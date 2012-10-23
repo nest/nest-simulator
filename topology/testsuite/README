@@ -1,0 +1,32 @@
+Topology testsuite
+------------------
+
+conntests:
+Execute 
+  ./run_all_tests.sh <nest executable>
+Should report that all results agree with results in reference directory
+
+manualtests:
+Exploratory tests. See conntests/run_all_tests for how to run them.
+
+unittests:
+Follow usual NEST unit testing setup, but need to be run manually at present.
+
+mpitests:
+Should be run like this
+mkdir 1 2 4
+cd 1
+mpirun -np 1 python ../topo_mpi_test.py
+cd ../2
+mpirun -np 2 python ../topo_mpi_test.py
+cd ../4
+mpirun -np 4 python ../topo_mpi_test.py
+cd ..
+diff 1 2
+diff 1 4
+
+Diff should not show any differences.
+
+pynest/tests:
+A Python testsuite for the py/topology interface.
+

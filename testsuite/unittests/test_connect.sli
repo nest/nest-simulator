@@ -1,0 +1,81 @@
+/*
+ *  test_connect.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+   Name: testsuite::test_connects - sli script to test if Connect works as expected
+
+   Synopsis: (test_connections) run
+
+   Description:
+   This test generates two neurons and connects them using different variants
+   of the Connect command. To check if the commands work as expected, the
+   resulting connectivity pattern is compared to the expected pattern.
+
+   SeeAlso: Connect
+
+   FirstVersion: September 2008
+   Author: Jochen Martin Eppler
+ */
+
+/unittest (7488) require
+/unittest using
+
+/iaf_neuron Create /n1 Set
+/iaf_neuron Create /n2 Set
+
+% plain Connect with gids
+n1 n2 Connect
+<< /source n1 /synapse_type /static_synapse >> FindConnections
+{ GetStatus } Map { /target get } Map
+[2] eq assert_or_die
+
+% plain Connect with addresses
+n1 GetAddress n2 GetAddress Connect
+<< /source n1 /synapse_type /static_synapse >> FindConnections
+{ GetStatus } Map { /target get } Map [1] get
+[2] eq assert_or_die
+
+% plain Connect with gids, weight and delay
+n1 n2 3.0 1.0 Connect
+<< /source n1 /synapse_type /static_synapse >> FindConnections
+{ GetStatus } Map { /weight get } Map [2] get
+[3.0] eq assert_or_die
+
+% plain Connect with addresses, weight and delay
+n1 GetAddress n2 GetAddress 4.0 1.0 Connect
+<< /source n1 /synapse_type /static_synapse >> FindConnections
+{ GetStatus } Map { /weight get } Map [3] get
+[4.0] eq assert_or_die
+
+% plain Connect with gids and parameter dict
+n1 n2 << /weight 5.0 >> Connect
+<< /source n1 /synapse_type /static_synapse >> FindConnections
+{ GetStatus } Map { /weight get } Map [4] get
+[5.0] eq assert_or_die
+
+% plain Connect with addresses and parameter dict
+n1 GetAddress n2 GetAddress << /weight 6.0 >> Connect
+<< /source n1 /synapse_type /static_synapse >> FindConnections
+{ GetStatus } Map { /weight get } Map [5] get
+[6.0] eq assert_or_die
+
+endusing

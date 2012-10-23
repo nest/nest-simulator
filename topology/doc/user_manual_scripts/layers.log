@@ -1,0 +1,94 @@
+
+           -- N E S T 2 beta --
+          Neural Simulation Tool
+  Copyright 1995-2009 The NEST Initiative
+   Version 2.1-svn Apr  7 2011 10:35:30
+
+This program is provided AS IS and comes with
+NO WARRANTY. See the file LICENSE for details.
+
+Problems or suggestions?
+  Website     : http://www.nest-initiative.org
+  Mailing list: nest_user@nest-initiative.org
+
+Type 'nest.help()' to find out more about NEST.
+#{ layer1s.log #}
+{'rows': 5, 'center': [0.0, 0.0], 'edge_wrap': False, 'depth': 1, 'extent': [1.0, 1.0], 'columns': 5}
+#{ end.log #}
+#{ layer1p.log #}
++-[0] root dim=[1 25]
+   |
+   +-[1] topology_layer_grid dim=[25]
+      |
+      +-[1]...[25] iaf_neuron
+      
+#{ end.log #}
+#{ layer6 #}
++-[0] root dim=[1 2 2]
+   |
+   +-[1] topology_layer_grid dim=[2 2]
+      |
+      +-[1] subnet dim=[2]
+      |  |
+      |  +-[1] iaf_cond_alpha
+      |  +-[2] poisson_generator
+      |  
+      +-[2] subnet dim=[2]
+         |
+         +-[1] iaf_cond_alpha
+         +-[2] poisson_generator
+         
+#{ end #}
+#{ layer7 #}
++-[0] root dim=[1 2 13]
+   |
+   +-[1] topology_layer_grid dim=[2 13]
+      |
+      +-[1] subnet dim=[13]
+      |  |
+      |  +-[1]...[10] iaf_cond_alpha
+      |  +-[11] poisson_generator
+      |  +-[12]...[13] noise_generator
+      |  
+      +-[2] subnet dim=[13]
+         |
+         +-[1]...[10] iaf_cond_alpha
+         +-[11] poisson_generator
+         +-[12]...[13] noise_generator
+         
+#{ end #}
+#{ layer8 #}
++-[0] root dim=[1 2 4]
+   |
+   +-[1] topology_layer_grid dim=[2 4]
+      |
+      +-[1] subnet dim=[4]
+      |  |
+      |  +-[1] subnet dim=[11]
+      |  |  |
+      |  |  +-[1]...[10] iaf_cond_alpha
+      |  |  +-[11] poisson_generator
+      |  |  
+      |  +-[2] subnet dim=[11]
+      |  |  |
+      |  |  +-[1]...[10] iaf_cond_alpha
+      |  |  +-[11] poisson_generator
+      |  |  
+      |  +-[3]...[4] noise_generator
+      |  
+      +-[2] subnet dim=[4]
+         |
+         +-[1] subnet dim=[11]
+         |  |
+         |  +-[1]...[10] iaf_cond_alpha
+         |  +-[11] poisson_generator
+         |  
+         +-[2] subnet dim=[11]
+         |  |
+         |  +-[1]...[10] iaf_cond_alpha
+         |  +-[11] poisson_generator
+         |  
+         +-[3]...[4] noise_generator
+         
+#{ end #}
+ Connecting: 0.907029 % Connecting: 1.81406 % Connecting: 2.72109 % Connecting: 3.62812 % Connecting: 4.53515 % Connecting: 5.44218 % Connecting: 6.34921 % Connecting: 7.25624 % Connecting: 8.16327 % Connecting: 9.07029 % Connecting: 9.97732 % Connecting: 10.8844 % Connecting: 11.7914 % Connecting: 12.6984 % Connecting: 13.6054 % Connecting: 14.5125 % Connecting: 15.4195 % Connecting: 16.3265 % Connecting: 17.2336 % Connecting: 18.1406 % Connecting: 19.0476 % Connecting: 19.9546 % Connecting: 20.8617 % Connecting: 21.7687 % Connecting: 22.6757 % Connecting: 23.5828 % Connecting: 24.4898 % Connecting: 25.3968 % Connecting: 26.3039 % Connecting: 27.2109 % Connecting: 28.1179 % Connecting: 29.0249 % Connecting: 29.932 % Connecting: 30.839 % Connecting: 31.746 % Connecting: 32.6531 % Connecting: 33.5601 % Connecting: 34.4671 % Connecting: 35.3741 % Connecting: 36.2812 % Connecting: 37.1882 % Connecting: 38.0952 % Connecting: 39.0023 % Connecting: 39.9093 % Connecting: 40.8163 % Connecting: 41.7234 % Connecting: 42.6304 % Connecting: 43.5374 % Connecting: 44.4444 % Connecting: 45.3515 % Connecting: 46.2585 % Connecting: 47.1655 % Connecting: 48.0726 % Connecting: 48.9796 % Connecting: 49.8866 % Connecting: 50.7937 % Connecting: 51.7007 % Connecting: 52.6077 % Connecting: 53.5147 % Connecting: 54.4218 % Connecting: 55.3288 % Connecting: 56.2358 % Connecting: 57.1429 % Connecting: 58.0499 % Connecting: 58.9569 % Connecting: 59.8639 % Connecting: 60.771 % Connecting: 61.678 % Connecting: 62.585 % Connecting: 63.4921 % Connecting: 64.3991 % Connecting: 65.3061 % Connecting: 66.2132 % Connecting: 67.1202 % Connecting: 68.0272 % Connecting: 68.9342 % Connecting: 69.8413 % Connecting: 70.7483 % Connecting: 71.6553 % Connecting: 72.5624 % Connecting: 73.4694 % Connecting: 74.3764 % Connecting: 75.2834 % Connecting: 76.1905 % Connecting: 77.0975 % Connecting: 78.0045 % Connecting: 78.9116 % Connecting: 79.8186 % Connecting: 80.7256 % Connecting: 81.6327 % Connecting: 82.5397 % Connecting: 83.4467 % Connecting: 84.3537 % Connecting: 85.2608 % Connecting: 86.1678 % Connecting: 87.0748 % Connecting: 87.9819 % Connecting: 88.8889 % Connecting: 89.7959 % Connecting: 90.7029 % Connecting: 91.61 % Connecting: 92.517 % Connecting: 93.424 % Connecting: 94.3311 % Connecting: 95.2381 % Connecting: 96.1451 % Connecting: 97.0522 % Connecting: 97.9592 % Connecting: 98.8662 % Connecting: 99.7732 %

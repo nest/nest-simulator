@@ -1,0 +1,100 @@
+/*
+ *  ticket-421.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-421 - Minimal test against missing variable initializations
+
+Synopsis: (ticket-421) run -> NEST exits if test fails
+
+Description:
+ This test simulates all nodes providing V_m for a short while and
+ checks that V_m remains constant. This is a minimal test against
+ missing variable initializations, cf ticket #421.
+ 
+Note:
+   - Passing this test does not mean that all variables are properly initialized. It may just catch some cases bad cases.
+   - Simulator response to initialization errors is stochastic, so if variables are not initialized properly, this test may
+     fail in some runs and not in others.
+   - Neuron models that do not initialize V_m to steady state, must be added to the exclude_models list below!
+   - If this test fails, please see installcheck.log for which model the test failed.
+     The check if that model really initializes the membrane potential V_m to the steady-state value in absence of any input. If not, add the model to the exclude_models list below.
+
+
+Author: Hans Ekkehard Plesser, 2010-05-05 
+ */
+
+/unittest (8045) require
+/unittest using
+
+% models that should not be tested because they do not initialize V_m to
+% steady state
+/exclude_models [/aeif_cond_exp /aeif_cond_alpha /a2eif_cond_exp /a2eif_cond_exp_HW
+                 /hh_cond_exp_traub
+                 /hh_psc_alpha /ht_neuron /ht_neuron_fs /iaf_cond_exp_sfa_rr /izhikevich] def
+
+% use power-of-two resolution to avoid roundof problems
+/res -3 dexp def
+
+M_WARNING setverbosity
+
+{
+  modeldict keys
+  {
+    /model Set
+
+    ResetKernel
+    0 << /resolution res >> SetStatus
+
+    % check if model has V_m, if none or excluded return true
+    false exclude_models { model eq or } Fold not
+    model GetDefaults /V_m known and
+    {
+      % store initial membrane potential
+      model GetDefaults /V_m get /Vm0 Set
+
+      % create and simulate single time step:
+      % if bad initial values has no effect now, it won't later
+      /n model Create def
+      res Simulate
+
+      % check membrane potential for exact equality
+      n /V_m get Vm0 eq
+
+      dup 
+      { (*** OK: ) model cvs join ( *** ) join == } 
+      { (###### FAIL : ) model cvs join 
+        ( Vm0 = ) join Vm0 cvs join ( Vm = ) join n /V_m get cvs  join == 
+      } ifelse
+    }   
+    { true }
+    ifelse
+  }
+  Map
+
+  % see if all entries are true
+  true exch { and } Fold
+
+}
+assert_or_die
+
+endusing

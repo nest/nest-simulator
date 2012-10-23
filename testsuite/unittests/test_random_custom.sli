@@ -1,0 +1,58 @@
+/*
+ *  test_random_custom.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_random_custom - test custom random number distributions
+
+Synopsis: (test_random_custom.sli) run -> dies if assertion fails
+
+Description:
+/normal_clipped is an example of a random number distribution defined on
+the SLI level. Here we test whether the distribution can be connected to
+a random number generator, it can be parameterized, and the range of 
+the resulting random numbers is correct.
+
+Author: Diesmann
+FirstVersion: 100918
+*/
+
+/unittest (6688) require
+/unittest using
+
+
+{
+rngdict /knuthlfg get 123456789 CreateRNG /rng Set
+rng rdevdict /normal get CreateRDV /normal_dv Set
+
+
+
+rng rdevdict /normal_clipped get CreateRDV /n_c Set
+
+n_c <</min 0.1 /max 2.0 >> SetStatus     
+
+
+n_c 10000 RandomArray {dup 0.1 lt exch 2.0 gt or} Select 
+
+[] eq
+}
+assert_or_die

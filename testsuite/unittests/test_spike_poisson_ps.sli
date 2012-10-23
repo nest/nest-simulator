@@ -1,0 +1,110 @@
+/*
+ *  test_spike_poisson_ps.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_spike_poisson_ps - tests if spikes independent of resolution
+
+Synopsis: (test_spike_poisson_ps) run -> compare with results at other resolutions
+
+Description:
+
+The difference in spike times is exactly 0.0 between 
+all resolutions. 
+ test_spike_poisson_ps_precision.sli
+already verified that spikes are produced and recorded with
+double resolution.
+
+This script will give identical results almost always, even if the resolution
+is not representable as a double. The main reason for this is that the 
+poisson_generator_ps generates spikes without attention to resolution. This
+means that exactly the same sequence of spike times is generated internally
+in the generator independent of resolution. Rounding errors occur, if at all,
+only when the spike time is split into a multiple of the resolution and the 
+offset. In this calculation, the resolution enters as a fixed multiple of tics.
+The calculation is reversed in the spike detector, when step-multiple and offset
+are recombined. This splitting and recombination apparently gives reproducible 
+results. The only deviation observed was for two spikes at very early times (<0.01 ms) 
+and coarse resolution (0.1 ms); total of 388.533 spikes tested. Therefore I
+introduced the check against the 1e-15 relative error limit below.
+
+If this test fails go back to
+ test_spike_poisson_ps_precision.sli
+to check whether poisson_generator_ps can emit spike times at
+double precision or whether spike times are limited to the 
+precision of a tic.
+
+FirstVersion: February 2007
+Author: Plesser, Diesmann
+*/
+
+
+/unittest (6688) require
+/unittest using
+
+M_ERROR setverbosity
+
+/Transmission
+{
+/h Set
+
+% end of stimulation period
+/stimtime 30.0 def
+
+% make simulation time long enough so that
+% at least one full min-delay passes after
+% end of stimulation even if resolution does 
+% not divide 1.0ms. Otherwise, not all spikes
+% will reach the spike_detector.
+/simtime stimtime 2.0 add def 
+
+ResetKernel
+
+0 << /resolution h >> SetStatus
+
+
+/spike_detector Create /sd Set  
+sd  << /precise_times true >> SetStatus
+ 
+
+/poisson_generator_ps Create /pg Set
+pg << /rate 128921.3 /stop stimtime >> SetStatus
+
+pg sd Connect
+
+simtime Simulate 
+
+sd [/events /times] get cva 
+} def
+
+
+
+{
+  [0.1 0.03 0.02 0.01 0.001]
+  { Transmission } Map 
+
+  % compute absolute relative error
+  dup First /refval Set
+  Rest { refval sub refval div { abs } Map } Map
+  Flatten { 1e-15 gt } Select [] eq
+}
+assert_or_die

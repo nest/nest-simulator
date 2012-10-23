@@ -1,0 +1,118 @@
+/*
+ *  test_iaf_psp_peak.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_iaf_psp_peak - test of closed form expression for peak
+
+Synopsis: (test_iaf_psp_peak) run -> compare expression with numerics
+
+Description:
+
+Several NEST neuron models have an alpha-shaped post-synaptic current (PSC).
+In these models the PSC is normalized to unit amplitude. Thus, a synaptic weight
+w leads to a PSC with amplitude w in units of pA.
+In order to adjust the amplitude of the post-synaptic potential (PSP) of a 
+neuron model with an alpha-shaped post-synaptic current (PSC) to a particular
+amplitude we need to first find the location of the maximum tmax of the PSP. 
+Here, this is done in two different ways:
+1. We numerically search for the root of the derivative of the PSP
+2. We used a closed form expression to compute the position of the maximum
+The test verifies that the methods lead to the same result. The test file 
+test_iaf_psp_normalized shows how this value is used to specify w such that a 
+PSP with a desired amplitude u in units of mV results.
+
+The closed form expression can be found by first transforming the expression 
+   d psp(t) / dt = 0
+into the normal form
+   exp(s) = 1 + a * s,
+where s is the scaled time s=bt and a and b depend on the time constants
+a = tau_m/tau_alpha, b = 1/tau_alpha - 1/tau_m . 
+
+The solution for s can then be expressed with the help of the Lambert W-function W
+which is the inverse of x=W*exp(W) and reads
+ 
+  s = 1/a * ( -a W(-exp(-1/a)/a) - 1 )
+
+
+References:
+  [1] Weisstein, Lambert W-function
+
+Author:  July 2009, Diesmann
+SeeAlso: testsuite::test_lambertw, testsuite::test_iaf_psp_normalized, LambertWm1
+*/
+
+/unittest (6335) require
+/unittest using
+
+M_ERROR setverbosity
+
+
+
+% parameter of the Brunel network examples
+%
+ 20.0   /tau_m   Set  % membrane time constant in ms
+  0.5   /tau_syn Set  % synaptic time constant in ms
+  1.0   /C_m     Set  % membrane capacity in pF 
+
+
+% In NEST neuron models with alpha-shaped PSC, the PSCs are normalized to
+% unit amplitude. Thus, a weight w results in a PSC with amplitude w.
+
+/psp
+ [/t]
+ ( 
+  E/tau_syn * 1/C_m 
+    * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) ) 
+ )
+ Function
+def
+
+% derivative of the post-synaptic potential
+/dpsp
+ [/t]
+ (
+  E/tau_syn * 1/C_m 
+    * (   (-1/tau_m*exp(-t/tau_m)+1/tau_syn*exp(-t/tau_syn)) / (1/tau_syn - 1/tau_m)^2 
+        - (exp(-t/tau_syn) - 1/tau_syn*t*exp(-t/tau_syn)) / (1/tau_syn - 1/tau_m) 
+      )
+ )
+ Function
+def
+
+
+{dpsp} 0. 5.0 0.00000000001 FindRoot /t0 Set   % 
+
+
+
+/psp_peaktime
+ []
+ ( a=tau_m/tau_syn;( -a*LambertWm1(-exp(-1./a)/a) -1. )/a / (1/tau_syn - 1/tau_m) )
+ Function
+def 
+
+
+% assert that peak times from direct root finding and 
+% close form solution are the same 
+%
+psp_peaktime t0 sub abs 1e-10 lt assert_or_die
+

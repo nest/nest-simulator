@@ -1,0 +1,78 @@
+/*
+ *  ticket-478.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-478 Ensure that devices can only be connected using static synapses.
+
+Synopsis: (ticket-478) run -> NEST exits if test fails
+
+Description:
+Ensure that NEST throws and exception if one tries to connect poisson_generator
+(sending DSSpikeEvents), noise_generator (sending DSCurrentEvents) or multimeter
+(sending DataLoggingRequest) to a neuron.
+
+spike_generator slips through this test, since it usually sends SpikeEvent. But it
+is no danger if it sends DSSpikeEvents for weighted spikes, since it sends precisely
+one DSSpikeEvent per spike. 
+
+Author: Hans Ekkehard Plesser, 2010-10-22
+ */
+
+/unittest (8831) require
+/unittest using
+
+M_ERROR setverbosity
+
+% these should pass, but keep only those that are in synapsedict (if developer not present)
+/statics 
+[ /static_synapse /static_synapse_hom_wd /static_synapse_S ] 
+{ synapsedict exch known }
+Select
+def
+
+% now all the others
+/plastics
+synapsedict keys
+{ statics exch MemberQ not }
+Select 
+def
+
+ResetKernel
+/n /iaf_neuron Create def
+/dev [/multimeter Create /poisson_generator Create /noise_generator Create ] def
+
+{
+  statics
+  { /st Set
+    dev n st ConvergentConnect
+  } forall
+} pass_or_die
+
+{
+  plastics
+  { /st Set
+    dev n st ConvergentConnect
+  } forall
+} fail_or_die 
+  
+endusing

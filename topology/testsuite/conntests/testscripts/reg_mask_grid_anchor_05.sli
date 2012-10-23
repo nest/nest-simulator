@@ -1,0 +1,37 @@
+% to be run by run_test.sli
+
+% expectation:
+%   /anchor << /row 5 /column 5 >> 
+%   The fictional point (5,5) measured from the top-left corner of the mask towards
+%   the bottom right is aligned with each source, i.e., the top left corner of the mask
+%   displaced by (-5,-5) relative to the source node, measured in grid coordinates.
+%   With a grid origin at (0,0), the "last" node in the 5x5 grid is at (4,4). For
+%   connections from this node, the box upper left corner of the 2x3 mask is placed
+%   at (-1,-1) and spans to (0,1), i.e., it contains nodes only at (0,0) and (0,1).
+%
+%    Sources                      Targets
+%     2  7 12 17 22    	          28 33 38 43 48
+%     3  8 13 18 23		  29 34	39 44 49
+%     4	 9 14 19 24		  30 35	40 45 50
+%     5	10 15 20 25		  31 36	41 46 51
+%     6	11 16 21 26		  32 37	42 47 52
+%
+%    All connections:
+%      21 -> 28
+%      26 -> 28 33
+
+/layer << /rows 5
+          /columns 5
+          /extent [1.25 1.25]
+          /center [0. 0.]
+          /edge_wrap false
+          /elements /iaf_neuron
+        >> def
+
+/src_layer layer def
+/tgt_layer layer def
+
+/conns << /connection_type (divergent)
+          /mask << /grid << /rows 2 /columns 3 >> /anchor << /row 5 /column 5 >> >>
+       >> def
+

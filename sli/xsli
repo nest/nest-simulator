@@ -1,0 +1,37 @@
+#!/bin/sh
+
+##  sli startup script for X Windows
+## If possible, re-direct standard-error
+## to a newly created FIFO. The FIFO is removed after the
+## session is finished.
+## to the file $SLIUSER/slierror (this may be a fifo), if not, to the console
+## if not, to null.
+SLILOG=slilog`date '+%H%M%S'`
+SLIEXE=$SLIHOME/kernel-1/slimain
+
+echo "Creating SLI session window. Please wait..."
+if [ ! -w $SLIUSER/$SLILOG ]
+then
+ echo "Creating new fifo $SLIUSER/$SLILOG"
+ cd $SLIUSER
+ mkfifo $SLILOG
+fi
+
+if [ -w $SLIUSER/$SLILOG ]
+then 
+  echo
+  echo "Starting SLI..."
+  echo
+  xterm -T "SLI session log" -sb -sl 2000 -geometry 60x12 -bg black -fg green -e cat $SLIUSER/$SLILOG &
+  $SLIEXE $* 2> $SLIUSER/$SLILOG
+  rm $SLIUSER/$SLILOG
+elif [ -w /dev/console ]
+then    
+   $SLIEXE $* 2> /dev/console
+elif [ -w /dev/null ]
+then
+   $SLIEXE $* 2> /dev/null
+else 
+   $SLIEXE
+fi
+

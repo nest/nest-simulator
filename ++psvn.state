@@ -1,0 +1,6 @@
+(("svn-trac-project-root" "http://nest-initiative.org/trac/")
+ ("sort-status-buffer" t)
+ ("elide-list" nil)
+ ("module-name" nil)
+ ("branch-list" nil)
+ ("changelog-style" changelog))

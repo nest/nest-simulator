@@ -1,0 +1,97 @@
+/*
+ *  proxynode.h
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef PROXYNODE_H
+#define PROXYNODE_H
+
+#include "node.h"
+
+namespace nest
+{
+  class SpikeEvent;
+  class CurrentEvent;
+  class Connection;
+
+/* BeginDocumentation
+Name: proxynode - Proxy to provide Nodes on remote machines
+Description:
+Remarks:
+Parameters: 
+References:
+Author: June 2005, Jochen Martin Eppler
+*/
+
+  /**
+   * Proxy Node to provide Nodes, where there aren't real Nodes to be
+   */
+  class proxynode: public Node
+  {    
+    
+  public:        
+    proxynode() : Node() {set(frozen);}
+    
+    /**
+     * Import sets of overloaded virtual functions.
+     * We need to explicitly include sets of overloaded
+     * virtual functions into the current scope.
+     * According to the SUN C++ FAQ, this is the correct
+     * way of doing things, although all other compilers
+     * happily live without.
+     */
+    using Node::connect_sender;
+    using Node::handle;
+    
+    port check_connection(Connection&, port);
+    void handle(SpikeEvent &) {}
+    port connect_sender(SpikeEvent &) {return 0;}
+    std::string get_name() const {return "proxynode";}
+
+    void get_status(DictionaryDatum &) const {}
+    
+    /**
+     * Proxy nodes have no properties.
+     * If set_status() gets called for a proxy node, this is
+     * and error; we must prevent this from happening, since the
+     * user might otherwise thaw a proxy node. It also causes 
+     * problems with dictionary entry checking
+     */
+     void set_status(const DictionaryDatum &) { assert(false); }
+
+    bool is_proxy() const;
+    
+  private:
+    void init_state_(const Node&) {}
+    void init_buffers_() {}
+    void calibrate() {}
+    void update(Time const &, const long_t, const long_t) {}
+
+  };
+
+  inline
+  bool proxynode::is_proxy() const
+  {
+    return true;
+  }
+
+} // namespace
+
+#endif //PROXYNODE_H

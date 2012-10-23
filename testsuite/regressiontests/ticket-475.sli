@@ -1,0 +1,48 @@
+/*
+ *  ticket-475.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-475 - Ensure that data collection across threads works
+
+Synopsis: (ticket-475) run -> NEST exits if test fails
+
+Description:
+Compilation on Stallo with icpc 11.1 cause crashed when collecting data across
+threads.
+ 
+Author: Hans Ekkehard Plesser, 2010-10-11
+ */
+
+/unittest (8831) require
+/unittest using
+M_INFO setverbosity
+
+
+{
+  /spike_detector << /withtime false >> Create 
+%  sd ShowStatus
+  %10 Simulate
+ % sd GetStatus
+} pass_or_die
+
+endusing

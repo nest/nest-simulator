@@ -1,0 +1,80 @@
+/*
+ *  test_multithreading.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+Name: testsuite::test_multithreading - sli script for several tests regarding multithreading
+
+Synopsis: (test_multithreading) run
+
+Description:
+This is a simple testscript to test if multithreading is working
+correctly. The following things are tested:
+  * Does setting the number of threads to x result in x threads?
+  * Does ResetKernel reset the number of threads to 1?
+  * Does default node distribution (modulo) work as expected?
+  * Does the /children_on_same_vp property of subnets do the right
+    thing?
+
+The data collection over threads is tested in a separate script. See
+SeeAlso key below.
+
+SeeAlso:testsuite::test_multithreading_devices
+
+Author: Jochen Martin Eppler
+FirstVersion: July 2008 
+*/
+
+statusdict /have_pthreads get {
+
+  /unittest (6688) require
+  /unittest using
+
+  /threads 4 def
+  
+  % check if setting the number of threads works
+  0 << /local_num_threads threads >> SetStatus
+  0 [ /local_num_threads ] get threads eq assert_or_die
+  
+  % check ResetKernel
+  ResetKernel
+  0 [ /local_num_threads ] get 1 eq assert_or_die
+  
+  % use 4 threads again
+  0 << /local_num_threads threads >> SetStatus
+  
+  % check if modulo node distribution works
+  /iaf_neuron 4 Create ;
+  [1 2 3 4 ] {
+    dup threads mod exch [ /vp ] get eq assert_or_die
+  } forall
+  
+  % check if /children_on_same_vp works
+  /subnet Create /sn Set
+  sn << /children_on_same_vp true >> SetStatus
+  sn ChangeSubnet
+  sn threads mod /snvp Set
+  /iaf_neuron 2 Create ;
+  sn GetNodes {
+    [ /vp ] get snvp eq assert_or_die
+  } forall
+
+} if

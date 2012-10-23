@@ -1,0 +1,14 @@
+Source: nest
+Section: science
+Priority: optional
+Maintainer: Jochen Martin Eppler <eppler@biologie.uni-freiburg.de>
+Build-Depends: debhelper (>= 5), autotools-dev, libreadline5-dev, libgsl0-dev, python-dev, libopenmpi-dev, libibverbs-dev, python-numpy
+Standards-Version: 3.7.2
+
+Package: nest
+Architecture: any
+Depends: ${shlibs:Depends}, openmpi-bin
+Description: NEST is a simulator for networks of spiking neurons.
+ NEST is a simulation system for large networks of biologically realistic
+ point-neurons and neurons with a small number of electrical compartments.
+ For more information, see http://www.nest-initiative.org

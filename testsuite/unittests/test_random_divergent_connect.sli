@@ -1,0 +1,99 @@
+/*
+ *  test_random_divergent_connect.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+   Name: testsuite::test_random_divergent_connect - sli script to test the RandomDivergentConnect function using global rng.
+
+   Synopsis: (test_random_divergent_connect) run -> compare response with reference data
+
+   Description: Tests the use of the RandomDivergentConnect function by 
+   creating a single one-to-many connection with this function. The test
+   script confirms that the function creates the right number of connections
+   and that the connections are in the list of possible connections. The
+   actual distribution of the connections is not tested.
+
+   Author: Tobias Potjans, Jochen Martin Eppler
+   SeeAlso: RandomDivergentConnect, testsuite::test_divergent_connect, testsuite::test_random_convergent_connect
+ */
+
+/unittest (6688) require
+/unittest using
+
+% Initialise variables
+
+0.1 /h Set
+0.1 /c Set
+100 /num_neur Set
+
+% Decide the number of nodes to connect to.
+c num_neur mul cvi /n Set
+
+ResetKernel
+
+% Set settings for root network. These
+% settings could be changed to test different
+% aspects of simulation.
+[0] <<
+      /local_num_threads 2
+      /resolution h
+    >> SetStatus
+
+% Create some target neurons.
+/iaf_psc_delta num_neur Create ;
+
+% Get list of neuron IDs.
+[num_neur] Range /t Set
+
+% Create source neuron.
+/dc_generator Create /dc_gen Set
+
+% Call function. Connect nodes.
+dc_gen n t RandomDivergentConnect
+
+% Assert that number of connected nodes are correct.
+<< /source dc_gen /synapse_type /static_synapse >> FindConnections
+length n eq assert_or_die
+
+% Check the weight/delay variant of RandomDivergentConnect
+ResetKernel
+
+0 <<
+     /local_num_threads 2
+     /resolution h
+  >> SetStatus
+
+/iaf_neuron num_neur Create ;
+/dc_generator Create /dc_gen Set
+
+/w [n] Range {cvd} Map def
+/d n array 1 add {cvd} Map def
+
+dc_gen n t w d RandomDivergentConnect
+
+% we have to sort the weight list, as the connections are on different
+% threads, which may destroy their ordering
+<< /source dc_gen /synapse_type /static_synapse >> FindConnections
+{ GetStatus } Map { /weight get } Map
+Sort w eq assert_or_die
+
+endusing

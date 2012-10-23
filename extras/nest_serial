@@ -1,0 +1,21 @@
+#! /bin/sh
+
+if [ $# -ne 1 ]; then
+  echo "Usage: nest_serial <script>"
+  exit 1
+fi
+
+abspath="$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"
+path="`dirname $abspath`"
+
+binary=`$path/sli -c "($1) nest_serial ="`
+exitcode=$?
+
+if [ $exitcode -ne 0 ]; then
+  echo "$binary"
+  exit $exitcode
+fi
+
+echo "Running " $binary
+$binary
+exit $?

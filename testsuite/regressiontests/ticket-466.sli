@@ -1,0 +1,57 @@
+/*
+ *  ticket-466.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::ticket-466.sli - test if mirollo_strogatz_ps can handle simultaneous inputs
+
+Synopsis: (ticket-466.sli) run -> dies if assertion fails
+
+Description:
+Feeds mirollo_strogatz_ps two simultaneous inputs, triggers assertion per r8864.
+
+Author: Plesser
+FirstVersion: 2010-10-05
+*/
+
+/unittest (8831) require
+/unittest using
+
+% only test if developer include
+modeldict /mirollo_strogatz_ps known not
+{
+  statusdict/exitcodes/success :: quit_i
+} if
+
+M_ERROR setverbosity
+
+{
+  ResetKernel
+  /n /mirollo_strogatz_ps Create def
+  /sg /spike_generator << /precise_times false
+                          /spike_times [ 0.1 0.1 ]
+		       >> Create def
+  sg n Connect
+  1.5 Simulate
+} pass_or_die
+
+endusing

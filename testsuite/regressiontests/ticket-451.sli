@@ -1,0 +1,187 @@
+/*
+ *  ticket-451.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-451 - Guard against infinte loops in Random*Connect
+
+Synopsis: (ticket-451) run -> NEST exits if test fails
+
+Description:
+ Random connection routines can hang in infinite loops if the user request
+ more connections than possible if restrictions on multapses and autapses
+ are taken into account. This test ensures that such conditions are caught.
+ 
+Author: Hans Ekkehard Plesser, 2010-09-20
+ */
+
+/unittest (8801) require
+/unittest using
+
+M_INFO setverbosity
+
+/iaf_neuron 3 Create ;
+{
+/RandomConvergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
+[1 2 3] 1 4 << /InitSynapse { pop } >> RandomConvergentConnect
+} fail_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
+[1 2 3] 1 3 << /InitSynapse { pop } >> RandomConvergentConnect
+} pass_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
+[1 2 3] 1 2 << /InitSynapse { pop } >> RandomConvergentConnect
+} pass_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
+[1 2 3] 1 4 << /InitSynapse { pop } >> RandomConvergentConnect
+} fail_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
+[1 2 3] 1 3 << /InitSynapse { pop } >> RandomConvergentConnect
+} fail_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
+[1 2 3] 1 2 << /InitSynapse { pop } >> RandomConvergentConnect
+} pass_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
+[1] 1 1 << /InitSynapse { pop } >> RandomConvergentConnect
+} fail_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
+[1 1 1] 1 1 << /InitSynapse { pop } >> RandomConvergentConnect
+} fail_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
+[1 1 1 2] 1 1 << /InitSynapse { pop } >> RandomConvergentConnect
+} pass_or_die
+
+% --- 
+% Same stuff over again for plain RCC without init dict 
+
+{
+/RandomConvergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
+[1 2 3] 1 4  RandomConvergentConnect
+} fail_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
+[1 2 3] 1 3  RandomConvergentConnect
+} pass_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
+[1 2 3] 1 2  RandomConvergentConnect
+} pass_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
+[1 2 3] 1 4  RandomConvergentConnect
+} fail_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
+[1 2 3] 1 3  RandomConvergentConnect
+} fail_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
+[1 2 3] 1 2  RandomConvergentConnect
+} pass_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
+[1] 1 1  RandomConvergentConnect
+} fail_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
+[1 1 1] 1 1  RandomConvergentConnect
+} fail_or_die
+
+{
+/RandomConvergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
+[1 1 1 2] 1 1  RandomConvergentConnect
+} pass_or_die
+
+% ---------------------
+% Finally, we test RandomDivergentConnect (no init dict variant)
+
+{
+/RandomDivergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
+1 4 [1 2 3]  RandomDivergentConnect
+} fail_or_die
+
+{
+/RandomDivergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
+1 3 [1 2 3]  RandomDivergentConnect
+} pass_or_die
+
+{
+/RandomDivergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
+1 2 [1 2 3]  RandomDivergentConnect
+} pass_or_die
+
+{
+/RandomDivergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
+1 4 [1 2 3] RandomDivergentConnect
+} fail_or_die
+
+{
+/RandomDivergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
+1 3 [1 2 3] RandomDivergentConnect
+} fail_or_die
+
+{
+/RandomDivergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
+1 2 [1 2 3]  RandomDivergentConnect
+} pass_or_die
+
+{
+/RandomDivergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
+1 1 [1]  RandomDivergentConnect
+} fail_or_die
+
+{
+/RandomDivergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
+1 1 [1 1 1]  RandomDivergentConnect
+} fail_or_die
+
+{
+/RandomDivergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
+1 1 [1 1 1 2]  RandomDivergentConnect
+} pass_or_die
+
+
+
+
+endusing

@@ -1,0 +1,32 @@
+PyNEST
+------ 
+
+This directory contains the source code of PyNEST, the Python bindings
+to the NEST kernel. A detailed explanation of PyNEST can be found in
+
+    Eppler JM, Helias M, Muller E, Diesmann M and Gewaltig M-O
+    PyNEST: A convenient interface to the NEST simulator
+    Front. Neuroinform. (2009) 2:12. doi:10.3389/neuro.11.012.2008
+
+PyNEST will be compiled by default. If you want to disable it, use
+
+    --without-python  
+
+as argument for configure. By default, make install will install
+PyNEST to /usr/lib/python$PYTHON_VERSION/site-packages/nest. To use a
+different installation path use
+
+    --with-pynest-prefix=$prefix
+
+To make the PyNEST module available to the Python interpreter, set the
+PYTHONPATH environment variable to
+
+    $prefix/lib/python$PYTHON_VERSION/site-packages/
+
+For help on a NEST objects OBJ in PyNEST, type nest.help(OBJ). To find
+out more about NEST, type nest.helpdesk().
+
+For more information on the usage of PyNEST, the homepage of the NEST
+Initiative at http://www.nest-initiative.org/index.php/PyNEST
+
+The PyNEST Python module is included in NEST with kind permission by Eilif Muller.

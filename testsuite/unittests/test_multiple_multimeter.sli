@@ -1,0 +1,155 @@
+/*
+ *  test_multiple_multimeter.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_multiple_multimeter - test support for multiple multimeters
+
+Synopsis: (test_multiple_multimeter.sli) run -> dies if assertion fails
+
+Description:
+This script tests support for multiple multimeters:
+- Connections created must have receptor != 0 
+  (this test is crucial to find models that have not been modified from
+
+  inline
+  port aeif_cond_alpha::connect_sender(DataLoggingRequest& dlr, 
+				      port receptor_type)
+  {
+    if (receptor_type != 0)
+      throw UnknownReceptorType(receptor_type, get_name());
+    B_.logger_.connect_logging_device(dlr, recordablesMap_);
+    return 0;
+  }
+
+  to
+
+  inline
+  port aeif_cond_alpha::connect_sender(DataLoggingRequest& dlr, 
+				      port receptor_type)
+  {
+    if (receptor_type != 0)
+      throw UnknownReceptorType(receptor_type, get_name());
+    return B_.logger_.connect_logging_device(dlr, recordablesMap_);
+  }
+
+- Check that one multimeter cannot be connected more than once to
+  one neuron
+
+- Multiple meters with identcial configurations connected to the
+  same neuron record identical data
+
+Author: Plesser
+FirstVersion: 2011-02-04
+*/
+/unittest (8831) require
+/unittest using
+
+M_ERROR setverbosity
+
+/* The following models do not support multimeter
+*/
+/skip_list [ ] def
+
+/clear_error
+{ 
+  counttomark npop % pop all but mark
+  errordict begin /newerror false def end
+} def
+
+
+% first test:
+% check that we can connect one multimeter once
+{
+  ResetKernel  
+  << >> begin
+    /mm /multimeter Create def
+    /n /iaf_psc_alpha Create def
+    mm n Connect 
+  end
+} pass_or_die
+
+% second test:
+% check that we cannot connect one multimeter twice
+{
+  ResetKernel  
+  << >> begin
+    /mm /multimeter Create def
+    /n /iaf_psc_alpha Create def
+    mm n Connect 
+    mm n Connect 
+  end
+} fail_or_die
+
+
+% third test:
+% check that connections from two multimeters get 
+% receptors 1 and 2 for all models with recordables
+{
+  << >> begin
+    modeldict keys 
+    {
+      ResetKernel  
+      /model Set
+      model GetDefaults /recordables known
+      {
+	/n model Create def
+        /mmd << /record_from n /recordables get >> def
+        /mm1 /multimeter mmd Create def	
+        /mm2 /multimeter mmd Create def	
+        mm1 n Connect
+        mm2 n Connect
+        [mm1 mm2] { /m Set << /source m >> FindConnections
+                    arrayload 1 eq assert /receptor get } Map
+        [1 2] eq
+      }
+      { true } 
+      ifelse
+    } Map
+  
+    true exch { and } Fold
+} assert_or_die
+
+% fourth test:
+% run simulation to see that two multimeters record same stuff
+{
+  ResetKernel
+  << >> begin
+    /recvars [ /V_m /weighted_spikes_ex /weighted_spikes_in ] def
+    /n /iaf_psc_alpha Create def
+    /mm1 /multimeter << /record_from recvars >> Create def	
+    /mm2 /multimeter << /record_from recvars >> Create def	
+    mm1 n Connect
+    mm2 n Connect
+    /pge /poisson_generator << /rate 10000. >> Create def
+    /pgi /poisson_generator << /rate 10000. >> Create def
+    pge n  1.0 1.0 Connect
+    pgi n -1.0 1.0 Connect
+    100 Simulate
+    /e1 mm1 /events get def
+    /e2 mm2 /events get def
+    recvars { /rv Set [ e1 e2 ] { rv get cva } Map arrayload ; eq } Map
+    true exch { and } Fold
+  end
+} assert_or_die
+
+endusing

@@ -1,0 +1,157 @@
+/*
+ *  ticket-336.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-336 - Check that vp-specific RNGs only provided for nodes with proxies and that they generate proper random numbers
+
+Synopsis: (ticket-336) run -> NEST exits if test fails
+
+Description:
+  This test ensures that GetVpRNG returns an error if called on a subnet or
+  device without proxies. When called on a node with proxies, it checks that
+  the same random number is generated independent of the number of MPI
+  processes.
+
+Todo:
+  This should also check that the VP-number of the node is the same independent
+  of the number of MPI processes
+ 
+Author: Hans Ekkehard Plesser, 2010-09-29
+ */
+
+/unittest (8831) require
+/unittest using
+
+/*
+ * do_test
+ *
+ * Expects a GID as argument.
+ * Returns a dictionary containing
+ * - GID
+ * - model of node
+ * - VP of node
+ * - if node is local: integer random number from VP-specific RNG
+ * - local number of threads
+ *
+ * Determines number of local threads, model of GID, vp of GID
+ * and tries to obtain the VP-specific RNG for the GID and draws
+ * a random number from it.
+ *
+ * The test should fail on any node that has proxies, since they have no
+ * well-defined VP and thus no well-defined VP-specific RNG (see r8824).
+ *
+ * When called on a node with proxies, one MPI process should report
+ * a "full" node and a random number, all others a proxy node and no
+ * random number.
+ */
+
+/do_test 
+{
+  /node Set
+
+  <<
+    /gid node
+    /model node /model get
+    /vp    node /vp    get
+    /n_threads 0 /local_num_threads get
+    /n_vps     0 /total_num_virtual_procs get
+    /n_procs   NumProcesses
+    /rank      Rank
+
+    node /local get
+    {
+      /rand node GetVpRNG drand
+    }
+    if
+  >>
+}
+def
+
+/* The test must fail for the root network, any subnet
+   and a device without proxies, eg, voltmeter.
+   No need to run this in parallel.
+ */
+[ 0 /subnet /voltmeter ]
+{ 
+  {
+    ResetKernel
+    LiteralQ { Create } if
+    0 << /total_num_virtual_procs 4 >> SetStatus
+    do_test
+  } fail_or_die
+} forall
+clear
+ 
+[1 2 4]
+{
+  ResetKernel
+  0 << /total_num_virtual_procs 4 >> SetStatus
+  /iaf_neuron Create 
+  do_test
+  % pcvs does not handle dicts well, so we pull out
+  % the vp# and, if known, the random number
+  dup 
+  /rand known
+  {
+    begin [ vp rand ] end
+  }
+  {
+    begin [vp ] end
+  }
+  ifelse
+} 
+{
+  /res Set
+  res length 3 eq
+  {
+     % this is a very crude test working around shortcomings in
+     % the way results are returned via pcvs
+     /ref res First def  % reference case, 1 MPI
+     ref length 2 eq % gid + rnd
+     {
+        /gid ref First def
+        /rnd ref Last  def
+  
+        % now check if all others have one identical random number
+        % and all others are equal to gid
+        res Rest 
+        { /rr Set 
+          rr { rnd eq } Select length 1 eq 
+          rr { gid eq } Select length rr length 1 sub eq 
+          and 
+        } Map
+        true exch { and } Fold
+     }
+     { 
+       false
+     }
+     ifelse
+  }
+  {
+     false % should have had 3 results on stack
+  } 
+  ifelse 
+} 
+distributed_collect_assert_or_die
+
+endusing % unittest

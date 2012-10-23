@@ -1,0 +1,135 @@
+% This tex file creates a document describing a number of topology connection profiles.
+%
+% The folders doughnut, exponential, gaussian, gaussian2d, linear and rectangular is required to run this tex file.
+% Each folder should contain the images above.png, perspective.png, xaxis.png and yaxis.png.
+% These images can be created with the Python scripts in topology/doc/plotting_tools/
+
+%\documentclass[]{article}
+\documentclass[landscape]{article}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+
+\usepackage[landscape]{geometry}
+
+\begin{document}
+
+\part{Appendix: Parameter functions}
+
+\large There exist a number of pre-defined functions that can be used to set up the weights, delays, and kernel values for a topological connection.
+
+\begin{table}[h]
+\Large
+\begin{tabular}{ | c | p{3cm} | p{12cm} | }
+\hline
+\textbf{Name} & \textbf{Parameters} & \textbf{Function} \\ \hline
+gaussian & c, p\_center, mean, sigma & \Large $c + p\_center * e^{-(distance-mean)^2/(2*sigma^2)}$ \\ \hline
+gaussian2D & c, p\_center, mean\_x, sigma\_x, mean\_y, sigma\_y, rho & \Large $c + p\_center * \newline e^{-(\frac{(x-mean\_x)^2}{sigma\_x^2} + \frac{(y-mean\_y)^2}{sigma\_y^2} - \frac{2*(x-mean\_x)*(y-mean\_y)*rho}{sigma\_x*sigma\_y})/(2*(1-rho^2))}$ \\ \hline
+linear & a, c & \Large $a*distance + c$ \\ \hline
+exponential & c, a, tau & \Large $c + a * e^{-distance/tau}$ \\ \hline
+uniform & min, max & \Large Random number in the range $[min, max]$ \\ \hline
+\end{tabular}
+\caption{Parameter functions.}
+\end{table}
+
+%gaussian2D & c, p\_center, mean\_x, sigma\_x, mean\_y, sigma\_y, rho & $c + p\_center * e^{-(\frac{(x-\overline{x})^2}{\sigma_{x}^2} + \frac{(y-\overline{y})^2}{\sigma_{y}^2} - \frac{2*(x-\overline{x})*(y-\overline{y})*\rho}{\sigma_{x}*\sigma_{y}})/(2*(1-\rho^2))}$ \\ \hline
+
+\clearpage
+
+%\section{Gaussian function: $c + p\_center * e^{-(distance-mean)^2/sigma^2}$}
+
+%$A*e^{-(d-d_{0})^2/sigma^2}+const.$
+
+
+%\begin{itemize}
+%\item Mean: [-0.00048848623100408153, -0.0012246436775821302]
+%\item Covariance: [[ 0.19408748  0.00055834]
+%             [ 0.00055834  0.19334064]]
+%\item MBB: [[-0.99998500000000001 -0.99998500000000001] 
+%      [0.99995400000000001 0.99994499999999997]]
+%\end{itemize}
+%\begin{tabular}{c}
+
+%\end{tabular}
+
+\begin{figure}[B]
+%\begin{center}
+\subfigure[Above]{\includegraphics[width=0.5\textwidth]{gaussian/above}}
+\subfigure[Perspective]{\includegraphics[width=0.5\textwidth]{gaussian/perspective}}
+\subfigure[Towards X axis]{\includegraphics[width=0.5\textwidth]{gaussian/xaxis}}
+\subfigure[Towards Y axis]{\includegraphics[width=0.5\textwidth]{gaussian/yaxis}}
+\caption{Gaussian connection profile with sigma equal to 0.3 (otherwise default values). The z-axis shows the relative distribution of the connections. The x- and y-axis shows the distances between the pre- and post-synaptic nodes involved in the different connections.}
+%\end{center}
+\end{figure}
+
+\clearpage
+
+%\section{Gaussian 2D function: $c + p\_center * e^{-(distance-mean)^2/sigma^2}$}
+
+\begin{figure}[B]
+%\begin{center}
+\subfigure[Above]{\includegraphics[width=0.5\textwidth]{gaussian2D/above}}
+\subfigure[Perspective]{\includegraphics[width=0.5\textwidth]{gaussian2D/perspective}}
+\subfigure[Towards X axis]{\includegraphics[width=0.5\textwidth]{gaussian2D/xaxis}}
+\subfigure[Towards Y axis]{\includegraphics[width=0.5\textwidth]{gaussian2D/yaxis}}
+\caption{2D gaussian connection profile with sigma\_x equal to 0.2 and sigma\_y equal to 0.4 (otherwise default values).}
+%\end{center}
+\end{figure}
+
+\clearpage
+
+%\section{Linear function: $c + p\_center * e^{-(distance-mean)^2/sigma^2}$}
+
+\begin{figure}[B]
+%\begin{center}
+\subfigure[Above]{\includegraphics[width=0.5\textwidth]{linear/above}}
+\subfigure[Perspective]{\includegraphics[width=0.5\textwidth]{linear/perspective}}
+\subfigure[Towards X axis]{\includegraphics[width=0.5\textwidth]{linear/xaxis}}
+\subfigure[Towards Y axis]{\includegraphics[width=0.5\textwidth]{linear/yaxis}}
+\caption{Linear connection profile with a = -1.3 and c = 1.0 (otherwise default values).}
+%\end{center}
+\end{figure}
+
+\clearpage
+
+%\section{Exponential function: $c + p\_center * e^{-(distance-mean)^2/sigma^2}$}
+
+\begin{figure}[B]
+%\begin{center}
+\subfigure[Above]{\includegraphics[width=0.5\textwidth]{exponential/above}}
+\subfigure[Perspective]{\includegraphics[width=0.5\textwidth]{exponential/perspective}}
+\subfigure[Towards X axis]{\includegraphics[width=0.5\textwidth]{exponential/xaxis}}
+\subfigure[Towards Y axis]{\includegraphics[width=0.5\textwidth]{exponential/yaxis}}
+\caption{Exponential connection profile with tau equal to 0.3 (otherwise default values).}
+%\end{center}
+\end{figure}
+
+\clearpage
+
+%\section{Doughnut region with gaussian: $c + p\_center * e^{-(distance-mean)^2/sigma^2}$}
+
+\begin{figure}[B]
+%\begin{center}
+\subfigure[Above]{\includegraphics[width=0.5\textwidth]{doughnut/above}}
+\subfigure[Perspective]{\includegraphics[width=0.5\textwidth]{doughnut/perspective}}
+\subfigure[Towards X axis]{\includegraphics[width=0.5\textwidth]{doughnut/xaxis}}
+\subfigure[Towards Y axis]{\includegraphics[width=0.5\textwidth]{doughnut/yaxis}}
+\caption{Gaussian connection profile with sigma equal to 0.3 (otherwise default values). A doughnut region with inner radius of 0.3 and outer radius of 1.0 is used. Z axis still shows relative distribution of connections.}
+%\end{center}
+\end{figure}
+
+\clearpage
+
+%\section{Rectangular region with distance independent kernel: $c + p\_center * e^{-(distance-mean)^2/sigma^2}$}
+
+\begin{figure}[B]
+%\begin{center}
+\subfigure[Above]{\includegraphics[width=0.5\textwidth]{rectangular/above}}
+\subfigure[Perspective]{\includegraphics[width=0.5\textwidth]{rectangular/perspective}}
+\subfigure[Towards X axis]{\includegraphics[width=0.5\textwidth]{rectangular/xaxis}}
+\subfigure[Towards Y axis]{\includegraphics[width=0.5\textwidth]{rectangular/yaxis}}
+\caption{Flat connection profile. A rectangular region with lower left corner equal to [-1, -1] and upper right corner equal to [1, 1] is used.}
+%\end{center}
+\end{figure}
+
+\end{document}

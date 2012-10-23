@@ -1,0 +1,72 @@
+/*
+ *  test_two_devices.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* Testscript 
+  
+
+tests for the correctness of calibration to the new 
+resolution after kernel reset. In particular the 
+correct calculation of the default delay and consequently
+also the mindelay.
+Using this test the problem described in ticket #164 which
+is connected to the solution of #120 was investigated 
+and fixed.
+
+*/
+
+/unittest (6688) require
+/unittest using
+
+
+/Transmission
+{
+ /d Set
+
+0.01 /h Set
+
+3.0 /T Set 
+
+ResetKernel
+
+0 d                    SetStatus
+0 << /resolution h >>  SetStatus
+
+/spike_detector Create /sp Set   
+sp  << /withgid false  /withtime true /to_memory true >> SetStatus
+ 
+/poisson_generator_ps Create /pn Set
+pn << /rate 10000.0 >> SetStatus
+
+pn sp Connect
+
+T Simulate 
+
+sp [/events /times ] get cva length
+
+} def
+
+<< /local_num_threads 1 >> Transmission
+<<                      >> Transmission
+eq
+
+
+assert_or_die

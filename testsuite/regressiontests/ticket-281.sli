@@ -1,0 +1,143 @@
+/*
+ *  ticket-281.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+ * Regression test for Ticket #281
+ *
+ * Nodes without proxies were not properly reset by ResetNetwork.
+ * 
+ * This test checks for resetting by creating one instance of each
+ * model in modeldict, simulating for 1 second, testing that bit 6 (==32)
+ * is set in state (buffers_initialized), then calling ResetNetwork
+ * and rechecking that the bit is unset. Tests are performed for nodes
+ * in the root net, a subnet, and a subnet inside a subnet.
+ *
+ * The test is performed for two threads. Using extended addresses, it 
+ * is verified that all replicas are reset.
+ *
+ * Note: This test does NOT test whether the state vector of the neuron
+ *       is properly reset.
+ *
+ * Hans E Plesser, 2008-08-13
+ *
+ */
+
+/unittest (7488) require
+/unittest using
+
+<< >> begin
+
+% check if buffers_initialized has given value for all instances
+% inst_array val check_flag -> bool
+/check_flag
+{ 
+  << >> begin
+  /val Set
+
+  % get value of buffers_initialized flag
+  /flagval elementstates /buffers_initialized get def
+
+  % map over instances
+  {
+    GetStatus /state get
+    % divide state by flag value; if flag is set, result is odd
+    flagval div dup 2 div 2 mul eq   % true if even -> flag not set
+    not % true if flag is set
+    val eq % check if we have right value
+  } Map
+
+  dup First
+  exch Rest
+
+  { and } Fold  % see if all results are equal
+
+  end
+}
+def
+
+% perform test once, leave bool on stack
+/runtest
+{
+  << >> begin
+
+  % create one instance of each model, except "special" models
+  % the list of excluded models should be reviewed regularly
+  % /ac_poisson_generator should be removed from exclusion list 
+  % once it supports parallel simulation
+  modeldict clonedict /models Set ; 
+
+  [ /subnet /proxynode /environment /volume_transmitter
+    /layer /layer_unrestricted /layer_3d /ac_poisson_generator
+    /music_event_in_proxy /music_event_out_proxy
+    /music_cont_in_proxy /music_message_in_proxy ]
+  {
+    models exch undef
+  }
+  forall
+
+  /instances models keys { Create } Map def
+
+  % simulate
+  1 Simulate
+
+  % check if buffers_initialized is set on all
+  /set_after_sim instances true check_flag def
+
+  ResetNetwork
+
+  % check if buffers_initialized is unset on all
+  /unset_after_reset instances false check_flag def
+
+  % result
+  set_after_sim unset_after_reset and
+
+  end
+}
+def
+
+{
+  % run in top level
+  ResetKernel
+  0 << /local_num_threads 2 /overwrite_files true >> SetStatus
+  runtest
+
+  % run inside subnet
+  ResetKernel
+  0 << /local_num_threads 2 /overwrite_files true >> SetStatus
+  /subnet Create ChangeSubnet
+  runtest
+
+  % run inside subnet inside subnet
+  ResetKernel
+  0 << /local_num_threads 2 /overwrite_files true >> SetStatus
+  /subnet Create ChangeSubnet
+  /subnet Create ChangeSubnet
+  runtest
+
+  % combine results
+  and and
+
+} assert_or_die
+
+end
+
+endusing

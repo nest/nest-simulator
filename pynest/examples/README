@@ -1,0 +1,12 @@
+This directory contains several example files for PyNEST. Here is a small
+summary of the files and their content. For more details, see the comments
+in the files.
+
+start.py  This is a simple example for how to execute SLI commands from within
+    Python. It does not use anything from the high-level PyNEST API.
+
+testiaf.py  In this example, a single integrate-and-fire neuron is created and
+    fed with input from a DC generator. The activity of the neuron is recorded
+    by a spike_detector and a voltmeter. Their output is directly printed.
+
+network1.py

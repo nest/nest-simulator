@@ -1,0 +1,116 @@
+/*
+ *  ticket-481.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-481 - Ensure that poisson_generator_ps delivers spikes to more than one node
+
+Synopsis: (ticket-481) run -> NEST exits if test fails
+
+Description:
+Ensure that poisson_generator_ps delivers spikes to more than one node.
+
+Peiran Gao reported to nest_bugs that poisson_generator_ps.
+
+First analysis indicates that spikes are lost if poisson_generator_ps is connected
+to target neurons using different synapse models, even if those are just copies of
+the same underlying class.
+ 
+Author: Hans Ekkehard Plesser, 2010-11-03; based on original reproducer by Peiran Gao
+ */
+
+/unittest (8831) require
+/unittest using
+M_ERROR setverbosity
+
+% if true, exec and show results instead of asserting
+/debugging false def
+
+% expects on stack: 
+% syn model 2
+% syn model 1
+% neuron model
+%
+% returns: whether voltage for either neurons exceeded Vref
+/Run
+{
+ /syn2 Set
+ /syn1 Set
+ /model Set
+  
+ debugging {
+   model cvs ( ) join syn1 cvs join ( ) join syn2 cvs join ( : ) join =only 
+ } if 
+
+ /dt -3 dexp def  % 0.125 ms
+ /Vref -70.0 def
+ 0 << /tics_per_ms 1.0 dt div round /resolution dt >> SetStatus
+
+ model << /V_m Vref /E_L Vref /V_th 1e10 /I_e 0.0  >> Create /n1 Set
+ model << /V_m Vref /E_L Vref /V_th 1e10 /I_e 0.0  >> Create /n2 Set
+ 
+ /poisson_generator_ps << /rate 10000.0 /start 0.0  >> Create  /pg Set
+ /voltmeter << /interval dt >>                         Create /vm1 Set
+ /voltmeter << /interval dt >>                         Create /vm2 Set
+
+ pg n1 syn1 Connect
+ pg n2 syn2 Connect
+   
+ vm1 n1 Connect
+ vm2 n2 Connect  
+
+ 1000 Simulate
+ vm1 [/events /V_m] get cva Max Vref gt  
+ vm2 [/events /V_m] get cva Max Vref gt  
+
+} def 
+
+{
+ ResetKernel
+
+  % this case always went well  
+  /iaf_psc_delta_canon /static_synapse /static_synapse Run
+  and
+} debugging { exec = } { assert_or_die } ifelse
+
+% identical synapse models, must pass
+{
+  ResetKernel
+
+  /static_synapse /hoo CopyModel
+  /iaf_psc_delta_canon /hoo /hoo Run
+  and
+} debugging { exec = } { assert_or_die } ifelse
+
+% mixed case, must throw execption
+% must be last in test script, since exception occurs in middle of
+% simulation, leaving kernel in unresettable state.
+{
+  ResetKernel
+
+  /static_synapse /foo CopyModel
+  /static_synapse /goo CopyModel
+  /iaf_psc_delta_canon /foo /goo Run
+  and
+} debugging { exec = } { fail_or_die } ifelse
+
+

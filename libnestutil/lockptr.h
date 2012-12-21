@@ -22,8 +22,13 @@
 
 #ifndef LOCK_PTR_H
 #define LOCK_PTR_H
-#include <cstddef>
+
+#ifdef NDEBUG
+#define LOCK_PTR_NDEBUG
+#endif
+
 #include <cassert>
+#include <cstddef>
 
 /**
 \class lockPTR
@@ -38,7 +43,7 @@
     protected pointer.
  3. The lockPTR can freely be copied and passed between objects and functions.
  4. lockPTR objects should be used like the pointer to the object.
- 5. lockPTR objects should be passed as objects in functions calls and
+ 5. lockPTR objects should be passed as objects in function calls and
     function return values.
  6. There should be no pointers to lockPTR objects.
 
@@ -58,7 +63,7 @@
 
  If a lockPTR is initialised with a pointer, it assumes that the
  referenced object was dynamically allocated and will call the
- destructor once the reference count dropt so zero.
+ destructor once the reference count drops to zero.
 
  If the lockPTR is initialised with a reference, it assumes that the
  object is automatically allocated. Thus, the lockPTR wil NOT call the
@@ -185,7 +190,7 @@ class lockPTR
   lockPTR(const lockPTR<D>& spd)
     : obj(spd.obj)
   {
-//    assert(obj != NULL);
+    assert(obj != NULL);
     obj->addReference();
   }
     
@@ -288,37 +293,37 @@ class lockPTR
 
   bool valid(void) const    //!< returns true if and only if obj->pointee != NULL
   {
-    // assert(obj != NULL);
+    assert(obj != NULL);
     return (obj->get() != NULL);
   }
 
   bool islocked(void) const 
   {
-    // assert(obj != NULL);
+    assert(obj != NULL);
     return (obj->islocked());
   }
 
   bool deletable(void) const 
   {
-    // assert(obj != NULL);
+    assert(obj != NULL);
     return (obj->isdeletable());
   }
 
   void lock(void) const
     {
-      // assert(obj!=NULL);
+      assert(obj!=NULL);
       obj->lock();
     }
 
   void unlock(void) const
     {
-      // assert(obj!=NULL);
+      assert(obj!=NULL);
       obj->unlock();
     }
 
   void unlock(void)
     {
-      // assert(obj!=NULL);
+      assert(obj!=NULL);
       obj->unlock();
     }
 
@@ -327,5 +332,9 @@ class lockPTR
       return (obj==NULL)? 0: obj->references();
     }
 };
+
+#ifndef LOCK_PTR_NDEBUG
+#undef NDEBUG
+#endif
 
 #endif

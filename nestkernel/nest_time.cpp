@@ -120,7 +120,6 @@ nest::Time nest::Time::compute_t_max_()
   }
 
   tmax.update_ms_();
-  tmax.error_  = success;   
   
   return tmax;
 }
@@ -134,7 +133,6 @@ nest::Time nest::Time::create_pos_inf_()
   posinf.t_steps_ = T_MAX_.t_steps_ + 1;
   // we cannot call tics2ms_(), since we violate overflow
   posinf.t_ms_   =  MS_PER_TIC_ * static_cast<double_t>(posinf.t_tics_); 
-  posinf.error_  = overflow;
 
   return posinf;
 }
@@ -148,7 +146,6 @@ nest::Time nest::Time::create_neg_inf_()
   neginf.t_steps_  = T_MIN_.t_steps_ - 1;
   // we cannot call tics2ms_(), since we violate overflow
   neginf.t_ms_   =  MS_PER_TIC_ * static_cast<double_t>(neginf.t_tics_); 
-  neginf.error_ = underflow;
 
   return neginf;
 }
@@ -201,8 +198,7 @@ nest::Time::Time()
     : 
     t_tics_(0),
     t_ms_(0.0),
-    t_steps_(0),
-    error_(Time::success)
+    t_steps_(0)
 {
 }
 
@@ -210,8 +206,7 @@ nest::Time::Time(const nest::Time &t)
     : 
     t_tics_(t.t_tics_),
     t_ms_(t.t_ms_),
-    t_steps_(t.t_steps_),
-    error_(t.error_)
+    t_steps_(t.t_steps_)
 {
 }
 
@@ -219,8 +214,7 @@ nest::Time::Time(const tic_t t)
     : 
     t_tics_(t),
     t_ms_(0.0),
-    t_steps_(0),
-    error_(Time::success)
+    t_steps_(0)
 {
   if ( t_tics_ > T_MAX_.t_tics_ )
     *this = T_POS_INF_;
@@ -237,8 +231,7 @@ nest::Time::Time(Time::tic t)
     : 
     t_tics_(t.tics_),
     t_ms_(0.0),
-    t_steps_(0),
-    error_(Time::success)
+    t_steps_(0)
 {
   if ( t_tics_ > T_MAX_.t_tics_ )
     *this = T_POS_INF_;
@@ -255,8 +248,7 @@ nest::Time::Time(Time::step s)
     : 
     t_tics_(0),
     t_ms_(0.0),
-    t_steps_(s.steps_),
-    error_(Time::success)
+    t_steps_(s.steps_)
 {
   if ( t_steps_ > T_MAX_.t_steps_ )
     *this = T_POS_INF_;
@@ -273,8 +265,7 @@ nest::Time::Time(Time::ms t)
     : 
     t_tics_(0),
     t_ms_(0.0),
-    t_steps_(0),
-    error_(Time::success)
+    t_steps_(0)
 {
   if ( t.ms_ > T_MAX_.t_ms_ )
     *this = T_POS_INF_;
@@ -282,11 +273,10 @@ nest::Time::Time(Time::ms t)
     *this = T_NEG_INF_;
   else
   {
+    // Do not change the order of the following statements
     t_tics_ = ms2tics_(t.ms_);
-    // Just in case we have rounded, we 
-    // re-compute the ms value.
-    update_steps_();
-    update_ms_();
+    update_steps_(); // This might round up ...
+    update_ms_(); // ... so this has to come last
   }
 }
 
@@ -294,8 +284,7 @@ nest::Time::Time(Time::ms_stamp t)
     : 
     t_tics_(0),
     t_ms_(0.0),
-    t_steps_(0),
-    error_(Time::success)
+    t_steps_(0)
 {
   if ( t.ms_ > T_MAX_.t_ms_ )
     *this = T_POS_INF_;
@@ -328,32 +317,6 @@ nest::Time::Time(Time::ms_stamp t)
   assert(t.ms_ <= t_ms_);
 }
 
-// nest::Time::Time(Time::ms_stamp t)
-//     : 
-//     t_tics_(0),
-//     t_ms_(0.0),
-//     t_steps_(0),
-//     error_(Time::success)
-// {
-//   if ( t.ms_ > T_MAX_.t_ms_ )
-//     *this = T_POS_INF_;
-//   else if ( t.ms_ < T_MIN_.t_ms_ )
-//     *this = T_NEG_INF_;
-//   else
-//   {
-//     // convert to steps by first ceiling double to tics,
-//     // then integer division to steps
-//     t_steps_ = ms2tics_(t.ms_) / TICS_PER_STEP_;
-
-//     // compute tics and ms value for number of steps
-//     t_tics_ = TICS_PER_STEP_ * t_steps_;
-//     update_ms_();    
-//   }
-  
-//   assert(t.ms_ <= t_ms_);
-// }
-
-
 nest::Time nest::Time::operator+=(const Time &t)
 {
   const tic_t new_tics = t_tics_ + t.t_tics_;
@@ -365,8 +328,6 @@ nest::Time nest::Time::operator+=(const Time &t)
     *this = T_NEG_INF_;
   else
   {
-    error_=Time::success;
-
     t_steps_ += t.t_steps_;  // faster than recomputing
     t_tics_= new_tics;
     update_ms_();
@@ -386,8 +347,6 @@ nest::Time nest::Time::operator-=(const Time &t)
     *this = T_NEG_INF_;
   else
   {
-    error_=Time::success;
-
     t_steps_ -= t.t_steps_;
     t_tics_   = new_tics;
     update_ms_();
@@ -406,14 +365,12 @@ nest::Time nest::Time::operator*=(long n)
     t_steps_ = 0;
     t_tics_ = 0;
     t_ms_ = 0;
-    error_=Time::success;
   }
   else if ( abs_(t_tics_) <= abs_(T_MAX_.t_tics_ / n) )
   { 
     t_steps_ *= n;
     t_tics_  *= n;
     update_ms_();
-    error_=Time::success;
   }
   else if ( ( t_tics_ < 0 && n < 0 ) || ( t_tics_ > 0 && n > 0 ) )
     *this = T_POS_INF_;
@@ -436,7 +393,6 @@ nest::Time nest::operator-(Time const &t1)
     result.t_tics_ = -t1.t_tics_;
     result.t_steps_= -t1.t_steps_;
     result.t_ms_   = -t1.t_ms_;
-    result.error_  = t1.error_;
   }
 
   return result;

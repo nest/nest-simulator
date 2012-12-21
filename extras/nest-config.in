@@ -61,7 +61,7 @@ while test $# -gt 0; do
         ;;
 
     --cflags)
-        NEST_CFLAGS="-I${srcdir}/{libnestutil,librandom,sli,nestkernel,nest} @MPI_INCLUDE@ @GSL_CFLAGS@"
+        NEST_CFLAGS="-I${srcdir}/{libnestutil,librandom,sli,nestkernel,nest,topology} @MUSIC_INCLUDE@ @MPI_INCLUDE@ @GSL_CFLAGS@"
         if [ "${builddir}" != "${srcdir}" ]; then
             NEST_CFLAGS="-I${builddir}/libnestutil ${NEST_CFLAGS}"
         fi
@@ -69,7 +69,7 @@ while test $# -gt 0; do
         ;;
 
     --libs)
-        NEST_LDFLAGS="-l{model,precise}module -l{nest,random,sli} @SLI_LIBS@ @GSL_LIBS@ @MPI_LIBS@ -lpthread -export-dynamic"
+        NEST_LDFLAGS="-l{model,precise}module -l{nest,random,sli} @SLI_LIBS@ @GSL_LIBS@ @MUSIC_LIBS@ @MPI_LIBS@ -lpthread -export-dynamic"
         if [ "${builddir}" != "${srcdir}" ]; then
             NEST_LDFLAGS="-L${builddir}/{nestkernel,models,precise,librandom,sli}/.libs ${NEST_LDFLAGS}"
         else

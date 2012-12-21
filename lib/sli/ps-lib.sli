@@ -21,7 +21,7 @@
  */
 
 
-/ps-lib ($Revision: 9902 $) provide
+/ps-lib ($Revision: 10098 $) provide
 
 
 
@@ -174,9 +174,4 @@ SeeAlso: ceil
  [/integertype] {} addtotrie
 def 
 
-/< mark def
-/> 
-{
-  counttomark arraystore exch ;
-} bind def
 

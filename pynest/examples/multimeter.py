@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
+#
 # multimeter.py
 #
 # This file is part of NEST.
@@ -74,6 +74,3 @@ pl.axis([0, 100, 0, 45])
 pl.xlabel('Time [ms]')
 pl.ylabel('Synaptic conductance [nS]')
 pl.legend(('g_exc', 'g_inh'))
-
-pl.show()
-

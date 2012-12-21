@@ -24,12 +24,13 @@ NEST Topology Module Example
 Create layer of 4x3 iaf_neurons, visualize
 
 BCCN Tutorial @ CNS*09
-Hans Ekkehard Plesser, UMB/Simula
+Hans Ekkehard Plesser, UMB
 '''
 
 import nest
 import pylab
 import nest.topology as topo
+pylab.ion()
 
 nest.ResetKernel()
 

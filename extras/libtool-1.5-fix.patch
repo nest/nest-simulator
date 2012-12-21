@@ -1,6 +1,6 @@
---- configure.ac	2010-01-28 00:39:01.000000000 +0100
-+++ configure.ac.libtool-1.5	2010-01-28 00:40:08.849521243 +0100
-@@ -465,27 +465,20 @@
+--- configure.ac	2012-01-25 11:13:00.529910000 +0100
++++ configure.ac.in.lt1.5	2012-01-25 11:15:41.805304000 +0100
+@@ -488,20 +488,16 @@
  
  AC_PROG_INSTALL
  
@@ -16,23 +16,16 @@
 +  AC_LIBTOOL_DLOPEN        ## use dlopen mechanism for dynamic loading of module
 +fi
 +AC_PROG_LD
-+AC_LIBLTDL_CONVENIENCE     ## put libltdl into a convenience library
-+AC_PROG_LIBTOOL            ## use libtool
- AC_CONFIG_SUBDIRS(libltdl)        ## also configure subdir containing libltdl 
++AC_LIBLTDL_CONVENIENCE            ## put libltdl into a convenience library
++AC_PROG_LIBTOOL                   ## use libtool
+ AC_CONFIG_SUBDIRS(libltdl)        ## also configure subdir containing libltdl
  
--# This is a fix for a big in Debian's libtool.
+-# This is a fix for a bug in Debian's libtool.
 -# See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=526750
 -if echo $LIBLTDL | grep -s -q top_build_prefix; then
 -  top_build_prefix=${PKGBUILDDIR}/
--  LIBLTDL=`eval echo $LIBLTDL` 
+-  LIBLTDL=`eval echo $LIBLTDL`
 -fi
--
- if test "x$BUILD_SHARED" != xno ; then 
--
-   if test "x$LIBLTDL" != x ; then
-     AC_DEFINE(HAVE_LIBLTDL, 1, [Havel libltdl, can load dynamic modules])
-   fi
--
- fi
  
- #-- Stuff for GSL ----------------------------------------- 
+ if test "x$BUILD_SHARED" != xno ; then
+   if test "x$LIBLTDL" != x ; then

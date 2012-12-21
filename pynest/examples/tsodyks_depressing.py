@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 /*
  *  tsodyks_depressing.py
@@ -78,6 +79,7 @@ neuron_param = {"tau_m"     :  Tau,
                 "C_m"       :  C,
                 "V_reset"   :  U0,
                 "E_L"       :  U0,
+                "V_m"       :  U0,
                 "V_th"      :  Theta}
 
 # set defaults of desired neuron type with chosen parameters:
@@ -96,7 +98,7 @@ dc_gen = nest.Create("dc_generator")
 volts=nest.Create("voltmeter")
 
 # set properties of voltmeter
-nest.SetStatus([volts],[{"label": "Voltmeter", "withtime": True, "withgid": True,
+nest.SetStatus(volts,[{"label": "Voltmeter", "withtime": True, "withgid": True,
                          "interval": 1.}])
 
 # connect dc_generator to neuron 1:
@@ -126,4 +128,3 @@ nest.Simulate(Tend)
 
 # plot membrane potential of neuron
 nest.voltage_trace.from_device(volts)
-nest.voltage_trace.show()

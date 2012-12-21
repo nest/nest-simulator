@@ -1046,6 +1046,7 @@ SeeAlso: help, helpindex, license, system
 
 /help_ trie
   [/literaltype] /help_l load addtotrie
+  [/stringtype] {cvlit help_l} addtotrie
   [/anytype] /help_any load addtotrie
 def
 

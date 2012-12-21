@@ -36,10 +36,10 @@ reproduces figure 1 A
 
 
 author:  Markus Diesmann, Moritz Helias
-date:	 March 2006
+date:    March 2006
 
 */
- 
+
 
 ResetKernel      % clear all existing network elements
 
@@ -50,83 +50,85 @@ userdict begin
       8 /total_num_virtual_procs Set
       0.1 /h Set
 
-      /Tau 40.0 def	     % membrane time constant
-      /Theta 15.0 def	     % threshold
-      /U0 0.0 def	     % reset potential of Vm
-      /R 0.1 def	     % 100 M Ohm
-      /C Tau R div def     % Tau [ms] / R in NEST units
-      /TauR 2.0 def	     % refractory time
+      /Tau 40.0 def          % membrane time constant
+      /Theta 15.0 def        % threshold
+      /U0 0.0 def            % reset potential of Vm
+      /R 0.1 def             % 100 M Ohm
+      /C Tau R div def       % Tau [ms] / R in NEST units
+      /TauR 2.0 def          % refractory time
       /Tau_psc 3.0 def       % time constant of PSC (=Tau_inact)
       /Tau_rec 800.0 def     % recovery time
-      /Tau_fac 0.0 def     % facilitation time
-      /U 0.5 def	     % facilitation parameter U
-      /A 250.0 def	     % PSC weight in pA
+      /Tau_fac 0.0 def       % facilitation time
+      /U 0.5 def             % facilitation parameter U
+      /A 250.0 def           % PSC weight in pA
       /f 20.0 1000.0 div def % frequency in Hz given converted to 1/ms
 
-      /Tend 1200.0 def	     % simulation time
+      /Tend 1200.0 def       % simulation time
       /TIstart 50.0 def      % start time of current
       /TIend 1050.0 def      % end time of current
-  
-      
+
+
       % set resolution and limits on delays
       % limits must be set BEFORE connecting any elements
       [0]
       <<
         /resolution h
-	/local_num_threads local_num_threads
-        /overwrite_files true  
+        /local_num_threads local_num_threads
+        /overwrite_files true
 %       /total_num_virtual_procs total_num_virtual_procs
       >> SetStatus
 
       cout 15 setprecision
 
       /tsodyks_synapse
-      << /tau_psc Tau_psc 
+      << /tau_psc Tau_psc
          /tau_rec Tau_rec
-	 /tau_fac Tau_fac
-	 /U U
-	 /delay 0.1
-	 /weight A
-	 /u 0.0
-	 /x 1.0
+         /tau_fac Tau_fac
+         /U U
+         /delay 0.1
+         /weight A
+         /u 0.0
+         /x 1.0
       >> SetDefaults
 
       /iaf_psc_exp Create /neuron1 Set
-    
+
       neuron1 << /tau_m Tau
-	         /t_ref TauR
-		 /tau_syn_ex Tau_psc
-		 /tau_syn_in Tau_psc
-		 /C_m C
-		 /V_reset U0
-		 /E_L U0
-		 /V_th Theta
+                 /t_ref TauR
+                 /tau_syn_ex Tau_psc
+                 /tau_syn_in Tau_psc
+                 /C_m C
+                 /V_reset U0
+                 /E_L U0
+                 /V_th Theta
+                 /V_m U0
               >> SetStatus
       % neuron1 GetStatus info
-      
+
       /iaf_psc_exp Create /neuron2 Set
 
       neuron2 << /tau_m Tau
-	         /t_ref TauR
-		 /tau_syn_ex Tau_psc
-		 /tau_syn_in Tau_psc
-		 /C_m C
-		 /V_reset U0
-		 /E_L U0
-		 /V_th Theta
+                 /t_ref TauR
+                 /tau_syn_ex Tau_psc
+                 /tau_syn_in Tau_psc
+                 /C_m C
+                 /V_reset U0
+                 /E_L U0
+                 /V_th Theta
+                 /V_m U0
               >> SetStatus
       % neuron2 GetStatus info
-	      
+
       /I0 Theta C mul Tau div 1.0 1.0 f div TauR sub Tau div neg exp sub div def
       cout (I0= ) <- I0 <- endl ;
-	      
+
 
       /dc_generator Create /dc_gen Set
       dc_gen << /amplitude I0 /start TIstart /stop TIend >> SetStatus
 
       /voltmeter Create /vm Set
       vm << /withtime true
-	    /to_file true
+            /to_file true
          >> SetStatus
 
       /spike_detector Create /sp_det Set

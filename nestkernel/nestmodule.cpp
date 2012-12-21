@@ -18,9 +18,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
- *
- *  First Version: April 2002
- *
  */
 
 #include "nestmodule.h"
@@ -30,10 +27,9 @@
 #include "nest.h"
 #include "network.h"
 #include "nodelist.h"
-#include "leaflist.h"
 #include "interpret.h"
 #include "node.h"
-#include "compound.h"
+#include "subnet.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "booldatum.h"
@@ -44,9 +40,24 @@
 #include "random_datums.h"
 #include "connectiondatum.h"
 #include "communicator.h"
+#include "communicator_impl.h"
 #include "genericmodel.h"
 
-#include <set>
+#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
+extern "C"
+{
+  // These functions are defined in the file "bg_get_mem.c". They need
+  // to reside in a plain C file, because the #pragmas defined in the
+  // BG header files interfere with C++, causing "undefined reference
+  // to non-virtual thunk" MH 12-02-22, redid fix by JME 12-01-27.
+  long bg_get_heap_mem();
+  long bg_get_stack_mem();
+}
+#endif
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 extern int SLIsignalflag;
 
@@ -90,7 +101,7 @@ namespace nest
 
   const std::string NestModule::commandstring(void) const
   {
-    return std::string("/nest-init /C++ ($Revision: 9902 $) provide-component "
+    return std::string("/nest-init /C++ ($Revision: 10101 $) provide-component "
                        "/nest-init /SLI (1.21) require-component");
   }
 
@@ -98,10 +109,9 @@ namespace nest
   /* BeginDocumentation
      Name: ChangeSubnet - change the current working subnet.
      Synopsis:
-     [adr] ChangeSubnet -> -
      gid   ChangeSubnet -> -
      Parameters:
-     [adr]/gid - The address of GID of the new current subnet.
+     gid - The GID of the new current subnet.
      Description:
      Change the current subnet to the one given as argument. Create
      will place newly created nodes in the current working subnet.
@@ -113,20 +123,6 @@ namespace nest
 
      SeeAlso: CurrentSubnet
   */
-  void NestModule::ChangeSubnet_aFunction::execute(SLIInterpreter *i) const
-  {
-    i->assert_stack_load(1);
-
-    TokenArray node_adr = getValue<TokenArray>(i->OStack.pick(0));
-
-    if(get_network().get_node(node_adr)->allow_entry())
-      get_network().go_to(node_adr);
-    else
-      throw SubnetExpected();
-    
-    i->OStack.pop();
-    i->EStack.pop();
-  }
 
   void NestModule::ChangeSubnet_iFunction::execute(SLIInterpreter *i) const
   {
@@ -144,41 +140,42 @@ namespace nest
   }
 
   /* BeginDocumentation
-     Name: CurrentSubnet - return the address of the current network node.
+     Name: CurrentSubnet - return the gid of the current network node.
 
-     Synopsis: CurrentSubnet -> array
+     Synopsis: CurrentSubnet -> gid
      Description:
-     CurrentSubnet returns the address of the current working subnet in form
-     of an address array. The address must conform the semantics for network
-     addresses.
+     CurrentSubnet returns the gid of the current working subnet in form
+     of an integer number
      Availability: NEST
      SeeAlso: ChangeSubnet
      Author: Marc-Oliver Gewaltig
-  */
+  */  
   void NestModule::CurrentSubnetFunction::execute(SLIInterpreter *i) const
   {
     assert(get_network().get_cwn() != 0);
-    vector<size_t> current = get_network().get_adr(get_network().get_cwn());
+    index current = get_network().get_cwn()->get_gid();
 
-    i->OStack.push(ArrayDatum(current));
+    i->OStack.push(current);
     i->EStack.pop();
   }
 
   /* BeginDocumentation
-     Name: SetStatus - sets the value of a property of a node or object
+     Name: SetStatus - sets the value of properties of a node, connection, random deviate generator or object
 
      Synopsis: 
-     [adr] dict SetStatus -> -
      gid   dict SetStatus -> -
-     rdev  dict SetStatus -> -
      conn  dict SetStatus -> -
+     rdev  dict SetStatus -> -
+     obj   dict SetStatus -> -
 
      Description:
-     SetStatus is the tool to alter properties of nodes. These can be viewed
-     with GetStatus info.
-     SetStatus fulfills the same function for random number distributions
-     and dictionaries used in SLI to represent the objects of oo-programming.
-  
+     SetStatus changes properties of a node (specified by its gid), a connection 
+     (specified by a connection object), a random deviate generator (see GetStatus_v 
+     for more) or an object as used in object-oriented programming in SLI 
+     (see cvo for more). Properties can be inspected with GetStatus. 
+
+     Note that many properties are read-only and cannot be changed.
+
      Examples:
      /dc_generator Create /dc_gen Set  %Creates a dc_generator, which is a node
      dc_gen GetStatus info %view properties (amplitude is 0)
@@ -212,7 +209,7 @@ namespace nest
     ConnectionDatum conn = getValue<ConnectionDatum>(i->OStack.pick(1));
     DictionaryDatum conn_dict = conn.get_dict();
 
-    long synapse_id = getValue<long>(conn_dict, nest::names::synapse_typeid);
+    long synapse_id = getValue<long>(conn_dict, nest::names::synapse_modelid);
     long port = getValue<long>(conn_dict, nest::names::port);
     long gid = getValue<long>(conn_dict, nest::names::source);
     thread tid = getValue<long>(conn_dict, nest::names::target_thread);
@@ -236,19 +233,97 @@ namespace nest
     i->EStack.pop();
   }
 
+  void NestModule::Cva_CFunction::execute(SLIInterpreter *i) const
+  {
+    ConnectionDatum conn = getValue<ConnectionDatum>(i->OStack.top());
+    ArrayDatum ad;
+    ad.push_back(conn.get_source_gid());
+    ad.push_back(conn.get_target_gid());
+    ad.push_back(conn.get_target_thread());
+    ad.push_back(conn.get_synapse_model_id());
+    ad.push_back(conn.get_port());
+    Token result(ad);
+    i->OStack.top().swap(result);
+    i->EStack.pop();
+  }
+ 
+  void NestModule::SetStatus_aaFunction::execute(SLIInterpreter *i) const
+  {
+    i->assert_stack_load(2);
+
+    ArrayDatum dict_a = getValue<ArrayDatum>(i->OStack.top());
+    ArrayDatum conn_a = getValue<ArrayDatum>(i->OStack.pick(1));
+
+    if((dict_a.size() != 1) and (dict_a.size() != conn_a.size()))
+    { 
+      throw RangeCheck();
+    }
+    if (dict_a.size() ==1) // Broadcast
+    {	
+      DictionaryDatum dict = getValue<DictionaryDatum>(dict_a[0]);
+      const size_t n_conns=conn_a.size();
+      for(size_t con=0;con < n_conns; ++con)
+      {
+        ConnectionDatum con_id = getValue<ConnectionDatum>(conn_a[con]);
+	dict->clear_access_flags();
+	get_network().set_synapse_status(con_id.get_source_gid(), // source_gid
+                                         con_id.get_synapse_model_id(), // synapse_id
+                                         con_id.get_port(), // port
+                                         con_id.get_target_thread(), // target thread
+                                         dict);
+	std::string missed;
+	if ( !dict->all_accessed(missed) )
+	  {
+	    if ( get_network().dict_miss_is_error() )
+	      throw UnaccessedDictionaryEntry(missed);
+	    else
+	      get_network().message(SLIInterpreter::M_WARNING, "SetStatus", 
+				    ("Unread dictionary entries: " + missed).c_str());
+	  }
+      }
+    }
+    else
+    {
+      const size_t n_conns=conn_a.size();
+      for(size_t con=0;con < n_conns; ++con)
+      {
+        DictionaryDatum dict = getValue<DictionaryDatum>(dict_a[con]);
+        ConnectionDatum con_id = getValue<ConnectionDatum>(conn_a[con]);
+	dict->clear_access_flags();
+        get_network().set_synapse_status(con_id.get_source_gid(), // source_gid
+                                         con_id.get_synapse_model_id(), // synapse_id
+                                         con_id.get_port(), // port
+                                         con_id.get_target_thread(), // target thread
+                                         dict);
+	std::string missed;
+	if ( !dict->all_accessed(missed) )
+	  {
+	    if ( get_network().dict_miss_is_error() )
+	      throw UnaccessedDictionaryEntry(missed);
+	    else
+	      get_network().message(SLIInterpreter::M_WARNING, "SetStatus", 
+				    ("Unread dictionary entries: " + missed).c_str());
+	  }
+      }
+    }
+    
+    i->OStack.pop(2);
+    i->EStack.pop();
+  }
+
   /* BeginDocumentation
-     Name: GetStatus - return the property dictionary of a node or object
+     Name: GetStatus - return the property dictionary of a node, connection, random deviate generator or object
      Synopsis: 
-     [adr] GetStatus -> dict
      gid   GetStatus -> dict
-     rdev  GetStatus -> dict
      conn  GetStatus -> dict
+     rdev  GetStatus -> dict
+     obj   GetStatus -> dict
 
      Description:
      GetStatus returns a dictionary with the status information 
-     of the node, specified by its global id or address.
-     GetStatus fulfills the same function for random number distributions
-     and dictionaries used in SLI to represent the objects of oo-programming.
+     for a node (specified by its gid), a connection (specified by a connection
+     object), a random deviate generator (see GetStatus_v for more) or an
+     object as used in object-oriented programming in SLI (see cvo for more).
 
      The interpreter exchanges data with the network element using
      its status dictionary. To abbreviate the access pattern
@@ -266,7 +341,7 @@ namespace nest
      
      Please refer to the model documentation for details.
   
-     Standard entries:
+     Standard entries for nodes:
 
      global_id   - local ID of the node
      status      - integer, representing the status flags of the node
@@ -297,18 +372,42 @@ namespace nest
     i->assert_stack_load(1);
 
     ConnectionDatum conn = getValue<ConnectionDatum>(i->OStack.pick(0));
-    DictionaryDatum conn_dict = conn.get_dict();
 
-    long synapse_id = getValue<long>(conn_dict, nest::names::synapse_typeid);
-    long port = getValue<long>(conn_dict, nest::names::port);
-    long gid = getValue<long>(conn_dict, nest::names::source);
-    thread tid = getValue<long>(conn_dict, nest::names::target_thread);
+    long gid=conn.get_source_gid();
     get_network().get_node(gid); // Just to check if the node exists
      
-    DictionaryDatum result_dict = get_network().get_synapse_status(gid, synapse_id, port, tid);
-    
+    DictionaryDatum result_dict = get_network().get_synapse_status(
+        gid,
+        conn.get_synapse_model_id(), 
+        conn.get_port(),
+        conn.get_target_thread());
+
     i->OStack.pop();
     i->OStack.push(result_dict);
+    i->EStack.pop();
+  }
+
+  // [intvector1,...,intvector_n]  -> [dict1,.../dict_n] 
+  void NestModule::GetStatus_aFunction::execute(SLIInterpreter *i) const
+  {
+    i->assert_stack_load(1);
+    const ArrayDatum conns = getValue<ArrayDatum>(i->OStack.pick(0));
+    size_t n_results=conns.size();
+    ArrayDatum result;
+    result.reserve(n_results);
+    for(size_t nt=0; nt< n_results; ++nt)
+    {
+      ConnectionDatum con_id= getValue<ConnectionDatum>(conns.get(nt));
+      DictionaryDatum result_dict = get_network().get_synapse_status(
+          con_id.get_source_gid(),
+          con_id.get_synapse_model_id(),
+          con_id.get_port(),
+          con_id.get_target_thread());
+      result.push_back(result_dict);
+    }
+
+    i->OStack.pop();
+    i->OStack.push(result);
     i->EStack.pop();
   }
 
@@ -395,23 +494,18 @@ namespace nest
   }
 
   // params: params
-  void NestModule::FindConnections_DFunction::execute(SLIInterpreter *i) const
+
+  // params: params
+  void NestModule::GetConnections_DFunction::execute(SLIInterpreter *i) const
   {
     i->assert_stack_load(1);
 
     DictionaryDatum dict = getValue<DictionaryDatum>(i->OStack.pick(0));
 
     dict->clear_access_flags();
-    ArrayDatum array = get_network().find_connections(dict);
+
+    ArrayDatum array = get_network().get_connections(dict);
     std::string missed;
-    if ( !dict->all_accessed(missed) )
-      {
-	if ( get_network().dict_miss_is_error() )
-	  throw UnaccessedDictionaryEntry(missed);
-	else
-	  get_network().message(SLIInterpreter::M_WARNING, "FindConnections", 
-				("Unread dictionary entries: " + missed).c_str());
-      }
      
     i->OStack.pop();
     i->OStack.push(array);
@@ -560,172 +654,122 @@ namespace nest
       throw  UnknownModelName(modname);
        
     // create
-    const long model_id = static_cast<long>(model);
+    const index model_id = static_cast<index>(model);
     const long last_node_id = get_network().add_node(model_id, n_nodes);
     i->OStack.pop(2);
     i->OStack.push(last_node_id);
     i->EStack.pop();
   }
 
-  void NestModule::GetNodes_i_bFunction::execute(SLIInterpreter *i) const
+  void NestModule::RestoreNodes_aFunction::execute(SLIInterpreter *i) const
   {
-     i->assert_stack_load(2);
+    i->assert_stack_load(1);
+    ArrayDatum node_list=getValue<ArrayDatum>(i->OStack.top());
+    get_network().restore_nodes(node_list);
+    i->OStack.pop();
+    i->EStack.pop();
+  }
 
-     const bool  include_remote = not getValue<bool>(i->OStack.pick(0));
-     const index node_id        = getValue<long>(i->OStack.pick(1));
-     Compound *subnet = dynamic_cast<Compound *>(get_network().get_node(node_id));
-     
-     if (subnet==NULL)
-       throw SubnetExpected();
- 
-     NodeList nodes(*subnet);
-
-     ArrayDatum result;
-     if ( include_remote )
-       result.reserve(nodes.size());
-     else
-       result.reserve(nodes.size() / get_network().get_num_processes());
-
-     for(NodeList::iterator n = nodes.begin(); n != nodes.end(); ++n)
-       if ( include_remote or (*n)->is_local() )
-	 result.push_back(new IntegerDatum((*n)->get_gid()));
-     
-     i->OStack.pop(2);
-     i->OStack.push(result);
-     i->EStack.pop();
-   }
-
-  void NestModule::GetChildren_i_bFunction::execute(SLIInterpreter *i) const
+  void NestModule::GetNodes_i_D_b_bFunction::execute(SLIInterpreter *i) const
   {
-    i->assert_stack_load(2);
+    i->assert_stack_load(4);
 
-    const bool  include_remote = not getValue<bool>(i->OStack.pick(0));
-    const index node_id        = getValue<long>(i->OStack.pick(1));
-    Compound *subnet = dynamic_cast<Compound *>(get_network().get_node(node_id));
-     
-    if (subnet == NULL)
+    const bool return_gids_only = getValue<bool>(i->OStack.pick(0));
+    const bool  include_remote = not getValue<bool>(i->OStack.pick(1));
+    const DictionaryDatum params = getValue<DictionaryDatum>(i->OStack.pick(2));
+    const index node_id        = getValue<long>(i->OStack.pick(3));
+
+    Subnet *subnet = dynamic_cast<Subnet *>(get_network().get_node(node_id));     
+    if (subnet==NULL)
       throw SubnetExpected();
- 
-    ArrayDatum result;
-    if ( include_remote )
-      result.reserve(subnet->size());
-    else
-      result.reserve(subnet->size() / get_network().get_num_processes());
-     
-    for(vector<Node *>::iterator n = subnet->begin(); n != subnet->end(); ++n)
-      if ( include_remote or (*n)->is_local() )
-	result.push_back(new IntegerDatum((*n)->get_gid()));
 
-    i->OStack.pop(2);
+    LocalNodeList localnodes(*subnet);
+    vector<Communicator::NodeAddressingData> globalnodes;
+    if (params->empty())
+      nest::Communicator::communicate(localnodes,globalnodes,include_remote);
+    else
+      nest::Communicator::communicate(localnodes, globalnodes, get_network(), params, include_remote);
+
+    ArrayDatum result;
+    result.reserve(globalnodes.size());
+    for( vector<Communicator::NodeAddressingData>::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n )
+    {
+      if ( return_gids_only )
+        result.push_back(new IntegerDatum(n->get_gid()));
+      else
+      {
+        DictionaryDatum* node_info = new DictionaryDatum(new Dictionary);
+        (**node_info)[names::global_id] = n->get_gid();
+        (**node_info)[names::vp] = n->get_vp();
+        (**node_info)[names::parent] = n->get_parent_gid();
+        result.push_back(node_info);
+      }
+    }
+
+    i->OStack.pop(4);
     i->OStack.push(result);
     i->EStack.pop();
   }
 
-  void NestModule::GetLeaves_i_bFunction::execute(SLIInterpreter *i) const
+  void NestModule::GetChildren_i_D_bFunction::execute(SLIInterpreter *i) const
   {
-    i->assert_stack_load(2);
+    i->assert_stack_load(3);
 
     const bool  include_remote = not getValue<bool>(i->OStack.pick(0));
-    const index node_id        = getValue<long>(i->OStack.pick(1));
-    Compound *subnet = dynamic_cast<Compound *>(get_network().get_node(node_id));
-     
+    const DictionaryDatum params = getValue<DictionaryDatum>(i->OStack.pick(1));
+    const index node_id        = getValue<long>(i->OStack.pick(2));
+
+    Subnet *subnet = dynamic_cast<Subnet *>(get_network().get_node(node_id));     
     if (subnet == NULL)
       throw SubnetExpected();
  
-    LeafList nodes(*subnet);
-
+    LocalChildList localnodes(*subnet);
     ArrayDatum result;
-    if ( include_remote )
-      result.reserve(nodes.size());
+
+    vector<Communicator::NodeAddressingData> globalnodes;
+    if (params->empty())
+       nest::Communicator::communicate(localnodes,globalnodes,include_remote);
     else
-      result.reserve(nodes.size() / get_network().get_num_processes());
-     
-    for(LeafList::iterator n = nodes.begin(); n != nodes.end(); ++n)
-      if ( include_remote or (*n)->is_local() )
-	result.push_back(new IntegerDatum((*n)->get_gid()));
-     
-    i->OStack.pop(2);
+      nest::Communicator::communicate(localnodes, globalnodes, get_network(), params, include_remote);
+    result.reserve(globalnodes.size());
+    for(vector<Communicator::NodeAddressingData>::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n)
+      result.push_back(new IntegerDatum(n->get_gid()));
+    
+    i->OStack.pop(3);
     i->OStack.push(result);
     i->EStack.pop();
   }
 
-  /* BeginDocumentation      
-     Name: GetGID - Return the global ID of a node
-     
-     Synopsis: [address] GetGID -> gid
-   
-     Parameters:
-     [address] - address of the node
-     gid       - Global id of a node
-
-     Description:
-     This function returns the global node ID which belongs to the
-     specified network address.
-
-     SeeAlso: GetAddress
-  */
-  void NestModule::GetGIDFunction::execute(SLIInterpreter *i) const
+  void NestModule::GetLeaves_i_D_bFunction::execute(SLIInterpreter *i) const
   {
-    i->assert_stack_load(1);
+    i->assert_stack_load(3);
 
-    TokenArray node_adr;
+    const bool  include_remote = not getValue<bool>(i->OStack.pick(0));
+    const DictionaryDatum params = getValue<DictionaryDatum>(i->OStack.pick(1));
+    const index node_id        = getValue<long>(i->OStack.pick(2));
 
-    node_adr = getValue<TokenArray>(i->OStack.pick(0));
-    Node* node = get_network().get_node(node_adr);
+    Subnet *subnet = dynamic_cast<Subnet *>(get_network().get_node(node_id));     
+    if (subnet == NULL)
+      throw SubnetExpected();
+ 
+    LocalLeafList localnodes(*subnet);
+    ArrayDatum result;
 
-    i->OStack.pop();
-    i->OStack.push(node->get_gid());
+    vector<Communicator::NodeAddressingData> globalnodes;
+    if (params->empty())
+      nest::Communicator::communicate(localnodes,globalnodes,include_remote);
+    else
+      nest::Communicator::communicate(localnodes, globalnodes, get_network(), params, include_remote);
+    result.reserve(globalnodes.size());
+
+    for(vector<Communicator::NodeAddressingData>::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n)
+      result.push_back(new IntegerDatum(n->get_gid()));
+
+    i->OStack.pop(3);
+    i->OStack.push(result);
     i->EStack.pop();
   }
 
-  /* BeginDocumentation      
-     Name: GetLID - Return the local ID of a node
-   
-     Synopsis: GID GetLID -> lid
-   
-     Parameters:
-     gid       - Global id of a node
-     lid       - Local if of the node
-
-     Description:
-     This function returns the local node ID of a node within its parent subnet.
-
-     SeeAlso: GetAddress, GetGID
-  */
-  void NestModule::GetLIDFunction::execute(SLIInterpreter *i) const
-  {
-    i->assert_stack_load(1);
-
-    long gid  =  i->OStack.pick(0);
-    Node * node= get_network().get_node(gid);
-     
-    i->OStack.pop();
-    i->OStack.push(node->get_lid()+1);
-    i->EStack.pop();
-  }
-
-  /* BeginDocumentation
-     Name: GetAddress - Return the address of a node
-     Synopsis: gid GetAddress -> [adr]
-     Parameterrs:
-     gid   - Global id of a node
-     [adr] - address of the node
-
-     Description:
-     This function returns the network address which belongs to
-     the specified  node gid (global id).
-  */
-  void NestModule::GetAddressFunction::execute(SLIInterpreter *i) const
-  {
-    i->assert_stack_load(1);
-
-    long gid  =  i->OStack.pick(0);
-    ArrayDatum node_adr(get_network().get_adr(gid));
-     
-    i->OStack.pop();
-    i->OStack.push(node_adr);
-    i->EStack.pop();
-  }
 
   /* BeginDocumentation
      Name: ResetKernel - Put the simulation kernel back to its initial state.
@@ -809,6 +853,18 @@ namespace nest
     i->EStack.pop();
   }
 
+  void NestModule::Connect_i_i_iFunction::execute(SLIInterpreter *i) const
+  {
+      long &source = static_cast<IntegerDatum *>(i->OStack.pick(2).datum())->get();
+      long &target = static_cast<IntegerDatum *>(i->OStack.pick(1).datum())->get();
+      long &synmodel_id = static_cast<IntegerDatum *>(i->OStack.pick(0).datum())->get();
+
+      get_network().connect(source, target, synmodel_id);
+      
+      i->OStack.pop(3);
+      i->EStack.pop();
+  }
+
   // Connect for gid gid weight delay
   // See lib/sli/nest-init.sli for details
   void NestModule::Connect_i_i_d_d_lFunction::execute(SLIInterpreter *i) const
@@ -825,6 +881,24 @@ namespace nest
     if ( synmodel.empty() )
       throw UnknownSynapseType(synmodel_name.toString());
     const index synmodel_id = static_cast<index>(synmodel);
+
+    get_network().connect(source, target, weight, delay, synmodel_id);
+    
+    i->OStack.pop(5);
+    i->EStack.pop();
+  }
+
+ // Connect for gid gid weight delay syn_id
+  // See lib/sli/nest-init.sli for details
+  void NestModule::Connect_i_i_d_d_iFunction::execute(SLIInterpreter *i) const
+  {
+    i->assert_stack_load(5);
+
+    index source = getValue<long>(i->OStack.pick(4));
+    index target = getValue<long>(i->OStack.pick(3));
+    double_t weight = getValue<double_t>(i->OStack.pick(2));
+    double_t delay  = getValue<double_t>(i->OStack.pick(1));
+    index synmodel_id = getValue<long>(i->OStack.pick(0));
 
     get_network().connect(source, target, weight, delay, synmodel_id);
     
@@ -868,82 +942,100 @@ namespace nest
     i->EStack.pop();
   }
 
-  /* BeginDocumentation
-     Name: CompoundConnect - Connect a source compound to a target compound.
+
+   /* BeginDocumentation
+     Name: DataConnect_i_dict_s - Connect many neurons from data.
 
      Synopsis: 
-     sources targets radius           CompoundConnect -> -
-     sources targets radius /synmodel CompoundConnect -> -
+     gid dict model  DataConnect -> -
 
-     Options:
-     If not given, the synapse model is taken from the Options dictionary
-     of the Connect command.
+     gid    - GID of the source neuron
+     dict   - dictionary with connection parameters
+     model  - the synapse model as string or literal
 
      Description:
-     Connect every node in a source compound to a selection of nodes in a 
-     target compound.
+     Connects the source neuron to targets according to the data in dict, using the synapse 'model'.
 
-     Goes through every target node and connects it to source nodes.
-     Source nodes connected is in the within the range 'radius' from
-     target.
-     
-     Uses two for-loops. The outer for-loop shifts the connection
-     process from one row to the next. The inner for-loop goes through
-     all the columns for every row. Every target node gets connected
-     to source nodes defined by the scope list. The scope is being
-     reset at the beginning of every row, and is being shifted to the
-     right as the for-loops traverse the columns.
-     
-     Nodes outside the boundaries of the source compound are given the
-     value false in the scope list. The nodes in the scope list gets
-     connected to the target by use of the function
-     convergent_connect.
+     Dict is a parameter dictionary that must contain the connection parameters as DoubleVectors. 
+     The parameter dictionary must contain at least the fields:
+     /target <. gid_1 ... gid_n .>
+     /weight <. w1_1 ... w_n .>
+     /delay  <. d_1 ... d_n .>
+     All of these must be DoubleVectors of the same length.
 
-     Author: Kittel Austvoll, Hans Ekkehard Plesser
-     FirstVersion: 24.10.2006
-     SeeAlso: Connect
-  */
-  void NestModule::CompoundConnect_i_i_i_lFunction::execute(SLIInterpreter *i) const
+     Depending on the synapse model, the dictionary may contain other keys, again as
+     DoubleVectors of the same length as /target. 
+
+     DataConnect will iterate all vectors and create the connections according to the parameters given.
+     SeeAlso: DataConnect_a, DataConnect
+     Author: Marc-Oliver Gewaltig
+   */
+  void NestModule::DataConnect_i_dict_sFunction::execute(SLIInterpreter *i) const
   {
-    i->assert_stack_load(4);
+    i->assert_stack_load(3);
      
-    index node_id = getValue<long>(i->OStack.pick(3));
-    Compound *sources=dynamic_cast<Compound *>(get_network().get_node(node_id));
-     
-    if (sources==NULL)
-    {
-      i->message(SLIInterpreter::M_ERROR, "CompoundConnect","Input sources must be a compound.");
-      throw SubnetExpected();
-    }
-
-    node_id = getValue<long>(i->OStack.pick(2));
-    Compound *targets=dynamic_cast<Compound *>(get_network().get_node(node_id));
-
-    if (targets==NULL)
-    {
-      i->message(SLIInterpreter::M_ERROR, "CompoundConnect","Input targets must be a compound.");
-      throw SubnetExpected();
-    }
- 
-    long radius = getValue<long>(i->OStack.pick(1));
-
-    if(radius<0)
-    {
-      i->message(SLIInterpreter::M_ERROR, "CompoundConnect","Radius must be a positive integer.");
-      throw RangeCheck();
-    }
-
+    index source = getValue<long>(i->OStack.pick(2));
+    DictionaryDatum params = getValue<DictionaryDatum>(i->OStack.pick(1));
     const Name synmodel_name = getValue<std::string>(i->OStack.pick(0));
-
     const Token synmodel = get_network().get_synapsedict().lookup(synmodel_name);
     if ( synmodel.empty() )
       throw UnknownSynapseType(synmodel_name.toString());
     const index synmodel_id = static_cast<index>(synmodel);
+
+    get_network().divergent_connect(source, params,synmodel_id);
+      // dict access control only if we actually made a connection
+    std::string missed;
+    if ( !params->all_accessed(missed) )
+      {
+	if ( get_network().dict_miss_is_error() )
+	  throw UnaccessedDictionaryEntry(missed);
+	else
+	  get_network().message(SLIInterpreter::M_WARNING, "Connect", 
+				("The following synapse parameters are unused: " + missed).c_str());
+      }
+
+    i->OStack.pop(3);
+    i->EStack.pop();
+  }
+
+ /* BeginDocumentation
+     Name: DataConnect_a - Connect many neurons from a list of synapse status dictionaries.
+
+     Synopsis: 
+     [dict1, dict2, ..., dict_n ]  DataConnect_a -> -
+
+     This variant of DataConnect can be used to re-instantiate a given connectivity matrix.
+     The argument is a list of dictionaries, each containing at least the keys
+     /source
+     /target
+     /weight
+     /delay
+     /model
      
-    get_network().compound_connect(*sources, *targets, radius, synmodel_id);
+     Example:
      
-    i->OStack.pop(4);
-    i->EStack.pop(); 
+     % assume a connected network
+
+     << >> GetConnections Flatten /conns Set % Get all connections
+     conns { GetStatus } Map      /syns  Set % retrieve their synapse status
+
+     ResetKernel                             % clear everything
+     % rebuild neurons
+     syns DataConnect                        % restore the connecions
+
+
+     Author: Marc-Oliver Gewaltig
+     FirstVersion: May 2012
+     SeeAlso: DataConnect_i_dict_s, Connect
+  */
+  void NestModule::DataConnect_aFunction::execute(SLIInterpreter *i) const
+  {
+      i->assert_stack_load(1);
+      ArrayDatum connectome = getValue<ArrayDatum>(i->OStack.top());
+
+      get_network().connect(connectome);
+      i->OStack.pop();
+      i->EStack.pop();
   }
 
   /* BeginDocumentation
@@ -1075,7 +1167,8 @@ namespace nest
     i->OStack.pop(5);
     i->EStack.pop();
   }
-  
+    
+
      
   // Documentation can be found in lib/sli/nest-init.sli near definition
   // of the trie for RandomConvergentConnect.
@@ -1103,68 +1196,30 @@ namespace nest
     i->EStack.pop();     
   }
 
-
-  /* BeginDocumentation
-     Name: NetworkDimensions - Determine dimensions of a subnet
-
-     Synopsis:
-     [sourcelayeradr] NetworkDimensions -> [height width]
-
-     Description:
-     NetworkDimensions corresponds to the command LayoutNetwork
-     in the same way as the command
-     Dimensions corresponds to the command LayoutArray.
-     NetworkDimensions takes the address of a subnet tree and returns a list with
-     dimensions [d1 d2 ... dn] where di gives the dimension of the
-     subnet tree at level i.
-     The length of the dimensions-list corresponds to the Depth of
-     the subnet tree.
-     
-     Note:
-     NetworkDimensions assumes that the subnet tree is hyper-rectangular
-     (rectangle, cuboid, ...), i.e., all subnets at a given level
-     have the same number of nodes.
-     NetworkDimensions does not check, if the subnet tree really is
-     hyper-rectangular. It will not fail if this is not the case. Instead,
-     the dimensions that are returned correspond to the number of
-     nodes in the first subnet in each level.
-
-     Alternatives: NetworkDimensions_a (undocumented) -> behaviour and synopsis are the same.
-     Availability: NEST
-     Author: Rüdiger Kupper
-     SeeAlso: LayoutNetwork, Dimensions
-  */
-  void NestModule::NetworkDimensions_aFunction::execute(SLIInterpreter *i) const
+  // Documentation can be found in lib/sli/nest-init.sli near definition
+  // of the trie for RandomConvergentConnect.
+  void NestModule::RConvergentConnect_ia_ia_ia_daa_daa_b_b_lFunction::execute(SLIInterpreter *i) const
   {
-    i->assert_stack_load(1);
-  
-    TokenArray compound_adr = getValue<TokenArray>(i->OStack.pick(0));
-    Compound  *compound_ptr; //!< pointer to source layer
+    i->assert_stack_load(8);
      
-    compound_ptr = dynamic_cast<Compound*>(get_network().get_node(compound_adr));
-    if (compound_ptr == NULL)
-        throw SubnetExpected();
-    
-    // determine dimensions:
-    TokenArray result;
-    index sh;  //!< number of nodes of subnet
-  
-    // stopping conditions for loop:
-    // 1. the next level node is not a compound (non-empty subnet)
-    // 2. there is no next level (empty subnet)
-    do
-    {
-      sh = compound_ptr->size();
-      result.push_back(new IntegerDatum(sh));
-      if (sh == 0) break;
-      compound_ptr = dynamic_cast<Compound*>((*compound_ptr)[0]);
-    }
-    while ( compound_ptr );
+    TokenArray source_adr = getValue<TokenArray>(i->OStack.pick(7));
+    TokenArray target_adr = getValue<TokenArray>(i->OStack.pick(6));
+    TokenArray n = getValue<TokenArray>(i->OStack.pick(5));
+    TokenArray weights = getValue<TokenArray>(i->OStack.pick(4));
+    TokenArray delays = getValue<TokenArray>(i->OStack.pick(3));      
+    bool allow_multapses = getValue<bool>(i->OStack.pick(2));
+    bool allow_autapses = getValue<bool>(i->OStack.pick(1));
 
-    i->OStack.pop(1);
-    i->OStack.push(ArrayDatum(result));
+    const Name synmodel_name = getValue<std::string>(i->OStack.pick(0));
+    const Token synmodel = get_network().get_synapsedict().lookup(synmodel_name);
+    if ( synmodel.empty() )
+      throw UnknownSynapseType(synmodel_name.toString());
+    const index synmodel_id = static_cast<index>(synmodel);
 
-    i->EStack.pop();
+    get_network().random_convergent_connect(source_adr, target_adr, n, weights, delays, allow_multapses, allow_autapses, synmodel_id);
+
+    i->OStack.pop(8);
+    i->EStack.pop();     
   }
 
   /* BeginDocumentation
@@ -1187,13 +1242,36 @@ namespace nest
     i->EStack.pop();
   }
 
+
+#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
+  /* BeginDocumentation
+     Name: memory_thisjob_bg - Reports memory usage on Blue Gene/P/Q systems
+     Description:
+     BGMemInfo returns a dictionary with the heap and stack memory
+     usage of a process in Bytes.
+     Availability: NEST
+     Author: Jochen Martin Eppler
+  */
+  void NestModule::MemoryThisjobBgFunction::execute(SLIInterpreter *i) const
+  {
+    DictionaryDatum dict(new Dictionary);
+
+    unsigned long heap_memory = bg_get_heap_mem();
+    (*dict)["heap"] = heap_memory;
+    unsigned long stack_memory = bg_get_stack_mem();
+    (*dict)["stack"] = stack_memory;
+  
+    i->OStack.push(dict);
+    i->EStack.pop();
+  }
+#endif
+
   /* BeginDocumentation
      Name: PrintNetwork - Print network tree in readable form.
-     Description:
      Synopsis: 
-     [adr] depth  PrintNetwork -> -
+     gid depth  PrintNetwork -> -
      Parameters: 
-     [adr]       - Address of the root subnet to start tree printout. 
+     gid        - Global ID of the subnet to start tree printout. 
      depth      - Integer, specifies down to which level the network is printed.
      Description:
      This function prints the network structure in a concise tree-like format 
@@ -1201,7 +1279,7 @@ namespace nest
      - Each Node is shown on a separate line, showing its model name followed 
      by its in global id in brackets.
      
-     +-[0] Compound Dim=[1]
+     +-[0] Subnet Dim=[1]
      |
      +- iaf_neuron [1]
      
@@ -1210,17 +1288,17 @@ namespace nest
      sequence, then the number of consecutive nodes, then the global id of 
      the last node in the sequence.
      
-     +-[0] Compound Dim=[1]
+     +-[0] Subnet Dim=[1]
      |
      +- iaf_neuron [1]..(2)..[2]
      
-     - If a node is a compound, its global id is printed first, followed by the model
+     - If a node is a subnet, its global id is printed first, followed by the model
      name or its label (if it is defined). Next, the dimension is shown.
      If the current recursion level is less than the specified depth, the printout descends
-     to the children of the compound. 
+     to the children of the subnet. 
      After the header, a new line is printed, followed by the list of children
      at the next indentation level.
-     After the last child, a new line is printed and the printout of the parent compound
+     After the last child, a new line is printed and the printout of the parent subnet
      is continued.
 
      Example:
@@ -1228,89 +1306,89 @@ namespace nest
      SLI [1] /iaf_cond_alpha 10 Create
      SLI [2] /dc_generator [2 5 6] LayoutNetwork
      SLI [3] [0] 1 PrintNetwork
-     +-[0] Compound Dim=[12]
+     +-[0] Subnet Dim=[12]
         |
         +- iaf_neuron [1]
         +- lifb_cond_neuron [2]..(10)..[11]
-        +-[12] Compound Dim=[2 5 6]
+        +-[12] Subnet Dim=[2 5 6]
      SLI [3] [0] 2 PrintNetwork
-     +-[0] Compound Dim=[12]
+     +-[0] Subnet Dim=[12]
         |
         +- iaf_neuron [1]
         +- lifb_cond_neuron [2]..(10)..[11]
-        +-[12] Compound Dim=[2 5 6]
+        +-[12] Subnet Dim=[2 5 6]
             |
-            +-[13] Compound Dim=[5 6]
-            +-[49] Compound Dim=[5 6]
+            +-[13] Subnet Dim=[5 6]
+            +-[49] Subnet Dim=[5 6]
      SLI [3] [0] 3 PrintNetwork
-     +-[0] Compound Dim=[12]
+     +-[0] Subnet Dim=[12]
         |
         +- iaf_neuron [1]
         +- lifb_cond_neuron [2]..(10)..[11]
-        +-[12] Compound Dim=[2 5 6]
+        +-[12] Subnet Dim=[2 5 6]
             |
-            +-[13] Compound Dim=[5 6]
+            +-[13] Subnet Dim=[5 6]
             |   |
-            |   +-[14] Compound Dim=[6]
-            |   +-[21] Compound Dim=[6]
-            |   +-[28] Compound Dim=[6]
-            |   +-[35] Compound Dim=[6]
-            |   +-[42] Compound Dim=[6]
-            +-[49] Compound Dim=[5 6]
+            |   +-[14] Subnet Dim=[6]
+            |   +-[21] Subnet Dim=[6]
+            |   +-[28] Subnet Dim=[6]
+            |   +-[35] Subnet Dim=[6]
+            |   +-[42] Subnet Dim=[6]
+            +-[49] Subnet Dim=[5 6]
                 |
-                +-[50] Compound Dim=[6]
-                +-[57] Compound Dim=[6]
-                +-[64] Compound Dim=[6]
-                +-[71] Compound Dim=[6]
-                +-[78] Compound Dim=[6]
+                +-[50] Subnet Dim=[6]
+                +-[57] Subnet Dim=[6]
+                +-[64] Subnet Dim=[6]
+                +-[71] Subnet Dim=[6]
+                +-[78] Subnet Dim=[6]
      SLI [3] [0] 4 PrintNetwork
-     +-[0] Compound Dim=[12]
+     +-[0] Subnet Dim=[12]
         |
         +- iaf_neuron [1]
         +- lifb_cond_neuron [2]..(10)..[11]
-        +-[12] Compound Dim=[2 5 6]
+        +-[12] Subnet Dim=[2 5 6]
             |
-            +-[13] Compound Dim=[5 6]
+            +-[13] Subnet Dim=[5 6]
             |   |
-            |   +-[14] Compound Dim=[6]
+            |   +-[14] Subnet Dim=[6]
             |   |   |
             |   |   +- dc_generator [15]..(6)..[20]
             |   |
-            |   +-[21] Compound Dim=[6]
+            |   +-[21] Subnet Dim=[6]
             |   |   |
             |   |   +- dc_generator [22]..(6)..[27]
             |   |
-            |   +-[28] Compound Dim=[6]
+            |   +-[28] Subnet Dim=[6]
             |   |   |
             |   |   +- dc_generator [29]..(6)..[34]
             |   |
-            |   +-[35] Compound Dim=[6]
+            |   +-[35] Subnet Dim=[6]
             |   |   |
             |   |   +- dc_generator [36]..(6)..[41]
             |   |
-            |   +-[42] Compound Dim=[6]
+            |   +-[42] Subnet Dim=[6]
             |       |
             |       +- dc_generator [43]..(6)..[48]
             |
-            +-[49] Compound Dim=[5 6]
+            +-[49] Subnet Dim=[5 6]
                 |
-                +-[50] Compound Dim=[6]
+                +-[50] Subnet Dim=[6]
                 |   |
                 |   +- dc_generator [51]..(6)..[56]
                 |
-                +-[57] Compound Dim=[6]
+                +-[57] Subnet Dim=[6]
                 |   |
                 |   +- dc_generator [58]..(6)..[63]
                 |
-                +-[64] Compound Dim=[6]
+                +-[64] Subnet Dim=[6]
                 |   |
                 |   +- dc_generator [65]..(6)..[70]
                 |
-                +-[71] Compound Dim=[6]
+                +-[71] Subnet Dim=[6]
                 |   |
                 |   +- dc_generator [72]..(6)..[77]
                 |
-                +-[78] Compound Dim=[6]
+                +-[78] Subnet Dim=[6]
                     |
                     +- dc_generator [79]..(6)..[84]
 
@@ -1322,20 +1400,27 @@ namespace nest
   {
     i->assert_stack_load(2);
     
-    TokenArray node_adr = getValue<TokenArray>(i->OStack.pick(1));
+    long gid = getValue<long>(i->OStack.pick(1));
     long depth = getValue<long>(i->OStack.pick(0));
-    get_network().print(node_adr, depth - 1);
+    get_network().print(gid, depth - 1);
 
     i->OStack.pop(2);
     i->EStack.pop();
   }
 
   /* BeginDocumentation
-     Name: Rank - Return the MPI rank (MPI_Comm_rank) of the process.
+     Name: Rank - Return the MPI rank of the process.
+     Synopsis: Rank -> int
+     Description:
+     Returns the rank of the MPI process (MPI_Comm_rank) executing the
+     command. This function is mainly meant for logging and debugging
+     purposes. It is highly discouraged to use this function to write
+     rank-dependent code in a simulation script as this can break NEST
+     in funny ways, of which dead-locks are the nicest.
      Availability: NEST 2.0
      Author: Jochen Martin Eppler
      FirstVersion: January 2006
-     SeeAlso: NumProcesses, SyncProcesses, MPIProcessorName 
+     SeeAlso: NumProcesses, SyncProcesses, ProcessorName 
   */
   void NestModule::RankFunction::execute(SLIInterpreter *i) const
   {
@@ -1344,11 +1429,15 @@ namespace nest
   }
 
   /* BeginDocumentation
-     Name: NumProcesses - Return the number of MPI processes (MPI_Comm_size).
+     Name: NumProcesses - Return the number of MPI processes.
+     Synopsis: NumProcesses -> int
+     Description:
+     Returns the number of MPI processes (MPI_Comm_size). This
+     function is mainly meant for logging and debugging purposes.
      Availability: NEST 2.0
      Author: Jochen Martin Eppler
      FirstVersion: January 2006
-     SeeAlso: Rank, SyncProcesses, MPIProcessorName
+     SeeAlso: Rank, SyncProcesses, ProcessorName
   */
   void NestModule::NumProcessesFunction::execute(SLIInterpreter *i) const
   {
@@ -1357,7 +1446,25 @@ namespace nest
   }
 
   /* BeginDocumentation
+     Name: SetFakeNumProcesses - Set a fake number of MPI processes.
+     Synopsis: n_procs SetFakeNumProcesses -> -
+     Description:
+     Sets the number of MPI processes to n_procs. Used for benchmarking puposes only. 
+     Availability: NEST 2.2
+     Author: Susanne Kunkel
+     FirstVersion: July 2011
+     SeeAlso: NumProcesses
+  */
+  void NestModule::SetFakeNumProcessesFunction_i::execute(SLIInterpreter *i) const
+  {
+    long n_procs = getValue<long>(i->OStack.pick(0));
+    Communicator::set_num_processes(n_procs);
+    i->EStack.pop();
+  }
+
+  /* BeginDocumentation
      Name: SyncProcesses - Synchronize all MPI processes.
+     Synopsis: SyncProcesses -> -
      Availability: NEST 2.0
      Author: Alexander Hanuschkin
      FirstVersion: April 2009
@@ -1366,52 +1473,88 @@ namespace nest
      point in a simulation script. Internally, the function uses
      MPI_Barrier(). Note that during simulation the processes are
      automatically synchronized without the need for user interaction.
-     SeeAlso: Rank, NumProcesses, MPIProcessorName
-   */
-   void NestModule::SyncProcessesFunction::execute(SLIInterpreter *i) const
-   {
-     Communicator::synchronize();
-     i->EStack.pop();
-   }
-
-   void NestModule::TimeCommunication_i_i_bFunction::execute(SLIInterpreter *i) const 
-   { 
-     i->assert_stack_load(3); 
-     long samples = getValue<long>(i->OStack.pick(2)); 
-     long num_bytes = getValue<long>(i->OStack.pick(1)); 
-     bool offgrid = getValue<bool>(i->OStack.pick(0));
-
-     double_t time = 0.0;
-     if ( offgrid )
-       time = Communicator::time_communicate_offgrid(num_bytes,samples);
-     else
-       time = Communicator::time_communicate(num_bytes,samples);
-
-     i->OStack.pop(3); 
-     i->OStack.push(time);
-     i->EStack.pop(); 
-   } 
+     SeeAlso: Rank, NumProcesses, ProcessorName
+  */
+  void NestModule::SyncProcessesFunction::execute(SLIInterpreter *i) const
+  {
+    Communicator::synchronize();
+    i->EStack.pop();
+  }
 
   /* BeginDocumentation
-     Name: MPIProcessorName - Return an unique specifier for the compute node (MPI_Get_processor_name).
+     Name: TimeCommunication - returns average time taken for MPI_Allgather over n calls with m bytes
+     Synopsis: 
+     n m TimeCommunication -> time
+     Availability: NEST 2.0
+     Author: Abigail Morrison
+     FirstVersion: August 2009
+     Description:
+     The function allows a user to test how much time a call the Allgather costs
+  */
+  void NestModule::TimeCommunication_i_i_bFunction::execute(SLIInterpreter *i) const 
+  { 
+    i->assert_stack_load(3); 
+    long samples = getValue<long>(i->OStack.pick(2)); 
+    long num_bytes = getValue<long>(i->OStack.pick(1)); 
+    bool offgrid = getValue<bool>(i->OStack.pick(0));
+
+    double_t time = 0.0;
+    if ( offgrid )
+      time = Communicator::time_communicate_offgrid(num_bytes,samples);
+    else
+      time = Communicator::time_communicate(num_bytes,samples);
+
+    i->OStack.pop(3); 
+    i->OStack.push(time);
+    i->EStack.pop(); 
+  } 
+
+  /* BeginDocumentation
+     Name: ProcessorName - Returns a unique specifier for the actual node.
+     Synopsis: ProcessorName -> string
      Availability: NEST 2.0
      Author: Alexander Hanuschkin
      FirstVersion: April 2009
      Description:
      This function returns the name of the processor it was called
-     on. See MPI documentation for more details. If NEST is not
+     on (MPI_Get_processor_name). See MPI documentation for more details. If NEST is not
      compiled with MPI support, this function returns the hostname of
      the machine as returned by the POSIX function gethostname().
      Examples:
-     (I'm process ) =only Rank 1 add =only ( of ) =only NumProcesses =only ( on machine ) =only MPIProcessorName =
+     (I'm process ) =only Rank 1 add =only ( of ) =only NumProcesses =only ( on machine ) =only ProcessorName =
      SeeAlso: Rank, NumProcesses, SyncProcesses
   */
-  void NestModule::MPIProcessorNameFunction::execute(SLIInterpreter *i) const
+  void NestModule::ProcessorNameFunction::execute(SLIInterpreter *i) const
   {
     i->OStack.push(Communicator::get_processor_name());
     i->EStack.pop();
   }
 
+#ifdef HAVE_MPI
+  /* BeginDocumentation
+     Name: abort - Abort all NEST processes gracefully.
+     Paramteres:
+     exitcode - The exitcode to quit with
+     Description:
+     This function can be run by the user to end all NEST processes as
+     gracefully as possible. If NEST is compiled without MPI support,
+     this will just call quit_i. If compiled with MPI support, it will
+     call MPI_Abort, which will kill all processes of the application
+     and thus prevents deadlocks. The exitcode is userabort in both
+     cases (see statusdict/exitcodes).
+     Availability: NEST 2.0
+     Author: Jochen Martin Eppler
+     FirstVersion: October 2012
+     SeeAlso: quit, Rank, SyncProcesses, ProcessorName
+  */
+  void NestModule::MPIAbort_iFunction::execute(SLIInterpreter *i) const
+  {
+    i->assert_stack_load(1); 
+    long exitcode = getValue<long>(i->OStack.pick(0));
+    Communicator::mpi_abort(exitcode);
+    i->EStack.pop();
+  }
+#endif
 
   /* BeginDocumentation
      Name: GetVpRNG - return random number generator associated to virtual process of node
@@ -1564,7 +1707,6 @@ namespace nest
   }
 #endif
 
-
   void NestModule::init(SLIInterpreter *i)
   {
     ConnectionType.settypename("connectiontype");
@@ -1578,24 +1720,24 @@ namespace nest
     net_->calibrate_clock();
       
     // register interface functions with interpreter
-    i->createcommand("ChangeSubnet_a", &changesubnet_afunction);
-    i->createcommand("ChangeSubnet_i", &changesubnet_ifunction);
-    i->createcommand("CurrentSubnet",  &currentsubnetfunction);
-    i->createcommand("GetNodes_i_b",   &getnodes_i_bfunction);
-    i->createcommand("GetLeaves_i_b",  &getleaves_i_bfunction);
-    i->createcommand("GetChildren_i_b",&getchildren_i_bfunction);
+    i->createcommand("ChangeSubnet",    &changesubnet_ifunction);
+    i->createcommand("CurrentSubnet",   &currentsubnetfunction);
+    i->createcommand("GetNodes_i_D_b_b",    &getnodes_i_D_b_bfunction);
+    i->createcommand("GetLeaves_i_D_b",   &getleaves_i_D_bfunction);
+    i->createcommand("GetChildren_i_D_b", &getchildren_i_D_bfunction);
 
-    i->createcommand("GetGID",       &getgidfunction);
-    i->createcommand("GetLID",       &getlidfunction);
-    i->createcommand("GetAddress",   &getaddressfunction);
+    i->createcommand("RestoreNodes_a", &restorenodes_afunction);
 
     i->createcommand("SetStatus_id", &setstatus_idfunction);
     i->createcommand("SetStatus_CD", &setstatus_CDfunction);
+    i->createcommand("SetStatus_aa", &setstatus_aafunction);
 
     i->createcommand("GetStatus_i",  &getstatus_ifunction);
     i->createcommand("GetStatus_C",  &getstatus_Cfunction);
+    i->createcommand("GetStatus_a",  &getstatus_afunction);
 
-    i->createcommand("FindConnections_D", &findconnections_Dfunction);
+    i->createcommand("GetConnections_D", &getconnections_Dfunction);
+    i->createcommand("cva_C", &cva_cfunction);
 
     i->createcommand("Simulate_d",   &simulatefunction);
 
@@ -1607,31 +1749,40 @@ namespace nest
     i->createcommand("Create_l_i", &create_l_ifunction);
    
     i->createcommand("Connect_i_i_l", &connect_i_i_lfunction);
+    i->createcommand("Connect_i_i_i", &connect_i_i_ifunction);
     i->createcommand("Connect_i_i_d_d_l", &connect_i_i_d_d_lfunction);
+    i->createcommand("Connect_i_i_d_d_i", &connect_i_i_d_d_ifunction);
     i->createcommand("Connect_i_i_D_l", &connect_i_i_D_lfunction);
+    i->createcommand("DataConnect_i_dict_s", &dataconnect_i_dict_sfunction);
+    i->createcommand("DataConnect_a", &dataconnect_afunction);
 
-    i->createcommand("CompoundConnect_i_i_i_l", &compoundconnect_i_i_i_lfunction);
-   
     i->createcommand("DivergentConnect_i_ia_a_a_l", &divergentconnect_i_ia_a_a_lfunction);
     i->createcommand("RandomDivergentConnect_i_i_ia_da_da_b_b_l", &rdivergentconnect_i_i_ia_da_da_b_b_lfunction);
     
     i->createcommand("ConvergentConnect_ia_i_a_a_l", &convergentconnect_ia_i_a_a_lfunction);
     i->createcommand("RandomConvergentConnect_ia_i_i_da_da_b_b_l", &rconvergentconnect_ia_i_i_da_da_b_b_lfunction);
+    i->createcommand("RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l", &rconvergentconnect_ia_ia_ia_daa_daa_b_b_lfunction);
    
     i->createcommand("ResetNetwork",&resetnetworkfunction);
     i->createcommand("ResetKernel",&resetkernelfunction);
-   
-    i->createcommand("NetworkDimensions_a",&networkdimensions_afunction);
-   
+
     i->createcommand("MemoryInfo", &memoryinfofunction);
+
+#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
+    i->createcommand("memory_thisjob_bg", &memorythisjobbgfunction);
+#endif
    
     i->createcommand("PrintNetwork", &printnetworkfunction);
     
     i->createcommand("Rank", &rankfunction);
     i->createcommand("NumProcesses", &numprocessesfunction);
+    i->createcommand("SetFakeNumProcesses", &setfakenumprocesses_ifunction);
     i->createcommand("SyncProcesses", &syncprocessesfunction);
     i->createcommand("TimeCommunication_i_i_b", &timecommunication_i_i_bfunction); 
-    i->createcommand("MPIProcessorName", &mpiprocessornamefunction);
+    i->createcommand("ProcessorName", &processornamefunction);
+#ifdef HAVE_MPI
+    i->createcommand("MPI_Abort", &mpiabort_ifunction);
+#endif
    
     i->createcommand("GetVpRNG", &getvprngfunction);
     i->createcommand("GetGlobalRNG", &getglobalrngfunction);
@@ -1645,7 +1796,7 @@ namespace nest
     Token statusd = i->baselookup(Name("statusdict"));
     DictionaryDatum dd=getValue<DictionaryDatum>(statusd);
     dd->insert(Name("kernelname"), new StringDatum("NEST"));
-    dd->insert(Name("kernelrevision"), new StringDatum("$Revision: 9902 $"));
+    dd->insert(Name("kernelrevision"), new StringDatum("$Revision: 10101 $"));
     dd->insert(Name("is_mpi"), new BoolDatum(Communicator::get_initialized()));
   }
 

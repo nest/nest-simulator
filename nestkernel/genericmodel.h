@@ -122,6 +122,7 @@ namespace nest
     : Model(newname),
       proto_(oldmod.proto_)
   {
+    set_type_id(oldmod.get_type_id());
     set_threads();
   }
 

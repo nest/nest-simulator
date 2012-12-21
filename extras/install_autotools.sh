@@ -26,10 +26,10 @@ fi
 
 # Package versions to install
 pkgs="m4 autoconf automake libtool"
-m4_ver=1.4.15
+m4_ver=1.4.16
 autoconf_ver=2.68
 automake_ver=1.11.1
-libtool_ver=2.4
+libtool_ver=2.4.2
 
 wgetprog=`which wget`
 if [ -z $wgetprog ] ; then
@@ -54,8 +54,11 @@ if [ -z $wgetprog ] ; then
   exit 1
 fi
 
+# current directory
+currdir=`pwd`
+
 # Work dir
-wrkdir=`pwd`/AutotoolsBuild
+wrkdir=$currdir/AutotoolsBuild
 mkdir -p $wrkdir
 cd $wrkdir
 
@@ -84,12 +87,13 @@ for pkg in $pkgs ; do
   cd ..
 done
 
+cd $currdir
 rm -rf $wrkdir
 
-link libtoolize to glibtoolize
+# link libtoolize to glibtoolize
 cd $prefix/bin
 ln -s libtoolize glibtoolize
-cd -
+cd $currdir
 
 # restore old path
 export PATH=$savepath

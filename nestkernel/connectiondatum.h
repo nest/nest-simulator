@@ -31,10 +31,15 @@
 #include "connection_id.h"
 #include "aggregatedatum.h"
 
+
 #ifndef HAVE_STATIC_TEMPLATE_DECLARATION_FAILS
 template<>
 sli::pool AggregateDatum<nest::ConnectionID, &nest::NestModule::ConnectionType>::memory;
 #endif
+template<>
+void AggregateDatum<nest::ConnectionID, &nest::NestModule::ConnectionType>::print(std::ostream &) const;
+template<>
+void AggregateDatum<nest::ConnectionID, &nest::NestModule::ConnectionType>::pprint(std::ostream &) const;
 
 typedef AggregateDatum<nest::ConnectionID, &nest::NestModule::ConnectionType> ConnectionDatum;
 

@@ -237,17 +237,17 @@ namespace nest
     // re-organize data into one vector per recorded variable
     for ( size_t v = 0 ; v < P_.record_from_.size() ; ++v )
       {
-	std::vector<double_t>* dv = new std::vector<double_t>(S_.data_.size());
+	std::vector<double_t> dv(S_.data_.size());
 	for ( size_t t = 0 ; t < S_.data_.size() ; ++t ) 
         {
           assert(v < S_.data_[t].size());
-          (*dv)[t] = S_.data_[t][v];
+          dv[t] = S_.data_[t][v];
         }
         initialize_property_doublevector(d, P_.record_from_[v]);
-        if ( device_.to_accumulator() )
-          accumulate_property(d, P_.record_from_[v], *dv);
+        if ( device_.to_accumulator() && not dv.empty() )
+          accumulate_property(d, P_.record_from_[v], dv);
         else
-          append_property(d, P_.record_from_[v], *dv);
+          append_property(d, P_.record_from_[v], dv);
       }
   }
 

@@ -30,12 +30,17 @@ import sys
 class ThreadTestCase(unittest.TestCase):
     """Multiple threads """
 
+    def nest_multithreaded(self):
+        """Return True, if we have a thread-enabled NEST, False otherwise"""
+
+        nest.sr("statusdict/threading :: (no) eq not")
+        return nest.spp()
+        
+
     def test_Threads(self):
         """Multiple threads"""
 
-        # Test if we have a thread-enabled NEST
-        nest.sr("statusdict /have_pthreads get")
-        if not nest.spp(): return
+        if not self.nest_multithreaded(): return
 
         nest.ResetKernel()
         self.assertEqual(nest.GetKernelStatus()['local_num_threads'],1)
@@ -50,9 +55,7 @@ class ThreadTestCase(unittest.TestCase):
     def test_ThreadsFindConnections(self):
         """FindConnections with threads"""
 
-        # Test if we have a thread-enabled NEST
-        nest.sr("statusdict /have_pthreads get")
-        if not nest.spp(): return
+        if not self.nest_multithreaded(): return
 
         nest.ResetKernel()
         nest.SetKernelStatus({'local_num_threads':8})
@@ -62,7 +65,10 @@ class ThreadTestCase(unittest.TestCase):
         nest.DivergentConnect(pre, post)
 
         conn = nest.FindConnections(pre)
+        # Because of threading, targets may be in a different order than
+        # in post, so we sort the vector.
         targets = nest.GetStatus(conn, "target")
+        targets.sort()
         
         self.assertEqual(targets, post)
 
@@ -70,9 +76,7 @@ class ThreadTestCase(unittest.TestCase):
     def test_ThreadsGetEvents(self):
         """ Gathering events across threads """
 
-        # Test if we have a thread-enabled NEST
-        nest.sr("statusdict /have_pthreads get")
-        if not nest.spp(): return
+        if not self.nest_multithreaded(): return
 
         threads = [1,2,4,8]
 

@@ -34,6 +34,7 @@ libmodelsmodule_la_SOURCES= \
 		hh_cond_exp_traub.cpp hh_cond_exp_traub.h\
 		mat2_psc_exp.h mat2_psc_exp.cpp\
 		parrot_neuron.h parrot_neuron.cpp\
+		pp_psc_delta.h pp_psc_delta.cpp\
 		ac_generator.h ac_generator.cpp\
 		dc_generator.h dc_generator.cpp\
 		spike_generator.h spike_generator.cpp\
@@ -42,6 +43,8 @@ libmodelsmodule_la_SOURCES= \
 		mip_generator.h mip_generator.cpp\
 		step_current_generator.h step_current_generator.cpp\
 		pulsepacket_generator.h pulsepacket_generator.cpp\
+		ppd_sup_generator.cpp ppd_sup_generator.h\
+		gamma_sup_generator.cpp gamma_sup_generator.h\
 		spike_detector.h spike_detector.cpp\
 		multimeter.cpp multimeter.h\
 		correlation_detector.h correlation_detector.cpp\
@@ -50,6 +53,7 @@ libmodelsmodule_la_SOURCES= \
 		static_connection_hom_wd.h\
 		cont_delay_connection.h cont_delay_connection.cpp\
 		tsodyks_connection.h tsodyks_connection.cpp\
+		tsodyks2_connection.h tsodyks2_connection.cpp\
 		stdp_connection.h stdp_connection.cpp\
 		stdp_connection_hom.h stdp_connection_hom.cpp\
 		stdp_pl_connection_hom.h stdp_pl_connection_hom.cpp\
@@ -68,12 +72,6 @@ AM_CPPFLAGS= -I$(top_srcdir)/libnestutil\
 		-I$(top_srcdir)/nestkernel\
 		@INCLTDL@ \
 		@GSL_CFLAGS@ @MUSIC_INCLUDE@ @MPI_INCLUDE@
-
-HELPDIRS="@PKGSRCDIR@/$(subdir)"
-
-install-slidoc:
-	mkdir -p $(DESTDIR)@PKGDOCDIR@/help
-	$(DESTDIR)$(exec_prefix)/bin/sli --userargs=$(HELPDIRS) $(top_srcdir)/lib/sli/install-help.sli 2>&1 > @INSTALL_HELP_LOG@
 
 nobase_pkgdata_DATA= sli/models-init.sli
 

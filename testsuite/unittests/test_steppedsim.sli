@@ -32,7 +32,7 @@
 
    FirstVersion: October 2010
    Author: Diesmann
-   SeeAlso: ticket-452.sli
+   SeeAlso: testsuite::ticket-452
 */
 
 

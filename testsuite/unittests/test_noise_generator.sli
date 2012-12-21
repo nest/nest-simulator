@@ -82,12 +82,13 @@ M_ERROR setverbosity  % suppress warning from time reset
   0 << /resolution 0.1 >> SetStatus
   /ng  /noise_generator Create def
   /nrn /iaf_neuron Create def
+  ng nrn Connect
+
   ng  << /mean 0.0 /std 1.0 /dt 0.1 >> SetStatus
 
   % no spiking, all parameters 1, 0 leak potential
   nrn << /V_th 1e10 /C_m 1.0 /tau_m 1.0 /E_L 0.0 >> SetStatus
 
-  ng nrn Connect
 
   % now simulate 
   /Nsims 100 def

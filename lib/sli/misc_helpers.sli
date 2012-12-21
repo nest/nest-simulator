@@ -387,26 +387,33 @@ def
 %----------------------------------------------------------------------------
 /* BeginDocumentation
    
-   Name: breakup - Break a string or an array at given Substrings or SubArrays.
+   Name: breakup - Break a string or an array at given Substrings or SubArrays, or to given lengths.
    
    Synopsis: MyStr BreakStr breakup -> StrArr
              MyArr BreakArr breakup -> ArrArr
+             MyStr SecLen   breakup -> StrArr
+             MyArr SecLen   breakup -> ArrArr
 
-   Description: Break a string or an array at given Substrings or SubArrays.
-                (See example below)
+   Description: Break a string or an array at given Substrings or SubArrays, or to sections
+                of given length. In the latter case, the last section may be shorter, if
+                the section length does not evenly divide the string/array length.
 
    Parameters: In : MyStr(string)/MyArr(array): String/Array to break up.
                     BreakStr(string)/BreakArr(array): Substring/Subarray defining break points.
+                    SecLen(int): Length of sections to form
                Out: StrArr(array of strings)/ArrArr(array of arrays): array of partial strings/arrays (see example below)
 
    Examples: 1. (home/kupper/synod) (/) breakup -> [(home) (kupper) (synod)]
              2. (Theresnospaceinhere) ( ) breakup -> [(Theresnospaceinhere)]
              3. [23 5 0 17 0] [0]   breakup -> [ [23 5] [17] [] ]
-             3. [23 5 0 17 0] [5 0] breakup -> [ [23] [17 0] ]
+             4. [23 5 0 17 0] [5 0] breakup -> [ [23] [17 0] ]
+             5. (abcdef) 3 breakup -> [(abc) (def)]
+             6. (abcdef) 4 breakup -> [(abcd) (ef)]
+             7  [1 2 3 4] 2 breakup -> [[1 2] [3 4]]
 
    Bugs: 
 
-   Author: R Kupper
+   Author: R Kupper, H E Plesser
 
    FirstVersion: Apr 10 1999
 
@@ -438,9 +445,25 @@ def
 }
 bind def
 
+/breakup_sa_i
+{
+  /seclen Set
+
+  empty 
+  { 
+    1 arraystore 
+  }
+  { 
+    /strarr Set
+    [ 0 strarr length 1 sub seclen ] { seclen strarr rollu getinterval } Table
+  } ifelse
+} bind def
+
 /breakup trie
 [/stringtype /stringtype] { [] breakup_sa } addtotrie
 [/arraytype  /arraytype ] { [] breakup_sa } addtotrie
+[/stringtype /integertype] { breakup_sa_i } addtotrie
+[/arraytype  /integertype] { breakup_sa_i } addtotrie
 def
 
 %----------------------------------------------------------------------------

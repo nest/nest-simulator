@@ -1,6 +1,3 @@
-#ifndef IZHIKEVICH_H
-#define IZHIKEVICH_H
-
 /*
  *  izhikevich.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef IZHIKEVICH_H
+#define IZHIKEVICH_H
 
 #include "nest.h"
 #include "event.h"

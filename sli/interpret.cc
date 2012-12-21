@@ -53,6 +53,8 @@
 #include "compose.hpp"
 
 #include <sstream>
+#include <fstream>
+
 
 using nest::Mutex;
 
@@ -105,6 +107,8 @@ SLIType SLIInterpreter::XIstreamtype;
 SLIType SLIInterpreter::Ostreamtype;
 SLIType SLIInterpreter::IntVectortype;
 SLIType SLIInterpreter::DoubleVectortype;
+SLIType SLIInterpreter::Iteratortype;
+
 //SLIType SLIInterpreter::IOstreamtype;
 
         // SLIType default actions
@@ -127,12 +131,15 @@ const IloopFunction        SLIInterpreter::iloopfunction;
 const IrepeatFunction      SLIInterpreter::irepeatfunction;
 const IforFunction         SLIInterpreter::iforfunction;
 const IforallarrayFunction SLIInterpreter::iforallarrayfunction;
+const IforalliterFunction  SLIInterpreter::iforalliterfunction;
 const IforallindexedarrayFunction SLIInterpreter::iforallindexedarrayfunction;
 const IforallindexedstringFunction SLIInterpreter::iforallindexedstringfunction;
 const IforallstringFunction SLIInterpreter::iforallstringfunction;
 
 void SLIInterpreter::inittypes(void)
 {
+  Iteratortype.settypename("iteratortype");
+  Iteratortype.setdefaultaction(datatypefunction);
   Integertype.settypename("integertype");
   Integertype.setdefaultaction(datatypefunction);
   Doubletype.settypename("doubletype");
@@ -175,42 +182,44 @@ void SLIInterpreter::inittypes(void)
 
 void SLIInterpreter::initdictionaries(void)
 {
-  assert(DStack == NULL);
+    assert(DStack == NULL);
     
-  DStack= new DictionaryStack();
-  assert(DStack != NULL);
+    DStack= new DictionaryStack();
+    assert(DStack != NULL);
     
-  errordict = new Dictionary();
-  DictionaryDatum sysdict(new Dictionary());
-  DictionaryDatum userdict(new Dictionary());
-
-  DStack->push(sysdict);
+    errordict = new Dictionary();
+    DictionaryDatum sysdict(new Dictionary());
+    DictionaryDatum userdict(new Dictionary());
     
-  def(errordict_name, DictionaryDatum(errordict));
-  def(systemdict_name, sysdict);
-  def(userdict_name, userdict);
-  def("statusdict", DictionaryDatum(statusdict));
+    DStack->push(sysdict);
+    DStack->set_basedict();
+    
+    def(errordict_name, DictionaryDatum(errordict));
+    def(systemdict_name, sysdict);
+    def(userdict_name, userdict);
+    def("statusdict", DictionaryDatum(statusdict));
 }
 
 void SLIInterpreter::initbuiltins(void)
 {
-
-  createcommand(ilookup_name,      &SLIInterpreter::ilookupfunction);
-  createcommand(ipop_name,         &SLIInterpreter::ilookupfunction);
-  createcommand(isetcallback_name, &SLIInterpreter::isetcallbackfunction);
-  createcommand(iiterate_name,     &SLIInterpreter::iiteratefunction);
-  createcommand(iloop_name,        &SLIInterpreter::iloopfunction);
-  createcommand(irepeat_name,      &SLIInterpreter::irepeatfunction);
-  createcommand(ifor_name,         &SLIInterpreter::iforfunction);
-  createcommand(iforallarray_name, &SLIInterpreter::iforallarrayfunction);
-  createcommand(iforallindexedstring_name, 
-		&SLIInterpreter::iforallindexedstringfunction);
-  createcommand(iforallindexedarray_name, 
-		&SLIInterpreter::iforallindexedarrayfunction);
-  createcommand(iforallstring_name,&SLIInterpreter::iforallstringfunction);
-
-  createdouble(pi_name, numerics::pi);
-  createdouble(e_name, numerics::e);
+    
+    createcommand(ilookup_name,      &SLIInterpreter::ilookupfunction);
+    createcommand(ipop_name,         &SLIInterpreter::ilookupfunction);
+    createcommand(isetcallback_name, &SLIInterpreter::isetcallbackfunction);
+    createcommand(iiterate_name,     &SLIInterpreter::iiteratefunction);
+    createcommand(iloop_name,        &SLIInterpreter::iloopfunction);
+    createcommand(irepeat_name,      &SLIInterpreter::irepeatfunction);
+    createcommand(ifor_name,         &SLIInterpreter::iforfunction);
+    createcommand(iforallarray_name, &SLIInterpreter::iforallarrayfunction);
+    createcommand(iforalliter_name,  &SLIInterpreter::iforalliterfunction);
+    createcommand(iforallindexedstring_name, 
+		  &SLIInterpreter::iforallindexedstringfunction);
+    createcommand(iforallindexedarray_name, 
+		  &SLIInterpreter::iforallindexedarrayfunction);
+    createcommand(iforallstring_name,&SLIInterpreter::iforallstringfunction);
+    
+    createdouble(pi_name, numerics::pi);
+    createdouble(e_name, numerics::e);
 }
 
 void SLIInterpreter::initexternals(void)
@@ -263,10 +272,10 @@ void SLIInterpreter::createdouble(Name const& n, double d)
 void SLIInterpreter::createcommand(Name const& n, SLIFunction const *fn)
 {
   if ( DStack->known(n) )
-    throw NamingConflict("A function called '" + std::string(n.toString()) 
-                          + "' exists already.\n"
-                         "Please choose a different name!");
-                         
+      throw NamingConflict("A function called '" + std::string(n.toString()) 
+			   + "' exists already.\n"
+			   "Please choose a different name!");
+  
   Token t( new FunctionDatum(n, fn) );
   DStack->def_move(n, t);
 }
@@ -303,7 +312,8 @@ void SLIInterpreter::createcommand(Name const& dictn, Name const& n, SLIFunction
       basedef(dictn, new DictionaryDatum(d) );
     }
   Token dt=baselookup(dictn);
-  DStack->push(dt);
+  DictionaryDatum *dd=dynamic_cast<DictionaryDatum *>(dt.datum());
+  DStack->push(*dd);
   createcommand(n, fn);
   DStack->pop();
 }
@@ -311,6 +321,11 @@ void SLIInterpreter::createcommand(Name const& dictn, Name const& n, SLIFunction
 const Token & SLIInterpreter::lookup(const Name &n) const
 {
   return DStack->lookup(n);
+}
+
+const Token & SLIInterpreter::lookup2(const Name &n) const
+{
+  return DStack->lookup2(n);
 }
 
 const Token & SLIInterpreter::baselookup(const Name &n) const
@@ -330,31 +345,26 @@ bool SLIInterpreter::baseknown(const Name &n) const
 
 void SLIInterpreter::def(Name const& n, Token const &t)
 {
-  assert(DStack != NULL);
   DStack->def(n,t);
 }
 
 void SLIInterpreter::undef(Name const& n)
 {
-  assert(DStack != NULL);
   DStack->undef(n);
 }
 
 void SLIInterpreter::basedef(Name const& n, Token const &t)
 {
-  assert(DStack != NULL);
   DStack->basedef(n,t);
 }
 
 void SLIInterpreter::def_move(Name const& n, Token &t)
 {
-  assert(DStack != NULL);
   DStack->def_move(n,t);
 }
 
 void SLIInterpreter::basedef_move(Name const& n, Token &t)
 {
-  assert(DStack != NULL);
   DStack->basedef_move(n,t);
 }
 
@@ -382,6 +392,7 @@ SLIInterpreter::SLIInterpreter(void)
       irepeat_name("::repeat"),
       ifor_name("::for"),
       iforallarray_name("::forall_a"),
+      iforalliter_name("::forall_iter"),
       iforallindexedarray_name("::forallindexed_a"),
       iforallindexedstring_name("::forallindexed_s"),
       iforallstring_name("::forall_s"),
@@ -615,7 +626,6 @@ void SLIInterpreter::raiseerror(std::exception &err)
   
   assert(errordict != NULL);
   errordict->insert("command",EStack.top()); // store the func/trie that caused the error.
-  EStack.pop();
 
   // SLIException provide addtional information
   SLIException *  slierr = 
@@ -955,21 +965,60 @@ void SLIInterpreter::removecycleguard(void)
 void SLIInterpreter::toggle_stack_display()
 {
   show_stack_=! show_stack_;
-  std::cerr << "Stack display is now " 
-	    << (show_stack_ ? "On" : "Off") 
-	    << std::endl;
+  std::string msg= std::string("Stack display is now ") 
+    + (show_stack_ ? "On" : "Off"); 
+  message(M_INFO,"SLIInterpreter",msg.c_str());
 }
 
+void SLIInterpreter::backtrace_on()
+{
+  show_backtrace_=true;
+  opt_tailrecursion_=false;
+  std::string msg= "Showing stack backtrace on error.  Disabling tail recursion optimization."; 
+  message(M_INFO,"SLIInterpreter",msg.c_str());
+}
+
+void SLIInterpreter::backtrace_off()
+{
+  show_backtrace_=false;
+  opt_tailrecursion_=true;
+  std::string msg= "Stack backtrace on error in now off. Re-enabling tail recursion optimization."; 
+  message(M_INFO,"SLIInterpreter",msg.c_str());
+}
+
+/**
+ * List the execution stack from level n-1 downwards to level 0. If you want the entire stack to be displayed, call
+ * the function as stack_backtrace(EStack.load());
+*/ 
 void SLIInterpreter::stack_backtrace(int n)
 {
   for(int p=n-1; p>=0; --p)
     {
-      if((size_t)p > EStack.load())
+      if((size_t)p >EStack.load())
 	continue;
 
       FunctionDatum *fd =dynamic_cast<FunctionDatum *>(EStack.pick(p).datum());
-      if(fd !=NULL)
-	fd->backtrace(this,p);
+      if(fd != 0)
+	{
+	  fd->backtrace(this,p);
+	  continue;
+	}
+      NameDatum *nd=dynamic_cast<NameDatum *>(EStack.pick(p).datum());
+      if(nd != 0)
+	{
+	  std::cerr << "While executing: ";
+	  nd->print(std::cerr);
+	  std::cerr << std::endl;
+	  continue;
+	}
+      TrieDatum *td=dynamic_cast<TrieDatum *>(EStack.pick(p).datum());
+      if(td != 0)
+	{
+	  std::cerr << "While executing: ";
+	  td->print(std::cerr);
+	  std::cerr << std::endl;
+	  continue;
+	}
     }
 }
 
@@ -1001,13 +1050,16 @@ void SLIInterpreter::debug_options() const
 
 char SLIInterpreter::debug_commandline(Token & next)
 {
-  
-  std::string line="n";
   char c='\n';
 
   std::string command;
   std::string arg;
   std::string val;
+
+  // /dev/tty is the UNIX  file representing the keyboard. We directly read from it to be able to close the input
+  // with CTRL-D. If std::cin is closed with ctrl-D we cannot re-open it again and the
+  // debugger would be dysfunctional for the remainder of the session.
+  std::ifstream tty("/dev/tty");
 
   if(show_stack_)
     OStack.dump(std::cerr);
@@ -1018,21 +1070,25 @@ char SLIInterpreter::debug_commandline(Token & next)
   do{
     std::cerr << call_depth_ << "/" << max_call_depth_ << ">";
 
-    std::cin >> command;
+    tty >> command;
+    if (tty.eof())
+      {
+	std::cerr << std::endl;
+	debug_mode_off();
+	return c; 
+      }
+
     if(SLIsignalflag!=0)
       {
 	std::cerr << "Caught Signal Number " << SLIsignalflag << std::endl;
 	SLIsignalflag=0;
-	std::cin.clear();
+	tty.clear();
 	continue;
       }
 
-    //if(command=="")
-    //  break;
-
     if(command=="show")
       {
-	std::cin >> arg;
+	tty >> arg;
 	if(arg=="stack")
 	  OStack.dump(std::cerr);
 	else if(arg=="estack")
@@ -1053,7 +1109,7 @@ char SLIInterpreter::debug_commandline(Token & next)
       }
     else if(command=="toggle")
       {
-	std::cin >> arg;
+	tty >> arg;
 	if(arg=="backtrace")
 	  {
 	    show_backtrace_= ! show_backtrace_;
@@ -1091,7 +1147,7 @@ char SLIInterpreter::debug_commandline(Token & next)
      else if(command=="stop")
       {
 	debug_mode_off();
-	EStack.push(new NameDatum("stop"));
+	EStack.push(new NameDatum(stop_name));
 	break;
       }
     else if(command=="catch")
@@ -1151,7 +1207,6 @@ char SLIInterpreter::debug_commandline(Token & next)
       }
   } while(true);
 
-
   return c;
 }
 
@@ -1170,94 +1225,374 @@ int SLIInterpreter::startup()
 
 int SLIInterpreter::execute(const std::string &cmdline)
 {
-  int exitcode=EXIT_SUCCESS;
-  exitcode=startup();
+  int exitcode=startup();
+  if(exitcode !=EXIT_SUCCESS)
+      return -1;
+
   OStack.push(new StringDatum(cmdline));
   EStack.push(new NameDatum("evalstring"));
   return execute_(); // run the interpreter
 }
 
 
-int SLIInterpreter::execute()
+int SLIInterpreter::execute(int v)
 {
   startup();
   EStack.push(new NameDatum("start"));
-  return execute_(); // run the interpreter
+  switch(v)
+      {
+      case 0:
+      case 1:
+	  return execute_(); // run the interpreter
+      case 2:
+	  return execute_debug_();
+      default:
+	  return -1;
+      }
+}
+
+int SLIInterpreter::execute_debug_(size_t exitlevel)
+{
+    int exitcode;
+    assert(statusdict->known("exitcodes"));
+    DictionaryDatum exitcodes = getValue<DictionaryDatum>(*statusdict, "exitcodes");
+    
+    if(SLIsignalflag !=0)
+    {
+	exitcode = getValue<long>(exitcodes, "unknownerror");
+	return exitcode;
+    }
+    
+    try
+    {
+	do { //loop1  this double loop to keep the try/catch outside the inner loop
+	    try
+	    { 
+		while(EStack.load() > exitlevel) // loop 2
+		{
+		    ++cycle_count;
+		    EStack.top()->execute(this);
+		}
+	    }
+	    catch(std::exception &exc)
+	    {
+		raiseerror(exc);
+	    }
+	} while(EStack.load() > exitlevel);
+    }
+    catch(std::exception &e)
+    {
+	message(M_FATAL, "SLIInterpreter","A C++ library exception occured.");
+	OStack.dump(std::cerr);
+	EStack.dump(std::cerr);
+	message(M_FATAL, "SLIInterpreter",e.what());
+	exitcode = getValue<long>(*exitcodes, "exception");
+	terminate(exitcode);
+    }
+    catch(...)
+    {
+	message(M_FATAL, "SLIInterpreter","An unknown c++ exception occured.");
+	OStack.dump(std::cerr);
+	EStack.dump(std::cerr);
+	exitcode = getValue<long>(*exitcodes, "exception");
+	terminate(exitcode);
+    } 
+    
+    assert(statusdict->known("exitcode"));
+    exitcode = getValue<long>(*statusdict,"exitcode");
+    
+    if (exitcode != 0)
+	errordict->insert(quitbyerror_name,baselookup(true_name));
+    
+    return exitcode;
 }
 
 int SLIInterpreter::execute_(size_t exitlevel)
 {
-  int exitcode;
-  assert(statusdict->known("exitcodes"));
-  DictionaryDatum exitcodes = getValue<DictionaryDatum>(*statusdict, "exitcodes");
-
-  if(SLIsignalflag !=0)
-  {
-    exitcode = getValue<long>(exitcodes, "unknownerror");
-    return exitcode;
-  }
-
-  try
-  {
-    while(EStack.load() > exitlevel)
+    int exitcode;
+    assert(statusdict->known("exitcodes"));
+    DictionaryDatum exitcodes = getValue<DictionaryDatum>(*statusdict, "exitcodes");
+    
+    if(SLIsignalflag !=0)
     {
-      
-      ++cycle_count;
-
-      try
-      {
-        EStack.top()->execute(this);
-      }
-      catch(std::exception &exc)
-      {
-        raiseerror(exc);
-      }
-      
-      // the following cascade prevents that two errors can be
-      // raised in a single interpreter cycle.
-      if(SLIsignalflag != 0) // handle signal, set by a handler
-      {                      // signalflag contains the numeric value of the
-                             // signal.
-        if(SLIsignalflag==255)
-        { 
-          std::cerr << "Bye." << std::endl;
-          exitcode = getValue<long>(exitcodes, "unknownerror");
-          return exitcode;
-        }
-
-        raisesignal(SLIsignalflag);
-        SLIsignalflag=0;
-      }
-      else if(cycle_guard && (cycles()>=cycle_restriction))
-      {
-        cycle_guard=false;
-        raiseerror(interpreter_name, CycleGuardError);
-      }
+	exitcode = getValue<long>(exitcodes, "unknownerror");
+	return exitcode;
     }
-  }
-  catch(std::exception &e)
-  {
-    message(M_FATAL, "SLIInterpreter","A C++ library exception occured.");
-    OStack.dump(std::cerr);
-    EStack.dump(std::cerr);
-    message(M_FATAL, "SLIInterpreter",e.what());
-    exitcode = getValue<long>(*exitcodes, "exception");
-    terminate(exitcode);
-  }
-  catch(...)
-  {
-    message(M_FATAL, "SLIInterpreter","An unknown c++ exception occured.");
-    OStack.dump(std::cerr);
-    EStack.dump(std::cerr);
-    exitcode = getValue<long>(*exitcodes, "exception");
-    terminate(exitcode);
-  }
-
-  assert(statusdict->known("exitcode"));
-  exitcode = getValue<long>(*statusdict,"exitcode");
-
-  if (exitcode != 0)
-    errordict->insert(quitbyerror_name,baselookup(true_name));
-
-  return exitcode;
+    
+    try
+    {
+	do { //loop1  this double loop to keep the try/catch outside the inner loop
+	    try
+	    { 
+	      while(!SLIsignalflag and (EStack.load() > exitlevel)) // loop 2
+		{
+		  ++cycle_count;
+		  EStack.top()->execute(this);
+		}
+	      if(SLIsignalflag !=0)
+		{
+		  SLIsignalflag=0;
+		  raisesignal(SLIsignalflag);
+		}
+	    }
+	    catch(std::exception &exc)
+	      {
+		raiseerror(exc);
+	      }
+	} while(EStack.load() > exitlevel);
+    }
+    catch(std::exception &e)
+    {
+	message(M_FATAL, "SLIInterpreter","A C++ library exception occured.");
+	OStack.dump(std::cerr);
+	EStack.dump(std::cerr);
+	message(M_FATAL, "SLIInterpreter",e.what());
+	exitcode = getValue<long>(*exitcodes, "exception");
+	terminate(exitcode);
+    }
+    catch(...)
+    {
+	message(M_FATAL, "SLIInterpreter","An unknown c++ exception occured.");
+	OStack.dump(std::cerr);
+	EStack.dump(std::cerr);
+	exitcode = getValue<long>(*exitcodes, "exception");
+	terminate(exitcode);
+    } 
+    
+    assert(statusdict->known("exitcode"));
+    exitcode = getValue<long>(*statusdict,"exitcode");
+    
+    if (exitcode != 0)
+	errordict->insert(quitbyerror_name,baselookup(true_name));
+    
+    return exitcode;
 }
+
+
+// inline
+// void SLIInterpreter::run_procedure_safe()
+// {
+// /* Stack Layout:
+//       3       2       1
+//    <proc>  <pos>   %iterate
+// */
+
+//     ProcedureDatum const *pd= dynamic_cast<ProcedureDatum *>(EStack.pick(2).datum());   
+//     assert(pd != 0);
+
+//     IntegerDatum   *id= dynamic_cast<IntegerDatum *>(EStack.pick(1).datum());
+//     assert(id != 0);
+//     size_t pos = static_cast<size_t>(id->get());
+    
+//     if( pos < pd->size())
+//     {
+//       Token t(pd->get(pos));
+//       if(step_mode())
+//       {
+// 	//std::cerr << std::endl;
+// 	do{
+// 	  char cmd=debug_commandline(t);
+// 	  if(cmd=='l') // List the procedure
+// 	  {
+// 	    if(pd !=NULL)
+// 	    {
+// 	      pd->list(std::cerr,"   ",pos);
+// 	      std::cerr <<std::endl;
+// 	    }
+// 	  }
+// 	  else 
+// 	    break;
+// 	} while (true);
+//       }
+
+//       if((pos+1 == pd->size()) 
+// 	 && optimize_tailrecursion() ) // This handles tailing recursion
+//       {
+// 	EStack.pop(3);
+// 	dec_call_depth();
+//       }
+//       else
+//         id->incr();
+
+//       EStack.push_move(t);
+//     }
+//     else
+//     {
+//       EStack.pop(3);
+//       dec_call_depth();
+//     }
+// }
+
+// inline
+// void SLIInterpreter::run_procedure()
+// {
+// /* Stack Layout:
+//       3       2       1
+//    <proc>  <pos>   %iterate
+// */
+
+//     ProcedureDatum const *pd= static_cast<ProcedureDatum *>(EStack.pick(2).datum());   
+//     IntegerDatum   *id= static_cast<IntegerDatum *>(EStack.pick(1).datum());
+//     long &pos = id->get();
+//     const long psize= pd->size();
+
+//     if( pos < psize)
+//     {
+//       Token t(pd->get(pos));
+//       ++pos;
+//       EStack.push_move(t);
+//     }
+//     else
+//     {
+//       EStack.pop(3);
+//       dec_call_depth();
+//     }
+// }
+
+
+// inline
+// void SLIInterpreter::run_repeat()
+// {
+//     IntegerDatum
+//         *proccount= static_cast<IntegerDatum *>(EStack.pick(1).datum());
+    
+//     ProcedureDatum
+//         const *proc= static_cast<ProcedureDatum *>(EStack.pick(2).datum());
+    
+//     size_t pos = static_cast<size_t>(proccount->get());
+    
+//     if(  pos < proc->size())
+//     {
+//         proccount->incr();
+//         EStack.push(proc->get(pos));
+//     }
+//     else
+//     {
+//         IntegerDatum
+//             *loopcount= static_cast<IntegerDatum *>(EStack.pick(3).datum());
+        
+//         if( loopcount->get() > 0 )
+//         {
+//             (*proccount)=0;     // reset procedure iterator
+//             loopcount->decr();
+//         }
+//         else
+// 	{
+//             EStack.pop(5);
+// 	    dec_call_depth();
+// 	}
+//     }
+
+// }
+
+// inline
+// void SLIInterpreter::run_repeat_debug()
+// {
+//     IntegerDatum
+//         *proccount= static_cast<IntegerDatum *>(EStack.pick(1).datum());
+    
+//     ProcedureDatum
+//         const *proc= static_cast<ProcedureDatum *>(EStack.pick(2).datum());
+    
+//     size_t pos = static_cast<size_t>(proccount->get());
+    
+//     if(  pos < proc->size())
+//     {
+//         proccount->incr();
+//         EStack.push(proc->get(pos));
+// 	if(step_mode())
+// 	{
+// 	  do{
+// 	    char cmd=debug_commandline(EStack.top());
+// 	    if(cmd=='l') // List the procedure
+// 	    {
+// 	      proc->list(std::cerr,"   ",pos);
+// 	      std::cerr <<std::endl;
+// 	    }
+// 	    else 
+// 	      break;
+// 	  } while (true);
+// 	}
+//     }
+//     else
+//     {
+//         IntegerDatum
+//             *loopcount= static_cast<IntegerDatum *>(EStack.pick(3).datum());
+        
+//         if( loopcount->get() > 0 )
+//         {
+//             (*proccount)=0;     // reset procedure iterator
+//             loopcount->decr();
+// 	    if(step_mode())
+// 	    {
+// 	      std::cerr << "repeat: " << loopcount->get()
+// 			<< " iterations left." << std::endl;
+// 	    }
+//         }
+//         else
+// 	{
+//             EStack.pop(5);
+// 	    dec_call_depth();
+// 	}
+//     }
+
+// }
+
+// inline
+// void SLIInterpreter::run_forallarray()
+// {
+//     IntegerDatum *count=
+//         static_cast<IntegerDatum *>(EStack.pick(2).datum());
+//     IntegerDatum *limit=
+//         static_cast<IntegerDatum *>(EStack.pick(3).datum());
+    
+//     if(count->get() < limit->get())
+//     {
+//       ArrayDatum *obj=
+// 	static_cast<ArrayDatum *>(EStack.pick(4).datum());
+
+//       OStack.push(obj->get(count->get()));  // push current element to operand stack
+//       count->incr();
+//       EStack.push(EStack.pick(1));       // push procedure to execution stack
+//     }
+//     else // at end of iteration remove everything from execution stack
+//     {
+// 	EStack.pop(6);
+// 	dec_call_depth();
+//     }
+// }
+
+// inline
+// void SLIInterpreter::run_forallarray_debug()
+// {
+//     IntegerDatum *count=
+//         static_cast<IntegerDatum *>(EStack.pick(2).datum());
+
+//     IntegerDatum *limit=
+//         static_cast<IntegerDatum *>(EStack.pick(3).datum());
+    
+//     if(count->get() < limit->get())
+//     {
+//       ArrayDatum *obj=
+// 	static_cast<ArrayDatum *>(EStack.pick(4).datum());
+
+//       OStack.push(obj->get(count->get()));  // push current element to operand stack
+//       count->incr();
+//       EStack.push(EStack.pick(1));       // push procedure to execution stack
+//       if(step_mode())
+//       {
+// 	  std::cerr << "forall:"
+// 		    << " Limit: " << limit->get()
+// 		    << " Pos: " << count->get()
+// 		    << " Iterator: ";
+// 	  OStack.pick(0).pprint(std::cerr);
+// 	  std::cerr << std::endl;
+//       }
+//     }
+//     else // at end of iteration remove everything from execution stack
+//     {
+// 	EStack.pop(6);
+// 	dec_call_depth();
+//     }
+
+// }

@@ -43,10 +43,23 @@ class Connector
 {
  public:
   virtual ~Connector() {}
-  virtual void register_connection(Node&, Node&) = 0;
-  virtual void register_connection(Node&, Node&, double_t, double_t) = 0;
-  virtual void register_connection(Node&, Node&, DictionaryDatum&) = 0;
+  virtual void register_connection(Node&, Node&, bool) = 0;
+  virtual void register_connection(Node&, Node&, double_t, double_t, bool) = 0;
+  virtual void register_connection(Node&, Node&, DictionaryDatum&, bool) = 0;
   virtual std::vector<long>* find_connections(DictionaryDatum) const = 0;
+  /**
+   * Return a list of all connections. 
+   * Return the list of ports that connect to the provided.
+   */
+  virtual void get_connections(size_t source_gid, size_t thrd, size_t synapse_id, ArrayDatum &conns) const=0;
+
+  /**
+   * Return a list of ports. 
+   * Return the list of ports that connect to the provided post_gid.
+   */
+  virtual void get_connections(size_t source_gid, size_t target_gid, size_t thrd, size_t synapse_id, ArrayDatum &conns) const=0;
+
+  virtual size_t get_num_connections() const =0;
   virtual void get_status(DictionaryDatum & d) const = 0;
   virtual void set_status(const DictionaryDatum & d) = 0;
   virtual void get_synapse_status(DictionaryDatum & d, port p) const = 0;

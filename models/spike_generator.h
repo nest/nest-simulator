@@ -40,9 +40,9 @@ namespace nest
 
     Synopsis: spike_generator Create -> gid
 
-    Description: 
-    A spike generator can be used to generate spikes at specific times which
-    are given to the spike generator as an array.
+    Description:
+    A spike generator can be used to generate spikes at specific times
+    which are given to the spike generator as an array.
     
     Spike times are given in milliseconds, and must be sorted with the
     earliest spike first. All spike times must be strictly in the future.
@@ -53,12 +53,13 @@ namespace nest
     of the simulation resolution. Three options control how spike times that 
     do not coincide with a step are handled (see examples below):
 
-    Multiple occurences of the same time indicate that more than one event is to be 
-    generated at this particular time.
+    Multiple occurences of the same time indicate that more than one
+    event is to be generated at this particular time.
 
-    Additionally, spike_weights can be set. This also is an array, which contains one
-    weight value per spike time. If set, the spikes are delivered with the respective
-    weight instead of the weight of the connection. To disable this functionality, the
+    Additionally, spike_weights can be set. This also is an array,
+    which contains one weight value per spike time. If set, the spikes
+    are delivered with the respective weight multiplied with the
+    weight of the connection. To disable this functionality, the
     spike_weights array can be set to an empty array.
 
     /precise_times   default: false
@@ -90,8 +91,8 @@ namespace nest
     Example:
     spikegenerator << /spike_times [1.0 2.0 3.0] >> SetStatus
     
-    Instructs the spike generator to generate events at 1.0, 2.0, and 3.0 milliseconds, 
-    relative to the device-timer origin. 
+    Instructs the spike generator to generate events at 1.0, 2.0, and
+    3.0 milliseconds, relative to the device-timer origin.
 
     Example:
     Assume that NEST works with default resolution (step size) of 0.1ms
@@ -132,13 +133,14 @@ namespace nest
     Example:
     spikegenerator << /spike_times [1.0 2.0] /spike_weights [5.0 -8.0] >> SetStatus
 
-    Instructs the spike generator to generate an event with weight 5.0 at 1.0 ms, and
-    an event with weight -8.0 at 2.0 ms, relative to the device-timer origin.
+    Instructs the spike generator to generate an event with weight 5.0
+    at 1.0 ms, and an event with weight -8.0 at 2.0 ms, relative to
+    the device-timer origin.
 
     spikegenerator << /spike_weights [] >> SetStatus
 
-    Instructs the spike generator to generate events at 1.0, 2.0, and 3.0 milliseconds, 
-    and use the weight of the connection. 
+    Instructs the spike generator to generate events at 1.0, 2.0, and
+    3.0 milliseconds, and use the weight of the connection.
 
     Parameters:
     The following properties can be set in the status dictionary.

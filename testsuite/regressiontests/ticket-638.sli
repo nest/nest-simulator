@@ -1,0 +1,79 @@
+/*
+ *  ticket-639.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-638 - Precise models remain refractory indefinitely
+
+Synopsis: (ticket-638) run -> NEST exits if test fails
+
+Description: 
+Ensure that precise models do not remain refractory indefinitely for t_ref==0
+ 
+Author: Hans Ekkehard Plesser, 2012-12-13
+ */
+
+/unittest (9726) require
+/unittest using
+M_ERROR setverbosity
+
+% model t_ref run_sim -> num spikes
+/run_sim 
+{  
+  /tref Set
+  ResetKernel
+  << /I_e 1000. /t_ref tref >> Create /n Set
+  /spike_detector Create /d Set
+  n d Connect
+  100. Simulate
+  d /n_events get
+}
+def
+
+% iaf_psc_alpha_presc is not affected
+/models [
+  /iaf_psc_alpha_canon
+  /iaf_psc_delta_canon
+  /iaf_psc_exp_ps
+] def
+
+% first: consistency test---all models must produce > 1 spike 
+{ 
+  models { 2.0 run_sim 1 gt } Map
+  true exch { and } Fold
+} assert_or_die
+
+% TEMPORARY MODIFICATION for NEST 2.2: ensure models throw exception
+% For 2.4, when fixing #638 for real, the test labeled "second" below 
+% must be re-activated
+{ /iaf_psc_alpha_canon << /t_ref 0.0 >> Create } fail_or_die
+{ /iaf_psc_delta_canon << /t_ref 0.0 >> Create } fail_or_die
+{ /iaf_psc_exp_os << /t_ref 0.0 >> Create } fail_or_die
+
+% second: with t_ref == 0, must also produce > 1 spike
+%
+%{ 
+%  models { 0.0 run_sim 1 gt } Map 
+%  true exch { and } Fold
+%} assert_or_die
+
+endusing

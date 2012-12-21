@@ -1,12 +1,36 @@
-This directory contains several example files for PyNEST. Here is a small
-summary of the files and their content. For more details, see the comments
-in the files.
+This directory contains example networks  using PyNEST.
 
-start.py  This is a simple example for how to execute SLI commands from within
-    Python. It does not use anything from the high-level PyNEST API.
+Some of the examples have corresponding SLI versions (e.g. brunel-alpha-nest.py) and it is instructive to compare them.
 
-testiaf.py  In this example, a single integrate-and-fire neuron is created and
-    fed with input from a DC generator. The activity of the neuron is recorded
-    by a spike_detector and a voltmeter. Their output is directly printed.
+Here is a list of all examples:
 
-network1.py
+LeNovere_2012/  Directory with examples from the NEST Tutorial chapter in Le Novere (2012)
+LeNovere_2012/brunel2000_classes.py
+LeNovere_2012/brunel2000_interactive.py
+LeNovere_2012/brunel2000_rand.py
+LeNovere_2012/brunel2000_rand_plastic.py
+LeNovere_2012/one_neuron_with_sine_wave.py
+
+BrodyHopfield.py
+CampbellSiegert.py
+balancedneuron.py
+brette-gerstner-fig-2c.py 
+brette-gerstner-fig-3d.py
+brunel-alpha-nest.py
+brunel-alpha-numpy.py
+brunel-delta-nest.py
+csa_example.py
+if_curve.py
+mc_neuron.py
+multimeter.py
+multimeter_file.py
+one-neuron-with-noise.py
+one-neuron.py
+pulsepacket.py
+repeated_stimulation.py
+test_tsodyks2_synapse.py
+testiaf.py
+tsodyks_depressing.py
+tsodyks_facilitating.py
+twoneurons.py
+vinit_example.py

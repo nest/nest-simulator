@@ -30,9 +30,9 @@
 
     Author: Marc-Oliver Gewaltig (marc-oliver.gewaltig@honda-ri.de)
 
-    $Date: 2012-10-11 15:50:10 +0200 (Thu, 11 Oct 2012) $
-    Last change: $Author: enger $
-    $Revision: 9902 $
+    $Date: 2012-12-13 17:28:44 +0100 (Thu, 13 Dec 2012) $
+    Last change: $Author: gewaltig $
+    $Revision: 10077 $
 */
 #include "slimodule.h"
 #include "slifunction.h"
@@ -139,13 +139,10 @@ namespace nest
       *
       * @section conventions Conventions
       * -# All interface functions expect and return nodes as vectors
-      *    of GIDs (Vi), with exception of only those functions that
-      *    absolutey need to take or provide addresses.
+      *    of GIDs (Vi).
       * -# Functions must document how they loop over GID vectors and
       *    how the function is applied to subnets provided as
       *    arguments.
-      * -# Functions expecting or returning addresses have the name
-      *    suffix @c ByAddr .
       * -# Functions that do not require overloading on the SLI level,
       *    need not carry their argument list in the SLI function
       *    name and need not be wrapped by SLI tries.
@@ -159,24 +156,12 @@ namespace nest
       * -# The network is accessed using the get_network() accessor
       *    function. 
       * -# Each interface function shall verify that there are enough
-      *    elements on the stack and check their data type as early 
-      *    as possible. Proper SLI error messages shall be issued in
-      *    case of error using
-           @verbatim
-           i->error(function, message);  // may be repeated for multi-line msg
-           i->raiseerror(i->{Kernel,InternalKernel,***}Error);    // set error flag in interpreter
-           return;                       // important to return to interpreter
-           @endverbatim
-      * -# No C++ exceptions should escape the interface function. Unspecified
-      *    exceptions should be caught and passed to the fallbackHandler, before
-      *    returning control to the interpreter.
-           @verbatim
-           catch ( std::exception& e )
-           {
-             KernelException::fallbackHandler(i, __PRETTY_FUNCTION__, e);
-             return;
-           }
-           @endverbatim
+      *    elements on the stack using (replace n by correct integer)
+      *    @verbatim
+      *    i->assert_stack_load(n);
+      *    @endverbatim
+      * -# Errors should trigger C++ exceptions. They will be caught
+      *    in the main interpreter loop.
       *
       * @section slidoc SLI Documentation
       * SLI documentation should be provided in nestmodule.cpp, ahead of each
@@ -185,12 +170,6 @@ namespace nest
 
      //@{
      
-     class ChangeSubnet_aFunction: public SLIFunction
-     { 
-      public:
-       void execute(SLIInterpreter *) const;
-     } changesubnet_afunction;
-  
      class ChangeSubnet_iFunction: public SLIFunction
      { 
       public:
@@ -203,42 +182,24 @@ namespace nest
        void execute(SLIInterpreter *) const;
      } currentsubnetfunction;
   
-     class GetNodes_i_bFunction: public SLIFunction
+     class GetNodes_i_D_b_bFunction: public SLIFunction
      { 
       public:
        void execute(SLIInterpreter *) const;
-     } getnodes_i_bfunction;
+     } getnodes_i_D_b_bfunction;
 
-     class GetLeaves_i_bFunction: public SLIFunction
+     class GetLeaves_i_D_bFunction: public SLIFunction
      { 
       public:
        void execute(SLIInterpreter *) const;
-     } getleaves_i_bfunction;
+     } getleaves_i_D_bfunction;
 
-     class GetChildren_i_bFunction: public SLIFunction
+     class GetChildren_i_D_bFunction: public SLIFunction
      { 
       public:
        void execute(SLIInterpreter *) const;
-     } getchildren_i_bfunction;
+     } getchildren_i_D_bfunction;
 
-     class GetAddressFunction: public SLIFunction
-     { 
-      public:
-       void execute(SLIInterpreter *) const;
-     } getaddressfunction;
-
-     class GetGIDFunction: public SLIFunction
-     { 
-      public:
-       void execute(SLIInterpreter *) const;
-     } getgidfunction;
-     
-     class GetLIDFunction: public SLIFunction
-     { 
-      public:
-       void execute(SLIInterpreter *) const;
-     } getlidfunction;
-     
      class GetStatus_iFunction: public SLIFunction
      { 
       public:
@@ -251,6 +212,12 @@ namespace nest
        void execute(SLIInterpreter *) const;
      } getstatus_Cfunction;
 
+     class GetStatus_aFunction: public SLIFunction
+     { 
+      public:
+       void execute(SLIInterpreter *) const;
+     } getstatus_afunction;
+
      class SetStatus_idFunction: public SLIFunction
      { 
       public:
@@ -262,7 +229,19 @@ namespace nest
       public:
        void execute(SLIInterpreter *) const;
      } setstatus_CDfunction;
-     
+
+     class Cva_CFunction: public SLIFunction
+     { 
+      public:
+       void execute(SLIInterpreter *) const;
+     } cva_cfunction;
+
+      class SetStatus_aaFunction: public SLIFunction
+     { 
+      public:
+       void execute(SLIInterpreter *) const;
+     } setstatus_aafunction;
+    
      class SetDefaults_l_DFunction: public SLIFunction
      { 
       public:
@@ -281,11 +260,12 @@ namespace nest
        void execute(SLIInterpreter *) const;
      } copymodel_l_l_Dfunction;
 
-     class FindConnections_DFunction: public SLIFunction
+
+     class GetConnections_DFunction: public SLIFunction
      { 
       public:
        void execute(SLIInterpreter *) const;
-     } findconnections_Dfunction;
+     } getconnections_Dfunction;
 
      class SimulateFunction: public SLIFunction
      { 
@@ -305,11 +285,35 @@ namespace nest
        void execute(SLIInterpreter *) const;
      } create_l_ifunction;
 
+     class RestoreNodes_aFunction: public SLIFunction
+     { 
+      public:
+       void execute(SLIInterpreter *) const;
+     } restorenodes_afunction;
+
+     class DataConnect_i_dict_sFunction: public SLIFunction
+     {
+      public:
+       void execute(SLIInterpreter *) const;
+     } dataconnect_i_dict_sfunction;
+
+     class DataConnect_aFunction: public SLIFunction
+     {
+      public:
+       void execute(SLIInterpreter *) const;
+     } dataconnect_afunction;
+
      class Connect_i_i_lFunction: public SLIFunction
      {
       public:
        void execute(SLIInterpreter *) const;
      } connect_i_i_lfunction;
+
+     class Connect_i_i_iFunction: public SLIFunction
+     {
+      public:
+       void execute(SLIInterpreter *) const;
+     } connect_i_i_ifunction;
 
      class Connect_i_i_d_d_lFunction: public SLIFunction
      {
@@ -317,17 +321,17 @@ namespace nest
        void execute(SLIInterpreter *) const;
      } connect_i_i_d_d_lfunction;
 
+     class Connect_i_i_d_d_iFunction: public SLIFunction
+     {
+      public:
+       void execute(SLIInterpreter *) const;
+     } connect_i_i_d_d_ifunction;
+
      class Connect_i_i_D_lFunction: public SLIFunction
      {
       public:
        void execute(SLIInterpreter *) const;
      } connect_i_i_D_lfunction;
-
-     class CompoundConnect_i_i_i_lFunction: public SLIFunction
-     {
-      public:
-       void execute(SLIInterpreter *) const;
-     } compoundconnect_i_i_i_lfunction;
 
      class DivergentConnect_i_ia_a_a_lFunction: public SLIFunction
      {
@@ -353,6 +357,12 @@ namespace nest
        void execute(SLIInterpreter *) const;
      } rconvergentconnect_ia_i_i_da_da_b_b_lfunction;
 
+     class RConvergentConnect_ia_ia_ia_daa_daa_b_b_lFunction: public SLIFunction
+     {
+      public:
+       void execute(SLIInterpreter *) const;
+     } rconvergentconnect_ia_ia_ia_daa_daa_b_b_lfunction;
+
      class ResetKernelFunction: public SLIFunction
      { 
       public:
@@ -365,16 +375,17 @@ namespace nest
        void execute(SLIInterpreter *) const;
      } resetnetworkfunction;
 
-     class NetworkDimensions_aFunction: public SLIFunction
-     { 
-      public:
-       void execute(SLIInterpreter *) const;
-     } networkdimensions_afunction;
-  
      class MemoryInfoFunction: public SLIFunction
      {
        void execute(SLIInterpreter *) const;
      } memoryinfofunction;
+
+#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
+     class MemoryThisjobBgFunction: public SLIFunction
+     {
+       void execute(SLIInterpreter *) const;
+     } memorythisjobbgfunction;
+#endif
 
      class PrintNetworkFunction : public SLIFunction
      {
@@ -391,6 +402,11 @@ namespace nest
        void execute(SLIInterpreter *) const;
      } numprocessesfunction;
 
+     class SetFakeNumProcessesFunction_i : public SLIFunction
+     {
+       void execute(SLIInterpreter *) const;
+     } setfakenumprocesses_ifunction;
+
      class SyncProcessesFunction : public SLIFunction
      {
        void execute(SLIInterpreter *) const;
@@ -401,10 +417,17 @@ namespace nest
        void execute(SLIInterpreter *) const; 
      } timecommunication_i_i_bfunction; 
 
-     class MPIProcessorNameFunction : public SLIFunction
+     class ProcessorNameFunction : public SLIFunction
      {
        void execute(SLIInterpreter *) const;
-     } mpiprocessornamefunction;
+     } processornamefunction;
+
+#ifdef HAVE_MPI
+     class MPIAbort_iFunction : public SLIFunction
+     {
+       void execute(SLIInterpreter *) const;
+     } mpiabort_ifunction;
+#endif
 
      class GetVpRngFunction : public SLIFunction
      {

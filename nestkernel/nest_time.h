@@ -116,27 +116,6 @@ namespace nest
   public:
     
     /**
-     * Error states of Time objects.
-     * Operations on Time objects can indicate certain error
-     * or state conditions.
-     * Among them are overflow and underflow during addition and subtraction.
-     * Also, when a value was rounded, this will be indicated in the 
-     * error conditions.
-     * @todo The error flags seem not to be set or used, no matter what
-     *       documentation elsewhere says. Needs review.ms2tic
-     */
-    enum ErrorType
-      { 
-	success=0, //!< Last operation succeeded.
-	round,     //!< Result of last operation was rounded.
-	truncate,  //!< Result of last operation was truncated.
-	overflow,  //!< Last operation produced an overflow; value Time::pos_inf()
-	underflow, //!< Last operation produced an underflow; value Time::neg_inf()
-	divzero,   //!< Last operation was division by zero.
-	format     //!< Format string in constructor was wrong. 
-      };
-
-    /**
      * Helper class to construct Time objects.
      */
     class step
@@ -167,8 +146,6 @@ namespace nest
 
     /**
      * Helper class to construct Time objects.
-     * The Time() constructor will raise the "truncated" error flag on
-     * construction from Time::ms() objects.
      */
     class ms
     {
@@ -193,7 +170,6 @@ namespace nest
      * Thus, the Time object can be used directly as step part of a 
      * combined (step, offset) representation of a time. Since 0 < offset <= h
      * by definition, and T = step * h - offset, we must round up.
-     * The truncation error flag is never raised.
      */
     class ms_stamp
     {
@@ -235,25 +211,26 @@ namespace nest
 
     /**
      * Construct from figure in units of ms.
-     * This constructor is identical to the intergral type constructors,
-     * however, it makes explicit in the code which units are used.
-     * It will raise the "truncated" error flag if the given time cannot
-     * be represented as a multiple of the resolution.
+     *
+     * The time given as double will be rounded to the nearest tic.
+     *
+     * @see Time(Time::ms_stamp)
      */ 
     Time(Time::ms);
 
     /**
-     * Construct from figure in units of ms forcing rounding down.
+     * Construct from figure in units of ms rounding up.
+     *
      * Time objects constructed from Time::ms_stamp objects are 
-     * set to the latest step not later than the time given. This
-     * can be used to create time stamps directly from times given
-     * as doubles. This constructor does NOT raise the
-     * truncated error flag.
-     * @note Only temporary Time objects may be created from Time::ms_stamp
-     *       objects. There is no guarantee that the correct number of steps
-     *       will be stored after a call to calibrate(). Objects constructed
-     *       from Time::ms_stamp are thus not safe across changes in resolution.
-     */ 
+     * set to the earliest time step no earlier than the time given
+     * in ms. The Time object obtained in such a way can in particular
+     * be used as the time stamp of a spike in stamp-offset representation:
+     *
+     *  stamp  = Time(Time::ms_stamp(spike_time));
+     *  offset = spike_time - stamp.get_ms();
+     *
+     * @see Time(Time::ms)
+     */
     Time(Time::ms_stamp);
     
     /**
@@ -279,6 +256,11 @@ namespace nest
     static 
     Time get_resolution(); 
 
+    /**
+     * Returns true if resolution is default resolution.
+     */
+    static
+    bool resolution_is_default();
 
     static nest::double_t get_ms_per_tic();
 
@@ -302,13 +284,11 @@ namespace nest
 
     /**
      * Recalculate steps from tics after a change in resolution.
-     * This may set the "truncated" error flag.
      */
     void calibrate();
 
     /**
      * Add a time to the object.
-     * This function sets the overflow error.
      */
     Time operator+=(const Time& t);
     Time operator-=(const Time& t);
@@ -318,16 +298,6 @@ namespace nest
     Time const& operator=(Time::ms const &);
     Time const& operator=(Time::step const &);
     Time const& operator=(Time::tic const &);
-
-    /**
-     * Return error state.
-     */
-    ErrorType get_error() const;
-
-    /**
-     * Clear the error state of the object.
-     */
-    void clear_error();   //!< reset error state.
 
     /**
      * Return time in tics.
@@ -366,12 +336,7 @@ namespace nest
 
 
     /** 
-     * Check, if the given time point conforms to the chosen time grid.       
-     * This check has a tolerance of 1/2 tic, so all points falling
-     * into an interval of width of one tic centered around a step will be rounded
-     * to the nearest grid point.
-     * This is the desired behavior, because times cannot be represented exactly
-     * as doubles, so we need to allow for a certain tolerance.
+     * Returns true if the Time is a multiple of the simulation step size.
      */
     inline
     bool is_grid_time() const
@@ -535,14 +500,22 @@ private:
 
     /**
      * Internal conversion from realtime (ms) to tics.
-     * Values are silently truncated to the nearst tic.
+     *
+     * Values are silently truncated to the nearest tic, such that any time
+     * within [n*tic-tic/2, n*tic+tic/2) is rounded to n*tic, where tic is
+     * the tic duration in ms.
+     * 
+     * @see ms2tics_floor_
      */
     static tic_t ms2tics_(double_t); 
 
     /**
      * Internal conversion from realtime (ms) to tics rounding down.
+     *
      * Values are always truncated to the largest tic not larger than the
      * argument (floor).
+     *
+     * @see ms2tics_
      */
     static tic_t ms2tics_floor_(double_t); 
 
@@ -557,22 +530,9 @@ private:
     tic_t   t_tics_;      //<! Value in tics.
     double  t_ms_;        //<! Value in ms.
     long_t  t_steps_;     //<! Value in number of simulation steps.
-    ErrorType error_;       //<! Error state.
   };
 
 
-  inline
-  Time::ErrorType Time::get_error() const
-  {
-    return error_;
-  }
-
-  inline
-  void Time::clear_error()
-  {
-    error_= Time::success;
-  }
-  
   inline 
   void Time::update_ms_()
   { 
@@ -587,8 +547,9 @@ private:
     t_steps_ = t_tics_ / TICS_PER_STEP_;
 
     // check for truncation. This happens if the new resolution is
-    // coarser that the old resolution. The following lines round
-    // to the next compatible step.
+    // coarser that the old resolution or if the time object is not
+    // representable in steps. The following lines round up to the
+    // next compatible step.
     if ( t_tics_ % TICS_PER_STEP_ != 0 )
       t_steps_ += 1;
   }
@@ -603,7 +564,6 @@ private:
       return T_POS_INF_.t_tics_;
     else
       return static_cast<tic_t>(std::floor(ms*TICS_PER_MS_+0.5)); 
-      //return static_cast<tic_t>(std::ceil(ms*TICS_PER_MS_)); 
   }
 
   inline 
@@ -696,6 +656,12 @@ private:
   }
 
   inline
+  bool Time::resolution_is_default()
+  {
+    return TICS_PER_STEP_ == TICS_PER_STEP_DEFAULT_;
+  }
+
+  inline
   Time Time::min()
   {
     return T_MIN_;
@@ -725,7 +691,6 @@ private:
     t_tics_  = t1.t_tics_;
     t_steps_ = t1.t_steps_;
     t_ms_    = t1.t_ms_;
-    error_   = t1.error_;
     return *this;
   }
 
@@ -790,7 +755,6 @@ private:
     t_tics_  = 0;
     t_steps_ = 0;
     t_ms_    = 0.0;
-    clear_error();
   }
 
   inline
@@ -806,9 +770,9 @@ private:
           the actual time value is meaningless (old infinity representation).
           The time is thus set to the infinity with the correct sign.
      */
-    if ( is_pos_inf() || error_ == overflow )
+    if ( is_pos_inf() )
       *this = T_POS_INF_;
-    else if ( is_neg_inf() || error_ == underflow )
+    else if ( is_neg_inf() )
       *this = T_NEG_INF_;
     else 
       update_steps_();

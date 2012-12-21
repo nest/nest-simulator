@@ -85,7 +85,7 @@
 % if precise_times is set to false
 {
   ResetKernel
-  [0] << 
+  0 << 
       /local_num_threads 1
       /resolution 0.1
   >> SetStatus
@@ -108,7 +108,7 @@ fail_or_die
 %
 {
   ResetKernel
-  [0] << 
+  0 << 
       /local_num_threads 1
       /resolution 0.1
   >> SetStatus
@@ -139,7 +139,7 @@ assert_or_die
 %    ---> spikes at steps 10 (==1.0ms), 20 (==2.0ms) and 30 (==3.0ms)
 {
   ResetKernel
-  [0] << 
+  0 << 
       /local_num_threads 1
       /resolution 0.1
   >> SetStatus
@@ -169,7 +169,7 @@ assert_or_die
 %    ---> error, spike time 1.05 not within tic/2 of step
 {
   ResetKernel
-  [0] << 
+  0 << 
       /local_num_threads 1
       /resolution 0.1
   >> SetStatus
@@ -190,7 +190,7 @@ assert_or_die
 %         30 (time within tic/2 of step moved to step)
 {
   ResetKernel
-  [0] << 
+  0 << 
       /local_num_threads 1
       /resolution 0.1
   >> SetStatus
@@ -223,7 +223,7 @@ assert_or_die
 %         step 31, offset 0.0999
 {
   ResetKernel
-  [0] << 
+  0 << 
       /local_num_threads 1
       /resolution 0.1
       /off_grid_spiking true  
@@ -259,7 +259,7 @@ assert_or_die
 %         not in the future and should not be emitted
 {
   ResetKernel
-  [0] << 
+  0 << 
       /local_num_threads 1
       /resolution 0.1
   >> SetStatus
@@ -286,7 +286,7 @@ assert_or_die
 %         that respect the offset (precise-timing model neurons)
 {
   ResetKernel
-  [0] << 
+  0 << 
       /local_num_threads 1
       /resolution 0.1
       /off_grid_spiking true  
@@ -320,7 +320,7 @@ assert_or_die
 %    ---> spike at step 101, spike shifted into the future; spike at 110 not shifted
 {
   ResetKernel
-  [0] << 
+  0 << 
       /local_num_threads 1
       /resolution 0.1
   >> SetStatus
@@ -356,7 +356,7 @@ assert_or_die
 %    ---> spike at step 101, spike shifted into the future; spike at 110 not shifted
 {
   ResetKernel
-  [0] << 
+  0 << 
       /local_num_threads 1
       /resolution 0.1
   >> SetStatus
@@ -451,7 +451,7 @@ assert_or_die
 
   ResetKernel
 
-  [0] << 
+  0 << 
          /local_num_threads 1
          /resolution h
 	 /off_grid_spiking true

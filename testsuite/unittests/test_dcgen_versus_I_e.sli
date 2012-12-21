@@ -30,7 +30,7 @@
    The approach is to simulate both situations for some time and compare membrane potentials at the end;
    Any model which supports current events and setting I_e is checked, other models are skipped.
 
-   SeeAlso: test_iaf_i0.sli
+   SeeAlso: testsuite::test_iaf_i0
 
    FirstVersion: January 2011
    Author: Sven Schrader
@@ -87,7 +87,7 @@ modeldict keys{
 	% compare final membrane potentials
 	n1 GetStatus /V_m get n2 GetStatus /V_m get eq dup {(pass) =}{ (failed: unequal voltages) =  executive } ifelse res exch append /res Set
 
-	} stopped {  clear (DC not allowed) = errordict /newerror false put } if % skip models that don't support current event
+	} stopped {  clear (DC not allowed) = errordict /newerror false put  } if % skip models that don't support current event
     }
     if   % model GetDefaults /I_e known record_VM and
 } forall % modeldict keys

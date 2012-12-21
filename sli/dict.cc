@@ -30,6 +30,8 @@
 #include <cstdlib>
 #include <string>
 
+const Token Dictionary::VoidToken;
+
 Dictionary::~Dictionary()
 {
 }
@@ -44,22 +46,6 @@ Token& Dictionary::operator[](const char *n)
   return operator[](Name(n));
 }
 
-const Token& Dictionary::operator[](const Name &n) const
-{      
-  if (!known(n)) 
-    throw UndefinedName(n.toString());
-  return lookup(n);
-}
-
-Token& Dictionary::operator[](const Name &n)
-{  
-  return this->TokenMap::operator[](n);
-}
-
-void Dictionary::insert_move(const Name &n, Token &t)
-{
-    this->TokenMap::operator[](n).move(t);
-}
 
 void Dictionary::clear()
 {

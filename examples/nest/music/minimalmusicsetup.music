@@ -5,7 +5,7 @@ stoptime=0.01
   binary=nest
   np=1
   args=minimalmusicsetup_sendnest.sli
- 
+
 [to]
   binary=nest
   np=1

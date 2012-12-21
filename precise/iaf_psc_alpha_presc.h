@@ -77,6 +77,11 @@
   spike_detector has to be set to true in order to record the offsets
   in addition to the on-grid spike times.
 
+  Note:
+  tau_m != tau_syn is required by the current implementation to avoid a
+  degenerate case of the ODE describing the model [1]. For very similar values,
+  numerics will be unstable.
+ 
   References:
   [1] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact Subthreshold 
   Integration with Continuous Spike Times in Discrete Time Neural Network 
@@ -91,7 +96,7 @@
 
   Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
   
-  SeeAlso: iaf_psc_alpha, iaf_psc_alpha_canon, iaf_psc_delta_presc
+  SeeAlso: iaf_psc_alpha, iaf_psc_alpha_canon, iaf_psc_delta_canon
 
 */ 
 
@@ -269,7 +274,11 @@ namespace nest{
       Parameters_();  //!< Sets default parameter values
 
       void get(DictionaryDatum&) const;  //!< Store current values in dictionary
-      void set(const DictionaryDatum&);  //!< Set values from dicitonary
+
+      /** Set values from dictionary.
+       * @returns Change in reversal potential E_L, to be passed to State_::set()
+       */
+      double set(const DictionaryDatum&);
     };
     
     // ---------------------------------------------------------------- 
@@ -291,7 +300,13 @@ namespace nest{
       State_();  //!< Default initialization
       
       void get(DictionaryDatum&, const Parameters_&) const;
-      void set(const DictionaryDatum&, const Parameters_&);
+
+      /** Set values from dictionary.
+       * @param dictionary to take data from
+       * @param current parameters
+       * @param Change in reversal potential E_L specified by this dict
+       */
+      void set(const DictionaryDatum&, const Parameters_&, double);
     };
     
     // ---------------------------------------------------------------- 
@@ -408,9 +423,9 @@ port iaf_psc_alpha_presc::connect_sender(DataLoggingRequest& dlr,
     void iaf_psc_alpha_presc::set_status(const DictionaryDatum &d)
   {
     Parameters_ ptmp = P_;  // temporary copy in case of errors
-    ptmp.set(d);                       // throws if BadProperty
+    const double delta_EL = ptmp.set(d);                       // throws if BadProperty
     State_      stmp = S_;  // temporary copy in case of errors
-    stmp.set(d, ptmp);                 // throws if BadProperty
+    stmp.set(d, ptmp, delta_EL);                 // throws if BadProperty
     
     // if we get here, temporaries contain consistent set of properties
     P_ = ptmp;

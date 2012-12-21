@@ -48,7 +48,6 @@ namespace nest
   using std::vector;
   typedef Communicator::OffGridSpike OffGridSpike;
 
-  class Compound;
   class Network;
   
   /**
@@ -141,7 +140,12 @@ namespace nest
      */
     thread get_num_threads() const;
     
-    void set_threads(thread);
+    /**
+     * Set the number of threads by setting the internal variable
+     * n_threads_, the corresponding value in the Communicator, and
+     * the OpenMP number of threads.
+     */
+    void set_num_threads(thread n_threads);
     
     /**
      * Return the number of processes used during simulation.
@@ -227,10 +231,15 @@ namespace nest
     bool update_reference() const;
 
     /**
-     * Update a fixed set of nodes per thread.
+     * Update a fixed set of nodes per thread using pthreads.
      * This is called by a thread.
      */
     void threaded_update(thread);
+
+    /**
+     * Update a fixed set of nodes per thread using OpenMP.
+     */
+    void threaded_update_openmp();
 
     /** Update without any threading. */
     void serial_update();
@@ -564,12 +573,6 @@ namespace nest
   }
 
   inline 
-  void Scheduler::set_threads(thread t)
-  {
-    n_threads_ = t;
-  }
-
-  inline 
   thread Scheduler::get_num_processes() const
   {
     return Communicator::get_num_processes();
@@ -674,7 +677,6 @@ namespace nest
       return;
     
     nodes_vec_[n->get_thread()].push_back(n);
-    ++n_nodes_;
   }
 
   inline

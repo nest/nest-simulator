@@ -90,6 +90,15 @@ public:
   void backtrace(SLIInterpreter *, int) const ;
 };
 
+class IforalliterFunction: public SLIFunction
+{
+public:
+  IforalliterFunction() {}
+  void execute(SLIInterpreter *) const;
+  void backtrace(SLIInterpreter *, int) const ;
+};
+
+
 class IforallindexedarrayFunction: public SLIFunction
 {
 public:

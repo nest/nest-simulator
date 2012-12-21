@@ -98,7 +98,7 @@ const std::string RegexpModule::name(void) const
 
 const std::string RegexpModule::commandstring(void) const
     {
-      return std::string("/regexp /C++ ($Revision: 9902 $) provide-component  /regexp /SLI (1.4) require-component");
+      return std::string("/regexp /C++ ($Revision: 9952 $) provide-component  /regexp /SLI (1.4) require-component");
     }
 
 

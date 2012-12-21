@@ -27,16 +27,16 @@
     behavior of integrate-and-fire neurons in response to a subthreshold
     oscillation. This phenomenon is shown in Fig. 1 of
 
-	C.D. Brody and J.J. Hopfield
-	Simple Networks for Spike-Timing-Based Computation,
-	with Application to Olfactory Processing
-	Neuron 37, 843-852 (2003)
+        C.D. Brody and J.J. Hopfield
+        Simple Networks for Spike-Timing-Based Computation,
+        with Application to Olfactory Processing
+        Neuron 37, 843-852 (2003)
 
     Neurons receive a weak 35Hz oscillation, a gaussian noise current
     and an increasing DC. The time-locking capability is shown to
     depend on the input current given.
     All parameters are taken from the above paper.
-	
+
    Sven Schrader
 */
 
@@ -54,10 +54,10 @@ ResetKernel
 
 /subnet Create /net Set
 net ChangeSubnet
-model N Create ; 
+model N Create ;
 
 [0] ChangeSubnet
-net GetNodes /neurons Set 
+net GetNodes /neurons Set
 
 sd << /to_file true /withgid true >> SetStatus
 
@@ -72,19 +72,19 @@ noise
 <<
     /mean    0.   pA
     /std     200. pA
->> SetStatus 
+>> SetStatus
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 0 1 N 1 sub {
     /i Set neurons i get
     <<
-	/tau_m  20 ms
-	/V_th   20 mV
-	/E_L    10 mV
-	/t_ref   2 ms
-	/V_reset 0 mV
-	/C_m   200 pF
-	/V_m     0 mV
-	/I_e i bias_end bias_begin sub N div mul bias_begin add
+        /tau_m  20 ms
+        /V_th   20 mV
+        /E_L    10 mV
+        /t_ref   2 ms
+        /V_reset 0 mV
+        /C_m   200 pF
+        /V_m     0 mV
+        /I_e i bias_end bias_begin sub N div mul bias_begin add
     >>
     SetStatus
 } for

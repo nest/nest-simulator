@@ -23,7 +23,9 @@
  *
  */
  
-#include "device.h" 
+#include "device.h"
+
+#include "dictutils.h"
 
 class SpikeEvent;
 class CurrentEvent;
@@ -125,6 +127,7 @@ namespace nest {
      * @see class comment for details.
      */
     bool is_active(const Time&) const;  
+    void get_status(DictionaryDatum &d) const;
   };
 
   template <typename EmittedEvent>
@@ -169,6 +172,14 @@ namespace nest {
     /* Input is the time stamp of the spike to be emitted. */
     const long_t stamp = T.get_steps();
     return get_t_min_() < stamp && stamp <= get_t_max_();
+  }
+
+  template <typename EmittedEvent>
+  inline
+  void StimulatingDevice<EmittedEvent>::get_status(DictionaryDatum &d) const
+  {
+    (*d)[names::type] = LiteralDatum(names::stimulator);
+    Device::get_status(d);
   }
 
 }  // namespace nest

@@ -177,16 +177,6 @@ Author: Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
     Buffers_    B_;
   };
 
-  inline  
-  port noise_generator::check_connection(Connection& c, port receptor_type)
-  {
-    DSCurrentEvent e;
-    e.set_sender(*this);
-    c.check_event(e);
-    const port receptor = c.get_target()->connect_sender(e, receptor_type);
-    ++P_.num_targets_;
-    return receptor;
-  }
 
   inline
   void noise_generator::get_status(DictionaryDatum &d) const
@@ -199,6 +189,7 @@ Author: Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
   void noise_generator::set_status(const DictionaryDatum &d)
   {
     Parameters_ ptmp = P_;  // temporary copy in case of errors
+    ptmp.num_targets_= P_.num_targets_; // Copy Constr. does not copy connections
     ptmp.set(d, *this);               // throws if BadProperty
 
     // We now know that ptmp is consistent. We do not write it back
@@ -208,6 +199,7 @@ Author: Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
 
     // if we get here, temporaries contain consistent set of properties
     P_ = ptmp;
+    P_.num_targets_= ptmp.num_targets_;
   }
 
 }

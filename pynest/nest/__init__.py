@@ -44,6 +44,8 @@ import nest.pynestkernel as _kernel
 
 hl_api.nest = _kernel
 
+Datum = _kernel.Datum
+
 sli_push = _kernel.pushsli
 hl_api.sps = sli_push
 sps = sli_push
@@ -52,6 +54,7 @@ sli_pop = _kernel.popsli
 hl_api.spp = sli_pop
 spp = sli_pop
 
+   
 def sli_run(*args):
     raise NESTError("PyNEST is not initialized properly. Please call init() first.")
 
@@ -147,10 +150,22 @@ def init(argv) :
     initialized |= _kernel.initialize(argv, __path__[0])
 
     if initialized :
+
         if not quiet :
             kernel_sr("pywelcome")
         catch_errors(True)
 
+        # Dirty hack to get models completion in iPython shell
+        try:
+            __IPYTHON__
+        except NameError:
+            pass
+        else:
+            try:
+                import keyword
+                keyword.kwlist += hl_api.Models()
+            except ImportError:
+                pass
 
 def test ():
     """ Runs a battery of unit tests on PyNEST """

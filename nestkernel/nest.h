@@ -93,7 +93,7 @@ namespace nest {
    *  Unsigned long type for enumerations.
    */
 
-  typedef size_t   index;      ///<
+  typedef size_t index;
   const size_t INDEX_MAX = UINT_MAX;
 
   /**
@@ -102,7 +102,7 @@ namespace nest {
    * identification.
    * For invalid or undefined threads, the value -1 is used.
    */
-  typedef int_t    thread;
+  typedef int_t thread;
 
   /**
    * Value for invalid connection port number.
@@ -110,18 +110,30 @@ namespace nest {
   const thread invalid_thread_ = -1;
 
   /**
-   * Connection port number.
+   * Connection port number to distinguish incoming connections,
+   * also called receiver port.
    * Connections between Nodes are assigned port numbers.
    * Valid port numbers start at zero (0.
    * The value -1 is used for invalid or unassigned ports.
    */
-  typedef int_t    port;
-  typedef long_t   rport;
+#ifdef HAVE_MUSIC
+  typedef long_t rport;
+#else
+  typedef char rport;
+#endif
+
+  /**
+   * Connection port number to distinguis outgoing connections.
+   * Connections between Nodes are assigned port numbers.
+   * Valid port numbers start at zero (0.
+   * The value -1 is used for invalid or unassigned ports.
+   */
+  typedef long_t port;
 
   /**
    * Value for invalid connection port number.
    */
-  const port invalid_port_ = -1;
+  const rport invalid_port_ = -1;
   
   /**
    * Weight of a connection.
@@ -131,7 +143,7 @@ namespace nest {
    * as a non-existing connection. Otherwise, there is no default range for 
    * connection weights.
    */
-  typedef double_t  weight;
+  typedef double_t weight;
 
   /**
    * Delay of a connection.
@@ -139,7 +151,7 @@ namespace nest {
    * before an Event arrives at the receiving Node.
    * Delays must be equal or larger than one.
    */
-  typedef uint_t    delay;
+  typedef uint_t delay;
 
 }
 #endif

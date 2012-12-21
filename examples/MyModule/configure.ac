@@ -54,7 +54,7 @@ AC_ARG_WITH(nest,[  --with-nest=script	nest-config script including path],
 
 # does nest-config work
 AC_MSG_CHECKING([for nest-config ])
-AC_CHECK_FILE($NEST_CONFIG, HAVE_NEST=yes, 
+AC_CHECK_FILE($NEST_CONFIG, HAVE_NEST=yes,
               AC_MSG_ERROR([No usable nest-config was found. You may want to use --with-nest-config.]))
 AC_MSG_RESULT(found)
 
@@ -167,7 +167,7 @@ AC_OUTPUT
 
 # -----------------------------------------------
 # Report, after output at end of configure run
-# Must come after AC_OUTPUT, so that it is 
+# Must come after AC_OUTPUT, so that it is
 # displayed after libltdl has been configured
 # -----------------------------------------------
 

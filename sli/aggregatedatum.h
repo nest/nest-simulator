@@ -63,9 +63,9 @@ class AggregateDatum : public TypedDatum<slt>, public C
     }
   
 public:
-    AggregateDatum() {}
-    AggregateDatum(const AggregateDatum<C,slt> &d):TypedDatum<slt>(d),C(d) {}
-    AggregateDatum(const C& c): TypedDatum<slt>(),C(c) { }    
+  AggregateDatum() {TypedDatum<slt>::unset_executable();}
+ AggregateDatum(const AggregateDatum<C,slt> &d):TypedDatum<slt>(d),C(d) {}
+ AggregateDatum(const C& c): TypedDatum<slt>(),C(c) { }    
 
     virtual ~AggregateDatum() {}
        

@@ -44,7 +44,7 @@ namespace nest {
   class Scheduler;
   class Model;
 
-  class Compound;
+  class Subnet;
   class Network;
   class Archiving_Node;
   class histentry;
@@ -74,24 +74,23 @@ namespace nest {
    * to direcly subclass from base class Node.
    *
    * @see class Event
-   * @see Compound
+   * @see Subnet
    * @ingroup user_interface
    */
 
   /* BeginDocumentation
      Name: Node - General properties of all nodes.
      Parameters:
-     address    arraytype   - The fully qualified address of the node in the network tree (cf. global_id, local_id)
      frozen     booltype    - Whether the node is updated during simulation
-     global_id  integertype - The global id of the node (cf. address, local_id)
+     global_id  integertype - The global id of the node (cf. local_id)
      local      booltype    - Whether the node is available on the local process
-     local_id   integertype - The id of the node in the current  (cf. address, global_id)
+     local_id   integertype - The id of the node in the current  (cf. global_id)
      model      literaltype - The model type the node was created from 
      parent     integertype - The global id of the parent subnet
      state      integertype - The state of the node (see the help on elementstates for details)
      thread     integertype - The id of the thread the node is assigned to (valid locally)
      vp         integertype - The id of the virtual process the node is assigned to (valid globally)
-     SeeAlso: GetStatus, SetStatus, elementstates, GetAddress, GetGID
+     SeeAlso: GetStatus, SetStatus, elementstates
    */
   
   
@@ -99,7 +98,8 @@ namespace nest {
   {
     friend class Network;
     friend class Scheduler;
-    friend class Compound;
+    friend class Subnet;
+    friend class proxynode;
     friend class Synapse;
     friend class Model;
     
@@ -190,21 +190,7 @@ namespace nest {
      * This name is identical to the name that is used to identify
      * the model in the interpreter's model dictionary.
      */
-    virtual
     std::string get_name() const;
-
-
-    /** 
-     * Return the size of the node. The return value for
-     * standard nodes is 0. For subnets and other compounds, 
-     * size() will return the number of nodes it contains.
-     */
-    virtual
-    size_t size() const { return 0;}
-
-    virtual
-    Node *operator[](index) const {return 0;}
-
 
     virtual 
       void register_connector(nest::Connector&) {}
@@ -215,7 +201,7 @@ namespace nest {
      * Returns the global network ID of the Node.
      * Each node has a unique network ID which can be used to access
      * the Node comparable to a pointer. By definition, the top-level
-     * compound has ID=0.
+     * subnet has ID=0.
      */
     index get_gid() const;
 
@@ -227,25 +213,29 @@ namespace nest {
     index get_lid() const;
 
     /**
+     * Return the index to the node in the node array of the parent subnet.
+     * @note Since subnets no longer store non-local nodes, LIDs are no
+     *       longer identical to these indices.
+     */
+    index get_subnet_index() const;
+
+    /**
      * Return model ID of the node.
      * Returns the model ID of the model for this node.
-     * Model IDs start with 0, Compound always having ID 0.
+     * Model IDs start with 0, Subnet always having ID 0.
      * @note The model ID is not stored in the model prototype instance. 
      *       It is only set when actual nodes are created from a prototype.
-     * @note A node ID of -1 indicates that the model ID has not been set.
-     *       This identifies Compound instances that are used as containers
-     *       for replicas of nodes without proxies.
      */
     int get_model_id() const;
 
     /**
-     * Return pointer to parent compound.
-     * Each node is member of a compound whose pointer can be accessed
+     * Return pointer to parent subnet.
+     * Each node is member of a subnet whose pointer can be accessed
      * through this function.
      * This pointer must be non NULL for all Nodes which are not the
-     * top-level compound. Only the top-level compound returns NULL.
+     * top-level subnet. Only the top-level subnet returns NULL.
      */
-    Compound* get_parent() const;
+    Subnet* get_parent() const;
 
     /************************************************
      * Functions to modify and test state flags
@@ -679,7 +669,7 @@ namespace nest {
 
     /**
      * @returns true if node can be entered with the NestModule::ChangeSubnet() 
-     *          commands (only true for Compounds).
+     *          commands (only true for Subnets).
      */
     virtual bool allow_entry() const;
 
@@ -701,12 +691,13 @@ namespace nest {
       * @internal
       */
      void set_status_base(const DictionaryDatum&);
-    
+
   private:
 
-    void  set_lid_(index);         //!< Set local id, relative to the parent compound
-    void  set_parent_(Compound *); //!< Set pointer to parent compound.
+    void  set_lid_(index);         //!< Set local id, relative to the parent subnet
+    void  set_parent_(Subnet *);   //!< Set pointer to parent subnet.
     void  set_gid_(index);         //!< Set global node id
+    void  set_subnet_index_(index);//!< Index into node array in subnet
 
     /** Return a new dictionary datum .
      *   
@@ -719,6 +710,36 @@ namespace nest {
     DictionaryDatum get_status_dict_();
 
   protected:
+
+    /**
+     * Return the number of thread siblings in SiblingContainer.
+     *
+     * This method is meaningful only for SiblingContainer, for which it
+     * returns the number of siblings in the container.
+     * For all other models (including Subnet), it returns 0, which is not
+     * wrong. By defining the method in this way, we avoid many dynamic casts.
+     */
+    virtual
+    size_t num_thread_siblings_() const { return 0;}
+
+    /**
+     * Return the specified member of a SiblingContainer.
+     *
+     * This method is meaningful only for SiblingContainer, for which it
+     * returns the pointer to the indexed node in the container.
+     * For all other models (including Subnet), it returns a null pointer
+     * and throws and assertion.By defining the method in this way, we avoid
+     * many dynamic casts.
+     */
+    virtual
+    Node* get_thread_sibling_(index) const { assert(false); return 0; }
+
+    /**
+     * Return specified member of a SiblingContainer, with access control.
+     */
+    virtual
+    Node* get_thread_sibling_safe_(index) const { assert(false); return 0; }
+
      /**
       * Private function to initialize the state of a node to model defaults.
       * This function, which must be overloaded by all derived classes, provides
@@ -752,17 +773,16 @@ namespace nest {
    private:
     index    gid_;           //!< Global element id (within network).
     index    lid_;           //!< Local element id (within parent).
+    index    subnet_index_;  //!< Index of node in parent's node array
     
     /**
      * Model ID.
      * It is only set for actual node instances, not for instances of class Node
      * representing model prototypes. Model prototypes always have model_id_==-1.
-     * Compound instances with model_id_==-1 are containers of replicas of nodes
-     * without proxies.
      * @see get_model_id(), set_model_id()
      */
     int      model_id_;      
-    Compound *parent_;            //!< Pointer to parent.
+    Subnet *parent_;              //!< Pointer to parent.
     std::bitset<n_flags> stat_;   //!< enum flag as bit mask.
 
     thread   thread_;        //!< thread node is assigned to
@@ -860,6 +880,12 @@ namespace nest {
   }
 
   inline
+  index Node::get_subnet_index() const
+  {
+    return subnet_index_;
+  }
+
+  inline
   void Node::set_gid_(index i)
   {
     gid_=i;
@@ -869,6 +895,12 @@ namespace nest {
   void Node::set_lid_(index i)
   {
     lid_=i;
+  }
+
+  inline
+  void Node::set_subnet_index_(index i)
+  {
+    subnet_index_ = i;
   }
 
   inline
@@ -883,16 +915,14 @@ namespace nest {
     model_id_ = i;
   }
 
-
   inline
-  Compound * Node::get_parent() const
+  Subnet * Node::get_parent() const
   {
     return parent_;
   }
 
-
   inline
-  void Node::set_parent_(Compound *c)
+  void Node::set_parent_(Subnet *c)
   {
     parent_=c;
   }

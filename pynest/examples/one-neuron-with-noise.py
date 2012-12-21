@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # one-neuron-with-noise.py
 #
 # This file is part of NEST.
@@ -37,4 +38,3 @@ nest.Connect(voltmeter, neuron)
 nest.Simulate(1000.0)
 
 nest.voltage_trace.from_device(voltmeter)
-nest.voltage_trace.show()

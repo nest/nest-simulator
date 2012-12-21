@@ -41,81 +41,25 @@ class NumericDatum: public GenericDatum<D,slt>
 {
  protected:
   static sli::pool memory;
+  using GenericDatum<D,slt>::d;
 
  private:
   Datum *clone(void) const
     {
-        return new NumericDatum<D,slt>(*this);    
+      return new NumericDatum<D,slt>(*this);    
     }
 
 public:
     
-    NumericDatum() { this->d = (D) 0;}
-    NumericDatum(const D& d_s) {this->d=d_s;}
+  NumericDatum() { d = (D) 0;}
+  NumericDatum(const D& d_s) {d=d_s;}
     virtual ~NumericDatum() {}
     
-    
-    void incr(void)
-    {
-        ++(this->d) ;
-    }
+    operator D() const
+    {return d;}
 
-    void decr(void )
-    {
-        --(this->d) ;
-    }
-
-    void add(const NumericDatum<D,slt> &nd ) 
-    {
-        this->d += nd.d;
-    }
-    
-    void add(D n ) 
-    {
-        this->d += n;
-    }
-
-    void sub(const NumericDatum<D,slt> &nd ) 
-    {
-        this->d -= nd.d;
-    }
-
-    void sub(D n ) 
-    {
-        this->d -= n;
-    }
-    void sub_from(const NumericDatum<D,slt> &nd ) 
-    {
-        this->d = nd.d - this->d;
-    }
-
-    void sub_from(D n ) 
-    {
-        this->d = n - this->d;
-    }
-
-    void mul(const NumericDatum<D,slt> &nd ) 
-    {
-        this->d *= nd.d;
-    }
-    void mul(D n ) 
-    {
-        this->d *= n;
-    }
-
-    void div(const NumericDatum<D,slt> &nd ) 
-    {
-        this->d /= nd.d;
-    }
-    void div(D n ) 
-    {
-        this->d /= n ;
-    }
-
-    void div_by(D n ) 
-    {
-        this->d = n / this->d ;
-    }   
+    operator D& () 
+    {return d;}
 
   void  input_form(std::ostream &) const;
   void  pprint(std::ostream &) const;

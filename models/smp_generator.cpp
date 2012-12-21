@@ -138,7 +138,7 @@ nest::smp_generator::smp_generator()
 
 nest::smp_generator::smp_generator(const smp_generator&n)
   : Node(n),
-    device_(),
+    device_(n.device_),
     P_(n.P_),
     S_(n.S_),
     B_(n.B_, *this)

@@ -102,7 +102,7 @@ class Connection
    * \param receptor The ID of the requested receptor type
    * \param the last spike produced by the presynaptic neuron (for STDP and maturing connections) 
    */
-  virtual void check_connection(Node & s, Node & r, port receptor, double_t t_lastspike);
+  virtual void check_connection(Node & s, Node & r, rport receptor, double_t t_lastspike);
 
   /**
    * This function checks if the event type is supported by the concrete
@@ -127,7 +127,7 @@ class Connection
   /**
    * Return the rport of the connection
    */
-  long_t get_rport() const;
+  rport get_rport() const;
 
   /**
    * Return the target of the connection
@@ -145,18 +145,18 @@ class Connection
  protected:
 
   Node *target_;       //!< Target node
-  long_t rport_;       //!< Receiver port at the target node
+  rport rport_;         //!< Receiver port at the target node
 };
 
 inline
-void Connection::check_connection(Node & s, Node & r, port receptor_type, double_t)
+void Connection::check_connection(Node & s, Node & r, rport receptor_type, double_t)
 {
   target_ = &r;
   rport_ = s.check_connection(*this, receptor_type);
 }
 
 inline
-long_t Connection::get_rport() const
+rport Connection::get_rport() const
 {
   return rport_;
 }

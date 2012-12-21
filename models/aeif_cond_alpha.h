@@ -70,7 +70,6 @@ Dynamic state variables:
 Membrane Parameters:
   C_m        double - Capacity of the membrane in pF
   t_ref      double - Duration of refractory period in ms. 
-  V_peak     double - Spike detection threshold in mV.
   V_reset    double - Reset value for V_m after a spike. In mV.
   E_L        double - Leak reversal potential in mV. 
   g_L        double - Leak conductance in nS.
@@ -81,7 +80,8 @@ Spike adaptation parameters:
   b          double - Spike-triggered adaptation in pA.
   Delta_T    double - Slope factor in mV
   tau_w      double - Adaptation time constant in ms
-  V_t        double - Spike initiation threshold in mV (V_th can also be used for compatibility).
+  V_th       double - Spike initiation threshold in mV
+  V_peak     double - Spike detection threshold in mV.
 
 Synaptic parameters
   E_ex       double - Excitatory reversal potential in mV.

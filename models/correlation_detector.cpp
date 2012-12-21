@@ -227,7 +227,7 @@ void nest::correlation_detector::handle(SpikeEvent & e)
 {
   // The receiver port identifies the sending node in our 
   // sender list.
-  const port sender = e.get_rport();
+  const rport sender = e.get_rport();
   
   // If this assertion breaks, the sender does not honor the
   // receiver port during connection or sending. 

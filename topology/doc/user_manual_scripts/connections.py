@@ -174,6 +174,60 @@ plt.savefig('../user_manual_figures/conn2.png', bbox_inches='tight')
 
 # -----------------------------------------------
 
+# 3d masks
+
+def conn_figure_3d(fig, layer, connd, targets=None, showmask=True, showkern=False,
+                xticks=range(-5,6),yticks=range(-5,6),
+                xlim=[-5.5,5.5],ylim=[-5.5,5.5]):
+    if targets==None:
+        targets=((tp.FindCenterElement(layer),'red'),)
+
+    tp.PlotLayer(layer, fig=fig, nodesize=20, nodecolor=(.5,.5,1.))
+    for src, clr in targets:
+        if showmask:
+            mask = connd['mask']
+        else:
+            mask = None
+        if showkern:
+            kern = connd['kernel']
+        else:
+            kern = None
+        tp.PlotTargets(src, layer, fig=fig, mask=mask, kernel=kern,
+                       src_size=250, tgt_color=clr, tgt_size=60,
+                       kernel_color='green')
+
+    ax = fig.gca()
+    ax.set_aspect('equal', 'box')
+    plt.draw()
+
+def free_mask_3d_fig(fig, loc, cdict):
+    nest.ResetKernel()
+    l = tp.CreateLayer({'rows': 11, 'columns': 11, 'layers': 11, 'extent': [11.,11.,11.],
+                        'elements': 'iaf_neuron'})
+    tp.ConnectLayers(l, l, cdict)
+
+    fig.add_subplot(loc,projection='3d')
+    conn_figure_3d(fig, l, cdict, xticks=range(-5,6,2), yticks=range(-5,6,2))
+
+fig = plt.figure()
+
+#{ conn_3d_a #}
+conndict = {'connection_type': 'divergent',
+            'mask': {'box': {'lower_left' : [-2.,-1.,-1.],
+                             'upper_right': [ 2., 1., 1.]}}}
+#{ end #}
+free_mask_3d_fig(fig, 121, conndict)
+
+#{ conn_3d_b #}
+conndict = {'connection_type': 'divergent',
+            'mask': {'spherical': {'radius': 2.5}}}
+#{ end #}
+free_mask_3d_fig(fig, 122, conndict)
+
+plt.savefig('../user_manual_figures/conn_3d.png', bbox_inches='tight')
+
+# -----------------------------------------------
+
 # grid masks
 
 def grid_mask_fig(fig, loc, cdict):

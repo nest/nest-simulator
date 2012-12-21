@@ -39,7 +39,9 @@ librandom_la_SOURCES=\
 		poisson_randomdev.h poisson_randomdev.cpp \
 		randomdev.h randomdev.cpp \
 		uniformint_randomdev.h uniformint_randomdev.cpp \
-		gslrandomgen.h gslrandomgen.cpp
+		gslrandomgen.h gslrandomgen.cpp \
+		gsl_binomial_randomdev.h gsl_binomial_randomdev.cpp
+
 
 librandom_la_CXXFLAGS=  @SLI_CXXBACKEND@ @AM_CXXFLAGS@
 

@@ -31,11 +31,8 @@
 #include <map>
 #include "sliexceptions.h"
 
-typedef  std::map<Name,Token, std::less<Name> > TokenMap;
 
-// This is a 'manual' instantiation of the STL-template, since g++2.7.2
-// seemed not to  be able to resolve the original function-template as
-// found in <map.h>
+typedef  std::map<Name,Token, std::less<Name> > TokenMap;
 
 inline bool operator==(const TokenMap & x, const TokenMap &y)
 {
@@ -47,8 +44,6 @@ inline bool operator==(const TokenMap & x, const TokenMap &y)
  */
 class Dictionary :private TokenMap
 {
-  const Token VoidToken;
-
   /**
    * Helper class for lexicographical sorting of dictionary entries.
    * Provides comparison operator for ascending, case-insensitive 
@@ -75,29 +70,45 @@ class Dictionary :private TokenMap
   };
   
 public:
-  Dictionary(const Token &t = Token()) : VoidToken(t) {}
-  Dictionary(const Dictionary &d) : TokenMap(d), VoidToken(d.VoidToken) {}
+  Dictionary() {}
+  Dictionary(const Dictionary &d) : TokenMap(d), refs_on_dictstack_(0) {}
   ~Dictionary();
   
   using TokenMap::erase;
   using TokenMap::size;
   using TokenMap::begin;
   using TokenMap::end;
+  using TokenMap::iterator;
+  using TokenMap::find;
 
   void clear();
 
   /**
    * Lookup and return Token with given name in dictionary.
+   * If the name is not found, an empty token is returned. 
+   * This version of lookup is deprecated and will disappear in future versions.
+   * Please use lookup2() instead.
    * @note The token returned should @b always  be stored as a 
    *       <tt>const \&</tt>, so that the control flag for 
    *       dictionary read-out is set on the Token in the dictionary,
    *       not its copy.  
    */
+
   const Token & lookup(const Name &n) const;
+
+  /**
+   * lookup a name in the dictionary. If the name is not found an UndefinedName exception is thrown.
+   * lookup2 is the preferred way to retrieve entries from the dictionary. 
+   * @note The token returned should @b always  be stored as a 
+   *       <tt>const \&</tt>, so that the control flag for 
+   *       dictionary read-out is set on the Token in the dictionary,
+   *       not its copy.  
+   */
+  const Token & lookup2(const Name &n) const; //throws UndefinedName
   bool known(const Name &) const;
   
-  void insert(const Name &n, const Token &t);
-  void insert_move(const Name &, Token &);
+  Token & insert(const Name &n, const Token &t);
+  Token & insert_move(const Name &, Token &);
 
   //! Remove entry from dictionary
   void remove(const Name& n);  
@@ -106,8 +117,6 @@ public:
   Token& operator[](const Name &);
   const Token& operator[](const char*) const;
   Token& operator[](const char *);
-  
-  const Token & getvoid(void) { return VoidToken; }
   
   bool empty(void) const { return TokenMap::empty(); }
       
@@ -164,7 +173,7 @@ public:
    * details. To allow for inspection of all elements in a dictionary,
    * we export the constant iterator type and begin() and end() methods.
    */  
-  const_iterator begin() const;
+  //  const_iterator begin() const;
 
   /** 
    * One-past-last element in dictionary.
@@ -172,14 +181,41 @@ public:
    * details. To allow for inspection of all elements in a dictionary,
    * we export the constant iterator type and begin() and end() methods.
    */  
-  const_iterator end() const;
+  //const_iterator end() const;
 
   /**
    *
    */
   void initialize_property_array(Name propname);
   
+  /**
+   * This function is called when a dictionary is pushed to the dictionary stack.
+   * The dictioray stack must keep track about which dictioraries are on the dictionary stack. 
+   * If a dictionary is modified and it is on the dictionary stack, the cache of the dictionary stack must
+   * be adjusted. This is e.g. the case for the systemdict or the errordict.
+   */ 
+  void add_dictstack_reference()
+  {
+    ++refs_on_dictstack_;
+  }
 
+  /**
+   * This function is called when the dictionary is popped from the dictionary stack.
+   */
+  void remove_dictstack_reference()
+  {
+    --refs_on_dictstack_;
+  }
+
+  /**
+   * Returns true, if the dictionary has references on the dictionary stack.
+   */
+  bool is_on_dictstack() const
+  {
+    return refs_on_dictstack_ >0;
+  }
+
+  
  private:
   /**
    * Worker function checking whether all elements have been accessed.
@@ -190,18 +226,30 @@ public:
    * @note this is just the worker for all_accessed()
    * @see clear_access_flags(), all_accessed()
    */
+ 
+  int refs_on_dictstack_; 
   bool all_accessed_(std::string&, std::string prefix = std::string()) const;
-
+  static const Token VoidToken;
 };
 
 inline
-const Token & Dictionary::lookup(const Name &n) const
+const Token& Dictionary::lookup(const Name &n) const
 {
   TokenMap::const_iterator where = find(n);
   if(where != end())
     return (*where).second;
   else
-    return VoidToken;
+    return Dictionary::VoidToken;
+}
+
+inline
+const Token& Dictionary::lookup2(const Name &n) const
+{      
+  TokenMap::const_iterator where = find(n);
+  if(where != end())
+    return (*where).second;
+  else
+    throw UndefinedName(n.toString());
 }
 
 inline
@@ -215,21 +263,36 @@ bool Dictionary::known(const Name &n) const
 }
 
 inline
-void Dictionary::insert(const Name &n, const Token &t)  
+Token& Dictionary::insert(const Name &n, const Token &t)  
 { 
-  this->TokenMap::operator[](n) = t; 
+  return TokenMap::operator[](n) = t; 
+}
+
+
+inline
+const Token& Dictionary::operator[](const Name &n) const
+{      
+  TokenMap::const_iterator where = find(n);
+  if(where != end())
+    return (*where).second;
+  else
+    throw UndefinedName(n.toString());
+}
+
+
+inline
+Token& Dictionary::operator[](const Name &n)
+{  
+  return TokenMap::operator[](n);
 }
 
 inline
-Dictionary::const_iterator Dictionary::begin() const
+Token& Dictionary::insert_move(const Name &n, Token &t)
 {
-  return this->TokenMap::begin();
+  Token &result=TokenMap::operator[](n);
+  result.move(t);
+  return result;
 }
 
-inline
-Dictionary::const_iterator Dictionary::end() const
-{
-  return this->TokenMap::end();
-}
 
 #endif

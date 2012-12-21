@@ -29,6 +29,7 @@
 #include "event.h"
 #include "node.h"
 #include "slice_ring_buffer.h"
+#include "ring_buffer.h"
 #include "connection.h"
 
 #include "universal_data_logger.h"
@@ -67,9 +68,9 @@ namespace nest{
      since incoming spikes are modeled as instantaneous potential
      jumps. Times of spikes caused by current input are determined
      exactly by solving the membrane potential equation. Note that, in
-     contrast to the neuron models discussed in [3], this model has so
-     simple dynamics that no interpolation of spike times is required at
-     all.
+     contrast to the neuron models discussed in [3,4], this model has so
+     simple dynamics that no interpolation or iterative spike location
+     technique is required at all.
 
      The general framework for the consistent formulation of systems with
      neuron like dynamics interacting by point events is described in
@@ -85,13 +86,13 @@ namespace nest{
      relevant measures analytically.
 
      Remarks:
-     The iaf_psc_delta_canon neuron does not accept CurrentEvent connections.
-     This is because the present method for transmitting CurrentEvents in 
+
+     The iaf_psc_delta_canon neuron accepts CurrentEvent connections.
+     However, the present method for transmitting CurrentEvents in 
      NEST (sending the current to be applied) is not compatible with off-grid
      currents, if more than one CurrentEvent-connection exists. Once CurrentEvents
      are changed to transmit change-of-current-strength, this problem will 
      disappear and the canonical neuron will also be able to handle CurrentEvents.
-     For now, the only way to inject a current is the built-in current I_e.
 
      The present implementation uses individual variables for the
      components of the state vector and the non-zero matrix elements of
@@ -105,14 +106,12 @@ namespace nest{
      optimization levels. A future version of iaf_psc_delta_canon will probably
      address the problem of efficient usage of appropriate vector and
      matrix objects.
-
      
      Please note that this node is capable of sending precise spike times
      to target nodes (on-grid spike time plus offset). If this node is
      connected to a spike_detector, the property "precise_times" of the
      spike_detector has to be set to true in order to record the offsets
      in addition to the on-grid spike times.
-
 
      Parameters: 
      The following parameters can be set in the status dictionary.
@@ -140,13 +139,16 @@ namespace nest{
      [3] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact Subthreshold 
      Integration with Continuous Spike Times in Discrete Time Neural Network 
      Simulations. To appear in Neural Computation.
+     [4] Hanuschkin A, Kunkel S, Helias M, Morrison A & Diesmann M (2010) 
+     A general and efficient method for incorporating exact spike times in 
+     globally time-driven simulations Front Neuroinformatics, 4:113
 
      Sends: SpikeEvent
 
-     Receives: SpikeEvent, DataLoggingRequest
+     Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
      
      Author:  May 2006, Plesser; based on work by Diesmann, Gewaltig, Morrison, Straube, Eppler
-     SeeAlso: iaf_psc_delta
+     SeeAlso: iaf_psc_delta, iaf_psc_exp_ps
   */
 
   class iaf_psc_delta_canon:
@@ -187,10 +189,12 @@ namespace nest{
     port check_connection(Connection&, port);
     
     void handle(SpikeEvent &);
+    void handle(CurrentEvent &);
     void handle(DataLoggingRequest &);
 
     bool is_off_grid() const {return true;}  // uses off_grid events    
     port connect_sender(SpikeEvent &, port);
+    port connect_sender(CurrentEvent &, port);
     port connect_sender(DataLoggingRequest &, port);
 
     void get_status(DictionaryDatum &) const;
@@ -282,7 +286,11 @@ namespace nest{
       Parameters_();  //!< Sets default parameter values
 
       void get(DictionaryDatum&) const;  //!< Store current values in dictionary
-      void set(const DictionaryDatum&);  //!< Set values from dicitonary
+
+      /** Set values from dictionary.
+       * @returns Change in reversal potential E_L, to be passed to State_::set()
+       */
+      double set(const DictionaryDatum&);
     };
     
 
@@ -297,6 +305,7 @@ namespace nest{
      */
     struct State_ {
       double_t U_;  //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+      double_t I_;  //!< This is the current to be applied during this time step
       
       long_t   last_spike_step_;   //!< step of last spike, for reporting in status dict
       double_t last_spike_offset_; //!< offset of last spike, for reporting in status dict
@@ -307,7 +316,13 @@ namespace nest{
       State_();  //!< Default initialization
       
       void get(DictionaryDatum&, const Parameters_&) const;
-      void set(const DictionaryDatum&, const Parameters_&);
+
+      /** Set values from dictionary.
+       * @param dictionary to take data from
+       * @param current parameters
+       * @param Change in reversal potential E_L specified by this dict
+       */
+      void set(const DictionaryDatum&, const Parameters_&, double);
     };
     
     // ---------------------------------------------------------------- 
@@ -325,6 +340,11 @@ namespace nest{
        *       with weight == numerics::NaN
        */
       SliceRingBuffer events_;
+
+      /**
+       * Queue for incoming current events.
+       */
+      RingBuffer currents_;
   
       //! Logger for all analog data
       UniversalDataLogger<iaf_psc_delta_canon> logger_;
@@ -393,14 +413,22 @@ namespace nest{
       return 0;
     }
 
-inline
-port iaf_psc_delta_canon::connect_sender(DataLoggingRequest& dlr, 
-					 port receptor_type)
-{
-  if (receptor_type != 0)
-    throw UnknownReceptorType(receptor_type, get_name());
-  return B_.logger_.connect_logging_device(dlr, recordablesMap_);
-}
+  inline
+    port iaf_psc_delta_canon::connect_sender(CurrentEvent&, port receptor_type)
+    {
+      if (receptor_type != 0)
+	throw UnknownReceptorType(receptor_type, get_name());
+      return 0;
+    }
+
+  inline
+    port iaf_psc_delta_canon::connect_sender(DataLoggingRequest& dlr, 
+					     port receptor_type)
+    {
+      if (receptor_type != 0)
+	throw UnknownReceptorType(receptor_type, get_name());
+      return B_.logger_.connect_logging_device(dlr, recordablesMap_);
+    }
   
   inline 
     Time iaf_psc_delta_canon::get_spiketime() const
@@ -420,9 +448,9 @@ port iaf_psc_delta_canon::connect_sender(DataLoggingRequest& dlr,
     void iaf_psc_delta_canon::set_status(const DictionaryDatum &d)
   {
     Parameters_ ptmp = P_;  // temporary copy in case of errors
-    ptmp.set(d);                       // throws if BadProperty
+    const double delta_EL = ptmp.set(d);                       // throws if BadProperty
     State_      stmp = S_;  // temporary copy in case of errors
-    stmp.set(d, ptmp);                 // throws if BadProperty
+    stmp.set(d, ptmp, delta_EL);                 // throws if BadProperty
 
     // if we get here, temporaries contain consistent set of properties
     P_ = ptmp;

@@ -56,7 +56,7 @@ References:
       Network Theory Limited.
 
 Author:  July 2009, Diesmann
-SeeAlso: testsuite::test_iaf_psp_peak, testsuite::test_iaf_psp, test_lambertw, LambertWm1
+SeeAlso: testsuite::test_iaf_psp_peak, testsuite::test_iaf_psp, testsuite::test_lambertw, LambertWm1
 */
 
 
@@ -73,6 +73,9 @@ SeeAlso: testsuite::test_iaf_psp_peak, testsuite::test_iaf_psp, test_lambertw, L
   /tau_syn  0.5    % synaptic time constant in ms
   /C_m      1.0    % membrane capacity in pF 
   /E_L      0.0
+  /V_reset  0.0
+  /V_th    15.0
+  /V_m      0.0
 >>
 /P Set
 

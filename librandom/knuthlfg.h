@@ -49,6 +49,11 @@ namespace librandom {
     
     ~KnuthLFG() {};
 
+    RngPtr clone(unsigned long s)
+      {
+	return RngPtr(new KnuthLFG(s));
+      }
+
   private:
     //! implements seeding for RandomGen
     void   seed_(unsigned long);

@@ -29,9 +29,8 @@
 
 const TokenArray & TokenArray::operator=(const TokenArray &a)
 {
-    ++a.data->refs; // protect from a=a
-    if( -- data->refs == 0)
-        delete data;
+    a.data->add_reference(); // protect from a=a
+    data->remove_reference();
     data = a.data;
 
     return *this;

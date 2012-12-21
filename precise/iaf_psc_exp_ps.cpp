@@ -57,13 +57,13 @@ namespace nest
     
 nest::iaf_psc_exp_ps::Parameters_::Parameters_()
   : tau_m_  ( 10.0     ),  // ms
-    tau_ex_ (  1.0     ),  // ms
-    tau_in_ (  1.0     ),  // ms
+    tau_ex_ (  2.0     ),  // ms
+    tau_in_ (  2.0     ),  // ms
     c_m_    (250.0     ),  // pF
     t_ref_  (  2.0     ),  // ms
     E_L_    (-70.0     ),  // mV
     I_e_    (  0.0     ),  // pA
-    U_th_   (-50.0-E_L_),  // mV, rel to E_L_
+    U_th_   (-55.0-E_L_),  // mV, rel to E_L_
     U_min_  (-std::numeric_limits<double_t>::infinity()),  // mV
     U_reset_(-70.0-E_L_)   // mV, rel to E_L_
 {}
@@ -104,24 +104,34 @@ void nest::iaf_psc_exp_ps::Parameters_::get(DictionaryDatum & d) const
   def<double>(d, names::t_ref, t_ref_);
 }
 
-void nest::iaf_psc_exp_ps::Parameters_::set(const DictionaryDatum & d)
+double nest::iaf_psc_exp_ps::Parameters_::set(const DictionaryDatum & d)
 {
+  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  const double ELold = E_L_;
+  updateValue<double>(d, names::E_L, E_L_);
+  const double delta_EL = E_L_ - ELold;
+
   updateValue<double>(d, names::tau_m, tau_m_);
   updateValue<double>(d, names::tau_syn_ex, tau_ex_);
   updateValue<double>(d, names::tau_syn_in, tau_in_);
   updateValue<double>(d, names::C_m, c_m_);
   updateValue<double>(d, names::t_ref, t_ref_);
-  updateValue<double>(d, names::E_L, E_L_);
   updateValue<double>(d, names::I_e, I_e_);
   
   if ( updateValue<double>(d, names::V_th, U_th_) )
     U_th_ -= E_L_;
+  else
+    U_th_ -= delta_EL;
   
   if ( updateValue<double>(d, names::V_min, U_min_) )
     U_min_ -= E_L_;
+  else
+    U_min_ -= delta_EL;
   
   if ( updateValue<double>(d, names::V_reset, U_reset_) ) 
     U_reset_ -= E_L_;
+  else
+    U_reset_ -= delta_EL;
   
   if ( U_reset_ >= U_th_ )
     throw BadProperty("Reset potential must be smaller than threshold.");
@@ -131,12 +141,18 @@ void nest::iaf_psc_exp_ps::Parameters_::set(const DictionaryDatum & d)
   
   if ( c_m_ <= 0 )
     throw BadProperty("Capacitance must be strictly positive.");
-  
-  if ( t_ref_ < 0 )
-    throw BadProperty("Refractory time must not be negative.");
-  
+
+  if ( Time(Time::ms(t_ref_)).get_steps() < 1 )
+    throw BadProperty("Refractory time must be at least one time step.");
+
   if ( tau_m_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
     throw BadProperty("All time constants must be strictly positive.");
+
+  if ( tau_m_ == tau_ex_ || tau_m_ == tau_in_ )
+    throw BadProperty("Membrane and synapse time constant(s) must differ."
+		      "See note in documentation.");
+
+  return delta_EL;
 }
 
 void nest::iaf_psc_exp_ps::State_::get(DictionaryDatum & d, 
@@ -148,10 +164,12 @@ void nest::iaf_psc_exp_ps::State_::get(DictionaryDatum & d,
   def<double>(d, names::offset, last_spike_offset_);
 }
 
-void nest::iaf_psc_exp_ps::State_::set(const DictionaryDatum & d, const Parameters_ & p)
+void nest::iaf_psc_exp_ps::State_::set(const DictionaryDatum & d, const Parameters_ & p, double delta_EL)
 {
   if ( updateValue<double>(d, names::V_m, y2_) )
     y2_ -= p.E_L_;
+  else
+    y2_ -= delta_EL;
 }
 
 /* ---------------------------------------------------------------- 
@@ -207,7 +225,7 @@ void nest::iaf_psc_exp_ps::calibrate()
   V_.P21_in_       = -P_.tau_m_*P_.tau_in_ / (P_.tau_m_-P_.tau_in_) / P_.c_m_ * (V_.expm1_tau_in_-V_.expm1_tau_m_);
   
   V_.refractory_steps_ = Time(Time::ms(P_.t_ref_)).get_steps();
-  assert( V_.refractory_steps_ >= 0 );  // since t_ref_ >= 0, this can only fail in error
+  assert(V_.refractory_steps_ > 1);  // since t_ref_ >= sim step size, this can only fail in error
 }
 
 /* ---------------------------------------------------------------- 
@@ -417,7 +435,7 @@ void nest::iaf_psc_exp_ps::emit_spike_(const Time & origin, const long_t lag,
   // reset neuron and make it refractory
   S_.y2_ = P_.U_reset_;
   S_.is_refractory_ = true;
-  
+
   // send spike
   SpikeEvent se;
   
@@ -437,7 +455,7 @@ void nest::iaf_psc_exp_ps::emit_instant_spike_(const Time & origin, const long_t
   // reset neuron and make it refractory
   S_.y2_ = P_.U_reset_;
   S_.is_refractory_ = true;
-  
+
   // send spike
   SpikeEvent se;
   

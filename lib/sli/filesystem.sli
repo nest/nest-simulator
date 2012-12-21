@@ -20,7 +20,7 @@
  *
  */
 
-/filesystem /SLI ($Revision: 9902 $) provide-component
+/filesystem /SLI ($Revision: 9979 $) provide-component
 /filesystem /C++ (7610) require-component
 
 
@@ -295,3 +295,46 @@ def
 /CompareFiles trie
   [/stringtype /stringtype] /CompareFiles_s_s load addtotrie
 def
+
+
+/* BeginDocumentation
+  Name: dirname - strip last component from file name
+  Synopsis: string dirname -> string
+  Description: Print NAME with its trailing /component removed;
+      if NAME contains no /'s, output `.' (meaning the current directory).
+  Parameters: string: Name of the directory
+  Examples: (./../test/dir/foo.sli) dirname -> (./../test/dir)
+  FirstVersion: November 2012
+  Author: Yury V. Zaytsev and Jochen M. Eppler
+*/
+
+/dirname {
+
+  /pth exch def
+
+  mark
+
+    % Special cases of leading directory separators
+    pth (/) eq
+      pth (//) eq or
+      pth (///) eq or
+        { (/) } case
+
+    % Special cases of lacking directory separators
+    pth (/) searchif not
+      pth () eq or
+      pth (.) eq or
+      pth (..) eq or
+        { (.) } case
+
+    {
+      % General case
+      (/{1,3}[^/]+/{0,3}$) regexdict/REG_EXTENDED :: regcomp () pth regex_replace
+
+      % Special case of non-empty path plus leading directory separator
+      dup () eq { pop (/) } if
+    }
+
+  switchdefault
+
+} def

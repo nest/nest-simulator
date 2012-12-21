@@ -1,6 +1,6 @@
-#!/usr/bin/env python
-
-# mc_neuron.sli
+# -*- coding: utf-8 -*-
+#
+# mc_neuron.py
 #
 # This file is part of NEST.
 #
@@ -136,5 +136,3 @@ pl.legend(('g_ex.s', 'g_ex.p', 'g_in.d','g_in.s', 'g_in.p', 'g_in.d'))
 pl.axis([350, 700, 0, 1.15])
 pl.xlabel('Time [ms]')
 pl.ylabel('Synaptic conductance [nS]')
-
-pl.show()

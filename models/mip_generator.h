@@ -72,11 +72,9 @@ Remarks:
    it is ensured that the mother process is identical for each of the 
    generators.
    
-   IMPORTANT: mip_generator nodes will ALWAYS be created with a KNUTH_LFG
-              random number generator, even if you have set a different 
-              mother_rng using SetDefaults. You MUST CHANGE THE RNG OF
-              THE INDIVIDUAL NODE if you want a different rng. This will
-              be fixed in a future release.
+   IMPORTANT: The mother_seed of mpi_generator must be different from any
+              seeds used for the global or thread-specific RNGs set in
+	      the kernel.
 
 Sends: SpikeEvent
               

@@ -22,26 +22,49 @@
 
 #include "nodelist.h"
 
-namespace nest{
+/*
+ * Iteration logic
+ *
+ * begin()
+ * Descends recursively, until it reaches a subnet in which
+ * the first entry is not a subnet. This is the first node and
+ * an iterator to it is returned.
+ *
+ * operator++()
+ * Proceeds to the right neighbor in the vector<Node*> of the
+ * Subnet. If there is no right neighbor, it backtracks up.
+ *
+ * end()
+ * By post-order traversal, the last item in the NodeList is the
+ * last child of the subnet wrapped. Thus subnet_.local_end() is the
+ * LocalNodeList::end().
+ *
+ */
 
-  NodeList::iterator NodeList::begin() const
+namespace nest
+{
+  // -----------------------------------------------------------------------
+
+  template <>
+  LocalNodeListBase<LocalNodeListIterator>::iterator 
+  LocalNodeListBase<LocalNodeListIterator>::begin() const
   {
-    if (empty())
+    if ( empty() )
       return end();
 
-    Compound *r=root_;
-    vector<Node*>::iterator n;
+    Subnet *current_subnet = &subnet_;  // start at wrapped subnet
+    vector<Node*>::iterator node;       // node we are looking at
 
-    while( r!=NULL && !r->empty() )
-    {
-      n=r->begin(); //!< Move down in tree
-      if( (r=dynamic_cast<Compound*>(*n)) == NULL)
-	break;
-    }
-    /** We have reached the end of tree */
-    return iterator(n);
+    do {
+      assert(not current_subnet->local_empty());
+      node = current_subnet->local_begin();  // leftmost in current subnet
+      current_subnet = dynamic_cast<Subnet*>(*node); // attempt descend
+    } while ( current_subnet && not current_subnet->local_empty() );
+
+    // Either node is a non-subnet node or and empty subnet, this is
+    // the first node.
+    return iterator(node, subnet_.local_end());
   }
-
 
 
   /** 
@@ -55,82 +78,100 @@ namespace nest{
    * supply a chached-iterator, which does this work only once.
    */
     
-  NodeList::iterator NodeList::iterator::operator++()
+  LocalNodeListIterator LocalNodeListIterator::operator++()
   {
-    /**
-     * We must assume that this operator is not called on
-     * end(). For this case, the result is undefined!
-     */
+    if ( current_node_ == list_end_ )  // we are at end
+      return *this;
 
-    /** This compound is the container to which e belongs!
-     *  If c yields NULL, the tree is ill-formed!
-     */
-    Compound *c=(*p_)->get_parent();
-    assert(c != NULL);
+    // Obtain a pointer to the subnet to which the current node
+    // belongs. We need it to check if we have reached the end
+    // of that subnet.
+    Subnet *current_subnet = (*current_node_)->get_parent();
+    assert(current_subnet != NULL);
 
-    /**
-     * 1. Find the right neighbor
-     * 2.   Traverse the left-most branch
-     * 3.   return leaf of leftmost branch
-     * 4. If no right neigbor exists, go up one level
-     * 5.   return element.
-     * 6. If we cannot go up, return end() of local compound
-     */
+    ++current_node_; // go to right neighbor of current node
 
-    /** Goto right neighbor */
-    ++p_;
-    
-    if(p_ != c->end())
+    if ( current_node_ != current_subnet->local_end() )
     {
-      Compound *r=dynamic_cast<Compound *>(*p_);
-
-      while(r != NULL && ! r->empty())
+      // We have a right neighbor.
+      current_subnet = dynamic_cast<Subnet *>(*current_node_);
+      while( current_subnet && not current_subnet->local_empty() )
       {
-	p_=r->begin();
-	r=dynamic_cast<Compound *>(*p_);
+        // current_node_ is a subnet and we descend into it
+        current_node_ = current_subnet->local_begin();
+        current_subnet = dynamic_cast<Subnet *>(*current_node_);
       }
-      
+      // current_node_ is either not a subnet or an empty subnet,
+      // so we have found the proper right neigbor.
       return *this;
     }
-    
-    
-    /** This is the case where no right neighbor exists.
-     * We have to go up and return the parent
-     */
-    Compound *p=c->get_parent();
-    if(p==NULL)
-    {
-      /** We are already at the root container and
-       * there is no right neighbor. Thus, we
-       * have reached the end.
-       */
-      p_=c->end();
-      return *this;
-    }
-    /**
-     * We are at the end of a local container
-     * thus, we have to ascend, so that we can proceed
-     * with its right neigbor in the next round
-     */
+    else if ( current_node_ == list_end_ )
+      return *this;   // we are at end of subnet
 
-    /** 
-     * Compute the iterator which points to c
-     */
-    p_= p->begin()+c->get_lid();
+    // If we get here, current_node_ is equal to the sentinel at the end of
+    // the current_subnet nodelist. Since it is different from list_end_, we
+    // know it is not the the sentinel at the end of the top-level subnet.
+    // Thus current_subnet must have a parent, and we need to ascend to that
+    // parent. We find the iterator to the current_subnet in the parent nodelist
+    // by index arithmetic.
+    Subnet* parent = current_subnet->get_parent();
+    assert(parent);
+    current_node_ = parent->local_begin() + current_subnet->get_subnet_index();
+    assert(*current_node_ == current_subnet);  // make sure we got iterator to correct node
+
     return *this;
   }
 
-  void NodeList::set_root(Compound &r)
+  // -----------------------------------------------------------------------
+
+  template <>
+  LocalNodeListBase<LocalChildListIterator>::iterator 
+  LocalNodeListBase<LocalChildListIterator>::begin() const
   {
-    root_=&r;
+    if ( empty() )
+      return end();
+
+    return iterator(subnet_.local_begin(), subnet_.local_end());
   }
 
-  Compound & NodeList::get_root() const
+  LocalChildListIterator LocalChildListIterator::operator++()
   {
-    assert(root_ != NULL);
-    return *root_;
+    if ( current_node_ != list_end_ )  // we are at end
+      ++current_node_;
+    return *this;
   }
+
+  // -----------------------------------------------------------------------
+
+  template <>
+  LocalNodeListBase<LocalLeafListIterator>::iterator 
+  LocalNodeListBase<LocalLeafListIterator>::begin() const
+   {
+     if ( empty() )
+       return end();
+
+     Subnet *current_subnet = &subnet_;  // start at wrapped subnet
+     vector<Node*>::iterator node;       // node we are looking at
+
+     do {
+       assert(not current_subnet->local_empty());
+       node = current_subnet->local_begin();  // leftmost in current subnet
+       current_subnet = dynamic_cast<Subnet*>(*node); // attempt descend
+     } while ( current_subnet && not current_subnet->local_empty() );
+
+     // Either node is a non-subnet node or and empty subnet. It is a candidate for the
+     // first node. The constructor will automatically move on to the first true leaf.
+     return iterator(node, subnet_.local_end());
+   }
+
+   // this is the same code as for the NodeList, except that we skip
+   LocalLeafListIterator LocalLeafListIterator::operator++()
+   {
+     do
+       ++base_it_;
+     while ( not base_it_.is_end_() && not is_leaf_(*base_it_) );
+
+     return *this;
+   }
+
 }
-	
-	
-	

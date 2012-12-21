@@ -108,26 +108,9 @@ void* nest_thread_handler(void *t)
 {
   nest::Thread *my_thread=static_cast<nest::Thread *>(t);
   assert(my_thread != NULL);
-  
+
   my_thread->run();
   pthread_exit(0);
-  return NULL;
-}
-
-#else
- void nest::Thread::run(void)
-{
-}
-
-int nest::Thread::join()
-{
-  return 0;
-}
-
-// global thread handler function.
-extern "C"
-void* nest_thread_handler(void *t)
-{
   return NULL;
 }
 

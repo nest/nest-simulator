@@ -210,17 +210,24 @@ def
 
 
 /put trie
-  [/arraytype      /arraytype    /anytype ]     /put_a_a_t load addtotrie
-  [/arraytype      /integertype  /anytype ]     /put_a load addtotrie
-  [/stringtype     /integertype  /integertype]  /put_s load addtotrie
-  [/arraytype      /integertype  /integertype]  /put_a load addtotrie
-  [/arraytype      /arraytype    /integertype ] /put_a_a_t load addtotrie
-  [/proceduretype  /integertype  /integertype ] /put_p load addtotrie
-  [/proceduretype  /integertype  /anytype ]     /put_p load addtotrie
-  [/literalproceduretype /integertype /integertype] /put_lp load addtotrie
-  [/literalproceduretype /integertype /anytype] /put_lp load addtotrie
-  [/dictionarytype /literaltype /anytype]       /put_d load addtotrie
-  [/dictionarytype /literaltype /integertype]   /put_d load addtotrie
+  [/arraytype            /integertype  /integertype]  /put_a     load addtotrie
+  [/arraytype            /arraytype    /anytype ]     /put_a_a_t load addtotrie
+  [/arraytype            /integertype  /anytype ]     /put_a     load addtotrie
+  [/literalproceduretype /integertype  /anytype]      /put_lp    load addtotrie
+  [/dictionarytype       /literaltype  /anytype]      /put_d     load addtotrie
+  [/proceduretype        /integertype  /anytype ]     /put_p     load addtotrie
+  [/stringtype           /integertype  /integertype]  /put_s     load addtotrie
+
+% The following seemingly redundant definitions fix a deficiency of /anytype
+% We must manually add the functions to the branches which have specific types 
+  [/arraytype            /arraytype    /integertype ] /put_a_a_t load addtotrie
+  [/arraytype            /arraytype    /doubletype ]  /put_a_a_t load addtotrie
+  [/proceduretype        /integertype  /integertype ] /put_p     load addtotrie
+  [/proceduretype        /integertype  /doubletype ]  /put_p     load addtotrie
+  [/literalproceduretype /integertype  /integertype]  /put_lp    load addtotrie
+  [/literalproceduretype /integertype  /doubletype]   /put_lp    load addtotrie
+  [/dictionarytype       /literaltype  /integertype]  /put_d     load addtotrie
+  [/dictionarytype       /literaltype  /doubletype]   /put_d     load addtotrie 
 def
 
 
@@ -511,7 +518,7 @@ SeeAlso: over, index
 /ptimes
 {
   pclocks pclockspersec cvd div
-} bind def
+} def
 
 /* BeginDocumentation
  Name: realtime - returns realtime 
@@ -528,7 +535,7 @@ SeeAlso: over, index
 /realtime
 {
   ptimes 0 get 
-} bind def  
+} def  
 
 /* BeginDocumentation
  Name: usertime - returns usertime for current process 
@@ -762,9 +769,16 @@ BeginDocumentation
 % * Prints the contents of the given dictionary
 % * This one is documented in slidict.cc
 
-/info trie [/dictionarytype]
+/info trie 
+[/dictionarytype]
 {
   cout exch info_d
+} bind addtotrie
+[/trietype]
+{
+  cout 
+(This type trie contains the following overloaded functions:\n\n) <- 
+  exch trieinfo_os_t
 } bind addtotrie def
 
 %%
@@ -1516,6 +1530,15 @@ SeeAlso: GNUreadline
 } addtotrie def
 
 
+
+/abort
+{
+  statusdict /exitcodes get /userabort get
+  quit_i
+} bind def
+
+
+
 /*
 BeginDocumentation
 Name: exithook - Procedure executed if the executive mode is left.
@@ -1681,11 +1704,11 @@ SeeAlso: nestrc
        (               -- S L I --) <- endl
    } 
    {
-       (             -- N E S T 2 --) <- endl
+       (              -- N E S T --) <- endl
    } ifelse
    endl
-   (  Copyright (C) 2004 The NEST Initiative ) <- endl
-   (   Version ) <- 
+   (  Copyright (C) 2004 The NEST Initiative) <- endl
+   (  Version ) <- 
    prgmajor <- (.) <- prgminor <- (.) <- prgpatch <-
    ( ) <- built <- endl endl ;
    end
@@ -1714,7 +1737,7 @@ SeeAlso: nestrc
    {
        (NEST v) <-
    } ifelse
-   version <- ( (C) 2004 The NEST Initiative ) <- endl ;
+   version <- ( (C) 2004 The NEST Initiative) <- endl ;
    end     
 } def
 
@@ -1817,7 +1840,7 @@ This symbol is defined in the status dictionary.
 
 statusdict begin
 /stdlibrevision 
-  ($Revision: 9932 $) % CVS revision number (unique)
+  ($Revision: 10138 $) % CVS revision number (unique)
 def
 end
 
@@ -2045,7 +2068,7 @@ moduleinitializers
     {
       statusdict begin
 	cout (NEST version ) <- version <- (, built on ) <- built <- ( for ) <- host <- endl
-	(Copyright (C) 2004 The NEST Initiative ) <- endl endl
+	(Copyright (C) 2004 The NEST Initiative) <- endl endl
       end
       quit
     } if
@@ -2260,3 +2283,18 @@ end % systemdict
 (.) path setpath                % prepend current directory
 
 evalrcfile
+
+
+/* BeginDocumentation
+Name: environment - return divtionary of environment variables
+Synopsis: enviroment -> dict
+Description: 
+Returns dictionary with the environment variables of the process that
+invoked NEST. It is a shortcut for statusdict/environment ::, provided
+for backward compatibility.
+SeeAlso: statusdict
+*/
+/environment 
+{
+  statusdict/environment ::
+} def

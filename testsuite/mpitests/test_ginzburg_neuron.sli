@@ -1,0 +1,76 @@
+/*
+ *  test_ginzburg_neuron.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /* BeginDocumentation
+Name: testsuite::test_ginzburg_neuron - Test parallel generation of Poissonian trains
+
+Synopsis: nest_indirect test_ginzburg_neuron.sli -> -
+
+Description:
+   Creates ginzburg neurons and sends spikes to spike detector. Assert invariant
+   results for fixed VP number. This is a partial response to #551. May be adapted
+   to other generators.
+
+Author:  December 2012, Plesser, based on test_poisson_generator.sli
+*/
+
+/unittest (9726) require
+/unittest using
+
+/total_vps 4 def
+
+[1 2 4]
+{
+  % set resolution and total/local number of threads
+  0
+  <<
+  /resolution  0.1
+  /total_num_virtual_procs total_vps
+  >> SetStatus
+
+  /sg /spike_generator << /spike_times [1.0 1.0] >> Create def
+  /gens [ total_vps ] 
+  { 
+    ;
+    /ginzburg_neuron << /tau_m 1.0 >> Create
+  } Table def
+  /sd /spike_detector << /record_to [/memory] 
+                         /withgid true 
+                         /withtime true 
+                      >> Create def
+  /pnet [ total_vps ] { ; /parrot_neuron Create } Table def
+
+  sg gens DivergentConnect
+  [ gens pnet ] { Connect } ScanThread
+  pnet sd ConvergentConnect
+  
+  20. Simulate
+
+  % get events, replace vectors with SLI arrays    
+  /ev sd /events get def
+  ev keys { /k Set ev dup k get cva k exch put } forall
+  ev 
+} distributed_process_invariant_events_assert_or_die
+
+
+
+    

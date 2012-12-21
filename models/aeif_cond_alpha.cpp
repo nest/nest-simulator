@@ -82,6 +82,9 @@ int nest::aeif_cond_alpha_dynamics (double, const double y[], double f[], void* 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
 
+  // This constant is used below as the largest admissible value for the exponential spike upstroke
+  static const double_t largest_exp=std::exp(10.);
+
   // shorthand for state variables
   const double_t& V     = y[S::V_M];
   const double_t& dg_ex = y[S::DG_EXC];
@@ -92,7 +95,11 @@ int nest::aeif_cond_alpha_dynamics (double, const double y[], double f[], void* 
 
   const double_t I_syn_exc = g_ex * (V - node.P_.E_ex);
   const double_t I_syn_inh = g_in * (V - node.P_.E_in);
-  const double_t I_spike = node.P_.Delta_T * std::exp((V - node.P_.V_th) / node.P_.Delta_T);
+
+  // We pre-compute the argument of the exponential
+  const double_t exp_arg=(V - node.P_.V_th) / node.P_.Delta_T;
+  // If the argument is too large, we clip it.
+  const double_t I_spike = (exp_arg>10.)? largest_exp : node.P_.Delta_T * std::exp(exp_arg);
 
   // dv/dt
   f[S::V_M  ] = ( -node.P_.g_L *( (V-node.P_.E_L) - I_spike ) 
@@ -115,7 +122,7 @@ int nest::aeif_cond_alpha_dynamics (double, const double y[], double f[], void* 
  * ---------------------------------------------------------------- */
     
 nest::aeif_cond_alpha::Parameters_::Parameters_()
-  : V_peak_    (  0.0    ),  // mV
+  : V_peak_    ( 0.0   ),  // mV, should not be larger that V_th+10
     V_reset_   (-60.0    ),  // mV
     t_ref_     (  0.0    ),  // ms
     g_L        ( 30.0    ),  // nS
@@ -210,11 +217,11 @@ void nest::aeif_cond_alpha::Parameters_::set(const DictionaryDatum& d)
 
   updateValue<double>(d,names::gsl_error_tol, gsl_error_tol);
 
-  if ( V_reset_ >= V_peak_ )
-    throw BadProperty("Reset potential must be smaller than spike cut-off threshold.");
-    
   if ( V_peak_ <= V_th )
     throw BadProperty("V_peak must be larger than threshold.");
+
+  if ( V_reset_ >= V_peak_ )
+    throw BadProperty("Ensure that: V_reset < V_peak .");
 
   if ( C_m <= 0 )
   {
@@ -378,7 +385,7 @@ void nest::aeif_cond_alpha::update(Time const & origin, const long_t from, const
 
     if ( S_.r_ > 0 )
       --S_.r_;
-
+ 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
     // gsl_odeiv_evolve_apply performs only a single numerical
@@ -391,45 +398,45 @@ void nest::aeif_cond_alpha::update(Time const & origin, const long_t from, const
     // enforce setting IntegrationStep to step-t; this is of advantage
     // for a consistent and efficient integration across subsequent
     // simulation intervals
+
     while ( t < B_.step_ )
     {
       const int status = gsl_odeiv_evolve_apply(B_.e_, B_.c_, B_.s_, 
-		  	   &B_.sys_,             // system of ODE
-			   &t,                   // from t
-			    B_.step_,            // to t <= step
-			   &B_.IntegrationStep_, // integration step size
-			    S_.y_);              // neuronal state
+						&B_.sys_,             // system of ODE
+						&t,                   // from t
+						B_.step_,            // to t <= step
+						&B_.IntegrationStep_, // integration step size
+						S_.y_);              // neuronal state
 
       if ( status != GSL_SUCCESS )
         throw GSLSolverFailure(get_name(), status);
-
+      
       // check for unreasonable values; we allow V_M to explode
       if ( S_.y_[State_::V_M] < -1e3 ||
 	   S_.y_[State_::W  ] <    -1e6 || S_.y_[State_::W] > 1e6    )
 	throw NumericalInstability(get_name());
-
+      
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
       if ( S_.r_ > 0 )
-        S_.y_[State_::V_M] = P_.V_reset_;
+	S_.y_[State_::V_M] = P_.V_reset_;
       else if ( S_.y_[State_::V_M] >= P_.V_peak_ )
-      {
-	S_.y_[State_::V_M]  = P_.V_reset_;
-	S_.y_[State_::W]   += P_.b; // spike-driven adaptation
-	S_.r_               = V_.RefractoryCounts_;
-	      
-	set_spiketime(Time::step(origin.get_steps() + lag + 1));
-	SpikeEvent se;
-	network()->send(*this, se, lag);
-      }
+	{
+	  S_.y_[State_::V_M]  = P_.V_reset_;
+	  S_.y_[State_::W]   += P_.b; // spike-driven adaptation
+	  S_.r_               = V_.RefractoryCounts_;
+	  
+	  set_spiketime(Time::step(origin.get_steps() + lag + 1));
+	  SpikeEvent se;
+	  network()->send(*this, se, lag);
+	}
     }
-
     S_.y_[State_::DG_EXC] += B_.spike_exc_.get_value(lag) * V_.g0_ex_;
     S_.y_[State_::DG_INH] += B_.spike_inh_.get_value(lag) * V_.g0_in_;
-      
+    
     // set new input current
     B_.I_stim_ = B_.currents_.get_value(lag);
-
+    
     // log state data
     B_.logger_.record_data(origin.get_steps() + lag);
   }

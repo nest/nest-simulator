@@ -1,0 +1,351 @@
+/*
+ *  test_pp_psc_delta.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_pp_psc_delta - test of pp_psc_delta neuron functionality
+
+Synopsis: (test_pp_psc_delta) run -> compare spike train statistics with expectations
+
+Description:
+ 
+ This simulation tests the basic functionality of the pp_psc_delta neuron model.
+ Specifically, it checks whether:
+
+ - the firing rate is close to the preset one
+
+ - the fixed dead-time is respected in all cases
+
+ - for randomly distributed dead-times, the mean and the variance of the
+   dead-times are close to the theoretical values
+
+ - the threshold adaptation works by looking for negative serial correlation of
+   the inter-spike intervals
+
+ All of these tests are based on random number realizations, which is necessary
+ since the model is stochastic. Thus there is a finite probability for the test
+ to fail, even if everything is fine.
+
+ The choice of the variable err, which is the allowed relative deviation from
+ the reference value, can be used to make the test more or less strict.
+ Increasing T inside the test functions can also help to get more reliable
+ statistics and a reduced probability of false alarms.
+
+ The values are chosen to have a reasonable execution time. False alarms were 
+ never observed yet. Since random numbers are preserved through repetitions of
+ the simulations, the test should work for sure as long as the random number 
+ generation procedure of NEST is not changed. If it is changed, failure of the
+ test is still very unlikely.
+
+ The intention of this script is to make sure that there are no gross errors in
+ the main functions of the neuron model pp_psc_delta.
+
+Remarks:
+
+  This test script is based on the python version 
+  
+      test_pp_psc_delta.py
+      
+  and was adapted to SLI using
+  
+      test_iaf_dc_aligned.sli
+      
+  as a guideline. The commented code is the original python test code.
+
+
+Author:  June 2011, Deger, Zaytsev
+SeeAlso: pp_psc_delta
+*/
+
+
+/unittest (6688) require
+/unittest using
+
+
+0.2 /err Set
+
+
+% 1) check for reasonable firing rate
+% 2) check if fixed dead-time is respected
+
+/check_rate_and_fixed_dead_time
+{
+    
+
+    % test parameters
+    25.0 /d Set
+    10.0 /lam Set
+    100000.0 /T Set
+
+    ResetKernel
+    /pp_psc_delta Create /nrn Set
+
+    <<
+      /tau_m  10.0
+      /C_m   250.0
+      /dead_time d 
+      /dead_time_random  false
+      /dead_time_shape  1
+      /with_reset false
+      /tau_sfa 34.0
+      /q_sfa 0.0
+      /c_1  0.0
+      /c_2 lam 
+      /c_3   0.25
+      /I_e   0.0
+      /t_ref_remaining   0.0
+    >> /params Set
+    
+    nrn params SetStatus
+    
+    /spike_detector Create /sd Set
+
+    nrn sd Connect
+    T Simulate
+    
+    sd GetStatus /events get /times get /spikes Set
+
+    % rate_sim = size(spikes) / (T*1e-3)
+    spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
+
+    % rate_ana = 1./(1./lam + d*1e-3)
+    1.0 lam div d 1e-3 mul add /mu_ana Set 
+    1.0 mu_ana div /rate_ana Set
+    
+    % ratio = rate_sim / rate_ana
+    rate_sim rate_ana div /ratio Set
+    
+    % This could fail due to bad luck. However, if it passes once, then it should
+    % always do so, since the random numbers are reproducible in NEST.
+    1.0 err sub ratio lt
+    ratio 1.0 err add lt
+    and assert_or_die
+    
+    %isi = []
+    %for i in xrange(1,len(spikes)):
+    %    isi.append(spikes[i]-spikes[i-1])
+    %assert( min(isi)>=d )
+    0.0 /t Set
+    spikes cva { dup t sub exch /t Set  } Map /l Set
+    l Rest Min d geq assert_or_die
+    
+} def
+
+
+
+%3) check if random dead-time moments are respected
+
+/check_random_dead_time
+{
+    % test parameters
+    50.0 /d Set
+    10  /n Set
+    1.0e6 /lam Set
+    10000.0 /T Set
+
+    ResetKernel
+    /pp_psc_delta Create /nrn Set
+
+    <<
+      /tau_m  10.0
+      /C_m   250.0
+      /dead_time d 
+      /dead_time_random  true
+      /dead_time_shape  10
+      /with_reset false
+      /tau_sfa 34.0
+      /q_sfa 0.0
+      /c_1  0.0
+      /c_2 lam 
+      /c_3   0.25
+      /I_e   0.0
+      /t_ref_remaining   0.0
+    >> /params Set
+
+    nrn params SetStatus
+
+
+
+    /spike_detector Create /sd Set
+
+    nrn sd Connect
+    T Simulate
+
+    sd GetStatus /events get /times get /spikes Set
+
+
+    % rate_sim = size(spikes) / (T*1e-3)
+    spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
+
+    % rate_ana = 1./(1./lam + d*1e-3)
+    1.0 lam div d 1e-3 mul add /mu_ana Set 
+    1.0 mu_ana div /rate_ana Set
+    %1.0 1.0 lam div d 1e-3 mul add div /rate_ana Set
+    
+    % ratio = rate_sim / rate_ana
+    rate_sim rate_ana div /ratio Set
+    
+    % This could fail due to bad luck. However, if it passes once, then it should
+    % always do so, since the random numbers are reproducible in NEST.
+    1.0 err sub ratio lt
+    ratio 1.0 err add lt
+    and assert_or_die
+
+    %isi = []
+    %for i in xrange(1,len(spikes)):
+    %    isi.append(spikes[i]-spikes[i-1])
+    0.0 /t Set
+    spikes cva { dup t sub exch /t Set  } Map Rest /isi Set
+    
+    %# compute moments of ISI to get mean and variance
+    %isi_m1 = 0. 
+    %isi_m2 = 0.
+    %for t in isi:
+    %    isi_m1 += t
+    %    isi_m2 += t**2
+    0. /isi_m1 Set
+    0. /isi_m2 Set
+    isi { dup isi_m1 add /isi_m1 Set dup mul isi_m2 add /isi_m2 Set} forall
+    
+    %isi_mean = isi_m1 / len(isi)
+    %isi_var = isi_m2/ len(isi) - isi_mean**2
+    %ratio_mean = isi_mean / d
+    isi_m1 isi size exch pop div /isi_mean Set
+    isi_m2 isi size exch pop div isi_mean dup mul sub /isi_var Set
+    isi_mean d div /ratio_mean Set 
+    1.0 err sub ratio_mean leq
+    ratio_mean 1.0 err add leq
+    and assert_or_die
+    
+    %isi_var_th = n / (n/d)**2
+    %ratio_var = isi_var / isi_var_th
+    %assert( 1.0<=ratio_var<=1.5 )
+    n d div dup mul n exch div /isi_var_th Set
+    isi_var isi_var_th div /ratio_var Set
+    1.0 err sub ratio_var leq
+    ratio_var 1.0 err add leq
+    and assert_or_die
+    
+} def
+
+
+% 4) check if threshold adaptation works by looking for negative serial correlation of ISI
+
+/check_adapting_threshold
+{
+    
+    %# test parameters
+    1e-8 /d Set
+    30.0 /lam Set
+    10000.0 /T Set
+
+    ResetKernel
+
+
+    /pp_psc_delta Create /nrn Set
+
+    <<
+      /tau_m  10.0
+      /C_m   250.0
+      /dead_time d 
+      /dead_time_random  false
+      /dead_time_shape  1
+      /with_reset false
+      /tau_sfa 34.0
+      /q_sfa 7.0
+      /c_1  0.0
+      /c_2 lam 
+      /c_3   0.25
+      /I_e   0.0
+      /t_ref_remaining   0.0
+    >> /params Set
+    
+    nrn params SetStatus
+    
+    /spike_detector Create /sd Set
+    
+    nrn sd Connect
+    T Simulate
+
+    sd GetStatus /events get /times get /spikes Set
+
+    % rate_sim = size(spikes) / (T*1e-3)
+    spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
+
+    % rate_ana = 1./(1./lam + d*1e-3)
+    1.0 lam div d 1e-3 mul add /mu_ana Set 
+    1.0 mu_ana div /rate_ana Set
+    %1.0 1.0 lam div d 1e-3 mul add div /rate_ana Set
+    
+    % ratio = rate_sim / rate_ana
+    rate_sim rate_ana div /ratio Set
+    
+    %# Adaptive threshold changes rate, thus not asserted here
+    %0.5 ratio lt
+    %ratio 1.5 lt
+    %and assert_or_die
+
+    %isi = []
+    %for i in xrange(1,len(spikes)):
+    %    isi.append(spikes[i]-spikes[i-1])
+    0.0 /t Set
+    spikes cva { dup t sub exch /t Set  } Map Rest /isi Set
+    
+    %    # compute moments of ISI to get mean and variance
+    %    isi_m1 = isi[-1]
+    %    isi_m2 = isi[-1]**2
+    %    isi_12 = 0.
+    %    for t,t1 in zip(isi[:-1],isi[1:]):
+    %        isi_m1 += t
+    %        isi_m2 += t**2
+    %        isi_12 += t*t1
+    0. /isi_m1 Set
+    0. /isi_m2 Set
+    isi { dup isi_m1 add /isi_m1 Set dup mul isi_m2 add /isi_m2 Set} forall
+
+    isi size exch pop /isi_size Set
+
+    0. /isi_12 Set
+    [] isi_size 1 sub append /dummylist Set
+    dummylist Range {dup isi exch get exch 1 sub isi exch get mul isi_12 add /isi_12 Set} forall
+ 
+    %    
+    %    isi_mean = isi_m1 / len(isi)
+    %    isi_var = (isi_m2 - isi_m1)**2 / len(isi)
+    %    isi_corr = (isi_12 / (len(isi)-1) - isi_mean**2) / isi_var
+    isi_m1 isi_size div /isi_mean Set
+    isi_m2 isi_size div isi_mean dup mul sub /isi_var Set
+    isi_size 1 sub isi_12 exch div isi_mean dup mul sub isi_var div /isi_corr Set
+
+    % This could fail due to bad luck. However, if it passes once, then it should
+    % always do so, since the random numbers are reproducible in NEST.
+    %    assert( -1.0<isi_corr<0.0 )
+    -1.0 isi_corr lt
+    isi_corr 0. lt 
+    and assert_or_die
+} def
+
+
+check_rate_and_fixed_dead_time 
+check_random_dead_time
+check_adapting_threshold
+

@@ -31,6 +31,8 @@
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictdatum.h"
+#include "iteratordatum.h"
+#include "tokenutils.h"
 #include <climits>
 #include <sstream>
 
@@ -1168,6 +1170,7 @@ void Cvx_aFunction::execute(SLIInterpreter *i) const
   ArrayDatum   *obj = dynamic_cast<ArrayDatum *>(i->OStack.top().datum());
   assert(obj != NULL);
   Token t( new ProcedureDatum(*obj));
+  t->set_executable();
   i->OStack.top().swap(t);
 }
 
@@ -1225,9 +1228,43 @@ void Cvlp_pFunction::execute(SLIInterpreter *i) const
   ProcedureDatum *obj = dynamic_cast<ProcedureDatum *>(i->OStack.top().datum());
   assert(obj != NULL);
   Token t( new LitprocedureDatum(*obj));
+  t->set_executable();
   i->OStack.top().swap(t);
   i->EStack.pop();
 }
+
+// ---- begin iterator experimental section 
+void RangeIterator_aFunction::execute(SLIInterpreter *i) const
+{
+  assert(i->OStack.load()>0);
+
+  ArrayDatum *a = dynamic_cast<ArrayDatum *>(i->OStack.top().datum());
+  assert(a != NULL);
+
+  const long start = getValue<long>(a->get(0));
+  const long stop  = getValue<long>(a->get(1));
+  const long di    = getValue<long>(a->get(2));
+ 
+  Token t( new IteratorDatum(start,stop,di));
+  i->OStack.top().swap(t);
+  i->EStack.pop();
+}
+
+
+void IteratorSize_iterFunction::execute(SLIInterpreter *i) const
+{
+  assert(i->OStack.load()>0);
+
+  IteratorDatum *iter = dynamic_cast<IteratorDatum *>(i->OStack.top().datum());
+  assert(iter != NULL);
+
+  Token t( new IntegerDatum(iter->size()));
+  i->OStack.push_move(t);
+  i->EStack.pop();
+}
+
+
+// ---- end iterator experimental section 
 
 
 void Cvi_sFunction::execute(SLIInterpreter *i) const
@@ -1372,7 +1409,7 @@ void IrepeatanyFunction::execute(SLIInterpreter *i) const
   if( loopcount->get() > 0 )
   {
     i->EStack.push(i->EStack.pick(1));
-    loopcount->decr();
+    --(loopcount->get());
   }
   else
     i->EStack.pop(4);    
@@ -1431,6 +1468,8 @@ const Cvx_aFunction cvx_afunction;
 const Cvlit_nFunction cvlit_nfunction;
 const Cvlit_pFunction cvlit_pfunction;
 const Cvlp_pFunction cvlp_pfunction;
+const RangeIterator_aFunction rangeiterator_afunction;
+const IteratorSize_iterFunction iteratorsize_iterfunction;
 const Cvn_lFunction cvn_lfunction;
 const Cvn_sFunction cvn_sfunction;
 const Cvi_sFunction cvi_sfunction;
@@ -1498,6 +1537,8 @@ void init_slidata(SLIInterpreter *i)
   i->createcommand("cvlit_n", &cvlit_nfunction);
   i->createcommand("cvlit_p", &cvlit_pfunction);
   i->createcommand("cvlp_p", &cvlp_pfunction);
+  i->createcommand("RangeIterator_a", &rangeiterator_afunction);
+  i->createcommand("size_iter", &iteratorsize_iterfunction);
   i->createcommand("cvn_l", &cvn_lfunction);
   i->createcommand("cvn_s", &cvn_sfunction);
   i->createcommand("cvi_s", &cvi_sfunction);

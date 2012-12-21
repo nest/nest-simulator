@@ -66,10 +66,10 @@ namespace nest
     void init(int, Scheduler *);
     int  get_id(void) const; 
     
+#ifdef HAVE_PTHREADS
     int join();
-    
     void run(void);  // main driver of the thread
-    void update(void);
+#endif
 
   private:
     
@@ -90,8 +90,10 @@ namespace nest
   
 } // namespace
 
-extern "C" 
+#ifdef HAVE_PTHREADS
+extern "C"
 void* nest_thread_handler(void *);
+#endif
 
 #endif
 

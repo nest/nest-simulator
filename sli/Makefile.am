@@ -46,9 +46,11 @@ libsli_base_sources=\
 		integerdatum.cc integerdatum.h\
 		interpret.cc interpret.h\
 		iostreamdatum.cc iostreamdatum.h\
+		iteratordatum.h iteratordatum.cc\
 		literaldatum.cc\
 		lockptrdatum.h lockptrdatum_impl.h\
 		name.cc name.h\
+		slinames.h slinames.cpp\
 		namedatum.cc namedatum.h\
 		numericdatum.h numericdatum_impl.h\
 		oosupport.cc oosupport.h\
@@ -111,9 +113,11 @@ libpuresli_la_SOURCES=\
 		integerdatum.cc integerdatum.h\
 		interpret.cc interpret.h\
 		iostreamdatum.cc iostreamdatum.h\
+		iteratordatum.h iteratordatum.cc\
 		literaldatum.cc\
 		lockptrdatum.h lockptrdatum_impl.h\
 		name.cc name.h\
+		slinames.h slinames.cpp\
 		namedatum.cc namedatum.h\
 		numericdatum.h numericdatum_impl.h\
 		oosupport.cc oosupport.h\

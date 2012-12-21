@@ -43,7 +43,8 @@ namespace nest
  * The interface between ConnectModel and Connector does not enter here,
  * since by using templates both of them have fixed type.
  */
-class ConnectorModel {
+class ConnectorModel
+{
 
  public:
   ConnectorModel(Network& net, std::string);
@@ -80,7 +81,7 @@ class ConnectorModel {
   /**
    * Increment the number of connections created by this ConnectorModel.
    */
-  void increment_num_connections();
+  void increment_num_connections(size_t num = 1);
 
   size_t get_num_connections() const;
 
@@ -88,16 +89,16 @@ class ConnectorModel {
 
   std::string get_name() const;
 
+  bool get_user_set_delay_extrema() const;
+
  protected:
-  Network &net_;                //!< The Network instance.
-  Time min_delay_;              //!< Minimal delay of all created synapses.
-  Time max_delay_;              //!< Maximal delay of all created synapses.
-  //  double_t min_delay_candidate_; //!< candidate for minimal delay: set when setting defaults
-  //double_t max_delay_candidate_; //!< candidate for maximal delay: set when setting defaults
-  size_t num_connections_;      //!< The number of connections registered with this type
-  size_t num_connectors_;      //!< The number of connectors registered with this type
+  Network &net_;                    //!< The Network instance.
+  Time min_delay_;                  //!< Minimal delay of all created synapses.
+  Time max_delay_;                  //!< Maximal delay of all created synapses.
+  size_t num_connections_;          //!< The number of connections registered with this type
+  size_t num_connectors_;           //!< The number of connectors registered with this type
   bool default_delay_needs_check_;  //!< Flag indicating, that the default delay must be checked
-  bool user_set_delay_extrema_; //!< Flag indicating if the user set the delay extrema.
+  bool user_set_delay_extrema_;     //!< Flag indicating if the user set the delay extrema.
 
  private:
   std::string name_;
@@ -113,13 +114,13 @@ Network& ConnectorModel::network() const
 inline 
 const Time ConnectorModel::get_min_delay() const
 {
-    return min_delay_;
+  return min_delay_;
 }
 
 inline
 const Time ConnectorModel::get_max_delay() const
 {
-    return max_delay_;
+  return max_delay_;
 }
 
 inline 
@@ -134,13 +135,11 @@ void ConnectorModel::set_max_delay(const Time &max_delay)
   max_delay_ = max_delay;
 }
 
-
 inline
-void ConnectorModel::increment_num_connections()
+void ConnectorModel::increment_num_connections(size_t num)
 {
-  ++num_connections_;
+  num_connections_ += num;
 }
-
 
 inline
 size_t ConnectorModel::get_num_connections() const
@@ -159,6 +158,13 @@ std::string ConnectorModel::get_name() const
 {
   return name_;
 }
+
+inline
+bool ConnectorModel::get_user_set_delay_extrema() const
+{
+  return user_set_delay_extrema_;
+}
+
 
 } // namespace
 

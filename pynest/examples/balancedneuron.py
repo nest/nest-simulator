@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # balancedneuron.py
 #
 # This file is part of NEST.
@@ -148,4 +149,3 @@ print "\nOptimal rate for the inhibitory population: %.2f Hz" % in_rate
 # function of time.
 
 nest.voltage_trace.from_device(voltmeter)
-nest.voltage_trace.show()

@@ -5,6 +5,7 @@
 #  The script will:
 #
 #  - make a clean checkout to __NEST_SOURCE in the local directory
+#  - set SLI_PATCHLEVEL to current SVN revision in configure.ac.in
 #  - ask if to tag the release in the repository
 #  - create an up-to-date doc/ChangeLog.html
 #  - run bootstrap
@@ -22,7 +23,7 @@
 #  08/2007 modified by Jochen Eppler to use SVN revision as patchlevel
 #  03/2009 modified by Jochen Eppler to allow tarballing branches
 #  11/2009 modified by Jochen Eppler to use the HTTPS repository
-#  11/2010 modified by Jochen Eppler for the 2.0.x releases
+
 
 # first, we check for autoconf >= 2.60, as tarballs built with older versions
 # may cause problems on many machines. See #122 for details.
@@ -53,7 +54,7 @@ if ( $#argv != 0 ) then
     exit 0
   endif
 else
-  set svndir="branches/nest2.0/2.0.0"
+  set svndir="branches/nest-2.2/2.2.0"
   set branch=""
 endif
 
@@ -117,25 +118,32 @@ svn --quiet checkout $svn_id $nest_srcdir
 
 # add svn revision number to tarball name
 set svnver=`svnversion $nest_srcdir`
+#set patchlevel = "$svnver$label"
+set patchlevel = "0"
 
 # move to nest_srcdir
 cd $nest_srcdir
 
-set nest_minor   = `grep -m1 SLI_MINOR configure.ac.in | cut -d\= -f2`
-set nest_major   = `grep -m1 SLI_MAJOR configure.ac.in | cut -d\= -f2`
-set nest_patch   = `grep -m1 SLI_PATCHLEVEL configure.ac.in | cut -d\= -f2`
-set nest_version = "$nest_major.$nest_minor.$nest_patch"
+# edit configure.ac.in
+echo ""
+echo -n "Setting patch level in configure.ac"
+sed -i -e "s/SLI_PATCHLEVEL=svn/SLI_PATCHLEVEL=$patchlevel/" configure.ac.in
+
+set nest_minor   = "2"
+set nest_major   = "2"
+set nest_version = "$nest_major.$nest_minor.$patchlevel"
 set nest_nprog   = "nest-$nest_version"
 
-echo ""
-echo "Creating tarball of $nest_nprog"
+sed -i -e "s/AC_INIT(\[nest\], \[$nest_major\.$nest_minor\.svn\]/AC_INIT([nest], [$nest_version]/" configure.ac.in
+
+echo " to $nest_nprog"
 
 # tag new version if real run
-if ( "$label" == "" ) then
-  echo ""
-  echo "Tagging new version as $nest_nprog" 
-  svn copy $svn_id $svn_tags/$nest_nprog -r $svnver -m "Tagging release as $nest_nprog"
-endif
+#if ( "$label" == "" ) then
+#  echo ""
+#  echo "Tagging new version as $nest_nprog" 
+#  svn copy $svn_id $svn_tags/$nest_nprog -r $svnver -m "Tagging release as $nest_nprog"
+#endif
 
 # remove all candidate modules from configure.ac---this change MUST NOT be checked in
 gawk -f $scriptdir/clear_extra_modules.awk configure.ac.in > configure.ac.tmp \
@@ -160,7 +168,7 @@ cd $nest_blddir
 # directories to be created on rolling tarball
 echo ""
 echo "Configuring build directory ..." 
-../$nest_srcdir/configure > /dev/null
+../$nest_srcdir/configure --prefix=$HOME/opt/nest  > /dev/null
 echo ""
 echo "Rolling tarball ..."
 make -s dist

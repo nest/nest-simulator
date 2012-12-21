@@ -22,6 +22,7 @@
 
 #include "connectiondatum.h"
 #include "datumconverter.h"
+
 #include "aggregatedatum_impl.h"
 
 // explicit instantiation
@@ -29,4 +30,19 @@ template class AggregateDatum<nest::ConnectionID, &nest::NestModule::ConnectionT
 
 template<> sli::pool 
  AggregateDatum<nest::ConnectionID, &nest::NestModule::ConnectionType>::memory(
-           sizeof(nest::ConnectionID),10240,1);
+           sizeof(nest::ConnectionID),10000,1);
+
+
+template<>
+void AggregateDatum<nest::ConnectionID, &nest::NestModule::ConnectionType>::print(std::ostream &out) const
+{
+    out << "/connectiontype";
+}
+
+template<>
+void AggregateDatum<nest::ConnectionID, &nest::NestModule::ConnectionType>::pprint(std::ostream &out) const
+{
+    out << "<" << source_gid_ << ',' << target_gid_ << ',' 
+	<< target_thread_ << ',' << synapse_modelid_ << ',' << port_ << ">";
+}
+

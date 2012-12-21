@@ -77,6 +77,11 @@ namespace librandom
     
     ~MT19937() {};
 
+    RngPtr clone(unsigned long s)
+      {
+	return RngPtr(new MT19937(s));
+      }
+ 
   private:
     //! implements seeding for RandomGen
     void   seed_(unsigned long);

@@ -62,7 +62,7 @@
    CreateLayer,ConnectLayers,GetPosition,GetLayer,
    GetElement,FindNearestElement,Displacement,Distance,
    DumpLayerNodes,DumpLayerConnections,FindCenterElement,
-   GetTargetNodes,GetTargetPositions,PlotTargets,PlotKernel,PlotLayer},
+   GetTargetNodes,GetTargetPositions,PlotTargets,PlotKernel,PlotLayer,Install},
   rangeprefix=\#\{\ ,
   rangesuffix=\ \#\},
   includerangemarker=false}
@@ -71,9 +71,10 @@
 
 \title{NEST Topology User Manual}
 \author{Hans Ekkehard Plesser\\[1ex]
+Håkon Enger\\[1ex]
 \normalsize Department of Mathematical Sciences and Technology\\\normalsize Norwegian University of Life Sciences\\
 \normalsize 1432 Ås, Norway}
-\date{NEST 2.0 RC2 (r9083 or later)\\[8cm]
+\date{NEST 2.2 (r9977 or later)\\[8cm]
 \centerline{\includegraphics{nest-initiative-logo}}}
 
 
@@ -95,7 +96,10 @@
   parts of the Topology library code, improved and extended the PyNEST
   interface for the Topology library, fixed bugs and added tests.
 
-  This User Manual describes the NEST 2.0 version of the NEST Topology
+  For NEST 2.2, Håkon Enger rewrote most of the Topology library code,
+  thereby improving performance considerably.
+
+  This User Manual describes the NEST 2.2 version of the NEST Topology
   Library. Please see Chapter~{sec:changes} for a summary of changes.
 
   We plan further improvements to the Topology Module in the future, 
@@ -127,8 +131,8 @@ reference manual. Please consult the online documentation in PyNEST
 for details; where appropriate, that documentation also points to
 relevant SLI documentation.
 
-This manual describes the Topology Module included with NEST~2.0, code
-revision 8995 or later.  This version differs from older ones in some
+This manual describes the Topology Module included with NEST~2.2, code
+revision 9977 or later.  This version differs from older ones in some
 important aspects as detailed in Section~\ref{sec:changes}. In our
 experience, though, most scripts using the Topology Module can be
 ported to the new version with minimal changes.
@@ -137,7 +141,9 @@ In the next chapter of this manual, we introduce Topology layers,
 which place neurons in space. In Chapter~\ref{sec:connections} we then
 describe how to connect layers with each other, before discussing in
 Chapter~\ref{sec:inspection} how you can inspect and visualize
-Topology networks.
+Topology networks. Chapter~\ref{ch:extending} deals with the more advanced
+topic of extending the Topology module with custom kernel functions and
+masks provided by C++ classes in an extension module.
 
 You will find the Python scripts used in the examples in this manual 
  in the NEST
@@ -146,20 +152,10 @@ source code directory under \lstinline!topology/doc/user_manual_scripts!.
 \section{Limitations and Disclaimer}\label{sec:limitations}
 
 \begin{description}
-\item[2D only] The Topology Module provides support for layers in two-dimensional
-space only. The ``3D layers'' described in the user manual for earlier
-versions of the Topology Module were actually layers in
-two-dimensional space, where each element consisted of several neurons
-which then were labeled, e.g., as belonging to L2/3, L4, or L6, but
-were not assigned a physical z-coordinate.
-\item[No extensibility] There is currently no user-friendly way to extend the
-  Topology Module with new kernel functions or masks. We plan to add
-  support for this in the future.
 \item[Undocumented features] The Topology Module provides a number of undocumented features, which
 you may discover by browsing the code. These features are highly
 experimental and should \emph{not be used for simulations}, as they
-have not been validated.  A prominent example is the possibility to
-create layers with neurons freely placed in three-dimensional space.
+have not been validated.
 \end{description}
 
 
@@ -339,6 +335,20 @@ Note the following points:
 \end{itemize}
 
 
+\section{3D layers}\label{sec:3dlayer}
+
+Although the term ``layer'' suggests a 2-dimensional structure, the layers
+in NEST may in fact be 3-dimensional\index{3D layers}.  The example from
+the previous section may be easily extended with another component in the
+coordinates for the positions:
+%
+\lstinputlisting[linerange=layer4_3d-end]{user_manual_scripts/layers.py}
+\scriptfig{layer4_3d}{0.5}{3D layer with freely spaced elements.}%
+{A free 3D layer with 200 elements uniformly distributed in an extent of
+size $1\times 1\times 1$.}
+%
+
+
 \section{Periodic boundary conditions}\label{sec:periodic}
 
 Simulations usually model systems much smaller than the biological
@@ -350,7 +360,7 @@ the network. In the $5\times 5$-layer in Fig.~\ref{fig:layer1}, e.g.,
 
 One common approach to reducing the effect of boundaries on
 simulations is to introduce \emph{periodic boundary
-  conditions}\index{periodic boundary conditions}, so that the
+  conditions}\index{periodic boundary cond.}, so that the
 rightmost elements on a grid are considered nearest neighbors to the
 leftmost elements, and the topmost to the bottommost. The flat layer
 becomes the surface of a torus. Fig.~\ref{fig:player} illustrates this
@@ -425,7 +435,7 @@ structure of the layer.
 So far, we have considered layers in which each element was a single
 model neuron. Topology can also create layers with \emph{composite
   elements}\index{composite element}, i.e., layers in which each
-element is a (possibly nested) collection of model neurons, or, in
+element is a collection of model neurons, or, in
 general NEST network nodes.
 
 Construction of layers with composite elements proceeds exactly as for
@@ -439,10 +449,11 @@ each element consists of one \lstinline!'iaf_cond_alpha'! and one
 \lstinputlisting[linerange=layer6-end]{user_manual_scripts/layers.py}
 \lstinputlisting[linerange=layer6-end]{user_manual_scripts/layers.log}
 %
-The network consist of one \lstinline!topology_layer_grid! with two
-elements, each of which is a \lstinline!subnet! containing one
-\lstinline!iaf_cond_alpha! and one \lstinline!poisson_generator!
-node. 
+The network consist of one \lstinline!topology_layer_grid! with four
+elements: two \lstinline!iaf_cond_alpha! and two
+\lstinline!poisson_generator! nodes. The identical nodes are grouped, so
+that the subnet contains first one full layer of \lstinline!iaf_cond_alpha!
+nodes followed by one full layer of \lstinline!poisson_generator! nodes.
 
 You can create network elements with several nodes of each type by
 following a model name with the number of nodes to be created:
@@ -457,16 +468,18 @@ and two \lstinline!noise_generator!s.
 Note the following points:
 \begin{itemize}
 \item Each element of a layer has identical components.
-\item Each element is implemented as a \lstinline!subnet!.
 \item All nodes within a composite element have identical positions,
   namely the position of the layer element.
-\item It is possible to create layers with nested, composite elements,
-  e.g.,
-\lstinputlisting[linerange=layer8-end]{user_manual_scripts/layers.py}
-\lstinputlisting[linerange=layer8-end]{user_manual_scripts/layers.log}
-  but such nested networks gobble up a lot of memory for subnet
-  constructs and provide no practical advantages. See the next section
-  for design recommendations for more complex layers.
+\item When inspecting a layer as a subnet, the different nodes will appear
+  in groups of identical nodes.
+\item For grid-based layers, the function \lstinline!GetElement! returns a
+  list of nodes at a given grid position. See Chapter~\ref{sec:inspection}
+  for more on inspecting layers.
+\item In a previous version of the topology module it was possible to
+  create layers with nested, composite elements, but such nested networks
+  gobble up a lot of memory for subnet constructs and provide no practical
+  advantages, so this is no longer supported. See the next section for
+  design recommendations for more complex layers.
 \end{itemize}
 
 \subsection{Designing layers}\label{sec:layerdesign}
@@ -484,23 +497,9 @@ and one interneuron. All pyramidal cells are modeled as NEST
 interneurons are \lstinline!iaf_neuron!s with threshold voltage
 $V_{\text{th}}=-52$mV. 
 \end{quote}
-How should you implement such a network using the Topology module? At
-first sight it appears tempting to reproduce the nested structure
-suggested by the model description:
-%
-\lstinputlisting[linerange=layer9-end]{user_manual_scripts/layers.py}
-%
-There are two shortcomings to this approach:
-\begin{itemize}
-\item The resulting layer will contain many subnets with only four
-  neurons each, resulting in a significant memory overhead.
-\item It is cumbersome to address the various subpopulations to create
-  selective connections, e.g., from L2/3 pyramidal cells to L4 interneurons.
-\end{itemize}
-We thus advise against this nesting approach.
-
-A more efficient approach is to create different models for the
-neurons in each layer and then define the microcolumn as one ``flat''
+How should you implement such a network using the Topology module?
+The recommended approach is to create different models for the
+neurons in each layer and then define the microcolumn as one
 composite element:
 %
 \lstinputlisting[linerange=layer10-end]{user_manual_scripts/layers.py}
@@ -598,9 +597,9 @@ Connections between Topology layers are created by calling
 \item The target layer (can be identical to source layer).
 \item A connection dictionary that contains at least the following entries:
 \begin{description}
-\item[\lstinline!'connection_type'!] Either \lstinline!'convergent'!
+\item['connection\_type'] Either \lstinline!'convergent'!
   or \lstinline!'divergent'!.
-\item[\lstinline!'mask'!] A mask specification as described in
+\item['mask'] A mask specification as described in
   Sec.~\ref{sec:conn_masks}.
 \end{description}
 \end{enumerate}
@@ -615,7 +614,7 @@ Here is a simple example, cf.~\ref{fig:conn1}:
   dots. This node has fewer targets since it is at the corner and many
   potential targets are beyond the layer.
 Right: The effect of periodic boundary conditions\index{periodic
-  boundary conditions} is seen here. Source and target layer and connection dictionary
+  boundary cond.} is seen here. Source and target layer and connection dictionary
 were identical, except that periodic boundary conditions were
 used. The node at $(4,5)$ now has 15 targets, too, but they are spread
 across the corners of the layer. If we wrapped the layer to a torus,
@@ -664,11 +663,16 @@ using periodic boundary conditions, since the mask would ``wrap
 around'' in that case and pool nodes would be considered multiple
 times as targets.
 
-\subsection{Masks for all layer types}\label{sec:free_masks}
+If none of the mask types provided in the topology library meet your need,
+you may add more mask types in a NEST extension module. This is covered in
+Chapter~\ref{ch:extending}.
 
-Topology currently provides three types of masks usable for free and
-grid-based layers. They are illustrated in Fig.~\ref{fig:conn2}. The
-masks are
+
+\subsection{Masks for 2D layers}\label{sec:free_masks}
+
+Topology currently provides three types of masks usable for 2-dimensional
+free and grid-based layers. They are illustrated in Fig.~\ref{fig:conn2}.
+The masks are
 \begin{description}
 \item[Rectangular\index{rectangular}] All nodes within a rectangular
   area are connected. The area is speficied by its lower left and
@@ -695,15 +699,38 @@ Fig.~\ref{fig:conn2}, bottom row):
 \lstinputlisting[linerange=conn2co-end]{user_manual_scripts/connections.py}
 \lstinputlisting[linerange=conn2do-end]{user_manual_scripts/connections.py}
 
-\scriptfig{conn2}{0.9}{Masks for all layer types}%
-{Masks for all layer types. For all mask types, the driver node is
+\scriptfig{conn2}{0.9}{Masks for 2D layers}%
+{Masks for 2D layers. For all mask types, the driver node is
   marked by a wide light-red circle, the selected pool nodes by red
   dots and the masks by red lines. Top row from left to right:
   rectangular, circular and doughnut masks centered about the driver
   node.
 Bottom row from left to right: the same masks as in the top row, but
-centered about $(-1.5,-1.5)$,m $(-2,0)$ and $(1.5,1.5)$, respectively,
+centered about $(-1.5,-1.5)$, $(-2,0)$ and $(1.5,1.5)$, respectively,
 using the \lstinline!'anchor'! parameter.}
+
+
+\subsection{Masks for 3D layers}\label{sec:3d_masks}
+
+Similarly, there are two mask types that can be used for 3D layers\index{3D layers},
+\begin{description}
+\item[Box\index{box}] All nodes within a cuboid volume are connected. The
+  area is speficied by its lower left and upper right corners, measured in
+  the same unit as element coordinates. Example:
+  \lstinputlisting[linerange=conn_3d_a-end]{user_manual_scripts/connections.py}
+\item[Spherical\index{spherical}] All nodes within a sphere are
+  connected.  The area is specified by its radius.
+\lstinputlisting[linerange=conn_3d_b-end]{user_manual_scripts/connections.py}
+\end{description}
+As in the 2D case, you can change the location of the mask relative to the
+driver node by specifying a 3D vector in the
+\lstinline!'anchor'!\index{anchor} entry in the mask dictionary.
+
+\scriptfig{conn_3d}{0.9}{Masks for 3D layers}%
+{Masks for 3D layers. For all mask types, the driver node is
+  marked by a wide light-red circle, the selected pool nodes by red
+  dots and the masks by red lines. From left to right:
+  box and spherical masks centered about the driver node.}
 
 
 \subsection{Masks for grid-based layers}\label{sec:grid_masks}
@@ -756,7 +783,7 @@ anchor determines which mask element is aligned with the driver element.
 
 \section{Kernels}\label{sec:conn_kernels}
 
-Many neuronl network models employ probabilistic connection
+Many neuronal network models employ probabilistic connection
 rules\index{probabilistic connection rules}. Topology supports
 probabilistic connections through \emph{kernels}\index{kernel}. A
 kernel is a function mapping the distance (or displacement) between a
@@ -779,9 +806,9 @@ Topology:
   Sec.~\ref{sec:prescribed_numbers} for details.
 \end{description}
 
-Available kernel functions are shown in Table~\ref{tab:kernels}. There
-is at present unfortunately no convenient way to add further kernel
-functions to Topology.
+Available kernel functions are shown in Table~\ref{tab:kernels}. More
+kernel function may be created in a NEST extension module. This is covered
+in Chapter~\ref{ch:extending}.
 
 \begin{table}
 \begin{tabularx}{\linewidth}{l|p{0.2\linewidth}|X}
@@ -876,7 +903,7 @@ $(25,0)$ since as the mask extends only 25 units to the right of the
 driver. Delays increase in a stepwise linear fashion\index{delays, stepwise}, as NEST requires
 delays to be multiples of the simulation resolution. 
 \item[Linear example with periodic boundary conditions\index{periodic
-    boundary conditions}]\rule{0mm}{0mm}\\
+    boundary cond.}]\rule{0mm}{0mm}\\
 \lstinputlisting[linerange=conn5linpbc-end]{user_manual_scripts/connections.py}
 Results are shown in the middle panel of Fig.~\ref{fig:conn5}.
 This example is identical to the previous,
@@ -905,7 +932,7 @@ delays can currently only be randomized with uniform distribution.
 \section{Periodic boundary conditions}\label{sec:conn_pbc}
 
 Connections between layers with periodic boundary
-conditions\index{periodic boundary conditions} are based
+conditions\index{periodic boundary cond.} are based
 on the following principles:
 \begin{itemize}
 \item Periodic boundary conditions are always applied in the pool
@@ -1136,7 +1163,240 @@ mask and kernel.
 \lstinputlisting[linerange=vislayer-end]{user_manual_scripts/layers.py}
 
 
-\chapter{Changes from Topology 1.9 to 2.0}\label{sec:changes}
+\chapter{Adding topology kernels and masks}\label{ch:extending}
+
+\index{adding kernels and masks}
+This chapter will show examples of how to extend the topology module by
+adding custom kernel functions and masks. Some knowledge of the C++
+programming language is needed for this. The functions will be added as a
+part of an extension module which is dynamically loaded into NEST. For more
+information on writing an extension module, see the section titled ``Writing
+an Extension Module'' in the NEST Developer Manual. The basic steps
+required to get started are:
+\begin{enumerate}
+\item From the NEST source directory, copy directory examples/MyModule to
+  somewhere outside the NEST source, build or install directories.
+\item Change to the new location of MyModule and prepare by issuing
+  \lstinline!./bootstrap.sh!
+\item Leave MyModule and create a build directory for it, e.g., mmb next to
+  it
+\begin{lstlisting}[language=bash]
+cd ..
+mkdir mmb
+cd mmb
+\end{lstlisting}
+\item Configure. The configure process uses the script \lstinline!nest-config!
+  to find out where NEST is installed, where the source code resides, and
+  which compiler options were used for compiling NEST. If
+  \lstinline!nest-config! is not in your path, you need to provided it
+  explicitly like this
+\begin{lstlisting}[language=bash]
+../MyModule/configure --with-nest=${NEST_INSTALL_DIR}/bin/nest-config
+\end{lstlisting}
+\item MyModule will then be installed to \lstinline!${NEST_INSTALL_DIR}!. This
+  ensures that NEST will be able to find initializing SLI files for the
+  module.  You should not use the \lstinline!--prefix! to select a different
+  installation destination. If you do, you must make sure to use addpath in
+  SLI before loading the module to ensure that NEST will find the SLI
+  initialization file for your module.
+\item Compile.
+\begin{lstlisting}[language=bash]
+make
+make install
+\end{lstlisting}
+The previous command installed MyModule to the NEST installation directory, including help files generated from the source code. 
+\end{enumerate}
+
+\section{Adding kernel functions}
+
+As an example, we will add a kernel\index{kernel} function called \lstinline!'affine2d'!,
+which will be linear (actually affine) in the displacement of the nodes, on
+the form
+\begin{equation*}
+  p(d) = a d_x + b d_y + c.
+\end{equation*}
+The kernel functions are provided by C++ classes subclassed from
+\lstinline!nest::Parameter!. To enable subclassing, add the following lines
+at the top of the file \lstinline!mymodule.h!:
+\begin{lstlisting}[language=C++]
+#include "topologymodule.h"
+#include "parameter.h"
+\end{lstlisting}
+Then, add the class definition, e.g. near the bottom of the file before the
+brace closing the namespace \lstinline!mynest!:
+\begin{lstlisting}[language=C++]
+  class Affine2DParameter: public nest::Parameter
+  {
+  public:
+    Affine2DParameter(const DictionaryDatum& d):
+      Parameter(d),
+      a_(1.0),
+      b_(1.0),
+      c_(0.0)
+      {
+        updateValue<double>(d, "a", a_);
+        updateValue<double>(d, "b", b_);
+        updateValue<double>(d, "c", c_);
+      }
+
+    double raw_value(const nest::Position<2>& disp,
+                     librandom::RngPtr&) const
+      {
+        return a_*disp[0] + b_*disp[1] + c_;
+      }
+
+    nest::Parameter * clone() const
+      { return new Affine2DParameter(*this); }
+
+  private:
+    double a_, b_, c_;
+  };
+\end{lstlisting}
+The class contains a constructor, which reads the value of the parameters
+$a$, $b$ and $c$ from the dictionary provided by the user. The function
+\lstinline!updateValue! will do nothing if the given key is not in the
+dictionary, and the default values $a=b=1,\ c=0$ will be used.
+
+The overridden method \lstinline!raw_value()! will return the actual value
+of the kernel function for the displacement given as the first argument,
+which is of type \lstinline!nest::Position<2>!. The template argument 2
+refers to a 2-dimensional position. You can also implement a method taking
+a \lstinline!nest::Position<3>! as the first argument if you want to
+support 3-dimensional layers. The second argument, a random number
+generator, is not used in this example.
+
+The class also needs to have a \lstinline!clone()! method, which will return
+a dynamically allocated copy of the object. We use the (default) copy
+constructor to implement this.
+
+To make the custom function available to the Topology module, you need to
+register the class you have provided. To do this, add the line
+\begin{lstlisting}[language=C++]
+nest::TopologyModule::register_parameter<Affine2DParameter>("affine2d");
+\end{lstlisting}
+to the function \lstinline!MyModule::init()! in the file
+\lstinline!mymodule.cpp!. Now compile and install the module by issuing
+\begin{lstlisting}[language=bash]
+make
+make install
+\end{lstlisting}
+To use the function, the module must be loaded into NEST using
+\lstinline!nest.Install()!. Then, the function is
+available to be used in connections, e.g.
+\begin{lstlisting}
+nest.Install('mymodule')
+l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [1.,1.],
+                        'elements': 'iaf_neuron'})
+tp.ConnectLayers(l,l,{'connection_type': 'convergent',
+            'mask': {'circular': {'radius': 0.5}},
+            'kernel': {'affine2d': {'a': 1.0, 'b': 2.0, 'c': 0.5}}})
+\end{lstlisting}
+
+\section{Adding masks}
+
+The process of adding a mask\index{mask} is similar to that of adding a kernel
+function. A subclass of \lstinline!nest::Mask<D>! must be defined, where
+\lstinline!D! is the dimension (2 or 3). In this case we will define a
+2-dimensional elliptic mask by creating a class called
+\lstinline!EllipticMask!. First, we must include another header file:
+\begin{lstlisting}[language=C++]
+#include "mask.h"
+\end{lstlisting}
+Compared to the \lstinline!Parameter! class discussed in the previous
+section, the \lstinline!Mask! class has a few more methods that must be
+overridden:
+\begin{lstlisting}[language=C++]
+  class EllipticMask : public nest::Mask<2>
+  {
+  public:
+    EllipticMask(const DictionaryDatum& d):
+      rx_(1.0), ry_(1.0)
+      {
+        updateValue<double>(d, "r_x", rx_);
+        updateValue<double>(d, "r_y", ry_);
+      }
+
+    using Mask<2>::inside;
+
+    // returns true if point is inside the ellipse
+    bool inside(const nest::Position<2> &p) const
+      { return p[0]*p[0]/rx_/rx_ + p[1]*p[1]/ry_/ry_ <= 1.0; }
+
+    // returns true if the whole box is inside the ellipse
+    bool inside(const nest::Box<2> &b) const
+      {
+        nest::Position<2> p = b.lower_left;
+
+        // Test if all corners are inside mask
+        if (not inside(p)) return false;       // (0,0)
+        p[0] = b.upper_right[0];
+        if (not inside(p)) return false;       // (0,1)
+        p[1] = b.upper_right[1];
+        if (not inside(p)) return false;       // (1,1)
+        p[0] = b.lower_left[0];
+        if (not inside(p)) return false;       // (1,0)
+
+        return true;
+      }
+
+    // returns bounding box of ellipse
+    nest::Box<2> get_bbox() const
+      {
+        nest::Position<2> ll(-rx_,-ry_);
+        nest::Position<2> ur(rx_,ry_);
+        return nest::Box<2>(ll,ur);
+      }
+
+    nest::Mask<2> * clone() const
+      { return new EllipticMask(*this); }
+
+  protected:
+    double_t rx_, ry_;
+  };
+\end{lstlisting}
+The overridden methods include a test if a point is inside the mask, and
+for efficiency reasons also a test if a box is fully inside the mask. We
+implement the latter by testing if all the corners are inside, since our
+elliptic mask is convex. We must also define a function which returns a
+bounding box for the mask, i.e. a box completely surrounding the mask.
+
+Similar to kernel functions, the mask class must be registered with the
+topology module, and this is done by adding a line to the function
+\lstinline!MyModule::init()! in the file \lstinline!mymodule.cpp!:
+\begin{lstlisting}[language=C++]
+    nest::TopologyModule::register_mask<EllipticMask>("elliptic");
+\end{lstlisting}
+After compiling and installing the module, the mask is available to be used
+in connections, e.g.
+\begin{lstlisting}
+nest.Install('mymodule')
+l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [1.,1.],
+                        'elements': 'iaf_neuron'})
+tp.ConnectLayers(l,l,{'connection_type': 'convergent',
+            'mask': {'elliptic': {'r_x': 0.5, 'r_y': 0.25}}})
+\end{lstlisting}
+
+
+\chapter{Changes from Topology 2.0 to 2.2}\label{sec:changes}
+
+This is a short summary of the most important changes in the Topology
+Module from NEST version 2.0 to 2.2.
+
+\begin{itemize}
+\item Nested layers are no longer supported.
+\item Subnets are no longer used inside composite layers. A call to
+  GetElement for a composite layer will now return a list of GIDs for the
+  nodes at the position rather than a single subnet GID.
+\item Positions in layers may now be 3-dimensional.
+\item The functions GetPosition, Displacement and Distance now only works
+  for nodes local to the current MPI process, if used in a MPI-parallel
+  simulation.
+\item It is now possible to add kernel functions and masks to the Topology
+  module through an extension module. Please see Chapter~\ref{ch:extending}
+  for examples.
+\end{itemize}
+
+\chapter{Changes from Topology 1.9 to 2.0}\label{sec:changes2}
 
 This is a short summary of the most important changes in the NEST
 Topology Module from the 1.9-xxxx to the 2.0 version.
@@ -1178,8 +1438,8 @@ Topology Module from the 1.9-xxxx to the 2.0 version.
   connections when masks overwrap.
 \end{itemize}
 
-\bibliographystyle{neuralcomput_natbib}
-\bibliography{/Users/plesser/Literature/bib/lit,/Users/plesser/Literature/bib/hep}
+\bibliographystyle{plainnat}
+\bibliography{../../extras/bibliography/nest.bib}
 %  \addcontentsline{toc}{chapter}{Bibliography}
 
 \listoffigures % \addcontentsline{toc}{chapter}{List of Figures}

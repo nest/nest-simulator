@@ -87,8 +87,8 @@ bind def
 % Connection function using explicit receptor type --- passes
 /connect_explicit_rt
 {
-  [ retina_gen GetLeaves 100 Take 
-    Tp GetLeaves 100 Take 
+  [ retina_gen GetGlobalLeaves 100 Take 
+    Tp GetGlobalLeaves 100 Take 
   ]
   { 
     << /receptor_type ampa >>
@@ -102,8 +102,8 @@ bind def
 % Connection function not giving receptor type --- fails
 /connect_implicit_rt
 {
-  [ retina_gen GetLeaves 100 Take 
-    Tp GetLeaves 100 Take 
+  [ retina_gen GetGlobalLeaves 100 Take 
+    Tp GetGlobalLeaves 100 Take 
   ]
   {
     Connect
@@ -136,7 +136,7 @@ bind def
   layerProps << /elements /ThalamicNeuron >> join
   /Tp layerProps topology/CreateLayer :: def
 
-  [retina_gen GetLeaves retina GetLeaves] { Connect true } MapThread ;
+  [retina_gen GetGlobalLeaves retina GetGlobalLeaves] { Connect true } MapThread ;
   
   connfun load exec
 

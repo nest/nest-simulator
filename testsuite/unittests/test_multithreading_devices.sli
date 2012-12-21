@@ -36,91 +36,91 @@ Author: Jochen Martin Eppler
 FirstVersion: May 2010 
 */
 
-statusdict /have_pthreads get {
+% don't run this test if we didn't compile with threads 
+statusdict/threading :: (no) eq {statusdict/exitcodes/success :: quit_i} if
 
-  /unittest (8418) require
-  /unittest using
+/unittest (8418) require
+/unittest using
 
-  % arrays to store the event dictionaries and n_events for the
-  % different trials
-  /sd_n_events  [] def
-  /sd_events    [] def
-  /sd_filenames [] def
-  /mm_n_events  [] def
-  /mm_events    [] def
-  /mm_filenames [] def
+% arrays to store the event dictionaries and n_events for the
+% different trials
+/sd_n_events  [] def
+/sd_events    [] def
+/sd_filenames [] def
+/mm_n_events  [] def
+/mm_events    [] def
+/mm_filenames [] def
 
-  % We run the simulation with a single thread and compare the events
-  % dictionary with the one obtained with 2 threads
-  [1 2] {
-      
-      /threads Set
+% We run the simulation with a single thread and compare the events
+% dictionary with the one obtained with 2 threads
+[1 2] {
+    
+    /threads Set
 
-      0 << /local_num_threads threads
+    0 << /local_num_threads threads
 	   /overwrite_files true
-        >> SetStatus
+      >> SetStatus
 
-      /iaf_psc_alpha Create /n1 Set
-      /iaf_psc_alpha Create /n2 Set
+    /iaf_psc_alpha Create /n1 Set
+    /iaf_psc_alpha Create /n2 Set
 
-      [n1 n2] {
+    [n1 n2] {
 	  << /I_e 1450.0 >> SetStatus	
-      } forall
-      
-      /spike_detector   Create /sd Set
-      /multimeter       Create /mm Set
+    } forall
+    
+    /spike_detector   Create /sd Set
+    /multimeter       Create /mm Set
 
-      [sd mm] {
-          << /withgid true /withtime true /to_file true >> SetStatus
-      } forall	
+    [sd mm] {
+        << /withgid true /withtime true /to_file true >> SetStatus
+    } forall	
 
-      mm << /record_from [/V_m] >> SetStatus
-      
-      [n1 n2] sd ConvergentConnect
-      mm [n1 n2] DivergentConnect
+    mm << /record_from [/V_m] >> SetStatus
+    
+    [n1 n2] sd ConvergentConnect
+    mm [n1 n2] DivergentConnect
 
-      100 Simulate
+    100 Simulate
 
-      /sd_events    sd_events    sd GetStatus /events    get append def
-      /sd_n_events  sd_n_events  sd GetStatus /n_events  get append def
-      /sd_filenames sd_filenames sd GetStatus /filenames get append def
+    /sd_events    sd_events    sd GetStatus /events    get append def
+    /sd_n_events  sd_n_events  sd GetStatus /n_events  get append def
+    /sd_filenames sd_filenames sd GetStatus /filenames get append def
 
-      /mm_events    mm_events    mm GetStatus /events    get append def
-      /mm_n_events  mm_n_events  mm GetStatus /n_events  get append def
-      /mm_filenames mm_filenames mm GetStatus /filenames get append def
+    /mm_events    mm_events    mm GetStatus /events    get append def
+    /mm_n_events  mm_n_events  mm GetStatus /n_events  get append def
+    /mm_filenames mm_filenames mm GetStatus /filenames get append def
 
-      ResetKernel
-      
-  } forall
+    ResetKernel
+    
+} forall
 
-  sd_events    {values {cva Sort} Map} Map arrayload ; eq assert_or_die
-  sd_n_events  arrayload ; eq assert_or_die
-  sd_filenames length 2  eq assert_or_die
-
-  mm_events    {values {cva Sort} Map} Map arrayload ; eq assert_or_die
-  mm_n_events  arrayload ; eq assert_or_die
-  mm_filenames length 2  eq assert_or_die
- 
-  %
-  % We now test if the recorded data looks as expected
-  %
-
-  ResetKernel
-  0 << /local_num_threads 4 >>  SetStatus
-
-  /multimeter  << /record_to [ /memory ] /record_from [ /V_m ] /withgid true /interval 1.0 >> Create /mm Set
-
-  0 1 3 {
-    cvd /x Set
-    mm /iaf_psc_alpha << /C_m 1.0 /tau_m 1.0 /E_L 0.0 /I_e x /V_m x  >> Create Connect
-  } for
-
-  2.0 Simulate
-
-  % [4 5 2 3] is the neuron list sorted by their thread
-  mm GetStatus /events get /senders get cva [4 5 2 3] eq assert_or_die
-
-  % check the corresponding potentials, also sorted by thread
-  mm GetStatus /events get /V_m get cva [2 3 0 1] {cvd} Map eq assert_or_die
-
-} if
+% sd_events    {values {cva Sort} Map} Map arrayload ; eq assert_or_die
+% sd_n_events  arrayload ; eq assert_or_die
+% sd_filenames length 2  eq assert_or_die
+% 
+% mm_events    {values {cva Sort} Map} Map arrayload ; eq assert_or_die
+% mm_n_events  arrayload ; eq assert_or_die
+% mm_filenames length 2  eq assert_or_die
+% 
+% %
+% % We now test if the recorded data looks as expected
+% %
+% 
+% ResetKernel
+% 0 << /local_num_threads 4 >>  SetStatus
+% 
+% /multimeter  << /record_to [ /memory ] /record_from [ /V_m ] /withgid true /interval 1.0 >> Create /mm Set
+% 
+% 0 1 3 {
+%   cvd /x Set
+%   mm /iaf_psc_alpha << /C_m 1.0 /tau_m 1.0 /E_L 0.0 /V_reset 0.0 /V_th 15.0
+%                        /I_e x /V_m x  >> Create Connect
+% } for
+% 
+% 2.0 Simulate
+% 
+% % [4 5 2 3] is the neuron list sorted by their thread
+% mm GetStatus /events get /senders get cva [4 5 2 3] eq assert_or_die
+% 
+% % check the corresponding potentials, also sorted by thread
+% mm GetStatus /events get /V_m get cva [2 3 0 1] {cvd} Map eq assert_or_die

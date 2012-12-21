@@ -1136,7 +1136,7 @@ AC_DEFUN([SLI_NEW_PATH_MPI],
 
 
 
-# configure use of MPI for blue gene
+# configure use of MPI for Blue Gene
 #
 #    We require a compiler wrapper that links the correct libraries
 #    therefore, mpi programs should link out of the box.

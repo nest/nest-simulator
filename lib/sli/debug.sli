@@ -272,8 +272,8 @@ debugdict begin
 
 /:pr_t
 {
-  % cva exch pop
-  <--
+  % stream trie -> stream
+  1 index exch trieinfo
 } def
 
 /:pr_any /<-- load def

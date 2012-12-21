@@ -29,6 +29,18 @@
 namespace nest
 {
 
+proxynode::proxynode(index gid, index parent_gid, index model_id, index vp) :
+    Node()
+{
+  set_gid_(gid);
+  Subnet* parent = dynamic_cast<Subnet*>(network()->get_node(parent_gid));
+  assert(parent);
+  set_parent_(parent);
+  set_model_id(model_id);
+  set_vp(vp);
+  set(frozen);
+}
+
 port proxynode::check_connection(Connection& c, port receptor_type)
 {
   return network()->get_model(get_model_id())->check_connection(c, receptor_type);

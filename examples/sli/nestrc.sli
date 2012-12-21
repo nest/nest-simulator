@@ -5,15 +5,14 @@
 % Type '/nestrc help' at the NEST prompt to learn more.
 %
 
-
-% The command mpirun tells NEST how to assemble a string which represents a 
+% The command mpirun tells NEST how to assemble a string which represents a
 % valid command for calling NEST if compiled with MPI support.
-% The details of this string depend on your MPI library and the desired 
+% The details of this string depend on your MPI library and the desired
 % communication interface. Please modify the command according to your needs.
 %
 %/mpirun
 %[/integertype /stringtype]
-%[/numproc     /slifile] 
+%[/numproc     /slifile]
 %{
 % () [
 %  (mpirun -np ) numproc cvs ( ) statusdict/prefix :: (/bin/nest )  slifile
@@ -25,26 +24,26 @@
 % Please uncomment what you like by removing the percent symbols.
 %
 % Use more as a pager:
-% /page << /command (more)             
+% /page << /command (more)
 %          /wait    true >> SetOptions
 %
 % Use less as a pager:
- /page << /command (less -S)          
-          /wait    true >> SetOptions 
-%
+ /page << /command (less -S)
+          /wait    true >> SetOptions
+
 % Run less in a separate xterm window:
-% /page << /command (xterm -e less -S)  
-%          /wait    false >> SetOptions 
+% /page << /command (xterm -e less -S)
+%          /wait    false >> SetOptions
 %
 % Use xless as a pager:
-% /page << /command (xless)             
+% /page << /command (xless)
 %          /wait    false >> SetOptions
 %
 % If you like to show helpfiles using xemacs:
-% /page << /command (xemacs)           
-%          /wait    false >> SetOptions 
+% /page << /command (xemacs)
+%          /wait    false >> SetOptions
 %
-% use built-in "poor man's pager" (this is the default):
+% Use built-in "poor man's pager" (this is the default):
 % /page << /command false >> SetOptions
 
 
@@ -56,4 +55,7 @@
 
 
 % Set the browser for displaying the helpdesk
-% /helpdesk << /command (firefox) >> SetOptions
+ /helpdesk << /command (firefox) >> SetOptions
+
+% Use Chromium browser
+% /helpdesk << /command (chromium-browser) >> SetOptions

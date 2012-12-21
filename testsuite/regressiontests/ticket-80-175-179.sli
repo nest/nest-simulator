@@ -41,6 +41,8 @@
 /unittest (6335) require
 /unittest using
 
+M_ERROR setverbosity
+
 /resolution 0.1 def
 
 /vm_params <<
@@ -124,7 +126,7 @@ sim_blocks { single_trial } Map
 
 % first test: check spike times for equality
 res [/All 1] Part 1 Flatten 
-dup First /ref Set 
+dup First dup == /ref Set 
 Rest true exch { ref eq and } Fold
 
 % second test: check voltmeter readings for equality

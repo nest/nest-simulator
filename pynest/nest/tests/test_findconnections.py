@@ -37,7 +37,7 @@ class FindConnectionsTestCase(unittest.TestCase):
         a=nest.Create("iaf_neuron", 3)
         nest.DivergentConnect(a,a)
         c1=nest.FindConnections(a)
-        c2=nest.FindConnections(a, synapse_type="static_synapse")
+        c2=nest.FindConnections(a, synapse_model="static_synapse")
         self.assertEqual(c1, c2)
         
         d1=[{"weight": w} for w in [2.0, 3.0, 4.0]]

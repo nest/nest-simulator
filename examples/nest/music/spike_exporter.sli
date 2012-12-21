@@ -28,7 +28,7 @@
 21.0 /T Set % total simulation time
 [0] << /resolution 0.1 >> SetStatus
 
-10 /N Set % number of spike generators 
+10 /N Set % number of spike generators
 
 % create a subnet containing N parrot_neurons
 % these are the dummy population to send data to the
@@ -51,9 +51,9 @@ SNG GetNodes /generators Set
 % connect it to parrot neuron i
 generators
 {
-	/i Set /sg Set
-	sg << /spike_times [0.5 i 2.0 mul add] >> SetStatus
-	sg parrots i get Connect
+        /i Set /sg Set
+        sg << /spike_times [0.5 i 2.0 mul add] >> SetStatus
+        sg parrots i get Connect
 }
 forallindexed
 
@@ -69,7 +69,7 @@ SetStatus
 % connect the parrot neuron i
 % to the music_event_out_proxy on receiver port (channel) i
 parrots
-{    
+{
      /i Set
      /src Set
      src GetStatus /local get

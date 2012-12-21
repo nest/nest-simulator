@@ -49,10 +49,8 @@ namespace nest   // template specialization must be placed in namespace
   void RecordablesMap<mat2_psc_exp>::create()
   {
     // use standard names whereever you can for consistency!
-    insert_(names::V_m,
-      &mat2_psc_exp::get_V_m_);
-    insert_(names::V_th,
-      &mat2_psc_exp::get_V_th_);
+    insert_(names::V_m,  &mat2_psc_exp::get_V_m_);
+    insert_(names::V_th, &mat2_psc_exp::get_V_th_);
   }
 }
 
@@ -85,7 +83,6 @@ namespace nest   // template specialization must be placed in namespace
        V_m_         (0.0 ),
        V_th_1_      (0.0 ), // relative to omega_
        V_th_2_      (0.0 ), // relative to omega_
-       V_th_        (19.0), // =omega_ relative to U0_
        r_           (0   )
   {}
 
@@ -106,12 +103,16 @@ namespace nest   // template specialization must be placed in namespace
     def<double>(d, names::tau_2, tau_2_);
     def<double>(d, names::alpha_1, alpha_1_);
     def<double>(d, names::alpha_2, alpha_2_);
-    def<double>(d, names::omega, omega_);
+    def<double>(d, names::omega, omega_+U0_);
   }
 
-  void nest::mat2_psc_exp::Parameters_::set(const DictionaryDatum& d)
+  double nest::mat2_psc_exp::Parameters_::set(const DictionaryDatum& d)
   {
+    // if U0_ is changed, we need to adjust all variables defined relative to U0_
+    const double ELold = U0_;
     updateValue<double>(d, names::E_L, U0_);
+    const double delta_EL = U0_ - ELold;
+
     updateValue<double>(d, names::I_e, I_e_);
     updateValue<double>(d, names::C_m, C_);
     updateValue<double>(d, names::tau_m, Tau_);
@@ -122,7 +123,11 @@ namespace nest   // template specialization must be placed in namespace
     updateValue<double>(d, names::tau_2, tau_2_);
     updateValue<double>(d, names::alpha_1, alpha_1_);
     updateValue<double>(d, names::alpha_2, alpha_2_);
-    updateValue<double>(d, names::omega, omega_);
+
+    if ( updateValue<double>(d, names::omega, omega_) )
+      omega_ -= U0_;
+    else
+      omega_ -= delta_EL;
 
     if ( C_ <= 0 )
       throw BadProperty("Capacitance must be strictly positive.");
@@ -130,27 +135,31 @@ namespace nest   // template specialization must be placed in namespace
     if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || 
      tau_ref_ <= 0 || tau_1_ <= 0 || tau_2_ <= 0)
       throw BadProperty("All time constants must be strictly positive.");
+
+    if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
+      throw BadProperty("Membrane and synapse time constant(s) must differ."
+			"See note in documentation.");
+
+    return delta_EL;
   }
 
   void nest::mat2_psc_exp::State_::get(DictionaryDatum &d, const Parameters_& p) const
   {
     def<double>(d, names::V_m, V_m_ + p.U0_); // Membrane potential
-    def<double>(d, names::V_th, V_th_+ p.U0_); // Adaptive threshold
+    def<double>(d, names::V_th, p.U0_ + p.omega_ + V_th_1_ + V_th_2_); // Adaptive threshold
     def<double>(d, names::V_th_alpha_1, V_th_1_);
     def<double>(d, names::V_th_alpha_2, V_th_2_);
   }
 
-  void nest::mat2_psc_exp::State_::set(const DictionaryDatum& d, const Parameters_& p)
+  void nest::mat2_psc_exp::State_::set(const DictionaryDatum& d, const Parameters_& p, double delta_EL)
   {
     if ( updateValue<double>(d, names::V_m, V_m_) )
       V_m_ -= p.U0_;
-    // Setting V_th does not make sense because of separation between fast
-    // and slow threshold component. Therefore set V_th_alpha_1 and V_th_alpha_2
-    // separately and keep in mind the subtraction of resting threshold omega:
-    // V_th = omega + V_th_alpha_1 + V_th_alpha_2
+    else
+      V_m_ -= delta_EL;
+
     updateValue<double>(d, names::V_th_alpha_1, V_th_1_);
     updateValue<double>(d, names::V_th_alpha_2, V_th_2_);
-    V_th_ = p.omega_ + V_th_2_ + V_th_1_;
   }
 
   nest::mat2_psc_exp::Buffers_::Buffers_(mat2_psc_exp& n)
@@ -290,19 +299,15 @@ namespace nest   // template specialization must be placed in namespace
       S_.i_syn_ex_ += B_.spikes_ex_.get_value(lag);            // the spikes arriving at T+1 have an
       S_.i_syn_in_ += B_.spikes_in_.get_value(lag);            // the spikes arriving at T+1 have an
 
-      // immediate effect on the state of the neuron
-      S_.V_th_ = P_.omega_ + S_.V_th_2_ + S_.V_th_1_; // evaluate threshold (for crossing and multimeter)
-
       if (S_.r_ == 0) // neuron is allowed to fire
       {
-        if (S_.V_m_ >= S_.V_th_) // threshold crossing
+        if ( S_.V_m_ >= P_.omega_ + S_.V_th_2_ + S_.V_th_1_ ) // threshold crossing
         {
           S_.r_ = V_.RefractoryCountsTot_;
 
           // procedure for adaptive potential
           S_.V_th_1_ += P_.alpha_1_; // short time
           S_.V_th_2_ += P_.alpha_2_; // long time
-          S_.V_th_ = S_.V_th_ + P_.alpha_1_ + P_.alpha_2_; // update for multimeter
 
           set_spiketime(Time::step(origin.get_steps()+lag+1));
 

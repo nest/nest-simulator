@@ -47,7 +47,7 @@ ResetKernel
 % Set settings for root network. These
 % settings could be changed to test different
 % aspects of simulation.
-[0] <<
+0 <<
       /local_num_threads 2
       /resolution h
     >> SetStatus
@@ -66,13 +66,13 @@ ResetKernel
 
 % test "source targets" variant
 dc1 t DivergentConnect
-<< /source dc1 /synapse_type /static_synapse >> FindConnections
+<< /source dc1 /synapse_model /static_synapse >> FindConnections
 { GetStatus } Map { /target get } Map
 Sort t eq assert_or_die
 
 % test "source targets synmodel" variant
 dc2 t /static_synapse DivergentConnect
-<< /source dc2 /synapse_type /static_synapse >> FindConnections
+<< /source dc2 /synapse_model /static_synapse >> FindConnections
 { GetStatus } Map { /target get } Map
 Sort t eq assert_or_die
 
@@ -81,13 +81,13 @@ n array 1 add {cvd} Map /d Set
 
 % test "source targets weights delays" variant
 dc3 t w d DivergentConnect
-<< /source dc3 /synapse_type /static_synapse >> FindConnections
+<< /source dc3 /synapse_model /static_synapse >> FindConnections
 { GetStatus } Map { /weight get } Map
 Sort w eq assert_or_die
 
 % test "source targets weights delays synmodel" variant
 dc4 t w d /static_synapse DivergentConnect
-<< /source dc4 /synapse_type /static_synapse >> FindConnections
+<< /source dc4 /synapse_model /static_synapse >> FindConnections
 { GetStatus } Map { /weight get } Map
 Sort w eq assert_or_die
 

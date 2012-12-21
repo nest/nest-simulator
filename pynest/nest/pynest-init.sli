@@ -50,7 +50,7 @@ def
 /*
 Name: sli_func_litconv - execute sli code on array of arguments
 Synopsis: [arg1 arg2 ... argN] (function code) sli_func_litconv -> [res1 res2 ...]
-Arguments: If argn is a string and its first char i /, it is 
+Arguments: If argn is a string and its first char is /, it is 
 	   converted to a literal before loaded onto the stack.
 Note: same as sli_func, but string args beginnig with / are converted to literals
 SeeAlso: sli_func_litconv
@@ -80,10 +80,10 @@ def
   cout endl
 
   statusdict begin
-    (             -- N E S T 2 --) <- endl
+    (              -- N E S T --) <- endl
     endl
-    (  Copyright (C) 2004 The NEST Initiative ) <- endl
-    (   Version ) <- 
+    (  Copyright (C) 2004 The NEST Initiative) <- endl
+    (  Version ) <- 
     prgmajor <- (.) <- prgminor <- (.) <- prgpatch <-
     ( ) <- built <- endl endl ;
   end

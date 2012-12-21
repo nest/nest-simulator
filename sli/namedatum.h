@@ -69,13 +69,21 @@ class NameDatum: public AggregateDatum<Name,&SLIInterpreter::Nametype>
     {
         return new NameDatum(*this);
     }
+
+    Datum * get_ptr()
+    {
+      Datum::addReference();
+      return this;
+    }
+
 public:
     NameDatum(const Name &n):
-            AggregateDatum<Name,&SLIInterpreter::Nametype>(n) {}
+            AggregateDatum<Name,&SLIInterpreter::Nametype>(n) 
+	      {set_executable();}
     NameDatum(const NameDatum &n):
             AggregateDatum<Name,&SLIInterpreter::Nametype>(n) {}
     ~NameDatum()
-    {}
+      {set_executable();}
     
 };
 
@@ -85,11 +93,19 @@ class LiteralDatum: public AggregateDatum<Name,&SLIInterpreter::Literaltype>
     {
         return new LiteralDatum(*this);
     }    
+
+    Datum * get_ptr()
+    {
+      Datum::addReference();
+      return this;
+    }
 public:
     LiteralDatum(const Name &n):
-            AggregateDatum<Name,&SLIInterpreter::Literaltype>(n) {}
+    AggregateDatum<Name,&SLIInterpreter::Literaltype>(n) 
+      {set_executable();}
     LiteralDatum(const LiteralDatum &n):
-            AggregateDatum<Name,&SLIInterpreter::Literaltype>(n) {}
+            AggregateDatum<Name,&SLIInterpreter::Literaltype>(n) 
+	      {set_executable();}
     ~LiteralDatum()
     {}
   void pprint(std::ostream &) const;

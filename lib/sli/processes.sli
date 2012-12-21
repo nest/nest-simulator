@@ -27,7 +27,7 @@
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/processes /SLI ($Revision: 9902 $) provide-component
+/processes /SLI ($Revision: 10020 $) provide-component
 /processes /C++ (1.48) require-component
 
 
@@ -226,12 +226,8 @@ def
 
 Name: sysexec - Transfer control to a UNIX-command
 
-Synopsis: CommandArray          sysexec -> -
-          CommandString         sysexec -> -
-          CommandArray  EnvDict sysexec -> -
-          CommandString EnvDict sysexec -> -
-  EBNF notation:
-         {CommandArray|CommandString} [EnvDict] sysexec -> -
+Synopsis: CommandArray  sysexec -> -
+          CommandString sysexec -> -
 
 Description: Transfer control to a UNIX-Command. The command may be
              executed in a specified program environment. The command
@@ -252,26 +248,6 @@ Parameters: In : CommandArray
                  (string)          : A standard UNIX command string, containing
                                      the command name and it's parameters to
                                      execute.
-                 EnvDict
-                 (dictionary of string values)
-                                   : A dictionary of string values
-                                     defining the new process'
-                                     environment. Each entry in the
-                                     dictionary is taken as the name
-                                     of an environment variable, which
-                                     is set to the corresponding
-                                     string value associated with the
-                                     dictionary entry. The new
-                                     process' environment will consist
-                                     of exactly (and only) these
-                                     environment variables.
-                                     If this parameter is not
-                                     specified, the new process will
-                                     inherit the calling SLI process'
-                                     environment.
-                                     See documentation of the
-                                     "setenvironment" command for
-                                     further details.
 
             Out: -whatever will be will be-
 
@@ -288,13 +264,9 @@ Examples: These two calls are equivalent:
           Look at the program environment of the new command:
           5. {(printenv) sysexec} spoon
           It was inherited from the SLI process.
-          Now initialize the environment explicitely:
-          6. {(printenv) <</TESTVAR (testvalue)>> sysexec} spoon
           
 
 Bugs: Will break down if given an array containing non-strings.
-      This error could be caught by typechecking each element
-      (to be implemented :-> ).
       
       This call is NOT quivalent to example 3, as one should expect:
       (ls "-l /home/kupper") sysexec.
@@ -311,11 +283,7 @@ Remarks: A call to sysexec WILL NOT RETURN, as control is literally transfered t
          That's why example 3. is equivalent to the UNIX-call
          ls "-l /home/kupper".
 
-         If an environment dictionary is supplied, the new process'
-         environment will consist of exactly (and only) the
-         environment variables specified therein.
-
-SeeAlso: spoon, breakup, setenvironment, environment
+SeeAlso: spoon, breakup, environment
 
 */
 
@@ -327,8 +295,6 @@ def
   
 /sysexec [/arraytype]  /sysexec_a load def
 /sysexec [/stringtype] /sysexec_s load def
-/sysexec [/arraytype  /dictionarytype] {setenvironment_di sysexec_a} def
-/sysexec [/stringtype /dictionarytype] {setenvironment_di sysexec_s} def
 
 %----------------------------------------------------------------------------
 /* BeginDocumentation
@@ -381,34 +347,20 @@ def
 
 Name: system - execute a UNIX command in a parallel process.
 
-Synopsis: CommandString                      system }   
-          CommandArray                       system }    
-                                                    }
-          CommandString EnvDict              system }   
-          CommandArray  EnvDict              system }    
-                                                    }
-          CommandString         Flag         system }    { Flag=0 or omitted:
-          CommandArray          Flag         system }    {  Status NormalExitFlag   
-                                                    } -> {
-          CommandString EnvDict Flag         system }    { Flag=1: -      
-          CommandArray  EnvDict Flag         system }    { 
-                                                    }    { Flag=2: ChildPID
-          CommandString         Flag Precode system }    
-          CommandArray          Flag Precode system }
-                                                    }
-          CommandString EnvDict Flag Precode system }    
-          CommandArray  EnvDict Flag Precode system }
-
-  EBNF notation:
-         {CommandString|CommandArray} [EnvDict] [Flag [Precode]] system -> ...
+Synopsis: CommandString              system }    { Flag=0 or omitted:
+          CommandArray               system }    {  Status NormalExitFlag   
+                                            } -> {
+          CommandString Flag         system }    { Flag=1: -      
+          CommandArray  Flag         system }    { 
+                                            }    { Flag=2: ChildPID
+          CommandString Flag Precode system }    
+          CommandArray  Flag Precode system }
 
 Description: "system" creates a child process of the current SLI process
              and executes the given command in that child process.
              Depending on the value of "Flag", the parent process will
              wait for the child to terminate or continue execution in
              parallel.
-             The command may be executed in a specified program
-             environment.
              The command may be given either as a string containing
              the command name and all options, or as an array of
              strings, specifying the command name and every single
@@ -427,16 +379,6 @@ Parameters: In : CommandString(string)/CommandArray(array of string):
                       Either a string containing the command and all
                       parameters, or an array of strings, containing the
                       command and the parameters in separate (see "sysexec").
-
-                 EnvDict(dictionary):
-                    A dictionary of string values, defining names and
-                    corresponding values of the new environment
-                    variables.
-                    If this parameter is not specified, the new
-                    process will inherit the calling SLI process'
-                    environment.
-                    See documentation of the "setenvironment" command
-                    for further details.
 
                  Flag: 0: Wait for termination of child process.
                            A flag indicating if the child process exited
@@ -522,7 +464,7 @@ To Do:   It should be possible to spawn a parallel SLI Process. This
          the more general case, the spoon/system/spawn chain of commands
          could be restructured. 
 
-SeeAlso: spawn, sysexec, spoon, fork, waitPID, wait, breakup, setenvironment, environment
+SeeAlso: spawn, sysexec, spoon, fork, waitPID, wait, breakup, environment
 
 */
 
@@ -557,55 +499,15 @@ SeeAlso: spawn, sysexec, spoon, fork, waitPID, wait, breakup, setenvironment, en
 } bind
 def
 
-/system_as_di_i_p %as: array or string
-{
-  << >> begin % use local variables (for switch)
-    /PreCode Set % Store pre-sysexec-code in PreCode
-	/Flag Set % Store flag in /Flag
-    %stack: CommStr EnvDict
-	mark
-	Flag 0 eq { {sysexec} exch prepend exch prepend% stack: {CommStr EnvDict sysexec}
-                /PreCode load prepend  % stack: {PreCode CommStr EnvDict sysexec}
-                spoon false waitPID pop
-                end exit
-              }
-	case
-	Flag 1 eq { {sysexec} exch prepend exch prepend % stack: {CommStr EnvDict sysexec}
-                /PreCode load prepend  % stack: {PreCode CommStr EnvDict sysexec}
-                /a Set      % store { PreCode CommStr EnvDict sysexec } in /a
-                { {a} spoon } spoon false waitPID 3 npop % create orphaned child
-                end exit
-              }
-	case
-	Flag 2 eq { {sysexec} exch prepend exch prepend % stack: {CommStr EnvDict sysexec}
-                /PreCode load prepend  % stack: {PreCode CommStr EnvDict sysexec}
-                spoon
-                end exit
-              }
-	case
-	{Flag end /system /FlagOutOfRange raiseerror}
-	switchdefault
-} bind
-def
-
 % define trie structure:
-/system [/arraytype                                             ] {0 {} system_as_i_p} def
-/system [/stringtype                                            ] {0 {} system_as_i_p} def
+/system [/arraytype                             ] {0 {} system_as_i_p} def
+/system [/stringtype                            ] {0 {} system_as_i_p} def
 
-/system [/arraytype  /dictionarytype                            ] {0 {} system_as_di_i_p} def
-/system [/stringtype /dictionarytype                            ] {0 {} system_as_di_i_p} def
+/system [/arraytype  /integertype               ] {  {} system_as_i_p} def
+/system [/stringtype /integertype               ] {  {} system_as_i_p} def
 
-/system [/arraytype                  /integertype               ] {  {} system_as_i_p} def
-/system [/stringtype                 /integertype               ] {  {} system_as_i_p} def
-
-/system [/arraytype  /dictionarytype /integertype               ] {  {} system_as_di_i_p} def
-/system [/stringtype /dictionarytype /integertype               ] {  {} system_as_di_i_p} def
-
-/system [/arraytype                  /integertype /proceduretype] /system_as_i_p load def
-/system [/stringtype                 /integertype /proceduretype] /system_as_i_p load def
-
-/system [/arraytype  /dictionarytype /integertype /proceduretype] /system_as_di_i_p load def
-/system [/stringtype /dictionarytype /integertype /proceduretype] /system_as_di_i_p load def
+/system [/arraytype  /integertype /proceduretype] /system_as_i_p load def
+/system [/stringtype /integertype /proceduretype] /system_as_i_p load def
 
 %-----------------------------------------------------------------------------
 /* BeginDocumentation
@@ -723,17 +625,14 @@ def
 
 Name: spawn - Spawn a UNIX process and redirect stdin and stdout.
 
-Synopsis: CommandString              spawn }    
-          CommandArray               spawn }      
-                                           }    { Flag=0: Status NormalExitFlag
-          CommandString EnvDict      spawn }    { 
-          CommandArray  EnvDict      spawn }    { Flag=1 or omitted:   
-                                           } -> {           ear(write) mouth(read)
-          CommandString         Flag spawn }    {
-          CommandArray          Flag spawn }    { Flag=2:
-                                           }    {  ChildPID ear(write) mouth(read)
-          CommandString EnvDict Flag spawn }   
-          CommandArray  EnvDict Flag spawn }   
+Synopsis: CommandString      spawn }    { Flag=0: Status NormalExitFlag	      
+          CommandArray       spawn }    { 				        
+                                   }    { Flag=1 or omitted:   		  
+          CommandString      spawn } -> {           ear(write) mouth(read)
+          CommandArray       spawn }    {				  
+                                   }    { Flag=2:			  
+          CommandString Flag spawn }    {  ChildPID ear(write) mouth(read)
+          CommandArray  Flag spawn }
 
 Description: "spawn" does exectly what "system" does (see there).
              If Flag is 1 or 2, in addition, it redirects the spawned
@@ -750,9 +649,6 @@ Description: "spawn" does exectly what "system" does (see there).
 Parameters: In : CommandString(string), CommandArray(array of string):
                      See "system"
 
-                 EnvDict(dictionary):
-                     See "system"
-            
                  Flag(0|1|2)  (Default=1):
                    The Flag parameter is passed to "system":
                              0: "spawn" behaves absolut identical to
@@ -839,7 +735,7 @@ To Do:   In some cases, we will not need both the standard input and
          "spawn" may have the option to redirect only one of them.
          Respectively, there should by the option to redirect standard
          error as well. Possible calling sequence:
-          command EnvDict Flag stdinflag stdoutflag stderrflag spawn
+          command Flag stdinflag stdoutflag stderrflag spawn
          with stdinflag, stoutflag true as default, stderrflag false.
 
          It should be possible to spawn a parallel SLI Process. This
@@ -847,7 +743,7 @@ To Do:   In some cases, we will not need both the standard input and
          the more general case, the spoon/system/spawn chain of commands
          could be restructured. 
           
-SeeAlso: system, pipe, available, wait, setenvironment, environment
+SeeAlso: system, pipe, available, wait, environment
 
 */
 
@@ -929,79 +825,24 @@ SeeAlso: system, pipe, available, wait, setenvironment, environment
 } bind
 def
 
-/spawn_as_di_i %as: array or string
-{
-  << >> begin % use local variables (for switch)
-    %stack: CommStr EnvDict Flag
-    /Flag Set % Store flag in /Flag
-    %stack: CommStr EnvDict
-
-    mark
-	Flag 0 eq {
-                Flag system %flag==0 - just call "system"
-                end exit
-              }
-	case
-    Flag 1 eq { %flag!=0 - open up pipes, define precode, call "system"           
-                :spawn_Open_pipes_define_Precode_call_system_withdict %call system with the precode. Flag==1, so it leaves no result.
-                %stack: >read_end >write_end <read_end <write_end
-                closeostream %Parent closes the write end of the <pipe, for it is not needed.
-                %stack: >read_end >write_end <read_end
-                3 -1 roll %stack: >write_end <read_end >read_end
-                closeistream %Parent closes the read end of the >pipe, for it is not needed.
-                %stack  : >write_end <read_end
-                %that is: ear mouth
-                end exit
-              }
-	case
-	Flag 2 eq { %flag!=0 - open up pipes, define precode, call "system"
-	  :spawn_Open_pipes_define_Precode_call_system_withdict %call system with the precode. Flag==2, so PID is left as result.
-	  %stack: >read_end >write_end <read_end <write_end ChildPID
-	  5 1 roll %stack: ChildPID >read_end >write_end <read_end <write_end
-	  closeostream %Parent closes the write end of the <pipe, for it is not needed.
-	  %stack: ChildPID >read_end >write_end <read_end
-	  3 -1 roll %stack: ChildPID >write_end <read_end >read_end
-	  closeistream %Parent closes the read end of the >pipe, for it is not needed.
-	  %stack  : ChildPID >write_end <read_end
-	  %that is: ChildPID ear mouth
-	end exit
-	}
-  case
-  {Flag end /spawn /FlagOutOfRange raiseerror}
-  switchdefault
-} bind
-def
-
 %define trie structure:
-/spawn [/arraytype                              ] {1 spawn_as_i} def
-/spawn [/stringtype                             ] {1 spawn_as_i} def
+/spawn [/arraytype              ] {1 spawn_as_i} def
+/spawn [/stringtype             ] {1 spawn_as_i} def
 
-/spawn [/arraytype  /dictionarytype             ] {1 spawn_as_di_i} def
-/spawn [/stringtype /dictionarytype             ] {1 spawn_as_di_i} def
-
-/spawn [/arraytype                  /integertype] /spawn_as_i load def
-/spawn [/stringtype                 /integertype] /spawn_as_i load def
-  
-/spawn [/arraytype  /dictionarytype /integertype] /spawn_as_di_i load def
-/spawn [/stringtype /dictionarytype /integertype] /spawn_as_di_i load def
-  
+/spawn [/arraytype  /integertype] /spawn_as_i load def
+/spawn [/stringtype /integertype] /spawn_as_i load def  
 
 %----------------------------------------------------------------------------
 /* BeginDocumentation
 
 Name: shpawn - Spawn a UNIX process using a shell and redirect stdin and stdout.
 
-Synopsis: CommandString              shpawn }     
-          CommandArray               shpawn }    
-                                            }    { Flag=0: Status NormalExitFlag
-          CommandString EnvDict      shpawn }    {
-          CommandArray  EnvDict      shpawn }    { Flag=1 or omitted:       
-                                            } -> {         ear(write) mouth(read)
-          CommandString         Flag shpawn }    {         
-          CommandArray          Flag shpawn }    { Flag=2:
-                                            }    {ChildPID ear(write) mouth(read)
-          CommandString EnvDict Flag shpawn }
-          CommandArray  EnvDict Flag shpawn }   
+Synopsis: CommandString      shpawn }    { Flag=0: Status NormalExitFlag      
+          CommandArray       shpawn }    {				        
+                                    }    { Flag=1 or omitted:       	    
+          CommandString Flag shpawn } -> {         ear(write) mouth(read)
+          CommandArray  Flag shpawn }    {         			    
+				         { Flag=2: ChildPID ear(write) mouth(read)
 
 Description: "shpawn" does the same as "spawn" does (see there).
 
@@ -1070,12 +911,6 @@ Remarks: "shpawn" invokes "/sh-binary" from the options dictionary
          a "-c" flag. This means the specified shell binary must
          support this -c flag.
 
-         If an environment dictionary is supplied, the environment is
-         initialized to the new values prior to invoking the
-         shell. I.e., the shell runs inside the new environment. Note
-         that the shell will usually add or modify some environment
-         variables itself (e.g. PATH, if it is not present).
-
          The monitoring option for stdin and stdout exploits the
          piping deature of the shell, by piping information through
          instances of the "tee" command, which writes it to a file.
@@ -1089,7 +924,7 @@ Remarks: "shpawn" invokes "/sh-binary" from the options dictionary
          which will persist after command execution terminated, so
          that their contents may be analyzed.
 
-SeeAlso: spawn, system, setenvironment, environment
+SeeAlso: spawn, system, environment
 
 */
 
@@ -1174,156 +1009,35 @@ def
 
 
 %define trie structure:
-/shpawn [/arraytype                              ] 
+/shpawn [/arraytype] 
   { %stack: comarray
     :shpawn_comarray_to_string %stack: commandstring
     :shpawn_add_monitors
     :shpawn_create_command_and_flags exch append %stack: [(/bin/sh) (-c) commandstring]
     1 spawn_as_i
   } def
-/shpawn [/stringtype                             ] 
+
+/shpawn [/stringtype] 
   {
     :shpawn_add_monitors
     :shpawn_create_command_and_flags exch append 1 spawn_as_i
   } def
 
-/shpawn [/arraytype /dictionarytype              ] 
-  { %stack: comarray EnvDict
-    exch :shpawn_comarray_to_string %stack: EnvDict commandstring
-    :shpawn_add_monitors
-    :shpawn_create_command_and_flags exch append %stack: EnvDict [(/bin/sh) (-c) commandstring]
-    exch 1 spawn_as_di_i
-  } def
-/shpawn [/stringtype /dictionarytype             ] 
-  { exch
-    :shpawn_add_monitors
-    :shpawn_create_command_and_flags exch append
-    exch 1 spawn_as_di_i
-  } def
-
-/shpawn [/arraytype                  /integertype] 
+/shpawn [/arraytype /integertype] 
   { exch %stack: flag comarray
     :shpawn_comarray_to_string %stack: flag commandstring
     :shpawn_add_monitors
     :shpawn_create_command_and_flags exch append %stack: flag [(/bin/sh) (-c) commandstring]
     exch spawn_as_i
   } def
-/shpawn [/stringtype                 /integertype] 
+
+/shpawn [/stringtype /integertype] 
   {
     exch
     :shpawn_add_monitors
     :shpawn_create_command_and_flags exch append exch spawn_as_i
   } def
-
-/shpawn [/arraytype  /dictionarytype /integertype]
-  { 3 -1 roll %stack: EnvDict flag comarray
-    :shpawn_comarray_to_string %stack: EnvDict flag commandstring
-    :shpawn_add_monitors
-    :shpawn_create_command_and_flags exch append %stack: EnvDict flag [(/bin/sh) (-c) commandstring]
-    3 1 roll spawn_as_di_i
-  } def
-/shpawn [/stringtype /dictionarytype /integertype]
-  { 3 -1 roll %stack: EnvDict flag commandstring
-    :shpawn_add_monitors
-    :shpawn_create_command_and_flags exch append %stack: EnvDict flag shcommandstring
-    3 1 roll spawn_as_di_i
-  } def
 %END: define trie structure for shpawn.
-
-%----------------------------------------------------------------------------
-/* BeginDocumentation
-
-Name: setenvironment - set the environment of the current SLI process.
-
-Synopsis: EnvDict setenvironment -> -
-
-Description: This command re-initializes the entire program
-             environment of the current SLI process from a dictionary
-             of string values. Each entry in the dictionary is taken
-             as the name of an environment variable, which is set to
-             the corresponding string value associated with the
-             dictionary entry. (See example below.)
-
-	     Alternatives: Function setenvironment_di (undocumented) 
-	     -> behaviour and synopsis are the same.
-
-Parameters: In : EnvDict(dictionary):
-                    A dictionary of string values, defining names and
-                    corresponding values of the new environment
-                    variables.
-            Out: -
-         
-Examples: 1. Set a specific program environment:
-             SLI ] << /TESTVAR (testvalue)
-             SLI ]    /my_envvar (my_brain_hurts) >>
-             SLI ] setenvironment
-             SLI ] environment info
-             SLI ] (my_envvar) getenv = =
-          2. Add or change a variable in the environment:
-             SLI ] environment
-             SLI ] dup /TESTVAR (new_value) put
-             SLI ] setenvironment
-             SLI ] environment info
-             SLI ] (TESTVAR) getenv = =
-          3. Remove a variable from the environment:
-             SLI ] environment
-             SLI ] dup /TESTVAR undef
-             SLI ] setenvironment
-             SLI ] environment info
-             SLI ] (TESTVAR) getenv =
-
-
-Diagnostics: If the supplied dictionary contains any non-string
-             values, the program environment stays unchanged, and
-             /EntryTypeMismatch is raised.
-
-Bugs: 
-
-Author: R Kupper
-
-FirstVersion: Nov 15 2000
-
-Remarks: Note that for normal operation of SLI, at least the four
-         environment variables HOME, PATH and DISPLAY need to
-         be existent and set to reasonable values.
-
-         To re-initialize the program environment for a SLI child
-         process, use the optional EnvDict argument to the sysexec,
-         system, spawn or shpawn command (see documentation for
-         details.)
-
-         For accessing an environment variable of known name, using
-         the "getenv" command may be more convenient.
-
-         Note that there is no "setenv" "putenv" or "unsetenv" command
-         in SLI. These calls are not supported by the POSIX.1
-         standard. The recommended (and only) way to change, set or
-         delete an environment variable in SLI is to read out the
-         whole process environment using "environment", apply
-         appropriate changes to the returned dictionary, and
-         re-initialize the environment using the modified
-         dictionary. (See examples 2. and 3. above.)
-
-         Any changes made to the program environment are valid until
-         destruction of the "processes" SLI module. (The loaded SLI
-         modules are usually destroyed only upon termination of the
-         SLI process.) Upon destruction of the "processes" module, the
-         program environment is reset to the state of module
-         initialization.
-
-References: W. Richard Stevens, "Advanced Programming in the UNIX
-            environment", chap. 7.5, 7.6 & 7.9.
-
-SeeAlso: environment, getenv, sysexec, system, spawn, shpawn
-
-*/
-
-/setenvironment [/dictionarytype] /setenvironment_di load def
-
-
-
-
-
 
 %----------------------------------------------------------------------------
 /* BeginDocumentation
@@ -1511,6 +1225,59 @@ or via MacPorts. procfs must be mounted at /proc.
     /memory_thisjob_darwin /ProcOpenFailed raiseerror
   }
   ifelse 
+} def
+
+/memory_thisjob_bluegenep
+{
+  % Blue Gene/P version, requires the function BGPMemInfo from NestModule
+
+  memory_thisjob_bgp /mem Set
+  mem /heap get
+  mem /stack get
+  add
+} def
+
+/hardware_memory_thisjob
+{
+    (/proc/) getPID cvs join (/status) join ifstream
+    not
+    {
+        (No information available on the NEST process from the /proc filesystem. ) M_ERROR message
+	/hardware_memory_thisjob /ProcOpenFailed raiseerror
+    }
+    if
+
+    { eof {exit} {getline {dup (VmHWM:) searchif {exch exit} {pop} ifelse } if} ifelse } loop
+
+
+    closeistream %close connection
+
+    0 6 erase
+    size 3 sub 3 erase    % assuming kb  may be unsafe
+    cvi
+} def
+
+/meminfo_thisjob
+{
+    (/proc/) getPID cvs join (/statm) join ifstream
+    not
+    {
+        (No information available on the NEST process from the /proc filesystem. ) M_ERROR message
+	/meminfo_thisjob /ProcOpenFailed raiseerror
+    }
+    if
+
+    getline
+    not
+    {
+        (No information available on the NEST process from the /proc filesystem. ) M_ERROR message
+	/meminfo_thisjob /ProcOpenFailed raiseerror
+    }
+    if
+    exch
+
+    closeistream %close connection
+
 } def
 
 

@@ -91,15 +91,22 @@ void nest::iaf_psc_exp::Parameters_::get(DictionaryDatum &d) const
   def<double>(d, names::t_ref,      t_ref_);
 }
 
-void nest::iaf_psc_exp::Parameters_::set(const DictionaryDatum &d)
+double nest::iaf_psc_exp::Parameters_::set(const DictionaryDatum &d)
 {
+  // if U0_ is changed, we need to adjust all variables defined relative to U0_
+  const double ELold = U0_;
   updateValue<double>(d, names::E_L, U0_);
+  const double delta_EL = U0_ - ELold;
 
   if(updateValue<double>(d, names::V_reset, V_reset_))
     V_reset_ -= U0_;
+  else
+    V_reset_ -= delta_EL;
 
   if (updateValue<double>(d, names::V_th, Theta_)) 
     Theta_ -= U0_;
+  else
+    Theta_ -= delta_EL;
 
   updateValue<double>(d, names::I_e,        I_e_);
   updateValue<double>(d, names::C_m,        C_);
@@ -117,6 +124,12 @@ void nest::iaf_psc_exp::Parameters_::set(const DictionaryDatum &d)
   if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || 
        t_ref_ <= 0 )
     throw BadProperty("All time constants must be strictly positive.");
+
+  if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
+    throw BadProperty("Membrane and synapse time constant(s) must differ."
+		      "See note in documentation.");
+
+  return delta_EL;
 }
 
 void nest::iaf_psc_exp::State_::get(DictionaryDatum &d, const Parameters_ &p) const
@@ -124,10 +137,13 @@ void nest::iaf_psc_exp::State_::get(DictionaryDatum &d, const Parameters_ &p) co
   def<double>(d, names::V_m, V_m_ + p.U0_); // Membrane potential
 }
 
-void nest::iaf_psc_exp::State_::set(const DictionaryDatum &d, const Parameters_ &p)
+void nest::iaf_psc_exp::State_::set(const DictionaryDatum &d, 
+				    const Parameters_ &p, double delta_EL)
 {
   if ( updateValue<double>(d, names::V_m, V_m_) )
     V_m_ -= p.U0_;
+  else
+    V_m_ -= delta_EL;
 }
 
 nest::iaf_psc_exp::Buffers_::Buffers_(iaf_psc_exp &n)

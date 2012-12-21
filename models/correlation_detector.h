@@ -275,6 +275,8 @@ namespace nest
     device_.get_status(d);
     P_.get(d);
     S_.get(d);
+
+    (*d)[names::type] = LiteralDatum(names::recorder);
   }
 
   inline

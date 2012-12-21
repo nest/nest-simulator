@@ -23,139 +23,280 @@
  *
  */
 
-/* 
-   topologymodule.h -- Header for the topology module
-
-   See topology/Makefile.am for full list of the files 
-   included in the module.
- 
-   topologymodule.h is the C++ version of topology/sli/topology.sli
-
-   Some additional functions and functionality is also added.
-
-   Note: Nodes in the topologymodule are refered to by their GID
-   (not their address array). 
-
-   Author: Hans Ekkehard Plesser (hans.ekkehard.plesser@umb.no)
-           Kittel Austvoll      
-*/
-
 #include "slimodule.h"
-#include "dict.h"
-#include "genericmodel.h"
-#include "exceptions.h"
-
+#include "network.h"
 #include "position.h"
-#include "layer_regular.h"
+#include "ntree.h"
+#include "exceptions.h"
+#include "generic_factory.h"
 
-// place all code for topology module in its own namespace
 namespace nest
 {
-   class TopologyModule: public SLIModule
-   {
+  class Parameter;
+  class AbstractMask;
+  class AbstractLayer;
+
+  template<int D>
+  class Layer;
+
+  class TopologyModule: public SLIModule
+  {
+  public:
+
+    TopologyModule(Network&);
+    ~TopologyModule();
+
+    /**
+     * Initialize module by registering models with the network.
+     * @param SLIInterpreter* SLI interpreter, must know modeldict
+     */
+    void init(SLIInterpreter*);
+
+    const std::string name(void) const;
+    const std::string commandstring(void) const;
+
+    static SLIType MaskType;         ///< SLI type for masks
+    static SLIType ParameterType;    ///< SLI type for parameters
+
+    /*
+     * SLI functions: See source file for documentation
+     */
+
+    class CreateLayer_DFunction: public SLIFunction
+    {
     public:
+      void execute(SLIInterpreter *) const;
+    } createlayer_Dfunction;
 
-     TopologyModule(Network&);
-     ~TopologyModule();
+    class GetPosition_iFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } getposition_ifunction;
 
-     /**
-      * Initialize module by registering models with the network.
-      * @param SLIInterpreter* SLI interpreter, must know modeldict
-      */
-     void init(SLIInterpreter*);
+    class Displacement_a_iFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } displacement_a_ifunction;
 
-     const std::string name(void) const;
-     const std::string commandstring(void) const;
+    class Distance_a_iFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } distance_a_ifunction;
 
-     /**
-      * See topologymodule.cpp for a description of these class functions.
-      * The classes are declared according to the setup described in 
-      * nestkernel/nestmodule.cpp
-      *
-      * The topology functions accessible from the SLI interface are 
-      * declared here.
-      */
+    class GetGlobalChildren_i_M_aFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } getglobalchildren_i_M_afunction;
 
-     class ConnectLayers_i_i_dictFunction: public SLIFunction
-       {
-       public:
-	 void execute(SLIInterpreter *) const;
-       } connectlayers_i_i_dictfunction;
+    class ConnectLayers_i_i_DFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } connectlayers_i_i_Dfunction;
 
-     class GetElement_i_iaFunction: public SLIFunction
-       {
-       public:
-	 void execute(SLIInterpreter *) const;
-       } getelement_i_iafunction;
+    class CreateMask_DFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } createmask_Dfunction;
 
-     class GetPosition_iFunction: public SLIFunction
-     {
-     public:
-       void execute(SLIInterpreter *) const;
-     } getposition_ifunction;
-     
-     class GetLayer_iFunction: public SLIFunction
-     {
-     public:
-       void execute(SLIInterpreter *) const;
-     } getlayer_ifunction;
+    class Inside_a_MFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } inside_a_Mfunction;
 
-     class Displacement_i_iFunction: public SLIFunction
-       {
-       public:
-	 void execute(SLIInterpreter *) const;
-       } displacement_i_ifunction;
+    class And_M_MFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } and_M_Mfunction;
 
-     class Displacement_a_iFunction: public SLIFunction
-       {
-       public:
-	 void execute(SLIInterpreter *) const;
-       } displacement_a_ifunction;
+    class Or_M_MFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } or_M_Mfunction;
 
-     class Distance_i_iFunction: public SLIFunction
-       {
-       public:
-	 void execute(SLIInterpreter *) const;
-       } distance_i_ifunction;
+    class Sub_M_MFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } sub_M_Mfunction;
 
-     class Distance_a_iFunction: public SLIFunction
-       {
-       public:
-	 void execute(SLIInterpreter *) const;
-       } distance_a_ifunction;
+    class Mul_P_PFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } mul_P_Pfunction;
 
-     static Position<double_t> 
-       compute_displacement(const Node&, const Node&);
-     static Position<double_t>
-       compute_displacement(const Position<double_t>&, const Node&);
+    class Div_P_PFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } div_P_Pfunction;
 
-     class DumpLayerNodes_os_iFunction: public SLIFunction
-       {
-       public:
-	 void execute(SLIInterpreter *) const;
-       } dumplayernodes_os_ifunction;
+    class Add_P_PFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } add_P_Pfunction;
 
-     class DumpLayerConnections_os_i_lFunction: public SLIFunction
-     {
-     public:
-       void execute(SLIInterpreter *) const;
-     } dumplayerconnections_os_i_lfunction;
-	
-     class CreateLayer_dictFunction: public SLIFunction
-     {
-     public:
-       void execute(SLIInterpreter *) const;
-     } createlayer_dictfunction;
+    class Sub_P_PFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } sub_P_Pfunction;
 
-   private:
-     /**
-      * network where models are to be registered
-      * @todo This should really be a reference, non-static
-      */
-     static Network* net_;
+    class CreateParameter_DFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } createparameter_Dfunction;
 
-   };
+    class GetValue_a_PFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } getvalue_a_Pfunction;
 
-} // namespace
+    class DumpLayerNodes_os_iFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } dumplayernodes_os_ifunction;
+
+    class DumpLayerConnections_os_i_lFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } dumplayerconnections_os_i_lfunction;
+
+    class GetElement_i_iaFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } getelement_i_iafunction;
+
+    class Cvdict_MFunction: public SLIFunction
+    {
+    public:
+      void execute(SLIInterpreter *) const;
+    } cvdict_Mfunction;
+
+    /**
+     * Return a reference to the network managed by the topology module.
+     */
+    static Network &get_network();
+
+    typedef GenericFactory<AbstractMask> MaskFactory;
+    typedef GenericFactory<AbstractMask>::CreatorFunction MaskCreatorFunction;
+
+    template<class T>
+    static bool register_mask();
+    template<class T>
+    static bool register_mask(const Name & name);
+    static bool register_mask(const Name& name, MaskCreatorFunction creator);
+
+    static lockPTRDatum<AbstractMask, &TopologyModule::MaskType> /*MaskDatum*/ create_mask(const Token &);
+    static AbstractMask *create_mask(const Name& name, const DictionaryDatum &d);
+
+    typedef GenericFactory<Parameter> ParameterFactory;
+    typedef GenericFactory<Parameter>::CreatorFunction ParameterCreatorFunction;
+
+    template<class T>
+    static bool register_parameter(const Name & name);
+    static bool register_parameter(const Name& name, ParameterCreatorFunction creator);
+
+    static lockPTRDatum<Parameter, &TopologyModule::ParameterType> /*ParameterDatum*/ create_parameter(const Token &);
+    static Parameter *create_parameter(const Name& name, const DictionaryDatum &d);
+
+  private:
+
+
+    /**
+     * Return a reference to the mask factory class.
+     */
+    static MaskFactory &mask_factory_();
+
+    /**
+     * Return a reference to the parameter factory class.
+     */
+    static ParameterFactory &parameter_factory_();
+
+    /**
+     * - @c net must be static, so that the execute() members of the
+     *   SliFunction classes in the module can access the network.
+     */
+    static Network* net_;
+  };
+
+  /**
+   * Exception to be thrown if the wrong argument type
+   * is given to a function
+   * @ingroup KernelExceptions
+   */
+  class LayerExpected: public KernelException
+  {
+  public:
+  LayerExpected()
+    : KernelException("LayerExpected") {}
+    ~LayerExpected() throw () {}
+
+    std::string message();
+  };
+
+  inline
+  Network &TopologyModule::get_network()
+  {
+    assert(net_ != 0);
+    return *net_;
+  }
+
+  template<class T>
+  inline
+  bool TopologyModule::register_mask()
+  {
+    return mask_factory_().register_subtype<T>(T::get_name());
+  }
+
+  template<class T>
+  inline
+  bool TopologyModule::register_mask(const Name& name)
+  {
+    return mask_factory_().register_subtype<T>(name);
+  }
+
+  inline
+  bool TopologyModule::register_mask(const Name& name, MaskCreatorFunction creator)
+  {
+    return mask_factory_().register_subtype(name, creator);
+  }
+
+  inline
+  AbstractMask *TopologyModule::create_mask(const Name& name, const DictionaryDatum &d)
+  {
+    return mask_factory_().create(name,d);
+  }
+
+  template<class T>
+  inline
+  bool TopologyModule::register_parameter(const Name& name)
+  {
+    return parameter_factory_().register_subtype<T>(name);
+  }
+
+  inline
+  bool TopologyModule::register_parameter(const Name& name, ParameterCreatorFunction creator)
+  {
+    return parameter_factory_().register_subtype(name, creator);
+  }
+
+
+} // namespace nest
 
 #endif

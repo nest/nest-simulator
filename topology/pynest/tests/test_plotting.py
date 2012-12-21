@@ -20,14 +20,25 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 """
 Tests for basic topology hl_api functions.
+
+NOTE: These tests only test whether the code runs, it does not check
+      whether the results produced are correct.
 """
 
 import unittest
 import nest
 import nest.topology as topo
 import sys
-import matplotlib.pyplot as plt
 
+from nest.tests.decorators import _skipIf
+
+try:
+    import matplotlib.pyplot as plt
+    have_mpl = True
+except ImportError:
+    have_mpl = False
+
+@_skipIf(not have_mpl, 'Python matplotlib package not installed', 'testcase')
 class PlottingTestCase(unittest.TestCase):
 
     def test_PlotLayer(self):
@@ -48,8 +59,10 @@ class PlottingTestCase(unittest.TestCase):
                  'mask': {'grid': {'rows':2, 'columns':2}}}     
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
-        ian = [gid for gid in nest.GetLeaves(l)[0] if nest.GetStatus([gid], 'model')[0] == 'iaf_neuron']
-        ipa = [gid for gid in nest.GetLeaves(l)[0] if nest.GetStatus([gid], 'model')[0] == 'iaf_psc_alpha']
+        ian = [gid for gid in nest.GetLeaves(l)[0]
+               if nest.GetStatus([gid], 'model')[0] == 'iaf_neuron']
+        ipa = [gid for gid in nest.GetLeaves(l)[0]
+               if nest.GetStatus([gid], 'model')[0] == 'iaf_psc_alpha']
         
         # connect ian -> all using static_synapse
         cdict.update({'sources': {'model': 'iaf_neuron'},
@@ -58,13 +71,14 @@ class PlottingTestCase(unittest.TestCase):
         for k in ['sources', 'synapse_model']: cdict.pop(k)
         
         # connect ipa -> ipa using stdp_synapse
-        cdict.update({'sources': {'model': 'iaf_psc_alpha'}, 'targets': {'model': 'iaf_psc_alpha'},
+        cdict.update({'sources': {'model': 'iaf_psc_alpha'},
+                      'targets': {'model': 'iaf_psc_alpha'},
                       'synapse_model': 'stdp_synapse'})
         topo.ConnectLayers(l, l, cdict)
         for k in ['sources', 'targets', 'synapse_model']: cdict.pop(k)
  
-        ctr_ian, ctr_iap = nest.GetLeaves(topo.FindCenterElement(l))[0]
-        fig = topo.PlotTargets([ctr_ian], l)
+        ctr = topo.FindCenterElement(l)
+        fig = topo.PlotTargets(ctr, l)
         fig.gca().set_title('Plain call')
         
         self.assertTrue(True)

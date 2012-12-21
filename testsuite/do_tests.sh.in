@@ -80,7 +80,7 @@ ask_results ()
     echo "***     - '${TEST_OUTDIR}'"
     echo "***     - '${TEST_TMPDIR}'"
     echo "***"
-    echo "*** to bugs@nest-initiative.org ."
+    echo "*** to the nest_user@nest-initiative.org mailing list."
     echo "***"
     echo
 }
@@ -464,6 +464,21 @@ if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
     junit_open 'core.phase_5'
 
     NEST_BINARY=nest_indirect
+    for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/pass" | grep '.*\.sli$') ; do
+        run_test "mpi_selftests/pass/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}"
+    done
+
+    # tests meant to fail
+    SAVE_CODES_SUCCESS=${CODES_SUCCESS}
+    SAVE_CODES_FAILURE=${CODES_FAILURE}
+    CODES_SUCCESS=' 1 Success (expected failure)'
+    CODES_FAILURE=' 0 Failed: Unittest failed to detect error.'
+    for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/fail" | grep '.*\.sli$') ; do
+        run_test "mpi_selftests/fail/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}"
+    done
+    CODES_SUCCESS=${SAVE_CODES_SUCCESS}
+    CODES_FAILURE=${SAVE_CODES_FAILURE}
+
     for test_name in $(ls "${TEST_BASEDIR}/mpitests/" | grep '.*\.sli$') ; do
         run_test "mpitests/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}"
     done

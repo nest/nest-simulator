@@ -48,11 +48,11 @@ Description:
 
 Author:  January 2006, Eppler, Diesmann, Gewaltig
          September 2010, Diesmann
-SeeAlso: testsuite::test_iaf_i0,test_getrng_neuron.sli  
+SeeAlso: testsuite::test_iaf_i0, testsuite::test_getrng_neuron
 */
 
 
-/unittest (8831) require
+/unittest (9715) require
 /unittest using
 
 

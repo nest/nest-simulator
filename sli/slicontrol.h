@@ -35,17 +35,17 @@
 
 void init_slicontrol(SLIInterpreter *);
 
-class SetcallbackFunction: public SLIFunction
+class Backtrace_onFunction: public SLIFunction
 {
 public:
-  SetcallbackFunction() {}
-    void execute(SLIInterpreter *) const;
+  Backtrace_onFunction(){}
+  void execute(SLIInterpreter *) const;
 };
 
-class ClearcallbackFunction: public SLIFunction
+class Backtrace_offFunction: public SLIFunction
 {
 public:
-ClearcallbackFunction() {}
+  Backtrace_offFunction(){}
     void execute(SLIInterpreter *) const;
 };
 
@@ -203,6 +203,14 @@ Forall_aFunction() {}
     void execute(SLIInterpreter *) const;
 };
 
+class Forall_iterFunction: public SLIFunction
+{
+public:
+Forall_iterFunction() {}
+    void execute(SLIInterpreter *) const;
+};
+
+
 class Forallindexed_aFunction: public SLIFunction
 {
 public:
@@ -249,6 +257,20 @@ class CyclesFunction: public SLIFunction
 {
 public:
 CyclesFunction() {}
+    void execute(SLIInterpreter *) const;
+};
+
+class CodeAccessedFunction: public SLIFunction
+{
+public:
+CodeAccessedFunction() {}
+    void execute(SLIInterpreter *) const;
+};
+
+class CodeExecutedFunction: public SLIFunction
+{
+public:
+CodeExecutedFunction() {}
     void execute(SLIInterpreter *) const;
 };
 

@@ -100,18 +100,28 @@ namespace nest{
     /**
      * Return reference to receiving Node.
      */
-    Node &  get_receiver() const; 
+    Node & get_receiver() const; 
 
     /**
      * Return reference to sending Node.
      */
-    Node &  get_sender() const;
-    
+    Node & get_sender() const;
+
     /**
      * Change pointer to sending Node.
      */
-    void  set_sender(Node &);
+    void set_sender(Node &);
 
+    /**
+     * Return GID of sending Node.
+     */
+    index get_sender_gid() const;
+
+    /**
+     * Change GID of sending Node.
+     */
+    void set_sender_gid(index);
+    
     /**
      * Return time stamp of the event.
      * The stamp denotes the time when the event was created.
@@ -154,7 +164,7 @@ namespace nest{
     long_t get_rel_delivery_steps(const Time& t) const;
 
     /**
-     * Return the port number of the event.
+     * Return the sender port number of the event.
      * This function returns the number of the port over which the
      * Event was sent.
      * @retval A negative return value indicates that no port number
@@ -168,7 +178,7 @@ namespace nest{
      * Event was sent.
      * @note A return value of 0 indicates that the r-port is not used.
      */
-    port    get_rport() const;    
+    rport    get_rport() const;    
 
     /**
      * Set the port number.
@@ -188,7 +198,7 @@ namespace nest{
      * number defaults to zero.
      * @param p Receiver port number of the connection, or 0 if unused.
      */
-    void    set_rport(port p);    
+    void    set_rport(rport p);    
     
     /**
      * Return the creation time offset of the Event.
@@ -234,7 +244,7 @@ namespace nest{
     void set_stamp(Time const &);
     
   protected:
-
+    index sender_gid_; //!< GID of sender or -1.
     /*
      * The original formulation used references to Nodes as
      * members, however, in order to avoid the reference of reference
@@ -244,6 +254,8 @@ namespace nest{
      */
     Node * sender_; //!< Pointer to sender or NULL.
     Node * receiver_; //!< Pointer to receiver or NULL.
+
+    
     
     /**
      * Sender port number.  
@@ -264,7 +276,7 @@ namespace nest{
      * @note The use of this port number is optional.
      * @note An r-port number of 0 indicates that the port is not used.
      */
-    port rp_;
+    rport rp_;
 
     /**
      * Transmission delay.
@@ -701,7 +713,13 @@ namespace nest{
   {
     sender_= &s;
   }
-  
+   
+  inline
+  void Event::set_sender_gid(index gid) 
+  {
+    sender_gid_ = gid;
+  }
+ 
   inline
   Node & Event::get_receiver(void) const 
   {
@@ -712,6 +730,12 @@ namespace nest{
   Node & Event::get_sender(void) const 
   {
     return *sender_;
+  }
+
+  inline
+  index Event::get_sender_gid(void) const 
+  {
+    return sender_gid_;
   }
 
   inline
@@ -775,7 +799,7 @@ namespace nest{
   }
   
   inline
-  port Event::get_rport() const
+  rport Event::get_rport() const
   {
     return rp_;
   }
@@ -787,7 +811,7 @@ namespace nest{
   }
 
   inline
-  void Event::set_rport(port rp)
+  void Event::set_rport(rport rp)
   {
     rp_=rp;
   }

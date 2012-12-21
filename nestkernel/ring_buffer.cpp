@@ -63,3 +63,30 @@ void nest::MultRBuffer::clear()
 {
   buffer_=0.0;
 }
+
+
+
+
+
+nest::ListRingBuffer::ListRingBuffer()
+  : buffer_(Scheduler::get_min_delay()+Scheduler::get_max_delay())
+{}
+
+void nest::ListRingBuffer::resize()
+{
+  size_t size = Scheduler::get_min_delay()+Scheduler::get_max_delay();
+  if (buffer_.size() != size)
+  {
+    buffer_.resize(size);
+  }
+}
+
+void nest::ListRingBuffer::clear()
+{
+  resize();    // does nothing if size is fine
+  // clear all elements
+  for (unsigned int i=0;i<buffer_.size();i++) {
+    buffer_[i].clear(); 
+  }
+}
+

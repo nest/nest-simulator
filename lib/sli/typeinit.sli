@@ -164,10 +164,6 @@ Synopsis: ostream trieinfo -> -
 /;_    /; load def
  
 /undef_ /undef load def
-/undef trie
-  [/dictionarytype /literaltype] /undef load addtotrie
-def
-
 
 /known_ /known load def
 /known [/dictionarytype /literaltype] /known_ load def
@@ -426,9 +422,10 @@ def
   
 } bind def
 /forall trie
-  [/arraytype      /proceduretype] /forall_a  load addtotrie
-  [/stringtype     /proceduretype] /forall_s  load addtotrie
-  [/dictionarytype /proceduretype] /forall_di load addtotrie
+  [/arraytype      /proceduretype] /forall_a    load addtotrie
+  [/stringtype     /proceduretype] /forall_s    load addtotrie
+  [/iteratortype   /proceduretype] /forall_iter load addtotrie
+  [/dictionarytype /proceduretype] /forall_di   load addtotrie
 def
 
 /forallindexed trie
@@ -456,10 +453,6 @@ def
 /replace trie
   [/arraytype  /integertype /integertype /arraytype]  /replace_a load addtotrie
   [/stringtype /integertype /integertype /stringtype] /replace_s load addtotrie
-def
-
-/roll trie
-  [/integertype /integertype] /roll load addtotrie
 def
 
 /erase trie
@@ -506,6 +499,7 @@ def
 /size trie
  [/arraytype  ]    /size_a load addtotrie
  [/stringtype ]    /size_s load addtotrie
+ [/iteratortype ]  /size_iter load addtotrie
 def
 
 /reserve trie
@@ -879,6 +873,7 @@ BeginDocumentation
 [/intvectortype] /intvector2array load addtotrie
 [/doublevectortype] /doublevector2array load addtotrie
 [/arraytype] { {cva} Map } addtotrie
+[/iteratortype] { {} Map } addtotrie
 def
 
 %%%%%%
@@ -1022,21 +1017,12 @@ def
 def
 
 /begin_ /begin load def
-/begin trie [/dictionarytype] /begin_ load addtotrie def
 
 /case_ /case load def
 /case trie [/booltype /proceduretype] /case_ load addtotrie def
 
 /ifelse_ /ifelse load def
-/ifelse trie 
-   [/booltype /anytype /anytype] /ifelse_ load
-addtotrie def
-
 /if_ /if load def
-/if trie 
-   [/booltype /anytype] /if_ load
-addtotrie def
-
 
 
 /* BeginDocumentation

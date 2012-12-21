@@ -73,7 +73,7 @@ userdict begin
       
       % set resolution and limits on delays
       % limits must be set BEFORE connecting any elements
-      [0]
+      0
       <<
         /resolution h
 	/local_num_threads local_num_threads
@@ -104,6 +104,7 @@ userdict begin
 		 /V_reset U0
 		 /E_L U0
 		 /V_th Theta
+                 /V_m U0  
               >> SetStatus
       % neuron1 GetStatus info
       
@@ -118,6 +119,7 @@ userdict begin
 		 /V_reset U0
 		 /E_L U0
 		 /V_th Theta
+                 /V_m U0
               >> SetStatus
     % neuron2 GetStatus info
 	      

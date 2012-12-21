@@ -39,14 +39,15 @@
 namespace nest 
 {
     Event::Event()
-    : sender_(NULL),
-    receiver_(NULL),
-    p_(-1),
-    rp_(0),
-    d_(1),
-    stamp_(Time::step(0)),
-    offset_(0.0),
-    w_(0.0)
+      : sender_gid_(-1),
+	sender_(NULL),
+	receiver_(NULL),
+	p_(-1),
+	rp_(0),
+	d_(1),
+	stamp_(Time::step(0)),
+	offset_(0.0),
+	w_(0.0)
     {}
 
 
@@ -112,7 +113,4 @@ namespace nest
     {
       receiver_->handle(*this);
     }
-
  }
-
-

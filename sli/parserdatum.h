@@ -35,11 +35,17 @@ class ParserDatum: public AggregateDatum<Parser,&SLIInterpreter::Parsertype>
         return new ParserDatum(*this);
     }
 
-    ParserDatum(void);
+    ParserDatum(void)
+      {
+	set_executable();
+      }
     
 public:
     ParserDatum(Scanner *s):
-            AggregateDatum<Parser,&SLIInterpreter::Parsertype>(Parser(s)) {}
+            AggregateDatum<Parser,&SLIInterpreter::Parsertype>(Parser(s)) 
+	      {
+		set_executable();
+	      }
     
 };
 

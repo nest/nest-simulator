@@ -86,6 +86,9 @@ int nest::aeif_cond_exp_dynamics (double, const double y[], double f[], void* pn
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
 
+  // This constant is used below as the largest admissible value for the exponential spike upstroke
+  static const double_t largest_exp=std::exp(10.);
+
   // shorthand for state variables
   const double_t& V     = y[S::V_M  ];
   const double_t& g_ex  = y[S::G_EXC];
@@ -94,7 +97,12 @@ int nest::aeif_cond_exp_dynamics (double, const double y[], double f[], void* pn
 
   const double_t I_syn_exc = g_ex * (V - node.P_.E_ex);
   const double_t I_syn_inh = g_in * (V - node.P_.E_in);
-  const double_t I_spike   = node.P_.Delta_T * std::exp((V - node.P_.V_th) / node.P_.Delta_T);
+
+  // We pre-compute the argument of the exponential
+  const double_t exp_arg=(V - node.P_.V_th) / node.P_.Delta_T;
+  // If the argument is too large, we clip it.
+  const double_t I_spike = (exp_arg>10.)? largest_exp : node.P_.Delta_T * std::exp(exp_arg);
+
 
   // dv/dt
   f[S::V_M  ] = ( -node.P_.g_L *( (V-node.P_.E_L) - I_spike) 
@@ -115,7 +123,7 @@ int nest::aeif_cond_exp_dynamics (double, const double y[], double f[], void* pn
  * ---------------------------------------------------------------- */
     
 nest::aeif_cond_exp::Parameters_::Parameters_()
-  : V_peak_    (   0.0 ), // mV
+  : V_peak_    (   0.0 ), // mV 
     V_reset_   ( -60.0 ), // mV
     t_ref_     (   0.0 ), // ms
     g_L        (  30.0 ), // nS
@@ -210,17 +218,17 @@ void nest::aeif_cond_exp::Parameters_::set(const DictionaryDatum &d)
 
   updateValue<double>(d,names::gsl_error_tol, gsl_error_tol);
 
-  if ( V_reset_ >= V_peak_ )
-    throw BadProperty("Reset potential must be smaller than spike cut-off threshold.");
-    
   if ( V_peak_ <= V_th )
     throw BadProperty("V_peak must be larger than threshold.");
 
+  if ( V_reset_ >= V_peak_ )
+    throw BadProperty("Ensure that: V_reset < V_peak .");
+    
   if ( C_m <= 0 )
-    throw BadProperty("Capacitance must be strictly positive.");
+    throw BadProperty("Ensure that C_m >0");
     
   if ( t_ref_ < 0 )
-    throw BadProperty("Refractory time cannot be negative.");
+    throw BadProperty("Ensure that t_ref >= 0");
       
   if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 )
     throw BadProperty("All time constants must be strictly positive.");
@@ -388,7 +396,7 @@ void nest::aeif_cond_exp::update(const Time &origin, const long_t from, const lo
 						B_.step_,             // to t <= step
 						&B_.IntegrationStep_, // integration step size
 						S_.y_);               // neuronal state
-
+      
       if ( status != GSL_SUCCESS )
         throw GSLSolverFailure(get_name(), status);
 
@@ -396,29 +404,28 @@ void nest::aeif_cond_exp::update(const Time &origin, const long_t from, const lo
       if ( S_.y_[State_::V_M] < -1e3 ||
 	   S_.y_[State_::W  ] <    -1e6 || S_.y_[State_::W] > 1e6    )
 	throw NumericalInstability(get_name());
-
+      
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
       if ( S_.r_ > 0 )
-        S_.y_[State_::V_M] = P_.V_reset_;
+	S_.y_[State_::V_M] = P_.V_reset_;
       else if ( S_.y_[State_::V_M] >= P_.V_peak_ )
-      {
-	S_.y_[State_::V_M]  = P_.V_reset_;
-	S_.y_[State_::W]   += P_.b; // spike-driven adaptation
-	S_.r_               = V_.RefractoryCounts_;
-
-	set_spiketime(Time::step(origin.get_steps() + lag + 1));
-	SpikeEvent se;
-	network()->send(*this, se, lag);
-      }
-    }
-
+	{
+	  S_.y_[State_::V_M]  = P_.V_reset_;
+	  S_.y_[State_::W]   += P_.b; // spike-driven adaptation
+	  S_.r_               = V_.RefractoryCounts_;
+	  
+	  set_spiketime(Time::step(origin.get_steps() + lag + 1));
+	  SpikeEvent se;
+	  network()->send(*this, se, lag);
+	}
+    }  
     S_.y_[State_::G_EXC] += B_.spike_exc_.get_value(lag);
     S_.y_[State_::G_INH] += B_.spike_inh_.get_value(lag);
-      
+    
     // set new input current
     B_.I_stim_ = B_.currents_.get_value(lag);
-
+    
     // log state data
     B_.logger_.record_data(origin.get_steps() + lag);
   }

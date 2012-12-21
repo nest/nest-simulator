@@ -17,5 +17,6 @@ For copyright information please refer to the file LICENSE and to the
 information header in the source files.
 
 Emacs users may use the SLI mode, which provides syntax highlighting
-for SLI. To install it, add the following line to your '.emacs' file:
+for SLI. To install it, add the following lines to your '.emacs' file:
+  (load-library "${prefix}/share/nest/extras/emacs/postscript-sli")
   (load-library "${prefix}/share/nest/extras/emacs/sli")

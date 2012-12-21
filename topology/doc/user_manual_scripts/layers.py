@@ -187,6 +187,22 @@ plt.savefig('../user_manual_figures/layer4.png', bbox_inches='tight')
 
 nest.ResetKernel()
 
+#{ layer4_3d #}
+import numpy as np
+pos = [[np.random.uniform(-0.5,0.5),np.random.uniform(-0.5,0.5),
+        np.random.uniform(-0.5,0.5)] for j in xrange(200)]
+l = tp.CreateLayer({'positions': pos,
+                    'elements': 'iaf_neuron'})
+#{ end #}
+
+fig = tp.PlotLayer(l, nodesize=50)
+
+plt.savefig('../user_manual_figures/layer4_3d.png', bbox_inches='tight')
+
+# --------------------------------------------------
+
+nest.ResetKernel()
+
 #{ player #}
 lp = tp.CreateLayer({'rows': 1, 'columns': 5, 'extent': [5., 1.],
                      'elements': 'iaf_neuron',
@@ -272,32 +288,6 @@ l = tp.CreateLayer({'rows': 1, 'columns': 2,
 print "#{ layer7 #}"
 nest.PrintNetwork(depth=3)
 print "#{ end #}"
-
-# --------------------------------------------------
-
-nest.ResetKernel()
-
-#{ layer8 #}
-l = tp.CreateLayer({'rows': 1, 'columns': 2,
-                    'elements': [['iaf_cond_alpha', 10,
-                                  'poisson_generator'], 2,
-                                 'noise_generator', 2]})
-#{ end #}
-
-print "#{ layer8 #}"
-nest.PrintNetwork(depth=4)
-print "#{ end #}"
-
-# --------------------------------------------------
-
-nest.ResetKernel()
-
-#{ layer9 #}
-nest.CopyModel('iaf_neuron', 'pyr')
-nest.CopyModel('iaf_neuron', 'in', {'V_th': -52.})
-l = tp.CreateLayer({'rows': 20, 'columns' : 20, 'extent': [0.5, 0.5],
-                    'elements': [['pyr', 3, 'in'], 3]})
-#{ end #}
 
 # --------------------------------------------------
 

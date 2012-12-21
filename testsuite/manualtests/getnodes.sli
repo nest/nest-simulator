@@ -1,0 +1,9 @@
+/iaf_neuron [5 6] LayoutNetwork /nw Set
+
+nw GetLocalNodes ==
+nw GetLocalLeaves ==
+nw GetLocalChildren ==
+
+nw GetGlobalNodes ==
+nw GetGlobalLeaves ==
+nw GetGlobalChildren ==

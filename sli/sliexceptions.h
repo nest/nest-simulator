@@ -72,7 +72,7 @@ class SLIException: public std::exception
    * @code
    * catch(IllegalOperation &e)
    * {
-   * 	 i->error("ChangeSubnet","Target node must be a subnet or compound.");
+   * 	 i->error("ChangeSubnet","Target node must be a subnet.");
    *	 i->raiseerror(e.what());
    *   return;
    * }
@@ -106,6 +106,18 @@ public:
  InterpreterError(char const * const what)
    : SLIException(what)
   {}
+};
+
+class DivisionByZero: public SLIException
+{
+ public:
+  virtual ~DivisionByZero() throw() {}
+  
+ DivisionByZero()
+   : SLIException("DivisionByZero")
+    {}
+  std::string message();
+
 };
 
 // -------------------- Type Mismatch -------------------------

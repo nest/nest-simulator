@@ -19,24 +19,19 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-/topology-interface /SLI ($Revision: 6714 $) provide-component
 
-% topology-interface is a temporary file during the mirgration of
-% topology functionality from SLI to C++ migration. Thus, functions
-% in topology-interface are also included in the topology namespace.
-%
-% See topology.sli for legacy code.
+/topology-interface /SLI ($Revision: 9954 $) provide-component
 
 /topology namespace
 
 % ------------------------------------------------------------------------------
 
 /ConnectLayers [/integertype /integertype /dictionarytype]
-  /ConnectLayers_i_i_dict load 
+  /ConnectLayers_i_i_D load
 def
 
 /CreateLayer [/dictionarytype]
-  /CreateLayer_dict load 
+  /CreateLayer_D load
 def
 
 /GetElement [/integertype /arraytype]
@@ -48,11 +43,12 @@ def
 def
 
 /GetLayer [/integertype]
-  /GetLayer_i load
+  { GetStatus /parent get } bind
 def
 
 /Displacement [/integertype /integertype]
-  /Displacement_i_i load
+  { exch GetPosition exch
+    Displacement_a_i } bind
 def
 
 /Displacement [/arraytype /integertype]
@@ -65,7 +61,8 @@ def
 def
 
 /Distance [/integertype /integertype]
-  /Distance_i_i load
+  { exch GetPosition exch
+    Distance_a_i } bind
 def
 
 /Distance [/arraytype /integertype]
@@ -78,13 +75,81 @@ def
 def
 
 /DumpLayerNodes [/ostreamtype /integertype]
-  /DumpLayerNodes_os_i load
+  { DumpLayerNodes_os_i } bind
 def
+
+% /DumpLayerNodes_nowrite [/integertype]
+%   { false DumpLayerNodes_os_i_b } bind
+% def
+
 
 /DumpLayerConnections [/ostreamtype /integertype /literaltype]
   /DumpLayerConnections_os_i_l load
 def
 
+/CreateMask [/dictionarytype]
+  /CreateMask_D load
+def
+
+/Inside [/arraytype /masktype]
+  /Inside_a_M load
+def
+
+/Inside [/arraytype /dictionarytype]
+  { CreateMask Inside_M_a } bind
+def
+
+/and [/masktype /masktype]
+  /and_M_M load
+def
+
+/or [/masktype /masktype]
+  /or_M_M load
+def
+
+/sub [/masktype /masktype]
+  /sub_M_M load
+def
+
+/mul [/parametertype /parametertype]
+  /mul_P_P load
+def
+
+/div [/parametertype /parametertype]
+  /div_P_P load
+def
+
+/add [/parametertype /parametertype]
+  /add_P_P load
+def
+
+/sub [/parametertype /parametertype]
+  /sub_P_P load
+def
+
+/GetGlobalChildren [/integertype /masktype /arraytype]
+  /GetGlobalChildren_i_M_a load
+def
+  
+/CreateParameter [/dictionarytype]
+  /CreateParameter_D load
+def
+
+/CreateParameter [/doubletype]
+  /CreateParameter_D load
+def
+
+/GetValue [/arraytype /parametertype]
+  /GetValue_a_P load
+def
+
+/cvdict [/masktype]
+  /cvdict_M load
+def
+  
+/get [/masktype /literaltype] {exch cvdict_M exch get} def
+/get [/masktype /arraytype] {exch cvdict_M exch get} def
+
 % ------------------------------------------------------------------------------
 
-end % namespace nest
+end % namespace topology

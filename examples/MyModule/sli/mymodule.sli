@@ -1,4 +1,4 @@
-/* 
+/*
  *  mymodule.sli
  *
  *  This file is part of NEST.
@@ -26,10 +26,10 @@
 
 M_DEBUG (mymodule.sli) (Initializing SLI support for MyModule.) message
 
-/mymodule /SLI ($Revision: 9902 $) provide-component
+/mymodule /SLI ($Revision: 9952 $) provide-component
 /mymodule /C++ (7165) require-component
 
 /StepPatternConnect [ /arraytype /integertype /arraytype /integertype /literaltype ]
-{ 
+{
   StepPatternConnect_Vi_i_Vi_i_l
 } def

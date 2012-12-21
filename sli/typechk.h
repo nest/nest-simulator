@@ -65,6 +65,7 @@ Date:      18.11.95
 #include "tokenarray.h"
 #include "tokenstack.h"
 #include "typearray.h"
+#include "slinames.h"
 
 class TypeTrie {
 private:
@@ -99,7 +100,6 @@ private:
 
     ~TypeNode()
       {
-	assert(refs == 0);
 	if (next != NULL)
 	  next->removereference();
 	if (alt != NULL)
@@ -111,8 +111,6 @@ private:
   };
 
   TypeNode *root;
-  Name any;
-  Name object;
 
 //    TypeTrie operator=(const TypeTrie &){}; // disable this operator
   TypeNode * getalternative(TypeNode *, const Name &);
@@ -122,22 +120,17 @@ private:
 public:
 
     TypeTrie()
-      : root(new TypeNode(Name())),
-	any("anytype"), // This could be defined somewhere else
-	object("trie::object") // This could be defined somewhere else
+      : root(new TypeNode(Name()))
     {}
 
   TypeTrie(const TokenArray &ta)
-    : root(NULL),
-      any("anytype"), // This could be defined somewhere else
-      object("trie::object") // This could be defined somewhere else
+    : root(NULL)
     {
       root= newnode(ta);
     }
   
   TypeTrie(const TypeTrie &tt)
-    :root(tt.root),
-     any(tt.any), object(tt.object)
+    :root(tt.root)
     {
       if(root !=NULL)
         root->addreference();
@@ -149,10 +142,12 @@ public:
     void  insert(const TypeArray&a , const Token &t)
     {
         Token tmp(t);
+	// We have no insert variant, that's why we copy the token
+	// to a temporary and then move it to the trie.
         insert_move(a,tmp);
     }
     
-  Token lookup(const TokenStack &st) const;
+  const Token& lookup(const TokenStack &st) const;
   
   bool operator == (const TypeTrie &) const;
   
@@ -161,6 +156,14 @@ public:
   void info(std::ostream &) const;
 };
 
+inline
+TypeTrie::~TypeTrie()
+{
+  if (root != NULL)
+      root->removereference();
+}
+/*_____ end ~TypeTrie() __________________________________________*/
+
 
 // Typename comparison including /anytype which compares
 // positively for all other typenames
@@ -168,8 +171,63 @@ public:
 inline
 bool TypeTrie::equals(const Name &t1, const Name &t2) const
 {
-    return(t1==t2 || t2==any || t1==any);
+  return(t1==t2 || t2==sli::any || t1==sli::any);
 }
+
+inline
+const Token& TypeTrie::lookup(const TokenStack &st) const
+{
+/*
+Task:      Tokens on stack 'st' will be compared with the TypeTrie.
+           Each stack element must have an equivalent type on the 
+           current tree level. By reaching a leaf the interpreter 
+           function will be returned. If an error occurs the
+           'ErrorFunction' will be returned.            
+
+Author:    Marc Oliver Gewaltig
+
+Date:      18.11.95, rewritten on Apr. 16 1998
+
+Parameter: st = stack
+
+*/
+  const unsigned int load =st.load();
+  unsigned int level=0;
+
+  TypeNode *pos=root;
+
+  while(level<load)
+  {
+    Name find_type=st.pick(level)->gettypename();
+
+    // Step 1: find the type at the current stack level in the
+    // list of alternatives. Unfortunately, this search is O(n).
+
+    while (! equals(find_type, pos->type))
+      if (pos->alt != NULL)
+	pos = pos->alt;
+      else
+	throw ArgumentType(level);
+    
+    // Now go to the next argument.
+    pos = pos->next;     
+
+    if(pos->type == sli::object)
+      return pos->func;
+
+    ++level;
+  }
+
+  throw StackUnderflow(level+1, load) ;
+}
+
+
+inline
+bool TypeTrie::operator == (const TypeTrie &tt) const
+{
+    return (root == tt.root);
+}
+
 #endif
 
 

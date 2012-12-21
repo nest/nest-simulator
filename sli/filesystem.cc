@@ -19,7 +19,7 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+#include <cassert>
 #include "filesystem.h"
 #include "arraydatum.h"
 #include "stringdatum.h"
@@ -56,7 +56,7 @@ const std::string FilesystemModule::name(void) const
 
 const std::string FilesystemModule::commandstring(void) const
     {
-      return std::string("/filesystem /C++ ($Revision: 9902 $) provide-component  /filesystem /SLI (7610) require-component");
+      return std::string("/filesystem /C++ ($Revision: 9952 $) provide-component  /filesystem /SLI (7610) require-component");
     }
 
 

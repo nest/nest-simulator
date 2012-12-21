@@ -29,9 +29,10 @@
 librandom::GslRandomGen::GslRandomGen(const gsl_rng_type *type, unsigned long seed) 
   : RandomGen()
 { 
-  rng_ = gsl_rng_alloc(type); 
+  rng_ = gsl_rng_alloc(type);
+  rng_type_ = type; 
   assert(rng_ != NULL);
-  gsl_rng_set(rng_, seed);  
+  gsl_rng_set(rng_, seed);
 }
 
 librandom::GslRandomGen::~GslRandomGen() 

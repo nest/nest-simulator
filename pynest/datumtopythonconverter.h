@@ -26,7 +26,6 @@
 
 extern "C" {
 #include<Python.h>
-}
 
 #ifdef HAVE_NUMPY
 
@@ -52,7 +51,6 @@ extern "C" {
 #define NO_IMPORT_ARRAY
 #define PY_ARRAY_UNIQUE_SYMBOL _pynest_arrayu
 
-extern "C" {
 #include <numpy/arrayobject.h>
 }
 

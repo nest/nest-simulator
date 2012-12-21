@@ -67,10 +67,10 @@
 
 ResetKernel
 
-[0] << 
+0 << 
       /local_num_threads 1 
       /resolution h
-    >> SetStatus
+  >> SetStatus
 
 /iaf_psc_exp Create /neuron Set
 

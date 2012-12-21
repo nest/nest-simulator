@@ -28,7 +28,7 @@
 #include "archiving_node.h"
 #include "ring_buffer.h"
 #include "spikecounter.h"
-
+#include "namedatum.h"
 
 
 /*BeginDocumentation
@@ -225,10 +225,12 @@ namespace nest
   }
 
   inline 
-    void volume_transmitter::get_status(DictionaryDatum &d) const
+  void volume_transmitter::get_status(DictionaryDatum &d) const
   {
     P_.get(d);
     Archiving_Node::get_status(d);
+
+    (*d)[names::type] = LiteralDatum(names::other);
   }
 
   inline

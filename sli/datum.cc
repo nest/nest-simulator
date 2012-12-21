@@ -32,15 +32,10 @@
 #include "datumconverter.h"
 #include "datum.h"
 
-void Datum::setwriteable(bool f)
-{
-    wflag = f;
-}
 
-
-void Datum::info(std::ostream &out) const
+void Datum::info(std::ostream &) const
 {
-    out << "wflag = " << wflag << std::endl;
+//    out << "wflag = " << wflag << std::endl;
 }
 
 void Datum::use_converter(DatumConverter &converter)

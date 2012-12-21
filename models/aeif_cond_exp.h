@@ -42,11 +42,14 @@
 /* BeginDocumentation
 Name: aeif_cond_exp - Conductance based exponential integrate-and-fire neuron model according to Brette and Gerstner (2005).
 
-Description:
-aeif_cond_exp is the adaptive exponential integrate and fire neuron according to Brette and Gerstner (2005).
+Description: 
 
-This implementation uses the embedded 4th order Runge-Kutta-Fehlberg solver with adaptive stepsize to integrate
-the differential equation.
+aeif_cond_exp is the adaptive exponential integrate and fire neuron
+according to Brette and Gerstner (2005), with post-synaptic
+conductances in the form of truncated exponentials.
+
+This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
+solver with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
 C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e) -g_i(t)(V-E_i)-w +I_e
@@ -54,6 +57,11 @@ C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e) -g_i(t)(V-E_
 and
 
 tau_w * dw/dt= a(V-E_L) -W
+
+
+Note that the spike detection threshold V_peak is automatically set to
+V_th+10 mV to avoid numerical instabilites that may result from
+setting V_peak too high.
 
 Parameters: 
 The following parameters can be set in the status dictionary.
@@ -67,7 +75,6 @@ Dynamic state variables:
 Membrane Parameters:
   C_m        double - Capacity of the membrane in pF
   t_ref      double - Duration of refractory period in ms. 
-  V_peak     double - Spike detection threshold in mV.
   V_reset    double - Reset value for V_m after a spike. In mV.
   E_L        double - Leak reversal potential in mV. 
   g_L        double - Leak conductance in nS.
@@ -78,7 +85,8 @@ Spike adaptation parameters:
   b          double - Spike-triggered adaptation in pA.
   Delta_T    double - Slope factor in mV
   tau_w      double - Adaptation time constant in ms
-  V_t        double - Spike initiation threshold in mV (V_th can also be used for compatibility).
+  V_t        double - Spike initiation threshold in mV
+  V_peak     double - Spike detection threshold in mV.
 
 Synaptic parameters
   E_ex       double - Excitatory reversal potential in mV.

@@ -100,9 +100,7 @@ namespace nest
      * @see Technical Issues / Virtual Functions: Overriding,
      * Overloading, and Hiding
      */
-#ifndef IS_BLUEGENE
-    using Node::check_connection;
-#endif
+
     using Node::handle;
 
     void handle(SpikeEvent &);

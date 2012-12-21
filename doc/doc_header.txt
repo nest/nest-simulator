@@ -31,7 +31,7 @@ Description:
 Parameters:
 (start here.)
 
-Options: 
+Options:
 (start here.)
 
 Examples:

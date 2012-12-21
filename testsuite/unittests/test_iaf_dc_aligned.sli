@@ -121,7 +121,7 @@ SeeAlso: testsuite::test_iaf_dc, testsuite::test_iaf_dc_aligned_delay, testsuite
   
  ResetKernel
 
-  [0] << 
+  0 << 
          /local_num_threads 1 
          /resolution h
        >> SetStatus
@@ -143,7 +143,7 @@ SeeAlso: testsuite::test_iaf_dc, testsuite::test_iaf_dc_aligned_delay, testsuite
 
 
   /spike_detector Create /sp_det Set 
-  sp_det << /withtime true /to_memory true /withpath true /time_in_steps true >> SetStatus
+  sp_det << /withtime true /to_memory true /time_in_steps true >> SetStatus
 
 
   dc_gen neuron 1.0 h Connect % code depends on computation step size

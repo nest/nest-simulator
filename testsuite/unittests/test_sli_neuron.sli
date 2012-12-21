@@ -30,7 +30,7 @@
 
     Author: Marc-Oliver Gewaltig
     FirstVersion: January 2009
-    SeeAlso: testsuite::iaf_neuron, sli_neuron 
+    SeeAlso: testsuite::test_iaf, sli_neuron 
 */
 
 
@@ -41,10 +41,10 @@
 
 ResetKernel
 
-[0] << 
+0 << 
       /local_num_threads 2 
       /resolution h
-    >> SetStatus
+  >> SetStatus
 
 
 /sli_neuron_state

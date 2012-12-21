@@ -121,7 +121,8 @@ namespace nest
         while(! eventqueue_[channel].empty())
         {
           Time T = Time::ms(eventqueue_[channel].top());
-          if (T >= origin + Time::step(from) && T < origin + Time::step(from + to))
+
+          if (T > origin + Time::step(from) - Time::ms(acceptable_latency_) && T <= origin + Time::step(from + to))
           {
             nest::SpikeEvent se;
             se.set_offset(Time(Time::step(T.get_steps())).get_ms() - T.get_ms());
@@ -131,7 +132,7 @@ namespace nest
             eventqueue_[channel].pop();       // remove the sent event from the queue
           }
           else
-            break;  
+            break;          
         }
   }
 

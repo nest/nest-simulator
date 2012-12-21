@@ -383,6 +383,6 @@ namespace nest
 
 } // namespace
 
+#endif //IAF_COND_ALPHA_H
 
 #endif //HAVE_GSL
-#endif //IAF_COND_ALPHA_H

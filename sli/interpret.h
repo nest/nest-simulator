@@ -62,6 +62,10 @@ namespace nest {
   class Network;
 }
 
+extern "C"{
+  void SLIthrowsignal(int s);
+}
+
 class SLIInterpreter
 {
   std::list<SLIModule *> modules;
@@ -82,15 +86,18 @@ class SLIInterpreter
   bool            cycle_guard;
   unsigned long   cycle_restriction; 
 
+
+
   int             verbositylevel;
-
-
   void inittypes(void);
   void initdictionaries(void);
   void initbuiltins(void);
   void initexternals(void);
   
 public:
+    unsigned long   code_accessed;  // for code coverage analysis.
+    unsigned long   code_executed;  // ration should be coverage
+
 
     Dictionary *statusdict;
     Dictionary *errordict;
@@ -108,6 +115,7 @@ public:
     Name irepeat_name;
     Name ifor_name;
     Name iforallarray_name;
+    Name iforalliter_name;
     Name iforallindexedarray_name;
     Name iforallindexedstring_name;
     Name iforallstring_name;
@@ -124,7 +132,7 @@ public:
     Name true_name;
     Name false_name;
     Name mark_name;
-    Name istopped_name; // Name that must resolve to false
+    Name istopped_name; 
     Name systemdict_name;
     Name userdict_name;
     Name errordict_name;
@@ -208,6 +216,7 @@ public:
   static SLIType Ostreamtype;
   static SLIType IntVectortype;
   static SLIType DoubleVectortype;
+  static SLIType Iteratortype;
 
   // SLIType default actions
   static DatatypeFunction         datatypefunction;
@@ -227,6 +236,7 @@ public:
   static const IrepeatFunction      irepeatfunction;
   static const IforFunction         iforfunction;
   static const IforallarrayFunction iforallarrayfunction;
+  static const IforalliterFunction  iforalliterfunction;
   static const IforallindexedarrayFunction iforallindexedarrayfunction;
   static const IforallindexedstringFunction iforallindexedstringfunction;
   static const IforallstringFunction iforallstringfunction;
@@ -253,15 +263,16 @@ public:
   /**
    * Start the interpreter and run the startup code.
    */
-  int execute();
+  int execute(int v=0);
 
-  int execute_protected(void);
+  //  int execute_protected(void);
 
   /**
    * Run the interpreter with a prepared execution stack. 
    * The function returns, if the execution stack has reached the given level. 
    */
   int execute_(size_t exitlevel=0);
+  int execute_debug_(size_t exitlevel=0);
   
   void createdouble(Name const&, double);
   void createcommand(Name const&, SLIFunction const *);
@@ -274,6 +285,13 @@ public:
    *  @a VoidToken is returned.
    */
   const Token & lookup(const Name &n) const;
+
+
+  /** Lookup a name searching all dictionaries on the stack.
+   *  The first occurrence is reported. If the Name is not found,
+   *  an UndefinedName exceptiopn is thrown.
+   */
+  const Token & lookup2(const Name &n) const;
     
   /** Lookup a name searching only the bottom level dictionary.
    *  If the Name is not found,
@@ -438,6 +456,9 @@ public:
    */
   void toggle_stack_display();
 
+
+
+
   /** 
    * Show Debug options. 
    */
@@ -518,11 +539,9 @@ public:
    * disturbing. So it is possible to switch this behavior on and 
    * off. 
    */
-  void backtrace_on()
-  {
-    show_backtrace_=true;
-  }
+  void backtrace_on();
 
+ 
   /**
    * Switch stack backtrace off.
    * Whenever an error or stop is raised, the execution stack is 
@@ -534,11 +553,9 @@ public:
    * disturbing. So it is possible to switch this behavior on and 
    * off. 
    */
-  void backtrace_off()
-  {
-    show_backtrace_=false;
-  }
+  void backtrace_off();
 
+ 
   bool catch_errors() const
   {
     return catch_errors_;

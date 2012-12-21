@@ -2,10 +2,10 @@
 #
 # Hans Ekkehard Plesser, April 2008
 # Automake file for the Developer Module
-# 
+#
 # libmymodule is built as a normal, installable library.
 # It will be installed to $prefix/lib by make install.
-# 
+#
 # Headers from this directory are not to be installed upon
 # make install. They are therefore included in _SOURCES.
 
@@ -36,7 +36,7 @@ libmymodule_la_SOURCES=  $(mymodule_la_SOURCES)
 MAKEFLAGS= @MAKE_FLAGS@
 
 AM_CPPFLAGS= @NEST_CPPFLAGS@ \
-             @INCLTDL@      
+             @INCLTDL@
 
 .PHONY: install-slidoc
 

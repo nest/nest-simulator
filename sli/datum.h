@@ -24,7 +24,6 @@
 #define DATUM_H
 
 #include "slitype.h"
-
 class DatumConverter;
 
 
@@ -38,8 +37,20 @@ class Datum
   
   friend class Token;
   
-  bool wflag; //!< writeable-flag
   virtual Datum * clone(void) const = 0;
+
+
+  /**
+   * Returns a reference counted pointer to the datum, or a new pointer, if the
+   * type does not support reference counting.
+   * The prefix const indicates that the pointer should be trated as const
+   * because changes affect all other references as well.
+   */ 
+
+  virtual Datum * get_ptr() 
+  {
+    return clone();
+  }
 
  protected:
   // Putting the following variables here, avoids a number of virtual
@@ -47,20 +58,64 @@ class Datum
 
   const SLIType     *type;   //!< Pointer to type object.
   const SLIFunction *action; //!< Shortcut to the SLIType default action.
+  mutable
+    unsigned int reference_count_;
+  bool   executable_;
 
-  Datum() : wflag(true), type(NULL), action(NULL){}
+ Datum() :
+  type(NULL), 
+    action(NULL),
+    reference_count_(1),
+    executable_(true)
+      {}
 
   
-  Datum(const SLIType *t) : wflag(true), type(t), action(t->getaction())
-    { }
+ Datum(const SLIType *t) : 
+  type(t), 
+    action(t->getaction()),
+    reference_count_(1),
+    executable_(true)
+      { }
 
-  Datum(const Datum &d) : wflag(d.wflag), type(d.type), action(d.action){}
-//  Datum(const Token &);
+ Datum(const Datum &d) : type(d.type), action(d.action),reference_count_(1),executable_(d.executable_){}
+
 
  public:
 
   virtual ~Datum() {};
-  
+
+  void addReference() const
+  {
+    ++reference_count_;
+  }
+
+  void removeReference()
+  {
+    --reference_count_;
+    if(reference_count_==0)
+      delete this;
+  }
+
+  size_t numReferences() const
+  {
+    return reference_count_;
+  }
+
+  bool is_executable() const
+  {
+    return executable_;
+  }
+
+  void set_executable()
+  {
+    executable_=true;
+  }
+
+  void unset_executable()
+  {
+    executable_=false;
+  }
+
   virtual void  print(std::ostream & ) const =0;
   virtual void  pprint(std::ostream &) const =0;
 
@@ -79,13 +134,13 @@ class Datum
     pprint(o);
   }
   
-  virtual bool  equals(const Datum *) const =0;
+  virtual bool  equals(const Datum *d) const
+  {
+    return this == d;
+  }
   
   virtual void  info(std::ostream &) const;
   
-  bool writeable(void) const  { return wflag;  }
-  void setwriteable(bool);    
-
   const Name & gettypename(void) const
     {
       return type->gettypename();
@@ -107,31 +162,29 @@ class Datum
    */
   virtual void use_converter(DatumConverter &v);
   
-
 };
 
 template<SLIType * slt >
 class TypedDatum: public Datum
 {
-// This should preferably be static!
  public:
-  TypedDatum(void)
-    :Datum(slt)
-    { }
+ TypedDatum(void)
+   :Datum(slt)
+  { }
   
-  TypedDatum(const TypedDatum<slt> &d) :Datum(d){}
-
-  inline const TypedDatum<slt>& operator=(const TypedDatum<slt>&);
-
+ TypedDatum(const TypedDatum<slt> &d) :Datum(d){}
+  const TypedDatum<slt>& operator=(const TypedDatum<slt>&);
+  
 };
 
 template<SLIType * slt >
+inline 
 const TypedDatum<slt>& TypedDatum<slt>::operator=(const TypedDatum<slt>&)
 {
   //  assert( type == d.type );
   return *this;
 }
-
+  
 
 
 #endif

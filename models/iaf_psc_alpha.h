@@ -96,6 +96,11 @@ Parameters:
   I_e        double - Constant external input current in pA.
   V_min      double - Absolute lower value for the membrane potential.
  
+Note:
+  tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
+  degenerate case of the ODE describing the model [1]. For very similar values,
+  numerics will be unstable.
+
 References:
   [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
       systems with applications to neuronal modeling. Biologial Cybernetics
@@ -191,15 +196,15 @@ namespace nest
       /** External current in pA */
       double_t I_e_;
 
-      /** reset value of the membrane potential */
+      /** Reset value of the membrane potential */
       double_t V_reset_;
 
-      /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
+      /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
           I.e. the real threshold is (U0_+Theta_). */
       double_t Theta_;
 
-      /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
-          I.e. the real lower bound is (LowerBound_+Theta_). */
+      /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
+          I.e. the real lower bound is (LowerBound_+U0_). */
       double_t LowerBound_;
 
       /** Time constant of excitatory synaptic current in ms. */
@@ -211,7 +216,11 @@ namespace nest
       Parameters_();  //!< Sets default parameter values
 
       void get(DictionaryDatum&) const;  //!< Store current values in dictionary
-      void set(const DictionaryDatum&);  //!< Set values from dicitonary
+
+      /** Set values from dictionary.
+       * @returns Change in reversal potential E_L, to be passed to State_::set()
+       */
+      double set(const DictionaryDatum&);
     };
     
     // ---------------------------------------------------------------- 
@@ -232,7 +241,13 @@ namespace nest
       State_();  //!< Default initialization
       
       void get(DictionaryDatum&, const Parameters_&) const;
-      void set(const DictionaryDatum&, const Parameters_&);
+
+      /** Set values from dictionary.
+       * @param dictionary to take data from
+       * @param current parameters
+       * @param Change in reversal potential E_L specified by this dict
+       */
+      void set(const DictionaryDatum&, const Parameters_&, double);
     };    
 
     // ---------------------------------------------------------------- 
@@ -360,9 +375,9 @@ inline
 void iaf_psc_alpha::set_status(const DictionaryDatum &d)
 {
   Parameters_ ptmp = P_;  // temporary copy in case of errors
-  ptmp.set(d);                       // throws if BadProperty
+  const double delta_EL = ptmp.set(d);                       // throws if BadProperty
   State_      stmp = S_;  // temporary copy in case of errors
-  stmp.set(d, ptmp);                 // throws if BadProperty
+  stmp.set(d, ptmp, delta_EL);                 // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not 
   // write them back to (P_, S_) before we are also sure that 

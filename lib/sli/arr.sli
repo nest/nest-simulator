@@ -29,7 +29,7 @@
 */
 
 
-/arr ($Revision: 9902 $) provide
+/arr ($Revision: 9952 $) provide
 
 
 /arr namespace
@@ -878,99 +878,7 @@ SeeAlso: gauss2d_
 >> Options
 
 
-/* BeginDocumentation
-
-Name: arr::index2address - Transform array indices into network addresses (add 1), preserving falses.
-
-Synopsis: [[indexarray]] index2address -> [[addressarray]]
-
-Parameters:
-[[indexarray]] must be hyperrectengular.
-Contained elements must be numerical, or "false".
-
-Description:
-Increment every element in the array by one.
-Elements that are "false" are left untouched.
-This routine is used to transform indices into a SLI array into network addresses
-inside a subnet of matching dimensions.
-Array dimensions are preserved.
-No range checking in respect to allowed network addresses is performed.
-Note that for an array that is known to contain numerical elements only (no falses),
-the same effect can be achieved faster by "[[array]] 1 add".
-
-Examples:
-/arr using
-  [1 2 false] index2address -> [2 3 false]
-/endusing
-
-Author: Ruediger Kupper
-
-Availability: "Namespace"-dictionary "arr"
-
-SeeAlso: arr::address2index
-*/
-
-/index2address [/arraytype]
-{
-  %stack: [[n-dimensional-array-of-indices]]
-  dup Dimensions exch Flatten
-  %stack: Dimensions [flat-array-of-indices]  
-  {
-    %stack: single_index
-    dup false neq {1 add_ii} if
-    %stack: single_address_index    
-  } Map
-  exch Reform  
-} bind def
-
-/* BeginDocumentation
-
-Name: arr::address2index - Transform array indices into network addresses (subtract 1), preserving falses.
-
-Synopsis: [[addressarray]] address2index -> [[indexarray]] 
-
-Parameters:
-[[indexarray]] must be hyperrectengular.
-Contained elements must be numerical, or "false".
-
-Description:
-Decrement every element in the array by one.
-Elements that are "false" are left untouched.
-This routine is used to transform network addresses
-inside a subnet into indices into a SLI array of matching dimensions.
-Array dimensions are preserved.
-No range checking in respect to allowed network addresses is performed.
-Note that for an array that is known to contain numerical elements only (no falses),
-the same effect can be achieved faster by "[[array]] 1 sub".
-
-Examples:
-/arr using
-  [2 3 false] address2index -> [1 2 false]
-endusing
-
-Author: Ruediger Kupper
-
-Availability: "Namespace"-dictionary "arr"
-
-SeeAlso: arr::index2address
-*/
-
-/address2index [/arraytype]
-{
-  %stack: [[n-dimensional-array-of-indices]]
-  dup Dimensions exch Flatten
-  %stack: Dimensions [flat-array-of-indices]  
-  {
-    %stack: single_index
-    dup false neq {1 sub_ii} if
-    %stack: single_address_index    
-  } Map
-  exch Reform  
-} bind def
-
-
 end % namespace arr
-
 
 
 %% NOTE: There must be a carriage return after the last line, i.e., here:

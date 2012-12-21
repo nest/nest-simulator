@@ -23,205 +23,547 @@
  *
  */
 
-/*
-    This file is part of the NEST topology module.
-    Authors: Kittel Austvoll, Håkon Enger
-
-*/
-
-#include "compound.h"
-#include "iostreamdatum.h"
-#include "nest.h"
-
-#include "position.h"
-#include "nodewrapper.h"
-#include "region.h"
-
 #include <iostream>
-
-/** @file layer.h
- *  Implements the abstract layer interface.
- */
+#include <utility>
+#include <bitset>
+#include "nest.h"
+#include "subnet.h"
+#include "position.h"
+#include "dictutils.h"
+#include "topology_names.h"
+#include "ntree.h"
+#include "connection_creator.h"
+#include "selector.h"
 
 namespace nest
 {
-  template <class DataType>
-    class Position;
 
   /**
-   * Abstract base class for the Layer* modeltypes used to add spatial
-   * information to a group of nodes.
+   * Abstract base class for Layers of unspecified dimension.
    */
-  class Layer: public Compound
+  class AbstractLayer: public Subnet
   {
   public:
+    /**
+     * Constructor.
+     */
+    AbstractLayer() : depth_(1)
+      {}
 
     /**
-     * Creates an empty layer.
-     * @param dim The number of dimensions of this layer.
+     * Virtual destructor
      */
-    Layer(int dim);
+    virtual ~AbstractLayer();
 
     /**
-     * Copy constructor.
+     * Get position of node. Only possible for local nodes.
+     * @param sind subnet index of node
+     * @returns position of node as std::vector
      */
-    Layer(const Layer &);
+    virtual std::vector<double_t> get_position_vector(const index sind) const = 0;
 
     /**
-     * Virtual destructor.
-     */
-    virtual ~Layer();
-
-    /**
-     * Removes node elements in the layer that don't fit the criterias
-     * set in the input dictionary (such as model type and depth). The
-     * modified layer is returned by the function, while the original
-     * layer remains unchanged.
-     * @param layer_connection_dict Dictionary containing the criterias 
-     *              that the function extracts nodes based on. See the 
-     *              documentation for the SLI topology/ConnectLayer 
-     *              function.
-     * @returns a copy of the layer where only the selected nodes exist
-     */
-    virtual lockPTR<Layer> slice(bool,
-				 const DictionaryDatum&) const = 0;
-
-    /**
-     * Set member variables in layer according to details in input 
-     * dictionary. 
-     * @param dict  Dictionary containing new values for selected 
-     *              layer variables.
-     */
-    virtual void set_status(const DictionaryDatum& c_dict);
-
-    /**
-     * Function that retrieves a list of the major layer variables.
-     * @param dict  Dictionary where the properties of the layer
-     *              are stored.
-     */
-    virtual void get_status(DictionaryDatum& dict) const;
-
-    /**
-     * @returns The upper left position of the layer
-     */
-    Position<double_t> get_upper_left() const;
-
-    /**
-     * @returns extent of layer.
-     */
-    const std::vector<double_t>& get_extent() const;
-    
-    /**
-     * Function that retrieves nodes in the layer that covers a selected 
-     * mask region centered around an input driver position.
-     * @param driver  Position of the center of the mask region in the pool
-     *                topological space (i.e. the position of the driver
-     *                node overlapping this center).
-     * @param region  Mask region where nodes are retrieved from.
-     * @returns vector containing the node pointers and the node positions 
-     *          of the nodes covering the input region centered around the 
-     *          input driver coordinate.
-     */
-    virtual lockPTR<std::vector<NodeWrapper> >
-      get_pool_nodewrappers(const Position<double_t>& driver_coo,
-			    AbstractRegion* region) = 0;
-
-    /**
-     * Function that retrieves all nodes in the input node pointer (should
-     * be a subnet).
-     * @param n  node pointer
-     * @returns vector of node pointers
-     */
-    static std::vector<Node*> get_nodes(Node* n);
-
-    /**
-     * Returns position of node recognized by current Layer/Compound
-     * local id value.
-     * @param lid  local id of node
-     * @returns position of node
-     */
-    virtual const Position<double_t> get_position(index lid) const = 0;
-
-    /**
-     * Returns displacement of node from given position
+     * Returns displacement of node from given position. When using periodic
+     * boundary conditions, will return minimum displacement.
      * @param from_pos  position vector in layer
      * @param to        node in layer to which displacement is to be computed
      * @returns vector pointing from from_pos to node to's position
      */
-    virtual const Position<double_t> compute_displacement(const Position<double_t>& from_pos,
-							  const Node& to) const = 0; 
+    virtual std::vector<double_t> compute_displacement(const std::vector<double_t>& from_pos,
+                                                       const index to) const = 0;
 
     /**
-     * Returns position of input node.
-     * @param n  node
-     * @returns position of node
-     * @throws LayerExpected if the node is not inside a layer
+     * Returns distance to node from given position. When using periodic
+     * boundary conditions, will return minimum distance.
+     * @param from_pos  position vector in layer
+     * @param to        node in layer to which displacement is to be computed
+     * @returns length of vector pointing from from_pos to node to's position
      */
-    static const Position<double_t> get_position(const Node& n);
-    
-     /**
-      * Get parent layer and local id within parent of node
-      * @param const Node& child node node to find layer for
-      * @returns pair of layer and id, layer is 0 if the node is not in a layer
-      */
-    static Layer* get_layer(const Node& child);
+    virtual double_t compute_distance(const std::vector<double_t>& from_pos,
+                                      const index to) const = 0;
+
+    /**
+     * Connect this layer to the given target layer. The actual connections
+     * are made in class ConnectionCreator.
+     * @param target    target layer to connect to. Must have same dimension
+     *                  as this layer.
+     * @param connector connection properties
+     */
+    virtual void connect(AbstractLayer& target, ConnectionCreator &connector) = 0;
+
+    /**
+     * Factory function for layers. The supplied dictionary contains
+     * parameters which specify the layer type and type-specific
+     * parameters.
+     * @returns pointer to new layer
+     */
+    static index create_layer(const DictionaryDatum&);
+
+    /**
+     * Return a vector with the GIDs of the nodes inside the mask.
+     * @param mask            mask to apply.
+     * @param anchor          position to center mask in.
+     * @param allow_oversized allow mask to be greater than layer
+     * @returns nodes in layer inside mask.
+     */
+    virtual std::vector<index> get_global_nodes(const AbstractMask &mask, const std::vector<double_t> &anchor, bool allow_oversized) = 0;
 
     /**
      * Write layer data to stream.
      * For each node in layer, write one line to stream containing:
      * GID x-position y-position [z-position]
-     * @param   output stream
+     * @param os     output stream
      */
-    void dump_nodes(std::ostream &) const;
+    virtual void dump_nodes(std::ostream & os) const = 0;
 
     /**
-     * @returns true if edge wrap is used.
+     * Dumps information about all connections of the given type having their source in
+     * the given layer to the given output stream. For distributed simulations
+     * this function will dump the connections with local targets only.
+     * @param out output stream
+     * @param synapse_id type of connection
      */
-    bool edge_wrap_is_set() const;
-    
-    virtual bool allow_entry() const;
+    virtual void dump_connections(std::ostream & out, long synapse_id) = 0;
+
+    using Subnet::local_begin;
+    using Subnet::local_end;
+
+    /**
+     * Start of local children at given depth.
+     * @param depth layer depth
+     * @returns iterator for local nodes pointing to first node at given depth
+     */
+    std::vector<Node*>::iterator local_begin(int_t depth);
+
+    /**
+     * End of local children at given depth.
+     * @param depth layer depth
+     * @returns iterator for local nodes pointing to the end of the given depth
+     */
+    std::vector<Node*>::iterator local_end(int_t depth);
+
+    /**
+     * Start of local children at given depth.
+     * @param depth layer depth
+     * @returns iterator for local nodes pointing to first node at given depth
+     */
+    std::vector<Node*>::const_iterator local_begin(int_t depth) const;
+
+    /**
+     * End of local children at given depth.
+     * @param depth layer depth
+     * @returns iterator for local nodes pointing to the end of the given depth
+     */
+    std::vector<Node*>::const_iterator local_end(int_t depth) const;
 
   protected:
     /**
-     * Called by the layer slice() functions. Extract nodes based on 
-     * modeltype and depth from calling layer and returns these nodes
-     * in a node vector.
-     * @param dict  Dictionary containing the criterias that the function
-     *              extracts nodes based on. See the documentation for
-     *              the SLI topology/ConnectLayer function.
-     * @returns the selected nodes
+     * GID for the single layer for which we cache global position information
      */
-    std::vector<Node*> 
-      slice_layer(const DictionaryDatum& dict) const;
+    static index cached_ntree_layer_;
 
-    // Geometry of the layer
-    std::vector<double_t> extent_;  //< size of layer
-    std::vector<double_t> center_;  //< coordinate of layer center
-    Position<double_t> upper_left_; //< upper left corner of layer
+    /**
+     * number of neurons at each position
+     */
+    int_t depth_;
 
-    // Layer parameters.
-    uint_t depth_;                  //< number of nodes at each position
+    /**
+     * GID for the single layer for which we cache global position information
+     */
+    static index cached_vector_layer_;
 
-    // True if edges of layer are wrapped 
-    bool EDGE_WRAP_;
+    /**
+     * Clear the cache for global position information
+     */
+    virtual void clear_ntree_cache_() const = 0;
+
+    /**
+     * Clear the cache for global position information
+     */
+    virtual void clear_vector_cache_() const = 0;
+
   };
 
+  template<int D>
+  class MaskedLayer;
 
   /**
-   * Exception to be thrown if a layer was excepted
-   * but some other node passed.
-   * @ingroup KernelExceptions
+   * Abstract base class for Layer of given dimension (D=2 or 3).
    */
-  class LayerExpected: public KernelException
+  template <int D>
+  class Layer: public AbstractLayer
   {
   public:
-  LayerExpected()
-    : KernelException("TopologyLayerExpected") {}
-    ~LayerExpected() throw () {}
-    
-    std::string message();
+    /**
+     * Creates an empty layer.
+     */
+    Layer();
+
+    /**
+     * Copy constructor.
+     */
+    Layer(const Layer &l);
+
+    /**
+     * Virtual destructor
+     */
+    ~Layer();
+
+    /**
+     * Change properties of the layer according to the
+     * entries in the dictionary.
+     * @param d Dictionary with named parameter settings.
+     */
+    void set_status(const DictionaryDatum&);
+
+    /**
+     * Export properties of the layer by setting
+     * entries in the status dictionary.
+     * @param d Dictionary.
+     */
+    void get_status(DictionaryDatum&) const;
+
+    /**
+     * @returns The bottom left position of the layer
+     */
+    const Position<D> & get_lower_left() const
+      { return lower_left_; }
+
+    /**
+     * @returns extent of layer.
+     */
+    const Position<D> & get_extent() const
+      { return extent_; }
+
+    /**
+     * @returns center of layer.
+     */
+    Position<D> get_center() const
+      { return lower_left_ + extent_/2; }
+
+    /**
+     * @returns a bitmask specifying which directions are periodic
+     */
+     std::bitset<D> get_periodic_mask() const
+      { return periodic_; }
+
+    /**
+     * Get position of node. Only possible for local nodes.
+     * @param sind subnet index of node
+     * @returns position of node identified by Subnet local index value.
+     */
+    virtual Position<D> get_position(index sind) const = 0;
+
+    /**
+     * @returns position of node as std::vector
+     */
+    std::vector<double_t> get_position_vector(const index lid) const;
+
+    /**
+     * Returns displacement of a position from another position. When using periodic
+     * boundary conditions, will return minimum displacement.
+     * @param from_pos  position vector in layer
+     * @param to_pos    position to which displacement is to be computed
+     * @returns vector pointing from from_pos to to_pos
+     */
+    virtual Position<D> compute_displacement(const Position<D>& from_pos,
+                                             const Position<D>& to_pos) const;
+
+    /**
+     * Returns displacement of node from given position. When using periodic
+     * boundary conditions, will return minimum displacement.
+     * @param from_pos  position vector in layer
+     * @param to        node in layer to which displacement is to be computed
+     * @returns vector pointing from from_pos to node to's position
+     */
+    Position<D> compute_displacement(const Position<D>& from_pos,
+                                             const index to) const;
+
+    std::vector<double_t> compute_displacement(const std::vector<double_t>& from_pos,
+                                               const index to) const;
+
+    /**
+     * Returns distance to node from given position. When using periodic
+     * boundary conditions, will return minimum distance.
+     * @param from_pos  position vector in layer
+     * @param to        node in layer to which displacement is to be computed
+     * @returns length of vector pointing from from_pos to node to's position
+     */
+    double_t compute_distance(const Position<D>& from_pos,
+                                      const index to) const;
+
+    double_t compute_distance(const std::vector<double_t>& from_pos,
+                              const index to) const;
+
+
+    /**
+     * Get positions for local nodes in layer.
+     */
+    lockPTR<Ntree<D,index> > get_local_positions_ntree(Selector filter=Selector());
+
+    /**
+     * Get positions for all nodes in layer, including nodes on other MPI
+     * processes. The positions will be cached so that subsequent calls for
+     * the same layer are fast. One one layer is cached at the time, so the
+     * user should group together all ConnectLayers calls using the same
+     * pool layer.
+     */
+    lockPTR<Ntree<D,index> > get_global_positions_ntree(Selector filter=Selector());
+
+    /**
+     * Get positions globally, overriding the dimensions of the layer and
+     * the periodic flags. The supplied lower left corner and extent
+     * coordinates are only used for the dimensions where the supplied
+     * periodic flag is set.
+     */
+    lockPTR<Ntree<D,index> > get_global_positions_ntree(Selector filter, std::bitset<D> periodic, Position<D> lower_left, Position<D> extent);
+
+    std::vector<std::pair<Position<D>,index> >* get_global_positions_vector(Selector filter=Selector());
+
+    virtual std::vector<std::pair<Position<D>,index> > get_global_positions_vector(Selector filter, const AbstractMask& mask, const Position<D>& anchor, bool allow_oversized);
+
+    /**
+     * Return a vector with the GIDs of the nodes inside the mask.
+     */
+    std::vector<index> get_global_nodes(const AbstractMask &mask, const std::vector<double_t> &anchor, bool allow_oversized);
+
+    /**
+     * Connect this layer to the given target layer. The actual connections
+     * are made in class ConnectionCreator.
+     * @param target    target layer to connect to. Must have same dimension
+     *                  as this layer.
+     * @param connector connection properties
+     */
+    void connect(AbstractLayer& target, ConnectionCreator &connector);
+
+    /**
+     * Write layer data to stream.
+     * For each node in layer, write one line to stream containing:
+     * GID x-position y-position [z-position]
+     * @param os     output stream
+     */
+    void dump_nodes(std::ostream & os) const;
+
+    /**
+     * Dumps information about all connections of the given type having their source in
+     * the given layer to the given output stream. For distributed simulations
+     * this function will dump the connections with local targets only.
+     * @param out output stream
+     * @param synapse_id type of connection
+     */
+    void dump_connections(std::ostream & out, long synapse_id);
+
+    /**
+     * Layers do not allow entry to the ChangeSubnet command, nodes can not
+     * be added by the user.
+     * @returns false
+     */
+    bool allow_entry() const
+      { return false; }
+
+  protected:
+    /**
+     * Clear the cache for global position information
+     */
+    void clear_ntree_cache_() const;
+
+    /**
+     * Clear the cache for global position information
+     */
+    void clear_vector_cache_() const;
+
+    lockPTR<Ntree<D,index> > do_get_global_positions_ntree_(const Selector& filter);
+
+    /**
+     * Insert global position info into ntree.
+     */
+    virtual void insert_global_positions_ntree_(Ntree<D,index> & tree, const Selector& filter) = 0;
+
+    /**
+     * Insert global position info into vector.
+     */
+    virtual void insert_global_positions_vector_(std::vector<std::pair<Position<D>,index> > &, const Selector& filter) = 0;
+
+    /**
+     * Insert local position info into ntree.
+     */
+    virtual void insert_local_positions_ntree_(Ntree<D,index> & tree, const Selector& filter) = 0;
+
+    Position<D> lower_left_;  ///< lower left corner (minimum coordinates) of layer
+    Position<D> extent_;      ///< size of layer
+    std::bitset<D> periodic_; ///< periodic b.c.
+
+    /**
+     * Global position information for a single layer
+     */
+    static lockPTR<Ntree<D,index> > cached_ntree_;
+    static std::vector<std::pair<Position<D>,index> > * cached_vector_;
+    static Selector cached_selector_;
+
+    friend class MaskedLayer<D>;
   };
 
-}
+  template<int D>
+  class MaskedLayer {
+  public:
+
+    MaskedLayer(Layer<D>& layer, Selector filter, const AbstractMask& mask, bool include_global, bool allow_oversized);
+    MaskedLayer(Layer<D>& layer, Selector filter, const AbstractMask& mask, bool include_global, bool allow_oversized, Layer<D>& target);
+    ~MaskedLayer();
+    typename Ntree<D,index>::masked_iterator begin(const Position<D>& anchor);
+    typename Ntree<D,index>::masked_iterator end();
+
+  protected:
+
+    void check_mask_(Layer<D>& layer, bool allow_oversized);
+
+    lockPTR<Ntree<D,index> > ntree_;
+    const AbstractMask* mask_;
+    Mask<D> * new_mask_;
+  };
+
+  template<int D>
+  inline
+  MaskedLayer<D>::MaskedLayer(Layer<D>& layer, Selector filter, const AbstractMask& mask, bool include_global, bool allow_oversized):
+    mask_(&mask), new_mask_(0)
+  {
+    if (include_global)
+      ntree_ = layer.get_global_positions_ntree(filter);
+    else
+      ntree_ = layer.get_local_positions_ntree(filter);
+
+    check_mask_(layer, allow_oversized);
+  }
+
+  template<int D>
+  inline
+  MaskedLayer<D>::MaskedLayer(Layer<D>& layer, Selector filter, const AbstractMask& mask, bool include_global, bool allow_oversized, Layer<D>& target):
+    mask_(&mask), new_mask_(0)
+  {
+    if (include_global)
+      ntree_ = layer.get_global_positions_ntree(filter, target.get_periodic_mask(), target.get_lower_left(), target.get_extent());
+    //else
+    //  ntree_ = layer.get_local_positions_ntree(filter, target.get_periodic_mask(), target.get_lower_left(), target.get_extent());
+
+    check_mask_(target, allow_oversized);
+    Mask<D>* conv_mask = new ConverseMask<D>(dynamic_cast<const Mask<D>&>(*mask_));
+    delete new_mask_;
+    new_mask_ = conv_mask;
+    mask_ = conv_mask;
+  }
+
+  template<int D>
+  inline
+  MaskedLayer<D>::~MaskedLayer()
+  {
+    delete new_mask_;
+  }
+
+  template<int D>
+  inline
+  typename Ntree<D,index>::masked_iterator MaskedLayer<D>::begin(const Position<D>& anchor)
+  {
+    return ntree_->masked_begin(dynamic_cast<const Mask<D>&>(*mask_),anchor);
+  }
+
+  template<int D>
+  inline
+  typename Ntree<D,index>::masked_iterator MaskedLayer<D>::end()
+  {
+    return ntree_->masked_end();
+  }
+
+  template<int D>
+  inline
+  Layer<D>::Layer()
+  {
+    // Default center (0,0) and extent (1,1)
+    for(int i=0;i<D;++i) {
+      lower_left_[i] = -0.5;
+      extent_[i] = 1.0;
+    }
+  }
+
+  template<int D>
+  inline
+  Layer<D>::Layer(const Layer &l) :
+      AbstractLayer(l),
+      lower_left_(l.lower_left_),
+      extent_(l.extent_),
+      periodic_(l.periodic_)
+  {
+  }
+
+  template<int D>
+  inline
+  Layer<D>::~Layer()
+  {
+    if (cached_ntree_layer_ == get_gid()) {
+      clear_ntree_cache_();
+    }
+
+    if (cached_vector_layer_ == get_gid()) {
+      clear_vector_cache_();
+    }
+  }
+
+  template<int D>
+  inline
+  Position<D> Layer<D>::compute_displacement(const Position<D>& from_pos,
+                                             const index to) const
+  {
+    return compute_displacement(from_pos,get_position(to));
+  }
+
+  template<int D>
+  inline
+  std::vector<double_t> Layer<D>::compute_displacement(const std::vector<double_t>& from_pos,
+                                                       const index to) const
+  {
+    return std::vector<double_t>(compute_displacement(Position<D>(from_pos), to));
+  }
+
+  template<int D>
+  inline
+  double_t Layer<D>::compute_distance(const Position<D>& from_pos,
+                                      const index to) const
+  {
+    return compute_displacement(from_pos, to).length();
+  }
+
+  template<int D>
+  inline
+  double_t Layer<D>::compute_distance(const std::vector<double_t>& from_pos,
+                                      const index to) const
+  {
+    return compute_displacement(Position<D>(from_pos), to).length();
+  }
+
+  template<int D>
+  inline
+  std::vector<double_t> Layer<D>::get_position_vector(const index lid) const
+  {
+    return std::vector<double_t>(get_position(lid));
+  }
+
+  template <int D>
+  inline
+  void Layer<D>::clear_ntree_cache_() const
+  {
+    cached_ntree_ = lockPTR<Ntree<D,index> >();
+    cached_ntree_layer_ = -1;
+  }
+
+  template <int D>
+  inline
+  void Layer<D>::clear_vector_cache_() const
+  {
+    if (cached_vector_ != 0)
+      delete cached_vector_;
+    cached_vector_ = 0;
+    cached_vector_layer_ = -1;
+  }
+
+} // namespace nest
 
 #endif

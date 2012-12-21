@@ -156,7 +156,7 @@ neuron2 GetStatus /local get
  neuron2 GetStatus /local get
  {
      % we are on the machine where neuron2 resides
-     << /source neuron1 /synapse_type /stdp_synapse >> FindConnections
+     << /source neuron1 /synapse_model /stdp_synapse >> FindConnections
      0 get GetStatus /weight get
      /w Set  %we know that there is only a single synapse
 

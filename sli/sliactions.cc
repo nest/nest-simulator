@@ -46,29 +46,20 @@ void DatatypeFunction::execute(SLIInterpreter *i) const
 
 void NametypeFunction::execute(SLIInterpreter *i) const
 {
-  
-    NameDatum *nd= static_cast<NameDatum *>(i->EStack.top().datum());
-//    assert(nd != NULL);
-    
-    Token contents(i->lookup(*nd));
-    if(contents.datum()!=NULL)
-    {
-//#ifdef SLIDEBUG
-//        i->EStack.push(i->Ilookup());
-//#else
-//        i->EStack.pop();
-//#endif
-//        i->EStack.push_move(contents);
-	i->EStack.top().swap(contents);
-    }
-    else
-        i->raiseerror(*nd, i->UndefinedNameError);    
+    i->EStack.top()=i->lookup2(*static_cast<NameDatum *>(i->EStack.top().datum()));
 }
 
 void ProceduretypeFunction::execute(SLIInterpreter *i) const
 {
-    i->EStack.push(new IntegerDatum(0));
-    i->EStack.push(i->Iiterate());
+// we locally cache the pointer to iiterate, so that
+// wen don't have to look it up each time.
+    static Token iiterate(i->Iiterate());
+
+    i->code_accessed += 
+            (static_cast<ProcedureDatum *>(i->EStack.top().datum()))->size();
+
+    i->EStack.push_by_pointer(new IntegerDatum(0));
+    i->EStack.push_by_ref(iiterate);
     i->inc_call_depth();
 }
 
@@ -81,19 +72,15 @@ void LitproceduretypeFunction::execute(SLIInterpreter *i) const
     
     LitprocedureDatum
         *lpd = static_cast<LitprocedureDatum *>(i->EStack.top().datum());
-//    assert(lpd != NULL);
-
-    i->OStack.push(new ProcedureDatum(*lpd));              //
-    i->EStack.pop();                   // pop empty token
+    i->OStack.push_by_pointer(new ProcedureDatum(*lpd));              //
+    i->EStack.pop();     
 }
 
 void FunctiontypeFunction::execute(SLIInterpreter *i) const
 {
-        // The Function is left on the estack
-    
     FunctionDatum
         *fd = static_cast<FunctionDatum *>(i->EStack.top().datum());
-//    assert(fd != NULL);
+    
     if(i->step_mode())
     {
       std::cerr << "Calling builtin function: ";
@@ -117,16 +104,7 @@ void TrietypeFunction::execute(SLIInterpreter *i) const
     
     TrieDatum
       *tried = static_cast<TrieDatum *>(i->EStack.top().datum());
-    Token tmp;
-    tmp=tried->lookup(i->OStack);
-    
-    // This call must be outside the catch clause,
-    // since it returns to the normal control flow 
-    // for which we don't want to handle errors.
-    i->EStack.top().swap(tmp);
-    i->EStack.top()->execute(i);
-
-    return;
+    i->EStack.top().assign_by_ref(tried->lookup(i->OStack));
 }
 
 void CallbacktypeFunction::execute(SLIInterpreter *i) const

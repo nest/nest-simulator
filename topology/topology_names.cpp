@@ -40,7 +40,7 @@ namespace nest
     const Name center("center");
     const Name edge_wrap("edge_wrap");
     const Name anchor("anchor");
-    const Name x("x");
+    //const Name x("x");
     const Name y("y");
     const Name positions("positions");
     const Name topology("topology");
@@ -50,6 +50,38 @@ namespace nest
     const Name lid("lid");
     const Name elements("elements");
     const Name allow_oversized_mask("allow_oversized_mask");
+    const Name connection_type("connection_type");
+    const Name number_of_connections("number_of_connections");
+    const Name convergent("convergent");
+    const Name divergent("divergent");
+    const Name kernel("kernel");
+    const Name lower_left("lower_left");
+    const Name upper_right("upper_right");
+    const Name radius("radius");
+    const Name outer_radius("outer_radius");
+    const Name inner_radius("inner_radius");
+    const Name tau("tau");
+    const Name p_center("p_center");
+    const Name sigma("sigma");
+    const Name min("min");
+    const Name max("max");
+    const Name mean_x("mean_x");
+    const Name mean_y("mean_y");
+    const Name sigma_x("sigma_x");
+    const Name sigma_y("sigma_y");
+    const Name rho("rho");
+    const Name layers("layers");
+    const Name layer("layer");
+    const Name allow_autapses("allow_autapses");
+    const Name allow_multapses("allow_multapses");
+    const Name circular("circular");
+    const Name spherical("spherical");
+    const Name rectangular("rectangular");
+    const Name box("box");
+    const Name volume("volume");
+    const Name doughnut("doughnut");
+    const Name grid("grid");
+    const Name cutoff("cutoff");
   }
 }
 

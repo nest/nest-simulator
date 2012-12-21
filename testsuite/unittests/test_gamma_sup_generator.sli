@@ -1,0 +1,332 @@
+
+/*
+ *  test_gamma_sup_generator.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /* BeginDocumentation
+Name: testsuite::test_gamma_sup_generator - sli script for test of gamma_sup_generator output 
+
+Synopsis: (test_gamma_sup_generator) run -> compare spike train statistics with expectations
+
+
+Description:
+ 
+ test_gamma_sup_generator is a collection of tests which require basic 
+ functionality of the generator. It tests
+ 1) if the firing rate of a superposition is close to the preset one.
+ 2) if the coefficient of variation of a superposition agrees with theory
+ 3) if the coefficient of variation of a single process agrees with theory
+ 4) if the spike trains generated for two different targets differ
+
+ All of these tests are based on random number realizations, which is 
+ necessarily so  since the model is stochastic. There is thus a finite 
+ probability of test failure, even if everything is fine. The choice of the 
+ variable err, which is the allowed relative deviation from the reference value, 
+ can be used to make the test more or less strict. Increasing T inside the test 
+ functions can also help to get more reliable statistics and a reduced 
+ probability of false alarms.
+ 
+ The values are chosen to have a reasonable execution time. False alarms were 
+ never observed yet. Since random numbers are preserved through repetitions of
+ the simulations, the test should work for sure as long as the random number 
+ generation procedure of nest is not changed. If it is changed, failure of the
+ test is still very unlikely.
+ 
+ The intention of this script is to make sure that there are no gross errors in
+ the main functions of the gamma_sup_generator. 
+
+Remarks:
+  This test script was adapted from test_ppd_sup_generator.sli  
+
+
+Author:  June 2011, Moritz Deger
+SeeAlso: gamma_sup_generator, testsuite::test_ppd_sup_generator
+*/
+
+
+/unittest (6688) require
+/unittest using
+
+
+0.2 /err Set
+
+
+% 1) check for reasonable superposition spike rate
+% 2) check if superposition cv agrees with theory
+
+/check_sup_rate_and_cv
+{    
+   % test parameters
+    5 /gamma_shape Set
+    10.0 /rate Set
+    10000.0 /T Set
+    5 /n_proc Set
+    1. /h Set
+
+    ResetKernel
+    
+    << 
+      /resolution  h
+    >> /kernelparams Set
+    
+    0 kernelparams SetStatus 
+    
+    /gamma_sup_generator Create /psg Set
+
+    <<
+      /rate  rate
+      /gamma_shape gamma_shape
+      /n_proc n_proc
+    >> /params Set
+    
+    psg params SetStatus
+    
+    /spike_detector Create /sd Set
+
+    psg sd Connect
+    T Simulate
+    
+    sd GetStatus /events get /times get /spikes Set
+
+    % rate_sim = size(spikes) / (T*1e-3)
+    spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
+
+    % rate_ana = 1./(1./lam + d*1e-3)
+    rate n_proc mul /rate_ana Set
+    
+    % ratio = rate_sim / rate_ana
+    rate_sim rate_ana div /ratio Set
+    
+    % this could fail due to bad luck. However, if it passes once, then it should
+    % always do so, since the random numbers are reproducible in NEST.
+    1.0 err sub ratio lt
+    ratio 1.0 err add lt
+    and assert_or_die
+    
+    %isi = []
+    %for i in xrange(1,len(spikes)):
+    %    isi.append(spikes[i]-spikes[i-1])
+    0.0 /t Set
+    spikes cva { dup t sub exch /t Set  } Map /isi Set
+
+
+    %# compute moments of ISI to get mean and variance
+    %isi_m1 = 0. 
+    %isi_m2 = 0.
+    %for t in isi:
+    %    isi_m1 += t
+    %    isi_m2 += t**2
+    0. /isi_m1 Set
+    0. /isi_m2 Set
+    isi { dup isi_m1 add /isi_m1 Set dup mul isi_m2 add /isi_m2 Set} forall
+    
+    %isi_mean = isi_m1 / len(isi)
+    %isi_var = isi_m2/ len(isi) - isi_mean**2
+    %cvsq = isi_var/isi_mean**2
+    isi_m1 isi size exch pop div /isi_mean Set
+    isi_m2 isi size exch pop div isi_mean dup mul sub /isi_var Set
+    isi_var isi_mean 2 pow  div /cvsq_sim Set
+
+    %theoretical CV**2 for PPD, should match gamma also, see Deger et al 2011, JCNS
+    1.0 1.0 gamma_shape sqrt div sub /dbar Set
+    1.0 rate div 1e3 mul /mu Set
+    mu dbar mul /dead_time Set
+    
+    1.0 1.0 n_proc add div /cvfact1 Set
+    n_proc 1.0 sub 2.0 1.0 dbar sub n_proc 1 add pow mul add /cvfact2 Set
+    cvfact1 cvfact2 mul /cvsq_theo Set
+
+    cvsq_sim cvsq_theo div /ratio_cvsq Set 
+    1.0 err sub ratio_cvsq leq
+    ratio_cvsq 1.0 err add leq
+    and assert_or_die
+    
+} def
+
+
+
+%3) check if single process respect isi moments
+
+/check_single_rate_and_isi
+{    
+   % test parameters
+    7 /gamma_shape Set
+    15.0 /rate Set
+    100000.0 /T Set
+    1 /n_proc Set
+    1.0 /h Set
+
+    ResetKernel
+    
+    << 
+      /resolution  h
+    >> /kernelparams Set
+    
+    0 kernelparams SetStatus 
+    
+    /gamma_sup_generator Create /psg Set
+
+    <<
+      /rate  rate
+      /gamma_shape gamma_shape
+      /n_proc n_proc
+    >> /params Set
+    
+    psg params SetStatus
+    
+    /spike_detector Create /sd Set
+    
+    psg sd Connect
+    T Simulate
+    
+    sd GetStatus /events get /times get /spikes Set
+
+    % rate_sim = size(spikes) / (T*1e-3)
+    spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
+
+    % rate_ana = 1./(1./lam + d*1e-3)
+    rate n_proc mul /rate_ana Set
+    
+    % ratio = rate_sim / rate_ana
+    rate_sim rate_ana div /ratio Set
+    
+    % this could fail due to bad luck. However, if it passes once, then it should
+    % always do so, since the random numbers are reproducible in NEST.
+    1.0 err sub ratio lt
+    ratio 1.0 err add lt
+    and assert_or_die
+    
+    %isi = []
+    %for i in xrange(1,len(spikes)):
+    %    isi.append(spikes[i]-spikes[i-1])
+    % Assert that min(isi)>=d
+    0.0 /t Set
+    spikes cva { dup t sub exch /t Set  } Map /isi Set
+%    isi Rest Min dead_time geq assert_or_die
+
+    %# compute moments of ISI to get mean and variance
+    %isi_m1 = 0. 
+    %isi_m2 = 0.
+    %for t in isi:
+    %    isi_m1 += t
+    %    isi_m2 += t**2
+    0. /isi_m1 Set
+    0. /isi_m2 Set
+    isi { dup isi_m1 add /isi_m1 Set dup mul isi_m2 add /isi_m2 Set} forall
+    
+    %isi_mean = isi_m1 / len(isi)
+    %isi_var = isi_m2/ len(isi) - isi_mean**2
+    %cvsq = isi_var/isi_mean**2
+    isi_m1 isi size exch pop div /isi_mean Set
+    isi_m2 isi size exch pop div isi_mean dup mul sub /isi_var Set
+    isi_var isi_mean 2 pow div /cvsq_sim Set
+
+    %theoretical CV**2, see Deger et al 2011, JCNS
+    % here we first match the equivalent PPD and then compute its CV**2
+    % this is done because formulas are simpler to remember and code can
+    % be reused.
+    1.0 1.0 gamma_shape div sqrt sub /dbar Set
+    1.0 rate div 1e3 mul /mu Set
+    mu dbar mul /dead_time Set
+
+    1.0 rate div /mu Set
+    mu dead_time sub /lam Set
+    1.0 lam div mu div 2 pow /cvsq_theo Set
+    
+    cvsq_sim cvsq_theo div /ratio_cvsq Set 
+    1.0 err sub ratio_cvsq leq
+    ratio_cvsq 1.0 err add leq
+    and assert_or_die
+    
+} def
+
+
+/check_different_outputs
+   {
+
+   % test parameters
+    2 /gamma_shape Set
+    25.0 /rate Set
+    10.0 /T Set
+    1000 /n_proc Set
+    0.01 /h Set
+
+    ResetKernel
+    
+    << 
+      /resolution  h
+    >> /kernelparams Set
+    
+    0 kernelparams SetStatus 
+    
+    /gamma_sup_generator Create /psg Set
+
+    <<
+      /rate  rate
+      /gamma_shape gamma_shape
+      /n_proc n_proc
+    >> /params Set
+    
+    psg params SetStatus
+    
+    /spike_detector Create /sd1 Set
+    /spike_detector Create /sd2 Set
+
+    psg sd1 Connect
+    psg sd2 Connect
+    T Simulate
+
+    %first we check if the spike trains are different
+    [sd1 sd2] {[/events /times] get} forall  neq  % spike trains differ
+    assert_or_die
+    
+    %and we also check the rates since we simulated anyway
+    sd1 GetStatus /events get /times get /spikes1 Set
+    sd2 GetStatus /events get /times get /spikes2 Set
+    
+    % rate_sim = size(spikes) / (T*1e-3)
+    spikes1 cva size T 1e-3 mul div /rate_sim1 Set /spikes_array1 Set
+    spikes2 cva size T 1e-3 mul div /rate_sim2 Set /spikes_array2 Set
+
+    % rate_ana = 1./(1./lam + d*1e-3)
+    rate n_proc mul /rate_ana Set
+    
+    % ratio = rate_sim / rate_ana
+    rate_sim1 rate_ana div /ratio1 Set
+    rate_sim2 rate_ana div /ratio2 Set
+    
+    % this could fail due to bad luck. However, if it passes once, then it should
+    % always do so, since the random numbers are reproducible in NEST.
+    1.0 err sub ratio1 lt
+    ratio1 1.0 err add lt
+    and assert_or_die
+    
+    1.0 err sub ratio2 lt
+    ratio2 1.0 err add lt
+    and assert_or_die
+} def
+
+
+
+check_sup_rate_and_cv
+check_single_rate_and_isi
+check_different_outputs
+

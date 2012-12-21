@@ -33,7 +33,7 @@
   time stamps go through unchanged.
 
   Transmits: SpikeEvent
-  
+
   Remarks:
   This synapse type is provided only for illustration purposes in MyModule.
 
@@ -66,7 +66,7 @@ class DropOddSpikeConnection : public nest::ConnectionHetWD
    * @param t_lastspike Point in time of last spike sent.
    * @param cp Common properties to all synapses (empty).
    */
-  void send(nest::Event& e, nest::double_t t_lastspike, 
+  void send(nest::Event& e, nest::double_t t_lastspike,
             const nest::CommonSynapseProperties &cp);
 
   //! Defining this as empty means we can handle spike events
@@ -77,17 +77,17 @@ class DropOddSpikeConnection : public nest::ConnectionHetWD
 
 
 inline
-void DropOddSpikeConnection::send(nest::Event& e, nest::double_t last, 
+void DropOddSpikeConnection::send(nest::Event& e, nest::double_t last,
                                   const nest::CommonSynapseProperties &props)
 {
   if ( e.get_stamp().get_steps() % 2 ) // stamp is odd, drop it
     return;
-    
-  // Even time stamp, we send the spike using the normal sending mechnism  
+
+  // Even time stamp, we send the spike using the normal sending mechnism
   // send the spike to the target
   nest::ConnectionHetWD::send(e, last, props);
 }
- 
+
 } // namespace
 
 #endif // drop_odd_spike_connection.h

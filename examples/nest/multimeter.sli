@@ -21,7 +21,7 @@
  */
 
 /*
-    This file illustrates recording from a iaf_cond_alpha neuron 
+    This file illustrates recording from a iaf_cond_alpha neuron
     using a multimeter.
 */
 
@@ -36,7 +36,7 @@ ResetKernel
 /multimeter Create /m Set
 
 m << /interval 0.1
-     /record_from [/V_m /g_ex /g_in] 
+     /record_from [/V_m /g_ex /g_in]
      /withtime true
   >> SetStatus
 

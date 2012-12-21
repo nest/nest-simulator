@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # vinit_example.py
 #
 # This file is part of NEST.
@@ -50,4 +51,3 @@ for vinit in numpy.arange(-100, -50, 10, float):
 pylab.legend(loc=4)
 pylab.xlabel("time (ms)")
 pylab.ylabel("V_m (mV)")
-pylab.show()

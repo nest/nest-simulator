@@ -18,33 +18,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-from scipy import *
-from matplotlib.pylab import *
-from matplotlib.mlab import *
+import pylab
+from nest import raster_plot
 
-def plot_spikes():
+raster_plot.from_file("spike_detector-503-0.gdf",hist=True)
 
-    dt = 0.25 # time resolution
-    nbins = 1000
-    N = 500 # number of neurons
-    
-    spikes = load('spike_detector-503-0.gdf')
-
-    figure(1)
-    clf()
-    subplot(2,1,1)
-    plot(spikes[:,4], spikes[:,0], '.')
-    xlabel('time / ms')
-    ylabel('neuron number')
-
-    subplot(2,1,2)
-    h,g = hist(spikes[:,4], nbins)
-    plot(g, 1.0*h/N)
-    xlabel('time / ms')
-    ylabel('population activity')
-
-    savefig('test_tsodyks_shortterm.png')
-
-
-plot_spikes()
-show()
+pylab.show()

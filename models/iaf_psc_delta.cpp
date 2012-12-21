@@ -92,18 +92,27 @@ void nest::iaf_psc_delta::Parameters_::get(DictionaryDatum &d) const
   def<bool>(d, "refractory_input", with_refr_input_);
 }
 
-void nest::iaf_psc_delta::Parameters_::set(const DictionaryDatum& d)
+double nest::iaf_psc_delta::Parameters_::set(const DictionaryDatum& d)
 {
+  // if U0_ is changed, we need to adjust all variables defined relative to U0_
+  const double ELold = E_L_;
   updateValue<double>(d, names::E_L, E_L_);
+  const double delta_EL = E_L_ - ELold;
 
   if(updateValue<double>(d, names::V_reset, V_reset_))
     V_reset_ -= E_L_;
+  else
+    V_reset_ -= delta_EL;
 
   if (updateValue<double>(d, names::V_th, V_th_)) 
     V_th_ -= E_L_;
+  else
+    V_th_ -= delta_EL;
 
   if (updateValue<double>(d, names::V_min, V_min_))
     V_min_ -= E_L_;
+  else
+    V_min_ -= delta_EL;
     
   updateValue<double>(d, names::I_e, I_e_);
   updateValue<double>(d, names::C_m, c_m_);
@@ -114,15 +123,17 @@ void nest::iaf_psc_delta::Parameters_::set(const DictionaryDatum& d)
     throw BadProperty("Reset potential must be smaller than threshold.");
     
   if ( c_m_ <= 0 )
-    throw BadProperty("Capacitance must be strictly positive.");
+    throw BadProperty("Capacitance must be >0.");
 
   if ( t_ref_ < 0 )
     throw BadProperty("Refractory time must not be negative.");
     
   if ( tau_m_ <= 0 )
-    throw BadProperty("All time constants must be strictly positive.");
+    throw BadProperty("Membrane time constant must be > 0.");
 
   updateValue<bool>(d, "refractory_input", with_refr_input_);
+
+  return delta_EL;
 }
 
 void nest::iaf_psc_delta::State_::get(DictionaryDatum &d, const Parameters_& p) const
@@ -130,10 +141,12 @@ void nest::iaf_psc_delta::State_::get(DictionaryDatum &d, const Parameters_& p) 
   def<double>(d, names::V_m, y3_ + p.E_L_); // Membrane potential
 }
 
-void nest::iaf_psc_delta::State_::set(const DictionaryDatum& d, const Parameters_& p)
+void nest::iaf_psc_delta::State_::set(const DictionaryDatum& d, const Parameters_& p, double delta_EL)
 {
   if ( updateValue<double>(d, names::V_m, y3_) )
     y3_ -= p.E_L_;
+  else
+    y3_ -= delta_EL;
 }
 
 nest::iaf_psc_delta::Buffers_::Buffers_(iaf_psc_delta &n)

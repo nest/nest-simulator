@@ -70,6 +70,7 @@ class Scanner
     openparst,
     closeparst,
     expdigst,
+    dotalphast,
     alphast,
     aheadalphst,
     slashst,

@@ -23,8 +23,8 @@
 #ifndef CONNECTION_ID_H
 #define CONNECTION_ID_H
 
+#include "arraydatum.h"
 #include "dictutils.h"
-#include "nest_names.h"
 
 namespace nest
 {
@@ -33,18 +33,67 @@ namespace nest
   {
     public:
       ConnectionID() {}  
-      ConnectionID(long source_gid, long target_thread, long synapse_typeid, long port);
+      ConnectionID(long source_gid, long target_gid, long target_thread, 
+		   long synapse_modelid, long port);
+      ConnectionID(long source_gid, long target_thread, long synapse_modelid, 
+		   long port);
+      ConnectionID(const ConnectionID &);
       
-      DictionaryDatum get_dict();
-      bool operator==(const ConnectionID& c);
-      std::ostream & print_me(std::ostream& out) const;
-    
-    private:
+      DictionaryDatum get_dict() const;
+      ArrayDatum to_ArrayDatum() const;
+      bool operator==(const ConnectionID& c) const;
+      std::ostream & print_me(std::ostream& out) const;      
+      long get_source_gid() const;
+      long get_target_gid() const;
+      long get_target_thread() const;
+      long get_synapse_model_id() const;
+      long get_port() const;
+  protected:
       long source_gid_;
+      long target_gid_;
       long target_thread_;
-      long synapse_typeid_;
+      long synapse_modelid_;
       long port_;
   };
+
+  inline
+    ConnectionID::ConnectionID(const ConnectionID& cid)
+      : source_gid_(cid.source_gid_),
+	target_gid_(cid.target_gid_),
+	target_thread_(cid.target_thread_),
+	synapse_modelid_(cid.synapse_modelid_),
+	port_(cid.port_)
+    {}
+    
+  inline
+    long ConnectionID::get_source_gid() const
+    {
+      return source_gid_;
+    }
+
+  inline
+    long ConnectionID::get_target_gid() const
+    {
+      return target_gid_;
+    }
+
+  inline
+    long ConnectionID::get_target_thread() const
+    {
+      return target_thread_;
+    }
+
+  inline
+    long ConnectionID::get_synapse_model_id() const
+    {
+      return synapse_modelid_;
+    }
+
+  inline
+    long ConnectionID::get_port() const
+    {
+      return port_;
+    }
 
   std::ostream & operator<<(std::ostream& , const ConnectionID&);
   

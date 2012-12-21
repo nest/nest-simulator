@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # ht_poisson.py
 #
@@ -18,10 +18,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+#
 """
 A small example using the ht_neuron.
 
-The neuron is bombarded with spike trains from four 
+The neuron is bombarded with spike trains from four
 Poisson generators, which are connected to the AMPA,
 NMDA, GABA_A, and GABA_B synapses, respectively.
 
@@ -39,7 +40,7 @@ nest.ResetKernel()
 # create neuron
 nrn = nest.Create('ht_neuron')
 
-# get receptor ID information, so we can connect to the 
+# get receptor ID information, so we can connect to the
 # different synapses
 receptors = nest.GetDefaults('ht_neuron')['receptor_types']
 
@@ -56,10 +57,15 @@ nest.SetStatus(mm, {'interval': 0.1,
 # create four Poisson generators
 g = nest.Create('poisson_generator', 4, params={'rate': 100.})
 
+# we cannot connect Poisson generators to neurons via dynamic synapses directly,
+# so we put parrot neurons in between
+p = nest.Create('parrot_neuron', 4)
+
 # connect each generator to synapse with given weight
-# using the adapting ht_synapse
-for s in zip(g, [('AMPA', 500.0), ('NMDA', 50.), ('GABA_A', 250.), ('GABA_B', 100.0)]):
-    nest.Connect([s[0]], nrn, params = {'weight': s[1][1], 'receptor_type': receptors[s[1][0]]},
+# using the adapting ht_synapse; connections pass through parrot neuron
+for s in zip(g, p, [('AMPA', 500.0), ('NMDA', 50.), ('GABA_A', 250.), ('GABA_B', 100.0)]):
+    nest.Connect([s[0]], [s[1]])
+    nest.Connect([s[1]], nrn, params = {'weight': s[2][1], 'receptor_type': receptors[s[2][0]]},
                  model= 'ht_synapse')
 
 # connect multimeter
@@ -69,7 +75,7 @@ nest.Connect(mm, nrn)
 for n in xrange(10):
     nest.Simulate(100)
 
-# extract data from multimeter 
+# extract data from multimeter
 events = nest.GetStatus(mm)[0]['events']
 t = events['times'];  # time axis
 
@@ -94,4 +100,3 @@ pl.ylabel('Intrinsic current [pA]')
 pl.xlabel('Time [ms]')
 
 pl.plot()
-pl.show()

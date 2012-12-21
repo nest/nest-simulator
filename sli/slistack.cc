@@ -69,8 +69,8 @@ void NpopFunction::execute(SLIInterpreter *i) const
 
   IntegerDatum *id = dynamic_cast<IntegerDatum *>(i->OStack.top().datum());
   assert( id != NULL);
-  int n=id->get();
-  if(n>=0 && ((size_t)n < i->OStack.load()))
+  size_t n=id->get();
+  if(n < i->OStack.load())
   {
     i->EStack.pop();
     i->OStack.pop(n+1); // pop one more and also remove the argument
@@ -154,9 +154,9 @@ void IndexFunction::execute(SLIInterpreter *i) const
   }
   IntegerDatum *id = dynamic_cast<IntegerDatum *>(i->OStack.top().datum());
   assert( id != NULL);
-  int pos=id->get();
+  size_t pos=id->get();
     
-  if(pos >= 0 && ((size_t)pos+1 < i->OStack.load()))
+  if(pos+1 < i->OStack.load())
   {
     i->EStack.pop();
     i->OStack.pop();
@@ -186,13 +186,13 @@ void CopyFunction::execute(SLIInterpreter *i) const
   }
   IntegerDatum *id = dynamic_cast<IntegerDatum *>(i->OStack.top().datum());
   assert( id != NULL);
-  int n=id->get();
-  if( n>0 &&  n < static_cast<int>(i->OStack.load()))
+  size_t n=id->get();
+  if( n < i->OStack.load())
   {
     i->EStack.pop();
     i->OStack.pop();
-    for(int p=0; p< n; ++p)
-      i->OStack.index(n-1);
+    for(size_t p=0; p< n; ++p)
+	i->OStack.index(n-1); //  Since the stack is growing, the argument to index is constant.
   }
   else
     i->raiseerror(i->StackUnderflowError);
@@ -224,34 +224,35 @@ SeeAlso: exch, rollu, rolld, rot
 */
 void RollFunction::execute(SLIInterpreter *i) const
 {
-  if(i->OStack.load()<2)
-  {
-    i->raiseerror(i->StackUnderflowError);
-    return;
-  }
+    const size_t load=i->OStack.load();
+    if(load<2)
+	throw StackUnderflow(2,load);
 
-  IntegerDatum *idn =
-    dynamic_cast<IntegerDatum *>(i->OStack.pick(1).datum());
-  assert( idn != NULL);
-  IntegerDatum *idk = dynamic_cast<IntegerDatum *>(i->OStack.top().datum());
-  assert( idk != NULL);
-  int n=idn->get();
-  int k=idk->get();
-  if(n < 0)
-  {
-    i->raiseerror(i->RangeCheckError);
-    return;
-  }
-  if( (size_t)n+2 > i->OStack.load())
-  {
-    i->raiseerror(i->StackUnderflowError);
-    return;
-  }
+    IntegerDatum *idn =
+	dynamic_cast<IntegerDatum *>(i->OStack.pick(1).datum());
+    if( idn == NULL)
+	throw ArgumentType(1);
 
-  i->EStack.pop();
-  i->OStack.pop(2);
+    IntegerDatum *idk = dynamic_cast<IntegerDatum *>(i->OStack.top().datum());
+    if( idk == NULL)
+	throw ArgumentType(0);
+
+    long &n=idn->get();
+    if(n < 0)
+    {
+	i->raiseerror(i->RangeCheckError);
+	return;
+    }
+    if( static_cast<size_t>(n+2) >load)
+    {
+	i->raiseerror(i->StackUnderflowError);
+	return;
+    }
+
+    i->EStack.pop();
+    i->OStack.pop(2);
     
-  i->OStack.roll(n,k);
+    i->OStack.roll(n,idk->get());
 }
 
 /*BeginDocumentation
@@ -318,7 +319,7 @@ void CountFunction::execute(SLIInterpreter *i) const
     i->EStack.pop();
     Token load(new IntegerDatum(i->OStack.load()));
     
-    i->OStack.push(load);
+    i->OStack.push_move(load);
 }
 
 /*BeginDocumentation

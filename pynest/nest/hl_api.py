@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 High-level API of PyNEST.
 
@@ -36,37 +37,12 @@ rules:
 
 4. Commands that return a GID must return it as list of GID(s).
 
-5. Commands that expect or return node addresses must indicate this in
-   their name, e.g. GetAddress(list) expects a list of GIDs and
-   returns a list of addresses.
-
-6. Like GIDs, addresses must also appear only in lists. Thus,
-   addresses and GIDs can be easily disambiguated:
-   
-   List of GIDs: [1,2,3,4]
-   List of addresses: [[1,2],[3,4]]
-
-7. When possible, loops over nodes should be propagated down to the
+5. When possible, loops over nodes should be propagated down to the
    SLI level.  This minimizes the number of Python<->SLI conversions
    and increases performance.  Loops in SLI are also faster than in
-   Python. Example:
-
-   instead of
-   
-   GetAddress(nodes):
-     GetOneAddress(n):
-        slipush(n)
-        slirun("GetAddress")
-     return map(GetOneAddress,nodes)
-
-   write
-
-   GetAddress(nodes):
-     slipush(nodes)
-     slirun("{GetAddress} map")
-     return slipop()
-     
-8. If you have a good reason, you may deviate from these guidelines.
+   Python. 
+        
+6. If you have a *very* good reason, you may deviate from these guidelines.
 
 Authors: Jochen Eppler, Marc-Oliver Gewaltig, Moritz Helias, Eilif Mueller
 """
@@ -85,14 +61,26 @@ class NESTError(Exception):
 
 # -------------------- Helper functions
 
-
+def is_ndarray(seq):
+        try:
+                import numpy
+                return type(seq) == numpy.ndarray
+        except:
+                return false
+        
 def is_sequencetype(seq) :
-    """Return True if the given object is a sequence type, False else"""
+    """
+    Return True if the given object is a sequence type, False else
+    """
+    import sys
     
-    return type(seq) in (types.TupleType, types.ListType)
+    return (type(seq) in (types.TupleType, types.ListType)) or is_ndarray(seq)
+
 
 def is_iterabletype(seq) :
-    """Return True if the given object is iterable, False else"""
+    """
+    Return True if the given object is iterable, False else
+    """
 
     try:
         i = iter(seq)
@@ -101,9 +89,14 @@ def is_iterabletype(seq) :
 
     return True
 
+
 def is_sequence_of_nonneg_ints(seq):
-    """Return True if the given object is a list or tuple of ints, False else"""
+    """
+    Return True if the given object is a list or tuple of ints, False else
+    """
+
     return is_sequencetype(seq) and all([type(n) == type(0) and n >= 0 for n in seq])
+
 
 def raise_if_not_list_of_gids(seq, argname):
     """
@@ -111,9 +104,11 @@ def raise_if_not_list_of_gids(seq, argname):
     The main purpose of this function is to perform a simple check that an
     argument is a potentially valid list of GIDs (ints >= 0).
     """
+
     if not is_sequence_of_nonneg_ints(seq):
         raise NESTError(argname + " must be a list or tuple of GIDs")
  
+
 def broadcast(val, l, allowedtypes, name="val"):
 
     if type(val) in allowedtypes:
@@ -127,7 +122,8 @@ def broadcast(val, l, allowedtypes, name="val"):
 
 
 def flatten(x):
-    """flatten(sequence) -> list
+    """
+    flatten(sequence) -> list
 
     Returns a flat list with all elements from the sequence and all
     contained sub-sequences (iterables).
@@ -136,7 +132,8 @@ def flatten(x):
     >>> [1, 2, [3,4], (5,6)]
     [1, 2, [3, 4], (5, 6)]
     >>> flatten([[[1,2,3], (42,None)], [4,5], [6], 7, MyVector(8,9,10)])
-    [1, 2, 3, 42, None, 4, 5, 6, 7, 8, 9, 10]"""
+    [1, 2, 3, 42, None, 4, 5, 6, 7, 8, 9, 10]
+    """
 
     result = []
     for el in x:
@@ -150,35 +147,45 @@ def flatten(x):
 
 # -------------------- Functions to get information on NEST
 
-
 def sysinfo():
-    """Print information on the platform on which NEST was compiled."""
+    """
+    Print information on the platform on which NEST was compiled.
+    """
 
     sr("sysinfo")
 
 
 def version():
-    """Print the NEST version."""
+    """
+    Return the NEST version.
+    """
 
     sr("statusdict [[ /kernelname /version ]] get")
     return string.join(spp())
     
 
 def authors():
-    """Show the authors of NEST."""
+    """
+    Print the authors of NEST.
+    """
 
     sr("authors")
 
 
 def helpdesk(browser="firefox"):
-    """Open the NEST helpdesk in the given browser."""
+    """
+    Open the NEST helpdesk in the given browser. The default browser is firefox.
+    """
     
     sr("/helpdesk << /command (%s) >> SetOptions" % browser)
     sr("helpdesk")
 
 
 def help(obj=None, pager="less"):
-    """Show the help page for the given object"""
+    """
+    Show the help page for the given object using the given pager. The
+    default pager is less.
+    """
 
     if obj:
         sr("/page << /command (%s) >> SetOptions" % pager)
@@ -196,38 +203,76 @@ def help(obj=None, pager="less"):
 	print "For more information visit http://www.nest-initiative.org."
 
 
+def get_verbosity():
+    """
+    Return verbosity level of NEST's messages.
+    """
+    
+    sr('verbosity')
+    return spp()
+
+
+def set_verbosity(level):
+    """
+    Change verbosity level for NEST's messages. level is a string and
+    can be one of M_FATAL, M_ERROR, M_WARNING, or M_INFO.
+    """
+
+    sr("%s setverbosity" % level)
+
+
+def message(level,sender,text):
+    """
+    Print a message using NEST's message system.
+    """
+
+    sps(level)
+    sps(sender)
+    sps(text)
+    sr('message')
+
+
 # -------------------- Functions for simulation control
 
-
 def Simulate(t):
-    """Simulate the network for t milliseconds."""
+    """
+    Simulate the network for t milliseconds.
+    """
 
     sps(float(t))
     sr('ms Simulate')
 
 
 def ResumeSimulation():
-    """Resume an interrupted simulation."""
+    """
+    Resume an interrupted simulation.
+    """
 
     sr("ResumeSimulation")
 
 
 def ResetKernel():
-    """Reset the simulation kernel. This will destroy the network as
+    """
+    Reset the simulation kernel. This will destroy the network as
     well as all custom models created with CopyModel(). Calling this
-    function is equivalent to restarting NEST."""
+    function is equivalent to restarting NEST.
+    """
 
     sr('ResetKernel')
 
 
 def ResetNetwork():
-    """Reset all nodes and connections to their original state."""
+    """
+    Reset all nodes and connections to their original state.
+    """
 
     sr('ResetNetwork')
 
 
 def SetKernelStatus(params):
-    """Set parameters for the simulation kernel."""
+    """
+    Set parameters for the simulation kernel.
+    """
     
     sps(0)
     sps(params)
@@ -250,7 +295,6 @@ def GetKernelStatus(keys = None):
     sr('/subnet GetDefaults')
     subnetdefaults = spp()
 
-    subnetdefaults["address"] = None
     subnetdefaults["frozen"] = None
     subnetdefaults["global_id"] = None
     subnetdefaults["local"] = None
@@ -283,9 +327,8 @@ def Install(module_name):
     Returns:
     NEST module identifier, required for unloading.
 
-    Note:
-    Dynamically linked modules are search in the LD_LIBRARY_PATH
-    (DYLD_LIBRARY_PATH under OSX). 
+    Note: Dynamically linked modules are searched in the
+    LD_LIBRARY_PATH (DYLD_LIBRARY_PATH under OSX).
     """
 
     return sr("(%s) Install" % module_name)
@@ -293,21 +336,26 @@ def Install(module_name):
 
 # -------------------- Functions for parallel computing
 
-
 def Rank():
-    """Return the MPI rank of the local process."""
+    """
+    Return the MPI rank of the local process.
+    """
 
     sr("Rank")
     return spp()
 
 def NumProcesses():
-    """Return the overall number of MPI processes."""
+    """
+    Return the overall number of MPI processes.
+    """
 
     sr("NumProcesses")
     return spp()
 
 def SetAcceptableLatency(port, latency):
-    """Set the acceptable latency (in ms) for a MUSIC port."""
+    """
+    Set the acceptable latency (in ms) for a MUSIC port.
+    """
     
     sps(latency)
     sr("/%s exch SetAcceptableLatency" % port)
@@ -315,13 +363,14 @@ def SetAcceptableLatency(port, latency):
 
 # -------------------- Functions for model handling
 
-
 def Models(mtype = "all", sel=None):
-    """Return a list of all available models (neurons, devices and
+    """
+    Return a list of all available models (neurons, devices and
     synapses). Use mtype='nodes' to only see neuron and device models,
     mtype='synapses' to only see synapse models. sel can be a string,
     used to filter the result list and only return models containing
-    it."""
+    it.
+    """
 
     if mtype not in ("all", "nodes", "synapses"):
         raise NESTError("type has to be one of 'all', 'nodes' or 'synapses'.")
@@ -343,26 +392,50 @@ def Models(mtype = "all", sel=None):
     return models
 
 
-def SetDefaults(model, params) :
-    """Set the default parameters of the given model to the values
-    specified in the params dictionary."""
+def SetDefaults(model, params, val=None) :
+    """
+    Set the default parameters of the given model to the values
+    specified in the params dictionary.
+    If val is given, params has to be the name of a model property.
+    New default values are used for all subsequently created instances
+    of the model.
+    """
 
+    if type(params) == types.StringType :
+            params = {params : val}
+
+    sr('/'+model)
     sps(params)
-    sr('/%s exch SetDefaults' % model)
+    sr('SetDefaults')
 
 
-def GetDefaults(model) :
-    """Return a dictionary with the default parameters of the given
-    model, specified by a string."""
-    
-    sr("/%s GetDefaults" % model)
+def GetDefaults(model, keys=None) :
+    """
+    Return a dictionary with the default parameters of the given
+    model, specified by a string.
+    If keys is given, it must be a string or a list of strings naming model properties.
+    GetDefaults then returns a single value or a list of values belonging to the keys given.
+    Examples:
+    GetDefaults('iaf_neuron','V_m') -> -70.0
+    GetDefaults('iaf_neuron',['V_m', 'model') -> [-70.0, 'iaf_neuron']
+    """
+    cmd = "/%s GetDefaults" % model
+    if keys:
+        if is_sequencetype(keys):
+            keyss = string.join(["/%s" % x for x in keys])
+            cmd='/'+model+' GetDefaults  [ %s ] { 1 index exch get} Map' % keyss
+        else:
+            cmd= '/'+model+' GetDefaults '+'/'+keys+' get'
+        
+    sr(cmd)
     return spp()
 
 
 def CopyModel(existing, new, params=None):
-    """ Create a new model by copying an existing one. Default
-    parameters can be given as params, or else are taken from
-    existing."""
+    """
+    Create a new model by copying an existing one. Default parameters
+    can be given as params, or else are taken from existing.
+    """
     
     if params:
         sps(params)
@@ -374,10 +447,11 @@ def CopyModel(existing, new, params=None):
 # -------------------- Functions for node handling
 
 def Create(model, n=1, params=None):
-    """Create n instances of type model. Parameters for the new nodes
-    can are given as params (a single dictionary or a list of
-    dictionaries with size n). If omitted, the model's defaults are
-    used."""
+    """
+    Create n instances of type model. Parameters for the new nodes can
+    are given as params (a single dictionary or a list of dictionaries
+    with size n). If omitted, the model's defaults are used.
+    """
 
     broadcast_params = False
 
@@ -409,12 +483,14 @@ def Create(model, n=1, params=None):
 
         
 def SetStatus(nodes, params, val=None) :
-    """ Set the parameters of nodes (identified by global ids or
-    addresses) or connections (identified by handles as returned by
-    FindConnections()) to params, which may be a single dictionary or
-    a list of dictionaries. If val is given, params has to be the name
+    """
+    Set the parameters of nodes (identified by global ids) or
+    connections (identified by handles as returned by
+    GetConnections()) to params, which may be a single dictionary or a
+    list of dictionaries. If val is given, params has to be the name
     of an attribute, which is set to val on the nodes/connections. val
-    can be a single value or a list of the same size as nodes."""
+    can be a single value or a list of the same size as nodes.
+    """
 
     if not is_sequencetype(nodes):
         raise NESTError("nodes must be a list of nodes or synapses.")
@@ -432,7 +508,7 @@ def SetStatus(nodes, params, val=None) :
     if len(nodes) != len(params) :
         raise NESTError("Status dict must be a dict, or list of dicts of length 1 or len(nodes).")
         
-    if type(nodes[0]) == types.DictType:
+    if  (type(nodes[0]) == types.DictType) or is_sequencetype(nodes[0]):
         nest.push_connection_datums(nodes)
     else:
         sps(nodes)
@@ -441,12 +517,15 @@ def SetStatus(nodes, params, val=None) :
     sr('2 arraystore')
     sr('Transpose { arrayload ; SetStatus } forall')
 
+
 def GetStatus(nodes, keys=None) :
-    """Return the parameter dictionaries of the given list of nodes
-    (identified by global ids or addresses) or connections (identified
-    by handles as returned by FindConnections()). If keys is given, a
+    """
+    Return the parameter dictionaries of the given list of nodes
+    (identified by global ids) or connections (identified
+    by handles as returned by GetConnections()). If keys is given, a
     list of values is returned instead. keys may also be a list, in
-    which case the returned list contains lists of values."""
+    which case the returned list contains lists of values.
+    """
 
     if not is_sequencetype(nodes):
         raise NESTError("nodes must be a list of nodes or synapses.")
@@ -463,7 +542,7 @@ def GetStatus(nodes, keys=None) :
         else:
             cmd='{ GetStatus /%s get} Map' % keys
 
-    if type(nodes[0]) == types.DictType:
+    if (type(nodes[0]) == types.DictType) or is_sequencetype(nodes[0]):
         nest.push_connection_datums(nodes)
     else:
         sps(nodes)
@@ -473,32 +552,15 @@ def GetStatus(nodes, keys=None) :
     return spp()
 
 
-def GetAddress(gids) :
-    """Return the addresses of one or more nodes."""
-
-    sps(gids)
-    sr("{GetAddress} Map")
-    return spp()
-
-
-def GetGID(addresses) :
-    """Return the global ids of one or more nodes."""
-
-    sps(addresses)
-    sr("{GetGID} Map")
-    return spp()
-
-
 def GetLID(gid) :
     """
     Return the local id of a node with gid.
     GetLID(gid) -> lid
-    Example:
-      gid=GetGID([[1,2,n]])
-      GetLID(gid) -> n
     """
+
     if len(gid) > 1:
-        raise NESTError("Can only return the local ID of one node.")
+        raise NESTError("GetLID() expects exactly one GID.")
+
     sps(gid[0])
     sr("GetLID")
 
@@ -506,46 +568,116 @@ def GetLID(gid) :
 
 
 # -------------------- Functions for connection handling
-        
 
-def FindConnections(source, target=None, synapse_type=None) :
-    """Return an array of identifiers for connections that match the
+	
+def FindConnections(source, target=None, synapse_model=None, synapse_type=None):
+    """
+    Return an array of identifiers for connections that match the
     given parameters. Only source is mandatory and must be a list of
-    one or more nodes. If target and/or synapse_type is/are given,
+    one or more nodes. If target and/or synapse_model is/are given,
     they must be single values, lists of length one or the same length
     as source. Use GetStatus()/SetStatus() to inspect/modify the found
-    connections."""
+    connections.
 
-    if not target and not synapse_type:
+    Note: FindConnections() is deprecated and will be removed in the future.
+          Use GetConnections() instead.
+
+    Note: synapse_type is alias for synapse_model for backward compatibility
+    """
+
+    if synapse_model and synapse_type:
+        raise NESTError("synapse_type is alias for synapse_model, cannot be used together.")
+    if synapse_type:
+        synapse_model = synapse_type
+
+    if not target and not synapse_model:
         params = [{"source": s} for s in source]
 
-    if not target and synapse_type:
-        synapse_type = broadcast(synapse_type, len(source), (str,), "synapse_type")
-        params = [{"source": s, "synapse_type": syn} for s, syn in zip(source, synapse_type)]
+    if not target and synapse_model:
+        synapse_model = broadcast(synapse_model, len(source), (str,), "synapse_model")
+        params = [{"source": s, "synapse_model": syn}
+                  for s, syn in zip(source, synapse_model)]
 
-    if target and not synapse_type:
+    if target and not synapse_model:
         target = broadcast(target, len(source), (int,), "target")
         params = [{"source": s, "target": t} for s, t in zip(source, target)]
 
-    if target and synapse_type:
+    if target and synapse_model:
         target = broadcast(target, len(source), (int,), "target")
-        synapse_type = broadcast(synapse_type, len(source), (str,), "synapse_type")
-        params = [{"source": s, "target": t, "synapse_type": syn} for s, t, syn in zip(source, target, synapse_type)]
+        synapse_model = broadcast(synapse_model, len(source), (str,), "synapse_model")
+        params = [{"source": s, "target": t, "synapse_model": syn}
+                  for s, t, syn in zip(source, target, synapse_model)]
 
     sps(params)
-    sr("{FindConnections} Map" % params)
+    sr("{FindConnections} Map Flatten")
     
-    return flatten(spp())
+    result=spp()
+    return [ { 'source':int(r[0]), 'target_thread': int(r[2]),
+               'synapse_modelid': int(r[3]), 'port': int(r[4])} for r in result ]
+
+
+def GetConnections(source=None, target=None, synapse_model=None) :
+    """
+    Return an array of connection identifiers.
+    
+    Parameters:
+    source - list of source GIDs
+    target - list of target GIDs
+    synapse_model - string with the synapse model
+    
+    If GetConnections is called without parameters, all connections
+    in the network are returned.
+
+    If a list of source neurons is given, only connections from these
+    pre-synaptic neurons are returned.
+
+    If a list of target neurons is given, only connections to these
+    post-synaptic neurons are returned.
+
+    If a synapse model is given, only connections with this synapse
+    type are returned.
+
+    Any combination of source, target and synapse_model parameters
+    is permitted.
+
+    Each connection id is a 5-tuple or, if available, a NumPy
+    array with the following fived entries:
+    source-gid, target-gid, target-thread, synapse-id, port
+    
+    Note: Only connections with targets on the MPI process executing
+          the command are returned.
+    """
+    
+    params={}
+    if source:
+        if not is_sequencetype(source):
+            raise NESTError("source must be a list of gids.")
+        params['source'] = source
+    if target:
+        if not is_sequencetype(target):
+            raise NESTError("target must be a list of gids.")
+        params['target'] = target
+
+    sps(params)
+    if synapse_model:
+        # add model to params dict as literal
+        sr('dup /synapse_model /{0} put_d'.format(synapse_model))
+
+    sr("GetConnections")
+    
+    return spp()
 
 
 def Connect(pre, post, params=None, delay=None, model="static_synapse"):
-    """Make one-to-one connections of type model between the nodes in
+    """
+    Make one-to-one connections of type model between the nodes in
     pre and the nodes in post. pre and post have to be lists of the
     same length. If params is given (as dictionary or list of
     dictionaries), they are used as parameters for the connections. If
     params is given as a single float or as list of floats, it is used
     as weight(s), in which case delay also has to be given as float or
-    as list of floats."""
+    as list of floats.
+    """
 
     if len(pre) != len(post):
         raise NESTError("pre and post have to be the same length")
@@ -590,10 +722,12 @@ def Connect(pre, post, params=None, delay=None, model="static_synapse"):
 
 
 def ConvergentConnect(pre, post, weight=None, delay=None, model="static_synapse"):
-    """Connect all neurons in pre to each neuron in post. pre and post
+    """
+    Connect all neurons in pre to each neuron in post. pre and post
     have to be lists. If weight is given (as a single float or as list
     of floats), delay also has to be given as float or as list of
-    floats."""
+    floats.
+    """
 
     if weight == None and delay == None:
         for d in post :
@@ -620,10 +754,9 @@ def ConvergentConnect(pre, post, weight=None, delay=None, model="static_synapse"
         raise NESTError("Both 'weight' and 'delay' have to be given.")
 
 
-def RandomConvergentConnect(pre, post, n, weight=None, delay=None,
-                            model="static_synapse", options=None):
-    
-    """Connect n randomly selected neurons from pre to each neuron in
+def RandomConvergentConnect(pre, post, n, weight=None, delay=None, model="static_synapse", options=None):
+    """
+    Connect n randomly selected neurons from pre to each neuron in
     post. pre and post have to be lists. If weight is given (as a
     single float or as list of floats), delay also has to be given as
     float or as list of floats. options is a dictionary specifying
@@ -671,10 +804,12 @@ def RandomConvergentConnect(pre, post, n, weight=None, delay=None,
 
 
 def DivergentConnect(pre, post, weight=None, delay=None, model="static_synapse"):
-    """Connect each neuron in pre to all neurons in post. pre and post
+    """
+    Connect each neuron in pre to all neurons in post. pre and post
     have to be lists. If weight is given (as a single float or as list
     of floats), delay also has to be given as float or as list of
-    floats."""
+    floats.
+    """
 
     if weight == None and delay == None:
         for s in pre :
@@ -689,21 +824,73 @@ def DivergentConnect(pre, post, weight=None, delay=None, model="static_synapse")
         delay = broadcast(delay, len(post), (float,), "delay")
         if len(delay) != len(post):
             raise NESTError("delay must be a float, or sequence of floats of length 1 or len(post)")
-
+        cmd='/%s DivergentConnect' % model
         for s in pre :
             sps(s)
             sps(post)
             sps(weight)
             sps(delay)
-            sr('/%s DivergentConnect' % model)
+            sr(cmd)
     
     else:
         raise NESTError("Both 'weight' and 'delay' have to be given.")
 
 
-def RandomDivergentConnect(pre, post, n, weight=None, delay=None,
-                           model="static_synapse", options=None):
-    """Connect each neuron in pre to n randomly selected neurons from
+def DataConnect(pre, params=None, model=None):
+    """
+    Connect neurons from lists of connection data.
+
+    Variant 1.
+    pre: [gid_1, ... gid_n]
+    params: [ {param1}, ..., {param_n} ]
+    model= 'synapse_model'
+
+    Variant 2:
+    pre = [ {synapse_state1}, ..., {synapse_state_n}]
+    params=None
+    model=None
+
+    Variant 1 of DataConnect connects each neuron in pre to the targets given in params, using synapse type model.
+    The dictionary parames must contain at least the following keys:
+    'target'
+    'weight'
+    'delay'
+    each resolving to a list or numpy.ndarray of values. Depending on the synapse model, other parameters can be given
+    in the same format. All arrays in params must have the same length as 'target'.
+
+    Variant 2 of DataConnect will connect neurons according to a list of synapse status dictionaries,
+    as obtained from GetStatus.
+    Note: During connection, status dictionary misses will not raise errors, even if
+    the kernel property 'dict_miss_is_error' is True.
+    """
+
+    if not is_sequencetype(pre):
+        raise NESTError("'pre' must be a list of nodes or connection dictionaries.")
+    if params and not is_sequencetype(params):
+        raise NESTError("'params' must be a list of dictionaries.")
+
+    if params:
+	if not model:
+		model="static_synapse"
+	cmd='/%s DataConnect_' % model
+    
+	for s,p in zip(pre,params):
+		sps(s)
+		sps(p)
+		sr(cmd)
+    else:
+	    # Call the variant where all connections are
+	    # given explicitly
+            dictmiss=GetKernelStatus('dict_miss_is_error')
+            SetKernelStatus('dict_miss_is_error', False)
+	    sps(pre)
+	    sr('DataConnect_a')
+            SetKernelStatus('dict_miss_is_error', dictmiss)
+            
+    
+def RandomDivergentConnect(pre, post, n, weight=None, delay=None, model="static_synapse", options=None):
+    """
+    Connect each neuron in pre to n randomly selected neurons from
     post. pre and post have to be lists. If weight is given (as a
     single float or as list of floats), delay also has to be given as
     float or as list of floats. options is a dictionary specifying
@@ -750,67 +937,141 @@ def RandomDivergentConnect(pre, post, n, weight=None, delay=None,
         raise NESTError("Both 'weight' and 'delay' have to be given.")
 
 
+def CGConnect(pre, post, cg, parameter_map={}, model="static_synapse"):
+    """
+    Connect neurons from pre to neurons from post using connectivity
+    specified by the connection generator cg. pre and post are either
+    both lists containing 1 subnet, or lists of gids. parameter_map is
+    a dictionary mapping names of values such as weight and delay to
+    value set positions.
+    """
+
+    if GetStatus(pre[:1], "model")[0] == "subnet":
+        if GetStatus(post[:1], "model")[0] != "subnet":
+            raise NESTError("if pre is a subnet, post also has to be a subnet")
+        if len(pre) > 1 or len(post) > 1:
+            raise NESTError("the length of pre and post has to be 1 if subnets are given")
+        sli_func('CGConnect', cg, pre[0], post[0], parameter_map, '/'+model, litconv=True)
+        
+    else:
+        sli_func('CGConnect', cg, pre, post, parameter_map, '/'+model, litconv=True)
+
 
 # -------------------- Functions for hierarchical networks
 
-
 def PrintNetwork(depth=1, subnet=None) :
-    """Print the network tree up to depth, starting at subnet. if
-    subnet is omitted, the current subnet is used instead."""
+    """
+    Print the network tree up to depth, starting at subnet. if
+    subnet is omitted, the current subnet is used instead.
+    """
     
     if subnet == None:
         subnet = CurrentSubnet()
+    elif len(subnet) > 1:
+        raise NESTError("PrintNetwork() expects exactly one GID.")
 
     sps(subnet[0])
-    sr("GetAddress %i PrintNetwork" % depth)
+    sr("%i PrintNetwork" % depth)
 
 
 def CurrentSubnet() :
-    """Returns the global id of the current subnet."""
+    """
+    Returns the global id of the current subnet.
+    """
 
-    sr("CurrentSubnet GetGID")
+    sr("CurrentSubnet")
     return [spp()]
 
 
 def ChangeSubnet(subnet) :
-    """Make subnet the current subnet."""
-    subnet = GetAddress(subnet)
+    """
+    Make subnet the current subnet.
+    """
+
+    if len(subnet) > 1:
+        raise NESTError("ChangeSubnet() expects exactly one GID.")
+
     sps(subnet[0])
     sr("ChangeSubnet")
 
 
-def GetLeaves(subnets) :
-    """Return the global ids of all leaf nodes of the given
-    subnet."""
-
-    sps(subnets)
-    sr("{GetLeaves} Map")
-    return spp()
-
-
-def GetNodes(subnets):
-    """Return the complete list of nodes (including sub-networks) under
-    subnet."""
-
-    sps(subnets)
-    sr("{GetNodes} Map")
+def GetLeaves(subnets, properties=None, local_only=False) :
+    """
+    Return the global ids of the leaf nodes of the given subnets.
     
-    return spp()
+    Leaf nodes are all nodes that are not subnets.
+    
+    If properties is given, it must be a dictionary. Only global ids of nodes 
+       matching the properties given in the dictionary exactly will be returned.
+       Matching properties with float values (e.g. the membrane potential) may
+       fail due to tiny numerical discrepancies and should be avoided.
+       
+    If local_only is True, only global ids of nodes simulated on the local MPI 
+       process will be returned. By default, global ids of nodes in the entire
+       simulation will be returned. This requires MPI communication and may
+       slow down the script.
+       
+    See also: GetNodes, GetChildren
+    """
+
+    if properties is None:
+        properties = {}
+    func = 'GetLocalLeaves' if local_only else 'GetGlobalLeaves'
+    return sli_func('/props Set { props %s } Map' % func, subnets, properties,
+                    litconv=True)    
 
 
-def GetChildren(gid):
+def GetNodes(subnets, properties=None, local_only=False):
     """
-    Return the immediate children of subnet id.
+    Return the global ids of the all nodes of the given subnets.
+    
+    If properties is given, it must be a dictionary. Only global ids of nodes 
+       matching the properties given in the dictionary exactly will be returned.
+       Matching properties with float values (e.g. the membrane potential) may
+       fail due to tiny numerical discrepancies and should be avoided.
+       
+    If local_only is True, only global ids of nodes simulated on the local MPI 
+       process will be returned. By default, global ids of nodes in the entire
+       simulation will be returned. This requires MPI communication and may
+       slow down the script.
+       
+    See also: GetLeaves, GetChildren
     """
-    if len(gid)>1 :
-        raise NESTError("GetChildren() expects exactly one GID.")
-    sps(gid[0])
-    sr("GetChildren")
-    return spp()
+
+    if properties is None:
+        properties = {}
+    func = 'GetLocalNodes' if local_only else 'GetGlobalNodes'
+    return sli_func('/props Set { props %s } Map' % func, subnets, properties,
+                    litconv=True)    
+
+
+def GetChildren(subnets, properties=None, local_only=False):
+    """
+    Return the global ids of the immediate children of the given subnets.
+    
+    If properties is given, it must be a dictionary. Only global ids of nodes 
+       matching the properties given in the dictionary exactly will be returned.
+       Matching properties with float values (e.g. the membrane potential) may
+       fail due to tiny numerical discrepancies and should be avoided.
+       
+    If local_only is True, only global ids of nodes simulated on the local MPI 
+       process will be returned. By default, global ids of nodes in the entire
+       simulation will be returned. This requires MPI communication and may
+       slow down the script.
+       
+    See also: GetNodes, GetLeaves
+    """
+
+    if properties is None:
+        properties = {}
+    func = 'GetLocalChildren' if local_only else 'GetGlobalChildren'
+    return sli_func('/props Set { props %s } Map' % func, subnets, properties,
+                    litconv=True)    
 
         
 def GetNetwork(gid, depth):
-    """Return a nested list with the children of subnet id at level
+    """
+    Return a nested list with the children of subnet id at level
     depth. If depth==0, the immediate children of the subnet are
     returned. The returned list is depth+1 dimensional.
     """
@@ -824,22 +1085,12 @@ def GetNetwork(gid, depth):
     return spp()
 
 
-def GetNodeAt(gidlist,adr):
-    """
-    For each subnet in gidlist, get the gid of the node at position adr.
-    """
-    def get_node(subnet, adr):
-        if type(subnet) == types.IntType:
-            subnet= GetAddress([subnet])
-        return GetGID([subnet[0]+adr])[0]
-    
-    return map(lambda n: get_node(n,adr),flatten(gidlist))
-
-
 def BeginSubnet(label=None, params=None):
-    """Create a new subnet and change into it.
-    A string argument can be used to name the new subnet
-    A dictionary argument can be used to set the subnet's custom dict."""
+    """
+    Create a new subnet and change into it. A string argument can be
+    used to name the new subnet A dictionary argument can be used to
+    set the subnet's custom dict.
+    """
 
     sn=Create("subnet")
     if label:
@@ -850,7 +1101,9 @@ def BeginSubnet(label=None, params=None):
 
 
 def EndSubnet():
-    """Change to the parent subnet and return the gid of the current."""
+    """
+    Change to the parent subnet and return the gid of the current.
+    """
 
     csn=CurrentSubnet()
     parent=GetStatus(csn, "parent")
@@ -863,8 +1116,11 @@ def EndSubnet():
 
 
 def LayoutNetwork(model, dim, label=None, params=None) :
-    """Create a subnetwork of dimension dim with nodes of type model
-       and return a list of ids."""
+    """
+    Create a subnetwork of dimension dim with nodes of type model and
+    return a list of ids.
+    """
+
     if type(model) == types.StringType:
         sps(dim)
         sr('/%s exch LayoutNetwork' % model)

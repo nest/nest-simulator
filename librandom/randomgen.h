@@ -281,6 +281,9 @@ namespace librandom {
     //! Default value for seeding generators in places where no seed is supplied.
     static const unsigned long DefaultSeed;  
 
+    //! clone a random number generator of same type initialized with given seed
+    virtual RngPtr clone(const unsigned long) = 0;
+
   protected:
 
     /**

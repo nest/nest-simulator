@@ -42,22 +42,23 @@
 #include <string>
 
 // Neuron models
+#include "aeif_cond_alpha.h"
+#include "aeif_cond_exp.h"
+#include "hh_cond_exp_traub.h"
+#include "hh_psc_alpha.h"
+#include "ht_neuron.h"
+#include "iaf_cond_alpha.h"
+#include "iaf_cond_alpha_mc.h"
+#include "iaf_cond_exp.h"
+#include "iaf_cond_exp_sfa_rr.h"
 #include "iaf_neuron.h"
 #include "iaf_psc_alpha.h"
 #include "iaf_psc_delta.h"
 #include "iaf_psc_exp.h"
 #include "iaf_tum_2000.h"
-#include "iaf_cond_alpha.h"
-#include "iaf_cond_exp.h"
-#include "iaf_cond_exp_sfa_rr.h"
-#include "iaf_cond_alpha_mc.h"
-#include "aeif_cond_alpha.h"
-#include "aeif_cond_exp.h"
-#include "hh_psc_alpha.h"
-#include "hh_cond_exp_traub.h"
 #include "mat2_psc_exp.h"
 #include "parrot_neuron.h"
-#include "ht_neuron.h"
+#include "pp_psc_delta.h"
 #include "sli_neuron.h"
 #include "ginzburg_neuron.h"
 #include "izhikevich.h"
@@ -72,6 +73,8 @@
 #include "step_current_generator.h"
 #include "mip_generator.h"
 #include "smp_generator.h"
+#include "ppd_sup_generator.h"
+#include "gamma_sup_generator.h"
 
 // Recording devices
 #include "spike_detector.h"
@@ -93,6 +96,7 @@
 #include "static_connection_hom_wd.h"
 #include "cont_delay_connection.h"
 #include "tsodyks_connection.h"
+#include "tsodyks2_connection.h"
 #include "stdp_connection.h"
 #include "stdp_connection_hom.h"
 #include "stdp_pl_connection_hom.h"
@@ -139,6 +143,7 @@ namespace nest
     register_model<iaf_tum_2000>(net_,  "iaf_tum_2000");
     register_model<mat2_psc_exp>(net_,  "mat2_psc_exp");
     register_model<parrot_neuron>(net_, "parrot_neuron");
+    register_model<pp_psc_delta>(net_, "pp_psc_delta");
 
     register_model<ac_generator>(net_,           "ac_generator");
     register_model<dc_generator>(net_,           "dc_generator");
@@ -149,6 +154,8 @@ namespace nest
     register_model<step_current_generator>(net_, "step_current_generator");
     register_model<mip_generator>(net_,          "mip_generator");
     register_model<smp_generator>(net_,          "smp_generator");
+    register_model<ppd_sup_generator>(net_,      "ppd_sup_generator");
+    register_model<gamma_sup_generator>(net_,    "gamma_sup_generator");
     register_model<sli_neuron>(net_,             "sli_neuron");
     register_model<ginzburg>(net_,               "ginzburg_neuron");
     register_model<izhikevich>(net_,             "izhikevich");
@@ -200,6 +207,7 @@ namespace nest
 
     register_prototype_connection<ContDelayConnection>(net_, "cont_delay_synapse");
     register_prototype_connection<TsodyksConnection>(net_,   "tsodyks_synapse");
+    register_prototype_connection<Tsodyks2Connection>(net_,   "tsodyks2_synapse");
     register_prototype_connection<STDPConnection>(net_,      "stdp_synapse");
     register_prototype_connection<HTConnection>(net_,        "ht_synapse");
 
@@ -213,6 +221,7 @@ namespace nest
     register_prototype_connection_commonproperties <STDPDopaConnection, 
                                                     STDPDopaCommonProperties
                                                    > (net_, "stdp_dopamine_synapse");
+
 
   }
 

@@ -74,9 +74,6 @@ namespace nest
      computation can be done "in place" i.e. no temporary state vector
      object is required.
 
-     The recording device voltmeter is not supported anymore by this model.
-     Please use the multimeter device instead.
-
      Parameters: 
      The following parameters can be set in the status dictionary:
 
@@ -93,12 +90,17 @@ namespace nest
      tau_2        double - Long time constant of adaptive threshold in ms
      alpha_1      double - Amplitude of short time threshold adaption in mV [3]
      alpha_2      double - Amplitude of long time threshold adaption in mV [3]
-     omega        double - Resting spike threshold in mV [3]
+     omega        double - Resting spike threshold in mV (absolute value, not relative to E_L as in [3])
 
      The following state variables can be read out with the multimeter device:
 
      V_m          Non-resetting membrane potential
      V_th         Two-timescale adaptive threshold
+
+     Note:
+     tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
+     degenerate case of the ODE describing the model [1]. For very similar values,
+     numerics will be unstable.
 
      References:
      [1] Rotter S & Diesmann M (1999) Exact simulation of
@@ -215,7 +217,11 @@ namespace nest
       Parameters_();  //!< Sets default parameter values
 
       void get(DictionaryDatum&) const;  //!< Store current values in dictionary
-      void set(const DictionaryDatum&);  //!< Set values from dicitonary
+
+      /** Set values from dictionary.
+       * @returns Change in reversal potential E_L, to be passed to State_::set()
+       */
+     double set(const DictionaryDatum&);  //!< Set values from dicitonary
     };
 
     // ---------------------------------------------------------------- 
@@ -232,14 +238,18 @@ namespace nest
       double_t     V_th_1_;   // short time adaptive threshold (related to tau_1_), variable 1
       double_t     V_th_2_;   // long time adaptive threshold (related to tau_2_), variable 2
 
-      double_t     V_th_;
-
       int_t        r_;    // total refractory counter (no spikes can be generated)
 
       State_();  //!< Default initialization
 
       void get(DictionaryDatum&, const Parameters_&) const;
-      void set(const DictionaryDatum&, const Parameters_&);
+
+      /** Set values from dictionary.
+       * @param dictionary to take data from
+       * @param current parameters
+       * @param Change in reversal potential E_L specified by this dict
+       */
+      void set(const DictionaryDatum&, const Parameters_&, double);
     };
 
     // ---------------------------------------------------------------- 
@@ -294,7 +304,7 @@ namespace nest
 
     //! Read out state variables, used by UniversalDataLogger
     double_t get_V_m_() const { return S_.V_m_ + P_.U0_; }
-    double_t get_V_th_() const { return S_.V_th_ + P_.U0_; }
+    double_t get_V_th_() const { return P_.U0_ + P_.omega_ + S_.V_th_1_ + S_.V_th_2_; }
 
     // ---------------------------------------------------------------- 
 
@@ -363,13 +373,10 @@ namespace nest
   inline
     void mat2_psc_exp::set_status(const DictionaryDatum &d)
   {
-    // Please do not change the order of ptmp.set and stmp.set,
-    // because V_th is updated in stmp.set using maybe previously
-    // updated parameter omega_.
     Parameters_ ptmp = P_;  // temporary copy in case of errors
-    ptmp.set(d);                       // throws if BadProperty
+    const double delta_EL = ptmp.set(d); // throws if BadProperty
     State_      stmp = S_;  // temporary copy in case of errors
-    stmp.set(d, ptmp);                 // throws if BadProperty
+    stmp.set(d, ptmp, delta_EL);         // throws if BadProperty
 
     // We now know that (ptmp, stmp) are consistent. We do not 
     // write them back to (P_, S_) before we are also sure that 

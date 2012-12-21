@@ -35,7 +35,7 @@
 
 using namespace nest;
 
-/* ---------------------------------------------------------------- 
+/* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
@@ -43,7 +43,7 @@ nest::RecordablesMap<mynest::pif_psc_alpha> mynest::pif_psc_alpha::recordablesMa
 
 namespace nest
 {
-  // Override the create() method with one call to RecordablesMap::insert_() 
+  // Override the create() method with one call to RecordablesMap::insert_()
   // for each quantity to be recorded.
   template <>
   void RecordablesMap<mynest::pif_psc_alpha>::create()
@@ -54,17 +54,17 @@ namespace nest
 }
 
 
-/* ---------------------------------------------------------------- 
+/* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
-    
+
 mynest::pif_psc_alpha::Parameters_::Parameters_()
   : C_m    (250.0),  // pF
     I_e    (  0.0),  // nA
     tau_syn(  2.0),  // ms
     V_th   (-55.0),  // mV
     V_reset(-70.0),  // mV
-    t_ref  (  2.0)   // ms   
+    t_ref  (  2.0)   // ms
   {}
 
 mynest::pif_psc_alpha::State_::State_(const Parameters_& p)
@@ -75,7 +75,7 @@ mynest::pif_psc_alpha::State_::State_(const Parameters_& p)
     refr_count(0  )
 {}
 
-/* ---------------------------------------------------------------- 
+/* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
 
@@ -106,16 +106,16 @@ void mynest::pif_psc_alpha::Parameters_::set(const DictionaryDatum& d)
 
   if ( V_reset >= V_th )
     throw nest::BadProperty("The reset potential must be below threshold.");
-  
+
   if ( t_ref < 0 )
-    throw nest::BadProperty("The refractory time must be at least one simulation step.");  
+    throw nest::BadProperty("The refractory time must be at least one simulation step.");
 }
 
 void mynest::pif_psc_alpha::State_::get(DictionaryDatum &d) const
 {
   // Only the membrane potential is shown in the status; one could show also the other
   // state variables
-  (*d)[names::V_m] = V_m;   
+  (*d)[names::V_m] = V_m;
 }
 
 void mynest::pif_psc_alpha::State_::set(const DictionaryDatum& d, const Parameters_& p)
@@ -134,13 +134,13 @@ mynest::pif_psc_alpha::Buffers_::Buffers_(const Buffers_ &, pif_psc_alpha &n)
 {}
 
 
-/* ---------------------------------------------------------------- 
+/* ----------------------------------------------------------------
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
 mynest::pif_psc_alpha::pif_psc_alpha()
-  : Node(), 
-    P_(), 
+  : Node(),
+    P_(),
     S_(P_),
     B_(*this)
 {
@@ -148,13 +148,13 @@ mynest::pif_psc_alpha::pif_psc_alpha()
 }
 
 mynest::pif_psc_alpha::pif_psc_alpha(const pif_psc_alpha& n)
-  : Node(n), 
-    P_(n.P_), 
+  : Node(n),
+    P_(n.P_),
     S_(n.S_),
     B_(n.B_, *this)
 {}
 
-/* ---------------------------------------------------------------- 
+/* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
 
@@ -175,7 +175,7 @@ void mynest::pif_psc_alpha::calibrate()
 {
   B_.logger_.init();
 
-  const double h  = Time::get_resolution().get_ms(); 
+  const double h  = Time::get_resolution().get_ms();
   const double eh = std::exp(-h/P_.tau_syn);
   const double tc = P_.tau_syn / P_.C_m;
 
@@ -187,7 +187,7 @@ void mynest::pif_psc_alpha::calibrate()
   V_.P31 = tc * ( P_.tau_syn - (h+P_.tau_syn) * eh );
   V_.P32 = tc * ( 1 - eh );
   // P33_ is 1
-    
+
   // initial value ensure normalization to max amplitude 1.0
   V_.pscInitialValue = 1.0 * numerics::e / P_.tau_syn;
 
@@ -196,25 +196,25 @@ void mynest::pif_psc_alpha::calibrate()
   assert(V_.t_ref_steps >= 0);  // since t_ref_ >= 0, this can only fail in error
 }
 
-/* ---------------------------------------------------------------- 
+/* ----------------------------------------------------------------
  * Update and spike handling functions
  * ---------------------------------------------------------------- */
 
-void mynest::pif_psc_alpha::update(Time const& slice_origin, 
-                                   const nest::long_t from_step, 
+void mynest::pif_psc_alpha::update(Time const& slice_origin,
+                                   const nest::long_t from_step,
                                    const nest::long_t to_step)
 {
   for ( long lag = from_step ; lag < to_step ; ++lag )
   {
     // order is important in this loop, since we have to use the old values
     // (those upon entry to the loop) on right hand sides everywhere
-    
+
     // update membrane potential
     if ( S_.refr_count == 0 )  // neuron absolute not refractory
       S_.V_m +=   V_.P30 * ( S_.I_ext + P_.I_e )
                   + V_.P31 * S_.dI_syn
                   + V_.P32 * S_.I_syn;
-    else 
+    else
      --S_.refr_count;  // count down refractory time
 
     // update synaptic currents
@@ -227,22 +227,22 @@ void mynest::pif_psc_alpha::update(Time const& slice_origin,
       // reset neuron
       S_.refr_count = V_.t_ref_steps;
       S_.V_m        = P_.V_reset;
-      
+
       // send spike
       SpikeEvent se;
       network()->send(*this, se, lag);
     }
 
-    // add synaptic input currents for this step 
+    // add synaptic input currents for this step
     S_.dI_syn += V_.pscInitialValue * B_.spikes.get_value(lag);
 
     // set new input current
     S_.I_ext = B_.currents.get_value(lag);
-    
+
     // log membrane potential
     B_.logger_.record_data(slice_origin.get_steps()+lag);
-  }  
-}                           
+  }
+}
 
 void mynest::pif_psc_alpha::handle(SpikeEvent & e)
 {
@@ -256,11 +256,11 @@ void mynest::pif_psc_alpha::handle(CurrentEvent& e)
 {
   assert(e.get_delay() > 0);
 
-  B_.currents.add_value(e.get_rel_delivery_steps(network()->get_slice_origin()), 
+  B_.currents.add_value(e.get_rel_delivery_steps(network()->get_slice_origin()),
 		                    e.get_weight() * e.get_current());
 }
 
-// Do not move this function as inline to h-file. It depends on 
+// Do not move this function as inline to h-file. It depends on
 // universal_data_logger_impl.h being included here.
 void mynest::pif_psc_alpha::handle(DataLoggingRequest& e)
 {

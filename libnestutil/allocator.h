@@ -123,7 +123,7 @@ namespace sli {
     void reserve(size_t n);
 
     size_t available(void) const
-      { return capacity;}
+      { return total-instantiations;}
 
     inline void *alloc(void);     //!< allocate one element
     inline void free(void* p);    //!< put element back into the pool
@@ -138,21 +138,17 @@ namespace sli {
   inline
   void * pool::alloc(void)
   {
-    link *p=0;
 
     if(head==0)
     {
-      assert(initialized_ == true);
       grow(block_size);
       block_size *= growth_factor;
-      // assert(head != NULL);
     }
 
-    p=head;
+    link *p=head;
 
     head = head->next;
     ++instantiations;
-    --capacity;
     
     return p;
   }
@@ -164,7 +160,6 @@ namespace sli {
     p->next= head;
     head = p;
     --instantiations;
-    ++capacity;
   }
 
   inline

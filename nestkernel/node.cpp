@@ -105,7 +105,7 @@ namespace nest {
 
   bool Node::is_local() const
   {
-    return net_->is_local_vp(get_vp());
+    return !is_proxy();
   }
 
   DictionaryDatum Node::get_status_dict_()
@@ -118,19 +118,34 @@ namespace nest {
     DictionaryDatum dict = get_status_dict_();
 
     assert(dict.valid());
-    if(parent_ != NULL)
-      {
-	(*dict)[names::address] = Token(net_->get_adr(this));
-	(*dict)[names::global_id] = get_gid();
-	(*dict)[names::local_id] = get_lid()+1;
-	(*dict)[names::parent] = (parent_ != 0) ?parent_->get_gid():0;
-      }
-    (*dict)[names::model] = LiteralDatum(get_name());
-    (*dict)[names::state] = get_status_flag();
-    (*dict)[names::thread] = get_thread();
-    (*dict)[names::vp] = get_vp();
+
+    // add information available for all nodes
     (*dict)[names::local] = is_local();
-    (*dict)[names::frozen] = is_frozen();
+    (*dict)[names::model] = LiteralDatum(get_name());
+
+    // add information available only for local nodes
+    if ( is_local() )
+    {
+      (*dict)[names::global_id] = get_gid();
+      (*dict)[names::state] = get_status_flag();
+      (*dict)[names::frozen] = is_frozen();
+      (*dict)[names::thread] = get_thread();
+      (*dict)[names::vp] = get_vp();
+      if ( parent_ )
+      {
+        (*dict)[names::parent] = parent_->get_gid();
+
+        // LIDs are only sensible for nodes with parents.
+        // Add 1 as we count lids internally from 0, but from
+        // 1 in the user interface.
+        (*dict)[names::local_id] = get_lid() + 1;
+      }
+    }
+
+    // This is overwritten with a corresponding value in the
+    // base classes for stimulating and recording devices, and
+    // in other special node classes
+    (*dict)[names::type] = LiteralDatum(names::neuron);
 
     // now call the child class' hook
     get_status(dict);

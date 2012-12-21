@@ -84,25 +84,7 @@ M_ERROR setverbosity
 
 <<
   /E_L         0.0      % resting potential in mV 
-  /V_reset     0.0
-  /V_th     1000.0      % spike threshold in mV
-  /tau_m      10.0      % membrane time constant in ms
-  /tau_syn     0.3      % PSC rise time in ms
-  /C_m       250.0      % membrane capacity in pF
->> /params Set
-
-/rate 16.0 def               % in spikes/ms 
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% Parameters of neuron model.
-%
-
-
-<<
-  /E_L         0.0      % resting potential in mV 
+  /V_m         0.0      % initial membrane potential in mV  
   /V_reset     0.0
   /V_th     1000.0      % spike threshold in mV
   /tau_m      10.0      % membrane time constant in ms

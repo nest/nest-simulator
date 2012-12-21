@@ -92,13 +92,10 @@ void AggregateDatum<TokenArray,&SLIInterpreter::Proceduretype>::list(std::ostrea
 {
   int lc=0;
 
-  if(line==lc)
-    out << "-->" << prefix << '{' << std::endl;
-  else
-    out << "   " << prefix << '{' << std::endl;
     
   prefix="   "+prefix;
-  
+
+  out << prefix << '{' << std::endl;  
   Token *i = this->begin();
 
   while(i!= this->end())
@@ -167,9 +164,20 @@ template<>
 void lockPTRDatum<std::vector<long> ,&SLIInterpreter::IntVectortype>::pprint(std::ostream &out) const
 {
   std::vector<long>* v = this->get();
-  out << "[# ";
-  std::copy(v->begin(), v->end(), std::ostream_iterator<long>(out, " "));
-  out << "#]";
+  out << "<# ";
+  if(v->size()<30)
+  {
+      for( size_t i=0; i< v->size(); ++i)
+          out << (*v)[i] << " ";
+  }
+  else
+  {
+      for( size_t i=0; i< 30; ++i )
+          out << (*v)[i] << " ";
+      out << "... ";
+  }
+      
+  out << "#>";
   this->unlock();
 }
 
@@ -177,8 +185,21 @@ template<>
 void lockPTRDatum<std::vector<double> ,&SLIInterpreter::DoubleVectortype>::pprint(std::ostream &out) const
 {
   std::vector<double>* v = this->get();
-  out << "[. ";
-  std::copy(v->begin(), v->end(), std::ostream_iterator<double>(out, " "));
-  out << ".]";
+  out << "<. ";
+
+  out.setf(std::ios::scientific);
+  if(v->size()<30)
+  {
+      for( size_t i=0; i< v->size(); ++i)
+          out << (*v)[i] << " ";
+  }
+  else
+  {
+      for( size_t i=0; i< 30; ++i )
+          out << (*v)[i] << " ";
+      out << "... ";
+  }
+  out << ".>";
+  out.unsetf(std::ios::scientific);
   this->unlock();
 }

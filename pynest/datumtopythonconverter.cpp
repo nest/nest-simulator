@@ -22,13 +22,11 @@
  */
 
 #include "datumtopythonconverter.h"
+#include "pydatum.h"
 
 void DatumToPythonConverter::convert_me(Datum &s)
 { 
-  std::string type_name = s.gettypename().toString();
-  std::string msg= "SLI object of type " + type_name + " cannot be converted to Python object.";
-  PyErr_Warn(PyExc_Warning, const_cast<char *>(msg.c_str()));
-  py_object_ = PyString_FromString(type_name.c_str());
+  py_object_ = PyDatum_FromDatum(s);
 }
 
 DatumToPythonConverter::DatumToPythonConverter()
@@ -71,7 +69,7 @@ void DatumToPythonConverter::convert_me(ArrayDatum &ad)
   py_object_ = PyList_New(ad.size());
 
   DatumToPythonConverter dpc;
-
+  
   int i = 0;
   for(Token *idx = ad.begin(); idx != ad.end(); ++idx) {
     // recurse to convert this element in the array
@@ -109,11 +107,12 @@ void DatumToPythonConverter::convert_me(DoubleVectorDatum &dvd)
   PyArrayObject *array;
 
 // PyArray_SimpleNew is a drop-in replacement for PyArray_FromDims
-// (except it takes ``npy_intp*`` dims instead of ``int*`` dims
-// which matters on 64-bit systems) and it does not initialize 
-// the memory to zero.
-#if (NPY_VERSION >= 0x01000009) && SIZEOF_VOID_P == SIZEOF_INT
-  array = (PyArrayObject*)(PyArray_SimpleNew(1, &dims, PyArray_DOUBLE));
+#if (NPY_VERSION >= 0x01000009)
+// PyArray_SimpleNew takes ``npy_intp*`` dims instead of ``int*`` dims
+// which matters on 64-bit systems and it does not initialize the
+// memory to zero.
+  npy_intp npydims = dims;
+  array = (PyArrayObject*)(PyArray_SimpleNew(1, &npydims, PyArray_DOUBLE));
 #else
   array = (PyArrayObject*)(PyArray_FromDims(1, &dims, PyArray_DOUBLE));  
 #endif 
@@ -135,16 +134,17 @@ void DatumToPythonConverter::convert_me(IntVectorDatum &ivd)
   PyArrayObject *array;
 
 // PyArray_SimpleNew is a drop-in replacement for PyArray_FromDims
-// (except it takes ``npy_intp*`` dims instead of ``int*`` dims
-// which matters on 64-bit systems) and it does not initialize 
-// the memory to zero.
-#if (NPY_VERSION >= 0x01000009) && SIZEOF_VOID_P == SIZEOF_INT
-  array = (PyArrayObject*)PyArray_SimpleNew(1, &dims, PyArray_INT);
+#if (NPY_VERSION >= 0x01000009)
+// PyArray_SimpleNew takes ``npy_intp*`` dims instead of ``long*`` dims
+// which matters on 64-bit systems and it does not initialize the
+// memory to zero.
+  npy_intp npydims = dims;
+  array = (PyArrayObject*)PyArray_SimpleNew(1, &npydims, PyArray_LONG);
 #else
-  array = (PyArrayObject*)PyArray_FromDims(1, &dims, PyArray_INT);
+  array = (PyArrayObject*)PyArray_FromDims(1, &dims, PyArray_LONG);
 #endif
 
-  std::copy( ivd->begin(), ivd->end(), reinterpret_cast<int*>(array->data) );
+  std::copy( ivd->begin(), ivd->end(), reinterpret_cast<long*>(array->data) );
   py_object_ = (PyObject*) array;
 #else
   py_object_ = PyList_New(dims);
@@ -156,8 +156,39 @@ void DatumToPythonConverter::convert_me(IntVectorDatum &ivd)
 
 void DatumToPythonConverter::convert_me(ConnectionDatum &cd)
 {
-  DictionaryDatum dict = cd.get_dict();
-  convert_me(dict);
+    const int dims=5;
+#ifdef HAVE_NUMPY
+  PyArrayObject *array;
+
+// PyArray_SimpleNew is a drop-in replacement for PyArray_FromDims
+#if (NPY_VERSION >= 0x01000009)
+// PyArray_SimpleNew takes ``npy_intp*`` dims instead of ``long*`` dims
+// which matters on 64-bit systems and it does not initialize the
+// memory to zero.
+npy_intp npydims = dims;
+
+  array = (PyArrayObject*)PyArray_SimpleNew(1, &npydims, PyArray_LONG);
+#else
+  array = (PyArrayObject*)PyArray_FromDims(1, &dims, PyArray_LONG);
+#endif
+  long *val=reinterpret_cast<long*>(array->data);
+  *val++= cd.get_source_gid();
+  *val++= cd.get_target_gid();
+  *val++= cd.get_target_thread();
+  *val++= cd.get_synapse_model_id();
+  *val++= cd.get_port();
+
+  py_object_ = (PyObject*) array;
+#else
+  py_object_ = PyList_New(dims);
+  int i=0;
+  PyList_SetItem(py_object_, i++, PyInt_FromLong(cd.get_source_gid()));
+  PyList_SetItem(py_object_, i++, PyInt_FromLong(cd.get_target_gid()));
+  PyList_SetItem(py_object_, i++, PyInt_FromLong(cd.get_target_thread()));
+  PyList_SetItem(py_object_, i++, PyInt_FromLong(cd.get_synapse_model_id()));
+  PyList_SetItem(py_object_, i++, PyInt_FromLong(cd.get_port()));
+#endif //HAVE_NUMPY
+
 }
 
 PyObject *DatumToPythonConverter::convert(Datum &d)

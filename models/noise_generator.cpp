@@ -118,13 +118,12 @@ void nest::noise_generator::init_buffers_()
   
   B_.next_step_ = 0;
   B_.amps_.clear();
-  B_.amps_.resize(P_.num_targets_, 0);
+  B_.amps_.resize(P_.num_targets_, 0.0);
 }
 
 void nest::noise_generator::calibrate()
 {
   device_.calibrate();
-  
   if ( P_.num_targets_ != B_.amps_.size() )
   {
     network()->message(SLIInterpreter::M_INFO, "noise_generator::calibrate()",
@@ -140,6 +139,16 @@ void nest::noise_generator::calibrate()
  * Update function and event hook
  * ---------------------------------------------------------------- */
 
+
+nest::port nest::noise_generator::check_connection(Connection& c, port receptor_type)
+{
+    DSCurrentEvent e;
+    e.set_sender(*this);
+    c.check_event(e);
+    const port receptor = c.get_target()->connect_sender(e, receptor_type);
+    ++P_.num_targets_;
+    return receptor;
+}
 
 //
 // Time Evolution Operator

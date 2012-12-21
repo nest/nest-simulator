@@ -43,11 +43,12 @@ else
 install-slidoc-recursive:
 	rm -rf $(DESTDIR)@PKGDOCDIR@/help/*
 	mkdir -p $(DESTDIR)@PKGDOCDIR@/help
+	
 	SLIDOCDIR=$(DESTDIR)@PKGDOCDIR@ SLIDATADIR=$(DESTDIR)@PKGDATADIR@ NESTRCFILENAME=/dev/null \
 	  $(DESTDIR)$(exec_prefix)/bin/sli --userargs="@HELPDIRS@" $(top_srcdir)/lib/sli/install-help.sli 2>&1 > @INSTALL_HELP_LOG@
-	for dir in $(SUBDIRS); do \
-	  $(MAKE) SLIDOCDIR=$(DESTDIR)@PKGDOCDIR@ SLIDATADIR=$(DESTDIR)@PKGDATADIR@ NESTRCFILENAME=/dev/null \
-	  -k -C @PKGBUILDDIR@/$$dir install-slidoc 2> /dev/null || true ; done
+	
+	$(MAKE) SLIDOCDIR=$(DESTDIR)@PKGDOCDIR@ SLIDATADIR=$(DESTDIR)@PKGDATADIR@ NESTRCFILENAME=/dev/null \
+	  -k -C @PKGBUILDDIR@/testsuite install-slidoc 2> /dev/null
 
 endif
 
@@ -80,10 +81,12 @@ install-data-hook: install-exec install-slidoc-recursive
 	@INSTALL_PROGRAM@ @PKGSRCDIR@/extras/nest_indirect $(DESTDIR)$(exec_prefix)/bin/
 	@INSTALL_PROGRAM@ -m 644 @PKGSRCDIR@/README $(DESTDIR)@PKGDOCDIR@/
 	@INSTALL_PROGRAM@ -m 644 @PKGSRCDIR@/NEWS $(DESTDIR)@PKGDOCDIR@/
-	@INSTALL_PROGRAM@ -m 644 @PKGBUILDDIR@/extras/petafx/configure_fx.py $(DESTDIR)@PKGDATADIR@/extras
 
 nobase_pkgdata_DATA=\
 	extras/emacs/sli.el.in \
 	extras/emacs/postscript-sli.el \
-	extras/emacs/psvn.el \
-	extras/petafx/configure_fx.py.in
+	extras/emacs/psvn.el
+
+uninstall:
+	@echo "make: uninstall target is not supported, use isolated prefix or a package manager instead!"
+	@exit 1

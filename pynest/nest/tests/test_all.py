@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 import unittest
 
 from nest.tests import test_errors
@@ -30,6 +31,7 @@ from nest.tests import test_connectoptions
 from nest.tests import test_events
 from nest.tests import test_networks
 from nest.tests import test_threads
+from nest.tests import test_csa
 
 def suite():
 
@@ -47,6 +49,7 @@ def suite():
     suite.addTest(test_events.suite())
     suite.addTest(test_networks.suite())
     suite.addTest(test_threads.suite())    
+    suite.addTest(test_csa.suite())    
     
     return suite
 

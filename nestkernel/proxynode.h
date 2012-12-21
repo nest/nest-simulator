@@ -50,6 +50,15 @@ Author: June 2005, Jochen Martin Eppler
     proxynode() : Node() {set(frozen);}
     
     /**
+     * Construct proxy node for internal use from
+     * @param GID of represented node
+     * @param GID of parent of represented node
+     * @param model id of represented node
+     * @param vp of represented node
+     */
+    proxynode(index, index, index, index);
+
+    /**
      * Import sets of overloaded virtual functions.
      * We need to explicitly include sets of overloaded
      * virtual functions into the current scope.
@@ -63,7 +72,6 @@ Author: June 2005, Jochen Martin Eppler
     port check_connection(Connection&, port);
     void handle(SpikeEvent &) {}
     port connect_sender(SpikeEvent &) {return 0;}
-    std::string get_name() const {return "proxynode";}
 
     void get_status(DictionaryDatum &) const {}
     

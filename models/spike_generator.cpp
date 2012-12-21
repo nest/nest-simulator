@@ -98,6 +98,7 @@ void nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_(dou
     // First, convert the spike time to tics, may not be on grid
     t_spike = Time::ms(t);
     if ( not t_spike.is_grid_time() )
+    {
       if ( allow_offgrid_spikes_ )
       {
 	// In this case, we need to round to the end of the step
@@ -111,6 +112,8 @@ void nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_(dou
 	    << " is not representable in current resolution.";
 	throw BadProperty(msg.str());
       }
+    }
+
     assert(t_spike.is_grid_time());
 
     if ( origin + t_spike == now && shift_now_spikes_ )

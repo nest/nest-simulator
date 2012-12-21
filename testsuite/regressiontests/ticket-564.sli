@@ -1,0 +1,67 @@
+/*
+ *  ticket-564.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-564 - Regression test for OpenMP-parallel problems on OSX
+
+Synopsis: (ticket-564) run -> NEST exits if test fails
+
+Description: 
+This test uses RandomConvergentConnect to connect a net of 100 neurons
+to itself, with 100 connections per neuron, a total of 10000 connections.
+This is repeated 10 times, and the resulting number of connections checked. 
+ 
+Author: Hans Ekkehard Plesser, 2012-05-27
+*/
+
+% don't run this test if we didn't compile with OpenMP 
+statusdict/threading :: (openmp) eq not {statusdict/exitcodes/success :: quit_i} if
+
+/unittest (9726) require
+/unittest using
+M_ERROR setverbosity
+
+{ 
+  /N    100  def % number of neurons
+  /C    100  def % number of connections per neuron
+  /N_VP 4    def % number of virtual processes
+  /ConnExpected N C mul def
+
+  [ 10 ]
+  {
+    pop    
+    ResetKernel    
+    0 << /total_num_virtual_procs N_VP >> SetStatus
+
+    /net /iaf_neuron [ N ] LayoutNetwork def
+    /nodes net GetGlobalNodes def
+    /local_nodes net GetLocalNodes def
+    nodes local_nodes C RandomConvergentConnect
+
+    0 /num_connections get dup ==
+  } Table
+  dup ==
+  true exch { ConnExpected eq and } Fold
+} assert_or_die
+
+endusing

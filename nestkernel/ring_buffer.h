@@ -23,6 +23,7 @@
 #ifndef RING_BUFFER_H
 #define RING_BUFFER_H
 #include <valarray>
+#include <list>
 #include "nest.h"
 #include "scheduler.h"
 #include "nest_time.h"
@@ -248,5 +249,83 @@ namespace nest
     return idx;
   }
  
+
+
+  class ListRingBuffer {
+  public:
+    
+    ListRingBuffer();
+    
+    /**
+     * Append a value to the ring buffer list.
+     * @param  offs     Arrival time relative to beginning of slice.
+     * @param  double_t Value to append.
+     */
+    void append_value(const long_t offs, const double_t);
+
+    std::list<double_t>& get_list(const long_t offs);
+    
+    /**
+     * Initialize the buffer with empty lists. 
+     * Also resizes the buffer if necessary.
+     */
+    void clear();
+
+    /**
+     * Resize the buffer according to max_thread and max_delay.
+     * New elements are filled with empty lists.
+     * @note resize() has no effect if the buffer has the correct size.
+     */
+    void resize();
+
+    /**
+     * Returns buffer size, for memory measurement.
+     */
+    size_t size() const { return buffer_.size(); }
+
+  private:        
+
+    //! Buffered data
+    std::vector<std::list<double_t> > buffer_;
+
+    /**
+     * Obtain buffer index.
+     * @param delay delivery delay for event
+     * @returns index to buffer element into which event should be 
+     * recorded.
+     */
+    size_t get_index_(const delay d) const;
+
+  };
+  
+  inline
+  void ListRingBuffer::append_value(const long_t offs, const double_t v)
+  {
+    buffer_[get_index_(offs)].push_back(v);
+  }
+
+  inline
+  std::list<double_t>& ListRingBuffer::get_list(const long_t offs)
+  {
+    assert(0 <= offs && (size_t)offs < buffer_.size());
+    assert((delay)offs < Scheduler::get_min_delay());
+
+    // offs == 0 is beginning of slice, but we have to
+    // take modulo into account when indexing
+    long_t   idx = get_index_(offs);
+    return buffer_[idx]; 
+  }
+
+  inline 
+  size_t ListRingBuffer::get_index_(const delay d) const
+  {
+    const long_t idx = Scheduler::get_modulo(d);
+    assert(0 <= idx);
+    assert((size_t)idx < buffer_.size());
+    return idx;
+  }
+
 }
+
+
 #endif

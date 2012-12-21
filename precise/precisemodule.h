@@ -32,9 +32,9 @@
     Author: Marc-Oliver Gewaltig (marc-oliver.gewaltig@honda-ri.de)
             Hans Ekkehard Plesser (hans.ekkehard.plesser@umb.no)
 
-    $Date: 2012-10-11 15:50:10 +0200 (Thu, 11 Oct 2012) $
-    Last change: $Author: enger $
-    $Revision: 9902 $
+    $Date: 2012-11-15 17:09:23 +0100 (Thu, 15 Nov 2012) $
+    Last change: $Author: eppler $
+    $Revision: 9952 $
 */
 
 #include "slimodule.h"

@@ -40,7 +40,7 @@ SeeAlso:
 */
 
 
-/unittest (8831) require
+/unittest (9715) require
 /unittest using
 
 
@@ -62,10 +62,10 @@ SeeAlso:
  % initialize membrane potential randomly from global RNG.
  % The SetStatus is ignored for non-local neurons but still the random number are drawn.
  % Therefore, each neuron receives a well defined random number.
- 0 GetLeaves { << /V_m rng drand >> SetStatus } forall
+ 0 GetGlobalLeaves { << /V_m rng drand >> SetStatus } forall
 
  % get membrane potential of the local nodes
- 0 GetLeaves  { /local get } Select  
+ 0 GetGlobalLeaves  { /local get } Select  
      { [[/global_id /V_m]] get } Map  Transpose
 
 
@@ -79,11 +79,11 @@ SeeAlso:
  % initialize membrane potential using the RNG assigned to the virtual process the 
  % neuron lives on. Also with this method each neuron receives a well defined random
  % number.
- 0 GetLeaves 
+ 0 GetGlobalLeaves 
     { dup /local get { dup GetVpRNG /rng Set << /V_m rng drand >> SetStatus } {pop} ifelse } forall
 
  % get membrane potential of the local nodes
- 0 GetLeaves  { /local get } Select  
+ 0 GetGlobalLeaves  { /local get } Select  
      { [[/global_id /V_m]] get } Map Transpose
 
 
@@ -91,7 +91,7 @@ SeeAlso:
  join [3] Drop Transpose   % format: [ [gid Vm1 Vm2], ... ]
 
 }
-distributed_invariant_collect_assert_or_die
+distributed_process_invariant_collect_assert_or_die
 
 
 

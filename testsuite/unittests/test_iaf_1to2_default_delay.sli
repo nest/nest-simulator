@@ -63,8 +63,7 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_al
 /unittest (8331) require
 /unittest using
 
-M_ERROR setverbosity
-
+M_INFO setverbosity
 
 /delay 1.0 def % connection delay to be used
 /simtime 8.0 def % simulation time
@@ -76,7 +75,7 @@ M_ERROR setverbosity
  /d Set /h Set
 
   ResetKernel
-      [0] << 
+      0 << 
       /local_num_threads 1   
       /resolution h
       >> SetStatus
@@ -90,7 +89,7 @@ M_ERROR setverbosity
       vm << /withtime true /time_in_steps true /interval h >> SetStatus
 
       /spike_detector Create /sd Set
-      sd << /withtime true /withpath true /time_in_steps true >> SetStatus
+      sd << /withtime true /time_in_steps true >> SetStatus
 
 
 % testing that  "/delay 1.0" is not needed here

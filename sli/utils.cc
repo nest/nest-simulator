@@ -23,7 +23,7 @@
 #include "utils.h"
 #include "integerdatum.h"
 
-bool array2vector(std::vector<long> &v, const TokenArray &a)
+bool array2vector(std::vector<long> &v, const TokenArray a)
 {
   bool status=true;
 

@@ -86,7 +86,7 @@ def
   << >> begin
     /mm /multimeter << /to_accumulator true >> Create def
     /mms mm GetStatus def
-    true [ /to_file /to_screen /to_memory /withgid /withpath /withweight ]
+    true [ /to_file /to_screen /to_memory /withgid /withweight ]
   { mms exch get not and } Fold    
   end
 } assert_or_die
@@ -103,7 +103,7 @@ def
         nnet ChangeSubnet
 	/iaf_cond_alpha N Create ;
         0 ChangeSubnet
-        /nrns nnet GetLeaves def
+        /nrns nnet GetGlobalLeaves def
 
         /multimeter << /record_from recvars /withgid false /withtime true 
                        /interval 0.7 /start 4.8 /stop 233.1 /time_in_steps true >> SetDefaults
@@ -172,7 +172,7 @@ def
     nnet ChangeSubnet
     /iaf_cond_alpha N << /I_e 40. >> Create ;
     0 ChangeSubnet
-    /nrns nnet GetLeaves def
+    /nrns nnet GetGlobalLeaves def
     nrns { dup /global_id get 1 sub 30. N div mul -90. add 
                /foo << >> def foo exch /V_m exch put foo SetStatus } forall
 

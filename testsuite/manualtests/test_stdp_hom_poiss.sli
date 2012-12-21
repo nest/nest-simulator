@@ -149,7 +149,7 @@ neuron2 GetStatus /local get
 
  neuron2 GetStatus /local get
  {
-  << /source neuron1 /synapse_type /stdp_synapse_hom >> FindConnections 0 get
+  << /source neuron1 /synapse_model /stdp_synapse_hom >> FindConnections 0 get
   GetStatus /weight get /w Set
   
   w ==

@@ -118,7 +118,7 @@ namespace nest{
      Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
      Author:  September 1999, Diesmann, Gewaltig
-     SeeAlso: iaf_cond_neuron, testsuite::test_iaf, lifb_cond_neuron, iaf_rev_neuron
+     SeeAlso: iaf_psc_alpha, iaf_psc_exp, iaf_neuron, iaf_psc_delta_canon
   */
 
   /**
@@ -209,7 +209,11 @@ namespace nest{
       Parameters_();  //!< Sets default parameter values
 
       void get(DictionaryDatum&) const;  //!< Store current values in dictionary
-      void set(const DictionaryDatum&);  //!< Set values from dicitonary
+
+      /** Set values from dictionary.
+       * @returns Change in reversal potential E_L, to be passed to State_::set()
+       */
+       double set(const DictionaryDatum&);
     };
     
     // ---------------------------------------------------------------- 
@@ -231,7 +235,13 @@ namespace nest{
       State_();  //!< Default initialization
       
       void get(DictionaryDatum&, const Parameters_&) const;
-      void set(const DictionaryDatum&, const Parameters_&);
+
+      /** Set values from dictionary.
+       * @param dictionary to take data from
+       * @param current parameters
+       * @param Change in reversal potential E_L specified by this dict
+       */
+      void set(const DictionaryDatum&, const Parameters_&, double);
     };    
 
     // ---------------------------------------------------------------- 
@@ -336,9 +346,9 @@ inline
 void iaf_psc_delta::set_status(const DictionaryDatum &d)
 {
   Parameters_ ptmp = P_;  // temporary copy in case of errors
-  ptmp.set(d);                       // throws if BadProperty
+  const double delta_EL = ptmp.set(d); // throws if BadProperty
   State_      stmp = S_;  // temporary copy in case of errors
-  stmp.set(d, ptmp);                 // throws if BadProperty
+  stmp.set(d, ptmp, delta_EL);         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not 
   // write them back to (P_, S_) before we are also sure that 

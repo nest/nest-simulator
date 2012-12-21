@@ -84,7 +84,7 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_dc_aligned_delay, testsuite::t
 ResetKernel
 
 
-[0] << 
+0 << 
        /local_num_threads 1   
        /resolution h
      >> SetStatus
@@ -109,7 +109,7 @@ vm << /withtime true /to_memory true /time_in_steps true /interval h >> SetStatu
 
 
 /spike_detector Create /sd Set
-sd << /withtime true /to_memory true /withpath true /time_in_steps true >> SetStatus
+sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
 
 
 sg neuron 100.0  delay Connect

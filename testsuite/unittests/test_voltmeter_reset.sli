@@ -33,7 +33,7 @@ Description:
 	derived recorder class, not only in RecordingDevice, is reset.
 
 Author: August 2008, Plesser
-SeeAlso: voltmeter, test_spike_det_reset
+SeeAlso: multimeter, testsuite::test_spike_det_reset
 */
 
 /unittest (7471) require

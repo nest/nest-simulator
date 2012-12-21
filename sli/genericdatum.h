@@ -43,10 +43,13 @@ class GenericDatum: public TypedDatum<slt>
 protected:
     D d;
 public:
-    GenericDatum() {}
+    GenericDatum() 
+      {
+	TypedDatum<slt>::unset_executable();
+      }
     virtual ~GenericDatum() {}
     
-    GenericDatum(const D& d_s): d(d_s) {}
+ GenericDatum(const D& d_s): d(d_s) {TypedDatum<slt>::unset_executable();}
     GenericDatum(const GenericDatum<D,slt>& gd): TypedDatum<slt>(gd), d(gd.d) {}
     
     const D& operator=(const D &d_s)
@@ -55,10 +58,20 @@ public:
         return d;
     }
 
+    const D& get(void) const
+    {
+        return d;
+    }
+
     D& get(void)
     {
         return d;
     }
+
+    D& get_lval()
+      {
+	return d;
+      }
 
     void print(std::ostream& o) const
     {
@@ -78,10 +91,6 @@ public:
 
     bool equals(const Datum *dat) const
     {
-        // The following construct works around the problem, that
-        // a direct dynamic_cast<const GenericDatum<D,slt> * > does not seem
-        // to work.
-    
         const GenericDatum<D,slt>
             *ddc=dynamic_cast<GenericDatum<D,slt> * >(const_cast< Datum *>(dat));
 

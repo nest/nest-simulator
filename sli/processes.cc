@@ -76,23 +76,8 @@
 #define _POSIX_SOURCE
 #endif
 
-// The following is a brutal hack to ensure that pynestmodule.so
-// can be loaded into python under OSX. As a consequence of this
-// hack, it is not possible to manipulate the environment, see
-// ticket #170.
-#ifdef __APPLE__
-#  include <crt_externs.h>
-#  define environ (*_NSGetEnviron())
-#else
-  // The global variable provided by the OS pointing to the environment
-  // variable list:
-  extern char **environ;
-#endif
-
 // definition of static variables and functions declared in processes.h:
 pid_t Processes::children_group = 0;
-std::vector<std::string> *Processes::envstrings = NULL;
-char **Processes::original_environ = environ; // store original environment for cleanup
 
 // The following concernes the new module: -----------------------
 
@@ -153,7 +138,7 @@ const std::string Processes::name(void) const
 
 const std::string Processes::commandstring(void) const
 {
-  return std::string("/processes /C++ ($Revision: 9902 $) provide-component  /processes /SLI (1.7) require-component");
+  return std::string("/processes /C++ ($Revision: 10020 $) provide-component  /processes /SLI (1.7) require-component");
 }
 
 void Processes::init(SLIInterpreter *i)
@@ -250,77 +235,13 @@ void Processes::init(SLIInterpreter *i)
   i->createcommand("getPGRP",& getpgrpfunction);
   i->createcommand("mkfifo",& mkfifofunction);
   i->createcommand("setNONBLOCK",& setnonblockfunction);
-  i->createcommand("environment",& environmentfunction);
-  i->createcommand("setenvironment_di",& setenvironment_difunction);
   i->createcommand("ctermid",& ctermidfunction);
   i->createcommand("isatty_os",& isatty_osfunction);
   i->createcommand("isatty_is",& isatty_isfunction);
-
-  // copy the process environment into our private memory space:
-  // Message output stream is now decided by the message level.
-//   i->message(std::cerr, SLIInterpreter::M_DEBUG, name().c_str(), 
-//              "Copying process environment...");
-  i->message(SLIInterpreter::M_DEBUG, name().c_str(), 
-             "Copying process environment...");
-
-  int varnumber = 0;
-
-  // determine number of environment variables:
-  for (char * const * envptr = environ; *envptr; ++envptr)
-    {
-      ++varnumber;
-    }
-
-  // get new string vector:
-  envstrings = new std::vector<std::string> (varnumber);
-  // fill it with copies of the environment variables:
-  char * const * envptr = environ;
-  for (int j=0; j!=varnumber; ++j)
-    {
-      (*envstrings)[j]=std::string(*envptr);
-      ++envptr;
-    }
-
-  //get new array of charpointers, don't forget one final NULL
-  char const **myenviron = new char const* [varnumber+1];
-  // let it point to the C-strings:
-  for (int j=0; j!=varnumber; ++j)
-    {
-      myenviron[j] = (*envstrings)[j].c_str();
-    }
-  myenviron[varnumber]=NULL; // The final NULL
-
-  // now set extern environ pointer to "our" environment:
-  environ = const_cast<char **>(myenviron);
-  // we will treat this strings as constant, but environ is passed
-  // non-const from extern.
-
-#ifdef HAVE_SSTREAM
-  std::ostringstream mess; 
-  mess << "...found " << varnumber <<" environment variables." 
-       << std::ends; // std::ends is the c-string-terminator
-  i->message(SLIInterpreter::M_DEBUG, name().c_str(), 
-	     mess.str().c_str());
-  // no freeze in stringstreams
-  // mess.freeze(false);
-#else
-  std::ostrstream mess; 
-  mess << "...found " << varnumber <<" environment variables." 
-       << std::ends; // std::ends is the c-string-terminator
-  i->message(SLIInterpreter::M_DEBUG, name().c_str(), 
-	     mess.str());
-  mess.freeze(false);
-#endif
 }
 
 Processes::~Processes()
-{
-  // clean up dynamic memory for static variables
-  delete envstrings;
-  delete[] environ; 
-  // restore original environment:
-  environ = original_environ;
-}
+{}
 
 
 // ---------------------------------------------------------------
@@ -860,106 +781,6 @@ void Processes::SetNonblockFunction::execute(SLIInterpreter *i) const
     }
 }
 
-void Processes::EnvironmentFunction::execute(SLIInterpreter *i) const
-{
-  // This is what happens, when the SLI-command is called:
-  // environment takes no arguments
-  
-  // Create Dictionary:
-  Dictionary * envdict = new Dictionary; //get a new dictionary from the heap
-
-  // Go through **environ and put values into dictionary:
-  //  char * const * envptr = environ;
-  for (char * const * envptr = environ; *envptr; ++envptr)
-    {
-      std::string const envstr(*envptr);
-      // It is safe to assume that all entries contain the character '='
-      size_t      pos = envstr.find('=');
-      Name    varname = envstr.substr(0, pos);
-      std::string varvalue = envstr.substr(pos+1);
-      envdict->insert(varname, new StringDatum(varvalue));
-    }
-
-  // Wrap it into a datum and into a token and leave on stack:
-  Token result_token = new DictionaryDatum(envdict); // Make Token, from Datum
-  i->OStack.push_move(result_token);
-  
-  i->EStack.pop();
-}
-
-
-void Processes::Setenvironment_diFunction::execute(SLIInterpreter *i) const
-{
-#ifdef __APPLE__
-  // environ hack breaks our ability for easy changes to environment
-  i->raiseerror("SetEnvironment_not_implemented_on_OSX");
-  return;
-#endif  
-
-  // This is what happens, when the SLI-command is called:
-  
-  assert( i->OStack.load() >= 1 ); // we expect 1 argument
-  
-  // Read argumens from operand Stack, but leave token on stack:
-  DictionaryDatum * env_d = dynamic_cast<DictionaryDatum *> ( i->OStack.top().datum() );
-  assert( env_d != NULL);
-
-  // determine number of dictionary entries:
-  int varnumber = (*env_d)->size();
-  
-  // get new string vector:
-  std::vector<std::string> *newenvstrings = new std::vector<std::string> (varnumber);
-  // fill it with copies of the environment variables:
-  int j=0;
-  for(TokenMap::const_iterator where=(*env_d)->begin(); where!=(*env_d)->end(); ++where)
-    {
-      //(*where).first is of type Name
-      //(*where).second is of type Token
-      try
-        {
-          std::string const envname = (*where).first.toString();
-          std::string const envval  = getValue<std::string>((*where).second);
-          //getValue<> could throw TypeMismatch
-          (*newenvstrings)[j]=envname+"="+envval;
-          ++j;
-        }
-      catch (TypeMismatch)
-        {// one entry was not a string.
-          // free dynamic memory:
-          delete newenvstrings;
-	  
-	  throw EntryTypeMismatch(Token(std::string()).datum()->gettypename().toString(),
-				  (*where).second.datum()->gettypename().toString());
-        }                                
-    }
-
-  // construction of new environment was successful.
-  // free the old environment string vector:
-  delete Processes::envstrings;
-  // let it point to new:
-  Processes::envstrings = newenvstrings;
-  // free the old pointers to their C-representations:
-  delete [] environ;
-
-  //get new array of charpointers, don't forget one final NULL
-  char const **myenviron = new char const* [varnumber+1];
-  // let it point to the C-strings:
-  for (int j=0; j!=varnumber; ++j)
-    {
-      myenviron[j] = (*Processes::envstrings)[j].c_str();
-    }
-  myenviron[varnumber]=NULL; // The final NULL
-
-  // now set extern environ pointer to "our" environment:
-  environ = const_cast<char **>(myenviron);
-  // we will treat this strings as constant, but environ is passed
-  // non-const from extern.
-
-  // execution sucessfull, clean up:
-  i->EStack.pop(); // pop command from execution stack
-  i->OStack.pop(); // pop argument from operand stack
-}
-
 void Processes::CtermidFunction::execute(SLIInterpreter *i) const
 {
   char term[] = "\0";
@@ -993,7 +814,6 @@ void Processes::Isatty_osFunction::execute(SLIInterpreter *i) const
   i->EStack.pop();
 }
 
-
 void Processes::Isatty_isFunction::execute(SLIInterpreter *i) const
 {
   assert( i->OStack.load() >= 1 );
@@ -1018,7 +838,6 @@ void Processes::Isatty_isFunction::execute(SLIInterpreter *i) const
 
   i->EStack.pop();
 }
-
 
 #ifdef _SYNOD__SET_POSIX_SOURCE
 #undef _SYNOD__SET_POSIX_SOURCE

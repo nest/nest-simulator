@@ -35,6 +35,15 @@
 #include "config.h"
 
 extern int SLIsignalflag;
+
+// Access to environement variables.
+#ifdef __APPLE__
+#  include <crt_externs.h>
+#  define environ (*_NSGetEnviron())
+#else
+  extern char **environ;
+#endif
+
 /*
 1.  Propagate commandline to the sli level.
     Commandline options will be handled by the startup file.
@@ -100,7 +109,7 @@ the SLI Session is terminated
 
 Author: docu by Marc Oliver Gewaltig and Sirko Straube
 
-SeeAlso: environment, setenvironment
+SeeAlso: environment
  */
 
 std::string SLIStartup::getenv(const std::string &v) const
@@ -139,14 +148,20 @@ void SLIStartup::GetenvFunction::execute(SLIInterpreter *i) const
  * Checks if the environment variable envvar contains a directory. If yes, the
  * path is returned, else an empty string is returned.
  */
-std::string SLIStartup::checkenvpath(std::string const &envvar, SLIInterpreter *i, std::string defaultval = "") const
+std::string SLIStartup::checkenvpath(std::string const &envvar, 
+				     SLIInterpreter *i, 
+				     std::string defaultval = "") const
 {
   const std::string envpath = getenv(envvar);
 
   if (envpath != "")
   {
-    if ( opendir(envpath.c_str()) != NULL )
+    DIR *dirptr = opendir(envpath.c_str());
+    if ( dirptr != NULL )
+    {
+      closedir(dirptr);
       return envpath;
+    }
     else
     {
       std::string msg;
@@ -163,10 +178,12 @@ std::string SLIStartup::checkenvpath(std::string const &envvar, SLIInterpreter *
   	  break;
       }
 
-      i->message(SLIInterpreter::M_ERROR, "SLIStartup", String::compose("%1 is not usable:", envvar).c_str());
+      i->message(SLIInterpreter::M_ERROR, "SLIStartup", 
+		 String::compose("%1 is not usable:", envvar).c_str());
       i->message(SLIInterpreter::M_ERROR, "SLIStartup", msg.c_str());
       if (defaultval != "")
-        i->message(SLIInterpreter::M_ERROR, "SLIStartup", String::compose("I'm using the default: %1", defaultval).c_str());
+        i->message(SLIInterpreter::M_ERROR, "SLIStartup", 
+		   String::compose("I'm using the default: %1", defaultval).c_str());
     }
   }
   return std::string();
@@ -206,6 +223,8 @@ SLIStartup::SLIStartup(int argc, char** argv)
   doublesize_name("double"),
   pointersize_name("void *"),
   architecturedict_name("architecture"),
+  platform_name("platform"),
+  threading_name("threading"),
   have_mpi_name("have_mpi"),
   ismpi_name("is_mpi"),
   have_gsl_name("have_gsl"),
@@ -216,11 +235,12 @@ SLIStartup::SLIStartup(int argc, char** argv)
   exitcode_success_name("success"),
   exitcode_scripterror_name("scripterror"),
   exitcode_abort_name("abort"),
+  exitcode_userabort_name("userabort"),
   exitcode_segfault_name("segfault"),
   exitcode_exception_name("exception"),
   exitcode_fatal_name("fatal"),
-  exitcode_unknownerror_name("unknownerror")
-
+  exitcode_unknownerror_name("unknownerror"),
+  environment_name("environment")
 {
   ArrayDatum ad;
 
@@ -353,6 +373,48 @@ void SLIStartup::init(SLIInterpreter *i)
   statusdict->insert(hostvendor_name,Token(new StringDatum(SLI_HOSTVENDOR)));
   statusdict->insert(hostcpu_name,Token(new StringDatum(SLI_HOSTCPU)));
 
+  // expose platform model for code branching without assuming
+  // configure leads to a unique setting
+  std::string platform;
+
+#ifdef IS_BLUEGENE_L
+  platform += "bg/l";
+#endif
+
+#ifdef IS_BLUEGENE_P
+  platform += "bg/p";
+#endif
+
+#ifdef IS_BLUEGENE_Q
+  platform += "bg/q";
+#endif
+
+#ifdef IS_K
+  platform = "k";
+#endif
+
+  if (platform == "")
+    platform = "default";
+
+  statusdict->insert(platform_name, Token(new StringDatum(platform)));
+
+  // expose threading model without assuming configure leads to a
+  // unique setting
+  std::string threading;
+
+#ifdef HAVE_PTHREADS
+  threading += "pthreads";
+#endif
+
+#ifdef _OPENMP
+  threading += "openmp";
+#endif
+
+  if (threading == "")
+      threading = "no";
+
+  statusdict->insert(threading_name, Token(new StringDatum(threading)));
+
 #ifdef HAVE_MPI
   statusdict->insert(have_mpi_name, Token(new BoolDatum(true)));
 #else
@@ -390,6 +452,14 @@ void SLIStartup::init(SLIInterpreter *i)
   architecturedict->insert(pointersize_name,Token(new IntegerDatum( sizeof(void *) )));
   architecturedict->insert(intsize_name,    Token(new IntegerDatum( sizeof(int)    )));
   architecturedict->insert(longsize_name,   Token(new IntegerDatum( sizeof(long)   )));
+  architecturedict->insert("Token",   Token(new IntegerDatum( sizeof(Token)   )));
+  architecturedict->insert("TokenMap",   Token(new IntegerDatum( sizeof(TokenMap)   )));
+  architecturedict->insert("Dictionary",   Token(new IntegerDatum( sizeof(Dictionary)   )));
+  architecturedict->insert("DictionaryDatum",   Token(new IntegerDatum( sizeof(DictionaryDatum)   )));
+  architecturedict->insert("IntegerDatum",   Token(new IntegerDatum( sizeof(IntegerDatum)   )));
+  architecturedict->insert("ArrayDatum",   Token(new IntegerDatum( sizeof(ArrayDatum)   )));
+  architecturedict->insert("TokenArray",   Token(new IntegerDatum( sizeof(TokenArray)   )));
+  architecturedict->insert("TokenArrayObj",   Token(new IntegerDatum( sizeof(TokenArrayObj)   )));
 
   statusdict->insert(architecturedict_name, architecturedict); 
 
@@ -399,12 +469,28 @@ void SLIStartup::init(SLIInterpreter *i)
   exitcodes->insert(exitcode_success_name,Token(new IntegerDatum(EXIT_SUCCESS)));
   exitcodes->insert(exitcode_scripterror_name,Token(new IntegerDatum(126)));
   exitcodes->insert(exitcode_abort_name,Token(new IntegerDatum(SLI_EXITCODE_ABORT)));
+  exitcodes->insert(exitcode_userabort_name,Token(new IntegerDatum(15)));
   exitcodes->insert(exitcode_segfault_name,Token(new IntegerDatum(SLI_EXITCODE_SEGFAULT)));
   exitcodes->insert(exitcode_exception_name,Token(new IntegerDatum(125)));
   exitcodes->insert(exitcode_fatal_name,Token(new IntegerDatum(127)));
   exitcodes->insert(exitcode_unknownerror_name,Token(new IntegerDatum(10)));
 
   statusdict->insert(exitcodes_name, exitcodes); 
+
+  // Copy environment variables
+  // The environ pointer is defined at the head of the file.
+  DictionaryDatum environment(new Dictionary());
+  for ( char * const * envptr = environ ; *envptr ; ++envptr )
+  {
+    std::string const envstr(*envptr);
+
+    // It is safe to assume that all entries contain the character '='
+    const size_t pos = envstr.find('=');
+    const Name varname = envstr.substr(0, pos);
+    const std::string varvalue = envstr.substr(pos+1);
+    environment->insert(varname, Token(new StringDatum(varvalue)));
+  }
+  statusdict->insert(environment_name, environment);
 
 #ifdef HAVE_LONG_LONG
   typedef long long longlong_t;

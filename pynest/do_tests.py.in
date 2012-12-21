@@ -13,16 +13,16 @@ def myprint(msg):
 
 def _setup(arg):
     if hasattr(arg,'_testMethodName'):
-        MethodName = "\'pynest/nest/tests/" + str(arg._testMethodName)
+        MethodName = str(arg._testMethodName)
     elif hasattr(arg,'__testMethodName'):
-        MethodName = "\'pynest/nest/tests/" + str(arg.__testMethodName)
+        MethodName = str(arg.__testMethodName)
     else:
         try:
-            MethodName = "\'pynest/nest/tests/" + str(arg).split('(')[0].split(' ')[0]
+            MethodName = str(arg).split('(')[0].split(' ')[0]
         except:
-            MethodName = "\'" + str(arg)
+            MethodName = str(arg)
     
-    sys.stderr.write("  Running test " + MethodName + "\'...\n")
+    sys.stderr.write("  Running test " + MethodName + "...\n")
 
 myprint("\n")
 myprint("Phase 6: Running PyNEST tests.\n")
@@ -31,7 +31,11 @@ myprint("------------------------------\n")
 import nest
 nest.init(["--verbosity=WARNING", "--quiet"])
 
+import nest.topology
+
 import nest.tests
+import nest.topology.tests
+
 import unittest
 
 # The function setUp() is called before each test run,
@@ -41,10 +45,11 @@ unittest.TestCase.setUp = _setup
 # The testsuite is initialized w/ stdout. That goes into the logfile.
 runner = unittest.TextTestRunner(verbosity=2, stream=sys.stdout)
 result = runner.run(nest.tests.suite())
+result_topo = runner.run(nest.topology.tests.suite())
 
 # We return the numbers of tests via a temporaty file
 file_handle = file("pynest_test_numbers.log", "w")
-file_handle.write(str(result.testsRun) + " ")
-file_handle.write(str(len(result.failures)+len(result.errors)) + " ")
-file_handle.write(str(result.testsRun - len(result.failures) - len(result.errors)) + "\n")
+file_handle.write(str(result.testsRun + result_topo.testsRun) + " ")
+file_handle.write(str(len(result.failures)+len(result.errors) + len(result_topo.failures)+len(result_topo.errors)) + " ")
+file_handle.write(str(result.testsRun + result_topo.testsRun - len(result.failures) - len(result.errors) - len(result_topo.failures) - len(result_topo.errors)) + "\n")
 file_handle.close()

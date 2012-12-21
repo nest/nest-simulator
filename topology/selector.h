@@ -23,67 +23,29 @@
  *
  */
 
-/*
-  This file is part of the NEST topology module.
-  Author: Kittel Austvoll
-
-*/
-
 #include "nest.h"
 #include "dictdatum.h"
-#include "compound.h"
 
-/** @file selector.h
- *  Implements the slicing functionality.
- */
-
-namespace nest{
+namespace nest
+{
 
   /**
-   * The Selector class extracts nodes from a node or a compound 
-   * structure. The nodes are extracted based upon the entries set
-   * in the layer slice dictionaries. Nodes can be extracted based
-   * upon modeltype and subnet depth.
+   * Contains rules for selecting nodes from a layer when connecting.
    */
-  class Selector{
-  public:
-    /**
-     * Create an empty Selector.
-     */
-    Selector();
-
-    /**
-     * Create a Selector based upon an input dictionary.
-     * @param dictionary with slicing information
-     */
-    Selector(const DictionaryDatum&);
-    
-    /**
-     * @param subnet Compound where nodes extracted by slicing are stored
-     * @param node   Layer node that will be sliced
-     */
-    void slice_node(Compound& subnet, Node* node);
-    
-  private:
-    // Class variables. slice_depth_ of 0 indicates that all depths
-    // should be connected to. modeltype_ of -1 indicates that all
-    // modeltypes should be connected.
-    index slice_depth_;
-    long_t modeltype_;
-    
-    /**
-     * Recursive function called by slice_node(Compound&, Node*).
-     *
-     * @param subnet Compound where nodes extracted by slicing are stored
-     * @param node   Node that will be sliced
-     * @param slice_depth 
-     */
-    void slice_node(Compound& subnet, Node* node,
-		    index slice_depth);
-
+  struct Selector {
+    Selector(): model(-1), depth(-1)
+      {}
+    Selector(const DictionaryDatum &);
+    bool select_model() const
+      { return model>=0; }
+    bool select_depth() const
+      { return depth>=0; }
+    bool operator==(const Selector & other)
+      { return (other.model==model) and (other.depth==depth); }
+    long_t model;
+    long_t depth;
   };
 
-}
+} // namespace nest
 
 #endif
-

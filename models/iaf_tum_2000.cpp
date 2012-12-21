@@ -96,15 +96,22 @@ namespace nest
     def<double>(d, names::t_ref_tot, tau_ref_tot_);
   }
 
-  void nest::iaf_tum_2000::Parameters_::set(const DictionaryDatum& d)
+  double nest::iaf_tum_2000::Parameters_::set(const DictionaryDatum& d)
   {
+    // if U0_ is changed, we need to adjust all variables defined relative to U0_
+    const double ELold = U0_;
     updateValue<double>(d, names::E_L, U0_);
+    const double delta_EL = U0_ - ELold;
 
     if(updateValue<double>(d, names::V_reset, V_reset_))
       V_reset_ -= U0_;
+    else
+      V_reset_ -= delta_EL;
 
     if (updateValue<double>(d, names::V_th, Theta_)) 
       Theta_ -= U0_;
+    else
+      Theta_ -= delta_EL;
 
     updateValue<double>(d, names::I_e, I_e_);
     updateValue<double>(d, names::C_m, C_);
@@ -126,6 +133,12 @@ namespace nest
     if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || 
 	 tau_ref_tot_ <= 0 || tau_ref_abs_ <=0)
       throw BadProperty("All time constants must be strictly positive.");
+    
+    if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
+      throw BadProperty("Membrane and synapse time constant(s) must differ."
+			"See note in documentation.");
+
+    return delta_EL;
   }
 
   void nest::iaf_tum_2000::State_::get(DictionaryDatum &d, const Parameters_& p) const
@@ -133,10 +146,12 @@ namespace nest
     def<double>(d, names::V_m, V_m_ + p.U0_); // Membrane potential
   }
 
-  void nest::iaf_tum_2000::State_::set(const DictionaryDatum& d, const Parameters_& p)
+  void nest::iaf_tum_2000::State_::set(const DictionaryDatum& d, const Parameters_& p, double delta_EL)
   {
     if ( updateValue<double>(d, names::V_m, V_m_) )
       V_m_ -= p.U0_;
+    else
+      V_m_ -= delta_EL;
   }
 
   nest::iaf_tum_2000::Buffers_::Buffers_(iaf_tum_2000 &n)
@@ -210,10 +225,12 @@ namespace nest
     // these depend on the above. Please do not change the order.
     // TODO: use expm1 here to improve accuracy for small timesteps
 
-    V_.P21ex_ = P_.Tau_/(P_.C_*(1.0-P_.Tau_/P_.tau_ex_)) * V_.P11ex_ * (1.0 - std::exp(h*(1.0/P_.tau_ex_-1.0/P_.Tau_)));
+    V_.P21ex_ = P_.Tau_/(P_.C_*(1.0-P_.Tau_/P_.tau_ex_)) * V_.P11ex_ 
+      * (1.0 - std::exp(h*(1.0/P_.tau_ex_-1.0/P_.Tau_)));
     //P21ex_ = h/C_;
 
-    V_.P21in_ = P_.Tau_/(P_.C_*(1.0-P_.Tau_/P_.tau_in_)) * V_.P11in_ * (1.0 - std::exp(h*(1.0/P_.tau_in_-1.0/P_.Tau_)));
+    V_.P21in_ = P_.Tau_/(P_.C_*(1.0-P_.Tau_/P_.tau_in_)) * V_.P11in_ 
+      * (1.0 - std::exp(h*(1.0/P_.tau_in_-1.0/P_.Tau_)));
     //P21in_ = h/C_;
 
     V_.P20_ = P_.Tau_/P_.C_*(1.0 - V_.P22_);

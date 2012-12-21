@@ -24,22 +24,21 @@
 %% NEST Kernel 2 initialisation
 %%
 %% (C) 2000-2006 The NEST Initiative
-%%        
+%%
 %%  Authors Marc-Oliver Gewaltig <marc-oliver.gewaltig@honda-ri.de>
-%%          Markus Diesmann <diesmann@biologie.uni-freiburg.de>
-%%          Jochen Martin Eppler <eppler@biologie.uni-freiburg.de>
+%%          Markus Diesmann <diesmann@fz-juelich.de>
+%%          Jochen Martin Eppler <eppler@fz-juelich.de>
 %%
 
 M_DEBUG (nest-init.sli) (Initializing SLI support for NEST Kernel.) message
 % see nestmodule.cpp
 
-/nest-init /SLI ($Revision: 9902 $) provide-component
+/nest-init /SLI ($Revision: 10101 $) provide-component
 /nest-init /C++ (1.157) require-component
 
-
 statusdict begin
-/kernellibrevision 
-  ($Revision: 9902 $) % SVN/CVS revision number (unique)
+/kernellibrevision
+  ($Revision: 10101 $) % SVN/CVS revision number (unique)
 def
 end
 
@@ -50,13 +49,8 @@ statusdict /prgdocdir get (/examples/FacetsBenchmarks) join addpath
 /test {
   statusdict/prgdatadir :: (/extras/do_tests.sh ) join
   statusdict/prefix :: (/bin/nest) join
-  join system ; ;  
+  join system ; ;
 } def
-
-/ChangeSubnet trie
-[/arraytype] /ChangeSubnet_a load addtotrie
-[/integertype] /ChangeSubnet_i load addtotrie
-def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -65,7 +59,6 @@ def
 {
   trie
 } if
-[/arraytype /dictionarytype] { exch GetGID exch SetStatus_id } addtotrie
 [/integertype /dictionarytype] /SetStatus_id load addtotrie
 [/connectiontype /dictionarytype] /SetStatus_CD load addtotrie
 def
@@ -75,7 +68,6 @@ def
 {
   trie
 } if
-[/arraytype]  { GetGID GetStatus_i } addtotrie
 [/integertype] /GetStatus_i load addtotrie
 [/connectiontype] /GetStatus_C load addtotrie
 def
@@ -111,13 +103,8 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/NetworkDimensions trie
-[/arraytype]
-  /NetworkDimensions_a load addtotrie
-def
-
 /GetResolution {
-    [0] GetStatus /resolution get
+    0 GetStatus /resolution get
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,7 +141,7 @@ def
     model params SetDefaults
     model n Create_l_i
     model oldparams SetDefaults
-  
+
   end % local namespace
 } def
 
@@ -172,7 +159,7 @@ def
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/CopyModel_l_l 
+/CopyModel_l_l
 {
   << >> CopyModel_l_l_D
 } bind def
@@ -194,15 +181,15 @@ def
 
 /* BeginDocumentation
    Name: ShowDefaults - Show the default parameters of a model.
-   
+
    Synopsis:
    /modelname ShowDefaults -> -
-   
-   Description: 
+
+   Description:
    ShowDefaults retrieves the dictionary of default values from the
    specified model and displays it, using info. ShowDefaults is
    equivalent to the sequence "GetDefaults info"
-   
+
    SeeAlso: GetDefaults, info
 */
 
@@ -220,23 +207,17 @@ def
 /* BeginDocumentation
    Name: Connect - Establish a connection between two nodes.
 
-   Synopsis: 
+   Synopsis:
    sgid   tgid                          Connect -> -
    sgid   tgid                /synmodel Connect -> -
-   [sadr] [tadr]                        Connect -> -
-   [sadr] [tadr]              /synmodel Connect -> -
    sgid   tgid   weight delay           Connect -> -
    sgid   tgid   weight delay /synmodel Connect -> -
-   [sadr] [tadr] weight delay           Connect -> -
-   [sadr] [tadr] weight delay /synmodel Connect -> -
    sgid   tgid   params                 Connect -> -
    sgid   tgid   params       /synmodel Connect -> -
-   [sadr] [tadr] params                 Connect -> -
-   [sadr] [tadr] params       /synmodel Connect -> -
 
    Parameters:
-   [sadr], sgid - Address/global id of the source node.
-   [tadr], tgid - Address/global id of the target node.
+   sgid         - Global id of the source node.
+   tgid         - Global id of the target node.
    weight       - The weight of the connection
    delay        - The transmission delay of the connection (in ms)
    params       - A complete parameter dictionary for the connection
@@ -244,7 +225,7 @@ def
 
    Options:
    /synapse_model - the default synapse model to be used for all connections.
-     
+
      This is a convenience option for the creation of many connections of the
      same type. Alternatively, the synapse model can be given in each call to
      Connect.
@@ -254,7 +235,7 @@ def
    2. The parameters and dynamics of the connection are determined by the
       synapse model. The model can be given in the call to Connect. The
       default model can be set as an Option.
-   
+
    SeeAlso: ConvergentConnect, DivergentConnect, synapsedict
 */
 
@@ -262,35 +243,17 @@ def
   /synapse_model /static_synapse
 >> Options
 
-/Connect_a_a_l {
-   3 1 roll GetGID exch GetGID exch 3 -1 roll Connect_i_i_l
-} bind def
-
-/Connect_a_a_d_d_l {
-   5 3 roll GetGID exch GetGID exch 5 -3 roll Connect_i_i_d_d_l
-} bind def
-
-/Connect_a_a_D_l {
-   4 2 roll GetGID exch GetGID exch 4 -2 roll Connect_i_i_D_l
-} bind def
-
 /Connect_main trie
-[/arraytype /arraytype /literaltype] 
-    /Connect_a_a_l load addtotrie
-[/integertype /integertype /literaltype] 
+[/integertype /integertype /literaltype]
     /Connect_i_i_l load addtotrie
-[/arraytype /arraytype /doubletype /doubletype /literaltype] 
-    /Connect_a_a_d_d_l load addtotrie
-[/integertype /integertype /doubletype /doubletype /literaltype] 
+[/integertype /integertype /doubletype /doubletype /literaltype]
     /Connect_i_i_d_d_l load addtotrie
-[/arraytype /arraytype /dictionarytype /literaltype]
-    /Connect_a_a_D_l load addtotrie
 [/integertype /integertype /dictionarytype /literaltype]
     /Connect_i_i_D_l load addtotrie
 def
 
 /Connect [/literaltype] {
-  Connect_main  
+  Connect_main
 } def
 
 /Connect [/anytype] {
@@ -298,22 +261,149 @@ def
   Connect_main
 } def
 
+/* BeginDocumentation
+   Name: GetConnections - Retrieve connections between nodes
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   Synopsis:
+   << /source [sgid1 sgid2 ...] 
+      /target [tgid1 tgid2 ...]
+      /synapse_model /smodel    >> GetConnections -> [ conn1 conn2 ... ]
 
-/CompoundConnect_main trie
-[/integertype /integertype /integertype /literaltype]
-  /CompoundConnect_i_i_i_l load addtotrie
+   Parameters:
+   A dictionary that may contain the following fields (all are optional):
+   /source  - array with GIDs of presynaptic nodes whose connections are sought. 
+              If not given, all neurons are searched as sources.
+   /target  - array with GIDs of post-synaptic nodes whose connections are sought.
+              If not given, all neurons are searched as targets.
+   /synapse_model - literal specifying synapse model
+                    If not given, connections of all synapse models are returned. 
+
+   Description:
+   1. If called with an empty dictionary, GetConnections returns all connections of the 
+      network, as a list of arrays (IntVectorDatum), one array per connection.
+   2. Each array (connection object) has the following elements:
+      [source-gid target-gid target-thread synapse-model-id port]
+   3. The optional dictionary elements /source and /target can be used to filter 
+      for specific pre- and post-synaptic neurons, respectively.
+   4. The optional parameter /synapse_model can be used to filter for a specific synapse model.
+   5. In a parallel simulation, GetConnections only returns connections with *targets*
+      on the MPI process executing the function. 
+
+   Remarks:
+   1. See synapsedict for the synapse-model-id's for all synapse models.
+   2. The "port" enumerates connections per source, thread and synapse model. It is
+      mainly important for NEST internally.
+   3. In OpenMP mode, GetConnections works thread-parallel for better performance.
+   4. Connection objects can be converted to SLI lists with cva.
+   5. Connection objects can be passed to SetSynapseStatus, GetSynapseStatus, and DataConnect
+
+   SeeAlso: DataConnect, SetSynapseStatus, GetSynapseStatus, synapsedict
+*/
+/GetConnections [/dictionarytype] { GetConnections_D Flatten } def
+
+/* BeginDocumentation
+   Name: GetSynapseStatus - Return synapse status information
+
+   Synopsis:
+   [ conn1 conn2 ... ] GetSynapseStatus -> [ sdict1 sdict2 ... ]
+
+   Parameters:
+   An list of connection objects as returned by GetConnections.
+
+   Description:
+   Returns a list of synapse status dictionaries, one for each connection
+   in the parameter list.
+
+   Remarks:
+   Status information is only available for connections with targets on
+   the MPI process executing the command.
+
+   See also: GetConnections, SetSynapseStatus, DataConnect
+*/
+/GetSynapseStatus [/arraytype] /GetStatus_a load def
+
+/* BeginDocumentation
+   Name: SetSynapseStatus - Return synapse status information
+
+   Synopsis:
+   [ conn1 conn2 ... ] [ sdict1 sdict2 ... ] SetSynapseStatus -> -
+
+   Parameters:
+   An list of connection objects as returned by GetConnections and a list
+   of synapse properties dictionaries.
+
+   Description:
+   Sets the given properties on the given connections. If the list of
+   dictionaries contains more than one dictionary, there must be one
+   dictionary per connection. Otherwise, the single dictionary is used
+   for all connections.
+
+   Remarks:
+   Only some connection properties can be changed. Properties can only
+   be changed for connections with targets on the MPI process executing
+   SetSynapseStatus.
+
+   See also: GetConnections, GetSynapseStatus, DataConnect
+*/   
+/SetSynapseStatus [/arraytype /arraytype] /SetStatus_aa load def
+
+/* BeginDocumentation
+     Name: DataConnect - Connect many neurons from data.
+
+     Synopsis: 
+     1.   source dict model  DataConnect_i_dict_a -> -
+
+     source - GID of the source neuron
+     dict   - dictionary with connection parameters
+     model  - the synapse model as string or literal
+
+     2. [dict1 dict2 .... dict_n] DataConnect_a -> -
+     
+     The argument is a list with synapse status dictionaries as obtained from GetStatus.
+
+     Description:
+
+     Variant 1:
+     This variant is used if connectivity data is explicitly given and read from files.
+     Connects the source neuron to targets according to the data in dict, using the synapse 'model'.
+     Dict is a parameter dictionary that must contain at least the following fields:
+     /target
+     /weight
+     /delay
+     Other parameters depend on the synapse model. 
+     The values in the dictionaries are arrays of equal size, specifying the parameters for the
+     respective connection. The arrays should all be of type DoubleVectorDatum (numpy.array(dtype=float)). 
+     Note that for performance reasons, target GIDs must be given as doubles rather than integers!
+
+     The second variant of DataConnect can be used to re-instantiate a given connectivity matrix.
+     The argument is a list of dictionaries, each containing at least the keys
+     /source
+     /target
+     /weight
+     /delay
+     /synapsemodel
+     
+     Example:
+     
+     % assume a connected network
+
+     << >> GetConnections /conns Set      % Get all connections
+     conns { GetStatus } Map  /syns  Set  % retrieve their synapse status
+
+     ResetKernel                          % clear everything
+     % rebuild neurons
+     syns DataConnect                     % restore the connecions
+
+     Author: Marc-Oliver Gewaltig
+     FirstVersion: August 2011
+     SeeAlso: DataConnect_i_dict_s, DataConnect_a, Connect, DivergentConnect
+  */ 
+
+/DataConnect trie
+  [/integertype /dictionarytype /literaltype] /DataConnect_i_dict_s load addtotrie
+  [/integertype /dictionarytype /stringtype] /DataConnect_i_dict_s load addtotrie
+  [/arraytype] /DataConnect_a load addtotrie 
 def
-
-/CompoundConnect [/literaltype] {
-  CompoundConnect_main  
-} def
-
-/CompoundConnect [/anytype] {
-  /Connect /synapse_model GetOption
-  CompoundConnect_main
-} def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -328,12 +418,12 @@ def
 [/integertype /arraytype /literaltype]
     /DivergentConnect_i_ia_l load addtotrie
 [/integertype /arraytype /arraytype /arraytype /literaltype]
-    /DivergentConnect_i_ia_a_a_l load addtotrie	
+    /DivergentConnect_i_ia_a_a_l load addtotrie
 def
 
 /DivergentConnect [/literaltype]
 {
-  DivergentConnect_main  
+  DivergentConnect_main
 } def
 
 /DivergentConnect [/anytype] {
@@ -365,11 +455,11 @@ def
 */
 
 /CheckMultapseAutapseConstraints
-[/arraytype /integertype /integertype /booltype /booltype /literaltype]
+%[/arraytype /integertype /integertype /booltype /booltype /literaltype]
 {
   % open phrase dictionary for current caller
   << /RCC << /caller /RandomConvergentConnect
-             /emptyPoolMsg (Source array must not be empty.) 
+             /emptyPoolMsg (Source array must not be empty.)
 	     /smallPoolMsg (Multapses prohibited and fewer sources than connections.)
 	     /smallPoolNoAutapseMsg (Multapses and autapses prohibited and fewer sources than connections.)
 	     /poolEqualsPoleMsg (Autapses prohibited and all sources equal target.)
@@ -425,7 +515,7 @@ def
 	} if
       } if   % allow_multapses not
 
-      allow_autapses not 
+      allow_autapses not
       {
 	 pool pole HasDifferentMemberQ not
 	 {
@@ -447,10 +537,10 @@ source n [targets]                    /synmodel RandomDivergentConnect -> -
 source n [targets] [weights] [delays]           RandomDivergentConnect -> -
 source n [targets] [weights] [delays] /synmodel RandomDivergentConnect -> -
 
-Parameters: 
-source    - GID of source node 
+Parameters:
+source    - GID of source node
 n         - number of connections to be established
-[targets] - array of (global IDs of) potential target nodes 
+[targets] - array of (global IDs of) potential target nodes
 weights   - A list of n or 1 weight(s)
 delays    - A list of n or 1 delay(s)
 /synmodel - The synapse model for the connection (see Options below)
@@ -497,7 +587,7 @@ SeeAlso: Connect, DivergentConnect, ConvergentConnect, RandomConvergentConnect
   % we only get here if check went through
   RandomDivergentConnect_i_i_ia_da_da_b_b_l
  % end
-} def
+} bind def
 
 /RandomDivergentConnect_i_i_ia_l
 {
@@ -506,7 +596,7 @@ SeeAlso: Connect, DivergentConnect, ConvergentConnect, RandomConvergentConnect
   /RandomDivergentConnect /allow_autapses GetOption
   5 4 roll
   RandomDivergentConnect_i_i_ia_da_da_b_b_l_wrapper
-} def
+} bind def
 
 /RandomDivergentConnect_i_i_ia_b_b_l
 {
@@ -519,23 +609,23 @@ SeeAlso: Connect, DivergentConnect, ConvergentConnect, RandomConvergentConnect
 {
   /RandomDivergentConnect /allow_multapses GetOption
   /RandomDivergentConnect /allow_autapses GetOption
-  3 2 roll  
+  3 2 roll
   RandomDivergentConnect_i_i_ia_da_da_b_b_l_wrapper
 } def
 
 /RandomDivergentConnect_main trie
-[/integertype /integertype /arraytype /literaltype] 
+[/integertype /integertype /arraytype /literaltype]
   /RandomDivergentConnect_i_i_ia_l load addtotrie
-[/integertype /integertype /arraytype /booltype /booltype /literaltype] 
+[/integertype /integertype /arraytype /booltype /booltype /literaltype]
   /RandomDivergentConnect_i_i_ia_b_b_l load addtotrie
-[/integertype /integertype /arraytype /arraytype /arraytype /literaltype] 
+[/integertype /integertype /arraytype /arraytype /arraytype /literaltype]
   /RandomDivergentConnect_i_i_ia_da_da_l load addtotrie
-[/integertype /integertype /arraytype /arraytype /arraytype /booltype /booltype /literaltype] 
+[/integertype /integertype /arraytype /arraytype /arraytype /booltype /booltype /literaltype]
   /RandomDivergentConnect_i_i_ia_da_da_b_b_l_wrapper load addtotrie
 def
 
 /RandomDivergentConnect [/literaltype] {
-  RandomDivergentConnect_main  
+  RandomDivergentConnect_main
 } def
 
 /RandomDivergentConnect [/anytype] {
@@ -553,14 +643,14 @@ def
 } def
 
 /ConvergentConnect_main trie
-[/arraytype /integertype /literaltype] 
+[/arraytype /integertype /literaltype]
   /ConvergentConnect_ia_i_l load addtotrie
 [/arraytype /integertype /arraytype /arraytype /literaltype]
-  /ConvergentConnect_ia_i_a_a_l load addtotrie	
+  /ConvergentConnect_ia_i_a_a_l load addtotrie
 def
 
 /ConvergentConnect [/literaltype] {
-  ConvergentConnect_main  
+  ConvergentConnect_main
 } def
 
 /ConvergentConnect [/anytype] {
@@ -577,24 +667,29 @@ Synopsis:
 [sources] target n init_dict          /synmodel RandomConvergentConnect -> -
 [sources] target n [weights] [delays]           RandomConvergentConnect -> -
 [sources] target n [weights] [delays] /synmodel RandomConvergentConnect -> -
+[sources] [targets] [ns] [weightss] [delayss] /synmodel RandomConvergentConnect -> -
+[sources] [targets] n /synmodel RandomConvergentConnect -> -
 
-Parameters: 
-[sources] - array of (global IDs of) potential source nodes 
+Parameters:
+[sources] - array of (global IDs of) potential source nodes
 target    - GID of target node
+[targets] - array of (global IDs of) target nodes
 n         - number of connections to be established
 init_dict - dictionary used to initialize each of the established connections
 weights   - A list of weights of size n
 delays    - A list of delays of size n
+weightss  - A list of lists of weights of size length(targets) x size n
+delayss   - A list of lists delays of size length(targets) x size n 
 /synmodel - The synapse model for the connection (see Options below)
-		 
+
 Options:
 allow_autapses  - controls, whether self connections can be produced.
-allow_multapses - controls, whether multiple selections are possible. 
+allow_multapses - controls, whether multiple selections are possible.
 
 If not given, the synapse model is taken from the Options dictionary
 of the Connect command.
 
-Description: 
+Description:
 This function connects a given target node with a random collection of
 n randomly chosen source nodes from the specified array. The sources
 are chosen with uniform probability.  Whether multiple synapses are
@@ -617,18 +712,18 @@ delay (stored in arrays in init_dict) of the synapse is given below:
 	 /InitSynapse
 	 {
 	     /i Set
-	     
+
 	     <<
 		 /weight weights i get
 		 /delay delays i get
-	     >> SetDefaults % sets these parameters for the following call to Connect 
+	     >> SetDefaults % sets these parameters for the following call to Connect
 	 }
      >> def
 
  In the third synopsis, an array of weights and delays of length n each are supplied. The first connection will get weights[0], delays[0], the second weights[1], delays[1] and so on.
 
-Author: Tobias Potjans, Moritz Helias     
-SeeAlso: Connect, ConvergentConnect, DivergentConnect, RandomDivergentConnect 
+Author: Tobias Potjans, Moritz Helias
+SeeAlso: Connect, ConvergentConnect, DivergentConnect, RandomDivergentConnect
 */
 
 % This variant handles calls with and init_dict
@@ -648,32 +743,32 @@ SeeAlso: Connect, ConvergentConnect, DivergentConnect, RandomDivergentConnect
 
 	    source_neurons target :RDC_N allow_multapses allow_autapses /RCC
 	    CheckMultapseAutapseConstraints
-	
+
 	    target GetStatus /local get
 	    {
 		target GetVpRNG /rngindx Set
 
 		source_neurons length /Nindx Set
-	
+
 		%% list of neurons already connected to this target
 		%% top prevent multiple connections
 		[] /srcs Set
-	
+
 		% make N connections i=0...N-1
 		0 1 :RDC_N 1 sub
 		{
-		    int /i Set % loop index	   
+		    int /i Set % loop index
 
 		    % call initilizer for synapse
 		    i init_dict /InitSynapse call
-		
+
 		    {
 			source_neurons rngindx Nindx irand get % GID of source neuron on stack
 
 			dup dup target neq             	% check if no self connection
-			allow_autapses or		% stack: gid gid True/False 
+			allow_autapses or		% stack: gid gid True/False
 
-			allow_multapses			
+			allow_multapses
 			{
 			    exch pop true
 			}
@@ -687,22 +782,22 @@ SeeAlso: Connect, ConvergentConnect, DivergentConnect, RandomDivergentConnect
 
 		    %% GID of source neuron on stack
 		    dup
-	    
+
 		    srcs exch append /srcs Set  %% append to list of incoming neurons
-		    
+
 	    			% source neuron's GID on stack
 		    target	% target neuron's GID
 		    synmodel Connect
 		} for
 	    } if % of if target is local
-	  
+
 	  % all went well, we can now pop the copied args from the stack
 	  RCC_NUM_ARGS npop
 
 	end % of private dictionary << >>
     end % of options
 }
-def
+bind def
 
 % default options
 /RandomConvergentConnect <<
@@ -724,7 +819,7 @@ def
 
   % we only get here if check went through
   RandomConvergentConnect_ia_i_i_da_da_b_b_l
-} def
+} bind def
 
 /RandomConvergentConnect_ia_i_i_l
 {
@@ -733,26 +828,54 @@ def
   /RandomConvergentConnect /allow_autapses GetOption
   5 4 roll
   RandomConvergentConnect_ia_i_i_da_da_b_b_l_wrapper
-} def
+} bind def
 
 /RandomConvergentConnect_ia_i_i_b_b_l
 {
   [] 4 -3 roll % empty weight array
   [] 4 -3 roll % empty delay array
   RandomConvergentConnect_ia_i_i_da_da_b_b_l_wrapper
-} def
+} bind def
 
 /RandomConvergentConnect_ia_i_i_da_da_l
 {
   /RandomConvergentConnect /allow_multapses GetOption
   /RandomConvergentConnect /allow_autapses GetOption
-  3 2 roll  
+  3 2 roll
   RandomConvergentConnect_ia_i_i_da_da_b_b_l_wrapper
-} def
+} bind def
+
+/RandomConvergentConnect_ia_ia_ia_daa_daa_l
+{
+  /RandomConvergentConnect /allow_multapses GetOption
+  /RandomConvergentConnect /allow_autapses GetOption
+  3 2 roll
+  RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l
+} bind def
+
+/RandomConvergentConnect_ia_ia_i_l
+{
+  % construct an array of size(targets) entries all of which have value given by third argument
+  3 2 roll
+  size [1] exch LayoutArray
+  4 -1 roll
+  LayoutArray
+  3 2 roll
+  
+  [ ] % weights empty
+  [ ] % delays empty
+  3 2 roll
+  
+  /RandomConvergentConnect /allow_multapses GetOption
+  /RandomConvergentConnect /allow_autapses GetOption
+  3 2 roll
+
+  RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l
+} bind def
 
 % all calls without init_dict are forwarded to C++
 /RandomConvergentConnect_main trie
-[/arraytype /integertype /integertype /literaltype] 
+[/arraytype /integertype /integertype /literaltype]
   /RandomConvergentConnect_ia_i_i_l load addtotrie
 [/arraytype /integertype /integertype /dictionarytype /literaltype]
   /RandomConvergentConnect_ia_i_i_d_l load addtotrie
@@ -762,16 +885,19 @@ def
   /RandomConvergentConnect_ia_i_i_da_da_l load addtotrie
 [/arraytype /integertype /integertype /arraytype /arraytype /booltype /booltype /literaltype]
   /RandomConvergentConnect_ia_i_i_da_da_b_b_l_wrapper load addtotrie
+[/arraytype /arraytype /arraytype /arraytype /arraytype /literaltype]
+  /RandomConvergentConnect_ia_ia_ia_daa_daa_l load addtotrie
+[/arraytype /arraytype /integertype /literaltype]
+  /RandomConvergentConnect_ia_ia_i_l load addtotrie
 def
 
-/RandomConvergentConnect [/literaltype] {
-  RandomConvergentConnect_main  
-} def
-
-/RandomConvergentConnect [/anytype] {
+/RandomConvergentConnect trie 
+[/literaltype] /RandomConvergentConnect_main load addtotrie
+[/anytype] {
   /Connect /synapse_model GetOption
   RandomConvergentConnect_main
-} def
+} bind addtotrie
+def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -780,14 +906,14 @@ Name: BinomialConvergentConnect - Connect a target to a binomial number of sourc
 Synopsis:
 [sources] target c    BinomialConvergentConnect -> -
 
-Parameters: 
-[sources] - array of (global IDs of) potential source nodes 
+Parameters:
+[sources] - array of (global IDs of) potential source nodes
 target    - GID of target node
 c         - probability of a potential connection to be established
-		 
+
 Options:
 allow_autapses  - controls, whether self connections can be produced.
-allow_multapses - controls, whether multiple selections are possible. 
+allow_multapses - controls, whether multiple selections are possible.
 
 Description:
 The function connects a given target node with each of the nodes
@@ -798,7 +924,7 @@ are the length of the source array and the connection probability c.
 One way to implement BinomialConnect is to draw a binomially distributed
 random number followed by a call of RandomConvergentConnect.
 
-Author: Diesmann     
+Author: Diesmann
 SeeAlso: RandomConvergentConnect
 */
 
@@ -822,7 +948,7 @@ SeeAlso: RandomConvergentConnect
   dup
   /source_neurons Set
   length /n Set
-	
+
   target GetStatus /local get
   {
    target GetVpRNG /rng Set
@@ -830,13 +956,13 @@ SeeAlso: RandomConvergentConnect
    rng rdevdict /binomial get CreateRDV /bino Set
    bino << /p c /n n >> SetStatus
 
-   
+
    source_neurons
    target
    bino Random
    allow_multapses
    allow_autapses
-   synmodel    
+   synmodel
    RandomConvergentConnect_ia_i_i_b_b_l
 
   } if % of if target is local
@@ -845,12 +971,12 @@ SeeAlso: RandomConvergentConnect
 
 
 /BinomialConvergentConnect_main trie
-[/arraytype /integertype /doubletype /literaltype] 
+[/arraytype /integertype /doubletype /literaltype]
   /BinomialConvergentConnect_ia_i_d_l load addtotrie
 def
 
 /BinomialConvergentConnect [/literaltype] {
-  RandomConvergentConnect_main  
+  RandomConvergentConnect_main
 } def
 
 /BinomialConvergentConnect [/anytype] {
@@ -861,8 +987,8 @@ def
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /*BeginDocumentation
- Name: FindConnections - Find connections that fulfil the given criteria
- 
+ Name: FindConnections - Find connections that fulfill the given criteria
+
  Synopsis:
  dict FindConnections -> [c1 c2 ... cn]
 
@@ -875,23 +1001,39 @@ def
  Description:
  FindConnections returns an array with the ids of all connections that
  fulfil the given criteria. The connection ids can then be used
- as argumentsfor GetStatus and SetStats to inspect and modify the
+ as argumentsfor GetStatus and SetStatus to inspect and modify the
  parameters of the connections. If no connections were found, the
  returned array is empty.
+
+ This function is deprecated and will disappear in future version. 
+ Please use GetConnections instead. 
 
  Remarks:
  This function iterates over all threads, but not over MPI processes.
 
  Author: Jochen Martin Eppler
  FirstVersion: January 2008
- 
- SeeAlso: GetStatus, SetStatus
+
+ SeeAlso: GetConnections, GetStatus, SetStatus
 */
 
-/FindConnections trie
- [/dictionarytype ] /FindConnections_D load addtotrie
-def
+%/FindConnections trie
+% [/dictionarytype ] /FindConnections_D load addtotrie
+%def
 
+/FindConnections
+[/dictionarytype]
+{
+  << >> begin
+  /args Set
+   <<
+     /source [ args /source get ]
+     args /target known {  /target [ args /target get ] } if 
+     args /synapse_model known { /synapse_model args /synapse_model get cvlit} if 
+  >> 
+  end
+  GetConnections Flatten
+} def
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* BeginDocumentation
@@ -912,7 +1054,7 @@ def
    LayoutNetwork generates an n-dimensial network with nodes of type model.
    If a status dictionary is supplied, each created node is initialized with
    the supplied status dictionary.
-  
+
    Examples:
    iaf_neuron [10 10] LayoutNetwork
    Creates a two dimensional layer of 10 by 10 neurons of type iaf_neuron.
@@ -920,7 +1062,7 @@ def
    Author: Marc-Oliver Gewaltig
    FirstVersion: 20.6.02
 
-   SeeAlso: Create, LayoutArray, NetworkDimensions
+   SeeAlso: Create, LayoutArray
 */
 
 /LayoutNetwork_l_a_dict
@@ -933,7 +1075,7 @@ def
              /m Set
 
   /cwn CurrentSubnet def
-  /subnet Create 
+  /subnet Create
   dup /result Set % safe return value
   ChangeSubnet
   n_dim 1 eq
@@ -952,7 +1094,7 @@ def
     m dim Rest val % parameters for LayoutNetwork
     n
     {
-       3 copy LayoutNetwork_l_a_dict % call function recursively 
+       3 copy LayoutNetwork_l_a_dict % call function recursively
        pop % forget about return value
     } repeat
     3 npop
@@ -989,7 +1131,7 @@ def
     m dim Rest % parameters for LayoutNetwork
     n
     {
-       2 copy LayoutNetwork_l_a % call function recursively 
+       2 copy LayoutNetwork_l_a % call function recursively
        pop % forget about return value
     } repeat
     2 npop
@@ -1001,9 +1143,9 @@ def
 } bind def
 
 /LayoutNetwork trie
-[/literaltype /arraytype /dictionarytype] 
+[/literaltype /arraytype /dictionarytype]
    /LayoutNetwork_l_a_dict load addtotrie
-[/literaltype /arraytype ] 
+[/literaltype /arraytype ]
    /LayoutNetwork_l_a load addtotrie
 def
 
@@ -1011,8 +1153,8 @@ def
 
 /* BeginDocumentation
    Name: elementstates - dictionary with symbolic element state tag
-   
-   Description: 
+
+   Description:
    Each element has a state which can be accessed via it's status dictionary.
    The state is defined as a superposition of the following values:
    /valid       1
@@ -1020,7 +1162,7 @@ def
    /updated     4
    /suspended   8
    /frozen     16
-   /buffers_initialized 32 
+   /buffers_initialized 32
    /err        64
    valid      - the default state of an element.
    busy       - indicates that this element needs more than one cycle to
@@ -1043,14 +1185,14 @@ def
    Availability: NEST
 */
 
-/elementstates 
+/elementstates
 <<
   /valid       1
   /busy        2
   /updated     4
   /suspended   8
   /frozen     16
-  /buffers_initialized 32 
+  /buffers_initialized 32
   /err        64
 >> def
 
@@ -1067,7 +1209,7 @@ def
    current generators   pA
    voltmeters           mV
    ac_generator         Hz
- 
+
    As SLI does not know any unit conversion scheme, numerical values
    need to be specified in the appropriate units. However, it improves
    readability, if a hint to the unit is specified in the program code,
@@ -1086,7 +1228,7 @@ def
 
    1000 ms Simulate
 
-   Author: (unknown), documented by Rüdiger Kupper, 18-jul-2003
+   Author: (unknown), documented by Ruediger Kupper, 18-jul-2003
 
    Availability: This is just a description. unit_conversion is no SLI command.
    SeeAlso: Hz, ms, pA, mV, spikes, cvd, cvi
@@ -1098,13 +1240,13 @@ def
    Name: ms - Specification in ms (for readability)
    SeeAlso: unit_conversion, ms2hms
 */
-/ms /cvd load def 
+/ms /cvd load def
 
 /* BeginDocumentation
    Name: s - Specification in s (for readability)
    SeeAlso: unit_conversion, ms2hms
 */
-/s {1000.0 mul} bind def 
+/s {1000.0 mul} bind def
 
 /* BeginDocumentation
    Name: pA - Specification in pA (for readability)
@@ -1145,26 +1287,24 @@ def
 
 /int    /cvi load def
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* BeginDocumentation
-   Name: SubsetQ - Test if one dictinary is a subset of another
-   
+   Name: SubsetQ - Test if one dictionary is a subset of another
+
    Synopsis:
    dict1 dict2 SubsetQ -> bool
-   
+
    Parameters:
    dict1 - dictionary
    dict2 - dictionary
-   
+
    Description:
    The functions returns true, if all entries of dict2 are present in dict1
    with the same values.
-   
+
    Examples:
    << /a 1 /b 2 /c 2 >> << /c 2 >> SubsetQ -> true
 */
-
 /SubsetQ
 [/dictionarytype /dictionarytype]
 {
@@ -1172,7 +1312,7 @@ def
   cva 2 Partition
   /properties Set
   /object Set
-  
+
   true
   properties
   {
@@ -1194,224 +1334,217 @@ def
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* BeginDocumentation
-   Name: GetNodes - Return IDs of all nodes of a subnet.
+   Name: GetGlobalNodesInfo - Return GIDs, VPs and Parent GIDs of all nodes of 
+         a subnet that fulfill the conditions given in the dictionary, or of
+         all nodes if no dictionary given.
    Synopsis:
-     [adr] GetNodes -> [gid1 ... gidn]
-     gid   GetNodes -> [gid1 ... gidn]
+     gid [<<dict>>]  GetGlobalNodesInfo -> [<<...>> <<...>> ...]
    Parameters:
-     [adr]   - address of a compound or subnet
-     gid     - id of a compound or subnet
-     [gid..] - Array with the global ids of all child nodes.
+     gid      - id of a subnet
+     <<dict>> - Dictionary of selection properties
+   Returns:
+     [<<...>>...]  - Array with dicts containing /global_id, /vp, /parent
    Description:
-   This function recursively traverses a subnet or compound and
-   returns the global ids of all child nodes in post-order.
+   This function recursively traverses a subnet and returns the gid, vp
+   and parent gid of all child nodes in increasing order of gid. If a dictionary
+   is provided, only those nodes which fulfill the given criteria are
+   returned.
 
-   The returned Nodes include the intermediate compounds/subnets.
-   For a variant of this command that EXcludes the compounds, see
-   "GetLeaves".
+   The returned Nodes include the intermediate subnets.
 
-   Author: Marc-Oliver Gewaltig, added documentation Ruediger Kupper
-     
-   SeeAlso: GetLocalNodes, GetLeaves, GetChildren
+   Author: Marc-Oliver Gewaltig, Abigail Morrison
+
+   SeeAlso: GetGlobalNodes, GetLocalNodes
 */
 
-/GetNodes trie
-[/integertype] { false GetNodes_i_b } bind addtotrie
-[/arraytype]   { GetGID false GetNodes_i_b } bind addtotrie
-def
-
-
-/* BeginDocumentation
-   Name: GetLocalNodes - Return IDs of all local nodes of a subnet.
-   Synopsis:
-     [adr] GetLocalNodes -> [gid1 ... gidn]
-     gid   GetLocalNodes -> [gid1 ... gidn]
-   Parameters:
-     [adr]   - address of a compound or subnet
-     gid     - id of a compound or subnet
-     [gid..] - Array with the global ids of all local child nodes.
-   Description:
-   This function is equivalent to GetNodes, but returns only those
-   nodes that are local to the MPI process executing the command.
-
-   Author: Hans Ekkehard Plesser
-     
-   SeeAlso: GetNodes, GetLocalLeaves, GetLocalChildren
-*/
-/GetLocalNodes trie
-[/integertype] { true GetNodes_i_b } bind addtotrie
-[/arraytype]   { GetGID true GetNodes_i_b } bind addtotrie
+/GetGlobalNodesInfo trie
+[/integertype /dictionarytype] { false false GetNodes_i_D_b_b } bind addtotrie
+[/integertype] { << >> false false GetNodes_i_D_b_b } bind addtotrie
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* BeginDocumentation
-   Name: GetChildren - Return IDs of all immediate child nodes of a subnet.
+   Name: GetGlobalNodes - Return IDs of all nodes of a subnet that fulfill the
+         conditions given in the dictionary, or all nodes if no dictionary given.
    Synopsis:
-   [adr] GetChildren -> [gid1 ... gidn]
-   gid   GetChildren -> [gid1 ... gidn]
+     gid [<<dict>>]  GetGlobalNodes -> [gid1 ... gidn]
    Parameters:
-   [adr]   - address of a compound or subnet
-   gid     - id of a compound or subnet
-   [gid..] - Array with the global ids of all child nodes.
-   
+     gid      - id of a subnet
+     <<dict>> - Dictionary of selection properties
+   Returns:
+     [gid..]  - Array with the global ids of all child nodes.
    Description:
-   This function returns the ids of all children of a subnet.
+   This function recursively traverses a subnet and returns the global
+   ids of all child nodes in increasing order of gid. If a dictionary
+   is provided, only those nodes which fulfill the given criteria are
+   returned.
 
-   Author: Marc-Oliver Gewaltig.
+   The returned Nodes include the intermediate subnets. For a variant
+   of this command that excludes the subnets, see "GetGlobalLeaves".
 
-   SeeAlso: GetLocalChildren, GetNodes, GetLeaves
+   Author: Marc-Oliver Gewaltig, Abigail Morrison
+
+   SeeAlso: GetGlobalNodesInfo, GetLocalNodes, GetGlobalLeaves, GetGlobalChildren
 */
 
-/GetChildren trie
-[/integertype] { false GetChildren_i_b } bind addtotrie
-[/arraytype]   { GetGID false GetChildren_i_b } bind addtotrie
+/GetGlobalNodes trie
+[/integertype /dictionarytype] { false true GetNodes_i_D_b_b } bind addtotrie
+[/integertype] { << >> false true GetNodes_i_D_b_b } bind addtotrie
 def
 
 /* BeginDocumentation
-   Name: GetLocalChildren - Return IDs of all immediate local child nodes of a subnet.
+   Name: GetLocalNodes - Return IDs of all local nodes of a subnet that fulfill the
+         conditions given in the dictionary, or all nodes if no dictionary given.
    Synopsis:
-   [adr] GetLocalChildren -> [gid1 ... gidn]
-   gid   GetLocalChildren -> [gid1 ... gidn]
+     gid [<<dict>>]  GetLocalNodes -> [gid1 ... gidn]
    Parameters:
-   [adr]   - address of a compound or subnet
-   gid     - id of a compound or subnet
-   [gid..] - Array with the global ids of all local child nodes.
-   
+     gid     - id of a subnet
+     <<dict>> - Dictionary of selection properties
+   Returns:	
+     [gid..] - Array with the global ids of all local child nodes.
    Description:
-   This function returns the ids of all children of a subnet belonging
-   to the MPI process executing the command.
+   This function is equivalent to GetGlobalNodes, but returns only those
+   nodes that are local to the MPI process executing the command.
 
-   Author: Hans Ekkehard Plesser.
+   Author: Hans Ekkehard Plesser, Abigail Morrison
 
-   SeeAlso: GetChildren, GetLocalNodes, GetLocalLeaves
+   SeeAlso: GetGlobalNodes, GetLocalLeaves, GetLocalChildren
+*/
+/GetLocalNodes trie
+[/integertype /dictionarytype] { true true GetNodes_i_D_b_b } bind addtotrie
+[/integertype] { << >> true true GetNodes_i_D_b_b } bind addtotrie
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/* BeginDocumentation
+   Name: GetGlobalChildren - Return IDs of all immediate child nodes of a subnet
+         that fulfill the conditions given in the dictionary, or all nodes if no 
+	 dictionary given.
+   Synopsis:
+   gid [<<dict>>]  GetGlobalChildren -> [gid1 ... gidn]
+
+   Parameters:
+   gid     - id of a subnet
+   <<dict>> - Dictionary of selection properties	
+   Returns:
+   [gid..] - Array with the global ids of all child nodes.
+
+   Description:
+   This function returns the ids of all children of a subnet in increasing order  
+   of gid. If a dictionary is provided, only those nodes which fulfill the given 
+   criteria are returned.
+
+   Author: Marc-Oliver Gewaltig, Abigail Morrison
+
+   SeeAlso: GetLocalChildren, GetGlobalNodes, GetGlobalLeaves
+*/
+
+/GetGlobalChildren trie
+[/integertype /dictionarytype] { false GetChildren_i_D_b } bind addtotrie
+[/integertype] { << >> false GetChildren_i_D_b} bind addtotrie
+def
+
+/* BeginDocumentation
+   Name: GetLocalChildren - Return IDs of all immediate local child nodes of a subnet 
+   	 that fulfill the conditions given in the dictionary, or all children if no 
+	 dictionary given.
+   Synopsis:
+   gid [<<dict>>]  GetLocalChildren -> [gid1 ... gidn]
+   Parameters:
+   gid     - id of a subnet
+   <<dict>> - Dictionary of selection properties
+   Returns:	
+   [gid..] - Array with the global ids of all local child nodes.
+
+   Description:
+   This function is equivalent to GetGlobalChildren, but returns only the ids of all 
+   children of a subnet belonging to the MPI process executing the command.
+
+   Author: Hans Ekkehard Plesser, Abigail Morrison
+
+   SeeAlso: GetGlobalChildren, GetLocalNodes, GetLocalLeaves
 */
 
 /GetLocalChildren trie
-[/integertype] { true GetChildren_i_b } bind addtotrie
-[/arraytype]   { GetGID true GetChildren_i_b } bind addtotrie
+[/integertype /dictionarytype] { true GetChildren_i_D_b } bind addtotrie
+[/integertype] { << >> true GetChildren_i_D_b } bind addtotrie
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* BeginDocumentation
-   Name: GetLeaves - Return IDs of all leaves of a subnet.
+   Name: GetGlobalLeaves - Return IDs of all leaves of a subnet that fulfill the 
+   	 conditions given in the dictionary, or all leaves if no dictionary given.
    Synopsis:
-   [adr] GetLeaves -> [gid1 ... gidn]
-   gid   GetLeaves -> [gid1 ... gidn]
+   gid [<<dict>>]  GetGlobalLeaves -> [gid1 ... gidn]
    Parameters:
-   [adr]   - address of a compound or subnet
-   gid     - id of a compound or subnet
+   gid     - id of a subnet
+   <<dict>> - Dictionary of selection properties	
+   Returns:
    [gid..] - Array with the global ids of all leaf nodes.
 
    Description:
-   This function recursively traverses a subnet or compound and
-   returns the global ids of all leaf nodes in post-order.
-   Note that this is the standard NEST counting order for
-   traversing multidimensional (nested) subnets, for example,
-   those that were created using "LayoutNetwork". (E.g.
-   twodimensional layers).
+   This function recursively traverses a subnet and returns the global
+   ids of all leaf nodes in increasing order of gid.  If a dictionary is provided, 
+   only those nodes which fulfill the given criteria are returned.
 
-   The returned Nodes DO NOT include the intermediate
-   compounds/subnets. For a variant of this command that also
-   returns the compounds, see "GetNodes".
+   The returned nodes DO NOT include the intermediate subnets. For a
+   variant of this command that also returns the subnets, see
+   "GetGlobalNodes".
 
-   Author: Ruediger Kupper
-    
+   Author: Ruediger Kupper, Abigail Morrison
+
    FirstVersion: 12.3.2003
 
-   SeeAlso: GetLocalLeaves, GetNodes, GetChildren
+   SeeAlso: GetLocalLeaves, GetGlobalNodes, GetGlobalChildren
 */
 
-/GetLeaves trie
-[/integertype] { false GetLeaves_i_b } bind addtotrie
-[/arraytype]  { GetGID false GetLeaves_i_b } bind addtotrie
+/GetGlobalLeaves trie
+[/integertype /dictionarytype] { false GetLeaves_i_D_b } bind addtotrie
+[/integertype] { << >> false GetLeaves_i_D_b } bind addtotrie
 def
 
 /* BeginDocumentation
-   Name: GetLocalLeaves - Return IDs of all local leaves of a subnet.
+   Name: GetLocalLeaves - Return IDs of all local leaves of a subnet that fulfill the 
+   	 conditions given in the dictionary, or all leaves if no dictionary given.
    Synopsis:
-   [adr] GetLocalLeaves -> [gid1 ... gidn]
-   gid   GetLocalLeaves -> [gid1 ... gidn]
+   gid [<<dict>>]  GetLocalLeaves -> [gid1 ... gidn]
    Parameters:
-   [adr]   - address of a compound or subnet
-   gid     - id of a compound or subnet
+   gid     - id of a subnet
+   <<dict>> - Dictionary of selection properties
+   Returns:	
    [gid..] - Array with the global ids of all local leaf nodes.
 
    Description:
-   This function does the same as GetLeaves, but returns only the
+   This function does the same as GetGlobalLeaves, but returns only the
    nodes local to the MPI process executing the program.
 
-   Author: Hans Ekkehard Plesser
+   Author: Hans Ekkehard Plesser, Abigail Morrison
 
-   SeeAlso: GetLeaves, GetLocalNodes, GetLocalChildren
+   SeeAlso: GetGlobalLeaves, GetLocalNodes, GetLocalChildren
 */
 
 /GetLocalLeaves trie
-[/integertype] { true GetLeaves_i_b } bind addtotrie
-[/arraytype]  { GetGID true GetLeaves_i_b } bind addtotrie
+[/integertype /dictionarytype] { true GetLeaves_i_D_b } bind addtotrie
+[/integertype] { << >> true GetLeaves_i_D_b } bind addtotrie
 def
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-/* BeginDocumentation
-   Name: FindNodes - Find all nodes with a certain property.
-   
-   Synopsis:
-   [adr] <<dict>> FindNodes -> [adr1 ... adrn]
-   
-   Parameters:
-   [adr]    - Address of the subnet to search in
-   <<dict>> - Dictionary with desired properties.
-   
-   Description:
-   Iterates through the specified subnet and compares the status dictionary of
-   each child with the specified property list. The return value is an array
-   with the addresses of all nodes which matched the list of properties.
-   
-   SeeAlso: SubsetQ
-*/
-
-/FindNodes
-[/arraytype /dictionarytype]
-{
- << >> begin
- /properties Set
- /adr Set
-  adr GetStatus /d Set
-  d /children known
-  {
-   mark 
-   adr GetNodes
-   {
-     GetAddress 
-     dup
-     GetStatus properties SubsetQ not
-     { pop } if
-   } forall
-   counttomark
-   arraystore exch ;
-  }
-  {
-    end
-    /FindNode /IllegalOperation raiseerror
-  } ifelse
-  end
-} bind def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* BeginDocumentation
    Name: ShowStatus - Show the status dictionary of a network node.
-   
+
    Synopsis:
-   [adr] ShowStatus -> -
-   
+   gid ShowStatus -> -
+
    Description:
    ShowStatus retrieves the status dictionary of the specified node
    and displays it, using info.
    ShowStatus is equivalent to the sequence "GetStatus info"
-   
+
    SeeAlso: GetStatus, info
 */
 
@@ -1431,7 +1564,7 @@ def
     dup                % id id
     [
       exch           % id [ id
-      GetChildren { depth 1 sub GetNetwork_i_i } forall
+      GetGlobalChildren { depth 1 sub GetNetwork_i_i } forall
     ]
     exch prepend
   } if
@@ -1455,46 +1588,136 @@ SLI ] /iaf_neuron Create ;
 SLI ] 0 3 GetNetwork ==
 [0 1 [2 [3 4 5] [6 7 8]] 9]
 
-SeeAlso: GetLeaves, GetNodes, GetChildren
+Note:
+In parallel simulations, this function collects data across all processes
+and can thus take a lot of time and consume huge amounts of memory.
+
+SeeAlso: GetGlobalNodes, GetLocalNodes, GetGlobalLeaves, GetLocalLeaves, GetGlobalChildren, GetLocalChildren
 */
 /GetNetwork trie
 [/integertype /integertype] /GetNetwork_i_i load addtotrie
-[/arraytype /integertype] 
-{ 
-   exch_ GetGID exch_ 
-   GetNetwork_i_i
-} bind addtotrie
 def
 
-  /* BeginDocumentation 
-     Name: TimeCommunication - returns average time taken for MPI_Allgather over n calls with m bytes 
-     Synopsis:  
-     n m [bool] TimeCommunication -> time 
-     Availability: NEST 2.0 
-     Author: Abigail Morrison 
-     FirstVersion: August 2009 
-     Description: 
-     The function allows a user to test how much time a call the Allgather costs 
+  /* BeginDocumentation
+     Name: TimeCommunication - returns average time taken for MPI_Allgather over n calls with m bytes
+     Synopsis:
+     n m [bool] TimeCommunication -> time
+     Availability: NEST 2.0
+     Author: Abigail Morrison
+     FirstVersion: August 2009
+     Description:
+     The function allows a user to test how much time a call the Allgather costs
      If boolean third argument is passed and true, time offgrid spike communication.
      SeeAlso: TimeCommunicationOffgrid
-   */ 
+   */
 /TimeCommunication trie
 [/integertype /integertype /booltype] /TimeCommunication_i_i_b load addtotrie
 [/integertype /integertype] { false TimeCommunication_i_i_b } bind addtotrie
 def
 
-  /* BeginDocumentation 
+  /* BeginDocumentation
      Name: TimeCommunicationOffgrid - returns average time taken for MPI_Allgather over n calls with m bytes when communication offgrid spikes
-     Synopsis:  
-     n m [bool] TimeCommunication -> time 
-     Availability: NEST 2.0 
-     Author: Abigail Morrison 
-     FirstVersion: August 2009 
-     Description: 
-     The function allows a user to test how much time a call the Allgather costs 
+     Synopsis:
+     n m [bool] TimeCommunication -> time
+     Availability: NEST 2.0
+     Author: Abigail Morrison
+     FirstVersion: August 2009
+     Description:
+     The function allows a user to test how much time a call the Allgather costs
      SeeAlso: TimeCommunication
-   */ 
+   */
 /TimeCommunicationOffgrid trie
 [/integertype /integertype] { true TimeCommunication_i_i_b } bind addtotrie
 def
 
+% can only be defined here because on bg processes.sli is not included
+statusdict /platform get dup (bg/p) eq exch (bg/q) eq or
+{
+ /memory_thisjob {memory_thisjob_bg} def
+} if
+
+/* BeginDocumentation
+Name - RestoreNodes - Restore nodes from an array of status dictionaries.
+Description:
+RestoreNodes takes an array of status dictionaries and creates nodes with these properties.
+RestoreNodes assumes that the status dictionaries belong to a consecutive range of nodes.
+
+The new nodes are created inside the current subnet and maintain their local subnet structure.
+Thus, RestoreNodes can be used to copy a range of neurons to different locations.
+*/
+
+/RestoreNodes [/arraytype] /RestoreNodes_a load def
+
+/* BeginDocumentation
+Name: SaveModels - Retrieve the state of all models.
+Description: 
+*/
+
+/SaveModels
+{
+  << >> begin
+  modeldict cva 2 Partition size /n_models Set
+  n_models 1 add % proxy model is not in modeldict
+  array /models Set
+  {
+    models exch
+    arrayload ; exch
+    put /models Set
+ } forall 
+
+ [
+ models
+ {
+   dup type /literaltype eq
+   { GetDefaults } { pop } ifelse
+ } forall 
+ ] 
+ end
+} def
+
+/* BeginDocumentation
+Name: RestoreModels - Restore saved models from an array of status dictionaries.
+Description:
+*/
+/RestoreModels
+[/arraytype]
+{
+ << >> begin
+  /models Set
+  0 GetStatus /dict_miss_is_error get /dict_err Set
+  0 << /dict_miss_is_error false >> SetStatus
+  /old_verbosity verbosity def
+  M_ERROR setverbosity
+  /restoremodel
+  {
+    begin
+    model type_id neq
+    {
+      type_id model currentdict CopyModel
+    }
+    {
+      type_id /a2eif_cond_exp_HW neq        % these models
+      type_id /topology_layer_3d neq and    % these models
+      type_id /topology_layer_free neq and  % break when
+      type_id /topology_layer_grid neq and  % their status is changed
+      {  model currentdict SetDefaults } if
+    } ifelse
+    end
+  } def
+  models
+  {
+    restoremodel
+  } forall
+  old_verbosity setverbosity
+  0 << /dict_miss_is_error dict_err >> SetStatus
+  end
+} def
+
+/cva [/connectiontype] /cva_C load def
+
+
+/abort
+{
+  statusdict /exitcodes get /userabort get
+  statusdict /is_mpi get { MPI_Abort }{ quit_i } ifelse
+} bind def

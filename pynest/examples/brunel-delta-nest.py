@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # brunel-delta-nest.py
 #
 # This file is part of NEST.
@@ -35,11 +36,11 @@ simtime = 1000.0 # Simulation time in ms
 delay   = 1.5    # synaptic delay in ms
 
 # Parameters for asynchronous irregular firing
-g       = 6.0
+g       = 5.0
 eta     = 2.0  # external rate relative to threshold rate
 epsilon = 0.1  # connection probability
 
-order     = 250
+order     = 2500
 NE        = 4*order
 NI        = 1*order
 N_neurons = NE+NI
@@ -52,7 +53,7 @@ C_tot = int(CI+CE)      # total number of synapses per neuron
 # Initialize the parameters of the integrate and fire neuron
 tauMem = 20.0
 theta  = 20.0
-J      = 10*0.1 # postsynaptic amplitude in mV
+J      = 0.1 # postsynaptic amplitude in mV
 
 J_ex  = J
 J_in  = -g*J_ex
@@ -69,6 +70,8 @@ neuron_params= {"C_m":        1.0,
                 "tau_m":      tauMem,
                 "t_ref":      2.0,
                 "E_L":        0.0,
+                "V_reset":    0.0,
+                "V_m":        0.0,
                 "V_th":       theta}
 
 nest.SetDefaults("iaf_psc_delta", neuron_params)
@@ -82,11 +85,11 @@ noise=nest.Create("poisson_generator")
 espikes=nest.Create("spike_detector")
 ispikes=nest.Create("spike_detector")
 
-nest.SetStatus([espikes],[{"label": "brunel-py-ex",
+nest.SetStatus(espikes,[{"label": "brunel-py-ex",
                    "withtime": True,
                    "withgid": True}])
 
-nest.SetStatus([ispikes],[{"label": "brunel-py-in",
+nest.SetStatus(ispikes,[{"label": "brunel-py-in",
                    "withtime": True,
                    "withgid": True}])
 
@@ -144,5 +147,4 @@ print "Inhibitory rate   : %.2f Hz" % rate_in
 print "Building time     : %.2f s" % build_time
 print "Simulation time   : %.2f s" % sim_time
 
-nest.raster_plot.from_device(espikes, "", hist=True)
-#nest.raster_plot.show()
+nest.raster_plot.from_device(espikes, hist=True)

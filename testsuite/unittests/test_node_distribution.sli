@@ -49,7 +49,7 @@
 
 ResetKernel
 
-[0] << 
+0 << 
     /local_num_threads 1   
     /resolution h
 >> SetStatus
@@ -65,23 +65,21 @@ ResetKernel
   sn2 << /children_on_same_vp true >> SetStatus
   sn2 ChangeSubnet
   /iaf_neuron 3 Create ;
-  
-sn1 GetLeaves
-{ sn2 GetLeaves DivergentConnect }
+
+sn1 GetGlobalLeaves
+{ sn2 GetGlobalLeaves DivergentConnect }
 forall
 
-sn2 GetLeaves
-{ sn1 GetLeaves DivergentConnect }
+sn2 GetGlobalLeaves
+{ sn1 GetGlobalLeaves DivergentConnect }
 forall
 
 0 ChangeSubnet
   /spike_detector Create /sd Set
   sd << /withgid true /withtime true /to_screen false >> SetStatus
 
-%[0] 2 PrintNetwork
-
-[1 1] sd GetAddress Connect
-[2 1] sd GetAddress Connect
+sn1 GetGlobalNodes 0 get sd Connect
+sn2 GetGlobalNodes 0 get sd Connect
 
 40 Simulate
 

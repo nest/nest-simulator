@@ -68,7 +68,7 @@ SeeAlso: iaf_neuron, testsuite::test_iaf_i0
 ResetKernel
 
 
-[0] << 
+0 << 
        /local_num_threads 1   
        /resolution h
      >> SetStatus
@@ -83,7 +83,7 @@ vm << /withtime true /to_memory true  /time_in_steps true /interval h >> SetStat
 
 
 /spike_detector Create /sd Set
-sd << /withtime true /to_memory true /withpath true /time_in_steps true >> SetStatus
+sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
 
 vm neuron 1.0 h Connect
 neuron sd 1.0 h Connect

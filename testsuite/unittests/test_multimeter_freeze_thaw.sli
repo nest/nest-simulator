@@ -186,7 +186,7 @@ def
         nnet ChangeSubnet
 	/iaf_psc_alpha N Create ;
         0 ChangeSubnet
-        /nrns nnet GetLeaves def
+        /nrns nnet GetGlobalLeaves def
 
         /multimeter << /record_from recvars /withgid false /withtime true 
                        /interval 0.7 /start 4.8 /stop 233.1 /time_in_steps true >> SetDefaults

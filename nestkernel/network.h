@@ -33,12 +33,15 @@
 #include "proxynode.h"
 #include "connection_manager.h"
 #include "event.h"
+#include "modelrangemanager.h"
 #include "compose.hpp"
 #include "dictdatum.h"
 #include <ostream>
 
 #include "dirent.h"
 #include "errno.h"
+
+#include "sparsetable.h"
 
 #ifdef M_ERROR
 #undef M_ERROR
@@ -57,7 +60,8 @@ class SLIInterpreter;
 
 namespace nest
 {
-  class Compound;
+  class Subnet;
+  class SiblingContainer;
   class Event;
   class Node;
 
@@ -144,10 +148,20 @@ SeeAlso: Simulate, Node
      * Reset the network to the state at T = 0.
      */
     void reset_network();
+    
+    /**
+     * Registers a fundamental model for use with the network.
+     * @param   m     Model object.
+     * @param   private_model  If true, model is not entered in modeldict.
+     * @return void
+     * @note The Network calls the Model object's destructor at exit.
+     * @see register_model, unregister_model, register_user_model
+     */
+    void register_basis_model(Model& m, bool private_model = false);
 
     /**
      * Register a built-in model for use with the network.
-     * Also enters the model in modeldict, lest private_model is true.
+     * Also enters the model in modeldict, unless private_model is true.
      * @param   m     Model object.
      * @param   private_model  If true, model is not entered in modeldict.
      * @return Model ID assigned by network
@@ -207,9 +221,25 @@ SeeAlso: Simulate, Node
     int get_model_id(const char []) const;
 
     /**
-     * Return the Model for a given ID.
+     * Return the Model for a given model ID.
      */
     Model * get_model(index) const;
+
+    /**
+     * Return the Model for a given GID.
+     */
+    Model * get_model_of_gid(index);
+
+    /**
+     * Return the Model ID for a given GID.
+     */
+    index get_model_id_of_gid(index);
+
+    /**
+     * Return the contiguous range of ids of nodes with the same model
+     * than the node with the given GID.
+     */
+    const modelrange& get_contiguous_gid_range(index gid) const;
 
     /**
      * Add a number of nodes to the network.
@@ -220,7 +250,21 @@ SeeAlso: Simulate, Node
      * specified.
      * @throws nest::UnknownModelID
      */
-    index add_node(long_t m, long_t n = 1);
+    index add_node(index m, long_t n = 1);
+
+    /**
+     * Restore nodes from an array of status dictionaries.
+     * The following entries must be present in each dictionary:
+     * /model - with the name or index of a neuron mode.
+     * 
+     * The following entries are optional:
+     * /parent - the node is created in the parent subnet
+     * 
+     * Restore nodes uses the current working node as root. Thus, all
+     * GIDs in the status dictionaties are offset by the GID of the current
+     * working node. This allows entire subnetworks to be copied.
+     */
+    void restore_nodes(ArrayDatum &);
 
     /**
      * Set the state (observable dynamic variables) of a node to model defaults.
@@ -230,7 +274,7 @@ SeeAlso: Simulate, Node
 
     /**
      * Return total number of network nodes.
-     * The size also includes all Compound objects.
+     * The size also includes all Subnet objects.
      */
     index size() const;
 
@@ -269,13 +313,34 @@ SeeAlso: Simulate, Node
      */ 
     bool connect(index s, index r, DictionaryDatum& d, index syn);
 
-    void compound_connect(Compound &, Compound &, int, index syn);
+    void subnet_connect(Subnet &, Subnet &, int, index syn);
 
-    void divergent_connect(index s, TokenArray r, TokenArray weights, TokenArray delays, index syn);
-    void random_divergent_connect(index s, TokenArray r, index n, TokenArray w, TokenArray d, bool, bool, index syn);
+    /**
+     * Connect from an array of dictionaries.
+     */
+    void connect(ArrayDatum& connectome);
+
+    void divergent_connect(index s, const TokenArray r, const TokenArray weights, const TokenArray delays, index syn);
+    /**
+     * Connect one source node with many targets.
+     * The dictionary d contains arrays for all the connections of type syn.
+     */
+
+    void divergent_connect(index s,  DictionaryDatum d, index syn);
+    void random_divergent_connect(index s, const TokenArray r, index n, const TokenArray w, const TokenArray d, bool, bool, index syn);
     
-    void convergent_connect(TokenArray s, index r, TokenArray weights, TokenArray delays, index syn);
-    void random_convergent_connect(TokenArray s, index t, index n, TokenArray w, TokenArray d, bool, bool, index syn);
+    void convergent_connect(const TokenArray s, index r, const TokenArray weights, const TokenArray delays, index syn);
+
+    
+    size_t convergent_connect(const std::vector<index> &s_id, const std::vector<Node*> &s, index r, const TokenArray &weight, const TokenArray &delays, index syn);
+
+    void random_convergent_connect(const TokenArray s, index t, index n, const TokenArray w, const TokenArray d, bool, bool, index syn);
+
+    /**
+     * Use openmp threaded parallelization to speed up connection.
+     * Parallelize over target list. 
+     */
+    void random_convergent_connect(TokenArray s, TokenArray t, TokenArray n, TokenArray w, TokenArray d, bool, bool, index syn);
  
     DictionaryDatum get_connector_defaults(index sc);
     void set_connector_defaults(index sc, DictionaryDatum& d);
@@ -284,36 +349,21 @@ SeeAlso: Simulate, Node
     void set_synapse_status(index gid, index syn, port p, thread tid, DictionaryDatum& d);
 
     DictionaryDatum get_connector_status(const Node& node, index sc);
+    DictionaryDatum get_connector_status(index gid, index sc);
     void set_connector_status(Node& node, index sc, thread tid, DictionaryDatum& d);
 
     ArrayDatum find_connections(DictionaryDatum dict);
+    ArrayDatum get_connections(DictionaryDatum dict);
 
-    Compound * get_root() const;        ///< return root compound.
-    Compound * get_cwn() const;         ///< current working node.
+    Subnet * get_root() const;        ///< return root subnet.
+    Subnet * get_cwn() const;         ///< current working node.
 
     /**
      * Change current working node. The specified node must
-     * exist and be a compound.
-     * @throws nest::IllegalOperation Target is no compound.
+     * exist and be a subnet.
+     * @throws nest::IllegalOperation Target is no subnet.
      */
     void  go_to(index);
-
-    /**
-     * Change current working node. The specified node must
-     * exist and be a compound.
-     * @throws nest::IllegalOperation  Target is no compound.
-     * @throws nest::UnknownNode       Target does not exist in the network.
-     */
-    void  go_to(std::vector<size_t> const &);
-
-    /**
-     * Change current working node. The specified node must
-     * exist and be a compound.
-     * @throws nest::IllegalOperation  Target is no compound.
-     * @throws TypeMismatch            Array is not a flat & homogeneous array of integers.
-     * @throws nest::UnknownNode       Target does not exist in the network.
-     */
-    void  go_to(TokenArray);
 
     void simulate(Time const &);
     /**
@@ -339,7 +389,7 @@ SeeAlso: Simulate, Node
 
     void memory_info();
 
-    void print(TokenArray, int);
+    void print(index, int);
 
     /**
      * Standard routine for sending events. This method decides if
@@ -438,6 +488,11 @@ SeeAlso: Simulate, Node
     bool is_local_node(Node*) const;
 
     /**
+     * Return true, if the given gid is on the local machine
+     */
+    bool is_local_gid(index gid) const;
+
+    /**
      * Return true, if the given VP is on the local machine
      */
     bool is_local_vp(thread) const;
@@ -475,44 +530,6 @@ SeeAlso: Simulate, Node
      */
 
     /**
-     * Return addess array of the specified Node.
-     * @param p Pointer to the specified Node.
-     * @ingroup net_access
-     */
-    std::vector<size_t> get_adr(Node const *p) const;
-
-    /**
-     * Return addess array of the specified Node.
-     * @param i Index of the specified Node.
-     *
-     * @ingroup net_access
-     */
-    std::vector<size_t> get_adr(index i) const;
-
-    /**
-     * Return pointer of the specified Node.
-     * @param a C++ vector with the address array of the Node.
-     * @param thr global thread index of the Node.
-     *
-     * @throws nest::UnknownNode       Target does not exist in the network.
-     *
-     * @ingroup net_access
-     */
-    Node* get_node(std::vector<size_t> const &a, thread thr = 0) const;
-
-    /**
-     * Return pointer of the specified Node.
-     * @param a SLI Array with the address array of the Node.
-     * @param thr global thread index of the Node.
-     *
-     * @throws TypeMismatch            Array is not a flat & homogeneous array of integers.
-     * @throws nest::UnknownNode       Target does not exist in the network.
-     *
-     * @ingroup net_access
-     */
-    Node* get_node(TokenArray a, thread thr = 0) const;
-
-    /**
      * Return pointer of the specified Node.
      * @param i Index of the specified Node.
      * @param thr global thread index of the Node.
@@ -521,24 +538,24 @@ SeeAlso: Simulate, Node
      *
      * @ingroup net_access
      */
-    Node*  get_node(index, thread thr = 0) const;
+    Node*  get_node(index, thread thr = 0);
 
     /**
-     * Return the Compound that contains the thread siblings.
+     * Return the Subnet that contains the thread siblings.
      * @param i Index of the specified Node.
      *
      * @throws nest::NoThreadSiblingsAvailable     Node does not have thread siblings.
      *
      * @ingroup net_access
      */
-    const Compound* get_thread_siblings(index n) const;
+    const SiblingContainer* get_thread_siblings(index n) const;
 
     /**
      * Check, if there are instances of a given model.
      * @param i index of the model to check for
      * @return true, if model is instantiated at least once.
      */
-    bool model_in_use(index i) const;
+    bool model_in_use(index i);
 
     /**
      * The prefix for files written by devices.
@@ -578,7 +595,7 @@ SeeAlso: Simulate, Node
      * Get properties of a node. The specified node must exist.
      * @throws nest::UnknownNode       Target does not exist in the network.
      */
-    DictionaryDatum get_status(index) const;
+    DictionaryDatum get_status(index);
 
     /**
      * Execute a SLI command in the neuron's namespace.
@@ -703,10 +720,10 @@ SeeAlso: Simulate, Node
 #endif
     
   private:
-    void connect(Node& s, Node& r, thread t, index syn);
-    void connect(Node& s, Node& r, thread t, double_t w, double_t d, index syn);
-    void connect(Node& s, Node& r, thread t, DictionaryDatum& d, index syn);
-    
+    void connect(Node& s, Node& r, index sgid, thread t, index syn, bool count_connections = true);
+    void connect(Node& s, Node& r, index sgid, thread t, double_t w, double_t d, index syn, bool count_connections = true);
+    void connect(Node& s, Node& r, index sgid, thread t, DictionaryDatum& d, index syn, bool count_connections = true);
+
     /**
      * Initialize the network data structures.
      * init_() is used by the constructor and by reset().
@@ -733,8 +750,8 @@ SeeAlso: Simulate, Node
     SLIInterpreter &interpreter_;
     ConnectionManager connection_manager_;
     
-    Compound *root_;               //!< Root node.
-    Compound *current_;            //!< Current working node (for insertion).
+    Subnet *root_;               //!< Root node.
+    Subnet *current_;            //!< Current working node (for insertion).
 
     /* BeginDocumentation
        Name: synapsedict - Dictionary containing all synapse models.
@@ -754,6 +771,8 @@ SeeAlso: Simulate, Node
     */
     Dictionary* modeldict_;        //!< Dictionary for models.
 
+    Model* siblingcontainer_model; //!< The model for the SiblingContainer class
+    
     std::string data_path_;        //!< Path for all files written by devices 
     std::string data_prefix_;      //!< Prefix for all files written by devices
     bool        overwrite_files_;  //!< If true, overwrite existing data files. 
@@ -765,9 +784,13 @@ SeeAlso: Simulate, Node
      * modeldict.
      */
     std::vector< std::pair<Model *, bool> > pristine_models_;
-    std::vector<Model *> models_;  //!< The list of available models
 
-    std::vector<Node *> nodes_; //!< The network as flat list of nodes
+    std::vector<Model *> models_;            //!< The list of available models
+    std::vector<Node*> proxy_nodes_;         //!< Placeholders for remote nodes, one per thread
+    std::vector<Node*> dummy_spike_sources_; //!< Placeholders for spiking remote nodes, one per thread
+
+    google::sparsetable<Node *> nodes_;  //!< The network as flat list of nodes
+    Modelrangemanager node_model_ids_;   //!< Records the model id of each neuron in the network
 
     bool dict_miss_is_error_;  //!< whether to throw exception on missed dictionary entries
   };
@@ -797,33 +820,34 @@ SeeAlso: Simulate, Node
   }
 
   inline
-  std::vector<size_t> Network::get_adr(index n) const
-  {
-    return get_adr(get_node(n));
-  }
-
-  inline
   index Network::size() const
   {
+    //return node_locs_.size();
     return nodes_.size();
   }
 
   inline
-  void Network::connect(Node& s, Node& r, thread t, index syn)
+  void Network::connect(Node& s, Node& r, index sgid, thread t, index syn, bool count_connections)
   {
-    connection_manager_.connect(s, r, t, syn);
+    connection_manager_.connect(s, r, sgid, t, syn, count_connections);
   }
 
   inline
-  void Network::connect(Node& s, Node& r, thread t, double_t w, double_t d, index syn)
+  void Network::connect(Node& s, Node& r, index sgid, thread t, double_t w, double_t d, index syn, bool count_connections)
   {
-    connection_manager_.connect(s, r, t, w, d, syn);
+    connection_manager_.connect(s, r, sgid, t, w, d, syn, count_connections);
   }
 
   inline
-  void Network::connect(Node& s, Node& r, thread t, DictionaryDatum& p, index syn)
+  void Network::connect(Node& s, Node& r, index sgid, thread t, DictionaryDatum& p, index syn, bool count_connections)
   {
-    connection_manager_.connect(s, r, t, p, syn);
+    connection_manager_.connect(s, r, sgid, t, p, syn, count_connections);
+  }
+
+  inline 
+  void Network::connect(ArrayDatum &connectome)
+  {
+    connection_manager_.connect(connectome);
   }
 
   inline
@@ -845,6 +869,12 @@ SeeAlso: Simulate, Node
   }
 
   inline
+  DictionaryDatum Network::get_connector_status(index gid, index sc)
+  {
+    return connection_manager_.get_connector_status(gid, sc);
+  }
+
+  inline
   void Network::set_connector_status(Node& node, index sc, thread tid, DictionaryDatum& d)
   {
     connection_manager_.set_connector_status(node, sc, tid, d);
@@ -854,6 +884,12 @@ SeeAlso: Simulate, Node
   ArrayDatum Network::find_connections(DictionaryDatum params)
   {
     return connection_manager_.find_connections(params);
+  }
+
+  inline
+  ArrayDatum Network::get_connections(DictionaryDatum params)
+  {
+    return connection_manager_.get_connections(params);
   }
   
   inline
@@ -911,13 +947,13 @@ SeeAlso: Simulate, Node
   }
 
   inline
-  Compound * Network::get_root() const
+  Subnet * Network::get_root() const
   {
     return root_;
   }
 
   inline
-  Compound* Network::get_cwn(void) const
+  Subnet* Network::get_cwn(void) const
   {
     return current_;
   }
@@ -937,7 +973,18 @@ SeeAlso: Simulate, Node
   inline
   bool Network::is_local_node(Node* n) const
   {
-    return scheduler_.is_local_node(n);
+    return !(n->is_proxy());
+  }
+
+  inline
+  bool Network::is_local_gid(index gid) const
+  {
+    /* if(gid >= node_locs_.size() || nodes_[node_locs_[gid]] == 0) */
+    /*   throw UnknownNode(gid); */
+    /* return (node_locs_[gid] != -1); */
+    if ( gid >= nodes_.size() )
+      throw UnknownNode(gid);
+    return ( nodes_.test(gid) ); // test if local
   }
 
   inline
@@ -1001,9 +1048,12 @@ SeeAlso: Simulate, Node
     e.set_stamp(get_slice_origin() + Time::step(lag + 1));
     e.set_sender(source);
     thread t = source.get_thread();
+    index gid = source.get_gid();
+
+    //std::cout << "Network::send 1 " << gid << " " << e.get_sender().get_gid() << std::endl;
 
     assert(!source.has_proxies());
-    send_local(t, source, e);
+    connection_manager_.send(t, gid, e);
   }
 
   template <>
@@ -1041,6 +1091,7 @@ SeeAlso: Simulate, Node
   void Network::send_local(thread t, Node& source, Event& e)
   {
     index sgid = source.get_gid();
+    e.set_sender_gid(sgid);
     connection_manager_.send(t, sgid, e);
   }
 
@@ -1092,6 +1143,27 @@ SeeAlso: Simulate, Node
     return 0; // this never happens
   }
 
+  inline 
+  Model* Network::get_model_of_gid(index gid)
+  {
+     return models_[get_model_id_of_gid(gid)];
+  }
+
+  inline
+  index Network::get_model_id_of_gid(index gid)
+  {
+    if (node_model_ids_.is_in_range(gid))
+      return node_model_ids_.get_model_id(gid);
+    else
+      throw UnknownNode(gid);
+  }
+
+  inline 
+  const modelrange& Network::get_contiguous_gid_range(index gid) const
+  {
+    return node_model_ids_.get_range(gid);
+  }
+
   inline
   const std::string& Network::get_data_path() const
   {
@@ -1141,7 +1213,7 @@ SeeAlso: Simulate, Node
   {
     return dict_miss_is_error_;
   }
-  
+
   typedef lockPTR<Network> NetPtr;
 
   //!< Functor to compare Models by their name.

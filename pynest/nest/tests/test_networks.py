@@ -56,13 +56,98 @@ class NetworkTestCase(unittest.TestCase):
        """GetLeaves"""
 
        nest.ResetKernel()
-       nest.BeginSubnet(label='testlabel')
-       n  = nest.Create('iaf_neuron',100)
-       sn = nest.EndSubnet()
+       model = 'iaf_neuron'
+       l = nest.LayoutNetwork(model, [2,3])
+       allLeaves = [3, 4, 5, 7, 8, 9]
+       
+       # test all
+       self.assertEqual(nest.GetLeaves(l), [allLeaves])
+       
+       # test all with empty dict
+       self.assertEqual(nest.GetLeaves(l, properties={}), [allLeaves])
+       
+       # test iteration over subnets
+       self.assertEqual(nest.GetLeaves(l + l), [allLeaves, allLeaves])
+       
+       # children of l are not leaves, should yield empty
+       self.assertEqual(nest.GetLeaves(l, properties={'parent': l[0]}),
+                        [[]])
+       
+       # local id of middle nodes
+       self.assertEqual(nest.GetLeaves(l, properties={'local_id': 2}),
+                        [[4, 8]])
+       
+       # selection by model type
+       self.assertEqual(nest.GetLeaves(l, properties={'model': model}),
+                        [allLeaves])
+       
 
-       self.assertEqual(len(nest.GetLeaves(sn)[0]), len(n))
+   def test_GetNodes(self):
+       """GetNodes"""
 
+       nest.ResetKernel()
+       model = 'iaf_neuron'
+       l = nest.LayoutNetwork(model, [2,3])
+       allNodes = range(2, 10)
+       allSubnets = [2, 6]
+       allLeaves = [n for n in allNodes if n not in allSubnets]
+       
+       # test all
+       self.assertEqual(nest.GetNodes(l), [allNodes])
+       
+       # test all with empty dict
+       self.assertEqual(nest.GetNodes(l, properties={}), [allNodes])
+       
+       # test iteration over subnets
+       self.assertEqual(nest.GetNodes(l + l), [allNodes, allNodes])
+       
+       # children of l are nodes
+       self.assertEqual(nest.GetNodes(l, properties={'parent': l[0]}),
+                        [allSubnets])
+       
+       # local id of second intermediate subnet and middle nodes
+       self.assertEqual(nest.GetNodes(l, properties={'local_id': 2}),
+                        [[4, 6, 8]])
+       
+       # selection by model type
+       self.assertEqual(nest.GetNodes(l, properties={'model': 'subnet'}),
+                        [allSubnets])
+       self.assertEqual(nest.GetNodes(l, properties={'model': model}),
+                        [allLeaves])
 
+   
+   def test_GetChildren(self):
+       """GetChildren"""
+
+       nest.ResetKernel()
+       model = 'iaf_neuron'
+       l = nest.LayoutNetwork(model, [2, 3])
+       topKids = [2, 6]
+       kids2 = [3, 4, 5]
+       kids6 = [7, 8, 9]
+       
+       # test top level
+       self.assertEqual(nest.GetChildren(l), [topKids])
+       
+       # test underlying level
+       self.assertEqual(nest.GetChildren([2, 6]), [kids2, kids6])
+       
+       # test with empty dict
+       self.assertEqual(nest.GetChildren(l, properties={}), [topKids])
+                     
+       # local id of middle nodes
+       self.assertEqual(nest.GetChildren([2, 6], properties={'local_id': 2}),
+                        [[4], [8]])
+       
+       # selection by model type
+       self.assertEqual(nest.GetChildren(l, properties={'model': 'subnet'}),
+                        [topKids])
+       self.assertEqual(nest.GetChildren([2], properties={'model': 'subnet'}),
+                        [[]])
+       self.assertEqual(nest.GetChildren([2], properties={'model': model}),
+                        [kids2])
+
+   
    def test_GetNetwork(self):
        """GetNetwork"""
 
@@ -78,18 +163,6 @@ class NetworkTestCase(unittest.TestCase):
        self.assertEqual(nest.GetNetwork(sn1,1)[1], sn2[0])
        self.assertEqual(len(nest.GetNetwork(sn1,2)[1]), len(nest.GetNetwork(sn2,1)))
 
-
-   def test_GetAddres_subnet(self):
-      """Subnets"""
-
-      nest.ResetKernel()
-      for i in range(10):
-         nest.BeginSubnet(str(i))
-
-      self.assertEqual(nest.CurrentSubnet(),[10])
-      n=nest.Create('iaf_neuron')
-      self.assertEqual(nest.GetAddress(n),[[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])
-      
 
 def suite():
 

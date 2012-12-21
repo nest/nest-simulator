@@ -189,7 +189,7 @@ void GenericConnectorModelBase< ConnectionT, CommonPropertiesT, ConnectorT >::ge
   // first get properties common to all synapses
   // these are stored only once (not within each Connection)
   common_props_.get_status(d);
-
+  (*d)["property_object"]=  (size_t) &common_props_;
   // then get default properties for individual synapses
   defaults_.get_status(d);
 

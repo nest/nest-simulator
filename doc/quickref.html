@@ -79,13 +79,13 @@
   <table class="toc">
     <thead>
       <tr height="50px">
-	<td align="center" colspan="2"><h2>Table of Contents</h2></td>
+        <td align="center" colspan="2"><h2>Table of Contents</h2></td>
       </tr>
     </thead>
     <tbody>
       <tr>
-	<td width="50%">
-	  <ul>
+        <td width="50%">
+          <ul>
             <li><a href="#introduction">Introduction</a></li>
             <li><a href="#online-help">The online-help system</a></li>
             <li><a href="#kernel">Simulation kernel</a></li>
@@ -94,15 +94,15 @@
             <li><a href="#net-access">Network access</a></li>
             <li><a href="#stacks">Stack Commands</a></li>
             <li><a href="#arithmetics">Arithmetic functions</a></li>
-	    <li><a href="#boolean">Boolean functions</a></li>
-	    <li><a href="#math">Special mathematical functions</a></li>
+            <li><a href="#boolean">Boolean functions</a></li>
+            <li><a href="#math">Special mathematical functions</a></li>
             <li><a href="#rangen">Random number generation</a></li>
             <li><a href="#statistics">Statistics</a></li>
             <li><a href="#arrays">Arrays, vectors, and matrices</a></li>
-	  </ul>
-	</td>
-	<td width="50%">
-	  <ul>
+          </ul>
+        </td>
+        <td width="50%">
+          <ul>
             <li><a href="#strings">Strings</a></li>
             <li><a href="#dictionaries">Dictionaries and Namespaces</a> </li>
             <li><a href="#names">Names, functions, and variables</a> </li>
@@ -116,16 +116,16 @@
             <li><a href="#processes">Process control</a> </li>
             <li><a href="#interpreter">SLI Interpreter Control</a> </li>
             <li><a href="#parallel">Parallel computing</a> </li>
-	  </ul>
-	</td>
+          </ul>
+        </td>
       </tr>
       <tr>
-	<td style="border-top: 1px solid #ccc">
-	  <ul><li><a href="index.html">Back to the Helpdesk</a></li></ul>
-	</td>
-	<td style="border-top: 1px solid #ccc">
-	  <ul><li><a href="help/helpindex.html">Alphabetical command index</a></li></ul>
-	</td>
+        <td style="border-top: 1px solid #ccc">
+          <ul><li><a href="index.html">Back to the Helpdesk</a></li></ul>
+        </td>
+        <td style="border-top: 1px solid #ccc">
+          <ul><li><a href="help/helpindex.html">Alphabetical command index</a></li></ul>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -163,7 +163,7 @@ several sections which are explained below:</p>
       <tr>
         <td valign="top"><b>Name:</b></td>
         <td>
-	  <i>[namespace::]Command</i> - Short description.<br> The
+          <i>[namespace::]Command</i> - Short description.<br> The
           commandname, followed by a dash, followed by a short
           description of the command. The short description should not
           be longer than 60 characters. However, the description
@@ -177,7 +177,7 @@ several sections which are explained below:</p>
       <tr>
         <td valign="top"><b>Synopsis:</b></td>
         <td>
-	  <i>arg1 ... argn Command -&gt; res1 ...  resn</i><br> This
+          <i>arg1 ... argn Command -&gt; res1 ...  resn</i><br> This
           entry summarises how the command is to be
           called. <i>arg1</i> through <i>argn</i> denote the arguments
           of the command in the order as they are
@@ -186,29 +186,29 @@ several sections which are explained below:</p>
           output of the command is shown, again, in the order that the
           results are pushed on the stack. Thus, <i>resn</i> will be
           at the top of the stack.
-	</td>
+        </td>
       </tr>
       <tr>
         <td valign="top"><b>Parameters:</b></td>
         <td>
-	  A detailed description of the types and semantics of the
+          A detailed description of the types and semantics of the
           parameters.<br> Note, that this entry is not allways
           present. Sometimes, the types of the arguments are already
           indicated in the Synopsis entry, by using appropriate names
           and syntactic markup. For example <i>[result]</i>
           indicates that the result is an array.
-	</td>
+        </td>
       </tr>
       <tr>
         <td valign="top"><b>Description:</b></td>
         <td>
-	  A detailed description of the command.
-	</td>
+          A detailed description of the command.
+        </td>
       </tr>
       <tr>
         <td valign="top"><b>Options:</b></td>
         <td>
-	  Any options that can be set for this routine, using
+          Any options that can be set for this routine, using
           the <i>SetOptions</i> command. This entry shall apear if
           there are any options that can be set for this routine.<br>
           When creating a new command, note that the options shall be
@@ -220,7 +220,7 @@ several sections which are explained below:</p>
       <tr>
         <td valign="top"><b>Examples:</b></td>
         <td>
-	  Illustrative examples, showing how the command works. This
+          Illustrative examples, showing how the command works. This
           entry should appear. Examples should cover typical usage as
           well as special cases (e.g. passing 0, empty arrays, strings
           of length 0, ...).  It is recommended that examples are
@@ -230,7 +230,7 @@ several sections which are explained below:</p>
       <tr>
         <td valign="top"><b>Variants:</b></td>
         <td>
-	  Any variants of the routine that operate on special
+          Any variants of the routine that operate on special
           parameter types (see SLI operator naming conventions). This
           entry is optional but should appear if existing variants are
           more efficient than root routine.
@@ -239,71 +239,71 @@ several sections which are explained below:</p>
       <tr>
         <td valign="top"><b>Bugs:</b></td>
         <td>
-	  Any information on known bugs and misbehaviour of the
+          Any information on known bugs and misbehaviour of the
           routine. This entry shall document all known bugs.
         </td>
       </tr>
       <tr>
         <td valign="top"><b>Diagnostics:</b></td>
         <td>
-	  A list of errors which may be raised. More elaborate
-	  versions may also describe in more detail in which
-	  situations the errors might occur. This entry is
-	  optional.
-	</td>
+          A list of errors which may be raised. More elaborate
+          versions may also describe in more detail in which
+          situations the errors might occur. This entry is
+          optional.
+        </td>
       </tr>
       <tr>
         <td valign="top"><b>Author:</b></td>
         <td>
-	  Author(s) of the command and/or documentation. This entry is
-	  optional.
-	</td>
+          Author(s) of the command and/or documentation. This entry is
+          optional.
+        </td>
       </tr>
       <tr>
         <td valign="top"><b>FirstVersion:</b></td>
         <td>
-	  Date at which the routine was created. This entry is
-	  optional.
-	</td>
+          Date at which the routine was created. This entry is
+          optional.
+        </td>
       </tr>
       <tr>
         <td valign="top"><b>Remarks:</b></td>
         <td>
-	  Any remarks on the routine, its operation or implementation,
-	  or any related information. This entry is optional.
+          Any remarks on the routine, its operation or implementation,
+          or any related information. This entry is optional.
         </td>
       </tr>
       <tr>
         <td valign="top"><b>Availability:</b></td>
         <td>
-	  SLI module or "namespace" dictionary that needs to be loaded
-	  or opened in order to make the command available. This entry
-	  shall appear if the scope of the routine name is limited to
-	  a module or dictionary.
+          SLI module or "namespace" dictionary that needs to be loaded
+          or opened in order to make the command available. This entry
+          shall appear if the scope of the routine name is limited to
+          a module or dictionary.
         </td>
       </tr>
       <tr>
         <td valign="top"><b>References:</b></td>
         <td>
-	  References to important articles, books, or other reference
-	  material which is related to this command or help-entry.
-	  This entry is optional, but recommended, if such references
-	  exist.
-	</td>
+          References to important articles, books, or other reference
+          material which is related to this command or help-entry.
+          This entry is optional, but recommended, if such references
+          exist.
+        </td>
       </tr>
       <tr>
         <td valign="top"><b>SeeAlso:</b></td>
         <td>
-	  A list of links to related help-pages. This entry is
-	  optional, but recommended.
-	</td>
+          A list of links to related help-pages. This entry is
+          optional, but recommended.
+        </td>
       </tr>
       <tr>
         <td valign="top"><b>Source:</b></td>
         <td>
-	  The name of the source-file from which the help-page was
-	  generated.
-	</td>
+          The name of the source-file from which the help-page was
+          generated.
+        </td>
       </tr>
     </tbody>
   </table>
@@ -457,8 +457,8 @@ properties.</p>
   <tbody>
     <tr>
       <td width="25%">
-	<a href="help/cc/iaf_neuron.html">iaf_neuron</a>,
-	<a href="help/cc/iaf_psc_alpha.html">iaf_psc_alpha</a>
+        <a href="help/cc/iaf_neuron.html">iaf_neuron</a>,
+        <a href="help/cc/iaf_psc_alpha.html">iaf_psc_alpha</a>
       </td>
       <td>Leaky integrate-and-fire neuron model.</td>
     </tr>
@@ -641,7 +641,7 @@ connected to their targets like a neuron.</p>
       <td>Creates topological node layer.</td>
     </tr>
     <tr>
-      <td width="25%"><a href="help/cc/topology::ConnectLayer.html">topology::ConnectLayer</a></td>
+      <td width="25%"><a href="help/cc/topology::ConnectLayers.html">topology::ConnectLayers</a></td>
       <td>Connect two layers.</td>
     </tr>
     <tr>
@@ -678,16 +678,8 @@ connected to their targets like a neuron.</p>
 <table class="commands">
   <tbody>
     <tr>
-      <td width="25%"><a href="help/cc/GetAddress.html">GetAddress</a></td>
-      <td>Return the address of a node.</td>
-    </tr>
-    <tr>
       <td width="25%"><a href="help/cc/CurrentSubnet.html">CurrentSubnet</a></td>
-      <td>Return the address of the current network node.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/GetGID.html">GetGID</a></td>
-      <td>Return the global ID of a node.</td>
+      <td>Return the GID of the current network node.</td>
     </tr>
     <tr>
       <td width="25%"><a href="help/cc/ChangeSubnet.html">ChangeSubnet</a></td>
@@ -702,12 +694,28 @@ connected to their targets like a neuron.</p>
       <td>Returns an array with the dimensions of a structured subnet.</td>
     </tr>
     <tr>
-      <td width="25%"><a href="help/cc/GetNodes.html">GetNodes</a></td>
+      <td width="25%"><a href="help/cc/GetGlobalNodes.html">GetGlobalNodes</a></td>
       <td>Return IDs of all nodes of a subnet.</td>
     </tr>
     <tr>
-      <td width="25%"><a href="help/cc/GetLeaves.html">GetLeaves</a></td>
+      <td width="25%"><a href="help/cc/GetGlobalLeaves.html">GetGlobalLeaves</a></td>
       <td>Return IDs of all leaves of a subnet.</td>
+    </tr>
+    <tr>
+      <td width="25%"><a href="help/cc/GetGlobalChildren.html">GetGlobalChildren</a></td>
+      <td>Return IDs of all immediate child nodes of a subnet.</td>
+    </tr>
+    <tr>
+      <td width="25%"><a href="help/cc/GetLocalNodes.html">GetLocalNodes</a></td>
+      <td>Return IDs of all nodes of a subnet local to the MPI process executing the command.</td>
+    </tr>
+    <tr>
+      <td width="25%"><a href="help/cc/GetLocalLeaves.html">GetLocalLeaves</a></td>
+      <td>Return IDs of all leaves of a subnet local to the MPI process executing the command.</td>
+    </tr>
+    <tr>
+      <td width="25%"><a href="help/cc/GetLocalChildren.html">GetLocalChildren</a></td>
+      <td>Return IDs of all immediate child nodes of a subnet local to the MPI process executing the command.</td>
     </tr>
   </tbody>
 </table>
@@ -1149,7 +1157,7 @@ connected to their targets like a neuron.</p>
     <tr>
       <td width="25%"><a href="help/cc/Pi.html">Pi</a></td>
       <td>Pi constant.</td>
-    </tr>    
+    </tr>
   </tbody>
 </table>
 
@@ -1367,14 +1375,6 @@ connected to their targets like a neuron.</p>
       <td>Save in a foreign file format.</td>
     </tr>
     <tr>
-      <td width="25%"><a href="help/sli/arr::index2address.html">index2address</a></td>
-      <td>Transform array indices into network addresses.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/sli/arr::address2index.html">address2index</a></td>
-      <td>Transform network addresses into array indices.</td>
-    </tr>
-    <tr>
       <td width="25%"><a href="help/sli/MathematicaToSliIndex.html">MathematicaToSliIndex</a></td>
       <td>Convert Mathematica-like indices to SLI indices.</td>
     </tr>
@@ -1431,7 +1431,7 @@ connected to their targets like a neuron.</p>
     <tr>
       <td width="25%"><a href="help/sli/empty.html">empty</a></td>
       <td>Tests if a string or array is empty.</td>
-    </tr> 
+    </tr>
     <tr>
       <td width="25%"><a href="help/sli/length.html">length</a></td>
       <td>Counts elements of an object.</td>
@@ -1876,7 +1876,7 @@ connected to their targets like a neuron.</p>
     <tr>
       <td width="25%"><a href="help/sli/empty.html">empty</a></td>
       <td>Tests if a string or array is empty.</td>
-    </tr> 
+    </tr>
     <tr>
       <td width="25%"><a href="help/sli/get.html">get</a></td>
       <td>Lookup indexed Object of a container.</td>
@@ -1946,7 +1946,7 @@ connected to their targets like a neuron.</p>
     <tr>
       <td width="25%"><a href="help/sli/empty.html">empty</a></td>
       <td>Tests if a string or array is empty.</td>
-    </tr> 
+    </tr>
     <tr>
       <td width="25%"><a href="help/sli/length.html">length</a></td>
       <td>Counts elements of an object.</td>
@@ -2058,7 +2058,7 @@ connected to their targets like a neuron.</p>
     <tr>
       <td width="25%"><a href="help/sli/MergeDictionary.html">MergeDictionary</a></td>
       <td>Merge all definitions of a dictionary with the current dicitonary.</td>
-    </tr>    
+    </tr>
   </tbody>
 </table>
 
@@ -2965,11 +2965,11 @@ not be restored to the state before the procedure was called.</p>
     <tr>
       <td width="25%"><a href="help/cc/endl.html">endl</a></td>
       <td>Line break.</td>
-    </tr> 
+    </tr>
     <tr>
       <td width="25%"><a href="help/cc/flush.html">flush</a></td>
       <td>Force the buffer of a stream to be flushed.</td>
-    </tr> 
+    </tr>
     <tr>
       <td width="25%"><a href="help/cc/setprecision.html">setprecision</a></td>
       <td>Set precision for decimal place of a stream.</td>
@@ -3016,25 +3016,6 @@ not be restored to the state before the procedure was called.</p>
     <tr>
       <td width="25%"><a href="help/sli/good.html">good</a></td>
       <td>Check good status of a stream.</td>
-    </tr>
-  </tbody>
-</table>
-
-<h3>XDR Data Format</h3>
-
-<table class="commands">
-  <tbody>
-    <tr>
-      <td width="25%"><a href="help/sli/XDR::XDRread_double.html">XDRread_double</a></td>
-      <td>Read a SLI double or double array from a stream using the XDR data format.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/sli/XDR::XDRread_int.html">XDRread_int</a></td>
-      <td>Read a SLI integer or integer array from a stream using the XDR data format.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/sli/XDR::XDRwrite.html">XDRwrite</a></td>
-      <td>Write a SLI value to a stream using the XDR data format.</td>
     </tr>
   </tbody>
 </table>
@@ -3374,7 +3355,7 @@ not be restored to the state before the procedure was called.</p>
     <tr>
       <td width="25%"><a href="help/sli/version::vlt.html">vlt</a></td>
       <td>"Less than" for version number arrays.</td>
-    </tr>    
+    </tr>
   </tbody>
 </table>
 
@@ -3475,7 +3456,7 @@ not be restored to the state before the procedure was called.</p>
     <tr>
       <td width="25%"><a href="help/cc/endl.html">endl</a></td>
       <td>Line break.</td>
-    </tr> 
+    </tr>
   </tbody>
 </table>
 
@@ -3507,7 +3488,7 @@ not be restored to the state before the procedure was called.</p>
     <tr>
       <td width="25%"><a href="help/sli/realtime.html">realtime</a></td>
       <td>Returns realtime.</td>
-    </tr> 
+    </tr>
     <tr>
       <td width="25%"><a href="help/sli/sleep.html">sleep</a></td>
       <td>Pauses current process.</td>

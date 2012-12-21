@@ -97,6 +97,7 @@ namespace nest
       tmp[t]= memory_[t].get_instantiations();
 
     (*d)["instantiations"]= Token(tmp);
+    (*d)["type_id"]= LiteralDatum(Node::network()->get_model(type_id_)->get_name());
 
     for(size_t t=0; t< tmp.size(); ++t)
       tmp[t]= memory_[t].get_total();

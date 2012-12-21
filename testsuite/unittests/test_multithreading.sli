@@ -43,38 +43,37 @@ Author: Jochen Martin Eppler
 FirstVersion: July 2008 
 */
 
-statusdict /have_pthreads get {
+% don't run this test if we didn't compile with threads 
+statusdict/threading :: (no) eq {statusdict/exitcodes/success :: quit_i} if
 
-  /unittest (6688) require
-  /unittest using
+/unittest (6688) require
+/unittest using
 
-  /threads 4 def
-  
-  % check if setting the number of threads works
-  0 << /local_num_threads threads >> SetStatus
-  0 [ /local_num_threads ] get threads eq assert_or_die
-  
-  % check ResetKernel
-  ResetKernel
-  0 [ /local_num_threads ] get 1 eq assert_or_die
-  
-  % use 4 threads again
-  0 << /local_num_threads threads >> SetStatus
-  
-  % check if modulo node distribution works
-  /iaf_neuron 4 Create ;
-  [1 2 3 4 ] {
-    dup threads mod exch [ /vp ] get eq assert_or_die
-  } forall
-  
-  % check if /children_on_same_vp works
-  /subnet Create /sn Set
-  sn << /children_on_same_vp true >> SetStatus
-  sn ChangeSubnet
-  sn threads mod /snvp Set
-  /iaf_neuron 2 Create ;
-  sn GetNodes {
-    [ /vp ] get snvp eq assert_or_die
-  } forall
+/threads 4 def
 
-} if
+% check if setting the number of threads works
+0 << /local_num_threads threads >> SetStatus
+0 [ /local_num_threads ] get threads eq assert_or_die
+
+% check ResetKernel
+ResetKernel
+0 [ /local_num_threads ] get 1 eq assert_or_die
+
+% use 4 threads again
+0 << /local_num_threads threads >> SetStatus
+
+% check if modulo node distribution works
+/iaf_neuron 4 Create ;
+[1 2 3 4 ] {
+  dup threads mod exch [ /vp ] get eq assert_or_die
+} forall
+
+% check if /children_on_same_vp works
+/subnet Create /sn Set
+sn << /children_on_same_vp true >> SetStatus
+sn ChangeSubnet
+sn threads mod /snvp Set
+/iaf_neuron 2 Create ;
+sn GetGlobalNodes {
+  [ /vp ] get snvp eq assert_or_die
+} forall

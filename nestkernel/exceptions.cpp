@@ -83,6 +83,11 @@ std::string nest::UnknownNode::message()
   return out.str();
 }
 
+std::string nest::MalformedAddress::message()
+{
+  return msg_;
+}
+
 std::string nest::NoThreadSiblingsAvailable::message()
 {
   std::ostringstream out;
@@ -224,8 +229,8 @@ std::string nest::InvalidDefaultResolution::message()
       << " is not consistent with the value " 
       << val_ << " of property '"
       << prop_.toString() << "' in model " << model_ << ".\n"
-      << "This is an internal NEST error, please report to "
-      "bugs@nest-initiative.org!";
+      << "This is an internal NEST error, please report to the "
+      "nest_user@nest-initiative.org mailing list!";
   return msg.str();
 }
 
@@ -316,12 +321,12 @@ std::string nest::MUSICChannelAlreadyMapped::message()
 std::string nest::GSLSolverFailure::message()
 {
   std::ostringstream msg;
-  msg << "In model " << model_ << ", the GSL solver " 
+  msg << "In model " << model_ << ", the GSL solver "
       << "returned with exit status " << status_ << ".\n"
       << "Please make sure you have installed a recent "
-      << "GSL version (> gsl-1.10) and contact "
-      << "bugs@nest-initiative.org for further support"
-      << ".";
+      << "GSL version (> gsl-1.10), or contact the "
+      << "nest_user@nest-initiative.org mailing list"
+      << "for further support.";
   return msg.str();
 }
 

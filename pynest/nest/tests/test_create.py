@@ -103,14 +103,6 @@ class CreateTestCase(unittest.TestCase):
         except: 
           self.fail('wrong error has been thrown')
 
-
-    def test_GetAddress(self):
-        """GetAddress"""
-        
-        nest.ResetKernel()        
-        n=nest.Create('iaf_neuron')
-        self.assertEqual(nest.GetAddress(n),[[0, 1]])
-        
         
 def suite():
 

@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # brette-gerstner-fig-3d.py
 #
 # This file is part of NEST.
@@ -27,13 +28,14 @@
 
 import nest
 import nest.voltage_trace
+import pylab
 
 nest.ResetKernel()
 
 res=0.1
 nest.SetKernelStatus({"resolution": res})
-neuron=nest.Create("aeif_cond_alpha")
-nest.SetStatus(neuron, {"V_peak": 0.0, "E_L":-60.0, "a":80.0, "b":80.5, "tau_w": 720.0})
+neuron=nest.Create("aeif_cond_exp")
+nest.SetStatus(neuron, {"V_peak":20., "E_L":-60.0, "a":80.0, "b":80.5, "tau_w": 720.0})
 dc=nest.Create("dc_generator")
 
 nest.SetStatus(dc,[{"amplitude":-800.0, "start":0.0, "stop":400.0}])
@@ -41,11 +43,11 @@ nest.SetStatus(dc,[{"amplitude":-800.0, "start":0.0, "stop":400.0}])
 nest.ConvergentConnect(dc,neuron)
 
 voltmeter= nest.Create("voltmeter")
-nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
+nest.SetStatus(voltmeter, {"withgid": True, "withtime": True, 'interval':0.1})
 
 nest.Connect(voltmeter,neuron)
 
 nest.Simulate(1000.0)
 
 nest.voltage_trace.from_device(voltmeter)
-nest.voltage_trace.show()
+pylab.axis([0,1000,-85,0])

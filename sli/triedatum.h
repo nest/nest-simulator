@@ -42,18 +42,23 @@ class TrieDatum: public TypedDatum<&SLIInterpreter::Trietype>
         return new TrieDatum(*this);
     }
 
+    Datum * get_ptr()
+    {
+      Datum::addReference();
+      return this;
+    }
 
 public:
     TrieDatum(TrieDatum const &fd)
             :TypedDatum<&SLIInterpreter::Trietype>(fd),
 	     name(fd.name),tree(fd.tree)
-    {}
+      {set_executable();}
 
     TrieDatum(Name const &n)
-            :name(n), tree() {}
+      :name(n), tree() {set_executable();}
     
     TrieDatum(Name const &n, const TokenArray &ta)
-            :name(n), tree(ta) {}
+      :name(n), tree(ta) {set_executable();}
     
 
   void print(std::ostream& o) const
@@ -64,14 +69,13 @@ public:
     void pprint(std::ostream& o) const
     {
         print(o);
-	o << "\nVariants are:" << std::endl;
-	tree.info(o);
     }
     
     void info(std::ostream &out) const
     {
-        out << "TrieDatum::info\n";
 	pprint(out);
+	out << "\nVariants are:" << std::endl;
+	tree.info(out);
     }
 
     bool equals(Datum const *) const;
@@ -91,7 +95,7 @@ public:
         tree.insert_move(a,t);
     }
     
-    Token  lookup(const TokenStack &s) const
+    const Token&  lookup(const TokenStack &s) const
     {
         return tree.lookup(s);
     }

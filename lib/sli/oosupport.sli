@@ -20,7 +20,7 @@
  *
  */
 
-/oosupport /SLI ($Revision: 9902 $) provide-component
+/oosupport /SLI ($Revision: 9952 $) provide-component
 /oosupport /C++ (1.4) require-component
 
 %

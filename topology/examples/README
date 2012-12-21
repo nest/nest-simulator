@@ -8,13 +8,14 @@ Updated
 - August 2009 to new module organization in PyNEST per NEST 1.9.r8375 or later.
 - May 2010 to new FindConnections scheme in PyNEST per NEST 1.9.r8411 or later.
 - October 2010 to new Topology Python interface per NEST 1.9.r8990 or later. 
+- December 2012 to Topology3 Interface
 
 All scripts should be run using ipython -pylab.
 
 Otherwise, you may need to add pylab.show() commands to draw the figures.
 
-You can find a somewhat outdated version of the tutorial on the NEST Website at
+You can find a somewhat outdated version of the tutorial on the NEST Website
 
-http://www.nest-initiative.org/images/6/66/CNS09TutorialUpdated.pdf
+http://www.nest-initiative.org
 
 Hans Ekkehard Plesser, UMB

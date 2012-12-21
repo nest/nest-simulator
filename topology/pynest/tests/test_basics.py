@@ -101,18 +101,20 @@ class BasicsTestCase(unittest.TestCase):
         # multiple gid, single coord gives l-elem gid list
         n2 = topo.GetElement(l, checkpos[0])
         self.assertEqual(len(n2), len(l))
-        self.assertTrue(all([not nest.is_sequencetype(n) for n in n2]))
+        self.assertTrue(all([nest.is_sequencetype(n) for n in n2]))
         
         # single gid, multiple coord gives len(checkpos)-elem gid list
         n3 = topo.GetElement(l[:1], checkpos)
         self.assertEqual(len(n3), len(checkpos))
-        self.assertTrue(all([not nest.is_sequencetype(n) for n in n3]))
+        self.assertTrue(all([nest.is_sequencetype(n) for n in n3]))
+        self.assertTrue(all([len(n) == 1 for n in n3]))
 
         # multiple gid, multiple coord gives l*len(cp)-elem gid list
         n4 = topo.GetElement(l, checkpos)
         self.assertEqual(len(n4), len(l))
         self.assertTrue(all([nest.is_sequencetype(n) for n in n4]))
-        self.assertTrue(all([len(n)==len(checkpos) for n in n4]))
+        self.assertTrue(all([len(n) == len(checkpos) for n in n4]))
+        self.assertTrue(all([nest.is_sequencetype(m) for n in n4 for m in n]))
 
     def test_Displacement(self):
         """Interface check on displacement calculations."""
@@ -248,8 +250,10 @@ class BasicsTestCase(unittest.TestCase):
                  'mask': {'grid': {'rows':2, 'columns':2}}}     
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
-        ian = [gid for gid in nest.GetLeaves(l)[0] if nest.GetStatus([gid], 'model')[0] == 'iaf_neuron']
-        ipa = [gid for gid in nest.GetLeaves(l)[0] if nest.GetStatus([gid], 'model')[0] == 'iaf_psc_alpha']
+        ian = [gid for gid in nest.GetLeaves(l)[0]
+               if nest.GetStatus([gid], 'model')[0] == 'iaf_neuron']
+        ipa = [gid for gid in nest.GetLeaves(l)[0]
+               if nest.GetStatus([gid], 'model')[0] == 'iaf_psc_alpha']
         
         # connect ian -> all using static_synapse
         cdict.update({'sources': {'model': 'iaf_neuron'},
@@ -258,7 +262,8 @@ class BasicsTestCase(unittest.TestCase):
         for k in ['sources', 'synapse_model']: cdict.pop(k)
         
         # connect ipa -> ipa using stdp_synapse
-        cdict.update({'sources': {'model': 'iaf_psc_alpha'}, 'targets': {'model': 'iaf_psc_alpha'},
+        cdict.update({'sources': {'model': 'iaf_psc_alpha'},
+                      'targets': {'model': 'iaf_psc_alpha'},
                       'synapse_model': 'stdp_synapse'})
         topo.ConnectLayers(l, l, cdict)
         for k in ['sources', 'targets', 'synapse_model']: cdict.pop(k)

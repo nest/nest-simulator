@@ -76,7 +76,7 @@ SeeAlso: iaf_neuron, testsuite::test_iaf_dc_aligned, testsuite::test_iaf_dc_alig
 
 ResetKernel
 
-[0] << 
+0 << 
       /local_num_threads 1 
       /resolution h
     >> SetStatus
@@ -90,7 +90,7 @@ dc_gen <<  /amplitude 1000. >> SetStatus
 vm << /withtime true /to_memory true /time_in_steps true /interval h >> SetStatus
 
 /spike_detector Create /sd Set
-sd << /withtime true /to_memory true /withpath true /time_in_steps true >> SetStatus
+sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
 
 dc_gen neuron 1.0 h Connect
 vm neuron Connect

@@ -98,23 +98,33 @@ void nest::iaf_psc_alpha_presc::Parameters_::get(DictionaryDatum &d) const
   def<long>(d, names::Interpol_Order, Interpol_);
 }
 
-void nest::iaf_psc_alpha_presc::Parameters_::set(const DictionaryDatum& d)
+double nest::iaf_psc_alpha_presc::Parameters_::set(const DictionaryDatum& d)
 {
+  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  const double ELold = E_L_;
+  updateValue<double>(d, names::E_L, E_L_);
+  const double delta_EL = E_L_ - ELold;
+
   updateValue<double>(d, names::tau_m, tau_m_);
   updateValue<double>(d, names::tau_syn, tau_syn_);
   updateValue<double>(d, names::C_m, c_m_);
   updateValue<double>(d, names::t_ref, t_ref_);
-  updateValue<double>(d, names::E_L, E_L_);
   updateValue<double>(d, names::I_e, I_e_);
 
   if (updateValue<double>(d, names::V_th, U_th_)) 
     U_th_ -= E_L_;
+  else
+    U_th_ -= delta_EL;
 
   if (updateValue<double>(d, names::V_min, U_min_)) 
     U_min_ -= E_L_;
+  else
+    U_min_ -= delta_EL;
 
   if (updateValue<double>(d, names::V_reset, U_reset_)) 
     U_reset_ -= E_L_;
+  else
+    U_reset_ -= delta_EL;
   
   long_t tmp;
   if ( updateValue<long_t>(d, names::Interpol_Order, tmp) )
@@ -140,6 +150,12 @@ void nest::iaf_psc_alpha_presc::Parameters_::set(const DictionaryDatum& d)
     
   if ( tau_m_ <= 0 || tau_syn_ <= 0 )
     throw BadProperty("All time constants must be strictly positive.");
+
+  if ( tau_m_ == tau_syn_ )
+    throw BadProperty("Membrane and synapse time constant(s) must differ."
+		      "See note in documentation.");
+
+  return delta_EL;
 }
 
 void nest::iaf_psc_alpha_presc::State_::get(DictionaryDatum &d, 
@@ -150,10 +166,12 @@ void nest::iaf_psc_alpha_presc::State_::get(DictionaryDatum &d,
   def<double>(d, names::offset, last_spike_offset_);
 }
 
-void nest::iaf_psc_alpha_presc::State_::set(const DictionaryDatum& d, const Parameters_& p)
+void nest::iaf_psc_alpha_presc::State_::set(const DictionaryDatum& d, const Parameters_& p, double delta_EL)
 {
   if ( updateValue<double>(d, names::V_m, y3_) )
     y3_ -= p.E_L_;
+  else
+    y3_ -= delta_EL;
 }
 
 nest::iaf_psc_alpha_presc::Buffers_::Buffers_(iaf_psc_alpha_presc& n)

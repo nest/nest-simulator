@@ -114,6 +114,44 @@ namespace nest
     extern const Name U_m;
     extern const Name consistent_integration;
 
+    // Tsodyks2_connection
+    extern const Name dU; //!< Unit increment of the utilization for a facilitating synapse [0...1]
+    extern const Name u;  //!< probability of release [0...1]
+    extern const Name x; //!< current scaling factor of the synaptic weight [0...1]
+    extern const Name tau_rec; //!< time constant for recovery (ms)
+    extern const Name tau_fac; //!< facilitation time constant (ms)
+
+    extern const Name A;
+    extern const Name A_upper;
+    extern const Name A_lower;
+    extern const Name A_mean;
+    extern const Name A_std;
+    extern const Name U_upper;
+    extern const Name U_lower;
+    extern const Name U_mean;
+    extern const Name U_std;
+    extern const Name D_upper;
+    extern const Name D_lower;
+    extern const Name D_mean;
+    extern const Name D_std;
+    extern const Name F_upper;
+    extern const Name F_lower;
+    extern const Name F_mean;
+    extern const Name F_std;
+    extern const Name epoch;
+    extern const Name success;
+    extern const Name with_noise;
+
+
+
+    // Same as aboce, but for property arrays.
+    extern const Name dUs; //!< Unit increment of the utilization for a facilitating synapse [0...1]
+    extern const Name us;  //!< probability of release [0...1]
+    extern const Name xs; //!< current scaling factor of the synaptic weight [0...1]
+    extern const Name tau_recs; //!< time constant for recovery (ms)
+    extern const Name tau_facs; //!< facilitation time constant (ms)
+
+
     // Other adaptation
     extern const Name E_sfa;
     extern const Name E_rr;
@@ -179,6 +217,13 @@ namespace nest
     extern const Name tau_ahp;
     extern const Name E_ahp;
 
+    // Specific to iaf_chs_2008 neuron
+    extern const Name tau_reset;
+    extern const Name tau_epsp;
+    extern const Name V_epsp;
+    extern const Name V_noise;
+    extern const Name noise;
+
     // Specific to iaf_tum_2000
     extern const Name I_syn_ex;  // Total excitatory synaptic current
     extern const Name I_syn_in;  // Total inhibitory synaptic current
@@ -211,6 +256,8 @@ namespace nest
     extern const Name file_extension;
     extern const Name precision;
     extern const Name scientific;
+    extern const Name binary;
+    extern const Name fbuffer_size;
     extern const Name flush_records;
     extern const Name close_after_simulate;
     extern const Name flush_after_simulate;
@@ -246,8 +293,8 @@ namespace nest
     extern const Name rports;
     extern const Name port;
     extern const Name target_thread;
-    extern const Name synapse_type;
-    extern const Name synapse_typeid;
+    extern const Name synapse_model;
+    extern const Name synapse_modelid;
 
     // Specific to ppd_sup_generator and gamma_sup_generator
     extern const Name amplitude;
@@ -288,6 +335,15 @@ namespace nest
     extern const Name published;
 
     extern const Name theta; // Did not compile without (theta neuron problem)
+
+    // Node types
+    extern const Name type;
+    extern const Name structure;
+    extern const Name neuron;
+    extern const Name stimulator;
+    extern const Name recorder;
+    extern const Name synapse;
+    extern const Name other;
   }
 }
 

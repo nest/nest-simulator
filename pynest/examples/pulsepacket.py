@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # pulsepacket.py
 #
 # This file is part of NEST.
@@ -18,8 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# pulsepacket.py
-#
 # This script compares the average and individual membrane potential excursions
 # in response to a single pulse packet with an analytically acquired voltage trace.
 # A pulse packet is a transient spike volley with a Gaussian rate profile.
@@ -108,7 +107,8 @@ nest.SetStatus([0],[{'resolution':simulation_resolution}])
 J = Cm*weight/tau_s*fudge
 nest.SetDefaults('static_synapse', {'weight':J} )
 
-n  = nest.Create('iaf_psc_alpha',n_neurons,{'V_th':Vth, 'tau_m':tau_m, 'tau_syn_ex':tau_s, 'C_m':Cm, 'E_L':V0})
+n  = nest.Create('iaf_psc_alpha',n_neurons,
+                 {'V_th':Vth, 'tau_m':tau_m, 'tau_syn_ex':tau_s, 'C_m':Cm, 'E_L':V0,'V_reset':V0,'V_m':V0})
 pp = nest.Create('pulsepacket_generator',n_neurons, {'pulse_times':[pulsetime], 'activity':a, 'sdev':sdev})
 vm = nest.Create('voltmeter', 1, {'record_to':['memory'], 'withtime':True, 'withgid':True, 'interval':sampling_resolution})
 
@@ -127,7 +127,7 @@ senders = nest.GetStatus(vm,'events')[0]['senders']
 
 v={}
 t={}
-    
+
 for s in range(senders.size):
     currentsender=senders[s]
     if not v.has_key(currentsender) :
@@ -144,8 +144,6 @@ if n_neurons >1:
         average_V += v[neuron]
     average_V /= n_neurons
 
-
-pylab.ioff()
 pylab.hold(True)
 
 p2 = pylab.plot(t_P,P+V0,color='red',linewidth=3)
@@ -163,9 +161,6 @@ if n_neurons > 1:
 else:
     pylab.legend( ( 'analytical solution','membrane potential') )
 
-    
-pylab.ion()
 pylab.xlabel('ms')
 pylab.ylabel('mV')
 pylab.xlim((-10*(tau_m+tau_s) + pulsetime , 10*(tau_m+tau_s) + pulsetime))
-pylab.show()

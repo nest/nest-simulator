@@ -56,7 +56,7 @@ void nest::UniversalDataLogger<HostNode>::record_data(long_t step)
 template <typename HostNode>
 void nest::UniversalDataLogger<HostNode>::handle(const DataLoggingRequest& dlr)
 {
-  const port rport = dlr.get_rport();
+  const rport rport = dlr.get_rport();
   assert(rport >= 1);
   assert(static_cast<size_t>(rport) <= data_loggers_.size());
   data_loggers_[rport-1].handle(host_, dlr);
@@ -190,6 +190,7 @@ void nest::UniversalDataLogger<HostNode>::DataLogger_::handle(HostNode& host,
   next_rec_[rt] = 0;
 
   reply.set_sender(host);
+  reply.set_sender_gid(host.get_gid());
   reply.set_receiver(request.get_sender());
   reply.set_port(request.get_port());
 

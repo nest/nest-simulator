@@ -35,7 +35,7 @@
 /tgt_layer layer def
 
 /conns << /connection_type (divergent)
-          /mask << /rectangular << /lower_left [0.0 0.0] /upper_right [0.6 0.3] >> 
+          /mask << /rectangular << /lower_left [-0.001 -0.001] /upper_right [0.6 0.3] >> 
                 >>
        >> def
 

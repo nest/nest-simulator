@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # brunel-alpha-nest.py
 #
 # This file is part of NEST.
@@ -20,7 +21,7 @@
 
 # This version uses NEST's RandomConvergentConnect functions.
 
-from scipy.optimize import fsolve  
+from scipy.optimize import fsolve
 
 import nest
 import nest.raster_plot
@@ -28,7 +29,7 @@ import nest.raster_plot
 import time
 from numpy import exp
 
-    
+
 def ComputePSPnorm(tauMem, CMem, tauSyn):
   """Compute the maximum of postsynaptic potential
      for a synaptic input current of unit amplitude
@@ -36,7 +37,7 @@ def ComputePSPnorm(tauMem, CMem, tauSyn):
 
   a = (tauMem / tauSyn)
   b = (1.0 / tauSyn - 1.0 / tauMem)
-    
+
   # time of maximum
   t_max = 1.0/b * ( -nest.sli_func('LambertWm1',-exp(-1.0/a)/a) - 1.0/a )
 
@@ -95,6 +96,8 @@ neuron_params= {"C_m":        CMem,
                 "tau_syn_in": tauSyn,
                 "t_ref":      2.0,
                 "E_L":        0.0,
+                "V_reset":    0.0,
+                "V_m":        0.0,
                 "V_th":       theta}
 
 nest.SetDefaults("iaf_psc_alpha", neuron_params)
@@ -108,11 +111,11 @@ noise=nest.Create("poisson_generator")
 espikes=nest.Create("spike_detector")
 ispikes=nest.Create("spike_detector")
 
-nest.SetStatus([espikes],[{"label": "brunel-py-ex",
+nest.SetStatus(espikes,[{"label": "brunel-py-ex",
                    "withtime": True,
                    "withgid": True}])
 
-nest.SetStatus([ispikes],[{"label": "brunel-py-in",
+nest.SetStatus(ispikes,[{"label": "brunel-py-in",
                    "withtime": True,
                    "withgid": True}])
 
@@ -120,7 +123,7 @@ print "Connecting devices."
 
 nest.CopyModel("static_synapse","excitatory",{"weight":J_ex, "delay":delay})
 nest.CopyModel("static_synapse","inhibitory",{"weight":J_in, "delay":delay})
- 
+
 nest.DivergentConnect(noise,nodes_ex,model="excitatory")
 nest.DivergentConnect(noise,nodes_in,model="excitatory")
 
@@ -171,4 +174,3 @@ print "Building time     : %.2f s" % build_time
 print "Simulation time   : %.2f s" % sim_time
 
 nest.raster_plot.from_device(espikes, hist=True)
-nest.raster_plot.show()

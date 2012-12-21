@@ -36,7 +36,7 @@ Note:
 Author: Hans Ekkehard Plesser, 2010-09-24
  */
 
-/unittest (8831) require
+/unittest (9715) require
 /unittest using
 
 [1 2]
@@ -61,9 +61,9 @@ Author: Hans Ekkehard Plesser, 2010-09-24
  s3 ChangeSubnet
  /iaf_neuron 3 Create ;   % gid 18,19,20
 
- 0 GetNodes    Sort [1 20] Range eq % 1..20
- 0 GetLeaves   Sort [4 20] Range eq  % 4..20
- 0 GetChildren Sort [1 4 5 6 7]  eq  % 1, 4..5, 6..7
+ 0 GetGlobalNodes    Sort [1 20] Range eq % 1..20
+ 0 GetGlobalLeaves   Sort [4 20] Range eq  % 4..20
+ 0 GetGlobalChildren Sort [1 4 5 6 7]  eq  % 1, 4..5, 6..7
 
  NumProcesses 1 eq {
   % 1 mpi process: local == global

@@ -24,7 +24,7 @@
 
 DictionaryStack::DictionaryStack(const Token &t )
         : VoidToken(t)
-{ 
+{    
 }
 
 DictionaryStack::DictionaryStack(const DictionaryStack &ds )
@@ -36,70 +36,25 @@ DictionaryStack::~DictionaryStack()
 {
   // We have to clear the dictionary before we delete it, otherwise the
   // dictionary references will prevent proper deletion.
-  for(std::list<DictionaryDatum>::iterator i=d.begin(); i != d.end(); ++i)
-    (*i)->clear();
-}
-
-/*
-const Token &  DictionaryStack::baselookup(const Name &n) const
-{
-        // just lookup in the bottom (base-) dictionary
-        // This method expects the base-dictionary to be
-        // present.
-    
-//    assert(d.end()!=d.begin());
-        
-    list<DictionaryDatum>::const_iterator i(--d.end());
-    return (*i)->lookup(n);
-}
-*/
-/*
-const Token &  DictionaryStack::lookup(const Name &n) const
-{
-  //
-  // search from top to bottom for a definition of n
-  // return VoidToken if no definition can be found.
-  // Note: need const_iterator here because lookup is
-  //       declared const.
-  // a refernce can be returned because we return a 
-  // refernce to a member of the class (not of the lookup
-  // function) which is destroyed late enough. 
-
-  list<DictionaryDatum>::const_iterator i(d.begin());
-
-  while (i!=d.end() && (*i)->lookup(n)==VoidToken)
-   ++i;
- 
-  return (i==d.end()) ? VoidToken : (*i)->lookup(n);
-}
-*/
-
-void DictionaryStack::def(const Name &n, const Token &t)
-{
-  //
-  // insert (n,t) in top level dictionary
-  // dictionary stack must contain at least one dictionary
-  // VoidToken is an illegal value for t.
-  //
- 
- assert(d.empty()==false);
- assert(t!=VoidToken);
- 
- (*d.begin())->insert(n,t);
+    for(std::list<DictionaryDatum>::iterator i=d.begin(); i != d.end(); ++i)
+	(*i)->clear();
 }
 
 void DictionaryStack::undef(const Name &n)
 {
-  assert(d.empty()==false);
-
-  size_t num_erased = 0;
-  for (std::list<DictionaryDatum>::iterator it = d.begin();
-       it != d.end();
-       it++)    
-    num_erased += (*it)->erase(n);    
-
-  if (num_erased == 0)
-    throw UndefinedName(n.toString());
+    
+    size_t num_erased = 0;
+    for (std::list<DictionaryDatum>::iterator it = d.begin();
+	 it != d.end();
+	 it++)    
+	num_erased += (*it)->erase(n);    
+    
+    if (num_erased == 0)
+	throw UndefinedName(n.toString());
+#ifdef DICTSTACK_CACHE
+    clear_token_from_cache(n);
+    clear_token_from_basecache(n);
+#endif
 }
 
 void DictionaryStack::basedef(const Name &n, const Token &t)
@@ -108,38 +63,25 @@ void DictionaryStack::basedef(const Name &n, const Token &t)
   // insert (n,t) in bottom level dictionary
   // dictionary stack must contain at least one dictionary
   // VoidToken is an illegal value for t.
-  //
- 
- assert(d.empty()==false);
- assert(t!=VoidToken);
- 
- std::list<DictionaryDatum>::const_iterator i(--d.end());
- (*i)->insert(n,t);
+#ifdef DICTSTACK_CACHE
+    clear_token_from_cache(n);
+    basecache_token(n,&(base_->insert(n,t)));
+#endif
+#ifndef DICTSTACK_CACHE
+    (*base_)[n]=t;
+#endif
 }
 
-
-void DictionaryStack::def_move(const Name &n, Token &t)
-{
-  //
-  // insert (n,t) in top level dictionary
-  // dictionary stack must contain at least one dictionary
-  // VoidToken is an illegal value for t.
-  // def_move returns t as the VoidToken.  
-  //
-
- assert(d.empty()== false);
- assert(t!=VoidToken);
-
- (*d.begin())->insert_move(n,t);
-}
 
 void DictionaryStack::basedef_move(const Name &n, Token &t)
 {
-  assert(d.empty()== false);
-  assert(t!=VoidToken);
-
-  std::list<DictionaryDatum>::const_iterator i(--d.end());
-  (*i)->insert_move(n, t);
+#ifdef DICTSTACK_CACHE
+    clear_token_from_cache(n);
+    basecache_token(n,&(base_->insert_move(n,t)));
+#endif
+#ifndef DICTSTACK_CACHE
+    base_->insert_move(n, t);
+#endif
 }
 
 
@@ -150,14 +92,19 @@ void DictionaryStack::pop(void)
   // dictionary stack must contain at least one dictionary 
   //
 
- assert(d.empty()==false);
-
- d.pop_front();
+#ifdef DICTSTACK_CACHE
+    clear_dict_from_cache(*(d.begin()));
+    (*(d.begin()))->remove_dictstack_reference();
+#endif
+    d.pop_front();
 }
 
 void DictionaryStack::clear(void)
 { 
-  d.erase(d.begin(),d.end());
+    d.erase(d.begin(),d.end());
+#ifdef DICTSTACK_CACHE
+    clear_cache();
+#endif
 }
 
 
@@ -170,7 +117,6 @@ void DictionaryStack::top(Token &t) const
   //
 
   DictionaryDatum *dd= new DictionaryDatum(*(d.begin()));
-  assert(dd!=NULL);
 
   Token dt( dd);
   t.move(dt);
@@ -195,7 +141,14 @@ void DictionaryStack::toArray(TokenArray &ta) const
   }
 }
   
-void DictionaryStack::push(const Token& t)
+void DictionaryStack::push(Token& d)
+{
+    DictionaryDatum *dd=dynamic_cast<DictionaryDatum *>(d.datum());
+    assert(dd !=NULL);
+    push(*dd);
+}
+
+void DictionaryStack::push(const DictionaryDatum& pd)
 {
   //
   // extract Dictionary from Token envelope
@@ -203,12 +156,19 @@ void DictionaryStack::push(const Token& t)
   // a non dictionary datum at this point is a program bug.
   //
 
-  DictionaryDatum *pd= dynamic_cast<DictionaryDatum *>(t.datum());
-  assert(pd!=NULL);
+#ifdef DICTSTACK_CACHE
+    pd->add_dictstack_reference();
+    // This call will remove all names in the dict from the name cache.
+    clear_dict_from_cache(pd);
+#endif
 
-  d.push_front(*pd);
+    d.push_front(pd);
 }
 
+void DictionaryStack::set_basedict()
+{
+    base_= *(--d.end()); // Cache base dictionary
+}
 
 size_t DictionaryStack::size(void) const
 {
@@ -245,6 +205,9 @@ const DictionaryStack& DictionaryStack::operator=(const DictionaryStack& ds)
   if(&ds != this)
   {
     d=ds.d;
+#ifdef DICTSTACK_CACHE
+    cache_=ds.cache_;
+#endif
   }
   return *this;
 }

@@ -40,7 +40,7 @@ namespace nest
   void CommonPropertiesHomWD::get_status(DictionaryDatum & d) const
   {
     CommonSynapseProperties::get_status(d);
-    def<double_t>(d, "weight", weight_);
+    def<double_t>(d, names::weight, weight_);
     def<double_t>(d, names::delay, Time(Time::step(delay_)).get_ms());
   }
 
@@ -57,7 +57,7 @@ namespace nest
 	delay_ = Time(Time::ms(delay)).get_steps();
       }
 
-    updateValue<double_t>(d, "weight", weight_);
+    updateValue<double_t>(d, names::weight, weight_);
   }
 
   /* ConnectionHomWD */

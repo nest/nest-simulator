@@ -51,23 +51,14 @@ namespace nest
    *       Node class, which is called only once to create the
    *       model prototype instance.
    *
-   * @note As a work-around to solve #339, this class uses std::string
-   *       internally as map-key, as use of Name caused #339. The
-   *       interface still requests Name, to signal to programmers 
-   *       that they should use standardized names, and since internally,
-   *       we should go back to Name as key once #348 is solved.
-   *
-   * @todo Replace std::string by Name as key when #348 is solved.
-   *
    * @see multimeter, UniversalDataLogger
    * @ingroup Devices
    */
   template <typename HostNode>
   class RecordablesMap
-    : public std::map<std::string, 
-		      double_t (HostNode::*)() const>
+    : public std::map<Name, double_t (HostNode::*)() const>
   {
-    typedef std::map<std::string, double_t (HostNode::*)() const> Base_;
+    typedef std::map<Name, double_t (HostNode::*)() const> Base_;
 
   public:
     virtual ~RecordablesMap() {}
@@ -106,7 +97,7 @@ namespace nest
     //! Insertion functions to be used in create(), adds entry to map and list
     void insert_(const Name& n, const DataAccessFct f)
     {
-      Base_::insert(std::make_pair(n.toString(), f));
+      Base_::insert(std::make_pair(n, f));
 
       // Line below leads to seg-fault if nest is quit right after start,
       // see comment on get_list()

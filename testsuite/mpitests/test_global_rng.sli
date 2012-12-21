@@ -38,7 +38,7 @@ SeeAlso: unittest::distributed_assert_or_die
 */
 
 
-/unittest (8831) require
+/unittest (9715) require
 /unittest using
 
 
@@ -50,8 +50,7 @@ SeeAlso: unittest::distributed_assert_or_die
  GetGlobalRNG /rng Set [ 20 ] { ; rng 100 irand } Table
 
 }
-
-distributed_invariant_assert_or_die   
+distributed_rank_invariant_collect_assert_or_die   
                             % a variant of this function will have an extra argument
                             % which specifies the test carried out to compare the 
                             % simulation results (not implemented 090716 MD)

@@ -162,7 +162,7 @@
 
 
 ;; for the execute functions, you might also want to have a look in
-;; the commented-out implementations in postscript-sli.el. Rüdiger 10-aug-2007
+;; the commented-out implementations in postscript-sli.el. Ruediger 10-aug-2007
 (defun sli-execute-buffer ()
   "Send contents of the buffer for execution to the SLI shell.
 If no SLI shell process is running, a SLI new shell is started."

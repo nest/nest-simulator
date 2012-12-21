@@ -27,6 +27,7 @@
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "arraydatum.h"
+#include "sibling_container.h"
 
 #include <numeric>
 
@@ -46,6 +47,7 @@ void nest::spike_detector::init_state_(const Node& np)
 {
   const spike_detector& sd = dynamic_cast<const spike_detector&>(np);
   device_.init_state(sd.device_);
+  init_buffers_();
 }
 
 void nest::spike_detector::init_buffers_()
@@ -58,22 +60,14 @@ void nest::spike_detector::init_buffers_()
 
 void nest::spike_detector::calibrate()
 {
-  if (! user_set_precise_times_)
+  if (!user_set_precise_times_ && network()->get_off_grid_communication())
   {
-    DictionaryDatum d(new Dictionary);
-    (*d)[names::precise_times] = network()->get_off_grid_communication();
-
-    if (network()->get_off_grid_communication())
-    {      
-      (*d)[names::precision] = 15;
-
-      network()->message(SLIInterpreter::M_INFO, "spike_detector::calibrate",
-                         String::compose("Precise neuron models exist: the property precise_times "
-                                         "of the %1 with gid %2 has been set to true, precision has "
-                                         "been set to 15.", get_name(), get_gid()));
-    }
-
-    device_.set_status(d);
+    device_.set_precise(true, 15);
+      
+    network()->message(SLIInterpreter::M_INFO, "spike_detector::calibrate",
+		       String::compose("Precise neuron models exist: the property precise_times "
+				       "of the %1 with gid %2 has been set to true, precision has "
+				       "been set to 15.", get_name(), get_gid()));
   }
 
   device_.calibrate();
@@ -104,7 +98,7 @@ void nest::spike_detector::get_status(DictionaryDatum &d) const
   // siblings on other threads
   if (get_thread() == 0)
   {
-    const Compound* siblings = network()->get_thread_siblings(get_gid());
+    const SiblingContainer* siblings = network()->get_thread_siblings(get_gid());
     std::vector<Node*>::const_iterator sibling;
     for (sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling)
       (*sibling)->get_status(d);
@@ -128,7 +122,7 @@ void nest::spike_detector::handle(SpikeEvent & e)
     assert(e.get_multiplicity() > 0);
 
     long_t dest_buffer;
-    if ( e.get_sender().has_proxies() )
+    if (network()->get_model_of_gid(e.get_sender_gid())->has_proxies())
       dest_buffer = network()->read_toggle();   // events from central queue
     else
       dest_buffer = network()->write_toggle();  // locally delivered events

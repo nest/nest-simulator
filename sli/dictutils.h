@@ -52,11 +52,11 @@ FT getValue(const DictionaryDatum &d, Name const n)
 {
   // We must take a reference, so that access information can be stored in the
   // token.
-  const Token& t = d->lookup(n);
+  const Token& t = d->lookup2(n);
   
-  if (t == d->getvoid())
-    throw UndefinedName(n.toString());
-
+  /* if (!t.empty()) */
+  /*   throw UndefinedName(n.toString()); */
+ 
   return getValue<FT>(t);
 }  
    
@@ -102,7 +102,7 @@ bool updateValue(DictionaryDatum const &d, Name const n, VT &value)
   // token.
   const Token& t = d->lookup(n);
 
-  if (t == d->getvoid())
+  if (t.empty())
     return false;
   
   value = getValue<FT>(t);
@@ -152,7 +152,7 @@ inline
 void append_property(DictionaryDatum &d, Name propname, const PropT &prop)
 {
   Token t = d->lookup(propname);
-  assert (t != d->getvoid());
+  assert (!t.empty());
 
   ArrayDatum* arrd = dynamic_cast<ArrayDatum*>(t.datum());
   assert(arrd != 0);
@@ -170,7 +170,7 @@ inline
 void append_property<std::vector<double> >(DictionaryDatum &d, Name propname, const std::vector<double> &prop)
 {
   Token t = d->lookup(propname);
-  assert (t != d->getvoid());
+  assert (!t.empty());
 
   DoubleVectorDatum* arrd = dynamic_cast<DoubleVectorDatum*>(t.datum());
   assert(arrd != 0);
@@ -188,7 +188,7 @@ inline
 void append_property<std::vector<long> >(DictionaryDatum &d, Name propname, const std::vector<long> &prop)
 {
   Token t = d->lookup(propname);
-  assert (t != d->getvoid());
+  assert (!t.empty());
 
   IntVectorDatum* arrd = dynamic_cast<IntVectorDatum*>(t.datum());
   assert(arrd != 0);
@@ -197,33 +197,30 @@ void append_property<std::vector<long> >(DictionaryDatum &d, Name propname, cons
 }
 
 
+/** Provide a value to a property DoubleVectorDatum in the dictionary.
+ * In contrast to append_property, this function adds the value only once
+ * to the property. On all subsequent events, it ensures that the value
+ * passed in is identical to the value present. This is needed by recording_decive.
+ * @ingroup DictUtils
+ */
+void provide_property(DictionaryDatum&, Name, const std::vector<double>&);
+
+/** Provide a value to a property IntVectorDatum in the dictionary.
+ * In contrast to append_property, this function adds the value only once
+ * to the property. On all subsequent events, it ensures that the value
+ * passed in is identical to the value present. This is needed by recording_decive.
+ * @ingroup DictUtils
+ */
+void provide_property(DictionaryDatum&, Name, const std::vector<long>&);
+
+
 /** Add values of a vector<double> to a property DoubleVectorDatum in the dictionary.
  * This variant of append_property is for adding vector<double>s to vector<double>s of the
  * same size. It is required for collecting data across threads when multimeter
  * is running in accumulation mode.
  * @ingroup DictUtils
  */
-inline
-void accumulate_property(DictionaryDatum &d, Name propname, const std::vector<double> &prop)
-{
-  Token t = d->lookup(propname);
-  assert (t != d->getvoid());
-
-  DoubleVectorDatum* arrd = dynamic_cast<DoubleVectorDatum*>(t.datum());
-  assert(arrd != 0);
-
-  if ( (*arrd)->empty() ) // first data, copy
-    (*arrd)->insert((*arrd)->end(), prop.begin(), prop.end());
-  else
-  {
-    assert((*arrd)->size() == prop.size());
-
-    // add contents of prop to **arrd elementwise
-    std::transform((*arrd)->begin(), (*arrd)->end(), prop.begin(), (*arrd)->begin(), std::plus<double>());
-  }
-}
-
-
+void accumulate_property(DictionaryDatum&, Name, const std::vector<double>&);
 
 #endif
 

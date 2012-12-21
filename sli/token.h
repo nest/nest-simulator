@@ -33,15 +33,11 @@
 #include <vector>
 #include <valarray>
 #include "config.h"
-
 #include "datum.h"
-
 class Name;
 class Token;
 class TokenArray;
 class TokenArrayObj;
-
-
 
 /***********************************************************/
 /* Token                                               */
@@ -51,6 +47,7 @@ class TokenArrayObj;
 
 const Datum* p;   makes p a pointer to a const. Any change to the
                   object p points to is prevented.
+
 Datum *const p;   makes p a const pointer to a Datum. Any change to the
                   pointer is prevented.
 
@@ -81,32 +78,29 @@ private:
    */
   mutable bool  accessed_;   
 
-  void SetDatum(Datum *p_s)
-    {
-      delete p;
-      p = p_s;
-    }
-
 public:
 
    ~Token()
     {
-      delete p;
+      if(p)
+	p->removeReference();
+      p=0;
     }
 
   Token(const Token& c_s)
     :p(NULL)
     {
-      if(c_s.p !=NULL)
-        p=c_s.p->clone(); // we can savely assume, that this object 
-    }                              // does not point to any Datum object
+      if(c_s.p)
+        p=c_s.p->get_ptr(); 
+    }                       
   
     
   Token(Datum *p_s = NULL) //!< use existing pointer to datum, token takes responsibulity of the pointer.
-    :p(p_s){}
+    :p(p_s)
+       {}
     
   Token(const Datum &d )   //!< copy datum object and store its pointer.
-    { p=d.clone();}
+     { p=d.clone();}
 
   Token(int);
   Token(unsigned int);
@@ -122,7 +116,6 @@ public:
   Token(const std::vector<size_t>&);
   Token(const std::ostream&);
   Token(const std::istream&);
-
   operator Datum*() const; 
   operator size_t() const;
   operator long() const;
@@ -133,14 +126,99 @@ public:
 //  operator vector<double> const;
 //  operator vector<long> const;
 
-  
+  /**
+   * If the contained datum has more than one reference, clone it, so it can
+   * be modified.
+   */
+  void detach()
+  {
+    if(p and p->numReferences() > 1)
+      {
+	p->removeReference();
+	p=p->clone();
+      }
+  }
+
   void move( Token &c)
     {
-      delete p;
+      if(p)
+	p->removeReference();
       p=c.p;
       c.p = NULL;
     }
-  
+
+
+  /**
+   * Initialize the token by moving a datum from another token.
+   * This function assumes that the token does not 
+   * point to a valid datum and that the argument token
+   * does point to a valid datum.
+   * This function does not change the reference count of the datum.
+   */
+  void init_move(Token &rhs)
+  {
+    p=rhs.p;
+    rhs.p=NULL;
+  }
+
+  /**
+   * Initialize the token by moving a datum from another token.
+   * This function assumes that the token does not 
+   * point to a valid datum and that the argument token
+   * does point to a valid datum.
+   * This function does not change the reference count of the datum.
+   */
+  void init_by_copy(const Token &rhs)
+  {
+    p=rhs.p->get_ptr();
+  }
+
+  /**
+   * Initialize the token with a reference.
+   * This function assumes that the token does not 
+   * point to a valid datum and that the argument token
+   * does point to a valid datum.
+   * This function increases the reference count of the argument.
+   */
+
+  void init_by_ref(const Token &rhs)
+  {
+    rhs.p->addReference();
+    p=rhs.p;
+  }
+
+  /**
+   * Initialize the token with a datum pointer.
+   * This function assumes that the token does not point to
+   * a valid datum.
+   * The function assumes that the datum is new and DOES NOT increases its reference count.
+   */
+  void init_by_pointer(Datum *rhs)
+  {
+    p=rhs;
+  }
+
+  void assign_by_ref(const Token &rhs)
+  {
+    //    assert(rhs.p !=NULL);
+    if(p != rhs.p)
+      {
+	if(p)
+	  p->removeReference();
+	p=rhs.p->get_ptr();
+      }
+  }
+
+  void assign_by_pointer(Datum *rhs)
+  {
+    assert(rhs != NULL);
+    rhs->addReference();
+    if(p)
+      p->removeReference();
+    p=rhs;
+  }
+   
+    
   void swap(Token &c)
     {
       std::swap(p,c.p);
@@ -148,7 +226,8 @@ public:
   
   void clear(void)
     {
-      delete p;
+      if(p)
+	p->removeReference();
       p = NULL;
     }
   
@@ -172,20 +251,27 @@ public:
       accessed_ = true;
       return p;
     }
+
+
   
+  bool valid() const
+  {
+    return ! empty();
+  }
   
   Datum* operator->() const
     {
-      assert(p!= NULL);
+      //      assert(p!= NULL);
       return p;
     }
   
   
   Datum& operator*() const
     {
-      assert(p != NULL);
+      //      assert(p != NULL);
       return *p;
     }
+
   
   const std::type_info& type(void) const
     {
@@ -195,18 +281,19 @@ public:
   
   Token& operator=(const Token& c_s)
     {
-      
-      if (c_s.p != NULL)
-      {
-        if (p!=c_s.p)               // protection against a=a !
-	  {
-	    delete p;
-	    p=c_s.p->clone();
-	  }
-      }
-      else
-        clear();
-      
+      if(c_s.p == p)
+	return *this;
+
+      if (c_s.p == NULL)
+	{
+	  clear();
+	  return *this;
+	}
+
+      if(p)
+	p->removeReference();
+      p=c_s.p->get_ptr();
+
       return *this; 
     }   
 
@@ -214,7 +301,8 @@ public:
     {
       if(p != p_s)
       {
-	delete p;
+	if(p)
+	  p->removeReference();
 	p=p_s;
       }
       
@@ -226,10 +314,8 @@ public:
     {
       if(p == t.p)
         return true;
-      if( p == NULL || t.p == NULL )
-        return false;
       
-      return p->equals(t.p);
+      return p and p->equals(t.p);
       
     }
 
@@ -256,6 +342,7 @@ public:
    */
   bool accessed() const { return accessed_; }
 
+
   /**
    * Check whether Token contains a Datum of a given type.
    * @return true if Token is of type given by template parameter.
@@ -265,7 +352,16 @@ public:
   {
     return dynamic_cast<DatumType*>(p);
   }
-  
+
+
+  /**
+   * Returns true if token equals rhs as string.
+   *
+   * The main purpose of this method is to allow seamless
+   * comparison of LiteralDatum and StringDatum tokens.
+   */
+  bool matches_as_string(const Token& rhs) const;
+
 };
 
 

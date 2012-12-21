@@ -20,6 +20,17 @@
  *
  */
 
+
+/* ---------------------------------------------------------------- 
+ * Draw a binomial random number using the BP algoritm
+ * Sampling From the Binomial Distribution on a Computer
+ * Author(s): George S. Fishman
+ * Source: Journal of the American Statistical Association, Vol. 74, No. 366 (Jun., 1979), pp. 418-423
+ * Published by: American Statistical Association
+ * Stable URL: http://www.jstor.org/stable/2286346 .
+ * ---------------------------------------------------------------- */
+
+
 #include "binomial_randomdev.h"
 #include "dictutils.h"
 #include <cmath>
@@ -27,69 +38,125 @@
 librandom::BinomialRandomDev::BinomialRandomDev(RngPtr r_s, 
 						double p_s, 
 						unsigned int n_s)
- : RandomDev(r_s), gamma_dev_(r_s), p_(p_s), n_(n_s)
+ : RandomDev(r_s), poisson_dev_(r_s), exp_dev_(r_s), p_(p_s), n_(n_s)
 {
   check_params_();
+  PrecomputeTable(n_s);
 }
 
 librandom::BinomialRandomDev::BinomialRandomDev(double p_s,
 						unsigned int n_s)
- : RandomDev(), gamma_dev_(), p_(p_s), n_(n_s)
+ : RandomDev(), poisson_dev_(), exp_dev_(), p_(p_s), n_(n_s)
 {
   check_params_();
+  PrecomputeTable(n_s);
 }
 
-unsigned long librandom::BinomialRandomDev::uldev(RngPtr r_s)
+
+void librandom::BinomialRandomDev::PrecomputeTable(size_t nmax)
 {
-  assert(r_s.valid());
-  
-  int ntmp = n_;
-  double ptmp = p_;
-  unsigned long X = 0;
-  int S = 1;
-  
-  // avoid problems for pathological case p_ == 1
-  if ( p_ == 1 )
-    return n_;
-    
-  // recursion first, see Devroye, Ch X.4, p. 537  
-  while ( ntmp * ptmp > 5.0 )
-  {
-    const int i = (ntmp + 1) * ptmp;
-    
-    // generate Y as beta(i, n+1-i) deviate, see Devroye, Ch IX.4, p. 432
-    const double y1 = gamma_dev_(r_s, static_cast<double>(i));
-    const double y2 = gamma_dev_(r_s, static_cast<double>(ntmp+1-i));
-    const double Y = y1 / (y1 + y2);
-    
-    X += S * i;
-    
-    if ( Y <= ptmp )
-    {
-      ntmp -= i;
-      ptmp = ( ptmp - Y ) / ( 1 - Y );
-    }
-    else
-    { 
-      S *= -1;
-      ntmp = i - 1;
-      ptmp = 1 - ptmp / Y;
-    }
-  }
-  
-  // generate directly for rest, see Devroye, Ch X.4. p. 524
-  while ( ntmp-- )
-    if ( r_s->drand() < ptmp )
-      X += S;
-      
-  return X;
+    // precompute the table of f
+    f_.resize( nmax+2 );
+    f_[0] = 0.0;
+    f_[1] = 0.0;    
+    unsigned long i, j;
+    i = 1;
+    while (i < f_.size()-1){
+        f_[i+1] = 0.0;
+        j = 1;
+        while (j<=i){
+	  f_[i+1] += std::log(static_cast<double>(j));
+            j++;
+            }
+        i++;
+        }
+    n_tablemax_ = nmax;
 }
+
+
+unsigned long librandom::BinomialRandomDev::uldev(RngPtr rng)
+{
+    assert(rng.valid());
+    
+    // BP algorithm (steps numbered as in Fishman 1979)
+    unsigned long  X_;
+    double q_, phi_, theta_, mu_, V_;
+    long  Y_, m_;
+
+    // 1, 2
+    if (p_>0.5) 
+        {
+        q_ = 1.-p_;
+        }
+    else
+        {
+        q_ = p_;
+        }
+    
+    // 3,4
+    long n1mq = static_cast<long> ( static_cast<double>(n_) * (1.-q_)); 
+    double n1mq_dbl = static_cast<double>(n1mq);
+    if ( static_cast<double>(n_)*(1.-q_) - n1mq_dbl  > q_)
+        {
+        mu_ = q_* (n1mq_dbl + 1.) / (1.-q_);
+        }
+    else
+        {
+        mu_ = static_cast<double>(n_) - n1mq_dbl;
+        }
+    
+    //5, 6, 7
+    theta_ = (1./q_ - 1.) * mu_;
+    phi_ = std::log(theta_);
+    m_ = static_cast<long> (theta_);
+    
+    bool not_finished = 1;
+    poisson_dev_.set_lambda( mu_ );
+    while (not_finished)
+        {
+        //8,9
+        X_ = n_+1;
+        while( X_ > n_)
+            {
+            X_ = poisson_dev_.uldev(rng);
+            }
+        
+        //10
+        V_ = exp_dev_(rng);
+        
+        //11
+        Y_ = n_ - X_;
+        
+        //12
+        if ( V_ < static_cast<double>(m_-Y_)*phi_ - f_[m_+1] + f_[Y_+1] )
+            {
+            not_finished = 1;
+            }
+        else
+            {
+            not_finished = 0;
+            }        
+        }
+    if (p_ <= 0.5)
+        {
+        return X_;
+        }
+    else
+        {
+        return static_cast<unsigned long>(Y_);
+        }
+}
+
 
 void librandom::BinomialRandomDev::set_p_n(double p_s, unsigned int n_s)
 {
   p_ = p_s;
   n_ = n_s;
   check_params_();
+  if (n_s > n_tablemax_)
+    {
+    PrecomputeTable(n_s);
+    }
 }
 
 void librandom::BinomialRandomDev::set_p(double p_s)
@@ -102,6 +169,10 @@ void librandom::BinomialRandomDev::set_n(unsigned int n_s)
 {
   n_ = n_s;
   check_params_();
+  if (n_s > n_tablemax_)
+    {
+    PrecomputeTable(n_s);
+    }
 } 
 
 void librandom::BinomialRandomDev::check_params_()

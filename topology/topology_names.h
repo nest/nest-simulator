@@ -48,7 +48,7 @@ namespace nest
     extern const Name center;
     extern const Name edge_wrap;
     extern const Name anchor;
-    extern const Name x;
+    //    extern const Name x; // this name is already defined in nest_names
     extern const Name y;
     extern const Name positions;
     extern const Name topology;
@@ -58,6 +58,38 @@ namespace nest
     extern const Name lid;
     extern const Name elements;
     extern const Name allow_oversized_mask;
+    extern const Name connection_type;
+    extern const Name number_of_connections;
+    extern const Name convergent;
+    extern const Name divergent;
+    extern const Name kernel;
+    extern const Name lower_left;
+    extern const Name upper_right;
+    extern const Name radius;
+    extern const Name outer_radius;
+    extern const Name inner_radius;
+    extern const Name tau;
+    extern const Name p_center;
+    extern const Name sigma;
+    extern const Name min;
+    extern const Name max;
+    extern const Name mean_x;
+    extern const Name mean_y;
+    extern const Name sigma_x;
+    extern const Name sigma_y;
+    extern const Name rho;
+    extern const Name layers;
+    extern const Name layer;
+    extern const Name allow_autapses;
+    extern const Name allow_multapses;
+    extern const Name circular;
+    extern const Name spherical;
+    extern const Name rectangular;
+    extern const Name box;
+    extern const Name volume;
+    extern const Name doughnut;
+    extern const Name grid;
+    extern const Name cutoff;
   }
 }
 

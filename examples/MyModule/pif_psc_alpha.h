@@ -39,33 +39,33 @@ Name: pif_psc_alpha - Perfect integrate-and-fire neuron model with alpha PSC syn
 
 Description:
   pif_psc_alpha implements a non-leaky integrate-and-fire neuron with
-  with alpha-function shaped synaptic currents. The threshold crossing is 
-  followed by an absolute refractory period during which the membrane potential 
+  with alpha-function shaped synaptic currents. The threshold crossing is
+  followed by an absolute refractory period during which the membrane potential
   is clamped to the resting potential, while synaptic currents evolve normally.
-  
+
   The dynamics of the neuron are defined by
-  
+
      C_m dV/dt  = I_syn(t) + I_e
-     
-     I_syn(t)   = Sum_{t_{j,k} < t} w_j x (t-t_{j,k}) x e/tau_syn x e^{-(t-t_{j,k})/tau_syn} 
+
+     I_syn(t)   = Sum_{t_{j,k} < t} w_j x (t-t_{j,k}) x e/tau_syn x e^{-(t-t_{j,k})/tau_syn}
 
   where t_{j,k} is the time of the k-th spike arriving from neuron j, and w_j is
   the weight of the synapse from neuron j onto the present neuron. The alpha function
   is normalized by amplitude, i.e., the maximum input current for any spike is w_j.
- 
+
   Parameters:
   C_m      double - Membrane capacitance, in pF
   I_e      double - Intrinsic DC current, in nA
   tau_syn  double - Synaptic time constant, in ms
-  t_ref    double - Duration of refractory period in ms. 
+  t_ref    double - Duration of refractory period in ms.
   V_th     double - Spike threshold in mV.
   V_reset  double - Reset potential of the membrane in mV.
-     
+
   Remarks:
   The linear subthresold dynamics is integrated by the Exact
   Integration scheme [1]. The neuron dynamics is solved on the time
   grid given by the computation step size. Incoming as well as emitted
-  spikes are forced to that grid.  
+  spikes are forced to that grid.
 
 References:
   [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
@@ -75,11 +75,11 @@ References:
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
-      
+
 Author:
   Hans Ekkehard Plesser, based on iaf_psc_alpha
-  
-SeeAlso: 
+
+SeeAlso:
 iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
 */
 
@@ -88,19 +88,19 @@ iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
    */
   class pif_psc_alpha : public nest::Node
   {
-  public:        
-    
+  public:
+
     /**
      * The constructor is only used to create the model prototype in the model manager.
-     */ 
+     */
     pif_psc_alpha();
-    
+
     /**
      * The copy constructor is used to create model copies and instances of the model.
      * @node The copy constructor needs to initialize the parameters and the state.
-     *       Initialization of buffers and interal variables is deferred to 
+     *       Initialization of buffers and interal variables is deferred to
      *       @c init_buffers_() and @c calibrate().
-     */      
+     */
     pif_psc_alpha(const pif_psc_alpha&);
 
     /**
@@ -115,38 +115,38 @@ iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
      * Used to validate that we can send SpikeEvent to desired target:port.
      */
     nest::port check_connection(nest::Connection&, nest::port);
-    
+
     /**
      * @defgroup mynest_handle Functions handling incoming events.
-     * We tell nest that we can handle incoming events of various types by 
+     * We tell nest that we can handle incoming events of various types by
      * defining @c handle() and @c connect_sender() for the given event.
      * @{
      */
     void handle(nest::SpikeEvent &);        //! accept spikes
     void handle(nest::CurrentEvent &);      //! accept input current
     void handle(nest::DataLoggingRequest &);//! allow recording with multimeter
-    
+
     nest::port connect_sender(nest::SpikeEvent&, nest::port);
     nest::port connect_sender(nest::CurrentEvent&, nest::port);
     nest::port connect_sender(nest::DataLoggingRequest&, nest::port);
     /** @} */
-    
+
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
-  
-  private:    
+
+  private:
 
     //! Reset parameters and state of neuron.
 
     //! Reset state of neuron.
     void init_state_(const Node& proto);
-    
+
     //! Reset internal buffers of neuron.
     void init_buffers_();
 
     //! Initialize auxiliary quantities, leave parameters and state untouched.
     void calibrate();
-    
+
     //! Take neuron through given time interval
     void update(nest::Time const &, const nest::long_t, const nest::long_t);
 
@@ -159,12 +159,12 @@ iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
      *
      * These are the parameters that can be set by the user through @c SetStatus.
      * They are initialized from the model prototype when the node is created.
-     * Parameters do not change during calls to @c update() and are not reset by 
+     * Parameters do not change during calls to @c update() and are not reset by
      * @c ResetNetwork.
-     * 
-     * @note Parameters_ need neither copy constructor nor @c operator=(), since 
+     *
+     * @note Parameters_ need neither copy constructor nor @c operator=(), since
      *       all its members are copied properly by the default copy constructor
-     *       and assignment operator. Important: 
+     *       and assignment operator. Important:
      *       - If Parameters_ contained @c Time members, you need to define the
      *         assignment operator to recalibrate all members of type @c Time . You
      *         may also want to define the assignment operator.
@@ -178,29 +178,29 @@ iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
       double tau_syn;  //!< Synaptic time constant, in ms.
       double V_th;     //!< Spike threshold, in mV.
       double V_reset;  //!< Reset potential of the membrane, in mV.
-      double t_ref;    //!< Duration of refractory period, in ms. 
-      
+      double t_ref;    //!< Duration of refractory period, in ms.
+
       //! Initialize parameters to their default values.
       Parameters_();
-      
+
       //! Store parameter values in dictionary.
       void get(DictionaryDatum&) const;
 
       //! Set parameter values from dictionary.
       void set(const DictionaryDatum&);
-    }; 
-  
+    };
+
     /**
      * Dynamic state of the neuron.
      *
-     * These are the state variables that are advanced in time by calls to 
-     * @c update(). In many models, some or all of them can be set by the user 
+     * These are the state variables that are advanced in time by calls to
+     * @c update(). In many models, some or all of them can be set by the user
      * through @c SetStatus. The state variables are initialized from the model
      * prototype when the node is created. State variables are reset by @c ResetNetwork.
-     * 
-     * @note State_ need neither copy constructor nor @c operator=(), since 
+     *
+     * @note State_ need neither copy constructor nor @c operator=(), since
      *       all its members are copied properly by the default copy constructor
-     *       and assignment operator. Important: 
+     *       and assignment operator. Important:
      *       - If State_ contained @c Time members, you need to define the
      *         assignment operator to recalibrate all members of type @c Time . You
      *         may also want to define the assignment operator.
@@ -215,7 +215,7 @@ iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
       double I_ext;      //!< External current, in nA.
       long   refr_count; //!< Number of steps neuron is still refractory for
 
-      /** 
+      /**
        * Construct new default State_ instance based on values in Parameters_.
        * This c'tor is called by the no-argument c'tor of the neuron model. It
        * takes a reference to the parameters instance of the model, so that the
@@ -223,11 +223,11 @@ iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
        * the membrane potential with the resting potential.
        */
       State_(const Parameters_&);
-      
+
       /** Store state values in dictionary. */
       void get(DictionaryDatum&) const;
-      
-      /** 
+
+      /**
        * Set membrane potential from dictionary.
        * @note Receives Parameters_ so it can test that the new membrane potential
        *       is below threshold.
@@ -255,7 +255,7 @@ iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
       //! Logger for all analog data
       nest::UniversalDataLogger<pif_psc_alpha> logger_;
     };
-    
+
     /**
      * Internal variables of the neuron.
      * These variables must be initialized by @c calibrate, which is called before
@@ -265,7 +265,7 @@ iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
      *       cannot destroy themselves, Variables_ will need a destructor.
      */
     struct Variables_ {
-      double P11;  
+      double P11;
       double P21;
       double P22;
       double P31;
@@ -276,7 +276,7 @@ iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
       double pscInitialValue;
       long   t_ref_steps;  //!< Duration of refractory period, in steps.
     };
-    
+
     /**
      * @defgroup Access functions for UniversalDataLogger.
      * @{
@@ -309,7 +309,7 @@ iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
 inline
 nest::port mynest::pif_psc_alpha::check_connection(nest::Connection& c, nest::port receptor_type)
 {
-  // You should usually not change the code in this function. 
+  // You should usually not change the code in this function.
   // It confirms that the target of connection @c c accepts @c SpikeEvent on
   // the given @c receptor_type.
   nest::SpikeEvent e;
@@ -317,11 +317,11 @@ nest::port mynest::pif_psc_alpha::check_connection(nest::Connection& c, nest::po
   c.check_event(e);
   return c.get_target()->connect_sender(e, receptor_type);
 }
-  
+
 inline
 nest::port mynest::pif_psc_alpha::connect_sender(nest::SpikeEvent&, nest::port receptor_type)
 {
-  // You should usually not change the code in this function. 
+  // You should usually not change the code in this function.
   // It confirms to the connection management system that we are able
   // to handle @c SpikeEvent on port 0. You need to extend the function
   // if you want to differentiate between input ports.
@@ -329,11 +329,11 @@ nest::port mynest::pif_psc_alpha::connect_sender(nest::SpikeEvent&, nest::port r
     throw nest::UnknownReceptorType(receptor_type, get_name());
   return 0;
 }
- 
+
 inline
 nest::port mynest::pif_psc_alpha::connect_sender(nest::CurrentEvent&, nest::port receptor_type)
 {
-  // You should usually not change the code in this function. 
+  // You should usually not change the code in this function.
   // It confirms to the connection management system that we are able
   // to handle @c CurrentEvent on port 0. You need to extend the function
   // if you want to differentiate between input ports.
@@ -341,14 +341,14 @@ nest::port mynest::pif_psc_alpha::connect_sender(nest::CurrentEvent&, nest::port
     throw nest::UnknownReceptorType(receptor_type, get_name());
   return 0;
 }
- 
+
 inline
-nest::port mynest::pif_psc_alpha::connect_sender(nest::DataLoggingRequest& dlr, 
+nest::port mynest::pif_psc_alpha::connect_sender(nest::DataLoggingRequest& dlr,
 						 nest::port receptor_type)
 {
-  // You should usually not change the code in this function. 
+  // You should usually not change the code in this function.
   // It confirms to the connection management system that we are able
-  // to handle @c DataLoggingRequest on port 0. 
+  // to handle @c DataLoggingRequest on port 0.
   // The function also tells the built-in UniversalDataLogger that this node
   // is recorded from and that it thus needs to collect data during simulation.
   if (receptor_type != 0)

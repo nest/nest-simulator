@@ -290,6 +290,8 @@ Scanner::Scanner(std::istream* is)
 
 
     trans[decpfirstst][digit]=decpdgtst;
+    trans[decpfirstst][alpha]=dotalphast;
+    trans[decpfirstst][asterisk]=dotalphast;
     trans[decpfirstst][null]=decpdgtst;
  
     trans[decpointst][digit]=fracdgtst;
@@ -512,7 +514,7 @@ bool Scanner::operator()(Token& t)
 
     long l=0L;
     double d=0.0;
-    int es=1,sg=1;
+    int sg=1;
     int e=0;
     int parenth=0;    // to handle PS parenthesis in strings
     double p=1.;
@@ -623,7 +625,6 @@ bool Scanner::operator()(Token& t)
         Token doubletoken(new DoubleDatum( std::atof(ds.c_str())  ));
         ds.clear();
      
-
 	t.move(doubletoken);
 	if(c != endoln && c != endof)
 	{
@@ -642,7 +643,7 @@ bool Scanner::operator()(Token& t)
 	break;
 
       case mnexpst    :
-	es=-1;
+//	es=-1;
         ds.push_back('-');
 	break;
 
@@ -666,11 +667,15 @@ bool Scanner::operator()(Token& t)
 	else
 	{
 	  Token temptoken(new StringDatum(s));
-	  
 	  t.move(temptoken);
 	  state=end;
 	}
 	break;
+      case dotalphast:
+          s.append(1,'.');
+          s.append(1,c);
+          state=alphast;
+          break;
       case sgalphast  :
 	assert(sgc=='+' || sgc=='-');
 	s.append(1,sgc);

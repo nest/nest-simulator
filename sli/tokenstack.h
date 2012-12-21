@@ -37,8 +37,6 @@
 
 class TokenStack : private TokenArrayObj
 {
-
-    
 public:
     TokenStack(Index n ) 
             : TokenArrayObj(0,Token(),n) {}
@@ -46,12 +44,14 @@ public:
             : TokenArrayObj(ta) {}
 
   using TokenArrayObj::reserve;
+  using TokenArrayObj::reserve_token;
 
     void clear(void)
     {
         erase(begin(),end());
     }
     
+
     void push(const Token& e)
     {
         push_back(e);
@@ -60,25 +60,41 @@ public:
     void push_move(Token& e)
     {
         push_back_move(e);
-//        (end()-1)->move(e);
     }
-        
+
+    /**
+     * Push a Token with a valid datum to the stack. This function
+     * expects that sufficient space is on the stack to fit the datum.
+     * This function increases the reference count of the datum.
+     */
+    void push_by_ref(const Token& e)
+    {
+        push_back_by_ref(e);
+    }
+ 
+    /**
+     * Push a valid datum to the stack. This function expects that
+     * sufficient space is on the stack to fit the datum.
+     * This function increases the reference count of the datum. 
+     */
+   void push_by_pointer(Datum *rhs)
+    {
+        push_back_by_pointer(rhs);
+    }
+         
     void pop(void)
     {
-//        assert(load() > 0);
         pop_back();
     }
  
     void pop_move(Token& e)   // new one 5.5.97
     {
-//        assert(load() > 0);
         e.move(*(end()-1));
         pop_back();
     }
     
     void pop(size_t n)
     {
-//        assert(load() >= n);
         erase(end()-n, end());
     }
  
@@ -108,26 +124,21 @@ public:
         
   void swap(void)
     {
-//        assert(load()>1);
         (end()-1)->swap(*(end()-2));
     }
 
   void swap(Token &e)
     {
-//      assert(load()>1);
         (end()-1)->swap(e);
     }
 
   void index(Index i)
     {
-//      assert(load()>i);
       push(pick(i));
     }
 
   void roll(size_t n, long k)
     {
-//      assert(load() >= n);
-      
       if (k>=0)
       {
 	rotate(end()-n,end()-(k%n),end());

@@ -99,6 +99,7 @@ M_ERROR setverbosity
 
 <<
   /E_L       0.0      % resting potential in mV 
+  /V_m       0.0      % initial membrane potential in mV  
   /V_th     15.0      % spike threshold in mV
   /I_e       0.0      % DC current in pA
   /tau_m    10.0      % membrane time constant in ms

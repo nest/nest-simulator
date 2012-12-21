@@ -135,9 +135,6 @@ namespace nest {
     The following parameters control how output is formatted:
     /withtime      - boolean value which specifies whether the network time should be 
                      recorded (default: true).
-    /withpath      - boolean value which specifies whether the address of the observed node(s)
-                     should be recorded (default: false). Note: when recording to memory, /withpath
-                     will have the same effect as /withgid.
     /withgid       - boolean value which specifies whether the global id of the observed node(s)
                      should be recorded (default: false).
     /withweight    - boolean value which specifies whether the weight of the event should be
@@ -153,6 +150,11 @@ namespace nest {
     /scientific    - if set to true, doubles are written in scientific format, otherwise in
                      fixed format; affects file output only, not screen output (default: false)
     /precision     - number of digits to use in output of doubles to file (default: 3)
+    /binary        - if set to true, data is written in binary mode to files instead of ASCII.
+                     This setting affects file output only, not screen output (default: false)
+    /fbuffer_size  - the size of the buffer to use for writing to files. The default size is
+                     determined by the implementation of the C++ standard library. To obtain an
+                     unbuffered file stream, use a buffer size of 0.
 
     Data recorded in memory is available through the following parameter:
     /n_events      - Number of events collected or sampled. n_events can be set to 0, but
@@ -320,6 +322,9 @@ namespace nest {
     bool to_memory() const { return P_.to_memory_; }
     bool to_accumulator() const { return P_.to_accumulator_; }
 
+    inline
+      void set_precise(bool use_precise, long precision);
+
   private:
 
     /** 
@@ -368,6 +373,12 @@ namespace nest {
  
     // ------------------------------------------------------------------
     
+    struct Buffers_ {
+      std::ofstream fs_; //!< the file to write the recorded data to
+    };
+
+    // ------------------------------------------------------------------
+    
     struct Parameters_ {  
       bool to_file_;       //!< true if recorder writes its output to a file
       bool to_screen_;     //!< true if recorder writes its output to stdout
@@ -376,12 +387,15 @@ namespace nest {
       bool time_in_steps_; //!< true if time is printed in steps, not ms.
       bool precise_times_; //!< true if time is computed including offset
       bool withgid_;       //!< true if element GID is to be printed, default
-      bool withpath_;      //!< true if element address is to be printed
       bool withtime_;      //!< true if time of event is to be printed, default
       bool withweight_;    //!< true if weight of event is to be printed
 
-      long precision_;       //!< precision of doubles written to file
-      bool scientific_;      //!< use scientific format if true, else fixed
+      long precision_;     //!< precision of doubles written to file
+      bool scientific_;    //!< use scientific format if true, else fixed
+
+      bool binary_;            //!< true if to write files in binary mode instead of ASCII   
+      long fbuffer_size_;      //!< the buffer size to use when writing to file
+      long fbuffer_size_old_;  //!< the buffer size to use when writing to file (old)
 
       std::string label_;    //!< a user-defined label for symbolic device names.
       std::string file_ext_; //!< the file name extension to use, without .
@@ -400,7 +414,7 @@ namespace nest {
       Parameters_(const std::string&, bool, bool);
 
       void get(const RecordingDevice&, DictionaryDatum&) const;  //!< Store current values in dictionary
-      void set(const RecordingDevice&, const DictionaryDatum&);  //!< Set values from dicitonary
+      void set(const RecordingDevice&, const Buffers_&, const DictionaryDatum&);  //!< Set values from dicitonary
     };
 
     // ------------------------------------------------------------------
@@ -421,18 +435,13 @@ namespace nest {
     };
 
     // ------------------------------------------------------------------
-    
-    struct Buffers_ {
-      std::ofstream fs_;         //!< the file to write the recorded data to
-    };
-    
-    // ------------------------------------------------------------------
 
     const Node& node_;  //!< node to which device instance belongs
     const Mode  mode_;  //!< operating mode, depends on owning node
     Parameters_ P_;
     State_      S_;
     Buffers_    B_;
+    Buffers_    V_;
 };
 
 
@@ -450,7 +459,18 @@ void RecordingDevice::get_status(DictionaryDatum &d) const
   P_.get(*this, d);
   S_.get(d, P_);
   Device::get_status(d);
+    
+  (*d)[names::type] = LiteralDatum(names::recorder);
 }
+
+inline
+void RecordingDevice::set_precise(bool use_precise, long precision)
+{
+  P_.precise_times_ = use_precise;
+  P_.precision_ = precision;
+}
+
+
 
 template <typename ValueT>
 void RecordingDevice::print_value(const ValueT& value, bool endrecord)

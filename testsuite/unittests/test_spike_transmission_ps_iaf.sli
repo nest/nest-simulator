@@ -41,7 +41,7 @@ This test exhibited the problem described in ticket #157
 
 ResetKernel
 
-[0] << 
+0 << 
       /resolution h
      >> SetStatus
 

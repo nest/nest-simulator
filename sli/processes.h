@@ -59,11 +59,6 @@ class Processes: public SLIModule
   // persist as long as the instantiation of the Processes module lives. Never
   // confuse declaration and definition of a variable, by the way...
 
-  static std::vector<std::string> *envstrings; // this will contain our copy of
-  // the environment variables
-  static char **original_environ; // this will
-  // store the original environment for cleanup
-
   const Name signaldict_name; // The name of the signal dictionary
 
   // The Names of the signals contained in signal dictionary:
@@ -295,16 +290,6 @@ class Processes: public SLIModule
     public:
     void execute(SLIInterpreter *) const; // This is all we need.
   };
-  class EnvironmentFunction: public SLIFunction
-  {
-    public:
-    void execute(SLIInterpreter *) const; // This is all we need.
-  };
-  class Setenvironment_diFunction: public SLIFunction
-  {
-    public:
-    void execute(SLIInterpreter *) const; // This is all we need.
-  };
   class CtermidFunction: public SLIFunction
   {
     public:
@@ -339,14 +324,9 @@ public:
   GetPGRPFunction getpgrpfunction;
   MkfifoFunction mkfifofunction;
   SetNonblockFunction setnonblockfunction;
-  EnvironmentFunction environmentfunction;
-  Setenvironment_diFunction setenvironment_difunction;
   CtermidFunction ctermidfunction;
   Isatty_osFunction isatty_osfunction;
   Isatty_isFunction isatty_isfunction;
-
-  // ---------------------------------------------------------------
-
 };
 
 
@@ -954,43 +934,7 @@ SeeAlso: available, ignore
 
 */
 
-//--------------------------------------------------------------------------------- <- end of line (C84) is maximum width for LaTeX-include1
-/* BeginDocumentation
 
-Name: environment - return the environment of the current SLI process.
-
-Synopsis: environment -> envdict
-
-Description: This command returns the full program environment of the
-             current SLI process as a dictionary of string values.
-             The result is a dictionary of all defined environment
-             variables and their corresponding values.
-
-Examples: SLI ] environment info
-
-Diagnostics: As every process has a program environment (even if it
-             should be empty), this routine should never fail.
-
-Author: R Kupper
-
-FirstVersion: Nov 10 2000
-
-Remarks: Note that changing the contents of the returned dictionary
-         does -NOT- in turn affect the program environment of the
-         current SLI process! See the "setenvironment" command on how
-         to change the process environment.
-
-SeeAlso: setenvironment, getenv
-*/
-
-//--------------------------------------------------------------------------------- <- end of line (C84) is maximum width for LaTeX-include1
-/* setenvironment_di
-   is documented with its root setenvironment in file
-   /lib/sli/processes.sli.
-*/
-
-
-//--------------------------------------------------------------------------------- <- end of line (C84) is maximum width for LaTeX-include1
 /*
 BeginDocumentation
 
@@ -1003,36 +947,4 @@ Remarks: This is a wrapper to the POSIX kernel function ctermid().
 SeeAlso: isatty
 */
 
-
-//--------------------------------------------------------------------------------- <- end of line (C84) is maximum width for LaTeX-include1
-/* ***Löschmisch!***
-BeginDocumentation
-
-Name:
-
-Synopsis:
-
-Description:
-
-Parameters: In : 
-            Out: 
-
-Examples:
-
-Diagnostics:
-
-Bugs:
-
-Author:
-
-FirstVersion:
-
-Remarks:
-
-References: 
-
-Variants: 
-
-SeeAlso:
-*/
 #endif

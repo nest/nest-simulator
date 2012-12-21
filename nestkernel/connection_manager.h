@@ -27,12 +27,14 @@
 #include <limits>
 
 #include "nest.h"
+#include "model.h"
 #include "dictutils.h"
 #include "connector.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
-#include "compound.h"
 #include "arraydatum.h"
+
+#include "sparsetable.h"
 
 namespace nest
 {
@@ -46,8 +48,14 @@ class ConnectorModel;
  */
 class ConnectionManager
 {
-  typedef std::vector< Connector* > tVConnector;
-  typedef std::vector< tVConnector > tVVConnector;
+  struct syn_id_connector
+  {
+    index syn_id;
+    Connector* connector;
+  };
+
+  typedef std::vector< syn_id_connector > tVConnector;
+  typedef google::sparsetable< tVConnector > tVVConnector;
   typedef std::vector< tVVConnector > tVVVConnector;
 
 public:
@@ -95,15 +103,37 @@ public:
   void set_synapse_status(index gid, index syn_id, port p, thread tid, const DictionaryDatum& d);
 
   DictionaryDatum get_connector_status(const Node& node, index syn_id);
+  DictionaryDatum get_connector_status(index gid, index syn_id);
   void set_connector_status(Node& node, index syn_id, thread tid, const DictionaryDatum& d);
   
   ArrayDatum find_connections(DictionaryDatum params);
-  void find_connections(ArrayDatum& connectome, thread t, index source, index syn_id, DictionaryDatum params);
+//   void find_connections(ArrayDatum& connectome, thread t, index source, index syn_id, DictionaryDatum params);
+  void find_connections(ArrayDatum& connectome, thread t, index source, int syn_vec_index, index syn_id, DictionaryDatum params);
+  /**
+   * Return connections between pairs of neurons.
+   * The params dictionary can have the following entries:
+   * 'source' a token array with GIDs of source neurons.
+   * 'target' a token array with GIDs of target neuron.
+   * If either of these does not exist, all neuron are used for the respective entry.
+   * 'synapse_model' name of the synapse model, or all synapse models are searched.
+   * The function then iterates all entries in source and collects the connection IDs to all neurons in target.
+   * get_connections will eventually replace find_connections.
+   */
+  ArrayDatum get_connections(DictionaryDatum params) const;
+
+  void get_connections(ArrayDatum& connectome, TokenArray const *source, TokenArray const *target, size_t syn_id) const;
+
+  /**
+   * Return connections between source and any neuron on thread t.
+   */
+  void get_connections(ArrayDatum& connectome, index source, thread t,  index syn_id) const;
 
   // aka CopyModel for synapse models
   index copy_synapse_prototype(index old_id, std::string new_name);
 
   bool has_user_prototypes() const;
+
+  bool get_user_set_delay_extrema() const;
   
   size_t get_num_connections() const;
 
@@ -119,10 +149,17 @@ public:
    * \param syn The synapse model to use.
    * \returns The receiver port number for the new connection
    */ 
-  void connect(Node& s, Node& r, thread tid, index syn);
-  void connect(Node& s, Node& r, thread tid, double_t w, double_t d, index syn);
-  void connect(Node& s, Node& r, thread tid, DictionaryDatum& p, index syn);
-  
+  void connect(Node& s, Node& r, index s_gid, thread tid, index syn, bool count_connections = true);
+  void connect(Node& s, Node& r, index s_gid, thread tid, double_t w, double_t d, index syn, bool count_connections = true);
+  void connect(Node& s, Node& r, index s_gid, thread tid, DictionaryDatum& p, index syn, bool count_connections = true);
+
+  /** 
+   * Experimental bulk connector. See documentation in network.h
+   */
+  bool connect(ArrayDatum &d);
+
+  void increment_num_connections(index syn, size_t num);
+
   void send(thread t, index sgid, Event& e);
 
   /**
@@ -137,17 +174,17 @@ public:
 
 private:
 
-  std::vector<ConnectorModel*> pristine_prototypes_;   //!< The list of clean synapse prototypes
-  std::vector<ConnectorModel*> prototypes_;            //!< The list of available synapse prototypes
+  std::vector<ConnectorModel*> pristine_prototypes_; //!< The list of clean synapse prototypes
+  std::vector<ConnectorModel*> prototypes_;          //!< The list of available synapse prototypes
 
-  Network& net_;                               //!< The reference to the network
-  Dictionary* synapsedict_;                    //!< The synapsedict (owned by the network)
+  Network& net_;            //!< The reference to the network
+  Dictionary* synapsedict_; //!< The synapsedict (owned by the network)
 
   /**
    * A 3-dim structure to hold the Connector objects which in turn hold the connection
    * information.
    * - First dim: A std::vector for each local thread
-   * - Second dim: A std::vectoir for each node on each thread
+   * - Second dim: A std::vector for each node on each thread
    * - Third dim: A std::vector for each synapse prototype, holding the Connector objects
    */
   tVVVConnector connections_;
@@ -156,7 +193,7 @@ private:
   void delete_connections_();
   void clear_prototypes_();
   
-  void validate_connector(thread tid, index gid, index syn_id);
+  index validate_connector(thread tid, index gid, index syn_id);
 
   /**
    * Return pointer to protoype for given synapse id.
@@ -169,6 +206,17 @@ private:
    * @throws UnknownSynapseType
    */
   void assert_valid_syn_id(index syn_id) const;
+
+  /**
+   * For a given thread, source gid and synapse id, return the correct
+   * index (syn_vec_index) into the connection store, so that one can
+   * access the corresponding connector using
+   * \code
+       connections_[tid][gid][syn_vec_index].
+     \endcode
+   * @returns the index of the Connector or -1 if it does not exist.
+   */  
+  int get_syn_vec_index(thread tid, index gid, index syn_id) const;
 };
 
 inline
@@ -189,6 +237,22 @@ inline
 bool ConnectionManager::has_user_prototypes() const
 {
   return prototypes_.size() > pristine_prototypes_.size();
+}
+
+inline
+int ConnectionManager::get_syn_vec_index(thread tid, index gid, index syn_id) const
+{
+  if (static_cast<size_t>(tid) >= connections_.size() || gid >= connections_[tid].size() || connections_[tid][gid].size() == 0)
+    return -1;
+
+  index syn_vec_index = 0;
+  while ( syn_vec_index < connections_[tid][gid].size() && connections_[tid][gid][syn_vec_index].syn_id != syn_id )
+    syn_vec_index++;
+
+  if (syn_vec_index == connections_[tid][gid].size())
+    return -1;
+  
+  return syn_vec_index;  
 }
 
 } // namespace

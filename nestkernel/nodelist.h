@@ -24,110 +24,195 @@
 #define NODELIST_H
 
 #include "node.h"
-#include "compound.h"
+#include "subnet.h"
 
 namespace nest{
 
-  /** 
-   * List interface to network tree.  class NodeList is an adaptor
-   * class which turns a Network object into a list.  Class NodeList
-   * also provides an iterator which can be used to traverse the
-   * network tree in post-order.  This iterator is not used during
-   * Network update, since it is not thread safe.
-   * For a list interface that only accesses the leaves of a network
-   * tree, excluding the intermediate compounds, see class LeafList
-   * and its iterator.
+/**
+ * Template for list interface to network tree.
+ *
+ * LocalNodeListBase provides a template for classes providing
+ * iterator interfaces to subnets. These iterators traverse only
+ * local nodes.
+ *
+ * Concrete classes for local lists are created by instantiating
+ * LocalNodeListBase with suitable iterator classes and specializing
+ * the begin() method for those template instances.
+ *
+ * @note All iterators provided must either perform post-order iteration
+ *       or specialize the end() method suitably, as the end() method
+ *       provided by LocalNodeListBase assumes post-order traversal.
+ *
+ * @note The list iterators provided here are not thread-safe. If you need
+ *       to use then in threaded code, you must make sure that (a) each
+ *       thread has its own list and iterator instances and (b) that no two
+ *       threads manipulate the same node simultaneously.
+ */
+template <typename ListIterator>
+class LocalNodeListBase
+{
+public:
+  typedef ListIterator iterator;
+
+  explicit LocalNodeListBase(Subnet &subnet) : subnet_(subnet) {}
+
+  /**
+   * Return iterator pointing to first node in subnet.
+   * @node Must be defined by all derived classes.
    */
+  iterator begin() const;
 
-  class NodeList
-  {
-  public:
+  /**
+   * Return iterator pointing to node past last node.
+   *
+   * @note Since traversal is post-order, the local_end() of the top-level
+   *       subnet is the end also for Leaf and Child lists.
+   */
+  iterator end() const { return iterator(subnet_.local_end(),
+                                         subnet_.local_end()); }
 
-    class iterator
-    {
-      friend class NodeList;
-    public:
-      iterator():p_(){}
-    private:
-      iterator(vector<Node*>::iterator const &p):p_(p){}
-    public:
-      iterator operator++();
+  //! Returns true if no local nodes
+  bool empty() const { return subnet_.local_empty(); }
 
-      Node*    operator*();
-      Node const*  operator*() const;
+  //! Returns subnet wrapped by NodeList
+  Subnet& get_subnet() const { return subnet_; }
 
-      bool operator==(const iterator&) const;
-      bool operator!=(const iterator&) const;
+private:
+  Subnet& subnet_;  //!< root of the network
+};
 
-    private:
-      vector<Node *>::iterator p_;  //!< iterator to the current node
-    };
 
-    NodeList():root_(NULL){}
-    explicit NodeList(Compound &c):root_(&c){};
+// ----------------------------------------------------------------------------
 
-    iterator begin() const;
-    iterator end()   const;
-    iterator lend()   const;
-
-    bool   empty()   const;
-    size_t size()    const;
-
-    Compound& get_root() const;
-    void set_root(Compound &);
+/**
+ * Iterator for post-order traversal of all local nodes in a subnet.
+ */
+class LocalNodeListIterator
+{
+  friend class LocalNodeListBase<LocalNodeListIterator>;
+  friend class LocalLeafListIterator;
 
   private:
-    Compound *root_;  //!< root of the network
+   //! Create iterator from pointer to Node in subnet
+   LocalNodeListIterator(std::vector<Node*>::iterator const &node,
+                         std::vector<Node*>::iterator const &list_end) :
+      current_node_(node), list_end_(list_end) {}
+   bool is_end_() const { return current_node_ == list_end_; }
 
-  };
+ public:
+   LocalNodeListIterator operator++();
 
-  inline 
-  bool NodeList::empty() const
-  {
-    return root_->empty();
-  }
+   Node*        operator*() { return *current_node_; }
+   Node const*  operator*() const { return *current_node_; }
 
-  inline
-  size_t NodeList::size() const
-  {
-    return root_->size();
-  }
+   bool operator==(const LocalNodeListIterator& i) const { return current_node_ == i.current_node_; }
+   bool operator!=(const LocalNodeListIterator& i) const { return not ( *this == i ); }
 
-  inline
-  NodeList::iterator NodeList::end() const
-  {
-    Compound *p=root_->get_parent();
-    return iterator(p == NULL ? root_->end() : p->begin()+root_->get_lid());
-  }
+ private:
+   //! iterator to the current node in subnet
+   vector<Node *>::iterator current_node_;
+   vector<Node *>::iterator list_end_;
 
-  inline
-  NodeList::iterator NodeList::lend() const
-  {
-    return iterator(root_->begin());
-  }
+};
 
-  inline
-  bool NodeList::iterator::operator==(const iterator&i) const
-  {
-    return p_==i.p_;
-  }
 
-  inline
-  bool NodeList::iterator::operator!=(const iterator&i) const
-  {
-    return p_!=i.p_;
-  }
+// ----------------------------------------------------------------------------
 
-  inline
-  Node* NodeList::iterator::operator*()
-  {
-    return *p_;
-  }
+template <>
+  LocalNodeListBase<LocalNodeListIterator>::iterator
+  LocalNodeListBase<LocalNodeListIterator>::begin() const;
 
-  inline
-  Node const * NodeList::iterator::operator*() const
-  {
-    return *p_;
-  }
+/**
+ * List interface to subnet providing iteration over all local nodes.
+ */
+typedef LocalNodeListBase<LocalNodeListIterator> LocalNodeList;
+
+// ----------------------------------------------------------------------------
+
+/**
+ * Iterator for traversal of all local immediate child nodes in a subnet.
+ */
+class LocalChildListIterator
+{
+  friend class LocalNodeListBase<LocalChildListIterator>;
+
+  private:
+   //! Create iterator from pointer to Node in subnet
+   LocalChildListIterator(std::vector<Node*>::iterator const &node,
+                          std::vector<Node*>::iterator const &list_end) :
+     current_node_(node), list_end_(list_end) {}
+
+ public:
+   LocalChildListIterator operator++();
+
+   Node*        operator*() { return *current_node_; }
+   Node const*  operator*() const { return *current_node_; }
+
+   bool operator==(const LocalChildListIterator& i) const { return current_node_ == i.current_node_; }
+   bool operator!=(const LocalChildListIterator& i) const { return not ( *this == i ); }
+
+ private:
+   //! iterator to the current node in subnet
+   vector<Node *>::iterator current_node_;
+   vector<Node *>::iterator list_end_;
+};
+
+template <> 
+  LocalNodeListBase<LocalChildListIterator>::iterator
+  LocalNodeListBase<LocalChildListIterator>::begin() const;
+
+/**
+ * List interface to subnet providing iteration over immediate local child nodes.
+ */
+typedef LocalNodeListBase<LocalChildListIterator> LocalChildList;
+
+// ----------------------------------------------------------------------------
+
+/**
+ * Iterator for traversal of only local leaf nodes in a subnet.
+ * @note Leaf nodes are those children that are not subnets. Empty subnets
+ *       are not considered leaves.
+ */
+class LocalLeafListIterator
+{
+  friend class LocalNodeListBase<LocalLeafListIterator>;
+
+  private:
+   //! Create iterator from pointer to Node in subnet
+   LocalLeafListIterator(std::vector<Node*>::iterator const &node,
+                          std::vector<Node*>::iterator const &list_end) :
+     base_it_(node, list_end)
+   {
+     while ( not base_it_.is_end_() && not is_leaf_(*base_it_) )
+       ++base_it_;
+   }
+
+ public:
+   LocalLeafListIterator operator++();
+
+   Node*        operator*() { return *base_it_; }
+   Node const*  operator*() const { return *base_it_; }
+
+   bool operator==(const LocalLeafListIterator& i) const { return base_it_ == i.base_it_; }
+   bool operator!=(const LocalLeafListIterator& i) const { return not ( *this == i ); }
+
+ private:
+   LocalNodeListIterator base_it_;  //<! we use this one for the basic iteration
+
+   static bool is_leaf_(Node *n)  { return not dynamic_cast<Subnet*>(n); }
+
+};
+
+template <>
+  LocalNodeListBase<LocalLeafListIterator>::iterator
+  LocalNodeListBase<LocalLeafListIterator>::begin() const;
+
+/**
+ * List interface to subnet providing iteration over local leaf nodes.
+ * @note Leaf nodes are those children that are not subnets. Empty subnets
+ *       are not considered leaves.
+ */
+typedef LocalNodeListBase<LocalLeafListIterator> LocalLeafList;
+
 }
 #endif

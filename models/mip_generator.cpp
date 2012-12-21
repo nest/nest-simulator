@@ -35,16 +35,18 @@
 nest::mip_generator::Parameters_::Parameters_()
   : rate_  (0.0),  // Hz
     p_copy_(1.0),
-    mother_seed_(0),
-    rng_()
-{}
+    mother_seed_(0)
+{
+  rng_ = librandom::RandomGen::create_knuthlfg_rng(mother_seed_);
+}
 
 nest::mip_generator::Parameters_::Parameters_(const Parameters_& p)
   : rate_  (p.rate_),
     p_copy_(p.p_copy_),
-    mother_seed_(p.mother_seed_),
-    rng_(p.rng_)  // copies smart pointer
-{}
+    mother_seed_(p.mother_seed_)
+{
+  rng_ = p.rng_->clone(p.mother_seed_);  // deep copy of random number generator
+}
 
 /* ---------------------------------------------------------------- 
  * Parameter extraction and manipulation functions
@@ -90,11 +92,8 @@ nest::mip_generator::mip_generator()
 nest::mip_generator::mip_generator(const mip_generator& n)
   : Node(n), 
     device_(n.device_),
-    P_(n.P_)
-{
-  // create new, private generator, not clean, as it ignores model status
-  P_.rng_ = librandom::RandomGen::create_knuthlfg_rng(P_.mother_seed_);
-}
+    P_(n.P_) // also causes deep copy of random nnumber generator
+{}
 
 
 /* ---------------------------------------------------------------- 

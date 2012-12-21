@@ -13,10 +13,9 @@
 #! :Note: For best results, you should run this script with PyReport by Gael Varoquaux,
 #!        available from http://gael-varoquaux.info/computers/pyreport/
 #!
-#!        As I assume that most people will try plain python (or ipython) first, the
-#!        default setup is for plain python, though. Please set using_pyreport to True
-#!        if you want to run the script through pyreport. Otherwise, figures will not
-#!        be captured properly.
+#!        Please set using_pyreport to True if you want to run the
+#!        script through pyreport. Otherwise, figures will not be captured
+#!        correctly.
 
 using_pyreport = False
 
@@ -69,7 +68,7 @@ def showTextTable(connPattern, fileTrunk):
         devnull = open('/dev/null', 'w')
         subp.call(['pdflatex', fileTrunk], stdout=devnull, stderr=subp.STDOUT)
         # need wrapper, since pdfcrop does not begin with #!
-        subp.call(['pdfcrop_wrapper.sh', fileTrunk+'.pdf'], 
+        subp.call(['pdfcrop '+fileTrunk+'.pdf '+fileTrunk+'-crop.pdf'], shell=True,
                   stdout=devnull, stderr=subp.STDOUT)
         devnull.close()
         os.rename(fileTrunk+'-crop.pdf', fileTrunk+'.pdf')
@@ -191,7 +190,7 @@ pylab.show()
 
 #! Save pattern to file
 #! --------------------
-s_cp.plot(file='simple_example.png')
+#s_cp.plot(file='simple_example.png')
 
 #! This saves the detailed diagram to the given file. If you want to save
 #! the pattern in several file formats, you can pass a tuple of file names, 
@@ -216,7 +215,7 @@ for layer in s_layer:
 
 #! Create connections, need to insert variable names
 for conn in s_conn:
-    eval('topo.ConnectLayer(%s,%s,conn[2])' % (conn[0], conn[1]))
+    eval('topo.ConnectLayers(%s,%s,conn[2])' % (conn[0], conn[1]))
 
 nest.Simulate(10)
 #! **Ooops:*** Nothing happened? Well, it did, but pyreport cannot capture the 
@@ -231,23 +230,23 @@ B_top = nest.GetStatus(RG, 'topology')[0]
 ctr_id = topo.GetElement(RG, [B_top['rows']/2, B_top['columns']/2])
 
 # find excitatory element in B
-E_id = [gid for gid in nest.GetLeaves(ctr_id)[0] 
+E_id = [gid for gid in ctr_id
         if nest.GetStatus([gid], 'model')[0] == 'E']
 
 # get all targets, split into excitatory and inhibitory
-alltgts = nest.GetStatus(nest.FindConnections(E_id, synapse_type='static_synapse'), 'target')
+alltgts = nest.GetStatus(nest.FindConnections(E_id, synapse_model='static_synapse'), 'target')
 Etgts = [t for t in alltgts if nest.GetStatus([t], 'model')[0] == 'E']
 Itgts = [t for t in alltgts if nest.GetStatus([t], 'model')[0] == 'I']
 
 # obtain positions of targets
-Etpos = zip(*[topo.GetPosition([n]) for n in Etgts])
-Itpos = zip(*[topo.GetPosition([n]) for n in Itgts])
+Etpos = zip(*topo.GetPosition(Etgts))
+Itpos = zip(*topo.GetPosition(Itgts))
 
 # plot excitatory
 pylab.clf()
 pylab.subplot(121)
 pylab.scatter(Etpos[0], Etpos[1]) 
-ctrpos = pylab.array(topo.GetPosition(E_id))
+ctrpos = pylab.array(topo.GetPosition(E_id)[0])
 ax = pylab.gca()
 ax.add_patch(pylab.Circle(ctrpos, radius=0.02, zorder = 99,
                           fc = 'r', alpha = 0.4, ec = 'none'))
@@ -263,7 +262,7 @@ ax.set(aspect='equal', xlim=[-0.5,0.5], ylim=[-0.5,0.5],
 # plot inhibitory
 pylab.subplot(122)
 pylab.scatter(Itpos[0], Itpos[1]) 
-ctrpos = topo.GetPosition(E_id)
+ctrpos = topo.GetPosition(E_id)[0]
 ax = pylab.gca()
 ax.add_patch(pylab.Circle(ctrpos, radius=0.02, zorder = 99,
                           fc = 'r', alpha = 0.4, ec = 'none'))
@@ -615,10 +614,7 @@ pylab.show()
 #! If not using pyreport, we finally show and block
 if not using_pyreport:
     print
-    print "The connplotter_tutorial script is done. Enjoy the figures!"
+    print "The connplotter_tutorial script is done. Call pylab.show() and enjoy the figures!"
     print "You may need to close all figures manually to get the Python prompt back."
     print
     pylab.show = pylab_show
-    pylab.show()
-    
-    

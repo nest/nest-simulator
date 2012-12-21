@@ -43,7 +43,7 @@
 /unittest (7488) require
 /unittest using
 
-[0] << 
+0 << 
       /local_num_threads 1 
       /resolution 0.1       % in ms
      >> SetStatus

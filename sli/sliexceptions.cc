@@ -25,6 +25,11 @@
 #include "interpret.h"
 #include <sstream>
 
+std::string DivisionByZero::message()
+{
+    return "You cannot divide by zero.";
+}
+
 std::string TypeMismatch::message()
 {
   if (!provided_.empty() && !expected_.empty())
@@ -79,7 +84,7 @@ std::string ArgumentType::message()
 
 std::string UndefinedName::message()
 {
-  return name_ + " does not exist in accessed dictionary.";
+  return "Key '/"+name_ + "' does not exist in dictionary.";
 }
 
 std::string EntryTypeMismatch::message()

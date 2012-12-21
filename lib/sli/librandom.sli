@@ -21,7 +21,7 @@
  */
 
 
-/librandom ($Revision: 9902 $) provide
+/librandom ($Revision: 10100 $) provide
 /oosupport (5774) require
 
 
@@ -227,7 +227,8 @@ SeeAlso: SetStatus_v, GetStatus_dict, CreateRDV, rdevdict
     % add new functions to trie if it exists, else create new
 /GetStatus [/rdvtype] /GetStatus_v load def
 
-
+/get [/rdvtype /literaltype] { exch GetStatus exch get } def
+/get [/rdvtype /arraytype] { exch GetStatus exch get_d_a } def
 
 
 /* BeginDocumentation

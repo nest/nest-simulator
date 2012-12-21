@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # smp_generator.py
 #
@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+#
 """
 Short demonstration of the smp_generator for AC Poisson trains.
 """
@@ -31,9 +32,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # create two generators with different frequencies, phases, amplitudes
-g = nest.Create('smp_generator', n=2, params=[{'dc': 10000.0, 'ac': 5000.0, 
+g = nest.Create('smp_generator', n=2, params=[{'dc': 10000.0, 'ac': 5000.0,
                                               'freq': 10.0, 'phi': 0.0},
-                                             {'dc': 0.0, 'ac': 10000.0, 
+                                             {'dc': 0.0, 'ac': 10000.0,
                                               'freq': 5.0, 'phi': np.pi/2.}])
 
 # create multimeters and spike detectors
@@ -56,5 +57,3 @@ for j in xrange(2):
     sp = nest.GetStatus([s[j]])[0]['events']['times']
     plt.subplot(212)
     plt.hist(sp, bins=20, range=[0, 200])
-
-plt.show()

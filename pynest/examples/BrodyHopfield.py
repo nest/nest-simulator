@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # BrodyHopfield.py
 #
 # This file is part of NEST.
@@ -35,7 +36,7 @@
 # units are the usual NEST units: pA,pF,ms,mV,Hz
 #
 # Sven Schrader
-	
+
 import nest
 import nest.raster_plot
 import pylab
@@ -44,13 +45,13 @@ import numpy
 N=1000 # number of neurons
 
 bias_begin=140. # bias current from...
-bias_end=200.   # ...to (ms) 
+bias_end=200.   # ...to (ms)
 T=600 # simulation time (ms)
 
 def bias(n):
     # constructs the dictionary with current ramp
     return { 'I_e': (n * (bias_end-bias_begin)/N + bias_begin) }
-    
+
 
 driveparams  = {'amplitude':50., 'frequency':35.}
 noiseparams  = {'mean':0.0, 'std':200.}
@@ -76,4 +77,3 @@ nest.ConvergentConnect(neurons, sd)
 nest.Simulate(T)
 
 nest.raster_plot.from_device(sd, hist=True)
-nest.raster_plot.show()

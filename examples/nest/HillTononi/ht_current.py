@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # ht_current.py
 #
@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+#
 """
 A small example using the ht_neuron.
 
@@ -39,7 +40,7 @@ nest.ResetKernel()
 # create neuron
 nrn = nest.Create('ht_neuron', params = {'NaP_g_peak': 1.0})
 
-# get receptor ID information, so we can connect to the 
+# get receptor ID information, so we can connect to the
 # different synapses
 receptors = nest.GetStatus(nrn)[0]['receptor_types']
 
@@ -80,10 +81,10 @@ for t in t_hyp:
     nest.Simulate(t)
     t_switch.append(nest.GetStatus([0], 'time')[0])
 
-# cut off after last burst 
+# cut off after last burst
 Tend = 1800
 
-# extract data from multimeter 
+# extract data from multimeter
 events = nest.GetStatus(mm)[0]['events']
 t = events['times'];  # time axis
 
@@ -112,5 +113,3 @@ pl.xlim([0, Tend])
 for k in xrange(len(t_switch)-1):
     iax.add_patch(pl.Rectangle([t_switch[k], -25], t_switch[k+1]-t_switch[k], 45,
                                ec='none', fc='w' if k%2 else '0.7'))
-
-pl.show()

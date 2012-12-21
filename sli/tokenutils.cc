@@ -35,7 +35,7 @@
 template<>
 long getValue<long>(const Token&t)
 {
-  IntegerDatum *id= dynamic_cast<IntegerDatum *>(t.datum());
+  const IntegerDatum *id= dynamic_cast<const IntegerDatum *>(t.datum());
   if (id == NULL) 
     {// we have to create a Datum object to get the name...
       IntegerDatum const d;

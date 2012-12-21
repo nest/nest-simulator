@@ -5,7 +5,7 @@ echo "Bootstrapping MyModule"
 if test -d autom4te.cache ; then
 # we must remove this cache, because it
 # may screw up things if configure is run for
-# different platforms. 
+# different platforms.
   echo "  -> Removing old automake cache ..."
   rm -rf autom4te.cache
 fi
@@ -17,7 +17,7 @@ echo "  -> Running libtoolize ..."
 if [ `uname -s` = Darwin ] ; then
 # libtoolize is glibtoolize on OSX
   LIBTOOLIZE=glibtoolize
-else  
+else
   LIBTOOLIZE=libtoolize
 fi
 
@@ -34,7 +34,7 @@ fi
 echo "  -> Running autoconf ..."
 autoconf
 
-# autoheader must run before automake 
+# autoheader must run before automake
 echo "  -> Running autoheader ..."
 autoheader
 

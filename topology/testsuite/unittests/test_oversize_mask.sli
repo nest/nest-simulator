@@ -27,13 +27,13 @@ unittest using
 
 /make_grid_layer
 {
-  << /rows 1 /columns 1 /elements /iaf_neuron >> topology/CreateLayer ::
+  << /rows 1 /columns 1 /elements /iaf_neuron /edge_wrap true >> topology/CreateLayer ::
 } 
 def
 
 /make_free_layer
 {
-  << /positions [[0. 0.]] /elements /iaf_neuron >> topology/CreateLayer ::
+  << /positions [[0. 0.]] /elements /iaf_neuron /edge_wrap true >> topology/CreateLayer ::
 } 
 def
 

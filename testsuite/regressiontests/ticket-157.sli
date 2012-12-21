@@ -1,0 +1,19 @@
+% previous to the fix for #157, this script caused a C++
+% assertion to fail for h==0.1, but not for h==0.01, 0.001
+
+0.1 /h Set  
+
+/T 3.0 def   
+
+ResetKernel
+
+0 << 
+      /resolution h
+     >> SetStatus
+
+/iaf_neuron Create /n Set
+/poisson_generator_ps Create /p Set
+p << /rate  10000. >> SetStatus
+
+p n Connect
+T Simulate 

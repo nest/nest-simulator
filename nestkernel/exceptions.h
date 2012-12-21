@@ -189,6 +189,24 @@ namespace nest {
     std::string message();
   };
 
+   /**
+     * Exception to be thrown if an incorrectly formed address is detected.
+     * @ingroup KernelExceptions
+     */
+
+    class MalformedAddress: public KernelException
+    {
+      std::string msg_;
+    public:
+      MalformedAddress(const std::string& msg)
+        : KernelException("MalformedAddress"),
+        msg_(msg)
+        {}
+
+      ~MalformedAddress() throw () {}
+
+      std::string message();
+    };
 
   /**
    * Exception to be thrown if the specified

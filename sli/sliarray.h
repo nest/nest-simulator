@@ -51,6 +51,18 @@ class SLIArrayModule: public SLIModule
     void execute(SLIInterpreter *) const;
     void backtrace(SLIInterpreter *, int) const ;
   };
+  class IMap_ivFunction: public SLIFunction
+  {
+    public:
+    void execute(SLIInterpreter *) const;
+    void backtrace(SLIInterpreter *, int) const ;
+  };
+  class IMap_dvFunction: public SLIFunction
+  {
+    public:
+    void execute(SLIInterpreter *) const;
+    void backtrace(SLIInterpreter *, int) const ;
+  };
   class MapThreadFunction: public SLIFunction
   {
     public:
@@ -320,6 +332,166 @@ class SLIArrayModule: public SLIModule
     void execute(SLIInterpreter *) const;
   };
 
+  class Add_iv_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+  class Add_i_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Neg_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Sub_iv_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Mul_iv_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Mul_i_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Mul_d_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Div_iv_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Add_dv_dvFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Add_d_dvFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Sub_dv_dvFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Mul_dv_dvFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+  class Mul_d_dvFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+  class Div_dv_dvFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+  class Neg_dvFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+  class Inv_dvFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+  class Length_dvFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+  class Length_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Get_iv_iFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+  class Get_iv_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+  class Get_dv_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+  class Get_dv_iFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Put_dv_i_dFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+  class Put_iv_i_iFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Zeros_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+  class Zeros_dvFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+  class Ones_dvFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+  class Ones_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class ArangeFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
   /**
    * Test single double for finiteness.
    * @todo This class does not really belong into sliarray, but is placed
@@ -331,6 +503,33 @@ class SLIArrayModule: public SLIModule
     FiniteQ_dFunction() {}
     void execute(SLIInterpreter *) const;
   };
+
+  class Forall_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Forall_dvFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Iforall_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+    void backtrace(SLIInterpreter *, int) const ;
+  };
+
+  class Iforall_dvFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+    void backtrace(SLIInterpreter *, int) const ;
+ };
+
 
   /** @} */
   
@@ -345,6 +544,8 @@ class SLIArrayModule: public SLIModule
   TransposeFunction transposefunction;
   MapFunction mapfunction;
   IMapFunction imapfunction;
+  IMap_ivFunction imap_ivfunction;
+  IMap_dvFunction imap_dvfunction;
   MapIndexedFunction mapindexedfunction;
   IMapIndexedFunction imapindexedfunction;
   MapThreadFunction mapthreadfunction;
@@ -365,7 +566,42 @@ class SLIArrayModule: public SLIModule
   IntVector2ArrayFunction intvector2arrayfunction;
   DoubleVector2ArrayFunction doublevector2arrayfunction;
   FiniteQ_dFunction finiteq_dfunction;
+  Forall_ivFunction forall_ivfunction;
+  Iforall_ivFunction iforall_ivfunction;
+  Forall_dvFunction forall_dvfunction;
+  Iforall_dvFunction iforall_dvfunction;
 
+
+  Add_iv_ivFunction add_iv_ivfunction;
+  Add_i_ivFunction  add_i_ivfunction;
+  Neg_ivFunction    neg_ivfunction;
+  Sub_iv_ivFunction sub_iv_ivfunction;
+  Mul_iv_ivFunction mul_iv_ivfunction;
+  Mul_i_ivFunction mul_i_ivfunction;
+  Mul_d_ivFunction mul_d_ivfunction;
+  Div_iv_ivFunction div_iv_ivfunction;
+  Length_ivFunction length_ivfunction;
+
+  Add_dv_dvFunction add_dv_dvfunction;
+  Add_d_dvFunction  add_d_dvfunction;
+  Sub_dv_dvFunction sub_dv_dvfunction;
+  Mul_dv_dvFunction mul_dv_dvfunction;
+  Mul_d_dvFunction  mul_d_dvfunction;
+  Div_dv_dvFunction div_dv_dvfunction;
+  Neg_dvFunction    neg_dvfunction;
+  Inv_dvFunction    inv_dvfunction;
+  Length_dvFunction length_dvfunction;
+  Get_dv_iFunction  get_dv_ifunction;
+  Get_dv_ivFunction get_dv_ivfunction;
+  Get_iv_iFunction  get_iv_ifunction;
+  Get_iv_ivFunction  get_iv_ivfunction;
+  Put_iv_i_iFunction put_iv_i_ifunction;
+  Put_dv_i_dFunction put_dv_i_dfunction;
+  Zeros_dvFunction zeros_dvfunction;
+  Ones_dvFunction ones_dvfunction;
+  Zeros_ivFunction zeros_ivfunction;
+  Ones_ivFunction ones_ivfunction;
+  ArangeFunction  arangefunction;
   public:
 
   SLIArrayModule(){}

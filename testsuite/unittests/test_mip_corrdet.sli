@@ -42,6 +42,7 @@ SeeAlso: mip_generator, correlation_detector
 /unittest using
 
 
+
 %
 % Cross check generated with cross_check_test_mip_corrdet.py
 % 
@@ -60,16 +61,19 @@ SeeAlso: mip_generator, correlation_detector
  
 ResetKernel
 
-
 userdict begin
 
-[0]
+0
 << 
     /local_num_threads 1
     /resolution h
-/overwrite_files true
+    /overwrite_files true
+    /grng_seed 0 % because test data was produced for seed = 0
 >> SetStatus
 
+% check, if we can set another rng
+/mip_generator << /mother_rng rngdict/MT19937 :: 101 CreateRNG >> SetDefaults
+/mip_generator << /mother_rng rngdict/knuthlfg :: 101 CreateRNG >> SetDefaults % this seed will be ignored, because explicitly set
 
 /mip_generator Create dup /mg Set
 <<
@@ -130,7 +134,7 @@ n2 T tau_max sub div 1000.0 mul /lmbd2 Set
 %cout
 %(rate 1=) <- lmbd1 <- (\n) <-
 %(rate 2=) <- lmbd2 <- (\n) <-
-%(background =) <- lmbd1 lmbd2 mul tbin 1000 div mul T tau_max sub 1000 div mul <- (\n) <- pop
+%(background =) <- lmbd1 lmbd2 mul delta_tau 1000 div mul T tau_max sub 1000 div mul <- (\n) <- pop
 
 %hist ==
 %0 hist { add } forall ==

@@ -4,8 +4,8 @@
 %% Misha Tsodyks, Asher Uziel, and Henry Markram
 %% "Synchrony generation in Recurrent Networks with Frequency-Dependent
 %% Synapses.", Journal of Neuroscience (2000), Vol. 20 RC50 1-5.
-%% 
-%% This script plots 
+%%
+%% This script plots
 %%
 %% 1.) (top left) Dot display of all spikes. Neurons are sorted by their
 %%     background input current in ascending order.
@@ -69,7 +69,7 @@ exc_neurons = spikes(find(spikes(:,2)==1),:);
 % mean isi of each exc neuron
 Ttot = (max(spikes(:,4))-min(spikes(:,4)))*h;
 for n=1:Ne
-    exc_T(n) = Ttot/length(find(exc_neurons(:,3)==n));    
+    exc_T(n) = Ttot/length(find(exc_neurons(:,3)==n));
 end
 exc_T_sorted = sort(exc_T);
 

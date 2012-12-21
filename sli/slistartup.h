@@ -81,6 +81,9 @@ class SLIStartup: public SLIModule
   Name pointersize_name;
   Name architecturedict_name;
 
+  Name platform_name;
+  Name threading_name;
+
   Name have_mpi_name;
   Name ismpi_name;
   Name have_gsl_name;
@@ -92,10 +95,13 @@ class SLIStartup: public SLIModule
   Name exitcode_success_name;
   Name exitcode_scripterror_name;
   Name exitcode_abort_name;
+  Name exitcode_userabort_name;
   Name exitcode_segfault_name;
   Name exitcode_exception_name;
   Name exitcode_fatal_name;
   Name exitcode_unknownerror_name;
+
+  Name environment_name;
   
   class GetenvFunction: public SLIFunction
   {

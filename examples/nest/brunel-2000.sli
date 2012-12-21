@@ -29,17 +29,17 @@
    receive Poissonian background input.  The spike output of 50
    neurons from each population are recorded.  Neurons are modeled
    as leaky integrate-and-fire neurons with current-injecting synapses
-   (alpha functions).  The model is based on 
+   (alpha functions).  The model is based on
 
       Nicolas Brunel
-      Dynamics of sparsely connected networks of excitatory 
+      Dynamics of sparsely connected networks of excitatory
       and inhibitory spiking neurons
       Journal of Computational Neuroscience, 2000, vol 8, pp 183-208.
 
    There are two differences to Brunel's model: we use alpha
    functions instead of delta for synaptic currents, and our neurons
    reset to the resting potential (0 mv) instead of to half-way
-   between resting potential and threshold. 
+   between resting potential and threshold.
 
    This example shows how to
 
@@ -49,7 +49,7 @@
       - define own functions
       - set parameters in a simple way
       - communicate with the user in a simple way
-   
+
    Abigail Morrison, Marc-Oliver Gewaltig, Hans Ekkehard Plesser
 */
 
@@ -68,15 +68,15 @@
 %/g      4.5  def    % rel strength, inhibitory synapses
 %/eta    0.95 def    % nu_ext / nu_thresh
 
-/simtime  1000.0 def % simulation time [ms] 
-/dt          0.1 def % simulation step length [ms]   
+/simtime  1000.0 def % simulation time [ms]
+/dt          0.1 def % simulation step length [ms]
 
-% Number of POSIX threads per program instance.
+% Number of virtual processes in the simulation.
 % When using MPI, the mpirun call determines the number
-% of MPI processes (=program instances). The total number
-% of virtual processes is #MPI processes x local_num_threads.
-/local_num_threads 8 def
-  
+% of MPI processes (=program instances). The number of threads
+% per process is total_num_virtual_procs / # MPI processes.
+/total_num_virtual_procs 4 def
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       NO USER-SERVICABLE PARTS BELOW
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,7 +87,7 @@
 % return average rate per neuron in Hz.
 % NOTE: If you are running with several MPI processes, this
 %       function only gives an approximation to the true rate.
-% 
+%
 % spike_det ComputeRate -> rate
 /ComputeRate
 {
@@ -107,7 +107,7 @@
     1000 mul         % convert from mHz to Hz, leave on stack
 
   end
-} bind             % optional, improves performance 
+} bind             % optional, improves performance
 def
 
 
@@ -134,37 +134,37 @@ def
 /NI 1 order mul cvi def  % number of inhibitory neurons
 /N  NI NE add def        % total number of neurons
 
-/epsilon 0.1 def            % connectivity 
+/epsilon 0.1 def            % connectivity
 /CE epsilon NE mul cvi def  % number of excitatory synapses on neuron
 /CI epsilon NI mul cvi def  % number of inhibitory synapses on neuron
-/C  CE CI add def           % total number of internal synapses per n.   
-/Cext CE def                % number of external synapses on neuron  
+/C  CE CI add def           % total number of internal synapses per n.
+/Cext CE def                % number of external synapses on neuron
 
 /tauMem 20.0 def    % neuron membrane time constant [ms]
-/CMem  250.0 def    % membrane capacity [pF]
+/CMem    1.0 def    % membrane capacity [pF]
 /tauSyn  0.5 def    % synaptic time constant [ms]
 /tauRef  2.0 def    % refractory time [ms]
 /U0      0.0 def    % resting potential [mV]
-/theta  20.0 def    % threshold 
+/theta  20.0 def    % threshold
 
 
 % amplitude of PSP given 1pA current
 ComputePSPnorm /J_max_unit Set
-  
+
 % synaptic weights, scaled for our alpha functions, such that
 % for constant membrane potential, the peak amplitude of the PSP
 % equals J
 
-/delay   1.5 def         % synaptic delay, all connections [ms]  
+/delay   1.5 def         % synaptic delay, all connections [ms]
 /J       0.1 def         % synaptic weight [mV]
 /JE J J_max_unit div def % synaptic weight [pA]
-/JI g JE mul neg def     % inhibitory  
-  
+/JI g JE mul neg def     % inhibitory
+
 % threshold rate, equivalent rate of events needed to
 % have mean input current equal to threshold
 /nu_thresh ((theta * CMem) / (JE*CE*exp(1)*tauMem*tauSyn)) ExecMath def
 /nu_ext eta nu_thresh mul def     % external rate per synapse
-/p_rate nu_ext Cext mul 1000. mul def % external input rate per neuron  
+/p_rate nu_ext Cext mul 1000. mul def % external input rate per neuron
                                         % must be given in Hz
 
 % number of neurons per population to record from
@@ -174,15 +174,16 @@ ComputePSPnorm /J_max_unit Set
 %%% CONSTRUCTION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ResetKernel      % clear all existing network elements
-
+M_WARNING setverbosity
 % set resolution and total/local number of threads
-[0]
- << 
-   /resolution  dt 
-   /local_num_threads local_num_threads
- >> SetStatus
-    
- tic % start timer on construction    
+0 << 
+    /resolution  dt 
+    /total_num_virtual_procs total_num_virtual_procs
+    /print_time true
+    /overwrite_files true
+>> SetStatus
+
+ tic % start timer on construction
 
 % Setting neuron default parameters
 
@@ -190,14 +191,14 @@ ResetKernel      % clear all existing network elements
       /iaf_psc_alpha
         <<
           /tau_m       tauMem
-	  /C_m         CMem
           /tau_syn_ex  tauSyn
           /tau_syn_in  tauSyn
           /t_ref       tauRef
           /E_L     U0
+          /V_m     U0
           /V_th    theta
           /V_reset    10.0 % according to Brunel (2000) p 185
-          /C_m     1.0     % Yes, capacitance is 1 in the Brunel model      
+          /C_m     1.0     % Yes, capacitance is 1 in the Brunel model
         >> SetDefaults
 
       (Creating the network.) =  % show message
@@ -207,13 +208,13 @@ ResetKernel      % clear all existing network elements
 
       % some connecting functions need lists (arrays) over all
       % neurons they should work on, so we need to extract these
-      % lists from the subnetworks    
+      % lists from the subnetworks
 
-      % obtain array with GIDs of all excitatory/inhibitory neurons    
-      /E_neurons E_net GetNodes def
-      /I_neurons I_net GetNodes def
+      % obtain array with GIDs of all excitatory/inhibitory neurons
+      /E_neurons E_net GetGlobalNodes def
+      /I_neurons I_net GetGlobalNodes def
 
-      % list of all neurons    
+      % list of all neurons
       /allNeurons E_neurons I_neurons join def
 
       (Creating Poisson generators.) =
@@ -222,39 +223,41 @@ ResetKernel      % clear all existing network elements
         /rate p_rate
       >> SetDefaults
 
-      /expoisson /poisson_generator Create def   
+      /expoisson /poisson_generator Create def
       /inpoisson /poisson_generator Create def
 
       % We could do with only one detector,
       % but by recording the populations separately,
-      % we needn't sort the recordings later    
+      % we needn't sort the recordings later
       (Creating excitatory spike detector.) =
       /exsd /spike_detector Create def
       exsd
-      << 
-	/label (brunel-2-ex)
+      <<
+        /label (brunel-2-ex)
         /withtime true   % record time of spikes
-	/withgid  true   % and the global ID of the neuron
+        /withgid  true   % and the global ID of the neuron
         /to_file true    % write results to a file
+        /to_memory true  % record spikes in memory
       >> SetStatus
 
       (Creating inhibitory spike detector.) =
       /insd /spike_detector Create def
       insd
-      << 
-	/label (brunel-2-in)
-        /withtime true   % record time of spikes 
-	/withgid  true   % and the global ID of the neuron
+      <<
+        /label (brunel-2-in)
+        /withtime true   % record time of spikes
+        /withgid  true   % and the global ID of the neuron
         /to_file true    % write results to a file
+        /to_memory true  % record spikes in memory
       >> SetStatus
 
       % Create custom synapse types with appropriate values for
       % our excitatory and inhibitory connections
-      /static_synapse << /delay delay >> SetDefaults
-      /static_synapse /syn_ex << /weight JE >> CopyModel
-      /static_synapse /syn_in << /weight JI >> CopyModel
+      /static_synapse_hom_wd << /delay delay >> SetDefaults
+      /static_synapse_hom_wd /syn_ex << /weight JE >> CopyModel
+      /static_synapse_hom_wd /syn_in << /weight JI >> CopyModel
 
-      (Connecting excitatory neurons.) =  
+      (Connecting excitatory neurons.) =
       expoisson E_neurons /syn_ex DivergentConnect
       E_neurons E_net CE /syn_ex RandomConvergentConnect
       I_neurons E_net CI /syn_in RandomConvergentConnect
@@ -267,12 +270,12 @@ ResetKernel      % clear all existing network elements
       % Spike detectors are connected to the first Nrec neurons in each
       % population.  Since neurons are equal and connectivity is homogeneously
       % randomized, this is equivalent to picking Nrec neurons at random
-      % from each population    
-      (Connecting spike detectors.) =    
+      % from each population
+      (Connecting spike detectors.) =
 
       E_neurons Nrec Take exsd ConvergentConnect  % pick the first 500 neurons
       I_neurons Nrec Take insd ConvergentConnect
-     
+
       toc /BuildCPUTime Set
 
      /syn_ex GetDefaults /num_connections get /n_ex_syn Set
@@ -293,6 +296,6 @@ ResetKernel      % clear all existing network elements
   (       Inhibitory : ) =only n_in_syn =
   (Excitatory rate   : ) =only exsd ComputeRate =only ( Hz) =
   (Inhibitory rate   : ) =only insd ComputeRate =only ( Hz) =
-  (Building time     : ) =only BuildCPUTime =only ( s) =    
-  (Simulation time   : ) =only SimCPUTime   =only ( s\n) =    
+  (Building time     : ) =only BuildCPUTime =only ( s) =
+  (Simulation time   : ) =only SimCPUTime   =only ( s\n) =
 

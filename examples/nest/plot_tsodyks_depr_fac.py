@@ -28,7 +28,7 @@ def plot_spikes():
     dt = 0.1 # time resolution
     nbins = 1000
     N = 500 # number of neurons
-    
+
     vm = load('voltmeter-4-0.dat')
 
     figure(1)

@@ -94,7 +94,7 @@ dt = 10.0
 weight = None
 for t in np.arange(0, T + dt, dt):
     if nest.GetStatus(neuron2)[0]['local']:
-        weight = nest.GetStatus(nest.FindConnections(neuron1, synapse_type="dopa"))[0]['weight']
+        weight = nest.GetStatus(nest.FindConnections(neuron1, synapse_model="dopa"))[0]['weight']
         print(weight)
         weightstr = str(weight)
         timestr = str(t)

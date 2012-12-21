@@ -37,20 +37,25 @@
 % /vp get
 
 
-/unittest (8831) require
+/unittest (9715) require
 /unittest using
 
 
 [1 2 4]
 {
- ResetKernel
+  ResetKernel
 
- 0 << /total_num_virtual_procs 4 >> SetStatus
+  0 << /total_num_virtual_procs 4 >> SetStatus
 
- /iaf_neuron Create /n1 Set
- /iaf_neuron Create /n2 Set
- /iaf_neuron Create /n3 Set
- /iaf_neuron Create /n4 Set
+  /subnet Create /net Set
+  net ChangeSubnet
+    /iaf_neuron Create /n1 Set
+    /iaf_neuron Create /n2 Set
+    /iaf_neuron Create /n3 Set
+    /iaf_neuron Create /n4 Set
+  0 ChangeSubnet
+
+  net GetGlobalNodesInfo /nodes Set
 
  Rank 0 eq
  {
@@ -58,11 +63,12 @@
   () =
   (gid vp | gid vp | gid vp | gid vp) =
   (---------------------------------) =
-  n1 cvs  (   ) join n1 /vp get cvs join  ( |  ) join
-  n2 cvs  (   ) join n2 /vp get cvs join  ( |  ) join join
-  n3 cvs  (   ) join n3 /vp get cvs join  ( |  ) join join
-  n4 cvs  (   ) join n4 /vp get cvs join  join 
-
+  ()
+  nodes 
+  { 
+    /d Set
+    d /global_id get cvs  (   ) join d /vp get cvs join  ( |  ) join join
+  } forall
   dup =
 
   } if

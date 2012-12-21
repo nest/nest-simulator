@@ -28,10 +28,19 @@
 #include "dictdatum.h"
 #include "network.h"
 
+// OpenMP
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 int main(int argc, char *argv[])
 {
 #ifdef HAVE_MPI
   nest::Communicator::init(&argc, &argv);
+#endif
+
+#ifdef _OPENMP
+  omp_set_num_threads(1);
 #endif
 
   nest::Network *pNet = 0;

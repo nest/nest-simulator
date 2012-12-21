@@ -439,8 +439,8 @@ SeeAlso: version::validate, version::vcmp, version::veq, version::vlt, version::
     {
       pop      
       (9999999.9)
-        M_WARNING (library::s2v) (Found non-substituted $Revision) ($ string, returning a large number.) join message
-        M_WARNING (library::s2v) (Please check that keyword substitution is turned on for this file.) message
+        M_DEBUG (library::s2v) (Found non-substituted $Revision) ($ string, returning a large number.) join message
+        M_DEBUG (library::s2v) (Please check that keyword substitution is turned on for this file.) message
       %stack:  (number)      
     } if
 

@@ -42,9 +42,23 @@ Description:
   iaf_neuron is an implementation of a leaky integrate-and-fire model
   with alpha-function shaped synaptic currents. Thus, synaptic currents
   and the resulting post-synaptic potentials have a finite rise time. 
-
   The threshold crossing is followed by an absolute refractory period
   during which the membrane potential is clamped to the resting potential.
+
+  The subthreshold membrane potential dynamics are given by [3]
+
+  dV_m/dt = - ( V_m - E_L ) / tau_m + I_syn(t) / C_m + I_e / C_m
+
+  where I_syn(t) is the sum of alpha-shaped synaptic currents
+
+  I_syn(t) = Sum[w_j alpha(t-t_j) for t_j in input spike times]
+
+  w_j is the synaptic weight of the connection through which the spike
+  at time t_j arrived. Each individual alpha-current is given by
+
+  alpha(t) = e * t/tau_s * e^{-t/tau_s} * Heaviside(t)
+
+  alpha(t=tau_s) == 1 is the maximum of the alpha-current.
 
   The linear subthresold dynamics is integrated by the Exact
   Integration scheme [1]. The neuron dynamics is solved on the time
@@ -81,6 +95,11 @@ Parameters:
   V_reset    double - Reset potential of the membrane in mV.
   tau_syn    double - Rise time of the excitatory synaptic alpha function in ms.
   I_e        double - Constant external input current in pA.
+
+Note:
+  tau_m != tau_syn is required by the current implementation to avoid a
+  degenerate case of the ODE describing the model [1]. For very similar values,
+  numerics will be unstable.
  
 References:
   [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
@@ -89,9 +108,9 @@ References:
   [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space 
       analysis of synchronous spiking in cortical neural networks. 
       Neurocomputing 38-40:565-571.
-  [3] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact subthreshold 
+  [3] Morrison A, Straube S, Plesser H E, & Diesmann M (2007) Exact subthreshold 
       integration with continuous spike times in discrete time neural network 
-      simulations. Neural Computation, in press
+      simulations. Neural Computation 19:47-79.
 
 Sends: SpikeEvent
 
@@ -182,7 +201,11 @@ SeeAlso: iaf_psc_alpha, testsuite::test_iaf
       Parameters_();  //!< Sets default parameter values
 
       void get(DictionaryDatum&) const;  //!< Store current values in dictionary
-      void set(const DictionaryDatum&);  //!< Set values from dicitonary
+
+      /** Set values from dictionary.
+       * @returns Change in reversal potential E_L, to be passed to State_::set()
+       */
+      double set(const DictionaryDatum&);
     };
 
     // ---------------------------------------------------------------- 
@@ -201,7 +224,13 @@ SeeAlso: iaf_psc_alpha, testsuite::test_iaf
       State_();  //!< Default initialization
       
       void get(DictionaryDatum&, const Parameters_&) const;
-      void set(const DictionaryDatum&, const Parameters_&);
+
+      /** Set values from dictionary.
+       * @param dictionary to take data from
+       * @param current parameters
+       * @param Change in reversal potential E_L specified by this dict
+       */
+      void set(const DictionaryDatum&, const Parameters_&, double);
     };
     
     // ---------------------------------------------------------------- 
@@ -318,9 +347,9 @@ inline
 void iaf_neuron::set_status(const DictionaryDatum &d)
 {
   Parameters_ ptmp = P_;  // temporary copy in case of errors
-  ptmp.set(d);                       // throws if BadProperty
+  const double delta_EL = ptmp.set(d); // throws if BadProperty
   State_      stmp = S_;  // temporary copy in case of errors
-  stmp.set(d, ptmp);                 // throws if BadProperty
+  stmp.set(d, ptmp, delta_EL);         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not 
   // write them back to (P_, S_) before we are also sure that 

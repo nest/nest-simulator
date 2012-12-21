@@ -1,26 +1,26 @@
 /*
     cuba.sli
 
-    Copyright (C) 2004 The NEST Initiative                 
+    Copyright (C) 2004 The NEST Initiative
     This file is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
- 
+
     This file is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
- 
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330,
-    Boston, MA  02111-1307, USA.
+    Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
 */
 
 /*
    Benchmark 2 of the simulator review
- 
+
    The SLI code in this file creates a sparsely coupled network of
    excitatory and inhibitory neurons which exhibits self-sustained
    activity after an initial stimulus.  Connections within and across
@@ -28,10 +28,10 @@
    receive Poissonian background input.  The spike output of 500
    neurons from each population are recorded.  Neurons are modeled
    as leaky integrate-and-fire neurons with conductance based synapses
-   (exponential functions).  The model is based on 
+   (exponential functions).  The model is based on
 
       T.P. Vogels & L.F. Abbott
-      Signal Propagation and Logic Gating in Networks of 
+      Signal Propagation and Logic Gating in Networks of
       Integrate-and-Fire Neurons
       Journal of Neuroscience, 2005, vol 25, pp 10786-10795.
 
@@ -43,7 +43,7 @@
 
     Marc-Oliver Gewaltig, Abigail Morrison, Tobias Potjans
 */
-  
+
 %%% PARAMETER SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % define all relevant parameters: changes should be made here
@@ -52,7 +52,7 @@
 % A dictionary is a list of name value pairs, enclosed in << and >>
 % Here we use dictionaries to encapsulate the parameters for the different
 % benchmarks
-  
+
 /cuba_params
 <<
   /model  /iaf_psc_exp  % the neuron model to use
@@ -60,8 +60,10 @@
   /model_params
    <<
      /E_L      -49.0 mV  % resting membrane potential [mV]
-     /V_th     -50.0 mV  % Threshold [mV] 
-     /V_reset  -60.0 mV  % Reset Potential [mV] 
+                         % see Brette et al, J Comput Neurosci 23:349 (2007), p 393
+     /V_m      -49.0 mV  % initial membrane potential [mV]
+     /V_th     -50.0 mV  % Threshold [mV]
+     /V_reset  -60.0 mV  % Reset Potential [mV]
      /C_m      200.0 pF  % Capacity of the membrane [pF]
      /tau_m     20.0 ms  % Membrane time constant [ms]
      /tau_syn_ex 5.0 ms  % time const. postsynaptic excitatory currents [ms]
@@ -70,19 +72,19 @@
    >>
 
   /delay  0.1 ms         % synaptic delay, all connections [ms]
- 
+
   % synaptic strengths, here peak current
   /E_synapse_params
   <<
      /weight 16.2 pA     % excitatory PSC amplitude
   >>
-  
+
   /I_synapse_params
   <<
      /weight -139.5 pA   % inhibitory PSC amplitude
   >>
- 
-  /stimulus /poisson_generator 
+
+  /stimulus /poisson_generator
   /stimulus_params
   <<
     /rate 300.0 Hz   % rate of inital poisson stimulus
@@ -93,27 +95,31 @@
 
   /detector /spike_detector
   /detector_params
-  << 
-   /withtime true 
+  <<
+   /withtime true
    /withgid true
    /to_file true
    /label (cuba)
   >>
 
   % number of neurons per population to record from
-  /Nrec 500 
+  /Nrec 500
 
   %number of neurons to stimulate
-  /Nstim 50 
-  /simtime 10000.0 ms % simulated time 
-  /dt         0.1 ms % simulation step   
+  /Nstim 50
+  /simtime 10000.0 ms % simulated time
+  /dt         0.1 ms % simulation step
 
   /NE 3200       % number of excitatory neurons
   /NI  800       % number of inhibitory neurons
-  /epsilon 0.02  % Connection probability 
+  /epsilon 0.02  % Connection probability
 
   /virtual_processes 1  % number of virtual processes to use
 
 >> def
 
 cuba_params using % here we activate the definitions in the dictionary
+
+/parameters_set true def
+statusdict/argv :: size 1 gt { 1 get dirname (/) join } { () } ifelse
+(benchmark.sli) join run

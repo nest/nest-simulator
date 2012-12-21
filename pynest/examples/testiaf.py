@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # testiaf.py
 #
 # This file is part of NEST.
@@ -44,14 +45,14 @@ def build_network(dt) :
 
     vm = nest.Create('voltmeter')
     nest.SetStatus(vm, "withtime", True)
-    
+
     sd = nest.Create('spike_detector')
 
     nest.Connect(vm, neuron)
     nest.Connect(neuron, sd)
 
     return vm, sd
-    
+
 if __name__ == "__main__" :
 
     for dt in [0.1, 0.5, 1.0] :
@@ -66,4 +67,3 @@ if __name__ == "__main__" :
     pylab.legend(loc=3)
     pylab.xlabel("time (ms)")
     pylab.ylabel("V_m (mV)")
-    pylab.show()

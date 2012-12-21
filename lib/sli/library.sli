@@ -547,7 +547,7 @@ Synopsis:
 /libname /component [version]  provide-component -> -
 /libname /component (version)  provide-component -> -
 special case (see below):
-/libname /component ($Revision: 9902 $)  provide -> -
+/libname /component ($Revision: 9952 $)  provide -> -
 
 Description:
 This command is an extended version of "provide". Unless you are a
@@ -689,7 +689,7 @@ Synopsis:
 /libname [version]  provide -> -
 /libname (version)  provide -> -
 special case (see below):
-/libname ($Revision: 9902 $)  provide -> -
+/libname ($Revision: 9952 $)  provide -> -
 
 Description:
 This command will usually be used once in each *.sli file that
@@ -726,7 +726,7 @@ version    - Version number of the respective component (string or array of int,
 
 Examples:
 /mylibrary (1.0) provide
-/newlibrary ($Revision: 9902 $) provide
+/newlibrary ($Revision: 9952 $) provide
 
 Diagnostics:
 If a component of name /SLI in the given library has already been earlier

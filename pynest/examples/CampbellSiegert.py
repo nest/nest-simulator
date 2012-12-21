@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # CampbellSiegert.py
 #
 # This file is part of NEST.
@@ -129,7 +130,7 @@ r =  1. / (tref*ms + tau_m*ms * tmpsum)
 nest.ResetKernel()
 
 nest.sr('20 setverbosity')
-neurondict = {'V_th':Vth, 'tau_m':tau_m, 'tau_syn_ex':tau_syn_ex,'tau_syn_in':tau_syn_in,  'C_m':Cm, 'E_L':V0, 't_ref':tref}
+neurondict = {'V_th':Vth, 'tau_m':tau_m, 'tau_syn_ex':tau_syn_ex,'tau_syn_in':tau_syn_in,  'C_m':Cm, 'E_L':V0, 't_ref':tref, 'V_m': V0, 'V_reset': V0}
 
 if (mu*1000) < Vth:
     neurondict['V_m'] = mu*1000.

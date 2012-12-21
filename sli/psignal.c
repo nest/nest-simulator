@@ -83,7 +83,9 @@ void SLISignalHandler(int s)
    its value is later evaluated in the interpreter cycle.
 */
   if(SLIsignalflag == 0) /* Ignore second signal, if the */
-    SLIsignalflag = s;   /* first has not been processed.*/
+    {
+      SLIsignalflag = s;   /* first has not been processed.*/
+    }
  
   return;
 }

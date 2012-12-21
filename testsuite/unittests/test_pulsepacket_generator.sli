@@ -30,7 +30,7 @@ Description:
 Tests parameter setting and statistical correctness for one application.
 
 Author: July 2008, Plesser
-SeeAlso: noise_generator, test_poisson_ps_min_interval.sli
+SeeAlso: noise_generator, testsuite::test_poisson_ps_min_interval
 */
 
 /unittest (7471) require

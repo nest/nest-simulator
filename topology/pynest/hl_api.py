@@ -1,23 +1,4 @@
-#! /usr/bin/env python
-#
-# hl_api.py
-#
-# This file is part of NEST.
-#
-# Copyright (C) 2004 The NEST Initiative
-#
-# NEST is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-#
-# NEST is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+# -*- coding: utf-8; -*-
 """
 High-level API of PyNEST Topology Module.
 
@@ -62,7 +43,7 @@ Notes:
 
 2. Some function names are now in plural form, e.g. CreateLayers.
 
-Authors: Kittel Austvoll, Hans Ekkehard Plesser
+Authors: Kittel Austvoll, Hans Ekkehard Plesser, Håkon Enger
 """
 
 import types
@@ -93,6 +74,137 @@ def topology_func(slifunc, *args):
     # We need to pass the kwarg namespace as **{} instead of the usuual
     # way to keep Python 2.5 happy, see http://bugs.python.org/issue3473
     return nest.sli_func(slifunc, *args, **{'namespace': 'topology'})
+
+
+class Mask(object):
+    """Class for spatial masks.
+
+    Masks are used when creating connections in the Topology module. A mask
+    describes which area of the pool layer shall be searched for nodes to
+    connect for any given node in the driver layer. Masks are created using
+    the CreateMask command."""
+
+    _datum = None
+
+    # The constructor should not be called by the user
+    def __init__(self,datum):
+        """Masks must be created using the CreateMask command."""
+        if not isinstance(datum,nest.Datum) or datum.type != "masktype":
+            raise TypeError,"Expected mask Datum."
+        self._datum=datum
+
+    # Generic binary operation
+    def _binop(self,op,other):
+        if not isinstance(other,Mask):
+            return NotImplemented
+        return Mask(topology_func(op,self._datum,other._datum))
+
+    def __or__(self,other): return self._binop("or",other)
+    def __and__(self,other): return self._binop("and",other)
+    def __sub__(self,other): return self._binop("sub",other)
+
+    def Inside(self,point):
+        """Test if a point is inside a mask.
+
+        Returns
+        -------
+        True if the point is inside the mask, False otherwise.
+
+        See also
+        --------
+        nest.help("topology::Inside")
+        """
+        return topology_func("Inside",point,self._datum)
+
+
+def CreateMask(masktype,specs,anchor=None):
+    """
+    Create a spatial mask according the the given specifications.
+
+    Parameters
+    ----------
+    specs: dict
+    anchor: list
+
+    Returns
+    -------
+    Mask object
+
+    Dictionary must be valid mask specification.
+
+    See also
+    --------
+    nest.help("topology::CreateMask")
+    """
+    if anchor is None:
+        return Mask(topology_func('CreateMask',{masktype:specs}))
+    else:
+        return Mask(topology_func('CreateMask',{masktype:specs,'anchor':anchor}))
+
+
+class Parameter(object):
+    """Class for spatial parameters.
+
+    Parameters are spatial functions which are used when creating
+    connections in the Topology module. A parameter may be used as a
+    probability kernel when creating connections or as synaptic parameters
+    (such as weight and delay). Parameters are created using the
+    CreateParameter command."""
+
+    _datum = None
+
+    # The constructor should not be called by the user
+    def __init__(self,datum):
+        """Parameters must be created using the CreateParameter command."""
+        if not isinstance(datum,nest.Datum) or datum.type != "parametertype":
+            raise TypeError,"Expected parameter Datum."
+        self._datum=datum
+
+    # Generic binary operation
+    def _binop(self,op,other):
+        if not isinstance(other,Parameter):
+            return NotImplemented
+        return Parameter(topology_func(op,self._datum,other._datum))
+
+    def __add__(self,other): return self._binop("add",other)
+    def __sub__(self,other): return self._binop("sub",other)
+    def __mul__(self,other): return self._binop("mul",other)
+    def __div__(self,other): return self._binop("div",other)
+    def __truediv__(self,other): return self._binop("div",other)
+
+    def GetValue(self,point):
+        """Compute value of parameter at a point.
+
+        Returns
+        -------
+        The value of the parameter at the point.
+
+        See also
+        --------
+        nest.help("topology::GetValue")
+        """
+        return topology_func("GetValue",point,self._datum)
+
+
+def CreateParameter(parametertype,specs):
+    """
+    Create a spatial parameter according the the given specifications.
+
+    Parameters
+    ----------
+    specs: dict
+
+    Returns
+    -------
+    Mask object
+
+    Dictionary must be valid parameter specification.
+
+    See also
+    --------
+    nest.help("topology::CreateParameter")
+    """
+    return Parameter(topology_func('CreateParameter',{parametertype:specs}))
 
 
 def CreateLayer(specs):
@@ -163,6 +275,18 @@ def ConnectLayers(pre, post, projections):
     # ensure projections is list of full length
     projections = nest.broadcast(projections, len(pre), (dict,), "projections")
 
+    # Replace python classes with SLI datums
+    def fixdict(d):
+        d = d.copy()
+        for k,v in d.items():
+            if isinstance(v,types.DictType):
+                d[k] = fixdict(v)
+            elif isinstance(v,Mask) or isinstance(v,Parameter):
+                d[k] = v._datum
+        return d
+
+    projections = [fixdict(p) for p in projections]
+
     topology_func('3 arraystore { ConnectLayers } ScanThread', pre, post, projections)
 
 
@@ -228,18 +352,19 @@ def GetElement(layers, locations):
     This function works for fixed grid layers only.
 
     If layers contains a single GID and locations is a single 2-element
-    array giving a grid location, return single-element list with GID
-    of layer element at the given location.
-    
-    If layers is a list with a single GID and locations is a list of coordinates,
-    the function returns a list of GIDs of the nodes at all locations.
+    array giving a grid location, return a list of GIDs of layer elements
+    at the given location.
+
+    If layers is a list with a single GID and locations is a list of
+    coordinates, the function returns a list of lists with GIDs of the
+    nodes at all locations.
 
     If layers is a list of GIDs and locations single 2-element array giving
-    a grid location, the function returns a list with the GIDs of the nodes
-    in all layers at the given location.
+    a grid location, the function returns a list of lists with the GIDs of
+    the nodes in all layers at the given location.
 
-    If layers and locations are lists, it returns a list of lists of GIDs,
-    one for each layer.
+    If layers and locations are lists, it returns a nested list of GIDs,
+    one list for each layer and each location.
 
     See also
     --------
@@ -261,24 +386,33 @@ def GetElement(layers, locations):
     except: 
         raise nest.NESTError("layers must contain only grid-based topology layers")
     
-    if not nest.is_sequencetype(locations[0]):
-        # locations is coordinate array, make it into 1-element list
-        locations = [locations]
+    # SLI GetElement returns either single GID or list
+    def makelist(x):
+        if not nest.is_sequencetype(x):
+            return [x] 
+        else:
+            return x
 
-    # layers and locations are now lists
-    nodes = topology_func('/locs Set { /lyr Set locs { lyr exch GetElement } Map } Map',
-                          layers, locations)
+    if nest.is_sequencetype(locations[0]):
 
-    # nodes are nested lists of equal length, need to unpack
-    if len(nodes) == 1:
-        assert(len(layers)==1)
-        return nodes[0]
-    elif len(nodes[0]) == 1:
-        # all elements have length 1
-        assert(len(locations)==1)
-        return [n[0] for n in nodes]
+        # layers and locations are now lists
+        nodes = topology_func('/locs Set { /lyr Set locs { lyr exch GetElement } Map } Map',
+                              layers, locations)
+
+        node_list = [[makelist(nodes_at_loc) for nodes_at_loc in nodes_in_lyr]
+                     for nodes_in_lyr in nodes]
+
     else:
-        return nodes
+
+        # layers is list, locations is a single location
+        nodes = topology_func('/loc Set { loc GetElement } Map', layers, locations)
+
+        node_list = [makelist(nodes_in_lyr) for nodes_in_lyr in nodes]
+
+    # If only a single layer is given, un-nest list
+    if len(layers)==1: node_list=node_list[0]
+
+    return node_list
 
 
 def FindNearestElement(layers, locations, find_all=False):
@@ -332,7 +466,7 @@ def FindNearestElement(layers, locations, find_all=False):
     result = []  # collect one list per layer
     # loop over layers
     for lyr in layers:
-        els = nest.GetChildren([lyr])
+        els = nest.GetChildren([lyr])[0]
 
         lyr_result = [] 
         # loop over locations
@@ -463,6 +597,23 @@ def Distance(from_arg, to_arg):
     from_arg, to_arg = _check_displacement_args(from_arg, to_arg, 'Distance')
     return topology_func('{ Distance } MapThread', [from_arg, to_arg])
 
+
+def _rank_specific_filename(basename):
+    """Returns file name decorated with rank."""
+   
+    if nest.NumProcesses() == 1:
+        return basename
+    else:
+        from numpy import log10, ceil
+        np = nest.NumProcesses()
+        np_digs = int(ceil(log10(np)))  # for pretty formatting
+        rk = nest.Rank()
+        dot = basename.find('.')
+        if dot < 0:
+            return '%s-%0*d' % (basename, np_digs, rk)
+        else:
+            return '%s-%0*d%s' % (basename[:dot], np_digs, rk, basename[dot:])
+
     
 def DumpLayerNodes(layers, outname):
     """
@@ -483,17 +634,19 @@ def DumpLayerNodes(layers, outname):
     
     Note
     ----
-    When calling this function from distributed simulations, only MPI Rank 0
-    will write data. It writes data for all nodes.
+    If calling this function from a distributed simulation, this function
+    will write to one file per MPI rank. File names are formed by inserting
+    the MPI Rank into the file name before the file name suffix. Each file
+    stores data for nodes local to that file.
+
+    See also
+    --------
+    DumpLayerConnections
     """
     topology_func("""
-                  /oname Set 
-                  /lyrs  Set 
-                  Rank 0 eq 
-                    { oname (w) file lyrs { DumpLayerNodes } forall close } 
-                  if
+                  (w) file exch { DumpLayerNodes } forall close
                   """,
-                  layers, outname)
+                  layers, _rank_specific_filename(outname))
 
 
 def DumpLayerConnections(layers, synapse_model, outname):
@@ -521,28 +674,20 @@ def DumpLayerConnections(layers, synapse_model, outname):
     If calling this function from a distributed simulation, this function
     will write to one file per MPI rank. File names are formed by inserting
     the MPI Rank into the file name before the file name suffix. Each file
-    stores data for connections local to that file. 
+    stores data for connections local to that file.
+
+    See also
+    --------
+    DumpLayerNodes
     """
-    if nest.NumProcesses() == 1:
-        outfile = outname
-    else:
-        from numpy import log10, ceil
-        np = nest.NumProcesses()
-        np_digs = int(ceil(log10(np)))  # for pretty formatting
-        rk = nest.Rank()
-        dot = outname.find('.')
-        if dot < 0:
-            outfile = '%s-%0*d' % (outname, np_digs, rk)
-        else:
-            outfile = '%s-%0*d%s' % (outname[:dot], np_digs, rk, outname[dot:])
-                
+
     topology_func("""
                   /oname  Set 
                   cvlit /synmod Set
                   /lyrs   Set 
                   oname (w) file lyrs { synmod DumpLayerConnections } forall close  
                   """,
-                  layers, synapse_model, outfile)
+                  layers, synapse_model, _rank_specific_filename(outname))
 
 
 def FindCenterElement(layers):
@@ -571,6 +716,57 @@ def FindCenterElement(layers):
             for lyr in layers]
 
 
+def NewGetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
+    """
+    Obtain targets of a list of sources in a given target layer.
+    
+    Parameters
+    ----------
+    sources     List of GID(s) of source neurons
+    tgt_layer   Single-element list with GID of tgt_layer
+    tgt_model   Return only target positions for a given neuron model [optional].
+    syn_model   Return only target positions for a given synapse model [optional].
+
+    Returns
+    -------
+    List of GIDs of target neurons fulfilling the given criteria. It is a list of lists,
+    one list per source.
+
+    For each neuron in sources, this function finds all target elements in tgt_layer.
+    If tgt_model is not given (default), all targets are returned, otherwise only
+    targets of specific type, and similarly for syn_model.
+    
+    Note: For distributed simulations, this function only returns targets on the local MPI process.
+    
+    See also
+    --------
+    GetTargetPositions, nest.GetConnections
+    """
+    
+    nest.raise_if_not_list_of_gids(sources, 'sources')
+    nest.raise_if_not_list_of_gids(tgt_layer, 'tgt_layer')
+    if len(tgt_layer) != 1:
+        raise nest.NESTError("tgt_layer must be a one-element list")
+    
+    # obtain local nodes in target layer, to pass to GetConnections
+    tgt_nodes = nest.GetLeaves(tgt_layer,
+                               properties = {'model': tgt_model} if tgt_model else None,
+                               local_only = True)[0]
+                              
+    conns = nest.GetConnections(sources, tgt_nodes, synapse_model=syn_model)
+       
+    # conns now contains one list per synapse type; each list contains connections
+    # from all sources. We need to re-organize into one list per source containing
+    # targets only
+    src_tgt_map = dict((sgid, []) for sgid in sources)
+    for per_syn_model_list in conns:
+       for conn in per_syn_model_list:
+          src_tgt_map[conn[0]].append(conn[1])
+
+    # convert dict to nested list in same order as sources
+    return [src_tgt_map[sgid] for sgid in sources]
+ 
+
 def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     """
     Obtain targets of a list of sources in a given target layer.
@@ -595,7 +791,7 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     
     See also
     --------
-    GetTargetPositions, nest.FindConnections
+    GetTargetPositions, nest.GetConnections
     """
     
     nest.raise_if_not_list_of_gids(sources, 'sources')
@@ -608,7 +804,7 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     # obtain all target neuron IDs, if necessary for given synapse type
     if syn_model:
         syn_model = nest.broadcast(syn_model, len(sources), (str,), 'syn_model')
-        conntgts = [nest.GetStatus(nest.FindConnections([sn], synapse_type=st), 'target')
+        conntgts = [nest.GetStatus(nest.FindConnections([sn], synapse_model=st), 'target')
                     for sn,st in zip(sources,syn_model)]
     else:
         conntgts = [nest.GetStatus(nest.FindConnections([sn]), 'target')
@@ -706,21 +902,46 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
     if len(layer) != 1:
         raise ValueError("layer must contain exactly one GID.")
 
-    # get layer extent and center, x and y
-    xext, yext = nest.GetStatus(layer, 'topology')[0]['extent'][:2]
-    xctr, yctr = nest.GetStatus(layer, 'topology')[0]['center'][:2]
+    # get layer extent
+    ext = nest.GetStatus(layer, 'topology')[0]['extent']
+
+    if len(ext)==2:
+        # 2D layer
+
+        # get layer extent and center, x and y
+        xext, yext = ext
+        xctr, yctr = nest.GetStatus(layer, 'topology')[0]['center']
     
-    # extract position information, transpose to list of x and y positions
-    xpos, ypos = zip(*GetPosition(nest.GetChildren(layer)))
+        # extract position information, transpose to list of x and y positions
+        xpos, ypos = zip(*GetPosition(nest.GetChildren(layer)[0]))
 
-    if not fig:
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+        if not fig:
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+        else:
+            ax = fig.gca()
+
+        ax.scatter(xpos, ypos, s=nodesize, facecolor=nodecolor, edgecolor='none')
+        _draw_extent(ax, xctr, yctr, xext, yext)
+
+    elif len(ext)==3:
+        # 3D layer
+        from mpl_toolkits.mplot3d import Axes3D
+
+        # extract position information, transpose to list of x,y,z positions
+        pos = zip(*GetPosition(nest.GetChildren(layer)[0]))
+
+        if not fig:
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection='3d')
+        else:
+            ax = fig.gca()
+
+        ax.scatter3D(*pos, s=nodesize, facecolor=nodecolor, edgecolor='none')
+        plt.draw_if_interactive()
+
     else:
-        ax = fig.gca()
-
-    ax.scatter(xpos, ypos, s=nodesize, facecolor=nodecolor, edgecolor='none')
-    _draw_extent(ax, xctr, yctr, xext, yext)
+        raise nest.NESTError("unexpected dimension of layer")
 
     return fig
 
@@ -768,30 +989,55 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
     srcpos = GetPosition(src_nrn)[0]
 
     # get layer extent and center, x and y
-    xext, yext = nest.GetStatus(tgt_layer, 'topology')[0]['extent'][:2]
-    xctr, yctr = nest.GetStatus(tgt_layer, 'topology')[0]['center'][:2]
+    ext = nest.GetStatus(tgt_layer, 'topology')[0]['extent']
+
+    if len(ext)==2:
+        # 2D layer
+
+        # get layer extent and center, x and y
+        xext, yext = ext
+        xctr, yctr = nest.GetStatus(tgt_layer, 'topology')[0]['center']
     
-    if not fig:
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+        if not fig:
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+        else:
+            ax = fig.gca()
+
+        # get positions, reorganize to x and y vectors
+        tgtpos = GetTargetPositions(src_nrn, tgt_layer, tgt_model, syn_type)
+        if tgtpos:
+            xpos, ypos = zip(*tgtpos[0])
+            ax.scatter(xpos, ypos, s=tgt_size, facecolor=tgt_color, edgecolor='none')
+
+        ax.scatter(srcpos[:1], srcpos[1:], s=src_size, facecolor=src_color, edgecolor='none',
+                   alpha = 0.4, zorder = -10)
+    
+        _draw_extent(ax, xctr, yctr, xext, yext)
+
+        if mask or kernel:
+            PlotKernel(ax, src_nrn, mask, kernel, mask_color, kernel_color)
+
     else:
-        ax = fig.gca()
+        # 3D layer
+        from mpl_toolkits.mplot3d import Axes3D
 
-    # get positions, reorganize to x and y vectors
-    tgtpos = GetTargetPositions(src_nrn, tgt_layer, tgt_model, syn_type)
-    if tgtpos:
-        xpos, ypos = zip(*tgtpos[0])
-        ax.scatter(xpos, ypos, s=tgt_size, facecolor=tgt_color, edgecolor='none')
+        if not fig:
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection='3d')
+        else:
+            ax = fig.gca()
 
-    ax.scatter(srcpos[:1], srcpos[1:], s=src_size, facecolor=src_color, edgecolor='none',
-               alpha = 0.4, zorder = -10)
-    
-    _draw_extent(ax, xctr, yctr, xext, yext)
+        # get positions, reorganize to x,y,z vectors
+        tgtpos = GetTargetPositions(src_nrn, tgt_layer, tgt_model, syn_type)
+        if tgtpos:
+            xpos, ypos, zpos = zip(*tgtpos[0])
+            ax.scatter3D(xpos, ypos, zpos, s=tgt_size, facecolor=tgt_color, edgecolor='none')
 
-    if mask or kernel:
-        PlotKernel(ax, src_nrn, mask, kernel, mask_color, kernel_color)
+        ax.scatter3D(srcpos[:1], srcpos[1:2], srcpos[2:], s=src_size, facecolor=src_color, edgecolor='none',
+                   alpha = 0.4, zorder = -10)
 
-    plt.draw() 
+    plt.draw_if_interactive() 
 
     return fig
 

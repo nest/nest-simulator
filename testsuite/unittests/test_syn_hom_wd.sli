@@ -45,7 +45,7 @@ Author: Moritz Helias, Susanne Kunkel
 
 ResetKernel
 
-[0] <<
+0 <<
        /local_num_threads 1
        /resolution h
      >> SetStatus
@@ -66,7 +66,7 @@ sg <<
 vm << /withtime true /to_memory true /time_in_steps true /interval h >> SetStatus
 
 /spike_detector Create /sd Set
-sd << /withtime true /to_memory true /withpath true /time_in_steps true >> SetStatus
+sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
 
 /static_synapse_hom_wd
 <<

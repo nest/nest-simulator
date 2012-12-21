@@ -25,11 +25,11 @@ The topology module code can be divided into two sections:
 
 A layer is a special kind of subnet model. There are two kinds of layers; fixed grid layers (\emph{layer.h/cpp}) and unrestricted layers (\emph{layer\_unrestricted.h/cpp}). A new 3D layer might also be added in the close future (\emph{layer\_3d.h/cpp}).
 
-A layer is simply a list of node pointers (inherited from the compound class), and a dictionary describing the layout of the layer. 
+A layer is simply a list of node pointers (inherited from the Subnet class), and a dictionary describing the layout of the layer. 
 
 \subsection{Translating a spatial position to an id in a node vector}
 
-The primary purpose of the layer is to serve as a bridge between a 2D (or in the future 3D) position and the node vector in the Compound class. The mapping between a spatial position and an id in the node vector have to be done at run time whenever needed.
+The primary purpose of the layer is to serve as a bridge between a 2D (or in the future 3D) position and the node vector in the Subnet class. The mapping between a spatial position and an id in the node vector have to be done at run time whenever needed.
 
 The fixed grid layer solves this problem by wrapping the node vector into a 2D matrix. See \emph{Austvoll}\cite{austvoll} for more about fixed grid layers.
 

@@ -20,14 +20,29 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 """
 Tests for topology hl_api dumping functions.
+
+
+NOTE: These tests only test whether the code runs, it does not check
+      whether the results produced are correct.
 """
 
 import unittest
 import nest
 import nest.topology as topo
+
 import sys
 
+import os
+import os.path
+
 class PlottingTestCase(unittest.TestCase):
+
+    def nest_tmpdir(self):
+        """Loads temporary directory path from the environment variable, returns current directory otherwise"""
+        if 'NEST_DATA_PATH' in os.environ:
+            return os.environ['NEST_DATA_PATH']
+        else:
+            return '.'
 
     def test_DumpNodes(self):
         """Test dumping nodes."""
@@ -35,7 +50,7 @@ class PlottingTestCase(unittest.TestCase):
                  'extent': [2., 2.], 'edge_wrap': True}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
-        topo.DumpLayerNodes(l, 'test_DumpNodes.out.lyr')
+        topo.DumpLayerNodes(l, os.path.join(self.nest_tmpdir(), 'test_DumpNodes.out.lyr') )
         self.assertTrue(True)
         
     def test_DumpNodes2(self):
@@ -44,7 +59,7 @@ class PlottingTestCase(unittest.TestCase):
                  'extent': [2., 2.], 'edge_wrap': True}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
-        topo.DumpLayerNodes(l*2, 'test_DumpNodes2.out.lyr')
+        topo.DumpLayerNodes(l*2, os.path.join(self.nest_tmpdir(), 'test_DumpNodes2.out.lyr') )
         self.assertTrue(True)
 
     def test_DumpConns(self):
@@ -56,7 +71,7 @@ class PlottingTestCase(unittest.TestCase):
         l = topo.CreateLayer(ldict)
         topo.ConnectLayers(l, l, cdict)
         
-        topo.DumpLayerConnections(l, 'static_synapse', 'test_DumpConns.out.cnn')
+        topo.DumpLayerConnections(l, 'static_synapse', os.path.join(self.nest_tmpdir(), 'test_DumpConns.out.cnn') )
         self.assertTrue(True)
         
     def test_DumpConns2(self):
@@ -68,7 +83,7 @@ class PlottingTestCase(unittest.TestCase):
         l = topo.CreateLayer(ldict)
         topo.ConnectLayers(l, l, cdict)
         
-        topo.DumpLayerConnections(l*2, 'static_synapse', 'test_DumpConns2.out.cnn')
+        topo.DumpLayerConnections(l*2, 'static_synapse', os.path.join(self.nest_tmpdir(), 'test_DumpConns2.out.cnn') )
         self.assertTrue(True)
 
 def suite():
@@ -82,5 +97,8 @@ if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
     
-    import matplotlib.pyplot as plt
-    plt.show()
+    try:
+        import matplotlib.pyplot as plt
+        plt.show()
+    except ImportError:
+        pass

@@ -232,7 +232,7 @@ void ginzburg::handle(SpikeEvent & e)
   // are received consecutively or are conveyed by setting the multiplicity accordingly.
   
   long_t m = e.get_multiplicity();
-  long_t gid = e.get_sender().get_gid();
+  long_t gid = e.get_sender_gid();
   const Time &t_spike = e.get_stamp();
 
   if (m == 1)

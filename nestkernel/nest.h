@@ -113,19 +113,15 @@ namespace nest {
    * Connection port number to distinguish incoming connections,
    * also called receiver port.
    * Connections between Nodes are assigned port numbers.
-   * Valid port numbers start at zero (0.
+   * Valid port numbers start at zero (0).
    * The value -1 is used for invalid or unassigned ports.
    */
-#ifdef HAVE_MUSIC
   typedef long_t rport;
-#else
-  typedef char rport;
-#endif
 
   /**
    * Connection port number to distinguis outgoing connections.
    * Connections between Nodes are assigned port numbers.
-   * Valid port numbers start at zero (0.
+   * Valid port numbers start at zero (0).
    * The value -1 is used for invalid or unassigned ports.
    */
   typedef long_t port;

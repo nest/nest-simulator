@@ -31,6 +31,8 @@
 #include <cmath>
 #include "nest.h"
 #include "token.h"
+#include "compose.hpp"
+#include "exceptions.h"
 
 namespace nest
 {
@@ -315,13 +317,17 @@ namespace nest
 
     MultiIndex & operator++()
       {
+        // Try increasing the first coordinate first, resetting it and
+        // continuing with the next if the first one overflows, and so on
         for(int i=0;i<D;++i) {
           this->x_[i]++;
           if (this->x_[i]<upper_right_[i])
             return *this;
           this->x_[i] = lower_left_[i];
         }
-        // If we reach this point, we are outside of bounds
+        // If we reach this point, we are outside of bounds. The upper
+        // right point is used as a marker to show that we have reached the
+        // end.
         for(int i=0;i<D;++i)
           this->x_[i] = upper_right_[i];
         return *this;
@@ -384,7 +390,9 @@ namespace nest
   inline
   Position<D,T>::Position(const std::vector<T> &y)
   {
-    assert(y.size() == D); // FIXME: should fail more gracefully
+    if(y.size() != D) {
+      throw BadProperty(String::compose("Expected a %d-dimensional position.",D));
+    }
     std::copy(y.begin(), y.end(), x_);
   }
 

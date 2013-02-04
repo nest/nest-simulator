@@ -47,7 +47,6 @@ Authors: Kittel Austvoll, Hans Ekkehard Plesser, Håkon Enger
 """
 
 import types
-import numpy
 
 nest = None
 
@@ -452,6 +451,7 @@ def FindNearestElement(layers, locations, find_all=False):
     GetElement
     """
 
+    import numpy
     nest.raise_if_not_list_of_gids(layers, 'layers')
     if not len(layers) > 0:
         raise nest.NESTError("layers cannot be empty")
@@ -507,6 +507,7 @@ def _check_displacement_args(from_arg, to_arg, caller):
     and Distance and make them lists of equal length.
     """
 
+    import numpy
     if isinstance(from_arg, numpy.ndarray):
         from_arg = [from_arg]
     elif not nest.is_sequencetype(from_arg) and len(from_arg) > 0:
@@ -604,9 +605,8 @@ def _rank_specific_filename(basename):
     if nest.NumProcesses() == 1:
         return basename
     else:
-        from numpy import log10, ceil
         np = nest.NumProcesses()
-        np_digs = int(ceil(log10(np)))  # for pretty formatting
+        np_digs = len(str(np-1))  # for pretty formatting
         rk = nest.Rank()
         dot = basename.find('.')
         if dot < 0:

@@ -38,9 +38,9 @@ static PyObject* pPartition = 0;
 static void
 error (std::string errstring)
 {
-  PyGILState_STATE gstate = PyGILState_Ensure();
+  PYGILSTATE_ENSURE (gstate);
   PyErr_SetString (NESTError, errstring.c_str ());
-  PyGILState_Release (gstate);
+  PYGILSTATE_RELEASE (gstate);
 }
 
 
@@ -54,14 +54,14 @@ CSAimported ()
 static bool
 loadCSA ()
 {
-  PyGILState_STATE gstate = PyGILState_Ensure();
+  PYGILSTATE_ENSURE (gstate);
   PyObject* pModule = PyMapping_GetItemString (PyImport_GetModuleDict (), (char*)"csa");
 
   pMask = PyObject_GetAttrString (pModule, "Mask");
   if (pMask == NULL)
     {
       Py_DECREF (pModule);
-      PyGILState_Release (gstate);
+      PYGILSTATE_RELEASE (gstate);
       error ("Couldn't find the Mask class in the CSA library");
       return false;
     }
@@ -70,7 +70,7 @@ loadCSA ()
   if (pConnectionSet == NULL)
     {
       Py_DECREF (pModule);
-      PyGILState_Release (gstate);
+      PYGILSTATE_RELEASE (gstate);
       error ("Couldn't find the ConnectionSet class in the CSA library");
       return false;
     }
@@ -81,13 +81,13 @@ loadCSA ()
   Py_DECREF (pModule);
   if (pArity == NULL)
     {
-      PyGILState_Release (gstate);
+      PYGILSTATE_RELEASE (gstate);
       error ("Couldn't find the arity function in the CSA library");
       return false;
     }
 
   pCSAClasses = PyTuple_Pack (2, pMask, pConnectionSet);
-  PyGILState_Release (gstate);
+  PYGILSTATE_RELEASE (gstate);
   return true;
 }
 
@@ -112,22 +112,22 @@ bool PyPyCSA_Check (PyObject* obj)
 PyCSAGenerator::PyCSAGenerator (PyObject* obj)
   : pCSAObject (obj), pPartitionedCSAObject (NULL), pIterator (NULL)
 {
-  PyGILState_STATE gstate = PyGILState_Ensure();
+  PYGILSTATE_ENSURE (gstate);
   Py_INCREF (pCSAObject);
   PyObject* a = PyObject_CallFunctionObjArgs (pArity, pCSAObject, NULL);
   arity_ = PyInt_AsLong (a);
   Py_DECREF (a);
-  PyGILState_Release (gstate);
+  PYGILSTATE_RELEASE (gstate);
 }
 
 
 PyCSAGenerator::~PyCSAGenerator ()
 {
-  PyGILState_STATE gstate = PyGILState_Ensure();
+  PYGILSTATE_ENSURE (gstate);
   Py_XDECREF (pIterator);
   Py_XDECREF (pPartitionedCSAObject);
   Py_DECREF (pCSAObject);
-  PyGILState_Release (gstate);
+  PYGILSTATE_RELEASE (gstate);
 }
 
 
@@ -169,7 +169,7 @@ PyCSAGenerator::makeIntervals (IntervalSet& iset)
 void
 PyCSAGenerator::setMask (std::vector<Mask>& masks, int local)
 {
-  PyGILState_STATE gstate = PyGILState_Ensure();
+  PYGILSTATE_ENSURE (gstate);
   PyObject* pMasks = PyList_New (masks.size ());
   for (size_t i = 0; i < masks.size (); ++i)
     {
@@ -189,21 +189,21 @@ PyCSAGenerator::setMask (std::vector<Mask>& masks, int local)
 							NULL);
   if (pPartitionedCSAObject == NULL)
     {
-      PyGILState_Release (gstate);
+      PYGILSTATE_RELEASE (gstate);
       std::cerr << "Failed to create masked CSA object" << std::endl;
       return;
     }
   Py_INCREF (pPartitionedCSAObject); //*fixme* check if necessary!
-  PyGILState_Release (gstate);
+  PYGILSTATE_RELEASE (gstate);
 }
 
 
 int
 PyCSAGenerator::size ()
 {
-  PyGILState_STATE gstate = PyGILState_Ensure();
+  PYGILSTATE_ENSURE (gstate);
   int size = PySequence_Size (pCSAObject);
-  PyGILState_Release (gstate);
+  PYGILSTATE_RELEASE (gstate);
   return size;
 }
 
@@ -216,10 +216,10 @@ PyCSAGenerator::start ()
       error ("CSA connection generator not properly initialized");
       return;
     }
-  PyGILState_STATE gstate = PyGILState_Ensure();
+  PYGILSTATE_ENSURE (gstate);
   Py_XDECREF (pIterator);
   pIterator = PyObject_GetIter (pPartitionedCSAObject);
-  PyGILState_Release (gstate);
+  PYGILSTATE_RELEASE (gstate);
 }
 
 
@@ -232,12 +232,12 @@ PyCSAGenerator::next (int& source, int& target, double* value)
       return false;
     }
 
-  PyGILState_STATE gstate = PyGILState_Ensure();
+  PYGILSTATE_ENSURE (gstate);
   PyObject* tuple = PyIter_Next (pIterator);
   PyObject* err = PyErr_Occurred ();
   if (err)
     {
-      PyGILState_Release (gstate);
+      PYGILSTATE_RELEASE (gstate);
       return false;
     }
 
@@ -245,7 +245,7 @@ PyCSAGenerator::next (int& source, int& target, double* value)
     {
       Py_DECREF (pIterator);
       pIterator = NULL;
-      PyGILState_Release (gstate);
+      PYGILSTATE_RELEASE (gstate);
       return false;
     }
 
@@ -257,7 +257,7 @@ PyCSAGenerator::next (int& source, int& target, double* value)
       if (!PyFloat_Check (v))
 	{
 	  Py_DECREF (tuple);
-	  PyGILState_Release (gstate);
+	  PYGILSTATE_RELEASE (gstate);
 	  error ("NEST cannot handle non-float CSA value sets");
 	  return false;
 	}
@@ -265,7 +265,7 @@ PyCSAGenerator::next (int& source, int& target, double* value)
     }
 
   Py_DECREF (tuple);
-  PyGILState_Release (gstate);
+  PYGILSTATE_RELEASE (gstate);
   return true;
 }
 

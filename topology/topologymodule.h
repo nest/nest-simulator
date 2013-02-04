@@ -196,23 +196,101 @@ namespace nest
     typedef GenericFactory<AbstractMask> MaskFactory;
     typedef GenericFactory<AbstractMask>::CreatorFunction MaskCreatorFunction;
 
+    /**
+     * Register an AbstractMask subclass as a new mask type. The name will
+     * be found using the function T::get_name()
+     * @returns true if the new type was successfully registered, or false
+     *          if a mask type with the same name already exists.
+     */
     template<class T>
     static bool register_mask();
+
+    /**
+     * Register an AbstractMask subclass as a new mask type with the given
+     * name.
+     * @param name name of the new mask type.
+     * @returns true if the new type was successfully registered, or false
+     *          if a mask type with the same name already exists.
+     */
     template<class T>
     static bool register_mask(const Name & name);
+
+    /**
+     * Register a new mask type with the given name, with a supplied
+     * function to create mask objects of this type.
+     * @param name    name of the new mask type.
+     * @param creator function creating objects of this type. The function
+     *                will be called with the parameter dictionary as
+     *                argument and should return a pointer to a new Mask
+     *                object.
+     * @returns true if the new type was successfully registered, or false
+     *          if a mask type with the same name already exists.
+     */
     static bool register_mask(const Name& name, MaskCreatorFunction creator);
 
-    static lockPTRDatum<AbstractMask, &TopologyModule::MaskType> /*MaskDatum*/ create_mask(const Token &);
+    /**
+     * Return a Mask object.
+     * @param t Either an existing MaskDatum, or a Dictionary containing
+     *          mask parameters. The dictionary should contain a key with
+     *          the name of the mask type, with a dictionary of parameters
+     *          as value, and optionally an anchor.
+     * @returns Either the MaskDatum given as argument, or a new mask.
+     */
+    static lockPTRDatum<AbstractMask, &TopologyModule::MaskType> /*MaskDatum*/ create_mask(const Token &t);
+
+    /**
+     * Create a new Mask object using the mask factory.
+     * @param name Mask type to create.
+     * @param d    Dictionary with parameters specific for this mask type.
+     * @returns dynamically allocated new Mask object.
+     */
     static AbstractMask *create_mask(const Name& name, const DictionaryDatum &d);
 
     typedef GenericFactory<Parameter> ParameterFactory;
     typedef GenericFactory<Parameter>::CreatorFunction ParameterCreatorFunction;
 
+    /**
+     * Register an Parameter subclass as a new parameter type with the
+     * given name.
+     * @param name name of the new parameter type.
+     * @returns true if the new type was successfully registered, or false
+     *          if a parameter type with the same name already exists.
+     */
     template<class T>
     static bool register_parameter(const Name & name);
+
+    /**
+     * Register a new parameter type with the given name, with a supplied
+     * function to create parameter objects of this type.
+     * @param name    name of the new parameter type.
+     * @param creator function creating objects of this type. The function
+     *                will be called with the parameter dictionary as
+     *                argument and should return a pointer to a new
+     *                Parameter object.
+     * @returns true if the new type was successfully registered, or false
+     *          if a parameter type with the same name already exists.
+     */
     static bool register_parameter(const Name& name, ParameterCreatorFunction creator);
 
+    /**
+     * Return a Parameter object.
+     * @param t Either an existing ParameterDatum, or a DoubleDatum
+     *          containing a constant value for this parameter, or a
+     *          Dictionary containing parameters. The dictionary
+     *          should contain a single key with the name of the parameter
+     *          type, with a dictionary of parameters as value.
+     * @returns Either the ParameterDatum given as argument, or a new
+     *          parameter.
+     */
     static lockPTRDatum<Parameter, &TopologyModule::ParameterType> /*ParameterDatum*/ create_parameter(const Token &);
+
+    /**
+     * Create a new Parameter object using the parameter factory.
+     * @param name Parameter type to create.
+     * @param d    Dictionary with parameters specific for this parameter
+     *             type.
+     * @returns dynamically allocated new Parameter object.
+     */
     static Parameter *create_parameter(const Name& name, const DictionaryDatum &d);
 
   private:

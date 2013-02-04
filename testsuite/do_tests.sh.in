@@ -232,6 +232,14 @@ run_test ()
     echo          "Running test '${param_script}'... " >> "${TEST_LOGFILE}"
     printf '%s' "  Running test '${param_script}'... "
 
+    # Very unfortunately, it is cheaper to generate a test runner on fly
+    # rather than trying to fight with sh, dash, bash, etc. variable
+    # expansion algorithms depending on whether the command is a built-in
+    # or not, how many subshells have been forked and so on.
+
+    echo "#!/bin/sh" >  "${TEST_RUNFILE}"
+    echo "set +e"   >> "${TEST_RUNFILE}"
+
     echo "${param_script}" | grep -q '\.sli'
     if test $? -eq 0 ; then
       command="'${NEST_BINARY}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
@@ -239,7 +247,13 @@ run_test ()
       command="'${PYTHON}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
     fi
 
-    time_dirty="$( ( time -p /bin/sh -c "set +e ; ${command} ; echo \$? > '${TEST_RETFILE}' ; exit 0 " ) 2>&1 )"
+    echo "${command}" >> "${TEST_RUNFILE}"
+    echo "echo \$? > '${TEST_RETFILE}' ; exit 0" >> "${TEST_RUNFILE}"
+
+    chmod 755 "${TEST_RUNFILE}"
+
+    time_dirty="$( /bin/sh -c "time ${TIME_PARAM} '${TEST_RUNFILE}' " 2>&1 )"
+    rm -f "${TEST_RUNFILE}"
 
     TIME_ELAPSED="$( echo "${time_dirty}" | awk 'NR == 1 { print $2 ; }' )"
     TIME_TOTAL="$( awk "BEGIN { print (${TIME_TOTAL} + ${TIME_ELAPSED}) ; }" )"
@@ -298,11 +312,27 @@ INFO_OS="$(uname -s)"
 INFO_USER="$(whoami)"
 INFO_VER="$(uname -r)"
 
+# We hope that time, be it a shell built-in, or an independent program
+# accepts -p flag as mandated by POSIX; however, the shell built-in might
+# not actually accept -p (as in bash called as sh) AND, at the same time,
+# a POSIX-compatible utility might not be installed on the target machine.
+#
+# In this case, we just skip the -p in the hope, that the output will
+# conform to POSIX. Additionally, we set the TIMEFORMAT to POSIX in order
+# to work around bash peculiarity mentioned above.
+
+TIME_PARAM="-p"
+/bin/sh -c "time ${TIME_PARAM} uname"  >/dev/null 2>&1 || TIME_PARAM=""
+
+TIMEFORMAT=$'real %2R\nuser %2U\nsys %2S'
+export TIMEFORMAT
+
 TEST_BASEDIR="@TESTSUITE_BASEDIR@"
 TEST_OUTDIR=${TEST_OUTDIR:-"$( pwd )/reports"}
 TEST_LOGFILE="${TEST_OUTDIR}/installcheck.log"
 TEST_OUTFILE="${TEST_OUTDIR}/output.log"
 TEST_RETFILE="${TEST_OUTDIR}/output.ret"
+TEST_RUNFILE="${TEST_OUTDIR}/runtest.sh"
 
 if test -d "${TEST_OUTDIR}" ; then
     rm -rf "${TEST_OUTDIR}"

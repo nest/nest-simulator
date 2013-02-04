@@ -78,6 +78,8 @@ namespace nest
 
     DictionaryDatum d = new Dictionary();
 
+    // Nodes in the subnet are grouped by depth, so to select by depth, we
+    // just adjust the begin and end pointers:
     std::vector<Node*>::const_iterator target_begin;
     std::vector<Node*>::const_iterator target_end;
     if (target_filter_.select_depth()) {
@@ -90,6 +92,7 @@ namespace nest
 
     if (mask_.valid()) {
 
+      // Retrieve global positions:
       MaskedLayer<D> masked_layer(source,source_filter_,*mask_,true,allow_oversized_);
 
       for (std::vector<Node*>::const_iterator tgt_it = target_begin;tgt_it != target_end;++tgt_it) {
@@ -101,6 +104,9 @@ namespace nest
         librandom::RngPtr rng = net_.get_rng((*tgt_it)->get_thread());
         Position<D> target_pos = target.get_position((*tgt_it)->get_subnet_index());
 
+        // If there is a kernel, we create connections conditionally,
+        // otherwise all sources within the mask are created. Test moved
+        // outside the loop for efficiency.
         if (kernel_.valid()) {
 
           for(typename Ntree<D,index>::masked_iterator iter=masked_layer.begin(target_pos); iter!=masked_layer.end(); ++iter) {
@@ -145,6 +151,9 @@ namespace nest
         librandom::RngPtr rng = net_.get_rng((*tgt_it)->get_thread());
         Position<D> target_pos = target.get_position((*tgt_it)->get_subnet_index());
 
+        // If there is a kernel, we create connections conditionally,
+        // otherwise all sources within the mask are created. Test moved
+        // outside the loop for efficiency.
         if (kernel_.valid()) {
 
           for(typename std::vector<std::pair<Position<D>,index> >::iterator iter=positions->begin();iter!=positions->end();++iter) {
@@ -188,6 +197,8 @@ namespace nest
 
     DictionaryDatum d = new Dictionary();
 
+    // Nodes in the subnet are grouped by depth, so to select by depth, we
+    // just adjust the begin and end pointers:
     std::vector<Node*>::const_iterator target_begin;
     std::vector<Node*>::const_iterator target_end;
     if (target_filter_.select_depth()) {
@@ -200,6 +211,8 @@ namespace nest
 
     if (mask_.valid()) {
 
+      // By supplying the target layer to the MaskedLayer constructor, the
+      // mask is mirrored so it may be applied to the source layer instead
       MaskedLayer<D> masked_layer(source,source_filter_,*mask_,true,allow_oversized_,target);
 
       for (std::vector<Node*>::const_iterator tgt_it = target_begin;tgt_it != target_end;++tgt_it) {
@@ -211,6 +224,9 @@ namespace nest
         librandom::RngPtr rng = net_.get_rng((*tgt_it)->get_thread());
         Position<D> target_pos = target.get_position((*tgt_it)->get_subnet_index());
 
+        // If there is a kernel, we create connections conditionally,
+        // otherwise all sources within the mask are created. Test moved
+        // outside the loop for efficiency.
         if (kernel_.valid()) {
 
           for(typename Ntree<D,index>::masked_iterator iter=masked_layer.begin(target_pos); iter!=masked_layer.end(); ++iter) {
@@ -255,6 +271,9 @@ namespace nest
         librandom::RngPtr rng = net_.get_rng((*tgt_it)->get_thread());
         Position<D> target_pos = target.get_position((*tgt_it)->get_subnet_index());
 
+        // If there is a kernel, we create connections conditionally,
+        // otherwise all sources within the mask are created. Test moved
+        // outside the loop for efficiency.
         if (kernel_.valid()) {
 
           for(typename std::vector<std::pair<Position<D>,index> >::iterator iter=positions->begin();iter!=positions->end();++iter) {
@@ -285,6 +304,17 @@ namespace nest
 
   }
 
+  // Throw a BadProperty rather than bad_cast if mask dimension is wrong
+  template<int D>
+  static inline
+  const Mask<D>& get_mask_ref(const MaskDatum &m) {
+    try {
+      return dynamic_cast<const Mask<D>&>(*m);
+    } catch (std::bad_cast e) {
+      throw BadProperty("Mask is incompatible with layer.");
+    }
+  }
+
   template<int D>
   void ConnectionCreator::convergent_connect_(Layer<D>& source, Layer<D>& target)
   {
@@ -297,6 +327,8 @@ namespace nest
 
     DictionaryDatum d = new Dictionary();
 
+    // Nodes in the subnet are grouped by depth, so to select by depth, we
+    // just adjust the begin and end pointers:
     std::vector<Node*>::const_iterator target_begin;
     std::vector<Node*>::const_iterator target_end;
     if (target_filter_.select_depth()) {
@@ -309,7 +341,7 @@ namespace nest
 
     if (mask_.valid()) {
 
-      const Mask<D>& mask_ref = dynamic_cast<const Mask<D>&>(*mask_);
+      const Mask<D>& mask_ref = get_mask_ref<D>(mask_);
 
       for (std::vector<Node*>::const_iterator tgt_it = target_begin;tgt_it != target_end;++tgt_it) {
 
@@ -320,16 +352,21 @@ namespace nest
         librandom::RngPtr rng = net_.get_rng((*tgt_it)->get_thread());
         Position<D> target_pos = target.get_position((*tgt_it)->get_subnet_index());
 
+        // Get (position,GID) pairs for sources inside mask
         std::vector<std::pair<Position<D>,index> > positions =
             source.get_global_positions_vector(source_filter_, mask_ref,
                                                target.get_position((*tgt_it)->get_subnet_index()),
                                                allow_oversized_);
 
+        // We will select `number_of_connections_` sources within the mask.
+        // If there is no kernel, we can just draw uniform random numbers,
+        // but with a kernel we have to set up a probability distribution
+        // function using the Vose class.
         if (kernel_.valid()) {
 
           std::vector<double_t> probabilities;
 
-          
+          // Collect probabilities for the sources
           for(typename std::vector<std::pair<Position<D>,index> >::iterator iter=positions.begin();iter!=positions.end();++iter) {
 
               probabilities.push_back(kernel_->value(source.compute_displacement(target_pos,iter->first), rng));
@@ -343,10 +380,15 @@ namespace nest
             throw KernelException(msg.c_str());
           }
 
+          // A Vose object draws random integers with a non-uniform
+          // distribution.
           Vose lottery(probabilities);
 
+          // If multapses are not allowed, we must keep track of which
+          // sources have been selected already.
           std::vector<bool> is_selected(positions.size());
 
+          // Draw `number_of_connections_` sources
           for(int i=0;i<(int)number_of_connections_;++i) {
             index random_id = lottery.get_random_id(rng);
             if ((not allow_multapses_) and (is_selected[random_id])) {
@@ -376,7 +418,11 @@ namespace nest
             throw KernelException(msg.c_str());
           }
 
+          // If multapses are not allowed, we must keep track of which
+          // sources have been selected already.
           std::vector<bool> is_selected(positions.size());
+
+          // Draw `number_of_connections_` sources
           for(int i=0;i<(int)number_of_connections_;++i) {
             index random_id = rng->ulrand(positions.size());
             if ((not allow_multapses_) and (is_selected[random_id])) {
@@ -396,6 +442,7 @@ namespace nest
     } else {
       // no mask
 
+      // Get (position,GID) pairs for all nodes in source layer
       std::vector<std::pair<Position<D>,index> >* positions = source.get_global_positions_vector(source_filter_);
 
       for (std::vector<Node*>::const_iterator tgt_it = target_begin;tgt_it != target_end;++tgt_it) {
@@ -414,17 +461,28 @@ namespace nest
           throw KernelException(msg.c_str());
         }
 
+        // We will select `number_of_connections_` sources within the mask.
+        // If there is no kernel, we can just draw uniform random numbers,
+        // but with a kernel we have to set up a probability distribution
+        // function using the Vose class.
         if (kernel_.valid()) {
 
           std::vector<double_t> probabilities;
 
+          // Collect probabilities for the sources
           for(typename std::vector<std::pair<Position<D>,index> >::iterator iter=positions->begin();iter!=positions->end();++iter) {
             probabilities.push_back(kernel_->value(source.compute_displacement(target_pos,iter->first), rng));
           }
 
+          // A Vose object draws random integers with a non-uniform
+          // distribution.
           Vose lottery(probabilities);
 
+          // If multapses are not allowed, we must keep track of which
+          // sources have been selected already.
           std::vector<bool> is_selected(positions->size());
+
+          // Draw `number_of_connections_` sources
           for(int i=0;i<(int)number_of_connections_;++i) {
             index random_id = lottery.get_random_id(rng);
             if ((not allow_multapses_) and (is_selected[random_id])) {
@@ -448,7 +506,11 @@ namespace nest
 
           // no kernel
 
+          // If multapses are not allowed, we must keep track of which
+          // sources have been selected already.
           std::vector<bool> is_selected(positions->size());
+
+          // Draw `number_of_connections_` sources
           for(int i=0;i<(int)number_of_connections_;++i) {
             index random_id = rng->ulrand(positions->size());
             if ((not allow_multapses_) and (is_selected[random_id])) {
@@ -523,9 +585,15 @@ namespace nest
         throw KernelException(msg.c_str());
       }
 
-      // Draw targets
+      // Draw targets.  A Vose object draws random integers with a
+      // non-uniform distribution.
       Vose lottery(probabilities);
+
+      // If multapses are not allowed, we must keep track of which
+      // targets have been selected already.
       std::vector<bool> is_selected(targets.size());
+
+      // Draw `number_of_connections_` targets
       for(long_t i=0;i<(long_t)number_of_connections_;++i) {
         index random_id = lottery.get_random_id(net_.get_grng());
         if ((not allow_multapses_) and (is_selected[random_id])) {

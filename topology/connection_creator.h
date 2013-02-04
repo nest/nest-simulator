@@ -62,12 +62,27 @@ namespace nest
   class ConnectionCreator {
   public:
 
-    enum ConnectionType {Target_driven, Source_driven, Convergent, Divergent, Population};
+    enum ConnectionType {Target_driven, Source_driven, Convergent, Divergent};
     typedef std::map<Name,lockPTR<Parameter> > ParameterMap;
 
     /**
      * Construct a ConnectionCreator with the properties defined in the
-     * given dictionary.
+     * given dictionary. Parameters for a ConnectionCreator are:
+     * - "connection_type": Either "convergent" or "convergent".
+     * - "allow_autapses": Boolean, true if autapses are allowed.
+     * - "allow_multapses": Boolean, true if multapses are allowed.
+     * - "allow_oversized": Boolean, true if oversized masks are allowed.
+     * - "number_of_connections": Integer, number of connections to make
+     *   for each source or target.
+     * - "mask": Mask definition (dictionary or masktype).
+     * - "kernel": Kernel definition (dictionary, parametertype, or double).
+     * - "synapse_model": The synapse model to use.
+     * - "targets": Which targets (model or lid) to select (dictionary).
+     * - "sources": Which targets (model or lid) to select (dictionary).
+     * - "weights": Synaptic weight (dictionary, parametertype, or double).
+     * - "delays": Synaptic delays (dictionary, parametertype, or double).
+     * - other parameters are interpreted as synapse parameters, and may
+     *   be defined by a dictionary, parametertype, or double.
      * @param dict dictionary containing properties for the connections.
      */
     ConnectionCreator(DictionaryDatum dict);

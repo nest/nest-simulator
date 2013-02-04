@@ -33,7 +33,7 @@ namespace nest
   {
     if (updateValue<long_t>(d, names::lid, depth)) {
 
-      if (depth==0)
+      if (depth<=0)
         throw BadProperty("lid must be >0");
 
       depth -= 1; // lid starts at 1 for backwards compatibility

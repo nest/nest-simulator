@@ -72,8 +72,8 @@ namespace nest
   const std::string TopologyModule::commandstring(void) const
   {
     return
-      std::string("/topology /C++ ($Revision: 10107 $) provide-component "
-		  "/topology-interface /SLI (6203) require-component ");
+      std::string("/topology /C++ ($Revision: 10204 $) provide-component "
+		  "/topology-interface /SLI (9954) require-component ");
   }
 
   GenericFactory<AbstractMask> &TopologyModule::mask_factory_(void)
@@ -90,93 +90,102 @@ namespace nest
 
   MaskDatum TopologyModule::create_mask(const Token & t)
   {
+    // t can be either an existing MaskDatum, or a Dictionary containing
+    // mask parameters
     MaskDatum *maskd = dynamic_cast<MaskDatum*>(t.datum());
     if (maskd) {
       return *maskd;
     } else {
 
       DictionaryDatum *dd = dynamic_cast<DictionaryDatum*>(t.datum());
-      if (dd) {
-
-        Token anchor_token;
-        bool has_anchor = false;
-        AbstractMask *mask = 0;
-
-        for(Dictionary::iterator dit = (*dd)->begin(); dit != (*dd)->end(); ++dit) {
-
-          if (dit->first == names::anchor) {
-
-            anchor_token = dit->second;
-            has_anchor = true;
-
-          } else {
-
-            if (mask != 0) { // mask has already been defined
-              throw BadProperty("Mask definition dictionary contains extraneous items.");
-            }
-
-            mask = create_mask(dit->first,getValue<DictionaryDatum>(dit->second));
-
-          }
-        }
-
-        if (has_anchor) {
-
-          try {
-
-            std::vector<double_t> anchor = getValue<std::vector<double_t> >(anchor_token);
-            AbstractMask *amask;
-
-            switch(anchor.size()) {
-            case 2:
-              amask = new AnchoredMask<2>(dynamic_cast<Mask<2>&>(*mask),anchor);
-              break;
-            case 3:
-              amask = new AnchoredMask<3>(dynamic_cast<Mask<3>&>(*mask),anchor);
-              break;
-            default:
-              throw BadProperty("Anchor must be 2- or 3-dimensional.");
-            }
-
-            delete mask;
-            mask = amask;
-
-          } catch (TypeMismatch e) {
-
-            DictionaryDatum ad = getValue<DictionaryDatum>(anchor_token);
-
-            int_t dim = 2;
-            int_t column = getValue<long>(ad, names::column);
-            int_t row = getValue<long>(ad, names::row);
-            int_t layer;
-            if (ad->known(names::layer)) {
-              layer = getValue<long>(ad,names::layer);
-              dim = 3;
-            }
-            switch(dim) {
-            case 2:
-              {
-                GridMask<2>& grid_mask_2d = dynamic_cast<GridMask<2>&>(*mask);
-                grid_mask_2d.set_anchor(Position<2,int_t>(column,row));
-              }
-              break;
-            case 3:
-              {
-                GridMask<3>& grid_mask_3d = dynamic_cast<GridMask<3>&>(*mask);
-                grid_mask_3d.set_anchor(Position<3,int_t>(column,row,layer));
-              }
-              break;
-            }
-          }
-        }
-
-        return mask;
-
-      } else {
-
+      if (dd==0) {
         throw BadProperty("Mask must be masktype or dictionary.");
-
       }
+
+      // The dictionary should contain one key which is the name of the
+      // mask type, and optionally the key 'anchor'. To find the unknown
+      // mask type key, we must loop through all keys. The value for the
+      // anchor key will be stored in the anchor_token variable.
+      Token anchor_token;
+      bool has_anchor = false;
+      AbstractMask *mask = 0;
+
+      for(Dictionary::iterator dit = (*dd)->begin(); dit != (*dd)->end(); ++dit) {
+
+        if (dit->first == names::anchor) {
+
+          anchor_token = dit->second;
+          has_anchor = true;
+
+        } else {
+
+          if (mask != 0) { // mask has already been defined
+            throw BadProperty("Mask definition dictionary contains extraneous items.");
+          }
+
+          mask = create_mask(dit->first,getValue<DictionaryDatum>(dit->second));
+
+        }
+      }
+
+      if (has_anchor) {
+
+        // The anchor may be an array of doubles (a spatial position), or a
+        // dictionary containing the keys 'column' and 'row' (for grid
+        // masks only)
+        try {
+
+          std::vector<double_t> anchor = getValue<std::vector<double_t> >(anchor_token);
+          AbstractMask *amask;
+
+          switch(anchor.size()) {
+          case 2:
+            amask = new AnchoredMask<2>(dynamic_cast<Mask<2>&>(*mask),anchor);
+            break;
+          case 3:
+            amask = new AnchoredMask<3>(dynamic_cast<Mask<3>&>(*mask),anchor);
+            break;
+          default:
+            throw BadProperty("Anchor must be 2- or 3-dimensional.");
+          }
+
+          delete mask;
+          mask = amask;
+
+        } catch (TypeMismatch e) {
+
+          DictionaryDatum ad = getValue<DictionaryDatum>(anchor_token);
+
+          int_t dim = 2;
+          int_t column = getValue<long>(ad, names::column);
+          int_t row = getValue<long>(ad, names::row);
+          int_t layer;
+          if (ad->known(names::layer)) {
+            layer = getValue<long>(ad,names::layer);
+            dim = 3;
+          }
+          switch(dim) {
+          case 2:
+            try {
+              GridMask<2>& grid_mask_2d = dynamic_cast<GridMask<2>&>(*mask);
+              grid_mask_2d.set_anchor(Position<2,int_t>(column,row));
+            } catch (std::bad_cast e) {
+              throw BadProperty("Mask must be 2-dimensional grid mask.");
+            }
+            break;
+          case 3:
+            try {
+              GridMask<3>& grid_mask_3d = dynamic_cast<GridMask<3>&>(*mask);
+              grid_mask_3d.set_anchor(Position<3,int_t>(column,row,layer));
+            } catch (std::bad_cast e) {
+              throw BadProperty("Mask must be 3-dimensional grid mask.");
+            }
+            break;
+          }
+        }
+      }
+
+      return mask;
 
     }
 
@@ -184,10 +193,14 @@ namespace nest
 
   ParameterDatum TopologyModule::create_parameter(const Token & t)
   {
+    // t can be an existing ParameterDatum, a DoubleDatum containing a
+    // constant value for this parameter, or a Dictionary containing
+    // parameters
     ParameterDatum *pd = dynamic_cast<ParameterDatum*>(t.datum());
     if (pd)
       return *pd;
 
+    // If t is a DoubleDatum, create a ConstantParameter with this value
     DoubleDatum *dd = dynamic_cast<DoubleDatum*>(t.datum());
     if (dd) {
       return new ConstantParameter(*dd);
@@ -196,7 +209,12 @@ namespace nest
     DictionaryDatum *dictd = dynamic_cast<DictionaryDatum*>(t.datum());
     if (dictd) {
 
-      assert((*dictd)->size() == 1);  // FIXME: Fail gracefully
+      // The dictionary should only have a single key, which is the name of
+      // the parameter type to create.
+      if ((*dictd)->size() != 1) {
+        throw BadProperty("Parameter definition dictionary must contain one single key only.");
+      }
+
       Name n = (*dictd)->begin()->first;
       DictionaryDatum pdict = getValue<DictionaryDatum>(*dictd,n);
       return create_parameter(n, pdict);
@@ -209,8 +227,12 @@ namespace nest
 
   Parameter *TopologyModule::create_parameter(const Name& name, const DictionaryDatum &d)
   {
+    // The parameter factory will create the parameter without regard for
+    // the anchor
     Parameter *param = parameter_factory_().create(name,d);
 
+    // Wrap the parameter object created above in an AnchoredParameter if
+    // the dictionary contains an anchor
     if (d->known(names::anchor)) {
       std::vector<double_t> anchor = getValue<std::vector<double_t> >(d,names::anchor);
       Parameter *aparam;
@@ -234,14 +256,15 @@ namespace nest
 
 
   static AbstractMask* create_doughnut(const DictionaryDatum& d) {
-      Position<2> center(0,0);
-      if (d->known(names::anchor))
-        center = getValue<std::vector<double_t> >(d, names::anchor);
+    // The doughnut (actually an annulus) is created using a DifferenceMask
+    Position<2> center(0,0);
+    if (d->known(names::anchor))
+      center = getValue<std::vector<double_t> >(d, names::anchor);
 
-      BallMask<2> outer_circle(center,getValue<double_t>(d, names::outer_radius));
-      BallMask<2> inner_circle(center,getValue<double_t>(d, names::inner_radius));
+    BallMask<2> outer_circle(center,getValue<double_t>(d, names::outer_radius));
+    BallMask<2> inner_circle(center,getValue<double_t>(d, names::inner_radius));
 
-      return new DifferenceMask<2>(outer_circle, inner_circle);
+    return new DifferenceMask<2>(outer_circle, inner_circle);
   }
 
   void TopologyModule::init(SLIInterpreter *i)
@@ -751,53 +774,53 @@ namespace nest
 
   /*
     BeginDocumentation
-    
+
     Name: topology::ConnectLayers - connect two layers
-    
-    Synopsis: sourcelayergid targetlayergid connection_dict 
+
+    Synopsis: sourcelayergid targetlayergid connection_dict
     ConnectLayers -> -
 
-    Description: Connects nodes in two topological layers. 
+    Description: Connects nodes in two topological layers.
 
     The parameters set in the input dictionary decides the nature
     of the connection pattern being created. Please see parameter
     list below for a detailed description of these variables.
-    
-    The connections are created by iterating through either the 
+
+    The connections are created by iterating through either the
     source or the target layer, consecutively connecting each node
     to a region in the opposing layer.
 
     Parameters:
-    sourcelayergid  - GID of source layer 
-    targetlayergid  - GID of target layer 
+    sourcelayergid  - GID of source layer
+    targetlayergid  - GID of target layer
 
-    connection_dict - dictionary containing any of the following 
+    connection_dict - dictionary containing any of the following
                       elements:
-    
+
     ------------------------------------------------------------------
     Connection dictionary parameters:
     ------------------------------------------------------------------
-    Parameter name: connection-type               
+    Parameter name: connection-type
 
-    Type: string       
+    Type: string
 
-    Parameter description: 
+    Parameter description:
 
-    Decides the type of connection pattern being created (i.e. 
+    Decides the type of connection pattern being created (i.e.
     convergent or divergent topological connection). A convergent
-    topological connection is a connection between a source region 
-    and a target node. A divergent topological connection is a 
+    topological connection is a connection between a source region
+    and a target node. A divergent topological connection is a
     connection between a source node and a target region. A convergent
     topological connection can also be called a receptive field connection.
     A divergent topological connection can also be called a projective
-    field connection. A one-to-one connection can be created by setting 
-    the size of the source or target region equal to one. The connection 
-    type has particular effect on the connection pattern when used together 
+    field connection. A one-to-one connection can be created by setting
+    the size of the source or target region equal to one. The connection
+    type has particular effect on the connection pattern when used together
     with the number_of_connections variable.
 
 
     Parameter name: mask
-    
+
     Type: dictionary
 
     Parameter description:
@@ -813,14 +836,14 @@ namespace nest
 
 
     Parameter name: weights, delays and kernel
-    
+
     Type: dictionary
 
     Parameter description:
 
     These parameters can be initialised in many ways. Either as a constant
-    value, with the help of a dictionary, or in an array (only for fixed 
-    grid layers). The dictionary can be of type gaussian, 2D gaussian, 
+    value, with the help of a dictionary, or in an array (only for fixed
+    grid layers). The dictionary can be of type gaussian, 2D gaussian,
     linear, exponential and other.
 
 
@@ -845,7 +868,7 @@ namespace nest
 
 
     Parameter name: target
-    
+
     Type: dictionary
 
     Parameter description:
@@ -854,18 +877,18 @@ namespace nest
 
 
     Parameter name: number_of_connections
-    
+
     Type: integer
 
     Parameter description:
 
     Maximum number of connections that each iterating node is allowed.
     The actual connections being created are picked at random from all
-    the candidate connections. 
-    
+    the candidate connections.
+
 .
     Parameter name: allow_autapses
-    
+
     Type: bool
 
     Parameter description: Used together with the number_of_connections option to
@@ -873,14 +896,14 @@ namespace nest
 
 
     Parameter name: allow_multapses
-    
+
     Type: bool
 
     Parameter description: Used together with the number_of_connections option to
     indicate if multapses are allowed.
 
     ------------------------------------------------------------------
-   
+
     Example:
 
     topology using
@@ -892,7 +915,7 @@ namespace nest
        /elements /iaf_neuron
     >> /src_dictionary Set
 
-    src_dictionary CreateLayer /src Set 
+    src_dictionary CreateLayer /src Set
 
     %Create target layer with CreateLayer
     %%Create layer
@@ -902,7 +925,7 @@ namespace nest
        /elements {/iaf_neuron Create ; /iaf_psc_alpha Create ;}
     >> /tgt_dictionary Set
 
-    tgt_dictionary CreateLayer /tgt Set 
+    tgt_dictionary CreateLayer /tgt Set
 
     <<	/connection_type (convergent)
         /mask << /grid << /rows 2 /columns 3 >>
@@ -914,13 +937,13 @@ namespace nest
 		    /lid 1 >>
 	/targets << /model /iaf_neuron
 		    /lid 2 >>
-	
+
     >> /parameters Set
 
     src tgt parameters ConnectLayers
-       
+
     Author: Håkon Enger, Kittel Austvoll
-    
+
     SeeAlso: topology::CreateLayer
   */
   void TopologyModule::ConnectLayers_i_i_DFunction::execute(SLIInterpreter *i) const
@@ -1010,15 +1033,15 @@ namespace nest
 
   /*
     BeginDocumentation
-    
+
     Name: topology::DumpLayerNodes - write information about layer nodes to file
-    
+
     Synopsis: ostream layer_gid DumpLayerNodes -> ostream
 
     Parameters:
     ostream   - open output stream
     layer_gid - topology layer
-		 
+
     Description:
     Write information about each element in the given layer to the
     output stream. The file format is one line per element with the
@@ -1043,16 +1066,16 @@ namespace nest
     (my_layer_dump.lyr) (w) file
     my_layer DumpLayerNodes
     close
-       
+
     Author: Kittel Austvoll, Hans Ekkehard Plesser
-    
+
     SeeAlso: topology::DumpLayerConnections, setprecision, modeldict
   */
   void TopologyModule::
   DumpLayerNodes_os_iFunction::execute(SLIInterpreter *i) const
   {
     i->assert_stack_load(2);
-    
+
     const index layer_gid =  getValue<long_t>(i->OStack.pick(0));
     OstreamDatum out = getValue<OstreamDatum>(i->OStack.pick(1));
 
@@ -1062,22 +1085,22 @@ namespace nest
       layer->dump_nodes(*out);
 
     i->OStack.pop(1);  // leave ostream on stack
-    i->EStack.pop();  
+    i->EStack.pop();
   }
 
   /*
     BeginDocumentation
-    
+
     Name: topology::DumpLayerConnections - prints a list of the connections of the nodes in the layer to file
-    
+
     Synopsis: ostream source_layer_gid synapse_model DumpLayerConnections -> ostream
 
     Parameters:
     ostream          - open outputstream
     source_layer_gid - topology layer
     synapse_model    - synapse model (literal)
-		 
-    Description: 
+
+    Description:
     Dumps information about all connections of the given type having their source in
     the given layer to the given output stream. The data format is one line per connection as follows:
 
@@ -1098,9 +1121,9 @@ namespace nest
     topology using
     ...
     (out.cnn) (w) file layer_gid /static_synapse PrintLayerConnections close
-       
+
     Author: Kittel Austvoll, Hans Ekkehard Plesser
-    
+
     SeeAlso: topology::DumpLayerNodes
   */
 
@@ -1132,21 +1155,21 @@ namespace nest
 
   /*
     BeginDocumentation
-    
+
     Name: topology::GetElement - return node GID at specified layer position
-    
+
     Synopsis: layer_gid [array] GetElement -> node_gid
 
     Parameters:
     layer_gid     - topological layer
     [array]       - position of node
     node_gid      - node GID
-		 
-    Description: Retrieves node at the layer grid position 
+
+    Description: Retrieves node at the layer grid position
     given in [array]. [array] is on the format [column row].
     The layer must be of grid type. Returns an array of GIDs
     if there are several nodes per grid point.
-   
+
     Examples:
 
     topology using
@@ -1157,10 +1180,10 @@ namespace nest
        /elements /iaf_neuron
     >> /dictionary Set
 
-    dictionary CreateLayer /src Set 
+    dictionary CreateLayer /src Set
 
     src [2 3] GetElement
-       
+
     Author: Kittel Austvoll, Håkon Enger
   */
   void TopologyModule::
@@ -1176,26 +1199,26 @@ namespace nest
     switch(array.size()) {
     case 2:
       {
-        GridLayer<2> *layer = 
+        GridLayer<2> *layer =
           dynamic_cast<GridLayer<2>*>(net_->get_node(layer_gid));
         if (layer==0) {
           throw TypeMismatch("grid layer node","something else");
         }
 
-        node_gids = layer->get_nodes(Position<2,int_t>(static_cast<index>(array[0]), 
+        node_gids = layer->get_nodes(Position<2,int_t>(static_cast<index>(array[0]),
                                                        static_cast<index>(array[1])));
       }
       break;
 
     case 3:
       {
-        GridLayer<3> *layer = 
+        GridLayer<3> *layer =
           dynamic_cast<GridLayer<3>*>(net_->get_node(layer_gid));
         if (layer==0) {
           throw TypeMismatch("grid layer node","something else");
         }
 
-        node_gids = layer->get_nodes(Position<3,int_t>(static_cast<index>(array[0]), 
+        node_gids = layer->get_nodes(Position<3,int_t>(static_cast<index>(array[0]),
                                                        static_cast<index>(array[1]),
                                                        static_cast<index>(array[2])));
       }
@@ -1214,7 +1237,7 @@ namespace nest
       i->OStack.push(node_gids);
     }
 
-    i->EStack.pop();  
+    i->EStack.pop();
   }
 
   void TopologyModule::Cvdict_MFunction::execute(SLIInterpreter *i) const

@@ -27,6 +27,15 @@ extern "C" {
 #include<Python.h>
 }
 
+#ifdef WITH_THREAD
+/* CPython compiled with threads */
+#define PYGILSTATE_ENSURE(VAR)  PyGILState_STATE VAR = PyGILState_Ensure()
+#define PYGILSTATE_RELEASE(VAR) PyGILState_Release (VAR)
+#else
+#define PYGILSTATE_ENSURE(VAR)
+#define PYGILSTATE_RELEASE(VAR)
+#endif
+
 #include "connection_generator.h"
 
 bool PyPyCSA_Check (PyObject* obj);

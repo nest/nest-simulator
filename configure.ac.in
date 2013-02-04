@@ -13,7 +13,7 @@ AC_INIT([nest], [2.2.svn], [nest_user@nest-initiative.org])
 # releasetools/buildnest
 SLI_MAJOR=2
 SLI_MINOR=2
-SLI_PATCHLEVEL=0
+SLI_PATCHLEVEL=svn
 
 SLI_PRGNAME="nest-$SLI_MAJOR.$SLI_MINOR.$SLI_PATCHLEVEL"
 SLI_VERSION=$SLI_MAJOR.$SLI_MINOR.$SLI_PATCHLEVEL
@@ -958,7 +958,7 @@ AC_SUBST(PYNEST_PREFIX)
 AC_SUBST(PYNEST_SUBDIR)
 AC_SUBST(HAVE_PYTHON)
 
-AM_CONFIG_HEADER(libnestutil/config.h)
+AC_CONFIG_HEADER(libnestutil/config.h)
 AC_CONFIG_FILES(libnestutil/sliconfig.h)
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(doc/Makefile)

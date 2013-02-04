@@ -96,20 +96,22 @@ namespace nest {
   template <int D>
   void Layer<D>::connect(AbstractLayer& target_layer, ConnectionCreator &connector)
   {
-    Layer<D> &tgt = dynamic_cast<Layer<D>&>(target_layer);
-    connector.connect(*this, tgt);
+    try {
+      Layer<D> &tgt = dynamic_cast<Layer<D>&>(target_layer);
+      connector.connect(*this, tgt);
+    } catch (std::bad_cast e) {
+      throw BadProperty("Target layer must have same number of dimensions as source layer.");
+    }
   }
 
   template <int D>
   lockPTR<Ntree<D,index> > Layer<D>::get_local_positions_ntree(Selector filter)
   {
-    clear_ntree_cache_();
+    lockPTR<Ntree<D,index> > ntree(new Ntree<D,index>(this->lower_left_, this->extent_, this->periodic_));
 
-    cached_ntree_ = lockPTR<Ntree<D,index> >(new Ntree<D,index>(this->lower_left_, this->extent_, this->periodic_));
+    insert_local_positions_ntree_(*ntree, filter);
 
-    insert_local_positions_ntree_(*cached_ntree_, filter);
-
-    return cached_ntree_;
+    return ntree;
   }
 
   template <int D>

@@ -66,7 +66,7 @@ def is_ndarray(seq):
                 import numpy
                 return type(seq) == numpy.ndarray
         except:
-                return false
+                return False
         
 def is_sequencetype(seq) :
     """
@@ -872,7 +872,7 @@ def DataConnect(pre, params=None, model=None):
     if params:
 	if not model:
 		model="static_synapse"
-	cmd='/%s DataConnect_' % model
+	cmd='(%s) DataConnect_i_dict_s ' % model
     
 	for s,p in zip(pre,params):
 		sps(s)

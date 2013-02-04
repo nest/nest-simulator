@@ -54,7 +54,7 @@ namespace nest
    * mother ntree.
    *
    */
-  template<int D, class T, int max_capacity=100>
+  template<int D, class T, int max_capacity=100, int max_depth=10>
   class Ntree : public AbstractNtree<T>
   {
   public:
@@ -312,6 +312,7 @@ namespace nest
 
     Ntree* parent_;
     int my_subquad_;    ///< This Ntree's subquad number within parent
+    int my_depth_;      ///< This Ntree's depth in the tree
     Ntree* children_[N];
     std::bitset<D> periodic_;        ///< periodic b.c.
 
@@ -319,23 +320,24 @@ namespace nest
     friend class masked_iterator;
   };
 
-  template<int D, class T, int max_capacity>
-  Ntree<D,T,max_capacity>::Ntree(const Position<D>& lower_left,
+  template<int D, class T, int max_capacity, int max_depth>
+  Ntree<D,T,max_capacity,max_depth>::Ntree(const Position<D>& lower_left,
                                  const Position<D>& extent,
                                  std::bitset<D> periodic,
-                                 Ntree<D,T,max_capacity>* parent,
+                                 Ntree<D,T,max_capacity,max_depth>* parent,
                                  int subquad) :
     lower_left_(lower_left),
     extent_(extent),
     leaf_(true),
     parent_(parent),
     my_subquad_(subquad),
+    my_depth_(parent?parent->my_depth_+1:0),
     periodic_(periodic)
   {
   }
 
-  template<int D, class T, int max_capacity>
-  Ntree<D,T,max_capacity>::iterator::iterator(Ntree& q, index n):
+  template<int D, class T, int max_capacity, int max_depth>
+  Ntree<D,T,max_capacity,max_depth>::iterator::iterator(Ntree& q, index n):
     ntree_(&q), top_(&q), node_(n)
   {
     assert(ntree_->leaf_);
@@ -345,37 +347,37 @@ namespace nest
       top_ = top_->parent_;
   }
 
-  template<int D, class T, int max_capacity>
-  bool Ntree<D,T,max_capacity>::is_leaf() const
+  template<int D, class T, int max_capacity, int max_depth>
+  bool Ntree<D,T,max_capacity,max_depth>::is_leaf() const
   {
     return leaf_;
   }
 
 
-  template<int D, class T, int max_capacity>
-  std::vector<std::pair<Position<D>,T> > Ntree<D,T,max_capacity>::get_nodes()
+  template<int D, class T, int max_capacity, int max_depth>
+  std::vector<std::pair<Position<D>,T> > Ntree<D,T,max_capacity,max_depth>::get_nodes()
   {
     std::vector<std::pair<Position<D>,T> > result;
     append_nodes_(result);
     return result;
   }
 
-  template<int D, class T, int max_capacity>
-  std::vector<std::pair<Position<D>,T> > Ntree<D,T,max_capacity>::get_nodes(const Mask<D> &mask, const Position<D> &anchor)
+  template<int D, class T, int max_capacity, int max_depth>
+  std::vector<std::pair<Position<D>,T> > Ntree<D,T,max_capacity,max_depth>::get_nodes(const Mask<D> &mask, const Position<D> &anchor)
   {
     std::vector<std::pair<Position<D>,T> > result;
     append_nodes_(result,mask,anchor);
     return result;
   }
 
-  template<int D, class T, int max_capacity>
-  typename Ntree<D,T,max_capacity>::iterator Ntree<D,T,max_capacity>::insert(const std::pair<Position<D>,T>& val)
+  template<int D, class T, int max_capacity, int max_depth>
+  typename Ntree<D,T,max_capacity,max_depth>::iterator Ntree<D,T,max_capacity,max_depth>::insert(const std::pair<Position<D>,T>& val)
   {
     return insert(val.first,val.second);
   }
 
-  template<int D, class T, int max_capacity>
-  typename Ntree<D,T,max_capacity>::iterator Ntree<D,T,max_capacity>::insert(iterator, const std::pair<Position<D>,T>& val)
+  template<int D, class T, int max_capacity, int max_depth>
+  typename Ntree<D,T,max_capacity,max_depth>::iterator Ntree<D,T,max_capacity,max_depth>::insert(iterator, const std::pair<Position<D>,T>& val)
   {
     return insert(val.first,val.second);
   }

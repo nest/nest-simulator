@@ -99,6 +99,7 @@
 #include "tsodyks2_connection.h"
 #include "stdp_connection.h"
 #include "stdp_connection_hom.h"
+#include "stdp_connection_facetshw_hom.h"
 #include "stdp_pl_connection_hom.h"
 #include "stdp_dopa_connection.h"
 #include "ht_connection.h"
@@ -214,6 +215,10 @@ namespace nest
     register_prototype_connection_commonproperties < STDPConnectionHom, 
                                                      STDPHomCommonProperties 
                                                    > (net_, "stdp_synapse_hom");
+
+    register_prototype_connection_commonproperties < STDPFACETSHWConnectionHom,
+                                                     STDPFACETSHWHomCommonProperties
+                                                   > (net_, "stdp_facetshw_synapse_hom");
 
     register_prototype_connection_commonproperties < STDPPLConnectionHom,
                                                      STDPPLHomCommonProperties 

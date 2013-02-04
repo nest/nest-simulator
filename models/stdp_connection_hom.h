@@ -156,7 +156,7 @@ namespace nest
    * \param receptor_type The ID of the requested receptor type
    * \param t_lastspike last spike produced by presynaptic neuron (in ms)
    */
-  void check_connection(Node & s, Node & r, port receptor_type, double_t t_lastspike);
+  void check_connection(Node & s, Node & r, rport receptor_type, double_t t_lastspike);
 
   /**
    * Get all properties of this connection and put them into a dictionary.
@@ -224,7 +224,7 @@ double_t STDPConnectionHom::depress_(double_t w, double_t kminus, const STDPHomC
 
 
 inline 
-  void STDPConnectionHom::check_connection(Node & s, Node & r, port receptor_type, double_t t_lastspike)
+  void STDPConnectionHom::check_connection(Node & s, Node & r, rport receptor_type, double_t t_lastspike)
 {
   ConnectionHetWD::check_connection(s, r, receptor_type, t_lastspike);
   r.register_stdp_connection(t_lastspike - Time(Time::step(delay_)).get_ms());

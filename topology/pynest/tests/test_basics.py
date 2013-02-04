@@ -26,6 +26,13 @@ import unittest
 import nest
 import nest.topology as topo
 import sys
+try:
+    import numpy
+    have_numpy = True
+except ImportError:
+    have_numpy = False
+
+from nest.tests.decorators import _skipIf
 
 class BasicsTestCase(unittest.TestCase):
 
@@ -116,6 +123,7 @@ class BasicsTestCase(unittest.TestCase):
         self.assertTrue(all([len(n) == len(checkpos) for n in n4]))
         self.assertTrue(all([nest.is_sequencetype(m) for n in n4 for m in n]))
 
+    @_skipIf(not have_numpy, 'Python numpy package not installed')
     def test_Displacement(self):
         """Interface check on displacement calculations."""
         ldict = {'elements': 'iaf_neuron',
@@ -151,6 +159,7 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(len(d), len(n))
         self.assertTrue(all([len(dd) == 2 for dd in d]))
         
+    @_skipIf(not have_numpy, 'Python numpy package not installed')
     def test_Distance(self):
         """Interface check on distance calculations."""
         ldict = {'elements': 'iaf_neuron',
@@ -186,6 +195,7 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(len(d), len(n))
         self.assertTrue(all([type(dd) == type(0.) for dd in d]))
 
+    @_skipIf(not have_numpy, 'Python numpy package not installed')
     def test_FindElements(self):
         """Interface and result check for finding nearest element.
             This function is Py only, so we also need to check results."""
@@ -225,6 +235,7 @@ class BasicsTestCase(unittest.TestCase):
         n = topo.FindNearestElement(l*2, [[0.,0.],[0.5,0.5]], find_all=True)
         self.assertEqual(n, [[[6], [5, 6, 8, 9]]]*2)
         
+    @_skipIf(not have_numpy, 'Python numpy package not installed')
     def test_GetCenterElement(self):
         """Interface and result check for finding center element.
             This function is Py only, so we also need to check results."""

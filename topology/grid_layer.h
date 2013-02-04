@@ -129,7 +129,9 @@ namespace nest
      */
     std::vector<index> get_nodes(Position<D,int_t> pos);
 
-    std::vector<std::pair<Position<D>,index> > get_global_positions_vector(Selector filter, const Mask<D>& mask, const Position<D>& anchor);
+    using Layer<D>::get_global_positions_vector;
+
+    std::vector<std::pair<Position<D>,index> > get_global_positions_vector(Selector filter, const AbstractMask& mask, const Position<D>& anchor, bool allow_oversized);
 
     masked_iterator masked_begin(const Mask<D> &mask, const Position<D> &anchor, const Selector & filter);
     masked_iterator masked_end();
@@ -226,6 +228,14 @@ namespace nest
   index GridLayer<D>::gridpos_to_lid(Position<D,int_t> pos) const
   {
     index lid = 0;
+
+    // In case of periodic boundaries, allow grid positions outside layer
+    for(int i=0;i<D;++i) {
+      if (this->periodic_[i]) {
+        pos[i] %= int(dims_[i]);
+        if (pos[i]<0) pos[i] += dims_[i];
+      }
+    }
 
     for(int i=0;i<D;++i) {
       lid *= dims_[i];
@@ -338,8 +348,13 @@ namespace nest
     bbox.lower_left += anchor;
     bbox.upper_right += anchor;
     for(int i=0;i<D;++i) {
-      ll[i] = std::min(index(std::max(ceil((bbox.lower_left[i] - layer.lower_left_[i])*layer_.dims_[i]/layer.extent_[i] - 0.5), 0.0)), layer.dims_[i]);
-      ur[i] = std::min(index(std::max(round((bbox.upper_right[i] - layer.lower_left_[i])*layer_.dims_[i]/layer.extent_[i]), 0.0)), layer.dims_[i]);
+      if (layer.periodic_[i]) {
+        ll[i] = ceil((bbox.lower_left[i] - layer.lower_left_[i])*layer_.dims_[i]/layer.extent_[i] - 0.5);
+        ur[i] = round((bbox.upper_right[i] - layer.lower_left_[i])*layer_.dims_[i]/layer.extent_[i]);
+      } else {
+        ll[i] = std::min(index(std::max(ceil((bbox.lower_left[i] - layer.lower_left_[i])*layer_.dims_[i]/layer.extent_[i] - 0.5), 0.0)), layer.dims_[i]);
+        ur[i] = std::min(index(std::max(round((bbox.upper_right[i] - layer.lower_left_[i])*layer_.dims_[i]/layer.extent_[i]), 0.0)), layer.dims_[i]);
+      }
     }
     if (D>1) {
       // grid layer uses "matrix convention", i.e. reversed y axis
@@ -356,7 +371,7 @@ namespace nest
       depth_ = 0;
 
     if ((not mask_->inside(layer_.gridpos_to_position(node_)-anchor_)) or
-        (filter_.select_model() && (layer_.net_->get_model_id_of_gid(layer_.gids_[depth_*layer_size_]) != filter_.model)))
+        (filter_.select_model() && (layer_.net_->get_model_id_of_gid(layer_.gids_[depth_*layer_size_]) != index(filter_.model))))
       ++(*this);
   
   }
@@ -380,7 +395,7 @@ namespace nest
       if (depth_ >= layer_.depth_) {
         depth_ = 0;
       } else {
-        if (filter_.select_model() && (layer_.net_->get_model_id_of_gid(layer_.gids_[depth_*layer_size_]) != filter_.model))
+        if (filter_.select_model() && (layer_.net_->get_model_id_of_gid(layer_.gids_[depth_*layer_size_]) != index(filter_.model)))
           return operator++();
         else
           return *this;
@@ -399,18 +414,19 @@ namespace nest
 
     } while (not mask_->inside(layer_.gridpos_to_position(node_)-anchor_));
 
-    if (filter_.select_model() && (layer_.net_->get_model_id_of_gid(layer_.gids_[depth_*layer_size_]) != filter_.model))
+    if (filter_.select_model() && (layer_.net_->get_model_id_of_gid(layer_.gids_[depth_*layer_size_]) != index(filter_.model)))
       return operator++();
 
     return *this;
   }
 
   template <int D>
-  std::vector<std::pair<Position<D>,index> > GridLayer<D>::get_global_positions_vector(Selector filter, const Mask<D>& mask, const Position<D>& anchor)
+  std::vector<std::pair<Position<D>,index> > GridLayer<D>::get_global_positions_vector(Selector filter, const AbstractMask& mask, const Position<D>& anchor, bool)
   {
     std::vector<std::pair<Position<D>,index> > positions;
 
-    for(typename GridLayer<D>::masked_iterator mi = masked_begin(mask,anchor,filter); mi != masked_end(); ++mi) {
+    const Mask<D>& mask_d = dynamic_cast<const Mask<D>&>(mask);
+    for(typename GridLayer<D>::masked_iterator mi = masked_begin(mask_d,anchor,filter); mi != masked_end(); ++mi) {
       positions.push_back(*mi);
     }
 

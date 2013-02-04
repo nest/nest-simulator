@@ -225,7 +225,7 @@ void nest::iaf_psc_exp_ps::calibrate()
   V_.P21_in_       = -P_.tau_m_*P_.tau_in_ / (P_.tau_m_-P_.tau_in_) / P_.c_m_ * (V_.expm1_tau_in_-V_.expm1_tau_m_);
   
   V_.refractory_steps_ = Time(Time::ms(P_.t_ref_)).get_steps();
-  assert(V_.refractory_steps_ > 1);  // since t_ref_ >= sim step size, this can only fail in error
+  assert(V_.refractory_steps_ >= 1);  // since t_ref_ >= sim step size, this can only fail in error
 }
 
 /* ---------------------------------------------------------------- 

@@ -28,8 +28,8 @@
 
 namespace nest {
 
-  template<int D, class T, int max_capacity>
-  Ntree<D,T,max_capacity>::iterator::iterator(Ntree& q):
+  template<int D, class T, int max_capacity, int max_depth>
+  Ntree<D,T,max_capacity,max_depth>::iterator::iterator(Ntree& q):
     ntree_(&q), top_(&q), node_(0)
   {
     // First leaf
@@ -45,8 +45,8 @@ namespace nest {
     }
   }
 
-  template<int D, class T, int max_capacity>
-  typename Ntree<D,T,max_capacity>::iterator & Ntree<D,T,max_capacity>::iterator::operator++()
+  template<int D, class T, int max_capacity, int max_depth>
+  typename Ntree<D,T,max_capacity,max_depth>::iterator & Ntree<D,T,max_capacity,max_depth>::iterator::operator++()
   {
     node_++;
 
@@ -63,8 +63,8 @@ namespace nest {
     return *this;
   }
 
-  template<int D, class T, int max_capacity>
-  void Ntree<D,T,max_capacity>::iterator::next_leaf_()
+  template<int D, class T, int max_capacity, int max_depth>
+  void Ntree<D,T,max_capacity,max_depth>::iterator::next_leaf_()
   {
 
     // If we are on the last subntree, move up
@@ -99,8 +99,8 @@ namespace nest {
     return x;
   }
 
-  template<int D, class T, int max_capacity>
-  Ntree<D,T,max_capacity>::masked_iterator::masked_iterator(Ntree<D,T,max_capacity>& q, const Mask<D> &mask, const Position<D> &anchor):
+  template<int D, class T, int max_capacity, int max_depth>
+  Ntree<D,T,max_capacity,max_depth>::masked_iterator::masked_iterator(Ntree<D,T,max_capacity,max_depth>& q, const Mask<D> &mask, const Position<D> &anchor):
     ntree_(&q), top_(&q), allin_top_(0), node_(0), mask_(&mask), anchor_(anchor), anchors_(), current_anchor_(0)
   {
     if (ntree_->periodic_.any()) {
@@ -139,8 +139,8 @@ namespace nest {
     init_();
   }
 
-  template<int D, class T, int max_capacity>
-  void Ntree<D,T,max_capacity>::masked_iterator::init_()
+  template<int D, class T, int max_capacity, int max_depth>
+  void Ntree<D,T,max_capacity,max_depth>::masked_iterator::init_()
   {
     node_ = 0;
     allin_top_ = 0;
@@ -164,8 +164,8 @@ namespace nest {
     }
   }
 
-  template<int D, class T, int max_capacity>
-  void Ntree<D,T,max_capacity>::masked_iterator::next_anchor_()
+  template<int D, class T, int max_capacity, int max_depth>
+  void Ntree<D,T,max_capacity,max_depth>::masked_iterator::next_anchor_()
   {
     ++current_anchor_;
     if (current_anchor_ >= anchors_.size()) {
@@ -178,8 +178,8 @@ namespace nest {
     }
   }
 
-  template<int D, class T, int max_capacity>
-  void Ntree<D,T,max_capacity>::masked_iterator::next_leaf_()
+  template<int D, class T, int max_capacity, int max_depth>
+  void Ntree<D,T,max_capacity,max_depth>::masked_iterator::next_leaf_()
   {
 
     // There are two states: the initial state, and "all in". In the
@@ -253,8 +253,8 @@ namespace nest {
     return first_leaf_();
   }
 
-  template<int D, class T, int max_capacity>
-  void Ntree<D,T,max_capacity>::masked_iterator::first_leaf_()
+  template<int D, class T, int max_capacity, int max_depth>
+  void Ntree<D,T,max_capacity,max_depth>::masked_iterator::first_leaf_()
   {
     while(!ntree_->is_leaf()) {
 
@@ -272,8 +272,8 @@ namespace nest {
   }
 
 
-  template<int D, class T, int max_capacity>
-  void Ntree<D,T,max_capacity>::masked_iterator::first_leaf_inside_()
+  template<int D, class T, int max_capacity, int max_depth>
+  void Ntree<D,T,max_capacity,max_depth>::masked_iterator::first_leaf_inside_()
   {
 
     allin_top_ = ntree_;
@@ -283,8 +283,8 @@ namespace nest {
     }
   }
 
-  template<int D, class T, int max_capacity>
-  typename Ntree<D,T,max_capacity>::masked_iterator & Ntree<D,T,max_capacity>::masked_iterator::operator++()
+  template<int D, class T, int max_capacity, int max_depth>
+  typename Ntree<D,T,max_capacity,max_depth>::masked_iterator & Ntree<D,T,max_capacity,max_depth>::masked_iterator::operator++()
   {
     node_++;
 
@@ -312,8 +312,8 @@ namespace nest {
     return *this;
   }
 
-  template<int D, class T, int max_capacity>
-  int Ntree<D,T,max_capacity>::subquad_(const Position<D>& pos)
+  template<int D, class T, int max_capacity, int max_depth>
+  int Ntree<D,T,max_capacity,max_depth>::subquad_(const Position<D>& pos)
   {
     int r = 0;
     for(int i=0;i<D;++i)
@@ -322,8 +322,8 @@ namespace nest {
     return r;
   }
 
-  template<int D, class T, int max_capacity>
-  void Ntree<D,T,max_capacity>::append_nodes_(std::vector<std::pair<Position<D>,T> >&v)
+  template<int D, class T, int max_capacity, int max_depth>
+  void Ntree<D,T,max_capacity,max_depth>::append_nodes_(std::vector<std::pair<Position<D>,T> >&v)
   {
     if (leaf_) {
       std::copy(nodes_.begin(), nodes_.end(), std::back_inserter(v));
@@ -333,8 +333,8 @@ namespace nest {
     }
   }
 
-  template<int D, class T, int max_capacity>
-  void Ntree<D,T,max_capacity>::append_nodes_(std::vector<std::pair<Position<D>,T> >&v, const Mask<D> &mask, const Position<D> &anchor)
+  template<int D, class T, int max_capacity, int max_depth>
+  void Ntree<D,T,max_capacity,max_depth>::append_nodes_(std::vector<std::pair<Position<D>,T> >&v, const Mask<D> &mask, const Position<D> &anchor)
   {
     if (mask.outside(Box<D>(lower_left_-anchor, lower_left_-anchor+extent_)))
       return;
@@ -358,8 +358,8 @@ namespace nest {
     }
   }
 
-  template<int D, class T, int max_capacity>
-  typename Ntree<D,T,max_capacity>::iterator Ntree<D,T,max_capacity>::insert(Position<D> pos, const T& node)
+  template<int D, class T, int max_capacity, int max_depth>
+  typename Ntree<D,T,max_capacity,max_depth>::iterator Ntree<D,T,max_capacity,max_depth>::insert(Position<D> pos, const T& node)
   {
     if (periodic_.any()) {
       // Map position into standard range when using periodic b.c.
@@ -375,7 +375,7 @@ namespace nest {
       }
     }
 
-    if (leaf_ && (nodes_.size()>=max_capacity))
+    if (leaf_ && (nodes_.size()>=max_capacity) && (my_depth_<max_depth))
       split_();
 
     if (leaf_) {
@@ -393,8 +393,8 @@ namespace nest {
     }
   }
 
-  template<int D, class T, int max_capacity>
-  void Ntree<D,T,max_capacity>::split_()
+  template<int D, class T, int max_capacity, int max_depth>
+  void Ntree<D,T,max_capacity,max_depth>::split_()
   {
     assert(leaf_);
 
@@ -405,7 +405,7 @@ namespace nest {
           ll[i] += extent_[i]*0.5;
       }
 
-      children_[j] = new Ntree<D,T,max_capacity>(ll, extent_*0.5,0,this,j);
+      children_[j] = new Ntree<D,T,max_capacity,max_depth>(ll, extent_*0.5,0,this,j);
     }
 
     for(typename std::vector<std::pair<Position<D>,T> >::iterator i=nodes_.begin(); i!=nodes_.end(); ++i) {

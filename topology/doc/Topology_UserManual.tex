@@ -6,7 +6,14 @@
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{listings}
+
 \usepackage[round]{natbib}
+\usepackage{hyperref}
+% Fix double links created by natbib
+\makeatletter
+\renewcommand\hyper@natlinkbreak[2]{#1}
+\makeatother
+
 \usepackage{makeidx}
 \usepackage{url}
 \usepackage{longtable}
@@ -100,7 +107,7 @@ Håkon Enger\\[1ex]
   thereby improving performance considerably.
 
   This User Manual describes the NEST 2.2 version of the NEST Topology
-  Library. Please see Chapter~{sec:changes} for a summary of changes.
+  Library. Please see Chapter~\ref{sec:changes} for a summary of changes.
 
   We plan further improvements to the Topology Module in the future, 
   which may include changes to the API to remove some of the remaining
@@ -1170,9 +1177,9 @@ This chapter will show examples of how to extend the topology module by
 adding custom kernel functions and masks. Some knowledge of the C++
 programming language is needed for this. The functions will be added as a
 part of an extension module which is dynamically loaded into NEST. For more
-information on writing an extension module, see the section titled ``Writing
-an Extension Module'' in the NEST Developer Manual. The basic steps
-required to get started are:
+information on writing an extension module, see the section titled
+\href{http://www.nest-initiative.org/index.php/Writing_an_Extension_Module}{``Writing an Extension Module''}
+in the NEST Developer Manual. The basic steps required to get started are:
 \begin{enumerate}
 \item From the NEST source directory, copy directory examples/MyModule to
   somewhere outside the NEST source, build or install directories.

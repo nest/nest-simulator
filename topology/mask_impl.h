@@ -32,7 +32,9 @@ namespace nest
   AbstractMask * Mask<D>::intersect_mask(const AbstractMask & other) const
   {
     const Mask * other_d = dynamic_cast<const Mask*>(&other);
-    assert(other_d); // FIXME: Fail gracefully
+    if (other_d==0) {
+      throw BadProperty("Masks must have same number of dimensions.");
+    }
     return new IntersectionMask<D>(*this,*other_d);
   }
 
@@ -40,7 +42,9 @@ namespace nest
   AbstractMask * Mask<D>::union_mask(const AbstractMask & other) const
   {
     const Mask * other_d = dynamic_cast<const Mask*>(&other);
-    assert(other_d); // FIXME: Fail gracefully
+    if (other_d==0) {
+      throw BadProperty("Masks must have same number of dimensions.");
+    }
     return new UnionMask<D>(*this,*other_d);
   }
 
@@ -48,7 +52,9 @@ namespace nest
   AbstractMask * Mask<D>::minus_mask(const AbstractMask & other) const
   {
     const Mask * other_d = dynamic_cast<const Mask*>(&other);
-    assert(other_d); // FIXME: Fail gracefully
+    if (other_d==0) {
+      throw BadProperty("Masks must have same number of dimensions.");
+    }
     return new DifferenceMask<D>(*this,*other_d);
   }
 

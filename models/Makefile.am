@@ -56,6 +56,7 @@ libmodelsmodule_la_SOURCES= \
 		tsodyks2_connection.h tsodyks2_connection.cpp\
 		stdp_connection.h stdp_connection.cpp\
 		stdp_connection_hom.h stdp_connection_hom.cpp\
+		stdp_connection_facetshw_hom.h stdp_connection_facetshw_hom.cpp\
 		stdp_pl_connection_hom.h stdp_pl_connection_hom.cpp\
 		stdp_dopa_connection.h stdp_dopa_connection.cpp\
 		ht_neuron.cpp ht_neuron.h \

@@ -53,14 +53,17 @@
 #include "iaf_cond_exp_sfa_rr.h"
 #include "iaf_neuron.h"
 #include "iaf_psc_alpha.h"
+#include "iaf_psc_alpha_multisynapse.h"
 #include "iaf_psc_delta.h"
 #include "iaf_psc_exp.h"
+#include "iaf_psc_exp_multisynapse.h"
 #include "iaf_tum_2000.h"
 #include "mat2_psc_exp.h"
 #include "parrot_neuron.h"
 #include "pp_psc_delta.h"
 #include "sli_neuron.h"
 #include "ginzburg_neuron.h"
+#include "mcculloch_pitts_neuron.h"
 #include "izhikevich.h"
 
 // Stimulation devices
@@ -72,12 +75,14 @@
 #include "noise_generator.h"
 #include "step_current_generator.h"
 #include "mip_generator.h"
-#include "smp_generator.h"
+#include "sinusoidal_poisson_generator.h"
+#include "sinusoidal_gamma_generator.h"
 #include "ppd_sup_generator.h"
 #include "gamma_sup_generator.h"
 
 // Recording devices
 #include "spike_detector.h"
+#include "spin_detector.h"
 #include "multimeter.h"
 #include "correlation_detector.h"
 
@@ -137,14 +142,16 @@ namespace nest
 
   void ModelsModule::init(SLIInterpreter *)
   {
-    register_model<iaf_neuron>(net_,    "iaf_neuron");
-    register_model<iaf_psc_alpha>(net_, "iaf_psc_alpha");
-    register_model<iaf_psc_delta>(net_, "iaf_psc_delta");
-    register_model<iaf_psc_exp>(net_,   "iaf_psc_exp");
-    register_model<iaf_tum_2000>(net_,  "iaf_tum_2000");
-    register_model<mat2_psc_exp>(net_,  "mat2_psc_exp");
-    register_model<parrot_neuron>(net_, "parrot_neuron");
-    register_model<pp_psc_delta>(net_, "pp_psc_delta");
+    register_model<iaf_neuron>(net_,                 "iaf_neuron");
+    register_model<iaf_psc_alpha>(net_,              "iaf_psc_alpha");
+    register_model<iaf_psc_alpha_multisynapse>(net_, "iaf_psc_alpha_multisynapse");
+    register_model<iaf_psc_delta>(net_,              "iaf_psc_delta");
+    register_model<iaf_psc_exp>(net_,                "iaf_psc_exp");
+    register_model<iaf_psc_exp_multisynapse>(net_, "iaf_psc_exp_multisynapse");
+    register_model<iaf_tum_2000>(net_,               "iaf_tum_2000");
+    register_model<mat2_psc_exp>(net_,               "mat2_psc_exp");
+    register_model<parrot_neuron>(net_,              "parrot_neuron");
+    register_model<pp_psc_delta>(net_,               "pp_psc_delta");
 
     register_model<ac_generator>(net_,           "ac_generator");
     register_model<dc_generator>(net_,           "dc_generator");
@@ -154,14 +161,16 @@ namespace nest
     register_model<noise_generator>(net_,        "noise_generator");
     register_model<step_current_generator>(net_, "step_current_generator");
     register_model<mip_generator>(net_,          "mip_generator");
-    register_model<smp_generator>(net_,          "smp_generator");
+    register_model<sinusoidal_poisson_generator>(net_,"sinusoidal_poisson_generator");
     register_model<ppd_sup_generator>(net_,      "ppd_sup_generator");
     register_model<gamma_sup_generator>(net_,    "gamma_sup_generator");
     register_model<sli_neuron>(net_,             "sli_neuron");
-    register_model<ginzburg>(net_,               "ginzburg_neuron");
+    register_model<ginzburg_neuron>(net_,        "ginzburg_neuron");
+    register_model<mcculloch_pitts_neuron>(net_, "mcculloch_pitts_neuron");
     register_model<izhikevich>(net_,             "izhikevich");
 
     register_model<spike_detector>(net_,       "spike_detector");
+    register_model<spin_detector>(net_,       "spin_detector");
     register_model<Multimeter>(net_,           "multimeter");
     register_model<correlation_detector>(net_, "correlation_detector");
     register_model<volume_transmitter>(net_, "volume_transmitter");
@@ -180,6 +189,7 @@ namespace nest
     register_model<iaf_cond_alpha_mc>(net_,   "iaf_cond_alpha_mc");
     register_model<hh_psc_alpha>(net_,        "hh_psc_alpha");
     register_model<hh_cond_exp_traub>(net_,   "hh_cond_exp_traub");
+    register_model<sinusoidal_gamma_generator>(net_,"sinusoidal_gamma_generator");
 #endif
 
 #ifdef HAVE_GSL_1_11

@@ -78,11 +78,7 @@ class ConnectorModel
   bool check_delay(double_t new_delay);
   bool check_delays(double_t delay1, double_t delay2);
 
-  /**
-   * Increment the number of connections created by this ConnectorModel.
-   */
-  void increment_num_connections(size_t num = 1);
-
+  void set_num_connections(size_t);
   size_t get_num_connections() const;
 
   size_t get_num_connectors() const;
@@ -136,15 +132,9 @@ void ConnectorModel::set_max_delay(const Time &max_delay)
 }
 
 inline
-void ConnectorModel::increment_num_connections(size_t num)
+void ConnectorModel::set_num_connections(size_t num_connections)
 {
-  num_connections_ += num;
-}
-
-inline
-size_t ConnectorModel::get_num_connections() const
-{
-  return num_connections_;
+  num_connections_ = num_connections;
 }
 
 inline

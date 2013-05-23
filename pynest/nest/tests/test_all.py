@@ -27,6 +27,7 @@ from nest.tests import test_create
 from nest.tests import test_status
 from nest.tests import test_connectapi
 from nest.tests import test_findconnections
+from nest.tests import test_dataconnect
 from nest.tests import test_connectoptions
 from nest.tests import test_events
 from nest.tests import test_networks
@@ -45,6 +46,7 @@ def suite():
     suite.addTest(test_status.suite())
     suite.addTest(test_connectapi.suite())
     suite.addTest(test_findconnections.suite())    
+    suite.addTest(test_dataconnect.suite())
     suite.addTest(test_connectoptions.suite())    
     suite.addTest(test_events.suite())
     suite.addTest(test_networks.suite())

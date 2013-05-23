@@ -112,11 +112,11 @@ class BinomialRandomDev : public RandomDev
     using RandomDev::uldev;
     
     unsigned long uldev(void);     //!< draw integer
-    unsigned long uldev(RngPtr);   //!< draw integer, threaded
+    unsigned long uldev(RngPtr) const;   //!< draw integer, threaded
     bool has_uldev() const { return true; }
 
     double operator()(void);       //!< return as double
-    double operator()(RngPtr);     //!< return as double, threaded
+    double operator()(RngPtr) const;     //!< return as double, threaded
 
     //! set distribution parameters from SLI dict
     void set_status(const DictionaryDatum&); 
@@ -129,11 +129,13 @@ class BinomialRandomDev : public RandomDev
     PoissonRandomDev poisson_dev_;     //!< source of Poisson random numbers
     ExpRandomDev exp_dev_;             //!< source of exponential random numbers
     double p_;                  //!<probability p of binomial distribution
+    double phi_;
+    long m_;
     unsigned int n_;            //!<parameter n in binomial distribution
     std::vector<double_t> f_;                     //!< precomputed table of f
     unsigned int n_tablemax_;   //!< current maximal n with precomputed values
 
-    void check_params_();       //!< check internal parameters
+    void init_();               //!< check and initialize internal parameters
     void PrecomputeTable(size_t);     //!< compute the internal lookup table
    
   };
@@ -145,7 +147,7 @@ class BinomialRandomDev : public RandomDev
   }
 
   inline
-  double BinomialRandomDev::operator()(RngPtr rthrd)
+  double BinomialRandomDev::operator()(RngPtr rthrd) const
   { 
     return static_cast<double>(uldev(rthrd)); 
   }

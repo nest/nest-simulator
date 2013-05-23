@@ -90,6 +90,8 @@ M_ERROR setverbosity
 	  counttomark npop pop % need to pop mark separately
  	}
         {
+          pop % mark
+	  
           % no error, simulate and check membrane potential is not nan
           10. Simulate	  
           /result n /V_m get cvs (nan) neq def	  

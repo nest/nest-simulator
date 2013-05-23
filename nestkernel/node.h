@@ -434,7 +434,7 @@ namespace nest {
      * so that the Connection object can check if it supports the type of event.
      */
     virtual
-        port check_connection(Connection& c, port receptor);
+    port check_connection(Connection& c, port receptor);
 
     /**
      * Register a STDP connection
@@ -692,6 +692,11 @@ namespace nest {
       */
      void set_status_base(const DictionaryDatum&);
 
+     /**
+      * Returns true if node is model prototype.
+      */
+     bool is_model_prototype() const;
+
   private:
 
     void  set_lid_(index);         //!< Set local id, relative to the parent subnet
@@ -777,8 +782,6 @@ namespace nest {
     
     /**
      * Model ID.
-     * It is only set for actual node instances, not for instances of class Node
-     * representing model prototypes. Model prototypes always have model_id_==-1.
      * @see get_model_id(), set_model_id()
      */
     int      model_id_;      
@@ -787,9 +790,7 @@ namespace nest {
 
     thread   thread_;        //!< thread node is assigned to
     thread   vp_;            //!< virtual process node is assigned to
-   
- 
-   
+      
   protected:
     static Network* net_;    //!< Pointer to global network driver.
   };
@@ -913,6 +914,12 @@ namespace nest {
   void Node::set_model_id(int i)
   {
     model_id_ = i;
+  }
+
+  inline
+  bool Node::is_model_prototype() const
+  {
+    return vp_ == invalid_thread_;
   }
 
   inline

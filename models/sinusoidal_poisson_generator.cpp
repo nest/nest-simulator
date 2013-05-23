@@ -1,5 +1,5 @@
 /*
- *  smp_generator.cpp
+ *  sinusoidal_poisson_generator.cpp
  *
  *  This file is part of NEST.
  *
@@ -21,7 +21,7 @@
  */
 
 #include "exceptions.h"
-#include "smp_generator.h"
+#include "sinusoidal_poisson_generator.h"
 #include "network.h"
 #include "dict.h"
 #include "integerdatum.h"
@@ -35,12 +35,12 @@
 #include <limits>
 
 namespace nest {
-  RecordablesMap<smp_generator> smp_generator::recordablesMap_;
+  RecordablesMap<sinusoidal_poisson_generator> sinusoidal_poisson_generator::recordablesMap_;
 
   template <>
-  void RecordablesMap<smp_generator>::create()
+  void RecordablesMap<sinusoidal_poisson_generator>::create()
   {
-    insert_(Name("Rate"), &smp_generator::get_rate_);
+    insert_(Name(names::rate), &sinusoidal_poisson_generator::get_rate_);
   }
 }
 
@@ -48,22 +48,24 @@ namespace nest {
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
     
-nest::smp_generator::Parameters_::Parameters_()
+nest::sinusoidal_poisson_generator::Parameters_::Parameters_()
   : om_(0.0),    // radian/s
     phi_(0.0),   // radian
     dc_(0.0),    // spikes/s
-    ac_(0.0)     // spikes/s
+    ac_(0.0),    // spikes/s
+    individual_spike_trains_(true)
 {}
 
-nest::smp_generator::Parameters_::Parameters_(const Parameters_& p )
+nest::sinusoidal_poisson_generator::Parameters_::Parameters_(const Parameters_& p )
   : om_(p.om_),
     phi_(p.phi_),
     dc_(p.dc_),
-    ac_(p.ac_)
+    ac_(p.ac_),
+    individual_spike_trains_(p.individual_spike_trains_)
 {}
 
-nest::smp_generator::Parameters_& 
-nest::smp_generator::Parameters_::operator=(const Parameters_& p)
+nest::sinusoidal_poisson_generator::Parameters_& 
+nest::sinusoidal_poisson_generator::Parameters_::operator=(const Parameters_& p)
 {
   if ( this == &p )
     return *this;
@@ -72,21 +74,21 @@ nest::smp_generator::Parameters_::operator=(const Parameters_& p)
   om_ = p.om_;
   phi_ = p.phi_;
   ac_ = p.ac_;
+  individual_spike_trains_ = p.individual_spike_trains_;
 
   return *this;
 }
 
-nest::smp_generator::State_::State_()
-  : rate_(0),
-    last_spike_(Time::step(-1))
+nest::sinusoidal_poisson_generator::State_::State_()
+  : rate_(0)
 {}
 
 
-nest::smp_generator::Buffers_::Buffers_(smp_generator& n)
+nest::sinusoidal_poisson_generator::Buffers_::Buffers_(sinusoidal_poisson_generator& n)
   : logger_(n)
 {}
 
-nest::smp_generator::Buffers_::Buffers_(const Buffers_&, smp_generator& n)
+nest::sinusoidal_poisson_generator::Buffers_::Buffers_(const Buffers_&, sinusoidal_poisson_generator& n)
   : logger_(n)
 {}
 
@@ -95,30 +97,37 @@ nest::smp_generator::Buffers_::Buffers_(const Buffers_&, smp_generator& n)
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
 
-void nest::smp_generator::Parameters_::get(DictionaryDatum &d) const
+void nest::sinusoidal_poisson_generator::Parameters_::get(DictionaryDatum &d) const
 {
-  (*d)["dc"]  = dc_ * 1000.0; 
-  (*d)["freq"]= om_ / ( 2.0 * numerics::pi / 1000.0);
-  (*d)["phi"] = phi_;
-  (*d)["ac"]  = ac_ * 1000.0;
+  (*d)[names::dc]  = dc_ * 1000.0; 
+  (*d)[names::freq]= om_ / ( 2.0 * numerics::pi / 1000.0);
+  (*d)[names::phi] = phi_;
+  (*d)[names::ac]  = ac_ * 1000.0;
+  (*d)[names::individual_spike_trains] = individual_spike_trains_;
 } 
 
-void nest::smp_generator::State_::get(DictionaryDatum &d) const
+void nest::sinusoidal_poisson_generator::State_::get(DictionaryDatum &) const
 {
-  (*d)["last_spike"] = last_spike_.get_ms();
 }  
 
-void nest::smp_generator::Parameters_::set(const DictionaryDatum& d)
+void nest::sinusoidal_poisson_generator::Parameters_::set(const DictionaryDatum& d,
+							  const sinusoidal_poisson_generator& n)
 {
-  if ( updateValue<double_t>(d, "dc", dc_) )
+  if ( not n.is_model_prototype() && d->known(names::individual_spike_trains) )
+    throw BadProperty("The individual_spike_trains property can only be set as"
+		      " a model default using SetDefaults or upon CopyModel.");
+  
+  updateValue<bool>(d, names::individual_spike_trains, individual_spike_trains_);
+
+  if ( updateValue<double_t>(d, names::dc, dc_) )
     dc_ /= 1000.0;           // scale to ms^-1
   
-  if ( updateValue<double_t>(d, "freq", om_) )
+  if ( updateValue<double_t>(d, names::freq, om_) )
     om_ *= 2.0 * numerics::pi / 1000.0;
 
-  updateValue<double_t>(d, "phi", phi_);
+  updateValue<double_t>(d, names::phi, phi_);
 
-  if ( updateValue<double_t>(d, "ac", ac_) )
+  if ( updateValue<double_t>(d, names::ac, ac_) )
       ac_ /= 1000.0;
 }
 
@@ -126,7 +135,7 @@ void nest::smp_generator::Parameters_::set(const DictionaryDatum& d)
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::smp_generator::smp_generator()
+nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator()
   : Node(),
     device_(),
     P_(),
@@ -136,7 +145,7 @@ nest::smp_generator::smp_generator()
     recordablesMap_.create();
 }
 
-nest::smp_generator::smp_generator(const smp_generator&n)
+nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator(const sinusoidal_poisson_generator&n)
   : Node(n),
     device_(n.device_),
     P_(n.P_),
@@ -149,50 +158,47 @@ nest::smp_generator::smp_generator(const smp_generator&n)
  * Node initialization functions
  * ---------------------------------------------------------------- */
 
-void nest::smp_generator::init_state_(const Node& proto)
+void nest::sinusoidal_poisson_generator::init_state_(const Node& proto)
 { 
-  const smp_generator& pr = downcast<smp_generator>(proto);
+  const sinusoidal_poisson_generator& pr = downcast<sinusoidal_poisson_generator>(proto);
   
   device_.init_state(pr.device_);
   S_ = pr.S_;
 }
 
-void nest::smp_generator::init_buffers_()
+void nest::sinusoidal_poisson_generator::init_buffers_()
 { 
   device_.init_buffers();
   B_.logger_.reset();
 }
 
-void nest::smp_generator::calibrate()
+void nest::sinusoidal_poisson_generator::calibrate()
 {
   B_.logger_.init();  // ensures initialization in case mm connected after Simulate
 
   device_.calibrate();
 
   // time resolution
-  const double h = Time::get_resolution().get_ms(); 
+  V_.h_ = Time::get_resolution().get_ms(); 
   const double_t t = network()->get_time().get_ms();
 
   // initial state
   S_.y_0_ = P_.ac_ * std::cos(P_.om_ * t + P_.phi_);
   S_.y_1_ = P_.ac_ * std::sin(P_.om_ * t + P_.phi_);
 
-  V_.sin_ = std::sin(h * P_.om_);         // block elements
-  V_.cos_ = std::cos(h * P_.om_);
+  V_.sin_ = std::sin(V_.h_ * P_.om_);         // block elements
+  V_.cos_ = std::cos(V_.h_ * P_.om_);
 
   return;
 }
 
-void nest::smp_generator::update(Time const& origin, 
+void nest::sinusoidal_poisson_generator::update(Time const& origin, 
 			 const long_t from, const long_t to)
 {
   assert(to >= 0 && (delay) from < Scheduler::get_min_delay());
   assert(from < to);
 
   const long_t start = origin.get_steps();
-
-  // time resolution
-  const double h = Time::get_resolution().get_ms(); 
 
   // random number generator
   librandom::RngPtr rng = net_->get_rng(get_thread());
@@ -224,20 +230,37 @@ void nest::smp_generator::update(Time const& origin,
     // create spikes
     if ( S_.rate_ > 0 && device_.is_active(Time::step(start+lag)) )
     {
-      V_.poisson_dev_.set_lambda(S_.rate_ * h);
-      ulong_t n_spikes = V_.poisson_dev_.uldev(rng);
-      while ( n_spikes-- )
+      if ( P_.individual_spike_trains_ )
       {
+	DSSpikeEvent se;
+	network()->send(*this, se, lag);
+      }
+      else
+      {
+	V_.poisson_dev_.set_lambda(S_.rate_ * V_.h_);
+	ulong_t n_spikes = V_.poisson_dev_.uldev(rng);
       	SpikeEvent se;
+	se.set_multiplicity(n_spikes);
         network()->send(*this, se, lag);
-        S_.last_spike_ = Time::step(origin.get_steps()+lag+1);
       }
     }
-
   }
 }                       
 
-void nest::smp_generator::handle(DataLoggingRequest& e)
+void nest::sinusoidal_poisson_generator::event_hook(DSSpikeEvent& e)
+{
+  librandom::RngPtr rng = net_->get_rng(get_thread());
+  V_.poisson_dev_.set_lambda(S_.rate_ * V_.h_);
+  ulong_t n_spikes = V_.poisson_dev_.uldev(rng);
+
+  if ( n_spikes > 0 ) // we must not send events with multiplicity 0
+  {
+    e.set_multiplicity(n_spikes);
+    e.get_receiver().handle(e);
+  }
+}
+
+void nest::sinusoidal_poisson_generator::handle(DataLoggingRequest& e)
 {
   B_.logger_.handle(e);
 }

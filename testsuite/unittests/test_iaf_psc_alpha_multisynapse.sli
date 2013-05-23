@@ -1,0 +1,101 @@
+/*
+ *  test_iaf_psc_alpha_multisynapse.sli
+ *
+ *  This file is part of NEST
+ *
+ *  Copyright (C) 2009 by
+ *  The NEST Initiative
+ *
+ *  See the file AUTHORS for details.
+ *
+ *  Permission is granted to compile and modify
+ *  this file for non-commercial use.
+ *  See the file LICENSE for details.
+ *
+ */
+
+/* BeginDocumentation
+   Name: testsuite::test_iaf_psc_alpha_multisynapse - sli script for the multisynapse model
+
+   Synopsis: (test_iaf_psc_alpha_multisynapse) run
+
+   Description:
+   This test creates a multisynapse neuron and first checks if time constants
+   can be set correctly. Afterwards, it simulates with four different time constants
+   and records the neuron's synaptic current. The expected PSC-maxima are
+   calculated and compared with the simulated currents.
+  
+
+   SeeAlso:
+
+   FirstVersion: March 2009
+   Author: Sven Schrader
+ */
+
+
+/unittest (8093) require
+/unittest using
+
+/tolerance  1e-2 def %mV
+/n_syn      4 def
+/taus       [2. 20. 60. 100.] def
+/delays     [100. 200. 500. 1200. ] def % ms
+/spike_time 100. def
+/dt         0.1 def
+
+/iaf_psc_alpha_multisynapse Create /npost Set
+npost << /n_synapses n_syn /tau_syn taus >> SetStatus
+
+npost GetStatus /n_synapses get
+n_syn eq assert_or_die
+
+npost GetStatus /tau_syn get
+taus eq assert_or_die
+
+% test if tau_syn array is exactly n_synapses long
+npost dup GetStatus /tau_syn get length
+exch GetStatus /n_synapses get eq assert_or_die
+
+/multimeter Create /mm Set
+mm <<
+    /record_from [/currents]
+    /withgid false
+    /withtime false
+    /to_file false
+    /to_memory true
+    /interval 0.1
+    /precision 5 >> SetStatus
+    
+/spike_generator Create /sg Set
+sg << /spike_times [spike_time] >> SetStatus
+
+/static_synapse /s1 CopyModel
+/static_synapse /s2 CopyModel
+/static_synapse /s3 CopyModel
+/static_synapse /s4 CopyModel
+
+/s1 << /weight 1.0 /delay delays 0 get /receptor_type 0 >> SetDefaults
+/s2 << /weight 1.0 /delay delays 1 get /receptor_type 1 >> SetDefaults
+/s3 << /weight 1.0 /delay delays 2 get /receptor_type 2 >> SetDefaults
+/s4 << /weight 1.0 /delay delays 3 get /receptor_type 3 >> SetDefaults
+
+sg npost /s1 Connect
+sg npost /s2 Connect
+sg npost /s3 Connect
+sg npost /s4 Connect
+
+mm npost 1. 8. /static_synapse Connect
+
+2500 ms Simulate
+
+/d mm GetStatus /events get def
+d /currents get cva /currents Set
+
+% find indices where currents should be maximal (weight==1.0)
+/expected_maxima [delays taus] { add dt div spike_time dt div add 1 add cvi } MapThread def 
+
+% compare currents at above positions with the given unit weight. 
+expected_maxima { currents exch get 1.0 sub abs tolerance lt } Map
+n_syn { true } repeat n_syn arraystore eq assert_or_die
+
+endusing

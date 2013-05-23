@@ -79,24 +79,24 @@ class GenericConnectorBase : public Connector
   /**
    * Register a new connection at the sender side.
    */ 
-  void register_connection(Node&, Node&, bool);
+  void register_connection(Node&, Node&);
 
   /**
    * Register a new connection at the sender side.
    * Use given weight and delay.
    */ 
-  void register_connection(Node&, Node&, double_t, double_t, bool);
+  void register_connection(Node&, Node&, double_t, double_t);
 
   /**
    * Register a new connection at the sender side. 
    * Use given dictionary for parameters.
    */ 
-  void register_connection(Node&, Node&, DictionaryDatum&, bool);
+  void register_connection(Node&, Node&, DictionaryDatum&);
   
   /**
    * Register a new connection at the sender side.
    */ 
-  void register_connection(Node&, Node&, ConnectionT&, port, bool);
+  void register_connection(Node&, Node&, ConnectionT&, port);
  
  /**
    * Register many connections in bulk. 
@@ -173,7 +173,7 @@ class GenericConnectorBase : public Connector
    * by the volume transmitter (attention: neuromodulated synapses 
    * and volume transmitter are not in the current release version
    */
-  void trigger_update_weight(const std::vector<spikecounter> &neuromodulator_spikes);
+  void trigger_update_weight(const std::vector<spikecounter>& neuromodulator_spikes, double_t t_trig);
 
  protected:
   std::vector<ConnectionT> connections_;
@@ -194,7 +194,7 @@ GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::Generic
 }
 
 template< typename ConnectionT, typename CommonPropertiesT, typename ConnectorModelT > 
-void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::register_connection(Node& s, Node& r, bool count_connections)
+void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::register_connection(Node& s, Node& r)
 {
   // create a new instance of the default connection
   ConnectionT cn = ConnectionT( connector_model_.get_default_connection() );
@@ -202,11 +202,11 @@ void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::re
   // tell the connector model, that we used the default delay
   connector_model_.used_default_delay();
 
-  register_connection(s, r, cn, connector_model_.get_receptor_type(), count_connections);
+  register_connection(s, r, cn, connector_model_.get_receptor_type());
 }
 
 template< typename ConnectionT, typename CommonPropertiesT, typename ConnectorModelT > 
-void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::register_connection(Node& s, Node& r, double_t w, double_t d, bool count_connections)
+void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::register_connection(Node& s, Node& r, double_t w, double_t d)
 {
 
   // We have to convert the delay in ms to a Time object then to steps and back the ms again
@@ -221,11 +221,11 @@ void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::re
   cn.set_weight(w);
   cn.set_delay(d);
 
-  register_connection(s, r, cn, connector_model_.get_receptor_type(), count_connections);
+  register_connection(s, r, cn, connector_model_.get_receptor_type());
 }
 
 template< typename ConnectionT, typename CommonPropertiesT, typename ConnectorModelT > 
-void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::register_connection(Node& s, Node& r, DictionaryDatum& d, bool count_connections)
+void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::register_connection(Node& s, Node& r, DictionaryDatum& d)
 {
   // check delay
   double_t delay = 0.0;
@@ -249,12 +249,12 @@ void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::re
 #endif
   updateValue<long_t>(d, names::receptor_type, receptor_type);
 
-  register_connection(s, r, cn, receptor_type, count_connections);
+  register_connection(s, r, cn, receptor_type);
 }
 
 template< typename ConnectionT, typename CommonPropertiesT, typename ConnectorModelT > 
 inline
-void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::register_connection(Node& s, Node& r, ConnectionT &cn, port receptor_type, bool count_connections)
+void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::register_connection(Node& s, Node& r, ConnectionT &cn, port receptor_type)
 {
   cn.check_connection(s, r, receptor_type, t_lastspike_);
   Node* n = connector_model_.get_registering_node(); //if the connection is a heterosynatpic one, it gets the node which contributes to heterosynaptic plasticity 
@@ -264,9 +264,6 @@ void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::re
   {
     n->register_connector(*this); //register node in heterosynapse
   }
-
-  if (count_connections)
-    connector_model_.increment_num_connections();
 }
 
 template< typename ConnectionT, typename CommonPropertiesT, typename ConnectorModelT > 
@@ -378,11 +375,10 @@ void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::ca
 
 
 template< typename ConnectionT, typename CommonPropertiesT, typename ConnectorModelT > 
-  void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::trigger_update_weight(const std::vector<spikecounter> &neuromodulator_spikes)
-
+void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::trigger_update_weight(const std::vector<spikecounter>& neuromodulator_spikes, double_t t_trig)
 {  
   for (ConnIter it = connections_.begin(); it < connections_.end(); ++it)
-    it->trigger_update_weight(neuromodulator_spikes, connector_model_.get_common_properties());
+    it->trigger_update_weight(neuromodulator_spikes, t_trig, connector_model_.get_common_properties());
 }
 
 

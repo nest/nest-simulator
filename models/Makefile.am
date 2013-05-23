@@ -21,6 +21,8 @@ libmodelsmodule_la_SOURCES= \
 		music_message_in_proxy.cpp music_message_in_proxy.h\
 		iaf_neuron.h iaf_neuron.cpp\
 		iaf_psc_alpha.h iaf_psc_alpha.cpp\
+		iaf_psc_alpha_multisynapse.h iaf_psc_alpha_multisynapse.cpp\
+		iaf_psc_exp_multisynapse.h iaf_psc_exp_multisynapse.cpp\
 		iaf_psc_delta.h iaf_psc_delta.cpp\
 		iaf_psc_exp.h iaf_psc_exp.cpp\
 		iaf_tum_2000.h iaf_tum_2000.cpp\
@@ -45,7 +47,9 @@ libmodelsmodule_la_SOURCES= \
 		pulsepacket_generator.h pulsepacket_generator.cpp\
 		ppd_sup_generator.cpp ppd_sup_generator.h\
 		gamma_sup_generator.cpp gamma_sup_generator.h\
+		sinusoidal_gamma_generator.h sinusoidal_gamma_generator.cpp \
 		spike_detector.h spike_detector.cpp\
+		spin_detector.h spin_detector.cpp\
 		multimeter.cpp multimeter.h\
 		correlation_detector.h correlation_detector.cpp\
 		volume_transmitter.h volume_transmitter.cpp\
@@ -61,9 +65,11 @@ libmodelsmodule_la_SOURCES= \
 		stdp_dopa_connection.h stdp_dopa_connection.cpp\
 		ht_neuron.cpp ht_neuron.h \
 		ht_connection.cpp ht_connection.h \
-		smp_generator.cpp smp_generator.h \
+		sinusoidal_poisson_generator.h sinusoidal_poisson_generator.cpp \
 		sli_neuron.cpp sli_neuron.h\
+		binary_neuron.h binary_neuron_impl.h\
 		ginzburg_neuron.cpp ginzburg_neuron.h\
+		mcculloch_pitts_neuron.cpp mcculloch_pitts_neuron.h\
 		izhikevich.cpp izhikevich.h\
 	 	modelsmodule.h modelsmodule.cpp
 

@@ -135,6 +135,47 @@ namespace nest
   };
 
   /**
+   * Mask which covers all of space
+   */
+  template<int D>
+  class AllMask : public Mask<D>
+  {
+  public:
+
+    ~AllMask()
+      {}
+
+    using Mask<D>::inside;
+
+    /**
+     * @returns true always for this mask.
+     */
+    bool inside(const Position<D> &) const
+      { return true; }
+
+    /**
+     * @returns true always for this mask
+     */
+    bool inside(const Box<D> &) const
+      { return true; }
+
+    /**
+     * @returns false always for this mask
+     */
+    bool outside(const Box<D> &) const
+      { return false; }
+
+    Box<D> get_bbox() const
+      {
+        const double inf = std::numeric_limits<double>::infinity();
+        return Box<D>(Position<D>(-inf,-inf), Position<D>(inf,inf));
+      }
+
+    Mask<D> * clone() const
+      { return new AllMask(); }
+  };
+
+  /**
    * Mask defining a box region.
    */
   template<int D>

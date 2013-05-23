@@ -137,7 +137,7 @@ void librandom::PoissonRandomDev::init_()
     P_[0] = 1.0;  // just for safety
 }
 
-unsigned long librandom::PoissonRandomDev::uldev(RngPtr r)
+unsigned long librandom::PoissonRandomDev::uldev(RngPtr r) const
 {
 
   // make sure we have an RNG
@@ -265,7 +265,7 @@ unsigned long librandom::PoissonRandomDev::uldev(RngPtr r)
 
 void librandom::PoissonRandomDev::proc_f_(const unsigned K, 
 					  double &px, double &py, 
-					  double &fx, double &fy)
+					  double &fx, double &fy) const
 {
   // Poisson PDF == py * exp(px), see Sec 2
 

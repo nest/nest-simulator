@@ -386,7 +386,7 @@ namespace nest
       {
         updateValue<double_t>(d, names::min, lower_);
         updateValue<double_t>(d, names::max, range_);
-        range_ += lower_;
+        range_ -= lower_;
       }
 
     double_t raw_value(const Position<2>&, librandom::RngPtr& rng) const
@@ -459,7 +459,63 @@ namespace nest
 
   private:
     double_t mean_, sigma_, min_, max_;
-    mutable librandom::NormalRandomDev rdev;
+    librandom::NormalRandomDev rdev;
+  };
+
+
+  /**
+   * Random parameter with lognormal distribution, optionally truncated to [min,max).
+   * Truncation is implemented by rejection.
+   */
+  class LognormalParameter: public Parameter {
+  public:
+  public:
+    /**
+     * Parameters:
+     * mu    - mean value of logarithm
+     * sigma - standard distribution of logarithm
+     * min   - minimum value
+     * max   - maximum value
+     */
+    LognormalParameter(const DictionaryDatum& d):
+      Parameter(d),
+      mu_(0.0),
+      sigma_(1.0),
+      min_(-std::numeric_limits<double>::infinity()),
+      max_(std::numeric_limits<double>::infinity()),
+      rdev()
+      {
+        updateValue<double_t>(d, names::mu, mu_);
+        updateValue<double_t>(d, names::sigma, sigma_);
+        updateValue<double_t>(d, names::min, min_);
+        updateValue<double_t>(d, names::max, max_);
+      }
+
+    double_t raw_value(librandom::RngPtr& rng) const
+      {
+        double_t val;
+        do {
+            val = std::exp(mu_ + rdev(rng)*sigma_);
+        } while ((val<min_) or (val>=max_));
+        return val;
+      }
+
+    double_t raw_value(const Position<2>&, librandom::RngPtr& rng) const
+      {
+        return raw_value(rng);
+      }
+
+    double_t raw_value(const Position<3>&, librandom::RngPtr& rng) const
+      {
+        return raw_value(rng);
+      }
+
+    Parameter * clone() const
+      { return new LognormalParameter(*this); }
+
+  private:
+    double_t mu_, sigma_, min_, max_;
+    librandom::NormalRandomDev rdev;
   };
 
 

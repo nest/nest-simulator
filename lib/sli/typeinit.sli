@@ -864,17 +864,48 @@ BeginDocumentation
 
 */
 
+/trieheads_iter
+{
+ dup length 3 eq
+ {
+  dup First exch
+  Last
+  trieheads_iter
+  exch prepend
+ }
+ {
+  First [] exch append
+ }
+ ifelse 
+} def
+
+
+% trie trieheads
+/trieheads
+{
+ cva trieheads_iter
+} def
+
+
+% MemberQ
+% type trie triematches -> true, false
+/triematches
+{
+ trieheads
+ exch MemberQ 
+} def
 
 
 /cva trie
 [/dictionarytype] /cva_d load addtotrie
-[/trietype] /cva_t load addtotrie
+[/trietype] {cva_t exch pop} addtotrie
 [/arraytypetype] {} addtotrie
 [/intvectortype] /intvector2array load addtotrie
 [/doublevectortype] /doublevector2array load addtotrie
-[/arraytype] { {cva} Map } addtotrie
+[/arraytype] { {dup type /cva load triematches {cva} if} Map } addtotrie
 [/iteratortype] { {} Map } addtotrie
 def
+
 
 %%%%%%
 % commands "keys" and "values" implemented and documented

@@ -72,7 +72,7 @@ namespace nest
   const std::string TopologyModule::commandstring(void) const
   {
     return
-      std::string("/topology /C++ ($Revision: 10204 $) provide-component "
+      std::string("/topology /C++ ($Revision: 10398 $) provide-component "
 		  "/topology-interface /SLI (9954) require-component ");
   }
 
@@ -359,6 +359,7 @@ namespace nest
     register_parameter<Gaussian2DParameter>("gaussian2D");
     register_parameter<UniformParameter>("uniform");
     register_parameter<NormalParameter>("normal");
+    register_parameter<LognormalParameter>("lognormal");
 
   }
 

@@ -302,11 +302,12 @@ def phiInit(pos, lam, alpha):
     '''
     return 2.0 * math.pi / lam * (math.cos(alpha) * pos[0] + math.sin(alpha) * pos[1]) 
 
-nest.CopyModel('smp_generator', 'RetinaNode',
+nest.CopyModel('sinusoidal_poisson_generator', 'RetinaNode',
                params = {'ac'    : Params['retAC'],
                          'dc'    : Params['retDC'],
                          'freq'  : Params['f_dg'],
-                         'phi'   : 0.0})
+                         'phi'   : 0.0,
+                         'individual_spike_trains': False})
 
 #! Recording nodes
 #! ---------------

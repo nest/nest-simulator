@@ -40,6 +40,8 @@ AM_CPPFLAGS= @NEST_CPPFLAGS@ \
 
 .PHONY: install-slidoc
 
+pkgdatadir=@datadir@/nest
+
 nobase_pkgdata_DATA=\
 	sli/mymodule.sli
 

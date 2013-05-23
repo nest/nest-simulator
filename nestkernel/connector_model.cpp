@@ -167,4 +167,10 @@ void ConnectorModel::update_delay_extrema(const double_t mindelay_cand,
     max_delay_ = Time(Time::ms(maxdelay_cand));
 }
 
+size_t ConnectorModel::get_num_connections() const
+{
+  net_.count_connections();
+  return num_connections_;
+}
+
 } // namespace nest

@@ -70,7 +70,7 @@ for ctr in [[15,15]]:
     ctr_id = topo.GetElement(a, ctr)
 
     # get all projection targets of center neuron
-    tgts = nest.GetStatus(nest.FindConnections(ctr_id), 'target')
+    tgts = [ci[1] for ci in nest.GetConnections(ctr_id)]
 
     # get positions of targets
     tpyr = pylab.array(zip(*[topo.GetPosition([n])[0] for n in tgts

@@ -43,10 +43,8 @@ else
 install-slidoc-recursive:
 	rm -rf $(DESTDIR)@PKGDOCDIR@/help/*
 	mkdir -p $(DESTDIR)@PKGDOCDIR@/help
-	
 	SLIDOCDIR=$(DESTDIR)@PKGDOCDIR@ SLIDATADIR=$(DESTDIR)@PKGDATADIR@ NESTRCFILENAME=/dev/null \
 	  $(DESTDIR)$(exec_prefix)/bin/sli --userargs="@HELPDIRS@" $(top_srcdir)/lib/sli/install-help.sli 2>&1 > @INSTALL_HELP_LOG@
-	
 	$(MAKE) SLIDOCDIR=$(DESTDIR)@PKGDOCDIR@ SLIDATADIR=$(DESTDIR)@PKGDATADIR@ NESTRCFILENAME=/dev/null \
 	  -k -C @PKGBUILDDIR@/testsuite install-slidoc 2> /dev/null
 

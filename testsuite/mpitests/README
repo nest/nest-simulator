@@ -15,7 +15,7 @@ Affected devices and models per r10038 (models, precise):
 + ginzburg_neuron (A.2, B.2)
 + pp_psc_delta (A.2, B.2)
 + pulsepacket_generator (A.2, B.2)
-+ smp_generator (A.2, B.2)
+*/+ sinusoidal_poisson_generator (A.2, B.2)
 
 For {A,B}.{1,2} classification see below. We have the following cases:
 

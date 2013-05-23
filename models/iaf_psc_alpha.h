@@ -115,8 +115,8 @@ References:
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
-
-Author:  September 1999, Diesmann, Gewaltig
+FirstVersion: September 1999
+Author:  Diesmann, Gewaltig
 SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 */
 
@@ -130,20 +130,14 @@ namespace nest
   class iaf_psc_alpha : public Archiving_Node
   {
     
-  public:        
-    
-    typedef Node base;
+  public:
     
     iaf_psc_alpha();
     iaf_psc_alpha(const iaf_psc_alpha&);
 
     /**
      * Import sets of overloaded virtual functions.
-     * We need to explicitly include sets of overloaded
-     * virtual functions into the current scope.
-     * According to the SUN C++ FAQ, this is the correct
-     * way of doing things, although all other compilers
-     * happily live without.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
 
     using Node::connect_sender;
@@ -176,9 +170,6 @@ namespace nest
 
     // ---------------------------------------------------------------- 
 
-    /** 
-     * Independent parameters of the model. 
-     */
     struct Parameters_ {
   
       /** Membrane time constant in ms. */
@@ -221,14 +212,13 @@ namespace nest
        * @returns Change in reversal potential E_L, to be passed to State_::set()
        */
       double set(const DictionaryDatum&);
+
     };
     
     // ---------------------------------------------------------------- 
 
-    /**
-     * State variables of the model.
-     */
     struct State_ {
+
       double_t y0_; //!< Constant current
       double_t y1_ex_;  
       double_t y2_ex_;
@@ -248,14 +238,13 @@ namespace nest
        * @param Change in reversal potential E_L specified by this dict
        */
       void set(const DictionaryDatum&, const Parameters_&, double);
-    };    
+
+    };
 
     // ---------------------------------------------------------------- 
 
-    /**
-     * Buffers of the model.
-     */
     struct Buffers_ {
+
       Buffers_(iaf_psc_alpha&);
       Buffers_(const Buffers_&, iaf_psc_alpha&);
 
@@ -266,17 +255,16 @@ namespace nest
 
       //! Logger for all analog data
       UniversalDataLogger<iaf_psc_alpha> logger_;
+
     };
     
     // ---------------------------------------------------------------- 
 
-    /**
-     * Internal variables of the model.
-     */
-    struct Variables_ { 
+    struct Variables_ {
+
       /** Amplitude of the synaptic current.
-	        This value is chosen such that a post-synaptic potential with
-	        weight one has an amplitude of 1 mV.
+	  This value is chosen such that a post-synaptic potential with
+	  weight one has an amplitude of 1 mV.
        */
       double_t EPSCInitialValue_;
       double_t IPSCInitialValue_;
@@ -298,6 +286,7 @@ namespace nest
 
       double_t weighted_spikes_ex_;
       double_t weighted_spikes_in_;
+
     };
 
     // Access functions for UniversalDataLogger -------------------------------
@@ -310,85 +299,84 @@ namespace nest
 
     // Data members ----------------------------------------------------------- 
     
-   /**
-    * @defgroup iaf_psc_alpha_data
-    * Instances of private data structures for the different types
-    * of data pertaining to the model.
-    * @note The order of definitions is important for speed.
-    * @{
-    */   
-   Parameters_ P_;
-   State_      S_;
-   Variables_  V_;
-   Buffers_    B_;
-   /** @} */
-
-   //! Mapping of recordables names to access functions
-   static RecordablesMap<iaf_psc_alpha> recordablesMap_;
+    /**
+     * @defgroup iaf_psc_alpha_data
+     * Instances of private data structures for the different types
+     * of data pertaining to the model.
+     * @note The order of definitions is important for speed.
+     * @{
+     */   
+    Parameters_ P_;
+    State_      S_;
+    Variables_  V_;
+    Buffers_    B_;
+    /** @} */
+    
+    //! Mapping of recordables names to access functions
+    static RecordablesMap<iaf_psc_alpha> recordablesMap_;
   };
 
-inline
-port nest::iaf_psc_alpha::check_connection(Connection& c, port receptor_type)
-{
-  SpikeEvent e;
-  e.set_sender(*this);
-  c.check_event(e);
-  return c.get_target()->connect_sender(e, receptor_type);
-}
+  inline
+  port iaf_psc_alpha::check_connection(Connection& c, port receptor_type)
+  {
+    SpikeEvent e;
+    e.set_sender(*this);
+    c.check_event(e);
+    return c.get_target()->connect_sender(e, receptor_type);
+  }
+    
+  inline
+  port iaf_psc_alpha::connect_sender(SpikeEvent&, port receptor_type)
+  {
+    if (receptor_type != 0)
+      throw UnknownReceptorType(receptor_type, get_name());
+    return 0;
+  }
+   
+  inline
+  port iaf_psc_alpha::connect_sender(CurrentEvent&, port receptor_type)
+  {
+    if (receptor_type != 0)
+      throw UnknownReceptorType(receptor_type, get_name());
+    return 0;
+  }
+   
+  inline
+  port iaf_psc_alpha::connect_sender(DataLoggingRequest& dlr, port receptor_type)
+  {
+    if (receptor_type != 0)
+      throw UnknownReceptorType(receptor_type, get_name());
+    return B_.logger_.connect_logging_device(dlr, recordablesMap_);
+  }
   
-inline
-port iaf_psc_alpha::connect_sender(SpikeEvent&, port receptor_type)
-{
-  if (receptor_type != 0)
-    throw UnknownReceptorType(receptor_type, get_name());
-  return 0;
-}
- 
-inline
-port iaf_psc_alpha::connect_sender(CurrentEvent&, port receptor_type)
-{
-  if (receptor_type != 0)
-    throw UnknownReceptorType(receptor_type, get_name());
-  return 0;
-}
- 
-inline
-port iaf_psc_alpha::connect_sender(DataLoggingRequest& dlr, 
-                                   port receptor_type)
-{
-  if (receptor_type != 0)
-    throw UnknownReceptorType(receptor_type, get_name());
-  return B_.logger_.connect_logging_device(dlr, recordablesMap_);
-}
-
-inline
-void iaf_psc_alpha::get_status(DictionaryDatum &d) const
-{
-  P_.get(d);
-  S_.get(d, P_);
-  Archiving_Node::get_status(d);
-
-  (*d)[names::recordables] = recordablesMap_.get_list();
-}
-
-inline
-void iaf_psc_alpha::set_status(const DictionaryDatum &d)
-{
-  Parameters_ ptmp = P_;  // temporary copy in case of errors
-  const double delta_EL = ptmp.set(d);                       // throws if BadProperty
-  State_      stmp = S_;  // temporary copy in case of errors
-  stmp.set(d, ptmp, delta_EL);                 // throws if BadProperty
-
-  // We now know that (ptmp, stmp) are consistent. We do not 
-  // write them back to (P_, S_) before we are also sure that 
-  // the properties to be set in the parent class are internally 
-  // consistent.
-  Archiving_Node::set_status(d);
-
-  // if we get here, temporaries contain consistent set of properties
-  P_ = ptmp;
-  S_ = stmp;
-}
+  inline
+  void iaf_psc_alpha::get_status(DictionaryDatum &d) const
+  {
+    P_.get(d);
+    S_.get(d, P_);
+    Archiving_Node::get_status(d);
+  
+    (*d)[names::recordables] = recordablesMap_.get_list();
+  }
+  
+  inline
+  void iaf_psc_alpha::set_status(const DictionaryDatum &d)
+  {
+    Parameters_ ptmp = P_;            // temporary copy in case of errors
+    const double delta_EL = ptmp.set(d);         // throws if BadProperty
+    State_      stmp = S_;            // temporary copy in case of errors
+    stmp.set(d, ptmp, delta_EL);                 // throws if BadProperty
+  
+    // We now know that (ptmp, stmp) are consistent. We do not 
+    // write them back to (P_, S_) before we are also sure that 
+    // the properties to be set in the parent class are internally 
+    // consistent.
+    Archiving_Node::set_status(d);
+  
+    // if we get here, temporaries contain consistent set of properties
+    P_ = ptmp;
+    S_ = stmp;
+  }
 
 } // namespace
 

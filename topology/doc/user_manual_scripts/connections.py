@@ -23,6 +23,7 @@
 import nest
 import nest.topology as tp
 import matplotlib.pyplot as plt
+import mpl_toolkits.mplot3d
 
 def beautify_layer(l, fig=plt.gcf(), xlabel=None, ylabel=None,
                    xlim=None, ylim=None, xticks=None, yticks=None, dx=0, dy=0):
@@ -342,7 +343,7 @@ def wd_fig(fig, loc, ldict, cdict, what, rpos=None,
     else:
         rn = tp.FindNearestElement(l, rpos)
 
-    conns = nest.FindConnections(rn)
+    conns = nest.GetConnections(rn)
     cstat = nest.GetStatus(conns)
     vals  = np.array([sd[what] for sd in cstat])
     tgts  = [sd['target'] for sd in cstat]
@@ -433,7 +434,7 @@ def pn_fig(fig, loc, ldict, cdict,
     ax = fig.add_subplot(loc)
 
     rn = nest.GetLeaves(l)[0]
-    conns = nest.FindConnections(rn)
+    conns = nest.GetConnections(rn)
     cstat = nest.GetStatus(conns)
     srcs  = [sd['source'] for sd in cstat]
     tgts  = [sd['target'] for sd in cstat]

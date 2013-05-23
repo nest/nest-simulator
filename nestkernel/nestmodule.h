@@ -30,9 +30,9 @@
 
     Author: Marc-Oliver Gewaltig (marc-oliver.gewaltig@honda-ri.de)
 
-    $Date: 2012-12-13 17:28:44 +0100 (Thu, 13 Dec 2012) $
-    Last change: $Author: gewaltig $
-    $Revision: 10077 $
+    $Date: 2013-05-23 15:41:44 +0200 (Thu, 23 May 2013) $
+    Last change: $Author: zaytsev $
+    $Revision: 10474 $
 */
 #include "slimodule.h"
 #include "slifunction.h"
@@ -291,11 +291,11 @@ namespace nest
        void execute(SLIInterpreter *) const;
      } restorenodes_afunction;
 
-     class DataConnect_i_dict_sFunction: public SLIFunction
+     class DataConnect_i_D_sFunction: public SLIFunction
      {
       public:
        void execute(SLIInterpreter *) const;
-     } dataconnect_i_dict_sfunction;
+     } dataconnect_i_D_sfunction;
 
      class DataConnect_aFunction: public SLIFunction
      {

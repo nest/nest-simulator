@@ -9,6 +9,7 @@ Updated
 - May 2010 to new FindConnections scheme in PyNEST per NEST 1.9.r8411 or later.
 - October 2010 to new Topology Python interface per NEST 1.9.r8990 or later. 
 - December 2012 to Topology3 Interface
+- January 2013 to new GetConnections scheme per NEST 2.2 or later.
 
 All scripts should be run using ipython -pylab.
 

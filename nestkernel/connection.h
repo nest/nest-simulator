@@ -138,9 +138,7 @@ class Connection
    * triggers an update of a synaptic weight
    * this function is needed for neuromodulated synaptic plasticity 
    */
-  void trigger_update_weight(const std::vector<spikecounter> &,const CommonSynapseProperties &){};
-  
-  
+  void trigger_update_weight(const std::vector<spikecounter>&, double_t, const CommonSynapseProperties&);
 
  protected:
 
@@ -213,6 +211,13 @@ inline
 void Connection::check_event(DoubleDataEvent&)
 {
   throw UnsupportedEvent();
+}
+
+inline
+void Connection::trigger_update_weight(const std::vector<spikecounter>&, double_t, const CommonSynapseProperties&)
+{
+  throw IllegalConnection("Connection::trigger_update_weight: "
+			  "Connection does not support time-driven update.");
 }
 
 template<typename PropT>

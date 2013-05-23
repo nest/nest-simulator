@@ -66,7 +66,7 @@ Author: Hans Ekkehard Plesser
     NormalRandomDev();          // threaded
 
     double operator()(void);
-    double operator()(RngPtr);  // threaded
+    double operator()(RngPtr) const;  // threaded
 
     //! set distribution parameters from SLI dict
     void set_status(const DictionaryDatum&) {}

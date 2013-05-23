@@ -64,6 +64,12 @@ namespace nest
     const Name ex_spikes("ex_spikes");
     const Name error("error");
 
+    // Related to ArchivingNode
+    const Name tau_minus("tau_minus");  
+    const Name tau_minus_triplet("tau_minus_triplet");
+    const Name archiver_length("archiver_length");
+    const Name clear("clear");
+
     // Specific to precise timing neurons
     const Name Interpol_Order("Interpol_Order");
     const Name refractory_input("refractory_input");
@@ -220,6 +226,8 @@ namespace nest
     const Name stop("stop");
     const Name recordables("recordables");
 
+    const Name individual_spike_trains("individual_spike_trains");
+
     const Name withtime("withtime");
     const Name withgid("withgid");
     const Name withpath("withpath");
@@ -276,6 +284,12 @@ namespace nest
     const Name synapse_model("synapse_model");
     const Name synapse_modelid("synapse_modelid");
 
+    // Specific to sinusoidally modulated generators
+    const Name dc("dc");
+    const Name ac("ac");
+    const Name freq("freq");
+    const Name order("order");
+ 
     // Specific to ppd_sup_generator and gamma_sup_generator
     const Name amplitude("amplitude");
     const Name phase("phase");

@@ -42,7 +42,7 @@
  * ---------------------------------------------------------------- */
 
 nest::RecordingDevice::Parameters_::Parameters_(const std::string& file_ext,
-						bool withtime, bool withgid)
+						bool withtime, bool withgid, bool withweight)
   : to_file_(false),
     to_screen_(false),
     to_memory_(true),
@@ -51,7 +51,7 @@ nest::RecordingDevice::Parameters_::Parameters_(const std::string& file_ext,
     precise_times_(false),
     withgid_(withgid),
     withtime_(withtime),
-    withweight_(false),
+    withweight_(withweight),
     precision_(3),
     scientific_(false),
     binary_(false),
@@ -293,11 +293,11 @@ void nest::RecordingDevice::State_::set(const DictionaryDatum& d)
   * ---------------------------------------------------------------- */
 
 nest::RecordingDevice::RecordingDevice(const Node& n, Mode mode, const std::string& file_ext,
-				       bool withtime, bool withgid)
+				       bool withtime, bool withgid, bool withweight)
    : Device(),
      node_(n),
      mode_(mode),
-     P_(file_ext, withtime, withgid),
+     P_(file_ext, withtime, withgid, withweight),
      S_()
  {}
 
@@ -528,7 +528,7 @@ void nest::RecordingDevice::record_event(const Event& event, bool endrecord)
   {
     print_id_(B_.fs_, sender);
     print_time_(B_.fs_, stamp, offset);
-    print_weight_(std::cout, weight);
+    print_weight_(B_.fs_, weight);
     if ( endrecord )
     {
       B_.fs_ << '\n';

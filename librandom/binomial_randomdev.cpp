@@ -40,7 +40,7 @@ librandom::BinomialRandomDev::BinomialRandomDev(RngPtr r_s,
 						unsigned int n_s)
  : RandomDev(r_s), poisson_dev_(r_s), exp_dev_(r_s), p_(p_s), n_(n_s)
 {
-  check_params_();
+  init_();
   PrecomputeTable(n_s);
 }
 
@@ -48,7 +48,7 @@ librandom::BinomialRandomDev::BinomialRandomDev(double p_s,
 						unsigned int n_s)
  : RandomDev(), poisson_dev_(), exp_dev_(), p_(p_s), n_(n_s)
 {
-  check_params_();
+  init_();
   PrecomputeTable(n_s);
 }
 
@@ -74,61 +74,34 @@ void librandom::BinomialRandomDev::PrecomputeTable(size_t nmax)
 }
 
 
-unsigned long librandom::BinomialRandomDev::uldev(RngPtr rng)
+unsigned long librandom::BinomialRandomDev::uldev(RngPtr rng) const
 {
     assert(rng.valid());
     
     // BP algorithm (steps numbered as in Fishman 1979)
-    unsigned long  X_;
-    double q_, phi_, theta_, mu_, V_;
-    long  Y_, m_;
-
-    // 1, 2
-    if (p_>0.5) 
-        {
-        q_ = 1.-p_;
-        }
-    else
-        {
-        q_ = p_;
-        }
-    
-    // 3,4
-    long n1mq = static_cast<long> ( static_cast<double>(n_) * (1.-q_)); 
-    double n1mq_dbl = static_cast<double>(n1mq);
-    if ( static_cast<double>(n_)*(1.-q_) - n1mq_dbl  > q_)
-        {
-        mu_ = q_* (n1mq_dbl + 1.) / (1.-q_);
-        }
-    else
-        {
-        mu_ = static_cast<double>(n_) - n1mq_dbl;
-        }
-    
-    //5, 6, 7
-    theta_ = (1./q_ - 1.) * mu_;
-    phi_ = std::log(theta_);
-    m_ = static_cast<long> (theta_);
+    // Steps 1-7 are in init_()
+    unsigned long X;
+    double V;
+    long Y;
     
     bool not_finished = 1;
-    poisson_dev_.set_lambda( mu_ );
     while (not_finished)
         {
         //8,9
-        X_ = n_+1;
-        while( X_ > n_)
+        X = n_+1;
+        while( X > n_)
             {
-            X_ = poisson_dev_.uldev(rng);
+            X = poisson_dev_.uldev(rng);
             }
         
         //10
-        V_ = exp_dev_(rng);
+        V = exp_dev_(rng);
         
         //11
-        Y_ = n_ - X_;
+        Y = n_ - X;
         
         //12
-        if ( V_ < static_cast<double>(m_-Y_)*phi_ - f_[m_+1] + f_[Y_+1] )
+        if ( V < static_cast<double>(m_-Y)*phi_ - f_[m_+1] + f_[Y+1] )
             {
             not_finished = 1;
             }
@@ -139,11 +112,11 @@ unsigned long librandom::BinomialRandomDev::uldev(RngPtr rng)
         }
     if (p_ <= 0.5)
         {
-        return X_;
+        return X;
         }
     else
         {
-        return static_cast<unsigned long>(Y_);
+        return static_cast<unsigned long>(Y);
         }
 }
 
@@ -152,7 +125,7 @@ void librandom::BinomialRandomDev::set_p_n(double p_s, unsigned int n_s)
 {
   p_ = p_s;
   n_ = n_s;
-  check_params_();
+  init_();
   if (n_s > n_tablemax_)
     {
     PrecomputeTable(n_s);
@@ -162,22 +135,53 @@ void librandom::BinomialRandomDev::set_p_n(double p_s, unsigned int n_s)
 void librandom::BinomialRandomDev::set_p(double p_s)
 {
   p_ = p_s;
-  check_params_();
+  init_();
 }
 
 void librandom::BinomialRandomDev::set_n(unsigned int n_s)
 {
   n_ = n_s;
-  check_params_();
+  init_();
   if (n_s > n_tablemax_)
     {
     PrecomputeTable(n_s);
     }
 } 
 
-void librandom::BinomialRandomDev::check_params_()
+void librandom::BinomialRandomDev::init_()
 {
   assert( 0.0 <= p_ && p_ <= 1.0 );
+
+  double q, mu;
+
+  // 1, 2
+  if (p_>0.5) 
+  {
+    q = 1.-p_;
+  }
+  else
+  {
+    q = p_;
+  }
+    
+  // 3,4
+  long n1mq = static_cast<long> ( static_cast<double>(n_) * (1.-q)); 
+  double n1mq_dbl = static_cast<double>(n1mq);
+  if ( static_cast<double>(n_)*(1.-q) - n1mq_dbl  > q)
+  {
+    mu = q* (n1mq_dbl + 1.) / (1.-q);
+  }
+  else
+  {
+    mu = static_cast<double>(n_) - n1mq_dbl;
+  }
+    
+  //5, 6, 7
+  double theta = (1./q - 1.) * mu;
+  phi_ = std::log(theta);
+  m_ = static_cast<long> (theta);
+  poisson_dev_.set_lambda( mu );
+
 }
 
 void librandom::BinomialRandomDev::set_status(const DictionaryDatum &d)

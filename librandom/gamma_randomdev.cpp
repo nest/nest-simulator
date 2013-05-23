@@ -38,7 +38,7 @@ librandom::GammaRandomDev::GammaRandomDev(double a_in)
   set_order(a);
 }
 
-double librandom::GammaRandomDev::operator()(RngPtr r)
+double librandom::GammaRandomDev::operator()(RngPtr r) const
 {
   assert(r.valid());  // make sure we have RNG
   

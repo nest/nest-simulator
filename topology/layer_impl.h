@@ -216,7 +216,7 @@ namespace nest {
   }
 
   template <int D>
-  std::vector<std::pair<Position<D>,index> > Layer<D>::get_global_positions_vector(Selector filter, const AbstractMask& mask, const Position<D>& anchor, bool allow_oversized)
+  std::vector<std::pair<Position<D>,index> > Layer<D>::get_global_positions_vector(Selector filter, const MaskDatum& mask, const Position<D>& anchor, bool allow_oversized)
   {
     MaskedLayer<D> masked_layer(*this,filter,mask,true,allow_oversized);
     std::vector<std::pair<Position<D>,index> > positions;
@@ -229,7 +229,7 @@ namespace nest {
   }
 
   template <int D>
-  std::vector<index> Layer<D>::get_global_nodes(const AbstractMask &mask, const std::vector<double_t> &anchor, bool allow_oversized)
+  std::vector<index> Layer<D>::get_global_nodes(const MaskDatum &mask, const std::vector<double_t> &anchor, bool allow_oversized)
   {
     MaskedLayer<D> masked_layer(*this,Selector(),mask,true,allow_oversized);
     std::vector<index> nodes;
@@ -303,8 +303,16 @@ namespace nest {
   template<int D>
   void MaskedLayer<D>::check_mask_(Layer<D>& layer, bool allow_oversized)
   {
-    const GridMask<D>* grid_mask = dynamic_cast<const GridMask<D>*>(mask_);
-    if (grid_mask) {
+    if (not mask_.valid()) {
+      mask_ = new AllMask<D>();
+    }
+
+    try // Try to cast to GridMask
+    {
+      const GridMask<D>& grid_mask = dynamic_cast<const GridMask<D>&>(*mask_);
+
+      // If the above cast succeeds, then this is a grid mask
+
       GridLayer<D>* grid_layer = dynamic_cast<GridLayer<D>*>(&layer);
       if (grid_layer==0) {
         throw BadProperty("Grid masks can only be used with grid layers.");
@@ -316,37 +324,46 @@ namespace nest {
       if (not allow_oversized) {
         bool oversize = false;
         for(int i=0;i<D;++i)
-          oversize |= layer.get_periodic_mask()[i] and (grid_mask->get_lower_right()[i]-grid_mask->get_upper_left()[i])>(int)dims[i];
+          oversize |= layer.get_periodic_mask()[i] and (grid_mask.get_lower_right()[i]-grid_mask.get_upper_left()[i])>(int)dims[i];
 
         if (oversize)
           throw BadProperty("Mask size must not exceed layer size; set allow_oversized_mask to override.");
       }
 
-      Position<D> lower_left = ext/dims * grid_mask->get_upper_left() - ext/dims * 0.5;
-      Position<D> upper_right = ext/dims * grid_mask->get_lower_right() - ext/dims * 0.5;
+      Position<D> lower_left = ext/dims * grid_mask.get_upper_left() - ext/dims * 0.5;
+      Position<D> upper_right = ext/dims * grid_mask.get_lower_right() - ext/dims * 0.5;
 
       double_t y = lower_left[1];
       lower_left[1] = -upper_right[1];
       upper_right[1] = -y;      
 
-      new_mask_ = new BoxMask<D>(lower_left, upper_right);
+      mask_ = new BoxMask<D>(lower_left, upper_right);
 
-      mask_ = new_mask_;
-    } else {
-      const Mask<D>* mask = dynamic_cast<const Mask<D>*>(mask_);
-      if (mask==0) {
+    }
+    catch (std::bad_cast&)
+    {
+
+      // Not a grid mask
+
+      try // Try to cast to correct dimension Mask
+      {
+        const Mask<D>& mask = dynamic_cast<const Mask<D>&>(*mask_);
+
+        if (not allow_oversized) {
+          const Box<D> bb = mask.get_bbox();
+          bool oversize = false;
+          for(int i=0;i<D;++i)
+            oversize |= layer.get_periodic_mask()[i] and (bb.upper_right[i]-bb.lower_left[i])>layer.get_extent()[i];
+
+          if (oversize)
+            throw BadProperty("Mask size must not exceed layer size; set allow_oversized_mask to override.");
+        }
+      }
+      catch (std::bad_cast&)
+      {
         throw BadProperty("Mask is incompatible with layer.");
       }
 
-      if (not allow_oversized) {
-        const Box<D> bb = mask->get_bbox();
-        bool oversize = false;
-        for(int i=0;i<D;++i)
-          oversize |= layer.get_periodic_mask()[i] and (bb.upper_right[i]-bb.lower_left[i])>layer.get_extent()[i];
-
-        if (oversize)
-          throw BadProperty("Mask size must not exceed layer size; set allow_oversized_mask to override.");
-      }
     }
   }
 

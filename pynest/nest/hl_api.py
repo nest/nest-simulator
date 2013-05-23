@@ -95,7 +95,7 @@ def is_sequence_of_nonneg_ints(seq):
     Return True if the given object is a list or tuple of ints, False else
     """
 
-    return is_sequencetype(seq) and all([type(n) == type(0) and n >= 0 for n in seq])
+    return is_sequencetype(seq) and all([isinstance(n,int) and n >= 0 for n in seq])
 
 
 def raise_if_not_list_of_gids(seq, argname):
@@ -872,7 +872,7 @@ def DataConnect(pre, params=None, model=None):
     if params:
 	if not model:
 		model="static_synapse"
-	cmd='(%s) DataConnect_i_dict_s ' % model
+	cmd='(%s) DataConnect_i_D_s ' % model
     
 	for s,p in zip(pre,params):
 		sps(s)
@@ -882,10 +882,12 @@ def DataConnect(pre, params=None, model=None):
 	    # Call the variant where all connections are
 	    # given explicitly
             dictmiss=GetKernelStatus('dict_miss_is_error')
-            SetKernelStatus('dict_miss_is_error', False)
+            # We disable dictionary checking now because most models
+            # cannot re-use their own status dictionary
+            SetKernelStatus({'dict_miss_is_error': False})
 	    sps(pre)
 	    sr('DataConnect_a')
-            SetKernelStatus('dict_miss_is_error', dictmiss)
+            SetKernelStatus({'dict_miss_is_error': dictmiss})
             
     
 def RandomDivergentConnect(pre, post, n, weight=None, delay=None, model="static_synapse", options=None):

@@ -132,11 +132,11 @@ Author: Hans Ekkehard Plesser
     using RandomDev::uldev;
 
     unsigned long uldev(void);     //!< draw integer
-    unsigned long uldev(RngPtr);   //!< draw integer, threaded
+    unsigned long uldev(RngPtr) const;   //!< draw integer, threaded
     bool has_uldev() const { return true; }
 
     double operator()(void);       //!< return as double
-    double operator()(RngPtr);     //!< return as double, threaded
+    double operator()(RngPtr) const;     //!< return as double, threaded
 
   private:
     void init_();   //!< re-compute internal parameters
@@ -168,7 +168,7 @@ Author: Hans Ekkehard Plesser
 
     //! Procedure F from Ahrens & Dieter
     void proc_f_(const unsigned k, double &px, double &py, 
-		 double &fx, double &fy);
+		 double &fx, double &fy) const;
 
   };
 
@@ -182,7 +182,7 @@ double librandom::PoissonRandomDev::operator()(void)
 }
 
 inline
-double librandom::PoissonRandomDev::operator()(RngPtr rthrd)
+double librandom::PoissonRandomDev::operator()(RngPtr rthrd) const
 { 
   return static_cast<double>(uldev(rthrd)); 
 }

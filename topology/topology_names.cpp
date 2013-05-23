@@ -83,6 +83,7 @@ namespace nest
     const Name grid("grid");
     const Name grid3d("grid3d");
     const Name cutoff("cutoff");
+    const Name mu("mu");
   }
 }
 

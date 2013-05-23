@@ -33,12 +33,12 @@
 M_DEBUG (nest-init.sli) (Initializing SLI support for NEST Kernel.) message
 % see nestmodule.cpp
 
-/nest-init /SLI ($Revision: 10101 $) provide-component
+/nest-init /SLI ($Revision: 10474 $) provide-component
 /nest-init /C++ (1.157) require-component
 
 statusdict begin
 /kernellibrevision
-  ($Revision: 10101 $) % SVN/CVS revision number (unique)
+  ($Revision: 10474 $) % SVN/CVS revision number (unique)
 def
 end
 
@@ -299,7 +299,28 @@ def
 
    SeeAlso: DataConnect, SetSynapseStatus, GetSynapseStatus, synapsedict
 */
-/GetConnections [/dictionarytype] { GetConnections_D Flatten } def
+/GetConnections [/dictionarytype] 
+{ 
+  dup /pdict Set
+  [ /source /target ]
+  {
+    /key Set
+    pdict key known 
+    { 
+      pdict key get 
+      ArrayQ exch ; not  
+      {
+	key cvs ( argument must be list of GIDs) join M_ERROR message
+	/GetConnections /ArgumentError raiseerror
+      }
+      if
+    } if    
+  } forall
+  pstack
+  GetConnections_D 
+  Flatten 
+} def
+
 
 /* BeginDocumentation
    Name: GetSynapseStatus - Return synapse status information
@@ -351,7 +372,7 @@ def
      Name: DataConnect - Connect many neurons from data.
 
      Synopsis: 
-     1.   source dict model  DataConnect_i_dict_a -> -
+     1.   source dict model  DataConnect_i_D_a -> -
 
      source - GID of the source neuron
      dict   - dictionary with connection parameters
@@ -396,12 +417,12 @@ def
 
      Author: Marc-Oliver Gewaltig
      FirstVersion: August 2011
-     SeeAlso: DataConnect_i_dict_s, DataConnect_a, Connect, DivergentConnect
+     SeeAlso: DataConnect_i_D_s, DataConnect_a, Connect, DivergentConnect
   */ 
 
 /DataConnect trie
-  [/integertype /dictionarytype /literaltype] /DataConnect_i_dict_s load addtotrie
-  [/integertype /dictionarytype /stringtype] /DataConnect_i_dict_s load addtotrie
+  [/integertype /dictionarytype /literaltype] /DataConnect_i_D_s load addtotrie
+  [/integertype /dictionarytype /stringtype] /DataConnect_i_D_s load addtotrie
   [/arraytype] /DataConnect_a load addtotrie 
 def
 

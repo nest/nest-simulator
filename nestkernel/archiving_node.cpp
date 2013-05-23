@@ -175,22 +175,31 @@ namespace nest {
   void nest::Archiving_Node::get_status(DictionaryDatum & d) const
   {
     def<double>(d, names::t_spike, get_spiketime_ms());
-    def<double>(d, "tau_minus", tau_minus_);
-    def<double>(d, "tau_minus_triplet", tau_minus_triplet_);
+    def<double>(d, names::tau_minus, tau_minus_);
+    def<double>(d, names::tau_minus_triplet, tau_minus_triplet_);
 #ifdef DEBUG_ARCHIVER
-    def<int>(d, "archiver_length", history_.size());
+    def<int>(d, names::archiver_length, history_.size());
 #endif
   }
 
   void nest::Archiving_Node::set_status(const DictionaryDatum & d)
   {
-    updateValue<double_t>(d, "tau_minus", tau_minus_);
-    updateValue<double_t>(d, "tau_minus_triplet", tau_minus_triplet_);
+    // We need to preserve values in case invalid values are set
+    double_t new_tau_minus = tau_minus_;
+    double_t new_tau_minus_triplet = tau_minus_triplet_;
+    updateValue<double_t>(d, names::tau_minus, new_tau_minus);
+    updateValue<double_t>(d, names::tau_minus_triplet, new_tau_minus_triplet);
+
+    if ( new_tau_minus <= 0 || new_tau_minus_triplet <= 0 )
+      throw BadProperty("All time constants must be strictly positive.");
+
+    tau_minus_ = new_tau_minus;
+    tau_minus_triplet_ = new_tau_minus_triplet;
 
     // check, if to clear spike history and K_minus
     bool clear = false;
-    updateValue<bool>(d, "clear", clear);
-    if (clear)
+    updateValue<bool>(d, names::clear, clear);
+    if ( clear )
 	clear_history();
   }
 

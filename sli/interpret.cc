@@ -49,12 +49,16 @@
 #include "tokenutils.h"
 #include "dictutils.h"
 #include "triedatum.h"
+#include "config.h"
 
 #include "compose.hpp"
 
 #include <sstream>
 #include <fstream>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 using nest::Mutex;
 
@@ -804,47 +808,41 @@ void SLIInterpreter::message(int level, const char from[],
 			     const char text[],
 			     const char errorname[]) const
 {
+  // Only one thread may write at a time.
+#ifdef _OPENMP
+#pragma omp critical (message)
+  {
+#else
+#ifdef HAVE_PTHREADS
   static Mutex barrier;
-  
-  barrier.lock(); // Only one thread may write at a time.
-
+  barrier.lock();
+#endif
+#endif
   if(level >= verbositylevel)
-    {
-      if (level >= M_FATAL)
-	{   
-	  // Take care that std::cerr and std::cout don't 
-	  // send output to the same source. This would 
-	  // lead to duplication of the message.
-	  message(std::cout, M_FATAL_NAME, from, text, errorname);
-	}
-      else if (level >= M_ERROR)
-	{         
-	  message(std::cout, M_ERROR_NAME, from, text, errorname);
+  {
+    if (level >= M_FATAL)
+      message(std::cout, M_FATAL_NAME, from, text, errorname);
+    else if (level >= M_ERROR)
+      message(std::cout, M_ERROR_NAME, from, text, errorname);  
+    else if (level >= M_WARNING)
+      message(std::cout, M_WARNING_NAME, from, text, errorname);
+    else if (level >= M_INFO)
+      message(std::cout, M_INFO_NAME, from, text, errorname);
+    else if (level >= M_STATUS)
+      message(std::cout, M_STATUS_NAME, from, text, errorname);
+    else if (level >= M_DEBUG)
+      message(std::cout, M_DEBUG_NAME, from, text, errorname);
+    else
+      message(std::cout, M_ALL_NAME, from, text, errorname);
+  }
 
-	}
-      else if (level >= M_WARNING)
-	{ 
-	  message(std::cout, M_WARNING_NAME, from, text, errorname);
-	}
-      else if (level >= M_INFO)
-	{
-	  message(std::cout, M_INFO_NAME, from, text, errorname);
-	}
-      else if (level >= M_STATUS)
-	{  
-	  message(std::cout, M_STATUS_NAME, from, text, errorname);
-	}
-      else if (level >= M_DEBUG)
-	{   
-	  message(std::cout, M_DEBUG_NAME, from, text, errorname);
-	}
-      else
-	{
-	  message(std::cout, M_ALL_NAME, from, text, errorname);
-	}
-    }
-  barrier.unlock(); // Now the next thread my write.
-
+#ifdef _OPENMP
+  }
+#else
+#ifdef HAVE_PTHREADS
+  barrier.unlock();
+#endif
+#endif
 }
 
 void SLIInterpreter::message(std::ostream& out, const char levelname[], 

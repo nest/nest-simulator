@@ -1316,7 +1316,7 @@ void Network::convergent_connect(const TokenArray source_ids, index target_id, c
  * function, which takes a vector<Node*> for sources and relies
  * on the fact that target is guaranteed to be on this thread.
  */
-size_t Network::convergent_connect(const std::vector<index> & source_ids, const std::vector<Node*> & sources, index target_id, const TokenArray & weights, const TokenArray & delays, index syn)
+void Network::convergent_connect(const std::vector<index> & source_ids, const std::vector<Node*> & sources, index target_id, const TokenArray & weights, const TokenArray & delays, index syn)
 {
   bool complete_wd_lists = (sources.size() == weights.size() && weights.size() != 0 && weights.size() == delays.size());
   bool short_wd_lists = (sources.size() != weights.size() && weights.size() == 1 && delays.size() == 1);
@@ -1334,8 +1334,6 @@ size_t Network::convergent_connect(const std::vector<index> & source_ids, const 
             "If given as lists, their size must be 1 or the same size as sources.");
     throw DimensionMismatch();
   }
-
-  size_t num_connections = 0;
 
   Node* target = get_node(target_id);
   for(index i = 0; i < sources.size(); ++i)
@@ -1358,13 +1356,11 @@ size_t Network::convergent_connect(const std::vector<index> & source_ids, const 
     try
     {
       if (complete_wd_lists)
-          connect(*source, *target, source_ids[i], target_thread, weights.get(i), delays.get(i), syn, false);
+          connect(*source, *target, source_ids[i], target_thread, weights.get(i), delays.get(i), syn);
       else if (short_wd_lists)
-          connect(*source, *target, source_ids[i], target_thread, weights.get(0), delays.get(0), syn, false);
+          connect(*source, *target, source_ids[i], target_thread, weights.get(0), delays.get(0), syn);
       else 
-          connect(*source, *target, source_ids[i], target_thread, syn, false);
-
-      num_connections++;      
+          connect(*source, *target, source_ids[i], target_thread, syn);
     }
     catch (IllegalConnection& e)
     {
@@ -1388,8 +1384,6 @@ size_t Network::convergent_connect(const std::vector<index> & source_ids, const 
       continue;
     }
   }
-
-  return num_connections;
 }
 
 
@@ -1459,7 +1453,7 @@ void Network::random_convergent_connect(TokenArray source_ids, TokenArray target
   // It only makes sense to call this function if we have openmp
   message(SLIInterpreter::M_ERROR, "ConvergentConnect", "This function can only be called using OpenMP threading.");
   throw KernelException();
-#endif
+#else
 
   // Collect all nodes on this process and convert the TokenArray with
   // the sources to a std::vector<Node*>. This is needed, because
@@ -1487,21 +1481,12 @@ void Network::random_convergent_connect(TokenArray source_ids, TokenArray target
 
   bool abort = false;
 
-  // We set up vector of connection counters with one entry per
-  // thread. The entries are only written at the end of the
-  // loops. Intermediate values are maintained in threadlocal counters
-  // by each thread during the loops. This should minimize cache
-  // thrashing and at the same time guarantee thread-safe counting.
-  std::vector<size_t> conn_count(get_num_threads(), 0);
-
 #pragma omp parallel
   {
     int nrn_counter = 0;
     int tid = 0;
 
-#ifdef _OPENMP
     tid = omp_get_thread_num();
-#endif
 
     librandom::RngPtr rng = get_rng(tid);
 
@@ -1569,7 +1554,7 @@ void Network::random_convergent_connect(TokenArray source_ids, TokenArray target
         chosen_source_ids[j] = vsource_ids[s_id];
       }
 
-      conn_count[tid] += convergent_connect(chosen_source_ids, chosen_sources, target_id, ws, ds, syn);
+      convergent_connect(chosen_source_ids, chosen_sources, target_id, ws, ds, syn);
 
     } // of for all targets
   } // of omp parallel
@@ -1583,15 +1568,9 @@ void Network::random_convergent_connect(TokenArray source_ids, TokenArray target
     throw DimensionMismatch();
   }
 
-  // We calculate the total number of connections established and
-  // increase the connection count of the corresponding prototype in
-  // the ConnectionManager.
-  size_t total_num_conn = 0;
-  for (thread t = 0; t < get_num_threads(); ++t)
-    total_num_conn += conn_count[t];
-  connection_manager_.increment_num_connections(syn, total_num_conn);  
-}
+#endif
 
+}
 
 void Network::message(int level, const char from[], const char text[])
 {

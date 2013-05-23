@@ -1,11 +1,5 @@
 AC_PREREQ(2.52)
-
-AC_INIT(mymodule, 1.0, nest_user@nest-initiative.org)
-
-# These variables are exported to include/config.h
-MYMODULE_MAJOR=1
-MYMODULE_MINOR=0
-MYMODULE_PATCHLEVEL=0
+AC_INIT([mymodule], [1.0], [nest_user@nest-initiative.org])
 
 # Exporting source and build directories requires full path names.
 # Thus we have to expand.
@@ -22,7 +16,7 @@ PKGBUILDDIR=`pwd`
 # moritz, 06-26-06
 AC_CONFIG_AUX_DIR(.)
 
-AM_INIT_AUTOMAKE(nest, $MYMODULE_VERSION)
+AM_INIT_AUTOMAKE([tar-ustar])
 
 # obtain host system type; HEP 2004-12-20
 AC_CANONICAL_HOST
@@ -156,7 +150,7 @@ AC_SUBST(MAKE_FLAGS)
 AC_SUBST(INCLTDL)
 AC_SUBST(LIBLTDL)
 
-AM_CONFIG_HEADER(mymodule_config.h:mymodule_config.h.in)
+AC_CONFIG_HEADER(mymodule_config.h:mymodule_config.h.in)
 AC_CONFIG_FILES(Makefile)
 
 # -----------------------------------------------

@@ -60,7 +60,7 @@ Author: Hans Ekkehard Plesser
     ExpRandomDev() : RandomDev() {} ;                // threaded
 
     double operator()(void);           // non-threaded
-    double operator()(RngPtr rthrd);   // threaded
+    double operator()(RngPtr rthrd) const;   // threaded
 
     //! set distribution parameters from SLI dict
     void set_status(const DictionaryDatum&) {} 
@@ -77,7 +77,7 @@ Author: Hans Ekkehard Plesser
   }
 
   inline
-  double ExpRandomDev::operator()(RngPtr rthrd)
+  double ExpRandomDev::operator()(RngPtr rthrd) const
   {
     return -std::log(rthrd->drandpos());
   }

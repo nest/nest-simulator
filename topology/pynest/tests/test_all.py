@@ -33,6 +33,7 @@ import unittest
 from nest.topology.tests import test_basics
 from nest.topology.tests import test_dumping
 from nest.topology.tests import test_plotting
+from nest.topology.tests import test_random_parameter
 
 def suite():
 
@@ -41,7 +42,8 @@ def suite():
     suite.addTest(test_basics.suite())
     suite.addTest(test_dumping.suite())
     suite.addTest(test_plotting.suite())
-    
+    suite.addTest(test_random_parameter.suite())
+
     return suite
 
 

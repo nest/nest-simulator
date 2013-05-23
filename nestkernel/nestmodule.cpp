@@ -101,7 +101,7 @@ namespace nest
 
   const std::string NestModule::commandstring(void) const
   {
-    return std::string("/nest-init /C++ ($Revision: 10101 $) provide-component "
+    return std::string("/nest-init /C++ ($Revision: 10474 $) provide-component "
                        "/nest-init /SLI (1.21) require-component");
   }
 
@@ -944,10 +944,10 @@ namespace nest
 
 
    /* BeginDocumentation
-     Name: DataConnect_i_dict_s - Connect many neurons from data.
+     Name: DataConnect_i_D_s - Connect many neurons from data.
 
      Synopsis: 
-     gid dict model  DataConnect -> -
+     gid dict model  DataConnect_i_D_s -> -
 
      gid    - GID of the source neuron
      dict   - dictionary with connection parameters
@@ -970,7 +970,7 @@ namespace nest
      SeeAlso: DataConnect_a, DataConnect
      Author: Marc-Oliver Gewaltig
    */
-  void NestModule::DataConnect_i_dict_sFunction::execute(SLIInterpreter *i) const
+  void NestModule::DataConnect_i_D_sFunction::execute(SLIInterpreter *i) const
   {
     i->assert_stack_load(3);
      
@@ -1026,7 +1026,7 @@ namespace nest
 
      Author: Marc-Oliver Gewaltig
      FirstVersion: May 2012
-     SeeAlso: DataConnect_i_dict_s, Connect
+     SeeAlso: DataConnect_i_D_s, Connect
   */
   void NestModule::DataConnect_aFunction::execute(SLIInterpreter *i) const
   {
@@ -1753,7 +1753,7 @@ namespace nest
     i->createcommand("Connect_i_i_d_d_l", &connect_i_i_d_d_lfunction);
     i->createcommand("Connect_i_i_d_d_i", &connect_i_i_d_d_ifunction);
     i->createcommand("Connect_i_i_D_l", &connect_i_i_D_lfunction);
-    i->createcommand("DataConnect_i_dict_s", &dataconnect_i_dict_sfunction);
+    i->createcommand("DataConnect_i_D_s", &dataconnect_i_D_sfunction);
     i->createcommand("DataConnect_a", &dataconnect_afunction);
 
     i->createcommand("DivergentConnect_i_ia_a_a_l", &divergentconnect_i_ia_a_a_lfunction);
@@ -1796,7 +1796,7 @@ namespace nest
     Token statusd = i->baselookup(Name("statusdict"));
     DictionaryDatum dd=getValue<DictionaryDatum>(statusd);
     dd->insert(Name("kernelname"), new StringDatum("NEST"));
-    dd->insert(Name("kernelrevision"), new StringDatum("$Revision: 10101 $"));
+    dd->insert(Name("kernelrevision"), new StringDatum("$Revision: 10474 $"));
     dd->insert(Name("is_mpi"), new BoolDatum(Communicator::get_initialized()));
   }
 

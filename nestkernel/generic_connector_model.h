@@ -196,8 +196,8 @@ void GenericConnectorModelBase< ConnectionT, CommonPropertiesT, ConnectorT >::ge
   (*d)["min_delay"] = get_min_delay().get_ms();
   (*d)["max_delay"] = get_max_delay().get_ms();
   (*d)[names::receptor_type] = receptor_type_;
-  (*d)["num_connections"] = num_connections_;
-  (*d)["num_connectors"] = num_connectors_;
+  (*d)["num_connections"] = get_num_connections();
+  (*d)["num_connectors"] = get_num_connectors();
   (*d)["synapsemodel"] = LiteralDatum(get_name());
 }
 

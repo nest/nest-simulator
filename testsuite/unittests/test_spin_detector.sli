@@ -1,0 +1,85 @@
+/*
+ *  test_spindetector.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /* BeginDocumentation
+    Name: testsuite::test_spindetector - test decoding mechanism of binary events by spin_detector
+
+    Synopsis: (test_binary) run -> test decoding mechanism of binary events by spin_detector
+
+    Description:
+    Test, whether the communication mechanism for binary neurons
+    works and whether the spin detector correctly decodes binary transitions.
+    
+    Author:  March 2013, Helias    
+*/
+
+(unittest) run
+/unittest using
+
+
+/run_test
+{
+
+    0.1 /h Set
+
+    ResetKernel
+
+    0 <<
+	/local_num_threads 1 
+	/resolution h
+    >> SetStatus
+    
+    % check, if double spikes are correctly interpreted as up transition
+    % and single spikes are interpreted as down transition
+    
+    /sp /spin_detector Create def
+
+    /sg /spike_generator Create def
+
+        
+    sg << /spike_times [10. 10. 15.] >> SetStatus
+
+    sg sp 1. 1. Connect	
+
+    20. Simulate
+
+    % check if right state is decoded
+    sp /events get /weights get /w Set
+    w 0 get 1.0 eq assert_or_die
+    w 1 get 0.0 eq assert_or_die
+    
+    
+    sp /events get /times get /times Set
+    times cva
+    [ 10. 15.] eq
+    assert_or_die
+    
+} def
+
+run_test
+
+
+
+
+
+
+

@@ -1,0 +1,160 @@
+/*
+ *  test_iaf_psc_exp_multisynapse.sli
+ *
+ *  This file is part of NEST
+ *
+ *  Copyright (C) 2009 by
+ *  The NEST Initiative
+ *
+ *  See the file AUTHORS for details.
+ *
+ *  Permission is granted to compile and modify
+ *  this file for non-commercial use.
+ *  See the file LICENSE for details.
+ *
+ */
+
+/* BeginDocumentation
+   Name: testsuite::test_iaf_psc_exp_multisynapse - sli script for the multisynapse model
+
+   Synopsis: (test_iaf_psc_exp_multisynapse) run
+
+   Description:
+   This test creates a multisynapse neuron and first checks if time constants
+   can be set correctly. 
+   Afterwards a neuron with four synaptic time constants with different weights and delays 
+   is simulated and the resulting membrane potential values after the income of one spike  
+   are checked against analytically obtained values.
+   The textual output of the voltmeter documented in this file can be regenerated 
+   by setting adding /to_screen true to the SetStatus call of vm below.
+  
+   SeeAlso: test_iaf_psc_alpha_multisynapse, iaf_psc_exp_multisynapse
+
+   FirstVersion: April 2013
+   Author: Hannah Bos
+ */
+
+
+(unittest) run
+/unittest using
+
+0.1 /h Set
+
+ResetKernel
+
+0 << 
+      /local_num_threads 1 
+      /resolution h
+  >> SetStatus
+
+/n_syn      4 def
+/taus       [2. 20. 60. 100.] def
+/delays     [7. 5. 2. 1. ] def % ms
+/weights    [30. 50. 20. 10.] def
+/spike_time 0.1 def
+/dt         0.1 def
+
+/iaf_psc_exp_multisynapse Create /npost Set
+npost << /n_synapses n_syn /tau_syn taus >> SetStatus
+
+npost GetStatus /n_synapses get
+n_syn eq assert_or_die
+
+npost GetStatus /tau_syn get
+taus eq assert_or_die
+
+% test if tau_syn array is exactly n_synapses long
+npost dup GetStatus /tau_syn get length
+exch GetStatus /n_synapses get eq assert_or_die
+
+/voltmeter Create /vm Set
+vm << /withtime true  /time_in_steps true /interval h /to_screen false >> SetStatus
+   
+/spike_generator Create /sg Set
+sg << /spike_times [spike_time] >> SetStatus
+
+/static_synapse /s1 CopyModel
+/static_synapse /s2 CopyModel
+/static_synapse /s3 CopyModel
+/static_synapse /s4 CopyModel
+
+/s1 << /weight weights 0 get /delay delays 0 get /receptor_type 0 >> SetDefaults
+/s2 << /weight weights 1 get /delay delays 1 get /receptor_type 1 >> SetDefaults
+/s3 << /weight weights 2 get /delay delays 2 get /receptor_type 2 >> SetDefaults
+/s4 << /weight weights 3 get /delay delays 3 get /receptor_type 3 >> SetDefaults
+
+sg npost /s1 Connect
+sg npost /s2 Connect
+sg npost /s3 Connect
+sg npost /s4 Connect
+
+vm npost 1.0 h Connect
+
+8 ms Simulate
+
+
+{                                            % reference data
+ dup Transpose First /test_times Set         % times of reference 
+                               
+ vm [/events [/times /V_m]] get cva   % array of recorded data
+  6 ToUnitTestPrecision                      % to precision of reference
+  Transpose                                  % all recorded tuples
+  {First test_times exch MemberQ } Select    % those with reference
+ eq                                          % compare
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%
+% Expected output of this program: 
+%
+% time (in steps)  voltage (in mV)
+[
+[ 1       -70      ] % <----- Spike time
+[ 2       -70      ] 
+[ 3       -70      ]
+[ 4       -70      ]
+[ 5       -70      ]
+[ 6       -70      ]
+[ 7       -70      ]
+[ 8       -70      ]
+[ 9       -70      ]
+[ 10      -70      ]
+[ 11      -70      ] % <----- The spike arrives at the first synapse but has not yet effected the snynaptic current and membrane potential.
+[ 12      -69.9960 ] % <-
+[ 13      -69.9921 ] %   |
+[ 14      -69.9882 ] %   |
+[ 15      -69.9843 ] %    --- the effect of the synaptic current is visible in the membrane potential
+%
+% ...
+%
+[ 20      -69.9657 ] %<----- The spike arrives at the second synapse but has not yet effected the snynaptic current and membrane potential.
+[ 21      -69.9621 ] %<-
+[ 22      -69.9506 ] %  |
+[ 23      -69.9392 ] %  |
+[ 24      -69.928  ] %   --- the effect of the two synaptic currents is visible in the membrane potential
+[ 25      -69.9169 ] %
+%
+% ...
+%
+[ 50      -69.6771 ] %<----- The spike arrives at the third synapse but has not yet effected the snynaptic current and membrane potential.
+[ 51      -69.6689 ] %<-
+[ 52      -69.641  ] %  |
+[ 53      -69.6134 ] %  |
+[ 54      -69.5863 ] %   --- the effect of the three synaptic currents is visible in the membrane potential
+[ 55      -69.5595 ] %
+%
+% ...
+%
+[ 70      -69.2011 ] %<----- The spike arrives at the fourth synapse but has not yet effected the snynaptic current and membrane potential.
+[ 71      -69.18   ] %<-
+[ 72      -69.1474 ] %  |
+[ 73      -69.1159 ] %  |
+[ 74      -69.0854 ] %   --- the effect of the four synaptic currents is visible in the membrane potential
+[ 75      -69.0557 ] %
+]                       
+%                         
+%
+
+exch assert_or_die
+
+endusing

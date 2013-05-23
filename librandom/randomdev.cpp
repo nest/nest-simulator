@@ -31,7 +31,7 @@ unsigned long librandom::RandomDev::uldev(void)
   return 0;
 }
 
-unsigned long librandom::RandomDev::uldev(RngPtr)
+unsigned long librandom::RandomDev::uldev(RngPtr) const
 {
   assert(false);
   return 0;

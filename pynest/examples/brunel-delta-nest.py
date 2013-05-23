@@ -74,6 +74,7 @@ neuron_params= {"C_m":        1.0,
                 "V_m":        0.0,
                 "V_th":       theta}
 
+
 nest.SetDefaults("iaf_psc_delta", neuron_params)
 
 nodes_ex=nest.Create("iaf_psc_delta",NE)
@@ -87,12 +88,14 @@ ispikes=nest.Create("spike_detector")
 
 nest.SetStatus(espikes,[{"label": "brunel-py-ex",
                    "withtime": True,
-                   "withgid": True}])
+                   "withgid": True,
+                   "to_file": True}])
 
 nest.SetStatus(ispikes,[{"label": "brunel-py-in",
                    "withtime": True,
-                   "withgid": True}])
-
+                   "withgid": True,
+                   "to_file": True}])
+    
 print "Connecting devices."
 
 nest.CopyModel("static_synapse","excitatory",{"weight":J_ex, "delay":delay})
@@ -101,8 +104,10 @@ nest.CopyModel("static_synapse","inhibitory",{"weight":J_in, "delay":delay})
 nest.DivergentConnect(noise,nodes_ex,model="excitatory")
 nest.DivergentConnect(noise,nodes_in,model="excitatory")
 
-nest.ConvergentConnect(range(1,N_rec+1),espikes,model="excitatory")
-nest.ConvergentConnect(range(NE+1,NE+1+N_rec),ispikes,model="excitatory")
+nest.ConvergentConnect(nodes_ex[:N_rec], espikes, model="excitatory")
+nest.ConvergentConnect(nodes_in[:N_rec], ispikes, model="excitatory")
+#nest.ConvergentConnect(range(1,N_rec+1),espikes,model="excitatory")
+#nest.ConvergentConnect(range(NE+1,NE+1+N_rec),ispikes,model="excitatory")
 
 print "Connecting network."
 

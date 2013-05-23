@@ -26,7 +26,7 @@ unsigned long librandom::GSL_BinomialRandomDev::uldev()
   return gsl_ran_binomial(rng_, p_, n_);
 }
 
-unsigned long librandom::GSL_BinomialRandomDev::uldev(RngPtr rng)
+unsigned long librandom::GSL_BinomialRandomDev::uldev(RngPtr rng) const
 {
   GslRandomGen* gsr_rng = dynamic_cast<GslRandomGen*>(&(*rng));
   assert (gsr_rng && "rng needs to be a GSL RNG");

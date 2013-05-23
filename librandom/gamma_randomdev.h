@@ -111,7 +111,7 @@ Author: Hans Ekkehard Plesser
 
 
     double operator()(void);            //!< draw number
-    double operator()(RngPtr);          //!< draw number, threaded
+    double operator()(RngPtr) const;    //!< draw number, threaded
     double operator()(RngPtr, double);  //!< draw number, threaded, explicit order
 
   private:

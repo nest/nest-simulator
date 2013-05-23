@@ -91,11 +91,11 @@ class GSL_BinomialRandomDev : public RandomDev
     using RandomDev::uldev;
 
     unsigned long uldev();         //!< draw integer
-    unsigned long uldev(RngPtr);   //!< draw integer, threaded
+    unsigned long uldev(RngPtr) const;   //!< draw integer, threaded
     bool has_uldev() const { return true; }
 
     double operator()();           //!< return as double
-    double operator()(RngPtr);     //!< return as double, threaded
+    double operator()(RngPtr) const;     //!< return as double, threaded
 
     //! set distribution parameters from SLI dict
     void set_status(const DictionaryDatum&);
@@ -117,7 +117,7 @@ class GSL_BinomialRandomDev : public RandomDev
   }
 
   inline
-  double GSL_BinomialRandomDev::operator()(RngPtr rthrd)
+  double GSL_BinomialRandomDev::operator()(RngPtr rthrd) const
   {
     return static_cast<double>(uldev(rthrd));
   }

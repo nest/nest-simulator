@@ -93,7 +93,7 @@ namespace nest
     if (mask_.valid()) {
 
       // Retrieve global positions:
-      MaskedLayer<D> masked_layer(source,source_filter_,*mask_,true,allow_oversized_);
+      MaskedLayer<D> masked_layer(source,source_filter_,mask_,true,allow_oversized_);
 
       for (std::vector<Node*>::const_iterator tgt_it = target_begin;tgt_it != target_end;++tgt_it) {
 
@@ -213,7 +213,7 @@ namespace nest
 
       // By supplying the target layer to the MaskedLayer constructor, the
       // mask is mirrored so it may be applied to the source layer instead
-      MaskedLayer<D> masked_layer(source,source_filter_,*mask_,true,allow_oversized_,target);
+      MaskedLayer<D> masked_layer(source,source_filter_,mask_,true,allow_oversized_,target);
 
       for (std::vector<Node*>::const_iterator tgt_it = target_begin;tgt_it != target_end;++tgt_it) {
 
@@ -304,17 +304,6 @@ namespace nest
 
   }
 
-  // Throw a BadProperty rather than bad_cast if mask dimension is wrong
-  template<int D>
-  static inline
-  const Mask<D>& get_mask_ref(const MaskDatum &m) {
-    try {
-      return dynamic_cast<const Mask<D>&>(*m);
-    } catch (std::bad_cast e) {
-      throw BadProperty("Mask is incompatible with layer.");
-    }
-  }
-
   template<int D>
   void ConnectionCreator::convergent_connect_(Layer<D>& source, Layer<D>& target)
   {
@@ -341,8 +330,6 @@ namespace nest
 
     if (mask_.valid()) {
 
-      const Mask<D>& mask_ref = get_mask_ref<D>(mask_);
-
       for (std::vector<Node*>::const_iterator tgt_it = target_begin;tgt_it != target_end;++tgt_it) {
 
         if (target_filter_.select_model() && ((*tgt_it)->get_model_id() != target_filter_.model))
@@ -354,7 +341,7 @@ namespace nest
 
         // Get (position,GID) pairs for sources inside mask
         std::vector<std::pair<Position<D>,index> > positions =
-            source.get_global_positions_vector(source_filter_, mask_ref,
+            source.get_global_positions_vector(source_filter_, mask_,
                                                target.get_position((*tgt_it)->get_subnet_index()),
                                                allow_oversized_);
 
@@ -547,7 +534,7 @@ namespace nest
     // 2. If using kernel: Compute connection probability for each global target
     // 3. Draw connections to make using global rng
 
-    MaskedLayer<D> masked_target(target,target_filter_,*mask_,true,allow_oversized_);
+    MaskedLayer<D> masked_target(target,target_filter_,mask_,true,allow_oversized_);
 
     std::vector<std::pair<Position<D>,index> >* sources = source.get_global_positions_vector(source_filter_);
     DictionaryDatum d = new Dictionary();

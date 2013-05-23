@@ -91,6 +91,7 @@ namespace nest
     extern const Name grid;
     extern const Name grid3d;
     extern const Name cutoff;
+    extern const Name mu;
   }
 }
 

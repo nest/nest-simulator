@@ -71,6 +71,9 @@ void ConnectionManager::init_()
   net_.get_num_threads(), google::sparsetable< std::vector< syn_id_connector > >());
 
   connections_.swap(tmp);
+
+  num_connections_ = 0;
+  num_conn_changed_since_counted_ = false;
 }
 
 void ConnectionManager::delete_connections_()
@@ -573,22 +576,25 @@ void ConnectionManager::get_connections(ArrayDatum& connectome, index source, th
   connections_[t].get(source)[syn_vec_index].connector->get_connections(source,t,syn_id,connectome);
 }
 
-void ConnectionManager::connect(Node& s, Node& r, index s_gid, thread tid, index syn, bool count_connections)
+void ConnectionManager::connect(Node& s, Node& r, index s_gid, thread tid, index syn)
 {
   index syn_vec_index = validate_connector(tid, s_gid, syn);
-  connections_[tid].get(s_gid)[syn_vec_index].connector->register_connection(s, r, count_connections);
+  connections_[tid].get(s_gid)[syn_vec_index].connector->register_connection(s, r);
+  num_conn_changed_since_counted_ = true;
 }
 
-void ConnectionManager::connect(Node& s, Node& r, index s_gid, thread tid, double_t w, double_t d, index syn, bool count_connections)
+void ConnectionManager::connect(Node& s, Node& r, index s_gid, thread tid, double_t w, double_t d, index syn)
 {
   index syn_vec_index = validate_connector(tid, s_gid, syn);
-  connections_[tid].get(s_gid)[syn_vec_index].connector->register_connection(s, r, w, d, count_connections);
+  connections_[tid].get(s_gid)[syn_vec_index].connector->register_connection(s, r, w, d);
+  num_conn_changed_since_counted_ = true;
 }
 
-void ConnectionManager::connect(Node& s, Node& r, index s_gid, thread tid, DictionaryDatum& p, index syn, bool count_connections)
+void ConnectionManager::connect(Node& s, Node& r, index s_gid, thread tid, DictionaryDatum& p, index syn)
 {
   index syn_vec_index = validate_connector(tid, s_gid, syn);
-  connections_[tid].get(s_gid)[syn_vec_index].connector->register_connection(s, r, p, count_connections);
+  connections_[tid].get(s_gid)[syn_vec_index].connector->register_connection(s, r, p);
+  num_conn_changed_since_counted_ = true;
 }
 
 
@@ -597,9 +603,7 @@ bool ConnectionManager::connect(ArrayDatum& conns)
 {
     std::string msg;
 // #ifdef _OPENMP
-//     msg = String::compose( "Setting OpenMP num_threads to %1.",net_.get_num_threads());
 //     net_.message(SLIInterpreter::M_INFO, "ConnectionManager::Connect", msg);
-//     omp_set_num_threads(net_.get_num_threads());
 // #endif
 
 // #ifdef _OPENMP
@@ -651,18 +655,42 @@ void ConnectionManager::send(thread t, index sgid, Event& e)
 
 size_t ConnectionManager::get_num_connections() const
 {
-  size_t num_connections = 0;
-  std::vector<ConnectorModel*>::const_iterator iter;
-  for (iter = prototypes_.begin(); iter != prototypes_.end(); ++iter)
-    num_connections += (*iter)->get_num_connections();
+  if (num_conn_changed_since_counted_)
+    count_connections();
 
-  return num_connections;
-} 
+  return num_connections_;
+}
 
-void ConnectionManager::increment_num_connections(index syn_id, size_t num)
+void ConnectionManager::count_connections() const
 {
-  assert_valid_syn_id(syn_id);
-  prototypes_[syn_id]->increment_num_connections(num);
+  // we need a local variable, as OpenMP reduction does not like
+  // working with the global variable directly
+  size_t num_connections = 0;
+
+#ifdef _OPENMP
+#pragma omp parallel reduction(+: num_connections)
+  {
+    size_t t = omp_get_thread_num();
+#else
+  for (index t = 0; t < net_.get_num_threads(); ++t)
+  {
+#endif
+    std::vector<size_t> num_connections_per_syn_id(prototypes_.size(), 0);
+
+    tVVConnector::const_nonempty_iterator iter;      
+    for (iter = connections_[t].nonempty_begin(); iter != connections_[t].nonempty_end(); ++iter)
+      for (size_t syn_id = 0; syn_id < (*iter).size(); ++syn_id)
+        num_connections_per_syn_id[(*iter)[syn_id].syn_id] += (*iter)[syn_id].connector->get_num_connections();
+
+    for (size_t syn_id = 0; syn_id < prototypes_.size(); ++syn_id)
+    {
+      prototypes_[syn_id]->set_num_connections(num_connections_per_syn_id[syn_id]);
+      num_connections += num_connections_per_syn_id[syn_id];
+    }
+  }
+
+  num_connections_ = num_connections;
+  num_conn_changed_since_counted_ = false;
 }
 
 } // namespace

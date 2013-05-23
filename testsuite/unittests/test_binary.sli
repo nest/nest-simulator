@@ -1,0 +1,132 @@
+/*
+ *  test_binary.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /* BeginDocumentation
+    Name: testsuite::test_binary - sli script for overall test of binary neuron models
+
+    Synopsis: (test_binary) run -> test basic communication patterns employed by binary neurons 
+
+    Description:
+    Test, whether the communication mechanism for binary neurons
+    works. Two spikes indicate an up-transition, a single spike
+    indicate a down transition.
+    
+    Author:  March 2013, Helias    
+*/
+
+(unittest) run
+/unittest using
+
+
+% assumes model name on stack
+[/ginzburg_neuron /mcculloch_pitts_neuron]
+{
+
+    0.1 /h Set
+
+    ResetKernel
+
+    0 <<
+	/local_num_threads 1 
+	/resolution h
+    >> SetStatus
+
+    /model Set
+
+    cout (testing model ) <- model <- ;
+    
+    % 1st Test:
+    % check, if double spikes are correctly interpreted as up transition
+    % and single spikes are interpreted as down transition
+    % expected read out at target neuron
+    /expected [ 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 1. 1. 1. 0. 0. 0. 0. ] def
+
+    /nrn model Create def
+
+    /sg /spike_generator Create def
+
+    sg << /spike_times [10. 10. 15.] >> SetStatus
+
+    sg nrn 1. 1. Connect	
+
+    /multi /multimeter Create def
+
+    multi << /record_from [/h] >> SetStatus
+
+    multi nrn Connect
+
+    20. Simulate
+    
+    multi /events get /h get cva
+    6 ToUnitTestPrecision
+    expected {cvi} Map
+    eq assert_or_die
+
+
+    % 2nd Test:
+    % check, if binary_neuron correctly transmits its state change
+    
+    ResetKernel
+
+    0 << 
+	/local_num_threads 1 
+	/resolution h
+    >> SetStatus
+
+
+    /nrn1 model Create def
+    /sp /spike_detector Create def
+
+    % set threshold so that neuron makes transition to 1
+    nrn1 << /theta -10. /tau_m 1. >> SetStatus
+
+    nrn1 sp Connect
+
+    100. Simulate
+    
+    % should have two events
+    sp GetStatus /events get /senders get length 2 eq
+    assert_or_die
+
+    % both events should be at same time point
+    sp GetStatus /events get /times get dup 0 get exch 0 get eq
+    assert_or_die
+
+    
+    sp GetStatus /events get /senders get length 2 eq
+    assert_or_die
+
+    % set threshold so that neuron makes transition to 0
+    nrn1 << /theta 10. /tau_m 1. >> SetStatus
+
+    100. Simulate
+
+    % should have one more event now
+    sp GetStatus /events get /senders get length 3 eq
+    assert_or_die
+}
+forall
+
+
+
+
+

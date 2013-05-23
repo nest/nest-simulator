@@ -218,7 +218,7 @@ namespace nest {
     /**
      * Device mode.
      */
-    enum Mode { SPIKE_DETECTOR, MULTIMETER };
+    enum Mode { SPIKE_DETECTOR, MULTIMETER, SPIN_DETECTOR };
 
     /**
      * Create recording device information.
@@ -227,8 +227,9 @@ namespace nest {
      * @param Default file name extension, excluding ".".
      * @param Default value for withtime property
      * @param Default value for withgid property
+     * @param Default value for withweight property
      */
-    RecordingDevice(const Node&, Mode, const std::string&, bool, bool);
+    RecordingDevice(const Node&, Mode, const std::string&, bool, bool, bool=false);
 
     /**
      * Copy from prototype member.
@@ -411,7 +412,7 @@ namespace nest {
        * @param Default value for withtime property
        * @param Default value for withgid property
        */
-      Parameters_(const std::string&, bool, bool);
+      Parameters_(const std::string&, bool, bool, bool);
 
       void get(const RecordingDevice&, DictionaryDatum&) const;  //!< Store current values in dictionary
       void set(const RecordingDevice&, const Buffers_&, const DictionaryDatum&);  //!< Set values from dicitonary

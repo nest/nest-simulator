@@ -1,0 +1,176 @@
+/*
+ *  ticket-686-positive-parameters.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-686 - catch nodes which do not require tau_*, C_m > 0
+
+Synopsis: (ticket-686-positive-parameters) run -> NEST exits if test fails
+
+Description: 
+This tests ensures that models with parameters C_m or tau_* throw an exception
+when trying to set a value that is not strictly positive.
+ 
+The test also ensures that values can actually be set to different, positive 
+values.
+
+Author: Hans Ekkehard Plesser, 2013-04-18
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+% Add models that have C_m or tau_* and that should not be checked
+% This should be devices only.
+/skipped_models 
+  [ /correlation_detector 
+    /correlomatrix_detector ] 
+def
+skipped_models { modeldict exch undef } forall
+
+
+% model GetPositiveKeyes -> list of keys requiring positive values
+% any of C_m and tau_*
+/GetPositiveKeys
+{
+  GetDefaults keys
+  { 
+    cvs /key Set 
+    key (C_m) eq      
+    key length 4 geq
+    {
+	key 0 4 getinterval (tau_) eq
+    }
+    {
+      false
+    } ifelse
+    or
+  } Select 
+} def
+
+
+% first test: ensure values <= 0 provoke exception
+{
+  modeldict keys 
+  {
+    ResetKernel
+
+    % Avoid exceptions in case a model has C_m or
+    % tau_* that cannot be changed.
+    0 << /dict_miss_is_error false >> SetStatus    
+
+    /model Set
+    /all_fine true def % pass by default
+
+    % now test one at a time    
+    model GetPositiveKeys
+    {
+
+      /key Set      
+
+      [ 0.0 -1.0 ] % test for zero and negative
+      {
+        /val Set
+	
+	% the next line shall provoke an error
+	mark
+	{ 
+	  /neuron model Create def
+          neuron key get /origval Set
+	  neuron << >> dup key val put_d SetStatus
+	}       
+        stopped
+        {
+          % we got an exception, need to clean up
+          % remove error code
+	  errordict /message undef
+	  errordict /command undef
+	  errordict begin /newerror false def end
+
+	  % clear stack
+	  counttomark npop pop % need to pop mark separately
+
+          % now check that value is unchanged
+          /all_fine
+            all_fine neuron key get origval eq and
+          def
+ 	}
+        {
+          % model failed to raise exception
+          pop % mark	  
+	  /all_fine false def	  
+	}
+        ifelse   % stopped
+
+      } 
+      forall  % values
+    }
+    forall   % keys    
+
+    all_fine % leave result on stack    
+    dup not { (ERROR: ) model cvs join == } if
+
+  }  
+  Map   % modeldict keys
+
+  true exch { and } Fold
+  
+} assert_or_die
+
+
+% second test: ensure positive values can be set
+{
+  modeldict keys 
+  {
+    ResetKernel
+
+    % Avoid exceptions in case a model has C_m or
+    % tau_* that cannot be changed.
+    0 << /dict_miss_is_error false >> SetStatus    
+
+    /model Set
+
+    % now test one at a time    
+    model GetPositiveKeys {
+
+      /key Set      
+
+      /nrn model Create def
+      /newval nrn key get 1.0 add def
+      nrn << >> dup key newval put SetStatus
+      nrn key get newval eq 
+
+    } Map
+
+    true exch { and } Fold
+    dup not { (ERROR2: ) model cvs join == } if
+
+  }  
+  Map   % modeldict keys
+
+  true exch { and } Fold
+  
+} assert_or_die
+
+endusing

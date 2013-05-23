@@ -1,4 +1,24 @@
-# -*- coding: utf-8; -*-
+# -*- coding: utf-8 -*-
+#
+# hl_api.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 High-level API of PyNEST Topology Module.
 
@@ -716,7 +736,7 @@ def FindCenterElement(layers):
             for lyr in layers]
 
 
-def NewGetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
+def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     """
     Obtain targets of a list of sources in a given target layer.
     
@@ -755,73 +775,15 @@ def NewGetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
                               
     conns = nest.GetConnections(sources, tgt_nodes, synapse_model=syn_model)
        
-    # conns now contains one list per synapse type; each list contains connections
-    # from all sources. We need to re-organize into one list per source containing
-    # targets only
+    # conns is a flat list of connections.
+    # Re-organize into one list per source, containing only target GIDs.
     src_tgt_map = dict((sgid, []) for sgid in sources)
-    for per_syn_model_list in conns:
-       for conn in per_syn_model_list:
-          src_tgt_map[conn[0]].append(conn[1])
+    for conn in conns:
+       src_tgt_map[conn[0]].append(conn[1])
 
     # convert dict to nested list in same order as sources
     return [src_tgt_map[sgid] for sgid in sources]
- 
 
-def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
-    """
-    Obtain targets of a list of sources in a given target layer.
-    
-    Parameters
-    ----------
-    sources     List of GID(s) of source neurons
-    tgt_layer   Single-element list with GID of tgt_layer
-    tgt_model   Return only target positions for a given neuron model [optional].
-    syn_type    Return only target positions for a given synapse model [optional].
-
-    Returns
-    -------
-    List of GIDs of target neurons fulfilling the given criteria. It is a list of lists,
-    one list per source.
-
-    For each neuron in sources, this function finds all target elements in tgt_layer.
-    If tgt_model is not given (default), all targets are returned, otherwise only
-    targets of specific type, and similarly for syn_model.
-    
-    Note: For distributed simulations, this function only returns targets on the local MPI process.
-    
-    See also
-    --------
-    GetTargetPositions, nest.GetConnections
-    """
-    
-    nest.raise_if_not_list_of_gids(sources, 'sources')
-    nest.raise_if_not_list_of_gids(tgt_layer, 'tgt_layer')
-    if len(tgt_layer) != 1:
-        raise nest.NESTError("tgt_layer must be a one-element list")
-    
-    tgt_layer = nest.broadcast(tgt_layer[0], len(sources), (int,), "tgt_layer")
-    
-    # obtain all target neuron IDs, if necessary for given synapse type
-    if syn_model:
-        syn_model = nest.broadcast(syn_model, len(sources), (str,), 'syn_model')
-        conntgts = [nest.GetStatus(nest.FindConnections([sn], synapse_model=st), 'target')
-                    for sn,st in zip(sources,syn_model)]
-    else:
-        conntgts = [nest.GetStatus(nest.FindConnections([sn]), 'target')
-                    for sn in sources]
-        
-    # obtain all node GIDs in target layer, filter by model if requested
-    if tgt_model:
-        tgt_model = nest.broadcast(tgt_model, len(sources), (str,), "tgt_model")
-        tgtnrns = [[n for n in leaves
-                    if nest.GetStatus([n], 'model')[0] == m]
-                   for leaves,m in zip(nest.GetLeaves(tgt_layer),tgt_model)]
-    else:
-        tgtnrns = nest.GetLeaves(tgt_layer)
-
-    # for each source neuron, get set of unique target gids, then intersect with
-    # list of gids with proper model type     
-    return [list(set(ct).intersection(tn)) for ct,tn in zip(conntgts,tgtnrns)]
 
 
 def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
@@ -837,9 +799,8 @@ def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
 
     Returns
     -------
-    List of positions of target neurons fulfilling the given criteria. If sources has only 
-    a single element, the result is a flat list. Otherwise, it is a list of lists,
-    one list per source.
+    Positions of target neurons fulfilling the given criteria as a nested list,
+    containing one list of positions per node in sources.
 
     For each neuron in sources, this function finds all target elements in tgt_layer.
     If tgt_model is not given (default), all targets are returned, otherwise only
@@ -853,7 +814,8 @@ def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
     GetTargetNodes
     """
     
-    return [GetPosition(nodes) for nodes in GetTargetNodes(sources, tgt_layer, tgt_model, syn_model)]
+    return [GetPosition(nodes) for nodes
+            in GetTargetNodes(sources, tgt_layer, tgt_model, syn_model)]
     
 
 def _draw_extent(ax, xctr, yctr, xext, yext):

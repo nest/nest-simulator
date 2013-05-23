@@ -72,7 +72,7 @@ namespace nest
      * Recordables map and must fill the map. This should happen
      * as part of the original constructor for the Node.
      */
-    void create() { assert(false); }
+    void create();
 
     /**
      * Obtain SLI list of all recordables, for use by get_status().
@@ -112,6 +112,13 @@ namespace nest
      */
     // ArrayDatum recordables_; 
   };
+
+
+  template <typename HostNode>
+  void RecordablesMap<HostNode>::create()
+  { assert(false); }
+
+
 }
 
 #endif

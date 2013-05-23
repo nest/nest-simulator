@@ -40,10 +40,6 @@ nest.ResetKernel()
 # create neuron
 nrn = nest.Create('ht_neuron', params = {'NaP_g_peak': 1.0})
 
-# get receptor ID information, so we can connect to the
-# different synapses
-receptors = nest.GetStatus(nrn)[0]['receptor_types']
-
 # create multimeter and configure it to record all information
 # we want at 0.1ms resolution
 mm = nest.Create('multimeter')

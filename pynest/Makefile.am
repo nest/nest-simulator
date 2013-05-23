@@ -67,6 +67,8 @@ data_DATA=\
 	examples/one-neuron.py \
 	examples/one-neuron-with-noise.py \
 	examples/pulsepacket.py \
+	examples/sinusoidal_poisson_generator.py\
+	examples/sinusoidal_gamma_generator.py\
 	examples/testiaf.py \
 	examples/tsodyks_facilitating.py \
 	examples/tsodyks_depressing.py \

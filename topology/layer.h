@@ -106,7 +106,7 @@ namespace nest
      * @param allow_oversized allow mask to be greater than layer
      * @returns nodes in layer inside mask.
      */
-    virtual std::vector<index> get_global_nodes(const AbstractMask &mask, const std::vector<double_t> &anchor, bool allow_oversized) = 0;
+    virtual std::vector<index> get_global_nodes(const MaskDatum &mask, const std::vector<double_t> &anchor, bool allow_oversized) = 0;
 
     /**
      * Write layer data to stream.
@@ -321,12 +321,12 @@ namespace nest
 
     std::vector<std::pair<Position<D>,index> >* get_global_positions_vector(Selector filter=Selector());
 
-    virtual std::vector<std::pair<Position<D>,index> > get_global_positions_vector(Selector filter, const AbstractMask& mask, const Position<D>& anchor, bool allow_oversized);
+    virtual std::vector<std::pair<Position<D>,index> > get_global_positions_vector(Selector filter, const MaskDatum& mask, const Position<D>& anchor, bool allow_oversized);
 
     /**
      * Return a vector with the GIDs of the nodes inside the mask.
      */
-    std::vector<index> get_global_nodes(const AbstractMask &mask, const std::vector<double_t> &anchor, bool allow_oversized);
+    std::vector<index> get_global_nodes(const MaskDatum &mask, const std::vector<double_t> &anchor, bool allow_oversized);
 
     /**
      * Connect this layer to the given target layer. The actual connections
@@ -420,7 +420,7 @@ namespace nest
      * @param include_global  If true, include all nodes, otherwise only local to MPI process
      * @param allow_oversized If true, allow larges masks than layers when using periodic b.c.
      */
-    MaskedLayer(Layer<D>& layer, Selector filter, const AbstractMask& mask, bool include_global, bool allow_oversized);
+    MaskedLayer(Layer<D>& layer, Selector filter, const MaskDatum& mask, bool include_global, bool allow_oversized);
 
     /**
      * Constructor for applying "converse" mask to layer. To be used for
@@ -434,7 +434,7 @@ namespace nest
      * @param allow_oversized If true, allow larges masks than layers when using periodic b.c.
      * @param target          The layer which the given mask is defined for (target layer)
      */
-    MaskedLayer(Layer<D>& layer, Selector filter, const AbstractMask& mask, bool include_global, bool allow_oversized, Layer<D>& target);
+    MaskedLayer(Layer<D>& layer, Selector filter, const MaskDatum& mask, bool include_global, bool allow_oversized, Layer<D>& target);
 
     ~MaskedLayer();
 
@@ -465,14 +465,13 @@ namespace nest
     void check_mask_(Layer<D>& layer, bool allow_oversized);
 
     lockPTR<Ntree<D,index> > ntree_;
-    const AbstractMask* mask_;
-    Mask<D> * new_mask_;
+    MaskDatum mask_;
   };
 
   template<int D>
   inline
-  MaskedLayer<D>::MaskedLayer(Layer<D>& layer, Selector filter, const AbstractMask& mask, bool include_global, bool allow_oversized):
-    mask_(&mask), new_mask_(0)
+  MaskedLayer<D>::MaskedLayer(Layer<D>& layer, Selector filter, const MaskDatum& maskd, bool include_global, bool allow_oversized):
+    mask_(maskd)
   {
     if (include_global)
       ntree_ = layer.get_global_positions_ntree(filter);
@@ -484,8 +483,8 @@ namespace nest
 
   template<int D>
   inline
-  MaskedLayer<D>::MaskedLayer(Layer<D>& layer, Selector filter, const AbstractMask& mask, bool include_global, bool allow_oversized, Layer<D>& target):
-    mask_(&mask), new_mask_(0)
+  MaskedLayer<D>::MaskedLayer(Layer<D>& layer, Selector filter, const MaskDatum& maskd, bool include_global, bool allow_oversized, Layer<D>& target):
+    mask_(maskd)
   {
     if (include_global)
       ntree_ = layer.get_global_positions_ntree(filter, target.get_periodic_mask(), target.get_lower_left(), target.get_extent());
@@ -493,17 +492,13 @@ namespace nest
     //  ntree_ = layer.get_local_positions_ntree(filter, target.get_periodic_mask(), target.get_lower_left(), target.get_extent());
 
     check_mask_(target, allow_oversized);
-    Mask<D>* conv_mask = new ConverseMask<D>(dynamic_cast<const Mask<D>&>(*mask_));
-    delete new_mask_;
-    new_mask_ = conv_mask;
-    mask_ = conv_mask;
+    mask_ = new ConverseMask<D>(dynamic_cast<const Mask<D>&>(*mask_));
   }
 
   template<int D>
   inline
   MaskedLayer<D>::~MaskedLayer()
   {
-    delete new_mask_;
   }
 
   template<int D>

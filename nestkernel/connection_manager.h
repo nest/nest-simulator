@@ -107,8 +107,8 @@ public:
   void set_connector_status(Node& node, index syn_id, thread tid, const DictionaryDatum& d);
   
   ArrayDatum find_connections(DictionaryDatum params);
-//   void find_connections(ArrayDatum& connectome, thread t, index source, index syn_id, DictionaryDatum params);
   void find_connections(ArrayDatum& connectome, thread t, index source, int syn_vec_index, index syn_id, DictionaryDatum params);
+
   /**
    * Return connections between pairs of neurons.
    * The params dictionary can have the following entries:
@@ -134,11 +134,25 @@ public:
   bool has_user_prototypes() const;
 
   bool get_user_set_delay_extrema() const;
-  
-  size_t get_num_connections() const;
 
   const Time get_min_delay() const;
   const Time get_max_delay() const;
+
+  /**
+   * Count the number of connections in all connectors and update the
+   * global counter num_connections_ in ConnectionManager and the
+   * local counters in the prototype objects.
+   * @note This function must be const, because it is called by const
+   * functions like get_num_connections() and get_status(). The number
+   * of connections is stored in a mutable variable num_connections_.
+   */
+  void count_connections() const;
+
+  /**
+   * Make sure that the connection counters are up-to-date and return
+   * the total number of connections in the network.
+   */
+  size_t get_num_connections() const;
 
   /**
    * Connect is used to establish a connection between a sender and
@@ -148,17 +162,15 @@ public:
    * \param t The thread of the target node.
    * \param syn The synapse model to use.
    * \returns The receiver port number for the new connection
-   */ 
-  void connect(Node& s, Node& r, index s_gid, thread tid, index syn, bool count_connections = true);
-  void connect(Node& s, Node& r, index s_gid, thread tid, double_t w, double_t d, index syn, bool count_connections = true);
-  void connect(Node& s, Node& r, index s_gid, thread tid, DictionaryDatum& p, index syn, bool count_connections = true);
+   */
+  void connect(Node& s, Node& r, index s_gid, thread tid, index syn);
+  void connect(Node& s, Node& r, index s_gid, thread tid, double_t w, double_t d, index syn);
+  void connect(Node& s, Node& r, index s_gid, thread tid, DictionaryDatum& p, index syn);
 
   /** 
    * Experimental bulk connector. See documentation in network.h
    */
   bool connect(ArrayDatum &d);
-
-  void increment_num_connections(index syn, size_t num);
 
   void send(thread t, index sgid, Event& e);
 
@@ -189,6 +201,9 @@ private:
    */
   tVVVConnector connections_;
   
+  mutable size_t num_connections_;              //!< The global counter for the number of synapses
+  mutable bool num_conn_changed_since_counted_; //!< Did the number of synapses change since counting?
+
   void init_();
   void delete_connections_();
   void clear_prototypes_();

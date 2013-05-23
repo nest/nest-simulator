@@ -77,6 +77,12 @@ namespace nest
     extern const Name ex_spikes;  //!< Number of arriving excitatory spikes
     extern const Name error;      //!< Indicates an error in a neuron
 
+    // Related to ArchivingNode
+    extern const Name tau_minus;  
+    extern const Name tau_minus_triplet;
+    extern const Name archiver_length;
+    extern const Name clear;
+
     // Specific to precise timing neurons
     extern const Name Interpol_Order;      //!< Interpolation order
     extern const Name refractory_input;    //!< Spikes arriving during refractory period are counted
@@ -237,6 +243,9 @@ namespace nest
     extern const Name stop;
     extern const Name recordables;  //!< List of recordable state data
 
+    // Generator parameters
+    extern const Name individual_spike_trains;
+
     // Recorder parameters
     extern const Name withtime;
     extern const Name withgid;
@@ -296,6 +305,12 @@ namespace nest
     extern const Name synapse_model;
     extern const Name synapse_modelid;
 
+    // Specific to sinusoidally modulated generators
+    extern const Name dc;
+    extern const Name ac;
+    extern const Name freq;
+    extern const Name order;
+ 
     // Specific to ppd_sup_generator and gamma_sup_generator
     extern const Name amplitude;
     extern const Name phase;

@@ -90,11 +90,11 @@ Author: Hans Ekkehard Plesser
     using RandomDev::uldev;
     
     unsigned long uldev(void);     //!< draw integer
-    unsigned long uldev(RngPtr);   //!< draw integer, threaded
+    unsigned long uldev(RngPtr) const;   //!< draw integer, threaded
     bool has_uldev() const { return true; }
 
     double operator()(void);           // non-threaded
-    double operator()(RngPtr rthrd);   // threaded
+    double operator()(RngPtr rthrd) const;   // threaded
 
     //! set distribution parameters from SLI dict
     void set_status(const DictionaryDatum&);
@@ -115,7 +115,7 @@ Author: Hans Ekkehard Plesser
   }
 
   inline
-  double UniformIntRandomDev::operator()(RngPtr rthrd)
+  double UniformIntRandomDev::operator()(RngPtr rthrd) const
   {
     return static_cast<double>(uldev(rthrd)); 
   }
@@ -127,7 +127,7 @@ Author: Hans Ekkehard Plesser
   }
 
   inline 
-  unsigned long UniformIntRandomDev::uldev(RngPtr r_s)
+  unsigned long UniformIntRandomDev::uldev(RngPtr r_s) const
   {
     return nmin_ + r_s->ulrand(range_);
   }

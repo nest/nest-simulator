@@ -51,7 +51,7 @@ while test $# -gt 0 ; do
             TEST_PYNEST=true
             ;;
         --output-dir=*)
-            TEST_OUTDIR="$( echo "$1" | sed 's/^[^=]\+=//' )"
+            TEST_OUTDIR="$( echo "$1" | sed 's/^--output-dir=//' )"
             ;;
         *)
             usage 1 "$1"

@@ -152,13 +152,13 @@ namespace librandom {
      * both varieties.
      */
     virtual double operator()(void) = 0;   //!< single-threaded
-    virtual double operator()(RngPtr) = 0; //!< multi-threaded
+    virtual double operator()(RngPtr) const = 0; //!< multi-threaded
 
     /**
      * integer valued functions for discrete distributions
      */
     virtual unsigned long uldev(void);
-    virtual unsigned long uldev(RngPtr);
+    virtual unsigned long uldev(RngPtr) const;
 
     /**
      * true if RDG implements uldev function

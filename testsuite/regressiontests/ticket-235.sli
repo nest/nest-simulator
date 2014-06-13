@@ -27,7 +27,7 @@
  * exits on stack.
  */
 
-/unittest (8041) require
+(unittest) run
 /unittest using
 
 % preparatory work for proper test code in case NEST is complied with MPI support

@@ -50,7 +50,7 @@ Author: Diesmann, Plesser
 */
 
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 

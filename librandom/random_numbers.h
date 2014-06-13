@@ -1,6 +1,3 @@
-#ifndef RANDOM_NUMBERS_H
-#define RANDOM_NUMBERS_H
-
 /*
  *  random_numbers.h
  *
@@ -23,9 +20,11 @@
  *
  */
 
+#ifndef RANDOM_NUMBERS_H
+#define RANDOM_NUMBERS_H
+
 #include "slitype.h"
 #include "slimodule.h" 
-//#include "dictdatum.h"
 
 #include <string>
 
@@ -55,22 +54,27 @@ class RandomNumbers: public SLIModule
   ~RandomNumbers();
 
   const std::string name(void) const
-    {
-      return "RandomNumbers";
-    }
+  {
+    return "RandomNumbers";
+  }
 
-   const std::string commandstring(void) const
-    {
-      return std::string("/librandom /C++ ($Revision: $) provide-component "
-                         "/librandom /SLI (6796) require-component");
-    }
+  const std::string commandstring(void) const
+  {
+    return std::string("(librandom) run");
+  }
 
   /**
    * Initializes the random number module.  
    * The random number generator
    * and the random deviate generator dictionaries are set up.
    */
- void init(SLIInterpreter *);
+  void init(SLIInterpreter *);
+
+  //! Returns global random number generator dictionary
+  static const Dictionary& get_rngdict();
+
+  //! Returns global random deviate generator dictionary
+  static const Dictionary& get_rdvdict();
 
   // RNG creation function
   class CreateRNGFunction: public SLIFunction
@@ -150,12 +154,28 @@ private:
   
   //! Utility function for registering number generators
   template <typename NumberGenerator>
-  void register_rng_(const std::string& name, DictionaryDatum& dict);
+  void register_rng_(const std::string& name, Dictionary& dict);
 
   //! Utility function for registering deviate generators
   template <typename DeviateGenerator>
-  void register_rdv_(const std::string& name, DictionaryDatum& dict);
+  void register_rdv_(const std::string& name, Dictionary& dict);
 
+  static Dictionary* rngdict_;  //!< manages random number generators
+  static Dictionary* rdvdict_;  //!< manages random deviate generators
 };
+
+inline
+const Dictionary& RandomNumbers::get_rngdict()
+{
+  assert(rngdict_);
+  return *rngdict_;
+}
+
+inline
+const Dictionary& RandomNumbers::get_rdvdict()
+{
+  assert(rdvdict_);
+  return *rdvdict_;
+}
 
 #endif

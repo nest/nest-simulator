@@ -1,4 +1,3 @@
-
 /*
  *  cont_delay_connection.cpp
  *
@@ -20,6 +19,7 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "network.h"
 #include "dictdatum.h"
 #include "connector_model.h"
@@ -55,7 +55,7 @@ namespace nest
       }
     
   }
-  
+
   void ContDelayConnection::set_status(const DictionaryDatum & d, ConnectorModel &cm)
   {
      //set delay if mentioned
@@ -63,10 +63,11 @@ namespace nest
     if (updateValue<double_t>(d, names::delay, delay))
       {
 
-	double int_delay;     
-	long_t lowerbound; 
 	double_t h = Time::get_resolution().get_ms();
+
+	double_t int_delay;
 	double_t frac_delay = std::modf(delay/h, &int_delay);
+
 	if (frac_delay == 0)
 	  {
 	    if (!cm.check_delay(delay))
@@ -76,7 +77,7 @@ namespace nest
 	  }
 	else
 	  {
-	    lowerbound = (long_t)(int_delay);
+	    long_t lowerbound = static_cast<long_t>(int_delay);
 	    if (!cm.check_delays(Time(Time::step(lowerbound)).get_ms(),
 				 Time(Time::step(lowerbound + 1)).get_ms()))
 	      throw BadDelay(lowerbound);
@@ -90,7 +91,7 @@ namespace nest
    /**
    * Set properties of this connection from position p in the properties
    * array given in dictionary.
-   */  
+   */
   void ContDelayConnection::set_status(const DictionaryDatum & d, index p, ConnectorModel &cm)
   {
 
@@ -98,10 +99,12 @@ namespace nest
     double_t delay;
     if ( set_property<double_t>(d, names::delays, p, delay) )
       {
-	double int_delay;     
-	long_t lowerbound; 
+
 	double_t h = Time::get_resolution().get_ms();
+
+	double_t int_delay;
 	double_t frac_delay = std::modf(delay/h, &int_delay);
+
 	if (frac_delay == 0)
 	  {
 	    if (!cm.check_delay(delay))
@@ -111,7 +114,7 @@ namespace nest
 	  }
 	else
 	  {
-	    lowerbound = (long_t)(int_delay);
+	    long_t lowerbound = static_cast<long_t>(int_delay);
 	    if (!cm.check_delays(Time(Time::step(lowerbound)).get_ms(),
 				 Time(Time::step(lowerbound + 1)).get_ms()))
 	      throw BadDelay(lowerbound);
@@ -121,7 +124,7 @@ namespace nest
       }
     set_property<double_t>(d, names::weights, p, weight_); 
   }
- 
+
   /**
    * Append properties of this connection to the given dictionary. If the
    * dictionary is empty, new arrays are created first.

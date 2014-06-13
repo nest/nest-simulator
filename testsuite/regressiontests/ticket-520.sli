@@ -33,8 +33,9 @@ so that value and times arrays have the same length.
 Author: Hans Ekkehard Plesser, 2011-06-17
  */
 
-/unittest (8831) require
+(unittest) run
 /unittest using
+
 M_ERROR setverbosity
 
 % test in non-accumulating mode, one mm

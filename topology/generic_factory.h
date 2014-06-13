@@ -1,6 +1,3 @@
-#ifndef GENERIC_FACTORY_H
-#define GENERIC_FACTORY_H
-
 /*
  *  generic_factory.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef GENERIC_FACTORY_H
+#define GENERIC_FACTORY_H
 
 #include <map>
 #include "nest.h"

@@ -39,19 +39,11 @@
 
 import nest
 import nest.raster_plot
-import pylab
-import numpy
 
-N=1000 # number of neurons
-
-bias_begin=140. # bias current from...
-bias_end=200.   # ...to (ms)
-T=600 # simulation time (ms)
-
-def bias(n):
-    # constructs the dictionary with current ramp
-    return { 'I_e': (n * (bias_end-bias_begin)/N + bias_begin) }
-
+N = 1000           # number of neurons
+bias_begin = 140.  # bias current from...
+bias_end = 200.    # ...to (ms)
+T = 600            # simulation time (ms)
 
 driveparams  = {'amplitude':50., 'frequency':35.}
 noiseparams  = {'mean':0.0, 'std':200.}
@@ -66,7 +58,7 @@ drive   = nest.Create('ac_generator')
 nest.SetStatus(drive,   driveparams )
 nest.SetStatus(noise,   noiseparams )
 nest.SetStatus(neurons, neuronparams)
-nest.SetStatus(neurons, map(bias, neurons))
+nest.SetStatus(neurons, [{'I_e': (n * (bias_end - bias_begin) / N + bias_begin)} for n in neurons])
 
 nest.SetStatus(sd, {"withgid": True, "withtime": True})
 

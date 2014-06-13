@@ -1,54 +1,93 @@
 # Makefile file for PyNEST
-#
-# author: Moritz Helias, november 2005
-# moritz@bccn.uni-freiburg.de
-# ported for prerelease 1.9.0, Moritz Helias, june 2006
-#
-# Extended and partly rewritten at the CodeJam 2007
-# Jochen Martin Eppler, Marc-Oliver Gewaltig, Moritz Helias
-#
-# Rewritten to make use of Python's distutils package, 01/31/08
-# Sven Schrader, Jochen Martin Eppler
-#
-
-defs= @SLI_THREAD_DEFS@ $defs
-MAKEFLAGS= @MAKE_FLAGS@
 
 EXTRA_DIST= setup.py.in do_tests.py.in \
 	nest examples \
 	README.PyNEST \
-	pynestkernel.cpp \
-	checkpython.py \
-	pydatum.h \
-	pydatum.cpp \
-	datumtopythonconverter.h \
-	datumtopythonconverter.cpp \
-	pynestpycsa.h \
-	pynestpycsa.cpp
+	pynestkernel.pyx \
+	pynestkernel.pxd
 
-# 'all' does sometimes miss changes, therefore we 'clean' first
-all:	clean
-	@PYTHON_EXEC@ setup.py build
+BUILT_SOURCES = pynestkernel.cpp
+
+pynestkernel.cpp: pynestkernel.pyx pynestkernel.pxd
+	cd $(top_srcdir)/pynest; $(PYTHON) -c \
+	"from Cython.Build import cythonize; \
+	cythonize('pynestkernel.pyx', verbose=1)"
+
+# Threading libraries should always be linked last (or, at least, after
+# the standard C++ library), so that the resulting shared object doesn't
+# segfault when dlopen'ed from inside Python
+#
+# Additionally, libtools up to 2.4.2 filter out OpenMP flags, so passing
+# them directly to the complier driver improves compatibility with older
+# versions
+
+if LINK_PTHREAD
+THREADING_FLAGS = -XCClinker -lpthread
+endif
+
+if LINK_OPENMP
+THREADING_FLAGS = -XCClinker $(OPENMP_CXXFLAGS)
+endif
+
+pkgpyexec_LTLIBRARIES = pynestkernel.la
+
+pynestkernel_la_SOURCES = pynestkernel.cpp ../nest/neststartup.cpp ../nest/neststartup.h
+
+pynestkernel_la_LDFLAGS = -shared -module -avoid-version -export-dynamic $(THREADING_FLAGS)
+
+pynestkernel_la_CPPFLAGS = \
+	-D_IS_PYNEST \
+	-I@PKGSRCDIR@/libnestutil \
+	-I@PKGSRCDIR@/librandom \
+	-I@PKGSRCDIR@/sli \
+	-I@PKGSRCDIR@/nestkernel \
+	-I@PKGBUILDDIR@/libnestutil \
+	-I@PKGSRCDIR@/nest \
+	-I@PKGBUILDDIR@/nest \
+	-I@PKGSRCDIR@/topology \
+	-I@PKGSRCDIR@/conngen \
+	@GSL_CFLAGS@ \
+	@MPI_INCLUDE@ \
+	@MUSIC_INCLUDE@ \
+	@LIBNEUROSIM_INCLUDE@ \
+	$(PYNEST_CPPFLAGS)
+
+pynestkernel_la_CXXFLAGS = $(PYNEST_CXXFLAGS)
+
+pynestkernel_la_LIBADD= \
+	@LINKED_USER_MODULES@ \
+	@LINKED_MODULES@ \
+	$(top_builddir)/nestkernel/libnest.la \
+	$(top_builddir)/librandom/librandom.la \
+	$(top_builddir)/libnestutil/libnestutil.la \
+	$(top_builddir)/sli/libsli.la \
+	@SLI_LIBS@ \
+	@GSL_LIBS@ \
+	@MPI_LIBS@ \
+	@MUSIC_LIBS@ \
+	@LIBNEUROSIM_LIBS@ @LIBNEUROSIM_PY_LIBS@
+
+# See comments in ../nest/Makefile.am that explain it:
+pynestkernel_la_DEPENDENCIES= \
+	@LINKED_USER_MODULES@ \
+	@LINKED_MODULES@ \
+	$(top_builddir)/nestkernel/libnest.la \
+	$(top_builddir)/librandom/librandom.la \
+	$(top_builddir)/libnestutil/libnestutil.la \
+	$(top_builddir)/sli/libsli.la
 
 install-exec-hook:
-	@PYTHON_EXEC@ setup.py install --prefix=$(DESTDIR)@PYNEST_PREFIX@
-	if test `echo @PYTHON_VERSION@ | cut -d. -f2` -ge 6; then \
-	  mkdir -p $(DESTDIR)@PYNEST_PREFIX@/lib/python@PYTHON_VERSION@/dist-packages; \
-	  cd $(DESTDIR)@PYNEST_PREFIX@/lib/python@PYTHON_VERSION@/dist-packages; \
-	     ln -f -s ../site-packages/nest; \
-	  cd $(DESTDIR)@PYNEST_PREFIX@/lib/python@PYTHON_VERSION@/dist-packages; \
-	     ln -f -s ../site-packages/PyNEST*.egg-info; \
-	fi
-
-install-data-hook: install-exec
-	@INSTALL_PROGRAM@ -m 644 @PKGSRCDIR@/pynest/README.PyNEST $(DESTDIR)@PKGDOCDIR@/
+	$(PYTHON) setup.py build --build-base=$(abs_builddir)/build install --prefix=$(DESTDIR)$(prefix) --install-lib=$(DESTDIR)$(pyexecdir) --install-scripts=$(DESTDIR)$(bindir) --install-data=$(DESTDIR)$(pkgdatadir)
 	mkdir -p $(DESTDIR)@PKGDATADIR@/extras
 	@INSTALL_PROGRAM@ do_tests.py $(DESTDIR)@PKGDATADIR@/extras/
-	for dir in @SLI_SUBDIRS@; do \
-	  $(MAKE) -k -C @PKGBUILDDIR@/$$dir install-pynest-component 2> /dev/null || true ; done
 
-clean:
-	rm -rf build
+clean-local:
+	-rm -rf $(abs_builddir)/build
+
+pkgdocdir=@PKGDOCDIR@
+
+pkgdoc_DATA= \
+	README.PyNEST
 
 datadir=@PKGDOCDIR@/examples/pynest
 
@@ -83,4 +122,8 @@ lenovere_DATA=\
 	examples/LeNovere_2012/brunel2000_rand.py \
 	examples/LeNovere_2012/one_neuron_with_sine_wave.py
 
+hilltononidir=@PKGDOCDIR@/examples/pynest/HillTononi
 
+hilltononi_DATA=\
+	examples/HillTononi/ht_current.py \
+	examples/HillTononi/ht_poisson.py

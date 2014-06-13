@@ -32,8 +32,9 @@ Ensure that kernel set status including /time 0.0 works.
 Author: Hans Ekkehard Plesser, 2012-11-29
  */
 
-/unittest (9726) require
+(unittest) run
 /unittest using
+
 M_ERROR setverbosity
 
 { 

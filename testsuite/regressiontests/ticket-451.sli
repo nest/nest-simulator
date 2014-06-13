@@ -34,7 +34,7 @@ Description:
 Author: Hans Ekkehard Plesser, 2010-09-20
  */
 
-/unittest (8801) require
+(unittest) run
 /unittest using
 
 M_INFO setverbosity

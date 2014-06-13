@@ -32,7 +32,7 @@
  *
  */
 
-/unittest (8418) require
+(unittest) run
 /unittest using
 
 << >> begin

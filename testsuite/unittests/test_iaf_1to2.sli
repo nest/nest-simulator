@@ -60,9 +60,8 @@ Author:  July 2004, Diesmann
 SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_aligned_delay
 */
 
-/unittest (6688) require
+(unittest) run
 /unittest using
-
 
 /delay 1.0 def % connection delay to be used
 /simtime 8.0 def % simulation time

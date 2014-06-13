@@ -1,6 +1,3 @@
-#ifndef DROP_ODD_SPIKE_CONNECTION_H
-#define DROP_ODD_SPIKE_CONNECTION_H
-
 /*
  *  drop_odd_spike_connection.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef DROP_ODD_SPIKE_CONNECTION_H
+#define DROP_ODD_SPIKE_CONNECTION_H
 
 #include "connection_het_wd.h"
 

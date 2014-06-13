@@ -60,7 +60,7 @@ SeeAlso: testsuite::test_iaf_psp_peak, testsuite::test_iaf_psp, testsuite::test_
 */
 
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 1.0    /delay Set   % in ms 

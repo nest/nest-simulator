@@ -1,6 +1,3 @@
-#ifndef MASK_IMPL_H
-#define MASK_IMPL_H
-
 /*
  *  mask_impl.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef MASK_IMPL_H
+#define MASK_IMPL_H
 
 #include "mask.h"
 

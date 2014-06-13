@@ -70,24 +70,17 @@ namespace nest
   bool ConnectionID::operator==(const ConnectionID& c) const
   {
     return (source_gid_ == c.source_gid_)
-      &&  (target_gid_ == c.target_gid_)
+      && (target_gid_ == c.target_gid_)
       && (target_thread_ == c.target_thread_)
       && (port_ == c.port_)
       && (synapse_modelid_ == c.synapse_modelid_);
   }
 
-  std::ostream & ConnectionID::print_me(std::ostream& out) const
+  void ConnectionID::print_me(std::ostream& out) const
   {
-    out << "((" << source_gid_ << ',' << target_gid_<< ','
-	<< target_thread_ << ',' << synapse_modelid_ << ',' 
-	<< port_ << "))"; 
-    return out;
+    out << "<" << source_gid_ << "," << target_gid_ << ","
+	<< target_thread_ << "," << synapse_modelid_ << "," << port_ << ">";
   }
-
-std::ostream & operator<<(std::ostream& out, const nest::ConnectionID& c)
-{
-  return c.print_me(out);
-}  
 
 } // namespace
 

@@ -1,4 +1,3 @@
-
 /*
  *  stdp_pl_connection_hom.cpp
  *
@@ -91,18 +90,20 @@ namespace nest
   {
     // base class properties
     ConnectionHetWD::set_status(d, cm);
-
-//     if (d->known("tau_plus") ||
-// 	d->known("lambd") ||
-// 	d->known("alpha") ||
-// 	d->known("mu_plus") ||
-// 	d->known("mu_minus") ||
-// 	d->known("Wmax") )
-//       {
-// 	cm.network().error("STDPPLConnectionHom::set_status()", "you are trying to set common properties via an individual synapse.");
-//       }
-
     updateValue<double_t>(d, "Kplus", Kplus_);    
+
+    if (d->known("tau_plus") ||
+	d->known("lambda") ||
+	d->known("alpha") ||
+	d->known("mu_plus") ||
+	d->known("mu_minus") ||
+	d->known("Wmax") )
+      {
+	//cm.network().message(SLIInterpreter::M_ERROR, "STDPPLConnectionHom::set_status()", "you are trying to set common properties via an individual synapse.");
+	//throw BadParameter();
+	throw ChangeCommonPropsByIndividual("STDPPLConnectionHom::set_status(): you are trying to set common properties via an individual synapse.");
+      }
+
   }
 
    /**
@@ -112,16 +113,18 @@ namespace nest
   void STDPPLConnectionHom::set_status(const DictionaryDatum & d, index p, ConnectorModel &cm)
   {
     ConnectionHetWD::set_status(d, p, cm);
+    set_property<double_t>(d, "Kpluss", p, Kplus_);
   
-     if (d->known("tau_pluss") ||
+    if (d->known("tau_pluss") ||
 	d->known("lambdas") ||
 	d->known("alphas") ||
-	 d->known("mus")) 
+	d->known("mus")) 
       {
-	cm.network().message(SLIInterpreter::M_ERROR, "STDPPLConnectionHom::set_status()", "you are trying to set common properties via an individual synapse.");
+	//cm.network().message(SLIInterpreter::M_ERROR, "STDPPLConnectionHom::set_status()", "you are trying to set common properties via an individual synapse.");
+        //throw BadParameter();
+	throw ChangeCommonPropsByIndividual("STDPPLConnectionHom::set_status(): you are trying to set common properties via an individual synapse.");
       }
 
-    set_property<double_t>(d, "Kpluss", p, Kplus_);
   }
 
   void STDPPLConnectionHom::initialize_property_arrays(DictionaryDatum & d) const

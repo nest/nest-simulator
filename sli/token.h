@@ -95,7 +95,7 @@ public:
     }                       
   
     
-  Token(Datum *p_s = NULL) //!< use existing pointer to datum, token takes responsibulity of the pointer.
+  Token(Datum *p_s = NULL) //!< use existing pointer to datum, token takes responsibility of the pointer.
     :p(p_s)
        {}
     
@@ -249,6 +249,12 @@ public:
   Datum* datum(void) const
     {
       accessed_ = true;
+      return p;
+    }
+
+  // use with care, circumvents dictionary access checking
+  Datum* datum_without_tagging_as_accessed(void) const
+    {
       return p;
     }
 

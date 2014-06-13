@@ -32,7 +32,7 @@ Description:
 Author: Hans Ekkehard Plesser, 2010-05-06
  */
 
-/unittest (8045) require
+(unittest) run
 /unittest using
 
 M_WARNING setverbosity

@@ -36,10 +36,8 @@ Author:  September 2010, Diesmann; May 2012, Plesser
 SeeAlso: testsuite::fail_distributed_pass_or_die, testsuite::test_distributed_pass_or_die
 */
 
-
-/unittest (9715) require
+(unittest) run
 /unittest using
-
 
 [1 2 4]
 {

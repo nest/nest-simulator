@@ -1,6 +1,3 @@
-#ifndef MASK_H
-#define MASK_H
-
 /*
  *  mask.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef MASK_H
+#define MASK_H
 
 #include "nest.h"
 #include "topology_names.h"

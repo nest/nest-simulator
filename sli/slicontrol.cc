@@ -129,7 +129,7 @@ void LoopFunction::execute(SLIInterpreter *i) const
 	i->raiseerror(i->StackUnderflowError);
 	return;
       }
-    if(dynamic_cast<ProcedureDatum *>(i->OStack.top().datum())==0)
+    if(!dynamic_cast<ProcedureDatum *>(i->OStack.top().datum()))
       {
 	i->raiseerror(i->ArgumentTypeError);
 	return;
@@ -188,12 +188,15 @@ void IfFunction::execute(SLIInterpreter *i) const
 {
         // OStack: bool proc
         //          1    0
-    static Token true_token(new BoolDatum(true));
-
+    BoolDatum *test;
     if((i->OStack.load()>=2))
     {
 	i->EStack.pop();
-	if(i->OStack.pick(1) == true_token )
+        test = dynamic_cast<BoolDatum *>(i->OStack.pick(1).datum());
+        if(!test)
+            throw TypeMismatch("booltype", "something else");
+        
+	if(test->get())
 	{
 	    if(i->step_mode())
 	    {
@@ -231,14 +234,18 @@ void IfelseFunction::execute(SLIInterpreter *i) const
 {
         // OStack: bool tproc fproc
         //          2    1      0
-    static Token true_token(new BoolDatum(true));
-
+    BoolDatum *test;
+    
     if(i->OStack.load()<3 )
 	throw StackUnderflow(3,i->OStack.load());
 
     i->EStack.pop();
 
-    if(i->OStack.pick(2) == true_token )
+    test = dynamic_cast<BoolDatum *>(i->OStack.pick(2).datum());
+    if(!test)
+        throw TypeMismatch("booltype", "something else");
+
+    if(test->get())
     {
       if(i->step_mode())
       {
@@ -293,7 +300,7 @@ void RepeatFunction::execute(SLIInterpreter *i) const
 
 	ProcedureDatum *proc=
 	    dynamic_cast<ProcedureDatum *>(i->OStack.top().datum());
-	if(proc !=NULL)
+	if(proc)
 	{
 	    IntegerDatum *id= dynamic_cast<IntegerDatum*>(i->OStack.pick(1).datum());
 	    if(id==0)
@@ -571,7 +578,7 @@ void IparseFunction::execute(SLIInterpreter *i) const
 
     XIstreamDatum *is =
 	dynamic_cast<XIstreamDatum *>(i->EStack.pick(1).datum());
-    assert(is != NULL);	assert(is->valid());
+    assert(is);	assert(is->valid());
 
     Token t;
     if(i->parse->readToken(**is, t))
@@ -597,7 +604,7 @@ void DefFunction::execute(SLIInterpreter *i) const
 	throw StackUnderflow(2,i->OStack.load());
 
     LiteralDatum *nd=dynamic_cast<LiteralDatum *>(i->OStack.pick(1).datum());
-    if(nd == NULL)
+    if(!nd)
 	throw ArgumentType(1);
 
     // if(nd->writeable())
@@ -644,7 +651,7 @@ void SetFunction::execute(SLIInterpreter *i) const
 	throw StackUnderflow(2,i->OStack.load());
 
   LiteralDatum *nd=dynamic_cast<LiteralDatum *>(i->OStack.top().datum());
-  if(nd ==0)
+  if(!nd)
       throw ArgumentType(0);
 
   // if(nd->writeable())
@@ -676,14 +683,14 @@ void LoadFunction::execute(SLIInterpreter *i) const
     i->assert_stack_load(1);
 
     LiteralDatum *name= dynamic_cast<LiteralDatum *>(i->OStack.top().datum());
-    if(name == NULL)
+    if(!name)
     {
       i->raiseerror(i->ArgumentTypeError);
       return;
     }
 
     Token contents= i->lookup(*name);
-    if(contents.datum()!=NULL)
+    if(contents.datum())
     {
         i->OStack.pop();
         i->OStack.push_move(contents);
@@ -719,7 +726,7 @@ void LookupFunction::execute(SLIInterpreter *i) const
     }
 
   LiteralDatum *name= dynamic_cast<LiteralDatum *>(i->OStack.top().datum());
-  if(name == 0)
+  if(!name)
     {
       i->raiseerror(i->ArgumentTypeError);
       return;
@@ -729,7 +736,7 @@ void LookupFunction::execute(SLIInterpreter *i) const
 
   Token contents= i->lookup(*name);
   i->OStack.pop();
-  if(contents.datum()!=NULL)
+  if(contents.datum())
   {
     i->OStack.push_move(contents);
     i->OStack.push(true);
@@ -771,7 +778,7 @@ void ForFunction::execute(SLIInterpreter *i) const
     i->EStack.pop();
     ProcedureDatum *proc=
         dynamic_cast<ProcedureDatum *>(i->OStack.top().datum());
-    assert(proc !=NULL);
+    assert(proc);
 
     i->EStack.push_by_ref(i->baselookup(i->mark_name));
     i->EStack.push_move(i->OStack.pick(2));      // increment
@@ -852,6 +859,7 @@ void Forall_aFunction::execute(SLIInterpreter *i) const
 
     ProcedureDatum *proc=
         static_cast<ProcedureDatum *>(i->OStack.top().datum());
+    assert(proc);
     
     i->EStack.pop();
     i->EStack.push_by_ref(mark);
@@ -875,7 +883,7 @@ void Forall_iterFunction::execute(SLIInterpreter *i) const
     i->EStack.pop();
     ProcedureDatum *proc=
         dynamic_cast<ProcedureDatum *>(i->OStack.top().datum());
-    assert(proc !=NULL);
+    assert(proc);
 
     i->EStack.push(i->baselookup(i->mark_name));
     i->EStack.push_move(i->OStack.pick(1));        // push iterator
@@ -933,13 +941,13 @@ void Forallindexed_aFunction::execute(SLIInterpreter *i) const
     i->EStack.pop();
     ProcedureDatum *proc=
         dynamic_cast<ProcedureDatum *>(i->OStack.top().datum());
-    assert(proc !=NULL);
+    assert(proc);
 
     i->EStack.push(i->baselookup(i->mark_name));
     i->EStack.push_move(i->OStack.pick(1));        // push object
 
     ArrayDatum  *ad= dynamic_cast<ArrayDatum *>(i->EStack.top().datum());
-    assert(ad !=NULL);
+    assert(ad);
 
     i->EStack.push(ad->size()); // push limit
     i->EStack.push(0);          // push initial counter
@@ -960,13 +968,13 @@ void Forallindexed_sFunction::execute(SLIInterpreter *i) const
     i->EStack.pop();
     ProcedureDatum *proc=
         dynamic_cast<ProcedureDatum *>(i->OStack.top().datum());
-    assert(proc !=NULL);
+    assert(proc);
 
     i->EStack.push(i->baselookup(i->mark_name));
     i->EStack.push_move(i->OStack.pick(1));        // push object
 
     StringDatum  *sd= dynamic_cast<StringDatum *>(i->EStack.top().datum());
-    assert(sd !=NULL);
+    assert(sd);
 
     i->EStack.push(sd->size()); // push limit
     i->EStack.push(0);          // push initial counter
@@ -987,13 +995,13 @@ void Forall_sFunction::execute(SLIInterpreter *i) const
     i->EStack.pop();
     ProcedureDatum *proc=
         dynamic_cast<ProcedureDatum *>(i->OStack.top().datum());
-    assert(proc !=NULL);
+    assert(proc);
 
     i->EStack.push(i->baselookup(i->mark_name));
     i->EStack.push_move(i->OStack.pick(1));        // push object
 
     StringDatum  *sd= dynamic_cast<StringDatum *>(i->EStack.top().datum());
-    assert(sd !=NULL);
+    assert(sd);
 
     i->EStack.push(new IntegerDatum(sd->size())); // push limit
     i->EStack.push(new IntegerDatum(0));          // push initial counter
@@ -1064,7 +1072,7 @@ void RaiseerrorFunction::execute(SLIInterpreter *i) const
 
     Name *errorname= dynamic_cast<Name *>(err.datum());
     Name *cmdname  = dynamic_cast<Name *>(cmd.datum());
-    if(errorname == NULL || cmdname == NULL)
+    if( (!errorname) || (!cmdname) )
     {
       i->message(SLIInterpreter::M_ERROR, "raiseerror","Usage: /command /errorname raiserror");
       i->raiseerror("ArgumentType");
@@ -1405,7 +1413,7 @@ void PclocksFunction::execute(SLIInterpreter *i) const
   struct tms foo;
   const clock_t realtime = times(&foo);
 
-  if ( realtime == (clock_t)(-1) )
+  if ( realtime == static_cast<clock_t>(-1) )
   {
     i->message(SLIInterpreter::M_ERROR, "PclocksFunction",
 	     "System function times() returned error!");
@@ -1614,7 +1622,7 @@ void  Token_sFunction::execute(SLIInterpreter *i) const
   assert(i->OStack.load()>0);
 
   StringDatum *sd= dynamic_cast<StringDatum *>(i->OStack.top().datum());
-  assert(sd != NULL);
+  assert(sd);
 #ifdef HAVE_SSTREAM
   std::istringstream in(sd->c_str());
 #else
@@ -1658,7 +1666,7 @@ void  Token_isFunction::execute(SLIInterpreter *i) const
 
   IstreamDatum *sd= dynamic_cast<IstreamDatum *>(i->OStack.top().datum());
 
-  if(sd == NULL)
+  if(!sd)
     throw TypeMismatch("istream", "something else");
 
   Token t;
@@ -1687,7 +1695,7 @@ void  Symbol_sFunction::execute(SLIInterpreter *i) const
   assert(i->OStack.load()>0);
 
   StringDatum *sd= dynamic_cast<StringDatum *>(i->OStack.top().datum());
-  assert(sd != NULL);
+  assert(sd);
 #ifdef HAVE_SSTREAM
   std::istringstream in(sd->c_str());
 #else
@@ -1741,7 +1749,7 @@ void SetGuardFunction::execute(SLIInterpreter *i) const
 {
   i->assert_stack_load(1);
   IntegerDatum *count= dynamic_cast<IntegerDatum *>(i->OStack.top().datum());
-  assert(count != NULL);
+  assert(count);
   i->setcycleguard(count->get());
   i->OStack.pop();
   i->EStack.pop();
@@ -1885,7 +1893,7 @@ void SetVerbosityFunction::execute(SLIInterpreter *i) const
 {
   assert(i->OStack.load()>0);
   IntegerDatum *count= dynamic_cast<IntegerDatum *>(i->OStack.top().datum());
-  assert(count != NULL);
+  assert(count);
   i->verbosity(count->get());
   i->OStack.pop();
   i->EStack.pop();
@@ -1922,11 +1930,11 @@ void MessageFunction::execute(SLIInterpreter *i) const
   assert(i->OStack.load() >= 3);
 
   IntegerDatum *lev= dynamic_cast<IntegerDatum *>(i->OStack.pick(2).datum());
-  assert(lev != NULL);
+  assert(lev);
   StringDatum  *frm= dynamic_cast<StringDatum  *>(i->OStack.pick(1).datum());
-  assert(frm != NULL);
+  assert(frm);
   StringDatum  *msg= dynamic_cast<StringDatum  *>(i->OStack.pick(0).datum());
-  assert(msg != NULL);
+  assert(msg);
 
   i->message(lev->get(),frm->c_str(),msg->c_str());
   i->OStack.pop(3);

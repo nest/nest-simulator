@@ -81,8 +81,6 @@ namespace nest{
     
   public:        
     
-    typedef Node base;
-    
     ppd_sup_generator();
     ppd_sup_generator(const ppd_sup_generator&);
     

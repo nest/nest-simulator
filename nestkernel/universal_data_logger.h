@@ -1,6 +1,3 @@
-#ifndef UNIVERSAL_DATA_LOGGER_H
-#define UNIVERSAL_DATA_LOGGER_H
-
 /*
  *  universal_data_logger.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef UNIVERSAL_DATA_LOGGER_H
+#define UNIVERSAL_DATA_LOGGER_H
 
 #include "nest.h"
 #include "event.h"

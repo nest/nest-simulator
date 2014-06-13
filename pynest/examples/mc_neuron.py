@@ -39,11 +39,11 @@ nest.ResetKernel()
 
 # Obtain receptor dictionary
 syns = nest.GetDefaults('iaf_cond_alpha_mc')['receptor_types']
-print "iaf_cond_alpha_mc receptor_types: ", syns
+print("iaf_cond_alpha_mc receptor_types: {0}".format(syns))
 
 # Obtain list of recordable quantities
 rqs = nest.GetDefaults('iaf_cond_alpha_mc')['recordables']
-print "iaf_cond_alpha_mc recordables   : ", rqs
+print("iaf_cond_alpha_mc recordables   : {0}".format(rqs))
 
 # Change some default values:
 #  - threshold potential
@@ -82,9 +82,9 @@ nest.SetStatus(cgs,
                 {'start':  50.0, 'stop': 100.0, 'amplitude': 100.0}]) # distal
 
 # Connect generators to correct compartments
-nest.Connect([cgs[0]], n, params = {'receptor_type': syns['soma_curr']})
-nest.Connect([cgs[1]], n, params = {'receptor_type': syns['proximal_curr']})
-nest.Connect([cgs[2]], n, params = {'receptor_type': syns['distal_curr']})
+nest.Connect([cgs[0]], n, syn_spec = {'receptor_type': syns['soma_curr']})
+nest.Connect([cgs[1]], n, syn_spec = {'receptor_type': syns['proximal_curr']})
+nest.Connect([cgs[2]], n, syn_spec = {'receptor_type': syns['distal_curr']})
 
 # Create one excitatory and one inhibitory spike generator per compartment,
 # configure regime that drives distal, proximal and soma, in that order,
@@ -99,12 +99,12 @@ nest.SetStatus(sgs,
                 {'spike_times': [410.0, 430.0]}]) # distal inhibitory
 
 # Connect generators to correct compartments
-nest.Connect([sgs[0]], n, params = {'receptor_type': syns['soma_exc']})
-nest.Connect([sgs[1]], n, params = {'receptor_type': syns['soma_inh']})
-nest.Connect([sgs[2]], n, params = {'receptor_type': syns['proximal_exc']})
-nest.Connect([sgs[3]], n, params = {'receptor_type': syns['proximal_inh']})
-nest.Connect([sgs[4]], n, params = {'receptor_type': syns['distal_exc']})
-nest.Connect([sgs[5]], n, params = {'receptor_type': syns['distal_inh']})
+nest.Connect([sgs[0]], n, syn_spec = {'receptor_type': syns['soma_exc']})
+nest.Connect([sgs[1]], n, syn_spec = {'receptor_type': syns['soma_inh']})
+nest.Connect([sgs[2]], n, syn_spec = {'receptor_type': syns['proximal_exc']})
+nest.Connect([sgs[3]], n, syn_spec = {'receptor_type': syns['proximal_inh']})
+nest.Connect([sgs[4]], n, syn_spec = {'receptor_type': syns['distal_exc']})
+nest.Connect([sgs[5]], n, syn_spec = {'receptor_type': syns['distal_inh']})
 
 # Simulate 
 nest.Simulate(700)

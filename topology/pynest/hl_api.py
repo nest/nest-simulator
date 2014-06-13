@@ -41,7 +41,7 @@ to NEST:
 
    Example:
 
-     layers = CreateLayers([{...}, {...}, {...}]
+     layers = CreateLayers(({...}, {...}, {...}))
 
    creates three layers and returns an array of three GIDs.
 
@@ -50,7 +50,7 @@ to NEST:
    connects layers[0]->layers[1] and layers[1]->layers[2] using
    the same dictionary to specify both connections.
 
-     ConnectLayers(layers[:2], layers[1:], [{...}, {...}])
+     ConnectLayers(layers[:2], layers[1:], ({...}, {...}))
 
    connects the same layers, but the layers[0]->layers[1] connection
    is specified by the first dictionary, the layers[1]->layers[2]
@@ -63,23 +63,10 @@ Notes:
 
 2. Some function names are now in plural form, e.g. CreateLayers.
 
-Authors: Kittel Austvoll, Hans Ekkehard Plesser, Håkon Enger
+Authors: Kittel Austvoll, Hans Ekkehard Plesser, Hakon Enger
 """
 
-import types
-
-nest = None
-
-# provide all() for Python versions < 2.5, see #495
-try:
-    all([True])
-except:
-    def all(arr):
-        """
-        Return true if all elements of argument are true.
-        Manual implementation for Python versions < 2.5.
-        """
-        return reduce(lambda a,b: a and b, arr, True)
+import nest
 
 
 def topology_func(slifunc, *args):
@@ -108,8 +95,8 @@ class Mask(object):
     # The constructor should not be called by the user
     def __init__(self,datum):
         """Masks must be created using the CreateMask command."""
-        if not isinstance(datum,nest.Datum) or datum.type != "masktype":
-            raise TypeError,"Expected mask Datum."
+        if not isinstance(datum, nest.SLIDatum) or datum.dtype != "masktype":
+            raise TypeError("expected mask Datum")
         self._datum=datum
 
     # Generic binary operation
@@ -175,8 +162,8 @@ class Parameter(object):
     # The constructor should not be called by the user
     def __init__(self,datum):
         """Parameters must be created using the CreateParameter command."""
-        if not isinstance(datum,nest.Datum) or datum.type != "parametertype":
-            raise TypeError,"Expected parameter Datum."
+        if not isinstance(datum, nest.SLIDatum) or datum.dtype != "parametertype":
+            raise TypeError("expected parameter datum")
         self._datum=datum
 
     # Generic binary operation
@@ -247,13 +234,10 @@ def CreateLayer(specs):
     nest.help("topology::CreateLayer")
     """
 
-    # ensure we can work on list/tuple in any case
-    if not nest.is_sequencetype(specs):
-        specs = (specs,)
-
-    # ensure all specs are dicts
-    if not all([type(spec) == types.DictType for spec in specs]):
-        raise nest.NESTError("specs must be dictionary of list of dictionaries")
+    if isinstance(specs, dict):
+        specs = (specs, )
+    elif not all(isinstance(spec, dict) for spec in specs):
+        raise TypeError("specs must be a dictionary or a list of dictionaries")
 
     return topology_func('{ CreateLayer } Map', specs)
 
@@ -285,8 +269,11 @@ def ConnectLayers(pre, post, projections):
     nest.help("topology::ConnectLayers")
     """
 
-    nest.raise_if_not_list_of_gids(pre, 'pre')
-    nest.raise_if_not_list_of_gids(post, 'post')
+    if not nest.is_sequence_of_gids(pre):
+        raise TypeError("pre must be a sequence of GIDs")
+
+    if not nest.is_sequence_of_gids(pre):
+        raise TypeError("post must be a sequence of GIDs")
 
     if not len(pre) == len(post):
         raise nest.NESTError("pre and post must have the same length.")
@@ -298,7 +285,7 @@ def ConnectLayers(pre, post, projections):
     def fixdict(d):
         d = d.copy()
         for k,v in d.items():
-            if isinstance(v,types.DictType):
+            if isinstance(v, dict):
                 d[k] = fixdict(v)
             elif isinstance(v,Mask) or isinstance(v,Parameter):
                 d[k] = v._datum
@@ -326,7 +313,8 @@ def GetPosition(nodes):
     nest.help("topology::GetPosition")
     """
 
-    nest.raise_if_not_list_of_gids(nodes, 'nodes')
+    if not nest.is_sequence_of_gids(nodes):
+        raise TypeError("nodes must be a sequence of GIDs")
 
     return topology_func('{ GetPosition } Map', nodes)
 
@@ -348,7 +336,8 @@ def GetLayer(nodes):
     nest.help("topology::GetLayer")
     """
 
-    nest.raise_if_not_list_of_gids(nodes, 'nodes')
+    if not nest.is_sequence_of_gids(nodes):
+        raise TypeError("nodes must be a sequence of GIDs")
 
     return topology_func('{ GetLayer } Map', nodes)
 
@@ -391,11 +380,13 @@ def GetElement(layers, locations):
     nest.help("topology::GetElement")
     """
 
-    nest.raise_if_not_list_of_gids(layers, 'layers')
+    if not nest.is_sequence_of_gids(layers):
+        raise TypeError("layers must be a sequence of GIDs")
+
     if not len(layers) > 0:
         raise nest.NESTError("layers cannot be empty")
 
-    if not ( nest.is_sequencetype(locations) and len(locations) > 0 ):
+    if not (nest.is_iterable(locations) and len(locations) > 0):
         raise nest.NESTError("locations must be coordinate array or list of coordinate arrays")
 
     # ensure that all layers are grid-based, otherwise one ends up with an
@@ -406,27 +397,27 @@ def GetElement(layers, locations):
         raise nest.NESTError("layers must contain only grid-based topology layers")
     
     # SLI GetElement returns either single GID or list
-    def makelist(x):
-        if not nest.is_sequencetype(x):
-            return [x] 
+    def make_tuple(x):
+        if not nest.is_iterable(x):
+            return (x, )
         else:
             return x
 
-    if nest.is_sequencetype(locations[0]):
+    if nest.is_iterable(locations[0]):
 
         # layers and locations are now lists
         nodes = topology_func('/locs Set { /lyr Set locs { lyr exch GetElement } Map } Map',
                               layers, locations)
 
-        node_list = [[makelist(nodes_at_loc) for nodes_at_loc in nodes_in_lyr]
-                     for nodes_in_lyr in nodes]
+        node_list = tuple(tuple(make_tuple(nodes_at_loc) for nodes_at_loc in nodes_in_lyr)
+                     for nodes_in_lyr in nodes)
 
     else:
 
         # layers is list, locations is a single location
         nodes = topology_func('/loc Set { loc GetElement } Map', layers, locations)
 
-        node_list = [makelist(nodes_in_lyr) for nodes_in_lyr in nodes]
+        node_list = tuple(make_tuple(nodes_in_lyr) for nodes_in_lyr in nodes)
 
     # If only a single layer is given, un-nest list
     if len(layers)==1: node_list=node_list[0]
@@ -472,41 +463,44 @@ def FindNearestElement(layers, locations, find_all=False):
     """
 
     import numpy
-    nest.raise_if_not_list_of_gids(layers, 'layers')
+
+    if not nest.is_sequence_of_gids(layers):
+        raise TypeError("layers must be a sequence of GIDs")
+
     if not len(layers) > 0:
         raise nest.NESTError("layers cannot be empty")
 
-    if not ( nest.is_sequencetype(locations) and len(locations) > 0 ):
-        raise nest.NESTError("locations must be coordinate array or list of coordinate arrays")
+    if not nest.is_iterable(locations):
+        raise TypeError("locations must be coordinate array or list of coordinate arrays")
 
     # ensure locations is sequence, keeps code below simpler
-    if not nest.is_sequencetype(locations[0]):
-        locations = [locations]
-   
+    if not nest.is_iterable(locations[0]):
+        locations = (locations, )
+
     result = []  # collect one list per layer
     # loop over layers
     for lyr in layers:
-        els = nest.GetChildren([lyr])[0]
+        els = nest.GetChildren((lyr, ))[0]
 
-        lyr_result = [] 
+        lyr_result = []
         # loop over locations
         for loc in locations:
             d = Distance(numpy.array(loc), els)
-   
+
             if not find_all:
                 dx = numpy.argmin(d)   # finds location of one minimum
                 lyr_result.append(els[dx])
             else:
-                mingids = els[:1]
-                minval  = d[0]  
-                for idx in xrange(1, len(els)):
+                mingids = list(els[:1])
+                minval  = d[0]
+                for idx in range(1, len(els)):
                     if d[idx] < minval:
                         mingids = [els[idx]]
                         minval = d[idx]
                     elif numpy.abs(d[idx] - minval) <= 1e-14 * minval:
                         mingids.append(els[idx])
-                lyr_result.append(mingids)   
-        result.append(lyr_result)
+                lyr_result.append(tuple(mingids))
+        result.append(tuple(lyr_result))
 
     # If both layers and locations are multi-element lists, result shall remain a nested list
     # Otherwise, either the top or the second level is a single element list and we flatten
@@ -516,9 +510,9 @@ def FindNearestElement(layers, locations, find_all=False):
         return result[0]
     elif len(result[0]) == 1:
         assert(len(locations) == 1)
-        return [el[0] for el in result]
+        return tuple(el[0] for el in result)
     else:
-        return result    
+        return tuple(result)
 
 
 def _check_displacement_args(from_arg, to_arg, caller):
@@ -528,13 +522,14 @@ def _check_displacement_args(from_arg, to_arg, caller):
     """
 
     import numpy
+
     if isinstance(from_arg, numpy.ndarray):
-        from_arg = [from_arg]
-    elif not nest.is_sequencetype(from_arg) and len(from_arg) > 0:
+        from_arg = (from_arg, )
+    elif not (nest.is_iterable(from_arg) and len(from_arg) > 0):
         raise nest.NESTError("%s: from_arg must be lists of GIDs or positions" % caller)
     # invariant: from_arg is list
     
-    if not ( nest.is_sequencetype(to_arg) and len(to_arg) > 0 ):
+    if not nest.is_sequence_of_gids(to_arg):
         raise nest.NESTError("%s: to_arg must be lists of GIDs" % caller)
     # invariant: from_arg and to_arg are sequences
     
@@ -729,11 +724,12 @@ def FindCenterElement(layers):
     FindNearestElement
     """ 
     
-    nest.raise_if_not_list_of_gids(layers, 'layers')
+    if not nest.is_sequence_of_gids(layers):
+        raise TypeError("layers must be a sequence of GIDs")
 
     # we need to do each layer on its own since FindNearestElement does not thread
-    return [FindNearestElement([lyr], nest.GetStatus([lyr], 'topology')[0]['center'])[0]
-            for lyr in layers]
+    return tuple(FindNearestElement((lyr, ), nest.GetStatus((lyr, ), 'topology')[0]['center'])[0]
+            for lyr in layers)
 
 
 def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
@@ -762,9 +758,13 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     --------
     GetTargetPositions, nest.GetConnections
     """
-    
-    nest.raise_if_not_list_of_gids(sources, 'sources')
-    nest.raise_if_not_list_of_gids(tgt_layer, 'tgt_layer')
+
+    if not nest.is_sequence_of_gids(sources):
+        raise TypeError("sources must be a sequence of GIDs")
+
+    if not nest.is_sequence_of_gids(tgt_layer):
+        raise TypeError("tgt_layer must be a sequence of GIDs")
+
     if len(tgt_layer) != 1:
         raise nest.NESTError("tgt_layer must be a one-element list")
     
@@ -782,7 +782,7 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
        src_tgt_map[conn[0]].append(conn[1])
 
     # convert dict to nested list in same order as sources
-    return [src_tgt_map[sgid] for sgid in sources]
+    return tuple(src_tgt_map[sgid] for sgid in sources)
 
 
 
@@ -814,8 +814,8 @@ def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
     GetTargetNodes
     """
     
-    return [GetPosition(nodes) for nodes
-            in GetTargetNodes(sources, tgt_layer, tgt_model, syn_model)]
+    return tuple(GetPosition(nodes) for nodes
+            in GetTargetNodes(sources, tgt_layer, tgt_model, syn_model))
     
 
 def _draw_extent(ax, xctr, yctr, xext, yext):
@@ -826,13 +826,13 @@ def _draw_extent(ax, xctr, yctr, xext, yext):
     # thin gray line indicating extent
     llx, lly = xctr - xext/2.0, yctr - yext/2.0
     urx, ury = llx + xext, lly + yext
-    ax.add_patch(plt.Rectangle([llx, lly], xext, yext, fc='none', ec='0.5', lw=1, zorder=1))
+    ax.add_patch(plt.Rectangle((llx, lly), xext, yext, fc='none', ec='0.5', lw=1, zorder=1))
     
     # set limits slightly outside extent
     ax.set(aspect='equal', 
-           xlim=[llx - 0.05*xext, urx + 0.05*xext],
-           ylim=[lly - 0.05*yext, ury + 0.05*yext],
-           xticks=[], yticks=[])
+           xlim=(llx - 0.05*xext, urx + 0.05*xext),
+           ylim=(lly - 0.05*yext, ury + 0.05*yext),
+           xticks=tuple(), yticks=tuple())
 
 
 def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
@@ -877,7 +877,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         # extract position information, transpose to list of x and y positions
         xpos, ypos = zip(*GetPosition(nest.GetChildren(layer)[0]))
 
-        if not fig:
+        if fig is None:
             fig = plt.figure()
             ax = fig.add_subplot(111)
         else:
@@ -893,7 +893,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         # extract position information, transpose to list of x,y,z positions
         pos = zip(*GetPosition(nest.GetChildren(layer)[0]))
 
-        if not fig:
+        if fig is None:
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d')
         else:
@@ -960,7 +960,7 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
         xext, yext = ext
         xctr, yctr = nest.GetStatus(tgt_layer, 'topology')[0]['center']
     
-        if not fig:
+        if fig is None:
             fig = plt.figure()
             ax = fig.add_subplot(111)
         else:
@@ -977,14 +977,14 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
     
         _draw_extent(ax, xctr, yctr, xext, yext)
 
-        if mask or kernel:
+        if mask is not None or kernel is not None:
             PlotKernel(ax, src_nrn, mask, kernel, mask_color, kernel_color)
 
     else:
         # 3D layer
         from mpl_toolkits.mplot3d import Axes3D
 
-        if not fig:
+        if fig is None:
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d')
         else:
@@ -1060,10 +1060,10 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red', kernel_color='red
     else:
         raise ValueError('Mask type cannot be plotted with this version of PyTopology.')
 
-    if kern and isinstance(kern, dict):
+    if kern is not None and isinstance(kern, dict):
         if 'gaussian' in kern:
             sigma = kern['gaussian']['sigma']
-            for r in xrange(3):
+            for r in range(3):
                 ax.add_patch(plt.Circle(srcpos+offs, radius=(r+1)*sigma, zorder=-1000,
                                         fc='none', ec=kernel_color, lw=3, ls='dashed'))
         else:

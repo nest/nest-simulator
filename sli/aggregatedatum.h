@@ -26,9 +26,7 @@
 #include "allocator.h"
 #include "config.h"
 
-class DatumConverter;
-
-/* 
+/*
     Datum template for aggregate data types.
 */
 
@@ -63,20 +61,13 @@ class AggregateDatum : public TypedDatum<slt>, public C
     }
   
 public:
-  AggregateDatum() {TypedDatum<slt>::unset_executable();}
- AggregateDatum(const AggregateDatum<C,slt> &d):TypedDatum<slt>(d),C(d) {}
- AggregateDatum(const C& c): TypedDatum<slt>(),C(c) { }    
+    AggregateDatum() {TypedDatum<slt>::unset_executable();}
+    AggregateDatum(const AggregateDatum<C,slt> &d):TypedDatum<slt>(d),C(d) {}
+    AggregateDatum(const C& c): TypedDatum<slt>(),C(c) { }
 
     virtual ~AggregateDatum() {}
-       
-  virtual void print(std::ostream &) const;
-  virtual void pprint(std::ostream &) const;
-  virtual void list(std::ostream &, std::string, int) const;
-  virtual void input_form(std::ostream &) const;
-  virtual void info(std::ostream &) const;
-  
 
-  bool equals(const Datum *dat) const
+    bool equals(const Datum *dat) const
     {
         // The following construct works around the problem, that
         // a direct dynamic_cast<const GenericDatum<D> * > does not seem
@@ -92,14 +83,14 @@ public:
     
     }
 
-  static void * operator new(size_t size)
+    static void * operator new(size_t size)
     {
       if(size != memory.size_of())
 	return ::operator new(size);
       return memory.alloc();
     }
 
-  static void operator delete(void *p, size_t size)
+    static void operator delete(void *p, size_t size)
     {
       if(p == NULL)
 	return;
@@ -111,18 +102,44 @@ public:
       memory.free(p);
     }
 
-  /**
-   * Accept a DatumConverter as a visitor to the datum (visitor pattern).
-   * This member has to be overridden in the derived classes
-   * to call visit and passing themselves as an argument.
-   */
-  void use_converter(DatumConverter &);
+    virtual void print(std::ostream &out) const;
+    virtual void pprint(std::ostream &out) const;
+    virtual void list(std::ostream &out, std::string prefix, int l) const;
 
+    virtual void input_form(std::ostream &out) const
+    {
+      print(out);
+    }
+
+    virtual void info(std::ostream &out) const
+    {
+      print(out);
+    }
 
 };
 
+template <class C, SLIType *slt>
+void AggregateDatum<C,slt>::print(std::ostream &out) const
+{
+    out << *dynamic_cast<C *>(const_cast<AggregateDatum<C,slt> *>(this));
+}
 
+template <class C, SLIType *slt>
+void AggregateDatum<C,slt>::pprint(std::ostream &out) const
+{
+    print(out);
+}
+
+template <class C, SLIType *slt>
+void AggregateDatum<C,slt>::list(std::ostream &out, std::string prefix, int l) const
+{
+    if(l==0)
+      prefix="-->"+prefix;
+    else
+      prefix="   "+prefix;
+
+    out << prefix;
+    print(out);
+}
 
 #endif
-
-

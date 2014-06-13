@@ -69,7 +69,7 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_dc_aligned_delay, testsuite::t
 */
 
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 1.0 /delay Set   % in ms 

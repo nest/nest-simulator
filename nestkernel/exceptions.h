@@ -1,5 +1,3 @@
-#ifndef EXCEPTIONS_H
-#define EXCEPTIONS_H
 /*
  *  exceptions.h
  *
@@ -21,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef EXCEPTIONS_H
+#define EXCEPTIONS_H
 
 #include "sliexceptions.h"
 #include "nest_time.h"
@@ -188,25 +189,6 @@ namespace nest {
 
     std::string message();
   };
-
-   /**
-     * Exception to be thrown if an incorrectly formed address is detected.
-     * @ingroup KernelExceptions
-     */
-
-    class MalformedAddress: public KernelException
-    {
-      std::string msg_;
-    public:
-      MalformedAddress(const std::string& msg)
-        : KernelException("MalformedAddress"),
-        msg_(msg)
-        {}
-
-      ~MalformedAddress() throw () {}
-
-      std::string message();
-    };
 
   /**
    * Exception to be thrown if the specified
@@ -446,6 +428,56 @@ namespace nest {
       {}
 
     ~BadProperty() throw () {}
+
+    std::string message();
+  };
+
+  /**
+   * Exception to be thrown if a parameter
+   * cannot be set.
+   * Thrown by Node::set_/get_property methods.
+   * @ingroup KernelExceptions
+   */
+  class BadParameter: public KernelException
+  {
+    std::string msg_;
+  public:
+    //! @param detailed error message
+  BadParameter()
+    : KernelException("BadParameter"),
+      msg_()
+	{}
+  BadParameter(std::string msg)
+    : KernelException("BadParameter"),
+      msg_(msg)
+      {}
+
+    ~BadParameter() throw () {}
+
+    std::string message();
+  };
+
+  /**
+   * Exception to be thrown if one tried to set the
+   * common properties via an individual synapse.
+   * Thrown by Node::set_/get_property methods.
+   * @ingroup KernelExceptions
+   */
+  class ChangeCommonPropsByIndividual: public KernelException
+  {
+    std::string msg_;
+  public:
+    //! @param detailed error message
+   ChangeCommonPropsByIndividual()
+    : KernelException("ChangeCommonPropsByIndividual"),
+      msg_()
+	{}
+  ChangeCommonPropsByIndividual(std::string msg)
+    : KernelException("ChangeCommonPropsByIndividual"),
+      msg_(msg)
+      {}
+
+    ~ChangeCommonPropsByIndividual() throw () {}
 
     std::string message();
   };

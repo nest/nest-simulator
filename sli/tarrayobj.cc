@@ -70,7 +70,6 @@ void TokenArrayObj::allocate(size_t new_s, size_t new_c, size_t new_a, const Tok
 
     alloc_block_size = new_a;
     
-    size_t min_l;
     size_t old_s = size();
 
     assert(new_c != 0);
@@ -88,6 +87,9 @@ void TokenArrayObj::allocate(size_t new_s, size_t new_c, size_t new_a, const Tok
     
     if(p!=NULL)
     {
+
+        size_t min_l;
+
         if(old_s < new_s)
         {
             min_l = old_s;

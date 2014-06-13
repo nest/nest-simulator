@@ -21,17 +21,13 @@
  */
 
 
-/ps-lib ($Revision: 10098 $) provide
-
-
-
 %% Library for PS conforming operators which are not 
 %% strictly needed by the startup process.
 /* BeginDocumentation
 Name: array - construct array with n zeros (PS)
 Synopsis: int array -> array
 Examples: 10 array ->[0 0 0 0 0 0 0 0 0 0]
-Author: docu by Sirko Straube
+SeeAlso: Range, LayoutArray, Table, arraystore
 */
 
 /array trie
@@ -89,26 +85,41 @@ def
 
 /* BeginDocumentation
 Name: round - Round double to the nearest integer
+Synopsis: double round -> double
+	integer round -> double
 
 Description: Alternatives: Function round_d (undocumented) 
 -> behaviour and synopsis are the same.
+
+Examples:
+1.4 round  --> 1.0
+1.5 round  --> 2.0
+2   round  --> 2.0
 
 Remarks: 
 round_d is currently defined in SLI,
 could be implemented in C++ for efficiency.
 
+On 130610 it was decided that round applied to an integer
+should be the identity function.
+
+Update: In a later discussion, it was decided to make round
+return a double in this case as well.
+
+
 Author: introduced non-trie-variant round_d, Ruediger Kupper.
 
-SeeAlso: iround, floor, ceil
+SeeAlso: iround, floor, ceil, cvi
 */
 
 /round trie
  [/doubletype]  /round_d load addtotrie
+ [/integertype]  {cvd} addtotrie
 def
 
 /* BeginDocumentation
 Name: iround - Round and convert double to the nearest integer
-Synopsis: double round -> int
+Synopsis: double iround -> int
 Description: 
 Round the argument to the nearest integer and converts it to type int.
 Examples: 

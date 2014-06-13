@@ -27,7 +27,7 @@ AM_CPPFLAGS= -I$(top_srcdir)/libnestutil\
 	  -I$(top_srcdir)/sli\
 	  -I$(top_srcdir)/nestkernel\
 	  @INCLTDL@ \
-	  @GSL_CFLAGS@ @MUSIC_INCLUDE@ @MPI_INCLUDE@
+	  @GSL_CFLAGS@ @MUSIC_INCLUDE@ @MPI_INCLUDE@ @LIBNEUROSIM_INCLUDE@
 
 nobase_pkgdata_DATA=\
   sli/conngen-interface.sli

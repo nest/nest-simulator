@@ -136,7 +136,7 @@ void nest::mip_generator::update(Time const & T, const long_t from, const long_t
       return; // no spikes to be generated
     
     // generate spikes of mother process for each time slice
-    ulong_t n_mother_spikes = V_.poisson_dev_.uldev(P_.rng_);
+    long_t n_mother_spikes = V_.poisson_dev_.ldev(P_.rng_);
 
     if ( n_mother_spikes )
     {

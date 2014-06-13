@@ -373,7 +373,7 @@ namespace nest
 						 const STDPDopaCommonProperties& cp)
   {
     // propagate all state variables to time t_trig
-    // this does not include the depression trace K_minus, which is updated in the postsyn.neuron
+    // this does not include the depression trace K_minus, which is updated in the postsyn. neuron
 
     // purely dendritic delay
     double_t dendritic_delay = Time(Time::step(delay_)).get_ms();
@@ -396,7 +396,7 @@ namespace nest
     }
     
     // propagate weight, eligibility trace c, dopamine trace n and facilitation trace K_plus to time t_trig
-    // but do increment/decrement as there are no spikes to be handled at t_trig
+    // but do not increment/decrement as there are no spikes to be handled at t_trig
     process_dopa_spikes_(dopa_spikes, t0, t_trig, cp);
     n_ = n_ * std::exp( ( dopa_spikes[dopa_spikes_idx_].spike_time_ - t_trig ) / cp.tau_n_ );
     Kplus_ = Kplus_ * std::exp( ( t_last_update_ - t_trig ) / cp.tau_plus_);

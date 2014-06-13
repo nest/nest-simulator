@@ -21,8 +21,6 @@
  */
 
 #include "stringdatum.h"
-#include "datumconverter.h"
-#include "aggregatedatum_impl.h"
 #include "tokenutils.h"
 
 #include <algorithm>

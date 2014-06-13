@@ -1,6 +1,3 @@
-#ifndef LAYER_H
-#define LAYER_H
-
 /*
  *  layer.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef LAYER_H
+#define LAYER_H
 
 #include <iostream>
 #include <utility>
@@ -123,7 +123,7 @@ namespace nest
      * @param out output stream
      * @param synapse_id type of connection
      */
-    virtual void dump_connections(std::ostream & out, long synapse_id) = 0;
+    virtual void dump_connections(std::ostream & out, const Token & syn_model) = 0;
 
     using Subnet::local_begin;
     using Subnet::local_end;
@@ -352,7 +352,7 @@ namespace nest
      * @param out output stream
      * @param synapse_id type of connection
      */
-    void dump_connections(std::ostream & out, long synapse_id);
+    void dump_connections(std::ostream & out, const Token & syn_model);
 
     /**
      * Layers do not allow entry to the ChangeSubnet command, nodes can not

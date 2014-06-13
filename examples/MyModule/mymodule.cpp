@@ -66,8 +66,7 @@ mynest::MyModule::MyModule()
    }
 
 mynest::MyModule::~MyModule()
-   {
-   }
+   {}
 
    const std::string mynest::MyModule::name(void) const
    {
@@ -76,16 +75,8 @@ mynest::MyModule::~MyModule()
 
    const std::string mynest::MyModule::commandstring(void) const
    {
-     /* 1. Tell interpreter that we provide the C++ part of MyModule with the
-           current revision number.
-        2. Instruct the interpreter to check that mymodule-init.sli exists,
-           provides at least version 1.0 of the SLI interface to MyModule, and
-           to load it.
-      */
-     return std::string(
-       "/mymodule /C++ ($Revision: 10071 $) provide-component "
-       "/mymodule /SLI (7165) require-component"
-       );
+     // Instruct the interpreter to load mymodule-init.sli
+     return std::string("(mymodule-init) run");
    }
 
    /* BeginDocumentation

@@ -6,14 +6,21 @@
 #
 
 AC_PREREQ(2.52)
-AC_INIT([nest], [2.2.svn], [nest_user@nest-initiative.org])
+AC_INIT([nest], [2.4.0], [nest_user@nest-initiative.org])
+
+# Prevent automatic rebuilding of Makefile.ins and configure if their
+# content or timestamp changes. Not doing this lead to failing builds
+# from tarballs on platforms with older versions of autotools. See
+# stackoverflow.com/questions/18769770 for the problem. Rebuilding can
+# still be enabled by configuring with --enable-maintainer-mode.
+AM_MAINTAINER_MODE([disable])
 
 # These variables are exported to libnestutil/config.h
 # The patchlevel is updated automatically by the script
 # releasetools/buildnest
 SLI_MAJOR=2
-SLI_MINOR=2
-SLI_PATCHLEVEL=svn
+SLI_MINOR=4
+SLI_PATCHLEVEL=0
 
 SLI_PRGNAME="nest-$SLI_MAJOR.$SLI_MINOR.$SLI_PATCHLEVEL"
 SLI_VERSION=$SLI_MAJOR.$SLI_MINOR.$SLI_PATCHLEVEL
@@ -41,13 +48,16 @@ AC_CONFIG_AUX_DIR(.)
 # We might consider switching to tar-pax (2001) in the future, for now
 # tar-ustar (1988) is probably good enough. tar-v7 is not an option, since
 # we already hit the 99 char filename limit.
-AM_INIT_AUTOMAKE([tar-ustar])
+AM_INIT_AUTOMAKE([tar-ustar subdir-objects])
 
 # Allow to build NEST using silent rules.
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
 
 # Obtain host system type; HEP 2004-12-20
 AC_CANONICAL_HOST
+
+# This is necessary to use AC_CHECK_HEADER
+AC_USE_SYSTEM_EXTENSIONS
 
 # ------------------------------------------------------------------------
 # Handle options
@@ -128,13 +138,14 @@ AC_ARG_WITH(vampir,[  --with-vampir			Include support for the Vampir tool.],
 fi])
 
 
-configure_bluegene="no"
+
 bluegene_architecture="none"
+configure_bluegene="no"
 AC_MSG_CHECKING(whether we are configuring for Blue Gene)
 AC_ARG_ENABLE([bluegene],
 	[AS_HELP_STRING([--enable-bluegene],
 	[Configure for Blue Gene; the specific BG model must be given as argument (=L/P/Q).])],
-	[if test "x$enableval" != xno ; then
+	[if test "x$enableval" != "xno" ; then
 	   configure_bluegene="yes"
 	   enableval_uc=`echo ${enableval} | awk {'print toupper($_)'}`
 	   if test "x$enableval_uc" = xL || test "x$enableval_uc" = xP || test "x$enableval_uc" = xQ; then
@@ -248,6 +259,32 @@ AC_ARG_WITH(music,[  --with-music[[=directory]]       Request the use of MUSIC. 
     fi
   ])
 
+#
+# Use libneurosim?
+#
+AC_CHECK_LIB(neurosim, libneurosim_version, HAVE_LIBNEUROSIM="auto", HAVE_LIBNEUROSIM="no")
+if test "x$HAVE_LIBNEUROSIM" = xauto; then
+   LIBNEUROSIM_LIBS="-lneurosim"
+   LIBNEUROSIM_PY_LIBS="-lpyneurosim"
+   LIBNEUROSIM_INCLUDE=""
+fi
+AC_ARG_WITH(libneurosim, [  --with-libneurosim[[=directory]]       Request the use of libneurosim. Optionally give the directory, where libneurosim is installed],
+  [
+    if test "$withval" != "no"; then
+      if test "$withval" != "yes"; then
+    	LIBNEUROSIM_LIBS="-L${withval}/lib -lneurosim"
+	LIBNEUROSIM_PY_LIBS="-lpyneurosim"
+	LIBNEUROSIM_INCLUDE="-I${withval}/include"
+      fi
+      HAVE_LIBNEUROSIM="yes"
+    else
+      HAVE_LIBNEUROSIM="no"
+    fi
+  ])
+
+if test "x$HAVE_LIBNEUROSIM" != xno; then
+  AC_DEFINE(HAVE_LIBNEUROSIM, 1, [libneurosim support enabled?])
+fi
 
 # Select optimization mode
 # note: see debugging mode selection
@@ -389,65 +426,6 @@ else
 
 fi
 # further processing of distributed case below (see SLI_NEW_PATH_MPI)
-
-
-# disable PyNEST for Blue Gene or if explicitly stated
-AC_MSG_CHECKING([whether to compile PyNEST])
-if test "x$configure_bluegene" = xyes ; then
-  HAVE_PYTHON=no
-else
-  HAVE_PYTHON=yes
-  PYTHON_EXEC=`which python`
-
-  AC_ARG_WITH(python,[  --with-python=python		specify the Python interpreter to use],
-  [
-    if test "$withval" == no; then
-      HAVE_PYTHON=no
-    else
-      if test "$withval" != yes; then
-        PYTHON_EXEC=$withval
-      fi
-    fi
-  ])
-fi
-AC_MSG_RESULT([$HAVE_PYTHON])
-
-# Check, whether we are able to compile PyNEST. This will break, if no Python
-# interpreter is found.
-# JME 2008/04
-if test $HAVE_PYTHON = yes; then
-  AC_CHECK_FILE($PYTHON_EXEC, HAVE_PYTHON=yes, AC_MSG_ERROR([Python interpreter '$PYTHON_EXEC' not found.]))
-  PYTHON_VERSION=`$PYTHON_EXEC -c "from distutils import sysconfig;\
-                                   print sysconfig.get_python_version()"`
-
-  PYNEST_SUBDIR="pynest"
-
-  AC_MSG_CHECKING([for Python headers])
-  PYTHON_INC_PATH="`$PYTHON_EXEC $PKGSRCDIR/$PYNEST_SUBDIR/checkpython.py`"
-  if test $PYTHON_INC_PATH != "yes"; then
-    AC_MSG_RESULT([no])
-    AC_MSG_ERROR([Python headers not found. Make sure you have the development package installed.
-                  If you do not need PyNEST, use --without-python to disable it.])
-  fi
-  AC_MSG_RESULT([yes])
-
-  if test $exec_prefix = NONE; then
-    PYNEST_PREFIX=${prefix}
-  else
-    PYNEST_PREFIX=${exec_prefix}
-  fi
-
-  # Check for a non-standard installation path for PyNEST
-  AC_ARG_WITH(pynest-prefix,[  --with-pynest-prefix=path	install PyNEST to path/lib/python<version>/site-packages.],
-  [
-    PYNEST_PREFIX=$withval
-  ])
-fi
-
-# register variable HAVE_PYTHON to be visible in Makefile.am
-# required to run or not run the PyNEST tests in the testsuite
-AM_CONDITIONAL(HAVE_PYTHON, test "x$HAVE_PYTHON" != xno)
-
 
 ##-- use ltdl library for dynamic loading of modules
 ##   if not Cygwin or blue gene
@@ -608,7 +586,7 @@ AC_PATH_PROGS([MAKE],[gmake make],[make])
 SLI_LIBS="$SLI_LIBS $LDFLAGS"
 
 # Check for readline if not configuring for Blue Gene
-if test "x$configure_bluegene" = xno ; then
+if test "x$configure_bluegene" = "xno" ; then
   AC_ARG_WITH([readline], [AS_HELP_STRING([--without-readline], [disable support for GNU readline])],
   [],
   [with_readline=yes])
@@ -626,6 +604,8 @@ if test "x$configure_bluegene" = xno ; then
    [AC_MSG_ERROR([No readline found, --without-readline to disable])],\
    [${SLI_LIBS}])
   fi
+else
+  AC_MSG_WARN("Skipping configuration of libreadline")
 fi
 
 # Test if to use multithreading with either OpenMP or POSIX threads
@@ -692,8 +672,50 @@ else
     AC_MSG_RESULT(none)
   fi
 fi
+
+AM_CONDITIONAL([LINK_PTHREAD], test "x$with_pthread" = xyes)
+AM_CONDITIONAL([LINK_OPENMP],  test "x$with_openmp"  = xyes)
+
 # End of thread library processing
 
+AC_ARG_WITH([python],
+    [AS_HELP_STRING([--without-python], [ignore the presence of Python and disable PyNEST])])
+
+AS_IF([test "x$with_python" != "xno"],
+      [AM_PATH_PYTHON([2.6], [have_python=yes], [have_python=no])],
+      [have_python=no])
+
+AS_IF([test "x$have_python" = "xyes"], [
+    PYTHON_INC=`$PYTHON -c 'import sys; from distutils import sysconfig; sys.stdout.write(sysconfig.get_python_inc())'`
+    AC_CHECK_FILE(["${PYTHON_INC}/Python.h"], [PYNEST_CPPFLAGS="-I${PYTHON_INC}"], [have_python=no])
+])
+
+AC_MSG_CHECKING([whether to build PyNEST])
+AS_IF([test "x$have_python" = "xyes"], [],
+      [AS_IF([test "x$with_python" = "xyes"],
+             [AC_MSG_ERROR([PyNEST requested, but Python not found])])])
+AC_MSG_RESULT([$have_python])
+
+AX_CHECK_COMPILE_FLAG([-fno-strict-aliasing],
+                      [PYNEST_CXXFLAGS="-fno-strict-aliasing"], [])
+
+# FIXME: this means that --without-python make will not recurse into pynest subdir
+if test "x$have_python" = "xyes"; then
+    PYNEST_SUBDIR="pynest"
+else
+    PYNEST_SUBDIR=""
+fi
+
+AM_CONDITIONAL([HAVE_PYTHON], [test "x$have_python" = "xyes"])
+
+AC_SUBST([HAVE_PYTHON])
+AC_SUBST([PYNEST_SUBDIR])
+
+AC_SUBST([PYTHON])
+AC_SUBST([PYTHON_VERSION])
+
+AC_SUBST([PYNEST_CPPFLAGS])
+AC_SUBST([PYNEST_CXXFLAGS])
 
 # is long long available for type representation and fully usable?
 SLI_HAVE_LONG_LONG
@@ -742,6 +764,8 @@ SLI_CHECK_SSTREAM_HEADER
 SLI_CHECK_STL_VECTOR_CAPACITY_BASE_UNITY
 SLI_CHECK_STL_VECTOR_CAPACITY_DOUBLING
 
+SLI_CHECK_XLC_ICE_ON_USING
+
 SLI_CHECK_EXITCODES
 
 # ----------------------------------------------------
@@ -780,11 +804,15 @@ fi
 # - SLI_NONPUBLIC_DYNMODULES
 #      dynamically linked, automatically loaded, not included in release
 
-SLI_PUBLIC_MODULES="models precise topology conngen"
+SLI_PUBLIC_MODULES="models precise topology"
 SLI_NONPUBLIC_MODULES=""
 
 SLI_PUBLIC_DYNMODULES=""
 SLI_NONPUBLIC_DYNMODULES=""
+
+if test "x$HAVE_LIBNEUROSIM" != xno; then
+  SLI_PUBLIC_MODULES="$SLI_PUBLIC_MODULES conngen"
+fi
 
 # Now go through all candidates and set up necessary variables and directories
 # NOTE: We only include those modules that shall be loaded automatically.
@@ -850,13 +878,13 @@ done
 # This way of doing it is quite a hack. We cannot use AC_CONFIG_FILES(), since
 # we cannot AC_SUBST() the multiline variables we create here.
 AC_CONFIG_COMMANDS([nest/static_modules.h],
-	           [printf "#ifndef STATIC_MODULES_H\n#define STATIC_MODULES_H\n\n$acc_include_static_modules\n#include \"interpret.h\"\n#include \"network.h\"\n\nvoid add_static_modules(SLIInterpreter& engine, nest::Network& net)\n{\n$acc_add_static_modules\n}\n#endif\n" > nest/static_modules.h],
+	           [printf "#ifndef STATIC_MODULES_H\n#define STATIC_MODULES_H\n\n$acc_include_static_modules\n#include \"interpret.h\"\n#include \"network.h\"\n\nvoid add_static_modules(SLIInterpreter& engine, nest::Network& net)\n{\n$acc_add_static_modules}\n\n#endif\n" > nest/static_modules.h],
 		   [acc_include_static_modules='$INCLUDE_STATIC_MODULES'
 		    acc_add_static_modules='$ADD_STATIC_MODULES'])
 
 # directories to include in distribution tarballs
 SLI_CORE_LIBS="libnestutil sli librandom lib nestkernel $SLI_PUBLIC_MODULES $SLI_PUBLIC_DYNMODULES"
-SLI_DIST_SUBDIRS="$SLI_CORE_LIBS nest $PYNEST_SUBDIR"
+SLI_DIST_SUBDIRS="$SLI_CORE_LIBS nest conngen pynest"
 SLI_SUBDIRS="$SLI_CORE_LIBS $SLI_EXTRA_MODULES nest"
 
 # generate a list of absolute paths where to search for help files
@@ -946,17 +974,16 @@ AC_SUBST(MPI_INCLUDE)
 AC_SUBST(HAVE_MUSIC)
 AC_SUBST(MUSIC_LIBS)
 AC_SUBST(MUSIC_INCLUDE)
+AC_SUBST(LIBNEUROSIM_LIBS)
+AC_SUBST(LIBNEUROSIM_PY_LIBS)
+AC_SUBST(LIBNEUROSIM_INCLUDE)
 AC_SUBST(INCLTDL)
 AC_SUBST(LIBLTDL)
 AC_SUBST(HAVE_LIBLTDL)
 AC_SUBST(LIBADD_DL)
 AC_SUBST(LINKED_MODULES)
 AC_SUBST(LINKED_USER_MODULES)
-AC_SUBST(PYTHON_EXEC)
-AC_SUBST(PYTHON_VERSION)
-AC_SUBST(PYNEST_PREFIX)
-AC_SUBST(PYNEST_SUBDIR)
-AC_SUBST(HAVE_PYTHON)
+
 
 AC_CONFIG_HEADER(libnestutil/config.h)
 AC_CONFIG_FILES(libnestutil/sliconfig.h)
@@ -975,6 +1002,12 @@ AC_CONFIG_FILES(nest/Makefile)
 AC_CONFIG_FILES(extras/nest-config)
 AC_CONFIG_FILES(testsuite/do_tests.sh)
 
+# conngen is special in that it might be omitted from build when
+# libneurosim is not present, yet it always has to be configured
+# in order to be distributed with the tarballs
+#
+AC_CONFIG_FILES(conngen/Makefile)
+
 # In the following loop, we need to have
 # a case statement and list all directories
 # with Makefile.am explicitly. Otherwise,
@@ -987,12 +1020,9 @@ for dir in $NEED_MAKEFILE_DIRS; do
     precise)
       AC_CONFIG_FILES(precise/Makefile)
       ;;
-    conngen)
-      AC_CONFIG_FILES(conngen/Makefile)
-      ;;
     topology)
       AC_CONFIG_FILES(topology/Makefile)
-      if test "$HAVE_PYTHON" = yes; then
+      if test "x$have_python" = "xyes" ; then
         AC_CONFIG_FILES(topology/setup.py)
       fi
       ;;
@@ -1005,10 +1035,11 @@ done
 EXTRAS_SUBDIRS=
 
 # if Python is found, configure and compile PyNEST
-if test "$HAVE_PYTHON" = yes; then
+if test "x$have_python" = "xyes" ; then
  AC_CONFIG_FILES(pynest/Makefile)
  AC_CONFIG_FILES(pynest/setup.py)
  AC_CONFIG_FILES(pynest/do_tests.py)
+
  AC_CONFIG_FILES(extras/ConnPlotter/Makefile)
  EXTRAS_SUBDIRS="$EXTRAS_SUBDIRS ConnPlotter"
 fi
@@ -1047,10 +1078,10 @@ echo "C++ compiler        : $CXX"
 echo "C++ compiler flags  : "`echo $AM_CXXFLAGS | sed 's/^[ ]*//g'`
 echo
 
-if test "$HAVE_PYTHON" = yes; then
-  echo "Enable PyNEST       : Yes (Python: $PYTHON_EXEC)"
+if test "x$have_python" = "xyes" ; then
+  echo "Python bindings     : Yes (Python $PYTHON_VERSION: $PYTHON)"
 else
-  echo "Enable PyNEST       : No"
+  echo "Python bindings     : No"
 fi
 
 if test x`echo $SLI_USER_MODULES | tr -d " "` != x; then
@@ -1104,6 +1135,19 @@ else
   echo "Use MUSIC           : No"
 fi
 
+if test "x$HAVE_LIBNEUROSIM" != xno; then
+  echo "Use libneurosim     : Yes"
+  if test "x$LIBNEUROSIM_INCLUDE" != x; then
+    echo "  libneurosim inlude: $LIBNEUROSIM_INCLUDE"
+  fi
+  if test "x$LIBNEUROSIM_LIBS" != x; then
+    echo "  libneurosim libs  : $LIBNEUROSIM_LIBS $LIBNEUROSIM_PY_LIBS"
+  fi
+else
+  echo "Use libneurosim     : No"
+fi
+
+
 echo
 echo "--------------------------------------------------------------------------------"
 echo
@@ -1113,12 +1157,10 @@ echo
 echo "Documentation and examples will be installed to:"
 echo  "  ${PKGDOCDIR_AS_CONFIGURED}/"
 echo
-if test "$HAVE_PYTHON" != no; then
-  if test "$PYNEST_PREFIX" != "NONE"; then
+if test "x$have_python" = "xyes"; then
     echo "PyNEST will be installed to:"
-    echo "  $PYNEST_PREFIX/lib/python$PYTHON_VERSION/site-packages/nest"
+    printf "  "; eval eval echo "  ${pyexecdir}"
     echo
-  fi
 fi
 echo "--------------------------------------------------------------------------------"
 echo
@@ -1180,5 +1222,5 @@ fi
 echo "If you experience problems with the installation or the use of"
 echo "NEST, please see http://nest-initiative.org/index.php/FAQ, or"
 echo "go to http://nest-initiative.org/index.php/Community to find out"
-echo "how to join the user mailing list"
+echo "how to join the user mailing list."
 echo

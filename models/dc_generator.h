@@ -78,7 +78,6 @@ namespace nest
 
     bool has_proxies() const {return false;} 
 
-
     port check_connection(Connection&, port);
     
     void get_status(DictionaryDatum &) const;

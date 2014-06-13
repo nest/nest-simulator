@@ -138,7 +138,7 @@ const std::string Processes::name(void) const
 
 const std::string Processes::commandstring(void) const
 {
-  return std::string("/processes /C++ ($Revision: 10020 $) provide-component  /processes /SLI (1.7) require-component");
+  return std::string("(processes.sli) run");
 }
 
 void Processes::init(SLIInterpreter *i)
@@ -374,24 +374,24 @@ void Processes::WaitPIDFunction::execute(SLIInterpreter *i) const
      {
        // push result
        Token pidout_t( new IntegerDatum(pidout) ); // Make Token, containing IntegerDatum, which is initialized to pidout;
-       i->OStack.push_move(pidout_t); // Push on stack by moving the contents of this token. 
+       i->OStack.push_move(pidout_t); // Push on stack by moving the contents of this token.
        // Ostack is now: pidin(int) nohangflag(bool) pidout(int)
        // first 2 Tokens will be reused: status(int) normalexitflag(bool) pidout(int)
        IntegerDatum * status_d         = pidin_d; // This is meant to produce clearity, not confusion!
        BoolDatum    * normalexitflag_d = nohangflag_d; // just a renaming of variables!
-       
+
        // check status
-       if WIFEXITED(stat_value) // child exited normally
+       if ( WIFEXITED(stat_value) ) // child exited normally
 	 {
 	   i->EStack.pop();
 	   (*normalexitflag_d) = true;
 	   (*status_d) = WEXITSTATUS(stat_value); // return exit status
 	 }
-       else if WIFSIGNALED(stat_value) // child terminated due to a sgnal that was not caught
-	 { 	   
+       else if ( WIFSIGNALED(stat_value) ) // child terminated due to a sgnal that was not caught
+	 {
 	   i->EStack.pop();
 	   (*normalexitflag_d) = false;
-	   (*status_d) = WTERMSIG(stat_value); // return number of terminating signal	   
+	   (*status_d) = WTERMSIG(stat_value); // return number of terminating signal
 	 }
        else
 	 {

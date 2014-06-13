@@ -20,7 +20,7 @@
  *
  */
 
-/unittest (6666) require
+(unittest) run
 /unittest using
 
 %% TEST IF message() CAN DISPLAY LARGE MESSAGES 

@@ -35,7 +35,7 @@
    Author: Marc-Oliver Gewaltig
  */
 
-/unittest (7488) require
+(unittest) run
 /unittest using
 
 /iaf_neuron 10 Create /n1 Set

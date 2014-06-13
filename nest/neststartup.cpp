@@ -20,19 +20,24 @@
  *
  */
 
-/* 
-    This code will be used to startup NEST. It will be called only
-    for starting NEST as a stand-alone application. Similar code is
-    found in PyNEST.   
-*/
-
 #include "config.h"
+
+#include "neststartup.h"
+
 #include <fstream>
+
+#include "network.h"
 #include "interpret.h"
+#include "communicator.h"
+
 #include "dict.h"
 #include "dictdatum.h"
 #include "random_numbers.h"
+
+#ifndef _IS_PYNEST
 #include "gnureadline.h"
+#endif
+
 #include "slistartup.h"
 #include "sliarray.h"
 #include "oosupport.h"
@@ -43,12 +48,28 @@
 #include "sligraphics.h"
 #include "dynamicloader.h"
 #include "filesystem.h"
-#include "neststartup.h"
 
 #include "static_modules.h"
 
-int neststartup(int argc, char**argv, SLIInterpreter &engine, nest::Network* &pNet)
+// OpenMP
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
+#ifndef _IS_PYNEST
+int neststartup(int argc, char** argv, SLIInterpreter &engine, nest::Network* &pNet)
+#else
+int neststartup(int argc, char** argv, SLIInterpreter &engine, nest::Network* &pNet, std::string modulepath)
+#endif
 {
+
+#ifdef HAVE_MPI
+  nest::Communicator::init(&argc, &argv);
+#endif
+
+#ifdef _OPENMP
+  omp_set_num_threads(1);
+#endif
 
   // We disable synchronization between stdio and istd::ostreams
   // this has to be done before any in- or output has been done.
@@ -69,9 +90,11 @@ int neststartup(int argc, char**argv, SLIInterpreter &engine, nest::Network* &pN
 
   addmodule<OOSupportModule>(engine);   
   addmodule<RandomNumbers>(engine);
-#ifdef HAVE_READLINE
+
+#if defined(HAVE_READLINE) && !defined(_IS_PYNEST)
   addmodule<GNUReadline>(engine);
 #endif
+
   addmodule<SLIArrayModule>(engine);
   addmodule<SpecialFunctionsModule>(engine);   // safe without GSL
   addmodule<SLIgraphics>(engine);
@@ -89,7 +112,7 @@ int neststartup(int argc, char**argv, SLIInterpreter &engine, nest::Network* &pN
   // now add static modules providing models
   add_static_modules(engine, *pNet);
 
-#ifdef HAVE_LIBLTDL  // no dynamic loading without LIBLTDL
+#ifdef HAVE_LIBLTDL
   //dynamic loader module for managing linked and dynamically loaded extension modules
   nest::DynamicLoaderModule *pDynLoader = new nest::DynamicLoaderModule(pNet, engine);
 
@@ -102,5 +125,34 @@ int neststartup(int argc, char**argv, SLIInterpreter &engine, nest::Network* &pN
   engine.addmodule(pDynLoader);
 #endif
 
+#ifdef _IS_PYNEST
+  // add the init-script to the list of module initializers
+  ArrayDatum *ad = dynamic_cast<ArrayDatum *>(engine.baselookup(engine.commandstring_name).datum());
+  assert(ad != NULL);
+  ad->push_back(new StringDatum("(" + modulepath + "/pynest-init.sli) run"));
+#endif
+
   return engine.startup();
 }
+
+void nestshutdown(void)
+{
+#ifdef HAVE_MPI
+  nest::Communicator::finalize();
+#endif
+}
+
+#if defined(HAVE_LIBNEUROSIM) && defined(_IS_PYNEST)
+Datum* CYTHON_unpackConnectionGeneratorDatum(PyObject* obj)
+{
+  Datum* ret = NULL;
+  ConnectionGenerator* cg = NULL;
+
+  cg = PNS::unpackConnectionGenerator(obj);
+
+  if (cg != NULL)
+    ret = static_cast<Datum*>(new nest::ConnectionGeneratorDatum(cg));
+
+  return ret;
+}
+#endif

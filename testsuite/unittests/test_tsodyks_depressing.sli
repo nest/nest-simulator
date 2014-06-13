@@ -23,8 +23,7 @@
  /* BeginDocumentation
 Name: test_tsodyks_depressing - sli script for overall test tsodyks_synapse synapse model.
 
-Synopsis: (test_tsodyks_depressing) run -> compare cout with comments in file
-
+Synopsis:(test_tsodyks_depressing) run -> compare cout with comments in file
 
 Description:
 Script to test Tsodyks short term plasticity depressing synapses according to
@@ -34,13 +33,11 @@ Neural computation 10, 821--853 (1998)
 
 reproduces figure 1 A
 
-
-author:  Markus Diesmann, Moritz Helias
-date:	 March 2006
-
+Author:  Markus Diesmann, Moritz Helias
+FirstVersion: March 2006
 */
 
-/unittest (7039) require
+(unittest) run
 /unittest using
 
 

@@ -22,22 +22,12 @@
 
 #ifndef NESTMODULE_H
 #define NESTMODULE_H
-/* 
-    This file is part of NEST
 
-    nestmodule.h -- Header to the nestmodule
-    (see cpp file for details)
-
-    Author: Marc-Oliver Gewaltig (marc-oliver.gewaltig@honda-ri.de)
-
-    $Date: 2013-05-23 15:41:44 +0200 (Thu, 23 May 2013) $
-    Last change: $Author: zaytsev $
-    $Revision: 10474 $
-*/
 #include "slimodule.h"
+#include "slitype.h" 
 #include "slifunction.h"
-#include "slitype.h"
 #include "dict.h"
+
 #include "network.h"
 #include "scheduler.h"
 #include "event.h"
@@ -56,8 +46,9 @@ namespace nest
    class NestModule: public SLIModule
    {
     public:
-  
+
      static SLIType ConnectionType;
+     static SLIType GIDCollectionType;
 
      NestModule();
      ~NestModule();
@@ -131,6 +122,8 @@ namespace nest
       * - @c os : output stream 
       * - @c t  : any token
       * - @c C  : connectiontype
+      * - @c cg : connectiongeneratortype
+      * - @c g  : gid collection
       *
       * @subsection compoundtypes Codes for compund data types
       * - @c A  : array
@@ -260,9 +253,8 @@ namespace nest
        void execute(SLIInterpreter *) const;
      } copymodel_l_l_Dfunction;
 
-
      class GetConnections_DFunction: public SLIFunction
-     { 
+     {
       public:
        void execute(SLIInterpreter *) const;
      } getconnections_Dfunction;
@@ -309,29 +301,23 @@ namespace nest
        void execute(SLIInterpreter *) const;
      } connect_i_i_lfunction;
 
-     class Connect_i_i_iFunction: public SLIFunction
-     {
-      public:
-       void execute(SLIInterpreter *) const;
-     } connect_i_i_ifunction;
-
      class Connect_i_i_d_d_lFunction: public SLIFunction
      {
       public:
        void execute(SLIInterpreter *) const;
      } connect_i_i_d_d_lfunction;
 
-     class Connect_i_i_d_d_iFunction: public SLIFunction
-     {
-      public:
-       void execute(SLIInterpreter *) const;
-     } connect_i_i_d_d_ifunction;
-
      class Connect_i_i_D_lFunction: public SLIFunction
      {
       public:
        void execute(SLIInterpreter *) const;
      } connect_i_i_D_lfunction;
+
+     class Connect_g_g_D_DFunction: public SLIFunction
+     {
+     public:
+       void execute(SLIInterpreter *) const;
+     } connect_g_g_D_Dfunction;
 
      class DivergentConnect_i_ia_a_a_lFunction: public SLIFunction
      {
@@ -407,6 +393,11 @@ namespace nest
        void execute(SLIInterpreter *) const;
      } setfakenumprocesses_ifunction;
 
+     class SetNumRecProcessesFunction_i : public SLIFunction
+     {
+       void execute(SLIInterpreter *) const;
+     } setnumrecprocesses_ifunction;
+
      class SyncProcessesFunction : public SLIFunction
      {
        void execute(SLIInterpreter *) const;
@@ -416,6 +407,11 @@ namespace nest
      { 
        void execute(SLIInterpreter *) const; 
      } timecommunication_i_i_bfunction; 
+     
+     class TimeCommunicationv_i_iFunction : public SLIFunction 
+     { 
+       void execute(SLIInterpreter *) const; 
+     } timecommunicationv_i_ifunction; 
 
      class ProcessorNameFunction : public SLIFunction
      {
@@ -444,11 +440,36 @@ namespace nest
        void execute(SLIInterpreter *) const;
      } cvdict_Cfunction;
 
+     class Cvgidcollection_i_iFunction : public SLIFunction
+     {
+       void execute(SLIInterpreter *) const;
+     } cvgidcollection_i_ifunction;
+
+     class Cvgidcollection_iaFunction : public SLIFunction
+     {
+       void execute(SLIInterpreter *) const;
+     } cvgidcollection_iafunction;
+
+     class Cvgidcollection_ivFunction : public SLIFunction
+     {
+       void execute(SLIInterpreter *) const;
+     } cvgidcollection_ivfunction;
+
+     class Size_gFunction: public SLIFunction
+     {
+       void execute(SLIInterpreter *) const;
+     } size_gfunction;
+
 #ifdef HAVE_MUSIC     
      class SetAcceptableLatencyFunction : public SLIFunction
      {
        void execute(SLIInterpreter *) const;
      } setacceptablelatency_l_dfunction;
+
+     class SetMaxBufferedFunction : public SLIFunction
+     {
+       void execute(SLIInterpreter *) const;
+     } setmaxbuffered_l_ifunction;
 #endif
 
      //@}
@@ -469,21 +490,21 @@ namespace nest
      static Network *net_;
    };
 
-inline
-Network &NestModule::get_network()
-{
-  assert(net_ != 0);
-  return *net_;
-}
+  inline
+  Network &NestModule::get_network()
+  {
+    assert(net_ != 0);
+    return *net_;
+  }
 
-inline
-index NestModule::get_num_threads()
-{
-  if ( net_ == 0 )
-    return 1;  // module not initialized, thus certainly single thread
-  else  
-    return net_->get_num_threads();
-}
+  inline
+  index NestModule::get_num_threads()
+  {
+    if ( net_ == 0 )
+      return 1;  // module not initialized, thus certainly single thread
+    else  
+      return net_->get_num_threads();
+  }
 
 } // namespace
 

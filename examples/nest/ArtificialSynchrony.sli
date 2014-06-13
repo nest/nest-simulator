@@ -152,7 +152,7 @@ modeldict begin
 
   %set resolution and limits on delays
        % limits must be set BEFORE connecting any elements
-       [0]
+       0
        <<
          /resolution h                  % time steps in ms
          /off_grid_spiking true         % precise neuron model
@@ -162,7 +162,7 @@ modeldict begin
 
   sim 1 eq { /iaf_psc_alpha_canon nr Create pop }
            { /iaf_psc_alpha nr Create pop } ifelse
-  /neurons [0] GetNodes def
+  /neurons 0 GetGlobalNodes def
 
   % connect neurons all to all
   neurons {

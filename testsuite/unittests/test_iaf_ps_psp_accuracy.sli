@@ -68,7 +68,7 @@ Author:  May 2005, February 2008, Diesmann
 SeeAlso: testsuite::test_iaf_psp, testsuite::test_iaf_ps_dc_accuracy
 */
 
-/unittest (6335) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity

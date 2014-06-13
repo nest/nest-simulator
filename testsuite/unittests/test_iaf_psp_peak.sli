@@ -61,7 +61,7 @@ Author:  July 2009, Diesmann
 SeeAlso: testsuite::test_lambertw, testsuite::test_iaf_psp_normalized, LambertWm1
 */
 
-/unittest (6335) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity

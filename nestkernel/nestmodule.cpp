@@ -25,7 +25,9 @@
 #include <iostream>  
 #include <sstream>
 #include "nest.h"
+#include "nest_datums.h"
 #include "network.h"
+#include "network_impl.h"
 #include "nodelist.h"
 #include "interpret.h"
 #include "node.h"
@@ -38,10 +40,10 @@
 #include "tokenutils.h"
 #include "sliexceptions.h"
 #include "random_datums.h"
-#include "connectiondatum.h"
 #include "communicator.h"
 #include "communicator_impl.h"
 #include "genericmodel.h"
+#include "conn_builder.h"
 
 #if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
 extern "C"
@@ -64,6 +66,7 @@ extern int SLIsignalflag;
 namespace nest
 {
   SLIType NestModule::ConnectionType;
+  SLIType NestModule::GIDCollectionType;
 
   Network* NestModule::net_ = 0;
 
@@ -84,6 +87,7 @@ namespace nest
     // dynamicloadermodule also needs it
 
     ConnectionType.deletetypename();
+    GIDCollectionType.deletetypename();
   }
 
   void NestModule::register_network(Network& net)
@@ -101,8 +105,7 @@ namespace nest
 
   const std::string NestModule::commandstring(void) const
   {
-    return std::string("/nest-init /C++ ($Revision: 10474 $) provide-component "
-                       "/nest-init /SLI (1.21) require-component");
+    return std::string("(nest-init) run");
   }
 
 
@@ -443,14 +446,20 @@ namespace nest
     else
       throw UnknownModelName(modelname.toString());
 
+
     std::string missed;
     if (!dict->all_accessed(missed))
     {
+
       if (get_network().dict_miss_is_error())
+	{
+
         throw UnaccessedDictionaryEntry(missed);
+	}
       else
         get_network().message(SLIInterpreter::M_WARNING, "SetDefaults", ("Unread dictionary entries: " + missed).c_str());
     }
+
 
     i->OStack.pop(2);
     i->EStack.pop();
@@ -493,9 +502,6 @@ namespace nest
     i->EStack.pop();
   }
 
-  // params: params
-
-  // params: params
   void NestModule::GetConnections_DFunction::execute(SLIInterpreter *i) const
   {
     i->assert_stack_load(1);
@@ -505,8 +511,17 @@ namespace nest
     dict->clear_access_flags();
 
     ArrayDatum array = get_network().get_connections(dict);
+
     std::string missed;
-     
+    if ( !dict->all_accessed(missed) )
+    {
+      if ( get_network().dict_miss_is_error() )
+        throw UnaccessedDictionaryEntry(missed);
+      else
+        get_network().message(SLIInterpreter::M_WARNING, "GetConnections", 
+                              ("Unread dictionary entries: " + missed).c_str());
+    }
+    
     i->OStack.pop();
     i->OStack.push(array);
     i->EStack.pop();
@@ -832,7 +847,7 @@ namespace nest
     i->EStack.pop();
   }
 
-  // Connect for gid gid
+  // Connect for gid gid syn_model
   // See lib/sli/nest-init.sli for details
   void NestModule::Connect_i_i_lFunction::execute(SLIInterpreter *i) const
   {
@@ -847,25 +862,19 @@ namespace nest
       throw UnknownSynapseType(synmodel_name.toString());
     const index synmodel_id = static_cast<index>(synmodel);
 
-    get_network().connect(source, target, synmodel_id);
+    // check whether the target is on this process
+    if (get_network().is_local_gid(target))
+    {
+      Node* const target_node = get_network().get_node(target);
+      const thread target_thread = target_node->get_thread();
+      get_network().connect(source, target, target_node, target_thread, synmodel_id);
+    }
     
     i->OStack.pop(3);
     i->EStack.pop();
   }
 
-  void NestModule::Connect_i_i_iFunction::execute(SLIInterpreter *i) const
-  {
-      long &source = static_cast<IntegerDatum *>(i->OStack.pick(2).datum())->get();
-      long &target = static_cast<IntegerDatum *>(i->OStack.pick(1).datum())->get();
-      long &synmodel_id = static_cast<IntegerDatum *>(i->OStack.pick(0).datum())->get();
-
-      get_network().connect(source, target, synmodel_id);
-      
-      i->OStack.pop(3);
-      i->EStack.pop();
-  }
-
-  // Connect for gid gid weight delay
+  // Connect for gid gid weight delay syn_model
   // See lib/sli/nest-init.sli for details
   void NestModule::Connect_i_i_d_d_lFunction::execute(SLIInterpreter *i) const
   {
@@ -882,36 +891,24 @@ namespace nest
       throw UnknownSynapseType(synmodel_name.toString());
     const index synmodel_id = static_cast<index>(synmodel);
 
-    get_network().connect(source, target, weight, delay, synmodel_id);
+    // check whether the target is on this process
+    if (get_network().is_local_gid(target))
+    {
+      Node* const target_node = get_network().get_node(target);
+      const thread target_thread = target_node->get_thread();
+      get_network().connect(source, target, target_node, target_thread, weight, delay, synmodel_id);
+    }
     
     i->OStack.pop(5);
     i->EStack.pop();
   }
 
- // Connect for gid gid weight delay syn_id
-  // See lib/sli/nest-init.sli for details
-  void NestModule::Connect_i_i_d_d_iFunction::execute(SLIInterpreter *i) const
-  {
-    i->assert_stack_load(5);
-
-    index source = getValue<long>(i->OStack.pick(4));
-    index target = getValue<long>(i->OStack.pick(3));
-    double_t weight = getValue<double_t>(i->OStack.pick(2));
-    double_t delay  = getValue<double_t>(i->OStack.pick(1));
-    index synmodel_id = getValue<long>(i->OStack.pick(0));
-
-    get_network().connect(source, target, weight, delay, synmodel_id);
-    
-    i->OStack.pop(5);
-    i->EStack.pop();
-  }
-
-  // Connect for gid gid dict
+  // Connect for gid gid params syn_model
   // See lib/sli/nest-init.sli for details
   void NestModule::Connect_i_i_D_lFunction::execute(SLIInterpreter *i) const
   {
     i->assert_stack_load(4);
-     
+    
     index source = getValue<long>(i->OStack.pick(3));
     index target = getValue<long>(i->OStack.pick(2));
     DictionaryDatum params = getValue<DictionaryDatum>(i->OStack.pick(1));
@@ -922,28 +919,37 @@ namespace nest
       throw UnknownSynapseType(synmodel_name.toString());
     const index synmodel_id = static_cast<index>(synmodel);
 
-    params->clear_access_flags();
- 
-    if ( get_network().connect(source, target, params, synmodel_id) )
+    // check whether the target is on this process
+    if (get_network().is_local_gid(target))
     {
-      // dict access control only if we actually made a connection
-      std::string missed;
-      if ( !params->all_accessed(missed) )
-      {
-	if ( get_network().dict_miss_is_error() )
-	  throw UnaccessedDictionaryEntry(missed);
-	else
-	  get_network().message(SLIInterpreter::M_WARNING, "Connect", 
-				("Unread dictionary entries: " + missed).c_str());
-      }
+      Node* const target_node = get_network().get_node(target);
+      const thread target_thread = target_node->get_thread();
+      get_network().connect(source, target, target_node, target_thread, params, synmodel_id);
     }
+    
+    i->OStack.pop(4);
+    i->EStack.pop();
+  }
+
+  // Connect for gidcollection gidcollection conn_spec syn_spec
+  // See lib/sli/nest-init.sli for details
+  void NestModule::Connect_g_g_D_DFunction::execute(SLIInterpreter *i) const
+  {
+    i->assert_stack_load(4);
+
+    GIDCollectionDatum sources = getValue<GIDCollectionDatum>(i->OStack.pick(3));
+    GIDCollectionDatum targets = getValue<GIDCollectionDatum>(i->OStack.pick(2));
+    DictionaryDatum connectivity = getValue<DictionaryDatum>(i->OStack.pick(1));
+    DictionaryDatum synapse_params = getValue<DictionaryDatum>(i->OStack.pick(0));
+
+    // dictionary access checking is handled by connect
+    get_network().connect(sources, targets, connectivity, synapse_params);
 
     i->OStack.pop(4);
     i->EStack.pop();
   }
 
-
-   /* BeginDocumentation
+  /* BeginDocumentation
      Name: DataConnect_i_D_s - Connect many neurons from data.
 
      Synopsis: 
@@ -969,7 +975,9 @@ namespace nest
      DataConnect will iterate all vectors and create the connections according to the parameters given.
      SeeAlso: DataConnect_a, DataConnect
      Author: Marc-Oliver Gewaltig
-   */
+     FirstVersion: August 2011
+     SeeAlso: Connect, DivergentConnect
+  */
   void NestModule::DataConnect_i_D_sFunction::execute(SLIInterpreter *i) const
   {
     i->assert_stack_load(3);
@@ -977,6 +985,7 @@ namespace nest
     index source = getValue<long>(i->OStack.pick(2));
     DictionaryDatum params = getValue<DictionaryDatum>(i->OStack.pick(1));
     const Name synmodel_name = getValue<std::string>(i->OStack.pick(0));
+
     const Token synmodel = get_network().get_synapsedict().lookup(synmodel_name);
     if ( synmodel.empty() )
       throw UnknownSynapseType(synmodel_name.toString());
@@ -1222,6 +1231,7 @@ namespace nest
     i->EStack.pop();     
   }
 
+
   /* BeginDocumentation
      Name: MemoryInfo - Report current memory usage.
      Description:
@@ -1463,6 +1473,29 @@ namespace nest
   }
 
   /* BeginDocumentation
+     Name: SetNumRecProcesses - Set the number of MPI processes dedicated to recording spikes.
+     Synopsis: n_procs SetNumRecProcesses -> -
+     Description:
+     Sets the number of recording MPI processes to n_procs. Usually,
+     spike detectors are distributed over all processes and record
+     from local neurons only. If a number of processes is dedicated to
+     spike detection, each spike detector is hosted on one of these
+     processes and records globally from all simulating processes.
+     Availability: NEST 2.4
+     Authors: Susanne Kunkel, Maximilian Schmidt
+     FirstVersion: April 2014
+     SeeAlso: NumProcesses
+  */
+  void NestModule::SetNumRecProcessesFunction_i::execute(SLIInterpreter *i) const
+  {
+    long n_rec_procs = getValue<long>(i->OStack.pick(0));
+    get_network().set_num_rec_processes(n_rec_procs);
+    i->OStack.pop(1);
+    i->EStack.pop();
+  }
+
+
+  /* BeginDocumentation
      Name: SyncProcesses - Synchronize all MPI processes.
      Synopsis: SyncProcesses -> -
      Availability: NEST 2.0
@@ -1505,6 +1538,32 @@ namespace nest
       time = Communicator::time_communicate(num_bytes,samples);
 
     i->OStack.pop(3); 
+    i->OStack.push(time);
+    i->EStack.pop(); 
+  } 
+  /* BeginDocumentation
+     Name: TimeCommunicationv - returns average time taken for MPI_Allgatherv over n calls with m bytes
+     Synopsis: 
+     n m TimeCommunication -> time
+     Availability: NEST 2.0
+     Author: 
+     FirstVersion: August 2012
+     Description:
+     The function allows a user to test how much time a call the Allgatherv costs
+     Does not work for offgrid!!!
+  */
+  void NestModule::TimeCommunicationv_i_iFunction::execute(SLIInterpreter *i) const 
+  { 
+    i->assert_stack_load(2); 
+    long samples = getValue<long>(i->OStack.pick(1)); 
+    long num_bytes = getValue<long>(i->OStack.pick(0)); 
+    
+
+    double_t time = 0.0;
+    
+    time = Communicator::time_communicatev(num_bytes,samples);
+
+    i->OStack.pop(2); 
     i->OStack.push(time);
     i->EStack.pop(); 
   } 
@@ -1677,6 +1736,53 @@ namespace nest
     i->EStack.pop();
   }
 
+  void NestModule::Cvgidcollection_i_iFunction::execute(SLIInterpreter *i) const
+  {
+    i->assert_stack_load(2);
+
+    const long_t first = getValue<long_t>(i->OStack.pick(1));
+    const long_t last = getValue<long_t>(i->OStack.pick(0));
+    GIDCollectionDatum gidcoll = GIDCollection(first, last);
+
+    i->OStack.pop(2);
+    i->OStack.push(gidcoll);
+    i->EStack.pop();
+  }
+
+  void NestModule::Cvgidcollection_iaFunction::execute(SLIInterpreter *i) const
+  {
+    i->assert_stack_load(1);
+
+    TokenArray gids = getValue<TokenArray>(i->OStack.pick(0));
+    GIDCollectionDatum gidcoll = GIDCollection(gids);
+
+    i->OStack.pop();
+    i->OStack.push(gidcoll);
+    i->EStack.pop();
+  }
+
+  void NestModule::Cvgidcollection_ivFunction::execute(SLIInterpreter *i) const
+  {
+    i->assert_stack_load(1);
+
+    IntVectorDatum gids = getValue<IntVectorDatum>(i->OStack.pick(0));
+    GIDCollectionDatum gidcoll = GIDCollection(gids);
+
+    i->OStack.pop();
+    i->OStack.push(gidcoll);
+    i->EStack.pop();
+  }
+
+  void NestModule::Size_gFunction::execute(SLIInterpreter *i) const
+  {
+    i->assert_stack_load(1);
+    GIDCollectionDatum gidcoll = getValue<GIDCollectionDatum>(i->OStack.pick(0));
+
+    i->OStack.pop();
+    i->OStack.push(gidcoll.size());
+    i->EStack.pop();    
+  }
+
 #ifdef HAVE_MUSIC
   /* BeginDocumentation
      Name: SetAcceptableLatency - set the acceptable latency of a MUSIC input port
@@ -1705,12 +1811,28 @@ namespace nest
     i->OStack.pop(2);
     i->EStack.pop();
   }
+
+  void NestModule::SetMaxBufferedFunction::execute(SLIInterpreter *i) const
+  {
+    i->assert_stack_load(2);
+
+    std::string port_name = getValue<std::string>(i->OStack.pick(1));
+    int maxBuffered = getValue<long>(i->OStack.pick(0));
+
+    get_network().set_music_in_port_max_buffered(port_name, maxBuffered);
+
+    i->OStack.pop(2);
+    i->EStack.pop();
+  }
 #endif
 
   void NestModule::init(SLIInterpreter *i)
   {
     ConnectionType.settypename("connectiontype");
     ConnectionType.setdefaultaction(SLIInterpreter::datatypefunction);
+
+    GIDCollectionType.settypename("gidcollectiontype");
+    GIDCollectionType.setdefaultaction(SLIInterpreter::datatypefunction);
 
     // ensure we have a network: it is created outside and registered via register_network()
     assert(net_ != 0);
@@ -1749,10 +1871,11 @@ namespace nest
     i->createcommand("Create_l_i", &create_l_ifunction);
    
     i->createcommand("Connect_i_i_l", &connect_i_i_lfunction);
-    i->createcommand("Connect_i_i_i", &connect_i_i_ifunction);
     i->createcommand("Connect_i_i_d_d_l", &connect_i_i_d_d_lfunction);
-    i->createcommand("Connect_i_i_d_d_i", &connect_i_i_d_d_ifunction);
     i->createcommand("Connect_i_i_D_l", &connect_i_i_D_lfunction);
+
+    i->createcommand("Connect_g_g_D_D", &connect_g_g_D_Dfunction);
+
     i->createcommand("DataConnect_i_D_s", &dataconnect_i_D_sfunction);
     i->createcommand("DataConnect_a", &dataconnect_afunction);
 
@@ -1777,8 +1900,10 @@ namespace nest
     i->createcommand("Rank", &rankfunction);
     i->createcommand("NumProcesses", &numprocessesfunction);
     i->createcommand("SetFakeNumProcesses", &setfakenumprocesses_ifunction);
+    i->createcommand("SetNumRecProcesses", &setnumrecprocesses_ifunction);
     i->createcommand("SyncProcesses", &syncprocessesfunction);
     i->createcommand("TimeCommunication_i_i_b", &timecommunication_i_i_bfunction); 
+    i->createcommand("TimeCommunicationv_i_i", &timecommunicationv_i_ifunction); 
     i->createcommand("ProcessorName", &processornamefunction);
 #ifdef HAVE_MPI
     i->createcommand("MPI_Abort", &mpiabort_ifunction);
@@ -1789,14 +1914,30 @@ namespace nest
 
     i->createcommand("cvdict_C", &cvdict_Cfunction);
 
+    i->createcommand("cvgidcollection_i_i", &cvgidcollection_i_ifunction);
+    i->createcommand("cvgidcollection_ia", &cvgidcollection_iafunction);
+    i->createcommand("cvgidcollection_iv", &cvgidcollection_ivfunction);
+    i->createcommand("size_g", &size_gfunction);
+
 #ifdef HAVE_MUSIC     
     i->createcommand("SetAcceptableLatency", &setacceptablelatency_l_dfunction);
+    i->createcommand("SetMaxBuffered", &setmaxbuffered_l_ifunction);
 #endif
-   
+
+    // Add connection rules
+    net_->register_conn_builder<OneToOneBuilder>("one_to_one");
+    net_->register_conn_builder<AllToAllBuilder>("all_to_all");
+    net_->register_conn_builder<FixedInDegreeBuilder>("fixed_indegree");
+    net_->register_conn_builder<FixedOutDegreeBuilder>("fixed_outdegree");
+    net_->register_conn_builder<BernoulliBuilder>("pairwise_bernoulli");
+
+    #ifdef HAVE_GSL
+    net_->register_conn_builder<FixedTotalNumberBuilder>("fixed_total_number");
+    #endif
+
     Token statusd = i->baselookup(Name("statusdict"));
     DictionaryDatum dd=getValue<DictionaryDatum>(statusd);
     dd->insert(Name("kernelname"), new StringDatum("NEST"));
-    dd->insert(Name("kernelrevision"), new StringDatum("$Revision: 10474 $"));
     dd->insert(Name("is_mpi"), new BoolDatum(Communicator::get_initialized()));
   }
 

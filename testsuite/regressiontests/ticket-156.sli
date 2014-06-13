@@ -36,7 +36,7 @@
    4. test for identical results across resolutions
 */
 
-/unittest (6335) require
+(unittest) run
 /unittest using
 
 /ps_params <<

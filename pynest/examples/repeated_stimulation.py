@@ -1,5 +1,5 @@
-#! /usr/bin/env python
-
+# -*- coding: utf-8 -*-
+#
 # repeated_stimulation.py
 #
 # This file is part of NEST.
@@ -57,7 +57,7 @@ nest.Connect(pg, sd)
 
 # before each trial, we set the 'origin' of the poisson_generator to the current
 # simulation time
-for n in xrange(num_trials):
+for n in range(num_trials):
     nest.SetStatus(pg, {'origin': nest.GetKernelStatus()['time']})
     nest.Simulate(trial_duration)
 

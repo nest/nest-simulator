@@ -62,6 +62,7 @@
        depends on neurotransmitter release probability. PNAS, 94(2), 719-23.
    [2] Fuhrmann, G., Segev, I., Markram, H., & Tsodyks, M. V. (2002). Coding of temporal 
        information by activity-dependent synapses. Journal of neurophysiology, 87(1), 140-8.
+   [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers. Neural networks, 15(2), 155–61.
 
   Transmits: SpikeEvent
        
@@ -152,19 +153,22 @@ inline
 void Tsodyks2Connection::send(Event& e, double_t t_lastspike, const CommonSynapseProperties &)
 {
   double_t h = e.get_stamp().get_ms() - t_lastspike;  
-  double_t f = std::exp(-h/tau_rec_);
+  double_t x_decay = std::exp(-h/tau_rec_);
   double_t u_decay = (tau_fac_ < 1.0e-10) ? 0.0 : std::exp(-h/tau_fac_);
 
-  x_= x_*(1.0-u_)*f + u_*(1.0-f); // Eq. 2 from reference [1]
-  u_ *= u_decay; 
-  u_+= U_*(1.0-u_); // for tau_fac=0 and u_=0, this will render u_==U_
+  // now we compute spike number n+1
+  x_= 1. + (x_ -x_*u_ -1.)*x_decay; // Eq. 5 from reference [3]
+  u_= U_+u_*(1.-U_)*u_decay;       // Eq. 4 from [3] 
 
-  // send the spike to the target
+  // We use the current values for the spike number n.
   e.set_receiver(*target_);
-  e.set_weight( x_*weight_ );
+  e.set_weight( x_*u_*weight_ );
+  // send the spike to the target
   e.set_delay( delay_ );
   e.set_rport( rport_ );
   e();
+
+
 }
  
 } // namespace

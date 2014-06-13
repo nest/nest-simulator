@@ -1,6 +1,3 @@
-#ifndef CONNECTION_CREATOR_IMPL_H
-#define CONNECTION_CREATOR_IMPL_H
-
 /*
  *  connection_creator_impl.h
  *
@@ -23,7 +20,15 @@
  *
  */
 
+#ifndef CONNECTION_CREATOR_IMPL_H
+#define CONNECTION_CREATOR_IMPL_H
+
 #include <vector>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
+
 #include "connection_creator.h"
 #include "binomial_randomdev.h"
 
@@ -60,12 +65,95 @@ namespace nest
   }
 
   template<int D>
-  void ConnectionCreator::get_parameters_(const Position<D> & pos, librandom::RngPtr rng, DictionaryDatum d)
+  void ConnectionCreator::get_parameters_(const Position<D> & pos, librandom::RngPtr rng,
+					  double& weight, double& delay)
   {
-    for(ParameterMap::iterator iter=parameters_.begin(); iter != parameters_.end(); ++iter) {
-      def<double_t>(d, iter->first, iter->second->value(pos, rng));
+    // keeping this function temporarily until all connection variants are cleaned up
+    weight = weight_->value(pos, rng);
+    delay  = delay_ ->value(pos, rng);
+  }
+
+  template<typename Iterator, int D>
+  void ConnectionCreator::connect_to_target_(Iterator from, Iterator to, index tgt_id, Node* tgt_ptr, 
+					     const Position<D>& tgt_pos, thread tgt_thread,
+					     const Layer<D>& source)
+  {
+    librandom::RngPtr rng = net_.get_rng(tgt_thread);
+
+    const bool without_kernel = not kernel_.valid();
+    for ( Iterator iter = from ; iter != to ; ++iter )
+    {
+      if ( (not allow_autapses_) and (iter->second == tgt_id) )
+	continue;
+
+      if ( without_kernel or
+	   rng->drand() < kernel_->value(source.compute_displacement(tgt_pos, iter->first), rng)
+	 ) 
+      {
+	const Position<D> disp = source.compute_displacement(tgt_pos,iter->first);
+	connect_(iter->second, tgt_id, tgt_ptr, tgt_thread, 
+		     weight_->value(disp, rng),
+		     delay_->value(disp, rng),
+		     synapse_model_);
+      }
     }
   }
+
+  template <int D>
+  ConnectionCreator::PoolWrapper_<D>::PoolWrapper_():
+    masked_layer_(0),
+    positions_(0)
+  {}
+
+  template <int D>
+  ConnectionCreator::PoolWrapper_<D>::~PoolWrapper_()
+  {
+    if ( masked_layer_ )
+      delete masked_layer_;
+  }
+
+  template <int D>
+  void ConnectionCreator::PoolWrapper_<D>::define(MaskedLayer<D>* ml)
+  {
+    assert(masked_layer_ == 0);
+    assert(positions_ == 0);
+    assert(ml != 0);
+    masked_layer_ = ml;
+  }
+  
+  template <int D>
+  void ConnectionCreator::PoolWrapper_<D>::define(std::vector<std::pair<Position<D>,index> >* pos)
+  {
+    assert(masked_layer_ == 0);
+    assert(positions_ == 0);
+    assert(pos != 0);
+    positions_ = pos;
+  }
+
+  template <int D>
+  typename Ntree<D,index>::masked_iterator ConnectionCreator::PoolWrapper_<D>::masked_begin(const Position<D>& pos) const
+  { 
+    return masked_layer_->begin(pos); 
+  }
+  
+  template <int D>
+  typename Ntree<D,index>::masked_iterator ConnectionCreator::PoolWrapper_<D>::masked_end() const
+  { 
+    return masked_layer_->end(); 
+  }
+
+  template <int D>
+  typename std::vector<std::pair<Position<D>,index> >::iterator ConnectionCreator::PoolWrapper_<D>::begin() const 
+  { 
+    return positions_->begin();
+  }
+
+  template <int D>
+  typename std::vector<std::pair<Position<D>,index> >::iterator ConnectionCreator::PoolWrapper_<D>::end() const 
+  { 
+    return positions_->end();
+  }
+
 
   template<int D>
   void ConnectionCreator::target_driven_connect_(Layer<D>& source, Layer<D>& target)
@@ -75,8 +163,6 @@ namespace nest
     //  1. Apply Mask to source layer
     //  2. For each source node: Compute probability, draw random number, make
     //     connection conditionally
-
-    DictionaryDatum d = new Dictionary();
 
     // Nodes in the subnet are grouped by depth, so to select by depth, we
     // just adjust the begin and end pointers:
@@ -90,99 +176,43 @@ namespace nest
       target_end = target.local_end();
     }
 
-    if (mask_.valid()) {
+    // retrieve global positions, either for masked or unmasked pool
+    PoolWrapper_<D> pool;
+    if ( mask_.valid() )  // MaskedLayer will be freed by PoolWrapper d'tor
+      pool.define(new MaskedLayer<D>(source,source_filter_,mask_,true,allow_oversized_));
+    else
+      pool.define(source.get_global_positions_vector(source_filter_));
 
-      // Retrieve global positions:
-      MaskedLayer<D> masked_layer(source,source_filter_,mask_,true,allow_oversized_);
+    // sharing specs on next line commented out because gcc 4.2 cannot handle them
+#pragma omp parallel //default(none) shared(source, target, masked_layer, target_begin, target_end)
+    {
+      for ( std::vector<Node*>::const_iterator tgt_it = target_begin;
+	    tgt_it != target_end;
+	    ++tgt_it ) 
+      {
+	const thread target_thread = (*tgt_it)->get_thread();
 
-      for (std::vector<Node*>::const_iterator tgt_it = target_begin;tgt_it != target_end;++tgt_it) {
+#ifdef _OPENMP
+	if ( target_thread != omp_get_thread_num() )
+	  continue;
+#endif
 
-        if (target_filter_.select_model() && ((*tgt_it)->get_model_id() != target_filter_.model))
-          continue;
+	if (target_filter_.select_model() && ((*tgt_it)->get_model_id() != target_filter_.model))
+	  continue;
 
-        index target_id = (*tgt_it)->get_gid();
-        librandom::RngPtr rng = net_.get_rng((*tgt_it)->get_thread());
-        Position<D> target_pos = target.get_position((*tgt_it)->get_subnet_index());
+	const index target_id = (*tgt_it)->get_gid();
+	const Position<D> target_pos = target.get_position((*tgt_it)->get_subnet_index());
 
-        // If there is a kernel, we create connections conditionally,
-        // otherwise all sources within the mask are created. Test moved
-        // outside the loop for efficiency.
-        if (kernel_.valid()) {
-
-          for(typename Ntree<D,index>::masked_iterator iter=masked_layer.begin(target_pos); iter!=masked_layer.end(); ++iter) {
-
-            if ((not allow_autapses_) and (iter->second == target_id))
-              continue;
-
-            if (rng->drand() < kernel_->value(source.compute_displacement(target_pos,iter->first), rng)) {
-              get_parameters_(source.compute_displacement(target_pos,iter->first), rng, d);
-              net_.connect(iter->second,target_id,d,synapse_model_);
-            }
-
-          }
-
-        } else {
-
-          // no kernel
-
-          for(typename Ntree<D,index>::masked_iterator iter=masked_layer.begin(target_pos); iter!=masked_layer.end(); ++iter) {
-
-            if ((not allow_autapses_) and (iter->second == target_id))
-              continue;
-
-            get_parameters_(source.compute_displacement(target_pos,iter->first), rng, d);
-            net_.connect(iter->second,target_id,d,synapse_model_);
-          }
-
-        }
-
-      }
-
-    } else {
-      // no mask
-
-      std::vector<std::pair<Position<D>,index> >* positions = source.get_global_positions_vector(source_filter_);
-      for (std::vector<Node*>::const_iterator tgt_it = target_begin;tgt_it != target_end;++tgt_it) {
-
-        if (target_filter_.select_model() && ((*tgt_it)->get_model_id() != target_filter_.model))
-          continue;
-
-        index target_id = (*tgt_it)->get_gid();
-        librandom::RngPtr rng = net_.get_rng((*tgt_it)->get_thread());
-        Position<D> target_pos = target.get_position((*tgt_it)->get_subnet_index());
-
-        // If there is a kernel, we create connections conditionally,
-        // otherwise all sources within the mask are created. Test moved
-        // outside the loop for efficiency.
-        if (kernel_.valid()) {
-
-          for(typename std::vector<std::pair<Position<D>,index> >::iterator iter=positions->begin();iter!=positions->end();++iter) {
-
-            if ((not allow_autapses_) and (iter->second == target_id))
-              continue;
-
-            if (rng->drand() < kernel_->value(source.compute_displacement(target_pos,iter->first), rng)) {
-              get_parameters_(source.compute_displacement(target_pos,iter->first), rng, d);
-              net_.connect(iter->second,target_id,d,synapse_model_);
-            }
-          }
-
-        } else {
-
-          for(typename std::vector<std::pair<Position<D>,index> >::iterator iter=positions->begin();iter!=positions->end();++iter) {
-
-            if ((not allow_autapses_) and (iter->second == target_id))
-              continue;
-
-            get_parameters_(source.compute_displacement(target_pos,iter->first), rng, d);
-            net_.connect(iter->second,target_id,d,synapse_model_);
-          }
-
-        }
-      }
-    }
-
+	if ( mask_.valid() )
+	  connect_to_target_(pool.masked_begin(target_pos), pool.masked_end(), 
+			     target_id, *tgt_it, target_pos, target_thread, source);
+	else
+	  connect_to_target_(pool.begin(), pool.end(), 
+			     target_id, *tgt_it, target_pos, target_thread, source);
+      } // for target_begin
+    }  // omp parallel
   }
+
 
   template<int D>
   void ConnectionCreator::source_driven_connect_(Layer<D>& source, Layer<D>& target)
@@ -194,8 +224,6 @@ namespace nest
     //  1. Apply (Converse)Mask to source layer
     //  2. For each source node: Compute probability, draw random number, make
     //     connection conditionally
-
-    DictionaryDatum d = new Dictionary();
 
     // Nodes in the subnet are grouped by depth, so to select by depth, we
     // just adjust the begin and end pointers:
@@ -221,7 +249,8 @@ namespace nest
           continue;
 
         index target_id = (*tgt_it)->get_gid();
-        librandom::RngPtr rng = net_.get_rng((*tgt_it)->get_thread());
+	thread target_thread = (*tgt_it)->get_thread();
+        librandom::RngPtr rng = net_.get_rng(target_thread);
         Position<D> target_pos = target.get_position((*tgt_it)->get_subnet_index());
 
         // If there is a kernel, we create connections conditionally,
@@ -235,8 +264,9 @@ namespace nest
               continue;
 
             if (rng->drand() < kernel_->value(target.compute_displacement(iter->first, target_pos), rng)) {
-              get_parameters_(target.compute_displacement(iter->first, target_pos), rng, d);
-              net_.connect(iter->second,target_id,d,synapse_model_);
+	      double w, d;
+              get_parameters_(target.compute_displacement(iter->first, target_pos), rng, w, d);
+              connect_(iter->second, target_id, *tgt_it, target_thread, w, d, synapse_model_);
             }
 
           }
@@ -249,9 +279,9 @@ namespace nest
 
             if ((not allow_autapses_) and (iter->second == target_id))
               continue;
-
-            get_parameters_(target.compute_displacement(iter->first,target_pos), rng, d);
-            net_.connect(iter->second,target_id,d,synapse_model_);
+	    double w, d;
+            get_parameters_(target.compute_displacement(iter->first,target_pos), rng, w, d);
+	    connect_(iter->second, target_id, *tgt_it, target_thread, w, d, synapse_model_);
           }
 
         }
@@ -268,7 +298,8 @@ namespace nest
           continue;
 
         index target_id = (*tgt_it)->get_gid();
-        librandom::RngPtr rng = net_.get_rng((*tgt_it)->get_thread());
+	thread target_thread = (*tgt_it)->get_thread();
+        librandom::RngPtr rng = net_.get_rng(target_thread);
         Position<D> target_pos = target.get_position((*tgt_it)->get_subnet_index());
 
         // If there is a kernel, we create connections conditionally,
@@ -282,8 +313,9 @@ namespace nest
               continue;
 
             if (rng->drand() < kernel_->value(target.compute_displacement(iter->first,target_pos), rng)) {
-              get_parameters_(target.compute_displacement(iter->first,target_pos), rng, d);
-              net_.connect(iter->second,target_id,d,synapse_model_);
+	      double w,d;
+              get_parameters_(target.compute_displacement(iter->first,target_pos), rng, w, d);
+              connect_(iter->second, target_id, *tgt_it, target_thread, w, d, synapse_model_);
             }
           }
 
@@ -293,9 +325,9 @@ namespace nest
 
             if ((not allow_autapses_) and (iter->second == target_id))
               continue;
-
-            get_parameters_(target.compute_displacement(iter->first,target_pos), rng, d);
-            net_.connect(iter->second,target_id,d,synapse_model_);
+	    double w,d;
+            get_parameters_(target.compute_displacement(iter->first,target_pos), rng, w, d);
+              connect_(iter->second, target_id, *tgt_it, target_thread, w, d, synapse_model_);
           }
 
         }
@@ -314,7 +346,6 @@ namespace nest
     // 2. Compute connection probability for each source position
     // 3. Draw source nodes and make connections
 
-    DictionaryDatum d = new Dictionary();
 
     // Nodes in the subnet are grouped by depth, so to select by depth, we
     // just adjust the begin and end pointers:
@@ -336,7 +367,8 @@ namespace nest
           continue;
 
         index target_id = (*tgt_it)->get_gid();
-        librandom::RngPtr rng = net_.get_rng((*tgt_it)->get_thread());
+	thread target_thread = (*tgt_it)->get_thread();
+        librandom::RngPtr rng = net_.get_rng(target_thread);
         Position<D> target_pos = target.get_position((*tgt_it)->get_subnet_index());
 
         // Get (position,GID) pairs for sources inside mask
@@ -360,7 +392,7 @@ namespace nest
 
           }
 
-          if ((positions.size()==0) or
+          if ( positions.empty() or
               ((not allow_autapses_) and (positions.size()==1) and (positions[0].second==target_id)) or
               ((not allow_multapses_) and (positions.size()<number_of_connections_)) ) {
             std::string msg = String::compose("Global target ID %1: Not enough sources found inside mask", target_id);
@@ -388,9 +420,9 @@ namespace nest
               --i;
               continue;
             }
-
-            get_parameters_(source.compute_displacement(target_pos,positions[random_id].first), rng, d);
-            net_.connect(source_id, target_id, d, synapse_model_);
+	    double w,d;
+            get_parameters_(source.compute_displacement(target_pos,positions[random_id].first), rng, w,d);
+	    connect_(source_id, target_id, *tgt_it, target_thread, w, d, synapse_model_);
             is_selected[random_id] = true;
           }
 
@@ -398,7 +430,7 @@ namespace nest
 
           // no kernel
 
-          if ((positions.size()==0) or
+          if ( positions.empty() or
               ((not allow_autapses_) and (positions.size()==1) and (positions[0].second==target_id)) or
               ((not allow_multapses_) and (positions.size()<number_of_connections_)) ) {
             std::string msg = String::compose("Global target ID %1: Not enough sources found inside mask", target_id);
@@ -417,8 +449,9 @@ namespace nest
               continue;
             }
             index source_id = positions[random_id].second;
-            get_parameters_(source.compute_displacement(target_pos,positions[random_id].first), rng, d);
-            net_.connect(source_id, target_id, d, synapse_model_);
+	    double w,d;
+            get_parameters_(source.compute_displacement(target_pos,positions[random_id].first), rng, w,d);
+	    connect_(source_id, target_id, *tgt_it, target_thread, w, d, synapse_model_);
             is_selected[random_id] = true;
           }
 
@@ -438,7 +471,8 @@ namespace nest
           continue;
 
         index target_id = (*tgt_it)->get_gid();
-        librandom::RngPtr rng = net_.get_rng((*tgt_it)->get_thread());
+	thread target_thread = (*tgt_it)->get_thread();
+        librandom::RngPtr rng = net_.get_rng(target_thread);
         Position<D> target_pos = target.get_position((*tgt_it)->get_subnet_index());
 
         if ( (positions->size()==0) or
@@ -484,8 +518,9 @@ namespace nest
             }
 
             Position<D> source_pos = (*positions)[random_id].first;
-            get_parameters_(source.compute_displacement(target_pos,source_pos), rng, d);
-            net_.connect(source_id, target_id, d, synapse_model_);
+	    double w,d;
+            get_parameters_(source.compute_displacement(target_pos,source_pos), rng, w,d);
+	    connect_(source_id, target_id, *tgt_it, target_thread, w, d, synapse_model_);
             is_selected[random_id] = true;
           }
 
@@ -512,8 +547,9 @@ namespace nest
             }
 
             Position<D> source_pos = (*positions)[random_id].first;
-            get_parameters_(source.compute_displacement(target_pos,source_pos), rng, d);
-            net_.connect(source_id, target_id, d, synapse_model_);
+	    double w,d;
+            get_parameters_(source.compute_displacement(target_pos,source_pos), rng, w,d);
+	    connect_(source_id, target_id, *tgt_it, target_thread, w, d, synapse_model_);
             is_selected[random_id] = true;
           }
 
@@ -537,7 +573,6 @@ namespace nest
     MaskedLayer<D> masked_target(target,target_filter_,mask_,true,allow_oversized_);
 
     std::vector<std::pair<Position<D>,index> >* sources = source.get_global_positions_vector(source_filter_);
-    DictionaryDatum d = new Dictionary();
 
     for (typename std::vector<std::pair<Position<D>,index> >::iterator src_it = sources->begin(); src_it != sources->end(); ++src_it) {
 
@@ -566,7 +601,7 @@ namespace nest
           probabilities.push_back(1.0);
       }
 
-      if ((targets.size()==0) or
+      if ( targets.empty() or
           ((not allow_multapses_) and (targets.size()<number_of_connections_)) ) {
         std::string msg = String::compose("Global source ID %1: Not enough targets found", source_id);
         throw KernelException(msg.c_str());
@@ -589,8 +624,10 @@ namespace nest
         }
         Position<D> target_displ = displacements[random_id];
         index target_id = targets[random_id];
-        get_parameters_(target_displ, net_.get_grng(), d);
-        net_.connect(source_id, target_id, d, synapse_model_);
+	Node* target_ptr = net_.get_node(target_id);
+	double w,d;
+        get_parameters_(target_displ, net_.get_grng(), w,d);
+        connect_(source_id, target_id, target_ptr, target_ptr->get_thread(), w, d, synapse_model_);
         is_selected[random_id] = true;
       }
 

@@ -109,13 +109,12 @@ class BinomialRandomDev : public RandomDev
      * way of doing things, although all other compilers
      * happily live without.
      */
-    using RandomDev::uldev;
-    
-    unsigned long uldev(void);     //!< draw integer
-    unsigned long uldev(RngPtr) const;   //!< draw integer, threaded
-    bool has_uldev() const { return true; }
+    using RandomDev::operator();
+    using RandomDev::ldev;
 
-    double operator()(void);       //!< return as double
+    long ldev(RngPtr) const;   //!< draw integer, threaded
+    bool has_ldev() const { return true; }
+
     double operator()(RngPtr) const;     //!< return as double, threaded
 
     //! set distribution parameters from SLI dict
@@ -141,23 +140,10 @@ class BinomialRandomDev : public RandomDev
   };
 
   inline
-  double BinomialRandomDev::operator()(void)
-  { 
-    return static_cast<double>(uldev()); 
-  }
-
-  inline
   double BinomialRandomDev::operator()(RngPtr rthrd) const
   { 
-    return static_cast<double>(uldev(rthrd)); 
+    return static_cast<double>(ldev(rthrd)); 
   }
-
-  inline
-  unsigned long BinomialRandomDev::uldev(void)
-  {
-    return uldev(rng_);
-  }
-
 }
 
 #endif

@@ -229,7 +229,8 @@ SLIStartup::SLIStartup(int argc, char** argv)
   ismpi_name("is_mpi"),
   have_gsl_name("have_gsl"),
   have_pthreads_name("have_pthreads"),
-  havemusic_name("have_music"),
+  have_music_name("have_music"),
+  have_libneurosim_name("have_libneurosim"),
   ndebug_name("ndebug"),
   exitcodes_name("exitcodes"),
   exitcode_success_name("success"),
@@ -434,9 +435,15 @@ void SLIStartup::init(SLIInterpreter *i)
 #endif
 
 #ifdef HAVE_MUSIC
-  statusdict->insert(havemusic_name, Token(new BoolDatum(true)));
+  statusdict->insert(have_music_name, Token(new BoolDatum(true)));
 #else
-  statusdict->insert(havemusic_name, Token(new BoolDatum(false)));
+  statusdict->insert(have_music_name, Token(new BoolDatum(false)));
+#endif
+
+#ifdef HAVE_LIBNEUROSIM
+  statusdict->insert(have_libneurosim_name, Token(new BoolDatum(true)));
+#else
+  statusdict->insert(have_libneurosim_name, Token(new BoolDatum(false)));
 #endif
 
 #ifdef NDEBUG

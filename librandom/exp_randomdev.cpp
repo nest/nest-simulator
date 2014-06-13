@@ -20,3 +20,22 @@
  *
  */
 #include "exp_randomdev.h"
+#include "sliexceptions.h"
+#include "dictutils.h"
+
+void librandom::ExpRandomDev::set_status(const DictionaryDatum& d)
+{
+  double new_lambda = lambda_;
+
+  updateValue<double>(d, "lambda", new_lambda);
+
+  if ( new_lambda <= 0. )
+    throw BadParameterValue("Exponential RDV: lambda > 0 required.");
+
+  lambda_ = new_lambda;
+}
+
+void librandom::ExpRandomDev::get_status(DictionaryDatum& d) const
+{
+  def<double>(d, "lambda", lambda_);
+}

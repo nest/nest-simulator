@@ -1,6 +1,3 @@
-#ifndef NTREE_H
-#define NTREE_H
-
 /*
  *  ntree.h
  *
@@ -23,6 +20,9 @@
  *
  */
 
+#ifndef NTREE_H
+#define NTREE_H
+
 #include <vector>
 #include <utility>
 #include <bitset>
@@ -37,15 +37,6 @@ namespace nest
   class Mask;
 
   /**
-   * Abstract base class for all Ntrees containing items of type T
-   */
-  template<class T>
-  class AbstractNtree
-  {
-  public:
-  };
-
-  /**
    * A Ntree object represents a subtree or leaf in a Ntree structure. Any
    * ntree covers a specific region in space. A leaf ntree contains a list
    * of items and their corresponding positions. A branch ntree contains a
@@ -55,7 +46,7 @@ namespace nest
    *
    */
   template<int D, class T, int max_capacity=100, int max_depth=10>
-  class Ntree : public AbstractNtree<T>
+  class Ntree
   {
   public:
 
@@ -225,6 +216,11 @@ namespace nest
           std::bitset<D> periodic=0, Ntree *parent=0, int subquad=0);
 
     /**
+     * Delete Ntree recursively.
+     */
+    ~Ntree(); 
+
+    /**
      * Traverse quadtree structure from current ntree.
      * Inserts node in correct leaf in quadtree.
      * @returns iterator pointing to inserted node.
@@ -334,6 +330,16 @@ namespace nest
     my_depth_(parent?parent->my_depth_+1:0),
     periodic_(periodic)
   {
+  }
+
+  template<int D, class T, int max_capacity, int max_depth>
+  Ntree<D,T,max_capacity,max_depth>::~Ntree()
+  {
+    if ( leaf_ )
+      return;    // if T is a vector class, we do not delete the pointees
+
+    for ( size_t n = 0 ; n < N ; ++n )
+      delete children_[n];   // calls destructor in child, thus recursing
   }
 
   template<int D, class T, int max_capacity, int max_depth>

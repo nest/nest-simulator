@@ -265,7 +265,6 @@ void nest::Communicator::communicate(const NodeListType& local_nodes, vector<Nod
       bool match = true;
       index gid = (*n)->get_gid();
       DictionaryDatum node_status = net.get_status(gid);
-      node_status->info(std::cout);
       for (Dictionary::iterator i = params->begin(); i != params->end(); ++i)
       {
         if (node_status->known(i->first))

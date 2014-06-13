@@ -1,7 +1,5 @@
 This is the README file for NEST's testsuite.
 
-
-
 When writing tests, please adhere to the following guideline:
 
  * The test scripts in selftests and mpitests have to be written in
@@ -15,14 +13,13 @@ When writing tests, please adhere to the following guideline:
  * Tests that are written in Python are run after the SLI tests.
 
  * Tests that need models which depend on the GSL need to be protected
-   by a check like this:
+   by a check like this, which should be above all actual code in the
+   test script:
 
-     statusdict/have_gsl :: {
-       % actual test code
-     } if
+   % This test should only run if we have GSL
+   statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
 
+ * Tests that need threading, need to be protected by a check like
+   this, which should be above all actual code in the test script:
 
-
-
-
-
+   statusdict/threading :: (no) eq {statusdict/exitcodes/success :: quit_i} if

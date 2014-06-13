@@ -1,6 +1,3 @@
-#ifndef GRID_MASK_H
-#define GRID_MASK_H
-
 /*
  *  grid_mask.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef GRID_MASK_H
+#define GRID_MASK_H
 
 #include "nest.h"
 #include "topology_names.h"

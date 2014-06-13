@@ -33,8 +33,22 @@
 %%            hans.ekkehard.plesser@umb.no
 %%
 
-/unittest ($Revision: 9990 $) provide
 /unittest namespace
+
+/* BeginDocumentation
+Name: unittest::exit_test_gracefully - End test script and report success
+Synopsis: exit_test_gracefully -> -
+Description:
+This function will terminate NEST/SLI with a return code signaling success.
+It should be used to leave test scripts that have special prerequisites.
+Example:
+/unittest using
+is_threaded_with_openmp not { exit_test_gracefully } if
+*/
+/exit_test_gracefully
+{
+  statusdict/exitcodes/success :: quit_i
+} def
 
 
 /* BeginDocumentation
@@ -228,9 +242,7 @@ SeeAlso: unittest::assert_or_die, unittest::pass_or_die, assert, quit
 {
   << exch /func exch >>
   begin
-
-    mark % to remove debris from stack after error
-
+    
     /func load stopped not  % got a problem if we were NOT stopped
     {
       M_FATAL (unittest::fail_or_die)
@@ -249,8 +261,8 @@ SeeAlso: unittest::assert_or_die, unittest::pass_or_die, assert, quit
     errordict /command undef
     errordict begin /newerror false def end
 
-    % clear stack
-    counttomark npop pop  % need to mark separately
+    % restore stack
+    errordict /ostack get restoreostack
   end
 
 } bind def 
@@ -579,7 +591,7 @@ SeeAlso: unittest::ToUnitTestPrecision
     1 MapAt                   % reduce to first entry available at this resolution
   d [1 1] Part sub 1 add      % index in data array
   m append /r Set             % distance between available data points 
-
+  
 
   d r Take [/All [2 -1]] Part /di AppendTo
 
@@ -1330,4 +1342,4 @@ SeeAlso:  unittest::distributed_assert_or_die, nest_indirect, unittest::mpirun_s
 }
 def
 
-end
+end % /unittest namespace

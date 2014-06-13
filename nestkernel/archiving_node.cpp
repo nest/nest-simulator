@@ -62,7 +62,7 @@ namespace nest {
 
     for ( std::deque<histentry>::iterator runner = history_.begin();
 	  runner != history_.end() && runner->t_ <= t_first_read;
-	  runner++)
+	  ++runner)
       (runner->access_counter_)++;
 
     n_incoming_++;    
@@ -77,7 +77,7 @@ namespace nest {
 
     for ( std::deque<histentry>::iterator runner = history_.begin();
 	  runner != history_.end() && runner->t_ <= t_last_read;
-	  runner++)
+	  ++runner)
       (runner->access_counter_)--;
 
     n_incoming_--;
@@ -136,12 +136,12 @@ namespace nest {
     else
       {
 	std::deque<histentry>::iterator runner = history_.begin();
-	while ((runner != history_.end()) && (runner->t_ <= t1)) runner++;
+	while ((runner != history_.end()) && (runner->t_ <= t1)) ++runner;
 	*start = runner;
-	while ((runner != history_.end()) && (runner->t_ <= t2)) 
+	while ((runner != history_.end()) && (runner->t_ <= t2))
 	  {
 	    (runner->access_counter_)++;
-	    runner++;
+	    ++runner;
 	  }
 	*finish = runner;
       }

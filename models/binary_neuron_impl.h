@@ -1,5 +1,5 @@
 /*
- *  binary_neuron_impl.cpp
+ *  binary_neuron_impl.h
  *
  *  This file is part of NEST.
  *
@@ -175,6 +175,8 @@ void binary_neuron<TGainfunction>::update(Time const & origin,
     // of the total input h with respect to the previous step, so sum them up
     S_.h_ += B_.spikes_.get_value(lag);
 
+    double_t c = B_.currents_.get_value(lag);
+
     // check, if the update needs to be done
     if ( Time::step(origin.get_steps()+lag) > S_.t_next_ )
     {
@@ -182,7 +184,7 @@ void binary_neuron<TGainfunction>::update(Time const & origin,
       // gain function
       // if the state has changed, the neuron produces an event sent to all its targets
       
-      bool new_y = gain_(V_.rng_, S_.h_ + B_.currents_.get_value(lag) );
+      bool new_y = gain_(V_.rng_, S_.h_ + c);
 
       if ( new_y != S_.y_ )
       {	
@@ -237,7 +239,7 @@ void binary_neuron<TGainfunction>::handle(SpikeEvent & e)
       // count this event negatively, assuming it comes as single event
       // transition 1->0
       B_.spikes_.add_value(e.get_rel_delivery_steps(network()->get_slice_origin()),
-                    -e.get_weight());
+			   -e.get_weight());
     }
   }
   else // multiplicity != 1
@@ -264,7 +266,8 @@ void binary_neuron<TGainfunction>::handle(CurrentEvent& e)
   // but also to handle the incoming current events added
   // both contributions are directly added to the variable h
   B_.currents_.add_value(e.get_rel_delivery_steps(network()->get_slice_origin()), 
-			 w *c);
+  			 w*c);
+
 }
 
 

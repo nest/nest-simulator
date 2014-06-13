@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # test_networks.py
 #
@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 Network tests
 """
@@ -26,7 +27,10 @@ import unittest
 import nest
 
 
+@nest.check_stack
 class NetworkTestCase(unittest.TestCase):
+   """Network tests"""
+
 
    def test_BeginEndSubnet(self):
        """Begin/End Subnet"""
@@ -46,10 +50,10 @@ class NetworkTestCase(unittest.TestCase):
        """Current Subnet"""
 
        nest.ResetKernel()
-       self.assertEqual(nest.CurrentSubnet(), [0])
+       self.assertEqual(nest.CurrentSubnet(), (0, ))
 
        nest.BeginSubnet()
-       self.assertEqual(nest.CurrentSubnet(), [1])
+       self.assertEqual(nest.CurrentSubnet(), (1, ))
 
 
    def test_GetLeaves(self):
@@ -57,29 +61,26 @@ class NetworkTestCase(unittest.TestCase):
 
        nest.ResetKernel()
        model = 'iaf_neuron'
-       l = nest.LayoutNetwork(model, [2,3])
-       allLeaves = [3, 4, 5, 7, 8, 9]
+       l = nest.LayoutNetwork(model, (2, 3))
+       allLeaves = (3, 4, 5, 7, 8, 9)
        
        # test all
-       self.assertEqual(nest.GetLeaves(l), [allLeaves])
+       self.assertEqual(nest.GetLeaves(l), (allLeaves, ))
        
        # test all with empty dict
-       self.assertEqual(nest.GetLeaves(l, properties={}), [allLeaves])
+       self.assertEqual(nest.GetLeaves(l, properties={}), (allLeaves, ))
        
        # test iteration over subnets
-       self.assertEqual(nest.GetLeaves(l + l), [allLeaves, allLeaves])
+       self.assertEqual(nest.GetLeaves(l + l), (allLeaves, allLeaves))
        
        # children of l are not leaves, should yield empty
-       self.assertEqual(nest.GetLeaves(l, properties={'parent': l[0]}),
-                        [[]])
+       self.assertEqual(nest.GetLeaves(l, properties={'parent': l[0]}), (tuple(), ))
        
        # local id of middle nodes
-       self.assertEqual(nest.GetLeaves(l, properties={'local_id': 2}),
-                        [[4, 8]])
+       self.assertEqual(nest.GetLeaves(l, properties={'local_id': 2}), ((4, 8), ))
        
        # selection by model type
-       self.assertEqual(nest.GetLeaves(l, properties={'model': model}),
-                        [allLeaves])
+       self.assertEqual(nest.GetLeaves(l, properties={'model': model}), (allLeaves, ))
        
 
    def test_GetNodes(self):
@@ -87,33 +88,29 @@ class NetworkTestCase(unittest.TestCase):
 
        nest.ResetKernel()
        model = 'iaf_neuron'
-       l = nest.LayoutNetwork(model, [2,3])
-       allNodes = range(2, 10)
-       allSubnets = [2, 6]
-       allLeaves = [n for n in allNodes if n not in allSubnets]
+       l = nest.LayoutNetwork(model, (2, 3))
+       allNodes = tuple(range(2, 10))
+       allSubnets = (2, 6)
+       allLeaves = tuple(n for n in allNodes if n not in allSubnets)
        
        # test all
-       self.assertEqual(nest.GetNodes(l), [allNodes])
+       self.assertEqual(nest.GetNodes(l), (allNodes, ))
        
        # test all with empty dict
-       self.assertEqual(nest.GetNodes(l, properties={}), [allNodes])
+       self.assertEqual(nest.GetNodes(l, properties={}), (allNodes, ))
        
        # test iteration over subnets
-       self.assertEqual(nest.GetNodes(l + l), [allNodes, allNodes])
+       self.assertEqual(nest.GetNodes(l + l), (allNodes, allNodes))
        
        # children of l are nodes
-       self.assertEqual(nest.GetNodes(l, properties={'parent': l[0]}),
-                        [allSubnets])
+       self.assertEqual(nest.GetNodes(l, properties={'parent': l[0]}), (allSubnets, ))
        
        # local id of second intermediate subnet and middle nodes
-       self.assertEqual(nest.GetNodes(l, properties={'local_id': 2}),
-                        [[4, 6, 8]])
+       self.assertEqual(nest.GetNodes(l, properties={'local_id': 2}), ((4, 6, 8), ))
        
        # selection by model type
-       self.assertEqual(nest.GetNodes(l, properties={'model': 'subnet'}),
-                        [allSubnets])
-       self.assertEqual(nest.GetNodes(l, properties={'model': model}),
-                        [allLeaves])
+       self.assertEqual(nest.GetNodes(l, properties={'model': 'subnet'}), (allSubnets, ))
+       self.assertEqual(nest.GetNodes(l, properties={'model': model}), (allLeaves, ))
 
    
    def test_GetChildren(self):
@@ -121,31 +118,27 @@ class NetworkTestCase(unittest.TestCase):
 
        nest.ResetKernel()
        model = 'iaf_neuron'
-       l = nest.LayoutNetwork(model, [2, 3])
-       topKids = [2, 6]
-       kids2 = [3, 4, 5]
-       kids6 = [7, 8, 9]
+       l = nest.LayoutNetwork(model, (2, 3))
+       topKids = (2, 6)
+       kids2 = (3, 4, 5)
+       kids6 = (7, 8, 9)
        
        # test top level
-       self.assertEqual(nest.GetChildren(l), [topKids])
+       self.assertEqual(nest.GetChildren(l), (topKids, ))
        
        # test underlying level
-       self.assertEqual(nest.GetChildren([2, 6]), [kids2, kids6])
+       self.assertEqual(nest.GetChildren((2, 6)), (kids2, kids6))
        
        # test with empty dict
-       self.assertEqual(nest.GetChildren(l, properties={}), [topKids])
+       self.assertEqual(nest.GetChildren(l, properties={}), (topKids, ))
                      
        # local id of middle nodes
-       self.assertEqual(nest.GetChildren([2, 6], properties={'local_id': 2}),
-                        [[4], [8]])
+       self.assertEqual(nest.GetChildren((2, 6), properties={'local_id': 2}), ((4, ), (8, )))
        
        # selection by model type
-       self.assertEqual(nest.GetChildren(l, properties={'model': 'subnet'}),
-                        [topKids])
-       self.assertEqual(nest.GetChildren([2], properties={'model': 'subnet'}),
-                        [[]])
-       self.assertEqual(nest.GetChildren([2], properties={'model': model}),
-                        [kids2])
+       self.assertEqual(nest.GetChildren(l, properties={'model': 'subnet'}), (topKids, ))
+       self.assertEqual(nest.GetChildren((2, ), properties={'model': 'subnet'}), (tuple(), ))
+       self.assertEqual(nest.GetChildren((2, ), properties={'model': model}), (kids2, ))
 
    
    def test_GetNetwork(self):
@@ -159,7 +152,7 @@ class NetworkTestCase(unittest.TestCase):
        sn2 = nest.EndSubnet()
        sn1 = nest.EndSubnet()
 
-       self.assertEqual(nest.CurrentSubnet(), [0])
+       self.assertEqual(nest.CurrentSubnet(), (0, ))
        self.assertEqual(nest.GetNetwork(sn1,1)[1], sn2[0])
        self.assertEqual(len(nest.GetNetwork(sn1,2)[1]), len(nest.GetNetwork(sn2,1)))
 

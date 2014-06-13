@@ -1,21 +1,25 @@
-# ConnPlotter --- A Tool to Generate Connectivity Pattern Matrices
+# -*- coding: utf-8 -*-
 #
-# This file is part of ConnPlotter.
+# ConnPlotter.py
 #
-# Copyright (C) 2009 Hans Ekkehard Plesser/UMB
+# This file is part of NEST.
 #
-# ConnPlotter is free software: you can redistribute it and/or modify
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #
-# ConnPlotter is distributed in the hope that it will be useful,
+# NEST is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with ConnPlotter.  If not, see <http://www.gnu.org/licenses/>.
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+# ConnPlotter --- A Tool to Generate Connectivity Pattern Matrices
 
 """
 ConnPlotter is a tool to create connectivity pattern tables.
@@ -143,8 +147,8 @@ pattern.toLaTeX('pattern.tex', standalone=True)
 #   - makes no sense to aggregate any longer
 """
 
-__version__ = '$Revision: 546 $'
-__date__    = '$Date: 2010-06-30 16:36:33 +0200 (Wed, 30 Jun 2010) $'
+#__version__ = '$Revision: 546 $'
+#__date__    = '$Date: 2010-06-30 16:36:33 +0200 (Wed, 30 Jun 2010) $'
 __author__  = 'Hans Ekkehard Plesser'
 
 __all__ = ['ConnectionPattern', 'SynType', 'plotParams', 'PlotParams']
@@ -164,12 +168,7 @@ __all__ = ['ConnectionPattern', 'SynType', 'plotParams', 'PlotParams']
 
 # ----------------------------------------------------------------------------
 
-# The next is a hack that helps me during development (allows run ConnPlotter),
-# should find a better solution.
-if __name__ == "__main__":
-    import colormaps as cm
-else:
-    from . import colormaps as cm
+from . import colormaps as cm
 
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -671,7 +670,7 @@ class ConnectionPattern(object):
             cdict = conninfo[2]
 
             if 'sources' in cdict:
-                if cdict['sources'].keys() == ['model']:
+                if tuple(cdict['sources'].keys()) == ('model', ):
                     self.snrn = cdict['sources']['model']
                 else:
                     raise ValueError('Can only handle sources in form {"model": ...}')
@@ -679,7 +678,7 @@ class ConnectionPattern(object):
                 self.snrn = None
 
             if 'targets' in cdict: 
-                if cdict['targets'].keys() == ['model']:
+                if tuple(cdict['targets'].keys()) == ('model', ):
                     self.tnrn = cdict['targets']['model']
                 else:
                     raise ValueError('Can only handle targets in form {"model": ...}')
@@ -1087,11 +1086,11 @@ class ConnectionPattern(object):
                     # NB: We must create also those block.newElement() that are not
                     #     registered later, since block would otherwise not skip 
                     #     over the unused location.
-                    for r in xrange(nsynrows):
+                    for r in range(nsynrows):
                         block.newRow(synsep, popsep/2.)
-                        for c in xrange(nsyncols):
+                        for c in range(nsyncols):
                             p = block.newElement(synsep, popsep/2., size=patchsize)
-                            smod = [k for k,s in self._synAttr.iteritems()
+                            smod = [k for k,s in self._synAttr.items()
                                     if s.r == r and s.c == c]
                             if smod:
                                 assert(len(smod)==1)
@@ -1124,7 +1123,7 @@ class ConnectionPattern(object):
                                          if c.matches(sl.name, sp, tl.name, tp)])
                         
                             # create all synapse patches
-                            for n in xrange(nsyncols):
+                            for n in range(nsyncols):
 
                                 # Do not duplicate existing axes.
                                 if (sl.name,sp,tl.name,tp,n) in axset:
@@ -1172,7 +1171,7 @@ class ConnectionPattern(object):
 
                 # we need to get the synapse names in ascending order of synapse indices
                 snames = [s[0] for s in 
-                          sorted([(k,v) for k,v in self._synAttr.iteritems()], 
+                          sorted([(k,v) for k,v in self._synAttr.items()],
                                  key=lambda kv: kv[1].index)
                           ]
                 snum = len(snames)
@@ -1206,7 +1205,7 @@ class ConnectionPattern(object):
                     cblift = 0.7 * cbmargin
 
                 self._cbPatches = {}
-                for j in xrange(snum):
+                for j in range(snum):
                     self._cbPatches[snames[j]] = \
                         self._Patch(self._axes.tl[0] + offset + j * (lstep + lwidth),
                                     self._axes.lr[1] - cblift,
@@ -1320,7 +1319,7 @@ class ConnectionPattern(object):
             tcd = None
         else:
             assert(mList)
-            import tcd_nest
+            from . import tcd_nest
             tcd = tcd_nest.TCD(mList)
 
         # Build internal representation of connections.
@@ -1352,7 +1351,7 @@ class ConnectionPattern(object):
         # also add any missing populations alphabetically at end
         # layers are ignored
         # create alphabetically sorted list of unique population names
-        popnames = sorted(list(set([p[1] for p in self._pops]))) 
+        popnames = sorted(list(set([p[1] for p in self._pops])), key=lambda x: x if x is not None else "")
         if poporder:
             self._poporder = poporder
             next = max(self._poporder.values()) + 1  # next free sorting index
@@ -1649,12 +1648,16 @@ class ConnectionPattern(object):
         # Create colorbars at bottom of figure
         if showLegend:
 
+            # FIXME: rewrite the function to avoid comparisons with None!
+            f_min = float("-inf") if c_min is None else c_min
+            f_max = float("-inf") if c_max is None else c_max
+
             # Do we have kernel values exceeding the color limits?
-            if c_min <= kern_min and kern_max <= c_max:
+            if f_min <= kern_min and kern_max <= f_max:
                 extmode = 'neither'
-            elif c_min > kern_min and kern_max <= c_max:
+            elif f_min > kern_min and kern_max <= f_max:
                 extmode = 'min'
-            elif c_min <= kern_min and kern_max > c_max:
+            elif f_min <= kern_min and kern_max > f_max:
                 extmode = 'max'
             else:
                 extmode = 'both'
@@ -1931,7 +1934,7 @@ def _weighteval(weight):
         elif 'gaussian' in weight:
             w = weight['gaussian']['mean']
         else:
-            raise Exception('Unknown weight type "%s"' % weight.keys()[0])
+            raise Exception('Unknown weight type "%s"' % tuple(weight.keys())[0])
         
     if not w:
         raise Exception('Cannot handle weight.')
@@ -1961,7 +1964,7 @@ def _maskeval(x, y, mask):
         m = np.logical_and(np.logical_and(ll[0] <= x, x <= ur[0]),
                            np.logical_and(ll[1] <= y, y <= ur[1]))
     else:
-        raise Exception('Unknown mask type "%s"' % mask.keys()[0])
+        raise Exception('Unknown mask type "%s"' % tuple(mask.keys())[0])
     
     return m
 
@@ -1984,7 +1987,7 @@ def _kerneval(x, y, fun):
         sig = g['sigma']
         return p0 * np.exp(-0.5*(x**2+y**2)/sig**2)
     else:
-        raise Exception('Unknown kernel "%s"', fun.keys()[0])
+        raise Exception('Unknown kernel "%s"', tuple(fun.keys())[0])
 
     # something very wrong
     raise Exception('Cannot handle kernel.')

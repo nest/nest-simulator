@@ -46,7 +46,7 @@ void DictionaryStack::undef(const Name &n)
     size_t num_erased = 0;
     for (std::list<DictionaryDatum>::iterator it = d.begin();
 	 it != d.end();
-	 it++)    
+	 ++it)    
 	num_erased += (*it)->erase(n);    
     
     if (num_erased == 0)

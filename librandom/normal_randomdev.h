@@ -35,9 +35,11 @@ namespace librandom {
 Name: rdevdict::normal - normal random deviate generator
 Description: Generates normally distributed random numbers.
 
-  p(x) = 1 / \sqrt{2 pi} * exp (-x^2 / 2)    
+  p(x) = 1 / (sigma * \sqrt{2 pi}) * exp (-(x-mu)^2 / 2 sigma^2)    
     
-Parameters: No parameters.
+Parameters:
+ mu  - mean (default: 0.0)
+ sigma - standard deviation (default: 1.0)
 
 SeeAlso: CreateRDV, RandomArray, rdevdict
 Author: Hans Ekkehard Plesser
@@ -65,22 +67,19 @@ Author: Hans Ekkehard Plesser
     NormalRandomDev(RngPtr);
     NormalRandomDev();          // threaded
 
-    double operator()(void);
+    using RandomDev::operator();
     double operator()(RngPtr) const;  // threaded
 
     //! set distribution parameters from SLI dict
-    void set_status(const DictionaryDatum&) {}
+    void set_status(const DictionaryDatum&);
 
     //! get distribution parameters from SLI dict
-    void get_status(DictionaryDatum&) const {} 
+    void get_status(DictionaryDatum&) const; 
 
+  private:
+    double mu_;
+    double sigma_;
   };
-
-  inline 
-  double NormalRandomDev::operator()(void)
-  {
-    return (*this)(rng_);
-  }
 
 }
 

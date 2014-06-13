@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # conncomp.py
 #
@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 '''
 NEST Topology Module Example
 
@@ -73,10 +74,10 @@ for ctr in [[15,15]]:
     tgts = [ci[1] for ci in nest.GetConnections(ctr_id)]
 
     # get positions of targets
-    tpyr = pylab.array(zip(*[topo.GetPosition([n])[0] for n in tgts
-                             if nest.GetStatus([n],'model')[0]=='pyr']))
-    tin  = pylab.array(zip(*[topo.GetPosition([n])[0] for n in tgts
-                             if nest.GetStatus([n],'model')[0]=='in']))
+    tpyr = pylab.array(tuple(zip(*[topo.GetPosition([n])[0] for n in tgts
+                             if nest.GetStatus([n],'model')[0]=='pyr'])))
+    tin  = pylab.array(tuple(zip(*[topo.GetPosition([n])[0] for n in tgts
+                             if nest.GetStatus([n],'model')[0]=='in'])))
 
     # scatter-plot
     pylab.scatter(tpyr[0]-0.02, tpyr[1]-0.02, 20, 'b', zorder = 10)

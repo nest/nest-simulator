@@ -1,3 +1,24 @@
+# -*- coding: utf-8 -*-
+#
+# hill_tononi_Vp.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 #! ===========================================
 #! NEST Topology Module: A Case-Based Tutorial
 #! ===========================================
@@ -602,17 +623,17 @@ corRet.update({"sources": {"model": "L56pyr"}, "weights": 2.5})
 #! -----------------------------------------
 
 #! Cortico-cortical, same orientation
-print "Connecting: cortico-cortical, same orientation"
+print("Connecting: cortico-cortical, same orientation")
 [topo.ConnectLayers(Vp_h, Vp_h, conn) for conn in ccConnections]
 [topo.ConnectLayers(Vp_v, Vp_v, conn) for conn in ccConnections]
 
 #! Cortico-cortical, cross-orientation
-print "Connecting: cortico-cortical, other orientation"
+print("Connecting: cortico-cortical, other orientation")
 [topo.ConnectLayers(Vp_h, Vp_v, conn) for conn in ccxConnections]
 [topo.ConnectLayers(Vp_v, Vp_h, conn) for conn in ccxConnections]
 
 #! Cortico-thalamic connections
-print "Connecting: cortico-thalamic"
+print("Connecting: cortico-thalamic")
 [topo.ConnectLayers(Vp_h, Tp, conn) for conn in ctConnections]
 [topo.ConnectLayers(Vp_v, Tp, conn) for conn in ctConnections]
 topo.ConnectLayers(Vp_h, Rp, corRet) 
@@ -633,7 +654,7 @@ thalCorRect = {"connection_type": "convergent",
                "weights": 5.0,
                "delays": {"uniform": {"min": 2.75, "max": 3.25}}}
 
-print "Connecting: thalamo-cortical"
+print("Connecting: thalamo-cortical")
 
 #! Horizontally tuned
 thalCorRect.update({"mask": {"rectangular": {"lower_left" : [-4.0*dpc, -1.0*dpc],
@@ -684,7 +705,7 @@ for conn in [{"targets": {"model": "L4pyr" }},
 thalBase = {"connection_type": "divergent",
             "delays": {"uniform": {"min": 1.75, "max": 2.25}}}
 
-print "Connecting: intra-thalamic"
+print("Connecting: intra-thalamic")
 
 for src, tgt, conn in [(Tp, Rp, {"sources": {"model": "TpRelay"},
                                  "synapse_model": "AMPA",
@@ -735,7 +756,7 @@ retThal = {"connection_type": "divergent",
            "weights": 10.0,
            "delays": 1.0}
 
-print "Connecting: retino-thalamic"
+print("Connecting: retino-thalamic")
 
 for conn in [{"targets": {"model": "TpRelay"}},
              {"targets": {"model": "TpInter"}}]:
@@ -771,7 +792,7 @@ pylab.show()
 #! we want to record from, we create one ``multimeter``, then select
 #! all nodes of the right model from the target population and
 #! connect. ``loc`` is the subplot location for the layer.
-print "Connecting: Recording devices"
+print("Connecting: Recording devices")
 recorders = {}
 for name, loc, population, model in [('TpRelay'   , 1, Tp  , 'TpRelay'),
                                      ('Rp'        , 2, Rp  , 'RpNeuron'),
@@ -813,7 +834,7 @@ for t in pylab.arange(Params['sim_interval'], Params['simtime'], Params['sim_int
     pylab.jet()
 
     # now plot data from each recorder in turn, assume four recorders
-    for name, r in recorders.iteritems():
+    for name, r in recorders.items():
         rec = r[0]
         sp = r[1]
         pylab.subplot(2,2,sp)
@@ -837,5 +858,5 @@ for t in pylab.arange(Params['sim_interval'], Params['simtime'], Params['sim_int
 
     
 #! just for some information at the end
-print nest.GetKernelStatus()
+print(nest.GetKernelStatus())
 

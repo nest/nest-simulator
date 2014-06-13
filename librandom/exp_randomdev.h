@@ -34,9 +34,10 @@ namespace librandom {
 Name: rdevdict::exponential - exponential random deviate generator
 Description: Generates exponentially distributed random numbers.
 
-  p(x) = exp(-x), x >= 0.     
+  p(x) = lambda exp(-lambda*x), x >= 0.     
     
-Parameters: No parameters.
+Parameters: 
+ lambda - rate parameter (default: 1.0)
 
 SeeAlso: CreateRDV, RandomArray, rdevdict
 Author: Hans Ekkehard Plesser
@@ -56,30 +57,26 @@ Author: Hans Ekkehard Plesser
     // accept only lockPTRs for initialization,
     // otherwise creation of a lock ptr would 
     // occur as side effect---might be unhealthy
-    ExpRandomDev(RngPtr r_in) : RandomDev(r_in) {} ;
-    ExpRandomDev() : RandomDev() {} ;                // threaded
+  ExpRandomDev(RngPtr r_in) : RandomDev(r_in), lambda_(1.0) {}
+  ExpRandomDev() : RandomDev(), lambda_(1.0) {}                // threaded
 
-    double operator()(void);           // non-threaded
+    using RandomDev::operator();
     double operator()(RngPtr rthrd) const;   // threaded
 
     //! set distribution parameters from SLI dict
-    void set_status(const DictionaryDatum&) {} 
+    void set_status(const DictionaryDatum&);
 
     //! get distribution parameters from SLI dict
-    void get_status(DictionaryDatum&) const {} 
+    void get_status(DictionaryDatum&) const; 
 
+  private:
+    double lambda_;  //!< rate parameter
   };
-
-  inline
-  double ExpRandomDev::operator()(void)
-  {
-    return -std::log(rng_->drandpos());
-  }
 
   inline
   double ExpRandomDev::operator()(RngPtr rthrd) const
   {
-    return -std::log(rthrd->drandpos());
+    return -std::log(rthrd->drandpos()) / lambda_;
   }
 
 }

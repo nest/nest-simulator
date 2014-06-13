@@ -1,5 +1,5 @@
 /*
- *  test_psp_amplitude_consistency.sli
+ *  test_DoubleVector_IntVector.sli
  *
  *  This file is part of NEST.
  *
@@ -39,7 +39,7 @@ Author:  December 2012, Gewaltig
 SeeAlso: testsuite::test_iaf_psp, testsuite::test_iaf_ps_dc_accuracy
 */
 
-/unittest (6335) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity

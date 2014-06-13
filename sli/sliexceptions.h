@@ -89,7 +89,6 @@ class SLIException: public std::exception
    * Returns a diagnostic message or empty string.
    * This function is not const, because it may clear internal data fields.
    */
-
   virtual std::string message() = 0;
 };
   
@@ -106,6 +105,24 @@ public:
  InterpreterError(char const * const what)
    : SLIException(what)
   {}
+};
+
+/**
+ * Class for packaging exceptions thrown in threads.
+ *
+ * This class is used to wrap exceptions thrown in threads.
+ * It essentially packages the message of the wrapped exception,
+ * avoiding the need of a clone() operation for each exception type.
+ */
+class WrappedThreadException: public SLIException
+{
+ public:
+  WrappedThreadException(std::exception&);
+  virtual ~WrappedThreadException() throw() {}
+  std::string message() { return message_; }
+
+ private:
+  std::string message_;
 };
 
 class DivisionByZero: public SLIException
@@ -194,6 +211,32 @@ class ArgumentType: public InterpreterError
   
   std::string message();
 
+};
+
+/**
+ * Exception to be thrown if a parameter value
+ * is not acceptable.
+ */
+class BadParameterValue: public SLIException
+{
+  std::string msg_;
+
+public:
+
+  //! @param detailed error message
+  BadParameterValue()
+    : SLIException("BadParameterValue"),
+      msg_()
+  {}
+
+  BadParameterValue(std::string msg)
+    : SLIException("BadParameterValue"),
+      msg_(msg)
+  {}
+  
+  ~BadParameterValue() throw () {}
+  
+  std::string message();
 };
 
 // -------------------- Dict Error -------------------------
@@ -345,6 +388,23 @@ class NamingConflict: public SLIException
   ~NamingConflict() throw() {}
  NamingConflict(const std::string& m)
    : SLIException("NamingConflict"),
+    msg_(m)
+    {}
+
+  std::string message();
+};
+
+/**
+ * Throw if an feature is unavailable.
+ * @ingroup SLIExceptions
+ */
+class NotImplemented: public SLIException
+{
+  std::string msg_;
+ public:
+  ~NotImplemented() throw() {}
+ NotImplemented(const std::string& m)
+   : SLIException("NotImplemented"),
     msg_(m)
     {}
 

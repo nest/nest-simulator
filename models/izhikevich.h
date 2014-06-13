@@ -213,6 +213,8 @@ namespace nest
 
     //! Read out the membrane potential
     double_t get_V_m_() const { return S_.v_; }
+    //! Read out the recovery variable
+    double_t get_U_m_() const { return S_.u_; }
 
     // ----------------------------------------------------------------
 

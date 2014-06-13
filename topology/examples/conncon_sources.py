@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # conncon_sources.py
 #
@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 '''
 NEST Topology Module Example
 
@@ -59,8 +60,8 @@ for tgt_pos in [[15,15],[0,0]]:
 
     # obtain list of outgoing connections for ctr
     # int() required to cast numpy.int64
-    spos = zip(*[topo.GetPosition([int(conn[0])])[0] for conn in
-                 nest.GetConnections(target=tgt)])
+    spos = tuple(zip(*[topo.GetPosition([int(conn[0])])[0] for conn in
+                 nest.GetConnections(target=tgt)]))
 
     # scatter-plot
     pylab.scatter(spos[0], spos[1], 20, zorder = 10)

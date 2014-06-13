@@ -1,5 +1,3 @@
-#ifndef NEST_H
-#define NEST_H
 /*
  *  nest.h
  *
@@ -21,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef NEST_H
+#define NEST_H
 
 #include <cstddef>
 #include <climits>

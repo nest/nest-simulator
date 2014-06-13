@@ -26,6 +26,7 @@
 #include <cassert>
 #include "randomgen.h"
 #include "dictdatum.h"
+#include "librandom_exceptions.h"
 
 /**
  * @defgroup RandomDeviateGenerators Random Deviate Generators.
@@ -59,7 +60,7 @@
  * @note
  * All RDGs provide double numbers, generators for discrete 
  * distributions may provide unsigned longs as well (eg, Poisson).
- * This can be checked with the has_uldev().
+ * This can be checked with the has_ldev().
  *
  * @note
  * Here is a code example for the use of the Poisson generator:
@@ -94,7 +95,7 @@
  *   ...
  *   librandom::RngPtr rng=Node::network()->get_rng(thrd);
  *   ...
- *     ulong_t n_spikes = poisson_dev_.uldev(rng);
+ *     long_t n_spikes = poisson_dev_.ldev(rng);
  *   ...
  * }
  * @endcode
@@ -151,19 +152,19 @@ namespace librandom {
      * of the argument to force all derived classes to implement
      * both varieties.
      */
-    virtual double operator()(void) = 0;   //!< single-threaded
+    virtual double operator()(void);   //!< single-threaded
     virtual double operator()(RngPtr) const = 0; //!< multi-threaded
 
     /**
      * integer valued functions for discrete distributions
      */
-    virtual unsigned long uldev(void);
-    virtual unsigned long uldev(RngPtr) const;
+    virtual long ldev(void);
+    virtual long ldev(RngPtr) const;
 
     /**
-     * true if RDG implements uldev function
+     * true if RDG implements ldev function
      */
-    virtual bool has_uldev() const { return false; }
+    virtual bool has_ldev() const { return false; }
 
     //! set RNG
     void set_rng(RngPtr rng) { rng_ = rng; }
@@ -192,8 +193,22 @@ namespace librandom {
 
   protected:
     RngPtr rng_;  //!< store underlying RNG
- 
   };
+
+  inline 
+  double RandomDev::operator()(void)
+  {
+    assert(rng_.valid());
+    return (*this)(rng_);
+  }
+
+  inline
+  long RandomDev::ldev(void)
+  {
+    assert(rng_.valid());
+    return this->ldev(rng_);
+  }
+
 
   /**
    * Generic factory class for RandomDev.
@@ -201,6 +216,7 @@ namespace librandom {
   class GenericRandomDevFactory {
   public:
     virtual ~GenericRandomDevFactory() {}
+    virtual RdvPtr create() const =0;
     virtual RdvPtr create(RngPtr rng) const =0;
   };
 
@@ -212,6 +228,12 @@ namespace librandom {
   class RandomDevFactory : public GenericRandomDevFactory {
 
   public:
+
+    //! create unbound deviate generator
+    RdvPtr create() const
+    {
+      return RdvPtr(new DevType());
+    }    
 
     //! create deviate generator given uniform number generator
     RdvPtr create(RngPtr rng) const

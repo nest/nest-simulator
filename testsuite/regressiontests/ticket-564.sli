@@ -34,11 +34,11 @@ This is repeated 10 times, and the resulting number of connections checked.
 Author: Hans Ekkehard Plesser, 2012-05-27
 */
 
-% don't run this test if we didn't compile with OpenMP 
-statusdict/threading :: (openmp) eq not {statusdict/exitcodes/success :: quit_i} if
-
-/unittest (9726) require
+(unittest) run
 /unittest using
+
+is_threaded_with_openmp not { exit_test_gracefully } if
+
 M_ERROR setverbosity
 
 { 

@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # twoneurons.py
 #
 # This file is part of NEST.
@@ -34,7 +35,7 @@ neuron2 = nest.Create("iaf_neuron")
 voltmeter = nest.Create("voltmeter")
 
 nest.SetStatus(neuron1, {"I_e": stim})
-nest.Connect(neuron1,neuron2,weight,delay)
+nest.Connect(neuron1, neuron2, syn_spec={'weight':weight, 'delay':delay})
 nest.Connect(voltmeter, neuron2)
 
 nest.Simulate(100.0)

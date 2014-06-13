@@ -1,6 +1,3 @@
-#ifndef STIMULATING_DEVICE_H
-#define STIMULATING_DEVICE_H
-
 /*
  *  stimulating_device.h
  *
@@ -22,7 +19,10 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
+#ifndef STIMULATING_DEVICE_H
+#define STIMULATING_DEVICE_H
+
 #include "device.h"
 
 #include "dictutils.h"

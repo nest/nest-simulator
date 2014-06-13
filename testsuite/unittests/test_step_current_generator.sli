@@ -34,7 +34,7 @@ FirstVersion: July 2008
 SeeAlso: noise_generator
 */
 
-/unittest (7471) require
+(unittest) run
 /unittest using
 
 % First test: parameter setting on model and instance

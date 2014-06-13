@@ -108,13 +108,15 @@ namespace nest
 	  I.e. the real threshold is (U0_+Theta_). */
       double_t Theta_;
 
-
       /** Time constants of synaptic currents in ms. */
       std::vector<double_t> tau_syn_;
       
       // type is long because other types are not put through in GetStatus
       std::vector<long> receptor_types_;
-      unsigned int      num_of_receptors_;
+      size_t num_of_receptors_;
+
+      // boolean flag which indicates whether the neuron has connections
+      bool has_connections_; 
 
       Parameters_();  //!< Sets default parameter values
 

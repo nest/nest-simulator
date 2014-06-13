@@ -22,7 +22,7 @@
 % this test ensures that topology/ConnectLayers :: accepts oversized masks only
 % when explicitly allowed
 
-/unittest (8831) require
+(unittest) run
 unittest using
 
 /make_grid_layer

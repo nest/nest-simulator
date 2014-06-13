@@ -37,10 +37,8 @@ Author: Plesser
 FirstVersion: 2011-02-11
 */
 
-/unittest (8831) require
+(unittest) run
 /unittest using
-
-/arr (9161) require
 
 M_ERROR setverbosity
 
@@ -289,6 +287,3 @@ def
 } assert_or_die
 
 endusing
-
-
-

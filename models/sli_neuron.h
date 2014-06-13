@@ -94,8 +94,6 @@ SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, testsuite::test_sli_neuron
   {
     
   public:        
-    
-    typedef Node base;
       
     sli_neuron();
     sli_neuron(const sli_neuron&);

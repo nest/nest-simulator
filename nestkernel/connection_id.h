@@ -31,7 +31,7 @@ namespace nest
   
   class ConnectionID
   {
-    public:
+  public:
       ConnectionID() {}  
       ConnectionID(long source_gid, long target_gid, long target_thread, 
 		   long synapse_modelid, long port);
@@ -42,7 +42,7 @@ namespace nest
       DictionaryDatum get_dict() const;
       ArrayDatum to_ArrayDatum() const;
       bool operator==(const ConnectionID& c) const;
-      std::ostream & print_me(std::ostream& out) const;      
+      void print_me(std::ostream& out) const;      
       long get_source_gid() const;
       long get_target_gid() const;
       long get_target_thread() const;
@@ -94,8 +94,6 @@ namespace nest
     {
       return port_;
     }
-
-  std::ostream & operator<<(std::ostream& , const ConnectionID&);
   
 } // namespace
 

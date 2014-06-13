@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # test_status.py
 #
@@ -18,194 +18,209 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 Test if Set/GetStatus work properly
 """
 
 import unittest
 import nest
-import sys
 
+
+@nest.check_stack
 class StatusTestCase(unittest.TestCase):
     """Tests of Set/GetStatus"""
-
 
     def test_GetKernelStatus(self):
         """GetKernelStatus"""
 
-        
-
         nest.ResetKernel()
-        s = nest.GetKernelStatus()
 
+        kernel_status = nest.GetKernelStatus()
+        self.assertIsInstance(kernel_status, dict)
+        self.assertGreater(len(kernel_status), 1)
+
+        self.assertRaises(KeyError, nest.GetKernelStatus, "nonexistent_status_key")
+
+        test_keys = ("resolution", ) * 3
+        kernel_status = nest.GetKernelStatus(test_keys)
+        self.assertEqual(len(kernel_status), len(test_keys))
+
+        self.assertRaises(TypeError, nest.GetKernelStatus, 42)
 
     def test_SetKernelStatus(self):
         """SetKernelStatus"""
 
         nest.ResetKernel()
         nest.SetKernelStatus({})
-        nest.SetKernelStatus({'print_time':True})
+        nest.SetKernelStatus({'print_time': True})
 
-        try:
-            nest.SetKernelStatus({'DUMMY':0})
-        except nest.NESTError:
-            info = sys.exc_info()[1]
-            if not "DictError" in info.__str__():
-                self.fail('wrong error message')                
-        # another error is wrong
-        except:
-            self.fail('wrong error has been thrown')
-      
+        self.assertRaisesRegex(nest.NESTError, "DictError", nest.SetKernelStatus, {'nonexistent_status_key': 0})
 
     def test_GetDefaults(self):
         """GetDefaults"""
 
-        models = nest.Models()
-        
+        nest.ResetKernel()
+
         # sli_neuron does not work under PyNEST
-        models.remove('sli_neuron')
+        models = (m for m in nest.Models() if m != 'sli_neuron')
 
         for model in models:
-            nest.ResetKernel()
-            d = nest.GetDefaults(model)        
 
+            model_status = nest.GetDefaults(model)
+            self.assertIsInstance(model_status, dict)
+            self.assertGreater(len(model_status), 1)
+
+            self.assertRaises(TypeError, nest.GetDefaults, model, 42)
+
+            if "V_m" in model_status:
+                test_value = nest.GetDefaults(model, "V_m")
+                self.assertIsInstance(test_value, float)
+
+                test_keys = ("V_m", ) * 3
+                model_status = nest.GetDefaults(model, test_keys)
+                self.assertEqual(len(model_status), len(test_keys))
 
     def test_SetDefaults(self):
         """SetDefaults"""
 
-        models = nest.Models()
+        nest.ResetKernel()
 
         # sli_neuron does not work under PyNEST
-        models.remove('sli_neuron')
+        models = (m for m in nest.Models() if m != 'sli_neuron')
 
-        for m in models:        
-            if nest.GetDefaults(m).has_key('V_m'):
-                nest.ResetKernel()
+        for m in models:
+            if 'V_m' in nest.GetDefaults(m):
                 v_m = nest.GetDefaults(m)['V_m']
-                nest.SetDefaults(m,{'V_m':-1.})
-                self.assertEqual(nest.GetDefaults(m)['V_m'], -1.)
-                nest.SetDefaults(m,{'V_m':v_m})
 
-                try:
-                    nest.SetDefaults(m,{'DUMMY':0})
-                except nest.NESTError:
-                    info = sys.exc_info()[1]
-                    if not "DictError" in info.__str__():
-                        self.fail('wrong error message')                
-                # any other error is wrongly thrown
-                except:
-                    self.fail('wrong error has been thrown')
+                nest.SetDefaults(m, {'V_m': -1.})
+                self.assertEqual(nest.GetDefaults(m, 'V_m'), -1.)
 
+                nest.SetDefaults(m, 'V_m', v_m)
+                self.assertEqual(nest.GetDefaults(m, 'V_m'), v_m)
+
+                self.assertRaisesRegex(nest.NESTError, "DictError", nest.SetDefaults, m, 'nonexistent_status_key', 0)
 
     def test_GetStatus(self):
         """GetStatus"""
 
-        models = nest.Models()
-
         # sli_neuron does not work under PyNEST
-        models.remove('sli_neuron')
+        models = (m for m in nest.Models() if m != 'sli_neuron')
 
-        for m in models:        
-            if nest.GetDefaults(m).has_key('V_m'):
+        for m in models:
+            if 'V_m' in nest.GetDefaults(m):
                 nest.ResetKernel()
-                n  = nest.Create(m)
-                d  = nest.GetStatus(n)
-                v1 = nest.GetStatus(n)[0]['V_m']
-                v2 = nest.GetStatus(n,'V_m')[0]
-                self.assertEqual(v1,v2)
-                n  = nest.Create(m,10)
-                self.assertEqual(len(nest.GetStatus(n,'V_m')), 10)
 
+                n = nest.Create(m)
+
+                d = nest.GetStatus(n)
+                self.assertIsInstance(d, tuple)
+                self.assertIsInstance(d[0], dict)
+                self.assertGreater(len(d[0]), 1)
+
+                v1 = nest.GetStatus(n)[0]['V_m']
+                v2 = nest.GetStatus(n, 'V_m')[0]
+                self.assertEqual(v1, v2)
+
+                n = nest.Create(m, 10)
+                d = nest.GetStatus(n, 'V_m')
+                self.assertEqual(len(d), len(n))
+                self.assertIsInstance(d[0], float)
+
+                test_keys = ("V_m", ) * 3
+                d = nest.GetStatus(n, test_keys)
+                self.assertEqual(len(d), len(n))
+                self.assertEqual(len(d[0]), len(test_keys))
 
     def test_SetStatus(self):
         """SetStatus with dict"""
 
-        models = nest.Models()
-
         # sli_neuron does not work under PyNEST
-        models.remove('sli_neuron')
+        models = (m for m in nest.Models() if m != 'sli_neuron')
 
-        for m in models:        
-            if nest.GetDefaults(m).has_key('V_m'):
+        for m in models:
+            if 'V_m' in nest.GetDefaults(m):
                 nest.ResetKernel()
                 n = nest.Create(m)
-                nest.SetStatus(n,{'V_m':1.})
-                self.assertEqual(nest.GetStatus(n,'V_m')[0], 1.)
+                nest.SetStatus(n, {'V_m': 1.})
+                self.assertEqual(nest.GetStatus(n, 'V_m')[0], 1.)
 
-        
     def test_SetStatusList(self):
         """SetStatus with list"""
 
-        models = nest.Models()
-
         # sli_neuron does not work under PyNEST
-        models.remove('sli_neuron')
+        models = (m for m in nest.Models() if m != 'sli_neuron')
 
-        for m in models:        
-            if nest.GetDefaults(m).has_key('V_m'):
+        for m in models:
+            if 'V_m' in nest.GetDefaults(m):
                 nest.ResetKernel()
-                n  = nest.Create(m)
-                nest.SetStatus(n,[{'V_m':2.}])
-                self.assertEqual(nest.GetStatus(n,'V_m')[0], 2.)
-
+                n = nest.Create(m)
+                nest.SetStatus(n, [{'V_m': 2.}])
+                self.assertEqual(nest.GetStatus(n, 'V_m')[0], 2.)
 
     def test_SetStatusParam(self):
         """SetStatus with parameter"""
 
-        models = nest.Models()
-        
         # sli_neuron does not work under PyNEST
-        models.remove('sli_neuron')
+        models = (m for m in nest.Models() if m != 'sli_neuron')
 
-        for m in models:        
-            if nest.GetDefaults(m).has_key('V_m'):
+        for m in models:
+            if 'V_m' in nest.GetDefaults(m):
                 nest.ResetKernel()
-                n  = nest.Create(m)
-                nest.SetStatus(n,'V_m',3.)
-                self.assertEqual(nest.GetStatus(n,'V_m')[0], 3.)
-
+                n = nest.Create(m)
+                nest.SetStatus(n, 'V_m', 3.)
+                self.assertEqual(nest.GetStatus(n, 'V_m')[0], 3.)
 
     def test_SetStatusVth_E_L(self):
         """SetStatus of reversal and threshold potential """
 
-        models = nest.Models()
-
         # sli_neuron does not work under PyNEST
-        models.remove('sli_neuron')
+        models = (m for m in nest.Models() if m != 'sli_neuron' and m != 'a2eif_cond_exp_HW' and m != 'mat2_psc_exp')
 
         for m in models:
-            if nest.GetDefaults(m).has_key('V_th') and nest.GetDefaults(m).has_key('E_L') and m != 'a2eif_cond_exp_HW' and m != 'mat2_psc_exp':
+            if all(key in nest.GetDefaults(m) for key in ('V_th', 'E_L')):
                 nest.ResetKernel()
 
                 neuron1 = nest.Create(m)
                 neuron2 = nest.Create(m)
 
-                # must not depend on the order.
+                # must not depend on the order
                 new_EL = -90.
-                new_Vth= -10.
-                nest.SetStatus(neuron1,{'E_L': new_EL})
-                nest.SetStatus(neuron2,{'V_th': new_Vth})
+                new_Vth = -10.
 
-                nest.SetStatus(neuron1,{'V_th': new_Vth})
-                nest.SetStatus(neuron2,{'E_L': new_EL})
+                if 'V_reset' in nest.GetDefaults(m):
+                    nest.SetStatus(neuron1 + neuron2, {'V_reset': new_EL})
 
-                # next three lines for debugging
-                vth1, vth2 = nest.GetStatus(neuron1,'V_th'), nest.GetStatus(neuron2,'V_th')
-                if vth1 != vth2:
-                    print m, vth1, vth2, nest.GetStatus(neuron1,'E_L'), nest.GetStatus(neuron2,'E_L')
+                nest.SetStatus(neuron1, {'E_L': new_EL})
+                nest.SetStatus(neuron2, {'V_th': new_Vth})
+                nest.SetStatus(neuron1, {'V_th': new_Vth})
+                nest.SetStatus(neuron2, {'E_L': new_EL})
+                vth1, vth2 = nest.GetStatus(neuron1 + neuron2, 'V_th')
+                self.assertEqual(vth1, vth2)
 
-                assert(nest.GetStatus(neuron1,'V_th')==nest.GetStatus(neuron2,'V_th'))
-    
+    def test_SetStatusV_th_smaller_V_reset(self):
+        """SetStatus of reversal and threshold potential
+           check if error is raised if V_reset > V_th"""
+
+        # sli_neuron does not work under PyNEST
+        models = (m for m in nest.Models() if m != 'sli_neuron')
+
+        for m in models:
+            if all(key in nest.GetDefaults(m) for key in ('V_th', 'V_reset')):
+                nest.ResetKernel()
+
+                neuron = nest.Create(m)
+
+                # should raise exception           
+                self.assertRaisesRegex(nest.NESTError, "BadProperty", nest.SetStatus, neuron, {'V_reset': 10., 'V_th': 0.})
 
 
 
 def suite():
-
-    suite = unittest.makeSuite(StatusTestCase,'test')
+    suite = unittest.makeSuite(StatusTestCase, 'test')
     return suite
 
 
 if __name__ == "__main__":
-
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

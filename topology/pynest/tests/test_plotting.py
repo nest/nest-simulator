@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # test_plotting.py
 #
@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 Tests for basic topology hl_api functions.
 
@@ -28,17 +29,17 @@ NOTE: These tests only test whether the code runs, it does not check
 import unittest
 import nest
 import nest.topology as topo
-import sys
 
-from nest.tests.decorators import _skipIf
 
 try:
     import matplotlib.pyplot as plt
-    have_mpl = True
-except ImportError:
-    have_mpl = False
+    plt.figure()  # make sure we can open a window; on Jenkins, DISPLAY is not set
+    PLOTTING_POSSIBLE = True
+except:
+    PLOTTING_POSSIBLE = False
 
-@_skipIf(not have_mpl, 'Python matplotlib package not installed', 'testcase')
+
+@unittest.skipIf(not PLOTTING_POSSIBLE, 'Plotting is impossible because matplotlib or display missing')
 class PlottingTestCase(unittest.TestCase):
 
     def test_PlotLayer(self):

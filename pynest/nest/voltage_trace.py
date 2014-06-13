@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # voltage_trace.py
 #
@@ -18,13 +18,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 import nest
 import numpy
 import pylab
 
 def from_file(fname, title=None, grayscale=False):
 
-    if nest.is_sequencetype(fname):
+    if nest.is_iterable(fname):
         data = None
         for f in fname:
             if data is None:
@@ -40,12 +41,12 @@ def from_file(fname, title=None, grayscale=False):
         line_style = ""
 
     if len(data.shape) == 1:
-        print "INFO: only found 1 column in the file. Assuming that only one neuron was recorded."
+        print("INFO: only found 1 column in the file. Assuming that only one neuron was recorded.")
         plotid = pylab.plot(data, line_style)
         pylab.xlabel("Time (steps of length interval)")
 
     elif data.shape[1] == 2:
-        print "INFO: found 2 columns in the file. Assuming them to be gid, pot."
+        print("INFO: found 2 columns in the file. Assuming them to be gid, pot.")
 
         plotid = []
         data_dict = {}
@@ -121,11 +122,12 @@ def from_device(detec, neurons=None, title=None, grayscale=False, timeunit="ms")
         times, voltages = _from_memory(detec)
 
         if not len(times):
-            raise nest.NESTError("No events recorded! Make sure that withtime and withgid are true.")
+            raise nest.NESTError("No events recorded! Make sure that withtime and withgid are set to True.")
 
-        if not neurons:
+        if neurons is None:
             neurons = voltages.keys()
 
+        plotids = []
         for neuron in neurons:
             time_values = numpy.array(times[neuron]) / timefactor
 
@@ -135,26 +137,25 @@ def from_device(detec, neurons=None, title=None, grayscale=False, timeunit="ms")
                 line_style = ""
 
             try:
-                plotid = pylab.plot(time_values, voltages[neuron], line_style)
+                plotids.append(pylab.plot(time_values, voltages[neuron], line_style, label="Neuron %i" % neuron))
             except KeyError:
-                raise nest.NESTError("Wrong ID: %d" % neuron)
-            else:
+                print("INFO: Wrong ID: {0}".format(neuron))
 
-                if not title:
-                    title = "Membrane potential"
-                pylab.title(title)
+        if not title:
+            title = "Membrane potential"
+        pylab.title(title)
 
-                pylab.ylabel("Membrane potential (mV)")
+        pylab.ylabel("Membrane potential (mV)")
 
-                if nest.GetStatus(detec)[0]['time_in_steps']:
-                    pylab.xlabel("Steps")
-                else:
-                    pylab.xlabel("Time (%s)" % timeunit)
-
-                pylab.draw()
-
-                # returns only the latest line :(
-                return plotid
+        if nest.GetStatus(detec)[0]['time_in_steps']:
+            pylab.xlabel("Steps")
+        else:
+            pylab.xlabel("Time (%s)" % timeunit)
+            
+        pylab.legend(loc="best")
+        pylab.draw()
+        
+        return plotids
 
     elif nest.GetStatus(detec, "to_file")[0]:
         fname = nest.GetStatus(detec, "filenames")[0]
@@ -172,10 +173,10 @@ def _from_memory(detec):
     v = {}
     t = {}
 
-    if ev.has_key('times'):
+    if 'times' in ev:
         times = ev['times']
         for s, currentsender in enumerate(senders):
-            if not v.has_key(currentsender):
+            if currentsender not in v:
                 v[currentsender] = array.array('f')
                 t[currentsender] = array.array('f')
 
@@ -192,7 +193,7 @@ def _from_memory(detec):
         times_s = origin + start + interval + interval * numpy.array(range(num_intvls))
 
         for s, currentsender in enumerate(senders):
-            if not v.has_key(currentsender):
+            if currentsender not in v:
                 v[currentsender] = array.array('f')
                 t[currentsender] = times_s
             v[currentsender].append(float(potentials[s]))

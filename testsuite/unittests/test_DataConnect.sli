@@ -1,5 +1,5 @@
 /*
- *  test_GetConnections.sli
+ *  test_DataConnect.sli
  *
  *  This file is part of NEST.
  *
@@ -35,32 +35,32 @@
    Author: Marc-Oliver Gewaltig
  */
 
-/unittest (7488) require
+(unittest) run
 /unittest using
 
 % Create Random number generator
 rngdict /MT19937 get 1234 CreateRNG /rng Set
 
-rng rdevdict /uniformint get CreateRDV /unidv Set
+rng rdevdict /uniform_int get CreateRDV /unidv Set
 rng rdevdict /normal get CreateRDV /normdv_w Set
 rng rdevdict /normal get CreateRDV /normdv_d Set
 
 unidv
 << 
-  /nmin 1 
-  /nmax 100
+  /low 1 
+  /high 100
 >> SetStatus
 
 normdv_w
 << 
-  /mean 10. 
-  /sdev 0.5
+  /mu 10. 
+  /sigma 0.5
 >> SetStatus
 
 normdv_d
 << 
-  /mean 1. 
-  /sdev 0.1
+  /mu 1. 
+  /sigma 0.1
 >> SetStatus
 
 /n_neurons 100 def

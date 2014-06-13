@@ -360,10 +360,8 @@ nest::RecordingDevice::RecordingDevice(const Node& n, Mode mode, const std::stri
        std::string newname = build_filename_();
        if ( newname != P_.filename_ )
        {
-         Node::network()->message(SLIInterpreter::M_INFO,
-				  "RecordingDevice::calibrate()",
-				  "Closing file " + P_.filename_ +
-				  ", opening file " + newname);
+         std::string msg = String::compose("Closing file '%1', opening file '%2'", P_.filename_, newname);
+         Node::network()->message(SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg);
 
          B_.fs_.close(); // close old file
          P_.filename_ = newname;
@@ -388,9 +386,10 @@ nest::RecordingDevice::RecordingDevice(const Node& n, Mode mode, const std::stri
          std::ifstream test(P_.filename_.c_str());
          if ( test.good() )
          {
-           Node::network()->message(SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()",
-             "The device file " + P_.filename_ + " exists already and will not be overwritten.\n"
-             "Please change data_path, data_prefix or label, or set /overwrite_files to true in the root node." );
+           std::string msg = String::compose("The device file '%1' exists already and will not be overwritten. "
+                                             "Please change data_path, data_prefix or label, or set /overwrite_files "
+                                             "to true in the root node.",P_.filename_);
+           Node::network()->message(SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg);
            throw IOError();
          }
          else
@@ -419,8 +418,11 @@ nest::RecordingDevice::RecordingDevice(const Node& n, Mode mode, const std::stri
 
      if ( !B_.fs_.good() )
      {
-       Node::network()->message(SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()",
-                              "I/O error while opening file " + P_.filename_);
+       std::string msg = String::compose("I/O error while opening file '%1'. "
+                                         "This may be caused by too many open files in networks "
+					 "with many recording devices and threads.", P_.filename_);
+       Node::network()->message(SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg);
+                              
        if ( B_.fs_.is_open() )
          B_.fs_.close();
        P_.filename_.clear();
@@ -466,8 +468,9 @@ nest::RecordingDevice::RecordingDevice(const Node& n, Mode mode, const std::stri
 
      if ( !B_.fs_.good() )
      {
-       Node::network()->message(SLIInterpreter::M_ERROR, "RecordingDevice::finalize()",
-                              "I/O error while writing to file " + P_.filename_);
+       std::string msg = String::compose("I/O error while opening file '%1'",P_.filename_);
+       Node::network()->message(SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg);
+
        throw IOError();
      }
    }

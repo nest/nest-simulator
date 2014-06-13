@@ -20,23 +20,6 @@
  *
  */
 
-/*
-    SLI Interpeter initalization
-
-*/
-
-% ****************************************************************
-% * SLI's Mathematica Style functions                            *
-% * ---------------------------------                            *
-% *                                                              *
-% *                                                              *
-% *                                                              *
-% ****************************************************************
-
-/mathematica /SLI ($Revision: 10098 $) provide-component
-/mathematica /C++ (1.55) require-component
-
-
 %% Mathematica style global Options
 
 /* BeginDocumentation
@@ -545,9 +528,17 @@ References:
  % v a i al
  rollu
  % v al a i
- [-1] exch 1 add prepend
- % v al a [i+1 -1]
- Take
+  2 copy exch length lt
+  {
+    [-1] exch 1 add prepend
+    %  v al a [i+1 -1]
+    Take
+  }
+  {
+    2 npop
+    []
+  } ifelse
+
  % v al ar
  rolld
  % al ar v
@@ -716,12 +707,50 @@ end
 } def
 
 
+% a p a
+% presently less general than the Mathematica version.
+% the level specification is restriced to [n], 130222 MD
+/MapAtLevel
+{
+ 0 get 
+ MapRecursion
+} def
+
+/MapRecursion
+{
+        % a p i
+ dup    % a p i i
+ 1 gt   % a p i b
+ {
+         % a p i
+  1 sub  % a p i
+  rolld  % p i a
+
+  {
+             % p i ai 
+   rollu     % ai p i
+   2 copy    % ai p i p i
+   5 -1 roll % p i p i ai
+   rollu     % p i ai p i
+   MapRecursion
+  } Map
+          % p i a
+  rollu   % a p i 
+  2 npop  % a
+ }
+ {pop Map}
+ ifelse
+} def
+
+
 /Map_ /Map load def
 /Map trie
 [/arraytype /proceduretype] /Map_ load addtotrie
+[/arraytype /proceduretype /arraytype] /MapAtLevel load addtotrie
 [/iteratortype /proceduretype] /Map_iter load addtotrie
 [/stringtype /proceduretype] /Map_s load addtotrie
 def
+
 
 
 /* BeginDocumentation
@@ -934,7 +963,7 @@ References:
  Bugs:
  Author: Gewaltig, Diesmann
  Remarks: Resembles the function Range of Mathematica
- SeeAlso:  Map, Table
+ SeeAlso: LayoutArray, Table, array, zeros, ones, Map
 */
 
 /Range_ /Range load def
@@ -986,7 +1015,7 @@ def
  Author: Gewaltig
  Remarks: Resembles the function Table of Mathematica
  References:
- SeeAlso: Map, MapIndexed, Range, forall, forallindexed
+ SeeAlso: Map, MapIndexed, Range, LayoutArray, array, forall, forallindexed
 */
 
 /Table_
@@ -1009,10 +1038,10 @@ BeginDocumentation
    Name: MapIndexed - Apply a function  to each element of a list/string
 
    Synopsis:
-     [v0 ... vn] {f} Map -> [ f(0,v0) ... f(n,vn) ]
+     [v1 ... vn] {f} MapIndexed -> [ f(v1,1) ... f(vn,n) ]
 
    Parameters:
-     [v0 ... vn] - list of n+1 arbitrary objects or string.
+     [v1 ... vn] - list of n arbitrary objects or string.
 
      {f}         - function of two arguments and one return value.
 
@@ -1022,7 +1051,9 @@ BeginDocumentation
      the element with the result of f.
      MapIndexed works similar to Map, however, in adition to the
      element its index within the array is also passed to the function.
-     Note that the index starts with 0, according to PostScript convention.
+     Note that the index starts with 1, according to Mathematica convention.
+     This is unlike in forallindexed where in accordance with Postscript 
+     array indices start with 0.
      The result of MapIndexed is a list with the same number of values as the
      argument list.
      If f does not return a value, MapIndexed fails.
@@ -1035,8 +1066,8 @@ BeginDocumentation
 
    Examples:
 
-   [1 2 3 4 5]  {add} MapIndexed -> [1 3 5 7 9]
-   (abcd) {add} MapIndexed -> (aceg)
+   [1 2 3 4 5]  {add} MapIndexed -> [2 4 6 8 10]
+   (abcd) {add} MapIndexed -> (bdfh)
 
    Diagnostics: None
 
@@ -1056,6 +1087,7 @@ BeginDocumentation
 {
   mark
   3 1 roll
+  {1 add} exch join  % Mathematica indices start at 1
   forallindexed_a
   counttomark
   arraystore
@@ -1067,6 +1099,7 @@ BeginDocumentation
 {
  mark
  3 1 roll
+ {1 add} exch join  % Mathematica indices start at 1
  forallindexed_s
  counttomark
  () exch_
@@ -1557,7 +1590,7 @@ Examples:
    [3 5 6 9 11] -2       MathematicaToSliIndex -> [3 5 6 9 11] 3
    [3 5 6 9 11] [ -2 2 ] MathematicaToSliIndex -> [3 5 6 9 11] [3 1]
 
-Author: Markus Diesmann (?)
+Author: Markus Diesmann
 
 Remarks: Commented Ruediger Kupper
 
@@ -1585,6 +1618,8 @@ bind def
 /MathematicaToSliIndex trie
  [/arraytype /integertype ] /MathematicaToSliIndex_i load addtotrie
  [/arraytype /arraytype ]   /MathematicaToSliIndex_a load addtotrie
+ [/stringtype /integertype ] /MathematicaToSliIndex_i load addtotrie
+ [/stringtype /arraytype ]   /MathematicaToSliIndex_a load addtotrie
 def
 
 %---------------------------------------------------------------------------------- <- end of line (C84) is maximum width for LaTeX-include1
@@ -1663,12 +1698,12 @@ SeeAlso: MathematicaToSliIndex
   {
    {
     1 index exch
-    MathematicaToSliIndex_i get
+    MathematicaToSliIndex_i get    % generalization: work with container and forall
     %
     % indexarray array subarray
     %
-   2 index Rest
-   empty {pop} {Part} ifelse
+    2 index Rest
+    empty {pop} {Part} ifelse
 
    } Map
    %
@@ -1714,35 +1749,19 @@ SeeAlso: MathematicaToSliIndex
 
   Examples:
 
-    5 /mul 3 /eq 15
 
-   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ [1 3] [2 3] ] Part
-    [[5 6] [1 8]]  eq
-
-   [ [3 [-12 -19] 6 9] [11 4 7 2] [-9 1 8 10] ]  [ 1 2 2] Part
-     -19  eq
-
-   [3 4 5 6 7] [-2] Part
-     6 eq
-
-   [3 [-9 -12] 5 6 7] [2] Part   -->     [-9 -12]
-
-   [3 [-9 -12] 5 6 7] [2 2] Part -->     -12
-
-   [3 [-9 -12] 5 6 7] [[2 3]] Part    [[-9 -12] 5]   eq
-
-   [3 [-9 -12] 5 6 7] [[2 3 2]] Part  [[-9 -12] 5 [-9 -12]] eq
-
-   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ 1 []  ] Part [] eq
-
-   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ [] 1 ] Part  [] eq
-
-   [3 [5 -12] 6 9]  [ [ 2 ] ] Part [[5 -12]] eq
-
-   [3 [5 -12] 6 9]  [ [ 2 ] 2] Part  [-12] eq
-
-   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ /All [3 2]  ] Part
-     [[6 5] [7 4] [8 1]] eq
+   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ [1 3] [2 3] ] Part  --> [[5 6] [1 8]]
+   [ [3 [-12 -19] 6 9] [11 4 7 2] [-9 1 8 10] ]  [ 1 2 2] Part --> -19  
+   [3 4 5 6 7] [-2] Part                                   --> 6 
+   [3 [-9 -12] 5 6 7] [2] Part                             --> [-9 -12]
+   [3 [-9 -12] 5 6 7] [2 2] Part                           --> -12
+   [3 [-9 -12] 5 6 7] [[2 3]] Part                         --> [[-9 -12] 5] 
+   [3 [-9 -12] 5 6 7] [[2 3 2]] Part                       --> [[-9 -12] 5 [-9 -12]]
+   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ 1 []  ] Part    --> [] 
+   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ [] 1 ] Part     --> [] 
+   [3 [5 -12] 6 9]  [ [ 2 ] ] Part                         --> [[5 -12]] 
+   [3 [5 -12] 6 9]  [ [ 2 ] 2] Part                        --> [-12] 
+   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ /All [3 2]  ] Part --> [[6 5] [7 4] [8 1]]
 
   Bugs:
   Author: Diesmann
@@ -1760,9 +1779,8 @@ SeeAlso: MathematicaToSliIndex
    [1] The Mathematica Book V4.0 "Part"
 */
 /Part trie
- [/arraytype /arraytype ]
-  /Part_a load
- addtotrie
+ [/arraytype /arraytype ] /Part_a load addtotrie
+ [/stringtype /arraytype ] /Part_a load addtotrie
 def
 
 
@@ -1776,13 +1794,13 @@ def
 %% array -n Take - take last n elements of array
 /Take_a_i
 {
-  dup 0 gt
+  dup 0 geq
   {
-    0 exch_  getinterval_a
+    0 exch_  getinterval
   }
   {
-    dup neg
-    getinterval_a
+      dup neg rollu MathematicaToSliIndex rolld
+      getinterval
   } ifelse
 
 } bind def
@@ -1818,21 +1836,30 @@ def
      rolld                         % a jm im
      dup                           % a jm im im
      rollu                         % a im jm im
-     sub 1 add                     % a im (jm - im +1)
-
+     sub 1 add   
+     dup 0 lt			    % if 2nd parameter < 0, set it to zero to force getinterval 
+     {				    % to return empty array as requested by Take in this case
+       pop 0 
+     } if 
+    
      getinterval
+     
    } case
 
    1 index 3 eq
    {
      pop
      dup rollu Most MathematicaToSliIndex rolld Last append
-     Range
+     Range     % a r
+     exch      % r a
+     container % r a c 
+     rolld     % a c r
      {
-       1 index
+       2 index
        exch
        get
-     } Map
+       append
+     } forall
      exch pop
    } case
 
@@ -1850,7 +1877,7 @@ def
 } bind def
 
 /*BeginDocumentation
-Name: Take - extract element sequences from an array
+Name: Take - extract element sequences from a container
 Synopsis:
  array  n Take                  return the first n elements
  array -n Take                  return the last n elements
@@ -1858,19 +1885,35 @@ Synopsis:
  array [n1 n2 s] Take           return elements n1 through n2 in steps of s
  array [[seq1]...[seqn]] Take   return a nested list in which elements
                                 specified by seqi are taken at level i in list.
+
+Operations are the same on strings.
+The implementation of Take uses the command container to abstract
+the container type.
+
+Note that Take handles indices ranging from -N to N where 
+    N is the length of the original container and asking for index 0 
+    will return an empty array.
+
+If the specified indices do not exist in the container, Take throws a RangeCheck error.
+
+If n2 < n1, Take returns an empty container.
+
+
 Examples:
- [4 9 -7 3 2 11] 2 Take
-  -> [4 9]
- [4 9 -7 3 2 11] -2 Take
-  -> [2 11]
- [1 2 3 4 5] [-2] Take
-  -> 4
- [1 2 3 4 5] [1 -2] Take
-  -> [1 2 3 4]
- [1 2 3 4 5] [1 -2 2] Take
-  -> [1 3]
- [1 2 3 4 5] [1 -1 2] Take
-  -> [1 3 5]
+ [4 9 -7 3 2 11] 2 Take    --> [4 9]
+ [4 9 -7 3 2 11] -2 Take   --> [2 11]
+ [1 2 3 4 5] [-2] Take     --> 4
+ [1 2 3 4 5] [1 -2] Take   --> [1 2 3 4]
+ [1 2 3 4 5] [1 -2 2] Take --> [1 3]
+ [1 2 3 4 5] [1 -1 2] Take --> [1 3 5]
+% [1 2 3 4 5] [1 6] Take    --> [Error]: RangeCheck 
+ (HAL) {1 add} Map     --> (IBM)
+ (HAL) 2 Take          --> (HA)
+ (HAL) -2 Take         --> (AL)
+ (HALLO) [-2] Take     --> 76
+ (HALLO) [1 -2] Take   --> (HALL)
+ (HALLO) [1 -2 2] Take --> (HL)
+ (HALLO) [1 -1 2] Take --> (HLO)
 
 Author: Diesmann
 Bugs:
@@ -1884,6 +1927,8 @@ SeeAlso: Drop, Part, MathematicaToSliIndex, getinterval, get
 /Take trie
 [/arraytype /integertype] /Take_a_i load addtotrie
 [/arraytype /arraytype]   /Take_a_a load addtotrie
+[/stringtype /integertype] /Take_a_i load addtotrie
+[/stringtype /arraytype]   /Take_a_a load addtotrie
 def
 
 
@@ -1899,21 +1944,14 @@ Synopsis:
  array {[seq1]...[seqn]} Drop   return a nested list in which elements
                                 specified by seqi are removed at level i in list.
 Examples:
- [4 9 -7 3 2 11] 2 Drop
-  -> [-7 3 2 11]
- [4 9 -7 3 2 11] -2 Drop
-  -> [4 9 -7 3]
- [1 2 3 4 5] [-2] Drop
-  -> [1 2 3 5]
- [1 2 3 4 5] [1 -2] Drop
-  -> [5]
- [1 2 3 4 5] [1 -2 2] Drop
-  -> [2 4 5]
- [1 2 3 4 5] [1 -1 2] Drop
-  -> [2 4]
+ [4 9 -7 3 2 11] 2 Drop    --> [-7 3 2 11]
+ [4 9 -7 3 2 11] -2 Drop   --> [4 9 -7 3]
+ [1 2 3 4 5] [-2] Drop     --> [1 2 3 5]
+ [1 2 3 4 5] [1 -2] Drop   --> [5]
+ [1 2 3 4 5] [1 -2 2] Drop --> [2 4 5]
+ [1 2 3 4 5] [1 -1 2] Drop --> [2 4]
 
- [[-9 -12] [6 7]] {[2] [1]} Drop
-  -> [[-12]]
+ [[-9 -12] [6 7]] {[2] [1]} Drop --> [[-12]]
 
 Author: Diesmann
 FirstVersion: 2007.11.28
@@ -2562,7 +2600,7 @@ Examples:
 
 Author: Marc-oliver Gewaltig
 FirstVersion: 20.6.02
-SeeAlso: ArrayShape, Range, Table, Dimensions
+SeeAlso: ArrayShape, Range, Table, Dimensions, array
 */
 /LayoutArray
 {
@@ -3531,6 +3569,8 @@ SeeAlso: Max, Sort, Total, Variance
     (Function({x+2},'x)) CompileMath      --> {{x 2 add} /x Function}
     (f=Function({x+2},'x)) CompileMath    --> {/f {x 2 add} /x Function dup rolld Set}
     (f={#+2})              CompileMath    --> {/f {<< >> begin /# Set # 2 add end} dup rolld Set}
+    (f={#1-#2})            CompileMath    --> {/f {<< >> begin /#2 Set /#1 Set #1 #2 sub end} dup rolld Set}
+    ({#1-#2})            CompileMath exec --> {<< >> begin /#2 Set /#1 Set #1 #2 sub end}
     ([4,3,2])              CompileMath    --> {[4 3 2]}
     (x=7+[4,3,2]*2)        CompileMath    --> {/x 7 [ 4 3 2 ] 2 mul add dup rolld Set}
     ([])                   CompileMath    --> {[]}
@@ -3541,6 +3581,7 @@ SeeAlso: Max, Sort, Total, Variance
     ( [ 3, [ 2, 1], -9] // Flatten) CompileMath exec --> [3 2 1 -9]
     ( [ 3, [ 2, 1], -9] // Flatten // {Select(#,{#<3})}  ) CompileMath exec --> [2 1 -9]
     (5+3 // {#+1}  ) CompileMath exec --> 9
+    (7 5 // {#1-#2}) CompileMath exec --> 2
 
   Bugs:
    The present version fails for doubles with negative exponents
@@ -3671,22 +3712,24 @@ def
  BeginProcedureSymbol match
    out length                          % length
 
-   << /n_args 0 >> begin
-
+   <</args [] >> begin                 % dictionary to store argument names of the pure function
+                                       % in the #1, ..., #n notation. In case of only a single argument
+                                       % the # is sufficient 
 % expr
-    expr_sequence                        % length
-
-
-%n_args ==
+     expr_sequence                        % length
 
      dup out exch Take                   % length first
      exch                                % first length
      out length sub  out exch Take       % first last
      cvx
 
-     n_args 0 gt                         % the procedure has arguments
+
+     args length 0 gt
      {
-      {<< >> begin /# Set} exch join {end} join
+      {<< >> begin} 
+      args Sort Reverse { cvlit append (Set) cvn append } forall
+
+      exch join {end} join
      }
      if
 
@@ -3914,7 +3957,7 @@ def
  /BeginArrayToken load /out cdict AppendTo
  lookahead match
 
- lookahead /EndArraySymbol load eq
+ /lookahead load /EndArraySymbol load eq
  {
   /EndArrayToken load /out cdict AppendTo
   lookahead match
@@ -3922,7 +3965,7 @@ def
  {
 
   {
-   delayedexpr     % expr
+   expr % delayedexpr     % expr
    lookahead /comma eq
    {
     /comma  match
@@ -4023,9 +4066,20 @@ def
  {
   lookahead /argument eq
   {
-   (#) cvn /out cdict AppendTo
    /argument match
-   1 /n_args Set
+   lookahead type /integertype eq
+   {
+    (#) lookahead cvs join dup cvn /out cdict AppendTo
+    /args AppendTo
+    lookahead match
+   }
+   {
+    (#) cvn /out cdict AppendTo
+%   /argument match
+   (#) /args AppendTo 
+%  1 /n_args Set
+   }
+   ifelse
   }
   {
    lookahead /openparenthesis eq
@@ -4051,7 +4105,13 @@ def
        dictionary
       }
       {
-       /unsignedfactor /SyntaxError raiseerror
+       lookahead /BeginProcedureSymbol load eq
+       {
+        purefunction
+       }
+       {
+        /unsignedfactor /SyntaxError raiseerror
+       } ifelse
       } ifelse
      } ifelse
     } ifelse
@@ -4798,15 +4858,11 @@ SeeAlso: MapThread, forall, Map, MapIndexed, NestList, FoldList
 /size [/intvectortype] {dup length_iv} def
 /size [/doublevectortype] {dup length_dv} def
 
-/eq [/intvectortype /intvectortype]
-{
-  intvector2array exch intvector2array eq
-} def
+/eq [/intvectortype /intvectortype] /eq_iv load def
+/eq [/doublevectortype /doublevectortype] /eq_dv load def
 
-/eq [/doublevectortype /doublevectortype]
-{
-  doublevector2array exch doublevector2array eq
-} def
+/neq [/intvectortype /intvectortype] {eq not} def
+/neq [/doublevectortype /doublevectortype] {eq not} def
 
 /forall [/doublevectortype /proceduretype] /forall_dv load def
 /forall [/intvectortype /proceduretype] /forall_iv load def
@@ -4860,7 +4916,7 @@ range specification.
 
 Author: Marc-Oliver Gewaltig
 FirstVersion: Dec. 4 2012
-SeeAlso: zeros, ones, Range
+SeeAlso: zeros, ones, Range, array, LayoutArray, Table
 */
 /arange_ /arange load def
 /arange [/arraytype] /arange_ load def

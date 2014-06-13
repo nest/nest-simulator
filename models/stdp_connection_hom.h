@@ -259,7 +259,7 @@ void STDPConnectionHom::send(Event& e, double_t t_lastspike, const STDPHomCommon
   while (start != finish)
   {
     minus_dt = t_lastspike - (start->t_ + dendritic_delay);
-        start++;
+    ++start;
     if (minus_dt == 0)
       continue;
     weight_ = facilitate_(weight_, Kplus_ * std::exp(minus_dt / cp.tau_plus_), cp);

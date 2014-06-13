@@ -229,7 +229,7 @@ Parameter: a = array of datatypes
     
 //Functions with no parameters are possible, but useless in trie
 // structures, so it is best to forbid them!
-  assert(a.size()>0); 
+  assert( !a.empty() );
   
   for(unsigned int level=0; level < a.size(); ++level)
   {

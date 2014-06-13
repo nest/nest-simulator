@@ -34,7 +34,7 @@
    Author: Eppler
  */
 
-/unittest (6335) require
+(unittest) run
 /unittest using
 
 /delay 2.5 def

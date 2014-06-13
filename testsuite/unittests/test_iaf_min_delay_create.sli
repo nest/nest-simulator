@@ -43,7 +43,7 @@ Author:  July 2004, Diesmann, January 2005, Plesser, September 2010, Diesmann
 SeeAlso: iaf_neuron, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, testsuite::test_iaf_dc, testsuite::test_min_delay, testsuite::test_min_delay
 */
 
-/unittest (6335) require
+(unittest) run
 /unittest using
 
 

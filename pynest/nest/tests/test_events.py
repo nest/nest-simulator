@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # test_events.py
 #
@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 Test of events
 """
@@ -26,8 +27,10 @@ import unittest
 import nest
 
 
+@nest.check_stack
 class EventsTestCase(unittest.TestCase):
     """Tests of the Connect API"""
+
 
     def test_Events_1(self):
         """Recorder Events"""
@@ -83,7 +86,6 @@ class EventsTestCase(unittest.TestCase):
 
         self.assert_(len(d['times'])>0)
         
-
 
 def suite():
 

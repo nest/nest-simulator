@@ -1052,7 +1052,6 @@ char SLIInterpreter::debug_commandline(Token & next)
 
   std::string command;
   std::string arg;
-  std::string val;
 
   // /dev/tty is the UNIX  file representing the keyboard. We directly read from it to be able to close the input
   // with CTRL-D. If std::cin is closed with ctrl-D we cannot re-open it again and the
@@ -1229,6 +1228,16 @@ int SLIInterpreter::execute(const std::string &cmdline)
 
   OStack.push(new StringDatum(cmdline));
   EStack.push(new NameDatum("evalstring"));
+  return execute_(); // run the interpreter
+}
+
+int SLIInterpreter::execute(const Token &cmd)
+{
+  int exitcode=startup();
+  if(exitcode !=EXIT_SUCCESS)
+      return -1;
+
+  EStack.push(cmd);
   return execute_(); // run the interpreter
 }
 

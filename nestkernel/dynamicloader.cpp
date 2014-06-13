@@ -97,7 +97,7 @@ namespace nest
   {
     // unload all loaded modules
     for (vecDynModules::iterator it = dyn_modules.begin();
-	 it != dyn_modules.end(); it++)
+	 it != dyn_modules.end(); ++it)
       {
 	if (it->handle != NULL) {
 	  lt_dlclose(it->handle);
@@ -359,7 +359,7 @@ namespace nest
   {
 
     for (vecLinkedModules::iterator it = getLinkedModules().begin(); 
-         it != getLinkedModules().end(); it++) 
+         it != getLinkedModules().end(); ++it)
     {
       interpreter.message(SLIInterpreter::M_STATUS, "DynamicLoaderModule::initLinkedModules", 
                          "adding linked module");

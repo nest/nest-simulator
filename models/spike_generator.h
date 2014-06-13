@@ -47,7 +47,8 @@ namespace nest
     Spike times are given in milliseconds, and must be sorted with the
     earliest spike first. All spike times must be strictly in the future.
     Trying to set a spike time in the past or at the current time step,
-    will cause a NEST error.
+    will cause a NEST error. Setting a spike time of 0.0 will also result
+    in an error.
 
     Spike times may not coincide with a time step, i.e., are not a multiple
     of the simulation resolution. Three options control how spike times that 
@@ -269,6 +270,7 @@ void spike_generator::get_status(DictionaryDatum &d) const
 inline
 void spike_generator::set_status(const DictionaryDatum &d)
 {
+
   Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // To detect "now" spikes and shift them, we need the origin. In case
@@ -288,6 +290,7 @@ void spike_generator::set_status(const DictionaryDatum &d)
 
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
+
 }
 
 

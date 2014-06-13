@@ -36,10 +36,10 @@
 
 % /vp get
 
-
-/unittest (9715) require
+(unittest) run
 /unittest using
 
+is_threaded not { exit_test_gracefully } if
 
 [1 2 4]
 {

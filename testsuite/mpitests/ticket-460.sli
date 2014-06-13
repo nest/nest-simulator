@@ -36,7 +36,7 @@ Note:
 Author: Hans Ekkehard Plesser, 2010-09-24
  */
 
-/unittest (9715) require
+(unittest) run
 /unittest using
 
 [1 2]

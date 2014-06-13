@@ -39,7 +39,7 @@ Author: Plesser
 FirstVersion: 2011-02-12
 */
 
-/unittest (8831) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity
@@ -73,11 +73,11 @@ M_ERROR setverbosity
   % compare all numeric pre-post values, except changed E_L
   pre /E_L undef pre keys
   { 
-    /key Set 
+    /key Set
      pre key get DoubleQ
      {
         dup post key get sub abs % |post-pre| < 1e-15 |pre|
-        exch abs 1e-15 mul leq 
+        exch abs 1e-15 mul leq
      }
      { pop true }
      ifelse

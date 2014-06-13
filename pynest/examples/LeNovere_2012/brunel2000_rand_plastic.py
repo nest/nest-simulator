@@ -35,8 +35,8 @@ N_E = 8000
 N_I = 2000
 N_neurons = N_E+N_I
 
-C_E    = N_E/10 # number of excitatory synapses per neuron
-C_I    = N_I/10 # number of inhibitory synapses per neuron  
+C_E    = int(N_E/10) # number of excitatory synapses per neuron
+C_I    = int(N_I/10) # number of inhibitory synapses per neuron
 
 J_E  = 0.1
 J_I  = -g*J_E
@@ -102,42 +102,42 @@ for gid,vp in local_E_nodes + local_I_nodes:
 # the excitatory-inhibitory weights
 nest.CopyModel("stdp_synapse_hom",
                "excitatory-plastic",
-               {"alpha":STDP_alpha,
-                "Wmax":STDP_Wmax})
+               {"alpha":STDP_alpha})
+nest.SetDefaults("excitatory-plastic",{"Wmax":STDP_Wmax})
+
+
 nest.CopyModel("static_synapse", "excitatory-static")
 
-for tgt_gid, tgt_vp in local_E_nodes:
-  # We call RandomConvergentConnect once per exc. target neuron. For each target neuron,
-  # we get a random weight vector from the RNG for the VP to which the target belongs.
-  weights = pyrngs[tgt_vp].uniform(0.5*J_E, 1.5*J_E, C_E)
-  nest.RandomConvergentConnect(nodes_E, [tgt_gid], C_E,
-                               weight = list(weights), delay = delay,
-                               model="excitatory-plastic")
+# weights are drawn at random while connecting
+nest.Connect(nodes_E, nodes_E,
+             {"rule": 'fixed_indegree', "indegree": C_E},
+             {"model": "excitatory-plastic", "delay": delay,
+              "weight": {"distribution": "uniform",
+                         "low": 0.5 * J_E, "high": 1.5 * J_E}})
 
-
-for tgt_gid, tgt_vp in local_I_nodes:
-  # We call RandomConvergentConnect once per inh. target neuron. For each target neuron,
-  # we get a random weight vector from the RNG for the VP to which the target belongs.
-  weights = pyrngs[tgt_vp].uniform(0.5*J_E, 1.5*J_E, C_E)
-  nest.RandomConvergentConnect(nodes_E, [tgt_gid], C_E,
-                               weight = list(weights), delay = delay,
-                               model="excitatory-static")
-
-
+# weights are drawn at random while connecting
+nest.Connect(nodes_E, nodes_I,
+             {"rule": 'fixed_indegree', "indegree": C_E},
+             {"model": "excitatory-static", "delay": delay,
+              "weight": {"distribution": "uniform",
+                         "low": 0.5 * J_E, "high": 1.5 * J_E}})
 
 nest.CopyModel("static_synapse",
                "inhibitory",
                {"weight":J_I, 
                 "delay":delay})
-nest.RandomConvergentConnect(nodes_I, nodes, C_I,model="inhibitory")
+nest.Connect(nodes_I, nodes,
+             {"rule": 'fixed_indegree', "indegree": C_I},
+             "inhibitory")
 
 noise=nest.Create("poisson_generator",1,{"rate": p_rate})
 
 nest.CopyModel("static_synapse_hom_wd",
                "excitatory-input",
-               {"weight":J_E, 
-                "delay":delay})
-nest.DivergentConnect(noise,nodes,model="excitatory-input")
+               {"weight":J_E, "delay":delay})
+
+# connect using all_to_all: one noise generator to all neurons
+nest.Connect(noise, nodes, "all_to_all", "excitatory-input")
 
 spikes=nest.Create("spike_detector",2, 
                    [{"label": "brunel-py-ex", "to_file": data2file},
@@ -145,8 +145,9 @@ spikes=nest.Create("spike_detector",2,
 spikes_E=spikes[:1]
 spikes_I=spikes[1:]
 
-nest.ConvergentConnect(nodes_E[:N_rec],spikes_E)
-nest.ConvergentConnect(nodes_I[:N_rec],spikes_I)
+# connect using all_to_all: all recorded excitatory neurons to one detector
+nest.Connect(nodes_E[:N_rec], spikes_E, 'all_to_all')
+nest.Connect(nodes_I[:N_rec], spikes_I, 'all_to_all')
 
 # Visualization of initial membrane potential and initial weight
 # distribution only if we run on single MPI process
@@ -166,7 +167,7 @@ if nest.NumProcesses() == 1:
 
   # weight of excitatory connections
   w = nest.GetStatus(nest.GetConnections(nodes_E[:N_rec],
-                                          synapse_model='excitatory-plastic'),
+                                         synapse_model='excitatory-plastic'),
                      'weight')
 
   pylab.subplot(2,1,2)
@@ -176,7 +177,7 @@ if nest.NumProcesses() == 1:
   pylab.draw()
 
 else:
-  print "Multiple MPI processes, skipping graphical output"
+  print("Multiple MPI processes, skipping graphical output")
 
 nest.Simulate(simtime)
 
@@ -186,11 +187,11 @@ events = nest.GetStatus(spikes,"n_events")
 # neurons are on the local MPI process
 N_rec_local_E = sum(nest.GetStatus(nodes_E[:N_rec], 'local'))
 rate_ex= events[0]/simtime*1000.0/N_rec_local_E
-print "Excitatory rate   : %.2f Hz" % rate_ex
+print("Excitatory rate   : %.2f Hz" % rate_ex)
 
 N_rec_local_I = sum(nest.GetStatus(nodes_I[:N_rec], 'local'))
 rate_in= events[1]/simtime*1000.0/N_rec_local_I
-print "Inhibitory rate   : %.2f Hz" % rate_in
+print("Inhibitory rate   : %.2f Hz" % rate_in)
 
 if nest.NumProcesses() == 1:
   nest.raster_plot.from_device(spikes_E, hist=True)
@@ -207,4 +208,4 @@ if nest.NumProcesses() == 1:
   #pylab.show()
 
 else:
-  print "Multiple MPI processes, skipping graphical output"
+  print("Multiple MPI processes, skipping graphical output")

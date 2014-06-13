@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # test_all.py
 #
@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 Testsuite for Topology PyNEST Interface.
 
@@ -30,13 +31,15 @@ in PyNEST only.
 
 import unittest
 
-from nest.topology.tests import test_basics
-from nest.topology.tests import test_dumping
-from nest.topology.tests import test_plotting
-from nest.topology.tests import test_random_parameter
+from nest.tests import compatibility
+
+from . import test_basics
+from . import test_dumping
+from . import test_plotting
+from . import test_random_parameter
+
 
 def suite():
-
     suite = unittest.TestSuite()
 
     suite.addTest(test_basics.suite())
@@ -48,6 +51,5 @@ def suite():
 
 
 if __name__ == "__main__":
-
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

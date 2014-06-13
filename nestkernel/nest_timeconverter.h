@@ -1,4 +1,3 @@
-
 /*
  *  nest_timeconverter.h
  *

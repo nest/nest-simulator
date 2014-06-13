@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # test_errors.py
 #
@@ -18,104 +18,64 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 Tests for error handling
 """
 
 import unittest
 import nest
-import sys
 
+
+@nest.check_stack
 class ErrorTestCase(unittest.TestCase):
     """Tests if errors are handled correctly"""
 
     def test_Raise(self):
         """Error raising"""
 
-        nest.ResetKernel()
-        try:
-            raise nest.NESTError('test')
-            self.fail('an error should have risen!')  # should not be reached
-        except nest.NESTError:
-            info = sys.exc_info()[1]
-            if not "test" in info.__str__():
-                self.fail('could not pass error message to NEST!')             
-        # another error has been thrown, this is wrong
-        except: 
-          self.fail('wrong error has been thrown')
+        def raise_custom_exception(exc, msg):
+            raise exc(msg)
 
+        message = "test"
+        exception = nest.NESTError
+
+        self.assertRaisesRegex(exception, message, raise_custom_exception, exception, message)
 
     def test_StackUnderFlow(self):
         """Stack underflow"""
 
         nest.ResetKernel()
-        try:
-            nest.sr('clear ;')
-            self.fail('an error should have risen!') # should not be reached
-        except nest.NESTError:
-            info = sys.exc_info()[1]
-            if not "StackUnderflow" in info.__str__():
-                self.fail('wrong error message')              
-        # another error has been thrown, this is wrong
-        except: 
-          self.fail('wrong error has been thrown')  
 
+        self.assertRaisesRegex(nest.NESTError, "StackUnderflow", nest.sli_run, 'clear ;')
 
     def test_DivisionByZero(self):
         """Division by zero"""
 
         nest.ResetKernel()
-        try:
-            nest.sr('1 0 div')
-            self.fail('an error should have risen!')  # should not be reached
-        except nest.NESTError:
-            info = sys.exc_info()[1]
-            if not "DivisionByZero" in info.__str__():
-                self.fail('wrong error message')              
-        # another error has been thrown, this is wrong
-        except: 
-          self.fail('wrong error has been thrown')  
 
+        self.assertRaisesRegex(nest.NESTError, "DivisionByZero", nest.sli_run, '1 0 div')
 
     def test_UnknownNode(self):
         """Unknown node"""
 
         nest.ResetKernel()
-        try:
-            nest.Connect([99],[99])
-            self.fail('an error should have risen!')  # should not be reached
-        except nest.NESTError:
-            info = sys.exc_info()[1]
-            if not "UnknownNode" in info.__str__():
-                self.fail('wrong error message')              
-        # another error has been thrown, this is wrong
-        except: 
-          self.fail('wrong error has been thrown')
 
-          
+        self.assertRaisesRegex(nest.NESTError, "UnknownNode", nest.Connect, (99, ), (99, ))
+
     def test_UnknownModel(self):
         """Unknown model name"""
 
         nest.ResetKernel()
-        try:
-            nest.Create(-1)
-            self.fail('an error should have risen!')  # should not be reached
-        except nest.NESTError:
-            info = sys.exc_info()[1]
-            if not "UnknownModelName" in info.__str__():
-                self.fail('wrong error message')              
-        # another error has been thrown, this is wrong
-        except: 
-          self.fail('wrong error has been thrown')  
+
+        self.assertRaisesRegex(nest.NESTError, "UnknownModelName", nest.Create, -1)
 
 
 def suite():
-
-    suite = unittest.makeSuite(ErrorTestCase,'test')
+    suite = unittest.makeSuite(ErrorTestCase, 'test')
     return suite
 
 
 if __name__ == "__main__":
-
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

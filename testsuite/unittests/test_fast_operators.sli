@@ -35,7 +35,7 @@ FirstVersion: 090227
 Author: Diesmann
 */
 
-/unittest (6335) require
+(unittest) run
 /unittest using
 
 % preparatory work for proper test code in case NEST is complied with MPI support

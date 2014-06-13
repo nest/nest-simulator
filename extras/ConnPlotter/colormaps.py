@@ -1,21 +1,25 @@
-# ConnPlotter --- A Tool to Generate Connectivity Pattern Matrices
+# -*- coding: utf-8 -*-
 #
-# This file is part of ConnPlotter.
+# colormaps.py
 #
-# Copyright (C) 2009 Hans Ekkehard Plesser/UMB
+# This file is part of NEST.
 #
-# ConnPlotter is free software: you can redistribute it and/or modify
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #
-# ConnPlotter is distributed in the hope that it will be useful,
+# NEST is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with ConnPlotter.  If not, see <http://www.gnu.org/licenses/>.
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+# ConnPlotter --- A Tool to Generate Connectivity Pattern Matrices
 
 """
 Colormaps for ConnPlotter.
@@ -35,8 +39,8 @@ positive to 0.5..1.
 
 # ----------------------------------------------------------------------------
 
-__version__ = '$Revision: 503 $'
-__date__    = '$Date: 2009-12-02 15:13:42 +0100 (Wed, 02 Dec 2009) $'
+#__version__ = '$Revision: 503 $'
+#__date__    = '$Date: 2009-12-02 15:13:42 +0100 (Wed, 02 Dec 2009) $'
 __author__  = 'Hans Ekkehard Plesser'
 
 __all__ = ['ZeroCenterNorm', 'make_colormap', 'redblue', 'bluered', 'bad_color']
@@ -187,12 +191,12 @@ if __name__ == '__main__':
     # this should be proper unit tests
     n1 = ZeroCenterNorm()
     if (n1([-1, -0.5, 0.0, 0.5, 1.0]).data == np.array([0, 0.25, 0.5, 0.75, 1.0])).all():
-        print "n1 ok"
+        print("n1 ok")
     else:
-        print "n1 failed."
+        print("n1 failed.")
 
     n2 = ZeroCenterNorm(-1, 2)
     if (n2([-1, -0.5, 0.0, 1.0, 2.0]).data == np.array([0, 0.25, 0.5, 0.75, 1.0])).all():
-        print "n2 ok"
+        print("n2 ok")
     else:
-        print "n2 failed."
+        print("n2 failed.")

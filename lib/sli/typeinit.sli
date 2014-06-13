@@ -354,9 +354,19 @@ def
   [/anytype /anytype] /eq_ load addtotrie
 def
 
+/neq_ /neq load def
+/neq trie
+  [/anytype /anytype] /neq_ load addtotrie
+def
+
 /not trie
   [/booltype   ] /not_b load addtotrie
   [/integertype] /not_i load addtotrie
+def
+
+/xor_ /xor load def
+/xor trie
+  [/booltype /booltype] /xor_ load addtotrie
 def
 
 /and_bb /and load def
@@ -532,9 +542,37 @@ def
  [/arraytype  ]    /shrink_a load addtotrie
 def
 
+
+/*BeginDocumentation
+Name: references - Returns the number of references to a reference counted object.
+Synopsis: array references -> array  integer
+          dict  references -> dict   integer
+Description: references returns the number of references to
+a reference counted object including potential self references.
+Examples: << /x 0 >> dup references -> dict dict 2
+               [ 0 ] dup references -> array array 2
+SeeAlso: selfreferences, testsuite::test_dict_basic_self_reference
+*/
 /references trie
  [/arraytype  ]    /references_a load addtotrie
+ [/dictionarytype  ] /references_d load addtotrie
 def
+
+
+/*BeginDocumentation
+Name: selfreferences - Returns the number of selfreferences of a reference counted object.
+Synopsis: dict selfreferences -> dict integer
+Description: selfreferences returns the number of references to
+a reference counted object. In the present implementation only first level 
+self references are handled.
+Examples: << /x 0 >> dup dup begin /x Set end selfreferences -> dict 1
+SeeAlso: references, testsuite::test_dict_basic_self_reference
+*/
+/selfreferences trie
+ [/dictionarytype  ]    /selfreferences_d load addtotrie
+def
+
+
 
 /*BeginDocumentation
 Name: cvx - convert array/string to procedure 
@@ -578,10 +616,11 @@ BeginDocumentation
 
 
    Examples:
-   3.33 cvi -> 3
-   (23) cvi -> 23
-   (23.2323) cvi -> 23
-   (hello) cvi -> 0
+   3.33 cvi      --> 3
+   2    cvi      --> 2
+   (23) cvi      --> 23
+   (23.2323) cvi --> 23
+   (hello) cvi   --> 0
 
    Diagnostics:
    no errors are issued.
@@ -648,6 +687,42 @@ def
 /addtotrie trie
 [/trietype /arraytype /anytype] /addtotrie load addtotrie
 def
+
+
+/* BeginDocumentation
+Name: eval - evaluate a string of SLI code
+Synopsis: string eval -> obj1 ... objn
+
+Description:
+Reads a string and evaluates its content. The resulting objects are
+pushed onto the stack.
+
+As in regular batch mode the interpreter reads tokens from a 
+stream, a string stream in this case,  and immediately executes the 
+incoming language constructs.
+
+An alternative implementation is cvx exec. Here cvx calls cst to
+first create an array of token from the string which is then converted
+to a procedure.
+
+The function evalstring uses cvx and executs the procedure in a 
+separate stopped context using the standard error handler.
+
+A similar function to eval also occurs in Python.
+
+Examples: 
+ (1 2 add) eval              --> 3
+ ([1 2 3] /peter 5 def) eval --> [1 2 3]
+
+Author: Jochen M. Eppler
+FirstVersion: June 2013
+SeeAlso: cvx, exec, cst, evalstring, token
+*/
+
+/eval [/stringtype] {
+  isstream pop cvx exec
+} def
+
 
 /* BeginDocumentation
 Name: token -  read a token from a stream or string
@@ -828,40 +903,34 @@ def
  [/booltype]    /not_b load addtotrie
 def 
 
-/*
-BeginDocumentation
+/* BeginDocumentation
 
-   Name: cva - Convert dictionary/trie to array
+   Name: cva - Converts argument to an array
 
-   Synopsis: dict cva -> array
-             trie cva -> array
+   Synopsis: dict         cva -> array
+             trie         cva -> array
+             array        cva -> array
+             intvector    cva -> array
+             doublevector cva -> array
+             iterator     cva -> array
 
-   Description: cva converts a given dictionary/trie to an array.
-   The contents of the dictionay is mapped to the array in a
-   form which is similar to the construction of an array, namely
-   << key1 val1 ... keyn valn>> cva -> [key1 val1 ... keyn valn]
-
-   Parameters:
-   dict is a dictionary which may be empty
-   trie is a type trie
+   Description: cva converts the argument to an array. The 
+   array is shaped close to a form usable to recreate the original
+   data type. In case the argument is already an array, cva is 
+   applied recursively.
 
    Examples:
-   << /a 1 /b 2>> cva -> [/a 1 /b 2]
-   /add load cva == shows trie for add.
 
-   Diagnostics:
-   no errors are issued.
+   << /a 1 /b 2>> cva         --> [/a 1 /b 2]
+   /square trie [/doubletype] { dup mul } addtotrie exch pop cva --> [/doubletype [{dup mul}]]
+   [ << /a 1 >> << /b 2>>] cva --> [[/a 1] [/b 2]]
+   [1 3 -5 2] cv_iv cva        --> [1 3 -5 2]
+   [1. 3. -5. 2.] cv_dv cva    --> [1. 3. -5. 2.]
+   [2 10] RangeIterator cva    --> [2 3 4 5 6 7 8 9 10]
 
-   Remarks:
-   The name follows the convention of PostScript and stands for
-   ConVert to Array.
-   This is a typesafe wrapper to cva_d/cva_t.
-
-   Author:
-   Marc-oliver Gewaltig
+   Author:   Marc-oliver Gewaltig
 
    SeeAlso:  <<>>, trie, cst, cv1d, cv2d, cva_d, cva_t, cvd, cvi, cvlit, cvn, cvs, cvt_a
-
 */
 
 /trieheads_iter

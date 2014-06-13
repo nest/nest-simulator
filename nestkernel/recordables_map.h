@@ -1,6 +1,3 @@
-#ifndef RECORDABLES_MAP_H
-#define RECORDABLES_MAP_H
-
 /*
  *  recordables_map.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef RECORDABLES_MAP_H
+#define RECORDABLES_MAP_H
 
 #include <map>
 #include <utility>

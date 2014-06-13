@@ -122,8 +122,6 @@ namespace nest
     
   public:        
     
-    typedef Node base;
-    
     iaf_psc_exp();
     iaf_psc_exp(const iaf_psc_exp&);
 
@@ -277,6 +275,9 @@ namespace nest
       double_t P21ex_;
       double_t P21in_;
       double_t P22_;
+      
+      double_t weighted_spikes_ex_;
+      double_t weighted_spikes_in_;
 
       int_t RefractoryCounts_;
     };
@@ -285,6 +286,11 @@ namespace nest
 
     //! Read out the real membrane potential
     double_t get_V_m_() const { return S_.V_m_ + P_.U0_; }
+    
+    double_t get_weighted_spikes_ex_() const { return V_.weighted_spikes_ex_; }
+    double_t get_weighted_spikes_in_() const { return V_.weighted_spikes_in_; }
+    double_t get_input_currents_ex_() const { return S_.i_syn_ex_; }
+    double_t get_input_currents_in_() const { return S_.i_syn_in_; }
 
     // ---------------------------------------------------------------- 
 

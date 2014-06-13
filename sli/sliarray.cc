@@ -36,15 +36,15 @@
 #include "config.h"
 #include <vector>
 #include "slinames.h"
+
 const std::string  SLIArrayModule::commandstring(void) const
 {
-  return std::string("/mathematica /C++ ($Revision: 10045 $) provide-component  /mathematica /SLI (1.7) require-component");
-  return std::string("(mathematica.sli) run");
+  return std::string("(mathematica) run (arraylib) run");
 }
 
 const std::string SLIArrayModule::name(void) const
 {
-  return std::string("Mathematica");
+  return std::string("SLI Array Module");
 }
 
 void SLIArrayModule::RangeFunction::execute(SLIInterpreter *i) const
@@ -1228,6 +1228,9 @@ BeginDocumentation
 
    Synopsis:
      [v1 ... vn] {f} Map -> [ f(v1) ... f(vn) ]
+     [ [... n levels [a1 ... an] ... [b1 ... bn] ...] ] {f} [n] Map 
+         -> [ [... [f(a1) ... f(an)] ... [f(b1) ... f(bn)] ...] ]
+
      (c1 ... cn) {f} Map -> (f(c1)...f(vn))
 
    Parameters:
@@ -1236,7 +1239,8 @@ BeginDocumentation
 
      {f}         - function which can operate on the elements of [array].
                    This function must return exaclty one value.
-
+     [n]         - nesting level at which {f} is applied
+   
    Description:
      Map works like the corresponding Mathematica function.
      For each element of the input array, Map calls f and replaces
@@ -1246,10 +1250,17 @@ BeginDocumentation
      If f does not return a value, Map fails.
      If f returns more than one value, the result of Map is undefined.
 
+     The specification of the nesting level in Mathematica is more general.
+     Currently NEST only supports [n]
+
    Examples:
 
-   [1 2 3 4 5]  {2 mul} Map -> [2 4 6 8 10]
-   (abc) {1 add} Map  -> (bcd)
+   [1 2 3 4 5]  {2 mul} Map          --> [2 4 6 8 10]
+   [ [3. 4.] [7. 8.] ] {cvi} [2] Map --> [[3 4] [7 8]]
+   [3. 4. 7. 8.] {cvi} [1] Map       --> [3 4 7 8]
+
+
+   (abc) {1 add} Map                 --> (bcd)
 
    Diagnostics:
 
@@ -1345,9 +1356,9 @@ void SLIArrayModule::IMapIndexedFunction::execute(SLIInterpreter *i) const
     // Do we  start a new iteration ?
     if(pos==0)
     {
-      if(iterator < limit) // Is Iteration is still running
+      if(iterator <= limit) // Is Iteration is still running
       {
-	if(iterator>0)
+	if(iterator>1)
 	{
 	  // In this case we have to put the result of
 	  // the last procedure call into the array
@@ -1356,13 +1367,13 @@ void SLIArrayModule::IMapIndexedFunction::execute(SLIInterpreter *i) const
 	    i->raiseerror(i->StackUnderflowError);
 	    return;
 	  }
-	  array->assign_move(iterator-1,i->OStack.top());
+	  array->assign_move(iterator-2,i->OStack.top());
 
 
 	  i->OStack.pop();
 	}
 
-	i->OStack.push(array->get(iterator));  // push element to user
+	i->OStack.push(array->get(iterator-1));  // push element to user
 	i->OStack.push(*count);             // push iterator to user
 	++(count->get());
 
@@ -1381,7 +1392,7 @@ void SLIArrayModule::IMapIndexedFunction::execute(SLIInterpreter *i) const
       }
       else
       {
-	if(iterator>0)
+	if(iterator>1)
 	{
 	  // In this case we have to put the result of
 	  // the last procedure call into the array
@@ -1390,7 +1401,7 @@ void SLIArrayModule::IMapIndexedFunction::execute(SLIInterpreter *i) const
 	    i->raiseerror(i->StackUnderflowError);
 	    return;
 	  }
-	  array->assign_move(iterator-1,i->OStack.top());
+	  array->assign_move(iterator-2,i->OStack.top());
 	  i->OStack.pop();
 	}
 	i->OStack.push_move(i->EStack.pick(5)); // push array
@@ -1448,7 +1459,7 @@ void SLIArrayModule::MapIndexedFunction::execute(SLIInterpreter *i) const
     i->EStack.push(i->baselookup(i->mark_name));
 
     i->EStack.push(new IntegerDatum(0));          // push procedure counter
-    i->EStack.push(new IntegerDatum(0));          // push initial counter
+    i->EStack.push(new IntegerDatum(1));          // push initial counter
     i->EStack.push_move(i->OStack.pick(0));       // push procedure
 
     i->EStack.push(i->baselookup(sli::imapindexed));
@@ -3863,6 +3874,72 @@ void SLIArrayModule::Iforall_dvFunction::backtrace(SLIInterpreter *i, int p) con
 
 }
 
+/* BeginDocumentation
+   Name: eq_dv - tests for content equality between vectors of doubles
+   Synopsis:
+     array array -> bool
+   Parameters:
+     two array of doubles
+   Description:
+     Deep equality test since regular eq is an identity test for vectors.
+     Intent is to be used in mathematica.sli to override eq for doublevectortype.
+   Example:
+     <. 1 .> <. 1 .> eq_ --> false
+     <. 1 .> <. 1 .> eq_dv --> true
+   Author: Peyser
+ */
+template<class T, class D>
+static void eq_execute(SLIInterpreter *i)
+{
+  if (i->OStack.load() < 2) {
+    i->raiseerror(i->StackUnderflowError);
+    return;
+  }
+
+  T* op1 = dynamic_cast<T*>(i->OStack.pick(1).datum());
+  if (! op1) {
+    i->raiseerror(i->ArgumentTypeError);
+    return;
+  }
+
+  T* op2 = dynamic_cast<T*>(i->OStack.pick(0).datum());
+  if (! op2) {
+    i->raiseerror(i->ArgumentTypeError);
+    return;
+  }
+
+  const std::vector<D>* d1 = op1->get(); op1->unlock();
+  const std::vector<D>* d2 = op2->get(); op2->unlock();
+  bool eq = (d1 == d2 || *d1 == *d2);
+
+  i->OStack.pop(2);
+  i->OStack.push_by_pointer(new BoolDatum(eq));
+  i->EStack.pop();
+}
+
+void SLIArrayModule::Eq_dvFunction::execute(SLIInterpreter *i) const {
+  eq_execute<DoubleVectorDatum, double>(i);
+}
+
+/* BeginDocumentation
+   Name: eq_iv - tests for content equality between vectors of integers
+   Synopsis:
+     array array -> bool
+   Parameters:
+     two arrays of integers
+   Description:
+     Deep equality test since regular eq is an identity test for vectors
+     Intent is to be used in mathematica.sli to override eq for intvectortype.
+   Example:
+     <# 1 #> <# 1 #> eq_ --> false
+     <# 1 #> <# 1 #> eq_iv --> true
+   Author: Peyser
+ */
+void SLIArrayModule::Eq_ivFunction::execute(SLIInterpreter *i) const
+{
+  eq_execute<IntVectorDatum, long>(i);
+}
+
 void SLIArrayModule::init(SLIInterpreter *i)
 {
   i->createcommand("MapIndexed_a", &mapindexedfunction);
@@ -3928,6 +4005,9 @@ void SLIArrayModule::init(SLIInterpreter *i)
  i->createcommand("div_dv_dv", &div_dv_dvfunction);
  i->createcommand("inv_dv",   &inv_dvfunction);
  i->createcommand("length_dv", &length_dvfunction);
+
+ i->createcommand("eq_dv", &eq_dvfunction);
+ i->createcommand("eq_iv", &eq_ivfunction);
 
  i->createcommand("get_iv_i", &get_iv_ifunction);
  i->createcommand("get_iv_iv", &get_iv_ivfunction);

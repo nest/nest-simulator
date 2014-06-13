@@ -26,6 +26,7 @@ DataConnect
 import unittest
 import nest
 
+@nest.check_stack
 class DataConnectTestCase(unittest.TestCase):
     """Find connections and test if values can be set."""
 
@@ -58,6 +59,7 @@ class DataConnectTestCase(unittest.TestCase):
         c2=[list(x) for x in conn2]
         
         self.assertEqual(c1, c2)
+
 
 def suite():
 

@@ -66,8 +66,10 @@ void nest::spike_generator::Parameters_::get(DictionaryDatum &d) const
 {  
   const size_t n_spikes = spike_stamps_.size();
   const size_t n_offsets = spike_offsets_.size();
+
   assert(   ( precise_times_ && n_offsets == n_spikes )
 	 || (!precise_times_ && n_offsets == 0        ) );
+
 
   std::vector<double_t>* times_ms = new std::vector<double_t>();
   times_ms->reserve(n_spikes);
@@ -82,12 +84,16 @@ void nest::spike_generator::Parameters_::get(DictionaryDatum &d) const
   (*d)[names::precise_times] = BoolDatum(precise_times_);
   (*d)["allow_offgrid_spikes"] = BoolDatum(allow_offgrid_spikes_);
   (*d)["shift_now_spikes"] = BoolDatum(shift_now_spikes_);
+
 }
  
 void nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_(double t,
 									     const Time& origin,
 									     const Time& now)
 {
+  if (t == 0.0 && !shift_now_spikes_)
+    throw BadProperty("spike time cannot be set to 0.");
+
   Time t_spike;
   if ( precise_times_ )
     t_spike = Time::ms_stamp(t);
@@ -279,7 +285,7 @@ void nest::spike_generator::update(Time const & sliceT0, const long_t from, cons
       // if we have to deliver weighted spikes, we need to get the
       // event back to set its weight according to the entry in
       // spike_weights_, so we use a DSSpike event and event_hook()
-      if (P_.spike_weights_.size() != 0)
+      if ( !P_.spike_weights_.empty() )
         se = new DSSpikeEvent;
       else
 	se = new SpikeEvent;

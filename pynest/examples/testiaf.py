@@ -56,13 +56,13 @@ def build_network(dt) :
 if __name__ == "__main__" :
 
     for dt in [0.1, 0.5, 1.0] :
-        print "Running simulation with dt=%.2f" % dt
+        print("Running simulation with dt=%.2f" % dt)
         vm, sd = build_network(dt)
         nest.Simulate(1000.0)
         potentials = nest.GetStatus(vm, "events")[0]["V_m"]
         times = nest.GetStatus(vm, "events")[0]["times"]
         pylab.plot(times, potentials, label="dt=%.2f" % dt)
-        print "  Number of spikes:",  nest.GetStatus(sd, "n_events")[0]
+        print("  Number of spikes: {0}".format(nest.GetStatus(sd, "n_events")[0]))
 
     pylab.legend(loc=3)
     pylab.xlabel("time (ms)")

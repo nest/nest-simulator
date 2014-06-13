@@ -1,6 +1,3 @@
-#ifndef SELECTOR_H
-#define SELECTOR_H
-
 /*
  *  selector.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef SELECTOR_H
+#define SELECTOR_H
 
 #include "nest.h"
 #include "dictdatum.h"

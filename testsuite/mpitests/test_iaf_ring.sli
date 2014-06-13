@@ -46,13 +46,12 @@ Description:
  steps) with respect to the documented values. The offset corresponds
  to the default delay of 1ms.
 
-Author:  January 2006, Eppler, Diesmann, Gewaltig
-         September 2010, Diesmann
+Author: Joche Martin Eppler, Markus Diesmann, Marc-Oliver Gewaltig
+FirstVersion: January 2006
 SeeAlso: testsuite::test_iaf_i0, testsuite::test_getrng_neuron
 */
 
-
-/unittest (9715) require
+(unittest) run
 /unittest using
 
 

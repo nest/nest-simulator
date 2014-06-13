@@ -1497,13 +1497,22 @@ The algorithm of function validate is as follows:
 
  % construct target path for test files
  %
- f (nest/help) search 
- pop /base Set pop pop
- base (nest/unittests/) join cf join /tf Set
+
+ %% this code writes directly into the unittests directory
+ % f (nest/help) search 
+ % pop /base Set pop pop
+ % base (nest/unittests/) join cf join /tf Set
+
+ %% this alternative code uses a temporary file
+ % tmpnam (.sli) join /tf Set
+
+ % tf (w) file /t Set
+
+ %% this alternative code uses a string stream
+ osstream pop /t Set
 
 
  % write header to test file
- tf (w) file /t Set
  t 
   (true [\n\n) print ;
 
@@ -1540,10 +1549,12 @@ The algorithm of function validate is as follows:
  %
  t (] EvaluateLiteralInfixes {and} Fold\n) print ;
 
- t close
+ %% close new test file and execute
+ % t close
+ % tf run
 
- % execute the new test file
- tf run
+ %% alternative version with string stream
+ t str isstream pop cvx exec
 
 } def
 

@@ -62,7 +62,6 @@ echo "Platform: ${host}"
        if test "${compversion:0:4}" = "icpc"; then
          # Intel compiler pretending to be g++
 	 echo "Compiler : icpc"
-       	 SLI_pynest_cxxflags="-fpermissive"
          if test "$SLI_debug" = "set" -a -z "$SLI_debugflags"; then
            SLI_debugflags="-g -inline-debug-info"
          fi
@@ -75,7 +74,6 @@ echo "Platform: ${host}"
        else
          #real g++
          echo "Compiler : g++"
-         SLI_pynest_cxxflags="-fpermissive"
          if test "$SLI_debug" = "set" -a -z "$SLI_debugflags"; then
            SLI_debugflags="-g"
          fi
@@ -89,7 +87,6 @@ echo "Platform: ${host}"
      fi
      if test "x$enable_bluegene" = xyes; then
 	  echo "Compiling for the Blue Gene using compilers specified by CC and CXX environment variables"
- 	    SLI_pynest_cxxflags=" "
 	  if test "$SLI_debug" = "set"; then
             SLI_debugflags=" "
           fi
@@ -105,7 +102,6 @@ echo "Platform: ${host}"
      SLI_forte=`$CXX -V 2>&1 | grep Forte`
      if test "$GXX" = "yes"; then
        echo "Compiler : g++"
-       SLI_pynest_cxxflags="-fpermissive"
        if test "$SLI_debug" = "set" -a -z "$SLI_debugflags"; then
          SLI_debugflags="-g"
        fi
@@ -155,7 +151,6 @@ echo "Platform: ${host}"
    *-hp-hpux*)
      if test "$GXX" = "yes"; then
        echo "Compiler : g++"
-       SLI_pynest_cxxflags="-fpermissive"
        if test "$SLI_debug" = "set" -a -z "$SLI_debugflags"; then
          SLI_debugflags="-g"
        fi
@@ -172,7 +167,6 @@ echo "Platform: ${host}"
    mips-sgi-irix*)
      if test "$GXX" = "yes"; then
        echo "Compiler : g++"
-       SLI_pynest_cxxflags="-fpermissive"
        if test "$SLI_debug" = "set" -a -z "$SLI_debugflags"; then
          SLI_debugflags="-g"
        fi
@@ -198,7 +192,6 @@ echo "Platform: ${host}"
    *-dec-osf*)
      if test "$GXX" = "yes"; then
        echo "Compiler : g++"
-       SLI_pynest_cxxflags="-fpermissive"
        if test "$SLI_debug" = "set" -a -z "$SLI_debugflags"; then
          SLI_debugflags="-g"
        fi
@@ -225,7 +218,6 @@ echo "Platform: ${host}"
    hppa1.1-hitachi-hiuxwe2*)
      if test "$GXX" = "yes"; then
        echo "Compiler : g++"
-       SLI_pynest_cxxflags="-fpermissive"
        if test "$SLI_debug" = "set" -a -z "$SLI_debugflags"; then
          SLI_debugflags="-g"
        fi
@@ -253,7 +245,6 @@ echo "Platform: ${host}"
    powerpc-ibm-aix5.1*)
      if test "$GXX" = "yes"; then
        echo "Compiler : g++"
-       SLI_pynest_cxxflags="-fpermissive"
        if test "$SLI_debug" = "set" -a -z "$SLI_debugflags"; then
          SLI_debugflags="-g"
        fi
@@ -282,7 +273,6 @@ echo "Platform: ${host}"
      ## For all other OS, we just check for the GNU compiler.
      if test "$GXX" = "yes"; then
        echo "Compiler : g++"
-       SLI_pynest_cxxflags="-fpermissive"
        if test "$SLI_debug" = "set" -a -z "$SLI_debugflags"; then
          SLI_debugflags="-g"
        fi
@@ -302,13 +292,10 @@ echo "Platform: ${host}"
 ## CXXFLAGS now appended instead of prepended, so that it can 
 ## override default values.
 AM_CXXFLAGS="$SLI_threadflags $SLI_cxxflags $SLI_warningflags $SLI_debugflags $SLI_optimizeflags $SLI_SAVE_CXXFLAGS" 
-PYNEST_CXXFLAGS="$SLI_pynest_cxxflags"
 
 echo "Using AM_CXXFLAGS= $AM_CXXFLAGS"
-echo "Using PYNEST_CXXFLAGS= $PYNEST_CXXFLAGS"
 AC_SUBST(SLI_CXXBACKEND)
 AC_SUBST(AM_CXXFLAGS)
-AC_SUBST(PYNEST_CXXFLAGS)
 AC_SUBST(CXX_AR)
 ])
 
@@ -388,7 +375,6 @@ echo "Platform: ${host}"
      fi
      if test "x$enable_bluegene" = xyes; then
 	 echo "Compiling for the Blue Gene using compilers specified by CC and CXX environment variables"	
-          SLI_pynest_cxxflags=" "
        	  if test "$SLI_debug" = "set"; then
             SLI_debugflags=" "
           fi
@@ -1513,6 +1499,65 @@ if test "$hep_cv_cxx_specialization_bug" = yes; then
 fi
 ])
 
+dnl @synopsis SLI_CHECK_XLC_ICE_ON_USING
+dnl
+dnl Tests for a an internal compiler error obeserved in IBM xlC.
+dnl If bug the ICE is detected, defines
+dnl HAVE_XLC_ICE_ON_USING
+dnl
+dnl @author Hans E. Plesser
+dnl
+
+AC_DEFUN([SLI_CHECK_XLC_ICE_ON_USING],
+[AC_CACHE_CHECK(whether the compiler fails with ICE,
+hep_cv_xlc_ice_on_using,
+[AC_LANG_SAVE
+ AC_LANG_CPLUSPLUS
+ AC_TRY_LINK([
+class RandomDev 
+{
+public:
+  virtual double operator()(void) =0; 
+  virtual double operator()(double x) =0; 
+};
+
+class GenericRandomDevFactory 
+{
+public:
+  virtual RandomDev* create() const =0;
+};
+
+template <typename DevType>
+class RandomDevFactory: public GenericRandomDevFactory 
+{  
+public:
+  RandomDev* create() const
+  {
+    return new DevType();
+  }      
+};
+
+template <typename T>
+class Wrapper: public T 
+{
+public:  
+  using RandomDev::operator();
+  double operator()(void) { return 0.0; }
+  double operator()(double x) { return x; }
+};
+],
+[
+RandomDevFactory<Wrapper<RandomDev> > r;
+], 
+ hep_cv_xlc_ice_on_using=no, hep_cv_xlc_ice_on_using=yes)
+ AC_LANG_RESTORE
+])
+if test "$hep_cv_xlc_ice_on_using" = yes; then
+  AC_DEFINE(HAVE_XLC_ICE_ON_USING,,
+            [define if the compiler fails with ICE])
+fi
+])
+
 # SLI_C_INLINE
 # ------------
 # Do nothing if the compiler accepts the inline keyword.
@@ -1608,3 +1653,74 @@ AC_DEFUN([SLI_CHECK_SOURCE_FILE],
    $3
  fi
 ])
+
+# ===========================================================================
+#   http://www.gnu.org/software/autoconf-archive/ax_check_compile_flag.html
+# ===========================================================================
+#
+# SYNOPSIS
+#
+#   AX_CHECK_COMPILE_FLAG(FLAG, [ACTION-SUCCESS], [ACTION-FAILURE], [EXTRA-FLAGS])
+#
+# DESCRIPTION
+#
+#   Check whether the given FLAG works with the current language's compiler
+#   or gives an error.  (Warnings, however, are ignored)
+#
+#   ACTION-SUCCESS/ACTION-FAILURE are shell commands to execute on
+#   success/failure.
+#
+#   If EXTRA-FLAGS is defined, it is added to the current language's default
+#   flags (e.g. CFLAGS) when the check is done.  The check is thus made with
+#   the flags: "CFLAGS EXTRA-FLAGS FLAG".  This can for example be used to
+#   force the compiler to issue an error when a bad flag is given.
+#
+#   NOTE: Implementation based on AX_CFLAGS_GCC_OPTION. Please keep this
+#   macro in sync with AX_CHECK_{PREPROC,LINK}_FLAG.
+#
+# LICENSE
+#
+#   Copyright (c) 2008 Guido U. Draheim <guidod@gmx.de>
+#   Copyright (c) 2011 Maarten Bosmans <mkbosmans@gmail.com>
+#
+#   This program is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU General Public License as published by the
+#   Free Software Foundation, either version 3 of the License, or (at your
+#   option) any later version.
+#
+#   This program is distributed in the hope that it will be useful, but
+#   WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+#   Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License along
+#   with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+#   As a special exception, the respective Autoconf Macro's copyright owner
+#   gives unlimited permission to copy, distribute and modify the configure
+#   scripts that are the output of Autoconf when processing the Macro. You
+#   need not follow the terms of the GNU General Public License when using
+#   or distributing such scripts, even though portions of the text of the
+#   Macro appear in them. The GNU General Public License (GPL) does govern
+#   all other use of the material that constitutes the Autoconf Macro.
+#
+#   This special exception to the GPL applies to versions of the Autoconf
+#   Macro released by the Autoconf Archive. When you make and distribute a
+#   modified version of the Autoconf Macro, you may extend this special
+#   exception to the GPL to apply to your modified version as well.
+
+AC_DEFUN([AX_CHECK_COMPILE_FLAG],
+[AC_PREREQ(2.59)dnl for _AC_LANG_PREFIX
+AS_VAR_PUSHDEF([CACHEVAR],[ax_cv_check_[]_AC_LANG_ABBREV[]flags_$4_$1])dnl
+AC_CACHE_CHECK([whether _AC_LANG compiler accepts $1], CACHEVAR, [
+  ax_check_save_flags=$[]_AC_LANG_PREFIX[]FLAGS
+  _AC_LANG_PREFIX[]FLAGS="$[]_AC_LANG_PREFIX[]FLAGS $4 $1"
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM()],
+    [AS_VAR_SET(CACHEVAR,[yes])],
+    [AS_VAR_SET(CACHEVAR,[no])])
+  _AC_LANG_PREFIX[]FLAGS=$ax_check_save_flags])
+AS_IF([test x"AS_VAR_GET(CACHEVAR)" = xyes],
+  [m4_default([$2], :)],
+  [m4_default([$3], :)])
+AS_VAR_POPDEF([CACHEVAR])dnl
+])dnl AX_CHECK_COMPILE_FLAGS

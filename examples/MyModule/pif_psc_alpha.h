@@ -1,6 +1,3 @@
-#ifndef PIF_PSC_ALPHA_H
-#define PIF_PSC_ALPHA_H
-
 /*
  *  pif_psc_alpha.h
  *
@@ -23,6 +20,8 @@
  *
  */
 
+#ifndef PIF_PSC_ALPHA_H
+#define PIF_PSC_ALPHA_H
 
 #include "nest.h"
 #include "event.h"

@@ -20,10 +20,6 @@
  *
  */
 
-/filesystem /SLI ($Revision: 9979 $) provide-component
-/filesystem /C++ (7610) require-component
-
-
 /FileNames_s
 {
   regcomp

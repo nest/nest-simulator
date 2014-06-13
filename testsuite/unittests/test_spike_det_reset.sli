@@ -35,7 +35,7 @@ Author: August 2008, Plesser
 SeeAlso: spike_detector
 */
 
-/unittest (7471) require
+(unittest) run
 /unittest using
 
 {

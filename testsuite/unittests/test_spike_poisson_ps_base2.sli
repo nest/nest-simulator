@@ -66,8 +66,7 @@ Author: May 2010, adapted to NEST2, Diesmann
 SeeAlso: testsuite::test_spike_poisson_ps
 */
 
-
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity

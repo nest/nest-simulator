@@ -1,7 +1,24 @@
 /*
-    Copyright (C) 2012 The NEST Initiative
-    This file is part of NEST.
-*/
+ *  gsl_binomial_randomdev.h
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include "config.h"
 
@@ -88,13 +105,13 @@ class GSL_BinomialRandomDev : public RandomDev
      * way of doing things, although all other compilers
      * happily live without.
      */
-    using RandomDev::uldev;
+    using RandomDev::operator();
+    using RandomDev::ldev;
 
-    unsigned long uldev();         //!< draw integer
-    unsigned long uldev(RngPtr) const;   //!< draw integer, threaded
-    bool has_uldev() const { return true; }
+    long ldev();         //!< draw integer
+    long ldev(RngPtr) const;   //!< draw integer, threaded
+    bool has_ldev() const { return true; }
 
-    double operator()();           //!< return as double
     double operator()(RngPtr) const;     //!< return as double, threaded
 
     //! set distribution parameters from SLI dict
@@ -111,15 +128,9 @@ class GSL_BinomialRandomDev : public RandomDev
   };
 
   inline
-  double GSL_BinomialRandomDev::operator()()
-  {
-    return static_cast<double>(uldev());
-  }
-
-  inline
   double GSL_BinomialRandomDev::operator()(RngPtr rthrd) const
   {
-    return static_cast<double>(uldev(rthrd));
+    return static_cast<double>(ldev(rthrd));
   }
 
 }

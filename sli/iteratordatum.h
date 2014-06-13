@@ -142,14 +142,6 @@ public:
       }
     memory.free(p);
   }
-  
-  
-  /**
-   * Accept a DatumVisitor as a visitor to the datum (visitor pattern).
-   * This member has to be overridden in the derived classes
-   * to call visit and passing themselves as an argument.
-   */
-  //  void use_converter(DatumConverter &);
 
   void print(std::ostream &out) const  { out << '<'<< this->gettypename()<<'>';}
  

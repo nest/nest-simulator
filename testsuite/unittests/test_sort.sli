@@ -34,7 +34,7 @@
    Author: Jochen Martin Eppler
  */
 
-/unittest (6335) require
+(unittest) run
 /unittest using
 
 { [10.0 1.0 -1.0] Range Sort [1.0 10.0] Range eq } assert_or_die

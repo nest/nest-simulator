@@ -36,15 +36,17 @@ namespace nest
             music_perm_ind_(0),
             published_(false),
             portname_(""),
-            acceptable_latency_(0.0)
+            acceptable_latency_(0.0),
+            max_buffered_(-1)
   {}
 
-  MusicEventHandler::MusicEventHandler(std::string portname, double acceptable_latency, Network* net)
+  MusicEventHandler::MusicEventHandler(std::string portname, double acceptable_latency, int max_buffered, Network* net)
           : music_port_(0),
             music_perm_ind_(0),
             published_(false),
             portname_(portname),
             acceptable_latency_(acceptable_latency),
+            max_buffered_(max_buffered),
             net_(net)
   {}
 
@@ -100,10 +102,16 @@ namespace nest
       // create the permutation index mapping
       music_perm_ind_ = new MUSIC::PermutationIndex(&indexmap_.front(), indexmap_.size());
       // map the port
-      music_port_->map(music_perm_ind_, this, acceptable_latency);
+      if (max_buffered_ >= 0)
+    	  music_port_->map(music_perm_ind_, this, acceptable_latency, max_buffered_);
+      else
+    	  music_port_->map(music_perm_ind_, this, acceptable_latency);
 
-      std::string msg = String::compose("Mapping MUSIC input port '%1' with width=%2 and acceptable latency=%3 ms.",
-                                        portname_, music_port_width, acceptable_latency_);
+      std::string msg = String::compose("Mapping MUSIC input port '%1' with width=%2 , acceptable latency=%3 ms",
+                                        portname_, music_port_width, acceptable_latency);
+      if (max_buffered_ > 0)
+	msg += String::compose(" and max buffered=%1 ticks", max_buffered_);
+      msg += ".";
       net_->message(SLIInterpreter::M_INFO, "MusicEventHandler::publish_port()", msg.c_str());
     }
   }

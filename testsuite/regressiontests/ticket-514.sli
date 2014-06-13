@@ -31,7 +31,7 @@
    r9192.
 */
 
-/unittest (6335) require
+(unittest) run
 /unittest using
 
 

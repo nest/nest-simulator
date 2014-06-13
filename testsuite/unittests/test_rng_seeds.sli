@@ -36,7 +36,7 @@ Author: Eppler
 FirstVersion: October 2008
 */
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 % Check the default seeds

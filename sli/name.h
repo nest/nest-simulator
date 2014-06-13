@@ -1,5 +1,3 @@
-#ifndef NAME_H
-#define NAME_H
 /*
  *  name.h
  *
@@ -21,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef NAME_H
+#define NAME_H
 
 #include <cassert>
 #include <map>
@@ -163,4 +164,3 @@ Name::HandleMap_& Name::handleMapInstance_()
 
 
 #endif
-

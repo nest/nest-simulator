@@ -238,7 +238,7 @@ void nest::sinusoidal_poisson_generator::update(Time const& origin,
       else
       {
 	V_.poisson_dev_.set_lambda(S_.rate_ * V_.h_);
-	ulong_t n_spikes = V_.poisson_dev_.uldev(rng);
+	long_t n_spikes = V_.poisson_dev_.ldev(rng);
       	SpikeEvent se;
 	se.set_multiplicity(n_spikes);
         network()->send(*this, se, lag);
@@ -251,7 +251,7 @@ void nest::sinusoidal_poisson_generator::event_hook(DSSpikeEvent& e)
 {
   librandom::RngPtr rng = net_->get_rng(get_thread());
   V_.poisson_dev_.set_lambda(S_.rate_ * V_.h_);
-  ulong_t n_spikes = V_.poisson_dev_.uldev(rng);
+  long_t n_spikes = V_.poisson_dev_.ldev(rng);
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

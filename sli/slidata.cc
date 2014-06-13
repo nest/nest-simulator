@@ -980,6 +980,36 @@ void References_aFunction::execute(SLIInterpreter *i) const
   i->OStack.push_move(t);
 }
 
+void References_dFunction::execute(SLIInterpreter *i) const
+{
+// call: dict references_a dict integer 
+  i->EStack.pop();
+  assert(i->OStack.load()>0);
+
+  DictionaryDatum    *ad = dynamic_cast<DictionaryDatum *>(i->OStack.top().datum());  
+
+  assert(ad != NULL);
+
+  Token t(new IntegerDatum(ad->references()));
+
+  i->OStack.push_move(t);
+}
+
+void Selfreferences_dFunction::execute(SLIInterpreter *i) const
+{
+// call: dict selfreferences_a dict integer 
+  i->EStack.pop();
+  assert(i->OStack.load()>0);
+
+  DictionaryDatum    *ad = dynamic_cast<DictionaryDatum *>(i->OStack.top().datum());  
+
+  assert(ad != NULL);
+
+  Token t(new IntegerDatum(ad->selfreferences()));
+
+  i->OStack.push_move(t);
+}
+
 /*BeginDocumentation
 Name: shrink - Reduce the capacity of an array or string to its minimum.
 Synopsis: array shrink -> array bool
@@ -1095,12 +1125,22 @@ Synopsis: (string1) a b getinterval -> (string2)
 Description:
 getinterval returns a new container with b elements 
 starting at element a
+Note that getinterval can only handle indices from 0 to N-1 
+where N is the length of the original array
+
+If other values are given (i.e. indices which do not exist in the array), the function throws a RangeCheckError
+
+If negative values are given, getinterval throws a PostiveIntegerExpectedError
+
+If b = 0, getinterval returns an empty array
+
 Examples: (spiketrainsimulation) 5 5 getinterval -> train
 (spiketrainsimulation) 0 5 getinterval -> spike
 [23 24 25 26 27 30] 0 2 getinterval -> [23 24]
 [23 24 25 26 27 30] 2 3 getinterval -> [25 26 27]
+[23 24 25 26 27 30] 0 6 getinterval -> [Error]: RangeCheck
 Author: docu edited by Sirko Straube
-SeeAlso: get, put, putinterval
+SeeAlso: get, put, putinterval, Take
 */
 
 void Getinterval_sFunction::execute(SLIInterpreter *i) const
@@ -1113,19 +1153,19 @@ void Getinterval_sFunction::execute(SLIInterpreter *i) const
   IntegerDatum *cd = dynamic_cast<IntegerDatum *>(i->OStack.pick(0).datum());
   assert(sd != NULL && id !=NULL && cd !=NULL);
 
-  if((id->get()>=0) && ( (size_t)id->get() < sd->size()))
-  {    
-    if (cd->get()>=0)
-    {
+  if (cd->get()>=0)
+  { 
+    if(id->get() >= 0 && static_cast<size_t>(id->get()) < sd->size() && static_cast<size_t>(id->get() + cd->get()) <= sd->size())
+    {    
       i->EStack.pop();
       sd->assign(*sd, id->get(),cd->get());
       i->OStack.pop(2);
     }
-    else
-      i->raiseerror(i->PositiveIntegerExpectedError);
+    else 
+      i->raiseerror(i->RangeCheckError);
   }
-  else 
-    i->raiseerror(i->RangeCheckError);
+  else
+    i->raiseerror(i->PositiveIntegerExpectedError);
 }
 
 
@@ -1139,30 +1179,27 @@ void Getinterval_aFunction::execute(SLIInterpreter *i) const
   IntegerDatum *cd = dynamic_cast<IntegerDatum *>(i->OStack.pick(0).datum());
   assert(sd != NULL && id !=NULL && cd !=NULL);
 
-  if (cd->get()>0)
+  if (cd->get()>=0)
   { 
-   long index = (id->get()>=0)? id->get(): (sd->size()+id->get());
-   if(index >= 0 && (size_t)index < sd->size())
+   
+   if(id->get() >= 0 && static_cast<size_t>(id->get()) < sd->size() && static_cast<size_t>(id->get() + cd->get()) <= sd->size())
    {
     i->EStack.pop();
-    sd->reduce(index,cd->get());
+    sd->reduce(id->get(),cd->get());
     i->OStack.pop(2);
    }
    else 
      i->raiseerror(i->RangeCheckError);
   }
   else
-  {
-   i->EStack.pop();
-   sd->clear();
-   i->OStack.pop(2);
-  }
+    i->raiseerror(i->PositiveIntegerExpectedError);
+  
+  
 }
 
 
 void Cvx_aFunction::execute(SLIInterpreter *i) const
 {
-  Name caller(i->getcurrentname());
   i->EStack.pop();
 
   assert(i->OStack.load()>0);
@@ -1490,6 +1527,8 @@ const Reserve_aFunction    reserve_afunction;
 const Resize_aFunction     resize_afunction;
 const Empty_aFunction      empty_afunction;
 const References_aFunction references_afunction;
+const References_dFunction references_dfunction;
+const Selfreferences_dFunction selfreferences_dfunction;
 const Shrink_aFunction     shrink_afunction;
 
 const Capacity_sFunction   capacity_sfunction;
@@ -1557,6 +1596,8 @@ void init_slidata(SLIInterpreter *i)
   i->createcommand(":resize_a",     &resize_afunction);
   i->createcommand("empty_a",      &empty_afunction);
   i->createcommand("references_a", &references_afunction);
+  i->createcommand("references_d", &references_dfunction);
+  i->createcommand("selfreferences_d", &selfreferences_dfunction);
   i->createcommand("shrink_a",     &shrink_afunction); 
 
   i->createcommand("capacity_s",   &capacity_sfunction);

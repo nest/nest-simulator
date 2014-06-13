@@ -63,17 +63,9 @@ public:
   void  print(std::ostream &) const;
   void  pprint(std::ostream &) const;
 
-
   static void * operator new(size_t size);
 
   static void operator delete(void *p, size_t size);
-
-  /**
-   * Accept a DatumConverter as a visitor to this datum.
-   * A visitor may be used to make a conversion to a type, which is not known to NEST.
-   * (visitor pattern).
-   */
-  void use_converter(DatumConverter &);
 
 };
 

@@ -32,7 +32,7 @@ namespace nest
     ConnectionHetWD(),
     U_(0.5),
     u_(U_),
-    x_(U_),
+    x_(1),
     tau_rec_(800.0),
     tau_fac_(0.0)
   {

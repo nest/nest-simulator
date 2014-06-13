@@ -30,8 +30,7 @@
  *
  */
 
-
-/unittest (9715) require
+(unittest) run
 /unittest using
 
 

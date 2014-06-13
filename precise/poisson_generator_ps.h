@@ -76,8 +76,6 @@ namespace nest{
     
   public:        
     
-    typedef Node base;
-    
     poisson_generator_ps();
     poisson_generator_ps(const poisson_generator_ps&);
 

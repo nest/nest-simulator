@@ -1,0 +1,216 @@
+/*
+ *  test_corr_matrix_det.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: testsuite::test_corr_matrix_det - minimal test of correlomatrix detector
+
+Synopsis: (test_corr_matrix_det) run -> dies if assertion fails
+
+Description:
+  Feeds correlomatrix detector with hand-crafted spike trains with
+  known correlation. Correlomatrix detector parameters are set in model.
+
+Remarks:
+  The test does not test weighted correlations.
+
+Author: April 2013, Jakob Jordan (copy+edit from test_corr_det.sli)
+SeeAlso: correlomatrix_detector
+*/
+
+(unittest) run
+/unittest using
+
+/d_tau    0.5 def
+/tau_max 10.0 def
+/N_ch       8 def
+
+% First test: parameter setting on model and instance
+{
+  ResetKernel
+  /cd1 /correlomatrix_detector Create def
+  cd1 << /delta_tau d_tau /tau_max tau_max /N_channels N_ch >>  SetStatus
+
+  /correlomatrix_detector << /delta_tau d_tau /tau_max tau_max /N_channels N_ch >> SetDefaults
+  /cd2 /correlomatrix_detector Create def
+
+  cd1 [[/delta_tau /tau_max /N_channels]] get
+  cd2 [[/delta_tau /tau_max /N_channels]] get
+  eq
+} assert_or_die
+clear
+ResetKernel
+
+
+% Second test: error if trying to set invalid channel number
+{
+  ResetKernel
+  /correlomatrix_detector << /N_channels 0 >> SetDefaults
+} fail_or_die
+
+{
+  ResetKernel
+  /correlomatrix_detector << /N_channels -1 >> SetDefaults
+} fail_or_die
+
+
+% Third test: error if uncommensurable delta_tau
+{
+  ResetKernel
+  0 << /resolution 0.1 >> SetStatus
+  /correlomatrix_detector << /delta_tau 0.25 >> SetDefaults
+} fail_or_die
+
+
+% Fourth test: error if delta_tau even multiple of resolution
+{
+  ResetKernel
+  0 << /resolution 0.1 >> SetStatus
+  /correlomatrix_detector << /delta_tau 1.0 >> SetDefaults
+} fail_or_die
+
+
+% Fifth test: error if uncommensurable tau_max
+{
+  ResetKernel
+  0 << /resolution 0.1 >> SetStatus
+  /correlomatrix_detector << /delta_tau 1.1 /tau_max 2.5 >> SetDefaults
+} fail_or_die
+
+
+% Sixth test: error if uncommensurable change of resolution
+{
+  ResetKernel
+  0 << /resolution 0.1 >> SetStatus
+  /correlomatrix_detector << /delta_tau 0.1 >> SetDefaults
+  0 << /resolution 1.0 >> SetStatus
+  /correlomatrix_detector Create % cannot create now with delta_tau==0.1
+} fail_or_die  
+
+
+% Seventh test: proper number of histogram bins under resolution changes
+{
+  ResetKernel
+  0 << /resolution 0.1 >> SetStatus
+  /correlomatrix_detector << /delta_tau 0.5 /tau_max 2.5 >> SetDefaults
+  0 << /resolution 0.5 >> SetStatus
+  /correlomatrix_detector Create 
+  1 Simulate % must simulate to force creation of histogram
+  [/covariance] get cva [1] Part [1] Part length
+  6 eq
+} assert_or_die
+
+
+% Functions for actual correlation tests
+
+% [spike_times_1 spike_times_2] cdsim -> histogram n_events cd_gid
+/cdsim
+{
+  << >> begin
+    /st Set
+
+    % build and connect
+    /correlomatrix_detector Create /cdt Set
+    [0 1] { 
+      /i Set 
+      /spike_generator Create /sg Set
+      sg << /precise_times false /spike_times st i get >> SetStatus
+      /static_synapse << /receptor_type i >> SetDefaults
+      sg cdt Connect
+      sg
+    } Table /sgens Set
+
+    % simulate to max spike time plus 2 min_delay
+    st Flatten Max 0 [/min_delay] get 2 mul add Simulate
+    
+    % get spike counts and histogram
+    cdt [ /covariance ] get cva [1] Part [2] Part
+    cdt [ /n_events  ] get cva
+    cdt
+  end
+}
+def
+
+% spike_times_1 spike_times_2 hist cdtest -> true/false
+/cdtest
+{
+  << >> begin
+  /ehist Set
+  2 arraystore /st Set
+
+  st cdsim ;
+    
+  % check spike counts
+  st { length } Map eq 
+
+  % check histogram
+  exch
+  ehist { cvd } Map eq
+
+  and
+
+  end
+} def
+
+
+% Eighth test: correlation histogram for time differences in bin centers
+{
+  ResetKernel
+  
+  0 << /resolution 0.1 >> SetStatus
+  /correlomatrix_detector << /delta_tau 0.5 /tau_max 2.0 /N_channels 2 >> SetDefaults
+
+  [     1.5 2.5 4.5 ]       % input 0
+  [ 0.5     2.5     ]       % input 1
+  [ 1 0 1 0 2 ]  % histogram
+  cdtest
+} assert_or_die
+
+
+% Ninth test: test that reset works
+{
+  ResetKernel
+
+  0 << /resolution 0.1 >> SetStatus
+  /correlomatrix_detector << /delta_tau .5 /tau_max 5.0 /N_channels N_ch >> SetDefaults
+
+  % expected histogram: [ 1 0 0 0 1 ] 
+  [ [ 1.0 2.0     6.0 ]       % input 0
+    [     2.0 4.0     ]       % input 1
+  ]
+  cdsim
+
+  /cdt Set
+  ;         % pop n_events
+  Plus 0 gt % ensure we have non-zeros in histogram
+  {
+    cdt << /N_channels N_ch >> SetStatus
+    cdt [/n_events] get cva Plus 0 eq  
+    cdt [/covariance] get cva [1] Part [1] Part Plus 0.0 eq  
+    and
+  }
+  { false }
+  ifelse
+
+} assert_or_die
+
+endusing

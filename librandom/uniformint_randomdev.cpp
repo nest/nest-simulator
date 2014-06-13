@@ -22,9 +22,11 @@
 
 #include "uniformint_randomdev.h"
 #include "dictutils.h"
+#include "sliexceptions.h"
+#include "compose.hpp"
 
 #include <cmath>
-#include <stdexcept>
+#include <limits>
 
 // by default, init as exponential density with mean 1
 librandom::UniformIntRandomDev::UniformIntRandomDev(RngPtr r_source)
@@ -33,7 +35,6 @@ librandom::UniformIntRandomDev::UniformIntRandomDev(RngPtr r_source)
     nmax_(0),
     range_(nmax_-nmin_+1)
 { 
-  assert(range_ > 0);
 }
 
 librandom::UniformIntRandomDev::UniformIntRandomDev() 
@@ -42,22 +43,30 @@ librandom::UniformIntRandomDev::UniformIntRandomDev()
     nmax_(0),
     range_(nmax_-nmin_+1)
 { 
-  assert(range_ > 0);
 }
-
 
 void librandom::UniformIntRandomDev::set_status(const DictionaryDatum& d)
 {
-  updateValue<long>(d, "nmin", nmin_);
-  updateValue<long>(d, "nmax", nmax_);
-  range_ = nmax_ - nmin_ + 1;
+  long new_nmin = nmin_;
+  long new_nmax = nmax_;
 
-  if ( range_ < 1 )
-    throw std::out_of_range("UniformIntRandomDev::set_status: range >= 1 required.");
+  updateValue<long>(d, "low", new_nmin);
+  updateValue<long>(d, "high", new_nmax);
+
+  if ( new_nmax < new_nmin )
+    throw BadParameterValue("Uniformint RDV: low <= high required.");
+  
+  if ( new_nmax - new_nmin < 0 )
+    throw BadParameterValue(String::compose("Uniformint RDV: high - low < %1 required.",
+					    static_cast<double>(std::numeric_limits<long>::max())));
+
+  nmin_ = new_nmin;
+  nmax_ = new_nmax;
+  range_ = nmax_ - nmin_ + 1;
 } 
 
 void librandom::UniformIntRandomDev::get_status(DictionaryDatum &d) const 
 {
-  def<long>(d, "nmin", nmin_);
-  def<long>(d, "nmax", nmax_);
+  def<long>(d, "low", nmin_);
+  def<long>(d, "high", nmax_);
 }

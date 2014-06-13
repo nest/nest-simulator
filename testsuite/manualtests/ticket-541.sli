@@ -35,7 +35,7 @@ Therefore, this test resides in manualtests.
 Author: Yury V. Zaytsev, Hans E. Plesser, 2012-11-29
  */
 
-/unittest (8831) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity

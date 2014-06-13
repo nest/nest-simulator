@@ -45,7 +45,7 @@ Author: Hans Ekkehard Plesser, 2010-10-04
 % by a restart of NEST with a serial binary.
 statusdict/is_mpi :: {statusdict/exitcodes/success :: quit_i} if
 
-/unittest (8831) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity

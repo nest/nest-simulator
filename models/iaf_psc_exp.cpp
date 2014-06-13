@@ -47,6 +47,10 @@ namespace nest
   {
     // use standard names whereever you can for consistency!
     insert_(names::V_m, &iaf_psc_exp::get_V_m_);
+    insert_(names::weighted_spikes_ex, &iaf_psc_exp::get_weighted_spikes_ex_);
+    insert_(names::weighted_spikes_in, &iaf_psc_exp::get_weighted_spikes_in_);
+    insert_(names::input_currents_ex, &iaf_psc_exp::get_input_currents_ex_);
+    insert_(names::input_currents_in, &iaf_psc_exp::get_input_currents_in_);
   }
 }
 
@@ -267,8 +271,12 @@ void nest::iaf_psc_exp::update(const Time &origin, const long_t from, const long
     S_.i_syn_in_ *= V_.P11in_;
 
     // the spikes arriving at T+1 have an immediate effect on the state of the neuron
-    S_.i_syn_ex_ += B_.spikes_ex_.get_value(lag);
-    S_.i_syn_in_ += B_.spikes_in_.get_value(lag);
+    
+    V_.weighted_spikes_ex_ = B_.spikes_ex_.get_value(lag);
+    V_.weighted_spikes_in_ = B_.spikes_in_.get_value(lag);
+    
+    S_.i_syn_ex_ += V_.weighted_spikes_ex_;
+    S_.i_syn_in_ += V_.weighted_spikes_in_;
                                                        
     if ( S_.V_m_ >= P_.Theta_ )  // threshold crossing
     {

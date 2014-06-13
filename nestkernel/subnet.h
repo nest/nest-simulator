@@ -39,6 +39,8 @@ A network node of type subnet serves as a root node for subnetworks
 Parameters:
 Parameters that can be accessed via the GetStatus and SetStatus functions:
 
+children_on_same_vp (booltype) -
+   Whether all children are allocated on the same virtual process
 customdict (dictionarytype) -
    A user-defined dictionary, which may be used to store additional
    data.
@@ -234,6 +236,7 @@ namespace nest{
     last_mid_ = mid;
     return lid;
   }
+
   /**
    * Add a remote node to the subnet.
    */

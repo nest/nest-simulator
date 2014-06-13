@@ -36,11 +36,10 @@ Author: Jochen Martin Eppler
 FirstVersion: May 2010 
 */
 
-% don't run this test if we didn't compile with threads 
-statusdict/threading :: (no) eq {statusdict/exitcodes/success :: quit_i} if
-
-/unittest (8418) require
+(unittest) run
 /unittest using
+
+is_threaded not { exit_test_gracefully } if
 
 % arrays to store the event dictionaries and n_events for the
 % different trials

@@ -35,7 +35,7 @@
    Author: Jochen Martin Eppler
  */
 
-/unittest (7488) require
+(unittest) run
 /unittest using
 
 % Checks for consistent operation for node models 

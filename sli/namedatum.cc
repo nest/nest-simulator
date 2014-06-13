@@ -21,9 +21,6 @@
  */
 
 #include "namedatum.h"
-#include "datumconverter.h"
-#include "aggregatedatum_impl.h"
-
 
 // initialization of static members requires template<>
 // see Stroustrup C.13.1 --- HEP 2001-08-09

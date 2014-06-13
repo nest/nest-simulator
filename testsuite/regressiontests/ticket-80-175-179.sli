@@ -38,7 +38,7 @@
    5. Test that all devices yield identical results under all conditions.
 */
 
-/unittest (6335) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity

@@ -32,7 +32,7 @@
  *
  */
 
-/unittest (8045) require
+(unittest) run
 /unittest using
 
 % First test: identical modeldicts

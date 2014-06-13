@@ -32,12 +32,10 @@ libnest_la_SOURCES=\
 		communicator.h communicator_impl.h communicator.cpp\
 		sibling_container.h sibling_container.cpp\
 		subnet.h subnet.cpp\
-		multirange.h multirange.cpp\
 		connection.h connection.cpp\
 		connection_het_wd.h connection_het_wd.cpp\
 		connection_hom_wd.h connection_hom_wd.cpp\
 		connection_manager.h connection_manager.cpp\
-		connectiondatum.h connectiondatum.cpp\
 		connection_id.h connection_id.cpp\
 		connector.h\
 		connector_model.h connector_model.cpp\
@@ -49,10 +47,12 @@ libnest_la_SOURCES=\
 		generic_connector.h\
 		generic_connector_model.h\
 		genericmodel.h\
+		gid_collection.h gid_collection.cpp\
 		bg_get_mem.c\
 		histentry.h histentry.cpp\
 		model.h model.cpp\
 		nest.h\
+		nest_datums.h nest_datums.cpp\
 		nest_names.cpp nest_names.h\
 		nestmodule.h nestmodule.cpp\
 		nest_time.h nest_time.cpp \
@@ -61,7 +61,8 @@ libnest_la_SOURCES=\
 		net_thread.h net_thread.cpp\
 		modelrange.h modelrange.cpp\
 		modelrangemanager.h modelrangemanager.cpp\
-		network.h network.cpp\
+		multirange.h multirange.cpp\
+		network.h network_impl.h network.cpp\
 		node.h node.cpp\
 		nodelist.h nodelist.cpp\
 		proxynode.h proxynode.cpp\
@@ -71,6 +72,9 @@ libnest_la_SOURCES=\
 		scheduler.h scheduler.cpp\
 		spikecounter.h spikecounter.cpp\
 		stimulating_device.h\
+		conn_parameter.h conn_parameter.cpp\
+		conn_builder.h conn_builder.cpp\
+		conn_builder_factory.h\
 		music_event_handler.h music_event_handler.cpp
 
 libnest_la_LIBADD= @LIBLTDL@ @LIBADD_DL@

@@ -88,7 +88,8 @@ class SLIStartup: public SLIModule
   Name ismpi_name;
   Name have_gsl_name;
   Name have_pthreads_name;
-  Name havemusic_name;
+  Name have_music_name;
+  Name have_libneurosim_name;
   Name ndebug_name;
 
   Name exitcodes_name;

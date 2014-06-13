@@ -40,6 +40,9 @@ Description:
 
  - the threshold adaptation works by looking for negative serial correlation of
    the inter-spike intervals
+   
+ - that threshold adaptation with time constant of the membrane is equivalent
+   to an inhibitory self-connection with the same strength
 
  All of these tests are based on random number realizations, which is necessary
  since the model is stochastic. Thus there is a finite probability for the test
@@ -57,7 +60,7 @@ Description:
  test is still very unlikely.
 
  The intention of this script is to make sure that there are no gross errors in
- the main functions of the neuron model pp_psc_delta.
+ the functionality of the neuron model pp_psc_delta.
 
 Remarks:
 
@@ -70,6 +73,9 @@ Remarks:
       test_iaf_dc_aligned.sli
       
   as a guideline. The commented code is the original python test code.
+  
+  Test 5) was added later (2014), when support for several adaptation time 
+  constants was added to pp_psc_delta.
 
 
 Author:  June 2011, Deger, Zaytsev
@@ -77,7 +83,7 @@ SeeAlso: pp_psc_delta
 */
 
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 
@@ -172,8 +178,8 @@ SeeAlso: pp_psc_delta
       /dead_time_random  true
       /dead_time_shape  10
       /with_reset false
-      /tau_sfa 34.0
-      /q_sfa 0.0
+      /tau_sfa [34.0]
+      /q_sfa [0.0]
       /c_1  0.0
       /c_2 lam 
       /c_3   0.25
@@ -270,8 +276,8 @@ SeeAlso: pp_psc_delta
       /dead_time_random  false
       /dead_time_shape  1
       /with_reset false
-      /tau_sfa 34.0
-      /q_sfa 7.0
+      /tau_sfa [34.0]
+      /q_sfa [7.0]
       /c_1  0.0
       /c_2 lam 
       /c_3   0.25
@@ -299,6 +305,7 @@ SeeAlso: pp_psc_delta
     % ratio = rate_sim / rate_ana
     rate_sim rate_ana div /ratio Set
     
+
     %# Adaptive threshold changes rate, thus not asserted here
     %0.5 ratio lt
     %ratio 1.5 lt
@@ -345,7 +352,93 @@ SeeAlso: pp_psc_delta
 } def
 
 
+% 5) check if threshold adaptation with membrane time constant corresponds to an
+% inhibitory self-connection
+
+/compare_adaptation_and_self_inhibition
+{
+
+    % test parameters
+    0.001 /d Set
+    10.0 /lam Set
+    200000.0 /T Set
+    25.0 /tau_m Set
+    50.0 /J_self Set
+    0.1 /J_adapt Set
+
+    ResetKernel
+
+    % create a neuron where adaptation does the reset, and one where a 
+    % synapse does.
+    /pp_psc_delta Create /nrn1 Set
+    /pp_psc_delta Create /nrn2 Set
+
+    <<
+      /tau_m  tau_m
+      /C_m   250.0
+      /dead_time d 
+      /dead_time_random  false
+      /dead_time_shape  1
+      /with_reset false
+      /tau_sfa [300.0 tau_m]
+      /q_sfa [J_adapt J_self]
+      /c_1  0.0
+      /c_2 lam 
+      /c_3   1.0
+      /I_e   0.0
+      /t_ref_remaining   0.0
+    >> /params1 Set
+
+    <<
+      /tau_m  tau_m
+      /C_m   250.0
+      /dead_time d 
+      /dead_time_random  false
+      /dead_time_shape  1
+      /with_reset false
+      /tau_sfa 300.0
+      /q_sfa J_adapt
+      /c_1  0.0
+      /c_2 lam 
+      /c_3   1.0
+      /I_e   0.0
+      /t_ref_remaining   0.0
+    >> /params2 Set
+
+    nrn1 params1 SetStatus
+    nrn2 params2 SetStatus
+
+    /spike_detector Create /sd1 Set
+    /spike_detector Create /sd2 Set
+
+    nrn1 sd1 Connect
+    nrn2 sd2 Connect
+
+    <<
+      /weight  -1 J_self mul
+      /delay   1.0
+    >> /synparams Set
+    
+    /static_synapse synparams SetDefaults
+    nrn2 nrn2 Connect
+    
+    T Simulate
+
+    sd1 GetStatus /n_events get /n1 Set
+    sd2 GetStatus /n_events get /n2 Set
+
+    n1 cvd n2 cvd div /ratio Set
+    1.0 err sub ratio lt
+    ratio 1.0 err add lt
+    % for debugging of the test, print the observed spike numbers, ratio, and lam*T
+    % cerr [n1 n2 ratio T lam mul 1000 div] pprint endl ;
+    and assert_or_die
+    
+} def
+
+
 check_rate_and_fixed_dead_time 
 check_random_dead_time
 check_adapting_threshold
+compare_adaptation_and_self_inhibition
 

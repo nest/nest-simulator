@@ -1,6 +1,3 @@
-#ifndef TOPOLOGY_NAMES_H
-#define TOPOLOGY_NAMES_H
-
 /*
  *  topology_names.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef TOPOLOGY_NAMES_H
+#define TOPOLOGY_NAMES_H
 
 /*
     This file is part of the NEST topology module.

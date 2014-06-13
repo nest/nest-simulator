@@ -135,7 +135,7 @@ class Scanner
   int digval(unsigned char c) const 
   {return c-'0';}
 
-  std::string ds;
+
 
 public:
   SymbolDatum BeginArraySymbol;

@@ -61,8 +61,7 @@ namespace nest
   }
 
   TopologyModule::~TopologyModule()
-  {
-  }
+  {}
 
   const std::string TopologyModule::name(void) const
   {
@@ -71,9 +70,7 @@ namespace nest
 
   const std::string TopologyModule::commandstring(void) const
   {
-    return
-      std::string("/topology /C++ ($Revision: 10398 $) provide-component "
-		  "/topology-interface /SLI (9954) require-component ");
+    return std::string("(topology-interface) run");
   }
 
   GenericFactory<AbstractMask> &TopologyModule::mask_factory_(void)
@@ -1138,17 +1135,13 @@ namespace nest
 
     const index layer_gid = getValue<long_t>(i->OStack.pick(1));
 
-    const std::string synname = getValue<std::string>(i->OStack.pick(0));
-    const Token synapse = net_->get_synapsedict().lookup(synname);
-    if ( synapse.empty() )
-      throw UnknownSynapseType(synname);
-    const long synapse_id = static_cast<long>(synapse);
+    const Token syn_model = i->OStack.pick(0);
 
     AbstractLayer* const layer = dynamic_cast<AbstractLayer*>(net_->get_node(layer_gid));
     if (layer == NULL)
       throw TypeMismatch("any layer type", "something else");
 
-    layer->dump_connections(out, synapse_id);
+    layer->dump_connections(out, syn_model);
 
     i->OStack.pop(2);  // leave ostream on stack
     i->EStack.pop();

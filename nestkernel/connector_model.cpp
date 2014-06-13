@@ -1,4 +1,3 @@
-
 /*
  *  connector_model.cpp
  *

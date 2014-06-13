@@ -61,6 +61,8 @@ namespace nest
      only sends a spike if a transition of its state occurs. If the
      state makes an up-transition it sends a spike with multiplicity 2,
      if a down transition occurs, it sends a spike with multiplicity 1.
+     The neuron accepts several sources of currents, e.g. from a
+     noise_generator.
      
      Parameters:
      tau_m      double - Membrane time constant (mean inter-update-interval) in ms.

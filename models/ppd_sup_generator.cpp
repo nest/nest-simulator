@@ -50,33 +50,31 @@ nest::ppd_sup_generator::Age_distribution_::Age_distribution_(size_t num_age_bin
 
 nest::ulong_t nest::ppd_sup_generator::Age_distribution_::update(double_t hazard_step, librandom::RngPtr rng)
 {
-    ulong_t n_spikes;
+    ulong_t n_spikes;  // only set from poisson_dev, bino_dev or 0, thus >= 0
     if (occ_active_>0)
       { 
       /*The binomial distribution converges towards the Poisson distribution as
       the number of trials goes to infinity while the product np remains fixed.
-      Therefore the Poisson distribution with parameter λ = np can be used as 
-      an approximation to B(n, p) of the binomial distribution if n is 
-      sufficiently large and p is sufficiently small. According to two rules 
-      of thumb, this approximation is good if n ≥ 20 and p ≤ 0.05, or if 
-      n ≥ 100 and np ≤ 10. Source:
+      Therefore the Poisson distribution with parameter \lambda = np can be used as
+      an approximation to B(n, p) of the binomial distribution if n is
+      sufficiently large and p is sufficiently small. According to two rules
+      of thumb, this approximation is good if n >= 20 and p <= 0.05, or if
+      n >= 100 and np <= 10. Source:
       http://en.wikipedia.org/wiki/Binomial_distribution#Poisson_approximation */
       if (( occ_active_ >= 100 && hazard_step <= 0.01 ) || \
           ( occ_active_ >= 500 && hazard_step * occ_active_ <= 0.1 ))
         {
         poisson_dev_.set_lambda( hazard_step * occ_active_ );
-        n_spikes = poisson_dev_.uldev(rng);
+        n_spikes = poisson_dev_.ldev(rng);
         if ( n_spikes > occ_active_)
             {
             n_spikes = occ_active_;
             }
-        else
-            {;}
         }
       else
         {
         bino_dev_.set_p_n( hazard_step, occ_active_); 
-        n_spikes = bino_dev_.uldev(rng);
+        n_spikes = bino_dev_.ldev(rng);
         }
       }
     else
@@ -84,14 +82,12 @@ nest::ulong_t nest::ppd_sup_generator::Age_distribution_::update(double_t hazard
       n_spikes = 0;
       }
     
-    if (occ_refractory_.size()>0)
+    if ( !occ_refractory_.empty() )
       {
       occ_active_ += occ_refractory_[activate_] - n_spikes;
       occ_refractory_[activate_] = n_spikes;
       activate_ = (activate_ + 1) % occ_refractory_.size();
       }
-    else
-      {;}
     return n_spikes;
 }
 

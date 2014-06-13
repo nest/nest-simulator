@@ -61,7 +61,8 @@ This script tests support for multiple multimeters:
 Author: Plesser
 FirstVersion: 2011-02-04
 */
-/unittest (8831) require
+
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity

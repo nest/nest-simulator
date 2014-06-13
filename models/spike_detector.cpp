@@ -34,13 +34,17 @@
 nest::spike_detector::spike_detector()
         : Node(),
           device_(*this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true),  // record time and gid
-          user_set_precise_times_(false)
+          user_set_precise_times_(false),
+          has_proxies_(false),
+          local_receiver_(true)
 {}
 
 nest::spike_detector::spike_detector(const spike_detector &n)
         : Node(n),
           device_(*this, n.device_),
-          user_set_precise_times_(n.user_set_precise_times_)
+          user_set_precise_times_(n.user_set_precise_times_),
+          has_proxies_(false),
+          local_receiver_(true)
 {}
 
 void nest::spike_detector::init_state_(const Node& np)
@@ -96,7 +100,7 @@ void nest::spike_detector::get_status(DictionaryDatum &d) const
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
-  if (get_thread() == 0)
+  if (local_receiver_ && get_thread() == 0)
   {
     const SiblingContainer* siblings = network()->get_thread_siblings(get_gid());
     std::vector<Node*>::const_iterator sibling;

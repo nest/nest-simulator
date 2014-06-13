@@ -90,7 +90,7 @@ Scanner::Scanner(std::istream* is)
         : in(is), code(std::numeric_limits<unsigned char>::max(),invalid),
 	  line(0),
 	  col(0),
-          space(32),tab(9),endoln(10),cr(13),endof(4), ds(),
+          space(32),tab(9),endoln(10),cr(13),endof(4), 
           BeginArraySymbol("/BeginArraySymbol"), // these symbol-names cannot be entered
           EndArraySymbol("/EndArraySymbol"),     // by keyboard! This is important to ensure
           BeginProcedureSymbol("/BeginProcedureSymbol"), // the integrity of the scanner/parser
@@ -507,6 +507,7 @@ bool Scanner::operator()(Token& t)
     static const int base=10;
     ScanStates state=start;
     std::string s; s.reserve(255);
+    std::string ds;
     context.reserve(255);
 
     unsigned char c='\0';

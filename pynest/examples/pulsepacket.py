@@ -130,11 +130,11 @@ t={}
 
 for s in range(senders.size):
     currentsender=senders[s]
-    if not v.has_key(currentsender) :
+    if currentsender not in v:
         v[currentsender] = array.array('f')
     v[currentsender].append(float(V[s]))
 
-    if not t.has_key(currentsender) :
+    if currentsender not in t:
         t[currentsender] = array.array('f')
     t[currentsender].append(float(t_V[s]))
 

@@ -34,8 +34,10 @@ Author:  May 2012, Plesser, based on brunel_ps.sli
 See: brunel_ps.sli
 */
 
-/unittest (9726) require
+(unittest) run
 /unittest using
+
+is_threaded not { exit_test_gracefully } if
 
 /brunel_setup {
 /brunel << >> def

@@ -261,6 +261,11 @@ public:
   int execute(const std::string &);
 
   /**
+   * Execute the supplied token.
+   */
+  int execute(const Token &);
+
+  /**
    * Start the interpreter and run the startup code.
    */
   int execute(int v=0);

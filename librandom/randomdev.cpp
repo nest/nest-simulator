@@ -22,16 +22,7 @@
 
 #include "randomdev.h"
 
-// These two functions must not be inlined
-// Otherwise, the Compaq C++ Compiler goes haywire
-// HEP, 2004-06-29
-unsigned long librandom::RandomDev::uldev(void)
-{
-  assert(false);
-  return 0;
-}
-
-unsigned long librandom::RandomDev::uldev(RngPtr) const
+long librandom::RandomDev::ldev(RngPtr) const
 {
   assert(false);
   return 0;

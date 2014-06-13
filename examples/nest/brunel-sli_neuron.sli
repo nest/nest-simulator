@@ -1,5 +1,5 @@
 /*
- *  brunel.sli
+ *  brunel-sli_neuron.sli
  *
  *  This file is part of NEST.
  *
@@ -137,7 +137,7 @@ def
   % number of neurons per population to record from
   /Nrec 50 def
 
- [0]
+ 0
   <<
     /resolution  dt
     /overwrite_files true
@@ -198,7 +198,7 @@ def
 /calibrate
 {
   GetResolution /h Set
-}
+} def
 
 /compile
 {
@@ -245,8 +245,8 @@ end
       % lists from the subnetworks
 
       % obtain array with GIDs of all excitatory/inhibitory neurons
-      /E_neurons E_net GetNodes def
-      /I_neurons I_net GetNodes def
+      /E_neurons E_net GetGlobalNodes def
+      /I_neurons I_net GetGlobalNodes def
 
       % list of all neurons
       /allNeurons E_neurons I_neurons join def
@@ -308,14 +308,14 @@ end
         CE          % number of source neurons to pick
         /syn_ex     % the synapse model
         RandomConvergentConnect
-      } bind % bind improves efficiency
+      }  % bind improves efficiency
       forall
 
       E_neurons
       {
         I_neurons exch CI /syn_in RandomConvergentConnect
 
-      } bind forall
+      }  forall
 
       (Connecting inhibitory population.) =
 
@@ -326,12 +326,12 @@ end
       I_neurons
       {
         E_neurons exch CE /syn_ex RandomConvergentConnect
-      } bind forall
+      }  forall
 
       I_neurons
       {
         I_neurons exch CI /syn_in RandomConvergentConnect
-      } bind forall
+      }  forall
 
       % Spike detectors are connected to the first Nrec neurons in each
       % population.  Since neurons are equal and connectivity is homogeneously
@@ -343,6 +343,8 @@ end
       I_neurons Nrec Take insd ConvergentConnect
 
     toc /BuildCPUTime Set
+      (Building time     : ) =only BuildCPUTime =only ( s) =
+
      /syn_ex GetDefaults /num_connections get /n_ex_syn Set
      /syn_in GetDefaults /num_connections get /n_in_syn Set
 

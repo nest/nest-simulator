@@ -28,7 +28,7 @@ namespace nest
 {
   Vose::Vose(std::vector<double_t> dist)
   {
-    assert(dist.size() > 0);
+    assert( !dist.empty() );
 
     const index n = dist.size();
 

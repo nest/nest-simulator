@@ -35,7 +35,7 @@ Author: Diesmann
 FirstVersion: 100918
 */
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 {

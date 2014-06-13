@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # test_create.py
 #
@@ -18,99 +18,92 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 Creation tests
 """
 
 import unittest
+import warnings
 import nest
-import sys
 
+
+@nest.check_stack
 class CreateTestCase(unittest.TestCase):
-
+    """Creation tests"""
 
     def test_ModelCreate(self):
-        """Model Creation"""       
+        """Model Creation"""
 
         nest.ResetKernel()
+
         for model in nest.Models(mtype='nodes'):
             node = nest.Create(model)
-
+            self.assertGreater(node[0], 0)
 
     def test_ModelCreateN(self):
-        """Model Creation with N"""       
+        """Model Creation with N"""
 
         nest.ResetKernel()
-        for model in nest.Models(mtype='nodes'):
-            node = nest.Create(model,10)
 
+        num_nodes = 10
+        for model in nest.Models(mtype='nodes'):
+            nodes = nest.Create(model, num_nodes)
+            self.assertEqual(len(nodes), num_nodes)
 
     def test_ModelCreateNdict(self):
-        """Model Creation with N and dict"""       
-
-        nest.ResetKernel()
-        for model in nest.Models(mtype='nodes'):
-            node = nest.Create(model,10, {})
-
-
-    def test_ModelDict(self):
-        """IAF Creation with N and dict"""       
+        """Model Creation with N and dict"""
 
         nest.ResetKernel()
 
-        n = nest.Create('iaf_neuron', 10, {'V_m':12.0})
-        V_m = [12.0, 12.0, 12.0, 12.0, 12.0, 12.0, 12.0, 12.0, 12.0, 12.0]        
-        self.assertEqual(nest.GetStatus(n,'V_m'), V_m)
-        self.assertEqual([key['V_m'] for key in nest.GetStatus(n)], V_m)
+        num_nodes = 10
+        voltage = 12.0
+        n = nest.Create('iaf_neuron', num_nodes, {'V_m': voltage})
 
-        
+        self.assertEqual(nest.GetStatus(n, 'V_m'), (voltage, ) * num_nodes)
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            self.assertRaises(TypeError, nest.Create, 'iaf_neuron', 10, tuple())
+            self.assertTrue(issubclass(w[-1].category, UserWarning))
+
     def test_ModelDicts(self):
-        """IAF Creation with N and dicts"""       
+        """IAF Creation with N and dicts"""
 
         nest.ResetKernel()
 
-        V_m = [0.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.]
-        n   = nest.Create('iaf_neuron', 10, [{'V_m':v} for v in V_m])
-        self.assertEqual(nest.GetStatus(n,'V_m'), V_m)
-        self.assertEqual([key['V_m'] for key in nest.GetStatus(n)], V_m)
+        num_nodes = 10
+        V_m = (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
+        n = nest.Create('iaf_neuron', num_nodes, [{'V_m': v} for v in V_m])
 
+        self.assertEqual(nest.GetStatus(n, 'V_m'), V_m)
 
     def test_CopyModel(self):
         """CopyModel"""
 
-        nest.ResetKernel()        
-        nest.CopyModel('iaf_neuron','new_neuron',{'V_m':10.0})
+        nest.ResetKernel()
+
+        nest.CopyModel('iaf_neuron', 'new_neuron', {'V_m': 10.0})
         vm = nest.GetDefaults('new_neuron')['V_m']
-        self.assertEqual(vm,10.0)
-        
-        n = nest.Create('new_neuron',10)
+        self.assertEqual(vm, 10.0)
+
+        n = nest.Create('new_neuron', 10)
         vm = nest.GetStatus([n[0]])[0]['V_m']
-        self.assertEqual(vm,10.0)
-        
-        nest.CopyModel('static_synapse', 'new_synapse',{'weight':10.})
-        nest.Connect([n[0]],[n[1]],model='new_synapse')
+        self.assertEqual(vm, 10.0)
+
+        nest.CopyModel('static_synapse', 'new_synapse', {'weight': 10.})
+        nest.Connect([n[0]], [n[1]], syn_spec='new_synapse')
         w = nest.GetDefaults('new_synapse')['weight']
-        self.assertEqual(w,10.0)
-        
-        try:
-            nest.CopyModel('iaf_neuron','new_neuron') # shouldn't be possible a second time
-            self.fail('an error should have risen!')  # should not be reached
-        except nest.NESTError:
-            info = sys.exc_info()[1]
-            if not "NewModelNameExists" in info.__str__():
-                self.fail('could not pass error message to NEST!')             
-        # another error has been thrown, this is wrong
-        except: 
-          self.fail('wrong error has been thrown')
+        self.assertEqual(w, 10.0)
 
-        
+        self.assertRaisesRegex(nest.NESTError, "NewModelNameExists", nest.CopyModel, 'iaf_neuron', 'new_neuron')
+
+
 def suite():
-
-    suite = unittest.makeSuite(CreateTestCase,'test')
+    suite = unittest.makeSuite(CreateTestCase, 'test')
     return suite
 
 
 if __name__ == "__main__":
-
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

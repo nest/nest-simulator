@@ -225,8 +225,7 @@ bool set_property(const DictionaryDatum & d, Name propname, index p, PropT &prop
 {
   if (d->known(propname))
   {
-    ArrayDatum* arrd = 0;
-    arrd = dynamic_cast<ArrayDatum*>((*d)[propname].datum());
+    ArrayDatum* arrd = dynamic_cast<ArrayDatum*>((*d)[propname].datum());
     if (! arrd)
     {
       ArrayDatum const arrd;

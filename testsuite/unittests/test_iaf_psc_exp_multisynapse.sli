@@ -1,16 +1,22 @@
 /*
  *  test_iaf_psc_exp_multisynapse.sli
  *
- *  This file is part of NEST
+ *  This file is part of NEST.
  *
- *  Copyright (C) 2009 by
- *  The NEST Initiative
+ *  Copyright (C) 2004 The NEST Initiative
  *
- *  See the file AUTHORS for details.
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
  *
- *  Permission is granted to compile and modify
- *  this file for non-commercial use.
- *  See the file LICENSE for details.
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -30,7 +36,7 @@
   
    SeeAlso: test_iaf_psc_alpha_multisynapse, iaf_psc_exp_multisynapse
 
-   FirstVersion: April 2013
+   FirstVersion: April 2013n
    Author: Hannah Bos
  */
 
@@ -47,7 +53,6 @@ ResetKernel
       /resolution h
   >> SetStatus
 
-/n_syn      4 def
 /taus       [2. 20. 60. 100.] def
 /delays     [7. 5. 2. 1. ] def % ms
 /weights    [30. 50. 20. 10.] def
@@ -55,17 +60,10 @@ ResetKernel
 /dt         0.1 def
 
 /iaf_psc_exp_multisynapse Create /npost Set
-npost << /n_synapses n_syn /tau_syn taus >> SetStatus
-
-npost GetStatus /n_synapses get
-n_syn eq assert_or_die
+npost << /tau_syn taus >> SetStatus
 
 npost GetStatus /tau_syn get
 taus eq assert_or_die
-
-% test if tau_syn array is exactly n_synapses long
-npost dup GetStatus /tau_syn get length
-exch GetStatus /n_synapses get eq assert_or_die
 
 /voltmeter Create /vm Set
 vm << /withtime true  /time_in_steps true /interval h /to_screen false >> SetStatus
@@ -78,10 +76,10 @@ sg << /spike_times [spike_time] >> SetStatus
 /static_synapse /s3 CopyModel
 /static_synapse /s4 CopyModel
 
-/s1 << /weight weights 0 get /delay delays 0 get /receptor_type 0 >> SetDefaults
-/s2 << /weight weights 1 get /delay delays 1 get /receptor_type 1 >> SetDefaults
-/s3 << /weight weights 2 get /delay delays 2 get /receptor_type 2 >> SetDefaults
-/s4 << /weight weights 3 get /delay delays 3 get /receptor_type 3 >> SetDefaults
+/s1 << /weight weights 0 get /delay delays 0 get /receptor_type 1 >> SetDefaults
+/s2 << /weight weights 1 get /delay delays 1 get /receptor_type 2 >> SetDefaults
+/s3 << /weight weights 2 get /delay delays 2 get /receptor_type 3 >> SetDefaults
+/s4 << /weight weights 3 get /delay delays 3 get /receptor_type 4 >> SetDefaults
 
 sg npost /s1 Connect
 sg npost /s2 Connect

@@ -40,7 +40,7 @@
 %    Hans Ekkehard Plesser
 
 
-/unittest (7488) require
+(unittest) run
 /unittest using
 
 0 << 

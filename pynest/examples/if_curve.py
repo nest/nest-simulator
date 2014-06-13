@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # if_curve.py
 #
 # This file is part of NEST.
@@ -103,7 +104,7 @@ class IF_curve():
         self.rate=numpy.zeros((self.i_range.size,self.std_range.size))
         nest.sr('M_WARNING setverbosity')
         for n,i in enumerate(self.i_range):
-            print "I= %s"%i
+            print("I = {0}".format(i))
             for m,std in enumerate(self.std_range):
                 self.rate[n,m]=self.output_rate(i,std)
             

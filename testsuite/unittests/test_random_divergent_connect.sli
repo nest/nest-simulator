@@ -36,7 +36,7 @@
    SeeAlso: RandomDivergentConnect, testsuite::test_divergent_connect
  */
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 % Initialise variables
@@ -48,52 +48,96 @@
 % Decide the number of nodes to connect to.
 c num_neur mul cvi /n Set
 
-ResetKernel
 
-% Set settings for root network. These
-% settings could be changed to test different
-% aspects of simulation.
-0 <<
+/prepare_nodes
+{
+    ResetKernel
+
+    % Set settings for root network. These
+    % settings could be changed to test different
+    % aspects of simulation.
+    0 <<
       /local_num_threads 2
       /resolution h
     >> SetStatus
 
-% Create some target neurons.
-/iaf_psc_delta num_neur Create ;
+    % Create some target neurons.
+    /P_from 0 GetStatus /network_size get def
+    /P_to /iaf_psc_delta num_neur Create def
 
-% Get list of neuron IDs.
-[num_neur] Range /t Set
+    % Create source neuron.
+    /dc_generator Create /dc_gen Set
 
-% Create source neuron.
-/dc_generator Create /dc_gen Set
+}
+def
+
+
+/check_param
+{
+    << >> begin
+    
+    /source Set /value Set /param Set
+
+    << /source [source] /synapse_model /static_synapse >> GetConnections    
+    { param get } Map
+    6 ToUnitTestPrecision
+    dup length /l Set
+    [l] value LayoutArray
+    eq assert_or_die
+    
+    end
+}
+def
+
+
+
+% Test1: default weight, delay
+prepare_nodes
+
+
+/static_synapse
+<< /weight 1.23 /delay 2.3 >>
+SetDefaults
+
 
 % Call function. Connect nodes.
-dc_gen n t RandomDivergentConnect
+dc_gen n [P_from P_to] Range RandomDivergentConnect
 
 % Assert that number of connected nodes are correct.
-<< /source dc_gen /synapse_model /static_synapse >> FindConnections
+<< /source [dc_gen] /synapse_model /static_synapse >> GetConnections
 length n eq assert_or_die
 
-% Check the weight/delay variant of RandomDivergentConnect
-ResetKernel
 
-0 <<
-     /local_num_threads 2
-     /resolution h
-  >> SetStatus
+% Assert that the weights are correct.
+/weight 1.23 dc_gen check_param
 
-/iaf_neuron num_neur Create ;
-/dc_generator Create /dc_gen Set
+% Assert that the weights are correct.
+/delay 2.3 dc_gen check_param
 
+
+
+
+% Test2: given weight, delay
 /w [n] Range {cvd} Map def
 /d n array 1 add {cvd} Map def
 
-dc_gen n t w d RandomDivergentConnect
+
+prepare_nodes
+
+dc_gen n [P_from P_to] Range w d RandomDivergentConnect
 
 % we have to sort the weight list, as the connections are on different
 % threads, which may destroy their ordering
-<< /source dc_gen /synapse_model /static_synapse >> FindConnections
-{ GetStatus } Map { /weight get } Map
+<< /source [dc_gen] /synapse_model /static_synapse >> GetConnections
+{ GetStatus /weight get } Map
 Sort w eq assert_or_die
+
+
+% we have to sort the delay list, as the connections are on different
+% threads, which may destroy their ordering
+<< /source [dc_gen] /synapse_model /static_synapse >> GetConnections
+{ GetStatus /delay get } Map
+Sort d eq assert_or_die
+
 
 endusing

@@ -143,17 +143,17 @@ vm     = nest.Create('voltmeter', 1,     [{'record_to':['memory'], 'withtime':Tr
 sd     = nest.Create('spike_detector',1, [{'record_to':['memory'], 'withtime':True, 'withgid':True}])
 
 for i, currentpg in enumerate(pg):
-    nest.DivergentConnect([currentpg],n,weight=float(J[i]), delay=0.1)
-    nest.Connect([currentpg],n_free,      {'weight':J[i]})
+    nest.Connect([currentpg],n, 'all_to_all', {'weight': float(J[i]), 'delay': 0.1})
+    nest.Connect([currentpg],n_free, syn_spec={'weight':J[i]})
 
 nest.Connect(vm,n_free)
-nest.ConvergentConnect(n,sd)
+nest.Connect(n, sd, 'all_to_all')
 
 nest.Simulate(simtime)
 
 # free membrane potential (first 100 steps are omitted)
 v_free = nest.GetStatus(vm,'events')[0]['V_m'][100:-1]
 
-print 'mean membrane potential  (actual/calculated):', numpy.mean(v_free), mu*1000
-print 'variance  (actual/calculated):               ', numpy.var(v_free), sigma2*1e6
-print 'firing rate (actual/calculated):             ', nest.GetStatus(sd,'n_events')[0] / (n_neurons*simtime*ms), r
+print('mean membrane potential (actual / calculated): {0} / {1}'.format(numpy.mean(v_free), mu * 1000))
+print('variance (actual / calculated): {0} / {1}'.format(numpy.var(v_free), sigma2 * 1e6))
+print('firing rate (actual / calculated): {0} / {1}'.format(nest.GetStatus(sd, 'n_events')[0] / (n_neurons * simtime * ms), r))

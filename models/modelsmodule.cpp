@@ -43,10 +43,14 @@
 
 // Neuron models
 #include "aeif_cond_alpha.h"
+#include "aeif_cond_alpha_RK5.h"
+#include "aeif_cond_alpha_multisynapse.h"
 #include "aeif_cond_exp.h"
 #include "hh_cond_exp_traub.h"
 #include "hh_psc_alpha.h"
 #include "ht_neuron.h"
+#include "iaf_chs_2007.h"
+#include "iaf_chxk_2008.h"
 #include "iaf_cond_alpha.h"
 #include "iaf_cond_alpha_mc.h"
 #include "iaf_cond_exp.h"
@@ -61,6 +65,7 @@
 #include "mat2_psc_exp.h"
 #include "parrot_neuron.h"
 #include "pp_psc_delta.h"
+#include "pp_pop_psc_delta.h"
 #include "sli_neuron.h"
 #include "ginzburg_neuron.h"
 #include "mcculloch_pitts_neuron.h"
@@ -85,8 +90,8 @@
 #include "spin_detector.h"
 #include "multimeter.h"
 #include "correlation_detector.h"
+#include "correlomatrix_detector.h"
 
-//
 #include "volume_transmitter.h"
 
 
@@ -102,6 +107,7 @@
 #include "cont_delay_connection.h"
 #include "tsodyks_connection.h"
 #include "tsodyks2_connection.h"
+#include "quantal_stp_connection.h"
 #include "stdp_connection.h"
 #include "stdp_connection_hom.h"
 #include "stdp_connection_facetshw_hom.h"
@@ -134,8 +140,7 @@ namespace nest
 
   const std::string ModelsModule::commandstring(void) const
   {
-    return std::string("/models-init /C++ ($Revision: 9031 $) provide-component "
-                       "/models-init /SLI ($Revision: 9031 $) require-component");
+    return std::string("(models-init) run");
   }
 
   //-------------------------------------------------------------------------------------
@@ -143,6 +148,7 @@ namespace nest
   void ModelsModule::init(SLIInterpreter *)
   {
     register_model<iaf_neuron>(net_,                 "iaf_neuron");
+    register_model<iaf_chs_2007>(net_,               "iaf_chs_2007");
     register_model<iaf_psc_alpha>(net_,              "iaf_psc_alpha");
     register_model<iaf_psc_alpha_multisynapse>(net_, "iaf_psc_alpha_multisynapse");
     register_model<iaf_psc_delta>(net_,              "iaf_psc_delta");
@@ -152,6 +158,7 @@ namespace nest
     register_model<mat2_psc_exp>(net_,               "mat2_psc_exp");
     register_model<parrot_neuron>(net_,              "parrot_neuron");
     register_model<pp_psc_delta>(net_,               "pp_psc_delta");
+    register_model<pp_pop_psc_delta>(net_,           "pp_pop_psc_delta");
 
     register_model<ac_generator>(net_,           "ac_generator");
     register_model<dc_generator>(net_,           "dc_generator");
@@ -173,6 +180,7 @@ namespace nest
     register_model<spin_detector>(net_,       "spin_detector");
     register_model<Multimeter>(net_,           "multimeter");
     register_model<correlation_detector>(net_, "correlation_detector");
+    register_model<correlomatrix_detector>(net_, "correlomatrix_detector");
     register_model<volume_transmitter>(net_, "volume_transmitter");
 
     // Create voltmeter as a multimeter pre-configured to record V_m.
@@ -183,6 +191,7 @@ namespace nest
     register_preconf_model<Multimeter>(net_, "voltmeter", vmdict);
 
 #ifdef HAVE_GSL
+    register_model<iaf_chxk_2008>(net_,       "iaf_chxk_2008");
     register_model<iaf_cond_alpha>(net_,      "iaf_cond_alpha");
     register_model<iaf_cond_exp>(net_,        "iaf_cond_exp");
     register_model<iaf_cond_exp_sfa_rr>(net_, "iaf_cond_exp_sfa_rr");
@@ -197,6 +206,9 @@ namespace nest
     register_model<aeif_cond_exp>(net_, "aeif_cond_exp");
     register_model<ht_neuron>(net_,       "ht_neuron");
 #endif
+    // This version of the AdEx model does not depend on GSL.
+    register_model<aeif_cond_alpha_RK5>(net_, "aeif_cond_alpha_RK5");
+    register_model<aeif_cond_alpha_multisynapse>(net_, "aeif_cond_alpha_multisynapse");
 
 #ifdef HAVE_MUSIC 
     //// proxies for inter-application communication using MUSIC
@@ -221,6 +233,7 @@ namespace nest
     register_prototype_connection<Tsodyks2Connection>(net_,   "tsodyks2_synapse");
     register_prototype_connection<STDPConnection>(net_,      "stdp_synapse");
     register_prototype_connection<HTConnection>(net_,        "ht_synapse");
+    register_prototype_connection< Quantal_StpConnection>(net_, "quantal_stp_synapse");
 
     register_prototype_connection_commonproperties < STDPConnectionHom, 
                                                      STDPHomCommonProperties 

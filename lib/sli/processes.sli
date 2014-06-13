@@ -20,18 +20,6 @@
  *
  */
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
-%% This is the SLI-library defining wrapper-routines
-%% for the functions defined in module "processes.{h|cc}".
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-/processes /SLI ($Revision: 10020 $) provide-component
-/processes /C++ (1.48) require-component
-
-
-
 /* BeginDocumentation
 Name: is_mpi - flag in statusdict indicating whether interpreter was compiled with MPI 
 

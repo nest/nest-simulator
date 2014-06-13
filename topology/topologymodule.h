@@ -1,6 +1,3 @@
-#ifndef TOPOLOGYMODULE_H
-#define TOPOLOGYMODULE_H
-
 /*
  *  topologymodule.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef TOPOLOGYMODULE_H
+#define TOPOLOGYMODULE_H
 
 #include "slimodule.h"
 #include "network.h"

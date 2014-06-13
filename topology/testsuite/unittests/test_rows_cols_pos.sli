@@ -23,7 +23,7 @@
 % this test ensures that one can specify either rows&cols or positions,
 % but not both
 
-/unittest (8831) require
+(unittest) run
 unittest using
 
 % correct, rows & columns

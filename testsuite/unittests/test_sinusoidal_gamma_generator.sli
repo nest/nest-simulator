@@ -160,9 +160,7 @@ M_ERROR setverbosity
   {
     /items Set
     items [ 1 -2 ] Take  % all except last element
-    {
-      2 add   % need to add 2 to make up for 0-based MapIndexed
-      -1 2 arraystore items exch Take 
+    { 1 add -1 2 arraystore items exch Take 
       exch /item Set 
       true exch { item neq and } Fold
     } MapIndexed 

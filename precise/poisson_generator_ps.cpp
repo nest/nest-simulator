@@ -129,8 +129,9 @@ void nest::poisson_generator_ps::calibrate()
   {
     // find minimum time stamp, offset does not matter here
     Time min_time = B_.next_spike_.begin()->first;
-    for ( std::vector<Buffers_::SpikeTime>::const_iterator it = B_.next_spike_.begin()+1 ;
-	  it != B_.next_spike_.end() ; ++it )
+   
+    for (std::vector<Buffers_::SpikeTime>::const_iterator it = B_.next_spike_.begin()+1 ;
+	     it != B_.next_spike_.end() ; ++it)
       min_time = std::min(min_time, it->first);
 
     if ( min_time < device_.get_origin() + device_.get_start() )
@@ -140,7 +141,8 @@ void nest::poisson_generator_ps::calibrate()
   // If new targets have been added during a simulation break, we
   // initialize the new elements in next_spike_ with -1. The existing
   // elements are unchanged.
-  B_.next_spike_.resize(P_.num_targets_, Buffers_::SpikeTime(Time::neg_inf(),0));
+  if (B_.next_spike_.size()==0)
+    B_.next_spike_.resize(P_.num_targets_, Buffers_::SpikeTime(Time::neg_inf(),0));
 }
 
 
@@ -182,11 +184,8 @@ void nest::poisson_generator_ps::event_hook(DSSpikeEvent& e)
   // get port number
   const port prt = e.get_port();
 
-
   // we handle only one port here, get reference to vector elem
   assert(0 <= prt && static_cast<size_t>(prt) < B_.next_spike_.size());
-
-
 
   const index tgid = e.get_receiver().get_gid();
   

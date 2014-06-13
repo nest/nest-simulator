@@ -71,7 +71,6 @@ namespace nest{
  
     bool has_proxies() const {return false;} 
 
-
     port check_connection(Connection&, port);
     
     void get_status(DictionaryDatum &) const;
@@ -140,7 +139,6 @@ namespace nest{
       return c.get_target()->connect_sender(e, receptor_type);
     }
 
-  
   inline
     void ac_generator::get_status(DictionaryDatum &d) const
   {

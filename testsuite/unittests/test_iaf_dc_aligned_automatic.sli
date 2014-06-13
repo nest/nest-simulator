@@ -85,7 +85,7 @@ SeeAlso: testsuite::test_iaf_dc, testsuite::test_iaf_dc_aligned, testsuite::test
 */
 
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 

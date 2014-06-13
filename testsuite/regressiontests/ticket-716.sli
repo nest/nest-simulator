@@ -37,6 +37,8 @@ Author: Susanne Kunkel, 2013-04-11
 
 M_ERROR setverbosity
 
+ResetKernel
+
 /vol /volume_transmitter Create def
 /stdp_dopamine_synapse << /vt vol >> SetDefaults
 

@@ -23,7 +23,6 @@
 #include "booldatum.h"
 #include "token.h"
 #include "name.h"
-#include "datumconverter.h"
 
 sli::pool  BoolDatum::memory(sizeof(BoolDatum),1024,1);
 
@@ -58,11 +57,6 @@ void BoolDatum::pprint(std::ostream &out) const
 void BoolDatum::print(std::ostream &out) const
 {
   out << (d ? true_string : false_string);
-}
-
-void BoolDatum::use_converter(DatumConverter &converter)
-{
-  converter.convert_me(*this);
 }
 
 void * BoolDatum::operator new(size_t size)

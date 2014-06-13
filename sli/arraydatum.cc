@@ -20,12 +20,7 @@
  *
  */
 
-//#include "datumconverter.h"
-
-
 #include "arraydatum.h"
-#include "datumconverter.h"
-#include "aggregatedatum_impl.h"
 #include "lockptrdatum_impl.h"
 #include <iterator>
 

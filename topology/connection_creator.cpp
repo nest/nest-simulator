@@ -34,7 +34,8 @@ namespace nest
     mask_(),
     kernel_(),
     synapse_model_(0),
-    parameters_(),
+    weight_(),
+    delay_(),
     net_(TopologyModule::get_network())
   {
     Name connection_type;
@@ -91,19 +92,27 @@ namespace nest
 
       } else if (dit->first == names::weights) {
 
-        parameters_[names::weight] = TopologyModule::create_parameter(dit->second);
+        weight_ = TopologyModule::create_parameter(dit->second);
 
       } else if (dit->first == names::delays) {
 
-        parameters_[names::delay] = TopologyModule::create_parameter(dit->second);
+        delay_ = TopologyModule::create_parameter(dit->second);
 
       } else {
 
-        parameters_[dit->first] = TopologyModule::create_parameter(dit->second);
+	throw BadProperty("ConnectLayers cannot handle parameter '"
+			  + dit->first.toString() + "'.");
 
       }
 
     }
+
+    // Set default weight and delay if not given explicitly
+    DictionaryDatum syn_defaults = net_.get_connector_defaults(synapse_model_);
+    if ( not weight_.valid() )
+      weight_ = TopologyModule::create_parameter((*syn_defaults)[names::weight]);
+    if ( not delay_.valid() )
+      delay_ = TopologyModule::create_parameter((*syn_defaults)[names::delay]);
 
     if (connection_type==names::convergent) {
 

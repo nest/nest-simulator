@@ -54,7 +54,7 @@ Author:  July 2009, Diesmann
 SeeAlso: LambertW, LambertW0, LambertWm1, testsuite::test_iaf_psp_peak, testsuite::test_iaf_psp_normalized
 */
 
-/unittest (6335) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity

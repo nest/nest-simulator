@@ -32,23 +32,20 @@
 
 SLIType RegexpModule::RegexType;
 
-
 template class lockPTRDatum<Regex, &RegexpModule::RegexType>;
-
 
 typedef lockPTRDatum<Regex, &RegexpModule::RegexType> RegexDatum;
 
-
-Regex::Regex(){}
+Regex::Regex() {}
 
 Regex::~Regex()
 {
- regfree(&r);
+  regfree(&r);
 }
  
-regex_t*  Regex::get(void)
+regex_t* Regex::get(void)
 {
- return &r; 
+  return &r; 
 }
 
 
@@ -92,14 +89,14 @@ void RegexpModule::init(SLIInterpreter *i)
 
 
 const std::string RegexpModule::name(void) const
-    {
-      return std::string("POSIX-Regexp");
-    }
+{
+  return std::string("POSIX-Regexp");
+}
 
 const std::string RegexpModule::commandstring(void) const
-    {
-      return std::string("/regexp /C++ ($Revision: 9952 $) provide-component  /regexp /SLI (1.4) require-component");
-    }
+{
+  return std::string("(regexp) run");
+}
 
 
 void RegexpModule::RegcompFunction::execute(SLIInterpreter *i) const

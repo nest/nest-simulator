@@ -1,6 +1,6 @@
 nobase_pkgdata_DATA=\
   sli/FormattedIO.sli\
-  sli/arr.sli\
+  sli/arraylib.sli\
   sli/debug.sli\
   sli/helpinit.sli\
   sli/install-help.sli\
@@ -14,7 +14,6 @@ nobase_pkgdata_DATA=\
   sli/regexp.sli\
   sli/sli-init.sli\
   sli/typeinit.sli\
-  sli/version.sli\
   sli/nest-init.sli\
   sli/unittest.sli\
   sli/filesystem.sli

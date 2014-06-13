@@ -38,6 +38,8 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,5,6}, test_sinusoidal_poisson
 (unittest) run
 /unittest using
 
+is_threaded not { exit_test_gracefully } if
+
 
 /total_vps 4 def
 

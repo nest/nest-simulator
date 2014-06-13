@@ -21,9 +21,9 @@
  */
 
  /* BeginDocumentation
-Name: test_iaf - sli script for overall test of iaf_neuron model
+Name: tsodyks_facilitating - sli script for overall test of iaf_neuron model
 
-Synopsis: (test_iaf) run -> compare cout with comments in file
+Synopsis: (tsodyks_facilitating) run -> compare cout with comments in file
 
 
 Description:
@@ -70,7 +70,7 @@ userdict begin
 
       % set resolution and limits on delays
       % limits must be set BEFORE connecting any elements
-      [0]
+      0
       <<
         /resolution h
         /local_num_threads local_num_threads

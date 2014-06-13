@@ -37,7 +37,7 @@ Author: Plesser
 FirstVersion: 2011-01-20
 */
 
-/unittest (8831) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity

@@ -1,4 +1,3 @@
-
 /*
  *  common_synapse_properties.cpp
  *
@@ -20,7 +19,6 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 #include "nest.h"
 #include "dictdatum.h"
@@ -45,7 +43,6 @@ namespace nest {
   
   Node* CommonSynapseProperties::get_node() {return 0;}
  
-
   void CommonSynapseProperties::calibrate(const TimeConverter &) {}
  
 } // namespace nest

@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # ctx_2n.py
 #
@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 '''
 NEST Topology Module Example
 
@@ -49,10 +50,10 @@ nest.PrintNetwork(2)
 nest.PrintNetwork(2, ctx)
 
 # extract position information
-ppyr = pylab.array(zip(*[topo.GetPosition([n])[0] for n in nest.GetLeaves(ctx)[0] 
-                         if nest.GetStatus([n],'model')[0]=='pyr']))
-pin  = pylab.array(zip(*[topo.GetPosition([n])[0] for n in nest.GetLeaves(ctx)[0] 
-                         if nest.GetStatus([n],'model')[0]=='in']))
+ppyr = pylab.array(tuple(zip(*[topo.GetPosition([n])[0] for n in nest.GetLeaves(ctx)[0]
+                         if nest.GetStatus([n],'model')[0]=='pyr'])))
+pin  = pylab.array(tuple(zip(*[topo.GetPosition([n])[0] for n in nest.GetLeaves(ctx)[0]
+                         if nest.GetStatus([n],'model')[0]=='in'])))
 # plot
 pylab.clf()
 pylab.plot(ppyr[0]-0.05, ppyr[1]-0.05, 'bo', markersize=20, label='Pyramidal', zorder=2)

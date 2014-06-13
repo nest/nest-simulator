@@ -50,7 +50,7 @@ References:
 SeeAlso: testsuite::test_iaf_ps_psp_accuracy, testsuite::test_iaf_ps_dc_accuracy
 */
 
-/unittest (6335) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity

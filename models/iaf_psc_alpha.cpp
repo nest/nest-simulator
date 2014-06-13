@@ -46,8 +46,10 @@ namespace nest
   {
     // use standard names whereever you can for consistency!
     insert_(names::V_m, &iaf_psc_alpha::get_V_m_);
-    insert_("weighted_spikes_ex", &iaf_psc_alpha::get_weighted_spikes_ex_);
-    insert_("weighted_spikes_in", &iaf_psc_alpha::get_weighted_spikes_in_);
+    insert_(names::weighted_spikes_ex, &iaf_psc_alpha::get_weighted_spikes_ex_);
+    insert_(names::weighted_spikes_in, &iaf_psc_alpha::get_weighted_spikes_in_);
+    insert_(names::input_currents_ex, &iaf_psc_alpha::get_input_currents_ex_);
+    insert_(names::input_currents_in, &iaf_psc_alpha::get_input_currents_in_);
   }
 
   /* ----------------------------------------------------------------

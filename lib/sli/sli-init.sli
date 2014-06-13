@@ -235,12 +235,20 @@ def
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialize Error Dictionary
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-errordict /recordstacks true  put_d %% Enable stack snapshot on error
-errordict /newerror     false put_d %% Initialize
-errordict /commandname    () put_d
-errordict /oldcommandname () put_d
-errordict /olderrorname   () put_d
-errordict /oldestack      () put_d
+/init_errordict
+{
+  errordict /recordstacks true  put_d %% Enable stack snapshot on error
+  errordict /newerror     false put_d %% Initialize
+  errordict /commandname    () put_d
+  errordict /oldcommandname () put_d
+  errordict /olderrorname   () put_d
+  errordict /oldestack      () put_d
+  errordict /estack [ ] put_d
+  errordict /dstack [ ] put_d
+  errordict /ostack [ ] put_d
+} def
+
+init_errordict 
 
 /raiseerror trie
   [/literaltype /literaltype] /raiseerror load addtotrie
@@ -698,12 +706,20 @@ def
 /:clicclocs clic cloc def
 
 /* BeginDocumentation
- Name: reset - Reset dictionary stack and clear the userdict
+ Name: reset - Reset the SLI interpreter
+ Description:
+ reset re-initializes most of the SLI interpreter by clearing the operand stack, the dictionary stack, 
+ and the userdict. reset also clears the error state.
+ Non-standard symbols and data defined in any of the other dictionaries, such as the statusdict or systemdict remain unchanged.
+ 
  SeeAlso: ResetKernel
 */
 
 /reset
 {
+  errordict /new_error false put_d 
+  init_errordict
+  clear % operand stack
   cleardictstack
   userdict cleardict
 } bind def
@@ -1537,7 +1553,65 @@ SeeAlso: GNUreadline
   quit_i
 } bind def
 
+/*
+BeginDocumentation
+Name: save - save interpreter state in a state dictionary
+Synopsis: save -> statedict true
+Description: 
 
+Experimental function to save the interpreter state into a state dictionary.
+The state can then be restored, using the command restore.
+After restore, execution will resume with the next command after 'save'. 
+The boolean return value can be used to branch execution after saving or restoring the state.
+
+Examples:
+
+save and restore can be used to implement non-local jumps within procedures and even between procedures. 
+A saved state defines a jump position to which the execution can return by calling restore for this state.
+
+
+
+SeeAlso: resore
+Author: Marc-Oliver Gewaltig
+*/
+/save
+{
+  (save) =
+  << >> begin
+  operandstack /ostack Set
+  execstack [1 -4] Take /estack Set
+  errordict /errdict Set
+  currentdict end
+  dup /dstack dictstack put_d  
+  true
+} def
+  
+/*
+BeginDocumentation
+Name: restore - restore interpreter state from state dictionary
+synopsis: statedict restore -> false
+Description: 
+
+Experimental function to restore the interpreter state from a previously stored state
+dictionary, created by the command save.
+After restore, execution will resume with the next command after 'save'. 
+The boolean return value can be used to branch execution after saving or restoring the state.
+
+Bugs: Currently, the state of the dictionary stack cannot be restored.
+
+SeeAlso: save
+Author: Marc-Oliver Gewaltig
+*/
+
+/restore
+{
+  begin
+  currentdict /ostack get restoreostack false
+  currentdict /errdict get systemdict /errordict rolld put
+  currentdict end
+  %dup /dstack get restoredstack
+  /estack get restoreestack
+} def
 
 /*
 BeginDocumentation
@@ -1748,17 +1822,6 @@ SeeAlso: nestrc
     cout  (Built on ) <- built <- ( for ) <- host <- endl
     (Architecture: ) <- statusdict /architecture get /long get 8 mul
     <- ( bit) <- endl
-    (SLI revison: ) <- stdlibrevision <- endl
-    
-    /kernelname lookup
-    {  % we are running the interpreter with a simulation kernel 
-      <- ( revision: ) <- kernelrevision  <- endl
-      (Kernel library rev: ) <- kernellibrevision  <- endl
-    }
-    { % we are running the pure interpreter
-      (no simulation kernel linked.) <- endl
-    }
-    ifelse
     (Searching files in: ) <- path <-- endl
     pop
   end
@@ -1825,26 +1888,6 @@ SeeAlso: page
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Define unique Library Version
-%% (note: depends on misc_helpers.sli for "breakup")
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/* BeginDocumentation
-Name: stdlibrevision - revision number of sli-init libray
-Description: String constants which contains the unique CVS revision
-number of the SLI startup file. This value can be
-used by custom programs to check whether certain features
-ought to be present.
-
-This symbol is defined in the status dictionary.  
-*/
-
-statusdict begin
-/stdlibrevision 
-  ($Revision: 10138 $) % CVS revision number (unique)
-def
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ENVVAR :pathlist -> array               %
 % UNDOCUMENTED                            %
 %% (note: depends on misc_helpers.sli for "breakup")
@@ -1865,25 +1908,20 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SLI library handling                    %
-% (see library.sli)                       %
-% and support:                            %
-% Version number handling routines        %
-% (see library.sli)                       %
 %                                         %
 % This should be initialized as early as  %
 % possible, so that other initialization  %
-% diles can use the library management!   %
+% files can use the library management!   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 (library.sli) run
-(version.sli) run % note: version.sli depends on misc_helpers.sli
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% PS conforming operators       %
+%% PS conforming operators      %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/ps-lib (1.2) require
+(ps-lib) run
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1978,7 +2016,9 @@ moduleinitializers
 */ 
 /:commandline
 {
+  systemdict begin
   /scripterror statusdict /exitcodes get /scripterror get def
+  end
   statusdict /argv get Rest
 
   << >> begin
@@ -2012,13 +2052,16 @@ moduleinitializers
 	  pop exit	
 	} if
 
-	dup 0 11 getinterval (--userargs=) eq
+	size 11 geq
 	{
-	  size 11 sub         % stack: (--userargs=...) size-11
-	  11 exch getinterval % stack: (...)
-	  (:) breakup
-	  statusdict /userargs rolld put
-	  exit	
+	  dup 0 11 getinterval (--userargs=) eq
+	  {
+	    size 11 sub         % stack: (--userargs=...) size-11
+	    11 exch getinterval % stack: (...)
+	    (:) breakup
+	    statusdict /userargs rolld put
+	    exit	
+	  } if
 	} if
 
 	dup (-c) eq
@@ -2125,9 +2168,6 @@ moduleinitializers
 */ 
 
 /start {
-
-  /scripterror statusdict /exitcodes get /scripterror get def
-
   {
     :commandline
     { % we have an interactive session
@@ -2277,16 +2317,8 @@ SeeAlso: welcome
 } def
 
 
-end % systemdict
-
-(SLIUSER) :pathlist path setpath % prepend user directories    
-(.) path setpath                % prepend current directory
-
-evalrcfile
-
-
 /* BeginDocumentation
-Name: environment - return divtionary of environment variables
+Name: environment - return dictionary of environment variables
 Synopsis: enviroment -> dict
 Description: 
 Returns dictionary with the environment variables of the process that
@@ -2298,3 +2330,40 @@ SeeAlso: statusdict
 {
   statusdict/environment ::
 } def
+
+end % systemdict
+
+(SLIUSER) :pathlist path setpath % prepend user directories    
+(.) path setpath                % prepend current directory
+
+evalrcfile
+
+
+/* BeginDocumentation
+Name: is_threaded - returns true if NEST/SLI was compiled with thread support
+Synopsis: is_threaded -> bool
+Description:
+Returns true if NEST/SLI was compiled with support for threads, and returns
+false otherwise.
+SeeAlso: statusdict
+*/
+/is_threaded 
+{
+  % We must test against "no", if threads are supported threading is a 
+  % string containing the threading model.
+  statusdict/threading :: (no) neq 
+} def
+
+/* BeginDocumentation
+Name: is_threaded_with_openmp - returns true if NEST/SLI was compiled with OpenMP support
+Synopsis: is_threaded_with_openmp -> bool
+Description:
+Returns true if NEST/SLI was compiled with support for OpenMP threads, and returns
+false otherwise.
+SeeAlso: statusdict
+*/
+/is_threaded_with_openmp
+{
+  statusdict/threading :: ToLowercase (openmp) searchif
+} def
+

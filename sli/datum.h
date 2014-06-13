@@ -24,8 +24,6 @@
 #define DATUM_H
 
 #include "slitype.h"
-class DatumConverter;
-
 
 /***********************************************************/
 /* Datum                                                   */
@@ -37,6 +35,10 @@ class Datum
   
   friend class Token;
   
+  /**
+   * Virtual copy constructor.
+   * Use this function to lazily copy a datum.
+   */ 
   virtual Datum * clone(void) const = 0;
 
 
@@ -62,6 +64,7 @@ class Datum
     unsigned int reference_count_;
   bool   executable_;
 
+
  Datum() :
   type(NULL), 
     action(NULL),
@@ -83,6 +86,7 @@ class Datum
  public:
 
   virtual ~Datum() {};
+  
 
   void addReference() const
   {
@@ -156,12 +160,6 @@ class Datum
       action->execute(i);
     }
 
-  /**
-   * Accept a DatumConverter as a visitor to this datum for conversion.
-   * (visitor pattern).
-   */
-  virtual void use_converter(DatumConverter &v);
-  
 };
 
 template<SLIType * slt >
@@ -172,6 +170,9 @@ class TypedDatum: public Datum
    :Datum(slt)
   { }
   
+// This is here solely for default assignment operators in
+// derived classes synthesized by the compiler. It does nothing but return itself.
+ protected:
  TypedDatum(const TypedDatum<slt> &d) :Datum(d){}
   const TypedDatum<slt>& operator=(const TypedDatum<slt>&);
   

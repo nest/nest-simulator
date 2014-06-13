@@ -34,8 +34,8 @@ N_E = 8000
 N_I = 2000
 N_neurons = N_E+N_I
 
-C_E    = N_E/10 # number of excitatory synapses per neuron
-C_I    = N_I/10 # number of inhibitory synapses per neuron  
+C_E    = int(N_E/10) # number of excitatory synapses per neuron
+C_I    = int(N_I/10) # number of inhibitory synapses per neuron
 
 J_E  = 0.1
 J_I  = -g*J_E
@@ -64,16 +64,22 @@ nest.CopyModel("static_synapse_hom_wd",
                "excitatory",
                {"weight":J_E, 
                 "delay":delay})
-nest.RandomConvergentConnect(nodes_E, nodes, C_E,model="excitatory")
+nest.Connect(nodes_E, nodes,
+             {"rule": 'fixed_indegree', "indegree": C_E},
+             "excitatory")
 
 nest.CopyModel("static_synapse_hom_wd",
                "inhibitory",
                {"weight":J_I, 
                 "delay":delay})
-nest.RandomConvergentConnect(nodes_I, nodes, C_I,model="inhibitory")
+nest.Connect(nodes_I, nodes,
+             {"rule": 'fixed_indegree', "indegree": C_I},
+             "inhibitory")
 
 noise=nest.Create("poisson_generator",1,{"rate": p_rate})
-nest.DivergentConnect(noise,nodes,model="excitatory")
+
+# connect using all_to_all: one noise generator to all neurons
+nest.Connect(noise, nodes, "all_to_all", "excitatory")
 
 spikes=nest.Create("spike_detector",2, 
                    [{"label": "brunel-py-ex"},
@@ -82,8 +88,10 @@ spikes_E=spikes[:1]
 spikes_I=spikes[1:]
 
 N_rec   = 50    # Number of neurons to record from
-nest.ConvergentConnect(nodes_E[:N_rec],spikes_E)
-nest.ConvergentConnect(nodes_I[:N_rec],spikes_I)
+
+# connect using all_to_all: all recorded excitatory neurons to one detector
+nest.Connect(nodes_E[:N_rec], spikes_E, 'all_to_all')
+nest.Connect(nodes_I[:N_rec], spikes_I, 'all_to_all')
 
 simtime=300.
 nest.Simulate(simtime)
@@ -91,10 +99,10 @@ nest.Simulate(simtime)
 events = nest.GetStatus(spikes,"n_events")
 
 rate_ex= events[0]/simtime*1000.0/N_rec
-print "Excitatory rate   : %.2f Hz" % rate_ex
+print("Excitatory rate   : %.2f Hz" % rate_ex)
 
 rate_in= events[1]/simtime*1000.0/N_rec
-print "Inhibitory rate   : %.2f Hz" % rate_in
+print("Inhibitory rate   : %.2f Hz" % rate_in)
 
 nest.raster_plot.from_device(spikes_E, hist=True)
 #pylab.show()

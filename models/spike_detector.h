@@ -101,9 +101,12 @@ namespace nest
     spike_detector();
     spike_detector(const spike_detector&);
     
-    bool has_proxies() const { return false; }
-    bool local_receiver() const {return true;} 
-
+    void set_has_proxies(const bool hp);
+    bool has_proxies() const { return has_proxies_; }
+    bool potential_global_receiver() const {return true;}
+    void set_local_receiver(const bool lr);
+    bool local_receiver() const {return local_receiver_;} 
+    
     /**
      * Import sets of overloaded virtual functions.
      * We need to explicitly include sets of overloaded
@@ -122,7 +125,6 @@ namespace nest
     void set_status(const DictionaryDatum &) ;
 
   private:
-
     void init_state_(Node const&);
     void init_buffers_();
     void calibrate();
@@ -166,8 +168,22 @@ namespace nest
     Buffers_ B_;
 
     bool user_set_precise_times_;
+    bool has_proxies_ ;
+    bool local_receiver_;
   };
-
+  
+  inline 
+  void spike_detector::set_has_proxies(const bool hp)
+  {
+    has_proxies_ = hp;
+  }
+  
+  inline 
+  void spike_detector::set_local_receiver(const bool lr)
+  {
+    local_receiver_ = lr;
+  }
+  
   inline
   port spike_detector::connect_sender(SpikeEvent&, port receptor_type)
   {

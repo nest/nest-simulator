@@ -53,7 +53,7 @@ SeeAlso: testsuite::test_iaf_ps_psp_poisson_accuracy, testsuite::test_iaf_ps_psp
 */
 
 
-/unittest (8331) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity

@@ -37,8 +37,7 @@ Author:  July 2009, Diesmann
 SeeAlso: unittest::distributed_assert_or_die
 */
 
-
-/unittest (9715) require
+(unittest) run
 /unittest using
 
 

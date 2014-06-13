@@ -23,16 +23,43 @@
 #include <cmath>
 #include "config.h"
 #include "normal_randomdev.h"
+#include "sliexceptions.h"
+#include "dictutils.h"
 
 // by default, init as exponential density with mean 1
 librandom::NormalRandomDev::NormalRandomDev(RngPtr r_source) 
-: RandomDev(r_source)
+  : RandomDev(r_source),
+    mu_(0.),
+    sigma_(1.)
 {}
 
 // threaded
 librandom::NormalRandomDev::NormalRandomDev() 
-: RandomDev()
+  : RandomDev(),
+    mu_(0.),
+    sigma_(1.)
 {}
+
+void librandom::NormalRandomDev::set_status(const DictionaryDatum& d)
+{
+  double new_mu = mu_;
+  double new_sigma = sigma_;
+
+  updateValue<double>(d, "mu", new_mu);
+  updateValue<double>(d, "sigma", new_sigma);
+
+  if ( new_sigma < 0. )
+    throw BadParameterValue("Normal RDV: sigma >= 0 required.");
+
+  mu_ = new_mu;
+  sigma_ = new_sigma;
+}
+
+void librandom::NormalRandomDev::get_status(DictionaryDatum& d) const
+{
+  def<double>(d, "mu", mu_);
+  def<double>(d, "sigma", sigma_);
+}
 
 double librandom::NormalRandomDev::operator()(RngPtr r) const
 {
@@ -48,8 +75,8 @@ double librandom::NormalRandomDev::operator()(RngPtr r) const
     S  = V1*V1 + V2*V2;
   } while ( S >= 1 );
   
-  if ( S == 0 )
-    return 0;
-  else
-    return V1 * std::sqrt(-2 * std::log(S)/S);  
+  if ( S != 0 )
+    S = V1 * std::sqrt(-2 * std::log(S)/S);
+
+  return mu_ + sigma_ * S;
 }

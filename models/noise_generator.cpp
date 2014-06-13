@@ -26,6 +26,7 @@
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictutils.h"
+#include "numerics.h"
 
 /* ---------------------------------------------------------------- 
  * Default constructors defining default parameter
@@ -34,13 +35,24 @@
 nest::noise_generator::Parameters_::Parameters_()
   : mean_(0.0),  // pA
     std_(0.0),   // pA / sqrt(s)
+    std_mod_(0.0),  // pA / sqrt(s)
+    freq_   (0.0),  // Hz
+    phi_deg_(0.0),   // degree 
     dt_(Time::ms(1.0)),
     num_targets_(0)
+{}
+
+nest::noise_generator::State_::State_()
+  : y_0_ (0.0),
+    y_1_ (0.0)  // pA
 {}
 
 nest::noise_generator::Parameters_::Parameters_(const Parameters_& p)
   : mean_(p.mean_),
     std_(p.std_),
+    std_mod_(p.std_mod_),
+    freq_   (p.freq_),
+    phi_deg_(p.phi_deg_),
     dt_(p.dt_),
     num_targets_(0)  // we do not copy connections
 {
@@ -58,20 +70,38 @@ void nest::noise_generator::Parameters_::get(DictionaryDatum &d) const
 {
   (*d)[names::mean] = mean_;
   (*d)[names::std ] = std_;
+  (*d)[names::std_mod ] = std_mod_;
   (*d)[names::dt]   = dt_.get_ms();
+  (*d)[names::phase    ] = phi_deg_;
+  (*d)[names::frequency] = freq_;
 }  
+
+void nest::noise_generator::State_::get(DictionaryDatum &d) const
+{
+  (*d)["y_0"] = y_0_;
+  (*d)["y_1"] = y_1_;
+}
 
 void nest::noise_generator::Parameters_::set(const DictionaryDatum& d,
                                              const noise_generator& n)
 {
   updateValue<double_t>(d, names::mean, mean_);
   updateValue<double_t>(d, names::std , std_);
+  updateValue<double_t>(d, names::std_mod , std_mod_);
+  updateValue<double_t>(d, names::frequency, freq_);
+  updateValue<double_t>(d, names::phase    , phi_deg_);
   double_t dt;
   if ( updateValue<double_t>(d, names::dt, dt) )
     dt_ = Time::ms(dt);
   
   if ( std_ < 0 )
     throw BadProperty("The standard deviation cannot be negative.");
+
+  if ( std_mod_ < 0 )
+    throw BadProperty("The standard deviation cannot be negative.");
+
+  if ( std_mod_ > std_ )
+    throw BadProperty("The modulation apmlitude must be smaller or equal to the baseline amplitude.");
     
   if ( !dt_.is_step() )
     throw StepMultipleRequired(n.get_name(), names::dt, dt_);
@@ -132,6 +162,23 @@ void nest::noise_generator::calibrate()
   }
 
   V_.dt_steps_ = P_.dt_.get_steps();
+
+  const double_t h = Time::get_resolution().get_ms();
+  const double_t t = network()->get_time().get_ms();
+
+  // scale Hz to ms
+  const double_t omega   = 2.0 * numerics::pi * P_.freq_ / 1000.0;       
+  const double_t phi_rad = P_.phi_deg_ * 2.0 * numerics::pi / 360.0;
+
+  // initial state
+  S_.y_0_ = std::cos(omega * t + phi_rad);
+  S_.y_1_ = std::sin(omega * t + phi_rad);
+
+  // matrix elements
+  V_.A_00_ =  std::cos(omega * h);
+  V_.A_01_ = -std::sin(omega * h);
+  V_.A_10_ =  std::sin(omega * h);
+  V_.A_11_ =  std::cos(omega * h);
 }
 
 
@@ -164,13 +211,22 @@ void nest::noise_generator::update(Time const &origin, const long_t from, const 
     if ( !device_.is_active(Time::step(now)) )
       continue;
     
+    if ( P_.std_mod_ != 0. ) 
+    {
+      const double_t y_0 = S_.y_0_;
+      S_.y_0_ = V_.A_00_ * y_0 + V_.A_01_ * S_.y_1_;
+      S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
+    }
+    
     // >= in case we woke from inactivity  
     if( now >= B_.next_step_ )
     {
       // compute new currents
       for ( AmpVec_::iterator it = B_.amps_.begin() ;
             it != B_.amps_.end() ; ++it )
-        *it = P_.mean_ + P_.std_ * V_.normal_dev_(net_->get_rng(get_thread()));
+	{
+	  *it = P_.mean_ + std::sqrt( P_.std_ *  P_.std_ + S_.y_1_ * P_.std_mod_ *  P_.std_mod_ ) * V_.normal_dev_(net_->get_rng(get_thread()));
+	}
 
       // use now as reference, in case we woke up from inactive period
       B_.next_step_ = now + V_.dt_steps_;

@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# This version uses NEST's RandomConvergentConnect functions.
+# This version uses NEST's Connect functions.
 
 from scipy.optimize import fsolve
 
@@ -86,9 +86,9 @@ nu_th  = (theta * CMem) / (J_ex*CE*exp(1)*tauMem*tauSyn)
 nu_ex  = eta*nu_th
 p_rate = 1000.0*nu_ex*CE
 
-nest.SetKernelStatus({"resolution": dt, "print_time": True})
+nest.SetKernelStatus({"resolution": dt, "print_time": True, 'local_num_threads': 1})
 
-print "Building network"
+print("Building network")
 
 neuron_params= {"C_m":        CMem,
                 "tau_m":      tauMem,
@@ -119,34 +119,36 @@ nest.SetStatus(ispikes,[{"label": "brunel-py-in",
                    "withtime": True,
                    "withgid": True}])
 
-print "Connecting devices."
+print("Connecting devices")
 
 nest.CopyModel("static_synapse","excitatory",{"weight":J_ex, "delay":delay})
 nest.CopyModel("static_synapse","inhibitory",{"weight":J_in, "delay":delay})
 
-nest.DivergentConnect(noise,nodes_ex,model="excitatory")
-nest.DivergentConnect(noise,nodes_in,model="excitatory")
+nest.Connect(noise,nodes_ex, 'all_to_all', "excitatory")
+nest.Connect(noise,nodes_in,'all_to_all', "excitatory")
 
-nest.ConvergentConnect(range(1,N_rec+1),espikes,model="excitatory")
-nest.ConvergentConnect(range(NE+1,NE+1+N_rec),ispikes,model="excitatory")
+nest.Connect(range(1,N_rec+1),espikes, 'all_to_all', "excitatory")
+nest.Connect(range(NE+1,NE+1+N_rec),ispikes, 'all_to_all', "excitatory")
 
-print "Connecting network."
+print("Connecting network")
 
 # We now iterate over all neuron IDs, and connect the neuron to
 # the sources from our array. The first loop connects the excitatory neurons
 # and the second loop the inhibitory neurons.
 
-print "Excitatory connections"
+print("Excitatory connections")
 
-nest.RandomConvergentConnect(nodes_ex, nodes_ex+nodes_in, CE,model="excitatory")
+conn_params_ex = {'rule': 'fixed_indegree', 'indegree': CE}
+nest.Connect(nodes_ex, nodes_ex+nodes_in, conn_params_ex, "excitatory")
 
-print "Inhibitory connections"
+print("Inhibitory connections")
 
-nest.RandomConvergentConnect(nodes_in, nodes_ex+nodes_in, CI,model="inhibitory")
+conn_params_in = {'rule': 'fixed_indegree', 'indegree': CI}
+nest.Connect(nodes_in, nodes_ex+nodes_in, conn_params_in, "inhibitory")
 
 endbuild=time.time()
 
-print "Simulating."
+print("Simulating")
 
 nest.Simulate(simtime)
 
@@ -163,14 +165,14 @@ nest.GetDefaults("inhibitory")["num_connections"]
 build_time = endbuild-startbuild
 sim_time   = endsimulate-endbuild
 
-print "Brunel network simulation (Python)"
-print "Number of neurons :", N_neurons
-print "Number of synapses:", num_synapses
-print "       Exitatory  :", int(CE*N_neurons)+N_neurons
-print "       Inhibitory :", int(CI*N_neurons)
-print "Excitatory rate   : %.2f Hz" % rate_ex
-print "Inhibitory rate   : %.2f Hz" % rate_in
-print "Building time     : %.2f s" % build_time
-print "Simulation time   : %.2f s" % sim_time
+print("Brunel network simulation (Python)")
+print("Number of neurons : {0}".format(N_neurons))
+print("Number of synapses: {0}".format(num_synapses))
+print("       Exitatory  : {0}".format(int(CE * N_neurons) + N_neurons))
+print("       Inhibitory : {0}".format(int(CI * N_neurons)))
+print("Excitatory rate   : %.2f Hz" % rate_ex)
+print("Inhibitory rate   : %.2f Hz" % rate_in)
+print("Building time     : %.2f s" % build_time)
+print("Simulation time   : %.2f s" % sim_time)
 
 nest.raster_plot.from_device(espikes, hist=True)

@@ -34,7 +34,7 @@
 
 #include "spikecounter.h"
 #include "nest_names.h"
-#include "connectiondatum.h"
+#include "nest_datums.h"
 namespace nest {
 
 /**
@@ -92,6 +92,12 @@ class GenericConnectorBase : public Connector
    * Use given dictionary for parameters.
    */ 
   void register_connection(Node&, Node&, DictionaryDatum&);
+
+  /**
+   * Register a new connection at the sender side. 
+   * Use given weight, delay and dictionary for parameters.
+   */ 
+  void register_connection(Node&, Node&, double_t, double_t, DictionaryDatum&);
   
   /**
    * Register a new connection at the sender side.
@@ -248,6 +254,34 @@ void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::re
   updateValue<long_t>(d, names::music_channel, receptor_type);
 #endif
   updateValue<long_t>(d, names::receptor_type, receptor_type);
+
+  register_connection(s, r, cn, receptor_type);
+}
+
+template< typename ConnectionT, typename CommonPropertiesT, typename ConnectorModelT > 
+  void GenericConnectorBase< ConnectionT, CommonPropertiesT, ConnectorModelT >::register_connection(Node& s, Node& r, double_t w, double_t d, DictionaryDatum& p)
+{
+  // We have to convert the delay in ms to a Time object then to steps and back the ms again
+  // in order to get the value in ms which can be represented with an integer number of steps
+  // in the currently chosen Time representation.
+  // See also bug #217, MH 08-04-23
+  if ( !connector_model_.check_delay( Time(Time::step(Time(Time::ms(d)).get_steps())).get_ms() ) )
+      throw BadDelay(d);
+
+  // create a new instance of the default connection
+  ConnectionT cn = ConnectionT( connector_model_.get_default_connection() );
+  // TODO: check wether dictionary p is empty, if so skip the following line
+  cn.set_status(p, connector_model_);
+  cn.set_weight(w);
+  cn.set_delay(d);
+  
+  port receptor_type = connector_model_.get_receptor_type();
+
+#ifdef HAVE_MUSIC
+  // We allow music_channel as alias for receptor_type during connection setup
+  updateValue<long_t>(p, names::music_channel, receptor_type);
+#endif
+  updateValue<long_t>(p, names::receptor_type, receptor_type);
 
   register_connection(s, r, cn, receptor_type);
 }

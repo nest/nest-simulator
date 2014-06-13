@@ -120,7 +120,7 @@ void nest::poisson_generator::update(Time const & T, const long_t from, const lo
 void nest::poisson_generator::event_hook(DSSpikeEvent& e)
 {
   librandom::RngPtr rng = net_->get_rng(get_thread());
-  ulong_t n_spikes = V_.poisson_dev_.uldev(rng);
+  long_t n_spikes = V_.poisson_dev_.ldev(rng);
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

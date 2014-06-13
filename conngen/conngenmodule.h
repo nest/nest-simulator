@@ -28,7 +28,8 @@
 
 #include "modelrange.h"
 
-#include "connection_generator.h"
+#include <neurosim/connection_generator.h>
+
 typedef std::vector<ConnectionGenerator::ClosedInterval> RangeSet;
 typedef ConnectionGenerator::ClosedInterval Range;
 
@@ -53,45 +54,50 @@ namespace nest
      */
     void init(SLIInterpreter*);
 
-    const std::string name(void) const;
-    const std::string commandstring(void) const;
-
-    /*
-     * SLI functions: See source file for documentation
-     */
+    const std::string name() const;
+    const std::string commandstring() const;
 
     class CGConnect_cg_i_i_D_lFunction : public SLIFunction
     {
-    public:
-      void execute(SLIInterpreter *) const;
+      void execute(SLIInterpreter*) const;
     } cgconnect_cg_i_i_D_lfunction;
     
-    class CGConnect_cg_a_a_D_lFunction : public SLIFunction
+    class CGConnect_cg_iV_iV_D_lFunction : public SLIFunction
     {
-    public:
-      void execute(SLIInterpreter *) const;
-    } cgconnect_cg_a_a_D_lfunction;
+      void execute(SLIInterpreter*) const;
+    } cgconnect_cg_iV_iV_D_lfunction;
 
-    class CGSetMask_cg_a_aFunction : public SLIFunction
+    class CGParse_sFunction: public SLIFunction
     {
-    public:
-      void execute(SLIInterpreter *) const;
-    } cgsetmask_cg_a_afunction;
+      void execute(SLIInterpreter*) const;
+    } cgparse_sfunction;
 
-    class CGStartFunction : public SLIFunction
+    class CGParseFile_sFunction: public SLIFunction
     {
-      void execute(SLIInterpreter *) const;
-    } cgstartfunction;
+      void execute(SLIInterpreter*) const;
+    } cgparsefile_sfunction;
 
-    class CGNextFunction : public SLIFunction
+    class CGSelectImplementation_s_sFunction: public SLIFunction
     {
-      void execute(SLIInterpreter *) const;
-    } cgnextfunction;
+      void execute(SLIInterpreter*) const;
+    } cgselectimplementation_s_sfunction;
 
-    /**
-     * Return a reference to the network managed by the topology module.
-     */
-    static Network &get_network();
+    class CGSetMask_cg_iV_iVFunction : public SLIFunction
+    {
+      void execute(SLIInterpreter*) const;
+    } cgsetmask_cg_iV_iVfunction;
+
+    class CGStart_cgFunction: public SLIFunction
+    {
+      void execute(SLIInterpreter*) const;
+    } cgstart_cgfunction;
+
+    class CGNext_cgFunction: public SLIFunction
+    {
+      void execute(SLIInterpreter*) const;
+    } cgnext_cgfunction;
+
+    static Network& get_network();
 
   private:
 

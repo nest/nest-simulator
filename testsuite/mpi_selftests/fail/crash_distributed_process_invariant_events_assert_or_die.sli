@@ -38,8 +38,7 @@ Author:  September 2010, Diesmann; May 2012, Plesser
 SeeAlso: testsuite::fail_distributed_process_invariant_events_assert_or_die, testsuite::test_distributed_process_invariant_events_assert_or_die
 */
 
-
-/unittest (9724) require
+(unittest) run
 /unittest using
 
 % take array of dict, with all entries arrays; return single dict with all 

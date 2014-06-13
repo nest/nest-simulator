@@ -34,8 +34,9 @@ which contain nested subnets
 Author: Hans Ekkehard Plesser & Susanne Kunkel, 2012-02-08
  */
 
-/unittest (8831) require
+(unittest) run
 /unittest using
+
 M_ERROR setverbosity
 
 % provide number of nesting levels as argument

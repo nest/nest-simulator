@@ -1,4 +1,3 @@
-
 /*
  *  test_gamma_sup_generator.sli
  *
@@ -21,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+/* BeginDocumentation
 Name: testsuite::test_gamma_sup_generator - sli script for test of gamma_sup_generator output 
 
 Synopsis: (test_gamma_sup_generator) run -> compare spike train statistics with expectations
@@ -62,7 +61,7 @@ SeeAlso: gamma_sup_generator, testsuite::test_ppd_sup_generator
 */
 
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 

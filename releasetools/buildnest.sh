@@ -54,7 +54,7 @@ if ( $#argv != 0 ) then
     exit 0
   endif
 else
-  set svndir="branches/nest-2.2/2.2.0"
+  set svndir="branches/nest-2.4/2.4.0"
   set branch=""
 endif
 
@@ -75,8 +75,8 @@ if ( ! ( -f $scriptdir/make_changelog.sh ) ) then
 endif
 
 # SVN ID to use
-set svn_id = https://www.nest-initiative.uni-freiburg.de/nest/$svndir
-set svn_tags = https://www.nest-initiative.uni-freiburg.de/nest/tags
+set svn_id = https://svn.nest-initiative.org/nest/$svndir
+set svn_tags = https://svn.nest-initiative.org/nest/tags
 
 # set umask to 022 (gives 755/644 permission in tarball)
 umask 022
@@ -118,7 +118,6 @@ svn --quiet checkout $svn_id $nest_srcdir
 
 # add svn revision number to tarball name
 set svnver=`svnversion $nest_srcdir`
-#set patchlevel = "$svnver$label"
 set patchlevel = "0"
 
 # move to nest_srcdir
@@ -129,7 +128,7 @@ echo ""
 echo -n "Setting patch level in configure.ac"
 sed -i -e "s/SLI_PATCHLEVEL=svn/SLI_PATCHLEVEL=$patchlevel/" configure.ac.in
 
-set nest_minor   = "2"
+set nest_minor   = "4"
 set nest_major   = "2"
 set nest_version = "$nest_major.$nest_minor.$patchlevel"
 set nest_nprog   = "nest-$nest_version"
@@ -168,7 +167,11 @@ cd $nest_blddir
 # directories to be created on rolling tarball
 echo ""
 echo "Configuring build directory ..." 
-../$nest_srcdir/configure --prefix=$HOME/opt/nest  > /dev/null
+../$nest_srcdir/configure --prefix=$HOME/opt/nest > /dev/null
+
+# pre-compile Cython code
+make -C pynest pynestkernel.cpp
+
 echo ""
 echo "Rolling tarball ..."
 make -s dist

@@ -107,7 +107,7 @@ SeeAlso: testsuite::test_iaf_dc, testsuite::test_iaf_dc_aligned_delay, testsuite
 */
 
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 

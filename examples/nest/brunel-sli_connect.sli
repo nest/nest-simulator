@@ -201,7 +201,7 @@ ComputePSPnorm /J_max_unit Set
 ResetKernel      % clear all existing network elements
 M_WARNING setverbosity
 % set resolution and total/local number of threads
-[0]
+0
  <<
    /resolution  dt
    /local_num_threads local_num_threads
@@ -226,7 +226,7 @@ M_WARNING setverbosity
         >> SetDefaults
 
 
-       (SLI only network building)
+       (SLI only network building) =
 
 
       % Setting neuron default parameters
@@ -286,8 +286,6 @@ M_WARNING setverbosity
       /static_synapse_hom_wd /syn_ex << /weight JE >> CopyModel
       /static_synapse_hom_wd /syn_in << /weight JI >> CopyModel
 
-      synapsedict /syn_ex get /syn_ex_id Set
-      synapsedict /syn_in get /syn_in_id Set
       synapsedict /static_synapse get /syn_default Set 
 
       rngdict /MT19937 get 123456789 CreateRNG /rng Set
@@ -386,13 +384,13 @@ M_WARNING setverbosity
       % Connect Poisson generator to neurons
       1 1 E_last
       {
-        expoisson exch syn_ex_id Connect_i_i_i	
+        expoisson exch /syn_ex Connect	
       } for
 
       % Connect Poisson generator to neurons
       I_first 1 I_last
       {
-        inpoisson exch syn_ex_id Connect_i_i_i	
+        inpoisson exch /syn_ex Connect	
       } for
 
       % Spike detectors are connected to the first Nrec neurons in each
@@ -403,12 +401,12 @@ M_WARNING setverbosity
 
       1 1 Nrec
       { 
-        exsd syn_ex_id Connect_i_i_i
+        exsd /syn_ex Connect
       } for
 
       I_first dup 1 exch Nrec add
       { 
-        insd syn_ex_id Connect_i_i_i
+        insd /syn_ex Connect
       } for
 
       (Drawing excitatory connections.) =
@@ -423,7 +421,8 @@ M_WARNING setverbosity
 	  rng NE irand % draw random number in [0,NE)
           1 add        % plus 1 to get number in [1,NE]
 	  target
-	  syn_ex_id Connect_i_i_i  
+	  /syn_ex
+          Connect  
         } repeat
       }  for
 
@@ -434,7 +433,7 @@ M_WARNING setverbosity
         CE
         {
 	  rng NE irand 1 add
-	  target syn_ex_id Connect_i_i_i  
+	  target /syn_ex Connect  
         } repeat
       } for
 
@@ -447,7 +446,7 @@ M_WARNING setverbosity
 	CI
 	{
 	   rng NI irand I_first add 
-	   target syn_in_id Connect_i_i_i
+	   target /syn_in Connect
 	} repeat
       } for
 
@@ -460,7 +459,7 @@ M_WARNING setverbosity
  	CI
 	{
 	   rng NI irand I_first add 
-	   target syn_in_id Connect_i_i_i
+	   target /syn_in Connect
 	} repeat
       } for
 } bind def
@@ -477,13 +476,13 @@ M_WARNING setverbosity
       % Connect Poisson generator to neurons
       1 1 E_last
       {
-        expoisson exch syn_ex_id Connect_i_i_i	
+        expoisson exch /syn_ex Connect	
       } for
 
       % Connect Poisson generator to neurons
       I_first 1 I_last
       {
-        inpoisson exch syn_ex_id Connect_i_i_i	
+        inpoisson exch /syn_ex Connect	
       } for
 
       % Spike detectors are connected to the first Nrec neurons in each
@@ -494,12 +493,12 @@ M_WARNING setverbosity
 
       1 1 Nrec
       { 
-        exsd syn_ex_id Connect_i_i_i
+        exsd /syn_ex Connect
       } for
 
       I_first dup 1 exch Nrec add
       { 
-        insd syn_ex_id Connect_i_i_i
+        insd /syn_ex Connect
       } for
 
       (Drawing excitatory connections.) =
@@ -514,7 +513,7 @@ M_WARNING setverbosity
 	  rng NE irand_g_i % draw random number in [0,NE)
           1 add_ii         % plus 1 to get number in [1,NE]
 	  target
-	  syn_ex_id Connect_i_i_i  
+	  /syn_ex Connect  
         } repeat_
       }  for
 
@@ -529,7 +528,7 @@ M_WARNING setverbosity
         CE
         {
 	  rng NE irand_g_i 1 add_ii
-	  target syn_ex_id Connect_i_i_i  
+	  target /syn_ex Connect  
         } repeat_
       }  for
 
@@ -546,7 +545,7 @@ M_WARNING setverbosity
 	CI
 	{
 	   rng NI irand_g_i I_first add_ii 
-	   target syn_in_id Connect_i_i_i
+	   target /syn_in Connect
 	} repeat_
       } for
 
@@ -559,7 +558,7 @@ M_WARNING setverbosity
  	CI
 	{
 	   rng NI irand_g_i I_first add_ii 
-	   target syn_in_id Connect_i_i_i
+	   target /syn_in Connect
 	} repeat_
       }  for
 } bind userdict Inline def

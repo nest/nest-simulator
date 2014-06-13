@@ -40,8 +40,7 @@ precision of a tic.
 
 */
 
-
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity
@@ -56,7 +55,7 @@ dexp /h Set
 
 ResetKernel
 
-[0] <<  
+0   <<  
       /tics_per_ms min_exponent neg dexp
       /resolution h
      >> SetStatus

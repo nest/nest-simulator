@@ -85,11 +85,41 @@ namespace nest
      */
     void clear_pending_spikes();
 
-    /** Simulate for the given time */
+    /** 
+     * Simulate for the given time .
+     * This function performs the following steps
+     * 1. set the new simulation time
+     * 2. call prepare_simulation()
+     * 3. call resume()
+     * 4. call finalize_simulation() 
+     */
     void simulate(Time const&);
 
     /** Resume simulation after an interrupt. */
     void resume();
+
+    /** 
+     * All steps that must be done before a simulation.
+     */
+    void prepare_simulation();
+
+    /**
+     * Force reconfiguration of the simulation.
+     * This function must be called whenever the network has changed after a simulation.
+     * Eligible changes are:
+     * - adding new nodes
+     * - adding connections
+     * - changing the number of threads
+     * - freezing or unfreezing of nodes.
+     * After a call to this function, the next simulate()/resume() call will call prepare_simulation.
+     */
+    void force_preparation();
+
+    /** 
+     * Cleanup after the simulation.
+     */
+
+    void finalize_simulation();
 
     void terminate();
 
@@ -155,6 +185,25 @@ namespace nest
      */
     thread get_num_processes() const;
 
+    thread get_num_rec_processes() const;
+    thread get_num_sim_processes() const;
+
+    /**
+     * Set number of recording processes, switches NEST to global
+     * spike detection mode.
+     */
+    void set_num_rec_processes(int nrp);
+
+    /**
+     * Increment total number of global spike detectors by 1
+     */
+    void increment_n_gsd();
+
+    /**
+     * Get total number of global spike detectors
+     */
+    index get_n_gsd();
+
     /**
      * Return true if the node on the local machine, false if not.
      */
@@ -169,11 +218,21 @@ namespace nest
      * Return a thread number for a given global node id.
      * Each node has a default thread on which it will run. 
      * The thread is defined by the relation:
-     * t = (gid div P) mod T, where P is the number of processes and 
+     * t = (gid div P) mod T, where P is the number of simulation processes and 
      * T the number of threads. This may be used by network::add_node()
      * if the user has not specified anything.
      */
     thread suggest_vp(index gid) const;
+
+    /**
+     * Return a thread number for a given global recording node id.
+     * Each node has a default thread on which it will run. 
+     * The thread is defined by the relation:
+     * t = (gid div P) mod T, where P is the number of recording processes and 
+     * T the number of threads. This may be used by network::add_node()
+     * if the user has not specified anything.
+     */
+    thread suggest_rec_vp(index gid) const;
 
     thread vp_to_thread(thread vp) const;
     
@@ -319,7 +378,7 @@ namespace nest
     void prepare_nodes();
 
     /**
-     * Calibrate, initialized buffers, register in list of nodes to update/finalize.
+     * Initialized buffers, register in list of nodes to update/finalize.
      * @see prepare_nodes()
      */
     void prepare_node_(Node *);
@@ -351,6 +410,11 @@ namespace nest
     index n_threads_; //!< Number of threads per process.
     index n_nodes_;   //!< Effective number of simulated nodes.
 
+    index n_rec_procs_; //!< MPI processes dedicated for recording devices
+    index n_sim_procs_; //!< MPI processes used for simulation
+
+    index n_gsd_; //!< Total number of global spike detectors, used for distributing them over recording processes
+
     volatile index   entry_counter_; //!< Counter for entry barrier.
     volatile index   exit_counter_;  //!< Counter for exit barrier.
 
@@ -376,6 +440,7 @@ namespace nest
     
     bool update_ref_;       //!< reference for node update state.
     bool terminate_;        //!< Terminate on signal or error
+    bool is_prepared_;      //!< true if prepare_simulation was executed
     bool simulated_;        //!< indicates whether the network has already been simulated for some time
     bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid 
     bool print_time_;       //!< Indicates whether time should be printed during simulations (or not)
@@ -578,10 +643,41 @@ namespace nest
     return Communicator::get_num_processes();
   }
 
+  inline 
+  thread Scheduler::get_num_rec_processes() const
+  {
+    return n_rec_procs_;
+  }
+
+  inline 
+  thread Scheduler::get_num_sim_processes() const
+  {
+    return n_sim_procs_;
+  }
+
+  inline 
+  void Scheduler::increment_n_gsd()
+  {
+    ++n_gsd_;
+  }
+  
+  inline
+  index Scheduler::get_n_gsd()
+  {
+    return n_gsd_;
+  }
+
   inline
   thread Scheduler::get_process_id(thread vp) const
   {
-    return vp % Communicator::get_num_processes();
+    if (vp >= static_cast<thread>(n_sim_procs_ * n_threads_)) // vp belongs to recording VPs
+    {
+      return (vp-n_sim_procs_*n_threads_) % n_rec_procs_ + n_sim_procs_;
+    }
+    else  // vp belongs to simulating VPs
+    {
+      return vp % n_sim_procs_;
+    }
   }
 
   inline
@@ -599,19 +695,39 @@ namespace nest
   inline
   thread Scheduler::suggest_vp(index gid) const
   {
-    return gid % Communicator::get_num_virtual_processes(); 
+    return gid % (n_sim_procs_*n_threads_);
+  }
+
+  inline
+  thread Scheduler::suggest_rec_vp(index gid) const
+  {
+    return gid % (n_rec_procs_*n_threads_)+n_sim_procs_*n_threads_;
   }
 
   inline
   thread Scheduler::vp_to_thread(thread vp) const
   {
-    return vp / Communicator::get_num_processes();
+    if (vp >= static_cast<thread>(n_sim_procs_ * n_threads_))
+    {
+      return (vp + n_sim_procs_*(1-n_threads_) - Communicator::get_rank() ) / n_rec_procs_;
+    }
+    else
+    {
+      return vp / n_sim_procs_;
+    }
   }
 
   inline
   thread Scheduler::thread_to_vp(thread t) const
   {
-    return t * Communicator::get_num_processes() + Communicator::get_rank();
+    if (Communicator::get_rank() >= static_cast<int>(n_sim_procs_)) // Rank is a recording process
+    {
+      return t * n_rec_procs_ + Communicator::get_rank() - n_sim_procs_ + n_sim_procs_*n_threads_;
+    }
+    else // Rank is a simulating process
+    {
+      return t * n_sim_procs_ + Communicator::get_rank();
+    }
   }
 
   inline
@@ -740,6 +856,12 @@ namespace nest
     terminate_mutex_.lock();
     terminate_=true;
     terminate_mutex_.unlock();
+  }
+
+  inline 
+  void Scheduler::force_preparation()
+  {
+    is_prepared_=false;
   }
 }
 

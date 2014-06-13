@@ -113,8 +113,6 @@ SeeAlso: hh_psc_alpha
     
   public:        
     
-    //    typedef Node base;
-    
     hh_cond_exp_traub();
     hh_cond_exp_traub(const hh_cond_exp_traub&);
     ~hh_cond_exp_traub();

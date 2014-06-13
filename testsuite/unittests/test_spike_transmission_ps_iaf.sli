@@ -28,7 +28,7 @@ This test exhibited the problem described in ticket #157
 
 */
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 

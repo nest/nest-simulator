@@ -37,6 +37,7 @@ namespace nest
     const Name C_m("C_m");
     const Name tau_m("tau_m");
     const Name tau_syn("tau_syn");
+    const Name taus_syn("taus_syn");
     const Name tau_syn_ex("tau_syn_ex");
     const Name tau_syn_in("tau_syn_in");
     const Name t_ref("t_ref");
@@ -62,6 +63,10 @@ namespace nest
     const Name E_K("E_K");
     const Name in_spikes("in_spikes");
     const Name ex_spikes("ex_spikes");
+    const Name weighted_spikes_in("weighted_spikes_in");
+    const Name weighted_spikes_ex("weighted_spikes_ex");
+    const Name input_currents_in("input_currents_in");
+    const Name input_currents_ex("input_currents_ex");
     const Name error("error");
 
     // Related to ArchivingNode
@@ -100,6 +105,8 @@ namespace nest
     const Name w("w");
     const Name Delta_T("Delta_T");
     const Name tau_w("tau_w");
+    const Name HMIN("HMIN");   //!< Smallest integration step for adaptive stepsize
+    const Name MAXERR("MAXERR"); //!< Largest permissible error for adaptive stepsize
 
     // Additional parameters for Izhikevich 2003
     const Name c("c");
@@ -111,12 +118,17 @@ namespace nest
     const Name dU("U"); //!< Unit increment of the utilization for a facilitating synapse [0...1]
     const Name u("u");  //!< probability of release [0...1]
     const Name x("x"); //!< current scaling factor of the synaptic weight [0...1]
+    const Name p("p"); //!< current release probability
+    const Name n("n");
     const Name tau_rec("tau_rec"); //!< time constant for recovery (ms)
     const Name tau_fac("tau_fac"); //!< facilitation time constant (ms)
     
     const Name dUs("Us"); //!< Unit increment of the utilization for a facilitating synapse [0...1]
     const Name us("us");  //!< probability of release [0...1]
     const Name xs("xs"); //!< current scaling factor of the synaptic weight [0...1]
+    const Name ps("ps"); //!< current release probability
+    const Name ns("ns");
+    const Name as("as");
     const Name tau_recs("tau_recs"); //!< time constant for recovery (ms)
     const Name tau_facs("tau_facs"); //!< facilitation time constant (ms)
 
@@ -140,6 +152,7 @@ namespace nest
     const Name epoch("epoch");
     const Name success("success");
     const Name with_noise("with_noise");
+    const Name weight_std("weight_std");
 
 
     // Other Adaptation
@@ -189,6 +202,22 @@ namespace nest
     const Name S("S");      // Binary state (output) of neuron
     const Name h("h");      // Summed input to a neuron
 
+
+    const Name I_syn("I_syn");               //!< following parameters used for iaflossless_count_exp
+    const Name pot_spikes("pot_spikes");
+    const Name dhaene_quick1("dhaene_quick1");
+    const Name dhaene_quick2("dhaene_quick2");
+    const Name dhaene_tmax_lt_t1("dhaene_tmax_lt_t1");
+    const Name dhaene_max_geq_V_th("dhaene_max_geq_V_th");
+    const Name dhaene_det_spikes("dhaene_det_spikes");
+    const Name eq7("eq7");
+    const Name eq9("eq9");
+    const Name eqs7and9("eqs7and9");
+    const Name lin_left_geq_V_th("lin_left_geq_V_th");
+    const Name lin_max_geq_V_th("lin_max_geq_V_th");
+    const Name eq13("eq13");
+    const Name eq12("eq12");
+
     // Specific to iaf_chxk_2008 neuron
     const Name g_ahp("g_ahp");
     const Name tau_ahp("tau_ahp");
@@ -205,6 +234,14 @@ namespace nest
     const Name I_syn_ex("I_syn_ex");  // Total excitatory synaptic current
     const Name I_syn_in("I_syn_in");  // Total inhibitory synaptic current
 
+    // Specific to population point process model (pp_pop_psc_delta)
+    const Name N("N");
+    const Name rho_0("rho_0");
+    const Name delta_u("delta_u");
+    const Name len_kernel("len_kernel");
+    const Name taus_eta("taus_eta");
+    const Name vals_eta("vals_eta");
+
     // Specific to GSL integration
     const Name gsl_error_tol("gsl_error_tol");  // GSL integrator tolerance
 
@@ -213,14 +250,22 @@ namespace nest
     const Name mother_rng("mother_rng");
     const Name p_copy("p_copy");
 
-    // Specific to correlation detector
+    // Specific to correlation and correlomatrix detector
     const Name delta_tau("delta_tau");
     const Name tau_max("tau_max");
-    const Name histogram("histogram");
-    const Name count_histogram("count_histogram");
     const Name Tstart("Tstart");
     const Name Tstop("Tstop");
 
+    // Specific to correlation detector
+    const Name histogram("histogram");
+    const Name histogram_correction("histogram_correction");
+    const Name count_histogram("count_histogram");
+
+    // Specific to correlomatrix detector
+    const Name N_channels("N_channels");
+    const Name covariance("covariance");
+    const Name count_covariance("count_covariance");
+    
     const Name origin("origin");
     const Name start("start");
     const Name stop("stop");
@@ -299,10 +344,14 @@ namespace nest
     const Name dead_time("dead_time");
     const Name gamma_shape("gamma_shape");
 
+    // Specific to iaf_psc_exp_multisynapse and iaf_psc_alpha_multisynapse
+    const Name has_connections("has_connections");
+
     // Miscellaneous parameters
     const Name label("label");
     const Name mean("mean");
     const Name std("std");
+    const Name std_mod("std_mod");
     const Name rms("rms");
     const Name dt("dt");
     const Name offset("offset");
@@ -330,12 +379,18 @@ namespace nest
     const Name theta("theta");
 
     // Node types
-    const Name type("type");
+    const Name type("node_type");
     const Name structure("structure");
     const Name neuron("neuron");
     const Name stimulator("stimulator");
     const Name recorder("recorder");
     const Name synapse("synapse");
     const Name other("other");
+
+    // connectivity-related
+    const Name rule("rule");
+    const Name autapses("autapses");
+    const Name multapses("multapses");
+    const Name distribution("distribution");
   }
 }

@@ -91,7 +91,7 @@ Note:
 References:
   [1] Morrison A, Straube S, Plesser HE & Diesmann M (2007) Exact subthreshold
       integration with continuous spike times in discrete time neural network
-      simulations. Neural Comput 19, 47–79
+      simulations. Neural Comput 19, 47-79
   [2] Hanuschkin A, Kunkel S, Helias M, Morrison A and Diesmann M (2010) A
       general and efficient method for incorporating precise spike times in
       globally timedriven simulations. Front Neuroinform 4:113
@@ -390,8 +390,7 @@ namespace nest
 inline
 port iaf_psc_exp_ps::check_connection(Connection & c, port receptor_type)
 {
-  SpikeEvent e;
-  
+  SpikeEvent e; 
   e.set_sender(*this);
   c.check_event(e);
   return c.get_target()->connect_sender(e, receptor_type);

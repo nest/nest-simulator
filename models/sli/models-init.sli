@@ -22,16 +22,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% SLI wrappers for functions defined in modelsmodule
-%
-% Author: Marc-Oliver Gewaltig, Jochen Martin Eppler, Hans Ekkehard Plesser
-% Date: September 2008, October 2010
-%
-
-/models-init /SLI ($Revision: 9031 $) provide-component
-/models-init /C++ ($Revision: 9031 $) require-component
-
-%% Code for the sli_neuron
+% Code for the sli_neuron
 
 modeldict /sli_neuron known
 {

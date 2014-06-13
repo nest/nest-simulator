@@ -38,7 +38,7 @@ Author:  October 2007, Helias
 SeeAlso: mip_generator, correlation_detector
 */
 
-/unittest (7039) require
+(unittest) run
 /unittest using
 
 

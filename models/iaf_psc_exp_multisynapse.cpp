@@ -55,16 +55,15 @@ namespace nest
  * ---------------------------------------------------------------- */
     
 iaf_psc_exp_multisynapse::Parameters_::Parameters_()
-  : Tau_     (  10.0       ),  // in ms
-    C_       ( 250.0       ),  // in pF
-    t_ref_   (   2.0       ),  // in ms
-    U0_      ( -70.0       ),  // in mV
-    I_e_     (   0.0       ),  // in pA
-    V_reset_ ( -70.0 - U0_ ),  // in mV
-    Theta_   ( -55.0 - U0_ ),  // relative U0_
-    num_of_receptors_    (0)
+  : Tau_             (  10.0       ),  // in ms
+    C_               ( 250.0       ),  // in pF
+    t_ref_           (   2.0       ),  // in ms
+    U0_              ( -70.0       ),  // in mV
+    I_e_             (   0.0       ),  // in pA
+    V_reset_         ( -70.0 - U0_ ),  // in mV
+    Theta_           ( -55.0 - U0_ ),  // relative U0_
+    has_connections_ ( false       )
 {
-  receptor_types_.clear();
   tau_syn_.clear();  
 }
 
@@ -90,11 +89,11 @@ void iaf_psc_exp_multisynapse::Parameters_::get(DictionaryDatum &d) const
   def<double>(d, names::tau_m,   Tau_);
   def<double>(d, names::t_ref,   t_ref_);
   def<int>(d,"n_synapses", num_of_receptors_);
+  def<bool>(d, names::has_connections, has_connections_);
   
   ArrayDatum tau_syn_ad(tau_syn_);
   def<ArrayDatum>(d,"tau_syn", tau_syn_ad);
-  
-  (*d)["receptor_types"] = IntVectorDatum(new std::vector<long>(receptor_types_));
+
 }
 
 double iaf_psc_exp_multisynapse::Parameters_::set(const DictionaryDatum& d)
@@ -125,17 +124,13 @@ double iaf_psc_exp_multisynapse::Parameters_::set(const DictionaryDatum& d)
   if ( Tau_ <= 0. )
     throw BadProperty("Membrane time constant must be > 0.");
 
-  if (updateValue<long>(d, "n_synapses", num_of_receptors_))
-    tau_syn_.resize(num_of_receptors_, 2.0);
-
   std::vector<double> tau_tmp;
   if (updateValue<std::vector<double> >(d, "tau_syn", tau_tmp))
   {
-    if (tau_tmp.size() != num_of_receptors_)
-      throw DimensionMismatch(num_of_receptors_, tau_tmp.size());
-
     for (size_t i = 0; i < tau_tmp.size(); ++i)
     {
+      if (tau_tmp.size() < tau_syn_.size() && has_connections_ == true)
+        throw BadProperty("The neuron has connections, therefore the number of ports cannot be reduced.");
       if (tau_tmp[i] <= 0)
         throw BadProperty("All synaptic time constants must be > 0.");
       if (tau_tmp[i] == Tau_)
@@ -143,6 +138,7 @@ double iaf_psc_exp_multisynapse::Parameters_::set(const DictionaryDatum& d)
     }
 
     tau_syn_ = tau_tmp;
+    num_of_receptors_ = tau_syn_.size();
   }
 
   if ( t_ref_ < 0. )
@@ -150,8 +146,6 @@ double iaf_psc_exp_multisynapse::Parameters_::set(const DictionaryDatum& d)
 
   if ( V_reset_ >= Theta_ )
     throw BadProperty("Reset potential must be smaller than threshold.");
-
-  updateValue<std::vector<long> >(d, "receptor_types", receptor_types_);
 
   return delta_EL;
 }
@@ -223,25 +217,23 @@ void nest::iaf_psc_exp_multisynapse::calibrate()
 
   const double h = Time::get_resolution().get_ms();
 
-  V_.receptor_types_size_ = P_.receptor_types_.size();
-
-  // if n_synapses has been Decreased with SetStatus, force new dimension.
-  if (P_.num_of_receptors_ < V_.receptor_types_size_){
-    V_.receptor_types_size_ = P_.num_of_receptors_;
-    P_.receptor_types_.resize(V_.receptor_types_size_);
+  P_.receptor_types_.resize(P_.num_of_receptors_);
+  for (size_t i=0; i < P_.num_of_receptors_; i++)
+  {
+    P_.receptor_types_[i] = i+1;
   }
 
-  V_.P11_syn_.resize(V_.receptor_types_size_);
-  V_.P21_syn_.resize(V_.receptor_types_size_);
+  V_.P11_syn_.resize(P_.num_of_receptors_);
+  V_.P21_syn_.resize(P_.num_of_receptors_);
 
-  S_.i_syn_.resize(V_.receptor_types_size_);
+  S_.i_syn_.resize(P_.num_of_receptors_);
 
-  B_.spikes_.resize(V_.receptor_types_size_);
+  B_.spikes_.resize(P_.num_of_receptors_);
 
   V_.P22_ = std::exp(-h/P_.Tau_);
   V_.P20_ = P_.Tau_/P_.C_*(1.0 - V_.P22_);
 
-  for (unsigned int i=0; i < V_.receptor_types_size_; i++)
+  for (size_t i=0; i < P_.num_of_receptors_; i++)
   {
     V_.P11_syn_[i] = std::exp(-h/P_.tau_syn_[i]);
     V_.P21_syn_[i] = P_.Tau_/(P_.C_*(1.0-P_.Tau_/P_.tau_syn_[i])) * V_.P11_syn_[i] * (1.0 - std::exp(h*(1.0/P_.tau_syn_[i]-1.0/P_.Tau_)));
@@ -268,7 +260,7 @@ void iaf_psc_exp_multisynapse::update(const Time& origin, const long_t from, con
       S_.V_m_ = S_.V_m_*V_.P22_ + (P_.I_e_+S_.i_0_)*V_.P20_; // not sure about this
 
       S_.current_=0.0;
-      for (unsigned int i=0; i < V_.receptor_types_size_; i++){
+      for (size_t i=0; i < P_.num_of_receptors_; i++){
 	S_.V_m_ += V_.P21_syn_[i]*S_.i_syn_[i];
 	S_.current_ += S_.i_syn_[i]; // not sure about this
       }
@@ -276,7 +268,7 @@ void iaf_psc_exp_multisynapse::update(const Time& origin, const long_t from, con
     else 
       --S_.r_ref_; // neuron is absolute refractory
 
-    for (unsigned int i=0; i < V_.receptor_types_size_; i++)
+    for (size_t i=0; i < P_.num_of_receptors_; i++)
     {      
       // exponential decaying PSCs
       S_.i_syn_[i] *= V_.P11_syn_[i];
@@ -305,38 +297,11 @@ void iaf_psc_exp_multisynapse::update(const Time& origin, const long_t from, con
 
 port iaf_psc_exp_multisynapse::connect_sender(SpikeEvent&, port receptor_type)
 {
-  bool new_rp = true;
-  
-  // look if new port is encountered
-  for(std::vector<long>::const_iterator pii = P_.receptor_types_.begin(); pii != P_.receptor_types_.end(); ++pii)
-  {
-    if (*pii == receptor_type)
-    {
-      new_rp = false;
-      break;
-    }
-  }
+  if (receptor_type <= 0 || receptor_type > static_cast <port>(P_.num_of_receptors_))
+    throw IncompatibleReceptorType(receptor_type, get_name(), "SpikeEvent");
 
-  if (new_rp)
-  {
-    
-    if (P_.num_of_receptors_ <= P_.receptor_types_.size())
-    {
-      // space has not been pre-allocated
-      ++P_.num_of_receptors_;
+  P_.has_connections_ = true;
 
-      RingBuffer spiketmp;
-      spiketmp.clear();
-      B_.spikes_.push_back(spiketmp); 
-
-      P_.tau_syn_.push_back(2.0); 
-
-      S_.i_syn_.push_back(0.0);
-    }
-
-    P_.receptor_types_.push_back(receptor_type);
-    V_.receptor_types_size_ = P_.receptor_types_.size();
-  }
   return receptor_type;
 }
 
@@ -344,7 +309,7 @@ void iaf_psc_exp_multisynapse::handle(SpikeEvent& e)
 {
   assert(e.get_delay() > 0);
 
-  for (unsigned int i=0; i < V_.receptor_types_size_; ++i)
+  for (size_t i=0; i < P_.num_of_receptors_; ++i)
   {
     if (P_.receptor_types_[i] == e.get_rport()){
       B_.spikes_[i].add_value(e.get_rel_delivery_steps(network()->get_slice_origin()),

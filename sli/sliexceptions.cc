@@ -25,6 +25,16 @@
 #include "interpret.h"
 #include <sstream>
 
+WrappedThreadException::WrappedThreadException(std::exception &exc)
+  : SLIException(exc.what())
+{
+  SLIException* se = dynamic_cast<SLIException*>(&exc);
+  if ( se )
+    message_ = se->message();
+  else
+    message_ = std::string("C++ exception: ") + exc.what();
+}
+
 std::string DivisionByZero::message()
 {
     return "You cannot divide by zero.";
@@ -81,6 +91,12 @@ std::string ArgumentType::message()
     
   return out.str();
 }
+
+std::string BadParameterValue::message()
+{
+  return msg_;
+}
+
 
 std::string UndefinedName::message()
 {
@@ -146,5 +162,9 @@ std::string DynamicModuleManagementError::message()
 std::string NamingConflict::message()
 {
   return msg_;
+}
 
+std::string NotImplemented::message()
+{
+  return msg_;
 }

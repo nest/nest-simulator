@@ -1,4 +1,3 @@
-
 /*
  *  test_set_tics.sli
  *
@@ -51,10 +50,8 @@ Author: Diesmann
 SeeAlso: get, dexp 
 */
 
-
-/unittest (6335) require
+(unittest) run
 /unittest using
-
 
 0 << /tics_per_ms 14 dexp /resolution -4 dexp  >> SetStatus
 % this is equivalent to:

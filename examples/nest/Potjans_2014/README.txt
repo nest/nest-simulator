@@ -1,0 +1,131 @@
+/*
+ *  README.txt
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+Cortical microcircuit simulation: SLI version
+
+This is an implementation of the multi-layer microcircuit model of early
+sensory cortex published by Potjans and Diesmann (2012) The cell-type specific
+cortical microcircuit: relating structure and activity in a full-scale spiking
+network model. Cereb Cortex, online first. 
+
+
+Files:
+	- network_params.sli
+	Script containing model parameters
+
+        - sim_params.sli
+        Script containing simulation and recording parameters
+
+        - user_params.sli
+        Script containing parameters related to the user system
+
+	- microcircuit.sli
+	Simulation script
+
+	- run_microcircuit.sh
+	Bash script. Creates sim_script.sh and submits it to the queue
+
+	- spike_analysis_www.py
+	Python script for basic analysis
+
+The bash script is designed for a cluster with a queuing system that uses qsub.
+It takes all parameters from user_params.sli and sim_params.sli and can be left
+unchanged. The actual simulation script 'microcircuit.sli' does not need to be
+changed either.
+
+
+Instructions:
+
+1. Download NEST (http://www.nest-initiative.org/index.php/Software:Download)
+
+2. Compile NEST with MPI support (use the --with-mpi option when configuring) 
+   according to the instructions on
+   http://www.nest-initiative.org/index.php/Software:Installation
+
+3. In user_params.sli adjust output_dir, mpi_path, and nest_path to your system
+
+4. In sim_params.sli adjust the following parameters:
+
+   - the number of compute nodes 'n_nodes'
+   - the number of processors per node 'n_procs_per_node'
+   - queuing system parameters 'walltime' and 'memory'
+   - simulation time 't_sim'
+
+   and choose recordables: cortical spikes, thalamic spikes, voltages
+
+5. In network_params.sli:
+
+   - Choose the network 'area', which scales the numbers of neurons
+   - When down-scaling: Choose whether full-scale in-degrees should be used.
+     Setting 'preserve_K' to true preserves most of the dynamics of the
+     full-size network, as long as 'area' is not too small
+   - Choose the external input: Poissonian noise 'bg_rate' and/or DC current
+     'dc_amplitude'
+   - Set any thalamic inputs parameters
+
+6. Run the simulation by typing ./run_microcircuit.sh in your terminal
+   (microcircuit.sli and the parameter files need to be in the same folder)
+
+7. Output files and basic analysis:
+   
+   - Spikes are written to .gdf files containing GIDs of the recorded neurons
+     and corresponding spike times in ms. The GIDs are unordered.
+     Separate files are written out for each population and virtual process.
+     File names are formed as spike detector label + layer index + population
+     index + spike detector GID + virtual process + .gdf
+   - population_GIDs.dat contains the first and last global ID (GID) of the
+     neurons in each population in the order 2/3e, 2/3i, 4e, 4i, 5e, 5i, 6e, 6i
+   - Voltages are written to .dat files containing GIDs, times in ms, and the
+     corresponding membrane potentials in mV. File names are formed as
+     voltmeter label + layer index + population index + spike detector GID +
+     virtual process + .dat
+
+   - Run 'spike_analysis.py' with the variable 'datapath' set to the output
+     folder in order to merge the spike files of each population (including
+     thalamic ones, if present), sort GIDs, and produce dot plots and firing
+     rate plots.
+   - The analysis script does not currently cover voltages.
+    
+The simulation was successfully tested with MPI 1.4.3.
+The analysis script works with Python 2.6.6 including packages numpy 1.3.0,
+matplotlib 0.99.1.1, and glob.
+
+---------------------------------------------------
+
+Simulation on a single process:
+
+1. After compiling NEST (not necessarily with MPI), go to the folder that
+   includes microcircuit.sli and the parameter files and type 'nest' in your
+   terminal.
+
+2. Adjust 'area' and 'preserve_K' in network_params.sli such that the network
+   is small enough to fit on your system. 
+
+3. Ensure that the output directory exists, as it is not created via the bash
+   script anymore
+
+4. Type '(microcircuit) run' to start the simulation on a single process.
+
+A downscaled version ('area' = 0.1) of the network was tested on a single
+process with 'preserve_K' = false. However, note that this produces different
+network dynamics than the full-scale model.
+

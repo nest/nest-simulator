@@ -42,7 +42,7 @@ SeeAlso: rdevdict::binomial
 */
 
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 % The factorial is needed to compute the binomial coefficients that occur

@@ -304,7 +304,6 @@ Added search for 'using/endusing', Kupper, 6-aug-2003."
       ("\\<\\(forall\\|forallindexed\\)\\>"           . font-lock-keyword-face)
       ("\\<\\(Map\\|MapIndexed\\|MapThread\\)\\>"  . font-lock-keyword-face)
       ("\\<\\(begin\\|end\\|namespace\\|using\\|endusing\\)\\>"       . font-lock-keyword-face)
-      ("\\<\\(provide\\|provide-component\\|require\\|require-component\\)\\>" . font-lock-keyword-face)
       ("\\<\\(stop\\|stopped\\|raiseerror\\|raiseagain\\)\\>" . font-lock-keyword-face)
 ;;      ("[{}]" . font-lock-keyword-face)    ; fontify braces
       ("\\/\\([:.?A-Za-z0-9_]\\)+\\b" . font-lock-function-name-face) ; literal names

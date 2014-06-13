@@ -166,6 +166,7 @@ public:
   void connect(Node& s, Node& r, index s_gid, thread tid, index syn);
   void connect(Node& s, Node& r, index s_gid, thread tid, double_t w, double_t d, index syn);
   void connect(Node& s, Node& r, index s_gid, thread tid, DictionaryDatum& p, index syn);
+  void connect(Node& s, Node& r, index s_gid, thread tid, double_t w, double_t d, DictionaryDatum& p, index syn);
 
   /** 
    * Experimental bulk connector. See documentation in network.h

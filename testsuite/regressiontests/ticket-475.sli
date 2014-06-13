@@ -33,8 +33,9 @@ threads.
 Author: Hans Ekkehard Plesser, 2010-10-11
  */
 
-/unittest (8831) require
+(unittest) run
 /unittest using
+
 M_INFO setverbosity
 
 

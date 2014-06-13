@@ -35,13 +35,16 @@
 #include "knuthlfg.h"
 #include "mt19937.h"
 #include "gslrandomgen.h"
+#include "clipped_randomdev.h"
 
 #include "binomial_randomdev.h"
 #include "poisson_randomdev.h"
 #include "normal_randomdev.h"
 #include "exp_randomdev.h"
 #include "gamma_randomdev.h"
+#include "uniform_randomdev.h"
 #include "uniformint_randomdev.h"
+#include "lognormal_randomdev.h"
 
 #ifdef HAVE_GSL
 #include "gsl_binomial_randomdev.h"
@@ -57,6 +60,8 @@ template class lockPTRDatum<librandom::RandomGen, &RandomNumbers::RngType>;
 template class lockPTRDatum<librandom::RandomDev, &RandomNumbers::RdvType>;
 template class lockPTRDatum<librandom::GenericRandomDevFactory, &RandomNumbers::RdvFactoryType>;
 
+Dictionary* RandomNumbers::rngdict_ = 0;
+Dictionary* RandomNumbers::rdvdict_ = 0;
 
 RandomNumbers::~RandomNumbers()
 {
@@ -68,19 +73,19 @@ RandomNumbers::~RandomNumbers()
 }
 
 template <typename NumberGenerator>
-void RandomNumbers::register_rng_(const std::string& name, DictionaryDatum& dict)
+void RandomNumbers::register_rng_(const std::string& name, Dictionary& dict)
 {
   Token rngfactory = new librandom::RngFactoryDatum(
                          new librandom::BuiltinRNGFactory<NumberGenerator>);
-  dict->insert_move(Name(name), rngfactory);
+  dict[Name(name)] = rngfactory;
 }
 
 template <typename DeviateGenerator>
-void RandomNumbers::register_rdv_(const std::string& name, DictionaryDatum& dict)
+void RandomNumbers::register_rdv_(const std::string& name, Dictionary& dict)
 {
   Token rdevfactory = new librandom::RdvFactoryDatum(
                           new librandom::RandomDevFactory<DeviateGenerator>);
-  dict->insert_move(Name(name), rdevfactory);
+  dict.insert_move(Name(name), rdevfactory);
 }
 
 void RandomNumbers::init(SLIInterpreter *i)
@@ -96,30 +101,51 @@ void RandomNumbers::init(SLIInterpreter *i)
   RdvFactoryType.settypename("rdvfactorytype");
   RdvFactoryType.setdefaultaction(SLIInterpreter::datatypefunction);
 
+  if ( rngdict_ || rdvdict_ )
+    throw DynamicModuleManagementError("RandomNumbers module has been initialized previously.");
+
   // create random number generator type dictionary
-  DictionaryDatum rngdict(new Dictionary());
-  i->def("rngdict", rngdict);
+  rngdict_ = new Dictionary();
+  assert(rngdict_);
+  i->def("rngdict", DictionaryDatum(rngdict_));
   
   // add built-in rngs
-  register_rng_<librandom::KnuthLFG>("knuthlfg", rngdict);
-  register_rng_<librandom::MT19937>("MT19937", rngdict);
+  register_rng_<librandom::KnuthLFG>("knuthlfg", *rngdict_);
+  register_rng_<librandom::MT19937>("MT19937", *rngdict_);
 
   // let GslRandomGen add all of the GSL rngs
-  librandom::GslRandomGen::add_gsl_rngs(rngdict);
+  librandom::GslRandomGen::add_gsl_rngs(*rngdict_);
 
   // create random deviate generator dictionary
-  DictionaryDatum rdvdict(new Dictionary());
-  i->def("rdevdict", rdvdict);
+  rdvdict_ = new Dictionary();
+  assert(rdvdict_);
+  i->def("rdevdict", DictionaryDatum(rdvdict_));
 
-  register_rdv_<librandom::BinomialRandomDev>("binomial", rdvdict);
-  register_rdv_<librandom::PoissonRandomDev>("poisson", rdvdict);
-  register_rdv_<librandom::NormalRandomDev>("normal", rdvdict);
-  register_rdv_<librandom::ExpRandomDev>("exponential", rdvdict);
-  register_rdv_<librandom::GammaRandomDev>("gamma", rdvdict);
-  register_rdv_<librandom::UniformIntRandomDev>("uniformint", rdvdict);
+  register_rdv_<librandom::BinomialRandomDev>("binomial", *rdvdict_);
+  register_rdv_<librandom::ClippedRedrawDiscreteRandomDev<librandom::BinomialRandomDev> >("binomial_clipped", *rdvdict_);
+  register_rdv_<librandom::ClippedToBoundaryDiscreteRandomDev<librandom::BinomialRandomDev> >("binomial_clipped_to_boundary", *rdvdict_);
+  register_rdv_<librandom::PoissonRandomDev>("poisson", *rdvdict_);
+  register_rdv_<librandom::ClippedRedrawDiscreteRandomDev<librandom::PoissonRandomDev> >("poisson_clipped", *rdvdict_);
+  register_rdv_<librandom::ClippedToBoundaryDiscreteRandomDev<librandom::PoissonRandomDev> >("poisson_clipped_to_boundary", *rdvdict_);
+  register_rdv_<librandom::UniformRandomDev>("uniform", *rdvdict_);
+  register_rdv_<librandom::UniformIntRandomDev>("uniform_int", *rdvdict_);
+
+  register_rdv_<librandom::NormalRandomDev>("normal", *rdvdict_);
+  register_rdv_<librandom::ClippedRedrawContinuousRandomDev<librandom::NormalRandomDev> >("normal_clipped", *rdvdict_);
+  register_rdv_<librandom::ClippedToBoundaryContinuousRandomDev<librandom::NormalRandomDev> >("normal_clipped_to_boundary", *rdvdict_);
+  register_rdv_<librandom::LognormalRandomDev>("lognormal", *rdvdict_);
+  register_rdv_<librandom::ClippedRedrawContinuousRandomDev<librandom::LognormalRandomDev> >("lognormal_clipped", *rdvdict_);
+  register_rdv_<librandom::ClippedToBoundaryContinuousRandomDev<librandom::LognormalRandomDev> >("lognormal_clipped_to_boundary", *rdvdict_);
+
+  register_rdv_<librandom::ExpRandomDev>("exponential", *rdvdict_);
+  register_rdv_<librandom::ClippedRedrawContinuousRandomDev<librandom::ExpRandomDev> >("exponential_clipped", *rdvdict_);
+  register_rdv_<librandom::ClippedToBoundaryContinuousRandomDev<librandom::ExpRandomDev> >("exponential_clipped_to_boundary", *rdvdict_);
+  register_rdv_<librandom::GammaRandomDev>("gamma", *rdvdict_);
+  register_rdv_<librandom::ClippedRedrawContinuousRandomDev<librandom::GammaRandomDev> >("gamma_clipped", *rdvdict_);
+  register_rdv_<librandom::ClippedToBoundaryContinuousRandomDev<librandom::GammaRandomDev> >("gamma_clipped_to_boundary", *rdvdict_);
 
 #ifdef HAVE_GSL
-  register_rdv_<librandom::GSL_BinomialRandomDev>("gsl_binomial", rdvdict);
+  register_rdv_<librandom::GSL_BinomialRandomDev>("gsl_binomial", *rdvdict_);
 #endif
 
   // create function
@@ -141,7 +167,7 @@ void RandomNumbers::init(SLIInterpreter *i)
 // see librandom.sli for SLI documentation
 void RandomNumbers::CreateRNGFunction::execute(SLIInterpreter *i) const
 {
-  assert(i->OStack.load()>1);
+  i->assert_stack_load(2);
 
   const long seed = getValue<long>(i->OStack.top());
   librandom::RngFactoryDatum factory 
@@ -157,7 +183,7 @@ void RandomNumbers::CreateRNGFunction::execute(SLIInterpreter *i) const
 // see librandom.sli for SLI documentation
 void RandomNumbers::CreateRDVFunction::execute(SLIInterpreter *i) const
 {
-  assert(i->OStack.load()>1);
+  i->assert_stack_load(2);
 
   librandom::RdvFactoryDatum factory 
     = getValue<librandom::RdvFactoryDatum>(i->OStack.top());
@@ -173,86 +199,42 @@ void RandomNumbers::CreateRDVFunction::execute(SLIInterpreter *i) const
 // see librandom.sli for SLI documentation
 void RandomNumbers::SetStatus_vdFunction::execute(SLIInterpreter *i) const
 {
-  assert(i->OStack.load() > 1);
+  i->assert_stack_load(2);
 
-  DictionaryDatum dict;
-  librandom::RdvDatum rdv;
+  DictionaryDatum dict = getValue<DictionaryDatum>(i->OStack.top());
+  librandom::RdvDatum rdv = getValue<librandom::RdvDatum>(i->OStack.pick(1));
 
-  try 
-    {
-      dict = getValue<DictionaryDatum>(i->OStack.top());
-      rdv = getValue<librandom::RdvDatum>(i->OStack.pick(1));
-    }
-  catch ( TypeMismatch &e )
-    {
-      i->raiseerror("TypeMismatch");
-      return;
-    }
+  dict->clear_access_flags();
+  rdv->set_status(dict);
+  std::string missed;
+  if ( !dict->all_accessed(missed) )
+    throw UnaccessedDictionaryEntry(missed);
 
-  try
-    {
-      rdv->set_status(dict);
-      i->OStack.pop(2);
-      i->EStack.pop();
-    }
-  catch(...)
-    {
-      /* This is not nice.  Before we improve on this,
-	 we should unify the exception handling in SLI an the kernel,
-	 so that the above set_status can throw a nest::KernelException,
-	 which can be queried here with e.what().
-	 HEP, 2004-08-05
-      */
-      i->raiseerror(i->BadErrorHandler);
-      return;
-    }
+  i->OStack.pop(2);
+  i->EStack.pop();
 }
 
 // see librandom.sli for SLI documentation
 void RandomNumbers::GetStatus_vFunction::execute(SLIInterpreter *i) const
 {
-  
-  assert(i->OStack.load() > 0);
+  i->assert_stack_load(1);
 
-  librandom::RdvDatum rdv;
-  try
-    {
-      rdv = getValue<librandom::RdvDatum>(i->OStack.top());
-    }
-  catch ( TypeMismatch &e )
-    {
-      i->raiseerror("TypeMismatch");
-      return;
-    }
-  
-  try
-    {
-      DictionaryDatum dict(new Dictionary);
-      assert(dict.valid());
+  librandom::RdvDatum rdv = getValue<librandom::RdvDatum>(i->OStack.top());
 
-      rdv->get_status(dict);
+  DictionaryDatum dict(new Dictionary);
+  assert(dict.valid());
 
-      i->OStack.pop();
-      i->OStack.push(dict);
-      i->EStack.pop();
-    }
-  catch(...)
-    {
-      /* This is not nice.  Before we improve on this,
-	 we should unify the exception handling in SLI an the kernel,
-	 so that the above set_status can throw a nest::KernelException,
-	 which can be queried here with e.what().
-	 HEP, 2004-08-05
-      */
-      i->raiseerror(i->BadErrorHandler);
-      return;
-    }
+  rdv->get_status(dict);
+
+  i->OStack.pop();
+  i->OStack.push(dict);
+  i->EStack.pop();
 }
 
 // see librandom.sli for SLI documentation
 void RandomNumbers::SeedFunction::execute(SLIInterpreter *i) const 
 {
-  assert(i->OStack.load()>1);
+  i->assert_stack_load(2);
 
   const long seed = getValue<long>(i->OStack.top());
   librandom::RngDatum   rng  = getValue<librandom::RngDatum>(i->OStack.pick(1));
@@ -266,7 +248,7 @@ void RandomNumbers::SeedFunction::execute(SLIInterpreter *i) const
 // see librandom.sli for SLI documentation
 void RandomNumbers::IrandFunction::execute(SLIInterpreter *i) const 
 {
-  assert(i->OStack.load()>1);
+  i->assert_stack_load(2);
 
   const long N = getValue<long>(i->OStack.top());
   librandom::RngDatum rng = getValue<librandom::RngDatum>(i->OStack.pick(1));
@@ -281,7 +263,7 @@ void RandomNumbers::IrandFunction::execute(SLIInterpreter *i) const
 // see librandom.sli for SLI documentation
 void RandomNumbers::DrandFunction::execute(SLIInterpreter *i) const 
 {
-  assert(i->OStack.load()>0);
+  i->assert_stack_load(1);
 
   librandom::RngDatum rng = getValue<librandom::RngDatum>(i->OStack.top());
 
@@ -296,13 +278,7 @@ void RandomNumbers::DrandFunction::execute(SLIInterpreter *i) const
 /* see librandom.sli for SLI documentation */
 void RandomNumbers::RandomArrayFunction::execute(SLIInterpreter *i) const
 {
-  if( i->OStack.load() < 2 )
-  {
-    i->message(SLIInterpreter::M_ERROR, "RandomArray","Too few parameters supplied.");
-    i->message(SLIInterpreter::M_ERROR, "RandomArray","Usage: rdv n RandomArray.");
-    i->raiseerror(i->StackUnderflowError);
-    return;
-  }
+  i->assert_stack_load(2);
 
   librandom::RdvDatum rdv = getValue<librandom::RdvDatum>(i->OStack.pick(1));
   const long n = getValue<long>(i->OStack.pick(0));
@@ -310,9 +286,9 @@ void RandomNumbers::RandomArrayFunction::execute(SLIInterpreter *i) const
   TokenArray result;
   result.reserve(n);
 
-  if ( rdv->has_uldev() )
+  if ( rdv->has_ldev() )
     for( long j = 0; j < n ; ++j)
-      result.push_back(rdv->uldev());
+      result.push_back(rdv->ldev());
   else
     for( long j=0; j<n ; ++j)
       result.push_back( (*rdv)() );
@@ -325,24 +301,16 @@ void RandomNumbers::RandomArrayFunction::execute(SLIInterpreter *i) const
 
 void RandomNumbers::RandomFunction::execute(SLIInterpreter *i) const
 {
-  if( i->OStack.load()<1 )
-  {
-    i->raiseerror(i->StackUnderflowError);
-    return;
-  }
+  i->assert_stack_load(1);
 
   librandom::RdvDatum rdv = getValue<librandom::RdvDatum>(i->OStack.top());
  
   i->OStack.pop(); 
 
-  if ( rdv->has_uldev() )
-    i->OStack.push( rdv->uldev() );
+  if ( rdv->has_ldev() )
+    i->OStack.push( rdv->ldev() );
   else
     i->OStack.push( (*rdv)() );
   
   i->EStack.pop();
 }
-
-
-
-

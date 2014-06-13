@@ -20,10 +20,7 @@
  *
  */
 
-
-/librandom ($Revision: 10100 $) provide
-/oosupport (5774) require
-
+(oosupport) run
 
 %  added function Random, MD 2006-03-16
 %
@@ -98,29 +95,40 @@ def
 
 /* BeginDocumentation
 Name:CreateRDV - Create a new random deviate generator 
+
 Synopsis:
-rngtype rdvfacttype CreateRDV -> rdvtype
-rngtype dict1                 -> dict2
-Description:Create a new random deviate generator for a given distribution.
-See rdevdict for the available distributions, and the documentation for the 
-individual deviates (under rdevdict::*). The distribution instance can either be
-generated from a distribution implemented in C++ represented by rdvfactype or
-a SLI implementation of a distribution represented by a dictionary. In the former
-case the return value is of rdvtype in the latter case a dictionary. See normal_clipped
-for an example on how to define a distribution by a SLI dictionary.
-Distribution parameters can be inspected and changed with 
-GetStatus/SetStatus where applicable. 
-Parameters:rngtype - random generator as source of random numbers
+rngtype rdvfacttype           CreateRDV -> rdvtype
+rngtype rdvfacttype paramdict CreateRDV -> rdvtype
+rngtype dict1                 CreateRDV -> dict2
+rngtype dict1 paramdict       CreateRDV -> dict2
+
+Description:
+Create a new random deviate generator for a given distribution.  See
+rdevdict for the available distributions, and the documentation for
+the individual deviates (under rdevdict::*). The distribution instance
+can either be generated from a distribution implemented in C++
+represented by rdvfactype or a SLI implementation of a distribution
+represented by a dictionary. In the former case the return value is of
+rdvtype in the latter case a dictionary. 
+
+If a paramdict is passed, it is used to set the parameters of the
+random deviate generator. Parameters can be inspected and changed with
+GetStatus/SetStatus where applicable.
+
+Parameters:
+rngtype     - random generator as source of random numbers
 rdvfacttype - distribution to draw from, from rdevdict
+paramdict   - dictionary with distribution parameters
 rdvtype     - the initialized C++ object representing the distribution
 dict1       - dictionary used as a template to create the distribution
 dict2       - the cloned and initalized dictionary representing the distribution
-Examples:Create a generator for binomial numbers based on a Knuth LFG random 
+
+Examples:
+Create a generator for binomial numbers based on an MT19937 random 
 number generator, set parameters to p=0.2 and n=10, and draw five numbers:
 
 SLI ] rngdict /MT19937 get 123456789 CreateRNG /rng Set
-SLI ] rng rdevdict /binomial get CreateRDV /bino Set
-SLI ] bino << /p 0.2 /n 10 >> SetStatus
+SLI ] rng rdevdict /binomial get << /p 0.2 /n 10 >> CreateRDV /bino Set
 SLI ] bino 5 RandomArray ==
 [2 3 2 2 1]
 
@@ -129,10 +137,11 @@ SeeAlso:rdevdict, rdevdict::normal_clipped, Random, RandomArray, CreateRNG
 */
 /CreateRDV trie
   [/rngtype /rdvfactorytype] /CreateRDV_g_vf load addtotrie
+  [/rngtype /rdvfactorytype /dictionarytype] { rollu CreateRDV_g_vf dup rolld SetStatus_v } addtotrie
   [/rngtype /dictionarytype] {clonedict exch pop dup rollu /init call} addtotrie
+  [/rngtype /dictionarytype /dictionarytype] { rollu clonedict exch pop dup rollu /init call
+                                               rolld SetStatus } addtotrie
 def
-
-
 
 /*BeginDocumentation
 Name: seed - Set the seed of a random number generator.
@@ -326,180 +335,4 @@ def
  rollu pop pop
 
 } bind def
-
-
-
-
-/* BeginDocumentation
-Name:rdevdict::normal_clipped - clipped gaussian random number distribution
-Synopsis:normal_clipped -> dict
-Parameters:normal_clipped does not take any arguments but the default values
-can be inspected by
-   normal_clipped GetStatus info
-The parameters of a particular corresponding random number distribution object
-created by CreateRDV can be modified as shown below
-Description:normal_clipped is defined in rdevdict and returns
-a dictionary representing a clipped gaussian random number distribution.
-The dictionary can be used to create an instance of a corresponding random
-number distribution using CreateRDV as in the example below. Here, it
-exploited that dictionaries can be used to implement aspects of object oriented
-programming in SLI, see function call for more details. Any random number
-distribution specified by a dictionary is required to provide at least to
-members: The literal /init provides a procedure taking a random number generator
-as an argument. The literal /rand provides a procedure returning a random number. Both
-procedures should be called using the standard syntax for call. Usually only the
-implementer uses these functions and the user accesses the random number distribution
-via general functions like CreateRDV and Random. 
-Examples:
-SLI ] rngdict /MT19937 get 123456789 CreateRNG /rng Set
-SLI ] rng rdevdict /normal_clipped get CreateRDV /nc Set
-SLI ] nc << /mu 10.0 /std 3.0 /min 1.0 /max 15.0 >> SetStatus
-SLI ] nc Random ==
-1.215086e+01
-Author:Helias, Diesmann
-FirstVersion: 2006-06-26
-SeeAlso: Random, CreateRDV, rdevdict::normal_clipped_left, rdevdict::normal_clipped_right, rdevdict, call
-*/
-rdevdict
-/normal_clipped
-<<
- /mu   0.0
- /std  1.0
- /min  -1.0
- /max   1.0
-
- /init
- { % This is the constructor used by CreateRDV to create
-   % an instance of this distribution. The corresponding variant
-   % of CreateRDV is called with: rng <<this dict>> CreateRDV and
-   % uses <<clone of this dict>> /init call to execute init in the proper
-   % context.
-  rdevdict /normal get CreateRDV
-  /dv Set  % not defined in template normal_clipped
-  
- }    
- 
- /rand 
- {
-   { 
-    dv Random std mul mu add 
-    dup dup
-    min gt exch
-    max lt and
-    { exit } { pop } ifelse
-   } loop
- }
->> cvo put
-
-/* BeginDocumentation
-Name:rdevdict::normal_clipped_left - left clipped gaussian random number distribution
-Synopsis:normal_clipped_left -> dict
-Parameters:normal_clipped_left does not take any arguments but the default values
-can be inspected by
-   normal_clipped_left GetStatus info
-The parameters of a particular corresponding random number distribution object
-created by CreateRDV can be modified as shown below
-Description:normal_clipped_left is defined in rdevdict and returns
-a dictionary representing a left clipped gaussian random number distribution.
-The dictionary can be used to create an instance of a corresponding random
-number distribution using CreateRDV as in the example below. For more information
-on the implementation of random number distributions using dictionaries see
-normal_clipped.
-Examples:
-SLI ] rngdict /MT19937 get 123456789 CreateRNG /rng Set
-SLI ] rng rdevdict /normal_clipped_left get CreateRDV /nc Set
-SLI ] nc << /mu 10.0 /std 3.0 /min 14.0  >> SetStatus
-SLI ] nc Random ==
-1.549122e+01
-Author:Helias
-FirstVersion: 2006-06-27
-SeeAlso: Random, CreateRDV, rdevdict::normal_clipped, rdevdict::normal_clipped_right, rdevdict, call
-*/
-rdevdict
-/normal_clipped_left
-<<
- /mu   0.0
- /std  1.0
- /min  -1.0
- 
- /init
- { % This is the constructor used by CreateRDV to create
-   % an instance of this distribution. The corresponding variant
-   % of CreateRDV is called with: rng <<this dict>> CreateRDV and
-   % uses <<this dict>> /init call to execute init in the proper
-   % context.
-  rdevdict /normal get CreateRDV
-  /dv Set  % not defined in template normal_clipped
-  
- }    
- 
- /rand 
- {
-   { 
-    dv Random std mul mu add 
-    dup
-    min gt
-    { exit } { pop } ifelse
-   } loop
- }
->> cvo put
-
-/* BeginDocumentation
-Name:rdevdict::normal_clipped_right - right clipped gaussian random number distribution
-Synopsis:normal_clipped_right -> dict
-Parameters:normal_clipped_right does not take any arguments but the default values
-can be inspected by
-   normal_clipped_right GetStatus info
-The parameters of a particular corresponding random number distribution object
-created by CreateRDV can be modified as shown below
-Description:normal_clipped_right is defined in rdevdict and returns
-a dictionary representing a right clipped gaussian random number distribution.
-The dictionary can be used to create an instance of a corresponding random
-number distribution using CreateRDV as in the example below. For more information
-on the implementation of random number distributions using dictionaries see
-normal_clipped.
-Examples:
-SLI ] rngdict /MT19937 get 123456789 CreateRNG /rng Set
-SLI ] rng rdevdict /normal_clipped_right get CreateRDV /nc Set
-SLI ] nc << /mu 10.0 /std 3.0 /max 14.0  >> SetStatus
-SLI ] nc Random ==
-4.618916e+00
-Author:Diesmann
-FirstVersion: 2008-09-17
-SeeAlso: Random, CreateRDV, rdevdict::normal_clipped, rdevdict::normal_clipped_left, rdevdict, call
-*/
-rdevdict
-/normal_clipped_right
-<<
- /mu   0.0
- /std  1.0
- /max  -1.0
- 
- /init
- { % This is the constructor used by CreateRDV to create
-   % an instance of this distribution. The corresponding variant
-   % of CreateRDV is called with: rng <<this dict>> CreateRDV and
-   % uses <<this dict>> /init call to execute init in the proper
-   % context.
-  rdevdict /normal get CreateRDV
-  /dv Set  % not defined in template normal_clipped
-  
- }    
- 
- /rand 
- {
-   { 
-    dv Random std mul mu add 
-    dup
-    max lt
-    { exit } { pop } ifelse
-   } loop
- }
->> cvo put
-
-
-
-
-
-
 

@@ -56,8 +56,8 @@ ResetKernel
 net ChangeSubnet
 model N Create ;
 
-[0] ChangeSubnet
-net GetNodes /neurons Set
+0 ChangeSubnet
+net GetGlobalNodes /neurons Set
 
 sd << /to_file true /withgid true >> SetStatus
 

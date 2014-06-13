@@ -47,7 +47,7 @@ nest::gamma_sup_generator::Internal_states_::Internal_states_(size_t num_bins, u
 
 nest::ulong_t nest::gamma_sup_generator::Internal_states_::update(double_t transition_prob, librandom::RngPtr rng)
 {
-    std::vector<ulong_t> n_trans;
+    std::vector<ulong_t> n_trans;  // only set from poisson_dev_ og bino_dev_ or 0, thus >= 0
     n_trans.resize( occ_.size() );
     
     // go through all states and draw number of transitioning components
@@ -57,28 +57,26 @@ nest::ulong_t nest::gamma_sup_generator::Internal_states_::update(double_t trans
             {
             /*The binomial distribution converges towards the Poisson distribution as
              the number of trials goes to infinity while the product np remains fixed.
-             Therefore the Poisson distribution with parameter λ = np can be used as 
-             an approximation to B(n, p) of the binomial distribution if n is 
-             sufficiently large and p is sufficiently small. According to two rules 
-             of thumb, this approximation is good if n ≥ 20 and p ≤ 0.05, or if 
-             n ≥ 100 and np ≤ 10. Source:
+             Therefore the Poisson distribution with parameter \lambda = np can be used as
+             an approximation to B(n, p) of the binomial distribution if n is
+             sufficiently large and p is sufficiently small. According to two rules
+             of thumb, this approximation is good if n >= 20 and p <= 0.05, or if
+             n >= 100 and np <= 10. Source:
              http://en.wikipedia.org/wiki/Binomial_distribution#Poisson_approximation */
             if (( occ_[i] >= 100 && transition_prob <= 0.01 ) || \
                 (  occ_[i] >= 500 && transition_prob * occ_[i] <= 0.1 ))
                 {
                 poisson_dev_.set_lambda( transition_prob * occ_[i] );
-                n_trans[i] = poisson_dev_.uldev(rng);
+                n_trans[i] = poisson_dev_.ldev(rng);
                 if ( n_trans[i] > occ_[i] )
                     {
                     n_trans[i] = occ_[i];
                     }
-                else
-                    {;}
                 }
             else
                 {
                 bino_dev_.set_p_n( transition_prob, occ_[i]);
-                n_trans[i] = bino_dev_.uldev(rng); 
+                n_trans[i] = bino_dev_.ldev(rng); 
                 }
             }
         else

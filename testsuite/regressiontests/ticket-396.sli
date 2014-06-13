@@ -33,8 +33,9 @@ differs from the default resolution.
 Author: Hans Ekkehard Plesser, 2012-12-03
  */
 
-/unittest (9726) require
+(unittest) run
 /unittest using
+
 M_ERROR setverbosity
 
 % test against changing local_num_threads
@@ -56,7 +57,7 @@ M_ERROR setverbosity
 } fail_or_die
 
 % don't run the remaining tests if we didn't compile with threads
-statusdict/threading :: (no) eq {statusdict/exitcodes/success :: quit_i} if
+is_threaded not { exit_test_gracefully } if
 
 % check that we can change either way before setting resolution
 { 

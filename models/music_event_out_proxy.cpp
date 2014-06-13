@@ -191,8 +191,15 @@ void nest::music_event_out_proxy::handle(SpikeEvent & e)
   double_t time = e.get_stamp().get_ms()*1e-3; // event time in seconds
   long_t receiver_port = e.get_rport();
 
-  for (int_t i = 0; i < e.get_multiplicity(); ++i)
-    V_.MP_->insertEvent(time, MUSIC::GlobalIndex(receiver_port));
+#ifdef _OPENMP
+#pragma omp critical (insertevent)
+  {
+#endif
+    for (int_t i = 0; i < e.get_multiplicity(); ++i)
+      V_.MP_->insertEvent(time, MUSIC::GlobalIndex(receiver_port));
+#ifdef _OPENMP
+  }
+#endif
 }
 
 #endif

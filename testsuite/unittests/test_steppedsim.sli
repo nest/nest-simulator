@@ -35,8 +35,7 @@
    SeeAlso: testsuite::ticket-452
 */
 
-
-/unittest (6335) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity

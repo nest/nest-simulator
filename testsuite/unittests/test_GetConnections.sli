@@ -35,7 +35,7 @@
    Author: Marc-Oliver Gewaltig
  */
 
-/unittest (7488) require
+(unittest) run
 /unittest using
 
 % Create the following network:
@@ -56,8 +56,8 @@
   /static_targets static_sources 1 add def
   /stdp_sources [ 31 99 2 ] Range def
   /stdp_targets stdp_sources 1 add def  
-  [static_sources static_targets] { /static_synapse Connect } ScanThread 
-  [stdp_sources stdp_targets] { /stdp_synapse Connect } ScanThread 
+  static_sources static_targets /one_to_one /static_synapse Connect
+  stdp_sources stdp_targets /one_to_one /stdp_synapse Connect
 } def
 
 % first test: retrieve static connections

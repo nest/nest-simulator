@@ -1,5 +1,5 @@
 /*
- *  ticket-639.sli
+ *  ticket-638.sli
  *
  *  This file is part of NEST.
  *
@@ -32,7 +32,7 @@ Ensure that precise models do not remain refractory indefinitely for t_ref==0
 Author: Hans Ekkehard Plesser, 2012-12-13
  */
 
-/unittest (9726) require
+(unittest) run
 /unittest using
 M_ERROR setverbosity
 

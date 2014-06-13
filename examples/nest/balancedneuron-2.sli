@@ -29,8 +29,8 @@
 % Try changing the value of /ipsc and see what happens.
 %%
 
-/arr (1.2) require
-/arr using
+(arraylib) run
+/arraylib using
 
 ResetKernel
 

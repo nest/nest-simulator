@@ -81,7 +81,7 @@ bool Modelrangemanager::model_in_use(index i) const
 {
    bool found = false;
 
-   for (std::vector<modelrange>::const_iterator it = modelranges_.begin(); it != modelranges_.end(); it++)
+   for (std::vector<modelrange>::const_iterator it = modelranges_.begin(); it != modelranges_.end(); ++it)
      if ( it->get_model_id() == i )
      {
        found = true;
@@ -99,9 +99,9 @@ void Modelrangemanager::clear()
 const modelrange& Modelrangemanager::get_range(index gid) const
 {
   if (!is_in_range(gid))
-      throw UnknownNode(gid);
-  
-  for (std::vector<modelrange>::const_iterator it = modelranges_.begin(); it != modelranges_.end(); it++)
+    throw UnknownNode(gid);
+
+  for (std::vector<modelrange>::const_iterator it = modelranges_.begin(); it != modelranges_.end(); ++it)
     if ( it->is_in_range(gid) )
       return (*it);
 

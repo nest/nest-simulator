@@ -72,7 +72,7 @@ References:
 
 Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
 model for the large, fluctuating synaptic conductance state typical of
-neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159–175.
+neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
 
 Author: Sven Schrader
 
@@ -98,8 +98,6 @@ namespace nest
   {
     
   public:        
-    
-    typedef Node base;
     
     iaf_cond_exp();
     iaf_cond_exp(const iaf_cond_exp&);

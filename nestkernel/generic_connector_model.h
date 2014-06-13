@@ -261,7 +261,16 @@ void GenericConnectorModelBase< ConnectionT, CommonPropertiesT, ConnectorT >::se
   Time max_delay_tmp = max_delay_;
 
   common_props_.set_status(d, *this);
-  defaults_.set_status(d, *this);
+
+  try {
+    defaults_.set_status(d, *this);
+  }
+  catch (ChangeCommonPropsByIndividual e)
+  {
+    // ignore this exception, because
+    // it is meaningless here, since we are actually changing
+    // the properties of the default object, not an individual synapse
+  }
 
   // restore min_delay_, max_delay_
   min_delay_ = min_delay_tmp;

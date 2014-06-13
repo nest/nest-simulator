@@ -42,7 +42,8 @@ This device can be used to inject a Gaussian "white" noise current into a node.
 The current is not really white, but a piecewise constant current with Gaussian 
 distributed amplitude. The current changes at intervals of dt. dt must be a 
 multiple of the simulation step size, the default is 1.0ms, 
-corresponding to a 1kHz cut-off.
+corresponding to a 1kHz cut-off. 
+Additionally a second sinusodial modulated term can be added to the standard deviation of the noise.
 
 The current generated is given by
 
@@ -50,13 +51,19 @@ The current generated is given by
   
 where N_j are Gaussian random numbers with unit standard deviation and t_0 is
 the device onset time.
+If the modulation is added the current is given by
+
+  I(t) = mean + sqrt(std^2 + std_mod^2 * sin(omega * t + phase)) * N_j  for t_0 + j dt <= t < t_0 + (j-1) dt
   
 Parameters:
 The following parameters can be set in the status dictionary:
 
-mean   double - mean value of the noise current in pA
-std    double - standard deviation of noise current in pA
-dt     double - interval between changes in current in ms, default 1.0ms
+mean      double - mean value of the noise current in pA
+std       double - standard deviation of noise current in pA
+dt        double - interval between changes in current in ms, default 1.0ms
+std_mod   double - modulated standard deviation of noise current in pA
+phase     double - Phase of sine modulation (0-360 deg)
+frequency double - Frequency of sine modulation in Hz 
 
 Remarks:
  - All targets receive different currents.
@@ -136,10 +143,13 @@ Author: Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
      * Store independent parameters of the model.
      */
     struct Parameters_ {
-      double_t mean_;   //!< mean current, in pA
-      double_t std_;    //!< standard deviation of current, in pA
-      Time     dt_;     //!< time interval between updates
-
+      double_t mean_;    //!< mean current, in pA
+      double_t std_;     //!< standard deviation of current, in pA
+      double_t std_mod_; //!< standard deviation of current modulation, in pA
+      double_t freq_;    //!< Standard frequency in Hz 
+      double_t phi_deg_; //!< Phase of sinusodial noise modulation (0-360 deg)
+      Time     dt_;      //!< time interval between updates
+      
       /**
        * Number of targets.
        * This is a hidden parameter; must be placed in parameters,
@@ -156,6 +166,17 @@ Author: Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
     };
 
     // ------------------------------------------------------------
+
+    struct State_ {    
+      double_t    y_0_;
+      double_t    y_1_;
+
+      State_();  //!< Sets default parameter values
+
+      void get(DictionaryDatum&) const;  //!< Store current values in dictionary
+    };
+
+    // ------------------------------------------------------------
     
     struct Buffers_ {
       long_t  next_step_;  //!< time step of next change in current
@@ -167,6 +188,14 @@ Author: Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
     struct Variables_ {
       long_t   dt_steps_; //!< update interval in steps
       librandom::NormalRandomDev normal_dev_;  //!< random deviate generator
+      double_t    omega_;   //!< Angelfrequency i rad/s
+      double_t    phi_rad_; //!< Phase of sine current (0-2Pi rad)
+
+      // The exact integration matrix
+      double_t    A_00_;
+      double_t    A_01_;
+      double_t    A_10_;
+      double_t    A_11_;
     };
     
     // ------------------------------------------------------------
@@ -175,6 +204,7 @@ Author: Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
     Parameters_ P_;
     Variables_  V_;
     Buffers_    B_;
+    State_      S_;
   };
 
 
@@ -182,6 +212,7 @@ Author: Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
   void noise_generator::get_status(DictionaryDatum &d) const
   {
     P_.get(d);
+    S_.get(d);
     device_.get_status(d);
   }
 

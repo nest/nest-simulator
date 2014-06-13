@@ -1,6 +1,3 @@
-#ifndef LAYER_IMPL_H
-#define LAYER_IMPL_H
-
 /*
  *  layer_impl.h
  *
@@ -23,6 +20,10 @@
  *
  */
 
+#ifndef LAYER_IMPL_H
+#define LAYER_IMPL_H
+
+#include "nest_datums.h"
 #include "layer.h"
 #include "grid_layer.h"
 #include "grid_mask.h"
@@ -251,9 +252,16 @@ namespace nest {
   }
 
   template <int D>
-  void Layer<D>::dump_connections(std::ostream & out, long synapse_id)
+  void Layer<D>::dump_connections(std::ostream & out, const Token & syn_model)
   {
     std::vector<std::pair<Position<D>,index> >* src_vec = get_global_positions_vector();
+
+    // Dictionary with parameters for get_connections()
+    DictionaryDatum gcdict(new Dictionary);
+    def(gcdict,names::synapse_model,syn_model);
+
+    // Avoid setting up new array for each iteration of the loop
+    std::vector<index> source_array(1);
 
     for(typename std::vector<std::pair<Position<D>,index> >::iterator src_iter=src_vec->begin();
         src_iter != src_vec->end(); ++src_iter) {
@@ -261,23 +269,29 @@ namespace nest {
       const index source_gid = src_iter->second;
       const Position<D> source_pos = src_iter->first;
 
-      DictionaryDatum dict = net_->get_connector_status(source_gid, synapse_id);
-
-      TokenArray targets = getValue<TokenArray>(dict, names::targets);
-      TokenArray weights = getValue<TokenArray>(dict, names::weights);
-      TokenArray delays  = getValue<TokenArray>(dict, names::delays);
-
-      assert(targets.size() == weights.size());
-      assert(targets.size() == delays.size());
+      source_array[0] = source_gid;
+      def(gcdict,names::source,source_array);
+      ArrayDatum connectome = net_->get_connections(gcdict);
 
       // Print information about all local connections for current source
-      for ( size_t i = 0; i < targets.size(); ++i ) {
-        Node const * const target = net_->get_node(targets[i]);
+      for( size_t i = 0; i < connectome.size(); ++i ) {
+        ConnectionDatum con_id= getValue<ConnectionDatum>(connectome.get(i));
+        DictionaryDatum result_dict = net_->get_synapse_status(
+          con_id.get_source_gid(),
+          con_id.get_synapse_model_id(),
+          con_id.get_port(),
+          con_id.get_target_thread());
+
+        long_t target_gid = getValue<long_t>(result_dict, names::target);
+        double_t weight   = getValue<double_t>(result_dict, names::weight);
+        double_t delay    = getValue<double_t>(result_dict, names::delay);
+
+        Node const * const target = net_->get_node(target_gid);
         assert(target);
 
         // Print source, target, weight, delay, rports
-        out << source_gid << ' ' << targets[i] << ' '
-            << weights[i] << ' ' << delays[i];
+        out << source_gid << ' ' << target_gid << ' '
+            << weight << ' ' << delay;
 
         Layer<D>* tgt_layer = dynamic_cast<Layer<D>*>(target->get_parent());
         if (tgt_layer==0) {

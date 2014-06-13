@@ -33,6 +33,8 @@
 
 #include "binomial_randomdev.h"
 #include "dictutils.h"
+#include "compose.hpp"
+#include <limits>
 #include <cmath>
 
 librandom::BinomialRandomDev::BinomialRandomDev(RngPtr r_s, 
@@ -74,7 +76,7 @@ void librandom::BinomialRandomDev::PrecomputeTable(size_t nmax)
 }
 
 
-unsigned long librandom::BinomialRandomDev::uldev(RngPtr rng) const
+long librandom::BinomialRandomDev::ldev(RngPtr rng) const
 {
     assert(rng.valid());
     
@@ -91,7 +93,7 @@ unsigned long librandom::BinomialRandomDev::uldev(RngPtr rng) const
         X = n_+1;
         while( X > n_)
             {
-            X = poisson_dev_.uldev(rng);
+            X = poisson_dev_.ldev(rng);
             }
         
         //10
@@ -186,13 +188,28 @@ void librandom::BinomialRandomDev::init_()
 
 void librandom::BinomialRandomDev::set_status(const DictionaryDatum &d)
 {
-  double p_tmp;
-  if (  updateValue<double>(d, "p", p_tmp) )
-    set_p(p_tmp);
+  double p_new = p_;
+  const bool p_updated = updateValue<double>(d, "p", p_new);
 
-  long n_tmp;
-  if (  updateValue<long>(d, "n", n_tmp) )
-    set_n(n_tmp);
+  long n_new = n_;
+  const bool n_updated = updateValue<long>(d, "n", n_new);
+
+  if ( p_new < 0. || 1. < p_new )
+    throw BadParameterValue("Binomial RDV: 0 <= p <= 1 required.");
+
+  if ( n_new < 1 )
+    throw BadParameterValue("Binomial RDV: n >= 1 required.");
+
+  // Binomial numbers are generated from Poisson numbers.
+  // To avoid an infinite loop, we limit n to slightly less than
+  // the maximum possible value for Poisson numbers
+  const long N_MAX = static_cast<long>(0.998 * std::numeric_limits<long>::max());
+  if ( n_new > N_MAX )
+    throw BadParameterValue(String::compose("Binomial RDV: N < %1 required.",
+					    static_cast<double>(N_MAX)));
+
+  if ( n_updated || p_updated )
+    set_p_n(p_new, n_new);
 } 
 
 void librandom::BinomialRandomDev::get_status(DictionaryDatum &d) const 

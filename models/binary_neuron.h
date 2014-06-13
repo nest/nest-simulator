@@ -46,18 +46,12 @@ namespace nest{
     
   public:
     
-    typedef Node base;
-    
     binary_neuron();
     binary_neuron(const binary_neuron&);
 
     /**
      * Import sets of overloaded virtual functions.
-     * We need to explicitly include sets of overloaded
-     * virtual functions into the current scope.
-     * According to the SUN C++ FAQ, this is the correct
-     * way of doing things, although all other compilers
-     * happily live without.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
 
     using Node::connect_sender;
@@ -85,8 +79,6 @@ namespace nest{
     // gain function functor
     // must have an double_t operator(double_t) defined
     TGainfunction gain_;
-
-    //double_t gain_(double_t h);
 
     void update(Time const &, const long_t, const long_t);
 

@@ -127,6 +127,7 @@ namespace nest
     size_t mem_capacity();
 
     virtual bool has_proxies()=0;
+    virtual bool potential_global_receiver()=0;
     virtual bool one_node_per_process()=0;
     virtual bool is_off_grid()=0;
  

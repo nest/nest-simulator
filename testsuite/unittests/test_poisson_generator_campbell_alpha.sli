@@ -33,7 +33,7 @@ Author: Schrader
 FirstVersion: Mar 2009
 */
 
-/unittest (6666) require
+(unittest) run
 /unittest using
 
 /n_neurons 1000  def % number of neurons to simulate

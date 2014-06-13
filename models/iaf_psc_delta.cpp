@@ -314,7 +314,7 @@ void nest::iaf_psc_delta::handle(CurrentEvent& e)
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(e.get_rel_delivery_steps(network()->get_slice_origin()), 
-		      w *c);
+			 w *c);
 }
 
 void nest::iaf_psc_delta::handle(DataLoggingRequest &e)

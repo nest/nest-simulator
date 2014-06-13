@@ -128,8 +128,6 @@ SeeAlso: iaf_psc_alpha, testsuite::test_iaf
     
   public:
     
-    typedef Node base;
-    
     iaf_neuron();
     iaf_neuron(const iaf_neuron&);
 
@@ -137,7 +135,6 @@ SeeAlso: iaf_psc_alpha, testsuite::test_iaf
      * Import sets of overloaded virtual functions.
      * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
-
     using Node::connect_sender;
     using Node::handle;
 

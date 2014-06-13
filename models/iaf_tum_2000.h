@@ -133,8 +133,6 @@ namespace nest
     
   public:        
     
-    typedef Node base;
-    
     iaf_tum_2000();
     iaf_tum_2000(const iaf_tum_2000&);
 

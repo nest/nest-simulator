@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+#
+# test_stdp_dopa.py
+#
 # This file is part of NEST.
 #
 # Copyright (C) 2004 The NEST Initiative
@@ -14,7 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-#
+
 # Begin Documentation
 # Name: testsuite::test_stdp_dopa - script to test stdp_dopamine_synapse model implementing dopamine-dependent spike-timing dependent plasticity as defined in [1], based on [2].
 # Two neurons, which fire poisson like, are connected by a stdp_dopamine_synapse. Dopamine is release by a third neuron, which also fires poisson like.

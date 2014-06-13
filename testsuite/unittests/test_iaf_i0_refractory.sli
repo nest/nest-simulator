@@ -54,9 +54,8 @@ Author:  July 2004, Diesmann
 SeeAlso: iaf_neuron, testsuite::test_iaf_i0
 */
 
-/unittest (6688) require
+(unittest) run
 /unittest using
-
 
 
 % h d, arguments are resolution and voltage trace

@@ -20,12 +20,12 @@ noinst_PROGRAMS = randomtest
 noinst_LTLIBRARIES= librandom.la
 
 AM_CPPFLAGS= -I$(top_srcdir)/libnestutil\
-		-I$(top_srcdir)/nestkernel\
 		-I$(top_srcdir)/sli\
         @GSL_CFLAGS@ @MUSIC_INCLUDE@ @MPI_INCLUDE@
 
 ## sources and headers for librandom
 librandom_la_SOURCES=\
+		librandom_exceptions.h \
 		exp_randomdev.h \
 		knuthlfg.h knuthlfg.cpp \
 		mt19937.h mt19937.cpp \
@@ -36,8 +36,11 @@ librandom_la_SOURCES=\
 		exp_randomdev.cpp \
 		gamma_randomdev.h gamma_randomdev.cpp \
 		normal_randomdev.h normal_randomdev.cpp \
+		lognormal_randomdev.h lognormal_randomdev.cpp \
 		poisson_randomdev.h poisson_randomdev.cpp \
 		randomdev.h randomdev.cpp \
+		clipped_randomdev.h \
+		uniform_randomdev.h uniform_randomdev.cpp \
 		uniformint_randomdev.h uniformint_randomdev.cpp \
 		gslrandomgen.h gslrandomgen.cpp \
 		gsl_binomial_randomdev.h gsl_binomial_randomdev.cpp

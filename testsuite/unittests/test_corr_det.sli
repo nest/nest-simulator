@@ -37,7 +37,7 @@ Author: July 2008, Plesser
 SeeAlso: correlation_detector
 */
 
-/unittest (8831) require
+(unittest) run
 /unittest using
 
 /d_tau    2.0 def

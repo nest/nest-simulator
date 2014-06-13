@@ -21,8 +21,6 @@
  */
 
 #include "symboldatum.h"
-#include "datumconverter.h"
-#include "aggregatedatum_impl.h"
 
 // explicit template instantiation needed
 // because otherwise methods defined in

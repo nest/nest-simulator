@@ -34,7 +34,7 @@
    SeeAlso: ConvergentConnect, testsuite::test_random_divergent_connect, testsuite::test_divergent_connect
  */
 
-/unittest (8093) require
+(unittest) run
 /unittest using
 
 0.1 /h Set

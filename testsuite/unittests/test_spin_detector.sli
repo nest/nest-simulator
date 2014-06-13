@@ -1,5 +1,5 @@
 /*
- *  test_spindetector.sli
+ *  test_spin_detector.sli
  *
  *  This file is part of NEST.
  *
@@ -20,16 +20,16 @@
  *
  */
 
- /* BeginDocumentation
-    Name: testsuite::test_spindetector - test decoding mechanism of binary events by spin_detector
+/* BeginDocumentation
+    Name: testsuite::test_spin_detector - test decoding mechanism of binary events by spin_detector
 
-    Synopsis: (test_binary) run -> test decoding mechanism of binary events by spin_detector
+    Synopsis: (test_spin_detector) run -> test decoding mechanism of binary events by spin_detector
 
     Description:
     Test, whether the communication mechanism for binary neurons
     works and whether the spin detector correctly decodes binary transitions.
-    
-    Author:  March 2013, Helias    
+
+    Author:  March 2013, Helias
 */
 
 (unittest) run

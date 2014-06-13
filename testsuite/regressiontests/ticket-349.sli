@@ -32,11 +32,11 @@
  *
  */
 
-% The following test needs the model iaf_cond_alpha,
-% which is only compiled if we have the GSL
-statusdict/have_gsl :: {
+% The following test needs the model iaf_cond_alpha, so
+% this test should only run if we have GSL
+statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
 
-/unittest (8045) require
+(unittest) run
 /unittest using
 
 % First test: connect with illegal entry
@@ -113,5 +113,3 @@ statusdict/have_gsl :: {
   and
 
 } assert_or_die
-
-} if % have_gsl

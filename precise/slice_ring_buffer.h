@@ -1,5 +1,3 @@
-#ifndef SLICE_RING_BUFFER_H
-#define SLICE_RING_BUFFER_H
 /*
  *  slice_ring_buffer.h
  *
@@ -21,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef SLICE_RING_BUFFER_H
+#define SLICE_RING_BUFFER_H
 
 #include "config.h"
 

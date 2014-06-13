@@ -39,14 +39,10 @@ FirstVersion: February 2009
 Author: Diesmann
 */
 
-
-/unittest (6688) require
+(unittest) run
 /unittest using
 
-
 M_ERROR setverbosity
-
-
 
 
 10000.0 /T Set

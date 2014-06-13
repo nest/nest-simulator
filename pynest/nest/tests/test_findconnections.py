@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # test_findconnections.py
 #
@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 FindConnections
 """
@@ -25,6 +26,7 @@ FindConnections
 import unittest
 import nest
 
+@nest.check_stack
 class FindConnectionsTestCase(unittest.TestCase):
     """Find connections and test if values can be set."""
 
@@ -40,12 +42,12 @@ class FindConnectionsTestCase(unittest.TestCase):
         c2=nest.FindConnections(a, synapse_model="static_synapse")
         self.assertEqual(c1, c2)
         
-        d1=[{"weight": w} for w in [2.0, 3.0, 4.0]]
+        d1=tuple({"weight": w} for w in (2.0, 3.0, 4.0))
 
         c3=nest.FindConnections(a, a)
         nest.SetStatus(c3, d1)
         s1=nest.GetStatus(c3, "weight")
-        self.assertEqual(s1, [w["weight"] for w in d1])
+        self.assertEqual(s1, tuple(w["weight"] for w in d1))
 
 
 def suite():

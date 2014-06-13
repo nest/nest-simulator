@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # test_random_parameter.py
 #
@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 Tests for random topology parameter distributions. This is an implementation
 of the Kolmogorov-Smirnov test [1] to check that the distribution of weights
@@ -28,25 +29,28 @@ parameters. Also serves as a regression test for ticket #687.
 """
 
 import unittest
-from math import sqrt
-try:
-    import numpy
-    have_numpy = True
-except ImportError:
-    have_numpy = False
-try:
-    from math import erf
-    have_erf = True
-except ImportError:
-    have_erf = False
 import nest
 import nest.topology as topo
-from nest.tests.decorators import _skipIf
 
-@_skipIf(not have_numpy, 'Python numpy package not installed', 'testcase')
+from math import sqrt
+
+
+try:
+    import numpy
+    HAVE_NUMPY = True
+except ImportError:
+    HAVE_NUMPY = False
+try:
+    from math import erf
+    HAVE_ERF = True
+except ImportError:
+    HAVE_ERF = False
+
+
+@unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
 class RandomParameterTestCase(unittest.TestCase):
 
-    def ks_test(self,weight_dict,expected_cdf_func):
+    def kolmogorov_smirnov(self,weight_dict,expected_cdf_func):
         """Create connections with given distribution of weights and test that it fits the given expected cumulative distribution using K-S."""
 
         # n = rows * cols * Nconn
@@ -91,10 +95,9 @@ class RandomParameterTestCase(unittest.TestCase):
 
         uniform_cdf_func = lambda w:(w>w_min)*(w<w_max)*((w-w_min)/(w_max-w_min)) + (w>=w_max)*1.0
 
-        self.ks_test(weight_dict, uniform_cdf_func)
+        self.kolmogorov_smirnov(weight_dict, uniform_cdf_func)
 
-
-    @_skipIf(not have_erf, 'Python function math.erf not available')
+    @unittest.skipIf(not HAVE_ERF, 'Python function math.erf is not available')
     def test_normal(self):
         """Test normal distribution of weights."""
 
@@ -107,10 +110,9 @@ class RandomParameterTestCase(unittest.TestCase):
 
         normal_cdf_func = lambda w:0.5*(1.0 + numpy_erf( (w-mean)/sqrt(2)/sigma ))
 
-        self.ks_test(weight_dict, normal_cdf_func)
+        self.kolmogorov_smirnov(weight_dict, normal_cdf_func)
 
-
-    @_skipIf(not have_erf, 'Python function math.erf not available')
+    @unittest.skipIf(not HAVE_ERF, 'Python function math.erf is not available')
     def test_lognormal(self):
         """Test lognormal distribution of weights."""
 
@@ -123,7 +125,7 @@ class RandomParameterTestCase(unittest.TestCase):
 
         lognormal_cdf_func = lambda w:0.5*(1.0 + numpy_erf( (numpy.log(w)-mu)/sqrt(2)/sigma ))
 
-        self.ks_test(weight_dict, lognormal_cdf_func)
+        self.kolmogorov_smirnov(weight_dict, lognormal_cdf_func)
 
 
 def suite():

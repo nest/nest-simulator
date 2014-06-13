@@ -31,7 +31,7 @@
     SeeAlso: 
 */
 
-/unittest (6666) require
+(unittest) run
 /unittest using
 
 0.1 /h Set

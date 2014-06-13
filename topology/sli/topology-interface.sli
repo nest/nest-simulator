@@ -20,8 +20,6 @@
  *
  */
 
-/topology-interface /SLI ($Revision: 9954 $) provide-component
-
 /topology namespace
 
 % ------------------------------------------------------------------------------

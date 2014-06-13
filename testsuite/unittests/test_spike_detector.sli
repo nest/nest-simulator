@@ -1,4 +1,4 @@
- /*
+/*
  *  test_spike_detector.sli
  *
  *  This file is part of NEST.
@@ -33,8 +33,7 @@
    Author: Diesmann, Eppler
  */
 
-
-/unittest (8331) require
+(unittest) run
 /unittest using
 
 /Transmission

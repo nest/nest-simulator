@@ -1,6 +1,3 @@
-#ifndef CONNECTION_CREATOR_H
-#define CONNECTION_CREATOR_H
-
 /*
  *  connection_creator.h
  *
@@ -23,6 +20,9 @@
  *
  */
 
+#ifndef CONNECTION_CREATOR_H
+#define CONNECTION_CREATOR_H
+
 #include <vector>
 #include "network.h"
 #include "position.h"
@@ -37,6 +37,9 @@ namespace nest
 {
   template<int D>
   class Layer;
+
+  template <int D>
+  class MaskedLayer;
 
   /**
    * This class is a representation of the dictionary of connection
@@ -63,7 +66,6 @@ namespace nest
   public:
 
     enum ConnectionType {Target_driven, Source_driven, Convergent, Divergent};
-    typedef std::map<Name,lockPTR<Parameter> > ParameterMap;
 
     /**
      * Construct a ConnectionCreator with the properties defined in the
@@ -97,6 +99,36 @@ namespace nest
 
   private:
 
+    /**
+     * Wrapper for masked and unmasked pools.
+     *
+     * The purpose is to avoid code doubling for cases with and without masks.
+     * Essentially, the class works as a fancy union.
+     */
+    template <int D>
+    class PoolWrapper_
+    {
+    public:
+      PoolWrapper_();
+      ~PoolWrapper_();
+      void define(MaskedLayer<D>*);
+      void define(std::vector<std::pair<Position<D>,index> >*); 
+      
+      typename Ntree<D,index>::masked_iterator masked_begin(const Position<D>& pos) const;
+      typename Ntree<D,index>::masked_iterator masked_end() const;
+
+      typename std::vector<std::pair<Position<D>,index> >::iterator begin() const;
+      typename std::vector<std::pair<Position<D>,index> >::iterator end() const;
+
+    private:
+      MaskedLayer<D>* masked_layer_;
+      std::vector<std::pair<Position<D>,index> >* positions_;
+    };
+
+    template<typename Iterator, int D>
+    void connect_to_target_(Iterator from, Iterator to, index tgt_id, Node* tgt_ptr,  
+			    const Position<D>& tgt_pos, thread tgt_thread, const Layer<D>& source);
+
     template<int D>
     void target_driven_connect_(Layer<D>& source, Layer<D>& target);
 
@@ -109,11 +141,17 @@ namespace nest
     template<int D>
     void divergent_connect_(Layer<D>& source, Layer<D>& target);
 
+    void connect_(index s, index t, Node* target, thread target_thread, 
+		 double_t w, double_t d, index syn);
+
     /**
      * Calculate parameter values for this position.
+     *
+     * TODO: remove when all four connection variants are refactored
      */
     template<int D>
-    void get_parameters_(const Position<D> & pos, librandom::RngPtr rng, DictionaryDatum d);
+    void get_parameters_(const Position<D> & pos, librandom::RngPtr rng, 
+			 double& weight, double& delay);
 
     ConnectionType type_;
     bool allow_autapses_;
@@ -125,10 +163,25 @@ namespace nest
     lockPTR<AbstractMask> mask_;
     lockPTR<Parameter> kernel_;
     index synapse_model_;
-    ParameterMap parameters_;
+    lockPTR<Parameter> weight_;
+    lockPTR<Parameter> delay_;
 
     Network& net_;
   };
+
+  inline 
+  void ConnectionCreator::connect_(index s, index t, Node* target, thread target_thread, 
+		double_t w, double_t d, index syn)
+  {
+    // check whether the target is on this process
+    if (net_.is_local_gid(t))
+    {
+      // check whether the target is on our thread
+      thread tid = net_.get_thread_id();      
+      if( tid == target_thread)
+	net_.connect(s, t, target, target_thread, w, d, syn);
+    }
+  }
 
 } // namespace nest
 

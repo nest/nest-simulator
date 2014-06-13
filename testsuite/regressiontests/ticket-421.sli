@@ -43,12 +43,12 @@ Note:
 Author: Hans Ekkehard Plesser, 2010-05-05 
  */
 
-/unittest (8045) require
+(unittest) run
 /unittest using
 
 % models that should not be tested because they do not initialize V_m to
 % steady state
-/exclude_models [/aeif_cond_exp /aeif_cond_alpha /a2eif_cond_exp /a2eif_cond_exp_HW
+/exclude_models [/aeif_cond_exp /aeif_cond_alpha /aeif_cond_alpha_RK5 /a2eif_cond_exp /a2eif_cond_exp_HW /aeif_cond_alpha_multisynapse
                  /hh_cond_exp_traub
                  /hh_psc_alpha /ht_neuron /ht_neuron_fs /iaf_cond_exp_sfa_rr /izhikevich] def
 

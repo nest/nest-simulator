@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # raster_plot.py
 #
@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 import nest
 import numpy
 import pylab
@@ -75,7 +76,7 @@ def from_file(fname, title=None, hist=False, hist_binwidth=5.0, grayscale=False)
     Plot raster from file
     """
 
-    if nest.is_sequencetype(fname):
+    if nest.is_iterable(fname):
         data = None
         for f in fname:
             if data is None:
@@ -161,7 +162,7 @@ def _make_plot(ts, ts1, gids, neurons, hist, hist_binwidth, grayscale, title, xl
         num_neurons = len(numpy.unique(neurons))
         heights = 1000 * n / (hist_binwidth * num_neurons)
         pylab.bar(t_bins, heights, width=hist_binwidth, color=color_bar, edgecolor=color_edge)
-        pylab.yticks(map(lambda x: int(x), numpy.linspace(0.0, int(max(heights) * 1.1) + 5, 4)))
+        pylab.yticks([int(x) for x in numpy.linspace(0.0, int(max(heights) * 1.1) + 5, 4)])
         pylab.ylabel("Rate (Hz)")
         pylab.xlabel(xlabel)
         pylab.xlim(xlim)
@@ -180,33 +181,33 @@ def _make_plot(ts, ts1, gids, neurons, hist, hist_binwidth, grayscale, title, xl
 
     return plotid
 
-def _histogram(a, bins=10, range=None, normed=False):
 
+def _histogram(a, bins=10, bin_range=None, normed=False):
     from numpy import asarray, iterable, linspace, sort, concatenate
 
     a = asarray(a).ravel()
 
-    if range is not None:
-        mn, mx = range
+    if bin_range is not None:
+        mn, mx = bin_range
         if mn > mx:
-            raise AttributeError, "max must be larger than min in range parameter."
+            raise ValueError("max must be larger than min in range parameter")
 
     if not iterable(bins):
-        if range is None:
-            range = (a.min(), a.max())
-        mn, mx = [mi + 0.0 for mi in range]
+        if bin_range is None:
+            bin_range = (a.min(), a.max())
+        mn, mx = [mi + 0.0 for mi in bin_range]
         if mn == mx:
             mn -= 0.5
             mx += 0.5
         bins = linspace(mn, mx, bins, endpoint=False)
     else:
-        if(bins[1:] - bins[:-1] < 0).any():
-            raise AttributeError, "bins must increase monotonically."
+        if (bins[1:] - bins[:-1] < 0).any():
+            raise ValueError("bins must increase monotonically")
 
     # best block size probably depends on processor cache size
     block = 65536
     n = sort(a[:block]).searchsorted(bins)
-    for i in xrange(block, a.size, block):
+    for i in range(block, a.size, block):
         n += sort(a[i:i + block]).searchsorted(bins)
     n = concatenate([n, [len(a)]])
     n = n[1:] - n[:-1]

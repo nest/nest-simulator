@@ -32,7 +32,7 @@
     Author: Helias
   */
 
-/unittest (6335) require
+(unittest) run
 /unittest using
 
 % expected_min_delay expected_max_delay check_min_max_delay

@@ -34,7 +34,7 @@ Description:
 Author: Hans Ekkehard Plesser, 2010-09-29, 2012-02-16
  */
 
-/unittest (8831) require
+(unittest) run
 /unittest using
 
 /*

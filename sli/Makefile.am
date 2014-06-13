@@ -1,15 +1,4 @@
-## Automake file for sli interpreter
-#
-# Jochen Martin Eppler, February 2004 
-#
-# Since most of libsli is for internal use, it is built as
-# convenience library. Headers are listed under SOURCES.
-# Headers needed in installed API libraries should be moved
-# elsewhere.
-
 bin_PROGRAMS= sli
-
-noinst_LTLIBRARIES= libsli.la libpuresli.la
 
 AM_CPPFLAGS= -I$(top_srcdir)/libnestutil\
 	-I$(top_srcdir)/librandom\
@@ -19,147 +8,76 @@ AM_CPPFLAGS= -I$(top_srcdir)/libnestutil\
 	-DPKGDOCDIR=\"@PKGDOCDIR@\"\
 	-DPKGSOURCEDIR=\"@PKGSRCDIR@\"
 
-libsli_la_LIBADD= $(top_builddir)/libnestutil/libnestutil.la \
-	    	  @SLI_LIBS@
-
-libsli_base_sources=\
-		aggregatedatum.h aggregatedatum_impl.h\
-		array.h\
-		arraydatum.cc arraydatum.h\
-		booldatum.cc booldatum.h\
-		callbackdatum.h\
-		charcode.cc charcode.h\
-		datum.cc datum.h\
-		datumconverter.h\
-		dict.cc dict.h\
-		dictdatum.cc dictdatum.h\
-		dictstack.cc dictstack.h\
-		dictutils.cc dictutils.h\
-		doubledatum.cc doubledatum.h\
-		dynmodule.cpp dynmodule.h\
-		fdstream.cc fdstream.h\
-		filesystem.cc filesystem.h\
-		functional.h\
-		functiondatum.cc functiondatum.h\
-		genericdatum.h\
-		gnureadline.cc gnureadline.h\
-		integerdatum.cc integerdatum.h\
-		interpret.cc interpret.h\
-		iostreamdatum.cc iostreamdatum.h\
-		iteratordatum.h iteratordatum.cc\
-		literaldatum.cc\
-		lockptrdatum.h lockptrdatum_impl.h\
-		name.cc name.h\
-		slinames.h slinames.cpp\
-		namedatum.cc namedatum.h\
-		numericdatum.h numericdatum_impl.h\
-		oosupport.cc oosupport.h\
-		parser.cc parser.h\
-		parserdatum.h\
-		processes.cc processes.h\
-		psignal.c psignal.h\
-		scanner.cc scanner.h\
-		sli_io.cc sli_io.h\
-		sliactions.cc sliactions.h\
-		sliarray.cc sliarray.h\
-		slibuiltins.cc slibuiltins.h\
-		slicontrol.cc slicontrol.h\
-		slidata.cc slidata.h\
-		slidict.cc slidict.h\
-		sliexceptions.cc sliexceptions.h\
-		slifunction.h\
-		sligraphics.cc sligraphics.h\
-		slimath.cc slimath.h\
-		slimodule.cc slimodule.h\
-		sliregexp.cc sliregexp.h\
-		slistack.cc slistack.h\
-		slistartup.cc slistartup.h\
-		slitype.cc slitype.h\
-		slitypecheck.cc slitypecheck.h\
-		specialfunctionsmodule.cc specialfunctionsmodule.h\
-		stringdatum.cc stringdatum.h\
-		symboldatum.cc symboldatum.h\
-		tarrayobj.cc tarrayobj.h\
-		token.cc token.h\
-		tokenarray.cc tokenarray.h\
-		tokenstack.cc tokenstack.h\
-		tokenutils.cc tokenutils.h\
-		triedatum.cc triedatum.h\
-		typearray.h\
-		typechk.cc typechk.h\
-		utils.cc utils.h
-
-libpuresli_la_SOURCES=\
-		aggregatedatum.h aggregatedatum_impl.h\
-		array.h\
-		arraydatum.cc arraydatum.h\
-		booldatum.cc booldatum.h\
-		callbackdatum.h\
-		charcode.cc charcode.h\
-		datum.cc datum.h\
-		datumconverter.h\
-		dict.cc dict.h\
-		dictdatum.cc dictdatum.h\
-		dictstack.cc dictstack.h\
-		dictutils.cc dictutils.h\
-		doubledatum.cc doubledatum.h\
-		dynmodule.cpp dynmodule.h\
-		fdstream.cc fdstream.h\
-		filesystem.cc filesystem.h\
-		functional.h\
-		functiondatum.cc functiondatum.h\
-		genericdatum.h\
-		gnureadline.cc gnureadline.h\
-		integerdatum.cc integerdatum.h\
-		interpret.cc interpret.h\
-		iostreamdatum.cc iostreamdatum.h\
-		iteratordatum.h iteratordatum.cc\
-		literaldatum.cc\
-		lockptrdatum.h lockptrdatum_impl.h\
-		name.cc name.h\
-		slinames.h slinames.cpp\
-		namedatum.cc namedatum.h\
-		numericdatum.h numericdatum_impl.h\
-		oosupport.cc oosupport.h\
-		parser.cc parser.h\
-		parserdatum.h\
-		processes.cc processes.h\
-		psignal.c psignal.h\
-		scanner.cc scanner.h\
-		sli_io.cc sli_io.h\
-		sliactions.cc sliactions.h\
-		sliarray.cc sliarray.h\
-		slibuiltins.cc slibuiltins.h\
-		slicontrol.cc slicontrol.h\
-		slidata.cc slidata.h\
-		slidict.cc slidict.h\
-		sliexceptions.cc sliexceptions.h\
-		slifunction.h\
-		sligraphics.cc sligraphics.h\
-		slimath.cc slimath.h\
-		slimodule.cc slimodule.h\
-		sliregexp.cc sliregexp.h\
-		slistack.cc slistack.h\
-		slistartup.cc slistartup.h\
-		slitype.cc slitype.h\
-		slitypecheck.cc slitypecheck.h\
-		specialfunctionsmodule.cc specialfunctionsmodule.h\
-		stringdatum.cc stringdatum.h\
-		symboldatum.cc symboldatum.h\
-		tarrayobj.cc tarrayobj.h\
-		token.cc token.h\
-		tokenarray.cc tokenarray.h\
-		tokenstack.cc tokenstack.h\
-		tokenutils.cc tokenutils.h\
-		triedatum.cc triedatum.h\
-		typearray.h\
-		typechk.cc typechk.h\
-		utils.cc utils.h
-
 sli_SOURCES= puresli.cc
 
-sli_LDADD= libpuresli.la \
+sli_LDADD= libsli.la \
 	$(top_builddir)/libnestutil/libnestutil.la \
 	@SLI_LIBS@
 
-libsli_la_SOURCES= $(libsli_base_sources)
+noinst_LTLIBRARIES= libsli.la
+
+libsli_la_SOURCES=\
+		aggregatedatum.h\
+		array.h\
+		arraydatum.cc arraydatum.h\
+		booldatum.cc booldatum.h\
+		callbackdatum.h\
+		charcode.cc charcode.h\
+		datum.cc datum.h\
+		dict.cc dict.h\
+		dictdatum.cc dictdatum.h\
+		dictstack.cc dictstack.h\
+		dictutils.cc dictutils.h\
+		doubledatum.cc doubledatum.h\
+		dynmodule.cpp dynmodule.h\
+		fdstream.cc fdstream.h\
+		filesystem.cc filesystem.h\
+		functional.h\
+		functiondatum.cc functiondatum.h\
+		genericdatum.h\
+		gnureadline.cc gnureadline.h\
+		integerdatum.cc integerdatum.h\
+		interpret.cc interpret.h\
+		iostreamdatum.cc iostreamdatum.h\
+		iteratordatum.h iteratordatum.cc\
+		literaldatum.cc\
+		lockptrdatum.h lockptrdatum_impl.h\
+		name.cc name.h\
+		slinames.h slinames.cpp\
+		namedatum.cc namedatum.h\
+		numericdatum.h numericdatum_impl.h\
+		oosupport.cc oosupport.h\
+		parser.cc parser.h\
+		parserdatum.h\
+		processes.cc processes.h\
+		psignal.c psignal.h\
+		scanner.cc scanner.h\
+		sli_io.cc sli_io.h\
+		sliactions.cc sliactions.h\
+		sliarray.cc sliarray.h\
+		slibuiltins.cc slibuiltins.h\
+		slicontrol.cc slicontrol.h\
+		slidata.cc slidata.h\
+		slidict.cc slidict.h\
+		sliexceptions.cc sliexceptions.h\
+		slifunction.h\
+		sligraphics.cc sligraphics.h\
+		slimath.cc slimath.h\
+		slimodule.cc slimodule.h\
+		sliregexp.cc sliregexp.h\
+		slistack.cc slistack.h\
+		slistartup.cc slistartup.h\
+		slitype.cc slitype.h\
+		slitypecheck.cc slitypecheck.h\
+		specialfunctionsmodule.cc specialfunctionsmodule.h\
+		stringdatum.cc stringdatum.h\
+		symboldatum.cc symboldatum.h\
+		tarrayobj.cc tarrayobj.h\
+		token.cc token.h\
+		tokenarray.cc tokenarray.h\
+		tokenstack.cc tokenstack.h\
+		tokenutils.cc tokenutils.h\
+		triedatum.cc triedatum.h\
+		typearray.h\
+		typechk.cc typechk.h\
+		utils.cc utils.h

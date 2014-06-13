@@ -42,7 +42,7 @@ librandom::GslRandomGen::~GslRandomGen()
 
 // function initializing RngList
 // add further self-implemented RNG below
-void librandom::GslRandomGen::add_gsl_rngs(DictionaryDatum& rngdict)
+void librandom::GslRandomGen::add_gsl_rngs(Dictionary& rngdict)
 {
   // add all standard GSL RNG, or those from GSL replacement
   const gsl_rng_type **t0 = gsl_rng_types_setup();
@@ -51,13 +51,13 @@ void librandom::GslRandomGen::add_gsl_rngs(DictionaryDatum& rngdict)
     assert(*t != NULL);
     const std::string name = std::string("gsl_") + (*t)->name;
     
-    if ( !rngdict->known( name ) )  // avoid multiple insertion
+    if ( !rngdict.known( name ) )  // avoid multiple insertion
     {
       GslRNGFactory* f = new GslRNGFactory(*t);
       assert(f != NULL);
     
       Token rngfactory = new librandom::RngFactoryDatum(*f);
-      rngdict->insert_move(Name(name), rngfactory);
+      rngdict.insert_move(Name(name), rngfactory);
     }
   }
 }

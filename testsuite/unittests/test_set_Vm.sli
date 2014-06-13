@@ -44,7 +44,7 @@ Author: Plesser
 FirstVersion: July 2008
 */
 
-/unittest (7432) require
+(unittest) run
 /unittest using
 
 << >> begin

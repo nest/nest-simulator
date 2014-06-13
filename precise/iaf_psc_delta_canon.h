@@ -157,8 +157,6 @@ namespace nest{
   
   public:        
     
-    typedef Node base;
-    
     /** Basic constructor.
 	This constructor should only be used by GenericModel to create 
 	model prototype instances.

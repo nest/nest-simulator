@@ -33,7 +33,7 @@ Author: Plesser
 FirstVersion: 2010-10-05
 */
 
-/unittest (8831) require
+(unittest) run
 /unittest using
 
 % only test if developer include

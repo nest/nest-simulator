@@ -134,7 +134,7 @@ int main(void)
   register_rng<librandom::MT19937>("MT19937", rngdictd);
 
   // let GslRandomGen add all of the GSL rngs
-  librandom::GslRandomGen::add_gsl_rngs(rngdictd);
+  librandom::GslRandomGen::add_gsl_rngs(rngdict);
 
   // run all available RNG
   std::cout << std::endl

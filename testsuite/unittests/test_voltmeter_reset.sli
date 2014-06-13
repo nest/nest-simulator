@@ -36,7 +36,7 @@ Author: August 2008, Plesser
 SeeAlso: multimeter, testsuite::test_spike_det_reset
 */
 
-/unittest (7471) require
+(unittest) run
 /unittest using
 
 {

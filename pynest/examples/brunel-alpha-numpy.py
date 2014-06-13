@@ -91,7 +91,7 @@ p_rate = 1000.0*nu_ex*CE
 
 nest.SetKernelStatus({"resolution": dt, "print_time": True})
 
-print "Building network"
+print("Building network")
 
 neuron_params= {"C_m"       : CMem,
                 "tau_m"     : tauMem,
@@ -122,7 +122,7 @@ nest.SetStatus(ispikes,[{"label": "brunel-py-in",
                    "withtime": True,
                    "withgid": True}])
 
-print "Connecting devices."
+print("Connecting devices")
 
 nest.CopyModel("static_synapse","excitatory",{"weight":J_ex, "delay":delay})
 nest.CopyModel("static_synapse","inhibitory",{"weight":J_in, "delay":delay})
@@ -133,7 +133,7 @@ nest.DivergentConnect(noise,nodes_in,model="excitatory")
 nest.ConvergentConnect(range(1,N_rec+1),espikes,model="excitatory")
 nest.ConvergentConnect(range(NE+1,NE+1+N_rec),ispikes,model="excitatory")
 
-print "Connecting network."
+print("Connecting network")
 
 # Here, we create the connections from the excitatory neurons to all other
 # neurons. We exploit that the neurons have consecutive IDs, running from
@@ -150,15 +150,15 @@ sources_in = numpy.random.random_integers(NE+1,N_neurons,(N_neurons,CI))
 # and the second loop the inhibitory neurons.
 
 
-for n in xrange(N_neurons):
+for n in range(N_neurons):
     nest.ConvergentConnect(list(sources_ex[n]),[n+1],model="excitatory")
 
-for n in xrange(N_neurons):
+for n in range(N_neurons):
     nest.ConvergentConnect(list(sources_in[n]),[n+1],model="inhibitory")
 
 endbuild=time.time()
 
-print "Simulating."
+print("Simulating")
 
 nest.Simulate(simtime)
 
@@ -175,14 +175,14 @@ nest.GetDefaults("inhibitory")["num_connections"]
 build_time = endbuild-startbuild
 sim_time   = endsimulate-endbuild
 
-print "Brunel network simulation (Python)"
-print "Number of neurons :", N_neurons
-print "Number of synapses:", num_synapses
-print "       Exitatory  :", int(CE*N_neurons)+N_neurons
-print "       Inhibitory :", int(CI*N_neurons)
-print "Excitatory rate   : %.2f Hz" % rate_ex
-print "Inhibitory rate   : %.2f Hz" % rate_in
-print "Building time     : %.2f s" % build_time
-print "Simulation time   : %.2f s" % sim_time
+print("Brunel network simulation (Python)")
+print("Number of neurons : {0}".format(N_neurons))
+print("Number of synapses: {0}".format(num_synapses))
+print("       Exitatory  : {0}".format(int(CE * N_neurons) + N_neurons))
+print("       Inhibitory : {0}".format(int(CI * N_neurons)))
+print("Excitatory rate   : %.2f Hz" % rate_ex)
+print("Inhibitory rate   : %.2f Hz" % rate_in)
+print("Building time     : %.2f s" % build_time)
+print("Simulation time   : %.2f s" % sim_time)
 
 nest.raster_plot.from_device(espikes, hist=True)

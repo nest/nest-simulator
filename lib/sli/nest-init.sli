@@ -33,15 +33,6 @@
 M_DEBUG (nest-init.sli) (Initializing SLI support for NEST Kernel.) message
 % see nestmodule.cpp
 
-/nest-init /SLI ($Revision: 10474 $) provide-component
-/nest-init /C++ (1.157) require-component
-
-statusdict begin
-/kernellibrevision
-  ($Revision: 10474 $) % SVN/CVS revision number (unique)
-def
-end
-
 % Add NEST example directory to search-path
 statusdict /prgdocdir get (/examples)                  join addpath
 statusdict /prgdocdir get (/examples/FacetsBenchmarks) join addpath
@@ -97,8 +88,51 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/cvdict trie
-[/connectiontype] /cvdict_C load addtotrie
+
+% oosupport.sli already defines conversions for dict
+/cvdict [/connectiontype] 
+ /cvdict_C load
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/* BeginDocumentation
+   Name: cvgidcollection - Create a container of global ids.
+
+   Synopsis:
+   list_of_gids          cvgidcollection -> gidcollection
+   first_gid    last_gid cvgidcollection -> gidcollection
+
+   Parameters:
+   list_of_gids    - an array or intvector of global ids, or a gidcollection
+   first_gid       - an integer definig the first GID of the range
+   last_gid        - an integer definig the last GID of the range
+
+   Description:
+   This function creates a gidcollection object, which is a unified
+   representation for multiple global ids of neurons or devices. To
+   save memory in the case of contiguous ranges of GIDs, it is
+   possible to just use the first and last index of the range to
+   initialize the gidcollection.
+
+   Author: Jochen Martin Eppler
+   FirstVersion: April 2014
+
+   SeeAlso: cv_iv, Connect
+*/
+
+/cvgidcollection trie
+  [/integertype /integertype] /cvgidcollection_i_i load addtotrie
+  [/arraytype]                /cvgidcollection_ia  load addtotrie
+  [/intvectortype]            /cvgidcollection_iv  load addtotrie
+  [/gidcollectiontype]        {}                        addtotrie
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% typeinit.sli already defines size functions for other types
+/size [/gidcollectiontype]
+  /size_g load
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -204,62 +238,244 @@ def
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 /* BeginDocumentation
-   Name: Connect - Establish a connection between two nodes.
+   Name: Connect - Establish a connection between two nodes or lists of nodes.
 
    Synopsis:
-   sgid   tgid                          Connect -> -
-   sgid   tgid                /synmodel Connect -> -
-   sgid   tgid   weight delay           Connect -> -
-   sgid   tgid   weight delay /synmodel Connect -> -
-   sgid   tgid   params                 Connect -> -
-   sgid   tgid   params       /synmodel Connect -> -
+   source target                        Connect
+   source target              syn_model Connect
+   source target weight delay           Connect
+   source target weight delay syn_model Connect
+   source target params                 Connect
+   source target params       syn_model Connect
+   
+   sources targets                      Connect
+   sources targets conn_rule            Connect
+   sources targets conn_spec            Connect
+   sources targets conn_rule syn_model  Connect
+   sources targets conn_spec syn_model  Connect
+   sources targets conn_rule syn_spec   Connect
+   sources targets conn_spec syn_spec   Connect
 
    Parameters:
-   sgid         - Global id of the source node.
-   tgid         - Global id of the target node.
-   weight       - The weight of the connection
-   delay        - The transmission delay of the connection (in ms)
-   params       - A complete parameter dictionary for the connection
-   /synmodel    - The synapse model for the connection (see Options below)
+   source     integer  - the GID of the source
+   target     integer  - the GID of the target
+   weight     double   - the weight of the connection
+   delay      double   - the delay of the connection
+   params     dict     - dictionary with synapse parameters
+
+   sources    array/intvector/gidcollection  - the GIDs of the sources
+   targets    array/intvector/gidcollection  - the GIDs of the targets
+   syn_model  literal  - the name of the synapse model, see synapsedict
+   syn_spec   dict     - dictionary with synapse model specification (see Options)
+   conn_rule  literal  - the name of the connection rule, see connruledict
+   conn_spec  dict     - dictionary with connectivity specification (see Options)
 
    Options:
-   /synapse_model - the default synapse model to be used for all connections.
-
-     This is a convenience option for the creation of many connections of the
-     same type. Alternatively, the synapse model can be given in each call to
-     Connect.
+   /conn_spec - dictionary with connectivity specification, must at
+                least contain /rule
+   /syn_spec  - dictionary with synapse specification, must at least
+                contain /model
 
    Description:
-   1. Connect establishes a connection between two nodes.
-   2. The parameters and dynamics of the connection are determined by the
-      synapse model. The model can be given in the call to Connect. The
-      default model can be set as an Option.
+   Connects sources to targets according to the given connectivity
+   specification conn_spec. Some connection rules impose requirements.
+   E.g. /one_to_one requires that sources and targets have the same
+   number of elements. Others may have additional parameters,
+   e.g. connection probability /p for /pairwise_binomial.
 
-   SeeAlso: ConvergentConnect, DivergentConnect, synapsedict
+   The variants with two global ids as arguments implicitly connect
+   the two neurons using the one_to_one rule. If given, weight, delay,
+   syn_model, and params are used for the connection.
+
+   The variants with only literal arguments /conn_rule or /syn_model
+   are shorthand for the corresponding calls with a connectivity or
+   synapse specification dictionaries as explained in the Options
+   section.  The literals are expanded to << /rule /conn_rule >> and
+   << /model /syn_model >>, respectively.
+
+   Parameters for connectivity rules must have fixed values.
+
+   Parameters for synapses may be fixed single values, random deviate
+   specifications, or arrays of the same length as sources and targets
+   for the /one_to_one rule.
+
+   SeeAlso: synapsedict, connruledict, cvgidcollection, DivergentConnect, RandomDivergentConnect, ConvergentConnect, RandomConvergentConnect
+
+   Author: Hannah Bos, Hans Ekkehard Plesser, Jochen Martin Eppler
+
+   FirstVersion: January 2014
 */
 
+%%% Options for Connect
+
 /Connect <<
-  /synapse_model /static_synapse
+  /conn_spec << /rule /one_to_one >>
+  /syn_spec << /model /static_synapse >>
 >> Options
 
-/Connect_main trie
-[/integertype /integertype /literaltype]
-    /Connect_i_i_l load addtotrie
-[/integertype /integertype /doubletype /doubletype /literaltype]
-    /Connect_i_i_d_d_l load addtotrie
-[/integertype /integertype /dictionarytype /literaltype]
-    /Connect_i_i_D_l load addtotrie
+
+%%% Helper functions for Connect
+
+% Expects a synapse or connection specification dictionary on the
+% stack and extends it by the defaults from Connect's Options for
+% all keys from the given spec in the Options for Connect that are
+% missing in the given dictionary.
+% Usage: dict /lit, where lit is the name of the spec in the Options
+/:Connect_complete_dict {
+    << >> begin
+    /optname Set
+    /Connect optname GetOption keys {
+    	dup /key Set
+	exch dup 3 2 roll known not {
+	  dup key /Connect optname GetOption key get put
+        } if
+    } forall
+    end
+} def
+
+
+%%% Variants of Connect
+
+/Connect trie
+
+  % Connect two nodes using default synapse model
+  [/integertype /integertype] {
+      /Connect /syn_spec GetOption /model get
+      Connect_i_i_l
+  } bind addtotrie
+
+  % Connect two nodes using given synapse model
+  [/integertype /integertype /literaltype]
+      /Connect_i_i_l load addtotrie
+
+  % Connect two nodes using given weight and delay and default synapse model
+  [/integertype /integertype /doubletype /doubletype] {
+      /Connect /syn_spec GetOption /model get
+      Connect_i_i_d_d_l
+  } bind addtotrie
+
+  % Connect two nodes using given weight, delay, and synapse model
+  [/integertype /integertype /doubletype /doubletype /literaltype]
+      /Connect_i_i_d_d_l load addtotrie
+
+  % Connect two nodes using given weight and delay and default synapse model
+  [/integertype /integertype /dictionarytype] {
+      /Connect /syn_spec GetOption /model get
+      Connect_i_i_D_l
+  } bind addtotrie
+
+  % Connect two nodes using given synapse parameters and synapse model
+  [/integertype /integertype /dictionarytype /literaltype]
+      /Connect_i_i_D_l load addtotrie
+
+
+  % We create the type trie for the list variants using a loop
+  [/arraytype /intvectortype /gidcollectiontype] {
+      /gidlisttype Set
+
+      % Connect nodes from two lists of GIDs using default rule and
+      % default syn_model
+      [gidlisttype gidlisttype] {
+	  cvgidcollection exch % convert targets to gidcollection
+	  cvgidcollection exch % convert sources to gidcollection
+	  /Connect /conn_spec GetOption % use defaults
+	  /Connect /syn_spec GetOption  % use defaults
+	  Connect_g_g_D_D
+      } bind addtotrie
+
+      % Connect nodes from two lists of GIDs using given rule and
+      % default synapse model
+      [gidlisttype gidlisttype /literaltype] {
+	  mark exch /rule exch >> % create the conn_spec dictionary
+	  /conn_spec :Connect_complete_dict % fill in missing defaults
+	  3 1 roll                % bring sources and targets to top
+	  cvgidcollection exch    % convert targets to gidcollection
+	  cvgidcollection exch    % convert sources to gidcollection
+	  3 2 roll                % bring sources and targets to bottom 
+	  /Connect /syn_spec GetOption % use defaults
+	  Connect_g_g_D_D
+      } bind addtotrie
+
+      % Connect nodes from two lists of GIDs using given rule
+      % paramters and default synapse model
+      [gidlisttype gidlisttype /dictionarytype] {
+	  /conn_spec :Connect_complete_dict % fill in missing defaults
+	  3 1 roll                  % bring sources and targets to top
+	  cvgidcollection exch      % convert targets to gidcollection
+	  cvgidcollection exch      % convert sources to gidcollection
+	  3 2 roll                  % bring sources and targets to bottom 
+	  /Connect /syn_spec GetOption % use defaults
+	  Connect_g_g_D_D
+      } bind addtotrie
+
+      % Connect nodes from two lists of GIDs using given rule and
+      % given synapse model
+      [gidlisttype gidlisttype /literaltype /literaltype] {
+	  mark exch /model exch >> % create the syn_spec dictionary
+	  /syn_spec :Connect_complete_dict  % fill in missing defaults
+	  exch                      % exchange syn_spec and conn_spec		
+	  mark exch /rule exch >> % create the conn_spec dictionary
+	  /conn_spec :Connect_complete_dict % fill in missing defaults
+	  exch                      % exchange syn_spec and conn_spec		
+	  4 2 roll                  % bring sources and targets to top
+	  cvgidcollection exch      % convert targets to gidcollection
+	  cvgidcollection exch      % convert sources to gidcollection
+	  4 2 roll                  % bring sources and targets to bottom 
+	  Connect_g_g_D_D
+      } bind addtotrie
+
+      % Connect nodes from two lists of GIDs using given rule and
+      % given syn_spec
+      [gidlisttype gidlisttype /literaltype /dictionarytype] {
+	  /syn_spec :Connect_complete_dict  % fill in missing defaults
+	  exch                      % exchange syn_spec and conn_spec		
+	  mark exch /rule exch >> % create the conn_spec dictionary
+	  /conn_spec :Connect_complete_dict % fill in missing defaults
+	  exch                      % exchange syn_spec and conn_spec		
+	  4 2 roll                  % bring sources and targets to top
+	  cvgidcollection exch      % convert targets to gidcollection
+	  cvgidcollection exch      % convert sources to gidcollection
+	  4 2 roll                  % bring sources and targets to bottom 
+	  Connect_g_g_D_D
+      } bind addtotrie
+
+      % Connect two lists using the given rule parameters and synapse model
+      [gidlisttype gidlisttype /dictionarytype /literaltype] {
+	  mark exch /model exch >> % create the syn_spec dictionary
+	  /syn_spec :Connect_complete_dict  % fill in missing defaults
+	  exch                      % exchange syn_spec and conn_spec		
+	  /conn_spec :Connect_complete_dict % fill in missing defaults
+	  exch                      % exchange syn_spec and conn_spec		
+	  4 2 roll                  % bring sources and targets to top
+	  cvgidcollection exch      % convert targets to gidcollection
+	  cvgidcollection exch      % convert sources to gidcollection
+	  4 2 roll                  % bring sources and targets to bottom 
+	  Connect_g_g_D_D
+      } bind addtotrie
+      
+      % Connect two lists using the given rule parameters and synapse
+      % parameters
+      [gidlisttype gidlisttype /dictionarytype /dictionarytype] {
+	  /syn_spec :Connect_complete_dict  % fill in missing defaults
+	  exch                      % exchange syn_spec and conn_spec		
+	  /conn_spec :Connect_complete_dict % fill in missing defaults
+	  exch                      % exchange syn_spec and conn_spec		
+	  4 2 roll                  % bring sources and targets to top
+	  cvgidcollection exch      % convert targets to gidcollection
+	  cvgidcollection exch      % convert sources to gidcollection
+	  4 2 roll                  % bring sources and targets to bottom 
+	  Connect_g_g_D_D
+      } bind addtotrie
+
+  } forall
+
 def
 
-/Connect [/literaltype] {
-  Connect_main
-} def
 
-/Connect [/anytype] {
-  /Connect /synapse_model GetOption
-  Connect_main
-} def
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 /* BeginDocumentation
    Name: GetConnections - Retrieve connections between nodes
@@ -314,9 +530,15 @@ def
 	/GetConnections /ArgumentError raiseerror
       }
       if
+      pdict key get
+      TensorRank 1 eq not
+      {
+        key cvs ( list of GIDs must be of dimension 1) join M_ERROR message
+      	/GetConnections /ArgumentError raiseerror
+      }
+      if
     } if    
   } forall
-  pstack
   GetConnections_D 
   Flatten 
 } def
@@ -448,7 +670,7 @@ def
 } def
 
 /DivergentConnect [/anytype] {
-  /Connect /synapse_model GetOption
+  /Connect /syn_spec GetOption /model get
   DivergentConnect_main
 } def
 
@@ -570,8 +792,8 @@ Options:
 allow_autapses  - controls, whether self connections can be produced.
 allow_multapses - controls, whether multiple selections are possible.
 
-If not given, the synapse model is taken from the Options dictionary
-of the Connect command.
+If not given, the synapse model is taken from the syn_spec dictionary
+from the Options of the Connect command.
 
 Description:
 
@@ -650,7 +872,7 @@ def
 } def
 
 /RandomDivergentConnect [/anytype] {
-  /Connect /synapse_model GetOption
+  /Connect /syn_spec GetOption /model get
   RandomDivergentConnect_main
 } def
 
@@ -675,7 +897,7 @@ def
 } def
 
 /ConvergentConnect [/anytype] {
-  /Connect /synapse_model GetOption
+  /Connect /syn_spec GetOption /model get
   ConvergentConnect_main
 } def
 
@@ -692,23 +914,25 @@ Synopsis:
 [sources] [targets] n /synmodel RandomConvergentConnect -> -
 
 Parameters:
-[sources] - array of (global IDs of) potential source nodes
-target    - GID of target node
-[targets] - array of (global IDs of) target nodes
-n         - number of connections to be established
-init_dict - dictionary used to initialize each of the established connections
-weights   - A list of weights of size n
-delays    - A list of delays of size n
-weightss  - A list of lists of weights of size length(targets) x size n
-delayss   - A list of lists delays of size length(targets) x size n 
-/synmodel - The synapse model for the connection (see Options below)
+[sources]   - array of (global IDs of) potential source nodes
+target      - GID of target node
+[targets]   - array of (global IDs of) target nodes
+source_from - first index in range 
+source_to   - last index in range
+n           - number of connections to be established
+init_dict   - dictionary used to initialize each of the established connections
+weights     - A list of weights of size n
+delays      - A list of delays of size n
+weightss    - A list of lists of weights of size length(targets) x size n
+delayss     - A list of lists delays of size length(targets) x size n 
+/synmodel   - The synapse model for the connection (see Options below)
 
 Options:
 allow_autapses  - controls, whether self connections can be produced.
 allow_multapses - controls, whether multiple selections are possible.
 
-If not given, the synapse model is taken from the Options dictionary
-of the Connect command.
+If not given, the synapse model is taken from the syn_spec dictionary
+from the Options of the Connect command.
 
 Description:
 This function connects a given target node with a random collection of
@@ -882,7 +1106,8 @@ bind def
   4 -1 roll
   LayoutArray
   3 2 roll
-  
+
+  % put empty arrays for weights before synapse type
   [ ] % weights empty
   [ ] % delays empty
   3 2 roll
@@ -893,6 +1118,7 @@ bind def
 
   RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l
 } bind def
+
 
 % all calls without init_dict are forwarded to C++
 /RandomConvergentConnect_main trie
@@ -915,95 +1141,10 @@ def
 /RandomConvergentConnect trie 
 [/literaltype] /RandomConvergentConnect_main load addtotrie
 [/anytype] {
-  /Connect /synapse_model GetOption
+  /Connect /syn_spec GetOption /model get
   RandomConvergentConnect_main
 } bind addtotrie
 def
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-/* BeginDocumentation
-Name: BinomialConvergentConnect - Connect a target to a binomial number of sources.
-Synopsis:
-[sources] target c    BinomialConvergentConnect -> -
-
-Parameters:
-[sources] - array of (global IDs of) potential source nodes
-target    - GID of target node
-c         - probability of a potential connection to be established
-
-Options:
-allow_autapses  - controls, whether self connections can be produced.
-allow_multapses - controls, whether multiple selections are possible.
-
-Description:
-The function connects a given target node with each of the nodes
-specified in the source array with probability c. The resulting
-number of inputs to the target neuron is a binomially distributed
-random number. Hence, the name. The parameters of the distribution
-are the length of the source array and the connection probability c.
-One way to implement BinomialConnect is to draw a binomially distributed
-random number followed by a call of RandomConvergentConnect.
-
-Author: Diesmann
-SeeAlso: RandomConvergentConnect
-*/
-
-% default options
-/BinomialConvergentConnect <<
-  /allow_multapses true
-  /allow_autapses true
->> Options
-
-
-/BinomialConvergentConnect_ia_i_d_l
-{
- % note: protection against impossible multapse/autapse
- % requirements handled by RandomConvergentConnect_ia_i_b_b_l
-
- /BinomialConvergentConnect GetOptions begin
- << >> begin %% open local namespace for variables
-  /synmodel Set
-  /c Set
-  /target Set
-  dup
-  /source_neurons Set
-  length /n Set
-
-  target GetStatus /local get
-  {
-   target GetVpRNG /rng Set
-
-   rng rdevdict /binomial get CreateRDV /bino Set
-   bino << /p c /n n >> SetStatus
-
-
-   source_neurons
-   target
-   bino Random
-   allow_multapses
-   allow_autapses
-   synmodel
-   RandomConvergentConnect_ia_i_i_b_b_l
-
-  } if % of if target is local
- end
-} def
-
-
-/BinomialConvergentConnect_main trie
-[/arraytype /integertype /doubletype /literaltype]
-  /BinomialConvergentConnect_ia_i_d_l load addtotrie
-def
-
-/BinomialConvergentConnect [/literaltype] {
-  RandomConvergentConnect_main
-} def
-
-/BinomialConvergentConnect [/anytype] {
-  /Connect /synapse_model GetOption
-  RandomConvergentConnect_main
-} def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1026,7 +1167,7 @@ def
  parameters of the connections. If no connections were found, the
  returned array is empty.
 
- This function is deprecated and will disappear in future version. 
+ This function is deprecated and will disappear in a future version. 
  Please use GetConnections instead. 
 
  Remarks:
@@ -1037,10 +1178,6 @@ def
 
  SeeAlso: GetConnections, GetStatus, SetStatus
 */
-
-%/FindConnections trie
-% [/dictionarytype ] /FindConnections_D load addtotrie
-%def
 
 /FindConnections
 [/dictionarytype]
@@ -1055,6 +1192,7 @@ def
   end
   GetConnections Flatten
 } def
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* BeginDocumentation
@@ -1634,6 +1772,10 @@ def
 /TimeCommunication trie
 [/integertype /integertype /booltype] /TimeCommunication_i_i_b load addtotrie
 [/integertype /integertype] { false TimeCommunication_i_i_b } bind addtotrie
+def
+
+/TimeCommunicationv trie
+[/integertype /integertype] /TimeCommunicationv_i_i load addtotrie
 def
 
   /* BeginDocumentation

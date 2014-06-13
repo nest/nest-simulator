@@ -1,5 +1,3 @@
-#ifndef SLINAMES_H
-#define SLINAMES_H
 /*
  *  slinames.h
  *
@@ -22,6 +20,9 @@
  *
  */
 
+#ifndef SLINAMES_H
+#define SLINAMES_H
+
 #include "name.h"
 
 namespace sli
@@ -35,4 +36,5 @@ namespace sli
   extern Name iforall_dv;
   extern Name imapindexed;
 }
+
 #endif

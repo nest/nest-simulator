@@ -76,8 +76,6 @@ namespace nest{
     
   public:        
     
-    typedef Node base;
-    
     gamma_sup_generator();
     gamma_sup_generator(const gamma_sup_generator&);
 

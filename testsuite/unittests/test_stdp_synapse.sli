@@ -38,7 +38,7 @@ Author: Kunkel, Nov 2010
 */
 
 
-/unittest (8831) require
+(unittest) run
 /unittest using
  
 ResetKernel

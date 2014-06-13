@@ -52,7 +52,7 @@ SeeAlso: iaf_neuron, testsuite::test_iaf, testsuite::test_lambertw, LambertWm1
 */
 
 
-/unittest (6666) require
+(unittest) run
 /unittest using
 
 0.1 /h Set

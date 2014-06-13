@@ -18,7 +18,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
- *
+ */
+
+/*
  *  Implementation based on J H Ahrens, U Dieter, ACM TOMS 8:163-179(1982)
  */
 
@@ -30,6 +32,8 @@
 #include "numerics.h"
 #include "poisson_randomdev.h"
 #include "dictutils.h"
+#include "sliexceptions.h"
+#include "compose.hpp"
 
 // Poisson CDF tabulation limit for case mu_ < 10, P(46, 10) ~ eps
 const unsigned librandom::PoissonRandomDev::n_tab_ = 46;
@@ -77,10 +81,35 @@ void librandom::PoissonRandomDev::set_lambda(double lambda)
 
 void librandom::PoissonRandomDev::set_status(const DictionaryDatum& d)
 {
-  double lam;
+  /*
+    Limits on mu:
 
-  if ( updateValue<double>(d, "lambda", lam) )
-    set_lambda(lam);
+    - mu >= 0 trivial
+    - As shown in comments in ldev(), the maximum absolute value 
+      that can be chosen as a candidate is mu + 710 * sqrt(mu).
+    - We thus must require mu + 710 * sqrt(mu) < max(long).
+    - This is equivalent to
+
+         mu < ( 2 N + a^2 - sqrt(4 N + a^2) ) / 2
+
+      where N is the largest representable integer and a = 710.
+    - Numerical evaluation shows that mu < 0.999 N is safe for 32
+      and 64 bit doubles with a good margin.
+  */
+
+  const double MU_MAX = 0.999 * std::numeric_limits<long>::max();
+
+  double new_mu = mu_;
+
+  if ( updateValue<double>(d, "lambda", new_mu) )
+  {
+    if ( new_mu < 0 )
+      throw BadParameterValue("Poisson RDV: lambda >= 0 required.");
+    if ( new_mu > MU_MAX )
+      throw BadParameterValue(String::compose("Poisson RDV: lambda < %1 required.",
+					      MU_MAX));
+    set_lambda(new_mu);
+  }
 } 
 
 void librandom::PoissonRandomDev::get_status(DictionaryDatum &d) const 
@@ -137,7 +166,7 @@ void librandom::PoissonRandomDev::init_()
     P_[0] = 1.0;  // just for safety
 }
 
-unsigned long librandom::PoissonRandomDev::uldev(RngPtr r) const
+long librandom::PoissonRandomDev::ldev(RngPtr r) const
 {
 
   // make sure we have an RNG
@@ -161,7 +190,7 @@ unsigned long librandom::PoissonRandomDev::uldev(RngPtr r) const
       while ( U > P_[K] && K != n_tab_ )
 	++K;
 
-      return K;
+      return K;    // maximum value: K == n_tab_ == 46
     }
   else
     {
@@ -188,6 +217,12 @@ unsigned long librandom::PoissonRandomDev::uldev(RngPtr r) const
 	}
       while (T * T > -4.0 * std::log (U));
 
+      /* maximum for T at this point:
+
+	 T*T <= -4 ln U ~ -4 * ln 1e-308 ~ 2837
+
+	 => |T| < 54 
+      */
       double G = mu_ + s_ * T;
 
       if ( G >= 0 ) {
@@ -238,6 +273,13 @@ unsigned long librandom::PoissonRandomDev::uldev(RngPtr r) const
 	  U = U + U - 1;
 	  T = U >= 0 ? 1.8 + E : 1.8 - E;
 	} while ( T <= -0.6744 );
+
+	/* maximum for T at this point:
+
+	   0 < E < - ln 1e-308 ~ 709
+
+	   => |T| < 710
+	*/
       
 	// Step H ******************************************************
 	K = static_cast<unsigned long>(std::floor(mu_ + s_ * T));
@@ -251,15 +293,6 @@ unsigned long librandom::PoissonRandomDev::uldev(RngPtr r) const
       return K;
 
     } // mu < 10	
-
-  // should never get here, because both branches of the 
-  // if () {} else {} statement above close with the statement
-  // return K; . Thus, any command following the if construct
-  // is never executed. The icc 8.0 rightfully detects that our
-  // original assert(false) generates a "statement is unreachable"
-  // remark. 30.4.04 Eppler & Diesmann
-  //
-  // assert(false);
 
 }
 

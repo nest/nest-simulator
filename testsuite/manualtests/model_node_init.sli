@@ -33,7 +33,7 @@
          - find way to compare property dictionaries
 */
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 %/model  /step_current_generator def

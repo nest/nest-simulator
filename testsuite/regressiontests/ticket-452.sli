@@ -37,8 +37,9 @@ and the spike_detector property  /precise_times.
 Author: Hans Ekkehard Plesser, 2010-09-30; based on original reproduced code by Alexander Hanuschkin
  */
 
-/unittest (8831) require
+(unittest) run
 /unittest using
+
 M_ERROR setverbosity
 
 

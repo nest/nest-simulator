@@ -53,7 +53,7 @@ class Brunel2000:
         self.data_path=self.name+"/"
         if not os.path.exists(self.data_path):
             os.makedirs(self.data_path)
-        print "Writing data to: "+self.data_path
+        print("Writing data to: {0}".format(self.data_path))
         nest.ResetKernel()
         nest.SetKernelStatus({"data_path": self.data_path})
 
@@ -111,13 +111,18 @@ class Brunel2000:
                        "inhibitory",
                        {"weight":self.J_I, 
                         "delay":self.delay})
-        nest.RandomConvergentConnect(self.nodes_E, self.nodes, 
-                                     self.C_E, model="excitatory")
-        nest.RandomConvergentConnect(self.nodes_I, self.nodes, 
-                                     self.C_I, model="inhibitory")
-        nest.DivergentConnect(self.noise,self.nodes,model="excitatory")
-        nest.ConvergentConnect(self.nodes_E[:self.N_rec],self.spikes_E)
-        nest.ConvergentConnect(self.nodes_I[:self.N_rec],self.spikes_I)
+
+        nest.Connect(self.nodes_E, self.nodes,
+                     {"rule": 'fixed_indegree', "indegree": self.C_E},
+                     "excitatory")
+        nest.Connect(self.nodes_I, self.nodes,
+                     {"rule": 'fixed_indegree', "indegree": self.C_I},
+                     "inhibitory")
+        nest.Connect(self.noise, self.nodes, "all_to_all", "excitatory")
+
+        nest.Connect(self.nodes_E[:self.N_rec], self.spikes_E, 'all_to_all')
+        nest.Connect(self.nodes_I[:self.N_rec], self.spikes_I, 'all_to_all')
+
         self.connected=True
 
     def run(self, simtime=300.):
@@ -130,9 +135,9 @@ class Brunel2000:
         nest.Simulate(simtime)
         events = nest.GetStatus(self.spikes,"n_events")
         self.rate_ex= events[0]/simtime*1000.0/self.N_rec
-        print "Excitatory rate   : %.2f Hz" % self.rate_ex
+        print("Excitatory rate   : %.2f Hz" % self.rate_ex)
         self.rate_in= events[1]/simtime*1000.0/self.N_rec
-        print "Inhibitory rate   : %.2f Hz" % self.rate_in
+        print("Inhibitory rate   : %.2f Hz" % self.rate_in)
         nest.raster_plot.from_device(self.spikes_E, hist=True)
         #pylab.show()
 

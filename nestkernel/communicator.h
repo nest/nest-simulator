@@ -191,6 +191,7 @@ public:
 
   static bool grng_synchrony(unsigned long);
   static double_t time_communicate(int num_bytes, int samples=1000);
+  static double_t time_communicatev(int num_bytes, int samples=1000);
   static double_t time_communicate_offgrid(int num_bytes, int samples=1000);
 
   static std::string get_processor_name();
@@ -203,7 +204,7 @@ public:
   static int get_recv_buffer_size();
   static bool get_use_Allgather();
   static bool get_initialized();
-
+   
   static void set_num_threads(thread num_threads);
   static void set_buffer_sizes(int send_buffer_size, int recv_buffer_size);
   static void set_use_Allgather(bool use_Allgather);
@@ -219,7 +220,7 @@ private:
   static int recv_buffer_size_;  //!< size of receive buffer
   static bool initialized_;      //!< whether MPI is initialized
   static bool use_Allgather_;    //!< using Allgather communication
-
+  
   static std::vector<int> comm_step_;  //!< array containing communication partner for each step.
   static uint_t COMM_OVERFLOW_ERROR;
 
@@ -252,6 +253,11 @@ private:
                                std::vector<int>& displacements);
   static void communicate_CPEX(std::vector<int_t>&);
 };
+
+inline void Communicator::set_use_Allgather(bool use_Allgather)
+{
+  use_Allgather_ = use_Allgather;
+}
 
 }
 
@@ -346,6 +352,7 @@ public:
    */
   static bool grng_synchrony(unsigned long) {return true;}
   static double_t time_communicate(int, int){return 0.0;}
+  static double_t time_communicatev(int, int){return 0.0;}
   static double_t time_communicate_offgrid(int, int){return 0.0;}
 
   static std::string get_processor_name();
@@ -375,6 +382,12 @@ private:
   static bool initialized_;      //!< whether MPI is initialized
   static bool use_Allgather_;    //!< using Allgather communication
 };
+
+inline void Communicator::set_use_Allgather(bool use_Allgather)
+{
+  use_Allgather_ = use_Allgather;
+}
+
 
 inline std::string Communicator::get_processor_name()
 {
@@ -439,11 +452,6 @@ inline void Communicator::set_buffer_sizes(int send_buffer_size, int recv_buffer
 {
   send_buffer_size_ = send_buffer_size;
   recv_buffer_size_ = recv_buffer_size;
-}
-
-inline void Communicator::set_use_Allgather(bool use_Allgather)
-{
-  use_Allgather_ = use_Allgather;
 }
 
 } // namespace nest

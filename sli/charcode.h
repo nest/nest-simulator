@@ -32,6 +32,7 @@
 /***************************************************************/
 #include <vector>
 #include <cassert>
+#include <cstddef>
 
 using std::size_t;
 

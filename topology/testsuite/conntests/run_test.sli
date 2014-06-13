@@ -19,6 +19,7 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 % expects on stack name of script to run to set
 % src_layer -- layer dict
 % tgt_layer -- layer dict

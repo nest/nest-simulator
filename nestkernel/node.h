@@ -156,6 +156,21 @@ namespace nest {
     virtual bool has_proxies() const;
     
     /**
+     * Returns true for potential global receivers (e.g. spike_detector) and false otherwise
+     */
+    virtual bool potential_global_receiver() const;
+    
+    /**
+     * Sets has_proxies_ member variable (to switch to global spike detection mode)
+     */
+    virtual void set_has_proxies(const bool);
+
+    /**
+     * Sets local_receiver_ member variable (to switch to global spike detection mode)
+     */
+    virtual void set_local_receiver(const bool);
+    
+    /**
      * Returns true if the node only receives events from nodes/devices 
      * on the same thread.
      */
@@ -195,7 +210,6 @@ namespace nest {
     virtual 
       void register_connector(nest::Connector&) {}
      
-
     /**
      * Return global Network ID.
      * Returns the global network ID of the Node.
@@ -425,7 +439,6 @@ namespace nest {
      *
      * @see Event
      */
-
 
     /**
      * This function checks if the receiver accepts the connection by creating an
@@ -844,6 +857,12 @@ namespace nest {
     return true;
   }
 
+  inline
+  bool Node::potential_global_receiver() const
+  {
+    return false;
+  }
+  
   inline
   bool Node::local_receiver() const
   {

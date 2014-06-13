@@ -60,7 +60,7 @@ Author:  July 2004, Diesmann
 SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_aligned_delay
 */
 
-/unittest (8331) require
+(unittest) run
 /unittest using
 
 M_INFO setverbosity

@@ -19,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+statusdict/have_music :: not {statusdict/exitcodes/success :: quit_i} if
+
 M_INFO setverbosity
 
 0 << /local_num_threads 2 /overwrite_files true >> SetStatus

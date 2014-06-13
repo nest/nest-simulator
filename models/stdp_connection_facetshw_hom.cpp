@@ -1,16 +1,22 @@
 /*
  *  stdp_connection_facetshw_hom.cpp
  *
- *  This file is part of NEST
+ *  This file is part of NEST.
  *
- *  Copyright (C) 2004 by
- *  The NEST Initiative
+ *  Copyright (C) 2004 The NEST Initiative
  *
- *  See the file AUTHORS for details.
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
  *
- *  Permission is granted to compile and modify
- *  this file for non-commercial use.
- *  See the file LICENSE for details.
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -297,6 +303,27 @@ namespace nest
     updateValue<double_t>(d, "next_readout_time", next_readout_time_);
 
     //setting discrete_weight_ does not make sense, is temporary variable
+
+    if (d->known("tau_plus") ||
+	d->known("tau_minus_stdp") ||
+	d->known("Wmax") ||
+	d->known("weight_per_lut_entry") ||
+	d->known("no_synapses") ||
+	d->known("synapses_per_driver") ||
+	d->known("driver_readout_time") ||
+	d->known("readout_cycle_duration") ||
+	d->known("lookuptable_0") ||
+	d->known("lookuptable_1") ||
+	d->known("lookuptable_2") ||
+	d->known("configbit_0") ||
+	d->known("configbit_1") ||
+	d->known("reset_pattern") )
+      {
+	//cm.network().message(SLIInterpreter::M_ERROR, "STDPFACETSHWConnectionHom::set_status()", "you are trying to set common properties via an individual synapse.");
+	//throw BadParameter();
+	throw ChangeCommonPropsByIndividual("STDPPLConnectionHom::set_status(): you are trying to set common properties via an individual synapse.");
+      }
+
   }
 
    /**
@@ -322,7 +349,9 @@ namespace nest
          d->known("configbit_1s") ||
          d->known("reset_patterns") )
      {
-       cm.network().message(SLIInterpreter::M_ERROR, "STDPFACETSHWConnectionHom::set_status()", "you are trying to set common properties via an individual synapse.");
+       //cm.network().message(SLIInterpreter::M_ERROR, "STDPFACETSHWConnectionHom::set_status()", "you are trying to set common properties via an individual synapse.");
+       //throw BadParameter();
+	throw ChangeCommonPropsByIndividual("STDPPLConnectionHom::set_status(): you are trying to set common properties via an individual synapse.");
      }
   }
 

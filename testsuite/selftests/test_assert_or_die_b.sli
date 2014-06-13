@@ -30,7 +30,7 @@
    Author: R Kupper
  */
 
-/unittest (7403) require
+(unittest) run
 /unittest using
 
 % the following call shall pass without error:

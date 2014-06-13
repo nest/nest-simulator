@@ -531,6 +531,18 @@ class SLIArrayModule: public SLIModule
  };
 
 
+  class Eq_dvFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
+  class Eq_ivFunction: public SLIFunction
+  {
+  public:
+    void execute(SLIInterpreter *) const;
+  };
+
   /** @} */
   
   RangeFunction rangefunction;
@@ -599,6 +611,8 @@ class SLIArrayModule: public SLIModule
   Put_dv_i_dFunction put_dv_i_dfunction;
   Zeros_dvFunction zeros_dvfunction;
   Ones_dvFunction ones_dvfunction;
+  Eq_dvFunction eq_dvfunction;
+  Eq_ivFunction eq_ivfunction;
   Zeros_ivFunction zeros_ivfunction;
   Ones_ivFunction ones_ivfunction;
   ArangeFunction  arangefunction;

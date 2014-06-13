@@ -22,20 +22,6 @@
 
 #ifndef PRECISEMODULE_H
 #define PRECISEMODULE_H
-/* 
-    This file is part of NEST
-
-    precisemodule.h -- Header to the precisemodule
-    (see cpp file for details)
-
-
-    Author: Marc-Oliver Gewaltig (marc-oliver.gewaltig@honda-ri.de)
-            Hans Ekkehard Plesser (hans.ekkehard.plesser@umb.no)
-
-    $Date: 2012-11-15 17:09:23 +0100 (Thu, 15 Nov 2012) $
-    Last change: $Author: eppler $
-    $Revision: 9952 $
-*/
 
 #include "slimodule.h"
 

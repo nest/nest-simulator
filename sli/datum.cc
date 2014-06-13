@@ -29,16 +29,9 @@
 #include "arraydatum.h"
 #include "booldatum.h"
 #include "stringdatum.h"
-#include "datumconverter.h"
 #include "datum.h"
-
 
 void Datum::info(std::ostream &) const
 {
 //    out << "wflag = " << wflag << std::endl;
-}
-
-void Datum::use_converter(DatumConverter &converter)
-{
-  converter.convert_me(*this);
 }

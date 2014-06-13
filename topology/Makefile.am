@@ -8,7 +8,7 @@ defs= @SLI_THREAD_DEFS@ $defs
 MAKEFLAGS= @MAKE_FLAGS@
 # END  : do not change these lines ---------------------------------------
 
-EXTRA_DIST= testsuite sli doc pynest
+EXTRA_DIST= testsuite sli doc pynest examples
 
 noinst_LTLIBRARIES= libtopologymodule.la
 
@@ -44,6 +44,11 @@ libtopologymodule_la_SOURCES= \
 nobase_pkgdata_DATA=\
 	sli/topology-interface.sli
 
+if HAVE_PYTHON
+
+install-exec-hook:
+	$(PYTHON) setup.py build --build-base=$(abs_builddir)/build install --prefix=$(DESTDIR)$(prefix) --install-lib=$(DESTDIR)$(pyexecdir) --install-scripts=$(DESTDIR)$(bindir) --install-data=$(DESTDIR)$(pkgdatadir)
+
 examplesdir=@PKGDOCDIR@/examples/topology
 
 dist_examples_DATA=\
@@ -63,6 +68,8 @@ dist_examples_DATA=\
 	examples/test_3d_exp.py \
 	examples/test_3d_gauss.py
 
+endif
+
 libtopologymodule_la_CXXFLAGS= @AM_CXXFLAGS@
 
 AM_CPPFLAGS= -I$(top_srcdir)/libnestutil\
@@ -78,5 +85,5 @@ install-data-hook:
 	cp -r @PKGSRCDIR@/$(subdir)/testsuite $(DESTDIR)@PKGDOCDIR@/topology
 	rm -rf `find $(DESTDIR)@PKGDOCDIR@/topology -name .svn`
 
-install-pynest-component:
-	@PYTHON_EXEC@ setup.py install --prefix=$(DESTDIR)@PYNEST_PREFIX@
+clean-local:
+	-rm -rf $(abs_builddir)/build

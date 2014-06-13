@@ -22,26 +22,25 @@
 
 #include "gamma_randomdev.h"
 #include "dictutils.h"
+#include "sliexceptions.h"
 
 #include <cmath>
 
 // by default, init as exponential density with mean 1
 librandom::GammaRandomDev::GammaRandomDev(RngPtr r_source, double a_in) 
-: RandomDev(r_source), a(a_in) 
+  : RandomDev(r_source), a(a_in), b_(1.0)
 { 
   set_order(a);
 }
 
 librandom::GammaRandomDev::GammaRandomDev(double a_in) 
-: RandomDev(), a(a_in) 
+  : RandomDev(), a(a_in), b_(1.0) 
 { 
   set_order(a);
 }
 
-double librandom::GammaRandomDev::operator()(RngPtr r) const
-{
-  assert(r.valid());  // make sure we have RNG
-  
+double librandom::GammaRandomDev::unscaled_gamma(RngPtr r) const
+{  
   // algorithm depends on order a
   if ( a == 1 )
     return -std::log(r->drandpos());
@@ -85,18 +84,28 @@ double librandom::GammaRandomDev::operator()(RngPtr r) const
       
       return X;
     }
-
 }
 
 void librandom::GammaRandomDev::set_status(const DictionaryDatum& d)
 {
-  double a_tmp;
+  double a_new = a;
+  double b_new = b_;
 
-  if ( updateValue<double>(d, "order", a_tmp) )
-    set_order(a_tmp);
+  updateValue<double>(d, "order", a_new);
+  updateValue<double>(d, "scale", b_new);
+
+  if ( a_new <= 0. )
+    throw BadParameterValue("Gamma RDV: order > 0 required.");
+
+  if ( b_new <= 0. )
+    throw BadParameterValue("Gamma RDV: scale > 0 required.");
+
+  set_order(a_new);
+  b_ = b_new;
 } 
 
 void librandom::GammaRandomDev::get_status(DictionaryDatum &d) const 
 {
   def<double>(d, "order", a);
+  def<double>(d, "scale", b_);
 }

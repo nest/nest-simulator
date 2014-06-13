@@ -57,8 +57,7 @@ for the kernel.
 
 */
 
-
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 % test parameters -------------------------------------------------

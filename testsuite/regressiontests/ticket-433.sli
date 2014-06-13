@@ -39,7 +39,7 @@ Author: Hans Ekkehard Plesser, 2010-06-28
 % This test should only run if we have GSL
 statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
 
-/unittest (8045) require
+(unittest) run
 /unittest using
 
 M_INFO setverbosity
@@ -188,7 +188,7 @@ fail_or_die
       % next condition avoids models with auto-generated
       % ports, such as iaf_cond_alpha_multisynapse
       % might be eliminated if #434 removes 0-port.
-      dflts /receptor_types get cva length 0 gt
+      dflts /receptor_types get cva length 0 geq
       {
         { ResetKernel 
           mod 2 Create ; 

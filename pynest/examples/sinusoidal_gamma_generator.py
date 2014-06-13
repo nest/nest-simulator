@@ -54,7 +54,7 @@ nest.Simulate(200)
 
 colors = ['b', 'g']
 
-for j in xrange(2):
+for j in range(2):
 
     ev = nest.GetStatus([m[j]])[0]['events']
     t = ev['times']

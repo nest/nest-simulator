@@ -20,10 +20,6 @@
  *
  */
 
-/oosupport /SLI ($Revision: 9952 $) provide-component
-/oosupport /C++ (1.4) require-component
-
-%
 /*BeginDocumentation
 Name: call - Execute object from a dictionary.
 Synopsis: dict /f call -> -
@@ -95,11 +91,19 @@ SeeAlso: cvdict, call, SetStatus, GetStatus
 
 /*BeginDocumentation
 Name:cvdict - Convert argument to a dictionary
-Synopsis:dict cvdict -> dict
-Parameters: a dictionary which may be labeled for oo-programming
-Description: In case the argument is labeled as a dictionary used as 
+Synopsis:  dict  cvdict -> dict
+           array cvdict -> dict
+Parameters: 
+- a dictionary which may be labeled for oo-programming
+- a flat array of even length containing key value pairs
+Description: 
+In case the argument is labeled as a dictionary used as 
 an object in oo-programming, this label is removed. cvdict does not
 clone its argument. This is the inverse function of cvo.
+In case the argument is an array the resulting new dictionary contains
+the key value pairs .
+Examples:
+ [/a 1 /b 2] cvdict -->  << /a 1 /b 2 >>
 Author:Diesmann
 FirstVersion: 2008-08-23
 SeeAlso: cvo, clonedict
@@ -107,6 +111,12 @@ SeeAlso: cvo, clonedict
 /cvdict [/dictionarytype] 
 {
  dup /__is_object undef
+}
+def
+
+/cvdict [/arraytype]
+{
+ << >> dup begin exch arrayload 2 div  {def} repeat
 }
 def
 

@@ -68,7 +68,7 @@ Author:
 SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_aligned_delay
 */
 
-/unittest (6666) require
+(unittest) run
 /unittest using
 
 0.1  /h Set       % time resolution

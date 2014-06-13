@@ -48,14 +48,14 @@
 namespace librandom {
 
 /*BeginDocumentation
-Name: rdevdict::uniformint - uniform integer random deviate generator
+Name: rdevdict::uniform_int - uniform integer random deviate generator
 Description: Generates uniformly distributed integers between two given limits
 
-  p(n) = 1 / (Nmax - Nmin + 1),   n = Nmin, Nmin+1, ..., Nmax
+  p(n) = 1 / (high - low + 1),   n = low, low+1, ..., high
     
 Parameters: 
-  Nmin - smallest allowed random number
-  Nmax - largest allowed random number
+  low - smallest allowed random number
+  high - largest allowed random number
 
 SeeAlso: CreateRDV, RandomArray, rdevdict
 Author: Hans Ekkehard Plesser
@@ -87,13 +87,12 @@ Author: Hans Ekkehard Plesser
      * way of doing things, although all other compilers
      * happily live without.
      */
-    using RandomDev::uldev;
+    using RandomDev::operator();
+    using RandomDev::ldev;
     
-    unsigned long uldev(void);     //!< draw integer
-    unsigned long uldev(RngPtr) const;   //!< draw integer, threaded
-    bool has_uldev() const { return true; }
+    long ldev(RngPtr) const;   //!< draw integer, threaded
+    bool has_ldev() const { return true; }
 
-    double operator()(void);           // non-threaded
     double operator()(RngPtr rthrd) const;   // threaded
 
     //! set distribution parameters from SLI dict
@@ -109,26 +108,15 @@ Author: Hans Ekkehard Plesser
   };
 
   inline
-  double UniformIntRandomDev::operator()(void)
-  {
-    return static_cast<double>(uldev());
-  }
-
-  inline
   double UniformIntRandomDev::operator()(RngPtr rthrd) const
   {
-    return static_cast<double>(uldev(rthrd)); 
-  }
-
-  inline
-  unsigned long UniformIntRandomDev::uldev(void)
-  {
-    return uldev(rng_);
+    return static_cast<double>(ldev(rthrd)); 
   }
 
   inline 
-  unsigned long UniformIntRandomDev::uldev(RngPtr r_s) const
+  long UniformIntRandomDev::ldev(RngPtr r_s) const
   {
+    assert(range_ > 0);
     return nmin_ + r_s->ulrand(range_);
   }
 }

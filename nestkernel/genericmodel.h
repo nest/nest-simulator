@@ -1,5 +1,3 @@
-#ifndef GENERICMODEL_H
-#define GENERICMODEL_H
 /*
  *  genericmodel.h
  *
@@ -21,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef GENERICMODEL_H
+#define GENERICMODEL_H
 
 #include "model.h"
 #include "dynmodule.h"
@@ -55,6 +56,7 @@ namespace nest
     Model* clone(const std::string&) const;
 
     bool has_proxies();
+    bool potential_global_receiver();
     bool one_node_per_process();
     bool is_off_grid();
     /**
@@ -150,6 +152,13 @@ namespace nest
   bool GenericModel<ElementT>::has_proxies()
   {
     return proto_.has_proxies();
+  }
+  
+  template <typename ElementT>
+  inline
+  bool GenericModel<ElementT>::potential_global_receiver()
+  {
+    return proto_.potential_global_receiver();
   }
 
   template <typename ElementT>

@@ -21,17 +21,9 @@
  */
 
 #include "namedatum.h"
-#include "datumconverter.h"
 
 void LiteralDatum::pprint(std::ostream &out) const
 {
   out << '/';
   print(out);   
 }
-
-void LiteralDatum::use_converter(DatumConverter &converter)
-{
-  converter.convert_me(*this); // call visit with our own type here
-                  // this will call the approproate implementation of the derived class
-}
-

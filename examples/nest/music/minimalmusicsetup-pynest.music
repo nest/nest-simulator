@@ -1,0 +1,11 @@
+stoptime=0.01
+
+[from]
+  binary=./minimalmusicsetup_sendnest.py
+  np=1
+
+[to]
+  binary=./minimalmusicsetup_receivenest.py
+  np=1
+
+from.spikes_out -> to.spikes_in [1]

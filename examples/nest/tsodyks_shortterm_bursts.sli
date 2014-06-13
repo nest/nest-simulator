@@ -21,9 +21,9 @@
  */
 
 /* BeginDocumentation
-Name: test_tsodyks_shortterm - sli script for testing Tsodyks short term plastic synapses.
+Name: tsodyks_shortterm_bursts - sli script for testing Tsodyks short term plastic synapses.
 
-Synopsis: (test_tsodyks_shortterm) run
+Synopsis: (tsodyks_shortterm_bursts) run
 
 
 Description:
@@ -123,7 +123,7 @@ ResetKernel      % clear all existing network elements
 {
     userdict begin
 
-        [0] ChangeSubnet             % return to full network
+        0 ChangeSubnet             % return to full network
 
         /E_net /subnet Create def    % create subnet
         E_net ChangeSubnet           % enter subnet
@@ -131,7 +131,7 @@ ResetKernel      % clear all existing network elements
         pop                          % pop gids returned by Create
 
         %% obtain array with GIDs of all excitatory neurons
-        /E_neurons E_net GetNodes def
+        /E_neurons E_net GetGlobalNodes def
 
         /E_params <<
             /tau_m   Tau
@@ -149,7 +149,7 @@ ResetKernel      % clear all existing network elements
         (Configuring excitatory neuron parameters.) =
         E_neurons E_params initNeurons
 
-        [0] ChangeSubnet             % return to full network
+        0 ChangeSubnet             % return to full network
 
         /I_net /subnet Create def    % create subnet
         I_net ChangeSubnet           % enter subnet
@@ -157,7 +157,7 @@ ResetKernel      % clear all existing network elements
         pop                          % pop gids returned by Create
 
         % obtain array with GIDs of all excitatory neurons
-        /I_neurons I_net GetNodes def
+        /I_neurons I_net GetGlobalNodes def
 
         /I_params <<
                 /tau_m    Tau
@@ -205,9 +205,9 @@ ResetKernel      % clear all existing network elements
         normal_c
         <<
             /mu A_mean
-            /std A_mean 0.5 mul
-            /min A_mean dup 0.2 mul exch 2.0 mul min
-            /max A_mean dup 0.2 mul exch 2.0 mul max
+            /sigma A_mean 0.5 mul abs
+            /low A_mean dup 0.2 mul exch 2.0 mul min
+            /high A_mean dup 0.2 mul exch 2.0 mul max
         >>
         SetStatus
 
@@ -219,8 +219,8 @@ ResetKernel      % clear all existing network elements
         normal_cl
         <<
             /mu Tau_rec_mean
-            /std Tau_rec_mean 0.5 mul
-            /min Tau_min
+            /sigma Tau_rec_mean 0.5 mul abs
+            /low Tau_min
         >>
         SetStatus
 
@@ -237,8 +237,8 @@ ResetKernel      % clear all existing network elements
             normal_cl
             <<
                 /mu Tau_fac_mean
-                /std Tau_fac_mean 0.5 mul
-                /min Tau_min
+                /sigma Tau_fac_mean 0.5 mul abs
+                /low Tau_min
             >>
             SetStatus
 
@@ -259,9 +259,9 @@ ResetKernel      % clear all existing network elements
         normal_c
         <<
             /mu U_mean
-            /std U_mean 0.5 mul
-            /min U_min
-            /max U_max
+            /sigma U_mean 0.5 mul abs
+            /low U_min
+            /high U_max
         >>
         SetStatus
 
@@ -309,14 +309,14 @@ ResetKernel      % clear all existing network elements
 /connectNeurons
 {
     userdict begin
-      % Gaussian distribution, mean = 1, std = 1
+      % Gaussian distribution, mean = 0, std = 1
       myrng rdevdict /normal get CreateRDV /normal_tot Set
 
       % Gaussian distribution left/right clipped
       myrng rdevdict /normal_clipped get CreateRDV /normal_c Set
 
       % Gaussian distribution, left clipped
-      myrng rdevdict /normal_clipped_left get CreateRDV /normal_cl Set
+      myrng rdevdict /normal_clipped get CreateRDV /normal_cl Set
 
 
       % set options of RandomConvergentConnect to forbid autapses/multapses
@@ -329,7 +329,7 @@ ResetKernel      % clear all existing network elements
 
       % use predefined tsodyks short term plasticity synapse for all
       % subsequent connections
-      /Connect << /synapse_model /tsodyks_synapse >> SetOptions
+      /Connect << /syn_spec << /model /tsodyks_synapse >> >> SetOptions
 
       (Connecting inputs to excitatory neurons.) =
 
@@ -417,7 +417,7 @@ ResetKernel      % clear all existing network elements
 {
     userdict begin
 
-        [0] ChangeSubnet
+        0 ChangeSubnet
 
         % select standard synapse
 
@@ -430,12 +430,12 @@ ResetKernel      % clear all existing network elements
         sd
         <<
             /withtime true   % record time of spikes
-            /withpath true   % record which neuron spiked
+            /withgid true   % record which neuron spiked
             /to_file true    % write results to a file
         >> SetStatus
 
         % select the standard synapse model for subsequent connections
-        /Connect << /synapse_model /static_synapse >> SetOptions
+        /Connect << /syn_spec << /model /static_synapse >> >> SetOptions
 
         % connect all exc neurons to it
         E_neurons
@@ -526,7 +526,7 @@ userdict begin
 
       % set resolution and limits on delays
       % limits must be set BEFORE connecting any elements
-      [0]
+      0
       <<
         /resolution h
         /local_num_threads local_num_threads

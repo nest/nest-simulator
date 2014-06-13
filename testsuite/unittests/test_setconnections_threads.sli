@@ -28,13 +28,14 @@
 % 090406, Morrison Diesmann
 
 
-/unittest (7488) require
+(unittest) run
 /unittest using
 
+/num_threads is_threaded { 2 } { 1 } ifelse def
 
 ResetKernel
 
-0 << /local_num_threads 2 >> SetStatus
+0 << /local_num_threads num_threads >> SetStatus
 
 /iaf_neuron Create /source Set
 /iaf_neuron Create /target Set

@@ -41,7 +41,7 @@
  *
  */
 
-/unittest (7488) require
+(unittest) run
 /unittest using
 
 << >> begin

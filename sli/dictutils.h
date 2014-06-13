@@ -27,6 +27,8 @@
 #include "namedatum.h"
 #include "tokenutils.h"
 #include "arraydatum.h"
+#include "integerdatum.h"
+#include "doubledatum.h"
 #include <string>
 #include <algorithm>
 #include <functional>
@@ -60,7 +62,120 @@ FT getValue(const DictionaryDatum &d, Name const n)
   return getValue<FT>(t);
 }  
    
+/** Get the value of an existing dictionary entry and check that it is in a specified range.
+ * The range is specified by two parameters min and max which have the same type as the template argument.
+ * The last parameter mode defines the type of the range:
+ * Mode    Relation
+ *-------------------
+ *  0      min < x < max
+ *  1      min <= x < max
+ *  2      min <= x <= max
+ *
+ * @ingroup DictUtils
+ * @throws UnknownName An entry of the given name is not known in the dictionary.
+ * @throws RangeCheck if a value is outside the range
+ */
+inline
+double get_double_in_range(const DictionaryDatum &d, Name const n, double min, double max, int mode=2)
+{
+  // We must take a reference, so that access information can be stored in the
+  // token.
+  const Token& t = d->lookup2(n);
+  DoubleDatum *dd= dynamic_cast<DoubleDatum *>(t.datum());
+  double x=0.0;
 
+  if (dd != 0)
+    {
+      x = dd->get();
+    } 
+  else
+    {
+      IntegerDatum *id= dynamic_cast<IntegerDatum *>(t.datum());
+      if (id == 0)
+	{
+	  throw TypeMismatch();
+	}
+
+      x = static_cast<double>(id->get());
+    }
+  switch(mode)
+    {
+    case 0:
+      if(min< x and x < max)
+	return x;
+      break;
+    case 1:
+      if (min <= x and x < max)
+	return x;
+      break;
+    case 2:
+      if (min <= x and x <= max)
+	return x;
+      break;
+    default:
+      return x;
+    }
+  throw RangeCheck();
+}
+
+/** Get the value of an existing dictionary entry and check that it is in a specified range.
+ * The range is specified by two parameters min and max which have the same type as the template argument.
+ * The last parameter mode defines the type of the range:
+ * Mode    Relation
+ *-------------------
+ *  0      min < x < max
+ *  1      min <= x < max
+ *  2      min <= x <= max
+ *
+ * @ingroup DictUtils
+ * @throws UnknownName An entry of the given name is not known in the dictionary.
+ * @throws RangeCheck if a value is outside the range
+ */
+inline
+long get_long_in_range(const DictionaryDatum &d, Name const n, long min, long max, int mode=2)
+{
+  // We must take a reference, so that access information can be stored in the
+  // token.
+  const Token& t = d->lookup2(n);
+  DoubleDatum *dd= dynamic_cast<DoubleDatum *>(t.datum());
+  long x=0;
+
+  if (dd != 0)
+    {
+      x = dd->get();
+    } 
+  else
+    {
+      IntegerDatum *id= dynamic_cast<IntegerDatum *>(t.datum());
+      if (id == 0)
+	{
+	  throw TypeMismatch();
+	}
+
+      x = static_cast<double>(id->get());
+    }
+  switch(mode)
+    {
+    case 0:
+      if(min< x and x < max)
+	return x;
+      break;
+    case 1:
+      if (min <= x and x < max)
+	return x;
+      break;
+    case 2:
+      if (min <= x and x <= max)
+	return x;
+      break;
+    default:
+      return x;
+    }
+  throw RangeCheck();
+}
+
+
+ 
 /** Define a new dictionary entry from a fundamental type.
  * @ingroup DictUtils
  * @throws TypeMismatch Fundamental type and requested SLI type are incompatible.

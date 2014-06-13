@@ -33,7 +33,7 @@ Author: July 2008, Plesser
 SeeAlso: noise_generator, testsuite::test_poisson_ps_min_interval
 */
 
-/unittest (7471) require
+(unittest) run
 /unittest using
 
 % flatten arrays that may contain vectors and numbers

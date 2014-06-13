@@ -36,7 +36,7 @@ Author: Plesser
 FirstVersion: August 2008
 */
 
-/unittest (7488) require
+(unittest) run
 /unittest using
 
 % expect on stack:

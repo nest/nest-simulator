@@ -27,7 +27,7 @@ fi
 
 libtool_major=`$LIBTOOLIZE --version | head -n1 | cut -d\) -f2 | cut -d\. -f1`
 if test $libtool_major -lt 2; then
-  echo "  -> Patching configure.ac for libtoolize 1.5..."
+  echo "  -> Patching configure.ac for libtoolize 1.5 ..."
   patch -s -f -p0 < extras/libtool-1.5-fix.patch
   $LIBTOOLIZE --force --copy --ltdl
 else
@@ -35,11 +35,7 @@ else
 fi
 
 echo "  -> Re-running aclocal ..."
-if test $libtool_major -le 2; then
-  aclocal --force
-else
-  aclocal --force -I $pwd/libltdl/m4
-fi
+aclocal --force
 
 echo "  -> Running autoconf ..."
 autoconf
@@ -47,6 +43,14 @@ autoconf
 # autoheader must run before automake 
 echo "  -> Running autoheader ..."
 autoheader
+
+# patch configure.ac for old (pre 1.14) versions of automake
+am_major=`automake --version | head -n1 | cut -d\) -f2 | cut -d. -f1`
+am_minor=`automake --version | head -n1 | cut -d. -f2`
+if test $am_major -lt 1 -o \( $am_major -le 1 -a $am_minor -lt 14 \); then
+  echo "  -> Patching configure.ac for automake < 1.14 ..."
+  patch -s -f -p0 < extras/automake-pre-1.14-fix.patch
+fi
 
 echo "  -> Running automake ..."
 automake --foreign --add-missing --force-missing --copy

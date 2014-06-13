@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # __init__.py
 #
@@ -18,11 +18,21 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 Initializer of PyNEST.
 """
 
-import sys, os, atexit
+import sys, os
+
+# This is a workaround to avoid segmentation faults when importing
+# scipy after nest. See https://github.com/numpy/numpy/issues/2521
+# and 
+try:
+    import scipy
+except:
+    pass
+
 
 # The following is a workaround to make MPI-enabled NEST import
 # properly. The basic problem is that the shared object pynestkernel
@@ -39,24 +49,41 @@ except:
     import ctypes
     sys.setdlopenflags(ctypes.RTLD_GLOBAL) 
 
-import hl_api
-import nest.pynestkernel as _kernel
+from . import pynestkernel as _kernel
+from . import hl_api
 
-hl_api.nest = _kernel
+engine = _kernel.NESTEngine()
 
-Datum = _kernel.Datum
-
-sli_push = _kernel.pushsli
+sli_push = engine.push
 hl_api.sps = sli_push
-sps = sli_push
 
-sli_pop = _kernel.popsli
+sli_pop = engine.pop
 hl_api.spp = sli_pop
-spp = sli_pop
 
-   
-def sli_run(*args):
-    raise NESTError("PyNEST is not initialized properly. Please call init() first.")
+hl_api.pcd = engine.push_connection_datums
+
+initialized = False
+
+def catching_sli_run(cmd):
+    """
+    Send a command string to the NEST kernel to be executed. This
+    function is is a wrapper around _kernel.runsli to raise errors that
+    happen on the SLI level as Python errors. cmd is the command to be
+    executed.
+    """
+
+    engine.run('{%s} runprotected' % cmd)
+    if not sli_pop():
+        errorname = sli_pop()
+        message = sli_pop()
+        commandname = sli_pop()
+        engine.run('clear')
+        raise hl_api.NESTError("{0} in {1}{2}".format(errorname, commandname, message))
+
+
+sli_run = catching_sli_run
+hl_api.sr = sli_run
+
 
 def sli_func(s, *args, **kwargs):
     """This function is a convenience function for executing the 
@@ -79,9 +106,9 @@ def sli_func(s, *args, **kwargs):
 
     # check for namespace
     slifun = 'sli_func'  # version not converting to literals
-    if kwargs.has_key('namespace'):
+    if 'namespace' in kwargs:
         s = kwargs['namespace'] + ' using ' + s + ' endusing'
-    elif kwargs.has_key('litconv'):
+    elif 'litconv' in kwargs:
         if kwargs['litconv']:
             slifun = 'sli_func_litconv'
     elif len(kwargs) > 0:
@@ -90,50 +117,19 @@ def sli_func(s, *args, **kwargs):
     sli_push(args)       # push array of arguments on SLI stack
     sli_push(s)          # push command string
     sli_run(slifun)      # SLI support code to execute s on args
-    r=sli_pop()          # return value is an array
+    r = sli_pop()        # return value is an array
 
-    if len(r) == 1:        # 1 return value is no tuple
+    if len(r) == 1:      # 1 return value is no tuple
         return r[0]
  
     if len(r) != 0:   
-       return tuple(r)   # convert array to tuple
+        return r
 
-kernel_sr = _kernel.runsli
-hl_api.sr = sli_run
-sr = sli_run
+
 hl_api.sli_func = sli_func
 
-initialized = False
 
-def catching_sr(cmd):
-    """
-    Send a command string to the NEST kernel to be executed.
-    catching_sr is a wrapper of the kernel_sr to raise errors as Python errors.
-    """
-
-    kernel_sr('{'+cmd+'} runprotected')
-    if not sli_pop():
-        errorname = sli_pop()
-        message = sli_pop()
-        commandname = sli_pop()
-        raise hl_api.NESTError(errorname + ' in ' + commandname + message)
-
-
-def catch_errors(catchErrors = True):
-    """Switch between the catching and non-catching versions or sr"""
-
-    global sr, sli_run
-
-    if catchErrors:
-        sli_run = catching_sr
-    else:
-        sli_run = kernel_sr
-
-    sr = sli_run
-    hl_api.sr = sli_run
-
-
-def init(argv) :
+def init(argv):
     """Initialize. argv is passed to the NEST kernel."""
 
     global initialized
@@ -143,19 +139,17 @@ def init(argv) :
         return
 
     quiet = False
-    if argv.count("--quiet") :
+    if argv.count("--quiet"):
         quiet = True
         argv.remove("--quiet")
 
-    initialized |= _kernel.initialize(argv, __path__[0])
+    initialized |= engine.init(argv, __path__[0])
 
-    if initialized :
-
+    if initialized:
         if not quiet :
-            kernel_sr("pywelcome")
-        catch_errors(True)
+            engine.run("pywelcome")
 
-        # Dirty hack to get models completion in iPython shell
+        # Dirty hack to get tab-completion for models in IPython.
         try:
             __IPYTHON__
         except NameError:
@@ -167,18 +161,25 @@ def init(argv) :
             except ImportError:
                 pass
 
-def test ():
+    else:
+        hl_api.NESTError("Initiatization of NEST failed.")
+
+
+def test():
     """ Runs a battery of unit tests on PyNEST """
-    import nest.tests
+    from . import tests
     import unittest
 
+    debug = hl_api.get_debug()
+    hl_api.set_debug(True)
+
     runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(nest.tests.suite())
+    runner.run(tests.suite())
+
+    hl_api.set_debug(debug)
 
 
 if not 'DELAY_PYNEST_INIT' in os.environ:
     init(sys.argv)
 
-atexit.register(_kernel.finalize)
-
-from hl_api import *
+from .hl_api import *

@@ -38,9 +38,26 @@ nest_LDADD= @LINKED_USER_MODULES@ \
 		@SLI_LIBS@\
 		@GSL_LIBS@\
 		@MUSIC_LIBS@\
-		@MPI_LIBS@
+		@MPI_LIBS@\
+		@LIBNEUROSIM_LIBS@
 
-nest_DEPENDENCIES = @LINKED_MODULES@ \
+# ZYV:
+#
+# The dependencies here have to be specified manually all over again,
+# instead of relying on the autotools dependency generation magic from the
+# LDADD primary, because of the awesomeness in how LINKED_MODULES
+# is constructed. Since these are not relative paths, autotools can't
+# figure out whether it's a local convenience library or not and just
+# drops these libraries from the dependency list.
+#
+# I sincerely hope that it gets busted when some brave soul will take
+# on the build system rewrite.
+#
+# Automake 1.11.3+ makes it a bit less painfull:
+#
+# EXTRA_nest_DEPENDENCIES = @LINKED_MODULES@ @LINKED_USER_MODULES@
+
+nest_DEPENDENCIES = @LINKED_MODULES@ @LINKED_USER_MODULES@ \
 		$(top_builddir)/nestkernel/libnest.la \
 		$(top_builddir)/librandom/librandom.la \
 		$(top_builddir)/libnestutil/libnestutil.la \
@@ -50,4 +67,4 @@ AM_CPPFLAGS= -I$(top_srcdir)/libnestutil\
 		-I$(top_srcdir)/librandom\
 		-I$(top_srcdir)/sli\
 		-I$(top_srcdir)/nestkernel\
-		@GSL_CFLAGS@ @MUSIC_INCLUDE@ @MPI_INCLUDE@
+		@GSL_CFLAGS@ @MUSIC_INCLUDE@ @MPI_INCLUDE@ @LIBNEUROSIM_INCLUDE@

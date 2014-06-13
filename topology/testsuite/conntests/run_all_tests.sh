@@ -7,6 +7,8 @@
 # executable
 NEST=$1
 
+mkdir -p output
+
 # Remove old stuff from output directory
 rm -rf output/*
 

@@ -1,0 +1,73 @@
+/*
+ *  ticket-772.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+   Name: testsuite::ticket-772 - NEST should not crash, if integer values for weight/ delay are used
+
+   Synopsis: (ticket-772) run -> NEST exits if test fails
+   Description:
+   Different connecting functions support passing TokenArrays for weights and delays.
+   The values for weight and delays are expected to be doubles, but passing them
+   as integers should not crash NEST. SLI's casting function getValue<double>
+   in tokenutils.cc is strict and throws a TypeMisMatch, if something different 
+   from a DoubleDatum should be casted to a double.
+   This test tests the relevant connecting functions.
+
+   FirstVersion: 04/2014
+   Author: Tammo Ippen
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+is_threaded_with_openmp not { exit_test_gracefully } if
+
+[1 2] /n Set
+
+{
+  ResetKernel
+  
+  /iaf_neuron 2 Create
+  n n [1 1] [[1] [1]] [[4] [6]] /static_synapse RandomConvergentConnect
+  % this one tests the convergent_connect with vectors, which
+  % is called by different other RandomConvergentConnect and 
+  % with convergent_connect(src_from,src_to,tgt_from,tgt_to,...)
+} pass_or_die
+
+{
+  ResetKernel
+  
+  /iaf_neuron 2 Create
+  n 1 [1 1] [4 6] /static_synapse ConvergentConnect
+} pass_or_die
+
+{
+  ResetKernel
+  
+  /iaf_neuron 2 Create
+  1 n [1] [4] /static_synapse DivergentConnect
+} pass_or_die
+
+endusing

@@ -40,7 +40,7 @@ Description:
 Author: Hans Ekkehard Plesser, 2010-05-05 
  */
 
-/unittest (8045) require
+(unittest) run
 /unittest using
 
 % use power-of-two resolution to avoid roundof problems

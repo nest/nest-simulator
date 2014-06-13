@@ -1,6 +1,3 @@
-#ifndef FREE_LAYER_H
-#define FREE_LAYER_H
-
 /*
  *  free_layer.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef FREE_LAYER_H
+#define FREE_LAYER_H
 
 #include <limits>
 #include <sstream>

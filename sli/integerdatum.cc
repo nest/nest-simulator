@@ -21,7 +21,6 @@
  */
 
 #include "integerdatum.h"
-#include "datumconverter.h"
 #include "numericdatum_impl.h"
 
 // explicit template instantiation needed

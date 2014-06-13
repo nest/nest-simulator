@@ -34,8 +34,9 @@ test ensures that no crash occurs.
 Author: Hans Ekkehard Plesser, 2011-06-16
  */
 
-/unittest (8831) require
+(unittest) run
 /unittest using
+
 M_ERROR setverbosity
 
 % test in non-accumulating mode

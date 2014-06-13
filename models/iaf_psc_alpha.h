@@ -287,6 +287,7 @@ namespace nest
       double_t weighted_spikes_ex_;
       double_t weighted_spikes_in_;
 
+
     };
 
     // Access functions for UniversalDataLogger -------------------------------
@@ -296,6 +297,8 @@ namespace nest
 
     double_t get_weighted_spikes_ex_() const { return V_.weighted_spikes_ex_; }
     double_t get_weighted_spikes_in_() const { return V_.weighted_spikes_in_; }
+    double_t get_input_currents_ex_() const { return S_.y1_ex_; }
+    double_t get_input_currents_in_() const { return S_.y1_in_; }
 
     // Data members ----------------------------------------------------------- 
     

@@ -35,7 +35,7 @@ void OOSupportModule::init(SLIInterpreter *i)
 
 const std::string  OOSupportModule::commandstring(void) const
 {
-  return std::string("/oosupport /C++ ($Revision: 9952 $) provide-component  /oosupport /SLI (1.2) require-component");
+  return std::string("(oosupport.sli) run");
 }
 
 const std::string OOSupportModule::name(void) const

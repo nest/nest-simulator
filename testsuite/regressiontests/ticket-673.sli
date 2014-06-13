@@ -33,8 +33,9 @@ Test whether precise models can handle t_ref==simulation resolution
 Author: Susanne Kunkel, 2013-01-23
  */
 
-/unittest (9990) require
+(unittest) run
 /unittest using
+
 M_ERROR setverbosity
 
 % model t_ref run_sim -> time of 2nd spike

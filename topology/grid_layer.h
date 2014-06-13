@@ -1,6 +1,3 @@
-#ifndef GRID_LAYER_H
-#define GRID_LAYER_H
-
 /*
  *  grid_layer.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef GRID_LAYER_H
+#define GRID_LAYER_H
 
 #include "layer.h"
 

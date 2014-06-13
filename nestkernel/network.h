@@ -47,6 +47,10 @@
 #undef M_ERROR
 #endif
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #ifdef HAVE_MUSIC
 #include "music_event_handler.h"
 #endif
@@ -64,6 +68,8 @@ namespace nest
   class SiblingContainer;
   class Event;
   class Node;
+  class GenericConnBuilderFactory;
+  class GIDCollection;
 
   /**
    * @defgroup network Network access and administration
@@ -108,6 +114,8 @@ Parameters:
   network_size             integertype - The number of nodes in the network
   num_connections          integertype - The number of connections in the network
   num_processes            integertype - The number of MPI processes
+  num_rec_processes        integertype - The number of MPI processes reserved for recording spikes
+  num_sim_processes        integertype - The number of MPI processes reserved for simulating neurons
   off_grid_spiking         booltype    - Whether to transmit precise spike times in MPI communicatio
   overwrite_files          booltype    - Whether to overwrite existing data files
   print_time               booltype    - Whether to print progress information during the simulation
@@ -216,6 +224,12 @@ SeeAlso: Simulate, Node
     int copy_synapse_prototype(index sc, std::string);
 
     /**
+     * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
+     */
+    template <typename ConnBuilder>
+    void register_conn_builder(const std::string& name);
+
+    /**
      * Return the model id for a given model name.
      */
     int get_model_id(const char []) const;
@@ -280,25 +294,69 @@ SeeAlso: Simulate, Node
 
     /**
      * Connect two nodes. The two nodes are defined by their global IDs.
+     * The source node is defined by its global ID.
+     * The target node is defined by its gloabl ID and the node.
      * The connection is established on the thread/process that owns the
      * target node.
-     * \param s Address of the sending Node.
-     * \param r Address of the receiving Node.
-     * \param syn The synapse model to use.
-     */ 
-    void connect(index s, index r, index syn);
-
-    /**
-     * Connect two nodes. The two nodes are defined by their global IDs.
-     * The connection is established on the thread/process that owns the
-     * target node.
-     * \param s Address of the sending Node.
-     * \param r Address of the receiving Node.
+     * \param s GID of the sending Node.
+     * \param t GID of the receiving Node.
+     * \param target pointer to target Node.
+     * \param target_thread thread that hosts the target node
      * \param w Weight of the connection.
      * \param d Delay of the connection (in ms).
      * \param syn The synapse model to use.
-     */ 
-    void connect(index s, index r, double_t w, double_t d, index syn);
+     */
+    void connect(index s, index t, Node* target, thread target_thread, 
+		 double_t w, double_t d, index syn); 
+
+    /**
+     * Connect two nodes. The two nodes are defined by their global IDs.
+     * The source node is defined by its global ID.
+     * The target node is defined by its gloabl ID and the node.
+     * The connection is established on the thread/process that owns the
+     * target node.
+     * \param s GID of the sending Node.
+     * \param t GID of the receiving Node.
+     * \param target pointer to target Node.
+     * \param target_thread thread that hosts the target node
+     * \param syn The synapse model to use.
+     */
+    void connect(index s, index t, Node* target, thread target_thread, 
+		 index syn); 
+
+    /**
+     * Connect two nodes. The two nodes are defined by their global IDs.
+     * The source node is defined by its global ID.
+     * The target node is defined by its gloabl ID and the node.
+     * The connection is established on the thread/process that owns the
+     * target node.
+     * \param s GID of the sending Node.
+     * \param t GID of the receiving Node.
+     * \param target pointer to target Node.
+     * \param target_thread thread that hosts the target node
+     * \param w Weight of the connection.
+     * \param d Delay of the connection (in ms).
+     * \param params parameter dict t configure the synapse
+     * \param syn The synapse model to use.
+     */
+    void connect(index s, index t, Node* target, thread target_thread, 
+		 double_t w, double_t d, DictionaryDatum& params, index syn);   
+
+    /**
+     * Connect two nodes. The two nodes are defined by their global IDs.
+     * The source node is defined by its global ID.
+     * The target node is defined by its gloabl ID and the node.
+     * The connection is established on the thread/process that owns the
+     * target node.
+     * \param s GID of the sending Node.
+     * \param t GID of the receiving Node.
+     * \param target pointer to target Node.
+     * \param target_thread thread that hosts the target node
+     * \param params parameter dict t configure the synapse
+     * \param syn The synapse model to use.
+     */
+    void connect(index s, index t, Node* target, thread target_thread, 
+		 DictionaryDatum& params, index syn);   
 
     /**
      * Connect two nodes. The two nodes are defined by their global IDs.
@@ -329,10 +387,15 @@ SeeAlso: Simulate, Node
      */
 
     void divergent_connect(index s,  DictionaryDatum d, index syn);
+    
     void random_divergent_connect(index s, const TokenArray r, index n, const TokenArray w, const TokenArray d, bool, bool, index syn);
     
     void convergent_connect(const TokenArray s, index r, const TokenArray weights, const TokenArray delays, index syn);
 
+    /**
+     * Specialized version of convegent_connect
+     * called by random_convergent_connect threaded
+     */
     void convergent_connect(const std::vector<index> &s_id, const std::vector<Node*> &s, index r, const TokenArray &weight, const TokenArray &delays, index syn);
 
     void random_convergent_connect(const TokenArray s, index t, index n, const TokenArray w, const TokenArray d, bool, bool, index syn);
@@ -342,6 +405,12 @@ SeeAlso: Simulate, Node
      * Parallelize over target list. 
      */
     void random_convergent_connect(TokenArray s, TokenArray t, TokenArray n, TokenArray w, TokenArray d, bool, bool, index syn);
+
+    /**
+     * Create connections.
+     */
+    void connect(const GIDCollection&, const GIDCollection&,
+		     const DictionaryDatum&, const DictionaryDatum&);
  
     DictionaryDatum get_connector_defaults(index sc);
     void set_connector_defaults(index sc, DictionaryDatum& d);
@@ -371,6 +440,16 @@ SeeAlso: Simulate, Node
      * Resume the simulation after it was terminated.
      */
     void resume();
+
+    /** 
+     * Force re-preparation of the simulation.
+     * This function must be called to re-create the simulation buffers when
+     * - new neurons have been created
+     * - new connections have been created
+     * - the number of threads changes
+     * - the temporal resolution changes.
+     */
+    void force_preparation();
 
     /** 
      * Terminate the simulation after the time-slice is finished.
@@ -467,6 +546,11 @@ SeeAlso: Simulate, Node
      * Suggest a VP for a given global node ID
      */
     thread suggest_vp(index) const;
+    
+    /**
+     * Suggest a VP for a given global recording node ID
+     */
+    thread suggest_rec_vp(index) const;
 
     /**
      * Convert a given VP ID to the corresponding thread ID
@@ -482,6 +566,21 @@ SeeAlso: Simulate, Node
      * Get number of processes.
      */
     thread get_num_processes() const;
+
+    /**
+     * Get number of recording processes.
+     */
+    thread get_num_rec_processes() const;
+
+    /**
+     * Get number of simulating processes.
+     */
+    thread get_num_sim_processes() const;
+
+    /**
+     * Set number of recording processes.
+     */
+    void set_num_rec_processes(int nrp);
 
     /**
      * Return true, if the given Node is on the local machine
@@ -689,17 +788,28 @@ SeeAlso: Simulate, Node
      * Set the acceptable latency (latency) for a music input port (portname).
      */
     void set_music_in_port_acceptable_latency(std::string portname, double_t latency);
+    void set_music_in_port_max_buffered(std::string portname, int_t maxbuffered);
+    /**
+     * Data structure to hold variables and parameters associated with a port.
+     */
+    struct MusicPortData {
+      MusicPortData (size_t n, double_t latency, int_t m)
+      : n_input_proxies (n), acceptable_latency (latency), max_buffered (m)
+      { }
+      MusicPortData () { }
+      size_t   n_input_proxies;    // Counter for number of music_input proxies
+                                   // connected to this port
+      double_t acceptable_latency;
+      int_t    max_buffered;
+    };
 
     /**
      * The mapping between MUSIC input ports identified by portname
-     * and the corresponding acceptable latency (second component of
-     * the pair). The first component of the pair is a counter that is
-     * used to track how many music_input_proxies are connected to the
-     * port.
+     * and the corresponding port variables and parameters.
      * @see register_music_in_port()
      * @see unregister_music_in_port()
      */
-    std::map< std::string, std::pair<size_t, double_t> > music_in_portlist_;
+    std::map< std::string, MusicPortData > music_in_portlist_;
     
     /**
      * The mapping between MUSIC input ports identified by portname
@@ -719,11 +829,20 @@ SeeAlso: Simulate, Node
      */
     void update_music_event_handlers_(Time const &, const long_t, const long_t);
 #endif
-    
+ 
+    /** 
+     * Gets ID of local thread. 
+     * Returns thread ID if OPENMP is installed
+     * and zero otherwise.
+     */
+    int get_thread_id() const;
+
+    void create_thread_local_ids();
   private:
     void connect(Node& s, Node& r, index sgid, thread t, index syn);
     void connect(Node& s, Node& r, index sgid, thread t, double_t w, double_t d, index syn);
     void connect(Node& s, Node& r, index sgid, thread t, DictionaryDatum& d, index syn);
+    void connect(Node& s, Node& r, index sgid, thread t, double_t w, double_t d, DictionaryDatum& p, index syn);
 
     /**
      * Initialize the network data structures.
@@ -732,7 +851,7 @@ SeeAlso: Simulate, Node
      */
     void init_();
     void destruct_nodes_();
-    void clear_models_();
+    void clear_models_(bool called_from_destructor=false);
         
     /**
      * Helper function to set properties on single node.
@@ -772,6 +891,16 @@ SeeAlso: Simulate, Node
     */
     Dictionary* modeldict_;        //!< Dictionary for models.
 
+    /* BeginDocumentation
+       Name: connruledict - dictionary containing all connectivity rules
+       Description:
+       This dictionary provides the connection rules that can be used
+       in Connect.
+       'connruledict info' shows the contents of the dictionary.
+       SeeAlso: Connect
+    */
+    Dictionary* connruledict_;    //!< Dictionary for connection rules.
+
     Model* siblingcontainer_model; //!< The model for the SiblingContainer class
     
     std::string data_path_;        //!< Path for all files written by devices 
@@ -787,6 +916,10 @@ SeeAlso: Simulate, Node
     std::vector< std::pair<Model *, bool> > pristine_models_;
 
     std::vector<Model *> models_;            //!< The list of available models
+
+    //! ConnBuilder factories, indexed by connruledict_ elements.
+    std::vector<GenericConnBuilderFactory*> connbuilder_factories_;
+
     std::vector<Node*> proxy_nodes_;         //!< Placeholders for remote nodes, one per thread
     std::vector<Node*> dummy_spike_sources_; //!< Placeholders for spiking remote nodes, one per thread
 
@@ -830,24 +963,35 @@ SeeAlso: Simulate, Node
   inline
   void Network::connect(Node& s, Node& r, index sgid, thread t, index syn)
   {
+    force_preparation();
     connection_manager_.connect(s, r, sgid, t, syn);
   }
 
   inline
   void Network::connect(Node& s, Node& r, index sgid, thread t, double_t w, double_t d, index syn)
   {
+    force_preparation();
     connection_manager_.connect(s, r, sgid, t, w, d, syn);
   }
 
   inline
   void Network::connect(Node& s, Node& r, index sgid, thread t, DictionaryDatum& p, index syn)
   {
+    force_preparation();
     connection_manager_.connect(s, r, sgid, t, p, syn);
+  }
+
+  inline
+  void Network::connect(Node& s, Node& r, index sgid, thread t, double_t w, double_t d, DictionaryDatum& params, index syn)
+  {
+    force_preparation();
+    connection_manager_.connect(s, r, sgid, t, w, d, params, syn);
   }
 
   inline
   void Network::connect(ArrayDatum &connectome)
   {
+    force_preparation();
     connection_manager_.connect(connectome);
   }
 
@@ -976,6 +1120,24 @@ SeeAlso: Simulate, Node
   {
     return scheduler_.get_num_processes();
   }
+  
+  inline
+  thread Network::get_num_rec_processes() const
+  {
+    return scheduler_.get_num_rec_processes();
+  }
+
+  inline
+  thread Network::get_num_sim_processes() const
+  {
+    return scheduler_.get_num_sim_processes();
+  }
+
+  inline
+  void Network::set_num_rec_processes(int nrp) 
+  {
+    scheduler_.set_num_rec_processes(nrp);
+  }
 
   inline
   bool Network::is_local_node(Node* n) const
@@ -1004,6 +1166,12 @@ SeeAlso: Simulate, Node
   int Network::suggest_vp(index gid) const
   {
     return scheduler_.suggest_vp(gid);
+  }
+  
+  inline
+  int Network::suggest_rec_vp(index gid) const
+  {
+    return scheduler_.suggest_rec_vp(gid);
   }
 
   inline
@@ -1056,8 +1224,6 @@ SeeAlso: Simulate, Node
     e.set_sender(source);
     thread t = source.get_thread();
     index gid = source.get_gid();
-
-    //std::cout << "Network::send 1 " << gid << " " << e.get_sender().get_gid() << std::endl;
 
     assert(!source.has_proxies());
     connection_manager_.send(t, gid, e);
@@ -1235,6 +1401,22 @@ SeeAlso: Simulate, Node
         return models[a]->get_name() < models[b]->get_name();
       }
   };
+
+  inline 
+    void Network::force_preparation()
+  {
+    scheduler_.force_preparation();
+  }
+
+  inline
+  int Network::get_thread_id() const
+  {
+#ifdef _OPENMP
+    return omp_get_thread_num();
+#else
+    return 0;
+#endif
+  }
 
 } // namespace
 

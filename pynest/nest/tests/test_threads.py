@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # test_threads.py
 #
@@ -18,17 +18,19 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 UnitTests for multithreaded pynest
 """
 
 import unittest
 import nest
-import sys
 
 
+@nest.check_stack
 class ThreadTestCase(unittest.TestCase):
-    """Multiple threads """
+    """Tests for multi-threading"""
+
 
     def nest_multithreaded(self):
         """Return True, if we have a thread-enabled NEST, False otherwise"""
@@ -40,14 +42,15 @@ class ThreadTestCase(unittest.TestCase):
     def test_Threads(self):
         """Multiple threads"""
 
-        if not self.nest_multithreaded(): return
+        if not self.nest_multithreaded():
+            self.skipTest("NEST was compiled without multi-threading")
 
         nest.ResetKernel()
         self.assertEqual(nest.GetKernelStatus()['local_num_threads'],1)
 
         nest.SetKernelStatus({'local_num_threads':8})
         n=nest.Create('iaf_neuron',8)
-        st = nest.GetStatus(n,'vp')
+        st = list(nest.GetStatus(n,'vp'))
         st.sort()        
         self.assertEqual(st,[0, 1, 2, 3, 4, 5, 6, 7])
 
@@ -55,7 +58,8 @@ class ThreadTestCase(unittest.TestCase):
     def test_ThreadsFindConnections(self):
         """FindConnections with threads"""
 
-        if not self.nest_multithreaded(): return
+        if not self.nest_multithreaded():
+            self.skipTest("NEST was compiled without multi-threading")
 
         nest.ResetKernel()
         nest.SetKernelStatus({'local_num_threads':8})
@@ -67,18 +71,19 @@ class ThreadTestCase(unittest.TestCase):
         conn = nest.FindConnections(pre)
         # Because of threading, targets may be in a different order than
         # in post, so we sort the vector.
-        targets = nest.GetStatus(conn, "target")
+        targets = list(nest.GetStatus(conn, "target"))
         targets.sort()
         
-        self.assertEqual(targets, post)
+        self.assertEqual(targets, list(post))
 
 
     def test_ThreadsGetEvents(self):
         """ Gathering events across threads """
 
-        if not self.nest_multithreaded(): return
+        if not self.nest_multithreaded():
+            self.skipTest("NEST was compiled without multi-threading")
 
-        threads = [1,2,4,8]
+        threads = (1,2,4,8)
 
         n_events_sd = []
         n_events_vm = []
@@ -111,8 +116,6 @@ class ThreadTestCase(unittest.TestCase):
         [ self.assertEqual(x,ref_vm) for x in n_events_vm]
         [ self.assertEqual(x,ref_sd) for x in n_events_sd]
 
-
-      
 
 def suite():
 

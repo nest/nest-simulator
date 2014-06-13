@@ -130,8 +130,6 @@ namespace nest{
     
   public:        
     
-    typedef Node base;
-    
     iaf_psc_delta();
     iaf_psc_delta(const iaf_psc_delta&);
 

@@ -38,8 +38,9 @@ the same underlying class.
 Author: Hans Ekkehard Plesser, 2010-11-03; based on original reproducer by Peiran Gao
  */
 
-/unittest (8831) require
+(unittest) run
 /unittest using
+
 M_ERROR setverbosity
 
 % if true, exec and show results instead of asserting

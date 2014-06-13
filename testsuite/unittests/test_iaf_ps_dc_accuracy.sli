@@ -68,7 +68,7 @@ References:
 SeeAlso: iaf_psc_alpha_canon, iaf_psc_alpha_presc, iaf_psc_delta_canon,  testsuite::test_iaf_ps_dc_t_accuracy
 */
 
-/unittest (8093) require
+(unittest) run
 /unittest using
 
 M_ERROR setverbosity

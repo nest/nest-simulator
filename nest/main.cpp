@@ -21,27 +21,14 @@
  */
 
 #include <config.h>
-#include "neststartup.h"
-#include "communicator.h"
-#include "interpret.h"
-#include "booldatum.h"
-#include "dictdatum.h"
-#include "network.h"
 
-// OpenMP
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+#include "neststartup.h"
+
+#include "network.h"
+#include "interpret.h"
 
 int main(int argc, char *argv[])
 {
-#ifdef HAVE_MPI
-  nest::Communicator::init(&argc, &argv);
-#endif
-
-#ifdef _OPENMP
-  omp_set_num_threads(1);
-#endif
 
   nest::Network *pNet = 0;
 
@@ -57,9 +44,7 @@ int main(int argc, char *argv[])
   // start the interpreter session
   int exitcode = engine.execute();
 
-#ifdef HAVE_MPI
-  nest::Communicator::finalize();
-#endif
+  nestshutdown();
 
   // delete the Network before modules are deleted by interpreter's destructor
   // because otherwise models defined in a module might still be referenced by

@@ -1,5 +1,3 @@
-#ifndef NEST_STARTUP_H
-#define NEST_STARTUP_H
 /*
  *  neststartup.h
  *
@@ -22,14 +20,42 @@
  *
  */
 
+#ifndef NEST_STARTUP_H
+#define NEST_STARTUP_H
+
+#if defined(HAVE_LIBNEUROSIM) && defined(_IS_PYNEST)
+
+#include <neurosim/pyneurosim.h>
+
+#include "datum.h"
+#include "conngenmodule.h"
+
+#define CYTHON_isConnectionGenerator(x) PNS::isConnectionGenerator(x)
+Datum* CYTHON_unpackConnectionGeneratorDatum(PyObject*);
+
+#else
+#define CYTHON_isConnectionGenerator(x) 0
+#define CYTHON_unpackConnectionGeneratorDatum(x) NULL
+#endif
+
 namespace nest {
 class Network;
 }
 
 class SLIInterpreter;
 
+#ifdef _IS_PYNEST
 
-int pyneststartup(int argc, char**argv, SLIInterpreter &engine, nest::Network* &pNet);
-int neststartup(int argc, char**argv, SLIInterpreter &engine, nest::Network* &pNet);
+#define CYTHON_DEREF(x) (*x)
+#define CYTHON_ADDR(x) (&x)
+
+#include <string>
+int neststartup(int argc, char** argv, SLIInterpreter &engine, nest::Network* &pNet, std::string modulepath = "");
+
+#else
+int neststartup(int argc, char** argv, SLIInterpreter &engine, nest::Network* &pNet);
+#endif
+
+void nestshutdown(void);
 
 #endif

@@ -40,7 +40,7 @@
    SeeAlso: testsuite::test_iaf_1to2
  */
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 /NodeDistribution

@@ -18,8 +18,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
+ */
+
+/*
  *  Multimeter support by Yury V. Zaytsev.
- *
  */
 
 /* pp_psc_delta is a stochastically spiking neuron where the potential jumps on each spike arrival. */
@@ -35,6 +37,7 @@
 #include "universal_data_logger_impl.h"
 
 #include <limits>
+
 
 namespace nest
 {
@@ -71,15 +74,21 @@ nest::pp_psc_delta::Parameters_::Parameters_()
     c_2_              (   1.238  ),  // Hz / mV
     c_3_              (   0.25   ),  // 1.0 / mV
     I_e_              (   0.0    ),  // pA
-    t_ref_remaining_  (   0.0    )   // ms
-{}
+    t_ref_remaining_  (   0.0    ),   // ms
+    multi_param_      (    1     )
+{
+    tau_sfa_.clear();
+    q_sfa_.clear();
+}
 
 nest::pp_psc_delta::State_::State_()
   : y0_   (0.0),
     y3_   (0.0),
     q_    (0.0),
     r_    (0)
-{}
+{
+    q_elems_.clear();
+}
 
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
@@ -94,12 +103,33 @@ void nest::pp_psc_delta::Parameters_::get(DictionaryDatum &d) const
   def<bool>(d, names::dead_time_random, dead_time_random_);
   def<long>(d, names::dead_time_shape, dead_time_shape_);
   def<bool>(d, names::with_reset, with_reset_);
-  def<double>(d, names::tau_sfa, tau_sfa_);
-  def<double>(d, names::q_sfa, q_sfa_);
+ 
   def<double>(d, names::c_1, c_1_);
   def<double>(d, names::c_2, c_2_);
   def<double>(d, names::c_3, c_3_);
   def<double>(d, names::t_ref_remaining, t_ref_remaining_);
+
+  if(multi_param_)
+  {
+      ArrayDatum tau_sfa_list_ad(tau_sfa_);
+      def<ArrayDatum>(d,names::tau_sfa, tau_sfa_list_ad);
+
+      ArrayDatum q_sfa_list_ad(q_sfa_);
+      def<ArrayDatum>(d,names::q_sfa, q_sfa_list_ad);
+  }
+  else
+  {
+      if(tau_sfa_.size() == 0)
+      {
+   	  def<double>(d, names::tau_sfa, 0);
+          def<double>(d, names::q_sfa, 0);
+      }
+      else
+      {
+          def<double>(d, names::tau_sfa, tau_sfa_[0]);
+          def<double>(d, names::q_sfa, q_sfa_[0]);
+      }
+  }
 }
 
 void nest::pp_psc_delta::Parameters_::set(const DictionaryDatum& d)
@@ -112,12 +142,28 @@ void nest::pp_psc_delta::Parameters_::set(const DictionaryDatum& d)
   updateValue<bool>(d, names::dead_time_random, dead_time_random_);
   updateValue<long>(d, names::dead_time_shape, dead_time_shape_);
   updateValue<bool>(d, names::with_reset, with_reset_);
-  updateValue<double>(d, names::tau_sfa, tau_sfa_);
-  updateValue<double>(d, names::q_sfa, q_sfa_);
   updateValue<double>(d, names::c_1, c_1_);
   updateValue<double>(d, names::c_2, c_2_);
   updateValue<double>(d, names::c_3, c_3_);
   updateValue<double>(d, names::t_ref_remaining, t_ref_remaining_);
+
+try{
+  updateValue<std::vector<double> >(d, names::tau_sfa, tau_sfa_);
+  updateValue<std::vector<double> >(d, names::q_sfa, q_sfa_);
+}catch(TypeMismatch e){
+  multi_param_ = 0;
+  double_t tau_sfa_temp_;
+  double_t q_sfa_temp_;
+  updateValue<double>(d, names::tau_sfa, tau_sfa_temp_);
+  updateValue<double>(d, names::q_sfa, q_sfa_temp_);
+  tau_sfa_.push_back(tau_sfa_temp_);
+  q_sfa_.push_back(q_sfa_temp_);
+}
+ 
+
+  if (tau_sfa_.size() != q_sfa_.size())
+      throw DimensionMismatch(tau_sfa_.size(), q_sfa_.size());
+
 
   if ( c_m_ <= 0 )
     throw BadProperty("Capacitance must be strictly positive.");
@@ -131,11 +177,17 @@ void nest::pp_psc_delta::Parameters_::set(const DictionaryDatum& d)
   if ( tau_m_ <= 0 )
     throw BadProperty("All time constants must be strictly positive.");
 
-  if ( tau_sfa_ <= 0 )
-    throw BadProperty("All time constants must be strictly positive.");
+  for(uint_t i = 0 ; i < tau_sfa_.size() ; i++ )
+    if ( tau_sfa_[i] <= 0 )
+      throw BadProperty("All time constants must be strictly positive.");
 
   if ( t_ref_remaining_ < 0)
-    throw BadProperty("Remaining refractory time can not be negative");
+    throw BadProperty("Remaining refractory time can not be negative.");
+
+  if ( c_3_ < 0)
+    throw BadProperty("C_3 must be positive.");
+
+
 
 }
 
@@ -200,6 +252,7 @@ void nest::pp_psc_delta::init_buffers_()
 
 void nest::pp_psc_delta::calibrate()
 {
+
   B_.logger_.init();
 
   V_.h_ = Time::get_resolution().get_ms();
@@ -208,7 +261,14 @@ void nest::pp_psc_delta::calibrate()
   V_.P33_ = std::exp(-V_.h_/P_.tau_m_);
   V_.P30_ = 1/P_.c_m_*(1-V_.P33_)*P_.tau_m_;
 
-  V_.Q33_ = std::exp(-V_.h_/P_.tau_sfa_);
+  if (P_.dead_time_ != 0 && P_.dead_time_ < V_.h_)
+	P_.dead_time_ = V_.h_; 
+
+  for(uint_t i = 0 ; i < P_.tau_sfa_.size() ; i++){
+     V_.Q33_.push_back(std::exp(-V_.h_/P_.tau_sfa_[i]));
+     S_.q_elems_.push_back(0.0);
+  }
+
 
   // TauR specifies the length of the absolute refractory period as
   // a double_t in ms. The grid based iaf_psp_delta can only handle refractory
@@ -250,16 +310,27 @@ void nest::pp_psc_delta::calibrate()
 
 void nest::pp_psc_delta::update(Time const & origin, const long_t from, const long_t to)
 {
+
   assert(to >= 0 && (delay) from < Scheduler::get_min_delay());
   assert(from < to);
+
+  double_t q_temp_;
 
   for ( long_t lag = from ; lag < to ; ++lag )
   {
 
     S_.y3_ = V_.P30_*(S_.y0_ + P_.I_e_) + V_.P33_*S_.y3_ + B_.spikes_.get_value(lag);
 
-    if (P_.q_sfa_ != 0.0)
-      S_.q_ = V_.Q33_ * S_.q_;
+    q_temp_ = 0;
+    for (uint_t i = 0 ; i < S_.q_elems_.size() ; i++)
+    {
+
+       S_.q_elems_[i] = V_.Q33_[i] * S_.q_elems_[i];
+      
+       q_temp_ += S_.q_elems_[i];
+    }
+
+    S_.q_ = q_temp_;
 
     if ( S_.r_ == 0 )
     {
@@ -271,10 +342,7 @@ void nest::pp_psc_delta::update(Time const & origin, const long_t from, const lo
 
       double_t V_eff;
 
-      if (P_.q_sfa_ != 0.0)
-        V_eff = S_.y3_ - S_.q_;
-      else
-        V_eff = S_.y3_;
+      V_eff = S_.y3_ - S_.q_;
 
       double_t rate = (P_.c_1_ * V_eff + P_.c_2_ * std::exp(P_.c_3_ * V_eff));
 
@@ -292,7 +360,7 @@ void nest::pp_psc_delta::update(Time const & origin, const long_t from, const lo
         {
           // Draw Poisson random number of spikes
           V_.poisson_dev_.set_lambda(rate*V_.h_*1e-3);
-          n_spikes = V_.poisson_dev_.uldev(V_.rng_);
+          n_spikes = V_.poisson_dev_.ldev(V_.rng_);
         }
 
         if ( n_spikes > 0 ) // Is there a spike? Then set the new dead time.
@@ -305,10 +373,12 @@ void nest::pp_psc_delta::update(Time const & origin, const long_t from, const lo
           else
             S_.r_ = V_.DeadTimeCounts_;
 
-          // Increment the adaptive threshold
-          if (P_.q_sfa_ != 0.0)
-            S_.q_ += P_.q_sfa_;
+          
+          for(uint_t i = 0 ; i < S_.q_elems_.size() ; i++ ){
+	      S_.q_elems_[i] += P_.q_sfa_[i]*n_spikes;
+	}
 
+	 
           // And send the spike event
           SpikeEvent se;
           se.set_multiplicity(n_spikes);

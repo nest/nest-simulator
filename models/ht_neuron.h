@@ -1,6 +1,3 @@
-#ifndef HT_NEURON_H
-#define HT_NEURON_H
-
 /*
  *  ht_neuron.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef HT_NEURON_H
+#define HT_NEURON_H
 
 #include "archiving_node.h"
 #include <vector>

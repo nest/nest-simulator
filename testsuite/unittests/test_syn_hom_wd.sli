@@ -36,7 +36,7 @@ FirstVersion: April 2008
 Author: Moritz Helias, Susanne Kunkel
 */
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 1.0 /delay Set   % in ms

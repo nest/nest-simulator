@@ -56,7 +56,7 @@ const std::string FilesystemModule::name(void) const
 
 const std::string FilesystemModule::commandstring(void) const
     {
-      return std::string("/filesystem /C++ ($Revision: 9952 $) provide-component  /filesystem /SLI (7610) require-component");
+      return std::string("(filesystem.sli) run");
     }
 
 
@@ -65,12 +65,12 @@ void FilesystemModule::FileNamesFunction::execute(SLIInterpreter *i) const
   StringDatum *sd=dynamic_cast<StringDatum *>(i->OStack.top().datum());
   assert(sd !=NULL);
 
-  dirent *TheEntry;
   DIR *TheDirectory=opendir(sd->c_str());
   if (TheDirectory!=NULL) {
     ArrayDatum* a=new ArrayDatum();
     i->EStack.pop();
     i->OStack.pop();
+    dirent *TheEntry;
     while ((TheEntry=readdir(TheDirectory))!=NULL) {
       Token string_token(new StringDatum(TheEntry->d_name));
       a->push_back_move(string_token);
@@ -256,7 +256,6 @@ void FilesystemModule::RemoveDirectoryFunction::execute(SLIInterpreter *i) const
 void FilesystemModule::TmpNamFunction::execute(SLIInterpreter *i) const
 {
   static unsigned int seed=std::time(0);
-  int rng= rand_r(&seed);
   char *env=getenv("TMPDIR");
   std::string tmpdir("/tmp");
   if(env)
@@ -264,8 +263,8 @@ void FilesystemModule::TmpNamFunction::execute(SLIInterpreter *i) const
 
   std::string tempfile;
   do {
+    int rng= rand_r(&seed);
     tempfile=tmpdir+String::compose("/nest-tmp-%1",rng);
-    rng=rand_r(&seed); // draw new number with seed as state 
   } while(std::ifstream(tempfile.c_str()));
 
   Token filename_t(new StringDatum(tempfile));

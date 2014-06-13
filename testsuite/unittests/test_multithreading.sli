@@ -43,11 +43,11 @@ Author: Jochen Martin Eppler
 FirstVersion: July 2008 
 */
 
-% don't run this test if we didn't compile with threads 
-statusdict/threading :: (no) eq {statusdict/exitcodes/success :: quit_i} if
 
-/unittest (6688) require
+(unittest) run
 /unittest using
+
+is_threaded not { exit_test_gracefully } if
 
 /threads 4 def
 

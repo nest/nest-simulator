@@ -1,6 +1,6 @@
-#!/usr/bin/env python
-
-# multimeter-file.py
+# -*- coding: utf-8 -*-
+#
+# multimeter_file.py
 #
 # This file is part of NEST.
 #
@@ -35,7 +35,7 @@ nest.SetKernelStatus({'overwrite_files': True,  # set to True to permit overwrit
                       'data_prefix': ''})       # prefix for all data files
 
 # display recordables for illustration
-print 'iaf_cond_alpha recordables: ', nest.GetDefaults('iaf_cond_alpha')['recordables']
+print('iaf_cond_alpha recordables: {0}'.format(nest.GetDefaults('iaf_cond_alpha')['recordables']))
 
 # create neuron and multimeter
 n = nest.Create('iaf_cond_alpha', 
@@ -55,8 +55,8 @@ gex = nest.Create('spike_generator',
 gin = nest.Create('spike_generator',
                   params = {'spike_times': np.array([15.0, 25.0, 55.0])})
 
-nest.Connect(gex, n, params={'weight':  40.0}) # excitatory
-nest.Connect(gin, n, params={'weight': -20.0}) # inhibitory
+nest.Connect(gex, n, syn_spec={'weight':  40.0}) # excitatory
+nest.Connect(gin, n, syn_spec={'weight': -20.0}) # inhibitory
 nest.Connect(m, n)
 
 # simulate

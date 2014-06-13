@@ -191,12 +191,11 @@ bool Dictionary::all_accessed_(std::string& missed, std::string prefix) const
   return missed.empty();
 }
 
-
 std::ostream & operator<<(std::ostream &out, const Dictionary &d)
 {
     out << "<<";
         
-    for(TokenMap::const_iterator where = d.begin(); where != d.end(); where ++)
+    for(TokenMap::const_iterator where = d.begin(); where != d.end(); ++where)
     {
         out << (*where).first << ' ' 
 	    << (*where).second << ',';

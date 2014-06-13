@@ -69,7 +69,7 @@ Author:  February 2004, Diesmann, Gewaltig, Plesser
 SeeAlso: iaf_neuron, testsuite::test_iaf_dc_aligned, testsuite::test_iaf_dc_aligned_delay, testsuite::test_iaf_dc_aligned_stop
 */
 
-/unittest (6688) require
+(unittest) run
 /unittest using
 
 0.1 /h Set

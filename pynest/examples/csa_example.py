@@ -37,12 +37,6 @@ def csa_example():
 
     cs = csa.cset(csa.random(0.1), 10000.0, 1.0)
 
-    # This does not work yet, as the implementation does not yet
-    # support nested subnets.
-    #
-    #pop1 = nest.LayoutNetwork("iaf_neuron", [4,4])
-    #pop2 = nest.LayoutNetwork("iaf_neuron", [4,4])
-
     pop1 = nest.LayoutNetwork("iaf_neuron", [16])
     pop2 = nest.LayoutNetwork("iaf_neuron", [16])
 
@@ -53,25 +47,24 @@ def csa_example():
     pg = nest.Create("poisson_generator", params={"rate": 80000.0})
     nest.DivergentConnect(pg, nest.GetLeaves(pop1)[0], 1.2, 1.0)
 
-    vm = nest.Create("voltmeter", params={"record_to": ["memory"], "withgid": True, "withtime": True, "interval": 0.1})
+    vm_params = {"record_to": ["memory"], "withgid": True,
+                 "withtime": True, "interval": 0.1}
+    vm = nest.Create("voltmeter", params=vm_params)
     nest.DivergentConnect(vm, nest.GetLeaves(pop2)[0])
 
     nest.Simulate(50.0)
 
-    # Not yet supported in NEST
-    #from nest import visualization
-    #allnodes = [pg, nest.GetLeaves(pop1)[0], nest.GetLeaves(pop2)[0], vm]
-    #visualization.plot_network(allnodes, "test_csa.png", "png", plot_modelnames=True
+    from nest import visualization
+    allnodes = pg + nest.GetLeaves(pop1)[0] + nest.GetLeaves(pop2)[0] + vm
+    visualization.plot_network(allnodes, "test_csa.png")
 
-    #if havePIL:
-    #    im = Image.open("test_csa.png")
-    #    im.show()
+    if havePIL:
+        im = Image.open("test_csa.png")
+        im.show()
 
     from nest import voltage_trace
     voltage_trace.from_device(vm)
 
-    #import pylab
-    #pylab.show()
 
 if __name__ == "__main__":
 

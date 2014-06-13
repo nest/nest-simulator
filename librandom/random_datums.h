@@ -1,5 +1,3 @@
-#ifndef RANDOM_DATUMS_H
-#define RANDOM_DATUMS_H
 /*
  *  random_datums.h
  *
@@ -20,9 +18,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
+ */
+
+/*
  * SLI Datum types related to the NEST random library.
  *
  */
+
+#ifndef RANDOM_DATUMS_H
+#define RANDOM_DATUMS_H
 
 #include "lockptrdatum.h"
 

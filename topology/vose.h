@@ -1,6 +1,3 @@
-#ifndef VOSE_H
-#define VOSE_H
-
 /*
  *  vose.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef VOSE_H
+#define VOSE_H
 
 #include <vector>
 

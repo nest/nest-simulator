@@ -76,10 +76,18 @@
    SeeAlso: spike_generator, testsuite::test_iaf_i0_refractory, testsuite::test_iaf_dc_aligned_stop
  */
 
-/unittest (8331) require
+(unittest) run
 /unittest using
 
 
+% check, if setting a spike time to 0 causes an exception
+{
+  ResetKernel
+  /spike_generator Create /sg Set
+  sg << /spike_times [0.0] >> SetStatus
+}
+fail_or_die
+(----------------------- 1 ------------------------------) ==
 
 % check, if truncating spike times to grid causes an assertion
 % if precise_times is set to false
@@ -101,6 +109,7 @@
   10.0 Simulate
 }
 fail_or_die
+(----------------------- 2 ------------------------------) ==
 
 % check, if spike times are rounded up or down,
 % if doube value is closer than tic/2 to next grid point
@@ -182,6 +191,7 @@ assert_or_die
         /stop  6.0                         % in ms
   >> SetStatus
 } fail_or_die  
+(----------------------- 3 ------------------------------) ==
 
 % test third example from documentation
 %    /spike_generator << /spike_times [1.0 1.05 3.0001] 
@@ -215,6 +225,7 @@ assert_or_die
   eq
 }
 assert_or_die
+(----------------------- 3.1 ------------------------------) ==
 
 % fourth example from documentation
 %    /spike_generator << /spike_times [1.0 1.05 3.0001] 
@@ -249,6 +260,7 @@ assert_or_die
   and
 }
 assert_or_die
+(----------------------- 3.2 ------------------------------) ==
 
 % fifth example from documentation
 %    Assume we have simulated 10.0ms and simulation times is thus 10.0 (step 100).
@@ -279,6 +291,7 @@ assert_or_die
   10 Simulate
   sd /n_events get 0 eq  
 } assert_or_die  
+(----------------------- 3.3 ------------------------------) ==
 
 % sixth example from documentation
 %    /spike_generator << /spike_times [10.0001] /precise_times true >> Create 
@@ -314,6 +327,7 @@ assert_or_die
   and  
 }
 assert_or_die
+(----------------------- 3.4 ------------------------------) ==
 
 % seventh example from documentation
 %    /spike_generator << /spike_times [10.0001 11.0001] /shift_now_spikes true >> Create 
@@ -349,7 +363,7 @@ assert_or_die
   and
 }
 assert_or_die	 
-
+(----------------------- 3.5 ------------------------------) ==
 
 % seventh example from documentation, but with origin
 %    /spike_generator << /spike_times [0.0001 1.0001] /origin 10.0 /shift_now_spikes true >> Create 
@@ -385,13 +399,17 @@ assert_or_die
   and
 }
 assert_or_die	 
-
+(----------------------- 3.6 ------------------------------) ==
 
 
 % ensure exclusivity between /precise_times and /allow_offgrid_spikes and /shift_now_spikes
 { /spike_generator << /precise_times true /allow_offgrid_spikes true >> Create } fail_or_die
-{ /spike_generator << /precise_times true /shift_now_spikes true >> Create } fail_or_die
+(----------------------- 4 ------------------------------) ==
 
+
+
+{ /spike_generator << /precise_times true /shift_now_spikes true >> Create } fail_or_die
+(----------------------- 5 ------------------------------) ==
 
 % test set-get
 {
@@ -404,7 +422,9 @@ assert_or_die
   eq
 }
 assert_or_die
-  
+(----------------------- 3.7 ------------------------------) ==  
+
+
 {
   ResetKernel  
   0 << /local_num_threads 1 /resolution 0.1 >> SetStatus
@@ -416,6 +436,7 @@ assert_or_die
   eq
 }
 assert_or_die
+(----------------------- 3.8 ------------------------------) ==
 
 {
   ResetKernel  
@@ -428,6 +449,7 @@ assert_or_die
   eq
 }
 assert_or_die
+(----------------------- 3.9 ------------------------------) ==
 
 {
   ResetKernel  

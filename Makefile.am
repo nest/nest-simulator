@@ -20,7 +20,8 @@ dist-hook:
 	rm -rf $(distdir)/doc/doxygen
 	rm -f $(distdir)/doc/doxygen.log
 	rm -rf $(distdir)/examples/nest/FacetsBenchmarks/debugging_versions
-	rm -f $(distdir)/libltdl/{config.h,config.log,config.status,Makefile,stamp-h1}
+	rm -f $(distdir)/libltdl/{config.h,config.log,config.status,Makefile,stamp-h1,libtool}
+	rm -rf $(distdir)/libltdl/.deps
 	rm -f $(distdir)/extras/logos/*.{ai,svg}
 	rm -f $(distdir)/extras/logos/nest-initiative-logo*.*
 
@@ -52,15 +53,16 @@ endif
 
 if HAVE_PYTHON
 
+# Python interpreter is discovered by AM_PATH_PYTHON and declared as a make variable by AC_SUBST
 installcheck-local:
-	PATH=$(exec_prefix)/bin:$(PATH) \
-	/bin/sh $(DESTDIR)@PKGDATADIR@/extras/do_tests.sh --test-pynest
+	PATH="$(exec_prefix)/bin:$(PATH)" PYTHON="$(PYTHON)" PYTHONPATH="$(pyexecdir):$(PYTHONPATH)" \
+	/bin/sh $(DESTDIR)@PKGDATADIR@/extras/do_tests.sh --test-pynest --source-dir=$(top_srcdir)
 
 else
 
 installcheck-local:
-	PATH=$(exec_prefix)/bin:$(PATH) \
-	/bin/sh $(DESTDIR)@PKGDATADIR@/extras/do_tests.sh
+	PATH="$(exec_prefix)/bin:$(PATH)" \
+	/bin/sh $(DESTDIR)@PKGDATADIR@/extras/do_tests.sh --source-dir=$(top_srcdir)
 
 endif
 

@@ -1,5 +1,3 @@
-#ifndef IAF_PSC_ALPHA_PRESC_H
-#define IAF_PSC_ALPHA_PRESC_H
 /*
  *  iaf_psc_alpha_presc.h
  *
@@ -21,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef IAF_PSC_ALPHA_PRESC_H
+#define IAF_PSC_ALPHA_PRESC_H
 
 #include "config.h"
 
@@ -115,8 +116,6 @@ namespace nest{
     class Network;
     
   public:        
-    
-    typedef Node base;
     
     /** Basic constructor.
         This constructor should only be used by GenericModel to create 

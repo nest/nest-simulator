@@ -1,0 +1,11 @@
+--- configure.ac	2013-08-14 22:33:03.000000000 +0200
++++ configure.ac.in.pre_am114	2013-08-14 22:58:01.000000000 +0200
+@@ -41,7 +41,7 @@
+ # We might consider switching to tar-pax (2001) in the future, for now
+ # tar-ustar (1988) is probably good enough. tar-v7 is not an option, since
+ # we already hit the 99 char filename limit.
+-AM_INIT_AUTOMAKE([tar-ustar subdir-objects])
++AM_INIT_AUTOMAKE([tar-ustar])
+ 
+ # Allow to build NEST using silent rules.
+ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])

@@ -1,4 +1,3 @@
-
 /*
  *  stdp_connection_hom.cpp
  *
@@ -97,18 +96,23 @@ namespace nest
   {
     // base class properties
     ConnectionHetWD::set_status(d, cm);
+    updateValue<double_t>(d, "Kplus", Kplus_);
 
-//     if (d->known("tau_plus") ||
-// 	d->known("lambd") ||
-// 	d->known("alpha") ||
-// 	d->known("mu_plus") ||
-// 	d->known("mu_minus") ||
-// 	d->known("Wmax") )
-//       {
-// 	cm.network().error("STDPConnectionHom::set_status()", "you are trying to set common properties via an individual synapse.");
-//       }
+    // exception throwing must happen after setting own parameters
+    // this exception will be caught and ignored within generic_connector_model::set_status()
+    // it will not be caught if set_status is called directly to signify the specified error 
+    if (d->known("tau_plus") ||
+	d->known("lambda") ||
+	d->known("alpha") ||
+	d->known("mu_plus") ||
+	d->known("mu_minus") ||
+	d->known("Wmax") )
+      {
+	//cm.network().message(SLIInterpreter::M_ERROR, "STDPConnectionHom::set_status()", "you are trying to set common properties via an individual synapse.");
+	//throw BadParameter();
+	throw ChangeCommonPropsByIndividual("STDPConnectionHom::set_status(): you are trying to set common properties via an individual synapse.");
+      }
 
-    updateValue<double_t>(d, "Kplus", Kplus_);    
   }
 
    /**
@@ -118,18 +122,19 @@ namespace nest
   void STDPConnectionHom::set_status(const DictionaryDatum & d, index p, ConnectorModel &cm)
   {
     ConnectionHetWD::set_status(d, p, cm);
+    set_property<double_t>(d, "Kpluss", p, Kplus_);
   
      if (d->known("tau_pluss") ||
-         d->known("lambds") ||
+         d->known("lambdas") ||
          d->known("alphas") ||
          d->known("mu_pluss") ||
          d->known("mu_minuss") ||
          d->known("Wmaxs") )
      {
-       cm.network().message(SLIInterpreter::M_ERROR, "STDPConnectionHom::set_status()", "you are trying to set common properties via an individual synapse.");
+       //cm.network().message(SLIInterpreter::M_ERROR, "STDPConnectionHom::set_status()", "you are trying to set common properties via an individual synapse.");
+       throw ChangeCommonPropsByIndividual("STDPConnectionHom::set_status(): you are trying to set common properties via an individual synapse.");
      }
 
-    set_property<double_t>(d, "Kpluss", p, Kplus_);
   }
 
   void STDPConnectionHom::initialize_property_arrays(DictionaryDatum & d) const

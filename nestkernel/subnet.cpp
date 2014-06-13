@@ -72,7 +72,7 @@ void nest::Subnet::set_status(const DictionaryDatum& dict)
       network()->message(SLIInterpreter::M_ERROR, "SetStatus", "Setting /children_on_same_vp to false is not possible,");
       network()->message(SLIInterpreter::M_ERROR, "SetStatus", "because it set to true in the parent subnet.");
     }
-    else if (nodes_.size() > 0)
+    else if ( !nodes_.empty() )
     {
       network()->message(SLIInterpreter::M_ERROR, "SetStatus", "Modifying /children_on_same_vp is not possible,");
       network()->message(SLIInterpreter::M_ERROR, "SetStatus", "because the subnet already contains nodes."); 
@@ -161,7 +161,7 @@ std::string nest::Subnet::print_network(int max_depth, int level, std::string pr
   if(max_depth <= level)
     return out.str();
 
-  if(nodes_.size()==0)
+  if( nodes_.empty() )
     return out.str();
 
   prefix += "  ";

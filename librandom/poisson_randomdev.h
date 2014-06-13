@@ -129,13 +129,12 @@ Author: Hans Ekkehard Plesser
      * way of doing things, although all other compilers
      * happily live without.
      */
-    using RandomDev::uldev;
+    using RandomDev::operator();
+    using RandomDev::ldev;
 
-    unsigned long uldev(void);     //!< draw integer
-    unsigned long uldev(RngPtr) const;   //!< draw integer, threaded
-    bool has_uldev() const { return true; }
+    long ldev(RngPtr) const;   //!< draw integer, threaded
+    bool has_ldev() const { return true; }
 
-    double operator()(void);       //!< return as double
     double operator()(RngPtr) const;     //!< return as double, threaded
 
   private:
@@ -174,23 +173,10 @@ Author: Hans Ekkehard Plesser
 
 }
 
-
-inline
-double librandom::PoissonRandomDev::operator()(void)
-{ 
-  return static_cast<double>(uldev()); 
-}
-
 inline
 double librandom::PoissonRandomDev::operator()(RngPtr rthrd) const
 { 
-  return static_cast<double>(uldev(rthrd)); 
-}
-
-inline
-unsigned long librandom::PoissonRandomDev::uldev(void)
-{
-  return uldev(rng_);
+  return static_cast<double>(ldev(rthrd)); 
 }
 
 # endif

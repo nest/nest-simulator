@@ -32,9 +32,8 @@
    SeeAlso: testsuite::test_iaf_1to2, testsuite::test_iaf_psp, testsuite::test_iaf_dc_aligned_delay
 */
 
-/unittest (6335) require
+(unittest) run
 /unittest using
-
 
 
 /smalldelay 0.5 def    % small connection delay used in network

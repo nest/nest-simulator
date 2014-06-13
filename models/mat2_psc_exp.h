@@ -131,8 +131,6 @@ namespace nest
 
   public:
 
-    typedef Node base;
-
     mat2_psc_exp();
     mat2_psc_exp(const mat2_psc_exp&);
 

@@ -34,8 +34,9 @@ Author:  May 2012, Plesser
 See also: unittest:::parse_message_line
 */
 
-/unittest (9715) require
+(unittest) run
 /unittest using
+
 
 { 
   clear

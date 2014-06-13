@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # conttest.py
 #
@@ -20,6 +21,12 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
+
+nest.sli_run("statusdict/have_music ::")
+if not nest.spp():
+    import sys
+    print("NEST was not compiled with support for MUSIC, not running.")
+    sys.exit()
 
 mcip = nest.Create('music_cont_in_proxy')
 nest.SetStatus(mcip, {'port_name' : 'contdata'})

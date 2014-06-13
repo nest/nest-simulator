@@ -43,7 +43,7 @@ AM_CPPFLAGS= @NEST_CPPFLAGS@ \
 pkgdatadir=@datadir@/nest
 
 nobase_pkgdata_DATA=\
-	sli/mymodule.sli
+	sli/mymodule-init.sli
 
 install-slidoc:
 	NESTRCFILENAME=/dev/null $(DESTDIR)$(NEST_PREFIX)/bin/sli --userargs="@HELPDIRS@" $(NEST_PREFIX)/share/nest/sli/install-help.sli

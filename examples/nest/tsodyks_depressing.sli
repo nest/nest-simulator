@@ -70,7 +70,7 @@ userdict begin
 
       % set resolution and limits on delays
       % limits must be set BEFORE connecting any elements
-      [0]
+      0
       <<
         /resolution h
         /local_num_threads local_num_threads

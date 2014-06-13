@@ -72,10 +72,11 @@ SeeAlso: testsuite::test_spike_poisson_ps
    %       is enclosed by this symbol or similar
    % maybe ` is the better character.
 
-      % --------- the prime indicates a literal ('x translated to /x)
-      % |
-      % v
-require('unittest, "6688");
+run("unittest");
+
+    % --------- the prime indicates a literal ('x translated to /x)
+    % |
+    % v
 using('unittest);
 
 setverbosity(M_ERROR);

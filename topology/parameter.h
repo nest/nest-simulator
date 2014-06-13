@@ -1,6 +1,3 @@
-#ifndef PARAMETER_H
-#define PARAMETER_H
-
 /*
  *  parameter.h
  *
@@ -22,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef PARAMETER_H
+#define PARAMETER_H
 
 #include <limits>
 #include "nest.h"

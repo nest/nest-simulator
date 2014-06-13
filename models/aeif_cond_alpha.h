@@ -316,7 +316,7 @@ namespace nest
     static RecordablesMap<aeif_cond_alpha> recordablesMap_;
   };
 
-  inline  
+  inline
   port aeif_cond_alpha::check_connection(Connection& c, port receptor_type)
   {
     SpikeEvent e;
@@ -332,7 +332,7 @@ namespace nest
       throw UnknownReceptorType(receptor_type, get_name());
     return 0;
   }
- 
+
   inline
   port aeif_cond_alpha::connect_sender(CurrentEvent&, port receptor_type)
   {
@@ -343,7 +343,7 @@ namespace nest
 
   inline
   port aeif_cond_alpha::connect_sender(DataLoggingRequest& dlr, 
-				      port receptor_type)
+                                       port receptor_type)
   {
     if (receptor_type != 0)
       throw UnknownReceptorType(receptor_type, get_name());

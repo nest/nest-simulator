@@ -266,7 +266,7 @@ namespace nest
             if (rng->drand() < kernel_->value(target.compute_displacement(iter->first, target_pos), rng)) {
 	      double w, d;
               get_parameters_(target.compute_displacement(iter->first, target_pos), rng, w, d);
-              connect_(iter->second, target_id, *tgt_it, target_thread, w, d, synapse_model_);
+              net_.connect(iter->second, target_id, *tgt_it, target_thread, w, d, synapse_model_);
             }
 
           }
@@ -281,7 +281,7 @@ namespace nest
               continue;
 	    double w, d;
             get_parameters_(target.compute_displacement(iter->first,target_pos), rng, w, d);
-	    connect_(iter->second, target_id, *tgt_it, target_thread, w, d, synapse_model_);
+	    net_.connect(iter->second, target_id, *tgt_it, target_thread, w, d, synapse_model_);
           }
 
         }
@@ -315,7 +315,7 @@ namespace nest
             if (rng->drand() < kernel_->value(target.compute_displacement(iter->first,target_pos), rng)) {
 	      double w,d;
               get_parameters_(target.compute_displacement(iter->first,target_pos), rng, w, d);
-              connect_(iter->second, target_id, *tgt_it, target_thread, w, d, synapse_model_);
+              net_.connect(iter->second, target_id, *tgt_it, target_thread, w, d, synapse_model_);
             }
           }
 
@@ -327,7 +327,7 @@ namespace nest
               continue;
 	    double w,d;
             get_parameters_(target.compute_displacement(iter->first,target_pos), rng, w, d);
-              connect_(iter->second, target_id, *tgt_it, target_thread, w, d, synapse_model_);
+              net_.connect(iter->second, target_id, *tgt_it, target_thread, w, d, synapse_model_);
           }
 
         }
@@ -422,7 +422,7 @@ namespace nest
             }
 	    double w,d;
             get_parameters_(source.compute_displacement(target_pos,positions[random_id].first), rng, w,d);
-	    connect_(source_id, target_id, *tgt_it, target_thread, w, d, synapse_model_);
+	    net_.connect(source_id, target_id, *tgt_it, target_thread, w, d, synapse_model_);
             is_selected[random_id] = true;
           }
 
@@ -451,7 +451,7 @@ namespace nest
             index source_id = positions[random_id].second;
 	    double w,d;
             get_parameters_(source.compute_displacement(target_pos,positions[random_id].first), rng, w,d);
-	    connect_(source_id, target_id, *tgt_it, target_thread, w, d, synapse_model_);
+	    net_.connect(source_id, target_id, *tgt_it, target_thread, w, d, synapse_model_);
             is_selected[random_id] = true;
           }
 
@@ -520,7 +520,7 @@ namespace nest
             Position<D> source_pos = (*positions)[random_id].first;
 	    double w,d;
             get_parameters_(source.compute_displacement(target_pos,source_pos), rng, w,d);
-	    connect_(source_id, target_id, *tgt_it, target_thread, w, d, synapse_model_);
+	    net_.connect(source_id, target_id, *tgt_it, target_thread, w, d, synapse_model_);
             is_selected[random_id] = true;
           }
 
@@ -549,7 +549,7 @@ namespace nest
             Position<D> source_pos = (*positions)[random_id].first;
 	    double w,d;
             get_parameters_(source.compute_displacement(target_pos,source_pos), rng, w,d);
-	    connect_(source_id, target_id, *tgt_it, target_thread, w, d, synapse_model_);
+	    net_.connect(source_id, target_id, *tgt_it, target_thread, w, d, synapse_model_);
             is_selected[random_id] = true;
           }
 
@@ -627,7 +627,7 @@ namespace nest
 	Node* target_ptr = net_.get_node(target_id);
 	double w,d;
         get_parameters_(target_displ, net_.get_grng(), w,d);
-        connect_(source_id, target_id, target_ptr, target_ptr->get_thread(), w, d, synapse_model_);
+        net_.connect(source_id, target_id, target_ptr, target_ptr->get_thread(), w, d, synapse_model_);
         is_selected[random_id] = true;
       }
 

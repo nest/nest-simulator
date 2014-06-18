@@ -38,8 +38,8 @@ do
     mpirun -np $n python ../../topo_mpi_test.py $testtype > /dev/null
     cd ..
   done
-  diff -qs 1 2
-  diff -qs 1 4
+  diff -q 1 2 || echo "ERROR: Results for 1 and 2 processes differ." 
+  diff -q 1 4 || echo "ERROR: Results for 1 and 4 processes differ." 
   cd ..
 done
 
@@ -48,5 +48,5 @@ rm -rf $tests
 
 
 # run regression test for #516 --- will hang on failure
-mpirun -np 6 python ticket-516.py
+mpirun -np 6 python ticket-516.py 
   

@@ -34,7 +34,7 @@ def beautify_layer(l, fig=plt.gcf(), xlabel=None, ylabel=None,
     ext = top['extent']
 
     if xticks == None:
-        if top.has_key('rows'):
+        if 'rows' in top:
             dx = float(ext[0]) / top['columns']
             dy = float(ext[1]) / top['rows']
             xticks = ctr[0]-ext[0]/2.+dx/2. + dx*np.arange(top['columns'])
@@ -81,18 +81,18 @@ for r in range(5):
 # For bbox_extra_artists, see http://old.nabble.com/bbox_inches%3D'tight'-issue-with-text-outside-axes-td28767991.html
 plt.savefig('../user_manual_figures/layer1.png', bbox_inches='tight', bbox_extra_artists=tx)
 
-print "#{ layer1s.log #}"
+print("#{ layer1s.log #}")
 #{ layer1s #}
-print nest.GetStatus(l)[0]['topology']
+print(nest.GetStatus(l)[0]['topology'])
 #{ end #}
-print "#{ end.log #}"
+print("#{ end.log #}")
 
 
-print "#{ layer1p.log #}"
+print("#{ layer1p.log #}")
 #{ layer1p #}
 nest.PrintNetwork(depth=2)
 #{ end #}
-print "#{ end.log #}"
+print("#{ end.log #}")
 
 # --------------------------------------------------
 
@@ -172,7 +172,7 @@ nest.ResetKernel()
 #{ layer4 #}
 import numpy as np
 pos = [[np.random.uniform(-0.5,0.5),np.random.uniform(-0.5,0.5)]
-       for j in xrange(50)]
+       for j in range(50)]
 l = tp.CreateLayer({'positions': pos,
                     'elements': 'iaf_neuron'})
 #{ end #}
@@ -191,7 +191,7 @@ nest.ResetKernel()
 #{ layer4_3d #}
 import numpy as np
 pos = [[np.random.uniform(-0.5,0.5),np.random.uniform(-0.5,0.5),
-        np.random.uniform(-0.5,0.5)] for j in xrange(200)]
+        np.random.uniform(-0.5,0.5)] for j in range(200)]
 l = tp.CreateLayer({'positions': pos,
                     'elements': 'iaf_neuron'})
 #{ end #}
@@ -272,9 +272,9 @@ l = tp.CreateLayer({'rows': 1, 'columns': 2,
                     'elements': ['iaf_cond_alpha', 'poisson_generator']})
 #{ end #}
 
-print "#{ layer6 #}"
+print("#{ layer6 #}")
 nest.PrintNetwork(depth=3)
-print "#{ end #}"
+print("#{ end #}")
 
 # --------------------------------------------------
 
@@ -286,9 +286,9 @@ l = tp.CreateLayer({'rows': 1, 'columns': 2,
                                  'noise_generator', 2]})
 #{ end #}
 
-print "#{ layer7 #}"
+print("#{ layer7 #}")
 nest.PrintNetwork(depth=3)
-print "#{ end #}"
+print("#{ end #}")
 
 # --------------------------------------------------
 

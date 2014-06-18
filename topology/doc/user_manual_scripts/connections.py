@@ -35,7 +35,7 @@ def beautify_layer(l, fig=plt.gcf(), xlabel=None, ylabel=None,
     ext = top['extent']
 
     if xticks == None:
-        if top.has_key('rows'):
+        if 'rows' in top:
             dx = float(ext[0]) / top['columns']
             dy = float(ext[1]) / top['rows']
             xticks = ctr[0]-ext[0]/2.+dx/2. + dx*np.arange(top['columns'])
@@ -457,7 +457,7 @@ fig = plt.figure()
 
 #{ conn6 #}
 pos = [[np.random.uniform(-1.,1.),np.random.uniform(-1.,1.)]
-       for j in xrange(1000)]
+       for j in range(1000)]
 ldict = {'positions': pos, 'extent': [2.,2.],
          'elements': 'iaf_neuron', 'edge_wrap': True}
 cdict = {'connection_type': 'divergent',
@@ -485,7 +485,8 @@ cdict_p2i = {'connection_type': 'divergent',
              'sources': {'model': 'pyr'},
              'targets': {'model': 'in'}}
 cdict_i2p = {'connection_type': 'divergent',
-             'mask': {'rectangular': {'lower_left': [-0.2,-0.2],'upper_right':[0.2,0.2]}},
+             'mask': {'rectangular': {'lower_left': [-0.2,-0.2],
+                                      'upper_right':[0.2,0.2]}},
              'sources': {'model': 'in'},
              'targets': {'model': 'pyr'}}
 l = tp.CreateLayer(ldict)
@@ -510,7 +511,8 @@ cdict_p2i = {'connection_type': 'divergent',
              'targets': {'model': 'in'},
              'synapse_model': 'exc'}
 cdict_i2p = {'connection_type': 'divergent',
-             'mask': {'rectangular': {'lower_left': [-0.2,-0.2],'upper_right':[0.2,0.2]}},
+             'mask': {'rectangular': {'lower_left': [-0.2,-0.2],
+                                      'upper_right':[0.2,0.2]}},
              'sources': {'model': 'in'},
              'targets': {'model': 'pyr'},
              'synapse_model': 'inh'}

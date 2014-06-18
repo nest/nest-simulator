@@ -23,9 +23,9 @@
 Cortical microcircuit simulation: SLI version
 
 This is an implementation of the multi-layer microcircuit model of early
-sensory cortex published by Potjans and Diesmann (2012) The cell-type specific
+sensory cortex published by Potjans and Diesmann (2014) The cell-type specific
 cortical microcircuit: relating structure and activity in a full-scale spiking
-network model. Cereb Cortex, online first. 
+network model. Cerebral Cortex: doi:10.1093/cercor/bhs358.
 
 
 Files:

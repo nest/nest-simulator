@@ -17,10 +17,10 @@ rm -f ${fname}.{aux,bbl,blg,idx,ilg,ins,lof,log,lot,pdf,synctex.gz,toc}
 rm -f user_manual_figures/*
 rm -f user_namual_scripts/*.log
 
-# Run scripts
+# Run scripts / -u ensures unbuffered output 
 cd user_manual_scripts
-${PYTHON} layers.py      > layers.log
-${PYTHON} connections.py > connections.log
+${PYTHON} -u layers.py      > layers.log
+${PYTHON} -u connections.py > connections.log
 cd ..
 
 # Do the LaTeX Dance

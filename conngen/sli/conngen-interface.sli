@@ -65,7 +65,7 @@ def
 } def
 
 /CGConnect [/anytype] {
-  /Connect /synapse_model GetOption
+  /Connect /syn_spec GetOption /model get
   CGConnect_main
 } def
 

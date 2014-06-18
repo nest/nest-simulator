@@ -76,7 +76,7 @@ namespace nest
  
      References:
      [1] Carandini M, Horton JC, Sincich LC (2007) Thalamic filtering of retinal
-     spike trains by postsynaptic summation. J Vis 7(14):20,1Ð11.
+     spike trains by postsynaptic summation. J Vis 7(14):20,1-11.
      [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
      systems with applications to neuronal modeling. Biologial Cybernetics
      81:381-402.

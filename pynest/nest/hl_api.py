@@ -421,6 +421,19 @@ def NumProcesses():
     return spp()
 
 @check_stack
+def SetNumRecProcesses(nrp):
+    """
+    Set the number of recording MPI processes to nrp. Usually,
+    spike detectors are distributed over all processes and record
+    from local neurons only. If a number of processes is dedicated to
+    spike detection, each spike detector is hosted on one of these
+    processes and records globally from all simulating processes.
+
+    """
+
+    sr("%d SetNumRecProcesses" % nrp)
+
+@check_stack
 def SetAcceptableLatency(port, latency):
     """
     Set the acceptable latency (in ms) for a MUSIC port.

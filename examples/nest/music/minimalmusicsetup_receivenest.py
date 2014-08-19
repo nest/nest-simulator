@@ -35,7 +35,7 @@ nest.SetStatus (meip, { 'port_name' : 'spikes_in', 'music_channel' : 0 })
 
 n = nest.Create ('iaf_neuron')
 
-nest.Connect (meip, n, { 'weight' : 750.0 })
+nest.Connect (meip, n, 'one_to_one', { 'weight' : 750.0 })
 
 vm = nest.Create ('voltmeter')
 nest.SetStatus (vm, { 'to_memory' : False, 'to_screen' : True })

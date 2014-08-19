@@ -54,7 +54,7 @@ if ( $#argv != 0 ) then
     exit 0
   endif
 else
-  set svndir="branches/nest-2.4/2.4.1"
+  set svndir="branches/nest-2.4/2.4.2"
   set branch=""
 endif
 
@@ -118,7 +118,7 @@ svn --quiet checkout $svn_id $nest_srcdir
 
 # add svn revision number to tarball name
 set svnver=`svnversion $nest_srcdir`
-set patchlevel = "1"
+set patchlevel = "2"
 
 # move to nest_srcdir
 cd $nest_srcdir

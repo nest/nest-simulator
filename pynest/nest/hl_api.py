@@ -65,15 +65,50 @@ __debug = False
 
 # These flags are used to print deprecation warnings only once. The
 # corresponding functions will be removed in the 2.6 release of NEST.
-_deprecation_warning = {'FindConnections': True,
-                        'OneToOneConnect': True,
-                        'ConvergentConnect': True,
-                        'RandomConvergentConnect': True,
-                        'DivergentConnect': True,
-                        'RandomDivergentConnect': True,
-                        'BackwardCompatibilityConnect': True}
+_deprecation_warning = {'BackwardCompatibilityConnect': True}
+
+def show_deprecation_warning(func_name, text=None):        
+    if _deprecation_warning[func_name]:
+        if text is None:
+            text = "".join(["{} is deprecated and will be removed in NEST 2.6.".format(func_name),
+                            "Please use Connect from now on. For details, see the documentation at:\n",
+                            "http://nest-initiative.org/Connection_Management"])
+        warnings.warn(text)
+        _deprecation_warning[func_name] = False
+        
+def deprecated(func, text=None):
+    """Decorator for deprecated functions. Shows a warning and calls the original function."""
+    _deprecation_warning[func.__name__] = True
+    def new_func(*args, **kwargs):
+        show_deprecation_warning(func.__name__, text=text)
+        return func(*args, **kwargs)
+    new_func.__name__ = func.__name__
+    new_func.__doc__ = func.__doc__
+    new_func.__dict__.update(func.__dict__)
+    return new_func
 
 # -------------------- Helper functions
+
+def get_unistring_type():
+    import sys
+    if sys.version_info[0] < 3:
+        return basestring
+    return str
+
+uni_str = get_unistring_type()
+
+def is_literal(obj):
+    """
+    Check whether obj is a "literal": a unicode string or SLI literal
+    """
+    return isinstance(obj, (uni_str, SLILiteral))
+
+def is_string(obj):
+    """
+    Check whether obj is a "literal": a unicode string or SLI literal
+    """
+    return isinstance(obj, uni_str)
+
 
 def set_debug(dbg=True):
     """
@@ -374,7 +409,7 @@ def GetKernelStatus(keys=None):
 
     if keys is None:
         return d
-    elif isinstance(keys, (str, SLILiteral)):
+    elif is_literal(keys):
         return d[keys]
     elif is_iterable(keys):
         return tuple(d[k] for k in keys)
@@ -497,7 +532,7 @@ def SetDefaults(model, params, val=None):
     """
 
     if val is not None:
-        if isinstance(params, (str, SLILiteral)):
+        if is_literal(params):
             params = {params: val}
 
     sps(params)
@@ -518,7 +553,7 @@ def GetDefaults(model, keys=None):
 
     if keys is None:
         cmd = "/{0} GetDefaults".format(model)
-    elif isinstance(keys, (str, SLILiteral)):
+    elif is_literal(keys):
         cmd = '/{0} GetDefaults /{1} get'.format(model, keys)
     elif is_iterable(keys):
         keys_str = " ".join("/{0}".format(x) for x in keys)
@@ -599,12 +634,11 @@ def SetStatus(nodes, params, val=None):
     if len(nodes) == 0:
         return
 
-    if val is not None:
-        if isinstance(params, (str, SLILiteral)):
-            if is_iterable(val) and not isinstance(val, (str, dict)):
-                params = [{params: x} for x in val]
-            else:
-                params = {params: val}
+    if val is not None and is_literal(params):
+        if is_iterable(val) and not isinstance(val, (uni_str, dict)):
+            params = [{params: x} for x in val]
+        else:
+            params = {params: val}
 
     params = broadcast(params, len(nodes), (dict,), "params")
     if len(nodes) != len(params):
@@ -638,7 +672,7 @@ def GetStatus(nodes, keys=None):
 
     if keys is None:
         cmd = '{ GetStatus } Map'
-    elif isinstance(keys, (str, SLILiteral)):
+    elif is_literal(keys):
         cmd = '{{ GetStatus /{0} get }} Map'.format(keys)
     elif is_iterable(keys):
         keys_str = " ".join("/{0}".format(x) for x in keys)
@@ -675,6 +709,7 @@ def GetLID(gid) :
 # -------------------- Functions for connection handling
 
 @check_stack
+@deprecated
 def FindConnections(source, target=None, synapse_model=None, synapse_type=None):
     """
     Return an array of identifiers for connections that match the
@@ -690,12 +725,6 @@ def FindConnections(source, target=None, synapse_model=None, synapse_type=None):
     Note: synapse_type is alias for synapse_model for backward compatibility.
     """
 
-    if _deprecation_warning["FindConnections"]:
-        warnings.warn("FindConnections is deprecated and will be removed in NEST 2.6. "
-                      "Please use GetConnections from now on. For details, see the documentation "
-                      "at http://nest-initiative.org/Connection_Management.")
-        _deprecation_warning["FindConnections"] = False
-
     if synapse_model is not None and synapse_type is not None:
         raise NESTError("'synapse_type' is alias for 'synapse_model' and cannot be used together with 'synapse_model'.")
 
@@ -705,7 +734,7 @@ def FindConnections(source, target=None, synapse_model=None, synapse_type=None):
     if target is None and synapse_model is None:
         params = [{"source": s} for s in source]
     elif target is None and synapse_model is not None:
-        synapse_model = broadcast(synapse_model, len(source), (str,), "synapse_model")
+        synapse_model = broadcast(synapse_model, len(source), (uni_str,), "synapse_model")
         params = [{"source": s, "synapse_model": syn}
                   for s, syn in zip(source, synapse_model)]
     elif target is not None and synapse_model is None:
@@ -713,7 +742,7 @@ def FindConnections(source, target=None, synapse_model=None, synapse_type=None):
         params = [{"source": s, "target": t} for s, t in zip(source, target)]
     else:  # target is not None and synapse_model is not None
         target = broadcast(target, len(source), (int,), "target")
-        synapse_model = broadcast(synapse_model, len(source), (str,), "synapse_model")
+        synapse_model = broadcast(synapse_model, len(source), (uni_str,), "synapse_model")
         params = [{"source": s, "target": t, "synapse_model": syn}
                   for s, t, syn in zip(source, target, synapse_model)]
 
@@ -785,6 +814,7 @@ def GetConnections(source=None, target=None, synapse_model=None):
 
 
 @check_stack
+@deprecated
 def OneToOneConnect(pre, post, params=None, delay=None, model="static_synapse"):
     """
     Make one-to-one connections of type model between the nodes in
@@ -795,12 +825,6 @@ def OneToOneConnect(pre, post, params=None, delay=None, model="static_synapse"):
     as weight(s), in which case delay also has to be given as float or
     as list of floats.
     """
-
-    if _deprecation_warning["OneToOneConnect"]:
-        warnings.warn("OneToOneConnect is deprecated and will be removed in NEST 2.6. "
-                      "Please use Connect from now on. For details, see the documentation "
-                      "at http://nest-initiative.org/Connection_Management.")
-        _deprecation_warning["OneToOneConnect"] = False
 
     if len(pre) != len(post):
         raise NESTError("pre and post have to be the same length")
@@ -845,6 +869,7 @@ def OneToOneConnect(pre, post, params=None, delay=None, model="static_synapse"):
 
 
 @check_stack
+@deprecated
 def ConvergentConnect(pre, post, weight=None, delay=None, model="static_synapse"):
     """
     Connect all neurons in pre to each neuron in post. pre and post
@@ -852,12 +877,6 @@ def ConvergentConnect(pre, post, weight=None, delay=None, model="static_synapse"
     of floats), delay also has to be given as float or as list of
     floats.
     """
-
-    if _deprecation_warning["ConvergentConnect"]:
-        warnings.warn("ConvergentConnect is deprecated and will be removed in NEST 2.6. "
-                      "Please use Connect from now on. For details, see the documentation "
-                      "at http://nest-initiative.org/Connection_Management.")
-        _deprecation_warning["ConvergentConnect"] = False
 
     if weight is None and delay is None:
         for d in post :
@@ -885,6 +904,7 @@ def ConvergentConnect(pre, post, weight=None, delay=None, model="static_synapse"
 
 
 @check_stack
+@deprecated
 def RandomConvergentConnect(pre, post, n, weight=None, delay=None, model="static_synapse", options=None):
     """
     Connect n randomly selected neurons from pre to each neuron in
@@ -894,12 +914,6 @@ def RandomConvergentConnect(pre, post, n, weight=None, delay=None, model="static
     options to the RandomConvergentConnect function: allow_autapses,
     allow_multapses.
     """
-
-    if _deprecation_warning["RandomConvergentConnect"]:
-        warnings.warn("RandomConvergentConnect is deprecated and will be removed in NEST 2.6. "
-                      "Please use Connect from now on. For details, see the documentation "
-                      "at http://nest-initiative.org/Connection_Management.")
-        _deprecation_warning["RandomConvergentConnect"] = False
 
     if not isinstance(n, int):
         raise TypeError("number of neurons n should be an integer")
@@ -944,6 +958,7 @@ def RandomConvergentConnect(pre, post, n, weight=None, delay=None, model="static
 
 
 @check_stack
+@deprecated
 def DivergentConnect(pre, post, weight=None, delay=None, model="static_synapse"):
     """
     Connect each neuron in pre to all neurons in post. pre and post
@@ -951,12 +966,6 @@ def DivergentConnect(pre, post, weight=None, delay=None, model="static_synapse")
     of floats), delay also has to be given as float or as list of
     floats.
     """
-
-    if _deprecation_warning["DivergentConnect"]:
-        warnings.warn("DivergentConnect is deprecated and will be removed in NEST 2.6. "
-                      "Please use Connect from now on. For details, see the documentation "
-                      "at http://nest-initiative.org/Connection_Management.")
-        _deprecation_warning["DivergentConnect"] = False
 
     if weight is None and delay is None:
         for s in pre :
@@ -1062,13 +1071,13 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     Note: model is alias for syn_spec for backward compatibility.
     """
 
-
-    if _deprecation_warning["BackwardCompatibilityConnect"] and model is not None:
-        warnings.warn("The argument 'model' is there for backward compatibility with the old "
-                      "Connect function and will be removed in NEST 2.6. Please change the name "
-                      "of the keyword argument from 'model' to 'syn_spec'. For details, see the "
-                      "documentation at http://nest-initiative.org/Connection_Management.")
-        _deprecation_warning["BackwardCompatibilityConnect"] = False
+    if model is not None:
+        deprecation_text = "".join(["The argument 'model' is there for backward compatibility with the old ",
+                                    "Connect function and will be removed in NEST 2.6. Please change the name ",
+                                    "of the keyword argument from 'model' to 'syn_spec'. For details, see the ",
+                                    "documentation at:\nhttp://nest-initiative.org/Connection_Management"])
+        show_deprecation_warning("BackwardCompatibilityConnect", 
+                                 text=deprecation_text)
 
     if model is not None and syn_spec is not None:
         raise NESTError("'model' is an alias for 'syn_spec' and cannot be used together with 'syn_spec'.")
@@ -1078,7 +1087,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
 
     if conn_spec is not None:
         sps(conn_spec)
-        if isinstance(conn_spec, str):
+        if is_string(conn_spec):
             sr("cvlit")
     else:
         sr('/Connect /conn_spec GetOption')
@@ -1088,7 +1097,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
 
     if syn_spec is not None:
         sps(syn_spec)
-        if isinstance(syn_spec, str):
+        if is_string(syn_spec):
             sr("cvlit")
 
     sr('Connect')
@@ -1151,6 +1160,7 @@ def DataConnect(pre, params=None, model="static_synapse"):
 
 
 @check_stack
+@deprecated
 def RandomDivergentConnect(pre, post, n, weight=None, delay=None, model="static_synapse", options=None):
     """
     Connect each neuron in pre to n randomly selected neurons from
@@ -1160,12 +1170,6 @@ def RandomDivergentConnect(pre, post, n, weight=None, delay=None, model="static_
     options to the RandomDivergentConnect function: allow_autapses,
     allow_multapses.
     """
-
-    if _deprecation_warning["RandomDivergentConnect"]:
-        warnings.warn("RandomDivergentConnect is deprecated and will be removed in NEST 2.6. "
-                      "Please use Connect from now on. For details, see the documentation "
-                      "at http://nest-initiative.org/Connection_Management.")
-        _deprecation_warning["RandomDivergentConnect"] = False
 
     if not isinstance(n, int):
         raise TypeError("number of neurons n should be an integer")
@@ -1452,7 +1456,7 @@ def LayoutNetwork(model, dim, label=None, params=None):
     for the neurons in the subnetwork.
     """
 
-    if isinstance(model, (str, SLILiteral)):
+    if is_literal(model):
         sps(dim)
         sr('/%s exch LayoutNetwork' % model)
         if label is not None:

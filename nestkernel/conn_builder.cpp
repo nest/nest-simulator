@@ -78,6 +78,11 @@ nest::ConnBuilder::ConnBuilder(Network& net,
 
   DictionaryDatum syn_defaults = net_.get_connector_defaults(synapse_model_);
 
+#ifdef HAVE_MUSIC
+  // We allow music_channel as alias for receptor_type during connection setup
+  (*syn_defaults)[names::music_channel] = 0;
+#endif
+
   // If neither weight or delay are given in the dict, we handle this
   // separately. Important for hom_wd synapses, on which weight and delay
   // cannot be set.
@@ -135,7 +140,7 @@ nest::ConnBuilder::ConnBuilder(Network& net,
 	    it != synapse_params_.end(); 
 	    ++it )
       {
-	if ( it->first == names::receptor_type )
+	if ( it->first == names::receptor_type || it->first == names::music_channel )
 	  (*param_dicts_[t])[it->first] = Token(new IntegerDatum(0));
 	else
 	  (*param_dicts_[t])[it->first] = Token(new DoubleDatum(0.0));
@@ -261,7 +266,7 @@ void nest::ConnBuilder::single_connect_(index sgid, index tgid,
 	  it != synapse_params_.end(); 
 	  ++it )
     {
-      if ( it->first == names::receptor_type )
+      if ( it->first == names::receptor_type || it->first == names::music_channel )
       {
         try
 	{

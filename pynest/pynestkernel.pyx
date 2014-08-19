@@ -184,12 +184,13 @@ cdef class NESTEngine(object):
         cdef string modulepath_str = modulepath.encode()
 
         cdef char* arg0 = "pynest\0"
-        cdef char** argv_bytes = <char**> malloc(argc * sizeof(char*))
+        cdef char** argv_bytes = <char**> malloc((argc+1) * sizeof(char*))
 
         if argv_bytes is NULL:
             raise NESTError("couldn't allocate argv_bytes")
 
-        argv_bytes[0] = arg0
+        argv_bytes[0] = arg0        
+        argv_bytes[argc] = NULL
 
         try:
             for i in range(1, argc):

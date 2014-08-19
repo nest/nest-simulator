@@ -1639,14 +1639,8 @@ void  Token_sFunction::execute(SLIInterpreter *i) const
   }
   else
   {
-    std::string s;
-    char c;
-
     i->OStack.push_move(t);
-    while(in.get(c))
-      s+=c;
-    *sd = s;  // this is correct, since sd points to the stringdatum on the
-             // ostack.
+    sd->erase(0, in.tellg());
     i->OStack.push(true);
   }
 }
@@ -1712,14 +1706,8 @@ void  Symbol_sFunction::execute(SLIInterpreter *i) const
   }
   else
   {
-    std::string s;
-    char c;
-
     i->OStack.push_move(t);
-    while(in.get(c))
-      s+=c;
-    *sd = s;  // this is correct, since sd points to the stringdatum on the
-             // ostack.
+    sd->erase(0, in.tellg());
     i->OStack.push(true);
   }
 }

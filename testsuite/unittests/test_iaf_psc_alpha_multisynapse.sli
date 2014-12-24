@@ -32,7 +32,7 @@
    calculated and compared with the simulated currents.
   
 
-   SeeAlso:
+   SeeAlso: testsuite::test_iaf_psc_exp_multisynapse, iaf_psc_alpha_multisynapse
 
    FirstVersion: March 2009
    Author: Sven Schrader
@@ -67,20 +67,12 @@ mm <<
 /spike_generator Create /sg Set
 sg << /spike_times [spike_time] >> SetStatus
 
-/static_synapse /s1 CopyModel
-/static_synapse /s2 CopyModel
-/static_synapse /s3 CopyModel
-/static_synapse /s4 CopyModel
-
-/s1 << /weight 1.0 /delay delays 0 get /receptor_type 1 >> SetDefaults
-/s2 << /weight 1.0 /delay delays 1 get /receptor_type 2 >> SetDefaults
-/s3 << /weight 1.0 /delay delays 2 get /receptor_type 3 >> SetDefaults
-/s4 << /weight 1.0 /delay delays 3 get /receptor_type 4 >> SetDefaults
-
-sg npost /s1 Connect
-sg npost /s2 Connect
-sg npost /s3 Connect
-sg npost /s4 Connect
+[ delays [ 4 ] Range ]
+{
+  /receptor Set
+  /delay Set
+  [sg] [npost] /one_to_one << /weight 1.0 /delay delay /receptor_type receptor >> Connect
+} ScanThread
 
 mm npost 1. 8. /static_synapse Connect
 

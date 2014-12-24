@@ -10,14 +10,20 @@
 
 doc:
 if DOXYGEN_AVAILABLE
-	TOPSRCDIR=$(top_srcdir) $(DOXYGEN) $(top_srcdir)/doc/normaldoc.conf
+
+	$(eval RCSINFO:=`@PKGSRCDIR@/extras/create_rcsinfo.sh @PKGSRCDIR@ /tmp`) \
+	  $(SED) -i "/^PROJECT_NUMBER/ s/=.*/= @SLI_VERSION@, $(RCSINFO)/" @PKGBUILDDIR@/doc/normaldoc.conf
+	$(DOXYGEN) @PKGBUILDDIR@/doc/normaldoc.conf
+
 endif
 
 fulldoc:
 if DOXYGEN_AVAILABLE
 if DOT_AVAILABLE
 
-	TOPSRCDIR=$(top_srcdir) $(DOXYGEN) $(top_srcdir)/doc/fulldoc.conf
+	$(eval RCSINFO:=`@PKGSRCDIR@/extras/create_rcsinfo.sh @PKGSRCDIR@ /tmp`) \
+	  $(SED) -i "/^PROJECT_NUMBER/ s/=.*/= @SLI_VERSION@, $(RCSINFO)/" @PKGBUILDDIR@/doc/fulldoc.conf
+	$(DOXYGEN) @PKGBUILDDIR@/doc/fulldoc.conf
 
 ## is it possible to issue a message here if DOT is not available?
 

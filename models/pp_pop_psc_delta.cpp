@@ -34,6 +34,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
+#include "compose.hpp"
 
 #include <limits>
 #include <algorithm>
@@ -77,7 +78,8 @@ nest::pp_pop_psc_delta::State_::State_()
   : y0_                 (0.0),
     h_                  (0.0),
     p_age_occupations_  ( 0 ),  
-    p_n_spikes_past_    ( 0 )
+    p_n_spikes_past_    ( 0 ),
+    initialized_        (false)
 {
     age_occupations_.clear();  
     thetas_ages_.clear();
@@ -124,7 +126,7 @@ void nest::pp_pop_psc_delta::Parameters_::set(const DictionaryDatum& d)
  
 
   if (taus_eta_.size() != vals_eta_.size())
-      throw DimensionMismatch(taus_eta_.size(), vals_eta_.size());
+      throw BadProperty(String::compose("'taus_eta' and 'vals_eta' need to have the same dimension.\nSize of taus_eta: %1\nSize of vals_eta: %2",taus_eta_.size(), vals_eta_.size()));
 
   if ( c_m_ <= 0 )
     throw BadProperty("Capacitance must be strictly positive.");
@@ -146,7 +148,6 @@ void nest::pp_pop_psc_delta::Parameters_::set(const DictionaryDatum& d)
 
   if ( delta_u_ <= 0)
     throw BadProperty("Delta_u must be positive.");
-
 }
 
 void nest::pp_pop_psc_delta::State_::get(DictionaryDatum &d, const Parameters_&) const
@@ -159,6 +160,7 @@ void nest::pp_pop_psc_delta::State_::get(DictionaryDatum &d, const Parameters_&)
 void nest::pp_pop_psc_delta::State_::set(const DictionaryDatum& d, const Parameters_&)
 {
   updateValue<double>(d, names::V_m, h_);
+  initialized_ = false; // vectors of the state should be initialized with new parameter set.
 }
 
 nest::pp_pop_psc_delta::Buffers_::Buffers_(pp_pop_psc_delta &n)
@@ -207,67 +209,71 @@ void nest::pp_pop_psc_delta::init_buffers_()
   Archiving_Node::clear_history();
 }
 
+
 void nest::pp_pop_psc_delta::calibrate()
 {
 
   if (P_.taus_eta_.size() == 0)
-  	throw BadProperty("Time constant array should not be empty. ");
+    throw BadProperty("Time constant array should not be empty. ");
 
   if (P_.vals_eta_.size() == 0)
-  	throw BadProperty("Adaptation value array should not be empty. ");
+    throw BadProperty("Adaptation value array should not be empty. ");
 
   B_.logger_.init();
 
   V_.h_ = Time::get_resolution().get_ms();
   V_.rng_ = net_->get_rng(get_thread());
 
-
-  V_.P33_ = std::exp(-V_.h_/P_.tau_m_);
-  V_.P30_ = 1/P_.c_m_*(1-V_.P33_)*P_.tau_m_;
-
-
   double_t tau_eta_max = -1; // finding max of taus_eta_
+  
   for(uint_t j = 0 ; j < P_.taus_eta_.size() ; j++ )
      if (P_.taus_eta_.at(j) > tau_eta_max)
          tau_eta_max = P_.taus_eta_.at(j);
 
-
   V_.len_eta_ = tau_eta_max * (P_.len_kernel_ / V_.h_);
 
+  V_.P33_ = std::exp(-V_.h_/P_.tau_m_);
+  V_.P30_ = 1/P_.c_m_*(1-V_.P33_)*P_.tau_m_;
 
+  //initializing internal state
+  if ( !S_.initialized_ ){
 
-  for(int_t j = 0 ; j < V_.len_eta_ ; j++)
-	S_.n_spikes_past_.push_back(0);
+     V_.len_eta_ = tau_eta_max * (P_.len_kernel_ / V_.h_);
 
+     for(int_t j = 0 ; j < V_.len_eta_ ; j++)
+       S_.n_spikes_past_.push_back(0);
 
-  vector<double> ts;
-  ts.clear();
-  for(int_t j = 0 ; j < V_.len_eta_ ; j++)
-     ts.push_back(j*V_.h_);
+     vector<double> ts;
+     ts.clear();
+     for(int_t j = 0 ; j < V_.len_eta_ ; j++)
+        ts.push_back(j*V_.h_);
 
-  double_t temp = 0;
+     double_t temp = 0;
 
-  for(int_t j = 0 ; j < V_.len_eta_ ; j++)
-  {
-     for(uint_t i = 0 ; i < P_.taus_eta_.size() ; i++)
-        temp += std::exp(-ts[j]/P_.taus_eta_.at(i))*(-P_.vals_eta_.at(i));
+     for(int_t j = 0 ; j < V_.len_eta_ ; j++)
+     {
+        for(uint_t i = 0 ; i < P_.taus_eta_.size() ; i++)
+           temp += std::exp(-ts[j]/P_.taus_eta_.at(i))*(-P_.vals_eta_.at(i));
 
-     V_.theta_kernel_.push_back(temp);
-     V_.eta_kernel_.push_back(std::exp(temp)-1);
-     temp = 0;
-  }
+        V_.theta_kernel_.push_back(temp);
+        V_.eta_kernel_.push_back(std::exp(temp)-1);
+        temp = 0;
+     }
 
-  for(int_t j = 0 ; j < V_.len_eta_ ; j++){
-     S_.age_occupations_.push_back(0);
+     for(int_t j = 0 ; j < V_.len_eta_ ; j++){
+        S_.age_occupations_.push_back(0);
+        S_.thetas_ages_.push_back(0);
+        S_.n_spikes_ages_.push_back(0);
+        S_.rhos_ages_.push_back(0);
+     }
+     S_.age_occupations_.push_back(P_.N_);
      S_.thetas_ages_.push_back(0);
      S_.n_spikes_ages_.push_back(0);
      S_.rhos_ages_.push_back(0);
-  }
-  S_.age_occupations_.push_back(P_.N_);
-  S_.thetas_ages_.push_back(0);
-  S_.n_spikes_ages_.push_back(0);
-  S_.rhos_ages_.push_back(0);
-     	
+
+     S_.initialized_ = true;
+ }
+
 }
 
 /* ----------------------------------------------------------------
@@ -323,17 +329,16 @@ void nest::pp_pop_psc_delta::update(Time const & origin, const long_t from, cons
        {
 
           p_argument = -numerics::expm1(-S_.rhos_ages_[i] * V_.h_ * 0.001);  // V_.h_ is in ms, S_.rhos_ages_ is in Hz
-	
 
-	  if ( p_argument <= 0.00000001 )  // check whether p_argument is zero, 0.00000001 is choosed to conquer floating point problem
+      if ( p_argument <= 0.00000001 )  // check whether p_argument is zero, 0.00000001 is choosed to avoid floating point problem
           {
           	S_.n_spikes_ages_[i] = 0 ;
           }
-	  else
-	  {
-          	V_.binom_dev_.set_p_n(p_argument, S_.age_occupations_[(S_.p_age_occupations_ + i) % S_.age_occupations_.size()]);
-          	S_.n_spikes_ages_[i] = V_.binom_dev_.ldev(V_.rng_);
-	  }       
+      else
+      {
+            V_.binom_dev_.set_p_n(p_argument, S_.age_occupations_[(S_.p_age_occupations_ + i) % S_.age_occupations_.size()]);
+            S_.n_spikes_ages_[i] = V_.binom_dev_.ldev(V_.rng_);
+      }       
        }
        else
           S_.n_spikes_ages_[i] = 0;

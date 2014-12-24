@@ -1571,7 +1571,7 @@ A saved state defines a jump position to which the execution can return by calli
 
 
 
-SeeAlso: resore
+SeeAlso: restore
 Author: Marc-Oliver Gewaltig
 */
 /save
@@ -2307,11 +2307,16 @@ SeeAlso: welcome
 
 
 
-%%%%
-% evalstring
-% used by interpret.cc
-%%%%
-/evalstring
+/* Private function, no user documentation
+
+Name: ::evalstring - execute SLI code given as string in stopped context
+
+Description:
+This function is used by SLIInterpreter::execute(const std::string &cmdline).
+
+SeeAlso: eval
+*/
+/::evalstring
 {
   cvx stopped {handleerror} if
 } def
@@ -2319,7 +2324,7 @@ SeeAlso: welcome
 
 /* BeginDocumentation
 Name: environment - return dictionary of environment variables
-Synopsis: enviroment -> dict
+Synopsis: enviromnent -> dict
 Description: 
 Returns dictionary with the environment variables of the process that
 invoked NEST. It is a shortcut for statusdict/environment ::, provided
@@ -2367,3 +2372,4 @@ SeeAlso: statusdict
   statusdict/threading :: ToLowercase (openmp) searchif
 } def
 
+(rcsinfo) run

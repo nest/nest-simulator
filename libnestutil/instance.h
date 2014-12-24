@@ -49,13 +49,13 @@ namespace nest
    *   return n;
    * }
    * @endcode
-   * to take advantage of the pool based allocator. Likewise the function reserve()
-   * looks like
+   * to take advantage of the pool based allocator.
+   * Likewise the function reserve_additional() looks like
    * @code
    * template< typename ElementT>
-   * inline void GenericModel<ElementT>::reserve(size_t s)
+   * inline void GenericModel<ElementT>::reserve_additional(size_t s)
    * {
-   *   Instance<ElementT>::reserve(s);
+   *   Instance<ElementT>::reserve_additional(s);
    * }
    * @endcode
    * @note
@@ -88,7 +88,7 @@ namespace nest
 
     ClassT *clone() const;
     
-    static void reserve(size_t);
+    static void reserve_additional(size_t);
 
     static void * operator new(size_t size);
     static void   operator delete(void *p, size_t size);
@@ -149,9 +149,9 @@ namespace nest
 
   template <typename ClassT>
   inline
-  void Instance<ClassT>::reserve(size_t s)
+  void Instance<ClassT>::reserve_additional(size_t s)
   {
-    memory_.reserve(s);
+    memory_.reserve_additional(s);
   }
   
   template <typename ClassT>

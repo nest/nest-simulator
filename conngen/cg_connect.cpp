@@ -42,7 +42,7 @@ namespace nest
 	{
 	  Node* const target_node = ConnectionGeneratorModule::get_network().get_node(target + target_offset);
 	  const thread target_thread = target_node->get_thread();
-	  ConnectionGeneratorModule::get_network().connect(source + source_offset, target + target_offset, target_node, target_thread, syn);
+	  ConnectionGeneratorModule::get_network().connect(source + source_offset, target_node, target_thread, syn);
 	}
       }
     }
@@ -62,7 +62,7 @@ namespace nest
 	{
 	  Node* const target_node = ConnectionGeneratorModule::get_network().get_node(target + target_offset);
 	  const thread target_thread = target_node->get_thread();
-	  ConnectionGeneratorModule::get_network().connect(source + source_offset, target + target_offset, target_node, target_thread, params[w_idx], params[d_idx], syn);
+	  ConnectionGeneratorModule::get_network().connect(source + source_offset, target_node, target_thread, syn, params[d_idx], params[w_idx]);
 	}
       }
     }
@@ -88,7 +88,7 @@ namespace nest
 	{
 	  Node* const target_node = ConnectionGeneratorModule::get_network().get_node(target_gids.at(target));
 	  const thread target_thread = target_node->get_thread();
-	  ConnectionGeneratorModule::get_network().connect(source_gids.at(source), target_gids.at(target), target_node, target_thread, syn);
+	  ConnectionGeneratorModule::get_network().connect(source_gids.at(source), target_node, target_thread, syn);
 	}
       }
     }
@@ -108,7 +108,7 @@ namespace nest
 	{
 	  Node* const target_node = ConnectionGeneratorModule::get_network().get_node(target_gids.at(target));
 	  const thread target_thread = target_node->get_thread();
-	  ConnectionGeneratorModule::get_network().connect(source_gids.at(source), target_gids.at(target), target_node, target_thread, params[w_idx], params[d_idx], syn);
+	  ConnectionGeneratorModule::get_network().connect(source_gids.at(source), target_node, target_thread, syn, params[d_idx], params[w_idx]);
 	}
       }
     }

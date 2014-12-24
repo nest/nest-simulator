@@ -1,0 +1,168 @@
+/*
+ *  ticket-787.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-787 Ensure that all commands raise errors instead of crashing
+
+Synopsis: (ticket-787) run -> NEST fails if test fails
+
+Description:
+This ticket executes all tries, procedures and functions in systemdict. 
+
+Candidates with names beginning with :, ending with _ or explicitly
+excluded are not tested, since they are internals that need not implement 
+complete error checking.
+
+As long as they all either pass or raise proper errors, the test will pass. 
+
+Remark:
+- This test will only run in serial mode, as it needs to spawn subprocesses.
+- Functions defined in other dictionaries that systemdict are not tested. 
+
+Author: Hans Ekkehard Plesser, 2014-11-26
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+% preparatory work for proper test code in case NEST is complied with MPI support
+% For now we just ignore this test, this will later be replaced 
+% by a restart of NEST with a serial binary.
+statusdict/is_mpi :: {statusdict/exitcodes/success :: quit_i} if
+
+
+% entries to skip
+
+% functions that confuse the test setup
+/special_skip [/abort /license /helpindex] def
+
+% private functions not expected to implement full error checking
+/private_skip [
+	/CompareFiles_s_s /ConnectLayers_i_i_D /Connect_g_g_D_D
+	/Connect_i_i_D_l /Connect_i_i_d_d_l /Connect_i_i_l
+	/ConvergentConnect_ia_i_a_a_l /ConvergentConnect_ia_i_l
+	/ConvergentConnect_main /CopyModel_l_l /CopyModel_l_l_D /CreateLayer_D
+	/CreateMask_D /CreateParameter_D /CreateRDV_g_vf /CreateRNG_gt_i
+	/Create_l /Create_l_D /Create_l_i /Create_l_i_D /CyclicValue_d_a
+	/CyclicValue_d_d_d /DataConnect_a /DataConnect_i_D_s /Displacement_a_i
+	/Distance_a_i /DivergentConnect_i_ia_a_a_l /DivergentConnect_i_ia_l
+	/DivergentConnect_main /DumpLayerConnections_os_i_l
+	/DumpLayerNodes_os_i /FileNames_r /FileNames_s /FixedPoint__p
+	/FixedPoint__p_i /Flatten_a /Flatten_a_i /GetChildren_i_D_b
+	/GetConnections_D /GetDefaults_l /GetElement_i_ia
+	/GetGlobalChildren_i_M_a /GetLeaves_i_D_b /GetNetwork_i_i
+	/GetNodes_i_D_b_b /GetPosition_i /GetStatus_C /GetStatus_a
+	/GetStatus_dict /GetStatus_i /GetStatus_v /GetValue_a_P /Inside_a_M
+	/JoinTo_ald /JoinTo_cont /JoinTo_d /LayoutNetwork_l_a
+	/LayoutNetwork_l_a_dict /MapIndexed_a /MapIndexed_s /MapThread_a
+	/Map_iter /Map_s /MathematicaToSliIndex_a /MathematicaToSliIndex_i
+	/Part_a /Partition_a_i_i /RandomArray_v_i
+	/RandomConvergentConnect_ia_i_i_b_b_l
+	/RandomConvergentConnect_ia_i_i_d_l
+	/RandomConvergentConnect_ia_i_i_da_da_b_b_l
+	/RandomConvergentConnect_ia_i_i_da_da_b_b_l_wrapper
+	/RandomConvergentConnect_ia_i_i_da_da_l
+	/RandomConvergentConnect_ia_i_i_l /RandomConvergentConnect_ia_ia_i_l
+	/RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l
+	/RandomConvergentConnect_ia_ia_ia_daa_daa_l
+	/RandomConvergentConnect_main /RandomDivergentConnect_i_i_ia_b_b_l
+	/RandomDivergentConnect_i_i_ia_da_da_b_b_l
+	/RandomDivergentConnect_i_i_ia_da_da_b_b_l_wrapper
+	/RandomDivergentConnect_i_i_ia_da_da_l
+	/RandomDivergentConnect_i_i_ia_l /RandomDivergentConnect_main
+	/Random_i /RangeIterator_a /RestoreNodes_a /SetDefaults_l_D
+	/SetStatus_CD /SetStatus_aa /SetStatus_dict /SetStatus_id /SetStatus_v
+	/Simulate_d /Take_a_a /Take_a_i /TimeCommunicationAlltoall_i_i
+	/TimeCommunicationAlltoallv_i_i /TimeCommunication_i_i_b
+	/TimeCommunicationv_i_i /UnitStep_d /UnitStep_da /UnitStep_i
+	/UnitStep_ia /_:out /abs_d /abs_i /acos_d /add_P_P /add_a_a /add_a_i
+	/add_d_dv /add_dd /add_di /add_dv_dv /add_i_a /add_i_iv /add_id
+	/add_ii /add_iv_iv /and_M_M /and_bb /and_ii /append_a /append_p
+	/append_s /asin_d /available_is /backtrace_off /backtrace_on
+	/breakup_sa /breakup_sa_i /calibrate_node /capacity_a /capacity_s
+	/ceil_d /cos_d /cv_dv /cv_iv /cva_C /cva_d /cva_t /cvd_s /cvdict_C
+	/cvdict_M /cvgidcollection_i_i /cvgidcollection_ia /cvgidcollection_iv
+	/cvi_s /cvlit_n /cvlit_p /cvlp_p /cvn_l /cvn_s /cvs_f /cvt_a /cvx_a
+	/cvx_f /dexp_i /div_P_P /div_a_a /div_a_i /div_dd /div_di /div_dv_dv
+	/div_i_a /div_id /div_ii /div_iv_iv /double_i /drand_g /dup2_is_is
+	/dup2_is_os /dup2_os_is /dup2_os_os /empty_D /empty_a /empty_s /eq_dv
+	/eq_iv /erase_a /erase_p /erase_s /exp_d /finite_q_d /floor_d /for_a
+	/for_i /forall_a /forall_di /forall_dv /forall_iter /forall_iv
+	/forall_s /forallindexed_a /forallindexed_s /frexp_d /geq_dd /geq_di
+	/geq_id /geq_ii /get_a /get_a_a /get_d /get_d_a /get_dv_i /get_dv_iv
+	/get_iv_i /get_iv_iv /get_lp /get_p /get_s /getinterval_a
+	/getinterval_s /getline_is /gt_dd /gt_di /gt_id /gt_ii /gt_ss /help_l
+	/info_d /info_ds /insert_a /insert_s /insertelement_a /insertelement_s
+	/int_d /inv_dv /irand_g_i /iround_d /isatty_is /isatty_os /join_a
+	/join_d /join_p /join_s /kill_i_i /kill_i_l /ldexp_di /length_a
+	/length_d /length_dv /length_iv /length_lp /length_p /length_s /leq_dd
+	/leq_di /leq_id /leq_ii /ln_d /log_d /lt_dd /lt_di /lt_id /lt_ii
+	/lt_ss /makehelp_s /max_d_d /max_d_i /max_i_d /max_i_i /min_d_d
+	/min_d_i /min_i_d /min_i_i /mkfifo_s /modf_d /mul_P_P /mul_a_a
+	/mul_a_i /mul_d_dv /mul_d_iv /mul_dd /mul_di /mul_dv_dv /mul_i_a
+	/mul_i_iv /mul_id /mul_ii /mul_iv_iv /neg_d /neg_dv /neg_i /neg_iv
+	/not_b /not_i /ones_dv /ones_iv /or_M_M /or_bb /or_ii /pow_dd /pow_di
+	/prepend_a /prepend_p /prepend_s /put_a /put_a_a_t /put_d /put_dv_i_d
+	/put_iv_i_i /put_lp /put_p /put_s /quit_i /references_a
+	/regex_find_r /regex_find_rf /regex_find_s /regex_find_sf
+	/regex_replace_r /regex_replace_rf /regex_replace_s /regex_replace_sf
+	/replace_a /replace_s /reserve_a /reserve_s /reverse_sa /round_d
+	/search_a /search_s /searchif_sa /seed_g_i
+	/setNONBLOCK_is_b /setverbosity_i /shrink_a /sin_d /size_a /size_g
+	/size_iter /size_s /sleep_d /sleep_i /spawn_as_i /sqr_d /sqrt_d
+	/sub_M_M /sub_P_P /sub_a_a /sub_a_i /sub_dd /sub_di /sub_dv_dv
+	/sub_i_a /sub_id /sub_ii /sub_iv_iv /symbol_s /sysexec_a /sysexec_s
+	/system_as_i_p /token_is /token_s /topinfo_d /trieheads_iter
+	/trieinfo_os_t /trim_sa /valid_a /waitPID_i_b /wait_b /zeros_dv
+	/zeros_iv
+] def
+
+
+% find all tries, functions and procedures in systemdict
+/candidates
+  systemdict keys
+  { 
+    /k Set
+    systemdict k get type [/trietype /functiontype /proceduretype] exch MemberQ
+    k cvs 1 Take (:) neq and 
+    k cvs -1 Take (_) neq and
+    private_skip k MemberQ not and
+    special_skip k MemberQ not and
+  } Select
+def
+
+candidates dup == length ==
+
+% try executing each one of them, print name before trying for analysis
+candidates
+{
+  /cand Set
+  cand ==
+  
+  % we trick a little to turn the item into a procedure ... 
+  cand cvs cvx passorfailbutnocrash_or_die
+} forall
+
+endusing

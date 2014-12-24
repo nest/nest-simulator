@@ -63,6 +63,7 @@ namespace sli {
 
       chunk(size_t s)
 	:csize(s),
+	 next(0),
 	 mem(new char[csize])
 	{}
 
@@ -82,7 +83,7 @@ namespace sli {
 
     size_t block_size;     //!< number of elements per chunk
     size_t el_size;        //!< sizeof an element
-    size_t instantiations; //!< number of instatiated elements
+    size_t instantiations; //!< number of instantiated elements
     size_t total;          //!< total number of allocated elements
     size_t capacity;       //!< number of free elements
     chunk *chunks;         //!< linked list of memory chunks
@@ -95,7 +96,7 @@ namespace sli {
 
     
    public:
-    /** Create pool for objects of size n. Initial is the inital allocation 
+    /** Create pool for objects of size n. Initial is the initial allocation
      *  block size, i.e. the number of objects per block.
      *  growth is the factor by which the allocations block increases after
      *  each growth.
@@ -109,18 +110,15 @@ namespace sli {
 
     ~pool();               //!< deallocate ALL memory
     
-    /** Increase the pools capacity (free slots) to at least n.
-	Reserve() ensures that the pool has at least n empty slots,
-	i.e., that the pool can store at least n additional elements
-	before more memory needs to be allocated from the operating
-	system.  
-        @note The semantics of pool::reserve(n) differ from the semantics
-	of reserve(n) for STL containers: for STL containers, n is the total
-        number of elements after the reserve() call, while for pool it is the
-        number of @b free @b elements.
-	@todo Adapt the semantics of capacity() and reserve() to STL semantics.
+    /**
+      Increase the pools capacity (free slots) by n.
+
+	  reserve_additional() ensures that the pool has at least n empty slots,
+	  i.e., that the pool can store at least n additional elements
+	  before more memory needs to be allocated from the operating
+	  system.
     */
-    void reserve(size_t n);
+    void reserve_additional(size_t n);
 
     size_t available(void) const
       { return total-instantiations;}
@@ -182,4 +180,100 @@ namespace sli {
 
 }
 
-#endif
+#ifdef USE_PMA
+
+const int MAX_THREAD = 128;
+
+/**
+ * The poor man's allocator is a simple pool-based allocator, used to
+ * allocate storage for connections in the limit of large machines.
+ *
+ * The allocator only supports allocation, but no freeing.  In the
+ * limit of large machines this is sufficient, because we rarely need
+ * to grow synapse lists, as the majority of neurons have at most one
+ * target per machine.
+ * The allocator manages the pool of free memory in chunks that form a
+ * linked list.  A head pointer keeps track of the next position in a
+ * chunk to be handed to the caller of allocate. Once head reaches the
+ * end of the current chunk, a new chunk is allocated from the OS and
+ * appends it to the linked list of chunks.
+ */
+class PoorMansAllocator
+{
+  private:
+
+  /** 
+   * A chunk of memory, one element in the linked list of the memory
+   * pool.
+   */
+    struct chunk
+    {
+      chunk(char* mem, chunk* next) : mem_(mem), next_(next) {};
+      char* mem_;
+      chunk *next_;
+    };
+  
+  public:
+    /**
+     * No constructors, as this would be counted as a 'use' of the
+     * pool before declaring it thread-private by the compiler.
+     * Therefore we have our own init() and destruct() functions.
+     */
+    void init(size_t chunk_size=1048576);
+    void destruct();
+    void* alloc(size_t obj_size);
+
+  private:
+
+    /**
+     * Append a new chunk of memory to the list forming the memory
+     * pool.
+     */
+    void new_chunk();
+
+    /**
+     * The size of each chunk to be allocated. This size must be
+     * chosen as a tradeoff between few allocations of chunks (large
+     * chunk) and little memory overhead due to unused chunks (small
+     * chunks).
+     */
+    size_t chunk_size_;
+
+    /**
+     * Points to the next free location in the current chunk. This
+     * location will be handed to the caller in the next call of
+     * allocate. The type is char*, so that pointer arithmetic allows
+     * adding sizeof(object) directly to advance the pointer to the
+     * next free location.
+     */
+    char* head_;
+
+    /**
+     * First element of the linked list of chunks.
+     */
+    chunk* chunks_;
+
+    /**
+     * Remaining capacity of the current chunk.
+     */
+    size_t capacity_;
+};
+
+#ifdef IS_K
+/**
+ * The Fujitsu compiler on K cannot handle OpenMP thread-private
+ * properly. We therefore need to emulate the thread-private storage
+ * by padding the allocator objects to the size of a cache line so
+ * that the instantiations for different threads lie on different
+ * cache lines.
+ */
+class PaddedPMA : public PoorMansAllocator 
+{
+  // Only works for sizeof(PoorMansAllocator) < 64
+  char padding[64 - sizeof(PoorMansAllocator)];
+};
+#endif /* #ifdef IS_K */
+
+#endif /* #ifdef USE_PMA */
+
+#endif /* #ifndef ALLOCATOR_H */

@@ -139,7 +139,10 @@ public:
 
   void roll(size_t n, long k)
     {
-      if (k>=0)
+	  if ( n < 2 || k == 0 )
+		  return;  // nothing to do
+
+      if ( k > 0 )
       {
 	rotate(end()-n,end()-(k%n),end());
       }

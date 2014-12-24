@@ -112,25 +112,24 @@ namespace nest
     iaf_chxk_2008(const iaf_chxk_2008&);
     ~iaf_chxk_2008();
 
-    /*
-     * Import all overloaded virtual functions that we
-     * override in this class.  For background information, 
-     * see http://www.gotw.ca/gotw/005.htm.
+    /**
+     * Import sets of overloaded virtual functions.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
-
-    using Node::connect_sender;
     using Node::handle;
+    using Node::handles_test_event;
 
-    port check_connection(Connection&, port);
+    port send_test_event(Node&, rport, synindex, bool);
 
     bool is_off_grid() const {return true;}  // uses off_grid events
-    port connect_sender(SpikeEvent &, port);
-    port connect_sender(CurrentEvent &, port);
-    port connect_sender(DataLoggingRequest &, port);
+
+    port handles_test_event(SpikeEvent&, rport);
+    port handles_test_event(CurrentEvent&, rport);
+    port handles_test_event(DataLoggingRequest&, rport);
     
-    void handle(SpikeEvent &);
-    void handle(CurrentEvent &);
-    void handle(DataLoggingRequest &); 
+    void handle(SpikeEvent&);
+    void handle(CurrentEvent&);
+    void handle(DataLoggingRequest&); 
         
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
@@ -318,16 +317,16 @@ namespace nest
   // Boilerplate inline function definitions ----------------------------------
 
   inline
-  port iaf_chxk_2008::check_connection(Connection& c, port receptor_type)
+  port iaf_chxk_2008::send_test_event(Node& target, rport receptor_type, synindex, bool)
   {
     SpikeEvent e;
     e.set_sender(*this);
-    c.check_event(e);
-    return c.get_target()->connect_sender(e, receptor_type);
+
+    return target.handles_test_event(e, receptor_type);
   }
 
   inline
-  port iaf_chxk_2008::connect_sender(SpikeEvent&, port receptor_type)
+  port iaf_chxk_2008::handles_test_event(SpikeEvent&, rport receptor_type)
   {
     if (receptor_type != 0)
       throw UnknownReceptorType(receptor_type, get_name());
@@ -335,7 +334,7 @@ namespace nest
   }
  
   inline
-  port iaf_chxk_2008::connect_sender(CurrentEvent&, port receptor_type)
+  port iaf_chxk_2008::handles_test_event(CurrentEvent&, rport receptor_type)
   {
     if (receptor_type != 0)
       throw UnknownReceptorType(receptor_type, get_name());
@@ -343,8 +342,8 @@ namespace nest
   }
  
   inline
-  port iaf_chxk_2008::connect_sender(DataLoggingRequest& dlr,
-				      port receptor_type)
+  port iaf_chxk_2008::handles_test_event(DataLoggingRequest& dlr,
+					 rport receptor_type)
   {
     if (receptor_type != 0)
       throw UnknownReceptorType(receptor_type, get_name());

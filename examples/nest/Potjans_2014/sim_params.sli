@@ -30,6 +30,11 @@
 %%%     	Simulation parameters		%%%        
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+/run_mode (test) def  % (test) for writing files to 
+                      % directory containing microcircuit.sli 
+                      % (production) for writing files
+                      % to a chosen absolute path. 
+
 /t_sim 1000.0 def     % simulated time (ms)
 /dt 0.1 def           % simulation step (ms). Default is 0.1 ms.
 /allgather true def   % communication protocol
@@ -40,13 +45,20 @@
 % see Gewaltig et al. (2012) for details       
 /master_seed 123456 def   % changes rng_seeds and grng_seed
 
-/n_nodes 1 def	      		% number of MPI nodes
-/n_procs_per_node 24 def	% number of MPI processes per node
-/n_vp n_procs_per_node n_nodes mul def 	% number of virtual processes
-% This should be an integer multiple of the number of processes 
-% See Morrison et al. (2005) Neural Comput
+/n_mpi_procs 1 def	                    % number of MPI processes
+
+/n_threads_per_proc 2 def	            % number of threads per MPI process
+                                            % use for instance 24 for a full-scale simulation
+
+
+/n_vp n_threads_per_proc n_mpi_procs mul def 	% number of virtual processes
+                                                % This should be an integer multiple of 
+                                                % the number of MPI processes 
+                                                % See Morrison et al. (2005) Neural Comput
 /walltime (8:0:0) def		% walltime for simulation
-/memory (4gb) def		% total memory for simulation
+
+/memory (500mb) def		% total memory
+                                % use for instance 4gb for a full-scale simulation
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%     	Recording parameters		%%%        

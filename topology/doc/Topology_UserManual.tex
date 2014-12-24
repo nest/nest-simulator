@@ -81,7 +81,7 @@
 Håkon Enger\\[1ex]
 \normalsize Department of Mathematical Sciences and Technology\\\normalsize Norwegian University of Life Sciences\\
 \normalsize 1432 Ås, Norway}
-\date{NEST 2.2 and 2.4 (r9977 or later)\\[8cm]
+\date{NEST 2.2, 2.4, and 2.6 (r9977 or later)\\[8cm]
 \centerline{\includegraphics{nest-initiative-logo}}}
 
 
@@ -108,7 +108,8 @@ Håkon Enger\\[1ex]
 
   This User Manual describes the NEST 2.2 and 2.4 versions of the NEST Topology
   Library. Please see Chapter~\ref{sec:changes} for a summary of
-  changes to 2.2. There are no changes in Topology from 2.2 to 2.4.
+  changes to 2.2. There are no changes in Topology from 2.2 to 2.4. In
+  NEST 2.6, Topology functions check their arguments more carefully.
 
   We plan further improvements to the Topology Module in the future, 
   which may include changes to the API to remove some of the remaining
@@ -603,14 +604,21 @@ Connections between Topology layers are created by calling
 \begin{enumerate}
 \item The source layer.
 \item The target layer (can be identical to source layer).
-\item A connection dictionary that contains at least the following entries:
+\item A connection dictionary that contains at least the following entry:
 \begin{description}
-\item['connection\_type'] Either \lstinline!'convergent'!
+\item['connection\_type'] either \lstinline!'convergent'!
   or \lstinline!'divergent'!.
-\item['mask'] A mask specification as described in
-  Sec.~\ref{sec:conn_masks}.
 \end{description}
 \end{enumerate}
+I many cases, the connection dictionary will also contain
+\begin{description}
+\item['mask'] a mask specification as described in
+  Sec.~\ref{sec:conn_masks}.
+\end{description}
+Only neurons within the mask are considered as potential sources or
+targets. If no mask is given, the all neurons in the respective layer
+are consider sources or targets.
+
 Here is a simple example, cf.~\ref{fig:conn1}:
 %
 \lstinputlisting[linerange=conn1-end]{user_manual_scripts/connections.py}
@@ -664,7 +672,8 @@ layers. Topology applies the following \emph{coordinate mapping
 A mask describes which area of the pool layer shall be searched for
 nodes to connect for any given node in the driver layer. We will first
 describe geometrical masks defined for all layer types and then
-consider grid-based masks for grid-based layers.
+consider grid-based masks for grid-based layers. If no mask is
+specified, all nodes in the pool layer will be searched.
 
 Note that the mask size should not exceed the size of the layer when
 using periodic boundary conditions, since the mask would ``wrap
@@ -822,20 +831,8 @@ in Chapter~\ref{ch:extending}.
 \begin{tabularx}{\linewidth}{l|p{0.2\linewidth}|X}
 Name & Parameters & Function \\\hline
 %
+\rowcolor{lstcolor} 
 constant & & {constant $p\in[0,1]$} \\
-%
-\rowcolor{lstcolor}
-\lstinline!uniform! & \lstinline!min!, \lstinline!max! & $p\in
-[\text{min},\text{max})$ uniformly \\
-%
-\lstinline!normal! &
-\lstinline!mean!, \lstinline!sigma!, \lstinline!min!, \lstinline!max! &
-$p \in [\text{min},\text{max})$ normal with given mean and $\sigma$ \\
-%
-\rowcolor{lstcolor}
-\lstinline!lognormal! &
-\lstinline!mu!, \lstinline!sigma!, \lstinline!min!, \lstinline!max! &
-$p \in [\text{min},\text{max})$ lognormal with given $\mu$ and $\sigma$ \\
 %
 \lstinline!linear! & \lstinline!a!, \lstinline!c! &
 \begin{equation*}
@@ -862,11 +859,26 @@ p(d) = c + p_{\text{center}}  e^{-\frac{(d-\mu)^2}{2\sigma^2}}
 p(d) = c + p_{\text{center}}
 e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-\frac{(d_y-\mu_y)^2}{\sigma_y^2}
           +2\rho\frac{(d_x-\mu_x)(d_y-\mu_y)}{\sigma_x\sigma_y}}{2(1-\rho^2)}}
-\end{equation*}\\
+\end{equation*}\\\hline\hline
+\lstinline!uniform! & \lstinline!min!, \lstinline!max! & $p\in
+[\text{min},\text{max})$ uniformly \\
+%
+\rowcolor{lstcolor}
+\lstinline!normal! &
+\lstinline!mean!, \lstinline!sigma!, \lstinline!min!, \lstinline!max! &
+$p \in [\text{min},\text{max})$ normal with given mean and $\sigma$ \\
+%
+\lstinline!lognormal! &
+\lstinline!mu!, \lstinline!sigma!, \lstinline!min!, \lstinline!max! &
+$p \in [\text{min},\text{max})$ lognormal with given $\mu$ and $\sigma$ \\
+%
 \end{tabularx}
-\caption[Kernel functions]{Kernel functions currently available in the
+\caption[Kernel functions]{Functions currently available in the
   Topology module. $d$ is the distance and $(d_x,d_y)$ the
-  displacement.}
+  displacement. All functions can be used to specify weights and
+  delays, but only the constant and the distance-dependent functions,
+  i.e., all functions above the double line,
+  can be used as kernels. }
 \label{tab:kernels}
 \end{table}
 

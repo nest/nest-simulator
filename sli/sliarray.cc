@@ -369,7 +369,7 @@ void SLIArrayModule::ArangeFunction::execute(SLIInterpreter *i) const
 void SLIArrayModule::ReverseFunction::execute(SLIInterpreter *i) const
 {
 //  call:  array reverse -> t1 ... tn n
-  assert(i->OStack.load()>0);
+  i->assert_stack_load(1);
 
   ArrayDatum *ad = dynamic_cast<ArrayDatum *>(i->OStack.top().datum());
   assert(ad !=0);
@@ -474,7 +474,7 @@ SeeAlso: Max, Min
 */
 void SLIArrayModule::SortFunction::execute(SLIInterpreter *i) const
 {
-  assert(i->OStack.load()>0);
+  i->assert_stack_load(1);
 
   TokenArray td = getValue<TokenArray>(i->OStack.top());
 
@@ -762,14 +762,13 @@ BeginDocumentation
 */
 void SLIArrayModule::ArraystoreFunction::execute(SLIInterpreter *i) const
 {
-//  call: t1 ... tn n  arraystore -> array
-//  assert(i->OStack.load()>0);
+  i->assert_stack_load(1); // we only require n here, further underflow handled below
 
   IntegerDatum *id=dynamic_cast<IntegerDatum *>(i->OStack.top().datum());
   assert(id != NULL);
 
   long n=id->get();
-  if(n>=0)
+  if( n >= 0 )
   {
     if(i->OStack.load()>static_cast<size_t>(n))
     {
@@ -2526,7 +2525,7 @@ Returns an nr by nc matrix with a Gabor patch, computed over the
 argument range of [xmin,xmax] by [ymin,ymax].
 This function is the low level variant of the more user-friendly
 GaborPatch.
-SeeAlso: arr::GaborPatch
+SeeAlso: arraylib::GaborPatch
 Author: Marc-Oliver Gewaltig
 References: Petkov N and Kruizinga P: Biol. Cybern. 76, 83-96 (1997)
 */
@@ -2634,7 +2633,7 @@ Returns an nr by nc matrix with a Gauss patch, computed over the
 argument range of [xmin,xmax] by [ymin,ymax].
 This function is the low level variant of the more user-friendly
 GaussPatch.
-SeeAlso: arr::GaussPatch
+SeeAlso: arraylib::GaussPatch
 Author: Marc-Oliver Gewaltig
 */
 void SLIArrayModule::Gauss2dFunction::execute(SLIInterpreter *i) const

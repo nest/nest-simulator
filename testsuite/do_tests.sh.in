@@ -84,7 +84,9 @@ ask_results ()
     echo "***     - '${TEST_OUTDIR}'"
     echo "***     - '${TEST_TMPDIR}'"
     echo "***"
-    echo "*** to the nest_user@nest-initiative.org mailing list."
+    echo "*** to the nest_user mailing list. Please find further information"
+    echo "*** about the mailing list at"
+    echo "***   http://www.nest-initiative.org/Software:Community"
     echo "***"
     echo
 }
@@ -98,6 +100,15 @@ portable_inplace_sed ()
     sed -e "$2" "$1.XXX" > "$1"
     rm -f "$1.XXX"
 }
+
+#
+# sed has different syntax for extended regular expressions
+# on different operating systems:
+# BSD: -E
+# other: -r
+#
+EXTENDED_REGEX_PARAM=r
+/bin/sh -c "echo 'hello' | sed -${EXTENDED_REGEX_PARAM} 's/[aeou]/_/g' "  >/dev/null 2>&1 || EXTENDED_REGEX_PARAM=E
 
 JUNIT_FILE=
 JUNIT_TESTS=
@@ -436,6 +447,23 @@ CODES_FAILURE=\
 
 run_test selftests/test_crash_or_die.sli "${CODES_SUCCESS}" "${CODES_FAILURE}"
 
+CODES_SUCCESS=' 3 Success'
+CODES_FAILURE=\
+' 1 Failed: missed assertion,'\
+' 2 Failed: error in tested code block,'\
+' 126 Failed: error in test script,'
+
+run_test selftests/test_failbutnocrash_or_die_crash.sli "${CODES_SUCCESS}" "${CODES_FAILURE}"
+run_test selftests/test_failbutnocrash_or_die_pass.sli "${CODES_SUCCESS}" "${CODES_FAILURE}"
+
+CODES_SUCCESS=' 3 Success'
+CODES_FAILURE=\
+' 1 Failed: missed assertion,'\
+' 2 Failed: error in tested code block,'\
+' 126 Failed: error in test script,'
+
+run_test selftests/test_passorfailbutnocrash_or_die.sli "${CODES_SUCCESS}" "${CODES_FAILURE}"
+
 junit_close
 
 # At this point, we are sure that
@@ -522,11 +550,47 @@ fi
 
 
 if test "x${TEST_PYNEST}" = xtrue ; then
-    "${PYTHON}" "${PYTHON_HARNESS}" >> "${TEST_LOGFILE}"
 
-    PYNEST_TEST_TOTAL="$(  cat pynest_test_numbers.log | cut -d' ' -f1 )"
-    PYNEST_TEST_PASSED="$( cat pynest_test_numbers.log | cut -d' ' -f3 )"
-    PYNEST_TEST_FAILED="$( cat pynest_test_numbers.log | cut -d' ' -f2 )"
+    if command -v nosetests >/dev/null 2>&1; then
+
+	echo
+	echo "Phase 6: Running PyNEST tests."
+	echo "------------------------------"
+
+        nosetests -v --with-xunit --xunit-file=${TEST_OUTDIR}/pynest_tests.xml @PYEXECDIR@/nest/tests 2>&1 \
+            | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
+
+        PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"
+        PYNEST_TEST_FAILURES="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*failures=([0-9]+).*/\1/' )"
+        PYNEST_TEST_ERRORS="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*errors=([0-9]+).*/\1/' )"
+
+        # check that PYNEST_TEST_FAILURES/PYNEST_TEST_ERRORS contain numbers
+        if test ${PYNEST_TEST_FAILURES} -eq ${PYNEST_TEST_FAILURES} 2>/dev/null ; then
+          # PYNEST_TEST_FAILURES is a valid number
+          :
+        else
+          PYNEST_TEST_FAILURES=0
+        fi
+        if test ${PYNEST_TEST_ERRORS} -eq ${PYNEST_TEST_ERRORS} 2>/dev/null ; then
+          # PYNEST_TEST_ERRORS is a valid number
+          :
+        else
+          PYNEST_TEST_ERRORS=0
+        fi
+        PYNEST_TEST_FAILED=$(($PYNEST_TEST_ERRORS + $PYNEST_TEST_FAILURES))
+        PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_FAILED))
+
+    else
+
+        "${PYTHON}" "${PYTHON_HARNESS}" >> "${TEST_LOGFILE}"
+    
+        PYNEST_TEST_TOTAL="$(  cat pynest_test_numbers.log | cut -d' ' -f1 )"
+        PYNEST_TEST_PASSED="$( cat pynest_test_numbers.log | cut -d' ' -f3 )"
+        PYNEST_TEST_FAILED="$( cat pynest_test_numbers.log | cut -d' ' -f2 )"
+
+        rm -f "pynest_test_numbers.log"
+
+    fi
 
     echo
     echo "  PyNEST tests: ${PYNEST_TEST_TOTAL}"
@@ -534,8 +598,6 @@ if test "x${TEST_PYNEST}" = xtrue ; then
     echo "     Failed: ${PYNEST_TEST_FAILED}"
 
     PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"
-
-    rm -f "pynest_test_numbers.log"
 
     TEST_TOTAL=$(( $TEST_TOTAL + $PYNEST_TEST_TOTAL ))
     TEST_PASSED=$(( $TEST_PASSED + $PYNEST_TEST_PASSED ))

@@ -102,19 +102,23 @@
   SeeAlso: stdp_synapse, synapsedict, tsodyks_synapse, static_synapse
 */
 
-#include "connection_het_wd.h"
-#include "archiving_node.h"
+#include "connection.h"
+#include "common_synapse_properties.h"
 #include <cmath>
 
 namespace nest
 {
 
+  // template class forward declaration required by common proterties friend definition
+  template<typename targetidentifierT> class STDPFACETSHWConnectionHom;
+
   /**
    * Class containing the common properties for all synapses of type STDPFACETSHWConnectionHom.
    */
+  template<typename targetidentifierT>
   class STDPFACETSHWHomCommonProperties : public CommonSynapseProperties
     {
-      friend class STDPFACETSHWConnectionHom;
+      friend class STDPFACETSHWConnectionHom<targetidentifierT>;
 
     public:
 
@@ -168,10 +172,15 @@ namespace nest
   /**
    * Class representing an STDP connection with homogeneous parameters, i.e. parameters are the same for all synapses.
    */
-  class STDPFACETSHWConnectionHom : public ConnectionHetWD
+  template<typename targetidentifierT>
+  class STDPFACETSHWConnectionHom : public Connection<targetidentifierT>
   {
 
   public:
+
+  typedef STDPFACETSHWHomCommonProperties<targetidentifierT> CommonPropertiesType;
+  typedef Connection<targetidentifierT> ConnectionBase;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -184,10 +193,42 @@ namespace nest
    */
   STDPFACETSHWConnectionHom(const STDPFACETSHWConnectionHom &);
 
+  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
+  // This avoids explicit name prefixes in all places these functions are used.
+  // Since ConnectionBase depends on the template parameter, they are not automatically
+  // found in the base class.
+  using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
+  using ConnectionBase::get_rport;
+  using ConnectionBase::get_target;
+
   /**
-   * Default Destructor.
+   * Get all properties of this connection and put them into a dictionary.
    */
-  virtual ~STDPFACETSHWConnectionHom() {}
+  void get_status(DictionaryDatum & d) const;
+
+  /**
+   * Set properties of this connection from the values given in dictionary.
+   */
+  void set_status(const DictionaryDatum & d, ConnectorModel &cm);
+
+  /**
+   * Send an event to the receiver of this connection.
+   * \param e The event to send
+   * \param t_lastspike Point in time of last spike sent.
+   */
+  void send(Event& e, thread t, double_t t_lastspike, const STDPFACETSHWHomCommonProperties<targetidentifierT> &);
+
+
+  class ConnTestDummyNode: public ConnTestDummyNodeBase
+  {
+  public:
+	// Ensure proper overriding of overloaded virtual functions.
+	// Return values from functions are ignored.
+	using ConnTestDummyNodeBase::handles_test_event;
+    port handles_test_event(SpikeEvent&, rport) { return invalid_port_; }
+  };
+
 
   /*
    * This function calls check_connection on the sender and checks if the receiver
@@ -203,47 +244,17 @@ namespace nest
    * \param receptor_type The ID of the requested receptor type
    * \param t_lastspike last spike produced by presynaptic neuron (in ms)
    */
-  void check_connection(Node & s, Node & r, rport receptor_type, double_t t_lastspike);
+  void check_connection(Node & s, Node & t, rport receptor_type, double_t t_lastspike, const CommonPropertiesType &)
+  {
+    ConnTestDummyNode dummy_target;
+    
+    ConnectionBase::check_connection_(dummy_target, s, t, receptor_type);
 
-  /**
-   * Get all properties of this connection and put them into a dictionary.
-   */
-  void get_status(DictionaryDatum & d) const;
+    t.register_stdp_connection(t_lastspike - get_delay());
+  }
 
-  /**
-   * Set properties of this connection from the values given in dictionary.
-   */
-  void set_status(const DictionaryDatum & d, ConnectorModel &cm);
-
-  /**
-   * Set properties of this connection from position p in the properties
-   * array given in dictionary.
-   */
-  void set_status(const DictionaryDatum & d, index p, ConnectorModel &cm);
-
-  /**
-   * Create new empty arrays for the properties of this connection in the given
-   * dictionary. It is assumed that they are not existing before.
-   */
-  void initialize_property_arrays(DictionaryDatum & d) const;
-
-  /**
-   * Append properties of this connection to the given dictionary. If the
-   * dictionary is empty, new arrays are created first.
-   */
-  void append_properties(DictionaryDatum & d) const;
-
-  /**
-   * Send an event to the receiver of this connection.
-   * \param e The event to send
-   * \param t_lastspike Point in time of last spike sent.
-   */
-  void send(Event& e, double_t t_lastspike, STDPFACETSHWHomCommonProperties &);
-
-  // overloaded for all supported event types
-  using Connection::check_event;
-  void check_event(SpikeEvent&) {}
-
+  void set_weight(double_t w) { weight_ = w; }
+ 
  private:
   bool eval_function_(double_t a_causal, double_t a_acausal, double_t a_thresh_th, double_t a_thresh_tl, std::vector<long_t> configbit);
 
@@ -254,6 +265,7 @@ namespace nest
   uint_t lookup_(uint_t discrete_weight_, std::vector<long_t> table);
 
   // data members of each connection
+  double_t weight_;
   double_t a_causal_;
   double_t a_acausal_;
   double_t a_thresh_th_;
@@ -265,8 +277,9 @@ namespace nest
   uint_t discrete_weight_; //TODO: TP: only needed in send, move to common properties or "static"?
   };
 
+template<typename targetidentifierT>
 inline
-bool STDPFACETSHWConnectionHom::eval_function_(double_t a_causal, double_t a_acausal, double_t a_thresh_th, double_t a_thresh_tl, std::vector<long_t> configbit)
+bool STDPFACETSHWConnectionHom<targetidentifierT>::eval_function_(double_t a_causal, double_t a_acausal, double_t a_thresh_th, double_t a_thresh_tl, std::vector<long_t> configbit)
 {
   // compare charge on capacitors with thresholds and return evaluation bit
   return (a_thresh_tl + configbit[2] * a_causal + configbit[1] * a_acausal)
@@ -275,33 +288,30 @@ bool STDPFACETSHWConnectionHom::eval_function_(double_t a_causal, double_t a_aca
           / (1 + configbit[0] + configbit[3]);
 }
 
+template<typename targetidentifierT>
 inline
-uint_t STDPFACETSHWConnectionHom::weight_to_entry_(double_t weight, double_t weight_per_lut_entry)
+uint_t STDPFACETSHWConnectionHom<targetidentifierT>::weight_to_entry_(double_t weight, double_t weight_per_lut_entry)
 {
   // returns the discrete weight in terms of the look-up table index
   return round(weight / weight_per_lut_entry);
 }
 
+template<typename targetidentifierT>
 inline
-double_t STDPFACETSHWConnectionHom::entry_to_weight_(uint_t discrete_weight, double_t weight_per_lut_entry)
+double_t STDPFACETSHWConnectionHom<targetidentifierT>::entry_to_weight_(uint_t discrete_weight, double_t weight_per_lut_entry)
 {
   // returns the continuous weight
   return discrete_weight * weight_per_lut_entry;
 }
 
+template<typename targetidentifierT>
 inline
-uint_t STDPFACETSHWConnectionHom::lookup_(uint_t discrete_weight_, std::vector<long_t> table)
+uint_t STDPFACETSHWConnectionHom<targetidentifierT>::lookup_(uint_t discrete_weight_, std::vector<long_t> table)
 {
   // look-up in table
   return table[discrete_weight_];
 }
 
-inline
-  void STDPFACETSHWConnectionHom::check_connection(Node & s, Node & r, rport receptor_type, double_t t_lastspike)
-{
-  ConnectionHetWD::check_connection(s, r, receptor_type, t_lastspike);
-  r.register_stdp_connection(t_lastspike - Time(Time::step(delay_)).get_ms());
-}
 
 /**
  * Send an event to the receiver of this connection.
@@ -309,19 +319,29 @@ inline
  * \param p The port under which this connection is stored in the Connector.
  * \param t_lastspike Time point of last spike emitted
  */
+template<typename targetidentifierT>
 inline
-void STDPFACETSHWConnectionHom::send(Event& e, double_t t_lastspike, STDPFACETSHWHomCommonProperties &cp)
+void STDPFACETSHWConnectionHom<targetidentifierT>::send(Event& e, thread t, double_t t_lastspike, const STDPFACETSHWHomCommonProperties<targetidentifierT> &cp)
 {
   // synapse STDP dynamics
 
   double_t t_spike = e.get_stamp().get_ms();
 
+  // remove const-ness of common properties
+  // this is not a nice solution, but only a workaround
+  // anyway the current implementation will presumably
+  // generate wring results on distributed systems,
+  // because the number of synapses counted is only
+  // the number of synapses local to the current machine
+  STDPFACETSHWHomCommonProperties<targetidentifierT> & cp_nonconst =
+    const_cast< STDPFACETSHWHomCommonProperties<targetidentifierT> & >(cp);
+
   //init the readout time
   if(init_flag_ == false){
     synapse_id_ = cp.no_synapses_;
-    ++cp.no_synapses_;
-    cp.calc_readout_cycle_duration_();
-    next_readout_time_ = int(synapse_id_ / cp.synapses_per_driver_) * cp.driver_readout_time_;
+    ++cp_nonconst.no_synapses_;
+    cp_nonconst.calc_readout_cycle_duration_();
+    next_readout_time_ = int(synapse_id_ / cp_nonconst.synapses_per_driver_) * cp_nonconst.driver_readout_time_;
     std::cout << "init synapse " << synapse_id_ << " - first readout time: " << next_readout_time_ << std::endl;
     init_flag_ = true;
   }
@@ -330,7 +350,7 @@ void STDPFACETSHWConnectionHom::send(Event& e, double_t t_lastspike, STDPFACETSH
   if(t_spike > next_readout_time_)
   {
     //transform weight to discrete representation
-    discrete_weight_ = weight_to_entry_(weight_, cp.weight_per_lut_entry_);
+    discrete_weight_ = weight_to_entry_(weight_, cp_nonconst.weight_per_lut_entry_);
 
     //obtain evaluation bits
     bool eval_0 = eval_function_(a_causal_, a_acausal_, a_thresh_th_, a_thresh_tl_, cp.configbit_0_);
@@ -353,7 +373,7 @@ void STDPFACETSHWConnectionHom::send(Event& e, double_t t_lastspike, STDPFACETSH
     //do nothing, if eval_0 == false and eval_1 == false
 
     while(t_spike > next_readout_time_){
-      next_readout_time_ += cp.readout_cycle_duration_;
+      next_readout_time_ += cp_nonconst.readout_cycle_duration_;
     }
     //std::cout << "synapse " << synapse_id_ << " updated at " << t_spike << ", next readout time: " << next_readout_time_ << std::endl;
 
@@ -363,12 +383,12 @@ void STDPFACETSHWConnectionHom::send(Event& e, double_t t_lastspike, STDPFACETSH
 
   // t_lastspike_ = 0 initially
 
-  double_t dendritic_delay = Time(Time::step(delay_)).get_ms();
+  double_t dendritic_delay = Time(Time::step( get_delay_steps() )).get_ms();
 
   //get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque<histentry>::iterator start;
   std::deque<histentry>::iterator finish;
-  target_->get_history(t_lastspike - dendritic_delay, t_spike - dendritic_delay,
+  get_target(t)->get_history(t_lastspike - dendritic_delay, t_spike - dendritic_delay,
 			       &start, &finish);
   //facilitation due to post-synaptic spikes since last pre-synaptic spike
   double_t minus_dt = 0;
@@ -393,10 +413,10 @@ void STDPFACETSHWConnectionHom::send(Event& e, double_t t_lastspike, STDPFACETSH
     a_acausal_ += std::exp(plus_dt / cp.tau_minus_);
   }
 
-  e.set_receiver(*target_);
+  e.set_receiver(*get_target(t));
   e.set_weight(weight_);
-  e.set_delay(delay_);
-  e.set_rport(rport_);
+  e.set_delay(get_delay_steps());
+  e.set_rport(get_rport());
   e();
 
   }

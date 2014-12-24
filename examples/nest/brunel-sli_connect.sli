@@ -282,9 +282,9 @@ M_WARNING setverbosity
 
       % Create custom synapse types with appropriate values for
       % our excitatory and inhibitory connections
-      /static_synapse_hom_wd << /delay delay >> SetDefaults
-      /static_synapse_hom_wd /syn_ex << /weight JE >> CopyModel
-      /static_synapse_hom_wd /syn_in << /weight JI >> CopyModel
+      /static_synapse_hom_w << /delay delay >> SetDefaults
+      /static_synapse_hom_w /syn_ex << /weight JE >> CopyModel
+      /static_synapse_hom_w /syn_in << /weight JI >> CopyModel
 
       synapsedict /static_synapse get /syn_default Set 
 

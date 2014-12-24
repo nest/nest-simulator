@@ -35,9 +35,26 @@ namespace nest
 {
   class Network;
 
-  /**
-   * Leaky integrate-and-fire neuron with exponential PSCs.
-   */
+  /* BeginDocumentation
+ Name: iaf_psc_exp_multisynapse - Leaky integrate-and-fire neuron model with multiple ports.
+
+ Description:
+
+   iaf_psc_exp_multisynapse is a direct extension of iaf_psc_exp.
+   On the postsynapic side, there can be arbitrarily many synaptic
+   time constants (iaf_psc_exp has exactly two: tau_syn_ex and tau_syn_in).
+
+   This can be reached by specifying separate receptor ports, each for
+   a different time constant. The port number has to match the respective
+   "receptor_type" in the connectors.
+
+ Sends: SpikeEvent
+
+ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+
+ Author:  Plesser, adapted from iaf_psc_alpha_multisynapse
+ SeeAlso: iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, iaf_psc_alpha_multisynapse
+ */
   class iaf_psc_exp_multisynapse: public Archiving_Node
   {
     
@@ -50,19 +67,18 @@ namespace nest
      * Import sets of overloaded virtual functions.
      * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
-
-    using Node::connect_sender;
     using Node::handle;
+    using Node::handles_test_event;
 
-    port check_connection(Connection&, port);
-    
+    port send_test_event(Node&, rport, synindex, bool);
+
     void handle(SpikeEvent &);
     void handle(CurrentEvent &);
     void handle(DataLoggingRequest &);
 
-    port connect_sender(SpikeEvent&, port);
-    port connect_sender(CurrentEvent&, port);
-    port connect_sender(DataLoggingRequest&, port);
+    port handles_test_event(SpikeEvent&, rport);
+    port handles_test_event(CurrentEvent&, rport);
+    port handles_test_event(DataLoggingRequest&, rport);
 
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
@@ -218,16 +234,16 @@ namespace nest
   };
 
 inline
-port iaf_psc_exp_multisynapse::check_connection(Connection& c, port receptor_type)
+port iaf_psc_exp_multisynapse::send_test_event(Node& target, rport receptor_type, synindex, bool)
 {
   SpikeEvent e;
   e.set_sender(*this);
-  c.check_event(e);
-  return c.get_target()->connect_sender(e, receptor_type);
+
+  return target.handles_test_event(e, receptor_type);
 }
 
 inline
-port iaf_psc_exp_multisynapse::connect_sender(CurrentEvent&, port receptor_type)
+port iaf_psc_exp_multisynapse::handles_test_event(CurrentEvent&, rport receptor_type)
 {
   if (receptor_type != 0)
     throw UnknownReceptorType(receptor_type, get_name());
@@ -235,8 +251,7 @@ port iaf_psc_exp_multisynapse::connect_sender(CurrentEvent&, port receptor_type)
 }
 
 inline
-port iaf_psc_exp_multisynapse::connect_sender(DataLoggingRequest& dlr, 
-                                   port receptor_type)
+port iaf_psc_exp_multisynapse::handles_test_event(DataLoggingRequest& dlr, rport receptor_type)
 {
   if (receptor_type != 0)
     throw UnknownReceptorType(receptor_type, get_name());

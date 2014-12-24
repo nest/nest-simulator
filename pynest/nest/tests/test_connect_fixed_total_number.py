@@ -29,9 +29,6 @@ from . import compatibility
 from . import test_connect_helpers as hf
 from .test_connect_parameters import TestParams
 
-@nest.check_stack
-@unittest.skipIf('fixed_total_number' not in nest.ConnectionRules(),
-                 'NEST was built without fixed_total_number rule.')
 class TestFixedTotalNumber(TestParams):
 
     # specify connection pattern and specific params
@@ -81,18 +78,16 @@ class TestFixedTotalNumber(TestParams):
             expected = hf.get_expected_degrees_totalNumber(self.N, fan, self.N_s, self.N_t)
             pvalues = []
             for i in range(self.stat_dict['n_runs']):
-                hf.reset_seed(i, self.nr_threads)
+                hf.reset_seed(123456 * i % 511, self.nr_threads)
                 self.setUpNetwork(conn_dict=conn_params,N1=self.N_s,N2=self.N_t)
                 degrees = hf.get_degrees(fan, self.pop1, self.pop2)
                 degrees = hf.gather_data(degrees)
                 if degrees != None:
-                    chi, p = hf.chi_squared_test(degrees, expected)
-                    print("p-value : %.2f" % p)
+                    chi, p = hf.chi_squared_check(degrees, expected)
                     pvalues.append(p)
                 hf.mpi_barrier()
             if degrees != None:
                 ks, p = scipy.stats.kstest(pvalues, 'uniform', alternative='two_sided')
-                print("p-value : %.2f" % p)
                 self.assertTrue( p > self.stat_dict['alpha2'] )
 
     def testAutapses(self):
@@ -123,6 +118,11 @@ class TestFixedTotalNumber(TestParams):
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestFixedTotalNumber)        
     return suite
+
+def run():
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())
+    
     
 if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    run()

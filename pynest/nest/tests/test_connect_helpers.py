@@ -23,7 +23,6 @@ import numpy as np
 import scipy.stats
 import nest
 import matplotlib.pylab as plt
-from scipy.stats import truncnorm
 from scipy.stats import truncexpon
 
 try:
@@ -56,12 +55,8 @@ def is_array(data):
     '''
     Returns True if data is a list or numpy-array and False otherwise.
     '''
-    if isinstance(data, list):
-        return True
-    elif isinstance(data, (np.ndarray, np.generic)):
-        return True
-    else:
-        return False
+    return isinstance(data, (list, np.ndarray, np.generic))
+
 
 def mpi_barrier():
     if haveMPI4Py:
@@ -291,7 +286,7 @@ def reset_seed(seed, nr_threads):
         nest.SetKernelStatus({'grng_seed': nr_procs*(seed+1) + seed})  
         
 # copied from Masterthesis, Daniel Hjertholm 
-def chi_squared_test(degrees, expected, distribution=None):
+def chi_squared_check(degrees, expected, distribution=None):
         '''
         Create a single network and compare the resulting degree distribution
         with the expected distribution using Pearson's chi-squared GOF test.
@@ -332,7 +327,7 @@ def chi_squared_test(degrees, expected, distribution=None):
             return scipy.stats.chisquare(np.array(degrees), np.array(expected))
     
 # copied from Masterthesis, Daniel Hjertholm
-def two_level_test(n_runs, degrees, expected, verbose=True):
+def two_level_check(n_runs, degrees, expected, verbose=True):
         '''
         Create a network and run chi-squared GOF test n_runs times.
         Test whether resulting p-values are uniformly distributed
@@ -356,8 +351,7 @@ def two_level_test(n_runs, degrees, expected, verbose=True):
 
         for i in range(n_runs):
             if verbose: print("Running test %d of %d." % (i + 1, n_runs))
-            chi, p = chi_squared_test(degrees, expected)
-            print("p-value : %.2f" % p)
+            chi, p = chi_squared_check(degrees, expected)
             pvalues.append(p)
 
         ks, p = scipy.stats.kstest(pvalues, 'uniform',
@@ -366,7 +360,7 @@ def two_level_test(n_runs, degrees, expected, verbose=True):
         return ks, p
 
 # copied from Masterthesis, Daniel Hjertholm
-def adaptive_test(stat_dict, degrees, expected):
+def adaptive_check(stat_dict, degrees, expected):
         '''
         Create a single network using Random{Con/Di}vergentConnect 
         and run a chi-squared GOF test on the connection distribution.
@@ -383,77 +377,94 @@ def adaptive_test(stat_dict, degrees, expected):
             boolean value. True if test was passed, False otherwise.
         '''
 
-        chi, p = chi_squared_test(degrees, expected)
-        print("p-value : %.2f" % p)
+        chi, p = chi_squared_check(degrees, expected)
 
         if stat_dict['alpha1_low'] < p < stat_dict['alpha1_up']:
             return True
         else:
-            ks, p = two_level_test(stat_dict['n_runs'], degrees, expected)
+            ks, p = two_level_check(stat_dict['n_runs'], degrees, expected)
             return True if p > stat_dict['alpha2'] else False
 
-def get_dist_clipped(params, N):
-    test_dist = []
-    for i in range(N):
-        x = np.inf
-        while(x<params['low'] or x>params['high']):
-            if params['distribution'] =='binomial_clipped':
-                x = np.random.binomial(params['n'], params['p'], 1)[0]
-            elif params['distribution'] =='exponential_clipped':
-                x = np.random.exponential(1./params['lambda'], 1)[0]
-            elif params['distribution'] == 'gamma_clipped':
-                x = np.random.gamma(params['order'],params['scale'], 1)[0]
-            elif params['distribution'] == 'lognormal_clipped':
-                x= np.random.lognormal(params['mu'],params['sigma'], 1)[0]
-            elif params['distribution'] =='poisson_clipped':
-                x = np.random.poisson(params['lambda'], 1)[0]
-        test_dist.append(x)
-    return np.asarray(test_dist)
-        
+def get_clipped_cdf(params):
 
-def test_ks(pop1, pop2, label, alpha, params):
+    def clipped_cdf(x):
+        if params['distribution'] == 'lognormal_clipped':
+            cdf_low = scipy.stats.lognorm.cdf(params['low'],params['sigma'],0,np.exp(params['mu']))
+            cdf_x = scipy.stats.lognorm.cdf(x,params['sigma'],0,np.exp(params['mu']))
+            cdf_high = scipy.stats.lognorm.cdf(params['high'],params['sigma'],0,np.exp(params['mu']))
+        elif params['distribution'] == 'exponential_clipped':
+            cdf_low = scipy.stats.expon.cdf(params['low'],0,1./params['lambda'])
+            cdf_x = scipy.stats.expon.cdf(x,0,1./params['lambda'])
+            cdf_high = scipy.stats.expon.cdf(params['high'],0,1./params['lambda'])
+        elif params['distribution'] == 'gamma_clipped':
+            cdf_low = scipy.stats.gamma.cdf(params['low'],params['order'],0,params['scale'])
+            cdf_x = scipy.stats.gamma.cdf(x,params['order'],0,params['scale'])
+            cdf_high = scipy.stats.gamma.cdf(params['high'],params['order'],0,params['scale'])
+        else:
+            raise ValueError("Clipped {} distribution not supported.".format(params['distribution']))
+
+        cdf = (cdf_x - cdf_low) / (cdf_high - cdf_low)
+        cdf[cdf < 0] = 0
+        cdf[cdf > 1] = 1
+
+        return cdf
+
+    return clipped_cdf
+
+def get_expected_freqs(params,x,N):
+    
+    if params['distribution'] == 'uniform_int':
+        expected = scipy.stats.randint.pmf(x,params['low'],params['high']+1)*N
+    elif params['distribution'] == 'binomial' or params['distribution'] == 'binomial_clipped':
+        expected = scipy.stats.binom.pmf(x,params['n'],params['p'])*N
+    elif params['distribution'] == 'poisson':
+        expected = scipy.stats.poisson.pmf(x,params['lambda'])*N
+    elif params['distribution'] == 'poisson_clipped':
+        x = np.arange(scipy.stats.poisson.ppf(1e-8, params['lambda']),scipy.stats.poisson.ppf(0.9999, params['lambda']))
+        expected = scipy.stats.poisson.pmf(x,params['lambda'])
+        expected = expected[np.where(x<=params['high'])]
+        x = x[np.where(x<=params['high'])]
+        expected = expected[np.where(x>=params['low'])]
+        expected = expected/np.sum(expected)*N
+        
+    return expected
+
+
+def check_ks(pop1, pop2, label, alpha, params):
+    clipped_dists = ['exponential_clipped', 'gamma_clipped', 'lognormal_clipped']
+    discrete_dists = ['binomial', 'poisson', 'uniform_int','binomial_clipped', 'poisson_clipped']
     M = get_weighted_connectivity_matrix(pop1,pop2,label)
     M = M.flatten()
-    if params['distribution'] == 'normal':
-        test_dist = np.random.normal(params['mu'], params['sigma'], len(M))
-    elif params['distribution'] =='normal_clipped':
-        m = params['mu']
-        s = params['sigma']
-        a = -np.inf
-        b = np.inf
-        if 'low' in params:
-            a = (params['low']-m)/s
-        if 'high' in params:
-            b = (params['high']-m)/s
-        tn = truncnorm(a, b, loc=m, scale=s)
-        test_dist = tn.rvs(len(M))
-    elif params['distribution'] =='binomial':
-        test_dist = np.random.binomial(params['n'], params['p'], len(M))
-    elif params['distribution'] =='binomial_clipped':
-        test_dist = get_dist_clipped(params, len(M))
-    elif params['distribution'] =='exponential':
-        test_dist = np.random.exponential(1./params['lambda'], len(M))
-    elif params['distribution'] =='exponential_clipped':
-        test_dist = get_dist_clipped(params, len(M))
-    elif params['distribution'] == 'gamma':
-        test_dist = np.random.gamma(params['order'],params['scale'], len(M))
-    elif params['distribution'] =='gamma_clipped':
-        test_dist = get_dist_clipped(params, len(M))
-    elif params['distribution'] == 'lognormal':
-        test_dist = np.random.lognormal(params['mu'],params['sigma'], len(M))
-    elif params['distribution'] =='lognormal_clipped':
-        test_dist = get_dist_clipped(params, len(M))
-    elif params['distribution'] =='poisson':
-        test_dist = np.random.poisson(params['lambda'], len(M))
-    elif params['distribution'] =='poisson_clipped':
-        test_dist = get_dist_clipped(params, len(M))
-    elif params['distribution'] =='uniform':
-        test_dist = np.random.uniform(params['low'], params['high'], len(M))
-    elif params['distribution'] =='uniform_int':
-        test_dist = np.random.randint(params['low'], params['high'], len(M))
-    chi, p = scipy.stats.ks_2samp(M.flatten(),test_dist)
-    print("p-value : %.2f" % p)
-    if p > alpha:
-        return True
+
+    if params['distribution'] in discrete_dists:
+        frequencies = scipy.stats.itemfreq(M)
+        expected = get_expected_freqs(params, frequencies[:, 0], len(M))
+        chi, p = scipy.stats.chisquare(frequencies[:, 1],expected)
+    elif params['distribution'] in clipped_dists:
+        D, p = scipy.stats.kstest(M, get_clipped_cdf(params), alternative='two-sided')
     else:
-        return False
+        if params['distribution'] == 'normal':
+            distrib = scipy.stats.norm
+            args = params['mu'],params['sigma']
+        elif params['distribution'] == 'normal_clipped':
+            distrib = scipy.stats.truncnorm
+            args = ((params['low']-params['mu'])/params['sigma'] if 'low' in params else -np.inf,
+                    (params['high']-params['mu'])/params['sigma'] if 'high' in params else -np.inf,
+                    params['mu'], params['sigma'])
+        elif params['distribution'] == 'exponential':
+            distrib = scipy.stats.expon
+            args = 0, 1./params['lambda']
+        elif params['distribution'] == 'gamma':
+            distrib = scipy.stats.gamma
+            args = params['order'], 0, params['scale']
+        elif params['distribution'] == 'lognormal':
+            distrib = scipy.stats.lognorm
+            args = params['sigma'], 0, np.exp(params['mu'])
+        elif params['distribution'] == 'uniform':
+            distrib = scipy.stats.uniform
+            args = params['low'], params['high']-params['low']
+        else:
+            raise ValueError("{} distribution not supported.".format(params['distribution']))
+        D, p = scipy.stats.kstest(M, distrib.cdf, args=args, alternative='two-sided')
+
+    return p > alpha

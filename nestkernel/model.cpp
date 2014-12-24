@@ -24,6 +24,7 @@
 #include "exceptions.h"
 #include "dictutils.h"
 #include "nestmodule.h"
+#include "compose.hpp"
 #include <algorithm>
 
 namespace nest
@@ -31,6 +32,7 @@ namespace nest
 
   Model::Model(const std::string& name)
     : name_(name),
+      type_id_(0),
       memory_()
   {}
   
@@ -52,10 +54,10 @@ namespace nest
       init_memory_(memory_[i]);
   }
 
-  void Model::reserve(thread t, size_t s)
+  void Model::reserve_additional(thread t, size_t s)
   {
     assert((size_t)t < memory_.size());    
-    memory_[t].reserve(s);
+    memory_[t].reserve_additional(s);
   }
 
   void Model::clear()
@@ -85,7 +87,14 @@ namespace nest
 
   void Model::set_status(DictionaryDatum d)
   {
-    set_status_(d);
+    try 
+    {
+      set_status_(d);
+    }
+    catch (BadProperty& e) 
+    {
+      throw BadProperty(String::compose("Setting status of model '%1': %2", get_name(), e.message()));
+    }
   }
 
   DictionaryDatum Model::get_status(void)

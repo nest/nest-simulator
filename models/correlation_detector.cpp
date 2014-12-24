@@ -31,8 +31,6 @@
 #include <cmath> // for less
 
 
-
-
 /* ---------------------------------------------------------------- 
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
@@ -66,6 +64,7 @@ nest::correlation_detector::State_::State_()
   : n_events_(2, 0),
     incoming_(2),
     histogram_(),
+    histogram_correction_(),
     count_histogram_()
 {}
 
@@ -86,6 +85,7 @@ void nest::correlation_detector::State_::get(DictionaryDatum &d) const
 {
   (*d)[names::n_events]  = IntVectorDatum(new std::vector<long_t>(n_events_));
   (*d)[names::histogram] = DoubleVectorDatum(new std::vector<double_t>(histogram_));
+  (*d)[names::histogram_correction] = DoubleVectorDatum(new std::vector<double_t>(histogram_correction_));
   (*d)[names::count_histogram] = IntVectorDatum(new std::vector<long_t>(count_histogram_));
 }  
 
@@ -159,6 +159,11 @@ void nest::correlation_detector::State_::reset(const Parameters_& p)
                       2 * p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 
                       0);
 
+    histogram_correction_.clear();
+    histogram_correction_.resize(1 + 
+				 2 * p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 
+				 0);
+
     count_histogram_.clear();
     count_histogram_.resize(1 + 
 			    2 * p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 
@@ -201,7 +206,7 @@ void nest::correlation_detector::init_state_(const Node& proto)
 
   device_.init_state(pr.device_); 
   S_ = pr.S_;
-  unset(buffers_initialized);  // force recreation of buffers
+  set_buffers_initialized(false);  // force recreation of buffers
 }
 
 void nest::correlation_detector::init_buffers_()
@@ -252,6 +257,8 @@ void nest::correlation_detector::handle(SpikeEvent & e)
     // all remaining spike times in the queue are >= spike_i - tau_edge, if sender = 0
     // all remaining spike times in the queue are > spike_i - tau_edge, if sender = 1
 
+    // temporary variables for kahan summation algorithm
+    double_t y,t;
 
     // only count events in histogram, if the current event is within the time window [Tstart, Tstop]
     // this is needed in order to prevent boundary effects
@@ -265,22 +272,25 @@ void nest::correlation_detector::handle(SpikeEvent & e)
       // of the spike arriving as second (which is not yet in the deque)
       S_.n_events_[sender]++; // count this spike
 
-
       const long_t sign = 2*sender - 1; // takes into account relative timing of spike from source 1 and source 2
 
       for (SpikelistType::const_iterator spike_j = otherSpikes.begin(); 
 	   spike_j != otherSpikes.end();
 	   ++spike_j)
-	{
-	  const size_t bin = static_cast<size_t>(std::floor( (tau_edge + sign*(spike_i - spike_j->timestep_)) / P_.delta_tau_.get_steps() ) );
-	  assert(bin < S_.histogram_.size());
-	  // weighted histogram
-	  S_.histogram_[bin] += e.get_multiplicity() * e.get_weight() * spike_j->weight_;
-
-	  // pure (unweighted) count histogram
-	  S_.count_histogram_[bin] += e.get_multiplicity();
-	}
-  
+      {
+	const size_t bin = static_cast<size_t>(std::floor( (tau_edge + sign*(spike_i - spike_j->timestep_)) / P_.delta_tau_.get_steps() ) );
+	assert(bin < S_.histogram_.size());
+	assert(bin < S_.histogram_correction_.size());
+	// weighted histogram with kahan summation algorithm
+	y = e.get_multiplicity() * e.get_weight() * spike_j->weight_-S_.histogram_correction_[bin];
+	t = S_.histogram_[bin]+y;
+	S_.histogram_correction_[bin] = (t-S_.histogram_[bin])-y;
+	S_.histogram_[bin] = t;
+	
+	// pure (unweighted) count histogram
+	S_.count_histogram_[bin] += e.get_multiplicity();
+      }
+      
     } // t in [TStart, Tstop]
 
     // store the spike time in the according deque

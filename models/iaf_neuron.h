@@ -135,18 +135,18 @@ SeeAlso: iaf_psc_alpha, testsuite::test_iaf
      * Import sets of overloaded virtual functions.
      * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
-    using Node::connect_sender;
     using Node::handle;
+    using Node::handles_test_event;
 
-    port check_connection(Connection&, port);
+    port send_test_event(Node&, rport, synindex, bool);
     
     void handle(SpikeEvent &);
     void handle(CurrentEvent &);
     void handle(DataLoggingRequest &);
     
-    port connect_sender(SpikeEvent&, port);
-    port connect_sender(CurrentEvent&, port);
-    port connect_sender(DataLoggingRequest&, port);
+    port handles_test_event(SpikeEvent&, rport);
+    port handles_test_event(CurrentEvent&, rport);
+    port handles_test_event(DataLoggingRequest&, rport);
 
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
@@ -298,33 +298,33 @@ SeeAlso: iaf_psc_alpha, testsuite::test_iaf
 };
 
 inline
-port iaf_neuron::check_connection(Connection& c, port receptor_type)
+port iaf_neuron::send_test_event(Node& target, rport receptor_type, synindex, bool)
 {
   SpikeEvent e;
   e.set_sender(*this);
-  c.check_event(e);
-  return c.get_target()->connect_sender(e, receptor_type);
+  
+  return target.handles_test_event(e, receptor_type);
 }
 
 inline
-port iaf_neuron::connect_sender(SpikeEvent&, port receptor_type)
+port iaf_neuron::handles_test_event(SpikeEvent&, rport receptor_type)
 {
   if (receptor_type != 0)
     throw UnknownReceptorType(receptor_type, get_name());
   return 0;
 }
- 
+
 inline
-port iaf_neuron::connect_sender(CurrentEvent&, port receptor_type)
+port iaf_neuron::handles_test_event(CurrentEvent&, rport receptor_type)
 {
   if (receptor_type != 0)
     throw UnknownReceptorType(receptor_type, get_name());
   return 0;
 }
- 
+
 inline
-port iaf_neuron::connect_sender(DataLoggingRequest &dlr, 
-		      port receptor_type)
+port iaf_neuron::handles_test_event(DataLoggingRequest &dlr, 
+				    rport receptor_type)
 {
   if (receptor_type != 0)
     throw UnknownReceptorType(receptor_type, get_name());
@@ -358,7 +358,6 @@ void iaf_neuron::set_status(const DictionaryDatum &d)
   P_ = ptmp;
   S_ = stmp;
 }
-
 
 } // namespace
 

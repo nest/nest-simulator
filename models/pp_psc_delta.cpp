@@ -35,6 +35,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
+#include "compose.hpp"
 
 #include <limits>
 
@@ -70,12 +71,12 @@ nest::pp_psc_delta::Parameters_::Parameters_()
     with_reset_       (    1     ),
     tau_sfa_          (  34.0    ),  // ms
     q_sfa_            (   0.0    ),  // mV, reasonable default is 7 mV [2]
+    multi_param_      (    1     ),
     c_1_              (   0.0    ),  // Hz / mV
     c_2_              (   1.238  ),  // Hz / mV
     c_3_              (   0.25   ),  // 1.0 / mV
     I_e_              (   0.0    ),  // pA
-    t_ref_remaining_  (   0.0    ),   // ms
-    multi_param_      (    1     )
+    t_ref_remaining_  (   0.0    )   // ms
 {
     tau_sfa_.clear();
     q_sfa_.clear();
@@ -162,7 +163,7 @@ try{
  
 
   if (tau_sfa_.size() != q_sfa_.size())
-      throw DimensionMismatch(tau_sfa_.size(), q_sfa_.size());
+    throw BadProperty(String::compose("'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of tau_sfa: %1\nSize of q_sfa: %2", tau_sfa_.size(), q_sfa_.size()));
 
 
   if ( c_m_ <= 0 )

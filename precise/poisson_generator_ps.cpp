@@ -105,8 +105,6 @@ void nest::poisson_generator_ps::init_buffers_()
   // forget all about past, but do not discard connection information
   B_.next_spike_.clear();
   B_.next_spike_.resize(P_.num_targets_, Buffers_::SpikeTime(Time::neg_inf(), 0));
-
-  // connection information retained, therefore port_senders_ not cleared
 }
 
 void nest::poisson_generator_ps::calibrate()
@@ -186,17 +184,6 @@ void nest::poisson_generator_ps::event_hook(DSSpikeEvent& e)
 
   // we handle only one port here, get reference to vector elem
   assert(0 <= prt && static_cast<size_t>(prt) < B_.next_spike_.size());
-
-  const index tgid = e.get_receiver().get_gid();
-  
-  // ensure unique mapping port -> sender, cf #482
-  const Buffers_::PortGIDMap::const_iterator it = B_.port_targets_.find(prt);
-  if ( it == B_.port_targets_.end() )
-    B_.port_targets_[prt] = tgid;  // new port, insert
-  else if ( it->second != tgid )
-    throw IllegalConnection("Non-unique port-target combination. "
-                            "poisson_generator_ps must make all outgoing connections "
-                            "using the same synapse type.");
 
   // obtain rng
   librandom::RngPtr rng = net_->get_rng(get_thread());

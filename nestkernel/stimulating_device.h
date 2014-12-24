@@ -128,17 +128,33 @@ namespace nest {
      */
     bool is_active(const Time&) const;  
     void get_status(DictionaryDatum &d) const;
+
+    //! Throws IllegalConnection if synapse id differs from initial synapse id
+    void enforce_single_syn_type(synindex);
+
+  private:
+
+    /**
+     * Synapse type of the first outgoing connection made by the Device.
+     *
+     * Used to check that devices connect using only a single synapse type,
+     * see #481 and #737. Since this value must survive resets, it is
+     * stored here, even though it is an implementation detail.
+     */
+    synindex first_syn_id_;
   };
 
   template <typename EmittedEvent>
   StimulatingDevice<EmittedEvent>::StimulatingDevice()
-    : Device()
+    : Device(),
+      first_syn_id_(invalid_synindex)
   {}
 
   template <typename EmittedEvent>
   StimulatingDevice<EmittedEvent>::StimulatingDevice(
                  StimulatingDevice<EmittedEvent> const& sd)
-  : Device(sd)
+  : Device(sd),
+    first_syn_id_(invalid_synindex)   // a new instance can have no connections
   {}
 
   // specializations must be declared inside namespace
@@ -178,10 +194,20 @@ namespace nest {
   inline
   void StimulatingDevice<EmittedEvent>::get_status(DictionaryDatum &d) const
   {
-    (*d)[names::type] = LiteralDatum(names::stimulator);
+    (*d)[names::element_type] = LiteralDatum(names::stimulator);
     Device::get_status(d);
   }
 
+  template <typename EmittedEvent>
+  inline
+  void nest::StimulatingDevice<EmittedEvent>::enforce_single_syn_type(synindex syn_id)
+  {
+    if ( first_syn_id_ == invalid_synindex )
+  	  first_syn_id_ = syn_id;
+
+    if ( syn_id != first_syn_id_ )
+  	  throw IllegalConnection("All outgoing connections from a device must use the same synapse type.");
+  }
 }  // namespace nest
 
 #endif

@@ -115,11 +115,11 @@ syn_params_in = {"model": "inhibitory",
                  "receptor_type": {"distribution": "uniform_int", "low": 1, "high": nr_ports}
                 }
  
-nest.Connect(noise,nodes_ex, 'all_to_all', syn_params_ex)
-nest.Connect(noise,nodes_in, 'all_to_all', syn_params_ex)
+nest.Connect(noise, nodes_ex, syn_spec=syn_params_ex)
+nest.Connect(noise, nodes_in, syn_spec=syn_params_ex)
 
-nest.Connect(nodes_ex[:N_rec], espikes, 'all_to_all', "excitatory")
-nest.Connect(nodes_in[:N_rec], ispikes, 'all_to_all', "excitatory")
+nest.Connect(nodes_ex[:N_rec], espikes, syn_spec="excitatory")
+nest.Connect(nodes_in[:N_rec], ispikes, syn_spec="excitatory")
 
 print("Connecting network")
 

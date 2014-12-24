@@ -25,7 +25,7 @@
 
 #include "nest.h"
 #include "event.h"
-#include "node.h"
+#include "archiving_node.h"
 #include "ring_buffer.h"
 #include "connection.h"
 #include "universal_data_logger.h"
@@ -85,7 +85,7 @@ iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
   /**
    * Non-leaky integrate-and-fire neuron with alpha-shaped PSCs.
    */
-  class pif_psc_alpha : public nest::Node
+  class pif_psc_alpha : public nest::Archiving_Node
   {
   public:
 
@@ -107,13 +107,13 @@ iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
      * This is necessary to ensure proper overload and overriding resolution.
      * @see http://www.gotw.ca/gotw/005.htm.
      */
-    using nest::Node::connect_sender;
     using nest::Node::handle;
+    using nest::Node::handles_test_event;
 
     /**
      * Used to validate that we can send SpikeEvent to desired target:port.
      */
-    nest::port check_connection(nest::Connection&, nest::port);
+    nest::port send_test_event(nest::Node&, nest::port, nest::synindex, bool);
 
     /**
      * @defgroup mynest_handle Functions handling incoming events.
@@ -125,9 +125,9 @@ iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
     void handle(nest::CurrentEvent &);      //! accept input current
     void handle(nest::DataLoggingRequest &);//! allow recording with multimeter
 
-    nest::port connect_sender(nest::SpikeEvent&, nest::port);
-    nest::port connect_sender(nest::CurrentEvent&, nest::port);
-    nest::port connect_sender(nest::DataLoggingRequest&, nest::port);
+    nest::port handles_test_event(nest::SpikeEvent&, nest::port);
+    nest::port handles_test_event(nest::CurrentEvent&, nest::port);
+    nest::port handles_test_event(nest::DataLoggingRequest&, nest::port);
     /** @} */
 
     void get_status(DictionaryDatum &) const;
@@ -306,19 +306,19 @@ iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
   };
 
 inline
-nest::port mynest::pif_psc_alpha::check_connection(nest::Connection& c, nest::port receptor_type)
+nest::port mynest::pif_psc_alpha::send_test_event(nest::Node& target, nest::port receptor_type,
+												  nest::synindex, bool)
 {
   // You should usually not change the code in this function.
   // It confirms that the target of connection @c c accepts @c SpikeEvent on
   // the given @c receptor_type.
   nest::SpikeEvent e;
   e.set_sender(*this);
-  c.check_event(e);
-  return c.get_target()->connect_sender(e, receptor_type);
+  return target.handles_test_event(e, receptor_type);
 }
 
 inline
-nest::port mynest::pif_psc_alpha::connect_sender(nest::SpikeEvent&, nest::port receptor_type)
+nest::port mynest::pif_psc_alpha::handles_test_event(nest::SpikeEvent&, nest::port receptor_type)
 {
   // You should usually not change the code in this function.
   // It confirms to the connection management system that we are able
@@ -330,7 +330,7 @@ nest::port mynest::pif_psc_alpha::connect_sender(nest::SpikeEvent&, nest::port r
 }
 
 inline
-nest::port mynest::pif_psc_alpha::connect_sender(nest::CurrentEvent&, nest::port receptor_type)
+nest::port mynest::pif_psc_alpha::handles_test_event(nest::CurrentEvent&, nest::port receptor_type)
 {
   // You should usually not change the code in this function.
   // It confirms to the connection management system that we are able
@@ -342,7 +342,7 @@ nest::port mynest::pif_psc_alpha::connect_sender(nest::CurrentEvent&, nest::port
 }
 
 inline
-nest::port mynest::pif_psc_alpha::connect_sender(nest::DataLoggingRequest& dlr,
+nest::port mynest::pif_psc_alpha::handles_test_event(nest::DataLoggingRequest& dlr,
 						 nest::port receptor_type)
 {
   // You should usually not change the code in this function.
@@ -359,8 +359,13 @@ nest::port mynest::pif_psc_alpha::connect_sender(nest::DataLoggingRequest& dlr,
 inline
 void pif_psc_alpha::get_status(DictionaryDatum &d) const
 {
+  // get our own parameter and state data
   P_.get(d);
   S_.get(d);
+
+  // get information managed by parent class
+  Archiving_Node::get_status(d);
+
   (*d)[nest::names::recordables] = recordablesMap_.get_list();
 }
 
@@ -371,6 +376,12 @@ void pif_psc_alpha::set_status(const DictionaryDatum &d)
   ptmp.set(d);                       // throws if BadProperty
   State_      stmp = S_;  // temporary copy in case of errors
   stmp.set(d, ptmp);                 // throws if BadProperty
+
+  // We now know that (ptmp, stmp) are consistent. We do not
+  // write them back to (P_, S_) before we are also sure that
+  // the properties to be set in the parent class are internally
+  // consistent.
+  Archiving_Node::set_status(d);
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

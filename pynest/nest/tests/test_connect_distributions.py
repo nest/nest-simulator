@@ -20,9 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-import numpy as np
 import nest
-import test_connect_helpers as hf
+from . import test_connect_helpers as hf
+
+HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 
 class TestDists(unittest.TestCase):
 
@@ -40,7 +41,10 @@ class TestDists(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.SetKernelStatus({'local_num_threads': 2})
+        #nest.SetKernelStatus({'local_num_threads': 1})
+        nest.SetKernelStatus({'local_num_threads': 2,
+                              'grng_seed': 120,
+                              'rng_seeds': [576, 886]})
         pass
 
     def setUpNetwork(self, conn_params=None, syn_dict=None):
@@ -52,6 +56,16 @@ class TestDists(unittest.TestCase):
 
     def testNormalDist(self):
         syn_params = self.syn_dict.copy()
+        distribution = 'normal'
+        mean = 4.5
+        std = 2.0
+        syn_params[self.label] = {'distribution': distribution, 'mu': mean, 'sigma': std}
+        self.setUpNetwork(self.conn_dict,syn_params)
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        self.assertTrue(is_dist)
+
+    def testNormalClippedDist(self):
+        syn_params = self.syn_dict.copy()
         distribution = 'normal_clipped'
         mean = 1.0
         std = 2.0
@@ -59,7 +73,7 @@ class TestDists(unittest.TestCase):
         xmax = 10.2
         syn_params[self.label] = {'distribution': distribution, 'mu': mean, 'sigma': std, 'low': xmin, 'high': xmax}
         self.setUpNetwork(self.conn_dict,syn_params)
-        is_dist = hf.test_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
         self.assertTrue(is_dist)
 
     def testBinomialDist(self): 
@@ -69,7 +83,7 @@ class TestDists(unittest.TestCase):
         p = 0.4
         syn_params[self.label] = {'distribution': distribution, 'n': n,'p': p}
         self.setUpNetwork(self.conn_dict,syn_params)
-        is_dist = hf.test_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
         self.assertTrue(is_dist)
 
     def testBinomialClippedDist(self):
@@ -77,13 +91,14 @@ class TestDists(unittest.TestCase):
         distribution = 'binomial_clipped'
         n = 50
         p = 0.4
-        xmin = 20
-        xmax = 70
+        xmin = 10
+        xmax = 30
         syn_params[self.label] = {'distribution': distribution, 'n': n,'p': p, 'low': xmin, 'high': xmax}
         self.setUpNetwork(self.conn_dict,syn_params)
-        is_dist = hf.test_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
         self.assertTrue(is_dist)
 
+    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def testGslBinomialDist(self): 
         syn_params = self.syn_dict.copy()
         distribution = 'gsl_binomial'
@@ -92,7 +107,7 @@ class TestDists(unittest.TestCase):
         syn_params[self.label] = {'distribution': distribution, 'n': n,'p': p}
         self.setUpNetwork(self.conn_dict,syn_params)
         syn_params[self.label]['distribution'] = 'binomial'
-        is_dist = hf.test_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
         self.assertTrue(is_dist)
 
     def testExponentialDist(self):
@@ -101,7 +116,7 @@ class TestDists(unittest.TestCase):
         l = 1.7
         syn_params[self.label] = {'distribution': distribution, 'lambda': l}
         self.setUpNetwork(self.conn_dict,syn_params)
-        is_dist = hf.test_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
         self.assertTrue(is_dist)
 
     def testExponentialClippedDist(self):
@@ -112,7 +127,7 @@ class TestDists(unittest.TestCase):
         xmax = 2.0
         syn_params[self.label] = {'distribution': distribution, 'lambda': l, 'low': xmin, 'high': xmax}
         self.setUpNetwork(self.conn_dict,syn_params)
-        is_dist = hf.test_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
         self.assertTrue(is_dist)
 
     def testGammaDist(self):
@@ -122,7 +137,7 @@ class TestDists(unittest.TestCase):
         scale = 0.75
         syn_params[self.label] = {'distribution': distribution, 'order': order, 'scale': scale}
         self.setUpNetwork(self.conn_dict,syn_params)
-        is_dist = hf.test_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
         self.assertTrue(is_dist)
 
     def testGammaClippedDist(self): 
@@ -134,7 +149,7 @@ class TestDists(unittest.TestCase):
         xmax = 1.5
         syn_params[self.label] = {'distribution': distribution, 'order': order, 'scale': scale, 'low': xmin, 'high': xmax}
         self.setUpNetwork(self.conn_dict,syn_params)
-        is_dist = hf.test_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
         self.assertTrue(is_dist)
 
     def testLognormalDist(self):
@@ -144,7 +159,7 @@ class TestDists(unittest.TestCase):
         std = 1.2
         syn_params[self.label] = {'distribution': distribution, 'mu': mean, 'sigma': std}
         self.setUpNetwork(self.conn_dict,syn_params)
-        is_dist = hf.test_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label]) 
         self.assertTrue(is_dist)
 
     def testLognormalClippedDist(self):
@@ -156,7 +171,7 @@ class TestDists(unittest.TestCase):
         xmax = 10.3
         syn_params[self.label] = {'distribution': distribution, 'mu': mean, 'sigma': std, 'low': xmin, 'high': xmax}
         self.setUpNetwork(self.conn_dict,syn_params)
-        is_dist = hf.test_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
         self.assertTrue(is_dist)
 
     def testPoissonDist(self):
@@ -166,7 +181,7 @@ class TestDists(unittest.TestCase):
         l = 5.1
         syn_params[self.label] = {'distribution': distribution, 'lambda': l}
         self.setUpNetwork(self.conn_dict,syn_params)
-        is_dist = hf.test_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
         self.assertTrue(is_dist)
 
     def testPoissonClippedDist(self):
@@ -178,7 +193,7 @@ class TestDists(unittest.TestCase):
         xmax = 8
         syn_params[self.label] = {'distribution': distribution, 'lambda': l, 'low': xmin, 'high': xmax}
         self.setUpNetwork(self.conn_dict,syn_params)
-        is_dist = hf.test_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
         self.assertTrue(is_dist)
 
     def testUniformDist(self):
@@ -188,7 +203,7 @@ class TestDists(unittest.TestCase):
         b = 4.5
         syn_params[self.label] = {'distribution': distribution, 'low': a, 'high': b}
         self.setUpNetwork(self.conn_dict,syn_params)
-        is_dist = hf.test_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
         self.assertTrue(is_dist)
 
     def testUniformIntDist(self):
@@ -198,11 +213,13 @@ class TestDists(unittest.TestCase):
         high = 100
         syn_params[self.label] = {'distribution': distribution, 'low': low, 'high': high}
         self.setUpNetwork(self.conn_dict,syn_params)
-        is_dist = hf.test_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
+        is_dist = hf.check_ks(self.pop1, self.pop2, self.label, self.pval, syn_params[self.label])
         self.assertTrue(is_dist)
         
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestDists)
     unittest.TextTestRunner(verbosity=2).run(suite)
- 
+    #suite = unittest.TestSuite()
+    #suite.addTest(TestDists('testGslBinomialDist'))
+    #unittest.TextTestRunner().run(suite)

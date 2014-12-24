@@ -270,17 +270,7 @@ SpecialFunctionsModule::GaussDiskConvFunction::execute(SLIInterpreter *i) const
 {
 
   i->EStack.pop();              // pop yourself
-  // Typechecking should have been done by the trie, so that
-  // we can assume the correct stack layout here.
-
-  /*
-  if (i->OStack.load() < 2) {   // expect two arguments on stack
-       i->message(std::cout, SLIInterpreter::M_ERROR,
-		  "GaussDiskConv","two arguments required");
-    i->raiseerror("GaussDiskConv", "ArgumentType");
-    return;
-  }
-  */
+  i->assert_stack_load(2);
   
   double r0 = i->OStack.top();
   double R  = i->OStack.pick(1);

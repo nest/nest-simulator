@@ -241,6 +241,7 @@ void nest::iaf_psc_delta::update(Time const & origin,
   assert(to >= 0 && (delay) from < Scheduler::get_min_delay());
   assert(from < to);
 
+  const double_t h = Time::get_resolution().get_ms();
   for ( long_t lag = from ; lag < to ; ++lag )
   {
     if ( S_.r_ == 0 )
@@ -265,7 +266,7 @@ void nest::iaf_psc_delta::update(Time const & origin,
       // for decay until end of refractory period
       if ( P_.with_refr_input_ )
 	S_.refr_spikes_buffer_ += B_.spikes_.get_value(lag)
-	  * std::exp(-S_.r_ * Time::get_resolution().get_ms() / P_.tau_m_);
+	  * std::exp(-S_.r_ * h / P_.tau_m_);
       else
 	B_.spikes_.get_value(lag);  // clear buffer entry, ignore spike
 

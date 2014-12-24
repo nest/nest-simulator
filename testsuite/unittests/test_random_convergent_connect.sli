@@ -22,11 +22,11 @@
 
 
 /* BeginDocumentation
-   Name: testsuite::test_random_divergent_connect - sli script to test the RandomDivergentConnect function using global rng.
+   Name: testsuite::test_random_convergent_connect - sli script to test the RandomConvergentConnect function using global rng.
 
-   Synopsis: (test_random_divergent_connect) run -> compare response with reference data
+   Synopsis: (test_random_convergent_connect) run -> compare response with reference data
 
-   Description: Tests the use of the RandomDivergentConnect function by 
+   Description: Tests the use of the RandomConvergentConnect function by 
    creating a single one-to-many connection with this function. The test
    script confirms that the function creates the right number of connections
    and that the connections are in the list of possible connections. The

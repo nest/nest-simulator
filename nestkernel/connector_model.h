@@ -20,142 +20,150 @@
  *
  */
 
-/*
- * first version
- * date: march 2006
- * author: Moritz Helias
- */
-
-#ifndef CONNECTORMODEL_H
-#define CONNECTORMODEL_H
+#ifndef CONNECTOR_MODEL_H
+#define CONNECTOR_MODEL_H
 
 #include "nest_time.h"
-#include "nest_timeconverter.h"
+#include "dictutils.h"
+#include "nest.h"
+#include <cmath>
 
 namespace nest
 {
-  class Connector;
+  class ConnectorBase;
+  class CommonSynapseProperties;
+  class TimeConverter;
+  class Node;
 
-/**
- * Defines abstract base class for ConnectorModel.
- * These virtual functions constitute the interface between ConnectionManager
- * and the ConnectorModel.
- * The interface between ConnectModel and Connector does not enter here,
- * since by using templates both of them have fixed type.
- */
-class ConnectorModel
-{
+  class ConnectorModel
+  {
 
- public:
-  ConnectorModel(Network& net, std::string);
-  ConnectorModel(const ConnectorModel &, std::string);
-  virtual ~ConnectorModel() {}
+  public:
+    ConnectorModel(Network & net, const std::string);
+    ConnectorModel(const ConnectorModel &, const std::string);
+    virtual ~ConnectorModel() {}
 
-  virtual ConnectorModel* clone(std::string) const = 0;
-  virtual void get_status(DictionaryDatum& d) const = 0;
-  virtual void set_status(const DictionaryDatum& d) = 0;
-  virtual Connector* get_connector() = 0;
-  virtual void calibrate(const TimeConverter &) = 0;
-  virtual void reset() = 0;
+    size_t get_num_connections() const;
+  
+    const Time & get_min_delay() const { return min_delay_; }
+    const Time & get_max_delay() const { return max_delay_; }
 
-  const Time get_min_delay() const;
-  const Time get_max_delay() const;
+    void update_delay_extrema(const double_t mindelay_cand, const double_t maxdelay_cand);
 
-  void set_min_delay(const Time &min_delay);
-  void set_max_delay(const Time &max_delay);
+    /**
+     * NAN is a special value in cmath, which describes double values that
+     * are not a number. If delay or weight is omitted in an add_connection call,
+     * NAN indicates this and weight/delay are set only, if they are valid.
+     */
+    virtual ConnectorBase * add_connection(Node & src, Node & tgt, ConnectorBase* conn, synindex syn_id,
+                                           double_t delay=NAN, double_t weight=NAN) = 0;
+    virtual ConnectorBase * add_connection(Node & src, Node & tgt, ConnectorBase* conn, synindex syn_id,
+				           DictionaryDatum& d, double_t delay=NAN, double_t weight=NAN) = 0;
 
-  Network & network() const;
+    virtual ConnectorModel* clone(std::string) const = 0;
 
-  /**
-   * Update min_delay and max_delay based on the delay given as argument
-   * \param delay The delay to update min_delay and max_delay
-   */
-  void update_delay_extrema(const double_t mindelay, const double_t maxdelay);
+    virtual void calibrate(const TimeConverter & tc) = 0;
+    
+    virtual void get_status(DictionaryDatum &) const = 0;
+    virtual void set_status(const DictionaryDatum &) = 0;
 
-  /**
-   * Check, if delay is in agreement with min_delay, max_delay and resolution.
-   */
-  bool check_delay(double_t new_delay);
-  bool check_delays(double_t delay1, double_t delay2);
+    virtual const CommonSynapseProperties & get_common_properties() const = 0;
 
-  void set_num_connections(size_t);
-  size_t get_num_connections() const;
+    virtual void set_syn_id(synindex syn_id) = 0;
 
-  size_t get_num_connectors() const;
 
-  std::string get_name() const;
+    /**
+     * Raise exception if delay value in milliseconds is invalid.
+     *
+     * @note Not const, since it may update delay extrema as a side-effect.
+     */
+    void assert_valid_delay_ms(double_t);
 
-  bool get_user_set_delay_extrema() const;
+    /**
+     * Raise exception if either of the two delays in steps is invalid.
+     *
+     * @note Setting continuous delays requires testing d and d+1. This function
+     *       implements this more efficiently than two calls to assert_valid_delay().
+     * @note This test accepts the delays in steps, as this makes more sense when
+     *       working with continuous delays.
+     * @note Not const, since it may update delay extrema as a side-effect.
+     */
+    void assert_two_valid_delays_steps(long_t, long_t);
 
- protected:
-  Network &net_;                    //!< The Network instance.
-  Time min_delay_;                  //!< Minimal delay of all created synapses.
-  Time max_delay_;                  //!< Maximal delay of all created synapses.
-  size_t num_connections_;          //!< The number of connections registered with this type
-  size_t num_connectors_;           //!< The number of connectors registered with this type
-  bool default_delay_needs_check_;  //!< Flag indicating, that the default delay must be checked
-  bool user_set_delay_extrema_;     //!< Flag indicating if the user set the delay extrema.
+    std::string get_name() const { return name_; }
 
- private:
-  std::string name_;
-};
+    bool get_user_set_delay_extrema() const { return user_set_delay_extrema_; }
 
+    Network & network() const { return net_; }
+
+  protected:
+    Network &net_;                    //!< The Network instance.
+    Time min_delay_;                  //!< Minimal delay of all created synapses.
+    Time max_delay_;                  //!< Maximal delay of all created synapses.
+    size_t num_connections_;          //!< The number of connections registered with this type
+    bool default_delay_needs_check_;  //!< Flag indicating, that the default delay must be checked
+    bool user_set_delay_extrema_;     //!< Flag indicating if the user set the delay extrema.
+    bool used_default_delay_;
+    std::string name_;
+
+  }; // ConnectorModel
+
+
+  template < typename ConnectionT >
+  class GenericConnectorModel : public ConnectorModel
+  {
+    typename ConnectionT::CommonPropertiesType cp_;
+    ConnectionT default_connection_;
+    rport receptor_type_;
+
+  public:
+
+    GenericConnectorModel(Network & net, const std::string name)
+            : ConnectorModel(net, name),
+              receptor_type_(0)
+    {}
+  
+    GenericConnectorModel(const GenericConnectorModel &cm, const std::string name)
+            : ConnectorModel(cm, name),
+              cp_(cm.cp_),
+              default_connection_(cm.default_connection_),
+              receptor_type_(cm.receptor_type_)
+    {}
+
+    ConnectorBase* add_connection(Node& src, Node& tgt, ConnectorBase* conn, synindex syn_id,
+                                  double_t weight, double_t delay);
+    ConnectorBase* add_connection(Node& src, Node& tgt, ConnectorBase* conn, synindex syn_id,
+                                  DictionaryDatum& d, double_t weight, double_t delay);
+
+    ConnectorModel* clone(std::string) const;
+
+    void calibrate(const TimeConverter &tc);
+
+    void get_status(DictionaryDatum &) const;
+    void set_status(const DictionaryDatum &);
+
+    typename ConnectionT::CommonPropertiesType const & get_common_properties() const { return cp_; }
+
+    void set_syn_id(synindex syn_id);
+
+    ConnectionT const & get_default_connection() const { return default_connection_; }
+
+  private:
+
+    void used_default_delay();
+
+    ConnectorBase * add_connection(Node& src, Node& tgt, ConnectorBase* conn, synindex syn_id,
+                                   ConnectionT& c, rport receptor_type);
+
+  }; // GenericConnectorModel
 
 inline
-Network& ConnectorModel::network() const
+size_t ConnectorModel::get_num_connections() const
 {
-  return net_;
-}
-
-inline 
-const Time ConnectorModel::get_min_delay() const
-{
-  return min_delay_;
-}
-
-inline
-const Time ConnectorModel::get_max_delay() const
-{
-  return max_delay_;
-}
-
-inline 
-void ConnectorModel::set_min_delay(const Time &min_delay)
-{
-  min_delay_ = min_delay;
-}
-
-inline 
-void ConnectorModel::set_max_delay(const Time &max_delay)
-{
-  max_delay_ = max_delay;
-}
-
-inline
-void ConnectorModel::set_num_connections(size_t num_connections)
-{
-  num_connections_ = num_connections;
-}
-
-inline
-size_t ConnectorModel::get_num_connectors() const
-{
-  return num_connectors_;
-}
-
-inline
-std::string ConnectorModel::get_name() const
-{
-  return name_;
-}
-
-inline
-bool ConnectorModel::get_user_set_delay_extrema() const
-{
-  return user_set_delay_extrema_;
+  return num_connections_;
 }
 
 
-} // namespace
+} // namespace nest
 
-#endif /* #ifndef CONNECTORMODEL_H */
+#endif /* #ifndef CONNECTOR_MODEL_H */

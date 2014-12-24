@@ -78,7 +78,7 @@ namespace nest
      Receives: SpikeEvent, PotentialRequest
      FirstVersion: February 2013
      Author: Moritz Helias
-     SeeAlso: binary_neuron, pp_psc_delta
+     SeeAlso: pp_psc_delta
   */
 
   class gainfunction_mcculloch_pitts

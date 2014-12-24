@@ -50,6 +50,8 @@ namespace nest
   {
     // use standard names whereever you can for consistency!
     insert_(names::V_m, &iaf_psc_alpha_canon::get_V_m_);
+    insert_("y2", &iaf_psc_alpha_canon::get_y2_);
+    insert_("y1", &iaf_psc_alpha_canon::get_y1_);
   }
 }
 
@@ -162,6 +164,8 @@ void nest::iaf_psc_alpha_canon::State_::get(DictionaryDatum &d,
                                             const Parameters_& p) const
 {
   def<double>(d, names::V_m, y3_ + p.E_L_); // Membrane potential
+  def<double>(d, "y1", y1_); // y1 state
+  def<double>(d, "y2", y2_); // y2 state
   def<double>(d, names::t_spike, Time(Time::step(last_spike_step_)).get_ms());
   def<double>(d, names::offset, last_spike_offset_);
   def<bool>(d, names::is_refractory, is_refractory_);
@@ -173,6 +177,9 @@ void nest::iaf_psc_alpha_canon::State_::set(const DictionaryDatum& d, const Para
     y3_ -= p.E_L_;
   else
     y3_ -= delta_EL;
+
+  updateValue<double>(d, "y1", y1_);
+  updateValue<double>(d, "y2", y2_);
 }
 
 nest::iaf_psc_alpha_canon::Buffers_::Buffers_(iaf_psc_alpha_canon& n)

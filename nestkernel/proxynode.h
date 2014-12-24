@@ -29,7 +29,6 @@ namespace nest
 {
   class SpikeEvent;
   class CurrentEvent;
-  class Connection;
 
 /* BeginDocumentation
 Name: proxynode - Proxy to provide Nodes on remote machines
@@ -47,7 +46,7 @@ Author: June 2005, Jochen Martin Eppler
   {    
     
   public:        
-    proxynode() : Node() {set(frozen);}
+    proxynode() : Node() { set_frozen_(true); }
     
     /**
      * Construct proxy node for internal use from
@@ -66,13 +65,11 @@ Author: June 2005, Jochen Martin Eppler
      * way of doing things, although all other compilers
      * happily live without.
      */
-    using Node::connect_sender;
     using Node::handle;
     
-    port check_connection(Connection&, port);
+    port send_test_event(Node&, rport, synindex, bool);
     void handle(SpikeEvent &) {}
-    port connect_sender(SpikeEvent &) {return 0;}
-
+    
     void get_status(DictionaryDatum &) const {}
     
     /**

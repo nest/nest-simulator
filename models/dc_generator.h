@@ -78,7 +78,7 @@ namespace nest
 
     bool has_proxies() const {return false;} 
 
-    port check_connection(Connection&, port);
+    port send_test_event(Node&, rport, synindex, bool);
     
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
@@ -111,13 +111,15 @@ namespace nest
     Parameters_ P_;
   };
 
-  inline  
-  port dc_generator::check_connection(Connection& c, port receptor_type)
+  inline
+  port dc_generator::send_test_event(Node& target, rport receptor_type, synindex syn_id, bool)
   {
-    CurrentEvent e;
+	device_.enforce_single_syn_type(syn_id);
+
+	CurrentEvent e;
     e.set_sender(*this);
-    c.check_event(e);
-    return c.get_target()->connect_sender(e, receptor_type);
+  
+    return target.handles_test_event(e, receptor_type);
   }
   
   inline

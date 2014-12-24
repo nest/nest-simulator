@@ -38,6 +38,15 @@ Author: Hans Ekkehard Plesser, 2012-12-03
 
 M_ERROR setverbosity
 
+% The following two tests must fail for one of two reasons:
+% 
+% 1. NEST was built without OpenMP/Thread support. Then,
+%    changing the number of threads either directly or
+%    through total_num_virtual_procs must fail.
+% 2. NEST was built with thread support. Then, changing
+%    the number of threads after changing the resolution
+%    must raise an error.
+
 % test against changing local_num_threads
 { 
   ResetKernel
@@ -56,7 +65,13 @@ M_ERROR setverbosity
   0 << /total_num_virtual_procs new_procs >> SetStatus
 } fail_or_die
 
-% don't run the remaining tests if we didn't compile with threads
+
+% The remaining tests require that the number of threads
+% or virtual processes can be changed from within the
+% running process; they check that the correct number
+% of threads/VPs is set.
+% These tests can therefore only run if NEST is threaded.
+
 is_threaded not { exit_test_gracefully } if
 
 % check that we can change either way before setting resolution

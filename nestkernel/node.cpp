@@ -28,6 +28,7 @@
 #include "namedatum.h"
 #include "arraydatum.h"
 #include "dictutils.h"
+#include "compose.hpp"
 
 namespace nest {
 
@@ -36,30 +37,26 @@ namespace nest {
   Node::Node()
       :gid_(0),
        lid_(0),
+       thread_lid_(invalid_index),
        model_id_(-1),
        parent_(0),
-       stat_(),
        thread_(0),
-       vp_(invalid_thread_)
+       vp_(invalid_thread_),
+       frozen_(false),
+       buffers_initialized_(false)
   {
-    /**
-     *
-     * the scheduler starts with update_reference()==true,
-     * thus we must reset the updated flag, so that
-     * is_updated() will return false at the beginning of
-     * each time-slice.
-     */
-    stat_.reset(updated); //!< Set to opposite of the scheduler's value
   }
 
   Node::Node(const Node &n)
       :gid_(0),
        lid_(0),
+       thread_lid_(n.thread_lid_),
        model_id_(n.model_id_),
        parent_(n.parent_),
-       stat_(n.stat_),  // copied from model prototype, frozen may be set
        thread_(n.thread_),
-       vp_(n.vp_)
+       vp_(n.vp_),
+       frozen_(n.frozen_),
+       buffers_initialized_(false)  // copy must always initialized its own buffers
   {
   }
 
@@ -75,11 +72,12 @@ namespace nest {
   
   void Node::init_buffers()
   {
-    if ( stat_.test(buffers_initialized) )
+    if ( buffers_initialized_ )
       return;
-      
+
     init_buffers_();
-    stat_.set(buffers_initialized);
+
+    buffers_initialized_ = true;
   }
   
   std::string Node::get_name() const
@@ -97,11 +95,6 @@ namespace nest {
     
     return *net_->get_model(model_id_);
   }      
-
-  bool Node::is_updated() const
-  {
-    return stat_.test(updated)==net_->update_reference();
-  }
 
   bool Node::is_local() const
   {
@@ -127,7 +120,6 @@ namespace nest {
     if ( is_local() )
     {
       (*dict)[names::global_id] = get_gid();
-      (*dict)[names::state] = get_status_flag();
       (*dict)[names::frozen] = is_frozen();
       (*dict)[names::thread] = get_thread();
       (*dict)[names::vp] = get_vp();
@@ -142,10 +134,12 @@ namespace nest {
       }
     }
 
+    (*dict)[names::thread_local_id] = get_thread_lid();
+
     // This is overwritten with a corresponding value in the
     // base classes for stimulating and recording devices, and
     // in other special node classes
-    (*dict)[names::type] = LiteralDatum(names::neuron);
+    (*dict)[names::element_type] = LiteralDatum(names::neuron);
 
     // now call the child class' hook
     get_status(dict);
@@ -157,31 +151,24 @@ namespace nest {
   void Node::set_status_base(const DictionaryDatum &dict)
   {
     assert(dict.valid());
-
-    // We call the child's set_status first, so that the Node remains
-    // unchanged if the child should throw an exception.
-    set_status(dict);
-
-    if(dict->known(names::frozen))
+    try 
     {
-      bool frozen_val=(*dict)[names::frozen];
-
-      if( frozen_val == true )
-	set(frozen);
-      else
-	unset(frozen);
+      set_status(dict);
+    } 
+    catch (BadProperty& e) 
+    {
+      throw BadProperty(String::compose("Setting status of a '%1' with GID %2: %3", get_name(), get_gid(), e.message()));
     }
-    if(net_)
-      net_->force_preparation(); // re-prepeare simulation
+    
+    updateValue<bool>(dict, names::frozen, frozen_);
   }
 
   /**
    * Default implementation of check_connection just throws UnexpectedEvent
    */
-  port Node::check_connection(Connection&, port)
+  port Node::send_test_event(Node&, rport, synindex, bool)
   {
     throw UnexpectedEvent();
-    return invalid_port_;
   }
 
   /**
@@ -213,10 +200,9 @@ namespace nest {
     throw UnexpectedEvent();
   }
 
-  port Node::connect_sender(SpikeEvent&, port)
+  port Node::handles_test_event(SpikeEvent&, rport)
   {
     throw IllegalConnection();
-    return invalid_port_;
   }
 
   void Node::handle(RateEvent&)
@@ -224,10 +210,9 @@ namespace nest {
     throw UnexpectedEvent();
   }
 
-  port Node::connect_sender(RateEvent&, port)
+  port Node::handles_test_event(RateEvent&, rport)
   {
     throw IllegalConnection();
-    return invalid_port_;
   }
 
   void Node::handle(CurrentEvent&)
@@ -235,10 +220,9 @@ namespace nest {
     throw UnexpectedEvent();
   }
 
-  port Node::connect_sender(CurrentEvent&, port)
+  port Node::handles_test_event(CurrentEvent&, rport)
   {
     throw IllegalConnection();
-    return invalid_port_;
   }
 
   void Node::handle(DataLoggingRequest&)
@@ -246,10 +230,9 @@ namespace nest {
     throw UnexpectedEvent();
   }
 
-  port Node::connect_sender(DataLoggingRequest&, port)
+  port Node::handles_test_event(DataLoggingRequest&, rport)
   {
-    throw IllegalConnection();
-    return invalid_port_;
+    throw IllegalConnection("Possible cause: only static synapse types may be used to connect devices.");
   }
 
   void Node::handle(DataLoggingReply&)
@@ -262,10 +245,9 @@ namespace nest {
     throw UnexpectedEvent();
   }
 
-  port Node::connect_sender(ConductanceEvent&, port)
+  port Node::handles_test_event(ConductanceEvent&, rport)
   {
     throw IllegalConnection();
-    return invalid_port_;
   }
 
   void Node::handle(DoubleDataEvent&)
@@ -273,16 +255,24 @@ namespace nest {
     throw UnexpectedEvent();
   }
 
-  port Node::connect_sender(DoubleDataEvent&, port)
+  port Node::handles_test_event(DoubleDataEvent&, rport)
   {
     throw IllegalConnection();
-    return invalid_port_;
+  }
+
+  port Node::handles_test_event(DSSpikeEvent&, rport)
+  {
+    throw IllegalConnection("Possible cause: only static synapse types may be used to connect devices.");
+  }
+
+  port Node::handles_test_event(DSCurrentEvent&, rport)
+  {
+    throw IllegalConnection("Possible cause: only static synapse types may be used to connect devices.");
   }
 
   double_t Node::get_K_value(double_t)
   {
     throw UnexpectedEvent();
-    return 0;
   }
 
 
@@ -318,7 +308,7 @@ namespace nest {
     e.get_receiver().handle(e);
   }
 
-  bool Node::allow_entry() const
+  bool Node::is_subnet() const
   {
     return false;
   }

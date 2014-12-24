@@ -88,19 +88,15 @@ namespace nest
     void clear();
 
     /**
-     * Reserve memory for at least n new Nodes.
-     * A number of memory managers work more efficently, if they have
+     * Reserve memory for at least n additional Nodes.
+     * A number of memory managers work more efficently if they have
      * an idea about the number of Nodes to be allocated.
      * This function prepares the memory manager for the subsequent
-     * allocation of n Nodes.
+     * allocation of n additional Nodes.
      * @param t Thread for which the Nodes are reserved.
      * @param n Number of Nodes to be allocated.
-     * @note Due to the semantics of sli::pool::reserve(), this reserve()
-     * ensures that there is space for at least @b additional @b nodes. 
-     * This is different from the semantics of reserve() for STL containers.
-     * @todo Adapt the semantics of reserve() to STL semantics.
      */
-    void  reserve(thread t, size_t n);
+    void  reserve_additional(thread t, size_t n);
 
     /**
      * Return name of the Model.
@@ -147,7 +143,7 @@ namespace nest
      */
     DictionaryDatum get_status(void) ;
 
-    virtual port check_connection(Connection&, port)=0;
+    virtual port send_test_event(Node&, rport, synindex, bool)=0;
 
     /**
      * Return the size of the prototype.

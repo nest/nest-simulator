@@ -199,7 +199,7 @@ namespace nest
 
     if (updateValue<double>(d, names::MAXERR, tmp))
     {
-      if (not tmp > 0.0)
+      if (not (tmp > 0.0))
       {
         throw BadProperty("MAXERR must be positive.");
       }
@@ -630,8 +630,8 @@ namespace nest
     } // for-loop
   }
 
-  port aeif_cond_alpha_multisynapse::connect_sender(SpikeEvent&,
-      port receptor_type)
+  port aeif_cond_alpha_multisynapse::handles_test_event(SpikeEvent&,
+      rport receptor_type)
   {
     if (receptor_type <= 0
         || receptor_type > static_cast<port>(P_.num_of_receptors_))

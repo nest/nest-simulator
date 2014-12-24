@@ -32,7 +32,7 @@ Description:
 
 Author:  December 2012, May 2013, Plesser, based on test_gamma_generator.sli
 
-See also: test_sinusoidal_gamma_generator_{1,2,4,5,6}, test_sinusoidal_gamma_generator_nostat
+See also: testsuite::test_sinusoidal_gamma_generator_4, testsuite::test_sinusoidal_gamma_generator
 */
 
 (unittest) run

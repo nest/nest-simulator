@@ -124,11 +124,11 @@ print("Connecting devices")
 nest.CopyModel("static_synapse","excitatory",{"weight":J_ex, "delay":delay})
 nest.CopyModel("static_synapse","inhibitory",{"weight":J_in, "delay":delay})
 
-nest.Connect(noise,nodes_ex, 'all_to_all', "excitatory")
-nest.Connect(noise,nodes_in,'all_to_all', "excitatory")
+nest.Connect(noise,nodes_ex, syn_spec="excitatory")
+nest.Connect(noise,nodes_in, syn_spec="excitatory")
 
-nest.Connect(range(1,N_rec+1),espikes, 'all_to_all', "excitatory")
-nest.Connect(range(NE+1,NE+1+N_rec),ispikes, 'all_to_all', "excitatory")
+nest.Connect(range(1,N_rec+1),espikes, syn_spec="excitatory")
+nest.Connect(range(NE+1,NE+1+N_rec),ispikes, syn_spec="excitatory")
 
 print("Connecting network")
 

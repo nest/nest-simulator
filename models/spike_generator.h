@@ -32,6 +32,7 @@
 #include "stimulating_device.h"
 #include "connection.h"
 #include "nest_time.h"
+#include "network.h"
 
 namespace nest
 {
@@ -178,11 +179,14 @@ namespace nest
 
     bool has_proxies() const {return false;} 
 
-    port check_connection(Connection&, port);
-    
+    port send_test_event(Node&, rport, synindex, bool);
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
 
+    /**
+     * Import sets of overloaded virtual functions.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+     */
     using Node::event_hook;
     void event_hook(DSSpikeEvent&);
 
@@ -251,13 +255,23 @@ namespace nest
     State_      S_;
   };
 
-inline  
-port spike_generator::check_connection(Connection& c, port receptor_type)
+inline
+port spike_generator::send_test_event(Node& target, rport receptor_type, synindex syn_id, bool dummy_target)
 {
-  SpikeEvent e;
-  e.set_sender(*this);
-  c.check_event(e);
-  return c.get_target()->connect_sender(e, receptor_type);
+	device_.enforce_single_syn_type(syn_id);
+
+    if ( dummy_target )
+    {
+      DSSpikeEvent e;
+      e.set_sender(*this);
+      return target.handles_test_event(e, receptor_type);
+    }
+    else
+    {
+      SpikeEvent e;
+      e.set_sender(*this);
+      return target.handles_test_event(e, receptor_type);
+    }
 }
 
 inline
@@ -270,7 +284,6 @@ void spike_generator::get_status(DictionaryDatum &d) const
 inline
 void spike_generator::set_status(const DictionaryDatum &d)
 {
-
   Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // To detect "now" spikes and shift them, we need the origin. In case
@@ -290,7 +303,6 @@ void spike_generator::set_status(const DictionaryDatum &d)
 
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
-
 }
 
 

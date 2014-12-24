@@ -33,12 +33,10 @@ namespace nest
   {
   public:
       ConnectionID() {}  
-      ConnectionID(long source_gid, long target_gid, long target_thread, 
-		   long synapse_modelid, long port);
-      ConnectionID(long source_gid, long target_thread, long synapse_modelid, 
-		   long port);
+      ConnectionID(long source_gid, long target_gid, long target_thread, long synapse_modelid, long port);
+      ConnectionID(long source_gid, long target_thread, long synapse_modelid, long port);
       ConnectionID(const ConnectionID &);
-      
+
       DictionaryDatum get_dict() const;
       ArrayDatum to_ArrayDatum() const;
       bool operator==(const ConnectionID& c) const;
@@ -48,6 +46,7 @@ namespace nest
       long get_target_thread() const;
       long get_synapse_model_id() const;
       long get_port() const;
+
   protected:
       long source_gid_;
       long target_gid_;

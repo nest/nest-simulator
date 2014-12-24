@@ -148,8 +148,7 @@ void nest::sinusoidal_gamma_generator::Parameters_::set(const DictionaryDatum& d
 
   if ( updateValue<double_t>(d, names::order, order_) )
   {    if ( order_ < 1.0 )
-      throw KernelException("sinusoidal_gamma_generator::get_status: "
-			    "The gamma order must be at least 1.");
+      throw BadProperty("The gamma order must be at least 1.");
   }
 
   /* The *_unscaled variables here are introduced to avoid spurious
@@ -164,8 +163,7 @@ void nest::sinusoidal_gamma_generator::Parameters_::set(const DictionaryDatum& d
     ac_ = 1e-3 * ac_unscaled;  // scale to 1/ms
 
   if ( not ( 0.0 <= ac_unscaled and ac_unscaled <= dc_unscaled ) )
-    throw KernelException("sinusoidal_gamma_generator::set_status: "
-			  "Amplitudes must fulfill 0 <= ac_ <= dc_.");
+    throw BadProperty("Amplitudes must fulfill 0 <= ac_ <= dc_.");
 }
 
 

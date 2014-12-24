@@ -35,6 +35,7 @@ libsli_la_SOURCES=\
 		functional.h\
 		functiondatum.cc functiondatum.h\
 		genericdatum.h\
+		get_mem.c\
 		gnureadline.cc gnureadline.h\
 		integerdatum.cc integerdatum.h\
 		interpret.cc interpret.h\

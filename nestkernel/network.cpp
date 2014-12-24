@@ -53,15 +53,16 @@ namespace nest {
 
 
 Network::Network(SLIInterpreter &i)
-: scheduler_(*this),
-  interpreter_(i),
+: interpreter_(i),
+  scheduler_(*this),
   connection_manager_(*this),
   root_(0),
   current_(0),
   data_path_(),
   data_prefix_(),
   overwrite_files_(false),
-  dict_miss_is_error_(true)
+  dict_miss_is_error_(true),
+  model_defaults_modified_(false)
 {
   Node::net_ = this;
   Communicator::net_ = this;
@@ -93,7 +94,7 @@ Network::Network(SLIInterpreter &i)
 
 Network::~Network()
 {
-  destruct_nodes_();
+  destruct_nodes_();    // We must destruct nodes properly, since devices may need to close files.
   clear_models_(true);  // mark call from destructor
 
   // Now we can delete the clean model prototypes
@@ -110,18 +111,18 @@ void Network::init_()
    * Note that we MUST NOT call add_node(), since it expects a properly
    * initialized network.
    */
-  nodes_.resize(1);
+  local_nodes_.reserve(1);
   node_model_ids_.add_range(0,0,0);
 
   SiblingContainer *root_container = static_cast<SiblingContainer *>(siblingcontainer_model->allocate(0));
-  nodes_[0] = root_container;
+  local_nodes_.add_local_node(*root_container);
   root_container->reserve(get_num_threads());
   root_container->set_model_id(-1);
 
   assert( !pristine_models_.empty() );
   Model* rootmodel= pristine_models_[0].first;
   assert(rootmodel != 0);
-
+  
   for(thread t = 0; t < get_num_threads(); ++t)
   {
     Node* newnode = rootmodel->allocate(t);
@@ -153,18 +154,20 @@ void Network::init_()
   Model *proxy_model = models_[proxy_model_id];
   assert(proxy_model != 0);
 
-  // create proxy nodes, one for each model
-  for(index i = 0; i < pristine_models_.size(); ++i)
-    if (pristine_models_[i].first != 0)
-    {
-      Node* newnode = proxy_model->allocate(0);
-      newnode->set_model_id(i);
-      proxy_nodes_.push_back(newnode);
-    }
-
+  // create proxy nodes, one for each thread and model
   // create dummy spike sources, one for each thread
+  proxy_nodes_.resize(get_num_threads());
   for(thread t = 0; t < get_num_threads(); ++t)
   {
+    for(index i = 0; i < pristine_models_.size(); ++i)
+    {
+      if (pristine_models_[i].first != 0)
+      {
+		Node* newnode = proxy_model->allocate(t);
+		newnode->set_model_id(i);
+		proxy_nodes_[t].push_back(newnode);
+      }
+    }
     Node* newnode = proxy_model->allocate(t);
     newnode->set_model_id(proxy_model_id);
     dummy_spike_sources_.push_back(newnode);
@@ -192,21 +195,21 @@ void Network::destruct_nodes_()
   // the objects without releasing their memory. Since the Memory is
   // owned by the Model objects, we must not call delete on the Node
   // objects!
-  for(size_t n = 0; n < nodes_.size(); ++n)
-    if ( nodes_.test(n) )
+  for( size_t n = 0; n < local_nodes_.size(); ++n )
     {
-      assert(nodes_[n] != 0);
-      for(size_t t = 0; t < (*nodes_[n]).num_thread_siblings_(); ++t)
-        (*nodes_[n]).get_thread_sibling_(t)->~Node();
-      (*nodes_[n]).~Node();
+      Node* node = local_nodes_.get_node_by_index(n);
+      assert(node != 0);
+      for(size_t t = 0; t < node->num_thread_siblings_(); ++t)
+        node->get_thread_sibling_(t)->~Node();
+      node->~Node();
     }
 
-  nodes_.clear();
+  local_nodes_.clear();
   node_model_ids_.clear();
 
   proxy_nodes_.clear();
   dummy_spike_sources_.clear();
-}
+ }
 
 void Network::clear_models_(bool called_from_destructor)
 {
@@ -224,6 +227,7 @@ void Network::clear_models_(bool called_from_destructor)
 
   models_.clear();
   modeldict_->clear();
+  model_defaults_modified_=false;
 }
 
 void Network::reset()
@@ -247,8 +251,16 @@ void Network::reset()
 
 void Network::reset_kernel()
 {
+  /*
+   * TODO: reset() below mixes both destruction of old nodes and
+   * configuration of the fresh kernel. set_num_rec_processes() chokes
+   * on this, as it expects a kernel without nodes. We now suppress that
+   * test manually. Ideally, though, we should split reset() into one
+   * part deleting all the old stuff, then perform settings for the
+   * fresh kernel, then do remaining initialization.
+   */
   scheduler_.set_num_threads(1);
-  scheduler_.set_num_rec_processes(0);
+  scheduler_.set_num_rec_processes(0, true);
   data_path_ = "";
   data_prefix_ = "";
   overwrite_files_ = false;
@@ -259,15 +271,13 @@ void Network::reset_kernel()
 
 void Network::reset_network()
 {
-  force_preparation();
   if ( !scheduler_.get_simulated() )
     return;  // nothing to do
 
   /* Reinitialize state on all nodes, force init_buffers() on next
      call to simulate().
-	 Finding all nodes is non-trivial:
-     - Nodes with proxies are found in nodes_. This is also true for
-       any nodes that are part of Subnets.
+     Finding all nodes is non-trivial:
+     - We iterate over local nodes only.
      - Nodes without proxies are not registered in nodes_. Instead, a
        SiblingContainer is created as container, and this container is
        stored in nodes_. The container then contains the actual nodes,
@@ -277,23 +287,23 @@ void Network::reset_network()
      container.  Subnets are not iterated, since their nodes are
      registered in nodes_ directly.
    */
-  for(size_t n = 0; n < nodes_.size(); ++n)
+  for(size_t n = 0; n < local_nodes_.size(); ++n)
   {
-    if ( (*nodes_[n]).num_thread_siblings_() == 0 )  // not a SiblingContainer
+    Node* node = local_nodes_.get_node_by_index(n);
+    assert(node != 0);
+    if ( node->num_thread_siblings_() == 0 )  // not a SiblingContainer
     {
-      (*nodes_[n]).init_state();
-      (*nodes_[n]).unset(Node::buffers_initialized);
-      assert(! (*nodes_[n]).test(Node::buffers_initialized));
+      node->init_state();
+      node->set_buffers_initialized(false);
     }
-    else if ( (*nodes_[n]).get_model_id() == -1 )
+    else if ( node->get_model_id() == -1 )
     {
-      SiblingContainer* const c = dynamic_cast<SiblingContainer*>(&(*nodes_[n]));
+      SiblingContainer* const c = dynamic_cast<SiblingContainer*>(node);
       assert(c);
-      for ( vector<Node*>::iterator cit = c->begin() ; cit != c->end() ; ++cit )
+      for ( vector<Node*>::iterator it = c->begin() ; it != c->end() ; ++it )
       {
-        (*cit)->init_state();
-        (*cit)->unset(Node::buffers_initialized);
-        assert(! (*nodes_[n]).test(Node::buffers_initialized));
+        (*it)->init_state();
+        (*it)->set_buffers_initialized(false);
       }
     }
   }
@@ -325,8 +335,6 @@ index Network::add_node(index mod, long_t n)   //no_p
   assert(current_ != 0);
   assert(root_ != 0);
 
-  force_preparation();
-
   if(mod >= models_.size())
     throw UnknownModelID(mod);
 
@@ -336,7 +344,7 @@ index Network::add_node(index mod, long_t n)   //no_p
   const thread n_threads = get_num_threads();
   assert(n_threads > 0);
 
-  const index min_gid = nodes_.size();
+  const index min_gid = local_nodes_.get_max_gid() + 1;
   const index max_gid = min_gid + n;
 
   Model* model = models_[mod];
@@ -346,19 +354,21 @@ index Network::add_node(index mod, long_t n)   //no_p
      The following code makes subnet a pointer to the wrapper container
      containing the instances of the current subnet on all threads.
    */
-  index subnet_gid = current_->get_gid();
-  assert ( nodes_.test(subnet_gid) );
+  const index subnet_gid = current_->get_gid();
+  Node* subnet_node = local_nodes_.get_node_by_gid(subnet_gid);
+  assert (subnet_node != 0);
 
-  SiblingContainer* subnet_container =
-      dynamic_cast<SiblingContainer *>(&(*nodes_[subnet_gid]));
+  SiblingContainer* subnet_container = dynamic_cast<SiblingContainer *>(subnet_node);
   assert(subnet_container != 0);
   assert(subnet_container->num_thread_siblings_() == static_cast<size_t>(n_threads));
   assert(subnet_container->get_thread_sibling_(0) == current_);
 
-  if ((max_gid > nodes_.max_size()) || (max_gid<min_gid))
+  if ( max_gid > local_nodes_.max_size()  || max_gid < min_gid )
   {
-    message(SLIInterpreter::M_ERROR, " Network::add:node", "Requested number of nodes will overflow the memory.");
-    message(SLIInterpreter::M_ERROR, " Network::add:node", "No nodes were created.");
+    message(SLIInterpreter::M_ERROR, "Network::add:node",
+            "Requested number of nodes will overflow the memory.");
+    message(SLIInterpreter::M_ERROR, "Network::add:node",
+            "No nodes were created.");
     throw KernelException("OutOfMemory");
   }
   node_model_ids_.add_range(mod,min_gid,max_gid-1);
@@ -369,14 +379,19 @@ index Network::add_node(index mod, long_t n)   //no_p
     const int n_per_process = n / scheduler_.get_num_rec_processes();
     const int n_per_thread = n_per_process / n_threads + 1;
 
-    nodes_.resize(max_gid);
-    for (thread t = 0; t < n_threads; ++t)
-      model->reserve(t, n_per_thread); // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
-
-    for ( size_t gid = min_gid; gid < max_gid; ++gid )
+    // We only need to reserve memory on the ranks on which we
+    // actually create nodes. In this if-branch ---> Only on recording
+    // processes
+    if ( Communicator::get_rank() >= scheduler_.get_num_sim_processes() )
     {
-      const thread vp = (current_->get_children_on_same_vp())
-        ? current_->get_children_vp() : suggest_rec_vp(scheduler_.get_n_gsd());
+      local_nodes_.reserve(std::ceil(static_cast<double>(max_gid)/scheduler_.get_num_sim_processes()));
+      for (thread t = 0; t < n_threads; ++t)
+	model->reserve_additional(t, n_per_thread); // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
+    }
+
+    for(size_t gid = min_gid; gid < max_gid; ++gid)
+    {
+      const thread vp = suggest_rec_vp(scheduler_.get_n_gsd());
       const thread t = vp_to_thread(vp);
 
       if( is_local_vp(vp) )
@@ -388,33 +403,45 @@ index Network::add_node(index mod, long_t n)   //no_p
         newnode->set_vp(vp);
         newnode->set_has_proxies(true);
         newnode->set_local_receiver(false);
-	nodes_[gid] = newnode;        // put into local nodes list
+    
+        local_nodes_.add_local_node(*newnode); // put into local nodes list
+
         current_->add_node(newnode);  // and into current subnet, thread 0.
       }
       else
+      {
+        local_nodes_.add_remote_node(gid);  // ensures max_gid is correct
         current_->add_remote_node(gid, mod);
-
+      }
       scheduler_.increment_n_gsd();
     }
-  }
+  } 
 
-  else if (model->has_proxies())
+  else if ( model->has_proxies() )
   {
     // In this branch we create nodes for all GIDs which are on a local thread
     const int n_per_process = n / scheduler_.get_num_sim_processes();
     const int n_per_thread = n_per_process / n_threads + 1;
 
-    nodes_.resize(max_gid);
-    for(thread t = 0; t < n_threads; ++t)
-      model->reserve(t, n_per_thread); // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
-
-
-    for(size_t gid = min_gid; gid < max_gid; ++gid)
+    // We only need to reserve memory on the ranks on which we
+    // actually create nodes. In this if-branch ---> Only on
+    // simulation processes
+    if ( Communicator::get_rank() < scheduler_.get_num_sim_processes() )
     {
-      thread vp = (current_->get_children_on_same_vp()) ? current_->get_children_vp() : suggest_vp(gid);
-      thread t = vp_to_thread(vp);
+      // TODO: This will work reasonably for round-robin. The extra 50 entries are
+      //       for subnets and devices.
+      local_nodes_.reserve(std::ceil(static_cast<double>(max_gid)/scheduler_.get_num_sim_processes()) + 50);
+      for ( thread t = 0; t < n_threads; ++t )
+        model->reserve_additional(t, n_per_thread); // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
+                                         // reserves at least one entry on each thread, nobody knows why
+    }
 
-      if(is_local_vp(vp))
+    for ( size_t gid = min_gid; gid < max_gid; ++gid )
+    {
+      const thread vp = suggest_vp(gid);
+      const thread t = vp_to_thread(vp);
+
+      if( is_local_vp(vp) )
       {
         Node *newnode = model->allocate(t);
         newnode->set_gid_(gid);
@@ -422,11 +449,14 @@ index Network::add_node(index mod, long_t n)   //no_p
         newnode->set_thread(t);
         newnode->set_vp(vp);
 
-        nodes_[gid] = newnode;        // put into local nodes list
+        local_nodes_.add_local_node(*newnode); // put into local nodes list
         current_->add_node(newnode);  // and into current subnet, thread 0.
       }
       else
-        current_->add_remote_node(gid,mod);
+      {
+        local_nodes_.add_remote_node(gid);  // ensures max_gid is correct
+        current_->add_remote_node(gid, mod);
+      }
     }
   } 
   else if ( !model->one_node_per_process() )
@@ -460,15 +490,15 @@ index Network::add_node(index mod, long_t n)   //no_p
     // since we create the n nodes on each thread, we reserve the full load.
     for(thread t = 0; t < n_threads; ++t)
     {
-      model->reserve(t, n);
-      siblingcontainer_model->reserve(t, container_per_thread);
+      model->reserve_additional(t, n);
+      siblingcontainer_model->reserve_additional(t, container_per_thread);
       static_cast<Subnet *>(subnet_container->get_thread_sibling_(t))->reserve(n);
     }
 
     // The following loop creates n nodes. For each node, a wrapper is created
     // and filled with one instance per thread, in total n * n_thread nodes in
     // n wrappers. 
-    nodes_.resize(max_gid);
+    local_nodes_.reserve(std::ceil(static_cast<double>(max_gid)/scheduler_.get_num_sim_processes())+ 50);
     for (index gid = min_gid; gid < max_gid; ++gid)
     {
       thread thread_id = vp_to_thread(suggest_vp(gid));
@@ -477,7 +507,8 @@ index Network::add_node(index mod, long_t n)   //no_p
       SiblingContainer *container= static_cast<SiblingContainer *>(siblingcontainer_model->allocate(thread_id));
       container->set_model_id(-1); // mark as pseudo-container wrapping replicas, see reset_network()
       container->reserve(n_threads); // space for one instance per thread
-      nodes_[gid] = container; 
+      container->set_gid_(gid);
+      local_nodes_.add_local_node(*container);
 
       // Generate one instance of desired model per thread
       for (thread t = 0; t < n_threads; ++t)
@@ -488,21 +519,9 @@ index Network::add_node(index mod, long_t n)   //no_p
         newnode->set_thread(t);
         newnode->set_vp(thread_to_vp(t));
 
-        // If the instance is a Subnet, set child-vp-assignment policies.
-        Subnet* newsubnet = 0;
-        if ((newsubnet = dynamic_cast<Subnet*>(newnode)) != 0)
-        {
-          if (current_->get_children_on_same_vp())
-          {
-            newsubnet->set_children_on_same_vp(true);
-            newsubnet->set_children_vp(current_->get_children_vp());
-          }
-          else
-            newsubnet->set_children_vp(suggest_vp(gid));
-        }
-
         // Register instance with wrapper
-        container->push_back(newnode); 
+		// container has one entry for each thread
+        container->push_back(newnode);
 
         // Register instance with per-thread instance of enclosing subnet.
         static_cast<Subnet*>(subnet_container->get_thread_sibling_(t))->add_node(newnode);
@@ -511,10 +530,11 @@ index Network::add_node(index mod, long_t n)   //no_p
   }
   else
   {
-    nodes_.resize(max_gid);
-    model->reserve(0, n); // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
-
-    for(index gid = min_gid; gid < max_gid; ++gid)
+    // no proxies and one node per process
+    // this is used by MUSIC proxies
+    // Per r9700, this case is only relevant for music_*_proxy models,
+    // which have a single instance per MPI process.
+    for ( index gid = min_gid; gid < max_gid; ++gid )
     {
       Node *newnode = model->allocate(0);
       newnode->set_gid_(gid);
@@ -522,9 +542,9 @@ index Network::add_node(index mod, long_t n)   //no_p
       newnode->set_thread(0);
       newnode->set_vp(thread_to_vp(0));
 
-      // Register instance with wrapper
-      nodes_[gid] = newnode;
-
+      // Register instance
+      local_nodes_.add_local_node(*newnode);
+      
       // and into current subnet, thread 0.
       current_->add_node(newnode);
     }
@@ -535,47 +555,49 @@ index Network::add_node(index mod, long_t n)   //no_p
   {
     scheduler_.set_off_grid_communication(true);
     message(SLIInterpreter::M_INFO, "network::add_node",
-            "Precise neuron models exist: the kernel property off_grid_spiking "
-            "has been set to true.");
+            "Neuron models emitting precisely timed spikes exist: "
+	    "the kernel property off_grid_spiking has been set to true.\n\n"
+	    "NOTE: Mixing precise-spiking and normal neuron models may "
+	    "lead to inconsistent results.");
   }
 
   return max_gid - 1;
 }
 
-  void Network::restore_nodes(ArrayDatum &node_list)
+void Network::restore_nodes(ArrayDatum &node_list)
+{
+  Subnet *root = get_cwn();
+  const index gid_offset = size()-1;
+  Token *first = node_list.begin();
+  const Token *end = node_list.end();
+  if(first == end)
+    return;
+
+  // We need to know the first and hopefully smallest GID to identify
+  // if a parent is in or outside the range of restored nodes.
+  // So we retrieve it here, from the first element of the node_list, assuming that
+  // the node GIDs are in ascending order.
+  DictionaryDatum node_props = getValue<DictionaryDatum>(*first);
+  const index min_gid = (*node_props)[names::global_id];
+
+  for (Token *node_t = first; node_t != end; ++node_t)
   {
-    force_preparation();
-    Subnet *root= get_cwn();
-    const index gid_offset= size()-1;
-    Token *first=node_list.begin();
-    const Token *end=node_list.end();
-    if(first == end)
-      return;
-    // We need to know the first and hopefully smallest GID to identify
-    // if a parent is in or outside the range of restored nodes.
-    // So we retrieve it here, from the first element of the node_list, assuming that
-    // the node GIDs are in ascending order.
-    DictionaryDatum node_props=getValue<DictionaryDatum>(*first);
-    const index min_gid=(*node_props)[names::global_id];
-    
-    for (Token *node_t=first; node_t != end; ++node_t)
-      {
-	DictionaryDatum node_props=getValue<DictionaryDatum>(*node_t);
-	std::string model_name= (*node_props)[names::model];
-	index model_id=get_model_id(model_name.c_str());
-	index parent_gid=(*node_props)[names::parent];
-	index local_parent_gid= parent_gid;
-	if(parent_gid >= min_gid)            // if the parent is one of the restored nodes
-	  local_parent_gid += gid_offset; // we must add the gid_offset
-	go_to(local_parent_gid);
-	index node_gid=add_node(model_id);
-	Node *node_ptr=get_node(node_gid);
-	// we call directly set_status on the node
-	// to bypass checking of unused dictionary items.
-	node_ptr->set_status_base(node_props);
-      }
-    current_=root;
-  }
+    DictionaryDatum node_props = getValue<DictionaryDatum>(*node_t);
+    std::string model_name = (*node_props)[names::model];
+    index model_id = get_model_id(model_name.c_str());
+    index parent_gid = (*node_props)[names::parent];
+    index local_parent_gid = parent_gid;
+    if(parent_gid >= min_gid)            // if the parent is one of the restored nodes
+      local_parent_gid += gid_offset; // we must add the gid_offset
+    go_to(local_parent_gid);
+    index node_gid = add_node(model_id);
+    Node *node_ptr = get_node(node_gid);
+    // we call directly set_status on the node
+    // to bypass checking of unused dictionary items.
+    node_ptr->set_status_base(node_props);
+    }
+  current_=root;
+}
     
 void Network::init_state(index GID)
 {
@@ -596,23 +618,27 @@ void Network::go_to(index n)
 
 Node* Network::get_node(index n, thread thr) //no_p
 {
-  if (!is_local_gid(n)){
-    return proxy_nodes_.at(node_model_ids_.get_model_id(n));
+  Node* node = local_nodes_.get_node_by_gid(n);
+  if ( node == 0 )
+  {
+    return proxy_nodes_[thr].at(node_model_ids_.get_model_id(n));
   }
-  if ((*nodes_[n]).num_thread_siblings_() == 0)
-    return nodes_[n];
 
-  if (thr < 0 || thr >= (thread)(*nodes_[n]).num_thread_siblings_())
+  if ( node->num_thread_siblings_() == 0 )
+    return node;  // plain node
+
+  if ( thr < 0 || thr >= static_cast<thread>(node->num_thread_siblings_()) )
     throw UnknownNode();
 
-  return (*nodes_[n]).get_thread_sibling_(thr);
+  return node->get_thread_sibling_(thr);
 }
 
 const SiblingContainer* Network::get_thread_siblings(index n) const
 {
-  if(nodes_[n]->num_thread_siblings_() == 0)
+  Node* node = local_nodes_.get_node_by_gid(n);
+  if( node->num_thread_siblings_() == 0 )
     throw NoThreadSiblingsAvailable(n);
-  const SiblingContainer* siblings = dynamic_cast<SiblingContainer*>(nodes_[n]);
+  const SiblingContainer* siblings = dynamic_cast<SiblingContainer*>(node);
   assert(siblings != 0);
 
   return siblings;
@@ -680,19 +706,19 @@ void Network::set_status(index gid, const DictionaryDatum& d)
   // we first handle normal nodes, except the root (GID 0)
   if ( gid > 0)
   {
-    if ( is_local_gid(gid) )
+    Node* target = local_nodes_.get_node_by_gid(gid);
+    if ( target != 0 )
     {
-      Node &target = *(nodes_[gid]);
-
-      if ( target.num_thread_siblings_() == 0 )
-        set_status_single_node_(target, d);
+      // node is local
+      if ( target->num_thread_siblings_() == 0 )
+        set_status_single_node_(*target, d);
       else
-        for(size_t t=0; t < target.num_thread_siblings_(); ++t)
+        for( size_t t=0; t < target->num_thread_siblings_(); ++t )
         {
           // non-root container for devices without proxies and subnets
           // we iterate over all threads
-          assert(target.get_thread_sibling_(t) != 0);
-          set_status_single_node_(*(target.get_thread_sibling_(t)), d);
+          assert(target->get_thread_sibling_(t) != 0);
+          set_status_single_node_(*(target->get_thread_sibling_(t)), d);
         }
     }
     return;
@@ -733,15 +759,16 @@ void Network::set_status(index gid, const DictionaryDatum& d)
     // Fetch the target pointer here. We cannot do it above, since 
     // Scheduler::set_status() may modify the root compound if the number
     // of threads changes. HEP, 2008-10-20
-    Node &target= *(nodes_[gid]);
+    Node* target= local_nodes_.get_node_by_gid(gid);
+    assert(target != 0);
 
-    for (size_t t=0; t < target.num_thread_siblings_(); ++t)
+    for (size_t t=0; t < target->num_thread_siblings_(); ++t)
     {
       // Root container for per-thread subnets. We must prevent clearing of access
       // flags before each compound's properties are set by passing false as last arg
       // we iterate over all threads
-      assert(target.get_thread_sibling_(t) != 0);
-      set_status_single_node_(*(target.get_thread_sibling_(t)), d, false);
+      assert(target->get_thread_sibling_(t) != 0);
+      set_status_single_node_(*(target->get_thread_sibling_(t)), d, false);
     }
   }  
 }
@@ -823,23 +850,28 @@ DictionaryDatum Network::get_status(index idx)
     (*d)["data_prefix"] = data_prefix_;
     (*d)["overwrite_files"] = overwrite_files_;
     (*d)["dict_miss_is_error"] = dict_miss_is_error_;
-  }
 
+    std::map<long, size_t> sna_cts = local_nodes_.get_step_ctr();
+    DictionaryDatum cdict(new Dictionary);
+    for ( std::map<long, size_t>::const_iterator cit = sna_cts.begin(); cit != sna_cts.end(); ++cit )
+    {
+      std::stringstream s;
+      s << cit->first;
+      (*cdict)[s.str()] = cit->second;
+    }
+  }
   return d;
 }
 
-// gid gid node thread weight delay syn 
-void Network::connect(index sgid, index tgid, Node* target, thread target_thread, double_t w, double_t d, index syn)
+// gid node thread syn delay weight
+void Network::connect(index sgid, Node* target, thread target_thread, index syn, double_t d, double_t w)
 {
-  // TODO: is this necessary?
-  force_preparation();
-
   Node * const source = get_node(sgid, target_thread);
 
   //normal nodes and devices with proxies
   if (target->has_proxies())
   {
-    connect(*source, *target, sgid, target_thread, w, d, syn);
+    connection_manager_.connect(*source, *target, sgid, target_thread, syn, d, w);
   }
   else if (target->local_receiver()) //normal devices
   {
@@ -849,10 +881,10 @@ void Network::connect(index sgid, index tgid, Node* target, thread target_thread
     if ((source->get_thread() != target_thread) && (source->has_proxies()))
     {
       target_thread = source->get_thread();
-      target = get_node(tgid, target_thread);
+      target = get_node(target->get_gid(), target_thread);
     }
 
-    connect(*source, *target, sgid, target_thread, w, d, syn);
+    connection_manager_.connect(*source, *target, sgid, target_thread, syn, d, w);
   }
   else //globally receiving devices iterate over all target threads
   {
@@ -861,24 +893,21 @@ void Network::connect(index sgid, index tgid, Node* target, thread target_thread
     const thread n_threads = get_num_threads();
     for (thread t = 0; t < n_threads; t++)
     {
-      target = get_node(tgid, t);
-      connect(*source, *target, sgid, t, w, d, syn);
+      target = get_node(target->get_gid(), t);
+      connection_manager_.connect(*source, *target, sgid, t, syn, d, w);
     } 
   }
 }
 
-// gid gid node thread syn 
-void Network::connect(index sgid, index tgid, Node* target, thread target_thread, index syn)
+// gid node thread syn dict delay weight
+void Network::connect(index sgid, Node* target, thread target_thread, index syn, DictionaryDatum& params, double_t d, double_t w)
 {
-  // TODO: is this necessary?
-  force_preparation();
-
   Node * const source = get_node(sgid, target_thread);
 
   //normal nodes and devices with proxies
   if (target->has_proxies())
   {
-    connect(*source, *target, sgid, target_thread, syn);
+    connection_manager_.connect(*source, *target, sgid, target_thread, syn, params, d, w);
   }
   else if (target->local_receiver()) //normal devices
   {
@@ -888,10 +917,10 @@ void Network::connect(index sgid, index tgid, Node* target, thread target_thread
     if ((source->get_thread() != target_thread) && (source->has_proxies()))
     {
       target_thread = source->get_thread();
-      target = get_node(tgid, target_thread);
+      target = get_node(target->get_gid(), target_thread);
     }
 
-    connect(*source, *target, sgid, target_thread, syn);
+    connection_manager_.connect(*source, *target, sgid, target_thread, syn, params, d, w);
   }
   else //globally receiving devices iterate over all target threads
   {
@@ -900,88 +929,8 @@ void Network::connect(index sgid, index tgid, Node* target, thread target_thread
     const thread n_threads = get_num_threads();
     for (thread t = 0; t < n_threads; t++)
     {
-      target = get_node(tgid, t);
-      connect(*source, *target, sgid, t, syn);
-    } 
-  }
-}
-
-// gid gid node thread weight delay dict syn 
-void Network::connect(index sgid, index tgid, Node* target, thread target_thread, double_t w, double_t d, 
-		      DictionaryDatum& params, index syn)
-{
-  // TODO: is this necessary?
-  force_preparation();
-
-  Node * const source = get_node(sgid, target_thread);
-
-  //normal nodes and devices with proxies
-  if (target->has_proxies())
-  {
-    connect(*source, *target, sgid, target_thread, w, d, params, syn);
-  }
-  else if (target->local_receiver()) //normal devices
-  {
-    if(source->is_proxy())
-      return;
-
-    if ((source->get_thread() != target_thread) && (source->has_proxies()))
-    {
-      target_thread = source->get_thread();
-      target = get_node(tgid, target_thread);
-    }
-
-    connect(*source, *target, sgid, target_thread, w, d, params, syn);
-  }
-  else //globally receiving devices iterate over all target threads
-  {
-    if (!source->has_proxies()) //we do not allow to connect a device to a global receiver at the moment
-      return;
-    const thread n_threads = get_num_threads();
-    for (thread t = 0; t < n_threads; t++)
-    {
-      target = get_node(tgid, t);
-      connect(*source, *target, sgid, t, w, d, params, syn);
-    } 
-  }
-}
-
-// gid gid node thread dict syn 
-void Network::connect(index sgid, index tgid, Node* target, thread target_thread,
-		      DictionaryDatum& params, index syn)
-{
-  // TODO: is this necessary?
-  force_preparation();
-
-  Node * const source = get_node(sgid, target_thread);
-
-  //normal nodes and devices with proxies
-  if (target->has_proxies())
-  {
-    connect(*source, *target, sgid, target_thread, params, syn);
-  }
-  else if (target->local_receiver()) //normal devices
-  {
-    if(source->is_proxy())
-      return;
-
-    if ((source->get_thread() != target_thread) && (source->has_proxies()))
-    {
-      target_thread = source->get_thread();
-      target = get_node(tgid, target_thread);
-    }
-
-    connect(*source, *target, sgid, target_thread, params, syn);
-  }
-  else //globally receiving devices iterate over all target threads
-  {
-    if (!source->has_proxies()) //we do not allow to connect a device to a global receiver at the moment
-      return;
-    const thread n_threads = get_num_threads();
-    for (thread t = 0; t < n_threads; t++)
-    {
-      target = get_node(tgid, t);
-      connect(*source, *target, sgid, t, params, syn);
+      target = get_node(target->get_gid(), t);
+      connection_manager_.connect(*source, *target, sgid, t, syn, params, d, w);
     } 
   }
 }
@@ -993,8 +942,6 @@ bool Network::connect(index source_id, index target_id, DictionaryDatum& params,
   if (!is_local_gid(target_id))
     return false;
 
-  force_preparation();
-
   Node* target_ptr = get_node(target_id);
 
   //target_thread defaults to 0 for devices
@@ -1005,7 +952,7 @@ bool Network::connect(index source_id, index target_id, DictionaryDatum& params,
   //normal nodes and devices with proxies
   if (target_ptr->has_proxies())
   {
-    connect(*source_ptr, *target_ptr, source_id, target_thread, params, syn);
+    connection_manager_.connect(*source_ptr, *target_ptr, source_id, target_thread, syn, params);
   }
   else if (target_ptr->local_receiver()) //normal devices
   {
@@ -1018,7 +965,7 @@ bool Network::connect(index source_id, index target_id, DictionaryDatum& params,
       target_ptr = get_node(target_id, target_thread);
     }
 
-    connect(*source_ptr, *target_ptr, source_id, target_thread, params, syn);
+    connection_manager_.connect(*source_ptr, *target_ptr, source_id, target_thread, syn, params);
   }
   else //globally receiving devices iterate over all target threads
   {
@@ -1028,7 +975,7 @@ bool Network::connect(index source_id, index target_id, DictionaryDatum& params,
     for (thread t = 0; t < n_threads; t++)
     {
       target_ptr = get_node(target_id, t);
-      connect(*source_ptr, *target_ptr, source_id, t, params, syn);
+      connection_manager_.connect(*source_ptr, *target_ptr, source_id, t, syn, params);
     } 
   }
 
@@ -1041,9 +988,6 @@ bool Network::connect(index source_id, index target_id, DictionaryDatum& params,
 void Network::divergent_connect(index source_id, const TokenArray target_ids, 
 				const TokenArray weights, const TokenArray delays, index syn)
 {
-  force_preparation();
-
-
   bool complete_wd_lists = (target_ids.size() == weights.size() 
 			    && weights.size() != 0 
 			    && weights.size() == delays.size());
@@ -1105,17 +1049,11 @@ void Network::divergent_connect(index source_id, const TokenArray target_ids,
     try
     {
       if (complete_wd_lists)
-      {
-        connect(*source, *targets[i], source_id, target_thread, weights.get(i), delays.get(i), syn);
-      }
+        connection_manager_.connect(*source, *targets[i], source_id, target_thread, syn, delays.get(i), weights.get(i));
       else if (short_wd_lists)
-      {
-        connect(*source, *targets[i], source_id, target_thread, weights.get(0), delays.get(0), syn);
-      }
+	  connection_manager_.connect(*source, *targets[i], source_id, target_thread, syn, delays.get(0), weights.get(0));
       else 
-      {
-        connect(*source, *targets[i], source_id, target_thread, syn);
-      }
+        connection_manager_.connect(*source, *targets[i], source_id, target_thread, syn);
     }
     catch (IllegalConnection& e)
     {
@@ -1159,11 +1097,9 @@ void Network::divergent_connect(index source_id, DictionaryDatum pars, index syn
 {
   // We extract the parameters from the dictionary explicitly since getValue() for DoubleVectorDatum
   // copies the data into an array, from which the data must then be copied once more.
-
-  force_preparation();
-
   DictionaryDatum par_i(new Dictionary());
   Dictionary::iterator di_s, di_t;
+
   // To save time, we first create the parameter dictionary for connect(), then we copy
   // all keys from the original dictionary into the parameter dictionary.
   // We can the later use iterators to change the values inside the parameter dictionary,
@@ -1244,10 +1180,9 @@ void Network::divergent_connect(index source_id, DictionaryDatum pars, index syn
   size_t n_targets=target_ids.size();
   for(index i = 0; i < n_targets; ++i)
   {
-    Node *ptarget=0;
     try
     {
-      ptarget=get_node(target_ids[i]);
+      get_node(target_ids[i]);
     }
     catch(UnknownNode &e)
     {
@@ -1307,9 +1242,6 @@ void Network::divergent_connect(index source_id, DictionaryDatum pars, index syn
 
 void Network::random_divergent_connect(index source_id, const TokenArray target_ids, index n, const TokenArray weights, const TokenArray delays, bool allow_multapses, bool allow_autapses, index syn)
 {
-
-  force_preparation();
-
   Node *source = get_node(source_id);
 
   // check if we have consistent lists for weights and delays
@@ -1371,8 +1303,6 @@ void Network::convergent_connect(const TokenArray source_ids, index target_id, c
   bool short_wd_lists = (source_ids.size() != weights.size() && weights.size() == 1 && delays.size() == 1);
   bool no_wd_lists = (weights.size() == 0 && delays.size() == 0);
 
-  force_preparation();
-
   // check if we have consistent lists for weights and delays
   if (! (complete_wd_lists || short_wd_lists || no_wd_lists))
   {
@@ -1427,17 +1357,11 @@ void Network::convergent_connect(const TokenArray source_ids, index target_id, c
     try
     {
       if (complete_wd_lists)
-      {
-        connect(*source, *target, source_id, target_thread, weights.get(i), delays.get(i), syn);
-      }
+	connection_manager_.connect(*source, *target, source_id, target_thread, syn, delays.get(i), weights.get(i));
       else if (short_wd_lists)
-      {
-        connect(*source, *target, source_id, target_thread, weights.get(0), delays.get(0), syn);
-      }
+	connection_manager_.connect(*source, *target, source_id, target_thread, syn, delays.get(0), weights.get(0));
       else 
-      {
-        connect(*source, *target, source_id, target_thread, syn);
-      }
+        connection_manager_.connect(*source, *target, source_id, target_thread, syn);
     }
     catch (IllegalConnection& e)
     {
@@ -1480,20 +1404,18 @@ void Network::convergent_connect(const TokenArray source_ids, index target_id, c
  * function, which takes a vector<Node*> for sources and relies
  * on the fact that target is guaranteed to be on this thread.
  */
-void Network::convergent_connect(const std::vector<index> & source_ids, const std::vector<Node*> & sources, index target_id, const TokenArray & weights, const TokenArray & delays, index syn)
+void Network::convergent_connect(const std::vector<index> & source_ids, index target_id, const TokenArray & weights, const TokenArray & delays, index syn)
 {
-  bool complete_wd_lists = (sources.size() == weights.size() && weights.size() != 0 && weights.size() == delays.size());
-  bool short_wd_lists = (sources.size() != weights.size() && weights.size() == 1 && delays.size() == 1);
-
-  force_preparation();
+  bool complete_wd_lists = (source_ids.size() == weights.size() && weights.size() != 0 && weights.size() == delays.size());
+  bool short_wd_lists = (source_ids.size() != weights.size() && weights.size() == 1 && delays.size() == 1);
 
   // Check if we have consistent lists for weights and delays
   // already checked in previous RCC call
-  
+
   Node* target = get_node(target_id);
-  for(index i = 0; i < sources.size(); ++i)
+  for(index i = 0; i < source_ids.size(); ++i)
   {
-    Node* source = sources[i];
+    Node* source = get_node(source_ids[i]);
     thread target_thread = target->get_thread();
 
     if (!target->has_proxies())
@@ -1511,17 +1433,11 @@ void Network::convergent_connect(const std::vector<index> & source_ids, const st
     try
     {
       if (complete_wd_lists)
-      {
-          connect(*source, *target, source_ids[i], target_thread, weights.get(i), delays.get(i), syn);
-      }
+	connection_manager_.connect(*source, *target, source_ids[i], target_thread, syn, delays.get(i), weights.get(i));
       else if (short_wd_lists)
-      {
-          connect(*source, *target, source_ids[i], target_thread, weights.get(0), delays.get(0), syn);
-      }
+	connection_manager_.connect(*source, *target, source_ids[i], target_thread, syn, delays.get(0), weights.get(0));
       else
-      {
-          connect(*source, *target, source_ids[i], target_thread, syn);
-      }
+	connection_manager_.connect(*source, *target, source_ids[i], target_thread, syn);
     }
     catch (IllegalConnection& e)
     {
@@ -1564,8 +1480,6 @@ void Network::random_convergent_connect(const TokenArray source_ids, index targe
 {
   if (!is_local_gid(target_id))
     return;
-
-  force_preparation();
 
   Node* target = get_node(target_id);
 
@@ -1621,8 +1535,6 @@ void Network::random_convergent_connect(const TokenArray source_ids, index targe
 // care only of its own target nodes
 void Network::random_convergent_connect(TokenArray source_ids, TokenArray target_ids, TokenArray ns, TokenArray weights, TokenArray delays, bool allow_multapses, bool allow_autapses, index syn)
 {
-  force_preparation();
-
 #ifndef _OPENMP
   // It only makes sense to call this function if we have openmp
   message(SLIInterpreter::M_ERROR, "ConvergentConnect", "This function can only be called using OpenMP threading.");
@@ -1637,12 +1549,10 @@ void Network::random_convergent_connect(TokenArray source_ids, TokenArray target
   //    the threads will possibly access the same element at the same
   //    time, causing segfaults
 
-  std::vector<Node*> sources(source_ids.size());
   std::vector<index> vsource_ids(source_ids.size());
   for (index i = 0; i < source_ids.size(); ++i)
   {
     index sid = getValue<long>(source_ids.get(i));
-    sources[i] = get_node(sid);
     vsource_ids[i] = sid;
   }
 
@@ -1685,7 +1595,7 @@ void Network::random_convergent_connect(TokenArray source_ids, TokenArray target
 #pragma omp parallel
   {
     int nrn_counter = 0;
-    int tid = omp_get_thread_num();
+    int tid = get_thread_id();
 
     librandom::RngPtr rng = get_rng(tid);
 
@@ -1718,7 +1628,6 @@ void Network::random_convergent_connect(TokenArray source_ids, TokenArray target
         ds = getValue<TokenArray>(delays.get(i));
       }
 
-      vector<Node*> chosen_sources(n);
       vector<index> chosen_source_ids(n);
       std::set<long> ch_ids;
 
@@ -1738,11 +1647,10 @@ void Network::random_convergent_connect(TokenArray source_ids, TokenArray target
         if (!allow_multapses)
           ch_ids.insert(s_id);
 
-        chosen_sources[j] = sources[s_id];
         chosen_source_ids[j] = vsource_ids[s_id];
       }
 
-      convergent_connect(chosen_source_ids, chosen_sources, target_id, ws, ds, syn);
+      convergent_connect(chosen_source_ids, target_id, ws, ds, syn);
 
     } // of for all targets
   } // of omp parallel
@@ -1810,9 +1718,12 @@ index Network::copy_model(index old_id, std::string new_name)
   assert(proxy_model_id > 0);
   Model *proxy_model = models_[proxy_model_id];
   assert(proxy_model != 0);
-  Node* newnode = proxy_model->allocate(0);
-  newnode->set_model_id(new_id);
-  proxy_nodes_.push_back(newnode);
+  for(thread t = 0; t < get_num_threads(); ++t)
+  {
+    Node* newnode = proxy_model->allocate(t);
+    newnode->set_model_id(new_id);
+    proxy_nodes_[t].push_back(newnode);
+  }
   return new_id;
 }
 
@@ -1851,9 +1762,13 @@ index Network::register_model(Model& m, bool private_model)
   assert(proxy_model_id > 0);
   Model *proxy_model = models_[proxy_model_id];
   assert(proxy_model != 0);
-  Node* newnode = proxy_model->allocate(0);
-  newnode->set_model_id(id);
-  proxy_nodes_.push_back(newnode);
+
+  for(thread t = 0; t < get_num_threads(); ++t)
+  {
+    Node* newnode = proxy_model->allocate(t);
+    newnode->set_model_id(id);
+    proxy_nodes_[t].push_back(newnode);
+  }
 
   if ( !private_model )
     modeldict_->insert(name, id);
@@ -1880,14 +1795,16 @@ void Network::unregister_model(index m_id)
   models_[m_id] = 0;
 
   // unregister from proxy_nodes_ list
-  delete proxy_nodes_[m_id];
-  proxy_nodes_[m_id] = 0;
+
+  for(thread t = 0; t < get_num_threads(); ++t)
+  {
+    delete proxy_nodes_[t][m_id];
+    proxy_nodes_[t][m_id] = 0;
+  }
 }
 
 void Network::try_unregister_model(index m_id)
 {
-  force_preparation();
-
   Model* m = get_model(m_id);  // may throw UnknownModelID
   std::string name = m->get_name();
 
@@ -1895,13 +1812,14 @@ void Network::try_unregister_model(index m_id)
     throw ModelInUse(name);
 }
 
+/**
+ * This function is not thread save and has to be called inside a omp critical
+ * region, e.g. sli_neuron.
+ */
 int Network::execute_sli_protected(DictionaryDatum state, Name cmd)
 {
-  static Mutex sli_mutex;
   SLIInterpreter& i=interpreter_;
-
-  sli_mutex.lock();
-
+  
   i.DStack->push(state); // push state dictionary as top namespace
   size_t exitlevel=i.EStack.load();
   i.EStack.push( new NameDatum(cmd));
@@ -1920,8 +1838,7 @@ int Network::execute_sli_protected(DictionaryDatum state, Name cmd)
 
     scheduler_.terminate();
   }
-  sli_mutex.unlock();
-
+  
   return result;
 }
 

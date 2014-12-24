@@ -28,6 +28,7 @@
 #ifdef HAVE_GSL
 
 #include "nest.h"
+#include "randomgen.h"
 #include "event.h"
 #include "node.h"
 #include "stimulating_device.h"
@@ -84,7 +85,7 @@ namespace nest{
      FirstVersion: October 2007, May 2013
      Author: Hans E Plesser, Thomas Heiberg
 
-     SeeAlso: gamma_generator, sinusoidal_poisson_generator
+     SeeAlso: sinusoidal_poisson_generator, gamma_sup_generator
   */
 
 
@@ -123,14 +124,23 @@ namespace nest{
     
     sinusoidal_gamma_generator();
     sinusoidal_gamma_generator(const sinusoidal_gamma_generator&);
-    
-    port check_connection(Connection&, port);
+
+    port send_test_event(Node&, rport, synindex, bool);
+
+    /**
+     * Import sets of overloaded virtual functions.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+     */
+    using Node::handle;
+    using Node::handles_test_event;
+    using Node::event_hook;
 
     void handle(DataLoggingRequest &);
-    port connect_sender(DataLoggingRequest &, port);
+
+    port handles_test_event(DataLoggingRequest&, rport);
 
     void get_status(DictionaryDatum &) const;
-    void set_status(const DictionaryDatum &) ;
+    void set_status(const DictionaryDatum &);
 
     //! Model can be switched between proxies (single spike train) and not
     bool has_proxies() const { return not P_.individual_spike_trains_; }
@@ -155,13 +165,13 @@ namespace nest{
       
       /** gamma order */
       double_t order_;
-      
+
       /** DC amplitude */
       double_t dc_;
       
       /** AC amplitude */
       double_t ac_;
-      
+
       /** Emit individual spike trains for each target, or same for all? */
       bool individual_spike_trains_;
 
@@ -179,7 +189,7 @@ namespace nest{
       Parameters_();  //!< Sets default parameter values
       Parameters_(const Parameters_& );
       Parameters_& operator=(const Parameters_& p); // Copy constructor EN
-      
+
       void get(DictionaryDatum&) const;  //!< Store current values in dictionary
       
       /**
@@ -199,6 +209,7 @@ namespace nest{
       void get(DictionaryDatum&) const;  //!< Store current values in dictionary
       void set(const DictionaryDatum&, const Parameters_&);  //!< Set values from dicitonary
     };
+
     // ------------------------------------------------------------
 
     // These friend declarations must be precisely here.
@@ -258,21 +269,32 @@ namespace nest{
     State_      S_;
     Variables_  V_;
     Buffers_    B_;
-};
+  };
 
   inline
-  port sinusoidal_gamma_generator::check_connection(Connection& c, port receptor_type)
+  port sinusoidal_gamma_generator::send_test_event(Node& target, rport receptor_type, synindex syn_id, bool dummy_target)
   {
+	device_.enforce_single_syn_type(syn_id);
+
     // to ensure correct overloading resolution, we need explicit event types
     // therefore, we need to duplicate the code here
     if ( P_.individual_spike_trains_ )
     {
-      DSSpikeEvent e;
-      e.set_sender(*this);
-      c.check_event(e);
-      const port rport = c.get_target()->connect_sender(e, receptor_type);
-      ++P_.num_trains_;
-      return rport;
+      if ( dummy_target )
+      {
+        DSSpikeEvent e;
+        e.set_sender(*this);
+        return target.handles_test_event(e, receptor_type);
+      }
+      else
+      {
+        SpikeEvent e;
+        e.set_sender(*this);
+        const rport r = target.handles_test_event(e, receptor_type);
+        if ( r != invalid_port_ and not is_model_prototype() )
+          ++P_.num_trains_;
+        return r;
+      }
     }
     else
     {
@@ -280,15 +302,12 @@ namespace nest{
       // proxies. Instead, we set P_.num_trains_ to 1 in Parameters_::set().
       SpikeEvent e;
       e.set_sender(*this);
-      c.check_event(e);
-      const port rport = c.get_target()->connect_sender(e, receptor_type);
-      return rport;
+      return target.handles_test_event(e, receptor_type);
     }
   }
-  
+
   inline
-  port sinusoidal_gamma_generator::connect_sender(DataLoggingRequest& dlr,
-						  port receptor_type)
+  port sinusoidal_gamma_generator::handles_test_event(DataLoggingRequest& dlr, rport receptor_type)
   {
     if (receptor_type != 0)
       throw UnknownReceptorType(receptor_type, get_name());

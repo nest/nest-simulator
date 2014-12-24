@@ -68,8 +68,7 @@ class TestAllToAll(TestParams):
 
     # test single threaded for now        
     def testRPortDistribution(self):
-        n_rport = 100
-        pval = 0.05
+        n_rport = 10
         nr_neurons = 20
         nest.ResetKernel()
         neuron_model = 'iaf_psc_exp_multisynapse'
@@ -80,24 +79,23 @@ class TestAllToAll(TestParams):
         syn_params['receptor_type'] = {'distribution': 'uniform_int', 'low': 1, 'high': n_rport}
         nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
         M = hf.get_weighted_connectivity_matrix(self.pop1, self.pop2, 'receptor')
-        params = syn_params
-        params['pval'] = self.pval
         M = hf.gather_data(M)
-        if M != None:
+        if M is not None:
             M = M.flatten()
-            test_dist = np.random.randint(params['receptor_type']['low'], params['receptor_type']['high'], len(M))
-            chi, p = scipy.stats.ks_2samp(M, test_dist)
-            print("p-value : %.2f" % p)
-            if p > self.pval:
-                is_dist = True
-            else:
-                is_dist = False
-            self.assertTrue(is_dist)
+            frequencies = scipy.stats.itemfreq(M)
+            self.assertTrue(np.array_equal(frequencies[:, 0], np.arange(1, n_rport+1)), 'Missing or invalid rports')
+            chi, p = scipy.stats.chisquare(frequencies[:, 1])
+            self.assertGreater(p, self.pval, 'Chi2 test failed.')
 
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestAllToAll)
     return suite
+
+def run():
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())
+    
         
 if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    run()

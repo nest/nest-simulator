@@ -48,10 +48,7 @@ SeeAlso: readline, GNUaddhistory
 */
 void GNUReadline::GNUReadlineFunction::execute(SLIInterpreter *i) const
 {
-  //call: promptstring GNUreadline -> string true
-  //                                         false
-
-  assert(i->OStack.load()>0);
+  i->assert_stack_load(1);
   i->EStack.pop();
 
   StringDatum *sd = dynamic_cast<StringDatum *>(i->OStack.top().datum());
@@ -91,9 +88,7 @@ SeeAlso: GNUreadline
 */
 void GNUReadline::GNUAddhistoryFunction::execute(SLIInterpreter *i) const
 {
-  //call: string GNUaddhistory
-
-  assert(i->OStack.load()>0);
+  i->assert_stack_load(1);
   i->EStack.pop();
   StringDatum *sd = dynamic_cast<StringDatum *>(i->OStack.top().datum());
   assert(sd != NULL);

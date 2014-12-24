@@ -68,12 +68,12 @@ namespace nest
        lot of general node properties, it was a natural place to put
        this function.
 
-       Model::check_connection() is a forwarding function that call
-       check_connection() from the prototype. Since proxies know the
+       Model::send_test_event() is a forwarding function that calls
+       send_test_event() from the prototype. Since proxies know the
        model they represent, they can now answer a call to check
-       connection by refering back to the model.
+       connection by referring back to the model.
      */
-    port check_connection(Connection&, port);
+    port send_test_event(Node&, rport, synindex, bool);
 
     Node const & get_prototype() const;
 
@@ -177,9 +177,9 @@ namespace nest
 
   template <typename ElementT>
   inline
-  port GenericModel<ElementT>::check_connection(Connection& c, port receptor)
+  port GenericModel<ElementT>::send_test_event(Node& target, rport receptor, synindex syn_id, bool dummy_target)
   {
-    return proto_.check_connection(c, receptor);
+    return proto_.send_test_event(target, receptor, syn_id, dummy_target);
   }
 
   template <typename ElementT>

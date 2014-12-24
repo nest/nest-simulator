@@ -56,8 +56,6 @@ nest::ConnParameter* nest::ConnParameter::create(const Token& t)
     //return new ArrayParameter(**dvd);
 
   throw BadProperty("Cannot handle parameter type.");
-
-  return 0;
 }
 
 nest::RandomParameter::RandomParameter(const DictionaryDatum& rdv_spec)

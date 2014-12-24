@@ -32,8 +32,6 @@
 
 #include "nest.h"
 #include "nest_time.h"
-#include "net_thread.h"
-#include "mutex.h"
 #include "nodelist.h"
 #include "event.h"
 #include "event_priority.h"
@@ -103,22 +101,9 @@ namespace nest
      */
     void prepare_simulation();
 
-    /**
-     * Force reconfiguration of the simulation.
-     * This function must be called whenever the network has changed after a simulation.
-     * Eligible changes are:
-     * - adding new nodes
-     * - adding connections
-     * - changing the number of threads
-     * - freezing or unfreezing of nodes.
-     * After a call to this function, the next simulate()/resume() call will call prepare_simulation.
-     */
-    void force_preparation();
-
     /** 
      * Cleanup after the simulation.
      */
-
     void finalize_simulation();
 
     void terminate();
@@ -162,6 +147,8 @@ namespace nest
      */
     void send_offgrid_remote(thread p, SpikeEvent&, const long_t lag = 0);
 
+    Node* thread_lid_to_node(thread t, targetindex thread_local_id) const;
+
     /**
      * Return the number of threads used during simulation.
      * This functions returns the number of threads per process. 
@@ -191,8 +178,16 @@ namespace nest
     /**
      * Set number of recording processes, switches NEST to global
      * spike detection mode.
+     *
+     * @param nrp  number of recording processes
+     * @param called_by_reset   pass true when calling from Scheduler::reset()
+     *
+     * @note The `called_by_reset` parameter is a cludge to avoid a chicken-and-egg
+     *       problem when resetting the kernel. It surpresses a test for existing
+     *       nodes, trusting that the kernel will immediately afterwards delete all
+     *       existing nodes.
      */
-    void set_num_rec_processes(int nrp);
+    void set_num_rec_processes(int nrp, bool called_by_reset=false);
 
     /**
      * Increment total number of global spike detectors by 1
@@ -285,23 +280,11 @@ namespace nest
      */
     Time const get_time() const;
 
-    bool is_busy() const;
-    bool is_updated() const;
-    bool update_reference() const;
-
-    /**
-     * Update a fixed set of nodes per thread using pthreads.
-     * This is called by a thread.
-     */
-    void threaded_update(thread);
-
-    /**
-     * Update a fixed set of nodes per thread using OpenMP.
-     */
-    void threaded_update_openmp();
-
-    /** Update without any threading. */
-    void serial_update();
+    /** Update all non-frozen nodes. This function uses OpenMP
+      * for multi-threading if enabled at configure time and runs
+      * with a single thread otherwise.
+      */
+    void update();
  
     void set_network_(Network*);
 
@@ -353,6 +336,11 @@ namespace nest
      */
     void calibrate_clock();
 
+    /**
+     * Ensure that all nodes in the network have valid thread-local IDs.
+     */
+    void ensure_valid_thread_local_ids() { update_nodes_vec_(); }
+
   private:
 
     /**
@@ -365,7 +353,6 @@ namespace nest
      */
     void finalize_();
     
-    void update_(Node*);
     void advance_time_();
 
     void print_progress_();
@@ -398,17 +385,20 @@ namespace nest
     void create_rngs_(const bool ctor_call = false);
     void create_grng_(const bool ctor_call = false);
 
-    void compute_delay_extrema_(delay&, delay&) const;
-    
-    Mutex ready_mutex_;
-    Mutex terminate_mutex_; //!< protect terminate() calls.
+    /**
+     * Update delay extrema to current values.
+     *
+     * Static since it only operates in static variables. This allows it to be
+     * called from const-method get_status() as well.
+     */
+    static
+    void update_delay_extrema_();
 
     bool initialized_;
     bool simulating_;  //!< true if simulation in progress
     bool force_singlethreading_;
 
     index n_threads_; //!< Number of threads per process.
-    index n_nodes_;   //!< Effective number of simulated nodes.
 
     index n_rec_procs_; //!< MPI processes dedicated for recording devices
     index n_sim_procs_; //!< MPI processes used for simulation
@@ -418,29 +408,21 @@ namespace nest
     volatile index   entry_counter_; //!< Counter for entry barrier.
     volatile index   exit_counter_;  //!< Counter for exit barrier.
 
-#ifdef HAVE_PTHREADS
-    pthread_cond_t   ready_;
-    pthread_cond_t   done_;
-#endif
-
-    vector<Thread>   threads_;
-    vector<vector<Node*> > nodes_vec_;   //!< Nodelists for unfrozen nodes
+    vector<vector<Node*> > nodes_vec_;   //!< Nodelists for nodes for each thread
+    index nodes_vec_network_size_;       //!< Network size when nodes_vec_ was last updated
     
-    Network  &net_;         //!< Reference to network object.
     Time     clock_;        //!< Network clock, updated once per slice
-    long_t   slice_;        //!< current update slice
-    long_t   to_do_;        //!< number of pending cycles.
-    long_t   to_do_total_;  //!< number of requested cycles in current simulation.
-    long_t   from_step_;    //!< update clock_+from_step<=T<clock_+to_step_
-    long_t   to_step_;      //!< update clock_+from_step<=T<clock_+to_step_
+    delay   slice_;        //!< current update slice
+    delay   to_do_;        //!< number of pending cycles.
+    delay   to_do_total_;  //!< number of requested cycles in current simulation.
+    delay   from_step_;    //!< update clock_+from_step<=T<clock_+to_step_
+    delay   to_step_;      //!< update clock_+from_step<=T<clock_+to_step_
 
     timeval t_slice_begin_; //!< Wall-clock time at the begin of a time slice
     timeval t_slice_end_;   //!< Wall-clock time at the end of time slice
     long t_real_;           //!< Accumunated wall-clock time spent simulating (in us) 
     
-    bool update_ref_;       //!< reference for node update state.
     bool terminate_;        //!< Terminate on signal or error
-    bool is_prepared_;      //!< true if prepare_simulation was executed
     bool simulated_;        //!< indicates whether the network has already been simulated for some time
     bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid 
     bool print_time_;       //!< Indicates whether time should be printed during simulations (or not)
@@ -448,11 +430,30 @@ namespace nest
     std::vector<long_t> rng_seeds_;  //!< The seeds of the local RNGs. These do not neccessarily describe the state of the RNGs.
     long_t grng_seed_;   //!< The seed of the global RNG, not neccessarily describing the state of the GRNG.
     
+    /**
+     * Pointer to network object.
+     *
+     * Maintained as a static pointer so that update_delay_extrema_() can be a static function
+     * and update thet static min/max_delay_ variables even from get_status() const.
+     */
     static
-    delay min_delay_; //!< Value of the smallest delay in the network.
+    Network*  net_;
 
+    /**
+     *  Value of the smallest delay in the network.
+     *
+     *  Static because get_min_delay() must be static to allow access from neuron models.
+     */
     static
-    delay max_delay_; //!< Value of the largest delay in the network in steps.
+    delay min_delay_;
+
+    /**
+     *  Value of the largest delay in the network.
+     *
+     *  Static because get_max_delay() must be static to allow access from neuron models.
+     */
+    static
+    delay max_delay_;
     
     /** 
      * Table of pre-computed modulos.
@@ -548,7 +549,7 @@ namespace nest
      * steps during communication. 
      */
     static
-    const uint_t comm_marker_;
+    const delay comm_marker_;
 
     /**
      * Resize spike_register and comm_buffer to correct dimensions.
@@ -561,10 +562,13 @@ namespace nest
      */
     void configure_spike_buffers_();
     
+
     /**
-     * Clear nodes_vec_ prior to each network calibration.
-     */  
-    void clear_nodes_vec_();
+     * Create up-to-date vector of local nodes, nodes_vec_.
+     *
+     * This method also sets the thread-local ID on all local nodes.
+     */
+    void update_nodes_vec_();
 
     /**
      * Rearrange the spike_register into a 2-dim structure. This is
@@ -589,28 +593,6 @@ namespace nest
      */
     void deliver_events_(thread t);
   };
-
-  /**
-   * Used by threads to update the element.
-   * Thus, we keep the responsibility of calling
-   * private Node methods at the Scheduler.
-   * 
-   * This function will perform two things:
-   * -# Call the node's update method @see Node::update
-   * -# Change the updated flag at the Node.
-   */
-  inline
-  void Scheduler::update_(Node *n)
-  {
-    n->update(clock_, from_step_, to_step_);
-    n->flip(Node::updated);
-  }
-
-  inline
-  bool Scheduler::is_busy() const
-  {
-    return (to_do_ != 0) && (! terminate_);
-  }
 
   inline
   Time const& Scheduler::get_slice_origin() const
@@ -748,18 +730,6 @@ namespace nest
     return off_grid_spiking_;
   }
   
-  inline 
-  bool Scheduler::is_updated() const
-  {
-    return (to_do_==0) || terminate_;
-  }
-
-  inline 
-  bool Scheduler::update_reference() const
-  {
-    return update_ref_;
-  }
-
   inline
   librandom::RngPtr Scheduler::get_rng(const thread thrd) const
   {
@@ -783,20 +753,19 @@ namespace nest
   void Scheduler::prepare_node_(Node *n)
   {
     // Frozen nodes are initialized and calibrated, so that they
-    // have ring buffers and can accept incoming spikes. They
-    // are not placed in the nodes_vec_, as they shall not be
-    // updated. See #414.
+    // have ring buffers and can accept incoming spikes.
     n->init_buffers();
     n->calibrate();
-
-    if(n->is_frozen())
-      return;
-    
-    nodes_vec_[n->get_thread()].push_back(n);
   }
 
   inline
-  void Scheduler::send_remote(thread t, SpikeEvent& e, const long_t lag)
+  Node* Scheduler::thread_lid_to_node(thread t, targetindex thread_local_id) const
+  {
+    return nodes_vec_[t][thread_local_id];
+  }
+
+  inline
+  void Scheduler::send_remote(thread t, SpikeEvent& e, const delay lag)
   {
     // Put the spike in a buffer for the remote machines
     for (int_t i = 0; i < e.get_multiplicity(); ++i)
@@ -804,7 +773,7 @@ namespace nest
   }
 
   inline
-  void Scheduler::send_offgrid_remote(thread t, SpikeEvent& e, const long_t lag)
+  void Scheduler::send_offgrid_remote(thread t, SpikeEvent& e, const delay lag)
   {
     // Put the spike in a buffer for the remote machines
     OffGridSpike ogs(e.get_sender().get_gid(), e.get_offset());
@@ -817,7 +786,7 @@ namespace nest
   {
     // Note, here d may be 0, since bin 0 represents the "current" time
     // when all evens due are read out.
-    assert(d < moduli_.size());
+    assert(static_cast<vector<delay>::size_type>(d) < moduli_.size());
 
     return moduli_[d];
   }
@@ -827,7 +796,7 @@ namespace nest
   {
     // Note, here d may be 0, since bin 0 represents the "current" time
     // when all evens due are read out.
-    assert(d < slice_moduli_.size());
+    assert(static_cast<vector<delay>::size_type>(d) < slice_moduli_.size());
 
     return slice_moduli_[d];
   }
@@ -853,16 +822,9 @@ namespace nest
   inline 
   void Scheduler::terminate()
   {
-    terminate_mutex_.lock();
     terminate_=true;
-    terminate_mutex_.unlock();
   }
 
-  inline 
-  void Scheduler::force_preparation()
-  {
-    is_prepared_=false;
-  }
 }
 
 #endif //SCHEDULER_H

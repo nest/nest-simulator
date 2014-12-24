@@ -6,7 +6,7 @@
 #
 
 AC_PREREQ(2.52)
-AC_INIT([nest], [2.4.2], [nest_user@nest-initiative.org])
+AC_INIT([nest], [2.6.0], [nest_user@nest-initiative.org])
 
 # Prevent automatic rebuilding of Makefile.ins and configure if their
 # content or timestamp changes. Not doing this lead to failing builds
@@ -19,8 +19,8 @@ AM_MAINTAINER_MODE([disable])
 # The patchlevel is updated automatically by the script
 # releasetools/buildnest
 SLI_MAJOR=2
-SLI_MINOR=4
-SLI_PATCHLEVEL=2
+SLI_MINOR=6
+SLI_PATCHLEVEL=0
 
 SLI_PRGNAME="nest-$SLI_MAJOR.$SLI_MINOR.$SLI_PATCHLEVEL"
 SLI_VERSION=$SLI_MAJOR.$SLI_MINOR.$SLI_PATCHLEVEL
@@ -137,6 +137,11 @@ AC_ARG_WITH(vampir,[  --with-vampir			Include support for the Vampir tool.],
   unset VAMPIR_CFLAGS
 fi])
 
+
+# memory_thisjob_darwin needs the mach/mach.h header to get
+# information about memory consumption
+# 05 Nov 2014 Tammo Ippen
+AC_CHECK_HEADERS(mach/mach.h)
 
 
 bluegene_architecture="none"
@@ -272,9 +277,15 @@ AC_ARG_WITH(libneurosim, [  --with-libneurosim[[=directory]]       Request the u
   [
     if test "$withval" != "no"; then
       if test "$withval" != "yes"; then
-    	LIBNEUROSIM_LIBS="-L${withval}/lib -lneurosim"
-	LIBNEUROSIM_PY_LIBS="-lpyneurosim"
-	LIBNEUROSIM_INCLUDE="-I${withval}/include"
+        if test "x$configure_bluegene" = xyes; then
+          LIBNEUROSIM_LIBS="${withval}/lib/libneurosim.a"
+          LIBNEUROSIM_PY_LIBS="${withval}/lib/libpyneurosim.a"
+          LIBNEUROSIM_INCLUDE="-I${withval}/include"
+        else
+          LIBNEUROSIM_LIBS="-L${withval}/lib -lneurosim"
+          LIBNEUROSIM_PY_LIBS="-lpyneurosim"
+          LIBNEUROSIM_INCLUDE="-I${withval}/include"
+        fi
       fi
       HAVE_LIBNEUROSIM="yes"
     else
@@ -617,29 +628,6 @@ AC_ARG_WITH([openmp], [AS_HELP_STRING([--without-openmp], [disable OpenMP multit
             [with_openmp=$withval],     # withval=yes, if configured with --with-openmp, no with --without-openmp
             [with_openmp=default])      # withval would be yes, if configured without args
 
-# Testing for POSIX threads
-AC_ARG_WITH([pthread], [AS_HELP_STRING([--with-pthread], [enable POSIX threads])],
-            [with_pthread=$withval],
-            [with_pthread=no])
-
-# This allows to override the default (OpenMP) by only using
-# --with-pthread without also having to use --without-openmp
-if test "$with_openmp" = default && test "$with_pthread" = yes; then
-  with_openmp=no
-fi
-
-# Force a sensible combination of --with-openmp and --with-pthread
-if test "$with_openmp" = yes && test "$with_pthread" = yes; then
-  echo # we need a newline here because there won't be a result to print
-  AC_MSG_ERROR([Only one of OpenMP and POSIX threads can be enabled manually.])
-fi
-
-# On Blue Gene/L we can't use POSIX threads
-if test "$with_pthread" = yes && test "x$bluegene_architecture" = xL; then
-  echo # we need a newline here because there won't be a result to print
-  AC_MSG_ERROR([POSIX threads are not available on Blue Gene/L, either use OpenMP, or no threading.])
-fi
-
 # Check if the OpenMP setup is usable
 if test "$with_openmp" = yes || test "$with_openmp" = default; then
   AC_MSG_RESULT(openmp)
@@ -659,21 +647,9 @@ if test "$with_openmp" = yes || test "$with_openmp" = default; then
   AM_CXXFLAGS="$AM_CXXFLAGS $OPENMP_CXXFLAGS"
   with_openmp=yes
 else
-  # Check if the POSIX threads are usable
-  if test "$with_pthread" = yes; then
-    AC_MSG_RESULT(pthreads)
-    AC_CHECK_LIB(pthread, pthread_testcancel,
-                [SLI_LIBS="${SLI_LIBS} -lpthread"
-                 SLI_THREAD_DEFS="-D_POSIX_C_SOURCE=199506L"
-                 SLI_HAVE_PTHREADS="true"
-                 AC_DEFINE(HAVE_PTHREADS,1,[pthreads are available])],\
-                [echo; AC_MSG_ERROR([No pthread library found, please use --without-pthread to disable.])])
-  else
-    AC_MSG_RESULT(none)
-  fi
+  AC_MSG_RESULT(none)
 fi
 
-AM_CONDITIONAL([LINK_PTHREAD], test "x$with_pthread" = xyes)
 AM_CONDITIONAL([LINK_OPENMP],  test "x$with_openmp"  = xyes)
 
 # End of thread library processing
@@ -710,6 +686,7 @@ AM_CONDITIONAL([HAVE_PYTHON], [test "x$have_python" = "xyes"])
 
 AC_SUBST([HAVE_PYTHON])
 AC_SUBST([PYNEST_SUBDIR])
+AC_SUBST([PYEXECDIR], ${pyexecdir})
 
 AC_SUBST([PYTHON])
 AC_SUBST([PYTHON_VERSION])
@@ -750,12 +727,6 @@ SLI_CHECK_STATIC_TEMPLATE_DECLARATION
 
 SLI_ALPHA_CMATH_MAKROS_IGNORED
 SLI_ALPHA_CXX_SIGUSR_IGNORED
-if test "$SLI_HAVE_PTHREADS" = "true"; then
-   SLI_ALPHA_CXX_PTHREAD_IGNORED
-
-   # must run aftr SLI_ALPHA_CXX_PTHREAD_IGNORED
-   SLI_HAVE_PTHREAD_SETCONCURRENCY
-fi
 
 SLI_CHECK_ISTREAM_HEADER
 SLI_CHECK_OSTREAM_HEADER
@@ -779,9 +750,8 @@ LINKED_USER_MODULES=""
 AC_ARG_WITH(modules,[  --with-modules = external modules to be linked in],
 [
 if test "$withval" != no; then
-  LINKED_USER_MODULES="-L$prefix/lib/nest"
   for mod in $withval; do
-    LINKED_USER_MODULES="$LINKED_USER_MODULES -l$mod"
+    LINKED_USER_MODULES=" $prefix/lib/nest/lib$mod.la"
     SLI_USER_MODULES="$SLI_USER_MODULES $mod"
   done
 fi
@@ -920,8 +890,6 @@ AC_SUBST(HAVE_M_E)
 AC_SUBST(HAVE_M_PI)
 AC_SUBST(HAVE_CMATH_MAKROS_IGNORED)
 AC_SUBST(HAVE_SIGUSR_IGNORED)
-AC_SUBST(HAVE_PTHREAD)
-AC_SUBST(HAVE_PTHREAD_IGNORED)
 AC_SUBST(HAVE_READLINE)
 AC_SUBST(HAVE_VAMPIR)
 AC_SUBST(VAMPIR_LIBS)
@@ -988,6 +956,8 @@ AC_SUBST(LINKED_USER_MODULES)
 AC_CONFIG_HEADER(libnestutil/config.h)
 AC_CONFIG_FILES(libnestutil/sliconfig.h)
 AC_CONFIG_FILES(Makefile)
+AC_CONFIG_FILES(doc/fulldoc.conf)
+AC_CONFIG_FILES(doc/normaldoc.conf)
 AC_CONFIG_FILES(doc/Makefile)
 AC_CONFIG_FILES(examples/Makefile)
 AC_CONFIG_FILES(examples/nest/Makefile)
@@ -1001,6 +971,7 @@ AC_CONFIG_FILES(nestkernel/Makefile)
 AC_CONFIG_FILES(nest/Makefile)
 AC_CONFIG_FILES(extras/nest-config)
 AC_CONFIG_FILES(testsuite/do_tests.sh)
+AC_CONFIG_FILES(extras/nest_vars.sh)
 
 # conngen is special in that it might be omitted from build when
 # libneurosim is not present, yet it always has to be configured
@@ -1107,11 +1078,7 @@ echo
 if test "$with_openmp" = yes; then
   echo "Use threading       : Yes (OpenMP)"
 else
-  if test "$with_pthread" = yes; then
-    echo "Use threading       : Yes (POSIX threads)"
-  else
-    echo "Use threading       : No"
-  fi
+  echo "Use threading       : No"
 fi
 
 echo
@@ -1162,6 +1129,10 @@ if test "x$have_python" = "xyes"; then
     printf "  "; eval eval echo "  ${pyexecdir}"
     echo
 fi
+echo "To set necessary environment variables, add the following line"
+echo "to your ~/.bashrc :"
+printf "  source "; eval eval echo "$exec_prefix/bin/nest_vars.sh"
+echo
 echo "--------------------------------------------------------------------------------"
 echo
 
@@ -1196,9 +1167,10 @@ if test "$ac_have_gsl" != no; then
   fi
 else
   echo
-  echo "You're about to compile NEST without the GNU Scientific"
-  echo "Library. Some models and random number generators will"
-  echo "not be available."
+  echo "ATTENTION!"
+  echo "You are about to compile NEST without the GNU Scientific"
+  echo "Library. This means that conductance-based neuron models"
+  echo "and some random number generators will not be available."
   echo
   echo "--------------------------------------------------------------------------------"
   echo

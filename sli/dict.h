@@ -32,7 +32,7 @@
 #include "sliexceptions.h"
 
 
-typedef  std::map<Name,Token, std::less<Name> > TokenMap;
+typedef  std::map<Name, Token, std::less<Name> > TokenMap;
 
 inline bool operator==(const TokenMap & x, const TokenMap &y)
 {
@@ -42,7 +42,7 @@ inline bool operator==(const TokenMap & x, const TokenMap &y)
 /** A class that associates names and tokens.
  *  @ingroup TokenHandling
  */
-class Dictionary :private TokenMap
+class Dictionary: private TokenMap
 {
   /**
    * Helper class for lexicographical sorting of dictionary entries.
@@ -70,7 +70,7 @@ class Dictionary :private TokenMap
   };
   
 public:
-  Dictionary() {}
+  Dictionary(): refs_on_dictstack_(0) {}
   Dictionary(const Dictionary &d) : TokenMap(d), refs_on_dictstack_(0) {}
   ~Dictionary();
   
@@ -107,6 +107,9 @@ public:
   const Token & lookup2(const Name &n) const; //throws UndefinedName
   bool known(const Name &) const;
   
+  //! Returns true if name is known but token has not been accessed
+  bool known_but_not_accessed(const Name&) const;
+
   Token & insert(const Name &n, const Token &t);
   Token & insert_move(const Name &, Token &);
 
@@ -258,6 +261,16 @@ bool Dictionary::known(const Name &n) const
   TokenMap::const_iterator where = find(n);
   if(where != end())
     return true;
+  else
+    return false;
+}
+
+inline
+bool Dictionary::known_but_not_accessed(const Name &n) const
+{
+  TokenMap::const_iterator where = find(n);
+  if(where != end())
+    return not where->second.accessed();
   else
     return false;
 }

@@ -70,7 +70,6 @@ FirstVersion: February 2014
     {
 	/ev sd /events get def
      	ev keys { /k Set ev dup k get cva k exch put } forall
-     	ev info
      	ev
     }
     {

@@ -27,9 +27,9 @@ Name: testsuite::ticket-478 Ensure that devices can only be connected using stat
 Synopsis: (ticket-478) run -> NEST exits if test fails
 
 Description:
-Ensure that NEST throws and exception if one tries to connect poisson_generator
+Ensure that NEST throws an exception if one tries to connect poisson_generator
 (sending DSSpikeEvents), noise_generator (sending DSCurrentEvents) or multimeter
-(sending DataLoggingRequest) to a neuron.
+(sending DataLoggingRequest) to a neuron using a plastic synapse.
 
 spike_generator slips through this test, since it usually sends SpikeEvent. But it
 is no danger if it sends DSSpikeEvents for weighted spikes, since it sends precisely
@@ -43,36 +43,68 @@ Author: Hans Ekkehard Plesser, 2010-10-22
 
 M_ERROR setverbosity
 
-% these should pass, but keep only those that are in synapsedict (if developer not present)
-/statics 
-[ /static_synapse /static_synapse_hom_wd /static_synapse_S ] 
-{ synapsedict exch known }
-Select
+% find all static and plastic synapses
+% we identifiy as static all synapses that have the same default parameter names
+% as static_synapse
+/static_defaults
+  /static_synapse GetDefaults keys { cvs } Map Sort
 def
 
-% now all the others
-/plastics
-synapsedict keys
-{ statics exch MemberQ not }
-Select 
+/static_syn_models
+  synapsedict keys { GetDefaults keys { cvs } Map Sort static_defaults eq } Select
 def
 
+/plastic_syn_models
+  synapsedict keys { GetDefaults keys { cvs } Map Sort static_defaults neq } Select
+def
+
+% We perform the tests first for all relevant generators
+/ds_models 
+  [/gamma_sup_generator /mip_generator /noise_generator /poisson_generator 
+   /ppd_sup_generator /sinusoidal_gamma_generator /poisson_generator_ps] 
+  { modeldict exch known } Select   
+def
+            
 ResetKernel
-/n /iaf_neuron Create def
-/dev [/multimeter Create /poisson_generator Create /noise_generator Create ] def
-
 {
-  statics
-  { /st Set
-    dev n st ConvergentConnect
+  static_syn_models
+  { /st Set 
+    % create new nodes for each connection to avoid any issues with prohibited multiple connections
+    ds_models 
+    { Create /iaf_neuron Create st Connect } forall  
   } forall
 } pass_or_die
 
+ResetKernel
+plastic_syn_models
 {
-  plastics
-  { /st Set
-    dev n st ConvergentConnect
+    /st Set
+    ds_models
+    {
+      /d Set
+      { d Create /iaf_neuron Create st Connect } fail_or_die
+    } forall
+} forall 
+
+ % Now we test the multimeter. Since it uses non-zero rports, it must also fail on HPC synapses
+ % We can currently only distinguish them by name. 
+ /static_non_hpc_models static_syn_models { cvs -4 Take (_hpc) neq } Select def
+ /models_to_fail plastic_syn_models  static_syn_models { cvs -4 Take (_hpc) eq } Select join def
+ 
+ResetKernel
+{
+  static_non_hpc_models
+  { /st Set 
+    % create new nodes for each connection to avoid any issues with prohibited multiple connections
+    /multimeter Create /iaf_neuron Create st Connect
   } forall
-} fail_or_die 
+} pass_or_die
+
+ResetKernel
+models_to_fail
+{
+    /st Set
+    /multimeter Create /iaf_neuron Create { st Connect } fail_or_die 
+} forall 
   
 endusing

@@ -142,17 +142,14 @@ namespace nest
 
     /**
      * Import sets of overloaded virtual functions.
-     * We need to explicitly include sets of overloaded
-     * virtual functions into the current scope.
-     * According to the SUN C++ FAQ, this is the correct
-     * way of doing things, although all other compilers
-     * happily live without.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
-	using Node::connect_sender;
     using Node::handle;
+    using Node::handles_test_event;
 
     void handle(SpikeEvent &);
-    port connect_sender(SpikeEvent &, port);
+
+    port handles_test_event(SpikeEvent &, rport);
 
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
@@ -261,7 +258,7 @@ namespace nest
   };
 
   inline
-  port correlomatrix_detector::connect_sender(SpikeEvent&, port receptor_type)
+  port correlomatrix_detector::handles_test_event(SpikeEvent&, rport receptor_type)
   {
     if (receptor_type < 0 || receptor_type > P_.N_channels_-1)
       throw UnknownReceptorType(receptor_type, get_name());
@@ -275,7 +272,7 @@ namespace nest
     P_.get(d);
     S_.get(d);
 
-    (*d)[names::type] = LiteralDatum(names::recorder);
+    (*d)[names::element_type] = LiteralDatum(names::recorder);
   }
 
   inline

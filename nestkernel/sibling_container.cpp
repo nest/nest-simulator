@@ -36,7 +36,7 @@ nest::SiblingContainer::SiblingContainer()
   :Node(),
    nodes_()
 {
-  set(frozen);  // freeze SiblingContainer by default
+  set_frozen_(true);  // freeze SiblingContainer by default
 }
 
 nest::SiblingContainer::SiblingContainer(const SiblingContainer &c)

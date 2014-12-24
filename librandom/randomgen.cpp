@@ -27,8 +27,9 @@ const size_t librandom::RandomGen::DEFAULT_BUFFSIZE = 128 * 1024;
 const unsigned long librandom::RandomGen::DefaultSeed = 0xd37ca59fUL;  
 
 librandom::RandomGen::RandomGen() :
-  next_(0),
-  end_(0)
+  buffer_(),
+  next_(buffer_.end()),
+  end_(buffer_.end())
 {
   set_buffsize(DEFAULT_BUFFSIZE);  // resets pointers as well
 

@@ -228,7 +228,6 @@ SLIStartup::SLIStartup(int argc, char** argv)
   have_mpi_name("have_mpi"),
   ismpi_name("is_mpi"),
   have_gsl_name("have_gsl"),
-  have_pthreads_name("have_pthreads"),
   have_music_name("have_music"),
   have_libneurosim_name("have_libneurosim"),
   ndebug_name("ndebug"),
@@ -403,10 +402,6 @@ void SLIStartup::init(SLIInterpreter *i)
   // unique setting
   std::string threading;
 
-#ifdef HAVE_PTHREADS
-  threading += "pthreads";
-#endif
-
 #ifdef _OPENMP
   threading += "openmp";
 #endif
@@ -426,12 +421,6 @@ void SLIStartup::init(SLIInterpreter *i)
   statusdict->insert(have_gsl_name, Token(new BoolDatum(true)));
 #else
   statusdict->insert(have_gsl_name, Token(new BoolDatum(false)));
-#endif
-
-#ifdef HAVE_PTHREADS
-  statusdict->insert(have_pthreads_name, Token(new BoolDatum(true)));
-#else
-  statusdict->insert(have_pthreads_name, Token(new BoolDatum(false)));
 #endif
 
 #ifdef HAVE_MUSIC

@@ -2,7 +2,7 @@
               -- N E S T --
 
   Copyright (C) 2004 The NEST Initiative
-  Version 2.3.svn Jun 18 2014 10:46:15
+  Version 2.5.svn Dec 13 2014 10:35:56
 
 This program is provided AS IS and comes with
 NO WARRANTY. See the file LICENSE for details.
@@ -13,10 +13,10 @@ Problems or suggestions?
 
 Type 'nest.help()' to find out more about NEST.
 
-Jun 18 15:41:54 Network::clear_models [Info]: 
+Dec 14 23:41:03 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 #{ layer1s.log #}
-{'rows': 5, 'columns': 5, 'depth': 1, 'extent': (1.0, 1.0), 'center': (0.0, 0.0), 'edge_wrap': False}
+{u'rows': 5, u'center': (0.0, 0.0), u'edge_wrap': False, u'depth': 1, u'extent': (1.0, 1.0), u'columns': 5}
 #{ end.log #}
 #{ layer1p.log #}
 +-[0] root dim=[1 25]
@@ -27,25 +27,25 @@ Jun 18 15:41:54 Network::clear_models [Info]:
       
 #{ end.log #}
 
-Jun 18 15:41:55 Network::clear_models [Info]: 
+Dec 14 23:41:04 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:41:55 Network::clear_models [Info]: 
+Dec 14 23:41:04 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:41:56 Network::clear_models [Info]: 
+Dec 14 23:41:05 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:41:57 Network::clear_models [Info]: 
+Dec 14 23:41:06 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:41:57 Network::clear_models [Info]: 
+Dec 14 23:41:06 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:41:58 Network::clear_models [Info]: 
+Dec 14 23:41:07 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:41:58 Network::clear_models [Info]: 
+Dec 14 23:41:07 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 #{ layer6 #}
 +-[0] root dim=[1 4]
@@ -57,7 +57,7 @@ Jun 18 15:41:58 Network::clear_models [Info]:
       
 #{ end #}
 
-Jun 18 15:41:58 Network::clear_models [Info]: 
+Dec 14 23:41:07 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 #{ layer7 #}
 +-[0] root dim=[1 26]
@@ -70,8 +70,8 @@ Jun 18 15:41:58 Network::clear_models [Info]:
       
 #{ end #}
 
-Jun 18 15:41:58 Network::clear_models [Info]: 
+Dec 14 23:41:07 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:41:58 Network::clear_models [Info]: 
+Dec 14 23:41:07 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.

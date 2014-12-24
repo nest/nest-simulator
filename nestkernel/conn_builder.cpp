@@ -31,6 +31,7 @@
 #include "exceptions.h"
 
 #include "gsl_binomial_randomdev.h"
+#include "binomial_randomdev.h"
 #include "normal_randomdev.h"
 #include "gslrandomgen.h"
 #include "fdstream.h"
@@ -70,7 +71,8 @@ nest::ConnBuilder::ConnBuilder(Network& net,
   if ( !net_.get_synapsedict().known(syn_name) )
     throw UnknownSynapseType(syn_name);
 
-  // if another synapse than static_synapse is defined we need to make sure that Connect can process all parameter specified
+  // if another synapse than static_synapse is defined we need to make
+  // sure that Connect can process all parameter specified
   if ( syn_name != "static_synapse" )
     check_synapse_params_(syn_name, syn_spec);
 
@@ -78,21 +80,34 @@ nest::ConnBuilder::ConnBuilder(Network& net,
 
   DictionaryDatum syn_defaults = net_.get_connector_defaults(synapse_model_);
 
+  // All synapse models have the possibility to set the delay (see
+  // SynIdDelay), but some have homogeneous weights, hence it should
+  // be possible to set the delay without the weight.
+  default_weight_ = !syn_spec->known(names::weight);
+
+  // If neither weight nor delay are given in the dict, we handle this
+  // separately. Important for hom_w synapses, on which weight cannot
+  // be set. However, we use default weight and delay for _all_ types
+  // of synapses.
+  default_weight_and_delay_ = ( default_weight_ && !syn_spec->known(names::delay) );
+
 #ifdef HAVE_MUSIC
-  // We allow music_channel as alias for receptor_type during connection setup
+  // We allow music_channel as alias for receptor_type during
+  // connection setup
   (*syn_defaults)[names::music_channel] = 0;
 #endif
-
-  // If neither weight or delay are given in the dict, we handle this
-  // separately. Important for hom_wd synapses, on which weight and delay
-  // cannot be set.
-  default_weight_and_delay_ = ( !syn_spec->known(names::weight) 
-				&& !syn_spec->known(names::delay) );
+  
   if ( !default_weight_and_delay_ )
   {
     weight_ = syn_spec->known(names::weight)
               ? ConnParameter::create((*syn_spec)[names::weight])
               : ConnParameter::create((*syn_defaults)[names::weight]);
+    delay_ = syn_spec->known(names::delay)
+              ? ConnParameter::create((*syn_spec)[names::delay])
+              : ConnParameter::create((*syn_defaults)[names::delay]);
+  }
+  else if (!default_weight_)
+  {
     delay_ = syn_spec->known(names::delay)
               ? ConnParameter::create((*syn_spec)[names::delay])
               : ConnParameter::create((*syn_defaults)[names::delay]);
@@ -108,7 +123,6 @@ nest::ConnBuilder::ConnBuilder(Network& net,
   skip_set.insert(names::delay);
   skip_set.insert(Name("min_delay"));
   skip_set.insert(Name("max_delay"));
-  skip_set.insert(Name("node_type"));
   skip_set.insert(Name("num_connections"));
   skip_set.insert(Name("num_connectors"));
   skip_set.insert(Name("property_object"));
@@ -164,12 +178,12 @@ nest::ConnBuilder::~ConnBuilder()
 inline 
 void nest::ConnBuilder::check_synapse_params_(std::string syn_name, const DictionaryDatum& syn_spec)
 {
-  // throw error if weight or delay are specified with static_synapse_hom_wd
-  if ( syn_name == "static_synapse_hom_wd" )
+  // throw error if weight is specified with static_synapse_hom_w
+  if ( syn_name == "static_synapse_hom_w" )
   {
-    if ( syn_spec->known(names::delay) or syn_spec->known(names::weight) )
-      throw BadProperty("Weight and delay cannot be specified since they need to be equal "
-			"for all connections when static_synapse_hom_wd is used.");
+    if ( syn_spec->known(names::weight) )
+      throw BadProperty("Weight cannot be specified since it needs to be equal "
+			"for all connections when static_synapse_hom_w is used.");
     return;
   }
 
@@ -244,19 +258,24 @@ void nest::ConnBuilder::connect()
 }
 
 inline
-void nest::ConnBuilder::single_connect_(index sgid, index tgid, 
+void nest::ConnBuilder::single_connect_(index sgid,
 					Node& target, thread target_thread, librandom::RngPtr& rng)
-{ 
+{
+  index tgid = target.get_gid();
   if ( param_dicts_.empty() )  // indicates we have no synapse params
   {
     if ( default_weight_and_delay_ )
-      net_.connect(sgid, tgid, &target, target_thread,
-		   synapse_model_);
+      net_.connect(sgid, &target, target_thread, synapse_model_);
+    else if (default_weight_)
+      net_.connect(sgid, &target, target_thread, synapse_model_,
+		   delay_->value_double(sgid, tgid, rng));
     else
-      net_.connect(sgid, tgid, &target, target_thread,
-		   weight_->value_double(sgid, tgid, rng),
-		   delay_->value_double(sgid, tgid, rng),
-		   synapse_model_);
+    {
+      double delay = delay_->value_double(sgid, tgid, rng);
+      double weight = weight_->value_double(sgid, tgid, rng);
+      net_.connect(sgid, &target, target_thread, synapse_model_,
+		   delay, weight);
+    }
   }
   else
   {
@@ -271,7 +290,7 @@ void nest::ConnBuilder::single_connect_(index sgid, index tgid,
         try
 	{
 	  // change value of dictionary entry without allocating new datum
-	  IntegerDatum *id = static_cast<IntegerDatum *>(((*param_dicts_[target_thread])[it->first]).datum_without_tagging_as_accessed());
+	  IntegerDatum *id = static_cast<IntegerDatum *>(((*param_dicts_[target_thread])[it->first]).datum());
 	  (*id) = it->second->value_int(sgid, tgid, rng);
         }
         catch(KernelException& e)
@@ -282,19 +301,25 @@ void nest::ConnBuilder::single_connect_(index sgid, index tgid,
       else
       {
 	// change value of dictionary entry without allocating new datum
-	DoubleDatum *dd = static_cast<DoubleDatum *>(((*param_dicts_[target_thread])[it->first]).datum_without_tagging_as_accessed());
+	DoubleDatum *dd = static_cast<DoubleDatum *>(((*param_dicts_[target_thread])[it->first]).datum());
         (*dd) = it->second->value_double(sgid, tgid, rng);
       }  
     }
 
     if ( default_weight_and_delay_ )
-      net_.connect(sgid, tgid, &target, target_thread,
-		   param_dicts_[target_thread], synapse_model_);
+      net_.connect(sgid, &target, target_thread, synapse_model_, 
+		   param_dicts_[target_thread]);
+    else if ( default_weight_ )
+      net_.connect(sgid, &target, target_thread, synapse_model_, 
+		   param_dicts_[target_thread],
+		   delay_->value_double(sgid, tgid, rng));
     else
-      net_.connect(sgid, tgid, &target, target_thread,
-		   weight_->value_double(sgid, tgid, rng),
-		   delay_->value_double(sgid, tgid, rng),
-		   param_dicts_[target_thread], synapse_model_);
+    {
+      double delay = delay_->value_double(sgid, tgid, rng);
+      double weight = weight_->value_double(sgid, tgid, rng);
+      net_.connect(sgid, &target, target_thread, synapse_model_,
+		   param_dicts_[target_thread], delay, weight);
+    }
   }
 }
 
@@ -338,7 +363,7 @@ void nest::OneToOneBuilder::connect_()
         if( tid != target_thread)
           continue;
 
-        single_connect_(*sgid, *tgid, *target, target_thread, rng);
+        single_connect_(*sgid, *target, target_thread, rng);
       }
     }
     catch ( std::exception& err )
@@ -388,7 +413,7 @@ void nest::AllToAllBuilder::connect_()
 	    if (not autapses_ and *sgid == *tgid)
 	      continue;
           
-            single_connect_(*sgid, *tgid, *target, target_thread, rng);
+            single_connect_(*sgid, *target, target_thread, rng);
           }
       }
     }
@@ -469,7 +494,7 @@ void nest::FixedInDegreeBuilder::connect_()
           if (not multapses_)
             ch_ids.insert(s_id);
 
-          single_connect_(sgid, *tgid, *target, target_thread, rng);
+          single_connect_(sgid, *target, target_thread, rng);
         }
       }
     }
@@ -561,7 +586,7 @@ void nest::FixedOutDegreeBuilder::connect_()
               if( tid != target_thread)
                 continue;
 
-              single_connect_(*sgid, *tgid, *target, target_thread, rng);
+              single_connect_(*sgid, *target, target_thread, rng);
             }
         }
         catch ( std::exception& err )
@@ -603,7 +628,6 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder(Network& net,
 
 void nest::FixedTotalNumberBuilder::connect_()
 {
-  #ifdef HAVE_GSL
   const int_t M = Communicator::get_num_virtual_processes();
   const long_t size_sources = sources_.size();
   const long_t size_targets = targets_.size();
@@ -641,7 +665,11 @@ void nest::FixedTotalNumberBuilder::connect_()
   //norm is equivalent to size_targets
   uint_t sum_partitions = 0; // corresponds to sum_n
   // substituting gsl_ran call
-  librandom::GSL_BinomialRandomDev bino(grng, 0, 0);    
+#ifdef HAVE_GSL
+  librandom::GSL_BinomialRandomDev bino(grng, 0, 0);
+#else
+  librandom::BinomialRandomDev bino(grng, 0, 0);
+#endif
 
   for (int k = 0; k < M; k++ )
   {
@@ -693,9 +721,9 @@ void nest::FixedTotalNumberBuilder::connect_()
           const thread target_thread = target->get_thread();
 
           if ( autapses_ or sgid != tgid )
-	  {
-            single_connect_(sgid, tgid, *target, target_thread, rng);
-	    num_conns_on_vp[vp_id]--;
+          {
+            single_connect_(sgid, *target, target_thread, rng);
+            num_conns_on_vp[vp_id]--;
           }
         }
       }
@@ -706,10 +734,7 @@ void nest::FixedTotalNumberBuilder::connect_()
       // the end of the catch block.
       exceptions_raised_.at(tid) = lockPTR<WrappedThreadException>(new WrappedThreadException(err));
     }
-  }
-  #else
-    throw NotImplemented("The FixedTotalNumber connector requires the GSL.");
-  #endif   
+  }   
 }
 
 
@@ -737,9 +762,9 @@ void nest::BernoulliBuilder::connect_()
       librandom::RngPtr rng = net_.get_rng(tid);
 
       for (GIDCollection::const_iterator 
-  	   tgid = targets_.begin();
-  	   tgid != targets_.end();
-	   ++tgid
+           tgid = targets_.begin();
+           tgid != targets_.end();
+           ++tgid
            )
       {
         // check whether the target is on this mpi machine
@@ -753,26 +778,21 @@ void nest::BernoulliBuilder::connect_()
         if( tid != target_thread)
           continue;
 
-        std::set<long> ch_ids;
-
         for ( GIDCollection::const_iterator 
-  	      sgid = sources_.begin();
-  	      sgid != sources_.end();
-	      ++sgid )
+              sgid = sources_.begin();
+              sgid != sources_.end();
+              ++sgid )
           {
-            if(not multapses_ and ch_ids.find( *sgid ) != ch_ids.end())
+            // not possible to create multapses with this implementation,
+            // hence leave out the check for BernoulliBuilder
+
+            if (not autapses_ and *sgid == *tgid)
               continue;
-         
-	    if (not autapses_ and *sgid == *tgid)
-	      continue;
 
-	    if (not ( rng->drand() < p_ ))
-	      continue;
+            if (not ( rng->drand() < p_ ))
+              continue;
 
-            if (not multapses_)
-              ch_ids.insert(*sgid);
-
-            single_connect_(*sgid, *tgid, *target, target_thread, rng);
+            single_connect_(*sgid, *target, target_thread, rng);
           }
       }
     }

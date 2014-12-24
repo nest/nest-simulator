@@ -127,11 +127,6 @@ class lockPTR
       ++number_of_references;
     }
 
-    void subReference(size_t s)
-    {
-      number_of_references-=s;
-    }
-
     void removeReference(void)
     {
 //      assert(number_of_references > 0);
@@ -203,26 +198,9 @@ class lockPTR
     
   virtual ~lockPTR()
   {
-    //   std::cout << "~lockPTR";
-
-    // MD experimental, we use obj==0 to indicate controlled detachment
-    if (exists())
-     obj->removeReference();
+    assert(obj != NULL);
+    obj->removeReference();
   }    
-
-  
-  // MD, experimental
-  void detach(void)
-  {
-   assert(obj != NULL);
-   assert(obj->references()-1>0); // somebody must remain do delete
-   obj->subReference(1);
-
-   //std::cout << "after detach ref: " << obj->references() << std::endl;
- 
-   obj=NULL;
-  }
-
 
   lockPTR<D> operator=(const lockPTR<D>&spd)
   {
@@ -330,14 +308,6 @@ class lockPTR
   {
     assert(obj != NULL);
     return (obj->get() != NULL);
-  }
-
- //MD, experimental
-  // this condition should only be false inside a recursive call to a datum with
-  // self references like the DictionaryDatum
-  bool exists(void) const    //!< returns true if and only if obj != NULL
-  {
-    return (obj != NULL);
   }
 
   bool islocked(void) const 

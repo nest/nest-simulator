@@ -20,8 +20,9 @@ libmodelsmodule_la_SOURCES= \
 		aeif_cond_alpha_RK5.h aeif_cond_alpha_RK5.cpp\
 		aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp\
 		aeif_cond_exp.h aeif_cond_exp.cpp\
+		amat2_psc_exp.h amat2_psc_exp.cpp\
 		binary_neuron.h binary_neuron_impl.h\
-		cont_delay_connection.h cont_delay_connection.cpp\
+		cont_delay_connection.h cont_delay_connection_impl.h\
 		correlation_detector.h correlation_detector.cpp\
 		correlomatrix_detector.h correlomatrix_detector.cpp\
 		dc_generator.h dc_generator.cpp\
@@ -29,7 +30,7 @@ libmodelsmodule_la_SOURCES= \
 		ginzburg_neuron.h ginzburg_neuron.cpp\
 		hh_cond_exp_traub.h hh_cond_exp_traub.cpp\
 		hh_psc_alpha.h hh_psc_alpha.cpp\
-		ht_connection.h ht_connection.cpp\
+		ht_connection.h\
 		ht_neuron.h ht_neuron.cpp\
 		iaf_chxk_2008.cpp iaf_chxk_2008.h\
 		iaf_chs_2007.cpp iaf_chs_2007.h\
@@ -61,7 +62,7 @@ libmodelsmodule_la_SOURCES= \
 		pp_pop_psc_delta.h pp_pop_psc_delta.cpp\
 		ppd_sup_generator.h ppd_sup_generator.cpp\
 		pulsepacket_generator.h pulsepacket_generator.cpp\
-		quantal_stp_connection.h quantal_stp_connection.cpp\
+		quantal_stp_connection.h quantal_stp_connection_impl.h\
 		sli_neuron.h sli_neuron.cpp\
 		sinusoidal_poisson_generator.h sinusoidal_poisson_generator.cpp \
 		sinusoidal_gamma_generator.h sinusoidal_gamma_generator.cpp \
@@ -69,16 +70,19 @@ libmodelsmodule_la_SOURCES= \
 		spike_generator.h spike_generator.cpp\
 		spin_detector.h spin_detector.cpp\
 		static_connection.h\
-		static_connection_hom_wd.h\
-		stdp_connection.h stdp_connection.cpp\
-		stdp_connection_facetshw_hom.h stdp_connection_facetshw_hom.cpp\
+		static_connection_hom_w.h\
+		stdp_connection.h\
+		stdp_connection_facetshw_hom.h stdp_connection_facetshw_hom_impl.h\
 		stdp_connection_hom.h stdp_connection_hom.cpp\
 		stdp_dopa_connection.h stdp_dopa_connection.cpp\
+		stdp_connection_facetshw_hom.h stdp_connection_facetshw_hom_impl.h\
 		stdp_pl_connection_hom.h stdp_pl_connection_hom.cpp\
 		step_current_generator.h step_current_generator.cpp\
-		tsodyks2_connection.h tsodyks2_connection.cpp\
-		tsodyks_connection.h tsodyks_connection.cpp\
+		tsodyks2_connection.h\
+		tsodyks_connection.h\
 		volume_transmitter.h volume_transmitter.cpp
+
+
 
 AM_CPPFLAGS= -I$(top_srcdir)/libnestutil\
 		-I$(top_srcdir)/librandom\

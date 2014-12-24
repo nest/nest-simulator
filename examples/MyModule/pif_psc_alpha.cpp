@@ -139,7 +139,7 @@ mynest::pif_psc_alpha::Buffers_::Buffers_(const Buffers_ &, pif_psc_alpha &n)
  * ---------------------------------------------------------------- */
 
 mynest::pif_psc_alpha::pif_psc_alpha()
-  : Node(),
+  : Archiving_Node(),
     P_(),
     S_(P_),
     B_(*this)
@@ -148,7 +148,7 @@ mynest::pif_psc_alpha::pif_psc_alpha()
 }
 
 mynest::pif_psc_alpha::pif_psc_alpha(const pif_psc_alpha& n)
-  : Node(n),
+  : Archiving_Node(n),
     P_(n.P_),
     S_(n.S_),
     B_(n.B_, *this)
@@ -228,7 +228,8 @@ void mynest::pif_psc_alpha::update(Time const& slice_origin,
       S_.refr_count = V_.t_ref_steps;
       S_.V_m        = P_.V_reset;
 
-      // send spike
+      // send spike, and set spike time in archive.
+	  set_spiketime(Time::step(slice_origin.get_steps()+lag+1));
       SpikeEvent se;
       network()->send(*this, se, lag);
     }

@@ -69,7 +69,7 @@ namespace nest{
      
      However, the adapting threshold eta(t) of the neurons generally makes the neurons 
      non-renewal processes. We employ the quasi-renewal approximation
-     [1],.to be able to use the above algorithm. For the extension of [1] to 
+     [1], to be able to use the above algorithm. For the extension of [1] to 
      coupled populations see [3].
 
      In effect, in each simulation time step, a binomial random number for each
@@ -85,22 +85,22 @@ namespace nest{
      emitted in a time step, and can be monitored using a multimeter.
 
      A journal article that describes the model and algorithm in detail is
-     currently in preparation.
+     in preparation.
 
 
      References:
 
      [1] Naud R, Gerstner W (2012) Coding and decoding with adapting neurons: 
      a population approach to the peri-stimulus time histogram. 
-     PLoS Comput Biol 8: e1002711.
+     PLoS Compututational Biology 8: e1002711.
 
      [2] Deger M, Helias M, Boucsein C, Rotter S (2012) Statistical properties 
      of superimposed stationary spike trains. Journal of Computational 
      Neuroscience 32:3, 443-463.
      
-     [3] Deger M, Schwalger T, Naud R, Gerstner W (2013) Dynamics of interacting 
-     finite-sized networks of spiking neurons with adaptation. arXiv 1311.4206.
-
+     [3] Deger M, Schwalger T, Naud R, Gerstner W (2014) Fluctuations and 
+     information filtering in coupled populations of spiking neurons with
+     adaptation. Physical Review E 90:6, 062704. 
 
 
      Parameters:
@@ -159,25 +159,20 @@ namespace nest{
 
     /**
      * Import sets of overloaded virtual functions.
-     * We need to explicitly include sets of overloaded
-     * virtual functions into the current scope.
-     * According to the SUN C++ FAQ, this is the correct
-     * way of doing things, although all other compilers
-     * happily live without.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
-
-    using Node::connect_sender;
     using Node::handle;
+    using Node::handles_test_event;
 
-    port check_connection(Connection&, port);
+    port send_test_event(Node&, rport, synindex, bool);
 
     void handle(SpikeEvent &);
     void handle(CurrentEvent &);
     void handle(DataLoggingRequest &);
 
-    port connect_sender(SpikeEvent &, port);
-    port connect_sender(CurrentEvent &, port);
-    port connect_sender(DataLoggingRequest &, port);
+    port handles_test_event(SpikeEvent &, rport);
+    port handles_test_event(CurrentEvent &, rport);
+    port handles_test_event(DataLoggingRequest &, rport);
 
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
@@ -241,7 +236,6 @@ namespace nest{
     struct State_ {
 
       double_t y0_;
-
       double_t h_;
 
       std::vector<int_t>     age_occupations_;  
@@ -253,6 +247,8 @@ namespace nest{
       // ring array pointers
       int_t  p_age_occupations_;  
       int_t  p_n_spikes_past_;    
+
+      bool initialized_; // it is true if the vectors are initialized
 
       State_();  //!< Default initialization
 
@@ -334,16 +330,16 @@ namespace nest{
   };
 
   inline
-    port pp_pop_psc_delta::check_connection(Connection& c, port receptor_type)
+    port pp_pop_psc_delta::send_test_event(Node& target, rport receptor_type, synindex, bool)
     {
       SpikeEvent e;
       e.set_sender(*this);
-      c.check_event(e);
-      return c.get_target()->connect_sender(e, receptor_type);
+
+      return target.handles_test_event(e, receptor_type);
     }
 
   inline
-    port pp_pop_psc_delta::connect_sender(SpikeEvent&, port receptor_type)
+    port pp_pop_psc_delta::handles_test_event(SpikeEvent&, rport receptor_type)
     {
       if (receptor_type != 0)
         throw UnknownReceptorType(receptor_type, get_name());
@@ -351,7 +347,7 @@ namespace nest{
     }
 
   inline
-    port pp_pop_psc_delta::connect_sender(CurrentEvent&, port receptor_type)
+    port pp_pop_psc_delta::handles_test_event(CurrentEvent&, rport receptor_type)
     {
       if (receptor_type != 0)
         throw UnknownReceptorType(receptor_type, get_name());
@@ -359,8 +355,8 @@ namespace nest{
     }
 
   inline
-  port pp_pop_psc_delta::connect_sender(DataLoggingRequest &dlr,
-                                     port receptor_type)
+  port pp_pop_psc_delta::handles_test_event(DataLoggingRequest &dlr,
+					    rport receptor_type)
   {
     if (receptor_type != 0)
       throw UnknownReceptorType(receptor_type, get_name());

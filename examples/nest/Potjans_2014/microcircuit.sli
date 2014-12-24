@@ -56,15 +56,15 @@
     } if
  
     % number of layers
-    /num_layers full_scale_num_neurons length def
+    /n_layers full_scale_n_neurons length def
     % number of populations in each layer
-    /num_pops_per_layer full_scale_num_neurons Dimensions 1 get def
+    /n_pops_per_layer full_scale_n_neurons Dimensions 1 get def
 
     conn_probs Dimensions 0 get
-    num_layers num_pops_per_layer mul 
+    n_layers n_pops_per_layer mul 
     eq not
     conn_probs Dimensions 1 get
-    num_layers num_pops_per_layer mul 
+    n_layers n_pops_per_layer mul 
     eq not or
     {
         /CheckParameters /conn_probs_dimensions raiseerror
@@ -77,7 +77,7 @@
             /CheckParameters /frac_rec_spikes raiseerror
         } if
     }{
-        n_rec_spikes full_scale_num_neurons { Min } Map Min area mul gt
+        n_rec_spikes full_scale_n_neurons { Min } Map Min area mul gt
         {
             /CheckParameters /n_rec_spikes raiseerror
         } if
@@ -90,7 +90,7 @@
             /CheckParameters /frac_rec_voltage raiseerror
         } if
     }{
-        n_rec_voltage full_scale_num_neurons { Min } Map Min area mul gt
+        n_rec_voltage full_scale_n_neurons { Min } Map Min area mul gt
         {
             /CheckParameters /n_rec_voltage raiseerror
         } if
@@ -113,7 +113,10 @@
        /overwrite_files overwrite_existing_files
        /rng_seeds master_seed [0 n_vp 1 sub] add Range % local RNG seeds
        /grng_seed master_seed n_vp add                 % global RNG seed
-       /data_path output_path
+       run_mode (production) eq
+       {
+           /data_path output_path
+       } if
     >> SetStatus
 
     /seed_offset master_seed n_vp add def
@@ -127,8 +130,8 @@
 /DerivedParameters
 {
     % compute numbers of neurons for the given surface area
-    /num_neurons
-    full_scale_num_neurons { area mul cvi } [2] Map
+    /n_neurons
+    full_scale_n_neurons { area mul cvi } [2] Map
     def
  
     % compute PSC amplitude from PSP amplitude
@@ -173,23 +176,23 @@
     % numbers of neurons from which to record spikes and membrane potentials
     record_fraction_neurons_spikes
     {
-        /num_neurons_rec_spikes
-        num_neurons{ frac_rec_spikes mul cvi } [2] Map
+        /n_neurons_rec_spikes
+        n_neurons{ frac_rec_spikes mul cvi } [2] Map
         def
     }{
-        /num_neurons_rec_spikes
-        [num_layers num_pops_per_layer] n_rec_spikes LayoutArray
+        /n_neurons_rec_spikes
+        [n_layers n_pops_per_layer] n_rec_spikes LayoutArray
         def
     } ifelse
 
     record_fraction_neurons_voltage
     {
-        /num_neurons_rec_voltage
-        num_neurons{ frac_rec_voltage mul cvi } [2] Map
+        /n_neurons_rec_voltage
+        n_neurons{ frac_rec_voltage mul cvi } [2] Map
         def
     }{
-        /num_neurons_rec_voltage
-        [num_layers num_pops_per_layer] n_rec_voltage LayoutArray
+        /n_neurons_rec_voltage
+        [n_layers n_pops_per_layer] n_rec_voltage LayoutArray
         def
     } ifelse
 
@@ -212,21 +215,21 @@
     neuron_model model_params SetDefaults
     % arrays of GIDs:
     % neuron subnets
-    /neuron_subnet_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def
+    /neuron_subnet_GIDs [n_layers n_pops_per_layer] 0 LayoutArray def
     % spike detectors
-    /spike_detector_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def
+    /spike_detector_GIDs [n_layers n_pops_per_layer] 0 LayoutArray def
     % voltmeters
-    /voltmeter_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def
+    /voltmeter_GIDs [n_layers n_pops_per_layer] 0 LayoutArray def
     % Poisson generators
-    /poisson_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def
+    /poisson_GIDs [n_layers n_pops_per_layer] 0 LayoutArray def
     % DC generators 
-    /dc_GIDs  [num_layers num_pops_per_layer] 0 LayoutArray def
-    0 1 num_layers 1 sub
+    /dc_GIDs  [n_layers n_pops_per_layer] 0 LayoutArray def
+    0 1 n_layers 1 sub
     {
         /layer_index Set
         0 ChangeSubnet   % change to the root node
         /subnet Create /layer_subnet Set
-        0 1 num_pops_per_layer 1 sub
+        0 1 n_pops_per_layer 1 sub
         {
             /population_index Set
 	    layer_subnet ChangeSubnet
@@ -237,7 +240,7 @@
 	    neuron_subnet ChangeSubnet
 	    neuron_subnet_GIDs [layer_index population_index] neuron_subnet put
             /neuron_subnet_GIDs Set
-            neuron_model num_neurons layer_index get population_index get
+            neuron_model n_neurons layer_index get population_index get
             Create ;
 
             % initialize membrane potentials
@@ -329,7 +332,16 @@
 
 /WriteGIDstoFile
 {
-    output_path (/) join GID_filename join
+    run_mode (test) eq
+    {
+        GID_filename
+    } if
+
+    run_mode (production) eq
+    {
+        output_path (/) join GID_filename join
+    } if
+
     (w) ofsopen
     ; /outputstream Set
     Rank 0 eq
@@ -355,10 +367,10 @@
 {
     tic
 
-    0 1 num_layers 1 sub % target layer
+    0 1 n_layers 1 sub % target layer
     {
         /target_layer Set
-        0 1 num_pops_per_layer 1 sub % target population
+        0 1 n_pops_per_layer 1 sub % target population
         {
 	    /target_pop Set
             % get neuron IDs
@@ -367,23 +379,14 @@
 	    dup GetGlobalNodes /target_nodes Set
             GetLocalNodes /local_target_nodes Set	  
 
-            % Determine the number of target neurons that will be used to
-            % compute the number of synapses. If in-degrees of the full-scale
-            % model are preserved, this means using the number of neurons from
-            % the full-scale model (only for computing the number of synapses).
-            preserve_K
-            {
-	        /effective_num_targets full_scale_num_neurons target_layer get
-                target_pop get def
-	    }{
-	        /effective_num_targets num_neurons target_layer get target_pop
-                get def	      
-	    } ifelse
+            /n_targets n_neurons target_layer get target_pop get def
+            /full_scale_n_targets full_scale_n_neurons target_layer get
+            target_pop get def
 	  
-	    0 1 num_layers 1 sub % source layer
+	    0 1 n_layers 1 sub % source layer
 	    {
 	        /source_layer Set
-	        0 1 num_pops_per_layer 1 sub % source population
+	        0 1 n_pops_per_layer 1 sub % source population
 	        {
 		    /source_pop Set
 		   
@@ -394,33 +397,34 @@
                     GetGlobalNodes 
                     /source_nodes Set
 		   
-		    % Determine the number of source neurons that will be used
-                    % to compute the number of synapses
-                    preserve_K
-                    {
-	                /effective_num_sources full_scale_num_neurons
-                        source_layer get source_pop get def
-	            }{
-	                /effective_num_sources num_neurons source_layer get
-                        source_pop get def	      
-	            } ifelse
+                    /n_sources n_neurons source_layer get source_pop get def
+                    /full_scale_n_sources full_scale_n_neurons
+                    source_layer get source_pop get def
 
                     % get connection probability
 		    conn_probs
 		    % pick row (target) in conn_probs
-		    target_layer num_pops_per_layer mul target_pop add get
+		    target_layer n_pops_per_layer mul target_pop add get
 		    % pick column (source) in conn_probs
-		    source_layer num_pops_per_layer mul source_pop add get
+		    source_layer n_pops_per_layer mul source_pop add get
 		    /this_conn Set % probability for this connection
 
                     % Compute numbers of synapses assuming binomial degree
                     % distributions and allowing for multapses (see Potjans
-                    % and Diesmann 2014 Cereb Cortex Eq. 1)
-                    /prod effective_num_sources effective_num_targets mul def
-                    ( log(1.-this_conn)/log((prod-1.)/prod) ) ExecMath
-                    cvi /this_num_synapses Set
+                    % and Diesmann 2012 Cereb Cortex Eq. 1)
+                    preserve_K
+                    {
+                        /prod full_scale_n_sources full_scale_n_targets mul def
+                        ( log(1.-this_conn)/log((prod-1.)/prod) ) ExecMath 
+                        /n_syn_temp Set
+                        n_syn_temp n_targets mul full_scale_n_targets div
+                    }{
+                        /prod n_sources n_targets mul def
+                        ( log(1.-this_conn)/log((prod-1.)/prod) ) ExecMath
+                    } ifelse
+                    cvi /this_n_synapses Set
                        
-                    this_num_synapses 0 gt
+                    this_n_synapses 0 gt
                     {
                         PSC_array target_layer get target_pop get source_layer
                         get source_pop get /mean_weight Set
@@ -450,7 +454,8 @@
                         syn_dict /delay delay_dict put        
 
 			% fill the connectivity dictionary with the number of synapses to be used
-                        conn_dict /N this_num_synapses put
+                        conn_dict /N this_n_synapses put
+                        conn_dict /rule /fixed_total_number put
 
                         % Connect the populations
                         source_nodes
@@ -459,7 +464,7 @@
                         syn_dict
                         Connect
 
-                    } if % this_num_synapses > 0
+                    } if % this_n_synapses > 0
               
 	        } for % source population
 	    } for % source layer
@@ -475,12 +480,20 @@
                  
                 % Compute numbers of synapses assuming binomial degree
                 % distributions and allowing for multapses (see Potjans and
-                % Diesmann 2014 Cereb Cortex Eq. 1)
-                /prod n_thal effective_num_targets mul def
-                ( log(1.- this_conn)/log((prod-1.)/prod) ) ExecMath
-                cvi /this_num_synapses Set
+                % Diesmann 2012 Cereb Cortex Eq. 1)
+                preserve_K
+                {
+                    /prod n_thal full_scale_n_targets mul def
+                    ( log(1.-this_conn)/log((prod-1.)/prod) ) ExecMath 
+                    /n_syn_temp Set
+                    n_syn_temp n_targets mul full_scale_n_targets div
+                }{
+                    /prod n_thal n_targets mul def
+                    ( log(1.-this_conn)/log((prod-1.)/prod) ) ExecMath
+                } ifelse
+                cvi /this_n_synapses Set
        
-                this_num_synapses 0 gt
+                this_n_synapses 0 gt
                 {                    
 
                     % create label for current target population
@@ -503,7 +516,9 @@
                     syn_dict /delay delay_dict put 
 
 		    % fill the connectivity dictionary with the number of synapses to be used       
-                    conn_dict /N this_num_synapses put
+                    conn_dict /N this_n_synapses put
+                    conn_dict /rule /fixed_total_number put
+
 
                     % Connect the thalamus
                     source_nodes
@@ -512,7 +527,7 @@
                     syn_dict
                     Connect                        
 
-                } if % this_num_synapses > 0
+                } if % this_n_synapses > 0
             } if % n_thal > 0        
 
             % Connect devices
@@ -521,26 +536,26 @@
             target_nodes
             % record from a continuous range of IDs
             % (appropriate for networks without topology)
-            num_neurons_rec_spikes target_layer get target_pop get
+            n_neurons_rec_spikes target_layer get target_pop get
             Take
             spike_detector_GIDs target_layer get target_pop get
             1 arraystore
-            /all_to_all 
+            /all_to_all
             Connect
 
             % Connect to the voltmeter
             voltmeter_GIDs target_layer get target_pop get
-	    1 arraystore
+	        1 arraystore
             target_nodes
             % record from a continuous range of IDs
-            num_neurons_rec_voltage target_layer get target_pop get
+            n_neurons_rec_voltage target_layer get target_pop get
             Take
-            /all_to_all 
+            /all_to_all
             Connect
 
             % Connect to the Poisson generators
             poisson_GIDs target_layer get target_pop get
-	    1 arraystore
+	        1 arraystore
             target_nodes
             /all_to_all 
             << /weight PSC_ext /delay delays 0 get >>
@@ -548,7 +563,7 @@
 
             % Connect to the DC generators
             dc_GIDs target_layer get target_pop get
-	    1 arraystore
+   	        1 arraystore
             target_nodes
             /all_to_all
             Connect
@@ -562,7 +577,6 @@
         th_poisson_GID
         1 arraystore
         th_neuron_subnet_GID GetGlobalNodes
-	/all_to_all 
         Connect  
     } if    
 
@@ -572,7 +586,6 @@
         th_neuron_subnet_GID GetGlobalNodes
         th_spike_detector_GID 
         1 arraystore
-	/all_to_all 
         Connect
     } if
     
@@ -586,7 +599,6 @@
 
 % load parameters
 (user_params) run
-(sim_params) run
 (network_params) run
 
 CheckParameters

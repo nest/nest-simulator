@@ -980,36 +980,6 @@ void References_aFunction::execute(SLIInterpreter *i) const
   i->OStack.push_move(t);
 }
 
-void References_dFunction::execute(SLIInterpreter *i) const
-{
-// call: dict references_a dict integer 
-  i->EStack.pop();
-  assert(i->OStack.load()>0);
-
-  DictionaryDatum    *ad = dynamic_cast<DictionaryDatum *>(i->OStack.top().datum());  
-
-  assert(ad != NULL);
-
-  Token t(new IntegerDatum(ad->references()));
-
-  i->OStack.push_move(t);
-}
-
-void Selfreferences_dFunction::execute(SLIInterpreter *i) const
-{
-// call: dict selfreferences_a dict integer 
-  i->EStack.pop();
-  assert(i->OStack.load()>0);
-
-  DictionaryDatum    *ad = dynamic_cast<DictionaryDatum *>(i->OStack.top().datum());  
-
-  assert(ad != NULL);
-
-  Token t(new IntegerDatum(ad->selfreferences()));
-
-  i->OStack.push_move(t);
-}
-
 /*BeginDocumentation
 Name: shrink - Reduce the capacity of an array or string to its minimum.
 Synopsis: array shrink -> array bool
@@ -1452,19 +1422,29 @@ void IrepeatanyFunction::execute(SLIInterpreter *i) const
     i->EStack.pop(4);    
 }
 
+/* BeginDocumentation
+
+Name: repeatany - Place any object n times on stack.
+
+Synopsis: n obj repeatany -> obj obj ... obj (n times)
+
+Examples: 3 (foo) repeatany -> (foo) (foo) (foo)
+
+SeeAlso: repeat, Table
+*/
 void RepeatanyFunction::execute(SLIInterpreter *i) const
 {
+	i->assert_stack_load(2);
+
         // level  1  0
         // stack: n proc repeat
     i->EStack.pop();
 
-//    if(proc->size() >0)
-//    {
-      i->EStack.push(i->baselookup(i->mark_name));
-      i->EStack.push_move(i->OStack.pick(1));
-      i->EStack.push_move(i->OStack.pick(0));
-      i->EStack.push(i->baselookup(Name("::repeatany")));
-//    }
+    i->EStack.push(i->baselookup(i->mark_name));
+    i->EStack.push_move(i->OStack.pick(1));
+    i->EStack.push_move(i->OStack.pick(0));
+    i->EStack.push(i->baselookup(Name("::repeatany")));
+
     i->OStack.pop(2);
 }
 
@@ -1527,8 +1507,6 @@ const Reserve_aFunction    reserve_afunction;
 const Resize_aFunction     resize_afunction;
 const Empty_aFunction      empty_afunction;
 const References_aFunction references_afunction;
-const References_dFunction references_dfunction;
-const Selfreferences_dFunction selfreferences_dfunction;
 const Shrink_aFunction     shrink_afunction;
 
 const Capacity_sFunction   capacity_sfunction;
@@ -1596,8 +1574,6 @@ void init_slidata(SLIInterpreter *i)
   i->createcommand(":resize_a",     &resize_afunction);
   i->createcommand("empty_a",      &empty_afunction);
   i->createcommand("references_a", &references_afunction);
-  i->createcommand("references_d", &references_dfunction);
-  i->createcommand("selfreferences_d", &selfreferences_dfunction);
   i->createcommand("shrink_a",     &shrink_afunction); 
 
   i->createcommand("capacity_s",   &capacity_sfunction);

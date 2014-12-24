@@ -246,7 +246,7 @@ class TestParams(unittest.TestCase):
             
     def testRPortAllSynapses(self):
         syns = [ 'cont_delay_synapse', 'ht_synapse', 'quantal_stp_synapse',
-                 'static_synapse_hom_wd', 'stdp_dopamine_synapse',
+                 'static_synapse_hom_w', 'stdp_dopamine_synapse',
                  'stdp_facetshw_synapse_hom', 'stdp_pl_synapse_hom',
                  'stdp_synapse_hom', 'stdp_synapse', 'tsodyks2_synapse',
                  'tsodyks_synapse'
@@ -267,10 +267,11 @@ class TestParams(unittest.TestCase):
             self.setUp
 
     def testWeightAllSynapses(self):
-        # test all synapses apart from static_synapse_hom_wd where weight is not settable
+        # test all synapses apart from static_synapse_hom_w where weight is not settable
         syns = [ 'cont_delay_synapse', 'ht_synapse', 'quantal_stp_synapse',
                  'stdp_dopamine_synapse',
-                 'stdp_facetshw_synapse_hom', 'stdp_pl_synapse_hom',
+                 'stdp_facetshw_synapse_hom',
+                 'stdp_pl_synapse_hom',
                  'stdp_synapse_hom', 'stdp_synapse', 'tsodyks2_synapse',
                  'tsodyks_synapse'
                ]
@@ -284,14 +285,12 @@ class TestParams(unittest.TestCase):
             self.setUpNetwork(self.conn_dict, syn_params)
             a = hf.get_weighted_connection_array(self.pop1, self.pop2, 'weight')
             self.assertTrue(hf.mpi_assert(a, np.ones(len(a))*syn_params['weight']))
-            nest.ResetKernel()
-            self.setUp
+            self.setUp()
 
     def testDelayAllSynapses(self):
-        # test all synapses apart from static_synapse_hom_wd where weight is not settable
-        vol = nest.Create('volume_transmitter')
-        nest.SetDefaults('stdp_dopamine_synapse',{'vt':vol[0]})
-        syns = [ 'cont_delay_synapse', 'ht_synapse', 'quantal_stp_synapse',
+        syns = [ 'cont_delay_synapse',
+                 'ht_synapse', 'quantal_stp_synapse',
+                 'static_synapse_hom_w',
                  'stdp_dopamine_synapse',
                  'stdp_facetshw_synapse_hom', 'stdp_pl_synapse_hom',
                  'stdp_synapse_hom', 'stdp_synapse', 'tsodyks2_synapse',
@@ -306,17 +305,11 @@ class TestParams(unittest.TestCase):
             syn_params['model'] = syn
             self.setUpNetwork(self.conn_dict, syn_params)
             a = hf.get_weighted_connection_array(self.pop1, self.pop2, 'delay')
-            self.assertTrue(hf.mpi_assert(a, np.ones(len(a))*syn_params['delay'])) 
-            nest.ResetKernel()
-            self.setUp
+            self.assertTrue(hf.mpi_assert(a, np.ones(len(a))*syn_params['delay']))
+            self.setUp()
 
     
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestParams)
     unittest.TextTestRunner(verbosity=2).run(suite)
-    #suite = unittest.TestSuite()
-    #suite.addTest(TestParams('testWeightSetting'))
-    #suite.addTest(TestParams('testContDelaySynapse'))
-    #unittest.TextTestRunner().run(suite)
-
 

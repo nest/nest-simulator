@@ -145,15 +145,20 @@ void nest::pulsepacket_generator::calibrate()
 void nest::pulsepacket_generator::update(Time const & T, const long_t from, const long_t to)
 {
   assert(to >= from);
-  assert((ulong_t)(to - from) <= Scheduler::get_min_delay());
+  assert((to - from) <= Scheduler::get_min_delay());
 
   if ( (V_.start_center_idx_ == P_.pulse_times_.size() && B_.spiketimes_.empty()) || (!device_.is_active(T)) )
     return; // nothing left to do
 
   // determine next pulse-center times (around sdev*tolerance window)
   if ( V_.stop_center_idx_ < P_.pulse_times_.size() )
-    while (V_.stop_center_idx_ < P_.pulse_times_.size() && P_.pulse_times_.at(V_.stop_center_idx_)-T.get_ms() <= V_.tolerance )
+  {
+    while (V_.stop_center_idx_ < P_.pulse_times_.size() && 
+           (Time(Time::ms(P_.pulse_times_.at(V_.stop_center_idx_)))-T).get_ms() <= V_.tolerance )
+    {
       V_.stop_center_idx_++;
+    }
+  }
 
   if(V_.start_center_idx_ <  V_.stop_center_idx_)
   {

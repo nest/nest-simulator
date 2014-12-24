@@ -555,24 +555,7 @@ SeeAlso: selfreferences, testsuite::test_dict_basic_self_reference
 */
 /references trie
  [/arraytype  ]    /references_a load addtotrie
- [/dictionarytype  ] /references_d load addtotrie
 def
-
-
-/*BeginDocumentation
-Name: selfreferences - Returns the number of selfreferences of a reference counted object.
-Synopsis: dict selfreferences -> dict integer
-Description: selfreferences returns the number of references to
-a reference counted object. In the present implementation only first level 
-self references are handled.
-Examples: << /x 0 >> dup dup begin /x Set end selfreferences -> dict 1
-SeeAlso: references, testsuite::test_dict_basic_self_reference
-*/
-/selfreferences trie
- [/dictionarytype  ]    /selfreferences_d load addtotrie
-def
-
-
 
 /*BeginDocumentation
 Name: cvx - convert array/string to procedure 
@@ -698,15 +681,8 @@ Reads a string and evaluates its content. The resulting objects are
 pushed onto the stack.
 
 As in regular batch mode the interpreter reads tokens from a 
-stream, a string stream in this case,  and immediately executes the 
+stream, a string stream in this case, and immediately executes the 
 incoming language constructs.
-
-An alternative implementation is cvx exec. Here cvx calls cst to
-first create an array of token from the string which is then converted
-to a procedure.
-
-The function evalstring uses cvx and executs the procedure in a 
-separate stopped context using the standard error handler.
 
 A similar function to eval also occurs in Python.
 
@@ -719,6 +695,14 @@ FirstVersion: June 2013
 SeeAlso: cvx, exec, cst, evalstring, token
 */
 
+/* Implementation notes:
+   An alternative implementation is cvx exec. Here cvx calls cst to
+   first create an array of token from the string which is then converted
+   to a procedure.
+
+   The function ::evalstring uses cvx and executs the procedure in a 
+   separate stopped context using the standard error handler.
+ */
 /eval [/stringtype] {
   isstream pop cvx exec
 } def

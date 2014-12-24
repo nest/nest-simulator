@@ -700,8 +700,7 @@ BeginDocumentation
 */
 void CleardictFunction::execute(SLIInterpreter *i) const
 {
-        //  call: dict  -> -
-  assert(i->OStack.load()>0);
+  i->assert_stack_load(1);
   DictionaryDatum *dict =
     dynamic_cast<DictionaryDatum *>(i->OStack.top().datum());
   assert(dict != NULL);
@@ -741,10 +740,7 @@ BeginDocumentation
 */
 void ClonedictFunction::execute(SLIInterpreter *i) const
 {
-  // Clone a given dictionary (real copy)
-  //  call: dict  clonedict -> dict1 dict2
-
-  assert(i->OStack.load()>0);
+  i->assert_stack_load(1);
   DictionaryDatum *dict =
     dynamic_cast<DictionaryDatum *>(i->OStack.top().datum());
   assert(dict != NULL);
@@ -937,7 +933,7 @@ void ValuesFunction::execute(SLIInterpreter *i) const
 
 void RestoredstackFunction::execute(SLIInterpreter *i) const
 {
-  assert(i->OStack.load()>0);
+  i->assert_stack_load(1);
   ArrayDatum *ad= dynamic_cast<ArrayDatum *>(i->OStack.top().datum());
   assert(ad != NULL);
   TokenArray ta = *ad;

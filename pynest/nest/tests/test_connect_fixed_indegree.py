@@ -86,13 +86,11 @@ class TestFixedInDegree(TestParams):
             degrees = hf.get_degrees('out', self.pop1, self.pop2)
             degrees = hf.gather_data(degrees)
             if degrees != None:
-                chi, p = hf.chi_squared_test(degrees, expected)
-                print("p-value : %.2f" % p)
+                chi, p = hf.chi_squared_check(degrees, expected)
                 pvalues.append(p)
             hf.mpi_barrier()
         if degrees != None:
             ks, p = scipy.stats.kstest(pvalues, 'uniform', alternative='two_sided')
-            print("p-value : %.2f" % p)
             self.assertTrue( p > self.stat_dict['alpha2'] )
 
     def testAutapses(self):
@@ -146,6 +144,10 @@ class TestFixedInDegree(TestParams):
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestFixedInDegree)
     return suite
+
+def run():
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())
         
 if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    run()

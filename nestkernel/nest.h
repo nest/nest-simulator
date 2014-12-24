@@ -25,6 +25,8 @@
 
 #include <cstddef>
 #include <climits>
+#include <cfloat>
+#include <limits>
 #include "config.h"
 
 /**
@@ -75,10 +77,15 @@ namespace nest {
   /**
    * Type for Time tics.
    */
+
 #ifdef HAVE_LONG_LONG
   typedef long long tic_t;
+  const tic_t tic_t_max = LONG_LONG_MAX;
+  const tic_t tic_t_min = LONG_LONG_MIN;
 #else
   typedef long      tic_t;
+  const tic_t tic_t_max = LONG_MAX;
+  const tic_t tic_t_min = LONG_MIN;
 #endif
 
   using std::size_t;
@@ -90,12 +97,32 @@ namespace nest {
   typedef unsigned int  uint_t; ///< Unsigned int_t.
   typedef unsigned long ulong_t; ///< Unsigned long_t.
 
+  const long_t long_t_max = LONG_MAX;
+  const long_t long_t_min = LONG_MIN;
+
+#define double_t_max (DBL_MAX) // because C++ language designers are apes
+#define double_t_min (DBL_MIN) // (only integral consts are compile time)
+
   /**
    *  Unsigned long type for enumerations.
    */
-
   typedef size_t index;
-  const size_t INDEX_MAX = UINT_MAX;
+  const index invalid_index = std::numeric_limits<index>::max();
+
+  /**
+   *  Unsigned char type for enumerations of synapse types.
+   */
+  typedef unsigned char synindex;
+  const synindex invalid_synindex = std::numeric_limits<synindex>::max();
+
+  /**
+   * Unsigned short type for compact target representation.
+   *
+   * See Kunkel et al, Front Neuroinform 8:78 (2014).
+   */
+  typedef unsigned short targetindex; ///< target index into thread local node vector
+  const targetindex invalid_targetindex = std::numeric_limits<targetindex>::max();
+  const index max_targetindex = invalid_targetindex - 1;
 
   /**
    * Thread index type.
@@ -148,7 +175,10 @@ namespace nest {
    * before an Event arrives at the receiving Node.
    * Delays must be equal or larger than one.
    */
-  typedef uint_t delay;
+  typedef long_t delay;
+  const long_t delay_max = long_t_max;
+  const long_t delay_min = long_t_min;
 
 }
+
 #endif

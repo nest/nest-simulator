@@ -53,7 +53,10 @@ namespace nest
      spikes are forced to that grid.  
 
      An additional state variable and the corresponding differential
-     equation represents a piecewise constant external current.
+     equation represents a piecewise constant external current. If the
+     corresponding current event is connected with port 1 the current
+     is filtered by the synapse (using the time constant of post-synaptic
+     excitatory currents)
 
      The general framework for the consistent formulation of systems with
      neuron like dynamics interacting by point events is described in
@@ -127,25 +130,20 @@ namespace nest
 
     /**
      * Import sets of overloaded virtual functions.
-     * We need to explicitly include sets of overloaded
-     * virtual functions into the current scope.
-     * According to the SUN C++ FAQ, this is the correct
-     * way of doing things, although all other compilers
-     * happily live without.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
-
-    using Node::connect_sender;
     using Node::handle;
+    using Node::handles_test_event;
 
-    port check_connection(Connection&, port);
-    
+    port send_test_event(Node &, rport, synindex, bool);
+
     void handle(SpikeEvent &);
     void handle(CurrentEvent &);
     void handle(DataLoggingRequest &);
     
-    port connect_sender(SpikeEvent &, port);
-    port connect_sender(CurrentEvent &, port);
-    port connect_sender(DataLoggingRequest &, port);
+    port handles_test_event(SpikeEvent&, rport);
+    port handles_test_event(CurrentEvent&, rport);
+    port handles_test_event(DataLoggingRequest &, rport);
 
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
@@ -216,7 +214,8 @@ namespace nest
     struct State_
     {
       // state variables
-      double_t i_0_;       // synaptic dc input current, variable 0
+      double_t i_0_;       // synaptic stepwise constant input current, variable 0
+      double_t i_1_;       // presynaptic stepwise constant input current
       double_t i_syn_ex_;  // postsynaptic current for exc. inputs, variable 1
       double_t i_syn_in_;  // postsynaptic current for inh. inputs, variable 1
       double_t V_m_;       // membrane potential, variable 2
@@ -248,7 +247,7 @@ namespace nest
       /** buffers and sums up incoming spikes/currents */
       RingBuffer spikes_ex_;
       RingBuffer spikes_in_;
-      RingBuffer currents_;  
+      std::vector<RingBuffer> currents_;
 
       //! Logger for all analog data
       UniversalDataLogger<iaf_psc_exp> logger_;
@@ -311,39 +310,42 @@ namespace nest
     static RecordablesMap<iaf_psc_exp> recordablesMap_;
   };
 
-  inline
-  port iaf_psc_exp::check_connection(Connection &c, port receptor_type)
-  {
-    SpikeEvent e;
-    e.set_sender(*this);
-    c.check_event(e);
-    return c.get_target()->connect_sender(e, receptor_type);
-  }
 
-  inline
-  port iaf_psc_exp::connect_sender(SpikeEvent&, port receptor_type)
-  {
-    if (receptor_type != 0)
-      throw UnknownReceptorType(receptor_type, get_name());
-    return 0;
-  }
+inline
+port nest::iaf_psc_exp::send_test_event(Node& target, rport receptor_type, synindex, bool)
+{
+  SpikeEvent e;
+  e.set_sender(*this);
+  return target.handles_test_event(e, receptor_type);
+}
+  
+inline
+port iaf_psc_exp::handles_test_event(SpikeEvent&, rport receptor_type)
+{
+  if (receptor_type != 0)
+    throw UnknownReceptorType(receptor_type, get_name());
+  return 0;
+}
  
-  inline
-  port iaf_psc_exp::connect_sender(CurrentEvent &, port receptor_type)
-  {
-    if (receptor_type != 0)
-      throw UnknownReceptorType(receptor_type, get_name());
+inline
+port iaf_psc_exp::handles_test_event(CurrentEvent&, rport receptor_type)
+{
+  if (receptor_type == 0)
     return 0;
-  }
-
-  inline
-  port iaf_psc_exp::connect_sender(DataLoggingRequest &dlr, 
-				   port receptor_type)
-  {
-    if (receptor_type != 0)
-      throw UnknownReceptorType(receptor_type, get_name());
-    return B_.logger_.connect_logging_device(dlr, recordablesMap_); 
-  }
+  else if (receptor_type == 1)
+    return 1;
+  else
+    throw UnknownReceptorType(receptor_type, get_name());
+}
+ 
+inline
+port iaf_psc_exp::handles_test_event(DataLoggingRequest& dlr, 
+				       rport receptor_type)
+{
+  if (receptor_type != 0)
+    throw UnknownReceptorType(receptor_type, get_name());
+  return B_.logger_.connect_logging_device(dlr, recordablesMap_);
+}
 
   inline
   void iaf_psc_exp::get_status(DictionaryDatum &d) const

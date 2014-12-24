@@ -42,10 +42,7 @@ FirstVersion: 2010-10-05
 
 M_ERROR setverbosity
 
-/* The following models will not be tested:
-   mirollo_strogatz_ps -- awaits fix of #466
-*/
-/skip_list [ /mirollo_strogatz_ps ] def
+/skip_list [ ] def
 
 /clear_error
 { 
@@ -105,12 +102,15 @@ M_ERROR setverbosity
   model GetDefaults
   /recordables known
   {
-    model true  run_sim 
-    model false run_sim 
+    (Testing: ) =only model =only
+    model true  run_sim /res1 Set
+    model false run_sim /res2 Set
 
     % should have two arrays of events results on the stack now, should be equal
-    eq
-  }
+    res1 res2 eq
+    
+    dup { ( ... ok) == } { ( ... FAIL) ==  } ifelse
+   }
   {
     true
   }

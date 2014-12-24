@@ -87,7 +87,7 @@ namespace nest
 {
 
   class Network;
-  class Connector;
+  class ConnectorBase;
 
   /**
    * volume transmitter class.
@@ -116,26 +116,19 @@ namespace nest
 
     /**
      * Import sets of overloaded virtual functions.
-     * We need to explicitly include sets of overloaded
-     * virtual functions into the current scope.
-     * According to the SUN C++ FAQ, this is the correct
-     * way of doing things, although all other compilers
-     * happily live without.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
-    using Node::connect_sender;
     using Node::handle;
+    using Node::handles_test_event;
 
     void handle(SpikeEvent&);
-    port connect_sender(SpikeEvent&, port);
+
+    port handles_test_event(SpikeEvent&, rport);
 
     void get_status(DictionaryDatum& d) const;
     void set_status(const DictionaryDatum& d) ;
 
     const vector<spikecounter>& deliver_spikes();
-
-  protected:
-
-    void register_connector(Connector& c);
 
   private:
 
@@ -161,7 +154,6 @@ namespace nest
 
     struct Buffers_ {
       RingBuffer neuromodulatory_spikes_; //!< buffer to store incoming spikes
-      vector<Connector*> targets_;        //!< vector to store target synapses
       vector<spikecounter> spikecounter_; //!< vector to store and deliver spikes
     };
 
@@ -170,9 +162,8 @@ namespace nest
 
   };
 
-
   inline
-  port volume_transmitter::connect_sender(SpikeEvent&, port receptor_type)
+  port  volume_transmitter::handles_test_event(SpikeEvent&, rport receptor_type)
   {
     if (receptor_type != 0)
       throw UnknownReceptorType(receptor_type, get_name());
@@ -185,7 +176,7 @@ namespace nest
     P_.get(d);
     Archiving_Node::get_status(d);
 
-    (*d)[names::type] = LiteralDatum(names::other);
+    (*d)[names::element_type] = LiteralDatum(names::other);
   }
 
   inline

@@ -48,8 +48,7 @@ namespace nest {
   class Network;
   class Archiving_Node;
   class histentry;
-  class Connector;
-  class Connection;
+
 
   /**
    * @defgroup user_interface Model developer interface.
@@ -107,36 +106,7 @@ namespace nest {
 
   public:
 
-    /**
-     * Enumeration for status flags.
-     * @see test(flag)
-     * @see set(flag)
-     * @see unset(flag)
-     * @see flip(flag)
-     * @todo Review set of states and transition rules, as well as use.
-     */
-    enum flag
-      {
-        valid=0,    //!< default element state
-        busy,       //!< element is not fully updated
-        updated,    //!< update was completed successfully
-        suspended,  //!< update was suspended
-        frozen,     //!< element or branch is "frozen"
-        buffers_initialized, //!< set if buffers are initialized
-        err,        //!< some error has occoured
-        n_flags
-      };
-
     Node();
-
-
-    /**
-     * The copy constructor assumes that information from
-     * the original object is needed to complete the construction.
-     * Thus, we merely copy all fields and just set the state flag
-     * to "incomplete", to indicate that construction is not
-     * ready yet.
-     */
     Node(Node const &);
     virtual ~Node();
 
@@ -146,7 +116,7 @@ namespace nest {
      * calling the derived class' copy constructor and
      * return its pointer.
      */
-    virtual Node *clone() const{ return 0;}
+    virtual Node *clone() const{ return 0; }
 
     /**
      * Returns true if the node has proxies on remote threads. This is
@@ -207,9 +177,6 @@ namespace nest {
      */
     std::string get_name() const;
 
-    virtual 
-      void register_connector(nest::Connector&) {}
-     
     /**
      * Return global Network ID.
      * Returns the global network ID of the Node.
@@ -251,22 +218,6 @@ namespace nest {
      */
     Subnet* get_parent() const;
 
-    /************************************************
-     * Functions to modify and test state flags
-     */
-
-    /**
-     * Return status flag of node.
-     * @see enum flag
-     */
-    index get_status_flag() const;
-
-    /**
-     * Clear all status flags of node.
-     * @see enum flag
-     */
-    void reset_status_flag();
-
     /**
      * Prints out one line of the tree view of the network.
      */
@@ -274,48 +225,7 @@ namespace nest {
     std::string print_network(int , int, std::string = "") {return std::string();}
 
     /**
-     * Flip one or more state flags.
-     * @param flag Bit mask, representing the flags to be flipped.
-     */
-    void flip(flag);
-
-    /**
-     * Set one or more state flags.
-     * @param flag Bit mask, representing the flags to be set.
-     */
-    void set(flag);
-
-    /**
-     * Unset one or more state flags.
-     * @param flag Bit mask, representing the flags to be cleared.
-     */
-    void unset(flag);
-
-    /**
-     * Test one or more state flags.
-     * @param flag Bit mask, representing the flags to be tested.
-     * @return Returns true, if all flags in the mask are set and false
-     * otherwise.
-     */
-    bool test(flag) const;
-
-    /**
-     * Returns true if the node has been updated during the current time-slice.
-     * Each simulation step brings all nodes from state $t$ to state $t+dt$.
-     * At the beginning of a time slice, the system clock matches the states
-     * of all nodes in the network. In this state, is_updated() will return false for
-     * all nodes.
-     * Each node which is updated has advanced to state $t+dt$. Its local state is ahead of the
-     * ststem clock.
-     * is_updated() will return true if the node is in state $t+dt$.
-     * is_updated() will return false if the node is still in state $t$.
-     * @node The state for the updated_ flag is only indirectly coupled to the node's
-     * is_updated state.
-     */
-    bool is_updated() const;
-
-    /**
-     * Returns true if frozen flag is true.
+     * Returns true if node is frozen, i.e., shall not be updated.
      */
     bool is_frozen() const;
 
@@ -354,8 +264,7 @@ namespace nest {
      * This function is called before Simulate is called for the first time
      * on a node, but not upon resumption of a simulation.
      * This is a wrapper function, which calls the overloaded Node::init_buffers_()
-     * worker only if the buffers of the node have not been initialized yet. It
-     * then sets the buffers_initialized flag.
+     * worker only if the buffers of the node have not been initialized yet.
      */
      void init_buffers();
 
@@ -441,13 +350,45 @@ namespace nest {
      */
 
     /**
-     * This function checks if the receiver accepts the connection by creating an
-     * instance of the event type it sends in its update() function and passing it
-     * to connect_sender() of the receiver. Afterwards it has to return the event
-     * so that the Connection object can check if it supports the type of event.
+     * Send an event to the receiving_node passed as an argument.
+     * This is required during the connection handshaking to test,
+     * if the receiving_node can handle the event type and receptor_type sent
+     * by the source node.
+     *
+     * If dummy_target is true, this indicates that receiving_node is derived from
+     * ConnTestDummyNodeBase and used in the first call to send_test_event().
+     * This can be ignored in most cases, but Nodes sending DS*Events to their
+     * own event hooks and then *Events to their proper targets must send
+     * DS*Events when called with the dummy target, and *Events when called with
+     * the real target, see #478.
      */
-    virtual
-    port check_connection(Connection& c, port receptor);
+    virtual port send_test_event(Node& receiving_node, rport receptor_type, synindex syn_id, bool dummy_target);
+
+    /**
+     * Check if the node can handle a particular event and receptor type.
+     * This function is called upon connection setup by send_test_event().
+     *
+     * handles_test_event() function is used to verify that the receiver
+     * can handle the event. It can also be used by the receiver to
+     * return information to the sender in form of the returned port.
+     * The default implementation throws an IllegalConnection
+     * exception.  Any node class should define handles_test_event()
+     * functions for all those event types it can handle.
+     *
+     * See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.
+     *
+     * @note The semantics of all other handles_test_event() functions is identical.
+     * @ingroup event_interface
+     * @throws IllegalConnection
+     */
+    virtual port handles_test_event(SpikeEvent&, rport receptor_type);
+    virtual port handles_test_event(RateEvent&, rport receptor_type);
+    virtual port handles_test_event(DataLoggingRequest&, rport receptor_type);
+    virtual port handles_test_event(CurrentEvent&, rport receptor_type);
+    virtual port handles_test_event(ConductanceEvent&, rport receptor_type);
+    virtual port handles_test_event(DoubleDataEvent&, rport receptor_type);
+    virtual port handles_test_event(DSSpikeEvent&, rport receptor_type);
+    virtual port handles_test_event(DSCurrentEvent&, rport receptor_type);
 
     /**
      * Register a STDP connection
@@ -467,8 +408,6 @@ namespace nest {
     virtual
     void unregister_stdp_connection(double_t);
 
-
-
     /**
      * Handle incoming spike events.
      * @param thrd Id of the calling thread.
@@ -483,32 +422,6 @@ namespace nest {
     void handle(SpikeEvent& e);
 
     /**
-     * Request a connection with the receiver.
-     * @param e Fully initialised event object.
-     * @retval Receiver port number, or 0 if unused.
-     * A negative receiver port is a request to the sender
-     * to cancel the connection without issueing an error.
-     *
-     * @throws IllegalConnection
-     *
-     * connect_sender() function is used to verify that the receiver
-     * can handle the event. It can also be used by the receiver to
-     * store information about an event sender.
-     * The default definition  throws an IllegalConnection
-     * exception.  Any node class should define empty connect_sender
-     * functions for all those event types it can handle.
-     *
-     * connect_sender() is called by the register_connection() method
-     * of the respective connector object.
-     *
-     * @note The semantics of all other connect_sender() functions is identical.
-     * @ingroup event_interface
-     * @throws IllegalConnection
-     */
-    virtual
-    port connect_sender(SpikeEvent& e, port receptor);
-
-    /**
      * Handler for rate events.
      * @see handle(SpikeEvent&)
      * @ingroup event_interface
@@ -518,14 +431,6 @@ namespace nest {
     void handle(RateEvent& e);
 
     /**
-     * Establish connection for rate events (receiver).
-     * @see connect_sender(SpikeEvent&)
-     * @ingroup event_interface
-     */
-    virtual
-    port connect_sender(RateEvent& e, port receptor);
-
-    /**
      * Handler for universal data logging request.
      * @see handle(SpikeEvent&)
      * @ingroup event_interface
@@ -533,15 +438,6 @@ namespace nest {
      */
     virtual
     void handle(DataLoggingRequest& e);
-
-    /**
-     * Establish connection for data logging request (receiver).
-     * @see connect_sender(SpikeEvent&, port)
-     * @ingroup event_interface
-     * @throws IllegalConnection
-     */
-    virtual
-    port connect_sender(DataLoggingRequest&, port);
 
     /**
      * Handler for universal data logging request.
@@ -564,15 +460,6 @@ namespace nest {
     void handle(CurrentEvent& e);
 
     /**
-     * Establish connection for current events (receiver).
-     * @see connect_sender(SpikeEvent&)
-     * @ingroup event_interface
-     * @throws IllegalConnection
-     */
-    virtual
-    port connect_sender(CurrentEvent& e, port receptor);
-
-    /**
      * Handler for conductance events.
      * @see handle(thread, SpikeEvent&)
      * @ingroup event_interface
@@ -582,15 +469,6 @@ namespace nest {
     void handle(ConductanceEvent& e);
 
     /**
-     * Establish connection for conductance events (receiver).
-     * @see connect_sender(SpikeEvent&)
-     * @ingroup event_interface
-     * @throws IllegalConnection
-     */
-    virtual
-    port connect_sender(ConductanceEvent& e, port receptor);
-
-    /**
      * Handler for DoubleData events.
      * @see handle(thread, SpikeEvent&)
      * @ingroup event_interface
@@ -598,15 +476,6 @@ namespace nest {
      */
     virtual
     void handle(DoubleDataEvent& e);
-
-    /**
-     * Establish connection for DoubleData events (receiver).
-     * @see connect_sender(SpikeEvent&)
-     * @ingroup event_interface
-     * @throws IllegalConnection
-     */
-    virtual
-    port connect_sender(DoubleDataEvent& e, port receptor);
 
     /**
      * return the Kminus value at t (in ms).
@@ -681,10 +550,9 @@ namespace nest {
     void  set_model_id(int);
 
     /**
-     * @returns true if node can be entered with the NestModule::ChangeSubnet() 
-     *          commands (only true for Subnets).
+     * @returns true if node is a subnet.
      */
-    virtual bool allow_entry() const;
+    virtual bool is_subnet() const;
 
     /**
      *  Return a dictionary with the node's properties.
@@ -699,8 +567,7 @@ namespace nest {
      /**
       * Set status dictionary of a node.
       *
-      * set_status_base() manages the frozen flag of the node itself
-      * and then invokes the set_status() of the derived class.
+      * Forwards to set_status() of the derived class.
       * @internal
       */
      void set_status_base(const DictionaryDatum&);
@@ -709,6 +576,22 @@ namespace nest {
       * Returns true if node is model prototype.
       */
      bool is_model_prototype() const;
+
+     /**
+      * set thread local index
+
+      */
+     void set_thread_lid(const index);
+
+     /**
+      * get thread local index
+      */
+     index get_thread_lid() const;
+
+     //! True if buffers have been initialized.
+     bool buffers_initialized() const { return buffers_initialized_; }
+
+     void set_buffers_initialized(bool initialized) { buffers_initialized_ = initialized; }
 
   private:
 
@@ -780,6 +663,9 @@ namespace nest {
 
     Model & get_model_() const;
 
+    //! Mark node as frozen.
+    void set_frozen_(bool frozen) { frozen_ = frozen; }
+
     /**
      * Auxiliary function to downcast a Node to a concrete class derived from Node.
      * @note This function is used to convert generic Node references to specific
@@ -792,63 +678,33 @@ namespace nest {
     index    gid_;           //!< Global element id (within network).
     index    lid_;           //!< Local element id (within parent).
     index    subnet_index_;  //!< Index of node in parent's node array
+
+    /**
+     * Local id of this node in the thread-local vector of nodes.
+     */
+    index    thread_lid_;
     
     /**
      * Model ID.
+     * It is only set for actual node instances, not for instances of class Node
+     * representing model prototypes. Model prototypes always have model_id_==-1.
      * @see get_model_id(), set_model_id()
      */
     int      model_id_;      
     Subnet *parent_;              //!< Pointer to parent.
-    std::bitset<n_flags> stat_;   //!< enum flag as bit mask.
-
     thread   thread_;        //!< thread node is assigned to
     thread   vp_;            //!< virtual process node is assigned to
-      
+    bool     frozen_;   //!< node shall not be updated if true
+    bool     buffers_initialized_;   //!< Buffers have been initialized
+
   protected:
     static Network* net_;    //!< Pointer to global network driver.
   };
 
-  
-  inline
-  index Node::get_status_flag() const
-  {
-    return stat_.to_ulong();
-  }
-
-  inline
-  void Node::reset_status_flag()
-  {
-    stat_.reset();
-  }
-  
-  inline
-  bool Node::test(enum flag f) const
-  {
-    return stat_.test(f);
-  }
-
-  inline
-  void Node::set(enum flag f)
-  {
-    stat_.set(f);
-  }
-
-  inline
-  void Node::unset(enum flag f)
-  {
-    stat_.reset(f);
-  }
-
-  inline
-  void Node::flip(enum flag f)
-  {
-    stat_[f].flip();
-  }
-
   inline
   bool Node::is_frozen() const
   {
-    return stat_.test(frozen);
+    return frozen_;
   }
 
   inline
@@ -989,6 +845,18 @@ namespace nest {
     ConcreteNode const* tp = dynamic_cast<ConcreteNode const*>(&n);
     assert(tp != 0);
     return *tp;
+  }
+
+  inline
+  void Node::set_thread_lid(const index tlid)
+  {
+    thread_lid_ = tlid;
+  }
+
+  inline
+  index Node::get_thread_lid() const
+  {
+    return thread_lid_;
   }
   
 } // namespace

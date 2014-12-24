@@ -495,6 +495,9 @@ namespace nest
   {
     lower_left_ = getValue<std::vector<double_t> >(d, names::lower_left);
     upper_right_ = getValue<std::vector<double_t> >(d, names::upper_right);
+	if ( not ( lower_left_ < upper_right_ ) )
+	  throw BadProperty("topology::BoxMask<D>: "
+			            "Upper right must be strictly to the right and above lower left.");
   }
 
   template<int D>
@@ -521,6 +524,10 @@ namespace nest
   BallMask<D>::BallMask(const DictionaryDatum& d)
   {
     radius_ = getValue<double_t>(d, names::radius);
+	if ( radius_ <= 0 )
+	  throw BadProperty("topology::BallMask<D>: "
+			            "radius > 0 required.");
+
     if (d->known(names::anchor)) {
       center_ = getValue<std::vector<double_t> >(d, names::anchor);
     }

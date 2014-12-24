@@ -49,6 +49,10 @@
       - define own functions
       - set parameters in a simple way
       - communicate with the user in a simple way
+      
+   This brunel-2000_newconnect.sli version shows how to construct
+   the network using the new Connect function introduced with
+   NEST 2.4.
 
    Abigail Morrison, Marc-Oliver Gewaltig, Hans Ekkehard Plesser
 */
@@ -266,26 +270,21 @@ statusdict/userargs :: size 1 geq
 
       % Create custom synapse types with appropriate values for
       % our excitatory and inhibitory connections
-      /static_synapse_hom_wd << /delay delay >> SetDefaults
-      /static_synapse_hom_wd /syn_ex << /weight JE >> CopyModel
-      /static_synapse_hom_wd /syn_in << /weight JI >> CopyModel
+      /static_synapse_hom_w << /delay delay >> SetDefaults
+      /static_synapse_hom_w /syn_ex << /weight JE >> CopyModel
+      /static_synapse_hom_w /syn_in << /weight JI >> CopyModel
 
       (Connecting excitatory neurons.) =
-      % expoisson E_neurons /syn_ex DivergentConnect
       expoisson 1 arraystore E_neurons /all_to_all /syn_ex Connect
 
       /target_ids E_net GetLocalNodes def
       /ns [ target_ids length ] { pop CE } Table def
       /empty [ target_ids length ] { pop [] } Table def
       /source_ids E_net GetGlobalNodes def
-      % source_ids target_ids ns empty empty true true /syn_ex RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l
-      % E_neurons E_net CE /syn_ex RandomConvergentConnect
       E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> /syn_ex Connect
 
       /ns [ target_ids length ] { pop CI } Table def
       /source_ids I_net GetGlobalNodes def
-      % source_ids target_ids ns empty empty true true /syn_in RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l
-      % I_neurons E_net CI /syn_in RandomConvergentConnect
       I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> /syn_in Connect
 
       (Connecting inhibitory population.) =
@@ -297,15 +296,11 @@ statusdict/userargs :: size 1 geq
       /ns [ target_ids length ] { pop CE } Table def
       /empty [ target_ids length ] { pop [] } Table def
       /source_ids E_net GetGlobalNodes def
-      %source_ids target_ids ns empty empty true true /syn_ex RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l
-      %E_neurons I_net CE /syn_ex RandomConvergentConnect
       E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> /syn_ex Connect
       
 
       /ns [ target_ids length ] { pop CI } Table def
       /source_ids I_net GetGlobalNodes def
-      % source_ids target_ids ns empty empty true true /syn_in RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l
-      % I_neurons I_net CI /syn_in RandomConvergentConnect
       I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> /syn_in Connect
 
       % Spike detectors are connected to the first Nrec neurons in each
@@ -314,10 +309,8 @@ statusdict/userargs :: size 1 geq
       % from each population
       (Connecting spike detectors.) =
 
-      % E_neurons Nrec Take exsd ConvergentConnect  % pick the first 500 neurons
-      % I_neurons Nrec Take insd ConvergentConnect
-      E_neurons Nrec Take exsd 1 arraystore /all_to_all Connect  % pick the first 500 neurons
-      I_neurons Nrec Take insd 1 arraystore /all_to_all Connect
+      E_neurons Nrec Take exsd 1 arraystore Connect  % pick the first 500 neurons
+      I_neurons Nrec Take insd 1 arraystore Connect
 
       toc /BuildCPUTime Set
 

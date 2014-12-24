@@ -26,6 +26,15 @@
 
 modeldict /sli_neuron known
 {
+
+/*
+ * These two wrapper functions are called from the C++-level
+ * calibrate() and update() functions. They forward the call
+ * to the SLI calibrate and update functions, while handling
+ * errors raised by the SLI functions.
+ * 
+ */
+
 /calibrate_node
 {
  { calibrate }  stopped 
@@ -44,12 +53,5 @@ modeldict /sli_neuron known
  } if
 } def
 
-/empty_sli_neuron
-<<
- /calibrate {}
- /update {}
->> def
-
-/sli_neuron empty_sli_neuron SetDefaults
 }
 if

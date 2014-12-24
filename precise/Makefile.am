@@ -24,9 +24,6 @@ libprecisemodule_la_SOURCES=\
 	parrot_neuron_ps.cpp parrot_neuron_ps.h\
 	precisemodule.cpp precisemodule.h
 
-
-
-
 AM_CPPFLAGS= -I$(top_srcdir)/libnestutil\
 		-I$(top_srcdir)/librandom\
 		-I$(top_srcdir)/sli\

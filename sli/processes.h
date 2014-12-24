@@ -285,6 +285,21 @@ class Processes: public SLIModule
     public:
     void execute(SLIInterpreter *) const; // This is all we need.
   };
+
+#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
+  class MemoryThisjobBgFunction: public SLIFunction
+  {
+    void execute(SLIInterpreter *) const;
+  };
+#endif
+
+#if defined __APPLE__ && HAVE_MACH_MACH_H
+  class MemoryThisjobDarwinFunction: public SLIFunction
+  {
+    void execute(SLIInterpreter *) const;
+  };
+#endif
+
   class SetNonblockFunction: public SLIFunction
   {
     public:
@@ -323,6 +338,15 @@ public:
   GetPPIDFunction getppidfunction;
   GetPGRPFunction getpgrpfunction;
   MkfifoFunction mkfifofunction;
+
+#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
+  MemoryThisjobBgFunction memorythisjobbgfunction;
+#endif
+
+#if defined __APPLE__ && HAVE_MACH_MACH_H
+  MemoryThisjobDarwinFunction memorythisjobdarwinfunction;
+#endif
+
   SetNonblockFunction setnonblockfunction;
   CtermidFunction ctermidfunction;
   Isatty_osFunction isatty_osfunction;

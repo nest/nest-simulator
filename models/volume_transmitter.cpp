@@ -28,7 +28,7 @@
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "arraydatum.h"
-#include "connector.h"
+#include "connector_base.h"
 #include "spikecounter.h"
 
 #include <numeric>
@@ -80,11 +80,6 @@ void nest::volume_transmitter::init_buffers_()
   Archiving_Node::clear_history();
 }
 
-void nest::volume_transmitter::register_connector(Connector& c)
-{
-  B_.targets_.push_back(&c);
-}
-
 void nest::volume_transmitter::calibrate()
 {
   // +1 as pseudo dopa spike at t_trig is inserted after trigger_update_weight
@@ -112,8 +107,7 @@ void nest::volume_transmitter::update(const Time&, const long_t from, const long
     double_t t_trig = Time(Time::step(network()->get_slice_origin().get_steps() + to)).get_ms();
 
     if ( !B_.spikecounter_.empty() )
-      for ( index i = 0; i < B_.targets_.size(); ++i )
-	B_.targets_[i]->trigger_update_weight(B_.spikecounter_, t_trig);
+      network()->trigger_update_weight(get_gid(), B_.spikecounter_, t_trig);
 
     // clear spikecounter
     B_.spikecounter_.clear();

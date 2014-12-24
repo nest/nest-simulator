@@ -37,11 +37,12 @@
 #include "compose.hpp"
 #include "dictdatum.h"
 #include <ostream>
+#include <cmath>
 
 #include "dirent.h"
 #include "errno.h"
 
-#include "sparsetable.h"
+#include "sparse_node_array.h"
 
 #ifdef M_ERROR
 #undef M_ERROR
@@ -204,18 +205,7 @@ SeeAlso: Simulate, Node
     /**
      * Register a synapse prototype at the connection manager.
      */
-    index register_synapse_prototype(ConnectorModel * cf);
-
-    /**
-     * Unregister a synapse prototype at the connection manager.
-     * syn_id: id which was obtained when registering (returned by register_synapse_prototype)
-     */
-    void unregister_synapse_prototype(index syn_id);
-
-    /**
-     * Try unregistering synapse prototype. Throws ModelInUseException, if not possible, does not unregister.
-     */
-    void try_unregister_synapse_prototype(index syn_id);
+    synindex register_synapse_prototype(ConnectorModel * cf);
 
     /**
      * Copy an existing synapse type.
@@ -293,83 +283,58 @@ SeeAlso: Simulate, Node
     index size() const;
 
     /**
-     * Connect two nodes. The two nodes are defined by their global IDs.
-     * The source node is defined by its global ID.
-     * The target node is defined by its gloabl ID and the node.
-     * The connection is established on the thread/process that owns the
-     * target node.
+     * Connect two nodes. The source node is defined by its global ID.
+     * The target node is defined by the node. The connection is
+     * established on the thread/process that owns the target node.
+     *
+     * The parameters delay and weight have the default value NAN.
+     * NAN is a special value in cmath, which describes double values that
+     * are not a number. If delay or weight is omitted in a connect call,
+     * NAN indicates this and weight/delay are set only, if they are valid.
+     *
      * \param s GID of the sending Node.
-     * \param t GID of the receiving Node.
-     * \param target pointer to target Node.
-     * \param target_thread thread that hosts the target node
-     * \param w Weight of the connection.
+     * \param target Pointer to target Node.
+     * \param target_thread Thread that hosts the target node.
+     * \param syn The synapse model to use.
      * \param d Delay of the connection (in ms).
-     * \param syn The synapse model to use.
-     */
-    void connect(index s, index t, Node* target, thread target_thread, 
-		 double_t w, double_t d, index syn); 
-
-    /**
-     * Connect two nodes. The two nodes are defined by their global IDs.
-     * The source node is defined by its global ID.
-     * The target node is defined by its gloabl ID and the node.
-     * The connection is established on the thread/process that owns the
-     * target node.
-     * \param s GID of the sending Node.
-     * \param t GID of the receiving Node.
-     * \param target pointer to target Node.
-     * \param target_thread thread that hosts the target node
-     * \param syn The synapse model to use.
-     */
-    void connect(index s, index t, Node* target, thread target_thread, 
-		 index syn); 
-
-    /**
-     * Connect two nodes. The two nodes are defined by their global IDs.
-     * The source node is defined by its global ID.
-     * The target node is defined by its gloabl ID and the node.
-     * The connection is established on the thread/process that owns the
-     * target node.
-     * \param s GID of the sending Node.
-     * \param t GID of the receiving Node.
-     * \param target pointer to target Node.
-     * \param target_thread thread that hosts the target node
      * \param w Weight of the connection.
-     * \param d Delay of the connection (in ms).
-     * \param params parameter dict t configure the synapse
-     * \param syn The synapse model to use.
      */
-    void connect(index s, index t, Node* target, thread target_thread, 
-		 double_t w, double_t d, DictionaryDatum& params, index syn);   
+    void connect(index s, Node* target, thread target_thread,
+		 index syn, double_t d=NAN, double_t w=NAN); 
 
     /**
-     * Connect two nodes. The two nodes are defined by their global IDs.
-     * The source node is defined by its global ID.
-     * The target node is defined by its gloabl ID and the node.
-     * The connection is established on the thread/process that owns the
-     * target node.
+     * Connect two nodes. The source node is defined by its global ID.
+     * The target node is defined by the node. The connection is
+     * established on the thread/process that owns the target node.
+     *
+     * The parameters delay and weight have the default value NAN.
+     * NAN is a special value in cmath, which describes double values that
+     * are not a number. If delay or weight is omitted in an connect call,
+     * NAN indicates this and weight/delay are set only, if they are valid.
+     *
      * \param s GID of the sending Node.
-     * \param t GID of the receiving Node.
+     * \param target Pointer to target Node.
+     * \param target_thread Thread that hosts the target node.
+     * \param syn The synapse model to use.
+     * \param params parameter dict to configure the synapse
+     * \param d Delay of the connection (in ms).
+     * \param w Weight of the connection.
+     */
+    void connect(index s, Node* target, thread target_thread,
+		 index syn, DictionaryDatum& params, double_t d=NAN, double_t w=NAN);   
+
+    /**
+     * Connect two nodes. The source node is defined by its global ID.
+     * The target node is defined by the node. The connection is
+     * established on the thread/process that owns the target node.
+     *
+     * \param s GID of the sending Node.
      * \param target pointer to target Node.
      * \param target_thread thread that hosts the target node
-     * \param params parameter dict t configure the synapse
+     * \param params parameter dict to configure the synapse
      * \param syn The synapse model to use.
      */
-    void connect(index s, index t, Node* target, thread target_thread, 
-		 DictionaryDatum& params, index syn);   
-
-    /**
-     * Connect two nodes. The two nodes are defined by their global IDs.
-     * The connection is established on the thread/process that owns the
-     * target node.
-     * \param s Address of the sending Node.
-     * \param r Address of the receiving Node.
-     * \param d A parameter dictionary for the connection.
-     * \param syn The synapse model to use.
-     * \returns true if a connection was made, false if operation was terminated 
-     *          because source or target was a proxy.
-     */ 
-    bool connect(index s, index r, DictionaryDatum& d, index syn);
+    bool connect(index s, index r, DictionaryDatum& params, index syn);
 
     void subnet_connect(Subnet &, Subnet &, int, index syn);
 
@@ -377,8 +342,6 @@ SeeAlso: Simulate, Node
      * Connect from an array of dictionaries.
      */
     void connect(ArrayDatum& connectome);
-
-    void count_connections();
 
     void divergent_connect(index s, const TokenArray r, const TokenArray weights, const TokenArray delays, index syn);
     /**
@@ -396,7 +359,7 @@ SeeAlso: Simulate, Node
      * Specialized version of convegent_connect
      * called by random_convergent_connect threaded
      */
-    void convergent_connect(const std::vector<index> &s_id, const std::vector<Node*> &s, index r, const TokenArray &weight, const TokenArray &delays, index syn);
+    void convergent_connect(const std::vector<index> &s_id, index r, const TokenArray &weight, const TokenArray &delays, index syn);
 
     void random_convergent_connect(const TokenArray s, index t, index n, const TokenArray w, const TokenArray d, bool, bool, index syn);
 
@@ -411,18 +374,13 @@ SeeAlso: Simulate, Node
      */
     void connect(const GIDCollection&, const GIDCollection&,
 		     const DictionaryDatum&, const DictionaryDatum&);
- 
+
     DictionaryDatum get_connector_defaults(index sc);
     void set_connector_defaults(index sc, DictionaryDatum& d);
 
     DictionaryDatum get_synapse_status(index gid, index syn, port p, thread tid);
     void set_synapse_status(index gid, index syn, port p, thread tid, DictionaryDatum& d);
 
-    DictionaryDatum get_connector_status(const Node& node, index sc);
-    DictionaryDatum get_connector_status(index gid, index sc);
-    void set_connector_status(Node& node, index sc, thread tid, DictionaryDatum& d);
-
-    ArrayDatum find_connections(DictionaryDatum dict);
     ArrayDatum get_connections(DictionaryDatum dict);
 
     Subnet * get_root() const;        ///< return root subnet.
@@ -433,23 +391,13 @@ SeeAlso: Simulate, Node
      * exist and be a subnet.
      * @throws nest::IllegalOperation Target is no subnet.
      */
-    void  go_to(index);
+    void go_to(index);
 
     void simulate(Time const &);
     /**
      * Resume the simulation after it was terminated.
      */
     void resume();
-
-    /** 
-     * Force re-preparation of the simulation.
-     * This function must be called to re-create the simulation buffers when
-     * - new neurons have been created
-     * - new connections have been created
-     * - the number of threads changes
-     * - the temporal resolution changes.
-     */
-    void force_preparation();
 
     /** 
      * Terminate the simulation after the time-slice is finished.
@@ -470,6 +418,13 @@ SeeAlso: Simulate, Node
     void memory_info();
 
     void print(index, int);
+
+    /**
+     * Triggered by volume transmitter in update.
+     * Triggeres updates for all connectors of dopamine synapses that
+     * are registered with the volume transmitter with gid vt_gid.
+     */
+    void trigger_update_weight(const long_t vt_gid, const vector<spikecounter>& dopa_spikes, const double_t t_trig);
 
     /**
      * Standard routine for sending events. This method decides if
@@ -603,28 +558,6 @@ SeeAlso: Simulate, Node
     bool get_simulated() const;
     
     /**
-     * Return true, if all Nodes are updated.
-     */
-    bool is_updated() const;
-
-    /**
-     * Get reference signal from the network.
-     * Node objects can use this function to determine their update
-     * state with respect to the remaining network.
-     * If the return value of this function is equal to the value of
-     * the Node's local updated flag, then the Node has already been
-     * update.
-     * For example:
-     * @code
-     *  bool Node::is_updated() const
-     *  {
-     *    return stat_.test(updated)==net_->update_reference();
-     *  }
-     * @endcode
-     */
-    bool update_reference() const; ///< needed to check update state of nodes.
-
-    /**
      * @defgroup net_access Network access
      * Functions to access network nodes.
      */
@@ -740,6 +673,11 @@ SeeAlso: Simulate, Node
      */
     bool has_user_models() const;
 
+    /**
+     * Ensure that all nodes in the network have valid thread-local IDs.
+     */
+    void ensure_valid_thread_local_ids() { scheduler_.ensure_valid_thread_local_ids(); }
+
     /** Display a message. This function displays a message at a 
      *  specific error level. Messages with an error level above
      *  M_ERROR will be written to std::cerr in addition to
@@ -837,13 +775,12 @@ SeeAlso: Simulate, Node
      */
     int get_thread_id() const;
 
-    void create_thread_local_ids();
-  private:
-    void connect(Node& s, Node& r, index sgid, thread t, index syn);
-    void connect(Node& s, Node& r, index sgid, thread t, double_t w, double_t d, index syn);
-    void connect(Node& s, Node& r, index sgid, thread t, DictionaryDatum& d, index syn);
-    void connect(Node& s, Node& r, index sgid, thread t, double_t w, double_t d, DictionaryDatum& p, index syn);
+    void set_model_defaults_modified() { model_defaults_modified_= true; }
+    bool model_defaults_modified() const { return model_defaults_modified_; }
+    
+    Node *thread_lid_to_node(thread t, targetindex thread_local_id) const;
 
+  private:
     /**
      * Initialize the network data structures.
      * init_() is used by the constructor and by reset().
@@ -866,8 +803,9 @@ SeeAlso: Simulate, Node
     //! Helper function to set device data path and prefix.
     void set_data_path_prefix_(const DictionaryDatum& d);
 
-    Scheduler scheduler_;
     SLIInterpreter &interpreter_;
+    SparseNodeArray local_nodes_;  //!< The network as sparse array of local nodes
+    Scheduler scheduler_;
     ConnectionManager connection_manager_;
     
     Subnet *root_;               //!< Root node.
@@ -915,18 +853,17 @@ SeeAlso: Simulate, Node
      */
     std::vector< std::pair<Model *, bool> > pristine_models_;
 
-    std::vector<Model *> models_;            //!< The list of available models
+    std::vector<Model *> models_;                    //!< The list of available models
+    std::vector< std::vector<Node*> > proxy_nodes_;  //!< Placeholders for remote nodes, one per thread
+    std::vector<Node*> dummy_spike_sources_;         //!< Placeholders for spiking remote nodes, one per thread
 
-    //! ConnBuilder factories, indexed by connruledict_ elements.
-    std::vector<GenericConnBuilderFactory*> connbuilder_factories_;
+    std::vector<GenericConnBuilderFactory*> connbuilder_factories_;  //! ConnBuilder factories, indexed by connruledict_ elements.
 
-    std::vector<Node*> proxy_nodes_;         //!< Placeholders for remote nodes, one per thread
-    std::vector<Node*> dummy_spike_sources_; //!< Placeholders for spiking remote nodes, one per thread
-
-    google::sparsetable<Node *> nodes_;  //!< The network as flat list of nodes
     Modelrangemanager node_model_ids_;   //!< Records the model id of each neuron in the network
-
+    
     bool dict_miss_is_error_;  //!< whether to throw exception on missed dictionary entries
+
+    bool model_defaults_modified_; //!< whether any model defaults have been modified
   };
 
   inline 
@@ -956,49 +893,19 @@ SeeAlso: Simulate, Node
   inline
   index Network::size() const
   {
-    //return node_locs_.size();
-    return nodes_.size();
+    return local_nodes_.get_max_gid() + 1;
   }
 
   inline
-  void Network::connect(Node& s, Node& r, index sgid, thread t, index syn)
-  {
-    force_preparation();
-    connection_manager_.connect(s, r, sgid, t, syn);
-  }
-
-  inline
-  void Network::connect(Node& s, Node& r, index sgid, thread t, double_t w, double_t d, index syn)
-  {
-    force_preparation();
-    connection_manager_.connect(s, r, sgid, t, w, d, syn);
-  }
-
-  inline
-  void Network::connect(Node& s, Node& r, index sgid, thread t, DictionaryDatum& p, index syn)
-  {
-    force_preparation();
-    connection_manager_.connect(s, r, sgid, t, p, syn);
-  }
-
-  inline
-  void Network::connect(Node& s, Node& r, index sgid, thread t, double_t w, double_t d, DictionaryDatum& params, index syn)
-  {
-    force_preparation();
-    connection_manager_.connect(s, r, sgid, t, w, d, params, syn);
+  Node *Network::thread_lid_to_node(thread t, targetindex thread_local_id) const
+  { 
+    return scheduler_.thread_lid_to_node(t, thread_local_id);
   }
 
   inline
   void Network::connect(ArrayDatum &connectome)
   {
-    force_preparation();
     connection_manager_.connect(connectome);
-  }
-
-  inline
-  void Network::count_connections()
-  {
-    connection_manager_.count_connections();
   }
 
   inline
@@ -1011,30 +918,6 @@ SeeAlso: Simulate, Node
   void Network::set_synapse_status(index gid, index syn, port p, thread tid, DictionaryDatum& d)
   {
     connection_manager_.set_synapse_status(gid, syn, p, tid, d);
-  }
-
-  inline
-  DictionaryDatum Network::get_connector_status(const Node& node, index sc)
-  {
-    return connection_manager_.get_connector_status(node, sc);
-  }
-
-  inline
-  DictionaryDatum Network::get_connector_status(index gid, index sc)
-  {
-    return connection_manager_.get_connector_status(gid, sc);
-  }
-
-  inline
-  void Network::set_connector_status(Node& node, index sc, thread tid, DictionaryDatum& d)
-  {
-    connection_manager_.set_connector_status(node, sc, tid, d);
-  }
-
-  inline
-  ArrayDatum Network::find_connections(DictionaryDatum params)
-  {
-    return connection_manager_.find_connections(params);
   }
 
   inline
@@ -1052,27 +935,15 @@ SeeAlso: Simulate, Node
   inline
   DictionaryDatum Network::get_connector_defaults(index sc)
   {
-   return connection_manager_.get_prototype_status(sc);
+    return connection_manager_.get_prototype_status(sc);
   }
   
   inline
-  index Network::register_synapse_prototype(ConnectorModel * cm)
+  synindex Network::register_synapse_prototype(ConnectorModel * cm)
   {
     return connection_manager_.register_synapse_prototype(cm);
   }
   
-  inline
-  void Network::unregister_synapse_prototype(index syn_id)
-  {
-    connection_manager_.unregister_synapse_prototype(syn_id);
-  }
-
-  inline
-  void Network::try_unregister_synapse_prototype(index syn_id)
-  {
-    connection_manager_.try_unregister_synapse_prototype(syn_id);
-  }
-
   inline
   int Network::copy_synapse_prototype(index sc, std::string name)
   {
@@ -1148,12 +1019,7 @@ SeeAlso: Simulate, Node
   inline
   bool Network::is_local_gid(index gid) const
   {
-    /* if(gid >= node_locs_.size() || nodes_[node_locs_[gid]] == 0) */
-    /*   throw UnknownNode(gid); */
-    /* return (node_locs_[gid] != -1); */
-    if ( gid >= nodes_.size() )
-      throw UnknownNode(gid);
-    return ( nodes_.test(gid) ); // test if local
+    return local_nodes_.get_node_by_gid(gid) != 0;
   }
 
   inline
@@ -1193,18 +1059,6 @@ SeeAlso: Simulate, Node
   }
 
   inline
-  bool Network::is_updated() const
-  {
-    return scheduler_.is_updated();
-  }
-
-  inline
-  bool Network::update_reference() const
-  {
-    return scheduler_.update_reference();
-  }
-
-  inline
   delay Network::get_min_delay() const
   {
     return scheduler_.get_min_delay();
@@ -1215,7 +1069,13 @@ SeeAlso: Simulate, Node
   {
     return scheduler_.get_max_delay();
   }
-  
+
+  inline
+  void Network::trigger_update_weight(const long_t vt_gid, const vector<spikecounter>& dopa_spikes, const double_t t_trig)
+  {
+    connection_manager_.trigger_update_weight(vt_gid, dopa_spikes, t_trig);
+  }
+
   template <class EventT>
   inline
   void Network::send(Node& source, EventT& e, const long_t lag)
@@ -1308,12 +1168,10 @@ SeeAlso: Simulate, Node
   inline
   Model* Network::get_model(index m) const
   {
-    if (m < models_.size() && models_[m] != 0)
-      return models_[m];
-    else
+    if (m >= models_.size() || models_[m] == 0)
       throw UnknownModelID(m);
 
-    return 0; // this never happens
+    return models_[m];
   }
 
   inline 
@@ -1325,10 +1183,10 @@ SeeAlso: Simulate, Node
   inline
   index Network::get_model_id_of_gid(index gid)
   {
-    if (node_model_ids_.is_in_range(gid))
-      return node_model_ids_.get_model_id(gid);
-    else
+    if (not node_model_ids_.is_in_range(gid))
       throw UnknownNode(gid);
+
+    return node_model_ids_.get_model_id(gid);
   }
 
   inline 
@@ -1401,12 +1259,6 @@ SeeAlso: Simulate, Node
         return models[a]->get_name() < models[b]->get_name();
       }
   };
-
-  inline 
-    void Network::force_preparation()
-  {
-    scheduler_.force_preparation();
-  }
 
   inline
   int Network::get_thread_id() const

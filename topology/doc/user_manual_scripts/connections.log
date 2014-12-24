@@ -2,7 +2,7 @@
               -- N E S T --
 
   Copyright (C) 2004 The NEST Initiative
-  Version 2.3.svn Jun 18 2014 10:46:15
+  Version 2.5.svn Dec 13 2014 10:35:56
 
 This program is provided AS IS and comes with
 NO WARRANTY. See the file LICENSE for details.
@@ -13,83 +13,83 @@ Problems or suggestions?
 
 Type 'nest.help()' to find out more about NEST.
 
-Jun 18 15:42:01 Network::clear_models [Info]: 
+Dec 14 23:41:09 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:01 Network::clear_models [Info]: 
+Dec 14 23:41:10 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:01 Network::clear_models [Info]: 
+Dec 14 23:41:10 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:02 Network::clear_models [Info]: 
+Dec 14 23:41:10 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:02 Network::clear_models [Info]: 
+Dec 14 23:41:10 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:02 Network::clear_models [Info]: 
+Dec 14 23:41:10 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:03 Network::clear_models [Info]: 
+Dec 14 23:41:11 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:03 Network::clear_models [Info]: 
+Dec 14 23:41:11 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:05 Network::clear_models [Info]: 
+Dec 14 23:41:12 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:05 Network::clear_models [Info]: 
+Dec 14 23:41:12 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:05 Network::clear_models [Info]: 
+Dec 14 23:41:12 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:06 Network::clear_models [Info]: 
+Dec 14 23:41:13 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:06 Network::clear_models [Info]: 
+Dec 14 23:41:13 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:06 Network::clear_models [Info]: 
+Dec 14 23:41:13 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:06 Network::clear_models [Info]: 
+Dec 14 23:41:13 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:06 Network::clear_models [Info]: 
+Dec 14 23:41:13 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:08 Network::clear_models [Info]: 
+Dec 14 23:41:14 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:08 Network::clear_models [Info]: 
+Dec 14 23:41:14 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:08 Network::clear_models [Info]: 
+Dec 14 23:41:14 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:08 Network::clear_models [Info]: 
+Dec 14 23:41:14 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:08 Network::clear_models [Info]: 
+Dec 14 23:41:14 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:08 Network::clear_models [Info]: 
+Dec 14 23:41:14 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:08 Network::clear_models [Info]: 
+Dec 14 23:41:14 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:08 Network::clear_models [Info]: 
+Dec 14 23:41:14 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:09 Network::clear_models [Info]: 
+Dec 14 23:41:15 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:11 Network::clear_models [Info]: 
+Dec 14 23:41:16 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.
 
-Jun 18 15:42:11 Network::clear_models [Info]: 
+Dec 14 23:41:16 Network::clear_models [Info]: 
     Models will be cleared and parameters reset.

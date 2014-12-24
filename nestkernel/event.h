@@ -23,6 +23,8 @@
 #ifndef EVENT_H
 #define EVENT_H
 
+#include <cassert>
+
 #include "nest.h"
 #include "nest_time.h"
 #include "lockptr.h"
@@ -735,7 +737,8 @@ namespace nest{
   inline
   index Event::get_sender_gid(void) const 
   {
-    return sender_gid_;
+    assert(sender_gid_ > 0);
+	return sender_gid_;
   }
 
   inline

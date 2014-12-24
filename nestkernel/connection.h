@@ -34,13 +34,45 @@
 #include "doubledatum.h"
 #include "common_synapse_properties.h"
 #include "nest_names.h"
-#include "generic_connector_model.h"
 #include "spikecounter.h"
+#include "syn_id_delay.h"
 
 namespace nest
 {
 
 class ConnectorModel;
+
+/**
+  * Base class for dummy nodes used in connection testing.
+  *
+  * This class provides a based for dummy node objects that
+  * are used to test whether a connection can be established.
+  * The base class provides empty implementations of all pure
+  * virtual functions of class Node.
+  *
+  * Each connection class (i.e., each class derived from class
+  * template Connection<T>), must derive a concrete ConnTestDummyNode
+  * class that overrides method Node::handles_test_event() for all
+  * event types that the connection supports.
+  *
+  * For details, see Kunkel et al, Front Neuroinform 8:78 (2014),
+  * Sec 3.3.1. Note that the ConnTestDummyNode class is called
+  * "check_helper" in the paper.
+  *
+  * @ingroup event_interface
+  */
+ class ConnTestDummyNodeBase: public Node
+ {
+   void calibrate() {}
+   void update(const nest::Time&, nest::long_t, nest::long_t) {}
+   void set_status(const DictionaryDatum&) {}
+   void get_status(DictionaryDatum&) const {}
+   void init_node_(const nest::Node&) {}
+   void init_state_(const nest::Node&) {}
+   void init_buffers_() {}
+ };
+
+
 
 /**
  * Base class for representing connections.
@@ -49,50 +81,81 @@ class ConnectorModel;
  * to read and write them. A suitable Connector containing these
  * connections can be obtained from the template GenericConnector.
  */
+template<typename targetidentifierT>
 class Connection
 {
 
  public:
 
-  /**
-   * Default Constructor. Sets default values for all parameters.
-   * Needed by GenericConnectorModel.
-   */
-  Connection();
-
-  /**
-   * Copy Constructor.
-   */
-  Connection(const Connection& c);
-
-  /**
-   * Default Destructor.
-   */
-  virtual ~Connection() {}
+  Connection() :
+    target_(),
+    syn_id_delay_(1.0)
+  { }
+    
+  Connection(const Connection<targetidentifierT> &rhs) :
+    target_(rhs.target_),
+    syn_id_delay_(rhs.syn_id_delay_)
+  { }
+  
 
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  virtual
   void get_status(DictionaryDatum & d) const;
 
   /**
-   * Create new empty arrays for the properties of this connection in the given
-   * dictionary. It is assumed that they are not existing before.
+   * Set properties of this connection from the values given in dictionary.
+   *
+   * @note Target and Rport cannot be changed after a connection has been created.
    */
-  void initialize_property_arrays(DictionaryDatum & d) const;
-
-  /**
-   * Append properties of this connection to the given dictionary. It is
-   * assumed that the arrays were created by initialize_property_arrays()
-   */
-  void append_properties(DictionaryDatum & d) const;
+  void set_status(const DictionaryDatum & d, ConnectorModel& cm);
 
   /**
    * Calibrate the delay of this connection to the desired resolution.
    */
-  //virtual
-  //void calibrate();
+  void calibrate(const TimeConverter &);
+
+  /**
+   * Return the delay of the connection in ms
+   */
+  double_t get_delay() const { return syn_id_delay_.get_delay_ms(); }
+
+  /**
+   * Return the delay of the connection in steps
+   */
+  long_t get_delay_steps() const { return syn_id_delay_.delay; }
+
+  /**
+   * Set the delay of the connection
+   */
+  void set_delay(const double_t delay) { syn_id_delay_.set_delay_ms(delay); }
+
+  /**
+   * Set the delay of the connection in steps
+   */
+  void set_delay_steps(const long_t delay) { syn_id_delay_.delay = delay; }
+
+  /**
+   * Set the synapse id of the connection
+   */
+  void set_syn_id(synindex syn_id) {  syn_id_delay_.syn_id = syn_id; }
+
+  /**
+   * Get the synapse id of the connection
+   */
+  synindex get_syn_id() const {  return syn_id_delay_.syn_id; }
+
+
+  /**
+   * triggers an update of a synaptic weight
+   * this function is needed for neuromodulated synaptic plasticity 
+   */
+  void trigger_update_weight(const thread, const std::vector<spikecounter> &, const double_t, const CommonSynapseProperties &);
+
+  Node *get_target(thread t) const { return target_.get_target_ptr(t); }
+  rport get_rport() const { return target_.get_rport(); }
+
+protected:
 
   /**
    * This function calls check_connection() on the sender to check if the receiver
@@ -100,144 +163,78 @@ class Connection
    * \param s The source node
    * \param r The target node
    * \param receptor The ID of the requested receptor type
-   * \param the last spike produced by the presynaptic neuron (for STDP and maturing connections) 
+   * \param the last spike produced by the presynaptic neuron (for STDP and maturing connections)
    */
-  virtual void check_connection(Node & s, Node & r, rport receptor, double_t t_lastspike);
+  void check_connection_(Node& dummy_target, Node& source, Node& target, rport receptor_type);
 
-  /**
-   * This function checks if the event type is supported by the concrete
-   * event type. In the base class it just throws UnsupportedEvent. In
-   * the derived Connection classes it can be implemented as an empty
-   * function to indicate that the event type is supported.
-   */
-  virtual void check_event(SpikeEvent&);
-
-  virtual void check_event(RateEvent&);
-  virtual void check_event(DataLoggingRequest&);
-  virtual void check_event(CurrentEvent&);
-  virtual void check_event(ConductanceEvent&);
-  virtual void check_event(DoubleDataEvent&);
-
-  // We must handle DSSpikeEvent and DSCurrentEvent explicitly instead
-  // of subsuming them under SpikeEvent and CurrentEvent via inheritance,
-  // as they must only be transmitted via static_synapse.
-  virtual void check_event(DSSpikeEvent&);
-  virtual void check_event(DSCurrentEvent&);
-
-  /**
-   * Return the rport of the connection
-   */
-  rport get_rport() const;
-
-  /**
-   * Return the target of the connection
-   */
-  Node *get_target() const;
-
-  /**
-   * triggers an update of a synaptic weight
-   * this function is needed for neuromodulated synaptic plasticity 
-   */
-  void trigger_update_weight(const std::vector<spikecounter>&, double_t, const CommonSynapseProperties&);
-
- protected:
-
-  Node *target_;       //!< Target node
-  rport rport_;         //!< Receiver port at the target node
+  /* the order of the members below is critical
+     as it influcences the size of the object. Please leave unchanged
+     as
+     targetidentifierT target_;
+     SynIdDelay syn_id_delay_;        //!< syn_id (char) and delay (24 bit) in timesteps of this connection
+  */
+     targetidentifierT target_;
+     SynIdDelay syn_id_delay_;        //!< syn_id (char) and delay (24 bit) in timesteps of this connection
 };
 
+
+template<typename targetidentifierT>
 inline
-void Connection::check_connection(Node & s, Node & r, rport receptor_type, double_t)
+void Connection<targetidentifierT>::check_connection_(Node& dummy_target, Node& source, Node& target, rport receptor_type)
 {
-  target_ = &r;
-  rport_ = s.check_connection(*this, receptor_type);
+  // 1. does this connection support the event type sent by source
+  // try to send event from source to dummy_target
+  // this line might throw an exception
+  source.send_test_event(dummy_target, receptor_type, get_syn_id(), true);
+
+  // 2. does the target accept the event type sent by sourc
+  // try to send event from source to target
+  // this returns the port of the incoming connection      
+  // p must be stored in the base class connection            
+  // this line might throw an exception
+  target_.set_rport(source.send_test_event(target, receptor_type, get_syn_id(), false));
+
+  target_.set_target(&target);
 }
 
+template<typename targetidentifierT>
 inline
-rport Connection::get_rport() const
+void Connection<targetidentifierT>::get_status(DictionaryDatum & d) const
 {
-  return rport_;
+  def<double_t>(d, names::delay, syn_id_delay_.get_delay_ms());
+  target_.get_status(d);
 }
 
+template<typename targetidentifierT>
 inline
-Node *Connection::get_target() const
+void Connection<targetidentifierT>::set_status(const DictionaryDatum & d, ConnectorModel& cm)
 {
-  return target_;
+  double_t delay;
+  if (updateValue<double_t>(d, names::delay, delay))
+  {
+	cm.assert_valid_delay_ms(delay);
+	syn_id_delay_.set_delay_ms(delay);
+  }
+  // no call to target_.set_status() because target and rport cannot be changed
 }
 
+template<typename targetidentifierT>
 inline
-void Connection::check_event(SpikeEvent&)
+void Connection<targetidentifierT>::calibrate(const TimeConverter &tc)
 {
-  throw UnsupportedEvent();
+  Time t = tc.from_old_steps(syn_id_delay_.delay);
+  syn_id_delay_.delay = t.get_steps();
+
+  if (syn_id_delay_.delay == 0)
+    syn_id_delay_.delay = 1;
 }
 
+template<typename targetidentifierT>
 inline
-void Connection::check_event(DSSpikeEvent&)
-{
-  throw UnsupportedEvent();
-}
-
-inline
-void Connection::check_event(RateEvent&)
-{
-  throw UnsupportedEvent();
-}
-
-inline
-void Connection::check_event(DataLoggingRequest&)
-{
-  throw UnsupportedEvent();
-}
-
-inline
-void Connection::check_event(CurrentEvent&)
-{
-  throw UnsupportedEvent();
-}
-
-inline
-void Connection::check_event(DSCurrentEvent&)
-{
-  throw UnsupportedEvent();
-}
-
-inline
-void Connection::check_event(ConductanceEvent&)
-{
-  throw UnsupportedEvent();
-}
-
-inline
-void Connection::check_event(DoubleDataEvent&)
-{
-  throw UnsupportedEvent();
-}
-
-inline
-void Connection::trigger_update_weight(const std::vector<spikecounter>&, double_t, const CommonSynapseProperties&)
+void Connection<targetidentifierT>::trigger_update_weight(const thread, const std::vector<spikecounter>&, const double_t, const CommonSynapseProperties&)
 {
   throw IllegalConnection("Connection::trigger_update_weight: "
-			  "Connection does not support time-driven update.");
-}
-
-template<typename PropT>
-bool set_property(const DictionaryDatum & d, Name propname, index p, PropT &prop)
-{
-  if (d->known(propname))
-  {
-    ArrayDatum* arrd = dynamic_cast<ArrayDatum*>((*d)[propname].datum());
-    if (! arrd)
-    {
-      ArrayDatum const arrd;
-      throw TypeMismatch(arrd.gettypename().toString(), 
-                         (*d)[propname].datum()->gettypename().toString());
-    }
-    
-    prop = (*arrd)[p];
-    return true;
-  }
-
-  return false;
+			  "Connection does not support updates that are triggered by the volume transmitter.");
 }
 
 } // namespace nest

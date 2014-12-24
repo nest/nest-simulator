@@ -338,7 +338,7 @@ namespace nest
     if ( leaf_ )
       return;    // if T is a vector class, we do not delete the pointees
 
-    for ( size_t n = 0 ; n < N ; ++n )
+    for ( size_t n = 0 ; n < static_cast<size_t>(N) ; ++n )
       delete children_[n];   // calls destructor in child, thus recursing
   }
 

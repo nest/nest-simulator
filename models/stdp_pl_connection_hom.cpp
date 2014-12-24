@@ -29,6 +29,7 @@
 
 namespace nest
 {
+
   //
   // Implementation of class STDPPLHomCommonProperties.
   //
@@ -59,91 +60,6 @@ namespace nest
     updateValue<double_t>(d, "lambda", lambda_);
     updateValue<double_t>(d, "alpha", alpha_);
     updateValue<double_t>(d, "mu", mu_);
-  }
-
-
-  //
-  // Implementation of class STDPPLConnectionHom.
-  //
-
-  STDPPLConnectionHom::STDPPLConnectionHom() :
-    Kplus_(0.0)
-  { }
-
-  STDPPLConnectionHom::STDPPLConnectionHom(const STDPPLConnectionHom &rhs) :
-    ConnectionHetWD(rhs)
-  {
-    Kplus_ = rhs.Kplus_;
-  }
-
-  void STDPPLConnectionHom::get_status(DictionaryDatum & d) const
-  {
-
-    // base class properties, different for individual synapse
-    ConnectionHetWD::get_status(d);
-
-    // own properties, different for individual synapse
-    def<double_t>(d, "Kplus", Kplus_);
-  }
-  
-  void STDPPLConnectionHom::set_status(const DictionaryDatum & d, ConnectorModel &cm)
-  {
-    // base class properties
-    ConnectionHetWD::set_status(d, cm);
-    updateValue<double_t>(d, "Kplus", Kplus_);    
-
-    if (d->known("tau_plus") ||
-	d->known("lambda") ||
-	d->known("alpha") ||
-	d->known("mu_plus") ||
-	d->known("mu_minus") ||
-	d->known("Wmax") )
-      {
-	//cm.network().message(SLIInterpreter::M_ERROR, "STDPPLConnectionHom::set_status()", "you are trying to set common properties via an individual synapse.");
-	//throw BadParameter();
-	throw ChangeCommonPropsByIndividual("STDPPLConnectionHom::set_status(): you are trying to set common properties via an individual synapse.");
-      }
-
-  }
-
-   /**
-   * Set properties of this connection from position p in the properties
-   * array given in dictionary.
-   */  
-  void STDPPLConnectionHom::set_status(const DictionaryDatum & d, index p, ConnectorModel &cm)
-  {
-    ConnectionHetWD::set_status(d, p, cm);
-    set_property<double_t>(d, "Kpluss", p, Kplus_);
-  
-    if (d->known("tau_pluss") ||
-	d->known("lambdas") ||
-	d->known("alphas") ||
-	d->known("mus")) 
-      {
-	//cm.network().message(SLIInterpreter::M_ERROR, "STDPPLConnectionHom::set_status()", "you are trying to set common properties via an individual synapse.");
-        //throw BadParameter();
-	throw ChangeCommonPropsByIndividual("STDPPLConnectionHom::set_status(): you are trying to set common properties via an individual synapse.");
-      }
-
-  }
-
-  void STDPPLConnectionHom::initialize_property_arrays(DictionaryDatum & d) const
-  {
-    ConnectionHetWD::initialize_property_arrays(d);
-    initialize_property_array(d, "Kpluss");
-  }
-  
-
-  /**
-   * Append properties of this connection to the given dictionary. If the
-   * dictionary is empty, new arrays are created first.
-   */
-  void STDPPLConnectionHom::append_properties(DictionaryDatum & d) const
-  {
-    std::cout << "ConnectionHetWD call..." << std::endl;
-    ConnectionHetWD::append_properties(d);
-    std::cout << "ConnectionHetWD complete" << std::endl;
-    append_property<double_t>(d, "Kpluss", Kplus_);
   }
 
 } // of namespace nest

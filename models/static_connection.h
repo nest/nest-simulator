@@ -41,44 +41,105 @@
 #ifndef STATICCONNECTION_H
 #define STATICCONNECTION_H
 
-#include "connection_het_wd.h"
+#include "connection.h"
 
 namespace nest
 {
 
 /**
  * Class representing a static connection. A static connection has the properties weight, delay and receiver port.
- * This class also serves as the base class for dynamic synapses (like TsodyksConnection, STDPConnection).
- * A suitale Connector containing these connections can be obtained from the template GenericConnector.
+ * A suitable Connector containing these connections can be obtained from the template GenericConnector.
  */
-class StaticConnection : public ConnectionHetWD
+
+
+template<typename targetidentifierT>
+class StaticConnection : public Connection<targetidentifierT>
 {
+  double_t weight_;
 
  public:
+
+  // this line determines which common properties to use
+  typedef CommonSynapseProperties CommonPropertiesType;
+
+  typedef Connection<targetidentifierT> ConnectionBase;
 
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  StaticConnection() : ConnectionHetWD() {}
+  StaticConnection() : ConnectionBase(), weight_(1.0)
+  { }
 
   /**
-   * Default Destructor.
+   * Copy constructor from a property object.
+   * Needs to be defined properly in order for GenericConnector to work.
    */
-  ~StaticConnection() {}
+  StaticConnection(const StaticConnection& rhs) : ConnectionBase(rhs), weight_(rhs.weight_)
+  { }
 
-  // overloaded for all supported event types
-  using Connection::check_event;
-  void check_event(SpikeEvent&) {}
-  void check_event(RateEvent&) {}
-  void check_event(DataLoggingRequest&) {}
-  void check_event(CurrentEvent&) {}
-  void check_event(ConductanceEvent&) {}
-  void check_event(DoubleDataEvent&) {}
-  void check_event(DSSpikeEvent&) {}
-  void check_event(DSCurrentEvent&) {}
+  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
+  // This avoids explicit name prefixes in all places these functions are used.
+  // Since ConnectionBase depends on the template parameter, they are not automatically
+  // found in the base class.
+  using ConnectionBase::get_delay_steps;
+  using ConnectionBase::get_rport;
+  using ConnectionBase::get_target;
 
+
+  class ConnTestDummyNode: public ConnTestDummyNodeBase
+  {
+  public:
+	// Ensure proper overriding of overloaded virtual functions.
+	// Return values from functions are ignored.
+	using ConnTestDummyNodeBase::handles_test_event;
+    port handles_test_event(SpikeEvent&, rport) { return invalid_port_; }
+    port handles_test_event(RateEvent&, rport) { return invalid_port_; }
+    port handles_test_event(DataLoggingRequest&, rport) { return invalid_port_; }
+    port handles_test_event(CurrentEvent&, rport) { return invalid_port_; }
+    port handles_test_event(ConductanceEvent&, rport) { return invalid_port_; }
+    port handles_test_event(DoubleDataEvent&, rport) { return invalid_port_; }
+    port handles_test_event(DSSpikeEvent&, rport) { return invalid_port_; }
+    port handles_test_event(DSCurrentEvent&, rport) { return invalid_port_; }
+  };
+
+  void check_connection(Node & s, Node & t, rport receptor_type, double_t, const CommonPropertiesType &)
+  {
+    ConnTestDummyNode dummy_target;
+    ConnectionBase::check_connection_(dummy_target, s, t, receptor_type);
+  }
+
+  void send(Event& e, thread t, double_t, const CommonSynapseProperties &)
+  {
+    e.set_weight(weight_);
+    e.set_delay(get_delay_steps());
+    e.set_receiver(*get_target(t));
+    e.set_rport(get_rport());
+    e();
+  }
+
+  void get_status(DictionaryDatum & d) const;
+
+  void set_status(const DictionaryDatum & d, ConnectorModel& cm);
+
+  void set_weight (double_t w) { weight_ = w; }
 };
+
+template<typename targetidentifierT>
+void StaticConnection<targetidentifierT>::get_status(DictionaryDatum & d) const
+{
+
+  ConnectionBase::get_status(d);
+  def<double_t>(d, names::weight, weight_);
+  def<long_t>(d, names::size_of, sizeof(*this));
+}
+
+template<typename targetidentifierT>
+void StaticConnection<targetidentifierT>::set_status(const DictionaryDatum & d, ConnectorModel& cm)
+{
+  ConnectionBase::set_status(d, cm);
+  updateValue<double_t>(d, names::weight, weight_);
+}
 
 } // namespace
 

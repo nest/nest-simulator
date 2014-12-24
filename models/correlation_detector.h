@@ -41,7 +41,9 @@
    intervals (raw cross correlation) binned to bins of duration delta_tau.
    The result can be obtained via GetStatus under the key /count_histogram.
    In parallel it records a weighted histogram, where the connection weights
-   are used to weight every count.
+   are used to weight every count. In order to minimize numerical errors the Kahan summation
+   algorithm is used when calculating the weighted histogram.
+   (http://en.wikipedia.org/wiki/Kahan_summation_algorithm)
    Both are arrays of 2*tau_max/delta_tau+1 values containing the histogram counts in the 
    following way:
 
@@ -70,11 +72,12 @@
    tau_max    double    - one-sided histogram width in ms. Events with differences in
                          [-tau_max-delta_tau/2, tau_max+delta_tau/2) are counted.
 
-   histogram        double vector, read-only  - raw, weighted cross correlation counts
-   count_histogram  long vector, read-only    - raw, cross correlation counts
-   n_events         integer vector            - number of events from source 0 and 1. 
-                                                By setting n_events to [0 0], the histogram 
-                                                is cleared.
+   histogram            double vector, read-only  - raw, weighted cross correlation counts
+   histogram_correction double_vector, read-only  - correction factors for kahan summation algorithm
+   count_histogram      long vector, read-only    - raw, cross correlation counts
+   n_events             integer vector            - number of events from source 0 and 1. 
+                                                    By setting n_events to [0 0], the histogram 
+                                                    is cleared.
    
    Remarks: This recorder does not record to file, screen or memory in the usual sense.
 
@@ -96,6 +99,7 @@
    Receives: SpikeEvent
 
    Author: Moritz Helias
+           Jakob Jordan (implemented Kahan summation algorithm) 2013/02/18
    FirstVersion: 2007/5/21
    SeeAlso: spike_detector, Device, PseudoRecordingDevice
    Availability: NEST
@@ -142,17 +146,14 @@ namespace nest
 
     /**
      * Import sets of overloaded virtual functions.
-     * We need to explicitly include sets of overloaded
-     * virtual functions into the current scope.
-     * According to the SUN C++ FAQ, this is the correct
-     * way of doing things, although all other compilers
-     * happily live without.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
-    using Node::connect_sender;
     using Node::handle;
+    using Node::handles_test_event;
 
     void handle(SpikeEvent &); //!< @todo implement if-else in term of function
-    port connect_sender(SpikeEvent &, port);
+
+    port handles_test_event(SpikeEvent &, rport);
 
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
@@ -233,6 +234,7 @@ namespace nest
        *  @note Data type is double to accomodate weights.
        */ 
       std::vector<double_t>       histogram_;
+      std::vector<double_t>       histogram_correction_; //!< used for Kahan summation algorithm
 
       /** Unweighted histogram.
        */ 
@@ -258,13 +260,10 @@ namespace nest
   };
 
   inline
-  port correlation_detector::connect_sender(SpikeEvent&, port receptor_type)
+  port correlation_detector::handles_test_event(SpikeEvent&, rport receptor_type)
   {
-    // depending on the requested receptor type we
-    // take the incoming connection as source 1 or 2
-
     if (receptor_type < 0 || receptor_type > 1)
-      throw UnknownReceptorType(receptor_type, get_name());
+        throw UnknownReceptorType(receptor_type, get_name());
 
     return receptor_type;
   }
@@ -276,7 +275,7 @@ namespace nest
     P_.get(d);
     S_.get(d);
 
-    (*d)[names::type] = LiteralDatum(names::recorder);
+    (*d)[names::element_type] = LiteralDatum(names::recorder);
   }
 
   inline

@@ -69,8 +69,8 @@ nest::sli_neuron::sli_neuron()
     B_(*this)
 {
   // We add empty defaults for /calibrate and /update, so that the uninitialised node runs without errors.
-  state_->insert(names::calibrate,new ProcedureDatum());
-  state_->insert(names::update,new ProcedureDatum());
+  state_->insert(names::calibrate, new ProcedureDatum());
+  state_->insert(names::update, new ProcedureDatum());
   recordablesMap_.create();
 }
 
@@ -130,7 +130,10 @@ void nest::sli_neuron::calibrate()
       return;
     }
 
-  network()->execute_sli_protected(state_, names::calibrate_node);   // call interpreter
+#pragma omp critical (sli_neuron)
+  {
+    network()->execute_sli_protected(state_, names::calibrate_node);   // call interpreter
+  }
 }
 
 /* ---------------------------------------------------------------- 
@@ -158,8 +161,11 @@ void nest::sli_neuron::update(Time const & origin, const long_t from, const long
     (*state_)[names::ex_spikes]=B_.ex_spikes_.get_value(lag); // ex spikes arriving at right border
     (*state_)[names::currents]=B_.currents_.get_value(lag);   
     (*state_)[names::t_lag]=lag;
-
-    network()->execute_sli_protected(state_, names::update_node);   // call interpreter
+    
+#pragma omp critical (sli_neuron)
+    {
+      network()->execute_sli_protected(state_, names::update_node);   // call interpreter
+    }
 
     bool spike_emission= false;
     if (state_->known(names::spike))

@@ -295,13 +295,12 @@ void iaf_psc_exp_multisynapse::update(const Time& origin, const long_t from, con
   }  
 }
 
-port iaf_psc_exp_multisynapse::connect_sender(SpikeEvent&, port receptor_type)
+port iaf_psc_exp_multisynapse::handles_test_event(SpikeEvent&, rport receptor_type)
 {
   if (receptor_type <= 0 || receptor_type > static_cast <port>(P_.num_of_receptors_))
     throw IncompatibleReceptorType(receptor_type, get_name(), "SpikeEvent");
 
   P_.has_connections_ = true;
-
   return receptor_type;
 }
 

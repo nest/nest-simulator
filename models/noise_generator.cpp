@@ -186,15 +186,25 @@ void nest::noise_generator::calibrate()
  * Update function and event hook
  * ---------------------------------------------------------------- */
 
-
-nest::port nest::noise_generator::check_connection(Connection& c, port receptor_type)
+nest::port nest::noise_generator::send_test_event(Node& target, rport receptor_type, synindex syn_id, bool dummy_target)
 {
+  device_.enforce_single_syn_type(syn_id);
+
+  if ( dummy_target )
+  {
     DSCurrentEvent e;
     e.set_sender(*this);
-    c.check_event(e);
-    const port receptor = c.get_target()->connect_sender(e, receptor_type);
-    ++P_.num_targets_;
-    return receptor;
+    return target.handles_test_event(e, receptor_type);
+  }
+  else
+  {
+    CurrentEvent e;
+    e.set_sender(*this);
+    const port p = target.handles_test_event(e, receptor_type);
+    if ( p != invalid_port_ and not is_model_prototype() )
+      ++P_.num_targets_;
+    return p;
+  }
 }
 
 //

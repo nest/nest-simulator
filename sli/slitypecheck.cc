@@ -39,7 +39,7 @@ Examples: /square trie
           [/doubletype] { dup mul } addtotrie def
           
 Author: Marc-Oliver 
-SeeAlso: addtotrie, cva_t, trieheads, triematches
+SeeAlso: addtotrie, cva_t
 */
 void TrieFunction::execute(SLIInterpreter *i) const
 {

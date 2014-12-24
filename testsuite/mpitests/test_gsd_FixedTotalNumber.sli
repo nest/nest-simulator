@@ -41,13 +41,6 @@ FirstVersion: February 2014
 
 [2 3]
 {
-   % This test requires the fixed_total_number connection rule, which
-   % requires GSL. We cannot test for the presence of the rule outside
-   % the distributed section, since that is run by SLI, not NEST.
-   % We thus test here, and return empty connection lists, so the test passes.
-
-   connruledict /fixed_total_number known
-   {
      NumProcesses /num_mpi_procs Set
      num_mpi_procs 3 eq
      {
@@ -67,12 +60,6 @@ FirstVersion: February 2014
      << >> GetConnections { GetStatus /target get} Map /targets Set %%% Retrieve all local connections and put them into a dictionary
      << >> GetConnections { GetStatus /source get} Map /sources Set %%% so that the distributed_process_invariant_events... function
      << /sources sources /targets targets >>		           %%% can be used.
-   }
-   {
-     cout (Skipping test because fixed_total_number is not available.) <- endl ;
-     << /sources [ ] /targets [ ] >>
-   }
-   ifelse
 
 } distributed_process_invariant_events_assert_or_die
  

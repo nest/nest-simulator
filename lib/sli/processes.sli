@@ -1132,21 +1132,6 @@ SeeAlso: taskset, Rank, NumProcesses
 } def
 
 
-% cat /proc/<pid>/status | grep VmSize
-
-%/memory_thisjob
-%{
-% (cat /proc/) getPID cvs join  (/status | grep VmSize) join shpawn %spawn ls in no-care-mode
-% 
-% exch closeostream %we do not need to write to ls!
-% { eof {exit} {getline {exch} if} ifelse } loop %read and display data.
-% closeistream %close connection
-%
-% 0 7 erase 
-% size 3 sub 3 erase    % assuming kb  may be unsafe
-% cvi
-%} def
-
 /* BeginDocumentation
 Name: memory_thisjob - report virtual memory size for current NEST process
 Synopsis:
@@ -1155,28 +1140,31 @@ Synopsis:
 Description:
 This function returns the virtual memory size (VmSize) for the current NEST
 process by checking the /proc filesystem. VmSize is reported in kB. 
-
-Note:
-This function is currently available under Linux and OSX. Under OSX, it 
-requires procfs which is available from http://osxbook.com/book/bonus/chapter11/procfs 
-or via MacPorts. procfs must be mounted at /proc.
 */
 
-/memory_thisjob
+% check, if the platform is a bluegene p/q and use corresponding function
+statusdict /platform get dup (bg/p) eq exch (bg/q) eq or
 {
-  /os statusdict /hostos get def
+  /memory_thisjob { :memory_thisjob_bg } def
+}
+{
+  /memory_thisjob
+  {
+    /os statusdict /hostos get def
 
-  mark 
-    os (darwin) searchif { memory_thisjob_darwin exit } case
-    os (linux)  searchif { memory_thisjob_linux  exit } case
+    mark 
+    os (darwin) searchif { :memory_thisjob_darwin exit } case
+    os (linux)  searchif { :memory_thisjob_linux  exit } case
     true { (I do not know how to check memory under ) os join M_ERROR message
-           /memory_thisjob /UnknowOS raiseerror
-           exit 
+            /memory_thisjob /UnknowOS raiseerror
+            exit 
          } case
-  switch 
-} def
+    switch 
+  } def
+}
+ifelse
 
-/memory_thisjob_linux
+/:memory_thisjob_linux
 {
  (/proc/) getPID cvs join (/status) join ifstream 
  not
@@ -1196,26 +1184,7 @@ or via MacPorts. procfs must be mounted at /proc.
  cvi
 } def
 
-/memory_thisjob_darwin
-{
-  % OSX version, requires procfs from, e.g., MacPorts
-
-  (/proc/) getPID cvs join (/task/basic_info/virtual_size) join ifstream 
-  {
-     % opened successfully; file has just one line: nnnnnnn KB
-     gets cvi    % read just number and convert to num
-     exch closeistream     
-  }
-  {
-    (No information available on the NEST process from the /proc filesystem. )
-    (Under OSX, you must have procfs mounted at /proc. procfs is available ) join
-    (from http://osxbook.com/book/bonus/chapter11/procfs or via MacPorts.) join M_ERROR message
-    /memory_thisjob_darwin /ProcOpenFailed raiseerror
-  }
-  ifelse 
-} def
-
-/memory_thisjob_bluegenep
+/:memory_thisjob_bluegenep
 {
   % Blue Gene/P version, requires the function BGPMemInfo from NestModule
 
@@ -1243,29 +1212,6 @@ or via MacPorts. procfs must be mounted at /proc.
     0 6 erase
     size 3 sub 3 erase    % assuming kb  may be unsafe
     cvi
-} def
-
-/meminfo_thisjob
-{
-    (/proc/) getPID cvs join (/statm) join ifstream
-    not
-    {
-        (No information available on the NEST process from the /proc filesystem. ) M_ERROR message
-	/meminfo_thisjob /ProcOpenFailed raiseerror
-    }
-    if
-
-    getline
-    not
-    {
-        (No information available on the NEST process from the /proc filesystem. ) M_ERROR message
-	/meminfo_thisjob /ProcOpenFailed raiseerror
-    }
-    if
-    exch
-
-    closeistream %close connection
-
 } def
 
 

@@ -22,7 +22,7 @@
 
 
  /* BeginDocumentation
-Name: testsuite::test_sinusoidal_poisson_generator_nostats - test basic properties of sinusoidal poisson generator
+Name: testsuite::test_sinusoidal_poisson_generator - test basic properties of sinusoidal poisson generator
 
 Synopsis: (test_sinusoidal_poisson_generator) run -> dies if assertion fails
 
@@ -42,7 +42,7 @@ This test DOES NOT test the statistical properties of the spike trains generated
 
 Author: Plesser
 FirstVersion: May 2013
-SeeAlso: test_sinusoidal_poisson_generator_mpi
+SeeAlso: testsuite::test_sinusoidal_poisson_generator_1, testsuite::test_sinusoidal_gamma_generator
 */
 
 (unittest) run

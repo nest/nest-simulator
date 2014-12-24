@@ -46,24 +46,21 @@ Token& Dictionary::operator[](const char *n)
   return operator[](Name(n));
 }
 
-
 void Dictionary::clear()
 {
-// First, clear all contained dictionaries
-    for(TokenMap::iterator i = TokenMap::begin(); i != end(); ++i)
-    {
-      DictionaryDatum *d=dynamic_cast<DictionaryDatum*>((*i).second.datum());
-      if(d !=0)
-      {
-	if(d->get()!= this)
-	  (*d)->clear();
-	d->unlock();
-      }
-      (*i).second.clear();
-    }
+  TokenMap cp(*this);
+  TokenMap::clear();
 
-    // now clear dictionary itself; HEP 2004-09-08
-    TokenMap::clear();
+  for (TokenMap::iterator i = cp.begin(); i != cp.end(); ++i) {
+    Token* tok = &i->second;
+    Datum* datum = tok->datum();
+    DictionaryDatum* d = dynamic_cast<DictionaryDatum*>(datum);
+    if (! d) continue;
+
+    Dictionary* dt = d->get();
+    d->unlock();
+    dt->clear();
+  }
 }
     
 void Dictionary::info(std::ostream &out) const

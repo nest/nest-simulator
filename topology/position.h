@@ -391,7 +391,7 @@ namespace nest
   Position<D,T>::Position(const std::vector<T> &y)
   {
     if(y.size() != D) {
-      throw BadProperty(String::compose("Expected a %d-dimensional position.",D));
+      throw BadProperty(String::compose("Expected a %1-dimensional position.", D));
     }
     std::copy(y.begin(), y.end(), x_);
   }

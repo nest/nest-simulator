@@ -23,7 +23,7 @@
 #ifndef TSODYKS_CONNECTION_H
 #define TSODYKS_CONNECTION_H
 
-#include "connection_het_wd.h"
+
 
 /* BeginDocumentation
   Name: tsodyks_synapse - Synapse type with short term plasticity.
@@ -90,14 +90,22 @@
 
 /**
  * Class representing a synapse with Tsodyks short term plasticity.
- * A suitale Connector containing these connections can be obtained from the template GenericConnector.
+ * A suitable Connector containing these connections can be obtained from the template GenericConnector.
  */
 
-namespace nest {
 
-class TsodyksConnection : public ConnectionHetWD
+#include "connection.h"
+#include <cmath>
+
+namespace nest {
+  
+template<typename targetidentifierT>
+class TsodyksConnection : public Connection<targetidentifierT>
 {
  public:
+
+  typedef CommonSynapseProperties CommonPropertiesType;
+  typedef Connection<targetidentifierT> ConnectionBase;
 
   /**
    * Default Constructor.
@@ -106,10 +114,25 @@ class TsodyksConnection : public ConnectionHetWD
   TsodyksConnection();
 
   /**
+     * Copy constructor from a property object.
+     * Needs to be defined properly in order for GenericConnector to work.
+     */
+  TsodyksConnection(const TsodyksConnection&);
+
+  /**
    * Default Destructor.
    */
   ~TsodyksConnection() {}
-
+  
+  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
+  // This avoids explicit name prefixes in all places these functions are used.
+  // Since ConnectionBase depends on the template parameter, they are not automatically
+  // found in the base class.
+  using ConnectionBase::get_delay_steps;
+  using ConnectionBase::get_delay;
+  using ConnectionBase::get_rport;
+  using ConnectionBase::get_target;
+  
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
@@ -121,36 +144,32 @@ class TsodyksConnection : public ConnectionHetWD
   void set_status(const DictionaryDatum & d, ConnectorModel &cm);
 
   /**
-   * Set properties of this connection from position p in the properties
-   * array given in dictionary.
-   */  
-  void set_status(const DictionaryDatum & d, index p, ConnectorModel &cm);
-
-  /**
-   * Create new empty arrays for the properties of this connection in the given
-   * dictionary. It is assumed that they are not existing before.
-   */
-  void initialize_property_arrays(DictionaryDatum & d) const;
-
-  /**
-   * Append properties of this connection to the given dictionary. If the
-   * dictionary is empty, new arrays are created first.
-   */
-  void append_properties(DictionaryDatum & d) const;
-
-  /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
    * \param t_lastspike Point in time of last spike sent.
    * \param cp Common properties to all synapses (empty).
    */
-  void send(Event& e, double_t t_lastspike, const CommonSynapseProperties &cp);
+  void send(Event& e, thread t,double_t t_lastspike, const CommonSynapseProperties &cp);
 
-  // overloaded for all supported event types
-  using Connection::check_event;
-  void check_event(SpikeEvent&) {}
+  class ConnTestDummyNode: public ConnTestDummyNodeBase
+  {
+  public:
+	// Ensure proper overriding of overloaded virtual functions.
+	// Return values from functions are ignored.
+	using ConnTestDummyNodeBase::handles_test_event;
+    port handles_test_event(SpikeEvent&, rport) { return invalid_port_; }
+  };
   
+  void check_connection(Node & s, Node & t, rport receptor_type, double_t, const CommonPropertiesType &)
+  {
+    ConnTestDummyNode dummy_target;
+    ConnectionBase::check_connection_(dummy_target, s, t, receptor_type);
+  }
+
+  void set_weight(double_t w) { weight_ = w; }
+    
  private:
+  double_t weight_;
   double_t tau_psc_;   //!< [ms] time constant of postsyn current
   double_t tau_fac_;   //!< [ms] time constant for fascilitation
   double_t tau_rec_;   //!< [ms] time constant for recovery
@@ -167,11 +186,17 @@ class TsodyksConnection : public ConnectionHetWD
  * \param p The port under which this connection is stored in the Connector.
  * \param t_lastspike Time point of last spike emitted
  */
+template<typename targetidentifierT>
 inline
-void TsodyksConnection::send(Event& e, double_t t_lastspike, const CommonSynapseProperties &)
+void TsodyksConnection<targetidentifierT>::send(Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties &)
 {
   double_t h = e.get_stamp().get_ms() - t_lastspike;
 
+  
+  Node *target = get_target(t);
+  
+  
+  
   // t_lastspike_ = 0 initially
   // this has no influence on the dynamics, IF y = z = 0 initially
   // !!! x != 1.0 -> z != 0.0 -> t_lastspike_=0 has influence on dynamics
@@ -206,14 +231,83 @@ void TsodyksConnection::send(Event& e, double_t t_lastspike, const CommonSynapse
   x_ -= delta_y_tsp;
   y_ += delta_y_tsp;
 
-  // send the spike to the target
-  e.set_receiver(*target_);
-  e.set_weight( weight_ * delta_y_tsp );
-  e.set_delay( delay_ );
-  e.set_rport( rport_ );
+  
+  e.set_receiver(*target);
+  e.set_weight(delta_y_tsp*weight_);
+  e.set_delay(get_delay_steps());
+  e.set_rport(get_rport());
   e();
 }
- 
+
+ template<typename targetidentifierT>
+  TsodyksConnection<targetidentifierT>::TsodyksConnection() :
+    ConnectionBase(),
+    weight_(1.0),
+    tau_psc_(3.0),
+    tau_fac_(0.0),
+    tau_rec_(800.0),
+    U_(0.5),
+    x_(1.0),
+    y_(0.0),
+    u_(0.0)
+  { }
+
+ template<typename targetidentifierT>
+   TsodyksConnection<targetidentifierT>::TsodyksConnection(const TsodyksConnection& rhs) :
+     ConnectionBase(rhs),
+     weight_(rhs.weight_),
+     tau_psc_(rhs.tau_psc_),
+     tau_fac_(rhs.tau_fac_),
+     tau_rec_(rhs.tau_rec_),
+     U_(rhs.U_),
+     x_(rhs.x_),
+     y_(rhs.y_),
+     u_(rhs.u_)
+   { }
+
+ template<typename targetidentifierT>
+  void TsodyksConnection<targetidentifierT>::get_status(DictionaryDatum & d) const
+  {
+    ConnectionBase::get_status(d);
+    def<double_t>(d, names::weight, weight_);
+
+    def<double_t>(d, "U", U_);
+    def<double_t>(d, "tau_psc", tau_psc_);
+    def<double_t>(d, "tau_rec", tau_rec_);
+    def<double_t>(d, "tau_fac", tau_fac_);
+    def<double_t>(d, "x", x_);
+    def<double_t>(d, "y", y_);
+    def<double_t>(d, "u", u_);
+    def<long_t>(d, names::size_of, sizeof(*this));
+  }
+  
+  template<typename targetidentifierT>
+  void TsodyksConnection<targetidentifierT>::set_status(const DictionaryDatum & d, ConnectorModel &cm)
+  {
+    // Handle parameters that may throw an exception first, so we can leave the synapse untouched
+	// in case of invalid parameter values
+	double_t x = x_;
+	double_t y = y_;
+	updateValue<double_t>(d, "x", x);
+	updateValue<double_t>(d, "y", y);
+
+	if (x + y > 1.0)
+	  throw BadProperty("x + y must be <= 1.0.");
+
+	x_ = x;
+	y_ = y;
+
+	ConnectionBase::set_status(d, cm);
+    updateValue<double_t>(d, names::weight, weight_);
+
+    updateValue<double_t>(d, "U", U_);
+    updateValue<double_t>(d, "tau_psc", tau_psc_);
+    updateValue<double_t>(d, "tau_rec", tau_rec_);
+    updateValue<double_t>(d, "tau_fac", tau_fac_);
+
+    updateValue<double_t>(d, "u", u_);
+  }
+
 } // namespace
 
 #endif // TSODYKS_CONNECTION_H

@@ -29,7 +29,6 @@
 
 int main(int argc, char *argv[])
 {
-
   nest::Network *pNet = 0;
 
   /** 

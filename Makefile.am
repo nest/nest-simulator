@@ -24,6 +24,7 @@ dist-hook:
 	rm -rf $(distdir)/libltdl/.deps
 	rm -f $(distdir)/extras/logos/*.{ai,svg}
 	rm -f $(distdir)/extras/logos/nest-initiative-logo*.*
+	@PKGSRCDIR@/extras/create_rcsinfo.sh @PKGSRCDIR@ $(distdir)
 
 
 .PHONY: doc fulldoc install-slidoc-recursive
@@ -55,7 +56,7 @@ if HAVE_PYTHON
 
 # Python interpreter is discovered by AM_PATH_PYTHON and declared as a make variable by AC_SUBST
 installcheck-local:
-	PATH="$(exec_prefix)/bin:$(PATH)" PYTHON="$(PYTHON)" PYTHONPATH="$(pyexecdir):$(PYTHONPATH)" \
+	PATH="$(exec_prefix)/bin:$(PATH)" PYTHON="$(PYTHON)" PYTHONPATH="$(pyexecdir):$(PYTHONPATH)" exec_prefix="$(exec_prefix)" \
 	/bin/sh $(DESTDIR)@PKGDATADIR@/extras/do_tests.sh --test-pynest --source-dir=$(top_srcdir)
 
 else
@@ -76,11 +77,17 @@ install-data-hook: install-exec install-slidoc-recursive
 	    -e "s:++PKGSRCDIR++:@PKGSRCDIR@:"\
 	    $(DESTDIR)@PKGDATADIR@/extras/emacs/sli.el.in > $(DESTDIR)@PKGDATADIR@/extras/emacs/sli.el
 	rm $(DESTDIR)@PKGDATADIR@/extras/emacs/sli.el.in
+	\
 	@INSTALL_PROGRAM@ @PKGBUILDDIR@/extras/nest-config $(DESTDIR)$(exec_prefix)/bin/
 	@INSTALL_PROGRAM@ @PKGSRCDIR@/extras/nest_serial $(DESTDIR)$(exec_prefix)/bin/
 	@INSTALL_PROGRAM@ @PKGSRCDIR@/extras/nest_indirect $(DESTDIR)$(exec_prefix)/bin/
+	@INSTALL_PROGRAM@ @PKGBUILDDIR@/extras/nest_vars.sh $(DESTDIR)$(exec_prefix)/bin/
 	@INSTALL_PROGRAM@ -m 644 @PKGSRCDIR@/README $(DESTDIR)@PKGDOCDIR@/
 	@INSTALL_PROGRAM@ -m 644 @PKGSRCDIR@/NEWS $(DESTDIR)@PKGDOCDIR@/
+	\
+	@PKGSRCDIR@/extras/create_rcsinfo.sh @PKGSRCDIR@ @PKGBUILDDIR@
+	test -f @PKGBUILDDIR@/lib/sli/rcsinfo.sli \
+	  && @INSTALL_PROGRAM@ -m 644 @PKGBUILDDIR@/lib/sli/rcsinfo.sli $(DESTDIR)@PKGDATADIR@/sli
 
 nobase_pkgdata_DATA=\
 	extras/emacs/sli.el.in \

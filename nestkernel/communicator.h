@@ -167,6 +167,7 @@ public:
                           std::vector<int>& displacements);
   static void communicate(double_t, std::vector<double_t>&);
   static void communicate(std::vector<int_t>&);
+  static void communicate(std::vector<long_t>&);
 
   /**
    * Collect GIDs for all nodes in a given node list across processes.
@@ -193,6 +194,8 @@ public:
   static double_t time_communicate(int num_bytes, int samples=1000);
   static double_t time_communicatev(int num_bytes, int samples=1000);
   static double_t time_communicate_offgrid(int num_bytes, int samples=1000);
+  static double_t time_communicate_alltoall(int num_bytes, int samples=1000);
+  static double_t time_communicate_alltoallv(int num_bytes, int samples=1000);
 
   static std::string get_processor_name();
 
@@ -233,6 +236,7 @@ private:
                                     std::vector<OffGridSpike>& recv_buffer,
                                     std::vector<int>& displacements);
   static void communicate_Allgather(std::vector<int_t>&);
+  static void communicate_Allgather(std::vector<long_t>&);
 
   template <typename T>
   static void communicate_Allgatherv(std::vector<T>& send_buffer,
@@ -252,11 +256,14 @@ private:
                                std::vector<OffGridSpike>& recv_buffer,
                                std::vector<int>& displacements);
   static void communicate_CPEX(std::vector<int_t>&);
+  static void communicate_CPEX(std::vector<long_t>&);
 };
 
 inline void Communicator::set_use_Allgather(bool use_Allgather)
 {
   use_Allgather_ = use_Allgather;
+  if (!use_Allgather)
+    init_communication();
 }
 
 }
@@ -323,6 +330,7 @@ public:
                           std::vector<int>& displacements);
   static void communicate(double_t, std::vector<double_t>&);
   static void communicate(std::vector<int_t>&) {}
+  static void communicate(std::vector<long_t>&) {}
 
    /**
    * Collect GIDs for all nodes in a given node list across processes.
@@ -354,6 +362,8 @@ public:
   static double_t time_communicate(int, int){return 0.0;}
   static double_t time_communicatev(int, int){return 0.0;}
   static double_t time_communicate_offgrid(int, int){return 0.0;}
+  static double_t time_communicate_alltoall(int, int){return 0.0;}
+  static double_t time_communicate_alltoallv(int, int){return 0.0;}
 
   static std::string get_processor_name();
 

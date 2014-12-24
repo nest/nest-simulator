@@ -21,7 +21,7 @@
  */
 
 /* 
-    This file is part of NEST
+    This file is part of NEST.
 
     modelsmodule.cpp -- sets up the modeldict with all models included
     with the NEST distribution. 
@@ -46,6 +46,7 @@
 #include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_alpha_multisynapse.h"
 #include "aeif_cond_exp.h"
+#include "amat2_psc_exp.h"
 #include "hh_cond_exp_traub.h"
 #include "hh_psc_alpha.h"
 #include "ht_neuron.h"
@@ -94,26 +95,29 @@
 
 #include "volume_transmitter.h"
 
-
 // Generic (template) implementations for synapse prototypes
-#include "generic_connector_model.h"
-#include "generic_connector.h"
+#include "connector_model_impl.h"
 
 // Prototypes for synapses
 
 #include "common_synapse_properties.h"
 #include "static_connection.h"
-#include "static_connection_hom_wd.h"
+#include "static_connection_hom_w.h"
 #include "cont_delay_connection.h"
+#include "cont_delay_connection_impl.h"
 #include "tsodyks_connection.h"
 #include "tsodyks2_connection.h"
 #include "quantal_stp_connection.h"
+#include "quantal_stp_connection_impl.h"
 #include "stdp_connection.h"
 #include "stdp_connection_hom.h"
 #include "stdp_connection_facetshw_hom.h"
+#include "stdp_connection_facetshw_hom_impl.h"
 #include "stdp_pl_connection_hom.h"
 #include "stdp_dopa_connection.h"
 #include "ht_connection.h"
+
+#include "target_identifier.h"
 
 #ifdef HAVE_MUSIC
 #include "music_event_in_proxy.h"
@@ -155,6 +159,7 @@ namespace nest
     register_model<iaf_psc_exp>(net_,                "iaf_psc_exp");
     register_model<iaf_psc_exp_multisynapse>(net_, "iaf_psc_exp_multisynapse");
     register_model<iaf_tum_2000>(net_,               "iaf_tum_2000");
+    register_model<amat2_psc_exp>(net_,              "amat2_psc_exp");
     register_model<mat2_psc_exp>(net_,               "mat2_psc_exp");
     register_model<parrot_neuron>(net_,              "parrot_neuron");
     register_model<pp_psc_delta>(net_,               "pp_psc_delta");
@@ -220,37 +225,107 @@ namespace nest
 
     // register synapses
 
-    // static connection with weight, delay, rport, target
-    register_prototype_connection<StaticConnection>(net_,    "static_synapse");
+/* BeginDocumentation
+   Name: static_synapse_hpc - Variant of static_synapse with low memory consumption.
 
-    // static connection with rport, target and common weight and delay
-    register_prototype_connection_commonproperties_hom_d < StaticConnectionHomWD,
-                                                            CommonPropertiesHomWD
-                                                          > (net_, "static_synapse_hom_wd");
+   Description:
+   hpc synapses store the target neuron in form of a 2 Byte index instead of an
+   8 Byte pointer. This limits the number of thread local neurons to 65,536.
+   No support for different receptor types.
+   Otherwise identical to static_synapse.
 
-    register_prototype_connection<ContDelayConnection>(net_, "cont_delay_synapse");
-    register_prototype_connection<TsodyksConnection>(net_,   "tsodyks_synapse");
-    register_prototype_connection<Tsodyks2Connection>(net_,   "tsodyks2_synapse");
-    register_prototype_connection<STDPConnection>(net_,      "stdp_synapse");
-    register_prototype_connection<HTConnection>(net_,        "ht_synapse");
-    register_prototype_connection< Quantal_StpConnection>(net_, "quantal_stp_synapse");
+   SeeAlso: synapsedict, static_synapse
+*/
+    register_connection_model < StaticConnection<TargetIdentifierPtrRport> > (net_,    "static_synapse");  
+    register_connection_model < StaticConnection<TargetIdentifierIndex> > (net_,    "static_synapse_hpc");
+  
 
-    register_prototype_connection_commonproperties < STDPConnectionHom, 
-                                                     STDPHomCommonProperties 
-                                                   > (net_, "stdp_synapse_hom");
-
-    register_prototype_connection_commonproperties < STDPFACETSHWConnectionHom,
-                                                     STDPFACETSHWHomCommonProperties
-                                                   > (net_, "stdp_facetshw_synapse_hom");
-
-    register_prototype_connection_commonproperties < STDPPLConnectionHom,
-                                                     STDPPLHomCommonProperties 
-                                                   > (net_, "stdp_pl_synapse_hom");
-    register_prototype_connection_commonproperties <STDPDopaConnection, 
-                                                    STDPDopaCommonProperties
-                                                   > (net_, "stdp_dopamine_synapse");
+/* BeginDocumentation
+   Name: static_synapse_hom_w_hpc - Variant of static_synapse_hom_w with low memory consumption.
+   SeeAlso: synapsedict, static_synapse_hom_w, static_synapse_hpc
+*/
+    register_connection_model < StaticConnectionHomW<TargetIdentifierPtrRport> > (net_, "static_synapse_hom_w");
+    register_connection_model < StaticConnectionHomW<TargetIdentifierIndex> > (net_, "static_synapse_hom_w_hpc");
 
 
+/* BeginDocumentation
+   Name: stdp_synapse_hpc - Variant of stdp_synapse with low memory consumption.
+   SeeAlso: synapsedict, stdp_synapse, static_synapse_hpc
+*/
+    register_connection_model < STDPConnection<TargetIdentifierPtrRport> > (net_,      "stdp_synapse");
+    register_connection_model < STDPConnection<TargetIdentifierIndex> > (net_,      "stdp_synapse_hpc");
+
+
+/* BeginDocumentation
+   Name: stdp_pl_synapse_hom_hpc - Variant of stdp_pl_synapse_hom with low memory consumption.
+   SeeAlso: synapsedict, stdp_pl_synapse_hom, static_synapse_hpc
+*/
+    register_connection_model < STDPPLConnectionHom<TargetIdentifierPtrRport> > (net_, "stdp_pl_synapse_hom");
+    register_connection_model < STDPPLConnectionHom<TargetIdentifierIndex> > (net_, "stdp_pl_synapse_hom_hpc");
+
+
+/* BeginDocumentation
+   Name: quantal_stp_synapse_hpc - Variant of quantal_stp_synapse with low memory consumption.
+   SeeAlso: synapsedict, quantal_stp_synapse, static_synapse_hpc
+*/
+    register_connection_model < Quantal_StpConnection<TargetIdentifierPtrRport> > (net_, "quantal_stp_synapse");
+    register_connection_model < Quantal_StpConnection<TargetIdentifierIndex> > (net_, "quantal_stp_synapse_hpc");
+
+
+/* BeginDocumentation
+   Name: stdp_synapse_hom_hpc - Variant of quantal_stp_synapse with low memory consumption.
+   SeeAlso: synapsedict, stdp_synapse_hom, static_synapse_hpc
+*/    
+    register_connection_model < STDPConnectionHom<TargetIdentifierPtrRport> > (net_, "stdp_synapse_hom");
+    register_connection_model < STDPConnectionHom<TargetIdentifierIndex> > (net_, "stdp_synapse_hom_hpc");
+
+
+/* BeginDocumentation
+   Name: stdp_facetshw_synapse_hom_hpc - Variant of stdp_facetshw_synapse_hom with low memory consumption.
+   SeeAlso: synapsedict, stdp_facetshw_synapse_hom, static_synapse_hpc
+*/
+    register_connection_model < STDPFACETSHWConnectionHom<TargetIdentifierPtrRport> > (net_, "stdp_facetshw_synapse_hom");
+    register_connection_model < STDPFACETSHWConnectionHom<TargetIdentifierIndex> > (net_, "stdp_facetshw_synapse_hom_hpc");
+
+
+/* BeginDocumentation
+   Name: cont_delay_synapse_hpc - Variant of cont_delay_synapse with low memory consumption.
+   SeeAlso: synapsedict, cont_delay_synapse, static_synapse_hpc
+*/
+    register_connection_model < ContDelayConnection<TargetIdentifierPtrRport> > (net_, "cont_delay_synapse");
+    register_connection_model < ContDelayConnection<TargetIdentifierIndex> > (net_, "cont_delay_synapse_hpc");
+
+
+/* BeginDocumentation
+   Name: tsodyks_synapse_hpc - Variant of tsodyks_synapse with low memory consumption.
+   SeeAlso: synapsedict, tsodyks_synapse, static_synapse_hpc
+*/
+    register_connection_model < TsodyksConnection<TargetIdentifierPtrRport> > (net_,    "tsodyks_synapse");
+    register_connection_model < TsodyksConnection<TargetIdentifierIndex> > (net_,    "tsodyks_synapse_hpc");
+
+
+/* BeginDocumentation
+   Name: tsodyks2_synapse_hpc - Variant of tsodyks2_synapse with low memory consumption.
+   SeeAlso: synapsedict, tsodyks2_synapse, static_synapse_hpc
+*/
+    register_connection_model < Tsodyks2Connection<TargetIdentifierPtrRport> > (net_,    "tsodyks2_synapse");
+    register_connection_model < Tsodyks2Connection<TargetIdentifierIndex> > (net_,    "tsodyks2_synapse_hpc");
+
+
+/* BeginDocumentation
+   Name: ht_synapse_hpc - Variant of ht_synapse with low memory consumption.
+   SeeAlso: synapsedict, ht_synapse, static_synapse_hpc
+*/
+    register_connection_model < HTConnection<TargetIdentifierPtrRport> > (net_,    "ht_synapse");
+    register_connection_model < HTConnection<TargetIdentifierIndex> > (net_,    "ht_synapse_hpc"); 
+
+
+/* BeginDocumentation
+   Name: stdp_dopamine_synapse_hpc - Variant of stdp_dopamine_synapse with low memory consumption.
+   SeeAlso: synapsedict, stdp_dopamine_synapse, static_synapse_hpc
+*/
+    register_connection_model < STDPDopaConnection<TargetIdentifierPtrRport> > (net_, "stdp_dopamine_synapse");
+    register_connection_model < STDPDopaConnection<TargetIdentifierIndex> > (net_, "stdp_dopamine_synapse_hpc");
   }
 
 } // namespace nest

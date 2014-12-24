@@ -21,7 +21,7 @@
  */
 
 /* 
-   This file is part of NEST
+   This file is part of NEST.
 
    dynamicloader.cpp -- Implements the class DynamicLoaderModule
    to allow for dymanically loaded modules for extending the kernel.
@@ -157,6 +157,9 @@ namespace nest
            != dyn_modules_.end() )
       throw DynamicModuleManagementError(
             "Module '" + new_module.name + "' is loaded already.");
+
+    // call lt_dlerror() to reset any error messages hanging around
+    lt_dlerror();
 
     // try to open the module
     const lt_dlhandle hModule = lt_dlopenext(new_module.name.c_str());

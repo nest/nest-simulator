@@ -80,8 +80,7 @@ SeeAlso: spike_generator, StimulatingDevice
       // output to all targets
       bool has_proxies() const {return true;}
 
-
-      port check_connection(Connection&, port);
+      port send_test_event(Node&, rport, synindex, bool);
 
       void get_status(DictionaryDatum &) const;
       void set_status(const DictionaryDatum &) ;
@@ -157,13 +156,15 @@ SeeAlso: spike_generator, StimulatingDevice
   };
 
   inline
-  port pulsepacket_generator::check_connection(Connection& c, port receptor_type)
-  {
-    SpikeEvent e;
-    e.set_sender(*this);
-    c.check_event(e);
-    return c.get_target()->connect_sender(e, receptor_type);
-  }
+port pulsepacket_generator::send_test_event(Node& target, rport receptor_type, synindex syn_id, bool)
+{
+  device_.enforce_single_syn_type(syn_id);
+
+  SpikeEvent e;
+  e.set_sender(*this);
+  
+  return target.handles_test_event(e, receptor_type);
+}
 
   inline
   void pulsepacket_generator::get_status(DictionaryDatum &d) const

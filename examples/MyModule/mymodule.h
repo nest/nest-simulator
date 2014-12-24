@@ -21,7 +21,7 @@
  */
 
 #ifndef MYMODULE_H
-#define MyMODULE_H
+#define MYMODULE_H
 
 #include "dynmodule.h"
 #include "slifunction.h"

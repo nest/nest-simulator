@@ -28,16 +28,6 @@
 #include "config.h"
 #include "compose.hpp"
 
-#ifdef HAVE_PTHREADS
-#ifdef HAVE_PTHREAD_IGNORED
-#undef __PURE_CNAME
-#include <pthread.h>
-#define __PURE_CNAME
-#else
-#include <pthread.h>
-#endif
-#endif
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -63,7 +53,20 @@
 #undef N_DEBUG
 #endif
 
+#ifdef USE_PMA
+#ifdef IS_K
+extern PaddedPMA poormansallocpool[];
+#else
+extern PoorMansAllocator poormansallocpool;
+#ifdef _OPENMP
+#pragma omp threadprivate(poormansallocpool)
+#endif
+#endif
+#endif
+
 extern int SLIsignalflag;
+
+nest::Network* nest::Scheduler::net_ = 0;
 
 std::vector<nest::delay> nest::Scheduler::moduli_;
 std::vector<nest::delay> nest::Scheduler::slice_moduli_;
@@ -78,24 +81,23 @@ nest::Scheduler::Scheduler(Network &net)
           simulating_(false),
       	  force_singlethreading_(false),
           n_threads_(1),
-	  n_nodes_(0),
-	  n_rec_procs_(0),
+          n_rec_procs_(0),
           entry_counter_(0),
           exit_counter_(0),
-          net_(net),
+          nodes_vec_(n_threads_),
+          nodes_vec_network_size_(0),    // zero to force update
           clock_(Time::tic(0L)),
           slice_(0L),
           to_do_(0L),
           to_do_total_(0L),
           from_step_(0L),
           to_step_(0L),    // consistent with to_do_ == 0
-          update_ref_(true),
           terminate_(false),
-	  is_prepared_(false),
           off_grid_spiking_(false),
           print_time_(false),
           rng_()
 {
+  net_ = &net;
   init_();
 }
 
@@ -129,41 +131,27 @@ void nest::Scheduler::init_()
   assert(initialized_ == false);
 
   simulated_ = false;
-  is_prepared_=false;
-  min_delay_ = max_delay_ = 0;
-  update_ref_ = true;
 
-#ifdef HAVE_PTHREADS
-  int status = pthread_cond_init(&done_, NULL);
-  if(status != 0)
-  {
-    net_.message(SLIInterpreter::M_ERROR, "Scheduler::reset",
-	       		"Error initializing condition variable done_");
-    throw PthreadException(status);
-  }
+  // The following line is executed by all processes, no need to communicate
+  // this change in delays.
+  min_delay_ = max_delay_ = 1;
 
-  status = pthread_cond_init(&ready_, NULL);
-  if(status != 0)
-  {
-    net_.message(SLIInterpreter::M_ERROR, "Scheduler::reset",
-				"Error initializing condition variable ready_");
-    throw PthreadException(status);
-  }
-#else
 #ifndef _OPENMP
   if (n_threads_ > 1)
   {
-    net_.message(SLIInterpreter::M_ERROR, "Scheduler::reset",
+    net_->message(SLIInterpreter::M_ERROR, "Scheduler::reset",
 				"No multithreading available, using single threading");
     n_threads_ = 1;
     force_singlethreading_ = true;
   }
 #endif
-#endif
 
   set_num_threads(n_threads_);
 
   n_sim_procs_ = Communicator::get_num_processes()-n_rec_procs_;
+
+  // explicitly force construction of nodes_vec_ to ensure consistent state
+  update_nodes_vec_();
 
   create_rngs_(true); // flag that this is a call from the ctr
   create_grng_(true); // flag that this is a call from the ctr
@@ -173,25 +161,6 @@ void nest::Scheduler::init_()
 
 void nest::Scheduler::finalize_()
 {
-
-#ifdef HAVE_PTHREADS
-  int status = pthread_cond_destroy(&done_);
-  if(status != 0)
-  {
-    net_.message(SLIInterpreter::M_ERROR, "Scheduler::reset",
-				"Error in destruction of condition variable done_");
-    throw PthreadException(status);
-  }
-
-  status = pthread_cond_destroy(&ready_);
-  if(status != 0)
-  {
-    net_.message(SLIInterpreter::M_ERROR, "Scheduler::reset",
-				"Error in destruction of condition variable ready_");
-    throw PthreadException(status);
-  }
-#endif
-
   // clear the buffers
   local_grid_spikes_.clear();
   global_grid_spikes_.clear();
@@ -245,7 +214,7 @@ void nest::Scheduler::compute_moduli_()
    * Note that for updating the modulos, it is sufficient
    * to rotate the buffer to the left.
    */
-  assert(moduli_.size() == min_delay_ + max_delay_);
+  assert(moduli_.size() == (index) (min_delay_ + max_delay_));
   std::rotate(moduli_.begin(), moduli_.begin() + min_delay_, moduli_.end());
 
   /* For the slice-based ring buffer, we cannot rotate the table, but
@@ -258,27 +227,26 @@ void nest::Scheduler::compute_moduli_()
     slice_moduli_[d] = ((clock_.get_steps() + d) / min_delay_) % nbuff;
 }
 
-void nest::Scheduler::compute_delay_extrema_(delay& min_delay,
-                                             delay& max_delay) const
+void nest::Scheduler::update_delay_extrema_()
 {
-  min_delay = net_.connection_manager_.get_min_delay().get_steps();
-  max_delay = net_.connection_manager_.get_max_delay().get_steps();
+  min_delay_ = net_->connection_manager_.get_min_delay().get_steps();
+  max_delay_ = net_->connection_manager_.get_max_delay().get_steps();
 
   if (Communicator::get_num_processes() > 1)
   {
-    std::vector<int_t> min_delays(Communicator::get_num_processes());
-    min_delays[Communicator::get_rank()] = min_delay;
+    std::vector<delay> min_delays(Communicator::get_num_processes());
+    min_delays[Communicator::get_rank()] = min_delay_;
     Communicator::communicate(min_delays);
-    min_delay = *std::min_element(min_delays.begin(), min_delays.end());
+    min_delay_ = *std::min_element(min_delays.begin(), min_delays.end());
 
-    std::vector<int_t> max_delays(Communicator::get_num_processes());
-    max_delays[Communicator::get_rank()] = max_delay;
+    std::vector<delay> max_delays(Communicator::get_num_processes());
+    max_delays[Communicator::get_rank()] = max_delay_;
     Communicator::communicate(max_delays);
-    max_delay = *std::max_element(max_delays.begin(), max_delays.end());
+    max_delay_ = *std::max_element(max_delays.begin(), max_delays.end());
   }
 
-  if (min_delay == Time::pos_inf().get_steps())
-    min_delay = Time::get_resolution().get_steps();
+  if ( min_delay_ == Time::pos_inf().get_steps() )
+    min_delay_ = Time::get_resolution().get_steps();
 }
 
 void nest::Scheduler::configure_spike_buffers_()
@@ -321,14 +289,6 @@ void nest::Scheduler::configure_spike_buffers_()
   displacements_.resize(Communicator::get_num_processes(), 0);
 }
 
-void nest::Scheduler::clear_nodes_vec_()
-{
-  nodes_vec_.resize(n_threads_);
-  for (index t = 0; t < n_threads_; ++t)
-    nodes_vec_[t].clear();
-}
-
-
 void nest::Scheduler::simulate(Time const & t)
 {
   assert(initialized_);
@@ -342,7 +302,7 @@ void nest::Scheduler::simulate(Time const & t)
 
   if (t < Time::step(1))
   {
-    net_.message(
+    net_->message(
         SLIInterpreter::M_ERROR,
         "Scheduler::simulate",
         String::compose("Simulation time must be >= %1 ms (one time step).",
@@ -357,7 +317,7 @@ void nest::Scheduler::simulate(Time const & t)
       {
 	std::string msg = String::compose("A clock overflow will occur after %1 of %2 ms. Please reset network "
 					  "clock first!", (Time::max()-clock_).get_ms(), t.get_ms());
-	net_.message(SLIInterpreter::M_ERROR, "Scheduler::simulate", msg);
+	net_->message(SLIInterpreter::M_ERROR, "Scheduler::simulate", msg);
 	throw KernelException();
       }
   }
@@ -365,7 +325,7 @@ void nest::Scheduler::simulate(Time const & t)
   {
     std::string msg = String::compose("The requested simulation time exceeds the largest time NEST can handle "
 				      "(T_max = %1 ms). Please use a shorter time!", Time::max().get_ms());
-    net_.message(SLIInterpreter::M_ERROR, "Scheduler::simulate", msg);
+    net_->message(SLIInterpreter::M_ERROR, "Scheduler::simulate", msg);
     throw KernelException();
   }
 
@@ -379,7 +339,7 @@ void nest::Scheduler::simulate(Time const & t)
   // a simulation was ended and is now continued, from_step_ will
   // have the proper value.  to_step_ is set as in advance_time().
 
-  ulong_t end_sim = from_step_ + to_do_;
+  delay end_sim = from_step_ + to_do_;
   if (min_delay_ < end_sim)
     to_step_ = min_delay_;    // update to end of time slice
   else
@@ -389,7 +349,7 @@ void nest::Scheduler::simulate(Time const & t)
   // This test cannot come any earlier, because we first need to compute min_delay_
   // above.
   if (t.get_steps() % min_delay_ != 0)
-    net_.message(
+    net_->message(
         SLIInterpreter::M_WARNING,
         "Scheduler::simulate",
         "The requested simulation time is not an integer multiple of the minimal delay in the network. "
@@ -397,50 +357,38 @@ void nest::Scheduler::simulate(Time const & t)
             "more than one source of randomness, e.g., two different poisson_generators, and (ii) Simulate "
             "is called repeatedly with simulation times that are not multiples of the minimal delay.");
 
-  // We must recalibrate, since time constants and other neuronal parameters may
-  // have changed.
-
   resume();
+
+  finalize_simulation();
 }
 
 void nest::Scheduler::prepare_simulation()
 {
-  if(is_prepared_)
+  if ( to_do_ == 0 )
     return;
-
-  //  std::cerr << "Preparing simulation\n";
 
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables
-  compute_delay_extrema_(min_delay_, max_delay_);
+  update_delay_extrema_();
 
-  // Check for synchronicity of global rngs over processes
-  if(Communicator::get_num_processes() > 1)
-    if (!Communicator::grng_synchrony(grng_->ulrand(100000)))
-      {
-        net_.message(SLIInterpreter::M_ERROR, "Scheduler::simulate",
-	  	     "Global Random Number Generators are not synchronized prior to simulation.");
-        throw KernelException();
-      }
-
-#ifdef HAVE_PTHREAD_SETCONCURRENCY
-  // The following is needed on Solaris 7 and higher
-  // to get one processor per thread
-  int status = pthread_setconcurrency(n_threads_);
-  if(status != 0)
+  // Check for synchronicity of global rngs over processes.
+  // We need to do this ahead of any simulation in case random numbers
+  // have been consumed on the SLI level.
+  if ( Communicator::get_num_processes() > 1 )
   {
-    net_.message(SLIInterpreter::M_ERROR, "Scheduler::resume","Could not set concurrency level.");
-    throw PthreadException(status);
+    if (!Communicator::grng_synchrony(grng_->ulrand(100000)))
+    {
+      net_->message(SLIInterpreter::M_ERROR, "Scheduler::simulate",
+                   "Global Random Number Generators are not synchronized prior to simulation.");
+      throw KernelException();
+    }
   }
-#endif
-  threads_.clear();
-  threads_.resize(n_threads_);
-  assert(threads_.size() == n_threads_);
 
   // if at the beginning of a simulation, set up spike buffers
-  if (!simulated_)
+  if ( !simulated_ )
     configure_spike_buffers_();
 
+  update_nodes_vec_();
   prepare_nodes();
 
 #ifdef HAVE_MUSIC
@@ -449,41 +397,39 @@ void nest::Scheduler::prepare_simulation()
   // before enter_runtime
   if (!simulated_) // only enter the runtime mode once
   {
-    net_.publish_music_in_ports_();
+    net_->publish_music_in_ports_();
 
     double tick = Time::get_resolution().get_ms() * min_delay_;
     std::string msg = String::compose("Entering MUSIC runtime with tick = %1 ms", tick);
-    net_.message(SLIInterpreter::M_INFO, "Scheduler::resume", msg);
+    net_->message(SLIInterpreter::M_INFO, "Scheduler::resume", msg);
     Communicator::enter_runtime(tick);
   }
 #endif
-  is_prepared_= true;
+
 }
 
 void nest::Scheduler::finalize_simulation()
 {
-  if(not simulated_)
+  if ( not simulated_ )
     return;
 
-  //  std::cerr << "Finalizing simulation\n";
-
   // Check for synchronicity of global rngs over processes
+  // TODO: This seems double up, there is such a test at end of simulate()
   if(Communicator::get_num_processes() > 1)
     if (!Communicator::grng_synchrony(grng_->ulrand(100000)))
     {
-      net_.message(SLIInterpreter::M_ERROR, "Scheduler::simulate",
+      net_->message(SLIInterpreter::M_ERROR, "Scheduler::simulate",
                    "Global Random Number Generators are not synchronized after simulation.");
       throw KernelException();
     }
 
   finalize_nodes();
-
 }
+
 
 void nest::Scheduler::resume()
 {
   assert(initialized_);
-  assert(is_prepared_);
 
   terminate_ = false;
 
@@ -497,45 +443,29 @@ void nest::Scheduler::resume()
   }
 
   simulating_ = true;
+  simulated_ = true;
 
-  if (n_threads_ == 1)
-    serial_update();
-  else
-  {
-#ifdef HAVE_PTHREADS
-    // Now we fire up the threads ...
-    for(index i = 0; i < threads_.size(); ++i)
-      threads_[i].init(i, this);
-
-    // ... and wait until all are done.
-    for(vector<Thread>::iterator i = threads_.begin(); i != threads_.end(); ++i)
-      i->join();
-#else
-#ifdef _OPENMP
-    // use openmp, if compiled with right compiler switch
-    // for gcc this is -fopenmp
-    threaded_update_openmp();
-#else
-    net_.message(SLIInterpreter::M_ERROR, "Scheduler::reset",
-				"No multithreading available, using single threading");
-    serial_update();
-#endif
-#endif
+#ifndef _OPENMP
+  if (n_threads_ > 1) {
+    net_->message(SLIInterpreter::M_ERROR, "Scheduler::resume",
+                 "No multithreading available, using single threading");
   }
+#endif
+  
+  update();
+  
   simulating_ = false;
-  finalize_nodes();
 
   if (print_time_)
     std::cout << std::endl;
 
   Communicator::synchronize();
-  simulated_ = true;
 
   if (terminate_)
   {
-    net_.message(SLIInterpreter::M_ERROR, "Scheduler::resume",
+    net_->message(SLIInterpreter::M_ERROR, "Scheduler::resume",
         "Exiting on error or user signal.");
-    net_.message(SLIInterpreter::M_ERROR, "Scheduler::resume",
+    net_->message(SLIInterpreter::M_ERROR, "Scheduler::resume",
         "Scheduler: Use 'ResumeSimulation' to resume.");
 
     if (SLIsignalflag != 0)
@@ -546,79 +476,24 @@ void nest::Scheduler::resume()
     }
     else
       throw SimulationError();
-
-    return;
   }
 
-  net_.message(SLIInterpreter::M_INFO, "Scheduler::resume",
+  net_->message(SLIInterpreter::M_INFO, "Scheduler::resume",
      			"Simulation finished.");
 }
 
-/**
- * the single-threaded update is just a single loop over all nodes
- * per time-slice.
- */
-void nest::Scheduler::serial_update()
-{
-  std::vector<Node*>::iterator i;
-
-  do
-  {
-    if (print_time_)
-      gettimeofday(&t_slice_begin_, NULL);
-
-    if (from_step_ == 0) // deliver only at beginning of slice
-    {
-      deliver_events_(0);
-#ifdef HAVE_MUSIC
-      // advance the time of music by one step (min_delay * h) must
-      // be done after deliver_events_() since it calls
-      // music_event_out_proxy::handle(), which hands the spikes over to
-      // MUSIC *before* MUSIC time is advanced
-      if (slice_ > 0)
-        Communicator::advance_music_time(1);
-
-      net_.update_music_event_handlers_(clock_, from_step_, to_step_);
-#endif
-    }
-
-    for (i = nodes_vec_[0].begin(); i != nodes_vec_[0].end(); ++i)
-      update_(*i);
-
-    if (static_cast<ulong_t>(to_step_) == min_delay_) // gather only at end of slice
-      gather_events_();
-
-    advance_time_();
-
-    if (SLIsignalflag != 0)
-    {
-      net_.message(SLIInterpreter::M_INFO, "Scheduler::serial_update",
-					"Simulation exiting on user signal.");
-      terminate_ = true;
-    }
-
-    if (print_time_)
-    {
-      gettimeofday(&t_slice_end_, NULL);
-      print_progress_();
-    }
-  } while ((to_do_ != 0) && (!terminate_));
-}
-
-
-void nest::Scheduler::threaded_update_openmp()
+void nest::Scheduler::update()
 {
 #ifdef _OPENMP
-  net_.message(SLIInterpreter::M_INFO, "Scheduler::threaded_update_openmp", "Simulating using OpenMP.");
+  net_->message(SLIInterpreter::M_INFO, "Scheduler::update", "Simulating using OpenMP.");
 #endif
-
+  
+  std::vector<lockPTR<WrappedThreadException> > exceptions_raised(net_->get_num_threads());
 // parallel section begins
 #pragma omp parallel
   {
-    int t = 0;
-#ifdef _OPENMP
-    t = omp_get_thread_num(); // which thread am I
-#endif
+    std::vector<Node*>::iterator i;
+    int t = net_->get_thread_id(); // which thread am I
 
     do
     {
@@ -629,30 +504,47 @@ void nest::Scheduler::threaded_update_openmp()
       {
         deliver_events_(t);
 #ifdef HAVE_MUSIC
-	  // advance the time of music by one step (min_delay * h) must
-	  // be done after deliver_events_() since it calls
-	  // music_event_out_proxy::handle(), which hands the spikes over to
-	  // MUSIC *before* MUSIC time is advanced
+        // advance the time of music by one step (min_delay * h) must
+        // be done after deliver_events_() since it calls
+        // music_event_out_proxy::handle(), which hands the spikes over to
+        // MUSIC *before* MUSIC time is advanced
 
-	  // wait until all threads are done -> synchronize
+        // wait until all threads are done -> synchronize
 #pragma omp barrier
-
-	  // the following block is executed by a single thread
-	  // the other threads wait at the end of the block
+        // the following block is executed by a single thread
+        // the other threads wait at the end of the block
 #pragma omp single
-	  {
-	    if (slice_ > 0)
-	      Communicator::advance_music_time(1);
-	    
-	    // the following could be made thread-safe
-	    net_.update_music_event_handlers_(clock_, from_step_, to_step_);
-	  }
-#endif
-	}
+        {
+          // advance the time of music by one step (min_delay * h) must
+          // be done after deliver_events_() since it calls
+          // music_event_out_proxy::handle(), which hands the spikes over to
+          // MUSIC *before* MUSIC time is advanced
+          if (slice_ > 0)
+            Communicator::advance_music_time(1);
 
-      for (std::vector<Node*>::iterator i = nodes_vec_[t].begin();
-          i != nodes_vec_[t].end(); ++i)
-        update_(*i);
+          // the following could be made thread-safe
+          net_->update_music_event_handlers_(clock_, from_step_, to_step_);
+        }
+#endif
+      }
+
+      for (i = nodes_vec_[t].begin(); i != nodes_vec_[t].end(); ++i)
+      {
+    	// We update in a parallel region. Therefore, we need to catch exceptions
+    	// here and then handle them after the parallel region.
+        try
+        {
+          if ( not (*i)->is_frozen() )
+          	  (*i)->update(clock_, from_step_, to_step_);
+        }
+        catch ( std::exception &e )
+        {
+          // so throw the exception after parallel region
+          exceptions_raised.at(t) = lockPTR<WrappedThreadException>(
+                                        new WrappedThreadException(e));
+          terminate_ = true;
+        }
+      }
 
       // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
@@ -661,14 +553,14 @@ void nest::Scheduler::threaded_update_openmp()
       // the other threads wait at the end of the block
 #pragma omp single
       {
-        if (static_cast<ulong_t>(to_step_) == min_delay_) // gather only at end of slice
+        if (to_step_ == min_delay_) // gather only at end of slice
           gather_events_();
 
         advance_time_();
 
         if (SLIsignalflag != 0)
         {
-          net_.message(SLIInterpreter::M_INFO, "Scheduler::serial_update",
+          net_->message(SLIInterpreter::M_INFO, "Scheduler::update",
               "Simulation exiting on user signal.");
           terminate_ = true;
         }
@@ -685,167 +577,11 @@ void nest::Scheduler::threaded_update_openmp()
     while ((to_do_ != 0) && (! terminate_));
 
   } // end of #pragma parallel omp
+  // check if any exceptions have been raised
+  for ( thread thr = 0 ; thr < net_->get_num_threads() ; ++thr )
+    if ( exceptions_raised.at(thr).valid() )
+      throw WrappedThreadException(*(exceptions_raised.at(thr)));
 }
-
-#ifdef HAVE_PTHREADS
-void nest::Scheduler::threaded_update(thread t)
-{
-  /** @todo Should not all variables related to thread control
-   *  (ready_mutex_, ready_, done_, etnry_counter_, exit_counter_)
-   *  be local variables in this function instead of class variables?
-   *  Creating the pthread variables must be fast compared to simulation
-   *  time.
-   */
-
-  assert(initialized_);
-  assert(t >= 0);
-
-  ready_mutex_.lock();
-
-  while ( true )
-  {
-    /* The default proceeding:
-     * - update the nodes.
-     * - synchronise threads.
-     * - advance time.
-
-     * This loop is left if and only if
-     * - the simulation time has elapsed and all nodes
-     *   of the current thread are updated (test on to_do_).
-     * - the end of a time slice has been reached and
-     *   a user interrupt occured (test on SLISignalflag).
-     */
-
-    //////////// Serial section beyond this line
-
-    // Wait until all threads have finished communicating and
-    // have advance time. The final thread arriving here has
-    // entry_counter_ == n_threads_, owns the ready_mutex_ and
-    // initiates unlocking everything as follows:
-    // 1. pthread_cond_signal(&ready_) wakes one arbitry waiting thread
-    // 2. the awoken thread tries to acquire the ready_mutex_ as part of
-    //    waking up, but blocks on it
-    // 3. the signaling thread unlocks the ready_mutex_ and proceeds into
-    //    the parallel section
-    // 4. the awoken thread acquires the ready_mutex_ and the process
-    //    starts at 1.
-    // 5. the last thread to awake signals, but this signal has no effect
-    // 6. all threads are now in the parallel section
-
-    if (print_time_)
-      gettimeofday(&t_slice_begin_, NULL);
-
-    ++entry_counter_;
-    if(entry_counter_ == n_threads_)
-      exit_counter_ = 0;
-
-    // protect against spurious wake-ups by while loop
-    // see Butenhof, Programming with POSIX Threads, sec 3.3.2
-    while(entry_counter_ < n_threads_)
-      pthread_cond_wait(&ready_,&ready_mutex_);
-
-    pthread_cond_signal(&ready_);
-    ready_mutex_.unlock();
-
-    //////////// Parallel section beyond this line
-
-    // Deliver events and update all neurons in parallel
-    if ( from_step_ == 0 ) // deliver only at beginning of slice
-    {
-      deliver_events_(t);
-
-#ifdef HAVE_MUSIC
-      if (t == 0) // only the first thread handles MUSIC stuff
-      {
-        // advance the time of music by one step (min_delay * h) must
-        // be done after deliver_events_() since it calls
-        // music_event_out_proxy::handle(), which hands the spikes over to
-        // MUSIC *before* MUSIC time is advanced
-        if (slice_ > 0)
-          Communicator::advance_music_time(1);
-
-        net_.update_music_event_handlers_(clock_, from_step_, to_step_);
-      }
-#endif
-    }
-
-    vector<Node*>::iterator i;
-    for(i = nodes_vec_[t].begin(); i != nodes_vec_[t].end(); ++i)
-      update_(*i);
-
-    ready_mutex_.lock();
-
-    //////////// Serial section beyond this line
-
-    ++exit_counter_; // Mark thread idle.
-
-    // We are at the end of a time slice or the end of simulation time,
-    // which may be inside a time slice.
-    // We wait for all threads to finish the parallel section above. The
-    // last thread arriving here fulfills exit_counter_==n_threads_ and
-    // performs event collection and communication with all other MPI
-    // processes, and advances time.
-    // Threads are then awoken one by one similar as described above.
-    // Each awoken thread retains the ready_mutex_ though, until it goes
-    // to sleep again by calling pthread_cond_wait(&ready_,...) above.
-    //
-    // The overall effect of this is that we first wait for all threads to
-    // finish updating, then communicate and advance time by help of the
-    // last thread, and then check if we need to leave the simulation loop
-    // because of a signal flag or because time has elapsed. In the latter
-    // case, each thread releases the ready_mutex_ once it has broken out
-    // of the while loop, so that the next thread can wake up.
-
-    if (exit_counter_ == n_threads_)
-    {
-      if ( static_cast<ulong_t>(to_step_) == min_delay_ ) // gather only at end of slice
-        gather_events_();
-
-      advance_time_();
-
-      entry_counter_ = 0;
-    }
-
-    // protect against spurious wake-ups by while loop
-    // see Butenhof, Programming with POSIX Threads, sec 3.3.2
-    while(exit_counter_ < n_threads_)
-      pthread_cond_wait(&done_,&ready_mutex_);
-
-    pthread_cond_signal(&done_);
-
-    if ( SLIsignalflag != 0 )
-    {
-      std::string msg = String::compose("Thread %1 exiting on error or user signal.", t);
-      net_.message(SLIInterpreter::M_INFO, "Scheduler::threaded_update", msg);
-      break;
-    }
-
-    if(to_do_ == 0) // is time up?
-    {
-      break;
-    }
-
-    assert(to_do_ > 0); // for safety's sake
-
-    if (print_time_)
-    {
-      gettimeofday(&t_slice_end_, NULL);
-      print_progress_();
-    }
-  } // while
-
-  ready_mutex_.unlock(); // unlock mutex after breaking out of while loop
-
-}
-#else
-void nest::Scheduler::threaded_update(thread)
-{
-  net_.message(SLIInterpreter::M_ERROR, "Scheduler::threaded_update",
-      "Multithreading mode not available");
-  throw KernelException();
-
-}
-#endif
 
 void nest::Scheduler::prepare_nodes()
 {
@@ -853,84 +589,162 @@ void nest::Scheduler::prepare_nodes()
 
   init_moduli_();
 
-  net_.message(SLIInterpreter::M_INFO, "Scheduler::prepare_nodes",
+  net_->message(SLIInterpreter::M_INFO, "Scheduler::prepare_nodes",
       "Please wait. Preparing elements.");
 
-  /* We clear the existing nodes_vec_ and then rebuild it.
-     prepare_node_() below inserts each node into the appropriate
-     nodes_vec_ after initializing its buffers and calibrating it.
-     We must rebuild the nodes_vec_ each time Simulate is called,
-     in case nodes have been added or deleted between Simulate calls.
-   */
-  clear_nodes_vec_();
+  /* We initialize the buffers of each node and calibrate it. */
+
+  size_t num_active_nodes = 0;  // counts nodes that will be updated
+
+  std::vector<lockPTR<WrappedThreadException> > exceptions_raised(net_->get_num_threads());
 
 #ifdef _OPENMP
-#pragma omp parallel
+#pragma omp parallel reduction(+:num_active_nodes)
   {
-    size_t t = omp_get_thread_num();
+    size_t t = net_->get_thread_id();
 #else
   for (index t = 0; t < n_threads_; ++t)
   {
 #endif
 
-    size_t num_thread_local_nodes = 0;
-    for (size_t idx = 0; idx < net_.size(); ++idx)
+  	// We prepare nodes in a parallel region. Therefore, we need to catch exceptions
+  	// here and then handle them after the parallel region.
+    try
     {
-      Node* node = net_.get_node(idx);
-      if (static_cast<index>(node->get_thread()) == t || node->num_thread_siblings_() > 0)
-        num_thread_local_nodes++;
-    }
-    nodes_vec_[t].reserve(num_thread_local_nodes);
-
-    for(index n = 0; n < net_.size(); ++n)
-    {
-      if (net_.is_local_gid(n) && net_.nodes_[n] != 0)
+      for ( std::vector<Node*>::iterator it = nodes_vec_[t].begin() ;
+            it != nodes_vec_[t].end(); ++it )
       {
-	if ((*net_.nodes_[n]).num_thread_siblings_() > 0)
-	  prepare_node_((*net_.nodes_[n]).get_thread_sibling_(t));
-	else
-	{
-	  Node* node = net_.get_node(n, t);
-	  if (static_cast<uint_t>(node->get_thread()) == t)
-	    prepare_node_(node);
-	}
+        prepare_node_(*it);
+        if ( not (*it)->is_frozen() )
+          ++num_active_nodes;
       }
     }
+    catch (std::exception &e)
+    {
+      // so throw the exception after parallel region
+      exceptions_raised.at(t) = lockPTR<WrappedThreadException>(
+                                    new WrappedThreadException(e));
+      terminate_ = true;
+    }
+
   } // end of parallel section / end of for threads
 
-  n_nodes_ = 0;
-  for (index t = 0; t < n_threads_; ++t)
-  {
-    n_nodes_ += nodes_vec_[t].size();
-  }
+  // check if any exceptions have been raised
+  for ( thread thr = 0 ; thr < net_->get_num_threads() ; ++thr )
+    if ( exceptions_raised.at(thr).valid() )
+      throw WrappedThreadException(*(exceptions_raised.at(thr)));
 
-  std::string msg, node_str("nodes");
-  if (n_nodes_ == 1) node_str = "node";  
-  msg = String::compose("Simulating %1 local %2.", n_nodes_, node_str);
-  net_.message(SLIInterpreter::M_INFO, "Scheduler::prepare_nodes", msg);
+  net_->message(SLIInterpreter::M_INFO, "Scheduler::prepare_nodes",
+		        String::compose("Simulating %1 local node%2.", num_active_nodes,
+		        		        num_active_nodes == 1 ? "" : "s"));
+}
+
+void nest::Scheduler::update_nodes_vec_()
+{
+  // Check if the network size changed, in order to not enter 
+  // the critical region if it is not necessary. Note that this 
+  // test also covers that case that nodes have been deleted
+  // by reset.
+  if ( net_->size() == nodes_vec_network_size_ )
+    return;
+
+#ifdef _OPENMP
+#pragma omp critical
+  {
+    // This code may be called from a thread-parallel context, when it is
+    // invoked by TargetIdentifierIndex::set_target() during parallel
+    // wiring. Nested OpenMP parallelism is problematic, therefore, we
+    // enforce single threading here. This should be unproblematic wrt
+    // performance, because the nodes_vec_ is rebuilt only once after
+    // changes in network size.
+#endif
+  
+  // Check again, if the network size changed, since a previous thread
+  // can have updated nodes_vec_ before. 
+  if ( net_->size() != nodes_vec_network_size_ )
+  {
+    
+    /* We clear the existing nodes_vec_ and then rebuild it. */
+    assert(nodes_vec_.size() == n_threads_);
+  
+    for (index t = 0; t < n_threads_; ++t)
+    {
+      nodes_vec_[t].clear();
+  
+      // Loops below run from index 1, because index 0 is always the root network,
+      // which is never updated.
+      size_t num_thread_local_nodes = 0;
+      for ( size_t idx = 1 ; idx < net_->local_nodes_.size() ; ++idx )
+      {
+        Node* node = net_->local_nodes_.get_node_by_index(idx);
+        if ( !node->is_subnet() &&
+           ( static_cast<index>(node->get_thread()) == t || node->num_thread_siblings_() > 0 ) )
+          num_thread_local_nodes++;
+      }
+      nodes_vec_[t].reserve(num_thread_local_nodes);
+      
+      for ( size_t idx = 1 ; idx < net_->local_nodes_.size() ; ++idx )
+      {
+        Node* node = net_->local_nodes_.get_node_by_index(idx);
+
+        // Subnets are never updated and therefore not included.
+        if ( node->is_subnet() )
+          continue;
+
+        // If a node has thread siblings, it is a sibling container, and we
+        // need to add the replica for the current thread. Otherwise, we have
+        // a normal node, which is added only on the thread it belongs to.
+        if ( node->num_thread_siblings_() > 0 )
+        {
+          node->get_thread_sibling_(t)->set_thread_lid( nodes_vec_[t].size());
+          nodes_vec_[t].push_back(node->get_thread_sibling_(t));
+        }
+        else if ( static_cast<index>(node->get_thread()) == t )
+        {
+          // these nodes cannot be subnets
+          node->set_thread_lid( nodes_vec_[t].size());
+          nodes_vec_[t].push_back(node);
+        }
+      }
+    } // end of for threads
+  
+    nodes_vec_network_size_ = net_->size();
+  }
+#ifdef _OPENMP
+  }  // end of omp single region
+#endif
+
 }
 
 //!< This function is called only if the thread data structures are properly set up.
 void nest::Scheduler::finalize_nodes()
 {
-  assert(is_prepared_);
 #ifdef _OPENMP
-  net_.message(SLIInterpreter::M_INFO, "Scheduler::finalize_nodes()", " using OpenMP.");
+  net_->message(SLIInterpreter::M_INFO, "Scheduler::finalize_nodes()", " using OpenMP.");
 // parallel section begins
 #pragma omp parallel
   {
-    index t = omp_get_thread_num(); // which thread am I
+    index t = net_->get_thread_id(); // which thread am I
 #else
   for (index t = 0; t < n_threads_; ++t)
   {
 #endif
-
-     for (std::vector<Node*>::iterator i = nodes_vec_[t].begin(); i != nodes_vec_[t].end(); ++i)
-       (*i)->finalize(); // we assume that the right sibling is stored in nodes_vec_
-
-      // parallel section ends, wait until all threads are done -> synchronize
+    for ( size_t idx = 0; idx < net_->local_nodes_.size(); ++idx )
+    {
+      Node* node = net_->local_nodes_.get_node_by_index(idx);
+      if ( node != 0 )
+      {
+        if ( node->num_thread_siblings_() > 0 )
+          node->get_thread_sibling_(t)->finalize();
+        else
+        {
+          if ( static_cast<index>(node->get_thread()) == t )
+            node->finalize();
+        }
+      }
     }
   }
+}
 
 
 void nest::Scheduler::set_status(DictionaryDatum const &d)
@@ -953,10 +767,10 @@ void nest::Scheduler::set_status(DictionaryDatum const &d)
     if (time != 0.0)
       throw BadProperty("The simulation time can only be set to 0.0.");
 
-    if ( clock_ > Time(Time::step(0)) )
+    if (clock_ > TimeZero)
     {
       // reset only if time has passed
-      net_.message(SLIInterpreter::M_WARNING, "Scheduler::set_status",
+      net_->message(SLIInterpreter::M_WARNING, "Scheduler::set_status",
                    "Simulation time reset to t=0.0. Resetting the simulation time is not "
                    "fully supported in NEST at present. Some spikes may be lost, and "
                    "stimulating devices may behave unexpectedly. PLEASE REVIEW YOUR "
@@ -975,44 +789,52 @@ void nest::Scheduler::set_status(DictionaryDatum const &d)
   bool n_threads_updated = updateValue<long>(d, "local_num_threads", n_threads);
   if (n_threads_updated)
   {
-    if ( net_.size() > 1 )
+    if ( net_->size() > 1 )
       throw KernelException("Nodes exist: Thread/process number cannot be changed.");
-    if ( net_.connection_manager_.has_user_prototypes() )
+    if ( net_->models_.size() > net_->pristine_models_.size())
+      throw KernelException("Custom neuron models exist: Thread/process number cannot be changed.");
+    if ( net_->connection_manager_.has_user_prototypes() )
       throw KernelException("Custom synapse types exist: Thread/process number cannot be changed.");
-    if ( net_.connection_manager_.get_user_set_delay_extrema() )
+    if ( net_->connection_manager_.get_user_set_delay_extrema() )
       throw KernelException("Delay extrema have been set: Thread/process number cannot be changed.");
-    if ( net_.get_simulated() )
+    if ( net_->get_simulated() )
       throw KernelException("The network has been simulated: Thread/process number cannot be changed.");
     if ( not Time::resolution_is_default() )
       throw KernelException("The resolution has been set: Thread/process number cannot be changed.");
+    if ( net_->model_defaults_modified() )
+      throw KernelException("Model defaults have been modified: Thread/process number cannot be changed.");
 
     if ( n_threads > 1 && force_singlethreading_ )
     {
-      net_.message(SLIInterpreter::M_WARNING, "Scheduler::set_status",
+      net_->message(SLIInterpreter::M_WARNING, "Scheduler::set_status",
                    "No multithreading available, using single threading");
       n_threads_ = 1;
     }
 
-    // it is essential to call net_.reset() here to adapt memory pools and more
+    // it is essential to call net_->reset() here to adapt memory pools and more
     // to the new number of threads and VPs.
     n_threads_ = n_threads;
-    net_.reset();
+    net_->reset();
   }
 
   long n_vps;
   bool n_vps_updated = updateValue<long>(d, "total_num_virtual_procs", n_vps);
   if (n_vps_updated)
   {
-    if ( net_.size() > 1 )
+    if ( net_->size() > 1 )
       throw KernelException("Nodes exist: Thread/process number cannot be changed.");
-    if ( net_.connection_manager_.has_user_prototypes() )
+    if ( net_->models_.size() > net_->pristine_models_.size())
+      throw KernelException("Custom neuron models exist: Thread/process number cannot be changed.");
+    if ( net_->connection_manager_.has_user_prototypes() )
       throw KernelException("Custom synapse types exist: Thread/process number cannot be changed.");
-    if ( net_.connection_manager_.get_user_set_delay_extrema() )
+    if ( net_->connection_manager_.get_user_set_delay_extrema() )
       throw KernelException("Delay extrema have been set: Thread/process number cannot be changed.");
-    if ( net_.get_simulated() )
+    if ( net_->get_simulated() )
       throw KernelException("The network has been simulated: Thread/process number cannot be changed.");
     if ( not Time::resolution_is_default() )
       throw KernelException("The resolution has been set: Thread/process number cannot be changed.");
+    if ( net_->model_defaults_modified() )
+      throw KernelException("Model defaults have been modified: Thread/process number cannot be changed.");
 
     if (n_vps % Communicator::get_num_processes() != 0)
       throw BadProperty("Number of virtual processes (threads*processes) must be an integer "
@@ -1021,15 +843,15 @@ void nest::Scheduler::set_status(DictionaryDatum const &d)
     n_threads_ = n_vps / Communicator::get_num_processes();
     if ((n_threads > 1) && (force_singlethreading_))
     {
-      net_.message(SLIInterpreter::M_WARNING, "Scheduler::set_status",
+      net_->message(SLIInterpreter::M_WARNING, "Scheduler::set_status",
                    "No multithreading available, using single threading");
       n_threads_ = 1;
     }
 
-    // it is essential to call net_.reset() here to adapt memory pools and more
+    // it is essential to call net_->reset() here to adapt memory pools and more
     // to the new number of threads and VPs
     set_num_threads(n_threads_);
-    net_.reset();
+    net_->reset();
   }
 
   // tics_per_ms and resolution must come after local_num_thread / total_num_threads
@@ -1041,21 +863,21 @@ void nest::Scheduler::set_status(DictionaryDatum const &d)
 
   if (tics_per_ms_updated || res_updated)
   {
-    if (net_.size() > 1) // root always exists
+    if (net_->size() > 1) // root always exists
     {
-      net_.message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
+      net_->message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
                    "Cannot change time representation after nodes have been created. Please call ResetKernel first.");
       throw KernelException();
     }
-    else if (net_.get_simulated()) // someone may have simulated empty network
+    else if (net_->get_simulated()) // someone may have simulated empty network
     {
-      net_.message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
+      net_->message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
                    "Cannot change time representation after the network has been simulated. Please call ResetKernel first.");
       throw KernelException();
     }
-    else if (net_.connection_manager_.get_num_connections() != 0)
+    else if (net_->connection_manager_.get_num_connections() != 0)
     {
-      net_.message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
+      net_->message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
                    "Cannot change time representation after connections have been created. Please call ResetKernel first.");
       throw KernelException();
     }
@@ -1063,7 +885,7 @@ void nest::Scheduler::set_status(DictionaryDatum const &d)
     {
       if (resd < 1.0 / tics_per_ms)
       {
-        net_.message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
+        net_->message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
                      "Resolution must be greater than or equal to one tic. Value unchanged.");
         throw KernelException();
       }
@@ -1071,8 +893,8 @@ void nest::Scheduler::set_status(DictionaryDatum const &d)
       {
         nest::TimeModifier::set_time_representation(tics_per_ms, resd);
         clock_.calibrate(); // adjust to new resolution
-        net_.connection_manager_.calibrate(time_converter); // adjust delays in the connection system to new resolution
-        net_.message(SLIInterpreter::M_INFO, "Scheduler::set_status",
+        net_->connection_manager_.calibrate(time_converter); // adjust delays in the connection system to new resolution
+        net_->message(SLIInterpreter::M_INFO, "Scheduler::set_status",
             "tics per ms and resolution changed.");
       }
     }
@@ -1080,7 +902,7 @@ void nest::Scheduler::set_status(DictionaryDatum const &d)
     {
       if (resd < Time::get_ms_per_tic())
       {
-        net_.message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
+        net_->message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
                      "Resolution must be greater than or equal to one tic. Value unchanged.");
         throw KernelException();
       }
@@ -1088,14 +910,14 @@ void nest::Scheduler::set_status(DictionaryDatum const &d)
       {
         Time::set_resolution(resd);
         clock_.calibrate(); // adjust to new resolution
-        net_.connection_manager_.calibrate(time_converter); // adjust delays in the connection system to new resolution
-        net_.message(SLIInterpreter::M_INFO, "Scheduler::set_status",
+        net_->connection_manager_.calibrate(time_converter); // adjust delays in the connection system to new resolution
+        net_->message(SLIInterpreter::M_INFO, "Scheduler::set_status",
             "Temporal resolution changed.");
       }
     }
     else
     {
-      net_.message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
+      net_->message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
                    "change of tics_per_step requires simultaneous specification of resolution.");
       throw KernelException();
     }
@@ -1121,7 +943,7 @@ void nest::Scheduler::set_status(DictionaryDatum const &d)
     // threads
     if (ad->size() != (size_t) (Communicator::get_num_virtual_processes()))
     {
-      net_.message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
+      net_->message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
                  "Number of RNGs must equal number of virtual processes (threads*processes). RNGs unchanged.");
       throw DimensionMismatch((size_t)(Communicator::get_num_virtual_processes()), ad->size());
     }
@@ -1135,9 +957,9 @@ void nest::Scheduler::set_status(DictionaryDatum const &d)
       if (is_local_vp(i))
         rng_.push_back(getValue<librandom::RngDatum>((*ad)[suggest_vp(i)]));
   }
-  else if (n_threads_updated && net_.size() == 0)
+  else if (n_threads_updated && net_->size() == 0)
   {
-    net_.message(SLIInterpreter::M_WARNING, "Scheduler::set_status",
+    net_->message(SLIInterpreter::M_WARNING, "Scheduler::set_status",
 				"Equipping threads with new default RNGs");
     create_rngs_();
   }
@@ -1150,7 +972,7 @@ void nest::Scheduler::set_status(DictionaryDatum const &d)
 
     if (ad->size() != (size_t) (Communicator::get_num_virtual_processes()))
     {
-      net_.message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
+      net_->message(SLIInterpreter::M_ERROR, "Scheduler::set_status",
                  "Number of seeds must equal number of virtual processes (threads*processes). RNGs unchanged.");
       throw DimensionMismatch((size_t)(Communicator::get_num_virtual_processes()), ad->size());
     }
@@ -1162,7 +984,7 @@ void nest::Scheduler::set_status(DictionaryDatum const &d)
       long s = (*ad)[i]; // SLI has no ulong tokens
       if (!seedset.insert(s).second)
       {
-        net_.message(SLIInterpreter::M_WARNING, "Scheduler::set_status",
+        net_->message(SLIInterpreter::M_WARNING, "Scheduler::set_status",
                      "Seeds are not unique across threads!");
         break;
       }
@@ -1186,9 +1008,9 @@ void nest::Scheduler::set_status(DictionaryDatum const &d)
     // pre-seeded grng that can be used directly, no seeding required
     updateValue<librandom::RngDatum>(d, "grng", grng_);
   }
-  else if (n_threads_updated && net_.size() == 0)
+  else if (n_threads_updated && net_->size() == 0)
   {
-    net_.message(SLIInterpreter::M_WARNING, "Scheduler::set_status",
+    net_->message(SLIInterpreter::M_WARNING, "Scheduler::set_status",
        			 "Equipping threads with new default GRNG");
     create_grng_();
   }
@@ -1212,7 +1034,7 @@ void nest::Scheduler::set_status(DictionaryDatum const &d)
 	const long vpseed = (*ad_rngseeds)[i];  // SLI has no ulong tokens
 	if ( !seedset.insert(vpseed).second )
 	{
-	  net_.message(SLIInterpreter::M_WARNING, "Scheduler::set_status",
+	  net_->message(SLIInterpreter::M_WARNING, "Scheduler::set_status",
 		       "Seeds are not unique across threads!");
 	  break;
 	}
@@ -1253,13 +1075,9 @@ void nest::Scheduler::get_status(DictionaryDatum &d) const
   def<double>(d, "tics_per_ms", Time::get_tics_per_ms());
   def<double>(d, "resolution", Time::get_resolution().get_ms());
 
-  delay min_delay = 0;
-  delay max_delay = 0;
-  compute_delay_extrema_(min_delay, max_delay);
-  Time tmp_delay = Time::step(min_delay);
-  def<double>(d, "min_delay", tmp_delay.get_ms());
-  tmp_delay = Time::step(max_delay);
-  def<double>(d, "max_delay", tmp_delay.get_ms());
+  update_delay_extrema_();
+  def<double>(d, "min_delay", Time(Time::step(min_delay_)).get_ms());
+  def<double>(d, "max_delay", Time(Time::step(max_delay_)).get_ms());
 
   def<double>(d, "ms_per_tic", Time::get_ms_per_tic());
   def<double>(d, "tics_per_ms", Time::get_tics_per_ms());
@@ -1275,11 +1093,13 @@ void nest::Scheduler::get_status(DictionaryDatum &d) const
   def<long>(d, "grng_seed", grng_seed_);
   def<bool>(d, "off_grid_spiking", off_grid_spiking_);
   def<bool>(d, "communicate_allgather", Communicator::get_use_Allgather());
+  def<long>(d, "send_buffer_size", Communicator::get_send_buffer_size());
+  def<long>(d, "receive_buffer_size", Communicator::get_recv_buffer_size());
 }
 
 void nest::Scheduler::create_rngs_(const bool ctor_call)
 {
-  // net_.message(SLIInterpreter::M_INFO, ) calls must not be called
+  // net_->message(SLIInterpreter::M_INFO, ) calls must not be called
   // if create_rngs_ is called from Scheduler::Scheduler(), since net_
   // is not fully constructed then
 
@@ -1288,7 +1108,7 @@ void nest::Scheduler::create_rngs_(const bool ctor_call)
   if ( !rng_.empty() )
   {
     if (!ctor_call)
-      net_.message(SLIInterpreter::M_INFO, "Scheduler::create_rngs_",
+      net_->message(SLIInterpreter::M_INFO, "Scheduler::create_rngs_",
 					"Deleting existing random number generators");
 
     rng_.clear();
@@ -1296,7 +1116,7 @@ void nest::Scheduler::create_rngs_(const bool ctor_call)
 
   // create new rngs
   if (!ctor_call)
-    net_.message(SLIInterpreter::M_INFO, "Scheduler::create_rngs_", "Creating default RNGs");
+    net_->message(SLIInterpreter::M_INFO, "Scheduler::create_rngs_", "Creating default RNGs");
 
   rng_seeds_.resize(Communicator::get_num_virtual_processes());
 
@@ -1324,7 +1144,7 @@ void nest::Scheduler::create_rngs_(const bool ctor_call)
       if (!rng)
       {
         if (!ctor_call)
-          net_.message(SLIInterpreter::M_ERROR, "Scheduler::create_rngs_",
+          net_->message(SLIInterpreter::M_ERROR, "Scheduler::create_rngs_",
              			"Error initializing knuthlfg");
         else
           std::cerr << "\nScheduler::create_rngs_\n" << "Error initializing knuthlfg" << std::endl;
@@ -1344,7 +1164,7 @@ void nest::Scheduler::create_grng_(const bool ctor_call)
 
   // create new grng
   if (!ctor_call)
-    net_.message(SLIInterpreter::M_INFO, "Scheduler::create_grng_",
+    net_->message(SLIInterpreter::M_INFO, "Scheduler::create_grng_",
  				"Creating new default global RNG");
 
   // create default RNG with default seed
@@ -1357,7 +1177,7 @@ void nest::Scheduler::create_grng_(const bool ctor_call)
   if ( !grng_ )
   {
     if ( !ctor_call )
-	  net_.message(SLIInterpreter::M_ERROR, "Scheduler::create_grng_", "Error initializing knuthlfg");
+	  net_->message(SLIInterpreter::M_ERROR, "Scheduler::create_grng_", "Error initializing knuthlfg");
     else
 	  std::cerr << "\nScheduler::create_grng_\n" << "Error initializing knuthlfg" << std::endl;
 
@@ -1402,10 +1222,9 @@ void nest::Scheduler::collocate_buffers_()
       global_grid_spikes_.resize(Communicator::get_recv_buffer_size(), 0);
 
     if (num_spikes + (n_threads_ * min_delay_) > static_cast<uint_t>(Communicator::get_send_buffer_size()))
-      local_grid_spikes_.resize((num_spikes + (min_delay_ * n_threads_)),0);
+      local_grid_spikes_.resize((num_spikes + (min_delay_ * n_threads_)), 0);
     else if (local_grid_spikes_.size() < static_cast<uint_t>(Communicator::get_send_buffer_size()))
       local_grid_spikes_.resize(Communicator::get_send_buffer_size(), 0);
-
 
     // collocate the entries of spike_registers into local_grid_spikes__
     std::vector<uint_t>::iterator pos = local_grid_spikes_.begin();
@@ -1452,12 +1271,12 @@ void nest::Scheduler::collocate_buffers_()
   {
     // make sure buffers are correctly sized 
     if (global_offgrid_spikes_.size() != static_cast<uint_t>(Communicator::get_recv_buffer_size()))
-      global_offgrid_spikes_.resize(Communicator::get_recv_buffer_size(), OffGridSpike(0,0.0));
+      global_offgrid_spikes_.resize(Communicator::get_recv_buffer_size(), OffGridSpike(0, 0.0));
 
     if (num_spikes + (n_threads_ * min_delay_) > static_cast<uint_t>(Communicator::get_send_buffer_size()))
-      local_offgrid_spikes_.resize((num_spikes + (min_delay_ * n_threads_)), OffGridSpike(0,0.0));
+      local_offgrid_spikes_.resize((num_spikes + (min_delay_ * n_threads_)), OffGridSpike(0, 0.0));
     else if (local_offgrid_spikes_.size() < static_cast<uint_t>(Communicator::get_send_buffer_size()))
-      local_offgrid_spikes_.resize(Communicator::get_send_buffer_size(),  OffGridSpike(0,0.0));
+      local_offgrid_spikes_.resize(Communicator::get_send_buffer_size(), OffGridSpike(0, 0.0));
 
     // collocate the entries of spike_registers into local_offgrid_spikes__
     std::vector<OffGridSpike>::iterator pos = local_offgrid_spikes_.begin();
@@ -1517,7 +1336,7 @@ void nest::Scheduler::deliver_events_(thread t)
   {
     // prepare Time objects for every possible time stamp within min_delay_
     std::vector<Time> prepared_timestamps(min_delay_);
-    for (size_t lag=0; lag < min_delay_; lag++)
+    for (size_t lag=0; lag < (size_t) min_delay_; lag++)
     {
       prepared_timestamps[lag] = clock_ - Time::step(lag);
     }
@@ -1526,15 +1345,15 @@ void nest::Scheduler::deliver_events_(thread t)
     {
       size_t pid = get_process_id(vp);
       int lag = min_delay_ - 1;
-      while (n_markers < min_delay_)
+      while (n_markers < (size_t) min_delay_)
       {
         index nid = global_grid_spikes_[pos[pid]];
-        if (nid != comm_marker_)
+        if (nid != static_cast<index>(comm_marker_))
         {
           // tell all local nodes about spikes on remote machines.
           se.set_stamp(prepared_timestamps[lag]);
           se.set_sender_gid(nid);
-          net_.connection_manager_.send(t, nid, se);
+          net_->connection_manager_.send(t, nid, se);
         }
         else
         {
@@ -1550,7 +1369,7 @@ void nest::Scheduler::deliver_events_(thread t)
   {
     // prepare Time objects for every possible time stamp within min_delay_
     std::vector<Time> prepared_timestamps(min_delay_);
-    for (size_t lag=0; lag < min_delay_; lag++)
+    for (size_t lag=0; lag < (size_t) min_delay_; lag++)
     {
       prepared_timestamps[lag] = clock_ - Time::step(lag);
     }
@@ -1559,16 +1378,16 @@ void nest::Scheduler::deliver_events_(thread t)
     {
       size_t pid = get_process_id(vp);
       int lag = min_delay_ - 1;
-      while (n_markers < min_delay_)
+      while (n_markers < (size_t) min_delay_)
       {
         index nid = global_offgrid_spikes_[pos[pid]].get_gid();
-        if (nid != comm_marker_)
+        if (nid != static_cast<index>(comm_marker_))
         {
           // tell all local nodes about spikes on remote machines.
           se.set_stamp(prepared_timestamps[lag]);
           se.set_sender_gid(nid);
           se.set_offset(global_offgrid_spikes_[pos[pid]].get_offset());
-          net_.connection_manager_.send(t, nid, se);
+          net_->connection_manager_.send(t, nid, se);
         }
         else
         {
@@ -1593,17 +1412,6 @@ void nest::Scheduler::gather_events_()
 
 void nest::Scheduler::advance_time_()
 {
-  /*
-   * After each time slice, we flip the value of the
-   * update_ref_ flag.
-   * The updated flag of a Node is changed after each
-   * update.
-   * We determine whether a Node was updated in the
-   * current cycle by comparing its updated flag with the update_ref
-   * flag.
-   */
-  update_ref_ = !update_ref_;
-
   // time now advanced time by the duration of the previous step
   to_do_ -= to_step_ - from_step_;
 
@@ -1650,26 +1458,43 @@ void nest::Scheduler::print_progress_()
   std::flush(std::cout);
 }
 
-void nest::Scheduler::set_num_rec_processes(int nrp)
+void nest::Scheduler::set_num_rec_processes(int nrp, bool called_by_reset)
 {
+  if ( net_->size() > 1 and not called_by_reset )
+    throw KernelException("Global spike detection mode must be enabled before nodes are created.");
   if ( nrp >= Communicator::get_num_processes() )
-    throw KernelException("Number of MPI processes used for recording must be smaller than total number of MPI processes.");
+    throw KernelException("Number of processes used for recording must be smaller than total number of processes.");
   n_rec_procs_ = nrp;
   n_sim_procs_ = Communicator::get_num_processes() - n_rec_procs_;
   create_rngs_(true);
   if ( nrp > 0 )
   {
     std::string msg = String::compose("Entering global spike detection mode with %1 recording MPI processes and %2 simulating MPI processes.", n_rec_procs_, n_sim_procs_);
-    net_.message(SLIInterpreter::M_INFO, "Scheduler::set_num_rec_processes",msg);
+    net_->message(SLIInterpreter::M_INFO, "Scheduler::set_num_rec_processes",msg);
   }
 }
 
 void nest::Scheduler::set_num_threads(thread n_threads)
 {
   n_threads_ = n_threads;
+  nodes_vec_.resize(n_threads_);
 
 #ifdef _OPENMP
   omp_set_num_threads(n_threads_);
+
+#ifdef USE_PMA
+  // initialize the memory pools
+#ifdef IS_K
+  assert(n_threads <= MAX_THREAD && "MAX_THREAD is a constant defined in allocator.h");
+
+#pragma omp parallel
+  poormansallocpool[omp_get_thread_num()].init();
+#else
+#pragma omp parallel
+  poormansallocpool.init();
+#endif
+#endif
+
 #endif
   Communicator::set_num_threads(n_threads_);
 }

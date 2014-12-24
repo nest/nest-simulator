@@ -107,16 +107,11 @@ Author: Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
 
     /**
      * Import sets of overloaded virtual functions.
-     * We need to explicitly include sets of overloaded
-     * virtual functions into the current scope.
-     * According to the SUN C++ FAQ, this is the correct
-     * way of doing things, although all other compilers
-     * happily live without.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
-
     using Node::event_hook;
 
-    port check_connection(Connection&, port);
+    port send_test_event(Node&, rport, synindex, bool);
 
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &) ;

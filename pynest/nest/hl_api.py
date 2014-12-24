@@ -47,6 +47,7 @@ rules:
 
 import functools
 import inspect
+import textwrap
 import warnings
 
 # Monkeypatch warnings.showwarning() to just print the warning without
@@ -67,25 +68,37 @@ __debug = False
 # corresponding functions will be removed in the 2.6 release of NEST.
 _deprecation_warning = {'BackwardCompatibilityConnect': True}
 
-def show_deprecation_warning(func_name, text=None):        
+def show_deprecation_warning(func_name, alt_func_name=None, text=None):        
     if _deprecation_warning[func_name]:
+        if alt_func_name is None:
+            alt_func_name = 'Connect'
         if text is None:
-            text = "".join(["{} is deprecated and will be removed in NEST 2.6.".format(func_name),
-                            "Please use Connect from now on. For details, see the documentation at:\n",
-                            "http://nest-initiative.org/Connection_Management"])
-        warnings.warn(text)
+            text = textwrap.dedent(
+                       """\
+                       {} is deprecated and will be removed in a future version of NEST.
+                       Please use {} instead!
+                       For details, see the documentation at http://nest-initiative.org/Connection_Management\
+                       """.format(func_name, alt_func_name)
+                   )
+
+        warnings.warn('\n' + text)   # add LF so text starts on new line
         _deprecation_warning[func_name] = False
-        
-def deprecated(func, text=None):
+
+# Since we need to pass extra arguments to the decorator, we need a decorator factory
+# See http://stackoverflow.com/questions/15564512/how-to-create-a-decorator-function-with-arguments-on-python-class        
+def deprecated(alt_func_name, text=None):
     """Decorator for deprecated functions. Shows a warning and calls the original function."""
-    _deprecation_warning[func.__name__] = True
-    def new_func(*args, **kwargs):
-        show_deprecation_warning(func.__name__, text=text)
-        return func(*args, **kwargs)
-    new_func.__name__ = func.__name__
-    new_func.__doc__ = func.__doc__
-    new_func.__dict__.update(func.__dict__)
-    return new_func
+    
+    def deprecated_decorator(func):
+        _deprecation_warning[func.__name__] = True
+        
+        @functools.wraps(func)
+        def new_func(*args, **kwargs):
+            show_deprecation_warning(func.__name__, alt_func_name, text=text)
+            return func(*args, **kwargs)
+        return new_func
+
+    return deprecated_decorator
 
 # -------------------- Helper functions
 
@@ -709,7 +722,7 @@ def GetLID(gid) :
 # -------------------- Functions for connection handling
 
 @check_stack
-@deprecated
+@deprecated(alt_func_name='GetConnections')
 def FindConnections(source, target=None, synapse_model=None, synapse_type=None):
     """
     Return an array of identifiers for connections that match the
@@ -722,7 +735,7 @@ def FindConnections(source, target=None, synapse_model=None, synapse_type=None):
     Note: FindConnections() is deprecated and will be removed in the future.
           Use GetConnections() instead.
 
-    Note: synapse_type is alias for synapse_model for backward compatibility.
+    Note: synapse_type is alias for synapse_model for backward compatibility
     """
 
     if synapse_model is not None and synapse_type is not None:
@@ -814,7 +827,7 @@ def GetConnections(source=None, target=None, synapse_model=None):
 
 
 @check_stack
-@deprecated
+@deprecated(alt_func_name='Connect')
 def OneToOneConnect(pre, post, params=None, delay=None, model="static_synapse"):
     """
     Make one-to-one connections of type model between the nodes in
@@ -869,7 +882,7 @@ def OneToOneConnect(pre, post, params=None, delay=None, model="static_synapse"):
 
 
 @check_stack
-@deprecated
+@deprecated(alt_func_name='Connect')
 def ConvergentConnect(pre, post, weight=None, delay=None, model="static_synapse"):
     """
     Connect all neurons in pre to each neuron in post. pre and post
@@ -904,7 +917,7 @@ def ConvergentConnect(pre, post, weight=None, delay=None, model="static_synapse"
 
 
 @check_stack
-@deprecated
+@deprecated(alt_func_name='Connect')
 def RandomConvergentConnect(pre, post, n, weight=None, delay=None, model="static_synapse", options=None):
     """
     Connect n randomly selected neurons from pre to each neuron in
@@ -958,7 +971,7 @@ def RandomConvergentConnect(pre, post, n, weight=None, delay=None, model="static
 
 
 @check_stack
-@deprecated
+@deprecated(alt_func_name='Connect')
 def DivergentConnect(pre, post, weight=None, delay=None, model="static_synapse"):
     """
     Connect each neuron in pre to all neurons in post. pre and post
@@ -995,63 +1008,65 @@ def DivergentConnect(pre, post, weight=None, delay=None, model="static_synapse")
 @check_stack
 def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     """
-    Connect pre neurons to post neurons.
+    Connect pre nodes to post nodes.
 
-    Neurons in pre and post are connected using the specified connectivity
-    (one-to-one by default) and synapse type (static_synapse by default).
+    Nodes in pre and post are connected using the specified connectivity
+    (all-to-all by default) and synapse type (static_synapse by default).
     Details depend on the connectivity rule.
 
     Note:
     Connect does not iterate over subnets, it only connects explicitly
     specified nodes.
 
-    pre - presynaptic neurons, given as list of GIDs
-    post - presynaptic neurons, given as list of GIDs
-    conn_spec - name or dictionary specifying connectivity rule, see below
-    syn_spec - name or dictionary specifying synapses, see below
+    pre - presynaptic nodes, given as list of GIDs
+    post - presynaptic nodes, given as list of GIDs
+    conn_spec - string, or dictionary specifying connectivity rule, see below
+    syn_spec - string, or dictionary specifying synapse model, see below
 
-    Connectivity:
+    Connectivity specification (conn_spec):
     
-    Connectivity is either specified as a string containing the name of a
-    connectivity rule (default: 'one_to_one') or as a dictionary specifying
-    the rule and rule-specific parameters (e.g. 'indegree'), which must be given.
-    In addition switches allowing self-connections ('autapses', default: True)
-    and multiple connections between a pair of neurons ('multapses', default: True)
-    can be contained in the dictionary.
+    Connectivity is specified either as a string containing the name of a
+    connectivity rule (default: 'all_to_all') or as a dictionary specifying
+    the rule and any mandatory rule-specific parameters (e.g. 'indegree').
+    In addition, switches setting permission for establishing self-connections 
+    ('autapses', default: True) and multiple connections between a pair of nodes 
+    ('multapses', default: True) can be contained in the dictionary.
 
-    Available rules and the associated parameters are:
+    Available rules and their associated parameters are:
+     - 'all_to_all' (default)
      - 'one_to_one'
-     - 'all_to_all'
      - 'fixed_indegree', 'indegree'
      - 'fixed_outdegree', 'outdegree'
      - 'fixed_total_number', 'N'
      - 'pairwise_bernoulli', 'p'
 
-    Possible choices of the conn_spec are:
-    - 'all_to_all'
+    Example choices for the conn_spec are:
+    - 'one_to_one'
     - {'rule': 'fixed_indegree', 'indegree': 2500, 'autapses': False}
     - {'rule': 'pairwise_bernoulli', 'p': 0.1}
 
-    Synapse:
+    Synapse specification (syn_spec):
 
-    The synapse model and its properties can be inserted either as a string describing
-    one synapse model (synapse models are listed in the synapsedict)
-    or as a dictionary as described below.
-    If no synapse model is specified the default model 'static_synapse' will be used.
-    Available keys in the synapse dictionary are 'model', 'weight', 'delay',
-    'receptor_type' and parameters specific to the synapse model choosen.
-    All parameters are optional and if not specified will use the default values determined
-    by the current synapse model.
-    'model' determines the synapse type, taken from pre-defined synapse types in NEST or
-    manually specified synapses created via CopyModel().
-    All other parameters can be scalars or distributions.
-    In the case of scalar parameters, all keys take doubles except for 'receptor_type'
-    which has to initialised with an integer.
-    Distributed Parameters are initialised with yet another dictionary specifying
-    the distribution ('distribution', such as 'normal') and distribution-specific
-    paramters (such as 'mu' and 'sigma').
+    The synapse model and its properties can be given either as a string identifying
+    a specific synapse model (default: 'static_synapse') or as a dictionary 
+    specifying the synapse model and its parameters. 
+    
+    Available keys in the synapse specification dictionary are 'model', 'weight',
+    'delay', 'receptor_type' and any parameters specific to the selected synapse model.
+    All parameters are optional and if not specified, the default values of the synapse 
+    model will be used. The key 'model' identifies the synapse model, this can be one
+    of NEST's built-in synapse models or a user-defined model created via CopyModel().
+    If 'model' is not specified the default model 'static_synapse' will be used.
 
-    Available distributions are given in the rdevdict, the most common ones are:
+    All other parameters can be scalars or distributions. In the case of scalar 
+    parameters, all keys must be doubles except for 'receptor_type' which must be
+    initialised with an integer. Any distributed parameter must be initialised with 
+    a further dictionary specifying the distribution type ('distribution', e.g. 'normal') 
+    and any distribution-specific parameters (e.g. 'mu' and 'sigma').
+
+    Available distributions are given in the rdevdict, the most common ones (and their
+    associated parameters) are:
+
     - 'normal' with 'mu', 'sigma'
     - 'normal_clipped' with 'mu', 'sigma', 'low', 'high'
     - 'lognormal' with 'mu', 'sigma'
@@ -1059,7 +1074,12 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     - 'uniform' with 'low', 'high'
     - 'uniform_int' with 'low', 'high'
 
-    Possible choices of the syn_spec are:
+    To see all available distributions, run: 
+    nest.slirun(’rdevdict info’)
+    To get information on a particular distribution, e.g. 'binomial', run: 
+    nest.help(’rdevdict::binomial’)
+    
+    Example choices for the syn_spec are:
     - 'stdp_synapse'
     - {'weight': 2.4, 'receptor_type': 1}
     - {'model': 'stdp_synapse',
@@ -1068,7 +1088,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
        'alpha': {'distribution': 'normal_clipped', 'low': 0.5, 'mu': 5.0, 'sigma': 1.0}
       }
 
-    Note: model is alias for syn_spec for backward compatibility.
+    Note: model is alias for syn_spec for backward compatibility.  
     """
 
     if model is not None:
@@ -1160,7 +1180,7 @@ def DataConnect(pre, params=None, model="static_synapse"):
 
 
 @check_stack
-@deprecated
+@deprecated(alt_func_name='Connect')
 def RandomDivergentConnect(pre, post, n, weight=None, delay=None, model="static_synapse", options=None):
     """
     Connect each neuron in pre to n randomly selected neurons from

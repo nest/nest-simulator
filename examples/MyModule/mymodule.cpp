@@ -26,13 +26,14 @@
 #include "model.h"
 #include "dynamicloader.h"
 #include "genericmodel.h"
-#include "generic_connector.h"
 #include "booldatum.h"
 #include "integerdatum.h"
 #include "tokenarray.h"
 #include "exceptions.h"
 #include "sliexceptions.h"
 #include "nestmodule.h"
+#include "connector_model_impl.h"
+#include "target_identifier.h"
 
 // include headers with your own stuff
 #include "mymodule.h"
@@ -127,7 +128,7 @@ mynest::MyModule::~MyModule()
       Hans Ekkehard Plesser
 
       SeeAlso:
-      Connect, ConvergentConnect, DivergentConnect
+      Connect
    */
    void mynest::MyModule::StepPatternConnect_Vi_i_Vi_i_lFunction::execute(SLIInterpreter *i) const
    {
@@ -193,9 +194,17 @@ mynest::MyModule::~MyModule()
     /* Register a synapse type.
        Give synapse type as template argument and the name as second argument.
        The first argument is always a reference to the network.
+
+       There are two choices for the template argument:
+       	   - nest::TargetIdentifierPtrRport
+       	   - nest::TargetIdentifierIndex
+       The first is the standard and you should usually stick to it.
+       nest::TargetIdentifierIndex reduces the memory requirement of synapses
+       even further, but limits the number of available rports. Please see
+       Kunkel et al, Front Neurofinfom 8:78 (2014), Sec 3.3.2, for details.
     */
-    nest::register_prototype_connection<DropOddSpikeConnection>(nest::NestModule::get_network(),
-                                                       "drop_odd_synapse");
+    nest::register_connection_model<DropOddSpikeConnection<nest::TargetIdentifierPtrRport> >(nest::NestModule::get_network(),
+										       "drop_odd_synapse");
 
     /* Register a SLI function.
        The first argument is the function name for SLI, the second a pointer to

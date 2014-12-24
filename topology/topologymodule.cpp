@@ -258,8 +258,14 @@ namespace nest
     if (d->known(names::anchor))
       center = getValue<std::vector<double_t> >(d, names::anchor);
 
-    BallMask<2> outer_circle(center,getValue<double_t>(d, names::outer_radius));
-    BallMask<2> inner_circle(center,getValue<double_t>(d, names::inner_radius));
+    const double outer = getValue<double_t>(d, names::outer_radius);
+    const double inner = getValue<double_t>(d, names::inner_radius);
+    if ( inner >= outer )
+      throw BadProperty("topology::create_doughnut: "
+    		            "inner_radius < outer_radius required.");
+
+    BallMask<2> outer_circle(center, outer);
+    BallMask<2> inner_circle(center, inner);
 
     return new DifferenceMask<2>(outer_circle, inner_circle);
   }
@@ -386,10 +392,21 @@ namespace nest
   {
     i->assert_stack_load(1);
 
-    DictionaryDatum layer_dict =
-      getValue<DictionaryDatum>(i->OStack.pick(0));
+    DictionaryDatum layer_dict = getValue<DictionaryDatum>(i->OStack.pick(0));
+
+    layer_dict->clear_access_flags();
 
     index layernode =  AbstractLayer::create_layer(layer_dict);
+
+    std::string missed;
+    if ( !layer_dict->all_accessed(missed) )
+    {
+      if ( net_->dict_miss_is_error() )
+        throw UnaccessedDictionaryEntry(missed);
+      else
+        net_->message(SLIInterpreter::M_WARNING, "topology::CreateLayer",
+        		      ("Unread dictionary entries: " + missed).c_str());
+    }
 
     i->OStack.pop(1);
     i->OStack.push(layernode);
@@ -572,7 +589,7 @@ namespace nest
 
     index node_gid = getValue<long_t>(i->OStack.pick(0));
     if ( not net.is_local_gid(node_gid) )
-      throw KernelException("Displacement is currently implemented for local nodes only.");
+      throw KernelException("Distance is currently implemented for local nodes only.");
 
     Node const * const node = net.get_node(node_gid);
 
@@ -611,7 +628,21 @@ namespace nest
   {
     i->assert_stack_load(1);
 
-    MaskDatum datum( create_mask(i->OStack.pick(0)) );
+    const DictionaryDatum mask_dict = getValue<DictionaryDatum>(i->OStack.pick(0));
+
+    mask_dict->clear_access_flags();
+
+    MaskDatum datum(create_mask(mask_dict));
+
+    std::string missed;
+    if ( !mask_dict->all_accessed(missed) )
+    {
+      if ( get_network().dict_miss_is_error() )
+        throw UnaccessedDictionaryEntry(missed);
+      else
+        get_network().message(SLIInterpreter::M_WARNING, "topology::CreateMask",
+        		              ("Unread dictionary entries: " + missed).c_str());
+    }
 
     i->OStack.pop(1);
     i->OStack.push(datum);
@@ -884,6 +915,14 @@ namespace nest
     The actual connections being created are picked at random from all
     the candidate connections.
 
+
+	Parameter name: synapse_model
+
+	Type: literal
+
+	Parameter description:
+
+	The synapse model to be used for creating the connection.
 .
     Parameter name: allow_autapses
 
@@ -935,6 +974,7 @@ namespace nest
 		    /lid 1 >>
 	/targets << /model /iaf_neuron
 		    /lid 2 >>
+	/synapse_model /stdp_synapse
 
     >> /parameters Set
 
@@ -958,8 +998,21 @@ namespace nest
     if ((source == NULL) || (target == NULL))
       throw LayerExpected();
 
+    connection_dict->clear_access_flags();
+
     ConnectionCreator connector(connection_dict);
-    source->connect(*target,connector);
+
+    std::string missed;
+    if ( !connection_dict->all_accessed(missed) )
+    {
+      if ( get_network().dict_miss_is_error() )
+        throw UnaccessedDictionaryEntry(missed);
+      else
+        get_network().message(SLIInterpreter::M_WARNING, "topology::CreateLayers",
+        		              ("Unread dictionary entries: " + missed).c_str());
+    }
+
+    source->connect(*target, connector);
 
     i->OStack.pop(3);
     i->EStack.pop();
@@ -989,8 +1042,21 @@ namespace nest
   void TopologyModule::CreateParameter_DFunction::execute(SLIInterpreter *i) const
   {
     i->assert_stack_load(1);
+    const DictionaryDatum param_dict = getValue<DictionaryDatum>(i->OStack.pick(0));
 
-    ParameterDatum datum( create_parameter(i->OStack.pick(0)) );
+    param_dict->clear_access_flags();
+
+    ParameterDatum datum(create_parameter(param_dict));
+
+    std::string missed;
+    if ( !param_dict->all_accessed(missed) )
+    {
+      if ( get_network().dict_miss_is_error() )
+        throw UnaccessedDictionaryEntry(missed);
+      else
+        get_network().message(SLIInterpreter::M_WARNING, "topology::CreateParameter",
+        		              ("Unread dictionary entries: " + missed).c_str());
+    }
 
     i->OStack.pop(1);
     i->OStack.push(datum);
@@ -1022,7 +1088,7 @@ namespace nest
     ParameterDatum param = getValue<ParameterDatum>(i->OStack.pick(0));
 
     librandom::RngPtr rng = get_network().get_grng();
-    double_t value = param->value(point,rng);
+    double_t value = param->value(point, rng);
 
     i->OStack.pop(2);
     i->OStack.push(value);
@@ -1195,8 +1261,8 @@ namespace nest
       {
         GridLayer<2> *layer =
           dynamic_cast<GridLayer<2>*>(net_->get_node(layer_gid));
-        if (layer==0) {
-          throw TypeMismatch("grid layer node","something else");
+        if ( layer == 0 ) {
+          throw TypeMismatch("grid layer node", "something else");
         }
 
         node_gids = layer->get_nodes(Position<2,int_t>(static_cast<index>(array[0]),

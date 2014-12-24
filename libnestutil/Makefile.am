@@ -13,10 +13,10 @@ libnestutil_la_CXXFLAGS=  @SLI_CXXBACKEND@ @AM_CXXFLAGS@
 ## sources and headers for libnestutil
 
 libnestutil_la_SOURCES= \
+		stopwatch.h stopwatch.cpp \
 		numerics.h numerics.cpp \
 		allocator.h allocator.cpp \
 		instance.h \
-		mutex.h \
 		lockptr.h \
 		sparseconfig.h \
 		template_util.h \
@@ -35,7 +35,7 @@ common_cppflags= -I$(top_srcdir)/librandom \
 
 # GSL_CFLAGS are required to provide
 # access to the GSL headers
-#  Diesmann, 6.4.04 
+#  Diesmann, 6.4.04
 if GSL_1_2_AVAILABLE
   AM_CPPFLAGS= $(common_cppflags) \
                @GSL_CFLAGS@

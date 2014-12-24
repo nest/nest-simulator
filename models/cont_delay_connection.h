@@ -41,17 +41,21 @@
   SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_canon
 */
 
-#include "connection_het_wd.h"
-#include "generic_connector.h"
+
+#include "connection.h"
 #include <cmath>
 
 namespace nest
 {
-  //class CommonProperties;
 
-  class ContDelayConnection : public ConnectionHetWD {
+  template<typename targetidentifierT>
+  class ContDelayConnection : public Connection<targetidentifierT> {
 
   public:
+
+    typedef CommonSynapseProperties CommonPropertiesType;
+    typedef Connection<targetidentifierT> ConnectionBase;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -69,6 +73,18 @@ namespace nest
    */
   ~ContDelayConnection() {}
 
+  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
+  // This avoids explicit name prefixes in all places these functions are used.
+  // Since ConnectionBase depends on the template parameter, they are not automatically
+  // found in the base class.
+  using ConnectionBase::get_delay_steps;
+  using ConnectionBase::set_delay_steps;
+  using ConnectionBase::get_rport;
+  using ConnectionBase::get_target;
+
+  //! Used by ConnectorModel::add_connection() for fast initialization
+  void set_weight(double_t w) { weight_ = w; }
+
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
@@ -80,38 +96,35 @@ namespace nest
   void set_status(const DictionaryDatum & d, ConnectorModel &cm);
 
   /**
-   * Set properties of this connection from position p in the properties
-   * array given in dictionary.
-   */  
-  void set_status(const DictionaryDatum & d, index p, ConnectorModel &cm);
-
-  /**
-   * Append properties of this connection to the given dictionary. If the
-   * dictionary is empty, new arrays are created first.
-   */
-  void append_properties(DictionaryDatum & d) const;
-
-  /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
    * \param t_lastspike Point in time of last spike sent.
    * \param cp common properties of all synapses (empty).
    */
-  void send(Event& e, double_t t_lastspike, const CommonSynapseProperties &cp);
-
-  // overloaded for all supported event types
-  using Connection::check_event;
-  void check_event(SpikeEvent&) {}
-  void check_event(RateEvent&) {}
-  void check_event(CurrentEvent&) {}
-  void check_event(ConductanceEvent&) {}
-  void check_event(DoubleDataEvent&) {}
+  void send(Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties &cp);
   
+  class ConnTestDummyNode: public ConnTestDummyNodeBase
+  {
+  public:
+	// Ensure proper overriding of overloaded virtual functions.
+	// Return values from functions are ignored.
+	using ConnTestDummyNodeBase::handles_test_event;
+    port handles_test_event(SpikeEvent&, rport) { return invalid_port_; }
+    port handles_test_event(RateEvent&, rport) { return invalid_port_; }
+    port handles_test_event(CurrentEvent&, rport) { return invalid_port_; }
+    port handles_test_event(ConductanceEvent&, rport) { return invalid_port_; }
+    port handles_test_event(DoubleDataEvent&, rport) { return invalid_port_; }
+  };
+
+  void check_connection(Node & s, Node & t, rport receptor_type, double_t, const CommonPropertiesType &)
+  {
+    ConnTestDummyNode dummy_target;
+    ConnectionBase::check_connection_(dummy_target, s, t, receptor_type);
+  }
+
  private:
-
-  // data members of each connection
-  double_t delay_offset_;              // fractional delay < h, total delay = delay_ - delay_offset_
-
+  double_t weight_;         //!< synaptic weight
+  double_t delay_offset_;   //!< fractional delay < h, total delay = delay_ - delay_offset_
   };
 
 /**
@@ -120,24 +133,29 @@ namespace nest
  * \param p The port under which this connection is stored in the Connector.
  * \param t_lastspike Time point of last spike emitted
  */
+template<typename targetidentifierT>
 inline
-void ContDelayConnection::send(Event& e, double_t, const CommonSynapseProperties &)
+void ContDelayConnection<targetidentifierT>::send(Event& e, thread t, double_t, const CommonSynapseProperties &)
 {
-  e.set_receiver(*target_);
+  e.set_receiver(*get_target(t));
   e.set_weight(weight_);
-  e.set_rport(rport_);
+  e.set_rport(get_rport());
   double orig_event_offset = e.get_offset();
   double total_offset = orig_event_offset + delay_offset_;
-  if (total_offset  < Time::get_resolution().get_ms())
-    {
-      e.set_delay(delay_);
-      e.set_offset(total_offset);
-    }
+  // As far as i have seen, offsets are outside of tics regime provided
+  // by the Time-class to allow more precise spike-times, hence comparing
+  // on the tics level here is not reasonable. Still, the double comparison
+  // seems save.
+  if (total_offset < Time::get_resolution().get_ms())
+  {
+    e.set_delay(get_delay_steps());
+    e.set_offset(total_offset);
+  }
   else
-    {
-      e.set_delay(delay_ - 1);
-      e.set_offset(total_offset - Time::get_resolution().get_ms());
-    }
+  {
+    e.set_delay(get_delay_steps() - 1);
+    e.set_offset(total_offset - Time::get_resolution().get_ms());
+  }
   e();
   //reset offset to original value
   e.set_offset(orig_event_offset);

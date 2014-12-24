@@ -84,7 +84,7 @@ namespace nest{
 
     using Node::event_hook;
 
-    port check_connection(Connection&, port);
+    port send_test_event(Node&, rport, synindex, bool);
 
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
@@ -148,20 +148,6 @@ namespace nest{
        *   and that an initial interval needs to be drawn.
        */
       std::vector<SpikeTime> next_spike_;   
-
-      //! Map port to target GID
-      typedef std::map<port,index> PortGIDMap;
-
-      /**
-       * Map sender port to target GID.
-       * This is a kludge to solve #482, i.e., to protect against several senders
-       * using the same port.
-       * Entries are added when a DSSpikeEvent is received through a new port.
-       * For subsequent DSSpikeEvents through the same port, they must be
-       * for the same target.
-       * @see assert_unique_port
-       */
-      PortGIDMap port_targets_;
     };
 
     // ------------------------------------------------------------
@@ -193,16 +179,27 @@ namespace nest{
     Buffers_    B_;
   };
 
-inline  
-port poisson_generator_ps::check_connection(Connection& c, port receptor_type)
-{
-  DSSpikeEvent e;
-  e.set_sender(*this);
-  c.check_event(e);
-  port receptor = c.get_target()->connect_sender(e, receptor_type);
-  ++P_.num_targets_;     // count number of targets
-  return receptor;
-}
+inline
+  port poisson_generator_ps::send_test_event(Node& target, rport receptor_type, synindex syn_id, bool dummy_target)
+  {
+	device_.enforce_single_syn_type(syn_id);
+
+	if ( dummy_target )
+	{
+	  DSSpikeEvent e;
+	  e.set_sender(*this);
+	  return target.handles_test_event(e, receptor_type);
+	}
+	else
+	{
+      SpikeEvent e;
+      e.set_sender(*this);
+      const port p = target.handles_test_event(e, receptor_type);
+      if ( p != invalid_port_ and not is_model_prototype() )
+        ++P_.num_targets_;     // count number of targets
+      return p;
+	}
+  }
 
 inline
 void poisson_generator_ps::get_status(DictionaryDatum &d) const

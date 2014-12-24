@@ -52,15 +52,13 @@ class TestPairwiseBernoulli(TestParams):
                 #degrees = self.comm.gather(degrees, root=0)
                 #if self.rank == 0:
                 if degrees != None:
-                    chi, p = hf.chi_squared_test(degrees, expected, self.rule)
-                    print("p-value : %.2f" % p)
+                    chi, p = hf.chi_squared_check(degrees, expected, self.rule)
                     pvalues.append(p)
                 #self.comm.Barrier()
                 hf.mpi_barrier()
             #if self.rank == 0:
             if degrees != None:
                 ks, p = scipy.stats.kstest(pvalues, 'uniform', alternative='two_sided')
-                print("p-value : %.2f" % p)
                 self.assertTrue( p > self.stat_dict['alpha2'] )
 
     def testAutapses(self):
@@ -92,5 +90,10 @@ def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestPairwiseBernoulli)
     return suite
 
+def run():
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())
+    
+
 if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    run()

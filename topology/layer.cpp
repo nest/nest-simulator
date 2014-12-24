@@ -137,8 +137,10 @@ namespace nest {
     net_->go_to(layer_node);
 
     // Create layer nodes.
-    for(size_t i=0;i<element_ids.size();++i) {
-      for(index n=0;n<length;++n) {
+    for ( size_t i = 0 ; i < element_ids.size() ; ++i )
+    {
+      for ( index n = 0 ; n < length ; ++n )
+      {
         net_->add_node(element_ids[i]);
       }
     }
@@ -147,9 +149,7 @@ namespace nest {
     net_->go_to(cwnode);
 
     //Set layer parameters according to input dictionary.
-    AbstractLayer *layer = 
-      dynamic_cast<AbstractLayer *>(net_->get_node(layer_node));
-
+    AbstractLayer *layer = dynamic_cast<AbstractLayer *>(net_->get_node(layer_node));
     layer->depth_ = element_ids.size();
     layer->set_status(layer_dict);
 

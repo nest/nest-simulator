@@ -21,14 +21,48 @@
 
 set -e
 
+SKIP_LIST="
+    MyModule/sli/example.sli
+    Potjans_2014/spike_analysis.py
+    Potjans_2014/user_params.sli
+    ReadData_demo.sli
+    music/
+    nestrc.sli
+    neuronview.py
+    plot_tsodyks_depr_fac.py
+    plot_tsodyks_shortterm_bursts.py
+"
+
 FAILURES=0
 
-# The extension will be the third field if separated by .
+# Trim leading and trailing whitespace and make gaps exactly one space large
+SKIP_LIST=$(echo $SKIP_LIST | sed -e 's/ +/ /g' -e 's/^ *//' -e 's/ *$//')
+
+# Create a regular expression for grep that removes the excluded files
+case "$SKIP_LIST" in  
+    *\ * ) # We have spaces in the list
+        SKIP='('$(echo $SKIP_LIST | tr ' ' '|' )')' ;;
+    *)
+        SKIP=$SKIP_LIST ;;
+esac
+
+# Find all examples in the installation directory
 EXAMPLES=$(find ${SEARCH_DIR:-./examples} -type f -name \*.py -o -name \*.sli | sort -t. -k3)
+
+if test -n "$SKIP_LIST"; then
+    EXAMPLES=$(echo $EXAMPLES | tr ' ' '\n' | grep -vE $SKIP)
+fi
+
+basedir=$PWD
 
 for i in $EXAMPLES ; do
 
-    ext=$(basename $i | cut -d. -f2)
+    cd $(dirname $i)
+
+    workdir=$PWD
+    example=$(basename $i)
+
+    ext=$(echo $example | cut -d. -f2)
 
     if [ $ext = sli ] ; then
         runner=nest
@@ -36,19 +70,22 @@ for i in $EXAMPLES ; do
         runner=python
     fi
 
-    echo ">>> RUNNING: $i"
+    echo ">>> RUNNING: $workdir$example"
 
     set +e
-    $runner $i
+    $runner $example
 
     if [ $? != 0 ] ; then
-        echo ">>> FAILURE: $i"
+        echo ">>> FAILURE: $workdir$example"
         FAILURES=$(( $FAILURES + 1 ))
-        OUTPUT=$(printf "        %s\n        %s\n" "$OUTPUT" "$i")
+        OUTPUT=$(printf "        %s\n        %s\n" "$OUTPUT" "$workdir$example")
     else
-        echo ">>> SUCCESS: $i"
+        echo ">>> SUCCESS: $example"
     fi
+    echo
     set -e
+
+    cd $basedir
 
 done
 

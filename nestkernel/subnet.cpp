@@ -36,22 +36,18 @@ nest::Subnet::Subnet()
   :Node(),
    nodes_(),
    gids_(),
-   children_on_same_vp_(false),
-   children_vp_(0),
    label_(),
    customdict_(new Dictionary),
    homogeneous_(true),
    last_mid_(0)
 {
-  set(frozen);  // freeze subnet by default
+  set_frozen_(true);  // freeze subnet by default
 }
 
 nest::Subnet::Subnet(const Subnet &c)
   :Node(c),
    nodes_(c.nodes_),
    gids_(c.gids_),
-   children_on_same_vp_(c.children_on_same_vp_),
-   children_vp_(c.children_vp_),
    label_(c.label_),
    customdict_(new Dictionary(*(c.customdict_))),
    homogeneous_(c.homogeneous_),
@@ -62,24 +58,6 @@ void nest::Subnet::set_status(const DictionaryDatum& dict)
 {
   updateValue<std::string>(dict,"label",label_);
   updateValue<DictionaryDatum> (dict,"customdict",customdict_);
-
-  bool children_on_same_vp;
-  if (updateValue<bool>(dict,"children_on_same_vp", children_on_same_vp))
-  {
-    bool parent_children_on_same_vp = (get_gid() == 0) ? false : get_parent()->get_children_on_same_vp();
-    if (parent_children_on_same_vp && !children_on_same_vp)
-    {
-      network()->message(SLIInterpreter::M_ERROR, "SetStatus", "Setting /children_on_same_vp to false is not possible,");
-      network()->message(SLIInterpreter::M_ERROR, "SetStatus", "because it set to true in the parent subnet.");
-    }
-    else if ( !nodes_.empty() )
-    {
-      network()->message(SLIInterpreter::M_ERROR, "SetStatus", "Modifying /children_on_same_vp is not possible,");
-      network()->message(SLIInterpreter::M_ERROR, "SetStatus", "because the subnet already contains nodes."); 
-    }
-    else
-      children_on_same_vp_ = children_on_same_vp;
-  }
 }
 
 void nest::Subnet::get_status(DictionaryDatum& dict) const
@@ -87,9 +65,7 @@ void nest::Subnet::get_status(DictionaryDatum& dict) const
   (*dict)["number_of_children"]= global_size();
   (*dict)["label"]=label_;
   (*dict)["customdict"]=customdict_;
-  (*dict)["children_on_same_vp"]=children_on_same_vp_; 
-
-  (*dict)[names::type] = LiteralDatum(names::structure);
+  (*dict)[names::element_type] = LiteralDatum(names::structure);
 }
 
 void nest::Subnet::get_dimensions_(std::vector<int> & dim) const
@@ -266,7 +242,7 @@ void nest::Subnet::set_label(std::string const l)
   }
 }
 
-bool nest::Subnet::allow_entry() const
+bool nest::Subnet::is_subnet() const
 {
   return true;
 }

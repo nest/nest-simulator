@@ -26,10 +26,10 @@ fi
 
 # Package versions to install
 pkgs="m4 autoconf automake libtool"
-m4_ver=1.4.16
-autoconf_ver=2.68
-automake_ver=1.11.1
-libtool_ver=2.4.2
+m4_ver=1.4.17
+autoconf_ver=2.69
+automake_ver=1.14.1
+libtool_ver=2.4.3
 
 wgetprog=`which wget`
 if [ -z $wgetprog ] ; then

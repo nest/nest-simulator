@@ -32,23 +32,20 @@ libnest_la_SOURCES=\
 		communicator.h communicator_impl.h communicator.cpp\
 		sibling_container.h sibling_container.cpp\
 		subnet.h subnet.cpp\
-		connection.h connection.cpp\
-		connection_het_wd.h connection_het_wd.cpp\
-		connection_hom_wd.h connection_hom_wd.cpp\
+		connection.h\
+		common_properties_hom_w.h\
+		syn_id_delay.h\
+		connector_base.h connector_base.cpp\
+		connector_model.h connector_model_impl.h connector_model.cpp\
 		connection_manager.h connection_manager.cpp\
 		connection_id.h connection_id.cpp\
-		connector.h\
-		connector_model.h connector_model.cpp\
 		device.h device.cpp\
 		dynamicloader.h dynamicloader.cpp\
 		event.h event.cpp\
 		event_priority.h\
 		exceptions.h exceptions.cpp\
-		generic_connector.h\
-		generic_connector_model.h\
 		genericmodel.h\
 		gid_collection.h gid_collection.cpp\
-		bg_get_mem.c\
 		histentry.h histentry.cpp\
 		model.h model.cpp\
 		nest.h\
@@ -58,7 +55,6 @@ libnest_la_SOURCES=\
 		nest_time.h nest_time.cpp \
 		nest_timeconverter.h nest_timeconverter.cpp \
 		nest_timemodifier.h nest_timemodifier.cpp\
-		net_thread.h net_thread.cpp\
 		modelrange.h modelrange.cpp\
 		modelrangemanager.h modelrangemanager.cpp\
 		multirange.h multirange.cpp\
@@ -72,6 +68,8 @@ libnest_la_SOURCES=\
 		scheduler.h scheduler.cpp\
 		spikecounter.h spikecounter.cpp\
 		stimulating_device.h\
+		target_identifier.h\
+		sparse_node_array.h sparse_node_array.cpp\
 		conn_parameter.h conn_parameter.cpp\
 		conn_builder.h conn_builder.cpp\
 		conn_builder_factory.h\

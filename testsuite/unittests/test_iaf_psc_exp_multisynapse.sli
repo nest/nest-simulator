@@ -34,9 +34,9 @@
    The textual output of the voltmeter documented in this file can be regenerated 
    by setting adding /to_screen true to the SetStatus call of vm below.
   
-   SeeAlso: test_iaf_psc_alpha_multisynapse, iaf_psc_exp_multisynapse
+   SeeAlso: testsuite::test_iaf_psc_alpha_multisynapse, iaf_psc_exp_multisynapse
 
-   FirstVersion: April 2013n
+   FirstVersion: April 2013
    Author: Hannah Bos
  */
 
@@ -71,20 +71,14 @@ vm << /withtime true  /time_in_steps true /interval h /to_screen false >> SetSta
 /spike_generator Create /sg Set
 sg << /spike_times [spike_time] >> SetStatus
 
-/static_synapse /s1 CopyModel
-/static_synapse /s2 CopyModel
-/static_synapse /s3 CopyModel
-/static_synapse /s4 CopyModel
+[ weights delays [ 4 ] Range ]
+{
+  /receptor Set
+  /delay Set
+  /weight Set
+  [sg] [npost] /one_to_one << /weight weight /delay delay /receptor_type receptor >> Connect
+} ScanThread
 
-/s1 << /weight weights 0 get /delay delays 0 get /receptor_type 1 >> SetDefaults
-/s2 << /weight weights 1 get /delay delays 1 get /receptor_type 2 >> SetDefaults
-/s3 << /weight weights 2 get /delay delays 2 get /receptor_type 3 >> SetDefaults
-/s4 << /weight weights 3 get /delay delays 3 get /receptor_type 4 >> SetDefaults
-
-sg npost /s1 Connect
-sg npost /s2 Connect
-sg npost /s3 Connect
-sg npost /s4 Connect
 
 vm npost 1.0 h Connect
 

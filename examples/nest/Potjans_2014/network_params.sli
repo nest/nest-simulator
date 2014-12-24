@@ -34,16 +34,17 @@
 
 % area of network in mm^2; scales numbers of neurons
 % use 1 for the full-size network (77,169 neurons)
-/area 1 def
+/area 0.1 def
 
 % whether to use full-scale in-degrees when downscaling the number of neurons
 % When preserve_K is false, the full-scale connection probabilities are used.
+% Note that this produces different dynamics compared to the original model.
 /preserve_K true def
 
 /layers [(L23) (L4) (L5) (L6)] def
 /populations [(e) (i)] def
 
-/full_scale_num_neurons 
+/full_scale_n_neurons 
   [[20683   % layer 2/3 e
     5834 ]  % layer 2/3 i
    [21915   % layer 4 e
@@ -57,7 +58,8 @@ def
 % mean EPSP amplitude (mV) for all connections except L4e->L2/3e
 /PSP_e .15 def
 % mean EPSP amplitude (mv) for L4e->L2/3e connections
-% The weight from L4e to L23e is chosen such that the results in the paper can be reproduced. The weigh deviates from the one specified in the paper by a factor of two.
+% see p. 801 of the paper, second paragraph under 'Model Parameterization',
+% and the caption to Supplementary Fig. 7
 /PSP_e_23_4 PSP_e 2 mul def
 % standard deviation of PSC amplitudes relative to mean PSC amplitudes
 /PSC_rel_sd 0.1 def
@@ -120,7 +122,7 @@ def
 % rate of background Poisson input at each external input synapse (spikes/s) 
 /bg_rate 8. def 
 % DC amplitude at each external input synapse (pA)
-% This is relevant for reproducing Potjans & Diesmann (2014) Fig. 7.
+% This is relevant for reproducing Potjans & Diesmann (2012) Fig. 7.
 /dc_amplitude 0. def
 % in-degrees for background input
 /K_bg [[1600   % 2/3e
@@ -135,7 +137,7 @@ def
 
 % optional additional thalamic input (Poisson)
 % Set n_thal to 0 to avoid this input.
-% For producing Potjans & Diesmann (2014) Fig. 10, n_thal=902 was used.
+% For producing Potjans & Diesmann (2012) Fig. 10, n_thal=902 was used.
 % Note that the thalamic rate here reproduces the simulation results
 % shown in the paper, and differs from the rate given in the text. 
 /n_thal 0 def          % size of thalamic population

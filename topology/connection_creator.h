@@ -126,7 +126,7 @@ namespace nest
     };
 
     template<typename Iterator, int D>
-    void connect_to_target_(Iterator from, Iterator to, index tgt_id, Node* tgt_ptr,  
+    void connect_to_target_(Iterator from, Iterator to, Node* tgt_ptr,  
 			    const Position<D>& tgt_pos, thread tgt_thread, const Layer<D>& source);
 
     template<int D>
@@ -141,7 +141,7 @@ namespace nest
     template<int D>
     void divergent_connect_(Layer<D>& source, Layer<D>& target);
 
-    void connect_(index s, index t, Node* target, thread target_thread, 
+    void connect_(index s, Node* target, thread target_thread,
 		 double_t w, double_t d, index syn);
 
     /**
@@ -170,16 +170,16 @@ namespace nest
   };
 
   inline 
-  void ConnectionCreator::connect_(index s, index t, Node* target, thread target_thread, 
+  void ConnectionCreator::connect_(index s, Node* target, thread target_thread,
 		double_t w, double_t d, index syn)
   {
     // check whether the target is on this process
-    if (net_.is_local_gid(t))
+    if (net_.is_local_gid(target->get_gid()))
     {
       // check whether the target is on our thread
       thread tid = net_.get_thread_id();      
       if( tid == target_thread)
-	net_.connect(s, t, target, target_thread, w, d, syn);
+	net_.connect(s, target, target_thread, syn, d, w);
     }
   }
 

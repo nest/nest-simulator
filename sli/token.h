@@ -252,12 +252,6 @@ public:
       return p;
     }
 
-  // use with care, circumvents dictionary access checking
-  Datum* datum_without_tagging_as_accessed(void) const
-    {
-      return p;
-    }
-
 
   
   bool valid() const

@@ -38,12 +38,12 @@ proxynode::proxynode(index gid, index parent_gid, index model_id, index vp) :
   set_parent_(parent);
   set_model_id(model_id);
   set_vp(vp);
-  set(frozen);
+  set_frozen_(true);
 }
 
-port proxynode::check_connection(Connection& c, port receptor_type)
+port proxynode::send_test_event(Node& target, rport receptor_type, synindex syn_id, bool dummy_target)
 {
-  return network()->get_model(get_model_id())->check_connection(c, receptor_type);
+  return network()->get_model(get_model_id())->send_test_event(target, receptor_type, syn_id, dummy_target);
 }
 
 } // namespace

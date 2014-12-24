@@ -105,7 +105,7 @@ class Main() :
         for key in ["archiver_length", "available", "capacity",
                     "elementsize", "frozen", "global_id",
                     "instantiations", "is_refractory", "local",
-                    "model", "node_type", "offset", "origin",
+                    "model", "element_type", "offset", "origin",
                     "receptor_types", "recordables",
                     "refractory_input", "rmax", "state", "t_spike",
                     "thread", "tlast", "tspike", "type_id", "vp",
@@ -132,7 +132,7 @@ class Main() :
         for entry in models:
 
             try:
-                entrytype = nest.GetDefaults(entry)["node_type"]
+                entrytype = nest.GetDefaults(entry)["element_type"]
             except:
                 entrytype = "unknown"
 
@@ -295,7 +295,7 @@ class DictView(gtk.TreeView) :
 
             pos = model.insert_after(None, None)
 
-            data = {"key"  : key, "node_type" : type(self.params[key])}
+            data = {"key"  : key, "element_type" : type(self.params[key])}
             model.set_value(pos, 0, data)
             model.set_value(pos, 1, str(key))
             model.set_value(pos, 2, str(self.params[key]))
@@ -310,7 +310,7 @@ class DictView(gtk.TreeView) :
 
         try :
             
-            typename = data["node_type"].__name__
+            typename = data["element_type"].__name__
             new_value = eval("%s('%s')" % (typename, new_text))
             if typename == "bool" and new_text.lower() in ["false", "0"] :
                 new_value = False

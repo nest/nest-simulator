@@ -143,11 +143,11 @@ vm     = nest.Create('voltmeter', 1,     [{'record_to':['memory'], 'withtime':Tr
 sd     = nest.Create('spike_detector',1, [{'record_to':['memory'], 'withtime':True, 'withgid':True}])
 
 for i, currentpg in enumerate(pg):
-    nest.Connect([currentpg],n, 'all_to_all', {'weight': float(J[i]), 'delay': 0.1})
-    nest.Connect([currentpg],n_free, syn_spec={'weight':J[i]})
+    nest.Connect([currentpg], n, syn_spec={'weight': float(J[i]), 'delay': 0.1})
+    nest.Connect([currentpg], n_free, syn_spec={'weight':J[i]})
 
-nest.Connect(vm,n_free)
-nest.Connect(n, sd, 'all_to_all')
+nest.Connect(vm, n_free)
+nest.Connect(n, sd)
 
 nest.Simulate(simtime)
 

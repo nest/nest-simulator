@@ -87,14 +87,14 @@ namespace nest
 
     /**
      * Import sets of overloaded virtual functions.
-     * @see Technical Issues / Virtual Functions: Overriding,
-     * Overloading, and Hiding
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
-    using Node::connect_sender;
     using Node::handle;
+    using Node::handles_test_event;
 
     void handle(SpikeEvent &);
-    port connect_sender(SpikeEvent &, port);
+
+    port handles_test_event(SpikeEvent &, rport);
 
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &) ;
@@ -149,7 +149,7 @@ namespace nest
   };
 
   inline
-  port music_event_out_proxy::connect_sender(SpikeEvent&, port receptor_type)
+  port music_event_out_proxy::handles_test_event(SpikeEvent&, rport receptor_type)
   {
     // receptor_type i is mapped to channel i of the MUSIC port so we
     // have to generate the index map here, that assigns the channel

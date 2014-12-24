@@ -36,7 +36,7 @@ Description:
 
 
 Author:  May 2014, Setareh, Deger
-SeeAlso: pp_pop_psc_delta test_pp_psc_delta
+SeeAlso: pp_pop_psc_delta, testsuite::test_pp_psc_delta
 
 */
 

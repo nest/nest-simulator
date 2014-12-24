@@ -127,25 +127,20 @@ namespace nest {
 
     /**
      * Import sets of overloaded virtual functions.
-     * We need to explicitly include sets of overloaded
-     * virtual functions into the current scope.
-     * According to the SUN C++ FAQ, this is the correct
-     * way of doing things, although all other compilers
-     * happily live without.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
+   using Node::handle;
+    using Node::handles_test_event;
 
-    using Node::connect_sender;
-    using Node::handle;
-
-    port check_connection(Connection&, port);
+    port send_test_event(Node&, rport, synindex, bool);
     
     void handle(SpikeEvent &);
     void handle(CurrentEvent &);
     void handle(DataLoggingRequest &); 
     
-    port connect_sender(SpikeEvent &, port);
-    port connect_sender(CurrentEvent &, port);
-    port connect_sender(DataLoggingRequest &, port);
+    port handles_test_event(SpikeEvent&, rport);
+    port handles_test_event(CurrentEvent&, rport);
+    port handles_test_event(DataLoggingRequest &, rport);
     
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
@@ -298,38 +293,38 @@ namespace nest {
 
   
   inline
-  port iaf_cond_exp_sfa_rr::check_connection(Connection& c, port receptor_type)
-  {
-    SpikeEvent e;
-    e.set_sender(*this);
-    c.check_event(e);
-    return c.get_target()->connect_sender(e, receptor_type);
-  }
-
-  inline
-  port iaf_cond_exp_sfa_rr::connect_sender(SpikeEvent&, port receptor_type)
-  {
-    if (receptor_type != 0)
-      throw UnknownReceptorType(receptor_type, get_name());
-    return 0;
-  }
+port nest::iaf_cond_exp_sfa_rr::send_test_event(Node& target, rport receptor_type, synindex, bool)
+{
+  SpikeEvent e;
+  e.set_sender(*this);
+  return target.handles_test_event(e, receptor_type);
+}
+  
+inline
+port iaf_cond_exp_sfa_rr::handles_test_event(SpikeEvent&, rport receptor_type)
+{
+  if (receptor_type != 0)
+    throw UnknownReceptorType(receptor_type, get_name());
+  return 0;
+}
  
-  inline
-  port iaf_cond_exp_sfa_rr::connect_sender(CurrentEvent&, port receptor_type)
-  {
-    if (receptor_type != 0)
-      throw UnknownReceptorType(receptor_type, get_name());
-    return 0;
-  }
+inline
+port iaf_cond_exp_sfa_rr::handles_test_event(CurrentEvent&, rport receptor_type)
+{
+  if (receptor_type != 0)
+    throw UnknownReceptorType(receptor_type, get_name());
+  return 0;
+}
+ 
+inline
+port iaf_cond_exp_sfa_rr::handles_test_event(DataLoggingRequest& dlr, 
+				       rport receptor_type)
+{
+  if (receptor_type != 0)
+    throw UnknownReceptorType(receptor_type, get_name());
+  return B_.logger_.connect_logging_device(dlr, recordablesMap_);
+}
 
-  inline
-  port iaf_cond_exp_sfa_rr::connect_sender(DataLoggingRequest& dlr, 
-				      port receptor_type)
-  {
-    if (receptor_type != 0)
-      throw UnknownReceptorType(receptor_type, get_name());
-    return B_.logger_.connect_logging_device(dlr, recordablesMap_);
-  }
  
   inline
   void iaf_cond_exp_sfa_rr::get_status(DictionaryDatum &d) const

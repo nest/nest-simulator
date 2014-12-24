@@ -82,6 +82,11 @@ class TestOneToOne(TestParams):
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestOneToOne)
     return suite
+
+def run():
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())
+    
         
 if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    run()

@@ -88,16 +88,22 @@ namespace nest {
     sinusoidal_poisson_generator();
     sinusoidal_poisson_generator(const sinusoidal_poisson_generator&);
 
-    using Node::handle;
-    using Node::connect_sender;
+    port send_test_event(Node&, rport, synindex, bool);
 
-    port check_connection(Connection&, port);
+    /**
+     * Import sets of overloaded virtual functions.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+     */
+    using Node::handle;
+    using Node::handles_test_event;
+    using Node::event_hook;
 
     void handle(DataLoggingRequest &);
-    port connect_sender(DataLoggingRequest &, port);
+
+    port handles_test_event(DataLoggingRequest&, rport);
 
     void get_status(DictionaryDatum &) const;
-    void set_status(const DictionaryDatum &) ;
+    void set_status(const DictionaryDatum &);
 
     //! Model can be switched between proxies (single spike train) and not
     bool has_proxies() const { return not P_.individual_spike_trains_; }
@@ -112,11 +118,11 @@ namespace nest {
     void event_hook(DSSpikeEvent&);
 
     void update(Time const &, const long_t, const long_t);
-    
+
     struct Parameters_ {
       /** temporal frequency in radian/ms. */
       double_t om_;
-            
+      
       /** phase in radian */
       double_t phi_;
       
@@ -137,18 +143,13 @@ namespace nest {
       
       /**
        * Set values from dicitonary.
-       * @note State is passed so that the position can be reset if the 
+       * @note State is passed so that the position can be reset if the
        *       spike_times_ vector has been filled with new data.
        */
-      void set(const DictionaryDatum&, const sinusoidal_poisson_generator&);  
+      void set(const DictionaryDatum&, const sinusoidal_poisson_generator&);
     };
 
-    // ------------------------------------------------------------
-    
-    /**
-     * State
-     */
-    struct State_ {      
+    struct State_ {
 
       double_t y_0_;      //!< Two-component oscillator state vector, see Rotter&Diesmann
       double_t y_1_;
@@ -167,7 +168,7 @@ namespace nest {
     friend class RecordablesMap<sinusoidal_poisson_generator>;
     friend class UniversalDataLogger<sinusoidal_poisson_generator>;
 
-    // ---------------------------------------------------------------- 
+    // ----------------------------------------------------------------
 
     /**
      * Buffers of the model.
@@ -203,35 +204,36 @@ namespace nest {
   };
 
   inline
-    port sinusoidal_poisson_generator::check_connection(Connection& c, port receptor_type)
+  port sinusoidal_poisson_generator::send_test_event(Node& target, rport receptor_type, synindex syn_id, bool dummy_target)
+  {
+	device_.enforce_single_syn_type(syn_id);
+
+	// to ensure correct overloading resolution, we need explicit event types
+    // therefore, we need to duplicate the code here
+    if (  dummy_target )
     {
-      if ( P_.individual_spike_trains_ )
-      {
-	DSSpikeEvent e;
-	e.set_sender(*this);
-	c.check_event(e);
-	return c.get_target()->connect_sender(e, receptor_type);
-      }
-      else
-      {
-	SpikeEvent e;
-	e.set_sender(*this);
-	c.check_event(e);
-	return c.get_target()->connect_sender(e, receptor_type);
-      }
+      DSSpikeEvent e;
+      e.set_sender(*this);
+      return target.handles_test_event(e, receptor_type);
     }
+    else
+    {
+      SpikeEvent e;
+      e.set_sender(*this);
+      return target.handles_test_event(e, receptor_type);
+    }
+  }
 
   inline
-    port sinusoidal_poisson_generator::connect_sender(DataLoggingRequest& dlr, 
-				      port receptor_type)
-    {
-      if (receptor_type != 0)
-	throw UnknownReceptorType(receptor_type, get_name());
-      return B_.logger_.connect_logging_device(dlr, recordablesMap_);
-    }
+  port sinusoidal_poisson_generator::handles_test_event(DataLoggingRequest& dlr, rport receptor_type)
+  {
+    if (receptor_type != 0)
+      throw UnknownReceptorType(receptor_type, get_name());
+    return B_.logger_.connect_logging_device(dlr, recordablesMap_);
+  }
 
   inline
-    void sinusoidal_poisson_generator::get_status(DictionaryDatum &d) const
+  void sinusoidal_poisson_generator::get_status(DictionaryDatum &d) const
   {
     P_.get(d);
     S_.get(d);
@@ -240,7 +242,7 @@ namespace nest {
   }
 
   inline
-    void sinusoidal_poisson_generator::set_status(const DictionaryDatum &d)
+  void sinusoidal_poisson_generator::set_status(const DictionaryDatum &d)
   {
     Parameters_ ptmp = P_;  // temporary copy in case of errors
 
@@ -252,9 +254,8 @@ namespace nest {
 
     // if we get here, temporaries contain consistent set of properties
     P_ = ptmp;
-
   }
 
 } // namespace
 
-#endif // sinusoidal_poisson_generator_H
+#endif // SINUSOIDAL_POISSON_GENERATOR_H

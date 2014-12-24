@@ -150,7 +150,7 @@ namespace nest
 				  const double ps_offset, const double weight)
   {
     const delay idx = Scheduler::get_slice_modulo(rel_delivery);
-    assert(idx < queue_.size());
+    assert((size_t) idx < queue_.size());
     assert(ps_offset >= 0);  
     
     queue_[idx].push_back(SpikeInfo(stamp, ps_offset, weight)); 

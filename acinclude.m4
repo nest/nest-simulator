@@ -69,7 +69,7 @@ echo "Platform: ${host}"
            SLI_warningflags="-w1"
          fi
          if test "$SLI_optimize" = "set" -a -z "$SLI_optimizeflags"; then 
-           SLI_optimizeflags="-O3 -mp"
+           SLI_optimizeflags="-O3 -fp-model precise"
          fi
        else
          #real g++
@@ -357,7 +357,7 @@ echo "Platform: ${host}"
            SLI_warningflags="-w1"
          fi
          if test "$SLI_optimize" = "set" -a -z "$SLI_optimizeflags"; then 
-           SLI_optimizeflags="-O3 -mp"
+           SLI_optimizeflags="-O3 -fp-model precise"
          fi
        else
          #real g++
@@ -691,60 +691,6 @@ if test "$sli_alpha_cxx_makros_ignored" = yes; then
 fi
 ])
 
-
-
-AC_DEFUN([SLI_ALPHA_CXX_PTHREAD_IGNORED],
-[
-AC_CACHE_CHECK(whether the compiler ignores symbols pthread.h,
-sli_cv_alpha_cxx_pthread_ignored,
-[AC_LANG_SAVE 
- pthread_help=$CXXFLAGS
- CXXFLAGS=$AM_CXXFLAGS
- AC_LANG_CPLUSPLUS
- AC_TRY_COMPILE([
-#include <pthread.h>  
- ],, 
- sli_cv_alpha_cxx_pthread_ignored=no, sli_cv_alpha_cxx_pthread_ignored=yes)
- CXXFLAGS=$pthread_help
- AC_LANG_RESTORE
-])
-if test "$sli_cv_alpha_cxx_pthread_ignored" = yes; then
-  AC_DEFINE(HAVE_PTHREAD_IGNORED,,
-            [define if the compiler ignores symbolic names in pthread.h])
-fi
-])
-
-AC_DEFUN([SLI_HAVE_PTHREAD_SETCONCURRENCY],
-[
-AC_CACHE_CHECK(whether pthread_setconcurrency is available,
-sli_cv_have_pthread_setconcurrency,
-[AC_LANG_SAVE 
- pthread_help=$CXXFLAGS
- CXXFLAGS=$AM_CXXFLAGS
- AC_LANG_CPLUSPLUS
- AC_TRY_COMPILE([
-#ifdef HAVE_PTHREAD_IGNORED
-#undef __PURE_CNAME
-#include <pthread.h>
-#define __PURE_CNAME
-#else
-#include <pthread.h>
-#endif
-void foo()
-{
-  unsigned int n=4;
-  int status = pthread_setconcurrency(n);
-}
- ],, 
- sli_cv_have_pthread_setconcurrency=yes, sli_cv_have_pthread_setconcurrency=no)
- CXXFLAGS=$pthread_help
- AC_LANG_RESTORE
-])
-if test "$sli_cv_have_pthread_setconcurrency" = yes; then
-  AC_DEFINE(HAVE_PTHREAD_SETCONCURRENCY,,
-            [define if pthread_setconcurrency is available])
-fi
-])
 
 AC_DEFUN([SLI_ALPHA_CXX_SIGUSR_IGNORED],
 [

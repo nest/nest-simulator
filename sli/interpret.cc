@@ -27,7 +27,6 @@
 #include <algorithm>
 #include <ctime>
 #include <string>
-#include "mutex.h"
 #include "numerics.h"
 #include <exception>
 #include "psignal.h"
@@ -60,7 +59,6 @@
 #include <omp.h>
 #endif
 
-using nest::Mutex;
 
 // This function is the only interface to the driver program
 extern void init_slidict(SLIInterpreter *);
@@ -812,11 +810,6 @@ void SLIInterpreter::message(int level, const char from[],
 #ifdef _OPENMP
 #pragma omp critical (message)
   {
-#else
-#ifdef HAVE_PTHREADS
-  static Mutex barrier;
-  barrier.lock();
-#endif
 #endif
   if(level >= verbositylevel)
   {
@@ -838,10 +831,6 @@ void SLIInterpreter::message(int level, const char from[],
 
 #ifdef _OPENMP
   }
-#else
-#ifdef HAVE_PTHREADS
-  barrier.unlock();
-#endif
 #endif
 }
 
@@ -1227,7 +1216,7 @@ int SLIInterpreter::execute(const std::string &cmdline)
       return -1;
 
   OStack.push(new StringDatum(cmdline));
-  EStack.push(new NameDatum("evalstring"));
+  EStack.push(new NameDatum("::evalstring"));
   return execute_(); // run the interpreter
 }
 
@@ -1374,232 +1363,3 @@ int SLIInterpreter::execute_(size_t exitlevel)
     
     return exitcode;
 }
-
-
-// inline
-// void SLIInterpreter::run_procedure_safe()
-// {
-// /* Stack Layout:
-//       3       2       1
-//    <proc>  <pos>   %iterate
-// */
-
-//     ProcedureDatum const *pd= dynamic_cast<ProcedureDatum *>(EStack.pick(2).datum());   
-//     assert(pd != 0);
-
-//     IntegerDatum   *id= dynamic_cast<IntegerDatum *>(EStack.pick(1).datum());
-//     assert(id != 0);
-//     size_t pos = static_cast<size_t>(id->get());
-    
-//     if( pos < pd->size())
-//     {
-//       Token t(pd->get(pos));
-//       if(step_mode())
-//       {
-// 	//std::cerr << std::endl;
-// 	do{
-// 	  char cmd=debug_commandline(t);
-// 	  if(cmd=='l') // List the procedure
-// 	  {
-// 	    if(pd !=NULL)
-// 	    {
-// 	      pd->list(std::cerr,"   ",pos);
-// 	      std::cerr <<std::endl;
-// 	    }
-// 	  }
-// 	  else 
-// 	    break;
-// 	} while (true);
-//       }
-
-//       if((pos+1 == pd->size()) 
-// 	 && optimize_tailrecursion() ) // This handles tailing recursion
-//       {
-// 	EStack.pop(3);
-// 	dec_call_depth();
-//       }
-//       else
-//         id->incr();
-
-//       EStack.push_move(t);
-//     }
-//     else
-//     {
-//       EStack.pop(3);
-//       dec_call_depth();
-//     }
-// }
-
-// inline
-// void SLIInterpreter::run_procedure()
-// {
-// /* Stack Layout:
-//       3       2       1
-//    <proc>  <pos>   %iterate
-// */
-
-//     ProcedureDatum const *pd= static_cast<ProcedureDatum *>(EStack.pick(2).datum());   
-//     IntegerDatum   *id= static_cast<IntegerDatum *>(EStack.pick(1).datum());
-//     long &pos = id->get();
-//     const long psize= pd->size();
-
-//     if( pos < psize)
-//     {
-//       Token t(pd->get(pos));
-//       ++pos;
-//       EStack.push_move(t);
-//     }
-//     else
-//     {
-//       EStack.pop(3);
-//       dec_call_depth();
-//     }
-// }
-
-
-// inline
-// void SLIInterpreter::run_repeat()
-// {
-//     IntegerDatum
-//         *proccount= static_cast<IntegerDatum *>(EStack.pick(1).datum());
-    
-//     ProcedureDatum
-//         const *proc= static_cast<ProcedureDatum *>(EStack.pick(2).datum());
-    
-//     size_t pos = static_cast<size_t>(proccount->get());
-    
-//     if(  pos < proc->size())
-//     {
-//         proccount->incr();
-//         EStack.push(proc->get(pos));
-//     }
-//     else
-//     {
-//         IntegerDatum
-//             *loopcount= static_cast<IntegerDatum *>(EStack.pick(3).datum());
-        
-//         if( loopcount->get() > 0 )
-//         {
-//             (*proccount)=0;     // reset procedure iterator
-//             loopcount->decr();
-//         }
-//         else
-// 	{
-//             EStack.pop(5);
-// 	    dec_call_depth();
-// 	}
-//     }
-
-// }
-
-// inline
-// void SLIInterpreter::run_repeat_debug()
-// {
-//     IntegerDatum
-//         *proccount= static_cast<IntegerDatum *>(EStack.pick(1).datum());
-    
-//     ProcedureDatum
-//         const *proc= static_cast<ProcedureDatum *>(EStack.pick(2).datum());
-    
-//     size_t pos = static_cast<size_t>(proccount->get());
-    
-//     if(  pos < proc->size())
-//     {
-//         proccount->incr();
-//         EStack.push(proc->get(pos));
-// 	if(step_mode())
-// 	{
-// 	  do{
-// 	    char cmd=debug_commandline(EStack.top());
-// 	    if(cmd=='l') // List the procedure
-// 	    {
-// 	      proc->list(std::cerr,"   ",pos);
-// 	      std::cerr <<std::endl;
-// 	    }
-// 	    else 
-// 	      break;
-// 	  } while (true);
-// 	}
-//     }
-//     else
-//     {
-//         IntegerDatum
-//             *loopcount= static_cast<IntegerDatum *>(EStack.pick(3).datum());
-        
-//         if( loopcount->get() > 0 )
-//         {
-//             (*proccount)=0;     // reset procedure iterator
-//             loopcount->decr();
-// 	    if(step_mode())
-// 	    {
-// 	      std::cerr << "repeat: " << loopcount->get()
-// 			<< " iterations left." << std::endl;
-// 	    }
-//         }
-//         else
-// 	{
-//             EStack.pop(5);
-// 	    dec_call_depth();
-// 	}
-//     }
-
-// }
-
-// inline
-// void SLIInterpreter::run_forallarray()
-// {
-//     IntegerDatum *count=
-//         static_cast<IntegerDatum *>(EStack.pick(2).datum());
-//     IntegerDatum *limit=
-//         static_cast<IntegerDatum *>(EStack.pick(3).datum());
-    
-//     if(count->get() < limit->get())
-//     {
-//       ArrayDatum *obj=
-// 	static_cast<ArrayDatum *>(EStack.pick(4).datum());
-
-//       OStack.push(obj->get(count->get()));  // push current element to operand stack
-//       count->incr();
-//       EStack.push(EStack.pick(1));       // push procedure to execution stack
-//     }
-//     else // at end of iteration remove everything from execution stack
-//     {
-// 	EStack.pop(6);
-// 	dec_call_depth();
-//     }
-// }
-
-// inline
-// void SLIInterpreter::run_forallarray_debug()
-// {
-//     IntegerDatum *count=
-//         static_cast<IntegerDatum *>(EStack.pick(2).datum());
-
-//     IntegerDatum *limit=
-//         static_cast<IntegerDatum *>(EStack.pick(3).datum());
-    
-//     if(count->get() < limit->get())
-//     {
-//       ArrayDatum *obj=
-// 	static_cast<ArrayDatum *>(EStack.pick(4).datum());
-
-//       OStack.push(obj->get(count->get()));  // push current element to operand stack
-//       count->incr();
-//       EStack.push(EStack.pick(1));       // push procedure to execution stack
-//       if(step_mode())
-//       {
-// 	  std::cerr << "forall:"
-// 		    << " Limit: " << limit->get()
-// 		    << " Pos: " << count->get()
-// 		    << " Iterator: ";
-// 	  OStack.pick(0).pprint(std::cerr);
-// 	  std::cerr << std::endl;
-//       }
-//     }
-//     else // at end of iteration remove everything from execution stack
-//     {
-// 	EStack.pop(6);
-// 	dec_call_depth();
-//     }
-
-// }

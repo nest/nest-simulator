@@ -20,20 +20,14 @@
  *
  */
 
-/*
- * first version
- * date: april 2007
- * author: Moritz Helias, Jochen Martin Eppler
- */
-
 #include "network.h"
 #include "connector_model.h"
-
+#include "connector_base.h"
 
 namespace nest
 {
 
-ConnectorModel::ConnectorModel(Network &net, std::string name) :
+ConnectorModel::ConnectorModel(Network &net, const std::string name) :
     net_(net),
     min_delay_(Time::pos_inf()),
     max_delay_(Time::neg_inf()),
@@ -43,133 +37,122 @@ ConnectorModel::ConnectorModel(Network &net, std::string name) :
     name_(name)
 { }
 
-ConnectorModel::ConnectorModel(const ConnectorModel &cm, std::string name) :
-      net_(cm.net_),
-      min_delay_(cm.min_delay_),
-      max_delay_(cm.max_delay_),
-      num_connections_(0),
-      num_connectors_(0),
-      default_delay_needs_check_(true),
-      user_set_delay_extrema_(cm.user_set_delay_extrema_),
-      name_(name)
+ConnectorModel::ConnectorModel(const ConnectorModel &cm, const std::string name) :
+  net_(cm.net_),
+  min_delay_(cm.min_delay_),
+  max_delay_(cm.max_delay_),
+  num_connections_(0),
+  default_delay_needs_check_(true),
+  user_set_delay_extrema_(cm.user_set_delay_extrema_),
+  name_(name)
 {
   min_delay_.calibrate();  // in case of change in resolution
   max_delay_.calibrate();
 }
 
-bool ConnectorModel::check_delay(double_t new_delay)
+void ConnectorModel::update_delay_extrema(const double_t mindelay_cand,
+					  const double_t maxdelay_cand )
 {
+  // check min delay candidate
+  Time delay_cand = Time(Time::ms(mindelay_cand));
+  if (delay_cand < min_delay_)
+    min_delay_ = delay_cand;
 
-  if (new_delay < Time::get_resolution().get_ms())
-  {
-    net_.message(SLIInterpreter::M_ERROR, "check_delay()", "Delay must be greater than or equal to resolution");
-    return false;
-  }
+  // check max delay candidate
+  delay_cand = Time(Time::ms(maxdelay_cand));
+  if (delay_cand > max_delay_)
+    max_delay_ = delay_cand;
+}
+
+void ConnectorModel::assert_valid_delay_ms(double_t requested_new_delay)
+{
+  // We have to convert the delay in ms to a Time object then to steps and back the ms again
+  // in order to get the value in ms which can be represented with an integer number of steps
+  // in the currently chosen Time representation.
+  // See also bug #217, MH 08-04-23
+  // This is also done by creating a Time object out of the provided ms.
+  const Time new_delay = Time(Time::ms(requested_new_delay));
+
+  if ( new_delay < Time::get_resolution() )
+    throw BadDelay(new_delay.get_ms(), "Delay must be greater than or equal to resolution");
 
   // if already simulated, the new delay has to be checked against the
   // min_delay and the max_delay which have been used during simulation
-  if (net_.get_simulated())
+  if ( net_.get_simulated() )
   {
     Time sim_min_delay = Time::step(net_.get_min_delay());
     Time sim_max_delay = Time::step(net_.get_max_delay());
-    bool bad_min_delay = new_delay < sim_min_delay.get_ms();
-    bool bad_max_delay = new_delay > sim_max_delay.get_ms();
+    const bool bad_min_delay = new_delay < sim_min_delay;
+    const bool bad_max_delay = new_delay > sim_max_delay;
  
-    if (bad_min_delay || bad_max_delay)
-      {
-	net_.message(SLIInterpreter::M_ERROR, "check_delay()", "Delay cannot be set: Simulate has been called already");
-	return false;
-      }
+    if ( bad_min_delay || bad_max_delay )
+      throw BadDelay(new_delay.get_ms(),
+    		  	     "Minimum and maximum delay cannot be changed after Simulate has been called.");
   }
   
-  bool bad_min_delay = new_delay < min_delay_.get_ms();
-  bool bad_max_delay = new_delay > max_delay_.get_ms();
+  const bool new_min_delay = new_delay < min_delay_;
+  const bool new_max_delay = new_delay > max_delay_;
 
-  if (!bad_min_delay && !bad_max_delay)
-    return true;
+  if ( new_min_delay )
+  {
+	  if ( user_set_delay_extrema_ )
+	    throw BadDelay(new_delay.get_ms(), "Delay must be greater than or equal to min_delay.");
+	  else
+		update_delay_extrema(new_delay.get_ms(), max_delay_.get_ms());
+  }
 
-  if (user_set_delay_extrema_)
-    {
-      if (bad_min_delay)
-	net_.message(SLIInterpreter::M_ERROR, "check_delay()", "Delay must be greater than or equal to min_delay");
-      if (bad_max_delay)
-	net_.message(SLIInterpreter::M_ERROR, "check_delay()", "Delay must be smaller than or equal to max_delay");
-      return false;    
-    }
-
-  if (bad_min_delay)
-    update_delay_extrema(new_delay, max_delay_.get_ms());
-
-  if (bad_max_delay)
-    update_delay_extrema(min_delay_.get_ms(), new_delay);
-
-  return true;
+  if ( new_max_delay )
+  {
+	if ( user_set_delay_extrema_ )
+	  throw BadDelay(new_delay.get_ms(), "Delay must be smaller than or equal to max_delay.");
+    else
+      update_delay_extrema(min_delay_.get_ms(), new_delay.get_ms());
+  }
 }
 
-bool ConnectorModel::check_delays(double_t new_delay1, double_t new_delay2)
+void ConnectorModel::assert_two_valid_delays_steps(long_t new_delay1, long_t new_delay2)
 {
-  double_t ldelay = new_delay1 < new_delay2 ? new_delay1 : new_delay2;
-  double_t hdelay = new_delay1 < new_delay2 ? new_delay2 : new_delay1;
+  const long_t ldelay = std::min(new_delay1, new_delay2);
+  const long_t hdelay = std::max(new_delay1, new_delay2);
 
-  if (ldelay < Time::get_resolution().get_ms())
-  {
-    net_.message(SLIInterpreter::M_ERROR, "check_delay()", "Delay must be greater than or equal to resolution");
-    return false;
-  }
+  if ( ldelay < Time::get_resolution().get_steps() )
+     throw BadDelay(Time::delay_steps_to_ms(ldelay),
+    		        "Delay must be greater than or equal to resolution");
  
-  if (net_.get_simulated())
+  if ( net_.get_simulated() )
   {
-    Time sim_min_delay = Time::step(net_.get_min_delay());
-    Time sim_max_delay = Time::step(net_.get_max_delay());
-    bool bad_min_delay = ldelay < sim_min_delay.get_ms();
-    bool bad_max_delay = hdelay > sim_max_delay.get_ms();
+    const bool bad_min_delay = ldelay < net_.get_min_delay();
+    const bool bad_max_delay = hdelay > net_.get_max_delay();
 
-    if (bad_min_delay || bad_max_delay)
-      {
-	net_.message(SLIInterpreter::M_ERROR, "check_delay()", "Delay cannot be set: Simulate has been called already");
-	return false;
-      }
+    if ( bad_min_delay )
+      throw BadDelay(Time::delay_steps_to_ms(ldelay),
+    		  	     "Minimum delay cannot be changed after Simulate has been called.");
+
+    if ( bad_max_delay )
+      throw BadDelay(Time::delay_steps_to_ms(hdelay),
+    		  	     "Maximum delay cannot be changed after Simulate has been called.");
   }
 
-  bool bad_min_delay = ldelay < min_delay_.get_ms();
-  bool bad_max_delay = hdelay > max_delay_.get_ms();
+  const bool new_min_delay = ldelay < min_delay_.get_steps();
+  const bool new_max_delay = hdelay > max_delay_.get_steps();
 
-  if (!bad_min_delay && !bad_max_delay)
-    return true;
-  
-  if (user_set_delay_extrema_)
-    {
-      if (bad_min_delay)
-	net_.message(SLIInterpreter::M_ERROR, "check_delay()", "Delay must be greater than or equal to min_delay");
-      if (bad_max_delay)
-	net_.message(SLIInterpreter::M_ERROR, "check_delay()", "Delay must be smaller than or equal to max_delay");
-      return false;    
-    }
+  if ( new_min_delay )
+  {
+	  if ( user_set_delay_extrema_ )
+	    throw BadDelay(Time::delay_steps_to_ms(ldelay),
+	    		       "Delay must be greater than or equal to min_delay.");
+	  else
+		update_delay_extrema(Time::delay_steps_to_ms(ldelay), max_delay_.get_ms());
+  }
 
-  if (bad_min_delay)
-    update_delay_extrema(ldelay, max_delay_.get_ms());
-  
-  if (bad_max_delay)
-    update_delay_extrema(min_delay_.get_ms(), hdelay);
-
-  return true;
-
-}
-
-void ConnectorModel::update_delay_extrema(const double_t mindelay_cand, 
-					  const double_t maxdelay_cand )
-{ 
-  if (mindelay_cand < min_delay_.get_ms())
-    min_delay_ = Time(Time::ms(mindelay_cand));
-  
-  if (maxdelay_cand > max_delay_.get_ms())
-    max_delay_ = Time(Time::ms(maxdelay_cand));
-}
-
-size_t ConnectorModel::get_num_connections() const
-{
-  net_.count_connections();
-  return num_connections_;
+  if ( new_max_delay )
+  {
+	if ( user_set_delay_extrema_ )
+	  throw BadDelay(Time::delay_steps_to_ms(hdelay),
+			         "Delay must be smaller than or equal to max_delay.");
+    else
+      update_delay_extrema(min_delay_.get_ms(), Time::delay_steps_to_ms(hdelay));
+  }
 }
 
 } // namespace nest

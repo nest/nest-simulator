@@ -39,8 +39,6 @@ A network node of type subnet serves as a root node for subnetworks
 Parameters:
 Parameters that can be accessed via the GetStatus and SetStatus functions:
 
-children_on_same_vp (booltype) -
-   Whether all children are allocated on the same virtual process
 customdict (dictionarytype) -
    A user-defined dictionary, which may be used to store additional
    data.
@@ -165,13 +163,7 @@ namespace nest{
     
     std::string print_network(int , int, std::string = "");
 
-    bool get_children_on_same_vp() const;
-    void set_children_on_same_vp(bool);
-
-    thread get_children_vp() const;
-    void set_children_vp(thread);
-    
-    bool allow_entry() const;
+    bool is_subnet() const;
 
     bool is_homogeneous() const; 
 
@@ -199,14 +191,6 @@ namespace nest{
      */
     Multirange gids_;
 
-    /**
-     * flag indicating if all children of this subnet have to
-     * be created on the same virtual process or not. Use with
-     * care. This may lead to severe performance problems!
-     */
-    bool children_on_same_vp_;
-    thread children_vp_;
-    
   private:
     void get_dimensions_(std::vector<int>&) const;
 
@@ -340,30 +324,6 @@ namespace nest{
   bool Subnet::has_proxies() const
   {
     return false;
-  }
-
-  inline
-  bool Subnet::get_children_on_same_vp() const
-  {
-    return children_on_same_vp_;
-  }
-
-  inline
-  void Subnet::set_children_on_same_vp(bool children_on_same_vp)
-  {
-    children_on_same_vp_ = children_on_same_vp;
-  }
-
-  inline
-  thread Subnet::get_children_vp() const
-  {
-    return children_vp_;
-  }
-
-  inline
-  void Subnet::set_children_vp(thread children_vp)
-  {
-    children_vp_ = children_vp;
   }
 
   inline

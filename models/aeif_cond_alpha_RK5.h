@@ -23,15 +23,12 @@
 #ifndef AEIF_COND_ALPHA_RK5_H
 #define AEIF_COND_ALPHA_RK5_H
 
-#include "config.h"
-
 #include "nest.h"
 #include "event.h"
 #include "archiving_node.h"
 #include "ring_buffer.h"
 #include "connection.h"
 #include "universal_data_logger.h"
-#include "recordables_map.h"
 
 /* BeginDocumentation
 Name: aeif_cond_alpha_RK5 -  Conductance based exponential integrate-and-fire neuron model according to Brette and Gerstner (2005).
@@ -115,25 +112,20 @@ namespace nest
 
     /**
      * Import sets of overloaded virtual functions.
-     * We need to explicitly include sets of overloaded
-     * virtual functions into the current scope.
-     * According to the SUN C++ FAQ, this is the correct
-     * way of doing things, although all other compilers
-     * happily live without.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
-
-    using Node::connect_sender;
     using Node::handle;
+    using Node::handles_test_event;
 
-    port check_connection(Connection&, port);
-    
+    port send_test_event(Node&, rport, synindex, bool);
+
     void handle(SpikeEvent &);
     void handle(CurrentEvent &);
     void handle(DataLoggingRequest &); 
     
-    port connect_sender(SpikeEvent &, port);
-    port connect_sender(CurrentEvent &, port);
-    port connect_sender(DataLoggingRequest &, port);
+    port handles_test_event(SpikeEvent&, rport);
+    port handles_test_event(CurrentEvent&, rport);
+    port handles_test_event(DataLoggingRequest&, rport);
 
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
@@ -143,6 +135,7 @@ namespace nest
     void init_state_(const Node& proto);
     void init_buffers_();
     void calibrate();
+
     void update(Time const &, const long_t, const long_t);
     
     inline
@@ -303,16 +296,16 @@ namespace nest
   };
 
   inline  
-  port aeif_cond_alpha_RK5::check_connection(Connection& c, port receptor_type)
+  port aeif_cond_alpha_RK5::send_test_event(Node& target, rport receptor_type, synindex, bool)
   {
     SpikeEvent e;
     e.set_sender(*this);
-    c.check_event(e);
-    return c.get_target()->connect_sender(e, receptor_type);
+
+    return target.handles_test_event(e, receptor_type);
   }
 
   inline
-  port aeif_cond_alpha_RK5::connect_sender(SpikeEvent&, port receptor_type)
+  port aeif_cond_alpha_RK5::handles_test_event(SpikeEvent&, rport receptor_type)
   {
     if (receptor_type != 0)
       throw UnknownReceptorType(receptor_type, get_name());
@@ -320,7 +313,7 @@ namespace nest
   }
  
   inline
-  port aeif_cond_alpha_RK5::connect_sender(CurrentEvent&, port receptor_type)
+  port aeif_cond_alpha_RK5::handles_test_event(CurrentEvent&, rport receptor_type)
   {
     if (receptor_type != 0)
       throw UnknownReceptorType(receptor_type, get_name());
@@ -328,8 +321,8 @@ namespace nest
   }
 
   inline
-  port aeif_cond_alpha_RK5::connect_sender(DataLoggingRequest& dlr, 
-				      port receptor_type)
+  port aeif_cond_alpha_RK5::handles_test_event(DataLoggingRequest& dlr, 
+				      rport receptor_type)
   {
     if (receptor_type != 0)
       throw UnknownReceptorType(receptor_type, get_name());

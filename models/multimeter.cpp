@@ -20,6 +20,7 @@
  *
  */
 
+#include "network.h"
 #include "multimeter.h"
 
 namespace nest
@@ -42,17 +43,16 @@ namespace nest
       V_()
   {}
 
-  port Multimeter::check_connection(Connection& c, port receptor_type)  
-  { 
+  port Multimeter::send_test_event(Node& target, rport receptor_type, synindex, bool)
+  {
     DataLoggingRequest e(P_.interval_, P_.record_from_);
     e.set_sender(*this);
-    c.check_event(e);
-    port p = c.get_target()->connect_sender(e, receptor_type);
-    // no throw so far, so we have connection
-    B_.has_targets_ = true;
+    port p = target.handles_test_event(e, receptor_type);
+    if ( p != invalid_port_ and not is_model_prototype() )
+      B_.has_targets_ = true;
     return p;
   }
-  
+
   nest::Multimeter::Parameters_::Parameters_()
     : interval_(Time::ms(1.0)),
       record_from_()
@@ -89,7 +89,7 @@ namespace nest
     double_t v;
     if ( updateValue<double_t>(d, names::interval, v) )
       {      
-	if ( v < Time::get_resolution().get_ms() )
+        if ( Time(Time::ms(v)) < Time::get_resolution() )
 	  throw BadProperty("The sampling interval must be at least as long "
 			    "as the simulation resolution.");
 	

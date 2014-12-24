@@ -293,7 +293,7 @@ Author: Hans Ekkehard Plesser
   inline 
   long ClippedRedrawDiscreteRandomDev<BaseRDV>::ldev(void)
   {
-    return ldev(this->rng_);
+    return ClippedRedrawDiscreteRandomDev<BaseRDV>::ldev(this->rng_);
   }
 
   template <typename BaseRDV>
@@ -535,7 +535,7 @@ Author: Hans Ekkehard Plesser
   inline 
   long ClippedToBoundaryDiscreteRandomDev<BaseRDV>::ldev(void)
   {
-    return ldev(this->rng_);
+    return ClippedToBoundaryDiscreteRandomDev<BaseRDV>::ldev(this->rng_);
   }
 
   template <typename BaseRDV>

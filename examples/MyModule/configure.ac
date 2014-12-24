@@ -176,9 +176,9 @@ echo "NEST compiler flags : $NEST_CPPFLAGS"
 
 # these variables will still contain '${prefix}'
 # we want to have the versions where this is resolved, too:
-eval eval eval  PKGDOCDIR_AS_CONFIGURED=$PKGDOCDIR
-eval eval eval  PKGDATADIR_AS_CONFIGURED=$PKGDATADIR
-
+eval eval eval PKGDOCDIR_AS_CONFIGURED=$PKGDOCDIR
+eval eval eval PKGDATADIR_AS_CONFIGURED=$PKGDATADIR
+eval eval eval LIBDIR_AS_CONFIGURED=$libdir
 echo
 echo "-------------------------------------------------------"
 echo
@@ -186,6 +186,5 @@ echo "You can build and install MyModule now, using"
 echo "  make"
 echo "  make install"
 echo
-echo "MyModule will be installed to:"
-echo -n "  "; eval eval echo "$libdir"
+echo "MyModule will be installed to: $LIBDIR_AS_CONFIGURED"
 echo

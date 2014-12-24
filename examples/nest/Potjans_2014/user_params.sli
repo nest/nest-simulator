@@ -20,9 +20,14 @@
  *
  */
 
-% absolute path to which the output files should be written
-/output_path (/path_to_data/data)
-def
+(sim_params) run
+
+run_mode (production) eq
+{
+    % absolute path to which the output files should be written
+    /output_path (/path_to_data/data)
+    def
+} if
 
 % path to the mpi shell script
 % can be left out if set beforehand

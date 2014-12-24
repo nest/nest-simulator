@@ -47,11 +47,17 @@
 #include <iosfwd>
 #include <stdexcept>                 // For length_error
 
+/* If we're not using GNU C, elide __attribute__ */
+#ifndef __GNUC__
+#  define  __attribute__(x)  /*NOTHING*/
+#endif
+
 _START_GOOGLE_NAMESPACE_
 
 template <bool> struct SparsehashCompileAssert { };
 #define SPARSEHASH_COMPILE_ASSERT(expr, msg) \
-  typedef SparsehashCompileAssert<(bool(expr))> msg[bool(expr) ? 1 : -1]
+  typedef SparsehashCompileAssert<(bool(expr))> msg[bool(expr) ? 1 : -1] \
+       __attribute__((unused))
 
 namespace sparsehash_internal {
 

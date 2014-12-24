@@ -45,18 +45,6 @@
 #include "genericmodel.h"
 #include "conn_builder.h"
 
-#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
-extern "C"
-{
-  // These functions are defined in the file "bg_get_mem.c". They need
-  // to reside in a plain C file, because the #pragmas defined in the
-  // BG header files interfere with C++, causing "undefined reference
-  // to non-virtual thunk" MH 12-02-22, redid fix by JME 12-01-27.
-  long bg_get_heap_mem();
-  long bg_get_stack_mem();
-}
-#endif
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -133,7 +121,7 @@ namespace nest
 
     index node_gid = getValue<long>(i->OStack.pick(0));
 
-    if(get_network().get_node(node_gid)->allow_entry())
+    if(get_network().get_node(node_gid)->is_subnet())
       get_network().go_to(node_gid);
     else
       throw SubnetExpected();
@@ -226,7 +214,9 @@ namespace nest
     if ( !dict->all_accessed(missed) )
     {
       if ( get_network().dict_miss_is_error() )
-        throw UnaccessedDictionaryEntry(missed);
+        throw UnaccessedDictionaryEntry(missed +
+        		                        "\nMaybe you tried to set common synapse properties through"
+        		                        " an individual synapse?");
       else
         get_network().message(SLIInterpreter::M_WARNING, "SetStatus", 
                               ("Unread dictionary entries: " + missed).c_str());
@@ -347,8 +337,8 @@ namespace nest
      Standard entries for nodes:
 
      global_id   - local ID of the node
-     status      - integer, representing the status flags of the node
      model       - literal, defining the current node
+     frozen      - frozen nodes are not updated
      thread      - the thread the node is allocated on
      vp          - the virtual process a node belongs to
   
@@ -437,11 +427,13 @@ namespace nest
     {
       const index model_id = static_cast<index>(nodemodel);
       get_network().get_model(model_id)->set_status(dict);
+      get_network().set_model_defaults_modified();
     }
     else if (!synmodel.empty())
     {
       const index synapse_id = static_cast<index>(synmodel);
       get_network().set_connector_defaults(synapse_id, dict);
+      get_network().set_model_defaults_modified();
     }
     else
       throw UnknownModelName(modelname.toString());
@@ -847,6 +839,7 @@ namespace nest
     i->EStack.pop();
   }
 
+
   // Connect for gid gid syn_model
   // See lib/sli/nest-init.sli for details
   void NestModule::Connect_i_i_lFunction::execute(SLIInterpreter *i) const
@@ -867,7 +860,7 @@ namespace nest
     {
       Node* const target_node = get_network().get_node(target);
       const thread target_thread = target_node->get_thread();
-      get_network().connect(source, target, target_node, target_thread, synmodel_id);
+      get_network().connect(source, target_node, target_thread, synmodel_id);
     }
     
     i->OStack.pop(3);
@@ -896,7 +889,7 @@ namespace nest
     {
       Node* const target_node = get_network().get_node(target);
       const thread target_thread = target_node->get_thread();
-      get_network().connect(source, target, target_node, target_thread, weight, delay, synmodel_id);
+      get_network().connect(source, target_node, target_thread, synmodel_id, delay, weight);
     }
     
     i->OStack.pop(5);
@@ -924,7 +917,7 @@ namespace nest
     {
       Node* const target_node = get_network().get_node(target);
       const thread target_thread = target_node->get_thread();
-      get_network().connect(source, target, target_node, target_thread, params, synmodel_id);
+      get_network().connect(source, target_node, target_thread, synmodel_id, params);
     }
     
     i->OStack.pop(4);
@@ -1252,30 +1245,6 @@ namespace nest
     i->EStack.pop();
   }
 
-
-#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
-  /* BeginDocumentation
-     Name: memory_thisjob_bg - Reports memory usage on Blue Gene/P/Q systems
-     Description:
-     BGMemInfo returns a dictionary with the heap and stack memory
-     usage of a process in Bytes.
-     Availability: NEST
-     Author: Jochen Martin Eppler
-  */
-  void NestModule::MemoryThisjobBgFunction::execute(SLIInterpreter *i) const
-  {
-    DictionaryDatum dict(new Dictionary);
-
-    unsigned long heap_memory = bg_get_heap_mem();
-    (*dict)["heap"] = heap_memory;
-    unsigned long stack_memory = bg_get_stack_mem();
-    (*dict)["stack"] = stack_memory;
-  
-    i->OStack.push(dict);
-    i->EStack.pop();
-  }
-#endif
-
   /* BeginDocumentation
      Name: PrintNetwork - Print network tree in readable form.
      Synopsis: 
@@ -1459,7 +1428,35 @@ namespace nest
      Name: SetFakeNumProcesses - Set a fake number of MPI processes.
      Synopsis: n_procs SetFakeNumProcesses -> -
      Description:
-     Sets the number of MPI processes to n_procs. Used for benchmarking puposes only. 
+     Sets the number of MPI processes to n_procs. Used for benchmarking purposes of memory consumption only. 
+     Please note:
+     - Simulation of the network will not be possible after setting fake processes.
+     - It is not possible to use this function when running a script on multiple actual MPI processes.
+     - The setting of the fake number of processes has to happen before the kernel reset and before the setting of the local number of threads. 
+       After calling SetFakeNumProcesses, it is obligatory to call either ResetKernel or SetStatus on the Kernel for the setting of the fake 
+       number of processes to come into effect.
+
+     A typical use case would be to test if a neuronal network fits on a machine of given size without using the actual resources.
+
+     Example:
+               %%% Set fake number of processes
+	       100 SetFakeNumProcesses
+	       ResetNetwork
+
+	       %%% Build network
+	       /iaf_neuron 100 Create 
+	       [1 100] Range /n Set
+     
+	       << /source n /target n >> Connect
+
+	       %%% Measure memory consumption
+	       memory_thisjob ==
+	 
+         Execute this script with 
+	       mpirun -np 1 nest example.sli
+
+     
+     
      Availability: NEST 2.2
      Author: Susanne Kunkel
      FirstVersion: July 2011
@@ -1467,8 +1464,10 @@ namespace nest
   */
   void NestModule::SetFakeNumProcessesFunction_i::execute(SLIInterpreter *i) const
   {
+	i->assert_stack_load(1);
     long n_procs = getValue<long>(i->OStack.pick(0));
     Communicator::set_num_processes(n_procs);
+    i->OStack.pop(1);
     i->EStack.pop();
   }
 
@@ -1488,6 +1487,7 @@ namespace nest
   */
   void NestModule::SetNumRecProcessesFunction_i::execute(SLIInterpreter *i) const
   {
+	i->assert_stack_load(1);
     long n_rec_procs = getValue<long>(i->OStack.pick(0));
     get_network().set_num_rec_processes(n_rec_procs);
     i->OStack.pop(1);
@@ -1566,7 +1566,61 @@ namespace nest
     i->OStack.pop(2); 
     i->OStack.push(time);
     i->EStack.pop(); 
-  } 
+  }
+ 
+  /* BeginDocumentation
+     Name: TimeCommunicationAlltoall - returns average time taken for MPI_Alltoall over n calls with m bytes
+     Synopsis:
+     n m TimeCommunicationAlltoall -> time
+     Availability: 10kproject (>r11254)
+     Author: Jakob Jordan
+     FirstVersion: June 2014
+     Description:
+     The function allows a user to test how much time a call to MPI_Alltoall costs
+     SeeAlso: TimeCommunication
+   */
+  void NestModule::TimeCommunicationAlltoall_i_iFunction::execute(SLIInterpreter *i) const 
+  { 
+    i->assert_stack_load(2); 
+    long samples = getValue<long>(i->OStack.pick(1)); 
+    long num_bytes = getValue<long>(i->OStack.pick(0)); 
+    
+
+    double_t time = 0.0;
+    
+    time = Communicator::time_communicate_alltoall(num_bytes,samples);
+
+    i->OStack.pop(2); 
+    i->OStack.push(time);
+    i->EStack.pop(); 
+  }
+
+  /* BeginDocumentation
+     Name: TimeCommunicationAlltoallv - returns average time taken for MPI_Alltoallv over n calls with m bytes
+     Synopsis:
+     n m TimeCommunicationAlltoallv -> time
+     Availability: 10kproject (>r11300)
+     Author: Jakob Jordan
+     FirstVersion: July 2014
+     Description:
+     The function allows a user to test how much time a call to MPI_Alltoallv costs
+     SeeAlso: TimeCommunication
+   */
+  void NestModule::TimeCommunicationAlltoallv_i_iFunction::execute(SLIInterpreter *i) const 
+  { 
+    i->assert_stack_load(2); 
+    long samples = getValue<long>(i->OStack.pick(1)); 
+    long num_bytes = getValue<long>(i->OStack.pick(0)); 
+    
+
+    double_t time = 0.0;
+    
+    time = Communicator::time_communicate_alltoallv(num_bytes,samples);
+
+    i->OStack.pop(2); 
+    i->OStack.push(time);
+    i->EStack.pop(); 
+  }
 
   /* BeginDocumentation
      Name: ProcessorName - Returns a unique specifier for the actual node.
@@ -1890,10 +1944,6 @@ namespace nest
     i->createcommand("ResetKernel",&resetkernelfunction);
 
     i->createcommand("MemoryInfo", &memoryinfofunction);
-
-#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
-    i->createcommand("memory_thisjob_bg", &memorythisjobbgfunction);
-#endif
    
     i->createcommand("PrintNetwork", &printnetworkfunction);
     
@@ -1904,6 +1954,8 @@ namespace nest
     i->createcommand("SyncProcesses", &syncprocessesfunction);
     i->createcommand("TimeCommunication_i_i_b", &timecommunication_i_i_bfunction); 
     i->createcommand("TimeCommunicationv_i_i", &timecommunicationv_i_ifunction); 
+    i->createcommand("TimeCommunicationAlltoall_i_i", &timecommunicationalltoall_i_ifunction);
+    i->createcommand("TimeCommunicationAlltoallv_i_i", &timecommunicationalltoallv_i_ifunction);
     i->createcommand("ProcessorName", &processornamefunction);
 #ifdef HAVE_MPI
     i->createcommand("MPI_Abort", &mpiabort_ifunction);
@@ -1930,10 +1982,7 @@ namespace nest
     net_->register_conn_builder<FixedInDegreeBuilder>("fixed_indegree");
     net_->register_conn_builder<FixedOutDegreeBuilder>("fixed_outdegree");
     net_->register_conn_builder<BernoulliBuilder>("pairwise_bernoulli");
-
-    #ifdef HAVE_GSL
     net_->register_conn_builder<FixedTotalNumberBuilder>("fixed_total_number");
-    #endif
 
     Token statusd = i->baselookup(Name("statusdict"));
     DictionaryDatum dd=getValue<DictionaryDatum>(statusd);

@@ -44,7 +44,7 @@ Files:
 	- run_microcircuit.sh
 	Bash script. Creates sim_script.sh and submits it to the queue
 
-	- spike_analysis_www.py
+	- spike_analysis.py
 	Python script for basic analysis
 
 The bash script is designed for a cluster with a queuing system that uses qsub.
@@ -57,16 +57,17 @@ Instructions:
 
 1. Download NEST (http://www.nest-initiative.org/index.php/Software:Download)
 
-2. Compile NEST with MPI support (use the --with-mpi option when configuring) 
-   according to the instructions on
+2. Compile NEST according to the instructions on
    http://www.nest-initiative.org/index.php/Software:Installation
+   Use the --with-mpi flag to configure with MPI support
 
 3. In user_params.sli adjust output_dir, mpi_path, and nest_path to your system
 
 4. In sim_params.sli adjust the following parameters:
 
+   - 'run_mode': test or production
    - the number of compute nodes 'n_nodes'
-   - the number of processors per node 'n_procs_per_node'
+   - the number of processes per node 'n_procs_per_node'
    - queuing system parameters 'walltime' and 'memory'
    - simulation time 't_sim'
 
@@ -120,12 +121,13 @@ Simulation on a single process:
 2. Adjust 'area' and 'preserve_K' in network_params.sli such that the network
    is small enough to fit on your system. 
 
-3. Ensure that the output directory exists, as it is not created via the bash
-   script anymore
+3. Set the 'output_path' in user_params.sli to an existing directory.
+
+5. Set 'n_threads_per_proc' in sim_params.sli to a suitable value for your 
+   computer.
 
 4. Type '(microcircuit) run' to start the simulation on a single process.
 
 A downscaled version ('area' = 0.1) of the network was tested on a single
-process with 'preserve_K' = false. However, note that this produces different
-network dynamics than the full-scale model.
+MPI process with two threads with 'preserve_K' = true. 
 

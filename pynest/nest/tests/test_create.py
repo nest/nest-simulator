@@ -103,7 +103,9 @@ def suite():
     suite = unittest.makeSuite(CreateTestCase, 'test')
     return suite
 
-
-if __name__ == "__main__":
+def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
+
+if __name__ == "__main__":
+    run()

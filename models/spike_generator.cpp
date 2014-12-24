@@ -131,8 +131,18 @@ void nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_(dou
   spike_stamps_.push_back(t_spike);
   if ( precise_times_ )
   {
-    assert(t_spike.get_ms() - t >= 0);
-    spike_offsets_.push_back(t_spike.get_ms() - t);
+    // t_spike is created with ms_stamp() that alignes
+    // the time to the next resolution step, so the offset
+    // has to be greater or equal to t by construction.
+    // Since substraction of closeby floating point values is 
+    // not stable, we have to compare with a delta.
+    double_t offset = t_spike.get_ms() - t;
+    if (std::fabs(offset) < std::numeric_limits<double>::epsilon())
+    { // if difference is smaller than epsilon 
+      offset = 0.0;  // than it is actually 0.0
+    }
+    assert(offset >= 0.0);
+    spike_offsets_.push_back(offset);
   }
 }
 

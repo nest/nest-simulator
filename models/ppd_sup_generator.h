@@ -87,9 +87,13 @@ namespace nest{
     bool has_proxies() const {return false;}
     bool is_off_grid() const {return false;}  // does not use off_grid events
 
+    /**
+     * Import sets of overloaded virtual functions.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+     */
     using Node::event_hook;
 
-    port check_connection(Connection&, port);
+    port send_test_event(Node&, rport, synindex, bool);
 
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
@@ -202,15 +206,26 @@ namespace nest{
     Buffers_    B_;
   };
 
-inline  
-port ppd_sup_generator::check_connection(Connection& c, port receptor_type)
+inline
+port ppd_sup_generator::send_test_event(Node& target, rport receptor_type, synindex syn_id, bool dummy_target)
 {
-  DSSpikeEvent e;
-  e.set_sender(*this);
-  c.check_event(e);
-  port receptor = c.get_target()->connect_sender(e, receptor_type);
-  ++P_.num_targets_;     // count number of targets
-  return receptor;
+  device_.enforce_single_syn_type(syn_id);
+
+  if ( dummy_target )
+  {
+    DSSpikeEvent e;
+    e.set_sender(*this);
+    return target.handles_test_event(e, receptor_type);
+  }
+  else
+  {
+    SpikeEvent e;
+    e.set_sender(*this);
+    const port p = target.handles_test_event(e, receptor_type);
+    if ( p != invalid_port_ and not is_model_prototype() )
+      ++P_.num_targets_;     // count number of targets
+    return p;
+  }
 }
 
 inline

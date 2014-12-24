@@ -286,7 +286,7 @@ def
    e.g. connection probability /p for /pairwise_binomial.
 
    The variants with two global ids as arguments implicitly connect
-   the two neurons using the one_to_one rule. If given, weight, delay,
+   the two neurons using the all_to_all rule. If given, weight, delay,
    syn_model, and params are used for the connection.
 
    The variants with only literal arguments /conn_rule or /syn_model
@@ -297,9 +297,8 @@ def
 
    Parameters for connectivity rules must have fixed values.
 
-   Parameters for synapses may be fixed single values, random deviate
-   specifications, or arrays of the same length as sources and targets
-   for the /one_to_one rule.
+   Parameters for synapses may be fixed single values and random deviate
+   specifications.
 
    SeeAlso: synapsedict, connruledict, cvgidcollection, DivergentConnect, RandomDivergentConnect, ConvergentConnect, RandomConvergentConnect
 
@@ -311,7 +310,7 @@ def
 %%% Options for Connect
 
 /Connect <<
-  /conn_spec << /rule /one_to_one >>
+  /conn_spec << /rule /all_to_all >>
   /syn_spec << /model /static_synapse >>
 >> Options
 
@@ -773,7 +772,7 @@ def
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* BeginDocumentation
-Name: RandomDivergentConnect - Randomly connect a population of nodes to a target node.
+Name: RandomDivergentConnect - Randomly connect a source node to a population of nodes.
 Synopsis:
 source n [targets]                              RandomDivergentConnect -> -
 source n [targets]                    /synmodel RandomDivergentConnect -> -
@@ -797,7 +796,7 @@ from the Options of the Connect command.
 
 Description:
 
-This function connects a given source node with a random collection of
+This function connects a given source node with 
 n randomly chosen target nodes from the specified array. The targets
 are chosen with uniform probability. Whether multiple synapses between
 a pair of nodes are allowed can be controlled by the option
@@ -1791,12 +1790,42 @@ def
    */
 /TimeCommunicationOffgrid trie
 [/integertype /integertype] { true TimeCommunication_i_i_b } bind addtotrie
+
+def
+  /* BeginDocumentation
+     Name: TimeCommunicationAlltoall - returns average time taken for MPI_Alltoall over n calls with m bytes
+     Synopsis:
+     n m TimeCommunicationAlltoall -> time
+     Availability: 10kproject (>r11254)
+     Author: Jakob Jordan (modified TimeCommunication)
+     FirstVersion: June 2014
+     Description:
+     The function allows a user to test how much time a call to MPI_Alltoall costs
+     SeeAlso: TimeCommunication
+   */
+/TimeCommunicationAlltoall trie
+[/integertype /integertype] /TimeCommunicationAlltoall_i_i load addtotrie
+def
+
+  /* BeginDocumentation
+     Name: TimeCommunicationAlltoallv - returns average time taken for MPI_Alltoallv over n calls with m bytes
+     Synopsis:
+     n m TimeCommunicationAlltoallv -> time
+     Availability: 10kproject (>r11300)
+     Author: Jakob Jordan (modified TimeCommunication)
+     FirstVersion: July 2014
+     Description:
+     The function allows a user to test how much time a call to MPI_Alltoallv costs
+     SeeAlso: TimeCommunication
+   */
+/TimeCommunicationAlltoallv trie
+[/integertype /integertype] /TimeCommunicationAlltoallv_i_i load addtotrie
 def
 
 % can only be defined here because on bg processes.sli is not included
 statusdict /platform get dup (bg/p) eq exch (bg/q) eq or
 {
- /memory_thisjob {memory_thisjob_bg} def
+ /memory_thisjob { :memory_thisjob_bg } def
 } if
 
 /* BeginDocumentation

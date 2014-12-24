@@ -7,23 +7,14 @@
 #  - make a clean checkout to __NEST_SOURCE in the local directory
 #  - set SLI_PATCHLEVEL to current SVN revision in configure.ac.in
 #  - ask if to tag the release in the repository
-#  - create an up-to-date doc/ChangeLog.html
 #  - run bootstrap
 #  - configure in __NEST_BUILD
 #  - roll a tarball
 #  - move the tarball to the local directory
-#  - copy the ChangeLog.html to the local directory
 #  - remove __NEST_SOURCE and __NEST_BUILD
 #
-#  The script requires SVN access and releasetools is sourcedir
+#  The script requires SVN access and releasetools in the sourcedir.
 #
-#  11/2004 first version by Hans Ekkehard Plesser
-#  06/2006 modified by Moritz Helias for prerelease
-#  07/2006 modified by Hans Ekkehard Plesser to use SVN
-#  08/2007 modified by Jochen Eppler to use SVN revision as patchlevel
-#  03/2009 modified by Jochen Eppler to allow tarballing branches
-#  11/2009 modified by Jochen Eppler to use the HTTPS repository
-
 
 # first, we check for autoconf >= 2.60, as tarballs built with older versions
 # may cause problems on many machines. See #122 for details.
@@ -54,7 +45,7 @@ if ( $#argv != 0 ) then
     exit 0
   endif
 else
-  set svndir="branches/nest-2.4/2.4.2"
+  set svndir="branches/nest-2.6/2.6.0"
   set branch=""
 endif
 
@@ -65,14 +56,6 @@ set scriptdir = `echo $scriptpath | gawk '{ split($1, a, /\/buildnest.sh/); prin
 # absolute pathnames give trouble with make
 set nest_srcdir = __NEST_SOURCE$branch
 set nest_blddir = __NEST_BUILD$branch
-
-# check that helpers are available
-if ( ! ( -f $scriptdir/make_changelog.sh ) ) then
-  echo ""  
-  echo "ERROR: Helper scripts not available in $scriptdir!"
-  echo ""
-  exit 1
-endif
 
 # SVN ID to use
 set svn_id = https://svn.nest-initiative.org/nest/$svndir
@@ -118,7 +101,7 @@ svn --quiet checkout $svn_id $nest_srcdir
 
 # add svn revision number to tarball name
 set svnver=`svnversion $nest_srcdir`
-set patchlevel = "2"
+set patchlevel = "0"
 
 # move to nest_srcdir
 cd $nest_srcdir
@@ -128,7 +111,7 @@ echo ""
 echo -n "Setting patch level in configure.ac"
 sed -i -e "s/SLI_PATCHLEVEL=svn/SLI_PATCHLEVEL=$patchlevel/" configure.ac.in
 
-set nest_minor   = "4"
+set nest_minor   = "6"
 set nest_major   = "2"
 set nest_version = "$nest_major.$nest_minor.$patchlevel"
 set nest_nprog   = "nest-$nest_version"
@@ -151,11 +134,6 @@ gawk -f $scriptdir/clear_extra_modules.awk configure.ac.in > configure.ac.tmp \
 # bootstrap after modification of configure.ac.in
 echo ""
 ./bootstrap.sh
-
-# create ChangeLog; done in source dir, since this is a source file
-echo ""
-echo "Creating ChangeLog ..."
-$scriptdir/make_changelog.sh $scriptdir $workdir/$nest_srcdir $svn_id $nest_version
 
 # now configure and roll in separate directory
 # build dir must be parallel to source dir!
@@ -181,13 +159,11 @@ cd $workdir
 
 # move/copy files to work directory
 mv $nest_blddir/$nest_nprog.tar.gz $workdir
-cp $nest_srcdir/doc/ChangeLog.html $workdir
 
 echo ""
 echo "Done."
 echo ""
 echo "NEST Tarball   : ${workdir}/${nest_nprog}.tar.gz"
-echo "NEST ChangeLog : ${workdir}/ChangeLog.html"
 echo ""
 
 # clean up

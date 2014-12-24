@@ -60,6 +60,8 @@ namespace nest{
     void set_status(const DictionaryDatum&) { assert(false); }
     void get_status(DictionaryDatum&) const { assert(false); }
 
+    bool is_subnet() const;
+
     bool has_proxies() const;
           
     bool   empty() const;
@@ -173,6 +175,12 @@ namespace nest{
   bool SiblingContainer::has_proxies() const
   {
     return false;
+  }
+
+  inline
+  bool SiblingContainer::is_subnet() const
+  {
+	 return empty() ? false : nodes_[0]->is_subnet();
   }
 
 } // namespace

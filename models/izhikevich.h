@@ -101,25 +101,20 @@ namespace nest
 
     /**
      * Import sets of overloaded virtual functions.
-     * We need to explicitly include sets of overloaded
-     * virtual functions into the current scope.
-     * According to the SUN C++ FAQ, this is the correct
-     * way of doing things, although all other compilers
-     * happily live without.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
-
-    using Node::connect_sender;
     using Node::handle;
+    using Node::handles_test_event;
 
     void handle(DataLoggingRequest &);
     void handle(SpikeEvent &);
     void handle(CurrentEvent &);
 
-    port connect_sender(DataLoggingRequest &, port);
-    port connect_sender(SpikeEvent &, port);
-    port connect_sender(CurrentEvent &, port);
+    port handles_test_event(DataLoggingRequest&, rport);
+    port handles_test_event(SpikeEvent&, rport);
+    port handles_test_event(CurrentEvent&, rport);
 
-    port check_connection(Connection&, port);
+   port send_test_event(Node&, rport, synindex, bool);
 
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
@@ -218,13 +213,6 @@ namespace nest
 
     // ----------------------------------------------------------------
 
-    /**
-     * @defgroup iaf_psc_alpha_data
-     * Instances of private data structures for the different types
-     * of data pertaining to the model.
-     * @note The order of definitions is important for speed.
-     * @{
-     */
     Parameters_ P_;
     State_      S_;
     Variables_  V_;
@@ -237,32 +225,33 @@ namespace nest
   };
 
   inline
-  port izhikevich::check_connection(Connection& c, port receptor_type)
+  port izhikevich::send_test_event(Node& target, rport receptor_type, synindex, bool)
   {
     SpikeEvent e;
     e.set_sender(*this);
-    c.check_event(e);
-    return c.get_target()->connect_sender(e, receptor_type);
+    
+    return target.handles_test_event(e, receptor_type);
   }
-
+  
   inline
-  port izhikevich::connect_sender(SpikeEvent&, port receptor_type)
+  port izhikevich::handles_test_event(SpikeEvent&, rport receptor_type)
   {
     if (receptor_type != 0)
       throw UnknownReceptorType(receptor_type, get_name());
     return 0;
   }
-
+  
   inline
-  port izhikevich::connect_sender(CurrentEvent&, port receptor_type)
+  port izhikevich::handles_test_event(CurrentEvent&, rport receptor_type)
   {
     if (receptor_type != 0)
       throw UnknownReceptorType(receptor_type, get_name());
     return 0;
   }
-
+  
   inline
-  port izhikevich::connect_sender(DataLoggingRequest &dlr, port receptor_type)
+  port izhikevich::handles_test_event(DataLoggingRequest &dlr, 
+  				    rport receptor_type)
   {
     if (receptor_type != 0)
       throw UnknownReceptorType(receptor_type, get_name());

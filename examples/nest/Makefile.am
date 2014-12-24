@@ -4,7 +4,6 @@ nobase_data_DATA=\
 	balancedneuron.sli\
 	balancedneuron-2.sli\
 	brunel-2000.sli\
-	brunel-2000_threaded_connect.sli\
 	brunel_ps.sli\
 	Brette_et_al_2007/coba.sli\
 	Brette_et_al_2007/cuba.sli\
@@ -12,6 +11,7 @@ nobase_data_DATA=\
 	Brette_et_al_2007/cuba_ps.sli\
 	Brette_et_al_2007/hh_coba.sli\
 	Brette_et_al_2007/benchmark.sli\
+	hpc_benchmark.sli\
 	multimeter.sli\
 	music/clocktest.music\
 	music/conttest.music\
@@ -30,10 +30,18 @@ nobase_data_DATA=\
 	music/spike_exporter.sli\
 	music/three_neurons_threaded.music\
 	music/three_neurons_threaded_receivenest.sli\
-	music/three_neurons_threaded_sendnest.sli
+	music/three_neurons_threaded_sendnest.sli\
+	Potjans_2014/microcircuit.sli\
+	Potjans_2014/network_params.sli\
+	Potjans_2014/README.txt\
+	Potjans_2014/run_microcircuit.sh\
+	Potjans_2014/sim_params.sli\
+	Potjans_2014/spike_analysis.py\
+	Potjans_2014/user_params.sli
 
 install-data-hook:
 	chmod 755 $(DESTDIR)@PKGDOCDIR@/examples/music/conttest.py
 	chmod 755 $(DESTDIR)@PKGDOCDIR@/examples/music/minimalmusicsetup_receivenest.py
 	chmod 755 $(DESTDIR)@PKGDOCDIR@/examples/music/minimalmusicsetup_sendnest.py
 	chmod 755 $(DESTDIR)@PKGDOCDIR@/examples/music/msgtest.py
+	chmod 755 $(DESTDIR)@PKGDOCDIR@/examples/Potjans_2014/run_microcircuit.sh

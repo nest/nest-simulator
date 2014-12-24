@@ -45,7 +45,8 @@ M_ERROR setverbosity
 % This should be devices only.
 /skipped_models 
   [ /correlation_detector 
-    /correlomatrix_detector ] 
+    /correlomatrix_detector
+    /correlospinmatrix_detector ] 
 def
 skipped_models { modeldict exch undef } forall
 

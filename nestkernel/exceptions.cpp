@@ -21,13 +21,21 @@
  */
 #include "exceptions.h"
 #include "interpret.h"
+#include "config.h"
 
 #include <sstream>
 
 std::string nest::UnknownModelName::message()
 {
   std::ostringstream msg;
-  msg << "/" << n_.toString() + " is not a known model name.";
+  msg << "/" << n_.toString() + " is not a known model name. "
+    "Please check the modeldict for a list of available models."
+#ifndef HAVE_GSL
+    " A frequent cause for this error is that NEST was compiled "
+    "without the GNU Scientific Library, which is required for "
+    "the conductance-based neuron models."
+#endif
+    ;
   return msg.str();
 }
 
@@ -160,7 +168,8 @@ std::string nest::UnknownThread::message()
 std::string nest::BadDelay::message()
 {
   std::ostringstream out;
-  out << "Delay with value " << delay_ << " can not be used.";
+  out << "Delay value " << delay_ << " is invalid: "
+	  << message_;
   return out.str();
 }
 
@@ -185,11 +194,6 @@ std::string nest::BadParameter::message()
   return msg_;
 }
 
-std::string nest::ChangeCommonPropsByIndividual::message()
-{
-  return msg_;
-}
-
 std::string nest::DimensionMismatch::message()
 {
   std::ostringstream out;
@@ -203,13 +207,6 @@ std::string nest::DimensionMismatch::message()
       out << "Dimension of two or more variables do not match.";
     }
   return out.str();
-}
-
-std::string nest::PthreadException::message()
-{
-  std::ostringstream msg;
-  msg << "Error with status " << status_;
-  return msg.str();
 }
 
 std::string nest::DistributionError::message()

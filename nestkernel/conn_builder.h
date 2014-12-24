@@ -84,7 +84,7 @@ namespace nest {
     virtual void connect_() =0;
 
     //! Create connection between given nodes, fill parameter values
-    void single_connect_(index, index, Node&, thread, librandom::RngPtr&);
+    void single_connect_(index, Node&, thread, librandom::RngPtr&);
 
     Network& net_;
 
@@ -104,7 +104,10 @@ namespace nest {
 
     //! indicate that weight and delay should not be set per synapse
     bool default_weight_and_delay_;
-
+    
+    //! indicate that weight should not be set per synapse
+    bool default_weight_;
+    
     // null-pointer indicates that default be used
     ConnParameter* weight_;
     ConnParameter* delay_;

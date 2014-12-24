@@ -53,7 +53,7 @@ class StatusTestCase(unittest.TestCase):
 
         nest.ResetKernel()
         nest.SetKernelStatus({})
-        nest.SetKernelStatus({'print_time': True})
+        nest.SetKernelStatus({'resolution': 0.2})
 
         self.assertRaisesRegex(nest.NESTError, "DictError", nest.SetKernelStatus, {'nonexistent_status_key': 0})
 
@@ -175,7 +175,8 @@ class StatusTestCase(unittest.TestCase):
         """SetStatus of reversal and threshold potential """
 
         # sli_neuron does not work under PyNEST
-        models = (m for m in nest.Models() if m != 'sli_neuron' and m != 'a2eif_cond_exp_HW' and m != 'mat2_psc_exp')
+        models = (m for m in nest.Models()
+                  if m not in ('sli_neuron', 'a2eif_cond_exp_HW', 'mat2_psc_exp', 'amat2_psc_exp'))
 
         for m in models:
             if all(key in nest.GetDefaults(m) for key in ('V_th', 'E_L')):
@@ -220,7 +221,10 @@ def suite():
     suite = unittest.makeSuite(StatusTestCase, 'test')
     return suite
 
-
-if __name__ == "__main__":
+def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
+    
+
+if __name__ == "__main__":
+    run()

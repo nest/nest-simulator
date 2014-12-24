@@ -266,20 +266,6 @@ References_aFunction() {}
     void execute(SLIInterpreter *) const;
 };
 
-class References_dFunction: public SLIFunction
-{
-public:
-References_dFunction() {}
-    void execute(SLIInterpreter *) const;
-};
-
-class Selfreferences_dFunction: public SLIFunction
-{
-public:
-Selfreferences_dFunction() {}
-    void execute(SLIInterpreter *) const;
-};
-
 class Shrink_aFunction: public SLIFunction
 {
 public:

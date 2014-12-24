@@ -323,7 +323,7 @@ void iaf_psc_alpha_multisynapse::update(Time const& origin, const long_t from, c
   }  
 }
 
-port iaf_psc_alpha_multisynapse::connect_sender(SpikeEvent&, port receptor_type)
+port iaf_psc_alpha_multisynapse::handles_test_event(SpikeEvent&, rport receptor_type)
 {
   if (receptor_type <= 0 || receptor_type > static_cast <port>(P_.num_of_receptors_))
     throw IncompatibleReceptorType(receptor_type, get_name(), "SpikeEvent");

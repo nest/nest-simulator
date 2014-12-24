@@ -163,7 +163,7 @@ namespace nest
       Parameters_(const Parameters_&);
       
       void get(DictionaryDatum&) const;  //!< Store current values in dictionary
-      void set(const DictionaryDatum&);  //!< Set values from dicitonary
+      void set(const DictionaryDatum&);  //!< Set values from dictionary
     };
     
     

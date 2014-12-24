@@ -125,9 +125,11 @@ double nest::iaf_psc_exp::Parameters_::set(const DictionaryDatum &d)
   if ( C_ <= 0 )
     throw BadProperty("Capacitance must be strictly positive.");
     
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || 
-       t_ref_ <= 0 )
-    throw BadProperty("All time constants must be strictly positive.");
+  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
+    throw BadProperty("Membrane and synapse time constants must be strictly positive.");
+
+  if ( t_ref_ < 0 )
+    throw BadProperty("Refractory time must not be negative.");
 
   if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
     throw BadProperty("Membrane and synapse time constant(s) must differ."
@@ -199,6 +201,8 @@ void nest::iaf_psc_exp::init_buffers_()
 
 void nest::iaf_psc_exp::calibrate()
 {
+  B_.currents_.resize(2);
+
   B_.logger_.init();  // ensures initialization in case mm connected after Simulate
 
   const double h = Time::get_resolution().get_ms(); 
@@ -247,10 +251,9 @@ void nest::iaf_psc_exp::calibrate()
   // results. However, a neuron model capable of operating with real valued spike
   // time may exhibit a different effective refractory time.
   //
+ 
   V_.RefractoryCounts_ = Time(Time::ms(P_.t_ref_)).get_steps();
-
-  if ( V_.RefractoryCounts_ < 1 )
-    throw BadProperty("Absolute refractory time must be at least one time step.");
+  assert(V_.RefractoryCounts_ >= 0);  // since t_ref_ >= 0, this can only fail in error
 }
 
 void nest::iaf_psc_exp::update(const Time &origin, const long_t from, const long_t to)
@@ -269,6 +272,9 @@ void nest::iaf_psc_exp::update(const Time &origin, const long_t from, const long
     // exponential decaying PSCs
     S_.i_syn_ex_ *= V_.P11ex_;
     S_.i_syn_in_ *= V_.P11in_;
+
+    // add evolution of presynaptic input current
+    S_.i_syn_ex_ += (1. - V_.P11ex_) * S_.i_1_;
 
     // the spikes arriving at T+1 have an immediate effect on the state of the neuron
     
@@ -290,7 +296,8 @@ void nest::iaf_psc_exp::update(const Time &origin, const long_t from, const long
     }
 
     // set new input current
-    S_.i_0_ = B_.currents_.get_value(lag);
+    S_.i_0_ = B_.currents_[0].get_value(lag);
+    S_.i_1_ = B_.currents_[1].get_value(lag);
 
     // log state data
     B_.logger_.record_data(origin.get_steps() + lag);
@@ -318,7 +325,14 @@ void nest::iaf_psc_exp::handle(CurrentEvent &e)
   const double_t w=e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(e.get_rel_delivery_steps(network()->get_slice_origin()), w*c);
+  if (0 == e.get_rport()){
+    B_.currents_[0].add_value(e.get_rel_delivery_steps(network()->get_slice_origin()),
+			      w * c);
+  }
+  if (1 == e.get_rport()){
+    B_.currents_[1].add_value(e.get_rel_delivery_steps(network()->get_slice_origin()),
+			      w * c);
+  }
 }
 
 void nest::iaf_psc_exp::handle(DataLoggingRequest &e)

@@ -80,8 +80,6 @@ class lockPTRDatum: public lockPTR<D>, public TypedDatum<slt>
   // It is defined as identity of the underly D, i.e. &this->D == &other->D
   bool equals(const Datum *) const;
 
-  size_t selfreferences(void) {return 0;}
-
   /* operator=
     The assignment operator is defaulted.
     Therefore, lockPTR<D>::operator= is called, and

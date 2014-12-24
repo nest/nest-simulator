@@ -30,9 +30,9 @@
 # output directory
 path=`egrep '/output_path' user_params.sli|cut -f 2 -d '('|cut -f 1 -d ')'`
 # number of nodes
-n_nodes=`egrep '/n_nodes' sim_params.sli|cut -f 2 -d ' '`
+n_nodes=`egrep '/n_mpi_procs' sim_params.sli|cut -f 2 -d ' '`
 # number of processors per node
-n_procs_per_node=`egrep '/n_procs_per_node' sim_params.sli|cut -f 2 -d ' '`
+n_procs_per_node=`egrep '/n_threads_per_proc' sim_params.sli|cut -f 2 -d ' '`
 # walltime
 walltime=`egrep '/walltime' sim_params.sli|cut -f 2 -d '('|cut -f 1 -d ')'`
 # memory allocation

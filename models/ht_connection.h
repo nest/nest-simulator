@@ -23,7 +23,7 @@
 #ifndef HT_CONNECTION_H
 #define HT_CONNECTION_H
 
-#include "connection_het_wd.h"
+#include "connection.h"
 
 /* BeginDocumentation
   Name: ht_synapse - Synapse with depression after Hill & Tononi (2005).
@@ -65,25 +65,39 @@
 
 namespace nest {
 
-  //class CommonProperties;
-
-class HTConnection : public ConnectionHetWD
+template<typename targetidentifierT>
+class HTConnection : public Connection<targetidentifierT>
 {
  public:
+
+  typedef CommonSynapseProperties CommonPropertiesType;
+  typedef Connection<targetidentifierT> ConnectionBase;
 
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
   HTConnection();
+  
+  /**
+   * Copy constructor.
+   * Needs to be defined properly in order for GenericConnector to work.
+   */
+  HTConnection(const HTConnection &);
 
+  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
+  // This avoids explicit name prefixes in all places these functions are used.
+  // Since ConnectionBase depends on the template parameter, they are not automatically
+  // found in the base class.
+  using ConnectionBase::get_delay_steps;
+  using ConnectionBase::get_delay;
+  using ConnectionBase::get_rport;
+  using ConnectionBase::get_target;
+  
   /**
    * Default Destructor.
    */
   virtual ~HTConnection() {}
-
-  // Import overloaded virtual function set to local scope. 
-  using Connection::check_event;
 
   /**
    * Get all properties of this connection and put them into a dictionary.
@@ -96,35 +110,34 @@ class HTConnection : public ConnectionHetWD
   virtual void set_status(const DictionaryDatum & d, ConnectorModel &cm);
 
   /**
-   * Set properties of this connection from position p in the properties
-   * array given in dictionary.
-   */  
-  virtual void set_status(const DictionaryDatum & d, index p, ConnectorModel &cm);
-
-  /**
-   * Create new empty arrays for the properties of this connection in the given
-   * dictionary. It is assumed that they are not existing before.
-   */
-  void initialize_property_arrays(DictionaryDatum & d) const;
-
-  /**
-   * Append properties of this connection to the given dictionary. If the
-   * dictionary is empty, new arrays are created first.
-   */
-  virtual void append_properties(DictionaryDatum & d) const;
-
-  /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
    * \param t_lastspike Point in time of last spike sent.
    * \param cp Common properties to all synapses (empty).
    */
-  void send(Event& e, double_t t_lastspike, const CommonSynapseProperties &cp);
-
-  // overloaded for all supported event types
-  void check_event(SpikeEvent&) {}
+  void send(Event& e,thread t, double_t t_lastspike, const CommonSynapseProperties &cp);
+  
+  class ConnTestDummyNode: public ConnTestDummyNodeBase
+  {
+  public:
+	// Ensure proper overriding of overloaded virtual functions.
+	// Return values from functions are ignored.
+	using ConnTestDummyNodeBase::handles_test_event;
+    port handles_test_event(SpikeEvent&, rport) { return invalid_port_; }
+  };
+  
+  void check_connection(Node & s, Node & t, rport receptor_type, double_t, const CommonPropertiesType &)
+  {
+    ConnTestDummyNode dummy_target;
+    ConnectionBase::check_connection_(dummy_target, s, t, receptor_type);
+  }
  
+  //! allows efficient initialization from ConnectorModel::add_connection()
+  void set_weight(double_t w) { weight_ = w; }
+
  private:
+  double_t weight_;    //!< synpatic weight
+
   double_t tau_P_;     //!< [ms] time constant for recovery
   double_t delta_P_;   //!< fractional decrease in pool size per spike
 
@@ -138,28 +151,78 @@ class HTConnection : public ConnectionHetWD
  * \param p The port under which this connection is stored in the Connector.
  * \param t_lastspike Time point of last spike emitted
  */
+template<typename targetidentifierT>
 inline
-void HTConnection::send(Event& e, double_t t_lastspike, 
+void HTConnection<targetidentifierT>::send(Event& e,thread t, double_t t_lastspike, 
 			const CommonSynapseProperties &)
 {
   double_t h = e.get_stamp().get_ms() - t_lastspike;
-
+  Node *target = get_target(t);
   // t_lastspike_ = 0 initially
 
   // propagation t_lastspike -> t_spike, t_lastspike_ = 0 initially, p_ = 1
   p_ = 1 - ( 1 - p_ ) * std::exp(-h/tau_P_);
 
   // send the spike to the target
-  e.set_receiver(*target_);
+  e.set_receiver(*target);
   e.set_weight( weight_ * p_ );
-  e.set_delay( delay_ );
-  e.set_rport( rport_ );
+  e.set_delay( get_delay_steps() );
+  e.set_rport( get_rport() );
   e();
 
   // reduce pool after spike is sent
   p_ *= ( 1 - delta_P_ );
 }
- 
+
+template<typename targetidentifierT>
+HTConnection<targetidentifierT>::HTConnection() :
+    ConnectionBase(),
+    weight_(1.0),
+    tau_P_(50.0),
+    delta_P_(0.2),
+    p_(1.0)
+  { }
+
+template<typename targetidentifierT>
+HTConnection<targetidentifierT>::HTConnection(const HTConnection& rhs) :
+    ConnectionBase(rhs),
+    weight_(rhs.weight_),
+    tau_P_(rhs.tau_P_),
+    delta_P_(rhs.delta_P_),
+    p_(rhs.p_)
+  { }
+
+template<typename targetidentifierT>
+void HTConnection<targetidentifierT>::get_status(DictionaryDatum & d) const
+  {
+    ConnectionBase::get_status(d);
+    def<double_t>(d, names::weight, weight_);
+    def<double_t>(d, "tau_P", tau_P_);
+    def<double_t>(d, "delta_P", delta_P_);
+    def<double_t>(d, "P", p_);
+    def<long_t>(d, names::size_of, sizeof(*this));
+  }
+
+template<typename targetidentifierT>
+void HTConnection<targetidentifierT>::set_status(const DictionaryDatum & d, ConnectorModel &cm)
+  {
+    ConnectionBase::set_status(d, cm);
+
+    updateValue<double_t>(d, names::weight, weight_);
+    updateValue<double_t>(d, "tau_P", tau_P_);
+    updateValue<double_t>(d, "delta_P", delta_P_);
+    updateValue<double_t>(d, "P", p_);
+
+    if ( tau_P_ <= 0.0 ) 
+      throw BadProperty("tau_P >= 0 required.");
+
+    if ( delta_P_ < 0.0 || delta_P_ > 1.0 )
+      throw BadProperty("0 <= delta_P <= 1 required.");
+
+    if ( p_ < 0.0 || p_ > 1.0 )
+      throw BadProperty("0 <= P <= 1 required.");
+  }
+
 } // namespace
 
 #endif // HT_CONNECTION_H

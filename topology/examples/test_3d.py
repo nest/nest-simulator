@@ -39,9 +39,9 @@ pylab.ion()
 
 nest.ResetKernel()
 
-# generate list of 100 (x,y,z) pairs
+# generate list of 1000 (x,y,z) triplets
 pos = [[random.uniform(-0.5,0.5), random.uniform(-0.5,0.5), random.uniform(-0.5,0.5)]
-       for j in range(10000)]
+       for j in range(1000)]
 
 l1 = topo.CreateLayer({'extent': [1.5, 1.5, 1.5], # must specify 3d extent AND center
                        'center': [0., 0., 0.],
@@ -75,5 +75,5 @@ tgts=topo.GetTargetNodes(ctr,l1)[0]
 d=topo.Distance(ctr,tgts)
 
 plt.figure()
-plt.hist(d,100)
+plt.hist(d, 25)
 #plt.show()

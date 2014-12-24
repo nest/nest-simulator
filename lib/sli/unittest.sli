@@ -365,6 +365,83 @@ SeeAlso: unittest::fail_or_die, assert, quit
 
 
 /* BeginDocumentation
+Name: unittest::passorfailbutnocrash_or_die - Execute a code block and exit with exit code 3 if it crashes
+
+Synopsis: { code } [string] passorfailbutnocrash_or_die -> -
+
+Description:
+This procedure executes the code. Anything except a crash (e.g. due to uncaught C++ exception such
+as a segfault) is considered a pass.
+
+Diagnostics:
+This function will quit nest  (exit code 3) if the code crashed.
+
+Examples:
+ { 1 0 add } passorfailbutnocrash_or_die -> success   % code passes
+ { 1 0 div } passorfailbutnocrash_or_die -> success   % code fails, but does not crash
+
+Author: Diesmann, Plesser
+
+FirstVersion: 2014-11-12
+
+SeeAlso: unittest::failbutnocrash_or_die, assert, quit
+*/
+/passorfailbutnocrash_or_die [/proceduretype]
+{
+ << exch /func exch >>
+  begin
+
+ (echo ")
+ /func load pcvs join
+ ( exec" | ) join 
+ statusdict /argv get First join
+ ( -) join /command Set
+
+% command ==
+
+ command 0 shpawn
+ pop         % don't know what to do with the boolean returnd by shpawn
+
+ % check exitcode returned by shpawn
+ statusdict/exitcodes :: [[/success /scripterror]] get
+ exch
+ MemberQ
+ {
+  % nest terminated with success or a SLI error, e.g. StackUnderflow
+  % this is the desired behavior
+ }
+ {
+  % nest chrashed, for example with return values 
+  %  statusdict/exitcodes/abort ::    (e.g. caused by failed assertion)
+  %  statusdict/exitcodes/segfault :: (e.g illegal access of memory)
+  % or nest completed successfully
+  % this is the undesired behavior
+   M_FATAL (unittest::passorfailbutnocrash_or_die)
+   (Code block crashed)
+   /die_message lookup { (: ) exch join join } if
+   (.\nCode block:\n) join /func load pcvs join  message
+
+  M_FATAL (unittest::passorfailbutnocrash_or_die) (Exiting with code 2.) message
+
+  3 quit_i  
+
+ }
+ ifelse
+
+  end
+} def
+
+/passorfailbutnocrash_or_die[/proceduretype /stringtype]
+{
+  << >> 
+  begin
+    /die_message Set
+    passorfailbutnocrash_or_die
+  end
+} bind def
+
+
+/* BeginDocumentation
 Name: unittest::crash_or_die - Execute a code block and exit with exit code 3 if nest does not crash
 
 Synopsis: { code } [string] crash_or_die -> -

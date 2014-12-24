@@ -82,14 +82,12 @@ class TestFixedOutDegree(TestParams):
             self.setUpNetwork(conn_dict=conn_params,N1=self.N_s,N2=self.N_t)
             degrees = hf.get_degrees('in', self.pop1, self.pop2)
             degrees = hf.gather_data(degrees)
-            if degrees != None:
-                chi, p = hf.chi_squared_test(degrees, expected)
-                print("p-value : %.2f" % p)
+            if degrees is not None:
+                chi, p = hf.chi_squared_check(degrees, expected)
                 pvalues.append(p)
             hf.mpi_barrier()
-        if degrees != None:
+        if degrees is not None:
             ks, p = scipy.stats.kstest(pvalues, 'uniform', alternative='two_sided')
-            print("p-value : %.2f" % p)
             self.assertTrue( p > self.stat_dict['alpha2'] )
 
     def testAutapses(self):
@@ -137,12 +135,16 @@ class TestFixedOutDegree(TestParams):
         nest.Connect(pop, pop, conn_params)
         M = hf.get_connectivity_matrix(pop, pop)
         M = hf.gather_data(M)
-        if M != None:
+        if M is not None:
             self.assertTrue(M.flatten, np.ones(N*N))
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestFixedOutDegree)
     return suite
+
+def run():
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())
     
 if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    run()

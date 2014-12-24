@@ -361,10 +361,14 @@ namespace nest {
   class BadDelay: public KernelException
   {
     double delay_;
+    std::string message_;
+
   public:
-  BadDelay(double delay)
+  BadDelay(double delay,
+		   std::string message)
     : KernelException("BadDelay"),
-      delay_(delay)
+      delay_(delay),
+      message_(message)
       {}
     
     ~BadDelay() throw () {}
@@ -458,31 +462,6 @@ namespace nest {
   };
 
   /**
-   * Exception to be thrown if one tried to set the
-   * common properties via an individual synapse.
-   * Thrown by Node::set_/get_property methods.
-   * @ingroup KernelExceptions
-   */
-  class ChangeCommonPropsByIndividual: public KernelException
-  {
-    std::string msg_;
-  public:
-    //! @param detailed error message
-   ChangeCommonPropsByIndividual()
-    : KernelException("ChangeCommonPropsByIndividual"),
-      msg_()
-	{}
-  ChangeCommonPropsByIndividual(std::string msg)
-    : KernelException("ChangeCommonPropsByIndividual"),
-      msg_(msg)
-      {}
-
-    ~ChangeCommonPropsByIndividual() throw () {}
-
-    std::string message();
-  };
-  
-  /**
    * Exception to be thrown if the dimensions
    * of two or more objects do not agree.
    * Thrown by Node::set_/get_property methods.
@@ -509,27 +488,6 @@ namespace nest {
 
     std::string message();
   };
-  
-  /**
-   *
-   * @ingroup KernelExceptions
-   */
-  class PthreadException: public KernelException
-  {
-    int status_;
-  public:
-  PthreadException(int s)
-    : KernelException("PthreadException"),
-      status_(s) {}
-    int get_status() const;
-    std::string message();
-  };
-
-  inline
-    int PthreadException::get_status() const
-  {
-    return status_;
-  }
 
   /**
    * Exception to be thrown if a problem with the

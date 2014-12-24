@@ -227,7 +227,7 @@ void nest::correlomatrix_detector::init_state_(const Node& proto)
 
   device_.init_state(pr.device_); 
   S_ = pr.S_;
-  unset(buffers_initialized);  // force recreation of buffers
+  set_buffers_initialized(false);  // force recreation of buffers
 }
 
 void nest::correlomatrix_detector::init_buffers_()

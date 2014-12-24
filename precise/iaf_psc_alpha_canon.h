@@ -156,26 +156,22 @@ namespace nest{
 
     /**
      * Import sets of overloaded virtual functions.
-     * We need to explicitly include sets of overloaded
-     * virtual functions into the current scope.
-     * According to the SUN C++ FAQ, this is the correct
-     * way of doing things, although all other compilers
-     * happily live without.
+     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
      */
+   using Node::handle;
+    using Node::handles_test_event;
 
-    using Node::connect_sender;
-    using Node::handle;
+    port send_test_event(Node &, rport, synindex, bool);
 
-    port check_connection(Connection &, port);
+    port handles_test_event(SpikeEvent&, rport);
+    port handles_test_event(CurrentEvent&, rport);
+    port handles_test_event(DataLoggingRequest &, rport);
     
     void handle(SpikeEvent &);
     void handle(CurrentEvent&);
     void handle(DataLoggingRequest &);
 
-    bool is_off_grid() const {return true;}  // uses off_grid events   
-    port connect_sender(SpikeEvent &, port);
-    port connect_sender(CurrentEvent &, port);
-    port connect_sender(DataLoggingRequest &, port);
+    bool is_off_grid() const {return true;}  // uses off_grid events
 
     void get_status(DictionaryDatum &) const;
     void set_status(const DictionaryDatum &);
@@ -398,6 +394,12 @@ namespace nest{
     //! Read out the real membrane potential
     double_t get_V_m_() const { return S_.y3_ + P_.E_L_; }
 
+    //! Read out state variable y1
+    double_t get_y1_() const { return S_.y1_; }
+
+    //! Read out state variable y2
+    double_t get_y2_() const { return S_.y2_; }
+
    // ---------------------------------------------------------------- 
 
    /**
@@ -418,33 +420,32 @@ namespace nest{
   };
   
 inline
-port iaf_psc_alpha_canon::check_connection(Connection& c, port receptor_type)
+port nest::iaf_psc_alpha_canon::send_test_event(Node& target, rport receptor_type, synindex, bool)
 {
   SpikeEvent e;
   e.set_sender(*this);
-  c.check_event(e);
-  return c.get_target()->connect_sender(e, receptor_type);
+  return target.handles_test_event(e, receptor_type);
 }
-
+  
 inline
-port iaf_psc_alpha_canon::connect_sender(SpikeEvent&, port receptor_type)
+port iaf_psc_alpha_canon::handles_test_event(SpikeEvent&, rport receptor_type)
 {
   if (receptor_type != 0)
     throw UnknownReceptorType(receptor_type, get_name());
   return 0;
 }
-
+ 
 inline
-port iaf_psc_alpha_canon::connect_sender(CurrentEvent&, port receptor_type)
+port iaf_psc_alpha_canon::handles_test_event(CurrentEvent&, rport receptor_type)
 {
   if (receptor_type != 0)
     throw UnknownReceptorType(receptor_type, get_name());
   return 0;
 }
-
+ 
 inline
-port iaf_psc_alpha_canon::connect_sender(DataLoggingRequest& dlr, 
-					 port receptor_type)
+port iaf_psc_alpha_canon::handles_test_event(DataLoggingRequest& dlr, 
+				       rport receptor_type)
 {
   if (receptor_type != 0)
     throw UnknownReceptorType(receptor_type, get_name());

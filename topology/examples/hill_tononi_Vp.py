@@ -801,7 +801,7 @@ for name, loc, population, model in [('TpRelay'   , 1, Tp  , 'TpRelay'),
     recorders[name] = (nest.Create('RecordingNode'), loc)
     tgts = [nd for nd in nest.GetLeaves(population)[0] 
             if nest.GetStatus([nd], 'model')[0]==model]
-    nest.DivergentConnect(recorders[name][0], tgts) 
+    nest.Connect(recorders[name][0], tgts)   # one recorder to all targets
 
 
 #! Example simulation

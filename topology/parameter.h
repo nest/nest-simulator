@@ -270,6 +270,9 @@ namespace nest
         updateValue<double_t>(d, names::a, a_);
         updateValue<double_t>(d, names::c, c_);
         updateValue<double_t>(d, names::tau, tau_);
+        if ( tau_ <= 0 )
+          throw BadProperty("topology::ExponentialParameter: "
+        		            "tau > 0 required.");
       }
 
     double_t raw_value(double_t x) const
@@ -309,6 +312,9 @@ namespace nest
         updateValue<double_t>(d, names::p_center, p_center_);
         updateValue<double_t>(d, names::mean, mean_);
         updateValue<double_t>(d, names::sigma, sigma_);
+        if ( sigma_ <= 0 )
+          throw BadProperty("topology::GaussianParameter: "
+        		            "sigma > 0 required.");
       }
 
     double_t raw_value(double_t x) const
@@ -386,6 +392,11 @@ namespace nest
       {
         updateValue<double_t>(d, names::min, lower_);
         updateValue<double_t>(d, names::max, range_);
+
+        if ( lower_ >= range_ )
+          throw BadProperty("topology::UniformParameter: "
+		            	    "min < max required.");
+
         range_ -= lower_;
       }
 
@@ -433,6 +444,13 @@ namespace nest
         updateValue<double_t>(d, names::sigma, sigma_);
         updateValue<double_t>(d, names::min, min_);
         updateValue<double_t>(d, names::max, max_);
+
+        if ( sigma_ <= 0 )
+          throw BadProperty("topology::NormalParameter: "
+        		            "sigma > 0 required.");
+        if ( min_ >= max_ )
+          throw BadProperty("topology::NormalParameter: "
+		            	    "min < max required.");
       }
 
     double_t raw_value(librandom::RngPtr& rng) const
@@ -489,6 +507,13 @@ namespace nest
         updateValue<double_t>(d, names::sigma, sigma_);
         updateValue<double_t>(d, names::min, min_);
         updateValue<double_t>(d, names::max, max_);
+
+        if ( sigma_ <= 0 )
+          throw BadProperty("topology::LognormalParameter: "
+        		            "sigma > 0 required.");
+        if ( min_ >= max_ )
+          throw BadProperty("topology::LognormalParameter: "
+		            	    "min < max required.");
       }
 
     double_t raw_value(librandom::RngPtr& rng) const

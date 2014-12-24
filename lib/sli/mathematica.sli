@@ -4789,16 +4789,14 @@ SeeAlso: MapThread, forall, Map, MapIndexed, NestList, FoldList
 /cva [/intvectortype] /intvector2array load def
 /cva [/doublevectortype] /doublevector2array load def
 
-/**
-* BeginDocumentation:
-* Name: cv_iv - convert array of integers to an IntVector.
-*/
+/* BeginDocumentation
+   Name: cv_iv - convert array of integers to an IntVector.
+ */
 /cv_iv[/arraytype]  { {cvi} Map array2intvector } def
 
-/**
-* BeginDocumentation:
-* Name: cv_dv - convert array of integers to a DoubleVector.
-*/
+/* BeginDocumentation
+   Name: cv_dv - convert array of integers to a DoubleVector.
+ */
 
 /cv_dv[/arraytype] { {cvd} Map array2doublevector } def
 

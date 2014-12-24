@@ -20,17 +20,17 @@
  *
  */
 
-#include "nest_names.h"
-#include "aeif_cond_alpha_RK5.h"
-#include "universal_data_logger_impl.h"
 
 #include "exceptions.h"
+#include "aeif_cond_alpha_RK5.h"
 #include "network.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "numerics.h"
+#include "universal_data_logger_impl.h"
+
 #include <limits>
 
 #include <cmath>
@@ -169,7 +169,7 @@ void nest::aeif_cond_alpha_RK5::Parameters_::set(const DictionaryDatum& d)
 
   if(updateValue<double>(d,names::MAXERR, tmp))
     {
-      if(not tmp >0.0)
+      if(not (tmp >0.0))
 	throw BadProperty("MAXERR must be positive.");
       MAXERR=tmp;
     }

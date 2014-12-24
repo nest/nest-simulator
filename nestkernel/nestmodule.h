@@ -366,13 +366,6 @@ namespace nest
        void execute(SLIInterpreter *) const;
      } memoryinfofunction;
 
-#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
-     class MemoryThisjobBgFunction: public SLIFunction
-     {
-       void execute(SLIInterpreter *) const;
-     } memorythisjobbgfunction;
-#endif
-
      class PrintNetworkFunction : public SLIFunction
      {
        void execute(SLIInterpreter *) const;
@@ -412,6 +405,16 @@ namespace nest
      { 
        void execute(SLIInterpreter *) const; 
      } timecommunicationv_i_ifunction; 
+
+     class TimeCommunicationAlltoall_i_iFunction : public SLIFunction 
+     { 
+       void execute(SLIInterpreter *) const; 
+     } timecommunicationalltoall_i_ifunction; 
+
+     class TimeCommunicationAlltoallv_i_iFunction : public SLIFunction 
+     { 
+       void execute(SLIInterpreter *) const; 
+     } timecommunicationalltoallv_i_ifunction; 
 
      class ProcessorNameFunction : public SLIFunction
      {

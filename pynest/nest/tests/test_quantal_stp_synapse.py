@@ -57,12 +57,16 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         nest.SetStatus(source,{'spike_times':[30.,60.,90.,120.,150.,180.,210.,240.,
                                                 270., 300., 330., 360., 390.,900.]})
 
+        parrot = nest.Create('parrot_neuron')
         neuron = nest.Create("iaf_psc_exp",2)
 
-        nest.Connect(source,[neuron[0]],syn_spec="tsodyks2_synapse")
-        nest.Connect(source,[neuron[1]],syn_spec="quantal_stp_synapse")
+        # We must send spikes via parrot because devices cannot connect through plastic synapses
+        # See #478.
+        nest.Connect(source, parrot)
+        nest.Connect(parrot, neuron[:1], syn_spec="tsodyks2_synapse")
+        nest.Connect(parrot, neuron[1:], syn_spec="quantal_stp_synapse")
 
-        voltmeter = nest.Create("voltmeter",2)
+        voltmeter = nest.Create("voltmeter", 2)
         nest.SetStatus(voltmeter, {"withgid": False, "withtime": True})
         t_plot=1000.
         t_tot=1500.
@@ -101,10 +105,12 @@ def suite():
     suite = unittest.makeSuite(QuantalSTPSynapseTestCase,'test')
     return suite
 
-
-if __name__ == "__main__":
-
+def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
+
+
+if __name__ == "__main__":
+    run()
 
 

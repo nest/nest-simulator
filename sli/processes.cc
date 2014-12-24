@@ -76,6 +76,26 @@
 #define _POSIX_SOURCE
 #endif
 
+#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
+extern "C"
+{
+  // These functions are defined in the file "get_mem.c". They need
+  // to reside in a plain C file, because the #pragmas defined in the
+  // BG header files interfere with C++, causing "undefined reference
+  // to non-virtual thunk" MH 12-02-22, redid fix by JME 12-01-27.
+  long bg_get_heap_mem();
+  long bg_get_stack_mem();
+}
+#endif
+
+#if defined __APPLE__ && HAVE_MACH_MACH_H
+extern "C"
+{
+  // Similar to the above prototype definitions for BG.
+  unsigned long darwin_get_used_mem();
+}
+#endif
+
 // definition of static variables and functions declared in processes.h:
 pid_t Processes::children_group = 0;
 
@@ -234,6 +254,12 @@ void Processes::init(SLIInterpreter *i)
   i->createcommand("getPPID",& getppidfunction);
   i->createcommand("getPGRP",& getpgrpfunction);
   i->createcommand("mkfifo",& mkfifofunction);
+#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
+  i->createcommand(":memory_thisjob_bg", &memorythisjobbgfunction);
+#endif
+#if defined __APPLE__ && HAVE_MACH_MACH_H
+  i->createcommand(":memory_thisjob_darwin", &memorythisjobdarwinfunction);
+#endif
   i->createcommand("setNONBLOCK",& setnonblockfunction);
   i->createcommand("ctermid",& ctermidfunction);
   i->createcommand("isatty_os",& isatty_osfunction);
@@ -442,8 +468,8 @@ void Processes::PipeFunction::execute(SLIInterpreter *i) const
 	}
   else
 	{// no error
-      ifdstream *in  = new ifdstream(filedes[0]);
-      ofdstream *out = new ofdstream(filedes[1]);
+          ifdstream *in  = new ifdstream(filedes[0]);
+	  ofdstream *out = new ofdstream(filedes[1]);
       
       Token  in_t(new IstreamDatum(in ));
       Token out_t(new OstreamDatum(out));
@@ -737,6 +763,46 @@ void Processes::MkfifoFunction::execute(SLIInterpreter *i) const
       i->OStack.pop();  //pop operand from operand stack
     }  
 }
+
+#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
+/* BeginDocumentation
+ Name: memory_thisjob_bg - Reports memory usage on Blue Gene/P/Q systems
+ Description:
+ memory_thisjob_bg returns a dictionary with the heap and stack memory
+ usage of a process in Bytes.
+ Availability: Processes
+ Author: Jochen Martin Eppler
+ */
+void Processes::MemoryThisjobBgFunction::execute(SLIInterpreter *i) const
+{
+  DictionaryDatum dict(new Dictionary);
+  
+  unsigned long heap_memory = bg_get_heap_mem();
+  (*dict)["heap"] = heap_memory;
+  unsigned long stack_memory = bg_get_stack_mem();
+  (*dict)["stack"] = stack_memory;
+  
+  i->OStack.push(dict);
+  i->EStack.pop();
+}
+#endif
+
+#if defined __APPLE__ && HAVE_MACH_MACH_H
+/* BeginDocumentation
+ Name: memory_thisjob_darwin - Reports memory usage on Darwin/Apple systems
+ Description:
+ memory_thisjob_darwin returns the resident memory usage of a process in Bytes.
+ Availability: Processes
+ Author: Tammo Ippen
+ */
+void Processes::MemoryThisjobDarwinFunction::execute(SLIInterpreter *i) const
+{
+  unsigned long resident_memory = darwin_get_used_mem();
+  
+  i->OStack.push(resident_memory);
+  i->EStack.pop();
+}
+#endif
 
 void Processes::SetNonblockFunction::execute(SLIInterpreter *i) const
 {

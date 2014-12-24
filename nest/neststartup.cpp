@@ -51,7 +51,6 @@
 
 #include "static_modules.h"
 
-// OpenMP
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -68,6 +67,13 @@ int neststartup(int argc, char** argv, SLIInterpreter &engine, nest::Network* &p
 #endif
 
 #ifdef _OPENMP
+  /* The next line is required because we use the OpenMP
+     threadprivate() directive in the allocator, see OpenMP
+     API Specifications v 3.1, Ch 2.9.2, p 89, l 14f. 
+     It keeps OpenMP from automagically changing the number
+     of threads used for parallel regions. 
+  */
+  omp_set_dynamic(false); 
   omp_set_num_threads(1);
 #endif
 

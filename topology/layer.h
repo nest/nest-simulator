@@ -359,7 +359,7 @@ namespace nest
      * be added by the user.
      * @returns false
      */
-    bool allow_entry() const
+    bool is_subnet() const
       { return false; }
 
   protected:

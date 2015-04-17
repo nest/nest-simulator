@@ -1,3 +1,7 @@
+---
+layout: index
+---
+
 # SLI Coding Guidelines
 
 ## Overview

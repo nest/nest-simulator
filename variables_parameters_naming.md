@@ -1,3 +1,7 @@
+---
+layout: index
+---
+
 # Variables and Parameter Names
 
 ## Conventions for Parameters

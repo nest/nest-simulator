@@ -2,11 +2,10 @@
 layout: index
 ---
 
-> <div class="align-justify">NEST is a simulator for spiking neural
-  networks. Development is coordinated by the [NEST
-  Iniative](http://nest-initiative.org). For details about how to use
-  NEST for your own modeling studies, see
-  [http://nest-simulator.org](http://nest-simulator.org).</div>
+> NEST is a simulator for spiking neural networks. Development is
+  coordinated by the [NEST Iniative](http://nest-initiative.org). For
+  details about how to use NEST for your own modeling studies, see
+  [http://nest-simulator.org](http://nest-simulator.org).
 
 <hr>
 

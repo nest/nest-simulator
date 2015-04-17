@@ -2,6 +2,10 @@
 layout: index
 ---
 
+[« Back to the index](index)
+
+<hr>
+
 # Conventions for Synapse Type Names
 
 1. Each connector needs to have a meaningful name, _CName_ in this document

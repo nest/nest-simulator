@@ -2,6 +2,10 @@
 layout: index
 ---
 
+[« Back to the index](index)
+
+<hr>
+
 # NEST Coding Style Guidelines
 
 In the code review process we want to enforce a consistent coding style to improve readability and maintainability. The article [Why Code Readability Matters](http://blog.ashodnakashian.com/2011/03/code-readability/) gives an intuition about the benefits of readable code. To simplify the process we use different tools that check compliance with our coding style and developers can reduce the workload of the review process by checking compliance of their code on their own.

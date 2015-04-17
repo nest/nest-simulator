@@ -2,6 +2,10 @@
 layout: index
 ---
 
+[« Back to the index](index)
+
+<hr>
+
 NEST is a simulator for spiking neural networks supported by the [NEST
 Iniative](http://nest-initiative.org). For more details about NEST, see
 [http://nest-initiative.org](http://nest-initiative.org).

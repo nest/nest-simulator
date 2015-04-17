@@ -2,6 +2,10 @@
 layout: index
 ---
 
+[« Back to the index](index)
+
+<hr>
+
 # SLI Coding Guidelines
 
 ## Overview

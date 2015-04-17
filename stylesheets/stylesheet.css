@@ -153,7 +153,7 @@ a.button span {
 }
 
 #nest-simulator span {
-  background: transparent url(../images/nest-icon.png) 12px 50% no-repeat;
+  padding-left: 5px;
 }
 #download-zip span {
   background: transparent url(../images/zip-icon.png) 12px 50% no-repeat;

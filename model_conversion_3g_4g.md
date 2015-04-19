@@ -18,10 +18,10 @@ will provide necessary background information.
 
 ##  Converting neuron models
 
-1. Change statement `using Node::connect_sender;` to `using Node::handles_test_event;`. 
-2. Remove function `check_connection(Connection&, port)`.
-3. Change function `connect_sender(SpikeEvent&, port)` to `handles_test_event(SpikeEvent&, rport)` for each event type that can be received by the neuron; note the change in the datatype of the second argument from `port` to `rport`
-4. For most neuron models, the implementation `handles_test_event()` will be identical to the previous implementation of `connect_sender()`. It should be similar to the one for `iaf_neuron`:
+* Change statement `using Node::connect_sender;` to `using Node::handles_test_event;`. 
+* Remove function `check_connection(Connection&, port)`.
+* Change function `connect_sender(SpikeEvent&, port)` to `handles_test_event(SpikeEvent&, rport)` for each event type that can be received by the neuron; note the change in the datatype of the second argument from `port` to `rport`
+* For most neuron models, the implementation `handles_test_event()` will be identical to the previous implementation of `connect_sender()`. It should be similar to the one for `iaf_neuron`:
 
         inline
         port iaf_neuron::handles_test_event(SpikeEvent&, rport receptor_type)
@@ -31,7 +31,7 @@ will provide necessary background information.
           return 0;
         }
 
-5. Define function `send_test_event(Node&, rport, synindex, bool)`, so that it sends an event of the type that the neuron sends (typically `SpikeEvent`). The implementation is similar to the `check_connection()` function in NEST 2.4, and will in most cases be the same as for `iaf_neuron`. The last two parameters will usually not be relevant.
+* Define function `send_test_event(Node&, rport, synindex, bool)`, so that it sends an event of the type that the neuron sends (typically `SpikeEvent`). The implementation is similar to the `check_connection()` function in NEST 2.4, and will in most cases be the same as for `iaf_neuron`. The last two parameters will usually not be relevant.
 
         inline
         port iaf_neuron::send_test_event(Node& target, rport receptor_type, synindex, bool)
@@ -48,8 +48,8 @@ handle a some extra aspects and therefore have a more complex
 send_test_event(). function. Please see the function for the
 poisson_generator below as an example.
 
-1. The function must call `device_.enforce_single_syn_type(syn_id)`, where `device_` is of type `StimulatingDevice`. This call ensures that only a single synapse type is used for 'outgoing' connections from the device. While this is not really relevant for poisson_generator, it is crucial for a range of other stimulators and therefore enforce by NEST throughout.
-2. Many stimulating devices use callback mechanisms, where the device first sends a `DSSpikeEvent` or `DSCurrentEvent`, which it then handles by its own `event_hook()` method, which dispatches the "real" output to the targets as `SpikeEvent` or `CurrentEvent`. The branch in the implementation below ensures that a `DSSpikeEvent` is used on the first call to `send_test_event()` and a `SpikeEvent` on the second, cf. Fig 5 in Kunkel et al (2014). The mechanism ensures that only static synapses can be used to connect devices to neurons.
+* The function must call `device_.enforce_single_syn_type(syn_id)`, where `device_` is of type `StimulatingDevice`. This call ensures that only a single synapse type is used for 'outgoing' connections from the device. While this is not really relevant for poisson_generator, it is crucial for a range of other stimulators and therefore enforce by NEST throughout.
+* Many stimulating devices use callback mechanisms, where the device first sends a `DSSpikeEvent` or `DSCurrentEvent`, which it then handles by its own `event_hook()` method, which dispatches the "real" output to the targets as `SpikeEvent` or `CurrentEvent`. The branch in the implementation below ensures that a `DSSpikeEvent` is used on the first call to `send_test_event()` and a `SpikeEvent` on the second, cf. Fig 5 in Kunkel et al (2014). The mechanism ensures that only static synapses can be used to connect devices to neurons.
 
         inline
         port poisson_generator::send_test_event(Node& target, rport receptor_type, synindex syn_id, bool dummy_target)
@@ -108,32 +108,32 @@ complex models later.
    * the first one is required by GenericConnectorModel<ConnectionType>;
    * the second provides a convenient shorthand for the base class. 
 
-          typedef CommonSynapseProperties CommonPropertiesType;
-          typedef Connection<targetidentifierT> ConnectionBase;
+           typedef CommonSynapseProperties CommonPropertiesType;
+           typedef Connection<targetidentifierT> ConnectionBase;
 
 * Add the following using declarations for accessor methods in the base class template
 
-       using ConnectionBase::get_delay_steps;
-       using ConnectionBase::get_delay;
-       using ConnectionBase::get_rport;
-       using ConnectionBase::get_target;
+        using ConnectionBase::get_delay_steps;
+        using ConnectionBase::get_delay;
+        using ConnectionBase::get_rport;
+        using ConnectionBase::get_target;
 
 * Add a data member for the synaptic weight (in NEST 2.4 handled by base class ConnectionHetWD)
 
-       double_t weight_;
-       ...
+        double_t weight_;
+        ...
 
 * In default and copy constructor, add forward to base class and initializer for weight. Default weight in NEST is 1.0
 
-       STDPConnection() :
-          ConnectionBase(),
-          weight_(1.0),
-          ...
+        STDPConnection() :
+           ConnectionBase(),
+           weight_(1.0),
+           ...
 
-       STDPConnection<targetidentifierT> &rhs) :
-         ConnectionBase(rhs),
-         weight_(rhs.weight_),
-         ...
+        STDPConnection<targetidentifierT> &rhs) :
+           ConnectionBase(rhs),
+           weight_(rhs.weight_),
+           ...
 
 * Define a class implementing a dummy node used for the first step in connection testing (see Fig 5 in Kunkel et al, 2014), derived from ConnTestDummyNodeBase.
 
@@ -143,75 +143,75 @@ complex models later.
    * The function should always return invalid_port_, this return value is ignored by the caller.
    * The class and its base are called check_helper and check_helper_base in Kunkel et al, 2014. 
 
-          class ConnTestDummyNode: public ConnTestDummyNodeBase
-          {
-          public:
-            using ConnTestDummyNodeBase::handles_test_event;
-            port handles_test_event(SpikeEvent&, rport) { return invalid_port_; }
-          };
+           class ConnTestDummyNode: public ConnTestDummyNodeBase
+           {
+           public:
+             using ConnTestDummyNodeBase::handles_test_event;
+             port handles_test_event(SpikeEvent&, rport) { return invalid_port_; }
+           };
 
 * Implement check_connection(). The fourth parameter, const CommenPropertiesType&, is new in the method signature relative to NEST 2.4, and the implementation slightly different. It forwards the actual connection checking to the base class.
 
-       void check_connection(Node & s, Node & t, rport receptor_type, double_t t_lastspike, 
-                             const CommonPropertiesType& cp)
-       {
-         ConnTestDummyNode dummy_target;
-         ConnectionBase::check_connection_(dummy_target, s, t, receptor_type);
-         t.register_stdp_connection(t_lastspike - get_delay());
-       }
+        void check_connection(Node & s, Node & t, rport receptor_type, double_t t_lastspike, 
+                              const CommonPropertiesType& cp)
+        {
+          ConnTestDummyNode dummy_target;
+          ConnectionBase::check_connection_(dummy_target, s, t, receptor_type);
+          t.register_stdp_connection(t_lastspike - get_delay());
+        }
 
 * Add a set_weight() method. It is used to set the weight efficiently during synapse creation. 
 
-       void set_weight(double_t w) { weight_ = w; }
+        void set_weight(double_t w) { weight_ = w; }
 
 * Modify the send() method. The key changes are
    
    * add thread t as second argument to the send() method, so that its signature becomes 
 
-          void send(Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties &cp)
+           void send(Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties &cp)
 
    * the method receives the target thread as second argument
    * target, rport and delay information must be obtained from the base class through accessor methods
    * the code below shows only the modified lines 
 
-          void send(Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties &)
-          {
-            [snip]
+           void send(Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties &)
+           {
+             [snip]
+             
+             Node *target = get_target(t);
+             double_t dendritic_delay = get_delay();
+             
+             [snip]  
+       	     
+             target->get_history(t_lastspike - dendritic_delay, t_spike - dendritic_delay,
+                                 &start, &finish);
+	               
+             [snip]
           
-            Node *target = get_target(t);
-            double_t dendritic_delay = get_delay();
-          
-            [snip]  
-          
-            target->get_history(t_lastspike - dendritic_delay, t_spike - dendritic_delay,
-                         		  &start, &finish);
-          
-           [snip]
-          
-           e.set_receiver(*target);
-           e.set_weight(weight_);
-           e.set_delay(get_delay_steps());
-           e.set_rport(get_rport());
-           e();
+             e.set_receiver(*target);
+             e.set_weight(weight_);
+             e.set_delay(get_delay_steps());
+             e.set_rport(get_rport());
+             e();
             
-           [snip]
-          }
+             [snip]
+           }
 
 *  Add forwards to base class and add weight in set_status() and get_status() 
 
-        void get_status(DictionaryDatum & d) const
-        {
-          ConnectionBase::get_status(d);
-          def<double_t>(d, names::weight, weight_);
-          ...
-        }
+         void get_status(DictionaryDatum & d) const
+         {
+           ConnectionBase::get_status(d);
+           def<double_t>(d, names::weight, weight_);
+           ...
+         }
           
-        void set_status(const DictionaryDatum & d, ConnectorModel &cm)
-        {
-          ConnectionBase::set_status(d, cm);
-          updateValue<double_t>(d, names::weight, weight_);
-          ... 
-        }
+         void set_status(const DictionaryDatum & d, ConnectorModel &cm)
+         {
+           ConnectionBase::set_status(d, cm);
+           updateValue<double_t>(d, names::weight, weight_);
+           ... 
+         }
 
 ### Example: stdp_synapse_hom
 

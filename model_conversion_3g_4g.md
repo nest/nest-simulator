@@ -78,10 +78,9 @@ complex models later.
 
 ### Connection base class, target data types, and synapse model registration
 
-* All connections must be derived from the base class template `Connection<T>`.
-* The template parameter T represents the target identifier data type (see Kunkel et al, Sec 3.3.2). It can either be `TargetIdentifierPtrRport` for general synapses or `TargetIdentifierIndex` for HPC synapses with extra-low memory footprint (max 65.535 targets per thread, rport fixed to 0).
-* The template is instantiated on synapse model registration, e.g. in `modelsmodule.cpp`
-
+1. All connections must be derived from the base class template `Connection<T>`.
+2. The template parameter T represents the target identifier data type (see Kunkel et al, Sec 3.3.2). It can either be `TargetIdentifierPtrRport` for general synapses or `TargetIdentifierIndex` for HPC synapses with extra-low memory footprint (max 65.535 targets per thread, rport fixed to 0).
+3. The template is instantiated on synapse model registration, e.g. in `modelsmodule.cpp`
         register_connection_model < STDPConnection<TargetIdentifierPtrRport> > (net_, "stdp_synapse");
         register_connection_model < STDPConnection<TargetIdentifierIndex> > (net_, "stdp_synapse_hpc");
 

@@ -294,15 +294,16 @@ blockquote {
 }
 
 ul li {
-  list-style: disc;
-  padding-left: 12px;
+  padding-left: 15px;
 }
 
 ul li:before {
-  content: '&raquo;';
+  content: '»';
   display: inline-block;
-  margin-left: -12px;
-  width: 12px;
+  margin-left: -15px;
+  width: 15px;
+  color: #6d6d6d;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 ol li {

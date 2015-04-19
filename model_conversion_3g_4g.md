@@ -101,8 +101,8 @@ complex models later.
 * This is a synapse model in which all parameters are individual to each connection.
 * Change the class declaration to
 
-       template<typename targetidentifierT>
-       class STDPConnection : public Connection<targetidentifierT>
+        template<typename targetidentifierT>
+        class STDPConnection : public Connection<targetidentifierT>
 
 * Add the following typedefs
    * the first one is required by GenericConnectorModel<ConnectionType>;

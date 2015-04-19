@@ -23,10 +23,10 @@ For ways to contribute your own code, see below.
 NEST development is backed by multiple interlinked systems, most
 notably,
 
-* a central [source code repository](https://github.com/nest/nest-simulator) hosted on GitHub(https://github.com/)
+* a central [source code repository](https://github.com/nest/nest-simulator) hosted on [GitHub](https://github.com/)
 * the associated GitHub [issue tracker](https://github.com/nest/nest-simulator/issues)
 * [continuous integration](continuous_integration) for pull requests provided by [TravisCI](https://travis-ci.org/)
-* self-hosted [mailing lists](http://www.nest-simulator.org/community/) based on Mailman.
+* self-hosted [mailing lists](http://www.nest-simulator.org/community/) based on [Mailman](http://www.gnu.org/software/mailman/).
 
 The development workflow is based purely on pull requests. This means
 that no direct commits to the repository are allowed, but all has to
@@ -58,7 +58,7 @@ analog quantities from the model.
 Devices are similar to neurons, but used to stimulate the network or
 record from the neurons without necessarily having internal dynamics.
 
-* [Developing neuron and device models](neurons_and_device_models)
+* [Developing neuron and device models](neuron_and_device_models)
 * [Multimeter support for models](multimeter_support)
 
 Synapses mediate the signal flow between neuron or device models. They
@@ -103,7 +103,7 @@ it must adhere to some minimal coding and naming conventions:
 * [Naming convention for variables and parameters](variables_parameters_naming)
 
 Once your code is in shape, head over to the [workflow
-manual](development_workflow) to find out how initiate the inclusion
+manual](development_workflow) to find out how to initiate the inclusion
 by issuing a pull request.
 
 You might also want to consider [becoming a

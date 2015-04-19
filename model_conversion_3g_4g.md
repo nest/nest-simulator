@@ -108,8 +108,8 @@ complex models later.
    * the first one is required by GenericConnectorModel<ConnectionType>;
    * the second provides a convenient shorthand for the base class. 
 
-           typedef CommonSynapseProperties CommonPropertiesType;
-           typedef Connection<targetidentifierT> ConnectionBase;
+       typedef CommonSynapseProperties CommonPropertiesType;
+       typedef Connection<targetidentifierT> ConnectionBase;
 
 * Add the following using declarations for accessor methods in the base class template
 

@@ -21,12 +21,12 @@ will provide necessary background information.
 * Change statement `using Node::connect_sender;` to `using Node::handles_test_event;`. 
 * Remove function `check_connection(Connection&, port)`.
 * Change function `connect_sender(SpikeEvent&, port)` to
-  `handles_test_event(SpikeEvent&, rport)` for each event type that can
-  be received by the neuron; note the change in the datatype of the
-  second argument from `port` to `rport`
+`handles_test_event(SpikeEvent&, rport)` for each event type that can
+be received by the neuron; note the change in the datatype of the
+second argument from `port` to `rport`
 * For most neuron models, the implementation `handles_test_event()` will
-  be identical to the previous implementation of `connect_sender()`. It
-  should be similar to the one for `iaf_neuron`:
+be identical to the previous implementation of `connect_sender()`. It
+should be similar to the one for `iaf_neuron`:
 
        inline
        port iaf_neuron::handles_test_event(SpikeEvent&, rport receptor_type)

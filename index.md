@@ -57,7 +57,8 @@ make the transision easier for you, there is a conversion guide:
 ## Dig deeper!
 
 NEST is a complex piece of software with a [long
-history](http://dx.doi.org/10.3389/conf.fninf.2013.09.00106). Here is a collection of 
+history](http://dx.doi.org/10.3389/conf.fninf.2013.09.00106). Here is
+a collection of documents describing the NEST simulation kernel.
 
 * [General architecture of NEST (Diploma thesis Jochen M. Eppler)](http://mindzoo.de/files/Diploma-JME.pdf)
 * [Overview of scheduling and update strategies](simulation_loop_mindelay)
@@ -75,7 +76,7 @@ it must adhere to some minimal coding and naming conventions:
 
 * [Coding Guidelines for C++](coding_guidelines_c++)
 * [Coding Guidelines for SLI](coding_guidelines_sli)
-
+ 
 * [Naming convention for neuron models](neuron_model_naming)
 * [Naming convention for synapse models](synapse_model_naming)
 * [Naming convention for variables and parameters](variables_parameters_naming)

@@ -11,10 +11,12 @@ layout: index
 
 # This is the developer manual for NEST.
 
-We use a private repository for internal development, while all
-general NEST development takes place in the public repository.
+We use a private repository for internal and unpublished work, while
+all general NEST development takes place in the public repository.
 
-This means that you can follow the development as it happens.
+This means that you can follow NEST's development as it happens.
+
+For ways to contribute your own code, see below.
 
 ## Development infrastructure and workflow
 
@@ -30,35 +32,55 @@ The development workflow is based purely on pull requests. This means
 that no direct commits to the repository are allowed, but all has to
 go through the code review process unconditionally.
 
+The details of the development workflow and the code review are layed
+out in the following pages:
+
 * [Development workflow for NEST](development_workflow)  
 * [Code review guidelines](code_review_guidelines)  
 
 ## Extending NEST
 
-If you intend to develop your own neuron or synapse models, the
-easiest way to do so without messing with NEST's source code is to
-write a plugin in the form of an extension module:
+The NEST simulator is a scientific tool and as such it is never ready
+and constantly changing to meet the needs of novel neuroscientific
+endeavors.
+
+When adding your own neuron or synapse models, the easiest way to do
+so without messing with NEST's source code, is to write a plugin in
+the form of an extension module:
 
 * [Writing an Extension Module](extension_modules)
 
-* Developing neuron and device models
-* [Multimeter support for models](multimeter_support)
-* [Creating and handling Tokens and Datums in SLI](tokens_and_datums)
+A neuron model in NEST is a C++ class that contains the neuron
+dynamics and implements the API for setting and retrieving parameters,
+updating the dynamics, sending and receiving events, and recording
+analog quantities from the model.
 
-* Synapses in NEST: An overview
-* Developing synapse models
+Devices are similar to neurons, but used to stimulate the network or
+record from the neurons without necessarily having internal dynamics.
+
+* [Developing neuron and device models](neurons_and_device_models)
+* [Multimeter support for models](multimeter_support)
+
+Synapses mediate the signal flow between neuron or device models. They
+can either be static or implement synaptic plasticity rules such as
+STDP.
+
+* [Synapses in NEST: An overview](synapses_overview)
+* [Developing synapse models](synapse_models)
 
 If you find your models written for NEST version 2.4 and prior not
-working in newer versions, this is because we have updated the API. To
-make the transision easier for you, there is a conversion guide:
+working anymore in newer versions, the most likely reason is that we
+have updated the API for neuron and synapse models. To make the
+transision of models easier for you, there is a conversion guide:
 
 * [Updating models for NEST 2.4 or prior to 2.6 or later](model_conversion_3g_4g)
 
 ## Dig deeper!
 
 NEST is a complex piece of software with a [long
-history](http://dx.doi.org/10.3389/conf.fninf.2013.09.00106). Here is
-a collection of documents describing the NEST simulation kernel.
+history](http://dx.doi.org/10.3389/conf.fninf.2013.09.00106). To get
+you started at learning about it, there's a collection of documents
+describing the NEST simulation kernel:
 
 * [General architecture of NEST (Diploma thesis Jochen M. Eppler)](http://mindzoo.de/files/Diploma-JME.pdf)
 * [Overview of scheduling and update strategies](simulation_loop_mindelay)
@@ -76,7 +98,6 @@ it must adhere to some minimal coding and naming conventions:
 
 * [Coding Guidelines for C++](coding_guidelines_c++)
 * [Coding Guidelines for SLI](coding_guidelines_sli)
- 
 * [Naming convention for neuron models](neuron_model_naming)
 * [Naming convention for synapse models](synapse_model_naming)
 * [Naming convention for variables and parameters](variables_parameters_naming)
@@ -88,3 +109,7 @@ by issuing a pull request.
 You might also want to consider [becoming a
 member](http://www.nest-initiative.org/membership/) in the NEST
 Initiative.
+
+## Further reading (aka needs-a-better-home)
+
+* [Creating and handling Tokens and Datums in SLI](tokens_and_datums)

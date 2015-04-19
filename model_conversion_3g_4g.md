@@ -33,13 +33,13 @@ will provide necessary background information.
 
 5. Define function `send_test_event(Node&, rport, synindex, bool)`, so that it sends an event of the type that the neuron sends (typically `SpikeEvent`). The implementation is similar to the `check_connection()` function in NEST 2.4, and will in most cases be the same as for `iaf_neuron`. The last two parameters will usually not be relevant.
 
-       inline
-       port iaf_neuron::send_test_event(Node& target, rport receptor_type, synindex, bool)
-       {
-         SpikeEvent e;
-         e.set_sender(*this);
-         return target.handles_test_event(e, receptor_type);
-       }
+        inline
+        port iaf_neuron::send_test_event(Node& target, rport receptor_type, synindex, bool)
+        {
+          SpikeEvent e;
+          e.set_sender(*this);
+          return target.handles_test_event(e, receptor_type);
+        }
 
 ## Converting stimulating devices
 
@@ -48,27 +48,27 @@ handle a some extra aspects and therefore have a more complex
 send_test_event(). function. Please see the function for the
 poisson_generator below as an example.
 
-* The function must call `device_.enforce_single_syn_type(syn_id)`, where `device_` is of type `StimulatingDevice`. This call ensures that only a single synapse type is used for 'outgoing' connections from the device. While this is not really relevant for poisson_generator, it is crucial for a range of other stimulators and therefore enforce by NEST throughout.
-* Many stimulating devices use callback mechanisms, where the device first sends a `DSSpikeEvent` or `DSCurrentEvent`, which it then handles by its own `event_hook()` method, which dispatches the "real" output to the targets as `SpikeEvent` or `CurrentEvent`. The branch in the implementation below ensures that a `DSSpikeEvent` is used on the first call to `send_test_event()` and a `SpikeEvent` on the second, cf. Fig 5 in Kunkel et al (2014). The mechanism ensures that only static synapses can be used to connect devices to neurons.
+1. The function must call `device_.enforce_single_syn_type(syn_id)`, where `device_` is of type `StimulatingDevice`. This call ensures that only a single synapse type is used for 'outgoing' connections from the device. While this is not really relevant for poisson_generator, it is crucial for a range of other stimulators and therefore enforce by NEST throughout.
+2. Many stimulating devices use callback mechanisms, where the device first sends a `DSSpikeEvent` or `DSCurrentEvent`, which it then handles by its own `event_hook()` method, which dispatches the "real" output to the targets as `SpikeEvent` or `CurrentEvent`. The branch in the implementation below ensures that a `DSSpikeEvent` is used on the first call to `send_test_event()` and a `SpikeEvent` on the second, cf. Fig 5 in Kunkel et al (2014). The mechanism ensures that only static synapses can be used to connect devices to neurons.
 
-       inline
-       port poisson_generator::send_test_event(Node& target, rport receptor_type, synindex syn_id, bool dummy_target)
-       {
-         device_.enforce_single_syn_type(syn_id);
-         
-         if ( dummy_target )
-         {
-           DSSpikeEvent e;
-           e.set_sender(*this);
-           return target.handles_test_event(e, receptor_type);
-         }
-         else
-         {
-           SpikeEvent e;
+        inline
+        port poisson_generator::send_test_event(Node& target, rport receptor_type, synindex syn_id, bool dummy_target)
+        {
+          device_.enforce_single_syn_type(syn_id);
+          
+          if ( dummy_target )
+          {
+            DSSpikeEvent e;
             e.set_sender(*this);
             return target.handles_test_event(e, receptor_type);
-         }
-       }
+          }
+          else
+          {
+            SpikeEvent e;
+             e.set_sender(*this);
+             return target.handles_test_event(e, receptor_type);
+          }
+        }
 
 ## Converting synapse models
 

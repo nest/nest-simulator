@@ -18,10 +18,10 @@ will provide necessary background information.
 
 ##  Converting neuron models
 
-* Change statement `using Node::connect_sender;` to `using Node::handles_test_event;`. 
-* Remove function `check_connection(Connection&, port)`.
-* Change function `connect_sender(SpikeEvent&, port)` to `handles_test_event(SpikeEvent&, rport)` for each event type that can be received by the neuron; note the change in the datatype of the second argument from `port` to `rport`
-* For most neuron models, the implementation `handles_test_event()` will be identical to the previous implementation of `connect_sender()`. It should be similar to the one for `iaf_neuron`:
+1. Change statement `using Node::connect_sender;` to `using Node::handles_test_event;`. 
+2. Remove function `check_connection(Connection&, port)`.
+3. Change function `connect_sender(SpikeEvent&, port)` to `handles_test_event(SpikeEvent&, rport)` for each event type that can be received by the neuron; note the change in the datatype of the second argument from `port` to `rport`
+4. For most neuron models, the implementation `handles_test_event()` will be identical to the previous implementation of `connect_sender()`. It should be similar to the one for `iaf_neuron`:
 
        inline
        port iaf_neuron::handles_test_event(SpikeEvent&, rport receptor_type)
@@ -31,7 +31,7 @@ will provide necessary background information.
          return 0;
        }
 
-* Define function `send_test_event(Node&, rport, synindex, bool)`, so that it sends an event of the type that the neuron sends (typically `SpikeEvent`). The implementation is similar to the `check_connection()` function in NEST 2.4, and will in most cases be the same as for `iaf_neuron`. The last two parameters will usually not be relevant.
+5. Define function `send_test_event(Node&, rport, synindex, bool)`, so that it sends an event of the type that the neuron sends (typically `SpikeEvent`). The implementation is similar to the `check_connection()` function in NEST 2.4, and will in most cases be the same as for `iaf_neuron`. The last two parameters will usually not be relevant.
 
        inline
        port iaf_neuron::send_test_event(Node& target, rport receptor_type, synindex, bool)

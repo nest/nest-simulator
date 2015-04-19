@@ -20,13 +20,8 @@ will provide necessary background information.
 
 * Change statement `using Node::connect_sender;` to `using Node::handles_test_event;`. 
 * Remove function `check_connection(Connection&, port)`.
-* Change function `connect_sender(SpikeEvent&, port)` to
-`handles_test_event(SpikeEvent&, rport)` for each event type that can
-be received by the neuron; note the change in the datatype of the
-second argument from `port` to `rport`
-* For most neuron models, the implementation `handles_test_event()` will
-be identical to the previous implementation of `connect_sender()`. It
-should be similar to the one for `iaf_neuron`:
+* Change function `connect_sender(SpikeEvent&, port)` to `handles_test_event(SpikeEvent&, rport)` for each event type that can be received by the neuron; note the change in the datatype of the second argument from `port` to `rport`
+* For most neuron models, the implementation `handles_test_event()` will be identical to the previous implementation of `connect_sender()`. It should be similar to the one for `iaf_neuron`:
 
        inline
        port iaf_neuron::handles_test_event(SpikeEvent&, rport receptor_type)
@@ -36,12 +31,7 @@ should be similar to the one for `iaf_neuron`:
          return 0;
        }
 
-* Define function `send_test_event(Node&, rport, synindex, bool)`, so
-  that it sends an event of the type that the neuron sends (typically
-  `SpikeEvent`). The implementation is similar to the
-  `check_connection()` function in NEST 2.4, and will in most cases be
-  the same as for `iaf_neuron`. The last two parameters will usually
-  not be relevant.
+* Define function `send_test_event(Node&, rport, synindex, bool)`, so that it sends an event of the type that the neuron sends (typically `SpikeEvent`). The implementation is similar to the `check_connection()` function in NEST 2.4, and will in most cases be the same as for `iaf_neuron`. The last two parameters will usually not be relevant.
 
        inline
        port iaf_neuron::send_test_event(Node& target, rport receptor_type, synindex, bool)
@@ -58,21 +48,8 @@ handle a some extra aspects and therefore have a more complex
 send_test_event(). function. Please see the function for the
 poisson_generator below as an example.
 
-* The function must call `device_.enforce_single_syn_type(syn_id)`,
-  where `device_` is of type `StimulatingDevice`. This call ensures that
-  only a single synapse type is used for 'outgoing' connections from
-  the device. While this is not really relevant for poisson_generator,
-  it is crucial for a range of other stimulators and therefore enforce
-  by NEST throughout.
-
-* Many stimulating devices use callback mechanisms, where the device
-  first sends a `DSSpikeEvent` or `DSCurrentEvent`, which it then handles
-  by its own `event_hook()` method, which dispatches the "real" output
-  to the targets as `SpikeEvent` or `CurrentEvent`. The branch in the
-  implementation below ensures that a `DSSpikeEvent` is used on the
-  first call to `send_test_event()` and a `SpikeEvent` on the second, cf
-  Fig 5 in Kunkel et al (2014). The mechanism ensures that only static
-  synapses can be used to connect devices to neurons.
+* The function must call `device_.enforce_single_syn_type(syn_id)`, where `device_` is of type `StimulatingDevice`. This call ensures that only a single synapse type is used for 'outgoing' connections from the device. While this is not really relevant for poisson_generator, it is crucial for a range of other stimulators and therefore enforce by NEST throughout.
+* Many stimulating devices use callback mechanisms, where the device first sends a `DSSpikeEvent` or `DSCurrentEvent`, which it then handles by its own `event_hook()` method, which dispatches the "real" output to the targets as `SpikeEvent` or `CurrentEvent`. The branch in the implementation below ensures that a `DSSpikeEvent` is used on the first call to `send_test_event()` and a `SpikeEvent` on the second, cf. Fig 5 in Kunkel et al (2014). The mechanism ensures that only static synapses can be used to connect devices to neurons.
 
        inline
        port poisson_generator::send_test_event(Node& target, rport receptor_type, synindex syn_id, bool dummy_target)
@@ -101,29 +78,18 @@ complex models later.
 
 ### Connection base class, target data types, and synapse model registration
 
-* All connections must be derived from the base class template
-  `Connection<T>`.
-* The template parameter T represents the target identifier data type
-  (see Kunkel et al, Sec 3.3.2). It can either be
-  `TargetIdentifierPtrRport` for general synapses or
-  `TargetIdentifierIndex` for HPC synapses with extra-low memory
-  footprint (max 65.535 targets per thread, rport fixed to 0).
-* The template is instantiated on synapse model registration, e.g. in
-  `modelsmodule.cpp`
+* All connections must be derived from the base class template `Connection<T>`.
+* The template parameter T represents the target identifier data type (see Kunkel et al, Sec 3.3.2). It can either be `TargetIdentifierPtrRport` for general synapses or `TargetIdentifierIndex` for HPC synapses with extra-low memory footprint (max 65.535 targets per thread, rport fixed to 0).
+* The template is instantiated on synapse model registration, e.g. in `modelsmodule.cpp`
 
-        register_connection_model < STDPConnection<TargetIdentifierPtrRport> > (net_, "stdp_synapse");
-        register_connection_model < STDPConnection<TargetIdentifierIndex> > (net_, "stdp_synapse_hpc");
+       register_connection_model < STDPConnection<TargetIdentifierPtrRport> > (net_, "stdp_synapse");
+       register_connection_model < STDPConnection<TargetIdentifierIndex> > (net_, "stdp_synapse_hpc");
 
 ### General remarks
 
-* Ususally, only `connection.h` needs to be included in files defining
-  synapses.
-* Because the base class `Connection<T>` is a template, all code
-  depending on it must be visible at compile time. This may require
-  moving code from cpp-files to h-files.
-* If you are certain that you will never want to use your synapse
-  model as an HPC-synapse, you can derive it from the specialized base
-  class.
+* Ususally, only `connection.h` needs to be included in files defining synapses.
+* Because the base class `Connection<T>` is a template, all code depending on it must be visible at compile time. This may require moving code from cpp-files to h-files.
+* If you are certain that you will never want to use your synapse model as an HPC-synapse, you can derive it from the specialized base class.
 * The following aspects of a connection are handled by the Connection<T> base class:
    * the target node
    * the rport
@@ -132,9 +98,8 @@ complex models later.
 
 ### Example: stdp_synapse
 
-* This is a synapse model in which all parameters are individual to
-  each connection.
-* Change the class declaration to 
+* This is a synapse model in which all parameters are individual to each connection.
+* Change the class declaration to
 
        template<typename targetidentifierT>
        class STDPConnection : public Connection<targetidentifierT>
@@ -146,22 +111,19 @@ complex models later.
           typedef CommonSynapseProperties CommonPropertiesType;
           typedef Connection<targetidentifierT> ConnectionBase;
 
-* Add the following using declarations for accessor methods in the
-  base class template
+* Add the following using declarations for accessor methods in the base class template
 
        using ConnectionBase::get_delay_steps;
        using ConnectionBase::get_delay;
        using ConnectionBase::get_rport;
        using ConnectionBase::get_target;
 
-* Add a data member for the synaptic weight (in NEST 2.4 handled by
-  base class ConnectionHetWD)
+* Add a data member for the synaptic weight (in NEST 2.4 handled by base class ConnectionHetWD)
 
-        double_t weight_;
-        ...
+       double_t weight_;
+       ...
 
-* In default and copy constructor, add forward to base class and
-  initializer for weight. Default weight in NEST is 1.0
+* In default and copy constructor, add forward to base class and initializer for weight. Default weight in NEST is 1.0
 
        STDPConnection() :
           ConnectionBase(),
@@ -173,9 +135,7 @@ complex models later.
          weight_(rhs.weight_),
          ...
 
-* Define a class implementing a dummy node used for the first step in
-  connection testing (see Fig 5 in Kunkel et al, 2014), derived from
-  ConnTestDummyNodeBase.
+* Define a class implementing a dummy node used for the first step in connection testing (see Fig 5 in Kunkel et al, 2014), derived from ConnTestDummyNodeBase.
 
    * The class should be defined inside your connection class.
    * This class must override handles_test_event() for each event type that the synapse handles.
@@ -190,11 +150,7 @@ complex models later.
             port handles_test_event(SpikeEvent&, rport) { return invalid_port_; }
           };
 
-
-* Implement check_connection(). The fourth parameter, const
-  CommenPropertiesType&, is new in the method signature relative to
-  NEST 2.4, and the implementation slightly different. It forwards the
-  actual connection checking to the base class.
+* Implement check_connection(). The fourth parameter, const CommenPropertiesType&, is new in the method signature relative to NEST 2.4, and the implementation slightly different. It forwards the actual connection checking to the base class.
 
        void check_connection(Node & s, Node & t, rport receptor_type, double_t t_lastspike, 
                              const CommonPropertiesType& cp)
@@ -265,9 +221,7 @@ its NEST 2.4 version. The specialty of the _hom variant is that all
 parameters concerning plasticity are homogeneous, i.e., identical for
 all synapses of the type.
 
-* Define a class representing the common properties, derived from
-  CommonSynapseProperties. Note that the constructor, and status
-  setters/getters must forward to the base class.
+* Define a class representing the common properties, derived from CommonSynapseProperties. Note that the constructor, and status setters/getters must forward to the base class.
 
        class STDPHomCommonProperties : public CommonSynapseProperties
        {
@@ -303,8 +257,7 @@ all synapses of the type.
 
 * All data members that are in `STDPHomCommonProperties` are removed 
 
-* `send()` and its helper functions must access those members through
-  the common properties reference (`depress_()`, not show):
+* `send()` and its helper functions must access those members through the common properties reference (`depress_()`, not show):
 
        double_t facilitate_(double_t w, double_t kplus, const STDPHomCommonProperties &cp)
        {

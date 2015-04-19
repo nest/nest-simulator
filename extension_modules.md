@@ -81,13 +81,14 @@ As a starting point, try to build MyModule as follows:
 
         ../MyModule/configure --with-nest=${NEST_INSTALL_DIR}/bin/nest-config
 
-   MyModule will then be installed to ${NEST_INSTALL_DIR}. This ensures that NEST will be able to find initializing SLI files for the module.
-   You should not use the --prefix to select a different installation destination. If you do, you must make sure to use addpath in SLI before loading the module to ensure that NEST will find the SLI initialization file for your module.
+    MyModule will then be installed to `${NEST_INSTALL_DIR}`. This ensures that NEST will be able to find initializing SLI files for the module.
+
+    You should not use the `--prefix` to select a different installation destination. If you do, you must make sure to use addpath in SLI before loading the module to ensure that NEST will find the SLI initialization file for your module.
 
 5. Compile.
 
-       make
-       make install
+        make
+        make install
        
 6. The previous command installed MyModule to the NEST installation directory, including help files generated from the source code. 
 
@@ -97,21 +98,21 @@ As a starting point, try to build MyModule as follows:
 2. Start NEST.
 3. Load the module using
 
-       SLI ] (mymodule) Install
-       Apr 30 17:06:11: *** Info: Install
-       Apr 30 17:06:11: loaded module My NEST Module
+        SLI ] (mymodule) Install
+        Apr 30 17:06:11: *** Info: Install
+        Apr 30 17:06:11: loaded module My NEST Module
 
 4. You should now see pif_psc_alpha in the modeldict and drop_odd_spike in the synapsedict. You can learn more about these models and the additional (meaningless) connection function supplied by the model by typing
 
-       /pif_psc_alpha help
-       /drop_odd_spike help
-       /StepPatternConnect help
+        /pif_psc_alpha help
+        /drop_odd_spike help
+        /StepPatternConnect help
 
 5. In PyNest, use
 
-       nest.Install("mymodule")
+        nest.Install("mymodule")
 
-   This is available under Linux and OSX starting with NEST 1.9.8497 and later. Link the module into NEST as described below if you run into problems. 
+    This is available under Linux and OSX starting with NEST 1.9.8497 and later. Link the module into NEST as described below if you run into problems. 
 
 ## Creating your own module
 
@@ -126,16 +127,16 @@ As a starting point, try to build MyModule as follows:
 2. Change back to the NEST build directory.
 3. Reconfigure NEST informing it about your MyModule. Note that the module MUST be installed in the NEST installation directory tree!
 
-       ../src/configure --with-modules="mymodule"
+        ../src/configure --with-modules="mymodule"
 
-   Several modules can be given, separated by spaces.
+    Several modules can be given, separated by spaces.
 4. Recompile and install NEST.
 5. The module should now be available as soon as NEST has started up. It will also be available in PyNEST.
 6. When you make any change to your module, you must first re-compile and re-install your module.
 7. Then move to the NEST build directory and issue
 
-       make -C nest clean
-       make
-       make install-exec
+        make -C nest clean
+        make
+        make install-exec
 
-   This rebuilds only the NEST executable. 
+    This rebuilds only the NEST executable. 

@@ -60,7 +60,7 @@ a {
   color: #e74007;
 }
 a:hover {
-  color: #c5000c;
+  color: #b22e00;
 }
 
 header {
@@ -252,13 +252,13 @@ h1 {
 h2 {
   margin-bottom: 8px;
   font-size: 22px;
-  color: #074872;
+  color: #0d5f94;
 }
 
 h3 {
   margin-bottom: 8px;
   font-size: 18px;
-  color: #074872;
+  color: #0d5f94;
 }
 
 h4 {

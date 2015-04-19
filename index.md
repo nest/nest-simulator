@@ -83,12 +83,14 @@ you started at learning about it, there's a collection of documents
 describing the NEST simulation kernel in historical order:
 
 * [An environment for neural systems
-  simulation](http://cns-classes.bu.edu/cn510/Papers/diesmann-gewaltig-02.pdf)  
+  simulation](http://cns-classes.bu.edu/cn510/Papers/diesmann-gewaltig-02.pdf).  
   Diesmann et al. (2002), explaining the first version of the NEST
   simulation kernel.
-* [General architecture of NEST 2](http://mindzoo.de/files/Diploma-JME.pdf)
+* [General architecture of NEST 2](http://mindzoo.de/files/Diploma-JME.pdf).
+
    J.M. Eppler (2006) explaining the first hybrid-parallel version of
    NEST, and the 2nd generation of the simulation kernel.
+
 * [Supercomputers ready for use as discovery machines for neuroscience.](http://dx.doi.org/10.3389/fninf.2012.00026)
    Helias et al. (2012) explaing the simulation kernel updates for
    allowing the use of supercomputers.

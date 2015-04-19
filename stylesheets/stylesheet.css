@@ -246,6 +246,7 @@ form {
 
 h1 {
   font-size: 32px;
+  margin-bottom: 8px;
 }
 
 h2 {
@@ -293,13 +294,18 @@ blockquote {
 }
 
 ul li {
-  list-style-position: inside;
   list-style: disc;
-  padding-left: 20px;
+  padding-left: 12px;
+}
+
+ul li:before {
+  content: '&raquo;';
+  display: inline-block;
+  margin-left: -12px;
+  width: 12px;
 }
 
 ol li {
-  list-style-position: inside;
   list-style: decimal;
   padding-left: 3px;
 }

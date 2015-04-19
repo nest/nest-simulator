@@ -21,9 +21,9 @@ This means that you can follow the development as it happens.
 NEST development is backed by multiple interlinked systems, most
 notably,
 
-* a central [source code repository](https://github.com/nest/nest-simulator) hosted on GitHub
+* a central [source code repository](https://github.com/nest/nest-simulator) hosted on GitHub(https://github.com/)
 * the associated GitHub [issue tracker](https://github.com/nest/nest-simulator/issues)
-* continuous integration for pull requests provided by TravisCI
+* [continuous integration](continuous_integration) for pull requests provided by [TravisCI](https://travis-ci.org/)
 * self-hosted [mailing lists](http://www.nest-simulator.org/community/) based on Mailman.
 
 The development workflow is based purely on pull requests. This means
@@ -40,7 +40,11 @@ easiest way to do so without messing with NEST's source code is to
 write a plugin in the form of an extension module:
 
 * [Writing an Extension Module](extension_modules)
+
 * Developing neuron and device models
+* [Multimeter support for models](multimeter_support)
+* [Creating and handling Tokens and Datums in SLI](tokens_and_datums)
+
 * Synapses in NEST: An overview
 * Developing synapse models
 
@@ -50,20 +54,36 @@ make the transision easier for you, there is a conversion guide:
 
 * [Updating models for NEST 2.4 or prior to 2.6 or later](model_conversion_3g_4g)
 
+## Dig deeper!
+
+NEST is a complex piece of software with a [long
+history](http://dx.doi.org/10.3389/conf.fninf.2013.09.00106). Here is a collection of 
+
+* [General architecture of NEST (Diploma thesis Jochen M. Eppler)](http://mindzoo.de/files/Diploma-JME.pdf)
+* [Overview of scheduling and update strategies](simulation_loop_mindelay)
+* [The 4th generation connection infrastructure](http://dx.doi.org/10.3389/fninf.2014.00078)
+
+For more information, see the [numerous
+publications](http://www.nest-initiative.org/publications/) about the
+technology behind NEST.
+
 ## Contributions welcome!
 
-We are happily accepting contributions in the form of new functions,
-models or general improvements. To have your code included in NEST, it
-must adhere to some minimal coding and naming conventions:
+We are happily accepting contributions in the form of new models and
+functions or general improvements to NEST. To have your code included,
+it must adhere to some minimal coding and naming conventions:
 
 * [Coding Guidelines for C++](coding_guidelines_c++)
 * [Coding Guidelines for SLI](coding_guidelines_sli)
+
 * [Naming convention for neuron models](neuron_model_naming)
 * [Naming convention for synapse models](synapse_model_naming)
 * [Naming convention for variables and parameters](variables_parameters_naming)
 
-## Further reading
+Once your code is in shape, head over to the [workflow
+manual](development_workflow) to find out how initiate the inclusion
+by issuing a pull request.
 
-* [Multimeter support for models](multimeter_support)
-* [Creating and handling Tokens and Datums in SLI](tokens_and_datums)
-* [Continuous integration](continuous_integration)
+You might also want to consider [becoming a
+member](http://www.nest-initiative.org/membership/) in the NEST
+Initiative.

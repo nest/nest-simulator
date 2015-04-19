@@ -23,13 +23,13 @@ will provide necessary background information.
 3. Change function `connect_sender(SpikeEvent&, port)` to `handles_test_event(SpikeEvent&, rport)` for each event type that can be received by the neuron; note the change in the datatype of the second argument from `port` to `rport`
 4. For most neuron models, the implementation `handles_test_event()` will be identical to the previous implementation of `connect_sender()`. It should be similar to the one for `iaf_neuron`:
 
-       inline
-       port iaf_neuron::handles_test_event(SpikeEvent&, rport receptor_type)
-       {
-         if (receptor_type != 0)
-           throw UnknownReceptorType(receptor_type, get_name());
-         return 0;
-       }
+        inline
+        port iaf_neuron::handles_test_event(SpikeEvent&, rport receptor_type)
+        {
+          if (receptor_type != 0)
+            throw UnknownReceptorType(receptor_type, get_name());
+          return 0;
+        }
 
 5. Define function `send_test_event(Node&, rport, synindex, bool)`, so that it sends an event of the type that the neuron sends (typically `SpikeEvent`). The implementation is similar to the `check_connection()` function in NEST 2.4, and will in most cases be the same as for `iaf_neuron`. The last two parameters will usually not be relevant.
 
@@ -82,8 +82,8 @@ complex models later.
 * The template parameter T represents the target identifier data type (see Kunkel et al, Sec 3.3.2). It can either be `TargetIdentifierPtrRport` for general synapses or `TargetIdentifierIndex` for HPC synapses with extra-low memory footprint (max 65.535 targets per thread, rport fixed to 0).
 * The template is instantiated on synapse model registration, e.g. in `modelsmodule.cpp`
 
-       register_connection_model < STDPConnection<TargetIdentifierPtrRport> > (net_, "stdp_synapse");
-       register_connection_model < STDPConnection<TargetIdentifierIndex> > (net_, "stdp_synapse_hpc");
+        register_connection_model < STDPConnection<TargetIdentifierPtrRport> > (net_, "stdp_synapse");
+        register_connection_model < STDPConnection<TargetIdentifierIndex> > (net_, "stdp_synapse_hpc");
 
 ### General remarks
 

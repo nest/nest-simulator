@@ -6,7 +6,7 @@ layout: index
 
 <hr>
 
-# Conventions for Synapse Type Names
+# Conventions for synapse model names
 
 1. Each connector needs to have a meaningful name, _CName_ in this document
 2. The filenames for the connector are lower case and according to the following set of rules:

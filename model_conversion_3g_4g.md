@@ -223,63 +223,63 @@ all synapses of the type.
 
 * Define a class representing the common properties, derived from CommonSynapseProperties. Note that the constructor, and status setters/getters must forward to the base class.
 
-       class STDPHomCommonProperties : public CommonSynapseProperties
-       {
-       public:
-         STDPHomCommonProperties():
-           CommonSynapseProperties(),
-           tau_plus_(20.0),
-           ...
-           {}
-      
-         void get_status(DictionaryDatum & d) const
-         {
-           CommonSynapseProperties::get_status(d);
-           def<double_t>(d, "tau_plus", tau_plus_);
-           ...
-         }
-         
-         void set_status(const DictionaryDatum & d, ConnectorModel& cm)
-         {
-           CommonSynapseProperties::set_status(d, cm);
-           updateValue<double_t>(d, "tau_plus", tau_plus_);
-           ...
-         }
-       };
+        class STDPHomCommonProperties : public CommonSynapseProperties
+        {
+        public:
+          STDPHomCommonProperties():
+            CommonSynapseProperties(),
+            tau_plus_(20.0),
+            ...
+            {}
+       
+          void get_status(DictionaryDatum & d) const
+          {
+            CommonSynapseProperties::get_status(d);
+            def<double_t>(d, "tau_plus", tau_plus_);
+            ...
+          }
+          
+          void set_status(const DictionaryDatum & d, ConnectorModel& cm)
+          {
+            CommonSynapseProperties::set_status(d, cm);
+            updateValue<double_t>(d, "tau_plus", tau_plus_);
+            ...
+          }
+        };
 
 * Typedef this class as `CommonPropertiesType` 
 
-       typedef STDPHomCommonProperties CommonPropertiesType;
+        typedef STDPHomCommonProperties CommonPropertiesType;
 
 * `send()` also needs to take this type as type of its fourth argument 
 
-       void send(Event& e, thread t, double_t t_lastspike, const STDPHomCommonProperties &)
+        void send(Event& e, thread t, double_t t_lastspike, const STDPHomCommonProperties &)
 
 * All data members that are in `STDPHomCommonProperties` are removed 
 
 * `send()` and its helper functions must access those members through the common properties reference (`depress_()`, not show):
 
-       double_t facilitate_(double_t w, double_t kplus, const STDPHomCommonProperties &cp)
-       {
-         double_t norm_w = (w / cp.Wmax_) + (cp.lambda_ * std::pow(1.0 - (w/cp.Wmax_), cp.mu_plus_) * kplus);
-         return norm_w < 1.0 ? norm_w * cp.Wmax_ : cp.Wmax_;
-       }
-       
-       void send(Event& e, thread t, double_t t_lastspike, const STDPHomCommonProperties &cp)
-       {
-         [snip] 
-       
-         while (start != finish)
-         {
-           [snip]	
-           weight_ = facilitate_(weight_, Kplus_ * std::exp(minus_dt / cp.tau_plus_), cp);
-         }
-       
-         weight_ = depress_(weight_, target->get_K_value(t_spike - dendritic_delay), cp);
-       
-         [snip]
+        double_t facilitate_(double_t w, double_t kplus, const STDPHomCommonProperties &cp)
+        {
+          double_t norm_w = (w / cp.Wmax_) + (cp.lambda_ * std::pow(1.0 - (w/cp.Wmax_), cp.mu_plus_) * kplus);
+          return norm_w < 1.0 ? norm_w * cp.Wmax_ : cp.Wmax_;
+        }
         
-         Kplus_ = Kplus_ * std::exp((t_lastspike - t_spike) /  cp.tau_plus_) + 1.0;
-       }
+        void send(Event& e, thread t, double_t t_lastspike, const STDPHomCommonProperties &cp)
+        {
+          [snip] 
+        
+          while (start != finish)
+          {
+            [snip]	
+            weight_ = facilitate_(weight_, Kplus_ * std::exp(minus_dt / cp.tau_plus_), cp);
+          }
+        
+          weight_ = depress_(weight_, target->get_K_value(t_spike - dendritic_delay), cp);
+        
+          [snip]
+         
+          Kplus_ = Kplus_ * std::exp((t_lastspike - t_spike) /  cp.tau_plus_) + 1.0;
+        }
 
 * In `get_status()`, drop all data members that have been moved to common properties.

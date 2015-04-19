@@ -57,7 +57,7 @@ body {
 }
 
 a {
-  color: #ff6633;
+  color: #e74007;
 }
 a:hover {
   color: #c5000c;
@@ -252,11 +252,13 @@ h1 {
 h2 {
   margin-bottom: 8px;
   font-size: 22px;
+  color: #074872;
 }
 
 h3 {
   margin-bottom: 8px;
   font-size: 18px;
+  color: #074872;
 }
 
 h4 {

@@ -82,20 +82,10 @@ history](http://dx.doi.org/10.3389/conf.fninf.2013.09.00106). To get
 you started at learning about it, there's a collection of documents
 describing the NEST simulation kernel in historical order:
 
-* [An environment for neural systems
-  simulation](http://cns-classes.bu.edu/cn510/Papers/diesmann-gewaltig-02.pdf).  
-  Diesmann et al. (2002), explaining the first version of the NEST
-  simulation kernel.
-* [General architecture of NEST 2](http://mindzoo.de/files/Diploma-JME.pdf).  
-  J.M. Eppler (2006) explaining the first hybrid-parallel version of
-  NEST, and the 2nd generation of the simulation kernel.
-* [Supercomputers ready for use as discovery machines for neuroscience.](http://dx.doi.org/10.3389/fninf.2012.00026)  
-  Helias et al. (2012) explaing the simulation kernel updates for
-  allowing the use of supercomputers.
-* [Spiking network simulation code for petascale computers](http://dx.doi.org/10.3389/fninf.2014.00078)  
-  Kunkel et al. (2014) introducing the 4th generation connection
-  infrastructure of NEST reducing the memory consumption and enabling
-  the use of the world's largest supercomputers.
+* Diesmann et al. (2002) [An environment for neural systems simulation](http://cns-classes.bu.edu/cn510/Papers/diesmann-gewaltig-02.pdf) explains the first version of the NEST simulation kernel.
+* J.M. Eppler (2006) [A Multithreaded and Distributed System for the  Simulation of Large Biological Neural Networks](http://mindzoo.de/files/Diploma-JME.pdf) explains the general architecture of the first hybrid-parallel version of NEST, which is the 2nd generation of the simulation kernel.
+* Helias et al. (2012) [Supercomputers ready for use as discovery machines for neuroscience.](http://dx.doi.org/10.3389/fninf.2012.00026) explains updates to the simulation kernel to enable the routinely use of supercomputers.
+* Kunkel et al. (2014) [Spiking network simulation code for petascale computers](http://dx.doi.org/10.3389/fninf.2014.00078) introduced the 4th generation connection infrastructure of NEST, which reduces the memory consumption considerably and thus enables the use of the world's largest supercomputers.
 * [Overview of scheduling and update strategies](simulation_loop_mindelay)
 
 For even more information, see the [numerous

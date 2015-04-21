@@ -45,10 +45,10 @@ will provide necessary background information.
 
 Stimulating devices, such as spike and current generators, need to
 handle a some extra aspects and therefore have a more complex
-send_test_event(). function. Please see the function for the
-poisson_generator below as an example.
+`send_test_event()` function. Please see the function for the
+`poisson_generator` below as an example.
 
-* The function must call `device_.enforce_single_syn_type(syn_id)`, where `device_` is of type `StimulatingDevice`. This call ensures that only a single synapse type is used for 'outgoing' connections from the device. While this is not really relevant for poisson_generator, it is crucial for a range of other stimulators and therefore enforce by NEST throughout.
+* The function must call `device_.enforce_single_syn_type(syn_id)`, where `device_` is of type `StimulatingDevice`. This call ensures that only a single synapse type is used for 'outgoing' connections from the device. While this is not really relevant for `poisson_generator`, it is crucial for a range of other stimulators and therefore enforce by NEST throughout.
 * Many stimulating devices use callback mechanisms, where the device first sends a `DSSpikeEvent` or `DSCurrentEvent`, which it then handles by its own `event_hook()` method, which dispatches the "real" output to the targets as `SpikeEvent` or `CurrentEvent`. The branch in the implementation below ensures that a `DSSpikeEvent` is used on the first call to `send_test_event()` and a `SpikeEvent` on the second, cf. Fig 5 in Kunkel et al (2014). The mechanism ensures that only static synapses can be used to connect devices to neurons.
 
         inline
@@ -73,7 +73,7 @@ poisson_generator below as an example.
 ## Converting synapse models
 
 Converting a synapse model requires more comprehensive changes. We
-will first consider stdp_synapse as an example, and consider more
+will first consider `stdp_synapse` as an example, and consider more
 complex models later.
 
 ### Connection base class, target data types, and synapse model registration
@@ -96,7 +96,7 @@ complex models later.
    * the delay 
 * They are available from derived classes through accessor methods. 
 
-### Example: stdp_synapse
+### Example: stdp\_synapse
 
 * This is a synapse model in which all parameters are individual to each connection.
 * Change the class declaration to
@@ -136,10 +136,10 @@ complex models later.
 * Define a class implementing a dummy node used for the first step in connection testing (see Fig 5 in Kunkel et al, 2014), derived from ConnTestDummyNodeBase.
 
    * The class should be defined inside your connection class.
-   * This class must override handles_test_event() for each event type that the synapse handles.
+   * This class must override `handles_test_event()` for each event type that the synapse handles.
    * The using declaration is required because we override an overloaded virtual function.
-   * The function should always return invalid_port_, this return value is ignored by the caller.
-   * The class and its base are called check_helper and check_helper_base in Kunkel et al, 2014. 
+   * The function should always return `invalid_port_`, this return value is ignored by the caller.
+   * The class and its base are called `check_helper` and `check_helper_base` in Kunkel et al, 2014. 
 
             class ConnTestDummyNode: public ConnTestDummyNodeBase
             {
@@ -148,7 +148,7 @@ complex models later.
               port handles_test_event(SpikeEvent&, rport) { return invalid_port_; }
             };
 
-* Implement check_connection(). The fourth parameter, const CommenPropertiesType&, is new in the method signature relative to NEST 2.4, and the implementation slightly different. It forwards the actual connection checking to the base class.
+* Implement `check_connection()`. The fourth parameter, `const CommenPropertiesType&`, is new in the method signature relative to NEST 2.4, and the implementation slightly different. It forwards the actual connection checking to the base class.
 
         void check_connection(Node & s, Node & t, rport receptor_type, double_t t_lastspike, 
                               const CommonPropertiesType& cp)
@@ -158,18 +158,18 @@ complex models later.
           t.register_stdp_connection(t_lastspike - get_delay());
         }
 
-* Add a set_weight() method. It is used to set the weight efficiently during synapse creation. 
+* Add a `set_weight()` method. It is used to set the weight efficiently during synapse creation. 
 
         void set_weight(double_t w) { weight_ = w; }
 
-* Modify the send() method. The key changes are
+* Modify the `send()` method. The key changes are
    
-   * add thread t as second argument to the send() method, so that its signature becomes 
+   * add thread t as second argument to the `send()` method, so that its signature becomes 
 
             void send(Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties &cp)
 
    * the method receives the target thread as second argument
-   * target, rport and delay information must be obtained from the base class through accessor methods
+   * `target`, `rport` and `delay` information must be obtained from the base class through accessor methods
    * the code below shows only the modified lines 
 
             void send(Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties &)
@@ -195,7 +195,7 @@ complex models later.
               [snip]
             }
 
-*  Add forwards to base class and add weight in set_status() and get_status() 
+*  Add forwards to base class and add weight in `set_status()` and `get_status()` 
 
         void get_status(DictionaryDatum & d) const
         {
@@ -211,11 +211,11 @@ complex models later.
           ... 
         }
 
-### Example: stdp__synapse__hom
+### Example: stdp\_synapse\_hom
 
-This section describes the implementation stdp_synapse_hom relative to
-stdp_synapse, both for NEST 2.6, it does not compare this synapse to
-its NEST 2.4 version. The specialty of the _hom variant is that all
+This section describes the implementation stdp\_synapse\_hom relative to
+stdp\_synapse, both for NEST 2.6, it does not compare this synapse to
+its NEST 2.4 version. The specialty of the \_hom variant is that all
 parameters concerning plasticity are homogeneous, i.e., identical for
 all synapses of the type.
 

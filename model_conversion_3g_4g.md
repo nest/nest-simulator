@@ -141,12 +141,12 @@ complex models later.
    * The function should always return invalid_port_, this return value is ignored by the caller.
    * The class and its base are called check_helper and check_helper_base in Kunkel et al, 2014. 
 
-             class ConnTestDummyNode: public ConnTestDummyNodeBase
-             {
-             public:
-               using ConnTestDummyNodeBase::handles_test_event;
-               port handles_test_event(SpikeEvent&, rport) { return invalid_port_; }
-             };
+            class ConnTestDummyNode: public ConnTestDummyNodeBase
+            {
+            public:
+              using ConnTestDummyNodeBase::handles_test_event;
+              port handles_test_event(SpikeEvent&, rport) { return invalid_port_; }
+            };
 
 * Implement check_connection(). The fourth parameter, const CommenPropertiesType&, is new in the method signature relative to NEST 2.4, and the implementation slightly different. It forwards the actual connection checking to the base class.
 
@@ -166,34 +166,34 @@ complex models later.
    
    * add thread t as second argument to the send() method, so that its signature becomes 
 
-             void send(Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties &cp)
+            void send(Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties &cp)
 
    * the method receives the target thread as second argument
    * target, rport and delay information must be obtained from the base class through accessor methods
    * the code below shows only the modified lines 
 
-             void send(Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties &)
-             {
-               [snip]
-               
-               Node *target = get_target(t);
-               double_t dendritic_delay = get_delay();
-               
-               [snip]  
-       	       
-               target->get_history(t_lastspike - dendritic_delay, t_spike - dendritic_delay,
-                                   &start, &finish);
-	                 
-               [snip]
-            
-               e.set_receiver(*target);
-               e.set_weight(weight_);
-               e.set_delay(get_delay_steps());
-               e.set_rport(get_rport());
-               e();
+            void send(Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties &)
+            {
+              [snip]
               
-               [snip]
-             }
+              Node *target = get_target(t);
+              double_t dendritic_delay = get_delay();
+              
+              [snip]  
+       	      
+              target->get_history(t_lastspike - dendritic_delay, t_spike - dendritic_delay,
+                                  &start, &finish);
+	                
+              [snip]
+	      
+              e.set_receiver(*target);
+              e.set_weight(weight_);
+              e.set_delay(get_delay_steps());
+              e.set_rport(get_rport());
+              e();
+              
+              [snip]
+            }
 
 *  Add forwards to base class and add weight in set_status() and get_status() 
 

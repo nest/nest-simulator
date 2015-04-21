@@ -15,30 +15,30 @@ _Note that older code might not conform to this rules and should be fixed when c
 - [Tooling](#tooling)
 - [Coding Style](#coding-style)
     * [General Remarks and Resources](#general-remarks-and-resources)
-        * [C++ Language Features](#c-language-features)
+        * [C++ Language Features](#c++-language-features)
         * [Language of Comments and Identifiers](#language-of-comments-and-identifiers)
-        * [Debugging & Quality Control](#debugging-quality-control)
+        * [Debugging and Quality Control](#debugging-and-quality-control)
         * [Compiler](#compiler)
         * [Online Reference Documents](#online-reference-documents)
         * [Books](#books)
-    * [Indentation & Formatting & Naming](#indentation-formatting-naming)
+    * [Indentation and Formatting and Naming](#indentation-and-formatting-and-naming)
         * [Files](#files)
         * [Folders](#folders)
-        * [Variables & Class Members](#variables-class-members)
-        * [Functions & Class Methods](#functions-class-methods)
+        * [Variables and Class Members](#variables-and-class-members)
+        * [Functions and Class Methods](#functions-and-class-methods)
         * [Namespaces](#namespaces)
-        * [Classes & Structs & Enums](#classes-structs-enums)
-        * [Further Indentation & Formatting](#further-indentation-formatting)
+        * [Classes and Structs and Enums](#classes-and-structs-and-enums)
+        * [Further Indentation and Formatting](#further-indentation-and-formatting)
     * [Stopwatch example](#stopwatch-example)
-- [.clang-format File](#clang-format-file)
-- [Vera++ profile nest](#vera-profile-nest)
+- [.clang-format File](#.clang-format-file)
+- [Vera++ profile nest](#vera++-profile-nest)
 
 
 ## Tooling
 
 The code has to compile without warnings (in the default settings of the build infrastructure). We restrict ourselfs to C++03 standard for a larger support of compilers on various cluster systems and supercomputers.
 
-The [clang-format](http://clang.llvm.org/docs/ClangFormat.html) tool is build on the clang compile frontend. It allows to pretty print input files in a configurable manner, and has vim and emacs integration. We supply a [.clang-format](#clang-format-file) configuration file to enforce some parts of the coding style. During the code review process we check that there is no difference between the committed files and the formatted version of the committed files:
+The [clang-format](http://clang.llvm.org/docs/ClangFormat.html) tool is build on the clang compile fronted. It allows to pretty print input files in a configurable manner, and has vim and emacs integration. We supply a [.clang-format](#clang-format-file) configuration file to enforce some parts of the coding style. During the code review process we check that there is no difference between the committed files and the formatted version of the committed files:
 
     clang-format <committed file> > tmp_out.txt
     diff <committed file> tmp_out.txt > /dev/null
@@ -46,12 +46,16 @@ The [clang-format](http://clang.llvm.org/docs/ClangFormat.html) tool is build on
       # error
     fi
 
-Developer can benefit from the tool by formatting their changes before issuing a pull request: `clang-format -i <committed file>`.
+Developer can benefit from the tool by formatting their changes before issuing a pull request: `clang-format -i <committed file>`. We require clang-format version 3.6 or later.
 
 Get `clang-format`:
-Ubuntu:
+Ubuntu (see [here](http://llvm.org/apt/)):
 
-    apt-get install clang-format-3.5
+    # To retrieve the archive signature:
+    wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
+    sudo sh -c 'echo -n "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.6 main" >> /etc/apt/sources.list'
+    sudo apt-get update
+    sudo apt-get install clang-format-3.6
 
 OS X:
 
@@ -108,7 +112,7 @@ OS X:
 1. All comments should be written in English.
 1. All identifiers, class and function names should be in English.
 
-### Debugging & Quality Control
+### Debugging and Quality Control
 
 Use the assert macro intensively to check program invariants [[9]](#books). Support for a C++ unit-testing framework for fine grain testing of the functionality is planned. Until then create unit-tests with the supplied SLI and Python unit-testing infrastructure.
 
@@ -200,7 +204,7 @@ Sometimes, system-specific code needs conditional includes. Such code can put co
     #endif  // LANG_CXX11
 
 
-### Indentation & Formatting & Naming
+### Indentation and Formatting and Naming
 
 #### Files
 
@@ -214,7 +218,7 @@ Lines should not exceed 100 characters (clang-format). Files should not be to lo
 
 Use `lower_case_under_lined` notation for folder names.
 
-#### Variables & Class Members
+#### Variables and Class Members
 
 In general, use meaningful, non-abbreviated names or follow naming conventions from the neuroscience field, e.g. the membrane potential is `V_m`. Use the `lower_case_under_lined` notation. Private member variables should end with an underscore (`name_`).
 
@@ -234,7 +238,7 @@ Constants should be defined with `enums` and not with `#define`, and use the `UP
 
 All code for the nest kernel should use the type aliases, defined in `nest.h`. Thus, use `nest::float_t` instead of `float`.
 
-#### Functions & Class Methods
+#### Functions and Class Methods
 
 In general, use meaningful, non-abbreviated names or follow naming conventions from the neuroscience field, e.g. the membrane potential is `V_m`. Use the `lower_case_under_lined` notation.
 
@@ -259,7 +263,7 @@ Use `lower_case_under_lined` notation for namespaces. Do not use `using namespac
 
 All symbols for the NEST kernel are declared in the namespace `nest`.
 
-#### Classes & Structs & Enums
+#### Classes and Structs and Enums
 
 Use a `struct` only for passive objects that carry data; everything else is a `class`. Use `CamelCase` notation for naming classes, structs and enums, e.g. `GenericConnBuilderFactory`. Private, nested classes and structs end with an underscore (`State_`).
 
@@ -279,7 +283,7 @@ Template class declarations follow the same style as normal class declarations. 
     };
 
 
-#### Further Indentation & Formatting
+#### Further Indentation and Formatting
 
 _Avoid committing indentation and formatting changes together with changes in logic. Always commit these changes separately._
 

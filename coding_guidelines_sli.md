@@ -13,12 +13,13 @@ layout: index
 1. Names of SLI operators shall conform to the following rules.
 
         functionname     - standard name for PS conforming operator
-        FunctionName     - names of Mathematica-like operator, or (other-language)-
-                           like operator
-        :functionname    - name of an undocumented, internal operator which may 
-                           disappear from the language anytime. Should only
-                           be used in libraries, but not in user programs.
-        ::functionname   - name of undocumented, internal operator which 
+        FunctionName     - names of Mathematica-like operator, or
+                           (other-language)-like operator
+        :functionname    - name of an undocumented, internal operator which 
+                           may disappear from the language anytime. Should
+                           only be used in libraries, but not in user
+                           programs.
+        ::functionname   - name of undocumented, internal operator, which 
                            operates on the execution stack.
 
 1. Names may have type-specifier (TS) appended

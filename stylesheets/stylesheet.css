@@ -299,6 +299,7 @@ blockquote {
 
 ul li {
   padding-left: 15px;
+  margin-bottom: 0.25em;  
 }
 
 ul li:before {

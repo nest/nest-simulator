@@ -161,21 +161,21 @@ Use standard order for readability and to avoid hidden dependencies: Related hea
 NEST's Makefiles add all project specific include paths to the compile commands, thus the file `iaf_cond_alpha.h` should be included as:
 `#include "iaf_cond_alpha.h"`
 
-In `iaf_cond_alpha.cpp`, whose main purpose is to implement iaf_cond_alpha.h, order your includes as follows:
+In `iaf_cond_alpha.cpp`, whose main purpose is to implement `iaf_cond_alpha.h`, order your includes as follows:
 
-1. iaf_cond_alpha.h.
+1. `iaf_cond_alpha.h`.
 1. C system files.
 1. C++ system files.
 1. Other libraries' .h files.
 1. Your project's .h files.
 
-With the preferred ordering, if iaf_cond_alpha.h omits any necessary includes, the build of iaf_cond_alpha.cpp will break. Thus, this rule ensures that build breaks show up first for the people working on these files, not for innocent people in other packages.
+With the preferred ordering, if `iaf_cond_alpha.h` omits any necessary includes, the build of `iaf_cond_alpha.cpp` will break. Thus, this rule ensures that build breaks show up first for the people working on these files, not for innocent people in other packages.
 
 Within each section the includes should be ordered alphabetically.
 
-You should include all the headers that define the symbols you rely upon (except in cases of forward declaration). If you rely on symbols from bar.h, don't count on the fact that you included foo.h which (currently) includes bar.h: include bar.h yourself, unless foo.h explicitly demonstrates its intent to provide you the symbols of bar.h. However, any includes present in the related header do not need to be included again in the related cpp (i.e., foo.cpp can rely on foo.h's includes).
+You should include all the headers that define the symbols you rely upon (except in cases of forward declaration). If you rely on symbols from `bar.h`, don't count on the fact that you included `foo.h` which (currently) includes `bar.h`: include `bar.h` yourself, unless `foo.h` explicitly demonstrates its intent to provide you the symbols of `bar.h`. However, any includes present in the related header do not need to be included again in the related cpp (i.e., `foo.cpp` can rely on `foo.h`'s includes).
 
-For example, the includes in `<nestdir>/models/iaf_cond_alpha.cpp might look like this:
+For example, the includes in `<nestdir>/models/iaf_cond_alpha.cpp` might look like this:
 
 
     #include "iaf_cond_alpha.h"

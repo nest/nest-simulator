@@ -3,7 +3,10 @@ layout: index
 ---
 [GitHub]: <http://github.com/> "GitHub"
 [NEST]: <http://www.nest-simulator.org/> "NEST"
-[NEST GitHub]: <https://github.com/nest/nest-simulator> "Nest GitHub"
+[NEST GitHub Organization]: <https://github.com/nest>
+[NEST GitHub]: <https://github.com/nest/nest-simulator> "NEST GitHub"
+[NEST Issue Tracker]: <https://github.com/nest/nest-simulator/issues> "NEST Issue Tracker"
+[NEST private]: <https://github.com/nest/nest-private>
 
 Getting started with Git development
 ====================================
@@ -21,6 +24,8 @@ Basic Git setup
         git config --global user.email you@yourdomain.example.com
         git config --global user.name "Your Name Comes Here"
 
+----------------------------------------------------------------------------
+
 Making your own copy (fork) of NEST
 ===================================
 You need to do this only once. The instructions here are very similar to the
@@ -37,6 +42,8 @@ You then need to configure your account to allow write access - see the
 [Generating SSH keys help](http://help.github.com/articles/generating-ssh-keys/) 
 on the GitHub help system.
 
+----------------------------------------------------------------------------
+
 Create your own forked copy of NEST
 ===================================
 * [Login](https://github.com/login) to your GitHub account
@@ -46,6 +53,8 @@ Create your own forked copy of NEST
 
 After a short pause, you should find yourself at the home page for your own 
 forked copy of [NEST].
+
+----------------------------------------------------------------------------
 
 Set up your fork
 ================
@@ -98,6 +107,7 @@ with `git remote -v show`, giving you something like:
     origin       git@github.com:your-user-name/nest-simulator.git (fetch)
     origin       git@github.com:your-user-name/nest-simulator.git (push)
 
+----------------------------------------------------------------------------
 
 Development Workflow
 ====================
@@ -447,8 +457,8 @@ usual:
      git commit -am 'ENH - much better code'
      git push origin master # pushes directly into your repo
 
+----------------------------------------------------------------------------
 
-XXXTODO: RECHECK EVERYTHING FROM HERE ON AND REFER TO PREVIOUS SECTIONSXXX 
 Use cases for the new platform
 ==============================
 
@@ -460,56 +470,56 @@ Karolina has identified a minor issue with a neuron model she is using. To
 inform the other developers about the problem, she creates a ticket in the
 public issue tracker on GitHub, which gives other people the chance to discuss
 the issue and possible solutions. To create a ticket on GitHub, Karolonia goes 
-to https://github.com/nest/nest-simulator/issues and clicks on the green button
-“New Issue”. Then, she will have to specify a title for the ticket which mentions
+to [NEST Issue Tracker] and clicks on the green button “New Issue”.
+
+Then, she will have to specify a title for the ticket which mentions
 in a few words what the problem is, and will have to write a short description of
 the problem in the text field. The text can be formatted using markdown syntax and
 can be previewed by switching to the “Preview” tab. Karolina can reference other
-tickets by indicating them with their issue number, for example *#123*. Existing 
+tickets by indicating them with their issue number, for example `#123`. Existing 
 Pull Requests can be also referenced by their number (Issues and Pull Requests share
 the same number space). In the text Karolina can also reference commits in the repo
-by specifying their SHA-1 hash: GitHub will add a link to the correspoding commit
-automatically. Finally, Karolina can notify other NEST developers by mentioning
-them with their GitHub account name prefixed by the symbol *@*, as in
-*@otizonaizit*. In this case developer *otizonaizit* will get an email
+by specifying their SHA-1 hash: [GitHub] will add a link to the correspoding commit
+automatically. 
+
+Finally, Karolina can notify other NEST developers by mentioning
+them with their GitHub account name prefixed by the symbol `@`, as in
+`@a-user-name`. In this case developer `a-user-name` will get an email
 notification that she should come and view the Issue. Karoline submits the issue by
 clicking on the corresponding green button “Submit new issue”. The issue will get
-assigned an issue number, for example #123. 
+assigned an issue number, for example `#123`. 
 
 Karolina is happy with the fact that other people can watch her fixing the bug.
 When she knows how to fix the problem, after having forked the official NEST repo
-as explained in the “Prerequisite” section, she creates a branch on her local clone
+as explained in the [Making your own copy (fork) of NEST](#making-your-own-copy-(fork)-of-nest) 
+section, she creates a feature branch on her local clone, as in
+[making a new feature branch](#making-a-new-feature-branch)
 
-```bash
-git checkout -b fix-123
-```
+    git checkout -b fix-123
+
 She explicitly mentions the issue number in the branch name, so that even to
 a casual read it will be clear what the branch is about. She writes a regression
 test and fixes the problem. In the process, she commits often and runs the test suite
-to verify that none of her commits break anything.
+to verify that none of her commits break anything. This is described in the 
+[basic workflow](#basic-workflow).
 
 When the regression test stops failing and she is happy with the result, she is
 ready to submit a Pull Request. If her git-foo is high enough, she may decide to
-clean up her local git history by using some combination of 
+clean up her local git history by using some combination of `git rebase -i` as decribed
+in [Rewriting commit history](#rewriting-commit-history) but this is not strictly
+necessary and can mess up things very badly if she doesn't know what she is doing,
+so she can skip this step. After that, she pushes the branch to her [GitHub] fork by doing
 
-```bash
-git rebase -i
-```
+    git push origin fix-123
 
-but this is not strictly necessary and can mess up things very badly if she doesn't
-know what she is doing, so she can skip this step. After that, she pushes the
-branch to her GitHub fork by doing
-
-```bash
-git push origin fix-123
-```
-To generate the Pull Request, she now goes to her fork on GitHub, for example
-https://github.com/otizonaizit/nest-simulator , to see that GitHub highlights
+To generate the Pull Request, she now goes to her fork on [GitHub], for example
+https://github.com/a-user-name/nest-simulator , to see that [GitHub] highlights
 her branch in a yellow box with a green button “Compare & pull request”.
+
 When she clicks on the button, GitHub will allow her to give a title to the Pull
 Request. The title should be something on the line of *Bugfix and test for issue
 123*. In the text field, Karolina will start with a sentence like *This Pull
-Request fixes #123*. By using the words *fixes #123* GitHub will automatically
+Request fixes #123*. By using the words `fixes #123` GitHub will automatically
 close the corresponding issue when the Pull Request is merged. The rest of the text
 should explain what the fix is about, of course. When she is happy with the text,
 she clicks the green button “Create pull request”.  
@@ -522,15 +532,13 @@ Karolina will receive a notification everytime a review posts a comment on her P
 Request. She can add commits to her local clone to address the reviewers comments,
 and everytime she pushes to her fork with
 
-```bash
-git push origin fix-123
-```
+    git push origin fix-123
 
 the reviewer will get a notification that Karolina has addressed their comments.
 
 When Karolina and the reviewers are happy with the Pull Request, they will flag 
-flag their agreement in the form of a comment like *merge approved* to the Pull
-Request. The release manager can now merge the Pull Request. 
+flag their agreement in the form of a comment like `merge approved` to the Pull
+Request. The release manager can now merge the Pull Request.
 
 Jeyashree wants to add a new neuron model to NEST
 -------------------------------------------------
@@ -540,43 +548,46 @@ her PhD project. As this is an internal prohject, she is using a private
 repository in the NEST organization on GitHub to benefit from the CI, but still
 allow her supervisor and other members of the NEST developer team to have
 a look (similar to the workflow using the *developer module*, which was used in
-the past). Jeyashree will start by asking the Release Manager to add her GitHub
-account to the NEST Organization on GitHub. The Release Manager will invite her to
+the past). 
+
+Jeyashree will start by asking the Release Manager to add her [GitHub]
+account to the [NEST GitHub Organization]. The Release Manager will invite her to
 join the organization and she will receive a notification of the invitation. She
 will accept the invitation by clicking on the link in the email from GitHub. Now
-she can create a private fork by going to the private NEST repository on GitHub
-???ADD LINK HERE! FAKE LINK FOLLOWS??? https://github.com/nest/nest-private and
+she can create a private fork by going to the 
+[private NEST repository on GitHub][NEST private] and
 click the fork button there. As a target she selects her GitHub account. Note that, because 
 she is forking a private repository, her fork will also be private: only members
 of the NEST organization will be able to see her code in
-https://github.com/otizonaizit/nest-private. From here on, the workflow
-is the same as it was in the "Karolina wants to fix a minor bug in a neuron model"
-usecase, we noticeable difference that the branch name now will be something like
-*neuron-model-XYZ*. She will not submit any Pull Request, but will just push
+https://github.com/a-user-name/nest-private . 
+
+From here on, the workflow is the same as it was in the 
+[Karolina wants to fix a minor bug in a neuron model](#karolina-wants-to-fix-a-minor-bug-in-a-neuron-model)
+usecase, we the noticeable difference that the branch name now will be something like
+`neuron-model-XYZ`. She will not submit any Pull Request, but will just push
 to her private fork. The collaborators will still be able to open issues or submit
 Pull Requests to her, if they propose changes to which Jeyashree agrees with. To do
-this the reviewers will have to fork https://github.com/otizonaizit/nest-private to
-their GitHub accounts. 
+this the reviewers will have to fork https://github.com/a-user-name/nest-private to
+their [GitHub] accounts. 
 
 After a first development phase, she submits a paper about the first results of
 her research using the new neuron model. She wants the corresponding
-code to be available in the public repository to the readers. For this, she first
-forks the official (and public) NEST repository. This fork will now be public and
-everyone will see it linked from the official NEST repository. She now adds this
-fork to her local clone of her private repo as a new remote:
+code to be available in the [NEST public repository][NEST GitHub] to the readers.
+For this, she first [forks the official (and public) NEST repository](#making-your-own-copy-(fork)-of-nest).
 
-```bash
-git remote add public https://github.com/otizonaizit/nest-simulator
-```
+This fork will now be public and everyone will see it linked from the official
+NEST repository. She now adds this fork to her local clone of her private repo
+as a new remote:
+
+    git remote add public git://github.com/a-user-name/nest-simulator
+
 now she can push her branch to her public fork:
 
-```bash
-git push public neuron-model-XYZ
-```
-From here on the workflow is the same as for "Karolina wants to fix a minor bug in
-a neuron model".
+    git push public neuron-model-XYZ
 
-???IS THE FOLLOWING NEEDED? ???
+From here on the workflow is the same as for 
+[Karolina wants to fix a minor bug in a neuron model](#karolina-wants-to-fix-a-minor-bug-in-a-neuron-model).
+
 However, the code is very much tailored to her specific use in
 the paper. One of the reviewers is not happy with this and points out possible
 ways to improve its generality and make it usable to a wider audience.
@@ -590,10 +601,31 @@ after a short round of discussion in the code review platform and fixes the
 remaining issues. After Travis and both reviewers signal their agreement with
 the code, the release manager merges the Pull Request.
 
+Jakob and Tammo want to implement a new communication infrastructure
+--------------------------------------------------------------------
+
+Because Tammo and Jakob are advanced users, they set up their own Git
+repository on their own server for maximumg.
+
+They are using a private repo. They will take care of adding the official NEST
+repository as a remote in their clone:
+
+    git add remote upstream git://github.com/nest/nest-simulator
+
+They will usually work on feature branches. To keep their fork up to date
+with the public repo, they will pull the changes to the master branch in the
+[official NEST repository][NEST GitHub] as explained [here](#reasing-on-master)
+
+Now their changes have been applied on top of the last commit in the 
+[official NEST repository][NEST GitHub] master branch!
+
+This workflow is more complicated and many things can go wrong in case some merge
+conflict do appear after all. Much easier would have been for Tammo and Jacob to
+use a private repository in the NEST organization and do the same as Jeyashree in 
+[Jeyashree wants to add a new neuron model to NEST](#jeyashree-wants-to-add-a-new-neuron-model-to-nest)
+
 Abigail wants to fix a misleading piece of documentation
 --------------------------------------------------------
-
-???No EXAMPLE NEEDED HERE? ???
 Abigail is happy with the fact that other people can watch her fixing the
 documentation. She clicks the button on the GitHub page of NEST and chooses her
 personal profile as the target.
@@ -626,48 +658,6 @@ Hannah wants to extend a neuron model by additional receptor types
 travis is happy first, but the code rots for some time due to vacation and
 reporting season. Then Travis is unhappy.
 
-Jakob and Tammo want to implement a new communication infrastructure
---------------------------------------------------------------------
-
-Because Tammo and Jakob are advanced users, they set up their own Git
-repository on their own server for maximumg.
-
-They are using a private repo. They will take care of adding the official NEST
-repository as a remote in their clone:
-
-```bash
-git add remote upstream https://github.com/nest/nest-simulator
-```
-They will usually work on so-called feature branches. To keep their fork up to date
-with the public repo, they will pull the changes to the master branch in the
-official NEST repository with:
-
-```bash
-git checkout master
-git pull upstream master
-```
-
-As they always took care of working on branches, this pull will always succeed
-without merge conflicts. They will then rebase the changes in the feature branches
-with something like:
-
-```bash
-git checkout feature-branch-X
-git rebase master
-```
-
-Now their changes have been applied on top of the last commit in the official NEST
-repository master branch!
-
-???NO TRAVIS HERE!!! ???
-Travis is unhappy in certain configurations of the matrix, because they did not
-test the full matrix
-??? ???
-
-This workflow is more complicated and many things can go wrong in case some merge
-conflict do appear after all. Much easier would have been for Tammo and Jacob to
-use a private repository in the NEST organization and do the same as Jeyashree in 
-"Jeyashree wants to add a new neuron model to NEST"
 
 Susanne wants to change the API of a function in PyNEST
 -------------------------------------------------------
@@ -676,5 +666,5 @@ The code review is fine, because the code quality is superb. However, the
 release manager is concerned that the review was not thorough enough and did
 not consider all apsects of the API change.
 
-start a wider discussion on the developer list
+Start a wider discussion on the developer list
 

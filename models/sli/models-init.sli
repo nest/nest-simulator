@@ -1,0 +1,57 @@
+/*
+ *  models-init.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Code for the sli_neuron
+
+modeldict /sli_neuron known
+{
+
+/*
+ * These two wrapper functions are called from the C++-level
+ * calibrate() and update() functions. They forward the call
+ * to the SLI calibrate and update functions, while handling
+ * errors raised by the SLI functions.
+ * 
+ */
+
+/calibrate_node
+{
+ { calibrate }  stopped 
+ {
+   handleerror 
+   errordict clonedict /error Set ;
+ } if
+} def
+
+/update_node
+{
+ { update }  stopped 
+ { 
+   handleerror
+   errordict clonedict /error Set ;
+ } if
+} def
+
+}
+if

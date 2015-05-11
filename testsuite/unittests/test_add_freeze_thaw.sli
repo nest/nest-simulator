@@ -1,0 +1,107 @@
+/*
+ *  test_add_freeze_thaw.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_add_freeze_thaw - test that per-thread nodes vectors are updated 
+
+Synopsis: (test_add_freeze_thaw.sli) run -> dies if assertion fails
+
+Description:
+1. Create nodes driven by internal current, simulate, check V_m changes.
+2. Add more nodes, reset old nodes, simulate again, check V_m changes for all.
+3. Freeze half the nodes, simulate, check their V_m is constant.
+4. Thaw nodes, simulate, check V_m changes again.
+
+Author: Plesser
+FirstVersion: 2014-11-05
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+/num_threads 4 def
+/blocksize 11 def   % number of neurons to create / freeze, intentionally not multiple of num_threads 
+/simtime 10. def
+/Vmref /iaf_neuron GetDefaults /V_m get def
+
+ResetKernel
+
+% run on multiple threads if possible
+statusdict/threading :: (no) neq 
+{
+  0 << /local_num_threads num_threads >> SetStatus
+}
+if
+
+% first test: one block of neurons
+{
+  % hyperpolarizing, avoids spikes
+  /iaf_neuron blocksize << /I_e -50.0 >> Create 
+  simtime Simulate
+  true 0 GetGlobalLeaves { /V_m get Vmref lt and } Fold
+} assert_or_die
+
+% second test: additional block of neurons
+{
+  % reset existing neurons
+  0 GetGlobalLeaves { << /V_m Vmref >> SetStatus } forall
+  
+  % add more neurons
+  /iaf_neuron blocksize << /I_e -50.0 >> Create 
+  simtime Simulate
+  true 0 GetGlobalLeaves { /V_m get Vmref lt and } Fold
+} assert_or_die
+
+% third test: freeze some neurons
+{
+  /nodes 0 GetGlobalLeaves def
+  
+  % reset existing neurons
+  nodes { << /V_m Vmref >> SetStatus } forall
+
+  /frozen_nodes nodes blocksize Take def
+  /thawed_nodes nodes nodes length blocksize sub neg Take def
+
+  frozen_nodes  { << /frozen true >> SetStatus } forall
+
+  simtime Simulate
+  true frozen_nodes { /V_m get Vmref eq and } Fold
+  true thawed_nodes { /V_m get Vmref lt and } Fold
+  and   
+} assert_or_die
+
+% fourth test: thaw them again
+{
+  /nodes 0 GetGlobalLeaves def
+  
+  % reset existing neurons
+  nodes { << /V_m Vmref /frozen false >> SetStatus } forall
+
+  simtime Simulate
+  true nodes { /V_m get Vmref lt and } Fold
+} assert_or_die
+
+
+endusing

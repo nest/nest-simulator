@@ -1,0 +1,119 @@
+/*
+ *  ticket-618.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-618 - catch nodes which require tau_mem != tau_syn
+
+Synopsis: (ticket-618) run -> NEST exits if test fails
+
+Description: 
+All neuron models using exact integration require that tau_mem != tau_syn.
+This test ensures that all pertaining models raise an exception if
+tau_mem == tau_syn.
+
+The test does so by ensuring that any model that has tau_* properties and V_m,
+either throws an exception when all tau_ properties are set to the same value,
+or has a non-nan V_m after 10ms simulation.
+
+This test should be updated when alternative implementations of exact integration
+for the degenerate case are in place.
+ 
+Author: Hans Ekkehard Plesser, 2012-12-11
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+{
+  modeldict keys 
+  {
+    ResetKernel
+
+    /model Set
+    /modelprops model GetDefaults def
+
+    /result true def % pass by default
+
+    % skip models without V_m
+    modelprops /V_m known
+    {        
+      % build dict setting all tau_* props to 10.
+      /propdict << >> def
+      modelprops keys
+      { 
+        /key Set 
+        key cvs length 4 geq
+        {
+          key cvs 0 4 getinterval (tau_) eq
+          {
+            propdict key 10.0 put_d
+          } if
+        } if
+      } forall
+
+      % skip models without tau_*
+      propdict empty not exch ;
+      {       
+        % the next line shall provoke an error for some
+        % models
+        mark
+        { 
+          /n model propdict Create def
+	}       
+        stopped
+        {
+          % we got an error, need to clean up
+          % remove error code
+	  errordict /message undef
+	  errordict /command undef
+	  errordict begin /newerror false def end
+
+	  % clear stack
+	  counttomark npop pop % need to pop mark separately
+ 	}
+        {
+          pop % mark
+	  
+          % no error, simulate and check membrane potential is not nan
+          10. Simulate	  
+          /result n /V_m get cvs (nan) neq def	  
+	}
+        ifelse   % stopped
+      } 
+      if  % propdict empty not
+    }
+    if  % /V_m known
+
+    result % leave result on stack    
+    dup not { model == } if
+
+  }  
+  Map   % modeldict keys
+
+  true exch { and } Fold
+  
+} assert_or_die
+
+endusing

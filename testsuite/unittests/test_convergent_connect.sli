@@ -1,0 +1,116 @@
+/*
+ *  test_convergent_connect.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+   Name: testsuite::test_convergent_connect - sli script to test the ConvergentConnect function.
+
+   Synopsis: (test_convergent_connect) run -> compare response with reference data
+   Description:
+   Tests the use of the ConvergentConnect function by using all variant
+   of the function and comparing the result to the expected result.
+
+   FirstVersion: 03/2009
+   Author: Jochen Martin Eppler
+   SeeAlso: ConvergentConnect, testsuite::test_random_divergent_connect, testsuite::test_divergent_connect
+ */
+
+(unittest) run
+/unittest using
+
+0.1 /h Set
+0.1 /c Set
+40 /n Set
+10 /n_per_trial Set
+
+ResetKernel
+
+% Set settings for root network. These
+% settings could be changed to test different
+% aspects of simulation.
+0 <<
+      /local_num_threads 2
+      /resolution h
+    >> SetStatus
+
+% Create some target neurons.
+/iaf_neuron n Create ;
+
+% Get list of source neuron IDs.
+[n] Range n_per_trial Partition /src Set
+
+% Create different target nodes for each variant.
+/spike_detector Create /sd Set
+
+% test "sources target" variant
+src 0 get sd ConvergentConnect
+src 0 get {
+  /source Set
+  << /source source /synapse_model /static_synapse >> FindConnections
+  { GetStatus } Map { /target get } Map
+  [ sd ] eq assert_or_die
+} forall
+
+% test "sources target synmodel" variant
+src 1 get sd /static_synapse ConvergentConnect
+src 1 get {
+  /source Set
+  << /source source /synapse_model /static_synapse >> FindConnections
+  { GetStatus } Map { /target get } Map
+  [ sd ] eq assert_or_die
+} forall
+
+% Define arrays of weights and delays for the other variants
+[n_per_trial] Range {cvd} Map /w Set
+n_per_trial array 1 add {cvd} Map /d Set
+
+% test "sources target weights delays" variant
+src 2 get sd w d ConvergentConnect
+src 2 get {
+  /source Set
+  << /source source /synapse_model /static_synapse >> FindConnections
+  { GetStatus } Map { /target get } Map
+  [ sd ] eq assert_or_die
+} forall
+[ src 2 get {
+  /source Set
+  << /source source /synapse_model /static_synapse >> FindConnections
+  { GetStatus } Map { /weight get } Map
+} forall ] Flatten Sort
+w eq assert_or_die
+
+% test "sources target weights delays synmodel" variant
+src 3 get sd w d /static_synapse ConvergentConnect
+src 3 get {
+  /source Set
+  << /source source /synapse_model /static_synapse >> FindConnections
+  { GetStatus } Map { /target get } Map
+  [ sd ] eq assert_or_die
+} forall
+[ src 3 get {
+  /source Set
+  << /source source /synapse_model /static_synapse >> FindConnections
+  { GetStatus } Map { /weight get } Map
+} forall ] Flatten Sort
+w eq assert_or_die
+
+endusing

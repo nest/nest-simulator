@@ -1,0 +1,102 @@
+/*
+ *  ticket-881.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-881 - ConnectLayers creates too few connections under some conditions when running on multiple threads
+
+Synopsis: (ticket-881) run -> NEST exits if test fails
+
+Description:
+This tests creates a small layer, connects it all-to-all and checks if all expected connections have been created.
+
+This is a regression from nest-2.2.2 to 10kproject@r11284 (precise location unknown so far)
+Author: Hans Ekkehard Plesser
+*/
+
+
+(unittest) run
+/unittest using
+
+/topology lookup not { exit_test_gracefully } if
+using
+
+M_ERROR setverbosity
+
+/num_threads 4 def
+/node_pos [ [0.0 0.0] [0.0 0.0] [0.0 0.0] [0.0 0.0] ] def
+/num_nodes node_pos length def
+
+/num_expected num_nodes dup mul def   % all to all
+
+% Test 1: pairwise convergent
+{
+  ResetKernel
+  0 << /local_num_threads num_threads >> SetStatus
+  
+  << /elements /iaf_neuron /positions node_pos >> CreateLayer
+  dup
+  << /connection_type (convergent) >> ConnectLayers
+
+  << >> GetConnections length num_expected eq 
+} assert_or_die
+
+% Test 2: pairwise divergent
+{
+  ResetKernel
+  0 << /local_num_threads num_threads >> SetStatus
+  
+  << /elements /iaf_neuron /positions node_pos >> CreateLayer
+  dup
+  << /connection_type (divergent) >> ConnectLayers
+
+  << >> GetConnections length num_expected eq 
+} assert_or_die
+
+% Test 3: fixed fan-in
+{
+  ResetKernel
+  0 << /local_num_threads num_threads >> SetStatus
+  
+  << /elements /iaf_neuron /positions node_pos >> CreateLayer
+  dup
+  << /connection_type (convergent) /number_of_connections num_nodes >> ConnectLayers
+
+  << >> GetConnections length num_expected eq 
+} assert_or_die
+
+% Test 4: fixed fan-out
+{
+  ResetKernel
+  0 << /local_num_threads num_threads >> SetStatus
+  
+  << /elements /iaf_neuron /positions node_pos >> CreateLayer
+  dup
+  << /connection_type (divergent) /number_of_connections num_nodes >> ConnectLayers
+
+  << >> GetConnections length num_expected eq 
+} assert_or_die
+
+
+
+endusing
+endusing

@@ -1,0 +1,89 @@
+/*
+ *  ticket-452.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-452 - Ensure that precise simulations give identical results whether stepped or run continuously
+
+Synopsis: (ticket-452) run -> NEST exits if test fails
+
+Description:
+Ensure that simulations with precise spike timing yield identical results independent of
+whether one simulates the full simulation time without interruption, or splits the simulation
+into many small pieces.
+
+The problem was unrelated to the setting of kernel property  /off_grid_spiking
+and the spike_detector property  /precise_times.
+ 
+Author: Hans Ekkehard Plesser, 2010-09-30; based on original reproduced code by Alexander Hanuschkin
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+
+/Run
+{
+ /model Set
+ /simcommand Set
+
+ ResetKernel
+                                    % 0.125 ms
+ 0 << /tics_per_ms 3 dexp  /resolution -3 dexp >> SetStatus
+
+ model << /I_e 500.0  >> Create /n Set
+ 
+ /poisson_generator_ps << /rate 10000.0 /start 0.0  >> Create  /pg Set
+   
+ pg n 1.0 1.0 Connect
+
+ /spike_detector 
+     <<
+      /withtime true   
+      /withgid false
+      /precise_times false  % problem was unrelated to setting
+    >> Create /sd Set
+
+ n sd Connect
+
+ simcommand
+
+ sd [/events /times] get cva 
+
+} def 
+
+
+[/iaf_psc_delta_canon /iaf_psc_alpha_canon ]
+{
+ {Run} exch prepend
+ [
+  {500.0 Simulate} 
+  {1 1 500  {; 1.0 Simulate} for}  
+ ]
+ exch forall eq 
+}
+forall 
+
+and assert_or_die
+

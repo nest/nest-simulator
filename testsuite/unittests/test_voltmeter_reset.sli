@@ -1,0 +1,76 @@
+/*
+ *  test_voltmeter_reset.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: testsuite::test_voltmeter_reset - test if resetting works on voltmeter
+
+Synopsis: (test_voltmeter_reset) run -> dies if assertion fails
+
+Description:
+	Voltmeter records from iaf_neuron to memory, checks if proper number
+	of data points is acquired, deleted on reset, and recorded again on
+	further simulation. This test ascertains that also data stored in the
+	derived recorder class, not only in RecordingDevice, is reset.
+
+Author: August 2008, Plesser
+SeeAlso: multimeter, testsuite::test_spike_det_reset
+*/
+
+(unittest) run
+/unittest using
+
+{
+  ResetKernel
+
+  /iaf_neuron Create /n Set
+
+  /voltmeter Create /vm Set
+  vm << /record_to [/memory] /withtime true /interval 1.0 >> SetStatus
+
+  vm n Connect
+
+  /res [] def  % array to collect bool results
+
+  10.5 Simulate  % should record voltage at 1, 2, ..., 10
+  vm [ /n_events ] get                      10 eq res exch append /res Set
+  vm [ /events /V_m ] get cva length 10 eq res exch append /res Set
+  vm [ /events /times   ]    get cva length 10 eq res exch append /res Set
+  
+  % reset
+  vm << /n_events 0 >> SetStatus
+  vm [ /n_events ] get                      0 eq res exch append /res Set
+  vm [ /events /V_m ] get cva length 0 eq res exch append /res Set
+  vm [ /events /times   ]    get cva length 0 eq res exch append /res Set
+
+  % simulate more
+  5 Simulate % should record voltage at 11, ..., 15 
+  vm [ /n_events ] get                      5 eq res exch append /res Set
+  vm [ /events /V_m ] get cva length 5 eq res exch append /res Set
+  vm [ /events /times   ] get cva length    5 eq res exch append /res Set
+
+  % combine results
+  res First res Rest { and } Fold
+
+} assert_or_die
+
+endusing

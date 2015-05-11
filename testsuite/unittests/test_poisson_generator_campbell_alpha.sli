@@ -1,0 +1,89 @@
+/*
+ *  test_poisson_generator_campbell_alpha.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: testsuite::test_poisson_generator_campbell_alpha - test if of poisson noise generates correct membrane potential
+
+Synopsis: (test_poisson_generator_campbell_alpha) run -> dies if assertion fails
+
+Description:
+
+
+Author: Schrader
+FirstVersion: Mar 2009
+*/
+
+(unittest) run
+/unittest using
+
+/n_neurons 1000  def % number of neurons to simulate
+/simtime   1000. def % simulation duration (ms)
+/pot       20.   def % desired membrane potential (mV)
+/tolerance 1e-2  def % potential tolerance (mV)
+
+% neuron&synapse parameters (cf. brunel*.sli)
+/tauMem 20.0 def  
+/tauSyn  0.5 def  
+/U0      0.0 def
+
+/J     0.01  def % small psp amplitude 
+/fudge 0.41363506632638 def
+/JE    J tauSyn div fudge mul def
+  
+ResetKernel
+
+/p_rate (1000.*pot/(fudge*J*tauMem*exp(1))) CompileMath exec def
+    
+/iaf_psc_alpha
+    <<
+        /tau_m       tauMem
+        /tau_syn_ex  tauSyn
+	/tau_syn_in  tauSyn
+        /E_L         U0
+        /V_th        999. % no firing
+        /C_m         1.0  
+    >> SetDefaults
+
+
+% create n_neurons neurons
+/subnet Create dup ChangeSubnet /iaf_psc_alpha n_neurons Create ;
+GetGlobalLeaves /neurons Set   
+0 ChangeSubnet
+
+/static_synapse /syn << /weight JE >> CopyModel
+
+/poisson_generator << /rate p_rate >> SetDefaults
+
+/poisson /poisson_generator Create def   
+
+poisson neurons /syn DivergentConnect
+    
+simtime Simulate
+
+% check if the membrane potential is equal to desired value (pot)
+neurons {GetStatus /V_m get } forall n_neurons arraystore Mean
+pot sub abs
+tolerance lt
+assert_or_die
+
+endusing

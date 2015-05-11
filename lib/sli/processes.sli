@@ -1,0 +1,1393 @@
+/*
+ *  processes.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+Name: is_mpi - flag in statusdict indicating whether interpreter was compiled with MPI 
+
+Synopsis: statusdict/is_mpi :: -> boolean
+
+Description:
+The C++ startup of a SLI interpreter which is not compiled with MPI support may 
+be completely unaware of distributed computing and may therefore not define the /is_mpi 
+flag. In order to simplify user code, processes.sli sets /is_mpi to false if it is
+not defined.
+
+Author: Diesmann
+
+FirstVersion: 090412
+
+SeeAlso: statusdict
+*/
+statusdict /is_mpi known not {statusdict /is_mpi false put} if
+
+
+%-----------------------------------------------------------------------+
+%This will make the C++-Functions defined in file processes.h typesafe: |
+%For a documentation of these functions, see file processes.h!          |
+%-----------------------------------------------------------------------+
+
+% ---"waitPID"---
+/waitPID_i_b /waitPID load def % rename waitPID to waitPID_ib             
+
+/waitPID trie
+[/integertype /booltype] /waitPID_i_b load addtotrie
+def
+% ---------------
+
+% ----"kill"-----
+/kill_i_i /kill load def % rename kill to kill_ii
+/kill_i_l
+{ 
+  dup signaldict exch known         %do we know the name of the signal?
+  {signaldict exch get kill_i_i}       %yes, so send it, using "kill_ii"
+  {/kill /UnknownSignal raiseerror} %no, so raise error.
+  ifelse
+} bind
+
+def
+/kill trie
+[/integertype /integertype] /kill_i_i load addtotrie
+[/integertype /literaltype] /kill_i_l load addtotrie 
+def
+% ---------------
+
+% ---"available"---
+/available_is /available load def % rename available to available_is             
+/available trie
+[/istreamtype] /available_is load addtotrie
+def
+% ---------------
+
+% ---"mkfifo"---
+/mkfifo_s /mkfifo load def % rename mkfifo to mkfifo_s             
+/mkfifo trie
+[/stringtype] /mkfifo_s load addtotrie
+def
+% ---------------
+
+% ---"setNONBLOCK"---
+/setNONBLOCK_is_b /setNONBLOCK load def % rename setNONBLOCK to setNONBLOCK_Ib             
+/setNONBLOCK trie
+[/istreamtype /booltype] /setNONBLOCK_is_b load addtotrie
+def
+% ---------------
+
+% ---"fork"---
+/fork_ /fork load def % rename fork to fork_             
+/fork {
+  % first check if forks are allowed:  
+  statusdict /argv get First (/) breakup Last (sli) neq
+  statusdict /have_mpi get
+  and {% this is not a sli executable, and MPI has been linked!
+    M_ERROR (fork) 
+      (MPI has been linked to this executable, and MPI does not support forks.)
+      (If you need system calls, you may either\n) join
+      ( * call the "sli" executable (it is never linked to MPI), or\n) join
+      ( * compile NEST without MPI support.) join message
+    /fork /ForkDisallowed  raiseerror
+  } if
+
+  fork_
+
+} bind def
+% ---------------
+
+%---------------------------------------------------------------------------
+
+
+/* BeginDocumentation
+
+Name: spoon - execute a parallel SLI-process 
+  
+Synopsis: Command spoon -> Child_PID      %for parent process 
+                        -> quit Command   %for child  process 
+
+Description: Basic process management: execute a parallel SLI-process
+
+Parameters: In:  Command (any): (However, Command is most likely to be a literal
+                                 procedure...)
+                                Command will be executed by the child process,
+                                which will terminate after execution.  
+                                It will be ignored by the parent process. 
+            Out: For parent process: Child_PID (integer): The child's process-ID. 
+                 For child  process: none. 
+
+Examples: { (I am the child!) = } spoon (I am the parent!) = 
+         
+          Try this several times. You will notice the child message to appear 
+          before or after the parent message "by chance". (Even after the parent's
+I-prompt...)
+
+Bugs: 
+
+Author: R Kupper
+
+FirstVersion: Mar 18 1999
+
+Remarks: A parallel process is forked.
+         Parent and child will execute in parallel. There is no way to know which
+         will start being executed first.
+         Child inherits all open files, including stdin and stdout, from parent!
+         If a SLI error is raised inside the child process, an error
+         message is issued and the process is terminated, in oder not
+         to leave two interactive SLI processes waiting for user
+         input. A copy of the error message is printed to cerr, in
+         case the standrad message stream M_OUT is redirected to a
+         pipe (i.e. by the spawn command).
+ 
+
+Procedure: Call fork.
+           Check if you are parent/child by test of (PID eq 0).
+           If parent: discard (pop) Command, leave: (child)PID.
+           If child : discard (pop) 0-PID, execute Command, quit.
+
+SeeAlso: fork
+
+*/
+
+/spoon
+trie 
+
+[/anytype] %stack: Command
+{
+  fork %stack: Command PID.      (PID is 0 for child, Child_PID for parent)
+  
+  dup 0 eq %stack: Command PID true/false.
+  
+  % if child:
+  {
+    %stack: Command PID
+    pop %stack: Command
+    {exec} stopped %protect from errors!
+    {% an error occured.
+     % define error message:
+       /errormessage
+       (SLI CHILD PROCESS ) getPID cvs join
+       ( CAUSED AN ERROR AND WILL BE TERMINATED:\n/) join
+      errordict /errorname get
+      % if it is a system error, get proper description:
+      dup /SystemError eq {pop errordict /sys_errname get} if
+      cvs join ( in ) join
+      errordict /commandname get cvs join
+      def
+
+      %print it:
+      M_FATAL (spoon) errormessage message
+      %print it again to cerr, in case other stream is redirected (spawn!)
+      /M_OUT cerr def
+      M_FATAL (spoon) errormessage message
+    } if
+    quit
+  }
+  % if parent:
+  {
+    %stack: Command PID
+    exch pop %stack: PID.
+  }
+  ifelse
+
+} bind addtotrie
+
+def
+
+%----------------------------------------------------------------------------
+/* BeginDocumentation
+
+Name: sysexec - Transfer control to a UNIX-command
+
+Synopsis: CommandArray  sysexec -> -
+          CommandString sysexec -> -
+
+Description: Transfer control to a UNIX-Command. The command may be
+             executed in a specified program environment. The command
+             may be given either as a string containing the command
+             name and all options, or as an array of strings,
+             specifying the command name and every single option.
+
+	     Alternatives: Functions sysexec_a for arrays, sysexec_s
+	     for strings (both undocumented) -> behaviour and synopsis 
+	     are the same.
+
+Parameters: In : CommandArray
+                 (array of strings): An array containing the command to execute.
+                                     The first element is interpreted as the
+                                     command, the remaining elements as it's
+                                     parameters.
+                 CommandString 
+                 (string)          : A standard UNIX command string, containing
+                                     the command name and it's parameters to
+                                     execute.
+
+            Out: -whatever will be will be-
+
+Examples: These two calls are equivalent:
+          1. [ (ls) (-l) (/home/kupper) ] sysexec
+          2. (ls -l /home/kupper) sysexec
+
+          This call is NOT equivalent to the above (see remarks below):
+          3. [ (ls) (-l /home/kupper) ] sysexec
+
+
+          4. {(ls -l /home/kupper) sysexec} spoon
+
+          Look at the program environment of the new command:
+          5. {(printenv) sysexec} spoon
+          It was inherited from the SLI process.
+          
+
+Bugs: Will break down if given an array containing non-strings.
+      
+      This call is NOT quivalent to example 3, as one should expect:
+      (ls "-l /home/kupper") sysexec.
+      The reason is the breakup-command not recognizing ".
+
+Author: R Kupper
+
+FirstVersion: Mar 18 1999
+
+Remarks: A call to sysexec WILL NOT RETURN, as control is literally transfered to
+         the UNIX command.
+
+         Given an array of strings, each element is treated as -one- parameter.
+         That's why example 3. is equivalent to the UNIX-call
+         ls "-l /home/kupper".
+
+SeeAlso: spoon, breakup, environment
+
+*/
+
+/sysexec_s
+{
+  ( ) 0 trim ( ) breakup sysexec_a
+} bind
+def
+  
+/sysexec [/arraytype]  /sysexec_a load def
+/sysexec [/stringtype] /sysexec_s load def
+
+%----------------------------------------------------------------------------
+/* BeginDocumentation
+
+Name: wait - Wait for any child process to terminate
+
+Synopsis: NoHangFlag wait -> Status NormalExitFlag PIDout
+                          -> 0   
+
+Description: Wait is the same as "waitPID", but it waits for any
+             child process.
+
+	     Alternatives: Function wait_b (undocumented) -> behaviour and
+	     synopsis are the same, except that no warnings or error
+	     messages are thrown.
+
+Parameters: In : NoHangFlag(boolean): -see waitPID-
+            Out: Status(integer)
+                 NormalExitFlag(boolean)
+                 PIDout(integer): -see waitPID-
+
+Examples: false wait %wait for the next child to terminate
+
+Bugs: 
+
+Author: R Kupper
+
+FirstVersion: Apr 23 1999
+
+Remarks: This is not a SLI-interface to the system's "wait()"-function,
+          but a thin wrapper to waitPID. The behaviour is exactly the
+          same, however.
+
+SeeAlso: waitPID, spawn, system, spoon, fork
+
+*/
+
+/wait_b
+{
+  -1 exch waitPID
+} bind
+def
+
+/wait trie
+[/booltype] /wait_b load addtotrie
+def
+
+%----------------------------------------------------------------------------
+/* BeginDocumentation
+
+Name: system - execute a UNIX command in a parallel process.
+
+Synopsis: CommandString              system }    { Flag=0 or omitted:
+          CommandArray               system }    {  Status NormalExitFlag   
+                                            } -> {
+          CommandString Flag         system }    { Flag=1: -      
+          CommandArray  Flag         system }    { 
+                                            }    { Flag=2: ChildPID
+          CommandString Flag Precode system }    
+          CommandArray  Flag Precode system }
+
+Description: "system" creates a child process of the current SLI process
+             and executes the given command in that child process.
+             Depending on the value of "Flag", the parent process will
+             wait for the child to terminate or continue execution in
+             parallel.
+             The command may be given either as a string containing
+             the command name and all options, or as an array of
+             strings, specifying the command name and every single
+             option.
+             If you are interested in communicating to the child process
+             via pipes, see "spawn" or "shpawn".
+
+	     Alternatives: Functions system_as_i_p with array or
+	     string and integer(flag) and precode, system_as_di_i_p 
+	     with array or string and dictionary followed by
+	     integer(flag) and precode (both undocumented) -> behaviour and
+	     synopsis are the same.
+
+Parameters: In : CommandString(string)/CommandArray(array of string):
+                      The UNIX command to execute.
+                      Either a string containing the command and all
+                      parameters, or an array of strings, containing the
+                      command and the parameters in separate (see "sysexec").
+
+                 Flag: 0: Wait for termination of child process.
+                           A flag indicating if the child process exited
+                           normally or abnormally, and the exit status is
+                           left on the stack.
+                       1: Return immediately. This is the "no-care-mode".
+                           An orphaned grandchild process is created.
+                               I.e. a child is forked, which again forks
+                           a child and then exits. The orphaned grandchild
+                           is inherited by the init-process immediately,
+                           which will perform any waiting.
+                           This is a legal way of producing a child you don't
+                           have to wait for. (However, see remarks below.)
+                           - All ressources occupied by the child process will
+                             be automatically released with its termination. -
+                          No result is left on the stack.
+                       2: Return immediately.
+                           Create a normal child process and return immediately,
+                           leaving it's PID on the stack.
+                           ! The parent has to call "wait" or "waitPID" in order
+                             to free the ressources occupied by the child process
+                             after it's termination !
+                      
+                       The "Flag" parameter may be omitted in which case
+                        it defaults to zero.
+
+                 Precode(executable procedure):
+                       -This parameter is for internal use with the "spawn"
+                        command. However, it is documented here for there may be 
+                        unexpected applications.-
+                       In "Precode" there can be supplied a sequence of SLI
+                       commands that will be executed by the child process
+                       prior to calling "sysexec". The main application
+                       is to instruct the child process to redirect it's
+                       standard input/output to a pipe, as does the "spawn"
+                       command (for a example, see the code of "spawn").
+
+                       
+            Out: NormalExitFlag(boolean):
+                       True, if the child terminated normally, i.e. by a call to
+                       exit() or by returning from main(). In that case, the exit
+                       code is reported in the Status argument (see below).
+                       False, if the child terminated due to a signal that was
+                       not caught. In that case, the number of that signal is
+                       reported in the Status argument (see below).
+     	    
+                 Status(integer):
+                       If NormalExitFlag is true, this reports the child's exit
+                       code, i.e. the low-order eight bits of the status argument
+                       that the child passed to exit(), or the value the child
+                       process returned from main().
+                       If NormalExitFlag is false, this reports the number of the
+                       signal that caused the termination of the child process.
+                       Look up this number in signaldict, to know what it means.
+
+                 ChildPID(integer): The process ID of the newly created child.
+
+Examples: 1. (ls) system % This is the same as: (ls) 0 system
+          2. (xterm) 1 system
+          3. %The follwing asks SLI to make itself, do something else in parallel
+             %and report make's exit code:
+             (make --silent) 2 system /MyChild Set
+             <do anything in parallel>
+             MyChild false waitPID %wait for child to terminate
+             pop pop (make returned exit code: ) =only =
+
+Bugs: Be aware of citation-mark-bug in breakup (see "breakup")
+
+Author: R Kupper
+
+FirstVersion: Apr 23 1999
+
+Remarks: The no-care-mode (Flag=2) gives no way to know about the
+         child`s exit code. If you need to care about the exit code,
+         use Flag=0, which will leave it on the stack, or use Flag=1
+         and get the exit code by calling "wait" or "waitPID".
+
+         If you are interested in communicating to the child process
+         via pipes, see "spawn" or "shpawn".
+
+To Do:   It should be possible to spawn a parallel SLI Process. This
+         should be supported by a future version. Actually, as this is
+         the more general case, the spoon/system/spawn chain of commands
+         could be restructured. 
+
+SeeAlso: spawn, sysexec, spoon, fork, waitPID, wait, breakup, environment
+
+*/
+
+/system_as_i_p %as: array or string
+{
+  << >> begin % use local variables (for switch)
+    /PreCode Set % Store pre-sysexec-code in PreCode
+	/Flag Set % Store flag in /Flag
+    %stack: CommStr
+	mark
+	Flag 0 eq { {sysexec} exch prepend % stack: {CommStr sysexec}
+                /PreCode load prepend  % stack: {PreCode CommStr sysexec}
+                spoon false waitPID pop
+                end exit
+              }
+	case
+	Flag 1 eq { {sysexec} exch prepend % stack: {CommStr sysexec}
+                /PreCode load prepend  % stack: {PreCode CommStr sysexec}
+                /a Set      % store { PreCode CommStr sysexec } in /a
+                { {a} spoon } spoon false waitPID 3 npop % create orphaned child
+                end exit
+              }
+	case
+	Flag 2 eq { {sysexec} exch prepend % stack: {CommStr sysexec}
+                /PreCode load prepend  % stack: {PreCode CommStr sysexec}
+                spoon
+                end exit
+              }
+	case
+	{Flag end /system /FlagOutOfRange raiseerror}
+	switchdefault
+} bind
+def
+
+% define trie structure:
+/system [/arraytype                             ] {0 {} system_as_i_p} def
+/system [/stringtype                            ] {0 {} system_as_i_p} def
+
+/system [/arraytype  /integertype               ] {  {} system_as_i_p} def
+/system [/stringtype /integertype               ] {  {} system_as_i_p} def
+
+/system [/arraytype  /integertype /proceduretype] /system_as_i_p load def
+/system [/stringtype /integertype /proceduretype] /system_as_i_p load def
+
+%-----------------------------------------------------------------------------
+/* BeginDocumentation
+
+Name: dup2 - Duplicate a filestream's file descriptor onto another's
+
+Synopsis: istream1 istream2 dup2 -> -
+          ostream1 ostream2 dup2 -> -
+
+Description: "dup2" is a wrapper to the "dup2()" UNIX system call.
+             This is a low-level file operation. It does not operate on
+             filestreams, but on the underlying UNIX file descriptors.
+             
+             Operation:
+              1. "dup2" gets the file descriptors fd1 and fd2, to which
+                 the two streams are bound. (See remarks below!)
+              2. System function dup2(fd1, fd2) is called. This means:
+                  o If fd1 equals fd2, nothing is done.
+                  o If not, the file associated with fd2, if any, is closed.
+                    fd2 is then attached to the same file as fd1. It refers
+                    to the same open file as fd1 and shares any locks.
+                     Thus, the values of fd1 and fd2 stay unchanged, but
+                    fd2 refers to a different file after the call.
+                     Respectively, C++-stream2 stays unchanged in every
+                    detail (buffer, value of undelying file descriptor, ...)
+                    but is actually connected to a different file.
+
+             "dup2" will usually be called on "cin", "cout" or "cerr" after 
+             a "fork" or "spoon" and prior to calling "sysexec". This is
+             used to redirect the standard channels of the newly created
+             process to a file, pipe or fifo. For a typical call see
+             examples below.
+              In a UNIX environment, each process expects the standard
+             channels stdin, stdout, stderr to be associated to three 
+             special file descriptors (usually 0, 1 and 2). Thus, if a parent
+             process redirects one of these descriptors explicitely, a
+             child process will inherit this redirection and read/write
+             to a file when accessing cin/cout/cerr/clog WITHOUT
+             NOTICING.
+
+	     Alternatives: Functions dup2_is_is for two istreams, 
+	     dup2_os_os for two osstreams (both undocumented) 
+	     -> behaviour and synopsis are the same.
+
+Parameters: In: i/ostream1: The stream to duplicate. This stream and it's
+                            undelying filedescriptor will stay unchanged.
+                i/ostream2: The stream to be re-directed. The file
+                            associated to this stream will be closed, and
+                            this stream will be associated to the same file
+                            as i/ostream1.
+
+Examples: 1. myostream cout dup2 %subsequent writes to cout will be
+                                 %redirected to myostream
+          2. myistream cin  dup2 %subsequent reads from cin will read
+                                 %from myinstream
+          3. % The "dup2" in 1. would better be preceeded by a "flush":
+             mystream cout flush dup2
+          4. % A typical case: redirect output of a child process to a pipe.
+             % (This is what the "spawn" command does):
+             pipe %create a pipe
+             {
+               cout flush dup2 %The child redirects its cout to the
+                               %write end of the pipe
+               closeistream    %It closes the read end of the pipe, for
+                               %it is not needed.
+               (ls) sysexec    %The child transfers control to "ls".
+                               %"ls" will write to it's cout, i.e., to
+                               %the pipe.
+             } spoon pop       %we are not interested in the child's PID...
+             closeostream      %The parent closes the write end of the
+                               %pipe, for it is not needed.
+             % The parent may now read the output of "ls" from the read end
+             % of the pipe.
+
+
+Diagnostics: System Errors: EBADF (Invalid file descriptor)
+                            EINTR (Function was interrupted by a signal)
+
+Bugs:
+
+Author: R Kupper
+
+FirstVersion: May 05 1999
+
+Remarks: This is a typesafe wrapper to "dup2_is_is" and "dup2_os_os"
+         which operate on two input streams and two output streams
+         respectively. The code for these functions can be found in
+         file "synod2/sli/processes.{h|cc}".
+
+          It sure is not a bad idea to flush ostream2 prior to the
+         call, as it will be connected to another file afterwards, but
+         any buffered data stays unchanged!
+
+          Getting the file descriptors from C++-filestreams is not yet
+         supported by a POSIX call. (There is such a call for C-filestreams,
+         however). The code used here may be implementation dependent and
+         not fully portable! As soon as there is a reliably portable way
+         to detect file descriptors from a C++-filestream (or convert a C++
+         stream to a C stream), the respective code found in function
+         Processes::fd(), file "synod2/sli/processes.cc", should be changed.
+
+SeeAlso: pipe, mkfifo
+
+*/
+/dup2 trie
+[/istreamtype /istreamtype] /dup2_is_is load addtotrie
+[/ostreamtype /ostreamtype] /dup2_os_os load addtotrie
+[/istreamtype /ostreamtype] /dup2_is_os load addtotrie
+[/ostreamtype /istreamtype] /dup2_os_is load addtotrie
+def
+
+
+%----------------------------------------------------------------------------
+/* BeginDocumentation
+
+Name: spawn - Spawn a UNIX process and redirect stdin and stdout.
+
+Synopsis: CommandString      spawn }    { Flag=0: Status NormalExitFlag	      
+          CommandArray       spawn }    { 				        
+                                   }    { Flag=1 or omitted:   		  
+          CommandString      spawn } -> {           ear(write) mouth(read)
+          CommandArray       spawn }    {				  
+                                   }    { Flag=2:			  
+          CommandString Flag spawn }    {  ChildPID ear(write) mouth(read)
+          CommandArray  Flag spawn }
+
+Description: "spawn" does exectly what "system" does (see there).
+             If Flag is 1 or 2, in addition, it redirects the spawned
+             processes standard input and output to pipes that are then
+             accesssible from the parent process.
+             If you are interested in monitoring the information flow across
+             the pipes, see "shpawn".
+
+	     Alternatives: Functions spawn_as_i with array or string
+	     followed bey an integer (flag), spawn_as_di_i with array
+	     or string and dictionary followed by an integer (both
+	     undocumented) -> behaviour and synopsis are the same.
+
+Parameters: In : CommandString(string), CommandArray(array of string):
+                     See "system"
+
+                 Flag(0|1|2)  (Default=1):
+                   The Flag parameter is passed to "system":
+                             0: "spawn" behaves absolut identical to
+                                "system" (see documentation).
+                  1 or omitted: "system" is called in no-care-mode
+                                 (see documentation). Pipes to standard
+                                 input and output of the new Process are
+                                 established.
+                             2: "system" is called with Flag=2.
+                                 (see documentation). Pipes to standard
+                                 input and output of the new Process are
+                                 established. The Child's PID is returned,
+                                 for the user has to call "waitPID" expli-
+                                 citely.
+
+            Out: Status(integer), NormalExitFlag(boolean): See "system"
+
+                 ChildPID(integer): Process ID of the child process.
+                                  Remember to call wait on this PID!
+                 ear(ostream): The write end of the pipe that is connected
+                            to the child's standard input. You can access
+                            the child's standard input by writing to "ear".
+                 mouth(istream): The read end of the pipe that is connected
+                            to the child's standard output. You can access
+                            the child's standard output by reading from "mouth".
+
+Examples: 1. %Spawn "ls" and read output from the pipe:
+             (ls) spawn %spawn ls in no-care-mode
+             exch closeostream %we do not need to write to ls!
+             { eof {exit} {getline =} ifelse } loop %read and display data.
+             closeistream %close connection
+
+          2. %Spawn "idl" and display output in SLI's callback cycle:
+             (idl) spawn  %spawn IDL in no-care-mode
+             /IDL_mouth Set
+             /IDL_ear   Set
+             %This procedure reads data from idl as long as it is available
+             %and displays it on the screen:
+             /IDL_talks
+             {
+               IDL_mouth
+               { available 
+                 {getline =}
+                 {exit}
+                 ifelse
+               } loop pop
+             } def
+            %Hang this Procedure into callback cycle:
+            /IDL_talks load setcallback
+
+            %You may now issue IDL commands by sending them to IDL_ear
+            %Output will be displayed on the screen:
+            IDL_ear (help, !VERSION, /STRUCT) <- endl
+
+          3.%Instead of using SLI's callback cycle to display the output,
+            %we could have used a parallel SLI process instead:
+            { IDL_mouth {getline =} loop } spoon
+            %In this case we even don not care about blocking...
+
+Diagnostics: -see section "Bugs"-
+
+Bugs: No error message is raised, if Flag=1 or Flag=2 and the given
+      UNIX-command does not exist. To be correct, an error -is- raised,
+      but it is raised in a child process of SLI, and -after- standard
+      output has been redirected. The error message can be read from
+      the "mouth"-pipe!
+       "spawn" always returns sucessful if Flag=1 or Flag=2. However,
+      excution of the UNIX command may have failed in the child process.
+      This may be a bug or a feature, whatever you like best ;->
+
+Author: R Kupper
+
+FirstVersion: May 06 1999 
+
+Remarks: "spawn" uses "system"'s Precode-Feature. (Caution - sophisticated
+         programming style!!! ;->)
+         For further remarks, see documentatin of "system".
+
+         If you are interested in monitoring the information flow across
+         the pipes, see "shpawn".
+
+To Do:   In some cases, we will not need both the standard input and
+         output redirected, but only one of them. In future versions,
+         "spawn" may have the option to redirect only one of them.
+         Respectively, there should by the option to redirect standard
+         error as well. Possible calling sequence:
+          command Flag stdinflag stdoutflag stderrflag spawn
+         with stdinflag, stoutflag true as default, stderrflag false.
+
+         It should be possible to spawn a parallel SLI Process. This
+         should be supported by a future version. Actually, as this is
+         the more general case, the spoon/system/spawn chain of commands
+         could be restructured. 
+          
+SeeAlso: system, pipe, available, wait, environment
+
+*/
+
+% We will use the following code at two positions, so we store it in two
+% helper routines:
+/:spawn_Open_pipes_define_Precode_call_system
+{%stack: CommStr
+  pipe %open up a pipe Parent>Child  stack: CommStr >read_end >write_end
+  pipe %open up a pipe Parent<Child  stack: CommStr >read_end >write_end <read_end <write_end
+  5 -1 roll %stack: >read_end >write_end <read_end <write_end CommStr
+  Flag %stack: >read_end >write_end <read_end <write_end CommStr Flag
+  {%Precode for system: This will be executed immediately before the "sysexec":
+    cout flush dup2 %The child redirects its cout to the write end of the <pipe
+    closeistream    %It closes the read end of the <pipe, for it is not needed.
+    closeostream    %It closes the write end of the >pipe, for it is not needed.
+    cin dup2        %The child redirects its cin to the read end of the >pipe
+  }%end of precode
+  %stack:  >read_end >write_end <read_end <write_end CommStr Flag Precode
+  system %stack: >read_end >write_end <read_end <write_end results_of_system
+} bind def
+/:spawn_Open_pipes_define_Precode_call_system_withdict
+{%stack: CommStr EnvDict
+  pipe %open up a pipe Parent>Child  stack: CommStr EnvDict >read_end >write_end
+  pipe %open up a pipe Parent<Child  stack: CommStr EnvDict >read_end >write_end <read_end <write_end
+  6 -2 roll %stack: >read_end >write_end <read_end <write_end CommStr EnvDict
+  Flag %stack: >read_end >write_end <read_end <write_end CommStr EnvDict Flag
+  {%Precode for system: This will be executed immediately before the "sysexec":
+    cout flush dup2 %The child redirects its cout to the write end of the <pipe
+    closeistream    %It closes the read end of the <pipe, for it is not needed.
+    closeostream    %It closes the write end of the >pipe, for it is not needed.
+    cin dup2        %The child redirects its cin to the read end of the >pipe
+  }%end of precode
+  %stack:  >read_end >write_end <read_end <write_end CommStr EnvDict Flag Precode
+  system %stack: >read_end >write_end <read_end <write_end results_of_system
+} bind def
+
+
+/spawn_as_i %as: array or string
+{
+  << >> begin % use local variables (for switch)
+    %stack: CommStr Flag
+    /Flag Set % Store flag in /Flag
+    %stack: CommStr
+
+    mark
+	Flag 0 eq {
+                Flag system %flag==0 - just call "system"
+                end exit
+              }
+	case
+    Flag 1 eq { %flag!=0 - open up pipes, define precode, call "system"           
+                :spawn_Open_pipes_define_Precode_call_system %call system with the precode. Flag==1, so it leaves no result.
+                %stack: >read_end >write_end <read_end <write_end
+                closeostream %Parent closes the write end of the <pipe, for it is not needed.
+                %stack: >read_end >write_end <read_end
+                3 -1 roll %stack: >write_end <read_end >read_end
+                closeistream %Parent closes the read end of the >pipe, for it is not needed.
+                %stack  : >write_end <read_end
+                %that is: ear mouth
+                end exit
+              }
+	case
+	Flag 2 eq { %flag!=0 - open up pipes, define precode, call "system"
+                :spawn_Open_pipes_define_Precode_call_system %call system with the precode. Flag==2, so PID is left as result.
+                %stack: >read_end >write_end <read_end <write_end ChildPID
+                5 1 roll %stack: ChildPID >read_end >write_end <read_end <write_end
+                closeostream %Parent closes the write end of the <pipe, for it is not needed.
+                %stack: ChildPID >read_end >write_end <read_end
+                3 -1 roll %stack: ChildPID >write_end <read_end >read_end
+                closeistream %Parent closes the read end of the >pipe, for it is not needed.
+                %stack  : ChildPID >write_end <read_end
+                %that is: ChildPID ear mouth
+                end exit
+              }
+	case
+	{Flag end /spawn /FlagOutOfRange raiseerror}
+	switchdefault
+  
+} bind
+def
+
+%define trie structure:
+/spawn [/arraytype              ] {1 spawn_as_i} def
+/spawn [/stringtype             ] {1 spawn_as_i} def
+
+/spawn [/arraytype  /integertype] /spawn_as_i load def
+/spawn [/stringtype /integertype] /spawn_as_i load def  
+
+%----------------------------------------------------------------------------
+/* BeginDocumentation
+
+Name: shpawn - Spawn a UNIX process using a shell and redirect stdin and stdout.
+
+Synopsis: CommandString      shpawn }    { Flag=0: Status NormalExitFlag      
+          CommandArray       shpawn }    {				        
+                                    }    { Flag=1 or omitted:       	    
+          CommandString Flag shpawn } -> {         ear(write) mouth(read)
+          CommandArray  Flag shpawn }    {         			    
+				         { Flag=2: ChildPID ear(write) mouth(read)
+
+Description: "shpawn" does the same as "spawn" does (see there).
+
+             However, the command is not executed directly but is passed
+             to a shell which then will process the command.
+             This way it is possible to use the full functionality of a
+             shell, e.g. wildcard extension, alias, piping, ...
+
+             By default, /bin/sh is used as the shell binary, and a login
+             shell is requested by giving the -l flag. These values can be
+             changed in the options dictionary, see sections "Options" below.
+
+             In addition, the piping facility of the shell can be used to
+             monitor the standard input and standard output of the
+             invoked command. Monitoring can conveniently be turned on
+             for stdin and stdout independently, via the options
+             dictionary.
+             See sections "Options" and "Remarks" below.
+
+Parameters: -see "spawn"-
+
+Options:
+    Options-name: /shpawn
+    
+    Option            type        default   description
+   ----------------  ----------  --------  ------------------------------
+    /terminal         string      $TERM     Terminal command to be used for
+                                            monitoring stdin and stdout.
+
+    /monitor-stdin    booltype    false     True, if the standard input of
+                                            the invoked command shall be
+                                            monitored in a terminal window.
+
+    /monitor-stout    booltype    false     True, if the standard output of
+                                            the invoked command shall be
+                                            monitored in a terminal window.
+
+    /sh-binary        string      (/bin/sh) Path to the shell binary to use.
+                                            This binary must accept the flag -c
+                                            for execution of a command.
+
+    /sh-flags         stringarray []        Flags added wehn calling the shell
+                                            binary. Flags must be given as separate
+                                            string elements (e.g. [(-l)].
+                                            The array may be empty.
+                                            The flag -c is automatically added
+                                            to this list of flags by the routine.
+                               
+
+
+Examples: %try these examples with "spawn" as well to see the difference:
+          1. (echo $PATH) 0 shpawn
+          2. (rm synod2/lib/help/cc/*.hlp) 0 shpawn
+          3. (ls | sort) 0 shpawn
+
+Diagnostics: -see "spawn"-
+
+Bugs: -see "spawn"-
+
+Author: R Kupper
+
+FirstVersion: May 19 1999
+
+Remarks: "shpawn" invokes "/sh-binary" from the options dictionary
+         (/bin/sh by default) and passes the given command after
+         a "-c" flag. This means the specified shell binary must
+         support this -c flag.
+
+         The monitoring option for stdin and stdout exploits the
+         piping deature of the shell, by piping information through
+         instances of the "tee" command, which writes it to a file.
+         (tee infile | command | tee outfile).
+         These files are then monitored in separate subprocesses, using
+         "tail" in a terminal window. The terminal command to be used is
+         defined in the Options of shpawn.
+         See manpages of sh, tee, tail, xterm/konsole for references.
+         The monitoring option creates two files named
+         /tmp/SLI-shpawn-monitor-stdin and /tmp/SLI-shpawn-monitor-stdout,
+         which will persist after command execution terminated, so
+         that their contents may be analyzed.
+
+SeeAlso: spawn, system, environment
+
+*/
+
+/shpawn <<
+    /terminal (TERM) getenv not {false} if
+    /monitor-stdin  false
+    /monitor-stdout false
+    /sh-binary      (/bin/sh)
+    /sh-flags       []
+>> Options
+
+%define a helper procedure:
+/:shpawn_comarray_to_string
+{ %stack: comarray
+  dup 0 get exch %stack: command comarray           - Rem. Jun 21: Why that complicated? (Can't remember...)
+  0 1 erase %stack: command optionarray             - Rem. Jun 21: Why not just turn the whole array into a string?
+  {( ) exch join join} forall %stack: commandstring - Rem. Jun 21: leading or trailing blanks would -not- disturb the call!
+  %stack: commandstring
+} bind
+def
+
+%define another helper routine:
+/:shpawn_add_monitors
+{ %stack: (commandstring)
+  << >> begin %local vars
+    /commandstring Set    
+    commandstring    
+    %stack: (commandstring)
+
+    /shpawn /monitor-stdin GetOption
+    {%stack:
+      (/tmp/SLI-shpawn-monitor-stdin) DeleteFile pop
+      (touch /tmp/SLI-shpawn-monitor-stdin) system pop pop
+      
+      /shpawn /terminal GetOption
+      ( -T ) join (STDIN:  ) commandstring join  ( ) (_) ReplaceOccurrences  join
+      %stack: (commandstring) (konsole -T 'stdin: commandstring')
+      ( -e tail --follow /tmp/SLI-shpawn-monitor-stdin) join
+      %stack: (commandstring) (konsole -T 'stdin: commandstring' -e tail --follow /tmp/SLI-shpawn-monitor-stdin)
+      1 system
+      %stack: (commandstring)       
+
+      (tee /tmp/SLI-shpawn-monitor-stdin | ) exch join 
+      %stack: (tee /tmp/SLI-shpawn-monitor-stdin | commandstring)
+    } if  
+
+    %stack: (commandstring) OR (prepended commandstring)
+    
+    /shpawn /monitor-stdout GetOption
+    {%stack: (ev. prepended commandstring)
+      (/tmp/SLI-shpawn-monitor-stdout) DeleteFile pop
+      (touch /tmp/SLI-shpawn-monitor-stdout) system pop pop
+      
+      /shpawn /terminal GetOption
+      ( -T ) join (STDOUT:  ) commandstring join  ( ) (_) ReplaceOccurrences  join
+      %stack: (ev. prepended commandstring) (konsole -T 'stdout: commandstring')
+      ( -e tail --follow /tmp/SLI-shpawn-monitor-stdout) join
+      %stack: (ev. prepended commandstring) (konsole -T 'stdout: commandstring' -e tail --follow /tmp/SLI-shpawn-monitor-stdout)
+      1 system
+      %stack: (ev. prepended commandstring)
+      
+      (| tee /tmp/SLI-shpawn-monitor-stdout) join    
+      %stack: (ev. prepended commandstring | tee /tmp/SLI-shpawn-monitor-stdout)
+    } if
+
+    %stack: (commandstring)
+    % OR    
+    %stack: (tee /tmp/SLI-shpawn-monitor-stdin | commandstring | tee /tmp/SLI-shpawn-monitor-stdout)
+    % OR    
+    % ...etc.
+  end %local vars 
+} bind def
+
+/:shpawn_create_command_and_flags
+{
+  /shpawn GetOptions begin
+    sh-binary 1 arraystore
+    sh-flags join
+    (-c) append    
+  end
+} bind def
+
+
+%define trie structure:
+/shpawn [/arraytype] 
+  { %stack: comarray
+    :shpawn_comarray_to_string %stack: commandstring
+    :shpawn_add_monitors
+    :shpawn_create_command_and_flags exch append %stack: [(/bin/sh) (-c) commandstring]
+    1 spawn_as_i
+  } def
+
+/shpawn [/stringtype] 
+  {
+    :shpawn_add_monitors
+    :shpawn_create_command_and_flags exch append 1 spawn_as_i
+  } def
+
+/shpawn [/arraytype /integertype] 
+  { exch %stack: flag comarray
+    :shpawn_comarray_to_string %stack: flag commandstring
+    :shpawn_add_monitors
+    :shpawn_create_command_and_flags exch append %stack: flag [(/bin/sh) (-c) commandstring]
+    exch spawn_as_i
+  } def
+
+/shpawn [/stringtype /integertype] 
+  {
+    exch
+    :shpawn_add_monitors
+    :shpawn_create_command_and_flags exch append exch spawn_as_i
+  } def
+%END: define trie structure for shpawn.
+
+%----------------------------------------------------------------------------
+/* BeginDocumentation
+
+Name: isatty - Determine if a stream is connected to a terminal.
+
+Synopsis: stream isatty -> false|true
+
+Description: Alternatives: Functions isatty_is for istreams, isatty_os
+for osstreams (both undocumented) -> behaviour and synopsis are the same.
+
+Remarks: This is a wrapper to the POSIX kernel function istty().
+
+SeeAlso: ctermid
+
+*/
+
+/isatty [/istreamtype] /isatty_is load def
+/isatty [/ostreamtype] /isatty_os load def
+
+
+/* BeginDocumentation
+Name: taskset - Binds a process to a processor.
+Synopsis:
+ proc pid taskset -> -
+
+Parameters:
+ proc - This integer value identifies a certain processing unit of the
+        system the current job is running on. On a system with multi-core
+        processors each core is assigned a different integer.
+ pid  - This integer value identifies the process that should be bound
+        to the procesing unit proc.
+
+Description:
+This function is a SLI interface to the UNIX command taskset.
+
+Author: Diesmann
+FirstVersion: September 9th, 2006
+SeeAlso: taskset_thisjob, Rank, NumProcesses
+*/
+
+/taskset [/stringtype /integertype]
+{
+ exch
+ osstream pop
+ (taskset -cp ) <-
+ exch <-
+ ( ) <-
+ exch <-
+ str system
+} def
+
+
+/* BeginDocumentation
+Name: taskset_thisjob - Binds the current process to a processor.
+Synopsis:
+ proc taskset_thisjob -> -
+
+Parameters:
+ proc - This integer value identifies a certain processing unit of the
+        system the current job is running on. On a system with multi-core
+        processors each core is assigned a different integer.
+
+Description:
+This function is a SLI interface to the UNIX command taskset.
+The command is particularly useful for assigning the different jobs 
+of a distributed simulation to different processors or computing cores 
+independent of the MPI implementation used. Binding of jobs is helpful 
+in benchmarking to quantify the effects of hardware shared by computing 
+cores and the influence of the job scheduling og the operating system.
+ 
+Examples:
+Consider a particular computer system with 4 processors with 2 computing
+cores each. The operating system assigns the identifiers 0 to 7
+to the 8 cores starting with 0 for the first core on the first processor,
+1 for the second core on the first processor, followed by 2 for the 
+first core on the second processor, and so on. The task now is to
+make sure that a distributed simulation with 4 MPI jobs uses only a 
+single core on each processor. This can be achieved by inserting the 
+following command as the first line of the simulation script:
+
+
+ [1 3 5 7] Rank get taskset_thisjob
+
+or alternatively,
+
+ Rank 2 mul 1 add taskset_thisjob
+
+In this examples only odd core identifiers are used because it
+is assumed that the operating system has a tendency to interrogate
+core 0 for availability.
+
+Following this strategy more general schemes can be designed to 
+minimize the use of shared hardware on the basis of the architecture 
+of a given computer system.
+
+Author: Diesmann
+FirstVersion: September 9th, 2006
+SeeAlso: taskset, Rank, NumProcesses
+*/
+/taskset_thisjob [/stringtype]
+{
+ getPID taskset
+} def
+
+
+/* BeginDocumentation
+Name: memory_thisjob - report virtual memory size for current NEST process
+Synopsis:
+ memory_thisjob -> vmsize
+
+Description:
+This function returns the virtual memory size (VmSize) for the current NEST
+process by checking the /proc filesystem. VmSize is reported in kB. 
+*/
+
+% check, if the platform is a bluegene p/q and use corresponding function
+statusdict /platform get dup (bg/p) eq exch (bg/q) eq or
+{
+  /memory_thisjob { :memory_thisjob_bg } def
+}
+{
+  /memory_thisjob
+  {
+    /os statusdict /hostos get def
+
+    mark 
+    os (darwin) searchif { :memory_thisjob_darwin exit } case
+    os (linux)  searchif { :memory_thisjob_linux  exit } case
+    true { (I do not know how to check memory under ) os join M_ERROR message
+            /memory_thisjob /UnknowOS raiseerror
+            exit 
+         } case
+    switch 
+  } def
+}
+ifelse
+
+/:memory_thisjob_linux
+{
+ (/proc/) getPID cvs join (/status) join ifstream 
+ not
+ {
+    (No information available on the NEST process from the /proc filesystem. ) M_ERROR message
+    /memory_thisjob_linux /ProcOpenFailed raiseerror
+ }
+ if
+
+ { eof {exit} {getline {dup (VmSize:) searchif {exch exit} {pop} ifelse } if} ifelse } loop
+
+
+ closeistream %close connection
+
+ 0 7 erase 
+ size 3 sub 3 erase    % assuming kb  may be unsafe
+ cvi
+} def
+
+/:memory_thisjob_bluegenep
+{
+  % Blue Gene/P version, requires the function BGPMemInfo from NestModule
+
+  memory_thisjob_bgp /mem Set
+  mem /heap get
+  mem /stack get
+  add
+} def
+
+/hardware_memory_thisjob
+{
+    (/proc/) getPID cvs join (/status) join ifstream
+    not
+    {
+        (No information available on the NEST process from the /proc filesystem. ) M_ERROR message
+	/hardware_memory_thisjob /ProcOpenFailed raiseerror
+    }
+    if
+
+    { eof {exit} {getline {dup (VmHWM:) searchif {exch exit} {pop} ifelse } if} ifelse } loop
+
+
+    closeistream %close connection
+
+    0 6 erase
+    size 3 sub 3 erase    % assuming kb  may be unsafe
+    cvi
+} def
+
+
+% experimental, MD 090413
+statusdict/exitcodes :: /restart_serial 4 put
+
+
+% experimental, MD 090413
+/mpirun_call 
+{
+ /mpirun lookup   % better mpirun_name
+ {pop}
+ {
+  M_FATAL (mpirun_call) (Cannot find definition of SLI command /mpirun.) message
+  M_FATAL (mpirun_call) (Please consult ~/.nestrc to learn how to provide) message
+  M_FATAL (mpirun_call) (NEST with this command.) message
+ } ifelse
+
+ mpirun 0 shpawn % arguments of mpirun are identical to the ones of mpirun_call
+ pop             % don't know what to do with the boolean returnd by shpawn
+
+ % return value is return value of command
+}
+def
+
+
+
+
+/* BeginDocumentation
+Name: nest_serial  - Returns a non-distributed call of nest as a string
+
+Synopsis:  (sli-filename) nest_serial -> (string with shell command)
+
+Description:
+If nest was compiled with MPI it may be unsafe to directly call the binary to
+obtain a non-distributed version. The command nest_serial looks up the appropriate 
+way to call nest and returns a suitable command as a string. The algorithm is as
+follows:
+  1. if nest is not compiled with MPI, return "nest"
+  2. if sli command /mpirun is defined, return this with
+     the -np 1 equivalent
+  3. issue and error with the message that nest was compiled with MPI 
+     but no method to call nest has been specified. 
+
+Diagnostics:
+This function issues an error if NEST was compiled with MPI but is not aware of 
+a safe method to call a non-distributed version of nest.
+
+Examples:
+ (hello.sli) nest_serial -> (mpirun -mca btl self,tcp -np 1 /home/dummy/nest/bin/nest hello.sli)
+
+Author: Diesmann
+
+FirstVersion: 090711
+
+SeeAlso: nest_indirect
+*/
+/nest_serial
+[/stringtype]
+{
+ statusdict/have_mpi :: 
+ {
+  /mpirun lookup   
+  {
+   pop
+   1 exch mpirun
+  } 
+  {
+   M_FATAL (nest_serial) (Command nest may fail because NEST was compiled with )
+                         (MPI but ~/.nestrc does not specify a corresponding method ) join
+                         (to call nest. This is required even if you intend to run ) join
+                         (a serial job although with some MPI implementations you can ) join
+                         (execute the nest binary directly. Please consult ~/.nestrc ) join
+                         (to learn how to provide NEST with the command /mpirun.) join message
+   statusdict/exitcodes/fatal :: quit_i
+  } ifelse
+ }
+ {
+  statusdict /prefix get (/bin/nest ) join
+  exch join
+ } ifelse 
+} def
+
+
+
+/* BeginDocumentation
+Name: nest_indirect  - Returns a nest call as a string able to spawn distributed simulations
+
+Synopsis:  (sli-filename) nest_indirect -> (string with shell command)
+
+Description:
+If a task requires multiple distributed simulations with different
+numbers of processors NEST needs to be compiled with support for distributed 
+computing and be aware of the corresponding method to start itself. However,
+some libraries for distributed computing do not support the nested call of 
+further processes. Therefore, nest_indirect provides a serial environment 
+for the preparation of the distributed simulations.
+The algorithm is as follows:
+ 1. if nest is not compiled with MPI, quit with fatal error
+ 2. if sli command /mpirun is not defined, quit with fatal error
+ 3. return "sli" 
+
+
+Diagnostics:
+This function quits nest with a fatal error if there is no support for 
+distributed computing or NEST does not know how to start a distributed version
+of itself.
+
+Examples:
+ (hello.sli) nest_indirect -> (/home/dummy/nest/bin/sli hello.sli)
+
+Author: Diesmann
+
+FirstVersion: 090711
+
+SeeAlso: nest_serial
+*/
+/nest_indirect
+[/stringtype]
+{
+ statusdict/have_mpi :: not
+ {
+  M_FATAL (nest_indirect) (The nest binary has no support for distributed computing.) message
+  M_FATAL (nest_indirect) (Please recompile with e.g. MPI.) message
+  statusdict/exitcodes/fatal :: quit_i
+ } if
+
+ /mpirun lookup   
+ {
+  pop
+  statusdict /prefix get (/bin/sli ) join
+  exch join
+ } 
+ {
+  M_FATAL (nest_indirect) (NEST was compiled with MPI but ~/.nestrc does not specify) message
+  M_FATAL (nest_indirect) (a corresponding method to call nest. Therefore NEST does) message
+  M_FATAL (nest_indirect) (not know how to start itself in a distributed manner.) message
+  M_FATAL (nest_indirect) (Please consult ~/.nestrc to learn how to provide NEST with) message
+  M_FATAL (nest_indirect) (the command /mpirun.) message
+  statusdict/exitcodes/fatal :: quit_i
+ } ifelse
+} def
+
+
+
+
+
+
+%----------------------------------------------------------------------------
+/* Begin(LOESCHMISCH!)Documentation
+
+Name:
+
+Synopsis: 
+
+Description: 
+
+Parameters: In :
+            Out:
+
+Examples:
+
+Diagnostics:
+
+Bugs: 
+
+Author: 
+
+FirstVersion: 
+
+Remarks: 
+
+References: 
+
+Variants: 
+
+SeeAlso: 
+
+*/

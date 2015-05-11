@@ -1,0 +1,148 @@
+/*
+ *  test_iaf_dc.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /* BeginDocumentation
+Name: testsuite::test_iaf_dc - sli script for test of iaf_neuron with external DC current
+
+Synopsis: (test_iaf_dc) run -> compare cout with comments in file
+
+
+Description:
+
+ test_iaf_dc.sli is a test of a specific feature of the iaf_neuron
+ model. It is tested at which time and how an external DC current affects 
+ the state of the neuron, the membrane potential in particular.
+
+ This is probably the simplest setup demonstrating how an external
+ continuous function (the DC) can be incorporated into a system with
+ point event interaction. A general introduction, including examples
+ not restricted to piecewise constant functions, can be found in [1].
+
+ The expected output is documented and briefly commented at the end of 
+ the script.
+
+ Cleary, the result of this script is not resolution independent. The 
+ choice of the computation step size determines at which point in time 
+ the current affects the neuron. 
+
+ There are 2 problems with this script:
+  1. A network element (here the DC generator) can only change its state
+     when it performs a computation (update) step t -> t + h.
+     Thus, the earliest possible time the DC generator can be switched on
+     is at t=h. This is the default. Therefore, the time of onset depends
+     on the computation step size.
+  2. The default delay between the DC generator and the neuron is the minimal
+     allowed value of 1 h. Therefore, the delay of the current depends on
+     the computation step size.
+
+ A sequence of further test scripts (SeeAlso key below) demonstrates and 
+ verifies how the SLI script can be made independent of the computation 
+ step size. This leads to properly aligned and identical voltage traces 
+ for simulations carried out with different computation step sizes.
+
+
+References:
+  [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
+      systems with applications to neuronal modeling. Biologial Cybernetics
+      81:381-402.
+
+Author:  February 2004, Diesmann, Gewaltig, Plesser
+SeeAlso: iaf_neuron, testsuite::test_iaf_dc_aligned, testsuite::test_iaf_dc_aligned_delay, testsuite::test_iaf_dc_aligned_stop
+*/
+
+(unittest) run
+/unittest using
+
+0.1 /h Set
+
+ResetKernel
+
+0 << 
+      /local_num_threads 1 
+      /resolution h
+    >> SetStatus
+
+/iaf_neuron Create /neuron Set
+
+/dc_generator Create /dc_gen Set
+dc_gen <<  /amplitude 1000. >> SetStatus
+
+/voltmeter Create /vm Set
+vm << /withtime true /to_memory true /time_in_steps true /interval h >> SetStatus
+
+/spike_detector Create /sd Set
+sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
+
+dc_gen neuron 1.0 h Connect
+vm neuron Connect
+neuron sd Connect
+
+2 Simulate
+
+
+{
+ /d Set
+ 
+ d Transpose First /test_times Set          % times of reference
+
+ vm [/events [/times /V_m]] get cva  % array of recorded voltages
+  6 ToUnitTestPrecision                     % to precision of reference
+  Transpose                                 % all recorded tuples
+  {First test_times exch MemberQ } Select   % those with reference 
+
+ d eq                                       % compare
+}
+  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%
+% Expected output of this program:
+% 
+% The output send to std::cout is a superposition of the output of  
+% the voltmeter and the spike detector. Both, voltmeter and spike 
+% detector are connected to the same neuron. 
+%
+% time (in steps)  voltage (in mV)
+%
+[
+% 0       -70 <--------------- Voltage trace of neuron, membrane potential
+[ 1       -70] %   <--------   is at rest (initial condition).
+[ 2       -70] % <-------   |
+[ 3       -69.602]  %<-  |   - In the first update step 0ms  -> 0.1 ms, i.e. at 
+[ 4       -69.2079] %  | |     the earliest possible time, the current generator 
+[ 5       -68.8178] %  | |     is switched on and emits a current event with time 
+[ 6       -68.4316] %  | |     stamp 0.1 ms.
+[ 7       -68.0492] %  | |
+[ 8       -67.6706] %  |  ---- After the minimal delay of 1 computation time step,
+[ 9       -67.2958] %  |       the current affects the state of the neuron. This is
+[ 10      -66.9247] %  |       reflected in the neuron's state variable y0 (initial
+[ 11      -66.5572] %  |       condition) but has not yet affected the membrane
+[ 12      -66.1935] %  |       potential.
+[ 13      -65.8334] %  |
+[ 14      -65.4768] %   ------ The effect of the DC current, influencing the neuron 
+[ 15      -65.1238] %          for 0.1 ms now, becomes visible in the membrane potential.
+[ 16      -64.7743]
+% ...
+%
+]
+
+exch assert_or_die

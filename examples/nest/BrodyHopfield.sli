@@ -1,0 +1,97 @@
+/*
+ *  BrodyHopfield.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+    Synchronization Behavior
+
+    The SLI code in this file reproduces the spike synchronization
+    behavior of integrate-and-fire neurons in response to a subthreshold
+    oscillation. This phenomenon is shown in Fig. 1 of
+
+        C.D. Brody and J.J. Hopfield
+        Simple Networks for Spike-Timing-Based Computation,
+        with Application to Olfactory Processing
+        Neuron 37, 843-852 (2003)
+
+    Neurons receive a weak 35Hz oscillation, a gaussian noise current
+    and an increasing DC. The time-locking capability is shown to
+    depend on the input current given.
+    All parameters are taken from the above paper.
+
+   Sven Schrader
+*/
+
+ResetKernel
+
+/N             1000   def % number of neurons
+/T             600 ms def % simulation time
+/bias_begin    140 pA def % increasing bias current to all neurons...
+/bias_end      200 pA def % ...from neuron 0 to N-1
+/model /iaf_psc_alpha def
+
+/ac_generator    Create /drive Set
+/noise_generator Create /noise Set
+/spike_detector  Create /sd    Set
+
+/subnet Create /net Set
+net ChangeSubnet
+model N Create ;
+
+0 ChangeSubnet
+net GetGlobalNodes /neurons Set
+
+sd << /to_file true /withgid true >> SetStatus
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+drive
+<<
+    /amplitude 50. pA
+    /frequency 35. Hz
+>> SetStatus
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+noise
+<<
+    /mean    0.   pA
+    /std     200. pA
+>> SetStatus
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+0 1 N 1 sub {
+    /i Set neurons i get
+    <<
+        /tau_m  20 ms
+        /V_th   20 mV
+        /E_L    10 mV
+        /t_ref   2 ms
+        /V_reset 0 mV
+        /C_m   200 pF
+        /V_m     0 mV
+        /I_e i bias_end bias_begin sub N div mul bias_begin add
+    >>
+    SetStatus
+} for
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+drive neurons DivergentConnect
+noise neurons DivergentConnect
+neurons sd    ConvergentConnect
+
+T Simulate

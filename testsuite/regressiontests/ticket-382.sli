@@ -1,0 +1,62 @@
+/*
+ *  ticket-382.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+ * Regression test for Ticket #382
+ *
+ * voltmeter fails assertion/seg faults when connected after simulation.
+ * 
+ * This test asserts that one can connect voltmeter and multimeter after having
+ * simulated for some time first.
+ *
+ * Hans E Plesser, 2010-04-22
+ *
+ */
+
+(unittest) run
+/unittest using
+
+<< >> begin
+
+{
+  ResetKernel
+  /vm /voltmeter Create def
+  /n /iaf_psc_alpha Create def
+  10 Simulate
+  vm n 1.0 0.1 Connect
+  10 Simulate
+}
+pass_or_die
+
+{
+  ResetKernel
+  /mm /multimeter << /record_from [/V_m] >> Create def
+  /n /iaf_psc_alpha Create def
+  10 Simulate
+  mm n 1.0 0.1 Connect
+  10 Simulate
+}
+pass_or_die
+
+end
+
+endusing

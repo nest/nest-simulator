@@ -1,0 +1,162 @@
+/*
+ *  test_psp_amplitude_consistency.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_psp_amplitude_consistency - test the consistency of PSP amplitudes across models.
+
+Synopsis: (test_psp_amplitude_consistency) run -> 
+
+Description:
+
+This test computes the peak amplitude of the post-synaptic potential
+for different neuron models and checks whether their PSP peak
+amplitudes match approximately.
+
+The maximal PSP amplitude is computed for different synaptic time
+constants to ensure that the scaling of the post-synaptic response is
+consinstent between models.
+
+Author:  December 2012, Gewaltig
+SeeAlso: testsuite::test_iaf_psp, testsuite::test_iaf_ps_dc_accuracy
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+[ 0.5 1.0 2.0 5.0 15. ] /tau_syns Set % synaptic time constants to test
+
+ 10. /emission Set             % Time of the spike
+
+% Parameters for conductance based models
+<<
+  /E_L       0.0      % resting potential in mV 
+  /g_L      30.0
+  /V_m       0.0      % initial membrane potential in mV  
+  /V_th     30.0      % spike threshold in mV
+  /I_e       0.0      % DC current in pA
+  /E_ex     40.0
+  /E_Na     40.0
+  /E_in    -40.0
+  /E_K     -40.0
+  /C_m     250.0      % membrane capacity in pF
+  /V_m       0.0
+  /V_peak   50.0
+>> /P_cond Set
+
+% Parameters for current based models
+<<
+  /tau_m    10.0
+  /E_L       0.0      % resting potential in mV 
+  /V_m       0.0      % initial membrane potential in mV  
+  /V_th     15.0      % spike threshold in mV
+  /I_e       0.0      % DC current in pA
+  /C_m     250.0      % membrane capacity in pF
+>> /P_psc Set
+
+/ComputePSP << 
+                /model /aeif_cond_alpha 
+                /params P_cond
+            >> Options
+
+/ComputePSP
+{
+  /ComputePSP GetOptions begin
+  /tau_syn Set
+
+  ResetKernel
+  0 << /dict_miss_is_error false >> SetStatus
+  /spike_generator Create /sg Set
+  sg <<
+     /origin 50.0            % in ms
+     /spike_times [ 20.0 ]   % in ms
+     /start 0.0              % in ms 
+     /stop  50.0             % in ms
+   >> SetStatus
+
+   /voltmeter Create /vm Set
+
+   model Create /neuron Set
+   params /tau_syn_ex tau_syn put
+   neuron params SetStatus
+
+   sg neuron 1.5 1.0 Connect
+   vm neuron Connect
+
+   150.0 Simulate
+
+   /V_max 0.0 def
+   vm GetStatus /events get /V_m get
+   {
+     dup V_max gt { /V_max Set }{ pop } ifelse
+   } forall
+   V_max
+  end
+} def
+
+% Testing conductance based alpha response models
+modeldict /aeif_cond_alpha known
+{
+  (Testing /aeif_cond_alpha) =
+  /ComputePSP << /model /aeif_cond_alpha >> SetOptions
+  tau_syns { ComputePSP } Map
+  /ComputePSP << /model /iaf_cond_alpha >> SetOptions
+  tau_syns { ComputePSP } Map
+
+  sub {sqr} Map Mean 1.e-4 lt assert_or_die
+
+  (Testing /aeif_cond_exp) =
+  /ComputePSP << /model /aeif_cond_exp >> SetOptions
+  tau_syns { ComputePSP } Map
+  /ComputePSP << /model /iaf_cond_exp >> SetOptions
+  tau_syns { ComputePSP } Map
+
+  sub {sqr} Map Mean 1.e-4 lt assert_or_die
+
+} if
+
+modeldict /iaf_cond_exp_sfa_rr  known
+{
+  (Testing /iaf_cond_exp_sfa_rr ) =
+  /ComputePSP << /model /iaf_cond_exp_sfa_rr >> SetOptions
+  tau_syns { ComputePSP } Map
+  /ComputePSP << /model /iaf_cond_exp >> SetOptions
+  tau_syns { ComputePSP } Map
+
+  sub {sqr} Map Mean 1.e-4 lt assert_or_die
+
+} if
+
+/* This test fails due to inappropriate parametrization of the hh model
+modeldict /hh_psc_alpha  known
+{
+  (Testing /hh_psc_alpha) =
+  /ComputePSP << /model /iaf_cond_alpha >> SetOptions
+  tau_syns { ComputePSP } Map
+  /ComputePSP << /model /hh_psc_alpha >> SetOptions
+  tau_syns { ComputePSP } Map
+
+  sub {sqr} Map Mean 1.e-4 lt assert_or_die
+} if
+*/

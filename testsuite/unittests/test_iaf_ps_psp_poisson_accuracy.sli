@@ -1,0 +1,345 @@
+/*
+ *  test_iaf_ps_psp_poisson_accuracy.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_iaf_ps_psp_poisson_accuracy - probes interaction of precise poisson generator and neuron model
+
+Synopsis: (test_iaf_ps_psp_poisson_accuracy) run -> compare with analytical result
+
+Description:
+The test probes the interaction of a spike generator implementing a
+poisson process in continuous time with a neuron model capable of
+handling off-grid spike times. The result is verified by comparing the
+superposition of post-synaptic potentials in the neuron model to the
+the corresonding analytical solution. To achieve this, spike
+generation of the neuron mode is prevented by setting the spike
+threshold to a very high value. The test employs the parrot neuron for
+precise spike times to provide the neuron model and the spike detector
+with an identical sequence of spike times. The independence of the
+result from the computations step size is ensured by comparing the
+results for a range of temporal resolutions. Due to this setup the
+test requires that several critical timing relations between network
+nodes of different types operate correctly. If the test fails go back
+to simpler tests verifying individual node types.
+
+Author:  May 2005, February 2008, March 2009; Diesmann
+References:
+ [1] Morrison A, Straube S, Plesser H E, & Diesmann M (2007) Exact Subthreshold 
+     Integration with Continuous Spike Times in Discrete Time Neural Network 
+     Simulations. Neural Computation 19:47--79
+SeeAlso: testsuite::test_iaf_ps_psp_accuracy, testsuite::test_iaf_ps_dc_accuracy
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Parameters of simulation schedule.
+%
+-10                         /min_exponent Set
+1.0                         /delay Set          % in ms 
+65.0                        /weight Set         % in pA
+[-4 min_exponent -2] Range  /hlist Set
+1e-13                       /tolerance Set      % in mV
+
+%100.0                         /T     Set
+5.0                         /T     Set
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Parameters of neuron model.
+%
+
+
+<<
+  /E_L         0.0      % resting potential in mV 
+  /V_m         0.0      % initial membrane potential in mV  
+  /V_reset     0.0
+  /V_th     1000.0      % spike threshold in mV
+  /I_e      -530.0      % DC current in pA
+  /tau_m      10.0      % membrane time constant in ms
+  /tau_syn     0.3      % PSC rise time in ms
+  /C_m       250.0      % membrane capacity in pF
+>> /params Set
+
+/rate 16.0 def               % in spikes/ms 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Reference value
+%
+% The function /potential computes the exact value of the membrane
+% potential at the end of the simulation for a given input spike train.       
+%
+
+/psp 
+ [/t]
+ ( 
+  UnitStep(t)*weight * E/tau_syn * 1/C_m 
+    * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) ) 
+ )
+ Function
+def
+
+
+/dc
+ [/t]
+ ( I_e*tau_m/C_m*(1-exp(-t/tau_m)) )
+ Function 
+def
+
+
+/potential
+{                  % argument is the input spike train
+ params begin
+
+  ( psp(T-t-delay) ) /t Function Map
+
+  Sort Total       % the present Total does not control accuracy 
+
+  T dc add 
+
+ end
+} def
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Simulation for a given computation step size
+%
+/AlignedImpact
+[/i /model]
+{
+ i dexp /h Set        % computation step size in ms  
+
+
+ ResetKernel
+ 0 << /tics_per_ms min_exponent neg dexp /resolution h  >> SetStatus
+
+ /poisson_generator_ps Create /pg Set
+ pg << /rate rate 1000.0 mul  >> SetStatus   % rate in Hz 
+
+
+ /parrot_neuron_ps Create /pn Set
+
+ model Create /n Set
+ n params SetStatus
+
+ /spike_detector Create /sd Set
+ sd << /precise_times true >> SetStatus
+
+ pg pn  Connect
+ pn sd  Connect
+ pn n weight delay Connect 
+
+ T Simulate
+
+ sd [/events /times] get cva potential  /V Set % potential from closed form expression
+ n /V_m get                             /Y Set % potential from simulation
+
+
+ [i Y Y V sub abs]    % full results to enable detailed report
+
+
+}
+Function
+def
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Perform simulations at all resolutions and collect results
+%
+{
+ hlist
+ {
+  /iaf_psc_alpha_canon AlignedImpact 
+ }
+ Map 
+
+%dup print_details   % uncomment for debugging
+ 
+ Transpose dup 
+
+  [2] Part dup Rest exch First sub       % check whether simulation results are 
+  {tolerance lt} Map                     % identical for all resolutions
+  true exch {and} Fold
+  exch
+
+  [3] Part                               % check whether individual simulation results 
+  {tolerance lt} Map                     % are identical to analytical solution
+  true exch {and} Fold
+
+ and
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% helper function for debugging, 
+% prints detailed table of results
+%
+/print_details
+{
+ cout default 15 setprecision 
+ endl endl endl
+
+ (               h in ms    ) <-
+ (     simul. potential [mV]) <-
+ (                error [mV]) <-
+ endl
+ (--------------------------) <-
+ (--------------------------) <-
+ (--------------------------) <-
+ endl
+
+ exch
+ {
+  {
+   exch 24 setw exch <- (  ) <-
+  }
+  forall
+  endl
+ }
+ forall 
+ ;
+}
+def
+
+
+
+% executes the overall test
+assert_or_die
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% RPN expression for the reference value
+%
+% Below is the code used to compute the reference value before
+% the compiler for infix mathematical notation became available.
+%
+% V is the exact value of the membrane potential at the end 
+% of the simulation.       
+%
+
+%params begin
+%userdict begin
+% << >> begin
+%
+% s
+% {
+%  T exch sub delay sub /t Set
+%
+%  t 0.0 geq 
+%  {
+%   TauSyn inv Tau inv sub /dti Set
+%   weight C inv mul
+%   E TauSyn div mul
+%   t neg Tau div exp t neg TauSyn div exp sub
+%   dti dup mul div
+%   t t neg TauSyn div exp mul
+%   dti div
+%   sub mul
+%  }
+%  { 0.0 }
+%  ifelse
+% } Map
+%
+% Sort
+% 0 exch {add} forall
+%
+% % I0 Tau/C (1 -e^-T/Tau)
+% 
+% I0 Tau C div mul 1.0 T neg Tau div exp sub mul
+% add 
+%
+% end
+%end
+%end
+%
+%/V Set
+
+
+
+
+
+% garbage to be removed
+% ---------------------
+%
+% [5 3 6 9]   /a Set
+% [-1 8 10 2] /b Set
+%
+%
+% %/parrot_neuron Create /pn Set
+% 
+%
+%/mean_interval rate inv def  % in ms
+
+
+%rngdict /knuthlfg get 200 CreateRNG /rng Set
+%rng rdevdict /poisson get CreateRDV /poiss Set
+%poiss << /lambda rate T mul >> SetStatus
+
+%poiss 1 RandomArray /n Set
+
+
+% method 1: draw n random numbers uniformly distributed  
+%           over the interval (0,T].
+%
+%n { pop rng drand 1.0 exch sub T mul} Table Sort /s Set 
+
+
+% method 2: draw n intervals from an exponential 
+%           distribution. The parameter of the distribution
+%           is the mean interval of the Poisson process
+
+%rng rdevdict /exponential get CreateRDV /expdist Set
+%expdist n [1] Part RandomArray /s Set
+
+%s {mean_interval mul } Map /s Set
+%0.0 s {add} FoldList Rest /s Set
+
+
+
+
+
+

@@ -1,0 +1,209 @@
+/*
+ *  test_iaf_ps_psp_accuracy.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_iaf_ps_psp_accuracy - test of iaf_neuron accuracy of PSP
+
+Synopsis: (test_iaf_ps_psp_accuracy) run -> compare one voltage with analytics
+
+Description:
+
+code updated for NEST 2 but not yet this comment
+
+ test_iaf_psp.sli checks the voltage response of the iaf_neuron
+ model neuron to a single incoming spike. The voltage excursion is
+ called post-synaptic potential (PSP). In the iaf_neuron model neuron
+ the post-synaptic current is described by an alpha-function 
+ (see [1] and references therein). The resulting PSP has a finite 
+ rise-time, with voltage and current beeing zero in the initial 
+ condition (see [1]).
+
+ The dynamics is tested by connecting a device that emits spikes
+ at individually configurable times (see test_spike_generator) to 
+ a model neuron. 
+
+ The weight of the connection specifies the peak value (amplitude)
+ of the post-synaptic current (PSC) in pA.
+
+ The subthreshold dynamics of the iaf_neuron is integrated exactly.
+ Therefore, it is suitable to check whether the simulation kernel 
+ produces results independent of the computation step size
+ (resolution).
+
+ In order to obtain identical results for different computation
+ step sizes h, the SLI script needs to be independent of h.
+ This is achieved by specifying all time parameters in milliseconds
+ (ms). In particular the time of spike emission and the synaptic
+ delay need to be integer multiples of the computation step sizes 
+ to be tested. test_iaf_dc_aligned_delay demonstrates the strategy
+ for the case of DC current input.
+
+
+References:
+  [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
+      systems with applications to neuronal modeling. Biologial Cybernetics
+      81:381-402.
+
+Author:  May 2005, February 2008, Diesmann
+SeeAlso: testsuite::test_iaf_psp, testsuite::test_iaf_ps_dc_accuracy
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Parameters of simulation schedule.
+%
+-14                         /min_exponent Set
+2.0                         /emission Set % in ms
+1.0                         /delay Set   % in ms 
+500.0                       /weight Set  % in pA
+[0 min_exponent -2] Range   /hlist Set
+0                           /O Set
+
+6.0                         /T     Set
+%20.0                         /T     Set
+%3.5                         /T     Set
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Parameters of neuron model.
+%
+
+
+<<
+  /E_L       0.0      % resting potential in mV 
+  /V_m       0.0      % initial membrane potential in mV  
+  /V_th     15.0      % spike threshold in mV
+  /I_e       0.0      % DC current in pA
+  /tau_m    10.0      % membrane time constant in ms
+  /tau_syn   0.3      % synaptic time constant in ms
+  /C_m     250.0      % membrane capacity in pF
+  /Interpol_Order O
+>> /P Set
+
+
+
+
+/AlignedImpact
+{
+ /model Set
+ dup /i Set
+ dexp /h Set        % argument: computation step size in ms  
+
+
+ResetKernel
+
+0 << /tics_per_ms min_exponent neg dexp /resolution h  >> SetStatus
+
+
+/spike_generator Create /sg Set
+
+sg <<
+     /precise_times false
+     /origin 0.0                 % in ms
+     /spike_times [ emission ]   % in ms
+     /start 0.0                  % in ms 
+     /stop  5.0                  % in ms
+   >> SetStatus
+
+model Create /neuron Set
+neuron P SetStatus
+
+sg neuron weight delay Connect
+
+T Simulate
+
+neuron /V_m get /u Set
+
+V u sub abs /d Set
+[u d]
+
+} def
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Reference value
+%
+% V is the exact value of the membrane potential at the end 
+% of the simulation time T.       
+%
+P begin
+ << >> begin
+ T emission sub delay sub /t Set
+
+ % traditional infix math notation: 
+ ( 
+  weight * E/tau_syn * 1/C_m 
+    * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) ) 
+ )
+ ExecMath 
+
+
+ % the same expression as SLI code for the stack engine:
+ %
+ % tau_syn inv tau_m inv sub /dti Set
+ % weight C_m inv mul
+ % E tau_syn div mul
+ % t neg tau_m div exp t neg tau_syn div exp sub
+ % dti dup mul div
+ % t t neg tau_syn div exp mul
+ % dti div
+ % sub mul
+
+ end
+end
+/V Set
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Perform simulations at all resolutions and collect results
+%
+
+hlist
+{
+ /i Set
+ [ i ]
+ i /iaf_psc_alpha_canon AlignedImpact join
+ i /iaf_psc_alpha_presc AlignedImpact join
+}
+Map
+/r Set
+
+
+r Transpose [[3 5]] Part Flatten {1e-14 leq} Map % comment to see individual results
+
+
+true exch {and} Fold % all accurate ?
+
+
+assert_or_die
+

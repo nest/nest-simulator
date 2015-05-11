@@ -1,0 +1,135 @@
+/*
+ *  ticket-754.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-754 - grng_seed not set correctly under certain circumstances
+
+Synopsis: (ticket-754) run -> NEST exits if test fails
+
+Description:
+Ensure that all random number seeds in the kernel are set as expected.
+
+Author: Hans Ekkehard Plesser, 2013-06-25
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+/num_procs is_threaded { 4 } { 1 } ifelse def
+
+% test 1: automatic re-seeding works
+{
+  /base_seed 100 def
+  /pseed base_seed [ 1 num_procs ] add Range def
+  /gseed pseed [-1] Take 1 add def
+
+  0 << /total_num_virtual_procs num_procs >> SetStatus
+
+  0 /rng_seeds get [ num_procs ] Range eq 
+  0 /grng_seed get 0 eq
+  and
+} assert_or_die
+
+(done 1) ==
+
+% test 2: change proc number first, then re-seed
+{
+  /base_seed 100 def
+  /pseed base_seed [ 1 num_procs ] add Range def
+  /gseed pseed [-1] Take 1 add def
+
+  0 << /total_num_virtual_procs num_procs >> SetStatus
+  0 << /rng_seeds pseed 
+       /grng_seed gseed 
+    >>
+  SetStatus
+
+  0 /rng_seeds get pseed eq 
+  0 /grng_seed get gseed eq
+  and
+} assert_or_die
+
+(done 2) ==
+
+% test 3: set proc number and reseed simultaneously
+{
+  /base_seed 100 def
+  /pseed base_seed [ 1 num_procs ] add Range def
+  /gseed pseed [-1] Take 1 add def
+
+  0 << /total_num_virtual_procs num_procs 
+       /rng_seeds pseed 
+       /grng_seed gseed 
+    >>
+  SetStatus
+
+  0 /rng_seeds get pseed eq 
+  0 /grng_seed get gseed eq
+  and
+
+} assert_or_die
+
+(done 3) ==
+
+% test 4: seed only grng explicitly
+{
+  /base_seed 100 def
+  /pseed base_seed [ 1 num_procs ] add Range def
+  /gseed pseed [-1] Take 1 add def
+
+  0 << /total_num_virtual_procs num_procs 
+       /grng_seed gseed 
+    >>
+  SetStatus
+
+  0 /rng_seeds get [ num_procs ] Range eq 
+  0 /grng_seed get gseed eq
+  and
+
+} assert_or_die
+
+(done 4) ==
+
+% test 5: set number of threads, not total number of virtual procs
+{
+  /base_seed 100 def
+  /pseed base_seed [ 1 num_procs ] add Range def
+  /gseed pseed [-1] Take 1 add def
+
+  0 << /local_num_threads num_procs 
+       /rng_seeds pseed 
+       /grng_seed gseed 
+    >>
+  SetStatus
+
+  0 /rng_seeds get pseed eq 
+  0 /grng_seed get gseed eq
+  and
+
+} assert_or_die
+
+(done 5) ==
+
+endusing

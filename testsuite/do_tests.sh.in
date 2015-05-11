@@ -1,0 +1,630 @@
+#!/bin/sh
+#
+# This script runs all test scripts that use the unittest library
+#
+# unittest provides functions that quit NEST with a non-zero exit
+# code upon errors. This is checked here and used to print a nice
+# summary after all tests have been run.
+#
+# For testing this script, these files may be handy:
+#
+#   exitcode0.sli
+#   exitcode1.sli
+#   exitcode2.sli
+#   exitcode3.sli
+#   exitcode99.sli
+#   exitcode126.sli
+#
+# They return a specific exit code
+#
+
+#
+# usage [exit_code bad_option]
+#
+usage ()
+{
+    if test $1 -ne 0 ; then
+        echo "Unknown option: $2"
+    fi
+
+    cat <<EOF
+Usage: do_tests.sh [options ...]"
+
+Options:
+
+    --help              Print program options and exit
+    --test-pynest       Test the PyNEST installation and APIs
+    --output-dir=/path  Output directory (default: ./reports)
+    --source-dir=/path  Toplevel NEST source code directory
+EOF
+
+    exit $1
+}
+
+TEST_PYNEST=false
+
+while test $# -gt 0 ; do
+    case "$1" in
+        --help)
+            usage 0
+            ;;
+        --test-pynest)
+            TEST_PYNEST=true
+            ;;
+        --output-dir=*)
+            TEST_OUTDIR="$( echo "$1" | sed 's/^--output-dir=//' )"
+            ;;
+        --source-dir=*)
+            export NEST_SOURCE="$( echo "$1" | sed 's/^--source-dir=//' )"
+            ;;
+        *)
+            usage 1 "$1"
+            ;;
+    esac
+    shift
+done
+
+#
+# bail_out message
+#
+bail_out ()
+{
+    echo "$1"
+    exit 1
+}
+
+#
+# ask_results
+#
+ask_results ()
+{
+    echo "***"
+    echo "*** Please send the archived content of these directories:"
+    echo "***"
+    echo "***     - '${TEST_OUTDIR}'"
+    echo "***     - '${TEST_TMPDIR}'"
+    echo "***"
+    echo "*** to the nest_user mailing list. Please find further information"
+    echo "*** about the mailing list at"
+    echo "***   http://www.nest-initiative.org/Software:Community"
+    echo "***"
+    echo
+}
+
+#
+# portable_inplace_sed file_name expression
+#
+portable_inplace_sed ()
+{
+    cp -f "$1" "$1.XXX"
+    sed -e "$2" "$1.XXX" > "$1"
+    rm -f "$1.XXX"
+}
+
+#
+# measure runtime of command
+#
+time_cmd()
+{
+    start=`date +%s%N`
+    $1
+    end=`date +%s%N`
+    echo `awk "BEGIN {print ($end - $start) / 1000000000}"`
+}
+
+#
+# sed has different syntax for extended regular expressions
+# on different operating systems:
+# BSD: -E
+# other: -r
+#
+EXTENDED_REGEX_PARAM=r
+/bin/sh -c "echo 'hello' | sed -${EXTENDED_REGEX_PARAM} 's/[aeou]/_/g' "  >/dev/null 2>&1 || EXTENDED_REGEX_PARAM=E
+
+JUNIT_FILE=
+JUNIT_TESTS=
+JUNIT_FAILURES=
+JUNIT_CLASSNAME='core'
+
+#
+# junit_open file_name
+#
+junit_open ()
+{
+    if test "x$1" = x ; then
+        bail_out 'junit_open: file_name not given!'
+    fi
+
+    JUNIT_FILE="${TEST_OUTDIR}/TEST-$1.xml"
+    JUNIT_TESTS=0
+    JUNIT_FAILURES=0
+
+    TIME_TOTAL=0
+
+    # Be compatible with BSD date; no --rfc-3339 and :z modifier
+    timestamp="$( date -u '+%FT%T+00:00' )"
+
+    echo '<?xml version="1.0" encoding="UTF-8" ?>' > "${JUNIT_FILE}"
+
+    echo "<testsuite errors=\"0\" failures=XXX hostname=\"${INFO_HOST}\" name=\"$1\" tests=XXX time=XXX timestamp=\"${timestamp}\">" >> "${JUNIT_FILE}"
+    echo '  <properties>' >> "${JUNIT_FILE}"
+    echo "    <property name=\"os.arch\" value=\"${INFO_ARCH}\" />" >> "${JUNIT_FILE}"
+    echo "    <property name=\"os.name\" value=\"${INFO_OS}\" />" >> "${JUNIT_FILE}"
+    echo "    <property name=\"os.version\" value=\"${INFO_VER}\" />" >> "${JUNIT_FILE}"
+    echo "    <property name=\"user.home\" value=\"${INFO_HOME}\" />" >> "${JUNIT_FILE}"
+    echo "    <property name=\"user.name\" value=\"${INFO_USER}\" />" >> "${JUNIT_FILE}"
+    echo '  </properties>' >> "${JUNIT_FILE}"
+}
+
+#
+# junit_write classname testname [fail_message fail_trace]
+#
+junit_write ()
+{
+    if test "x${JUNIT_FILE}" = x ; then
+        bail_out 'junit_write: report file not open, call junit_open first!'
+    fi
+
+    if test "x$1" = x || test "x$2" = x ; then
+        bail_out 'junit_write: classname and testname arguments are mandatory!'
+    fi
+
+    JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
+
+    printf '%s' "  <testcase classname=\"$1\" name=\"$2\" time=\"${TIME_ELAPSED}\"" >> "${JUNIT_FILE}"
+
+    if test "x$3" != x ; then
+        echo '>' >> "${JUNIT_FILE}"
+        echo "    <failure message=\"$3\" type=\"\"><![CDATA[" >> "${JUNIT_FILE}"
+        echo "$4" | sed 's/]]>/]]>]]\&gt;<![CDATA[/' >> "${JUNIT_FILE}"
+        echo "]]></failure>" >> "${JUNIT_FILE}"
+        echo "  </testcase>" >> "${JUNIT_FILE}"
+    else
+        echo ' />' >> "${JUNIT_FILE}"
+    fi
+}
+
+#
+# junit_close
+#
+junit_close ()
+{
+    if test "x${JUNIT_FILE}" = x ; then
+        bail_out 'junit_close: report file not open, call junit_open first!'
+    fi
+
+    portable_inplace_sed "${JUNIT_FILE}" "s/time=XXX/time=\"${TIME_TOTAL}\"/"
+    portable_inplace_sed "${JUNIT_FILE}" "s/tests=XXX/tests=\"${JUNIT_TESTS}\"/"
+    portable_inplace_sed "${JUNIT_FILE}" "s/failures=XXX/failures=\"${JUNIT_FAILURES}\"/"
+
+    echo '  <system-out><![CDATA[]]></system-out>' >> "${JUNIT_FILE}"
+    echo '  <system-err><![CDATA[]]></system-err>' >> "${JUNIT_FILE}"
+    echo '</testsuite>' >> "${JUNIT_FILE}"
+
+    JUNIT_FILE=
+}
+
+#
+# run_test script_name codes_success codes_failure
+#
+# script_name: name of a .sli / .py script in $TEST_BASEDIR
+#
+# codes_success: variable that contains an explanation string for
+#                all exit codes that are to be regarded as a success
+# codes_failure: variable that contains an explanation string for
+#                all exit codes that are to be regarded as a failure
+# Examples:
+#
+#   codes_success=' 0 Success'
+#   codes_failure=\
+#   ' 1 Failed: missed assertion,'\
+#   ' 2 Failed: error in tested code block,'\
+#   ' 3 Failed: tested code block failed to fail,'\
+#   ' 126 Failed: error in test script,'
+#
+# Description:
+#
+#   The function runs the NEST binary with the SLI script script_name.
+#   The exit code is then transformed into a human readable string
+#   (if possible) using the global variables CODES_SUCCESS and
+#   CODES_FAILURE which contain a comma separated list of exit codes
+#   and strings describing the exit code.
+#
+#   If either CODES_SUCCESS or CODES_FAILURE contain an entry for the
+#   exit code, the respective string is logged, and the test is
+#   either counted as passed or failed.
+#
+#   If neither CODES_SUCCESS nor CODES_FAILURE contains an entry !=
+#   "" for the returned exit code, the pass is counted as failed,
+#   too, and unexpected exit code is logged).
+#
+# First Version by Ruediger Kupper, 07 Jul 2008
+# Modified by Jochen Eppler and Markus Diesmann
+# Modified by Yury V. Zaytsev
+#
+run_test ()
+{
+    TEST_TOTAL=$(( ${TEST_TOTAL} + 1 ))
+
+    param_script="$1"
+    param_success="$2"
+    param_failure="$3"
+
+    msg_error=
+
+    junit_class="$( echo "${param_script}" | sed 's/.[^.]\+$//' | sed 's/\/[^/]\+$//' | sed 's/\//./' )"
+    junit_name="$( echo "${param_script}" | sed 's/^.*\/\([^/]\+\)$/\1/' )"
+
+    echo          "Running test '${param_script}'... " >> "${TEST_LOGFILE}"
+    printf '%s' "  Running test '${param_script}'... "
+
+    # Very unfortunately, it is cheaper to generate a test runner on fly
+    # rather than trying to fight with sh, dash, bash, etc. variable
+    # expansion algorithms depending on whether the command is a built-in
+    # or not, how many subshells have been forked and so on.
+
+    echo "#!/bin/sh" >  "${TEST_RUNFILE}"
+    echo "set +e"   >> "${TEST_RUNFILE}"
+
+    echo "${param_script}" | grep -q '\.sli'
+    if test $? -eq 0 ; then
+      command="'${NEST_BINARY}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
+    else
+      command="'${PYTHON}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
+    fi
+
+    echo "${command}" >> "${TEST_RUNFILE}"
+    echo "echo \$? > '${TEST_RETFILE}' ; exit 0" >> "${TEST_RUNFILE}"
+
+    chmod 755 "${TEST_RUNFILE}"
+
+    TIME_ELAPSED="$( time_cmd "${TEST_RUNFILE}" 2>&1 )"
+    TIME_TOTAL="$( awk "BEGIN { print (${TIME_TOTAL} + ${TIME_ELAPSED}) ; }" )"
+    rm -f "${TEST_RUNFILE}"
+
+    exit_code="$(cat "${TEST_RETFILE}")"
+
+    sed 's/^/   > /g' "${TEST_OUTFILE}" >> "${TEST_LOGFILE}"
+
+    msg_dirty=${param_success##* ${exit_code} }
+    msg_clean=${msg_dirty%%,*}
+    if test "${msg_dirty}" != "${param_success}" ; then
+        TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
+        explanation="${msg_clean}"
+        junit_failure=
+    else
+        TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
+        JUNIT_FAILURES=$(( ${JUNIT_FAILURES} + 1 ))
+
+        msg_dirty=${param_failure##* ${exit_code} }
+        msg_clean=${msg_dirty%%,*}
+        if test "${msg_dirty}" != "${param_failure}" ; then
+            explanation="${msg_clean}"
+        else
+            explanation="Failed: unexpected exit code ${exit_code}"
+            msg_error="$( cat "${TEST_OUTFILE}" )"
+        fi
+
+        junit_failure="${exit_code} (${explanation})"
+    fi
+
+    echo "${explanation}"
+
+    echo >> "${TEST_LOGFILE}" "-> ${exit_code} (${explanation})"
+    echo >> "${TEST_LOGFILE}" "----------------------------------------"
+
+    junit_write "${JUNIT_CLASSNAME}.${junit_class}" "${junit_name}" "${junit_failure}" "$(cat "${TEST_OUTFILE}")"
+
+    # Panic on "unexpected" exit code
+    if test "x${msg_error}" != x ; then
+        echo "${msg_error}"
+        echo
+        echo "***"
+        echo "*** An unexpected exit code usually hints at a bug in the test suite!"
+        ask_results
+        exit 2
+    fi
+
+    rm -f "${TEST_OUTFILE}" "${TEST_RETFILE}"
+}
+
+# Gather some information about the host
+INFO_ARCH="$(uname -m)"
+INFO_HOME="$(/bin/sh -c 'echo ~')"
+INFO_HOST="$(hostname -f)"
+INFO_OS="$(uname -s)"
+INFO_USER="$(whoami)"
+INFO_VER="$(uname -r)"
+
+TEST_BASEDIR="@TESTSUITE_BASEDIR@"
+TEST_OUTDIR=${TEST_OUTDIR:-"$( pwd )/reports"}
+TEST_LOGFILE="${TEST_OUTDIR}/installcheck.log"
+TEST_OUTFILE="${TEST_OUTDIR}/output.log"
+TEST_RETFILE="${TEST_OUTDIR}/output.ret"
+TEST_RUNFILE="${TEST_OUTDIR}/runtest.sh"
+
+if test -d "${TEST_OUTDIR}" ; then
+    rm -rf "${TEST_OUTDIR}"
+fi
+
+mkdir "${TEST_OUTDIR}"
+
+PYTHON="${PYTHON:-python}"
+PYTHON_HARNESS="@PKGDATADIR_AS_CONFIGURED@/extras/do_tests.py"
+
+TMPDIR=${TMPDIR:-${TEST_OUTDIR}}
+TEST_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/nest.XXXXX")"
+NEST_DATA_PATH="${TEST_TMPDIR}"
+export NEST_DATA_PATH
+
+# Remember: single line exports are unportable!
+
+NEST_BINARY=nest_serial
+
+# Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
+if test "x${INFO_OS}" = xDarwin ; then
+    TEST_CRSTATE="$( defaults read com.apple.CrashReporter DialogType )"
+    defaults write com.apple.CrashReporter DialogType server
+fi
+
+TEST_TOTAL=0
+TEST_PASSED=0
+TEST_FAILED=0
+
+TIME_TOTAL=0
+TIME_ELAPSED=0
+
+echo >  "${TEST_LOGFILE}" "NEST v. @SLI_VERSION@ testsuite log"
+echo >> "${TEST_LOGFILE}" "======================"
+echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
+
+echo
+echo 'Phase 1: Testing if SLI can execute scripts and report errors'
+echo '-------------------------------------------------------------'
+
+junit_open 'core.phase_1'
+
+CODES_SUCCESS=' 0 Success'
+CODES_FAILURE=
+for test_name in test_pass.sli test_goodhandler.sli test_lazyhandler.sli ; do
+    run_test "selftests/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}"
+done
+
+CODES_SUCCESS=' 126 Success'
+CODES_FAILURE=
+for test_name in test_fail.sli test_stop.sli test_badhandler.sli ; do
+    run_test "selftests/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}"
+done
+
+junit_close
+
+# At this point, we are sure that
+#
+#  * NEST will return 0 after finishing a script
+#  * NEST will return 126 when a script raises an unhandled error
+#  * Error handling in stopped contexts works
+
+echo
+echo "Phase 2: Testing SLI's unittest library"
+echo "---------------------------------------"
+
+junit_open 'core.phase_2'
+
+# assert_or_die uses pass_or_die, so pass_or_die should be tested first.
+
+CODES_SUCCESS=' 2 Success'
+CODES_FAILURE=' 126 Failed: error in test script'
+
+run_test selftests/test_pass_or_die.sli "${CODES_SUCCESS}" "${CODES_FAILURE}"
+
+CODES_SUCCESS=' 1 Success'
+CODES_FAILURE=\
+' 2 Failed: error in tested code block,'\
+' 126 Failed: error in test script,'
+
+run_test selftests/test_assert_or_die_b.sli "${CODES_SUCCESS}" "${CODES_FAILURE}"
+run_test selftests/test_assert_or_die_p.sli "${CODES_SUCCESS}" "${CODES_FAILURE}"
+
+CODES_SUCCESS=' 3 Success'
+CODES_FAILURE=\
+' 1 Failed: missed assertion,'\
+' 2 Failed: error in tested code block,'\
+' 126 Failed: error in test script,'
+
+run_test selftests/test_fail_or_die.sli "${CODES_SUCCESS}" "${CODES_FAILURE}"
+
+CODES_SUCCESS=' 3 Success'
+CODES_FAILURE=\
+' 1 Failed: missed assertion,'\
+' 2 Failed: error in tested code block,'\
+' 126 Failed: error in test script,'
+
+run_test selftests/test_crash_or_die.sli "${CODES_SUCCESS}" "${CODES_FAILURE}"
+
+CODES_SUCCESS=' 3 Success'
+CODES_FAILURE=\
+' 1 Failed: missed assertion,'\
+' 2 Failed: error in tested code block,'\
+' 126 Failed: error in test script,'
+
+run_test selftests/test_failbutnocrash_or_die_crash.sli "${CODES_SUCCESS}" "${CODES_FAILURE}"
+run_test selftests/test_failbutnocrash_or_die_pass.sli "${CODES_SUCCESS}" "${CODES_FAILURE}"
+
+CODES_SUCCESS=' 3 Success'
+CODES_FAILURE=\
+' 1 Failed: missed assertion,'\
+' 2 Failed: error in tested code block,'\
+' 126 Failed: error in test script,'
+
+run_test selftests/test_passorfailbutnocrash_or_die.sli "${CODES_SUCCESS}" "${CODES_FAILURE}"
+
+junit_close
+
+# At this point, we are sure that
+#
+#  * unittest::pass_or_die works
+#  * unittest::assert_or_die works
+#  * unittest::fail_or_die works
+#  * unittest::crash_or_die works
+
+# These are the default exit codes and their explanations
+CODES_SUCCESS=' 0 Success'
+CODES_FAILURE=\
+' 1 Failed: missed SLI assertion,'\
+' 2 Failed: error in tested code block,'\
+' 3 Failed: tested code block failed to fail,'\
+' 4 Failed: re-run serial,'\
+' 10 Failed: unknown error,'\
+' 20 Failed: inconsistent copyright header(s),'\
+' 125 Failed: unknown C++ exception,'\
+' 126 Failed: error in test script,'\
+' 127 Failed: fatal error,'\
+' 134 Failed: missed C++ assertion,'\
+' 139 Failed: segmentation fault,'
+
+echo
+echo "Phase 3: Running NEST unit tests"
+echo "--------------------------------"
+
+junit_open 'core.phase_3'
+
+for test_ext in sli py ; do
+    for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
+        run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}"
+    done
+done
+
+junit_close
+
+echo
+echo "Phase 4: Running regression tests"
+echo "---------------------------------"
+
+junit_open 'core.phase_4'
+
+for test_ext in sli py ; do
+    for test_name in $(ls "${TEST_BASEDIR}/regressiontests/" | grep ".*\.${test_ext}$") ; do
+        run_test "regressiontests/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}"
+    done
+done
+
+junit_close
+
+echo
+echo "Phase 5: Running MPI tests"
+echo "--------------------------"
+if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
+    junit_open 'core.phase_5'
+
+    NEST_BINARY=nest_indirect
+    for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/pass" | grep '.*\.sli$') ; do
+        run_test "mpi_selftests/pass/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}"
+    done
+
+    # tests meant to fail
+    SAVE_CODES_SUCCESS=${CODES_SUCCESS}
+    SAVE_CODES_FAILURE=${CODES_FAILURE}
+    CODES_SUCCESS=' 1 Success (expected failure)'
+    CODES_FAILURE=' 0 Failed: Unittest failed to detect error.'
+    for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/fail" | grep '.*\.sli$') ; do
+        run_test "mpi_selftests/fail/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}"
+    done
+    CODES_SUCCESS=${SAVE_CODES_SUCCESS}
+    CODES_FAILURE=${SAVE_CODES_FAILURE}
+
+    for test_name in $(ls "${TEST_BASEDIR}/mpitests/" | grep '.*\.sli$') ; do
+        run_test "mpitests/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}"
+    done
+
+    junit_close
+else
+  echo "  Not running MPI tests because NEST was compiled without support"
+  echo "  for distributed computing. See the file README for details."
+fi
+
+
+if test "x${TEST_PYNEST}" = xtrue ; then
+
+    if command -v nosetests >/dev/null 2>&1; then
+
+	echo
+	echo "Phase 6: Running PyNEST tests."
+	echo "------------------------------"
+
+        nosetests -v --with-xunit --xunit-file=${TEST_OUTDIR}/pynest_tests.xml @PYEXECDIR@/nest/tests 2>&1 \
+            | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
+
+        PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"
+        PYNEST_TEST_FAILURES="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*failures=([0-9]+).*/\1/' )"
+        PYNEST_TEST_ERRORS="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*errors=([0-9]+).*/\1/' )"
+
+        # check that PYNEST_TEST_FAILURES/PYNEST_TEST_ERRORS contain numbers
+        if test ${PYNEST_TEST_FAILURES} -eq ${PYNEST_TEST_FAILURES} 2>/dev/null ; then
+          # PYNEST_TEST_FAILURES is a valid number
+          :
+        else
+          PYNEST_TEST_FAILURES=0
+        fi
+        if test ${PYNEST_TEST_ERRORS} -eq ${PYNEST_TEST_ERRORS} 2>/dev/null ; then
+          # PYNEST_TEST_ERRORS is a valid number
+          :
+        else
+          PYNEST_TEST_ERRORS=0
+        fi
+        PYNEST_TEST_FAILED=$(($PYNEST_TEST_ERRORS + $PYNEST_TEST_FAILURES))
+        PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_FAILED))
+
+    else
+
+        "${PYTHON}" "${PYTHON_HARNESS}" >> "${TEST_LOGFILE}"
+    
+        PYNEST_TEST_TOTAL="$(  cat pynest_test_numbers.log | cut -d' ' -f1 )"
+        PYNEST_TEST_PASSED="$( cat pynest_test_numbers.log | cut -d' ' -f3 )"
+        PYNEST_TEST_FAILED="$( cat pynest_test_numbers.log | cut -d' ' -f2 )"
+
+        rm -f "pynest_test_numbers.log"
+
+    fi
+
+    echo
+    echo "  PyNEST tests: ${PYNEST_TEST_TOTAL}"
+    echo "     Passed: ${PYNEST_TEST_PASSED}"
+    echo "     Failed: ${PYNEST_TEST_FAILED}"
+
+    PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"
+
+    TEST_TOTAL=$(( $TEST_TOTAL + $PYNEST_TEST_TOTAL ))
+    TEST_PASSED=$(( $TEST_PASSED + $PYNEST_TEST_PASSED ))
+    TEST_FAILED=$(( $TEST_FAILED + $PYNEST_TEST_FAILED ))
+else
+    echo
+    echo "Phase 6: Running PyNEST tests"
+    echo "-----------------------------"
+    echo "  Not running PyNEST tests because NEST was compiled without support"
+    echo "  for Python. See the file README for details."
+fi
+
+echo
+echo "NEST Testsuite Summary"
+echo "----------------------"
+echo "  NEST Executable: $(which nest)"
+echo "  SLI Executable : $(which sli)"
+echo "  Total number of tests: ${TEST_TOTAL}"
+echo "     Passed: ${TEST_PASSED}"
+echo "     Failed: ${TEST_FAILED} ${PYNEST_TEST_FAILED_TEXT:-}"
+echo
+
+if test ${TEST_FAILED} -gt 0 ; then
+    echo "***"
+    echo "*** There were errors detected during the run of the NEST test suite!"
+    ask_results
+else
+    rm -rf "${TEST_TMPDIR}"
+fi
+
+# Mac OS X: Restore old crash reporter state
+if test "x${INFO_OS}" = xDarwin ; then
+    defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}"
+fi
+
+exit 0

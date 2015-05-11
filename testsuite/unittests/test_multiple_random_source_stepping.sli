@@ -1,0 +1,89 @@
+/*
+ *  test_multiple_random_source_stepping.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_multiple_random_source_stepping - test NEST's behavior when using multiple random sources and different stepping schemes
+
+Synopsis: (test_multiple_random_source_stepping.sli) run -> dies if assertion fails
+
+Description:
+The script checks whether simulations of a network with more than one node consuming random numbers
+creates identical output under different stepping regimes, e.g., 1x10.0ms vs 100x0.1ms.
+Per r9131, this tests works well only if the stepping interval is a multiple of the minimal delay.
+Otherwise, random numbers will be fed to consumers in different orders, as nodes are updated for 
+parts of minimal delay periods only.
+
+Author: Plesser
+FirstVersion: 2011-01-20
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+
+/clear_error
+{ 
+  counttomark npop % pop all but mark
+  errordict begin /newerror false def end
+} def
+
+
+% single simulation run
+% arg: steppings
+% arg: interval
+/run_sim
+{
+  /interval Set
+  /steppings Set
+  ResetKernel
+  /pg1 /poisson_generator_ps << /rate 1000. >> Create def
+  /pg2 /poisson_generator_ps << /rate 1000. >> Create def
+  /sd1 /spike_detector << /precise_times true >> Create def
+  /sd2 /spike_detector << /precise_times true >> Create def
+  pg1 sd1 Connect
+  pg2 sd2 Connect
+
+  steppings { interval Simulate } repeat
+  sd1 /events get /times get cva
+  sd2 /events get /times get cva
+  2 arraystore
+}
+def				   
+
+{
+   1 10.0 run_sim /ref Set
+   5  2.0 run_sim
+  10  1.0 run_sim
+  2 arraystore
+  true exch { ref eq and } Fold
+  
+  % the following two will lead to different results and are thus excluded
+  %  20  0.5 run_sim
+  % 100  0.1 run_sim  
+  %4 arraystore
+  %true exch { ref eq and } Fold
+} 
+assert_or_die
+

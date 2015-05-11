@@ -1,0 +1,139 @@
+/*
+ *  ticket-80-175-179.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+   Test for Tickets 80 and 175.
+
+   This test verifies that:
+   voltmeter and spike_detector record identical signals from iaf_neuron
+   driven by internal dc independent of how simulation time is blocked
+   and how elements are placed in script. Additionally, two spike generators,
+   placed before and after the recorders, emit the same spike trains that
+   are expected from the neurons for the given parameters.
+
+   Protocol:
+   1. One iaf_neuron created before voltmeters and spike detectors, one after.
+   2. Devices recording from both neurons.
+   3. Neurons driven by internal dc current.
+   4. Resolution fixed, but simulation time subdivided in different ways.
+   5. Test that all devices yield identical results under all conditions.
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+/resolution 0.1 def
+
+/vm_params <<
+  /origin 0.0
+  /start   0.0 
+  /stop  100.0 
+  /interval resolution
+  /to_memory true
+  /withtime true
+>> def 
+
+/sd_params <<
+  /origin 0.0
+  /start  0.0 
+  /stop  100.0 
+  /to_memory     true
+  /precise_times false
+  /time_in_steps true
+  /to_file true
+>> def
+
+/sg_params <<
+  /spike_times [ 4.8 11.6 18.4 25.2 32.0 38.8 45.6 52.4
+                 59.2 66.0 72.8 79.6 86.4 93.2 100.0]
+>> def
+
+/iaf_params <<
+  /I_e 1e3
+>> def
+
+/sim_blocks [0.1 0.3 0.5 0.7 1.0 1.3 1.5 1.7 110.0] def
+
+% ensure all spikes arrive at detector
+/simtime vm_params /stop get 2.0 add def  
+
+/single_trial
+{
+  << >> begin
+    /T Set
+    ResetKernel
+    0 << /resolution resolution
+         /overwrite_files true >> SetStatus
+  
+    /iaf_neuron iaf_params SetDefaults
+    /voltmeter vm_params  SetDefaults
+    /spike_detector sd_params SetDefaults
+    /spike_generator sg_params SetDefaults
+
+    /iaf_neuron Create /n_pre Set
+    /spike_generator Create /sg_pre Set
+
+    [ /spike_detector Create
+      /spike_detector Create
+      /spike_detector Create
+      /spike_detector Create
+    ] /sds Set
+    [ /voltmeter Create
+      /voltmeter Create
+    ] /vms Set
+
+    /iaf_neuron Create /n_post Set
+    /spike_generator Create /sg_post Set
+
+    [[n_pre n_post sg_pre sg_post] sds] { Connect true } MapThread ;
+    [vms [n_pre n_post]] { Connect true } MapThread ;
+
+    { 
+      T Simulate
+      0 [ /time ] get simtime geq
+      { exit } if
+    } loop
+
+    sds { [/events /times] get cva } Map
+    vms { [/events /V_m] get cva } Map
+    2 arraystore
+  end
+} def
+
+sim_blocks { single_trial } Map
+/res Set
+
+% first test: check spike times for equality
+res [/All 1] Part 1 Flatten 
+dup First dup == /ref Set 
+Rest true exch { ref eq and } Fold
+
+% second test: check voltmeter readings for equality
+res [/All 2] Part 1 Flatten 
+dup First /ref Set 
+Rest true exch { ref eq and } Fold
+
+and
+
+assert_or_die

@@ -1,0 +1,115 @@
+/*
+ *  test_spike_detector.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+   Name: testsuite::test_spike_detector - sli script to test spike_detector device
+
+   Synopsis: (test_spike_detector) run
+
+   Description:
+ 
+
+   FirstVersion: Jan 2008
+   Author: Diesmann, Eppler
+ */
+
+(unittest) run
+/unittest using
+
+/Transmission
+{
+ /h Set
+
+ResetKernel
+
+0 << 
+     /resolution h
+  >> SetStatus
+
+/spk_tms [0.1 5.0 5.3 5.33 5.4 5.9 6.0 ] def
+/spike_generator Create /sg Set
+sg <<
+     /spike_times spk_tms   % in ms
+     /precise_times true    % send spikes with precise offset
+   >> SetStatus     
+
+/spike_detector Create /sd Set
+sd << /withtime true /to_memory true /time_in_steps false /precise_times true >> SetStatus 
+
+sg sd Connect
+
+% must simulate to 8.0 to record 6.0 spike when using 1.0 resolution
+8.0 Simulate
+
+% get maximum relative error in measure times
+sd [ /events /times ] get cva 
+spk_tms sub spk_tms div { abs } Map Max
+1e-15 lt
+
+} def
+
+[1.0 0.1 0.02 0.01]
+ { Transmission } Map
+true exch {and} Fold   % all equal ?
+
+assert_or_die
+
+
+% Test the behavior of the /precise_times flag
+% 1. if the user does not set it
+
+  ResetKernel
+  /spike_detector Create /sd Set
+
+  % is the default correctly set to false?
+  sd GetStatus /precise_times get dup /pt_flag Set false eq assert_or_die
+
+  % is the flag still the same after simulating for some time?
+  100 Simulate
+  sd GetStatus /precise_times get pt_flag eq assert_or_die
+
+  % is the flag still the same after the creation of a precise neuron?
+  /iaf_psc_exp_ps Create ;
+  sd GetStatus /precise_times get pt_flag eq assert_or_die
+
+  % does the flag change to true if simulating with a precise neuron around?
+  100 Simulate
+  sd GetStatus /precise_times get true eq assert_or_die
+
+% 2.a if the user sets the flag to false
+
+  ResetKernel
+  /spike_detector Create /sd Set
+  sd << /precise_times false >> SetStatus
+  /iaf_psc_exp_ps Create ;
+  100 Simulate
+  sd GetStatus /precise_times get false eq assert_or_die
+
+% 2.b if the user sets the flag to true
+
+  ResetKernel
+  /spike_detector Create /sd Set
+  sd << /precise_times true >> SetStatus
+  /iaf_psc_exp_ps Create ;
+  100 Simulate
+  sd GetStatus /precise_times get true eq assert_or_die

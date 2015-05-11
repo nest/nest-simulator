@@ -1,0 +1,31 @@
+--- configure.ac	2012-01-25 11:13:00.529910000 +0100
++++ configure.ac.in.lt1.5	2012-01-25 11:15:41.805304000 +0100
+@@ -488,20 +488,16 @@
+ 
+ AC_PROG_INSTALL
+ 
+-LT_PATH_LD
+-LT_CONFIG_LTDL_DIR([libltdl])
+-_LTDL_CONVENIENCE                 ## put libltdl into a convenience library
+-LT_INIT([dlopen])                 ## use libtool
+-m4_pattern_allow([LT_LIBEXT])     ## supress false positive message by autoconf
+-
++if test "$host_os" != "cygwin"; then
++  true # This is needed, because the macro below may be defined empty and
++       # an empty if would lead to an error in configure.
++  AC_LIBTOOL_DLOPEN        ## use dlopen mechanism for dynamic loading of module
++fi
++AC_PROG_LD
++AC_LIBLTDL_CONVENIENCE            ## put libltdl into a convenience library
++AC_PROG_LIBTOOL                   ## use libtool
+ AC_CONFIG_SUBDIRS(libltdl)        ## also configure subdir containing libltdl
+ 
+-# This is a fix for a bug in Debian's libtool.
+-# See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=526750
+-if echo $LIBLTDL | grep -s -q top_build_prefix; then
+-  top_build_prefix=${PKGBUILDDIR}/
+-  LIBLTDL=`eval echo $LIBLTDL`
+-fi
+ 
+ if test "x$BUILD_SHARED" != xno ; then
+   if test "x$LIBLTDL" != x ; then

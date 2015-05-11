@@ -1,0 +1,73 @@
+/*
+ *  test_failbutnocrash_or_die_crash.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+   Name: testsuite::test_failbutnocrash_or_die_crash - sli script to test the failbutnocrash_or_die_crash function
+
+   Synopsis: (test_failbutnocrash_or_die_crash) run
+
+   FirstVersion: 2014-11-12
+
+   Author: Diesmann, Plesser
+ */
+
+(unittest) run
+/unittest using
+
+% Preparatory work for proper test code in case NEST is complied with MPI support
+% For now we just ignore this test, this will later be replaced 
+% by a restart of NEST with a serial binary.
+% The commented code below is the real one.
+statusdict/is_mpi :: {3 quit_i} if
+
+
+/*
+% if interpreter is parallel and not indirected: request serial restart
+statusdict/is_mpi :: statusdict/userargs :: length 0 eq  and
+{
+ statusdict/exitcodes/restart_serial :: quit_i
+} if
+
+
+% this is for the case where we need a proper parallel version
+%% % if interpreter is serial and parallel nest exists: use parallel version 
+%% statusdict/is_mpi :: not statusdict/have_mpi :: and
+%% {
+%%  1 ( --userargs=indirected ) statusdict/files :: First join mpirun_call 
+%% } if
+*/
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% At this point nest is serial 
+% Therefore, we can now do the test.
+
+
+% the following call shall pass without error
+{ 1 0 div } failbutnocrash_or_die
+
+% the following shall make NEST exit with exit code 3 (code crashed)
+{ statusdict/exitcodes/abort :: quit_i} failbutnocrash_or_die
+
+% Test that procedure handles crash correctly in ..._pass.sli, cannot run more 
+% tests here because NEST terminates on line above if all goes well. 
+

@@ -1,0 +1,13 @@
+ConnPlotter.py
+__init__.py
+colormaps.py
+tcd_nest.py
+setup.py
+examples/__init__.py
+examples/complex.py
+examples/non_dale.py
+examples/simple.py
+docs/connplotter_tutorial.py
+docs/connplotter_tutorial.pdf
+
+

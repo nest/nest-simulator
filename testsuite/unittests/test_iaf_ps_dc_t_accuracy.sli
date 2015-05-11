@@ -1,0 +1,258 @@
+/*
+ *  test_iaf_ps_dc_t_accuracy.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /* BeginDocumentation
+Name: testsuite::test_iaf_ps_dc_t_accuracy - test of temporal accuracy of iaf_neuron subject to DC current
+
+Synopsis: (test_iaf_ps_dc_t_accuracy) run ->  comparison with analytical solution
+
+Description:
+
+
+ A DC current is injected for a finite duration. The time of the first
+ spike is compared to the theoretical value for different computation
+ step sizes and interpolation orders.
+
+ Computation step sizes are specified as base 2 values.
+
+ The high accuracy of the neuron models is achieved by the use of
+ Exact Integration [1] and an appropriate arrangement of the terms
+ [2]. For small computation step sizes the accuracy at large
+ simulation time decreases because of the accumulation of errors.
+
+ The expected output is documented at the end of the script.
+ Individual simulation results can be inspected by uncommented the
+ call to function print_details.
+
+
+Remarks:
+
+ The script checks whether the simulator is appropriately configured.
+ The script can be used to check whether the accuracy has survived optimization.
+
+ In case the accuracy is higher than specified by IEEE arithmetics this might
+ be due to the use of processor registers. The compiler option   
+ -ffloat-store of the gcc compiler ensures that doubles are not stored in 
+ registers.
+
+FirstVersion: May 2005
+Author: March 2009, Diesmann
+References:
+ [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
+     systems with applications to neuronal modeling. Biologial Cybernetics
+     81:381-402.
+ [2] Morrison A, Straube S, Plesser H E, & Diesmann M (2007) Exact Subthreshold 
+     Integration with Continuous Spike Times in Discrete Time Neural Network 
+     Simulations. Neural Computation 19:47--79
+SeeAlso: iaf_psc_alpha_canon, iaf_psc_alpha_presc, iaf_psc_delta_canon, testsuite::test_iaf_ps_dc_accuracy
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+-14 /min_exponent Set
+
+[0 min_exponent -1] Range   /hlist Set
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Parameters of simulation schedule.
+%
+5.0                         /T     Set
+[  % interpolation order   tolerated error [mv]
+ [ 0   1e-4  ]  
+ [ 1   1e-10 ]  
+ [ 2   1e-13 ]
+ [ 3   1e-13 ]
+] /Olist Set
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Check if configuration of simulation kernel is appropriate
+%
+0 << 
+ /tics_per_ms min_exponent neg dexp 
+ /resolution 0 dexp                   % 1 ms default 
+>> SetStatus
+
+
+0 /ms_per_tic get frexp
+
+exch
+{0.5 eq} assert_or_die                  % base 2 tic size?
+{1 sub min_exponent leq} assert_or_die  % sufficient resolution?
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Parameters of neuron model.
+%
+
+
+<<
+  /E_L       0.0      % resting potential in mV 
+  /V_m       0.0      % initial membrane potential in mV
+  /V_th     15.0      % spike threshold in mV
+  /I_e    1000.0      % DC current in pA
+  /tau_m    10.0      % membrane time constant in ms
+  /C_m     250.0      % membrane capacity in pF
+>> /params Set
+
+params begin userdict begin
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Simulation at given resolution returns membrane potential 
+%  at end of simulation time and difference to exact value 
+%  for both implementations.
+%
+/SimAtResolution
+{
+ dup /i Set
+ dexp /h Set
+
+
+ ResetKernel
+ 0 << /tics_per_ms min_exponent neg dexp /resolution h >> SetStatus
+
+ [
+  /iaf_psc_alpha_canon 
+  /iaf_psc_alpha_presc
+  /iaf_psc_delta_canon  % this list can be extended
+ ]
+ {Create dup params SetStatus} Map /neurons Set
+
+ neurons {/Interpol_Order known} Select {<< /Interpol_Order O >> SetStatus} forall
+
+
+ T Simulate
+
+ neurons
+ {[exch dup /t_spike get exch /offset get sub dup t sub abs]}  Map Flatten
+
+ i prepend
+
+} def
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% do for all interpolation orders
+%
+{
+ Olist  
+ {
+  [/O /tolerance] Set
+
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %
+ % Reference value
+ %
+ % V is the exact value of the membrane potential at the end 
+ % of the simulation.       
+ %
+
+ % tau_m neg 1 c_m V_th mul tau_m I_e mul div sub ln mul
+
+ (-tau_m*ln( 1.0 - (C_m*V_th)/(tau_m*I_e) )) ExecMath /t Set
+
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %
+ % Perform simulations at all resolutions and collect results
+ %
+ hlist {SimAtResolution} Map 
+
+
+ %dup print_details                    % uncomment for debugging
+
+ {Rest 2 Partition [/All 2] Part} Map  % select columns containing
+                                       % the timing errors
+ [-1] Part                             % select only highest resolution
+  Flatten {tolerance lt} Map
+ } Map
+
+ Flatten true exch {and} Fold
+}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% helper function for debugging, 
+% prints detailed table of results
+%
+/print_details
+{
+cout default 15 setprecision 
+
+endl
+endl
+(order: ) <- O <- (, exact value of membrane potential after ) <-
+T <- ( ms is ) <-
+t <- ( ms.) <- endl 
+
+endl
+
+(               h in ms    ) <-
+(        alpha_canon [ms]) <-
+(        error         [ms]) <-
+(          alpha_presc [ms]) <-
+(      error           [ms]) <- 
+(          delta_canon [ms]) <-
+(        error         [ms]) <-
+endl
+(--------------------------) <-
+(--------------------------) <-
+(--------------------------) <-
+(--------------------------) <-
+(--------------------------) <-
+(--------------------------) <-
+(------------------------) <-
+endl
+
+exch
+{
+ {
+  exch 24 setw exch <- (  ) <-
+ }
+ forall
+ endl
+}
+forall 
+;
+}
+def
+
+exec
+
+
+% executes the overall test
+assert_or_die

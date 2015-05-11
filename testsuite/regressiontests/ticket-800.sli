@@ -1,0 +1,404 @@
+/*
+ *  ticket-800.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-800 Ensure that Topology parameters check their parameters
+
+Synopsis: (ticket-800) run -> NEST exits if test fails
+
+Description:
+This ticket ensures that Topology parameters check their parameters for
+validity, e.g., strictly positive sigma for a Gaussian.
+
+Author: Hans Ekkehard Plesser, 2014-12-13
+ */
+
+(unittest) run
+/unittest using
+
+/topology using
+
+M_ERROR setverbosity
+
+/good_random_parameters
+[
+  << /uniform << /min 0. /max 1. >> >>
+  << /normal << /mean 0. /sigma 1. /min 0. /max 1. >> >>
+  << /normal << /mean 0. /sigma 1. /min 0. /max 1. /cutoff 0.1 >> >>
+  << /lognormal << /mu 0. /sigma 1. /min 0. /max 1. >> >>
+]
+def
+
+/good_distance_parameters
+[
+  << /linear << /a 1. /c 0. >> >>
+  << /exponential << /a 1. /c 0. /tau 1. >> >>
+  << /gaussian << /p_center 1. /c 0. /mean 0. /sigma 1. >> >>
+  << /gaussian2D << /p_center 1. /c 0. 
+    			     /mean_x 0. /sigma_x 1.
+    				 /mean_y 0. /sigma_y 1.
+   				     /rho 0.5 >> >>
+]
+def
+
+/good_parameters good_random_parameters good_distance_parameters join def
+
+/bad_random_parameters
+[
+  << /uniform << /min 0. /max 0. >> >> 
+  << /normal << /mu 0. /sigma 1. >> >>   % check if bad parameter names are detected
+  << /normal << /mean 0. /sigma 0. >> >>
+  << /normal << /mean 0. /sigma -1. >> >>
+  << /normal << /mean 0. /sigma 1. /min 1. /max 1. >> >>
+  << /lognormal << /mu 0. /sigma 0. >> >>
+  << /lognormal << /mu 0. /sigma -1. >> >>
+  << /lognormal << /mu 0. /sigma 1. /min 1. /max 1. >> >>
+]
+def
+
+/bad_distance_parameters
+[
+  << /exponential << /a 1. /c 0. /tau 0. >> >>
+  << /exponential << /a 1. /c 0. /tau -1. >> >>
+  << /gaussian << /p_center 1. /c 0. /mean 0. /sigma 0. >> >>
+  << /gaussian << /p_center 1. /c 0. /mean 0. /sigma -1. >> >>
+  << /gaussian2D << /p_center 1. /c 0. 
+    			     /mean_x 0. /sigma_x 0.
+    				 /mean_y 0. /sigma_y 1.
+   				     /rho 0.5 >> >>
+  << /gaussian2D << /p_center 1. /c 0. 
+    			     /mean_x 0. /sigma_x 1.
+    				 /mean_y 0. /sigma_y 0.
+   				     /rho 0.5 >> >>
+  << /gaussian2D << /p_center 1. /c 0. 
+    			     /mean_x 0. /sigma_x 1.
+    				 /mean_y 0. /sigma_y 1.
+   				     /rho -1. >> >>
+  << /gaussian2D << /p_center 1. /c 0. 
+    			     /mean_x 0. /sigma_x 1.
+    				 /mean_y 0. /sigma_y 1.
+   				     /rho 1. >> >>
+]
+def
+
+/bad_parameters bad_random_parameters bad_distance_parameters join def
+
+/good_masks_2d
+[
+  << /circular << /radius 1. >> >>
+  << /circular << /radius 1. >> /anchor [0.5 0.5] >>
+  << /rectangular << /lower_left [-0.1 -0.1] /upper_right [0.1 0.1] >> >>
+  << /doughnut << /inner_radius 0.1 /outer_radius 0.2 >> >>
+]
+def
+
+/bad_masks_2d
+[
+  << /circular << /r 0. >> >>   % check if bad parameter names are detected
+  << /circular << /radius 1. /foo 1 >> >>  % spurious parameter
+  << /circular << /radius 0. >> >>
+  << /circular << /radius -1. >> >>
+  << /rectangular << /lower_left [-0.1 -0.1] /upper_right [-0.1 0.1] >> >>
+  << /rectangular << /lower_left [-0.1 -0.1] /upper_right [0.1 -0.1] >> >>
+  << /doughnut << /inner_radius 0.1 /outer_radius 0.1 >> >>
+]
+def
+
+/good_masks_3d
+[
+  << /spherical << /radius 1. >> >>
+  << /box << /lower_left [-0.1 -0.1 -0.1] /upper_right [0.1 0.1 0.1] >> >>
+]
+def
+
+/bad_masks_3d
+[
+  << /spherical << /radius 0. >> >>
+  << /spherical << /radius -1. >> >>
+  << /box << /lower_left [-0.1 -0.1 -0.1] /upper_right [-0.1 0.1 0.1] >> >>
+  << /box << /lower_left [-0.1 -0.1 -0.1] /upper_right [0.1 -0.1 0.1] >> >>
+  << /box << /lower_left [-0.1 -0.1 -0.1] /upper_right [0.1 0.1 -0.1] >> >>
+]
+def
+
+/good_layers
+[
+  << /rows 2 /columns 2 /elements /iaf_neuron >>
+  << /rows 2 /columns 2 /elements /iaf_neuron 
+     /extent [2. .5] /center [.2 .3] /edge_wrap true >>
+  << /rows 2 /columns 2 /elements /iaf_neuron 
+     /extent [2. .5] /center [.2 .3] /edge_wrap false >>
+  << /positions [[0.1 0.1] [0.2 0.2]] /elements /iaf_neuron 
+     /extent [2. .5] /center [.2 .3] /edge_wrap true >>
+  << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_neuron 
+     /extent [2. .5 3.] /center [.2 .3 .4] /edge_wrap true >>
+]
+def
+       
+/bad_layers
+[
+  << /rows 2 /elements /iaf_neuron >>    % mandatory missing
+  << /rows 2 /columns 2 /elementsss /iaf_neuron >>  % misspelling
+  << /rows 2 /columns 2 /elements /iaf_neuron 
+     /extent [2. .5] /center [.2 .3] /edge_wrap 3 >>  % bad data type
+  << /positions [[0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_neuron  % dim mix 
+     /extent [2. .5] /center [.2 .3] /edge_wrap true >>
+  << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_neuron  % dim mix 
+     /extent [2. .5 .5] /center [.2 .3] /edge_wrap true >>
+  << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_neuron  % dim mix 
+     /extent [2. .5] /center [.2 .2 .3] /edge_wrap true >>
+]
+def
+
+/good_connspecs
+[
+  << /connection_type /convergent >>
+  << /connection_type /divergent >>
+  << /connection_type /convergent /allow_oversized_mask true >>
+  << /connection_type /convergent /synapse_model /static_synapse >>
+  << /connection_type /convergent /allow_multapses false >>
+  << /connection_type /convergent /allow_autapses false >>
+  << /connection_type /convergent /allow_oversized_mask true >>
+  << /connection_type /convergent /number_of_connections 2 >>
+  << /connection_type /divergent /number_of_connections 2 >>
+  << /connection_type /convergent /delays 2.0 >>
+  << /connection_type /convergent /sources << /model /iaf_neuron >> >>
+  << /connection_type /convergent /targets << /model /iaf_neuron >> >>
+]
+def
+
+/bad_connspecs
+[
+  << /connection_type /population >>   % unknown type
+  << /kernel 0.1 >>                    % type missing
+]
+def
+
+%% Test runner for 2d connections
+/conn_layers_test_2d
+{
+  /conndict Set
+  
+  ResetKernel
+  << /elements /iaf_neuron  /rows 1 /columns 1 >> CreateLayer
+  dup
+  conndict ConnectLayers
+} def
+ 
+%% Test runner for 3d connections
+/conn_layers_test_3d
+{
+  /conndict Set
+  
+  ResetKernel
+  << /elements /iaf_neuron  /positions [ [0. 0. 0.] ] >> CreateLayer
+  dup
+  conndict ConnectLayers
+} def
+
+
+%% first: test CreateParameter on good parameter sets
+good_parameters
+{
+  /pset Set
+  (Test 1: ) =only
+  pset keys ==
+  { pset CreateParameter } pass_or_die
+  clear
+} forall
+
+%% second: test CreateParameter on bad parameter sets
+bad_parameters
+{
+  /pset Set
+  (Test 2: ) =only
+  pset keys ==
+  { pset CreateParameter } fail_or_die
+  clear
+} forall
+
+%% third: test CreateMask on good masks
+good_masks_2d good_masks_3d join
+{
+  /mask Set
+  (Test 3: ) =only
+  mask keys ==
+  { mask CreateMask } pass_or_die
+  clear
+} forall
+
+%% fourth: test CreateMask on bad masks
+bad_masks_2d bad_masks_3d join
+{
+  /mask Set
+  (Test 4: ) =only
+  mask keys ==
+  { mask CreateMask } fail_or_die
+  clear
+} forall
+
+%% fifth: test CreateLayer on good specs
+good_layers
+{
+  /lspec Set
+  ResetKernel
+  (Test 5: ) =only
+  lspec keys ==
+  { lspec CreateLayer } pass_or_die
+  clear
+} forall
+
+%% sixth: test CreateLayer on bad specs
+bad_layers
+{
+  /lspec Set
+  ResetKernel
+  (Test 6: ) =only
+  lspec keys ==
+  { lspec CreateLayer } fail_or_die
+  clear
+} forall
+
+%% seventh: test ConnectLayers with good kernels
+good_distance_parameters [ 0.5 1.0 ] join
+{
+  /kspec Set
+  (Test 7: ) =only
+  kspec DictQ { keys == } { == } ifelse
+  { << /connection_type /convergent /kernel kspec >>
+    conn_layers_test_2d 
+  } pass_or_die
+  clear
+} forall
+
+%% eighth: test ConnectLayers with bad kernels
+bad_distance_parameters 
+{
+  /kspec Set
+  (Test 8: ) =only
+  kspec DictQ { keys == } { == } ifelse
+  { << /connection_type /convergent /kernel kspec >>
+    conn_layers_test_2d 
+  } fail_or_die
+  clear
+} forall
+
+%% ninth: test ConnectLayers with good weights
+good_parameters [ 0.5 1.0 ] join
+{
+  /wspec Set
+  (Test 9: ) =only
+  wspec DictQ { keys == } { == } ifelse
+  { << /connection_type /convergent /weights wspec >>
+    conn_layers_test_2d 
+  } pass_or_die
+  clear
+} forall
+
+%% tenth: test ConnectLayers with bad weights
+bad_parameters 
+{
+  /wspec Set
+  (Test 10: ) =only
+  wspec DictQ { keys == } { == } ifelse
+  { << /connection_type /convergent /weights wspec >>
+    conn_layers_test_2d 
+  } fail_or_die
+  clear
+} forall
+
+%% elevnth: test ConnectLayers with good 2d masks
+good_masks_2d
+{
+  /mspec Set
+  (Test 11: ) =only
+  mspec DictQ { keys == } { == } ifelse
+  { << /connection_type /convergent /mask mspec >>
+    conn_layers_test_2d 
+  } pass_or_die
+  clear
+} forall
+
+%% twelfth: test ConnectLayers with bad 2d masks
+bad_masks_2d
+{
+  /mspec Set
+  (Test 12: ) =only
+  mspec DictQ { keys == } { == } ifelse
+  { << /connection_type /convergent /mask mspec >>
+    conn_layers_test_2d 
+  } fail_or_die
+  clear
+} forall
+
+%% thirteenth: test ConnectLayers with good 3d masks
+good_masks_3d
+{
+  /mspec Set
+  (Test 13: ) =only
+  mspec DictQ { keys == } { == } ifelse
+  { << /connection_type /convergent /mask mspec >>
+    conn_layers_test_3d 
+  } pass_or_die
+  clear
+} forall
+
+%% fourteenth: test ConnectLayers with bad 3d masks
+bad_masks_3d
+{
+  /mspec Set
+  (Test 14: ) =only
+  mspec DictQ { keys == } { == } ifelse
+  { << /connection_type /convergent /mask mspec >>
+    conn_layers_test_3d 
+  } fail_or_die
+  clear
+} forall
+
+%% fifteenth test: various good cases
+good_connspecs
+{
+  /cspec Set
+  (Test 15: ) =only
+  cspec DictQ { keys == } { == } ifelse
+  { cspec
+    conn_layers_test_2d 
+  } pass_or_die
+  clear
+} forall
+
+%% sixteenth test: various bad cases
+bad_connspecs
+{
+  /cspec Set
+  (Test 16: ) =only
+  cspec DictQ { keys == } { == } ifelse
+  { cspec
+    conn_layers_test_2d 
+  } fail_or_die
+  clear
+} forall
+     
+endusing
+ 
+ 

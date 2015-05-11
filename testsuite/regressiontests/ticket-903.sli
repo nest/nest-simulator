@@ -1,0 +1,65 @@
+/*
+ *  ticket-903.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-903 - Ensure delays are not strictly rounded up
+
+Synopsis: (ticket-903) run -> NEST exits if test fails
+
+Description:
+This test ensures that delays drawn from continuous distribution are not
+rounded up strictly.
+
+Note: This test is probabilistic, so there is a minuscule chance of it
+      failing even if all is well. 
+
+Author: Hans Ekkehard Plesser
+*/
+
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+{
+  ResetKernel
+  0 << /resolution 0.1 >>  SetStatus
+  
+  /iaf_neuron Create
+  1 arraystore dup
+  << /rule /fixed_indegree /indegree 1000 >>
+  << /delay << /distribution /uniform /low 0.11 /high 0.19 >> >>
+  Connect
+  
+  % delays are drawn randomly from [0.11, 0.19), so about half should
+  % be rounded down to 0.1, half up to 0.2
+  << >> GetConnections { /delay get } Map
+  dup { 0.15 lt } Select length 100 gt
+  exch
+  { 0.15 gt } Select length 100 gt
+  and
+} 
+assert_or_die
+
+endusing

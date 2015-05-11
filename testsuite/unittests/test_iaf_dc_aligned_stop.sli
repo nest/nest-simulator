@@ -1,0 +1,227 @@
+/*
+ *  test_iaf_dc_aligned_stop.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /* BeginDocumentation
+Name: testsuite::test_iaf_dc_aligned_stop - sli script for test of iaf_neuron resolution independence 
+
+Synopsis: (test_iaf_dc_aligned_stop) run -> compare response with reference data
+
+
+Description:
+
+  test_iaf_dc_aligned_stop.sli is an extended version of
+  test_iaf_dc_aligned_delay.sli . In addition to the time when the
+  current is switched on (/start) (test_iaf_dc_aligned_delay.sli) also
+  a finite duration of the current is specified. This is done by
+  supplying the DC generator device with the time stamp of the
+  earliest DC event that should not be emitted.  Consequently, stop =
+  start + duration.
+
+  In the step stop - h -> stop, no DC event is emitted anymore. A neuron
+  connected to the DC generator interprets this as a DC current that is 
+  switched off precisely at time stop. Therefore, the DC current specified
+  by start and stop is independent of the resolution h. The minimal duration
+  is h.  
+
+  See [1] for details on why the DC generator specification is
+  consistent with a grid based integration scheme of systems of
+  differential equations.  In this scheme DC currents are represeted
+  by the differential equation d/dt I = 0.
+
+  The resulting SLI code is independent of the resolution and
+  generates exactly the same voltage trace at all resolutions.
+
+  No output of the spike detector is visible here because of the short
+  stimulation period of 2 ms.
+
+  The expected output is documented at the end of the script.
+
+References:
+  [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
+      systems with applications to neuronal modeling. Biologial Cybernetics
+      81:381-402.
+
+Author:  July 2004, Diesmann
+SeeAlso: testsuite::test_iaf_dc, testsuite::test_iaf_dc_aligned_delay
+*/
+
+(unittest) run
+/unittest using
+
+
+1.0 /max_h Set       % in ms, maximal computation time step
+
+1.0 /dc_delay Set    % in ms, delay of the connection from 
+                     % DC generator to neuron
+
+3.0 /dc_visible Set  % in ms, desired onset of the DC current
+                     % in the neuron
+
+2.0 /dc_duration Set % the duration of the stimulation
+
+dc_visible dc_delay sub /dc_on Set
+                     % the onset time of the DC generator 
+                     % required to make the current visible at
+                     % the neuron at the desired time
+
+dc_on dc_duration add /dc_off Set
+
+
+dc_delay /max_delay Set
+                     % the maximal delay tolereated by the 
+                     % simulation kernel (in ms) needs to be
+                     % larger or equal to the maximal delay
+                     % used in this script
+
+
+
+dc_delay max_h lt
+{
+ cout (Delay between DC generator and neuron is too small) <-- endl
+      (for the range of step sizes to be tested) <-- endl ;
+} if
+
+dc_delay max_delay gt
+{
+ cout (the maximal delay tolerated by the simulation kernel) <-- endl
+      (is too small for the specified delays) <-- endl ;
+} if
+
+
+
+
+/AlignedInjection  
+{
+ << >> begin    
+ /d Set /h Set   
+ 
+ ResetKernel
+
+
+  0 << 
+         /local_num_threads 1 
+         /resolution h
+       >> SetStatus
+
+  /iaf_neuron Create /neuron Set
+
+  /dc_generator Create /dc_gen Set
+  dc_gen <<  
+           /amplitude 1000.             % in pA
+           /origin 0.                   % in ms
+           /start  dc_on                % in ms
+           /stop   dc_off               % in ms
+          >> SetStatus
+
+  /voltmeter Create /vm Set
+  vm << /withtime true /to_memory true /time_in_steps true /interval h >> SetStatus
+
+  /spike_detector Create /sd Set 
+  sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
+
+  dc_gen neuron 1.0 dc_delay Connect
+  vm neuron Connect
+  neuron sd Connect
+
+  10 Simulate
+
+
+ d Transpose First /test_times Set          % times of reference
+
+ vm [/events [/times /V_m]] get cva  % array of recorded voltages
+  6 ToUnitTestPrecision                     % to precision of reference
+  Transpose                                 % all recorded tuples
+
+  {First test_times exch MemberQ } Select   % those with reference 
+
+ d eq                                       % compare
+
+ end
+} def
+
+
+{
+ % h d,  vector of resolutions and compressed reference data   
+ InflateUnitTestData 
+
+ Transpose {AlignedInjection} MapThread
+
+ true exch {and} Fold   % remove this line to see individual results
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%
+% Expected output of this program:
+% 
+% The output send to std::cout is a superposition of the output of  
+% the voltmeter and the spike detector. Both, voltmeter and spike 
+% detector are connected to the same neuron. 
+%
+%
+% h=   (in ms)
+[0.1   0.2    0.5   1.0]
+%
+% time                    voltage
+% ...
+[
+[ 25            5           -70]
+[ 26     12                 -70]
+[ 27                        -70]
+[ 28     14                 -70]
+[ 29                        -70]
+[ 30     15     6     3     -70]%         <-- current starts to affect
+[ 31                        -69.602 ] %         neuron (visible in state variable
+[ 32     16                 -69.2079] %       y0). This is the desired onset of
+[ 33                        -68.8178] %       t= 3.0 ms.
+[ 34     17                 -68.4316]
+[ 35            7           -68.0492]
+[ 36     18                 -67.6706]
+[ 37                        -67.2958]
+[ 38     19                 -66.9247]
+[ 39                        -66.5572]
+[ 40     20     8     4     -66.1935]
+[ 41                        -65.8334]
+[ 42     21                 -65.4768]
+[ 43                        -65.1238]
+[ 44     22                 -64.7743]
+[ 45            9           -64.4283]
+[ 46     23                 -64.0858]
+[ 47                        -63.7466]
+[ 48     24                 -63.4108]
+[ 49                        -63.0784]
+[ 50     25    10    5      -62.7492]%   <-- current ends to affect neuron
+[ 51                        -62.8214]%       (visible in state variable y0),
+[ 52     26                 -62.8928]%       the highest voltage is observed.
+[ 53                        -62.9635]%       The current was applied for the desired
+[ 54     27                 -63.0335]%       duration (2ms).
+[ 55           11           -63.1029]
+[ 56     28                 -63.1715]
+[ 57                        -63.2394]
+[ 58     29                 -63.3067]
+[ 59                        -63.3733]
+[ 60     30    12      6    -63.4392]
+]
+
+
+rolld assert_or_die
+

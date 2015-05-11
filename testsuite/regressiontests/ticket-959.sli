@@ -1,0 +1,64 @@
+/*
+ *  ticket-959.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-959 Ensure that pp_psc_delta generates same results when run in small intervals
+
+Synopsis: (ticket-959) run -> NEST exits if test fails
+
+Description:
+This ticket ensures that pp_psc_delta produces the same results when run 1000 times 10ms as when run 1 time 10000ms. This test was adapted from ticket-933.
+
+Author: Moritz Deger, 2015-03-16
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+/build_network
+{
+  /pp_psc_delta << /tau_sfa 34. /q_sfa 0. >> Create dup /n Set
+  /spike_detector Create dup /sd Set
+  Connect
+  sd
+} 
+def
+
+{
+  ResetKernel
+  build_network /sd Set
+  10000 Simulate
+  sd [[/n_events]] get 
+  dup (Results 1 x 10000ms: ) =only ==
+  
+  ResetKernel
+  build_network /sd Set
+  1000 { 10 Simulate } repeat
+  sd [[/n_events]] get
+  dup (Results 1000 x 10ms: ) =only ==
+
+  eq
+} assert_or_die
+

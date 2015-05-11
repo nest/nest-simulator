@@ -1,0 +1,131 @@
+/*
+ *  test_pulsepacket_generator.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: testsuite::test_pulsepacket_generator - minimal test of pulsepacket_generator
+
+Synopsis: (test_pulsepacket_generator) run -> dies if assertion fails
+
+Description:
+Tests parameter setting and statistical correctness for one application.
+
+Author: July 2008, Plesser
+SeeAlso: noise_generator, testsuite::test_poisson_ps_min_interval
+*/
+
+(unittest) run
+/unittest using
+
+% flatten arrays that may contain vectors and numbers
+/allflat {
+  { { cva } stopped { ; errordict begin /newerror false def end } if  } Map 
+    Flatten
+} def
+
+% First test: parameter setting on model and instance
+{
+    ResetKernel
+    /tdict << /pulse_times [ 1.0 2.5 4.6 ] 
+              /activity    150
+              /sdev        0.1234  >> def
+
+    /ng1 /pulsepacket_generator Create def
+    ng1 tdict SetStatus
+
+    /pulsepacket_generator tdict SetDefaults
+    /ng2 /pulsepacket_generator Create def
+
+    ng1 [tdict keys] get allflat
+    ng2 [tdict keys] get allflat
+    eq
+} assert_or_die
+clear
+ResetKernel
+
+% Second test: error if sdev negative
+{
+  ResetKernel
+  /pulsepacket_generator << /sdev -0.5 >> SetDefaults
+} fail_or_die  
+
+% Third test: error if activity negative
+{
+  ResetKernel
+  /pulsepacket_generator << /activity -5 >> SetDefaults
+} fail_or_die  
+
+% Fourth test: assure empty pulse times and zero otherwise is ok
+{
+  ResetKernel
+  /pulsepacket_generator Create
+  << /pulse_times [] /activity 0 /sdev 0.0 >> SetStatus
+  1 Simulate
+} pass_or_die  
+
+% Fifth test: feed spike detector
+{
+  ResetKernel
+  0 << /resolution 0.1 >> SetStatus
+  /ppg /pulsepacket_generator Create def
+  /sd  /spike_detector Create def
+ 
+  /tstart  75.0 def
+  /tstop  225.0 def
+  /nspk    10   def
+  /pulset [ 10.0 125.0 175.0 275.0 ] def
+  /stddev   5.0 def
+  % find number of pulse centers in start..stop
+  /npulseff
+    0 pulset { dup tstart gt exch tstop lt and { 1 } { 0 } ifelse add } Fold
+  def
+  % since start, stop are far from pulse times, it is highly likely that
+  % only spikes belonging to the pulses with centers in start..stop are
+  % fired and then we get for the total spike number 
+  /nspktot nspk npulseff mul def
+
+  ppg << /start        tstart
+         /stop         tstop
+         /pulse_times  pulset
+         /activity     nspk
+         /sdev         stddev
+      >> SetStatus
+
+  sd << /record_to [/memory] /time_in_steps false >> SetStatus
+
+  ppg sd Connect
+
+  300 Simulate
+
+  sd [ /events /times ] get cva /spks Set
+
+  % check min and max are inside start .. stop
+  tstart spks Min leq
+  spks Max tstop  leq and
+
+  % check number of spikes
+  spks length nspktot eq
+  and 
+
+} assert_or_die
+
+endusing

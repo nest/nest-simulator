@@ -1,0 +1,145 @@
+/*
+ *  balancedneuron-2.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+%%
+% This is an extended version of the simple balancedneuron.sli script.
+% After finding the rate of the inhibitory background population that
+% creates the spontaneous target rate of the test neuron, it records
+% the membrane potential of the test neuron for a short period and the
+% mean and standard deviation of the test neuron's membrane potential
+% is computed and printed.
+% Try changing the value of /ipsc and see what happens.
+%%
+
+(arraylib) run
+/arraylib using
+
+ResetKernel
+
+ 1000 ms   /t_relax Set % how long to wait for the state to stabiluze before reording the spikes
+ 100 s    /t_sim Set % how long we simulate to compute the rate (1000 sec)
+ 1000 ms   /t_memmeasure Set % how long to measure the membrane potential
+ 16000     /n_ex  Set % size of the excitatory population
+ 4000      /n_in  Set % size of the inhibitory population
+ 2.0   Hz  /r_ex  Set % mean rate of the excitatory population
+ 10.0  pA  /epsc  Set % peak amplitude of excitatory synaptic currents
+ -100.0 pA /ipsc  Set % peak amplitude of inhibitory synaptic currents
+ 1.0   ms  /d     Set % synaptic delay
+ 0.0   Hz  /lower Set % lower bound of the search interval
+ 100.0  Hz /upper Set % upper bound of the search interval
+ 0.01 Hz   /prec  Set % how close need the excitatory rates be
+
+ M_INFO 1 add setverbosity                 % suppress output from Simulate
+
+ 0 <<
+   /data_path (/tmp)
+ >> SetStatus
+
+ /iaf_neuron        Create /neuron Set % target neuron
+ /poisson_generator Create /ex_pop Set % excitatory population
+ /poisson_generator Create /in_pop Set % inhibitory population
+ /spike_detector    Create /spikes Set % the spike detector device
+
+ neuron
+ <<
+    /tau_syn 1.0
+    /V_th -55.0
+ >> SetStatus
+
+ ex_pop
+ <<
+    /rate r_ex n_ex mul % multiply rate and number of neurons
+ >> SetStatus
+
+ spikes
+ <<
+   /withtime false    % suppress output from spike detector
+ >> SetStatus
+
+ ex_pop neuron epsc d Connect
+ in_pop neuron ipsc d Connect
+ neuron spikes        Connect
+
+ /OutputRate
+ {
+   /guess Set % store the function parameter
+
+    M_INFO 1 add (blancedneuron) (--------------------------------------------------------------------------------------) message
+    M_INFO 1 add (blancedneuron) (Setting new rate for the inhibitory background population: ) guess cvs join (Hz/neuron) join message
+
+    in_pop
+    <<
+    /rate guess n_in mul % set a new rate for the inhibitory population.
+    >>
+    SetStatus
+
+    M_INFO 1 add (blancedneuron) (Allowing the new state to relax for ) t_relax cvs join (ms...) join message
+    t_relax  Simulate % let the neuron relax to the new balanced state
+
+    spikes
+    <<
+       /n_events 0 % reset the event counter of the spike detector
+    >> SetStatus
+
+    M_INFO 1 add (blancedneuron) (Counting spikes for ) t_sim cvs join (ms...) join message
+    t_sim  Simulate % simulate and count the spikes
+
+    spikes [ /n_events ] get /e Set % read out the event counter
+    e t_sim 1000.0 div  div  /rate Set % and divide by t_sim
+    M_INFO 1 add (blancedneuron) (Counted ) e cvs join ( spikes.) join message
+    M_INFO 1 add (blancedneuron) (==> Rate of the test neuron is ) rate cvs join (Hz.) join message
+
+   rate % leave the result as return value
+ } def
+
+ {OutputRate r_ex sub} lower upper prec FindRoot
+
+% measure the mean membrane potential:
+ M_INFO 1 add (blancedneuron) (=============================================================================) message
+ M_INFO 1 add (blancedneuron) (Recording membrane potential for ) t_memmeasure cvs join (ms.) join message
+
+ % create voltmeter and connect to neuron
+ /voltmeter Create /volts  Set
+ volts neuron Connect
+
+ t_memmeasure Simulate
+
+
+% ------------------------------------------------------
+
+ M_INFO 1 add (blancedneuron) (Computing mean and SDev of membrane potential...)  message
+
+ % obtain membrane potential trace from voltmeter, convert to SLI array for further processing
+ volts [/events /V_m] get cva /potentials Set
+ potentials length /n Set
+
+ M_INFO 1 add (blancedneuron) n cvs ( numbers.) join message
+
+
+% compute mean and sdev:
+/mean potentials Mean def
+/sdev potentials SDev def
+
+ M_INFO 1 add (blancedneuron) (Mean: ) mean cvs join (mV) join message
+ M_INFO 1 add (blancedneuron) (==> Distance from threshold: ) mean neuron GetStatus /V_th get sub cvs join (mV) join message
+ M_INFO 1 add (blancedneuron) (SDev: ) sdev cvs join (mV) join message
+
+endusing % arr

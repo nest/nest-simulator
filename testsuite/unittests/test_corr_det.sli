@@ -1,0 +1,211 @@
+/*
+ *  test_corr_det.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: testsuite::test_corr_det - minimal test of correlation detector
+
+Synopsis: (test_corr_det) run -> dies if assertion fails
+
+Description:
+  Feeds correlation detector with two hand-crafted spike trains with
+  known correlation. Correlation detector parameters are set in model.
+
+Remarks:
+  The test does not test weighted correlations.
+
+Author: July 2008, Plesser
+SeeAlso: correlation_detector
+*/
+
+(unittest) run
+/unittest using
+
+/d_tau    2.0 def
+/tau_max 20.0 def
+
+% First test: parameter setting on model and instance
+{
+  ResetKernel
+
+  /cd1 /correlation_detector Create def
+  cd1 << /delta_tau d_tau /tau_max tau_max >>  SetStatus
+
+  /correlation_detector << /delta_tau d_tau /tau_max tau_max >> SetDefaults
+  /cd2 /correlation_detector Create def
+
+  cd1 [[/delta_tau /tau_max]] get
+  cd2 [[/delta_tau /tau_max]] get
+  eq
+} assert_or_die
+clear
+ResetKernel
+
+% Second test: error if uncommensurable delta_tau
+{
+  ResetKernel
+  0 << /resolution 0.1 >> SetStatus
+  /correlation_detector << /delta_tau 0.25 >> SetDefaults
+} fail_or_die
+
+
+% Third test: error if uncommensurable tau_max
+{
+  ResetKernel
+  0 << /resolution 0.1 >> SetStatus
+  /correlation_detector << /delta_tau 1.0 /tau_max 2.5 >> SetDefaults
+} fail_or_die
+
+
+% Fourth test: error if uncommensurable change of resolution
+{
+  ResetKernel
+  0 << /resolution 0.1 >> SetStatus
+  /correlation_detector << /delta_tau 0.1 >> SetDefaults
+  0 << /resolution 1.0 >> SetStatus
+  /correlation_detector Create % cannot create now with delta_tau==0.1
+} fail_or_die  
+
+
+% Fifth test: proper number of histogram bins under resolution changes
+{
+  ResetKernel
+  0 << /resolution 0.1 >> SetStatus
+  /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
+  0 << /resolution 0.2 >> SetStatus
+  /correlation_detector Create 
+  1 Simulate % must simulate to force creation of histogram
+  [/histogram] get cva length
+  11 eq
+} assert_or_die
+
+
+% Functions for actual correlation tests
+
+% [spike_times_1 spike_times_2] cdsim -> histogram n_events cd_gid
+/cdsim
+{
+  << >> begin
+    /st Set
+
+    % build and connect
+    /correlation_detector Create /cdt Set
+    [0 1] { 
+      /i Set 
+      /spike_generator Create /sg Set
+      sg << /precise_times false /spike_times st i get >> SetStatus
+      /static_synapse << /receptor_type i >> SetDefaults
+      sg cdt Connect
+      sg
+    } Table /sgens Set
+
+    % simulate to max spike time plus 2 min_delay
+    st Flatten Max 0 [/min_delay] get 2 mul add Simulate
+    
+    % get spike counts and histogram
+    cdt [ /histogram ] get cva
+    cdt [ /n_events  ] get cva
+    cdt
+  end
+}
+def
+
+% spike_times_1 spike_times_2 hist cdtest -> true/false
+/cdtest
+{
+  << >> begin
+  /ehist Set
+  2 arraystore /st Set
+
+  st cdsim ;
+    
+  % check spike counts
+  st { length } Map eq 
+
+  % check histogram
+  exch
+  ehist { cvd } Map eq
+
+  and
+
+  end
+} def
+
+% Sixth test: correlation histogram for time differences in bin centers
+{
+  ResetKernel
+
+  0 << /resolution 0.1 >> SetStatus
+  /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
+
+  [ 1.0 2.0     6.0 ]       % input 0
+  [     2.0 4.0     ]       % input 1
+  [ 0 1 0 1 0 1 1 1 1 0 0]  % histogram
+  cdtest
+} assert_or_die
+
+% Seventh test: correlation histogram for time differences at bin edges
+{
+  ResetKernel
+  0 << /resolution 0.1 >> SetStatus
+  /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
+
+  [                 6.0                  ]  % input 0
+  [ 0.5 5.4 5.5 5.6     6.4 6.5 6.6 11.5 ]  % input 1
+  [ 1 0 0 0 1 3 2 0 0 0 0                ]  % histogram
+  cdtest
+} assert_or_die
+
+% Eight test: test to ensure [1 1] not allowed for /n_events
+{
+  /correlation_detector Create
+  << /n_events [1 1] >> SetStatus
+} fail_or_die
+
+% Ninth test: test that reset works
+{
+  ResetKernel
+
+  0 << /resolution 0.1 >> SetStatus
+  /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
+
+  % expected histogram: [ 0 1 0 1 0 1 1 1 1 0 0] 
+  [ [ 1.0 2.0     6.0 ]       % input 0
+    [     2.0 4.0     ]       % input 1
+  ]
+  cdsim
+
+  /cdt Set
+  ;         % pop n_events
+  Plus 0 gt % ensure we have non-zeros in histogram
+  {
+	cdt << /n_events [0 0] >> SetStatus
+    cdt [/n_events] get cva Plus 0 eq  
+    cdt [/histogram] get cva Plus 0.0 eq  
+    and
+  }
+  { false }
+  ifelse
+
+} assert_or_die
+
+endusing

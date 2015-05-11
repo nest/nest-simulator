@@ -1,0 +1,93 @@
+#! /bin/sh
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+srcdir=@PKGSRCDIR@
+builddir=@PKGBUILDDIR@
+
+usage()
+{
+    cat <<EOF
+Usage: nest-config [OPTION]
+
+Known values for OPTION are:
+
+  --prefix              NEST install prefix for architecture-independent files
+  --exec-prefix         NEST install prefix for architecture-dependent files
+  --libs                print library linking information
+  --cflags              print pre-processor and compiler flags
+  --compiler            print the compiler used to compile NEST
+  --help                display this help and exit
+  --version             output version information
+
+EOF
+
+    exit $1
+}
+
+if test $# -eq 0; then
+    usage 1
+fi
+
+cflags=false
+libs=false
+
+while test $# -gt 0; do
+    case "$1" in
+    -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+    *) optarg= ;;
+    esac
+
+    case "$1" in
+    --prefix=*)
+        prefix=$optarg
+        ;;
+
+    --prefix)
+        echo $prefix
+        ;;
+
+    --exec-prefix)
+        echo $exec_prefix
+        ;;
+
+    --version)
+        echo @SLI_VERSION@
+        exit 0
+        ;;
+
+    --help)
+        usage 0
+        ;;
+
+    --cflags)
+        NEST_CFLAGS="-I${srcdir}/{libnestutil,librandom,sli,nestkernel,nest,topology} @MUSIC_INCLUDE@ @MPI_INCLUDE@ @GSL_CFLAGS@ @OPENMP_CXXFLAGS@"
+        if [ "${builddir}" != "${srcdir}" ]; then
+            NEST_CFLAGS="-I${builddir}/libnestutil ${NEST_CFLAGS}"
+        fi
+        echo $NEST_CFLAGS
+        ;;
+
+    --libs)
+        NEST_LDFLAGS="-l{models,precise,topology}module -l{nest,random,sli} @SLI_LIBS@ @GSL_LIBS@ @MUSIC_LIBS@ @MPI_LIBS@ -lpthread @OPENMP_CXXFLAGS@ -export-dynamic"
+        if [ "${builddir}" != "${srcdir}" ]; then
+            NEST_LDFLAGS="-L${builddir}/{nestkernel,models,precise,librandom,sli,topology}/.libs ${NEST_LDFLAGS}"
+        else
+            NEST_LDFLAGS="-L${srcdir}/{nestkernel,models,precise,librandom,sli,topology}/.libs ${NEST_LDFLAGS}"
+        fi
+        echo $NEST_LDFLAGS
+        ;;
+
+    --compiler)
+        echo @CXX@
+        ;;
+
+    *)
+        usage
+        exit 1
+        ;;
+    esac
+    shift
+done
+
+exit 0

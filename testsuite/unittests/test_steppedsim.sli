@@ -1,0 +1,74 @@
+/*
+ *  test_steppedsim.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+   Name: testsuite::test_steppedsim - test multiple calls of Simulate
+
+   Synopsis: (test_steppedsim) run
+
+   Description:
+   The script tests if multiple calls to Simulate give the same result as 
+   a single one.
+   This test is a reduced version of ticket-452.sli
+
+   FirstVersion: October 2010
+   Author: Diesmann
+   SeeAlso: testsuite::ticket-452
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+/Run
+{
+ /simcommand Set
+
+ ResetKernel
+
+  /iaf_psc_delta_canon Create  /nrn Set   
+ 
+  /spike_generator  << /precise_times false /spike_times [ 0.4 ] >> Create /sg Set
+
+  sg nrn 15.0 1.0 Connect
+
+  /spike_detector << /withgid false >>  Create /sd Set
+
+  nrn sd Connect
+
+  simcommand
+
+  sd [/events /times] get cva 
+
+} def 
+
+
+{3.0 Simulate} Run 
+
+{1 1 3  {; 1.0 Simulate} for}  Run 
+
+eq assert_or_die
+
+
+
+

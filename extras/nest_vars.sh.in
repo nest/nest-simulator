@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export NEST_INSTALL_DIR=@prefix@
+export PYTHONPATH=$NEST_INSTALL_DIR/lib/python@PYTHON_VERSION@/site-packages:$PYTHONPATH
+export PYTHONPATH=$NEST_INSTALL_DIR/lib64/python@PYTHON_VERSION@/site-packages:$PYTHONPATH
+export PATH=$NEST_INSTALL_DIR/bin:$PATH

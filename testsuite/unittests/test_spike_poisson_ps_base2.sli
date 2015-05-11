@@ -1,0 +1,139 @@
+/*
+ *  test_spike_poisson_ps_base2.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/*BeginDocumentation
+Name: testsuite::test_spike_poisson_ps_base2.sli
+
+Synopsis: (test_spike_poisson_ps_base2) run
+
+Description:
+In NEST spike times are represented by an integer part in units of h
+and an offset in units of milliseconds. This helps to maintain a
+uniform absolute accuracy of spike times even for long simulation
+times.
+
+The user has access to the two components of the spike if the spike 
+detector is set to
+   /time_in_steps true  /precise_times true .
+In thie case the spike detector returns events with the properties
+/times and /offsets, where /times are the integer parts s in units of h
+and offsets are the fractional parts o in milliseconds. According to
+NEST's definition of a grid-constrained spike as a spike occuring 
+somewhere in (t-h,t], the precise spike time is
+   t = s*h - o
+
+Access to spike times with a uniform absolute accuracy is benefitial
+when testing and comparing integrators for neuron models, see appendix
+A.2 of [1] for details.
+
+This script tests whether the accuracy of spike times is maintained
+independent of the choice of computation step size h.
+
+This assumes that also the poisson generator is capable of maintaining
+the accuracy independent of computation step size.
+If this test fails go back to
+ test_spike_poisson_ps.sli
+to check whether poisson_generator_ps can emit spike times at double
+precision or whether spike times are limited to the precision of a
+tic.
+
+References:
+[1] Morrison A, Straube S, Plesser H E, Diesmann M (2007) Exact
+subthreshold integration with continuous spike times in discrete time
+neural network simulations. Neural Computation 19: 47-79
+
+Author: May 2010, adapted to NEST2, Diesmann
+SeeAlso: testsuite::test_spike_poisson_ps
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+-20    /min_exponent Set
+1e-15  /spike_absolute_accuracy Set
+
+/T 4.0 def 
+
+min_exponent dexp /h_min Set
+
+
+/Transmission
+{
+ /h Set
+
+ ResetKernel
+
+ 0 <<  /tics_per_ms min_exponent neg dexp  /resolution h >>  SetStatus
+
+ /spike_detector  
+   << /withgid false  /withtime true /to_memory true  /time_in_steps true /precise_times true >> 
+ Create /sp Set
+
+ /poisson_generator_ps << /rate 16384.0 >>  Create /pn Set
+
+ pn sp Connect
+
+
+ T Simulate 
+                          
+ sp [/events [/times /offsets]] get cva 
+} def
+
+
+
+[0 min_exponent -2] Range 
+{ 
+ dup min_exponent sub dexp exch  % ratio (integer) of h to smallest h
+ dexp Transmission
+
+ dup First exch Last rollu    % all time steps in units of smallest h
+ mul
+ exch
+ 2 arraystore
+
+} Map
+
+
+dup Last exch Most   % combine results with the one at smallest h as reference
+{                    % to 4-tuples [s o sr or]
+ 1 index join
+}
+Map exch pop
+
+
+{
+ arrayload pop           % s o sr or, we compute (s*hmin-o)-(sr*hmin-or)
+                         % trying to keep the highest possible accuracy    
+ exch 4 -1 roll exch     % o or s sr 
+ sub                     % o or (s-sr)
+ h_min mul               % o or (s-sr)*hmin
+ rolld sub               % or (s-sr)*hmin - o
+ exch add                % (s-sr)*hmin - o + or
+}
+Map
+
+
+Flatten {abs spike_absolute_accuracy gt } Select [] eq  % comment these two last lines to inspect the 
+assert_or_die                                           % differences causing the failure

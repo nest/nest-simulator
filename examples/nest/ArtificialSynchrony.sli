@@ -1,0 +1,247 @@
+/*
+ *  ArtificialSynchrony.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+%%%%%%%%%%%%%%%% Write welcome message %%%%%%%%%%%%%%%%%%%%%%
+(\n\n) =
+1 1 80 { (#) =only } for ( ) =
+(Artificial synchrony can be introduced by discrete-time simulation
+of neuronal networks, because they typically constrain spike times to a
+grid determined by the computational step size. Hansel et al. (1998) used
+a small all to all connected network of spiking neurons to demonstrated
+that this artificial synchrony can be reduced by a finer resolution or by
+interpolating for the correct spike times. In a further step Morrison et
+al. (2007) showed that by interpolating the exact spike times and
+distributing them, not only the artificial synchrony is avoided
+but even machine precision can be obtained for small time steps.
+
+Here, we simulate the 'Hansel' network of 128 all to all connected
+excitatory I&F neurons with alpha shaped PSC in the
+1. precise implementation by Morrison et al. (2007).
+2. grid constrained implementation
+
+The synchrony of the network can be calculated from the membrane
+potentials of each neuron following Hansel et al. (1998).  Thus, by
+varying the coupling weights and estimating the corresponding
+synchrony of the network the results of Hansel et al. (1998), Morrison
+et al. (2007) and Diesmann et al. (2008) can be reproduced.
+
+An additional Perl script performs the task to calculate the synchrony
+and generate the final plot.
+
+References:
+D. Hansel, G. Mato, C. Meunier, and L. Neltner. On numerical
+simulations of integrate-and-fire neural networks. Neural Computation,
+10(2):467-483, Feb., 15 1998.
+
+A. Morrison, S. Straube, H. E. Plesser, and M. Diesmann. Exact
+subthreshold integration with continuous spike times in discrete time
+neural network simulations. Neural Computation, 19(1):47-79, 2007.
+
+Diesmann M, Hanuschkin A, Helias M, Kunkel S and Morrison A
+(2008). The performance of solvers for integrate-and-fire models with
+exact spike timing.  Frontiers in Neuroinformatics. Conference
+Abstract: Neuroinformatics 2008.
+
+AH 09) =
+1 1 80 { (#) =only } for (\n\n) =
+
+
+%%%%%%%%%%%%%%%%% Simulation parameter  %%%%%%%%%%%%%%%%%%%%%%%%%
+(Set Simulation Parameters ) =only
+/nr 128 def                     % number of neurons in the network
+/h 0.03125 def                  % simulation resolution h=2^-5
+
+/C_m 250.0 def                  % membrane capacitance
+/E_L 0.0 def                    % leaky potential
+/I_e 575.0 def                  % suprathreshold current
+/tau_m 10.0 def                 % membrane time constant
+/V_reset 0.0 def                % reset potential
+/V_th  20.0 def                 % threshold potential
+/t_refra 0.25 def               % refractory time
+/tau_syn_ex 1.648 def           % syn. time constant 3/2ln3
+%/tau_syn_in 1.648 def
+/INTERPOL 3 def                 % cubic interpolation (canonical model)
+
+
+/gamma 0.5 def                  % parameter determining the degree of synchrony at the beginning
+
+/tofile true def                % write potentials of the neurons to file
+
+/delay 0.25 def                 % synaptic delay
+
+%% initialize random number generator
+rngdict /gsl_mt19937 get 2000 CreateRNG /myrng Set  % usage 'myrng drand' for double in in [0, 1)
+(-DONE-) =
+
+
+%%%%%%%%%%%%%%%%% Setup report  %%%%%%%%%%%%%%%%%%%%%%%%%
+(gamma []: \t) =only gamma =    % The initial synchronization is determined by gamma.
+(delay [ms]:\t) =only delay =
+(tau_r [ms]:\t) =only t_refra =
+
+%% Calculate spike period T (needed for setup of initial membrane potential)
+ tau_m  C_m   div  /R Set
+ R I_e mul  E_L add  V_reset sub  R I_e mul  E_L add  V_th sub  div  ln  tau_m mul  dup /T Set
+ (ISI [ms]:\t) =only  T =only
+ 1.0 exch div  % now we have the fire rate
+ (, i.e. firingrate [Hz]: ) =only 1000.0 mul =
+
+
+
+%%%%%%%%%%%%%%%%%  Start Simulation Section   %%%%%%%%%%%%%%%%%%%%%%%%%
+1 1 2 {
+/sim Set   % sim = 1 Canon / sim = 2 Grid
+
+sim 1 eq {
+ /params <<
+        /C_m C_m
+        /E_L E_L
+        /I_e I_e
+        /tau_m tau_m
+        /tau_syn tau_syn_ex
+        /V_m  E_L
+        /V_reset V_reset
+        /V_th  V_th
+        /t_ref t_refra
+        /Interpol_Order INTERPOL
+     >> def
+ }
+ {
+ /params <<
+        /C_m C_m
+        /E_L E_L
+        /I_e I_e
+        /tau_m tau_m
+        /tau_syn_ex tau_syn_ex
+        /V_m  E_L
+        /V_reset V_reset
+        /V_th  V_th
+        /t_ref t_refra
+     >> def
+ } ifelse
+
+
+() =
+1 1 40 { (#) =only } for
+sim 1 eq {(\nRun the canonical simulations first: )= }
+         {(\nRun the grid constrained simulations now: )= } ifelse
+modeldict begin
+ userdict begin
+ 0.0 0.2 5.0 {
+  cvd /strength Set
+
+  (weigth [pA]:\t) =only strength =
+
+  %set resolution and limits on delays
+       % limits must be set BEFORE connecting any elements
+       0
+       <<
+         /resolution h                  % time steps in ms
+         /off_grid_spiking true         % precise neuron model
+         /rngs [myrng]                  % set rnd seed
+         /overwrite_files true          % overwrite previous output
+       >> SetStatus
+
+  sim 1 eq { /iaf_psc_alpha_canon nr Create pop }
+           { /iaf_psc_alpha nr Create pop } ifelse
+  /neurons 0 GetGlobalNodes def
+
+  % connect neurons all to all
+  neurons {
+   /ii Set
+   neurons {
+        dup
+        /ii2 Set
+        ii
+        %   neq {                       % uncomment to  avoid self connections
+                    ii ii2 strength delay Connect
+        %   } if
+        } forall
+  } forall
+
+  /*                                    % uncomment to verify connections
+  %% Readout if everything works
+  neurons {
+    /ii Set
+    (\n\nneuron ) = ii = (connects to) =
+    << /source ii /synapse_model /static_synapse >> FindConnections
+    { GetStatus /target get } Map ==
+  } forall
+  */
+
+  %% Set the neuron parameters according to definition
+  (Set neuron parameters ) =only
+  neurons {
+    params SetStatus
+  } forall
+  (-DONE-) =
+
+  %% Set initial potentials
+  (Set initial potentials [mV] (Morrison et al. 2007) ) =only
+  neurons {
+   /ii Set
+   R I_e mul                            % like Morrison et al. 2007
+   1 -1.0 gamma mul ii 1 sub nr cvd div T tau_m div mul mul exp sub mul
+   %dup =                               % uncomment to print out value of initial potentials
+
+   %%% Alternatively take just random initial states
+   %   myrng drand
+   %   V_th V_reset sub mul
+   %   V_reset add dup
+   %   =
+
+   /V_0 Set
+   ii << /V_m  V_0 >> SetStatus         % set initial potential to each neuron
+  } forall
+  (-DONE-) =
+
+  (Create voltmeter ) =only
+  %% generate spike detectors and voltmeter for each neuron
+  % /spike_detector Create /detec Set   % spike detectors will generate enormous amount of data!
+  %  detec  << /to_file tofile /withgid true /interval 0.1 >> SetStatus
+  /voltmeter Create /volt Set
+
+
+
+  volt  << /to_file tofile              % write to file
+         /to_memory false               % not to memory
+         /withgid true                  % important to know which neuron
+         /withtime true
+%         /interval 1.0                 % record only every msec.
+      >> SetStatus
+
+  sim 1 eq {volt  <<  /label (voltmeter-Canon-) strength cvs join >> SetStatus}
+           {volt  <<  /label (voltmeter-Grid-) strength cvs join >> SetStatus} ifelse
+  (-DONE-) =
+
+  neurons {
+   dup
+   %  detec 1.0 h Connect               % connect spike_detector
+   volt exch 1.0 h Connect              % connect voltmeter
+  } forall
+
+  10000 Simulate                        % simulate for 10s
+
+  ResetKernel
+ } for                                  % for each coupling strength
+ end
+end
+} for                                   % for each neuron model

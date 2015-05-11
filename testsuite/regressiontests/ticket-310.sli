@@ -1,0 +1,77 @@
+/*
+ *  ticket-310.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+ * Regression test for Ticket #310.
+ *
+ * Ensure that all neuron models that have V_m and V_th permit
+ * V_m to be set to >= V_th, and that they emit a spike with
+ * time stamp == resolution in that case.
+ *
+ * Hans Ekkehard Plesser, 2009-02-11 
+ *
+ */
+
+(unittest) run
+/unittest using
+
+% use power-of-two resolution to avoid roundof problems
+/res -3 dexp def
+
+/* The following models will not be tested:
+   iaf_cxhk_2008  ---  spikes only on explicit positive threshold crossings
+*/
+/skip_list [ /iaf_chxk_2008 /correlospinmatrix_detector ] def
+
+{
+  modeldict keys {
+    dup skip_list exch MemberQ not
+    {
+      /model Set
+
+      ResetKernel
+      0 << /resolution res >> SetStatus
+      model Create /n Set
+
+      % see if we have V_m and V_th, otherwise return true
+      n GetStatus dup /V_m known exch /V_th known and
+      {
+        n << /V_m n /V_th get 15.0 add >> SetStatus
+        res Simulate
+        n /t_spike get res eq    % works also for precise models
+        dup not { (FAILED: ) model cvs join == n ShowStatus } if      
+      }
+      { true }
+      ifelse   
+    }
+    { true }
+    ifelse
+  }
+  Map
+
+  % see if all entries are true
+  true exch { and } Fold
+
+} 
+assert_or_die
+
+endusing

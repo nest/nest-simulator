@@ -1,0 +1,83 @@
+/*
+ *  test_poisson_generator_ps.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_poisson_generator_ps - basic test of poisson_generator_ps
+
+Synopsis: (test_poisson_generator_ps) run -> fails if targets receive identical spikes trains
+
+Description:
+ This basic test checks whether two targets receive different spikes trains 
+ and whether the start and stop properties of the generator are respected.
+ The test does neither check that spikes indeed have high resolution nor 
+ that grid-constrained neuron models receive consistent spike times.
+Remarks:
+ This test fails for a correct implementation if in the simulation interval both targets 
+ receive no spikes. The seed set in the default configuration of NEST avoids this 
+ problem. Therefore, failure of this script indicates that the configuration is not
+ portable.
+Author:  February 2008, Diesmann, Plesser
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+
+/poisson_generator_ps Create /pg Set
+/spike_detector Create /sd1 Set
+/spike_detector Create /sd2 Set
+
+pg sd1 Connect
+pg sd2 Connect
+
+pg << /rate 100.0 /start 200.0 /stop 500.0 >> SetStatus
+
+sd1 << /precise_times true >> SetStatus
+sd2 << /precise_times true >> SetStatus
+
+
+
+1000 Simulate
+
+pg << /start 1200. /stop 1800. >> SetStatus
+
+1000 Simulate
+
+[sd1 sd2] {[/events /times] get} forall  neq  % spike trains differ
+
+
+[sd1 sd2] 
+{
+ [/events /times] get
+ cva {dup 500.0 gt exch 1200.0 lt and   } Select [] eq  % there is a gap
+} forall and  % in both channels
+
+and
+
+assert_or_die
+
+
+
+

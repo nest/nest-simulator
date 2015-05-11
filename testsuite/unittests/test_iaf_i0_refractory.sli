@@ -1,0 +1,205 @@
+/*
+ *  test_iaf_i0_refractory.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /* BeginDocumentation
+Name: testsuite::test_iaf_i0_refractory - sli script for test of iaf_neuron internal DC current
+
+Synopsis: (test_iaf_i0_refractory) run -> compare cout with comments in file
+
+
+Description:
+
+ test_iaf_i0_refractory.sli is a test of a specific feature of the
+ iaf_neuron model. It is tested whether the voltage traces of simulations
+ carried out at different resolutions (computation step sizes) are well
+ aligned and identical when the neuron recovers from refractoriness.
+
+ In grid based simulation a prerequisite is that the spike is reported at
+ a grid position shared by all the resolutions compared.
+
+ Here, we compare resolutions 0.1, 0.2, 0.5, and 1.0 ms. Therefore, the 
+ internal DC current is adjusted such (1450.0 pA) that the spike is 
+ reported at time 3.0 ms, corresponding to computation step 30, 15, 6, 
+ and 3, respectively.
+
+ The results are consistent with those of iaf_neuron_ps capable of
+ handling off-grid spike timing when the interpolation order is set to
+ 0.
+
+ The expected output is documented and briefly commented at the end of 
+ the script.
+
+ The file is an extended version of test_iaf_i0.sli .
+
+Author:  July 2004, Diesmann
+SeeAlso: iaf_neuron, testsuite::test_iaf_i0
+*/
+
+(unittest) run
+/unittest using
+
+
+% h d, arguments are resolution and voltage trace
+/AlignedRecovery 
+{
+ << >> begin    
+ /d Set /h Set   
+
+ResetKernel
+
+
+0 << 
+       /local_num_threads 1   
+       /resolution h
+     >> SetStatus
+
+
+/iaf_neuron Create /neuron Set
+neuron << /I_e 1450.0 >> SetStatus  
+
+
+/voltmeter Create /vm Set
+vm << /withtime true /to_memory true  /time_in_steps true /interval h >> SetStatus
+
+
+/spike_detector Create /sd Set
+sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
+
+vm neuron 1.0 h Connect
+neuron sd 1.0 h Connect
+
+7 Simulate
+
+                                            % 2. argument, reference voltages
+ d Transpose First /test_times Set          % times of reference
+
+ vm [/events [/times /V_m]] get cva  % array of recorded voltages
+  6 ToUnitTestPrecision                     % to precision of reference
+  Transpose                                 % all recorded tuples
+  {First test_times exch MemberQ } Select   % those with reference 
+
+ d eq                                       % compare
+
+
+ end
+} def
+
+
+{
+ % h d,  vector of resolutions and compressed reference data   
+ InflateUnitTestData 
+
+ Transpose {AlignedRecovery} MapThread
+
+ true exch {and} Fold   % remove this line to see individual results
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%
+% Expected output of this program:
+% 
+% The output send to std::cout is a superposition of the output of  
+% the voltmeter and the spike detector. Both, voltmeter and spike 
+% detector are connected to the same neuron. 
+%
+% h=   (in ms)
+[ 0.1   0.2    0.5   1.0 ]
+%
+% time                    voltage
+[
+%  0     0     0     0   -70                <-- voltage trace. the membrane is at rest
+[  1                     -69.4229] %              because the current has not yet had the
+[  2     1               -68.8515] %              chance to influence the membrane
+[  3                     -68.2858] %              potential (initial conditions).
+[  4     2               -67.7258]
+[  5           1         -67.1713]
+[  6     3               -66.6223]
+[  7                     -66.0788]
+[  8     4               -65.5407]
+[  9                     -65.008]
+[ 10     5     2    1    -64.4806]
+[ 11                     -63.9584]
+[ 12     6               -63.4414]
+[ 13                     -62.9295]
+[ 14     7               -62.4228]
+[ 15           3         -61.9211]
+[ 16     8               -61.4243]
+[ 17                     -60.9326]
+[ 18     9               -60.4457]
+[ 19                     -59.9636]
+[ 20    10     4    2    -59.4864]
+[ 21                     -59.0139]
+[ 22    11               -58.5461]
+[ 23                     -58.0829]
+[ 24    12               -57.6244]
+[ 25           5         -57.1704]
+[ 26    13               -56.721]
+[ 27                     -56.276]
+[ 28    14               -55.8355]
+[ 29                     -55.3993]
+[ 30    15     6    3    -70] %       <- The membrane potential crossed threshold in the
+% 1 30    15    6   3          <-        step 2.9 ms -> 3.0 ms. The membrane potential is 
+[ 31                     -70] %  |       reset (no super-threshold values can be observed).     
+[ 32    16               -70] %  |
+[ 33                     -70] %   ------ The spike is reported at 3.0 ms
+[ 34    17               -70]
+[ 35           7         -70]
+[ 36    18               -70]
+[ 37                     -70]
+[ 38    19               -70]
+[ 39                     -70]
+[ 40    20     8    4    -70]
+[ 41                     -70]
+[ 42    21               -70]
+[ 43                     -70]
+[ 44    22               -70]
+[ 45           9         -70]
+[ 46    23               -70]
+[ 47                     -70]
+[ 48    24               -70]
+[ 49                     -70]
+[ 50    25    10    5    -70     ] %   <- The last point in time at which the membrane potential
+[ 51                     -69.4229] % <-   is clamped. The fact that the neuron is not refractory
+[ 52    26               -68.8515] %   |  anymore is reflected in the state variable r==0.
+[ 53                     -68.2858] %   |  The neuron was refractory for 2.0 ms.
+[ 54    27               -67.7258] %   |
+[ 55          11         -67.1713] %    -- The membrane potential starts to increase 
+[ 56    28               -66.6223] %       immediately afterwards (step 5ms -> 5ms + h),  
+[ 57                     -66.0788] %       and the neuron can generate spikes again  
+[ 58    29               -65.5407] %       (with time stamp 5ms + h).  
+[ 59                     -65.008 ] %       The membrane trace is independent of the resolution.
+[ 60    30    12    6    -64.4806]
+[ 61                     -63.9584]
+[ 62    31               -63.4414]
+[ 63                     -62.9295]
+[ 64    32               -62.4228]
+[ 65          13         -61.9211]
+[ 66    33               -61.4243]
+[ 67                     -60.9326]
+[ 68    34               -60.4457]
+[ 69                     -59.9636]
+]
+%
+%
+
+rolld assert_or_die

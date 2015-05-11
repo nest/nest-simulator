@@ -1,0 +1,136 @@
+/*
+ *  test_iaf_i0.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /* BeginDocumentation
+Name: testsuite::test_iaf_i0 - sli script for test of iaf_neuron internal DC current
+
+Synopsis: (test_iaf_i0) run -> compares response to internal dc with reference data
+
+
+Description:
+
+ test_iaf_i0.sli is a test of a specific feature of the iaf_neuron
+ model. It is tested whether an internal DC current that is present
+ from the time of neuron initialization, correctly affects the membrane
+ potential.
+
+ This is probably the simplest setup in which we can study how the 
+ dynamics develops from an initial condition.
+
+ The expected output is documented and briefly commented at the end of 
+ the script.
+
+ When the DC current is supplied by a device external to the neuron
+ the situation is more complex because additional delays are introduced.
+  
+
+Author:  February 2004, Diesmann, Gewaltig, Plesser
+SeeAlso: iaf_neuron
+*/
+
+(unittest) run
+/unittest using
+
+0.1 /h Set
+
+ResetKernel
+
+0 << 
+       /local_num_threads 1  
+       /resolution h  
+     >> SetStatus
+
+
+
+/iaf_neuron Create /neuron Set
+neuron << /I_e 1000.0 >> SetStatus
+
+% we must manually set the recording interval to single time step
+/voltmeter Create /vm Set
+vm << /withtime true /to_memory true /time_in_steps true /interval h >> SetStatus
+
+/spike_detector Create /sd Set
+sd << /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+
+
+vm neuron Connect
+neuron sd Connect
+
+6 Simulate
+
+{                                            % 1. argument, reference spikes
+ sd [/events [/senders /times]] get cva      % array of recorded spikes
+  Transpose                                  % all recorded tuples
+ eq                                          % compare
+
+ exch                                        % 2. argument, reference voltages
+ dup Transpose First /test_times Set         % times of reference
+
+ vm [/events [/times /V_m]] get cva   % array of recorded voltages
+  6 ToUnitTestPrecision                      % to precision of reference
+  Transpose                                  % all recorded tuples
+  {First test_times exch MemberQ } Select    % those with reference 
+ eq                                          % compare
+
+ and                                         % spikes and voltages ok?
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%
+% Expected output of this program:
+% 
+% The output send to std::cout is a superposition of the output of  
+% the voltmeter and the spike detector. Both, voltmeter and spike 
+% detector are connected to the same neuron. 
+%
+% time (in steps)  voltage (in mV)
+[
+%  0      -70          <------ Voltage trace. the membrane is at rest
+[  1      -69.602  ] % <-      because the current has not yet had the 
+[  2      -69.2079 ] %   |     chance to influence the membrane potential.
+[  3      -68.8178 ] %   |     However, the current is reflected in state
+[  4      -68.4316 ] %   |     variable I0 in this initial condition of the 
+[  5      -68.0492 ] %   |     system.
+%                    %   |
+%  ...               %    ---  At the next observation point on the simulation
+%                    %         grid, the current present from time 0 on has 
+[ 43      -56.0204 ] %         affected the membrane potential.
+[ 44      -55.7615 ] %
+[ 45      -55.5051 ] %
+[ 46      -55.2513 ] %
+[ 47      -55.0001 ] %
+[ 48      -70      ] %
+[ 49      -70      ] %  
+[ 50      -70      ] %
+]                    %
+%
+% ...
+%
+
+[                    %
+[ 1       48       ] %       <-- the neuron emits a spike with time
+]                    %           stamp 4.8 ms
+
+
+rolld assert_or_die
+

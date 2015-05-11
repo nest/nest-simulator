@@ -1,0 +1,162 @@
+/*
+ *  test_aeif_cond_alpha_multisynapse.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+ 
+ /* BeginDocumentation
+   Name: testsuite::test_aeif_cond_alpha_multisynapse - sli script for the aeif multisynapse model
+
+   Synopsis: (test_aeif_cond_alpha_multisynapse) run
+
+   Description:
+   This test creates a multisynapse neuron and first checks if time constants
+   can be set correctly. 
+   Afterwards, it simulates the mutisynapse neuron with n (n=4) different time 
+   constants and records the neuron's synaptic current. At the same time, it simulates 
+   n (n=4) single synapse neurons with according parameters.
+   At the end, it compares the multisynapse neuron currents with each according single 
+   synapse current.
+   
+   SeeAlso:
+
+   FirstVersion: January 2014
+   Author: Daniel Peppicelli
+ */
+ 
+(unittest) run
+/unittest using
+
+0
+<< 
+    /overwrite_files true
+>> SetStatus
+
+/tolerance   	2e-3 def %mV
+/simulation_t	1500 def %ms
+/V_peak			0. def
+/a 				4. def
+/b 				80.5 def
+/tau_syn_ex		[0.2 2. 3. 3.] def 
+/tau_syn_in		[0.2 2. 3. 3.] def
+/weights		[1. 1. 1. -1.] def
+/spike_time 	100. def
+/delays     	[1. 250. 500. 1000. ] def % ms - The delays have to be ordered and needs enough space between them to avoid noise
+/dt         	0.1 def
+
+/spike_generator Create /sg Set
+sg << /spike_times [spike_time] >> SetStatus
+
+% Create the several aeif_conf_alpha_RK5 (one for each synapses of the previous neuron)
+[tau_syn_in tau_syn_ex delays weights] 
+{
+	/weight_var exch def
+	/delay_var exch def
+	/tau_syn_ex_var exch def
+	/tau_syn_in_var exch def
+ 	/aeif_cond_alpha_RK5 Create /singlesynapse_neuron Set
+ 	singlesynapse_neuron << /V_peak V_peak >> SetStatus
+	singlesynapse_neuron << /a a >> SetStatus
+	singlesynapse_neuron << /b b >> SetStatus
+ 	singlesynapse_neuron << /tau_syn_ex tau_syn_ex_var >> SetStatus
+ 	singlesynapse_neuron << /tau_syn_in tau_syn_in_var >> SetStatus
+
+ 	[sg] [singlesynapse_neuron] /one_to_one << /model /static_synapse /delay delay_var /weight weight_var >> Connect
+ 	
+ 	/voltmeter Create /vm_for_single_synapse_neuron Set
+ 	vm_for_single_synapse_neuron << /withtime true /time_in_steps true /interval 0.1 /precision 5 >> SetStatus
+	vm_for_single_synapse_neuron singlesynapse_neuron 1. 8. /static_synapse Connect
+ 
+ 	vm_for_single_synapse_neuron
+ 	
+} MapThread /vms_for_single_synapse_neuron Set
+
+% Create one voltmeter for the multi synapse neuron
+/voltmeter Create /vm Set
+vm << /withtime true /time_in_steps true /interval dt /to_file true /precision 5 >> SetStatus
+
+% Create one aeif_conf_alpha_multisynapse
+/aeif_cond_alpha_multisynapse Create /multisynapse_neuron Set
+multisynapse_neuron << /taus_syn tau_syn_ex >> SetStatus
+multisynapse_neuron << /V_peak V_peak >> SetStatus
+multisynapse_neuron << /a a >> SetStatus
+multisynapse_neuron << /b b >> SetStatus
+
+multisynapse_neuron ShowStatus
+
+% create and array [1 .. n] 
+delays length 1 arraystore Range /synapses_indices exch def
+
+[delays weights synapses_indices]
+{
+	/synapses_indice_var exch def
+	/weight_var exch def
+	/delay_var exch def
+	
+	[sg] [multisynapse_neuron] /one_to_one << /model /static_synapse /delay delay_var /weight weight_var /receptor_type synapses_indice_var >> Connect
+	
+} ScanThread
+
+vm multisynapse_neuron 1. 8. /static_synapse Connect
+
+simulation_t ms Simulate
+
+% Get the currents of the multisynapse neuron
+/d vm GetStatus /events get def
+d /V_m get cva /currents Set
+
+% Take the array of delays, remove the first element and append at the end (total simulation time - spiketime).
+% The new array will be used to determine the ranges of comparison between the single neurons and the multisynapse neurons.
+
+delays reverse arrayload pop pop
+delays length 1 sub
+arraystore reverse 
+simulation_t spike_time sub 1 dt div sub
+append
+/delays_shifted exch def
+
+
+% Go over every dt in the ranges (0 -> delays_shifted[1], ... , delays_shifted[n] -> delays_shifted[n+1])
+% For each one of them, compare the multisynapse_current[t] with singlesynapse_current[n][t].
+
+/current_pos 0 def
+
+[vms_for_single_synapse_neuron delays_shifted]
+{
+	/delay_var exch def
+	/voltmeter_var exch def
+
+	% Get the currents of the single synapse model
+	voltmeter_var GetStatus /events get /V_m get cva
+	
+	% black voodoo magic - compare values at the same position in multisynapse currents and according single synapse currents
+	current_pos 1 delay_var spike_time add dt div 
+	{
+		rot dup rot exch dup rot cvi get rot rot currents exch cvi get sub 
+		tolerance lt true eq assert_or_die 
+	} for
+
+	% Update the current position. In the next loop, we will start from here
+	/current_pos delay_var spike_time add 10 mul def
+
+	pop
+	
+} ScanThread
+
+endusing

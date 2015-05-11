@@ -1,0 +1,147 @@
+/*
+ *  test_spike_dilutor.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::test_spike_dilutor - test of spike_dilutor functionality
+
+Synopsis: (test_spike_dilutor) run -> count the average number of spikes repeated by the spike dilutor
+
+Description:
+100 spikes are given to spike_dilutor and it has to repeat 20% of them (20 spikes) to 10 different spike detectors.
+If the average number of spikes detected by spike detectors equals to 20 (with marginal error 3), the dilutor works fine.
+
+Author: Hesam Setareh, April 2015
+ */
+
+(unittest) run
+/unittest using
+ 
+[
+1.0
+{ dup
+ exch
+ 1.0 add
+ dup 100.0 eq {exit} if
+}loop
+] 
+
+/sp_t Set
+
+%sp_t
+%stack
+%{=}forall
+%exit
+
+
+ResetKernel
+/spike_generator Create /sg Set
+  sg <<
+        /spike_times sp_t   % in ms
+  >> SetStatus
+
+/spike_dilutor Create /dilutor Set
+dilutor << /p_copy 0.2 >> SetStatus
+
+/spike_detector Create /sp_det0 Set
+/spike_detector Create /sp_det1 Set
+/spike_detector Create /sp_det2 Set
+/spike_detector Create /sp_det3 Set
+/spike_detector Create /sp_det4 Set
+/spike_detector Create /sp_det5 Set
+/spike_detector Create /sp_det6 Set
+/spike_detector Create /sp_det7 Set
+/spike_detector Create /sp_det8 Set
+/spike_detector Create /sp_det9 Set
+
+
+sg dilutor Connect
+dilutor sp_det0 Connect
+dilutor sp_det1 Connect
+dilutor sp_det2 Connect
+dilutor sp_det3 Connect
+dilutor sp_det4 Connect
+dilutor sp_det5 Connect
+dilutor sp_det6 Connect
+dilutor sp_det7 Connect
+dilutor sp_det8 Connect
+dilutor sp_det9 Connect
+
+102 Simulate
+
+sp_det0 GetStatus /events get /times get /spikes Set
+spikes size
+exch pop
+
+sp_det1 GetStatus /events get /times get /spikes Set
+spikes size
+exch pop
+add
+
+sp_det2 GetStatus /events get /times get /spikes Set
+spikes size
+exch pop
+add
+
+sp_det3 GetStatus /events get /times get /spikes Set
+spikes size
+exch pop
+add
+
+sp_det4 GetStatus /events get /times get /spikes Set
+spikes size
+exch pop
+add
+
+sp_det5 GetStatus /events get /times get /spikes Set
+spikes size
+exch pop
+add
+
+sp_det6 GetStatus /events get /times get /spikes Set
+spikes size
+exch pop
+add
+
+sp_det7 GetStatus /events get /times get /spikes Set
+spikes size
+exch pop
+add
+
+sp_det8 GetStatus /events get /times get /spikes Set
+spikes size
+exch pop
+add
+
+sp_det9 GetStatus /events get /times get /spikes Set
+spikes size
+exch pop
+add
+
+10.0
+div
+
+20.0 sub 
+dup 3 lt
+exch
+-3 gt
+and assert_or_die 

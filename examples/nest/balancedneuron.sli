@@ -1,0 +1,91 @@
+/*
+ *  balancedneuron.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ResetKernel
+
+ 1000.   ms /t_relax Set % how long to wait for the state to stabiluze before reording the spikes
+ 100000. ms /t_sim Set % how long we simulate to compute the rate (1000 sec)
+ 16000     /n_ex  Set % size of the excitatory population
+ 4000      /n_in  Set % size of the inhibitory population
+ 5.0   Hz  /r_ex  Set % mean rate of the excitatory population
+ 45.0  pA  /epsc  Set % peak amplitude of excitatory synaptic currents
+ -45.0 pA  /ipsc  Set % peak amplitude of inhibitory synaptic currents
+ 1.0   ms  /d     Set % synaptic delay
+ 5.0   Hz  /lower Set % lower bound of the search interval
+ 25.0  Hz  /upper Set % upper bound of the search interval
+ 0.1  Hz  /prec  Set % how close need the excitatory rates be
+
+ M_INFO 1 add setverbosity                 % suppress output from Simulate
+
+ /iaf_neuron        Create /neuron Set % target neuron
+ /poisson_generator Create /ex_pop Set % excitatory population
+ /poisson_generator Create /in_pop Set % inhibitory population
+ /spike_detector    Create /spikes Set % the spike detector device
+
+ ex_pop
+ <<
+    /rate r_ex n_ex mul % multiply rate and number of neurons
+ >> SetStatus
+
+ spikes
+ <<
+   /withtime false    % suppress output from spike detector
+ >> SetStatus
+
+ ex_pop neuron epsc d Connect
+ in_pop neuron ipsc d Connect
+ neuron spikes        Connect
+
+ /OutputRate
+ {
+   /guess Set % store the function parameter
+
+    M_INFO 1 add (blancedneuron) (--------------------------------------------------------------------------------------) message
+    M_INFO 1 add (blancedneuron) (Setting new rate for the inhibitory background population: ) guess cvs join (Hz/neuron) join message
+
+    in_pop
+    <<
+    /rate guess n_in mul % set a new rate for the inhibitory population.
+    >>
+    SetStatus
+
+    M_INFO 1 add (blancedneuron) (Allowing the new state to relax for ) t_relax cvs join (ms...) join message
+    t_relax  Simulate % let the neuron relax to the new balanced state
+
+    spikes
+    <<
+       /n_events 0 % reset the event counter of the spike detector
+    >> SetStatus
+
+    M_INFO 1 add (blancedneuron) (Counting spikes for ) t_sim cvs join (ms...) join message
+    t_sim  Simulate % simulate and count the spikes
+
+    spikes [ /n_events ] get /e Set % read out the event counter
+    e t_sim 1000.0 div  div  /rate Set % and divide by t_sim
+    M_INFO 1 add (blancedneuron) (Counted ) e cvs join ( spikes.) join message
+    M_INFO 1 add (blancedneuron) (==> Rate of the test neuron is ) rate cvs join (Hz.) join message
+
+   rate % leave the result as return value
+ } def
+
+ {OutputRate r_ex sub} lower upper prec FindRoot
+

@@ -1,0 +1,151 @@
+/*
+ *  test_mip_corrdet.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: testsuite::test_mip_corrdet - sli script for testing mip_generator and correlation_detector
+
+Synopsis: (test_mip_corrdet) run -> compare cout with comments in file
+
+
+Description:
+  test_mip_corrdet.sli creates two poisson spiking sources with a rate of
+  50 Hz each, which have half of their events in common. The correlation
+  detector records these spike trains and calculates the raw cross correlation
+  in a time window of +-100 ms with a bin width of 10 ms.
+  After the simulation, the accumulated number of events in the bins is displayed.
+
+Author:  October 2007, Helias
+SeeAlso: mip_generator, correlation_detector
+*/
+
+(unittest) run
+/unittest using
+
+
+
+%
+% Cross check generated with cross_check_test_mip_corrdet.py
+% 
+[ 2453  2528  2507  2439  2459  2451  2441  2523  2494  2445
+  4909  2369  2410  2457  2495  2484  2369  2341  2452  2475
+  2453] { cvd } Map /expected_hist Set
+
+/run_test
+{
+ 0.1 /h Set        % computation step size in ms 
+ 100000.0 /T Set   % total duration
+ 10.0 /delta_tau Set
+ 100.0 /tau_max Set
+ 0.5 /pc Set
+ 100.0 /nu Set
+ 
+ResetKernel
+
+userdict begin
+
+0
+<< 
+    /local_num_threads 1
+    /resolution h
+    /overwrite_files true
+    /grng_seed 0 % because test data was produced for seed = 0
+>> SetStatus
+
+% check, if we can set another rng
+/mip_generator << /mother_rng rngdict/MT19937 :: 101 CreateRNG >> SetDefaults
+/mip_generator << /mother_rng rngdict/knuthlfg :: 101 CreateRNG >> SetDefaults % this seed will be ignored, because explicitly set
+
+/mip_generator Create dup /mg Set
+<<
+    /rate nu
+    /p_copy pc
+>> SetStatus
+
+
+/correlation_detector Create dup /cd Set
+<<
+    /tau_max   tau_max 
+    /delta_tau delta_tau
+>> SetStatus
+
+/spike_detector Create dup /sd Set
+<<
+    /to_file true
+    /to_memory false
+    /withtime true
+    /withgid true
+    /time_in_steps true
+>> SetStatus
+
+/parrot_neuron Create /pn1 Set
+/parrot_neuron Create /pn2 Set
+
+mg pn1 Connect
+mg pn2 Connect
+
+pn1 sd Connect
+pn2 sd Connect
+
+/static_synapse
+<<
+    /weight 1.0
+    /receptor_type 0
+>> SetDefaults
+
+pn1 cd Connect
+
+/static_synapse
+<<
+    /weight 1.0
+    /receptor_type 1
+>> SetDefaults
+
+pn2 cd Connect
+
+T Simulate
+
+cd GetStatus
+dup /histogram get cva /hist Set
+/n_events get cva arrayload ; /n2 Set /n1 Set
+
+n1 T tau_max sub div 1000.0 mul /lmbd1 Set
+n2 T tau_max sub div 1000.0 mul /lmbd2 Set
+
+%cout
+%(rate 1=) <- lmbd1 <- (\n) <-
+%(rate 2=) <- lmbd2 <- (\n) <-
+%(background =) <- lmbd1 lmbd2 mul delta_tau 1000 div mul T tau_max sub 1000 div mul <- (\n) <- pop
+
+%hist ==
+%0 hist { add } forall ==
+
+
+hist expected_hist eq
+assert_or_die
+
+end
+} def
+
+run_test
+
+endusing

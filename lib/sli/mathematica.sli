@@ -1,0 +1,4997 @@
+/*
+ *  mathematica.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+%% Mathematica style global Options
+
+/* BeginDocumentation
+Name: OptionsDictionary - Dictionary for global options
+Synopsis: none
+
+Description:
+This dictionary contains the global option for
+certain functions. Within the dictionary each
+function name is associated with a dictionary
+which contains the options for that function.
+
+Note that the accessibility, i.e. the dicitonary
+in which a function is defined is not accounted for.
+
+It is suggested that you use a C++-like notation to indicate the
+availability of the function, if the function is defined in some
+"namespace" dictionary.
+For example: "arr::Mean".
+
+Diagnostics: None.
+Author: M. O. Gewaltig
+
+SeeAlso: GetOption, GetOptions, ShowOptions, SetOptions, Options, ResetOptions, SaveOptions, RestoreOptions
+*/
+
+/OptionsDictionary << >> def
+
+/* BeginDocumentation
+Name: Options - Define a new set of options for a given name.
+Synopsis: /f  optiondict Options -> --
+
+Description:
+Options defines a set of options for a name.
+The options are supplied in a dictionary. Old
+option values are overwritten by this operation.
+Options should be used to initially define a
+set of options for a given name. Use SetOptions
+to modify one or more options from this set.
+
+In addition to the supplied options, Options adds
+the options /DefaultOptions with the original option
+values.
+
+It is suggested that you use a C++-like notation to indicate the
+availability of the function, if the function is defined in some
+"namespace" dictionary.
+For example: "arr::Mean".
+
+Diagnostics: None
+Author: M. O. Gewaltig
+
+SeeAlso: GetOption, GetOptions, ShowOptions, SetOptions, ResetOptions, SaveOptions, RestoreOptions, OptionsDictionary
+*/
+
+/Options
+trie [/literaltype /dictionarytype]
+{
+  systemdict
+  begin
+   OptionsDictionary
+   begin
+    2 copy
+    def
+   end
+   begin % Open Options
+    /DefaultOptions currentdict clonedict exch pop def
+   end
+   pop
+  end
+} bind addtotrie def
+
+/* BeginDocumentation
+Name: SetOptions - Set options for a given name
+Synopsis: /f  optiondict SetOptions -> --
+
+Description:
+SetOptions set all option values given in
+the supplied dictionary. Options which are not listed
+in this dicitonary are not modified.
+Note that only those options can be modified which were
+initially defined by the Options command.
+
+Use the option /DefaultOptions to retrieve the default
+values for all options.
+
+Usually, a C++-like notation is used to indicate the
+availability of the function, if the function is defined in some
+"namespace" dictionary.
+For example: "arr::Mean".
+
+Diagnostics: SetOptions gives a warning message for each unknown
+             options it encounters.
+
+Author: M. O. Gewaltig
+
+SeeAlso: GetOption, GetOptions, ShowOptions, Options, ResetOptions, SaveOptions, RestoreOptions, OptionsDictionary
+*/
+
+/SetOptions
+trie [/literaltype /dictionarytype]
+{
+  1 index GetOptions
+    begin
+    cva 2 2 Partition
+    {
+      arrayload pop
+      exch cvlit
+      dup DefaultOptions exch known
+      {
+        exch def
+      }
+      {
+        M_WARNING exch (SetOptions) exch cvs (Unknown option for command ') 5 index cvs join (': ) join exch join message
+        pop
+      } ifelse
+    } forall
+    pop
+    end
+} bind addtotrie def
+
+/* BeginDocumentation
+Name: GetOptions - Get all options for a given name
+Synopsis: /f  GetOptions -> optiondict
+
+Description:
+Usually, a C++-like notation is used to indicate the
+availability of the function, if the function is defined in some
+"namespace" dictionary.
+For example: "arr::Mean".
+
+Diagnostics:
+Raises /NoOptionsAvailable if there are no
+options associated with the name.
+
+Author: M. O. Gewaltig
+
+SeeAlso: GetOption, ShowOptions, SetOptions, Options, ResetOptions, SaveOptions, RestoreOptions, OptionsDictionary
+*/
+
+/GetOptions
+{
+  systemdict
+  begin
+    OptionsDictionary 1 index known
+    {
+      OptionsDictionary exch get
+    }
+    {
+    end	/GetOptions /NoOptionsAvailable raiseerror
+    } ifelse
+  end
+} bind def
+
+/* BeginDocumentation
+Name: ShowOptions - Display all options for a given name
+Synopsis: /f  ShowOptions -> --
+
+Description:
+Usually, a C++-like notation is used to indicate the
+availability of the function, if the function is defined in some
+"namespace" dictionary.
+For example: "arr::Mean".
+
+Diagnostics: None
+Author: M. O. Gewaltig
+SeeAlso: GetOption, GetOptions, SetOptions, Options, ResetOptions, SaveOptions, RestoreOptions, OptionsDictionary
+*/
+
+/ShowOptions
+{
+  GetOptions info
+} bind def
+
+/* BeginDocumentation
+Name: GetOption - get the value of a procedure option
+Synopsis: /f /opt GetOption -> val
+
+Description:
+Retrieves the value for a specific option
+of a function.
+
+Usually, a C++-like notation is used to indicate the
+availability of the function, if the function is defined in some
+"namespace" dictionary.
+For example: "arr::Mean".
+
+Diagnostics: Raises UnknownOption if the supplied option
+             is unknown.
+
+SeeAlso: GetOptions, ShowOptions, SetOptions, Options, ResetOptions, SaveOptions, RestoreOptions, OptionsDictionary
+*/
+
+/GetOption
+{
+  1 index GetOptions % /f /opt << >>
+  dup 2 index known
+  {
+    1 index get
+    3 1 roll 2 npop
+  }
+  {
+    2 npop
+    /GetOption /UnknownOption raiseerror
+  } ifelse
+} bind def
+
+
+%----------------------------------------------------------------------------
+/* BeginDocumentation
+
+Name: SaveOptions - temporarily save options of a command
+
+Synopsis:
+  /f SaveOptions -> -
+
+Description:
+
+Usually, a C++-like notation is used to indicate the
+availability of the function, if the function is defined in some
+"namespace" dictionary.
+For example: "arr::Mean".
+
+Author: Ruediger Kupper
+
+FirstVersion: 7.3.2003
+
+SeeAlso: GetOption, GetOptions, ShowOptions, SetOptions, Options, ResetOptions, RestoreOptions, OptionsDictionary
+*/
+
+/SaveOptions [/literaltype]
+{
+  %stack: /f
+  GetOptions clonedict
+  %stack: <<options>> <<copy-of-options>>
+  dup /DefaultOptions undef
+  /SavedOptions exch put
+} def
+
+%----------------------------------------------------------------------------
+/* BeginDocumentation
+
+Name: RestoreOptions - Restore the temporaryly saved options of a command
+
+Synopsis:
+  /f RestoreOptions -> -
+
+Description:
+
+Usually, a C++-like notation is used to indicate the
+availability of the function, if the function is defined in some
+"namespace" dictionary.
+For example: "arr::Mean".
+
+Author: Ruediger Kupper
+
+FirstVersion: 7.3.2003
+
+SeeAlso: GetOption, GetOptions, ShowOptions, SetOptions, Options, ResetOptions, SaveOptions, OptionsDictionary
+*/
+
+/RestoreOptions [/literaltype]
+{
+  %stack: /f
+  dup dup /SavedOptions GetOption
+  %stack: /f /f <<saved-options>>
+  SetOptions
+  %stack: /f
+  GetOptions /SavedOptions undef
+} def
+
+%----------------------------------------------------------------------------
+/* BeginDocumentation
+
+Name: ResetOptions - Reset all options of a command to their default values.
+
+Synopsis:
+  /f ResetOptions -> -
+
+Description:
+
+Usually, a C++-like notation is used to indicate the
+availability of the function, if the function is defined in some
+"namespace" dictionary.
+For example: "arr::Mean".
+
+Author: Ruediger Kupper
+
+FirstVersion: 28.3.2003, by copy-paste-and-modify from RestoreOptions
+
+SeeAlso: GetOption, GetOptions, ShowOptions, SetOptions, Options, SaveOptions, RestoreOptions, OptionsDictionary
+*/
+
+/ResetOptions [/literaltype]
+{
+  %stack: /f
+  dup /DefaultOptions GetOption
+  %stack: /f <<default-options>>
+  SetOptions
+} def
+
+
+
+
+/* BeginDocumentation
+Name: JoinTo - Join an object to a container
+
+Synopsis:
+array literal JoinTo -> --
+dict  literal JoinTo -> --
+Description:
+ Assignment like AddTo. Compared to Mathematica the order of
+ arguments is reversed here, because its more readable to
+ have the l-value close to the assignment operator,
+ like in ... // Set[x,#]& .
+ Allows for optimization of code.
+Examples:
+/j [4 5] def [6 7 8] /j JoinTo j --> [4 5 6 7 8]
+/j << /C_m 250.0 /Tau_m 10.0 >> def
+<< /Tau_m 25.0 /I_e 130.0 >> /j JoinTo j --> << /C_m 250.0 /Tau_m 25.0 /I_e 130.0 >>
+
+SeeAlso: Set, AppendTo, MergeDictionary
+*/
+/JoinTo_cont
+{
+ dup load
+ 3 -1 roll
+ join
+ def
+} bind def
+
+/JoinTo_ald
+{
+ 2 copy    % v l d l d
+ 5 2 roll  % l d v l d
+ exch      % l d v d l
+ get_d     % l d v a
+ exch      % l d a v
+ join      % l d av
+ exch      % l av d
+ rollu     % d l av
+ put_d
+} def
+
+/JoinTo_d
+{
+  load     % d2 d1
+  exch     % d1 d2
+  join_d
+} def
+
+/JoinTo trie
+[/arraytype /literaltype /dictionarytype] /JoinTo_ald load addtotrie
+[/stringtype /literaltype /dictionarytype] /JoinTo_ald load addtotrie
+[/arraytype /literaltype] /JoinTo_cont load addtotrie
+[/stringtype /literaltype] /JoinTo_cont load addtotrie
+[/dictionarytype /literaltype] /JoinTo_d load addtotrie
+def
+
+
+%
+%  /j << /C_m 250.0 /Tau_m 10.0 >> def
+%   j << /Tau_m 25.0 /I_e 130.0 >> join_d
+%
+%  --> << /C_m 250.0 /Tau_m 25.0 /I_e 130.0 >>
+%
+/join_d
+{
+ % d1 d2
+  cva 2 2 Partition
+  {
+    1 index exch
+    arrayload pop
+    put
+  } forall
+ pop
+} def
+
+
+/join
+ /join load
+ [/dictionarytype /dictionarytype] /join_d load addtotrie
+def
+
+
+
+
+
+
+
+
+
+/* BeginDocumentation
+Name: AppendTo - Append an object to a container
+
+Synopsis: any literal AppendTo -> --
+
+Description:
+ Assignment like AddTo. Compared to Mathematica the order of
+ arguments is reversed here, because its more readable to
+ have the l-value close to the assignment operator,
+ like in ... // Set[x,#]& .
+ Allows for optimization of code.
+Examples: /j [4 5] def  7 /j AppendTo j --> [4 5 7]
+Author: Diesmann
+FirstVersion: 8.5.01
+SeeAlso: Set, JoinTo
+*/
+/AppendTo
+[/anytype /literaltype]
+{
+ dup load
+ 3 -1 roll
+ append
+ def
+}
+def
+
+/AppendTo
+[/anytype /literaltype /dictionarytype]
+{
+ 2 copy    % v l d l d
+ 5 2 roll  % l d v l d
+ exch      % l d v d l
+ get_d     % l d v a
+ exch      % l d a v
+ append    % l d av
+ exch      % l av d
+ rollu     % d l av
+ put_d
+} def
+
+
+
+
+% documentation in sli/slicontrol.cc
+/Set_ /Set load def
+
+/Set trie
+  [/anytype /literaltype] /Set_ load addtotrie
+def
+
+/Set
+[/arraytype /arraytype]
+{
+2 arraystore Transpose
+{
+ arrayload ;
+ Set
+}
+forall
+
+}
+def
+
+
+/* BeginDocumentation
+Name: ReplacePart - replaces particular elements of an array
+Synopsis: array1 any integer ReplacePart -> array3
+          array1 any array2  ReplacePart
+Description:
+ Replaces the elements of array1 specified by the integer or
+ by array2 with the 2nd argument any and returns the resulting
+ array.
+Parameters:
+ The integer specifies a position in array1. array2 specifies a
+ multi-dimensional position [i, j,...] in array1 or a list of
+ positions [ [i1,j1,...], [i2,j2,...], ...].
+Examples:
+ [3, {-11, 5}, {9}, 7] 4 2 ReplacePart
+  -> [3 4 [9] 7]
+ [3 [-11 5] [9] 7] 4 [2 1] ReplacePart
+  -> [3 [4 5] [9] 7]
+ [3 [-11 5] [9] 7] 4 [[2] [4]] ReplacePart
+  -> [3 4 [9] 4]
+ [3 [-11 5] [9] 7] 4 [[2 1] [3 1]] ReplacePart
+  -> [3 [4 5] [4] 7]
+
+Author: Diesmann
+FirstVersion: 2007.11.28
+Remarks:
+ The variant of this function with four arguments is not implemented
+SeeAlso: MapAt, ReplaceOccurrences, Part
+References:
+   [1] The Mathematica Book V4.0 "Part"
+*/
+
+/ReplacePart [/arraytype /anytype /integertype]
+{
+ % a v i
+ ReplacePart_i_
+} def
+
+/ReplacePart_i_
+{
+ % a v i
+ exch
+ % a i v
+ rollu
+ % v a i
+ 2 copy
+ % v a i a i
+ [1] exch 1 sub append
+ % v a i a [1 i-1]
+ Take
+ % v a i al
+ rollu
+ % v al a i
+  2 copy exch length lt
+  {
+    [-1] exch 1 add prepend
+    %  v al a [i+1 -1]
+    Take
+  }
+  {
+    2 npop
+    []
+  } ifelse
+
+ % v al ar
+ rolld
+ % al ar v
+ prepend
+ % al var
+ join
+} def
+
+/ReplacePart [/arraytype /anytype /arraytype]
+{
+ % a v i
+ dup First
+ % a v i First(i)
+ ArrayQ
+ {
+  % a v i First(i)
+  pop
+  % a v i, First(i) is an array: i is list of indices
+  {
+   % a v k, with k iterating over First(i)
+   1 index
+   % a v k v
+   4 1 roll
+   % v a v k
+   ReplacePart_a_
+   % v a
+   exch
+   % a v
+  }
+  forall
+  % a v
+  pop
+  % a
+ }
+ {
+  % a v i First(i)
+  pop
+  % a v i, First(i) is not an array: i is mult-dim index
+  ReplacePart_a_
+ }
+ ifelse
+} def
+
+/ReplacePart_a_
+{
+ % a v i, i is multi-dim index
+ dup length
+ 1 eq
+ {
+  % a v i, i has length 1
+  First
+  % a v ii
+  ReplacePart_i_
+ }
+ {
+  % a v i, i has more than 1 element
+  exch
+  % a i v
+  rollu
+  % v a i
+  dup Rest
+  % v a i ir
+  rollu
+  % v ir a i
+  First
+  % v ir a First(i)
+  2 copy 2 copy
+  % v ir a i a i a i
+  [1] exch 1 sub append
+  % v ir a i a i a [1 i-1]
+  Take
+  % v ir a i a i al
+  5 1 roll
+  % v ir al a i a i
+  [-1] exch 1 add prepend
+  % v ir al a i a [i+1 -1]
+  Take
+  % v ir al a i ar
+  rollu
+  % v ir al ar a i
+  MathematicaToSliIndex_i get
+  % v ir al ar ai
+  5 -2 roll
+  % al ar  ai v ir
+  ReplacePart_a_
+  % al ar vi
+  prepend
+  % al viar
+  join
+  % a
+ }
+ ifelse
+} def
+
+
+
+
+/* BeginDocumentation
+Name: ReplaceOccurrences - replace the occurences of a key in a container
+Synopsis:  l1 l2 l3 ReplaceOccurrences l4
+Description:
+ Replaces all occurences of l2 in l1 by l3 and
+ returns the result. Works for strings and arrays.
+
+Examples:
+  (L: 'Where?') (') ('') ReplaceOccurrences (L: ''Where?'')
+  [4 5 6 7 5 8 9] [5] [-1 -2]  ReplaceOccurrences
+Author: -unknown- Diesmann? Hehl?
+*/
+
+/ReplaceOccurrences
+{
+<< >>
+begin
+ container /r Set_            % create empty object
+ /v Set_                      % save replacement
+ {
+  search
+  exch_                        % get pre save boolean
+  /r JoinTo                   % append pre to r
+  {r v join /r Set_     }      % append '' if ' leave post and match
+  {exit}                      % ready
+  ifelse
+ } loop
+ r
+end
+} bind def
+
+
+
+% Map:   string procedure Map array
+% ----
+%
+% Example:
+%    (1 2 3) {1 add} Map_s --> (2!3!4)
+%
+
+/Map_s
+{
+ mark
+ 3 1 roll
+ forall_s
+ counttomark
+ () exch
+ {
+   exch append
+ } repeat
+ reverse exch pop
+
+} bind def
+
+
+/Map_iter
+{
+ % i p
+ exch size
+ % p i s
+ [] exch reserve
+ % p i a
+ rollu exch
+ % a i p
+ {append} join
+ % a i p
+ forall
+ % a
+} def
+
+
+% a p a
+% presently less general than the Mathematica version.
+% the level specification is restriced to [n], 130222 MD
+/MapAtLevel
+{
+ 0 get 
+ MapRecursion
+} def
+
+/MapRecursion
+{
+        % a p i
+ dup    % a p i i
+ 1 gt   % a p i b
+ {
+         % a p i
+  1 sub  % a p i
+  rolld  % p i a
+
+  {
+             % p i ai 
+   rollu     % ai p i
+   2 copy    % ai p i p i
+   5 -1 roll % p i p i ai
+   rollu     % p i ai p i
+   MapRecursion
+  } Map
+          % p i a
+  rollu   % a p i 
+  2 npop  % a
+ }
+ {pop Map}
+ ifelse
+} def
+
+
+/Map_ /Map load def
+/Map trie
+[/arraytype /proceduretype] /Map_ load addtotrie
+[/arraytype /proceduretype /arraytype] /MapAtLevel load addtotrie
+[/iteratortype /proceduretype] /Map_iter load addtotrie
+[/stringtype /proceduretype] /Map_s load addtotrie
+def
+
+
+
+/* BeginDocumentation
+Name: MapAt - applies a function to some of the elements of its argument
+Synopsis: array1 proc array2 MapAt -> array3
+Description:
+ MapAt successively applies proc to the elements of array1
+ specified by array2 and replaces the original values by the
+ return value of proc. The return value array3 has exactly the
+ same shape as the first argument array1.
+
+ Compared to languages like Matlab MapAt constitutes an lhs
+ assignment operator for constructs like a(i)=f(a(i)), where
+ i may be an array of indices. However, unlike in Matlab no
+ temporary object a(i) for the rhs expression is created.
+ Consequently, if the index ii occurs in array i n times the
+ final value of a(ii) returned by MapAt is the cumulative effect
+ of f operating n times on the original value of a(ii):
+   a(ii) <- f(f(...f(a(ii))...))
+             n times
+ In Matlab the result is f(a(ii)), independent of n.
+ The behavior of MapAt is, for example, useful in counting
+ processes like the construction of a histogram as shown in the
+ last example of the examples section.
+
+ Parameters:
+  array1 is an arbitrarily shaped array. In particular
+  it does not need to be rectangular.
+  array2 specifies a multi-dimensional position [i, j,...]
+  in array1 or a list of positions [ [i1,j1,...], [i2,j2,...], ...].
+  The same element may be specified multiple times in array2 at
+  arbitrary positions.
+
+  The first element on each level has index 1. Indices can also
+  be specified counting from the end of the array, in this case the
+  last element has index -1. Positive and negative indices can
+  arbitrarily be intermixed.
+
+Examples:
+
+  [3 4 5 6 7] {dup mul} -2 MapAt
+   -> [3 4 5 36 7]
+  [3 [-9 -12] 5 6 7] {dup mul} [2 2] MapAt
+   -> [3 [-9 144] 5 6 7]
+  [3 4 5 6 7] {dup mul} [[1] [3]] MapAt
+   -> [9 4 25 6 7]
+  [[3 9] 4 [5 -11] 6 7] {dup mul} [[1 2] [3 1]] MapAt
+   -> [[3 81] 4 [25 -11] 6 7]
+
+  [0 0 0 0 0] {1 add} [2 4 5 2 3 2 2 5] 1 1 Partition MapAt
+   -> [0 4 1 1 2]
+
+Author: Diesmann
+FirstVersion: 2007.08.12
+Remarks:
+ This function is an implementation of Mathematica's MapAt function.
+ Mathematica-style functions in SLI use Mathematica index notation.
+SeeAlso: ReplacePart, Part, Map, Partition
+References:
+ [1] The Mathematica Book V4.0 "Part"
+*/
+
+/MapAt [/arraytype /proceduretype /integertype]
+{
+ % a f i
+ MapAt_i_
+} def
+
+/MapAt_i_
+{
+ % a f i
+ exch
+ % a i f
+ rollu
+ % f a i
+ 2 copy
+ % f a i a i
+ 5 2 roll
+ % a i f a i
+ MathematicaToSliIndex_i get
+ % a i f ai
+ exch
+ % a i ai f
+ exec
+ % a i v
+ exch
+ % a v i
+ ReplacePart_i_
+} def
+
+
+/MapAt [/arraytype /proceduretype /arraytype]
+{
+ % a f i
+ dup First
+ % a f i First(i)
+ ArrayQ
+ {
+  % a f i First(i)
+  pop
+  % a f i, First(i) is an array: i is list of indices
+  {
+   % a f k, with k iterating over First(i)
+   1 index
+   % a f k f
+   4 1 roll
+   % f a f k
+   MapAt_a_
+   % f a
+   exch
+   % a f
+  }
+  forall
+  % a f
+  pop
+  % a
+ }
+ {
+  % a f i First(i)
+  pop
+  % a f i, First(i) is not an array: i is mult-dim index
+  exch
+  % a i f
+  2 index
+  % a i f a
+  2 index
+  % a i f a i
+  Part
+  % a i f ai
+  exch
+  % a i ai f
+  exec
+  % a i aif
+  exch
+  % a aif i
+  ReplacePart_a_
+ }
+ ifelse
+} def
+
+/MapAt_a_
+{
+ % a f i, i is multi-dim index
+ dup length
+ 1 eq
+ {
+  % a f i, i has length 1
+  First
+  % a f ii
+  MapAt_i_
+ }
+ {
+  % a f i, i has more than 1 element
+  exch
+  % a i f
+  2 index
+  % a i f a
+  2 index
+  % a i f a i
+  First
+  % a i f a ii
+  MathematicaToSliIndex_i get
+  % a i f ai
+  exch
+  % a i ai f
+  2 index
+  % a i ai f i
+  Rest
+  % a i ai f ir
+  MapAt_a_
+  % a i aif
+  exch
+  % a aif i
+  First
+  % a aif ii
+  ReplacePart_i_
+ }
+ ifelse
+} def
+
+
+
+/* BeginDocumentation
+ Name: Range - Generate array with range of numbers
+ Synopsis:  [N] Range  -> [1 ... N]
+            [N1 N2] Range -> [N1 ... N2]
+            [N1 N2 d] Range -> [N1 N1+d N1+2d ...]
+ Description:
+    Range accepts an array which contains either
+    1) a single integer
+    2) an interval specified by two integers or two doubles
+    3) an interval and a stepsize, specified by three integers or
+       three doubles.
+
+    Range generates an array with numbers which are in the specified
+    range. The type of the result corresponds to the type used for
+    specifying the interval.
+
+    Range returns an empty array if the set specified by N1, N2 and d
+    does not contain any element. This behavior is essential if
+    Range is used in combination with functional operators like
+    FoldList and NestList.
+
+ Examples:
+          [5] Range    -> [1 2 3 4 5]
+        [2 5] Range    -> [2 3 4 5]
+        [5 2] Range    -> []
+        [5 2 -1] Range -> [5 4 3 2]
+        [1.0 10.0 2.5] Range -> [1 3.5 6 8.5]
+ Bugs:
+ Author: Gewaltig, Diesmann
+ Remarks: Resembles the function Range of Mathematica
+ SeeAlso: LayoutArray, Table, array, zeros, ones, Map
+*/
+
+/Range_ /Range load def
+/Range trie
+[/arraytype] /Range_ load addtotrie
+def
+
+/RangeIterator
+[/arraytype]
+{
+ size 1 eq
+ {
+  1 prepend 1 append RangeIterator_a
+ }
+ {
+  size 2 eq
+  {
+   1 append RangeIterator_a
+  }
+  {
+   RangeIterator_a
+  } ifelse
+ } ifelse
+}
+def
+
+
+
+/* BeginDocumentation
+ Name: Table - Generate an array according to a given function
+ Synopsis:  [N]       {f} Table  -> [f(1) ... f(N)]
+            [N1 N2]   {f} Table  -> [f(N1) ...f(N2)]
+            [N1 N2 d] {f} Table -> [ f(N1) f(N1+d) f(N1+2d) ...]
+ Description:
+    Table accepts an array which contains either
+    1) a single integer
+    2) in interval specified by two integers or two doubles
+    3) an interval and a stepsize, specified by three integers or
+       three doubles.
+    and a procedure object which is to be applied. From the
+    interval specification an array of numbers is generated, using Range.
+    The supplied procedure is the applied to each number in the array.
+
+ Examples:
+          [5] {2 mul} Table  -> [2 4 6 8 10]
+        [2 5] {2 mul} Table  -> [4 6 8 10]
+        [1.0 10.0 2.5] {2 mul} Table  -> [2.0 7.0 12.0 17.0]
+ Bugs:
+ Author: Gewaltig
+ Remarks: Resembles the function Table of Mathematica
+ References:
+ SeeAlso: Map, MapIndexed, Range, LayoutArray, array, forall, forallindexed
+*/
+
+/Table_
+{
+ mark
+ 3 1 roll
+ exch_ Range exch_
+ forall_a
+ counttomark
+ arraystore
+ exch_ pop_
+} bind def
+
+/Table trie
+[/arraytype /proceduretype] /Table_ load addtotrie def
+
+/*
+BeginDocumentation
+
+   Name: MapIndexed - Apply a function  to each element of a list/string
+
+   Synopsis:
+     [v1 ... vn] {f} MapIndexed -> [ f(v1,1) ... f(vn,n) ]
+
+   Parameters:
+     [v1 ... vn] - list of n arbitrary objects or string.
+
+     {f}         - function of two arguments and one return value.
+
+   Description:
+     For each element of the input array, MapIndexed calls f with
+     two arguments, the current index and the element. It replaces
+     the element with the result of f.
+     MapIndexed works similar to Map, however, in adition to the
+     element its index within the array is also passed to the function.
+     Note that the index starts with 1, according to Mathematica convention.
+     This is unlike in forallindexed where in accordance with Postscript 
+     array indices start with 0.
+     The result of MapIndexed is a list with the same number of values as the
+     argument list.
+     If f does not return a value, MapIndexed fails.
+     If f returns more than one value, the result of MapIndexed is
+     undefined.
+
+     Alternatives: Function MapIndexed_a for lists and  MapIndexed_s
+     for strings (both undocumented) -> behaviour and synopsis are
+     the same.
+
+   Examples:
+
+   [1 2 3 4 5]  {add} MapIndexed -> [2 4 6 8 10]
+   (abcd) {add} MapIndexed -> (bdfh)
+
+   Diagnostics: None
+
+   Bugs:
+
+   Author:
+    Marc-Oliver Gewaltig
+
+   References: The Mathematica Book
+
+   SeeAlso: Map, Table, forall, forallindexed
+
+*/
+
+/*
+/MapIndexed_a
+{
+  mark
+  3 1 roll
+  {1 add} exch join  % Mathematica indices start at 1
+  forallindexed_a
+  counttomark
+  arraystore
+  exch_ pop_
+} bind def
+*/
+
+/MapIndexed_s
+{
+ mark
+ 3 1 roll
+ {1 add} exch join  % Mathematica indices start at 1
+ forallindexed_s
+ counttomark
+ () exch_
+ {
+   exch_ append_s
+ } repeat_
+ reverse exch_ pop_
+} bind def
+
+/MapIndexed trie
+[/arraytype /proceduretype] /MapIndexed_a load addtotrie
+[/stringtype /proceduretype] /MapIndexed_s load addtotrie
+def
+
+/MapThread trie
+ [/arraytype /proceduretype] /MapThread_a load addtotrie
+def
+
+% * List Operations
+/*BeginDocumentation
+Name: First - Return the first element of an array or string.
+
+Synopsis: string First -> char
+array First -> arrayelement
+
+Examples: (train) First -> 104
+[1 2 3] First -> 1
+[(this) (is) (an) (example)] First -> (this)
+
+Author: docu edited by Sirko Straube
+
+SeeAlso: Last, Rest, Most
+*/
+
+/First { 0 get }    bind def
+
+/*BeginDocumentation
+Name: Last - Return the last element of an array or string
+
+Synopsis: string Last -> char
+array Last -> arrayelement
+
+Examples: (train) Last -> 110
+[1 2 3] Last -> 3
+[(this) (is) (an) (example)] Last -> (example)
+
+Author: docu edited by Sirko Straube
+
+SeeAlso: First, Rest, Most
+*/
+/Last  { size 1 sub_ii get } bind def
+
+/*BeginDocumentation
+Name: Rest - Remove the first element of an array or string and return
+the rest.
+
+Synopsis: string Rest -> string
+array Rest -> array
+
+Examples: (train) Rest -> (rain)
+[1 2 3] Rest -> [2 3]
+[(this) (is) (an) (example)] Rest -> [(is) (an) (example)]
+
+Author: docu edited by Sirko Straube
+
+SeeAlso: First, Last, Most
+*/
+/Rest  { 0 1 erase} bind def
+
+
+
+
+/*BeginDocumentation
+Name: Most - Remove the last element of an array or string and return the rest.
+Synopsis: string Most -> string
+array Most -> array
+
+Examples: (computer) Most -> (compute)
+[1 2 3] Most -> [1 2]
+[(this) (is) (an) (example)] Rest -> [(this) (is) (an)]
+
+Remarks:
+In 2003 this function did not exist in Mathematica and was
+introduced as LRest by Kupper. Mathematica 5 introduced the
+function and its SLI Name was changed for compatibility
+(Apr 2008, Diesmann).
+
+Author: Ruediger Kupper, docu edited by Sirko Straube
+
+FirstVersion: 10.3.2003
+SeeAlso: First, Last, Rest
+*/
+/Most [/arraytype]  { size 1 sub 1 erase } bind def
+/Most [/stringtype] { size 1 sub 1 erase } bind def
+
+/LRest
+{
+ M_WARNING (LRest) (LRest deprecated, use Most for Mathematica compatibility) message
+ Most
+}
+def
+
+
+/Flatten_ /Flatten load def
+
+% a
+/Flatten_a
+{
+ /Flatten_ load  % a p
+ FixedPoint__p
+} def
+
+% a i
+/Flatten_a_i
+{
+ /Flatten_ load  % a n p
+ exch            % a p n
+ FixedPoint__p_i
+} def
+
+/*BeginDocumentation
+Name: Flatten - flatten out a nested list
+Synopsis:
+         array         Flatten -> array
+         array integer Flatten -> array
+Description:
+Flatten called with one argument flattens out all levels of
+the argument. Flatten called with two arguments flattens out
+the first n levels.
+Examples:
+        [3 [4 [5 [6]]] 7] Flatten   -->  [3 4 5 6 7]
+        [3 [4 [5 [6]]] 7] 1 Flatten -->  [3 4 [5 [6]] 7]
+        [3 [4 [5 [6]]] 7] 2 Flatten -->  [3 4 5 [6] 7]
+Author: Gewaltig, Diesmann
+FirstVersion: Gewaltig
+References:
+  [1] The Mathematica Book V4.0 "Flatten"
+SeeAlso: Partition, FixedPoint
+*/
+
+/Flatten trie
+[/arraytype /integertype]
+ /Flatten_a_i load  addtotrie
+[/arraytype ]
+ /Flatten_a load  addtotrie
+def
+
+
+% x f
+/FixedPoint__p
+{
+ exch    % f x
+ {
+  dup    % f x x
+  2 pick % f x x f
+  exec   % f x f(x)
+  dup    % f x f(x) f(x)
+  rolld  % f f(x) f(x) x
+  eq     % f f(x) bool
+  {
+   exit
+  }
+  if     % f f(x)
+ } loop
+ exch pop % f(x)
+} def
+
+
+% x f n
+/FixedPoint__p_i
+{
+ rollu
+ exch
+ rolld   % f x n
+ {
+  dup    % f x x
+  2 pick % f x x f
+  exec   % f x f(x)
+  dup    % f x f(x) f(x)
+  rolld  % f f(x) f(x) x
+  eq     % f f(x) bool
+  {
+   exit
+  }
+  if     % f f(x)
+ } repeat
+ exch pop   % f(x)
+} def
+
+/*BeginDocumentation
+Name: FixedPoint - applies a procedure repeatedly until the result is an invariant
+Synopsis:
+         any proc         FixedPoint -> any
+         any proc integer FixedPoint -> any
+Description:
+FixedPoint called with three arguments applies the procedure not more
+than n times. The first argument is the initial value.
+Examples:
+ (kaeschperle) {Rest (_) join} FixedPoint   --> (___________)
+ (kaeschperle) {Rest (_) join} 1 FixedPoint --> (aeschperle_)
+ (kaeschperle) {Rest (_) join} 3 FixedPoint --> (schperle___)
+Remarks:
+Compared to Mathematica the first two arguments are reversed
+for better conformance with RPN.
+Author: Diesmann
+FirstVersion: May 21 2001
+References:
+  [1] The Mathematica Book V4.0 "Flatten"
+SeeAlso: Flatten
+*/
+
+/FixedPoint trie
+[/anytype /proceduretype /integertype]
+ /FixedPoint__p_i load  addtotrie
+[/anytype /proceduretype ]
+ /FixedPoint__p load  addtotrie
+def
+
+
+/*
+BeginDocumentation
+
+   Name: Partition - Partition list into n element pieces
+
+   Synopsis:
+     array n Partition
+     array n d Partition
+
+   Description:
+     Partition works like the corresponding Mathematica function. Partition
+     creates subarrays with n elements, and offset d.
+
+   Parameters:
+     n - length of subarray.
+     d - offset of subarray, defaults to n.
+   Examples:
+
+   [1 2 3 4 5 6 7 8 9 10]  2 2 Partition -> [[1 2] [3 4] [5 6] [7 8] [9 10]]
+   [1 2 3 4 5 6 7 8 9 10]  1 2 Partition -> [[1] [3] [5] [7] [9] [10]]
+   [1 2 3 4 5 6 7 8 9 10]  2 1 Partition ->
+              [[1 2] [2 3] [3 4] [4 5] [5 6] [6 7] [7 8] [8 9] [9 10]]
+
+   [4 5 6 7 8] 2     Partition  ->  [[4 5] [6 7]]
+   [4 5 6]     2 5   Partition  ->  [[4 5]]
+   [4 5 6]     5 1   Partition  ->  []
+   [4 5 6]     5 7   Partition  ->  []
+
+
+   Diagnostics:
+     Raises error if n<0 or d<1
+
+   Remarks: Still implements only part of Mathematica's functionality.
+
+   Author: Gewaltig, Diesmann
+
+   FirstVersion:  Jun 29 1999, Marc-Oliver Gewaltig
+
+   References: "The Mathematica Book"
+   SeeAlso: Flatten
+*/
+/Partition trie
+[/arraytype /integertype /integertype] /Partition_a_i_i load addtotrie
+[/arraytype /integertype ] {dup} /Partition_a_i_i load append addtotrie
+def
+
+
+
+
+%% array TensorRank -> n
+/TensorRank_
+{
+  1
+  {
+    exch_ 0 get_a
+    dup_ type
+    /arraytype neq
+    {
+      pop_ exit
+    } if
+    exch_ 1 add_ii
+  } loop
+} bind def
+
+/*BeginDocumentation
+Name: TensorRank - Determine the level to which an array is a full vector
+Synopsis: [array] TensorRank -> n
+Examples:
+           [1 2 3] TensorRank -> 1
+           [[1 2] [3 4]] TensorRank -> 2
+SeeAlso: Dimensions
+*/
+/TensorRank trie
+ [/arraytype] /TensorRank_ load addtotrie
+def
+
+/TensorRank [/intvectortype] {; 1} def
+/TensorRank [/doublevectortype] {; 1} def
+
+/*BeginDocumentation
+Name: Dimensions - determine dimenstions of a (hyper-rectangular) SLI array
+Synopsis: [array] Dimensions -> [d1 d2 ... dn]
+Description:
+Dimensions corresponds to the Mathematica function of
+the same name. It takes a sli array and returns a list with
+dimensions [d1 d2 ... dn] where di gives the dimension of the
+array at level i.
+The length of the dimensions-list corresponds to the TensorRank of
+the array.
+Note: Dimensions assumes that the array is hyper-rectangular
+      (rectangle,cuboid, ...), i.e., all subarrays at a given level
+      have the same number of elements.
+      Dimensions does not check, if the array really is hyper-rectangular. It
+      will not fail if this is not the case. Instead, the dimensions
+      that are returned correspond to the number of elements of the
+      first subarray in each level.
+
+Examples:
+SLI ] [1 2 3]                    Dimensions -> [3]
+SLI ] [[1 2 3] [4 5 6]]          Dimensions -> [2 3]
+SLI ] [[[1 2][3 4]][[5 6][7 8]]] Dimensions -> [2 2 2]
+
+SeeAlso: TensorRank, MatrixQ
+*/
+
+/Dimensions
+trie [/arraytype]
+{
+  [] exch_
+  %% [] obj
+  {
+    %% [] obj
+    dup_ type
+    %% [] obj type
+    /arraytype neq
+    { pop_ exit } if
+    size_a
+    dup
+    0 gt
+    {
+     %% [] array s
+     exch_ 0 get_a
+     %% [] s obj
+     3 1 roll
+     %% obj [] s
+     append_a exch_
+    }
+    {
+     %% [] array s
+     exch_ pop
+     append_a
+     exit
+    } ifelse
+  } loop
+} bind addtotrie def
+
+/Dimensions [/intvectortype] { length 1 arraystore } def
+/Dimensions [/doublevectortype] { length 1 arraystore } def
+
+/*BeginDocumentation
+Name: MatrixQ - Test whether a nested array i a matrix
+Synopsis: [array] MatrixQ -> true | false
+Examples: [1 2 3] MatrixQ -> true
+          [[1 2] [3 4]] MatrixQ -> true
+          [[1] [2 3]] MatrixQ ->False
+Bugs: This version fails on the third example
+Author: Marc-Oliver Gewaltig
+*/
+/MatrixQ
+trie [/arraytype]
+{
+  dup type
+  /arraytype eq
+  {
+    %% array
+    dup Dimensions
+    %% array [dims]
+    length 1 eq
+    {
+      true exch
+      {
+	MatrixQ not and
+      } forall
+    }
+    {
+      %% array
+      true exch
+      {
+        MatrixQ and
+ %       dup =
+      } forall
+    } ifelse
+  }
+  {
+    pop false
+  } ifelse
+} bind addtotrie
+[/anytype] {pop false} addtotrie
+ def
+
+/MatrixQ [/intvectortype] false def
+/MatrixQ [/doublevectortype] false def
+
+/* BeginDocumentation
+  Name: FindRoot - numerically find a root in an interval
+  Synopsis: proc double1 double2 double3 FindRoot -> double
+  Description:
+     Numerically searches for a root of a function
+     specified by proc in the interval [double1, double2].
+     The search stops when the absolute value of proc
+     is less or equal double3.
+  Parameters:
+  Examples:
+    cout 15 setprecision                   % for display only
+    {dup mul 2 sub} -3.0 7.0 0.00000000001 FindRoot
+  Bugs:
+   - should raise error when there is no sign reversal
+   - tracing should be optional
+   - specification of precision should be optional
+  Author: Diesmann, Hehl
+  FirstVersion: 29.7.1999
+  Remarks:
+   FindRoot currenly supports only a single method for
+   root finding: the "bisection method" (see [2]). The
+   Mathematica implementation uses different methods (see [1]).
+  SeeAlso:
+  References:
+   [1] The Mathematica Book "FindRoot"
+   [2] Numerical Recipes in C. 2nd ed. sec. 9.1
+       "Bracketing and Bisection"
+*/
+
+/FindRoot
+{
+ << >> begin
+ /prec Set
+ /xmax Set
+ /xmin Set
+ /f    Set
+
+ xmin f xmax f gt {xmin xmax /xmin Set /xmax Set} if
+
+ {
+  /x xmax xmin add 2 div def
+  x ==
+  x f /y Set
+  y prec gt
+  {/xmax x def}
+  {
+   y prec neg lt
+   {/xmin x def}
+   {x exit }
+   ifelse
+  }
+  ifelse
+ } loop
+end
+} def
+
+
+
+
+%---------------------------------------------------------------------------------- <- end of line (C84) is maximum width for LaTeX-include1
+/*
+BeginDocumentation
+
+Name: MathematicaToSliIndex - Convert Mathematica-like indices to SLI indices
+
+Synopsis: [array] mathematicaIndex MathematicaToSliIndex -> [array] sliIndex
+
+Description:
+   "MathematicaToSliIndex" converts Mathematica-like indices
+   to SLI indices.
+   For an array of size N, valid SLI indices are in the range 0..N-1
+   while valid Matematica indices are in the range -N..-1, 1..N
+   (negative indices indicating backward indexing from the end of the
+   array).
+
+   The given array is left untouched, solely its length is taken to
+   correctly map negative Mathematica indices to the correct SLI
+   indices.
+
+   Alternatives: Function MathematicaToSliIndex_i if index is a
+   number (example 1) and  MathematicaToSliIndex_a if index is an
+   array (example 2) (both undocumented) -> behaviour and synopsis are
+   the same.
+
+Examples:
+   [3 5 6 9 11] -2       MathematicaToSliIndex -> [3 5 6 9 11] 3
+   [3 5 6 9 11] [ -2 2 ] MathematicaToSliIndex -> [3 5 6 9 11] [3 1]
+
+Author: Markus Diesmann
+
+Remarks: Commented Ruediger Kupper
+
+SeeAlso: SliToMathematicaIndex
+
+*/
+
+% array integer MathematicaToSliIndex
+/MathematicaToSliIndex_i
+{
+ dup
+ 0 lt
+ {exch size 3 -1 roll add}
+ {1 sub}
+ ifelse
+} bind def
+
+/MathematicaToSliIndex_a
+{
+ { MathematicaToSliIndex_i } Map
+}
+bind def
+
+
+/MathematicaToSliIndex trie
+ [/arraytype /integertype ] /MathematicaToSliIndex_i load addtotrie
+ [/arraytype /arraytype ]   /MathematicaToSliIndex_a load addtotrie
+ [/stringtype /integertype ] /MathematicaToSliIndex_i load addtotrie
+ [/stringtype /arraytype ]   /MathematicaToSliIndex_a load addtotrie
+def
+
+%---------------------------------------------------------------------------------- <- end of line (C84) is maximum width for LaTeX-include1
+/*
+BeginDocumentation
+
+Name: SliToMathematicaIndex - Convert SLI indices to Mathematica-like indices
+
+Synopsis: sliIndex MathematicaToSliIndex -> mathematicaIndex
+
+Description:
+   "SliToMathematicaIndex" converts SLI indices to Mathematica-like
+   indices.
+   For an array of size N, valid SLI indices are in the range 0..N-1 while
+   valid Matematica indices are in the range -N..-1, 1..N (negative
+   indices indicating backward indexing from the end of the array).
+
+   Note that this routine will always return positive indices.
+
+Examples:
+     3     SliToMathematicaIndex -> 4
+   [ 3 1 ] SliToMathematicaIndex -> [ 4 2 ]
+
+
+Author: Ruediger Kupper
+
+FirstVersion: 11.3.2003
+
+Remarks:
+   Note the difference in the argument list compared to
+   "MathematicaToSliIndex". Only one argument, the index(array)
+   itself, is needed.
+
+   The implementation is _most_ simple (add 1 to the index), but the
+   Routine is supplied for symmetry reasons.
+
+   Note that this routine will always return positive indices. Hence,
+   the sequence
+   [array] MathematicaToSliIndex SliToMathematicaIndex
+   is NOT identity.
+
+SeeAlso: MathematicaToSliIndex
+
+*/
+
+/SliToMathematicaIndex [/integertype]
+{
+  1 add
+} bind def
+
+/SliToMathematicaIndex [/arraytype]
+{
+  {SliToMathematicaIndex} Map
+} bind def
+
+
+
+
+
+/Part_a
+{
+  dup
+  First
+  3 -1 roll exch
+  %
+  % indexarray array First[indexarray]
+  %
+  dup /All eq
+  {
+   pop size [1] exch append Range
+  }
+  if
+  %
+  %
+  dup type /arraytype eq
+  {
+   {
+    1 index exch
+    MathematicaToSliIndex_i get    % generalization: work with container and forall
+    %
+    % indexarray array subarray
+    %
+    2 index Rest
+    empty {pop} {Part} ifelse
+
+   } Map
+   %
+   % indexarray array subarray
+   %
+   3 1 roll pop pop
+  }
+  {
+    MathematicaToSliIndex_i get
+    exch Rest
+    empty {pop} {Part} ifelse
+  }
+  ifelse
+
+} def
+
+/* BeginDocumentation
+  Name: Part - returns a sub-array of an array
+  Synopsis: array1 array2 Part -> array3
+  Description:
+   Part returns a sub-array of array1 specified by
+   array2. This function is an implementation of
+   Mathematica's Part function. It can also be used
+   to rearrange or copy parts of array1. Note,
+   Mathematica-style functions in SLI use Mathematica
+   index notation.
+  Parameters:
+   array1 is an arbitrarily shaped array. In particular
+   it does not need to be rectangular.
+
+   array2 is an array [i,j, ...] where the i,j specify the
+   selected elements on each level. Any i,j can itself be
+   an array [i1,i2,....] specifying a list of elements on
+   that level. When i is the literal /All, all elements on
+   the corresponding level are returned. The first element
+   on each level has index 1. Indices can also be specified
+   counting from the end of the array, in this case the last
+   element has index -1. Positive and neative indices can
+   arbitrarily be intermixed.
+
+   Alternatives: Function Part_a (undocumented) -> behaviour and
+   synopsis are the same.
+
+  Examples:
+
+
+   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ [1 3] [2 3] ] Part  --> [[5 6] [1 8]]
+   [ [3 [-12 -19] 6 9] [11 4 7 2] [-9 1 8 10] ]  [ 1 2 2] Part --> -19  
+   [3 4 5 6 7] [-2] Part                                   --> 6 
+   [3 [-9 -12] 5 6 7] [2] Part                             --> [-9 -12]
+   [3 [-9 -12] 5 6 7] [2 2] Part                           --> -12
+   [3 [-9 -12] 5 6 7] [[2 3]] Part                         --> [[-9 -12] 5] 
+   [3 [-9 -12] 5 6 7] [[2 3 2]] Part                       --> [[-9 -12] 5 [-9 -12]]
+   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ 1 []  ] Part    --> [] 
+   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ [] 1 ] Part     --> [] 
+   [3 [5 -12] 6 9]  [ [ 2 ] ] Part                         --> [[5 -12]] 
+   [3 [5 -12] 6 9]  [ [ 2 ] 2] Part                        --> [-12] 
+   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ /All [3 2]  ] Part --> [[6 5] [7 4] [8 1]]
+
+  Bugs:
+  Author: Diesmann
+  FirstVersion: 29.9.1999
+
+  Remarks:
+   Literal /All plays the role of the index specifier ':'
+   in Matlab when used without arguments. Note, that
+   Matlab in addition provides specifier 'end'.
+   This is not necessary in the formalism of Mathematica
+   because indices counting from the end of the array can be
+   expressed by negative values.
+  SeeAlso: MathematicaToSliIndex
+  References:
+   [1] The Mathematica Book V4.0 "Part"
+*/
+/Part trie
+ [/arraytype /arraytype ] /Part_a load addtotrie
+ [/stringtype /arraytype ] /Part_a load addtotrie
+def
+
+
+/Transpose_ /Transpose load def
+/Transpose trie
+[/arraytype ] /Transpose_ load addtotrie
+def
+
+
+%% array n  Take - take first n elements of array
+%% array -n Take - take last n elements of array
+/Take_a_i
+{
+  dup 0 geq
+  {
+    0 exch_  getinterval
+  }
+  {
+      dup neg rollu MathematicaToSliIndex rolld
+      getinterval
+  } ifelse
+
+} bind def
+
+/switchbegin mark def
+
+/Take_a_a
+{
+  dup TensorRank
+  1 eq
+  {
+   size
+   switchbegin
+   1 index 1 eq
+   {
+     pop arrayload pop
+     MathematicaToSliIndex
+     get
+   } case
+
+   1 index 2 eq
+   {
+     pop arrayload pop
+
+%
+%    a i j
+     rollu                         % j a i
+     MathematicaToSliIndex         % j a im
+     rollu                         % im j a
+     exch                          % im a j
+     MathematicaToSliIndex         % im a jm
+
+     rolld                         % a jm im
+     dup                           % a jm im im
+     rollu                         % a im jm im
+     sub 1 add   
+     dup 0 lt			    % if 2nd parameter < 0, set it to zero to force getinterval 
+     {				    % to return empty array as requested by Take in this case
+       pop 0 
+     } if 
+    
+     getinterval
+     
+   } case
+
+   1 index 3 eq
+   {
+     pop
+     dup rollu Most MathematicaToSliIndex rolld Last append
+     Range     % a r
+     exch      % r a
+     container % r a c 
+     rolld     % a c r
+     {
+       2 index
+       exch
+       get
+       append
+     } forall
+     exch pop
+   } case
+
+   {
+      pop
+      /Take /IllegalSequenceSpecification raiseerror
+   }
+  switchdefault
+ }
+ {
+   %% array sarr
+   {Range} Map
+   Part
+ } ifelse
+} bind def
+
+/*BeginDocumentation
+Name: Take - extract element sequences from a container
+Synopsis:
+ array  n Take                  return the first n elements
+ array -n Take                  return the last n elements
+ array [n1 n2] Take             return elements n1 through n2
+ array [n1 n2 s] Take           return elements n1 through n2 in steps of s
+ array [[seq1]...[seqn]] Take   return a nested list in which elements
+                                specified by seqi are taken at level i in list.
+
+Operations are the same on strings.
+The implementation of Take uses the command container to abstract
+the container type.
+
+Note that Take handles indices ranging from -N to N where 
+    N is the length of the original container and asking for index 0 
+    will return an empty array.
+
+If the specified indices do not exist in the container, Take throws a RangeCheck error.
+
+If n2 < n1, Take returns an empty container.
+
+
+Examples:
+ [4 9 -7 3 2 11] 2 Take    --> [4 9]
+ [4 9 -7 3 2 11] -2 Take   --> [2 11]
+ [1 2 3 4 5] [-2] Take     --> 4
+ [1 2 3 4 5] [1 -2] Take   --> [1 2 3 4]
+ [1 2 3 4 5] [1 -2 2] Take --> [1 3]
+ [1 2 3 4 5] [1 -1 2] Take --> [1 3 5]
+% [1 2 3 4 5] [1 6] Take    --> [Error]: RangeCheck 
+ (HAL) {1 add} Map     --> (IBM)
+ (HAL) 2 Take          --> (HA)
+ (HAL) -2 Take         --> (AL)
+ (HALLO) [-2] Take     --> 76
+ (HALLO) [1 -2] Take   --> (HALL)
+ (HALLO) [1 -2 2] Take --> (HL)
+ (HALLO) [1 -1 2] Take --> (HLO)
+
+Author: Diesmann
+Bugs:
+ The scheme for a list of sequences is not fully consistent with Mathematica.
+ See Drop for a more advanced implementation.
+References:
+   [1] The Mathematica Book V4.0 "Take"
+SeeAlso: Drop, Part, MathematicaToSliIndex, getinterval, get
+*/
+
+/Take trie
+[/arraytype /integertype] /Take_a_i load addtotrie
+[/arraytype /arraytype]   /Take_a_a load addtotrie
+[/stringtype /integertype] /Take_a_i load addtotrie
+[/stringtype /arraytype]   /Take_a_a load addtotrie
+def
+
+
+
+/*BeginDocumentation
+Name: Drop - remove element sequences from an array
+Synopsis:
+ array  n Drop                  remove the first n elements
+ array -n Drop                  remove the last n elements
+ array [n] Drop                 remove the nth element
+ array [n1 n2] Drop             remove elements n1 through n2
+ array [n1 n2 s] Drop           remove elements n1 through n2 in steps of s
+ array {[seq1]...[seqn]} Drop   return a nested list in which elements
+                                specified by seqi are removed at level i in list.
+Examples:
+ [4 9 -7 3 2 11] 2 Drop    --> [-7 3 2 11]
+ [4 9 -7 3 2 11] -2 Drop   --> [4 9 -7 3]
+ [1 2 3 4 5] [-2] Drop     --> [1 2 3 5]
+ [1 2 3 4 5] [1 -2] Drop   --> [5]
+ [1 2 3 4 5] [1 -2 2] Drop --> [2 4 5]
+ [1 2 3 4 5] [1 -1 2] Drop --> [2 4]
+
+ [[-9 -12] [6 7]] {[2] [1]} Drop --> [[-12]]
+
+Author: Diesmann
+FirstVersion: 2007.11.28
+Bugs:
+ The list of sequences is represented by a procedure. This has delayed
+ evaluation which may cause undesired effects. Should be replaced in a
+ future versionby a new container type for parameter lists of undefined
+ length. Candidate delimiters are <...> with cva as the only access method.
+ Just using [...] as the container is ambiguous.
+References:
+   [1] The Mathematica Book V4.0 "Take"
+SeeAlso: Take, Part, MathematicaToSliIndex, erase
+*/
+
+/Drop [/arraytype /integertype]
+{
+ Drop_sequence_a_i_
+}
+def
+
+/Drop [/arraytype /arraytype]
+{
+ % a [i]
+ Drop_sequence_a_a_
+}
+def
+
+/Drop_preposti_
+{
+ % a [i]  -> pre_a post_a ai
+
+ 2 copy            % a [i] a [i]
+
+ Take              % a [i] ai
+ rollu             % ai a [i]
+ First             % ai a i
+
+
+ dup               % a i i
+ 1 sub
+ [1] exch append   % a i [1 i-1]
+ 2 index           % a i [1 i-1] a
+ exch Take         % a i pre_a
+ rollu             % pre_a a i
+ 1 add             % pre_a a i+1
+ 1 index length    % pre_a a i+1 l
+ 2 arraystore      % pre_a a [i+1 l]
+ Take              % pre_a post_a
+
+ rolld             % pre_a post_a ai
+}
+def
+
+
+
+/Drop [/arraytype /proceduretype]
+{
+ /mark exch  exec counttomark arraystore exch pop
+ Drop_sequences_
+}
+def
+
+
+/Drop_sequence_ [/arraytype /integertype]
+{
+ Drop_sequence_a_i_
+}
+def
+
+/Drop_sequence_ [/arraytype /arraytype]
+{
+ Drop_sequence_a_a_
+}
+def
+
+
+/Drop_sequence_a_i_
+{
+ % 1 2 | 3 4 5:  2 Drop == -length +  2 = -3 Take
+ %              -3 Drop ==  length + -3 =  2 Take
+ dup Sign neg   % a n -s
+ 2 index length % a n -s l
+ mul            % a n l
+ add            % a n
+ Take
+}
+def
+
+% array seq -> array explicit_range
+/MathematicaSequenceToExplicitRange_a_a_
+{
+ size  % a s
+ dup 1 eq
+ {
+  pop MathematicaToSliIndex
+ }
+ {
+  dup 2 eq
+  {
+   pop MathematicaToSliIndex Range
+  }
+  {
+   pop dup rollu Most MathematicaToSliIndex rolld Last append Range
+  }
+  ifelse
+ }
+ ifelse
+}
+def
+
+/Drop_sequence_a_a_
+{                       % a s
+ MathematicaSequenceToExplicitRange_a_a_  % a s(explicit and <-sorted)
+ {                      % a si i
+  sub                   % a si(corrected for previous erasions)
+  1 erase
+ } forallindexed
+}
+def
+
+/Drop_sequences_
+{
+           % a p
+ empty
+ {
+  pop
+ }
+ {                  % a p
+  exch              % p a
+  1 index           % p a p
+  First             % p a s
+  Drop_sequence_    % p as
+  exch              % as p
+  Rest              % as pr
+  exch              % pr ar
+  {                 % pr ai
+   1 index          % pr ai pr
+   Drop_sequences_  % ar
+  } Map             % pr aar
+  exch              % aar pr
+  pop               % aar
+ }
+ ifelse
+}
+def
+
+
+
+
+/* BeginDocumentation
+Name: NestList - gives a list of the results of applying f to x 0 through n times.
+Synopsis: x f n NestList ->  [x, x f,  x f f,..., x f1 ... fn]
+Parameters: x - any object to which f can be applied
+            f - an executable object.
+Description: NestList repeatedly applies f to the supplied argument and returns
+             the result als well as all intermediate results in a list.
+             Note that f must expect and return exactly one argument.
+Examples:   1 {2 mul} 3 NestList -> [1 2 4 8]
+SeeAlso: Map, forall
+*/
+%% x proc n NetList -> [x proc, x proc proc, x proc1 ... procn]
+/NestList trie
+[/anytype /anytype /integertype]
+{
+  [] 1 index 1 add reserve % reserve array-space for n+1 elements
+  4 -1 roll append         % add initial value to the array
+  exch
+  %% proc [x] n            % iterate over n
+  {
+    dup Last               % extract the last lement from the array
+    2 index exec           % apply function and
+    append                 % append the result to the array
+  } repeat
+  exch pop                 % remove spare function object
+} bind addtotrie def
+
+
+/*BeginDocumentation
+Name: Nest - apply a function n times
+Synopsis: x f n Nest -> f( ...n times... f(f(x)) ...)
+Examples:0.2 {dup 1 exch sub mul 3.3 mul} 10 Nest
+Author: Diesmann
+FirstVersion: 9.2.01
+Remarks:Nest is a restricted variant of repeat.
+It is implemented to demonstrate the use of repeat as a
+functional operator and for compatibility with Mathematica.
+SeeAlso: repeat, forall, NestList, Fold
+*/
+%% x f n Nest
+/Nest trie
+[/anytype /proceduretype /integertype]
+{
+ exch repeat
+} bind addtotrie def
+
+
+
+/*BeginDocumentation
+Name: Fold - result of repeatedly applying a function with two arguments
+Synopsis: x [a b c ...] f Select -> f( ...n times... f(f(f(x,a),b),c) ...)
+Examples: 1 [2 x] Range {mul} Fold
+         computes faculty of integer x
+Author: Diesmann
+FirstVersion: 9.2.01
+Remarks:Fold is a restricted variant of forall.
+It is implemented to demonstrate the use of forall as a
+functional operator and for compatibility with Mathematica.
+SeeAlso: forall, repeat, FoldList, Nest
+*/
+%% x a p
+/Fold [/anytype /arraytype /proceduretype] /forall load def
+/Fold [/anytype /intvectortype /proceduretype] /forall load def
+/Fold [/anytype /doublevectortype /proceduretype] /forall load def
+
+
+
+
+/*BeginDocumentation
+Name: FoldList - repeatedly apply a function with two parameters
+Synopsis: x [a b c ...] f FoldList -> [f(x,a) f(f(x,a),b) ...]
+Examples: 0 [1 2 3 4] {add} FoldList gives the cumulative sums of the list.
+         0 [1 2 3 4] {add} FoldList -> [0 1 3 6 10]
+Remarks: This function is Mathematica compatible.
+SeeAlso: NestList, Fold, Map, forall
+*/
+%% x array f FoldList
+/FoldList trie
+[/anytype /arraytype /anytype]
+{
+  exch
+  % x f array
+  []
+  % x f array []
+  4 -1 roll append
+  % f array [x]
+  exch
+  % f [x] array
+  {
+    1 index Last
+    % f [x] ai x
+    exch
+    % x ai
+    3 index exec
+    % f [x] f(x,ai)
+    append
+  } forall
+  exch pop
+} bind addtotrie def
+
+
+
+/*BeginDocumentation
+Name: Select - reduces an array to elements which fulfill a criterion
+Synopsis: array proc Select -> array
+Examples:[4 -2 0.3 -1.7 -3 0 7] {0 lt} Select -> [-2 -1.7 -3]
+         [4 -2 0.3 -1.7 -3 0 7] {0 gt} Select -> [ 4  0.3  7]
+Remarks: Mathematica compatible
+Author: Diesmann
+FirstVersion: 9.2.01
+SeeAlso: Take, Split
+*/
+%% a f Select
+/Select trie
+[/arraytype /proceduretype]
+{
+ exch
+ container
+ rollu exch
+ {dup} exch join { {append } {pop} ifelse } join
+ forall
+}  bind addtotrie def
+
+
+
+/*BeginDocumentation
+Name: Split - splits array into subarrays of sequences of identical elements
+Synopsis: array  Split     -> [array1 ... arrayn]
+          array proc Split -> [array1 ... arrayn]
+Examples:
+         [1 1 1 2 2 3 3 3 3 4 4 4] Split -> [[1 1 1] [2 2] [3 3 3 3] [4 4 4]]
+         [1.1 1.3 1.7 2.1 2.3 2.7] {floor exch floor eq} Split ->
+             [[1.1 1.3 1.7] [2.1 2.3 2.7]]
+         [1] Split -> [[1]]
+         [] Split  -> []
+Remarks: Mathematica compatible
+Author: Diesmann
+FirstVersion: 13.2.01
+SeeAlso: Take, Select
+*/
+/Split_
+{
+ exch
+ container
+ exch
+ empty
+ {
+  rollu pop pop
+ }
+ {
+  dup [[1]] Part exch
+  2 1 Partition
+
+  {                    % 1. part of forall's argument
+   dup arrayload pop
+  }
+
+  5 -1 roll            % 2. part, the criterion
+  join
+
+  {                    % 3. part
+   {1 get append}
+   {rollu append exch [[2]] Part }
+   ifelse
+  }
+  join
+
+  forall
+
+  append
+ } ifelse
+
+} bind def
+
+/Split trie
+ [/arraytype /proceduretype] /Split_ load addtotrie
+ [/arraytype ] { {eq} } /Split_ load  join  addtotrie
+def
+
+
+
+
+/*BeginDocumentation
+Name: MergeLists - merges sorted lists
+Synopsis: array array      MergeLists  -> array
+          array array proc MergeLists  -> array
+Examples:
+  [1 3 5] [2 7] MergeLists -> [1 2 3 5 7]
+  [[-9 1] [1 3] [4 5]]  [[3 2] [0 7]] {exch 1 get exch 1 get lt} MergeLists ->
+         [[-9 1] [3 2] [1 3] [4 5] [0 7]]
+Description:
+ MergeLists is unlike Union which removes repeated elements and does
+ not require the arguments to be sorted. However, the result of
+ Union is also sorted. MergeLists does not appear in Mathematica V4.0,
+ Union does.
+Author: Diesmann
+FirstVersion: 8.5.01
+References:
+   [1] The Mathematica Book V4.0 "Union"
+SeeAlso: Select, Split
+*/
+/MergeLists_
+{
+ % l1 l2 crit
+
+ {% part 1 of loop procedure
+
+  % loop invariant is:
+  %  [result] [remainder l1] [remainder l2]
+
+  empty      {pop join exit} if
+  exch empty {pop join exit} { exch } ifelse
+
+  % get first element of l1 and l2
+  %
+  1 pick First
+  1 pick First
+
+  % [] l1 l2 e1 e2
+ }
+
+ exch % l1 l2 p1 crit
+
+ {% part 2 of loop procedure
+  { % e1 < e2
+    % [] l1 l2
+
+   rollu
+   dup First
+   exch rollu
+   append
+
+   rollu
+   Rest
+   exch
+
+  }
+  { % e1 >= e2
+    % [] l1 l2
+
+   rolld exch
+   dup First
+   rolld exch
+   append
+
+   rollu
+   Rest
+
+  }
+  ifelse
+ }
+            % l1 l2 p1 crit p2
+ join join  % l1 l2 p
+
+ exch container rolld
+ 4 2 roll
+ rolld
+
+%  container rollu  % [] l1 l2 p
+
+ loop
+
+} def
+
+
+/MergeLists trie
+ [/arraytype /arraytype /proceduretype] /MergeLists_ load addtotrie
+ [/arraytype /arraytype ] { {lt} } /MergeLists_ load join  addtotrie
+def
+
+
+
+
+/* BeginDocumentation
+  Name: Times - represents/computes product of terms
+  Synopsis: array Times -> double
+                        -> integer
+  Description:
+   Times represents or computes the product of its
+   arguments v1,-,vn. The arguments are supplied
+   by an array [v1, -,vn]. The product of an empty
+   argument list is defined to be unity.
+   Times is an implementation of Mathematica's Times [1].
+  Parameters:
+  Examples:
+%
+         [4 3 2 5 6] Times --> 720
+         [] Times          --> 1
+
+  Bugs:
+   not yet protected by trie
+  Author: Diesmann
+  FirstVersion: 31.5.2000
+  Remarks:
+  SeeAlso: Plus
+  References:
+   [1] The Mathematica Book "Times"
+*/
+/Times { 1 exch { mul } forall } bind def
+
+
+/* BeginDocumentation
+  Name: Plus - represents/computes sum of terms
+  Synopsis: array Plus -> double
+                       -> integer
+  Description:
+   Plus represents or computes the sum of its
+   arguments v1,-,vn. The arguments are supplied
+   by an array [v1, -,vn]. The sum of an empty
+   argument list is defined to be zero.
+   Plus is an implementation of Mathematica's Plus [1].
+  Parameters:
+  Examples:
+
+         [4 3 2 5 6] Plus -->  20
+         [ ] Plus         -->   0
+
+  Bugs:
+   not yet protected by trie
+  Author: Diesmann
+  FirstVersion: 31.5.2000
+  Remarks:
+  SeeAlso: Times
+  References:
+   [1] The Mathematica Book "Plus"
+*/
+/Plus { 0 exch { add } forall } bind def
+
+% v1 vn n astore
+/astore
+{
+ length arraystore
+ (astore is obsolete:\n)
+ (In contrast to PostScript SLI arrays are dynamic\n)
+ (use arraystore instead.) join join M_INFO message
+} def
+
+
+/aload
+{
+ arrayload array
+ (aload is obsolete:\n)
+ (In contrast to PostScript SLI arrays are dynamic\n)
+ (use arrayload instead.) join join M_INFO message
+} def
+
+/* BeginDocumentation
+  Name: Dot - product of vectors, matrices, and tensors
+  Synopsis: array array Dot -> array
+                              -> double
+                              -> integer
+  Description:
+
+    A B Dot contracts the last index in A with the first
+    index in B. Indices in mathematical notation, leftmost
+    index describes first level objects. For peole used to
+    strict (row,column) notation as in Matlab [2] effects
+    of this generalized product may be surprising (see
+    examples (1) to (3).
+    Dot is an implementation of Mathematica's Dot [1].
+  Parameters:
+  Examples:
+
+ (1)
+   [ 4 3 7 ] [ 2 5 8] Dot ==79
+
+ (2)
+   [ 4 3 7 ] [ [ 2] [ 5 ] [ 8 ] ] Dot ==  [79]
+
+ (3)
+   [ [ 4 ] [ 3 ] [ 7 ] ] [  2  5   8  ] Dot ==  [8 6 14]
+      Error: /DimensionMismatch in Dup
+ (4)
+   [ [ 5 3 2 ] [ 5 4 1 ] ] [ [ 2 ] [ 3 ] [ 9 ] ] Dot == [[37] [31]]
+
+ (5)
+   [ [ 5 3 2 ] [ 5 4 1 ] ] [ 2  3 9  ] Dot ==   [37 31]
+
+ (6)
+   [ 7 8 ] [ [ 5 3 2 ] [ 5 4 1 ] ]  Dot == [75 53 22]
+
+ (7)
+   [  [ 5 3 ]  [ 1 2 ] [ 5 4 ] ]
+   [ [ [ 2 1 ]  [ 5 3 ] [ 3  4 ] [ 7 5 ]] [ [ 3 1 ]  [ 7 4] [8 9] [1 8] ] ]
+    Dot ==
+   [ [ [19 8] [46 27] [39 47] [38 49] ]
+     [ [8 3]  [19 11] [19 22] [9 21]  ]
+     [ [22 9] [53 31] [47 56] [39 57] ]
+    ]
+
+  Bugs: Bad performace: TensorRank should be rewritten in C++
+   not yet protected by trie
+  Author: Diesmann
+  FirstVersion: 31.5.2000
+  Remarks:
+  SeeAlso: Times, Plus, OuterProduct
+  References:
+   [1] The Mathematica Book "Dot"
+   [2] The MathWorks, Matlab User's Guide
+*/
+/Dot  % A B Dot
+{
+ dup Dimensions First  2 index Dimensions  Last neq
+ {/Dot /DimensionMismatch raiseerror } if
+ exch
+ dup TensorRank 1 eq  % of A
+ {
+  exch_ dup_ TensorRank 1 eq  % of B
+  {
+    Dot1D
+  }
+  {
+   Transpose_   % of B
+   {1 index exch_ Dot } Map_ exch_ pop_
+  }
+  ifelse_
+ }
+ { % B A
+  { 1 index Dot } Map_ exch_ pop_
+ }
+ ifelse_
+} bind def
+
+/* BeginDocumentation
+   Name: Dot1D - Compute the inner product of two vectors.
+   Synopsis: array array Dot1D -> num
+   Description: 
+   Dot1D expects two one dimensional arrays or vectors and computes the
+   inner product of the two arguments.
+   Dot1D works equally well for arrays, doublevectors and intvectors.
+
+   Example:
+    <. 1 2 3 .> <. 1 2 3 .> Dot1D -> 14
+   SeeAlso: Dot, OuterProduct
+   Author: Marc-Oliver Gewaltig
+   FirstVersion: Dec 18 2012
+*/
+/Dot1D
+{
+  mul
+  0 exch
+  { add } forall
+} def
+
+
+/* BeginDocumentation
+  Name: OuterProduct - outer product
+  Synopsis: array array OuterProduct -> array
+
+  Description:
+   A B OuterProduct computes the outer product of A
+   and B by forming all possible combinations of the
+   lowest level elements (rightmost indices) in both
+   lists.
+   OuterProduct is compatible to Mathematica's
+   Outer[Times,A,B] [1]
+  Parameters:
+  Examples:
+
+    [3 4 5] [6 7 8 9] OuterProduct ->
+       [
+        [18 21 24 27]
+        [24 28 32 36]
+        [30 35 40 45]
+       ]
+
+  Bugs:
+   not yet protected by trie
+  Author: Marc-Oliver Gewaltig, Diesmann
+  FirstVersion: 31.5.2000, rewritten Dec 18 2012
+  
+  Remarks:
+  SeeAlso: Times, Dot
+  References:
+   [1] The Mathematica Book "Outer"
+*/
+/OuterProduct
+{
+ exch
+ { 1 index mul } Map 
+ exch pop
+} bind def
+
+
+/*BeginDocumentation
+Name: LayoutArray - build a multidimensional array
+Synopsis: [d1 d2 ...] val LayoutArray -> [...]
+Parameters: [d1 d2 ...] - Array with dimensions.
+            val         - initialisation value for array entries
+Description:
+  LayoutArray generates a multi-dimensional array which is
+  initialised to val.
+
+Examples:
+   [5] 1 LayoutArray -> [1 1 1 1 1]
+   [2 3] 1.0 LayoutArray -> [ [1.0 1.0 1.0] [1.0 1.0 1.0]]
+
+Author: Marc-oliver Gewaltig
+FirstVersion: 20.6.02
+SeeAlso: ArrayShape, Range, Table, Dimensions, array
+*/
+/LayoutArray
+{
+  << >> begin
+  /val exch def
+  size /n_dim Set
+ /dim  Set
+  n_dim 1 eq
+  {
+    [ dim 0 get {val} repeat ]
+  }
+  {
+    dim 0 get array
+    { ;
+      dim Rest val LayoutArray
+    } Map
+  } ifelse
+ end
+} bind def
+
+
+
+/*BeginDocumentation
+Name: ArrayShape - reduce a multidimensional array to a desired shape
+Synopsis: array1 [d1 d2 ...] LayoutArray -> array2
+Parameters:
+ array1      - array to operate on
+ [d1 d2 ...] - array with specification of dimensions, where
+               di is an integer or /All
+ array2      - reduced array1
+Description:
+ The function is useful if an operation needs to be performed on an
+ array of data which contains rows with insufficient data and rows
+ with trailing superfluous entries.
+
+ The algorithm is as follows:
+  - if dim empty return []
+  - take first d1 elements of a if available
+    return [] otherwise
+  - forall these elements
+     - do nothing if [d2 ...dn] empty
+     - otherwise apply [d2 ...dn] and remove
+       if result is []
+
+Examples:
+ [ [ 3 6 9] 100 [ 8 2 3 7 1] ] [2] ArrayShape
+  -> [[3 6 9] 100]
+ [ [ 3 6 9] [ 8 2 3 7 1] ] [/All 2] ArrayShape
+  -> [[3 6] [8 2]]
+ [ [ 3 6 9] [ 8 2 3 7 1] ] [/All 3] ArrayShape
+  -> [[3 6 9] [8 2 3]]
+ [ [ 3 6 9] [ 8 2 3 7 1] ] [/All 4] ArrayShape
+  -> [[8 2 3 7]]
+
+ [[[ 6 2 3] [-7 4 5] ] [[8 3 2] [2 -9 -5] 3 7 1]] [/All 2 3] ArrayShape
+  -> [[[6 2 3] [-7 4 5]] [[8 3 2] [2 -9 -5]]]
+
+Remarks:
+ The Mathematica function ArrayDepth (not implemented) tests whether its
+ argument has the required dimensions. This is unlike the function Dimensions
+ which assumes that all elements of the array at a given level have identical
+ shape and, therefore, inspects only the first element at each level.
+Author: Diesmann
+FirstVersion: 2007.11.28
+SeeAlso: LayoutArray, Part, Table, Dimensions
+*/
+
+/ArrayShape
+{
+ empty  % array dims
+ {
+  exch pop  % return empty array
+ }
+ {
+  dup Rest rollu  % array dims
+  First           % dims_remain array dims
+                  % dims_remain array dim
+
+  dup /All eq {pop dup length} if  % dims_remain array dim
+  dup 2 index length  % dims_remain array dim dim length
+
+  leq
+  { % array has sufficient length
+   Take                      % dims_remain array dim
+   1 index                   % dims_remain array
+   length                    % dims_remain array dims_remain
+   0 eq                      % dims_remain array length
+   {                         % dims_remain array
+    exch pop                 % remove dims_remain
+   }
+   {
+    container        % dims_remain array
+    exch             % dims_remain array []
+    {
+     2 index         % dims_remain result_array array_element
+     ArrayShape      % dims_remain result_array array_element dims_remain
+     empty           % dims_remain result_array array_element
+     {pop}
+     {append}
+     ifelse
+    }
+    forall
+    exch pop         % dims_remain result_array
+   }
+   ifelse
+  }
+  {
+   pop       % dims_remain array dim
+   container % dims_remain array
+   rollu     % dims_remain array []
+   pop       % [] dims_remain array
+   pop       % [] dims_remain
+  }
+  ifelse
+ }
+ ifelse
+} def
+
+
+
+/* BeginDocumentation
+Name: add - add two numbers or vectors
+Synopsis: n1 n2  add -> n3
+          a1 a2  add -> a3
+Description: add can be used to add numbers and arrays.
+
+  If applied to numbers, add returns the sum of the numbers. If one
+  of the arguments is a double, the result is also a double.
+
+  Applied to arrays, add perfoms a per-component addition of the two
+  arrays. The components must be numbers, however, integer and double
+  values may be mixed.
+
+  Note that the two arrays must be of the same size.
+
+
+Examples:
+           1 2   add -> 3
+           1.0 2 add -> 3.0
+           [1 2] [3 4] add -> [4 6]
+           1 [3 4] add -> [4 5]
+Author: M-O Gewaltig
+SeeAlso: Dot, Plus, Times
+*/
+
+
+/add_a_a
+{
+  2 arraystore
+  { add } MapThread
+}  bind def
+
+/add_i_a
+{
+  {
+    1 index add
+  } Map
+  exch pop
+} bind def
+
+/add_a_i
+{
+  exch_ add_i_a
+} bind def
+
+/add [/arraytype /arraytype] /add_a_a load def
+/add [/doubletype /arraytype] /add_i_a load def
+/add [/arraytype /doubletype] /add_a_i load def
+/add [/integertype /arraytype] /add_i_a load def
+/add [/arraytype /integertype] /add_a_i load def
+
+/*BeginDocumentation
+Name: sub - subtract two numbers or vectors
+
+Synopsis: n1 n2  sub -> n3
+          a1 a2  sub -> a3
+
+Description: sub can be used to subtract numbers and arrays.
+
+  If applied to numbers, sub returns the difference of the numbers. If one
+  of the arguments is a double, the result is also a double.
+
+  Applied to arrays, sub perfoms a per-component subtraction of the two
+  arrays. The components must be numbers, however, integer and double
+  values may be mixed.
+
+  Note that the two arrays must be of the same size.
+
+
+Examples:
+           5 2   sub -> 3
+           5.0 2 sub -> 3.0
+           [5 7] [3 4] sub -> [2 3]
+           [3 4] 1 sub -> [2 3]
+
+Author: docu by Sirko Straube (adopted from add)
+
+SeeAlso: add, mul, div
+*/
+
+/sub_a_a
+{
+  2 arraystore
+  { sub } MapThread
+}  bind def
+
+/sub_i_a
+{
+  {
+    1 index exch_ sub
+  } Map
+  exch pop
+} bind def
+
+/sub_a_i
+{
+  exch_
+  {
+    1 index sub
+  } Map
+  exch_ pop
+} bind def
+
+/sub [/arraytype /arraytype] /sub_a_a load def
+/sub [/doubletype /arraytype] /sub_i_a load def
+/sub [/arraytype /doubletype] /sub_a_i load def
+/sub [/integertype /arraytype] /sub_i_a load def
+/sub [/arraytype /integertype] /sub_a_i load def
+
+/*BeginDocumentation
+Name: mul - multiply two numbers or vectors (point-wise)
+
+Synopsis: int int mul -> int
+int double mul -> double
+array int/double mul -> array
+
+Examples: 3 4 mul -> 12
+3.33 3 mul -> 9.99
+[1 2.2 3] 4 mul -> [4 8.8 12]
+
+Author: docu by Sirko Straube
+
+SeeAlso: add, sub, div, Dot
+*/
+/mul_a_a
+{
+  2 arraystore
+  { mul } MapThread
+}  bind def
+
+/mul_i_a
+{
+  {
+    1 index mul
+  } Map
+  exch pop
+} bind def
+
+/mul_a_i
+{
+  exch_ mul_i_a
+} bind def
+
+/mul [/arraytype /arraytype] /mul_a_a load def
+/mul [/doubletype /arraytype] /mul_i_a load def
+/mul [/arraytype /doubletype] /mul_a_i load def
+/mul [/integertype /arraytype] /mul_i_a load def
+/mul [/arraytype /integertype] /mul_a_i load def
+
+/*BeginDocumentation
+Name: div - divide two numbers or vectors (point-wise)
+
+Synopsis: int int div -> int
+int double div -> double
+array int/double div -> array
+
+Examples: 9 2 div -> 4
+9 3.3 div -> 2.727273
+[10 11.5 12] 4 div -> [2 2.875 3]
+
+Author: docu by Sirko Straube
+
+SeeAlso: add, sub, mul, Dot
+*/
+/div_a_a
+{
+  2 arraystore
+  { div } MapThread
+}  bind def
+
+/div_i_a
+{
+  {
+    1 index div
+  } Map
+  exch pop
+} bind def
+
+/div_a_i
+{
+  exch_ div_i_a
+} bind def
+
+/div [/arraytype /arraytype] /div_a_a load def
+/div [/doubletype /arraytype] /div_i_a load def
+/div [/arraytype /doubletype] /div_a_i load def
+/div [/integertype /arraytype] /div_i_a load def
+/div [/arraytype /integertype] /div_a_i load def
+
+/*BeginDocumentation
+Name: ArrayQ - returns true if top object is an array
+SeeAlso: NumberQ, LiteralQ
+*/
+
+/ArrayQ trie [/arraytype] true  addtotrie
+             [/anytype]   false addtotrie
+def
+/*BeginDocumentation
+Name: LiteralQ - returns true if top object is a literal
+SeeAlso: NumberQ, ArrayQ, StringQ
+*/
+/LiteralQ trie [/literaltype] true  addtotrie
+               [/anytype]   false   addtotrie
+def
+
+/*BeginDocumentation
+Name: NumberQ - returns true if top object is a number (int or double)
+Synopsis: int    NumberQ -> true
+          double NumberQ -> true
+          any    NumberQ -> false
+SeeAlso: IntegerQ, DoubleQ, LiteralQ, ArrayQ, StringQ
+*/
+
+/NumberQ trie
+ [/integertype] true  addtotrie
+ [/doubletype]  true  addtotrie
+ [/anytype]     false addtotrie
+def
+
+/*BeginDocumentation
+Name: IntegerQ - returns true if top object is an integer (int)
+Synopsis: int    IntegerQ -> true
+          any    IntegerQ -> false
+SeeAlso: NumberQ, DoubleQ, LiteralQ, ArrayQ, StringQ
+*/
+/IntegerQ trie
+ [/integertype] true  addtotrie
+ [/anytype]     false addtotrie
+def
+
+/*BeginDocumentation
+Name: DoubleQ - returns true if top object is a double
+Synopsis: double DoubleQ -> true
+          any    DoubleQ -> false
+SeeAlso: IntegerQ, DoubleQ, FiniteQ, LiteralQ, ArrayQ, StringQ
+*/
+/DoubleQ trie
+ [/doubletype] true  addtotrie
+ [/anytype]    false addtotrie
+def
+
+/*BeginDocumentation
+Name: FiniteQ - returns true if top object is finite number
+Synopsis: double FiniteQ -> true/false
+          int    FiniteQ -> true
+Description:
+For numeric arguments, returns true if the value is finite
+(neither +inf, -inf, or nan). Integers are always finite.
+It is an error to call this function on anything except numbers.
+SeeAlso: IntegerQ, DoubleQ, LiteralQ, ArrayQ, StringQ
+*/
+/FiniteQ trie
+ [/doubletype]  /finite_q_d load addtotrie
+ [/integertype] true       addtotrie
+ [/anytype]     { /FiniteQ /IllegalArgument raiseerror } addtotrie
+def
+
+
+/*BeginDocumentation
+Name: StringQ - returns true if top object is a string
+Synposis: string StringQ -> true
+          any    StringQ -> false
+SeeAlso: NumberQ, LiteralQ, ArrayQ
+*/
+/StringQ trie [/stringtype] true  addtotrie
+       	      [/anytype]    false addtotrie
+def
+
+/*BeginDocumentation
+Name: DictQ - returns true if top object is a dictionary
+Synposis: dictionary DictQ -> true
+          any        DictQ -> false
+SeeAlso: NumberQ, LiteralQ, ArrayQ
+*/
+/DictQ trie 
+  [/dictionarytype] true addtotrie
+  [/anytype]        false addtotrie
+def
+
+/*BeginDocumentation
+Name: MemberQ - checks if array contains a specific element
+Synopsis:
+array any MemberQ -> true
+                  -> false
+Examples:
+[3 8 2 9 -1] 2 MemberQ --> true
+[3 8 9 -1]   2 MemberQ --> false
+Author: Diesmann
+FirstVersion: 10.5.2001
+Remarks: The Mathematica implementation is much more general
+References:
+   [1] The Mathematica Book "MemberQ"
+SeeAlso: LiteralQ, NumberQ, ArrayQ, MatrixQ, HasDifferentMemberQ
+*/
+/MemberQ
+{
+ << >> begin
+  /member Set
+  /array Set
+
+ false
+ array {/member load eq {pop true exit} if} forall
+ end
+} def
+
+/*BeginDocumentation
+Name: HasDifferentMemberQ - checks if array contains different element(s)
+Synopsis:
+array any HasDifferentMemberQ -> true
+                          -> false
+Examples:
+[3 8 2 9 -1] 2 HasDifferentMemberQ --> true
+[2 2 2]      2 HasDifferentMemberQ --> false
+Author: Plesser, based on MemberQ
+FirstVersion: 20 Sept 2010
+SeeAlso: LiteralQ, NumberQ, ArrayQ, MatrixQ, MemberQ
+*/
+/HasDifferentMemberQ
+{
+ << >> begin
+  /member Set
+  /array Set
+
+ false
+ array {/member load neq {pop true exit} if} forall
+ end
+} def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/* BeginDocumentation
+   Name: SubsetQ - Test if one dictinary is a subset of another
+
+   Synopsis:
+   dict1 dict2 SubsetQ -> bool
+
+   Parameters:
+   dict1 - dictionary
+   dict2 - dictionary
+
+   Description:
+   The functions returns true, if all entries of dict2 are present in dict1
+   with the same values.
+
+   Examples:
+   << /a 1 /b 2 /c 2 >> << /c 2 >> SubsetQ -> true
+*/
+
+/SubsetQ
+[/dictionarytype /dictionarytype]
+{
+  << >> begin
+  cva 2 Partition
+  /properties Set
+  /object Set
+
+  true
+  properties
+  {
+    arrayload ;
+    /val Set
+    cvlit /key Set
+    object dup key known
+    {
+      key get
+      val eq and
+    }
+    {
+     pop pop false exit
+    } ifelse
+  } forall
+  end
+} bind def
+
+/*BeginDocumentation
+Name: ToMathematicaExpression - converts SLI data to Mathematica input
+Synopsis:
+any ToMathematicaExpression -> string
+
+Description:
+An error is raised for unsupported SLI data types. In particular,
+the function also converts heterogeneous arrays and dictionaries.
+
+Examples:
+
+[3.4 (hello) [2 3] ] ToMathematicaExpression -->
+     ({ImportString["3.4","List"][[1]], "hello", {2, 3}})
+<< /i 6 /s (hello) >> ToMathematicaExpression -->
+     ({i -> 6, s -> "hello"})
+
+Author: Diesmann
+Remarks:
+The conversion of doubles does not yet guarantee the existence
+of the decimal point and an appropriate number of digits.
+References:
+   [1] The Mathematica Book
+*/
+/ToMathematicaExpression
+{
+ dup                           % we need type and value
+ <<
+   /arraytype
+     {
+      ({) exch empty not
+      {
+       {                        % we at least one element to operate on
+        dup Rest exch           % save the reminder of the array
+        First                   % get the next element to operate on
+        ToMathematicaExpression % convert to Mathematica input format
+        rolld exch join exch    % append to converted part
+        empty
+        {exit} if               % last element does not need a separator
+        (, )                    % separator
+        rolld exch join exch    % append to converted part
+       } loop
+      } if
+      pop                       % the empty array is still on the stack
+      (}) join
+     }
+   /dictionarytype
+     {
+      cva 2 Partition           % create a list of tuples
+      ({) exch empty not
+      {
+       {                        % we at least one element to operate on
+        dup Rest exch           % save the reminder of the array
+        First                   % get the next element to operate on
+
+        dup 0 get cvs           % convert the name of the key
+        ( -> ) join exch        % append the rule symbol
+        1 get
+        ToMathematicaExpression % convert to Mathematica input format
+        join                    % append value in Mathematica input format
+
+        rolld exch join exch    % append to converted part
+        empty
+        {exit} if               % last element does not need a separator
+        (, )                    % separator
+        rolld exch join exch    % append to converted part
+       } loop
+      } if
+      pop                       % the empty array is still on the stack
+      (}) join
+     }
+   /stringtype
+     { (") exch join (") join }
+   /booltype
+     { {(True)} {(False)} ifelse }
+   /integertype
+     { cvs }
+   /doubletype
+     { cvs (ImportString[") exch join (","List"][[1]]) join }
+   /literaltype
+     { cvs }
+ >>
+ dup rolld type known not       % argument not in the list of convertible types?
+ {
+  /ToMathematicaExpression      % supply the error handler with appropriate
+  /NoMathematicaRepresentation  % information about the problem
+  raiseerror
+ } if
+ exch dup rollu type get exec   % apply conversion rule
+} def
+
+%----------------------------------------------------------------------------
+/* BeginDocumentation
+
+Name: UnitStep - The unit step function (aka Heavyside function)
+
+Synopsis:
+              x  UnitStep -> 0   ;if  x <  0
+                          -> 1   ;if  x >= 0
+     [x1 x2 ...] UnitStep -> 0   ;if xi <  0 for any xi in [x]
+                          -> 1   ;if xi >= 0 for all xi in [x]
+
+Description:
+     "x UnitStep" represents the unit step function,
+     equal to 0 for x<0 and 1 for x>=0.
+
+     "[x1 x2 ...] UnitStep" represents the multidimensional unit step
+     function which is 1 only if none of the xi are negative.
+
+     Alternatives: Function UnitStep_i for integers, UnitStep_d for
+     doubles, UnitStep_ia for integer arrays, UnitStep_da for double
+     arrays (all undocumented) -> behavior and synopsis are the same,
+     except that no warnings or error messages are thrown.
+
+Diagnostics:
+     When called on an empty array, /ArgumentType is raised.
+
+     When first element of the array is not of type integer or double,
+     /ArgumentType is raised.
+
+     Will break if called on an array containing non-numerical values.
+
+Author: Ruediger Kupper
+
+FirstVersion: 13.3.2003
+
+Remarks:
+     This is the SLI version of the Mathematica function "UnitStep".
+     Documentation taken from the Mathematica Book.
+
+     Implementation of the type variants can be found in file
+     synod2/sli/slimath.cc.
+SeeAlso: Sign, abs
+References:
+     The Mathematica Book
+
+*/
+
+/UnitStep [/integertype] /UnitStep_i load def
+/UnitStep [/doubletype]  /UnitStep_d load def
+/UnitStep [/arraytype]
+{
+  size 0 eq
+  {
+    M_ERROR (UnitStep) (Array must not be empty.) message
+    /UnitStep /ArgumentType raiseerror
+  } if
+
+  dup 0 get type
+  mark
+  1 pick /integertype eq {pop UnitStep_ia exit} case
+  1 pick /doubletype  eq {pop UnitStep_da exit} case
+  {
+    pop
+    M_ERROR (UnitStep) (Array must be a homogeneous integer or double array.) message
+    /UnitStep /ArgumentType raiseerror
+  }
+  switchdefault
+} bind def
+
+
+
+
+/*BeginDocumentation
+Name: Sign - returns the sign of its argument
+Synopsis:
+ integer Sign -1,0, or 1
+ double  Sign -1,0, or 1
+Parameters:
+ The return value is always an integer
+Description:
+ The C++ standard library does not define a sign function because
+ there is no general agreement on the return value for 0. The function
+ Sign implements the decision made for Mathematica: if the argument is
+ 0, Sign returns 0.
+Author: Diesmann
+FirstVersion: 2007.11.28
+References:
+   [1] The Mathematica Book "Sign"
+SeeAlso: UnitStep, abs
+*/
+
+/Sign
+{
+ dup
+ 0 eq
+ {pop 0 }
+ {0 gt {1}{-1} ifelse }
+ ifelse
+}
+def
+
+
+/* BeginDocumentation
+Name: IntegerPart - Return integer part of the argument.
+Synopsis: double IntegerPart -> integerpart
+Description:
+     In effect sets all digits to the right of the decimal point to
+     zero. The sign is preserved. The output value is of type integer.
+Parameters:
+     The input value must be of type double,
+     the output value is of type double.
+Examples:
+     -2.3 IntegerPart -> -2.0
+SeeAlso: FractionalPart
+
+*/
+/IntegerPart trie
+ [/doubletype] { int_d double_i } addtotrie
+def
+
+/* BeginDocumentation
+Name: FractionalPart - Return fractional part of the argument.
+Synopsis: double FractionalPart -> fractionalpartpart
+Description:
+     In effect sets all digits to the left of the decimal point to
+     zero. The sign is preserved. The output value is of type double.
+Parameters:
+     The input value must be of type double,
+     the output value is of type double.
+Examples:
+     -2.3 FractionalPart -> -0.3
+SeeAlso: IntegerPart
+
+*/
+/FractionalPart trie
+ [/doubletype] {dup_ int_d double_i sub_dd} addtotrie
+def
+
+
+/*BeginDocumentation
+Name: Max - returns the largest element of an array
+Synopsis:
+ array Max -> max element
+Parameters:
+ array
+Description:
+  This function finds the largest element in a list, DoubleVector or IntVector. To process
+  heterogeneous arrays, the operator gt must be supported between any pair of objects in
+  the list.
+
+Examples:
+ [8 4 3 6 9 5] Max --> 9
+Remarks:
+ Replacess arr::Max in future versions.
+Author: Gewaltig
+FirstVersion: 2008.2.12 (Diesmann)
+References:
+   [1] The Mathematica Book "Max"
+SeeAlso: Min, Sort
+*/
+/Max
+{
+   size 0 eq
+   {  
+     /Max /RangeCheck raiseerror
+   } if
+   dup 0 get  % start value as sentinel
+   exch 
+   { 
+      dup 2 index gt % compare current element with sentinel
+     { 
+       exch pop % if element is greater than sentinel, make it new sentinel
+     } 
+     {
+        pop  %else discard
+     } ifelse 
+   } forall 
+} def
+
+/*BeginDocumentation
+Name: Min - returns the smallest element of an array
+Synopsis:
+ array Min -> min element
+Parameters:
+ array
+Description:
+ This function finds the smallest element in a list, DoubleVector or intVector.
+ To process heterogeneous arrays, the operator lt must be supported between
+ any pair of objects in the list.
+
+Examples:
+ [8 4 3 6 9 5] Min --> 3
+Remarks:
+ Replacess arr::Min in future versions.
+
+Author: Gewaltig
+FirstVersion: 2008.2.12 (Diesmann)
+References:
+   [1] The Mathematica Book "Min"
+SeeAlso: Max, Sort, Mean, Variance
+*/
+/Min
+{
+   size 0 eq
+   {  
+     /Max /RangeCheck raiseerror
+   } if
+   dup 0 get  % start value as sentinel
+   exch 
+   { 
+      dup 2 index lt % compare current element with sentinel
+     { 
+       exch pop % if element is less than sentinel, make it new sentinel
+     } 
+     {
+        pop  %else discard
+     } ifelse 
+   } forall 
+}
+def
+
+
+/*BeginDocumentation
+Name: Total - returns the sum of the elements of an array
+Synopsis:
+ array Total -> sum of elements
+Parameters:
+ array
+Description:
+ The function is implemented in SLI and based on the
+ overloaded operator add.
+Examples:
+ [8 4 3 6 9 5] Total --> 35
+Remarks:
+ The Mathematica version is more general.
+ Replacess arr::Sum in future versions.
+Author: Diesmann
+FirstVersion: 2009.2.22
+References:
+   [1] The Mathematica Book "Total"
+SeeAlso: Max, Sort, Mean, Variance
+*/
+/Total
+{
+ 0 exch {add} Fold
+} def
+
+/*BeginDocumentation
+Name: Mean - returns the mean of the elements of an array
+Synopsis:
+ array Mean -> double, mean of elements
+Parameters:
+ array
+Description:
+ The function is implemented in SLI and based on the
+ operator Total.
+Examples:
+ [8 4 3 6 9 5] Mean --> 5.833
+Remarks:
+ The Mathematica version is more general
+ Replaces arr:Mean in future versions.
+Author: Diesmann
+FirstVersion: 2009.2.22
+References:
+   [1] The Mathematica Book "Mean"
+SeeAlso: Max, Sort, Total, Variance
+*/
+/Mean
+{
+ size cvd exch Total exch div
+} def
+
+/*BeginDocumentation
+Name: Variance - returns the variance of the elements of an array
+Synopsis:
+ array Variance -> double, unbiased estimate of variance of elements
+Parameters:
+ array
+Description:
+ The function is implemented in SLI using Mean and Total
+Examples:
+ [8 4 3 6 9 5] Variance --> 5.366
+Remarks:
+ The Mathematica version is more general.
+ Replaces arr::Var in future versions.
+Author: Diesmann
+FirstVersion: 2009.2.22
+References:
+   [1] The Mathematica Book "Variance"
+SeeAlso: Max, Sort, Total, Mean, StandardDeviation
+*/
+/Variance
+{
+ dup size 1 sub cvd rollu
+ Mean
+ sub
+ {sqr} Map
+ Total
+ exch
+ div
+} def
+
+
+/*BeginDocumentation
+Name: StandardDeviation - returns the standard deviation of the elements of an array
+Synopsis:
+ array StandardDeviation -> double, standard deviation
+Parameters:
+ array
+Description:
+ The function is implemented in SLI using Variance
+Examples:
+ [8 4 3 6 9 5] StandardDeviation --> 2.3166
+Remarks:
+ The Mathematica version is more general.
+ Replaces arr::SDev in future versions.
+Author: Diesmann
+FirstVersion: 2009.2.22
+References:
+   [1] The Mathematica Book "StandardDeviation"
+SeeAlso: Max, Sort, Total, Variance
+*/
+/StandardDeviation
+{
+ Variance sqrt
+} def
+
+
+
+
+
+% the following two definitions are used to make escaping of
+% SLI strings in Mathematica easier
+% e.g, see extras/mathematica/LinkMathematica.m
+% Diesmann, 1.4.2003
+%
+/NewLine (\n) def
+/DoublyEscapedNewLine (\\\\n) def
+
+
+
+/* BeginDocumentation
+  Name: CompileMath - converts traditional math to postfix notation
+  Synopsis: string CompileMath -> proc
+  Description:
+   CompileMath converts a string containing a mathematical expression
+   in traditional infix notation to a procedure using the
+   standard postfix notation of SLI. The algorithm is:
+    1. replace traditonal operators like "-" and "+" with
+       SLI literals like /sub and /add
+    2. decompose the string into tokens using the standard
+       SLI scanner
+    3. compile the sequence of tokens to a SLI postfix expression
+       using the predictive recursive-descent parser described in
+       chapter 2 of the Dragon Book.
+   The result is the unevaluated expression. This enables the user
+   to store the expression for later reevaluation.
+  Parameters:
+   string, is the mathematical expression
+   proc, is the unevaluated expression in SLI postfix notation
+  Examples:
+    ( 5 + 3 * 7 )      CompileMath  exec  --> 26
+    ( 5 * (3 + 7) )    CompileMath  exec  --> 50
+    ( 5 + x * 7 )      CompileMath        --> {5 x 7 mul add}
+    ( 3 + exp 5 )      CompileMath        --> {3 5 exp add}
+    ( 3 + exp (  x ) ) CompileMath        --> {3 x exp add}
+    ( 3 + exp ( -x ) ) CompileMath        --> {3 x neg exp add}
+    ( 3 * exp (sin 2)) CompileMath        --> {3 2 sin exp mul}
+    ( 3 * exp sin 2 )  CompileMath        --> {3 2 sin exp mul}
+    (4 * - 7)          CompileMath exec   --> -28
+    (2^3)              CompileMath        --> {2 3 pow}
+    (5+3*2^3)          CompileMath        --> {5 3 2 3 pow mul add}
+    (5+3*2^3-4)        CompileMath        --> {5 3 2 3 pow mul add 4 sub}
+    (5+3*2^3/4)        CompileMath        --> {5 3 2 3 pow mul 4 div add}
+    (5+3*2^-3)         CompileMath        --> {5 3 2 3 neg pow mul add}
+    (4)                CompileMath        --> {4}
+    ()                 CompileMath        --> {}
+    (a=7+3)            CompileMath        --> {/a 7 3 add dup rolld Set}
+    (a=7+3;)           CompileMath        --> {/a 7 3 add dup rolld Set pop}
+    (a=7+3;6)          CompileMath        --> {/a 7 3 add dup rolld Set pop 6}
+    (a=7+4;b=2*exp(-2.0/10)) CompileMath  --> {/a 7 4 add dup rolld Set pop /b 2 2.0 neg 10 div exp mul dup rolld Set}
+    (Function({x+2},'x)) CompileMath      --> {{x 2 add} /x Function}
+    (f=Function({x+2},'x)) CompileMath    --> {/f {x 2 add} /x Function dup rolld Set}
+    (f={#+2})              CompileMath    --> {/f {<< >> begin /# Set # 2 add end} dup rolld Set}
+    (f={#1-#2})            CompileMath    --> {/f {<< >> begin /#2 Set /#1 Set #1 #2 sub end} dup rolld Set}
+    ({#1-#2})            CompileMath exec --> {<< >> begin /#2 Set /#1 Set #1 #2 sub end}
+    ([4,3,2])              CompileMath    --> {[4 3 2]}
+    (x=7+[4,3,2]*2)        CompileMath    --> {/x 7 [ 4 3 2 ] 2 mul add dup rolld Set}
+    ([])                   CompileMath    --> {[]}
+    (<< 'x : [-3, 9]*2, 'y : 7 >>) CompileMath --> {<< /x [ 3 neg 9 ] 2 mul /y 7 >>}
+    (<< >>)                CompileMath    --> {<< >>}
+    (5+3 // Function( {2*x+1},'x)  ) CompileMath exec  --> 17
+    (1+(5+3 // Function( {2*x+1},'x))  ) CompileMath exec  --> 18
+    ( [ 3, [ 2, 1], -9] // Flatten) CompileMath exec --> [3 2 1 -9]
+    ( [ 3, [ 2, 1], -9] // Flatten // {Select(#,{#<3})}  ) CompileMath exec --> [2 1 -9]
+    (5+3 // {#+1}  ) CompileMath exec --> 9
+    (7 5 // {#1-#2}) CompileMath exec --> 2
+
+  Bugs:
+   The present version fails for doubles with negative exponents
+   because the lexer just replaces all "-" with /sub. A slightly
+   smarter lexer using a regular expression can solve this problem.
+  Remarks:
+   The function can be improved by using a more powerful parsing
+   scheme. The predictive recursive parsing scheme is used here
+   as an educational example.
+  Author: Diesmann
+  FirstVersion: 090117
+
+  SeeAlso: Inline, ExecMath, cst, cvx, exec
+  References:
+   [1] The Dragon Book, 1988, chapter 2
+*/
+
+({)  symbol pop /BeginProcedureSymbol Set pop
+(})  symbol pop /EndProcedureSymbol Set pop
+([)  symbol pop /BeginArraySymbol Set pop
+(])  symbol pop /EndArraySymbol Set pop
+([)  token pop  /BeginArrayToken Set pop
+(])  token pop  /EndArrayToken Set pop
+(<<)  symbol pop /BeginDictionarySymbol Set pop
+(>>)  symbol pop /EndDictionarySymbol Set pop
+
+
+% for debugging, displays call sequence
+/pdef
+{
+% % l p
+% 1 index {==} exch prepend exch join
+ def
+}
+def
+
+/CompileMath
+{
+<</out [] >> begin currentdict /cdict Set
+
+/lexan
+{
+ [
+  (/)  ( /div )       % this first because "/" leads literals
+  (/div  /div) (/pipe)   % for //
+  (')  ( /lit /)      % operator /literal followed by SLI notation literal value
+  (^)  ( /pow )
+  (**) ( /pow )   % as in python
+  (*)  ( /mul )
+  (-)  ( /sub )
+  (+)  ( /add )
+  (x) 0 40 put ( /openparenthesis )
+  (x) 0 41 put ( /closeparenthesis )
+  (<<) ( /BeginDictionary )
+  (>>) ( /EndDictionary )
+  (==) ( /eq )
+  (!=) ( /neq )
+  (<=) ( /leq )
+  (<)  ( /lt )
+  (>=) ( /geq )
+  (>)  ( /gt )
+  (=)  ( /def )
+  (;)  ( /sepexpr )
+  (,)  ( /comma )
+  (:)  ( /colon )
+  (" /openparenthesis )  (x) 0 40 put
+  ( /closeparenthesis ") (x) 0 41 put
+
+  (#)  ( /argument )
+ ] 2 Partition
+
+ {arrayload pop ReplaceOccurrences} Fold
+
+ css   % alternative: do this stepwise with symbol
+}
+def
+
+
+/gettoken {
+ in empty not
+ {
+  First
+  cdict /in in Rest put_d
+ } if
+} def
+
+/match
+{
+ /lookahead load eq         % avoid immediate lookup of identifier
+ {cdict /lookahead gettoken put_d}
+ { /match /SyntaxError raiseerror }
+ ifelse
+} def
+
+/seq
+{
+ delayedexpr
+ {
+  lookahead /comma eq
+  {
+   /comma match seq  % no output for comma
+  }
+  {
+   exit
+  }
+  ifelse
+ } loop
+} pdef
+
+
+% algorithm to compile a pure function:
+% -------------------------------------
+%
+% (1) match the BeginProcedureSymbol
+% (2) determine the current length of the compiled code
+% (3) compile the body of the function
+% (4) extract the previously compiled code from out
+% (5) determine length of compiled body
+% (6) extract code of compiled body from out
+% (7) make it a literal procedure object
+% (8) append procedure object to previously compiled code
+% (9) store result in out variable
+%
+%
+
+/purefunction
+{
+ BeginProcedureSymbol match
+   out length                          % length
+
+   <</args [] >> begin                 % dictionary to store argument names of the pure function
+                                       % in the #1, ..., #n notation. In case of only a single argument
+                                       % the # is sufficient 
+% expr
+     expr_sequence                        % length
+
+     dup out exch Take                   % length first
+     exch                                % first length
+     out length sub  out exch Take       % first last
+     cvx
+
+
+     args length 0 gt
+     {
+      {<< >> begin} 
+      args Sort Reverse { cvlit append (Set) cvn append } forall
+
+      exch join {end} join
+     }
+     if
+
+     cvlp_p                             % first proc  (7)
+
+     append /out cdict                   % v l d  (8)
+     exch                                % v d l
+     rolld                               % d l v
+     put_d
+
+  end
+
+ EndProcedureSymbol match
+} pdef
+
+
+/expr_sequence
+{
+ {
+  /lookahead load EndProcedureSymbol eq {exit} if
+
+  expr
+  /lookahead load /sepexpr eq
+  {
+   /sepexpr  match /pop cvn /out cdict AppendTo
+  }
+  if
+
+ } loop
+} pdef
+
+
+/delayedexpr
+{
+ /lookahead load BeginProcedureSymbol eq
+ {
+  purefunction
+ }
+ {
+  litarg
+ }
+ ifelse
+} pdef
+
+
+/litarg
+{
+ /lookahead load /lit eq
+ {
+  /lit match
+  lookahead /out cdict AppendTo  % the current symbol is the literal
+  lookahead match
+ }
+ {
+  expr
+ }
+ ifelse
+} pdef
+
+
+% An expression is an inequality followed by a piped sequence
+% of operations on the result of the inequality:
+%    ie // a // b // c ...
+% The operations are either specified by an individual function name or direct
+% generators of pure functions:
+%    ie // Flatten
+%    ie // Function({x+1},'x)
+%    ie // {#+1}
+%
+/expr
+{
+ inequality
+
+ {
+  /lookahead load /pipe eq
+  {
+   /pipe match
+   /lookahead load type /nametype eq
+   {
+    /lookahead load /Function cvn eq
+    {
+     inequality /exec cvn /out cdict AppendTo
+    }
+    {
+     /lookahead load /out cdict AppendTo
+     /lookahead load match
+    }
+    ifelse % pure function starting with 'Function'
+   }
+   {
+    purefunction /exec cvn /out cdict AppendTo
+   }
+   ifelse  % nametype
+  }
+  {
+   exit
+  }
+  ifelse
+
+ } loop     % /pipe
+} pdef
+
+
+
+/inequality
+{
+ equality
+ {
+  /lookahead load /lt eq
+  {
+   /lt match equality /lt cvn /out cdict AppendTo
+  }
+  {
+   /lookahead load /leq eq
+   {
+    /leq match equality /leq cvn /out cdict AppendTo
+   }
+   {
+    /lookahead load /gt eq
+    {
+     /gt match equality /gt cvn /out cdict AppendTo
+    }
+    {
+     /lookahead load /geq eq
+     {
+      /geq match equality /geq cvn /out cdict AppendTo
+     }
+     {
+      exit
+     }
+     ifelse
+    }
+    ifelse
+   }
+   ifelse
+  }
+  ifelse
+
+ } loop     % /lt, /leq, /gt, /geq
+} pdef
+
+
+/equality
+{
+ sum
+ {
+  /lookahead load /eq eq
+  {
+   /eq match sum /eq cvn /out cdict AppendTo
+  }
+  {
+   /lookahead load /neq eq
+   {
+    /neq match sum /neq cvn /out cdict AppendTo
+   }
+   {
+    exit
+   }
+   ifelse
+  }
+  ifelse
+ } loop     % /eq, /neq
+} pdef
+
+
+
+/sum
+{
+ term
+ {
+  /lookahead load /add eq
+  {
+   /add match term /add cvn /out cdict AppendTo
+  }
+  {
+   /lookahead load /sub eq
+   {
+    /sub match term /sub cvn /out cdict AppendTo
+   }
+   {
+    exit
+   }
+   ifelse
+  }
+  ifelse
+ } loop     % /add, /sub
+} pdef
+
+
+
+/factor
+{
+ signedfactor power
+} pdef
+
+/power
+{
+ {
+  /lookahead load /pow eq
+  {
+   /pow match signedfactor /pow cvn /out cdict AppendTo
+  }
+  {
+   exit
+  }
+  ifelse
+ } loop
+} pdef
+
+
+/signedfactor
+{
+ /lookahead load /sub eq
+ {
+  /sub match unsignedfactor /neg cvn /out cdict AppendTo
+ }
+ {
+  unsignedfactor
+ } ifelse
+} pdef
+
+
+/array
+{
+ /BeginArrayToken load /out cdict AppendTo
+ lookahead match
+
+ /lookahead load /EndArraySymbol load eq
+ {
+  /EndArrayToken load /out cdict AppendTo
+  lookahead match
+ }
+ {
+
+  {
+   expr % delayedexpr     % expr
+   lookahead /comma eq
+   {
+    /comma  match
+   }
+   {
+    exit
+   }
+   ifelse
+  }
+  loop
+
+  lookahead /EndArraySymbol load eq
+  {
+   /EndArrayToken load /out cdict AppendTo
+   lookahead match
+  }
+  {
+   /array /EndArrayExpectedError raiseerror
+  }
+  ifelse
+
+ }
+ ifelse
+
+} pdef
+
+
+/dictionaryentry
+{
+ litarg
+
+ lookahead /colon eq
+ {
+  lookahead match
+ }
+ {
+  /dictionaryentry /ColonExpectedError raiseerror
+ }
+ ifelse
+
+ expr
+
+} pdef
+
+
+
+/dictionary
+{
+ /BeginDictionarySymbol load /out cdict AppendTo
+ lookahead match
+
+ lookahead /EndDictionary eq
+ {
+  /EndDictionarySymbol load /out cdict AppendTo
+  lookahead match
+ }
+ {
+
+  {
+   dictionaryentry
+   lookahead /comma eq
+   {
+    /comma  match
+   }
+   {
+    exit
+   }
+   ifelse
+  }
+  loop
+
+  lookahead /EndDictionary eq
+  {
+   /EndDictionarySymbol load /out cdict AppendTo
+   lookahead match
+  }
+  {
+   /array /EndDictionaryExpectedError raiseerror
+  }
+  ifelse
+
+ }
+ ifelse
+
+} pdef
+
+
+
+
+
+/unsignedfactor    %  x =
+{
+ /lookahead load type /nametype eq % avoid immediate lookup of identifiers
+ {
+  /lookahead load                   % leave id on stack
+  /lookahead load match  assign  % factorarg /out AppendTo % assign  % /out AppendTo
+ }
+ {
+  lookahead /argument eq
+  {
+   /argument match
+   lookahead type /integertype eq
+   {
+    (#) lookahead cvs join dup cvn /out cdict AppendTo
+    /args AppendTo
+    lookahead match
+   }
+   {
+    (#) cvn /out cdict AppendTo
+%   /argument match
+   (#) /args AppendTo 
+%  1 /n_args Set
+   }
+   ifelse
+  }
+  {
+   lookahead /openparenthesis eq
+   {
+    /openparenthesis match expr /closeparenthesis match
+   }
+   {
+    lookahead type /integertype eq
+    lookahead type /doubletype  eq or
+    lookahead type /stringtype  eq or
+    {
+     lookahead /out cdict AppendTo
+     lookahead match
+    }
+    {
+     lookahead /BeginArraySymbol load eq
+     {
+      array
+     }
+     {
+      lookahead /BeginDictionary eq
+      {
+       dictionary
+      }
+      {
+       lookahead /BeginProcedureSymbol load eq
+       {
+        purefunction
+       }
+       {
+        /unsignedfactor /SyntaxError raiseerror
+       } ifelse
+      } ifelse
+     } ifelse
+    } ifelse
+   } ifelse
+  } ifelse
+ } ifelse
+} pdef
+
+
+/assign
+{
+ /lookahead load /def eq
+ {
+  % the id is still on the stack, make literal for assignment
+  cvlit /out cdict AppendTo /def match delayedexpr {dup rolld Set} cvlit /out cdict JoinTo
+              % version without return value:
+              %                       /def cvn /out AppendTo
+ }
+ { % the id is still on the stack
+  factorarg /out cdict AppendTo
+ }
+ ifelse
+} pdef
+
+
+/factorarg
+{
+ /lookahead load type /nametype eq % avoid immediate lookup of identifiers
+ {
+  /lookahead load
+  /lookahead load match factorarg /out cdict AppendTo
+ }
+ {
+  lookahead /openparenthesis eq
+  {
+   /openparenthesis match
+   /lookahead load /closeparenthesis eq
+   {
+    /closeparenthesis match
+   }
+   {
+    seq /closeparenthesis match
+   }
+   ifelse
+  }
+  {
+   lookahead type /integertype eq
+   lookahead type /doubletype  eq or
+   lookahead type /stringtype  eq or
+   {
+    lookahead /out cdict AppendTo
+    lookahead match
+   }
+   {
+    lookahead /BeginArraySymbol load eq
+    {
+     array
+    }
+    {
+     lookahead /BeginDictionary eq
+     {
+      dictionary
+     }
+     if                      % epsilon
+    } ifelse
+   } ifelse
+  } ifelse
+ } ifelse
+
+} pdef
+
+
+
+%
+/term
+{
+ factor
+ {
+  /lookahead load /mul eq
+  {
+   /mul match factor /mul cvn /out cdict AppendTo
+  }
+  {
+   /lookahead load /div eq
+   {
+    /div match factor /div cvn /out cdict AppendTo
+   }
+   {
+    exit
+   }
+   ifelse
+  }
+  ifelse
+
+ } loop
+} pdef
+
+
+/statement
+{
+ {
+  /lookahead load [] eq {exit} if
+
+  expr
+  /lookahead load /sepexpr eq
+  {
+   /sepexpr  match /pop cvn /out cdict AppendTo
+  }
+  if
+
+ } loop
+} pdef
+
+
+
+%
+% main of CompileMath
+%
+
+lexan /in Set
+
+gettoken /lookahead Set
+
+statement  % expr
+
+
+out cvx
+
+end
+}
+def
+
+/*BeginDocumentation
+ Name: ExecMath - execute a math expression.
+ Synopsis: (expr) ExecMath -> val
+ Description:
+  ExecMath is equivalent to the sequence
+  CompileMath exec
+ SeeAlso: CompileMath, Inline
+*/
+/ExecMath
+{
+  CompileMath exec
+} def
+
+
+/fsprompt
+{
+  (fSLI )
+  count 1 gt_ii      % counter has to be corrected for operative
+  {                  % objects on the stack
+    ([) join_s
+    count 1 sub_ii cvs join_s
+  } if
+  (] ) join_s
+} bind def
+
+/* BeginDocumentation
+Name: mathexecutive - start interactive math session
+Description:
+Starts an interactive shell similar to the standard shell of SLI
+provided by the command executive. You can leave the shell by
+typing exit.
+
+In contrast to executive, mathexecutive accepts an infix mathematical
+notation. The input is compiled with command CompileMath prior to
+execution.  See the documentation of CompileMath for the details of
+the syntax.
+
+Remarks:
+The syntax accepted by this command is experimental, be prepared for
+substantial changes.
+
+Author: Diesmann
+FirstVersion: March 2010
+SeeAlso: executive, exit, CompileMath
+*/
+
+
+%% check whether GNU readline is installed. If so,
+%% use it for the executive command.
+
+systemdict /GNUreadline known
+{
+
+ /mathexecutive
+ {
+  (The syntax accepted by this command is experimental,\nsee the documentation of CompileMath for details.)
+   M_WARNING  message
+  {  %% loop with stopped context to catch signals
+   {
+    callback
+    fsprompt GNUreadline
+    {
+      dup GNUaddhistory
+      CompileMath stopped  {handleerror} if
+    } if
+   } stopped {handleerror} if % to catch signals
+  } loop
+% exithook
+ } bind def
+
+}
+{
+
+ /mathexecutive
+ {
+  (The syntax accepted by this command is experimental,\nsee the documentation of CompileMath for details.)
+  M_WARNING  message
+  {
+   {
+     callback
+     fsprompt readline
+     {
+      CompileMath stopped {handleerror} if
+     } if
+   } stopped {handleerror} if % to catch signals
+  } loop
+%  exithook
+ } bind def
+
+} ifelse
+
+
+
+
+/*BeginDocumentation
+Name: Inline - Replace names in a procedure with their definitions.
+
+Synopsis:
+   {proc} <<dict>> Inline -> {proc'}
+
+Parameters:
+   {proc}    - procedure to be transformed
+   <<dict>>  - dictionary with names and definitions for the names to be inlined.
+   {proc'}   - the transformed procedure with all names replaced.
+
+Description:
+
+Transform the input procedure {proc} such that all names that are
+defined in <<dict>> are placed by their definitions.
+
+Inline can be used to inline the code of procedures or to replace
+names of constants with their literal values. All names that are not
+defined in <<dict>> are unchanged.
+
+Inline is particularly useful in combination with CompileMath.
+
+Inline is similar to bind, but there are two big differences:
+1. bind uses the current dictstack to determine which names are placed.
+2. bind only replaces names that refer to C++-functions or tries.
+
+Examples:
+SLI ] {a b add} <</a 1 /b 2 >> Inline ==
+{1 2 add}
+
+SLI ] {1 2 3 stack} << /stack dup load  >> Inline ==
+{1 2 3 0 1 -count- 3 -sub_ii- /{-index- =} -for-}
+
+Version: January 19 2008
+Author: marc-Oliver Gewaltig
+SeeAlso: bind, CompileMath
+*/
+/:Inline
+{
+   [
+     exch  % swap position of mark and array
+     cvlit % convert procedure to array
+     {
+       dup
+       type /nametype eq
+       {
+         dup cvlit
+         currentdict exch known
+         {
+           cvlit currentdict exch get
+           dup type /proceduretype eq
+           {
+             cvlit arrayload pop
+           } if
+         } if
+       }
+       {
+         dup type /literalproceduretype eq
+         {
+	   exec
+           currentdict
+           Inline cvlp
+         } if
+       } ifelse
+
+     } forall
+   ] cvx
+} def
+
+/Inline
+[/proceduretype /dictionarytype]
+{
+  begin
+    :Inline
+  end
+} def
+
+/* BeginDocumentation
+Name: Apply - calls a function with the elements of an array as arguments
+Synopsis: array proc Apply -> any
+Description:
+ Apply interprets the elements of the input array a as the list
+ of arguments of the supplied function f,
+   f(a(1),a(2), ...,a(n))
+
+ This is to be distinguished from Map which individually applies
+ the function to the elements of the array,
+   [f(a(1),f(a(2), ...,f(a(n))] 
+
+Parameters:
+  array is an arbitrarily shaped heterogeneous array. 
+  proc is any procedure object (pure function).
+
+Examples:
+
+  [1 2] {add} Apply --> 3
+  [1 2] {dup mul} Map --> [1 4]
+  [(hell world) 4 (o)] {insert} Apply --> (hello world)
+
+Author: Diesmann
+FirstVersion: unknown, documented 121124
+Remarks:
+ This function is an implementation of Mathematica's Apply function.
+SeeAlso: Map, MapAt, MapThread
+References:
+ [1] The Mathematica Book V4.0 "Apply"
+*/
+% a f
+/Apply
+{
+ exch       % f a
+ arrayload  % f a1 ... an n
+ 1 add      % f a1 ... an n+1
+ -1 roll    % a1 ... an f
+ exec
+}
+def
+
+
+
+/*BeginDocumentation
+Name: Function - creates pure function with named arguments
+
+Synopsis:
+   {proc} literal_1 ... literal_n    Function -> proc'
+   string literal_1 ... literal_n    Function -> proc'
+   [literal_1 ... literal_n] {proc}  Function -> proc'
+   [literal_1 ... literal_n] string  Function -> proc'
+
+
+Parameters:
+   proc       - code body using variables
+   string     - code body using variables in infix notation
+   literal_i  - the name of the ith argument
+   proc'      - pure function with named arguments
+
+Description:
+ Pure functions are one of the most powerful features of SLI. They are
+ first class objects and can be assembled at run time like arrays. Some
+ times pure functions are constructed for one time execution, however more
+ often they are used as arguments of functional operators like Map and Fold
+ executing the pure function many times.
+ If a pure function has several arguments or a particular argument is used many
+ times in the code managing the location of the arguments on the stack can be
+ cumbersome. In these situations operator Function is helpful, it assigns each
+ argument of the pure function to a formal name which can be used in the body
+ of function. If the pure function is specified as a string, Compile Math is
+ called for conversion to rpn. Note that the example combining Function and Map
+ is efficient. The pure function is constructed from the string only once but
+ executed 4 times with different arguments. In the alternative syntax the variables
+ are declared by an array prior to the body of the function. This notation increases
+ the readability of definitions of  named functions because in most programming
+ languages the declaration of variables preceeds the function body. In combination
+ with operator def also the type of the arguments can be specified. The definition
+ of a function without arguments is useful if the body of the function introduces
+ local variables and therefore profits from the automatic restriction of scope by
+ operator Function. This is shown in the last example. Without the empty array the
+ arguments of Function would not be unique.
+ The availability of the alternative version ExecFunction with immediate execution
+ highlights the fact that a pure function with named arguments maybe used
+ for clarity even in situations where it needs to be evaluated only once.
+
+Examples:
+ 2   {x 1 x add mul} /x    Function exec --> 6
+ 2 3 {x 1 x add mul} /x /y Function exec --> 6
+ 2 3 {x y x add mul} /x /y Function exec --> 10
+ 2 3   ( x*(y+x) )   /x /y Function exec --> 10
+
+ ( x*(y+x) ) /x /y Function --> {<< >> begin /y Set /x Set x y x add mul end}
+
+ [2. 3. 4. 5.]  (x + (1+x)^3) /x Function Map --> [29. 67. 129. 221.]
+
+ /f ( x*(y+x) )  /x /y  Function def
+ /f [/x /y] ( x*(y+x) ) Function def
+
+ /f [/doubletype /doubletype] [/x /y] (y+x^2) Function def
+ /f [/doubletype /doubletype] [/x /y] {y x dup mul add} Function def
+
+
+ /f [] (x=sin(0.7);x^2-3*x) Function def
+
+
+Version: 090302
+Author: Diesmann
+References:
+   [1] The Mathematica Book "Function"
+SeeAlso: CompileMath, Inline, ExecFunction
+*/
+/Function_
+{
+ {<< >> begin}
+
+ {
+  exch
+  dup type
+  /literaltype neq
+  {
+   dup type
+   /stringtype eq
+   {
+    CompileMath
+   } if
+   exit
+  } if
+  append {Set} join
+ } loop
+
+ join
+ {end} join
+}
+def
+
+/Function
+[/literaltype]
+{
+ Function_
+} def
+
+/Function
+[/arraytype /anytype]
+{
+ exch arrayload pop Function_
+}
+def
+
+
+
+/*BeginDocumentation
+Name: ExecFunction - immediately execute a pure function with named arguments
+Synopsis:
+   {proc} literal_1 ... literal_n ExecFunction -> val
+   string literal_1 ... literal_n ExecFunction -> val
+
+Description:
+  ExecFunction is equivalent to the sequence
+  Function exec
+Examples:
+ 2   {x 1 x add mul} /x    ExecFunction --> 6
+ 2 3 {x 1 x add mul} /x /y ExecFunction --> 6
+ 2 3 {x y x add mul} /x /y ExecFunction --> 10
+ 2 3   ( x*(y+x) )   /x /y ExecFunction --> 10
+
+Version: 090304
+Author: Diesmann
+ SeeAlso: Function, CompileMath, Inline
+*/
+/ExecFunction
+{
+ Function exec
+} def
+
+
+/*BeginDocumentation
+Name: LambertW - simple iteration implementing the Lambert-W function
+Synopsis:
+   double double LambertW -> double
+Parameters:
+The first parameter is the argument of the Lambert-W function, the
+second argument is the start value of the iteration. 0.0 is a good initial
+value for the principal branch of the Lambert-W function. -2.0 is a good
+choice to select the non-principal branch.
+
+Description:
+The Lambert-W function is the inverse function of x=W*exp(W). For real values of
+x and W, the function W(x) is defined on [-1/e,\infty). On the interval [-1/e,0)
+it is double valued. The two branches coincide at W(-1/e)=-1. The so called
+principal branch LambertW0 continuously grows (W>=-1) and crosses the origin (0,0).
+The non-principal branch LambertWm1 is defined on [-1/e,0) and declines to -\infty for
+growing x.
+
+LambertW uses Halley's method described in [1] (see also [2]) to
+implement the functions for the two branches LambertW0 and LambertWm1
+if NEST has no access to the GSL [3].
+
+Version: 090818
+Author: Diesmann
+References:
+[1] Corless, R. M., Gonnet, G. H., Hare, D. E. G., Jeffrey, D. J., & Knuth, D. E.
+    (1996). On the lambert w function. Advances in Computational Mathematics 5,
+     329--359.
+[2] Wikipedia (2009). Lambert W function ---wikipedia, the free encyclopedia.
+[3] Galassi, M., Davies, J., Theiler, J., Gough, B., Jungman, G., Booth, M.,
+    & Rossi, F. (2006). GNU Scientific Library Reference Manual (2nd Ed.).
+    Network Theory Limited.
+
+SeeAlso: LambertWm1, LambertW0, testsuite::test_lambertw, CompileMath
+*/
+/LambertW
+[/doubletype /doubletype] [/x /start]
+{
+ 1e-12 /prec Set
+ start /w    Set
+ 100   % maxiters
+ (we=w*E**w; w1e=(w+1)*E**w; abs((x-we)/w1e)) CompileMath
+ {prec leq {w exit} if }
+ (w=w-(we - x) / (w1e - (w + 2) * (we - x) / (2*w + 2));) CompileMath
+
+ join join
+ repeat
+}
+Function def
+
+
+
+
+/*BeginDocumentation
+Name: LambertW0 - principal branch of the Lambert-W function
+Synopsis:
+   double LambertW0 -> double
+Description:
+The Lambert-W function [1] is the inverse function of x=W*exp(W). For real values of
+x and W, the function W(x) is defined on [-1/e,\infty). On the interval [-1/e,0)
+it is double valued. The two branches coincide at W(-1/e)=-1. The so called
+principal branch LambertW0 continuously grows (W>=-1) and crosses the origin (0,0).
+The non-principal branch LambertWm1 is defined on [-1/e,0) and declines to -\infty for
+growing x.
+
+NEST uses the GSL [2] implementations of LambertW0 and LambertWm1 if available and
+falls back to to the iterative scheme LambertW suggested in [1] if not.
+The GSL interfaces for LambertW0 and LambertWm1 are in the SpecialFunctionsModule
+of SLI.
+
+Examples:
+
+The Lambert-W function has applications in many areas as described in [1] and [3].
+For example, the solution of
+     exp(s) = 1 + a*s
+with respect to s can be written in closed form as
+  s=1/a * (-aW(-exp(-1/a)/a) -1 )
+
+Version: 090818
+Author: Diesmann
+References:
+[1] Corless, R. M., Gonnet, G. H., Hare, D. E. G., Jeffrey, D. J., & Knuth, D. E.
+    (1996). On the lambert w function. Advances in Computational Mathematics 5,
+     329--359.
+[2] Galassi, M., Davies, J., Theiler, J., Gough, B., Jungman, G., Booth, M.,
+    & Rossi, F. (2006). GNU Scientific Library Reference Manual (2nd Ed.).
+    Network Theory Limited.
+[3] Wikipedia (2009). Lambert W function ---wikipedia, the free encyclopedia.
+
+
+SeeAlso: LambertWm1, LambertW, testsuite::test_lambertw
+*/
+statusdict/have_gsl :: not
+{
+ /LambertW0  [/doubletype] {0.  LambertW} def
+}
+if
+
+/*BeginDocumentation
+Name: LambertWm1 - non-principal branch of the Lambert-W function
+Synopsis:
+   double LambertWm1 -> double
+Description:
+The Lambert-W function [1] is the inverse function of x=W*exp(W). For real values of
+x and W, the function W(x) is defined on [-1/e,\infty). On the interval [-1/e,0)
+it is double valued. The two branches coincide at W(-1/e)=-1. The so called
+principal branch LambertW0 continuously grows (W>=-1) and crosses the origin (0,0).
+The non-principal branch LambertWm1 is defined on [-1/e,0) and declines to -\infty for
+growing x.
+
+NEST uses the GSL [2] implementations of LambertW0 and LambertWm1 if available and
+falls back to to the iterative scheme LambertW suggested in [1] if not.
+The GSL interfaces for LambertW0 and LambertWm1 are in the SpecialFunctionsModule
+of SLI.
+
+Examples:
+
+The Lambert-W function has applications in many areas as described in [1] and [3].
+For example, the problem of finding the location of the maximum of the postsynaptic
+potential generated by an alpha-function shaped current can be reduced to the
+equation
+     exp(s) = 1 + a*s .
+Here, s is the location of the maximum in scaled time s=b*t, where
+b= 1/tau_alpha - 1/tau_m and a is the ratio of the time constants tau_m/tau_alpha.
+In terms of the Lambda_W function the solution is
+  s=1/a * (-aW(-exp(-1/a)/a) -1 ) .
+The solution is guaranteed to live on the non-principal branch because the scaled time
+needs to be positive. This requires W < -1/a which is trivially fulfilled for the
+non-principal branch and there is no solution on the principal branch.
+
+
+Version: 090818
+Author: Diesmann
+References:
+[1] Corless, R. M., Gonnet, G. H., Hare, D. E. G., Jeffrey, D. J., & Knuth, D. E.
+    (1996). On the lambert w function. Advances in Computational Mathematics 5,
+     329--359.
+[2] Galassi, M., Davies, J., Theiler, J., Gough, B., Jungman, G., Booth, M.,
+    & Rossi, F. (2006). GNU Scientific Library Reference Manual (2nd Ed.).
+    Network Theory Limited.
+[3] Wikipedia (2009). Lambert W function ---wikipedia, the free encyclopedia.
+SeeAlso: LambertW0, LambertW, testsuite::test_lambertw
+*/
+statusdict/have_gsl :: not
+{
+ /LambertWm1 [/doubletype] {-2. LambertW} def
+}
+if
+
+%----------------------------------------------------------------------------
+/* BeginDocumentation
+Name: ScanThread - execute a function to corresponding elements of n arrays
+Synopsis: [[a11 ... a1n]...[am1 ... amn]] {f} ScanThread -> -
+Description: ScanThread applies the given function to corresponding elements
+             of m argument arrays. This is similar to MapThread, but no results
+	     are returned.
+
+Parameters: the first parameter is a list of m arrays of equal size n.
+            The second parameter is a procedure which takes m arguments and
+	    returns nothing.
+
+Examples:   [[(a) (b) (c)] [1 2 3]] { exch (: ) join exch cvs join == } ScanThread
+
+	    generates the following output and leaves nothing on the stack.
+
+References: This function implements the simple version of Mathematica's ScanThread
+SeeAlso: MapThread, forall, Map, MapIndexed, NestList, FoldList
+*/
+
+/ScanThread
+[/arraytype /proceduretype]
+{
+  << >> begin
+    /proc Set
+    /args Set
+
+    args length 0 gt
+    {
+      % ensure all arrays have equal length
+      args { length } Map
+      dup First /l0 Set
+      Rest true exch { l0 eq and } Fold
+      not
+      {
+        /ScanThread /ArraysMustHaveEqualLength raiseerror
+      } if
+
+      args Transpose
+      { arrayload ; proc } forall
+    }
+    if
+  end
+} def
+
+%% Functions on Integer and double vectors
+
+/cva [/intvectortype] /intvector2array load def
+/cva [/doublevectortype] /doublevector2array load def
+
+/* BeginDocumentation
+   Name: cv_iv - convert array of integers to an IntVector.
+ */
+/cv_iv[/arraytype]  { {cvi} Map array2intvector } def
+
+/* BeginDocumentation
+   Name: cv_dv - convert array of integers to a DoubleVector.
+ */
+
+/cv_dv[/arraytype] { {cvd} Map array2doublevector } def
+
+/neg [/intvectortype] /neg_iv load def
+/neg [/doublevectortype] /neg_dv load def
+/inv_ /inv load def
+
+/inv [/doublevectortype] /inv_dv load def
+/inv [/doubletype] /inv_ load def
+
+/add [/intvectortype /intvectortype] /add_iv_iv load def
+/add [/integertype /intvectortype] /add_i_iv load def
+/add [/intvectortype /integertype] {exch_ add_i_iv} def
+/add [/doublevectortype /doublevectortype] /add_dv_dv load def
+/add [/doubletype /doublevectortype] /add_d_dv load def
+/add [/doublevectortype /doubletype] {exch_ add_d_dv} def
+/sub [/intvectortype /intvectortype] /sub_iv_iv load def
+/sub [/integertype /intvectortype] { neg_iv add_i_iv} def
+/sub [/intvectortype /integertype] { neg_i exch_ add_i_iv} def
+/sub [/doublevectortype /doublevectortype] /sub_dv_dv load def
+/mul [/intvectortype /intvectortype] /mul_iv_iv load def
+/mul [/integertype /intvectortype] /mul_i_iv load def
+/mul [/intvectortype /integertype] {exch_ mul_i_iv} def
+/mul [/doubletype /intvectortype]  /mul_d_iv load def
+/mul [/intvectortype /doubletype ]  {exch_ mul_d_iv} def
+/mul [/doubletype /doublevectortype] /mul_d_dv load def
+/mul [/doublevectortype /doubletype] {exch_ mul_d_dv} def
+/mul [/doublevectortype /doublevectortype] /mul_dv_dv load def
+/div [/intvectortype /integertype] { exch_ { 1 index div_ii } Map exch_ ; } def
+/div [/intvectortype /intvectortype] /div_iv_iv load def
+/div [/doublevectortype /doublevectortype] /div_dv_dv load def
+/div [/doubletype /doublevectortype] { inv_dv mul_d_dv } def
+/div [/doublevectortype /doubletype] { inv_d exch_ mul_d_dv}  def
+
+/add [/intvectortype /arraytype] {cv_iv add_iv_iv} def
+/mul [/intvectortype /arraytype] {cv_iv mul_iv_iv} def
+/sub [/intvectortype /arraytype] {cv_iv sub_iv_iv} def
+/div [/intvectortype /arraytype] {cv_iv div_iv_iv} def
+
+/add [/arraytype /intvectortype] {exch cv_iv add_iv_iv} def
+/mul [/arraytype /intvectortype] {exch cv_iv mul_iv_iv} def
+/dub [/arraytype /intvectortype] {exch cv_iv exch sub_iv_iv} def
+/div [/arraytype /intvectortype] {exch cv_iv exch div_iv_iv} def
+
+/add [/doublevectortype /arraytype] {cv_dv add_dv_dv} def
+/mul [/doublevectortype /arraytype] {cv_dv mul_dv_dv} def
+/sub [/doublevectortype /arraytype] {cv_dv sub_dv_dv} def
+/div [/doublevectortype /arraytype] {cv_dv div_dv_dv} def
+
+/add [/arraytype /doublevectortype] {exch cv_dv add_dv_dv} def
+/mul [/arraytype /doublevectortype] {exch cv_dv mul_dv_dv} def
+/dub [/arraytype /doublevectortype] {exch cv_dv exch sub_dv_dv} def
+/div [/arraytype /doublevectortype] {exch cv_dv exch div_dv_dv} def
+
+/length [/doublevectortype] /length_dv load def
+/length [/intvectortype] /length_iv load def
+/size [/intvectortype] {dup length_iv} def
+/size [/doublevectortype] {dup length_dv} def
+
+/eq [/intvectortype /intvectortype] /eq_iv load def
+/eq [/doublevectortype /doublevectortype] /eq_dv load def
+
+/neq [/intvectortype /intvectortype] {eq not} def
+/neq [/doublevectortype /doublevectortype] {eq not} def
+
+/forall [/doublevectortype /proceduretype] /forall_dv load def
+/forall [/intvectortype /proceduretype] /forall_iv load def
+
+/Map [/doublevectortype /proceduretype] /Map_ load def
+/Map [/intvectortype /proceduretype] /Map_ load def
+ 
+/arrayload_ /arrayload load def
+
+/arrayload [/arraytype] /arrayload_ load def
+/arrayload [/intvectortype] {intvector2array arrayload_} def
+/arrayload [/doublevectortype] {doublevector2array arrayload_} def
+
+/get [/doublevectortype /integertype] /get_dv_i load def
+/get [/doublevectortype /intvectortype] /get_dv_iv load def
+/get [/intvectortype /integertype] /get_iv_i load def
+/get [/intvectortype /intvectortype] /get_iv_iv load def
+/get [/intvectortype /arraytype] {cv_iv get_iv_iv} def
+/get [/doublevectortype /arraytype] {cv_iv get_dv_iv} def
+
+/put  [/doublevectortype /integertype /doubletype] /put_dv_i_d load def
+/put  [/intvectortype /integertype /integertype] /put_iv_i_i load def
+
+/* BeginDocumentation
+Name: zeros - Return a DoubleVector filled with zeros.
+Synapsis: n zeros -> [. 0. 0. ... .]
+Author: Marc-Oliver Gewaltig
+FirstVersion: Dec. 4 2012
+SeeAlso: ones, arange
+*/
+/zeros [/integertype] /zeros_dv load def
+
+/* BeginDocumentation
+Name: ones - Return a DoubleVector filled with ones.
+Synapsis: n ones -> [. 1. 1. ... .]
+Author: Marc-Oliver Gewaltig
+FirstVersion: Dec. 4 2012
+SeeAlso: zeros, arange
+*/
+
+/ones [/integertype] /ones_dv load def
+
+/* BeginDocumentation
+Name: arange - Return a Int/DoubleVector filled with a range of numbers.
+Synapsis: [n] arange -> [ 1  ... 10 ]
+          [a b] arange -> [a ... b]
+          [a b s] arange -> [a a+s ...]
+Description:
+arange is identical to Range, except that the returned object is a DoubleVector or IntVector, depending on the type of the
+range specification.
+
+Author: Marc-Oliver Gewaltig
+FirstVersion: Dec. 4 2012
+SeeAlso: zeros, ones, Range, array, LayoutArray, Table
+*/
+/arange_ /arange load def
+/arange [/arraytype] /arange_ load def
+
+/getinterval [/intvectortype /integertype /integertype]
+{
+   2 arraystore arange 
+   get_iv_iv 
+} def 
+
+/getinterval [/doublevectortype /integertype /integertype]
+{
+   2 arraystore arange 
+   get_dv_iv 
+} def 
+
+/<. mark def
+/<# mark def
+
+/.> { ] cv_dv } bind def
+/#> { ] cv_iv } bind def
+
+/< mark def
+/* BeginDocumentation
+Name: <> - Construct an array or vector, depending on the element type.
+Synopsis: < obj1 ... obj n > -> [obj1, ... , objn]
+          < int1 ... intn >  -> <# int1 ... intn #>
+          < double1 ... doublen > -> <. d1 ... dn .>
+Description:
+Create an array, intvector, or doublevector, depending on the type of the entered elements.
+This constructor uses the type of the first element in the sequence to determine the target type. All other
+elements will be converted.
+FirstVersion: Dec 18 2012
+Author: Marc-Oliver Gewaltig
+*/ 
+/> 
+{
+  counttomark arraystore exch ;
+  dup 0 get type 
+  switchbegin
+  1 index /doubletype eq { pop cv_dv exit} case
+  1 index /integertype eq { pop cv_iv exit} case
+  { pop } switchdefault
+
+} bind def
+
+
+%----------------------------------------------------------------------------
+/* Begin(LOESCHMISCH!)Documentation
+
+Name:
+
+Synopsis:
+
+Description:
+
+Parameters: In :
+            Out:
+
+Examples:
+
+Diagnostics:
+
+Bugs:
+
+Author:
+
+FirstVersion:
+
+Remarks:
+
+References:
+
+Variants:
+
+SeeAlso:
+
+*/
+
+%% NOTE: There must be a carriage return after the last line, i.e., here:

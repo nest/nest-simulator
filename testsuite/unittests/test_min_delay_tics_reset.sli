@@ -1,0 +1,94 @@
+/*
+ *  test_min_delay_tics_reset.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+M_ERROR setverbosity
+
+
+% Diesmann 080423
+
+(unittest) run
+/unittest using
+
+1.0 /delay Set   % in ms 
+
+-14 /min_exponent Set
+
+[0 min_exponent -4] Range {dexp} Map /hlist Set
+
+
+/sim
+{
+
+ /h Set   
+
+
+ResetKernel
+
+
+0 <<  
+     /tics_per_ms min_exponent neg dexp
+     /resolution h
+   >> SetStatus
+
+/spike_detector Create /sd Set
+
+
+/iaf_psc_alpha_canon Create /neuron Set
+neuron </Interpol_Order 3 >> SetStatus
+
+
+   % works if "100.0 delay" is inserted
+   %              | 
+   %     ----------
+   %     |
+   %     v
+neuron sd Connect
+
+
+1.0 Simulate
+
+
+0 /min_delay get
+
+} def
+
+
+
+{
+ hlist {sim} Map 
+
+ true exch {delay eq and } Fold % comment this line to see individual results
+} 
+
+
+assert_or_die
+
+
+
+
+
+
+
+
+
+  

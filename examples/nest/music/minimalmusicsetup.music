@@ -1,0 +1,13 @@
+
+stoptime=0.01
+
+[from]
+  binary=nest
+  np=1
+  args=minimalmusicsetup_sendnest.sli
+
+[to]
+  binary=nest
+  np=1
+  args=minimalmusicsetup_receivenest.sli
+  from.spikes_out -> to.spikes_in [1]

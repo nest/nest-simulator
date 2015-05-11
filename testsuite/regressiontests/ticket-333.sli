@@ -1,0 +1,83 @@
+/*
+ *  ticket-333.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+ * Regression test for Ticket #333.
+ *
+ * Ensure that modeldict is identical before and after ResetKernel.
+ * Ensure that GetDefaults can be called on all models after ResetKernel.
+ *
+ * NOTE: This test must be run only on a newly invoked nest.
+ *
+ * Hans Ekkehard Plesser, 2009-04-16
+ *
+ */
+
+(unittest) run
+/unittest using
+
+% First test: identical modeldicts
+{
+  modeldict clonedict /md1 Set ;
+
+  ResetKernel
+  
+  % compare keys
+  % since key order is not guaranteed, and Sort cannot handle strings or literals,
+  % we first check that all keys of md1 are in modeldict, then the other way round 
+  md1       keys /md1k Set
+  modeldict keys /md2k Set 
+
+  true md1k { modeldict exch known and } Fold
+  true md2k { md1       exch known and } Fold
+  and
+
+  {
+     % keys are equal, check values
+     true md1k { /k Set md1 k get modeldict k get eq and } Fold
+  } 
+  {
+     false
+  }
+  ifelse
+} 
+assert_or_die
+
+% Second test: attempt GetDefaults
+% some models excluded as they cause warnings (sli_neuron) or crashes (see #335)
+{
+  ResetKernel
+  /exlist << /sli_neuron false >> def
+
+  modeldict keys 
+  {
+    dup exlist exch known not
+    {
+       % not on exclusion list, key on stack
+       GetDefaults
+       pop
+    }
+    if
+  }
+  forall
+}
+pass_or_die

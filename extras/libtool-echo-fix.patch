@@ -1,0 +1,11 @@
+--- libtool.original	2009-06-04 17:44:00.000000000 +0200
++++ libtool	2009-06-04 17:46:17.000000000 +0200
+@@ -154,6 +154,8 @@
+ 
+ # An echo program that does not interpret backslashes.
+ ECHO="echo"
++#well this $ECHO is referred to as $echo everywhere in this file. So:
++echo="$ECHO"
+ 
+ # Used to examine libraries when file_magic_cmd begins with "file".
+ MAGIC_CMD=file

@@ -1,0 +1,72 @@
+/*
+ *  ticket-673.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-673 - Precise models are inconsistent with
+respect to whether 1 time step is an acceptable refractory time
+
+Synopsis: (ticket-673) run -> NEST exits if test fails
+
+Description: 
+Test whether precise models can handle t_ref==simulation resolution
+
+Author: Susanne Kunkel, 2013-01-23
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+% model t_ref run_sim -> time of 2nd spike
+/run_sim 
+{  
+  /tref Set
+  ResetKernel
+  0 << /resolution 0.1 >> SetStatus
+  << /I_e 1000. /t_ref tref >> Create /n Set
+  /spike_detector Create /d Set
+  n d Connect
+  20. Simulate
+  d /events get /times get 1 get
+}
+def
+
+% iaf_psc_alpha_presc is not affected
+/models [
+  /iaf_psc_alpha_canon
+  /iaf_psc_delta_canon
+  /iaf_psc_exp_ps
+] def
+
+% for all models:
+%   run the simulation with t_ref=1.0 ms
+%   run the simulation with t_ref=0.1 ms
+%   check that the second spike is shifted by 0.9 ms
+/dt 1.0 0.1 sub def
+{
+  models { dup 1.0 run_sim exch 0.1 run_sim sub dt sub abs 1e-15 leq } Map
+  true exch { and } Fold
+} assert_or_die
+
+endusing

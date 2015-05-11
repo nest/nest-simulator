@@ -1,0 +1,337 @@
+/*
+ *  test_sinusoidal_poisson_generator.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: testsuite::test_sinusoidal_poisson_generator - test basic properties of sinusoidal poisson generator
+
+Synopsis: (test_sinusoidal_poisson_generator) run -> dies if assertion fails
+
+Description:
+This test asserts that
+ - that /individual_spike_trains is true by default
+ - the /individual_spike_trains property can be set on the model, but not on instances
+ - that instances inherit the correct /individual_spike_trains value
+ - that different targets (on same or different threads)
+     * identical spike trains if /individual_spike_trains is false
+     * different spike trains otherwise
+ - that a multimeter can be connected to record the rate
+     * independent of /individual_spike_trains ..., only a single trace is returned
+ - the recorded rate profile is tested against expectation
+
+This test DOES NOT test the statistical properties of the spike trains generated.
+
+Author: Plesser
+FirstVersion: May 2013
+SeeAlso: testsuite::test_sinusoidal_poisson_generator_1, testsuite::test_sinusoidal_gamma_generator
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity 
+
+% test 1: individual_spike_trains true by default
+{
+  ResetKernel
+  /sinusoidal_poisson_generator Create
+  /individual_spike_trains get
+} assert_or_die
+(passed 1) ==
+
+% test 2: individual_spike_trains can be set on model and is passed on
+{
+  ResetKernel
+  /sinusoidal_poisson_generator << /individual_spike_trains false >> SetDefaults
+  /sinusoidal_poisson_generator Create
+  /individual_spike_trains get
+  not
+} assert_or_die
+(passed 2) ==
+
+% test 2a: individual_spike_trains can be set on model and is passed on
+{
+  ResetKernel
+  /sinusoidal_poisson_generator 
+    /sspg << /individual_spike_trains false >> CopyModel
+  /sspg Create
+  /individual_spike_trains get
+  not
+} assert_or_die
+(passed 2a) ==
+
+
+% test 3: individual_spike_trains cannot be set on instances
+{
+  ResetKernel
+  /spg /sinusoidal_poisson_generator Create def
+
+  mark
+  {
+    spg << /individual_spike_trains false >> SetStatus
+  } stopped
+  {
+    /passed true def
+
+    % we got an exception, need to clean up
+    errordict /message undef
+    errordict /command undef
+    errordict begin /newerror false def end
+  }
+  {
+    /passed false def
+  } ifelse
+
+  counttomark npop pop % clear stack, including mark
+
+  passed
+} assert_or_die
+  
+(passed 3) ==
+
+% function building n neuron network with spike detectors
+% num_nrns build_simple_net -> [ spike_detectors ]
+/build_simple_net
+{
+  /n Set
+  /pnet /subnet Create def
+  pnet ChangeSubnet
+  /parrot_neuron n Create ;
+  0 ChangeSubnet
+  /parrots pnet GetLocalLeaves def
+  
+  /snet /subnet Create def
+  snet ChangeSubnet  
+  /spike_detector n << /withtime true /withgid false >> Create ;
+  0 ChangeSubnet
+  /sdets snet GetLocalLeaves def
+
+  /gen /sinusoidal_poisson_generator Create def
+
+  gen parrots DivergentConnect
+
+  [parrots sdets] { Connect } ScanThread
+
+  sdets
+} def
+ 
+% return true if all arrays inside an array are identical
+% [l1 l2 ...] all_equal -> bool
+/all_equal
+{
+  dup First /reference Set
+  true exch { reference eq and } Fold
+} def
+
+% return true if all arrays inside an array are different from each other
+% [l1 l2 ...] all_different -> bool
+/all_different
+{
+  empty
+  {
+    ; true 
+  }
+  {
+    /items Set
+    items [ 1 -2 ] Take  % all except last element
+    { 1 add -1 2 arraystore items exch Take 
+      exch /item Set 
+      true exch { item neq and } Fold
+    } MapIndexed 
+    true exch { and } Fold
+  } ifelse
+
+} def
+
+
+% Run test for given value for individual spike train and thread number
+% individual(true/false) num_threads nrns_per_thread test4_function -> bool
+/test4_function
+{
+  /nrns_per_thread Set
+  /num_threads Set
+  /individual Set
+
+  ResetKernel
+  0 << /local_num_threads num_threads >> SetStatus
+
+  /sinusoidal_poisson_generator 
+  << 
+     /dc  100.
+     /ac   50.
+     /freq 10.
+     /individual_spike_trains individual
+  >> SetDefaults
+
+  /sdets num_threads nrns_per_thread mul build_simple_net def
+
+  1000. Simulate
+
+  sdets { [/events /times] get cva } Map
+  individual
+  {
+    all_different 
+  }
+  {
+    all_equal 
+  }
+  ifelse
+} def
+
+% test 4a: single thread, one spike train for all targets
+{
+  false 1 4 test4_function
+} assert_or_die
+(passed 4a) ==
+
+% test 4b: single thread, different spike trains for all targets
+{
+  true 1 4 test4_function
+} assert_or_die
+(passed 4b) ==
+
+% test 4c: two threads, one spike train for all targets
+{
+  false 2 4 test4_function
+} assert_or_die
+(passed 4c) ==
+
+% test 4d: two threads, different spike trains for all targets
+{
+  true 2 4 test4_function
+} assert_or_die
+(passed 4d) ==
+
+
+% now let's add multimeters
+% function building n neuron network with multimeter
+% num_nrns build_simple_net -> [ multimeter ]
+/build_mm_net
+{
+  /n Set
+  /pnet /subnet Create def
+  pnet ChangeSubnet
+  /parrot_neuron n Create ;
+  0 ChangeSubnet
+  /parrots pnet GetLocalLeaves def
+  
+  /gen /sinusoidal_poisson_generator Create def
+  /mm /multimeter << /record_from [ /rate ] >> Create def
+
+  gen parrots DivergentConnect
+  mm gen Connect  
+
+  mm
+} def
+
+% Run test for given value for individual spike train and thread number
+% individual(true/false) num_threads nrns_per_thread test4_function -> bool
+/test5_function
+{
+  /nrns_per_thread Set
+  /num_threads Set
+  /individual Set
+
+  ResetKernel
+  0 << /local_num_threads num_threads >> SetStatus
+
+  /sinusoidal_poisson_generator 
+  << 
+     /dc  100.
+     /ac   50.
+     /freq 10.
+     /individual_spike_trains individual
+  >> SetDefaults
+
+  /mm num_threads nrns_per_thread mul build_mm_net def
+
+  /tsim 100. def
+  tsim Simulate
+
+  /ndata tsim cvi 1 sub def
+
+  % times and rates must be arrays of ndata points    
+    mm [/events /times] get length ndata eq
+    mm [/events /rate ] get length ndata eq
+    and    
+} def
+
+% test 5a: single thread, one spike train for all targets
+{
+  false 1 4 test5_function
+} assert_or_die
+(passed 5a) ==
+
+% test 5b: single thread, different spike trains for all targets
+{
+  true 1 4 test5_function
+} assert_or_die
+(passed 5b) ==
+
+% test 5c: two threads, one spike train for all targets
+{
+  false 2 4 test5_function
+} assert_or_die
+(passed 5c) ==
+
+% test 5d: two threads, different spike trains for all targets
+{
+  true 2 4 test5_function
+} assert_or_die
+(passed 5d) ==
+
+
+%% finally, check multimeter whether rate is correct
+{
+  ResetKernel
+
+  /dc    1. def
+  /ac    0.5 def
+  /freq 10. def
+  /phi   2. def  
+
+  /sinusoidal_poisson_generator 
+  << 
+     /dc   dc
+     /ac   ac
+     /freq freq
+     /phi  phi
+  >> SetDefaults
+
+  /mm 1 build_mm_net def
+
+  /tsim 100. def
+  tsim Simulate
+  
+  /t mm [ /events /times ] get cva def
+  /r mm [ /events /rate  ] get cva def
+
+  /r0 dc ac 2. Pi mul freq 1000. div mul t mul phi add { sin } Map mul add def
+  true r r0 sub { abs 1e-14 lt and } Fold
+ 
+} assert_or_die
+(passed 6) ==
+
+
+
+
+endusing

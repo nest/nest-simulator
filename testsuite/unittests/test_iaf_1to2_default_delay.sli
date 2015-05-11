@@ -1,0 +1,185 @@
+/*
+ *  test_iaf_1to2_default_delay.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_iaf_1to2 - sli script for test of iaf_neuron spike interaction 
+
+Synopsis: (test_iaf_1to2) run -> compare response with reference data
+
+Description:
+
+ test_iaf_1to2 checks the spike interaction of two iaf_neuron model
+ neurons.
+
+ In order to obtain identical results for different computation step
+ sizes h, the SLI script needs to be independent of h.  This is
+ achieved by specifying all time parameters in milliseconds (ms). In
+ particular the time of spike emission and the synaptic delay need to
+ be integer multiples of the computation step sizes to be
+ tested. test_iaf_dc_aligned_delay demonstrates the strategy for the
+ case of DC current input.
+
+ A DC current in the pre-synaptic neuron is adjusted to cause a spike
+ at a grid position (t=3.0 ms) joined by all computation step sizes to
+ be tested.
+ 
+ Note that in a neuron model where synaptic events are modeled by a
+ truncated exponential the effect of the incoming spike would be
+ visible at the time of impact (here, t=4.0 ms). This is because the
+ initial condition for the post-synaptic potential (PSP) has a
+ non-zero voltage component. For PSPs with finite rise time the
+ situation is different. In this case the voltage component of the
+ initial condition is zero (see documentation of
+ test_iaf_psp). Therefore, at the time of impact the PSP is only
+ visible in other components of the state vector.
+
+ The expected output is documented and briefly commented at the end of
+ the script.
+
+Author:  July 2004, Diesmann
+SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_aligned_delay
+*/
+
+(unittest) run
+/unittest using
+
+M_INFO setverbosity
+
+/delay 1.0 def % connection delay to be used
+/simtime 8.0 def % simulation time
+
+
+/AlignedImpact
+{
+  << >> begin    
+ /d Set /h Set
+
+  ResetKernel
+      0 << 
+      /local_num_threads 1   
+      /resolution h
+      >> SetStatus
+
+      /iaf_psc_alpha Create /neuron1 Set
+      neuron1 << /I_e 1450.0 >> SetStatus
+
+      /iaf_neuron Create /neuron2 Set
+
+      /voltmeter Create /vm Set
+      vm << /withtime true /time_in_steps true /interval h >> SetStatus
+
+      /spike_detector Create /sd Set
+      sd << /withtime true /time_in_steps true >> SetStatus
+
+
+% testing that  "/delay 1.0" is not needed here
+%                                     | 
+%                                     v  
+      /static_synapse << /weight 100.0 >> SetDefaults
+      neuron1 neuron2 Connect
+
+      vm neuron2 Connect
+
+      neuron1 sd Connect
+      neuron2 sd Connect
+
+      simtime Simulate
+
+ d Transpose First /test_times Set          % times of reference
+
+ vm [/events [/times /V_m]] get cva  % array of recorded voltages
+  6 ToUnitTestPrecision                     % to precision of reference
+  Transpose                                 % all recorded tuples
+  {First test_times exch MemberQ } Select   % those with reference 
+
+  d 
+  eq                                        % compare
+
+} def 
+
+
+{
+ % h d,  vector of resolutions and compressed reference data   
+ InflateUnitTestData 
+
+ Transpose {AlignedImpact} MapThread
+
+ true exch {and} Fold   % remove this line to see individual results
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%
+% Expected output of this program:
+% 
+% The output send to std::cout is a superposition of the output of  
+% the voltmeter and the spike detector. Both, voltmeter and spike 
+% detector are connected to the same neuron. 
+%
+%
+% h=   (in ms)
+[ 0.1   0.2    0.5   1.0]
+%
+% time                    voltage
+[
+% ...
+[ 25           5           -70]%         <-- Voltage trace of the post-synaptic neuron
+[ 26    13                 -70]%              (neuron2), at rest until a spike arrives.
+[ 27                       -70]
+[ 28    14                 -70]
+[ 29                       -70]
+[ 30    15     6     3     -70]
+% 1       30                   %         <-- The pre-synaptic neuron (neuron1) emits a 
+[ 31                       -70]%             spike at t=3.0 ms.
+[ 32    16                 -70]
+[ 33                       -70]
+[ 34    17                 -70]
+[ 35           7           -70]%         <--  Synaptic delay of 1.0 ms.
+[ 36    18                 -70]
+[ 37                       -70]
+[ 38    19                 -70]
+[ 39                       -70]
+[ 40    20     8    4      -70]% <-----------  Spike arrives at the post-synaptic neuron
+[ 41                       -69.9974]%    <-    (neuron2) and changes the state vector of
+[ 42    21                 -69.9899]%      |   the neuron, not visible in voltage because
+[ 43                       -69.9781]%      |   voltage of PSP initial condition is 0.
+[ 44    22                 -69.9624]%      |
+[ 45           9           -69.9434]%       -  Arbitrarily close to the time of impact 
+[ 46    23                 -69.9213]%          (t=4.0 ms) the effect of the spike (PSP) 
+[ 47                       -69.8967]%          is visible in the voltage trace.
+[ 48    24                 -69.8699]
+[ 49                       -69.8411]
+[ 50    25    10     5     -69.8108]
+[ 51                       -69.779 ]
+[ 52    26                 -69.7463]%    <---  The voltage trace is independent
+[ 53                       -69.7126]%          of the computation step size h.
+[ 54    27                 -69.6783]%          Larger step sizes only have fewer
+[ 55          11           -69.6435]%          sample points.
+[ 56    28                 -69.6084]
+[ 57                       -69.5732]
+% ...
+]
+%
+
+rolld assert_or_die
+

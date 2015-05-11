@@ -1,0 +1,90 @@
+/*
+ *  ticket-737.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-737 Ensure that stimulating devices can only be connected with a single synapse type
+
+Synopsis: (ticket-737) run -> NEST exits if test fails
+
+Description:
+Ensure that NEST throws an exception if one tries to connect poisson_generator
+(sending DSSpikeEvents), noise_generator (sending DSCurrentEvents) or multimeter
+(sending DataLoggingRequest) to a neuron using a plastic synapse.
+
+spike_generator slips through this test, since it usually sends SpikeEvent. But it
+is no danger if it sends DSSpikeEvents for weighted spikes, since it sends precisely
+one DSSpikeEvent per spike. 
+
+Author: Hans Ekkehard Plesser, 2014-11-06
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+/stimulators modeldict keys { GetDefaults /element_type get /stimulator eq } Select def
+
+% first test: multiple connections with same type
+ResetKernel
+{
+  stimulators
+  {
+    Create /stim Set
+    /iaf_neuron Create /n Set
+    stim n /static_synapse Connect
+    stim n /static_synapse Connect
+  } forall
+} pass_or_die
+
+% second test: multiple connections of user-defined type
+ResetKernel
+{
+  stimulators
+  {
+    /stimname Set
+    stimname Create /stim Set
+    /iaf_neuron Create /n Set
+    /synmodel stimname cvs (_syn) join cvlit def
+    /static_synapse synmodel CopyModel
+    stim n synmodel Connect
+    stim n synmodel Connect
+  } forall
+} pass_or_die
+
+
+% third test: no multiple connections with different types
+%   test must fail if a single case fails
+ResetKernel
+stimulators
+{
+  /stimname Set
+  stimname Create /stim Set
+  /iaf_neuron Create /n Set
+  /synmodel stimname cvs (_syn) join cvlit def
+  /static_synapse synmodel CopyModel
+  stim n /static_synapse Connect
+  { stim n synmodel Connect } fail_or_die 
+} forall 
+
+endusing

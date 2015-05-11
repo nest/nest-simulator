@@ -1,0 +1,123 @@
+/*
+ *  test_spike_transmission_ps.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* Testscript 
+
+Setup:
+- poisson_generator_ps with high rate
+- spike_detector recording precise spike times
+- connected with default connection, delay 1ms
+
+Test:
+- simulate for T at different resolutions h
+- record until Tstop <= T - min_delay
+- compare recorded spike times: must be equal
+
+Important:
+- Recording must end at the same time for all resolutions.
+  No data newer than one min_delay before the end of the
+  simulation can be recorded. To avoid any problems caused
+  by min_delay depending on the resolution (see #161), we
+  set the end of the recording time explicitly. We check
+  by assertion that the end of recording is no later than
+  T - min_delay.
+- Connection delay must be set explicitly because
+  of default delay recalibration error reported in
+  #161. Once #161 is fixed, it should no longer be
+  necessary to explicitly set the delay.
+  
+Historic information:
+- related to tickets #157, #164, #210
+
+worked even with ticket #157 unresolved.
+Only the presence of a neuron (see test_spike_transmission_ps_iaf)
+exhibited the problem.
+Prior to the fix of ticket #164 this test produced
+inconsistent results without specifying /local_num_threads 1
+for the kernel.
+
+*/
+
+(unittest) run
+/unittest using
+
+% test parameters -------------------------------------------------
+
+/T         4.0 def   % simulation time
+/Tstop     3.0 def   % end of recording
+/prate 12892.3 def   % rate of Poisson generator
+/delay     1.0 def   % connection delay, needs to be set explicity due to #161
+
+/resolutions [0.1 0.01 0.001] def
+
+% test routine ----------------------------------------------------
+
+/Transmission
+{
+  /h Set
+
+  ResetKernel
+
+  0 <<  
+       /resolution h
+      >> SetStatus
+
+  % build and connect first
+  /spike_detector Create /sp Set  
+  /poisson_generator_ps Create /pn Set
+ 
+  % now configure
+  sp  << /record_to [ /memory ]
+         /precise_times true
+         /stop Tstop
+      >> 
+  SetStatus
+
+  pn << /rate prate >> SetStatus
+
+  pn sp 1.0 delay Connect
+
+  % check in-delay condition
+  /mindel 0 /min_delay get def
+  Tstop T mindel sub leq assert
+
+  % simulate
+  T Simulate 
+
+  % obtain event time stamps and offsets
+  sp [/events /times] get cva
+
+} def
+
+% execute test -----------------------------------------------------
+
+resolutions
+{ 
+  Transmission 
+} Map
+
+% Stack now contains one array of spike times per
+% resolution. Check if spike times are equal to within 4.5e-16 ms.
+dup First /ref Set   % reference
+Rest true exch { ref sub 0 exch { abs max } Fold 4.5e-16 lt and } Fold
+
+assert_or_die

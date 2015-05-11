@@ -1,0 +1,178 @@
+/*
+ *  test_iaf_psp_normalized.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_iaf_psp_normalized - check if PSP can be normalized 
+
+Synopsis: (test_iaf_psp_normalized) run -> compare response with desired outcome
+
+Description:
+
+The script computes the peak location of the PSP analytically for a
+neuron model with an alpha-shaped post-synaptic current (PSC) [1]. In case
+the GNU Scientific Library (GSL) is not present the peak location is
+found by searching for the root of the derivative of the PSP. We then
+compute the peak value for a PSC with unit amplitude and show how the
+synaptic weight can be adjusted to cause a PSP of a specific
+amplitiude. Finally, we check whether the simulation indeed generates
+a PSP of the desired amplitude.
+
+In application code the test for the availability of the GSL is not
+necessary because NEST has a built in version of the LambertWm1 which
+automatically replaces the GSL function if required. This removes the
+need to specify the derivative of the function of interest, here the
+PSP, in application code.  A further alternative is used in
+test_lambertw where knowledge of the range of values of the
+non-principal branch of the Lambert-W function [-1,-\infty) is
+exploited to find the inverse of x*exp(x) by bisectioning.
+
+
+References:
+  [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
+      systems with applications to neuronal modeling. Biologial Cybernetics
+      81:381-402.
+  [2] Galassi, M., Davies, J., Theiler, J., Gough, B., Jungman, G., Booth, M.,
+      & Rossi, F. (2006). GNU Scientific Library Reference Manual (2nd Ed.).
+      Network Theory Limited.
+
+Author:  July 2009, Diesmann
+SeeAlso: testsuite::test_iaf_psp_peak, testsuite::test_iaf_psp, testsuite::test_lambertw, LambertWm1
+*/
+
+
+(unittest) run
+/unittest using
+
+1.0    /delay Set   % in ms 
+0.001  /h     Set
+
+1.0  /u Set   % requested PSP size in mV
+
+<<                 % parameter of the Brunel network examples
+  /tau_m   20.0    % membrane time constant in ms
+  /tau_syn  0.5    % synaptic time constant in ms
+  /C_m      1.0    % membrane capacity in pF 
+  /E_L      0.0
+  /V_reset  0.0
+  /V_th    15.0
+  /V_m      0.0
+>>
+/P Set
+
+
+/psp
+ [/t]
+ ( 
+  E/tau_syn * 1/C_m 
+    * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) ) 
+ )
+ Function
+def
+
+
+% derivative of the post-synaptic potential
+% only required in case the GSL is not available
+/dpsp
+ [/t]
+ (
+  E/tau_syn * 1/C_m 
+    * (   (-1/tau_m*exp(-t/tau_m)+1/tau_syn*exp(-t/tau_syn)) / (1/tau_syn - 1/tau_m)^2 
+        - (exp(-t/tau_syn) - 1/tau_syn*t*exp(-t/tau_syn)) / (1/tau_syn - 1/tau_m) 
+      )
+ )
+ Function
+def
+
+
+
+P begin
+<< >> begin
+
+ statusdict/have_gsl :: 
+ {
+  (                                               % closed form solution
+   a=tau_m/tau_syn;
+   t= (-a*LambertWm1(-exp(-1/a)/a) -1)/a / (1/tau_syn - 1/tau_m);
+  ) ExecMath 
+ }
+ {                                                % numerical solution in absence of GSL
+  {dpsp} 0. 5.0 0.00000000001 FindRoot /t Set 
+ }
+ ifelse
+ t psp inv
+
+ end
+end
+/f Set  % f is the weight required for a PSP with unit amplitude
+
+u  f mul /w Set 
+
+
+
+ResetKernel
+
+
+0 << 
+    /resolution h
+  >> SetStatus
+
+
+/spike_generator Create /sg Set
+
+
+sg <<
+     /precise_times false
+     /origin 0.0            % in ms
+     /spike_times [ 2.0 ]   % in ms
+     /start 1.0             % in ms 
+     /stop 3.0              % in ms
+   >> SetStatus
+
+/iaf_neuron Create /neuron Set
+neuron P SetStatus
+
+
+
+
+
+/voltmeter Create /vm Set
+vm << /withtime true /to_memory true /time_in_steps true /interval h >> SetStatus
+
+
+sg neuron w  delay Connect
+
+vm neuron Connect
+
+
+7.0 Simulate
+
+
+vm [/events /V_m] get cva Max 
+
+
+1.0 sub abs 1e-6 lt   assert_or_die
+
+
+
+
+

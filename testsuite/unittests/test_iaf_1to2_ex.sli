@@ -1,0 +1,207 @@
+/*
+ *  test_iaf_1to2_ex.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_iaf_1to2_ex - sli script for test of min_delay
+
+Synopsis: (test_iaf_1to2_ex) run -> compare with reference data
+
+Description:
+
+ test_iaf_1to2_ex checks the invariance of the spike interaction of 
+ two iaf_neuron model neurons with respect to the min_delay of the 
+ kernel.
+
+ In order to obtain identical results for different computation step
+ sizes h, the SLI script needs to be independent of h.  This is
+ achieved by specifying all time parameters in milliseconds (ms). In
+ particular the time of spike emission and the synaptic delay need to
+ be integer multiples of the computation step sizes to be
+ tested. test_iaf_dc_aligned_delay demonstrates the strategy for the
+ case of DC current input.
+
+ A DC current in the pre-synaptic neuron is adjusted to cause a spike
+ at a grid position (t=3.0 ms) joined by all computation step sizes to
+ be tested.
+ 
+ Note that in a neuron model where synaptic events are modeled by a
+ truncated exponential the effect of the incoming spike would be
+ visible at the time of impact (here, t=5.0 ms). This is because the
+ initial condition for the post-synaptic potential (PSP) has a
+ non-zero voltage component. For PSPs with finite rise time the
+ situation is different. In this case the voltage component of the
+ initial condition is zero (see documentation of
+ test_iaf_psp). Therefore, at the time of impact the PSP is only
+ visible in other components of the state vector.
+
+ The expected output is documented and briefly commented at the end of
+ the script.
+
+ The simulation is run with several values of min_delay, which all 
+ should yield identical results.
+
+Author: 
+        January 2008, Diesmann
+        January 2005, Plesser
+        July 2004, Diesmann
+
+SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_aligned_delay
+*/
+
+(unittest) run
+/unittest using
+
+0.1  /h Set       % time resolution
+
+2.0 /delay   Set  % actual delay between neurons
+8.0 /simtime Set  % simulation time
+
+
+
+/RunMinDelay
+{
+ << >> begin    
+ /d Set /min_delay Set   
+ 
+ min_delay delay leq assert  
+
+ ResetKernel
+
+
+ 
+  0 << 
+    /local_num_threads 1   
+    /resolution h
+  >> SetStatus
+
+  /iaf_neuron Create /neuron1 Set
+  /iaf_neuron Create /neuron2 Set
+
+  neuron1 << /I_e 1450.0 >> SetStatus
+
+
+  /voltmeter Create /vm Set
+  vm << /withtime true /to_memory true /time_in_steps true /interval h >> SetStatus
+
+  /spike_detector Create /sd Set
+  sd << /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+
+
+  /static_synapse 
+  << 
+     /delay delay 
+     /weight 100.0 
+  >> SetDefaults
+
+  /static_synapse 
+  << 
+    /min_delay min_delay 
+    /max_delay delay 
+  >> SetDefaults
+
+  neuron1 neuron2 Connect
+
+  vm neuron2 Connect
+
+  neuron1 sd Connect
+  neuron2 sd Connect
+
+  simtime Simulate
+
+ d Transpose First /test_times Set           % times of reference
+
+ vm [/events [/times /V_m]] get cva   % array of recorded voltages
+  6 ToUnitTestPrecision                      % to precision of reference
+  Transpose                                  % all recorded tuples
+  {First test_times exch MemberQ } Select    % those with reference 
+
+ d eq                                        % compare data
+ 0 GetStatus /min_delay get min_delay eq   % compare kernel setting
+ and
+
+end
+} def 
+
+
+{
+ % m d,  vector of mind_delays and reference data   
+ 
+ {2 arraystore } exch prepend   % prepare function containing the test data
+ Map                            % supply each min_delay with a copy of the data
+
+ Transpose {RunMinDelay} MapThread
+
+ true exch {and} Fold   % remove this line to see individual results
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%
+% Expected output of this program:
+% 
+% The output send to std::cout is a superposition of the output of  
+% the voltmeter and the spike detector. The voltmeter ist connected 
+% to the postsynaptic neuron and the spike detector to both neurons.
+%
+% 
+% min_delay (in ms)
+[0.1   0.5   2.0]
+%
+% time (steps)  voltage (mV)
+[
+% 0	-70
+[ 1	-70]
+[ 2	-70]
+[ 3	-70]
+[ 4	-70]
+[ 5	-70]
+% ...
+[ 28	-70]
+[ 29	-70]
+[ 30	-70]
+% 1 	30	% <--- neuron1 
+[ 31	-70]
+[ 32	-70]
+[ 33	-70]
+[ 34	-70]
+[ 35	-70]
+% ...
+[ 48	-70]
+[ 49	-70]
+[ 50	-70]
+[ 51	-69.9974]
+[ 52	-69.9899]
+[ 53	-69.9781]
+[ 54	-69.9624]
+[ 55	-69.9434]
+[ 56	-69.9213]
+[ 57	-69.8967]
+[ 58	-69.8699]
+[ 59	-69.8411]
+[ 60	-69.8108]
+%...
+]
+
+rolld assert_or_die
+
+

@@ -1,0 +1,527 @@
+/*
+ *  library.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+systemdict begin
+
+/* BeginDocumentation
+Name: namespace - Open a namespace
+
+Synopsis:
+/name namespace ...your.code... end -> -
+
+Description: 
+"namespace" provides to SLI the concept of namespaces,
+  as known from C++. 
+
+The command changes the current scope to the namespace of the given
+  name, i.e.,
+  - all following symbol definitions go to this namespace
+  - all symbols that were previously defined in this namespace become
+    known
+The namespace must be closed by an "end" statement.
+
+The symbols defined in a namespace persist across closing and
+  re-opening of the namespace. Namespaces can be nested.
+
+For alternative ways of accessing a namespace,
+  see "using" and "call".
+
+Parameters:
+  /name - the namespace to open
+
+Examples:
+/myspace namespace % this opens namespace "myspace"
+  /var 23 def      % this creates the variable "myspace::var"
+  /func {(This is stupid.) =} def % this creates the function "myspace::func"
+end                % this closes the namespace "myspace"
+
+/myspace namespace % this re-opens the namespace "myspace"
+  who              % this shows the variables defined in the namespace
+end                % this closes the namespace "myspace"
+
+myspace /func call % this calls "myspace::func"
+
+Diagnostics:
+If the named object is not a dictionary, TypeMismatchError is raised.
+
+Author:
+Ruediger Kupper
+
+FirstVersion:
+21-jul-2003
+
+Remarks:
+Currently, namespaces are implemented as
+  dictionaries. Namespaces may become more tightly
+  integrated with the SLI interpreter in future.
+The idea is to define a set of symbols not in the global user
+  dictionary, but in a separate dictionary that has the name of the
+  namespace. Thus, symbols in different namespaces can have
+  identical names, and are effectively disambiguated by the current
+  dictionary context.
+Note that the namespace dictionary is looked up and created in the
+  current scope. This is to allow for nested namespaces.
+
+Availability: SLI2.0
+
+References:
+[1] Ruediger Kupper, SLI library management,
+    HRI-EU Report 06/05, Honda Research Institute Europe GmbH, 2006.
+
+SeeAlso: call, using, endusing
+*/
+  /namespace[/literaltype]
+  {
+    %stack: /name
+    dup
+    lookup
+    {%stack: /name dict
+      dup type /dictionarytype neq
+      {
+        pop
+        M_ERROR (namespace) (Object is not a dictionary.) message
+        /namespace /TypeMismatchError raiseerror          
+      } if        
+      begin
+        pop
+    }
+        {%stack: /name
+          << >> dup rolld Set
+          begin
+        } ifelse        
+  } bind def
+
+  
+
+/* BeginDocumentation
+Name: using - Make symbols of a namespace or dictionary available in the current scope.
+
+Synopsis:
+/namespace     using ...your.code... endusing -> -
+<<dictionary>> using ...your.code... endusing -> -
+
+Description:
+The 'using' statement provides read access to a namespace or
+  dictionary, without changing the current scope for new symbol
+  definitions.
+
+The 'using' statement must be closed by 'endusing'.
+
+**********************************************************************
+* IMPORTANT:                                                         *
+* The 'using' statement puts the specified namespace                 *
+* or dictionary in the second position of the dictionary stack. This *
+* means that LOCAL SYMBOLS WILL SHADOW SYMBOLS OF THE SAME NAME FROM *
+* THE SPECIFIED NAMESPACE OR DICTIONARY. This makes the 'using'      *
+* statement unsafe in all situations where you do not have explicit  *
+* control of the current dictionary. YOU MAY END UP CALLING A        *
+* FOREIGN SYMBOL.                                                    *
+* There are two ways to avoid this problem:                          *
+* (a) use 'namespace' or 'call', which provide read/write access to  *
+*           the namespace or dictionary and don't have the shadowing *
+*           problem.                                                 *
+* (b) put an empty dictionary on the dictionary stack at the         *
+*           beginning of your routine, providing a local symbol      *
+*           scope for your routine. The 'SLIFunctionWrapper'         *
+*           command does this for you automatically.                 *
+**********************************************************************
+
+Parameters:
+ /name          - name of the the namespace to use
+ <<dictionary>> - dictionary to use         
+
+Examples:
+ % the following makes the routines of the unittest library available to the current scope:
+ (unittest) run
+ /unittest using
+   ..your code..
+ endusing
+
+ % the following makes the models in modeldict available to the current scope:
+ modeldict using
+   ..your code..
+ endusing
+
+ % alternatively, you can also use the literal name:
+ /modeldict using
+   ..your code..
+ endusing
+
+Diagnostics:
+If the name is not known,  UndefinedNameError is raised.
+If the name is not bound to a dictionary, TypeMismatchError is raised.
+
+Author: Ruediger Kupper
+
+FirstVersion: 6-aug-2003
+
+Remarks:
+Please note that 'using'/'endusing' is implemented by the opening and
+closing of dictionaries. Code between 'using' and 'endusing' should
+hence have completely matched 'begin' and 'end' statements, or special
+care must be taken when using non-matched 'begin'/'end' constructs
+inside a 'using' context.
+
+Availability: SLI2.0
+
+References:
+[1] Ruediger Kupper, SLI library management,
+    HRI-EU Report 06/05, Honda Research Institute Europe GmbH, 2006.
+
+SeeAlso: endusing, namespace, call
+*/
+/using[/dictionarytype]
+{
+  %stack: dict
+  currentdict
+  exch begin begin       
+} bind def
+
+/using[/literaltype]
+{
+  %stack: /name
+  dup  
+  lookup not
+  { 
+    M_ERROR (using) (A namespace or dictionary of the given name is not known.) message
+    /using /UndefinedNameError raiseerror          
+  } if
+
+  %stack: /name dict
+  dup type /dictionarytype neq
+  {
+    pop
+    M_ERROR (using) (Object is not a namespace or dictionary.) message
+    /using /TypeMismatchError raiseerror          
+  } if        
+  
+  %stack: /name dict
+  exch pop
+  
+  %stack: dict
+  % call the dictionary variant  
+  using
+} bind def  
+
+
+
+/* BeginDocumentation
+Name: endusing - Close the scope of a 'using' context.
+
+Synopsis: /namespacename using ...your.code... endusing -> -
+
+Description:
+'endusing' must be used to close a 'using' statement.
+For further information, see 'using'.
+
+Examples:
+ % the following makes the routines of the unittest library available to the current scope:
+ (unittest) run
+ /unittest using
+   ..your code..
+ endusing
+
+Author: Ruediger Kupper
+
+FirstVersion: 6-aug-2003
+
+Remarks:
+Please note that 'using'/'endusing' is implemented by the opening and
+closing of dictionaries. Code between 'using' and 'endusing' should
+hence have completely matched 'begin' and 'end' statements, or special
+care must be taken when using non-matched 'begin'/'end' constructs
+inside a 'using' context.
+
+Availability: SLI2.0
+
+References:
+[1] Ruediger Kupper, SLI library management,
+    HRI-EU Report 06/05, Honda Research Institute Europe GmbH, 2006.
+
+SeeAlso: using, namespace, call
+*/
+/endusing
+{
+  end
+  end
+} bind def
+
+
+
+% ========= Implementation of :: begins here =========
+%           (sorry, this is a length piece of code)
+
+/* BeginDocumentation
+Name: :: - execute a symbol from a nested namespace
+
+Synopsis: A/name ::       -> executes A::name (symbol "name" from namespace "A")
+          A/B/name ::     -> executes A::B::name
+          A/B/C/name ::   -> executes A::B::C::name
+          A/B/C/D/name :: -> executes A::B::C::D::name
+
+
+Description:
+The :: operator looks up and executes a symbol from a nested namespace.
+
+The normal rules for symbol execution apply, i.e.
+  - if the symbol is a variable, its value is returned.
+  - if the symbol is a routine, it is executed.
+
+The symbol is executed in the full nested context, i.e.
+  if you call a routine "A/B/C/routine ::", the routine can
+  access symbols from namespaces "A", "B" and "C" as if
+  the namespaces had been opened in this order.
+  "A/B/.../name ::" is equivalent to:
+  /A namespace
+    /B namespace
+      ...
+        name
+      ...
+    end
+  end
+
+The lookup is safe in the sense that, if the symbol cannot be found,
+the scope will stay unchanged, so that the user can safely recover
+from the error. If however the called symbol is a routine and this
+routine raises an error, the user will find the interpreter at the
+scope of the nested routine.
+
+Parameters:
+A,B,C,D: nested namespaces
+name: name of the symbol to look up and execute
+
+Examples:
+SLI ] /A namespace
+SLI ]   /B namespace
+SLI ]     /myvar 23 def
+SLI ]   end
+SLI ] end
+SLI ] A/B/myvar :: =
+   -> 23
+
+SLI ] /X namespace
+SLI ]   /var_in_x 23.5 def
+SLI ]   /Y namespace
+SLI ]     /func {var_in_x =} def
+SLI ]   end
+SLI ] end
+SLI ] X/Y/func ::
+   -> 23.5
+
+Diagnostics:
+If the symbol cannot be found at the specified nested position,
+/UnknownMember is raised. In this case, the operand and dictionary
+stacks will stay unchanged, so that the user can safely recover from
+the error.
+
+If the called symbol is a routine and this routine raises an error,
+the scope will be that of the nested routine.
+
+Author: Ruediger Kupper
+
+FirstVersion: 17-jun-2008
+
+Remarks:
+Currently implemented up to a depth of four nested namespaces.
+
+SeeAlso: namespace, call
+*/
+
+% --------- parameter checking routines for :: ----------------
+/::checknestedlookup[/dictionarytype /A
+                     /arraytype      /symbols]
+% Returns true if the nested lookup worked for all symbols.
+% Prints a message and returns false if the nested symbol cannot be looked up.
+{
+  % all members of the array must be literals
+
+  /result true def  
+
+  /ns A def % current namespace
+  
+  % first check the namspaces:  
+  symbols Most % all but last symbol (the namespaces)  
+  {
+    1 add /depth Set
+    /nextnslit Set 
+        
+    % check if /nextnslit is a member of ns and if ot refers to a dictionary:
+    % The following test yields true if symbol is known and a dictionary, false, else.    
+    ns nextnslit known
+    {
+      ns nextnslit get  type /dictionarytype  eq
+    }
+    {
+      false      
+    } ifelse  
+   
+    not { % symbol is either unknown or not a dictionary
+      M_ERROR (Nested symbol lookup (::))
+      (At depth )
+      depth cvs join
+      (: /) join
+      nextnslit cvs join
+      ( is not a nested namespace.) join
+      message      
+
+      % set result to false and exit the forall loop:
+      /result false def
+      exit
+    } if
+
+    % okay, iterate:
+    /ns  ns nextnslit get  def
+  } forallindexed  
+
+  % continue only if result is still true:  
+  result {
+    % now check the last symbol:
+    ns  symbols Last  known  not
+    { % symbol is not known
+      M_ERROR (Nested symbol lookup (::)) 
+      (At depth )
+      depth 1 add cvs join
+      (: /) join
+      symbols Last cvs join
+      ( is not a member of this nested namespace.) join
+      message
+
+      % set result to false:
+      /result false def
+    } if
+  } if
+
+  % leave the result on the stack
+  result
+} bind SLIFunctionWrapper
+
+/::checknestedlookupandraise
+% Call ::checknestedlookup appropriately and raise an error if it returns false.
+{
+  % <<A>> /literals.../literals  n_literals
+  arraystore
+  % <<A>> [/literals.../literals]
+  2 copy
+  % <<A>> [/literals.../literals] <<A>> [/literals.../literals]
+  ::checknestedlookup not
+  { % check not passed. restore stack and raise error
+    % <<A>> [/literals.../literals]
+    arrayload pop
+    /:: /UnknownMember raiseerror
+  } if
+  % test passed, restore stack:
+  arrayload pop
+} bind def
+
+% --------- :: routines that really do the work ----------------
+/::depth1_%[/dictionarytype /literaltype]
+/call load def
+
+/::depth2_%[/dictionarytype /literaltype /literaltype]
+%           <<A>>           /B           /C
+{
+  3 -2 roll
+  % /C <<A>> /B  
+  1 index begin %open namespace A
+    % /C <<A>> /B
+    get % get /B from <<A>>
+    % /C <<B>>
+    exch
+    % <<B>> /C
+    ::depth1_ %recurse
+  end %close namespace A
+} bind def
+
+/::depth3_%[/dictionarytype /literaltype /literaltype /literaltype]
+%           <<A>>           /B           /C           /D
+{
+  4 -2 roll
+  % /C /D <<A>> /B
+  1 index begin %open namespace A
+    % /C /D <<A>> /B
+    get %get /B from <<A>>
+    % /C /D <<B>>
+    rollu
+    % <<B>> /C /D
+    ::depth2_ %recurse   
+  end %close namespace A
+} bind def
+
+/::depth4_%[/dictionarytype /literaltype /literaltype /literaltype /literaltype]
+%           <<A>>           /B           /C           /D           /E
+{
+  5 -2 roll
+  % /C /D /E <<A>> /B
+  1 index begin %open namespace A
+    % /C /D /E <<A>> /B
+    get %get /B from <<A>>
+    % /C /D /E <<B>>
+    4 1 roll
+    % <<B>> /C /D /E
+    ::depth3_ %recurse   
+  end %close namespace A
+} bind def
+
+% --------- safe type tries for the different variants of ::  ----------------
+/::[/dictionarytype /literaltype]
+/::depth1_ load def
+
+/::[/dictionarytype /literaltype /literaltype]
+{2 ::checknestedlookupandraise  ::depth2_} bind def
+
+/::[/dictionarytype /literaltype /literaltype /literaltype]
+{3 ::checknestedlookupandraise  ::depth3_} bind def
+
+/::[/dictionarytype /literaltype /literaltype /literaltype /literaltype]
+{4 ::checknestedlookupandraise  ::depth4_} bind def
+
+% ========= Implementation of :: ends here =========
+
+
+
+/* BeginDocumentation
+Name: initialize_module - Initialize module by executing commandstring
+
+Synopsis:
+commandstring initialize_module -> -
+
+Description:
+Executes the command string provided by a module to initialize it.
+ */
+		/initialize_module[/stringtype]
+		{
+		  << >> begin
+		  /initializer Set
+		  systemdict begin
+		  { initializer
+		    M_DEBUG (sli-init) (Executing module initializer: ) 3 index join message
+		    cvx exec } stopped
+		  { 
+		    M_FATAL (sli-init) (While executing module initializer: {) initializer join (}) join message
+		    handleerror
+		    start
+		  } if
+		  end end
+		} bind def
+
+end % systemdict
+

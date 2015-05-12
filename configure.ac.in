@@ -489,18 +489,15 @@ AC_PROG_INSTALL
 
 LT_PATH_LD
 LT_CONFIG_LTDL_DIR([libltdl])
-_LTDL_CONVENIENCE                 ## put libltdl into a convenience library
 LT_INIT([dlopen])                 ## use libtool
-m4_pattern_allow([LT_LIBEXT])     ## supress false positive message by autoconf
-
-AC_CONFIG_SUBDIRS(libltdl)        ## also configure subdir containing libltdl
+LTDL_INIT([convenience subproject])
 
 # This is a fix for a bug in Debian's libtool.
 # See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=526750
-if echo $LIBLTDL | grep -s -q top_build_prefix; then
-  top_build_prefix=${PKGBUILDDIR}/
-  LIBLTDL=`eval echo $LIBLTDL`
-fi
+#  if echo $LIBLTDL | grep -s -q top_build_prefix; then
+#  top_build_prefix=${PKGBUILDDIR}/
+#  LIBLTDL=`eval echo $LIBLTDL`
+#  fi
 
 if test "x$BUILD_SHARED" != xno ; then
   if test "x$LIBLTDL" != x ; then

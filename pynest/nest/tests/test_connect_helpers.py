@@ -354,8 +354,7 @@ def two_level_check(n_runs, degrees, expected, verbose=True):
             chi, p = chi_squared_check(degrees, expected)
             pvalues.append(p)
 
-        ks, p = scipy.stats.kstest(pvalues, 'uniform',
-                                   alternative='two_sided')
+        ks, p = scipy.stats.kstest(pvalues, 'uniform')
 
         return ks, p
 

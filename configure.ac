@@ -1,10 +1,3 @@
-#
-# CAUTION!
-#
-# The file configure.ac is auto-generated from configure.ac.in
-# Changes to configure.ac will be overwritten by bootstrap.sh
-#
-
 AC_PREREQ(2.52)
 AC_INIT([nest], [2.6.1], [nest_user@nest-initiative.org])
 

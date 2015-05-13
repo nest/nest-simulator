@@ -485,13 +485,6 @@ LT_CONFIG_LTDL_DIR([libltdl])
 LT_INIT([dlopen])                 ## use libtool
 LTDL_INIT([convenience subproject])
 
-# This is a fix for a bug in Debian's libtool.
-# See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=526750
-#  if echo $LIBLTDL | grep -s -q top_build_prefix; then
-#  top_build_prefix=${PKGBUILDDIR}/
-#  LIBLTDL=`eval echo $LIBLTDL`
-#  fi
-
 if test "x$BUILD_SHARED" != xno ; then
   if test "x$LIBLTDL" != x ; then
     AC_DEFINE(HAVE_LIBLTDL, 1, [Havel libltdl, can load dynamic modules])

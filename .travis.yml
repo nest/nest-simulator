@@ -90,6 +90,7 @@ before_install:
   - sudo apt-get install -y cvs e2fsprogs gettext libpackagekit-glib2-dev groff libssh2-1-dev python-libssh2 slang-gsl libncurses5-dev check
 
   # for checking coding style (clang-format-3.6 depends on libllvm3.6)
+  - sudo apt-get install libllvm3.6
   - sudo apt-get install clang-format-3.6
 
   #cppcheck

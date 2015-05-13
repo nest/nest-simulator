@@ -14,6 +14,7 @@ fi
 libtool_major=`$LIBTOOLIZE --version | head -n1 | cut -d\) -f2 | cut -d\. -f1`
 if test $libtool_major -lt 2; then
     echo "libtool v 1.x is no longer supported."
+    echo "Use extras/install_autotools.sh to install up-to-date tools."
     echo "Aborting."
     exit 1
 fi

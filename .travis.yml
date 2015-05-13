@@ -90,6 +90,7 @@ before_install:
   - sudo apt-get install -y cvs e2fsprogs gettext libpackagekit-glib2-dev groff libssh2-1-dev python-libssh2 slang-gsl libncurses5-dev check
 
   # for checking coding style (clang-format-3.6 depends on libllvm3.6)
+  - sudo apt-get install -f
   - sudo apt-get install libllvm3.6 libc6 libstdc++6
   - sudo apt-get install clang-format-3.6
 
@@ -111,11 +112,11 @@ notifications:
   email:
     recipients:
       - r.deepu@fz-juelich.de
-      - t.zito@fz-juelich.de
-      - a.peyser@fz-juelich.de
-      - a.morrison@fz-juelich.de
-      - j.eppler@fz-juelich.de
-      - t.ippen@fz-juelich.de
+      #- t.zito@fz-juelich.de
+      #- a.peyser@fz-juelich.de
+      #- a.morrison@fz-juelich.de
+      #- j.eppler@fz-juelich.de
+      #- t.ippen@fz-juelich.de
     on_success: change
     on_failure: always
     #on_start: false

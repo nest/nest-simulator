@@ -1,4 +1,4 @@
-AC_PREREQ(2.52)
+AC_PREREQ(2.63)
 AC_INIT([nest], [2.6.1], [nest_user@nest-initiative.org])
 
 # Prevent automatic rebuilding of Makefile.ins and configure if their

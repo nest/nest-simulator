@@ -551,7 +551,6 @@ Description: references returns the number of references to
 a reference counted object including potential self references.
 Examples: << /x 0 >> dup references -> dict dict 2
                [ 0 ] dup references -> array array 2
-SeeAlso: selfreferences, testsuite::test_dict_basic_self_reference
 */
 /references trie
  [/arraytype  ]    /references_a load addtotrie
@@ -692,7 +691,7 @@ Examples:
 
 Author: Jochen M. Eppler
 FirstVersion: June 2013
-SeeAlso: cvx, exec, cst, evalstring, token
+SeeAlso: cvx, exec, cst, token
 */
 
 /* Implementation notes:

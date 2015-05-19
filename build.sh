@@ -63,6 +63,9 @@ cd "$NEST_VPATH"
     $CONFIGURE_PYTHON \
     $CONFIGURE_GSL \
 
+export PYTHONPATH=$NEST_RESULT/lib/python2.7/site-packages:$PYTHONPATH
+export PYTHONPATH=/usr/local/bin:$NEST_RESULT/lib64/python2.7/site-packages:$PYTHONPATH
+export PATH=$NEST_RESULT/bin:$PATH
 
 make
 make install

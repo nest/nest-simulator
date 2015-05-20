@@ -25,6 +25,9 @@ namespace nest
 {
 namespace names
 {
+const Name Ca( "Ca" );
+const Name tau_Ca( "tau_Ca" );
+const Name beta_Ca( "beta_Ca" );
 const Name a( "a" );
 const Name A( "A" );
 const Name A_lower( "A_lower" );

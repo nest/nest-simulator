@@ -130,6 +130,9 @@ extern const Name events;          //!< Recorder parameter
 extern const Name ex_spikes;       //!< Number of arriving excitatory spikes
 extern const Name exc_conductance; //!< Recorder parameter
 
+extern const Name Ca;
+extern const Name tau_Ca;
+extern const Name beta_Ca;
 extern const Name F_lower;
 extern const Name F_mean;
 extern const Name F_std;

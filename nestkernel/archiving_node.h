@@ -37,6 +37,7 @@
 #include "nest_time.h"
 #include "histentry.h"
 #include <deque>
+#include "synaptic_element.h"
 
 #define DEBUG_ARCHIVER 1
 
@@ -64,6 +65,36 @@ public:
    */
   Archiving_Node( const Archiving_Node& );
 
+  /**
+   * \fn double_t get_Ca_value()
+   * return the Ca_minus value
+   */
+  double_t
+  get_Ca_value() const
+  {
+    return Ca_minus_;
+  }
+
+  /**
+   * \fn double_t get_synaptic_element(Name n, double_t t)
+   * get the number of synaptic element for the current Node
+   */
+  double_t get_synaptic_element( Name n ) const;
+
+  int_t get_synaptic_element_vacant( Name n ) const;
+  int_t get_synaptic_element_connected( Name n ) const;
+
+  /**
+   * \fn std::map<Name, double_t> get_synaptic_elements()
+   * get the number of all synaptic elements for the current Node
+   */
+  std::map< Name, double_t > get_synaptic_elements() const;
+
+  void update_synaptic_element( double_t t );
+
+  void decay_synaptic_element_vacant( double_t p );
+
+  void connect_synaptic_element( Name name, int_t n );
 
   /**
    * \fn double_t get_K_value(long_t t)
@@ -106,6 +137,12 @@ public:
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d );
 
+  double_t
+  get_tau_Ca() const
+  {
+    return tau_Ca_;
+  };
+
 protected:
   /**
    * \fn void set_spiketime(Time const & t_sp)
@@ -124,7 +161,6 @@ protected:
    * clear spike history
    */
   void clear_history();
-
 
 private:
   // number of incoming connections from stdp connectors.
@@ -147,6 +183,25 @@ private:
 
   // spiking history needed by stdp synapses
   std::deque< histentry > history_;
+
+  /*
+   * Structural plasticity
+   */
+
+  // Time of the last update of the Calcium concentration
+  double_t Ca_t_;
+
+  //  Value of the calcium concentration at Ca_t_
+  double_t Ca_minus_;
+
+  // time constant for exponential decay of the intracellular calcium concentration
+  double_t tau_Ca_;
+
+  // increase in calcium concentration for each spike of the neuron
+  double_t beta_Ca_;
+
+  // Map of the synaptic elements
+  std::map< Name, SynapticElement > synaptic_elements_map_;
 };
 
 inline double_t

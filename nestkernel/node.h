@@ -469,6 +469,59 @@ public:
   virtual void handle( DoubleDataEvent& e );
 
   /**
+   * return the Ca_minus value at t (in ms).
+   * return 0.0 if not overridden
+   */
+  virtual double_t
+  get_Ca_value() const
+  {
+    return 0.0;
+  }
+
+  /**
+   * get the number of synaptic element for the current Node at t (in ms)
+   * return 0.0 if not overridden
+   */
+  virtual double_t get_synaptic_element( Name ) const
+  {
+    return 0.0;
+  }
+
+  /**
+   * get the number of vacant synaptic element for the current Node
+   * return 0.0 if not overridden
+   */
+  virtual int_t get_synaptic_element_vacant( Name ) const
+  {
+    return 0.0;
+  }
+
+  /**
+   * get the number of connected synaptic element for the current Node
+   * return 0.0 if not overridden
+   */
+  virtual int_t get_synaptic_element_connected( Name ) const
+  {
+    return 0.0;
+  }
+
+  /**
+   * get the number of all synaptic elements for the current Node at t (in ms)
+   * return an empty map if not overridden
+   */
+  virtual std::map< Name, double_t >
+  get_synaptic_elements()
+  {
+    return std::map< Name, double >();
+  }
+
+  virtual void update_synaptic_element( double_t ){};
+
+  virtual void decay_synaptic_element_vacant( double_t ){};
+
+  virtual void connect_synaptic_element( Name, int_t ){};
+
+  /**
    * return the Kminus value at t (in ms).
    * @throws UnexpectedEvent
    */

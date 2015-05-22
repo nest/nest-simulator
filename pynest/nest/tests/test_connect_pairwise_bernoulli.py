@@ -58,7 +58,7 @@ class TestPairwiseBernoulli(TestParams):
                 hf.mpi_barrier()
             #if self.rank == 0:
             if degrees != None:
-                ks, p = scipy.stats.kstest(pvalues, 'uniform', alternative='two_sided')
+                ks, p = scipy.stats.kstest(pvalues, 'uniform')
                 self.assertTrue( p > self.stat_dict['alpha2'] )
 
     def testAutapses(self):

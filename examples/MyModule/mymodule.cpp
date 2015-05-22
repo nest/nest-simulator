@@ -131,8 +131,7 @@ mynest::MyModule::commandstring( void ) const
    Author:
    Hans Ekkehard Plesser
 
-   SeeAlso:
-   Connect
+   SeeAlso: Connect
 */
 void
 mynest::MyModule::StepPatternConnect_Vi_i_Vi_i_lFunction::execute( SLIInterpreter* i ) const

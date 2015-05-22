@@ -55,6 +55,7 @@ exclude_files = [
     'nest/static_modules.h',
     'pynest/pynestkernel.cpp',
     'rcsinfo.sli',
+    'get-pip.py'
 ]
 
 templates = {

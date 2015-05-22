@@ -115,12 +115,19 @@ before_script:
 
 script: ./build.sh  
 
-after_failure:
-  - cd $TRAVIS_BUILD_DIR/build
-  - |
-    for i in $(find reports -type f); do
-      echo "###########################"
-      echo "File: $i"
-      cat $i
-    done
+#S3 deployment    
+
+deploy:
+  provider: s3
+  access_key_id: AKIAIGKKBSJAWDMB34IA
+  secret_access_key:
+    secure: CARBlB16Up/ZyrMJty32nolnBfSKvlBYJ9HD7KXEOqCL4L95QJdpH0XtfxwTfOYJ5XuTjVMOvnUmB6F/PKzVO01VTP5Fa9iRBo2UNHYP6zxKNW++z5658iPoFPVTag47M9grWDCfp7A/+1pFna7mHHJ0Iq/+pUPYblYTNMFfqJg=
+  bucket: "nest-travis-artefacts"
+  skip_cleanup: true
+  local-dir: "$TRAVIS_BUILD_DIR/build"
+  acl: bucket_owner_full_control
+  on:
+    repo: nest/nest-simulator
+
+
   

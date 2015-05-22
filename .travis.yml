@@ -115,19 +115,6 @@ before_script:
 
 script: ./build.sh  
 
-notifications:
-  email:
-    recipients:
-      - r.deepu@fz-juelich.de
-      - t.zito@fz-juelich.de
-      - a.peyser@fz-juelich.de
-      - a.morrison@fz-juelich.de
-      - j.eppler@fz-juelich.de
-      - t.ippen@fz-juelich.de
-    on_success: change
-    on_failure: always
-    #on_start: false
-
 after_failure:
   - cd $TRAVIS_BUILD_DIR/build
   - |

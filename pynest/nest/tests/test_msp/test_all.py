@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# setup.py
+# test_all.py
 #
 # This file is part of NEST.
 #
@@ -18,18 +18,23 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+__author__ = 'naveau'
 
-from distutils.core import setup
+import unittest
+import nest
 
-setup(
-    name='PyNEST',
-    version='@SLI_VERSION@',
-    description='PyNEST provides Python bindings for NEST',
-    author='The NEST Initiative',
-    author_email='nest_user@nest-initiative.org',
-    url='http://www.nest-initiative.org',
-    license='GPLv2+',
-    packages=['nest', 'nest.tests', 'nest.tests.test_msp'],
-    package_dir={'nest': '@PKGSRCDIR@/pynest/nest'},
-    package_data={'nest': ['pynest-init.sli']},
-)
+from . import synaptic_elements
+
+
+def suite():
+    test_suite = unittest.TestSuite()
+
+    test_suite.addTest(synaptic_elements.suite())
+
+    return test_suite
+
+
+if __name__ == "__main__":
+    nest.set_verbosity('M_WARNING')
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())

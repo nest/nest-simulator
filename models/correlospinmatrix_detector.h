@@ -230,11 +230,11 @@ namespace nest
       std::vector<long_t>         n_events_;  //!< spike counters
       BinaryPulselistType incoming_;  //!< incoming binary pulses, sorted
 
-      index last_i_;        //!< gid of last event coming in (needed for decoding logic of binary events)
+      index last_i_;             //!< gid of last event coming in (needed for decoding logic of binary events)
       Time t_last_in_spike_;     //!< time of last event coming in (needed for decoding logic of binary events)
       bool tentative_down_;      //!< potentially a down transition (single spike received)
 
-      //std::vector<bool>         curr_state_; //!< current state of neuron i
+      std::vector<bool>         curr_state_; //!< current state of neuron i
 
       std::vector<long_t>         last_change_; //!< last time pointof change of neuron i
 

@@ -92,7 +92,7 @@ void nest::correlospinmatrix_detector::State_::get(DictionaryDatum &d) const
   {
     ArrayDatum *CountC_i = new ArrayDatum;
     for(size_t j = 0; j < count_covariance_[i].size(); ++j)
-    {
+    {	
       CountC_i->push_back( new IntVectorDatum( new std::vector<long_t>(count_covariance_[i][j]) ));
     }
     CountC->push_back(*CountC_i);
@@ -177,8 +177,8 @@ void nest::correlospinmatrix_detector::State_::reset(const Parameters_& p)
   count_covariance_.clear();
   count_covariance_.resize(p.N_channels_);
 
-  //curr_state_.clear();
-  //curr_state_.resize(p.N_channels_);
+  curr_state_.clear();
+  curr_state_.resize(p.N_channels_);
 
   last_change_.clear();
   last_change_.resize(p.N_channels_);
@@ -290,9 +290,9 @@ void nest::correlospinmatrix_detector::handle(SpikeEvent & e)
       {
 	// received twice the same gid, so transition 0->1
 	// revise the last event written to the buffer
-	//S_.curr_stoate_[curr_i] = true;
-	S_.tentative_down_ = false;  // previous event was first event of two, so no down transition
+	S_.curr_state_[curr_i] = true;
 	S_.last_change_[curr_i] = stamp.get_steps();
+	S_.tentative_down_ = false;  // previous event was first event of two, so no down transition
       }
       else
       {
@@ -310,22 +310,15 @@ void nest::correlospinmatrix_detector::handle(SpikeEvent & e)
     else // multiplicity != 1
       if (m == 2)
       {
-	//S_.curr_state_[curr_i] = true;
+	S_.curr_state_[curr_i] = true;
 
 	if (S_.tentative_down_) // really was a down transition, because we now have another double event
 	  down_transition = true;
 
+	S_.curr_state_[S_.last_i_] = false;
 	S_.last_change_[curr_i] = stamp.get_steps();
 	S_.tentative_down_ = false;  // previous event was first event of two, so no down transition
-      }
-
-    //if (down_transition)
-    //  S_.curr_state_[S_.last_i_] = false;
-
-    //for (index i=0; i<S_.curr_state_.size(); i++)
-    //  std::cout << S_.curr_state_[i] << ' ';
-    //std::cout << std::endl;
-    
+      }   
       
     if (down_transition) // only do something on the downtransitions
     {
@@ -339,18 +332,26 @@ void nest::correlospinmatrix_detector::handle(SpikeEvent & e)
 
       // throw out all binary pulses from event list that are too old to enter the correlation window   
       BinaryPulselistType& otherPulses = S_.incoming_;
-      const double_t tau_edge = P_.tau_max_.get_steps() + 0.5*P_.delta_tau_.get_steps();
+
+      // calculate the minimum of those neurons that switched on and are not off yet
+      // every impulse in the queue that is further in the past than
+      // this minimum - tau_max cannot contribute to the count covariance
+      long_t t_min_on = t_i_on;
+      for (int n = 0; n < P_.N_channels_; n++)
+      {
+	if (S_.curr_state_[n])
+	  if (S_.last_change_[n] < t_min_on)
+	    t_min_on = S_.last_change_[n];
+      }
+      const double_t tau_edge = P_.tau_max_.get_steps() + P_.delta_tau_.get_steps();
 
       const delay min_delay = Scheduler::get_min_delay();
-      while ( !otherPulses.empty() && (t_i_on - otherPulses.front().t_off_) >= tau_edge + min_delay)
+      while ( !otherPulses.empty() && (t_min_on - otherPulses.front().t_off_) >= tau_edge + min_delay)
 	otherPulses.pop_front();
 
 
       // insert new event into history
-      // must be done here to appear in autocorrelation
-
-      //std::cout << "t_i_on = " << t_i_on << std::endl;
-
+      // must happen here so event is taken into account in autocorrelation
       const BinaryPulse_ bp_i(t_i_on, t_i_off, i);
 
       BinaryPulselistType::iterator insert_pos = 
@@ -362,8 +363,6 @@ void nest::correlospinmatrix_detector::handle(SpikeEvent & e)
       S_.incoming_.insert(insert_pos, bp_i);
 
 
-      //std::cout << "going through history" << std::endl;
-
       // go through history of other binary pulses
       for (BinaryPulselistType::const_iterator pulse_j = otherPulses.begin(); 
 	   pulse_j != otherPulses.end();
@@ -374,22 +373,16 @@ void nest::correlospinmatrix_detector::handle(SpikeEvent & e)
 	long_t t_j_on = pulse_j->t_on_;
 	long_t t_j_off = pulse_j->t_off_;
 
-	//std::cout << "t_j_on = " << t_j_on << std::endl;
-	//std::cout << "t_j_off = " << t_j_off << std::endl;
-
 	// minimum and maximum time difference in histogram
 	long_t Delta_ij_min = std::max(t_j_on - t_i_off, -P_.tau_max_.get_steps());
-	//long_t Delta_ij_min = std::max(1l, t_i_on - t_j_on);
 	long_t Delta_ij_max = std::min(t_j_off - t_i_on, P_.tau_max_.get_steps());
-	//long_t Delta_ij_max = std::min(t_i_off - t_j_on, P_.tau_max_.get_steps());
-
-	//std::cout << "Delta_ij_min = " << Delta_ij_min << std::endl;
-	//std::cout << "Delta_ij_max = " << Delta_ij_max << std::endl;
-
+	
 	long_t t0 = P_.tau_max_.get_steps()/P_.delta_tau_.get_steps();
 	long_t dt = P_.delta_tau_.get_steps();
 
+
 	// zero time lag covariance
+	
 	long_t l = std::min(t_i_off, t_j_off) - std::max(t_i_on, t_j_on);
 	if (l > 0)
 	{
@@ -398,6 +391,7 @@ void nest::correlospinmatrix_detector::handle(SpikeEvent & e)
 	    S_.count_covariance_[j][i][t0] += l;
 	}
 
+	// non-zero time lag covariance
 	for (long_t Delta = Delta_ij_min/dt; Delta < 0; Delta++)
 	{
 	  long_t l = std::min(t_i_off, t_j_off - Delta*dt) - std::max(t_i_on, t_j_on - Delta*dt);
@@ -409,7 +403,7 @@ void nest::correlospinmatrix_detector::handle(SpikeEvent & e)
 	}
 
 	if (i != j)
-	  for (long_t Delta = 1; Delta < Delta_ij_max/dt; Delta++)
+	  for (long_t Delta = 1; Delta <= Delta_ij_max/dt; Delta++)
 	  {
 	      long_t l = std::min(t_i_off, t_j_off - Delta*dt) - std::max(t_i_on, t_j_on - Delta*dt);
 	      if (l > 0)
@@ -418,7 +412,7 @@ void nest::correlospinmatrix_detector::handle(SpikeEvent & e)
 		S_.count_covariance_[j][i][t0 + Delta] += l;
 	      }
 	  }
-	  
+
       } // loop over history
 
       S_.last_change_[i] = t_i_off;

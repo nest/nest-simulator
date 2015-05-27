@@ -92,6 +92,7 @@
 #include "multimeter.h"
 #include "correlation_detector.h"
 #include "correlomatrix_detector.h"
+#include "correlospinmatrix_detector.h"
 
 #include "volume_transmitter.h"
 
@@ -194,6 +195,7 @@ ModelsModule::init( SLIInterpreter* )
   register_model< Multimeter >( net_, "multimeter" );
   register_model< correlation_detector >( net_, "correlation_detector" );
   register_model< correlomatrix_detector >( net_, "correlomatrix_detector" );
+  register_model< correlospinmatrix_detector >( net_, "correlospinmatrix_detector" );
   register_model< volume_transmitter >( net_, "volume_transmitter" );
 
   // Create voltmeter as a multimeter pre-configured to record V_m.

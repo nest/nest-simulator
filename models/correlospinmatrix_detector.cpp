@@ -157,9 +157,6 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d,
     throw TimeMultipleRequired(
       n.get_name(), names::tau_max, tau_max_, names::delta_tau, delta_tau_ );
 
-  // if ( delta_tau_.get_steps() % 2 != 1 )
-  //  throw BadProperty("/delta_tau must be odd multiple of resolution.");
-
   return reset;
 }
 
@@ -291,13 +288,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
     // are received consecutively or are conveyed by setting the multiplicity accordingly.
 
     long_t m = e.get_multiplicity();
-    index gid = e.get_sender_gid();
     bool down_transition = false;
-
-    // std::cout << "gid = " << gid << std::endl;
-    // std::cout << "rport = " << curr_i << std::endl;
-    // std::cout << "stamp = " << stamp.get_steps() << std::endl;
-    // std::cout << "m = " << m << std::endl;
 
     if ( m == 1 )
     { // multiplicity == 1, either a single 1->0 event or the first or second of a pair of 0->1
@@ -338,13 +329,10 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
 
     if ( down_transition ) // only do something on the downtransitions
     {
-      // std::cout << "entering down transition" << std::endl;
-
       long_t i = S_.last_i_;                // index of neuron making the down transition
       long_t t_i_on = S_.last_change_[ i ]; // last time point of change, must have been on
 
       const long_t t_i_off = S_.t_last_in_spike_.get_steps();
-      // std::cout << "t_i_off = " << t_i_off << std::endl;
 
       // throw out all binary pulses from event list that are too old to enter the correlation
       // window

@@ -204,8 +204,8 @@ receives random spiking input from two sources known as Poisson
 generators. One Poisson generator represents a large population of
 excitatory neurons and the other a population of inhibitory
 neurons. The rate for each Poisson generator is set as the product of
-the assumed number of neurons in a population and their average firing
-rate.
+the assumed number of synapses per target neuron received from the 
+population and the average firing rate of the source neurons.
 
 The small network is simulated for 1000 milliseconds, after which the
 time course of the membrane potential during this period is plotted
@@ -1543,7 +1543,7 @@ grant FP7-269921 (BrainScaleS).
 The examples in this chapter were tested with the following versions.\\
 NEST: pre-2.6.0 (r11744), Python: 2.7.8, Matplotlib: 1.3.1, NumPy: 1.8.1.
 
-\bibliography{NEST_By_Example}
+\bibliography{NEST_by_Example}
 \bibliographystyle{plainnat}
 
 \printindex

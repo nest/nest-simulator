@@ -69,7 +69,9 @@ nest::GrowthCurveLinear::update( double_t t,
     growth_rate * tau_Ca * ( Ca - Ca_minus ) / eps + growth_rate * ( t - t_minus ) + z_minus;
 
   if ( z_value > 0 )
+  {
     return z_value;
+  }
   else
     return 0.0;
 }
@@ -127,7 +129,9 @@ nest::GrowthCurveGaussian::update( double_t t,
 
   //  return z_value;
   if ( z_value > 0 )
+  {
     return z_value;
+  }
   else
     return 0.0;
 }
@@ -139,8 +143,8 @@ nest::GrowthCurveGaussian::update( double_t t,
 * ---------------------------------------------------------------- */
 
 nest::SynapticElement::SynapticElement()
-  : z_minus_( 0.0 )
-  , z_minus_t_( 0.0 )
+  : z( 0.0 )
+  , z_t_( 0.0 )
   , z_connected_( 0 )
   , continuous_( true )
   , growth_rate_( 1.0 )
@@ -150,8 +154,8 @@ nest::SynapticElement::SynapticElement()
 }
 
 nest::SynapticElement::SynapticElement( const SynapticElement& se )
-  : z_minus_( se.z_minus_ )
-  , z_minus_t_( se.z_minus_t_ )
+  : z( se.z )
+  , z_t_( se.z_t_ )
   , z_connected_( se.z_connected_ )
   , continuous_( se.continuous_ )
   , growth_rate_( se.growth_rate_ )
@@ -177,8 +181,8 @@ nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& 
     delete growth_curve_;
     growth_curve_ = new_gc;
 
-    z_minus_ = other.z_minus_;
-    z_minus_t_ = other.z_minus_t_;
+    z = other.z;
+    z_t_ = other.z_t_;
     z_connected_ = other.z_connected_;
     continuous_ = other.continuous_;
     growth_rate_ = other.growth_rate_;
@@ -190,11 +194,11 @@ nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& 
 nest::GrowthCurve*
 nest::SynapticElement::new_growth_curve( std::string name )
 {
-  if ( !name.compare( "gaussian" ) )
+  if ( not name.compare( "gaussian" ) )
   {
     return new GrowthCurveGaussian;
   }
-  if ( !name.compare( "linear" ) )
+  if ( not name.compare( "linear" ) )
   {
     return new GrowthCurveLinear;
   }
@@ -211,7 +215,7 @@ nest::SynapticElement::get( DictionaryDatum& d ) const
   def< double_t >( d, "growth_rate", growth_rate_ );
   def< double_t >( d, "tau_vacant", tau_vacant_ );
   def< bool >( d, "continuous", continuous_ );
-  def< double_t >( d, "z", z_minus_ );
+  def< double_t >( d, "z", z );
   def< int_t >( d, "z_connected", z_connected_ );
 
   // Store growth curve
@@ -230,12 +234,12 @@ nest::SynapticElement::set( const DictionaryDatum& d )
   updateValue< double_t >( d, "growth_rate", growth_rate_ );
   updateValue< double_t >( d, "tau_vacant", new_tau_vacant );
   updateValue< bool >( d, "continuous", continuous_ );
-  updateValue< double_t >( d, "z", z_minus_ );
+  updateValue< double_t >( d, "z", z );
 
   if ( d->known( "growth_curve" ) )
   {
     std::string growth_curve_name = getValue< std::string >( d, "growth_curve" );
-    if ( !growth_curve_->is( growth_curve_name ) )
+    if ( not growth_curve_->is( growth_curve_name ) )
     {
       growth_curve_ = new_growth_curve( growth_curve_name );
     }
@@ -243,7 +247,9 @@ nest::SynapticElement::set( const DictionaryDatum& d )
   growth_curve_->set( d );
 
   if ( new_tau_vacant <= 0.0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
   tau_vacant_ = new_tau_vacant;
 }
 
@@ -254,12 +260,12 @@ nest::SynapticElement::set( const DictionaryDatum& d )
 void
 nest::SynapticElement::update( double_t t, double_t t_minus, double_t Ca_minus, double_t tau_Ca )
 {
-  if ( z_minus_t_ != t_minus )
+  if ( z_t_ != t_minus )
   {
     throw KernelException(
       "Last update of the calcium concentration does not match the last update of the synaptic "
       "element" );
   }
-  z_minus_ = growth_curve_->update( t, t_minus, Ca_minus, z_minus_, tau_Ca, growth_rate_ );
-  z_minus_t_ = t;
+  z = growth_curve_->update( t, t_minus, Ca_minus, z, tau_Ca, growth_rate_ );
+  z_t_ = t;
 }

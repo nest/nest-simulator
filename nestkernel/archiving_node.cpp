@@ -79,8 +79,10 @@ Archiving_Node::register_stdp_connection( double_t t_first_read )
   for ( std::deque< histentry >::iterator runner = history_.begin();
         runner != history_.end() && runner->t_ <= t_first_read;
         ++runner )
+  {
     ( runner->access_counter_ )++;
-
+  }
+  
   n_incoming_++;
 }
 
@@ -88,12 +90,16 @@ double_t
 nest::Archiving_Node::get_K_value( double_t t )
 {
   if ( history_.empty() )
+  {
     return Kminus_;
+  }
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
     if ( t > history_[ i ].t_ )
+    {
       return ( history_[ i ].Kminus_ * std::exp( ( history_[ i ].t_ - t ) / tau_minus_ ) );
+    }
     i--;
   }
   return 0;
@@ -170,7 +176,9 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp )
     while ( history_.size() > 1 )
     {
       if ( history_.front().access_counter_ >= n_incoming_ )
+      {
         history_.pop_front();
+      }
       else
         break;
     }
@@ -211,7 +219,7 @@ nest::Archiving_Node::get_status( DictionaryDatum& d ) const
   {
     synaptic_element_d = DictionaryDatum( new Dictionary );
     def< DictionaryDatum >( synaptic_elements_d, it->first, synaptic_element_d );
-    ( it->second ).get( synaptic_element_d );
+    it->second.get( synaptic_element_d );
   }
 }
 
@@ -229,33 +237,42 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
   updateValue< double_t >( d, names::beta_Ca, new_beta_Ca );
 
   if ( new_tau_minus <= 0.0 || new_tau_minus_triplet <= 0.0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
-
+  }
+  
   tau_minus_ = new_tau_minus;
   tau_minus_triplet_ = new_tau_minus_triplet;
 
   if ( new_tau_Ca <= 0.0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
   tau_Ca_ = new_tau_Ca;
 
   if ( new_beta_Ca <= 0.0 )
+  {
     throw BadProperty(
       "For Ca to function as an integrator of the electrical activity, beta_ca needs to be greater "
       "than 0." );
+  }
   beta_Ca_ = new_beta_Ca;
 
   // check, if to clear spike history and K_minus
   bool clear = false;
   updateValue< bool >( d, names::clear, clear );
   if ( clear )
+  {
     clear_history();
-
-  if ( !d->known( "synaptic_elements" ) )
+  }
+  
+  if ( not d->known( "synaptic_elements" ) )
+  {
     return;
-
+  }
   // we replace the existing synaptic_elements_map_ by the new one
   DictionaryDatum synaptic_elements_d;
-  DictionaryDatum synaptic_element_d;
+  //DictionaryDatum synaptic_element_d;
   std::pair< std::map< Name, SynapticElement >::iterator, bool > insert_result;
 
   synaptic_elements_map_ = std::map< Name, SynapticElement >();
@@ -265,10 +282,10 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
         i != synaptic_elements_d->end();
         ++i )
   {
-    synaptic_element_d = getValue< DictionaryDatum >( synaptic_elements_d, i->first );
+    //synaptic_element_d = getValue< DictionaryDatum >( synaptic_elements_d, i->first );
     insert_result = synaptic_elements_map_.insert(
       std::pair< Name, SynapticElement >( i->first, SynapticElement() ) );
-    ( insert_result.first->second ).set( synaptic_element_d );
+    ( insert_result.first->second ).set( getValue< DictionaryDatum >( synaptic_elements_d, i->first ) );/*synaptic_element_d );*/
   }
 }
 
@@ -296,9 +313,11 @@ nest::Archiving_Node::get_synaptic_element( Name n ) const
 
   if ( se_it != synaptic_elements_map_.end() )
   {
-    z_value = ( se_it->second ).get_z_minus();
+    z_value = ( se_it->second ).get_z();
     if ( ( se_it->second ).continuous() )
+    {
       return z_value;
+    }
     else
       return std::floor( z_value );
   }
@@ -316,7 +335,7 @@ nest::Archiving_Node::get_synaptic_element_vacant( Name n ) const
 
   if ( se_it != synaptic_elements_map_.end() )
   {
-    return ( se_it->second ).get_z_vacant();
+    return se_it->second.get_z_vacant();
   }
   else
   {
@@ -332,7 +351,7 @@ nest::Archiving_Node::get_synaptic_element_connected( Name n ) const
 
   if ( se_it != synaptic_elements_map_.end() )
   {
-    return ( se_it->second ).get_z_connected();
+    return se_it->second.get_z_connected();
   }
   else
   {
@@ -366,7 +385,7 @@ nest::Archiving_Node::update_synaptic_element( double_t t )
         it != synaptic_elements_map_.end();
         ++it )
   {
-    ( it->second ).update( t, Ca_t_, Ca_minus_, tau_Ca_ );
+    it->second.update( t, Ca_t_, Ca_minus_, tau_Ca_ );
   }
   // Update calcium concentration
   Ca_minus_ = Ca_minus_ * std::exp( ( Ca_t_ - t ) / tau_Ca_ );
@@ -381,9 +400,9 @@ nest::Archiving_Node::decay_synaptic_element_vacant( double_t p )
         it != synaptic_elements_map_.end();
         ++it )
   {
-    z = ( it->second ).get_z_minus();
+    z = ( it->second ).get_z();
     z_vacant = ( it->second ).get_z_vacant();
-    ( it->second ).set_z_minus( z - ( z_vacant * p ) );
+    it->second.set_z( z - ( z_vacant * p ) );
   }
 }
 
@@ -395,7 +414,7 @@ nest::Archiving_Node::connect_synaptic_element( Name name, int_t n )
 
   if ( se_it != synaptic_elements_map_.end() )
   {
-    ( se_it->second ).connect( n );
+    se_it->second.connect( n );
   }
 }
 

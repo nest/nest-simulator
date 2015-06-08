@@ -94,7 +94,7 @@ As a starting point, try to build MyModule as follows:
 
 ## Using MyModule
 
-1. Set your LD_LIBRARY_PATH to include $NEST_INSTALL_DIR/lib/nest, where $NEST_INSTALL_DIR is the root of the NEST installation directory tree. On OSX, set DYLD_LIBRARY_PATH.
+1. Set your `LD_LIBRARY_PATH` to include `$NEST_INSTALL_DIR/lib/nest`, where `$NEST_INSTALL_DIR` is the root of the NEST installation directory tree. On OSX, set `DYLD_LIBRARY_PATH`.
 2. Start NEST.
 3. Load the module using
 

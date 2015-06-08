@@ -28,8 +28,8 @@ fi
 pkgs="m4 autoconf automake libtool"
 m4_ver=1.4.17
 autoconf_ver=2.69
-automake_ver=1.14.1
-libtool_ver=2.4.2
+automake_ver=1.15
+libtool_ver=2.4.6
 
 wgetprog=`which wget`
 if [ -z $wgetprog ] ; then

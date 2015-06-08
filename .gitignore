@@ -24,7 +24,6 @@ pynest/pynestkernel.cpp
 .*
 *.log
 config.status
-configure.ac
 Makefile
 build/
 

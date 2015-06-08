@@ -1,11 +1,4 @@
-#
-# CAUTION!
-#
-# The file configure.ac is auto-generated from configure.ac.in
-# Changes to configure.ac will be overwritten by bootstrap.sh
-#
-
-AC_PREREQ(2.52)
+AC_PREREQ(2.63)
 AC_INIT([nest], [2.6.1], [nest_user@nest-initiative.org])
 
 # Prevent automatic rebuilding of Makefile.ins and configure if their
@@ -489,18 +482,8 @@ AC_PROG_INSTALL
 
 LT_PATH_LD
 LT_CONFIG_LTDL_DIR([libltdl])
-_LTDL_CONVENIENCE                 ## put libltdl into a convenience library
 LT_INIT([dlopen])                 ## use libtool
-m4_pattern_allow([LT_LIBEXT])     ## supress false positive message by autoconf
-
-AC_CONFIG_SUBDIRS(libltdl)        ## also configure subdir containing libltdl
-
-# This is a fix for a bug in Debian's libtool.
-# See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=526750
-if echo $LIBLTDL | grep -s -q top_build_prefix; then
-  top_build_prefix=${PKGBUILDDIR}/
-  LIBLTDL=`eval echo $LIBLTDL`
-fi
+LTDL_INIT([convenience subproject])
 
 if test "x$BUILD_SHARED" != xno ; then
   if test "x$LIBLTDL" != x ; then

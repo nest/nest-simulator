@@ -79,8 +79,7 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 Author:
 Hans Ekkehard Plesser, based on iaf_psc_alpha
 
-SeeAlso:
-iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
+SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
 */
 
 /**

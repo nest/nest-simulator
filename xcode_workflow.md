@@ -35,12 +35,9 @@ We present two ways to install the rest: MacPorts and Homebrew. For both version
 1. Open up the Terminal and execute the following lines:
 
         brew install gcc gsl autoconf automake libtool
-1. NEST on Mac requires OpenMPI 1.6 to work properly, so we have to get this older version from Homebrew
-
-        brew tap homebrew/versions
 1. Since every package is compiled using th Mac supplied gcc, aka clang, but we want OpenMP to wrap around the Homebrew-gcc, we have to alter the openmpi-installation script. Assuming we installed Homebrew gcc 5.1.0, the executable is called `gcc-5` or `g++-5`, the script can be changed this way:
 
-        brew edit open-mpi16
+        brew edit open-mpi
 In the `def install` function add the `CC` and `CXX` lines to the `args` variable like this:
 
         args = %W[
@@ -48,14 +45,19 @@ In the `def install` function add the `CC` and `CXX` lines to the `args` variabl
           --disable-dependency-tracking
           --disable-silent-rules
           --enable-ipv6
+          --with-libevent=#{Formula["libevent"].opt_prefix}
+          --with-sge
           CC=gcc-5         # these are the
           CXX=g++-5        # important lines
         ]
-1. Install OpenMPI with the following line:
+1. Homebrew tries to use pre-compiled packages, if possible (so-called bottles). You can disable this by setting the environment variable `HOMEBREW_BUILD_FROM_SOURCE` to some value. Install OpenMPI with the following line:
 
-        brew install open-mpi16
+        brew install pkg-config makedepend     # have open-mpi dependancies installed as bottles
+        HOMEBREW_BUILD_FROM_SOURCE=1 brew install open-mpi
 
 ### MacPorts
+
+(We recommend using the Homebrew workflow, since there you can use a more current openmpi version for NEST, but we leave the MacPorts instructions for legacy purposes.)
 
 1. Follow the install instructions for [MacPorts](https://www.macports.org/install.php).
 1. Open up the Terminal and execute the following lines:
@@ -64,7 +66,7 @@ In the `def install` function add the `CC` and `CXX` lines to the `args` variabl
         sudo port select gcc mp-gcc48 # make gcc-48 the default compiler
         sudo port install gsl +gcc48
         sudo port install autoconf automake libtool    # build tools
-1. NEST on Mac requires OpenMPI 1.6 to work properly, so we have to get this older version for MacPort. Download the portsfile [Portfile-openmpi-1.6.4.txt](http://www.nest-simulator.org/wp-content/uploads/2014/12/Portfile-openmpi-1.6.4.txt) and save it under the name `Portfile` in an arbitraty directory.
+1. NEST on Mac requires OpenMPI 1.6 from MacPorts to work properly, so we have to get this older version for MacPort. Download the portsfile [Portfile-openmpi-1.6.4.txt](http://www.nest-simulator.org/wp-content/uploads/2014/12/Portfile-openmpi-1.6.4.txt) and save it under the name `Portfile` in an arbitraty directory.
 1. In Terminal, move to the directory containing Portfile and run
 
         sudo port install +gcc48 +threads configure.compiler=macports-gcc-4.8

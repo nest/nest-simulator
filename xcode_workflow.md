@@ -98,11 +98,14 @@ Afterwards you should have a directory structure like:
         make -j8    # run make with 8 processes
         make install 
         make installcheck
-It is important, that the `configure` command is _not_ executed with relative paths, in order for Xcode to find source files mentioned in the build logs.
+
+__Note:__ It is important, that the `configure` command is _not_ executed with relative paths, in order for Xcode to find source files mentioned in the build logs.
+
+__Note:__ Always supply a concrete `CC` and `CXX` for the configure (if you do not use the mpi-versions, which should wrap around the correct gcc): e.g. `CC=gcc-5 CXX=g++-5` (for Homebrew) or `CC=gcc-mp-4.8 CXX=g++-mp-4.8` (for MacPorts). Otherwise Xcode will prefer to use the gcc/clang version.
 
 ## Get Xcode working with NEST
 
-1. Create a new project, which we will call `NEST-fork` in this article. Click File -> New -> Project... -> OS X -> Other -> External Build System (with build tool `/usr/bin/make`)
+1. Create a new project, which we will call `NEST-fork` in this article. In the menu select File -> New -> Project... . Then select OS X -> Other -> External Build System (with build tool `/usr/bin/make`)
 1. Add the NEST sources to the project. There is a `+` in the left-bottom corner (see image). Click `Add Files to "NEST-fork"...`. Then select the `<somebase>/NEST/src/` folder (do not copy items and use groups).
   <br/>![Add Sources](images/xcode_article/add_files.png)<br/>
   Also add the generated files:

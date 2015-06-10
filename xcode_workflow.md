@@ -91,15 +91,17 @@ Afterwards you should have a directory structure like:
         cd ../build
 
         # with Homebrew infrastructure run:
-        $PWD/../src/configure --prefix=$PWD/../install --with-openmp --with-mpi CC=mpicc CXX=mpicxx
+        $PWD/../src/configure --prefix=$PWD/../install --with-debug --with-mpi CC=mpicc CXX=mpicxx
         # with MacPorts infrastructure run:
-        $PWD/../src/configure --prefix=$PWD/../install --with-openmp --with-mpi CC=openmpicc CXX=openmpicxx
+        $PWD/../src/configure --prefix=$PWD/../install --with-debug --with-mpi CC=openmpicc CXX=openmpicxx
 
         make -j8    # run make with 8 processes
         make install 
         make installcheck
 
 __Note:__ It is important, that the `configure` command is _not_ executed with relative paths, in order for Xcode to find source files mentioned in the build logs.
+
+__Note:__ If you want to debug your code with Xcode later, it has to be compiled with debug-options enabled.
 
 __Note:__ Always supply a concrete `CC` and `CXX` for the configure (if you do not use the mpi-versions, which should wrap around the correct gcc): e.g. `CC=gcc-5 CXX=g++-5` (for Homebrew) or `CC=gcc-mp-4.8 CXX=g++-mp-4.8` (for MacPorts). Otherwise Xcode will prefer to use the gcc/clang version.
 

@@ -56,7 +56,7 @@
     see the SeeAlso key below.
 
     Author:  November 2014 Hans E Plesser based on test_mat2_psc_exp
-    SeeAlso: testsuite::test_iaf testsuite::test_iaf_i0 testsuite::test_iaf_i0_refractory testsuite::test_iaf_dc
+    SeeAlso: testsuite::test_iaf, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, testsuite::test_iaf_dc
 */
 
 (unittest) run

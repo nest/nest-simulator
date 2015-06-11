@@ -45,6 +45,7 @@
 #include "randomgen.h"
 #include "random_datums.h"
 #include "gslrandomgen.h"
+#include "stopwatch.h"
 
 #include "nest_timemodifier.h"
 #include "nest_timeconverter.h"
@@ -76,6 +77,18 @@ nest::delay nest::Scheduler::min_delay_ = 1;
 
 const nest::delay nest::Scheduler::comm_marker_ = 0;
 
+#define DRY_RUN_SUBNET_MODE
+
+bool nest::Scheduler::dry_run_enabled_ = false;
+// arbitrarily guessed value for threshold for now
+const double_t nest::Scheduler::dry_run_num_spikes_per_h_threshold_ = 4.0;
+
+// BEGIN: DEBUGGING HACK BY WS
+#ifdef COUNT_FACILITATE
+size_t nest::facilitate_counter = 0;
+#endif
+// END: DEBUGGING HACK BY WS
+
 nest::Scheduler::Scheduler( Network& net )
   : initialized_( false )
   , simulating_( false )
@@ -97,6 +110,14 @@ nest::Scheduler::Scheduler( Network& net )
   terminate_( false )
   , off_grid_spiking_( false )
   , print_time_( false )
+  , dry_run_target_rate_( -1.0 )
+  , dry_run_only_relevant_spikes_( false )
+  , dry_run_num_spikes_per_h_( 1.0 )
+  , dry_run_indirect_access_enabled_( false )
+  , gather_walltime_( 0.0 )
+  , collocate_buffers_walltime_( 0.0 )
+  , local_spike_counter_( 0 )
+  , dry_run_irrelevant_spikes_counter_( 0 )
   , rng_()
 {
   net_ = &net;
@@ -115,6 +136,8 @@ nest::Scheduler::reset()
   // See ticket #217 for details.
   nest::TimeModifier::reset_to_defaults();
 
+  reset_profiling_counters_timers_();
+
   clock_.set_to_zero(); // ensures consistent state
   to_do_ = 0;
   slice_ = 0;
@@ -122,6 +145,29 @@ nest::Scheduler::reset()
   to_step_ = 0; // consistent with to_do_ = 0
   finalize_();
   init_();
+}
+
+void
+nest::Scheduler::reset_profiling_counters_timers_()
+{
+  // reset various counters and timers used for profiling purposes,
+  //     especially in dry-run mode
+
+  // reset timer with cumulated runtime of gather_events_(..) or
+  //     gather_events_for_dry_run_(..)
+  gather_walltime_ = 0.0;
+  // reset also timer for collocate_buffers_(..) within gather_events_(..)
+  collocate_buffers_walltime_ = 0.0;
+  // reset spike counters
+  local_spike_counter_ = 0;
+  dry_run_irrelevant_spikes_counter_ = 0;
+// BEGIN: DEBUGGING HACK BY WS
+#ifdef COUNT_FACILITATE
+#pragma omp atomic write
+  // reset counter for STDP facilitations
+  facilitate_counter = 0;
+#endif
+  // END: DEBUGGING HACK BY WS
 }
 
 void
@@ -242,7 +288,9 @@ nest::Scheduler::update_delay_extrema_()
   min_delay_ = net_->connection_manager_.get_min_delay().get_steps();
   max_delay_ = net_->connection_manager_.get_max_delay().get_steps();
 
-  if ( Communicator::get_num_processes() > 1 )
+  // don't do this in dry-run mode because there are no communication
+  // partners; keep local min_delay and max_delay values instead
+  if ( Communicator::get_num_processes() > 1 && !dry_run_enabled_ )
   {
     std::vector< delay > min_delays( Communicator::get_num_processes() );
     min_delays[ Communicator::get_rank() ] = min_delay_;
@@ -279,23 +327,350 @@ nest::Scheduler::configure_spike_buffers_()
     for ( size_t k = 0; k < offgrid_spike_register_[ j ].size(); ++k )
       offgrid_spike_register_[ j ][ k ].clear();
 
-  // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces.
-  int send_buffer_size = n_threads_ * min_delay_ > 2 ? n_threads_ * min_delay_ : 2;
-  int recv_buffer_size = send_buffer_size * Communicator::get_num_processes();
+  int send_buffer_size, recv_buffer_size;
+
+  // variable solely used for dry-run mode
+  double_t num_spikes_per_h = 0;
+
+  if ( dry_run_enabled_ && ( dry_run_target_rate_ > 0.0 ) )
+  // version of dry-run mode with prefilled spike buffer
+  // and fixed target spike rate ("static mode")
+  {
+    // if dry-run mode is enabled, the send buffer size is calculated in a different way
+    // than in standard mode
+
+    // num_spikes_per_h holds the average number of spikes generated in a VP in a single
+    // simulation step;
+    // remark on the calculation of num_spikes_per_h:
+    //   - (net_->size()-1) to exclude root node from calculation because we want do divide
+    //     by the number of spike-generating neurons (however, we cannot account for subnets
+    //     and devices)
+    num_spikes_per_h = ( net_->size() - 1 ) * dry_run_target_rate_
+      * ( Time::get_resolution().get_ms() / 1000.0 ) / Communicator::get_num_virtual_processes();
+
+    // calculation of send buffer size for dry-run mode;
+    // "num_spikes_per_h+2" because of comm. markers (+1) and to have some extra space
+    // to account for stochastic fluctuations (+1);
+    // a minimum size of 2 is also guaranteed (see regular computation of send_buffer_size)
+    send_buffer_size = ceil( ( num_spikes_per_h + 2 ) * min_delay_ * n_threads_ );
+
+    // this part is (mainly) repeated from configure_spike_buffers_(..)
+    recv_buffer_size = send_buffer_size * Communicator::get_num_processes();
+  }
+  else
+  {
+    // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces.
+    send_buffer_size = n_threads_ * min_delay_ > 2 ? n_threads_ * min_delay_ : 2;
+    recv_buffer_size = send_buffer_size * Communicator::get_num_processes();
+  }
+
   Communicator::set_buffer_sizes( send_buffer_size, recv_buffer_size );
 
   // DEC cxx required 0U literal, HEP 2007-03-26
+  // --> replaced 0U by comm_marker_ for dry-run mode, hope this does not hurt
+  //     now, nearly eight years later (WS 2015-01-23)
   local_grid_spikes_.clear();
-  local_grid_spikes_.resize( send_buffer_size, 0U );
+  local_grid_spikes_.resize( send_buffer_size, comm_marker_ );
   local_offgrid_spikes_.clear();
   local_offgrid_spikes_.resize( send_buffer_size, OffGridSpike( 0, 0.0 ) );
   global_grid_spikes_.clear();
-  global_grid_spikes_.resize( recv_buffer_size, 0U );
+  global_grid_spikes_.resize( recv_buffer_size, comm_marker_ );
   global_offgrid_spikes_.clear();
   global_offgrid_spikes_.resize( recv_buffer_size, OffGridSpike( 0, 0.0 ) );
 
   displacements_.clear();
   displacements_.resize( Communicator::get_num_processes(), 0 );
+
+  if ( dry_run_enabled_ )
+  {
+    if ( dry_run_target_rate_ > 0.0 )
+    {
+      fill_spike_buffers_for_static_dry_run_(
+        num_spikes_per_h, send_buffer_size, recv_buffer_size );
+    }
+    else
+    {
+      net_->message( SLIInterpreter::M_INFO,
+        "Scheduler::configure_spike_buffers_",
+        "Dynamic dry-run mode enabled." );
+    }
+
+    if ( dry_run_only_relevant_spikes_ )
+    {
+      // set number of thread-specific global spike buffers
+      global_grid_spikes_thread_specific_.resize( n_threads_ );
+      for ( index tid = 0; tid < n_threads_; ++tid )
+      {
+        global_grid_spikes_thread_specific_[ tid ] = global_grid_spikes_;
+      }
+    }
+  }
+}
+
+inline nest::uint_t
+nest::Scheduler::createNewFakeGID_SubnetMode_( nest::uint_t old_gid,
+  uint_t vp_num,
+  librandom::RngPtr rng )
+{
+  static const int max_correction_cycles = 5;
+
+  uint_t new_gid;
+
+  Subnet* old_gid_parent_subnet = net_->get_node( old_gid, 0 )->get_parent();
+  if ( !old_gid_parent_subnet )
+  {
+    // fallback solution, just a hack for now
+    // TODO: proper solution
+    new_gid = old_gid;
+    printf( "Fallback 1 required!\n" );
+  }
+  else
+  {
+    const Multirange& alt_gid_list = old_gid_parent_subnet->get_gids();
+    index num_alt_gids = alt_gid_list.size();
+    uint_t new_gid_corrected;
+
+    int count = 0;
+    while ( true )
+    {
+      // draw random gid from subnet
+      new_gid = alt_gid_list[ rng->ulrand( num_alt_gids - 1 ) ];
+      // correct for requested VP assignment by making a good guess
+      new_gid_corrected =
+        new_gid - ( new_gid % Communicator::get_num_virtual_processes() ) + vp_num;
+      // increase cycle counter (for fallback exit)
+      count++;
+      // check if the new corrected gid is still within subnet
+      // if( net_->is_local_gid( new_gid ) )
+      // if( new_gid % Communicator::get_num_virtual_processes() != vp_num )
+      if ( !alt_gid_list.contains( new_gid_corrected ) )
+      {
+        // first attempt at heuristic correction
+        if ( new_gid_corrected > Communicator::get_num_virtual_processes() )
+        {
+          new_gid_corrected = new_gid_corrected - Communicator::get_num_virtual_processes();
+          printf( "CORRECTION [%02i]: %lu --> %lu (%lu, %u)\n",
+            count,
+            old_gid,
+            new_gid_corrected,
+            num_alt_gids,
+            vp_num );
+        }
+        // check again
+        if ( !alt_gid_list.contains( new_gid_corrected ) )
+        {
+          // not within subnet: fallback exit or continue loop
+          printf( "REJECTED   [%02i]: %lu --> %lu (%lu, %u)\n",
+            count,
+            old_gid,
+            new_gid_corrected,
+            num_alt_gids,
+            vp_num );
+          // fallback exit to avoid infinite loop in case there actually does not
+          // exist any gid of this subnet on the requested VP
+          if ( count >= max_correction_cycles )
+          {
+            new_gid_corrected = new_gid;
+            break;
+          }
+        }
+        else
+        {
+          // within subnet: regular exit
+          // printf( ">> FOUND   [%02i]: %lu --> %lu (%lu, %u)\n", count, old_gid,
+          // new_gid_corrected, num_alt_gids, vp_num );
+          break;
+        }
+      }
+      else
+      {
+        // within subnet: regular exit
+        // printf( ">> FOUND   [%02i]: %lu --> %lu (%lu, %u)\n", count, old_gid, new_gid_corrected,
+        // num_alt_gids, vp_num );
+        break;
+      }
+    }
+    // only variable new_gid is used below, therefore assignment necessary
+    new_gid = new_gid_corrected;
+  }
+
+  // prevent fake spike events from being equal to comm_marker_
+  if ( new_gid == comm_marker_ )
+  {
+    // implicit assumption: comm_marker_ = 0
+    new_gid = rng->ulrand( net_->size() - 1 ) + 1;
+    printf( "Fallback 2 required!\n" );
+  }
+
+  return new_gid;
+}
+
+inline nest::uint_t
+nest::Scheduler::createNewFakeGID_( nest::uint_t old_gid, librandom::RngPtr rng )
+{
+  uint_t new_gid;
+
+  // magic formula which guarantees that we only generate spike events
+  // with GIDs from the respective VP (however, because we don't check
+  // for subnets and extra devices, this is not perfect; nevertheless, it should
+  // at least lead to similar memory access patterns within deliver_events_(..))
+  new_gid = ( old_gid
+              + rng->ulrand( ( net_->size() - 1 ) / Communicator::get_num_virtual_processes() + 1 )
+                * Communicator::get_num_virtual_processes() ) % net_->size();
+
+  // prevent fake spike events from being equal to comm_marker_
+  if ( new_gid == comm_marker_ )
+  {
+    // implicit assumption: comm_marker_ = 0
+    new_gid = rng->ulrand( net_->size() - 1 ) + 1;
+  }
+
+  return new_gid;
+}
+
+void
+nest::Scheduler::fill_spike_buffers_for_static_dry_run_( double_t num_spikes_per_h,
+  int send_buffer_size,
+  int recv_buffer_size )
+{
+  // in dry-run mode, we need a prefilled buffer of spike events, following a
+  // similar pattern as in a real simulation; this prefilling is carried out in
+  // the following...
+
+  std::string msg = String::compose(
+    "Entering prefilling of fake spike buffer... (num_spikes_per_h = %1)", num_spikes_per_h );
+  net_->message( SLIInterpreter::M_INFO, "Scheduler::fill_spike_buffers_for_static_dry_run_", msg );
+
+  // the displacements are perfectly regular and pre-set at this point
+  for ( int pid = 0; pid < Communicator::get_num_processes(); ++pid )
+  {
+    displacements_[ pid ] = send_buffer_size * pid;
+  }
+
+  // get a local random generator to generate the spike events and
+  // the number of events per simulation step
+  librandom::RngPtr rng = get_rng( 0 );
+
+  // fill global spike buffer as expected by deliver_events_(..)
+  uint64_t num_spikes_sum = 0;
+  // outermost loop: processes
+  for ( int pid = 0; pid < Communicator::get_num_processes(); ++pid )
+  {
+    int count, pos;
+    uint64_t num_spikes;
+
+    bool stop_loop = false;
+    while ( !stop_loop )
+    // the following steps might have to be repeated because of their stochastic nature;
+    // we never want to exceed the available space in the global spike buffer for each
+    // specific process p
+    {
+      count = 0;
+      num_spikes = 0;
+      pos = displacements_[ pid ]; // displacements_ filled before
+
+      // fill the process-related region within the global spike buffer
+      // with comm. markers (local_grid_spikes_ is filled with them at this point,
+      // see above) as initialization (this is important if the while loop runs for
+      // more than one iteration)
+      std::copy(
+        local_grid_spikes_.begin(), local_grid_spikes_.end(), global_grid_spikes_.begin() + pos );
+
+      // outer loop: threads
+      for ( index tid = 0; tid < n_threads_; ++tid )
+      {
+        // VP counter, computed for current pid and tid
+        index vp_num = pid + tid * Communicator::get_num_processes();
+
+        // middle loop: time steps within slice
+        for ( nest::delay h = 0; h < min_delay_; ++h )
+        {
+          // determine how many spike events are generated within this time step
+          // based on the "expected value" num_spikes_per_h (either floor or ceil)
+          uint64_t num_spikes_per_h_discrete;
+          double_t rand_val = rng->drand();
+          if ( rand_val <= ( num_spikes_per_h - floor( num_spikes_per_h ) ) )
+          {
+            num_spikes_per_h_discrete = ceil( num_spikes_per_h );
+          }
+          else
+          {
+            num_spikes_per_h_discrete = floor( num_spikes_per_h );
+          }
+          // inner loop: spike events within single time step for single VP
+          for ( index n = 0; n < num_spikes_per_h_discrete; ++n )
+          {
+            if ( pos < recv_buffer_size ) // avoid buffer overflow
+            {
+              global_grid_spikes_[ pos ] = createNewFakeGID_( vp_num, rng );
+              pos++;
+            }
+            count++;
+            num_spikes++;
+          }
+          if ( pos < recv_buffer_size ) // avoid buffer overflow
+          {
+            global_grid_spikes_[ pos++ ] = comm_marker_;
+          }
+          count++;
+        }
+      }
+      // if we are within the limits of available buffer space for the current process p,
+      // we will continue with the next process (outside of this while loop)
+      stop_loop = ( count <= send_buffer_size );
+      if ( !stop_loop )
+      {
+        msg = String::compose(
+          "Repetition of spike filling for process %1 necessary! (num_spikes = %2)",
+          pid,
+          num_spikes );
+        net_->message(
+          SLIInterpreter::M_WARNING, "Scheduler::fill_spike_buffers_for_static_dry_run_", msg );
+      }
+    }
+    num_spikes_sum += num_spikes;
+  }
+  // notify the user about effective target firing rate
+  msg = String::compose( "Target firing rate is set to %1 but requested rate was %2!",
+    num_spikes_sum / min_delay_
+      / ( ( net_->size() - 1 ) * ( Time::get_resolution().get_ms() / 1000.0 ) ),
+    dry_run_target_rate_ );
+  net_->message(
+    SLIInterpreter::M_WARNING, "Scheduler::fill_spike_buffers_for_static_dry_run_", msg );
+
+  // store spikes per h-step in class variable
+  dry_run_num_spikes_per_h_ = num_spikes_per_h;
+  // set flag for indirect access to global spike buffer
+  dry_run_indirect_access_enabled_ =
+    ( dry_run_num_spikes_per_h_ < dry_run_num_spikes_per_h_threshold_ );
+
+  // for the sparse case: fill the buffer which holds the indices within the global
+  // spike buffer at which actually spike events can be found
+  if ( dry_run_indirect_access_enabled_ )
+  {
+    net_->message( SLIInterpreter::M_INFO,
+      "Scheduler::fill_spike_buffers_for_static_dry_run_",
+      "Preparing indirect access via dry_run_valid_spike_pos_vec_..." );
+    dry_run_valid_spike_pos_vec_.resize( num_spikes_sum );
+    uint_t count = 0;
+    for ( u_int u = 0; u < static_cast< uint_t >( recv_buffer_size ); u++ )
+    {
+      if ( global_grid_spikes_[ u ] != comm_marker_ )
+      {
+        dry_run_valid_spike_pos_vec_[ count++ ] = u;
+      }
+    }
+  }
+  else
+  {
+    net_->message( SLIInterpreter::M_INFO,
+      "Scheduler::fill_spike_buffers_for_static_dry_run_",
+      "Direct access to global_grid_spikes_..." );
+  }
+
+  net_->message( SLIInterpreter::M_INFO,
+    "Scheduler::fill_spike_buffers_for_static_dry_run_",
+    "Prefilling of fake spike buffer finished." );
 }
 
 void
@@ -384,14 +759,18 @@ nest::Scheduler::prepare_simulation()
   if ( to_do_ == 0 )
     return;
 
+  reset_profiling_counters_timers_();
+
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables
   update_delay_extrema_();
 
-  // Check for synchronicity of global rngs over processes.
-  // We need to do this ahead of any simulation in case random numbers
+  // Check for synchronicity of global rngs over processes only in case
+  // of parallel MPI processes; if the parallel MPI processes are only fake processes
+  // because NEST is executed in dry-run mode, skip the check;
+  // we need to do the check ahead of any simulation in case random numbers
   // have been consumed on the SLI level.
-  if ( Communicator::get_num_processes() > 1 )
+  if ( Communicator::get_num_processes() > 1 && !dry_run_enabled_ )
   {
     if ( !Communicator::grng_synchrony( grng_->ulrand( 100000 ) ) )
     {
@@ -431,9 +810,11 @@ nest::Scheduler::finalize_simulation()
   if ( not simulated_ )
     return;
 
-  // Check for synchronicity of global rngs over processes
-  // TODO: This seems double up, there is such a test at end of simulate()
-  if ( Communicator::get_num_processes() > 1 )
+  // Check for synchronicity of global rngs over processes only in case
+  // of parallel MPI processes; if the parallel MPI processes are only fake processes
+  // because NEST is executed in dry-run mode, skip the check
+  if ( Communicator::get_num_processes() > 1 && !dry_run_enabled_ )
+  {
     if ( !Communicator::grng_synchrony( grng_->ulrand( 100000 ) ) )
     {
       net_->message( SLIInterpreter::M_ERROR,
@@ -441,6 +822,7 @@ nest::Scheduler::finalize_simulation()
         "Global Random Number Generators are not synchronized after simulation." );
       throw KernelException();
     }
+  }
 
   finalize_nodes();
 }
@@ -518,6 +900,17 @@ nest::Scheduler::update()
     std::vector< Node* >::iterator i;
     int t = net_->get_thread_id(); // which thread am I
 
+    index num_t = 1;
+#ifdef _OPENMP
+    num_t = static_cast< index >( omp_get_num_threads() ); // how many threads there are
+    if ( ( num_t != n_threads_ ) && ( t == 0 ) )
+    {
+      std::string msg =
+        String::compose( "Setting number of OpenMP threads failed! (num_t = %1)", num_t );
+      net_->message( SLIInterpreter::M_ERROR, "Scheduler::update", msg );
+    }
+#endif
+
     do
     {
       if ( print_time_ )
@@ -571,6 +964,13 @@ nest::Scheduler::update()
         }
       }
 
+      if ( dry_run_enabled_ )
+      { // in dry-run mode, gather events in parallel section after barrier
+#pragma omp barrier
+        if ( to_step_ == min_delay_ ) // gather only at end of slice
+          gather_events_for_dry_run_( static_cast< uint_t >( t ), static_cast< uint_t >( num_t ) );
+      }
+
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
 
@@ -578,8 +978,11 @@ nest::Scheduler::update()
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
       {
-        if ( to_step_ == min_delay_ ) // gather only at end of slice
-          gather_events_();
+        if ( !dry_run_enabled_ )
+        {                               // in real simulation, gather events in single thread
+          if ( to_step_ == min_delay_ ) // gather only at end of slice
+            gather_events_();
+        }
 
         advance_time_();
 
@@ -982,7 +1385,8 @@ nest::Scheduler::set_status( DictionaryDatum const& d )
     }
   }
 
-  updateValue< bool >( d, "off_grid_spiking", off_grid_spiking_ );
+  if ( updateValue< bool >( d, "off_grid_spiking", off_grid_spiking_ ) && dry_run_enabled_ )
+    throw KernelException( "Off-grid spiking must not be enabled when in dry-run mode." );
 
   bool comm_allgather;
   bool commstyle_updated = updateValue< bool >( d, "communicate_allgather", comm_allgather );
@@ -1148,6 +1552,26 @@ nest::Scheduler::get_status( DictionaryDatum& d ) const
   def< bool >( d, "communicate_allgather", Communicator::get_use_Allgather() );
   def< long >( d, "send_buffer_size", Communicator::get_send_buffer_size() );
   def< long >( d, "receive_buffer_size", Communicator::get_recv_buffer_size() );
+
+  def< bool >( d, "dry_run", dry_run_enabled_ );
+  if ( dry_run_enabled_ )
+  {
+    def< double >( d, "dry_run_target_rate", dry_run_target_rate_ );
+    def< bool >( d, "dry_run_spike_filter", dry_run_only_relevant_spikes_ );
+    def< double >( d, "dry_run_num_spikes_per_h", dry_run_num_spikes_per_h_ );
+    def< bool >( d, "dry_run_indirect_access_enabled", dry_run_indirect_access_enabled_ );
+    def< double >( d, "dry_run_num_spikes_per_h_threshold", dry_run_num_spikes_per_h_threshold_ );
+  }
+
+  if ( n_rec_procs_ > 0 )
+    def< double >( d, "num_rec_processes", n_rec_procs_ );
+
+  def< double >( d, "gather_walltime", Scheduler::get_gather_walltime_() );
+  def< double >( d, "collocate_buffers_walltime", Scheduler::get_collocate_buffers_walltime_() );
+  def< size_t >( d, "local_spike_counter", Scheduler::get_local_spike_counter_() );
+  // BEGIN: DEBUGGING HACK BY WS
+  def< size_t >( d, "facilitate_counter", Scheduler::get_facilitate_counter_() );
+  // END: DEBUGGING HACK BY WS
 }
 
 void
@@ -1275,6 +1699,10 @@ nest::Scheduler::collocate_buffers_()
       num_offgrid_spikes += jt->size();
 
   num_spikes = num_grid_spikes + num_offgrid_spikes;
+
+  // for counting of locally generated spikes, especially for dry-run mode
+  local_spike_counter_ += num_spikes;
+
   if ( !off_grid_spiking_ ) // on grid spiking
   {
     // make sure buffers are correctly sized
@@ -1408,28 +1836,61 @@ nest::Scheduler::deliver_events_( thread t )
       prepared_timestamps[ lag ] = clock_ - Time::step( lag );
     }
 
-    for ( size_t vp = 0; vp < ( size_t ) Communicator::get_num_virtual_processes(); ++vp )
+    if ( dry_run_enabled_ && dry_run_only_relevant_spikes_ )
     {
-      size_t pid = get_process_id( vp );
-      int pos_pid = pos[ pid ];
-      int lag = min_delay_ - 1;
-      while ( lag >= 0 )
+      for ( size_t vp = 0; vp < ( size_t ) Communicator::get_num_virtual_processes(); ++vp )
       {
-        index nid = global_grid_spikes_[ pos_pid ];
-        if ( nid != static_cast< index >( comm_marker_ ) )
+        size_t pid = get_process_id( vp );
+        int pos_pid = pos[ pid ];
+        int lag = min_delay_ - 1;
+        while ( lag >= 0 )
         {
-          // tell all local nodes about spikes on remote machines.
-          se.set_stamp( prepared_timestamps[ lag ] );
-          se.set_sender_gid( nid );
-          net_->connection_manager_.send( t, nid, se );
+          index nid = global_grid_spikes_thread_specific_[ t ][ pos_pid ];
+          if ( nid != static_cast< index >( comm_marker_ ) )
+          {
+            // tell all local nodes about spikes on remote machines.
+            se.set_stamp( prepared_timestamps[ lag ] );
+            se.set_sender_gid( nid );
+
+            //// trusted send because preceding spike filtering ensures
+            //// that only relevant spikes are present in spike buffer
+            // net_->connection_manager_.send_trusted(t, nid, se);
+            net_->connection_manager_.send( t, nid, se );
+          }
+          else
+          {
+            --lag;
+          }
+          ++pos_pid;
         }
-        else
-        {
-          --lag;
-        }
-        ++pos_pid;
+        pos[ pid ] = pos_pid;
       }
-      pos[ pid ] = pos_pid;
+    }
+    else
+    {
+      for ( size_t vp = 0; vp < ( size_t ) Communicator::get_num_virtual_processes(); ++vp )
+      {
+        size_t pid = get_process_id( vp );
+        int pos_pid = pos[ pid ];
+        int lag = min_delay_ - 1;
+        while ( lag >= 0 )
+        {
+          index nid = global_grid_spikes_[ pos_pid ];
+          if ( nid != static_cast< index >( comm_marker_ ) )
+          {
+            // tell all local nodes about spikes on remote machines.
+            se.set_stamp( prepared_timestamps[ lag ] );
+            se.set_sender_gid( nid );
+            net_->connection_manager_.send( t, nid, se );
+          }
+          else
+          {
+            --lag;
+          }
+          ++pos_pid;
+        }
+        pos[ pid ] = pos_pid;
+      }
     }
   }
   else // off grid spiking
@@ -1471,12 +1932,244 @@ nest::Scheduler::deliver_events_( thread t )
 void
 nest::Scheduler::gather_events_()
 {
+  // time measurements: init (assuming that this function is only called from one thread)
+  Stopwatch stw, stw_cb;
+  stw.start();
+
+  // buffer handling (with time measurement)
+  stw_cb.start();
   collocate_buffers_();
+  stw_cb.stop();
+  collocate_buffers_walltime_ += stw_cb.elapsed();
+
+  // invoke MPI communication
   if ( off_grid_spiking_ )
     Communicator::communicate( local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
   else
     Communicator::communicate( local_grid_spikes_, global_grid_spikes_, displacements_ );
+  // main stuff: end
+
+  // time measurement: finish
+  stw.stop();
+  gather_walltime_ += stw.elapsed();
 }
+
+void
+nest::Scheduler::gather_events_for_dry_run_( uint_t t, uint_t num_t )
+{
+  // IMPORTANT: Assume that all threads are synchronized at this point
+
+  Stopwatch stw, stw_cb; // only used in master thread
+
+#pragma omp master
+  { // only master thread (or only thread) does this work
+    // time measurement: init
+    stw.start();
+
+    // clean local spike buffer (not really necessary, but nicer for debugging)
+    fill( local_grid_spikes_.begin(), local_grid_spikes_.end(), 0 );
+
+    // usual buffer handling (with time measurement)
+    stw_cb.start();
+    collocate_buffers_();
+    stw_cb.stop();
+    collocate_buffers_walltime_ += stw_cb.elapsed();
+
+    if ( dry_run_target_rate_ <= 0.0 ) // only for dry-run mode
+                                       // without fixed target spike rate
+    {
+      int send_buffer_size = local_grid_spikes_.size();
+      int recv_buffer_size = global_grid_spikes_.size();
+
+      int old_send_buffer_size = Communicator::get_send_buffer_size();
+
+      // detect that local spike buffer has increased in size
+      // and update global spike buffer and Communicator state accordingly
+      if ( send_buffer_size > old_send_buffer_size )
+      {
+        recv_buffer_size = send_buffer_size * Communicator::get_num_processes();
+        global_grid_spikes_.resize( recv_buffer_size );
+        Communicator::set_buffer_sizes( send_buffer_size, recv_buffer_size );
+
+        // update displacements_ as well;
+        // the displacements are perfectly regular
+        for ( int pid = 0; pid < Communicator::get_num_processes(); ++pid )
+        {
+          displacements_[ pid ] = send_buffer_size * pid;
+        }
+      }
+
+      // copy spike events from only real process to global spike buffer
+      // (for the real process AND for all fake processes)
+      for ( int pid = 0; pid < Communicator::get_num_processes(); ++pid )
+      {
+        std::copy( local_grid_spikes_.begin(),
+          local_grid_spikes_.end(),
+          global_grid_spikes_.begin() + pid * send_buffer_size );
+      }
+    }
+  }
+
+// synchronize here
+#pragma omp barrier
+  // all threads do the following work
+
+  if ( dry_run_target_rate_ <= 0.0 ) // dry-run mode without fixed target spike rate
+  {
+    // get a local random generator
+    librandom::RngPtr rng = get_rng( t );
+
+// ...and now modify the spike events of all processes such
+// that the GIDs match the VPs somehow (plus some extra randomness)
+
+#ifdef DRY_RUN_SUBNET_MODE
+    int sqrt_M = static_cast< int >( sqrt( Communicator::get_num_processes() ) );
+#endif // DRY_RUN_SUBNET_MODE
+
+// loop over all processes (real and fake; note that pid counting starts
+// with 1 to preserve spike events on single real process)
+#pragma omp for
+    for ( int pid = 1; pid < Communicator::get_num_processes(); ++pid )
+    {
+      int vp_num = pid;                // VP counter, starting at pid for every process
+      int pos = displacements_[ pid ]; // displacements_ filled before
+      index n_markers = 0;             // counter for comm. markers
+      nest::delay h_count = 0;         // counter for h-steps within slice
+
+      // loop until max. number of comm. markers is exceeded
+      while ( n_markers < n_threads_ * min_delay_ )
+      {
+        // get spike event (gid)
+        index gid = global_grid_spikes_[ pos ];
+        // in case of comm. marker increase all counters
+        if ( gid == comm_marker_ )
+        {
+          n_markers++;
+          h_count++;
+          // check if we have already reached the end of a slice
+          if ( h_count == min_delay_ )
+          {
+            // if slice is finished, skip to next VP on process
+            vp_num += Communicator::get_num_processes();
+            // reset h_count (for next slice)
+            h_count = 0;
+          }
+        }
+        else
+        {
+#ifdef DRY_RUN_SUBNET_MODE
+          if ( pid <= sqrt_M )
+          {
+            global_grid_spikes_[ pos ] = createNewFakeGID_SubnetMode_( gid, vp_num, rng );
+          }
+          else
+          {
+            global_grid_spikes_[ pos ] = createNewFakeGID_( vp_num, rng );
+          }
+#else  // DRY_RUN_SUBNET_MODE
+          global_grid_spikes_[ pos ] = createNewFakeGID_( vp_num, rng );
+#endif // DRY_RUN_SUBNET_MODE
+        }
+        // iterate forward in global spike buffer
+        pos++;
+      }
+    }
+  }
+  else // dry-run mode with fixed target spike rate
+  {
+    // get a local random generator
+    librandom::RngPtr rng = get_rng( t );
+
+    // update every spike event in the prefilled global spike buffer such that
+    // there remains a realistic spike pattern (GIDs fitting to VPs)
+    if ( dry_run_indirect_access_enabled_ )
+    { // sparse case, few spike events in global spike buffer, access global_grid_spikes_ indirectly
+      // (only at positions at which are for sure spike events)
+#pragma omp for
+      for ( uint_t u = 0; u < dry_run_valid_spike_pos_vec_.size(); u++ )
+      {
+        uint_t u2 = dry_run_valid_spike_pos_vec_[ u ];
+        global_grid_spikes_[ u2 ] = createNewFakeGID_( global_grid_spikes_[ u2 ], rng );
+      }
+    }
+    else
+    { // non-sparse case, iterate simply over the whole global spike buffer and avoid
+      // hitting comm. markers
+#pragma omp for
+      for ( index i = 0; i < global_grid_spikes_.size(); i++ )
+      {
+        if ( global_grid_spikes_[ i ] != comm_marker_ )
+        {
+          global_grid_spikes_[ i ] = createNewFakeGID_( global_grid_spikes_[ i ], rng );
+        }
+      }
+    }
+  } // versions of dry-run mode
+
+  // filter global spike buffer and leave only relevant spikes
+  // (for which target exists on real virtual processes)
+  if ( dry_run_only_relevant_spikes_ )
+  {
+// synchronize all threads
+#pragma omp barrier
+
+    // ensure proper sizing of thread-specific global spike buffers
+    if ( global_grid_spikes_thread_specific_[ t ].size() != global_grid_spikes_.size() )
+    {
+      global_grid_spikes_thread_specific_[ t ].resize( global_grid_spikes_.size() );
+    }
+
+    index n_markers;
+    int irrelevantCount = 0;
+
+    // loop over global spike buffer (process-wise)
+    for ( int pid = 0; pid < Communicator::get_num_processes(); ++pid )
+    {
+      int pos = displacements_[ pid ];
+      int pos_only_relevant = displacements_[ pid ];
+
+      n_markers = 0;
+      while ( n_markers < n_threads_ * min_delay_ )
+      {
+        index gid = global_grid_spikes_[ pos ];
+        if ( gid != comm_marker_ )
+        {
+          if ( net_->connection_manager_.check_source_relevance( t, gid ) )
+          {
+            // valid entry -> gets into as relevant spike into thread-specific
+            //                global spike buffer
+            global_grid_spikes_thread_specific_[ t ][ pos_only_relevant++ ] = gid;
+          }
+          else
+          {
+            irrelevantCount++;
+          }
+        }
+        else
+        {
+          global_grid_spikes_thread_specific_[ t ][ pos_only_relevant++ ] = comm_marker_;
+          ++n_markers;
+        }
+        ++pos;
+      }
+    }
+#pragma omp critical
+    {
+      dry_run_irrelevant_spikes_counter_ = dry_run_irrelevant_spikes_counter_ + irrelevantCount;
+    }
+  }
+
+// finally synchronize all threads
+#pragma omp barrier
+
+#pragma omp master
+  {
+    // time measurement: finish
+    stw.stop();
+    gather_walltime_ += stw.elapsed();
+  }
+}
+
 
 void
 nest::Scheduler::advance_time_()
@@ -1532,6 +2225,9 @@ nest::Scheduler::print_progress_()
 void
 nest::Scheduler::set_num_rec_processes( int nrp, bool called_by_reset )
 {
+  if ( dry_run_enabled_ && ( nrp > 0 ) )
+    throw KernelException(
+      "Global spike detection mode must not be enabled when in dry-run mode." );
   if ( net_->size() > 1 and not called_by_reset )
     throw KernelException(
       "Global spike detection mode must be enabled before nodes are created." );

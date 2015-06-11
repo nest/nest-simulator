@@ -162,6 +162,12 @@ public:
 
   void send( thread t, index sgid, Event& e );
 
+  // send without checks if connection for sending actually exists (dangerous!!!)
+  void send_trusted( thread t, index sgid, Event& e );
+
+  // returns true if sgid is in source list of thread t, otherwise false
+  bool check_source_relevance( thread t, index sgid );
+
   /**
    * Resize the structures for the Connector objects if necessary.
    * This function should be called after number of threads, min_delay, max_delay,

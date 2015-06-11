@@ -1913,3 +1913,27 @@ Description:
   statusdict /exitcodes get /userabort get
   statusdict /is_mpi get { MPI_Abort }{ quit_i } ifelse
 } bind def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/SetFakeNumProcesses_i
+{
+  -1.0 false SetFakeNumProcesses_i_d_b
+} bind def
+
+/SetFakeNumProcesses_i_d
+{
+  false SetFakeNumProcesses_i_d_b
+} bind def
+
+/SetFakeNumProcesses_i_b
+{
+  -1.0 exch SetFakeNumProcesses_i_d_b
+} bind def
+
+/SetFakeNumProcesses trie
+  [/integertype                      ] /SetFakeNumProcesses_i     load addtotrie
+  [/integertype /doubletype          ] /SetFakeNumProcesses_i_d   load addtotrie
+  [/integertype /booltype            ] /SetFakeNumProcesses_i_b   load addtotrie
+  [/integertype /doubletype /booltype] /SetFakeNumProcesses_i_d_b load addtotrie
+def

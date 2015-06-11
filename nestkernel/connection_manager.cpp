@@ -696,6 +696,22 @@ ConnectionManager::send( thread t, index sgid, Event& e )
       connections_[ t ].get( sgid )->send( e, t, prototypes_[ t ] );
 }
 
+void
+ConnectionManager::send_trusted( thread t, index sgid, Event& e )
+{
+  connections_[ t ].get( sgid )->send( e, t, prototypes_[ t ] );
+}
+
+bool
+ConnectionManager::check_source_relevance( thread t, index sgid )
+{
+  if ( sgid < connections_[ t ].size() ) // probably test only fails, if there are no connections
+    if ( connections_[ t ].get( sgid ) != 0 ) // check if sgid is in source list
+      return true;
+
+  return false;
+}
+
 size_t
 ConnectionManager::get_num_connections() const
 {

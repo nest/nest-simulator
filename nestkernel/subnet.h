@@ -169,6 +169,12 @@ public:
 
   bool is_homogeneous() const;
 
+  const Multirange&
+  get_gids() const
+  {
+    return gids_;
+  }
+
 protected:
   void
   init_node_( const Node& )

@@ -44,7 +44,7 @@ M_ERROR setverbosity
 fail_or_die
 
 {
-  777 SetFakeNumProcesses
+  777 -1.0 false SetFakeNumProcesses
   0 GetStatus /num_processes get 777 eq
 }
 assert_or_die

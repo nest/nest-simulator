@@ -28,6 +28,9 @@
 #include <cfloat>
 #include <limits>
 #include "config.h"
+// BEGIN: DEBUGGING HACK BY WS
+//#define COUNT_FACILITATE
+// END: DEBUGGING HACK BY WS
 
 /**
  * @mainpage NEST: Neural Simulation Tool
@@ -179,6 +182,12 @@ typedef double_t weight;
 typedef long_t delay;
 const long_t delay_max = long_t_max;
 const long_t delay_min = long_t_min;
+
+// BEGIN: DEBUGGING HACK BY WS
+#ifdef COUNT_FACILITATE
+extern size_t facilitate_counter;
+#endif
+// END: DEBUGGING HACK BY WS
 }
 
 #endif

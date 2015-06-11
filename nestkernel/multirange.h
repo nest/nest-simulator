@@ -61,6 +61,7 @@ public:
   bool empty() const;
   iterator begin() const;
   iterator end() const;
+  bool contains( index x ) const;
 
 private:
   RangeVector ranges_;
@@ -152,6 +153,40 @@ Multirange::end() const
   return Multirange::iterator( ranges_.end(), 0 );
 }
 
+inline bool
+Multirange::contains( index x ) const
+{
+  for ( RangeVector::const_iterator it = ranges_.begin(); it != ranges_.end(); ++it )
+  {
+    if ( ( x >= it->first ) && ( x <= it->second ) )
+    {
+      return true;
+    }
+  }
+  return *this;
+}
+
+inline Multirange::iterator Multirange::iterator::operator++( int )
+{
+  iterator tmp = *this;
+  ++( *this );
+  return tmp;
+}
+
+inline Multirange::iterator
+Multirange::begin() const
+{
+  return Multirange::iterator( ranges_.begin(), 0 );
+}
+
+inline Multirange::iterator
+Multirange::end() const
+{
+  return Multirange::iterator( ranges_.end(), 0 );
+}
+
+  return false;
+}
 
 } // namespace
 

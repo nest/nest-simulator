@@ -1496,3 +1496,53 @@ def LayoutNetwork(model, dim, label=None, params=None):
         return gid
     else:
         raise ValueError("model must be a string or a function")
+
+
+@check_stack
+def GetDryRunIrrelevantSpikesCounter():
+    """
+    Returns the counter for irrelevant spikes which can be enabled
+    in dry-run mode in conjunction with the filtering out of these spikes.
+    """
+    
+    sr("GetDryRunIrrelevantSpikesCounter")
+    return spp()
+
+
+@check_stack
+def SetFakeNumProcesses(n_procs, nu_target=None, only_relevant_spikes=False):
+    """
+    Enables the dry-run mode of NEST. The number of fake MPI processes is set
+    to n_procs. nu_target defines the firing rate in Hz per neuron for the
+    generation of fake spikes in the simulation phase (static dry-run mode).
+    If it is not given or set to a value <= 0, dynamic dry-run mode is enabled. In
+    the dynamic mode, the rate of the fake spikes is adjusted to the rate of the
+    spikes which are actually generated on the only really existing MPI process.
+    In addition, the boolean flag only_relevant_spikes enables (if True) the
+    filtering out of spikes which are irrelevant for each virtual process (VP)
+    during the generation of fake spikes. Therefore only relevant spikes arrive
+    at each VP for spike routing. By default only_relevant_spikes=False.
+    Please note:
+    - Calling SetFakeNumProcesses will invoke a reset of the NEST simulation
+      kernel. Therefore all NEST settings up to this point are lost. It is
+      strongly suggested to call SetFakeNumProcesses before any other NEST-
+      related function.
+    - A real simulation of the network will not be possible after setting fake
+      processes.
+    - It is not possible to use this function when running a script on multiple
+      actual MPI processes.
+    - After invoking the dry-run mode, usage of the global spike detector or
+      of off-grid spiking is no longer possible.
+    - Although MUSIC is not disabled when working in dry-run mode, the results
+      will most likely be inconsistent. Therefore it is strongly recommended
+      to never use the dry-run mode in a simulation relying on MUSIC.
+    """
+    
+    if nu_target is None:
+        nu_target = -1.0
+
+    sps(n_procs)
+    sps(nu_target)
+    sps(only_relevant_spikes)
+    
+    sr("SetFakeNumProcesses")

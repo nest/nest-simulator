@@ -512,6 +512,18 @@ public:
   delay get_max_delay() const;
 
   /**
+   * Set dry run mode and target rate in Scheduler.
+   */
+  void set_dry_run_enabled( bool const dry_run_enabled,
+    double_t const dry_run_target_rate,
+    bool const dry_run_only_relevant_spikes );
+
+  /**
+   * Get rank-local count of irrelevant spikes (for last call to simulate(..)).
+   */
+  size_t get_dry_run_irrelevant_spikes_counter() const;
+
+  /**
    * Get the time at the beginning of the current time slice.
    */
   Time const& get_slice_origin() const;
@@ -1139,6 +1151,25 @@ inline delay
 Network::get_max_delay() const
 {
   return scheduler_.get_max_delay();
+}
+
+inline void
+Network::set_dry_run_enabled( bool const dry_run_enabled,
+  double_t const dry_run_target_rate,
+  bool const dry_run_only_relevant_spikes )
+{
+  message( SLIInterpreter::M_INFO, "Network::set_dry_run_enabled", "Dry-run mode enabled." );
+
+  reset_kernel();
+  scheduler_.set_off_grid_communication( false );
+  return scheduler_.set_dry_run_enabled(
+    dry_run_enabled, dry_run_target_rate, dry_run_only_relevant_spikes );
+}
+
+inline size_t
+Network::get_dry_run_irrelevant_spikes_counter() const
+{
+  return scheduler_.get_dry_run_irrelevant_spikes_counter();
 }
 
 inline void

@@ -566,7 +566,9 @@ Communicator::get_num_processes()
 inline void
 Communicator::set_num_processes( int np )
 {
+  thread n_threads = n_vps_ / num_processes_;
   num_processes_ = np;
+  n_vps_ = np * n_threads;
 }
 
 inline int

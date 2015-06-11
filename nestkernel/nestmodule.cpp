@@ -1446,6 +1446,23 @@ NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
 }
 
 /* BeginDocumentation
+   Name: GetDryRunIrrelevantSpikesCounter - Return the counter for irrelevant spikes.
+   Synopsis: GetDryRunIrrelevantSpikesCounter -> int
+   Description:
+   Returns the counter for irrelevant spikes which can be enabled in dry-run mode
+   in conjunction with the filtering out of these spikes.
+   Availability: NEST 2.6.X
+   Author: Wolfram Schenck
+   FirstVersion: January 2015
+*/
+void
+NestModule::GetDryRunIrrelevantSpikesCounterFunction::execute( SLIInterpreter* i ) const
+{
+  i->OStack.push( get_network().get_dry_run_irrelevant_spikes_counter() );
+  i->EStack.pop();
+}
+
+/* BeginDocumentation
    Name: Rank - Return the MPI rank of the process.
    Synopsis: Rank -> int
    Description:
@@ -1486,53 +1503,78 @@ NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
 
 /* BeginDocumentation
    Name: SetFakeNumProcesses - Set a fake number of MPI processes.
-   Synopsis: n_procs SetFakeNumProcesses -> -
+   Synopsis:
+   n_procs                                SetFakeNumProcesses -> -
+   n_procs nu_target                      SetFakeNumProcesses -> -
+   n_procs           only_relevant_spikes SetFakeNumProcesses -> -
+   n_procs nu_target only_relevant_spikes SetFakeNumProcesses -> -
    Description:
-   Sets the number of MPI processes to n_procs. Used for benchmarking purposes of memory consumption
-   only.
+   Sets the number of fake MPI processes to n_procs and enables the dry-run
+   mode of NEST. Used for benchmarking purposes only.
+   nu_target defines the firing rate in Hz per neuron for the generation of
+   fake spikes in the simulation phase (static dry-run mode). If it not given
+   or set to a value <= 0, dynamic dry-run mode is enabled. In the dynamic
+   mode, the rate of the fake spikes is adjusted to the rate of the spikes
+   which are actually generated on the only really existing MPI process.
+   In addition, the flag only_relevant_spikes enables (if true) the filtering
+   out of spikes which are irrelevant for each virtual process (VP) during the
+   generation of fake spikes. Therefore only relevant spikes arrive at each VP
+   for spike routing. By default only_relevant_spikes=false.
    Please note:
-   - Simulation of the network will not be possible after setting fake processes.
-   - It is not possible to use this function when running a script on multiple actual MPI processes.
-   - The setting of the fake number of processes has to happen before the kernel reset and before
-   the setting of the local number of threads.
-     After calling SetFakeNumProcesses, it is obligatory to call either ResetKernel or SetStatus on
-   the Kernel for the setting of the fake
-     number of processes to come into effect.
+   - Calling SetFakeNumProcesses will invoke a reset of the NEST simulation
+     kernel. Therefore all NEST settings up to this point are lost. It is
+     strongly suggested to call SetFakeNumProcesses before any other NEST-
+     related function.
+   - A real simulation of the network will not be possible after setting fake
+     processes.
+   - It is not possible to use this function when running a script on multiple
+     actual MPI processes.
+   - After invoking the dry-run mode, usage of the global spike detector or
+     of off-grid spiking is no longer possible.
+   - Although MUSIC is not disabled when working in dry-run mode, the results
+     will most likely be inconsistent. Therefore it is strongly recommended
+     to never use the dry-run mode in a simulation relying on MUSIC.
 
-   A typical use case would be to test if a neuronal network fits on a machine of given size without
-   using the actual resources.
+   A typical use case would be to test if a neuronal network fits on a machine
+   of given size without using the actual resources.
 
    Example:
              %%% Set fake number of processes
-             100 SetFakeNumProcesses
-             ResetNetwork
+             100 -1.0 false SetFakeNumProcesses
 
              %%% Build network
              /iaf_neuron 100 Create
              [1 100] Range /n Set
 
-             << /source n /target n >> Connect
+             n n Connect
 
              %%% Measure memory consumption
              memory_thisjob ==
 
-       Execute this script with
+   Execute this script with
              mpirun -np 1 nest example.sli
 
-
-
-   Availability: NEST 2.2
-   Author: Susanne Kunkel
+   Availability: NEST 2.2/2.6.X
+   Author: Susanne Kunkel, Wolfram Schenck
    FirstVersion: July 2011
    SeeAlso: NumProcesses
 */
 void
-NestModule::SetFakeNumProcesses_iFunction::execute( SLIInterpreter* i ) const
+NestModule::SetFakeNumProcesses_i_d_bFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 1 );
-  long n_procs = getValue< long >( i->OStack.pick( 0 ) );
+  i->assert_stack_load( 3 );
+
+  long n_procs = getValue< long >( i->OStack.pick( 2 ) );
+  double_t nu_target = getValue< double_t >( i->OStack.pick( 1 ) );
+  bool drors = getValue< bool >( i->OStack.pick( 0 ) );
+
+  if ( Communicator::get_num_processes() > 1 )
+    throw KernelException(
+      "Dry-run mode must not be enabled when running with more than one MPI rank." );
   Communicator::set_num_processes( n_procs );
-  i->OStack.pop( 1 );
+  get_network().set_dry_run_enabled( true, nu_target, drors );
+
+  i->OStack.pop( 3 );
   i->EStack.pop();
 }
 
@@ -1554,8 +1596,11 @@ void
 NestModule::SetNumRecProcesses_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
+
   long n_rec_procs = getValue< long >( i->OStack.pick( 0 ) );
+
   get_network().set_num_rec_processes( n_rec_procs );
+
   i->OStack.pop( 1 );
   i->EStack.pop();
 }
@@ -2037,9 +2082,11 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "PrintNetwork", &printnetworkfunction );
 
+  i->createcommand( "GetDryRunIrrelevantSpikesCounter", &getdryrunirrelevantspikescounterfunction );
+
   i->createcommand( "Rank", &rankfunction );
   i->createcommand( "NumProcesses", &numprocessesfunction );
-  i->createcommand( "SetFakeNumProcesses", &setfakenumprocesses_ifunction );
+  i->createcommand( "SetFakeNumProcesses_i_d_b", &setfakenumprocesses_i_d_bfunction );
   i->createcommand( "SetNumRecProcesses", &setnumrecprocesses_ifunction );
   i->createcommand( "SyncProcesses", &syncprocessesfunction );
   i->createcommand( "TimeCommunication_i_i_b", &timecommunication_i_i_bfunction );

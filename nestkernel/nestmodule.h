@@ -370,6 +370,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } printnetworkfunction;
 
+  class GetDryRunIrrelevantSpikesCounterFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } getdryrunirrelevantspikescounterfunction;
+
   class RankFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
@@ -380,10 +385,10 @@ public:
     void execute( SLIInterpreter* ) const;
   } numprocessesfunction;
 
-  class SetFakeNumProcesses_iFunction : public SLIFunction
+  class SetFakeNumProcesses_i_d_bFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } setfakenumprocesses_ifunction;
+  } setfakenumprocesses_i_d_bfunction;
 
   class SetNumRecProcesses_iFunction : public SLIFunction
   {

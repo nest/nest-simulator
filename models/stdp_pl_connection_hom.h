@@ -191,6 +191,12 @@ private:
   double_t
   facilitate_( double_t w, double_t kplus, const STDPPLHomCommonProperties& cp )
   {
+// BEGIN: DEBUGGING HACK BY WS
+#ifdef COUNT_FACILITATE
+#pragma omp atomic update
+    facilitate_counter++;
+#endif
+    // END: DEBUGGING HACK BY WS
     return w + ( cp.lambda_ * std::pow( w, cp.mu_ ) * kplus );
   }
 

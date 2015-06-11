@@ -78,9 +78,14 @@ public: // Public methods
   void reset();
 
   /**
-   * Clear all pending spikes, but do not otherwise manipulate scheduler.
-   * @note This is used by Network::reset_network().
-   */
+    * Set all counters and timers used for profiling to zero.
+    */
+  void reset_profiling_counters_timers_();
+
+  /**
+    * Clear all pending spikes, but do not otherwise manipulate scheduler.
+    * @note This is used by Network::reset_network().
+    */
   void clear_pending_spikes();
 
   /**
@@ -322,6 +327,19 @@ public: // Public methods
   static delay get_max_delay();
 
   /**
+   * Set dry run mode and target rate.
+   */
+  void set_dry_run_enabled( bool const dry_run_enabled,
+    double_t const dry_run_target_rate,
+    bool const dry_run_only_relevant_spikes );
+
+  /**
+   * Get rank-local count of irrelevant spikes: dry_run_irrelevant_spikes_counter_
+   * (for last call to simulate(..)).
+   */
+  size_t get_dry_run_irrelevant_spikes_counter() const;
+
+  /**
    * Get slice number. Increased by one for each slice. Can be used
    * to choose alternating buffers.
    */
@@ -426,6 +444,51 @@ private:
   bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid
   bool print_time_;       //!< Indicates whether time should be printed during simulations (or not)
 
+  static bool dry_run_enabled_;  /* flag if dry-run mode is enabled (only declared as
+                                    static because it is also used in static member functions)
+                                  */
+  double_t dry_run_target_rate_; //!< target rate if in dry-run mode
+  bool dry_run_only_relevant_spikes_;
+  //!< flag if irrelevant spikes are eliminated before processing in dry-run mode
+
+  double_t dry_run_num_spikes_per_h_;
+  //!< number of spikes per h-step in dry-run mode with static spike frequ.
+  bool dry_run_indirect_access_enabled_;
+  /* flag for dry-run mode with static spike frequ.: if enabled
+   * (fake) spike events are accessed indirectly via
+   * dry_run_valid_spike_pos_vec_ (sparse case)
+   */
+
+  static const double_t dry_run_num_spikes_per_h_threshold_;
+  /* concerns dry-run mode with static spike frequ.:
+   * if dry_run_num_spikes_per_h_ is smaller than this threshold,
+   * (fake) spike events are accessed indirectly via
+   * dry_run_valid_spike_pos_vec_ (sparse case)
+   */
+
+  std::vector< uint_t >
+    dry_run_valid_spike_pos_vec_; /* vector holding the indices within global_grid_spikes_
+                                   * at which spike events are stored
+                                   */
+
+  double_t gather_walltime_; /* cumulated execution time for gather_events_(..) or
+                              * gather_events_for_dry_run_(..) within
+                              * last preceding call to simulate(..) [in sec]
+                              */
+  double_t collocate_buffers_walltime_;
+  /* time spent within gather_events_(..)
+   * for collocate_buffers_(..) [in sec]
+   */
+  size_t local_spike_counter_; /* counter for spikes generated on local rank within
+                                * last preceding call to simulate(..)
+                                */
+  size_t dry_run_irrelevant_spikes_counter_;
+  /* counter for irrelevant spikes within
+   * last preceding call to simulate(..)
+   * (only for dry-run mode and only if filtering
+   * of irrelevant spikes is enabled)
+   */
+
   std::vector< long_t > rng_seeds_; //!< The seeds of the local RNGs. These do not neccessarily
                                     //describe the state of the RNGs.
   long_t
@@ -519,6 +582,16 @@ private:
   std::vector< uint_t > global_grid_spikes_;
 
   /**
+   * Thread-specific buffers containing the gids of all neurons
+   * that spiked in the last min_delay_ interval (the single slices
+   * are separated by a marker value). This data structure was introduced
+   * for the dry-run mode to perform thread-specific filtering of
+   * irrelevant spikes. Without filtering and in full simulations it
+   * each buffer just carries a copy of global_grid_spikes_ for each thread.
+   */
+  std::vector< std::vector< uint_t > > global_grid_spikes_thread_specific_;
+
+  /**
    * Buffer containing the gids and offsets for local neurons that
    * fired off-grid spikes in the last min_delay_ interval. The
    * single slices are separated by a marker value.
@@ -556,6 +629,27 @@ private:
    */
   void configure_spike_buffers_();
 
+  /**
+   * Used for the generation of fake spikes in dry-run mode: Computes
+   * a fake GID from an existing valid GID; special version for subnet mode
+   * within the dry-run mode (in subnet mode, fake GIDs are created in the same
+   * subnet as the original "old" gid if possible)
+   */
+  uint_t createNewFakeGID_SubnetMode_( uint_t old_gid, uint_t vp_num, librandom::RngPtr rng );
+
+  /**
+   * Used for the generation of fake spikes in dry-run mode: Computes
+   * a fake GID from an existing valid GID
+   */
+  uint_t createNewFakeGID_( uint_t old_gid, librandom::RngPtr rng );
+
+  /**
+   * Reconfigure the spike buffers for static dry-run mode
+   * (includes filling the global spike buffer with fake spike events)
+   */
+  void fill_spike_buffers_for_static_dry_run_( double_t num_spikes_per_h,
+    int send_buffer_size,
+    int recv_buffer_size );
 
   /**
    * Create up-to-date vector of local nodes, nodes_vec_.
@@ -575,6 +669,37 @@ private:
    * Collocate buffers and exchange events with other MPI processes.
    */
   void gather_events_();
+
+  /**
+   * Update the global spike buffer in dry-run mode
+   * (mainly filling the global spike buffer with fake spike events)
+   */
+  void gather_events_for_dry_run_( uint_t t, uint_t num_t );
+
+  /**
+   * Get gather_walltime_ [in sec] (for last call to simulate(..)).
+   */
+  double_t get_gather_walltime_() const;
+
+  /**
+   * Get collocate_buffers_walltime_ [in sec] (for last call to simulate(..)).
+   */
+  double_t get_collocate_buffers_walltime_() const;
+
+  /**
+   * Get rank-local count of generated spikes: local_spike_counter_
+   * (for last call to simulate(..)).
+   */
+  size_t get_local_spike_counter_() const;
+
+  // BEGIN: DEBUGGING HACK BY WS
+  /**
+   * Get facilitate_counter (for last call to simulate(..))
+   * (only if compiled with definition COUNT_FACILITATE;
+   * otherwise returns always 0).
+   */
+  size_t get_facilitate_counter_() const;
+  // END: DEBUGGING HACK BY WS
 
   /**
    * Read all event buffers for thread t and send the corresponding
@@ -716,6 +841,8 @@ Scheduler::get_simulated() const
 inline void
 Scheduler::set_off_grid_communication( bool off_grid_spiking )
 {
+  if ( dry_run_enabled_ )
+    throw KernelException( "Off-grid spiking must not be enabled when in dry-run mode." );
   off_grid_spiking_ = off_grid_spiking;
 }
 
@@ -812,6 +939,51 @@ inline size_t
 Scheduler::get_slice() const
 {
   return slice_;
+}
+
+inline size_t
+Scheduler::get_dry_run_irrelevant_spikes_counter() const
+{
+  return dry_run_irrelevant_spikes_counter_;
+}
+
+inline double_t
+Scheduler::get_gather_walltime_() const
+{
+  return gather_walltime_;
+}
+
+inline double_t
+Scheduler::get_collocate_buffers_walltime_() const
+{
+  return collocate_buffers_walltime_;
+}
+
+inline size_t
+Scheduler::get_local_spike_counter_() const
+{
+  return local_spike_counter_;
+}
+
+// BEGIN: DEBUGGING HACK BY WS
+inline size_t
+Scheduler::get_facilitate_counter_() const
+{
+#ifdef COUNT_FACILITATE
+  return facilitate_counter;
+#endif
+  return 0;
+}
+// END: DEBUGGING HACK BY WS
+
+inline void
+Scheduler::set_dry_run_enabled( bool const dry_run_enabled,
+  double_t const dry_run_target_rate,
+  bool const dry_run_only_relevant_spikes )
+{
+  dry_run_enabled_ = dry_run_enabled;
+  dry_run_target_rate_ = dry_run_target_rate;
+  dry_run_only_relevant_spikes_ = dry_run_only_relevant_spikes;
 }
 
 inline void

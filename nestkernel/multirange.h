@@ -163,28 +163,6 @@ Multirange::contains( index x ) const
       return true;
     }
   }
-  return *this;
-}
-
-inline Multirange::iterator Multirange::iterator::operator++( int )
-{
-  iterator tmp = *this;
-  ++( *this );
-  return tmp;
-}
-
-inline Multirange::iterator
-Multirange::begin() const
-{
-  return Multirange::iterator( ranges_.begin(), 0 );
-}
-
-inline Multirange::iterator
-Multirange::end() const
-{
-  return Multirange::iterator( ranges_.end(), 0 );
-}
-
   return false;
 }
 

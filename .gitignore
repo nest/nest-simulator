@@ -42,3 +42,5 @@ build/
 /sli/sli
 /testsuite/do_tests.sh
 /topology/setup.py
+
+*.kdev4

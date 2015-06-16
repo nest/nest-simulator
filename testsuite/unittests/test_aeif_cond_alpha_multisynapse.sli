@@ -63,14 +63,14 @@
 /spike_generator Create /sg Set
 sg << /spike_times [spike_time] >> SetStatus
 
-% Create the several aeif_conf_alpha_RK5 (one for each synapses of the previous neuron)
+% Create the several aeif_conf_alpha (one for each synapses of the previous neuron)
 [tau_syn_in tau_syn_ex delays weights] 
 {
 	/weight_var exch def
 	/delay_var exch def
 	/tau_syn_ex_var exch def
 	/tau_syn_in_var exch def
- 	/aeif_cond_alpha_RK5 Create /singlesynapse_neuron Set
+ 	/aeif_cond_alpha Create /singlesynapse_neuron Set
  	singlesynapse_neuron << /V_peak V_peak >> SetStatus
 	singlesynapse_neuron << /a a >> SetStatus
 	singlesynapse_neuron << /b b >> SetStatus

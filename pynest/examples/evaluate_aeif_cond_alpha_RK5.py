@@ -102,8 +102,8 @@ def run_model(model='aeif_cond_alpha', dt=0.1,reps=1):
     nest.sr("30 setverbosity")
     nest.SetKernelStatus({"overwrite_files": True})
     nest.SetStatus([0],[{"resolution": dt}])
-    nest.SetDefaults('aeif_cond_alpha_RK5',{'HMIN':0.001})
-    nest.SetDefaults('aeif_cond_alpha_RK5',{'MAXERR':1e-10})
+    nest.SetDefaults('aeif_cond_alpha',{'HMIN':0.001})
+    nest.SetDefaults('aeif_cond_alpha',{'MAXERR':1e-10})
  
     neuron = nest.Create(model,2)
     nest.SetStatus(neuron,[{"V_peak": 0.0, "a": 4.0, "b":80.5}])
@@ -135,9 +135,9 @@ Three traces a produced. First, a reference trace of the original `aeif_cond_alp
 The second trace is from the `aeif_cond_alpha model with default resolution and the final trace is from the `aeif_cond_alphaRK5 model also at default resolution.
 '''
 
-reference = run_model(model='aeif_cond_alpha',dt=0.001,reps=50)
-gsl = run_model(model='aeif_cond_alpha',dt=0.1,reps=50)
-test = run_model(model='aeif_cond_alpha_RK5',dt=0.1,reps=50)
+reference = run_model(model='aeif_cond_alpha_gsl',dt=0.001,reps=50)
+gsl = run_model(model='aeif_cond_alpha_gsl',dt=0.1,reps=50)
+test = run_model(model='aeif_cond_alpha',dt=0.1,reps=50)
 
 '''
 Compare the execution times of the models.

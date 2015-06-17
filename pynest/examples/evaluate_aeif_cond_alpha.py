@@ -25,7 +25,11 @@
 import nest
 import numpy as np
 import timeit
+import sys
 
+if len(nest.Models(sel='aeif_cond_alpha_gsl'))==0:
+    sys.exit()
+    
 """
 Example of the Adaptive Exponential Integrate and Fire (AdEx) in NEST.
 ----------------------------------------------------------------------
@@ -131,8 +135,8 @@ def run_model(model='aeif_cond_alpha', dt=0.1,reps=1):
 
 '''
 Now we run the different simulations.
-Three traces a produced. First, a reference trace of the original `aeif_cond_alpha model with 100 times higher resolution than the default.
-The second trace is from the `aeif_cond_alpha model with default resolution and the final trace is from the `aeif_cond_alphaRK5 model also at default resolution.
+Three traces a produced. First, a reference trace of the original `aeif_cond_alpha_gsl model with 100 times higher resolution than the default.
+The second trace is from the `aeif_cond_alpha_gsl model with default resolution and the final trace is from the `aeif_cond_alpha model also at default resolution.
 '''
 
 reference = run_model(model='aeif_cond_alpha_gsl',dt=0.001,reps=50)

@@ -161,7 +161,7 @@ nest::poisson_generator_ps::calibrate()
 void
 nest::poisson_generator_ps::update( Time const& T, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )

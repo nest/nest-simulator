@@ -199,7 +199,7 @@ nest::izhikevich::calibrate()
 void
 nest::izhikevich::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
   assert( from < to );
 
   const double_t h = Time::get_resolution().get_ms();

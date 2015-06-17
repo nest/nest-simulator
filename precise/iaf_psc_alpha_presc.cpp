@@ -277,7 +277,7 @@ void
 nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const long_t to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < Scheduler::get_min_delay() );
+  assert( static_cast< delay >( from ) < Network::get_network().get_min_delay() );
   assert( from < to );
 
   /* Neurons may have been initialized to superthreshold potentials.

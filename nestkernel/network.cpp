@@ -520,7 +520,7 @@ index Network::add_node( index mod, long_t n ) // no_p
   if ( model->potential_global_receiver() and get_num_rec_processes() > 0 )
   {
     // In this branch we create nodes for all GIDs which are on a local thread
-    const int n_per_process = n / scheduler_.get_num_rec_processes();
+    const int n_per_process = n / get_num_rec_processes();
     const int n_per_thread = n_per_process / n_threads + 1;
 
     // We only need to reserve memory on the ranks on which we
@@ -651,7 +651,7 @@ index Network::add_node( index mod, long_t n ) // no_p
     // and filled with one instance per thread, in total n * n_thread nodes in
     // n wrappers.
     local_nodes_.reserve(
-      std::ceil( static_cast< double >( max_gid ) / scheduler_.get_num_sim_processes() ) + 50 );
+      std::ceil( static_cast< double >( max_gid ) / get_num_sim_processes() ) + 50 );
     for ( index gid = min_gid; gid < max_gid; ++gid )
     {
       thread thread_id = vp_to_thread( suggest_vp( gid ) );

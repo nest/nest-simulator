@@ -162,7 +162,7 @@ private:
    * order-independent results.
    *
    * Events arriving from globally sending nodes are delivered from the
-   * global event queue by Scheduler::deliver_events() at the beginning
+   * global event queue by Network::deliver_events() at the beginning
    * of the time slice. They are therefore written to spikes_[Network::get_network().read_toggle()]
    * so that they can be recorded by the subsequent call to update().
    * This does not violate order-independence, since all spikes are delivered

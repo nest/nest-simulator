@@ -50,7 +50,7 @@ void
 parrot_neuron_ps::update( Time const& origin, long_t const from, long_t const to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < Scheduler::get_min_delay() );
+  assert( static_cast< delay >( from ) < Network::get_network().get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery

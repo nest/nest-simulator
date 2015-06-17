@@ -332,7 +332,7 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
   const long_t from,
   const long_t to ) // proceed in time
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 

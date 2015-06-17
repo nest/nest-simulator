@@ -153,7 +153,7 @@ nest::sli_neuron::calibrate()
 void
 nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
   assert( from < to );
   ( *state_ )[ names::t_origin ] = origin.get_steps();
 

@@ -398,7 +398,7 @@ nest::aeif_cond_alpha::calibrate()
 void
 nest::aeif_cond_alpha::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 

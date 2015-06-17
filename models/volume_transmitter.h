@@ -137,7 +137,7 @@ public:
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d );
 
-  const vector< spikecounter >& deliver_spikes();
+  const std::vector< spikecounter >& deliver_spikes();
 
 private:
   void init_state_( Node const& );
@@ -163,8 +163,8 @@ private:
 
   struct Buffers_
   {
-    RingBuffer neuromodulatory_spikes_;   //!< buffer to store incoming spikes
-    vector< spikecounter > spikecounter_; //!< vector to store and deliver spikes
+    RingBuffer neuromodulatory_spikes_;        //!< buffer to store incoming spikes
+    std::vector< spikecounter > spikecounter_; //!< vector to store and deliver spikes
   };
 
   Parameters_ P_;
@@ -204,7 +204,7 @@ volume_transmitter::set_status( const DictionaryDatum& d )
   P_ = ptmp;
 }
 
-inline const vector< nest::spikecounter >&
+inline const std::vector< nest::spikecounter >&
 volume_transmitter::deliver_spikes()
 {
   return B_.spikecounter_;

@@ -136,7 +136,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 template < typename NodeListType >
 void
 nest::Communicator::communicate( const NodeListType& local_nodes,
-  vector< NodeAddressingData >& all_nodes
+  vector< NodeAddressingData >& all_nodes,
   DictionaryDatum params,
   bool remote )
 {

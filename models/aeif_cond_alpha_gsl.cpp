@@ -1,5 +1,5 @@
 /*
- *  aeif_cond_alpha.cpp
+ *  aeif_cond_alpha_gsl.cpp
  *
  *  This file is part of NEST.
  *

@@ -27,8 +27,8 @@
 #include <string>
 #include <typeinfo>
 #include "nest.h"
+#include "nest_time.h"
 #include "model.h"
-#include "scheduler.h"
 #include "exceptions.h"
 #include "proxynode.h"
 #include "connection_manager.h"
@@ -43,6 +43,8 @@
 #include "errno.h"
 
 #include "sparse_node_array.h"
+#include "randomgen.h"
+#include "communicator.h"
 
 #ifdef M_ERROR
 #undef M_ERROR
@@ -65,6 +67,8 @@ class SLIInterpreter;
 
 namespace nest
 {
+typedef Communicator::OffGridSpike OffGridSpike;
+
 class Subnet;
 class SiblingContainer;
 class Event;
@@ -139,15 +143,29 @@ SeeAlso: Simulate, Node
 
 class Network
 {
-  friend class Scheduler;
+private:
+  Network( SLIInterpreter& );
+  static Network* network_instance_;
+  static bool created_network_instance_;
+
+  Network( Network const& );        // Don't Implement
+  void operator=( Network const& ); // Don't Implement
 
 public:
-  Network( SLIInterpreter& );
+  /**
+   * Create/destroy and access the Network singleton.
+   */
+  static void create_network( SLIInterpreter& );
+  static void destroy_network();
+  static Network& get_network();
+
   ~Network();
 
   /**
    * Reset deletes all nodes and reallocates all memory pools for
    * nodes.
+   * @note Threading parameters as well as random number state
+   * are not reset. This has to be done manually.
    */
   void reset();
 
@@ -441,7 +459,16 @@ public:
    */
   void go_to( index );
 
+  /**
+   * Simulate for the given time .
+   * This function performs the following steps
+   * 1. set the new simulation time
+   * 2. call prepare_simulation()
+   * 3. call resume()
+   * 4. call finalize_simulation()
+   */
   void simulate( Time const& );
+
   /**
    * Resume the simulation after it was terminated.
    */
@@ -522,8 +549,9 @@ public:
   Time get_previous_slice_origin() const;
 
   /**
-   * Get the current simulation time.
-   * Defined only while no simulation in progress.
+   * Precise time of simulation.
+   * @note The precise time of the simulation is defined only
+   *       while the simulation is not in progress.
    */
   Time const get_time() const;
 
@@ -548,12 +576,22 @@ public:
   thread get_num_threads() const;
 
   /**
-   * Suggest a VP for a given global node ID
+   * Return a thread number for a given global node id.
+   * Each node has a default thread on which it will run.
+   * The thread is defined by the relation:
+   * t = (gid div P) mod T, where P is the number of simulation processes and
+   * T the number of threads. This may be used by network::add_node()
+   * if the user has not specified anything.
    */
   thread suggest_vp( index ) const;
 
   /**
-   * Suggest a VP for a given global recording node ID
+   * Return a thread number for a given global recording node id.
+   * Each node has a default thread on which it will run.
+   * The thread is defined by the relation:
+   * t = (gid div P) mod T, where P is the number of recording processes and
+   * T the number of threads. This may be used by network::add_node()
+   * if the user has not specified anything.
    */
   thread suggest_rec_vp( index ) const;
 
@@ -568,7 +606,10 @@ public:
   thread thread_to_vp( thread t ) const;
 
   /**
-   * Get number of processes.
+   * Return the number of processes used during simulation.
+   * This functions returns the number of processes.
+   * Since each process has the same number of threads, the total number
+   * of threads is given by get_num_threads()*get_num_processes().
    */
   thread get_num_processes() const;
 
@@ -583,7 +624,16 @@ public:
   thread get_num_sim_processes() const;
 
   /**
-   * Set number of recording processes.
+   * Set number of recording processes, switches NEST to global
+   * spike detection mode.
+   *
+   * @param nrp  number of recording processes
+   * @param called_by_reset   pass true when calling from Scheduler::reset()
+   *
+   * @note The `called_by_reset` parameter is a cludge to avoid a chicken-and-egg
+   *       problem when resetting the kernel. It surpresses a test for existing
+   *       nodes, trusting that the kernel will immediately afterwards delete all
+   *       existing nodes.
    */
   void set_num_rec_processes( int nrp );
 
@@ -603,7 +653,9 @@ public:
   bool is_local_vp( thread ) const;
 
   /**
-   * See Scheduler::get_simulated()
+   * Return true, if the network has already been simulated for some time.
+   * This does NOT indicate that simulate has been called (i.e. if Simulate
+   * is called with 0 as argument, the flag is still set to false.)
    */
   bool get_simulated() const;
 
@@ -696,7 +748,7 @@ public:
   const Dictionary& get_synapsedict() const;
 
   /**
-   * Recalibrate scheduler clock.
+   * Calibrate clock after resolution change.
    */
   void calibrate_clock();
 
@@ -704,7 +756,7 @@ public:
    * Return 0 for even, 1 for odd time slices.
    *
    * This is useful for buffers that need to be written alternatingly
-   * by time slice. The value is given by Scheduler::get_slice_() % 2.
+   * by time slice. The value is given by get_slice_() % 2.
    * @see read_toggle
    */
   size_t write_toggle() const;
@@ -726,11 +778,7 @@ public:
   /**
    * Ensure that all nodes in the network have valid thread-local IDs.
    */
-  void
-  ensure_valid_thread_local_ids()
-  {
-    scheduler_.ensure_valid_thread_local_ids();
-  }
+  void ensure_valid_thread_local_ids();
 
   /** Display a message. This function displays a message at a
    *  specific error level. Messages with an error level above
@@ -873,7 +921,6 @@ private:
 
   SLIInterpreter& interpreter_;
   SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
-  Scheduler scheduler_;
   ConnectionManager connection_manager_;
 
   Subnet* root_;    //!< Root node.
@@ -935,12 +982,356 @@ private:
   bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 
   bool model_defaults_modified_; //!< whether any model defaults have been modified
+
+  /************ Previously Scheduler ***************/
+public:
+  /**
+   * Clear all pending spikes, but do not otherwise manipulate scheduler.
+   * @note This is used by Network::reset_network().
+   */
+  void clear_pending_spikes();
+
+  /**
+   * All steps that must be done before a simulation.
+   */
+  void prepare_simulation();
+
+  /**
+   * Cleanup after the simulation.
+   * @note never called?
+   */
+  void finalize_simulation();
+
+  /** Update with OpenMP threading, if enabled. */
+  void update();
+
+  /**
+   * Add global id of event sender to the spike_register.
+   * An event sent through this method will remain in the queue until
+   * the network time has advanced by min_delay_ steps. After this period
+   * the buffers are collocated and sent to the partner machines.
+
+   * Old documentation from network.h:
+   * Place an event in the global event queue.
+   * Add event to the queue to be delivered
+   * when it is due.
+   * At the delivery time, the target list of the sender is iterated
+   * and the event is delivered to all targets.
+   * The event is guaranteed to arrive at the receiver when all
+   * elements are updated and the system is
+   * in a synchronised (single threaded) state.
+   * @see send_to_targets()
+   */
+  void send_remote( thread p, SpikeEvent&, const long_t lag = 0 );
+
+  /**
+   * Add global id of event sender to the spike_register.
+   * Store event offset with global id.
+   * An event sent through this method will remain in the queue until
+   * the network time has advanced by min_delay_ steps. After this period
+   * the buffers are collocated and sent to the partner machines.
+
+   * Old documentation from network.h:
+   * Place an event in the global event queue.
+   * Add event to the queue to be delivered
+   * when it is due.
+   * At the delivery time, the target list of the sender is iterated
+   * and the event is delivered to all targets.
+   * The event is guaranteed to arrive at the receiver when all
+   * elements are updated and the system is
+   * in a synchronised (single threaded) state.
+   * @see send_to_targets()
+   */
+  void send_offgrid_remote( thread p, SpikeEvent&, const long_t lag = 0 );
+
+  /**
+   * Set the number of threads by setting the internal variable
+   * n_threads_, the corresponding value in the Communicator, and
+   * the OpenMP number of threads.
+   */
+  void set_num_threads( thread n_threads );
+
+  /**
+   * Return the process id for a given virtual process. The real process' id
+   * of a virtual process is defined by the relation: p = (vp mod P), where
+   * P is the total number of processes.
+   */
+  thread get_process_id( thread vp ) const;
+
+  /**
+   * set communication style to off_grid (true) or on_grid
+   */
+  void set_off_grid_communication( bool off_grid_spiking );
+
+  /**
+   * Get slice number. Increased by one for each slice. Can be used
+   * to choose alternating buffers.
+   */
+  size_t get_slice() const;
+
+  /**
+   * Return the global thread id of a local thread.
+   * @note NOT IMPLEMENTED
+   */
+  thread get_global_thread_id( thread lt ) const;
+
+  /**
+   * Return (T+d) mod max_delay.
+   */
+  delay get_modulo( delay d );
+
+  /**
+   * Index to slice-based buffer.
+   * Return ((T+d)/min_delay) % ceil(max_delay/min_delay).
+   */
+  delay get_slice_modulo( delay d );
+
+private:
+  /******** Member functions former owned by the scheduler ********/
+
+  void init_scheduler_();
+
+  /**
+   * Prepare nodes for simulation and register nodes in node_list.
+   * Calls prepare_node_() for each pertaining Node.
+   * @see prepare_node_()
+   */
+  void prepare_nodes();
+
+  /**
+   * Initialized buffers, register in list of nodes to update/finalize.
+   * @see prepare_nodes()
+   */
+  void prepare_node_( Node* );
+
+  /**
+   * Invoke finalize() on nodes registered for finalization.
+   */
+  void finalize_nodes();
+
+  void advance_time_();
+
+  void print_progress_();
+
+  /**
+   * Re-compute table of fixed modulos, including slice-based.
+   */
+  void compute_moduli_();
+
+  void init_moduli_();
+
+  void create_rngs_( const bool ctor_call = false );
+  void create_grng_( const bool ctor_call = false );
+  
+  /**
+   * Update delay extrema to current values.
+   *
+   * Static since it only operates in static variables. This allows it to be
+   * called from const-method get_status() as well.
+   */
+  void update_delay_extrema_();
+
+  /**
+   * Resize spike_register and comm_buffer to correct dimensions.
+   * Resizes also offgrid_*_buffer_.
+   * This is done by resume() when called for the first time.
+   * The spike buffers cannot be reconfigured later, whence neither
+   * the number of local threads or the min_delay can change after
+   * simulate() has been called. ConnectorModel::check_delay() and
+   * Network::set_status() ensure this.
+   */
+  void configure_spike_buffers_();
+  
+  /**
+   * Create up-to-date vector of local nodes, nodes_vec_.
+   *
+   * This method also sets the thread-local ID on all local nodes.
+   */
+  void update_nodes_vec_();
+
+  /**
+   * Rearrange the spike_register into a 2-dim structure. This is
+   * done by collecting the spikes from all threads in each slice of
+   * the min_delay_ interval.
+   */
+  void collocate_buffers_();
+
+  /**
+   * Collocate buffers and exchange events with other MPI processes.
+   */
+  void gather_events_();
+
+  /**
+   * Read all event buffers for thread t and send the corresponding
+   * Events to the Nodes that are targeted.
+   *
+   * @note It is a crucial property of deliver_events_() that events
+   * are delivered ordered by non-decreasing time stamps. BUT: this
+   * ordering applies to time stamps only, it does NOT take into
+   * account the offsets of precise spikes.
+   */
+  void deliver_events_( thread t );
+
+  /**
+   * Increment total number of global spike detectors by 1
+   */
+  void increment_n_gsd();
+
+  /**
+   * Get total number of global spike detectors
+   */
+  index get_n_gsd();
+
+private:
+  /******** Member variables former owned by the scheduler ********/
+  bool initialized_;
+  bool simulating_; //!< true if simulation in progress
+  bool force_singlethreading_;
+
+  index n_threads_; //!< Number of threads per process.
+
+  index n_rec_procs_; //!< MPI processes dedicated for recording devices
+  index n_sim_procs_; //!< MPI processes used for simulation
+
+  index n_gsd_; //!< Total number of global spike detectors, used for distributing them over
+                //recording processes
+  
+  volatile index entry_counter_; //!< Counter for entry barrier.
+  volatile index exit_counter_;  //!< Counter for exit barrier.
+
+  vector< vector< Node* > > nodes_vec_; //!< Nodelists for unfrozen nodes
+  index nodes_vec_network_size_;        //!< Network size when nodes_vec_ was last updated
+
+  Time clock_;        //!< Network clock, updated once per slice
+  delay slice_;       //!< current update slice
+  delay to_do_;       //!< number of pending cycles.
+  delay to_do_total_; //!< number of requested cycles in current simulation.
+  delay from_step_;   //!< update clock_+from_step<=T<clock_+to_step_
+  delay to_step_;     //!< update clock_+from_step<=T<clock_+to_step_
+
+  timeval t_slice_begin_; //!< Wall-clock time at the begin of a time slice
+  timeval t_slice_end_;   //!< Wall-clock time at the end of time slice
+  long t_real_;           //!< Accumunated wall-clock time spent simulating (in us)
+  
+  bool terminate_; //!< Terminate on signal or error
+  bool simulated_; //!< indicates whether the network has already been simulated for some time
+  bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid
+  bool print_time_;       //!< Indicates whether time should be printed during simulations (or not)
+
+  std::vector< long_t > rng_seeds_; //!< The seeds of the local RNGs. These do not neccessarily
+  //describe the state of the RNGs.
+  
+  long_t
+    grng_seed_; //!< The seed of the global RNG, not neccessarily describing the state of the GRNG.
+
+  delay min_delay_; //!< Value of the smallest delay in the network.
+
+  delay max_delay_; //!< Value of the largest delay in the network in steps.
+
+  /**
+   * Table of pre-computed modulos.
+   * This table is used to map time steps, given as offset from now,
+   * to ring-buffer bins.  There are min_delay+max_delay bins in a ring buffer,
+   * and the moduli_ array is rotated by min_delay elements after
+   * each slice is completed.
+   * @see RingBuffer
+   */
+  vector< delay > moduli_;
+
+  /**
+   * Table of pre-computed slice-based modulos.
+   * This table is used to map time steps, give as offset from now,
+   * to slice-based ring-buffer bins.  There are ceil(max_delay/min_delay)
+   * bins in a slice-based ring buffer, one per slice within max_delay.
+   * Since max_delay may not be a multiple of min_delay, we cannot simply
+   * rotate the table content after each slice, but have to recompute
+   * the table anew.
+   * @see SliceRingBuffer
+   */
+  vector< delay > slice_moduli_;
+
+  /**
+   * Vector of random number generators for threads.
+   * There must be PRECISELY one rng per thread.
+   */
+  vector< librandom::RngPtr > rng_;
+
+  /**
+   * Global random number generator.
+   * This rng must be synchronized on all threads
+   */
+  librandom::RngPtr grng_;
+
+  /**
+   * Register for gids of neurons that spiked. This is a 3-dim
+   * structure.
+   * - First dim: Each thread has its own vector to write to.
+   * - Second dim: A vector for each slice of the min_delay interval
+   * - Third dim: The gids.
+   */
+  std::vector< std::vector< std::vector< uint_t > > > spike_register_;
+
+  /**
+   * Register for off-grid spikes.
+   * This is a 3-dim structure.
+   * - First dim: Each thread has its own vector to write to.
+   * - Second dim: A vector for each slice of the min_delay interval
+   * - Third dim: Struct containing GID and offset.
+   */
+  std::vector< std::vector< std::vector< OffGridSpike > > > offgrid_spike_register_;
+
+  /**
+   * Buffer containing the gids of local neurons that spiked in the
+   * last min_delay_ interval. The single slices are separated by a
+   * marker value.
+   */
+  std::vector< uint_t > local_grid_spikes_;
+
+  /**
+   * Buffer containing the gids of all neurons that spiked in the
+   * last min_delay_ interval. The single slices are separated by a
+   * marker value
+   */
+  std::vector< uint_t > global_grid_spikes_;
+
+  /**
+   * Buffer containing the gids and offsets for local neurons that
+   * fired off-grid spikes in the last min_delay_ interval. The
+   * single slices are separated by a marker value.
+   */
+  std::vector< OffGridSpike > local_offgrid_spikes_;
+
+  /**
+   * Buffer containing the gids and offsets for all neurons that
+   * fired off-grid spikes in the last min_delay_ interval. The
+   * single slices are separated by a marker value.
+   */
+  std::vector< OffGridSpike > global_offgrid_spikes_;
+
+  /**
+   * Buffer containing the starting positions for the spikes from
+   * each process within the global_(off)grid_spikes_ buffer.
+   */
+  std::vector< int > displacements_;
+
+  /**
+   * Marker Value to be put between the data fields from different time
+   * steps during communication.
+   */
+  const uint_t comm_marker_;
 };
+
+inline Network&
+Network::get_network()
+{
+  assert( created_network_instance_ );
+  return *network_instance_;
+}
 
 inline void
 Network::terminate()
 {
-  scheduler_.terminate();
+  terminate_ = true;
 }
 
 inline bool
@@ -970,7 +1361,7 @@ Network::size() const
 inline Node*
 Network::thread_lid_to_node( thread t, targetindex thread_local_id ) const
 {
-  return scheduler_.thread_lid_to_node( t, thread_local_id );
+  return nodes_vec_[ t ][ thread_local_id ];
 }
 
 inline void
@@ -1024,19 +1415,20 @@ Network::copy_synapse_prototype( index sc, std::string name )
 inline Time const&
 Network::get_slice_origin() const
 {
-  return scheduler_.get_slice_origin();
+  return clock_;
 }
 
 inline Time
 Network::get_previous_slice_origin() const
 {
-  return scheduler_.get_previous_slice_origin();
+  return clock_ - Time::step( min_delay_ );
 }
 
 inline Time const
 Network::get_time() const
 {
-  return scheduler_.get_time();
+  assert( not simulating_ );
+  return clock_ + Time::step( from_step_ );
 }
 
 inline Subnet*
@@ -1054,37 +1446,31 @@ Network::get_cwn( void ) const
 inline thread
 Network::get_num_threads() const
 {
-  return scheduler_.get_num_threads();
+  return n_threads_;
 }
 
 inline thread
 Network::get_num_processes() const
 {
-  return scheduler_.get_num_processes();
+  return Communicator::get_num_processes();
 }
 
 inline thread
 Network::get_num_rec_processes() const
 {
-  return scheduler_.get_num_rec_processes();
+  return n_rec_procs_;
 }
 
 inline thread
 Network::get_num_sim_processes() const
 {
-  return scheduler_.get_num_sim_processes();
-}
-
-inline void
-Network::set_num_rec_processes( int nrp )
-{
-  scheduler_.set_num_rec_processes( nrp );
+  return n_sim_procs_;
 }
 
 inline bool
 Network::is_local_node( Node* n ) const
 {
-  return !( n->is_proxy() );
+  return is_local_vp( n->get_vp() );
 }
 
 inline bool
@@ -1094,51 +1480,67 @@ Network::is_local_gid( index gid ) const
 }
 
 inline bool
-Network::is_local_vp( thread t ) const
+Network::is_local_vp( thread vp ) const
 {
-  return scheduler_.is_local_vp( t );
+  return get_process_id( vp ) == Communicator::get_rank();
 }
 
 inline int
 Network::suggest_vp( index gid ) const
 {
-  return scheduler_.suggest_vp( gid );
+  return gid % ( n_sim_procs_ * n_threads_ );
 }
 
 inline int
 Network::suggest_rec_vp( index gid ) const
 {
-  return scheduler_.suggest_rec_vp( gid );
+  return gid % ( n_rec_procs_ * n_threads_ ) + n_sim_procs_ * n_threads_;
 }
 
 inline thread
 Network::vp_to_thread( thread vp ) const
 {
-  return scheduler_.vp_to_thread( vp );
+  if ( vp >= static_cast< thread >( n_sim_procs_ * n_threads_ ) )
+  {
+    return ( vp + n_sim_procs_ * ( 1 - n_threads_ ) - Communicator::get_rank() ) / n_rec_procs_;
+  }
+  else
+  {
+    return vp / n_sim_procs_;
+  }
 }
 
 inline thread
 Network::thread_to_vp( thread t ) const
 {
-  return scheduler_.thread_to_vp( t );
+  if ( Communicator::get_rank() >= static_cast< int >( n_sim_procs_ ) ) 
+  {
+    // Rank is a recording process
+    return t * n_rec_procs_ + Communicator::get_rank() - n_sim_procs_ + n_sim_procs_ * n_threads_;
+  }
+  else
+  {
+    // Rank is a simulating process
+    return t * n_sim_procs_ + Communicator::get_rank();
+  }
 }
 
 inline bool
 Network::get_simulated() const
 {
-  return scheduler_.get_simulated();
+  return simulated_;
 }
 
 inline delay
 Network::get_min_delay() const
 {
-  return scheduler_.get_min_delay();
+  return min_delay_;
 }
 
 inline delay
 Network::get_max_delay() const
 {
-  return scheduler_.get_max_delay();
+  return max_delay_;
 }
 
 inline void
@@ -1173,9 +1575,9 @@ Network::send< SpikeEvent >( Node& source, SpikeEvent& e, const long_t lag )
   if ( source.has_proxies() )
   {
     if ( source.is_off_grid() )
-      scheduler_.send_offgrid_remote( t, e, lag );
+      send_offgrid_remote( t, e, lag );
     else
-      scheduler_.send_remote( t, e, lag );
+      send_remote( t, e, lag );
   }
   else
     send_local( t, source, e );
@@ -1210,13 +1612,13 @@ Network::send_to_node( Event& e )
 inline void
 Network::calibrate_clock()
 {
-  scheduler_.calibrate_clock();
+  clock_.calibrate_clock();
 }
 
 inline size_t
 Network::write_toggle() const
 {
-  return scheduler_.get_slice() % 2;
+  return get_slice() % 2;
 }
 
 inline size_t
@@ -1229,13 +1631,14 @@ Network::read_toggle() const
 inline librandom::RngPtr
 Network::get_rng( thread t ) const
 {
-  return scheduler_.get_rng( t );
+  assert( t < static_cast< thread >( rng_.size() ) );
+  return rng_[ t ];
 }
 
 inline librandom::RngPtr
 Network::get_grng() const
 {
-  return scheduler_.get_grng();
+  return grng_;
 }
 
 inline Model*
@@ -1289,7 +1692,7 @@ Network::overwrite_files() const
 inline bool
 Network::get_off_grid_communication() const
 {
-  return scheduler_.get_off_grid_communication();
+  return off_grid_spiking_;
 }
 
 inline const Dictionary&
@@ -1345,6 +1748,97 @@ Network::get_thread_id() const
   return 0;
 #endif
 }
+
+/****** former Scheduler functions ******/
+
+inline void
+Network::prepare_node_( Node* n )
+{
+  // Frozen nodes are initialized and calibrated, so that they
+  // have ring buffers and can accept incoming spikes.
+  n->init_buffers();
+  n->calibrate();
+}
+
+inline void
+Network::send_remote( thread t, SpikeEvent& e, const long_t lag )
+{
+  // Put the spike in a buffer for the remote machines
+  for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+    spike_register_[ t ][ lag ].push_back( e.get_sender().get_gid() );
+}
+
+inline void
+Network::send_offgrid_remote( thread t, SpikeEvent& e, const long_t lag )
+{
+  // Put the spike in a buffer for the remote machines
+  OffGridSpike ogs( e.get_sender().get_gid(), e.get_offset() );
+  for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+    offgrid_spike_register_[ t ][ lag ].push_back( ogs );
+}
+
+inline thread
+Network::get_process_id( thread vp ) const
+{
+  if ( vp >= static_cast< thread >( n_sim_procs_ * n_threads_ ) ) // vp belongs to recording VPs
+  {
+    return ( vp - n_sim_procs_ * n_threads_ ) % n_rec_procs_ + n_sim_procs_;
+  }
+  else // vp belongs to simulating VPs
+  {
+    return vp % n_sim_procs_;
+  }
+}
+
+inline size_t
+Network::get_slice() const
+{
+  return slice_;
+}
+
+inline void
+Network::set_off_grid_communication( bool off_grid_spiking )
+{
+  off_grid_spiking_ = off_grid_spiking;
+}
+
+inline void
+Network::increment_n_gsd()
+{
+  ++n_gsd_;
+}
+
+inline index
+Network::get_n_gsd()
+{
+  return n_gsd_;
+}
+
+inline delay
+Network::get_modulo( delay d )
+{
+  // Note, here d may be 0, since bin 0 represents the "current" time
+  // when all evens due are read out.
+  assert( static_cast< vector< delay >::size_type >( d ) < moduli_.size() );
+  
+  return moduli_[ d ];
+}
+
+inline delay
+Network::get_slice_modulo( delay d )
+{
+  /// Note, here d may be 0, since bin 0 represents the "current" time
+  // when all evens due are read out.
+  assert( static_cast< vector< delay >::size_type >( d ) < slice_moduli_.size() );
+  
+  return slice_moduli_[ d ];
+}
+  
+  inline void
+  ensure_valid_thread_local_ids()
+  {
+    update_nodes_vec_();
+  }
 
 } // namespace
 

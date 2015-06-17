@@ -116,9 +116,9 @@ M_ERROR setverbosity
 } def
 
 % Testing conductance based alpha response models
-modeldict /aeif_cond_alpha known
+modeldict /iaf_cond_alpha known
 {
-  (Testing /aeif_cond_alpha) =
+  (Testing /iaf_cond_alpha) =
   /ComputePSP << /model /aeif_cond_alpha >> SetOptions
   tau_syns { ComputePSP } Map
   /ComputePSP << /model /iaf_cond_alpha >> SetOptions

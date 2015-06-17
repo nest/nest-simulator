@@ -1,5 +1,5 @@
 /*
- *  aeif_cond_alpha.h
+ *  aeif_cond_alpha_gsl.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AEIF_COND_ALPHA_H
-#define AEIF_COND_ALPHA_H
+#ifndef AEIF_COND_ALPHA_GSL_H
+#define AEIF_COND_ALPHA_GSL_H
 
 #include "config.h"
 
@@ -40,11 +40,11 @@
 #include <gsl/gsl_odeiv.h>
 
 /* BeginDocumentation
-Name: aeif_cond_alpha -  Conductance based exponential integrate-and-fire neuron model according to
+Name: aeif_cond_alpha_gsl -  Conductance based exponential integrate-and-fire neuron model according to
 Brette and Gerstner (2005).
 
 Description:
-aeif_cond_alpha is the adaptive exponential integrate and fire neuron according to Brette and
+aeif_cond_alpha_gsl is the adaptive exponential integrate and fire neuron according to Brette and
 Gerstner (2005).
 Synaptic conductances are modelled as alpha-functions.
 
@@ -105,7 +105,7 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 References: Brette R and Gerstner W (2005) Adaptive Exponential Integrate-and-Fire Model as
             an Effective Description of Neuronal Activity. J Neurophysiol 94:3637-3642
 
-SeeAlso: iaf_cond_alpha, aeif_cond_exp
+SeeAlso: aeif_cond_alpha, iaf_cond_alpha, aeif_cond_exp
 */
 
 namespace nest
@@ -120,15 +120,15 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int aeif_cond_alpha_dynamics( double, const double*, double*, void* );
+extern "C" int aeif_cond_alpha_dynamics_gsl( double, const double*, double*, void* );
 
-class aeif_cond_alpha : public Archiving_Node
+class aeif_cond_alpha_gsl : public Archiving_Node
 {
 
 public:
-  aeif_cond_alpha();
-  aeif_cond_alpha( const aeif_cond_alpha& );
-  ~aeif_cond_alpha();
+  aeif_cond_alpha_gsl();
+  aeif_cond_alpha_gsl( const aeif_cond_alpha_gsl& );
+  ~aeif_cond_alpha_gsl();
 
   /**
    * Import sets of overloaded virtual functions.
@@ -161,11 +161,11 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int aeif_cond_alpha_dynamics( double, const double*, double*, void* );
+  friend int aeif_cond_alpha_dynamics_gsl( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< aeif_cond_alpha >;
-  friend class UniversalDataLogger< aeif_cond_alpha >;
+  friend class RecordablesMap< aeif_cond_alpha_gsl >;
+  friend class UniversalDataLogger< aeif_cond_alpha_gsl >;
 
 private:
   // ----------------------------------------------------------------
@@ -245,11 +245,11 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_cond_alpha& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_cond_alpha& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_cond_alpha_gsl& );                  //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_cond_alpha_gsl& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
-    UniversalDataLogger< aeif_cond_alpha > logger_;
+    UniversalDataLogger< aeif_cond_alpha_gsl > logger_;
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spike_exc_;
@@ -313,11 +313,11 @@ public:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< aeif_cond_alpha > recordablesMap_;
+  static RecordablesMap< aeif_cond_alpha_gsl > recordablesMap_;
 };
 
 inline port
-aeif_cond_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
+aeif_cond_alpha_gsl::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -326,7 +326,7 @@ aeif_cond_alpha::send_test_event( Node& target, rport receptor_type, synindex, b
 }
 
 inline port
-aeif_cond_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
+aeif_cond_alpha_gsl::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -334,7 +334,7 @@ aeif_cond_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline port
-aeif_cond_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
+aeif_cond_alpha_gsl::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -342,7 +342,7 @@ aeif_cond_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-aeif_cond_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+aeif_cond_alpha_gsl::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -350,7 +350,7 @@ aeif_cond_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_typ
 }
 
 inline void
-aeif_cond_alpha::get_status( DictionaryDatum& d ) const
+aeif_cond_alpha_gsl::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -360,7 +360,7 @@ aeif_cond_alpha::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-aeif_cond_alpha::set_status( const DictionaryDatum& d )
+aeif_cond_alpha_gsl::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty

@@ -1,5 +1,5 @@
 /*
- *  aeif_cond_alpha.cpp
+ *  aeif_cond_alpha_gsl.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "aeif_cond_alpha.h"
+#include "aeif_cond_alpha_gsl.h"
 #include "nest_names.h"
 
 #ifdef HAVE_GSL_1_11
@@ -45,7 +45,7 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_cond_alpha > nest::aeif_cond_alpha::recordablesMap_;
+nest::RecordablesMap< nest::aeif_cond_alpha_gsl > nest::aeif_cond_alpha_gsl::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -53,25 +53,25 @@ namespace nest // template specialization must be placed in namespace
 // for each quantity to be recorded.
 template <>
 void
-RecordablesMap< aeif_cond_alpha >::create()
+RecordablesMap< aeif_cond_alpha_gsl >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::V_M > );
-  insert_( names::g_ex, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::G_EXC > );
-  insert_( names::g_in, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::G_INH > );
-  insert_( names::w, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::W > );
+  insert_( names::V_m, &aeif_cond_alpha_gsl::get_y_elem_< aeif_cond_alpha_gsl::State_::V_M > );
+  insert_( names::g_ex, &aeif_cond_alpha_gsl::get_y_elem_< aeif_cond_alpha_gsl::State_::G_EXC > );
+  insert_( names::g_in, &aeif_cond_alpha_gsl::get_y_elem_< aeif_cond_alpha_gsl::State_::G_INH > );
+  insert_( names::w, &aeif_cond_alpha_gsl::get_y_elem_< aeif_cond_alpha_gsl::State_::W > );
 }
 }
 
 extern "C" int
-nest::aeif_cond_alpha_dynamics( double, const double y[], double f[], void* pnode )
+nest::aeif_cond_alpha_dynamics_gsl( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::aeif_cond_alpha::State_ S;
+  typedef nest::aeif_cond_alpha_gsl::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_cond_alpha& node = *( reinterpret_cast< nest::aeif_cond_alpha* >( pnode ) );
+  const nest::aeif_cond_alpha_gsl& node = *( reinterpret_cast< nest::aeif_cond_alpha_gsl* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -119,7 +119,7 @@ nest::aeif_cond_alpha_dynamics( double, const double y[], double f[], void* pnod
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::aeif_cond_alpha::Parameters_::Parameters_()
+nest::aeif_cond_alpha_gsl::Parameters_::Parameters_()
   : V_peak_( 0.0 )
   , // mV, should not be larger that V_th+10
   V_reset_( -60.0 )
@@ -156,7 +156,7 @@ nest::aeif_cond_alpha::Parameters_::Parameters_()
 {
 }
 
-nest::aeif_cond_alpha::State_::State_( const Parameters_& p )
+nest::aeif_cond_alpha_gsl::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
   y_[ 0 ] = p.E_L;
@@ -164,14 +164,14 @@ nest::aeif_cond_alpha::State_::State_( const Parameters_& p )
     y_[ i ] = 0;
 }
 
-nest::aeif_cond_alpha::State_::State_( const State_& s )
+nest::aeif_cond_alpha_gsl::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::aeif_cond_alpha::State_& nest::aeif_cond_alpha::State_::operator=( const State_& s )
+nest::aeif_cond_alpha_gsl::State_& nest::aeif_cond_alpha_gsl::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -186,7 +186,7 @@ nest::aeif_cond_alpha::State_& nest::aeif_cond_alpha::State_::operator=( const S
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha::Parameters_::get( DictionaryDatum& d ) const
+nest::aeif_cond_alpha_gsl::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::C_m, C_m );
   def< double >( d, names::V_th, V_th );
@@ -208,7 +208,7 @@ nest::aeif_cond_alpha::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
+nest::aeif_cond_alpha_gsl::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::V_th, V_th );
   updateValue< double >( d, names::V_peak, V_peak_ );
@@ -255,7 +255,7 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::aeif_cond_alpha::State_::get( DictionaryDatum& d ) const
+nest::aeif_cond_alpha_gsl::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] );
   def< double >( d, names::g_ex, y_[ G_EXC ] );
@@ -266,7 +266,7 @@ nest::aeif_cond_alpha::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::aeif_cond_alpha_gsl::State_::set( const DictionaryDatum& d, const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::g_ex, y_[ G_EXC ] );
@@ -279,7 +279,7 @@ nest::aeif_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_&
     throw BadProperty( "Conductances must not be negative." );
 }
 
-nest::aeif_cond_alpha::Buffers_::Buffers_( aeif_cond_alpha& n )
+nest::aeif_cond_alpha_gsl::Buffers_::Buffers_( aeif_cond_alpha_gsl& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -289,7 +289,7 @@ nest::aeif_cond_alpha::Buffers_::Buffers_( aeif_cond_alpha& n )
   // init_buffers_().
 }
 
-nest::aeif_cond_alpha::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha& n )
+nest::aeif_cond_alpha_gsl::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha_gsl& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -303,7 +303,7 @@ nest::aeif_cond_alpha::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha& n )
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::aeif_cond_alpha::aeif_cond_alpha()
+nest::aeif_cond_alpha_gsl::aeif_cond_alpha_gsl()
   : Archiving_Node()
   , P_()
   , S_( P_ )
@@ -312,7 +312,7 @@ nest::aeif_cond_alpha::aeif_cond_alpha()
   recordablesMap_.create();
 }
 
-nest::aeif_cond_alpha::aeif_cond_alpha( const aeif_cond_alpha& n )
+nest::aeif_cond_alpha_gsl::aeif_cond_alpha_gsl( const aeif_cond_alpha_gsl& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -320,7 +320,7 @@ nest::aeif_cond_alpha::aeif_cond_alpha( const aeif_cond_alpha& n )
 {
 }
 
-nest::aeif_cond_alpha::~aeif_cond_alpha()
+nest::aeif_cond_alpha_gsl::~aeif_cond_alpha_gsl()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -336,14 +336,14 @@ nest::aeif_cond_alpha::~aeif_cond_alpha()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha::init_state_( const Node& proto )
+nest::aeif_cond_alpha_gsl::init_state_( const Node& proto )
 {
-  const aeif_cond_alpha& pr = downcast< aeif_cond_alpha >( proto );
+  const aeif_cond_alpha_gsl& pr = downcast< aeif_cond_alpha_gsl >( proto );
   S_ = pr.S_;
 }
 
 void
-nest::aeif_cond_alpha::init_buffers_()
+nest::aeif_cond_alpha_gsl::init_buffers_()
 {
   B_.spike_exc_.clear(); // includes resize
   B_.spike_inh_.clear(); // includes resize
@@ -372,7 +372,7 @@ nest::aeif_cond_alpha::init_buffers_()
   else
     gsl_odeiv_evolve_reset( B_.e_ );
 
-  B_.sys_.function = aeif_cond_alpha_dynamics;
+  B_.sys_.function = aeif_cond_alpha_dynamics_gsl;
   B_.sys_.jacobian = NULL;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
@@ -381,7 +381,7 @@ nest::aeif_cond_alpha::init_buffers_()
 }
 
 void
-nest::aeif_cond_alpha::calibrate()
+nest::aeif_cond_alpha_gsl::calibrate()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 
@@ -396,7 +396,7 @@ nest::aeif_cond_alpha::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha::update( Time const& origin, const long_t from, const long_t to )
+nest::aeif_cond_alpha_gsl::update( Time const& origin, const long_t from, const long_t to )
 {
   assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
   assert( from < to );
@@ -467,7 +467,7 @@ nest::aeif_cond_alpha::update( Time const& origin, const long_t from, const long
 }
 
 void
-nest::aeif_cond_alpha::handle( SpikeEvent& e )
+nest::aeif_cond_alpha_gsl::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
@@ -480,7 +480,7 @@ nest::aeif_cond_alpha::handle( SpikeEvent& e )
 }
 
 void
-nest::aeif_cond_alpha::handle( CurrentEvent& e )
+nest::aeif_cond_alpha_gsl::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
@@ -492,7 +492,7 @@ nest::aeif_cond_alpha::handle( CurrentEvent& e )
 }
 
 void
-nest::aeif_cond_alpha::handle( DataLoggingRequest& e )
+nest::aeif_cond_alpha_gsl::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }

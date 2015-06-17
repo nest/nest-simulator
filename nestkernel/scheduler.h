@@ -39,6 +39,10 @@
 #include "lockptr.h"
 #include "communicator.h"
 
+// !!!!!!Depricated!!!!!!
+// Do not use anymore! Will be removed!
+#error Do not use scheduler.h in any place in your nest code!
+
 namespace nest
 {
 

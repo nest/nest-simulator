@@ -64,6 +64,10 @@ extern PoorMansAllocator poormansallocpool;
 #endif
 #endif
 
+// !!!!!!Depricated!!!!!!
+// Do not use anymore! Will be removed!
+#error Do not use scheduler.cpp in any place in your nest code!
+
 extern int SLIsignalflag;
 
 nest::Network* nest::Scheduler::net_ = 0;

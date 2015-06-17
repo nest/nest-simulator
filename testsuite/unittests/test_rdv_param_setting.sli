@@ -244,19 +244,38 @@ statusdict /have_gsl :: {
   /MT19937 /uniform_int << /low 11 /high 10 >> run_test
 } fail_or_die
 
+/:range_limit
 {
-  % test that setting limits with a range larger than the range
-  % of positive longs triggers an error; must be 32-bit safe
   % limit: 2^(N-1)-1, where N is number of bits for long
-  % build in overflow-safe way
-  /limit 
+  % compute in overflow-safe way
+
   statusdict/architecture/long :: 8 mul   % N
   2 sub 2 exch pow cvi                    % 2^(N-2)
   dup 1 sub % stack: 2^(N-2) 2^(N-2)-1
   add       % 2^(N-1)-1
-  def
-  /MT19937 /uniform_int << /low limit neg cvi /high limit cvi >> run_test
+} bind def
+
+{
+  % test with +- max value + 1  on both ends, must fail
+  /MT19937 /uniform_int << /low :range_limit neg cvi /high :range_limit cvi >> run_test
 } fail_or_die
+
+{
+  % test with max value + 1 at upper end, must fail
+  /MT19937 /uniform_int << /low 0 /high :range_limit cvi >> run_test
+} fail_or_die
+
+{
+  % test with -(max value + 1) at lower end, must fail
+  /MT19937 /uniform_int << /low :range_limit neg cvi /high 0 >> run_test
+} fail_or_die
+
+{
+  % test with non-extreme edge is +-1, must pass (largest allowed range)
+  /MT19937 /uniform_int << /low 1 cvi /high :range_limit cvi >> run_test
+  /MT19937 /uniform_int << /low :range_limit neg cvi /high -1 >> run_test
+} pass_or_die
+
 
 % -------------------------------------------------------
 

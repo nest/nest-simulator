@@ -57,7 +57,14 @@ librandom::UniformIntRandomDev::set_status( const DictionaryDatum& d )
   if ( new_nmax < new_nmin )
     throw BadParameterValue( "Uniformint RDV: low <= high required." );
 
-  if ( new_nmax - new_nmin < 0 )
+  // The following test is based on
+  // https://www.securecoding.cert.org/confluence/display/c/INT32-C.+Ensure+that+operations+on+signed+integers+do+not+result+in+overflow
+  // The third condition tests that we can add 1 to the difference; by the time we reach
+  // that clause, we know that the first two are false, so that the difference does not overflow.
+  if ( ( new_nmin > 0 && new_nmax < std::numeric_limits< long >::min() + new_nmin ) ||
+	   ( new_nmin < 0 && new_nmax > std::numeric_limits< long >::max() + new_nmin ) ||
+	   ( new_nmax - new_nmin > std::numeric_limits< long >::max() - 1 )
+	 )
     throw BadParameterValue( String::compose( "Uniformint RDV: high - low < %1 required.",
       static_cast< double >( std::numeric_limits< long >::max() ) ) );
 

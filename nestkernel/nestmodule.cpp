@@ -711,8 +711,7 @@ NestModule::GetNodes_i_D_b_bFunction::execute( SLIInterpreter* i ) const
   if ( params->empty() )
     nest::Communicator::communicate( localnodes, globalnodes, include_remote );
   else
-    nest::Communicator::communicate(
-      localnodes, globalnodes, get_network(), params, include_remote );
+    nest::Communicator::communicate( localnodes, globalnodes, params, include_remote );
 
   ArrayDatum result;
   result.reserve( globalnodes.size() );
@@ -758,7 +757,7 @@ NestModule::GetChildren_i_D_bFunction::execute( SLIInterpreter* i ) const
     nest::Communicator::communicate( localnodes, globalnodes, include_remote );
   else
     nest::Communicator::communicate(
-      localnodes, globalnodes, get_network(), params, include_remote );
+      localnodes, globalnodes, params, include_remote );
   result.reserve( globalnodes.size() );
   for ( vector< Communicator::NodeAddressingData >::iterator n = globalnodes.begin();
         n != globalnodes.end();
@@ -791,7 +790,7 @@ NestModule::GetLeaves_i_D_bFunction::execute( SLIInterpreter* i ) const
     nest::Communicator::communicate( localnodes, globalnodes, include_remote );
   else
     nest::Communicator::communicate(
-      localnodes, globalnodes, get_network(), params, include_remote );
+      localnodes, globalnodes, params, include_remote );
   result.reserve( globalnodes.size() );
 
   for ( vector< Communicator::NodeAddressingData >::iterator n = globalnodes.begin();
@@ -1545,7 +1544,7 @@ NestModule::SetNumRecProcesses_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
   long n_rec_procs = getValue< long >( i->OStack.pick( 0 ) );
-  Network::get_network().set_num_rec_processes( n_rec_procs );
+  Network::get_network().set_num_rec_processes( n_rec_procs, false );
   i->OStack.pop( 1 );
   i->EStack.pop();
 }
@@ -1964,9 +1963,6 @@ NestModule::init( SLIInterpreter* i )
 
   GIDCollectionType.settypename( "gidcollectiontype" );
   GIDCollectionType.setdefaultaction( SLIInterpreter::datatypefunction );
-
-  // ensure we have a network: it is created outside and registered via register_network()
-  assert( net_ != 0 );
 
   // set resolution, ensure clock is calibrated to new resolution
   Time::reset_resolution();

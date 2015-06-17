@@ -635,7 +635,7 @@ public:
    *       nodes, trusting that the kernel will immediately afterwards delete all
    *       existing nodes.
    */
-  void set_num_rec_processes( int nrp );
+  void set_num_rec_processes( int nrp, bool called_by_reset );
 
   /**
    * Return true, if the given Node is on the local machine

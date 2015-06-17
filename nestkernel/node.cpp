@@ -97,7 +97,7 @@ Node::get_model_() const
   if ( model_id_ < 0 )
     throw UnknownModelID( model_id_ );
 
-  return Network::get_network().get_model( model_id_ );
+  return *Network::get_network().get_model( model_id_ );
 }
 
 bool

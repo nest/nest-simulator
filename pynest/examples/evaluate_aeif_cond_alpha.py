@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# evaluate_aeif_cond_alpha_RK5.py
+# evaluate_aeif_cond_alpha.py
 #
 # This file is part of NEST.
 #
@@ -36,8 +36,8 @@ Example of the Adaptive Exponential Integrate and Fire (AdEx) in NEST.
 
 This script compares the two aeif_cond_alpha flavors with respect to speed and precision.
 
-Version 1 is the GSL based 'aeif_cond_alpha' model.
-Version 2 is called 'aeif_cond_alpha_RK5' which uses an explicitly coded version
+Version 1 is the GSL based 'aeif_cond_alpha_gsl' model.
+Version 2 is called 'aeif_cond_alpha' which uses an explicitly coded version
 of the RK-45 method as described in Numerical Recepies, Chap. 17.2, Press et al (2007).
 
 Reference is Version 1 at a temporal resolution of 0.001 ms.
@@ -46,7 +46,7 @@ The test comparest both versions at a resolution of 0.1 ms with the reference. T
 1. the difference is spike times wrt reference
 2. the L2 (root mean squared) error of the voltage response to a step current input.
 
-aeif_cond_alpha_RK5 is the adaptive exponential integrate and fire neuron according to Brette and Gerstner (2005). Synaptic conductances are modelled as alpha-functions.
+aeif_cond_alpha is the adaptive exponential integrate and fire neuron according to Brette and Gerstner (2005). Synaptic conductances are modelled as alpha-functions.
 
 This implementation uses a 5th order Runge-Kutta solver with adaptive stepsize to integrate the differential equation (see Numerical Recipes 3rd Edition, Press et al. 2007, Ch. 17.2).
 

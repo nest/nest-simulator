@@ -277,7 +277,7 @@ void
 nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const long_t to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < Network::get_network().get_min_delay() );
+  assert( static_cast< delay >( from ) < nest::Network::get_network().get_min_delay() );
   assert( from < to );
 
   /* Neurons may have been initialized to superthreshold potentials.
@@ -296,7 +296,7 @@ nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const 
     // send spike
     SpikeEvent se;
     se.set_offset( S_.last_spike_offset_ );
-    Network::get_network().send( *this, se, from );
+    nest::Network::get_network().send( *this, se, from );
   }
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -379,7 +379,7 @@ nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const 
       // sent event
       SpikeEvent se;
       se.set_offset( S_.last_spike_offset_ );
-      Network::get_network().send( *this, se, lag );
+      nest::Network::get_network().send( *this, se, lag );
     }
 
     // Set new input current. The current change occurs at the
@@ -399,7 +399,7 @@ nest::iaf_psc_alpha_presc::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const long_t Tdeliver = e.get_rel_delivery_steps( Network::get_network().get_slice_origin() );
+  const long_t Tdeliver = e.get_rel_delivery_steps( nest::Network::get_network().get_slice_origin() );
 
   const double_t spike_weight = V_.PSCInitialValue_ * e.get_weight() * e.get_multiplicity();
   const double_t dt = e.get_offset();
@@ -427,7 +427,7 @@ nest::iaf_psc_alpha_presc::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( nest::Network::get_network().get_slice_origin() ), w * c );
 }
 
 void
@@ -504,7 +504,7 @@ nest::iaf_psc_alpha_presc::thresh_find_( double_t const dt ) const
   case CUBIC:
     return thresh_find3_( dt );
   default:
-    Network::get_network().message( SLIInterpreter::M_ERROR,
+    nest::Network::get_network().message( SLIInterpreter::M_ERROR,
       "iaf_psc_alpha_presc::thresh_find_()",
       "Invalid interpolation---Internal model error." );
     throw BadProperty();

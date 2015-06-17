@@ -289,7 +289,7 @@ void
 nest::iaf_psc_alpha_canon::update( Time const& origin, const long_t from, const long_t to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < Network::get_network().get_min_delay() );
+  assert( static_cast< delay >( from ) < nest::Network::get_network().get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
@@ -420,7 +420,7 @@ nest::iaf_psc_alpha_canon::handle( SpikeEvent& e )
      in the queue.  The time is computed according to Time Memo, Rule 3.
   */
   const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
-  B_.events_.add_spike( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+  B_.events_.add_spike( e.get_rel_delivery_steps( nest::Network::get_network().get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -436,7 +436,7 @@ nest::iaf_psc_alpha_canon::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( nest::Network::get_network().get_slice_origin() ), w * c );
 }
 
 void
@@ -500,7 +500,7 @@ nest::iaf_psc_alpha_canon::emit_spike_( Time const& origin,
   // send spike
   SpikeEvent se;
   se.set_offset( spike_offset );
-  Network::get_network().send( *this, se, lag );
+  nest::Network::get_network().send( *this, se, lag );
 
   return;
 }
@@ -523,7 +523,7 @@ nest::iaf_psc_alpha_canon::emit_instant_spike_( Time const& origin,
   // send spike
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  Network::get_network().send( *this, se, lag );
+  nest::Network::get_network().send( *this, se, lag );
 
   return;
 }

@@ -78,7 +78,7 @@ bool Network::created_network_instance_ = false;
 void
 Network::create_network( SLIInterpreter& i )
 {
-#pragma omp critical
+#pragma omp critical( create_network )
   {
     if ( !created_network_instance_ )
     {
@@ -2875,7 +2875,7 @@ nest::Network::update_nodes_vec_()
     return;
 
 #ifdef _OPENMP
-#pragma omp critical
+#pragma omp critical( update_nodes_vec )
   {
 // This code may be called from a thread-parallel context, when it is
 // invoked by TargetIdentifierIndex::set_target() during parallel

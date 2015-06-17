@@ -411,7 +411,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
       }
 
 #ifdef _OPENMP
-#pragma omp critical
+#pragma omp critical( get_connections )
 #endif
       conns_in_thread.reserve( num_connections_in_thread );
       for ( index source_id = 1; source_id < connections_[ t ].size(); ++source_id )
@@ -424,7 +424,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
       if ( conns_in_thread.size() > 0 )
       {
 #ifdef _OPENMP
-#pragma omp critical
+#pragma omp critical( get_connections )
 #endif
         connectome.append_move( conns_in_thread );
       }
@@ -453,7 +453,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
       }
 
 #ifdef _OPENMP
-#pragma omp critical
+#pragma omp critical( get_connections )
 #endif
       conns_in_thread.reserve( num_connections_in_thread );
       for ( index source_id = 1; source_id < connections_[ t ].size(); ++source_id )
@@ -472,7 +472,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
       if ( conns_in_thread.size() > 0 )
       {
 #ifdef _OPENMP
-#pragma omp critical
+#pragma omp critical( get_connections )
 #endif
         connectome.append_move( conns_in_thread );
       }
@@ -500,7 +500,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
       }
 
 #ifdef _OPENMP
-#pragma omp critical
+#pragma omp critical( get_connections )
 #endif
       conns_in_thread.reserve( num_connections_in_thread );
       for ( index s = 0; s < source->size(); ++s )
@@ -530,7 +530,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
       if ( conns_in_thread.size() > 0 )
       {
 #ifdef _OPENMP
-#pragma omp critical
+#pragma omp critical( get_connections )
 #endif
         connectome.append_move( conns_in_thread );
       }

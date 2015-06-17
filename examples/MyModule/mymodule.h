@@ -60,7 +60,7 @@ public:
    * Initialize module by registering models with the network.
    * @param SLIInterpreter* SLI interpreter
    */
-  void init( SLIInterpreter*);
+  void init( SLIInterpreter* );
 
   /**
    * Return the name of your model.

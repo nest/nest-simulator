@@ -206,7 +206,7 @@ mynest::MyModule::init( SLIInterpreter* i )
      Kunkel et al, Front Neurofinfom 8:78 (2014), Sec 3.3.2, for details.
   */
   nest::register_connection_model< DropOddSpikeConnection< nest::TargetIdentifierPtrRport > >(
-     "drop_odd_synapse" );
+    "drop_odd_synapse" );
 
   /* Register a SLI function.
      The first argument is the function name for SLI, the second a pointer to

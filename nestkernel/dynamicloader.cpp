@@ -137,8 +137,7 @@ has_name( DynModule const* const m, const std::string n )
   Description:
   Synopsis: (module_name) Install -> handle
 */
-DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction( 
-  vecDynModules& dyn_modules )
+DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction( vecDynModules& dyn_modules )
   : dyn_modules_( dyn_modules )
 {
 }
@@ -253,8 +252,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   Synopsis: handle Uninstall
   See: Install
 */
-DynamicLoaderModule::UnloadModuleFunction::UnloadModuleFunction(
-  vecDynModules& dyn_modules )
+DynamicLoaderModule::UnloadModuleFunction::UnloadModuleFunction( vecDynModules& dyn_modules )
   : dyn_modules_( dyn_modules )
 {
 }

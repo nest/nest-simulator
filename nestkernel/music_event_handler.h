@@ -43,9 +43,7 @@ class MusicEventHandler : public MUSIC::EventHandlerGlobalIndex
 {
 public:
   MusicEventHandler();
-  MusicEventHandler( std::string portname,
-    double acceptable_latency,
-    int max_buffered );
+  MusicEventHandler( std::string portname, double acceptable_latency, int max_buffered );
 
   virtual ~MusicEventHandler();
 
@@ -83,7 +81,7 @@ private:
   std::vector< MUSIC::GlobalIndex > indexmap_; //!< Maps local index to global MUSIC index (channel)
   double acceptable_latency_;                  //!< The acceptable latency of the port in ms
   int max_buffered_;
-  
+
   /**
    * Buffers incoming spike events until they are due. The vector has
    * one entry per channel. The priority queues used within the vector

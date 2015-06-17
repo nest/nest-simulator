@@ -430,8 +430,8 @@ nest::iaf_cond_alpha::handle( CurrentEvent& e )
   assert( e.get_delay() > 0 );
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), e.get_weight() * e.get_current() );
+  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 void

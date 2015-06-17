@@ -135,7 +135,7 @@ Network::Network( SLIInterpreter& i )
   //
   network_instance_ = this;
   created_network_instance_ = true;
-  
+
   init_scheduler_();
 
   modeldict_ = new Dictionary();
@@ -3360,7 +3360,7 @@ nest::Network::init_moduli_()
   for ( delay d = 0; d < min_delay_ + max_delay_; ++d )
     slice_moduli_[ d ] = ( ( clock_.get_steps() + d ) / min_delay_ ) % nbuff;
 }
-  
+
 /**
  * This function is called after all nodes have been updated.
  * We can compute the value of (T+d) mod max_delay without explicit
@@ -3374,43 +3374,43 @@ nest::Network::compute_moduli_()
 {
   assert( min_delay_ != 0 );
   assert( max_delay_ != 0 );
-  
+
   /*
    * Note that for updating the modulos, it is sufficient
    * to rotate the buffer to the left.
    */
   assert( moduli_.size() == ( index )( min_delay_ + max_delay_ ) );
   std::rotate( moduli_.begin(), moduli_.begin() + min_delay_, moduli_.end() );
-  
+
   /* For the slice-based ring buffer, we cannot rotate the table, but
    have to re-compute it, since max_delay_ may not be a multiple of
    min_delay_.  Reference time is the time at the beginning of the slice.
    */
   const size_t nbuff = static_cast< size_t >(
-                                             std::ceil( static_cast< double >( min_delay_ + max_delay_ ) / min_delay_ ) );
+    std::ceil( static_cast< double >( min_delay_ + max_delay_ ) / min_delay_ ) );
   for ( delay d = 0; d < min_delay_ + max_delay_; ++d )
     slice_moduli_[ d ] = ( ( clock_.get_steps() + d ) / min_delay_ ) % nbuff;
 }
-  
+
 void
 nest::Network::update_delay_extrema_()
 {
   min_delay_ = connection_manager_.get_min_delay().get_steps();
   max_delay_ = connection_manager_.get_max_delay().get_steps();
-  
+
   if ( Communicator::get_num_processes() > 1 )
   {
     std::vector< delay > min_delays( Communicator::get_num_processes() );
     min_delays[ Communicator::get_rank() ] = min_delay_;
     Communicator::communicate( min_delays );
     min_delay_ = *std::min_element( min_delays.begin(), min_delays.end() );
-    
+
     std::vector< delay > max_delays( Communicator::get_num_processes() );
     max_delays[ Communicator::get_rank() ] = max_delay_;
     Communicator::communicate( max_delays );
     max_delay_ = *std::max_element( max_delays.begin(), max_delays.end() );
   }
-  
+
   if ( min_delay_ == Time::pos_inf().get_steps() )
     min_delay_ = Time::get_resolution().get_steps();
 }

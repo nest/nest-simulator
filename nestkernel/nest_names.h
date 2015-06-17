@@ -90,14 +90,14 @@ extern const Name dead_time; //!< Specific to ppd_sup_generator and gamma_sup_ge
 extern const Name
   dead_time_random; //!< Random dead time or fixed dead time (stochastic neuron pp_psc_delta)
 extern const Name dead_time_shape; //!< Shape parameter of the dead time distribution (stochastic
-                                   //neuron pp_psc_delta)
-extern const Name delay;           //!< Connection parameters
-extern const Name delays;          //!< Connection parameters
-extern const Name Delta_T;         //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
-extern const Name delta_tau;       //!< Specific to correlation_and correlomatrix detector
-extern const Name delta_u; //!< Specific to population point process model (pp_pop_psc_delta)
-extern const Name dg_ex;   //!< Derivative of the excitatory conductance
-extern const Name dg_in;   //!< Derivative of the inhibitory conductance
+// neuron pp_psc_delta)
+extern const Name delay;     //!< Connection parameters
+extern const Name delays;    //!< Connection parameters
+extern const Name Delta_T;   //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
+extern const Name delta_tau; //!< Specific to correlation_and correlomatrix detector
+extern const Name delta_u;   //!< Specific to population point process model (pp_pop_psc_delta)
+extern const Name dg_ex;     //!< Derivative of the excitatory conductance
+extern const Name dg_in;     //!< Derivative of the inhibitory conductance
 extern const Name dhaene_det_spikes;   //!< used for iaflossless_count_exp
 extern const Name dhaene_max_geq_V_th; //!< used for iaflossless_count_exp
 extern const Name dhaene_quick1;       //!< used for iaflossless_count_exp
@@ -256,10 +256,10 @@ extern const Name registered;       //!< Parameters for MUSIC devices
 extern const Name rho_0; //!< Specific to population point process model (pp_pop_psc_delta)
 extern const Name rms;   //!< Root mean square
 extern const Name root_finding_epsilon; //!< Accuracy of the root of the polynomial (precise timing
-                                        //neurons (Brette 2007))
-extern const Name rport;                //!< Connection parameters
-extern const Name rports;               //!< Connection parameters
-extern const Name rule;                 //!< Connectivity-related
+// neurons (Brette 2007))
+extern const Name rport;  //!< Connection parameters
+extern const Name rports; //!< Connection parameters
+extern const Name rule;   //!< Connectivity-related
 
 extern const Name S;           //!< Binary state (output) of neuron (Ginzburg neuron)
 extern const Name scientific;  //!< Recorder parameter
@@ -297,11 +297,11 @@ extern const Name tau_ahp;         //!< Specific to iaf_chxk_2008 neuron
 extern const Name tau_epsp;        //!< Specific to iaf_chs_2008 neuron
 extern const Name tau_fac;         //!< facilitation time constant (ms) (Tsodyks2_connection)
 extern const Name tau_facs;        //!< facilitation time constant (ms) (property arrays)
-extern const Name tau_lcm;   //!< Least common multiple of tau_m, tau_ex and tau_in (precise timing
-                             //neurons (Brette 2007))
-extern const Name tau_m;     //!< Membrane time constant
-extern const Name tau_max;   //!< Specific to correlation_and correlomatrix detector
-extern const Name tau_minus; //!< used for ArchivingNode
+extern const Name tau_lcm; //!< Least common multiple of tau_m, tau_ex and tau_in (precise timing
+// neurons (Brette 2007))
+extern const Name tau_m;             //!< Membrane time constant
+extern const Name tau_max;           //!< Specific to correlation_and correlomatrix detector
+extern const Name tau_minus;         //!< used for ArchivingNode
 extern const Name tau_minus_triplet; //!< used for ArchivingNode
 extern const Name tau_rec;           //!< time constant for recovery (ms) (Tsodyks2_connection)
 extern const Name tau_recs;          //!< time constant for recovery (ms) (property arrays)

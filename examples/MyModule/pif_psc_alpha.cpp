@@ -267,7 +267,8 @@ mynest::pif_psc_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  B_.spikes.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), e.get_weight() );
+  B_.spikes.add_value(
+    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), e.get_weight() );
 }
 
 void
@@ -275,8 +276,8 @@ mynest::pif_psc_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  B_.currents.add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), e.get_weight() * e.get_current() );
+  B_.currents.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 // Do not move this function as inline to h-file. It depends on

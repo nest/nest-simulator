@@ -1122,7 +1122,7 @@ private:
 
   void create_rngs_( const bool ctor_call = false );
   void create_grng_( const bool ctor_call = false );
-  
+
   /**
    * Update delay extrema to current values.
    *
@@ -1141,7 +1141,7 @@ private:
    * Network::set_status() ensure this.
    */
   void configure_spike_buffers_();
-  
+
   /**
    * Create up-to-date vector of local nodes, nodes_vec_.
    *
@@ -1194,8 +1194,8 @@ private:
   index n_sim_procs_; //!< MPI processes used for simulation
 
   index n_gsd_; //!< Total number of global spike detectors, used for distributing them over
-                //recording processes
-  
+  // recording processes
+
   volatile index entry_counter_; //!< Counter for entry barrier.
   volatile index exit_counter_;  //!< Counter for exit barrier.
 
@@ -1212,15 +1212,15 @@ private:
   timeval t_slice_begin_; //!< Wall-clock time at the begin of a time slice
   timeval t_slice_end_;   //!< Wall-clock time at the end of time slice
   long t_real_;           //!< Accumunated wall-clock time spent simulating (in us)
-  
+
   bool terminate_; //!< Terminate on signal or error
   bool simulated_; //!< indicates whether the network has already been simulated for some time
   bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid
   bool print_time_;       //!< Indicates whether time should be printed during simulations (or not)
 
   std::vector< long_t > rng_seeds_; //!< The seeds of the local RNGs. These do not neccessarily
-  //describe the state of the RNGs.
-  
+  // describe the state of the RNGs.
+
   long_t
     grng_seed_; //!< The seed of the global RNG, not neccessarily describing the state of the GRNG.
 
@@ -1513,7 +1513,7 @@ Network::vp_to_thread( thread vp ) const
 inline thread
 Network::thread_to_vp( thread t ) const
 {
-  if ( Communicator::get_rank() >= static_cast< int >( n_sim_procs_ ) ) 
+  if ( Communicator::get_rank() >= static_cast< int >( n_sim_procs_ ) )
   {
     // Rank is a recording process
     return t * n_rec_procs_ + Communicator::get_rank() - n_sim_procs_ + n_sim_procs_ * n_threads_;
@@ -1820,7 +1820,7 @@ Network::get_modulo( delay d )
   // Note, here d may be 0, since bin 0 represents the "current" time
   // when all evens due are read out.
   assert( static_cast< vector< delay >::size_type >( d ) < moduli_.size() );
-  
+
   return moduli_[ d ];
 }
 
@@ -1830,15 +1830,15 @@ Network::get_slice_modulo( delay d )
   /// Note, here d may be 0, since bin 0 represents the "current" time
   // when all evens due are read out.
   assert( static_cast< vector< delay >::size_type >( d ) < slice_moduli_.size() );
-  
+
   return slice_moduli_[ d ];
 }
-  
-  inline void
-  ensure_valid_thread_local_ids()
-  {
-    update_nodes_vec_();
-  }
+
+inline void
+ensure_valid_thread_local_ids()
+{
+  update_nodes_vec_();
+}
 
 } // namespace
 

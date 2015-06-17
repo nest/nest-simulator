@@ -259,9 +259,9 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
       Network::get_network().set_synapse_status( con_id.get_source_gid(), // source_gid
-        con_id.get_synapse_model_id(),                           // synapse_id
-        con_id.get_port(),                                       // port
-        con_id.get_target_thread(),                              // target thread
+        con_id.get_synapse_model_id(),                                    // synapse_id
+        con_id.get_port(),                                                // port
+        con_id.get_target_thread(),                                       // target thread
         dict );
       std::string missed;
       if ( !dict->all_accessed( missed ) )
@@ -284,9 +284,9 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
       Network::get_network().set_synapse_status( con_id.get_source_gid(), // source_gid
-        con_id.get_synapse_model_id(),                           // synapse_id
-        con_id.get_port(),                                       // port
-        con_id.get_target_thread(),                              // target thread
+        con_id.get_synapse_model_id(),                                    // synapse_id
+        con_id.get_port(),                                                // port
+        con_id.get_target_thread(),                                       // target thread
         dict );
       std::string missed;
       if ( !dict->all_accessed( missed ) )
@@ -393,10 +393,11 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
   for ( size_t nt = 0; nt < n_results; ++nt )
   {
     ConnectionDatum con_id = getValue< ConnectionDatum >( conns.get( nt ) );
-    DictionaryDatum result_dict = Network::get_network().get_synapse_status( con_id.get_source_gid(),
-      con_id.get_synapse_model_id(),
-      con_id.get_port(),
-      con_id.get_target_thread() );
+    DictionaryDatum result_dict =
+      Network::get_network().get_synapse_status( con_id.get_source_gid(),
+        con_id.get_synapse_model_id(),
+        con_id.get_port(),
+        con_id.get_target_thread() );
     result.push_back( result_dict );
   }
 
@@ -920,7 +921,8 @@ NestModule::Connect_i_i_d_d_lFunction::execute( SLIInterpreter* i ) const
   {
     Node* const target_node = Network::get_network().get_node( target );
     const thread target_thread = target_node->get_thread();
-    Network::get_network().connect( source, target_node, target_thread, synmodel_id, delay, weight );
+    Network::get_network().connect(
+      source, target_node, target_thread, synmodel_id, delay, weight );
   }
 
   i->OStack.pop( 5 );

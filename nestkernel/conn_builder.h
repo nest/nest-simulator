@@ -157,8 +157,7 @@ protected:
 class FixedInDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedInDegreeBuilder( 
-    const GIDCollection&,
+  FixedInDegreeBuilder( const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
     const DictionaryDatum& );
@@ -173,8 +172,7 @@ private:
 class FixedOutDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedOutDegreeBuilder(
-    const GIDCollection&,
+  FixedOutDegreeBuilder( const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
     const DictionaryDatum& );
@@ -189,8 +187,7 @@ private:
 class FixedTotalNumberBuilder : public ConnBuilder
 {
 public:
-  FixedTotalNumberBuilder(
-    const GIDCollection&,
+  FixedTotalNumberBuilder( const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
     const DictionaryDatum& );
@@ -205,8 +202,7 @@ private:
 class BernoulliBuilder : public ConnBuilder
 {
 public:
-  BernoulliBuilder(
-    const GIDCollection&,
+  BernoulliBuilder( const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
     const DictionaryDatum& );

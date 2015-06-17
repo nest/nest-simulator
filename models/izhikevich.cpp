@@ -267,7 +267,8 @@ nest::izhikevich::handle( CurrentEvent& e )
 
   const double_t c = e.get_current();
   const double_t w = e.get_weight();
-  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
 }
 
 void

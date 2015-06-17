@@ -80,7 +80,7 @@ public:
   {
   public:
     //! We defined this type explicitly, so that the assert function below always tests the correct
-    //type.
+    // type.
     typedef uint_t gid_external_type;
 
     OffGridSpike()

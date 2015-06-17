@@ -383,7 +383,8 @@ nest::RecordingDevice::calibrate()
       {
         std::string msg =
           String::compose( "Closing file '%1', opening file '%2'", P_.filename_, newname );
-        Network::get_network().message( SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg );
+        Network::get_network().message(
+          SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg );
 
         B_.fs_.close(); // close old file
         P_.filename_ = newname;
@@ -413,7 +414,8 @@ nest::RecordingDevice::calibrate()
             "Please change data_path, data_prefix or label, or set /overwrite_files "
             "to true in the root node.",
             P_.filename_ );
-          Network::get_network().message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+          Network::get_network().message(
+            SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
           throw IOError();
         }
         else
@@ -447,7 +449,8 @@ nest::RecordingDevice::calibrate()
         "This may be caused by too many open files in networks "
         "with many recording devices and threads.",
         P_.filename_ );
-      Network::get_network().message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+      Network::get_network().message(
+        SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
 
       if ( B_.fs_.is_open() )
         B_.fs_.close();
@@ -474,7 +477,8 @@ nest::RecordingDevice::calibrate()
         "openeded with a buffer size of %1. Please close the "
         "file first.",
         P_.fbuffer_size_old_ );
-      Network::get_network().message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+      Network::get_network().message(
+        SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
       throw IOError();
     }
   }

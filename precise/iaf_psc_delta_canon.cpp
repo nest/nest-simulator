@@ -509,7 +509,8 @@ iaf_psc_delta_canon::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add stepwise constant current; MH 2009-10-14
-  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
 }
 
 

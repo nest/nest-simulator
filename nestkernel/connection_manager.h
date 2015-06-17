@@ -157,7 +157,7 @@ public:
   bool connect( ArrayDatum& d );
 
   void trigger_update_weight( const long_t vt_gid,
-    const vector< spikecounter >& dopa_spikes,
+    const std::vector< spikecounter >& dopa_spikes,
     const double_t t_trig );
 
   void send( thread t, index sgid, Event& e );
@@ -175,9 +175,9 @@ public:
 private:
   std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
   std::vector< std::vector< ConnectorModel* > > prototypes_; //!< The list of available synapse
-                                                             //prototypes: first dimenasion one
-                                                             //entry per thread, second dimantion
-                                                             //for each synapse type
+  // prototypes: first dimenasion one
+  // entry per thread, second dimantion
+  // for each synapse type
 
   Dictionary* synapsedict_; //!< The synapsedict (owned by the network)
 

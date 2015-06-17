@@ -460,8 +460,8 @@ Processes::KillFunction::execute( SLIInterpreter* i ) const
     i->raiseerror( systemerror( i ) );
   }
   else
-  { // no error
-    i->EStack.pop(); // pop command from execution stack
+  {                     // no error
+    i->EStack.pop();    // pop command from execution stack
     i->OStack.pop( 2 ); // pop arguments from operand stack
   }
 }
@@ -519,8 +519,8 @@ Processes::Dup2_is_isFunction::execute( SLIInterpreter* i ) const
     i->raiseerror( systemerror( i ) );
   }
   else
-  { // no error
-    i->EStack.pop(); // pop command from execution stack
+  {                     // no error
+    i->EStack.pop();    // pop command from execution stack
     i->OStack.pop( 2 ); // pop operands from operand stack
   }
 }
@@ -547,8 +547,8 @@ Processes::Dup2_os_osFunction::execute( SLIInterpreter* i ) const
     i->raiseerror( systemerror( i ) );
   }
   else
-  { // no error
-    i->EStack.pop(); // pop command from execution stack
+  {                     // no error
+    i->EStack.pop();    // pop command from execution stack
     i->OStack.pop( 2 ); // pop operands from operand stack
   }
 }
@@ -579,8 +579,8 @@ Processes::Dup2_is_osFunction::execute( SLIInterpreter* i ) const
     i->raiseerror( systemerror( i ) );
   }
   else
-  { // no error
-    i->EStack.pop(); // pop command from execution stack
+  {                     // no error
+    i->EStack.pop();    // pop command from execution stack
     i->OStack.pop( 2 ); // pop operands from operand stack
   }
 }
@@ -607,8 +607,8 @@ Processes::Dup2_os_isFunction::execute( SLIInterpreter* i ) const
     i->raiseerror( systemerror( i ) );
   }
   else
-  { // no error
-    i->EStack.pop(); // pop command from execution stack
+  {                     // no error
+    i->EStack.pop();    // pop command from execution stack
     i->OStack.pop( 2 ); // pop operands from operand stack
   }
 }
@@ -787,7 +787,7 @@ Processes::MkfifoFunction::execute( SLIInterpreter* i ) const
     i->raiseerror( systemerror( i ) );
   }
   else
-  { // no error
+  {                  // no error
     i->EStack.pop(); // pop command from execution stack
     i->OStack.pop(); // pop operand from operand stack
   }

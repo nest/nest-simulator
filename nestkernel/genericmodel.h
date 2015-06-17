@@ -264,9 +264,7 @@ register_model( const std::string& name, bool private_model = false )
  */
 template < class ModelT >
 index
-register_preconf_model( const std::string& name,
-  Dictionary& conf,
-  bool private_model = false )
+register_preconf_model( const std::string& name, Dictionary& conf, bool private_model = false )
 {
   Model* prototype = new GenericModel< ModelT >( name );
   assert( prototype != 0 );

@@ -358,9 +358,11 @@ iaf_psc_alpha::handle( SpikeEvent& e )
   const double_t s = e.get_weight() * e.get_multiplicity();
 
   if ( e.get_weight() > 0.0 )
-    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), s );
+    B_.ex_spikes_.add_value(
+      e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), s );
   else
-    B_.in_spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), s );
+    B_.in_spikes_.add_value(
+      e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), s );
 }
 
 void
@@ -371,7 +373,8 @@ iaf_psc_alpha::handle( CurrentEvent& e )
   const double_t I = e.get_current();
   const double_t w = e.get_weight();
 
-  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * I );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * I );
 }
 
 void

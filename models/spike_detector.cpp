@@ -79,8 +79,8 @@ nest::spike_detector::calibrate()
       String::compose( "Precise neuron models exist: the property precise_times "
                        "of the %1 with gid %2 has been set to true, precision has "
                        "been set to 15.",
-                          get_name(),
-                          get_gid() ) );
+                                      get_name(),
+                                      get_gid() ) );
   }
 
   device_.calibrate();
@@ -89,9 +89,10 @@ nest::spike_detector::calibrate()
 void
 nest::spike_detector::update( Time const&, const long_t, const long_t )
 {
-  for ( std::vector< Event* >::iterator e = B_.spikes_[ Network::get_network().read_toggle() ].begin();
-        e != B_.spikes_[ Network::get_network().read_toggle() ].end();
-        ++e )
+  for (
+    std::vector< Event* >::iterator e = B_.spikes_[ Network::get_network().read_toggle() ].begin();
+    e != B_.spikes_[ Network::get_network().read_toggle() ].end();
+    ++e )
   {
     assert( *e != 0 );
     device_.record_event( **e );

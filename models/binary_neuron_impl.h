@@ -246,8 +246,8 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
     {
       // received twice the same gid, so transition 0->1
       // take double weight to compensate for subtracting first event
-      B_.spikes_.add_value(
-        e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), 2.0 * e.get_weight() );
+      B_.spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+        2.0 * e.get_weight() );
     }
     else
     {
@@ -281,7 +281,8 @@ binary_neuron< TGainfunction >::handle( CurrentEvent& e )
   // we use the spike buffer to receive the binary events
   // but also to handle the incoming current events added
   // both contributions are directly added to the variable h
-  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
 }
 
 

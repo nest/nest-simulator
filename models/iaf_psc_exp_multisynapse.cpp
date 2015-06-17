@@ -339,7 +339,8 @@ iaf_psc_exp_multisynapse::handle( SpikeEvent& e )
   {
     if ( P_.receptor_types_[ i ] == e.get_rport() )
     {
-      B_.spikes_[ i ].add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+      B_.spikes_[ i ].add_value(
+        e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
         e.get_weight() * e.get_multiplicity() );
     }
   }
@@ -354,7 +355,8 @@ iaf_psc_exp_multisynapse::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * I );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * I );
 }
 
 void

@@ -63,7 +63,8 @@ ConnectionManager::init_()
   synapsedict_->clear();
 
   // one list of prototypes per thread
-  std::vector< std::vector< ConnectorModel* > > tmp_proto( Network::get_network().get_num_threads() );
+  std::vector< std::vector< ConnectorModel* > > tmp_proto(
+    Network::get_network().get_num_threads() );
   prototypes_.swap( tmp_proto );
 
   // (re-)append all synapse prototypes
@@ -342,8 +343,10 @@ ConnectionManager::get_connections( DictionaryDatum params ) const
 
 #ifdef _OPENMP
   std::string msg;
-  msg = String::compose( "Setting OpenMP num_threads to %1.", Network::get_network().get_num_threads() );
-  Network::get_network().message( SLIInterpreter::M_DEBUG, "ConnectionManager::get_connections", msg );
+  msg = String::compose(
+    "Setting OpenMP num_threads to %1.", Network::get_network().get_num_threads() );
+  Network::get_network().message(
+    SLIInterpreter::M_DEBUG, "ConnectionManager::get_connections", msg );
   omp_set_num_threads( Network::get_network().get_num_threads() );
 #endif
 

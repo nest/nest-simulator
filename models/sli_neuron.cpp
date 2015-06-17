@@ -134,13 +134,15 @@ nest::sli_neuron::calibrate()
   if ( terminate )
   {
     Network::get_network().terminate();
-    Network::get_network().message( SLIInterpreter::M_ERROR, "sli_neuron::calibrate", "Terminating." );
+    Network::get_network().message(
+      SLIInterpreter::M_ERROR, "sli_neuron::calibrate", "Terminating." );
     return;
   }
 
 #pragma omp critical( sli_neuron )
   {
-    Network::get_network().execute_sli_protected( state_, names::calibrate_node ); // call interpreter
+    Network::get_network().execute_sli_protected(
+      state_, names::calibrate_node ); // call interpreter
   }
 }
 
@@ -177,7 +179,8 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
 
 #pragma omp critical( sli_neuron )
     {
-      Network::get_network().execute_sli_protected( state_, names::update_node ); // call interpreter
+      Network::get_network().execute_sli_protected(
+        state_, names::update_node ); // call interpreter
     }
 
     bool spike_emission = false;
@@ -219,7 +222,8 @@ nest::sli_neuron::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * I );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * I );
 }
 
 void

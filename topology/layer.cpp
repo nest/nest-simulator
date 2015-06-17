@@ -160,7 +160,8 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   Network::get_network().go_to( cwnode );
 
   // Set layer parameters according to input dictionary.
-  AbstractLayer* layer = dynamic_cast< AbstractLayer* >( Network::get_network().get_node( layer_node ) );
+  AbstractLayer* layer =
+    dynamic_cast< AbstractLayer* >( Network::get_network().get_node( layer_node ) );
   layer->depth_ = element_ids.size();
   layer->set_status( layer_dict );
 

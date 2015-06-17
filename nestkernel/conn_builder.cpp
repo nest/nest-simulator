@@ -282,7 +282,8 @@ nest::ConnBuilder::single_connect_( index sgid,
   }
   else
   {
-    assert( Network::get_network().get_num_threads() == static_cast< thread >( param_dicts_.size() ) );
+    assert(
+      Network::get_network().get_num_threads() == static_cast< thread >( param_dicts_.size() ) );
 
     for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
           it != synapse_params_.end();
@@ -312,7 +313,8 @@ nest::ConnBuilder::single_connect_( index sgid,
     }
 
     if ( default_weight_and_delay_ )
-      Network::get_network().connect( sgid, &target, target_thread, synapse_model_, param_dicts_[ target_thread ] );
+      Network::get_network().connect(
+        sgid, &target, target_thread, synapse_model_, param_dicts_[ target_thread ] );
     else if ( default_weight_ )
       Network::get_network().connect( sgid,
         &target,

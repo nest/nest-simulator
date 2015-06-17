@@ -347,10 +347,10 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
 
-  register_model< FreeLayer< 2 > >(  "topology_layer_free" );
-  register_model< FreeLayer< 3 > >(  "topology_layer_free_3d" );
-  register_model< GridLayer< 2 > >(  "topology_layer_grid" );
-  register_model< GridLayer< 3 > >(  "topology_layer_grid_3d" );
+  register_model< FreeLayer< 2 > >( "topology_layer_free" );
+  register_model< FreeLayer< 3 > >( "topology_layer_free_3d" );
+  register_model< GridLayer< 2 > >( "topology_layer_grid" );
+  register_model< GridLayer< 3 > >( "topology_layer_grid_3d" );
 
   // Register mask types
   register_mask< BallMask< 2 > >();
@@ -1006,8 +1006,10 @@ TopologyModule::ConnectLayers_i_i_DFunction::execute( SLIInterpreter* i ) const
   index target_gid = getValue< long_t >( i->OStack.pick( 1 ) );
   const DictionaryDatum connection_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  AbstractLayer* source = dynamic_cast< AbstractLayer* >( Network::get_network().get_node( source_gid ) );
-  AbstractLayer* target = dynamic_cast< AbstractLayer* >( Network::get_network().get_node( target_gid ) );
+  AbstractLayer* source =
+    dynamic_cast< AbstractLayer* >( Network::get_network().get_node( source_gid ) );
+  AbstractLayer* target =
+    dynamic_cast< AbstractLayer* >( Network::get_network().get_node( target_gid ) );
 
   if ( ( source == NULL ) || ( target == NULL ) )
     throw LayerExpected();
@@ -1161,7 +1163,8 @@ TopologyModule::DumpLayerNodes_os_iFunction::execute( SLIInterpreter* i ) const
   const index layer_gid = getValue< long_t >( i->OStack.pick( 0 ) );
   OstreamDatum out = getValue< OstreamDatum >( i->OStack.pick( 1 ) );
 
-  AbstractLayer const* const layer = dynamic_cast< AbstractLayer* >( Network::get_network().get_node( layer_gid ) );
+  AbstractLayer const* const layer =
+    dynamic_cast< AbstractLayer* >( Network::get_network().get_node( layer_gid ) );
 
   if ( layer != 0 && out->good() )
     layer->dump_nodes( *out );
@@ -1222,7 +1225,8 @@ TopologyModule::DumpLayerConnections_os_i_lFunction::execute( SLIInterpreter* i 
 
   const Token syn_model = i->OStack.pick( 0 );
 
-  AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( Network::get_network().get_node( layer_gid ) );
+  AbstractLayer* const layer =
+    dynamic_cast< AbstractLayer* >( Network::get_network().get_node( layer_gid ) );
   if ( layer == NULL )
     throw TypeMismatch( "any layer type", "something else" );
 
@@ -1279,7 +1283,8 @@ TopologyModule::GetElement_i_iaFunction::execute( SLIInterpreter* i ) const
   {
   case 2:
   {
-    GridLayer< 2 >* layer = dynamic_cast< GridLayer< 2 >* >( Network::get_network().get_node( layer_gid ) );
+    GridLayer< 2 >* layer =
+      dynamic_cast< GridLayer< 2 >* >( Network::get_network().get_node( layer_gid ) );
     if ( layer == 0 )
     {
       throw TypeMismatch( "grid layer node", "something else" );
@@ -1292,7 +1297,8 @@ TopologyModule::GetElement_i_iaFunction::execute( SLIInterpreter* i ) const
 
   case 3:
   {
-    GridLayer< 3 >* layer = dynamic_cast< GridLayer< 3 >* >( Network::get_network().get_node( layer_gid ) );
+    GridLayer< 3 >* layer =
+      dynamic_cast< GridLayer< 3 >* >( Network::get_network().get_node( layer_gid ) );
     if ( layer == 0 )
     {
       throw TypeMismatch( "grid layer node", "something else" );

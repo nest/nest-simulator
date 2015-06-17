@@ -455,7 +455,8 @@ template < class ConnectionT >
 synindex
 register_connection_model( const std::string& name )
 {
-  return Network::get_network().register_synapse_prototype( new GenericConnectorModel< ConnectionT >( name ) );
+  return Network::get_network().register_synapse_prototype(
+    new GenericConnectorModel< ConnectionT >( name ) );
 }
 
 } // namespace nest

@@ -120,7 +120,8 @@ MusicEventHandler::publish_port()
     if ( max_buffered_ > 0 )
       msg += String::compose( " and max buffered=%1 ticks", max_buffered_ );
     msg += ".";
-    Network::get_network().message( SLIInterpreter::M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
+    Network::get_network().message(
+      SLIInterpreter::M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
   }
 }
 

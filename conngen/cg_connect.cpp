@@ -47,11 +47,9 @@ cg_connect( ConnectionGeneratorDatum& cg,
     {
       if ( Network::get_network().is_local_gid( target + target_offset ) )
       {
-        Node* const target_node =
-          Network::get_network().get_node( target + target_offset );
+        Node* const target_node = Network::get_network().get_node( target + target_offset );
         const thread target_thread = target_node->get_thread();
-        Network::get_network().connect(
-          source + source_offset, target_node, target_thread, syn );
+        Network::get_network().connect( source + source_offset, target_node, target_thread, syn );
       }
     }
   }
@@ -69,8 +67,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
     {
       if ( Network::get_network().is_local_gid( target + target_offset ) )
       {
-        Node* const target_node =
-          Network::get_network().get_node( target + target_offset );
+        Node* const target_node = Network::get_network().get_node( target + target_offset );
         const thread target_thread = target_node->get_thread();
         Network::get_network().connect( source + source_offset,
           target_node,
@@ -110,11 +107,9 @@ cg_connect( ConnectionGeneratorDatum& cg,
     {
       if ( Network::get_network().is_local_gid( target_gids.at( target ) ) )
       {
-        Node* const target_node =
-          Network::get_network().get_node( target_gids.at( target ) );
+        Node* const target_node = Network::get_network().get_node( target_gids.at( target ) );
         const thread target_thread = target_node->get_thread();
-        Network::get_network().connect(
-          source_gids.at( source ), target_node, target_thread, syn );
+        Network::get_network().connect( source_gids.at( source ), target_node, target_thread, syn );
       }
     }
   }
@@ -132,8 +127,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
     {
       if ( Network::get_network().is_local_gid( target_gids.at( target ) ) )
       {
-        Node* const target_node =
-          Network::get_network().get_node( target_gids.at( target ) );
+        Node* const target_node = Network::get_network().get_node( target_gids.at( target ) );
         const thread target_thread = target_node->get_thread();
         Network::get_network().connect( source_gids.at( source ),
           target_node,

@@ -33,7 +33,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   , number_of_connections_( 0 )
   , mask_()
   , kernel_()
-  , synapse_model_( TopologyModule::get_network().get_synapsedict()[ "static_synapse" ] )
+  , synapse_model_( Network::get_network().get_synapsedict()[ "static_synapse" ] )
   , weight_()
   , delay_()
 {

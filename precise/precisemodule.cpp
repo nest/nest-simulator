@@ -81,12 +81,12 @@ void
 PreciseModule::init( SLIInterpreter* )
 {
   // register models
-  register_model< iaf_psc_delta_canon >( net_, "iaf_psc_delta_canon" );
-  register_model< iaf_psc_alpha_canon >( net_, "iaf_psc_alpha_canon" );
-  register_model< iaf_psc_alpha_presc >( net_, "iaf_psc_alpha_presc" );
-  register_model< iaf_psc_exp_ps >( net_, "iaf_psc_exp_ps" );
-  register_model< poisson_generator_ps >( net_, "poisson_generator_ps" );
-  register_model< parrot_neuron_ps >( net_, "parrot_neuron_ps" );
+  register_model< iaf_psc_delta_canon >( "iaf_psc_delta_canon" );
+  register_model< iaf_psc_alpha_canon >( "iaf_psc_alpha_canon" );
+  register_model< iaf_psc_alpha_presc >( "iaf_psc_alpha_presc" );
+  register_model< iaf_psc_exp_ps >( "iaf_psc_exp_ps" );
+  register_model< poisson_generator_ps >( "poisson_generator_ps" );
+  register_model< parrot_neuron_ps >( "parrot_neuron_ps" );
 } // PreciseModule::init()
 
 

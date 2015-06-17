@@ -119,7 +119,7 @@ nest::sli_neuron::calibrate()
   {
     std::string msg =
       String::compose( "Node %1 has no /calibrate function in its status dictionary.", get_gid() );
-    net_->message( SLIInterpreter::M_ERROR, "sli_neuron::calibrate", msg.c_str() );
+    Network::get_network().message( SLIInterpreter::M_ERROR, "sli_neuron::calibrate", msg.c_str() );
     terminate = true;
   }
 
@@ -127,20 +127,20 @@ nest::sli_neuron::calibrate()
   {
     std::string msg = String::compose(
       "Node %1 has no /update function in its status dictionary. Terminating.", get_gid() );
-    net_->message( SLIInterpreter::M_ERROR, "sli_neuron::calibrate", msg.c_str() );
+    Network::get_network().message( SLIInterpreter::M_ERROR, "sli_neuron::calibrate", msg.c_str() );
     terminate = true;
   }
 
   if ( terminate )
   {
-    net_->terminate();
-    net_->message( SLIInterpreter::M_ERROR, "sli_neuron::calibrate", "Terminating." );
+    Network::get_network().terminate();
+    Network::get_network().message( SLIInterpreter::M_ERROR, "sli_neuron::calibrate", "Terminating." );
     return;
   }
 
 #pragma omp critical( sli_neuron )
   {
-    network()->execute_sli_protected( state_, names::calibrate_node ); // call interpreter
+    Network::get_network().execute_sli_protected( state_, names::calibrate_node ); // call interpreter
   }
 }
 
@@ -158,11 +158,11 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
   if ( state_->known( names::error ) )
   {
     std::string msg = String::compose( "Node %1 still has its error state set.", get_gid() );
-    net_->message( SLIInterpreter::M_ERROR, "sli_neuron::update", msg.c_str() );
-    net_->message( SLIInterpreter::M_ERROR,
+    Network::get_network().message( SLIInterpreter::M_ERROR, "sli_neuron::update", msg.c_str() );
+    Network::get_network().message( SLIInterpreter::M_ERROR,
       "sli_neuron::update",
       "Please check /calibrate and /update for errors" );
-    net_->terminate();
+    Network::get_network().terminate();
     return;
   }
 
@@ -177,7 +177,7 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
 
 #pragma omp critical( sli_neuron )
     {
-      network()->execute_sli_protected( state_, names::update_node ); // call interpreter
+      Network::get_network().execute_sli_protected( state_, names::update_node ); // call interpreter
     }
 
     bool spike_emission = false;
@@ -189,7 +189,7 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
     {
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      Network::get_network().send( *this, se, lag );
     }
 
     B_.logger_.record_data( origin.get_steps() + lag );
@@ -203,10 +203,10 @@ nest::sli_neuron::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.in_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.in_spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 
@@ -219,7 +219,7 @@ nest::sli_neuron::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * I );
+  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * I );
 }
 
 void

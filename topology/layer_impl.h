@@ -327,13 +327,13 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
 
     source_array[ 0 ] = source_gid;
     def( gcdict, names::source, source_array );
-    ArrayDatum connectome = net_->get_connections( gcdict );
+    ArrayDatum connectome = Network::get_network().get_connections( gcdict );
 
     // Print information about all local connections for current source
     for ( size_t i = 0; i < connectome.size(); ++i )
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( connectome.get( i ) );
-      DictionaryDatum result_dict = net_->get_synapse_status( con_id.get_source_gid(),
+      DictionaryDatum result_dict = Network::get_network().get_synapse_status( con_id.get_source_gid(),
         con_id.get_synapse_model_id(),
         con_id.get_port(),
         con_id.get_target_thread() );
@@ -342,7 +342,7 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
       double_t weight = getValue< double_t >( result_dict, names::weight );
       double_t delay = getValue< double_t >( result_dict, names::delay );
 
-      Node const* const target = net_->get_node( target_gid );
+      Node const* const target = Network::get_network().get_node( target_gid );
       assert( target );
 
       // Print source, target, weight, delay, rports

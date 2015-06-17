@@ -160,7 +160,7 @@ nest::step_current_generator::update( Time const& origin, const long_t from, con
     {
       CurrentEvent ce;
       ce.set_current( B_.amp_ );
-      network()->send( *this, ce, offs );
+      Network::get_network().send( *this, ce, offs );
     }
   }
 }

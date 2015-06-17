@@ -39,7 +39,6 @@
 #include "dictutils.h"
 #include "nodelist.h"
 
-nest::Network* nest::Communicator::net_ = 0;
 int nest::Communicator::rank_ = 0;
 int nest::Communicator::num_processes_ = 1;
 int nest::Communicator::n_vps_ = 1;
@@ -169,7 +168,7 @@ nest::Communicator::finalize()
 
   if ( finalized == 0 && initialized == 1 )
   {
-    if ( !net_->quit_by_error() )
+    if ( not Network::get_network().quit_by_error() )
 #ifdef HAVE_MUSIC
     {
       if ( music_runtime == 0 )
@@ -187,10 +186,10 @@ nest::Communicator::finalize()
 #endif /* #ifdef HAVE_MUSIC */
     else
     {
-      net_->message( SLIInterpreter::M_INFO,
+      Network::get_network().message( SLIInterpreter::M_INFO,
         "Communicator::finalize()",
         "Calling MPI_Abort() due to errors in the script." );
-      MPI_Abort( MPI_COMM_WORLD, net_->get_exitcode() );
+      MPI_Abort( MPI_COMM_WORLD, Network::get_network().get_exitcode() );
     }
   }
 }

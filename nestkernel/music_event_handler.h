@@ -36,8 +36,6 @@
 namespace nest
 {
 
-class Network;
-
 /**
  * Event handler for all events of a MUSIC port received on this process.
  */
@@ -47,8 +45,7 @@ public:
   MusicEventHandler();
   MusicEventHandler( std::string portname,
     double acceptable_latency,
-    int max_buffered,
-    Network* net );
+    int max_buffered );
 
   virtual ~MusicEventHandler();
 
@@ -86,8 +83,7 @@ private:
   std::vector< MUSIC::GlobalIndex > indexmap_; //!< Maps local index to global MUSIC index (channel)
   double acceptable_latency_;                  //!< The acceptable latency of the port in ms
   int max_buffered_;
-  Network* net_; //!< Pointer to global network driver.
-
+  
   /**
    * Buffers incoming spike events until they are due. The vector has
    * one entry per channel. The priority queues used within the vector

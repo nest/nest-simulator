@@ -322,7 +322,7 @@ nest::spike_generator::update( Time const& sliceT0, const long_t from, const lon
       long_t lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
 
       // all spikes are sent locally, so offset information is always preserved
-      network()->send( *this, *se, lag );
+      Network::get_network().send( *this, *se, lag );
       delete se;
     }
 

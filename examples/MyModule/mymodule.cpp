@@ -147,7 +147,7 @@ mynest::MyModule::StepPatternConnect_Vi_i_Vi_i_lFunction::execute( SLIInterprete
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) ); // top
 
   // Obtain synapse model index
-  const Token synmodel = nest::NestModule::get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = nest::Network::get_network().get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw nest::UnknownSynapseType( synmodel_name.toString() );
   const nest::index synmodel_id = static_cast< nest::index >( synmodel );
@@ -166,7 +166,7 @@ mynest::MyModule::StepPatternConnect_Vi_i_Vi_i_lFunction::execute( SLIInterprete
 
     // nest::network::divergent_connect() requires weight and delay arrays. We want to use
     // default values from the synapse model, so we pass empty arrays.
-    nest::NestModule::get_network().divergent_connect(
+    nest::Network::get_network().divergent_connect(
       sgid, selected_targets, TokenArray(), TokenArray(), synmodel_id );
     Nconn += selected_targets.size();
   }
@@ -184,14 +184,14 @@ mynest::MyModule::StepPatternConnect_Vi_i_Vi_i_lFunction::execute( SLIInterprete
 //-------------------------------------------------------------------------------------
 
 void
-mynest::MyModule::init( SLIInterpreter* i, nest::Network* )
+mynest::MyModule::init( SLIInterpreter* i )
 {
   /* Register a neuron or device model.
      Give node type as template argument and the name as second argument.
      The first argument is always a reference to the network.
      Return value is a handle for later unregistration.
   */
-  nest::register_model< pif_psc_alpha >( nest::NestModule::get_network(), "pif_psc_alpha" );
+  nest::register_model< pif_psc_alpha >( "pif_psc_alpha" );
 
   /* Register a synapse type.
      Give synapse type as template argument and the name as second argument.
@@ -206,7 +206,7 @@ mynest::MyModule::init( SLIInterpreter* i, nest::Network* )
      Kunkel et al, Front Neurofinfom 8:78 (2014), Sec 3.3.2, for details.
   */
   nest::register_connection_model< DropOddSpikeConnection< nest::TargetIdentifierPtrRport > >(
-    nest::NestModule::get_network(), "drop_odd_synapse" );
+     "drop_odd_synapse" );
 
   /* Register a SLI function.
      The first argument is the function name for SLI, the second a pointer to

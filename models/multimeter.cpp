@@ -172,7 +172,7 @@ Multimeter::update( Time const& origin, const long_t from, const long_t )
   // Note that not all nodes receiving the request will necessarily answer.
   V_.new_request_ = B_.has_targets_ && !P_.record_from_.empty(); // no targets, no request
   DataLoggingRequest req;
-  network()->send( *this, req );
+  Network::get_network().send( *this, req );
 }
 
 void

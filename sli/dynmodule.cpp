@@ -24,13 +24,13 @@
 #include "interpret.h"
 
 void
-DynModule::install( std::ostream&, SLIInterpreter* i, nest::Network* net )
+DynModule::install( std::ostream&, SLIInterpreter* i )
 {
   // Output stream for all messages are now decided by the message
   // level.
   //  i->message(out,5, name().c_str(), "Initializing.");
   i->message( 5, name().c_str(), "Initializing." );
-  init( i, net );
+  init( i );
 }
 
 const std::string

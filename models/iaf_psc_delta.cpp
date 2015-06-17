@@ -302,7 +302,7 @@ nest::iaf_psc_delta::update( Time const& origin, const long_t from, const long_t
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      Network::get_network().send( *this, se, lag );
     }
 
     // set new input current
@@ -322,7 +322,7 @@ nest::iaf_psc_delta::handle( SpikeEvent& e )
   //     explicity, since it depends on delay and offset within
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
-  B_.spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -335,7 +335,7 @@ nest::iaf_psc_delta::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
 }
 
 void

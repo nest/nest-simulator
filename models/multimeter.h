@@ -317,7 +317,7 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings = network()->get_thread_siblings( get_gid() );
+    const SiblingContainer* siblings = Network::get_network().get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
     for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
       ( *sibling )->get_status( d );

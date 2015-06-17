@@ -284,7 +284,7 @@ nest::pp_psc_delta::calibrate()
   B_.logger_.init();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = net_->get_rng( get_thread() );
+  V_.rng_ = Network::get_network().get_rng( get_thread() );
 
   V_.P33_ = std::exp( -V_.h_ / P_.tau_m_ );
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
@@ -420,7 +420,7 @@ nest::pp_psc_delta::update( Time const& origin, const long_t from, const long_t 
           // And send the spike event
           SpikeEvent se;
           se.set_multiplicity( n_spikes );
-          network()->send( *this, se, lag );
+          Network::get_network().send( *this, se, lag );
 
           // Reset the potential if applicable
           if ( P_.with_reset_ )
@@ -452,7 +452,7 @@ nest::pp_psc_delta::handle( SpikeEvent& e )
   //     explicitly, since it depends on delay and offset within
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
-  B_.spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -465,7 +465,7 @@ nest::pp_psc_delta::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
 }
 
 void

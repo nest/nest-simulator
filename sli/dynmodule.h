@@ -29,11 +29,6 @@
 
 class SLIInterpreter;
 
-namespace nest
-{
-class Network;
-}
-
 /**
  * Base class for dynamically loadable SLI interpreter modules.
  */
@@ -50,13 +45,13 @@ public:
    * bootstrap sequence the module is initialised, not
    * all services may be available.
    */
-  virtual void init( SLIInterpreter*, nest::Network* ) = 0;
+  virtual void init( SLIInterpreter* ) = 0;
 
   /**
    * Unregister the symbols defined in module.
    */
   virtual void
-  unregister( SLIInterpreter*, nest::Network* )
+  unregister( SLIInterpreter* )
   {
     throw DynamicModuleManagementError();
   }
@@ -74,7 +69,7 @@ public:
   /**
    * Print installation message via interpreter message command.
    */
-  void install( std::ostream&, SLIInterpreter*, nest::Network* );
+  void install( std::ostream&, SLIInterpreter* );
 };
 
 #endif

@@ -73,8 +73,7 @@ public:
   virtual void connect();
 
   //! parameters: sources, targets, specifications
-  ConnBuilder( Network&,
-    const GIDCollection&,
+  ConnBuilder( const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
     const DictionaryDatum& );
@@ -86,8 +85,6 @@ protected:
 
   //! Create connection between given nodes, fill parameter values
   void single_connect_( index, Node&, thread, librandom::RngPtr& );
-
-  Network& net_;
 
   const GIDCollection& sources_;
   const GIDCollection& targets_;
@@ -129,12 +126,11 @@ private:
 class OneToOneBuilder : public ConnBuilder
 {
 public:
-  OneToOneBuilder( Network& net,
-    const GIDCollection& sources,
+  OneToOneBuilder( const GIDCollection& sources,
     const GIDCollection& targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec )
-    : ConnBuilder( net, sources, targets, conn_spec, syn_spec )
+    : ConnBuilder( sources, targets, conn_spec, syn_spec )
   {
   }
 
@@ -145,12 +141,11 @@ protected:
 class AllToAllBuilder : public ConnBuilder
 {
 public:
-  AllToAllBuilder( Network& net,
-    const GIDCollection& sources,
+  AllToAllBuilder( const GIDCollection& sources,
     const GIDCollection& targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec )
-    : ConnBuilder( net, sources, targets, conn_spec, syn_spec )
+    : ConnBuilder( sources, targets, conn_spec, syn_spec )
   {
   }
 
@@ -162,7 +157,7 @@ protected:
 class FixedInDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedInDegreeBuilder( Network&,
+  FixedInDegreeBuilder( 
     const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
@@ -178,7 +173,7 @@ private:
 class FixedOutDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedOutDegreeBuilder( Network&,
+  FixedOutDegreeBuilder(
     const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
@@ -194,7 +189,7 @@ private:
 class FixedTotalNumberBuilder : public ConnBuilder
 {
 public:
-  FixedTotalNumberBuilder( Network&,
+  FixedTotalNumberBuilder(
     const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
@@ -210,7 +205,7 @@ private:
 class BernoulliBuilder : public ConnBuilder
 {
 public:
-  BernoulliBuilder( Network&,
+  BernoulliBuilder(
     const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,

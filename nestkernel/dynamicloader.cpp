@@ -82,16 +82,12 @@ DynamicLoaderModule::getLinkedModules()
 /*! At the time when DynamicLoaderModule is constructed, the SLI Interpreter
   and NestModule must be already constructed and initialized.
   DynamicLoaderModule relies on the presence of
-  the following SLI datastructures: Name, Dictionary
-  and on the nest::NestModule::net.
+  the following SLI datastructures: Name, Dictionary.
 */
-DynamicLoaderModule::DynamicLoaderModule( Network* pNet, SLIInterpreter& interpreter )
-  : loadmodule_function( pNet, dyn_modules )
-  , unloadmodule_function( pNet, dyn_modules )
+DynamicLoaderModule::DynamicLoaderModule( SLIInterpreter& interpreter )
+  : loadmodule_function( dyn_modules )
+  , unloadmodule_function( dyn_modules )
 {
-  assert( pNet != NULL );
-  pNet_ = pNet;
-
   interpreter.def( "moduledict", new DictionaryDatum( moduledict_ ) );
 }
 
@@ -141,10 +137,9 @@ has_name( DynModule const* const m, const std::string n )
   Description:
   Synopsis: (module_name) Install -> handle
 */
-DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction( Network* pNet,
+DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction( 
   vecDynModules& dyn_modules )
-  : pNet_( pNet )
-  , dyn_modules_( dyn_modules )
+  : dyn_modules_( dyn_modules )
 {
 }
 
@@ -212,7 +207,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   // all is well an we can register the module with the interpreter
   try
   {
-    pModule->install( std::cerr, i, pNet_ );
+    pModule->install( std::cerr, i );
   }
   catch ( std::exception& e )
   {
@@ -258,10 +253,9 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   Synopsis: handle Uninstall
   See: Install
 */
-DynamicLoaderModule::UnloadModuleFunction::UnloadModuleFunction( Network* pNet,
+DynamicLoaderModule::UnloadModuleFunction::UnloadModuleFunction(
   vecDynModules& dyn_modules )
-  : pNet_( pNet )
-  , dyn_modules_( dyn_modules )
+  : dyn_modules_( dyn_modules )
 {
 }
 
@@ -294,7 +288,7 @@ DynamicLoaderModule::UnloadModuleFunction::execute( SLIInterpreter* i ) const
   }
 
   // Check if there are any user defined models. We cannot unload in that case.
-  if ( pNet_->has_user_models() )
+  if ( Network::get_network().has_user_models() )
   {
     i->message(
       SLIInterpreter::M_ERROR, "Uninstall", "Modules cannot be unloaded after use of CopyModel." );
@@ -306,7 +300,7 @@ DynamicLoaderModule::UnloadModuleFunction::execute( SLIInterpreter* i ) const
   try
   {
     DynModule* pMod = dyn_modules_[ mod_id->get() ].pModule;
-    pMod->unregister( i, pNet_ );
+    pMod->unregister( i );
   }
   catch ( KernelException& e )
   {
@@ -387,7 +381,7 @@ DynamicLoaderModule::initLinkedModules( SLIInterpreter& interpreter )
       SLIInterpreter::M_STATUS, "DynamicLoaderModule::initLinkedModules", "adding linked module" );
     interpreter.message(
       SLIInterpreter::M_STATUS, "DynamicLoaderModule::initLinkedModules", ( *it )->name().c_str() );
-    interpreter.addlinkeddynmodule( *it, pNet_ );
+    interpreter.addlinkeddynmodule( *it );
   }
 }
 

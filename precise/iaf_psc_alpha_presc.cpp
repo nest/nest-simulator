@@ -296,7 +296,7 @@ nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const 
     // send spike
     SpikeEvent se;
     se.set_offset( S_.last_spike_offset_ );
-    network()->send( *this, se, from );
+    Network::get_network().send( *this, se, from );
   }
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -379,7 +379,7 @@ nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const 
       // sent event
       SpikeEvent se;
       se.set_offset( S_.last_spike_offset_ );
-      network()->send( *this, se, lag );
+      Network::get_network().send( *this, se, lag );
     }
 
     // Set new input current. The current change occurs at the
@@ -399,7 +399,7 @@ nest::iaf_psc_alpha_presc::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const long_t Tdeliver = e.get_rel_delivery_steps( network()->get_slice_origin() );
+  const long_t Tdeliver = e.get_rel_delivery_steps( Network::get_network().get_slice_origin() );
 
   const double_t spike_weight = V_.PSCInitialValue_ * e.get_weight() * e.get_multiplicity();
   const double_t dt = e.get_offset();
@@ -426,7 +426,7 @@ nest::iaf_psc_alpha_presc::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
 }
 
 void
@@ -503,7 +503,7 @@ nest::iaf_psc_alpha_presc::thresh_find_( double_t const dt ) const
   case CUBIC:
     return thresh_find3_( dt );
   default:
-    network()->message( SLIInterpreter::M_ERROR,
+    Network::get_network().message( SLIInterpreter::M_ERROR,
       "iaf_psc_alpha_presc::thresh_find_()",
       "Invalid interpolation---Internal model error." );
     throw BadProperty();

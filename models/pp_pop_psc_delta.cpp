@@ -242,7 +242,7 @@ nest::pp_pop_psc_delta::calibrate()
   B_.logger_.init();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = net_->get_rng( get_thread() );
+  V_.rng_ = Network::get_network().get_rng( get_thread() );
   V_.min_double_ = std::numeric_limits< double_t >::min();
 
   double_t tau_eta_max = -1; // finding max of taus_eta_
@@ -412,7 +412,7 @@ nest::pp_pop_psc_delta::update( Time const& origin, const long_t from, const lon
     {
       SpikeEvent se;
       se.set_multiplicity( S_.n_spikes_past_[ S_.p_n_spikes_past_ ] );
-      network()->send( *this, se, lag );
+      Network::get_network().send( *this, se, lag );
     }
   }
 }
@@ -426,7 +426,7 @@ nest::pp_pop_psc_delta::handle( SpikeEvent& e )
   //     explicitly, since it depends on delay and offset within
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
-  B_.spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.spikes_.add_value( e.get_rel_delivery_steps(Network::get_network().get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -439,7 +439,7 @@ nest::pp_pop_psc_delta::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
 }
 
 void

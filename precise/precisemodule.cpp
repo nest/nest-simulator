@@ -55,8 +55,7 @@ namespace nest
    the following SLI datastructures: Name, Dictionary
 */
 
-PreciseModule::PreciseModule( Network& net )
-  : net_( net )
+PreciseModule::PreciseModule()
 {
 }
 

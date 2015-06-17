@@ -231,7 +231,6 @@ public:
   template < typename NodeListType >
   static void communicate( const NodeListType& local_nodes,
     std::vector< NodeAddressingData >& all_nodes,
-    Network& net,
     DictionaryDatum params,
     bool remote = false );
 
@@ -264,8 +263,6 @@ public:
   static void set_use_Allgather( bool use_Allgather );
 
 private:
-  static Network* net_; //!< Pointer to the Network class
-
   static int rank_;             //!< the rank of the machine
   static int num_processes_;    //!< the number of mpi-processes
   static int n_vps_;            //!< the number of virtual processes
@@ -454,7 +451,6 @@ public:
   template < typename NodeListType >
   static void communicate( const NodeListType& local_nodes,
     std::vector< NodeAddressingData >& all_nodes,
-    Network& net,
     DictionaryDatum params,
     bool remote = false );
 
@@ -519,8 +515,6 @@ public:
   static void set_use_Allgather( bool use_Allgather );
 
 private:
-  static Network* net_; //!< Pointer to the Network class
-
   static int rank_;             //!< the rank of the machine
   static int num_processes_;    //!< the number of mpi-processes
   static int n_vps_;            //!< the number of virtual processes

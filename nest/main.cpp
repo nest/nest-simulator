@@ -30,8 +30,6 @@
 int
 main( int argc, char* argv[] )
 {
-  nest::Network* pNet = 0;
-
   /**
    * Create the interpreter object. Due to its dependence
    * on various static objects (e.g. of class Name), the
@@ -39,17 +37,12 @@ main( int argc, char* argv[] )
    */
   SLIInterpreter engine;
 
-  neststartup( argc, argv, engine, pNet );
+  neststartup( argc, argv, engine );
 
   // start the interpreter session
   int exitcode = engine.execute();
 
   nestshutdown();
-
-  // delete the Network before modules are deleted by interpreter's destructor
-  // because otherwise models defined in a module might still be referenced by
-  // the Network
-  delete pNet;
 
   return exitcode;
 }

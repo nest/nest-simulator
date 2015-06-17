@@ -153,7 +153,7 @@ nest::music_cont_in_proxy::calibrate()
 
     std::string msg = String::compose(
       "Mapping MUSIC input port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
-    net_->message( SLIInterpreter::M_INFO, "music_cont_in_proxy::calibrate()", msg.c_str() );
+    Network::get_network().message( SLIInterpreter::M_INFO, "music_cont_in_proxy::calibrate()", msg.c_str() );
   }
 }
 

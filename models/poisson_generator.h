@@ -85,7 +85,7 @@ Remarks:
    guarantee reproducibility of the simulations across varying machine
    numbers.
 
-   Therefore, first, as network()->send sends spikes to all the
+   Therefore, first, as Network::get_network().send sends spikes to all the
    recipients, differentiation has to happen in the hook, second, the
    hook can use the RNG from the thread where the recipient neuron sits,
    which explains the current design of the generator. For details,

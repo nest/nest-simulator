@@ -134,7 +134,7 @@ nest::pulsepacket_generator::calibrate()
   else
     V_.tolerance = 1.0;
 
-  const double_t now = ( net_->get_time() ).get_ms();
+  const double_t now = ( Network::get_network().get_time() ).get_ms();
 
   V_.start_center_idx_ = 0;
   V_.stop_center_idx_ = 0;
@@ -176,7 +176,7 @@ nest::pulsepacket_generator::update( Time const& T, const long_t from, const lon
   if ( V_.start_center_idx_ < V_.stop_center_idx_ )
   {
     // obtain rng
-    librandom::RngPtr rng = net_->get_rng( get_thread() );
+    librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
 
     bool needtosort = false;
 
@@ -210,7 +210,7 @@ nest::pulsepacket_generator::update( Time const& T, const long_t from, const lon
     {
       SpikeEvent se;
       se.set_multiplicity( n_spikes );
-      network()->send( *this, se, prev_spike - T.get_steps() );
+      Network::get_network().send( *this, se, prev_spike - T.get_steps() );
       n_spikes = 0;
     }
   }

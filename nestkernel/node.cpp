@@ -33,8 +33,6 @@
 namespace nest
 {
 
-Network* Node::net_ = NULL;
-
 Node::Node()
   : gid_( 0 )
   , lid_( 0 )
@@ -68,7 +66,7 @@ Node::~Node()
 void
 Node::init_state()
 {
-  Model const* const model = net_->get_model( model_id_ );
+  Model const* const model = Network::get_network().get_model( model_id_ );
   assert( model );
   init_state_( model->get_prototype() );
 }
@@ -87,19 +85,19 @@ Node::init_buffers()
 std::string
 Node::get_name() const
 {
-  if ( net_ == 0 || model_id_ < 0 )
+  if ( model_id_ < 0 )
     return std::string( "UnknownNode" );
 
-  return net_->get_model( model_id_ )->get_name();
+  return Network::get_network().get_model( model_id_ )->get_name();
 }
 
 Model&
 Node::get_model_() const
 {
-  if ( net_ == 0 || model_id_ < 0 )
+  if ( model_id_ < 0 )
     throw UnknownModelID( model_id_ );
 
-  return *net_->get_model( model_id_ );
+  return Network::get_network().get_model( model_id_ );
 }
 
 bool

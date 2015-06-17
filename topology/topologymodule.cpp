@@ -49,11 +49,8 @@ namespace nest
 SLIType TopologyModule::MaskType;
 SLIType TopologyModule::ParameterType;
 
-Network* TopologyModule::net_;
-
-TopologyModule::TopologyModule( Network& net )
+TopologyModule::TopologyModule()
 {
-  net_ = &net;
   MaskType.settypename( "masktype" );
   MaskType.setdefaultaction( SLIInterpreter::datatypefunction );
   ParameterType.settypename( "parametertype" );
@@ -350,13 +347,10 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
 
-  // Register layer types as models
-  Network& net = get_network();
-
-  register_model< FreeLayer< 2 > >( net, "topology_layer_free" );
-  register_model< FreeLayer< 3 > >( net, "topology_layer_free_3d" );
-  register_model< GridLayer< 2 > >( net, "topology_layer_grid" );
-  register_model< GridLayer< 3 > >( net, "topology_layer_grid_3d" );
+  register_model< FreeLayer< 2 > >(  "topology_layer_free" );
+  register_model< FreeLayer< 3 > >(  "topology_layer_free_3d" );
+  register_model< GridLayer< 2 > >(  "topology_layer_grid" );
+  register_model< GridLayer< 3 > >(  "topology_layer_grid_3d" );
 
   // Register mask types
   register_mask< BallMask< 2 > >();
@@ -414,10 +408,10 @@ TopologyModule::CreateLayer_DFunction::execute( SLIInterpreter* i ) const
   std::string missed;
   if ( !layer_dict->all_accessed( missed ) )
   {
-    if ( net_->dict_miss_is_error() )
+    if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      net_->message( SLIInterpreter::M_WARNING,
+      Network::get_network().message( SLIInterpreter::M_WARNING,
         "topology::CreateLayer",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -462,13 +456,11 @@ TopologyModule::GetPosition_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  Network& net = get_network();
-
   index node_gid = getValue< long_t >( i->OStack.pick( 0 ) );
-  if ( not net.is_local_gid( node_gid ) )
+  if ( not Network::get_network().is_local_gid( node_gid ) )
     throw KernelException( "GetPosition is currently implemented for local nodes only." );
 
-  Node const* const node = net.get_node( node_gid );
+  Node const* const node = Network::get_network().get_node( node_gid );
 
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
   if ( !layer )
@@ -529,15 +521,13 @@ TopologyModule::Displacement_a_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  Network& net = get_network();
-
   std::vector< double_t > point = getValue< std::vector< double_t > >( i->OStack.pick( 1 ) );
 
   index node_gid = getValue< long_t >( i->OStack.pick( 0 ) );
-  if ( not net.is_local_gid( node_gid ) )
+  if ( not Network::get_network().is_local_gid( node_gid ) )
     throw KernelException( "Displacement is currently implemented for local nodes only." );
 
-  Node const* const node = net.get_node( node_gid );
+  Node const* const node = Network::get_network().get_node( node_gid );
 
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
   if ( !layer )
@@ -598,15 +588,13 @@ TopologyModule::Distance_a_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  Network& net = get_network();
-
   std::vector< double_t > point = getValue< std::vector< double_t > >( i->OStack.pick( 1 ) );
 
   index node_gid = getValue< long_t >( i->OStack.pick( 0 ) );
-  if ( not net.is_local_gid( node_gid ) )
+  if ( not Network::get_network().is_local_gid( node_gid ) )
     throw KernelException( "Distance is currently implemented for local nodes only." );
 
-  Node const* const node = net.get_node( node_gid );
+  Node const* const node = Network::get_network().get_node( node_gid );
 
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
   if ( !layer )
@@ -652,10 +640,10 @@ TopologyModule::CreateMask_DFunction::execute( SLIInterpreter* i ) const
   std::string missed;
   if ( !mask_dict->all_accessed( missed ) )
   {
-    if ( get_network().dict_miss_is_error() )
+    if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      get_network().message( SLIInterpreter::M_WARNING,
+      Network::get_network().message( SLIInterpreter::M_WARNING,
         "topology::CreateMask",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -810,7 +798,7 @@ TopologyModule::GetGlobalChildren_i_M_aFunction::execute( SLIInterpreter* i ) co
   std::vector< double_t > anchor = getValue< std::vector< double_t > >( i->OStack.pick( 0 ) );
 
   AbstractMask& mask = *maskd;
-  AbstractLayer* layer = dynamic_cast< AbstractLayer* >( get_network().get_node( gid ) );
+  AbstractLayer* layer = dynamic_cast< AbstractLayer* >( Network::get_network().get_node( gid ) );
   if ( layer == NULL )
     throw LayerExpected();
 
@@ -1018,8 +1006,8 @@ TopologyModule::ConnectLayers_i_i_DFunction::execute( SLIInterpreter* i ) const
   index target_gid = getValue< long_t >( i->OStack.pick( 1 ) );
   const DictionaryDatum connection_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  AbstractLayer* source = dynamic_cast< AbstractLayer* >( get_network().get_node( source_gid ) );
-  AbstractLayer* target = dynamic_cast< AbstractLayer* >( get_network().get_node( target_gid ) );
+  AbstractLayer* source = dynamic_cast< AbstractLayer* >( Network::get_network().get_node( source_gid ) );
+  AbstractLayer* target = dynamic_cast< AbstractLayer* >( Network::get_network().get_node( target_gid ) );
 
   if ( ( source == NULL ) || ( target == NULL ) )
     throw LayerExpected();
@@ -1031,10 +1019,10 @@ TopologyModule::ConnectLayers_i_i_DFunction::execute( SLIInterpreter* i ) const
   std::string missed;
   if ( !connection_dict->all_accessed( missed ) )
   {
-    if ( get_network().dict_miss_is_error() )
+    if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      get_network().message( SLIInterpreter::M_WARNING,
+      Network::get_network().message( SLIInterpreter::M_WARNING,
         "topology::CreateLayers",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -1079,10 +1067,10 @@ TopologyModule::CreateParameter_DFunction::execute( SLIInterpreter* i ) const
   std::string missed;
   if ( !param_dict->all_accessed( missed ) )
   {
-    if ( get_network().dict_miss_is_error() )
+    if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      get_network().message( SLIInterpreter::M_WARNING,
+      Network::get_network().message( SLIInterpreter::M_WARNING,
         "topology::CreateParameter",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -1117,7 +1105,7 @@ TopologyModule::GetValue_a_PFunction::execute( SLIInterpreter* i ) const
   std::vector< double_t > point = getValue< std::vector< double_t > >( i->OStack.pick( 1 ) );
   ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
 
-  librandom::RngPtr rng = get_network().get_grng();
+  librandom::RngPtr rng = Network::get_network().get_grng();
   double_t value = param->value( point, rng );
 
   i->OStack.pop( 2 );
@@ -1173,7 +1161,7 @@ TopologyModule::DumpLayerNodes_os_iFunction::execute( SLIInterpreter* i ) const
   const index layer_gid = getValue< long_t >( i->OStack.pick( 0 ) );
   OstreamDatum out = getValue< OstreamDatum >( i->OStack.pick( 1 ) );
 
-  AbstractLayer const* const layer = dynamic_cast< AbstractLayer* >( net_->get_node( layer_gid ) );
+  AbstractLayer const* const layer = dynamic_cast< AbstractLayer* >( Network::get_network().get_node( layer_gid ) );
 
   if ( layer != 0 && out->good() )
     layer->dump_nodes( *out );
@@ -1234,7 +1222,7 @@ TopologyModule::DumpLayerConnections_os_i_lFunction::execute( SLIInterpreter* i 
 
   const Token syn_model = i->OStack.pick( 0 );
 
-  AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( net_->get_node( layer_gid ) );
+  AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( Network::get_network().get_node( layer_gid ) );
   if ( layer == NULL )
     throw TypeMismatch( "any layer type", "something else" );
 
@@ -1291,7 +1279,7 @@ TopologyModule::GetElement_i_iaFunction::execute( SLIInterpreter* i ) const
   {
   case 2:
   {
-    GridLayer< 2 >* layer = dynamic_cast< GridLayer< 2 >* >( net_->get_node( layer_gid ) );
+    GridLayer< 2 >* layer = dynamic_cast< GridLayer< 2 >* >( Network::get_network().get_node( layer_gid ) );
     if ( layer == 0 )
     {
       throw TypeMismatch( "grid layer node", "something else" );
@@ -1304,7 +1292,7 @@ TopologyModule::GetElement_i_iaFunction::execute( SLIInterpreter* i ) const
 
   case 3:
   {
-    GridLayer< 3 >* layer = dynamic_cast< GridLayer< 3 >* >( net_->get_node( layer_gid ) );
+    GridLayer< 3 >* layer = dynamic_cast< GridLayer< 3 >* >( Network::get_network().get_node( layer_gid ) );
     if ( layer == 0 )
     {
       throw TypeMismatch( "grid layer node", "something else" );

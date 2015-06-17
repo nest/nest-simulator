@@ -248,7 +248,7 @@ mynest::pif_psc_alpha::update( Time const& slice_origin,
       // send spike, and set spike time in archive.
       set_spiketime( Time::step( slice_origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      Network::get_network().send( *this, se, lag );
     }
 
     // add synaptic input currents for this step
@@ -267,7 +267,7 @@ mynest::pif_psc_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  B_.spikes.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), e.get_weight() );
+  B_.spikes.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), e.get_weight() );
 }
 
 void
@@ -276,7 +276,7 @@ mynest::pif_psc_alpha::handle( CurrentEvent& e )
   assert( e.get_delay() > 0 );
 
   B_.currents.add_value(
-    e.get_rel_delivery_steps( network()->get_slice_origin() ), e.get_weight() * e.get_current() );
+    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), e.get_weight() * e.get_current() );
 }
 
 // Do not move this function as inline to h-file. It depends on

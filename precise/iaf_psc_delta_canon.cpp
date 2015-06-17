@@ -456,7 +456,7 @@ nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
   // send spike
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  network()->send( *this, se, lag );
+  Network::get_network().send( *this, se, lag );
 
   return;
 }
@@ -479,7 +479,7 @@ nest::iaf_psc_delta_canon::emit_instant_spike_( Time const& origin,
   // send spike
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  network()->send( *this, se, lag );
+  Network::get_network().send( *this, se, lag );
 
   return;
 }
@@ -494,7 +494,7 @@ iaf_psc_delta_canon::handle( SpikeEvent& e )
      in the queue.  The time is computed according to Time Memo, Rule 3.
   */
   const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
-  B_.events_.add_spike( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.events_.add_spike( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -509,7 +509,7 @@ iaf_psc_delta_canon::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add stepwise constant current; MH 2009-10-14
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
 }
 
 

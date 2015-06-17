@@ -163,7 +163,7 @@ void
 binary_neuron< TGainfunction >::calibrate()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
-  V_.rng_ = net_->get_rng( get_thread() );
+  V_.rng_ = Network::get_network().get_rng( get_thread() );
 
   // draw next time of update for the neuron from exponential distribution
   // only if not yet initialized
@@ -207,7 +207,7 @@ binary_neuron< TGainfunction >::update( Time const& origin, const long_t from, c
         // use multiplicity 2 to signalize transition to 1 state
         // use multiplicity 1 to signalize transition to 0 state
         se.set_multiplicity( new_y ? 2 : 1 );
-        network()->send( *this, se, lag );
+        Network::get_network().send( *this, se, lag );
         S_.y_ = new_y;
       }
 
@@ -247,14 +247,14 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
       // received twice the same gid, so transition 0->1
       // take double weight to compensate for subtracting first event
       B_.spikes_.add_value(
-        e.get_rel_delivery_steps( network()->get_slice_origin() ), 2.0 * e.get_weight() );
+        e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), 2.0 * e.get_weight() );
     }
     else
     {
       // count this event negatively, assuming it comes as single event
       // transition 1->0
       B_.spikes_.add_value(
-        e.get_rel_delivery_steps( network()->get_slice_origin() ), -e.get_weight() );
+        e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), -e.get_weight() );
     }
   }
   else // multiplicity != 1
@@ -262,7 +262,7 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
   {
     // count this event positively, transition 0->1
     B_.spikes_.add_value(
-      e.get_rel_delivery_steps( network()->get_slice_origin() ), e.get_weight() );
+      e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), e.get_weight() );
   }
 
   S_.last_in_gid_ = gid;
@@ -281,7 +281,7 @@ binary_neuron< TGainfunction >::handle( CurrentEvent& e )
   // we use the spike buffer to receive the binary events
   // but also to handle the incoming current events added
   // both contributions are directly added to the variable h
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
 }
 
 

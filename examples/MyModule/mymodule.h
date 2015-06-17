@@ -59,11 +59,8 @@ public:
   /**
    * Initialize module by registering models with the network.
    * @param SLIInterpreter* SLI interpreter
-   * @param nest::Network*  Network with which to register models
-   * @note  Parameter Network is needed for historical compatibility
-   *        only.
    */
-  void init( SLIInterpreter*, nest::Network* );
+  void init( SLIInterpreter*);
 
   /**
    * Return the name of your model.

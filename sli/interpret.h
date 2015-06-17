@@ -58,11 +58,6 @@ class FunctionDatum;
 class BoolDatum;
 class DynModule;
 
-namespace nest
-{
-class Network;
-}
-
 extern "C" {
 void SLIthrowsignal( int s );
 }
@@ -861,7 +856,7 @@ public:
    * by sli-init.sli after all C++ initialization is done.
    * Do not use this for modules loaded at runtime!
    */
-  void addlinkeddynmodule( DynModule*, nest::Network* );
+  void addlinkeddynmodule( DynModule* );
 
   FunctionDatum* Ilookup( void ) const;
   FunctionDatum* Iiterate( void ) const;

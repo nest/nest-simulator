@@ -406,7 +406,7 @@ nest::hh_cond_exp_traub::update( Time const& origin, const long_t from, const lo
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
         SpikeEvent se;
-        network()->send( *this, se, lag );
+        Network::get_network().send( *this, se, lag );
       }
     }
 
@@ -425,14 +425,14 @@ nest::hh_cond_exp_traub::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
     // add with negative weight, ie positive value, since we are changing a
     // conductance
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -446,7 +446,7 @@ nest::hh_cond_exp_traub::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
 }
 
 void

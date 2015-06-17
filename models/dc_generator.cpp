@@ -113,5 +113,5 @@ nest::dc_generator::update( Time const& origin, const long_t from, const long_t 
 
   for ( long_t offs = from; offs < to; ++offs )
     if ( device_.is_active( Time::step( start + offs ) ) )
-      network()->send( *this, ce, offs );
+      Network::get_network().send( *this, ce, offs );
 }

@@ -39,7 +39,7 @@ class ConnectorModel
 {
 
 public:
-  ConnectorModel( Network& net, const std::string );
+  ConnectorModel( const std::string );
   ConnectorModel( const ConnectorModel&, const std::string );
   virtual ~ConnectorModel()
   {
@@ -121,14 +121,7 @@ public:
     return user_set_delay_extrema_;
   }
 
-  Network&
-  network() const
-  {
-    return net_;
-  }
-
 protected:
-  Network& net_;                   //!< The Network instance.
   Time min_delay_;                 //!< Minimal delay of all created synapses.
   Time max_delay_;                 //!< Maximal delay of all created synapses.
   size_t num_connections_;         //!< The number of connections registered with this type
@@ -148,8 +141,8 @@ class GenericConnectorModel : public ConnectorModel
   rport receptor_type_;
 
 public:
-  GenericConnectorModel( Network& net, const std::string name )
-    : ConnectorModel( net, name )
+  GenericConnectorModel( const std::string name )
+    : ConnectorModel( name )
     , receptor_type_( 0 )
   {
   }

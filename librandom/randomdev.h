@@ -83,7 +83,7 @@
  *   poisson_dev_(0.0),
  *  ...
  * {
- *   calibrate(network()->get_resolution());
+ *   calibrate(Network::get_network().get_resolution());
  * }
  * void nest::poisson_generator::calibrate(Time const & dt)
  * {
@@ -93,7 +93,7 @@
  * void nest::poisson_generator::update(thread thrd, Time const & T)
  * {
  *   ...
- *   librandom::RngPtr rng=Node::network()->get_rng(thrd);
+ *   librandom::RngPtr rng=Network::get_network().get_rng(thrd);
  *   ...
  *     long_t n_spikes = poisson_dev_.ldev(rng);
  *   ...

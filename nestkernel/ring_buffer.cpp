@@ -23,14 +23,14 @@
 #include "ring_buffer.h"
 
 nest::RingBuffer::RingBuffer()
-  : buffer_( 0.0, Scheduler::get_min_delay() + Scheduler::get_max_delay() )
+  : buffer_( 0.0, Network::get_network().get_min_delay() + Network::get_network().get_max_delay() )
 {
 }
 
 void
 nest::RingBuffer::resize()
 {
-  size_t size = Scheduler::get_min_delay() + Scheduler::get_max_delay();
+  size_t size = Network::get_network().get_min_delay() + Network::get_network().get_max_delay();
   if ( buffer_.size() != size )
   {
     buffer_.resize( size );
@@ -47,14 +47,14 @@ nest::RingBuffer::clear()
 
 
 nest::MultRBuffer::MultRBuffer()
-  : buffer_( 0.0, Scheduler::get_min_delay() + Scheduler::get_max_delay() )
+  : buffer_( 0.0, Network::get_network().get_min_delay() + Network::get_network().get_max_delay() )
 {
 }
 
 void
 nest::MultRBuffer::resize()
 {
-  size_t size = Scheduler::get_min_delay() + Scheduler::get_max_delay();
+  size_t size = Network::get_network().get_min_delay() + Network::get_network().get_max_delay();
   if ( buffer_.size() != size )
   {
     buffer_.resize( size );
@@ -70,14 +70,14 @@ nest::MultRBuffer::clear()
 
 
 nest::ListRingBuffer::ListRingBuffer()
-  : buffer_( Scheduler::get_min_delay() + Scheduler::get_max_delay() )
+  : buffer_( Network::get_network().get_min_delay() + Network::get_network().get_max_delay() )
 {
 }
 
 void
 nest::ListRingBuffer::resize()
 {
-  size_t size = Scheduler::get_min_delay() + Scheduler::get_max_delay();
+  size_t size = Network::get_network().get_min_delay() + Network::get_network().get_max_delay();
   if ( buffer_.size() != size )
   {
     buffer_.resize( size );

@@ -127,7 +127,7 @@ nest::spike_dilutor::update( Time const& T, const long_t from, const long_t to )
       DSSpikeEvent se;
 
       se.set_multiplicity( n_mother_spikes );
-      network()->send( *this, se, lag );
+      Network::get_network().send( *this, se, lag );
     }
   }
 }
@@ -145,7 +145,7 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
   // store the number of mother spikes again during the next call of event_hook().
   // reichert
 
-  librandom::RngPtr rng = net_->get_rng( get_thread() );
+  librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
   ulong_t n_mother_spikes = e.get_multiplicity();
   ulong_t n_spikes = 0;
 
@@ -167,6 +167,6 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
 void
 nest::spike_dilutor::handle( SpikeEvent& e )
 {
-  B_.n_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.n_spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
     static_cast< double_t >( e.get_multiplicity() ) );
 }

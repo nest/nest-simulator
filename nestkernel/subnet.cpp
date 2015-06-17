@@ -238,9 +238,9 @@ void
 nest::Subnet::set_label( std::string const l )
 {
   // set the new label on all sibling threads
-  for ( thread t = 0; t < network()->get_num_threads(); ++t )
+  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
   {
-    Node* n = network()->get_node( get_gid(), t );
+    Node* n = Network::get_network().get_node( get_gid(), t );
     Subnet* c = dynamic_cast< Subnet* >( n );
     assert( c );
     c->label_ = l;

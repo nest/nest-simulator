@@ -424,7 +424,7 @@ nest::iaf_cond_exp_sfa_rr::update( Time const& origin, const long_t from, const 
       S_.y_[ State_::G_RR ] += P_.q_rr;
 
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      Network::get_network().send( *this, se, lag );
     }
 
     // set new input current
@@ -441,10 +441,10 @@ nest::iaf_cond_exp_sfa_rr::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() ); // ensure conductance is positive
 }
 
@@ -457,7 +457,7 @@ nest::iaf_cond_exp_sfa_rr::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
 }
 
 void

@@ -57,14 +57,10 @@
 
 #ifndef _IS_PYNEST
 int
-neststartup( int argc, char** argv, SLIInterpreter& engine, nest::Network*& pNet )
+neststartup( int argc, char** argv, SLIInterpreter& engine )
 #else
 int
-neststartup( int argc,
-  char** argv,
-  SLIInterpreter& engine,
-  nest::Network*& pNet,
-  std::string modulepath )
+neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepath )
 #endif
 {
 
@@ -115,18 +111,17 @@ neststartup( int argc,
   addmodule< RegexpModule >( engine );
   addmodule< FilesystemModule >( engine );
 
-  // create the network and register with NestModule class
-  pNet = new nest::Network( engine );
-  assert( pNet != 0 );
-  nest::NestModule::register_network( *pNet );
+  // create the network
+  nest::Network::create_network( engine );
+  // register NestModule class
   addmodule< nest::NestModule >( engine );
 
   // now add static modules providing models
-  add_static_modules( engine, *pNet );
+  add_static_modules( engine );
 
 #ifdef HAVE_LIBLTDL
   // dynamic loader module for managing linked and dynamically loaded extension modules
-  nest::DynamicLoaderModule* pDynLoader = new nest::DynamicLoaderModule( pNet, engine );
+  nest::DynamicLoaderModule* pDynLoader = new nest::DynamicLoaderModule( engine );
 
   // initialize all modules that were linked into at compile time
   // these modules have registered via calling DynamicLoader::registerLinkedModule
@@ -154,6 +149,7 @@ nestshutdown( void )
 #ifdef HAVE_MPI
   nest::Communicator::finalize();
 #endif
+  nest::Network::destroy_network();
 }
 
 #if defined( HAVE_LIBNEUROSIM ) && defined( _IS_PYNEST )

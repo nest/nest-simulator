@@ -56,17 +56,12 @@ namespace nest
 SLIType NestModule::ConnectionType;
 SLIType NestModule::GIDCollectionType;
 
-Network* NestModule::net_ = 0;
-
 // At the time when NestModule is constructed, the SLI Interpreter
 // must already be initialized. NestModule relies on the presence of
 // the following SLI datastructures: Name, Dictionary
 
 NestModule::NestModule()
 {
-  // The network pointer must be initalized using register_network()
-  // before the NestModule instance is created.
-  assert( net_ != 0 );
 }
 
 NestModule::~NestModule()
@@ -76,13 +71,6 @@ NestModule::~NestModule()
 
   ConnectionType.deletetypename();
   GIDCollectionType.deletetypename();
-}
-
-void
-NestModule::register_network( Network& net )
-{
-  assert( net_ == 0 ); // register_network() must be called once only
-  net_ = &net;
 }
 
 // The following concerns the new module:
@@ -125,8 +113,8 @@ NestModule::ChangeSubnet_iFunction::execute( SLIInterpreter* i ) const
 
   index node_gid = getValue< long >( i->OStack.pick( 0 ) );
 
-  if ( get_network().get_node( node_gid )->is_subnet() )
-    get_network().go_to( node_gid );
+  if ( Network::get_network().get_node( node_gid )->is_subnet() )
+    Network::get_network().go_to( node_gid );
   else
     throw SubnetExpected();
 
@@ -148,8 +136,8 @@ NestModule::ChangeSubnet_iFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::CurrentSubnetFunction::execute( SLIInterpreter* i ) const
 {
-  assert( get_network().get_cwn() != 0 );
-  index current = get_network().get_cwn()->get_gid();
+  assert( Network::get_network().get_cwn() != 0 );
+  index current = Network::get_network().get_cwn()->get_gid();
 
   i->OStack.push( current );
   i->EStack.pop();
@@ -193,7 +181,7 @@ NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
 
   // Network::set_status() performs entry access checks for each
   // target and throws UnaccessedDictionaryEntry where necessary
-  get_network().set_status( node_id, dict );
+  Network::get_network().set_status( node_id, dict );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -212,21 +200,21 @@ NestModule::SetStatus_CDFunction::execute( SLIInterpreter* i ) const
   long port = getValue< long >( conn_dict, nest::names::port );
   long gid = getValue< long >( conn_dict, nest::names::source );
   thread tid = getValue< long >( conn_dict, nest::names::target_thread );
-  get_network().get_node( gid ); // Just to check if the node exists
+  Network::get_network().get_node( gid ); // Just to check if the node exists
 
   dict->clear_access_flags();
 
-  get_network().set_synapse_status( gid, synapse_id, port, tid, dict );
+  Network::get_network().set_synapse_status( gid, synapse_id, port, tid, dict );
 
   std::string missed;
   if ( !dict->all_accessed( missed ) )
   {
-    if ( get_network().dict_miss_is_error() )
+    if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry(missed +
         		                        "\nMaybe you tried to set common synapse properties through"
         		                        " an individual synapse?");
     else
-      get_network().message( SLIInterpreter::M_WARNING,
+      Network::get_network().message( SLIInterpreter::M_WARNING,
         "SetStatus",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -270,7 +258,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      get_network().set_synapse_status( con_id.get_source_gid(), // source_gid
+      Network::get_network().set_synapse_status( con_id.get_source_gid(), // source_gid
         con_id.get_synapse_model_id(),                           // synapse_id
         con_id.get_port(),                                       // port
         con_id.get_target_thread(),                              // target thread
@@ -278,10 +266,10 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       std::string missed;
       if ( !dict->all_accessed( missed ) )
       {
-        if ( get_network().dict_miss_is_error() )
+        if ( Network::get_network().dict_miss_is_error() )
           throw UnaccessedDictionaryEntry( missed );
         else
-          get_network().message( SLIInterpreter::M_WARNING,
+          Network::get_network().message( SLIInterpreter::M_WARNING,
             "SetStatus",
             ( "Unread dictionary entries: " + missed ).c_str() );
       }
@@ -295,7 +283,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ con ] );
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      get_network().set_synapse_status( con_id.get_source_gid(), // source_gid
+      Network::get_network().set_synapse_status( con_id.get_source_gid(), // source_gid
         con_id.get_synapse_model_id(),                           // synapse_id
         con_id.get_port(),                                       // port
         con_id.get_target_thread(),                              // target thread
@@ -303,10 +291,10 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       std::string missed;
       if ( !dict->all_accessed( missed ) )
       {
-        if ( get_network().dict_miss_is_error() )
+        if ( Network::get_network().dict_miss_is_error() )
           throw UnaccessedDictionaryEntry( missed );
         else
-          get_network().message( SLIInterpreter::M_WARNING,
+          Network::get_network().message( SLIInterpreter::M_WARNING,
             "SetStatus",
             ( "Unread dictionary entries: " + missed ).c_str() );
       }
@@ -368,7 +356,7 @@ NestModule::GetStatus_iFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   index node_id = getValue< long >( i->OStack.pick( 0 ) );
-  DictionaryDatum dict = get_network().get_status( node_id );
+  DictionaryDatum dict = Network::get_network().get_status( node_id );
 
   i->OStack.pop();
   i->OStack.push( dict );
@@ -383,9 +371,9 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
   long gid = conn.get_source_gid();
-  get_network().get_node( gid ); // Just to check if the node exists
+  Network::get_network().get_node( gid ); // Just to check if the node exists
 
-  DictionaryDatum result_dict = get_network().get_synapse_status(
+  DictionaryDatum result_dict = Network::get_network().get_synapse_status(
     gid, conn.get_synapse_model_id(), conn.get_port(), conn.get_target_thread() );
 
   i->OStack.pop();
@@ -405,7 +393,7 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
   for ( size_t nt = 0; nt < n_results; ++nt )
   {
     ConnectionDatum con_id = getValue< ConnectionDatum >( conns.get( nt ) );
-    DictionaryDatum result_dict = get_network().get_synapse_status( con_id.get_source_gid(),
+    DictionaryDatum result_dict = Network::get_network().get_synapse_status( con_id.get_source_gid(),
       con_id.get_synapse_model_id(),
       con_id.get_port(),
       con_id.get_target_thread() );
@@ -432,22 +420,22 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
   const Name modelname = getValue< Name >( i->OStack.pick( 1 ) );
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  const Token nodemodel = get_network().get_modeldict().lookup( modelname );
-  const Token synmodel = get_network().get_synapsedict().lookup( modelname );
+  const Token nodemodel = Network::get_network().get_modeldict().lookup( modelname );
+  const Token synmodel = Network::get_network().get_synapsedict().lookup( modelname );
 
   dict->clear_access_flags(); // set properties with access control
 
   if ( !nodemodel.empty() )
   {
     const index model_id = static_cast< index >( nodemodel );
-    get_network().get_model( model_id )->set_status( dict );
-    get_network().set_model_defaults_modified();
+    Network::get_network().get_model( model_id )->set_status( dict );
+    Network::get_network().set_model_defaults_modified();
   }
   else if ( !synmodel.empty() )
   {
     const index synapse_id = static_cast< index >( synmodel );
-    get_network().set_connector_defaults( synapse_id, dict );
-    get_network().set_model_defaults_modified();
+    Network::get_network().set_connector_defaults( synapse_id, dict );
+    Network::get_network().set_model_defaults_modified();
   }
   else
     throw UnknownModelName( modelname.toString() );
@@ -457,13 +445,13 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
   if ( !dict->all_accessed( missed ) )
   {
 
-    if ( get_network().dict_miss_is_error() )
+    if ( Network::get_network().dict_miss_is_error() )
     {
 
       throw UnaccessedDictionaryEntry( missed );
     }
     else
-      get_network().message( SLIInterpreter::M_WARNING,
+      Network::get_network().message( SLIInterpreter::M_WARNING,
         "SetDefaults",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -487,21 +475,21 @@ NestModule::GetDefaults_lFunction::execute( SLIInterpreter* i ) const
 
   const Name modelname = getValue< Name >( i->OStack.pick( 0 ) );
 
-  const Token nodemodel = get_network().get_modeldict().lookup( modelname );
-  const Token synmodel = get_network().get_synapsedict().lookup( modelname );
+  const Token nodemodel = Network::get_network().get_modeldict().lookup( modelname );
+  const Token synmodel = Network::get_network().get_synapsedict().lookup( modelname );
 
   DictionaryDatum dict;
 
   if ( !nodemodel.empty() )
   {
     const long model_id = static_cast< long >( nodemodel );
-    Model* m = get_network().get_model( model_id );
+    Model* m = Network::get_network().get_model( model_id );
     dict = m->get_status();
   }
   else if ( !synmodel.empty() )
   {
     const long synapse_id = static_cast< long >( synmodel );
-    dict = get_network().get_connector_defaults( synapse_id );
+    dict = Network::get_network().get_connector_defaults( synapse_id );
   }
   else
     throw UnknownModelName( modelname.toString() );
@@ -520,15 +508,15 @@ NestModule::GetConnections_DFunction::execute( SLIInterpreter* i ) const
 
   dict->clear_access_flags();
 
-  ArrayDatum array = get_network().get_connections( dict );
+  ArrayDatum array = Network::get_network().get_connections( dict );
 
   std::string missed;
   if ( !dict->all_accessed( missed ) )
   {
-    if ( get_network().dict_miss_is_error() )
+    if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      get_network().message( SLIInterpreter::M_WARNING,
+      Network::get_network().message( SLIInterpreter::M_WARNING,
         "GetConnections",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -563,7 +551,7 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
 
   // experimental callback and signal safe, uncomment for testing, MD 090105
   // i->EStack.push(i->execbarrier_token);  // protect by barrier
-  get_network().simulate( t );
+  Network::get_network().simulate( t );
   // i->EStack.pop();                       // pop the barrier
 
 
@@ -579,7 +567,7 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::ResumeSimulationFunction::execute( SLIInterpreter* i ) const
 {
-  get_network().resume();
+  Network::get_network().resume();
   i->EStack.pop();
 }
 
@@ -609,8 +597,8 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
   const std::string newmodname = getValue< std::string >( i->OStack.pick( 1 ) );
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  const Dictionary& modeldict = get_network().get_modeldict();
-  const Dictionary& synapsedict = get_network().get_synapsedict();
+  const Dictionary& modeldict = Network::get_network().get_modeldict();
+  const Dictionary& synapsedict = Network::get_network().get_synapsedict();
 
   if ( modeldict.known( newmodname ) || synapsedict.known( newmodname ) )
     throw NewModelNameExists( newmodname );
@@ -622,14 +610,14 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
   if ( !oldnodemodel.empty() )
   {
     const index old_id = static_cast< index >( oldnodemodel );
-    const index new_id = get_network().copy_model( old_id, newmodname );
-    get_network().get_model( new_id )->set_status( dict );
+    const index new_id = Network::get_network().copy_model( old_id, newmodname );
+    Network::get_network().get_model( new_id )->set_status( dict );
   }
   else if ( !oldsynmodel.empty() )
   {
     const index old_id = static_cast< index >( oldsynmodel );
-    const index new_id = get_network().copy_synapse_prototype( old_id, newmodname );
-    get_network().set_connector_defaults( new_id, dict );
+    const index new_id = Network::get_network().copy_synapse_prototype( old_id, newmodname );
+    Network::get_network().set_connector_defaults( new_id, dict );
   }
   else
     throw UnknownModelName( oldmodname );
@@ -637,10 +625,10 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
   std::string missed;
   if ( !dict->all_accessed( missed ) )
   {
-    if ( get_network().dict_miss_is_error() )
+    if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      get_network().message( SLIInterpreter::M_WARNING,
+      Network::get_network().message( SLIInterpreter::M_WARNING,
         "CopyModel",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -681,13 +669,13 @@ NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const
     throw RangeCheck();
 
   const std::string modname = getValue< std::string >( i->OStack.pick( 1 ) );
-  const Token model = get_network().get_modeldict().lookup( modname );
+  const Token model = Network::get_network().get_modeldict().lookup( modname );
   if ( model.empty() )
     throw UnknownModelName( modname );
 
   // create
   const index model_id = static_cast< index >( model );
-  const long last_node_id = get_network().add_node( model_id, n_nodes );
+  const long last_node_id = Network::get_network().add_node( model_id, n_nodes );
   i->OStack.pop( 2 );
   i->OStack.push( last_node_id );
   i->EStack.pop();
@@ -698,7 +686,7 @@ NestModule::RestoreNodes_aFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
   ArrayDatum node_list = getValue< ArrayDatum >( i->OStack.top() );
-  get_network().restore_nodes( node_list );
+  Network::get_network().restore_nodes( node_list );
   i->OStack.pop();
   i->EStack.pop();
 }
@@ -713,7 +701,7 @@ NestModule::GetNodes_i_D_b_bFunction::execute( SLIInterpreter* i ) const
   const DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 2 ) );
   const index node_id = getValue< long >( i->OStack.pick( 3 ) );
 
-  Subnet* subnet = dynamic_cast< Subnet* >( get_network().get_node( node_id ) );
+  Subnet* subnet = dynamic_cast< Subnet* >( Network::get_network().get_node( node_id ) );
   if ( subnet == NULL )
     throw SubnetExpected();
 
@@ -757,7 +745,7 @@ NestModule::GetChildren_i_D_bFunction::execute( SLIInterpreter* i ) const
   const DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const index node_id = getValue< long >( i->OStack.pick( 2 ) );
 
-  Subnet* subnet = dynamic_cast< Subnet* >( get_network().get_node( node_id ) );
+  Subnet* subnet = dynamic_cast< Subnet* >( Network::get_network().get_node( node_id ) );
   if ( subnet == NULL )
     throw SubnetExpected();
 
@@ -790,7 +778,7 @@ NestModule::GetLeaves_i_D_bFunction::execute( SLIInterpreter* i ) const
   const DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const index node_id = getValue< long >( i->OStack.pick( 2 ) );
 
-  Subnet* subnet = dynamic_cast< Subnet* >( get_network().get_node( node_id ) );
+  Subnet* subnet = dynamic_cast< Subnet* >( Network::get_network().get_node( node_id ) );
   if ( subnet == NULL )
     throw SubnetExpected();
 
@@ -838,7 +826,7 @@ NestModule::GetLeaves_i_D_bFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
 {
-  get_network().reset_kernel();
+  Network::get_network().reset_kernel();
   i->EStack.pop();
 }
 
@@ -872,7 +860,7 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::ResetNetworkFunction::execute( SLIInterpreter* i ) const
 {
-  get_network().reset_network();
+  Network::get_network().reset_network();
   i->message( SLIInterpreter::M_INFO,
     "ResetNetworkFunction",
     "The network has been reset. Random generators and time have NOT been reset." );
@@ -892,17 +880,17 @@ NestModule::Connect_i_i_lFunction::execute( SLIInterpreter* i ) const
   index target = getValue< long >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  const Token synmodel = get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
   // check whether the target is on this process
-  if ( get_network().is_local_gid( target ) )
+  if ( Network::get_network().is_local_gid( target ) )
   {
-    Node* const target_node = get_network().get_node( target );
+    Node* const target_node = Network::get_network().get_node( target );
     const thread target_thread = target_node->get_thread();
-    get_network().connect( source, target_node, target_thread, synmodel_id );
+    Network::get_network().connect( source, target_node, target_thread, synmodel_id );
   }
 
   i->OStack.pop( 3 );
@@ -922,17 +910,17 @@ NestModule::Connect_i_i_d_d_lFunction::execute( SLIInterpreter* i ) const
   double_t delay = getValue< double_t >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  const Token synmodel = get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
   // check whether the target is on this process
-  if ( get_network().is_local_gid( target ) )
+  if ( Network::get_network().is_local_gid( target ) )
   {
-    Node* const target_node = get_network().get_node( target );
+    Node* const target_node = Network::get_network().get_node( target );
     const thread target_thread = target_node->get_thread();
-    get_network().connect( source, target_node, target_thread, synmodel_id, delay, weight );
+    Network::get_network().connect( source, target_node, target_thread, synmodel_id, delay, weight );
   }
 
   i->OStack.pop( 5 );
@@ -951,17 +939,17 @@ NestModule::Connect_i_i_D_lFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  const Token synmodel = get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
   // check whether the target is on this process
-  if ( get_network().is_local_gid( target ) )
+  if ( Network::get_network().is_local_gid( target ) )
   {
-    Node* const target_node = get_network().get_node( target );
+    Node* const target_node = Network::get_network().get_node( target );
     const thread target_thread = target_node->get_thread();
-    get_network().connect( source, target_node, target_thread, synmodel_id, params );
+    Network::get_network().connect( source, target_node, target_thread, synmodel_id, params );
   }
 
   i->OStack.pop( 4 );
@@ -981,7 +969,7 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by connect
-  get_network().connect( sources, targets, connectivity, synapse_params );
+  Network::get_network().connect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
   i->EStack.pop();
@@ -1026,20 +1014,20 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  const Token synmodel = get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  get_network().divergent_connect( source, params, synmodel_id );
+  Network::get_network().divergent_connect( source, params, synmodel_id );
   // dict access control only if we actually made a connection
   std::string missed;
   if ( !params->all_accessed( missed ) )
   {
-    if ( get_network().dict_miss_is_error() )
+    if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      get_network().message( SLIInterpreter::M_WARNING,
+      Network::get_network().message( SLIInterpreter::M_WARNING,
         "Connect",
         ( "The following synapse parameters are unused: " + missed ).c_str() );
   }
@@ -1084,7 +1072,7 @@ NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
   ArrayDatum connectome = getValue< ArrayDatum >( i->OStack.top() );
 
-  get_network().connect( connectome );
+  Network::get_network().connect( connectome );
   i->OStack.pop();
   i->EStack.pop();
 }
@@ -1131,12 +1119,12 @@ NestModule::DivergentConnect_i_ia_a_a_lFunction::execute( SLIInterpreter* i ) co
   TokenArray delays = getValue< TokenArray >( i->OStack.pick( 1 ) );
 
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  get_network().divergent_connect( source_adr, target_adr, weights, delays, synmodel_id );
+  Network::get_network().divergent_connect( source_adr, target_adr, weights, delays, synmodel_id );
 
   i->OStack.pop( 5 );
   i->EStack.pop();
@@ -1158,12 +1146,12 @@ NestModule::RDivergentConnect_i_i_ia_da_da_b_b_lFunction::execute( SLIInterprete
   bool allow_autapses = getValue< bool >( i->OStack.pick( 1 ) );
 
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  get_network().random_divergent_connect(
+  Network::get_network().random_divergent_connect(
     source_adr, target_adr, n, weights, delays, allow_multapses, allow_autapses, synmodel_id );
 
   i->OStack.pop( 8 );
@@ -1212,12 +1200,12 @@ NestModule::ConvergentConnect_ia_i_a_a_lFunction::execute( SLIInterpreter* i ) c
   TokenArray delays = getValue< TokenArray >( i->OStack.pick( 1 ) );
 
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  get_network().convergent_connect( source_adr, target_adr, weights, delays, synmodel_id );
+  Network::get_network().convergent_connect( source_adr, target_adr, weights, delays, synmodel_id );
 
   i->OStack.pop( 5 );
   i->EStack.pop();
@@ -1240,12 +1228,12 @@ NestModule::RConvergentConnect_ia_i_i_da_da_b_b_lFunction::execute( SLIInterpret
   bool allow_autapses = getValue< bool >( i->OStack.pick( 1 ) );
 
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  get_network().random_convergent_connect(
+  Network::get_network().random_convergent_connect(
     source_adr, target_adr, n, weights, delays, allow_multapses, allow_autapses, synmodel_id );
 
   i->OStack.pop( 8 );
@@ -1268,12 +1256,12 @@ NestModule::RConvergentConnect_ia_ia_ia_daa_daa_b_b_lFunction::execute( SLIInter
   bool allow_autapses = getValue< bool >( i->OStack.pick( 1 ) );
 
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  get_network().random_convergent_connect(
+  Network::get_network().random_convergent_connect(
     source_adr, target_adr, n, weights, delays, allow_multapses, allow_autapses, synmodel_id );
 
   i->OStack.pop( 8 );
@@ -1298,7 +1286,7 @@ NestModule::RConvergentConnect_ia_ia_ia_daa_daa_b_b_lFunction::execute( SLIInter
 void
 NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
 {
-  get_network().memory_info();
+  Network::get_network().memory_info();
   i->EStack.pop();
 }
 
@@ -1439,7 +1427,7 @@ NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
 
   long gid = getValue< long >( i->OStack.pick( 1 ) );
   long depth = getValue< long >( i->OStack.pick( 0 ) );
-  get_network().print( gid, depth - 1 );
+  Network::get_network().print( gid, depth - 1 );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -1555,7 +1543,7 @@ NestModule::SetNumRecProcesses_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
   long n_rec_procs = getValue< long >( i->OStack.pick( 0 ) );
-  get_network().set_num_rec_processes( n_rec_procs );
+  Network::get_network().set_num_rec_processes( n_rec_procs );
   i->OStack.pop( 1 );
   i->EStack.pop();
 }
@@ -1801,9 +1789,9 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   index target = getValue< long >( i->OStack.pick( 0 ) );
-  Node* target_node = get_network().get_node( target );
+  Node* target_node = Network::get_network().get_node( target );
 
-  if ( !get_network().is_local_node( target_node ) )
+  if ( !Network::get_network().is_local_node( target_node ) )
     throw LocalNodeExpected( target );
 
   // Only nodes with proxies have a well-defined VP and thus thread.
@@ -1811,7 +1799,7 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
   if ( !target_node->has_proxies() )
     throw NodeWithProxiesExpected( target );
 
-  librandom::RngPtr rng = get_network().get_rng( target_node->get_thread() );
+  librandom::RngPtr rng = Network::get_network().get_rng( target_node->get_thread() );
 
   Token rt( new librandom::RngDatum( rng ) );
   i->OStack.pop( 1 );
@@ -1849,7 +1837,7 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::GetGlobalRngFunction::execute( SLIInterpreter* i ) const
 {
-  librandom::RngPtr rng = get_network().get_grng();
+  librandom::RngPtr rng = Network::get_network().get_grng();
 
   Token rt( new librandom::RngDatum( rng ) );
   i->OStack.push_move( rt );
@@ -1945,7 +1933,7 @@ NestModule::SetAcceptableLatencyFunction::execute( SLIInterpreter* i ) const
   std::string port_name = getValue< std::string >( i->OStack.pick( 1 ) );
   double latency = getValue< double >( i->OStack.pick( 0 ) );
 
-  get_network().set_music_in_port_acceptable_latency( port_name, latency );
+  Network::get_network().set_music_in_port_acceptable_latency( port_name, latency );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -1959,7 +1947,7 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
   std::string port_name = getValue< std::string >( i->OStack.pick( 1 ) );
   int maxBuffered = getValue< long >( i->OStack.pick( 0 ) );
 
-  get_network().set_music_in_port_max_buffered( port_name, maxBuffered );
+  Network::get_network().set_music_in_port_max_buffered( port_name, maxBuffered );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -1980,7 +1968,7 @@ NestModule::init( SLIInterpreter* i )
 
   // set resolution, ensure clock is calibrated to new resolution
   Time::reset_resolution();
-  net_->calibrate_clock();
+  Network::get_network().calibrate_clock();
 
   // register interface functions with interpreter
   i->createcommand( "ChangeSubnet", &changesubnet_ifunction );
@@ -2067,12 +2055,12 @@ NestModule::init( SLIInterpreter* i )
 #endif
 
   // Add connection rules
-  net_->register_conn_builder< OneToOneBuilder >( "one_to_one" );
-  net_->register_conn_builder< AllToAllBuilder >( "all_to_all" );
-  net_->register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
-  net_->register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
-  net_->register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
-  net_->register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
+  Network::get_network().register_conn_builder< OneToOneBuilder >( "one_to_one" );
+  Network::get_network().register_conn_builder< AllToAllBuilder >( "all_to_all" );
+  Network::get_network().register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
+  Network::get_network().register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
+  Network::get_network().register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
+  Network::get_network().register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
 
   Token statusd = i->baselookup( Name( "statusdict" ) );
   DictionaryDatum dd = getValue< DictionaryDatum >( statusd );

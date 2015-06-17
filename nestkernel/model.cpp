@@ -23,7 +23,7 @@
 #include "model.h"
 #include "exceptions.h"
 #include "dictutils.h"
-#include "nestmodule.h"
+#include "network.h"
 #include "compose.hpp"
 #include <algorithm>
 
@@ -40,7 +40,7 @@ Model::Model( const std::string& name )
 void
 Model::set_threads()
 {
-  set_threads_( NestModule::get_num_threads() );
+  set_threads_( Network::get_network().get_num_threads() );
 }
 
 void
@@ -116,7 +116,7 @@ Model::get_status( void )
     tmp[ t ] = memory_[ t ].get_instantiations();
 
   ( *d )[ "instantiations" ] = Token( tmp );
-  ( *d )[ "type_id" ] = LiteralDatum( Node::network()->get_model( type_id_ )->get_name() );
+  ( *d )[ "type_id" ] = LiteralDatum( Network::get_network().get_model( type_id_ )->get_name() );
 
   for ( size_t t = 0; t < tmp.size(); ++t )
     tmp[ t ] = memory_[ t ].get_total();

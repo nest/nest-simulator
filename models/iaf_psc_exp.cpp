@@ -317,7 +317,7 @@ nest::iaf_psc_exp::update( const Time& origin, const long_t from, const long_t t
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      Network::get_network().send( *this, se, lag );
     }
 
     // set new input current
@@ -335,10 +335,10 @@ nest::iaf_psc_exp::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spikes_in_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spikes_in_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 
@@ -353,11 +353,11 @@ nest::iaf_psc_exp::handle( CurrentEvent& e )
   // add weighted current; HEP 2002-10-04
   if ( 0 == e.get_rport() )
   {
-    B_.currents_[ 0 ].add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+    B_.currents_[ 0 ].add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
   }
   if ( 1 == e.get_rport() )
   {
-    B_.currents_[ 1 ].add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+    B_.currents_[ 1 ].add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
   }
 }
 

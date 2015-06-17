@@ -338,7 +338,7 @@ nest::mat2_psc_exp::update( Time const& origin, const long_t from, const long_t 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
         SpikeEvent se;
-        network()->send( *this, se, lag );
+        Network::get_network().send( *this, se, lag );
       }
     }
     else
@@ -359,10 +359,10 @@ nest::mat2_psc_exp::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spikes_in_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spikes_in_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 
@@ -375,7 +375,7 @@ nest::mat2_psc_exp::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
 }
 
 void

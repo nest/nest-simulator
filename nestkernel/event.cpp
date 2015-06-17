@@ -33,7 +33,7 @@
 
 #include "node.h"
 #include "event.h"
-#include "scheduler.h"
+#include "network.h"
 
 namespace nest
 {
@@ -51,17 +51,6 @@ Event::Event()
   , offset_( 0.0 )
   , w_( 0.0 )
 {
-}
-
-
-delay
-Event::get_max_delay() const
-{
-  // This is dead stupid, but I was not able to
-  // formulate a forward declaration of the static
-  // function Scheduler::get_max_delay() :-(
-  // mog
-  return Scheduler::get_max_delay();
 }
 
 

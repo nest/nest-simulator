@@ -71,7 +71,7 @@ parrot_neuron_ps::update( Time const& origin, long_t const from, long_t const to
       // send spike
       SpikeEvent se;
       se.set_offset( ev_offset );
-      network()->send( *this, se, lag );
+      Network::get_network().send( *this, se, lag );
     }
   }
 }
@@ -87,7 +87,7 @@ parrot_neuron_ps::handle( SpikeEvent& e )
   // in the queue.  The time is computed according to Time Memo, Rule 3.
   long_t const Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
 
-  B_.events_.add_spike( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.events_.add_spike( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );

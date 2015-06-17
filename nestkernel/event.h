@@ -150,8 +150,6 @@ public:
    */
   delay get_delay() const;
 
-  delay get_max_delay() const;
-
   /**
    * Relative spike delivery time in steps.
    * Returns the delivery time of the spike relative to a given

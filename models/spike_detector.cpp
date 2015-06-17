@@ -70,11 +70,11 @@ nest::spike_detector::init_buffers_()
 void
 nest::spike_detector::calibrate()
 {
-  if ( !user_set_precise_times_ && network()->get_off_grid_communication() )
+  if ( !user_set_precise_times_ && Network::get_network().get_off_grid_communication() )
   {
     device_.set_precise( true, 15 );
 
-    network()->message( SLIInterpreter::M_INFO,
+    Network::get_network().message( SLIInterpreter::M_INFO,
       "spike_detector::calibrate",
       String::compose( "Precise neuron models exist: the property precise_times "
                        "of the %1 with gid %2 has been set to true, precision has "
@@ -89,8 +89,8 @@ nest::spike_detector::calibrate()
 void
 nest::spike_detector::update( Time const&, const long_t, const long_t )
 {
-  for ( std::vector< Event* >::iterator e = B_.spikes_[ network()->read_toggle() ].begin();
-        e != B_.spikes_[ network()->read_toggle() ].end();
+  for ( std::vector< Event* >::iterator e = B_.spikes_[ Network::get_network().read_toggle() ].begin();
+        e != B_.spikes_[ Network::get_network().read_toggle() ].end();
         ++e )
   {
     assert( *e != 0 );
@@ -100,7 +100,7 @@ nest::spike_detector::update( Time const&, const long_t, const long_t )
 
   // do not use swap here to clear, since we want to keep the reserved()
   // memory for the next round
-  B_.spikes_[ network()->read_toggle() ].clear();
+  B_.spikes_[ Network::get_network().read_toggle() ].clear();
 }
 
 void
@@ -113,7 +113,7 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( local_receiver_ && get_thread() == 0 )
   {
-    const SiblingContainer* siblings = network()->get_thread_siblings( get_gid() );
+    const SiblingContainer* siblings = Network::get_network().get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
     for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
       ( *sibling )->get_status( d );
@@ -139,10 +139,10 @@ nest::spike_detector::handle( SpikeEvent& e )
     assert( e.get_multiplicity() > 0 );
 
     long_t dest_buffer;
-    if ( network()->get_model_of_gid( e.get_sender_gid() )->has_proxies() )
-      dest_buffer = network()->read_toggle(); // events from central queue
+    if ( Network::get_network().get_model_of_gid( e.get_sender_gid() )->has_proxies() )
+      dest_buffer = Network::get_network().read_toggle(); // events from central queue
     else
-      dest_buffer = network()->write_toggle(); // locally delivered events
+      dest_buffer = Network::get_network().write_toggle(); // locally delivered events
 
     for ( int_t i = 0; i < e.get_multiplicity(); ++i )
     {

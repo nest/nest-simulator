@@ -23,19 +23,19 @@
 #ifndef NEST_TIMEMODIFIER_H
 #define NEST_TIMEMODIFIER_H
 
-#include "scheduler.h"
+#include "network.h"
 
 /*
-TimeModifier is an interface class which defines the scheduler's
+TimeModifier is an interface class which defines the networks's
 ability to modify the representation of time. It is only safe
 to change the number of tics representing a millisecond if no
 Time objects exist or it is guaranteed that all Time objects are
-reinitialized before usage. Only the Scheduler can do this.
+reinitialized before usage. Only the network can do this.
 Therefore the functions
   set_tics_per_ms
 and
   set_tics_per_step_default
-are only accessible by specific members of the Scheduler
+are only accessible by specific members of the Network
  (reset, set_status)
 
 Diesmann
@@ -47,11 +47,11 @@ namespace nest
 
 class TimeModifier
 {
-  // allow Scheduler::set_status to change Time representation
-  friend void Scheduler::set_status( DictionaryDatum const& );
+  // allow Network::set_status to change Time representation
+  friend void Network::set_status( DictionaryDatum const& );
 
-  // allow Scheduler::rest to change Time representation
-  friend void Scheduler::reset();
+  // allow Network::rest to change Time representation
+  friend void Network::reset();
 
 private:
   /**

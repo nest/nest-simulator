@@ -152,7 +152,7 @@ nest::mip_generator::update( Time const& T, const long_t from, const long_t to )
       DSSpikeEvent se;
 
       se.set_multiplicity( n_mother_spikes );
-      network()->send( *this, se, lag );
+      Network::get_network().send( *this, se, lag );
     }
   }
 }
@@ -170,7 +170,7 @@ nest::mip_generator::event_hook( DSSpikeEvent& e )
   // store the number of mother spikes again during the next call of event_hook().
   // reichert
 
-  librandom::RngPtr rng = net_->get_rng( get_thread() );
+  librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
   ulong_t n_mother_spikes = e.get_multiplicity();
   ulong_t n_spikes = 0;
 

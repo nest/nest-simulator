@@ -237,11 +237,11 @@ GenericModel< ElementT >::set_model_id( int i )
  */
 template < class ModelT >
 index
-register_model( Network& net, const std::string& name, bool private_model = false )
+register_model( const std::string& name, bool private_model = false )
 {
   Model* prototype = new GenericModel< ModelT >( name );
   assert( prototype != 0 );
-  return net.register_model( *prototype, private_model );
+  return Network::get_network().register_model( *prototype, private_model );
 }
 
 /**
@@ -264,8 +264,7 @@ register_model( Network& net, const std::string& name, bool private_model = fals
  */
 template < class ModelT >
 index
-register_preconf_model( Network& net,
-  const std::string& name,
+register_preconf_model( const std::string& name,
   Dictionary& conf,
   bool private_model = false )
 {
@@ -275,7 +274,7 @@ register_preconf_model( Network& net,
   prototype->set_status( conf );
   std::string missed;
   assert( conf.all_accessed( missed ) ); // we only get here from C++ code, no need for exception
-  return net.register_model( *prototype, private_model );
+  return Network::get_network().register_model( *prototype, private_model );
 }
 
 /**
@@ -292,9 +291,9 @@ register_preconf_model( Network& net,
  */
 template < class ModelT >
 index
-register_private_model( Network& net, const std::string& name )
+register_private_model( const std::string& name )
 {
-  return register_model< ModelT >( net, name, true );
+  return register_model< ModelT >( name, true );
 }
 }
 #endif

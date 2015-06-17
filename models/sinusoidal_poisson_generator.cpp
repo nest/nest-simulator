@@ -200,7 +200,7 @@ nest::sinusoidal_poisson_generator::calibrate()
 
   // time resolution
   V_.h_ = Time::get_resolution().get_ms();
-  const double_t t = network()->get_time().get_ms();
+  const double_t t = Network::get_network().get_time().get_ms();
 
   // initial state
   S_.y_0_ = P_.ac_ * std::cos( P_.om_ * t + P_.phi_ );
@@ -221,7 +221,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
   const long_t start = origin.get_steps();
 
   // random number generator
-  librandom::RngPtr rng = net_->get_rng( get_thread() );
+  librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
 
   // We iterate the dynamics even when the device is turned off,
   // but do not issue spikes while it is off. In this way, the
@@ -253,7 +253,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
       if ( P_.individual_spike_trains_ )
       {
         DSSpikeEvent se;
-        network()->send( *this, se, lag );
+        Network::get_network().send( *this, se, lag );
       }
       else
       {
@@ -261,7 +261,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
         long_t n_spikes = V_.poisson_dev_.ldev( rng );
         SpikeEvent se;
         se.set_multiplicity( n_spikes );
-        network()->send( *this, se, lag );
+        Network::get_network().send( *this, se, lag );
       }
     }
   }
@@ -270,7 +270,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
 void
 nest::sinusoidal_poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  librandom::RngPtr rng = net_->get_rng( get_thread() );
+  librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
   V_.poisson_dev_.set_lambda( S_.rate_ * V_.h_ );
   long_t n_spikes = V_.poisson_dev_.ldev( rng );
 

@@ -42,11 +42,10 @@ class Layer;
 class TopologyModule : public SLIModule
 {
 public:
-  TopologyModule( Network& );
+  TopologyModule();
   ~TopologyModule();
 
   /**
-   * Initialize module by registering models with the network.
    * @param SLIInterpreter* SLI interpreter, must know modeldict
    */
   void init( SLIInterpreter* );
@@ -187,11 +186,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } cvdict_Mfunction;
 
-  /**
-   * Return a reference to the network managed by the topology module.
-   */
-  static Network& get_network();
-
   typedef GenericFactory< AbstractMask > MaskFactory;
   typedef GenericFactory< AbstractMask >::CreatorFunction MaskCreatorFunction;
 
@@ -304,12 +298,6 @@ private:
    * Return a reference to the parameter factory class.
    */
   static ParameterFactory& parameter_factory_();
-
-  /**
-   * - @c net must be static, so that the execute() members of the
-   *   SliFunction classes in the module can access the network.
-   */
-  static Network* net_;
 };
 
 /**
@@ -330,13 +318,6 @@ public:
 
   std::string message();
 };
-
-inline Network&
-TopologyModule::get_network()
-{
-  assert( net_ != 0 );
-  return *net_;
-}
 
 template < class T >
 inline bool

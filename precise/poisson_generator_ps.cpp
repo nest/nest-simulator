@@ -182,7 +182,7 @@ nest::poisson_generator_ps::update( Time const& T, const long_t from, const long
     // the event hook then sends out the real spikes with offgrid timing
     // We pretend to send at T+from
     DSSpikeEvent se;
-    net_->send( *this, se, from );
+    Network::get_network().send( *this, se, from );
   }
 }
 
@@ -196,7 +196,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
   assert( 0 <= prt && static_cast< size_t >( prt ) < B_.next_spike_.size() );
 
   // obtain rng
-  librandom::RngPtr rng = net_->get_rng( get_thread() );
+  librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
 
   // introduce nextspk as a shorthand
   Buffers_::SpikeTime& nextspk = B_.next_spike_[ prt ];

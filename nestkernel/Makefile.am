@@ -70,7 +70,6 @@ libnest_la_SOURCES=\
 		recording_device.h recording_device.cpp\
 		pseudo_recording_device.h\
 		ring_buffer.h ring_buffer.cpp\
-		scheduler.h scheduler.cpp\
 		spikecounter.h spikecounter.cpp\
 		stimulating_device.h\
 		target_identifier.h\

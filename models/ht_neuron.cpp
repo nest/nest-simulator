@@ -644,7 +644,7 @@ ht_neuron::update( Time const& origin, const long_t from, const long_t to )
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      Network::get_network().send( *this, se, lag );
     }
 
     // set new input current
@@ -661,7 +661,7 @@ nest::ht_neuron::handle( SpikeEvent& e )
   assert( e.get_rport() < static_cast< int_t >( B_.spike_inputs_.size() ) );
 
   B_.spike_inputs_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -674,7 +674,7 @@ nest::ht_neuron::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * I );
+  B_.currents_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * I );
 }
 
 void

@@ -58,7 +58,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     {
 
       element_name = std::string( *tp );
-      element_model = net_->get_modeldict().lookup( element_name );
+      element_model = Network::get_network().get_modeldict().lookup( element_name );
 
       if ( element_model.empty() )
         throw UnknownModelName( element_name );
@@ -83,7 +83,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   {
 
     element_name = getValue< std::string >( layer_dict, names::elements );
-    element_model = net_->get_modeldict().lookup( element_name );
+    element_model = Network::get_network().get_modeldict().lookup( element_name );
 
     if ( element_model.empty() )
       throw UnknownModelName( element_name );
@@ -141,26 +141,26 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   }
 
   assert( layer_model_name != 0 );
-  Token layer_model = net_->get_modeldict().lookup( layer_model_name );
+  Token layer_model = Network::get_network().get_modeldict().lookup( layer_model_name );
   if ( layer_model.empty() )
     throw UnknownModelName( layer_model_name );
 
-  index layer_node = net_->add_node( layer_model );
+  index layer_node = Network::get_network().add_node( layer_model );
 
   // Remember original subnet
-  const index cwnode = net_->get_cwn()->get_gid();
+  const index cwnode = Network::get_network().get_cwn()->get_gid();
 
-  net_->go_to( layer_node );
+  Network::get_network().go_to( layer_node );
 
   // Create layer nodes.
   for ( size_t i = 0; i < element_ids.size(); ++i )
-    net_->add_node( element_ids[ i ], length );
+    Network::get_network().add_node( element_ids[ i ], length );
 
   // Return to original subnet
-  net_->go_to( cwnode );
+  Network::get_network().go_to( cwnode );
 
   // Set layer parameters according to input dictionary.
-  AbstractLayer* layer = dynamic_cast< AbstractLayer* >( net_->get_node( layer_node ) );
+  AbstractLayer* layer = dynamic_cast< AbstractLayer* >( Network::get_network().get_node( layer_node ) );
   layer->depth_ = element_ids.size();
   layer->set_status( layer_dict );
 

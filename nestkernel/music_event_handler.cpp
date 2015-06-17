@@ -27,7 +27,7 @@
 #include "nest.h"
 #include "event.h"
 #include "communicator.h"
-#include "network.h" // needed for event_impl.h to be included
+#include "network.h"
 
 namespace nest
 {
@@ -43,15 +43,13 @@ MusicEventHandler::MusicEventHandler()
 
 MusicEventHandler::MusicEventHandler( std::string portname,
   double acceptable_latency,
-  int max_buffered,
-  Network* net )
+  int max_buffered )
   : music_port_( 0 )
   , music_perm_ind_( 0 )
   , published_( false )
   , portname_( portname )
   , acceptable_latency_( acceptable_latency )
   , max_buffered_( max_buffered )
-  , net_( net )
 {
 }
 
@@ -122,7 +120,7 @@ MusicEventHandler::publish_port()
     if ( max_buffered_ > 0 )
       msg += String::compose( " and max buffered=%1 ticks", max_buffered_ );
     msg += ".";
-    net_->message( SLIInterpreter::M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
+    Network::get_network().message( SLIInterpreter::M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
   }
 }
 

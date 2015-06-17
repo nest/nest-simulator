@@ -129,7 +129,7 @@ nest::ac_generator::calibrate()
   device_.calibrate();
 
   const double_t h = Time::get_resolution().get_ms();
-  const double_t t = network()->get_time().get_ms();
+  const double_t t = Network::get_network().get_time().get_ms();
 
   // scale Hz to ms
   const double_t omega = 2.0 * numerics::pi * P_.freq_ / 1000.0;
@@ -159,6 +159,6 @@ nest::ac_generator::update( Time const& origin, const long_t from, const long_t 
       S_.y_0_ = V_.A_00_ * y_0 + V_.A_01_ * S_.y_1_;
       S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
       ce.set_current( S_.y_1_ + P_.offset_ );
-      network()->send( *this, ce, lag );
+      Network::get_network().send( *this, ce, lag );
     }
 }

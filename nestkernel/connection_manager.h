@@ -53,7 +53,7 @@ class ConnectionManager
   typedef std::vector< tSConnector > tVSConnector;           // for all threads
 
 public:
-  ConnectionManager( Network& net );
+  ConnectionManager();
   ~ConnectionManager();
 
   void init( Dictionary* );
@@ -179,7 +179,6 @@ private:
                                                              //entry per thread, second dimantion
                                                              //for each synapse type
 
-  Network& net_;            //!< The reference to the network
   Dictionary* synapsedict_; //!< The synapsedict (owned by the network)
 
   /**

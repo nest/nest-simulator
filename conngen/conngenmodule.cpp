@@ -39,13 +39,6 @@ namespace nest
 {
 SLIType ConnectionGeneratorModule::ConnectionGeneratorType;
 
-Network* ConnectionGeneratorModule::net_ = 0;
-
-ConnectionGeneratorModule::ConnectionGeneratorModule( Network& net )
-{
-  net_ = &net;
-}
-
 ConnectionGeneratorModule::~ConnectionGeneratorModule()
 {
   ConnectionGeneratorType.deletetypename();
@@ -125,7 +118,7 @@ ConnectionGeneratorModule::CGConnect_cg_i_i_D_lFunction::execute( SLIInterpreter
   DictionaryDatum params_map = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  Subnet* sources = dynamic_cast< Subnet* >( get_network().get_node( source_id ) );
+  Subnet* sources = dynamic_cast< Subnet* >( Network::get_network().get_node( source_id ) );
   if ( sources == NULL )
   {
     i->message( SLIInterpreter::M_ERROR, "CGConnect_cg_i_i_D_l", "sources must be a subnet." );
@@ -145,7 +138,7 @@ ConnectionGeneratorModule::CGConnect_cg_i_i_D_lFunction::execute( SLIInterpreter
     throw BadProperty();
   }
 
-  Subnet* targets = dynamic_cast< Subnet* >( get_network().get_node( target_id ) );
+  Subnet* targets = dynamic_cast< Subnet* >( Network::get_network().get_node( target_id ) );
   if ( targets == NULL )
   {
     i->message( SLIInterpreter::M_ERROR, "CGConnect_cg_i_i_D_l", "targets must be a subnet." );
@@ -165,19 +158,19 @@ ConnectionGeneratorModule::CGConnect_cg_i_i_D_lFunction::execute( SLIInterpreter
     throw BadProperty();
   }
 
-  const Token synmodel = get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
   const modelrange source_range =
-    get_network().get_contiguous_gid_range( ( *sources->local_begin() )->get_gid() );
+    Network::get_network().get_contiguous_gid_range( ( *sources->local_begin() )->get_gid() );
   index source_offset = source_range.get_first_gid();
   RangeSet source_ranges;
   source_ranges.push_back( Range( source_range.get_first_gid(), source_range.get_last_gid() ) );
 
   const modelrange target_range =
-    get_network().get_contiguous_gid_range( ( *targets->local_begin() )->get_gid() );
+    Network::get_network().get_contiguous_gid_range( ( *targets->local_begin() )->get_gid() );
   index target_offset = target_range.get_first_gid();
   RangeSet target_ranges;
   target_ranges.push_back( Range( target_range.get_first_gid(), target_range.get_last_gid() ) );
@@ -201,7 +194,7 @@ ConnectionGeneratorModule::CGConnect_cg_iV_iV_D_lFunction::execute( SLIInterpret
   DictionaryDatum params_map = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  const Token synmodel = get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );

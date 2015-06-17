@@ -104,7 +104,7 @@ nest::music_event_in_proxy::music_event_in_proxy( const music_event_in_proxy& n 
   , P_( n.P_ )
   , S_( n.S_ )
 {
-  network()->register_music_in_port( P_.port_name_ );
+  Network::get_network().register_music_in_port( P_.port_name_ );
 }
 
 
@@ -131,7 +131,7 @@ nest::music_event_in_proxy::calibrate()
   // register my port and my channel at the scheduler
   if ( !S_.registered_ )
   {
-    network()->register_music_event_in_proxy( P_.port_name_, P_.channel_, this );
+    Network::get_network().register_music_event_in_proxy( P_.port_name_, P_.channel_, this );
     S_.registered_ = true;
   }
 }
@@ -153,8 +153,8 @@ nest::music_event_in_proxy::set_status( const DictionaryDatum& d )
   stmp.set( d, P_ ); // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
-  network()->register_music_in_port( ptmp.port_name_ );
-  network()->unregister_music_in_port( P_.port_name_ );
+  Network::get_network().register_music_in_port( ptmp.port_name_ );
+  Network::get_network().unregister_music_in_port( P_.port_name_ );
 
   P_ = ptmp;
   S_ = stmp;
@@ -165,8 +165,8 @@ nest::music_event_in_proxy::handle( SpikeEvent& e )
 {
   e.set_sender( *this );
 
-  for ( thread t = 0; t < network()->get_num_threads(); ++t )
-    network()->send_local( t, *this, e );
+  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+    Network::get_network().send_local( t, *this, e );
 }
 
 #endif

@@ -132,8 +132,7 @@ namespace nest
 // At the time when ModelsModule is constructed, the SLI Interpreter
 // must already be initialized. ModelsModule relies on the presence of
 // the following SLI datastructures: Name, Dictionary
-ModelsModule::ModelsModule( Network& net )
-  : net_( net )
+ModelsModule::ModelsModule()
 {
 }
 

@@ -261,7 +261,7 @@ nest::iaf_chs_2007::update( const Time& origin, const long_t from, const long_t 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      Network::get_network().send( *this, se, lag );
     }
 
     // log state data
@@ -275,7 +275,7 @@ nest::iaf_chs_2007::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 

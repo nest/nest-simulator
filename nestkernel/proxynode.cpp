@@ -33,7 +33,7 @@ proxynode::proxynode( index gid, index parent_gid, index model_id, index vp )
   : Node()
 {
   set_gid_( gid );
-  Subnet* parent = dynamic_cast< Subnet* >( network()->get_node( parent_gid ) );
+  Subnet* parent = dynamic_cast< Subnet* >( Network::get_network().get_node( parent_gid ) );
   assert( parent );
   set_parent_( parent );
   set_model_id( model_id );
@@ -44,8 +44,8 @@ proxynode::proxynode( index gid, index parent_gid, index model_id, index vp )
 port
 proxynode::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  return network()
-    ->get_model( get_model_id() )
+  return Network::get_network()
+    .get_model( get_model_id() )
     ->send_test_event( target, receptor_type, syn_id, dummy_target );
 }
 

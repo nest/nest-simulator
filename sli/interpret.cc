@@ -592,9 +592,9 @@ SLIInterpreter::addmodule( SLIModule* m )
 }
 
 void
-SLIInterpreter::addlinkeddynmodule( DynModule* m, nest::Network* net )
+SLIInterpreter::addlinkeddynmodule( DynModule* m )
 {
-  m->install( std::cerr, this, net );
+  m->install( std::cerr, this );
 
   // Add commandstring to list of module initializers. They will be executed
   // by sli-init.sli once all C++ stuff is loaded.

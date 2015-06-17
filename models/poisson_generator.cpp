@@ -122,14 +122,14 @@ nest::poisson_generator::update( Time const& T, const long_t from, const long_t 
       continue; // no spike at this lag
 
     DSSpikeEvent se;
-    network()->send( *this, se, lag );
+    Network::get_network().send( *this, se, lag );
   }
 }
 
 void
 nest::poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  librandom::RngPtr rng = net_->get_rng( get_thread() );
+  librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
   long_t n_spikes = V_.poisson_dev_.ldev( rng );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0

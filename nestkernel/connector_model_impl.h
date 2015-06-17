@@ -167,27 +167,27 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
     new_delay = Time( Time::ms( delay_tmp ) );
 
   if ( min_delay_updated xor max_delay_updated )
-    net_.message(
+    Network::get_network().message(
       SLIInterpreter::M_ERROR, "SetDefaults", "Both min_delay and max_delay have to be specified" );
 
   if ( min_delay_updated && max_delay_updated )
   {
     if ( num_connections_ > 0 )
-      net_.message( SLIInterpreter::M_ERROR,
+      Network::get_network().message( SLIInterpreter::M_ERROR,
         "SetDefaults",
         "Connections already exist. Please call ResetKernel first" );
     else if ( min_delay > new_delay )
-      net_.message(
+      Network::get_network().message(
         SLIInterpreter::M_ERROR, "SetDefaults", "min_delay is not compatible with default delay" );
     else if ( max_delay < new_delay )
-      net_.message(
+      Network::get_network().message(
         SLIInterpreter::M_ERROR, "SetDefaults", "max_delay is not compatible with default delay" );
     else if ( min_delay < Time::get_resolution() )
-      net_.message( SLIInterpreter::M_ERROR,
+      Network::get_network().message( SLIInterpreter::M_ERROR,
         "SetDefaults",
         "min_delay must be greater than or equal to resolution" );
     else if ( max_delay < Time::get_resolution() )
-      net_.message( SLIInterpreter::M_ERROR,
+      Network::get_network().message( SLIInterpreter::M_ERROR,
         "SetDefaults",
         "max_delay must be greater than or equal to resolution" );
     else
@@ -453,9 +453,9 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
  */
 template < class ConnectionT >
 synindex
-register_connection_model( Network& net, const std::string& name )
+register_connection_model( const std::string& name )
 {
-  return net.register_synapse_prototype( new GenericConnectorModel< ConnectionT >( net, name ) );
+  return Network::get_network().register_synapse_prototype( new GenericConnectorModel< ConnectionT >( name ) );
 }
 
 } // namespace nest

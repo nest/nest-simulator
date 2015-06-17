@@ -41,12 +41,9 @@
 
 namespace nest
 {
-
-class Scheduler;
 class Model;
 
 class Subnet;
-class Network;
 class Archiving_Node;
 class histentry;
 
@@ -237,12 +234,6 @@ public:
   bool is_frozen() const;
 
   /**
-   * Return pointer to network driver class.
-   * @todo This member should return a reference, not a pointer.
-   */
-  static Network* network();
-
-  /**
    * Returns true if the node is allocated in the local process.
    */
   bool is_local() const;
@@ -287,7 +278,7 @@ public:
   /**
    * Finalize node.
    * Override this function if a node needs to "wrap up" things after a simulation,
-   * i.e., before Scheduler::resume() returns. Typical use-cases are devices
+   * i.e., before Network::get_network().resume() returns. Typical use-cases are devices
    * that need to flush buffers or disconnect from external files or pipes.
    */
   virtual void
@@ -709,9 +700,6 @@ private:
   thread vp_;                //!< virtual process node is assigned to
   bool frozen_;              //!< node shall not be updated if true
   bool buffers_initialized_; //!< Buffers have been initialized
-
-protected:
-  static Network* net_; //!< Pointer to global network driver.
 };
 
 inline bool
@@ -820,12 +808,6 @@ inline void
 Node::set_parent_( Subnet* c )
 {
   parent_ = c;
-}
-
-inline Network*
-Node::network()
-{
-  return net_;
 }
 
 inline void

@@ -47,8 +47,7 @@ public:
   virtual ~GenericConnBuilderFactory()
   {
   }
-  virtual ConnBuilder* create( Network&,
-    const GIDCollection&,
+  virtual ConnBuilder* create( const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
     const DictionaryDatum& ) const = 0;
@@ -65,13 +64,12 @@ class ConnBuilderFactory : public GenericConnBuilderFactory
 public:
   //! create conn builder
   ConnBuilder*
-  create( Network& net,
-    const GIDCollection& sources,
+  create( const GIDCollection& sources,
     const GIDCollection& targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec ) const
   {
-    return new ConnBuilderType( net, sources, targets, conn_spec, syn_spec );
+    return new ConnBuilderType( sources, targets, conn_spec, syn_spec );
   }
 };
 

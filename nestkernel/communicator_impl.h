@@ -136,8 +136,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 template < typename NodeListType >
 void
 nest::Communicator::communicate( const NodeListType& local_nodes,
-  vector< NodeAddressingData >& all_nodes,
-  Network& net,
+  vector< NodeAddressingData >& all_nodes
   DictionaryDatum params,
   bool remote )
 {
@@ -162,7 +161,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
         // select those nodes fulfilling the key/value pairs of the dictionary
         bool match = true;
         index gid = ( *n )->get_gid();
-        DictionaryDatum node_status = net.get_status( gid );
+        DictionaryDatum node_status = Network::get_network().get_status( gid );
         for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
         {
           if ( node_status->known( i->first ) )
@@ -231,7 +230,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
       {
         bool match = true;
         index gid = ( *n )->get_gid();
-        DictionaryDatum node_status = net.get_status( gid );
+        DictionaryDatum node_status = Network::get_network().get_status( gid );
         for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
         {
           if ( node_status->known( i->first ) )
@@ -272,7 +271,6 @@ template < typename NodeListType >
 void
 nest::Communicator::communicate( const NodeListType& local_nodes,
   vector< NodeAddressingData >& all_nodes,
-  Network& net,
   DictionaryDatum params,
   bool )
 {
@@ -290,7 +288,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
     {
       bool match = true;
       index gid = ( *n )->get_gid();
-      DictionaryDatum node_status = net.get_status( gid );
+      DictionaryDatum node_status = Network::get_network().get_status( gid );
       for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
       {
         if ( node_status->known( i->first ) )

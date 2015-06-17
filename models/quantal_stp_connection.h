@@ -178,7 +178,6 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e,
   double_t t_lastspike,
   const CommonSynapseProperties& )
 {
-  Network* net = Node::network();
   const int vp = get_target( t )->get_vp();
 
   const double_t h = e.get_stamp().get_ms() - t_lastspike;
@@ -193,7 +192,7 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e,
   // Compute number of sites that recovered during the interval.
   for ( int depleted = n_ - a_; depleted > 0; --depleted )
   {
-    if ( net->get_rng( vp )->drand() < ( 1.0 - p_decay ) )
+    if ( Network::get_network().get_rng( vp )->drand() < ( 1.0 - p_decay ) )
       ++a_;
   }
 
@@ -201,7 +200,7 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e,
   int n_release = 0;
   for ( int i = a_; i > 0; --i )
   {
-    if ( net->get_rng( vp )->drand() < u_ )
+    if ( Network::get_network().get_rng( vp )->drand() < u_ )
       ++n_release;
   }
 

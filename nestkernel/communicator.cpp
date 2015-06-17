@@ -224,8 +224,10 @@ nest::Communicator::communicate( std::vector< uint_t >& send_buffer,
     }
     recv_buffer.swap( send_buffer );
   }
-  else 
+  else
+  {
     communicate_Allgather( send_buffer, recv_buffer, displacements );
+  }
 }
 
 void
@@ -375,7 +377,9 @@ nest::Communicator::communicate( std::vector< OffGridSpike >& send_buffer,
     recv_buffer.swap( send_buffer );
   }
   else 
+  {
     communicate_Allgather( send_buffer, recv_buffer, displacements );
+  }
 }
 
 void

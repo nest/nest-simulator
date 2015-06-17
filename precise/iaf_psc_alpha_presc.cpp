@@ -399,7 +399,8 @@ nest::iaf_psc_alpha_presc::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const long_t Tdeliver = e.get_rel_delivery_steps( nest::Network::get_network().get_slice_origin() );
+  const long_t Tdeliver =
+    e.get_rel_delivery_steps( nest::Network::get_network().get_slice_origin() );
 
   const double_t spike_weight = V_.PSCInitialValue_ * e.get_weight() * e.get_multiplicity();
   const double_t dt = e.get_offset();

@@ -374,13 +374,13 @@ Network::reset()
   slice_ = 0;
   from_step_ = 0;
   to_step_ = 0; // consistent with to_do_ = 0
-  
+
   // clear the buffers
   local_grid_spikes_.clear();
   global_grid_spikes_.clear();
   local_offgrid_spikes_.clear();
   global_offgrid_spikes_.clear();
-  
+
   initialized_ = false;
   init_scheduler_();
 

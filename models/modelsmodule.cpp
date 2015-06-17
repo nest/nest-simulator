@@ -243,10 +243,8 @@ ModelsModule::init( SLIInterpreter* )
 
      SeeAlso: synapsedict, static_synapse
   */
-  register_connection_model< StaticConnection< TargetIdentifierPtrRport > >(
-    "static_synapse" );
-  register_connection_model< StaticConnection< TargetIdentifierIndex > >(
-    "static_synapse_hpc" );
+  register_connection_model< StaticConnection< TargetIdentifierPtrRport > >( "static_synapse" );
+  register_connection_model< StaticConnection< TargetIdentifierIndex > >( "static_synapse_hpc" );
 
 
   /* BeginDocumentation
@@ -291,10 +289,8 @@ ModelsModule::init( SLIInterpreter* )
      Name: stdp_synapse_hom_hpc - Variant of quantal_stp_synapse with low memory consumption.
      SeeAlso: synapsedict, stdp_synapse_hom, static_synapse_hpc
   */
-  register_connection_model< STDPConnectionHom< TargetIdentifierPtrRport > >(
-    "stdp_synapse_hom" );
-  register_connection_model< STDPConnectionHom< TargetIdentifierIndex > >(
-    "stdp_synapse_hom_hpc" );
+  register_connection_model< STDPConnectionHom< TargetIdentifierPtrRport > >( "stdp_synapse_hom" );
+  register_connection_model< STDPConnectionHom< TargetIdentifierIndex > >( "stdp_synapse_hom_hpc" );
 
 
   /* BeginDocumentation
@@ -322,18 +318,15 @@ ModelsModule::init( SLIInterpreter* )
      Name: tsodyks_synapse_hpc - Variant of tsodyks_synapse with low memory consumption.
      SeeAlso: synapsedict, tsodyks_synapse, static_synapse_hpc
   */
-  register_connection_model< TsodyksConnection< TargetIdentifierPtrRport > >(
-    "tsodyks_synapse" );
-  register_connection_model< TsodyksConnection< TargetIdentifierIndex > >(
-    "tsodyks_synapse_hpc" );
+  register_connection_model< TsodyksConnection< TargetIdentifierPtrRport > >( "tsodyks_synapse" );
+  register_connection_model< TsodyksConnection< TargetIdentifierIndex > >( "tsodyks_synapse_hpc" );
 
 
   /* BeginDocumentation
      Name: tsodyks2_synapse_hpc - Variant of tsodyks2_synapse with low memory consumption.
      SeeAlso: synapsedict, tsodyks2_synapse, static_synapse_hpc
   */
-  register_connection_model< Tsodyks2Connection< TargetIdentifierPtrRport > >(
-    "tsodyks2_synapse" );
+  register_connection_model< Tsodyks2Connection< TargetIdentifierPtrRport > >( "tsodyks2_synapse" );
   register_connection_model< Tsodyks2Connection< TargetIdentifierIndex > >(
     "tsodyks2_synapse_hpc" );
 

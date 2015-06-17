@@ -756,8 +756,7 @@ NestModule::GetChildren_i_D_bFunction::execute( SLIInterpreter* i ) const
   if ( params->empty() )
     nest::Communicator::communicate( localnodes, globalnodes, include_remote );
   else
-    nest::Communicator::communicate(
-      localnodes, globalnodes, params, include_remote );
+    nest::Communicator::communicate( localnodes, globalnodes, params, include_remote );
   result.reserve( globalnodes.size() );
   for ( vector< Communicator::NodeAddressingData >::iterator n = globalnodes.begin();
         n != globalnodes.end();
@@ -789,8 +788,7 @@ NestModule::GetLeaves_i_D_bFunction::execute( SLIInterpreter* i ) const
   if ( params->empty() )
     nest::Communicator::communicate( localnodes, globalnodes, include_remote );
   else
-    nest::Communicator::communicate(
-      localnodes, globalnodes, params, include_remote );
+    nest::Communicator::communicate( localnodes, globalnodes, params, include_remote );
   result.reserve( globalnodes.size() );
 
   for ( vector< Communicator::NodeAddressingData >::iterator n = globalnodes.begin();

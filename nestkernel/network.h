@@ -1612,7 +1612,7 @@ Network::send_to_node( Event& e )
 inline void
 Network::calibrate_clock()
 {
-  clock_.calibrate_clock();
+  clock_.calibrate();
 }
 
 inline size_t
@@ -1835,7 +1835,7 @@ Network::get_slice_modulo( delay d )
 }
 
 inline void
-ensure_valid_thread_local_ids()
+Network::ensure_valid_thread_local_ids()
 {
   update_nodes_vec_();
 }

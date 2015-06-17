@@ -32,7 +32,6 @@
 #include "nest.h"
 #include "event.h"
 #include "node.h"
-#include "scheduler.h"
 #include "connection.h"
 
 /*BeginDocumentation

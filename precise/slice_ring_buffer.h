@@ -28,9 +28,10 @@
 #include <algorithm>
 #include <functional>
 #include <vector>
+#include <cassert>
 
 #include "nest.h"
-#include "scheduler.h"
+#include "network.h"
 
 namespace nest
 {

@@ -28,7 +28,6 @@
 #include "event.h"
 #include "node.h"
 #include "stimulating_device.h"
-#include "scheduler.h"
 #include "exp_randomdev.h"
 #include "connection.h"
 

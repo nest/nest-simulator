@@ -28,7 +28,6 @@
 #include "nest.h"
 #include "event.h"
 #include "node.h"
-#include "scheduler.h"
 #include "stimulating_device.h"
 #include "connection.h"
 #include "nest_time.h"

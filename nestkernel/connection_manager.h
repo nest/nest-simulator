@@ -33,13 +33,14 @@
 #include "nest_timeconverter.h"
 #include "arraydatum.h"
 #include "sparsetable.h"
-#include "../models/volume_transmitter.h"
+
 #include <cmath>
 
 namespace nest
 {
 class ConnectorBase;
 class ConnectorModel;
+class spikecounter;
 class Network;
 
 /**

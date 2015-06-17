@@ -23,6 +23,7 @@
 #include "connection_manager.h"
 #include "connector_base.h"
 #include "network.h"
+#include "spikecounter.h"
 #include "nest_time.h"
 #include "nest_datums.h"
 #include <algorithm>

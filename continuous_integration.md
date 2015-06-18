@@ -45,12 +45,16 @@ are detected, the latest source code is downloaded to a worker machine which is 
     Bootstrap the build system
     Build and install NEST
     Run the test suite
-    Uploading the build artifacts to Amazon S3 (Simple Storage Service)
+    Uploading the build artifacts to Amazon S3 (Simple Storage Service) in case of merge commits to the master branch.
 
 If any of the first three steps fails (returns a non-zero exit code), the build
 is marked as failed and a notification is sent to the person who initiated the build.
+Pull Requests
 
-Due to security reasons, Travis doesn't allow uploading of artifacts to S3 for the pull requests.
+ Pull requests can be initiated by anyone having the fork of the repository. Travis builds only the  pull requests from someone who has write access to the main repository. Rather than testing the commits from the branches the pull request is sent from, Travis test the merge between the origin and the upstream branch.
+
+ Uploading of artifacts to S3 is not allowed for the pull requests. From a pull request, the secure environment values (for e.g.: the encrypted access keys for S3) could not be extracted properly and thus the artifacts can't be uploaded to S3. Secure access keys are set for the particular repository (in our case, nest/nest-simulator). Because of this reason, artifacts will be uploaded only when we merge the commit to the upstream master.
+Skipping a Travis build
 
 In the case of some changes in the documentation where you don't want to trigger a Travis build, add 
 [ci skip] or [skip ci] anywhere in the commit message.
@@ -59,6 +63,7 @@ In the case of some changes in the documentation where you don't want to trigger
 
 ## Further reading
 
+* [Travis CI](http://docs.travis-ci.com)
 * [Martin Fowler's paper on Continuous Integration](http://martinfowler.com/articles/continuousIntegration.html)
 * [Continuous Integration vs Continuous Delivery vs Continuous Deployment: what is the difference?](http://www.itwriting.com/blog/4797-continuous-integration-vs-continuous-delivery-vs-continuous-deployment-what-is-the-difference.html)
 * [8 Principles of Continuous Delivery](http://java.dzone.com/articles/8-principles-continuous)

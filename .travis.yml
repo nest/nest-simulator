@@ -19,8 +19,8 @@ matrix:
   # do notify immediately about it when a job of a build fails.
   fast_finish: true
 branches:
- only:
-  - master
+  except:
+  - gh-pages
 cache:
   apt: true 
   ccache: true

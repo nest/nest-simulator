@@ -256,12 +256,10 @@ public:
   static int get_num_virtual_processes();
   static int get_send_buffer_size();
   static int get_recv_buffer_size();
-  static bool get_use_Allgather();
   static bool get_initialized();
 
   static void set_num_threads( thread num_threads );
   static void set_buffer_sizes( int send_buffer_size, int recv_buffer_size );
-  static void set_use_Allgather( bool use_Allgather );
 
 private:
   static Network* net_; //!< Pointer to the Network class
@@ -272,12 +270,9 @@ private:
   static int send_buffer_size_; //!< expected size of send buffer
   static int recv_buffer_size_; //!< size of receive buffer
   static bool initialized_;     //!< whether MPI is initialized
-  static bool use_Allgather_;   //!< using Allgather communication
 
   static std::vector< int > comm_step_; //!< array containing communication partner for each step.
   static uint_t COMM_OVERFLOW_ERROR;
-
-  static void init_communication();
 
   static void communicate_Allgather( std::vector< uint_t >& send_buffer,
     std::vector< uint_t >& recv_buffer,
@@ -298,24 +293,8 @@ private:
   static void communicate_Allgather( std::vector< T >& send_buffer,
     std::vector< T >& recv_buffer,
     std::vector< int >& displacements );
-
-  static void communicate_CPEX( std::vector< uint_t >& send_buffer,
-    std::vector< uint_t >& recv_buffer,
-    std::vector< int >& displacements );
-  static void communicate_CPEX( std::vector< OffGridSpike >& send_buffer,
-    std::vector< OffGridSpike >& recv_buffer,
-    std::vector< int >& displacements );
-  static void communicate_CPEX( std::vector< int_t >& );
-  static void communicate_CPEX( std::vector< long_t >& );
 };
 
-inline void
-Communicator::set_use_Allgather( bool use_Allgather )
-{
-  use_Allgather_ = use_Allgather;
-  if ( !use_Allgather )
-    init_communication();
-}
 }
 
 #else  /* #ifdef HAVE_MPI */
@@ -516,7 +495,6 @@ public:
 
   static void set_num_threads( thread num_threads );
   static void set_buffer_sizes( int send_buffer_size, int recv_buffer_size );
-  static void set_use_Allgather( bool use_Allgather );
 
 private:
   static Network* net_; //!< Pointer to the Network class
@@ -529,12 +507,6 @@ private:
   static bool initialized_;     //!< whether MPI is initialized
   static bool use_Allgather_;   //!< using Allgather communication
 };
-
-inline void
-Communicator::set_use_Allgather( bool use_Allgather )
-{
-  use_Allgather_ = use_Allgather;
-}
 
 
 inline std::string
@@ -585,12 +557,6 @@ inline int
 Communicator::get_recv_buffer_size()
 {
   return recv_buffer_size_;
-}
-
-inline bool
-Communicator::get_use_Allgather()
-{
-  return use_Allgather_;
 }
 
 inline bool

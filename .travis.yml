@@ -18,9 +18,6 @@ env:
 matrix:
   # do notify immediately about it when a job of a build fails.
   fast_finish: true
-branches:
- only:
-  - master
 cache:
   apt: true 
   ccache: true

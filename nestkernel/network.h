@@ -104,8 +104,6 @@ Description:
 Parameters:
   The following parameters can be set in the status dictionary.
 
-  communicate_allgather    booltype    - Whether to use MPI_Allgather for communication (otherwise
-use CPEX)
   data_path                stringtype  - A path, where all data is written to (default is the
 current directory)
   data_prefix              stringtype  - A common prefix for all data files

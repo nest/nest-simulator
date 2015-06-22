@@ -42,8 +42,7 @@
 #include <string>
 
 // Neuron models
-#include "aeif_cond_alpha_gsl.h"
-#include "aeif_cond_alpha_RK5.h"
+#include "aeif_cond_alpha.h"
 #include "aeif_cond_alpha_multisynapse.h"
 #include "aeif_cond_exp.h"
 #include "amat2_psc_exp.h"
@@ -215,12 +214,11 @@ ModelsModule::init( SLIInterpreter* )
 #endif
 
 #ifdef HAVE_GSL_1_11
-  register_model< aeif_cond_alpha_gsl >( net_, "aeif_cond_alpha_gsl" );
   register_model< aeif_cond_exp >( net_, "aeif_cond_exp" );
   register_model< ht_neuron >( net_, "ht_neuron" );
 #endif
   // This version of the AdEx model does not depend on GSL.
-  register_model< aeif_cond_alpha_RK5 >( net_, "aeif_cond_alpha" );
+  register_model< aeif_cond_alpha >( net_, "aeif_cond_alpha" );
   register_model< aeif_cond_alpha_multisynapse >( net_, "aeif_cond_alpha_multisynapse" );
 
 #ifdef HAVE_MUSIC

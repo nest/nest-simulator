@@ -31,7 +31,7 @@
    Afterwards, it simulates the mutisynapse neuron with n (n=4) different time 
    constants and records the neuron's synaptic current. At the same time, it simulates 
    n (n=4) single synapse neurons with according parameters.
-   At the end, it compares the multisynapse neuron currents with each according single 
+   At the end, it compares the multisynapse neuron currents with each corresponding single 
    synapse current.
    
    SeeAlso:
@@ -63,7 +63,7 @@
 /spike_generator Create /sg Set
 sg << /spike_times [spike_time] >> SetStatus
 
-% Create the several aeif_conf_alpha (one for each synapses of the previous neuron)
+% Create the several aeif_cond_alpha (one for each synapses of the previous neuron)
 [tau_syn_in tau_syn_ex delays weights] 
 {
 	/weight_var exch def

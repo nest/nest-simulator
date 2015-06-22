@@ -16,8 +16,7 @@ libmodelsmodule_la_CXXFLAGS= @AM_CXXFLAGS@
 
 libmodelsmodule_la_SOURCES= \
 		ac_generator.h ac_generator.cpp\
-		aeif_cond_alpha_gsl.h aeif_cond_alpha_gsl.cpp\
-		aeif_cond_alpha_RK5.h aeif_cond_alpha_RK5.cpp\
+		aeif_cond_alpha.h aeif_cond_alpha.cpp\
 		aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp\
 		aeif_cond_exp.h aeif_cond_exp.cpp\
 		amat2_psc_exp.h amat2_psc_exp.cpp\

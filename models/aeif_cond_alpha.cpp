@@ -1,5 +1,5 @@
 /*
- *  aeif_cond_alpha_RK5.cpp
+ *  aeif_cond_alpha.cpp
  *
  *  This file is part of NEST.
  *
@@ -22,7 +22,7 @@
 
 
 #include "exceptions.h"
-#include "aeif_cond_alpha_RK5.h"
+#include "aeif_cond_alpha.h"
 #include "network.h"
 #include "dict.h"
 #include "integerdatum.h"
@@ -42,7 +42,7 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_cond_alpha_RK5 > nest::aeif_cond_alpha_RK5::recordablesMap_;
+nest::RecordablesMap< nest::aeif_cond_alpha > nest::aeif_cond_alpha::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -50,13 +50,13 @@ namespace nest // template specialization must be placed in namespace
 // for each quantity to be recorded.
 template <>
 void
-RecordablesMap< aeif_cond_alpha_RK5 >::create()
+RecordablesMap< aeif_cond_alpha >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &aeif_cond_alpha_RK5::get_y_elem_< aeif_cond_alpha_RK5::State_::V_M > );
-  insert_( names::g_ex, &aeif_cond_alpha_RK5::get_y_elem_< aeif_cond_alpha_RK5::State_::G_EXC > );
-  insert_( names::g_in, &aeif_cond_alpha_RK5::get_y_elem_< aeif_cond_alpha_RK5::State_::G_INH > );
-  insert_( names::w, &aeif_cond_alpha_RK5::get_y_elem_< aeif_cond_alpha_RK5::State_::W > );
+  insert_( names::V_m, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::V_M > );
+  insert_( names::g_ex, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::G_EXC > );
+  insert_( names::g_in, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::G_INH > );
+  insert_( names::w, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::W > );
 }
 }
 
@@ -65,7 +65,7 @@ RecordablesMap< aeif_cond_alpha_RK5 >::create()
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::aeif_cond_alpha_RK5::Parameters_::Parameters_()
+nest::aeif_cond_alpha::Parameters_::Parameters_()
   : V_peak_( 0.0 )
   , // mV, should not be larger that V_th+10
   V_reset_( -60.0 )
@@ -104,7 +104,7 @@ nest::aeif_cond_alpha_RK5::Parameters_::Parameters_()
 {
 }
 
-nest::aeif_cond_alpha_RK5::State_::State_( const Parameters_& p )
+nest::aeif_cond_alpha::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
   y_[ 0 ] = p.E_L;
@@ -112,14 +112,14 @@ nest::aeif_cond_alpha_RK5::State_::State_( const Parameters_& p )
     y_[ i ] = 0.0;
 }
 
-nest::aeif_cond_alpha_RK5::State_::State_( const State_& s )
+nest::aeif_cond_alpha::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::aeif_cond_alpha_RK5::State_& nest::aeif_cond_alpha_RK5::State_::operator=( const State_& s )
+nest::aeif_cond_alpha::State_& nest::aeif_cond_alpha::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -134,7 +134,7 @@ nest::aeif_cond_alpha_RK5::State_& nest::aeif_cond_alpha_RK5::State_::operator=(
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha_RK5::Parameters_::get( DictionaryDatum& d ) const
+nest::aeif_cond_alpha::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::C_m, C_m );
   def< double >( d, names::V_th, V_th );
@@ -157,7 +157,7 @@ nest::aeif_cond_alpha_RK5::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cond_alpha_RK5::Parameters_::set( const DictionaryDatum& d )
+nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 {
   double tmp = 0.0;
 
@@ -215,7 +215,7 @@ nest::aeif_cond_alpha_RK5::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::aeif_cond_alpha_RK5::State_::get( DictionaryDatum& d ) const
+nest::aeif_cond_alpha::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] );
   def< double >( d, names::g_ex, y_[ G_EXC ] );
@@ -226,7 +226,7 @@ nest::aeif_cond_alpha_RK5::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cond_alpha_RK5::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::aeif_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::g_ex, y_[ G_EXC ] );
@@ -239,14 +239,14 @@ nest::aeif_cond_alpha_RK5::State_::set( const DictionaryDatum& d, const Paramete
     throw BadProperty( "Conductances must not be negative." );
 }
 
-nest::aeif_cond_alpha_RK5::Buffers_::Buffers_( aeif_cond_alpha_RK5& n )
+nest::aeif_cond_alpha::Buffers_::Buffers_( aeif_cond_alpha& n )
   : logger_( n )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
 }
 
-nest::aeif_cond_alpha_RK5::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha_RK5& n )
+nest::aeif_cond_alpha::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha& n )
   : logger_( n )
 {
   // Initialization of the remaining members is deferred to
@@ -257,7 +257,7 @@ nest::aeif_cond_alpha_RK5::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha_
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::aeif_cond_alpha_RK5::aeif_cond_alpha_RK5()
+nest::aeif_cond_alpha::aeif_cond_alpha()
   : Archiving_Node()
   , P_()
   , S_( P_ )
@@ -266,7 +266,7 @@ nest::aeif_cond_alpha_RK5::aeif_cond_alpha_RK5()
   recordablesMap_.create();
 }
 
-nest::aeif_cond_alpha_RK5::aeif_cond_alpha_RK5( const aeif_cond_alpha_RK5& n )
+nest::aeif_cond_alpha::aeif_cond_alpha( const aeif_cond_alpha& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -274,7 +274,7 @@ nest::aeif_cond_alpha_RK5::aeif_cond_alpha_RK5( const aeif_cond_alpha_RK5& n )
 {
 }
 
-nest::aeif_cond_alpha_RK5::~aeif_cond_alpha_RK5()
+nest::aeif_cond_alpha::~aeif_cond_alpha()
 {
 }
 
@@ -283,14 +283,14 @@ nest::aeif_cond_alpha_RK5::~aeif_cond_alpha_RK5()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha_RK5::init_state_( const Node& proto )
+nest::aeif_cond_alpha::init_state_( const Node& proto )
 {
-  const aeif_cond_alpha_RK5& pr = downcast< aeif_cond_alpha_RK5 >( proto );
+  const aeif_cond_alpha& pr = downcast< aeif_cond_alpha >( proto );
   S_ = pr.S_;
 }
 
 void
-nest::aeif_cond_alpha_RK5::init_buffers_()
+nest::aeif_cond_alpha::init_buffers_()
 {
   B_.spike_exc_.clear(); // includes resize
   B_.spike_inh_.clear(); // includes resize
@@ -308,7 +308,7 @@ nest::aeif_cond_alpha_RK5::init_buffers_()
 }
 
 void
-nest::aeif_cond_alpha_RK5::calibrate()
+nest::aeif_cond_alpha::calibrate()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 
@@ -328,7 +328,7 @@ nest::aeif_cond_alpha_RK5::calibrate()
  * @param from
  * @param to
  */
-void nest::aeif_cond_alpha_RK5::update( Time const& origin,
+void nest::aeif_cond_alpha::update( Time const& origin,
   const long_t from,
   const long_t to ) // proceed in time
 {
@@ -499,7 +499,7 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
 
 
 void
-nest::aeif_cond_alpha_RK5::handle( SpikeEvent& e )
+nest::aeif_cond_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
@@ -512,7 +512,7 @@ nest::aeif_cond_alpha_RK5::handle( SpikeEvent& e )
 }
 
 void
-nest::aeif_cond_alpha_RK5::handle( CurrentEvent& e )
+nest::aeif_cond_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
@@ -524,7 +524,7 @@ nest::aeif_cond_alpha_RK5::handle( CurrentEvent& e )
 }
 
 void
-nest::aeif_cond_alpha_RK5::handle( DataLoggingRequest& e )
+nest::aeif_cond_alpha::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }

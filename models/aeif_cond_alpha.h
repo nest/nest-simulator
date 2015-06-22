@@ -35,7 +35,7 @@ Name: aeif_cond_alpha -  Conductance based exponential integrate-and-fire neuron
 to Brette and Gerstner (2005).
 
 Description:
-aeif_cond_alpha_RK5 is the adaptive exponential integrate and fire neuron according to Brette and
+aeif_cond_alpha is the adaptive exponential integrate and fire neuron according to Brette and
 Gerstner (2005).
 Synaptic conductances are modelled as alpha-functions.
 

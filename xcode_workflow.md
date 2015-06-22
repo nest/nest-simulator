@@ -52,7 +52,7 @@ In the `def install` function add the `CC` and `CXX` lines to the `args` variabl
         ]
 1. Homebrew tries to use pre-compiled packages, if possible (so-called bottles). You can disable this by setting the environment variable `HOMEBREW_BUILD_FROM_SOURCE` to some value. Install OpenMPI with the following line:
 
-        brew install pkg-config makedepend     # have open-mpi dependancies installed as bottles
+        brew install pkg-config makedepend     # have open-mpi dependencies installed as bottles
         HOMEBREW_BUILD_FROM_SOURCE=1 brew install open-mpi
 
 ### MacPorts

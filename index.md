@@ -116,3 +116,5 @@ Initiative.
 
 * [Creating and handling Tokens and Datums in SLI](tokens_and_datums)
 * [Xcode workflow](xcode_workflow)
+* [Eclipse workflow](eclipse_workflow)
+

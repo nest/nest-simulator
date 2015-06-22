@@ -115,7 +115,7 @@ for f in $file_names; do
   case $f in
     *.h | *.c | *.cc | *.hpp | *.cpp )
       echo "Static analysis on file $f:"
-      f_base=reports/`basename $f`
+      f_base=$NEST_VPATH/reports/`basename $f`
       # Vera++ checks the specified list of rules given in the profile 
       # nest which is placed in the <vera++ root>/lib/vera++/profile
       vera++ --root ./vera_home --profile nest $f > ${f_base}_vera.txt

@@ -13,6 +13,15 @@ installed. Just a Java Runtime Environment (JRE) is not enough.
 You can download the JDK from
 [Oracle's JDK8 Download Page](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 
+### Debugger under OSX
+
+Under OSX, you need to install `gdb` to be able to debug NEST with
+Eclipse, since Eclipse does not support `lldb` (yet). For installation
+instructions, see
+
+ - http://ntraft.com/installing-gdb-on-os-x-mavericks
+ - https://sourceware.org/gdb/wiki/BuildingOnDarwin
+
 ### Eclipse
 
 From http://www.eclipse.org/downloads/, download either the "Eclipse
@@ -143,6 +152,44 @@ You can now run NEST by clicking the "Play" button.
 **DO NOT QUIT NEST WITH CTRL-D, or your computer WILL HANG HORRIBLY!**
 
 
-1. go to the project properties browser
-1. 
+### Multiple configurations
 
+We have little experience with multiple branches and configurations in
+Eclipse yet, so take these recommendations with a pinch of salt---and
+feel free to provide improvements!
+
+Switching the source code between Git branches is straightforward:
+Choose `Team > Switch to ...`and select the branch you want.
+
+Managing the build and install directories requires a bit more
+work. We recommend that you create one build directory for each branch
+and configuration (e.g. `bld_master`, `bld_master_debug`,
+`bld_master_mpi`, `bld_myfix`) and place the `install` directory
+inside each build directory to keep directory clutter down. For
+short-lived branches with small changes, you may want to work with the
+build directory for the parent branch and rather rebuild after each
+branch switch.
+
+Configure NEST in the build directory as usual.
+
+Then, in Eclipse
+
+1. In the project context menu, choose `Build configurations > Manage
+...` and then `New ...`
+1. Choose a name, e.g., `Build Debug (GNU)` and choose to copy
+settings from an existing configuration.
+1. In the context menu, choose `Build configurations > Set Active` and
+select you new configuration.
+1. Choose `Properties` from the context menu, go to `C/C++ Build`,
+   choose the `Builder Settings` tab and then under "Build location"
+   click `File system ...` and select the build directory for this
+   configuration, e.g., `$NEST_ROOT/bld_master_debug`.
+1. In the Properties menu, go to `Run/Debug Settings`, select an
+existing configuraton and click `Duplicate`, then select the new
+configuration and choose `Edit`. 
+1. Edit the name of the configuratoin and the  path to the C/C++
+   Application. If you have not built this configuration yet, you will get a warning; ignore it.
+1. Still in the Edit window, select the correct Build configuration.
+
+
+### Code formatting

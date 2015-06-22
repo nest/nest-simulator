@@ -233,14 +233,17 @@ statusdict /have_gsl :: {
 % -------------------------------------------------------
 
 {
+  % choose uniformly from [1, 2, 3, ..., 10]
   /MT19937 /uniform_int << /low 1 /high 10 >> run_test
 } assert_or_die
 
 {
+  % choose from [10] --- trivial, but must work
   /MT19937 /uniform_int << /low 10 /high 10 >> run_test
 } assert_or_die
 
 {
+  % lower limit of number range higher than upper, must raise error
   /MT19937 /uniform_int << /low 11 /high 10 >> run_test
 } fail_or_die
 

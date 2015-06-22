@@ -1241,11 +1241,6 @@ Network::set_status( index gid, const DictionaryDatum& d )
 
   updateValue< bool >( d, "off_grid_spiking", off_grid_spiking_ );
 
-  bool comm_allgather;
-  bool commstyle_updated = updateValue< bool >( d, "communicate_allgather", comm_allgather );
-  if ( commstyle_updated )
-    Communicator::set_use_Allgather( comm_allgather );
-
   // set RNGs --- MUST come after n_threads_ is updated
   if ( d->known( "rngs" ) )
   {
@@ -1496,7 +1491,6 @@ Network::get_status( index idx )
     ( *d )[ "rng_seeds" ] = Token( rng_seeds_ );
     def< long >( d, "grng_seed", grng_seed_ );
     def< bool >( d, "off_grid_spiking", off_grid_spiking_ );
-    def< bool >( d, "communicate_allgather", Communicator::get_use_Allgather() );
     def< long >( d, "send_buffer_size", Communicator::get_send_buffer_size() );
     def< long >( d, "receive_buffer_size", Communicator::get_recv_buffer_size() );
     // former scheduler_.get_status( d ) end

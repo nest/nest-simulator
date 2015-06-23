@@ -48,7 +48,7 @@ anywhere.
 ### PyDev
 
 Once you have installed and started Eclipse, go to `Help > Eclipse
-Marketplace` and install the *PyDev* extension.
+Marketplace` and install the *PyDev* extension, then restart Eclipse.
 
 Once *PyDev* is installed, open the Eclipse preferences, go to
 `PyDev > Interpreters > Python Interpreter` and configure your
@@ -58,6 +58,22 @@ choose `New ...` and browse to the executable of your Python interpreter, e.g.,
 `$HOME/anaconda/bin/python2.7`.
 
 You need to repeat this step for each new workspace you enter.
+
+### CppStyle
+
+*CppStyle* is a source-code formatter based on `clang-format`. You can install it from the
+Eclipse Marketplace in the same way as *PyDev*; remember to restart Eclipse.
+
+Then, open Eclipse preferences, go to `CppStyle` and enter the path to your `clang-format` executable.
+
+
+### General settings in Eclipse
+
+1. Open Eclipse preferences and go to `General > Editors > Text Editors`
+1. Set the following
+    - `Displayed tab width` to 2
+    - `Insert spaces for tabs` checked
+	- `Show print margin` checked and colum set to 100
 
 ## Directory Structure for NEST
 
@@ -80,77 +96,38 @@ directory reduces clutter.
 
 A typical set of build directories could then look like this
 
-| Directory | Configure  | Purpose |
-|--------|---------|-------|
-| `bld_master_nompi`| `../src/configure --prefix=$NEST_ROOT/bld_master_nompi/install` | production version for laptop, only compiled from master |
-| `bld_fixes_nompi` | `../src/configure --prefix=$NEST_ROOT/bld_fixes_nompi/install` | testing code in branches for small fixes |
-| `bld_fixes_mpi` | `../src/configure --prefix=$NEST_ROOT/bld_fixes_mpi/install --with-mpi` | testing code in branches for small fixes with MPI  |
-| `bld_debug_nompi` | `../src/configure --prefix=$NEST_ROOT/bld_fixes_mpi/install --with-debug` | for debugging  |
+| Directory |  Purpose |
+|:---------|:-------|
+| `bld_master_nompi` | production version for laptop, only compiled from master |
+| `bld_fixes_nompi`  | testing code in branches for small fixes |
+| `bld_fixes_mpi`  | testing code in branches for small fixes with MPI  |
+| `bld_debug_nompi`  | for debugging  |
 
 If you have longer-running branches for major changes, you may want to create one or more `bld_` directories for this branch in addition, so that you can always "hop into" work on that branch without having to recompile much code.
-
-| foo | goo |
-| --- | --- |
-| 1 |  2 |
-
-
-### Source code
-
-NEST source code should reside in i
-
-Managing the build and install directories requires a bit more
-work. At present, we suggest an approach to balance
-stability, efficiency and clarity.
-
-To keep everything totally tidy, you would need one build directory
-(and an install directory inside it) for each
-*configuration*, where each combination of
-branch---debug/no-debug---mpi/no mpi---python/no python, etc is a
-*configuration*. Clearly, this would quickly lead to a combinatorial
-explosion that is not manageable.
-
-Thus, we propose the following (again, we are very interested in
-feedback on this proposal):
-
-1. Create one *production build* directory and configuration, as
-   described above. This directory will always be built from the
-   master source branch with the configuration most suitable for your
-   production needs. The key point of this build is to provide you
-   with a stable installation of NEST to work with.
-1.  Create one *development build* directory and configuration (see
-    below). The main purpose of this build is to allow you to test
-    minor changes to NEST quickly. You first build this build from the
-    master branch. When you later create a branch of master
-    to make a small fix, you build that branch in this development
-    build directory.
-1. Create a dedicated *branch build* directory and configuration for each branch
-   dedicated to more complex changes that will take time (see below
-   for instructions). In this way, whenever you return to work on a
-   given branch, you have everything set up and most code already
-   compiled.
-1. Create one *debug build* directory and configuration set up for
-   debugging (see below). This configuration serves a similar purpose
-   as the development build, but with debugging enabled.
-1. If you need
-   to do a lot of debugging in a long-running branch, you may want to
-   create a separate debug build for that branch as well.
 
 
 ## Setting up NEST with Eclipse
 
 ### Preparations
 
-You should bootstrap and configure NEST as usual. This document
-assumes the following directory layout:
+You should bootstrap and configure NEST as usual. In this document,
+we will first set up the NEST production build
+`bld_master_nompi`. Handling further configurations will be described
+in a later section.
 
-    $NEST_ROOT/src          # source code
-    $NEST_ROOT/bld          # build directory
-    $NEST_ROOT/bld/ins      # install directory
+We thus assume the following directory layout:
 
-You should build and install NEST manually once:
+    $NEST_ROOT/src                          # source code
+    $NEST_ROOT/bld_master_nompi             # build directory
+    $NEST_ROOT/bld_master_nompi/install     # install directory
 
-    cd $NEST_ROOT/bld
-    $NEST_ROOT/src/configure --prefix=$NEST_ROOT/bld/ins
+You should configure, build and install NEST manually once (note that
+I want to build NEST with gcc 5.1 from Homebrew, therefore the
+`CC=gcc-5 CXX=g++-5` arguments to `configure`; NB: Make sure that you
+have checked out the master branch in the `src` directory):
+
+    cd $NEST_ROOT/bld_master_nompi
+    ../src/configure --prefix=$NEST_ROOT/bld_master_nompi/install CC=gcc-5 CXX=g++-5
 	make -j4
 	make install
 	make installcheck
@@ -172,27 +149,37 @@ the build directory. To this end, select the project in the project
 browser and choose`Properties` from the context menu. Then
 
 1. go to `C/C++ General > Paths and Symbols`
-1. choose `Includes tab and there `GNU C`
+1. choose `Includes` tab and there `GNU C`
 1. click `Add`
-1. check off for `Add to all configurations`
-and `Add to all languages`
+1. check off for `Add to all languages`
 1. click `File system ...` and select the
-`$NEST_ROOT/bld/libnestutil` directory
-1. add the `$NEST_ROOT/bld/nest` directory in the same way
+`$NEST_ROOT/bld_master_nompi/libnestutil` directory
+1. add the `$NEST_ROOT/bld_master_nompi/nest` directory in the same way
 1. rebuild the index when Eclipse suggest it or by choosing `Index >
    Rebuild` from the context menu on the project.
 
+To enable code formatting with `clang-format` via `CppStyle`, open the Properties window
+for the project and go to `C/C++ General > Formatter`, enable project specific settings, choose `CppStyle` as Code Formatter. `Source > Format` will now format source code according to the `.clang-format` file shipped with NEST.
+
+
+
 Finally, we need to tell Eclipse about the build path.
 
+1. From the project context menu, choose `Build configurations > Manage ...`.
+Rename the `Build GNU` build configuration to according to the build directory (helps
+keeping an overview later), in our case `bld_master_nompi`.
 1. Choose the project in the project browser, then `Properties` from the context
 menu.
-1. Go to `C/C++ Build` and in the "Build location" section click
-`File system ...`, then choose `$NEST_ROOT/bld`.
+1. Go to `C/C++ Build`
+1. It should show the`bld_master_nompi` (or whatever name you chose)  as active
+configuration. 
+1. Then, in the `Build location` section of the `C/C++ Build` window, click
+`File system ...`, then choose `$NEST_ROOT/bld_master_nompi`.
 1. If you want to build in parallel, remove the check for
 `Use default build command` and enter `make -j4` as build command
   (replace 4 with a suitable number for your computer).
 
-And we need to amend the search path for tools Eclipse uses. In the
+Finally, we need to amend the search path for tools Eclipse uses. In the
 project properties browser,
 
 1. go to `C/C++ Build > Enviroment`
@@ -211,67 +198,108 @@ targets:
 1. Go to the Context Menu of the project
 1. Choose `Make Targets > Create ...` and add a target,
 e.g. `install` by entering this as the target name.
-1. Remove the check for "Run all project builders".
-1. You should create targets `all`, `install`, `install-exec` and
-`installcheck`.
+1. Remove the check for `Run all project builders`.
+1. You should create targets 
+    - `all` (builds nest)
+    - `install` (installs nest, including tests and help)
+	- `install-exec` (installs compiled code and Python, but not SLI
+	code, tests, or help; faster if you only changed C++ or Python files)
+    - `installcheck` (runs the testsuite)
 1. You can run the targets by choosing `Make Targets > Build ...` from
 the Context Menu.
 
 See also [https://wiki.eclipse.org/CDT/Autotools/User_Guide](https://wiki.eclipse.org/CDT/Autotools/User_Guide).
 
-### Running NEST
+### Running NEST from Eclipse
 
 To run NEST within Eclipse,
 
 1. go to the project properties browser
 1. select `Run/Debug Settings`
 1. select `NEST Build (GNU)` and click `Edit ...`
+1. rename to `run_master_nompi`
 1. under `C/C++ Application` click `Browse ...` and select
-`$NEST_ROOT/bld/ins/bin/nest`
+`$NEST_ROOT/bld_master_nompi/ins/bin/nest`
+1. select `Disable auto build` (because that only builds, but does not install)
 
-You can now run NEST by clicking the "Play" button. Input is shown a
-line off in the built-in console, but NEST works fine.
+You can now run NEST by clicking the "Play" button. Input is echoed in
+a slightly funny way in the build-in console, but NEST works fine. You
+need to quit NEST with the `quit` command, `Ctrl-D` does not seem to
+work (made my machine hang totally on one occasion).
 
-**DO NOT QUIT NEST WITH CTRL-D, or your computer MAY HANG HORRIBLY!**
-
-#### Running PyNEST
+#### Running PyNEST from Eclipse
 
 To be written.
 
 
-### Multiple configurations
+## Multiple build directories and configurations
 
-We have little experience with multiple branches and configurations in
-Eclipse yet, so take these recommendations with a pinch of salt---and
-feel free to provide improvements!
+We have little experience with multiple build directories yet, so take
+this with a pinch of salt and let us know about your experiences! See
+above for a general suggestion on how to organize build directories.
 
-Switching the source code between Git branches is straightforward:
-Choose `Team > Switch to ...`and select the branch you want.
+For the example here, we set up a `bld_fixes_mpi` build directory and
+then add the corresponding build and run configuration in Eclipse. In
+general, you need to set up one build and one run configuration for
+each build directory you create.
 
+### Configuring and additional build directory
 
+Create and configure the build directory as usual and build and
+install NEST once (`CC` and `CXX` are not set explicitly, since I
+built MPI to use the `gcc-5` and `g++-5` compilers).
 
-#### Configuring and additional build directory
-
-Create the build directory, call it, e.g., `bld_devel`. Configure NEST in the build directory as usual.
+```
+cd $NEST_ROOT
+mkdir bld_fixes_mpi
+cd bld_fixes_mpi
+../src/configure --prefix=$NEST_ROOT/bld_fixes_mpi/install --with-mpi
+make -j4
+make install
+make installcheck
+```
 
 Then, in Eclipse
 
 1. In the project context menu, choose
 `Build configurations > Manage ...` and then `New ...`
-1. Choose a name, e.g., `NEST Devel` and choose to copy
+1. Choose a name, preferably the same as the build directory, here `bld_fixes_mpi` and choose to copy
 settings from an existing configuration.
 1. In the context menu, choose `Build configurations > Set Active` and
 select you new configuration.
-1. Choose `Properties` from the context menu, go to `C/C++ Build`,
+1. Choose `Properties` from the context menu and go to `C/C++ General > Path and Symbols`. Delete the include directories listed (for C and C++) and add the `libnestutil` and `nest` directories from the build directory, rebuild the index when Eclipse suggest it (deleting and adding paths is easier than editing them, because with the `Add to all languages` option you only need to add each path once).
+1. In the `Properties` window go to `C/C++ Build`,
    choose the `Builder Settings` tab and then under "Build location"
    click `File system ...` and select the build directory for this
-   configuration, e.g., `$NEST_ROOT/bld_devel`.
-1. In the Properties menu, go to `Run/Debug Settings`, select an
+   configuration, e.g., `$NEST_ROOT/bld_fixes_mpi`.
+1. In the `Properties` window, go to `Run/Debug Settings`, select an
 existing configuraton and click `Duplicate`, then select the new
-configuration and choose `Edit`. 
-1. Edit the name of the configuration and the  path to the C/C++
+configuration and choose `Edit`.
+1. Edit the name of the configuration, e.g. to `run_fixes_mpi` and the  path to the C/C++
    Application. If you have not built this configuration yet, you will get a warning; ignore it.
-1. Still in the Edit window, select the correct Build configuration.
+
+### Building and running with multiple configurations
+
+- You select the active configuration from the project context menu via `Build Configurations > Set Active` .
+- To build a different configuration directly, you can also click on the little triangle next to the hammer icon and select the configuration you want to build.
+
+A build just runs make. If you want to do more (install, run the tests), you need to select one of the make targets from the context menu via `Make Targets > Build ...`; in this case, you will always run the active build configuration.
+
+When running a new configuration for the first time,
+
+- either click on the triangle next to the "play" button, choose `Run configurations ...`, select the configuration you want to run and click `Run`
+- or go to the same menu via the context menu `Run as ... > Run configurations ...`.
+
+Afterwards, you can select the run configuration by clicking on the little triangle next to the play button.
+
+## Debugging in Eclipse
+
+This section is very preliminary.
+
+1. Create a build directory and configure NEST with the `--with-debug` switch, then add a corresponding configuration in Eclipse as described above.
+1. Remember to also create a run configuration. Then, click the triangle next to the Bug to start debugging, chosing your debug run configuration.
+1. Eclipse stops the debugger on entry to main, you probably want to click Resume here.
+
+NB: At present, I am not able to get any variable values out in gdb. This seems to be a gdb problem, I also have this problem with gdb on the command line. So on the Mac we may have to wait until Eclipse support lldb.
 
 
-### Code formatting

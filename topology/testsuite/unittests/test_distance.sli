@@ -25,8 +25,6 @@
 (unittest) run
 unittest using
 
-topology using
-
 % fixed grid, distance from node
 {
   ResetKernel
@@ -106,6 +104,4 @@ topology using
   eq 
 } assert_or_die
 
-
-endusing
 endusing

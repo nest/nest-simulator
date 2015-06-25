@@ -45,14 +45,14 @@ nest::GrowthCurveLinear::GrowthCurveLinear()
 void
 nest::GrowthCurveLinear::get( DictionaryDatum& d ) const
 {
-  def< std::string >( d, "growth_curve", name );
-  def< double_t >( d, "eps", eps );
+  def< std::string >( d, names::growth_curve, name );
+  def< double_t >( d, names::eps, eps );
 }
 
 void
 nest::GrowthCurveLinear::set( const DictionaryDatum& d )
 {
-  updateValue< double_t >( d, "eps", eps );
+  updateValue< double_t >( d, names::eps, eps );
 }
 
 nest::double_t

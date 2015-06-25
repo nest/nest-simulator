@@ -25,9 +25,6 @@ namespace nest
 {
 namespace names
 {
-const Name Ca( "Ca" );
-const Name tau_Ca( "tau_Ca" );
-const Name beta_Ca( "beta_Ca" );
 const Name a( "a" );
 const Name A( "A" );
 const Name A_lower( "A_lower" );
@@ -47,6 +44,7 @@ const Name autapses( "autapses" );
 
 const Name b( "b" );
 const Name beta( "beta" );
+const Name beta_Ca( "beta_Ca" );
 const Name binary( "binary" );
 
 const Name c( "c" );
@@ -54,6 +52,7 @@ const Name c_1( "c_1" );
 const Name c_2( "c_2" );
 const Name c_3( "c_3" );
 const Name C_m( "C_m" );
+const Name Ca( "Ca" );
 const Name calibrate( "calibrate" );
 const Name calibrate_node( "calibrate_node" );
 const Name clear( "clear" );
@@ -104,6 +103,7 @@ const Name E_rr( "E_rr" );
 const Name E_sfa( "E_sfa" );
 const Name element_type( "element_type" );
 const Name epoch( "epoch" );
+const Name eps("eps");
 const Name eq12( "eq12" );
 const Name eq13( "eq13" );
 const Name eq7( "eq7" );
@@ -140,6 +140,7 @@ const Name g_sfa( "g_sfa" );
 const Name gamma( "gamma" );
 const Name gamma_shape( "gamma_shape" );
 const Name global_id( "global_id" );
+const Name growth_curve("growth_curve");
 const Name gsl_error_tol( "gsl_error_tol" );
 
 const Name h( "h" );
@@ -273,6 +274,7 @@ const Name targets( "targets" );
 const Name tau_1( "tau_1" );
 const Name tau_2( "tau_2" );
 const Name tau_ahp( "tau_ahp" );
+const Name tau_Ca( "tau_Ca" );
 const Name tau_epsp( "tau_epsp" );
 const Name tau_fac( "tau_fac" );
 const Name tau_facs( "tau_facs" );

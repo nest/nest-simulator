@@ -66,23 +66,33 @@ public:
   Archiving_Node( const Archiving_Node& );
 
   /**
-   * \fn double_t get_Ca_value()
-   * return the Ca_minus value
+   * \fn double_t get_Ca_minus()
+   * return the current value of Ca_minus
    */
-  double_t
-  get_Ca_value() const
-  {
-    return Ca_minus_;
-  }
+  double_t get_Ca_minus() const;
 
   /**
-   * \fn double_t get_synaptic_element(Name n, double_t t)
+   * \fn double_t get_synaptic_elements(Name n)
    * get the number of synaptic element for the current Node
+   * the number of synaptic elements is a double value but the number of
+   * actual vacant and connected elements is an integer truncated from this
+   * value
    */
-  double_t get_synaptic_element( Name n ) const;
+  double_t get_synaptic_elements( Name n ) const;
 
-  int_t get_synaptic_element_vacant( Name n ) const;
-  int_t get_synaptic_element_connected( Name n ) const;
+  /**
+   * \fn int_t get_synaptic_elements_vacant(Name n)
+   * get the number of synaptic elements of type n which are available
+   * for new synapse creation
+   */
+  int_t get_synaptic_elements_vacant( Name n ) const;
+  
+  /**
+   * \fn int_t get_synaptic_elements_connected(Name n)
+   * get the number of synaptic element of type n which are currently
+   * connected
+   */
+  int_t get_synaptic_elements_connected( Name n ) const;
 
   /**
    * \fn std::map<Name, double_t> get_synaptic_elements()
@@ -90,10 +100,24 @@ public:
    */
   std::map< Name, double_t > get_synaptic_elements() const;
 
-  void update_synaptic_element( double_t t );
+  /**
+   * \fn void update_synaptic_elements()
+   * Change the number of synaptic elements in the node depending on the 
+   * dynamics described by the corresponding growth curve
+   */
+  void update_synaptic_elements( double_t t );
 
-  void decay_synaptic_element_vacant( double_t p );
+  /**
+   * \fn void decay_synaptic_elements_vacant()
+   * Delete a certain portion of the vacant synaptic elements which are not
+   * in use
+   */
+  void decay_synaptic_elements_vacant( double_t p );
 
+  /**
+   * \fn void connect_synaptic_element()
+   * Change the number of connected synaptic elements by n
+   */
   void connect_synaptic_element( Name name, int_t n );
 
   /**
@@ -137,11 +161,11 @@ public:
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d );
 
-  double_t
-  get_tau_Ca() const
-  {
-    return tau_Ca_;
-  };
+  /**
+   * retrieve the current value of tau_Ca which defines the exponential decay 
+   * constant of the intracellular calcium concentration
+   */
+  double_t get_tau_Ca() const;
 
 protected:
   /**
@@ -188,16 +212,19 @@ private:
    * Structural plasticity
    */
 
-  // Time of the last update of the Calcium concentration
+  // Time of the last update of the Calcium concentration in ms
   double_t Ca_t_;
 
-  //  Value of the calcium concentration at Ca_t_
+  // Value of the calcium concentration [Ca2+] at Ca_t_. Intracellular calcium
+  // concentration has a linear factor to mean electrical activity of 10^2,
+  // this means, for example, that a [Ca2+] of 0.2 is equivalent to a mean activity
+  // of 20Hz.
   double_t Ca_minus_;
 
-  // time constant for exponential decay of the intracellular calcium concentration
+  // Time constant for exponential decay of the intracellular calcium concentration
   double_t tau_Ca_;
 
-  // increase in calcium concentration for each spike of the neuron
+  // Increase in calcium concentration [Ca2+] for each spike of the neuron
   double_t beta_Ca_;
 
   // Map of the synaptic elements
@@ -210,6 +237,17 @@ Archiving_Node::get_spiketime_ms() const
   return last_spike_;
 }
 
-} // of namespace
+inline double_t
+Archiving_Node::get_tau_Ca() const
+{
+  return tau_Ca_;
+}
 
+inline double_t
+Archiving_Node::get_Ca_minus() const
+{
+  return Ca_minus_;
+}
+  
+} // of namespace
 #endif

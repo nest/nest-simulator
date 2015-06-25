@@ -469,45 +469,45 @@ public:
   virtual void handle( DoubleDataEvent& e );
 
   /**
-   * return the Ca_minus value at t (in ms).
-   * return 0.0 if not overridden
+   * Return the Ca_minus value at time t
+   * Return 0.0 if not overridden
    */
   virtual double_t
-  get_Ca_value() const
+  get_Ca_minus() const
   {
     return 0.0;
   }
 
   /**
-   * get the number of synaptic element for the current Node at t (in ms)
-   * return 0.0 if not overridden
+   * Get the number of synaptic element for the current Node at t
+   * Return 0.0 if not overridden
    */
-  virtual double_t get_synaptic_element( Name ) const
+  virtual double_t get_synaptic_elements( Name ) const
   {
     return 0.0;
   }
 
   /**
-   * get the number of vacant synaptic element for the current Node
-   * return 0.0 if not overridden
+   * Get the number of vacant synaptic element for the current Node
+   * Return 0 if not overridden
    */
-  virtual int_t get_synaptic_element_vacant( Name ) const
+  virtual int_t get_synaptic_elements_vacant( Name ) const
   {
-    return 0.0;
+    return 0;
   }
 
   /**
-   * get the number of connected synaptic element for the current Node
-   * return 0.0 if not overridden
+   * Get the number of connected synaptic element for the current Node
+   * Return 0 if not overridden
    */
-  virtual int_t get_synaptic_element_connected( Name ) const
+  virtual int_t get_synaptic_elements_connected( Name ) const
   {
-    return 0.0;
+    return 0;
   }
 
   /**
-   * get the number of all synaptic elements for the current Node at t (in ms)
-   * return an empty map if not overridden
+   * Get the number of all synaptic elements for the current Node at time t
+   * Return an empty map if not overridden
    */
   virtual std::map< Name, double_t >
   get_synaptic_elements()
@@ -515,10 +515,28 @@ public:
     return std::map< Name, double >();
   }
 
-  virtual void update_synaptic_element( double_t ){};
+  /**
+   * Triggers the update of all SynapticElements
+   * stored in the synaptic_element_map_. It also updates the calcium concentration.
+   * @param t double_t time when the update is being performed
+   */
+  virtual void update_synaptic_elements( double_t ){};
 
-  virtual void decay_synaptic_element_vacant( double_t ){};
+  /**
+   * Is used to reduce the number of synaptic elements in the node through 
+   * time. 
+   * @param p double_t correspond the the proportion of synaptic elements 
+   * to be removed.
+   */
+  virtual void decay_synaptic_elements_vacant( double_t ){};
 
+  /**
+   * Is used to update the number of connected 
+   * synaptic elements (SynapticElement::z_connected_) when a synapse 
+   * is formed or deleted.
+   * @param type Name, name of the synaptic element to connect
+   * @param n int_t number of new connections of the given type
+   */
   virtual void connect_synaptic_element( Name, int_t ){};
 
   /**

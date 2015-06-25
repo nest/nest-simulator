@@ -166,7 +166,7 @@ nest::Archiving_Node::get_history( double_t t1,
 void
 nest::Archiving_Node::set_spiketime( Time const& t_sp )
 {
-  update_synaptic_element( t_sp.get_ms() );
+  update_synaptic_elements( t_sp.get_ms() );
   Ca_minus_ += beta_Ca_;
 
   if ( n_incoming_ )
@@ -272,7 +272,6 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
   }
   // we replace the existing synaptic_elements_map_ by the new one
   DictionaryDatum synaptic_elements_d;
-  //DictionaryDatum synaptic_element_d;
   std::pair< std::map< Name, SynapticElement >::iterator, bool > insert_result;
 
   synaptic_elements_map_ = std::map< Name, SynapticElement >();
@@ -282,10 +281,9 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
         i != synaptic_elements_d->end();
         ++i )
   {
-    //synaptic_element_d = getValue< DictionaryDatum >( synaptic_elements_d, i->first );
     insert_result = synaptic_elements_map_.insert(
       std::pair< Name, SynapticElement >( i->first, SynapticElement() ) );
-    ( insert_result.first->second ).set( getValue< DictionaryDatum >( synaptic_elements_d, i->first ) );/*synaptic_element_d );*/
+    ( insert_result.first->second ).set( getValue< DictionaryDatum >( synaptic_elements_d, i->first ) );
   }
 }
 
@@ -305,7 +303,7 @@ nest::Archiving_Node::clear_history()
 * Get the number of synaptic_elements
 * ---------------------------------------------------------------- */
 double_t
-nest::Archiving_Node::get_synaptic_element( Name n ) const
+nest::Archiving_Node::get_synaptic_elements( Name n ) const
 {
   std::map< Name, SynapticElement >::const_iterator se_it;
   se_it = synaptic_elements_map_.find( n );
@@ -319,7 +317,9 @@ nest::Archiving_Node::get_synaptic_element( Name n ) const
       return z_value;
     }
     else
+    {
       return std::floor( z_value );
+    }
   }
   else
   {
@@ -328,7 +328,7 @@ nest::Archiving_Node::get_synaptic_element( Name n ) const
 }
 
 int_t
-nest::Archiving_Node::get_synaptic_element_vacant( Name n ) const
+nest::Archiving_Node::get_synaptic_elements_vacant( Name n ) const
 {
   std::map< Name, SynapticElement >::const_iterator se_it;
   se_it = synaptic_elements_map_.find( n );
@@ -344,7 +344,7 @@ nest::Archiving_Node::get_synaptic_element_vacant( Name n ) const
 }
 
 int_t
-nest::Archiving_Node::get_synaptic_element_connected( Name n ) const
+nest::Archiving_Node::get_synaptic_elements_connected( Name n ) const
 {
   std::map< Name, SynapticElement >::const_iterator se_it;
   se_it = synaptic_elements_map_.find( n );
@@ -368,18 +368,15 @@ nest::Archiving_Node::get_synaptic_elements() const
         it != synaptic_elements_map_.end();
         ++it )
   {
-    n_map.insert( std::pair< Name, double_t >( it->first, get_synaptic_element( it->first ) ) );
+    n_map.insert( std::pair< Name, double_t >( it->first, get_synaptic_elements( it->first ) ) );
   }
   return n_map;
 }
 
 void
-nest::Archiving_Node::update_synaptic_element( double_t t )
+nest::Archiving_Node::update_synaptic_elements( double_t t )
 {
-  if ( t < Ca_t_ )
-  {
-    throw KernelException( "Synaptic elements already updated" );
-  }
+  assert ( t >= Ca_t_ );
 
   for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();
@@ -393,7 +390,7 @@ nest::Archiving_Node::update_synaptic_element( double_t t )
 }
 
 void
-nest::Archiving_Node::decay_synaptic_element_vacant( double_t p )
+nest::Archiving_Node::decay_synaptic_elements_vacant( double_t p )
 {
   double_t z, z_vacant;
   for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();

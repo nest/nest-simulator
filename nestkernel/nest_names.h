@@ -119,6 +119,7 @@ extern const Name E_rr;         //!< Other adaptation
 extern const Name E_sfa;        //!< Other adaptation
 extern const Name element_type; //!< Node type
 extern const Name epoch;
+extern const Name eps;          //!< MSP growth curve parameter 
 extern const Name eq12;            //!< used for iaflossless_count_exp
 extern const Name eq13;            //!< used for iaflossless_count_exp
 extern const Name eq7;             //!< used for iaflossless_count_exp
@@ -158,6 +159,7 @@ extern const Name g_sfa;         //!< Other adaptation
 extern const Name gamma;         //!< Specific to mirollo_strogatz_ps
 extern const Name gamma_shape;   //!< Specific to ppd_sup_generator and gamma_sup_generator
 extern const Name global_id;     //!< Node parameter
+extern const Name growth_curve;  //!< Growth curve for MSP dynamics
 extern const Name gsl_error_tol; //!< GSL integrator tolerance
 
 extern const Name h;                    //!< Summed input to a neuron (Ginzburg neuron)

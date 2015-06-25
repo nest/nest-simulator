@@ -111,7 +111,11 @@ EOF
 file_names=`git diff --name-only $TRAVIS_COMMIT_RANGE`
 
 for f in $file_names; do
-   # filter files
+  if [ ! -f "$f" ]; then
+    echo "$f : Is not a file or does not exist anymore."
+    continue
+  fi
+  # filter files
   case $f in
     *.h | *.c | *.cc | *.hpp | *.cpp )
       echo "Static analysis on file $f:"

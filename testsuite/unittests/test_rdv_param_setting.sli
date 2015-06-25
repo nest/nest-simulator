@@ -281,7 +281,7 @@ def
   % test with non-extreme edge is +-1, must pass (largest allowed range)
   /MT19937 /uniform_int << /low 1 cvi /high :LONG_MAX cvi >> run_test
   /MT19937 /uniform_int << /low :LONG_MAX neg cvi /high -1 >> run_test
-} pass_or_die
+} pass_or_die 
 
 % -------------------------------------------------------
 

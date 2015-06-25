@@ -69,6 +69,7 @@ frequency double - Frequency of sine modulation in Hz
 Remarks:
  - All targets receive different currents.
  - The currents for all targets change at the same points in time.
+ - The interval between changes, dt, must be a multiple of the time step.
  - The effect of this noise current on a neuron DEPENDS ON DT. Consider
    the membrane potential fluctuations evoked when a noise current is
    injected into a neuron. The standard deviation of these fluctuations

@@ -158,6 +158,11 @@ public:
       return invalid_port_;
     }
     port
+    handles_test_event( DataLoggingRequest&, rport )
+    {
+      return invalid_port_;
+    }
+    port
     handles_test_event( CurrentEvent&, rport )
     {
       return invalid_port_;

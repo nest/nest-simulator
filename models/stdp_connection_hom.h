@@ -25,12 +25,15 @@
 
 /* BeginDocumentation
   Name: stdp_synapse_hom - Synapse type for spike-timing dependent
-   plasticity using homogeneous parameters, i.e. all synapses have the same parameters.
+   plasticity using homogeneous parameters.
 
   Description:
-   stdp_synapse is a connector to create synapses with spike time
+   stdp_synapse_hom is a connector to create synapses with spike time
    dependent plasticity (as defined in [1]). Here the weight dependence
    exponent can be set separately for potentiation and depression.
+
+   Parameters controlling plasticity are identical for all synapses of the model,
+   reducing the memory required per synapse considerably.
 
   Examples:
    multiplicative STDP [2]  mu_plus = mu_minus = 1.0
@@ -46,6 +49,10 @@
    mu_plus    double - Weight dependence exponent, potentiation
    mu_minus   double - Weight dependence exponent, depression
    Wmax       double - Maximum allowed weight
+
+  Remarks:
+   The parameters are common to all synapses of the model and must be set using
+   SetDefaults on the synapse model.
 
   Transmits: SpikeEvent
 

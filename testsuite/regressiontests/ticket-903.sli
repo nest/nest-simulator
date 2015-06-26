@@ -30,7 +30,7 @@ Description:
 This test ensures that delays drawn from continuous distribution are not
 rounded up strictly.
 
-Note: This test is probabilistic, so there is a minuscule chance of it
+Remarks: This test is probabilistic, so there is a minuscule chance of it
       failing even if all is well. 
 
 Author: Hans Ekkehard Plesser

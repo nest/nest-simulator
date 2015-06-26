@@ -515,7 +515,7 @@ SeeAlso: over, index
  counts for all child processes.  Real time has arbitrary origin,
  i.e., only differences are meaningful.
 
- Note: results for user and system time may not be reliable if more
+ Remarks: results for user and system time may not be reliable if more
  than one thread is used.
 
  Author: Hans Ekkehard Plesser

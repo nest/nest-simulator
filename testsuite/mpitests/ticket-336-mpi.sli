@@ -31,7 +31,7 @@ Description:
   the same random number is generated independent of the number of MPI
   processes.
   
-Note: In response to the changes of GetStatus return values (cf #549),
+Remarks: In response to the changes of GetStatus return values (cf #549),
   this test now only checks that the first 10 RNs from its VP-RNG are
   identical independent of the number of MPI processes.
 

@@ -140,10 +140,6 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
   if ( tau_ex_ <= 0.0 || tau_in_ <= 0.0 )
     throw BadProperty( "All synaptic time constants must be > 0." );
 
-  if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
-    throw BadProperty(
-      "Membrane and synapse time constant(s) must differ. See note in documentation." );
-
   if ( TauR_ < 0.0 )
     throw BadProperty( "The refractory time t_ref can't be negative." );
 
@@ -240,16 +236,88 @@ iaf_psc_alpha::calibrate()
 
   // these depend on the above. Please do not change the order.
   V_.P30_ = -P_.Tau_ / P_.C_ * numerics::expm1( -h / P_.Tau_ );
-
   V_.P21_ex_ = h * V_.P11_ex_;
-  V_.P31_ex_ = 1 / P_.C_ * ( ( V_.P11_ex_ - V_.P33_ ) / ( -1 / P_.tau_ex_ - -1 / P_.Tau_ )
-                             - h * V_.P11_ex_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_ex_ );
-  V_.P32_ex_ = 1 / P_.C_ * ( V_.P33_ - V_.P11_ex_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_ex_ );
-
   V_.P21_in_ = h * V_.P11_in_;
-  V_.P31_in_ = 1 / P_.C_ * ( ( V_.P11_in_ - V_.P33_ ) / ( -1 / P_.tau_in_ - -1 / P_.Tau_ )
-                             - h * V_.P11_in_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_in_ );
-  V_.P32_in_ = 1 / P_.C_ * ( V_.P33_ - V_.P11_in_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_in_ );
+
+  // exact propagator, linear approximation and singular case for excitatory synaptic event
+
+  const double P32_ex_linear = 1 / 2. / P_.C_ / P_.Tau_ / P_.Tau_  
+                               * h * h * ( P_.tau_ex_ - P_.Tau_ ) * std::exp( -h / P_.Tau_ );
+  const double P32_ex_singular = h / P_.C_ * V_.P33_;
+  const double P32_ex = 1 / P_.C_ * ( V_.P33_ - V_.P11_ex_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_ex_ );
+  const double P31_ex_linear = h * 2 / 3. * P32_ex_linear;
+  const double P31_ex = 1 / P_.C_ * ( ( V_.P11_ex_ - V_.P33_ ) / ( -1 / P_.tau_ex_ - -1 / P_.Tau_ )
+                              - h * V_.P11_ex_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_ex_ );
+  const double P31_ex_singular = h * h / 2 / P_.C_ * V_.P33_;
+  const double dev_P31_ex = std::fabs( P31_ex - P31_ex_singular );
+  const double dev_P32_ex = std::fabs( P32_ex - P32_ex_singular );
+    
+  const double dev_norm_ex = std::sqrt( std::pow( dev_P31_ex , 2 ) + std::pow( dev_P32_ex , 2 ) );
+  const double error_linear_ex = std::sqrt( std::pow( std::fabs( P32_ex_linear ) , 2 )
+					   +std::pow( std::fabs( P31_ex_linear ) , 2 ) );
+
+  if (P_.Tau_ == P_.tau_ex_)
+    {
+      net_->message(
+	SLIInterpreter::M_INFO, "iaf_psc_alpha::calibrate",
+	"singular solution for excitatory synaptic events is used." );
+      V_.P31_ex_ = P31_ex_singular;
+      V_.P32_ex_ = P32_ex_singular;
+    }
+  else
+    if (std::abs(P_.Tau_ - P_.tau_ex_) < 0.1 and dev_norm_ex  >  2 * error_linear_ex )
+    {
+      net_->message(
+	SLIInterpreter::M_INFO, "iaf_psc_alpha::calibrate",
+	"singular solution for excitatory synaptic events is used." );
+      V_.P31_ex_ = P31_ex_singular;
+      V_.P32_ex_ = P32_ex_singular;
+    }
+    else
+    {
+      V_.P32_ex_ = P32_ex;
+      V_.P31_ex_ = P31_ex;
+    }
+
+  // exact propagator, linear approximation and singular case for inhibitory synaptic event
+
+  const double P32_in_linear = 1 / 2. / P_.C_ / P_.Tau_ / P_.Tau_  
+                               * h * h * ( P_.tau_in_ - P_.Tau_ ) * std::exp( -h / P_.Tau_ );
+  const double P32_in_singular = h / P_.C_ * V_.P33_;
+  const double P32_in = 1 / P_.C_ * ( V_.P33_ - V_.P11_in_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_in_ );
+  const double P31_in_linear = h * 2 / 3. * P32_in_linear;
+  const double P31_in = 1 / P_.C_ * ( ( V_.P11_in_ - V_.P33_ ) / ( -1 / P_.tau_in_ - -1 / P_.Tau_ )
+                              - h * V_.P11_in_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_in_ );
+  const double P31_in_singular = h * h / 2 / P_.C_ * V_.P33_;
+  const double dev_P31_in = std::fabs( P31_in - P31_in_singular );
+  const double dev_P32_in = std::fabs( P32_in - P32_in_singular );
+    
+  const double dev_norm_in = std::sqrt( std::pow( dev_P31_in , 2 ) + std::pow( dev_P32_in , 2 ) );
+  const double error_linear_in = std::sqrt( std::pow( std::fabs( P32_in_linear ) , 2 )
+					   +std::pow( std::fabs( P31_in_linear ) , 2 ) );
+
+  if (P_.Tau_ == P_.tau_in_)
+    {
+      net_->message(
+	SLIInterpreter::M_INFO, "iaf_psc_alpha::calibrate",
+	"singular solution for excitatory synaptic events is used." );
+      V_.P31_in_ = P31_in_singular;
+      V_.P32_in_ = P32_in_singular;
+    }
+  else
+    if (std::abs(P_.Tau_ - P_.tau_in_) < 0.1 and dev_norm_in  >  2 * error_linear_in )
+    {
+      net_->message(
+	SLIInterpreter::M_INFO, "iaf_psc_alpha::calibrate",
+	"singular solution for excitatory synaptic events is used." );
+      V_.P31_in_ = P31_in_singular;
+      V_.P32_in_ = P32_in_singular;
+    }
+    else
+    {
+      V_.P32_in_ = P32_in;
+      V_.P31_in_ = P31_in;
+    }
 
   V_.EPSCInitialValue_ = 1.0 * numerics::e / P_.tau_ex_;
   V_.IPSCInitialValue_ = 1.0 * numerics::e / P_.tau_in_;

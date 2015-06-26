@@ -523,16 +523,16 @@ public:
   virtual void update_synaptic_elements( double_t ){};
 
   /**
-   * Is used to reduce the number of synaptic elements in the node through 
-   * time. 
-   * @param p double_t correspond the the proportion of synaptic elements 
+   * Is used to reduce the number of synaptic elements in the node through
+   * time.
+   * @param p double_t correspond the the proportion of synaptic elements
    * to be removed.
    */
   virtual void decay_synaptic_elements_vacant( double_t ){};
 
   /**
-   * Is used to update the number of connected 
-   * synaptic elements (SynapticElement::z_connected_) when a synapse 
+   * Is used to update the number of connected
+   * synaptic elements (SynapticElement::z_connected_) when a synapse
    * is formed or deleted.
    * @param type Name, name of the synaptic element to connect
    * @param n int_t number of new connections of the given type

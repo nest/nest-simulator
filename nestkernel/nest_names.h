@@ -56,6 +56,7 @@ extern const Name autapses;        //!< Connectivity-related
 
 extern const Name b;      //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name beta;   //!< Specific to amat2_*
+extern const Name beta_Ca;//!< Increment in calcuim concentration with each spike
 extern const Name binary; //!< Recorder parameter
 
 extern const Name c;                    //!< Specific to Izhikevich 2003
@@ -63,6 +64,7 @@ extern const Name c_1;                  //!< Specific to stochastic neuron pp_ps
 extern const Name c_2;                  //!< Specific to stochastic neuron pp_psc_delta
 extern const Name c_3;                  //!< Specific to stochastic neuron pp_psc_delta
 extern const Name C_m;                  //!< Membrane capacitance
+extern const Name Ca;                   //!< Calcium concentration
 extern const Name calibrate;            //!< Command to calibrate the neuron (sli_neuron)
 extern const Name calibrate_node;       //!< Command to calibrate the neuron (sli_neuron)
 extern const Name clear;                //!< used for ArchivingNode
@@ -119,7 +121,7 @@ extern const Name E_rr;         //!< Other adaptation
 extern const Name E_sfa;        //!< Other adaptation
 extern const Name element_type; //!< Node type
 extern const Name epoch;
-extern const Name eps;          //!< MSP growth curve parameter 
+extern const Name eps;             //!< MSP growth curve parameter
 extern const Name eq12;            //!< used for iaflossless_count_exp
 extern const Name eq13;            //!< used for iaflossless_count_exp
 extern const Name eq7;             //!< used for iaflossless_count_exp
@@ -130,9 +132,6 @@ extern const Name events;          //!< Recorder parameter
 extern const Name ex_spikes;       //!< Number of arriving excitatory spikes
 extern const Name exc_conductance; //!< Recorder parameter
 
-extern const Name Ca;
-extern const Name tau_Ca;
-extern const Name beta_Ca;
 extern const Name F_lower;
 extern const Name F_mean;
 extern const Name F_std;
@@ -300,6 +299,7 @@ extern const Name targets;           //!< Connection parameters
 extern const Name tau_1;             //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name tau_2;             //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name tau_ahp;           //!< Specific to iaf_chxk_2008 neuron
+extern const Name tau_Ca;            //!< Rate of loss of calcuim concentration
 extern const Name tau_epsp;          //!< Specific to iaf_chs_2008 neuron
 extern const Name tau_fac;           //!< facilitation time constant (ms) (Tsodyks2_connection)
 extern const Name tau_facs;          //!< facilitation time constant (ms) (property arrays)

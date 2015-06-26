@@ -43,7 +43,7 @@ class Archiving_Node;
 
 /**
  * \class GrowthCurve
- * Defines the way the number of synaptic elements changes through time 
+ * Defines the way the number of synaptic elements changes through time
  * according to the calcium concentration of the neuron.
  */
 class GrowthCurve
@@ -78,7 +78,7 @@ protected:
 /**
  * \class GrowthCurveLinear
  * Uses an exact integration method to update the number of synaptic elements:
- * dz/dt = nu (1 - (1/epsilon) * Ca(t)), where nu is the growth rate and 
+ * dz/dt = nu (1 - (1/epsilon) * Ca(t)), where nu is the growth rate and
  * epsilon is the desired average calcium concentration.
  */
 class GrowthCurveLinear : public GrowthCurve
@@ -100,13 +100,13 @@ private:
 
 /**
  * \class GrowthCurveGaussian
- * Uses a forward Euler integration method to update the number of synaptic 
- * elements: 
+ * Uses a forward Euler integration method to update the number of synaptic
+ * elements:
  * dz/dt = nu (2 * e^(- ((Ca(t) - xi)/zeta)^2 ) - 1)
- * where xi = (eta  + epsilon)/2, 
+ * where xi = (eta  + epsilon)/2,
  * zeta = (epsilon - eta)/2 * sqrt(ln(2))),
  * eta is the minimum calcium concentration required for any synaptic element
- * to be created, epsilon is the target mean calcium concentration in the 
+ * to be created, epsilon is the target mean calcium concentration in the
  * neuron and nu is the growth rate.
  */
 class GrowthCurveGaussian : public GrowthCurve
@@ -132,11 +132,11 @@ private:
  * \class SynapticElement
  * Synaptic element of a node (like Axon or dendrite) for the purposes
  * of synaptic plasticity.
- * The synaptic elements represent connection points between two neurons that 
- * grow according to a homeostatic growth rule. Basically, the dynamics of the 
- * number of synaptic elements is driven by the average electrical activity of 
- * the neuron (indirectly measured through the Calcium concentration of the 
- * node). The probability of two neurons creating a new synapse between them, 
+ * The synaptic elements represent connection points between two neurons that
+ * grow according to a homeostatic growth rule. Basically, the dynamics of the
+ * number of synaptic elements is driven by the average electrical activity of
+ * the neuron (indirectly measured through the Calcium concentration of the
+ * node). The probability of two neurons creating a new synapse between them,
  * depends on the number of available synaptic elements of each neuron.
  */
 class SynapticElement
@@ -199,7 +199,7 @@ public:
   * @param a node of this synaptic_element
   * @param t Current time (in ms)
   */
-  
+
   /*
    * Updates the number of available synaptic elements according to the mean
    * calcium concentration of the neuron at time t.
@@ -209,7 +209,7 @@ public:
    * @param tau_Ca change in the calcium concentration on each spike
    */
   void update( double_t t, double_t t_minus, double_t Ca_minus, double_t tau_Ca );
-  
+
   int_t
   get_z_vacant() const
   {
@@ -244,7 +244,7 @@ public:
   }
 
   /*
-   * Retrieves the current value of the growth rate, this is 
+   * Retrieves the current value of the growth rate, this is
    */
   double_t
   get_growth_rate() const
@@ -270,21 +270,21 @@ public:
   }
 
 private:
-  //The current number of synaptic elements at t = z_t_
+  // The current number of synaptic elements at t = z_t_
   double_t z;
-  //Last time stamp when the number of synaptic elements was updated
+  // Last time stamp when the number of synaptic elements was updated
   double_t z_t_;
-  //Number of synaptic elements bound to a synapse
+  // Number of synaptic elements bound to a synapse
   int_t z_connected_;
-  //Variable which defines if the number of synaptic elements should be treated 
-  //as a continous double number or as an integer value
+  // Variable which defines if the number of synaptic elements should be treated
+  // as a continous double number or as an integer value
   bool continuous_;
-  //The maximum amount by which the synaptic elements will change between time 
-  //steps.
+  // The maximum amount by which the synaptic elements will change between time
+  // steps.
   double_t growth_rate_;
-  //Rate at which vacant synaptic elements will decay
+  // Rate at which vacant synaptic elements will decay
   double_t tau_vacant_;
-  //Growth curve which defines the dynamics of this synaptic element.
+  // Growth curve which defines the dynamics of this synaptic element.
   GrowthCurve* growth_curve_;
 };
 

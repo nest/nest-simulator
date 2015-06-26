@@ -82,7 +82,7 @@ Archiving_Node::register_stdp_connection( double_t t_first_read )
   {
     ( runner->access_counter_ )++;
   }
-  
+
   n_incoming_++;
 }
 
@@ -240,7 +240,7 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
-  
+
   tau_minus_ = new_tau_minus;
   tau_minus_triplet_ = new_tau_minus_triplet;
 
@@ -265,7 +265,7 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
   {
     clear_history();
   }
-  
+
   if ( not d->known( "synaptic_elements" ) )
   {
     return;
@@ -283,7 +283,8 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
   {
     insert_result = synaptic_elements_map_.insert(
       std::pair< Name, SynapticElement >( i->first, SynapticElement() ) );
-    ( insert_result.first->second ).set( getValue< DictionaryDatum >( synaptic_elements_d, i->first ) );
+    ( insert_result.first->second )
+      .set( getValue< DictionaryDatum >( synaptic_elements_d, i->first ) );
   }
 }
 
@@ -376,7 +377,7 @@ nest::Archiving_Node::get_synaptic_elements() const
 void
 nest::Archiving_Node::update_synaptic_elements( double_t t )
 {
-  assert ( t >= Ca_t_ );
+  assert( t >= Ca_t_ );
 
   for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();

@@ -103,7 +103,7 @@ const Name E_rr( "E_rr" );
 const Name E_sfa( "E_sfa" );
 const Name element_type( "element_type" );
 const Name epoch( "epoch" );
-const Name eps("eps");
+const Name eps( "eps" );
 const Name eq12( "eq12" );
 const Name eq13( "eq13" );
 const Name eq7( "eq7" );
@@ -140,7 +140,7 @@ const Name g_sfa( "g_sfa" );
 const Name gamma( "gamma" );
 const Name gamma_shape( "gamma_shape" );
 const Name global_id( "global_id" );
-const Name growth_curve("growth_curve");
+const Name growth_curve( "growth_curve" );
 const Name gsl_error_tol( "gsl_error_tol" );
 
 const Name h( "h" );

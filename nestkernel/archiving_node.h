@@ -86,7 +86,7 @@ public:
    * for new synapse creation
    */
   int_t get_synaptic_elements_vacant( Name n ) const;
-  
+
   /**
    * \fn int_t get_synaptic_elements_connected(Name n)
    * get the number of synaptic element of type n which are currently
@@ -102,7 +102,7 @@ public:
 
   /**
    * \fn void update_synaptic_elements()
-   * Change the number of synaptic elements in the node depending on the 
+   * Change the number of synaptic elements in the node depending on the
    * dynamics described by the corresponding growth curve
    */
   void update_synaptic_elements( double_t t );
@@ -162,7 +162,7 @@ public:
   void set_status( const DictionaryDatum& d );
 
   /**
-   * retrieve the current value of tau_Ca which defines the exponential decay 
+   * retrieve the current value of tau_Ca which defines the exponential decay
    * constant of the intracellular calcium concentration
    */
   double_t get_tau_Ca() const;
@@ -248,6 +248,6 @@ Archiving_Node::get_Ca_minus() const
 {
   return Ca_minus_;
 }
-  
+
 } // of namespace
 #endif

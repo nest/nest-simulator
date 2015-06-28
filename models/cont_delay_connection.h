@@ -50,7 +50,7 @@
 
   Remarks:
   All delays set by the normal NEST Connect function will be rounded, even when using
-  cont_delay_connection. Set non-grid delays, you must either
+  cont_delay_connection. To set non-grid delays, you must either
 
   1) set the delay as synapse default, as in the example above
   2) set the delay for each synapse after the connections have been created, e.g.,

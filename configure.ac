@@ -783,6 +783,31 @@ for mod in $SLI_MODULES; do
 
 done
 
+# On Bluegene, we need to link user modules statically and add them to startup
+# We require that the module is installed and has its header file in $prefix/include
+echo "*******************************"
+echo $SLI_USER_MODULES
+echo "-------------------------------"
+if test x$configure_bluegene == xyes ; then
+echo "BG is YES"
+  for umod in $SLI_USER_MODULES ; do
+    modheader="${umod}.h"
+echo "$umod $modheader"
+    # get module name from the module's main header
+    Mod=`grep SLIModule ${prefix}/include/${modheader} | sed -n 's/class *\(.*\) *:.*/\1/p' | tr -d ' '`
+echo "$Mod"
+    SLI_CHECK_SOURCE_FILE([$prefix/include/$modheader],
+      [MODULE_INCLUDES="${MODULE_INCLUDES}#include \"${modheader}\"\n"
+       ADD_STATIC_MODULES="${ADD_STATIC_MODULES}  engine.addmodule(new nest::${Mod}(net));\n"],
+      [printf ""])
+echo $MODULE_INCLUDES
+echo $ADD_STATIC_MODULES
+echo ".............................."
+  done
+fi
+echo "=============================="
+
+
 # Now generate $PKGBUILDDIR/nest/static_modules.h, including the module headers
 # and providing the add_static_modules() function.
 # This way of doing it is quite a hack. However, AC_CONFIG_FILES() cannot substitute
@@ -894,7 +919,7 @@ AC_SUBST(HAVE_LIBLTDL)
 AC_SUBST(LIBADD_DL)
 AC_SUBST(SLI_MODULES_LDADD)
 AC_SUBST(SLI_USER_MODULES_LDADD)
-
+AC_SUBST(configure_bluegene)
 
 AC_CONFIG_HEADER(libnestutil/config.h)
 AC_CONFIG_FILES(libnestutil/sliconfig.h)

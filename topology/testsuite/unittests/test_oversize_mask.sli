@@ -23,7 +23,7 @@
 % when explicitly allowed
 
 (unittest) run
-unittest using
+/unittest using
 
 /make_grid_layer
 {

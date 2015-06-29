@@ -24,7 +24,7 @@
 % but not both
 
 (unittest) run
-unittest using
+/unittest using
 
 % correct, rows & columns
 {

@@ -23,7 +23,7 @@
 % simple tests for distance calculations
 
 (unittest) run
-unittest using
+/unittest using
 
 % fixed grid, distance from node
 {

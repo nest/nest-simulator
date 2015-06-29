@@ -51,15 +51,11 @@ RecordablesMap< sinusoidal_poisson_generator >::create()
  * ---------------------------------------------------------------- */
 
 nest::sinusoidal_poisson_generator::Parameters_::Parameters_()
-  : om_( 0.0 )
-  , // radian/s
-  phi_( 0.0 )
-  , // radian
-  dc_( 0.0 )
-  , // spikes/s
-  ac_( 0.0 )
-  , // spikes/s
-  individual_spike_trains_( true )
+  : om_( 0.0 )  // radian/s
+  , phi_( 0.0 ) // radian
+  , dc_( 0.0 )  // spikes/s
+  , ac_( 0.0 )  // spikes/s
+  , individual_spike_trains_( true )
 {
 }
 
@@ -88,7 +84,9 @@ operator=( const Parameters_& p )
 }
 
 nest::sinusoidal_poisson_generator::State_::State_()
-  : rate_( 0 )
+  : y_0_( 0 )
+  , y_1_( 0 )
+  , rate_( 0 )
 {
 }
 
@@ -112,10 +110,10 @@ nest::sinusoidal_poisson_generator::Buffers_::Buffers_( const Buffers_&,
 void
 nest::sinusoidal_poisson_generator::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ names::dc ] = dc_ * 1000.0;
-  ( *d )[ names::freq ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
-  ( *d )[ names::phi ] = phi_;
-  ( *d )[ names::ac ] = ac_ * 1000.0;
+  ( *d )[ names::rate ] = dc_ * 1000.0;
+  ( *d )[ names::frequency ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
+  ( *d )[ names::phase ] = 180.0 / numerics::pi * phi_;
+  ( *d )[ names::amplitude ] = ac_ * 1000.0;
   ( *d )[ names::individual_spike_trains ] = individual_spike_trains_;
 }
 
@@ -135,15 +133,16 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
 
   updateValue< bool >( d, names::individual_spike_trains, individual_spike_trains_ );
 
-  if ( updateValue< double_t >( d, names::dc, dc_ ) )
+  if ( updateValue< double_t >( d, names::rate, dc_ ) )
     dc_ /= 1000.0; // scale to ms^-1
 
-  if ( updateValue< double_t >( d, names::freq, om_ ) )
+  if ( updateValue< double_t >( d, names::frequency, om_ ) )
     om_ *= 2.0 * numerics::pi / 1000.0;
 
-  updateValue< double_t >( d, names::phi, phi_ );
+  if ( updateValue< double_t >( d, names::phase, phi_ ) )
+    phi_ *= numerics::pi / 180.0;
 
-  if ( updateValue< double_t >( d, names::ac, ac_ ) )
+  if ( updateValue< double_t >( d, names::amplitude, ac_ ) )
     ac_ /= 1000.0;
 }
 

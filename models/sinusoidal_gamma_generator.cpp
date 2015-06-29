@@ -53,16 +53,12 @@ RecordablesMap< sinusoidal_gamma_generator >::create()
 
 
 nest::sinusoidal_gamma_generator::Parameters_::Parameters_()
-  : om_( 0.0 )
-  , // radian/s
-  phi_( 0.0 )
-  , // radian
-  order_( 1.0 )
-  , dc_( 0.0 )
-  , // spikes/s
-  ac_( 0.0 )
-  , // spikes/s
-  individual_spike_trains_( true )
+  : om_( 0.0 )  // radian/s
+  , phi_( 0.0 ) // radian
+  , order_( 1.0 )
+  , dc_( 0.0 ) // spikes/s
+  , ac_( 0.0 ) // spikes/s
+  , individual_spike_trains_( true )
   , num_trains_( 0 )
 {
 }
@@ -127,11 +123,11 @@ nest::sinusoidal_gamma_generator::Buffers_::Buffers_( const Buffers_& b,
 void
 nest::sinusoidal_gamma_generator::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ names::freq ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
-  ( *d )[ names::phi ] = phi_;
+  ( *d )[ names::rate ] = dc_ * 1000.0;
+  ( *d )[ names::frequency ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
+  ( *d )[ names::phase ] = 180.0 / numerics::pi * phi_;
+  ( *d )[ names::amplitude ] = ac_ * 1000.0;
   ( *d )[ names::order ] = order_;
-  ( *d )[ names::dc ] = dc_ * 1000.0;
-  ( *d )[ names::ac ] = ac_ * 1000.0;
   ( *d )[ names::individual_spike_trains ] = individual_spike_trains_;
 }
 
@@ -158,10 +154,11 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
       num_trains_ = 1; // fixed
   }
 
-  if ( updateValue< double_t >( d, names::freq, om_ ) )
+  if ( updateValue< double_t >( d, names::frequency, om_ ) )
     om_ *= 2.0 * numerics::pi / 1000.0;
 
-  updateValue< double_t >( d, names::phi, phi_ );
+  if ( updateValue< double_t >( d, names::phase, phi_ ) )
+    phi_ *= numerics::pi / 180.0;
 
   if ( updateValue< double_t >( d, names::order, order_ ) )
   {
@@ -173,15 +170,15 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
      floating-point comparison issues under 32-bit Linux.
   */
   double dc_unscaled = 1e3 * dc_;
-  if ( updateValue< double_t >( d, names::dc, dc_unscaled ) )
+  if ( updateValue< double_t >( d, names::rate, dc_unscaled ) )
     dc_ = 1e-3 * dc_unscaled; // scale to 1/ms
 
   double ac_unscaled = 1e3 * ac_;
-  if ( updateValue< double_t >( d, names::ac, ac_unscaled ) )
+  if ( updateValue< double_t >( d, names::amplitude, ac_unscaled ) )
     ac_ = 1e-3 * ac_unscaled; // scale to 1/ms
 
   if ( not( 0.0 <= ac_unscaled and ac_unscaled <= dc_unscaled ) )
-    throw BadProperty( "Amplitudes must fulfill 0 <= ac_ <= dc_." );
+    throw BadProperty( "Rate parameters must fulfill 0 <= amplitude <= rate." );
 }
 
 

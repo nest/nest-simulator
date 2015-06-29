@@ -51,21 +51,21 @@ class Network;
 
    The instantaneous rate of the process is given by
 
-       f(t) = dc + ac sin ( 2 pi freq t + phi ) >= 0
+       f(t) = rate + amplitude sin ( 2 pi frequency t + phase * pi/180 )
 
    Parameters:
    The following parameters can be set in the status dictionary:
 
-   dc         double - Mean firing rate in spikes/second, default: 0 s^-1
-   ac         double - Firing rate modulation amplitude in spikes/second, default: 0 s^-1
-   freq       double - Modulation frequency in Hz, default: 0 Hz
-   phi        double - Modulation phase in radian, default: 0
+   rate       double - Mean firing rate in spikes/second, default: 0 s^-1
+   amplitude  double - Firing rate modulation amplitude in spikes/second, default: 0 s^-1
+   frequency  double - Modulation frequency in Hz, default: 0 Hz
+   phase      double - Modulation phase in degree [0-360], default: 0
    order      double - Gamma order (>= 1), default: 1
 
    individual_spike_trains   bool - See note below, default: true
 
    Remarks:
-   - The gamma generator requires 0 <= ac <= dc.
+   - The gamma generator requires 0 <= amplitude <= rate.
    - The state of the generator is reset on calibration.
    - The generator does not support precise spike timing.
    - You can use the multimeter to sample the rate of the generator.

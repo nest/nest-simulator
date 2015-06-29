@@ -43,9 +43,9 @@ Description:
 Parameters:
    The following parameters appear in the element's status dictionary:
 
-   rate - mean firing rate of the component processes. (double, var)
-   gamma_shape - shape paramter of component gamma processes. (long, var)
-   n_proc - number of superimposed independent component processes. (long, var)
+   rate         double - mean firing rate of the component processes, default: 0 s^-1
+   gamma_shape  long   - shape paramter of component gamma processes, default: 1
+   n_proc       long   - number of superimposed independent component processes, default: 1
 
 Note:
    The generator has been published in Deger, Helias, Boucsein, Rotter (2011)

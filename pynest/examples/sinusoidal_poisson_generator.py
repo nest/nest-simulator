@@ -56,10 +56,14 @@ devices to record firing rates (`multimeter`) and spikes
 
 nest.SetKernelStatus({'resolution': 0.01})
 
-g = nest.Create('sinusoidal_poisson_generator', n=2, params=[{'dc': 10000.0, 'ac': 5000.0,
-                                                              'freq': 10.0, 'phi': 0.0},
-                                                             {'dc': 0.0, 'ac': 10000.0,
-                                                              'freq': 5.0, 'phi': np.pi/2.}])
+g = nest.Create('sinusoidal_poisson_generator', n=2, params=[{'rate': 10000.0, 
+                                                              'amplitude': 5000.0,
+                                                              'frequency': 10.0, 
+                                                              'phase': 0.0},
+                                                             {'rate': 0.0, 
+                                                              'amplitude': 10000.0,
+                                                              'frequency': 5.0, 
+                                                              'phase': 90.0}])
 
 m = nest.Create('multimeter', n=2, params={'interval': 0.1, 'withgid': False,
                                            'record_from': ['rate']})
@@ -113,7 +117,8 @@ simulating, a raster plot of the spikes is created.
 '''
 
 g = nest.Create('sinusoidal_poisson_generator',
-                params={'dc': 100.0, 'ac': 50.0, 'freq': 10.0, 'phi': 0.0,
+                params={'rate': 100.0, 'amplitude': 50.0, 
+                        'frequency': 10.0, 'phase': 0.0,
                         'individual_spike_trains': True})
 p = nest.Create('parrot_neuron', 20)
 s = nest.Create('spike_detector')
@@ -142,7 +147,8 @@ nest.ResetKernel()
 nest.SetKernelStatus({'local_num_threads': 4})  # show this work for multiple threads
 
 g = nest.Create('sinusoidal_poisson_generator',
-                params={'dc': 100.0, 'ac': 50.0, 'freq': 10.0, 'phi': 0.0,
+                params={'rate': 100.0, 'amplitude': 50.0, 
+                        'frequency': 10.0, 'phase': 0.0,
                         'individual_spike_trains': False})
 p = nest.Create('parrot_neuron', 20)
 s = nest.Create('spike_detector')

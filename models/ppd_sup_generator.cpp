@@ -122,7 +122,7 @@ nest::ppd_sup_generator::Parameters_::get( DictionaryDatum& d ) const
   ( *d )[ names::dead_time ] = dead_time_;
   ( *d )[ names::n_proc ] = n_proc_;
   ( *d )[ names::frequency ] = frequency_;
-  ( *d )[ names::amplitude ] = amplitude_;
+  ( *d )[ names::relative_amplitude ] = amplitude_;
 }
 
 void
@@ -146,7 +146,7 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double_t >( d, names::frequency, frequency_ );
 
-  updateValue< double_t >( d, names::amplitude, amplitude_ );
+  updateValue< double_t >( d, names::relative_amplitude, amplitude_ );
   if ( amplitude_ > 1.0 or amplitude_ < 0.0 )
     throw BadProperty( "The relative amplitude of the rate modulation must be in [0,1]." );
 }

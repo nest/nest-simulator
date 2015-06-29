@@ -68,8 +68,8 @@
 
    Parameters:
      The following parameters can be set in the status dictionary:
-     U         double - maximum probability of realease [0,1]
-     tau_psc   double - time constants of synaptic current in ms
+     U         double - maximum probability of release [0,1]
+     tau_psc   double - time constant of synaptic current in ms
      tau_fac   double - time constant for facilitation in ms
      tau_rec   double - time constant for depression in ms
      x         double - initial fraction of synaptic vesicles in the readily releasable pool [0,1]

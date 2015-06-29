@@ -61,7 +61,7 @@
            Wmin      double - Minimal synaptic weight
            Wmax      double - Maximal synaptic weight
 
-         Individual properties:
+     Individual properties:
            c         double - eligibility trace
            n         double - neuromodulator concentration
 

@@ -20,20 +20,17 @@
  *
  */
 
-#include "aeif_cond_alpha.h"
-#include "nest_names.h"
-
-#ifdef HAVE_GSL_1_11
-
-#include "universal_data_logger_impl.h"
 
 #include "exceptions.h"
+#include "aeif_cond_alpha.h"
 #include "network.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "numerics.h"
+#include "universal_data_logger_impl.h"
+
 #include <limits>
 
 #include <cmath>
@@ -63,57 +60,6 @@ RecordablesMap< aeif_cond_alpha >::create()
 }
 }
 
-extern "C" int
-nest::aeif_cond_alpha_dynamics( double, const double y[], double f[], void* pnode )
-{
-  // a shorthand
-  typedef nest::aeif_cond_alpha::State_ S;
-
-  // get access to node so we can almost work as in a member function
-  assert( pnode );
-  const nest::aeif_cond_alpha& node = *( reinterpret_cast< nest::aeif_cond_alpha* >( pnode ) );
-
-  // y[] here is---and must be---the state vector supplied by the integrator,
-  // not the state vector in the node, node.S_.y[].
-
-  // The following code is verbose for the sake of clarity. We assume that a
-  // good compiler will optimize the verbosity away ...
-
-  // shorthand for state variables
-  const double_t& V = y[ S::V_M ];
-  const double_t& dg_ex = y[ S::DG_EXC ];
-  const double_t& g_ex = y[ S::G_EXC ];
-  const double_t& dg_in = y[ S::DG_INH ];
-  const double_t& g_in = y[ S::G_INH ];
-  const double_t& w = y[ S::W ];
-
-  const double_t I_syn_exc = g_ex * ( V - node.P_.E_ex );
-  const double_t I_syn_inh = g_in * ( V - node.P_.E_in );
-
-  // We pre-compute the argument of the exponential
-  const double_t exp_arg = ( V - node.P_.V_th ) / node.P_.Delta_T;
-
-  // Upper bound for exponential argument to avoid numerical instabilities
-  const double_t MAX_EXP_ARG = 10.;
-
-  // If the argument is too large, we clip it.
-  const double_t I_spike = node.P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
-
-  // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh - w
-                  + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
-
-  f[ S::DG_EXC ] = -dg_ex / node.P_.tau_syn_ex;
-  f[ S::G_EXC ] = dg_ex - g_ex / node.P_.tau_syn_ex; // Synaptic Conductance (nS)
-
-  f[ S::DG_INH ] = -dg_in / node.P_.tau_syn_in;
-  f[ S::G_INH ] = dg_in - g_in / node.P_.tau_syn_in; // Synaptic Conductance (nS)
-
-  // Adaptation current w.
-  f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
-
-  return GSL_SUCCESS;
-}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -152,7 +98,9 @@ nest::aeif_cond_alpha::Parameters_::Parameters_()
   , // ms
   I_e( 0.0 )
   , // pA
-  gsl_error_tol( 1e-6 )
+  MAXERR( 1.0e-10 )
+  ,              // mV
+  HMIN( 1.0e-3 ) // ms
 {
 }
 
@@ -161,7 +109,7 @@ nest::aeif_cond_alpha::State_::State_( const Parameters_& p )
 {
   y_[ 0 ] = p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
-    y_[ i ] = 0;
+    y_[ i ] = 0.0;
 }
 
 nest::aeif_cond_alpha::State_::State_( const State_& s )
@@ -204,12 +152,15 @@ nest::aeif_cond_alpha::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_w, tau_w );
   def< double >( d, names::I_e, I_e );
   def< double >( d, names::V_peak, V_peak_ );
-  def< double >( d, names::gsl_error_tol, gsl_error_tol );
+  def< double >( d, names::MAXERR, MAXERR );
+  def< double >( d, names::HMIN, HMIN );
 }
 
 void
 nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 {
+  double tmp = 0.0;
+
   updateValue< double >( d, names::V_th, V_th );
   updateValue< double >( d, names::V_peak, V_peak_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
@@ -231,7 +182,19 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::I_e, I_e );
 
-  updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
+  if ( updateValue< double >( d, names::MAXERR, tmp ) )
+  {
+    if ( not( tmp > 0.0 ) )
+      throw BadProperty( "MAXERR must be positive." );
+    MAXERR = tmp;
+  }
+
+  if ( updateValue< double >( d, names::HMIN, tmp ) )
+  {
+    if ( not( tmp > 0.0 ) )
+      throw BadProperty( "HMIN must be positive." );
+    HMIN = tmp;
+  }
 
   if ( V_peak_ <= V_th )
     throw BadProperty( "V_peak must be larger than threshold." );
@@ -249,9 +212,6 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 
   if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 )
     throw BadProperty( "All time constants must be strictly positive." );
-
-  if ( gsl_error_tol <= 0. )
-    throw BadProperty( "The gsl_error_tol must be strictly positive." );
 }
 
 void
@@ -281,9 +241,6 @@ nest::aeif_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_&
 
 nest::aeif_cond_alpha::Buffers_::Buffers_( aeif_cond_alpha& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -291,9 +248,6 @@ nest::aeif_cond_alpha::Buffers_::Buffers_( aeif_cond_alpha& n )
 
 nest::aeif_cond_alpha::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -322,13 +276,6 @@ nest::aeif_cond_alpha::aeif_cond_alpha( const aeif_cond_alpha& n )
 
 nest::aeif_cond_alpha::~aeif_cond_alpha()
 {
-  // GSL structs may not have been allocated, so we need to protect destruction
-  if ( B_.s_ )
-    gsl_odeiv_step_free( B_.s_ );
-  if ( B_.c_ )
-    gsl_odeiv_control_free( B_.c_ );
-  if ( B_.e_ )
-    gsl_odeiv_evolve_free( B_.e_ );
 }
 
 /* ----------------------------------------------------------------
@@ -357,26 +304,6 @@ nest::aeif_cond_alpha::init_buffers_()
   // We must integrate this model with high-precision to obtain decent results
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
-  if ( B_.s_ == 0 )
-    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
-  else
-    gsl_odeiv_step_reset( B_.s_ );
-
-  if ( B_.c_ == 0 )
-    B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
-  else
-    gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
-
-  if ( B_.e_ == 0 )
-    B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
-  else
-    gsl_odeiv_evolve_reset( B_.e_ );
-
-  B_.sys_.function = aeif_cond_alpha_dynamics;
-  B_.sys_.jacobian = NULL;
-  B_.sys_.dimension = State_::STATE_VEC_SIZE;
-  B_.sys_.params = reinterpret_cast< void* >( this );
-
   B_.I_stim_ = 0.0;
 }
 
@@ -395,46 +322,147 @@ nest::aeif_cond_alpha::calibrate()
  * Update and spike handling functions
  * ---------------------------------------------------------------- */
 
-void
-nest::aeif_cond_alpha::update( Time const& origin, const long_t from, const long_t to )
+/**
+ * Member function updating the neuron state by integrating the ODE.
+ * @param origin
+ * @param from
+ * @param to
+ */
+void nest::aeif_cond_alpha::update( Time const& origin,
+  const long_t from,
+  const long_t to ) // proceed in time
 {
   assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long_t lag = from; lag < to; ++lag ) // proceed by stepsize B_.step_
   {
-    double t = 0.0;
+    double t = 0.0; // internal time of the integration period
 
-    if ( S_.r_ > 0 )
+    if ( S_.r_ > 0 ) // decrease remaining refractory steps if non-zero
       --S_.r_;
 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
-    // gsl_odeiv_evolve_apply performs only a single numerical
-    // integration step, starting from t and bounded by step;
-    // the while-loop ensures integration over the whole simulation
-    // step (0, step] if more than one integration step is needed due
-    // to a small integration step size;
+    // The numerical integration of the model equations is performed by
+    // a Dormand-Prince method (5th order Runge-Kutta method with
+    // adaptive stepsize control) as desribed in William H. Press et
+    // al., “Adaptive Stepsize Control for Runge-Kutta”, Chapter 17.2
+    // in Numerical Recipes (3rd edition, 2007), 910-914.  The solver
+    // itself performs only a single NUMERICAL integration step,
+    // starting from t and of size B_.IntegrationStep_ (bounded by
+    // step); the while-loop ensures integration over the whole
+    // SIMULATION step (0, step] of size B_.step_ if more than one
+    // integration step is needed due to a small integration stepsize;
     // note that (t+IntegrationStep > step) leads to integration over
     // (t, step] and afterwards setting t to step, but it does not
     // enforce setting IntegrationStep to step-t; this is of advantage
     // for a consistent and efficient integration across subsequent
-    // simulation intervals
+    // simulation intervals.
 
-    while ( t < B_.step_ )
+    double_t& h = B_.IntegrationStep_; // numerical integration step
+    double_t& tend = B_.step_;         // end of simulation step
+
+    const double_t& MAXERR = P_.MAXERR; // maximum error
+    const double_t& HMIN = P_.HMIN;     // minimal integration step
+
+    double_t err;
+    double_t t_return = 0.0;
+
+    while ( t < B_.step_ ) // while not yet reached end of simulation step
     {
-      const int status = gsl_odeiv_evolve_apply( B_.e_,
-        B_.c_,
-        B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+      bool done = false;
 
-      if ( status != GSL_SUCCESS )
-        throw GSLSolverFailure( get_name(), status );
+      do
+      {
+
+        if ( tend - t < h ) // stop integration at end of simulation step
+          h = tend - t;
+
+        t_return = t + h; // update t
+
+        // k1 = f(told, y)
+        aeif_cond_alpha_RK5_dynamics( S_.y_, S_.k1 );
+
+        // k2 = f(told + h/5, y + h*k1 / 5)
+        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
+          S_.yin[ i ] = S_.y_[ i ] + h * S_.k1[ i ] / 5.0;
+        aeif_cond_alpha_RK5_dynamics( S_.yin, S_.k2 );
+
+        // k3 = f(told + 3/10*h, y + 3/40*h*k1 + 9/40*h*k2)
+        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
+          S_.yin[ i ] = S_.y_[ i ] + h * ( 3.0 / 40.0 * S_.k1[ i ] + 9.0 / 40.0 * S_.k2[ i ] );
+        aeif_cond_alpha_RK5_dynamics( S_.yin, S_.k3 );
+
+        // k4
+        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
+          S_.yin[ i ] = S_.y_[ i ]
+            + h * ( 44.0 / 45.0 * S_.k1[ i ] - 56.0 / 15.0 * S_.k2[ i ] + 32.0 / 9.0 * S_.k3[ i ] );
+        aeif_cond_alpha_RK5_dynamics( S_.yin, S_.k4 );
+
+        // k5
+        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
+          S_.yin[ i ] = S_.y_[ i ]
+            + h * ( 19372.0 / 6561.0 * S_.k1[ i ] - 25360.0 / 2187.0 * S_.k2[ i ]
+                    + 64448.0 / 6561.0 * S_.k3[ i ]
+                    - 212.0 / 729.0 * S_.k4[ i ] );
+        aeif_cond_alpha_RK5_dynamics( S_.yin, S_.k5 );
+
+        // k6
+        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
+          S_.yin[ i ] = S_.y_[ i ]
+            + h * ( 9017.0 / 3168.0 * S_.k1[ i ] - 355.0 / 33.0 * S_.k2[ i ]
+                    + 46732.0 / 5247.0 * S_.k3[ i ]
+                    + 49.0 / 176.0 * S_.k4[ i ]
+                    - 5103.0 / 18656.0 * S_.k5[ i ] );
+        aeif_cond_alpha_RK5_dynamics( S_.yin, S_.k6 );
+
+        // 5th order
+        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
+          S_.ynew[ i ] = S_.y_[ i ]
+            + h * ( 35.0 / 384.0 * S_.k1[ i ] + 500.0 / 1113.0 * S_.k3[ i ]
+                    + 125.0 / 192.0 * S_.k4[ i ]
+                    - 2187.0 / 6784.0 * S_.k5[ i ]
+                    + 11.0 / 84.0 * S_.k6[ i ] );
+        aeif_cond_alpha_RK5_dynamics( S_.yin, S_.k7 );
+
+        // 4th order
+        for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
+        {
+          S_.yref[ i ] = S_.y_[ i ]
+            + h * ( 5179.0 / 57600.0 * S_.k1[ i ] + 7571.0 / 16695.0 * S_.k3[ i ]
+                    + 393.0 / 640.0 * S_.k4[ i ]
+                    - 92097.0 / 339200.0 * S_.k5[ i ]
+                    + 187.0 / 2100.0 * S_.k6[ i ]
+                    + 1.0 / 40.0 * S_.k7[ i ] );
+        }
+
+        err = std::fabs( S_.ynew[ 0 ] - S_.yref[ 0 ] ) / MAXERR + 1.0e-200; // error estimate,
+        // based on different orders for stepsize prediction. Small value added to prevent err==0
+
+        // The following flag 'done' is needed to ensure that we accept the result
+        // for h<=HMIN, irrespective of the error. (See below)
+
+        done = ( h <= HMIN ); // Always exit loop if h was <=HMIN already
+
+        // prediction of next integration stepsize. This step may result in a stepsize below HMIN.
+        // If this happens, we must
+        //   1. set the stepsize to HMIN
+        //   2. compute the result and accept it irrespective of the error, because we cannot
+        //      decrease the stepsize any further.
+        //  the 'done' flag, computed above ensure that the loop is terminated after the
+        //  result was computed.
+
+        h *= 0.98 * std::pow( 1.0 / err, 1.0 / 5.0 );
+        h = std::max( h, HMIN );
+
+      } while ( ( err > 1.0 ) and ( not done ) ); // reject step if err > 1
+
+      for ( unsigned int i = 0; i < S_.STATE_VEC_SIZE; ++i )
+        S_.y_[ i ] = S_.ynew[ i ]; // pass updated values
+
+      t = t_return;
 
       // check for unreasonable values; we allow V_M to explode
       if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
@@ -442,20 +470,22 @@ nest::aeif_cond_alpha::update( Time const& origin, const long_t from, const long
 
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
-      if ( S_.r_ > 0 )
-        S_.y_[ State_::V_M ] = P_.V_reset_;
-      else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ )
+      if ( S_.r_ > 0 )                               // if neuron is still in refractory period
+        S_.y_[ State_::V_M ] = P_.V_reset_;          // clamp it to V_reset
+      else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ ) // V_m >= V_peak: spike
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
-        S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
-        S_.r_ = V_.RefractoryCounts_;
+        S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation
+        S_.r_ = V_.RefractoryCounts_; // initialize refractory steps with refractory period
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
         network()->send( *this, se, lag );
       }
-    }
-    S_.y_[ State_::DG_EXC ] += B_.spike_exc_.get_value( lag ) * V_.g0_ex_;
+    } // while
+
+
+    S_.y_[ State_::DG_EXC ] += B_.spike_exc_.get_value( lag ) * V_.g0_ex_; // add incoming spikes
     S_.y_[ State_::DG_INH ] += B_.spike_inh_.get_value( lag ) * V_.g0_in_;
 
     // set new input current
@@ -463,8 +493,10 @@ nest::aeif_cond_alpha::update( Time const& origin, const long_t from, const long
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
-  }
-}
+
+  } // for-loop
+} // function update()
+
 
 void
 nest::aeif_cond_alpha::handle( SpikeEvent& e )
@@ -496,5 +528,3 @@ nest::aeif_cond_alpha::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
-
-#endif // HAVE_GSL_1_11

@@ -44,7 +44,7 @@ This is important, since the slop of the action potential is very steep.
 '''
 res=0.1
 nest.SetKernelStatus({"resolution": res})
-neuron=nest.Create("aeif_cond_exp")
+neuron=nest.Create("aeif_cond_alpha")
 
 '''
 Set the parameters of the neuron according to the paper.

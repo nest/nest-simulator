@@ -53,11 +53,11 @@ RecordablesMap< sinusoidal_gamma_generator >::create()
 
 
 nest::sinusoidal_gamma_generator::Parameters_::Parameters_()
-  : om_( 0.0 )  // radian/s
+  : om_( 0.0 )  // radian/ms
   , phi_( 0.0 ) // radian
   , order_( 1.0 )
-  , dc_( 0.0 ) // spikes/s
-  , ac_( 0.0 ) // spikes/s
+  , rate_( 0.0 )      // spikes/ms
+  , amplitude_( 0.0 ) // spikes/ms
   , individual_spike_trains_( true )
   , num_trains_( 0 )
 {
@@ -67,8 +67,8 @@ nest::sinusoidal_gamma_generator::Parameters_::Parameters_( const Parameters_& p
   : om_( p.om_ )
   , phi_( p.phi_ )
   , order_( p.order_ )
-  , dc_( p.dc_ )
-  , ac_( p.ac_ )
+  , rate_( p.rate_ )
+  , amplitude_( p.amplitude_ )
   , individual_spike_trains_( p.individual_spike_trains_ )
   , num_trains_( p.num_trains_ )
 {
@@ -83,8 +83,8 @@ operator=( const Parameters_& p )
   om_ = p.om_;
   phi_ = p.phi_;
   order_ = p.order_;
-  dc_ = p.dc_;
-  ac_ = p.ac_;
+  rate_ = p.rate_;
+  amplitude_ = p.amplitude_;
   individual_spike_trains_ = p.individual_spike_trains_;
   num_trains_ = p.num_trains_;
 
@@ -123,10 +123,10 @@ nest::sinusoidal_gamma_generator::Buffers_::Buffers_( const Buffers_& b,
 void
 nest::sinusoidal_gamma_generator::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ names::rate ] = dc_ * 1000.0;
+  ( *d )[ names::rate ] = rate_ * 1000.0;
   ( *d )[ names::frequency ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
   ( *d )[ names::phase ] = 180.0 / numerics::pi * phi_;
-  ( *d )[ names::amplitude ] = ac_ * 1000.0;
+  ( *d )[ names::amplitude ] = amplitude_ * 1000.0;
   ( *d )[ names::order ] = order_;
   ( *d )[ names::individual_spike_trains ] = individual_spike_trains_;
 }
@@ -169,13 +169,13 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
   /* The *_unscaled variables here are introduced to avoid spurious
      floating-point comparison issues under 32-bit Linux.
   */
-  double dc_unscaled = 1e3 * dc_;
+  double dc_unscaled = 1e3 * rate_;
   if ( updateValue< double_t >( d, names::rate, dc_unscaled ) )
-    dc_ = 1e-3 * dc_unscaled; // scale to 1/ms
+    rate_ = 1e-3 * dc_unscaled; // scale to 1/ms
 
-  double ac_unscaled = 1e3 * ac_;
+  double ac_unscaled = 1e3 * amplitude_;
   if ( updateValue< double_t >( d, names::amplitude, ac_unscaled ) )
-    ac_ = 1e-3 * ac_unscaled; // scale to 1/ms
+    amplitude_ = 1e-3 * ac_unscaled; // scale to 1/ms
 
   if ( not( 0.0 <= ac_unscaled and ac_unscaled <= dc_unscaled ) )
     throw BadProperty( "Rate parameters must fulfill 0 <= amplitude <= rate." );
@@ -239,9 +239,9 @@ nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p,
   if ( t_a == t_b )
     return 0.0;
 
-  double_t deltaLambda = p.order_ * p.dc_ * ( t_b - t_a );
-  if ( std::abs( p.ac_ ) > 0 && std::abs( p.om_ ) > 0 )
-    deltaLambda += -p.order_ * p.ac_ / p.om_
+  double_t deltaLambda = p.order_ * p.rate_ * ( t_b - t_a );
+  if ( std::abs( p.amplitude_ ) > 0 && std::abs( p.om_ ) > 0 )
+    deltaLambda += -p.order_ * p.amplitude_ / p.om_
       * ( std::cos( p.om_ * t_b + p.phi_ ) - std::cos( p.om_ * t_a + p.phi_ ) );
   return deltaLambda;
 }
@@ -297,7 +297,7 @@ nest::sinusoidal_gamma_generator::update( Time const& origin, const long_t from,
     V_.t_ms_ = t.get_ms();
     V_.t_steps_ = t.get_steps();
 
-    S_.rate_ = P_.dc_ + P_.ac_ * std::sin( P_.om_ * V_.t_ms_ + P_.phi_ );
+    S_.rate_ = P_.rate_ + P_.amplitude_ * std::sin( P_.om_ * V_.t_ms_ + P_.phi_ );
     B_.logger_.record_data( origin.get_steps() + lag );
 
     // t_steps_-1 since t_steps is end of interval, while activity det by start

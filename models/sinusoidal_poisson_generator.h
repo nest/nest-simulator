@@ -129,17 +129,17 @@ private:
 
   struct Parameters_
   {
-    /** temporal frequency in radian/ms. */
+    /** Temporal frequency in radian/ms */
     double_t om_;
 
-    /** phase in radian */
+    /** Phase in radian */
     double_t phi_;
 
-    /** DC amplitude in spikes/s */
-    double_t dc_;
+    /** Mean firing rate in spikes/ms */
+    double_t rate_;
 
-    /** AC amplitude in spikes/s */
-    double_t ac_;
+    /** Firing rate modulation amplitude in spikes/ms */
+    double_t amplitude_;
 
     /** Emit individual spike trains for each target, or same for all? */
     bool individual_spike_trains_;

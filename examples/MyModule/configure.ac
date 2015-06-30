@@ -51,6 +51,9 @@ AM_CONDITIONAL(BUILD_DYNAMIC_USER_MODULES, test x$configure_bluegene = xno)
 if test x$configure_bluegene = xyes ; then
   AC_DISABLE_SHARED
   AC_ENABLE_STATIC
+else
+  AC_DISABLE_STATIC
+  AC_ENABLE_SHARED
 fi
 
 # -------------------------------------------

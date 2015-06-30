@@ -160,10 +160,9 @@ else
   AC_MSG_RESULT([yes ($bluegene_architecture)])
 fi
 
-# register variable IS_BLUEGENE to be visible in Makefile.am
+# register IS_BLUEGENE to be visible in Makefile.am
 # required to suppress slidoc installation, which would fail due to cross-compile
 AM_CONDITIONAL(IS_BLUEGENE, test "x$configure_bluegene" != xno)
-
 
 # Manually activate MPI, allow to specify directory containing MPI
 #
@@ -185,6 +184,7 @@ SLI_scali_option="no"
 if test "x$configure_bluegene" = xyes ; then
   SLI_distributed=set
   SLI_mpi_option=yes
+  AC_DEFINE(IS_BLUEGENE, 1, [Configuring for Blue Gene]) 
   if test "x$bluegene_architecture" = xL; then
     AC_DEFINE(IS_BLUEGENE_L, 1, [Configuring for Blue Gene/L])
     bluegene_dynamic_libs=no # no dynamic libs on BG/L
@@ -862,6 +862,7 @@ AC_SUBST(HAVE_READLINE)
 AC_SUBST(HAVE_VAMPIR)
 AC_SUBST(VAMPIR_LIBS)
 AC_SUBST(VAMPIR_CFLAGS)
+AC_SUBST(IS_BLUEGENE)
 AC_SUBST(IS_BLUEGENE_L)
 AC_SUBST(IS_BLUEGENE_P)
 AC_SUBST(IS_BLUEGENE_Q)

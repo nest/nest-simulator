@@ -184,12 +184,11 @@ mynest::MyModule::StepPatternConnect_Vi_i_Vi_i_lFunction::execute( SLIInterprete
 //-------------------------------------------------------------------------------------
 
 void
-mynest::MyModule::init( SLIInterpreter* i, nest::Network* )
+mynest::MyModule::init( SLIInterpreter* i )
 {
   /* Register a neuron or device model.
      Give node type as template argument and the name as second argument.
      The first argument is always a reference to the network.
-     Return value is a handle for later unregistration.
   */
   nest::register_model< pif_psc_alpha >( nest::NestModule::get_network(), "pif_psc_alpha" );
 

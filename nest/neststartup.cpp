@@ -125,6 +125,7 @@ neststartup( int argc,
   add_static_modules( engine, *pNet );
 
 #ifdef HAVE_LIBLTDL
+#ifndef IS_BLUEGENE // modules are linked statically on BlueGene
   // dynamic loader module for managing linked and dynamically loaded extension modules
   nest::DynamicLoaderModule* pDynLoader = new nest::DynamicLoaderModule( pNet, engine );
 
@@ -135,6 +136,7 @@ neststartup( int argc,
 
   // interpreter will delete module on destruction
   engine.addmodule( pDynLoader );
+#endif
 #endif
 
 #ifdef _IS_PYNEST

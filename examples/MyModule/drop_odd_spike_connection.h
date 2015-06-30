@@ -69,6 +69,7 @@ public:
    */
   DropOddSpikeConnection()
     : ConnectionBase()
+    , weight_( 1.0 )
   {
   }
 

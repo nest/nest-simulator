@@ -792,13 +792,26 @@ if test x$configure_bluegene == xyes ; then
 echo "BG is YES"
   for umod in $SLI_USER_MODULES ; do
     modheader="${umod}.h"
+    fullmodheader="${prefix}/include/${modheader}"
 echo "$umod $modheader"
-    # get module name from the module's main header
-    Mod=`grep SLIModule ${prefix}/include/${modheader} | sed -n 's/class *\(.*\) *:.*/\1/p' | tr -d ' '`
-echo "$Mod"
+    # get module namespace and class from the module's main header
+    # the following chain of commands (feel free to beautify!)
+    # 1. removes all block comments
+    # 2. removes all // comments
+    # 3. removes all "namespace nest" lines
+    # 4. selects all "namespace" lines (should only be one!!!)
+    # 5. extracts the name of the module namespace 
+    # 6. appends :: if modnamespace is not empty
+    modnamespace=`sed "/^ *\/\*/,/*\/ *$/d" ${fullmodheader} | sed "/\/\/.*$/d" | grep -v "namespace *nest" | grep namespace | sed -n 's/namespace *\(.*\)/\1/p' | tr -d ' {'`
+    if test x$modnamespace != x ; then
+      modnamespace="${modnamespace}::"
+    fi
+    modclass=`grep SLIModule ${fullmodheader} | sed -n 's/class *\(.*\) *:.*/\1/p' | tr -d ' '`
+echo "$modnamespace $modclass"
+    # Do NOT pass network to user modules, it is outdated
     SLI_CHECK_SOURCE_FILE([$prefix/include/$modheader],
-      [MODULE_INCLUDES="${MODULE_INCLUDES}#include \"${modheader}\"\n"
-       ADD_STATIC_MODULES="${ADD_STATIC_MODULES}  engine.addmodule(new nest::${Mod}(net));\n"],
+      [MODULE_INCLUDES="${MODULE_INCLUDES}#include \"${fullmodheader}\"\n"
+       ADD_STATIC_MODULES="${ADD_STATIC_MODULES}  engine.addmodule(new ${modnamespace}${modclass}());\n"],
       [printf ""])
 echo $MODULE_INCLUDES
 echo $ADD_STATIC_MODULES

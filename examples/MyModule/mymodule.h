@@ -26,10 +26,6 @@
 #include "slimodule.h"
 #include "slifunction.h"
 
-namespace nest
-{
-class Network;
-}
 
 // Put your stuff into your own namespace.
 namespace mynest

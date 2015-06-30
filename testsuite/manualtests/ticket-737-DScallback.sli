@@ -31,7 +31,7 @@ This tests ensures that generators relying on port information to provide target
 output via the DS-callback mechanism verify that all callback connections have a contiguous
 port range starting from 0.
 
-Note: 
+Remarks: 
 This test does not work properly until #681 is fixed, because exceptions thrown in parallel
 sections are not handled properly.
 

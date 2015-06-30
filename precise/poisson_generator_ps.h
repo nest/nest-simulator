@@ -48,7 +48,7 @@ Parameters:
    rate     - mean firing rate. (double, var)
    dead_time - minimal time between two spikes. (double, var)
 
-Note:
+Remarks:
    - This generator must be connected to all its targets using the
      same synapse model. Failure to do so will only be detected at
      runtime.

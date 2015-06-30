@@ -42,7 +42,7 @@ Parameters:
  mu  - mean of the underlying normal distribution (default: 0.0)
  sigma - standard deviation of the underlying normal distribution (default: 1.0)
 
-Note:
+Remarks:
 Mean and variance of the lognormal numbers are given by
 
   E[X] = exp(mu + sigma^2/2)

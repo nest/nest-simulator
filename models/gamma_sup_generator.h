@@ -47,7 +47,7 @@ Parameters:
    gamma_shape - shape paramter of component gamma processes. (long, var)
    n_proc - number of superimposed independent component processes. (long, var)
 
-Note:
+Remarks:
    The generator has been published in Deger, Helias, Boucsein, Rotter (2011)
    Statistical properties of superimposed stationary spike trains,
    Journal of Computational Neuroscience.

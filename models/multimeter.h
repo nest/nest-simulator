@@ -69,7 +69,7 @@ to memory, to screen, with GID or with weight. You must activate accumulator mod
 before simulating. Accumulator data is never written to file. You must extract it
 from the device using GetStatus.
 
-Note:
+Remarks:
  - The set of variables to record and the recording interval must be set
    BEFORE the multimeter is connected to any node, and cannot be changed
    afterwards.

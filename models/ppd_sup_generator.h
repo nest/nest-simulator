@@ -53,7 +53,7 @@ Parameters:
    frequency - rate modulation frequency. (double, var)
    amplitude - relative rate modulation amplitude. (double, var)
 
-Note:
+Remarks:
    The generator has been published in Deger, Helias, Boucsein, Rotter (2011)
    Statistical properties of superimposed stationary spike trains,
    Journal of Computational Neuroscience.

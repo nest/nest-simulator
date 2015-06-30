@@ -119,7 +119,7 @@ class Network;
    The following parameters can be set in the status dictionary.
 
    V_m               double - Membrane potential in mV.
-   C_m               double - Specific capacitance of the membrane in pF/mum^2.
+   C_m               double - Capacitance of the membrane in pF.
    tau_m             double - Membrane time constant in ms.
    q_sfa             double - Adaptive threshold jump in mV.
    tau_sfa           double - Adaptive threshold time constant in ms.
@@ -139,7 +139,8 @@ class Network;
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
    Author:  July 2009, Deger, Helias; January 2011, Zaytsev; May 2014, Setareh
-   SeeAlso: pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp, iaf_neuron, iaf_psc_delta_canon
+   SeeAlso: pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp, iaf_neuron,
+   iaf_psc_delta_canon
 */
 
 /**

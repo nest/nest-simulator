@@ -19,21 +19,21 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-% this test ensures that topology/ConnectLayers :: accepts oversized masks only
+% this test ensures that ConnectLayers accepts oversized masks only
 % when explicitly allowed
 
 (unittest) run
-unittest using
+/unittest using
 
 /make_grid_layer
 {
-  << /rows 1 /columns 1 /elements /iaf_neuron /edge_wrap true >> topology/CreateLayer ::
+  << /rows 1 /columns 1 /elements /iaf_neuron /edge_wrap true >> CreateLayer
 } 
 def
 
 /make_free_layer
 {
-  << /positions [[0. 0.]] /elements /iaf_neuron /edge_wrap true >> topology/CreateLayer ::
+  << /positions [[0. 0.]] /elements /iaf_neuron /edge_wrap true >> CreateLayer
 } 
 def
 
@@ -43,7 +43,7 @@ def
   << /connection_type (divergent)
      /mask << /grid << /rows 1 /columns 1 >> >>
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 } pass_or_die
 
 % incorrect, grid-based, too wide
@@ -52,7 +52,7 @@ def
   << /connection_type (divergent)
      /mask << /grid << /rows 1 /columns 2 >> >>
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 } fail_or_die
 
 % incorrect, grid-based, too tall
@@ -61,7 +61,7 @@ def
   << /connection_type (divergent)
      /mask << /grid << /rows 2 /columns 1 >> >>
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 } fail_or_die
 
 % incorrect, grid-based, too wide and tall
@@ -70,7 +70,7 @@ def
   << /connection_type (divergent)
      /mask << /grid << /rows 2 /columns 2 >> >>
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 } fail_or_die
 
 % correct, grid-based, too wide and tall, but oversized allowed
@@ -80,7 +80,7 @@ def
      /mask << /grid << /rows 2 /columns 2 >> >>
      /allow_oversized_mask true
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 } pass_or_die
 
 % ----------------------------
@@ -91,7 +91,7 @@ def
   << /connection_type (divergent)
       /mask << /circular << /radius 0.5 >> >>
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 } pass_or_die
 
 % incorrect, circular, too wide
@@ -100,7 +100,7 @@ def
   << /connection_type (divergent)
       /mask << /circular << /radius 0.51 >> >>
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 } fail_or_die
 
 % correct, circular, too wide but allowed
@@ -110,7 +110,7 @@ def
       /mask << /circular << /radius 0.51 >> >>
       /allow_oversized_mask true
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 } pass_or_die
 
 % ----------------------------------------------------------
@@ -121,7 +121,7 @@ def
   << /connection_type (divergent)
       /mask << /doughnut << /inner_radius 0.2 /outer_radius 0.5 >> >>
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 } pass_or_die
 
 % incorrect, doughnut, too wide
@@ -130,7 +130,7 @@ def
   << /connection_type (divergent)
       /mask << /doughnut << /inner_radius 0.2 /outer_radius 0.51 >> >>
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 } fail_or_die
 
 % correct, doughnut, too wide but allowed
@@ -140,7 +140,7 @@ def
       /mask << /doughnut << /inner_radius 0.2 /outer_radius 0.51 >> >>
       /allow_oversized_mask true
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 } pass_or_die
 
 % -------------------------------------------
@@ -151,7 +151,7 @@ def
   << /connection_type (divergent)
       /mask << /rectangular << /lower_left [-0.5 -0.5] /upper_right [0.5 0.5] >> >>
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 } pass_or_die
 
 % incorrect, rectangular, too wide
@@ -160,7 +160,7 @@ def
   << /connection_type (divergent)
       /mask << /rectangular << /lower_left [-0.5 -0.5] /upper_right [0.51 0.5] >> >>
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 } fail_or_die
 
 % correct, rectangular, too wide but allowed
@@ -170,7 +170,7 @@ def
       /mask << /rectangular << /lower_left [-0.5 -0.5] /upper_right [0.51 0.5] >> >>
       /allow_oversized_mask true
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 } pass_or_die
 
 

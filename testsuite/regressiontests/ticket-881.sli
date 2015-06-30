@@ -37,8 +37,6 @@ Author: Hans Ekkehard Plesser
 (unittest) run
 /unittest using
 
-/topology lookup not { exit_test_gracefully } if
-using
 
 M_ERROR setverbosity
 
@@ -98,5 +96,4 @@ M_ERROR setverbosity
 
 
 
-endusing
 endusing

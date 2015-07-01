@@ -77,14 +77,14 @@ Remarks:
    the membrane potential fluctuations evoked when a noise current is
    injected into a neuron. The standard deviation of these fluctuations
    across an ensemble will increase with dt for a given value of std.
-   For the leaky integrate-and-fire neuron with time constant tau_m,
-   membrane potential fluctuations at times t_j+delay are given by
+   For the leaky integrate-and-fire neuron with time constant tau_m and 
+   capacity C_m, membrane potential fluctuations Sigma at times t_j+delay are given by
 
-     Sigma = std * sqrt( (1-x) / (1+x) ) where x = exp(-dt/tau_m)
+     Sigma = std * tau_m / C_m * sqrt( (1-x) / (1+x) ) where x = exp(-dt/tau_m)
 
    for large t_j. In the white noise limit, dt -> 0, one has
 
-     Sigma -> std * sqrt(dt / tau).
+     Sigma -> std / C_m * sqrt(dt * tau / 2).
 
    To obtain comparable results for different values of dt, you must
    adapt std.

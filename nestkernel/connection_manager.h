@@ -61,7 +61,7 @@ public:
 
   /**
    * Register a synapse type. This is called by Network::register_synapse_prototype.
-   * Returns an id, which is needed to unregister the prototype later.
+   * Returns an id for the prototype.
    */
   synindex register_synapse_prototype( ConnectorModel* cf );
 
@@ -175,9 +175,9 @@ public:
 private:
   std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
   std::vector< std::vector< ConnectorModel* > > prototypes_; //!< The list of available synapse
-                                                             //prototypes: first dimenasion one
-                                                             //entry per thread, second dimantion
-                                                             //for each synapse type
+  // prototypes: first dimenasion one
+  // entry per thread, second dimantion
+  // for each synapse type
 
   Network& net_;            //!< The reference to the network
   Dictionary* synapsedict_; //!< The synapsedict (owned by the network)

@@ -51,8 +51,7 @@ public:
   MyModule();
 
   /**
-   * @note The destructor does not do much in modules. Proper "downrigging"
-   *       is the responsibility of the unregister() method.
+   * @note The destructor does not do much in modules.
    */
   ~MyModule();
 

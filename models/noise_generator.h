@@ -56,6 +56,9 @@ If the modulation is added the current is given by
   I(t) = mean + sqrt(std^2 + std_mod^2 * sin(omega * t + phase)) * N_j  for t_0 + j dt <= t < t_0 +
 (j-1) dt
 
+For a detailed discussion of the properties of the noise generator, please see
+the noise_generator.ipynb notebook included in the NEST source code (docs/model_details).
+
 Parameters:
 The following parameters can be set in the status dictionary:
 

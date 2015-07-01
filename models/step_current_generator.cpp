@@ -32,9 +32,8 @@
  * ---------------------------------------------------------------- */
 
 nest::step_current_generator::Parameters_::Parameters_()
-  : amp_times_()
-  ,             // ms
-  amp_values_() // pA
+  : amp_times_()  // ms
+  , amp_values_() // pA
 {
 }
 

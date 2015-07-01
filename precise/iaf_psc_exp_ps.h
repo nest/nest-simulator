@@ -66,15 +66,15 @@ between events [3].
 Parameters:
   The following parameters can be set in the status dictionary.
   E_L           double - Resting membrane potential in mV.
-  C_m           double - Specific capacitance of the membrane in pF/mum^2.
+  C_m           double - Capacitance of the membrane in pF.
   tau_m         double - Membrane time constant in ms.
   tau_syn_ex    double - Excitatory synaptic time constant in ms.
   tau_syn_in    double - Inhibitory synaptic time constant in ms.
   t_ref         double - Duration of refractory period in ms.
   V_th          double - Spike threshold in mV.
   I_e           double - Constant input current in pA.
-  V_min         double - Absolute lower value for the membrane potential.
-  V_reset       double - Reset value for the membrane potential.
+  V_min         double - Absolute lower value for the membrane potential in mV.
+  V_reset       double - Reset value for the membrane potential in mV.
 
 Remarks:
   Please note that this node is capable of sending precise spike times
@@ -83,7 +83,7 @@ Remarks:
   spike_detector has to be set to true in order to record the offsets
   in addition to the on-grid spike times.
 
-Note:
+Remarks:
   tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
   degenerate case of the ODE describing the model [1]. For very similar values,
   numerics will be unstable.

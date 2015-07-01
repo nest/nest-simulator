@@ -24,31 +24,31 @@
 % but not both
 
 (unittest) run
-unittest using
+/unittest using
 
 % correct, rows & columns
 {
-  << /rows 1 /columns 1 /elements /iaf_neuron >> topology/CreateLayer ::
+  << /rows 1 /columns 1 /elements /iaf_neuron >> CreateLayer
 } pass_or_die
 
 % correct, positions
 {
-  << /positions [[0. 0.]] /elements /iaf_neuron >> topology/CreateLayer ::
+  << /positions [[0. 0.]] /elements /iaf_neuron >> CreateLayer
 } pass_or_die
 
 % incorrect, rows, columns, and positions
 {
-  << /rows 1 /columns 1 /positions [[0. 0.]] /elements /iaf_neuron >> topology/CreateLayer ::
+  << /rows 1 /columns 1 /positions [[0. 0.]] /elements /iaf_neuron >> CreateLayer
 } fail_or_die
 
 % incorrect, only rows
 {
-  << /rows 1 /elements /iaf_neuron >> topology/CreateLayer ::
+  << /rows 1 /elements /iaf_neuron >> CreateLayer
 } fail_or_die
 
 % incorrect, only columns
 {
-  << /columns 1 /elements /iaf_neuron >> topology/CreateLayer ::
+  << /columns 1 /elements /iaf_neuron >> CreateLayer
 } fail_or_die
 
 endusing

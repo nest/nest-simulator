@@ -36,8 +36,6 @@ Author: Hans Ekkehard Plesser, 2014-12-13
 (unittest) run
 /unittest using
 
-/topology using
-
 M_ERROR setverbosity
 
 /good_random_parameters

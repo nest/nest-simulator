@@ -59,21 +59,14 @@ RecordablesMap< iaf_psc_alpha_presc >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_alpha_presc::Parameters_::Parameters_()
-  : tau_m_( 10.0 )
-  , // ms
-  tau_syn_( 2.0 )
-  , // ms
-  c_m_( 250.0 )
-  , // pF
-  t_ref_( 2.0 )
-  , // ms
-  E_L_( -70.0 )
-  , // mV
-  I_e_( 0.0 )
-  , // pA
-  U_th_( -55.0 - E_L_ )
-  , // mV, rel to E_L_
-  U_min_( -std::numeric_limits< double_t >::infinity() )
+  : tau_m_( 10.0 )        // ms
+  , tau_syn_( 2.0 )       // ms
+  , c_m_( 250.0 )         // pF
+  , t_ref_( 2.0 )         // ms
+  , E_L_( -70.0 )         // mV
+  , I_e_( 0.0 )           // pA
+  , U_th_( -55.0 - E_L_ ) // mV, rel to E_L_
+  , U_min_( -std::numeric_limits< double_t >::infinity() )
   , U_reset_( -70.0 - E_L_ )
   , Interpol_( iaf_psc_alpha_presc::LINEAR )
 {

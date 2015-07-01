@@ -1147,7 +1147,7 @@ TopologyModule::GetValue_a_PFunction::execute( SLIInterpreter* i ) const
   not as grid positions. The number of decimals can be controlled by
   calling setprecision on the output stream before calling DumpLayerNodes.
 
-  Note:
+  Remarks:
   In distributed simulations, this function should only be called for
   MPI rank 0. If you call it on several MPI ranks, you must use a
   different file name on each.
@@ -1205,7 +1205,7 @@ TopologyModule::DumpLayerNodes_os_iFunction::execute( SLIInterpreter* i ) const
   the target node. If targets do not have positions (eg spike detectors outside any layer),
   NaN is written for each displacement coordinate.
 
-  Note:
+  Remarks:
   For distributed simulations
   - this function will dump the connections with local targets only.
   - the user is responsible for writing to a different output stream (file)

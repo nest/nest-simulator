@@ -51,7 +51,6 @@ const Name c( "c" );
 const Name c_1( "c_1" );
 const Name c_2( "c_2" );
 const Name c_3( "c_3" );
-const Name c_m( "c_m" );
 const Name C_m( "C_m" );
 const Name calibrate( "calibrate" );
 const Name calibrate_node( "calibrate_node" );

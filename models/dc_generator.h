@@ -37,7 +37,7 @@ Examples: The dc current can be altered in the following way:
    dc_gen << /amplitude 1500. >> SetStatus
    dc_gen GetStatus info                    % amplitude is now 1500.0
 
-Note: The dc_generator is rather inefficient, since it needs to
+Remarks: The dc_generator is rather inefficient, since it needs to
       send the same current information on each time step. If you
       only need a constant bias current into a neuron, you should
       set it directly in the neuron, e.g., dc_generator.

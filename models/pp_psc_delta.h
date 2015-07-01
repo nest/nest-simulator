@@ -119,7 +119,7 @@ class Network;
    The following parameters can be set in the status dictionary.
 
    V_m               double - Membrane potential in mV.
-   C_m               double - Specific capacitance of the membrane in pF/mum^2.
+   C_m               double - Capacitance of the membrane in pF.
    tau_m             double - Membrane time constant in ms.
    q_sfa             double - Adaptive threshold jump in mV.
    tau_sfa           double - Adaptive threshold time constant in ms.

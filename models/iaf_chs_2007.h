@@ -58,7 +58,7 @@ class Network;
    grid given by the computation step size. Incoming as well as emitted
    spikes are forced to that grid.
 
-   Note:
+   Remarks:
    The way the noise term was implemented in the original model makes it
    unsuitable for simulation in NEST. The workaround was to prepare the
    noise signal externally prior to simulation. The noise signal,

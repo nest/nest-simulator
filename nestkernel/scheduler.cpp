@@ -85,16 +85,14 @@ nest::Scheduler::Scheduler( Network& net )
   , entry_counter_( 0 )
   , exit_counter_( 0 )
   , nodes_vec_( n_threads_ )
-  , nodes_vec_network_size_( 0 )
-  , // zero to force update
-  clock_( Time::tic( 0L ) )
+  , nodes_vec_network_size_( 0 ) // zero to force update
+  , clock_( Time::tic( 0L ) )
   , slice_( 0L )
   , to_do_( 0L )
   , to_do_total_( 0L )
   , from_step_( 0L )
-  , to_step_( 0L )
-  , // consistent with to_do_ == 0
-  terminate_( false )
+  , to_step_( 0L ) // consistent with to_do_ == 0
+  , terminate_( false )
   , off_grid_spiking_( false )
   , print_time_( false )
   , rng_()
@@ -984,11 +982,6 @@ nest::Scheduler::set_status( DictionaryDatum const& d )
 
   updateValue< bool >( d, "off_grid_spiking", off_grid_spiking_ );
 
-  bool comm_allgather;
-  bool commstyle_updated = updateValue< bool >( d, "communicate_allgather", comm_allgather );
-  if ( commstyle_updated )
-    Communicator::set_use_Allgather( comm_allgather );
-
   // set RNGs --- MUST come after n_threads_ is updated
   if ( d->known( "rngs" ) )
   {
@@ -1145,7 +1138,6 @@ nest::Scheduler::get_status( DictionaryDatum& d ) const
   ( *d )[ "rng_seeds" ] = Token( rng_seeds_ );
   def< long >( d, "grng_seed", grng_seed_ );
   def< bool >( d, "off_grid_spiking", off_grid_spiking_ );
-  def< bool >( d, "communicate_allgather", Communicator::get_use_Allgather() );
   def< long >( d, "send_buffer_size", Communicator::get_send_buffer_size() );
   def< long >( d, "receive_buffer_size", Communicator::get_recv_buffer_size() );
 }
@@ -1514,7 +1506,7 @@ nest::Scheduler::print_progress_()
   {
     long t_real_s = ( t_slice_end_.tv_sec - t_slice_begin_.tv_sec ) * 1e6;   // usec
     t_real_ += t_real_s + ( t_slice_end_.tv_usec - t_slice_begin_.tv_usec ); // usec
-    double_t t_real_acc = ( t_real_ ) / 1000.; // ms
+    double_t t_real_acc = ( t_real_ ) / 1000.;                               // ms
     double_t t_sim_acc = ( to_do_total_ - to_do_ ) * Time::get_resolution().get_ms();
     rt_factor = t_sim_acc / t_real_acc;
   }

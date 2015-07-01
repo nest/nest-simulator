@@ -112,7 +112,7 @@ class Network;
 
    N                 int    - Number of represented neurons.
    tau_m             double - Membrane time constant in ms.
-   C_m               double - Specific capacitance of the membrane in pF/mum^2.
+   C_m               double - Capacitance of the membrane in pF.
    rho_0             double - Base firing rate in 1/s.
    delta_u           double - Voltage scale parameter in mV.
    I_e               double - Constant input current in pA.

@@ -61,7 +61,7 @@ Parameters:
 /low  lower bound (default: -inf)
 /high upper bound (default: +inf)
 
-Note:
+Remarks:
 - Clipped generators can be very inefficient if there is little probability
 mass in (low, high).
 - For continuous distributions, the probability of actually drawing

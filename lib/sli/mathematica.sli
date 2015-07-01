@@ -1408,7 +1408,7 @@ dimensions [d1 d2 ... dn] where di gives the dimension of the
 array at level i.
 The length of the dimensions-list corresponds to the TensorRank of
 the array.
-Note: Dimensions assumes that the array is hyper-rectangular
+Remarks: Dimensions assumes that the array is hyper-rectangular
       (rectangle,cuboid, ...), i.e., all subarrays at a given level
       have the same number of elements.
       Dimensions does not check, if the array really is hyper-rectangular. It

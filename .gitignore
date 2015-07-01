@@ -24,7 +24,6 @@ pynest/pynestkernel.cpp
 .*
 *.log
 config.status
-configure.ac
 Makefile
 build/
 
@@ -43,3 +42,5 @@ build/
 /sli/sli
 /testsuite/do_tests.sh
 /topology/setup.py
+
+*.kdev4

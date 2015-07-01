@@ -100,6 +100,7 @@ Norway}
   \citet{Gewa:2012(533)} and has been updated for NEST 2.6 (r11744).
 
 \begin{description}
+\item[Edited] Sacha J.\ van Albada, May 2015
 \item[Updated to 2.6.0] Hans E.\ Plesser, December 2014
 \item[Updated to 2.4.0] Hans E.\ Plesser, June 2014
 \item[Updated to 2.2.2] Hans E.\ Plesser \& Marc-Oliver Gewaltig,
@@ -295,8 +296,9 @@ membrane potential of the neuron. Other devices may be in the target
 position, e.g., the spike detector which receives spike events from a
 neuron. If in doubt about the order, consult the documentation of the
 respective nodes using NEST's help system. For example, to read the
-documentation of the voltmeter you can type
-\lstinline!nest.help('voltmeter')!\index{NEST!help}.
+documentation of the ac\_generator you can type
+\lstinline!nest.help('ac_generator')!\index{NEST!help}. 
+Dismiss the help by typing `q'.
 
 Next, we use the command \lstinline!Connect! with the
 \lstinline!syn_spec! parameter to connect the
@@ -352,10 +354,10 @@ network so that you can start from scratch.
   between the network nodes. Triangular arrow-heads represent
   excitatory and round arrow-heads represent inhibitory
   connections. The numbers at the start and end of each arrow indicate
-  the multiplicity of the connection. See also table
+  the multiplicity of the connection. See also Table
   \ref{nest:tab:Brunel2000}. \textbf{b)} Spiking activity of 50 neurons
   during the first 300 ms of simulated time as a raster plot. Time is
-  shown on the x-axis, neuron id on the y-axis. Each dot corresponds
+  shown on the x-axis, neuron ID on the y-axis. Each dot corresponds
   to a spike of the respective neuron at the given time. The histogram
   below the raster plot shows the population rate of the network.}
 \end{figure}
@@ -367,8 +369,8 @@ implementation. Please refer to the original paper for further details.
 
 The local cortical network consists of two neuron populations: a
 population of $N_E$ excitatory neurons and a population of $N_I$
-inhibitory neurons. To mimic the cortical ratio of 80\% excitation
-and 20\% inhibition, we assume that $N_E=8000$ and $N_I=2000$. Thus,
+inhibitory neurons. To mimic the cortical ratio of 80\% excitatory neurons
+and 20\% inhibitory neurons, we assume that $N_E=8000$ and $N_I=2000$. Thus,
 our local network has a total of 10,000 neurons.
 
 For both the excitatory and the inhibitory population, we use the same
@@ -391,24 +393,24 @@ J_I = -g \cdot J_E
 with $g=5.0$ in this example.
 
 In addition to the sparse recurrent inputs from within the local
-network, each neuron receives excitatory input from a population of
-$C_E$ randomly firing neurons, mimicking the input from the rest of
-cortex.  The randomly firing population is modeled as $C_E$
+network, each neuron receives randomly timed excitatory input, mimicking 
+the input from the rest of cortex. The random input is modeled as $C_E$
 independent and identically distributed Poisson processes with rate
-$\nu_{\text{ext}}$. Here, we set $\nu_{\text{ext}}$ to twice the rate $\nu_{\text{th}}$
-that is needed to drive a neuron to threshold asymptotically. The
-details of the model are summarized in tables
+$\nu_{\text{ext}}$, or equivalently, by a single Poisson process with rate 
+$C_E \cdot \nu_{\text{ext}}$. Here, we set $\nu_{\text{ext}}$ to twice the 
+rate $\nu_{\text{th}}$ that is needed to drive a neuron to threshold 
+asymptotically. The details of the model are summarized in Tables
 \ref{nest:tab:Brunel2000} and \ref{nest:tab:Brunelparams}.
 
 Fig.~\ref{nest:fig:brunel2000}b shows a raster plot of 50
 excitatory neurons during the first 300 ms of simulated time. Time is
-shown along the x-axis, neuron id along the y-axis. At $t=0$, all
+shown along the x-axis, neuron ID along the y-axis. At $t=0$, all
 neurons are in the same state $V_m=0$ and hence there is no spiking
 activity. The external stimulus rapidly drives the membrane potentials
 towards the threshold. Due to the random nature of the external
 stimulus, not all the neurons reach the threshold at the same
 time. After a few milliseconds, the neurons start to spike irregularly at
-roughly 40 $\mathrm{spikes}/s$. In the original paper, this network
+roughly 40 $\mathrm{spikes/s}$. In the original paper, this network
 state is called the \emph{asynchronous irregular state} \citep{Brunel00}.
 
 \begin{table}[!htp]
@@ -441,7 +443,7 @@ neurons \\\hline
   \textbf{Name} & \textbf{Elements} & \textbf{Size} \\\hline
 E & Iaf neuron & $N_{\text{E}} = 4N_{\text{I}}$  \\\hline
 I & Iaf neuron & $N_{\text{I}}$ \\\hline
-E$_{\text{ext}}$ & Poisson generator & $C_E(N_{\text{E}}+N_{\text{I}})$ \\\hline
+E$_{\text{ext}}$ & Poisson generator & $1$ \\\hline
 \end{tabularx}
 
 \vspace{2ex}
@@ -458,7 +460,7 @@ E$_{\text{ext}}$ & Poisson generator & $C_E(N_{\text{E}}+N_{\text{I}})$ \\\hline
   II & I & I & 
   Random convergent $C_{\text{I}}\rightarrow 1$, weight $-gJ$, delay $D$ \\\hline
   Ext& E$_{\text{ext}}$ & E $\cup$ I & 
-  Non-overlapping $C_{\text{E}}\rightarrow 1$, weight $J$, delay $D$ \\\hline
+  Divergent $1 \rightarrow N_{\text{E}} + N_{\text{I}}$, weight $J$, delay $D$ \\\hline
 \end{tabularx}
 
 \vspace{2ex}
@@ -495,8 +497,8 @@ E$_{\text{ext}}$ & Poisson generator & $C_E(N_{\text{E}}+N_{\text{I}})$ \\\hline
 \noindent\begin{tabularx}{0.95\linewidth}{|l|X|}\hline
 \multicolumn{2}{|l|}{\color{white}\cellcolor[gray]{0.0}\hdr{E}{Input}}\\\hline
 \textbf{Type} & \textbf{Description} \\\hline
-{Poisson generators} & Fixed rate $\nu_{\text{ext}}$, $C_{\text{E}}$
-generators per neuron, each generator projects to one neuron\\\hline
+{Poisson generator} & Fixed rate $\nu_{\text{ext}} \cdot C_{\text{E}}$,
+one generator providing independent input to each target neuron\\\hline
 \end{tabularx}
 
 \vspace{2ex}
@@ -529,11 +531,11 @@ generators per neuron, each generator projects to one neuron\\\hline
 Membrane time constant $\tau_m$ & 20 ms\\
 Refractory period $\tau_{\text{rp}}$ & 2 ms\\
 Firing threshold $V_{\text{th}}$ & 20 mV\\
-Membrane capatitance $C_m$ & 1pF\\
+Membrane capacitance $C_m$ & 1 pF\\
 Resting potential    $V_E$ & 0 mV\\
 Reset potential      $V_{\text{reset}}$ & 10 mV\\
 Excitatory PSP amplitude $J_E$ & 0.1 mV\\
-Inhibitory PSP amplitude $J_I$ & -0.5 mV\\
+Inhibitory PSP amplitude $J_I$ & $-0.5$ mV\\
 Synaptic delay $D$ & 1.5 ms \\
 Background rate $\eta$ & 2.0 \\
 \hline
@@ -576,8 +578,8 @@ the threshold rate $\nu_{\text{th}}$, i.e. the steady state firing
 rate which is needed to bring a neuron to threshold. The value of the
 scaling constant  \lstinline!eta! is defined in line \ref{nest:ln:eta}.
 
-In line \ref{nest:ln:p_rate}, we compute the population rate of the
-whole external population. With $C_E$ neurons, the population rate is
+In line \ref{nest:ln:p_rate}, we compute the combined input rate due to the
+external population. With $C_E$ incoming synapses per neuron, the total rate is
 simply the product \lstinline!nu_ex*C_E!. The factor 1000.0 in the
 product changes the units from spikes per ms to spikes per second.
  
@@ -627,6 +629,8 @@ nodes_I = nodes[N_E:] !\label{nest:ln:nodes_i}!
 
 noise = nest.Create('poisson_generator',1,{'rate': p_rate})!\label{nest:ln:create2}!
 
+nest.SetDefaults('spike_detector', {'to_file': True}) !\label{nest:ln:sd_default}!
+
 spikes = nest.Create('spike_detector',2,    !\label{nest:ln:spikedetect}!
                      [{'label': 'brunel-py-ex'},
                       {'label': 'brunel-py-in'}])
@@ -664,17 +668,17 @@ independent and identically distributed spike trains. Thus, we only
 need one generator to model an entire population of randomly firing
 neurons.
 
- To observe how the neurons in the
-recurrent network respond to the random spikes from the external
-population, we create two spike detectors in line
-\ref{nest:ln:spikedetect}; one for the excitatory neurons and one for the
-inhibitory neurons. By default, each detector writes its spikes into a
-file whose name is automatically generated from the device type and
-its global id. We use
-the third argument of \lstinline!Create! to give each spike detector a
-\lstinline!'label'!, which will be part of the name of the output file written
-by the detector. Since two devices are created, we supply a list
-of dictionaries.
+To observe how the neurons in the recurrent network respond to the 
+random spikes from the external population, we create two spike detectors.
+By default, spike detectors record to memory but not to file. In line 
+\ref{nest:ln:sd_default} we override this default behavior to also record
+to file. Line \ref{nest:ln:spikedetect} then creates one detector for the 
+excitatory neurons and one for the inhibitory neurons. 
+The default file names are automatically generated from the device type and
+its global ID. We use the third argument of \lstinline!Create! to give each 
+spike detector a \lstinline!'label'!, which will be part of the name of the 
+output file written by the detector. Since two devices are created, we supply
+a list of dictionaries.
 
 In line \ref{nest:ln:spikes_e}, we store the GID of the first spike
 detector in a one-element list and assign it to the variable
@@ -693,7 +697,7 @@ nest.CopyModel('static_synapse_hom_w',  !\label{nest:ln:copymodel}!
 nest.Connect(nodes_E, nodes,            !\label{nest:ln:randomconnect}!
              {'rule': 'fixed_indegree', 
               'indegree': C_E},
-             'excitatory')
+             'excitatory')             !\label{nest:ln:randomconnect_end}!
 nest.CopyModel('static_synapse_hom_w', !\label{nest:ln:copymodel1}!
                'inhibitory',
                {'weight':J_I, 
@@ -726,12 +730,12 @@ source nodes, a list of target nodes, a connection rule, and a synapse
 specification. Some connection rules, in particular
 \lstinline!'one_to_one'! and \lstinline!'all_to_all'! require no
 parameters and can be specified as strings. All other connection rules
-must be specfied as a dictionary, while at least must contain the key
+must be specfied as a dictionary, which at least must contain the key
 \lstinline!'rule'! specifying a connection rule;
 \lstinline!nest.ConnectionRules()! shows all connection rules. The
 remaining dictionary entries depend on the particular rule. We use the
 \lstinline!'fixed_indegree'! rule, which creates exactly
-\lstinline!indegree! connections to each target neurons; in previous
+\lstinline!indegree! connections to each target neuron; in previous
 versions of NEST, this connectivity was provided by
 \lstinline!RandomConvergentConnect!. 
 
@@ -794,7 +798,7 @@ In line \ref{nest:ln:simtime}, we select a simulation time of
 command \lstinline!Simulate! to run the simulation for 300 ms. During
 simulation, the Poisson generators send spikes into the network
 and cause the neurons to fire. The spike detectors receive spikes
-from the neurons and write them to a file, or to memory.
+from the neurons and write them to a file and to memory.
 
 When the function returns, the simulation time has progressed by
 300 ms. You can call \lstinline!Simulate! as often as you like and
@@ -809,7 +813,7 @@ function \lstinline!raster_plot! to produce the raster plot shown in
 Fig.~\ref{nest:fig:brunel2000}b. \lstinline!raster_plot! has two
 modes. \lstinline!raster_plot.from_device! expects the global ID of a
 spike detector.  \lstinline!raster_plot.from_file! expects the name of
-a data-file. This is useful to plot data without repeating a
+a data file. This is useful to plot data without repeating a
 simulation.
 
 
@@ -905,8 +909,8 @@ nest.GetKernelStatus('total_num_virtual_procs')
 The virtual process concept is reflected in the labeling of output
 files. For example, the data files for the excitatory spikes produced
 by the network discussed here follow the form
-\lstinline!brunel-py-ex-x-y.gdf!, where \lstinline!x! is the id of the
-data recording node and \lstinline!y! is the id of the virtual
+\lstinline!brunel-py-ex-x-y.gdf!, where \lstinline!x! is the ID of the
+data recording node and \lstinline!y! is the ID of the virtual
 process.
 
 \section{Randomness in NEST}\label{nest:sec:random}
@@ -953,10 +957,10 @@ applications.
 Based on this knowledge, each virtual process (VP) in NEST has its own
 RNG. Numbers from these RNGs are used to
 \begin{itemize}
-\item choose random convergent connections
-\item create random spike trains (e.g.\ \lstinline!poisson_generator!)
+\item choose random connections
+\item create random spike trains (e.g.,\ \lstinline!poisson_generator!)
   or random currents
-  (e.g.\ \lstinline!noise_generator!).
+  (e.g.,\ \lstinline!noise_generator!).
 \end{itemize}
 
 In order to randomize model parameters in a PyNEST script, it is
@@ -1065,7 +1069,7 @@ responsible for updating that node.
 As the next step, we create excitatory recurrent connections with the
 same connection rule as in the original script, but with randomized
 weights. To this end, we replace the code on lines
-\ref{nest:ln:copymodel}--\ref{nest:ln:randomconnect} of the original
+\ref{nest:ln:copymodel}--\ref{nest:ln:randomconnect_end} of the original
 script with
 \begin{lstlisting}[name=brunel-rand]
 nest.CopyModel('static_synapse', 'excitatory')
@@ -1087,7 +1091,7 @@ specification \lstinline!'excitatory'! with a synapse specification
 dictionary on lines \ref{nest:w_rand_beg}--\ref{nest:w_rand_end}. Such
 a dictionary must always contain the key \lstinline!'model'! providing
 the synapse model to use. In addition, we specify a fixed delay, and a
-distribution from which to draw the weights here a uniform
+distribution from which to draw the weights, here a uniform
 distribution over $[J_E/2, 3J_E/2)$. NEST will automatically use the
 correct random number generator for each weight. 
 
@@ -1184,9 +1188,9 @@ recorded nodes.
 
 NEST provides synapse models with a variety of short-term and
 long-term dynamics. To illustrate this, we extend the sparsely
-connected network introduced in section \ref{nest:sec:brunel} with
-randomized synaptic weights as described in section
-\ref{nest:sec:random} to incorporate spike-timing dependent plasticity
+connected network introduced in Section \ref{nest:sec:brunel} with
+randomized synaptic weights as described in Section
+\ref{nest:sec:random} to incorporate spike-timing-dependent plasticity
 \citep{Bi98} at its recurrent excitatory-excitatory synapses.
 
 We create all nodes and randomize their initial membrane potentials
@@ -1250,7 +1254,7 @@ uniform distribution has begun to soften
 results in an approximately Gaussian distribution of weights.
 
 \section{Example 4: Classes and Automatization Techniques} 
-So far, we have encouraged you to try our examples line-by line. This
+So far, we have encouraged you to try our examples line by line. This
 is possible in interactive sessions, but if you want to run a
 simulation several times, possibly with different parameters, it is
 more practical to write a script that can be loaded from Python.
@@ -1260,13 +1264,13 @@ only your simulations, but also your simulation data.  The first step
 is to re-write a model as a \emph{class}. In Python, and other
 object-oriented languages, a class is a data structure which groups
 data and functions into a single entity. In our case, data are the
-different parameters of a model and functions are what you can do with
+different parameters of a model, and functions are what you can do with
 a model.
 Classes allow you to solve various common problems in simulations:
 \begin{description}
 \item[\bf Parameter sets] Classes are data structures and so are
   ideally suited to hold the parameter set for a model. Class inheritance
-  allows you to modify one, few, or all parameters while maintaining
+  allows you to modify one, a few, or all parameters while maintaining
   the relation to the original model.
 \item[\bf Model variations] Often, we want to change minor aspects of
   a model. For example, in one version we have homogeneous connections
@@ -1274,7 +1278,7 @@ Classes allow you to solve various common problems in simulations:
   inheritance to express both cases while maintaining the conceptual
   relation between the models.
 \item[\bf Data management] Often, we run simulations with different
-  parameters, or other variations and forget to record which data file
+  parameters or other variations and forget to record which data file
   belonged to which simulation. Python's class mechanisms provide a
   simple solution.
 \end{description}
@@ -1288,7 +1292,7 @@ into separate functions:
   parameter $g$ is an independent parameter.
 \item Compute all dependent parameters of the model. These are all
   parameters or variables that have to be computed from other
-  quantities (e.g. the total number of neurons).
+  quantities (e.g., the total number of neurons).
 \item Create all nodes (neurons, devices, etc.)
 \item Connect the nodes.
 \item Simulate the model.
@@ -1302,7 +1306,7 @@ class Model(object):
     # Define all independent variables.
 
     def __init__(self):
-        """Initialize the simulation, setup data directory"""
+        """Initialize the simulation, set up data directory"""
     def calibrate(self): !\label{nest:ln:calibrate}!
         """Compute all dependent variables"""
     def build(self):     !\label{nest:ln:build}!
@@ -1310,7 +1314,7 @@ class Model(object):
     def connect(self):   !\label{nest:ln:connect}!
         """Connect all nodes"""
     def run(self,simtime):!\label{nest:ln:run}!
-        """Build, connect and simulate the model"""
+        """Build, connect, and simulate the model"""
 \end{lstlisting}
 In the following, we illustrate how to fit the model from Section
 \ref{nest:sec:brunel} into this scaffold. The complete and commented
@@ -1451,7 +1455,7 @@ state variables to build and connect the network:
         if not self.connected:
             self.connect()
         nest.Simulate(simtime)
-        # more code, e.g. to compute and print rates
+        # more code, e.g., to compute and print rates
 \end{lstlisting}
 In order to use the class, we have to load the file with the class
 definition and then create an object of the class:
@@ -1521,12 +1525,12 @@ Connect(*args, **kwargs)
  \end{lstlisting}
 
 To learn more about NEST's node and synapse types, you can access
-NEST's help system, using the PyNEST command NEST's online help still
-uses a lot of SLI syntax, NEST's native simulation language. However
+NEST's help system. NEST's online help still
+uses a lot of syntax of SLI, NEST's native simulation language. However,
 the general information is also valid for PyNEST.
 
 Help and advice can also be found on NEST's user mailing list where
-developers and users exchange their experience, problems and ideas.
+developers and users exchange their experience, problems, and ideas.
 And finally, we encourage you to visit the web site of the NEST
 Initiative at \url{www.nest-initiative.org}.
 

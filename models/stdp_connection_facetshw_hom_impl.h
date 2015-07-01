@@ -36,20 +36,13 @@ namespace nest
 template < typename targetidentifierT >
 STDPFACETSHWHomCommonProperties< targetidentifierT >::STDPFACETSHWHomCommonProperties()
   : CommonSynapseProperties()
-  ,
-
-  tau_plus_( 20.0 )
+  , tau_plus_( 20.0 )
   , tau_minus_( 20.0 )
-  ,
-
-  Wmax_( 100.0 )
-  ,
-
-  no_synapses_( 0 )
-  , synapses_per_driver_( 50 )
-  , // hardware efficiency of 50/256=20%,
-  // which is comparable to Fieres et al. (2008)
-  driver_readout_time_( 15.0 ) // in ms; measured on hardware
+  , Wmax_( 100.0 )
+  , no_synapses_( 0 )
+  , synapses_per_driver_( 50 )   // hardware efficiency of 50/256=20%,
+                                 // which is comparable to Fieres et al. (2008)
+  , driver_readout_time_( 15.0 ) // in ms; measured on hardware
 
 {
   lookuptable_0_.resize( 16 );

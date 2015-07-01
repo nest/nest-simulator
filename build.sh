@@ -109,15 +109,20 @@ EOF
 
 # Extracting changed files between two commits
 file_names=`git diff --name-only $TRAVIS_COMMIT_RANGE`
+format_error_files=""
 
 for f in $file_names; do
-   # filter files
+  if [ ! -f "$f" ]; then
+    echo "$f : Is not a file or does not exist anymore."
+    continue
+  fi
+  # filter files
   case $f in
     *.h | *.c | *.cc | *.hpp | *.cpp )
       echo "Static analysis on file $f:"
-      f_base=`basename $f`
+      f_base=$NEST_VPATH/reports/`basename $f`
       # Vera++ checks the specified list of rules given in the profile 
-      # nest which is placed in the <vera++ home>/lib/vera++/profile
+      # nest which is placed in the <vera++ root>/lib/vera++/profile
       vera++ --root ./vera_home --profile nest $f > ${f_base}_vera.txt
       echo "\n - vera++ for $f:"
       cat ${f_base}_vera.txt
@@ -136,13 +141,20 @@ for f in $file_names; do
       # remove temporary files
       rm ${f_base}_formatted_$TRAVIS_COMMIT.txt
 
-      # TODO: instead of rm these files, they should be used for code review
-      rm ${f_base}_vera.txt
-      rm ${f_base}_cppcheck.txt
-      rm ${f_base}_clang_format.txt
+      if [ -s ${f_base}_clang_format.txt ]; then 
+        # file exists and has size greater than zero
+        format_error_files="$format_error_files $f"
+      fi
+
       ;;
     *)
       echo "$f : not a C/CPP file. Do not do static analysis / formatting checking."
       continue
   esac
 done
+
+if [ "$format_error_files" != "" ]; then
+  echo "There are files with a formatting error: $format_error_files ."
+  exit 42
+fi
+

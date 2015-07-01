@@ -53,16 +53,12 @@ RecordablesMap< sinusoidal_gamma_generator >::create()
 
 
 nest::sinusoidal_gamma_generator::Parameters_::Parameters_()
-  : om_( 0.0 )
-  , // radian/s
-  phi_( 0.0 )
-  , // radian
-  order_( 1.0 )
-  , dc_( 0.0 )
-  , // spikes/s
-  ac_( 0.0 )
-  , // spikes/s
-  individual_spike_trains_( true )
+  : om_( 0.0 )  // radian/s
+  , phi_( 0.0 ) // radian
+  , order_( 1.0 )
+  , dc_( 0.0 ) // spikes/s
+  , ac_( 0.0 ) // spikes/s
+  , individual_spike_trains_( true )
   , num_trains_( 0 )
 {
 }

@@ -38,11 +38,10 @@
 namespace nest
 {
 Event::Event()
-  : sender_gid_( 0 )
-  , // initializing to 0 as this is an unsigned type
-    // gid 0 is network, can never send an event, so
-    // this is safe
-  sender_( NULL )
+  : sender_gid_( 0 ) // initializing to 0 as this is an unsigned type
+                     // gid 0 is network, can never send an event, so
+                     // this is safe
+  , sender_( NULL )
   , receiver_( NULL )
   , p_( -1 )
   , rp_( 0 )

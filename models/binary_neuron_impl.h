@@ -59,9 +59,8 @@ binary_neuron< TGainfunction >::State_::State_()
   : y_( false )
   , h_( 0.0 )
   , last_in_gid_( 0 )
-  , t_next_( Time::neg_inf() )
-  ,                                   // mark as not initialized
-  t_last_in_spike_( Time::neg_inf() ) // mark as not intialized
+  , t_next_( Time::neg_inf() )          // mark as not initialized
+  , t_last_in_spike_( Time::neg_inf() ) // mark as not intialized
 {
 }
 

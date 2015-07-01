@@ -156,11 +156,9 @@ nest::iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pn
  * ---------------------------------------------------------------- */
 
 nest::iaf_cond_alpha_mc::Parameters_::Parameters_()
-  : V_th( -55.0 )
-  , // mV
-  V_reset( -60.0 )
-  ,            // mV
-  t_ref( 2.0 ) // ms
+  : V_th( -55.0 )    // mV
+  , V_reset( -60.0 ) // mV
+  , t_ref( 2.0 )     // ms
 {
   // conductances between compartments
   g_conn[ SOMA ] = 2.5; // nS, soma-proximal

@@ -65,29 +65,20 @@ RecordablesMap< pp_psc_delta >::create()
  * ---------------------------------------------------------------- */
 
 nest::pp_psc_delta::Parameters_::Parameters_()
-  : tau_m_( 10.0 )
-  , // ms
-  c_m_( 250.0 )
-  , // pF
-  dead_time_( 1.0 )
-  , // ms
-  dead_time_random_( 0 )
+  : tau_m_( 10.0 )    // ms
+  , c_m_( 250.0 )     // pF
+  , dead_time_( 1.0 ) // ms
+  , dead_time_random_( 0 )
   , dead_time_shape_( 1 )
   , with_reset_( 1 )
-  , tau_sfa_( 34.0 )
-  , // ms
-  q_sfa_( 0.0 )
-  , // mV, reasonable default is 7 mV [2]
-  multi_param_( 1 )
-  , c_1_( 0.0 )
-  , // Hz / mV
-  c_2_( 1.238 )
-  , // Hz / mV
-  c_3_( 0.25 )
-  , // 1.0 / mV
-  I_e_( 0.0 )
-  ,                       // pA
-  t_ref_remaining_( 0.0 ) // ms
+  , tau_sfa_( 34.0 ) // ms
+  , q_sfa_( 0.0 )    // mV, reasonable default is 7 mV [2]
+  , multi_param_( 1 )
+  , c_1_( 0.0 )             // Hz / mV
+  , c_2_( 1.238 )           // Hz / mV
+  , c_3_( 0.25 )            // 1.0 / mV
+  , I_e_( 0.0 )             // pA
+  , t_ref_remaining_( 0.0 ) // ms
 {
   tau_sfa_.clear();
   q_sfa_.clear();

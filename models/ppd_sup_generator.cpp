@@ -98,16 +98,12 @@ nest::ppd_sup_generator::Age_distribution_::update( double_t hazard_step, libran
  * ---------------------------------------------------------------- */
 
 nest::ppd_sup_generator::Parameters_::Parameters_()
-  : rate_( 0.0 )
-  , // Hz
-  dead_time_( 0.0 )
-  , // ms
-  n_proc_( 1 )
-  , frequency_( 0.0 )
-  , // Hz
-  amplitude_( 0.0 )
-  , // percentage
-  num_targets_( 0 )
+  : rate_( 0.0 )      // Hz
+  , dead_time_( 0.0 ) // ms
+  , n_proc_( 1 )
+  , frequency_( 0.0 ) // Hz
+  , amplitude_( 0.0 ) // percentage
+  , num_targets_( 0 )
 {
 }
 

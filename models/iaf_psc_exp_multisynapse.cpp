@@ -57,21 +57,14 @@ RecordablesMap< iaf_psc_exp_multisynapse >::create()
  * ---------------------------------------------------------------- */
 
 iaf_psc_exp_multisynapse::Parameters_::Parameters_()
-  : Tau_( 10.0 )
-  , // in ms
-  C_( 250.0 )
-  , // in pF
-  t_ref_( 2.0 )
-  , // in ms
-  U0_( -70.0 )
-  , // in mV
-  I_e_( 0.0 )
-  , // in pA
-  V_reset_( -70.0 - U0_ )
-  , // in mV
-  Theta_( -55.0 - U0_ )
-  , // relative U0_
-  has_connections_( false )
+  : Tau_( 10.0 )            // in ms
+  , C_( 250.0 )             // in pF
+  , t_ref_( 2.0 )           // in ms
+  , U0_( -70.0 )            // in mV
+  , I_e_( 0.0 )             // in pA
+  , V_reset_( -70.0 - U0_ ) // in mV
+  , Theta_( -55.0 - U0_ )   // relative U0_
+  , has_connections_( false )
 {
   tau_syn_.clear();
 }

@@ -114,35 +114,21 @@ nest::iaf_chxk_2008_dynamics( double, const double y[], double f[], void* pnode 
  * ---------------------------------------------------------------- */
 
 nest::iaf_chxk_2008::Parameters_::Parameters_()
-  :
-
-  // Default values chosen based on values found in
+  : // Default values chosen based on values found in
   // Alex Casti's simulator
-  V_th( -45.0 )
-  , // mV
-  g_L( 100.0 )
-  , // nS
-  C_m( 1000.0 )
-  , // pF
-  E_ex( 20.0 )
-  , // mV
-  E_in( -90.0 )
-  , // mV
-  E_L( -60.0 )
-  , // mV
-  tau_synE( 1.0 )
-  , // ms
-  tau_synI( 1.0 )
-  , // ms
-  I_e( 0.0 )
-  , // pA
-  tau_ahp( 0.5 )
-  , // ms
-  g_ahp( 443.8 )
-  , // nS
-  E_ahp( -95.0 )
-  , // mV
-  ahp_bug( false )
+  V_th( -45.0 )     // mV
+  , g_L( 100.0 )    // nS
+  , C_m( 1000.0 )   // pF
+  , E_ex( 20.0 )    // mV
+  , E_in( -90.0 )   // mV
+  , E_L( -60.0 )    // mV
+  , tau_synE( 1.0 ) // ms
+  , tau_synI( 1.0 ) // ms
+  , I_e( 0.0 )      // pA
+  , tau_ahp( 0.5 )  // ms
+  , g_ahp( 443.8 )  // nS
+  , E_ahp( -95.0 )  // mV
+  , ahp_bug( false )
 
 {
   recordablesMap_.create();

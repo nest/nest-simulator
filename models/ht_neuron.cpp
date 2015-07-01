@@ -173,66 +173,40 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::ht_neuron::Parameters_::Parameters_()
-  : E_Na( 30.0 )
-  , // 30 mV
-  E_K( -90.0 )
-  , // -90 mV
-  g_NaL( 0.2 )
-  , // 0.2
-  g_KL( 1.0 )
-  , // 1.0 - 1.85
-  Tau_m( 16.0 )
-  , // ms
-  Theta_eq( -51.0 )
-  , // mV
-  Tau_theta( 2.0 )
-  , // ms
-  Tau_spike( 1.75 )
-  , // ms
-  t_spike( 2.0 )
-  , // ms
-  AMPA_g_peak( 0.1 )
-  , AMPA_Tau_1( 0.5 )
-  , // ms
-  AMPA_Tau_2( 2.4 )
-  , // ms
-  AMPA_E_rev( 0.0 )
-  , // mV
-  NMDA_g_peak( 0.075 )
-  , NMDA_Tau_1( 4.0 )
-  , // ms
-  NMDA_Tau_2( 40.0 )
-  , // ms
-  NMDA_E_rev( 0.0 )
-  , // mV
-  NMDA_Vact( -58.0 )
-  , // mV
-  NMDA_Sact( 2.5 )
-  , // mV
-  GABA_A_g_peak( 0.33 )
-  , GABA_A_Tau_1( 1.0 )
-  , // ms
-  GABA_A_Tau_2( 7.0 )
-  , // ms
-  GABA_A_E_rev( -70.0 )
-  , // mV
-  GABA_B_g_peak( 0.0132 )
-  , GABA_B_Tau_1( 60.0 )
-  , // ms
-  GABA_B_Tau_2( 200.0 )
-  , // ms
-  GABA_B_E_rev( -90.0 )
-  , // mV
-  NaP_g_peak( 1.0 )
-  , NaP_E_rev( 30.0 )
-  , // mV
-  KNa_g_peak( 1.0 )
-  , KNa_E_rev( -90.0 )
-  , // mV
-  T_g_peak( 1.0 )
-  , T_E_rev( 0.0 )
-  , // mV
-  h_g_peak( 1.0 )
+  : E_Na( 30.0 )      // 30 mV
+  , E_K( -90.0 )      // -90 mV
+  , g_NaL( 0.2 )      // 0.2
+  , g_KL( 1.0 )       // 1.0 - 1.85
+  , Tau_m( 16.0 )     // ms
+  , Theta_eq( -51.0 ) // mV
+  , Tau_theta( 2.0 )  // ms
+  , Tau_spike( 1.75 ) // ms
+  , t_spike( 2.0 )    // ms
+  , AMPA_g_peak( 0.1 )
+  , AMPA_Tau_1( 0.5 ) // ms
+  , AMPA_Tau_2( 2.4 ) // ms
+  , AMPA_E_rev( 0.0 ) // mV
+  , NMDA_g_peak( 0.075 )
+  , NMDA_Tau_1( 4.0 )  // ms
+  , NMDA_Tau_2( 40.0 ) // ms
+  , NMDA_E_rev( 0.0 )  // mV
+  , NMDA_Vact( -58.0 ) // mV
+  , NMDA_Sact( 2.5 )   // mV
+  , GABA_A_g_peak( 0.33 )
+  , GABA_A_Tau_1( 1.0 )   // ms
+  , GABA_A_Tau_2( 7.0 )   // ms
+  , GABA_A_E_rev( -70.0 ) // mV
+  , GABA_B_g_peak( 0.0132 )
+  , GABA_B_Tau_1( 60.0 )  // ms
+  , GABA_B_Tau_2( 200.0 ) // ms
+  , GABA_B_E_rev( -90.0 ) // mV
+  , NaP_g_peak( 1.0 )
+  , NaP_E_rev( 30.0 ) // mV
+  , KNa_g_peak( 1.0 )
+  , KNa_E_rev( -90.0 ) // mV
+  , T_g_peak( 1.0 )
+  , T_E_rev( 0.0 ) // mV
+  , h_g_peak( 1.0 )
   , h_E_rev( -40.0 ) // mV
 {
 }

@@ -33,9 +33,13 @@
 
 nest::spin_detector::spin_detector()
   : Node()
-  , device_( *this, RecordingDevice::SPIN_DETECTOR, "gdf", true, true, true )
-  , // record time, gid and weight (used for spin)
-  last_in_gid_( 0 )
+  , device_( *this,
+      RecordingDevice::SPIN_DETECTOR,
+      "gdf",
+      true,
+      true,
+      true ) // record time, gid and weight (used for spin)
+  , last_in_gid_( 0 )
   , t_last_in_spike_( Time::neg_inf() )
   , user_set_precise_times_( false )
 {
@@ -45,9 +49,8 @@ nest::spin_detector::spin_detector( const spin_detector& n )
   : Node( n )
   , device_( *this, n.device_ )
   , last_in_gid_( 0 )
-  , t_last_in_spike_( Time::neg_inf() )
-  , // mark as not initialized
-  user_set_precise_times_( n.user_set_precise_times_ )
+  , t_last_in_spike_( Time::neg_inf() ) // mark as not initialized
+  , user_set_precise_times_( n.user_set_precise_times_ )
 {
 }
 

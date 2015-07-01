@@ -60,31 +60,20 @@ RecordablesMap< mat2_psc_exp >::create()
  * ---------------------------------------------------------------- */
 
 nest::mat2_psc_exp::Parameters_::Parameters_()
-  : Tau_( 5.0 )
-  , // in ms
-  C_( 100.0 )
-  , // in pF
-  tau_ref_( 2.0 )
-  , // in ms
-  U0_( -70.0 )
-  , // in mV
-  I_e_( 0.0 )
-  , // in pA
-  tau_ex_( 1.0 )
-  , // in ms
-  tau_in_( 3.0 )
-  , // in ms
-  tau_1_( 10.0 )
-  , // in ms
-  tau_2_( 200.0 )
-  , // in ms
-  alpha_1_( 37.0 )
-  , // in mV
-  alpha_2_( 2.0 )
-  ,              // in mV
-  omega_( 19.0 ) // resting threshold relative to U0_ in mV
-                 // state V_th_ is initialized with the
-                 // same value
+  : Tau_( 5.0 )      // in ms
+  , C_( 100.0 )      // in pF
+  , tau_ref_( 2.0 )  // in ms
+  , U0_( -70.0 )     // in mV
+  , I_e_( 0.0 )      // in pA
+  , tau_ex_( 1.0 )   // in ms
+  , tau_in_( 3.0 )   // in ms
+  , tau_1_( 10.0 )   // in ms
+  , tau_2_( 200.0 )  // in ms
+  , alpha_1_( 37.0 ) // in mV
+  , alpha_2_( 2.0 )  // in mV
+  , omega_( 19.0 )   // resting threshold relative to U0_ in mV
+                     // state V_th_ is initialized with the
+                     // same value
 {
 }
 
@@ -93,11 +82,9 @@ nest::mat2_psc_exp::State_::State_()
   , i_syn_ex_( 0.0 )
   , i_syn_in_( 0.0 )
   , V_m_( 0.0 )
-  , V_th_1_( 0.0 )
-  , // relative to omega_
-  V_th_2_( 0.0 )
-  , // relative to omega_
-  r_( 0 )
+  , V_th_1_( 0.0 ) // relative to omega_
+  , V_th_2_( 0.0 ) // relative to omega_
+  , r_( 0 )
 {
 }
 

@@ -628,13 +628,11 @@ Abigail wants to fix a misleading piece of documentation
 --------------------------------------------------------
 Abigail wants to fix the documentation of a single file and figures that changing the file directly through the GitHub web interface is the easiest way to go.
 
-On the GitHub page of NEST she chooses her personal profile as the target and browses to the file she wants to edit. She clicks the button on the top right corner that allows her to edit this file and then fixes the documentation. Once she is done, she writes a meaningful commit message under "Commit changes" at the bottom of the page and clicks the corresponding button (the option “Commit directly to the `master` branch” is selected).
+On the GitHub page of NEST she chooses her personal profile as the target and browses to the file she wants to edit. She clicks the button on the top right corner that allows her to edit this file and then fixes the documentation. Once she is done, she writes a meaningful commit message under "Commit changes" at the bottom of the page and selects the option "Create a new branch for this commit and start a pull request". She types in an appropriate branch name and finally clicks "Commit changes".
 
-The commit affects only her own public version of the NEST code. She then creates a Pull Request with a comment explaining the reason for the change.
+As Abigail has made only minor changes to the documentation, she did not create a ticket in the bug tracker and she includes the flag `[ci skip]` in the title of the Pull Request to keep Travis from running any tests.
 
-Because it is only a minor change to the documentation, Abigail did not create a ticket in the bug tracker, but flags the Pull Request by adding the label “not code”.
-
-Travis tries to merge the Pull Request, build it and run all the tests. If this succeeds, the NEST Core mailing list is informed about the new Pull Request and invited to have a look at the change.
+If Abigail is an owner of the NEST repository, she can also add the label “documentation” to the Pull Request. Otherwise, she can ask one of the owners to do so.
 
 If no one objects, the release manager merges the Pull Request into the public version of NEST.
 

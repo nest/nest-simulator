@@ -785,15 +785,10 @@ done
 
 # On Bluegene, we need to link user modules statically and add them to startup
 # We require that the module is installed and has its header file in $prefix/include
-echo "*******************************"
-echo $SLI_USER_MODULES
-echo "-------------------------------"
 if test x$configure_bluegene == xyes ; then
-echo "BG is YES"
   for umod in $SLI_USER_MODULES ; do
     modheader="${umod}.h"
     fullmodheader="${prefix}/include/${modheader}"
-echo "$umod $modheader"
     # get module namespace and class from the module's main header
     # the following chain of commands (feel free to beautify!)
     # 1. removes all block comments
@@ -807,18 +802,13 @@ echo "$umod $modheader"
       modnamespace="${modnamespace}::"
     fi
     modclass=`grep SLIModule ${fullmodheader} | sed -n 's/class *\(.*\) *:.*/\1/p' | tr -d ' '`
-echo "$modnamespace $modclass"
     # Do NOT pass network to user modules, it is outdated
     SLI_CHECK_SOURCE_FILE([$prefix/include/$modheader],
       [MODULE_INCLUDES="${MODULE_INCLUDES}#include \"${fullmodheader}\"\n"
        ADD_STATIC_MODULES="${ADD_STATIC_MODULES}  engine.addmodule(new ${modnamespace}${modclass}());\n"],
       [printf ""])
-echo $MODULE_INCLUDES
-echo $ADD_STATIC_MODULES
-echo ".............................."
   done
 fi
-echo "=============================="
 
 
 # Now generate $PKGBUILDDIR/nest/static_modules.h, including the module headers

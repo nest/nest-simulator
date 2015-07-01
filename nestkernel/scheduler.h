@@ -402,7 +402,7 @@ private:
   index n_sim_procs_; //!< MPI processes used for simulation
 
   index n_gsd_; //!< Total number of global spike detectors, used for distributing them over
-                //recording processes
+                //!< recording processes
 
   volatile index entry_counter_; //!< Counter for entry barrier.
   volatile index exit_counter_;  //!< Counter for exit barrier.
@@ -427,7 +427,7 @@ private:
   bool print_time_;       //!< Indicates whether time should be printed during simulations (or not)
 
   std::vector< long_t > rng_seeds_; //!< The seeds of the local RNGs. These do not neccessarily
-                                    //describe the state of the RNGs.
+                                    //!< describe the state of the RNGs.
   long_t
     grng_seed_; //!< The seed of the global RNG, not neccessarily describing the state of the GRNG.
 

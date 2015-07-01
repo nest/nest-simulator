@@ -1506,7 +1506,7 @@ nest::Scheduler::print_progress_()
   {
     long t_real_s = ( t_slice_end_.tv_sec - t_slice_begin_.tv_sec ) * 1e6;   // usec
     t_real_ += t_real_s + ( t_slice_end_.tv_usec - t_slice_begin_.tv_usec ); // usec
-    double_t t_real_acc = ( t_real_ ) / 1000.; // ms
+    double_t t_real_acc = ( t_real_ ) / 1000.;                               // ms
     double_t t_sim_acc = ( to_do_total_ - to_do_ ) * Time::get_resolution().get_ms();
     rt_factor = t_sim_acc / t_real_acc;
   }

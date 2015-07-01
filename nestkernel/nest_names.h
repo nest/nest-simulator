@@ -84,19 +84,19 @@ extern const Name D_lower;
 extern const Name D_mean;
 extern const Name D_std;
 extern const Name D_upper;
-extern const Name dc;        //!< Specific to sinusoidally modulated generators
-extern const Name dead_time; //!< Specific to ppd_sup_generator and gamma_sup_generator
-extern const Name
-  dead_time_random; //!< Random dead time or fixed dead time (stochastic neuron pp_psc_delta)
-extern const Name dead_time_shape; //!< Shape parameter of the dead time distribution (stochastic
-// neuron pp_psc_delta)
-extern const Name delay;     //!< Connection parameters
-extern const Name delays;    //!< Connection parameters
-extern const Name Delta_T;   //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
-extern const Name delta_tau; //!< Specific to correlation_and correlomatrix detector
-extern const Name delta_u;   //!< Specific to population point process model (pp_pop_psc_delta)
-extern const Name dg_ex;     //!< Derivative of the excitatory conductance
-extern const Name dg_in;     //!< Derivative of the inhibitory conductance
+extern const Name dc;               //!< Specific to sinusoidally modulated generators
+extern const Name dead_time;        //!< Specific to ppd_sup_generator and gamma_sup_generator
+extern const Name dead_time_random; //!< Random dead time or fixed dead time
+                                    //!< (stochastic neuron pp_psc_delta)
+extern const Name dead_time_shape;  //!< Shape parameter of the dead time distribution (stochastic
+                                    //!< neuron pp_psc_delta)
+extern const Name delay;            //!< Connection parameters
+extern const Name delays;           //!< Connection parameters
+extern const Name Delta_T;          //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
+extern const Name delta_tau;        //!< Specific to correlation_and correlomatrix detector
+extern const Name delta_u; //!< Specific to population point process model (pp_pop_psc_delta)
+extern const Name dg_ex;   //!< Derivative of the excitatory conductance
+extern const Name dg_in;   //!< Derivative of the inhibitory conductance
 extern const Name dhaene_det_spikes;   //!< used for iaflossless_count_exp
 extern const Name dhaene_max_geq_V_th; //!< used for iaflossless_count_exp
 extern const Name dhaene_quick1;       //!< used for iaflossless_count_exp
@@ -104,10 +104,10 @@ extern const Name dhaene_quick2;       //!< used for iaflossless_count_exp
 extern const Name dhaene_tmax_lt_t1;   //!< used for iaflossless_count_exp
 extern const Name distribution;        //!< Connectivity-related
 extern const Name dt;                  //!< Miscellaneous parameters
-extern const Name dU; //!< Unit increment of the utilization for a facilitating synapse [0...1]
-                      //(Tsodyks2_connection)
-extern const Name
-  dUs; //!< Unit increment of the utilization for a facilitating synapse [0...1] (property arrays)
+extern const Name dU;  //!< Unit increment of the utilization for a facilitating synapse [0...1]
+                       //!< (Tsodyks2_connection)
+extern const Name dUs; //!< Unit increment of the utilization for a facilitating synapse [0...1]
+                       //!< (property arrays)
 
 extern const Name E_ahp;        //!< Specific to iaf_chxk_2008 neuron
 extern const Name E_ex;         //!< Excitatory reversal potential
@@ -158,13 +158,13 @@ extern const Name gamma_shape;   //!< Specific to ppd_sup_generator and gamma_su
 extern const Name global_id;     //!< Node parameter
 extern const Name gsl_error_tol; //!< GSL integrator tolerance
 
-extern const Name h; //!< Summed input to a neuron (Ginzburg neuron)
-extern const Name
-  has_connections; //!< Specific to iaf_psc_exp_multisynapse and iaf_psc_alpha_multisynapse
+extern const Name h;                    //!< Summed input to a neuron (Ginzburg neuron)
+extern const Name has_connections;      //!< Specific to iaf_psc_exp_multisynapse and
+                                        //!< iaf_psc_alpha_multisynapse
 extern const Name histogram;            //!< Specific to correlation_detector
 extern const Name histogram_correction; //!< Specific to correlation_detector
-extern const Name
-  HMIN; //!< Smallest integration step for adaptive stepsize (Brette & Gerstner 2005)
+extern const Name HMIN;                 //!< Smallest integration step for adaptive stepsize
+                                        //!< (Brette & Gerstner 2005)
 
 extern const Name I;         //!< Specific to mirollo_strogatz_ps
 extern const Name I_adapt;   //!< Goal of current homeostasis (current homeostasis)
@@ -188,15 +188,16 @@ extern const Name Interpol_Order;          //!< Interpolation order (precise tim
 extern const Name interval;                //!< Recorder parameter
 extern const Name is_refractory;           //!< Neuron is in refractory period (debugging)
 
-extern const Name label;      //!< Miscellaneous parameters
-extern const Name len_kernel; //!< Specific to population point process model (pp_pop_psc_delta)
+extern const Name label;             //!< Miscellaneous parameters
+extern const Name len_kernel;        //!< Specific to population point process model
+                                     //!< (pp_pop_psc_delta)
 extern const Name lin_left_geq_V_th; //!< used for iaflossless_count_exp
 extern const Name lin_max_geq_V_th;  //!< used for iaflossless_count_exp
 extern const Name local;             //!< Node parameter
 extern const Name local_id;          //!< Node
 
-extern const Name
-  MAXERR; //!< Largest permissible error for adaptive stepsize (Brette & Gerstner 2005)
+extern const Name MAXERR;        //!< Largest permissible error for adaptive stepsize
+                                 //!< (Brette & Gerstner 2005)
 extern const Name mean;          //!< Miscellaneous parameters
 extern const Name memory;        //!< Recorder parameter
 extern const Name model;         //!< Node parameter
@@ -242,23 +243,24 @@ extern const Name published;          //!< Parameters for MUSIC devices
 extern const Name q_rr;  //!< Other adaptation
 extern const Name q_sfa; //!< Other adaptation
 
-extern const Name rate;             //!< Specific to ppd_sup_generator and gamma_sup_generator
-extern const Name receptor_type;    //!< Connection parameters
-extern const Name receptor_types;   //!< Connection parameters
-extern const Name record_from;      //!< Recorder parameter
-extern const Name record_to;        //!< Recorder parameter
-extern const Name recordables;      //!< List of recordable state data (Device parameters)
-extern const Name recorder;         //!< Node type
-extern const Name refractory_input; //!< Spikes arriving during refractory period are counted
-                                    //(precise timing neurons)
-extern const Name registered;       //!< Parameters for MUSIC devices
-extern const Name rho_0; //!< Specific to population point process model (pp_pop_psc_delta)
-extern const Name rms;   //!< Root mean square
+extern const Name rate;                 //!< Specific to ppd_sup_generator and gamma_sup_generator
+extern const Name receptor_type;        //!< Connection parameters
+extern const Name receptor_types;       //!< Connection parameters
+extern const Name record_from;          //!< Recorder parameter
+extern const Name record_to;            //!< Recorder parameter
+extern const Name recordables;          //!< List of recordable state data (Device parameters)
+extern const Name recorder;             //!< Node type
+extern const Name refractory_input;     //!< Spikes arriving during refractory period are counted
+                                        //!< (precise timing neurons)
+extern const Name registered;           //!< Parameters for MUSIC devices
+extern const Name rho_0;                //!< Specific to population point process model
+                                        //!< (pp_pop_psc_delta)
+extern const Name rms;                  //!< Root mean square
 extern const Name root_finding_epsilon; //!< Accuracy of the root of the polynomial (precise timing
-// neurons (Brette 2007))
-extern const Name rport;  //!< Connection parameters
-extern const Name rports; //!< Connection parameters
-extern const Name rule;   //!< Connectivity-related
+                                        //!< neurons (Brette 2007))
+extern const Name rport;                //!< Connection parameters
+extern const Name rports;               //!< Connection parameters
+extern const Name rule;                 //!< Connectivity-related
 
 extern const Name S;           //!< Binary state (output) of neuron (Ginzburg neuron)
 extern const Name scientific;  //!< Recorder parameter
@@ -280,24 +282,24 @@ extern const Name synapse;         //!< Node type
 extern const Name synapse_model;   //!< Connection parameters
 extern const Name synapse_modelid; //!< Connection parameters
 
-extern const Name t_lag;           //!< Lag within a time slice
-extern const Name t_origin;        //!< Origin of a time-slice
-extern const Name t_ref;           //!< Refractory period
-extern const Name t_ref_abs;       //!< Absolute refractory period
-extern const Name t_ref_remaining; //!< Time remaining till end of refractory state
-extern const Name t_ref_tot;       //!< Total refractory period
-extern const Name t_spike;         //!< Time of last spike
-extern const Name target;          //!< Connection parameters
-extern const Name target_thread;   //!< Connection parameters
-extern const Name targets;         //!< Connection parameters
-extern const Name tau_1;           //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
-extern const Name tau_2;           //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
-extern const Name tau_ahp;         //!< Specific to iaf_chxk_2008 neuron
-extern const Name tau_epsp;        //!< Specific to iaf_chs_2008 neuron
-extern const Name tau_fac;         //!< facilitation time constant (ms) (Tsodyks2_connection)
-extern const Name tau_facs;        //!< facilitation time constant (ms) (property arrays)
-extern const Name tau_lcm; //!< Least common multiple of tau_m, tau_ex and tau_in (precise timing
-// neurons (Brette 2007))
+extern const Name t_lag;             //!< Lag within a time slice
+extern const Name t_origin;          //!< Origin of a time-slice
+extern const Name t_ref;             //!< Refractory period
+extern const Name t_ref_abs;         //!< Absolute refractory period
+extern const Name t_ref_remaining;   //!< Time remaining till end of refractory state
+extern const Name t_ref_tot;         //!< Total refractory period
+extern const Name t_spike;           //!< Time of last spike
+extern const Name target;            //!< Connection parameters
+extern const Name target_thread;     //!< Connection parameters
+extern const Name targets;           //!< Connection parameters
+extern const Name tau_1;             //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
+extern const Name tau_2;             //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
+extern const Name tau_ahp;           //!< Specific to iaf_chxk_2008 neuron
+extern const Name tau_epsp;          //!< Specific to iaf_chs_2008 neuron
+extern const Name tau_fac;           //!< facilitation time constant (ms) (Tsodyks2_connection)
+extern const Name tau_facs;          //!< facilitation time constant (ms) (property arrays)
+extern const Name tau_lcm;           //!< Least common multiple of tau_m, tau_ex and tau_in
+                                     //!< (precise timing neurons (Brette 2007))
 extern const Name tau_m;             //!< Membrane time constant
 extern const Name tau_max;           //!< Specific to correlation_and correlomatrix detector
 extern const Name tau_minus;         //!< used for ArchivingNode
@@ -312,19 +314,20 @@ extern const Name tau_syn_ex;        //!< Excitatory synaptic time constant
 extern const Name tau_syn_in;        //!< Inhibitory synaptic time constant
 extern const Name tau_v;             //!< Specific to amat2_*
 extern const Name tau_w;             //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
-extern const Name taus_eta; //!< Specific to population point process model (pp_pop_psc_delta)
-extern const Name taus_syn; //!< Synapse time constants (array)
-extern const Name theta;    //!< Did not compile without (theta neuron problem)
-extern const Name thread;   //!< Node parameter
-extern const Name thread_local_id; //!< Thead-local ID of node, see Kunkel et al 2014, Sec 3.3.2
-extern const Name time_in_steps;   //!< Recorder parameter
-extern const Name times;           //!< Recorder parameter
-extern const Name to_accumulator;  //!< Recorder parameter
-extern const Name to_file;         //!< Recorder parameter
-extern const Name to_memory;       //!< Recorder parameter
-extern const Name to_screen;       //!< Recorder parameter
-extern const Name Tstart;          //!< Specific to correlation_and correlomatrix detector
-extern const Name Tstop;           //!< Specific to correlation_and correlomatrix detector
+extern const Name taus_eta;          //!< Specific to population point process model
+                                     //!< (pp_pop_psc_delta)
+extern const Name taus_syn;          //!< Synapse time constants (array)
+extern const Name theta;             //!< Did not compile without (theta neuron problem)
+extern const Name thread;            //!< Node parameter
+extern const Name thread_local_id;   //!< Thead-local ID of node, see Kunkel et al 2014, Sec 3.3.2
+extern const Name time_in_steps;     //!< Recorder parameter
+extern const Name times;             //!< Recorder parameter
+extern const Name to_accumulator;    //!< Recorder parameter
+extern const Name to_file;           //!< Recorder parameter
+extern const Name to_memory;         //!< Recorder parameter
+extern const Name to_screen;         //!< Recorder parameter
+extern const Name Tstart;            //!< Specific to correlation_and correlomatrix detector
+extern const Name Tstop;             //!< Specific to correlation_and correlomatrix detector
 
 extern const Name u; //!< probability of release [0...1] (Tsodyks2_connection)
 extern const Name U_lower;
@@ -356,15 +359,15 @@ extern const Name weighted_spikes_ex; //!< Weighted incoming excitatory spikes
 extern const Name weighted_spikes_in; //!< Weighted incoming inhibitory spikes
 extern const Name weights;            //!< Connection parameters
 extern const Name with_noise;
-extern const Name
-  with_reset; //!< Shall the pp_neuron reset after each spike? (stochastic neuron pp_psc_delta)
+extern const Name with_reset; //!< Shall the pp_neuron reset after each spike?
+                              //!< (stochastic neuron pp_psc_delta)
 extern const Name withgid;    //!< Recorder parameter
 extern const Name withpath;   //!< Recorder parameter
 extern const Name withtime;   //!< Recorder parameter
 extern const Name withweight; //!< Recorder parameter
 
-extern const Name
-  x; //!< current scaling factor of the synaptic weight [0...1] (Tsodyks2_connection)
+extern const Name x;  //!< current scaling factor of the synaptic weight [0...1]
+                      //!< (Tsodyks2_connection)
 extern const Name xs; //!< current scaling factor of the synaptic weight [0...1] (property arrays)
 }
 }

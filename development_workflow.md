@@ -626,25 +626,17 @@ use a private repository in the NEST organization and do the same as Jeyashree i
 
 Abigail wants to fix a misleading piece of documentation
 --------------------------------------------------------
-Abigail is happy with the fact that other people can watch her fixing the
-documentation. She clicks the button on the GitHub page of NEST and chooses her
-personal profile as the target.
+Abigail wants to fix the documentation of a single file and figures that changing the file directly through the GitHub web interface is the easiest way to go.
 
-She then works on her own public version of the NEST code on GitHub and creates
-a once she is done by clicking on the corresponding button.
+On the GitHub page of NEST she chooses her personal profile as the target and browses to the file she wants to edit. She clicks the button on the top right corner that allows her to edit this file and then fixes the documentation. Once she is done, she writes a meaningful commit message under "Commit changes" at the bottom of the page and clicks the corresponding button (the option “Commit directly to the `master` branch” is selected).
 
-She adds a comment to the Pull Request explaining the reason for the change.
+The commit affects only her own public version of the NEST code. She then creates a Pull Request with a comment explaining the reason for the change.
 
-Because it is only a minor change to the documentation, she did not create
-a ticket in the bug tracker, but flags the Pull Request by adding the label
-“not code”.
+Because it is only a minor change to the documentation, Abigail did not create a ticket in the bug tracker, but flags the Pull Request by adding the label “not code”.
 
-Travis tries to merge the Pull Request, build it and run all the tests. If this
-succeeds, the NEST Core mailing list is informed about the new Pull Request and
-invited to have a look at the change.
+Travis tries to merge the Pull Request, build it and run all the tests. If this succeeds, the NEST Core mailing list is informed about the new Pull Request and invited to have a look at the change.
 
-If no one objects, the release manager can merge the Pull Request into the
-public version of NEST.
+If no one objects, the release manager merges the Pull Request into the public version of NEST.
 
 Alex wants to fix a bug in the NEST kernel
 ------------------------------------------

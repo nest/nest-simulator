@@ -183,9 +183,9 @@ M_ERROR setverbosity
 
   /sinusoidal_gamma_generator 
   << 
-     /dc  100.
-     /ac   50.
-     /freq 10.
+     /rate  100.
+     /amplitude   50.
+     /frequency 10.
      /order 3.  
      /individual_spike_trains individual
   >> SetDefaults
@@ -264,9 +264,9 @@ M_ERROR setverbosity
 
   /sinusoidal_gamma_generator 
   << 
-     /dc  100.
-     /ac   50.
-     /freq 10.
+     /rate  100.
+     /amplitude   50.
+     /frequency 10.
      /order 3.  
      /individual_spike_trains individual
   >> SetDefaults
@@ -321,10 +321,10 @@ M_ERROR setverbosity
 
   /sinusoidal_gamma_generator 
   << 
-     /dc   dc
-     /ac   ac
-     /freq freq
-     /phi  phi
+     /rate   dc
+     /amplitude   ac
+     /frequency freq
+     /phase  phi Pi div 180. mul
      /order order
   >> SetDefaults
 

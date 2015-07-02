@@ -65,8 +65,10 @@ generators using `Connect`.
 '''
 
 g = nest.Create('sinusoidal_gamma_generator', n=2,
-                params=[{'dc': 10000.0, 'ac': 5000.0, 'freq': 10.0, 'phi': 0.0, 'order': 2.0},
-                        {'dc': 10000.0, 'ac': 5000.0, 'freq': 10.0, 'phi': 0.0, 'order': 10.0}])
+                params=[{'rate': 10000.0, 'amplitude': 5000.0, 
+                         'frequency': 10.0, 'phase': 0.0, 'order': 2.0},
+                        {'rate': 10000.0, 'amplitude': 5000.0, 
+                         'frequency': 10.0, 'phase': 0.0, 'order': 10.0}])
 
 m = nest.Create('multimeter', n=2, params={'interval': 0.1, 'withgid': False,
                                            'record_from': ['rate']})
@@ -117,7 +119,8 @@ First, a `sinusoidal_gamma_generator` with
 simulating, a raster plot of the spikes is created.
 '''
 g = nest.Create('sinusoidal_gamma_generator',
-                params={'dc': 100.0, 'ac': 50.0, 'freq': 10.0, 'phi': 0.0, 'order': 3.,
+                params={'rate': 100.0, 'amplitude': 50.0, 
+                        'frequency': 10.0, 'phase': 0.0, 'order': 3.,
                         'individual_spike_trains': True})
 p = nest.Create('parrot_neuron', 20)
 s = nest.Create('spike_detector')
@@ -146,7 +149,8 @@ nest.ResetKernel()
 nest.SetKernelStatus({'local_num_threads': 4})
 
 g = nest.Create('sinusoidal_gamma_generator',
-                params={'dc': 100.0, 'ac': 50.0, 'freq': 10.0, 'phi': 0.0, 'order': 3.,
+                params={'rate': 100.0, 'amplitude': 50.0, 
+                        'frequency': 10.0, 'phase': 0.0, 'order': 3.,
                         'individual_spike_trains': False})
 p = nest.Create('parrot_neuron', 20)
 s = nest.Create('spike_detector')
@@ -222,8 +226,8 @@ values, i.e. ac=0 and the DC value being changed from 20 to 50 after
 
 plt.subplot(grid[0], grid[1], 1)
 spikes = step(t, n,
-              {'dc': 20.0},
-              {'dc': 50.0,},
+              {'rate': 20.0},
+              {'rate': 50.0,},
               seed=123, dt=dt)
 plot_hist(spikes)
 exp = np.ones(steps)   
@@ -242,8 +246,8 @@ second over time.
 
 plt.subplot(grid[0], grid[1], 2)
 spikes = step(t, n,
-              {'order': 6.0, 'dc': 80.0, 'ac': 0., 'freq': 0., 'phi': 0.},
-              {'order': 6.0, 'dc': 40.0, 'ac': 0., 'freq': 0., 'phi': 0.},
+              {'order': 6.0, 'rate': 80.0, 'amplitude': 0., 'frequency': 0., 'phase': 0.},
+              {'order': 6.0, 'rate': 40.0, 'amplitude': 0., 'frequency': 0., 'phase': 0.},
               seed=123, dt=dt)
 plot_hist(spikes)
 exp = np.ones(steps)
@@ -260,8 +264,8 @@ second over time.
 
 plt.subplot(grid[0], grid[1], 3)
 spikes = step(t, n,
-              {'order': 3.0, 'dc': 40.0, 'ac': 40., 'freq': 10., 'phi': 0.},
-              {'order': 3.0, 'dc': 40.0, 'ac': 20., 'freq': 10., 'phi': 0.},
+              {'order': 3.0, 'rate': 40.0, 'amplitude': 40., 'frequency': 10., 'phase': 0.},
+              {'order': 3.0, 'rate': 40.0, 'amplitude': 20., 'frequency': 10., 'phase': 0.},
               seed=123, dt=dt)
 plot_hist(spikes)
 exp = np.zeros(steps)
@@ -278,8 +282,8 @@ the number of spikes per second over time.
 
 plt.subplot(grid[0], grid[1], 4)
 spikes = step(t, n,
-              {'order': 6.0, 'dc': 20.0, 'ac': 20., 'freq': 10., 'phi': 0.},
-              {'order': 6.0, 'dc': 50.0, 'ac': 50., 'freq': 10., 'phi': 0.},
+              {'order': 6.0, 'rate': 20.0, 'amplitude': 20., 'frequency': 10., 'phase': 0.},
+              {'order': 6.0, 'rate': 50.0, 'amplitude': 50., 'frequency': 10., 'phase': 0.},
               seed=123, dt=dt)
 plot_hist(spikes)
 exp = np.zeros(steps)
@@ -299,8 +303,8 @@ second over time.
 
 plt.subplot(grid[0], grid[1], 5)
 spikes = step(t, n,
-              {'dc': 40.0,},
-              {'ac': 40.0, 'freq': 20.},
+              {'rate': 40.0,},
+              {'amplitude': 40.0, 'frequency': 20.},
               seed=123, dt=1.)
 plot_hist(spikes)
 exp = np.zeros(steps)
@@ -319,8 +323,8 @@ Simulate a `sinusoidal_gamma_generator` with a phase shift at
 #Phase shift    
 plt.subplot(grid[0], grid[1], 6)
 spikes = step(t, n,
-              {'order': 6.0, 'dc': 60.0, 'ac': 60., 'freq': 10., 'phi': 0.},
-              {'order': 6.0, 'dc': 60.0, 'ac': 60., 'freq': 10., 'phi': np.pi},
+              {'order': 6.0, 'rate': 60.0, 'amplitude': 60., 'frequency': 10., 'phase': 0.},
+              {'order': 6.0, 'rate': 60.0, 'amplitude': 60., 'frequency': 10., 'phase': 180.},
               seed=123, dt=1.)
 plot_hist(spikes)
 exp = np.zeros(steps)

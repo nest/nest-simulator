@@ -51,21 +51,21 @@ class Network;
 
    The instantaneous rate of the process is given by
 
-       f(t) = dc + ac sin ( 2 pi freq t + phi ) >= 0
+       f(t) = rate + amplitude sin ( 2 pi frequency t + phase * pi/180 )
 
    Parameters:
    The following parameters can be set in the status dictionary:
 
-   dc         double - Mean firing rate in spikes/second, default: 0 s^-1
-   ac         double - Firing rate modulation amplitude in spikes/second, default: 0 s^-1
-   freq       double - Modulation frequency in Hz, default: 0 Hz
-   phi        double - Modulation phase in radian, default: 0
+   rate       double - Mean firing rate in spikes/second, default: 0 s^-1
+   amplitude  double - Firing rate modulation amplitude in spikes/second, default: 0 s^-1
+   frequency  double - Modulation frequency in Hz, default: 0 Hz
+   phase      double - Modulation phase in degree [0-360], default: 0
    order      double - Gamma order (>= 1), default: 1
 
    individual_spike_trains   bool - See note below, default: true
 
    Remarks:
-   - The gamma generator requires 0 <= ac <= dc.
+   - The gamma generator requires 0 <= amplitude <= rate.
    - The state of the generator is reset on calibration.
    - The generator does not support precise spike timing.
    - You can use the multimeter to sample the rate of the generator.
@@ -166,20 +166,20 @@ private:
 
   struct Parameters_
   {
-    /** Frequency in radian */
+    /** Frequency in radian/ms */
     double_t om_;
 
-    /** phase in radian */
+    /** Phase in radian */
     double_t phi_;
 
     /** gamma order */
     double_t order_;
 
-    /** DC amplitude */
-    double_t dc_;
+    /** Mean firing rate in spikes/ms */
+    double_t rate_;
 
-    /** AC amplitude */
-    double_t ac_;
+    /** Firing rate modulation amplitude in spikes/ms */
+    double_t amplitude_;
 
     /** Emit individual spike trains for each target, or same for all? */
     bool individual_spike_trains_;

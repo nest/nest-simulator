@@ -43,14 +43,13 @@ extern const Name A_lower;
 extern const Name A_mean;
 extern const Name A_std;
 extern const Name A_upper;
-extern const Name ac;              //!< Specific to sinusoidally modulated generators
 extern const Name accumulator;     //!< Recorder parameter
 extern const Name Act_h;           //!< Specific to Hodgkin Huxley models
 extern const Name Act_m;           //!< Specific to Hodgkin Huxley models
 extern const Name address;         //!< Node parameter
 extern const Name alpha_1;         //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name alpha_2;         //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
-extern const Name amplitude;       //!< Specific to ppd_sup_generator and gamma_sup_generator
+extern const Name amplitude;       //!< Signal modulation amplitude
 extern const Name archiver_length; //!< used for ArchivingNode
 extern const Name as;              //!< Number of available release sites (property arrays)
 extern const Name autapses;        //!< Connectivity-related
@@ -84,20 +83,21 @@ extern const Name D_lower;
 extern const Name D_mean;
 extern const Name D_std;
 extern const Name D_upper;
-extern const Name dc;               //!< Specific to sinusoidally modulated generators
-extern const Name dead_time;        //!< Specific to ppd_sup_generator and gamma_sup_generator
-extern const Name dead_time_random; //!< Random dead time or fixed dead time
-                                    //!< (stochastic neuron pp_psc_delta)
-extern const Name dead_time_shape;  //!< Shape parameter of the dead time distribution (stochastic
-                                    //!< neuron pp_psc_delta)
-extern const Name delay;            //!< Connection parameters
-extern const Name delays;           //!< Connection parameters
-extern const Name Delta_T;          //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
-extern const Name delta_tau;        //!< Specific to correlation_and correlomatrix detector
-extern const Name delta_u; //!< Specific to population point process model (pp_pop_psc_delta)
-extern const Name dg_ex;   //!< Derivative of the excitatory conductance
-extern const Name dg_in;   //!< Derivative of the inhibitory conductance
-extern const Name dhaene_det_spikes;   //!< used for iaflossless_count_exp
+extern const Name dc;                //!< Specific to sinusoidally modulated generators
+extern const Name dead_time;         //!< Specific to ppd_sup_generator and gamma_sup_generator
+extern const Name dead_time_random;  //!< Random dead time or fixed dead time
+                                     //!< (stochastic neuron pp_psc_delta)
+extern const Name dead_time_shape;   //!< Shape parameter of the dead time distribution (stochastic
+                                     //!< neuron pp_psc_delta)
+extern const Name delay;             //!< Connection parameters
+extern const Name delays;            //!< Connection parameters
+extern const Name Delta_T;           //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
+extern const Name delta_tau;         //!< Specific to correlation_and correlomatrix detector
+extern const Name delta_u;           //!< Specific to population point process model
+                                     //!< (pp_pop_psc_delta)
+extern const Name dg_ex;             //!< Derivative of the excitatory conductance
+extern const Name dg_in;             //!< Derivative of the inhibitory conductance
+extern const Name dhaene_det_spikes; //!< used for iaflossless_count_exp
 extern const Name dhaene_max_geq_V_th; //!< used for iaflossless_count_exp
 extern const Name dhaene_quick1;       //!< used for iaflossless_count_exp
 extern const Name dhaene_quick2;       //!< used for iaflossless_count_exp
@@ -140,8 +140,7 @@ extern const Name filename;             //!< Recorder parameter
 extern const Name filenames;            //!< Recorder parameter
 extern const Name flush_after_simulate; //!< Recorder parameter
 extern const Name flush_records;        //!< Recorder parameter
-extern const Name freq;                 //!< Specific to sinusoidally modulated generators
-extern const Name frequency;            //!< Specific to ppd_sup_generator and gamma_sup_generator
+extern const Name frequency;            //!< Signal modulation frequency
 extern const Name frozen;               //!< Node parameter
 
 extern const Name g;             //!< Conductance
@@ -225,7 +224,7 @@ extern const Name other;   //!< Node type
 extern const Name p;                  //!< current release probability  (Tsodyks2_connection)
 extern const Name p_copy;             //!< Specific to mip_generator
 extern const Name parent;             //!< Node parameter
-extern const Name phase;              //!< Specific to ppd_sup_generator and gamma_sup_generator
+extern const Name phase;              //!< Signal phase in degrees
 extern const Name phi;                //!< Specific to mirollo_strogatz_ps
 extern const Name phi_th;             //!< Specific to mirollo_strogatz_ps
 extern const Name port;               //!< Connection parameters

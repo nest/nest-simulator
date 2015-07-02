@@ -84,9 +84,9 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
 
   /sinusoidal_poisson_generator 
   << 
-     /dc  1000.
-     /ac   1000.
-     /freq 100.
+     /rate  1000.
+     /amplitude   1000.
+     /frequency 100.
      /individual_spike_trains individual
   >> SetDefaults
 

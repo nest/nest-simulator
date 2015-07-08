@@ -46,21 +46,21 @@ class TestOneToOne(TestParams):
         M = hf.get_connectivity_matrix(self.pop2, self.pop1)
         self.assertTrue(hf.mpi_assert(M, np.zeros((self.N, self.N))))
                         
-    # def testInputArray(self):
-    #     # TODO: check for autapses
-    #     # arrays not implemented for multithreading or mpi
-    #     if self.comm.Get_size() == 1:
-    #         nest.ResetKernel()
-    #         syn_params = {}
-    #         for label in ['weight', 'delay']:
-    #             if label == 'weight':
-    #                 self.onedarray = np.random.rand(self.N1)
-    #             elif label == 'delay':
-    #                 self.onedarray = np.random.randint(1,100,size=self.N1)*0.1
-    #             syn_params[label] = self.onedarray
-    #             self.setUpNetwork(syn_dict=syn_params)
-    #             M_nest = hf.get_weighted_connectivity_matrix(self.pop1,self.pop2,label)
-    #             self.assertTrue(np.allclose(np.diag(M_nest),self.onedarray))
+    def testInputArray(self):
+        # TODO: check for autapses
+        # arrays not implemented for multithreading or mpi
+        #if self.comm.Get_size() == 1:
+        nest.ResetKernel()
+        syn_params = {}
+        for label in ['weight', 'delay']:
+            if label == 'weight':
+                self.param_array = np.random.rand(self.N1)
+            elif label == 'delay':
+                self.param_array = np.random.randint(1,100,size=self.N1)*0.1
+            syn_params[label] = self.param_array
+            self.setUpNetwork(syn_dict=syn_params)
+            M_nest = hf.get_weighted_connectivity_matrix(self.pop1,self.pop2,label)
+            self.assertTrue(np.allclose(M_nest,np.diag(self.param_array)))
 
     # def testInputArrayRPort(self):
     #     syn_params = {}

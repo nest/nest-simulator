@@ -62,7 +62,7 @@ nest::ConnParameter::create( const Token& t )
     throw NotImplemented( "Cannot handle parameter type." );
   // return new ArrayIntegerParameter(**ivd);
 
-  throw BadProperty( "Cannot handle parameter type." );
+  throw BadProperty( std::string ("Cannot handle parameter type. Received ") + t.datum()->gettypename().toString() );
 }
 
 nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec )

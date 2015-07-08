@@ -274,11 +274,11 @@ nest::ConnBuilder::single_connect_( index sgid,
       net_.connect( sgid, &target, target_thread, synapse_model_ );
     else if ( default_weight_ )
       net_.connect(
-        sgid, &target, target_thread, synapse_model_, delay_->value_double( sgid, tgid, rng ) );
+        sgid, &target, target_thread, synapse_model_, delay_->value_double( rng ) );
     else
     {
-      double delay = delay_->value_double( sgid, tgid, rng );
-      double weight = weight_->value_double( sgid, tgid, rng );
+      double delay = delay_->value_double( rng );
+      double weight = weight_->value_double( rng );
       net_.connect( sgid, &target, target_thread, synapse_model_, delay, weight );
     }
   }
@@ -297,7 +297,7 @@ nest::ConnBuilder::single_connect_( index sgid,
           // change value of dictionary entry without allocating new datum
           IntegerDatum* id = static_cast< IntegerDatum* >(
             ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-          ( *id ) = it->second->value_int( sgid, tgid, rng );
+          ( *id ) = it->second->value_int( rng );
         }
         catch ( KernelException& e )
         {
@@ -309,7 +309,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         // change value of dictionary entry without allocating new datum
         DoubleDatum* dd = static_cast< DoubleDatum* >(
           ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-        ( *dd ) = it->second->value_double( sgid, tgid, rng );
+        ( *dd ) = it->second->value_double( rng );
       }
     }
 
@@ -321,11 +321,11 @@ nest::ConnBuilder::single_connect_( index sgid,
         target_thread,
         synapse_model_,
         param_dicts_[ target_thread ],
-        delay_->value_double( sgid, tgid, rng ) );
+        delay_->value_double( rng ) );
     else
     {
-      double delay = delay_->value_double( sgid, tgid, rng );
-      double weight = weight_->value_double( sgid, tgid, rng );
+      double delay = delay_->value_double( rng );
+      double weight = weight_->value_double( rng );
       net_.connect( sgid,
         &target,
         target_thread,

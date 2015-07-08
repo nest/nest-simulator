@@ -69,8 +69,8 @@ public:
    * @param rng   random number generator pointer
    * will be ignored except for random parameters.
    */
-  virtual double value_double( index, index, librandom::RngPtr& ) const = 0;
-  virtual long_t value_int( index, index, librandom::RngPtr& ) const = 0;
+  virtual double value_double( librandom::RngPtr& ) const = 0;
+  virtual long_t value_int( librandom::RngPtr& ) const = 0;
 
   /**
    * Returns number of values available.
@@ -101,12 +101,12 @@ public:
   }
 
   double
-  value_double( index, index, librandom::RngPtr& ) const
+  value_double( librandom::RngPtr& ) const
   {
     return value_;
   }
   long_t
-  value_int( index, index, librandom::RngPtr& ) const
+  value_int( librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
@@ -129,12 +129,12 @@ public:
   }
 
   double
-  value_double( index, index, librandom::RngPtr& ) const
+  value_double( librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
   long_t
-  value_int( index, index, librandom::RngPtr& ) const
+  value_int( librandom::RngPtr& ) const
   {
     return value_;
   }
@@ -145,17 +145,18 @@ private:
 
 
 /**
- * Array parameter, returning values in order.
+ * Array parameter classes, returning values in order.
  *
  * - The array of values must not be empty
  *   (so return 0 for number_of_values can signal non-array parameter)
  * - Throws exception if more values requested than available.
  *
  */
-class ArrayParameter : public ConnParameter
+
+class ArrayDoubleParameter : public ConnParameter
 {
 public:
-  ArrayParameter( const std::vector< double >& values )
+  ArrayDoubleParameter( const std::vector< double >& values )
     : values_( values )
     , next_( values_.begin() )
   {
@@ -167,19 +168,17 @@ public:
     return values_.size();
   }
 
-  // double value(index sgid, index tgid, librandom::RngPtr&) const
   double
-  value_double( index, index, librandom::RngPtr& ) const
+  value_double( librandom::RngPtr& ) const
 
   {
-    // return values_[sgid];
     if ( next_ != values_.end() )
       return *next_++;
     else
       throw KernelException( "Parameter values exhausted." );
   }
   long_t
-  value_int( index, index, librandom::RngPtr& ) const
+  value_int( librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
@@ -189,6 +188,40 @@ private:
   mutable std::vector< double >::iterator next_;
 };
 
+class ArrayIntegerParameter : public ConnParameter
+{
+public:
+  ArrayIntegerParameter( const std::vector< long_t >& values )
+    : values_( values )
+    , next_( values_.begin() )
+  {
+  }
+
+  size_t
+  number_of_values() const
+  {
+    return values_.size();
+  }
+
+  long_t
+  value_int( librandom::RngPtr& ) const
+
+  {
+    if ( next_ != values_.end() )
+      return *next_++;
+    else
+      throw KernelException( "Parameter values exhausted." );
+  }
+  double
+  value_double( librandom::RngPtr& ) const
+  {
+    throw KernelException( "ConnParameter calls value function with false return type." );
+  }
+
+private:
+  std::vector< long_t > values_;
+  mutable std::vector< long_t >::iterator next_;
+};
 
 /**
  * Random scalar value.
@@ -201,12 +234,12 @@ public:
   RandomParameter( const DictionaryDatum& );
 
   double
-  value_double( index, index, librandom::RngPtr& rng ) const
+  value_double( librandom::RngPtr& rng ) const
   {
     return ( *rdv_ )( rng );
   }
   long_t
-  value_int( index, index, librandom::RngPtr& rng ) const
+  value_int( librandom::RngPtr& rng ) const
   {
     return ( *rdv_ )( rng );
   }

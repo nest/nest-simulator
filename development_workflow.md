@@ -628,7 +628,7 @@ Abigail wants to fix a misleading piece of documentation
 --------------------------------------------------------
 Abigail wants to fix the documentation of a single file and figures that changing the file directly through the GitHub web interface is the easiest way to go.
 
-On the GitHub page of NEST she chooses her personal profile as the target and browses to the file she wants to edit. She clicks the button on the top right corner that allows her to edit this file and then fixes the documentation. Once she is done, she writes a meaningful commit message under "Commit changes" at the bottom of the page and selects the option "Create a new branch for this commit and start a pull request". She types in an appropriate branch name and finally clicks "Commit changes".
+On the GitHub page she navigates to her personal fork of NEST and browses to the file she wants to edit. She clicks the button on the top right corner that allows her to edit this file and then fixes the documentation. Once she is done, she writes a meaningful commit message under "Commit changes" at the bottom of the page and selects the option "Create a new branch for this commit and start a pull request". She types in an appropriate branch name and finally clicks "Commit changes".
 
 As Abigail has made only minor changes to the documentation, she did not create a ticket in the bug tracker and she includes the flag `[ci skip]` in the title of the Pull Request to keep Travis from running any tests.
 

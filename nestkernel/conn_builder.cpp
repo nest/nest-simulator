@@ -338,18 +338,15 @@ nest::ConnBuilder::single_connect_( index sgid,
 }
 
 inline void
-nest::ConnBuilder::skip_single_connect_( index sgid,
-  Node& target,
-  thread target_thread,
+nest::ConnBuilder::skip_single_connect_( thread target_thread,
   librandom::RngPtr& rng )
 {
-  index tgid = target.get_gid();
   if ( param_dicts_.empty() ) // indicates we have no synapse params
   {
     if ( ( ! default_weight_and_delay_ ) && ( ! default_weight_) )
     {
-      double delay = delay_->value_double( sgid, tgid, rng );
-      double weight = weight_->value_double( sgid, tgid, rng );
+      double delay = delay_->value_double( rng );
+      double weight = weight_->value_double( rng );
     }
   }
   else
@@ -367,7 +364,7 @@ nest::ConnBuilder::skip_single_connect_( index sgid,
           // change value of dictionary entry without allocating new datum
           IntegerDatum* id = static_cast< IntegerDatum* >(
             ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-          ( *id ) = it->second->value_int( sgid, tgid, rng );
+          ( *id ) = it->second->value_int( rng );
         }
         catch ( KernelException& e )
         {
@@ -379,14 +376,14 @@ nest::ConnBuilder::skip_single_connect_( index sgid,
         // change value of dictionary entry without allocating new datum
         DoubleDatum* dd = static_cast< DoubleDatum* >(
           ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-        ( *dd ) = it->second->value_double( sgid, tgid, rng );
+        ( *dd ) = it->second->value_double( rng );
       }
     }
 
     if ( ( ! default_weight_and_delay_ ) && ( ! default_weight_) )
     {
-      double delay = delay_->value_double( sgid, tgid, rng );
-      double weight = weight_->value_double( sgid, tgid, rng );
+      double delay = delay_->value_double( rng );
+      double weight = weight_->value_double( rng );
     }
   }
 }
@@ -425,17 +422,17 @@ nest::OneToOneBuilder::connect_()
 
         // check whether the target is on this mpi machine
         if ( !net_.is_local_gid( *tgid ) )
-	  {
-	  skip_single_connect_( *sgid, *target, target_thread, rng );
           continue;
-	  }
 
         Node* const target = net_.get_node( *tgid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
         if ( tid != target_thread )
+	  {
+	  skip_single_connect_( target_thread, rng );
           continue;
+	  }
 
         single_connect_( *sgid, *target, target_thread, rng );
       }

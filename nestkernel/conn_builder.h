@@ -87,6 +87,9 @@ protected:
   //! Create connection between given nodes, fill parameter values
   void single_connect_( index, Node&, thread, librandom::RngPtr& );
 
+  //! Create connection between given nodes, fill parameter values
+  void skip_single_connect_( index, Node&, thread, librandom::RngPtr& );
+
   Network& net_;
 
   const GIDCollection& sources_;

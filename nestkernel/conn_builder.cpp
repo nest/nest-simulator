@@ -337,6 +337,61 @@ nest::ConnBuilder::single_connect_( index sgid,
   }
 }
 
+inline void
+nest::ConnBuilder::skip_single_connect_( index sgid,
+  Node& target,
+  thread target_thread,
+  librandom::RngPtr& rng )
+{
+  index tgid = target.get_gid();
+  if ( param_dicts_.empty() ) // indicates we have no synapse params
+  {
+    if ( ( ! default_weight_and_delay_ ) && ( ! default_weight_) )
+    {
+      double delay = delay_->value_double( sgid, tgid, rng );
+      double weight = weight_->value_double( sgid, tgid, rng );
+    }
+  }
+  else
+  {
+    assert( net_.get_num_threads() == static_cast< thread >( param_dicts_.size() ) );
+
+    for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
+          it != synapse_params_.end();
+          ++it )
+    {
+      if ( it->first == names::receptor_type || it->first == names::music_channel )
+      {
+        try
+        {
+          // change value of dictionary entry without allocating new datum
+          IntegerDatum* id = static_cast< IntegerDatum* >(
+            ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
+          ( *id ) = it->second->value_int( sgid, tgid, rng );
+        }
+        catch ( KernelException& e )
+        {
+          throw BadProperty( "Receptor type must be of type integer." );
+        }
+      }
+      else
+      {
+        // change value of dictionary entry without allocating new datum
+        DoubleDatum* dd = static_cast< DoubleDatum* >(
+          ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
+        ( *dd ) = it->second->value_double( sgid, tgid, rng );
+      }
+    }
+
+    if ( ( ! default_weight_and_delay_ ) && ( ! default_weight_) )
+    {
+      double delay = delay_->value_double( sgid, tgid, rng );
+      double weight = weight_->value_double( sgid, tgid, rng );
+    }
+  }
+}
+
+
 void
 nest::OneToOneBuilder::connect_()
 {
@@ -370,7 +425,10 @@ nest::OneToOneBuilder::connect_()
 
         // check whether the target is on this mpi machine
         if ( !net_.is_local_gid( *tgid ) )
+	  {
+	  skip_single_connect_( *sgid, *target, target_thread, rng );
           continue;
+	  }
 
         Node* const target = net_.get_node( *tgid );
         const thread target_thread = target->get_thread();

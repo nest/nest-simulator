@@ -50,11 +50,17 @@ nest::ConnParameter::create( const Token& t )
   if ( id )
     return new ScalarIntegerParameter( *id );
 
-  // array
+  // array of doubles
   DoubleVectorDatum* dvd = dynamic_cast< DoubleVectorDatum* >( t.datum() );
   if ( dvd )
     throw NotImplemented( "Cannot handle parameter type." );
-  // return new ArrayParameter(**dvd);
+  // return new ArrayDoubleParameter(**dvd);
+
+  // array of integer
+  IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( t.datum() );
+  if ( ivd )
+    throw NotImplemented( "Cannot handle parameter type." );
+  // return new ArrayIntegerParameter(**ivd);
 
   throw BadProperty( "Cannot handle parameter type." );
 }

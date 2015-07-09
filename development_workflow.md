@@ -68,23 +68,23 @@ Overview
 In detail
 ---------
 ### Clone your fork
-* Clone your fork to the local computer with  
+Clone your fork to the local computer with  
 
-        git clone git@github.com:your-user-name/nest-simulator.git
+    git clone git@github.com:your-user-name/nest-simulator.git
 
-* Investigate. Change directory to your new repo: `cd nest-simulator`. 
-    Then `git branch -a` to show you all branches. You’ll get something like:  
+Investigate. Change directory to your new repo: `cd nest-simulator`. 
+Then `git branch -a` to show you all branches. You’ll get something like:  
 
-        * master
-        remotes/origin/master
+    * master
+    remotes/origin/master
 
-    This tells you that you are currently on the `master` branch, and that you
-    also have a `remote` connection to `origin/master`. What remote repository
-    is `remote/origin`? Try `git remote -v` to see the URLs for the remote.
-    They will point to your GitHub fork.
+This tells you that you are currently on the `master` branch, and that you
+also have a `remote` connection to `origin/master`. What remote repository
+is `remote/origin`? Try `git remote -v` to see the URLs for the remote.
+They will point to your GitHub fork.
 
-* Now you want to connect to the upstream [NEST GitHub repository][NEST GitHub], 
-    so you can merge in changes from `master`.
+Now you want to connect to the upstream [NEST GitHub repository][NEST GitHub], 
+so you can merge in changes from `master`.
 
 ### Linking your repository to the upstream repo
 
@@ -95,7 +95,7 @@ In detail
 [NEST] repository  at [NEST GitHub].
 
 Note that we’ve used `git://` for the URL rather than `git@`. 
-The `git://` URL is read only. This means we that we can’t accidentally (or
+The `git://` URL is read only. This means that we can’t accidentally (or
 deliberately) write to the `upstream` repo, and we are only going to use it
 to merge into our own code.
 
@@ -333,7 +333,7 @@ good description of how to do this, see
 ####Rewriting commit history
 *Do this only for your own feature branches!*  
 *Do not use this if you are sharing your work with other people!*  
-There's an embarrassing typo in a commit you made? Or perhaps the you
+There's an embarrassing typo in a commit you made? Or perhaps you
 made several false starts you would like the posterity not to see.
 
 This can be done via *interactive rebasing*.
@@ -469,7 +469,7 @@ Karolina wants to fix a minor bug in a neuron model
 Karolina has identified a minor issue with a neuron model she is using. To
 inform the other developers about the problem, she creates a ticket in the
 public issue tracker on GitHub, which gives other people the chance to discuss
-the issue and possible solutions. To create a ticket on GitHub, Karolonia goes 
+the issue and possible solutions. To create a ticket on GitHub, Karolina goes 
 to [NEST Issue Tracker] and clicks on the green button “New Issue”.
 
 Then, she will have to specify a title for the ticket which mentions
@@ -544,7 +544,7 @@ Jeyashree wants to add a new neuron model to NEST
 -------------------------------------------------
 
 Jeyashree wants to develop a new neuron or synapse model for NEST as part of
-her PhD project. As this is an internal prohject, she is using a private
+her PhD project. As this is an internal project, she is using a private
 repository in the NEST organization on GitHub to benefit from the CI, but still
 allow her supervisor and other members of the NEST developer team to have
 a look (similar to the workflow using the *developer module*, which was used in
@@ -563,7 +563,7 @@ https://github.com/a-user-name/nest-private .
 
 From here on, the workflow is the same as it was in the 
 [Karolina wants to fix a minor bug in a neuron model](#karolina-wants-to-fix-a-minor-bug-in-a-neuron-model)
-usecase, we the noticeable difference that the branch name now will be something like
+use case, with the noticeable difference that the branch name now will be something like
 `neuron-model-XYZ`. She will not submit any Pull Request, but will just push
 to her private fork. The collaborators will still be able to open issues or submit
 Pull Requests to her, if they propose changes to which Jeyashree agrees with. To do
@@ -626,25 +626,15 @@ use a private repository in the NEST organization and do the same as Jeyashree i
 
 Abigail wants to fix a misleading piece of documentation
 --------------------------------------------------------
-Abigail is happy with the fact that other people can watch her fixing the
-documentation. She clicks the button on the GitHub page of NEST and chooses her
-personal profile as the target.
+Abigail wants to fix the documentation of a single file and figures that changing the file directly through the GitHub web interface is the easiest way to go.
 
-She then works on her own public version of the NEST code on GitHub and creates
-a once she is done by clicking on the corresponding button.
+On the GitHub page she navigates to her personal fork of NEST and browses to the file she wants to edit. She clicks the button on the top right corner that allows her to edit this file and then fixes the documentation. Once she is done, she writes a meaningful commit message under "Commit changes" at the bottom of the page and selects the option "Create a new branch for this commit and start a pull request". She types in an appropriate branch name and finally clicks "Commit changes".
 
-She adds a comment to the Pull Request explaining the reason for the change.
+As Abigail has made only minor changes to the documentation, she did not create a ticket in the bug tracker and she includes the flag `[ci skip]` in the title of the Pull Request to keep Travis from running any tests.
 
-Because it is only a minor change to the documentation, she did not create
-a ticket in the bug tracker, but flags the Pull Request by adding the label
-“not code”.
+If Abigail is an owner of the NEST repository, she can also add the label “documentation” to the Pull Request. Otherwise, she can ask one of the owners to do so.
 
-Travis tries to merge the Pull Request, build it and run all the tests. If this
-succeeds, the NEST Core mailing list is informed about the new Pull Request and
-invited to have a look at the change.
-
-If no one objects, the release manager can merge the Pull Request into the
-public version of NEST.
+If no one objects, the release manager merges the Pull Request into the public version of NEST.
 
 Alex wants to fix a bug in the NEST kernel
 ------------------------------------------

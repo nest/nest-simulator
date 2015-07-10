@@ -338,15 +338,17 @@ nest::ConnBuilder::single_connect_( index sgid,
 }
 
 inline void
-nest::ConnBuilder::skip_single_connect_( thread target_thread,
+nest::ConnBuilder::skip_conn_parameter_( thread target_thread,
   librandom::RngPtr& rng )
 {
   if ( param_dicts_.empty() ) // indicates we have no synapse params
   {
-    if ( ( ! default_weight_and_delay_ ) && ( ! default_weight_) )
+    if ( default_weight_ )
+      delay_->value_double( target_thread, rng );
+    else if ( ( ! default_weight_and_delay_ ) && ( ! default_weight_) )
     {
-      double delay = delay_->value_double( rng );
-      double weight = weight_->value_double( rng );
+      delay_->value_double( target_thread, rng );
+      weight_->value_double( target_thread, rng );
     }
   }
   else
@@ -380,10 +382,12 @@ nest::ConnBuilder::skip_single_connect_( thread target_thread,
       }
     }
 
-    if ( ( ! default_weight_and_delay_ ) && ( ! default_weight_) )
+    if ( default_weight_ )
+      delay_->value_double( target_thread, rng );
+    else if ( ( ! default_weight_and_delay_ ) && ( ! default_weight_) )
     {
-      double delay = delay_->value_double( rng );
-      double weight = weight_->value_double( rng );
+      delay_->value_double( target_thread, rng );
+      weight_->value_double( target_thread, rng );
     }
   }
 }
@@ -422,7 +426,10 @@ nest::OneToOneBuilder::connect_()
 
         // check whether the target is on this mpi machine
         if ( !net_.is_local_gid( *tgid ) )
+          {
+	  skip_conn_parameter_( tid, rng );
           continue;
+	  }
 
         Node* const target = net_.get_node( *tgid );
         const thread target_thread = target->get_thread();
@@ -430,7 +437,7 @@ nest::OneToOneBuilder::connect_()
         // check whether the target is on our thread
         if ( tid != target_thread )
 	  {
-	  skip_single_connect_( target_thread, rng );
+	  skip_conn_parameter_( tid, rng );
           continue;
 	  }
 
@@ -465,20 +472,33 @@ nest::AllToAllBuilder::connect_()
       {
         // check whether the target is on this mpi machine
         if ( !net_.is_local_gid( *tgid ) )
-          continue;
+	  {
+	    for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+              ++sgid )
+	      skip_conn_parameter_( tid, rng );
+	    continue;
+	  }
 
         Node* const target = net_.get_node( *tgid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
         if ( tid != target_thread )
-          continue;
+	  {
+	    for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+              ++sgid )
+	      skip_conn_parameter_( tid, rng );
+	    continue;
+	  }
 
         for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
               ++sgid )
         {
           if ( not autapses_ and *sgid == *tgid )
+	    {
+	    skip_conn_parameter_( target_thread, rng );
             continue;
+	    }
 
           single_connect_( *sgid, *target, target_thread, rng );
         }

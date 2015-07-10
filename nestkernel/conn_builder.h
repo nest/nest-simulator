@@ -88,7 +88,7 @@ protected:
   void single_connect_( index, Node&, thread, librandom::RngPtr& );
 
   //! Create connection between given nodes, fill parameter values
-  void skip_single_connect_( thread, librandom::RngPtr& );
+  void skip_conn_parameter_( thread, librandom::RngPtr& );
 
   Network& net_;
 

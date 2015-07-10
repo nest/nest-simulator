@@ -267,7 +267,6 @@ nest::ConnBuilder::single_connect_( index sgid,
   thread target_thread,
   librandom::RngPtr& rng )
 {
-  index tgid = target.get_gid();
   if ( param_dicts_.empty() ) // indicates we have no synapse params
   {
     if ( default_weight_and_delay_ )

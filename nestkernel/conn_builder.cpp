@@ -105,7 +105,7 @@ nest::ConnBuilder::ConnBuilder( Network& net,
       ? ConnParameter::create( ( *syn_spec )[ names::delay ], net_.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], net_.get_num_threads() );
   }
-  else if ( !default_weight_ )
+  else if ( default_weight_ )
   {
     delay_ = syn_spec->known( names::delay )
       ? ConnParameter::create( ( *syn_spec )[ names::delay ], net_.get_num_threads() )

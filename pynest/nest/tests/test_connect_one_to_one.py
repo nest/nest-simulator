@@ -47,37 +47,39 @@ class TestOneToOne(TestParams):
         self.assertTrue(hf.mpi_assert(M, np.zeros((self.N, self.N))))
                         
     def testInputArray(self):
-        # TODO: check for autapses
-        # arrays not implemented for multithreading or mpi
-        #if self.comm.Get_size() == 1:
-        nest.ResetKernel()
         syn_params = {}
         for label in ['weight', 'delay']:
             if label == 'weight':
-                self.param_array = np.random.rand(self.N1)
+                self.param_array = np.arange(self.N1, dtype=float)
             elif label == 'delay':
-                self.param_array = np.random.randint(1,100,size=self.N1)*0.1
+                self.param_array = np.arange(1,self.N1+1)*0.1
             syn_params[label] = self.param_array
-            self.setUpNetwork(syn_dict=syn_params)
+            self.setUpNetwork(self.conn_dict, syn_params)
             M_nest = hf.get_weighted_connectivity_matrix(self.pop1,self.pop2,label)
-            self.assertTrue(np.allclose(M_nest,np.diag(self.param_array)))
+            hf.mpi_assert(M_nest, np.diag(self.param_array), self)
 
-    # def testInputArrayRPort(self):
-    #     syn_params = {}
-    #     nest.ResetKernel()
-    #     neuron_model = 'iaf_psc_exp_multisynapse'
-    #     neuron_dict = {'tau_syn': [0.1+i for i in range(self.N1)]}
-    #     self.pop1 = nest.Create(neuron_model, self.N1, neuron_dict)
-    #     self.pop2 = nest.Create(neuron_model, self.N1, neuron_dict)
-    #     self.onedarray = np.arange(1, self.N1+1, dtype=int)
-    #     syn_params['receptor_type'] = self.onedarray
-    #     nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
-    #     M = hf.get_weighted_connectivity_matrix(self.pop1, self.pop2, 'receptor')
-    #     M = self.comm.gather(M, root=0)
-    #     if self.rank == 0:
-    #         M = sum(M)
-    #         M = M.flatten()
-    #         self.assertTrue(np.allclose(np.diag(M),self.onedarray))
+    def testInputArrayRPort(self):
+        syn_params = {}
+        neuron_model = 'iaf_psc_exp_multisynapse'
+        neuron_dict = {'tau_syn': [0.1+i for i in range(self.N1)]}
+        self.pop1 = hf.nest.Create(neuron_model, self.N1, neuron_dict)
+        self.pop2 = hf.nest.Create(neuron_model, self.N1, neuron_dict)
+        self.param_array = np.arange(1, self.N1+1, dtype=int)
+        syn_params['receptor_type'] = self.param_array
+        hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
+        M = hf.get_weighted_connectivity_matrix(self.pop1, self.pop2, 'receptor')
+        hf.mpi_assert(M, np.diag(self.param_array), self)
+
+    def testInputArrayToStdpSynapse(self):
+        params = ['Wmax', 'alpha', 'lambda', 'mu_minus', 'mu_plus', 'tau_plus']
+        syn_params = {'model': 'stdp_synapse'}
+        values = [ np.arange(self.N1, dtype=float) for i in range(6)]
+        for i, param in enumerate(params):
+            syn_params[param] = values[i]
+        self.setUpNetwork(self.conn_dict, syn_params)
+        for i, param in enumerate(params):
+            a = hf.get_weighted_connectivity_matrix(self.pop1, self.pop2, param)
+            hf.mpi_assert(np.diag(a), values[i], self)
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestOneToOne)

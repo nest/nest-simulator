@@ -23,11 +23,10 @@
 import unittest
 import numpy as np
 import scipy.stats
-import nest
 from . import test_connect_helpers as hf
 from .test_connect_parameters import TestParams
 
-@nest.check_stack
+@hf.nest.check_stack
 class TestAllToAll(TestParams):
 
     # specify connection pattern
@@ -44,11 +43,11 @@ class TestAllToAll(TestParams):
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(self.pop1, self.pop2)
         M_all = np.ones((len(self.pop2), len(self.pop1)))
-        self.assertTrue(hf.mpi_assert(M, M_all))
+        hf.mpi_assert(M, M_all, self)
         # make sure no connections were drawn from the target to the source population
         M = hf.get_connectivity_matrix(self.pop2, self.pop1)
         M_none = np.zeros((len(self.pop1), len(self.pop2)))
-        self.assertTrue(hf.mpi_assert(M, M_none))
+        hf.mpi_assert(M, M_none, self)
         
     def testInputArray(self):
         for label in ['weight', 'delay']:
@@ -103,14 +102,14 @@ class TestAllToAll(TestParams):
     def testRPortDistribution(self):
         n_rport = 10
         nr_neurons = 20
-        nest.ResetKernel()
+        hf.nest.ResetKernel()
         neuron_model = 'iaf_psc_exp_multisynapse'
         neuron_dict = {'tau_syn': [0.1+i for i in range(n_rport)]}
-        self.pop1 = nest.Create(neuron_model, nr_neurons, neuron_dict)
-        self.pop2 = nest.Create(neuron_model, nr_neurons, neuron_dict)       
+        self.pop1 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)
+        self.pop2 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)       
         syn_params = {'model': 'static_synapse'}
         syn_params['receptor_type'] = {'distribution': 'uniform_int', 'low': 1, 'high': n_rport}
-        nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
+        hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
         M = hf.get_weighted_connectivity_matrix(self.pop1, self.pop2, 'receptor')
         M = hf.gather_data(M)
         if M is not None:

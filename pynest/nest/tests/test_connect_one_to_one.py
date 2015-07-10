@@ -21,7 +21,6 @@
 
 import numpy as np
 import unittest
-import nest
 from . import test_connect_helpers as hf
 from .test_connect_parameters import TestParams
 
@@ -41,10 +40,10 @@ class TestOneToOne(TestParams):
         self.setUpNetwork(self.conn_dict)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(self.pop1, self.pop2)
-        self.assertTrue(hf.mpi_assert(M, np.identity(self.N)))
+        hf.mpi_assert(M, np.identity(self.N), self)
         # make sure no connections were drawn from the target to the source population
         M = hf.get_connectivity_matrix(self.pop2, self.pop1)
-        self.assertTrue(hf.mpi_assert(M, np.zeros((self.N, self.N))))
+        hf.mpi_assert(M, np.zeros((self.N, self.N)), self)
                         
     def testInputArray(self):
         syn_params = {}

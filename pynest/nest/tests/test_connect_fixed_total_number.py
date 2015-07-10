@@ -22,7 +22,6 @@
 import numpy as np
 import unittest
 import scipy.stats
-import nest
 
 from . import compatibility
 
@@ -62,12 +61,12 @@ class TestFixedTotalNumber(TestParams):
     def testTotalNumberOfConnections(self):
         conn_params = self.conn_dict.copy()
         self.setUpNetwork(conn_params)
-        total_conn = len(nest.GetConnections(self.pop1, self.pop2))
-        self.assertTrue(hf.mpi_assert(total_conn, self.Nconn))
+        total_conn = len(hf.nest.GetConnections(self.pop1, self.pop2))
+        hf.mpi_assert(total_conn, self.Nconn, self)
         # make sure no connections were drawn from the target to the source population
         M = hf.get_connectivity_matrix(self.pop2, self.pop1)
         M_none = np.zeros((len(self.pop1),len(self.pop2)))
-        self.assertTrue(hf.mpi_assert(M, M_none))
+        hf.mpi_assert(M, M_none, self)
      
     def testStatistics(self):
         conn_params = self.conn_dict.copy()
@@ -97,23 +96,23 @@ class TestFixedTotalNumber(TestParams):
         # test that autapses exist
         conn_params['N'] = N*N*N
         conn_params['autapses'] = True
-        pop = nest.Create('iaf_neuron', N)
-        nest.Connect(pop, pop, conn_params)
+        pop = hf.nest.Create('iaf_neuron', N)
+        hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
         M = hf.gather_data(M)
         if M != None:
             self.assertTrue(np.sum(np.diag(M)) > N)
-        nest.ResetKernel()
+        hf.nest.ResetKernel()
 
         # test that autapses were excluded
         conn_params['N'] = N*(N-1)
         conn_params['autapses'] = False        
-        pop = nest.Create('iaf_neuron', N)
-        nest.Connect(pop, pop, conn_params)
+        pop = hf.nest.Create('iaf_neuron', N)
+        hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
-        self.assertTrue(hf.mpi_assert(M, np.zeros(N), 'diagonal'))
+        hf.mpi_assert(np.diag(M), np.zeros(N), self)
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestFixedTotalNumber)        

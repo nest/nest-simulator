@@ -69,8 +69,8 @@ public:
    * @param rng   random number generator pointer
    * will be ignored except for random parameters.
    */
-  virtual double value_double( librandom::RngPtr& ) const = 0;
-  virtual long_t value_int( librandom::RngPtr& ) const = 0;
+  virtual double value_double( thread, librandom::RngPtr& ) const = 0;
+  virtual long_t value_int( thread, librandom::RngPtr& ) const = 0;
 
   /**
    * Returns number of values available.
@@ -83,7 +83,7 @@ public:
     return 0;
   }
 
-  static ConnParameter* create( const Token& );
+  static ConnParameter* create( const Token&, const size_t );
 };
 
 
@@ -95,18 +95,18 @@ public:
 class ScalarDoubleParameter : public ConnParameter
 {
 public:
-  ScalarDoubleParameter( double value )
+  ScalarDoubleParameter( double value, const size_t )
     : value_( value )
   {
   }
 
   double
-  value_double( librandom::RngPtr& ) const
+    value_double( thread, librandom::RngPtr& ) const
   {
     return value_;
   }
   long_t
-  value_int( librandom::RngPtr& ) const
+    value_int( thread, librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
@@ -123,18 +123,18 @@ private:
 class ScalarIntegerParameter : public ConnParameter
 {
 public:
-  ScalarIntegerParameter( long_t value )
+  ScalarIntegerParameter( long_t value, const size_t )
     : value_( value )
   {
   }
 
   double
-  value_double( librandom::RngPtr& ) const
+    value_double( thread, librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
   long_t
-  value_int( librandom::RngPtr& ) const
+    value_int( thread, librandom::RngPtr& ) const
   {
     return value_;
   }
@@ -156,71 +156,70 @@ private:
 class ArrayDoubleParameter : public ConnParameter
 {
 public:
-  ArrayDoubleParameter( const std::vector< double >& values )
-    : values_( values )
-    , next_( values_.begin() )
+ ArrayDoubleParameter( const std::vector< double >& values, const size_t nthreads )
+    : values_( &values )
+    , next_( nthreads, values_->begin() )
   {
   }
 
   size_t
   number_of_values() const
   {
-    return values_.size();
+    return values_->size();
   }
 
   double
-  value_double( librandom::RngPtr& ) const
-
+    value_double(thread tid, librandom::RngPtr& ) const
   {
-    if ( next_ != values_.end() )
-      return *next_++;
+    if ( next_[tid] != values_->end() )
+      return *next_[tid]++;
     else
       throw KernelException( "Parameter values exhausted." );
   }
   long_t
-  value_int( librandom::RngPtr& ) const
+    value_int( thread, librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
 
 private:
-  std::vector< double > values_;
-  mutable std::vector< double >::iterator next_;
+  const std::vector< double >* values_;
+  mutable std::vector< std::vector< double >::const_iterator > next_;
 };
 
 class ArrayIntegerParameter : public ConnParameter
 {
 public:
-  ArrayIntegerParameter( const std::vector< long_t >& values )
-    : values_( values )
-    , next_( values_.begin() )
+  ArrayIntegerParameter( const std::vector< long_t >& values, const size_t nthreads )
+    : values_( &values )
+    , next_( nthreads, values_->begin() )
   {
   }
 
   size_t
   number_of_values() const
   {
-    return values_.size();
+    return values_->size();
   }
 
   long_t
-  value_int( librandom::RngPtr& ) const
+    value_int( thread tid, librandom::RngPtr& ) const
 
   {
-    if ( next_ != values_.end() )
-      return *next_++;
+    if ( next_[tid] != values_->end() )
+      return *next_[tid]++;
     else
       throw KernelException( "Parameter values exhausted." );
   }
   double
-  value_double( librandom::RngPtr& ) const
+    value_double( thread, librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
 
 private:
-  std::vector< long_t > values_;
-  mutable std::vector< long_t >::iterator next_;
+  const std::vector< long_t >* values_;
+  mutable std::vector< std::vector< long_t >::const_iterator > next_;
 };
 
 /**
@@ -231,15 +230,15 @@ private:
 class RandomParameter : public ConnParameter
 {
 public:
-  RandomParameter( const DictionaryDatum& );
+  RandomParameter( const DictionaryDatum&, const size_t );
 
   double
-  value_double( librandom::RngPtr& rng ) const
+    value_double( thread, librandom::RngPtr& rng ) const
   {
     return ( *rdv_ )( rng );
   }
   long_t
-  value_int( librandom::RngPtr& rng ) const
+    value_int( thread, librandom::RngPtr& rng ) const
   {
     return ( *rdv_ )( rng );
   }

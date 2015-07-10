@@ -99,17 +99,17 @@ nest::ConnBuilder::ConnBuilder( Network& net,
   if ( !default_weight_and_delay_ )
   {
     weight_ = syn_spec->known( names::weight )
-      ? ConnParameter::create( ( *syn_spec )[ names::weight ] )
-      : ConnParameter::create( ( *syn_defaults )[ names::weight ] );
+      ? ConnParameter::create( ( *syn_spec )[ names::weight ], net_.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::weight ], net_.get_num_threads() );
     delay_ = syn_spec->known( names::delay )
-      ? ConnParameter::create( ( *syn_spec )[ names::delay ] )
-      : ConnParameter::create( ( *syn_defaults )[ names::delay ] );
+      ? ConnParameter::create( ( *syn_spec )[ names::delay ], net_.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::delay ], net_.get_num_threads() );
   }
   else if ( !default_weight_ )
   {
     delay_ = syn_spec->known( names::delay )
-      ? ConnParameter::create( ( *syn_spec )[ names::delay ] )
-      : ConnParameter::create( ( *syn_defaults )[ names::delay ] );
+      ? ConnParameter::create( ( *syn_spec )[ names::delay ], net_.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::delay ], net_.get_num_threads() );
   }
 
   // synapse-specific parameters
@@ -136,7 +136,7 @@ nest::ConnBuilder::ConnBuilder( Network& net,
       continue; // weight, delay or not-settable parameter
 
     if ( syn_spec->known( param_name ) )
-      synapse_params_[ param_name ] = ConnParameter::create( ( *syn_spec )[ param_name ] );
+      synapse_params_[ param_name ] = ConnParameter::create( ( *syn_spec )[ param_name ], net_.get_num_threads() );
   }
 
   // Now create dictionary with dummy values that we will use
@@ -274,11 +274,11 @@ nest::ConnBuilder::single_connect_( index sgid,
       net_.connect( sgid, &target, target_thread, synapse_model_ );
     else if ( default_weight_ )
       net_.connect(
-        sgid, &target, target_thread, synapse_model_, delay_->value_double( rng ) );
+        sgid, &target, target_thread, synapse_model_, delay_->value_double( target_thread, rng ) );
     else
     {
-      double delay = delay_->value_double( rng );
-      double weight = weight_->value_double( rng );
+      double delay = delay_->value_double( target_thread, rng );
+      double weight = weight_->value_double( target_thread, rng );
       net_.connect( sgid, &target, target_thread, synapse_model_, delay, weight );
     }
   }
@@ -297,7 +297,7 @@ nest::ConnBuilder::single_connect_( index sgid,
           // change value of dictionary entry without allocating new datum
           IntegerDatum* id = static_cast< IntegerDatum* >(
             ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-          ( *id ) = it->second->value_int( rng );
+          ( *id ) = it->second->value_int( target_thread, rng );
         }
         catch ( KernelException& e )
         {
@@ -309,7 +309,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         // change value of dictionary entry without allocating new datum
         DoubleDatum* dd = static_cast< DoubleDatum* >(
           ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-        ( *dd ) = it->second->value_double( rng );
+        ( *dd ) = it->second->value_double( target_thread, rng );
       }
     }
 
@@ -321,11 +321,11 @@ nest::ConnBuilder::single_connect_( index sgid,
         target_thread,
         synapse_model_,
         param_dicts_[ target_thread ],
-        delay_->value_double( rng ) );
+        delay_->value_double( target_thread, rng ) );
     else
     {
-      double delay = delay_->value_double( rng );
-      double weight = weight_->value_double( rng );
+      double delay = delay_->value_double( target_thread, rng );
+      double weight = weight_->value_double( target_thread, rng );
       net_.connect( sgid,
         &target,
         target_thread,
@@ -364,7 +364,7 @@ nest::ConnBuilder::skip_single_connect_( thread target_thread,
           // change value of dictionary entry without allocating new datum
           IntegerDatum* id = static_cast< IntegerDatum* >(
             ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-          ( *id ) = it->second->value_int( rng );
+          ( *id ) = it->second->value_int( target_thread, rng );
         }
         catch ( KernelException& e )
         {
@@ -376,7 +376,7 @@ nest::ConnBuilder::skip_single_connect_( thread target_thread,
         // change value of dictionary entry without allocating new datum
         DoubleDatum* dd = static_cast< DoubleDatum* >(
           ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-        ( *dd ) = it->second->value_double( rng );
+        ( *dd ) = it->second->value_double( target_thread, rng );
       }
     }
 

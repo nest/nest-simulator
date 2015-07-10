@@ -49,6 +49,7 @@ import functools
 import inspect
 import textwrap
 import warnings
+import numpy as np
 
 # Monkeypatch warnings.showwarning() to just print the warning without
 # the coude line it was emitted by.
@@ -1058,11 +1059,14 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     of NEST's built-in synapse models or a user-defined model created via CopyModel().
     If 'model' is not specified the default model 'static_synapse' will be used.
 
-    All other parameters can be scalars or distributions. In the case of scalar 
-    parameters, all keys must be doubles except for 'receptor_type' which must be
-    initialised with an integer. Any distributed parameter must be initialised with 
-    a further dictionary specifying the distribution type ('distribution', e.g. 'normal') 
-    and any distribution-specific parameters (e.g. 'mu' and 'sigma').
+    All other parameters can be scalars, arrays or distributions. 
+    In the case of scalar parameters, all keys must be doubles except for 'receptor_type' which must be
+    initialised with an integer. 
+    Parameter arrays are only avaibale for the rules 'one_to_one' and 'all_to_all'. For 'one_to_one' the
+    array has to be a one-dimensional NumPy array with length len(pre) For 'all_to_all' the array has
+    to be a two-dimensional NumPy array with shape len(post) x len(pre).
+    Any distributed parameter must be initialised with a further dictionary specifying the distribution 
+    type ('distribution', e.g. 'normal') and any distribution-specific parameters (e.g. 'mu' and 'sigma').
 
     Available distributions are given in the rdevdict, the most common ones (and their
     associated parameters) are:
@@ -1105,10 +1109,18 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     sps(pre)
     sps(post)
 
+    # default rule 
+    rule = 'all_to_all'
+
     if conn_spec is not None:
         sps(conn_spec)
         if is_string(conn_spec):
+            rule = conn_spec
             sr("cvlit")
+        elif isinstance(conn_spec, dict):
+            rule = conn_spec['rule']          
+        else:
+            raise NESTError("conn_spec needs to be a string or dictionary.")
     else:
         sr('/Connect /conn_spec GetOption')
 
@@ -1116,9 +1128,30 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
         syn_spec = model
 
     if syn_spec is not None:
-        sps(syn_spec)
         if is_string(syn_spec):
+            sps(syn_spec)
             sr("cvlit")
+        elif isinstance(syn_spec, dict):
+            for key,value in syn_spec.items():
+                if isinstance(value, (np.ndarray, np.generic)):
+                    if len(value.shape) == 1:
+                        if rule == 'one_to_one':
+                            if value.shape[0] is not len(pre):
+                                raise NESTError("'" + key + "' has to be an array of dimension " + str(len(pre)) + ", a scalar or a dictionary.")
+                        else:
+                            raise NESTError("'" + key + "' has the wrong type. One-dimensional parameter arrays can only be used in conjunction with rule 'one_to_one'.")
+                    elif len(value.shape) == 2:
+                        if rule == 'all_to_all':
+                            # TODO Jochen does len(pre), len(post) work for all possible types of node containers?
+                            if value.shape[0] is not len(post) or value.shape[1] is not len(pre):
+                                raise NESTError("'" + key + "' has to be an array of dimension " + str(len(post)) + "x" + str(len(pre)) + " (n_target x n_sources), a scalar or a dictionary.")
+                            else:
+                                syn_spec[key] = value.flatten()
+                        else:
+                            raise NESTError("'" + key + "' has the wrong type. Two-dimensional parameter arrays can only be used in conjunction with rule 'all_to_all'.")
+            sps(syn_spec)
+        else:
+            raise NESTError("syn_spec needs to be a string or dictionary.")
 
     sr('Connect')
 

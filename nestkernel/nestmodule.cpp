@@ -854,7 +854,7 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
    init_buffers() upon the next call to Simulate. Node parameters, such as
    time constants and threshold potentials, are not affected.
 
-   Note:
+   Remarks:
    - Time and random number generators are NOT reset.
    - Files belonging to recording devices (spike detector, voltmeter, etc)
      are closed. You must change the file name before simulating again, otherwise

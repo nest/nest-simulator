@@ -58,25 +58,16 @@ RecordablesMap< iaf_tum_2000 >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_tum_2000::Parameters_::Parameters_()
-  : Tau_( 10.0 )
-  , // in ms
-  C_( 250.0 )
-  , // in pF
-  tau_ref_tot_( 2.0 )
-  , // in ms
-  tau_ref_abs_( 2.0 )
-  , // in ms
-  U0_( -70.0 )
-  , // in mV
-  I_e_( 0.0 )
-  , // in pA
-  Theta_( -55.0 - U0_ )
-  , // relative U0_
-  V_reset_( -70.0 - U0_ )
-  , // in mV
-  tau_ex_( 2.0 )
-  ,              // in ms
-  tau_in_( 2.0 ) // in ms
+  : Tau_( 10.0 )            // in ms
+  , C_( 250.0 )             // in pF
+  , tau_ref_tot_( 2.0 )     // in ms
+  , tau_ref_abs_( 2.0 )     // in ms
+  , U0_( -70.0 )            // in mV
+  , I_e_( 0.0 )             // in pA
+  , Theta_( -55.0 - U0_ )   // relative U0_
+  , V_reset_( -70.0 - U0_ ) // in mV
+  , tau_ex_( 2.0 )          // in ms
+  , tau_in_( 2.0 )          // in ms
 {
 }
 

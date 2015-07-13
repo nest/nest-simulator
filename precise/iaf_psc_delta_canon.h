@@ -119,13 +119,13 @@ class Network;
 
    V_m        double - Membrane potential in mV
    E_L        double - Resting membrane potential in mV.
-   C_m        double - Specific capacitance of the membrane in pF/mum^2
+   C_m        double - Capacitance of the membrane in pF
    tau_m      double - Membrane time constant in ms.
    t_ref      double - Duration of refractory period in ms.
    V_th       double - Spike threshold in mV.
    V_reset    double - Reset potential of the membrane in mV.
    I_e        double - Constant input current in pA.
-   V_min      double - Absolute lower value for the membrane potential.
+   V_min      double - Absolute lower value for the membrane potential in mV.
 
    refractory_input bool - If true, do not discard input during
    refractory period. Default: false.

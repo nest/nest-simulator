@@ -33,9 +33,8 @@
  * ---------------------------------------------------------------- */
 
 nest::mip_generator::Parameters_::Parameters_()
-  : rate_( 0.0 )
-  , // Hz
-  p_copy_( 1.0 )
+  : rate_( 0.0 ) // Hz
+  , p_copy_( 1.0 )
   , mother_seed_( 0 )
 {
   rng_ = librandom::RandomGen::create_knuthlfg_rng( mother_seed_ );

@@ -196,7 +196,7 @@ void
 DropOddSpikeConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double_t >( d, nest::names::weight, weight_ );
+  def< nest::double_t >( d, nest::names::weight, weight_ );
   def< nest::long_t >( d, nest::names::size_of, sizeof( *this ) );
 }
 
@@ -206,7 +206,7 @@ DropOddSpikeConnection< targetidentifierT >::set_status( const DictionaryDatum& 
   nest::ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, nest::names::weight, weight_ );
+  updateValue< nest::double_t >( d, nest::names::weight, weight_ );
 }
 
 } // namespace

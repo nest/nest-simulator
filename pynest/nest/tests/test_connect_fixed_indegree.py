@@ -89,7 +89,7 @@ class TestFixedInDegree(TestParams):
                 pvalues.append(p)
             hf.mpi_barrier()
         if degrees != None:
-            ks, p = scipy.stats.kstest(pvalues, 'uniform', alternative='two_sided')
+            ks, p = scipy.stats.kstest(pvalues, 'uniform')
             self.assertTrue( p > self.stat_dict['alpha2'] )
 
     def testAutapses(self):

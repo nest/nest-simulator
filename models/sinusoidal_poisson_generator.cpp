@@ -51,23 +51,20 @@ RecordablesMap< sinusoidal_poisson_generator >::create()
  * ---------------------------------------------------------------- */
 
 nest::sinusoidal_poisson_generator::Parameters_::Parameters_()
-  : om_( 0.0 )
-  , // radian/s
-  phi_( 0.0 )
-  , // radian
-  dc_( 0.0 )
-  , // spikes/s
-  ac_( 0.0 )
-  , // spikes/s
-  individual_spike_trains_( true )
+
+  : om_( 0.0 )        // radian/ms
+  , phi_( 0.0 )       // radian
+  , rate_( 0.0 )      // spikes/ms
+  , amplitude_( 0.0 ) // spikes/ms
+  , individual_spike_trains_( true )
 {
 }
 
 nest::sinusoidal_poisson_generator::Parameters_::Parameters_( const Parameters_& p )
   : om_( p.om_ )
   , phi_( p.phi_ )
-  , dc_( p.dc_ )
-  , ac_( p.ac_ )
+  , rate_( p.rate_ )
+  , amplitude_( p.amplitude_ )
   , individual_spike_trains_( p.individual_spike_trains_ )
 {
 }
@@ -78,17 +75,19 @@ operator=( const Parameters_& p )
   if ( this == &p )
     return *this;
 
-  dc_ = p.dc_;
+  rate_ = p.rate_;
   om_ = p.om_;
   phi_ = p.phi_;
-  ac_ = p.ac_;
+  amplitude_ = p.amplitude_;
   individual_spike_trains_ = p.individual_spike_trains_;
 
   return *this;
 }
 
 nest::sinusoidal_poisson_generator::State_::State_()
-  : rate_( 0 )
+  : y_0_( 0 )
+  , y_1_( 0 )
+  , rate_( 0 )
 {
 }
 
@@ -112,10 +111,10 @@ nest::sinusoidal_poisson_generator::Buffers_::Buffers_( const Buffers_&,
 void
 nest::sinusoidal_poisson_generator::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ names::dc ] = dc_ * 1000.0;
-  ( *d )[ names::freq ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
-  ( *d )[ names::phi ] = phi_;
-  ( *d )[ names::ac ] = ac_ * 1000.0;
+  ( *d )[ names::rate ] = rate_ * 1000.0;
+  ( *d )[ names::frequency ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
+  ( *d )[ names::phase ] = 180.0 / numerics::pi * phi_;
+  ( *d )[ names::amplitude ] = amplitude_ * 1000.0;
   ( *d )[ names::individual_spike_trains ] = individual_spike_trains_;
 }
 
@@ -135,16 +134,17 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
 
   updateValue< bool >( d, names::individual_spike_trains, individual_spike_trains_ );
 
-  if ( updateValue< double_t >( d, names::dc, dc_ ) )
-    dc_ /= 1000.0; // scale to ms^-1
+  if ( updateValue< double_t >( d, names::rate, rate_ ) )
+    rate_ /= 1000.0; // scale to ms^-1
 
-  if ( updateValue< double_t >( d, names::freq, om_ ) )
+  if ( updateValue< double_t >( d, names::frequency, om_ ) )
     om_ *= 2.0 * numerics::pi / 1000.0;
 
-  updateValue< double_t >( d, names::phi, phi_ );
+  if ( updateValue< double_t >( d, names::phase, phi_ ) )
+    phi_ *= numerics::pi / 180.0;
 
-  if ( updateValue< double_t >( d, names::ac, ac_ ) )
-    ac_ /= 1000.0;
+  if ( updateValue< double_t >( d, names::amplitude, amplitude_ ) )
+    amplitude_ /= 1000.0;
 }
 
 /* ----------------------------------------------------------------
@@ -203,8 +203,8 @@ nest::sinusoidal_poisson_generator::calibrate()
   const double_t t = network()->get_time().get_ms();
 
   // initial state
-  S_.y_0_ = P_.ac_ * std::cos( P_.om_ * t + P_.phi_ );
-  S_.y_1_ = P_.ac_ * std::sin( P_.om_ * t + P_.phi_ );
+  S_.y_0_ = P_.amplitude_ * std::cos( P_.om_ * t + P_.phi_ );
+  S_.y_1_ = P_.amplitude_ * std::sin( P_.om_ * t + P_.phi_ );
 
   V_.sin_ = std::sin( V_.h_ * P_.om_ ); // block elements
   V_.cos_ = std::cos( V_.h_ * P_.om_ );
@@ -233,7 +233,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
   {
     // update oscillator blocks, accumulate rate as sum of DC and N_osc_ AC elements
     // rate is instantaneous sum of state
-    S_.rate_ = P_.dc_;
+    S_.rate_ = P_.rate_;
 
     const double_t new_y_0 = V_.cos_ * S_.y_0_ - V_.sin_ * S_.y_1_;
 

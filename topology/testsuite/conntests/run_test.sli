@@ -39,8 +39,6 @@ script run % defines parameters
 
 userdict /resolution known { 0 << /resolution resolution >> SetStatus } if
 
-topology using
-
 /sources src_layer CreateLayer def
 /targets tgt_layer CreateLayer def
 
@@ -49,5 +47,3 @@ sources targets conns ConnectLayers
 outtrunk (_sources.lyr) join (w) file sources DumpLayerNodes close 
 outtrunk (_targets.lyr) join (w) file targets DumpLayerNodes close 
 outtrunk (_sources.cnn) join (w) file sources /static_synapse DumpLayerConnections close
-
-endusing

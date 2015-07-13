@@ -1,0 +1,84 @@
+language: cpp
+compiler:
+  - gcc
+
+#For Ubuntu Trusty (14.04 LTS)
+dist: trusty
+
+env:
+  matrix:
+    - xGSL=0 xMPI=0 xPYTHON=0
+    - xGSL=0 xMPI=0 xPYTHON=1
+    - xGSL=0 xMPI=1 xPYTHON=0
+    - xGSL=0 xMPI=1 xPYTHON=1
+    - xGSL=1 xMPI=0 xPYTHON=0
+    - xGSL=1 xMPI=0 xPYTHON=1
+    - xGSL=1 xMPI=1 xPYTHON=0
+    - xGSL=1 xMPI=1 xPYTHON=1
+matrix:
+  # do notify immediately about it when a job of a build fails.
+  fast_finish: true
+cache:
+  apt: true 
+  ccache: true
+  pip: true
+#virtualenv:
+ # system_site_packages: true
+#addons:
+#  artifacts:
+ #  debug: true
+
+before_install:
+  - echo $LANG
+  - echo $LC_ALL
+
+  # get repository for clang-3.6 stuff (including clang-format-3.6)
+  - sudo sh -c 'echo -n "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.6 main" >> /etc/apt/sources.list'
+  # add key from ^ repository
+  - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
+
+  # update package repository status (-qq is more quiet)
+  - sudo rm -rf /var/lib/apt/lists/*
+  - ls /etc/apt/sources.list.d/
+  - sudo apt-get update -qq
+
+  # remove any obsolete libraries
+  - sudo apt-get autoremove
+
+  # from installation webpage http://www.nest-simulator.org/installation-2/#Standard_configuration
+  - sudo apt-get install -y build-essential autoconf automake libtool libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy python-matplotlib ipython
+
+  # Install pip and cython
+  - wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+  - sudo python get-pip.py
+  - pip install --user cython==0.21.1
+  - sudo pip install -U setuptools
+
+  # MPI
+  - sudo apt-get install -y openmpi-bin libopenmpi-dev
+
+  # python testsuite nosetests
+  - sudo apt-get install -y python-nose
+
+  # static code analysis
+  - sudo apt-get install -y libllvm3.6 clang-format-3.6 vera++ cppcheck
+
+install: 
+  - cppcheck --version
+  - cython --version
+  - python --version
+before_script:
+  - chmod +x build.sh 
+
+script: ./build.sh  
+
+after_failure:
+  - cd $TRAVIS_BUILD_DIR/build
+  - |
+    echo "config.log: "
+    cat config.log
+    for i in $(find reports -type f); do
+      echo "###########################"
+      echo "File: $i"
+      cat $i
+    done

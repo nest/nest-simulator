@@ -47,13 +47,14 @@ Description:
 Parameters:
    The following parameters appear in the element's status dictionary:
 
-   rate - mean firing rate of the component processes. (double, var)
-   dead_time - minimal time between two spikes of the component processes. (double, var)
-   n_proc - number of superimposed independent component processes. (long, var)
-   frequency - rate modulation frequency. (double, var)
-   amplitude - relative rate modulation amplitude. (double, var)
+   rate                double - mean firing rate of the component processes, default: 0 s^-1
+   dead_time           double - minimal time between two spikes of the component processes, default:
+0 ms
+   n_proc              long   - number of superimposed independent component processes, default: 1
+   frequency           double - rate modulation frequency, default: 0 Hz
+   relative_amplitude  double - relative rate modulation amplitude, default: 0
 
-Note:
+Remarks:
    The generator has been published in Deger, Helias, Boucsein, Rotter (2011)
    Statistical properties of superimposed stationary spike trains,
    Journal of Computational Neuroscience.

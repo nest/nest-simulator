@@ -30,7 +30,7 @@ Description:
  This test creates a network and extracts nodes, leaves and children both locally 
  and globally.
 
-Note:
+Remarks:
  This should be run with 1 and 2 MPI processes automatically.
  
 Author: Hans Ekkehard Plesser, 2010-09-24

@@ -23,9 +23,7 @@
 % simple tests for distance calculations
 
 (unittest) run
-unittest using
-
-topology using
+/unittest using
 
 % fixed grid, distance from node
 {
@@ -106,6 +104,4 @@ topology using
   eq 
 } assert_or_die
 
-
-endusing
 endusing

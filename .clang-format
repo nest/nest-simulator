@@ -1,0 +1,58 @@
+BasedOnStyle: WebKit
+
+AccessModifierOffset: -2
+AlignEscapedNewlinesLeft: true
+AlignTrailingComments: true
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: false # not in 3.4
+AllowShortCaseLabelsOnASingleLine: false # not in 3.4, 3.5
+AllowShortFunctionsOnASingleLine: None # not in 3.4
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakAfterDefinitionReturnType: true # not in 3.4, 3.5
+AlwaysBreakBeforeMultilineStrings: true
+AlwaysBreakTemplateDeclarations: true
+
+BinPackArguments: false # not in 3.4, 3.5
+BinPackParameters: false
+BreakBeforeBinaryOperators: NonAssignment # not in 3.4 # true in 3.5
+BreakBeforeBraces: Allman
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializersBeforeComma: true
+
+ColumnLimit: 100
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+ConstructorInitializerIndentWidth: 2
+ContinuationIndentWidth: 2
+
+DerivePointerAlignment: false # not in 3.4
+
+ExperimentalAutoDetectBinPacking: false
+
+IndentCaseLabels: false
+IndentWidth: 2
+IndentWrappedFunctionNames: false # not in 3.4
+
+KeepEmptyLinesAtTheStartOfBlocks: true # not in 3.4
+
+Language: Cpp # not in 3.4
+
+MaxEmptyLinesToKeep: 2
+
+NamespaceIndentation: None
+
+PointerAlignment: Left # not in 3.4
+# PointerBindsToType: true # 3.4
+
+SpaceAfterCStyleCast: true # not in 3.4, 3.5
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements # not in 3.4
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: true
+SpacesInCStyleCastParentheses: true
+SpacesInParentheses: true
+SpacesInSquareBrackets: true # not in 3.4, 3.5
+Standard: Cpp03
+
+UseTab: Never

@@ -120,27 +120,17 @@ hh_psc_alpha_dynamics( double, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::hh_psc_alpha::Parameters_::Parameters_()
-  : t_ref_( 2.0 )
-  , // ms
-  g_Na( 12000.0 )
-  , // nS
-  g_K( 3600.0 )
-  , // nS
-  g_L( 30.0 )
-  , // nS
-  C_m( 100.0 )
-  , // pF
-  E_Na( 50.0 )
-  , // mV
-  E_K( -77.0 )
-  , // mV
-  E_L( -54.402 )
-  , // mV
-  tau_synE( 0.2 )
-  , // ms
-  tau_synI( 2.0 )
-  ,          // ms
-  I_e( 0.0 ) // pA
+  : t_ref_( 2.0 )   // ms
+  , g_Na( 12000.0 ) // nS
+  , g_K( 3600.0 )   // nS
+  , g_L( 30.0 )     // nS
+  , C_m( 100.0 )    // pF
+  , E_Na( 50.0 )    // mV
+  , E_K( -77.0 )    // mV
+  , E_L( -54.402 )  // mV
+  , tau_synE( 0.2 ) // ms
+  , tau_synI( 2.0 ) // ms
+  , I_e( 0.0 )      // pA
 {
 }
 

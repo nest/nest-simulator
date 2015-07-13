@@ -101,12 +101,12 @@ public:
   }
 
   double
-    value_double( thread, librandom::RngPtr& ) const
+  value_double( thread, librandom::RngPtr& ) const
   {
     return value_;
   }
   long_t
-    value_int( thread, librandom::RngPtr& ) const
+  value_int( thread, librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
@@ -129,12 +129,12 @@ public:
   }
 
   double
-    value_double( thread, librandom::RngPtr& ) const
+  value_double( thread, librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
   long_t
-    value_int( thread, librandom::RngPtr& ) const
+  value_int( thread, librandom::RngPtr& ) const
   {
     return value_;
   }
@@ -156,7 +156,7 @@ private:
 class ArrayDoubleParameter : public ConnParameter
 {
 public:
- ArrayDoubleParameter( const std::vector< double >& values, const size_t nthreads )
+  ArrayDoubleParameter( const std::vector< double >& values, const size_t nthreads )
     : values_( &values )
     , next_( nthreads, values_->begin() )
   {
@@ -169,15 +169,15 @@ public:
   }
 
   double
-    value_double(thread tid, librandom::RngPtr& ) const
+  value_double( thread tid, librandom::RngPtr& ) const
   {
-    if ( next_[tid] != values_->end() )
-      return *next_[tid]++;
+    if ( next_[ tid ] != values_->end() )
+      return *next_[ tid ]++;
     else
       throw KernelException( "Parameter values exhausted." );
   }
   long_t
-    value_int( thread, librandom::RngPtr& ) const
+  value_int( thread, librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
@@ -203,16 +203,16 @@ public:
   }
 
   long_t
-    value_int( thread tid, librandom::RngPtr& ) const
+  value_int( thread tid, librandom::RngPtr& ) const
 
   {
-    if ( next_[tid] != values_->end() )
-      return *next_[tid]++;
+    if ( next_[ tid ] != values_->end() )
+      return *next_[ tid ]++;
     else
       throw KernelException( "Parameter values exhausted." );
   }
   double
-    value_double( thread, librandom::RngPtr& ) const
+  value_double( thread, librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
@@ -233,12 +233,12 @@ public:
   RandomParameter( const DictionaryDatum&, const size_t );
 
   double
-    value_double( thread, librandom::RngPtr& rng ) const
+  value_double( thread, librandom::RngPtr& rng ) const
   {
     return ( *rdv_ )( rng );
   }
   long_t
-    value_int( thread, librandom::RngPtr& rng ) const
+  value_int( thread, librandom::RngPtr& rng ) const
   {
     return ( *rdv_ )( rng );
   }

@@ -53,14 +53,15 @@ nest::ConnParameter::create( const Token& t, const size_t nthreads )
   // array of doubles
   DoubleVectorDatum* dvd = dynamic_cast< DoubleVectorDatum* >( t.datum() );
   if ( dvd )
-    return new ArrayDoubleParameter( **dvd, nthreads);
+    return new ArrayDoubleParameter( **dvd, nthreads );
 
   // array of integer
   IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( t.datum() );
   if ( ivd )
-    return new ArrayIntegerParameter( **ivd, nthreads);
+    return new ArrayIntegerParameter( **ivd, nthreads );
 
-  throw BadProperty( std::string ("Cannot handle parameter type. Received ") + t.datum()->gettypename().toString() );
+  throw BadProperty( std::string( "Cannot handle parameter type. Received " )
+    + t.datum()->gettypename().toString() );
 }
 
 nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec, const size_t )

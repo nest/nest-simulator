@@ -67,7 +67,8 @@ main()
   }
 
   o << "Line 1" << std::endl;
-  o << "Line 2" << std::endl << "Line 3" << std::endl;
+  o << "Line 2" << std::endl
+    << "Line 3" << std::endl;
   o.close();
 
   if ( o.good() )

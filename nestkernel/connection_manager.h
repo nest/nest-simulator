@@ -162,6 +162,9 @@ public:
 
   void send( thread t, index sgid, Event& e );
 
+  //! send secondary events, e.g. for gap junctions
+  void send_secondary( thread t, SecondaryEvent& e );
+
   /**
    * Resize the structures for the Connector objects if necessary.
    * This function should be called after number of threads, min_delay, max_delay,
@@ -171,6 +174,20 @@ public:
    * request to all ConnectorModel objects.
    */
   void calibrate( const TimeConverter& );
+
+  /**
+   * Asserts validity of synapse index, otherwise throws exception.
+   * @throws UnknownSynapseType
+   */
+  void assert_valid_syn_id( synindex syn_id ) const;
+
+
+  /**
+   * Return pointer to protoype for given synapse id.
+   * @throws UnknownSynapseType
+   */
+  const ConnectorModel& get_synapse_prototype( synindex syn_id ) const;
+
 
 private:
   std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes

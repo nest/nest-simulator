@@ -709,6 +709,217 @@ DoubleDataEvent::clone() const
   return new DoubleDataEvent( *this );
 }
 
+// needed to serialize and deserialize SecondaryEvents
+typedef std::vector< uint_t >::iterator fwit;
+typedef std::vector< double_t >::iterator dfwit;
+
+/**
+ * Base class of secondary events. Provides interface for serialization and deserialization.
+ */
+class SecondaryEvent : public Event
+{
+
+public:
+  virtual SecondaryEvent* clone() const = 0;
+
+  virtual synindex get_syn_id() const = 0;
+
+  //! size of event in units of uint_t
+  virtual size_t size() = 0;
+  virtual fwit& operator<<( fwit& pos ) = 0;
+  virtual fwit& operator>>( fwit& pos ) = 0;
+  // virtual uint_t * serialize( uint_t * ) = 0;
+  // virtual uint_t * deserialize( uint_t * ) = 0;
+};
+
+// iterator class for the GapJEvent coefficient-array
+// generating a copy of the coeffarray at several times is too time consuming
+// therefore we use iterators pointing to the "old" location of the coeffarray
+class CoeffArrayIterator
+{
+
+  friend class GapJEvent;
+
+private:
+  fwit pos_;
+
+public:
+  CoeffArrayIterator()
+  {
+  }
+
+  CoeffArrayIterator( const fwit& rhs )
+    : pos_( rhs )
+  {
+  }
+
+  CoeffArrayIterator( const dfwit& rhs )
+  {
+    fwit iit( reinterpret_cast< uint_t* >( &( *rhs ) ) );
+    pos_ = iit;
+  }
+
+  CoeffArrayIterator( const CoeffArrayIterator& rhs )
+    : pos_( rhs.pos_ )
+  {
+  }
+
+  CoeffArrayIterator& operator++()
+  {
+    size_t inc = 0;
+    if ( sizeof( double ) % sizeof( uint_t ) != 0 )
+      inc = sizeof( double ) / sizeof( uint_t ) + 1;
+    else
+      inc = sizeof( double ) / sizeof( uint_t );
+
+    pos_ += inc;
+
+    return ( *this );
+  }
+
+  double& operator*()
+  {
+    return *reinterpret_cast< double* >( &( *pos_ ) );
+  }
+
+  bool operator!=( const CoeffArrayIterator& rhs )
+  {
+    return pos_ != rhs.pos_;
+  }
+};
+
+/**
+ * Event for gap junction information.
+ */
+class GapJEvent : public SecondaryEvent
+{
+private:
+  static synindex synid_;
+  static size_t coeff_length_; // length of coeffarray
+
+  CoeffArrayIterator diit_begin_;
+  CoeffArrayIterator diit_end_;
+
+public:
+  GapJEvent()
+  {
+  }
+
+  void operator()();
+  GapJEvent* clone() const;
+
+  static void
+  set_syn_id( const synindex synid )
+  {
+    synid_ = synid;
+  }
+
+  synindex
+  get_syn_id() const
+  {
+    return synid_;
+  }
+
+  void
+  set_coeffarray( std::vector< double_t >& ca )
+  {
+    diit_begin_ = ca.begin();
+    diit_end_ = ca.end();
+    coeff_length_ = ca.size();
+  }
+
+  // size_t get_coeff_length() const { return coeff_length_;}
+
+  fwit& operator<<( fwit& pos );
+
+  fwit& operator>>( fwit& pos );
+
+  size_t size();
+
+  const CoeffArrayIterator&
+  begin()
+  {
+    return diit_begin_;
+  }
+
+  const CoeffArrayIterator&
+  end()
+  {
+    return diit_end_;
+  }
+};
+
+template < typename T >
+size_t size_uint_t( T )
+{
+  if ( sizeof( T ) < sizeof( uint_t ) )
+    return 1;
+  else if ( sizeof( T ) % sizeof( uint_t ) != 0 )
+    return sizeof( T ) / sizeof( uint_t ) + 1;
+  else
+    return sizeof( T ) / sizeof( uint_t );
+}
+
+template < typename T >
+fwit& operator>>( T d, fwit& pos )
+{
+  *reinterpret_cast< T* >( &( *pos ) ) = d;
+  pos += size_uint_t( d );
+  return pos;
+}
+
+template < typename T >
+fwit& operator<<( T& d, fwit& pos )
+{
+  d = *reinterpret_cast< T* >( &( *pos ) );
+  pos += size_uint_t( d );
+  return pos;
+}
+
+inline fwit& GapJEvent::operator<<( fwit& pos )
+{
+  // synid_ << pos;
+  pos += size_uint_t( synid_ );
+  sender_gid_ << pos;
+
+  // generating a copy of the coeffarray is too time consuming
+  // therefore we save an iterator to the beginning+end of the coeffarray
+  diit_begin_ = pos;
+
+  double_t elem = 0.0;
+  pos += coeff_length_ * size_uint_t( elem );
+
+  diit_end_ = pos;
+
+  return pos;
+}
+
+inline fwit& GapJEvent::operator>>( fwit& pos )
+{
+  synid_ >> pos;
+  sender_gid_ >> pos;
+  std::copy( begin().pos_, end().pos_, pos );
+
+  return pos;
+}
+
+inline size_t
+GapJEvent::size()
+{
+  size_t s = size_uint_t( sender_gid_ ) + size_uint_t( synid_ );
+  double_t elem = 0.0;
+  s += size_uint_t( elem ) * coeff_length_;
+
+
+  return s;
+}
+
+inline GapJEvent*
+GapJEvent::clone() const
+{
+  return new GapJEvent( *this );
+}
+
 //*************************************************************
 // Inline implementations.
 

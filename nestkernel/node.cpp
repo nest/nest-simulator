@@ -45,6 +45,7 @@ Node::Node()
   , vp_( invalid_thread_ )
   , frozen_( false )
   , buffers_initialized_( false )
+  , needs_prelim_up_( false )
 {
 }
 
@@ -57,7 +58,9 @@ Node::Node( const Node& n )
   , thread_( n.thread_ )
   , vp_( n.vp_ )
   , frozen_( n.frozen_ )
-  , buffers_initialized_( false ) // copy must always initialized its own buffers
+  , buffers_initialized_( false )
+  , // copy must always initialized its own buffers
+  needs_prelim_up_( n.needs_prelim_up_ )
 {
 }
 
@@ -130,6 +133,7 @@ Node::get_status_base()
   {
     ( *dict )[ names::global_id ] = get_gid();
     ( *dict )[ names::frozen ] = is_frozen();
+    ( *dict )[ names::needs_prelim_update ] = needs_prelim_update();
     ( *dict )[ names::thread ] = get_thread();
     ( *dict )[ names::vp ] = get_vp();
     if ( parent_ )
@@ -172,6 +176,18 @@ Node::set_status_base( const DictionaryDatum& dict )
   }
 
   updateValue< bool >( dict, names::frozen, frozen_ );
+
+  updateValue< bool >( dict, names::needs_prelim_update, needs_prelim_up_ );
+}
+
+/**
+ * Default implementation of prelim_update just
+ * throws UnexpectedEvent
+ */
+bool
+Node::prelim_update( Time const&, const long_t, const long_t )
+{
+  throw UnexpectedEvent();
 }
 
 /**
@@ -299,6 +315,26 @@ Node::handles_test_event( DSCurrentEvent&, rport )
   throw IllegalConnection(
     "Possible cause: only static synapse types may be used to connect devices." );
 }
+
+void
+Node::handle( GapJEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+port
+Node::handles_test_event( GapJEvent&, rport )
+{
+  throw IllegalConnection();
+  return invalid_port_;
+}
+
+void
+Node::sends_secondary_event( GapJEvent& )
+{
+  throw IllegalConnection();
+}
+
 
 double_t Node::get_K_value( double_t )
 {

@@ -132,6 +132,9 @@ local_num_threads)
   to_do                    integertype - The number of steps yet to be simulated
   T_max                    doubletype  - The largest representable time value
   T_min                    doubletype  - The smallest representable time value
+  prelim_tol		   doubletype  - Tolerance of prelim iterations
+  prelim_interpolation_order integertype - Interpolation order of polynomial used in prelim
+iterations
 SeeAlso: Simulate, Node
 */
 
@@ -208,6 +211,11 @@ public:
    * Register a synapse prototype at the connection manager.
    */
   synindex register_synapse_prototype( ConnectorModel* cf );
+
+  /**
+   * Register a synapse prototype for a secondary synapse at the connection manager.
+   */
+  synindex register_secondary_synapse_prototype( ConnectorModel* cf );
 
   /**
    * Copy an existing synapse type.
@@ -487,6 +495,13 @@ public:
   template < class EventT >
   void send( Node& source, EventT& e, const long_t lag = 0 );
 
+
+  /**
+   * Send a secondary event.
+   */
+  void send_secondary( Node& source, SecondaryEvent& e );
+
+
   /**
    * Send event e to all targets of node source on thread t
    */
@@ -508,6 +523,9 @@ public:
    * Return maximal connection delay.
    */
   delay get_max_delay() const;
+
+  size_t get_prelim_interpolation_order() const;
+  double_t get_prelim_tol() const;
 
   /**
    * Get the time at the beginning of the current time slice.
@@ -1013,6 +1031,16 @@ Network::register_synapse_prototype( ConnectorModel* cm )
   return connection_manager_.register_synapse_prototype( cm );
 }
 
+inline synindex
+Network::register_secondary_synapse_prototype( ConnectorModel* cm )
+{
+  synindex synid = connection_manager_.register_synapse_prototype( cm );
+  // call function in scheduler to register secondary synapse type
+  // and create corresponding event
+  scheduler_.register_secondary_synapse_prototype( cm, synid );
+  return synid;
+}
+
 inline int
 Network::copy_synapse_prototype( index sc, std::string name )
 {
@@ -1139,6 +1167,18 @@ Network::get_max_delay() const
   return scheduler_.get_max_delay();
 }
 
+inline size_t
+Network::get_prelim_interpolation_order() const
+{
+  return scheduler_.get_prelim_interpolation_order();
+}
+
+inline double_t
+Network::get_prelim_tol() const
+{
+  return scheduler_.get_prelim_tol();
+}
+
 inline void
 Network::trigger_update_weight( const long_t vt_gid,
   const vector< spikecounter >& dopa_spikes,
@@ -1159,6 +1199,19 @@ Network::send( Node& source, EventT& e, const long_t lag )
   assert( !source.has_proxies() );
   connection_manager_.send( t, gid, e );
 }
+
+
+inline void
+Network::send_secondary( Node& source, SecondaryEvent& e )
+{
+  e.set_stamp( get_slice_origin() + Time::step( 1 ) );
+  e.set_sender( source );
+  e.set_sender_gid( source.get_gid() );
+  // std::cout << "Network::send_secondary, gid = " << e.get_sender_gid() << std::endl;
+  thread t = source.get_thread();
+  scheduler_.send_remote( t, e );
+}
+
 
 template <>
 inline void
@@ -1183,9 +1236,13 @@ template <>
 inline void
 Network::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long_t lag )
 {
+
   e.set_stamp( get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
   thread t = source.get_thread();
+
+  // std::cout << "Network::send<DSSpikeEvent> " << e.get_sender().get_gid() << std::endl;
+  // std::cout << "event type =" << typeid(e).name() << std::endl;
 
   assert( !source.has_proxies() );
   send_local( t, source, e );

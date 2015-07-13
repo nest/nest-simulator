@@ -75,6 +75,8 @@ public:
    */
   port send_test_event( Node&, rport, synindex, bool );
 
+  void sends_secondary_event( GapJEvent& ge );
+
   Node const& get_prototype() const;
 
   void set_model_id( int );
@@ -90,6 +92,10 @@ private:
    */
   Node* allocate_( void* );
 
+  bool has_proxies();
+  bool potential_global_receiver();
+  bool one_node_per_process();
+  bool is_off_grid();
   /**
    * Initialize the pool allocator with the node specific properties.
    */
@@ -184,6 +190,13 @@ GenericModel< ElementT >::send_test_event( Node& target,
   bool dummy_target )
 {
   return proto_.send_test_event( target, receptor, syn_id, dummy_target );
+}
+
+template < typename ElementT >
+inline void
+GenericModel< ElementT >::sends_secondary_event( GapJEvent& ge )
+{
+  return proto_.sends_secondary_event( ge );
 }
 
 template < typename ElementT >

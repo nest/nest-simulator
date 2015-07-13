@@ -35,6 +35,8 @@
 #include "event.h"
 #include "scheduler.h"
 
+nest::size_t nest::GapJEvent::coeff_length_ = 0;
+
 namespace nest
 {
 Event::Event()
@@ -111,9 +113,15 @@ void DataLoggingRequest::operator()()
   receiver_->handle( *this );
 }
 
-
 void DataLoggingReply::operator()()
 {
   receiver_->handle( *this );
 }
+
+void GapJEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+synindex GapJEvent::synid_ = invalid_synindex;
 }

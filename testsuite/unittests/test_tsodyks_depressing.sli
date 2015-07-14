@@ -21,7 +21,7 @@
  */
 
  /* BeginDocumentation
-Name: test_tsodyks_depressing - sli script for overall test tsodyks_synapse synapse model.
+Name: test_tsodyks_depressing - sli script for overall test of tsodyks synapse models
 
 Synopsis:(test_tsodyks_depressing) run -> compare cout with comments in file
 
@@ -40,6 +40,9 @@ FirstVersion: March 2006
 (unittest) run
 /unittest using
 
+
+[/tsodyks_synapse /tsodyks_synapse_hom] {
+/tsodyks_model Set
 
 ResetKernel      % clear all existing network elements
 
@@ -79,7 +82,7 @@ userdict begin
 
       cout 15 setprecision
 
-      /tsodyks_synapse
+      tsodyks_model
       << /tau_psc Tau_psc 
          /tau_rec Tau_rec
 	 /tau_fac Tau_fac
@@ -135,7 +138,7 @@ userdict begin
 
       vm neuron2 Connect
 
-      neuron1 neuron2 /tsodyks_synapse Connect
+      neuron1 neuron2 tsodyks_model Connect
 
       Tend Simulate
 
@@ -203,6 +206,8 @@ userdict begin
 vm_sim vm_expected eq assert_or_die
 
 end
+
+} forall % tsodyks models
 
 endusing % unittest
 

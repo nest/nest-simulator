@@ -66,41 +66,24 @@ RecordablesMap< aeif_cond_alpha_RK5 >::create()
  * ---------------------------------------------------------------- */
 
 nest::aeif_cond_alpha_RK5::Parameters_::Parameters_()
-  : V_peak_( 0.0 )
-  , // mV, should not be larger that V_th+10
-  V_reset_( -60.0 )
-  , // mV
-  t_ref_( 0.0 )
-  , // ms
-  g_L( 30.0 )
-  , // nS
-  C_m( 281.0 )
-  , // pF
-  E_ex( 0.0 )
-  , // mV
-  E_in( -85.0 )
-  , // mV
-  E_L( -70.6 )
-  , // mV
-  Delta_T( 2.0 )
-  , // mV
-  tau_w( 144.0 )
-  , // ms
-  a( 4.0 )
-  , // nS
-  b( 80.5 )
-  , // pA
-  V_th( -50.4 )
-  , // mV
-  tau_syn_ex( 0.2 )
-  , // ms
-  tau_syn_in( 2.0 )
-  , // ms
-  I_e( 0.0 )
-  , // pA
-  MAXERR( 1.0e-10 )
-  ,              // mV
-  HMIN( 1.0e-3 ) // ms
+  : V_peak_( 0.0 )    // mV, should not be larger that V_th+10
+  , V_reset_( -60.0 ) // mV
+  , t_ref_( 0.0 )     // ms
+  , g_L( 30.0 )       // nS
+  , C_m( 281.0 )      // pF
+  , E_ex( 0.0 )       // mV
+  , E_in( -85.0 )     // mV
+  , E_L( -70.6 )      // mV
+  , Delta_T( 2.0 )    // mV
+  , tau_w( 144.0 )    // ms
+  , a( 4.0 )          // nS
+  , b( 80.5 )         // pA
+  , V_th( -50.4 )     // mV
+  , tau_syn_ex( 0.2 ) // ms
+  , tau_syn_in( 2.0 ) // ms
+  , I_e( 0.0 )        // pA
+  , MAXERR( 1.0e-10 ) // mV
+  , HMIN( 1.0e-3 )    // ms
 {
 }
 

@@ -89,16 +89,14 @@ nest::Scheduler::Scheduler( Network& net )
   , entry_counter_( 0 )
   , exit_counter_( 0 )
   , nodes_vec_( n_threads_ )
-  , nodes_vec_network_size_( 0 )
-  , // zero to force update
-  clock_( Time::tic( 0L ) )
+  , nodes_vec_network_size_( 0 ) // zero to force update
+  , clock_( Time::tic( 0L ) )
   , slice_( 0L )
   , to_do_( 0L )
   , to_do_total_( 0L )
   , from_step_( 0L )
-  , to_step_( 0L )
-  , // consistent with to_do_ == 0
-  terminate_( false )
+  , to_step_( 0L ) // consistent with to_do_ == 0
+  , terminate_( false )
   , off_grid_spiking_( false )
   , print_time_( false )
   , rng_()

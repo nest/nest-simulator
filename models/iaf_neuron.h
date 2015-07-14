@@ -96,7 +96,7 @@ V_reset    double - Reset potential of the membrane in mV.
 tau_syn    double - Rise time of the excitatory synaptic alpha function in ms.
 I_e        double - Constant external input current in pA.
 
-Note:
+Remarks:
 tau_m != tau_syn is required by the current implementation to avoid a
 degenerate case of the ODE describing the model [1]. For very similar values,
 numerics will be unstable.

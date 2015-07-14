@@ -114,6 +114,7 @@ Network::Network( SLIInterpreter& i )
   , n_sim_procs_( 0 )
   , n_gsd_( 0 )
   , nodes_vec_()
+  , nodes_vec_network_size_( 0 ) // zero to force update
   , clock_( Time::tic( 0L ) )
   , slice_( 0L )
   , to_do_( 0L )

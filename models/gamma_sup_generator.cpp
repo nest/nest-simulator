@@ -110,9 +110,8 @@ nest::gamma_sup_generator::Internal_states_::update( double_t transition_prob,
  * ---------------------------------------------------------------- */
 
 nest::gamma_sup_generator::Parameters_::Parameters_()
-  : rate_( 0.0 )
-  , // Hz
-  gamma_shape_( 1 )
+  : rate_( 0.0 ) // Hz
+  , gamma_shape_( 1 )
   , n_proc_( 1 )
   , num_targets_( 0 )
 {

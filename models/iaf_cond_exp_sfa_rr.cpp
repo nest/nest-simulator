@@ -103,39 +103,23 @@ nest::iaf_cond_exp_sfa_rr_dynamics( double, const double y[], double f[], void* 
  * ---------------------------------------------------------------- */
 
 nest::iaf_cond_exp_sfa_rr::Parameters_::Parameters_()
-  : V_th_( -57.0 )
-  , // mV
-  V_reset_( -70.0 )
-  , // mV
-  t_ref_( 0.5 )
-  , // ms
-  g_L( 28.95 )
-  , // nS
-  C_m( 289.5 )
-  , // pF
-  E_ex( 0.0 )
-  , // mV
-  E_in( -75.0 )
-  , // mV
-  E_L( -70.0 )
-  , // mV
-  tau_synE( 1.5 )
-  , // ms
-  tau_synI( 10.0 )
-  , // ms
-  I_e( 0.0 )
-  , // pA
-  tau_sfa( 110.0 )
-  , // ms
-  tau_rr( 1.97 )
-  , // ms
-  E_sfa( -70.0 )
-  , // mV
-  E_rr( -70.0 )
-  , // mV
-  q_sfa( 14.48 )
-  ,              // nS
-  q_rr( 3214.0 ) // nS
+  : V_th_( -57.0 )    // mV
+  , V_reset_( -70.0 ) // mV
+  , t_ref_( 0.5 )     // ms
+  , g_L( 28.95 )      // nS
+  , C_m( 289.5 )      // pF
+  , E_ex( 0.0 )       // mV
+  , E_in( -75.0 )     // mV
+  , E_L( -70.0 )      // mV
+  , tau_synE( 1.5 )   // ms
+  , tau_synI( 10.0 )  // ms
+  , I_e( 0.0 )        // pA
+  , tau_sfa( 110.0 )  // ms
+  , tau_rr( 1.97 )    // ms
+  , E_sfa( -70.0 )    // mV
+  , E_rr( -70.0 )     // mV
+  , q_sfa( 14.48 )    // nS
+  , q_rr( 3214.0 )    // nS
 {
 }
 

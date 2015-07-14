@@ -61,35 +61,22 @@ RecordablesMap< amat2_psc_exp >::create()
  * ---------------------------------------------------------------- */
 
 nest::amat2_psc_exp::Parameters_::Parameters_()
-  : Tau_( 10.0 )
-  , // in ms
-  C_( 200.0 )
-  , // in pF (R=50MOhm)
-  tau_ref_( 2.0 )
-  , // in ms
-  U0_( -70.0 )
-  , // in mV
-  I_e_( 0.0 )
-  , // in pA
-  tau_ex_( 1.0 )
-  , // in ms
-  tau_in_( 3.0 )
-  , // in ms
-  tau_1_( 10.0 )
-  , // in ms
-  tau_2_( 200.0 )
-  , // in ms
-  alpha_1_( 10.0 )
-  , // in mV
-  alpha_2_( 0.0 )
-  , // in mV
-  beta_( 0.0 )
-  , // in mV
-  tau_v_( 5.0 )
-  ,             // in ms
-  omega_( 5.0 ) // resting threshold relative to U0_ in mV
-                // state V_th_ is initialized with the
-                // same value
+  : Tau_( 10.0 )     // in ms
+  , C_( 200.0 )      // in pF (R=50MOhm)
+  , tau_ref_( 2.0 )  // in ms
+  , U0_( -70.0 )     // in mV
+  , I_e_( 0.0 )      // in pA
+  , tau_ex_( 1.0 )   // in ms
+  , tau_in_( 3.0 )   // in ms
+  , tau_1_( 10.0 )   // in ms
+  , tau_2_( 200.0 )  // in ms
+  , alpha_1_( 10.0 ) // in mV
+  , alpha_2_( 0.0 )  // in mV
+  , beta_( 0.0 )     // in mV
+  , tau_v_( 5.0 )    // in ms
+  , omega_( 5.0 )    // resting threshold relative to U0_ in mV
+                     // state V_th_ is initialized with the
+                     // same value
 {
 }
 
@@ -98,11 +85,9 @@ nest::amat2_psc_exp::State_::State_()
   , i_syn_ex_( 0.0 )
   , i_syn_in_( 0.0 )
   , V_m_( 0.0 )
-  , V_th_1_( 0.0 )
-  , // relative to omega_
-  V_th_2_( 0.0 )
-  , // relative to omega_
-  V_th_dv_( 0.0 )
+  , V_th_1_( 0.0 ) // relative to omega_
+  , V_th_2_( 0.0 ) // relative to omega_
+  , V_th_dv_( 0.0 )
   , V_th_v_( 0.0 )
   , r_( 0 )
 {

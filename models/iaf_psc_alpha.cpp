@@ -58,24 +58,16 @@ RecordablesMap< iaf_psc_alpha >::create()
  * ---------------------------------------------------------------- */
 
 iaf_psc_alpha::Parameters_::Parameters_()
-  : Tau_( 10.0 )
-  , // ms
-  C_( 250.0 )
-  , // pF
-  TauR_( 2.0 )
-  , // ms
-  U0_( -70.0 )
-  , // mV
-  I_e_( 0.0 )
-  , // pA
-  V_reset_( -70.0 - U0_ )
-  , // mV, rel to U0_
-  Theta_( -55.0 - U0_ )
-  , // mV, rel to U0_
-  LowerBound_( -std::numeric_limits< double_t >::infinity() )
-  , tau_ex_( 2.0 )
-  ,              // ms
-  tau_in_( 2.0 ) // ms
+  : Tau_( 10.0 )            // ms
+  , C_( 250.0 )             // pF
+  , TauR_( 2.0 )            // ms
+  , U0_( -70.0 )            // mV
+  , I_e_( 0.0 )             // pA
+  , V_reset_( -70.0 - U0_ ) // mV, rel to U0_
+  , Theta_( -55.0 - U0_ )   // mV, rel to U0_
+  , LowerBound_( -std::numeric_limits< double_t >::infinity() )
+  , tau_ex_( 2.0 ) // ms
+  , tau_in_( 2.0 ) // ms
 {
 }
 

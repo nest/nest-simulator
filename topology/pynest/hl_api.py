@@ -94,10 +94,7 @@ def topology_func(slifunc, *args):
     nest.sli_func
     """
 
-    # Execute function in topology namespace.
-    # We need to pass the kwarg namespace as **{} instead of the usuual
-    # way to keep Python 2.5 happy, see http://bugs.python.org/issue3473
-    return nest.sli_func(slifunc, *args, **{'namespace': 'topology'})
+    return nest.sli_func(slifunc, *args)
 
 
 class Mask(object):

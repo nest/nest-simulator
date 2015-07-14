@@ -33,17 +33,12 @@
  * ---------------------------------------------------------------- */
 
 nest::noise_generator::Parameters_::Parameters_()
-  : mean_( 0.0 )
-  , // pA
-  std_( 0.0 )
-  , // pA / sqrt(s)
-  std_mod_( 0.0 )
-  , // pA / sqrt(s)
-  freq_( 0.0 )
-  , // Hz
-  phi_deg_( 0.0 )
-  , // degree
-  dt_( Time::ms( 1.0 ) )
+  : mean_( 0.0 )    // pA
+  , std_( 0.0 )     // pA / sqrt(s)
+  , std_mod_( 0.0 ) // pA / sqrt(s)
+  , freq_( 0.0 )    // Hz
+  , phi_deg_( 0.0 ) // degree
+  , dt_( Time::ms( 1.0 ) )
   , num_targets_( 0 )
 {
 }

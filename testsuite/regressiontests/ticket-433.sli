@@ -62,7 +62,7 @@ M_INFO setverbosity
      /synapse_model /ht_synapse
      /mask << /circular << /radius 2.0 >> >>
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 }
 bind def
 
@@ -80,7 +80,7 @@ bind def
      /synapse_model /ht_syn_ampa
      /mask << /circular << /radius 2.0 >> >>
   >>
-  topology/ConnectLayers ::
+  ConnectLayers
 }
 bind def
 
@@ -128,13 +128,13 @@ bind def
   /layerProps << /rows 10 /columns 10 /extent [8.0 8.0] >> def
 
   layerProps << /elements /RetinaGen >> join
-  /retina_gen layerProps topology/CreateLayer :: def
+  /retina_gen layerProps CreateLayer def
 
   layerProps << /elements /RetinaNode >> join
-  /retina layerProps topology/CreateLayer :: def
+  /retina layerProps CreateLayer def
 
   layerProps << /elements /ThalamicNeuron >> join
-  /Tp layerProps topology/CreateLayer :: def
+  /Tp layerProps CreateLayer def
 
   [retina_gen GetGlobalLeaves retina GetGlobalLeaves] { Connect true } MapThread ;
   
@@ -159,7 +159,7 @@ bind def
 }
 fail_or_die
 
-% third test: connect using topology::ConnectLayers
+% third test: connect using ConnectLayers
 % this must raise an error, otherwise lacking receptor_type is not detected
 {
   /connect_topo
@@ -167,7 +167,7 @@ fail_or_die
 }
 fail_or_die
 
-% fourth test: connect using topology::ConnectLayers, but with 
+% fourth test: connect using ConnectLayers, but with 
 % properly configured synapse model
 {
   /connect_topo_syn

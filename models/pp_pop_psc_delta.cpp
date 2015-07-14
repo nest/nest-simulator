@@ -64,15 +64,11 @@ RecordablesMap< pp_pop_psc_delta >::create()
 
 nest::pp_pop_psc_delta::Parameters_::Parameters_()
   : N_( 100 )
-  , tau_m_( 10.0 )
-  , // ms
-  c_m_( 250.0 )
-  , // pF
-  rho_0_( 10.0 )
-  , // 1/s
-  delta_u_( 1.0 )
-  , // mV
-  len_kernel_( 5.0 )
+  , tau_m_( 10.0 )  // ms
+  , c_m_( 250.0 )   // pF
+  , rho_0_( 10.0 )  // 1/s
+  , delta_u_( 1.0 ) // mV
+  , len_kernel_( 5.0 )
   , I_e_( 0.0 ) // pA
 {
   taus_eta_.push_back( 10.0 );

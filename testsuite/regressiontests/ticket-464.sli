@@ -30,7 +30,7 @@ Description:
 Ensure that NEST triggers an assertion in UniversalDataLogger::record_data() instead of seg faulting
 when a frozen multimeter is connected to a node.
 
-Note:
+Remarks:
 This test has been modified (2011-02-11) to reflect the fact that NEST now protects
 multimeter against being frozen. Thus, the first test triggers an error instead of
 and assertion, and crash_or_die has been replaced by fail_or_die.

@@ -56,21 +56,14 @@ RecordablesMap< iaf_neuron >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_neuron::Parameters_::Parameters_()
-  : C_( 250.0 )
-  , // pF
-  Tau_( 10.0 )
-  , // ms
-  tau_syn_( 2.0 )
-  , // ms
-  TauR_( 2.0 )
-  , // ms
-  U0_( -70.0 )
-  , // mV
-  V_reset_( -70.0 - U0_ )
-  , // mV, rel to U0_
-  Theta_( -55.0 - U0_ )
-  ,           // mV, rel to U0_
-  I_e_( 0.0 ) // pA
+  : C_( 250.0 )             // pF
+  , Tau_( 10.0 )            // ms
+  , tau_syn_( 2.0 )         // ms
+  , TauR_( 2.0 )            // ms
+  , U0_( -70.0 )            // mV
+  , V_reset_( -70.0 - U0_ ) // mV, rel to U0_
+  , Theta_( -55.0 - U0_ )   // mV, rel to U0_
+  , I_e_( 0.0 )             // pA
 {
 }
 

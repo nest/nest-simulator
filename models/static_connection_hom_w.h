@@ -26,8 +26,13 @@
 
    Description:
      static_synapse_hom_w does not support any kind of plasticity. It simply stores
-     the parameters target, and receiver port for each connection and uses a common
-     weight and delay for all connections.
+     the parameters delay, target, and receiver port for each connection and uses a common
+     weight for all connections.
+
+   Remarks:
+     The common weight for all connections of this model must be set by SetDefaults on the model.
+     If you create copies of this model using CopyModel, each derived model can have a different
+     weight.
 
    Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent, DataLoggingRequest,
    DoubleDataEvent

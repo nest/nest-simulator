@@ -37,8 +37,6 @@ Author: Hans Ekkehard Plesser, 2015-02-03 based on a reproducer by Janne Morén
 
 [1 2 4]
 {
-  topology using
-  
   << 
     /positions [[0.0 0.0]]
     /elements /iaf_neuron

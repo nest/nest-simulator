@@ -56,23 +56,15 @@ RecordablesMap< iaf_chs_2007 >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_chs_2007::Parameters_::Parameters_()
-  : tau_epsp_( 8.5 )
-  , // in ms
-  tau_reset_( 15.4 )
-  , // in ms
-  E_L_( 0.0 )
-  , // normalized
-  U_th_( 1.0 )
-  , // normalized
-  U_epsp_( 0.77 )
-  , // normalized
-  U_reset_( 2.31 )
-  , // normalized
-  C_( 1.0 )
-  , // Should not be modified
-  U_noise_( 0.0 )
-  , // normalized
-  noise_()
+  : tau_epsp_( 8.5 )   // in ms
+  , tau_reset_( 15.4 ) // in ms
+  , E_L_( 0.0 )        // normalized
+  , U_th_( 1.0 )       // normalized
+  , U_epsp_( 0.77 )    // normalized
+  , U_reset_( 2.31 )   // normalized
+  , C_( 1.0 )          // Should not be modified
+  , U_noise_( 0.0 )    // normalized
+  , noise_()
 
 {
 }

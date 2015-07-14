@@ -106,27 +106,17 @@ nest::iaf_cond_alpha_dynamics( double, const double y[], double f[], void* pnode
  * ---------------------------------------------------------------- */
 
 nest::iaf_cond_alpha::Parameters_::Parameters_()
-  : V_th( -55.0 )
-  , // mV
-  V_reset( -60.0 )
-  , // mV
-  t_ref( 2.0 )
-  , // ms
-  g_L( 16.6667 )
-  , // nS
-  C_m( 250.0 )
-  , // pF
-  E_ex( 0.0 )
-  , // mV
-  E_in( -85.0 )
-  , // mV
-  E_L( -70.0 )
-  , // mV
-  tau_synE( 0.2 )
-  , // ms
-  tau_synI( 2.0 )
-  ,          // ms
-  I_e( 0.0 ) // pA
+  : V_th( -55.0 )    // mV
+  , V_reset( -60.0 ) // mV
+  , t_ref( 2.0 )     // ms
+  , g_L( 16.6667 )   // nS
+  , C_m( 250.0 )     // pF
+  , E_ex( 0.0 )      // mV
+  , E_in( -85.0 )    // mV
+  , E_L( -70.0 )     // mV
+  , tau_synE( 0.2 )  // ms
+  , tau_synI( 2.0 )  // ms
+  , I_e( 0.0 )       // pA
 {
 }
 

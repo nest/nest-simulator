@@ -60,17 +60,12 @@ RecordablesMap< mynest::pif_psc_alpha >::create()
  * ---------------------------------------------------------------- */
 
 mynest::pif_psc_alpha::Parameters_::Parameters_()
-  : C_m( 250.0 )
-  , // pF
-  I_e( 0.0 )
-  , // nA
-  tau_syn( 2.0 )
-  , // ms
-  V_th( -55.0 )
-  , // mV
-  V_reset( -70.0 )
-  ,            // mV
-  t_ref( 2.0 ) // ms
+  : C_m( 250.0 )     // pF
+  , I_e( 0.0 )       // nA
+  , tau_syn( 2.0 )   // ms
+  , V_th( -55.0 )    // mV
+  , V_reset( -70.0 ) // mV
+  , t_ref( 2.0 )     // ms
 {
 }
 

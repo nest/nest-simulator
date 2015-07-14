@@ -57,22 +57,14 @@ RecordablesMap< iaf_psc_delta >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_delta::Parameters_::Parameters_()
-  : tau_m_( 10.0 )
-  , // ms
-  c_m_( 250.0 )
-  , // pF
-  t_ref_( 2.0 )
-  , // ms
-  E_L_( -70.0 )
-  , // mV
-  I_e_( 0.0 )
-  , // pA
-  V_th_( -55.0 - E_L_ )
-  , // mV, rel to U0_
-  V_min_( -std::numeric_limits< double_t >::max() )
-  ,
-  // relative U0_-55.0-U0_),  // mV, rel to U0_
-  V_reset_( -70.0 - E_L_ )
+  : tau_m_( 10.0 )                                    // ms
+  , c_m_( 250.0 )                                     // pF
+  , t_ref_( 2.0 )                                     // ms
+  , E_L_( -70.0 )                                     // mV
+  , I_e_( 0.0 )                                       // pA
+  , V_th_( -55.0 - E_L_ )                             // mV, rel to U0_
+  , V_min_( -std::numeric_limits< double_t >::max() ) // relative U0_-55.0-U0_
+  , V_reset_( -70.0 - E_L_ )                          // mV, rel to U0_
   , with_refr_input_( false )
 {
 }

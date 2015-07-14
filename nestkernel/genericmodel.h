@@ -24,7 +24,6 @@
 #define GENERICMODEL_H
 
 #include "model.h"
-#include "dynmodule.h"
 #include <new>
 
 namespace nest

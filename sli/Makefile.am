@@ -29,7 +29,6 @@ libsli_la_SOURCES=\
 		dictstack.cc dictstack.h\
 		dictutils.cc dictutils.h\
 		doubledatum.cc doubledatum.h\
-		dynmodule.cpp dynmodule.h\
 		fdstream.cc fdstream.h\
 		filesystem.cc filesystem.h\
 		functional.h\

@@ -23,13 +23,9 @@
 #ifndef MYMODULE_H
 #define MYMODULE_H
 
-#include "dynmodule.h"
+#include "slimodule.h"
 #include "slifunction.h"
 
-namespace nest
-{
-class Network;
-}
 
 // Put your stuff into your own namespace.
 namespace mynest
@@ -39,7 +35,7 @@ namespace mynest
  * Class defining your model.
  * @note For each model, you must define one such class, with a unique name.
  */
-class MyModule : public DynModule
+class MyModule : public SLIModule
 {
 public:
   // Interface functions ------------------------------------------
@@ -59,11 +55,8 @@ public:
   /**
    * Initialize module by registering models with the network.
    * @param SLIInterpreter* SLI interpreter
-   * @param nest::Network*  Network with which to register models
-   * @note  Parameter Network is needed for historical compatibility
-   *        only.
    */
-  void init( SLIInterpreter*, nest::Network* );
+  void init( SLIInterpreter* );
 
   /**
    * Return the name of your model.

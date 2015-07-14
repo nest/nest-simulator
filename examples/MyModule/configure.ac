@@ -41,6 +41,21 @@ AC_ARG_WITH(nest,[  --with-nest=script	nest-config script including path],
   fi
 ])
 
+# ---------------------------------------------------------------
+# Do not build dynamic libraries for user models if on BlueGene
+# ---------------------------------------------------------------
+
+configure_bluegene=`$NEST_CONFIG --configure-bluegene`
+AM_CONDITIONAL(BUILD_DYNAMIC_USER_MODULES, test x$configure_bluegene = xno) 
+
+if test x$configure_bluegene = xyes ; then
+  AC_DISABLE_SHARED
+  AC_ENABLE_STATIC
+else
+  AC_DISABLE_STATIC
+  AC_ENABLE_SHARED
+fi
+
 # -------------------------------------------
 # END Handle options
 # -------------------------------------------
@@ -107,6 +122,7 @@ AC_LANG_CPLUSPLUS
 AC_PROG_CXXCPP
 AM_PROG_LIBTOOL
 AC_PATH_PROGS([MAKE],[gmake make],[make])
+
 
 # ---------------------------------------------------------------
 # Configure directories to be built

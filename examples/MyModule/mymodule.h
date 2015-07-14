@@ -26,11 +26,6 @@
 #include "dynmodule.h"
 #include "slifunction.h"
 
-namespace nest
-{
-class Network;
-}
-
 // Put your stuff into your own namespace.
 namespace mynest
 {
@@ -57,7 +52,7 @@ public:
   ~MyModule();
 
   /**
-   * Initialize module by registering models with the network.
+   * Initialize module.
    * @param SLIInterpreter* SLI interpreter
    */
   void init( SLIInterpreter* );

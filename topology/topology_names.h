@@ -90,7 +90,7 @@ extern const Name tau;
 extern const Name topology;
 extern const Name upper_right;
 extern const Name volume;
-//extern const Name x; // this name is already defined in nest_names
+// extern const Name x; // this name is already defined in nest_names
 extern const Name y;
 }
 }

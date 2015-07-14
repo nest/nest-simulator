@@ -82,7 +82,7 @@ Håkon Enger\\[1ex]
 \normalsize Department of Mathematical Sciences and Technology\\\normalsize Norwegian University of Life Sciences\\
 \normalsize 1432 Ås, Norway}
 \date{NEST 2.2, 2.4, and 2.6 (r9977 or later)\\[8cm]
-\centerline{\includegraphics{nest-initiative-logo}}}
+\centerline{\includegraphics{nest-initiative}}}
 
 
 \begin{document}
@@ -1107,6 +1107,21 @@ dictionary, as in this example:
 You have to use synapse models if you want to set, e.g., the receptor
 type of connections or parameters for plastic synapse models. These
 can not be set in distance-dependent ways at present.
+
+
+\section{Connecting devices to subregions of layers}\label{sec:dev_subregions}
+
+It is possible to connect stimulation and recording devices only to specific
+subregions of layers. A simple way to achieve this is to create a layer
+which contains only the device placed typically in its center.
+For connecting the device layer to a neuron layer, an appropriate mask
+needs to be specified and optionally also an anchor for shifting the
+center of the mask.
+As demonstrated in the following example, stimulation devices require the
+divergent and recording devices the convergent connection type:
+\lstinputlisting[linerange=conn9-end]{user_manual_scripts/connections.py}
+\lstinputlisting[linerange=conn10-end]{user_manual_scripts/connections.py}
+
 
 
 \chapter{Inspecting Layers}\label{sec:inspection}

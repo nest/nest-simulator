@@ -72,22 +72,6 @@ Archiving_Node::register_stdp_connection( double_t t_first_read )
   n_incoming_++;
 }
 
-void
-Archiving_Node::unregister_stdp_connection( double_t t_last_read )
-{
-  // Mark all entries in the deque we have read as unread
-  // so that we can savely decrement the incoming number of
-  // connections afterwards without loosing entries, which
-  // are still needed. For details see bug #218. MH 08-04-22
-
-  for ( std::deque< histentry >::iterator runner = history_.begin();
-        runner != history_.end() && runner->t_ <= t_last_read;
-        ++runner )
-    ( runner->access_counter_ )--;
-
-  n_incoming_--;
-}
-
 double_t
 nest::Archiving_Node::get_K_value( double_t t )
 {

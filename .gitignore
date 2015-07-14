@@ -44,3 +44,7 @@ build/
 /topology/setup.py
 
 *.kdev4
+
+### IPythonNotebook ###
+# Temporary data
+.ipynb_checkpoints/

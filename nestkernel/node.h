@@ -407,14 +407,6 @@ public:
   virtual void register_stdp_connection( double_t );
 
   /**
-   * Unregister a STDP connection
-   *
-   * @throws IllegalConnection
-   *
-   */
-  virtual void unregister_stdp_connection( double_t );
-
-  /**
    * Handle incoming spike events.
    * @param thrd Id of the calling thread.
    * @param e Event object.

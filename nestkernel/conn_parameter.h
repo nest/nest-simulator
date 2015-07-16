@@ -59,13 +59,11 @@ public:
   /**
    * Return parameter value.
    *
-   * The parameter value may depend on source and target GIDs
-   * (when using callback functions, not yet implemented)
-   * and random numbers. All three must be supplied, even if
+   * The parameter value may depend on target threads
+   * and random numbers. Both must be supplied, even if
    * a concrete parameter type does not use them.
    *
-   * @param sgid  source gid
-   * @param tgid  target gid
+   * @param target_thread  will be ignored except for array parameters.
    * @param rng   random number generator pointer
    * will be ignored except for random parameters.
    */
@@ -82,7 +80,12 @@ public:
   {
     return 0;
   }
-
+  /**
+  * @param t parameter
+  * type is established by casts to all acceptedpossibilities
+  * @param nthread number of threads
+  * required to fix number pointers to the iterator (one for each thread) 
+  */
   static ConnParameter* create( const Token&, const size_t );
 };
 
@@ -145,12 +148,18 @@ private:
 
 
 /**
- * Array parameter classes, returning values in order.
+ * Array parameter classes, returning double values in order.
  *
  * - The array of values must not be empty
  *   (so return 0 for number_of_values can signal non-array parameter)
  * - Throws exception if more values requested than available.
- *
+ * - The class contains nthread number of pointers (one for each thread)
+ *   to an iterator, which runs over the parameters initialised in an array.
+ *   Each pointer is moved along the paramtere array by the function 
+ *   value_double(), which returns the current parameter value and moves the 
+ *   pointer to the subsequent position.   
+ * - All parameters are  doubles, thus calling the function value_int()
+ *   throws an error.
  */
 
 class ArrayDoubleParameter : public ConnParameter
@@ -186,6 +195,21 @@ private:
   const std::vector< double >* values_;
   mutable std::vector< std::vector< double >::const_iterator > next_;
 };
+
+/**
+ * Array parameter classes, returning integer values in order.
+ *
+ * - The array of values must not be empty
+ *   (so return 0 for number_of_values can signal non-array parameter)
+ * - Throws exception if more values requested than available.
+ * - The class contains nthread number of pointers (one for each thread)
+ *   to an iterator, which runs over the parameters initialised in an array.
+ *   Each pointer is moved along the paramtere array by the function 
+ *   value_int(), which returns the current parameter value and moves the 
+ *   pointer to the subsequent position.   
+ * - All parameters are integer, thus calling the function value_double()
+ *   throws an error.
+ */
 
 class ArrayIntegerParameter : public ConnParameter
 {

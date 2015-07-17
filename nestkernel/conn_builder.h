@@ -88,8 +88,8 @@ protected:
   void single_connect_( index, Node&, thread, librandom::RngPtr& );
 
   //! Calls value-function of all parameters being instantiations of ArrayDoubleParameter or
-  //ArrayIntegerParameter, thus moving the pointer to the next parameter value. The function is
-  //called when the target node is not located on the current thread or MPI-process.
+  // ArrayIntegerParameter, thus moving the pointer to the next parameter value. The function is
+  // called when the target node is not located on the current thread or MPI-process.
   void skip_conn_parameter_( thread, librandom::RngPtr& );
 
   Network& net_;

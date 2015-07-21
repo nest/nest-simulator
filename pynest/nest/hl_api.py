@@ -75,8 +75,8 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
         if text is None:
             text = textwrap.dedent(
                        """\
-                       {} is deprecated and will be removed in a future version of NEST.
-                       Please use {} instead!
+                       {0} is deprecated and will be removed in a future version of NEST.
+                       Please use {1} instead!
                        For details, see the documentation at http://www.nest-simulator.org/connection_management\
                        """.format(func_name, alt_func_name)
                    )

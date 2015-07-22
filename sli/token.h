@@ -31,7 +31,6 @@
 #include <iomanip>
 #include <string>
 #include <vector>
-#include <valarray>
 #include "config.h"
 #include "datum.h"
 class Name;
@@ -114,7 +113,6 @@ public:
   Token( const char* );
   Token( std::string );
   Token( const std::vector< double >& );
-  Token( const std::valarray< double >& );
   Token( const std::vector< long >& );
   Token( const std::vector< size_t >& );
   Token( const std::ostream& );

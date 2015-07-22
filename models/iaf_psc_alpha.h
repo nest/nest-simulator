@@ -96,18 +96,18 @@ Parameters:
   I_e        double - Constant external input current in pA.
   V_min      double - Absolute lower value for the membrane potential.
 
-Note: 
+Note:
 For very similar values of tau_m and tau_syn_{ex,in} the
 evaluation of the propagator entries P_31 and P_32 is numerically
 unstable.  Consider a first order taylor approximation in tau_s around tau_m
-P_31 = P_31_0 + P_31_lin + O(2) ; P_32 = P_32_0 + P_32_lin + O(2).  
+P_31 = P_31_0 + P_31_lin + O(2) ; P_32 = P_32_0 + P_32_lin + O(2).
 If tau_m == tau_syn_{ex,in} the singular solutions P_31_0 and P_32_0 are used.
 If tau_m and tau_syn_{ex,in} are close to each other we calculate the
-deviation of the propagator to the singular case 
-P_31_dev = P_31 - P_31_0 ; P_32_dev = P_32 - P_32_0 
-and if 
-||(P_31_dev,P_32_dev)|| > 2 * ||(P_31_1,P_32_1)|| 
-we assume that the deviations in the propagators are due to numeric 
+deviation of the propagator to the singular case
+P_31_dev = P_31 - P_31_0 ; P_32_dev = P_32 - P_32_0
+and if
+||(P_31_dev,P_32_dev)|| > 2 * ||(P_31_1,P_32_1)||
+we assume that the deviations in the propagators are due to numeric
 instabilities and we use the singular solutions. Here || || is the euclidean norm.
 With this criterion the maximal error is of order ||(P_31_1,P_32_1)||.
 

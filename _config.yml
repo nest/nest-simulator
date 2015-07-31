@@ -1,3 +1,6 @@
 markdown: redcarpet
 redcarpet:
-  extensions:    ["with_toc_data"]
+  # see http://milanaryal.com/2015/writing-on-github-pages-and-jekyll-using-markdown/
+  extensions:    ["with_toc_data", "smart", "tables", "no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript"]
+
+

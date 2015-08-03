@@ -23,6 +23,8 @@
 #ifndef NUMERICS_H
 #define NUMERICS_H
 
+#include "config.h"
+
 #include <limits>
 #include <cmath>
 
@@ -30,11 +32,25 @@
 #include <math.h>
 #endif
 
+#if defined( IS_K )
+#undef HAVE_STD_ISNAN
+#undef HAVE_ISNAN
+#endif
+
+#if defined( HAVE_STD_ISNAN )
+#include <cmath>
+#elif defined( HAVE_ISNAN )
+#include <math.h>
+#else
+#include <cstring>
+#endif
+
 namespace numerics
 {
 
 extern const double e;
 extern const double pi;
+extern const double nan;
 
 /** Supply expm1() function independent of system.
  *  @note Implemented inline for efficiency.
@@ -66,6 +82,20 @@ expm1( double x )
 
     return sum;
   }
+#endif
+}
+
+template < class T >
+bool
+isnan( T f )
+{
+#if defined( HAVE_STD_ISNAN )
+  return std::isnan( f );
+#elif defined( HAVE_ISNAN )
+  return isnan( f );
+#else
+  T _nan = ( T ) nan;
+  return 0 == memcmp( ( void* ) &f, ( void* ) &_nan, sizeof( T ) );
 #endif
 }
 }

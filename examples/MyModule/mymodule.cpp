@@ -189,7 +189,6 @@ mynest::MyModule::init( SLIInterpreter* i )
   /* Register a neuron or device model.
      Give node type as template argument and the name as second argument.
      The first argument is always a reference to the network.
-     Return value is a handle for later unregistration.
   */
   nest::register_model< pif_psc_alpha >( "pif_psc_alpha" );
 

@@ -23,7 +23,7 @@
 #ifndef MYMODULE_H
 #define MYMODULE_H
 
-#include "dynmodule.h"
+#include "slimodule.h"
 #include "slifunction.h"
 
 // Put your stuff into your own namespace.
@@ -34,7 +34,7 @@ namespace mynest
  * Class defining your model.
  * @note For each model, you must define one such class, with a unique name.
  */
-class MyModule : public DynModule
+class MyModule : public SLIModule
 {
 public:
   // Interface functions ------------------------------------------
@@ -46,8 +46,7 @@ public:
   MyModule();
 
   /**
-   * @note The destructor does not do much in modules. Proper "downrigging"
-   *       is the responsibility of the unregister() method.
+   * @note The destructor does not do much in modules.
    */
   ~MyModule();
 

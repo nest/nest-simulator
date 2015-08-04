@@ -37,11 +37,11 @@ public:
   virtual ~SLIModule(){};
 
   /**
-   * Initialise the module.
+   * Initialize the module.
    * When this function is called, most of the
-   * interpreter's fascilities are up and running.
+   * interpreter's facilities are up and running.
    * However, depending on where in the interpreter's
-   * bootstrap sequence the module is initialised, not
+   * bootstrap sequence the module is initialized, not
    * all services may be available.
    */
   virtual void init( SLIInterpreter* ) = 0;
@@ -52,7 +52,7 @@ public:
   virtual const std::string name( void ) const = 0;
 
   /**
-   * Return sli command sequence to be executed for initialisation.
+   * Return sli command sequence to be executed for initialization.
    */
   virtual const std::string commandstring( void ) const;
 

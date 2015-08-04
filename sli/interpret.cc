@@ -42,7 +42,6 @@
 #include "dictstack.h"
 #include "functional.h"
 #include "stringdatum.h"
-#include "dynmodule.h"
 #include "iostreamdatum.h"
 #include "dictdatum.h"
 #include "tokenutils.h"
@@ -592,7 +591,7 @@ SLIInterpreter::addmodule( SLIModule* m )
 }
 
 void
-SLIInterpreter::addlinkeddynmodule( DynModule* m )
+SLIInterpreter::addlinkedusermodule( SLIModule* m )
 {
   m->install( std::cerr, this );
 
@@ -881,7 +880,8 @@ SLIInterpreter::message( std::ostream& out,
   std::strftime( timestring, buflen, "%b %d %H:%M:%S", std::localtime( &tm ) );
 
   std::string msg = String::compose( "%1 %2 [%3]: ", timestring, from, levelname );
-  out << std::endl << msg << errorname;
+  out << std::endl
+      << msg << errorname;
 
   // Set the preferred line indentation.
   const size_t indent = 4;
@@ -908,7 +908,8 @@ SLIInterpreter::message( std::ostream& out,
   // Indent first message line
   if ( text_str.size() != 0 )
   {
-    std::cout << std::endl << std::string( indent, ' ' );
+    std::cout << std::endl
+              << std::string( indent, ' ' );
   }
 
   size_t pos = 0;
@@ -920,7 +921,8 @@ SLIInterpreter::message( std::ostream& out,
       // Print a lineshift followed by an indented whitespace
       // Manually inserted lineshift at the end of the message
       // are suppressed.
-      out << std::endl << std::string( indent, ' ' );
+      out << std::endl
+          << std::string( indent, ' ' );
       pos = 0;
     }
     else
@@ -943,7 +945,8 @@ SLIInterpreter::message( std::ostream& out,
       if ( i != 0 && text_str.at( i - 1 ) == ' '
         && static_cast< int >( space - i ) > static_cast< int >( width - pos ) )
       {
-        out << std::endl << std::string( indent, ' ' );
+        out << std::endl
+            << std::string( indent, ' ' );
         pos = 0;
       }
 

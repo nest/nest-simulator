@@ -4,6 +4,7 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 srcdir=@PKGSRCDIR@
 builddir=@PKGBUILDDIR@
+configure_bluegene=@configure_bluegene@
 
 usage()
 {
@@ -17,6 +18,7 @@ Known values for OPTION are:
   --libs                print library linking information
   --cflags              print pre-processor and compiler flags
   --compiler            print the compiler used to compile NEST
+  --configure-bluegene  print "yes" if configured for BlueGene, "no" otherwise
   --help                display this help and exit
   --version             output version information
 
@@ -80,6 +82,10 @@ while test $# -gt 0; do
 
     --compiler)
         echo @CXX@
+        ;;
+
+    --configure-bluegene)
+        echo ${configure_bluegene}
         ;;
 
     *)

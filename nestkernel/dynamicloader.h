@@ -34,8 +34,6 @@
 
 #include <vector>
 
-class DynModule;
-
 namespace nest
 {
 
@@ -44,7 +42,7 @@ struct sDynModule;
 
 typedef std::vector< sDynModule > vecDynModules;
 
-typedef std::vector< DynModule* > vecLinkedModules;
+typedef std::vector< SLIModule* > vecLinkedModules;
 
 
 /**
@@ -73,7 +71,7 @@ public:
    * instance of the module calls this method to register itself.
    * Later, DynamicLoader will go through all registered modules and initialize them.
    */
-  static int registerLinkedModule( DynModule* pModule );
+  static int registerLinkedModule( SLIModule* pModule );
 
   void initLinkedModules( SLIInterpreter& );
 
@@ -90,23 +88,9 @@ public:
     vecDynModules& dyn_modules_;
   };
 
-  class UnloadModuleFunction : public SLIFunction
-  {
-  public:
-    UnloadModuleFunction( vecDynModules& dyn_modules );
-
-  private:
-    void execute( SLIInterpreter* ) const;
-
-  private:
-    vecDynModules& dyn_modules_;
-  };
-
-
   /** @} */
 
   LoadModuleFunction loadmodule_function;
-  UnloadModuleFunction unloadmodule_function;
 
 private:
   /**

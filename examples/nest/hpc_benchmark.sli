@@ -240,10 +240,21 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
 
   record_spikes true eq 
   {
+    E_net GetLocalNodes size /local_neurons Set
+
+    local_neurons Nrec lt
+    {
+      M_ERROR (BuildNetwork)
+      (Spikes can only be recorded from local neurons, but the number of local 
+neurons is smaller than the number of neurons spikes should be recorded from. 
+Aborting the simulation!) message
+      1 quit_i
+    } if
+
     M_INFO (BuildNetwork)
     (Connecting spike detectors.) message
     E_net GetLocalNodes Nrec Take [E_detector] << /rule (all_to_all) >> << /model /syn_std >> Connect
-  } if    
+  } if
 
   % read out time used for building    
   toc /BuildEdgeTime Set

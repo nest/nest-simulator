@@ -244,11 +244,11 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
 
     local_neurons Nrec lt
     {
-      M_WARNING (BuildNetwork)
+      M_ERROR (BuildNetwork)
       (Spikes can only be recorded from local neurons, but the number of local 
 neurons is smaller than the number of neurons spikes should be recorded from. 
-Hence, the number of recorded neurons is reduced.) message
-      /Nrec local_neurons def
+Aborting the simulation!) message
+      1 quit_i
     } if
 
     M_INFO (BuildNetwork)

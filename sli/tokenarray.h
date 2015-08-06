@@ -29,7 +29,6 @@
 #include <typeinfo>
 #include <cstddef>
 #include <vector>
-#include <algorithm>
 #include "tarrayobj.h"
 #include "sliexceptions.h"
 

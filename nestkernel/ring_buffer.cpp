@@ -33,7 +33,7 @@ nest::RingBuffer::resize()
   size_t size = Scheduler::get_min_delay() + Scheduler::get_max_delay();
   if ( buffer_.size() != size )
   {
-    std::vector< double_t >( size, 0.0 ).swap( buffer_ );
+    buffer_.resize( size );
   }
 }
 
@@ -42,10 +42,7 @@ nest::RingBuffer::clear()
 {
   resize(); // does nothing if size is fine
   // clear all elements
-  for ( std::vector< double_t >::iterator it = buffer_.begin(); it != buffer_.end(); ++it )
-  {
-    *it = 0;
-  }
+  buffer_.assign( buffer_.size(), 0.0 );
 }
 
 
@@ -60,7 +57,7 @@ nest::MultRBuffer::resize()
   size_t size = Scheduler::get_min_delay() + Scheduler::get_max_delay();
   if ( buffer_.size() != size )
   {
-    std::vector< double_t >( size, 0.0 ).swap( buffer_ );
+    buffer_.resize( size );
   }
 }
 
@@ -68,10 +65,7 @@ void
 nest::MultRBuffer::clear()
 {
   // clear all elements
-  for ( std::vector< double_t >::iterator it = buffer_.begin(); it != buffer_.end(); ++it )
-  {
-    *it = 0;
-  }
+  buffer_.assign( buffer_.size(), 0.0 );
 }
 
 

@@ -125,7 +125,7 @@ cd ..
 
 # Extracting changed files in PR / push
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-  file_names=`curl "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename'`
+  file_names=`curl "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
 else
   # extract filenames via git => has some problems with history rewrites
   # see https://github.com/travis-ci/travis-ci/issues/2668

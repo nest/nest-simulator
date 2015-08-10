@@ -730,11 +730,11 @@ SLI_USER_MODULES=""
 # SLI_USER_MODULES_LDADD collects what needs to be added to LDADD
 SLI_USER_MODULES_LDADD=""
 
-AC_ARG_WITH(modules,[  --with-modules = external modules to be linked in],
+AC_ARG_WITH(modules,[  --with-modules=MODULES external modules to be linked in],
 [
 if test "$withval" != no; then
   for mod in $withval; do
-    SLI_USER_MODULES_LDADD=" $prefix/lib/nest/lib$mod.la"
+    SLI_USER_MODULES_LDADD="$SLI_USER_MODULES_LDADD $prefix/lib/nest/lib$mod.la"
     SLI_USER_MODULES="$SLI_USER_MODULES $mod"
   done
 fi

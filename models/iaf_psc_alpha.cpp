@@ -241,7 +241,7 @@ iaf_psc_alpha::calibrate()
 
   // exact propagator, linear approximation and singular case for excitatory synaptic event
 
-  const double P32_ex_linear = 1 / 2. / P_.C_ / P_.Tau_ / P_.Tau_ * h * h * ( P_.tau_ex_ - P_.Tau_ )
+  const double P32_ex_linear = 1 / ( 2. * P_.C_ * P_.Tau_ * P_.Tau_ ) * h * h * ( P_.tau_ex_ - P_.Tau_ )
     * std::exp( -h / P_.Tau_ );
   const double P32_ex_singular = h / P_.C_ * V_.P33_;
   const double P32_ex = 1 / P_.C_ * ( V_.P33_ - V_.P11_ex_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_ex_ );

@@ -241,19 +241,19 @@ iaf_psc_alpha::calibrate()
 
   // exact propagator, linear approximation and singular case for excitatory synaptic event
 
-  const double P32_ex_linear = 1 / ( 2. * P_.C_ * P_.Tau_ * P_.Tau_ ) * h * h * ( P_.tau_ex_ - P_.Tau_ )
-    * std::exp( -h / P_.Tau_ );
+  const double P32_ex_linear = 1 / ( 2. * P_.C_ * P_.Tau_ * P_.Tau_ ) * h * h
+    * ( P_.tau_ex_ - P_.Tau_ ) * std::exp( -h / P_.Tau_ );
   const double P32_ex_singular = h / P_.C_ * V_.P33_;
   const double P32_ex = 1 / P_.C_ * ( V_.P33_ - V_.P11_ex_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_ex_ );
   const double P31_ex_linear = h * 2 / 3. * P32_ex_linear;
   const double P31_ex = 1 / P_.C_ * ( ( V_.P11_ex_ - V_.P33_ ) / ( -1 / P_.tau_ex_ - -1 / P_.Tau_ )
                                       - h * V_.P11_ex_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_ex_ );
   const double P31_ex_singular = h * h / 2 / P_.C_ * V_.P33_;
-  const double dev_P31_ex = std::fabs( P31_ex - P31_ex_singular );
-  const double dev_P32_ex = std::fabs( P32_ex - P32_ex_singular );
-  const double dev_norm_ex = std::sqrt( std::pow( dev_P31_ex, 2 ) + std::pow( dev_P32_ex, 2 ) );
-  const double error_linear_ex = std::sqrt(
-    std::pow( std::fabs( P32_ex_linear ), 2 ) + std::pow( std::fabs( P31_ex_linear ), 2 ) );
+  const double dev_P31_ex = P31_ex - P31_ex_singular;
+  const double dev_P32_ex = P32_ex - P32_ex_singular;
+  const double dev_norm_ex = std::pow( dev_P31_ex, 2 ) + std::pow( dev_P32_ex, 2 );
+  const double error_linear_ex =
+    std::pow( std::fabs( P32_ex_linear ), 2 ) + std::pow( std::fabs( P31_ex_linear ), 2 );
 
   if ( P_.Tau_ == P_.tau_ex_ )
   {
@@ -263,7 +263,7 @@ iaf_psc_alpha::calibrate()
     V_.P31_ex_ = P31_ex_singular;
     V_.P32_ex_ = P32_ex_singular;
   }
-  else if ( std::abs( P_.Tau_ - P_.tau_ex_ ) < 0.1 and dev_norm_ex > 2 * error_linear_ex )
+  else if ( std::abs( P_.Tau_ - P_.tau_ex_ ) < 0.1 and dev_norm_ex > 4 * error_linear_ex )
   {
     net_->message( SLIInterpreter::M_INFO,
       "iaf_psc_alpha::calibrate",

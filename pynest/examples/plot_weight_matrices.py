@@ -169,7 +169,6 @@ def plot_weight_matrices(E_neurons, I_neurons):
     pylab.tight_layout()
 
     plt3 = ax3.imshow(W_EI)
-    print W_EI
     plt3.set_cmap('jet')
     divider = make_axes_locatable(ax3)
     cax = divider.append_axes("right", "5%", pad="3%")

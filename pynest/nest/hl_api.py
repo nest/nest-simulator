@@ -1143,7 +1143,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                             raise NESTError("'" + key + "' has the wrong type. One-dimensional parameter arrays can only be used in conjunction with rule 'one_to_one'.")
                     elif len(value.shape) == 2:
                         if rule == 'all_to_all':
-                            # TODO Jochen does len(pre), len(post) work for all possible types of node containers?
                             if value.shape[0] is not len(post) or value.shape[1] is not len(pre):
                                 raise NESTError("'" + key + "' has to be an array of dimension " + str(len(post)) + "x" + str(len(pre)) + " (n_target x n_sources), a scalar or a dictionary.")
                             else:

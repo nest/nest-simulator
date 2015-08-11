@@ -155,7 +155,7 @@ private:
  * - Throws exception if more values requested than available.
  * - The class contains nthread number of pointers (one for each thread)
  *   to an iterator, which runs over the parameters initialised in an array.
- *   Each pointer is moved along the paramtere array by the function
+ *   Each pointer is moved along the parameter array by the function
  *   value_double(), which returns the current parameter value and moves the
  *   pointer to the subsequent position.
  * - All parameters are  doubles, thus calling the function value_int()
@@ -204,7 +204,7 @@ private:
  * - Throws exception if more values requested than available.
  * - The class contains nthread number of pointers (one for each thread)
  *   to an iterator, which runs over the parameters initialised in an array.
- *   Each pointer is moved along the paramtere array by the function
+ *   Each pointer is moved along the parameter array by the function
  *   value_int(), which returns the current parameter value and moves the
  *   pointer to the subsequent position.
  * - All parameters are integer, thus calling the function value_double()

@@ -1062,7 +1062,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     All other parameters can be scalars, arrays or distributions. 
     In the case of scalar parameters, all keys must be doubles except for 'receptor_type' which must be
     initialised with an integer. 
-    Parameter arrays are only avaibale for the rules 'one_to_one' and 'all_to_all'. For 'one_to_one' the
+    Parameter arrays are only available for the rules 'one_to_one' and 'all_to_all'. For 'one_to_one' the
     array has to be a one-dimensional NumPy array with length len(pre) For 'all_to_all' the array has
     to be a two-dimensional NumPy array with shape len(post) x len(pre).
     Any distributed parameter must be initialised with a further dictionary specifying the distribution 

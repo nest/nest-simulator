@@ -1064,7 +1064,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     initialised with an integer. 
     Parameter arrays are only available for the rules 'one_to_one' and 'all_to_all'. For 'one_to_one' the
     array has to be a one-dimensional NumPy array with length len(pre). For 'all_to_all' the array has
-    to be a two-dimensional NumPy array with shape len(post) x len(pre).
+    to be a two-dimensional NumPy array with shape (len(post), len(pre)), therefore the rows describe the 
+    target and the columns the source neurons.
     Any distributed parameter must be initialised with a further dictionary specifying the distribution 
     type ('distribution', e.g. 'normal') and any distribution-specific parameters (e.g. 'mu' and 'sigma').
 

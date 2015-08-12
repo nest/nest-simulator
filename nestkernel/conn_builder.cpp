@@ -340,17 +340,7 @@ nest::ConnBuilder::single_connect_( index sgid,
 inline void
 nest::ConnBuilder::skip_conn_parameter_( thread target_thread, librandom::RngPtr& rng )
 {
-  if ( param_dicts_.empty() ) // indicates we have no synapse params
-  {
-    if ( default_weight_ )
-      delay_->value_double( target_thread, rng );
-    else if ( ( !default_weight_and_delay_ ) && ( !default_weight_ ) )
-    {
-      delay_->value_double( target_thread, rng );
-      weight_->value_double( target_thread, rng );
-    }
-  }
-  else
+  if ( not param_dicts_.empty() ) 
   {
     assert( net_.get_num_threads() == static_cast< thread >( param_dicts_.size() ) );
 
@@ -380,14 +370,14 @@ nest::ConnBuilder::skip_conn_parameter_( thread target_thread, librandom::RngPtr
         ( *dd ) = it->second->value_double( target_thread, rng );
       }
     }
+  }
 
-    if ( default_weight_ )
-      delay_->value_double( target_thread, rng );
-    else if ( ( !default_weight_and_delay_ ) && ( !default_weight_ ) )
-    {
-      delay_->value_double( target_thread, rng );
-      weight_->value_double( target_thread, rng );
-    }
+  if ( default_weight_ )
+    delay_->value_double( target_thread, rng );
+  else if ( ( !default_weight_and_delay_ ) && ( !default_weight_ ) )
+  {
+    delay_->value_double( target_thread, rng );
+    weight_->value_double( target_thread, rng );
   }
 }
 

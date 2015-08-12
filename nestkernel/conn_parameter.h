@@ -69,6 +69,8 @@ public:
    */
   virtual double value_double( thread, librandom::RngPtr& ) const = 0;
   virtual long_t value_int( thread, librandom::RngPtr& ) const = 0;
+  virtual void skip( thread ) const = 0;
+  virtual bool is_array() const = 0;
 
   /**
    * Returns number of values available.
@@ -103,11 +105,23 @@ public:
   {
   }
 
+  void
+  skip( thread tid ) const
+  {
+  }
+
+  bool
+  is_array() const
+  {
+    return false;
+  }
+
   double
   value_double( thread, librandom::RngPtr& ) const
   {
     return value_;
   }
+
   long_t
   value_int( thread, librandom::RngPtr& ) const
   {
@@ -131,11 +145,23 @@ public:
   {
   }
 
+  void
+  skip( thread tid ) const
+  {
+  }
+
+  bool
+  is_array() const
+  {
+    return false;
+  }
+
   double
   value_double( thread, librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
+
   long_t
   value_int( thread, librandom::RngPtr& ) const
   {
@@ -171,6 +197,21 @@ public:
   {
   }
 
+  void
+  skip( thread tid ) const
+  {
+    if ( next_[ tid ] != values_->end() )
+      *next_[ tid ]++;
+    else
+      throw KernelException( "Parameter values exhausted." );
+  }
+
+  bool
+  is_array() const
+  {
+    return true;
+  }
+
   size_t
   number_of_values() const
   {
@@ -185,6 +226,7 @@ public:
     else
       throw KernelException( "Parameter values exhausted." );
   }
+
   long_t
   value_int( thread, librandom::RngPtr& ) const
   {
@@ -220,6 +262,21 @@ public:
   {
   }
 
+  void
+  skip( thread tid ) const
+  {
+    if ( next_[ tid ] != values_->end() )
+      *next_[ tid ]++;
+    else
+      throw KernelException( "Parameter values exhausted." );
+  }
+
+  bool
+  is_array() const
+  {
+    return true;
+  }
+
   size_t
   number_of_values() const
   {
@@ -228,13 +285,13 @@ public:
 
   long_t
   value_int( thread tid, librandom::RngPtr& ) const
-
   {
     if ( next_[ tid ] != values_->end() )
       return *next_[ tid ]++;
     else
       throw KernelException( "Parameter values exhausted." );
   }
+
   double
   value_double( thread, librandom::RngPtr& ) const
   {
@@ -256,11 +313,23 @@ class RandomParameter : public ConnParameter
 public:
   RandomParameter( const DictionaryDatum&, const size_t );
 
+  void
+  skip( thread tid ) const
+  {
+  }
+
+  bool
+  is_array() const
+  {
+    return false;
+  }
+
   double
   value_double( thread, librandom::RngPtr& rng ) const
   {
     return ( *rdv_ )( rng );
   }
+
   long_t
   value_int( thread, librandom::RngPtr& rng ) const
   {

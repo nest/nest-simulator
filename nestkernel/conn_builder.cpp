@@ -362,7 +362,7 @@ nest::ConnBuilder::skip_conn_parameter_( thread target_thread )
   for ( std::vector< ConnParameter* >::iterator it = skip_array_parameters.begin();
         it != skip_array_parameters.end(); 
         ++it )
-    ( *it )->skip();
+    ( *it )->skip(target_thread);
 }
 
 

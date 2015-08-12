@@ -106,7 +106,7 @@ public:
   }
 
   void
-  skip( thread tid ) const
+  skip( thread ) const
   {
   }
 
@@ -146,7 +146,7 @@ public:
   }
 
   void
-  skip( thread tid ) const
+  skip( thread ) const
   {
   }
 
@@ -314,7 +314,7 @@ public:
   RandomParameter( const DictionaryDatum&, const size_t );
 
   void
-  skip( thread tid ) const
+  skip( thread ) const
   {
   }
 

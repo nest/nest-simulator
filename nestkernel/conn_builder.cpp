@@ -102,7 +102,7 @@ nest::ConnBuilder::ConnBuilder( Network& net,
     weight_ = syn_spec->known( names::weight )
       ? ConnParameter::create( ( *syn_spec )[ names::weight ], net_.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::weight ], net_.get_num_threads() );
-    // If weight is an array it will be added to a vector of ConnParameters, 
+    // If weight is an array it will be added to a vector of ConnParameters,
     // ensuring thread-safety of the connection routine.
     if ( weight_->is_array() )
     {
@@ -118,7 +118,7 @@ nest::ConnBuilder::ConnBuilder( Network& net,
       ? ConnParameter::create( ( *syn_spec )[ names::delay ], net_.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], net_.get_num_threads() );
   }
-  // If delay is an array it will be added to a vector of ConnParameters, 
+  // If delay is an array it will be added to a vector of ConnParameters,
   // ensuring thread-safety of the connection routine.
   if ( delay_->is_array() )
   {
@@ -149,16 +149,16 @@ nest::ConnBuilder::ConnBuilder( Network& net,
       continue; // weight, delay or not-settable parameter
 
     if ( syn_spec->known( param_name ) )
+    {
+      synapse_params_[ param_name ] =
+        ConnParameter::create( ( *syn_spec )[ param_name ], net_.get_num_threads() );
+      // If the synapse parameter is an array it will be added to a vector of ConnParameters,
+      // ensuring thread-safety of the connection routine.
+      if ( synapse_params_[ param_name ]->is_array() )
       {
-	synapse_params_[ param_name ] =
-	  ConnParameter::create( ( *syn_spec )[ param_name ], net_.get_num_threads() );
-        // If the synapse parameter is an array it will be added to a vector of ConnParameters, 
-        // ensuring thread-safety of the connection routine.
-	if ( synapse_params_[ param_name ]->is_array() )
-	{
-	  skip_array_parameters.push_back( synapse_params_[ param_name ] );
-	}
+        skip_array_parameters.push_back( synapse_params_[ param_name ] );
       }
+    }
   }
 
   // Now create dictionary with dummy values that we will use
@@ -362,9 +362,9 @@ inline void
 nest::ConnBuilder::skip_conn_parameter_( thread target_thread )
 {
   for ( std::vector< ConnParameter* >::iterator it = skip_array_parameters.begin();
-        it != skip_array_parameters.end(); 
+        it != skip_array_parameters.end();
         ++it )
-    ( *it )->skip(target_thread);
+    ( *it )->skip( target_thread );
 }
 
 

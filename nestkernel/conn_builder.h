@@ -90,9 +90,9 @@ protected:
   /**
    * Moves pointer in parameter array.
    *
-   * Calls value-function of all parameters being instantiations of 
-   * ArrayDoubleParameter or ArrayIntegerParameter, thus moving the pointer 
-   * to the next parameter value. The function is called when the target 
+   * Calls value-function of all parameters being instantiations of
+   * ArrayDoubleParameter or ArrayIntegerParameter, thus moving the pointer
+   * to the next parameter value. The function is called when the target
    * node is not located on the current thread or MPI-process and read of an
    * array.
    */

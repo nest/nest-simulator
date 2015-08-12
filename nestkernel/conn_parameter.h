@@ -71,7 +71,9 @@ public:
    */
   virtual double value_double( thread, librandom::RngPtr& ) const = 0;
   virtual long_t value_int( thread, librandom::RngPtr& ) const = 0;
-  virtual void skip( thread ) const {}
+  virtual void skip( thread ) const
+  {
+  }
   virtual bool is_array() = 0;
 
   /**
@@ -103,7 +105,7 @@ public:
 class ScalarDoubleParameter : public ConnParameter
 {
 public:
- ScalarDoubleParameter( double value, const size_t )
+  ScalarDoubleParameter( double value, const size_t )
     : value_( value )
   {
   }
@@ -120,7 +122,8 @@ public:
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
 
-  inline bool is_array()
+  inline bool
+  is_array()
   {
     return false;
   }
@@ -154,7 +157,8 @@ public:
     return value_;
   }
 
-  inline bool is_array()
+  inline bool
+  is_array()
   {
     return false;
   }
@@ -218,7 +222,8 @@ public:
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
 
-  inline bool is_array()
+  inline bool
+  is_array()
   {
     return true;
   }
@@ -282,7 +287,8 @@ public:
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
 
-  inline bool is_array()
+  inline bool
+  is_array()
   {
     return true;
   }
@@ -314,7 +320,8 @@ public:
     return ( *rdv_ )( rng );
   }
 
-  inline bool is_array()
+  inline bool
+  is_array()
   {
     return false;
   }

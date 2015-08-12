@@ -357,7 +357,7 @@ nest::ConnBuilder::single_connect_( index sgid,
 }
 
 inline void
-nest::ConnBuilder::skip_conn_parameter_( thread target_thread, librandom::RngPtr& rng )
+nest::ConnBuilder::skip_conn_parameter_( thread target_thread )
 {
   for ( std::vector< ConnParameter* >::iterator it = skip_array_parameters.begin();
         it != skip_array_parameters.end(); 
@@ -400,7 +400,7 @@ nest::OneToOneBuilder::connect_()
         // check whether the target is on this mpi machine
         if ( !net_.is_local_gid( *tgid ) )
         {
-          skip_conn_parameter_( tid, rng );
+          skip_conn_parameter_( tid );
           continue;
         }
 
@@ -410,7 +410,7 @@ nest::OneToOneBuilder::connect_()
         // check whether the target is on our thread
         if ( tid != target_thread )
         {
-          skip_conn_parameter_( tid, rng );
+          skip_conn_parameter_( tid );
           continue;
         }
 
@@ -448,7 +448,7 @@ nest::AllToAllBuilder::connect_()
         {
           for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
                 ++sgid )
-            skip_conn_parameter_( tid, rng );
+            skip_conn_parameter_( tid );
           continue;
         }
 
@@ -460,7 +460,7 @@ nest::AllToAllBuilder::connect_()
         {
           for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
                 ++sgid )
-            skip_conn_parameter_( tid, rng );
+            skip_conn_parameter_( tid );
           continue;
         }
 
@@ -469,7 +469,7 @@ nest::AllToAllBuilder::connect_()
         {
           if ( not autapses_ and *sgid == *tgid )
           {
-            skip_conn_parameter_( target_thread, rng );
+            skip_conn_parameter_( target_thread );
             continue;
           }
 

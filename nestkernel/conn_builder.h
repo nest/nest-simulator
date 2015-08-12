@@ -96,7 +96,7 @@ protected:
    * node is not located on the current thread or MPI-process and read of an
    * array.
    */
-  void skip_conn_parameter_( thread, librandom::RngPtr& );
+  void skip_conn_parameter_( thread );
 
   Network& net_;
 

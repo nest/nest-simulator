@@ -130,6 +130,9 @@ private:
   //! dictionaries to pass to connect function, one per thread
   std::vector< DictionaryDatum > param_dicts_;
 
+  //! pointers to connection parameters specified as arrays
+  std::vector< ConnParameter* > skip_array_parameters;
+
   // check for synapse specific errors or warnings
   // This is a temporary function which should be removed once all parameter types work with
   // Connect.

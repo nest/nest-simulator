@@ -56,6 +56,7 @@ nest::ConnBuilder::ConnBuilder( Network& net,
   , weight_( 0 )
   , delay_( 0 )
   , param_dicts_()
+  , skip_array_parameters()
 {
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above
@@ -101,6 +102,12 @@ nest::ConnBuilder::ConnBuilder( Network& net,
     weight_ = syn_spec->known( names::weight )
       ? ConnParameter::create( ( *syn_spec )[ names::weight ], net_.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::weight ], net_.get_num_threads() );
+    // If weight is an array it will be added to a vector of ConnParameters, 
+    // ensuring thread-safety of the connection routine.
+    if ( weight_->is_array() )
+    {
+      skip_array_parameters.push_back( weight_ );
+    }
     delay_ = syn_spec->known( names::delay )
       ? ConnParameter::create( ( *syn_spec )[ names::delay ], net_.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], net_.get_num_threads() );
@@ -110,6 +117,12 @@ nest::ConnBuilder::ConnBuilder( Network& net,
     delay_ = syn_spec->known( names::delay )
       ? ConnParameter::create( ( *syn_spec )[ names::delay ], net_.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], net_.get_num_threads() );
+  }
+  // If delay is an array it will be added to a vector of ConnParameters, 
+  // ensuring thread-safety of the connection routine.
+  if ( delay_->is_array() )
+  {
+    skip_array_parameters.push_back( delay_ );
   }
 
   // synapse-specific parameters
@@ -138,6 +151,12 @@ nest::ConnBuilder::ConnBuilder( Network& net,
     if ( syn_spec->known( param_name ) )
       synapse_params_[ param_name ] =
         ConnParameter::create( ( *syn_spec )[ param_name ], net_.get_num_threads() );
+    // If the synapse parameter is an array it will be added to a vector of ConnParameters, 
+    // ensuring thread-safety of the connection routine.
+    if ( synapse_params_[ param_name ]->is_array() )
+    {
+      skip_array_parameters.push_back( synapse_params_[ param_name ] );
+    }
   }
 
   // Now create dictionary with dummy values that we will use
@@ -340,45 +359,10 @@ nest::ConnBuilder::single_connect_( index sgid,
 inline void
 nest::ConnBuilder::skip_conn_parameter_( thread target_thread, librandom::RngPtr& rng )
 {
-  if ( not param_dicts_.empty() ) 
-  {
-    assert( net_.get_num_threads() == static_cast< thread >( param_dicts_.size() ) );
-
-    for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
-          it != synapse_params_.end();
-          ++it )
-    {
-      if ( it->first == names::receptor_type || it->first == names::music_channel )
-      {
-        try
-        {
-          // change value of dictionary entry without allocating new datum
-          IntegerDatum* id = static_cast< IntegerDatum* >(
-            ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-          ( *id ) = it->second->value_int( target_thread, rng );
-        }
-        catch ( KernelException& e )
-        {
-          throw BadProperty( "Receptor type must be of type integer." );
-        }
-      }
-      else
-      {
-        // change value of dictionary entry without allocating new datum
-        DoubleDatum* dd = static_cast< DoubleDatum* >(
-          ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-        ( *dd ) = it->second->value_double( target_thread, rng );
-      }
-    }
-  }
-
-  if ( default_weight_ )
-    delay_->value_double( target_thread, rng );
-  else if ( ( !default_weight_and_delay_ ) && ( !default_weight_ ) )
-  {
-    delay_->value_double( target_thread, rng );
-    weight_->value_double( target_thread, rng );
-  }
+  for ( std::vector< ConnParameter* >::iterator it = skip_array_parameters.begin();
+        it != skip_array_parameters.end(); 
+        ++it )
+    ( *it )->skip();
 }
 
 

@@ -149,14 +149,16 @@ nest::ConnBuilder::ConnBuilder( Network& net,
       continue; // weight, delay or not-settable parameter
 
     if ( syn_spec->known( param_name ) )
-      synapse_params_[ param_name ] =
-        ConnParameter::create( ( *syn_spec )[ param_name ], net_.get_num_threads() );
-    // If the synapse parameter is an array it will be added to a vector of ConnParameters, 
-    // ensuring thread-safety of the connection routine.
-    if ( synapse_params_[ param_name ]->is_array() )
-    {
-      skip_array_parameters.push_back( synapse_params_[ param_name ] );
-    }
+      {
+	synapse_params_[ param_name ] =
+	  ConnParameter::create( ( *syn_spec )[ param_name ], net_.get_num_threads() );
+        // If the synapse parameter is an array it will be added to a vector of ConnParameters, 
+        // ensuring thread-safety of the connection routine.
+	if ( synapse_params_[ param_name ]->is_array() )
+	{
+	  skip_array_parameters.push_back( synapse_params_[ param_name ] );
+	}
+      }
   }
 
   // Now create dictionary with dummy values that we will use

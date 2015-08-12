@@ -48,10 +48,12 @@ namespace nest
 
 class ConnParameter
 {
+
 public:
   ConnParameter()
   {
   }
+
   virtual ~ConnParameter()
   {
   }
@@ -69,8 +71,8 @@ public:
    */
   virtual double value_double( thread, librandom::RngPtr& ) const = 0;
   virtual long_t value_int( thread, librandom::RngPtr& ) const = 0;
-  virtual void skip( thread ) const = 0;
-  virtual bool is_array() const = 0;
+  virtual void skip( thread ) const {}
+  virtual bool is_array() = 0;
 
   /**
    * Returns number of values available.
@@ -82,6 +84,7 @@ public:
   {
     return 0;
   }
+
   /**
   * @param t parameter
   * type is established by casts to all acceptedpossibilities
@@ -100,20 +103,9 @@ public:
 class ScalarDoubleParameter : public ConnParameter
 {
 public:
-  ScalarDoubleParameter( double value, const size_t )
+ ScalarDoubleParameter( double value, const size_t )
     : value_( value )
   {
-  }
-
-  void
-  skip( thread ) const
-  {
-  }
-
-  bool
-  is_array() const
-  {
-    return false;
   }
 
   double
@@ -126,6 +118,11 @@ public:
   value_int( thread, librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
+  }
+
+  inline bool is_array()
+  {
+    return false;
   }
 
 private:
@@ -145,17 +142,6 @@ public:
   {
   }
 
-  void
-  skip( thread ) const
-  {
-  }
-
-  bool
-  is_array() const
-  {
-    return false;
-  }
-
   double
   value_double( thread, librandom::RngPtr& ) const
   {
@@ -166,6 +152,11 @@ public:
   value_int( thread, librandom::RngPtr& ) const
   {
     return value_;
+  }
+
+  inline bool is_array()
+  {
+    return false;
   }
 
 private:
@@ -206,12 +197,6 @@ public:
       throw KernelException( "Parameter values exhausted." );
   }
 
-  bool
-  is_array() const
-  {
-    return true;
-  }
-
   size_t
   number_of_values() const
   {
@@ -231,6 +216,11 @@ public:
   value_int( thread, librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
+  }
+
+  inline bool is_array()
+  {
+    return true;
   }
 
 private:
@@ -271,12 +261,6 @@ public:
       throw KernelException( "Parameter values exhausted." );
   }
 
-  bool
-  is_array() const
-  {
-    return true;
-  }
-
   size_t
   number_of_values() const
   {
@@ -298,6 +282,11 @@ public:
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
 
+  inline bool is_array()
+  {
+    return true;
+  }
+
 private:
   const std::vector< long_t >* values_;
   mutable std::vector< std::vector< long_t >::const_iterator > next_;
@@ -313,17 +302,6 @@ class RandomParameter : public ConnParameter
 public:
   RandomParameter( const DictionaryDatum&, const size_t );
 
-  void
-  skip( thread ) const
-  {
-  }
-
-  bool
-  is_array() const
-  {
-    return false;
-  }
-
   double
   value_double( thread, librandom::RngPtr& rng ) const
   {
@@ -334,6 +312,11 @@ public:
   value_int( thread, librandom::RngPtr& rng ) const
   {
     return ( *rdv_ )( rng );
+  }
+
+  inline bool is_array()
+  {
+    return false;
   }
 
 private:

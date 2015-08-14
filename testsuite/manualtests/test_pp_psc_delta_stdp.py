@@ -1,6 +1,12 @@
-import sys
-sys.path.append('/home/deger/nest/nest-git-mdeger/install/lib/python2.7/site-packages')
-sys.path.reverse()
+#
+# Moritz Deger, moritz.deger@epfl.ch, Aug 14, 2015
+#
+#
+# Python script to reproduce failure of pp_psc_delta to show spike timing 
+# dependent plasticity (STDP), as opposed to iaf_psc_delta.
+# The problem is probably related to the setting of 'archiver_length' 
+# (printed at the end of the script) 
+
 
 import nest
 import nest.raster_plot

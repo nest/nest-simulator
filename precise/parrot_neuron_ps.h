@@ -25,7 +25,7 @@
 
 #include "nest.h"
 #include "event.h"
-#include "node.h"
+#include "archiving_node.h"
 #include "slice_ring_buffer.h"
 #include "connection.h"
 
@@ -76,7 +76,7 @@ Author: adapted from parrot_neuron by Kunkel
 
 namespace nest
 {
-class parrot_neuron_ps : public Node
+class parrot_neuron_ps : public Archiving_Node
 {
   class Network;
 
@@ -94,14 +94,8 @@ public:
   port send_test_event( Node&, rport, synindex, bool );
   port handles_test_event( SpikeEvent&, rport );
 
-  void
-  get_status( DictionaryDatum& ) const
-  {
-  }
-  void
-  set_status( const DictionaryDatum& )
-  {
-  }
+  void get_status( DictionaryDatum& ) const;
+  void set_status( const DictionaryDatum& );
 
   // uses off_grid events
   bool

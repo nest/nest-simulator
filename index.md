@@ -86,7 +86,6 @@ describing the NEST simulation kernel in historical order:
 * J.M. Eppler (2006) [A Multithreaded and Distributed System for the  Simulation of Large Biological Neural Networks](http://mindzoo.de/files/Diploma-JME.pdf) explains the general architecture of the first hybrid-parallel version of NEST, which is the 2nd generation of the simulation kernel.
 * Helias et al. (2012) [Supercomputers ready for use as discovery machines for neuroscience.](http://dx.doi.org/10.3389/fninf.2012.00026) explains updates to the simulation kernel to enable the routinely use of supercomputers.
 * Kunkel et al. (2014) [Spiking network simulation code for petascale computers](http://dx.doi.org/10.3389/fninf.2014.00078) introduced the 4th generation connection infrastructure of NEST, which reduces the memory consumption considerably and thus enables the use of the world's largest supercomputers.
-* [Overview of scheduling and update strategies](simulation_loop_mindelay)
 
 For even more information, see the [numerous
 publications](http://www.nest-initiative.org/publications/) about the

@@ -107,6 +107,22 @@ set rules {
 }
 EOF
 
+# initialize and build cppcheck 1.69
+git clone https://github.com/danmar/cppcheck.git
+# go into source directory of cppcheck
+cd cppcheck
+# set git to 1.69 version
+git checkout tags/1.69
+# build cppcheck => now there is an executable ./cppcheck
+mkdir -p install
+make PREFIX=$PWD/install CFGDIR=$PWD/install/cfg HAVE_RULES=yes install
+# make cppcheck available
+export PATH=$PATH:$PWD/install/bin
+# check everything is alright
+cppcheck --version
+# go back to NEST sources
+cd ..
+
 # Extracting changed files between two commits
 file_names=`git diff --name-only $TRAVIS_COMMIT_RANGE`
 format_error_files=""
@@ -123,11 +139,11 @@ for f in $file_names; do
       f_base=$NEST_VPATH/reports/`basename $f`
       # Vera++ checks the specified list of rules given in the profile 
       # nest which is placed in the <vera++ root>/lib/vera++/profile
-      vera++ --root ./vera_home --profile nest $f > ${f_base}_vera.txt
+      vera++ --root ./vera_home --profile nest $f > ${f_base}_vera.txt 2>&1
       echo "\n - vera++ for $f:"
       cat ${f_base}_vera.txt
 
-      cppcheck --enable=all --inconclusive --std=c++03 $f > ${f_base}_cppcheck.txt
+      cppcheck --enable=all --inconclusive --std=c++03 $f > ${f_base}_cppcheck.txt 2>&1
       echo "\n - cppcheck for $f:"
       cat ${f_base}_cppcheck.txt
 

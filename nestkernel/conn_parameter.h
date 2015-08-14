@@ -69,8 +69,8 @@ public:
    * @param rng   random number generator pointer
    * will be ignored except for random parameters.
    */
-  virtual double value_double( index, index, librandom::RngPtr& ) const = 0;
-  virtual long_t value_int( index, index, librandom::RngPtr& ) const = 0;
+  virtual double value_double( librandom::RngPtr& ) const = 0;
+  virtual long_t value_int( librandom::RngPtr& ) const = 0;
 
   /**
    * Returns number of values available.
@@ -101,12 +101,12 @@ public:
   }
 
   double
-  value_double( index, index, librandom::RngPtr& ) const
+  value_double( librandom::RngPtr& ) const
   {
     return value_;
   }
   long_t
-  value_int( index, index, librandom::RngPtr& ) const
+  value_int( librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
@@ -129,12 +129,12 @@ public:
   }
 
   double
-  value_double( index, index, librandom::RngPtr& ) const
+  value_double( librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
   long_t
-  value_int( index, index, librandom::RngPtr& ) const
+  value_int( librandom::RngPtr& ) const
   {
     return value_;
   }
@@ -167,9 +167,9 @@ public:
     return values_.size();
   }
 
-  // double value(index sgid, index tgid, librandom::RngPtr&) const
+  // double value(librandom::RngPtr&) const
   double
-  value_double( index, index, librandom::RngPtr& ) const
+  value_double( librandom::RngPtr& ) const
 
   {
     // return values_[sgid];
@@ -179,7 +179,7 @@ public:
       throw KernelException( "Parameter values exhausted." );
   }
   long_t
-  value_int( index, index, librandom::RngPtr& ) const
+  value_int( librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
@@ -201,12 +201,12 @@ public:
   RandomParameter( const DictionaryDatum& );
 
   double
-  value_double( index, index, librandom::RngPtr& rng ) const
+  value_double( librandom::RngPtr& rng ) const
   {
     return ( *rdv_ )( rng );
   }
   long_t
-  value_int( index, index, librandom::RngPtr& rng ) const
+  value_int( librandom::RngPtr& rng ) const
   {
     return ( *rdv_ )( rng );
   }

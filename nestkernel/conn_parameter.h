@@ -74,7 +74,7 @@ public:
   virtual void skip( thread ) const
   {
   }
-  virtual bool is_array() = 0;
+  virtual bool is_array() const = 0;
 
   /**
    * Returns number of values available.
@@ -123,7 +123,7 @@ public:
   }
 
   inline bool
-  is_array()
+  is_array() const
   {
     return false;
   }
@@ -158,7 +158,7 @@ public:
   }
 
   inline bool
-  is_array()
+  is_array() const
   {
     return false;
   }
@@ -223,7 +223,7 @@ public:
   }
 
   inline bool
-  is_array()
+  is_array() const
   {
     return true;
   }
@@ -288,7 +288,7 @@ public:
   }
 
   inline bool
-  is_array()
+  is_array() const
   {
     return true;
   }
@@ -321,7 +321,7 @@ public:
   }
 
   inline bool
-  is_array()
+  is_array() const
   {
     return false;
   }

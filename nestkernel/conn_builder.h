@@ -136,8 +136,8 @@ private:
   /**
    * Collects all array paramters in a vector.
    *
-   * If the inserted parameter is an array it will be added to a vector of 
-   * ConnParameters. This vector will be exploited in some connection 
+   * If the inserted parameter is an array it will be added to a vector of
+   * ConnParameters. This vector will be exploited in some connection
    * routines to ensuring thread-safety.
    */
   void register_parameters_requiring_skipping_( ConnParameter& param );

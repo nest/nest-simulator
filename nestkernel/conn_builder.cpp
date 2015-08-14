@@ -179,7 +179,7 @@ nest::ConnBuilder::~ConnBuilder()
     delete it->second;
 }
 
-inline void 
+inline void
 nest::ConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
 {
   if ( param.is_array() )

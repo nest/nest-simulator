@@ -1,0 +1,120 @@
+/*
+ *  ticket-77.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+ * Regression test for Ticket #77 (GitHub).
+ *
+ * Ensure that all neuron models call register outgoing 
+ * spikes with archiving node. The test sends a very 
+ * high-rate Poisson spike train into the neuron that
+ * should make any type of model neuron fire and checks
+ * both `t_spike` entry of the neuron (>0 if neuron has
+ * spiked) and checks that the connection weight differs
+ * from the initial values 1.0.
+ *
+ * Hans Ekkehard Plesser, 2015-08-14 
+ *
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+/* We first need to test the parrot_neuron_ps, since we should use that in tests below.
+ */
+{
+  /sg /spike_generator << /spike_times [ 10.0 ] /precise_times true >> Create  def
+  /pn /parrot_neuron_ps Create def
+  
+  sg pn Connect
+  20 Simulate
+  
+  pn /t_spike get dup = 11.0 eq
+} % assert_or_die
+  
+
+
+/* The following models will not be tested:
+*/
+/skip_list [ /iaf_psc_alpha_multisynapse  % rport
+             /iaf_psc_exp_multisynapse    % rport
+             /iaf_cond_alpha_mc           % rport
+             /aeif_cond_alpha             % unstable
+             /ht_neuron                   % rport
+             /aeif_cond_alpha_multisynapse  % rport
+             /iaf_psc_delta_canon         % connection not possible
+             /iaf_psc_alpha_canon         % connection not possible
+             /iaf_psc_alpha_presc         % connection not possible
+             /iaf_psc_exp_ps              % connection not possible
+             /parrot_neuron_ps            % connection not possible
+             /sli_neuron                  % does nothing if dynamics not defined
+           ] def    
+
+{
+  % apply to all models of element_type neuron
+  modeldict keys {
+    /model Set
+    
+    model skip_list exch MemberQ not
+    model GetDefaults /element_type get /neuron eq and
+    {
+      (\n****************) = model =
+
+      ResetKernel
+      /n model Create def
+      /pg /poisson_generator << /rate 1e6 >> Create def
+      /parrot /parrot_neuron Create def
+      /sd /spike_detector << /withtime false /withgid false >> Create def
+      
+      /delay 1.0 def
+      /initial_weight 1.0 def
+      pg parrot Connect   % need to connect via parrot since generators cannot connect with
+                          % plastic synapses.
+      parrot n initial_weight delay /stdp_synapse Connect
+      n sd Connect
+            
+      100 Simulate
+
+      /neuron_spiked sd /n_events get dup == 0 gt def
+
+      /t_spike_set n /t_spike get dup == 0 gt def
+      
+      /weight_changed
+      << /source [ parrot ] >> GetConnections 0 get /weight get dup == 
+      initial_weight neq def 
+
+     neuron_spiked t_spike_set weight_changed and and
+     dup not { (FAILED: ) model cvs join == } if      
+    }
+    { true }
+    ifelse
+  }
+  Map
+
+  % see if all entries are true
+  true exch { and } Fold
+
+} 
+assert_or_die
+
+endusing

@@ -73,6 +73,7 @@ parrot_neuron_ps::update( Time const& origin, long_t const from, long_t const to
       SpikeEvent se;
       se.set_offset( ev_offset );
       network()->send( *this, se, lag );
+      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
     }
   }
 }

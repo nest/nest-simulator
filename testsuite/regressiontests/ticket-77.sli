@@ -78,8 +78,6 @@ M_ERROR setverbosity
     model skip_list exch MemberQ not
     model GetDefaults /element_type get /neuron eq and
     {
-      (\n****************) = model =
-
       ResetKernel
       /n model Create def
       /pg /poisson_generator << /rate 1e6 >> Create def
@@ -95,16 +93,14 @@ M_ERROR setverbosity
             
       100 Simulate
 
-      /neuron_spiked sd /n_events get dup == 0 gt def
-
-      /t_spike_set n /t_spike get dup == 0 gt def
-      
+      /neuron_spiked sd /n_events get 0 gt def
+      /t_spike_set n /t_spike get 0 gt def
       /weight_changed
-      << /source [ parrot ] >> GetConnections 0 get /weight get dup == 
-      initial_weight neq def 
+        << /source [ parrot ] >> GetConnections 0 get /weight get  
+        initial_weight neq def 
 
-     neuron_spiked t_spike_set weight_changed and and
-     dup not { (FAILED: ) model cvs join == } if      
+      neuron_spiked t_spike_set weight_changed and and
+      dup not { (FAILED: ) model cvs join == } if      
     }
     { true }
     ifelse

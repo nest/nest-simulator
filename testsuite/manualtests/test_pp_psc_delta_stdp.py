@@ -66,7 +66,7 @@ nest.raster_plot.from_device(sd)
 ylims = pylab.ylim()
 pylab.ylim(ylims[0]-.5, ylims[1]+.5)
 pylab.show()
-pylab.savefig('test_pp_psc_delta_stdp_fig1.pdf')
+pylab.savefig('test_pp_psc_delta_stdp_fig2.pdf')
 
 
 print 'archiver-lengths are different:'

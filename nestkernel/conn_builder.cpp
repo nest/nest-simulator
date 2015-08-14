@@ -273,8 +273,7 @@ nest::ConnBuilder::single_connect_( index sgid,
     if ( default_weight_and_delay_ )
       net_.connect( sgid, &target, target_thread, synapse_model_ );
     else if ( default_weight_ )
-      net_.connect(
-        sgid, &target, target_thread, synapse_model_, delay_->value_double( rng ) );
+      net_.connect( sgid, &target, target_thread, synapse_model_, delay_->value_double( rng ) );
     else
     {
       double delay = delay_->value_double( rng );

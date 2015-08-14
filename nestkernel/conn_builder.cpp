@@ -56,7 +56,7 @@ nest::ConnBuilder::ConnBuilder( Network& net,
   , weight_( 0 )
   , delay_( 0 )
   , param_dicts_()
-  , skip_array_parameters_()
+  , parameters_requiring_skipping_()
 {
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above
@@ -361,8 +361,8 @@ nest::ConnBuilder::single_connect_( index sgid,
 inline void
 nest::ConnBuilder::skip_conn_parameter_( thread target_thread )
 {
-  for ( std::vector< ConnParameter* >::iterator it = skip_array_parameters_.begin();
-        it != skip_array_parameters_.end();
+  for ( std::vector< ConnParameter* >::iterator it = parameters_requiring_skipping_.begin();
+        it != parameters_requiring_skipping_.end();
         ++it )
     ( *it )->skip( target_thread );
 }

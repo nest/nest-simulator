@@ -102,12 +102,7 @@ nest::ConnBuilder::ConnBuilder( Network& net,
     weight_ = syn_spec->known( names::weight )
       ? ConnParameter::create( ( *syn_spec )[ names::weight ], net_.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::weight ], net_.get_num_threads() );
-    // If weight is an array it will be added to a vector of ConnParameters,
-    // ensuring thread-safety of the connection routine.
-    if ( weight_->is_array() )
-    {
-      skip_array_parameters_.push_back( weight_ );
-    }
+    register_parameters_requiring_skipping_( *weight_ );
     delay_ = syn_spec->known( names::delay )
       ? ConnParameter::create( ( *syn_spec )[ names::delay ], net_.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], net_.get_num_threads() );
@@ -118,12 +113,7 @@ nest::ConnBuilder::ConnBuilder( Network& net,
       ? ConnParameter::create( ( *syn_spec )[ names::delay ], net_.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], net_.get_num_threads() );
   }
-  // If delay is an array it will be added to a vector of ConnParameters,
-  // ensuring thread-safety of the connection routine.
-  if ( delay_->is_array() )
-  {
-    skip_array_parameters_.push_back( delay_ );
-  }
+  register_parameters_requiring_skipping_( *delay_ );
 
   // synapse-specific parameters
   // TODO: Can we create this set once and for all?
@@ -152,12 +142,7 @@ nest::ConnBuilder::ConnBuilder( Network& net,
     {
       synapse_params_[ param_name ] =
         ConnParameter::create( ( *syn_spec )[ param_name ], net_.get_num_threads() );
-      // If the synapse parameter is an array it will be added to a vector of ConnParameters,
-      // ensuring thread-safety of the connection routine.
-      if ( synapse_params_[ param_name ]->is_array() )
-      {
-        skip_array_parameters_.push_back( synapse_params_[ param_name ] );
-      }
+      register_parameters_requiring_skipping_( *synapse_params_[ param_name ] );
     }
   }
 
@@ -192,6 +177,15 @@ nest::ConnBuilder::~ConnBuilder()
         it != synapse_params_.end();
         ++it )
     delete it->second;
+}
+
+inline void 
+nest::ConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
+{
+  if ( param.is_array() )
+  {
+    parameters_requiring_skipping_.push_back( &param );
+  }
 }
 
 inline void

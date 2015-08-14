@@ -133,6 +133,15 @@ private:
   //! pointers to connection parameters specified as arrays
   std::vector< ConnParameter* > parameters_requiring_skipping_;
 
+  /**
+   * Collects all array paramters in a vector.
+   *
+   * If the inserted parameter is an array it will be added to a vector of 
+   * ConnParameters. This vector will be exploited in some connection 
+   * routines to ensuring thread-safety.
+   */
+  void register_parameters_requiring_skipping_( ConnParameter& param );
+
   // check for synapse specific errors or warnings
   // This is a temporary function which should be removed once all parameter types work with
   // Connect.

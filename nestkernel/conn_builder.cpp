@@ -1,3 +1,4 @@
+
 /*
  *  conn_builder.cpp
  *
@@ -56,7 +57,7 @@ nest::ConnBuilder::ConnBuilder( Network& net,
   , weight_( 0 )
   , delay_( 0 )
   , param_dicts_()
-  , skip_array_parameters()
+  , skip_array_parameters_()
 {
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above
@@ -106,7 +107,7 @@ nest::ConnBuilder::ConnBuilder( Network& net,
     // ensuring thread-safety of the connection routine.
     if ( weight_->is_array() )
     {
-      skip_array_parameters.push_back( weight_ );
+      skip_array_parameters_.push_back( weight_ );
     }
     delay_ = syn_spec->known( names::delay )
       ? ConnParameter::create( ( *syn_spec )[ names::delay ], net_.get_num_threads() )
@@ -122,7 +123,7 @@ nest::ConnBuilder::ConnBuilder( Network& net,
   // ensuring thread-safety of the connection routine.
   if ( delay_->is_array() )
   {
-    skip_array_parameters.push_back( delay_ );
+    skip_array_parameters_.push_back( delay_ );
   }
 
   // synapse-specific parameters
@@ -156,7 +157,7 @@ nest::ConnBuilder::ConnBuilder( Network& net,
       // ensuring thread-safety of the connection routine.
       if ( synapse_params_[ param_name ]->is_array() )
       {
-        skip_array_parameters.push_back( synapse_params_[ param_name ] );
+        skip_array_parameters_.push_back( synapse_params_[ param_name ] );
       }
     }
   }
@@ -361,8 +362,8 @@ nest::ConnBuilder::single_connect_( index sgid,
 inline void
 nest::ConnBuilder::skip_conn_parameter_( thread target_thread )
 {
-  for ( std::vector< ConnParameter* >::iterator it = skip_array_parameters.begin();
-        it != skip_array_parameters.end();
+  for ( std::vector< ConnParameter* >::iterator it = skip_array_parameters_.begin();
+        it != skip_array_parameters_.end();
         ++it )
     ( *it )->skip( target_thread );
 }

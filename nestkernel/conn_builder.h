@@ -131,7 +131,7 @@ private:
   std::vector< DictionaryDatum > param_dicts_;
 
   //! pointers to connection parameters specified as arrays
-  std::vector< ConnParameter* > skip_array_parameters;
+  std::vector< ConnParameter* > skip_array_parameters_;
 
   // check for synapse specific errors or warnings
   // This is a temporary function which should be removed once all parameter types work with

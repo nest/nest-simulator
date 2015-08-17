@@ -23,6 +23,7 @@
 import numpy as np
 import unittest
 import scipy.stats
+import nest
 from . import test_connect_helpers as hf
 from .test_connect_parameters import TestParams
 
@@ -53,7 +54,9 @@ class TestPairwiseBernoulli(TestParams):
                 if degrees != None:
                     chi, p = hf.chi_squared_check(degrees, expected, self.rule)
                     pvalues.append(p)
+                #self.comm.Barrier()
                 hf.mpi_barrier()
+            #if self.rank == 0:
             if degrees != None:
                 ks, p = scipy.stats.kstest(pvalues, 'uniform')
                 self.assertTrue( p > self.stat_dict['alpha2'] )
@@ -66,21 +69,21 @@ class TestPairwiseBernoulli(TestParams):
         # test that autapses exist
         conn_params['p'] = 1.
         conn_params['autapses'] = True
-        pop = hf.nest.Create('iaf_neuron', N)
-        hf.nest.Connect(pop, pop, conn_params)
+        pop = nest.Create('iaf_neuron', N)
+        nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
-        hf.mpi_assert(np.diag(M), np.ones(N), self)
-        hf.nest.ResetKernel()
+        self.assertTrue(hf.mpi_assert(M, np.ones(N), 'diagonal'))
+        nest.ResetKernel()
 
         # test that autapses were excluded
         conn_params['p'] = 1.
         conn_params['autapses'] = False        
-        pop = hf.nest.Create('iaf_neuron', N)
-        hf.nest.Connect(pop, pop, conn_params)
+        pop = nest.Create('iaf_neuron', N)
+        nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
-        hf.mpi_assert(np.diag(M), np.zeros(N), self)
+        self.assertTrue(hf.mpi_assert(M, np.zeros(N), 'diagonal'))
 
     
 def suite():

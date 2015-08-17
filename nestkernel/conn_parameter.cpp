@@ -30,7 +30,7 @@
 #include "tokenutils.h"
 
 nest::ConnParameter*
-nest::ConnParameter::create( const Token& t, const size_t nthreads )
+nest::ConnParameter::create( const Token& t )
 {
   // Code grabbed from TopologyModule::create_parameter()
   // See there for a more general solution
@@ -38,33 +38,28 @@ nest::ConnParameter::create( const Token& t, const size_t nthreads )
   // single double
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
   if ( dd )
-    return new ScalarDoubleParameter( *dd, nthreads );
+    return new ScalarDoubleParameter( *dd );
 
   // random deviate
   DictionaryDatum* rdv_spec = dynamic_cast< DictionaryDatum* >( t.datum() );
   if ( rdv_spec )
-    return new RandomParameter( *rdv_spec, nthreads );
+    return new RandomParameter( *rdv_spec );
 
   // single integer
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
   if ( id )
-    return new ScalarIntegerParameter( *id, nthreads );
+    return new ScalarIntegerParameter( *id );
 
-  // array of doubles
+  // array
   DoubleVectorDatum* dvd = dynamic_cast< DoubleVectorDatum* >( t.datum() );
   if ( dvd )
-    return new ArrayDoubleParameter( **dvd, nthreads );
+    throw NotImplemented( "Cannot handle parameter type." );
+  // return new ArrayParameter(**dvd);
 
-  // array of integer
-  IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( t.datum() );
-  if ( ivd )
-    return new ArrayIntegerParameter( **ivd, nthreads );
-
-  throw BadProperty( std::string( "Cannot handle parameter type. Received " )
-    + t.datum()->gettypename().toString() );
+  throw BadProperty( "Cannot handle parameter type." );
 }
 
-nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec, const size_t )
+nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec )
   : rdv_( 0 )
 {
   if ( !rdv_spec->known( names::distribution ) )

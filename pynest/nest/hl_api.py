@@ -77,7 +77,7 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
                        """\
                        {} is deprecated and will be removed in a future version of NEST.
                        Please use {} instead!
-                       For details, see the documentation at http://nest-initiative.org/Connection_Management\
+                       For details, see http://nest-simulator.org/connection_management\
                        """.format(func_name, alt_func_name)
                    )
 
@@ -303,7 +303,7 @@ def help(obj=None, pager="less"):
         print("Type 'nest.sysinfo()' to see details on the system configuration.")
         print("Type 'nest.version()' for information about the NEST version.")
         print()
-        print("For more information visit http://www.nest-initiative.org.")
+        print("For more information visit http://www.nest-simulator.org.")
 
 
 @check_stack
@@ -1095,7 +1095,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
         deprecation_text = "".join(["The argument 'model' is there for backward compatibility with the old ",
                                     "Connect function and will be removed in NEST 2.6. Please change the name ",
                                     "of the keyword argument from 'model' to 'syn_spec'. For details, see the ",
-                                    "documentation at:\nhttp://nest-initiative.org/Connection_Management"])
+                                    "documentation at:\nhttp://nest-simulator.org/connection_management"])
         show_deprecation_warning("BackwardCompatibilityConnect", 
                                  text=deprecation_text)
 

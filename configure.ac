@@ -1125,8 +1125,8 @@ if test $SLI_distributed = set; then
   echo
 fi
 
-echo "If you experience problems with the installation or the use of"
-echo "NEST, please see http://nest-initiative.org/index.php/FAQ, or"
-echo "go to http://nest-initiative.org/index.php/Community to find out"
-echo "how to join the user mailing list."
+echo "If you experience problems with the installation or the use of NEST,"
+echo "please see http://www.nest-simulator.org/frequently_asked_questions"
+echo "or go to http://www.nest-simulator.org/community to find out how to"
+echo "join the user mailing list."
 echo

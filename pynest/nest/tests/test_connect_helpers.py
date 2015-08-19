@@ -129,7 +129,7 @@ def get_weighted_connectivity_matrix(pop1,pop2,label):
         M[index_dic[target_id]][index_dic[source_id]] += weight
     return M
 
-def test_synapse(params, values, syn_params, TestCase):
+def check_synapse(params, values, syn_params, TestCase):
     for i, param in enumerate(params):
             syn_params[param] = values[i]
     TestCase.setUpNetwork(TestCase.conn_dict, syn_params)

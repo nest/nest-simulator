@@ -81,7 +81,7 @@ class TestParams(unittest.TestCase):
         w0 = 0.351
         label = 'weight'
         syn_params = {label: w0}
-        hf.test_synapse([label], [syn_params['weight']], syn_params, self)
+        hf.check_synapse([label], [syn_params['weight']], syn_params, self)
         
     def testDelaySetting(self):
         ## test if delays are set correctly
@@ -152,7 +152,7 @@ class TestParams(unittest.TestCase):
         params = ['P', 'delta_P']
         values = [0.987, 0.362]
         syn_params = {'model': 'ht_synapse'}
-        hf.test_synapse(params, values, syn_params, self)
+        hf.check_synapse(params, values, syn_params, self)
 
     def testQuantalStpSynapse(self):
         # params a and n are not tested since Connect cannot handle integer parameter yet
@@ -160,7 +160,7 @@ class TestParams(unittest.TestCase):
         params = ['U', 'tau_fac', 'tau_rec', 'u']
         values = [0.679, 8.45, 746.2, 0.498]
         syn_params = {'model': 'quantal_stp_synapse'}
-        hf.test_synapse(params, values, syn_params, self)
+        hf.check_synapse(params, values, syn_params, self)
 
     def testStdpFacetshwSynapseHom(self):
         params = [ 'a_acausal', 'a_causal', 'a_thresh_th', 'a_thresh_tl',
@@ -168,37 +168,37 @@ class TestParams(unittest.TestCase):
                  ]
         values = [0.162, 0.263, 20.46, 19.83, 0.1]
         syn_params = {'model': 'stdp_facetshw_synapse_hom'}
-        hf.test_synapse(params, values, syn_params, self)
+        hf.check_synapse(params, values, syn_params, self)
 
     def testStdpPlSynapseHom(self):
         params = ['Kplus']
         values = [0.173]
         syn_params = {'model': 'stdp_pl_synapse_hom'}
-        hf.test_synapse(params, values, syn_params, self)
+        hf.check_synapse(params, values, syn_params, self)
             
     def testStdpSynapseHom(self):
         params = ['Kplus']
         values = [0.382]
         syn_params = {'model': 'stdp_synapse_hom'}
-        hf.test_synapse(params, values, syn_params, self)
+        hf.check_synapse(params, values, syn_params, self)
             
     def testStdpSynapse(self):
         params = ['Wmax', 'alpha', 'lambda', 'mu_minus', 'mu_plus', 'tau_plus']
         values = [98.34, 0.945, 0.02, 0.945, 1.26, 19.73]
         syn_params = {'model': 'stdp_synapse'}
-        hf.test_synapse(params, values, syn_params, self)
+        hf.check_synapse(params, values, syn_params, self)
             
     def testTsodyks2Synapse(self):
         params = ['U', 'tau_fac', 'tau_rec', 'u', 'x']
         values = [0.362, 0.152, 789.2, 0.683, 0.945]
         syn_params = {'model': 'tsodyks2_synapse'}
-        hf.test_synapse(params, values, syn_params, self)
+        hf.check_synapse(params, values, syn_params, self)
 
     def testTsodyksSynapse(self):
         params = ['U', 'tau_fac', 'tau_psc', 'tau_rec', 'x', 'y', 'u']
         values = [0.452, 0.263, 2.56, 801.34, 0.567, 0.376, 0.102]
         syn_params = {'model': 'tsodyks_synapse'}
-        hf.test_synapse(params, values, syn_params, self)
+        hf.check_synapse(params, values, syn_params, self)
             
     def testStdpDopamineSynapse(self):
         # ResetKernel() since parameter setting not thread save for this synapse type
@@ -208,7 +208,7 @@ class TestParams(unittest.TestCase):
         params = ['c', 'n']
         values = [0.153, 0.365]
         syn_params = {'model': 'stdp_dopamine_synapse'}
-        hf.test_synapse(params, values, syn_params, self)
+        hf.check_synapse(params, values, syn_params, self)
             
     def testRPortAllSynapses(self):
         syns = [ 'cont_delay_synapse', 'ht_synapse', 'quantal_stp_synapse',
@@ -250,7 +250,7 @@ class TestParams(unittest.TestCase):
                 vol = hf.nest.Create('volume_transmitter')
                 hf.nest.SetDefaults('stdp_dopamine_synapse',{'vt':vol[0]})
             syn_params['model'] = syn
-            hf.test_synapse(['weight'], [syn_params['weight']], syn_params, self)
+            hf.check_synapse(['weight'], [syn_params['weight']], syn_params, self)
             self.setUp()
 
     def testDelayAllSynapses(self):
@@ -269,7 +269,7 @@ class TestParams(unittest.TestCase):
                 vol = hf.nest.Create('volume_transmitter')
                 hf.nest.SetDefaults('stdp_dopamine_synapse',{'vt':vol[0]})
             syn_params['model'] = syn
-            hf.test_synapse(['delay'], [syn_params['delay']], syn_params, self)
+            hf.check_synapse(['delay'], [syn_params['delay']], syn_params, self)
             self.setUp()
 
     

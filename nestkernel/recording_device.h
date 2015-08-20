@@ -134,8 +134,6 @@ namespace nest
   The following parameters control how output is formatted:
   /withtime      - boolean value which specifies whether the network time should be
                    recorded (default: true).
-  /withgid       - boolean value which specifies whether the global id of the observed node(s)
-                   should be recorded (default: false).
   /time_in_steps - boolean value which specifies whether to print time in steps, i.e., multiples
                    of the resolution, rather than in ms. If combined with /precise_times, each
                    time is printed as a pair of an integer step number and a double offset < 0.
@@ -152,8 +150,8 @@ namespace nest
   /n_events      - Number of events collected or sampled. n_events can be set to 0, but
                    no other value. Setting n_events to 0 will delete all spikes recorded
                    in memory. n_events will count events even when not recording to memory.
-  /events        - Dictionary with elements /senders (sender GID, only if /withgid or /withpath
-                   are true), /times (spike times in ms or steps, depending on /time_in_steps;
+  /events        - Dictionary with elements /senders (sender GID, only if /withpath
+                   is true), /times (spike times in ms or steps, depending on /time_in_steps;
                    only if /withtime is true) and /offsets (only if /time_in_steps,
                    /precise_times and /withtime are true). All data stored in memory
                    is erased when /n_events is set to 0.
@@ -223,9 +221,8 @@ public:
    * @param Mode of recording device.
    * @param Default file name extension, excluding ".".
    * @param Default value for withtime property
-   * @param Default value for withgid property
    */
-  RecordingDevice( const Node&, Mode, const std::string&, bool, bool );
+  RecordingDevice( const Node&, Mode, const std::string&, bool );
 
   /**
    * Copy from prototype member.
@@ -384,7 +381,6 @@ private:
     bool to_memory_;      //!< true if data should be recorded in memory, default
     bool time_in_steps_;  //!< true if time is printed in steps, not ms.
     bool precise_times_;  //!< true if time is computed including offset
-    bool withgid_;        //!< true if element GID is to be printed, default
     bool withtime_;       //!< true if time of event is to be printed, default
 
     long fbuffer_size_;     //!< the buffer size to use when writing to file
@@ -402,9 +398,8 @@ private:
      * Set default parameter values.
      * @param Default file name extension, excluding ".".
      * @param Default value for withtime property
-     * @param Default value for withgid property
      */
-    Parameters_( const std::string&, bool, bool );
+    Parameters_( const std::string&, bool );
 
     void get( const RecordingDevice&,
       DictionaryDatum& ) const; //!< Store current values in dictionary

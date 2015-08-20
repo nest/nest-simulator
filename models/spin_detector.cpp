@@ -36,8 +36,7 @@ nest::spin_detector::spin_detector()
   , device_( *this,
       RecordingDevice::SPIN_DETECTOR,
       "gdf",
-      true,
-      true ) // record time, gid
+      true ) // record time
   , last_in_gid_( 0 )
   , t_last_in_spike_( Time::neg_inf() )
   , user_set_precise_times_( false )

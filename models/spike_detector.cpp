@@ -33,7 +33,7 @@
 
 nest::spike_detector::spike_detector()
   : Node()
-  , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true ) // record time and gid
+  , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true ) // record time and gid
   , user_set_precise_times_( false )
   , has_proxies_( false )
   , local_receiver_( true )

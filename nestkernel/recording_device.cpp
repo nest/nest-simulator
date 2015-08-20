@@ -42,13 +42,11 @@
  * ---------------------------------------------------------------- */
 
 nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
-  bool withtime,
-  bool withgid )
+  bool withtime )
   : to_file_( false )
   , to_memory_( true )
   , time_in_steps_( false )
   , precise_times_( false )
-  , withgid_( withgid )
   , withtime_( withtime )
   , fbuffer_size_( BUFSIZ ) // default buffer size as defined in <cstdio>
   , label_()
@@ -80,7 +78,6 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd, DictionaryDa
   ( *d )[ names::label ] = label_;
 
   ( *d )[ names::withtime ] = withtime_;
-  ( *d )[ names::withgid ] = withgid_;
 
   ( *d )[ names::time_in_steps ] = time_in_steps_;
   if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR )
@@ -120,7 +117,6 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::label, label_ );
-  updateValue< bool >( d, names::withgid, withgid_ );
   updateValue< bool >( d, names::withtime, withtime_ );
   updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
   if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR )
@@ -199,11 +195,8 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d, const Parameters_& p ) c
   else
     dict = getValue< DictionaryDatum >( d, names::events );
 
-  if ( p.withgid_ )
-  {
-    initialize_property_intvector( dict, names::senders );
-    append_property( dict, names::senders, std::vector< long >( event_senders_ ) );
-  }
+  initialize_property_intvector( dict, names::senders );
+  append_property( dict, names::senders, std::vector< long >( event_senders_ ) );
 
   if ( p.withtime_ )
   {
@@ -251,12 +244,11 @@ nest::RecordingDevice::State_::set( const DictionaryDatum& d )
 nest::RecordingDevice::RecordingDevice( const Node& n,
   Mode mode,
   const std::string& file_ext,
-  bool withtime,
-  bool withgid )
+  bool withtime )
   : Device()
   , node_( n )
   , mode_( mode )
-  , P_( file_ext, withtime, withgid )
+  , P_( file_ext, withtime )
   , S_()
 {
 }
@@ -496,8 +488,7 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
 void
 nest::RecordingDevice::print_id_( std::ostream& os, index gid )
 {
-  if ( P_.withgid_ )
-    os << gid << '\t';
+  os << gid << '\t';
 }
 
 void
@@ -521,8 +512,7 @@ nest::RecordingDevice::print_time_( std::ostream& os, const Time& t, double offs
 void
 nest::RecordingDevice::store_data_( index sender, const Time& t, double offs )
 {
-  if ( P_.withgid_ )
-    S_.event_senders_.push_back( sender );
+  S_.event_senders_.push_back( sender );
 
   if ( P_.withtime_ )
   {

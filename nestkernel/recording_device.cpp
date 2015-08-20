@@ -52,7 +52,6 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   , withgid_( withgid )
   , withtime_( withtime )
   , precision_( 3 )
-  , scientific_( false )
   , binary_( false )
   , fbuffer_size_( BUFSIZ ) // default buffer size as defined in <cstdio>
   , label_()
@@ -107,7 +106,6 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd, DictionaryDa
 
   ( *d )[ names::file_extension ] = file_ext_;
   ( *d )[ names::precision ] = precision_;
-  ( *d )[ names::scientific ] = scientific_;
 
   ( *d )[ names::binary ] = binary_;
   ( *d )[ names::fbuffer_size ] = fbuffer_size_;
@@ -137,7 +135,6 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
     updateValue< bool >( d, names::precise_times, precise_times_ );
   updateValue< std::string >( d, names::file_extension, file_ext_ );
   updateValue< long >( d, names::precision, precision_ );
-  updateValue< bool >( d, names::scientific, scientific_ );
 
   updateValue< bool >( d, names::binary, binary_ );
 
@@ -420,10 +417,7 @@ nest::RecordingDevice::calibrate()
        since different devices may have different settings and
        this would lead to a mess.
      */
-    if ( P_.scientific_ )
-      B_.fs_ << std::scientific;
-    else
-      B_.fs_ << std::fixed;
+    B_.fs_ << std::fixed;
 
     B_.fs_ << std::setprecision( P_.precision_ );
 

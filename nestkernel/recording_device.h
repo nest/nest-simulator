@@ -146,8 +146,6 @@ namespace nest
                    the spike time. This is only useful when recording from neurons that can
                    emit spikes off-grid (see module precise). Times are given in milliseconds.
                    If /time_in_steps is true, times are given as steps and negative offset.
-  /scientific    - if set to true, doubles are written in scientific format, otherwise in
-                   fixed format; affects file output only, not screen output (default: false)
   /precision     - number of digits to use in output of doubles to file (default: 3)
   /binary        - if set to true, data is written in binary mode to files instead of ASCII.
                    This setting affects file output only, not screen output (default: false)
@@ -401,7 +399,6 @@ private:
     bool withtime_;       //!< true if time of event is to be printed, default
 
     long precision_;  //!< precision of doubles written to file
-    bool scientific_; //!< use scientific format if true, else fixed
 
     bool binary_;           //!< true if to write files in binary mode instead of ASCII
     long fbuffer_size_;     //!< the buffer size to use when writing to file

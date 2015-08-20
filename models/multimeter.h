@@ -58,26 +58,11 @@ each recorded quantity, a vector of doubles is returned. The vector has the
 same name as the /recordable. If /withtime is set, times are given in the
 /times vector in /events.
 
-Accumulator mode:
-Multimeter can operate in accumulator mode. In this case, values for all recorded
-variables are added across all recorded nodes (but kept separate in time). This can
-be useful to record average membrane potential in a population.
-
-To activate accumulator mode, either set /to_accumulator to true, or set
-/record_to [ /accumulator ].  In accumulator mode, you cannot record to file,
-to memory, to screen, with GID or with weight. You must activate accumulator mode
-before simulating. Accumulator data is never written to file. You must extract it
-from the device using GetStatus.
-
 Remarks:
  - The set of variables to record and the recording interval must be set
    BEFORE the multimeter is connected to any node, and cannot be changed
    afterwards.
  - A multimeter cannot be frozen.
- - If you record with multimeter in accumulator mode and some of the nodes
-   you record from and others are not, data will only be collected from the
-   unfrozen nodes. Most likely, this will lead to confusing results, so
-   you should not use multimeter with frozen nodes.
 
 Parameters:
      The following parameters can be set in the status dictionary:

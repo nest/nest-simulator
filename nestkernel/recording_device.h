@@ -341,11 +341,6 @@ public:
   {
     return P_.to_memory_;
   }
-  bool
-  to_accumulator() const
-  {
-    return P_.to_accumulator_;
-  }
 
   inline void set_precise( bool use_precise, long precision );
 
@@ -408,7 +403,6 @@ private:
     bool to_file_;        //!< true if recorder writes its output to a file
     bool to_screen_;      //!< true if recorder writes its output to stdout
     bool to_memory_;      //!< true if data should be recorded in memory, default
-    bool to_accumulator_; //!< true if data is to be accumulated; exclusive to all other to_*
     bool time_in_steps_;  //!< true if time is printed in steps, not ms.
     bool precise_times_;  //!< true if time is computed including offset
     bool withgid_;        //!< true if element GID is to be printed, default

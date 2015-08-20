@@ -204,18 +204,16 @@ Multimeter::handle( DataLoggingReply& reply )
     reply.set_stamp( info[ j ].timestamp );
 
     // record sender and time information; in accumulator mode only for first Reply in slice
-    if ( !device_.to_accumulator() || V_.new_request_ )
+    if ( V_.new_request_ )
       device_.record_event( reply, false ); // false: more data to come
 
-    if ( !device_.to_accumulator() )
-    {
-      // "print" actual data, but not in accumulator mode
-      print_value_( info[ j ].data );
+    // "print" actual data, but not in accumulator mode
+    print_value_( info[ j ].data );
 
-      if ( device_.to_memory() )
-        S_.data_.push_back( info[ j ].data );
-    }
-    else
+    if ( device_.to_memory() )
+      S_.data_.push_back( info[ j ].data );
+    
+	else
     {
       if ( V_.new_request_ ) // first reply in slice, push back to create new time points
         S_.data_.push_back( info[ j ].data );
@@ -262,10 +260,7 @@ Multimeter::add_data_( DictionaryDatum& d ) const
       dv[ t ] = S_.data_[ t ][ v ];
     }
     initialize_property_doublevector( d, P_.record_from_[ v ] );
-    if ( device_.to_accumulator() && not dv.empty() )
-      accumulate_property( d, P_.record_from_[ v ], dv );
-    else
-      append_property( d, P_.record_from_[ v ], dv );
+    append_property( d, P_.record_from_[ v ], dv );
   }
 }
 

@@ -48,7 +48,6 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   : to_file_( false )
   , to_screen_( false )
   , to_memory_( true )
-  , to_accumulator_( false )
   , time_in_steps_( false )
   , precise_times_( false )
   , withgid_( withgid )
@@ -99,8 +98,6 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd, DictionaryDa
   ( *d )[ names::to_screen ] = to_screen_;
   ( *d )[ names::to_memory ] = to_memory_;
   ( *d )[ names::to_file ] = to_file_;
-  if ( rd.mode_ == RecordingDevice::MULTIMETER )
-    ( *d )[ names::to_accumulator ] = to_accumulator_;
 
   ArrayDatum ad;
   if ( to_file_ )
@@ -109,9 +106,6 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd, DictionaryDa
     ad.push_back( LiteralDatum( names::memory ) );
   if ( to_screen_ )
     ad.push_back( LiteralDatum( names::screen ) );
-  if ( rd.mode_ == RecordingDevice::MULTIMETER )
-    if ( to_accumulator_ )
-      ad.push_back( LiteralDatum( names::accumulator ) );
   ( *d )[ names::record_to ] = ad;
 
   ( *d )[ names::file_extension ] = file_ext_;
@@ -176,14 +170,12 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   rec_change = updateValue< bool >( d, names::to_screen, to_screen_ ) || rec_change;
   rec_change = updateValue< bool >( d, names::to_memory, to_memory_ ) || rec_change;
   rec_change = updateValue< bool >( d, names::to_file, to_file_ ) || rec_change;
-  if ( rd.mode_ == RecordingDevice::MULTIMETER )
-    rec_change = updateValue< bool >( d, names::to_accumulator, to_accumulator_ ) || rec_change;
 
   const bool have_record_to = d->known( names::record_to );
   if ( have_record_to )
   {
     // clear all flags
-    to_file_ = to_screen_ = to_memory_ = to_accumulator_ = false;
+    to_file_ = to_screen_ = to_memory_ = false;
 
     // check for flags present in array, could be far more elegant ...
     ArrayDatum ad = getValue< ArrayDatum >( d, names::record_to );
@@ -194,15 +186,11 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
         to_memory_ = true;
       else if ( *t == LiteralDatum( names::screen ) || *t == Token( names::screen.toString() ) )
         to_screen_ = true;
-      else if ( rd.mode_ == RecordingDevice::MULTIMETER
-        && ( *t == LiteralDatum( names::accumulator )
-                  || *t == Token( names::accumulator.toString() ) ) )
-        to_accumulator_ = true;
       else
       {
         if ( rd.mode_ == RecordingDevice::MULTIMETER )
           throw BadProperty(
-            "/to_record must be array, allowed entries: /file, /memory, /screen, /accumulator." );
+            "/to_record must be array, allowed entries: /file, /memory, /screen." );
         else
           throw BadProperty(
             "/to_record must be array, allowed entries: /file, /memory, /screen." );
@@ -213,16 +201,6 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
     NestModule::get_network().message( SLIInterpreter::M_INFO,
       "RecordingDevice::set_status",
       "Data will be recorded to file and to memory." );
-
-  if ( to_accumulator_ && ( to_file_ || to_screen_ || to_memory_ || withgid_ || withweight_ ) )
-  {
-    to_file_ = to_screen_ = to_memory_ = withgid_ = withweight_ = false;
-    Node::network()->message( SLIInterpreter::M_WARNING,
-      "RecordingDevice::set_status()",
-      "Accumulator mode selected. All incompatible properties "
-      "(to_file, to_screen, to_memory, withgid, withweight) "
-      "have been set to false." );
-  }
 }
 
 void
@@ -244,14 +222,12 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d, const Parameters_& p ) c
 
   if ( p.withgid_ )
   {
-    assert( not p.to_accumulator_ );
     initialize_property_intvector( dict, names::senders );
     append_property( dict, names::senders, std::vector< long >( event_senders_ ) );
   }
 
   if ( p.withweight_ )
   {
-    assert( not p.to_accumulator_ );
     initialize_property_doublevector( dict, names::weights );
     append_property( dict, names::weights, std::vector< double_t >( event_weights_ ) );
   }
@@ -264,27 +240,18 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d, const Parameters_& p ) c
       // When not accumulating, we just add time data. When accumulating, we must add
       // time data only from one thread and ensure that time data from other threads
       // is either empty of identical to what is present.
-      if ( not p.to_accumulator_ )
-        append_property( dict, names::times, std::vector< long >( event_times_steps_ ) );
-      else
-        provide_property( dict, names::times, std::vector< long >( event_times_steps_ ) );
+      append_property( dict, names::times, std::vector< long >( event_times_steps_ ) );
 
       if ( p.precise_times_ )
       {
         initialize_property_doublevector( dict, names::offsets );
-        if ( not p.to_accumulator_ )
-          append_property( dict, names::offsets, std::vector< double_t >( event_times_offsets_ ) );
-        else
-          provide_property( dict, names::offsets, std::vector< double_t >( event_times_offsets_ ) );
+	    append_property( dict, names::offsets, std::vector< double_t >( event_times_offsets_ ) );
       }
     }
     else
     {
       initialize_property_doublevector( dict, names::times );
-      if ( not p.to_accumulator_ )
-        append_property( dict, names::times, std::vector< double_t >( event_times_ms_ ) );
-      else
-        provide_property( dict, names::times, std::vector< double_t >( event_times_ms_ ) );
+      append_property( dict, names::times, std::vector< double_t >( event_times_ms_ ) );
     }
   }
 
@@ -574,9 +541,9 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
     }
   }
 
-  // storing data when recording to accumulator relies on the fact
-  // that multimeter will call us only once per accumulation step
-  if ( P_.to_memory_ || P_.to_accumulator_ )
+  // storing data when recording to accumulator relies on the fact that
+  // multimeter will call us only once per accumulation step
+  if ( P_.to_memory_ )
     store_data_( sender, stamp, offset, weight );
 }
 

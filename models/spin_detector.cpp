@@ -75,7 +75,7 @@ nest::spin_detector::calibrate()
 {
   if ( !user_set_precise_times_ && network()->get_off_grid_communication() )
   {
-    device_.set_precise( true, 15 );
+    device_.set_precise( true );
 
     network()->message( SLIInterpreter::M_INFO,
       "spin_detector::calibrate",

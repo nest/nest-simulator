@@ -144,7 +144,6 @@ namespace nest
                    the spike time. This is only useful when recording from neurons that can
                    emit spikes off-grid (see module precise). Times are given in milliseconds.
                    If /time_in_steps is true, times are given as steps and negative offset.
-  /precision     - number of digits to use in output of doubles to file (default: 3)
   /fbuffer_size  - the size of the buffer to use for writing to files. The default size is
                    determined by the implementation of the C++ standard library. To obtain an
                    unbuffered file stream, use a buffer size of 0.
@@ -328,7 +327,7 @@ public:
     return P_.to_memory_;
   }
 
-  inline void set_precise( bool use_precise, long precision );
+  inline void set_precise( bool use_precise );
 
 private:
   /**
@@ -387,8 +386,6 @@ private:
     bool precise_times_;  //!< true if time is computed including offset
     bool withgid_;        //!< true if element GID is to be printed, default
     bool withtime_;       //!< true if time of event is to be printed, default
-
-    long precision_;  //!< precision of doubles written to file
 
     long fbuffer_size_;     //!< the buffer size to use when writing to file
     long fbuffer_size_old_; //!< the buffer size to use when writing to file (old)
@@ -463,10 +460,9 @@ RecordingDevice::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-RecordingDevice::set_precise( bool use_precise, long precision )
+RecordingDevice::set_precise( bool use_precise )
 {
   P_.precise_times_ = use_precise;
-  P_.precision_ = precision;
 }
 
 

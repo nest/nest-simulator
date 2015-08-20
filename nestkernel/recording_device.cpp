@@ -50,7 +50,6 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   , precise_times_( false )
   , withgid_( withgid )
   , withtime_( withtime )
-  , precision_( 3 )
   , fbuffer_size_( BUFSIZ ) // default buffer size as defined in <cstdio>
   , label_()
   , file_ext_( file_ext )
@@ -100,7 +99,6 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd, DictionaryDa
   ( *d )[ names::record_to ] = ad;
 
   ( *d )[ names::file_extension ] = file_ext_;
-  ( *d )[ names::precision ] = precision_;
 
   ( *d )[ names::fbuffer_size ] = fbuffer_size_;
 
@@ -128,7 +126,6 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR )
     updateValue< bool >( d, names::precise_times, precise_times_ );
   updateValue< std::string >( d, names::file_extension, file_ext_ );
-  updateValue< long >( d, names::precision, precision_ );
 
   long fbuffer_size;
   if ( updateValue< long >( d, names::fbuffer_size, fbuffer_size ) )
@@ -397,7 +394,6 @@ nest::RecordingDevice::calibrate()
 
     /* Set formatting */
     B_.fs_ << std::fixed;
-    B_.fs_ << std::setprecision( P_.precision_ );
 
     if ( P_.fbuffer_size_ != P_.fbuffer_size_old_ )
     {

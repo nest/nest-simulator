@@ -132,8 +132,6 @@ namespace nest
                     the file is always closed upon ResetKernel. (Default: true).
 
   The following parameters control how output is formatted:
-  /withtime      - boolean value which specifies whether the network time should be
-                   recorded (default: true).
   /time_in_steps - boolean value which specifies whether to print time in steps, i.e., multiples
                    of the resolution, rather than in ms. If combined with /precise_times, each
                    time is printed as a pair of an integer step number and a double offset < 0.
@@ -220,9 +218,8 @@ public:
    * @param Node of which the device is member.
    * @param Mode of recording device.
    * @param Default file name extension, excluding ".".
-   * @param Default value for withtime property
    */
-  RecordingDevice( const Node&, Mode, const std::string&, bool );
+  RecordingDevice( const Node&, Mode, const std::string& );
 
   /**
    * Copy from prototype member.
@@ -381,7 +378,6 @@ private:
     bool to_memory_;      //!< true if data should be recorded in memory, default
     bool time_in_steps_;  //!< true if time is printed in steps, not ms.
     bool precise_times_;  //!< true if time is computed including offset
-    bool withtime_;       //!< true if time of event is to be printed, default
 
     long fbuffer_size_;     //!< the buffer size to use when writing to file
     long fbuffer_size_old_; //!< the buffer size to use when writing to file (old)
@@ -397,9 +393,8 @@ private:
     /**
      * Set default parameter values.
      * @param Default file name extension, excluding ".".
-     * @param Default value for withtime property
      */
-    Parameters_( const std::string&, bool );
+    Parameters_( const std::string& );
 
     void get( const RecordingDevice&,
       DictionaryDatum& ) const; //!< Store current values in dictionary

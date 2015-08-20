@@ -41,13 +41,11 @@
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
-  bool withtime )
+nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext )
   : to_file_( false )
   , to_memory_( true )
   , time_in_steps_( false )
   , precise_times_( false )
-  , withtime_( withtime )
   , fbuffer_size_( BUFSIZ ) // default buffer size as defined in <cstdio>
   , label_()
   , file_ext_( file_ext )
@@ -76,8 +74,6 @@ void
 nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd, DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
-
-  ( *d )[ names::withtime ] = withtime_;
 
   ( *d )[ names::time_in_steps ] = time_in_steps_;
   if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR )
@@ -117,7 +113,6 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::label, label_ );
-  updateValue< bool >( d, names::withtime, withtime_ );
   updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
   if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR )
     updateValue< bool >( d, names::precise_times, precise_times_ );
@@ -198,27 +193,24 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d, const Parameters_& p ) c
   initialize_property_intvector( dict, names::senders );
   append_property( dict, names::senders, std::vector< long >( event_senders_ ) );
 
-  if ( p.withtime_ )
+  if ( p.time_in_steps_ )
   {
-    if ( p.time_in_steps_ )
-    {
-      initialize_property_intvector( dict, names::times );
-      // When not accumulating, we just add time data. When accumulating, we must add
-      // time data only from one thread and ensure that time data from other threads
-      // is either empty of identical to what is present.
-      append_property( dict, names::times, std::vector< long >( event_times_steps_ ) );
+    initialize_property_intvector( dict, names::times );
+    // When not accumulating, we just add time data. When accumulating, we must add
+    // time data only from one thread and ensure that time data from other threads
+    // is either empty of identical to what is present.
+    append_property( dict, names::times, std::vector< long >( event_times_steps_ ) );
 
-      if ( p.precise_times_ )
-      {
-        initialize_property_doublevector( dict, names::offsets );
-	    append_property( dict, names::offsets, std::vector< double_t >( event_times_offsets_ ) );
-      }
-    }
-    else
+    if ( p.precise_times_ )
     {
-      initialize_property_doublevector( dict, names::times );
-      append_property( dict, names::times, std::vector< double_t >( event_times_ms_ ) );
+      initialize_property_doublevector( dict, names::offsets );
+      append_property( dict, names::offsets, std::vector< double_t >( event_times_offsets_ ) );
     }
+  }
+  else
+  {
+    initialize_property_doublevector( dict, names::times );
+    append_property( dict, names::times, std::vector< double_t >( event_times_ms_ ) );
   }
 
   ( *d )[ names::events ] = dict;
@@ -243,12 +235,11 @@ nest::RecordingDevice::State_::set( const DictionaryDatum& d )
 
 nest::RecordingDevice::RecordingDevice( const Node& n,
   Mode mode,
-  const std::string& file_ext,
-  bool withtime )
+  const std::string& file_ext )
   : Device()
   , node_( n )
   , mode_( mode )
-  , P_( file_ext, withtime )
+  , P_( file_ext )
   , S_()
 {
 }
@@ -494,9 +485,6 @@ nest::RecordingDevice::print_id_( std::ostream& os, index gid )
 void
 nest::RecordingDevice::print_time_( std::ostream& os, const Time& t, double offs )
 {
-  if ( !P_.withtime_ )
-    return;
-
   if ( P_.time_in_steps_ )
   {
     os << t.get_steps() << '\t';
@@ -514,19 +502,16 @@ nest::RecordingDevice::store_data_( index sender, const Time& t, double offs )
 {
   S_.event_senders_.push_back( sender );
 
-  if ( P_.withtime_ )
+  if ( P_.time_in_steps_ )
   {
-    if ( P_.time_in_steps_ )
-    {
-      S_.event_times_steps_.push_back( t.get_steps() );
-      if ( P_.precise_times_ )
-        S_.event_times_offsets_.push_back( offs );
-    }
-    else if ( P_.precise_times_ )
-      S_.event_times_ms_.push_back( t.get_ms() - offs );
-    else
-      S_.event_times_ms_.push_back( t.get_ms() );
+    S_.event_times_steps_.push_back( t.get_steps() );
+    if ( P_.precise_times_ )
+      S_.event_times_offsets_.push_back( offs );
   }
+  else if ( P_.precise_times_ )
+    S_.event_times_ms_.push_back( t.get_ms() - offs );
+  else
+    S_.event_times_ms_.push_back( t.get_ms() );
 }
 
 const std::string

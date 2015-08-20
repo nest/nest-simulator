@@ -88,11 +88,11 @@ namespace nest
   /interval - Sampling interval in ms (default: 1ms).
 
   The following parameters control where output is sent/data collected:
-  /record_to - An array containing any combination of /file, /memory, /screen,
+  /record_to - An array containing any combination of /file, /memory,
                indicating whether to write to file, record in memory or write
                to the console window. An empty array turns all recording of
                individual events off, only an event count is kept. You can also pass
-               strings (file), (memory), (screen), mainly for compatibility with
+               strings (file), (memory), mainly for compatibility with
                Python.
 
                The name of the output file is
@@ -108,11 +108,9 @@ namespace nest
                or file_extension.
 
   /to_file   - If true, turn on recording to file. Similar to /record_to [/file], but
-               does not affect settings for recording to memory and screen.
-  /to_screen - If true, turn on recording to screen. Similar to /record_to [/screen], but
-               does not affect settings for recording to memory and file.
+               does not affect settings for recording to memory.
   /to_memory - If true, turn on recording to memory Similar to /record_to [/memory], but
-               does not affect settings for recording to file and screen.
+               does not affect settings for recording to file.
 
   /filenames - Array containing the filenames where data is recorded to. This array has one
                entry per local thread and is only available if /to_file is set to true, or
@@ -147,8 +145,6 @@ namespace nest
                    emit spikes off-grid (see module precise). Times are given in milliseconds.
                    If /time_in_steps is true, times are given as steps and negative offset.
   /precision     - number of digits to use in output of doubles to file (default: 3)
-  /binary        - if set to true, data is written in binary mode to files instead of ASCII.
-                   This setting affects file output only, not screen output (default: false)
   /fbuffer_size  - the size of the buffer to use for writing to files. The default size is
                    determined by the implementation of the C++ standard library. To obtain an
                    unbuffered file stream, use a buffer size of 0.
@@ -322,11 +318,6 @@ public:
   void set_status( const DictionaryDatum&, DataT& t );
 
   bool
-  to_screen() const
-  {
-    return P_.to_screen_;
-  }
-  bool
   to_file() const
   {
     return P_.to_file_;
@@ -391,7 +382,6 @@ private:
   struct Parameters_
   {
     bool to_file_;        //!< true if recorder writes its output to a file
-    bool to_screen_;      //!< true if recorder writes its output to stdout
     bool to_memory_;      //!< true if data should be recorded in memory, default
     bool time_in_steps_;  //!< true if time is printed in steps, not ms.
     bool precise_times_;  //!< true if time is computed including offset
@@ -400,7 +390,6 @@ private:
 
     long precision_;  //!< precision of doubles written to file
 
-    bool binary_;           //!< true if to write files in binary mode instead of ASCII
     long fbuffer_size_;     //!< the buffer size to use when writing to file
     long fbuffer_size_old_; //!< the buffer size to use when writing to file (old)
 
@@ -485,13 +474,6 @@ template < typename ValueT >
 void
 RecordingDevice::print_value( const ValueT& value, bool endrecord )
 {
-  if ( P_.to_screen_ )
-  {
-    std::cout << value << '\t';
-    if ( endrecord )
-      std::cout << '\n';
-  }
-
   if ( P_.to_file_ )
   {
     B_.fs_ << value << '\t';

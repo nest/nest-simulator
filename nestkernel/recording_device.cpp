@@ -45,14 +45,12 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   bool withtime,
   bool withgid )
   : to_file_( false )
-  , to_screen_( false )
   , to_memory_( true )
   , time_in_steps_( false )
   , precise_times_( false )
   , withgid_( withgid )
   , withtime_( withtime )
   , precision_( 3 )
-  , binary_( false )
   , fbuffer_size_( BUFSIZ ) // default buffer size as defined in <cstdio>
   , label_()
   , file_ext_( file_ext )
@@ -89,9 +87,8 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd, DictionaryDa
   if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR )
     ( *d )[ names::precise_times ] = precise_times_;
 
-  // We must maintain /to_file, /to_screen, and /to_memory, because
+  // We must maintain /to_file, and /to_memory, because
   // the new /record_to feature is not working in Pynest.
-  ( *d )[ names::to_screen ] = to_screen_;
   ( *d )[ names::to_memory ] = to_memory_;
   ( *d )[ names::to_file ] = to_file_;
 
@@ -100,14 +97,11 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd, DictionaryDa
     ad.push_back( LiteralDatum( names::file ) );
   if ( to_memory_ )
     ad.push_back( LiteralDatum( names::memory ) );
-  if ( to_screen_ )
-    ad.push_back( LiteralDatum( names::screen ) );
   ( *d )[ names::record_to ] = ad;
 
   ( *d )[ names::file_extension ] = file_ext_;
   ( *d )[ names::precision ] = precision_;
 
-  ( *d )[ names::binary ] = binary_;
   ( *d )[ names::fbuffer_size ] = fbuffer_size_;
 
   ( *d )[ names::close_after_simulate ] = close_after_simulate_;
@@ -136,8 +130,6 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   updateValue< std::string >( d, names::file_extension, file_ext_ );
   updateValue< long >( d, names::precision, precision_ );
 
-  updateValue< bool >( d, names::binary, binary_ );
-
   long fbuffer_size;
   if ( updateValue< long >( d, names::fbuffer_size, fbuffer_size ) )
   {
@@ -160,7 +152,6 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   // We must have || rec_change at the end, otherwise short-circuiting may
   // mean that some flags are not read.
   bool rec_change = false;
-  rec_change = updateValue< bool >( d, names::to_screen, to_screen_ ) || rec_change;
   rec_change = updateValue< bool >( d, names::to_memory, to_memory_ ) || rec_change;
   rec_change = updateValue< bool >( d, names::to_file, to_file_ ) || rec_change;
 
@@ -168,7 +159,7 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   if ( have_record_to )
   {
     // clear all flags
-    to_file_ = to_screen_ = to_memory_ = false;
+    to_file_ = to_memory_ = false;
 
     // check for flags present in array, could be far more elegant ...
     ArrayDatum ad = getValue< ArrayDatum >( d, names::record_to );
@@ -177,16 +168,14 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
         to_file_ = true;
       else if ( *t == LiteralDatum( names::memory ) || *t == Token( names::memory.toString() ) )
         to_memory_ = true;
-      else if ( *t == LiteralDatum( names::screen ) || *t == Token( names::screen.toString() ) )
-        to_screen_ = true;
       else
       {
         if ( rd.mode_ == RecordingDevice::MULTIMETER )
           throw BadProperty(
-            "/to_record must be array, allowed entries: /file, /memory, /screen." );
+            "/to_record must be array, allowed entries: /file, /memory." );
         else
           throw BadProperty(
-            "/to_record must be array, allowed entries: /file, /memory, /screen." );
+            "/to_record must be array, allowed entries: /file, /memory." );
       }
   }
 
@@ -354,10 +343,7 @@ nest::RecordingDevice::calibrate()
 
       if ( Node::network()->overwrite_files() )
       {
-        if ( P_.binary_ )
-          B_.fs_.open( P_.filename_.c_str(), std::ios::out | std::ios::binary );
-        else
-          B_.fs_.open( P_.filename_.c_str() );
+        B_.fs_.open( P_.filename_.c_str() );
       }
       else
       {
@@ -377,10 +363,7 @@ nest::RecordingDevice::calibrate()
           test.close();
 
         // file does not exist, so we can open
-        if ( P_.binary_ )
-          B_.fs_.open( P_.filename_.c_str(), std::ios::out | std::ios::binary );
-        else
-          B_.fs_.open( P_.filename_.c_str() );
+        B_.fs_.open( P_.filename_.c_str() );
       }
 
       if ( P_.fbuffer_size_ != P_.fbuffer_size_old_ )
@@ -412,13 +395,8 @@ nest::RecordingDevice::calibrate()
       throw IOError();
     }
 
-    /* Set formatting
-       Formatting is not applied to std::cout for screen output,
-       since different devices may have different settings and
-       this would lead to a mess.
-     */
+    /* Set formatting */
     B_.fs_ << std::fixed;
-
     B_.fs_ << std::setprecision( P_.precision_ );
 
     if ( P_.fbuffer_size_ != P_.fbuffer_size_old_ )
@@ -500,14 +478,6 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
   const double offset = event.get_offset();
 
   // std::cout << "recording device sender: " << sender << std::endl;
-
-  if ( P_.to_screen_ )
-  {
-    print_id_( std::cout, sender );
-    print_time_( std::cout, stamp, offset );
-    if ( endrecord )
-      std::cout << '\n';
-  }
 
   if ( P_.to_file_ )
   {

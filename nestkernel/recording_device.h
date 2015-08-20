@@ -138,8 +138,6 @@ namespace nest
                    recorded (default: true).
   /withgid       - boolean value which specifies whether the global id of the observed node(s)
                    should be recorded (default: false).
-  /withweight    - boolean value which specifies whether the weight of the event should be
-                   recorded (default: false).
   /time_in_steps - boolean value which specifies whether to print time in steps, i.e., multiples
                    of the resolution, rather than in ms. If combined with /precise_times, each
                    time is printed as a pair of an integer step number and a double offset < 0.
@@ -233,9 +231,8 @@ public:
    * @param Default file name extension, excluding ".".
    * @param Default value for withtime property
    * @param Default value for withgid property
-   * @param Default value for withweight property
    */
-  RecordingDevice( const Node&, Mode, const std::string&, bool, bool, bool = false );
+  RecordingDevice( const Node&, Mode, const std::string&, bool, bool );
 
   /**
    * Copy from prototype member.
@@ -362,14 +359,9 @@ private:
   void print_id_( std::ostream&, index );
 
   /**
-   * Print the weight of an event.
-   */
-  void print_weight_( std::ostream&, double );
-
-  /**
    * Store data in internal structure.
    */
-  void store_data_( index, const Time&, double, double );
+  void store_data_( index, const Time&, double );
 
   /**
    * Clear data in internal structure, and call clear_data_hook().
@@ -407,7 +399,6 @@ private:
     bool precise_times_;  //!< true if time is computed including offset
     bool withgid_;        //!< true if element GID is to be printed, default
     bool withtime_;       //!< true if time of event is to be printed, default
-    bool withweight_;     //!< true if weight of event is to be printed
 
     long precision_;  //!< precision of doubles written to file
     bool scientific_; //!< use scientific format if true, else fixed
@@ -430,7 +421,7 @@ private:
      * @param Default value for withtime property
      * @param Default value for withgid property
      */
-    Parameters_( const std::string&, bool, bool, bool );
+    Parameters_( const std::string&, bool, bool );
 
     void get( const RecordingDevice&,
       DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -448,7 +439,6 @@ private:
     std::vector< double_t > event_times_ms_;      //!< List of event times in ms
     std::vector< long > event_times_steps_;       //!< List of event times in steps
     std::vector< double_t > event_times_offsets_; //!< List of event time offsets
-    std::vector< double_t > event_weights_;       //!< List of event weights
 
     State_(); //!< Sets default parameter values
 

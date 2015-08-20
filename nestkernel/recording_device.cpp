@@ -43,8 +43,7 @@
 
 nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   bool withtime,
-  bool withgid,
-  bool withweight )
+  bool withgid )
   : to_file_( false )
   , to_screen_( false )
   , to_memory_( true )
@@ -52,7 +51,6 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   , precise_times_( false )
   , withgid_( withgid )
   , withtime_( withtime )
-  , withweight_( withweight )
   , precision_( 3 )
   , scientific_( false )
   , binary_( false )
@@ -87,7 +85,6 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd, DictionaryDa
 
   ( *d )[ names::withtime ] = withtime_;
   ( *d )[ names::withgid ] = withgid_;
-  ( *d )[ names::withweight ] = withweight_;
 
   ( *d )[ names::time_in_steps ] = time_in_steps_;
   if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR )
@@ -135,7 +132,6 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   updateValue< std::string >( d, names::label, label_ );
   updateValue< bool >( d, names::withgid, withgid_ );
   updateValue< bool >( d, names::withtime, withtime_ );
-  updateValue< bool >( d, names::withweight, withweight_ );
   updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
   if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR )
     updateValue< bool >( d, names::precise_times, precise_times_ );
@@ -226,12 +222,6 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d, const Parameters_& p ) c
     append_property( dict, names::senders, std::vector< long >( event_senders_ ) );
   }
 
-  if ( p.withweight_ )
-  {
-    initialize_property_doublevector( dict, names::weights );
-    append_property( dict, names::weights, std::vector< double_t >( event_weights_ ) );
-  }
-
   if ( p.withtime_ )
   {
     if ( p.time_in_steps_ )
@@ -279,12 +269,11 @@ nest::RecordingDevice::RecordingDevice( const Node& n,
   Mode mode,
   const std::string& file_ext,
   bool withtime,
-  bool withgid,
-  bool withweight )
+  bool withgid )
   : Device()
   , node_( n )
   , mode_( mode )
-  , P_( file_ext, withtime, withgid, withweight )
+  , P_( file_ext, withtime, withgid )
   , S_()
 {
 }
@@ -515,7 +504,6 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
-  const double weight = event.get_weight();
 
   // std::cout << "recording device sender: " << sender << std::endl;
 
@@ -523,7 +511,6 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
   {
     print_id_( std::cout, sender );
     print_time_( std::cout, stamp, offset );
-    print_weight_( std::cout, weight );
     if ( endrecord )
       std::cout << '\n';
   }
@@ -532,7 +519,6 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
   {
     print_id_( B_.fs_, sender );
     print_time_( B_.fs_, stamp, offset );
-    print_weight_( B_.fs_, weight );
     if ( endrecord )
     {
       B_.fs_ << '\n';
@@ -544,7 +530,7 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
   // storing data when recording to accumulator relies on the fact that
   // multimeter will call us only once per accumulation step
   if ( P_.to_memory_ )
-    store_data_( sender, stamp, offset, weight );
+    store_data_( sender, stamp, offset );
 }
 
 void
@@ -573,15 +559,7 @@ nest::RecordingDevice::print_time_( std::ostream& os, const Time& t, double offs
 }
 
 void
-nest::RecordingDevice::print_weight_( std::ostream& os, double weight )
-{
-  if ( P_.withweight_ )
-    os << weight << '\t';
-}
-
-
-void
-nest::RecordingDevice::store_data_( index sender, const Time& t, double offs, double weight )
+nest::RecordingDevice::store_data_( index sender, const Time& t, double offs )
 {
   if ( P_.withgid_ )
     S_.event_senders_.push_back( sender );
@@ -599,9 +577,6 @@ nest::RecordingDevice::store_data_( index sender, const Time& t, double offs, do
     else
       S_.event_times_ms_.push_back( t.get_ms() );
   }
-
-  if ( P_.withweight_ )
-    S_.event_weights_.push_back( weight );
 }
 
 const std::string
@@ -639,5 +614,4 @@ nest::RecordingDevice::State_::clear_events()
   event_times_ms_.clear();
   event_times_steps_.clear();
   event_times_offsets_.clear();
-  event_weights_.clear();
 }

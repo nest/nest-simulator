@@ -377,6 +377,7 @@ nest::RecordingDevice::calibrate()
 
     /* Set formatting */
     B_.fs_ << std::fixed;
+	B_.fs_ << std::setprecision(3);
 
     if ( P_.fbuffer_size_ != P_.fbuffer_size_old_ )
     {
@@ -460,9 +461,22 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
 
   if ( P_.to_file_ )
   {
-    print_id_( B_.fs_, sender );
-    print_time_( B_.fs_, stamp, offset );
-    if ( endrecord )
+	// print gid
+    B_.fs_ << sender << '\t';
+
+	// print time
+	if ( P_.time_in_steps_ )
+	{
+	  B_.fs_ << stamp.get_steps() << '\t';
+	  if ( P_.precise_times_ )
+		B_.fs_ << offset << '\t';
+	}
+	else if ( P_.precise_times_ )
+	  B_.fs_ << stamp.get_ms() - offset << '\t';
+	else
+	  B_.fs_ << stamp.get_ms() << '\t';
+    
+	if ( endrecord )
     {
       B_.fs_ << '\n';
       if ( P_.flush_records_ )
@@ -474,27 +488,6 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
   // multimeter will call us only once per accumulation step
   if ( P_.to_memory_ )
     store_data_( sender, stamp, offset );
-}
-
-void
-nest::RecordingDevice::print_id_( std::ostream& os, index gid )
-{
-  os << gid << '\t';
-}
-
-void
-nest::RecordingDevice::print_time_( std::ostream& os, const Time& t, double offs )
-{
-  if ( P_.time_in_steps_ )
-  {
-    os << t.get_steps() << '\t';
-    if ( P_.precise_times_ )
-      os << offs << '\t';
-  }
-  else if ( P_.precise_times_ )
-    os << t.get_ms() - offs << '\t';
-  else
-    os << t.get_ms() << '\t';
 }
 
 void

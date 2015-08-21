@@ -325,22 +325,6 @@ public:
 
 private:
   /**
-   * Print the time-stamp according to the recorder's flags.
-   *
-   * The following combinations are possible:
-   * time_in_steps & precise_times:  give steps and offsets separately
-   * time_in_steps                :  give steps, ignore offsets
-   *                 precise_times:  give time in ms, take into account offsets
-   * none set                     :  give time in ms, ignore offsets
-   */
-  void print_time_( std::ostream&, const Time&, double offset );
-
-  /**
-   * Print a node's global ID and/or address, according to the recorder's flags.
-   */
-  void print_id_( std::ostream&, index );
-
-  /**
    * Store data in internal structure.
    */
   void store_data_( index, const Time&, double );

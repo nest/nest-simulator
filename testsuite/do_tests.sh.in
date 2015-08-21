@@ -545,7 +545,7 @@ fi
 
 if test "x${TEST_PYNEST}" = xtrue ; then
 
-    if command -v nosetests >/dev/null 2>&1; then
+    if command -v nosetests >/dev/null 2>&1 && nosetests --with-xunit --xunit-file=/dev/null >/dev/null 2>&1; then
 
 	echo
 	echo "Phase 6: Running PyNEST tests."

@@ -51,7 +51,7 @@ double
 propagator_31( double tau_syn, double tau, double C, double h )
 {
   const double P31_linear =
-    h / ( 3. * C * tau * tau ) * h * h * ( tau_syn - tau ) * std::exp( -h / tau );
+    1 / ( 3. * C * tau * tau ) * h * h * h * ( tau_syn - tau ) * std::exp( -h / tau );
   const double P31 =
     1 / C * ( ( std::exp( -h / tau_syn ) - std::exp( -h / tau ) ) / ( -1 / tau_syn - -1 / tau )
               - h * std::exp( -h / tau_syn ) ) / ( -1 / tau - -1 / tau_syn );

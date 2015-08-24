@@ -20,8 +20,8 @@ public:
   virtual void finalize() = 0;
 
   virtual void write_event( const RecordingDevice& device, const Event& event ) = 0;
-  virtual void write_value( const double& value ) = 0;
-  virtual void write_end() = 0;
+  virtual void write_value( const RecordingDevice& device, const double& value ) = 0;
+  virtual void write_end( const RecordingDevice& device ) = 0;
 };
 
 } // namespace

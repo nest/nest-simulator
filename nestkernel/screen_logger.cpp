@@ -34,13 +34,13 @@ nest::ScreenLogger::write_event( const RecordingDevice& device, const Event& eve
 }
 
 void
-nest::ScreenLogger::write_value( const double& value )
+nest::ScreenLogger::write_value( const RecordingDevice& device, const double& value )
 {
   std::cout << "\t" << value;
 }
 
 void
-nest::ScreenLogger::write_end()
+nest::ScreenLogger::write_end( const RecordingDevice& device )
 {
   std::cout << std::endl;
 }

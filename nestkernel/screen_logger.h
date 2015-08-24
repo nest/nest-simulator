@@ -22,8 +22,8 @@ public:
   void initialize();
   void finalize();
   void write_event( const RecordingDevice& device, const Event& event );
-  void write_value( const double& value );
-  void write_end();
+  void write_value( const RecordingDevice& device, const double& value );
+  void write_end( const RecordingDevice& device );
 
 private:
   struct Parameters_

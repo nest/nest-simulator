@@ -451,9 +451,9 @@ RecordingDevice::print_value( const ValueT& value, bool endrecord )
   if ( P_.to_file_ )
   {
     Logger* logger = Node::network()->get_logger();
-    logger->write_value( value );
+    logger->write_value( *this, value );
     if ( endrecord )
-      logger->write_end();
+      logger->write_end( *this );
 
 	/*
     B_.fs_ << value << '\t';

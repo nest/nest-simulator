@@ -467,7 +467,7 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
     Logger* logger = Node::network()->get_logger();
     logger->write_event( *this, event );
     if ( endrecord )
-      logger->write_end();
+      logger->write_end( *this );
   }
 
   // storing data when recording to accumulator relies on the fact that

@@ -73,7 +73,8 @@
    n_events               integer vector                      - number of events from all sources.
 
    Remarks: This recorder does not record to file, screen or memory in the usual sense. The result
-   must be obtained by a call to GetStatus. Setting either N_channels, Tstart, Tstop, tau_max or delta_tau
+   must be obtained by a call to GetStatus. Setting either N_channels, Tstart, Tstop, tau_max or
+   delta_tau
    clears count_covariance, covariance and n_events.
 
    Example:

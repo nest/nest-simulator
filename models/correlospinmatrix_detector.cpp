@@ -316,9 +316,9 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
         // assume it will stay alone, so meaning a down tansition
 
         if ( S_.tentative_down_ ) // really was a down transition, because we now have another event
-	{
+        {
           down_transition = true;
-	}
+        }
 
         S_.tentative_down_ = true;
       }
@@ -356,12 +356,12 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       for ( int n = 0; n < P_.N_channels_; n++ )
       {
         if ( S_.curr_state_[ n ] )
-	{
+        {
           if ( S_.last_change_[ n ] < t_min_on )
-	  {
+          {
             t_min_on = S_.last_change_[ n ];
-	  }
-	}
+          }
+        }
       }
       const double_t tau_edge = P_.tau_max_.get_steps() + P_.delta_tau_.get_steps();
 
@@ -409,9 +409,9 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
         {
           S_.count_covariance_[ i ][ j ][ t0 ] += l;
           if ( i != j )
-	  {
+          {
             S_.count_covariance_[ j ][ i ][ t0 ] += l;
-	  }
+          }
         }
 
         // non-zero time lag covariance

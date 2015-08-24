@@ -297,6 +297,7 @@ nest::RecordingDevice::calibrate()
 
   if ( P_.to_file_ )
   {
+	/*
     // do we need to (re-)open the file
     bool newfile = false;
 
@@ -378,7 +379,7 @@ nest::RecordingDevice::calibrate()
       throw IOError();
     }
 
-    /* Set formatting */
+    // Set formatting
     B_.fs_ << std::fixed;
 	B_.fs_ << std::setprecision(3);
 
@@ -392,6 +393,7 @@ nest::RecordingDevice::calibrate()
       Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
       throw IOError();
     }
+  */
   }
 }
 

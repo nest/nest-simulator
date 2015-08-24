@@ -70,6 +70,6 @@ if not hasattr(unittest.TestCase, 'assertGreater'):
 # NumPy 1.4.0-
 if not hasattr(numpy, 'fill_diagonal'):
     def fill_diagonal(a, b):
-        diagonal = numpy.arange(a.shape[0])
-        a[diagonal, diagonal] = b
+        diagonal = [ numpy.arange( min( a.shape ) ) ] * a.ndim
+        a[diagonal] = b
     numpy.fill_diagonal = fill_diagonal

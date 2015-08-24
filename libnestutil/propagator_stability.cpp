@@ -24,30 +24,6 @@
 #include <cmath>
 
 double
-propagator_32( double tau_syn, double tau, double C, double h )
-{
-  const double P32_linear =
-    1 / ( 2. * C * tau * tau ) * h * h * ( tau_syn - tau ) * std::exp( -h / tau );
-  const double P32_singular = h / C * std::exp( -h / tau );
-  const double P32 =
-    1 / C * ( std::exp( -h / tau ) - std::exp( -h / tau_syn ) ) / ( -1 / tau - -1 / tau_syn );
-  const double dev_P32 = std::abs( P32 - P32_singular );
-
-  if ( tau == tau_syn )
-  {
-    return P32_singular;
-  }
-  else if ( std::abs( tau - tau_syn ) < 0.1 and dev_P32 > 2 * P32_linear )
-  {
-    return P32_singular;
-  }
-  else
-  {
-    return P32;
-  }
-}
-
-double
 propagator_31( double tau_syn, double tau, double C, double h )
 {
   const double P31_linear =
@@ -69,5 +45,29 @@ propagator_31( double tau_syn, double tau, double C, double h )
   else
   {
     return P31;
+  }
+}
+
+double
+propagator_32( double tau_syn, double tau, double C, double h )
+{
+  const double P32_linear =
+    1 / ( 2. * C * tau * tau ) * h * h * ( tau_syn - tau ) * std::exp( -h / tau );
+  const double P32_singular = h / C * std::exp( -h / tau );
+  const double P32 =
+    1 / C * ( std::exp( -h / tau ) - std::exp( -h / tau_syn ) ) / ( -1 / tau - -1 / tau_syn );
+  const double dev_P32 = std::abs( P32 - P32_singular );
+
+  if ( tau == tau_syn )
+  {
+    return P32_singular;
+  }
+  else if ( std::abs( tau - tau_syn ) < 0.1 and dev_P32 > 2 * P32_linear )
+  {
+    return P32_singular;
+  }
+  else
+  {
+    return P32;
   }
 }

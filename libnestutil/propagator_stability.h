@@ -23,7 +23,7 @@
 #ifndef PROPAGATOR_STABILITY_H
 #define PROPAGATOR_STABILITY_H
 
-double propagator_32( double tau_syn, double tau, double C, double h );
 double propagator_31( double tau_syn, double tau, double C, double h );
+double propagator_32( double tau_syn, double tau, double C, double h );
 
 #endif

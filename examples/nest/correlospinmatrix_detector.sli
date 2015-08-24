@@ -1,4 +1,3 @@
-
 /*
  *  correlospinmatrix_detector.sli
  *
@@ -24,7 +23,7 @@
 
 /* simple example of usage for the
    correlospinmatrix detector
-/*
+*/
 
 modeldict begin
 
@@ -54,9 +53,6 @@ sg3 csd << /receptor_type 2 >> Connect
 
 100. Simulate
 
-%sd GetStatus /eventinfo
-
-%csd GetStatus info
 csd GetStatus /n_events get ==
 csd GetStatus /count_covariance get ==
 

@@ -78,7 +78,8 @@ libnest_la_SOURCES=\
 		conn_parameter.h conn_parameter.cpp\
 		conn_builder.h conn_builder.cpp\
 		conn_builder_factory.h\
-		music_event_handler.h music_event_handler.cpp
+		music_event_handler.h music_event_handler.cpp\
+		screen_logger.h screen_logger.cpp
 
 libnest_la_LIBADD= @LIBLTDL@ @LIBADD_DL@
 

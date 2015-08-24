@@ -198,7 +198,7 @@ ModelsModule::init( SLIInterpreter* )
 
   // Create voltmeter as a multimeter pre-configured to record V_m.
   /*BeginDocumentation
-  Name: voltmeter - Device to membrane potential from neurons.
+  Name: voltmeter - Device to record membrane potential from neurons.
   Synopsis: voltmeter Create
 
   Description:
@@ -233,9 +233,9 @@ ModelsModule::init( SLIInterpreter* )
      afterwards.
    - A voltmeter cannot be frozen.
    - If you record with voltmeter in accumulator mode and some of the nodes
-     you record from and others are not, data will only be collected from the
-     unfrozen nodes. Most likely, this will lead to confusing results, so
-     you should not use voltmeter with frozen nodes.
+     you record from are frozen and others are not, data will only be collected
+     from the unfrozen nodes. Most likely, this will lead to confusing results,
+     so you should not use voltmeter with frozen nodes.
 
   Parameters:
        The following parameter can be set in the status dictionary:

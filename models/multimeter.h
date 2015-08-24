@@ -75,9 +75,9 @@ Remarks:
    afterwards.
  - A multimeter cannot be frozen.
  - If you record with multimeter in accumulator mode and some of the nodes
-   you record from and others are not, data will only be collected from the
-   unfrozen nodes. Most likely, this will lead to confusing results, so
-   you should not use multimeter with frozen nodes.
+   you record from are frozen and others are not, data will only be collected
+   from the unfrozen nodes. Most likely, this will lead to confusing results,
+   so you should not use multimeter with frozen nodes.
 
 Parameters:
      The following parameters can be set in the status dictionary:

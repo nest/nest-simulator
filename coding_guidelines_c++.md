@@ -15,7 +15,7 @@ _Note that older code might not conform to this rules and should be fixed when c
 - [Tooling](#tooling)
 - [Coding Style](#coding-style)
     * [General Remarks and Resources](#general-remarks-and-resources)
-        * [C++ Language Features](#c++-language-features)
+        * [C++ Language Features](#c-language-features)
         * [Language of Comments and Identifiers](#language-of-comments-and-identifiers)
         * [Debugging and Quality Control](#debugging-and-quality-control)
         * [Compiler](#compiler)
@@ -31,7 +31,7 @@ _Note that older code might not conform to this rules and should be fixed when c
         * [Further Indentation and Formatting](#further-indentation-and-formatting)
     * [Stopwatch example](#stopwatch-example)
 - [.clang-format File](#.clang-format-file)
-- [Vera++ profile nest](#vera++-profile-nest)
+- [Vera++ profile nest](#vera-profile-nest)
 
 
 ## Tooling

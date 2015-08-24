@@ -64,6 +64,7 @@ Network::Network( SLIInterpreter& i )
   , overwrite_files_( false )
   , dict_miss_is_error_( true )
   , model_defaults_modified_( false )
+  , logger_( 0 )
 {
   Node::net_ = this;
   Communicator::net_ = this;
@@ -89,6 +90,8 @@ Network::Network( SLIInterpreter& i )
 
   connruledict_ = new Dictionary();
   interpreter_.def( "connruledict", new DictionaryDatum( connruledict_ ) );
+
+  logger_ = new ScreenLogger();
 
   init_();
 }
@@ -1979,6 +1982,12 @@ Network::execute_sli_protected( DictionaryDatum state, Name cmd )
   }
 
   return result;
+}
+
+Logger*
+Network::get_logger()
+{
+  return logger_;
 }
 
 #ifdef HAVE_MUSIC

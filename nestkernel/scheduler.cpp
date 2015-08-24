@@ -407,6 +407,9 @@ nest::Scheduler::prepare_simulation()
   update_nodes_vec_();
   prepare_nodes();
 
+  Logger* logger = Node::network()->get_logger();
+  logger->initialize();
+
 #ifdef HAVE_MUSIC
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done

@@ -28,6 +28,8 @@
 #include "dictutils.h"
 #include "lockptr.h"
 #include "device.h"
+#include "network.h"
+#include "logger.h"
 
 #include <vector>
 #include <fstream>
@@ -323,6 +325,8 @@ public:
 
   inline void set_precise( bool use_precise );
 
+  const Node& get_node() const;
+
 private:
   /**
    * Store data in internal structure.
@@ -446,9 +450,16 @@ RecordingDevice::print_value( const ValueT& value, bool endrecord )
 {
   if ( P_.to_file_ )
   {
+    Logger* logger = Node::network()->get_logger();
+    logger->write_value( value );
+    if ( endrecord )
+      logger->write_end();
+
+	/*
     B_.fs_ << value << '\t';
     if ( endrecord )
       B_.fs_ << '\n';
+	*/
   }
 }
 

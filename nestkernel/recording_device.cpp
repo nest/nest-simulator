@@ -292,6 +292,9 @@ nest::RecordingDevice::calibrate()
 {
   Device::calibrate();
 
+  Logger* logger = Node::network()->get_logger();
+  logger->signup(node_.get_vp(), *this);
+
   if ( P_.to_file_ )
   {
     // do we need to (re-)open the file
@@ -461,27 +464,10 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
 
   if ( P_.to_file_ )
   {
-	// print gid
-    B_.fs_ << sender << '\t';
-
-	// print time
-	if ( P_.time_in_steps_ )
-	{
-	  B_.fs_ << stamp.get_steps() << '\t';
-	  if ( P_.precise_times_ )
-		B_.fs_ << offset << '\t';
-	}
-	else if ( P_.precise_times_ )
-	  B_.fs_ << stamp.get_ms() - offset << '\t';
-	else
-	  B_.fs_ << stamp.get_ms() << '\t';
-    
-	if ( endrecord )
-    {
-      B_.fs_ << '\n';
-      if ( P_.flush_records_ )
-        B_.fs_.flush();
-    }
+    Logger* logger = Node::network()->get_logger();
+    logger->write_event( *this, event );
+    if ( endrecord )
+      logger->write_end();
   }
 
   // storing data when recording to accumulator relies on the fact that
@@ -542,4 +528,10 @@ nest::RecordingDevice::State_::clear_events()
   event_times_ms_.clear();
   event_times_steps_.clear();
   event_times_offsets_.clear();
+}
+
+const nest::Node&
+nest::RecordingDevice::get_node() const
+{
+  return node_;
 }

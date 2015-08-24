@@ -442,6 +442,9 @@ nest::Scheduler::finalize_simulation()
         "Global Random Number Generators are not synchronized after simulation." );
       throw KernelException();
     }
+  
+  Logger* logger = Node::network()->get_logger();
+  logger->finalize();
 
   finalize_nodes();
 }

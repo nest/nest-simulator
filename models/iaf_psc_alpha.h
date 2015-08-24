@@ -96,11 +96,14 @@ Parameters:
   I_e        double - Constant external input current in pA.
   V_min      double - Absolute lower value for the membrane potential.
 
-Note:
-For very similar values of tau_m and tau_syn_{ex,in} the
-evaluation of the propagator entries P_31 and P_32 is numerically
-unstable. For details, please see IAF_Neruons_Singularity.ipynb in the
-NEST source code (docs/model_details)
+Remarks: 
+If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+will numerically behave as if tau_m is equal to tau_syn_ex or
+tau_syn_in, respectively, to avoid numerical instabilities. The status
+dictionary provides information about which propagators are used
+through the /propagator_info entry. For details, please see
+IAF_Neruons_Singularity.ipynb in the NEST source code
+(docs/model_details).
 
 References:
   [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear

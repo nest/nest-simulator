@@ -147,11 +147,7 @@ class Network;
  *
  * @note If you want to pick up values at every time stamp,
  *       you must set the interval to the simulation resolution.
- *
- * @todo Testing and Code Review:
- *   - performance: currently about 5% slower than plain voltmeter;
- * but check asserts in universal_data_logger.
- *
+ * *
  * @ingroup Devices
  * @see UniversalDataLogger
  */

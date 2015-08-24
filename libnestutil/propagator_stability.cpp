@@ -34,11 +34,7 @@ propagator_31( double tau_syn, double tau, double C, double h )
   const double P31_singular = h * h / 2 / C * std::exp( -h / tau );
   const double dev_P31 = std::abs( P31 - P31_singular );
 
-  if ( tau == tau_syn )
-  {
-    return P31_singular;
-  }
-  else if ( std::abs( tau - tau_syn ) < 0.1 and dev_P31 > 2 * P31_linear )
+  if ( tau == tau_syn or ( std::abs( tau - tau_syn ) < 0.1 and dev_P31 > 2 * P31_linear ) )
   {
     return P31_singular;
   }
@@ -58,11 +54,7 @@ propagator_32( double tau_syn, double tau, double C, double h )
     1 / C * ( std::exp( -h / tau ) - std::exp( -h / tau_syn ) ) / ( -1 / tau - -1 / tau_syn );
   const double dev_P32 = std::abs( P32 - P32_singular );
 
-  if ( tau == tau_syn )
-  {
-    return P32_singular;
-  }
-  else if ( std::abs( tau - tau_syn ) < 0.1 and dev_P32 > 2 * P32_linear )
+  if ( tau == tau_syn or ( std::abs( tau - tau_syn ) < 0.1 and dev_P32 > 2 * P31_linear ) )
   {
     return P32_singular;
   }

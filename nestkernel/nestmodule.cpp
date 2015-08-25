@@ -45,6 +45,8 @@
 #include "genericmodel.h"
 #include "conn_builder.h"
 
+#include "H5MikeReader.cpp"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -937,6 +939,27 @@ NestModule::Connect_i_i_d_d_lFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop( 5 );
   i->EStack.pop();
+}
+
+
+void NestModule::HDF5MikeLoad_s_sFunction::execute(SLIInterpreter *i) const
+{
+	//i->assert_stack_load(3);
+	 
+	//index source = getValue<long>(i->OStack.pick(2));
+	const std::string con_dir = getValue<std::string>(i->OStack.pick(1));
+	const std::string coord_file = getValue<std::string>(i->OStack.pick(0));
+
+
+
+	//get_network().divergent_connect(source, params,synmodel_id);
+	  // dict access control only if we actually made a connection
+
+
+	H5MikeReader(con_dir, coord_file);
+
+	i->OStack.pop(2);
+	i->EStack.pop();
 }
 
 // Connect for gid gid params syn_model
@@ -2003,7 +2026,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "cva_C", &cva_cfunction );
 
   i->createcommand( "Simulate_d", &simulatefunction );
-
   i->createcommand( "CopyModel_l_l_D", &copymodel_l_l_Dfunction );
   i->createcommand( "SetDefaults_l_D", &setdefaults_l_Dfunction );
   i->createcommand( "GetDefaults_l", &getdefaults_lfunction );
@@ -2029,6 +2051,8 @@ NestModule::init( SLIInterpreter* i )
     "RandomConvergentConnect_ia_i_i_da_da_b_b_l", &rconvergentconnect_ia_i_i_da_da_b_b_lfunction );
   i->createcommand( "RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l",
     &rconvergentconnect_ia_ia_ia_daa_daa_b_b_lfunction );
+
+  i->createcommand("HDF5MikeLoad_s_s", &hdf5mikeload_s_sfunction);
 
   i->createcommand( "ResetNetwork", &resetnetworkfunction );
   i->createcommand( "ResetKernel", &resetkernelfunction );

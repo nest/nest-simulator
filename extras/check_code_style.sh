@@ -4,10 +4,8 @@
 START_SHA=master
 END_SHA=HEAD
 
-NEST_SRC=.
 CPPCHECK=cppcheck
 VERA=vera++
-VERA_HOME=/usr/local/lib/vera++
 
 CLANG_FORMAT=clang-format
 INCREMENTAL=false
@@ -24,7 +22,11 @@ usage ()
     fi
 
     cat <<EOF
-Usage: check_code_style.sh [options ...]"
+Usage: ./extras/check_code_style.sh [options ...]"
+
+The script expects to be run from the base directory of the
+NEST sources, i.e. all executions should start like:
+    ./extras/check_code_style.sh ...
 
 Setup of Tooling is explained here: 
     https://nest.github.io/nest-simulator/coding_guidelines_c++
@@ -38,13 +40,14 @@ Options:
                          (default=master)
     --git-end=SHA        Enter the default SHA for git to end the diff
                          (default=HEAD)
-    --nest-src=/path     The base directory for the NEST sources
-                         (default=. assuming you execute check_code_style.sh 
-                         from the base directory.)
-    --cppcheck=exe       Enter the executable that is used for cppcheck.
+    --cppcheck=exe       Enter the executable that is used for cppcheck. Due to
+                         a bug in previous versions we require at least version
+                         1.69, which is also used in our TravisCI setup.
                          (default=cppcheck)
     --clang-format=exe   Enter the executable that is used for clang-format.
-                         (default=clang-format)
+                         Due to formatting differences in version 3.6 and 3.7
+                         we require version 3.6, which is also used in our
+                         TravisCI setup. (default=clang-format)
     --vera++=exe         Enter the executable that is used for vera++.
                          (default=vera++)
 EOF
@@ -81,9 +84,6 @@ while test $# -gt 0 ; do
         --git-end=*)
             END_SHA="$( echo "$1" | sed 's/^--git-end=//' )"
             ;;
-        --nest-src=*)
-            NEST_SRC="$( echo "$1" | sed 's/^--nest-src=//' )"
-            ;;
         --cppcheck=*)
             CPPCHECK="$( echo "$1" | sed 's/^--cppcheck=//' )"
             ;;
@@ -113,12 +113,12 @@ echo "Executing check_code_style.sh"
 echo "Tooling:"
 
 # check vera++ is set up appropriately
-$VERA $NEST_SRC/nest/main.cpp >/dev/null 2>&1 || usage 1 "Executable $VERA for vera++ is not working!"
-$VERA --profile nest $NEST_SRC/nest/main.cpp >/dev/null 2>&1 ||  bail_out "No profile called nest for vera++ installed. See https://nest.github.io/nest-simulator/coding_guidelines_c++#vera-profile-nest"
+$VERA ./nest/main.cpp >/dev/null 2>&1 || usage 1 "Executable $VERA for vera++ is not working!"
+$VERA --profile nest ./nest/main.cpp >/dev/null 2>&1 ||  bail_out "No profile called nest for vera++ installed. See https://nest.github.io/nest-simulator/coding_guidelines_c++#vera-profile-nest"
 echo "vera++ version: `vera++ --version`"
 
 # check cppcheck 1.69 is installed correctly
-$CPPCHECK --enable=all --inconclusive --std=c++03 $NEST_SRC/nest/main.cpp >/dev/null 2>&1 || usage 1 "Executable $CPPCHECK for cppcheck is not working!"
+$CPPCHECK --enable=all --inconclusive --std=c++03 ./nest/main.cpp >/dev/null 2>&1 || usage 1 "Executable $CPPCHECK for cppcheck is not working!"
 cppcheck_version=`$CPPCHECK --version | sed 's/^Cppcheck //'`
 echo "cppcheck version: $cppcheck_version"
 if [[ "x$cppcheck_version" != "x1.69" ]]; then
@@ -126,7 +126,7 @@ if [[ "x$cppcheck_version" != "x1.69" ]]; then
 fi
 
 # clang-format is installed correctly
-$CLANG_FORMAT -style=$NEST_SRC/.clang-format $NEST_SRC/nest/main.cpp >/dev/null 2>&1 || usage 1 "Executable $CLANG_FORMAT for clang-format is not working!"
+$CLANG_FORMAT -style=./.clang-format ./nest/main.cpp >/dev/null 2>&1 || usage 1 "Executable $CLANG_FORMAT for clang-format is not working!"
 clang_format_version=`$CLANG_FORMAT --version | sed -${EXTENDED_REGEX_PARAM} 's/^.*([0-9]\.[0-9])\..*/\1/'`
 echo "clang-format version: $clang_format_version"
 if [[ "x$clang_format_version" != "x3.6" ]]; then
@@ -154,7 +154,7 @@ else
 fi
 
 for f in $file_names; do
-  if [ ! -f "$NEST_SRC/$f" ]; then
+  if [ ! -f $f ]; then
     echo "$f : Is not a file or does not exist anymore."
     continue
   fi
@@ -172,28 +172,28 @@ for f in $file_names; do
 
       echo " - clang-format for $f: (critical: if there are diffs, perform $CLANG_FORMAT -i $f )"
       # clang format creates tempory formatted file
-      $CLANG_FORMAT $NEST_SRC/$f > $NEST_SRC/${f}_formatted.txt
+      $CLANG_FORMAT $f > ${f}_formatted.txt
       # compare the committed file and formatted file and 
       # writes the differences to a temp file
-      diff $f $NEST_SRC/${f}_formatted.txt | tee $NEST_SRC/${f}_clang_format.txt
+      diff $f ${f}_formatted.txt | tee ${f}_clang_format.txt
 
-      if [ -s $NEST_SRC/${f}_clang_format.txt ]; then 
+      if [ -s ${f}_clang_format.txt ]; then 
         # file exists and has size greater than zero
         format_error_files="$format_error_files $f"
       fi
 
       # remove temporary files
-      rm $NEST_SRC/${f}_formatted.txt
-      rm $NEST_SRC/${f}_clang_format.txt
+      rm ${f}_formatted.txt
+      rm ${f}_clang_format.txt
 
       # Vera++ checks the specified list of rules given in the profile 
       # nest which is placed in the <vera++ root>/lib/vera++/profile
       echo " - vera++ for $f: (please consider fixing all warnings emitted here.)"
-      $VERA --profile nest $NEST_SRC/$f
+      $VERA --profile nest $f
 
       # perform other static analysis
       echo " - cppcheck for $f: (suggestions for improvements)"
-      $CPPCHECK --enable=all --inconclusive --std=c++03 $NEST_SRC/$f
+      $CPPCHECK --enable=all --inconclusive --std=c++03 $f
 
       ;;
     *)

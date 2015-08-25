@@ -20,7 +20,6 @@
 
 #include "communicator.h"
 
-
 #include <stdio.h>
 
 #ifdef IS_BLUEGENE_Q

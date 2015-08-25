@@ -3,14 +3,17 @@
 #include "H5Synapses/HDF5Mike.h"
 
 
-void outOfMem() {
-    std::cerr << "Out of memory" << std::endl;
+void outOfMem() {  
+    std::cerr << "Out of memory\t";
+    std::cerr << "rank=" << nest::Communicator::get_num_processes() << "\t";
+    std::cerr << H5SynMEMPredictor::instance->toString() << std::endl;
+    
     exit(1);
 }
 
 void H5MikeReader(const std::string& con_dir, const std::string& coord_file)
 {
-  //std::set_new_handler(outOfMem);
+  std::set_new_handler(outOfMem);
   
   //omp_set_dynamic(true);
   

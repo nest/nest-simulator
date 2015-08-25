@@ -1,7 +1,10 @@
+#include <sstream>
 #include "H5SynMEMPedictor.h"
 
 H5SynMEMPredictor::H5SynMEMPredictor(): predicted_mem_used(0), number_of_neurons(0), number_of_synapses(0), max_nos(1e9)
 {
+  instance = this;
+  
   updateMEM();
   measured_mem_free_begin = measured_mem_free;
 }
@@ -52,3 +55,20 @@ void H5SynMEMPredictor::predictBestLoadNos(uint64_t& nos)
   if (nos > max_nos)
     nos = max_nos;
 }
+
+std::string H5SynMEMPredictor::toString()
+{
+  std::stringstream stream;
+  stream << "measured_mem_free_begin=" << measured_mem_free_begin << "\t";
+  stream << "measured_mem_free=" << measured_mem_free << "\t";
+  stream << "predicted_mem_used=" << predicted_mem_used << "\t";
+  stream << "number_of_neurons=" << number_of_neurons << "\t";
+  stream << "number_of_synapses=" << number_of_synapses << "\t";
+  stream << "max_nos=" << max_nos << "\t";
+  updateMEM();
+  stream << "current_measured_mem_free=" << measured_mem_free << "\t";
+  
+  return stream.str();
+}
+
+H5SynMEMPredictor* H5SynMEMPredictor::instance = NULL;

@@ -1,3 +1,4 @@
+#include <iostream>
 
 #ifdef IS_BLUEGENE_Q
 #include <spi/include/kernel/memory.h>
@@ -28,6 +29,11 @@ public:
   int preNESTCreate(const uint32_t& non);
   int preNESTConnect(const uint64_t& nos);
   void predictBestLoadNos(uint64_t& nos);
+  
+  std::string toString();
+  
+  
+  static H5SynMEMPredictor* instance;
   
 private:
   

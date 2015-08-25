@@ -40,7 +40,7 @@ namespace nest
   Description:
 
   Recording devices are used to measure properties of or signals emitted
-  by network nodes, e.g., using a voltmeter or a spike detector.
+  by network nodes, e.g., using a multimeter, voltmeter or a spike detector.
 
   Recording devices can collect data in memory, display it on the terminal
   output or write it to file in any combination. The output format can be

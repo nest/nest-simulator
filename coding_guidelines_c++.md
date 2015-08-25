@@ -31,7 +31,7 @@ _Note that older code might not conform to this rules and should be fixed when c
         * [Classes and Structs and Enums](#classes-and-structs-and-enums)
         * [Further Indentation and Formatting](#further-indentation-and-formatting)
     * [Stopwatch example](#stopwatch-example)
-- [.clang-format File](#.clang-format-file)
+- [.clang-format File](#clang-format-file)
 - [Vera++ profile nest](#vera-profile-nest)
 
 

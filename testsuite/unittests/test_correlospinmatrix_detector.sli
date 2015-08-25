@@ -1,5 +1,5 @@
 /*
- *  correlospinmatrix_detector.sli
+ *  test_correlospinmatrix_detector.sli
  *
  *  This file is part of NEST.
  *
@@ -22,8 +22,55 @@
 
 
 /* simple example of usage for the
-   correlospinmatrix detector
+   tests the device correlospinmatrix detector
 */
+
+
+
+
+(unittest) run
+/unittest using
+
+
+ResetKernel
+
+0.1 /h Set
+
+0 << 
+      /local_num_threads 1 
+      /resolution h
+  >> SetStatus
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%
+% Expected output
+% 
+% The output send to std::cout is a superposition of the output of  
+% the voltmeter and the spike detector. Both, voltmeter and spike 
+% detector are connected to the same neuron. 
+%
+% 3-tensor of correlation functions
+/expected_corr
+[
+  [
+   [ 0 0 0 0 0 10 20 30 40 50 60 50 40 30 20 10 0 0 0 0 0 ]
+   [ 0 10 20 30 40 50 50 40 30 20 10 0 0 0 0 0 0 0 0 0 0 ]
+   [ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
+  ]
+  [
+   [ 0 0 0 0 0 0 0 0 0 0 10 20 30 40 50 50 40 30 20 10 0 ]
+   [ 0 0 0 0 0 0 10 20 30 40 50 40 30 20 10 0 0 0 0 0 0 ]
+   [ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
+  ]
+  [
+   [ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
+   [ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
+   [ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
+  ]
+]
+def
+
 
 modeldict begin
 
@@ -53,6 +100,9 @@ sg3 csd << /receptor_type 2 >> Connect
 
 100. Simulate
 
-csd GetStatus /count_covariance get ==
+csd GetStatus /count_covariance get cva  % 3-tensor of recorded raw correlation functions
+expected_corr                            % expected result
+eq
+assert_or_die
 
 modeldict end

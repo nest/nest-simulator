@@ -70,15 +70,19 @@
    receptor_type. Default is
    1.
    count_covariance       matrix of long vectors, read-only   - raw, auto/cross correlation counts
-   n_events               integer vector                      - number of events from all sources.
 
    Remarks: This recorder does not record to file, screen or memory in the usual sense. The result
    must be obtained by a call to GetStatus. Setting either N_channels, Tstart, Tstop, tau_max or
-   delta_tau
-   clears count_covariance, covariance and n_events.
+   delta_tau clears count_covariance.
 
    Example:
 
+   See also pynest/examples/correlospinmatrix_detector_two_neuron.py
+   for a script reproducing a setting studied in Fig 1 of Grinzburg & Sompolinsky (1994) PRE 50(4)
+   p. 3171.
+
+   See also examples/nest/correlospinmatrix_detector.sli for a basic
+   example in sli.
 
    /sg1 /spike_generator Create def
    /sg2 /spike_generator Create def
@@ -106,7 +110,7 @@
 
    Author: Moritz Helias
 
-   FirstVersion: 2015/05/27
+   FirstVersion: 2015/08/25
    SeeAlso: correlation_detector, correlomatrix_detector, spike_detector, Device,
    PseudoRecordingDevice
    Availability: NEST
@@ -235,9 +239,7 @@ private:
    */
   struct State_
   {
-
-    std::vector< long_t > n_events_; //!< spike counters
-    BinaryPulselistType incoming_;   //!< incoming binary pulses, sorted
+    BinaryPulselistType incoming_; //!< incoming binary pulses, sorted
 
     rport last_i_; //!< rport of last event coming in (needed for decoding logic of binary events)
     Time t_last_in_spike_; //!< time of last event coming in (needed for decoding logic of binary

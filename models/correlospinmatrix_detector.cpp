@@ -63,8 +63,7 @@ nest::correlospinmatrix_detector::Parameters_::Parameters_( const Parameters_& p
 }
 
 nest::correlospinmatrix_detector::State_::State_()
-  : n_events_( 1, 0 )
-  , incoming_()
+  : incoming_()
   , last_i_( 0 )
   , t_last_in_spike_( Time::neg_inf() )
   , count_covariance_( 1, std::vector< std::vector< long_t > >( 1, std::vector< long_t >() ) )
@@ -89,8 +88,6 @@ nest::correlospinmatrix_detector::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::correlospinmatrix_detector::State_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ names::n_events ] = IntVectorDatum( new std::vector< long_t >( n_events_ ) );
-
   ArrayDatum* CountC = new ArrayDatum;
   for ( size_t i = 0; i < count_covariance_.size(); ++i )
   {
@@ -180,9 +177,6 @@ nest::correlospinmatrix_detector::State_::reset( const Parameters_& p )
   last_i_ = 0;
   tentative_down_ = false;
   t_last_in_spike_ = Time::neg_inf();
-
-  n_events_.clear();
-  n_events_.resize( p.N_channels_, 0 );
 
   incoming_.clear();
 

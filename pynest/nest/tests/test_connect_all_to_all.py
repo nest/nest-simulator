@@ -117,7 +117,7 @@ class TestAllToAll(TestParams):
             frequencies = scipy.stats.itemfreq(M)
             self.assertTrue(np.array_equal(frequencies[:, 0], np.arange(1, n_rport+1)), 'Missing or invalid rports')
             chi, p = scipy.stats.chisquare(frequencies[:, 1])
-            self.assertGreater(p, self.pval, 'Chi2 test failed.')
+            self.assertGreater(p, self.pval)
 
 
 def suite():

@@ -177,6 +177,7 @@ nest::ASCIILogger::finalize()
           if ( P_.flush_after_simulate_ )
             file.flush();
 
+		  // FIXME: can this ever happen / does the message make sense?
           if ( !file.good() )
           {
             std::string msg =

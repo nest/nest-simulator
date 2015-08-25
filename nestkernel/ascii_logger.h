@@ -18,6 +18,7 @@ public:
 
   ~ASCIILogger() throw()
   {
+    // FIXME: close remaining files
   }
 
   void enroll( const int virtual_process, RecordingDevice& device );

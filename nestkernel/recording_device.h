@@ -256,6 +256,7 @@ public:
    */
   void finalize();
 
+  // FIXME: documentation is now completely outdated
   /**
    * Record common information for one event.
    *
@@ -267,15 +268,8 @@ public:
    * - sender ID
    * @param endrecord pass false if more data is to come on same line
    */
-  void record_event( const Event&, bool endrecord = true );
-
-  /**
-   * Print single item of type ValueT.
-   *
-   * @param endrecord pass false if more data is to come on same line.
-   */
-  template < typename ValueT >
-  void print_value( const ValueT&, bool endrecord = true );
+  void write( const Event& );
+  void write( const Event&, const std::vector< double_t >& values );
 
   /** Indicate if recording device is active.
    *  The argument is the time stamp of the event, and the
@@ -459,26 +453,6 @@ inline void
 RecordingDevice::set_precise( bool use_precise )
 {
   P_.precise_times_ = use_precise;
-}
-
-
-template < typename ValueT >
-void
-RecordingDevice::print_value( const ValueT& value, bool endrecord )
-{
-  if ( P_.to_file_ )
-  {
-    Logger* logger = Node::network()->get_logger();
-    logger->write_value( *this, value );
-    if ( endrecord )
-      logger->write_end( *this );
-
-	/*
-    B_.fs_ << value << '\t';
-    if ( endrecord )
-      B_.fs_ << '\n';
-	*/
-  }
 }
 
 template < typename DataT >

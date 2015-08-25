@@ -93,7 +93,7 @@ nest::spin_detector::update( Time const&, const long_t, const long_t )
         ++e )
   {
     assert( *e != 0 );
-    device_.record_event( **e );
+    device_.write( **e );
     delete *e;
   }
 

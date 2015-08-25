@@ -192,7 +192,24 @@ nest::ASCIILogger::finalize()
 }
 
 void
-nest::ASCIILogger::write_event( const RecordingDevice& device, const Event& event )
+nest::ASCIILogger::write( const RecordingDevice& device, const Event& event )
+{
+  const Node& node = device.get_node();
+  int vp = node.get_vp();
+  int id = node.get_gid();
+
+  const index sender = event.get_sender_gid();
+  const Time stamp = event.get_stamp();
+  const double offset = event.get_offset();
+
+  std::ofstream& file = *( files_[ vp ][ id ].second );
+  file << sender << "\t" << stamp.get_ms() - offset << "\n";
+}
+
+void
+nest::ASCIILogger::write( const RecordingDevice& device,
+  const Event& event,
+  const std::vector< double_t >& values )
 {
   const Node& node = device.get_node();
   int vp = node.get_vp();
@@ -204,27 +221,12 @@ nest::ASCIILogger::write_event( const RecordingDevice& device, const Event& even
 
   std::ofstream& file = *( files_[ vp ][ id ].second );
   file << sender << "\t" << stamp.get_ms() - offset;
-}
 
-void
-nest::ASCIILogger::write_value( const RecordingDevice& device, const double& value )
-{
-  const Node& node = device.get_node();
-  int vp = node.get_vp();
-  int id = node.get_gid();
+  for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
+  {
+    file << "\t" << *val;
+  }
 
-  std::ofstream& file = *( files_[ vp ][ id ].second );
-  file << "\t" << value;
-}
-
-void
-nest::ASCIILogger::write_end( const RecordingDevice& device )
-{
-  const Node& node = device.get_node();
-  int vp = node.get_vp();
-  int id = node.get_gid();
-
-  std::ofstream& file = *( files_[ vp ][ id ].second );
   file << "\n";
 }
 

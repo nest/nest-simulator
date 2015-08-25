@@ -21,9 +21,8 @@ public:
   void enroll( const int virtual_process, RecordingDevice& device );
   void initialize();
   void finalize();
-  void write_event( const RecordingDevice& device, const Event& event );
-  void write_value( const RecordingDevice& device, const double& value );
-  void write_end( const RecordingDevice& device );
+  void write( const RecordingDevice& device, const Event& event );
+  void write( const RecordingDevice& device, const Event& event, const std::vector< double_t >& );
 
 private:
   struct Parameters_

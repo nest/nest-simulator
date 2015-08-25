@@ -24,24 +24,29 @@ nest::ScreenLogger::finalize()
 }
 
 void
-nest::ScreenLogger::write_event( const RecordingDevice& device, const Event& event )
+nest::ScreenLogger::write( const RecordingDevice& device, const Event& event )
+{
+  const index sender = event.get_sender_gid();
+  const Time stamp = event.get_stamp();
+  const double offset = event.get_offset();
+
+  std::cout << sender << "\t" << stamp.get_ms() - offset << std::endl;
+}
+
+void
+nest::ScreenLogger::write( const RecordingDevice& device, const Event& event, const std::vector< double_t >& values )
 {
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
 
   std::cout << sender << "\t" << stamp.get_ms() - offset;
-}
 
-void
-nest::ScreenLogger::write_value( const RecordingDevice& device, const double& value )
-{
-  std::cout << "\t" << value;
-}
+  for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
+  {
+    std::cout << "\t" << *val;
+  }
 
-void
-nest::ScreenLogger::write_end( const RecordingDevice& device )
-{
   std::cout << std::endl;
 }
 

@@ -181,11 +181,6 @@ Multimeter::handle( DataLoggingReply& reply )
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
 
-  // If this is the first Reply arriving, we need to mark the beginning of the data
-  // for this round of replies
-  if ( V_.new_request_ )
-    V_.current_request_data_start_ = S_.data_.size();
-
   size_t inactive_skipped = 0; // count records that have been skipped during inactivity
 
   // record all data, time point by time point
@@ -204,48 +199,11 @@ Multimeter::handle( DataLoggingReply& reply )
     reply.set_stamp( info[ j ].timestamp );
 
     // record sender and time information; in accumulator mode only for first Reply in slice
-    if ( V_.new_request_ )
-      device_.record_event( reply, false ); // false: more data to come
+    device_.write( reply, info[ j ].data ); // false: more data to come
 
-    // "print" actual data, but not in accumulator mode
-    print_value_( info[ j ].data );
-
-    if ( device_.to_memory() )
-      S_.data_.push_back( info[ j ].data );
-    
-	else
-    {
-      if ( V_.new_request_ ) // first reply in slice, push back to create new time points
-        S_.data_.push_back( info[ j ].data );
-      else
-      { // add data; offset j from current_request_data_start_, but inactive skipped entries
-        // subtracted
-        assert( j >= inactive_skipped );
-        assert( V_.current_request_data_start_ + j - inactive_skipped < S_.data_.size() );
-        assert( S_.data_[ V_.current_request_data_start_ + j - inactive_skipped ].size()
-          == info[ j ].data.size() );
-        for ( size_t k = 0; k < info[ j ].data.size(); ++k )
-          S_.data_[ V_.current_request_data_start_ + j - inactive_skipped ][ k ] +=
-            info[ j ].data[ k ];
-      }
-    }
+    S_.data_.push_back( info[ j ].data );
   }
-
-  V_.new_request_ = false; // correct either we are done with the first reply or any later one
 }
-
-void
-Multimeter::print_value_( const std::vector< double_t >& values )
-{
-  if ( values.size() < 1 )
-    return;
-
-  for ( size_t j = 0; j < values.size() - 1; ++j )
-    device_.print_value( values[ j ], false );
-
-  device_.print_value( values[ values.size() - 1 ] );
-}
-
 
 void
 Multimeter::add_data_( DictionaryDatum& d ) const

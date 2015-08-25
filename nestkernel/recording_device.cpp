@@ -453,9 +453,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
     S_.clear_events();
 }
 
-
-void
-nest::RecordingDevice::record_event( const Event& event, bool endrecord )
+void nest::RecordingDevice::write( const Event& event )
 {
   ++S_.events_;
   const index sender = event.get_sender_gid();
@@ -467,9 +465,28 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
   if ( P_.to_file_ )
   {
     Logger* logger = Node::network()->get_logger();
-    logger->write_event( *this, event );
-    if ( endrecord )
-      logger->write_end( *this );
+    logger->write( *this, event );
+  }
+
+  // storing data when recording to accumulator relies on the fact that
+  // multimeter will call us only once per accumulation step
+  if ( P_.to_memory_ )
+    store_data_( sender, stamp, offset );
+}
+
+void nest::RecordingDevice::write( const Event& event, const std::vector< double_t >& values )
+{
+  ++S_.events_;
+  const index sender = event.get_sender_gid();
+  const Time stamp = event.get_stamp();
+  const double offset = event.get_offset();
+
+  // std::cout << "recording device sender: " << sender << std::endl;
+
+  if ( P_.to_file_ )
+  {
+    Logger* logger = Node::network()->get_logger();
+    logger->write( *this, event, values );
   }
 
   // storing data when recording to accumulator relies on the fact that

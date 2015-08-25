@@ -36,7 +36,7 @@ public:
     return std::vector<T>::operator[](ix+offset_);
   }
   
-  setOffset(const int& offset)
+  void setOffset(const int& offset)
   {
     offset_ = offset;
   }

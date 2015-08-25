@@ -2,7 +2,7 @@
 #include "screen_logger.h"
 
 void
-nest::ScreenLogger::signup( const int virtual_process, const RecordingDevice& device )
+nest::ScreenLogger::signup( const int virtual_process, RecordingDevice& device )
 {
 }
 

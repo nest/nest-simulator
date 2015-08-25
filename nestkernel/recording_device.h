@@ -323,6 +323,24 @@ public:
     return P_.to_memory_;
   }
 
+  const std::string&
+  get_label() const
+  {
+    return P_.label_;
+  }
+
+  const std::string&
+  get_filename() const
+  {
+    return P_.filename_;
+  }
+
+  void
+  set_filename( const std::string& filename )
+  {
+    P_.filename_ = filename;
+  }
+
   inline void set_precise( bool use_precise );
 
   const Node& get_node() const;

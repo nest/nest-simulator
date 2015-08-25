@@ -2,7 +2,7 @@
 #include "ascii_logger.h"
 
 void
-nest::ASCIILogger::signup( const int virtual_process, const RecordingDevice& device )
+nest::ASCIILogger::signup( const int virtual_process, RecordingDevice& device )
 {
   const Node& node = device.get_node();
   const int gid = node.get_gid();
@@ -11,12 +11,13 @@ nest::ASCIILogger::signup( const int virtual_process, const RecordingDevice& dev
 
   if ( files_.find( virtual_process ) == files_.end() )
   {
-    files_.insert( std::make_pair( virtual_process, std::map< int, std::ofstream* >() ) );
+    files_.insert( std::make_pair( virtual_process, file_map::mapped_type() ) );
   }
 
   if ( files_[ virtual_process ].find( gid ) == files_[ virtual_process ].end() )
   {
-    files_[ virtual_process ].insert( std::make_pair( gid, new std::ofstream() ) );
+    files_[ virtual_process ].insert(
+      std::make_pair( gid, std::make_pair( &device, new std::ofstream() ) ) );
   }
 }
 
@@ -35,7 +36,8 @@ nest::ASCIILogger::initialize()
     for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )
     {
       int gid = jj->first;
-      std::ofstream& file = *( jj->second );
+      std::ofstream& file = *( jj->second.second );
+      RecordingDevice& device = *( jj->second.first );
 
       // initialize file according to parameters
       std::string filename;
@@ -46,27 +48,24 @@ nest::ASCIILogger::initialize()
       if ( !file.is_open() )
       {
         newfile = true; // no file from before
-        filename = build_filename_( vp, gid );
+        filename = build_filename_( device );
+        device.set_filename( filename );
       }
 
-      // FIXME: currently not possible, since we don't store the filename
-      // in the corresponding RecordingDevice
-      /*
-  else
-  {
-    std::string newname = build_filename_();
-    if ( newname != P_.filename_ )
-    {
-      std::string msg =
-        String::compose( "Closing file '%1', opening file '%2'", P_.filename_, newname );
-      Node::network()->message( SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg );
+      else
+      {
+        std::string newname = build_filename_( device );
+        if ( newname != device.get_filename() )
+        {
+          std::string msg =
+            String::compose( "Closing file '%1', opening file '%2'", device.get_filename(), newname );
+          Node::network()->message( SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg );
 
-      B_.fs_.close(); // close old file
-      P_.filename_ = newname;
-      newfile = true;
-    }
-  }
-      */
+          file.close(); // close old file
+          device.set_filename( newname );
+          newfile = true;
+        }
+      }
 
       if ( newfile )
       {
@@ -160,7 +159,8 @@ nest::ASCIILogger::finalize()
     for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )
     {
       int gid = jj->first;
-      std::ofstream& file = *( jj->second );
+      std::ofstream& file = *( jj->second.second );
+	  RecordingDevice& device = *( jj->second.first );
 
       if ( file.is_open() )
       {
@@ -175,8 +175,7 @@ nest::ASCIILogger::finalize()
 
         if ( !file.good() )
         {
-          // FIXME: use actual filename
-          std::string msg = String::compose( "I/O error while closing file '%1'", "FIXME" );
+          std::string msg = String::compose( "I/O error while closing file '%1'", device.get_filename() );
           Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg );
 
           throw IOError();
@@ -197,7 +196,7 @@ nest::ASCIILogger::write_event( const RecordingDevice& device, const Event& even
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
 
-  std::ofstream& file = *( files_[ vp ][ id ] );
+  std::ofstream& file = *( files_[ vp ][ id ].second );
   file << sender << "\t" << stamp.get_ms() - offset;
 }
 
@@ -208,7 +207,7 @@ nest::ASCIILogger::write_value( const RecordingDevice& device, const double& val
   int vp = node.get_vp();
   int id = node.get_gid();
 
-  std::ofstream& file = *( files_[ vp ][ id ] );
+  std::ofstream& file = *( files_[ vp ][ id ].second );
   file << "\t" << value;
 }
 
@@ -219,13 +218,15 @@ nest::ASCIILogger::write_end( const RecordingDevice& device )
   int vp = node.get_vp();
   int id = node.get_gid();
 
-  std::ofstream& file = *( files_[ vp ][ id ] );
+  std::ofstream& file = *( files_[ vp ][ id ].second );
   file << "\n";
 }
 
 const std::string
-nest::ASCIILogger::build_filename_( const int& vp, const int& gid ) const
+nest::ASCIILogger::build_filename_( const RecordingDevice& device ) const
 {
+  const Node& node = device.get_node();
+
   // number of digits in number of virtual processes
   const int vpdigits = static_cast< int >(
     std::floor( std::log10( static_cast< float >( Communicator::get_num_virtual_processes() ) ) )
@@ -239,16 +240,14 @@ nest::ASCIILogger::build_filename_( const int& vp, const int& gid ) const
     basename << path << '/';
   basename << Node::network()->get_data_prefix();
 
-
-  // FIXME: no access to Node at the moment
-  /*
-  if ( !P_.label_.empty() )
-    basename << P_.label_;
+  const std::string& label = device.get_label();
+  if ( !label.empty() )
+    basename << label;
   else
-    basename << node_.get_name();
-  */
+    basename << node.get_name();
 
-  basename << "device";
+  int vp = node.get_vp();
+  int gid = node.get_gid();
 
   basename << "-" << std::setfill( '0' ) << std::setw( gidigits ) << gid << "-"
            << std::setfill( '0' ) << std::setw( vpdigits ) << vp;

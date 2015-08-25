@@ -20,7 +20,7 @@ public:
   {
   }
 
-  void signup( const int virtual_process, const RecordingDevice& device );
+  void signup( const int virtual_process, RecordingDevice& device );
   void initialize();
   void finalize();
   void write_event( const RecordingDevice& device, const Event& event );
@@ -28,7 +28,7 @@ public:
   void write_end( const RecordingDevice& device );
 
 private:
-  const std::string build_filename_( const int& vp, const int& gid ) const;
+  const std::string build_filename_( const RecordingDevice& device ) const;
 
   struct Parameters_
   {
@@ -50,7 +50,7 @@ private:
 
   // one map for each virtual process,
   // in turn containing one ostream for everydevice
-  typedef std::map< int, std::map< int, std::ofstream* > > file_map;
+  typedef std::map< int, std::map< int, std::pair< RecordingDevice*, std::ofstream* > > > file_map;
   file_map files_;
 };
 

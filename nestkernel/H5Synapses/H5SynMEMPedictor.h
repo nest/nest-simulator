@@ -1,6 +1,7 @@
 
-
+#ifdef IS_BLUEGENE_Q
 #include <spi/include/kernel/memory.h>
+#endif
 
 /**
  * Memory predictor for NEST 

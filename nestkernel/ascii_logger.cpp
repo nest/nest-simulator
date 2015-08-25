@@ -8,6 +8,7 @@ nest::ASCIILogger::enroll( const int virtual_process, RecordingDevice& device )
   const int gid = node.get_gid();
 
   // is virtual_process == virtual process we are in?
+  // FIXME: critical?
 
   if ( files_.find( virtual_process ) == files_.end() )
   {
@@ -24,14 +25,16 @@ nest::ASCIILogger::enroll( const int virtual_process, RecordingDevice& device )
 void
 nest::ASCIILogger::initialize()
 {
-  // iterate over all virtual processes
-  for ( file_map::iterator ii = files_.begin(); ii != files_.end(); ++ii )
+#pragma omp parallel
   {
-    int vp = ii->first;
+    Network& network = *( Node::network() );
+    thread t = network.get_thread_id();
+    int vp = network.thread_to_vp( t );
 
     // extract the inner map (containing the registered devices) for the specific VP
     typedef typename file_map::mapped_type inner_map;
-    inner_map inner = ii->second;
+    inner_map inner = files_[vp];
+
     // iterate over registed devices and their corresponding fstreams
     for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )
     {
@@ -147,38 +150,41 @@ nest::ASCIILogger::initialize()
 void
 nest::ASCIILogger::finalize()
 {
-  // iterate over all virtual processes
-  for ( file_map::iterator ii = files_.begin(); ii != files_.end(); ++ii )
+#pragma omp parallel
   {
-    int vp = ii->first;
+    Network& network = *( Node::network() );
+    thread t = network.get_thread_id();
+    int vp = network.thread_to_vp( t );
 
     // extract the inner map (containing the registered devices) for the specific VP
     typedef typename file_map::mapped_type inner_map;
-    inner_map inner = ii->second;
+    inner_map inner = files_[ vp ];
     // iterate over registed devices and their corresponding fstreams
     for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )
     {
       int gid = jj->first;
       std::ofstream& file = *( jj->second.second );
-	  RecordingDevice& device = *( jj->second.first );
+      RecordingDevice& device = *( jj->second.first );
 
       if ( file.is_open() )
       {
         if ( P_.close_after_simulate_ )
         {
           file.close();
-          return;
         }
-
-        if ( P_.flush_after_simulate_ )
-          file.flush();
-
-        if ( !file.good() )
+        else
         {
-          std::string msg = String::compose( "I/O error while closing file '%1'", device.get_filename() );
-          Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg );
+          if ( P_.flush_after_simulate_ )
+            file.flush();
 
-          throw IOError();
+          if ( !file.good() )
+          {
+            std::string msg =
+              String::compose( "I/O error while closing file '%1'", device.get_filename() );
+            Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg );
+
+            throw IOError();
+          }
         }
       }
     }

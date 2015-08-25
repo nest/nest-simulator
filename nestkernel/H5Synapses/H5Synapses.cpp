@@ -145,6 +145,7 @@ void H5Synapses::threadConnectNeurons(const std::deque<NESTNodeSynapse>& synapse
       }
       tracelogger.store(tid,"nest::connect", before_connect, connect_dur);
     }
+    TraceLogger::print_mem("threadConnectNeurons");
   }
 }
 

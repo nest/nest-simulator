@@ -14,7 +14,7 @@ public:
   Logger() {}
   virtual ~Logger() throw() {};
 
-  virtual void signup( const int virtual_process, RecordingDevice& device ) = 0;
+  virtual void enroll( const int virtual_process, RecordingDevice& device ) = 0;
 
   virtual void initialize() = 0;
   virtual void finalize() = 0;

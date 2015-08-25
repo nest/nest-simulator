@@ -293,7 +293,7 @@ nest::RecordingDevice::calibrate()
   Device::calibrate();
 
   Logger* logger = Node::network()->get_logger();
-  logger->signup(node_.get_vp(), *this);
+  logger->enroll(node_.get_vp(), *this);
 
   if ( P_.to_file_ )
   {

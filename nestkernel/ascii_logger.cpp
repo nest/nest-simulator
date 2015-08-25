@@ -2,7 +2,7 @@
 #include "ascii_logger.h"
 
 void
-nest::ASCIILogger::signup( const int virtual_process, RecordingDevice& device )
+nest::ASCIILogger::enroll( const int virtual_process, RecordingDevice& device )
 {
   const Node& node = device.get_node();
   const int gid = node.get_gid();

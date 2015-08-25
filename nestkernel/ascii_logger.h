@@ -20,7 +20,7 @@ public:
   {
   }
 
-  void signup( const int virtual_process, RecordingDevice& device );
+  void enroll( const int virtual_process, RecordingDevice& device );
   void initialize();
   void finalize();
   void write_event( const RecordingDevice& device, const Event& event );

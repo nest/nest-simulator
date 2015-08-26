@@ -78,7 +78,7 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
                        """\
                        {0} is deprecated and will be removed in a future version of NEST.
                        Please use {1} instead!
-                       For details, see the documentation at http://www.nest-simulator.org/connection_management\
+                       For details, see http://www.nest-simulator.org/connection_management\
                        """.format(func_name, alt_func_name)
                    )
 
@@ -304,7 +304,7 @@ def help(obj=None, pager="less"):
         print("Type 'nest.sysinfo()' to see details on the system configuration.")
         print("Type 'nest.version()' for information about the NEST version.")
         print()
-        print("For more information visit http://www.nest-initiative.org.")
+        print("For more information visit http://www.nest-simulator.org.")
 
 
 @check_stack

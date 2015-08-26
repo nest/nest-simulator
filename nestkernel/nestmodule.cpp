@@ -1791,7 +1791,7 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
    [1] Morrison A, Mehring C, Geisel T, Aertsen A, and Diesmann M (2005)
        Advancing the boundaries of high connectivity network simulation
        with distributed computing. Neural Computation 17(8):1776-1801
-       The article is available at www.nest-initiative.org
+       The article is available at www.nest-simulator.org
 
    Author: Tobias Potjans, Moritz Helias, Diesmann
    SeeAlso: GetGlobalRNG, RandomConvergentConnect
@@ -1842,7 +1842,7 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
    [1] Morrison A, Mehring C, Geisel T, Aertsen A, and Diesmann M (2005)
        Advancing the boundaries of high connectivity network simulation
        with distributed computing. Neural Computation 17(8):1776-1801
-       The article is available at www.nest-initiative.org
+       The article is available at www.nest-simulator.org
 
    Author: Tobias Potjans, Moritz Helias, Diesmann
    SeeAlso: GetVpRNG, RandomDivergentConnect

@@ -59,17 +59,9 @@ nest::SIONLogger::initialize()
       NULL ); // FIXME: nullptr allowed here? Readback filename?
 
     VirtualProcessEntry& vpe = files_[ vp ];
-	vpe.sid = sid;
+    vpe.sid = sid;
 
-    // iterate over registed devices and set sid
-    for ( std::map< int, DeviceEntry >::iterator jj = vpe.devices.begin(); jj != vpe.devices.end(); ++jj )
-    {
-      int gid = jj->first;
-      DeviceEntry& entry = jj->second;
-      entry.sid = sid;
-    }
-	
-	// TODO: write header
+    // TODO: write header
   }
 }
 
@@ -81,9 +73,10 @@ nest::SIONLogger::finalize()
     Network& network = *( Node::network() );
     thread t = network.get_thread_id();
     int vp = network.thread_to_vp( t );
+    VirtualProcessEntry& entry = files_[ vp ];
+    int& sid = entry.sid;
 
-    VirtualProcessEntry& vpe = files_[ vp ];
-	sion_parclose_ompi( vpe.sid );
+	sion_parclose_ompi( sid );
 
     // TODO: write header
   }

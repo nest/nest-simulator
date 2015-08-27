@@ -159,14 +159,12 @@ private:
     {
     }
     RecordingDevice& device;
-    SIONBuffer buffer;
-
-    int sid;
   };
   
   struct VirtualProcessEntry
   {
     int sid;
+    SIONBuffer buffer;
 	std::map< int, DeviceEntry > devices;
   };
 

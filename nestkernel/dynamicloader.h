@@ -60,6 +60,7 @@ public:
   ~DynamicLoaderModule();
 
   void init( SLIInterpreter* );
+  void reset( SLIInterpreter& );
 
   const std::string commandstring( void ) const;
   const std::string name( void ) const;
@@ -80,6 +81,7 @@ public:
 public:
   class LoadModuleFunction : public SLIFunction
   {
+    friend class DynamicLoaderModule;
   public:
     LoadModuleFunction( Network* pNet, vecDynModules& dyn_modules );
 

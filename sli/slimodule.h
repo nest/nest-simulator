@@ -47,6 +47,12 @@ public:
   virtual void init( SLIInterpreter* ) = 0;
 
   /**
+   * Reset the module. This function is currently only called when the
+   * NEST function ResetKernel is invoked.
+   */
+  virtual void reset( SLIInterpreter& ) {}
+
+  /**
    * Return name of the module.
    */
   virtual const std::string name( void ) const = 0;

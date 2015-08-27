@@ -275,6 +275,8 @@ Network::reset_kernel()
   overwrite_files_ = false;
   dict_miss_is_error_ = true;
 
+  interpreter_.reset_modules();
+
   reset();
 }
 

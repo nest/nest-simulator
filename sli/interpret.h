@@ -36,6 +36,8 @@
 #include "slibuiltins.h"
 #include "slimodule.h"
 
+#include "compose.hpp"
+
 /**
  * @defgroup SLIOutput How to notify the SLI user
  */
@@ -862,6 +864,11 @@ public:
    */
   void addlinkedusermodule( SLIModule* );
 
+  /*
+   * Reset all SLIModules of the interpreter.
+   */
+  void reset_modules();
+
   FunctionDatum* Ilookup( void ) const;
   FunctionDatum* Iiterate( void ) const;
 
@@ -895,6 +902,18 @@ SLIInterpreter::addmodule( void )
 
   modules.push_back( m );
   m->install( std::cout, this );
+}
+
+inline void
+SLIInterpreter::reset_modules()
+{
+  std::list< SLIModule* >::iterator i;
+  for ( i = modules.begin(); i != modules.end(); ++i )
+  {
+    std::string msg = String::compose( "Resetting module '%1'", (*i)->name() );
+    message( M_INFO, "SLIInterpreter::reset_modules()", msg.c_str() );
+    (*i)->reset( *this );
+  }
 }
 
 inline void

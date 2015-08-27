@@ -110,13 +110,6 @@ nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
   double time = stamp.get_ms() - offset;
   int n_values = 0;
 
-#pragma omp critical
-  {
-    std::cout << "writing event" << std::endl;
-    std::cout << "  buffer size: " << buffer.get_capacity() << std::endl;
-    std::cout << "  buffer free: " << buffer.get_free() << std::endl;
-  }
-
   unsigned int required_space = 3 * sizeof( int ) + sizeof( double );
   if ( buffer.get_capacity() > required_space )
   {
@@ -162,13 +155,6 @@ nest::SIONLogger::write( const RecordingDevice& device,
 
   double time = stamp.get_ms() - offset;
   int n_values = values.size();
-
-#pragma omp critical
-  {
-    std::cout << "writing event" << std::endl;
-    std::cout << "  buffer size: " << buffer.get_capacity() << std::endl;
-    std::cout << "  buffer free: " << buffer.get_free() << std::endl;
-  }
 
   unsigned int required_space = 3 * sizeof( int ) + ( 1 + n_values ) * sizeof( double );
   if ( buffer.get_capacity() > required_space )

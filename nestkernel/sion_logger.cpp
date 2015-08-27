@@ -60,7 +60,7 @@ nest::SIONLogger::initialize()
 
     VirtualProcessEntry& vpe = files_[ vp ];
     vpe.sid = sid;
-    vpe.buffer.reserve( 21 );
+    vpe.buffer.reserve( P_.buffer_size_ );
     vpe.buffer.clear();
 
     // TODO: write header
@@ -246,7 +246,7 @@ nest::SIONLogger::build_filename_( const RecordingDevice& device ) const
 nest::SIONLogger::Parameters_::Parameters_()
   : precision_( 3 )
   , file_ext_( "dat" )
-  , fbuffer_size_( BUFSIZ ) // default buffer size as defined in <cstdio>
+  , buffer_size_( 1024 )
   , close_after_simulate_( false )
   , flush_after_simulate_( true )
   , sion_buffer_size_( 2400 )
@@ -258,7 +258,7 @@ nest::SIONLogger::Parameters_::get( const SIONLogger& al, DictionaryDatum& d ) c
 {
   ( *d )[ names::precision ] = precision_;
   ( *d )[ names::file_extension ] = file_ext_;
-  ( *d )[ names::fbuffer_size ] = fbuffer_size_;
+  ( *d )[ names::buffer_size ] = buffer_size_;
   ( *d )[ names::close_after_simulate ] = close_after_simulate_;
   ( *d )[ names::flush_after_simulate ] = flush_after_simulate_;
 }
@@ -271,15 +271,5 @@ nest::SIONLogger::Parameters_::set( const SIONLogger& al, const DictionaryDatum&
   updateValue< bool >( d, names::close_after_simulate, close_after_simulate_ );
   updateValue< bool >( d, names::flush_after_simulate, flush_after_simulate_ );
 
-  long fbuffer_size;
-  if ( updateValue< long >( d, names::fbuffer_size, fbuffer_size ) )
-  {
-    if ( fbuffer_size < 0 )
-      throw BadProperty( "/fbuffer_size must be <= 0" );
-    else
-    {
-      fbuffer_size_old_ = fbuffer_size_;
-      fbuffer_size_ = fbuffer_size;
-    }
-  }
+  updateValue< long >( d, names::buffer_size, buffer_size_ );
 }

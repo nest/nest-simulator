@@ -185,11 +185,10 @@ private:
   {
     long precision_;
 
-	long sion_buffer_size_;
+    long sion_buffer_size_;
 
     std::string file_ext_;      //!< the file name extension to use, without .
-    long fbuffer_size_;         //!< the buffer size to use when writing to file
-    long fbuffer_size_old_;     //!< the buffer size to use when writing to file (old)
+    long buffer_size_;          //!< the buffer size to use when writing to file
     bool close_after_simulate_; //!< if true, finalize() shall close the stream
     bool flush_after_simulate_; //!< if true, finalize() shall flush the stream
 

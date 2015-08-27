@@ -115,6 +115,7 @@ const Name F_lower( "F_lower" );
 const Name F_mean( "F_mean" );
 const Name F_std( "F_std" );
 const Name F_upper( "F_upper" );
+const Name buffer_size( "buffer_size" );
 const Name fbuffer_size( "fbuffer_size" );
 const Name file( "file" );
 const Name file_extension( "file_extension" );

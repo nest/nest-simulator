@@ -133,6 +133,7 @@ extern const Name F_lower;
 extern const Name F_mean;
 extern const Name F_std;
 extern const Name F_upper;
+extern const Name buffer_size;          //!< Recorder parameter
 extern const Name fbuffer_size;         //!< Recorder parameter
 extern const Name file;                 //!< Recorder parameter
 extern const Name file_extension;       //!< Recorder parameter

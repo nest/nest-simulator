@@ -128,7 +128,9 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d,
     delta_tau_ = Time::ms( t );
     reset = true;
     if ( t < 0 )
+    {
       throw BadProperty( "/delta_tau must not be negative." );
+    }
   }
 
   if ( updateValue< double_t >( d, names::tau_max, t ) )
@@ -136,7 +138,9 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d,
     tau_max_ = Time::ms( t );
     reset = true;
     if ( t < 0 )
+    {
       throw BadProperty( "/tau_max must not be negative." );
+    }
   }
 
   if ( updateValue< double_t >( d, names::Tstart, t ) )
@@ -144,7 +148,9 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d,
     Tstart_ = Time::ms( t );
     reset = true;
     if ( t < 0 )
+    {
       throw BadProperty( "/Tstart must not be negative." );
+    }
   }
 
   if ( updateValue< double_t >( d, names::Tstop, t ) )
@@ -152,16 +158,21 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d,
     Tstop_ = Time::ms( t );
     reset = true;
     if ( t < 0 )
+    {
       throw BadProperty( "/Tstop must not be negative." );
+    }
   }
 
   if ( !delta_tau_.is_step() )
+  {
     throw StepMultipleRequired( n.get_name(), names::delta_tau, delta_tau_ );
+  }
 
   if ( !tau_max_.is_multiple_of( delta_tau_ ) )
+  {
     throw TimeMultipleRequired(
       n.get_name(), names::tau_max, tau_max_, names::delta_tau, delta_tau_ );
-
+  }
   return reset;
 }
 
@@ -213,7 +224,9 @@ nest::correlospinmatrix_detector::correlospinmatrix_detector()
   , S_()
 {
   if ( !P_.delta_tau_.is_step() )
+  {
     throw InvalidDefaultResolution( get_name(), names::delta_tau, P_.delta_tau_ );
+  }
 }
 
 nest::correlospinmatrix_detector::correlospinmatrix_detector( const correlospinmatrix_detector& n )
@@ -223,7 +236,9 @@ nest::correlospinmatrix_detector::correlospinmatrix_detector( const correlospinm
   , S_()
 {
   if ( !P_.delta_tau_.is_step() )
+  {
     throw InvalidTimeInModel( get_name(), names::delta_tau, P_.delta_tau_ );
+  }
 }
 
 

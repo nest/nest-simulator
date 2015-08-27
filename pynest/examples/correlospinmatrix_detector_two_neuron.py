@@ -34,7 +34,6 @@ of the individual neurons and between them, repsectively.
 import pylab as pl
 import nest
 import numpy as np
-import scipy.optimize as opt
 
 m_x = 0.5
 tau_m = 10.

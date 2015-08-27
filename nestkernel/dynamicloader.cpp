@@ -114,7 +114,7 @@ DynamicLoaderModule::~DynamicLoaderModule()
 const std::string
 DynamicLoaderModule::name( void ) const
 {
-  return std::string( "NEST-Dynamic Loader" ); // Return name of the module
+  return std::string( "NEST Dynamic Loader" ); // Return name of the module
 }
 
 const std::string

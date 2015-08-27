@@ -60,10 +60,15 @@ nest::SIONLogger::initialize()
 
     VirtualProcessEntry& vpe = files_[ vp ];
     vpe.sid = sid;
+
+    int mc;
+    sion_int64* cs;
+    sion_get_current_location( sid, &( vpe.body_blk ), &( vpe.body_pos ), &mc, &cs );
+
+    vpe.t_start = Node::network()->get_time().get_ms();
+
     vpe.buffer.reserve( P_.buffer_size_ );
     vpe.buffer.clear();
-
-    // TODO: write header
   }
 }
 
@@ -85,9 +90,49 @@ nest::SIONLogger::finalize()
       buffer.clear();
     }
 
-    sion_parclose_ompi( sid );
+    entry.t_end = Node::network()->get_time().get_ms();
 
-    // TODO: write header
+    int mc;
+    sion_int64* cs;
+    sion_get_current_location( sid, &( entry.info_blk ), &( entry.info_pos ), &mc, &cs );
+
+    // write device info
+    int n_dev = entry.devices.size();
+    sion_fwrite( &n_dev, sizeof( int ), 1, sid );
+
+    for ( VirtualProcessEntry::device_map::iterator it = entry.devices.begin();
+          it != entry.devices.end();
+          ++it )
+    {
+      DeviceEntry& device_entry = it->second;
+      RecordingDevice& device = device_entry.device;
+      unsigned long& n_rec = device_entry.n_rec;
+      const Node& node = device.get_node();
+
+      int gid = node.get_gid();
+      sion_fwrite( &gid, sizeof( int ), 1, sid );
+
+      char name[ 16 ];
+      strncpy( name, node.get_name().c_str(), 16 );
+      sion_fwrite( &name, sizeof( char ), 16, sid );
+
+      sion_fwrite( &n_rec, sizeof( unsigned long ), 1, sid );
+    }
+
+    // write tail
+    double resolution = 43.0;
+
+    sion_fwrite( &( entry.body_blk ), sizeof( int ), 1, sid );
+    sion_fwrite( &( entry.body_pos ), sizeof( sion_int64 ), 1, sid );
+
+    sion_fwrite( &( entry.info_blk ), sizeof( int ), 1, sid );
+    sion_fwrite( &( entry.info_pos ), sizeof( sion_int64 ), 1, sid );
+
+    sion_fwrite( &( entry.t_start ), sizeof( double ), 1, sid );
+    sion_fwrite( &( entry.t_end ), sizeof( double ), 1, sid );
+    sion_fwrite( &resolution, sizeof( double ), 1, sid );
+
+    sion_parclose_ompi( sid );
   }
 }
 
@@ -106,6 +151,8 @@ nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
   VirtualProcessEntry& entry = files_[ vp ];
   int& sid = entry.sid;
   SIONBuffer& buffer = entry.buffer;
+
+  entry.devices.find( gid )->second.n_rec++;
 
   double time = stamp.get_ms() - offset;
   int n_values = 0;
@@ -152,6 +199,8 @@ nest::SIONLogger::write( const RecordingDevice& device,
   VirtualProcessEntry& entry = files_[ vp ];
   int& sid = entry.sid;
   SIONBuffer& buffer = entry.buffer;
+
+  entry.devices.find( gid )->second.n_rec++;
 
   double time = stamp.get_ms() - offset;
   int n_values = values.size();

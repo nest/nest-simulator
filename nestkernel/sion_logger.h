@@ -169,16 +169,25 @@ private:
   {
     DeviceEntry( RecordingDevice& device )
       : device( device )
+      , n_rec( 0 )
     {
     }
+
     RecordingDevice& device;
+    unsigned long n_rec;
   };
 
   struct VirtualProcessEntry
   {
     int sid;
+    int body_blk, info_blk;
+    sion_int64 body_pos, info_pos;
+
+    double t_start, t_end, resolution;
+
     SIONBuffer buffer;
-    std::map< int, DeviceEntry > devices;
+    typedef std::map< int, DeviceEntry > device_map;
+    device_map devices;
   };
 
   struct Parameters_

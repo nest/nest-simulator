@@ -38,7 +38,7 @@ nest::SIONLogger::initialize()
     thread t = network.get_thread_id();
     int vp = network.thread_to_vp( t );
 
-    std::string tmp = "data.dat";
+    std::string tmp = build_filename_();
     char* filename = strdup( tmp.c_str() );
 
     // SIONlib parameters
@@ -207,34 +207,15 @@ nest::SIONLogger::write( const RecordingDevice& device,
 }
 
 const std::string
-nest::SIONLogger::build_filename_( const RecordingDevice& device ) const
+nest::SIONLogger::build_filename_() const
 {
-  const Node& node = device.get_node();
-
-  // number of digits in number of virtual processes
-  const int vpdigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >( Communicator::get_num_virtual_processes() ) ) )
-    + 1 );
-  const int gidigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >( Node::network()->size() ) ) ) + 1 );
-
   std::ostringstream basename;
   const std::string& path = Node::network()->get_data_path();
   if ( !path.empty() )
     basename << path << '/';
   basename << Node::network()->get_data_prefix();
 
-  const std::string& label = device.get_label();
-  if ( !label.empty() )
-    basename << label;
-  else
-    basename << node.get_name();
-
-  int vp = node.get_vp();
-  int gid = node.get_gid();
-
-  basename << "-" << std::setfill( '0' ) << std::setw( gidigits ) << gid << "-"
-           << std::setfill( '0' ) << std::setw( vpdigits ) << vp;
+  basename << "output";
 
   return basename.str() + '.' + P_.file_ext_;
 }
@@ -244,32 +225,24 @@ nest::SIONLogger::build_filename_( const RecordingDevice& device ) const
  * ---------------------------------------------------------------- */
 
 nest::SIONLogger::Parameters_::Parameters_()
-  : precision_( 3 )
-  , file_ext_( "dat" )
-  , buffer_size_( 1024 )
-  , close_after_simulate_( false )
-  , flush_after_simulate_( true )
+  : file_ext_( "dat" )
   , sion_buffer_size_( 2400 )
+  , buffer_size_( 1024 )
 {
 }
 
 void
 nest::SIONLogger::Parameters_::get( const SIONLogger& al, DictionaryDatum& d ) const
 {
-  ( *d )[ names::precision ] = precision_;
   ( *d )[ names::file_extension ] = file_ext_;
   ( *d )[ names::buffer_size ] = buffer_size_;
-  ( *d )[ names::close_after_simulate ] = close_after_simulate_;
-  ( *d )[ names::flush_after_simulate ] = flush_after_simulate_;
+  ( *d )[ names::sion_buffer_size ] = sion_buffer_size_;
 }
 
 void
 nest::SIONLogger::Parameters_::set( const SIONLogger& al, const DictionaryDatum& d )
 {
-  updateValue< long >( d, names::precision, precision_ );
   updateValue< std::string >( d, names::file_extension, file_ext_ );
-  updateValue< bool >( d, names::close_after_simulate, close_after_simulate_ );
-  updateValue< bool >( d, names::flush_after_simulate, flush_after_simulate_ );
-
+  updateValue< long >( d, names::sion_buffer_size, sion_buffer_size_ );
   updateValue< long >( d, names::buffer_size, buffer_size_ );
 }

@@ -32,7 +32,7 @@ public:
   void write( const RecordingDevice& device, const Event& event, const std::vector< double_t >& );
 
 private:
-  const std::string build_filename_( const RecordingDevice& device ) const;
+  const std::string build_filename_() const;
 
   class SIONBuffer
   {
@@ -183,14 +183,9 @@ private:
 
   struct Parameters_
   {
-    long precision_;
-
-    long sion_buffer_size_;
-
     std::string file_ext_;      //!< the file name extension to use, without .
-    long buffer_size_;          //!< the buffer size to use when writing to file
-    bool close_after_simulate_; //!< if true, finalize() shall close the stream
-    bool flush_after_simulate_; //!< if true, finalize() shall flush the stream
+    long buffer_size_;          //!< the size of the internal buffer .
+    long sion_buffer_size_;     //!< the size of SIONlib's buffer .
 
     Parameters_();
 

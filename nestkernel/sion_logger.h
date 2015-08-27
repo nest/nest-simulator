@@ -78,7 +78,7 @@ private:
         memcpy( new_buffer, buffer, ptr );
         delete[] buffer;
       }
-          buffer = new_buffer;
+      buffer = new_buffer;
       max_size = size;
     }
 
@@ -114,7 +114,7 @@ private:
     {
       if ( !has_free_space( size ) )
       {
-		// TODO: What? +10*size?
+        // TODO: What? +10*size?
         int new_max_size = max_size + size * 10;
         reserve( max_size + size * 10 );
       }
@@ -148,7 +148,7 @@ private:
     SIONBuffer& operator<<( const T data )
     {
       write( ( const char* ) &data, sizeof( T ) );
-	  return *this;
+      return *this;
     }
   };
 
@@ -173,12 +173,12 @@ private:
     }
     RecordingDevice& device;
   };
-  
+
   struct VirtualProcessEntry
   {
     int sid;
     SIONBuffer buffer;
-	std::map< int, DeviceEntry > devices;
+    std::map< int, DeviceEntry > devices;
   };
 
   struct Parameters_

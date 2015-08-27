@@ -60,6 +60,8 @@ nest::SIONLogger::initialize()
 
     VirtualProcessEntry& vpe = files_[ vp ];
     vpe.sid = sid;
+    vpe.buffer.reserve( 21 );
+    vpe.buffer.clear();
 
     // TODO: write header
   }
@@ -75,6 +77,13 @@ nest::SIONLogger::finalize()
     int vp = network.thread_to_vp( t );
     VirtualProcessEntry& entry = files_[ vp ];
     int& sid = entry.sid;
+    SIONBuffer& buffer = entry.buffer;
+    
+	if ( buffer.get_size() > 0 )
+	{
+      sion_fwrite( buffer.read(), buffer.get_size(), 1, sid );
+	  buffer.clear();
+	}
 
 	sion_parclose_ompi( sid );
 
@@ -89,20 +98,49 @@ nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
   int vp = node.get_vp();
   int gid = node.get_gid();
 
-  const index sender = event.get_sender_gid();
+  // FIXME: use proper type for sender (was: index)
+  const int sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
 
   VirtualProcessEntry& entry = files_[vp];
   int& sid = entry.sid;
+  SIONBuffer& buffer = entry.buffer;
 
   double time = stamp.get_ms() - offset;
   int n_values = 0;
 
-  sion_fwrite( &gid, sizeof( int ), 1, sid );
-  sion_fwrite( &sender, sizeof( int ), 1, sid );
-  sion_fwrite( &time, sizeof( double ), 1, sid );
-  sion_fwrite( &n_values, sizeof( int ), 1, sid );
+#pragma omp critical
+  {
+  std::cout << "writing event" << std::endl;
+  std::cout << "  buffer size: " << buffer.get_capacity() << std::endl;
+  std::cout << "  buffer free: " << buffer.get_free() << std::endl;
+  }
+
+  unsigned int required_space = 3 * sizeof( int ) + sizeof( double );
+  if ( buffer.get_capacity() > required_space )
+  {
+    if ( buffer.get_free() < required_space )
+	{
+      sion_fwrite( buffer.read(), buffer.get_size(), 1, sid );
+	  buffer.clear();
+	}
+
+    buffer << gid << sender << time << n_values;
+  }
+  else
+  {
+    if ( buffer.get_size() > 0 )
+	{
+      sion_fwrite( buffer.read(), buffer.get_size(), 1, sid );
+	  buffer.clear();
+	}
+    
+	sion_fwrite( &gid, sizeof( int ), 1, sid );
+    sion_fwrite( &sender, sizeof( int ), 1, sid );
+    sion_fwrite( &time, sizeof( double ), 1, sid );
+    sion_fwrite( &n_values, sizeof( int ), 1, sid );
+  }
 }
 
 void
@@ -114,25 +152,57 @@ nest::SIONLogger::write( const RecordingDevice& device,
   int vp = node.get_vp();
   int gid = node.get_gid();
 
-  const index sender = event.get_sender_gid();
+  const int sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
   
   VirtualProcessEntry& entry = files_[vp];
   int& sid = entry.sid;
+  SIONBuffer& buffer = entry.buffer;
 
   double time = stamp.get_ms() - offset;
   int n_values = values.size();
 
-  sion_fwrite( &gid, sizeof( int ), 1, sid );
-  sion_fwrite( &sender, sizeof( int ), 1, sid );
-  sion_fwrite( &time, sizeof( double ), 1, sid );
-  sion_fwrite( &n_values, sizeof( int ), 1, sid );
-  
-  for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
+#pragma omp critical
   {
-	  double value = *val;
-	  sion_fwrite( &value, sizeof( double ), 1, sid );
+  std::cout << "writing event" << std::endl;
+  std::cout << "  buffer size: " << buffer.get_capacity() << std::endl;
+  std::cout << "  buffer free: " << buffer.get_free() << std::endl;
+  }
+
+  unsigned int required_space = 3 * sizeof( int ) + ( 1 + n_values ) * sizeof( double );
+  if ( buffer.get_capacity() > required_space )
+  {
+    if ( buffer.get_free() < required_space )
+	{
+      sion_fwrite( buffer.read(), buffer.get_size(), 1, sid );
+	  buffer.clear();
+	}
+
+	buffer << gid << sender << time << n_values;
+    for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
+    {
+      buffer << *val;
+    }
+  }
+  else
+  {
+    if ( buffer.get_size() > 0 )
+	{
+      sion_fwrite( buffer.read(), buffer.get_size(), 1, sid );
+	  buffer.clear();
+	}
+    
+	sion_fwrite( &gid, sizeof( int ), 1, sid );
+    sion_fwrite( &sender, sizeof( int ), 1, sid );
+    sion_fwrite( &time, sizeof( double ), 1, sid );
+    sion_fwrite( &n_values, sizeof( int ), 1, sid );
+    
+	for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
+    {
+      double value = *val;
+      sion_fwrite( &value, sizeof( double ), 1, sid );
+    }
   }
 }
 

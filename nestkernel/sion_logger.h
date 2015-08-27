@@ -126,6 +126,12 @@ private:
       return ( ptr + size < max_size );
     }
 
+    int
+    get_free()
+    {
+      return ( max_size - ptr );
+    }
+
     void
     clear()
     {
@@ -136,6 +142,13 @@ private:
     read()
     {
       return buffer;
+    }
+
+    template < typename T >
+    SIONBuffer& operator<<( const T data )
+    {
+      write( ( const char* ) &data, sizeof( T ) );
+	  return *this;
     }
   };
 

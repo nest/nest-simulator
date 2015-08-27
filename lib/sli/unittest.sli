@@ -767,7 +767,7 @@ the executing process and RESULT AS STRING is present only for the
 to send_distributed.  This message is suitable for collection by
 :collect_distributed_results.
 
-Note: result can be a dict, but must not contain dicts
+Remarks: result can be a dict, but must not contain dicts
 
 SeeAlso: unittest:mpirun_self
 */

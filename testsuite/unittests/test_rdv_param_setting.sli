@@ -233,30 +233,55 @@ statusdict /have_gsl :: {
 % -------------------------------------------------------
 
 {
+  % choose uniformly from [1, 2, 3, ..., 10]
   /MT19937 /uniform_int << /low 1 /high 10 >> run_test
 } assert_or_die
 
 {
+  % choose from [10] --- trivial, but must work
   /MT19937 /uniform_int << /low 10 /high 10 >> run_test
 } assert_or_die
 
 {
+  % lower limit of number range higher than upper, must raise error
   /MT19937 /uniform_int << /low 11 /high 10 >> run_test
 } fail_or_die
 
-{
-  % test that setting limits with a range larger than the range
-  % of positive longs triggers an error; must be 32-bit safe
-  % limit: 2^(N-1)-1, where N is number of bits for long
-  % build in overflow-safe way
-  /limit 
-  statusdict/architecture/long :: 8 mul   % N
+/*
+ Compute the largest positive number representable by long type
+ 
+ If long has N bits, this number is 2^(N-1) - 1. To avoid 
+ overflow during the computation, we compute it as
+ 
+ 2^(N-1) - 1 = 2^(N-2) + [ 2^(N-2) - 1 ]
+*/
+/:LONG_MAX
+  statusdict/architecture/long :: 8 mul   % N: bits in long type
   2 sub 2 exch pow cvi                    % 2^(N-2)
-  dup 1 sub % stack: 2^(N-2) 2^(N-2)-1
-  add       % 2^(N-1)-1
-  def
-  /MT19937 /uniform_int << /low limit neg cvi /high limit cvi >> run_test
+  dup 1 sub                               % stack: 2^(N-2) 2^(N-2)-1
+  add                                     % 2^(N-1)-1
+def
+
+{
+  % test with +- max value + 1  on both ends, must fail
+  /MT19937 /uniform_int << /low :LONG_MAX neg cvi /high :LONG_MAX cvi >> run_test
 } fail_or_die
+
+{
+  % test with max value + 1 at upper end, must fail
+  /MT19937 /uniform_int << /low 0 /high :LONG_MAX cvi >> run_test
+} fail_or_die
+
+{
+  % test with -(max value + 1) at lower end, must fail
+  /MT19937 /uniform_int << /low :LONG_MAX neg cvi /high 0 >> run_test
+} fail_or_die
+
+{
+  % test with non-extreme edge is +-1, must pass (largest allowed range)
+  /MT19937 /uniform_int << /low 1 cvi /high :LONG_MAX cvi >> run_test
+  /MT19937 /uniform_int << /low :LONG_MAX neg cvi /high -1 >> run_test
+} pass_or_die 
 
 % -------------------------------------------------------
 

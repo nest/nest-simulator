@@ -31,7 +31,7 @@ Description:
  checks that V_m remains constant. This is a minimal test against
  missing variable initializations, cf ticket #421.
  
-Note:
+Remarks:
    - Passing this test does not mean that all variables are properly initialized. It may just catch some cases bad cases.
    - Simulator response to initialization errors is stochastic, so if variables are not initialized properly, this test may
      fail in some runs and not in others.

@@ -522,4 +522,35 @@ tp.ConnectLayers(l, l, cdict_i2p)
 #{ end #}
 
 
+# ----------------------------
 
+#{ conn9 #}
+nrns = tp.CreateLayer({'rows'    : 20,
+                       'columns' : 20,
+                       'elements': 'iaf_neuron'})
+
+stim = tp.CreateLayer({'rows'    : 1,
+                       'columns' : 1,
+                       'elements': 'poisson_generator'})
+
+cdict_stim = {'connection_type': 'divergent',
+              'mask'           : {'circular': {'radius': 0.1},
+                                  'anchor': [0.2, 0.2]}}
+
+tp.ConnectLayers(stim, nrns, cdict_stim)
+#{ end #}
+
+
+# ----------------------------
+
+#{ conn10 #}
+rec = tp.CreateLayer({'rows'    : 1,
+                      'columns' : 1,
+                      'elements': 'spike_detector'})
+
+cdict_rec = {'connection_type': 'convergent',
+             'mask'           : {'circular': {'radius': 0.1},
+                                 'anchor': [-0.2, 0.2]}}
+
+tp.ConnectLayers(nrns, rec, cdict_rec)
+#{ end #}

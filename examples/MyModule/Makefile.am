@@ -22,16 +22,25 @@
 
 libdir= @libdir@/nest
 
-lib_LTLIBRARIES=      mymodule.la libmymodule.la
+# We need to install the module header for static linking on BlueGene
+include_HEADERS = mymodule.h
 
-mymodule_la_CXXFLAGS= @AM_CXXFLAGS@
-mymodule_la_SOURCES=  mymodule.cpp      mymodule.h      \
-                      pif_psc_alpha.cpp pif_psc_alpha.h \
-                      drop_odd_spike_connection.h
-mymodule_la_LDFLAGS=  -module
+# All other source files
+source_files=  mymodule.cpp \
+               pif_psc_alpha.cpp pif_psc_alpha.h \
+               drop_odd_spike_connection.h
 
-libmymodule_la_CXXFLAGS= $(mymodule_la_CXXFLAGS) -DLINKED_MODULE
-libmymodule_la_SOURCES=  $(mymodule_la_SOURCES)
+if BUILD_DYNAMIC_USER_MODULES
+  lib_LTLIBRARIES= libmymodule.la mymodule.la
+  mymodule_la_CXXFLAGS= @AM_CXXFLAGS@
+  mymodule_la_SOURCES=  $(source_files)
+  mymodule_la_LDFLAGS=  -module
+else
+  lib_LTLIBRARIES= libmymodule.la
+endif
+
+libmymodule_la_CXXFLAGS= @AM_CXXFLAGS@ -DLINKED_MODULE
+libmymodule_la_SOURCES=  $(source_files)
 
 MAKEFLAGS= @MAKE_FLAGS@
 

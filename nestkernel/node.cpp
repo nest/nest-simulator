@@ -193,15 +193,6 @@ void Node::register_stdp_connection( double_t )
 }
 
 /**
- * Default implementation of unregister_stdp_connection() just
- * throws IllegalConnection
- */
-void Node::unregister_stdp_connection( double_t )
-{
-  throw IllegalConnection();
-}
-
-/**
  * Default implementation of event handlers just throws
  * an UnexpectedEvent exception.
  * @see class UnexpectedEvent

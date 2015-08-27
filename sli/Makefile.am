@@ -18,7 +18,6 @@ noinst_LTLIBRARIES= libsli.la
 
 libsli_la_SOURCES=\
 		aggregatedatum.h\
-		array.h\
 		arraydatum.cc arraydatum.h\
 		booldatum.cc booldatum.h\
 		callbackdatum.h\
@@ -29,7 +28,6 @@ libsli_la_SOURCES=\
 		dictstack.cc dictstack.h\
 		dictutils.cc dictutils.h\
 		doubledatum.cc doubledatum.h\
-		dynmodule.cpp dynmodule.h\
 		fdstream.cc fdstream.h\
 		filesystem.cc filesystem.h\
 		functional.h\

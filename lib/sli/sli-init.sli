@@ -515,7 +515,7 @@ SeeAlso: over, index
  counts for all child processes.  Real time has arbitrary origin,
  i.e., only differences are meaningful.
 
- Note: results for user and system time may not be reliable if more
+ Remarks: results for user and system time may not be reliable if more
  than one thread is used.
 
  Author: Hans Ekkehard Plesser
@@ -1734,7 +1734,7 @@ systemdict /GNUreadline known
   (Type 'sysinfo' to see details on the system configuration.) =
   (Type 'authors' for information about the makers of NEST.) =
   (Type 'license' to display the license agreement that came with your copy of NEST.) =
-  (For more information visit http://www.nest-initiative.org.) =  
+  (For more information visit http://www.nest-simulator.org.) =
   (Type 'help' to see this text again.) =
   () =  
 } def
@@ -1789,8 +1789,7 @@ SeeAlso: nestrc
    warranty
 
    (Problems or suggestions?) =
-   (  Website     : http://www.nest-initiative.org) =
-   (  Mailing list: nest_user@nest-initiative.org) =
+   (  Visit http://www.nest-simulator.org) =
    () =
 
    (Type 'help' to get more information.) =
@@ -1832,15 +1831,8 @@ SeeAlso: nestrc
   cout endl
   (NEST has been created and is maintained by the ) <- 
   (members of the NEST Initiative:) <- endl endl
-  (  * Honda Research Institute Europe, Offenbach, Germany) <- endl
-  (  * Computational Neurophysics Research Unit,) <- endl
-  (    RIKEN Brain Science Institute, Wako City, Japan) <- endl
-  (  * Department of Mathematical Sciences & Technology,) <- endl
-  (    Norwegian University of Life Sciences, Aas, Norway) <- endl
-  (  * Neurobiology & Biophysics, Institute for Biology III,) <- endl
-  (    Albrecht-Ludwigs-Universitaet Freiburg, Germany) <- endl
-  ()   <- endl endl
-  (For the list of developers and more information visit us at http://www.nest-initiative.org.) <- endl endl ;  
+  (For a list of associated institutions and contributors,) <- endl
+  (visit us at http://www.nest-initiative.org.) <- endl endl ;
     
 } def
 

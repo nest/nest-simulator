@@ -33,6 +33,38 @@
   that the actual delay is given by  delay_*h - delay_offset_. This can be
   combined with off-grid spike times.
 
+  Example:
+  0 << /resolution 1.0 >> SetStatus
+
+  /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
+  /n  /iaf_psc_delta_canon Create def
+  /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create def
+
+  /cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
+  sg n /cont_delay_synapse Connect
+  n sd Connect
+
+  10 Simulate
+
+  sd GetStatus /events/times :: ==   %  --> <. 3.7 7.2 .>
+
+  Remarks:
+  All delays set by the normal NEST Connect function will be rounded, even when using
+  cont_delay_connection. To set non-grid delays, you must either
+
+  1) set the delay as synapse default, as in the example above
+  2) set the delay for each synapse after the connections have been created, e.g.,
+
+       sg n 100. 1.0 /cont_delay_synapse Connect
+       << /source [ sg ] /synapse_model /cont_delay_synapse >> GetConnections
+          { << /delay 1.7 >> SetStatus }
+       forall
+
+  Alternative 1) is much more efficient, but all synapses then will have the same delay.
+  Alternative 2) is slower, but allows individual delay values.
+
+  Continuous delays cannot be shorter than the simulation resolution.
+
   Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent, DoubleDataEvent
 
   References: none
@@ -126,6 +158,11 @@ public:
       return invalid_port_;
     }
     port
+    handles_test_event( DataLoggingRequest&, rport )
+    {
+      return invalid_port_;
+    }
+    port
     handles_test_event( CurrentEvent&, rport )
     {
       return invalid_port_;
@@ -137,6 +174,16 @@ public:
     }
     port
     handles_test_event( DoubleDataEvent&, rport )
+    {
+      return invalid_port_;
+    }
+    port
+    handles_test_event( DSSpikeEvent&, rport )
+    {
+      return invalid_port_;
+    }
+    port
+    handles_test_event( DSCurrentEvent&, rport )
     {
       return invalid_port_;
     }

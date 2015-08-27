@@ -305,29 +305,29 @@ nest.CopyModel('NeuronModel', 'ThalamicNeuron',
 #! slightly more complicated initialization than all other elements of
 #! the network:
 #!
-#! - Average firing rate ``DC``, firing rate modulation depth ``AC``, and
-#!   temporal modulation frequency ``Freq`` are the same for all retinal
+#! - Average firing rate ``rate``, firing rate modulation depth ``amplitude``, and
+#!   temporal modulation frequency ``frequency`` are the same for all retinal
 #!   nodes and are set directly below.
-#! - The temporal phase ``Phi`` of each node depends on its position in
+#! - The temporal phase ``phase`` of each node depends on its position in
 #!   the grating and can only be assigned after the retinal layer has
 #!   been created. We therefore specify a function for initalizing the
-#!   phase ``Phi``. This function will be called for each node.
-def phiInit(pos, lam, alpha):
+#!   ``phase``. This function will be called for each node.
+def phaseInit(pos, lam, alpha):
     '''Initializer function for phase of drifting grating nodes.
 
        pos  : position (x,y) of node, in degree
        lam  : wavelength of grating, in degree
        alpha: angle of grating in radian, zero is horizontal
 
-       Returns number to be used as phase of AC Poisson generator.
+       Returns number to be used as phase of sinusoidal Poisson generator.
     '''
-    return 2.0 * math.pi / lam * (math.cos(alpha) * pos[0] + math.sin(alpha) * pos[1]) 
+    return 360.0 / lam * (math.cos(alpha) * pos[0] + math.sin(alpha) * pos[1]) 
 
 nest.CopyModel('sinusoidal_poisson_generator', 'RetinaNode',
-               params = {'ac'    : Params['retAC'],
-                         'dc'    : Params['retDC'],
-                         'freq'  : Params['f_dg'],
-                         'phi'   : 0.0,
+               params = {'amplitude': Params['retAC'],
+                         'rate'     : Params['retDC'],
+                         'frequency': Params['f_dg'],
+                         'phase'    : 0.0,
                          'individual_spike_trains': False})
 
 #! Recording nodes
@@ -375,9 +375,9 @@ retina = topo.CreateLayer(layerProps)
 
 #! Now set phases of retinal oscillators; we use a list comprehension instead
 #! of a loop.
-[nest.SetStatus([n], {"phi": phiInit(topo.GetPosition([n])[0], 
-                                      Params["lambda_dg"],
-                                      Params["phi_dg"])})
+[nest.SetStatus([n], {"phase": phaseInit(topo.GetPosition([n])[0], 
+                                         Params["lambda_dg"],
+                                         Params["phi_dg"])})
  for n in nest.GetLeaves(retina)[0]]
 
 #! Thalamus

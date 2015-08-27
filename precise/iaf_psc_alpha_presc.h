@@ -78,7 +78,7 @@
   spike_detector has to be set to true in order to record the offsets
   in addition to the on-grid spike times.
 
-  Note:
+  Remarks:
   tau_m != tau_syn is required by the current implementation to avoid a
   degenerate case of the ODE describing the model [1]. For very similar values,
   numerics will be unstable.

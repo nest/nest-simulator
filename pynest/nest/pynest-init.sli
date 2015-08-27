@@ -29,7 +29,7 @@ Arguments: The first arg is an array containing arguments to the
 	   The second arg is SLI code that is a string containing
 	   SLI code that is executed. Anything left on the stack
 	   is stored in an array as result.
-Note: This function is for use by the python sli_func().
+Remarks: This function is for use by the python sli_func().
 SeeAlso: sli_func_litconv
  */
 /sli_func
@@ -52,7 +52,7 @@ Name: sli_func_litconv - execute sli code on array of arguments
 Synopsis: [arg1 arg2 ... argN] (function code) sli_func_litconv -> [res1 res2 ...]
 Arguments: If argn is a string and its first char is /, it is 
 	   converted to a literal before loaded onto the stack.
-Note: same as sli_func, but string args beginnig with / are converted to literals
+Remarks: same as sli_func, but string args beginnig with / are converted to literals
 SeeAlso: sli_func_litconv
  */
 /sli_func_litconv
@@ -92,8 +92,7 @@ def
 
   cout
   (Problems or suggestions?) <- endl
-  (  Website     : http://www.nest-initiative.org) <- endl
-  (  Mailing list: nest_user@nest-initiative.org) <- endl
+  (  Visit http://www.nest-simulator.org) <- endl
 
   endl
   (Type 'nest.help()' to find out more about NEST.) <- endl ;

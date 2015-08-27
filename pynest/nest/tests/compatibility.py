@@ -20,6 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+import numpy
 import inspect
 
 
@@ -65,3 +66,10 @@ if not hasattr(unittest.TestCase, 'assertIsInstance'):
 if not hasattr(unittest.TestCase, 'assertGreater'):
     unittest.TestCase.assertGreater = lambda self, a, b, **kwargs: \
         unittest.TestCase.assertTrue(self, a > b, **kwargs)
+
+# NumPy 1.4.0-
+if not hasattr(numpy, 'fill_diagonal'):
+    def fill_diagonal(a, b):
+        diagonal = [ numpy.arange( min( a.shape ) ) ] * a.ndim
+        a[diagonal] = b
+    numpy.fill_diagonal = fill_diagonal

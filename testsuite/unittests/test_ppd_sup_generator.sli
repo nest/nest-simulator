@@ -99,7 +99,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
       /dead_time dead_time
       /n_proc n_proc
       /frequency 0.
-      /amplitude 0.
+      /relative_amplitude 0.
     >> /params Set
     
     psg params SetStatus
@@ -192,7 +192,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
       /dead_time dead_time
       /n_proc n_proc
       /frequency 0.
-      /amplitude 0.
+      /relative_amplitude 0.
     >> /params Set
     
     psg params SetStatus
@@ -281,7 +281,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
       /dead_time dead_time
       /n_proc n_proc
       /frequency 0.
-      /amplitude 0.
+      /relative_amplitude 0.
     >> /params Set
     
     psg params SetStatus

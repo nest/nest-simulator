@@ -33,7 +33,7 @@
  * @mainpage NEST: Neural Simulation Tool
  *
  * The main resource on information about NEST is the homepage of the
- * NEST Initiative at http://www.nest-initiative.org
+ * NEST simulator at http://www.nest-simulator.org
  * <p>
  *
  * @see Diesmann, Markus and Gewaltig, Marc-Oliver (2002) NEST: An

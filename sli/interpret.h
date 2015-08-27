@@ -56,7 +56,6 @@ class DictionaryStack;
 class Dictionary;
 class FunctionDatum;
 class BoolDatum;
-class DynModule;
 
 namespace nest
 {
@@ -856,12 +855,12 @@ public:
   void addmodule( SLIModule* );
 
   /*
-   * Add a linked dynamic module to the interpreter.
+   * Add a linked user module to the interpreter.
    * Initializers (commandstrings) for linked dynamic modules are executed
    * by sli-init.sli after all C++ initialization is done.
    * Do not use this for modules loaded at runtime!
    */
-  void addlinkeddynmodule( DynModule*, nest::Network* );
+  void addlinkedusermodule( SLIModule* );
 
   FunctionDatum* Ilookup( void ) const;
   FunctionDatum* Iiterate( void ) const;

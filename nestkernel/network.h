@@ -104,8 +104,6 @@ Description:
 Parameters:
   The following parameters can be set in the status dictionary.
 
-  communicate_allgather    booltype    - Whether to use MPI_Allgather for communication (otherwise
-use CPEX)
   data_path                stringtype  - A path, where all data is written to (default is the
 current directory)
   data_prefix              stringtype  - A common prefix for all data files
@@ -168,7 +166,7 @@ public:
    * @param   private_model  If true, model is not entered in modeldict.
    * @return void
    * @note The Network calls the Model object's destructor at exit.
-   * @see register_model, unregister_model, register_user_model
+   * @see register_model
    */
   void register_basis_model( Model& m, bool private_model = false );
 
@@ -179,20 +177,8 @@ public:
    * @param   private_model  If true, model is not entered in modeldict.
    * @return Model ID assigned by network
    * @note The Network calls the Model object's destructor at exit.
-   * @see unregister_model, register_user_model
    */
   index register_model( Model& m, bool private_model = false );
-
-  /**
-   * Unregister a previously registered model.
-   */
-  void unregister_model( index m_id );
-
-  /**
-   * Try unregistering model prototype.
-   * Throws ModelInUseException, if not possible, does not unregister.
-   */
-  void try_unregister_model( index m_id );
 
   /**
    * Copy an existing model and register it as a new model.
@@ -201,8 +187,6 @@ public:
    * @param new_name The name of the new model.
    * @retval Index, identifying the new Model object.
    * @see copy_synapse_prototype()
-   * @todo Not fully compatible with thread number changes and
-   * unregister_model() yet.
    */
   index copy_model( index old_id, std::string new_name );
 

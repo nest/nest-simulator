@@ -100,11 +100,6 @@ Token::Token( const std::vector< double >& value )
   p = new ArrayDatum( value );
 }
 
-Token::Token( const std::valarray< double >& value )
-{
-  p = new ArrayDatum( value );
-}
-
 /*
 Token::operator Datum* () const
 {

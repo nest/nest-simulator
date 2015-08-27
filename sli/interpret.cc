@@ -42,7 +42,6 @@
 #include "dictstack.h"
 #include "functional.h"
 #include "stringdatum.h"
-#include "dynmodule.h"
 #include "iostreamdatum.h"
 #include "dictdatum.h"
 #include "tokenutils.h"
@@ -592,9 +591,9 @@ SLIInterpreter::addmodule( SLIModule* m )
 }
 
 void
-SLIInterpreter::addlinkeddynmodule( DynModule* m, nest::Network* net )
+SLIInterpreter::addlinkedusermodule( SLIModule* m )
 {
-  m->install( std::cerr, this, net );
+  m->install( std::cerr, this );
 
   // Add commandstring to list of module initializers. They will be executed
   // by sli-init.sli once all C++ stuff is loaded.

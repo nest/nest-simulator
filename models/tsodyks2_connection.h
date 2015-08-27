@@ -47,7 +47,7 @@
      tau_rec    double - time constant for depression in ms, default=800 ms
      tau_fac    double - time constant for facilitation in ms, default=0 (off)
 
-  Notes:
+  Remarks:
 
      Under identical conditions, the tsodyks2_synapse produces
      slightly lower peak amplitudes than the tsodyks_synapse. However,

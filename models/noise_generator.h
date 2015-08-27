@@ -56,6 +56,9 @@ If the modulation is added the current is given by
   I(t) = mean + sqrt(std^2 + std_mod^2 * sin(omega * t + phase)) * N_j  for t_0 + j dt <= t < t_0 +
 (j-1) dt
 
+For a detailed discussion of the properties of the noise generator, please see
+the noise_generator.ipynb notebook included in the NEST source code (docs/model_details).
+
 Parameters:
 The following parameters can be set in the status dictionary:
 
@@ -69,18 +72,19 @@ frequency double - Frequency of sine modulation in Hz
 Remarks:
  - All targets receive different currents.
  - The currents for all targets change at the same points in time.
+ - The interval between changes, dt, must be a multiple of the time step.
  - The effect of this noise current on a neuron DEPENDS ON DT. Consider
    the membrane potential fluctuations evoked when a noise current is
    injected into a neuron. The standard deviation of these fluctuations
    across an ensemble will increase with dt for a given value of std.
-   For the leaky integrate-and-fire neuron with time constant tau_m,
-   membrane potential fluctuations at times t_j+delay are given by
+   For the leaky integrate-and-fire neuron with time constant tau_m and
+   capacity C_m, membrane potential fluctuations Sigma at times t_j+delay are given by
 
-     Sigma = std * sqrt( (1-x) / (1+x) ) where x = exp(-dt/tau_m)
+     Sigma = std * tau_m / C_m * sqrt( (1-x) / (1+x) ) where x = exp(-dt/tau_m)
 
    for large t_j. In the white noise limit, dt -> 0, one has
 
-     Sigma -> std * sqrt(dt / tau).
+     Sigma -> std / C_m * sqrt(dt * tau / 2).
 
    To obtain comparable results for different values of dt, you must
    adapt std.

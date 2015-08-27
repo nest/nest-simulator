@@ -56,6 +56,7 @@ ContDelayConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
   def< double_t >( d, names::weight, weight_ );
   def< double_t >(
     d, names::delay, Time( Time::step( get_delay_steps() ) ).get_ms() - delay_offset_ );
+  def< long_t >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >

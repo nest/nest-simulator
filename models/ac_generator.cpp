@@ -36,13 +36,10 @@
  * ---------------------------------------------------------------- */
 
 nest::ac_generator::Parameters_::Parameters_()
-  : amp_( 0.0 )
-  , // pA
-  offset_( 0.0 )
-  , // pA
-  freq_( 0.0 )
-  ,               // Hz
-  phi_deg_( 0.0 ) // degree
+  : amp_( 0.0 )     // pA
+  , offset_( 0.0 )  // pA
+  , freq_( 0.0 )    // Hz
+  , phi_deg_( 0.0 ) // degree
 {
 }
 

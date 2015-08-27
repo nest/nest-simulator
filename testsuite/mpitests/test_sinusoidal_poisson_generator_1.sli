@@ -61,9 +61,9 @@ is_threaded not { exit_test_gracefully } if
 
   /sinusoidal_poisson_generator
   << 
-    /dc 1000.
-    /ac 1000.
-    /freq 100.
+    /rate 1000.
+    /amplitude 1000.
+    /frequency 100.
     /individual_spike_trains individual
   >> SetDefaults
 

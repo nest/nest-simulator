@@ -109,7 +109,6 @@
     <<
        /resolution dt
        /total_num_virtual_procs n_vp
-       /communicate_allgather allgather
        /overwrite_files overwrite_existing_files
        /rng_seeds master_seed [0 n_vp 1 sub] add Range % local RNG seeds
        /grng_seed master_seed n_vp add                 % global RNG seed

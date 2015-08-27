@@ -48,10 +48,12 @@ namespace nest
 
 class ConnParameter
 {
+
 public:
   ConnParameter()
   {
   }
+
   virtual ~ConnParameter()
   {
   }
@@ -59,18 +61,20 @@ public:
   /**
    * Return parameter value.
    *
-   * The parameter value may depend on source and target GIDs
-   * (when using callback functions, not yet implemented)
-   * and random numbers. All three must be supplied, even if
+   * The parameter value may depend on target threads
+   * and random numbers. Both must be supplied, even if
    * a concrete parameter type does not use them.
    *
-   * @param sgid  source gid
-   * @param tgid  target gid
+   * @param target_thread  will be ignored except for array parameters.
    * @param rng   random number generator pointer
    * will be ignored except for random parameters.
    */
-  virtual double value_double( index, index, librandom::RngPtr& ) const = 0;
-  virtual long_t value_int( index, index, librandom::RngPtr& ) const = 0;
+  virtual double value_double( thread, librandom::RngPtr& ) const = 0;
+  virtual long_t value_int( thread, librandom::RngPtr& ) const = 0;
+  virtual void skip( thread ) const
+  {
+  }
+  virtual bool is_array() const = 0;
 
   /**
    * Returns number of values available.
@@ -83,7 +87,13 @@ public:
     return 0;
   }
 
-  static ConnParameter* create( const Token& );
+  /**
+  * @param t parameter
+  * type is established by casts to all acceptedpossibilities
+  * @param nthread number of threads
+  * required to fix number pointers to the iterator (one for each thread)
+  */
+  static ConnParameter* create( const Token&, const size_t );
 };
 
 
@@ -95,20 +105,27 @@ public:
 class ScalarDoubleParameter : public ConnParameter
 {
 public:
-  ScalarDoubleParameter( double value )
+  ScalarDoubleParameter( double value, const size_t )
     : value_( value )
   {
   }
 
   double
-  value_double( index, index, librandom::RngPtr& ) const
+  value_double( thread, librandom::RngPtr& ) const
   {
     return value_;
   }
+
   long_t
-  value_int( index, index, librandom::RngPtr& ) const
+  value_int( thread, librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
+  }
+
+  inline bool
+  is_array() const
+  {
+    return false;
   }
 
 private:
@@ -123,20 +140,27 @@ private:
 class ScalarIntegerParameter : public ConnParameter
 {
 public:
-  ScalarIntegerParameter( long_t value )
+  ScalarIntegerParameter( long_t value, const size_t )
     : value_( value )
   {
   }
 
   double
-  value_double( index, index, librandom::RngPtr& ) const
+  value_double( thread, librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
+
   long_t
-  value_int( index, index, librandom::RngPtr& ) const
+  value_int( thread, librandom::RngPtr& ) const
   {
     return value_;
+  }
+
+  inline bool
+  is_array() const
+  {
+    return false;
   }
 
 private:
@@ -145,50 +169,134 @@ private:
 
 
 /**
- * Array parameter, returning values in order.
+ * Array parameter classes, returning double values in order.
  *
  * - The array of values must not be empty
  *   (so return 0 for number_of_values can signal non-array parameter)
  * - Throws exception if more values requested than available.
- *
+ * - The class contains nthread number of pointers (one for each thread)
+ *   to an iterator, which runs over the parameters initialised in an array.
+ *   Each pointer is moved along the parameter array by the function
+ *   value_double(), which returns the current parameter value and moves the
+ *   pointer to the subsequent position.
+ * - All parameters are  doubles, thus calling the function value_int()
+ *   throws an error.
  */
-class ArrayParameter : public ConnParameter
+
+class ArrayDoubleParameter : public ConnParameter
 {
 public:
-  ArrayParameter( const std::vector< double >& values )
-    : values_( values )
-    , next_( values_.begin() )
+  ArrayDoubleParameter( const std::vector< double >& values, const size_t nthreads )
+    : values_( &values )
+    , next_( nthreads, values_->begin() )
   {
+  }
+
+  void
+  skip( thread tid ) const
+  {
+    if ( next_[ tid ] != values_->end() )
+      *next_[ tid ]++;
+    else
+      throw KernelException( "Parameter values exhausted." );
   }
 
   size_t
   number_of_values() const
   {
-    return values_.size();
+    return values_->size();
   }
 
-  // double value(index sgid, index tgid, librandom::RngPtr&) const
   double
-  value_double( index, index, librandom::RngPtr& ) const
-
+  value_double( thread tid, librandom::RngPtr& ) const
   {
-    // return values_[sgid];
-    if ( next_ != values_.end() )
-      return *next_++;
+    if ( next_[ tid ] != values_->end() )
+      return *next_[ tid ]++;
     else
       throw KernelException( "Parameter values exhausted." );
   }
+
   long_t
-  value_int( index, index, librandom::RngPtr& ) const
+  value_int( thread, librandom::RngPtr& ) const
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
 
+  inline bool
+  is_array() const
+  {
+    return true;
+  }
+
 private:
-  std::vector< double > values_;
-  mutable std::vector< double >::iterator next_;
+  const std::vector< double >* values_;
+  mutable std::vector< std::vector< double >::const_iterator > next_;
 };
 
+/**
+ * Array parameter classes, returning integer values in order.
+ *
+ * - The array of values must not be empty
+ *   (so return 0 for number_of_values can signal non-array parameter)
+ * - Throws exception if more values requested than available.
+ * - The class contains nthread number of pointers (one for each thread)
+ *   to an iterator, which runs over the parameters initialised in an array.
+ *   Each pointer is moved along the parameter array by the function
+ *   value_int(), which returns the current parameter value and moves the
+ *   pointer to the subsequent position.
+ * - All parameters are integer, thus calling the function value_double()
+ *   throws an error.
+ */
+
+class ArrayIntegerParameter : public ConnParameter
+{
+public:
+  ArrayIntegerParameter( const std::vector< long_t >& values, const size_t nthreads )
+    : values_( &values )
+    , next_( nthreads, values_->begin() )
+  {
+  }
+
+  void
+  skip( thread tid ) const
+  {
+    if ( next_[ tid ] != values_->end() )
+      *next_[ tid ]++;
+    else
+      throw KernelException( "Parameter values exhausted." );
+  }
+
+  size_t
+  number_of_values() const
+  {
+    return values_->size();
+  }
+
+  long_t
+  value_int( thread tid, librandom::RngPtr& ) const
+  {
+    if ( next_[ tid ] != values_->end() )
+      return *next_[ tid ]++;
+    else
+      throw KernelException( "Parameter values exhausted." );
+  }
+
+  double
+  value_double( thread, librandom::RngPtr& ) const
+  {
+    throw KernelException( "ConnParameter calls value function with false return type." );
+  }
+
+  inline bool
+  is_array() const
+  {
+    return true;
+  }
+
+private:
+  const std::vector< long_t >* values_;
+  mutable std::vector< std::vector< long_t >::const_iterator > next_;
+};
 
 /**
  * Random scalar value.
@@ -198,17 +306,24 @@ private:
 class RandomParameter : public ConnParameter
 {
 public:
-  RandomParameter( const DictionaryDatum& );
+  RandomParameter( const DictionaryDatum&, const size_t );
 
   double
-  value_double( index, index, librandom::RngPtr& rng ) const
+  value_double( thread, librandom::RngPtr& rng ) const
   {
     return ( *rdv_ )( rng );
   }
+
   long_t
-  value_int( index, index, librandom::RngPtr& rng ) const
+  value_int( thread, librandom::RngPtr& rng ) const
   {
     return ( *rdv_ )( rng );
+  }
+
+  inline bool
+  is_array() const
+  {
+    return false;
   }
 
 private:

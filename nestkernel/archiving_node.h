@@ -103,13 +103,6 @@ public:
    */
   void register_stdp_connection( double_t t_first_read );
 
-  /**
-   * Unregister this incoming connection.
-   * t_last_read: The unregistered synapse has read all history entries with t <= t_last_read.
-   */
-  void unregister_stdp_connection( double_t t_last_read );
-
-
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d );
 

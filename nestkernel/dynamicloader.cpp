@@ -38,11 +38,11 @@
 
 #include <ltdl.h>
 
+#include "sliconfig.h"
 #include "network.h"
 #include "interpret.h"
 #include "integerdatum.h"
 #include "stringdatum.h"
-#include "dynmodule.h"
 
 #include "model.h"
 
@@ -53,7 +53,7 @@ struct sDynModule
 {
   std::string name;
   lt_dlhandle handle;
-  DynModule* pModule;
+  SLIModule* pModule;
 
   bool operator==( const sDynModule& rhs ) const
   {
@@ -87,7 +87,6 @@ DynamicLoaderModule::getLinkedModules()
 */
 DynamicLoaderModule::DynamicLoaderModule( Network* pNet, SLIInterpreter& interpreter )
   : loadmodule_function( pNet, dyn_modules )
-  , unloadmodule_function( pNet, dyn_modules )
 {
   assert( pNet != NULL );
   pNet_ = pNet;
@@ -129,7 +128,7 @@ DynamicLoaderModule::commandstring( void ) const
 // we cannot use a & for the second argument, as std::bind2nd() then
 // becomes confused, at least with g++ 4.0.1.
 bool
-has_name( DynModule const* const m, const std::string n )
+has_name( SLIModule const* const m, const std::string n )
 {
   return m->name() == n;
 }
@@ -167,6 +166,15 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
 
   // call lt_dlerror() to reset any error messages hanging around
   lt_dlerror();
+  int searchpath_result = lt_dlsetsearchpath( SLI_PREFIX "/lib/nest" );
+  if ( searchpath_result != 0 )
+  {
+    char* errstr = ( char* ) lt_dlerror();
+    std::string msg = "Could not set user search path: " SLI_PREFIX "/lib/nest";
+    if ( errstr )
+      msg += "\nThe dynamic loader returned the following error: '" + std::string( errstr ) + "'.";
+    throw DynamicModuleManagementError( msg );
+  }
 
   // try to open the module
   const lt_dlhandle hModule = lt_dlopenext( new_module.name.c_str() );
@@ -182,7 +190,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   }
 
   // see if we can find the mod symbol in the module
-  DynModule* pModule = ( DynModule* ) lt_dlsym( hModule, "mod" );
+  SLIModule* pModule = ( SLIModule* ) lt_dlsym( hModule, "mod" );
   char* errstr = ( char* ) lt_dlerror();
   if ( errstr )
   {
@@ -212,7 +220,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   // all is well an we can register the module with the interpreter
   try
   {
-    pModule->install( std::cerr, i, pNet_ );
+    pModule->install( std::cerr, i );
   }
   catch ( std::exception& e )
   {
@@ -251,94 +259,12 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*
-  BeginDocumentation
-  Name: Uninstall - Uninstall a previously loaded module.
-  Description:
-  Synopsis: handle Uninstall
-  See: Install
-*/
-DynamicLoaderModule::UnloadModuleFunction::UnloadModuleFunction( Network* pNet,
-  vecDynModules& dyn_modules )
-  : pNet_( pNet )
-  , dyn_modules_( dyn_modules )
-{
-}
-
-void
-DynamicLoaderModule::UnloadModuleFunction::execute( SLIInterpreter* i ) const
-{
-
-  if ( i->OStack.load() < 1 )
-  {
-    i->raiseerror( i->StackUnderflowError );
-    return;
-  }
-
-  IntegerDatum* mod_id = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-
-  if ( mod_id == NULL )
-  {
-    i->message( SLIInterpreter::M_ERROR, "Uninstall", "expected argument of type integer" );
-    i->raiseerror( i->ArgumentTypeError );
-    return;
-  }
-
-  // check, if given id is in correct range
-  if ( static_cast< size_t >( mod_id->get() ) >= dyn_modules_.size()
-    || dyn_modules_[ mod_id->get() ].handle == 0 )
-  {
-    i->message( SLIInterpreter::M_ERROR, "Uninstall", "id is not bound to any loaded module" );
-    i->raiseerror( "ArgumentError" );
-    return;
-  }
-
-  // Check if there are any user defined models. We cannot unload in that case.
-  if ( pNet_->has_user_models() )
-  {
-    i->message(
-      SLIInterpreter::M_ERROR, "Uninstall", "Modules cannot be unloaded after use of CopyModel." );
-    i->raiseerror( "KernelError" );
-    return;
-  }
-
-  // unregister symbols/dictionaries defined in this module
-  try
-  {
-    DynModule* pMod = dyn_modules_[ mod_id->get() ].pModule;
-    pMod->unregister( i, pNet_ );
-  }
-  catch ( KernelException& e )
-  {
-    i->message( SLIInterpreter::M_ERROR, "Uninstall", "Modules cannot be unloaded." );
-    i->message( SLIInterpreter::M_ERROR, "Uninstall", e.what() );
-    i->raiseerror( "KernelError" );
-    return;
-  }
-
-  // unload the module
-  lt_dlclose( dyn_modules_[ mod_id->get() ].handle );
-  lt_dlerror(); // remove any error caused by lt_dlclose()
-
-  dyn_modules_[ mod_id->get() ].pModule = 0; // mark as unloaded
-  dyn_modules_[ mod_id->get() ].handle = 0;  // mark as unloaded
-  dyn_modules_[ mod_id->get() ].name = "";   // mark as unloaded
-
-  i->message( SLIInterpreter::M_INFO, "Uninstall", "sucessfully unloaded module" );
-
-  // remove operand and operator from stack
-  i->OStack.pop();
-  i->EStack.pop();
-}
-
-
 void
 DynamicLoaderModule::init( SLIInterpreter* i )
 {
 
   // bind functions to terminal names
   i->createcommand( "Install", &loadmodule_function );
-  i->createcommand( "Uninstall", &unloadmodule_function );
 
   // initialize ltdl library for loading dynamic modules
 
@@ -369,7 +295,7 @@ DynamicLoaderModule::init( SLIInterpreter* i )
 
 
 int
-DynamicLoaderModule::registerLinkedModule( DynModule* pModule )
+DynamicLoaderModule::registerLinkedModule( SLIModule* pModule )
 {
   assert( pModule != 0 );
   getLinkedModules().push_back( pModule );
@@ -387,7 +313,7 @@ DynamicLoaderModule::initLinkedModules( SLIInterpreter& interpreter )
       SLIInterpreter::M_STATUS, "DynamicLoaderModule::initLinkedModules", "adding linked module" );
     interpreter.message(
       SLIInterpreter::M_STATUS, "DynamicLoaderModule::initLinkedModules", ( *it )->name().c_str() );
-    interpreter.addlinkeddynmodule( *it, pNet_ );
+    interpreter.addlinkedusermodule( *it );
   }
 }
 

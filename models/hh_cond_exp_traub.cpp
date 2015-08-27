@@ -119,27 +119,19 @@ hh_cond_exp_traub_dynamics( double, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::hh_cond_exp_traub::Parameters_::Parameters_()
-  : g_Na( 20000.0 )
-  , // Sodium Conductance (nS)
-  g_K( 6000.0 )
-  , // K Conductance      (nS)
-  g_L( 10.0 )
-  , // Leak Conductance   (nS)
-  C_m( 200.0 )
-  , // Membrane Capacitance (pF)
-  E_Na( 50.0 )
-  , // Reversal potentials (mV)
-  E_K( -90.0 )
+  : g_Na( 20000.0 ) // Sodium Conductance (nS)
+  , g_K( 6000.0 )   // K Conductance      (nS)
+  , g_L( 10.0 )     // Leak Conductance   (nS)
+  , C_m( 200.0 )    // Membrane Capacitance (pF)
+  , E_Na( 50.0 )    // Reversal potentials (mV)
+  , E_K( -90.0 )
   , E_L( -60.0 )
-  , V_T( -63.0 )
-  , // adjusts threshold to around -50 mV
-  E_ex( 0.0 )
+  , V_T( -63.0 ) // adjusts threshold to around -50 mV
+  , E_ex( 0.0 )
   , E_in( -80.0 )
-  , tau_synE( 5.0 )
-  , // Synaptic Time Constant Excitatory Synapse (ms)
-  tau_synI( 10.0 )
-  ,          // Synaptic Time Constant Excitatory Synapse (ms)
-  I_e( 0.0 ) // Stimulus Current (pA)
+  , tau_synE( 5.0 )  // Synaptic Time Constant Excitatory Synapse (ms)
+  , tau_synI( 10.0 ) // Synaptic Time Constant Excitatory Synapse (ms)
+  , I_e( 0.0 )       // Stimulus Current (pA)
 {
 }
 

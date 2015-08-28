@@ -174,3 +174,7 @@ if [ "$format_error_files" != "" ]; then
   exit 42
 fi
 
+if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+  echo "WARNING: Not uploading results as this is a pull request" >&2
+  exit 2
+fi

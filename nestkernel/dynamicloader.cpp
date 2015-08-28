@@ -300,7 +300,7 @@ DynamicLoaderModule::reset( SLIInterpreter& interpreter )
   vecDynModules& dm = loadmodule_function.dyn_modules_;
   for ( it = dm.begin(); it != dm.end(); ++it )
   {
-    SLIModule* mod = (*it).pModule;
+    SLIModule* mod = ( *it ).pModule;
     std::string msg = String::compose( "Resetting dynamic module '%1'", mod->name() );
     interpreter.message( SLIInterpreter::M_INFO, "DynamicLoaderModule::reset()", msg.c_str() );
     mod->reset( interpreter );

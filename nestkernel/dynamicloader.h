@@ -82,6 +82,7 @@ public:
   class LoadModuleFunction : public SLIFunction
   {
     friend class DynamicLoaderModule;
+
   public:
     LoadModuleFunction( Network* pNet, vecDynModules& dyn_modules );
 

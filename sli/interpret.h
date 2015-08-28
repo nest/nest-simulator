@@ -910,9 +910,9 @@ SLIInterpreter::reset_modules()
   std::list< SLIModule* >::iterator i;
   for ( i = modules.begin(); i != modules.end(); ++i )
   {
-    std::string msg = String::compose( "Resetting module '%1'", (*i)->name() );
+    std::string msg = String::compose( "Resetting module '%1'", ( *i )->name() );
     message( M_INFO, "SLIInterpreter::reset_modules()", msg.c_str() );
-    (*i)->reset( *this );
+    ( *i )->reset( *this );
   }
 }
 

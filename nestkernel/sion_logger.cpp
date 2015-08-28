@@ -152,8 +152,8 @@ nest::SIONLogger::finalize()
     sion_fwrite( &( info.t_start ), sizeof( double ), 1, file.sid );
     sion_fwrite( &( info.t_end ), sizeof( double ), 1, file.sid );
     sion_fwrite( &( info.resolution ), sizeof( double ), 1, file.sid );
-    
-	sion_parclose_ompi( file.sid );
+
+    sion_parclose_ompi( file.sid );
   }
 }
 

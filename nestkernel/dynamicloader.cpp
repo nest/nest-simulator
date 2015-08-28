@@ -114,7 +114,7 @@ DynamicLoaderModule::~DynamicLoaderModule()
 const std::string
 DynamicLoaderModule::name( void ) const
 {
-  return std::string( "NEST-Dynamic Loader" ); // Return name of the module
+  return std::string( "NEST Dynamic Loader" ); // Return name of the module
 }
 
 const std::string
@@ -293,6 +293,19 @@ DynamicLoaderModule::init( SLIInterpreter* i )
   }
 }
 
+void
+DynamicLoaderModule::reset( SLIInterpreter& interpreter )
+{
+  vecDynModules::iterator it;
+  vecDynModules& dm = loadmodule_function.dyn_modules_;
+  for ( it = dm.begin(); it != dm.end(); ++it )
+  {
+    SLIModule* mod = ( *it ).pModule;
+    std::string msg = String::compose( "Resetting dynamic module '%1'", mod->name() );
+    interpreter.message( SLIInterpreter::M_INFO, "DynamicLoaderModule::reset()", msg.c_str() );
+    mod->reset( interpreter );
+  }
+}
 
 int
 DynamicLoaderModule::registerLinkedModule( SLIModule* pModule )

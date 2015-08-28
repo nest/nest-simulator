@@ -30,6 +30,18 @@ nest::SIONLogger::enroll( const int task,
   if ( devices_[ task ].find( gid ) == devices_[ task ].end() )
   {
     DeviceEntry entry( device );
+    DeviceInfo& info = entry.info;
+
+    info.gid = device.get_node().get_gid();
+    info.name = device.get_node().get_name();
+
+    info.value_names.reserve( value_names.size() );
+    for ( std::vector< Name >::const_iterator it = value_names.begin(); it != value_names.end();
+          ++it )
+    {
+      info.value_names.push_back( it->toString() );
+    }
+
     devices_[ task ].insert( std::make_pair( gid, entry ) );
   }
   else
@@ -140,6 +152,18 @@ nest::SIONLogger::finalize()
       sion_fwrite( &name, sizeof( char ), 16, file.sid );
 
       sion_fwrite( &( dev_info.n_rec ), sizeof( unsigned long ), 1, file.sid );
+
+      int n_val = dev_info.value_names.size();
+      sion_fwrite( &n_val, sizeof( int ), 1, file.sid );
+
+      for ( std::vector< std::string >::iterator it = dev_info.value_names.begin();
+            it != dev_info.value_names.end();
+            ++it )
+      {
+        char name[ 8 ];
+        strncpy( name, it->c_str(), 8 );
+        sion_fwrite( &name, sizeof( char ), 8, file.sid );
+      }
     }
 
     // write tail

@@ -7,7 +7,7 @@ END_SHA=HEAD
 CPPCHECK=cppcheck
 VERA=vera++
 
-CLANG_FORMAT=clang-format
+CLANG_FORMAT=clang-format-3.6
 INCREMENTAL=false
 
 ONLY_FILE=

@@ -5,23 +5,23 @@
 #include "sion_logger.h"
 
 void
-nest::SIONLogger::enroll( const int virtual_process, RecordingDevice& device )
+nest::SIONLogger::enroll( const int task, RecordingDevice& device )
 {
   const Node& node = device.get_node();
   const int gid = node.get_gid();
 
-  // is virtual_process == virtual process we are in?
+  // is task == virtual process we are in?
   // FIXME: critical?
 
-  if ( files_.find( virtual_process ) == files_.end() )
+  if ( devices_.find( task ) == files_.end() )
   {
-    files_.insert( std::make_pair( virtual_process, VirtualProcessEntry() ) );
+    files_.insert( std::make_pair( task, VirtualProcessEntry() ) );
   }
 
-  if ( files_[ virtual_process ].devices.find( gid ) == files_[ virtual_process ].devices.end() )
+  if ( files_[ task ].devices.find( gid ) == files_[ task ].devices.end() )
   {
     DeviceEntry entry( device );
-    files_[ virtual_process ].devices.insert( std::make_pair( gid, entry ) );
+    files_[ task ].devices.insert( std::make_pair( gid, entry ) );
   }
 }
 

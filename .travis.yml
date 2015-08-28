@@ -74,19 +74,20 @@ script: ./build.sh
 
 before_deploy:
   - cd $TRAVIS_BUILD_DIR/build
-  - tar -zcvf configlog.tar.gz ./*.log
+  - tar -zcvf logfiles.tar.gz ./*.log
   - tar -zcvf reports.tar.gz ./reports 
   - mkdir -p $TRAVIS_BUILD_DIR/build/artefacts_upload
-  - cp configlog.tar.gz reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+  - mv logfiles.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+  - mv reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
   
 #S3 deployment    
 
 deploy:
   provider: s3
   access_key_id:
-    secure: aB3wzUTjsnOKEAm8tkC0Z9PS5xx8rXKoo1urRKzpFfWT40hoALVvLkt5ctGg3ZTsbkvZUiiBkbJWEuYagCuPrYhK8VZCO7dc59pe9GUjBtchYy98seyrwo0rgE7fXnVMxdWiD+kcbe/GdduFYizom5ko0t4tb0jcBnW/ii0ffFg=
+    secure: $ARTIFACTS_KEY
   secret_access_key:
-    secure: MYu4cCqQtIOfLCJdeWjb1EThIUXgGMozSSuSImiEc6k7C5QMKkw2P006wQamsm1nmjFCTEMVlKOzk2YMBnS6qgtpZTZQK9+SBRZLyzFM2Us9katB52G/9XZa8s7/4dXV7zpDIZ3oSNDLoKmTRTWBLZ6zH6o01+68NR59XsTuUXM=
+    secure: $ARTIFACTS_SECRET
   bucket: "nest-travis-artefacts"
   region: eu-central-1
   skip_cleanup: true
@@ -96,3 +97,4 @@ deploy:
   local-dir: "$TRAVIS_BUILD_DIR/build/artefacts_upload"
   upload-dir: "$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER"
   acl: bucket_owner_full_control
+

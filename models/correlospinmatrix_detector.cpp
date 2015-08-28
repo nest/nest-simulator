@@ -436,6 +436,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
         }
 
         if ( i != j )
+	{
           for ( long_t Delta = 1; Delta <= Delta_ij_max / dt; Delta++ )
           {
             long_t l =
@@ -446,7 +447,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
               S_.count_covariance_[ j ][ i ][ t0 + Delta ] += l;
             }
           }
-
+	}
       } // loop over history
 
       S_.last_change_[ i ] = t_i_off;

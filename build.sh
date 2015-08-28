@@ -176,5 +176,5 @@ fi
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "WARNING: Not uploading results as this is a pull request" >&2
-  exit 2
+  exit 0
 fi

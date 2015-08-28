@@ -77,9 +77,11 @@ Finally, we let [cppcheck](http://cppcheck.sourceforge.net/) statically analyse 
     cppcheck --enable=all <committed file>
 
 Get `cppcheck`:
-Ubuntu:
+Ubuntu 15.10:
 
     apt-get install cppcheck
+
+Ubuntu before does not provide a package for 1.69. Please use the instructions to build from scratch.
 
 OS X:
 

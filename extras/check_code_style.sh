@@ -24,21 +24,28 @@ usage ()
     cat <<EOF
 Usage: ./extras/check_code_style.sh [options ...]"
 
+This script checks our coding style guidelines. The checks are
+performed in the same way as in our TravisCI setup. First it looks
+for changed files in the repository in the commit range <git-start>..<git-end>
+(by default this is master..HEAD). Only the changed files are checked.
+You can specify a different commit range or define the file, which
+should be checked, as an argument.
+
 The script expects to be run from the base directory of the
 NEST sources, i.e. all executions should start like:
     ./extras/check_code_style.sh ...
 
-Setup of Tooling is explained here: 
+Setup of the tooling is explained here: 
     https://nest.github.io/nest-simulator/coding_guidelines_c++
 
 Options:
 
-    --help               Print program options and exit
+    --help               Print program options and exit.
     --incremental        Do analysis one file after another.
     --file=/path/to/file Perform the static analysis on this file only.
-    --git-start=SHA      Enter the default SHA for git to start the diff
+    --git-start=SHA      Enter the SHA from which git starts the diff.
                          (default=master)
-    --git-end=SHA        Enter the default SHA for git to end the diff
+    --git-end=SHA        Enter the SHA from which git ends the diff.
                          (default=HEAD)
     --cppcheck=exe       Enter the executable that is used for cppcheck. Due to
                          a bug in previous versions we require at least version
@@ -47,7 +54,7 @@ Options:
     --clang-format=exe   Enter the executable that is used for clang-format.
                          Due to formatting differences in version 3.6 and 3.7
                          we require version 3.6, which is also used in our
-                         TravisCI setup. (default=clang-format)
+                         TravisCI setup. (default=clang-format-3.6)
     --vera++=exe         Enter the executable that is used for vera++.
                          (default=vera++)
 EOF

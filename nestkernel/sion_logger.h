@@ -56,43 +56,54 @@ private:
     SIONBuffer& operator<<( const T data );
   };
 
-  struct DeviceHeader
+  struct DeviceInfo
   {
-    int device_id;
-    int n_values;
-    std::vector< std::string > value_names;
-  };
+    DeviceInfo()
+      : n_rec( 0 )
+    {
+    }
 
-  struct FileHeader
-  {
-    int n_devices;
-    std::vector< DeviceHeader > device_headers;
+    int gid;
+    int type;
+    std::string name;
+    unsigned long n_rec;
+    std::vector< std::string > value_names;
   };
 
   struct DeviceEntry
   {
     DeviceEntry( RecordingDevice& device )
       : device( device )
-      , n_rec( 0 )
+      , info()
     {
     }
 
     RecordingDevice& device;
-    unsigned long n_rec;
+    DeviceInfo info;
   };
 
-  struct VirtualProcessEntry
+  struct FileInfo
   {
-    int sid;
     int body_blk, info_blk;
     sion_int64 body_pos, info_pos;
 
     double t_start, t_end, resolution;
 
     SIONBuffer buffer;
-    typedef std::map< int, DeviceEntry > device_map;
-    device_map devices;
   };
+
+  struct FileEntry
+  {
+    int sid;
+    SIONBuffer buffer;
+    FileInfo info;
+  };
+
+  typedef std::map< int, std::map< int, DeviceEntry > > device_map;
+  device_map devices_;
+
+  typedef std::map< int, FileEntry > file_map;
+  file_map files_;
 
   struct Parameters_
   {
@@ -107,11 +118,6 @@ private:
   };
 
   Parameters_ P_;
-
-  // one map for each virtual process,
-  // in turn containing one ostream for everydevice
-  typedef std::map< int, VirtualProcessEntry > file_map;
-  file_map files_;
 
   bool initialized_;
 };

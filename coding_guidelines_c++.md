@@ -95,7 +95,7 @@ Build from scratch:
     make PREFIX=$PWD/install/ CFGDIR=$PWD/install/cfg HAVE_RULES=yes install
 
     # In `.bashrc` at install/bin to `PATH`:
-    export PATH=$PATH:/path/to/cppcheck/install/bin
+    export PATH=/path/to/cppcheck/install/bin:$PATH
 
 ### Check Static Analysis Local
 

@@ -339,6 +339,8 @@ public:
 
   const Node& get_node() const;
 
+  void set_value_names( const std::vector< Name >& names );
+
 private:
   /**
    * Store data in internal structure.
@@ -424,6 +426,9 @@ private:
 
   const Node& node_; //!< node to which device instance belongs
   const Mode mode_;  //!< operating mode, depends on owning node
+
+  std::vector< Name > value_names_;
+
   Parameters_ P_;
   State_ S_;
   Buffers_ B_;

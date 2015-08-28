@@ -554,3 +554,9 @@ nest::RecordingDevice::get_node() const
 {
   return node_;
 }
+
+void
+nest::RecordingDevice::set_value_names( const std::vector< Name >& names )
+{
+	value_names_ = names;
+}

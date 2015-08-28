@@ -137,6 +137,7 @@ Multimeter::init_buffers_()
 void
 Multimeter::calibrate()
 {
+  device_.set_value_names( P_.record_from_ );
   device_.calibrate();
   V_.new_request_ = false;
   V_.current_request_data_start_ = 0;

@@ -256,6 +256,103 @@ nest::SIONLogger::build_filename_() const
 }
 
 /* ----------------------------------------------------------------
+ * Buffer
+ * ---------------------------------------------------------------- */
+
+
+nest::SIONLogger::SIONBuffer::SIONBuffer()
+  : buffer( NULL )
+  , ptr( 0 )
+  , max_size( 0 )
+{
+}
+
+nest::SIONLogger::SIONBuffer::SIONBuffer( int size )
+  : buffer( NULL )
+  , ptr( 0 )
+{
+  if ( size > 0 )
+  {
+    buffer = new char[ size ];
+    max_size = size;
+  }
+  max_size = 0;
+}
+
+nest::SIONLogger::SIONBuffer::~SIONBuffer()
+{
+  if ( buffer != NULL )
+    delete[] buffer;
+}
+
+void
+nest::SIONLogger::SIONBuffer::reserve( int size )
+{
+  char* new_buffer = new char[ size ];
+
+  if ( buffer != NULL )
+  {
+    ptr = std::min( ptr, size );
+    memcpy( new_buffer, buffer, ptr );
+    delete[] buffer;
+  }
+  buffer = new_buffer;
+  max_size = size;
+}
+
+void
+nest::SIONLogger::SIONBuffer::write( const char* v, long unsigned int n )
+{
+  if ( ptr + n <= max_size )
+  {
+    memcpy( buffer + ptr, v, n );
+    ptr += n;
+  }
+  else
+  {
+    std::cerr << "SIONBuffer: buffer overflow: ptr=" << ptr << " n=" << n
+              << " max_size=" << max_size << std::endl;
+  }
+}
+
+int
+nest::SIONLogger::SIONBuffer::get_size()
+{
+  return ptr;
+}
+
+int
+nest::SIONLogger::SIONBuffer::get_capacity()
+{
+  return max_size;
+}
+
+int
+nest::SIONLogger::SIONBuffer::get_free()
+{
+  return ( max_size - ptr );
+}
+
+void
+nest::SIONLogger::SIONBuffer::clear()
+{
+  ptr = 0;
+}
+
+char*
+nest::SIONLogger::SIONBuffer::read()
+{
+  return buffer;
+}
+
+template < typename T >
+nest::SIONLogger::SIONBuffer& nest::SIONLogger::SIONBuffer::operator<<( const T data )
+{
+  write( ( const char* ) &data, sizeof( T ) );
+  return *this;
+}
+
+/* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
 

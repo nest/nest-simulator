@@ -42,114 +42,18 @@ private:
     int max_size;
 
   public:
-    SIONBuffer()
-      : buffer( NULL )
-      , ptr( 0 )
-      , max_size( 0 )
-    {
-    }
-
-    SIONBuffer( int size )
-      : buffer( NULL )
-      , ptr( 0 )
-    {
-      if ( size > 0 )
-      {
-        buffer = new char[ size ];
-        max_size = size;
-      }
-      max_size = 0;
-    }
-
-    ~SIONBuffer()
-    {
-      if ( buffer != NULL )
-        delete[] buffer;
-    }
-
-    void
-    reserve( int size )
-    {
-      char* new_buffer = new char[ size ];
-
-      if ( buffer != NULL )
-      {
-        ptr = std::min( ptr, size );
-        memcpy( new_buffer, buffer, ptr );
-        delete[] buffer;
-      }
-      buffer = new_buffer;
-      max_size = size;
-    }
-
-    void
-    write( const char* v, long unsigned int n )
-    {
-      if ( ptr + n <= max_size )
-      {
-        memcpy( buffer + ptr, v, n );
-        ptr += n;
-      }
-      else
-      {
-        std::cerr << "SIONBuffer: buffer overflow: ptr=" << ptr << " n=" << n
-                  << " max_size=" << max_size << std::endl;
-      }
-    }
-
-    int
-    get_size()
-    {
-      return ptr;
-    }
-
-    int
-    get_capacity()
-    {
-      return max_size;
-    }
-
-    void
-    ensure_free_space( int size )
-    {
-      if ( !has_free_space( size ) )
-      {
-        // TODO: What? +10*size?
-        int new_max_size = max_size + size * 10;
-        reserve( max_size + size * 10 );
-      }
-    }
-
-    bool
-    has_free_space( int size )
-    {
-      return ( ptr + size < max_size );
-    }
-
-    int
-    get_free()
-    {
-      return ( max_size - ptr );
-    }
-
-    void
-    clear()
-    {
-      ptr = 0;
-    }
-
-    char*
-    read()
-    {
-      return buffer;
-    }
-
+    SIONBuffer();
+    SIONBuffer( int size );
+    ~SIONBuffer();
+    void reserve( int size );
+    void write( const char* v, long unsigned int n );
+    int get_capacity();
+    int get_size();
+    int get_free();
+    void clear();
+    char* read();
     template < typename T >
-    SIONBuffer& operator<<( const T data )
-    {
-      write( ( const char* ) &data, sizeof( T ) );
-      return *this;
-    }
+    SIONBuffer& operator<<( const T data );
   };
 
   struct DeviceHeader

@@ -148,6 +148,12 @@ else
 fi
 format_error_files=""
 
+if [ -z "$file_names" ]; then
+  echo
+  echo "Nothing to check."
+  exit 0
+fi
+
 echo
 echo "Performing static analysis on:"
 for f in $file_names; do

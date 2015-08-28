@@ -7,6 +7,13 @@ nest::ScreenLogger::enroll( const int virtual_process, RecordingDevice& device )
 }
 
 void
+nest::ScreenLogger::enroll( const int virtual_process,
+  RecordingDevice& device,
+  const std::vector< Name >& value_names )
+{
+}
+
+void
 nest::ScreenLogger::initialize()
 {
   if ( initialized_ )

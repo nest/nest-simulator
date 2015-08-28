@@ -36,7 +36,6 @@
 // issue warning messages. This is messy and needs cleaning up.
 #include "nestmodule.h"
 
-
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
@@ -293,7 +292,7 @@ nest::RecordingDevice::calibrate()
   Device::calibrate();
 
   Logger* logger = Node::network()->get_logger();
-  logger->enroll(node_.get_vp(), *this);
+  logger->enroll(node_.get_vp(), *this, value_names_);
 
   if ( P_.to_file_ )
   {

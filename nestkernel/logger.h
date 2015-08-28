@@ -15,6 +15,9 @@ public:
   virtual ~Logger() throw() {};
 
   virtual void enroll( const int virtual_process, RecordingDevice& device ) = 0;
+  virtual void enroll( const int virtual_process,
+    RecordingDevice& device,
+    const std::vector< Name >& value_names ) = 0;
 
   virtual void initialize() = 0;
   virtual void finalize() = 0;

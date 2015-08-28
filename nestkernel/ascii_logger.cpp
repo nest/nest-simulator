@@ -2,7 +2,16 @@
 #include "ascii_logger.h"
 
 void
-nest::ASCIILogger::enroll( const int virtual_process, RecordingDevice& device )
+nest::ASCIILogger::enroll( const int task, RecordingDevice& device )
+{
+  std::vector< Name > value_names;
+  enroll( task, device, value_names );
+}
+
+void
+nest::ASCIILogger::enroll( const int virtual_process,
+  RecordingDevice& device,
+  const std::vector< Name >& value_names )
 {
   const Node& node = device.get_node();
   const int gid = node.get_gid();

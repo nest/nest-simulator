@@ -7,6 +7,15 @@
 void
 nest::SIONLogger::enroll( const int task, RecordingDevice& device )
 {
+  std::vector< Name > value_names;
+  nest::SIONLogger::enroll( task, device, value_names );
+}
+
+void
+nest::SIONLogger::enroll( const int task,
+  RecordingDevice& device,
+  const std::vector< Name >& value_names )
+{
   const Node& node = device.get_node();
   const int gid = node.get_gid();
 

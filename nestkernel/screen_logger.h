@@ -19,6 +19,9 @@ public:
   }
 
   void enroll( const int virtual_process, RecordingDevice& device );
+  void enroll( const int virtual_process,
+    RecordingDevice& device,
+    const std::vector< Name >& value_names );
   void initialize();
   void finalize();
   void write( const RecordingDevice& device, const Event& event );

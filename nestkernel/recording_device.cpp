@@ -548,6 +548,12 @@ nest::RecordingDevice::State_::clear_events()
   event_times_offsets_.clear();
 }
 
+const nest::RecordingDevice::Mode&
+nest::RecordingDevice::get_mode() const
+{
+  return mode_;
+}
+
 const nest::Node&
 nest::RecordingDevice::get_node() const
 {

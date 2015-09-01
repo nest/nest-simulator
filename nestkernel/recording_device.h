@@ -339,6 +339,8 @@ public:
 
   const Node& get_node() const;
 
+  const Mode& get_mode() const;
+
   void set_value_names( const std::vector< Name >& names );
 
 private:

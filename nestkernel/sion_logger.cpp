@@ -33,6 +33,7 @@ nest::SIONLogger::enroll( const int task,
     DeviceInfo& info = entry.info;
 
     info.gid = device.get_node().get_gid();
+    info.type = device.get_mode();
     info.name = device.get_node().get_name();
 
     info.value_names.reserve( value_names.size() );
@@ -168,6 +169,7 @@ nest::SIONLogger::finalize()
       DeviceInfo& dev_info = it->second.info;
 
       sion_fwrite( &( dev_info.gid ), sizeof( int ), 1, file.sid );
+      sion_fwrite( &( dev_info.type ), sizeof( int ), 1, file.sid );
 
       char name[ 16 ];
       strncpy( name, dev_info.name.c_str(), 16 );

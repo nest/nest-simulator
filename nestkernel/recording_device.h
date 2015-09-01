@@ -360,13 +360,6 @@ private:
    */
   void flush_stream_();
 
-  /**
-   * Build filename from parts.
-   * @note This function returns the filename, it does not manipulate
-   *       any data member.
-   */
-  const std::string build_filename_() const;
-
   // ------------------------------------------------------------------
 
   struct Buffers_

@@ -293,131 +293,11 @@ nest::RecordingDevice::calibrate()
 
   Logger* logger = Node::network()->get_logger();
   logger->enroll(node_.get_vp(), *this, value_names_);
-
-  if ( P_.to_file_ )
-  {
-	/*
-    // do we need to (re-)open the file
-    bool newfile = false;
-
-    if ( !B_.fs_.is_open() )
-    {
-      newfile = true; // no file from before
-      P_.filename_ = build_filename_();
-    }
-    else
-    {
-      std::string newname = build_filename_();
-      if ( newname != P_.filename_ )
-      {
-        std::string msg =
-          String::compose( "Closing file '%1', opening file '%2'", P_.filename_, newname );
-        Node::network()->message( SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg );
-
-        B_.fs_.close(); // close old file
-        P_.filename_ = newname;
-        newfile = true;
-      }
-    }
-
-    if ( newfile )
-    {
-      assert( !B_.fs_.is_open() );
-
-      if ( Node::network()->overwrite_files() )
-      {
-        B_.fs_.open( P_.filename_.c_str() );
-      }
-      else
-      {
-        // try opening for reading
-        std::ifstream test( P_.filename_.c_str() );
-        if ( test.good() )
-        {
-          std::string msg = String::compose(
-            "The device file '%1' exists already and will not be overwritten. "
-            "Please change data_path, data_prefix or label, or set /overwrite_files "
-            "to true in the root node.",
-            P_.filename_ );
-          Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
-          throw IOError();
-        }
-        else
-          test.close();
-
-        // file does not exist, so we can open
-        B_.fs_.open( P_.filename_.c_str() );
-      }
-
-      if ( P_.fbuffer_size_ != P_.fbuffer_size_old_ )
-      {
-        if ( P_.fbuffer_size_ == 0 )
-          B_.fs_.rdbuf()->pubsetbuf( 0, 0 );
-        else
-        {
-          std::vector< char >* buffer = new std::vector< char >( P_.fbuffer_size_ );
-          B_.fs_.rdbuf()->pubsetbuf( reinterpret_cast< char* >( &buffer[ 0 ] ), P_.fbuffer_size_ );
-        }
-
-        P_.fbuffer_size_old_ = P_.fbuffer_size_;
-      }
-    }
-
-    if ( !B_.fs_.good() )
-    {
-      std::string msg = String::compose(
-        "I/O error while opening file '%1'. "
-        "This may be caused by too many open files in networks "
-        "with many recording devices and threads.",
-        P_.filename_ );
-      Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
-
-      if ( B_.fs_.is_open() )
-        B_.fs_.close();
-      P_.filename_.clear();
-      throw IOError();
-    }
-
-    // Set formatting
-    B_.fs_ << std::fixed;
-	B_.fs_ << std::setprecision(3);
-
-    if ( P_.fbuffer_size_ != P_.fbuffer_size_old_ )
-    {
-      std::string msg = String::compose(
-        "Cannot set file buffer size, as the file is already "
-        "openeded with a buffer size of %1. Please close the "
-        "file first.",
-        P_.fbuffer_size_old_ );
-      Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
-      throw IOError();
-    }
-  */
-  }
 }
 
 void
 nest::RecordingDevice::finalize()
 {
-  if ( B_.fs_.is_open() )
-  {
-    if ( P_.close_after_simulate_ )
-    {
-      B_.fs_.close();
-      return;
-    }
-
-    if ( P_.flush_after_simulate_ )
-      B_.fs_.flush();
-
-    if ( !B_.fs_.good() )
-    {
-      std::string msg = String::compose( "I/O error while opening file '%1'", P_.filename_ );
-      Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg );
-
-      throw IOError();
-    }
-  }
 }
 
 /* ----------------------------------------------------------------
@@ -480,8 +360,6 @@ void nest::RecordingDevice::write( const Event& event, const std::vector< double
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
 
-  // std::cout << "recording device sender: " << sender << std::endl;
-
   if ( P_.to_file_ )
   {
     Logger* logger = Node::network()->get_logger();
@@ -509,33 +387,6 @@ nest::RecordingDevice::store_data_( index sender, const Time& t, double offs )
     S_.event_times_ms_.push_back( t.get_ms() - offs );
   else
     S_.event_times_ms_.push_back( t.get_ms() );
-}
-
-const std::string
-nest::RecordingDevice::build_filename_() const
-{
-  // number of digits in number of virtual processes
-  const int vpdigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >( Communicator::get_num_virtual_processes() ) ) )
-    + 1 );
-  const int gidigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >( Node::network()->size() ) ) ) + 1 );
-
-  std::ostringstream basename;
-  const std::string& path = Node::network()->get_data_path();
-  if ( !path.empty() )
-    basename << path << '/';
-  basename << Node::network()->get_data_prefix();
-
-
-  if ( !P_.label_.empty() )
-    basename << P_.label_;
-  else
-    basename << node_.get_name();
-
-  basename << "-" << std::setfill( '0' ) << std::setw( gidigits ) << node_.get_gid() << "-"
-           << std::setfill( '0' ) << std::setw( vpdigits ) << node_.get_vp();
-  return basename.str() + '.' + P_.file_ext_;
 }
 
 void

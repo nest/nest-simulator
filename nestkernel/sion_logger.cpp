@@ -74,8 +74,22 @@ nest::SIONLogger::initialize()
     FileEntry& file = files_[ task ];
     FileInfo& info = file.info;
 
-    std::string tmp = build_filename_();
-    char* filename = strdup( tmp.c_str() );
+    std::string filename = build_filename_();
+    char* filename_c = strdup( filename.c_str() );
+
+    std::ifstream test( filename.c_str() );
+    if ( test.good() & !Node::network()->overwrite_files() )
+    {
+      std::string msg = String::compose(
+        "The device file '%1' exists already and will not be overwritten. "
+        "Please change data_path, or data_prefix, or set /overwrite_files "
+        "to true in the root node.",
+        filename );
+      Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+      throw IOError();
+    }
+    else
+      test.close();
 
     // SIONlib parameters
     int n_files = 1;
@@ -83,7 +97,7 @@ nest::SIONLogger::initialize()
 
     sion_int64 sion_buffer_size = P_.sion_buffer_size_;
 
-    file.sid = sion_paropen_ompi( filename,
+    file.sid = sion_paropen_ompi( filename_c,
       "bw",
       &n_files,
       MPI_COMM_WORLD,
@@ -102,6 +116,14 @@ nest::SIONLogger::initialize()
 
     file.buffer.reserve( P_.buffer_size_ );
     file.buffer.clear();
+
+    for ( device_map::mapped_type::iterator it = devices_[ task ].begin();
+          it != devices_[ task ].end();
+          ++it )
+    {
+      RecordingDevice& device = it->second.device;
+      device.set_filename( filename );
+    }
   }
 }
 

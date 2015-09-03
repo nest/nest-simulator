@@ -40,6 +40,7 @@ nest::ScreenLogger::write( const RecordingDevice& device, const Event& event )
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
 
+#pragma omp critical
   std::cout << sender << "\t" << stamp.get_ms() - offset << std::endl;
 }
 
@@ -50,14 +51,17 @@ nest::ScreenLogger::write( const RecordingDevice& device, const Event& event, co
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
 
-  std::cout << sender << "\t" << stamp.get_ms() - offset;
-
-  for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
+#pragma omp critical
   {
-    std::cout << "\t" << *val;
-  }
+    std::cout << sender << "\t" << stamp.get_ms() - offset;
 
-  std::cout << std::endl;
+    for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
+    {
+      std::cout << "\t" << *val;
+    }
+
+    std::cout << std::endl;
+  }
 }
 
 /* ----------------------------------------------------------------

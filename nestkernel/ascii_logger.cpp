@@ -25,9 +25,12 @@ nest::ASCIILogger::enroll( const int virtual_process,
   // is virtual_process == virtual process we are in?
   // FIXME: critical?
 
-  if ( files_.find( virtual_process ) == files_.end() )
+#pragma omp critical
   {
-    files_.insert( std::make_pair( virtual_process, file_map::mapped_type() ) );
+    if ( files_.find( virtual_process ) == files_.end() )
+    {
+      files_.insert( std::make_pair( virtual_process, file_map::mapped_type() ) );
+    }
   }
 
   if ( files_[ virtual_process ].find( gid ) == files_[ virtual_process ].end() )
@@ -47,9 +50,12 @@ nest::ASCIILogger::initialize()
     int vp = network.thread_to_vp( t );
 
     // extract the inner map (containing the registered devices) for the specific VP
-    if ( files_.find( vp ) == files_.end() )
+#pragma omp critical
     {
-      files_.insert( std::make_pair( vp, file_map::mapped_type() ) );
+      if ( files_.find( vp ) == files_.end() )
+      {
+        files_.insert( std::make_pair( vp, file_map::mapped_type() ) );
+      }
     }
 
     typedef typename file_map::mapped_type inner_map;

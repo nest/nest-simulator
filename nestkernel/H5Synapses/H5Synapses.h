@@ -75,10 +75,10 @@ private:
   
   void CreateNeurons(const uint32_t& non);
   
-  void singleConnect(const NESTNodeSynapse& synapse, nest::Node* const target_node, const nest::thread target_thread, nestio::Stopwatch::timestamp_t& connect_dur);
+  void singleConnect(const NESTNodeSynapse& synapse, nest::Node* const target_node, const nest::thread target_thread, uint64_t& n_conSynapses, nestio::Stopwatch::timestamp_t& connect_dur);
   
-  void ConnectNeurons(const std::deque<NESTNodeSynapse>& synapses);
-  void threadConnectNeurons(const std::deque<NESTNodeSynapse>& synapses);
+  void ConnectNeurons(const std::deque<NESTNodeSynapse>& synapses, uint64_t& n_conSynapses);
+  void threadConnectNeurons(const std::deque<NESTNodeSynapse>& synapses, uint64_t& n_conSynapses);
   
   void freeSynapses(std::deque<NESTNodeSynapse>& synapses);
   CommunicateSynapses_Status CommunicateSynapses(std::deque<NESTNodeSynapse>& synapses);

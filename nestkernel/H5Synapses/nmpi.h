@@ -8,6 +8,11 @@
 #include "communicator.h"
 #include <fstream>
 
+#define HAVE_SIONLIB 1
+
+#ifdef HAVE_SIONLIB
+#include <sion.h>
+#endif
 
 #ifdef IS_BLUEGENE_Q
 #include <spi/include/kernel/memory.h>
@@ -95,6 +100,100 @@ namespace tMPIo
     
 };
 
+#ifdef HAVE_SIONLIB
+class SionWriter
+{
+private:
+  int sid_;
+  unsigned int n_datasets_;
+  struct LOGHEAD
+  {
+    int size;
+    int n_items;
+    char datatype[256];
+    char name[256];
+  };
+  std::vector<LOGHEAD> logheads;
+  
+  template <typename Container>
+  size_t value_size(const Container &)
+  {
+      return sizeof(typename Container::value_type);
+  }
+
+  template <typename Container>
+  const char* value_name(const Container &)
+  {
+      return typeid(typename Container::value_type).name();
+  }
+  
+  
+public:
+  SionWriter(const char* filename)
+  {	
+    /* SION parameters */
+    int sid, numFiles, globalrank;
+    MPI_Comm lComm;
+    sion_int64 chunksize, left, bwrote;
+    sion_int32 fsblksize;
+    char fname[256], *newfname=NULL;
+
+    /* open parameters */
+    chunksize = 10; globalrank = nest::Communicator::get_rank();
+    strcpy(fname, filename);
+    numFiles = 1;
+    fsblksize = -1;
+    
+    sid_ = sion_paropen_ompi(fname, "bw", &numFiles,
+    MPI_COMM_WORLD, &lComm,
+    &chunksize, &fsblksize,
+    &globalrank,
+    NULL, &newfname);
+  }
+  ~SionWriter()
+  {	
+    sion_parclose_mpi(sid_);
+  }
+  
+  
+  template <typename Container>
+  int registerVector(const char* name,const Container & vec)
+  {
+    LOGHEAD logheadentry;
+    
+    logheadentry.size = value_size(vec);
+    logheadentry.n_items = vec.size();
+    strncpy(logheadentry.datatype,value_name(vec),255);
+    strncpy(logheadentry.name,name,255);
+    
+    logheads.push_back(logheadentry);
+    
+    return logheads.size()-1;
+  }
+  
+  void writeHeader()
+  {
+    unsigned int version=1;
+    unsigned int n_head=logheads.size();   
+    
+    sion_fwrite(&version,sizeof(int), 1, sid_);
+    sion_fwrite(&n_head,sizeof(int), 1, sid_);
+    for (int i=0;i<n_head;i++) {
+      sion_fwrite(&logheads[i].size,sizeof(int), 1, sid_);
+      sion_fwrite(&logheads[i].n_items,sizeof(int), 1, sid_);
+      sion_fwrite(logheads[i].datatype,sizeof(char), 256, sid_);
+      sion_fwrite(logheads[i].name,sizeof(char), 256, sid_);
+    }
+  }
+  template <typename Container>
+  void writeVector(const int& index,const Container & vec)
+  {
+    sion_fwrite(&vec[0],logheads[index].size, logheads[index].n_items, sid_);
+  }
+  
+};
+#endif // HAVE_SIONLIB
+
 class TraceLogger 
 {
   std::vector< std::vector<std::string> > labels_;
@@ -129,16 +228,66 @@ public:
   ~TraceLogger()
   {
     #ifdef _DEBUG_MODE
-    
+    #ifdef HAVE_SION
+    writeSionLog
+    #else //HAVE_SION
+    writeCSVLog();
+    #endif //HAVE_SION
+    #endif
+  }
+  
+  
+  void writeSionLog()
+  {
     const uint32_t rank = nest::Communicator::get_rank();
+    char recv_trace_filename[256] = {0};
+    if (rank==0)
+    {
+      std::string trace_filename = findNotExistingFilename("traceFile_", ".sion");
+      strncpy(recv_trace_filename, trace_filename.c_str(), 255);
+    }
+    MPI_Bcast(recv_trace_filename, 256, MPI_CHAR, 0, MPI_COMM_WORLD);
+    
+    #pragma omp parallel
+    {
+      const int thread_num = omp_get_thread_num();
+      
+      SionWriter sw(recv_trace_filename);
+      
+      sw.registerVector("labels", labels_[thread_num]);
+      sw.registerVector("dataset", dataset_[thread_num]);
+      sw.registerVector("begin", begin_[thread_num]);
+      sw.registerVector("end", end_[thread_num]);
+      
+      sw.writeHeader();
+      
+      sw.writeVector(0,labels_[thread_num]);
+      sw.writeVector(0,dataset_[thread_num]);
+      sw.writeVector(0,begin_[thread_num]);
+      sw.writeVector(0,end_[thread_num]);
+    }
+  }
+  
+  void writeCSVLog()
+  {
     const uint32_t size = nest::Communicator::get_num_processes();
+    const uint32_t rank = nest::Communicator::get_rank();
+    
+    // find not used filename
+    char recv_trace_filename[256] = {0};
+    if (rank==0)
+    {
+      std::string trace_filename = findNotExistingFilename("traceFile_", ".csv");
+      strncpy(recv_trace_filename, trace_filename.c_str(), 255);
+    }
+    MPI_Bcast(recv_trace_filename, 256, MPI_CHAR, 0, MPI_COMM_WORLD);  
     
     begin(0,"writeLog");
     for(int r=0; r<size; r++ ) {
       MPI_Barrier( MPI_COMM_WORLD );
       if (r==rank) {
 	std::ofstream traceFile;
-	traceFile.open("traceFile.csv",std::ofstream::out | std::ofstream::app);
+	traceFile.open(recv_trace_filename,std::ofstream::out | std::ofstream::app);
 	std::stringstream ss2;
 	ss2 << rank;
 	
@@ -148,7 +297,27 @@ public:
 	traceFile.close();
       }
     }
-    #endif
+  }
+  
+  std::string findNotExistingFilename(const char* prefix, const char* suffix)
+  {
+    const uint32_t rank = nest::Communicator::get_rank();
+    std::string trace_filename;
+      int i=0;
+      do {
+	std::stringstream ss;
+	ss << prefix << std::setfill('0') << std::setw(3) << i << ".csv";
+	i++;
+	trace_filename = ss.str();
+      } while (is_file_exist(trace_filename.c_str()));
+      
+      return trace_filename;   
+  }
+  
+  bool is_file_exist(const char *fileName)
+  {
+      std::ifstream infile(fileName);
+      return infile.good();
   }
   
   void store(const int& id, const std::string& label, const nestio::Stopwatch::timestamp_t& begin, const nestio::Stopwatch::timestamp_t& end)

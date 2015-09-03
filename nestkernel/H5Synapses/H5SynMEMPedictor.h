@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 #ifdef IS_BLUEGENE_Q
 #include <spi/include/kernel/memory.h>
@@ -21,7 +22,7 @@ class H5SynMEMPredictor
 {
 public:
   H5SynMEMPredictor();
-  ~H5SynMEMPredictor() {};
+  ~H5SynMEMPredictor();
   
   
   void updateMEM();
@@ -47,4 +48,5 @@ private:
   
   uint64_t max_nos;
   
+  std::vector<uint64_t> log_measured_mem_free;
 };

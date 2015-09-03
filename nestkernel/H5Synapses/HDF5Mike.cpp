@@ -238,11 +238,13 @@ HDF5Mike::HDF5Mike(const std::string& con_dir, uint64_t& n_readSynapses, uint64_
   
   getdir(con_dir, hdf5files);
   
-  if (rank==0) {
+  preLoadBalancing();
+  
+  /*if (rank==0) {
     for (uint32_t i=0;i<hdf5files.size(); i++) {
       std::cout << hdf5files[i].name << "\t size=" << hdf5files[i].size << std::endl;
     }
-  }
+  }*/
   
   i_hdf5files=0; // distribute files between nodes based on mod function 
   i_datasets=0;
@@ -302,7 +304,7 @@ void HDF5Mike::iterateOverSynapsesFromFiles(std::deque<NESTNodeSynapse>& synapse
     }
     for (;i_datasets < number_datasets; i_datasets++) // iteration over all datasets in file
     {
-      if (i_target==0) {
+      if (i_target==0 && i_source==0) {
 	loadDataset2Buffers(i_datasets); // write buffer_source_neurons_, buffer_target_neurons_, number_target_neurons, number_source_neurons
       }
       for (;i_target<number_target_neurons; i_target++) {   // iteration over all synapses
@@ -373,10 +375,13 @@ void HDF5Mike::preLoadBalancing()
     inbalance_max = std::max(inbalance_max, load_per_node[i]);
   }
   
-  std::cout << "with hdf5 load balancing inbalance_total=" << inbalance_total << " inbalance_delta=" << inbalance_max-inbalance_min << std::endl;
+  std::cout << "with hdf5 load balancing\trank=" << rank << "\tinbalance_total=" << inbalance_total << "\tinbalance_delta=" << inbalance_max-inbalance_min << "\n";
   
   
   hdf5files.swap(own_files);
+  
+  
+  std::cout << "preLoadBalancing\trank= " << rank << "\tnum_files=" << hdf5files.size() << "\n";
   
   // experimental optimization
   //std::reverse(hdf5files.begin()+1024, hdf5files.end());

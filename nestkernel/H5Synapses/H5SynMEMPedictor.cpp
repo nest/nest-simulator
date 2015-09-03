@@ -1,12 +1,37 @@
 #include <sstream>
+#include "nmpi.h"
 #include "H5SynMEMPedictor.h"
+#include <vector>
 
-H5SynMEMPredictor::H5SynMEMPredictor(): predicted_mem_used(0), number_of_neurons(0), number_of_synapses(0), max_nos(1e9)
+//#define _DEBUG_MODE 1
+
+
+H5SynMEMPredictor::H5SynMEMPredictor(): predicted_mem_used(0), number_of_neurons(0), number_of_synapses(0), max_nos(1e6)
 {
   instance = this;
   
   updateMEM();
   measured_mem_free_begin = measured_mem_free;
+}
+
+H5SynMEMPredictor::~H5SynMEMPredictor()
+{
+  #ifdef _DEBUG_MODE  
+  
+  
+  
+  /* write to file */
+  
+  
+  
+  
+  
+  /* close file */
+  
+
+  
+  
+  #endif //_DEBUG_MODE
 }
 
 void H5SynMEMPredictor::updateMEM()
@@ -18,7 +43,7 @@ void H5SynMEMPredictor::updateMEM()
   measured_mem_free--;
   #endif
   
-  
+  log_measured_mem_free.push_back(measured_mem_free);
   predicted_mem_used=0;
 }
 
@@ -46,6 +71,10 @@ int H5SynMEMPredictor::preNESTConnect(const uint64_t& nos)
     return 0;
 }
 
+/**
+ * Predicts number of Synapses which can be loaded at once
+ * 
+ */
 void H5SynMEMPredictor::predictBestLoadNos(uint64_t& nos)
 {
   updateMEM();

@@ -41,8 +41,13 @@ nest::ASCIILogger::initialize()
     int vp = network.thread_to_vp( t );
 
     // extract the inner map (containing the registered devices) for the specific VP
+    if ( files_.find( vp ) == files_.end() )
+    {
+      files_.insert( std::make_pair( vp, file_map::mapped_type() ) );
+    }
+
     typedef typename file_map::mapped_type inner_map;
-    inner_map inner = files_[vp];
+    inner_map inner = files_.find( vp )->second;
 
     // iterate over registed devices and their corresponding fstreams
     for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )

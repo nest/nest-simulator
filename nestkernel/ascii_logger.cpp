@@ -1,3 +1,9 @@
+#include <cassert>
+#include <iostream>
+#include <iomanip>
+#include <cmath>
+#include <sstream>
+
 #include "recording_device.h"
 #include "ascii_logger.h"
 

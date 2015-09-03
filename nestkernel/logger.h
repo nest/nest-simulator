@@ -1,6 +1,8 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <vector>
+
 #include "event.h"
 
 namespace nest

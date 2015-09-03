@@ -1,6 +1,7 @@
 #ifndef ASCII_LOGGER_H
 #define ASCII_LOGGER_H
 
+#include <map>
 #include <fstream>
 
 #include "logger.h"

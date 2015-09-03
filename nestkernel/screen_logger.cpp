@@ -1,3 +1,6 @@
+#include <iostream>
+#include <iomanip>
+
 #include "recording_device.h"
 #include "screen_logger.h"
 

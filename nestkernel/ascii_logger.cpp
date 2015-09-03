@@ -80,9 +80,11 @@ nest::ASCIILogger::initialize()
         std::string newname = build_filename_( device );
         if ( newname != device.get_filename() )
         {
-          std::string msg =
-            String::compose( "Closing file '%1', opening file '%2'", device.get_filename(), newname );
+#ifndef NESTIO
+          std::string msg = String::compose(
+            "Closing file '%1', opening file '%2'", device.get_filename(), newname );
           Node::network()->message( SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg );
+#endif // NESTIO
 
           file.close(); // close old file
           device.set_filename( newname );
@@ -104,6 +106,7 @@ nest::ASCIILogger::initialize()
           std::ifstream test( filename.c_str() );
           if ( test.good() )
           {
+#ifndef NESTIO
             std::string msg = String::compose(
               "The device file '%1' exists already and will not be overwritten. "
               "Please change data_path, data_prefix or label, or set /overwrite_files "
@@ -111,6 +114,7 @@ nest::ASCIILogger::initialize()
               filename );
             Node::network()->message(
               SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+#endif // NESTIO
             throw IOError();
           }
           else
@@ -136,12 +140,14 @@ nest::ASCIILogger::initialize()
 
       if ( !file.good() )
       {
+#ifndef NESTIO
         std::string msg = String::compose(
           "I/O error while opening file '%1'. "
           "This may be caused by too many open files in networks "
           "with many recording devices and threads.",
           filename );
         Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+#endif // NESTIO
 
         if ( file.is_open() )
           file.close();
@@ -155,12 +161,14 @@ nest::ASCIILogger::initialize()
 
       if ( P_.fbuffer_size_ != P_.fbuffer_size_old_ )
       {
+#ifndef NESTIO
         std::string msg = String::compose(
           "Cannot set file buffer size, as the file is already "
           "openeded with a buffer size of %1. Please close the "
           "file first.",
           P_.fbuffer_size_old_ );
         Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+#endif // NESTIO
         throw IOError();
       }
     }
@@ -197,12 +205,14 @@ nest::ASCIILogger::finalize()
           if ( P_.flush_after_simulate_ )
             file.flush();
 
-		  // FIXME: can this ever happen / does the message make sense?
+          // FIXME: can this ever happen / does the message make sense?
           if ( !file.good() )
           {
+#ifndef NESTIO
             std::string msg =
               String::compose( "I/O error while closing file '%1'", device.get_filename() );
             Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg );
+#endif // NESTIO
 
             throw IOError();
           }

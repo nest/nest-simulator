@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "recording_device.h"
 
 #include "sion.h"
@@ -81,12 +83,14 @@ nest::SIONLogger::initialize()
     std::ifstream test( filename.c_str() );
     if ( test.good() & !Node::network()->overwrite_files() )
     {
+#ifndef NESTIO
       std::string msg = String::compose(
         "The device file '%1' exists already and will not be overwritten. "
         "Please change data_path, or data_prefix, or set /overwrite_files "
         "to true in the root node.",
         filename );
       Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+#endif // NESTIO
       throw IOError();
     }
     else

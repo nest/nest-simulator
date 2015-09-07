@@ -18,9 +18,8 @@ nest::SIONLogger::enroll( const int task,
   RecordingDevice& device,
   const std::vector< Name >& value_names )
 {
-  const Node& node = device.get_node();
-  const int gid = node.get_gid();
-
+  const int gid = device.get_gid();
+  
 #pragma omp critical
   {
     if ( devices_.find( task ) == devices_.end() )
@@ -34,9 +33,9 @@ nest::SIONLogger::enroll( const int task,
     DeviceEntry entry( device );
     DeviceInfo& info = entry.info;
 
-    info.gid = device.get_node().get_gid();
-    info.type = device.get_mode();
-    info.name = device.get_node().get_name();
+    info.gid = device.get_gid();
+    info.type = device.get_type();
+    info.name = device.get_name();
 
     info.value_names.reserve( value_names.size() );
     for ( std::vector< Name >::const_iterator it = value_names.begin(); it != value_names.end();
@@ -162,7 +161,7 @@ nest::SIONLogger::finalize()
     sion_int64* cs;
     sion_get_current_location( file.sid, &( info.info_blk ), &( info.info_pos ), &mc, &cs );
 
-    // write device info
+	// write device info
     int n_dev = devices_[ task ].size();
     sion_fwrite( &n_dev, sizeof( int ), 1, file.sid );
 
@@ -188,6 +187,7 @@ nest::SIONLogger::finalize()
             it != dev_info.value_names.end();
             ++it )
       {
+
         char name[ 8 ];
         strncpy( name, it->c_str(), 8 );
         sion_fwrite( &name, sizeof( char ), 8, file.sid );
@@ -212,9 +212,8 @@ nest::SIONLogger::finalize()
 void
 nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
 {
-  const Node& node = device.get_node();
-  int task = node.get_vp();
-  int gid = node.get_gid();
+  int task = device.get_vp();
+  int gid = device.get_gid();
 
   // FIXME: use proper type for sender (was: index)
   const int sender = event.get_sender_gid();
@@ -260,9 +259,8 @@ nest::SIONLogger::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double_t >& values )
 {
-  const Node& node = device.get_node();
-  int task = node.get_vp();
-  int gid = node.get_gid();
+  int task = device.get_vp();
+  int gid = device.get_gid();
 
   const int sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();

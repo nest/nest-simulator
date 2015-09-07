@@ -166,7 +166,6 @@ private:
     std::vector< std::vector< Event* > > spikes_;
   };
 
-  RecordingDevice device_;
   Buffers_ B_;
   index last_in_gid_;
   Time t_last_in_spike_;
@@ -184,7 +183,6 @@ spin_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 inline void
 spin_detector::finalize()
 {
-  device_.finalize();
 }
 
 } // namespace

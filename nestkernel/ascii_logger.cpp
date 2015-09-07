@@ -19,8 +19,7 @@ nest::ASCIILogger::enroll( const int virtual_process,
   RecordingDevice& device,
   const std::vector< Name >& value_names )
 {
-  const Node& node = device.get_node();
-  const int gid = node.get_gid();
+  const int gid = device.get_gid();
 
   // is virtual_process == virtual process we are in?
   // FIXME: critical?
@@ -231,9 +230,8 @@ nest::ASCIILogger::finalize()
 void
 nest::ASCIILogger::write( const RecordingDevice& device, const Event& event )
 {
-  const Node& node = device.get_node();
-  int vp = node.get_vp();
-  int id = node.get_gid();
+  int vp = device.get_vp();
+  int id = device.get_gid();
 
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
@@ -248,9 +246,8 @@ nest::ASCIILogger::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double_t >& values )
 {
-  const Node& node = device.get_node();
-  int vp = node.get_vp();
-  int id = node.get_gid();
+  int vp = device.get_vp();
+  int id = device.get_gid();
 
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
@@ -270,8 +267,6 @@ nest::ASCIILogger::write( const RecordingDevice& device,
 const std::string
 nest::ASCIILogger::build_filename_( const RecordingDevice& device ) const
 {
-  const Node& node = device.get_node();
-
   // number of digits in number of virtual processes
   const int vpdigits = static_cast< int >(
     std::floor( std::log10( static_cast< float >( Communicator::get_num_virtual_processes() ) ) )
@@ -289,10 +284,10 @@ nest::ASCIILogger::build_filename_( const RecordingDevice& device ) const
   if ( !label.empty() )
     basename << label;
   else
-    basename << node.get_name();
+    basename << device.get_name();
 
-  int vp = node.get_vp();
-  int gid = node.get_gid();
+  int vp = device.get_vp();
+  int gid = device.get_gid();
 
   basename << "-" << std::setfill( '0' ) << std::setw( gidigits ) << gid << "-"
            << std::setfill( '0' ) << std::setw( vpdigits ) << vp;

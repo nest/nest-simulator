@@ -26,9 +26,8 @@
 namespace nest
 {
 Multimeter::Multimeter()
-  : Node()
-  , device_( *this, RecordingDevice::MULTIMETER, "dat" )
-  , P_()
+  //: Node() //FIXME: initialize RecordingDevice
+  : P_()
   , S_()
   , B_()
   , V_()
@@ -36,9 +35,8 @@ Multimeter::Multimeter()
 }
 
 Multimeter::Multimeter( const Multimeter& n )
-  : Node( n )
-  , device_( *this, n.device_ )
-  , P_( n.P_ )
+  //: Node(n) //FIXME: initialize RecordingDevice
+  : P_( n.P_ )
   , S_()
   , B_()
   , V_()
@@ -123,22 +121,23 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b 
 void
 Multimeter::init_state_( const Node& np )
 {
-  const Multimeter& asd = dynamic_cast< const Multimeter& >( np );
-  device_.init_state( asd.device_ );
+  //const Multimeter& asd = dynamic_cast< const Multimeter& >( np );
+  //device_.init_state( asd.device_ );
   S_.data_.clear();
 }
 
 void
 Multimeter::init_buffers_()
 {
-  device_.init_buffers();
 }
 
 void
 Multimeter::calibrate()
 {
-  device_.set_value_names( P_.record_from_ );
-  device_.calibrate();
+  Logger* logger = Node::network()->get_logger();
+  logger->enroll(get_vp(), *this, P_.record_from_);
+  //device_.set_value_names( P_.record_from_ );
+  //device_.calibrate();
   V_.new_request_ = false;
   V_.current_request_data_start_ = 0;
 }
@@ -146,7 +145,7 @@ Multimeter::calibrate()
 void
 Multimeter::finalize()
 {
-  device_.finalize();
+  //device_.finalize();
 }
 
 void
@@ -196,14 +195,25 @@ Multimeter::handle( DataLoggingReply& reply )
       continue;
     }
 
-    // store stamp for current data set in event for logging
-    reply.set_stamp( info[ j ].timestamp );
+    // TODO:
+    // ++S_.events_;
 
-    // record sender and time information; in accumulator mode only for first Reply in slice
-    device_.write( reply, info[ j ].data ); // false: more data to come
+    reply.set_stamp( info[ j ].timestamp );
+    const index sender = reply.get_sender_gid();
+    const Time stamp = reply.get_stamp();
+    const double offset = reply.get_offset();
+
+    Logger* logger = Node::network()->get_logger();
+    logger->write( *this, reply );
 
     S_.data_.push_back( info[ j ].data );
   }
+}
+
+RecordingDevice::Type
+Multimeter::get_type() const
+{
+  return RecordingDevice::MULTIMETER;
 }
 
 void
@@ -228,6 +238,10 @@ Multimeter::is_active( Time const& T ) const
 {
   const long_t stamp = T.get_steps();
 
-  return device_.get_t_min_() < stamp && stamp <= device_.get_t_max_();
+  // FIXME: restore original functionality
+  // return device_.get_t_min_() < stamp && stamp <= device_.get_t_max_();
+
+  return true;
 }
+
 }

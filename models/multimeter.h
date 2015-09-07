@@ -140,7 +140,7 @@ class Network;
  * @ingroup Devices
  * @see UniversalDataLogger
  */
-class Multimeter : public Node
+class Multimeter : public RecordingDevice
 {
 
 public:
@@ -167,6 +167,8 @@ public:
   port send_test_event( Node&, rport, synindex, bool );
 
   void handle( DataLoggingReply& );
+
+  Type get_type() const;
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -208,10 +210,6 @@ private:
    * @param /events dictionary to be placed in properties dictionary
    */
   void add_data_( DictionaryDatum& ) const;
-
-  // ------------------------------------------------------------
-
-  RecordingDevice device_;
 
   // ------------------------------------------------------------
 
@@ -292,11 +290,7 @@ inline void
 nest::Multimeter::get_status( DictionaryDatum& d ) const
 {
   // get the data from the device
-  device_.get_status( d );
-
-  // we need to add analog data to the events dictionary
-  DictionaryDatum dd = getValue< DictionaryDatum >( d, names::events );
-  add_data_( dd );
+  RecordingDevice::get_status( d );
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
@@ -324,7 +318,7 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
 
   // Set properties in device. As a side effect, this will clear data_,
   // if /clear_events set in d
-  device_.set_status( d, S_.data_ );
+  RecordingDevice::set_status( d );
 
   P_ = ptmp;
 }

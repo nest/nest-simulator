@@ -32,18 +32,16 @@
 #include <numeric>
 
 nest::spike_detector::spike_detector()
-  : Node()
-  , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf" )
-  , user_set_precise_times_( false )
-  , has_proxies_( false )
-  , local_receiver_( true )
+  //: Node() // FIXME
+    : user_set_precise_times_( false ),
+    has_proxies_( false ),
+    local_receiver_( true )
 {
 }
 
 nest::spike_detector::spike_detector( const spike_detector& n )
-  : Node( n )
-  , device_( *this, n.device_ )
-  , user_set_precise_times_( n.user_set_precise_times_ )
+  //: Node(n) // FIXME
+  : user_set_precise_times_( n.user_set_precise_times_ )
   , has_proxies_( false )
   , local_receiver_( true )
 {
@@ -53,15 +51,12 @@ void
 nest::spike_detector::init_state_( const Node& np )
 {
   const spike_detector& sd = dynamic_cast< const spike_detector& >( np );
-  device_.init_state( sd.device_ );
   init_buffers_();
 }
 
 void
 nest::spike_detector::init_buffers_()
 {
-  device_.init_buffers();
-
   std::vector< std::vector< Event* > > tmp( 2, std::vector< Event* >() );
   B_.spikes_.swap( tmp );
 }
@@ -71,7 +66,7 @@ nest::spike_detector::calibrate()
 {
   if ( !user_set_precise_times_ && network()->get_off_grid_communication() )
   {
-    device_.set_precise( true );
+    //device_.set_precise( true ); FIXME: is this required?
 
     network()->message( SLIInterpreter::M_INFO,
       "spike_detector::calibrate",
@@ -82,7 +77,8 @@ nest::spike_detector::calibrate()
                           get_gid() ) );
   }
 
-  device_.calibrate();
+  Logger* logger = Node::network()->get_logger();
+  logger->enroll(get_vp(), *this );
 }
 
 void
@@ -93,7 +89,10 @@ nest::spike_detector::update( Time const&, const long_t, const long_t )
         ++e )
   {
     assert( *e != 0 );
-    device_.write( **e ); // false: more data to come
+
+    // ++S_.events_;
+    Logger* logger = Node::network()->get_logger();
+    logger->write( *this, **e );
     delete *e;
   }
 
@@ -102,11 +101,17 @@ nest::spike_detector::update( Time const&, const long_t, const long_t )
   B_.spikes_[ network()->read_toggle() ].clear();
 }
 
+nest::RecordingDevice::Type
+nest::spike_detector::get_type() const
+{
+  return RecordingDevice::SPIKE_DETECTOR;
+}
+
 void
 nest::spike_detector::get_status( DictionaryDatum& d ) const
 {
   // get the data from the device
-  device_.get_status( d );
+  //device_.get_status( d );
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
@@ -125,7 +130,7 @@ nest::spike_detector::set_status( const DictionaryDatum& d )
   if ( d->known( names::precise_times ) )
     user_set_precise_times_ = true;
 
-  device_.set_status( d );
+  //device_.set_status( d );
 }
 
 void
@@ -133,7 +138,8 @@ nest::spike_detector::handle( SpikeEvent& e )
 {
   // accept spikes only if detector was active when spike was
   // emitted
-  if ( device_.is_active( e.get_stamp() ) )
+  //if ( device_.is_active( e.get_stamp() ) ) // FIXME: add active stuff
+  if ( true )
   {
     assert( e.get_multiplicity() > 0 );
 

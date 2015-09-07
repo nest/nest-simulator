@@ -31,6 +31,7 @@ public:
     const std::vector< Name >& value_names );
   void initialize();
   void finalize();
+
   void write( const RecordingDevice& device, const Event& event );
   void write( const RecordingDevice& device, const Event& event, const std::vector< double_t >& );
 

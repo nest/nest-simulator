@@ -33,7 +33,6 @@
 
 nest::spin_detector::spin_detector()
   : Node()
-  , device_( *this, RecordingDevice::SPIN_DETECTOR, "gdf" )
   , last_in_gid_( 0 )
   , t_last_in_spike_( Time::neg_inf() )
   , user_set_precise_times_( false )
@@ -42,7 +41,6 @@ nest::spin_detector::spin_detector()
 
 nest::spin_detector::spin_detector( const spin_detector& n )
   : Node( n )
-  , device_( *this, n.device_ )
   , last_in_gid_( 0 )
   , t_last_in_spike_( Time::neg_inf() ) // mark as not initialized
   , user_set_precise_times_( n.user_set_precise_times_ )
@@ -53,14 +51,14 @@ void
 nest::spin_detector::init_state_( const Node& np )
 {
   const spin_detector& sd = dynamic_cast< const spin_detector& >( np );
-  device_.init_state( sd.device_ );
+  //device_.init_state( sd.device_ ); // FIXME
   init_buffers_();
 }
 
 void
 nest::spin_detector::init_buffers_()
 {
-  device_.init_buffers();
+  //device_.init_buffers();
 
   std::vector< std::vector< Event* > > tmp( 2, std::vector< Event* >() );
   B_.spikes_.swap( tmp );
@@ -71,7 +69,7 @@ nest::spin_detector::calibrate()
 {
   if ( !user_set_precise_times_ && network()->get_off_grid_communication() )
   {
-    device_.set_precise( true );
+    //device_.set_precise( true ); //FIXME
 
     network()->message( SLIInterpreter::M_INFO,
       "spin_detector::calibrate",
@@ -82,7 +80,7 @@ nest::spin_detector::calibrate()
                           get_gid() ) );
   }
 
-  device_.calibrate();
+  //device_.calibrate(); //FIXME
 }
 
 void
@@ -93,7 +91,7 @@ nest::spin_detector::update( Time const&, const long_t, const long_t )
         ++e )
   {
     assert( *e != 0 );
-    device_.write( **e );
+    //device_.write( **e ); //FIXME
     delete *e;
   }
 
@@ -106,7 +104,7 @@ void
 nest::spin_detector::get_status( DictionaryDatum& d ) const
 {
   // get the data from the device
-  device_.get_status( d );
+  //device_.get_status( d ); //FIXME
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
@@ -125,7 +123,7 @@ nest::spin_detector::set_status( const DictionaryDatum& d )
   if ( d->known( names::precise_times ) )
     user_set_precise_times_ = true;
 
-  device_.set_status( d );
+  //device_.set_status( d ); //FIXME
 }
 
 
@@ -135,7 +133,7 @@ nest::spin_detector::handle( SpikeEvent& e )
 {
   // accept spikes only if detector was active when spike was
   // emitted
-  if ( device_.is_active( e.get_stamp() ) )
+  if ( true ) // device_.is_active( e.get_stamp() ) ) // FIXME
   {
     assert( e.get_multiplicity() > 0 );
 

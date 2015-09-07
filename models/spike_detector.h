@@ -93,7 +93,7 @@ class Network;
  *
  * @ingroup Devices
  */
-class spike_detector : public Node
+class spike_detector : public RecordingDevice
 {
 
 public:
@@ -128,6 +128,8 @@ public:
   void handle( SpikeEvent& );
 
   port handles_test_event( SpikeEvent&, rport );
+
+  Type get_type() const;
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -173,7 +175,6 @@ private:
     std::vector< std::vector< Event* > > spikes_;
   };
 
-  RecordingDevice device_;
   Buffers_ B_;
 
   bool user_set_precise_times_;
@@ -204,7 +205,6 @@ spike_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 inline void
 spike_detector::finalize()
 {
-  device_.finalize();
 }
 
 } // namespace

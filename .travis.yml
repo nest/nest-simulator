@@ -66,6 +66,9 @@ before_install:
   # used for building cppcheck-1.69
   - sudo apt-get install -y libpcre3 libpcre3-dev
 
+  # process json output from github api
+  - sudo apt-get install -y jq
+
 install: 
   - cython --version
   - python --version

@@ -84,3 +84,13 @@ nest::ScreenLogger::Parameters_::set( const ScreenLogger& sl, const DictionaryDa
 {
   updateValue< long >( d, names::precision, precision_ );
 }
+
+void
+nest::ScreenLogger::set_status( const DictionaryDatum& d )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( *this, d );  // throws if BadProperty
+
+  // if we get here, temporaries contain consistent set of properties
+  P_ = ptmp;
+}

@@ -447,3 +447,13 @@ nest::SIONLogger::Parameters_::set( const SIONLogger& al, const DictionaryDatum&
   updateValue< long >( d, names::sion_buffer_size, sion_buffer_size_ );
   updateValue< long >( d, names::buffer_size, buffer_size_ );
 }
+
+void
+nest::SIONLogger::set_status( const DictionaryDatum& d )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( *this, d );  // throws if BadProperty
+
+  // if we get here, temporaries contain consistent set of properties
+  P_ = ptmp;
+}

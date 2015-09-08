@@ -31,6 +31,9 @@ public:
   void write( const RecordingDevice& device, const Event& event );
   void write( const RecordingDevice& device, const Event& event, const std::vector< double_t >& );
 
+  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const;
+
 private:
   const std::string build_filename_( const RecordingDevice& device ) const;
 
@@ -57,6 +60,12 @@ private:
   typedef std::map< int, std::map< int, std::pair< RecordingDevice*, std::ofstream* > > > file_map;
   file_map files_;
 };
+
+inline void
+ASCIILogger::get_status( DictionaryDatum& d ) const
+{
+  P_.get( *this, d );
+}
 
 } // namespace
 

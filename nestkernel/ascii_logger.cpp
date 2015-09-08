@@ -338,3 +338,13 @@ nest::ASCIILogger::Parameters_::set( const ASCIILogger& al, const DictionaryDatu
     }
   }
 }
+
+void
+nest::ASCIILogger::set_status( const DictionaryDatum& d )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( *this, d );  // throws if BadProperty
+
+  // if we get here, temporaries contain consistent set of properties
+  P_ = ptmp;
+}

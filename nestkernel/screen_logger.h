@@ -27,6 +27,9 @@ public:
   void write( const RecordingDevice& device, const Event& event );
   void write( const RecordingDevice& device, const Event& event, const std::vector< double_t >& );
 
+  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const;
+
 private:
   struct Parameters_
   {
@@ -42,6 +45,12 @@ private:
 
   bool initialized_;
 };
+
+inline void
+ScreenLogger::get_status( DictionaryDatum& d ) const
+{
+  P_.get( *this, d );
+}
 
 } // namespace
 

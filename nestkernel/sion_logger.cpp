@@ -1,9 +1,6 @@
 #include <sstream>
 
 #include "recording_device.h"
-
-#include "sion.h"
-
 #include "sion_logger.h"
 
 void

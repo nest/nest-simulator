@@ -49,12 +49,12 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& sl, const Dictio
 void
 nest::RecordingDevice::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;    // temporary copy in case of errors
-  ptmp.set( *this, d ); // throws if BadProperty
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( *this, d );  // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
 
-  //if ( P_.to_file_ && B_.fs_.is_open() ) // TODO: check if this is neccessary
+  // if ( P_.to_file_ && B_.fs_.is_open() ) // TODO: check if this is neccessary
   P_.filename_.clear();
 }

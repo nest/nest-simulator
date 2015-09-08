@@ -135,7 +135,7 @@ void
 Multimeter::calibrate()
 {
   Logger* logger = Node::network()->get_logger();
-  logger->enroll(get_vp(), *this, P_.record_from_);
+  logger->enroll( *this, P_.record_from_ );
   //device_.set_value_names( P_.record_from_ );
   //device_.calibrate();
   V_.new_request_ = false;

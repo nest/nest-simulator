@@ -4,17 +4,16 @@
 #include "sion_logger.h"
 
 void
-nest::SIONLogger::enroll( const int task, RecordingDevice& device )
+nest::SIONLogger::enroll( RecordingDevice& device )
 {
   std::vector< Name > value_names;
-  nest::SIONLogger::enroll( task, device, value_names );
+  nest::SIONLogger::enroll( device, value_names );
 }
 
 void
-nest::SIONLogger::enroll( const int task,
-  RecordingDevice& device,
-  const std::vector< Name >& value_names )
+nest::SIONLogger::enroll( RecordingDevice& device, const std::vector< Name >& value_names )
 {
+  const int task = device.get_vp();
   const int gid = device.get_gid();
   
 #pragma omp critical

@@ -5,14 +5,12 @@
 #include "screen_logger.h"
 
 void
-nest::ScreenLogger::enroll( const int virtual_process, RecordingDevice& device )
+nest::ScreenLogger::enroll( RecordingDevice& device )
 {
 }
 
 void
-nest::ScreenLogger::enroll( const int virtual_process,
-  RecordingDevice& device,
-  const std::vector< Name >& value_names )
+nest::ScreenLogger::enroll( RecordingDevice& device, const std::vector< Name >& value_names )
 {
 }
 

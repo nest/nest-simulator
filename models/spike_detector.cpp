@@ -78,7 +78,7 @@ nest::spike_detector::calibrate()
   }
 
   Logger* logger = Node::network()->get_logger();
-  logger->enroll(get_vp(), *this );
+  logger->enroll( *this );
 }
 
 void

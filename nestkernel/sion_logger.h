@@ -25,10 +25,9 @@ public:
   {
   }
 
-  void enroll( const int task, RecordingDevice& device );
-  void enroll( const int task,
-    RecordingDevice& device,
-    const std::vector< Name >& value_names );
+  void enroll( RecordingDevice& device );
+  void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
+
   void initialize();
   void finalize();
 

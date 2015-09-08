@@ -8,17 +8,16 @@
 #include "ascii_logger.h"
 
 void
-nest::ASCIILogger::enroll( const int task, RecordingDevice& device )
+nest::ASCIILogger::enroll( RecordingDevice& device )
 {
   std::vector< Name > value_names;
-  enroll( task, device, value_names );
+  enroll( device, value_names );
 }
 
 void
-nest::ASCIILogger::enroll( const int virtual_process,
-  RecordingDevice& device,
-  const std::vector< Name >& value_names )
+nest::ASCIILogger::enroll( RecordingDevice& device, const std::vector< Name >& value_names )
 {
+	const int task = device.get_vp();
   const int gid = device.get_gid();
 
   // is virtual_process == virtual process we are in?
@@ -26,15 +25,15 @@ nest::ASCIILogger::enroll( const int virtual_process,
 
 #pragma omp critical
   {
-    if ( files_.find( virtual_process ) == files_.end() )
+    if ( files_.find( task ) == files_.end() )
     {
-      files_.insert( std::make_pair( virtual_process, file_map::mapped_type() ) );
+      files_.insert( std::make_pair( task, file_map::mapped_type() ) );
     }
   }
 
-  if ( files_[ virtual_process ].find( gid ) == files_[ virtual_process ].end() )
+  if ( files_[ task ].find( gid ) == files_[ task ].end() )
   {
-    files_[ virtual_process ].insert(
+    files_[ task ].insert(
       std::make_pair( gid, std::make_pair( &device, new std::ofstream() ) ) );
   }
 }

@@ -57,6 +57,7 @@ private:
 
   // one map for each virtual process,
   // in turn containing one ostream for everydevice
+  // vp -> (gid -> [device, filestream])
   typedef std::map< int, std::map< int, std::pair< RecordingDevice*, std::ofstream* > > > file_map;
   file_map files_;
 };

@@ -56,7 +56,7 @@ nest::ASCIILogger::initialize()
       }
     }
 
-    typedef typename file_map::mapped_type inner_map;
+    typedef file_map::mapped_type inner_map;
     inner_map inner = files_.find( vp )->second;
 
     // iterate over registed devices and their corresponding fstreams
@@ -189,7 +189,7 @@ nest::ASCIILogger::finalize()
     int vp = network.thread_to_vp( t );
 
     // extract the inner map (containing the registered devices) for the specific VP
-    typedef typename file_map::mapped_type inner_map;
+    typedef file_map::mapped_type inner_map;
     inner_map inner = files_[ vp ];
     // iterate over registed devices and their corresponding fstreams
     for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )

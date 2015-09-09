@@ -17,7 +17,7 @@ nest::ASCIILogger::enroll( RecordingDevice& device )
 void
 nest::ASCIILogger::enroll( RecordingDevice& device, const std::vector< Name >& value_names )
 {
-	const int task = device.get_vp();
+  const int task = device.get_vp();
   const int gid = device.get_gid();
 
   // is virtual_process == virtual process we are in?

@@ -39,7 +39,7 @@
 nest::GrowthCurveLinear::GrowthCurveLinear()
   : eps( 0.7 )
 {
-  name = "linear";
+  name = names::linear.toString();
 }
 
 void
@@ -83,22 +83,22 @@ nest::GrowthCurveGaussian::GrowthCurveGaussian()
   : eta( 0.1 )
   , eps( 0.7 )
 {
-  name = "gaussian";
+  name = names::gaussian.toString();
 }
 
 void
 nest::GrowthCurveGaussian::get( DictionaryDatum& d ) const
 {
-  def< std::string >( d, "growth_curve", name );
-  def< double_t >( d, "eps", eps );
-  def< double_t >( d, "eta", eta );
+  def< std::string >( d, names::growth_curve, name );
+  def< double_t >( d, names::eps, eps );
+  def< double_t >( d, names::eta, eta );
 }
 
 void
 nest::GrowthCurveGaussian::set( const DictionaryDatum& d )
 {
-  updateValue< double_t >( d, "eps", eps );
-  updateValue< double_t >( d, "eta", eta );
+  updateValue< double_t >( d, names::eps, eps );
+  updateValue< double_t >( d, names::eta, eta );
 }
 
 nest::double_t
@@ -194,11 +194,11 @@ nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& 
 nest::GrowthCurve*
 nest::SynapticElement::new_growth_curve( std::string name )
 {
-  if ( not name.compare( "gaussian" ) )
+  if ( not name.compare( names::gaussian.toString() ) )
   {
     return new GrowthCurveGaussian;
   }
-  if ( not name.compare( "linear" ) )
+  if ( not name.compare( names::linear.toString() ) )
   {
     return new GrowthCurveLinear;
   }
@@ -212,11 +212,11 @@ void
 nest::SynapticElement::get( DictionaryDatum& d ) const
 {
   // Store current values in the dictionary
-  def< double_t >( d, "growth_rate", growth_rate_ );
-  def< double_t >( d, "tau_vacant", tau_vacant_ );
-  def< bool >( d, "continuous", continuous_ );
-  def< double_t >( d, "z", z );
-  def< int_t >( d, "z_connected", z_connected_ );
+  def< double_t >( d, names::growth_rate, growth_rate_ );
+  def< double_t >( d, names::tau_vacant, tau_vacant_ );
+  def< bool >( d, names::continuous, continuous_ );
+  def< double_t >( d, names::z, z );
+  def< int_t >( d, names::z_connected, z_connected_ );
 
   // Store growth curve
   growth_curve_->get( d );
@@ -231,14 +231,14 @@ nest::SynapticElement::set( const DictionaryDatum& d )
   double_t new_tau_vacant = tau_vacant_;
 
   // Store values
-  updateValue< double_t >( d, "growth_rate", growth_rate_ );
-  updateValue< double_t >( d, "tau_vacant", new_tau_vacant );
-  updateValue< bool >( d, "continuous", continuous_ );
-  updateValue< double_t >( d, "z", z );
+  updateValue< double_t >( d, names::growth_rate, growth_rate_ );
+  updateValue< double_t >( d, names::tau_vacant, new_tau_vacant );
+  updateValue< bool >( d, names::continuous, continuous_ );
+  updateValue< double_t >( d, names::z, z );
 
-  if ( d->known( "growth_curve" ) )
+  if ( d->known( names::growth_curve ) )
   {
-    std::string growth_curve_name = getValue< std::string >( d, "growth_curve" );
+    std::string growth_curve_name = getValue< std::string >( d, names::growth_curve );
     if ( not growth_curve_->is( growth_curve_name ) )
     {
       growth_curve_ = new_growth_curve( growth_curve_name );

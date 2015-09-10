@@ -34,6 +34,7 @@
 #include "dictdatum.h"
 #include "dictutils.h"
 #include "histentry.h"
+#include <cmath>
 
 namespace nest
 {
@@ -193,12 +194,6 @@ public:
   */
   void set( const DictionaryDatum& d );
 
-  /**
-  * \fn double_t get_z_value(Archiving_Node const *a, double_t t) const
-  * Get the number of synaptic_element at the time t (in ms)
-  * @param a node of this synaptic_element
-  * @param t Current time (in ms)
-  */
 
   /*
    * Updates the number of available synaptic elements according to the mean
@@ -210,6 +205,12 @@ public:
    */
   void update( double_t t, double_t t_minus, double_t Ca_minus, double_t tau_Ca );
 
+  /**
+  * \fn double_t get_z_value(Archiving_Node const *a, double_t t) const
+  * Get the number of synaptic_element at the time t (in ms)
+  * @param a node of this synaptic_element
+  * @param t Current time (in ms)
+  */
   int_t
   get_z_vacant() const
   {
@@ -239,8 +240,10 @@ public:
   void
   set_growth_curve( GrowthCurve* g )
   {
-    delete growth_curve_;
-    growth_curve_ = g;
+    if(growth_curve_ != g){
+      delete growth_curve_;
+      growth_curve_ = g;
+    }
   }
 
   /*

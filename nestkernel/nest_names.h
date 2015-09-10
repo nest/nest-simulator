@@ -75,6 +75,7 @@ extern const Name coeff_in; //!< tau_lcm=coeff_in*tau_in (precise timing neurons
 extern const Name coeff_m;  //!< tau_lcm=coeff_m*tau_m (precise timing neurons (Brette 2007))
 extern const Name connection_count;       //!< Parameters for MUSIC devices
 extern const Name consistent_integration; //!< Specific to Izhikevich 2003
+extern const Name continuous;             //!< Parameter for MSP dynamics
 extern const Name count_covariance;       //!< Specific to correlomatrix_detector
 extern const Name count_histogram;        //!< Specific to correlation_detector
 extern const Name covariance;             //!< Specific to correlomatrix_detector
@@ -128,6 +129,7 @@ extern const Name eq7;             //!< used for iaflossless_count_exp
 extern const Name eq9;             //!< used for iaflossless_count_exp
 extern const Name eqs7and9;        //!< used for iaflossless_count_exp
 extern const Name error;           //!< Indicates an error in a neuron
+extern const Name eta;             //!< MSP growth curve parameter
 extern const Name events;          //!< Recorder parameter
 extern const Name ex_spikes;       //!< Number of arriving excitatory spikes
 extern const Name exc_conductance; //!< Recorder parameter
@@ -157,8 +159,10 @@ extern const Name g_rr;          //!< Other adaptation
 extern const Name g_sfa;         //!< Other adaptation
 extern const Name gamma;         //!< Specific to mirollo_strogatz_ps
 extern const Name gamma_shape;   //!< Specific to ppd_sup_generator and gamma_sup_generator
+extern const Name gaussian;      //!< Parameter for MSP growth curves
 extern const Name global_id;     //!< Node parameter
 extern const Name growth_curve;  //!< Growth curve for MSP dynamics
+extern const Name growth_rate;   //!< Parameter of the growth curve for MSP dynamics
 extern const Name gsl_error_tol; //!< GSL integrator tolerance
 
 extern const Name h;                    //!< Summed input to a neuron (Ginzburg neuron)
@@ -196,6 +200,7 @@ extern const Name len_kernel;        //!< Specific to population point process m
                                      //!< (pp_pop_psc_delta)
 extern const Name lin_left_geq_V_th; //!< used for iaflossless_count_exp
 extern const Name lin_max_geq_V_th;  //!< used for iaflossless_count_exp
+extern const Name linear;            //!< Parameter for MSP growth curves
 extern const Name local;             //!< Node parameter
 extern const Name local_id;          //!< Node
 
@@ -285,6 +290,7 @@ extern const Name success;
 extern const Name synapse;         //!< Node type
 extern const Name synapse_model;   //!< Connection parameters
 extern const Name synapse_modelid; //!< Connection parameters
+extern const Name synaptic_elements;//!< Synaptic elements used in structural plasticity
 
 extern const Name t_lag;             //!< Lag within a time slice
 extern const Name t_origin;          //!< Origin of a time-slice
@@ -318,6 +324,7 @@ extern const Name tau_syn;           //!< Synapse time constant
 extern const Name tau_syn_ex;        //!< Excitatory synaptic time constant
 extern const Name tau_syn_in;        //!< Inhibitory synaptic time constant
 extern const Name tau_v;             //!< Specific to amat2_*
+extern const Name tau_vacant;        //!< Parameter for MSP dynamics
 extern const Name tau_w;             //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name taus_eta;          //!< Specific to population point process model
                                      //!< (pp_pop_psc_delta)
@@ -374,6 +381,9 @@ extern const Name withweight; //!< Recorder parameter
 extern const Name x;  //!< current scaling factor of the synaptic weight [0...1]
                       //!< (Tsodyks2_connection)
 extern const Name xs; //!< current scaling factor of the synaptic weight [0...1] (property arrays)
+
+extern const Name z;  //!< Number of available synaptic elements per node
+extern const Name z_connected;//!< Number of connected synaptic elements per node
 }
 }
 

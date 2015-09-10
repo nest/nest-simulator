@@ -63,6 +63,7 @@ const Name coeff_in( "coeff_in" );
 const Name coeff_m( "coeff_m" );
 const Name connection_count( "connection_count" );
 const Name consistent_integration( "consistent_integration" );
+const Name continuous( "continuous" );
 const Name count_covariance( "count_covariance" );
 const Name count_histogram( "count_histogram" );
 const Name covariance( "covariance" );
@@ -110,6 +111,7 @@ const Name eq7( "eq7" );
 const Name eq9( "eq9" );
 const Name eqs7and9( "eqs7and9" );
 const Name error( "error" );
+const Name eta( "eta" );
 const Name events( "events" );
 const Name ex_spikes( "ex_spikes" );
 const Name exc_conductance( "exc_conductance" );
@@ -139,8 +141,10 @@ const Name g_rr( "g_rr" );
 const Name g_sfa( "g_sfa" );
 const Name gamma( "gamma" );
 const Name gamma_shape( "gamma_shape" );
+const Name gaussian( "gaussian" );
 const Name global_id( "global_id" );
 const Name growth_curve( "growth_curve" );
+const Name growth_rate("growth_rate");
 const Name gsl_error_tol( "gsl_error_tol" );
 
 const Name h( "h" );
@@ -175,6 +179,7 @@ const Name label( "label" );
 const Name len_kernel( "len_kernel" );
 const Name lin_left_geq_V_th( "lin_left_geq_V_th" );
 const Name lin_max_geq_V_th( "lin_max_geq_V_th" );
+const Name linear( "linear" );
 const Name local( "local" );
 const Name local_id( "local_id" );
 
@@ -260,6 +265,7 @@ const Name success( "success" );
 const Name synapse( "synapse" );
 const Name synapse_model( "synapse_model" );
 const Name synapse_modelid( "synapse_modelid" );
+const Name synaptic_elements( "synaptic_elements" );
 
 const Name t_lag( "t_lag" );
 const Name t_origin( "t_origin" );
@@ -292,6 +298,7 @@ const Name tau_syn( "tau_syn" );
 const Name tau_syn_ex( "tau_syn_ex" );
 const Name tau_syn_in( "tau_syn_in" );
 const Name tau_v( "tau_v" );
+const Name tau_vacant( "tau_vacant" );
 const Name tau_w( "tau_w" );
 const Name taus_eta( "taus_eta" );
 const Name taus_syn( "taus_syn" );
@@ -345,5 +352,8 @@ const Name withweight( "withweight" );
 
 const Name x( "x" );
 const Name xs( "xs" );
+
+const Name z( "z" );
+const Name z_connected( "z_connected" );
 }
 }

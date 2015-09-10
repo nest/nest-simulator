@@ -212,7 +212,7 @@ nest::Archiving_Node::get_status( DictionaryDatum& d ) const
 #endif
 
   synaptic_elements_d = DictionaryDatum( new Dictionary );
-  def< DictionaryDatum >( d, "synaptic_elements", synaptic_elements_d );
+  def< DictionaryDatum >( d, names::synaptic_elements, synaptic_elements_d );
   for ( std::map< Name, SynapticElement >::const_iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();
         ++it )
@@ -266,7 +266,7 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
     clear_history();
   }
 
-  if ( not d->known( "synaptic_elements" ) )
+  if ( not d->known( names::synaptic_elements ) )
   {
     return;
   }

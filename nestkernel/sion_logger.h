@@ -1,8 +1,11 @@
 #ifndef SION_LOGGER_H
 #define SION_LOGGER_H
 
+#include <string.h>
+#include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <map>
 
 #include "logger.h"
 

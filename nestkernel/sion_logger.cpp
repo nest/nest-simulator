@@ -15,7 +15,7 @@ nest::SIONLogger::enroll( RecordingDevice& device, const std::vector< Name >& va
 {
   const int task = device.get_vp();
   const int gid = device.get_gid();
-  
+
 #pragma omp critical
   {
     if ( devices_.find( task ) == devices_.end() )
@@ -157,49 +157,50 @@ nest::SIONLogger::finalize()
     sion_int64* cs;
     sion_get_current_location( file.sid, &( info.info_blk ), &( info.info_pos ), &mc, &cs );
 
-	// write device info
-    int n_dev = devices_[ task ].size();
-    sion_fwrite( &n_dev, sizeof( int ), 1, file.sid );
-
-    for ( device_map::mapped_type::iterator it = devices_[ task ].begin();
-          it != devices_[ task ].end();
-          ++it )
+    if ( task == 0 )
     {
-      DeviceInfo& dev_info = it->second.info;
+      // write device info
+      int n_dev = devices_[ task ].size();
+      sion_fwrite( &n_dev, sizeof( int ), 1, file.sid );
 
-      sion_fwrite( &( dev_info.gid ), sizeof( int ), 1, file.sid );
-      sion_fwrite( &( dev_info.type ), sizeof( int ), 1, file.sid );
-
-      char name[ 16 ];
-      strncpy( name, dev_info.name.c_str(), 16 );
-      sion_fwrite( &name, sizeof( char ), 16, file.sid );
-
-      sion_fwrite( &( dev_info.n_rec ), sizeof( unsigned long ), 1, file.sid );
-
-      int n_val = dev_info.value_names.size();
-      sion_fwrite( &n_val, sizeof( int ), 1, file.sid );
-
-      for ( std::vector< std::string >::iterator it = dev_info.value_names.begin();
-            it != dev_info.value_names.end();
+      for ( device_map::mapped_type::iterator it = devices_[ task ].begin();
+            it != devices_[ task ].end();
             ++it )
       {
+        DeviceInfo& dev_info = it->second.info;
 
-        char name[ 8 ];
-        strncpy( name, it->c_str(), 8 );
-        sion_fwrite( &name, sizeof( char ), 8, file.sid );
+        sion_fwrite( &( dev_info.gid ), sizeof( int ), 1, file.sid );
+        sion_fwrite( &( dev_info.type ), sizeof( int ), 1, file.sid );
+
+        char name[ 16 ];
+        strncpy( name, dev_info.name.c_str(), 16 );
+        sion_fwrite( &name, sizeof( char ), 16, file.sid );
+
+        int n_val = dev_info.value_names.size();
+        sion_fwrite( &n_val, sizeof( int ), 1, file.sid );
+
+        for ( std::vector< std::string >::iterator it = dev_info.value_names.begin();
+              it != dev_info.value_names.end();
+              ++it )
+        {
+
+          char name[ 8 ];
+          strncpy( name, it->c_str(), 8 );
+          sion_fwrite( &name, sizeof( char ), 8, file.sid );
+        }
       }
+
+      // write tail
+      sion_fwrite( &( info.body_blk ), sizeof( int ), 1, file.sid );
+      sion_fwrite( &( info.body_pos ), sizeof( sion_int64 ), 1, file.sid );
+
+      sion_fwrite( &( info.info_blk ), sizeof( int ), 1, file.sid );
+      sion_fwrite( &( info.info_pos ), sizeof( sion_int64 ), 1, file.sid );
+
+      sion_fwrite( &( info.t_start ), sizeof( double ), 1, file.sid );
+      sion_fwrite( &( info.t_end ), sizeof( double ), 1, file.sid );
+      sion_fwrite( &( info.resolution ), sizeof( double ), 1, file.sid );
     }
-
-    // write tail
-    sion_fwrite( &( info.body_blk ), sizeof( int ), 1, file.sid );
-    sion_fwrite( &( info.body_pos ), sizeof( sion_int64 ), 1, file.sid );
-
-    sion_fwrite( &( info.info_blk ), sizeof( int ), 1, file.sid );
-    sion_fwrite( &( info.info_pos ), sizeof( sion_int64 ), 1, file.sid );
-
-    sion_fwrite( &( info.t_start ), sizeof( double ), 1, file.sid );
-    sion_fwrite( &( info.t_end ), sizeof( double ), 1, file.sid );
-    sion_fwrite( &( info.resolution ), sizeof( double ), 1, file.sid );
 
     sion_parclose_ompi( file.sid );
   }
@@ -411,7 +412,8 @@ nest::SIONLogger::SIONBuffer::read()
 }
 
 template < typename T >
-nest::SIONLogger::SIONBuffer& nest::SIONLogger::SIONBuffer::operator<<( const T data )
+nest::SIONLogger::SIONBuffer&
+nest::SIONLogger::SIONBuffer::operator<<( const T data )
 {
   write( ( const char* ) &data, sizeof( T ) );
   return *this;

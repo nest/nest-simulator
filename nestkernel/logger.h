@@ -24,6 +24,7 @@ public:
 
   virtual void initialize() = 0;
   virtual void finalize() = 0;
+  virtual void synchronize() = 0;
 
   virtual void write( const RecordingDevice& device, const Event& event ) = 0;
   virtual void

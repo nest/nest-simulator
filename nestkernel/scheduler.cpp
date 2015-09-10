@@ -442,7 +442,7 @@ nest::Scheduler::finalize_simulation()
         "Global Random Number Generators are not synchronized after simulation." );
       throw KernelException();
     }
-  
+
   Logger* logger = Node::network()->get_logger();
   logger->finalize();
 
@@ -514,6 +514,8 @@ nest::Scheduler::update()
 #ifdef _OPENMP
   net_->message( SLIInterpreter::M_INFO, "Scheduler::update", "Simulating using OpenMP." );
 #endif
+
+  Logger* logger = Node::network()->get_logger();
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised( net_->get_num_threads() );
 // parallel section begins
@@ -600,6 +602,7 @@ nest::Scheduler::update()
           print_progress_();
         }
       }
+      logger->synchronize();
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 

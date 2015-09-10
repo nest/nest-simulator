@@ -470,11 +470,11 @@ public:
 
   /**
    * @defgroup MSP_functions Model of Structural Plasticity in NEST.
-   * Functions related to accessibility and setup of variables required for 
+   * Functions related to accessibility and setup of variables required for
    * the implementation of MSP in NEST.
    *
    */
-  
+
   /**
    * Return the Ca_minus value at time Ca_t which corresponds to the time of
    * the last update in Calcium concentration which is performed each time

@@ -144,7 +144,7 @@ const Name gamma_shape( "gamma_shape" );
 const Name gaussian( "gaussian" );
 const Name global_id( "global_id" );
 const Name growth_curve( "growth_curve" );
-const Name growth_rate("growth_rate");
+const Name growth_rate( "growth_rate" );
 const Name gsl_error_tol( "gsl_error_tol" );
 
 const Name h( "h" );

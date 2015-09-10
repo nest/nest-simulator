@@ -240,7 +240,8 @@ public:
   void
   set_growth_curve( GrowthCurve* g )
   {
-    if(growth_curve_ != g){
+    if ( growth_curve_ != g )
+    {
       delete growth_curve_;
       growth_curve_ = g;
     }

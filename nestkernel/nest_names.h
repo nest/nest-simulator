@@ -287,10 +287,10 @@ extern const Name stimulator;  //!< Node type
 extern const Name stop;        //!< Device parameters
 extern const Name structure;   //!< Node type
 extern const Name success;
-extern const Name synapse;         //!< Node type
-extern const Name synapse_model;   //!< Connection parameters
-extern const Name synapse_modelid; //!< Connection parameters
-extern const Name synaptic_elements;//!< Synaptic elements used in structural plasticity
+extern const Name synapse;           //!< Node type
+extern const Name synapse_model;     //!< Connection parameters
+extern const Name synapse_modelid;   //!< Connection parameters
+extern const Name synaptic_elements; //!< Synaptic elements used in structural plasticity
 
 extern const Name t_lag;             //!< Lag within a time slice
 extern const Name t_origin;          //!< Origin of a time-slice
@@ -382,8 +382,8 @@ extern const Name x;  //!< current scaling factor of the synaptic weight [0...1]
                       //!< (Tsodyks2_connection)
 extern const Name xs; //!< current scaling factor of the synaptic weight [0...1] (property arrays)
 
-extern const Name z;  //!< Number of available synaptic elements per node
-extern const Name z_connected;//!< Number of connected synaptic elements per node
+extern const Name z;           //!< Number of available synaptic elements per node
+extern const Name z_connected; //!< Number of connected synaptic elements per node
 }
 }
 

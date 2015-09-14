@@ -803,7 +803,7 @@ Scheduler::register_secondary_synapse_prototype( ConnectorModel* cm, synindex sy
 {
   // idea: save *cm in data structure
   // otherwise when number of threads is increased no way to get further elements
-  if ( secondary_connector_models_.size() < synid + 1 )
+  if ( secondary_connector_models_.size() < synid + (unsigned int)1 )
     secondary_connector_models_.resize( synid + 1, NULL );
 
   secondary_connector_models_[ synid ] = cm;

@@ -1,16 +1,22 @@
 /*
  *  gap_junction.h
  *
- *  This file is part of NEST
+ *  This file is part of NEST.
  *
- *  Copyright (C) 2004-2008 by
- *  The NEST Initiative
+ *  Copyright (C) 2004 The NEST Initiative
  *
- *  See the file AUTHORS for details.
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
  *
- *  Permission is granted to compile and modify
- *  this file for non-commercial use.
- *  See the file LICENSE for details.
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -19,9 +25,7 @@
    Name: gap_junction
 
    Description:
-     static_synapse_hom_wd does not support any kind of plasticity. It simply stores
-     the parameters target, and receiver port for each connection and uses a common
-     weight and delay for all connections.
+     TODO
 
    Transmits: GapJEvent
 
@@ -29,7 +33,7 @@
      No Parameters
 
    References:
-     No References
+     TODO
    FirstVersion: April 2008
    Author: Susanne Kunkel, Moritz Helias
    SeeAlso: synapsedict, static_synapse
@@ -38,28 +42,25 @@
 #ifndef GAP_JUNCTION_H
 #define GAP_JUNCTION_H
 
-#include "hom_w.h"
-#include "target_identifier_ptr_rport.h"
-#include "target_identifier_index.h"
-#include <typeinfo>
+#include "connection.h"
 
 namespace nest
 {
 
 /**
- * Class representing a static connection. A static connection has the properties weight, delay and
+ * Class representing a gap-junction connection. A gap-junction connection has the properties weight, delay and
  * receiver port.
- * This class also serves as the base class for dynamic synapses (like TsodyksConnection,
- * STDPConnection).
- * A suitale Connector containing these connections can be obtained from the template
- * GenericConnector.
+ * TODO
+ * 
+ * 
+ * 
  */
 
 template < typename targetidentifierT >
 class GapJunction : public Connection< targetidentifierT >
 {
 
-  HetW w_;
+  double_t weight_;
 
 public:
   // this line determines which common properties to use
@@ -72,18 +73,24 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
+  GapJunction()
+    : ConnectionBase()
+    , weight_( 1.0 )
+  {
+  }
 
 
-  /**
-   * needed in order for compiler to find functions defined in base class
-   */
+  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
+  // This avoids explicit name prefixes in all places these functions are used.
+  // Since ConnectionBase depends on the template parameter, they are not automatically
+  // found in the base class.
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, double_t )
+  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType&  )
   {
     // std::cout << "gap_junction::check_connection" << std::endl;
     EventType ge;
@@ -118,7 +125,7 @@ public:
   void
   send( Event& e, thread t, double_t, const CommonSynapseProperties& )
   {
-    e.set_weight( w_.get_weight() );
+    e.set_weight( weight_ );
     e.set_delay( get_delay_steps() );
     e.set_receiver( *get_target( t ) );
     e.set_rport( get_rport() );
@@ -129,26 +136,20 @@ public:
 
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
-  void set_status( const DictionaryDatum& d, index p, ConnectorModel& cm );
-
-  void initialize_property_arrays( DictionaryDatum& d ) const;
-
-  void append_properties( DictionaryDatum& d ) const;
-
   void
   set_weight( double_t w )
   {
-    w_.set_weight( w );
+    weight_ = w;
   }
 };
-
 
 template < typename targetidentifierT >
 void
 GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
+
   ConnectionBase::get_status( d );
-  w_.get_status( d );
+  def< double_t >( d, names::weight, weight_ );
   def< long_t >( d, names::size_of, sizeof( *this ) );
 }
 
@@ -157,30 +158,7 @@ void
 GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  w_.set_status( d, cm );
-}
-
-template < typename targetidentifierT >
-void
-GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d,
-  index p,
-  ConnectorModel& cm )
-{
-  w_.set_status( d, p, cm );
-}
-
-template < typename targetidentifierT >
-void
-GapJunction< targetidentifierT >::initialize_property_arrays( DictionaryDatum& d ) const
-{
-  w_.initialize_property_arrays( d );
-}
-
-template < typename targetidentifierT >
-void
-GapJunction< targetidentifierT >::append_properties( DictionaryDatum& d ) const
-{
-  w_.append_properties( d );
+  updateValue< double_t >( d, names::weight, weight_ );
 }
 
 } // namespace

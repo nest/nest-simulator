@@ -217,30 +217,19 @@ private:
 
   ConnectorBase* validate_source_entry( thread tid, index s_gid, synindex syn_id );
 
-  /**
-   * Return pointer to protoype for given synapse id.
-   * @throws UnknownSynapseType
-   */
-  const ConnectorModel& get_synapse_prototype( synindex syn_id, thread t = 0 ) const;
-
-  /**
-   * Asserts validity of synapse index, otherwise throws exception.
-   * @throws UnknownSynapseType
-   */
-  void assert_valid_syn_id( synindex syn_id, thread t = 0 ) const;
 };
 
 inline const ConnectorModel&
-ConnectionManager::get_synapse_prototype( synindex syn_id, thread t ) const
+ConnectionManager::get_synapse_prototype( synindex syn_id) const
 {
   assert_valid_syn_id( syn_id );
-  return *( prototypes_[ t ][ syn_id ] );
+  return *( prototypes_[ 0 ][ syn_id ] );
 }
 
 inline void
-ConnectionManager::assert_valid_syn_id( synindex syn_id, thread t ) const
+ConnectionManager::assert_valid_syn_id( synindex syn_id) const
 {
-  if ( syn_id >= prototypes_[ t ].size() || prototypes_[ t ][ syn_id ] == 0 )
+  if ( syn_id >= prototypes_[ 0 ].size() || prototypes_[ 0 ][ syn_id ] == 0 )
     throw UnknownSynapseType( syn_id );
 }
 

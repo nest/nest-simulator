@@ -402,10 +402,8 @@ nest::hh_psc_alpha_gap::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  static const gsl_odeiv_step_type* T1 = gsl_odeiv_step_rkf45;
-
   if ( B_.s_ == 0 )
-    B_.s_ = gsl_odeiv_step_alloc( T1, State_::STATE_VEC_SIZE );
+    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   else
     gsl_odeiv_step_reset( B_.s_ );
 

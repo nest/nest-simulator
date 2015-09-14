@@ -191,6 +191,7 @@ const Name N( "N" );
 const Name N_channels( "N_channels" );
 const Name n_events( "n_events" );
 const Name n_proc( "n_proc" );
+const Name needs_prelim_update("needs_prelim_update");
 const Name neuron( "neuron" );
 const Name noise( "noise" );
 const Name ns( "ns" );

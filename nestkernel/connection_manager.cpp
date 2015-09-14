@@ -309,7 +309,7 @@ ConnectionManager::set_synapse_status( index gid,
   try
   {
     validate_pointer( connections_[ tid ].get( gid ) )
-      ->set_synapse_status( syn_id, *( prototypes_[ syn_id ] ), dict, p );
+      ->set_synapse_status( syn_id, *( prototypes_[tid][ syn_id ] ), dict, p );
   }
   catch ( BadProperty& e )
   {
@@ -700,7 +700,7 @@ ConnectionManager::send( thread t, index sgid, Event& e )
       {
         // std::cout << "has primary\n";
         // erase 2 least significant bits to obtain the correct pointer
-        validate_pointer( p )->send( e, t, prototypes_ );
+        validate_pointer( p )->send( e, t, prototypes_[t] );
       }
     }
   }
@@ -726,10 +726,10 @@ ConnectionManager::send_secondary( thread t, SecondaryEvent& e )
         if ( p->homogeneous_model() )
         {
           if ( p->get_syn_id() == e.get_syn_id() )
-            p->send( e, t, prototypes_ );
+            p->send( e, t, prototypes_[t] );
         }
         else
-          p->send_secondary( e, t, prototypes_ );
+          p->send_secondary( e, t, prototypes_[t] );
       }
     }
   }

@@ -92,10 +92,6 @@ private:
    */
   Node* allocate_( void* );
 
-  bool has_proxies();
-  bool potential_global_receiver();
-  bool one_node_per_process();
-  bool is_off_grid();
   /**
    * Initialize the pool allocator with the node specific properties.
    */

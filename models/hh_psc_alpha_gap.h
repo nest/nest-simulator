@@ -138,7 +138,7 @@ public:
   //     using Node::connect_sender;
   using Node::handle;
 
-  port send_test_event( Node& target, rport receptor_type );
+  port send_test_event( Node& target, rport receptor_type, synindex, bool );
 
 
   void handle( SpikeEvent& );
@@ -374,7 +374,7 @@ hh_psc_alpha_gap::prelim_update( Time const& origin, const long_t from, const lo
 }
 
 inline port
-hh_psc_alpha_gap::send_test_event( Node& target, rport receptor_type )
+hh_psc_alpha_gap::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent se;
   se.set_sender( *this );

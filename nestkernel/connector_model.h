@@ -254,6 +254,15 @@ public:
   {
     return default_connection_;
   }
+  
+  virtual std::vector<SecondaryEvent*> create_event(size_t n) const
+  {
+    // Should not be called for a ConnectorModel belonging to a primary
+    // connection. Only required for secondary connection types.
+    assert(false);
+    std::vector<SecondaryEvent*> prototype_events;
+    return prototype_events;
+  }
 
 private:
   void used_default_delay();
@@ -264,6 +273,8 @@ private:
     synindex syn_id,
     ConnectionT& c,
     rport receptor_type );
+  
+
 
 }; // GenericConnectorModel
 

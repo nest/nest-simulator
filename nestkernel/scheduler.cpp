@@ -740,6 +740,7 @@ nest::Scheduler::prepare_nodes()
   /* We initialize the buffers of each node and calibrate it. */
 
   size_t num_active_nodes = 0; // counts nodes that will be updated
+  size_t num_active_prelim_nodes = 0; // counts nodes that need preliminary updates
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised( net_->get_num_threads() );
 
@@ -762,7 +763,11 @@ nest::Scheduler::prepare_nodes()
       {
         prepare_node_( *it );
         if ( not( *it )->is_frozen() )
+	{
           ++num_active_nodes;
+	  if ( ( *it )->needs_prelim_update() )
+	    ++num_active_prelim_nodes;
+	}
       }
     }
     catch ( std::exception& e )
@@ -780,11 +785,23 @@ nest::Scheduler::prepare_nodes()
     if ( exceptions_raised.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 
-  net_->message(
-    SLIInterpreter::M_INFO,
-    "Scheduler::prepare_nodes",
-    String::compose(
-      "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
+  if(  num_active_prelim_nodes == 0)
+  {
+    net_->message(
+      SLIInterpreter::M_INFO,
+      "Scheduler::prepare_nodes",
+      String::compose(
+	"Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
+  }
+  else
+  {
+    net_->message(
+      SLIInterpreter::M_INFO,
+      "Scheduler::prepare_nodes",
+      String::compose(
+	"Simulating %1 local node%2 of which %3 need%4 prelim_update.", num_active_nodes, 
+	num_active_nodes == 1 ? "" : "s", num_active_prelim_nodes, num_active_prelim_nodes == 1 ? "s" : ""  ) );
+  }
 }
 
 void

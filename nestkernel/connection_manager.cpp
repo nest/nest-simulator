@@ -403,7 +403,6 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
             it != connections_[ t ].nonempty_end();
             ++it )
       {
-        num_connections_in_thread += ( *it )->get_num_connections();
         num_connections_in_thread += validate_pointer( *it )->get_num_connections();
       }
 
@@ -504,8 +503,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
         {
           if ( target == 0 )
           {
-            connections_[ t ]
-              .get( source_id )
+            validate_pointer(connections_[ t ].get( source_id ) )
               ->get_connections( source_id, t, syn_id, conns_in_thread );
           }
           else
@@ -680,7 +678,7 @@ ConnectionManager::trigger_update_weight( const long_t vt_id,
     for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
           it != connections_[ t ].nonempty_end();
           ++it )
-      ( *it )->trigger_update_weight( vt_id, t, dopa_spikes, t_trig, prototypes_[ t ] );
+      validate_pointer( *it )->trigger_update_weight( vt_id, t, dopa_spikes, t_trig, prototypes_[ t ] );
 }
 
 void

@@ -828,8 +828,6 @@ public:
     coeff_length_ = ca.size();
   }
 
-  // size_t get_coeff_length() const { return coeff_length_;}
-
   fwit& operator<<( fwit& pos );
 
   fwit& operator>>( fwit& pos );
@@ -878,7 +876,6 @@ fwit& operator<<( T& d, fwit& pos )
 
 inline fwit& GapJEvent::operator<<( fwit& pos )
 {
-  // synid_ << pos;
   pos += size_uint_t( synid_ );
   sender_gid_ << pos;
 

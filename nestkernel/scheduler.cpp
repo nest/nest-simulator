@@ -89,8 +89,8 @@ nest::Scheduler::Scheduler( Network& net )
   , entry_counter_( 0 )
   , exit_counter_( 0 )
   , nodes_vec_( n_threads_ )
-  , nodes_prelim_up_vec_( n_threads_ )
   , nodes_vec_network_size_( 0 ) // zero to force update
+  , nodes_prelim_up_vec_( n_threads_ )
   , clock_( Time::tic( 0L ) )
   , slice_( 0L )
   , to_do_( 0L )
@@ -608,7 +608,7 @@ nest::Scheduler::update()
           // the partial step in the final update
           // needs to be done in omp single since to_step_ is a scheduler variable
           old_to_step = to_step_;
-          if ( static_cast< ulong_t >( to_step_ ) < min_delay_ )
+          if ( to_step_ < min_delay_ )
             to_step_ = min_delay_;
         }
 
@@ -745,7 +745,7 @@ nest::Scheduler::prepare_nodes()
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised( net_->get_num_threads() );
 
 #ifdef _OPENMP
-#pragma omp parallel reduction( + : num_active_nodes )
+#pragma omp parallel reduction( + : num_active_nodes, num_active_prelim_nodes )
   {
     size_t t = net_->get_thread_id();
 #else
@@ -832,6 +832,7 @@ nest::Scheduler::update_nodes_vec_()
 
       /* We clear the existing nodes_vec_ and then rebuild it. */
       assert( nodes_vec_.size() == n_threads_ );
+      assert( nodes_prelim_up_vec_.size() == n_threads_ );
 
       for ( index t = 0; t < n_threads_; ++t )
       {
@@ -877,8 +878,8 @@ nest::Scheduler::update_nodes_vec_()
             // these nodes cannot be subnets
             node->set_thread_lid( nodes_vec_[ t ].size() );
             nodes_vec_[ t ].push_back( node );
-
-            if ( node->needs_prelim_update() )
+	    
+	    if ( node->needs_prelim_update() )
               nodes_prelim_up_vec_[ t ].push_back( node );
           }
         }
@@ -900,7 +901,7 @@ nest::Scheduler::update_nodes_vec_()
 #ifdef _OPENMP
   } // end of omp critical region
 #endif
-  
+
 }
 
 //!< This function is called only if the thread data structures are properly set up.
@@ -1541,26 +1542,15 @@ void nest::Scheduler::collocate_buffers_( bool done )
 
     // end marker after last secondary event
     // made sure in resize that this position is still allocated
-
-    // this code is incompatible in JUQUEEN
+    invalid_synindex >> pos;
+    // append the boolean value indicating whether we are done here
+    done >> pos;
+    
+    // the last two lines use our template streaming operators defined in event.h
+    // this alternative code is incompatible on JUQUEEN
     //*pos = static_cast<uint_t>(invalid_synindex);
     // pos++;
-
-    // append the boolean value indicating whether we are done here
-    // the following code ins incompatible in JUQUEEN
     //*pos = static_cast<uint_t>(done);
-
-    // uses our template streaming operators defined in event.h
-    invalid_synindex >> pos;
-
-    // uses our template streaming operators defined in event.h
-    done >> pos;
-
-    // std::cout << "local_grid_spikes = ";
-    // for (std::vector<uint_t>::iterator it = local_grid_spikes_.begin(); it !=
-    // local_grid_spikes_.end(); ++it)
-    //  std::cout << *it << ',';
-    // std::cout << std::endl;
   }
   else // off_grid_spiking
   {
@@ -1678,8 +1668,6 @@ bool nest::Scheduler::deliver_events_( thread t )
     for ( size_t pid = 0; pid < ( size_t ) Communicator::get_num_processes(); ++pid )
     {
       fwit readpos = global_grid_spikes_.begin() + pos[ pid ];
-      // GapJEvent e;
-      // we can delete the previous line
 
       while ( true )
       {
@@ -1835,6 +1823,7 @@ void nest::Scheduler::set_num_threads( thread n_threads )
 {
   n_threads_ = n_threads;
   nodes_vec_.resize( n_threads_ );
+  nodes_prelim_up_vec_.resize( n_threads_ );
 
 #ifdef _OPENMP
   omp_set_num_threads( n_threads_ );

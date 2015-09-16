@@ -218,9 +218,6 @@ nest::CollectiveSIONLogger::synchronize()
   SIONBuffer& buffer = file.buffer;
 
   sion_coll_fwrite( buffer.read(), 1, buffer.get_size(), file.sid );
-
-#pragma omp critical
-  std::cout << "synchronize() in task #" << task << std::endl;
 }
 
 void

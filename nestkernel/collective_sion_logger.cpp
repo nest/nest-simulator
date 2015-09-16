@@ -146,13 +146,14 @@ nest::CollectiveSIONLogger::finalize()
     FileInfo& info = file.info;
     SIONBuffer& buffer = file.buffer;
 
+    if ( buffer.get_size() > 0 )
+    {
+      sion_fwrite( buffer.read(), buffer.get_size(), 1, file.sid );
+      buffer.clear();
+    }
+
     if ( task == 0 )
     {
-      if ( buffer.get_size() > 0 )
-      {
-        sion_fwrite( buffer.read(), buffer.get_size(), 1, file.sid );
-        buffer.clear();
-      }
 
       info.t_end = Node::network()->get_time().get_ms();
 

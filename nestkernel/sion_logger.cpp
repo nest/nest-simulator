@@ -151,14 +151,14 @@ nest::SIONLogger::finalize()
       buffer.clear();
     }
 
-    info.t_end = Node::network()->get_time().get_ms();
-
-    int mc;
-    sion_int64* cs;
-    sion_get_current_location( file.sid, &( info.info_blk ), &( info.info_pos ), &mc, &cs );
-
     if ( task == 0 )
     {
+      info.t_end = Node::network()->get_time().get_ms();
+
+      int mc;
+      sion_int64* cs;
+      sion_get_current_location( file.sid, &( info.info_blk ), &( info.info_pos ), &mc, &cs );
+
       // write device info
       int n_dev = devices_[ task ].size();
       sion_fwrite( &n_dev, sizeof( int ), 1, file.sid );

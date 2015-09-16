@@ -132,8 +132,6 @@
         string           GetValue<string>            SymbolDatum
         vector<long>     GetValue<vector<long> >     ArrayDatum
         vector<double>   GetValue<vector<double> >   ArrayDatum
-        valarray<long>   GetValue<valarray<long> >   ArrayDatum
-        valarray<double> GetValue<valarray<double> > ArrayDatum
     \endverbatim
 
     What about the rest? (ElementFactoryDatum, el_prtdatum, FunctionDatum,
@@ -279,26 +277,5 @@ void setValue< std::vector< double > >( const Token&, std::vector< double > cons
 
 template <>
 Token newToken< std::vector< double > >( std::vector< double > const& value );
-
-
-// These will convert homogeneous int arrays to valarrays:
-template <>
-std::valarray< long > getValue< std::valarray< long > >( const Token& );
-template <>
-void setValue< std::valarray< long > >( const Token&, std::valarray< long > const& value );
-
-template <>
-Token newToken< std::valarray< long > >( std::valarray< long > const& value );
-
-
-// These will convert homogeneous double arrays to valarrays:
-template <>
-std::valarray< double > getValue< std::valarray< double > >( const Token& );
-template <>
-void setValue< std::valarray< double > >( const Token&, std::valarray< double > const& value );
-
-template <>
-Token newToken< std::valarray< double > >( std::valarray< double > const& value );
-
 
 #endif

@@ -730,11 +730,11 @@ SLI_USER_MODULES=""
 # SLI_USER_MODULES_LDADD collects what needs to be added to LDADD
 SLI_USER_MODULES_LDADD=""
 
-AC_ARG_WITH(modules,[  --with-modules = external modules to be linked in],
+AC_ARG_WITH(modules,[  --with-modules=MODULES external modules to be linked in],
 [
 if test "$withval" != no; then
   for mod in $withval; do
-    SLI_USER_MODULES_LDADD=" $prefix/lib/nest/lib$mod.la"
+    SLI_USER_MODULES_LDADD="$SLI_USER_MODULES_LDADD $prefix/lib/nest/lib$mod.la"
     SLI_USER_MODULES="$SLI_USER_MODULES $mod"
   done
 fi
@@ -1154,8 +1154,8 @@ if test $SLI_distributed = set; then
   echo
 fi
 
-echo "If you experience problems with the installation or the use of"
-echo "NEST, please see http://nest-initiative.org/index.php/FAQ, or"
-echo "go to http://nest-initiative.org/index.php/Community to find out"
-echo "how to join the user mailing list."
+echo "If you experience problems with the installation or the use of NEST,"
+echo "please see http://www.nest-simulator.org/frequently_asked_questions"
+echo "or go to http://www.nest-simulator.org/community to find out how to"
+echo "join the user mailing list."
 echo

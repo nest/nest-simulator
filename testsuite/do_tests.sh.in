@@ -79,14 +79,13 @@ bail_out ()
 ask_results ()
 {
     echo "***"
-    echo "*** Please send the archived content of these directories:"
+    echo "*** Please report the problem at"
+    echo "***     https://github.com/nest/nest-simulator/issues"
     echo "***"
+    echo "*** To help us diagnose the problem, please attach the archived content"
+    echo "*** of these directories to the issue:"
     echo "***     - '${TEST_OUTDIR}'"
     echo "***     - '${TEST_TMPDIR}'"
-    echo "***"
-    echo "*** to the nest_user mailing list. Please find further information"
-    echo "*** about the mailing list at"
-    echo "***   http://www.nest-initiative.org/Software:Community"
     echo "***"
     echo
 }
@@ -545,7 +544,7 @@ fi
 
 if test "x${TEST_PYNEST}" = xtrue ; then
 
-    if command -v nosetests >/dev/null 2>&1; then
+    if command -v nosetests >/dev/null 2>&1 && nosetests --with-xunit --xunit-file=/dev/null >/dev/null 2>&1; then
 
 	echo
 	echo "Phase 6: Running PyNEST tests."
@@ -627,4 +626,8 @@ if test "x${INFO_OS}" = xDarwin ; then
     defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}"
 fi
 
-exit 0
+if test ${TEST_FAILED} -gt 0 ; then
+    exit 1
+else
+    exit 0
+fi

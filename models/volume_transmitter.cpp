@@ -106,9 +106,8 @@ nest::volume_transmitter::update( const Time&, const long_t from, const long_t t
     multiplicity = B_.neuromodulatory_spikes_.get_value( lag );
     if ( multiplicity > 0 )
     {
-      t_spike =
-        Time( Time::step( Network::get_network().get_slice_origin().get_steps() + lag + 1 ) )
-          .get_ms();
+      t_spike = Time( Time::step( Network::get_network().get_slice_origin().get_steps() + lag
+                        + 1 ) ).get_ms();
       B_.spikecounter_.push_back( spikecounter( t_spike, multiplicity ) );
     }
   }

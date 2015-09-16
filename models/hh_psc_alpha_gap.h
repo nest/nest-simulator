@@ -58,10 +58,10 @@ using std::vector;
  */
 extern "C" int hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
 
-/* BeginDocumentation
-Name: hh_psc_alpha_gap - Hodgkin Huxley neuron model. TODO: update documentation
+/* BeginDocumentation 
+Name: hh_psc_alpha_gap - Hodgkin Huxley neuron model with gap-junction support. 
 
-Description:
+Description: TODO update description
 
  hh_psc_alpha_gap is an implementation of a spiking neuron using the Hodkin-Huxley formalism.
 
@@ -69,7 +69,6 @@ Description:
  Incoming spike events induce a post-synaptic change of current modelled
  by an alpha function. The alpha function is normalised such that an event of
  weight 1.0 results in a peak current of 1 pA.
-
 
  (2) Spike Detection
  Spike detection is done by a combined threshold-and-local-maximum search: if there
@@ -83,43 +82,42 @@ Parameters:
  E_L        double - Resting membrane potential in mV.
  g_L        double - Leak conductance in nS.
  C_m        double - Capacity of the membrane in pF.
- tau_ex     double - Rise time of the excitatory synaptic alpha function in ms.
- tau_in     double - Rise time of the inhibitory synaptic alpha function in ms.
+ tau_syn_ex double - Rise time of the excitatory synaptic alpha function in ms.
+ tau_syn_in double - Rise time of the inhibitory synaptic alpha function in ms.
  E_Na       double - Sodium reversal potential in mV.
  g_Na       double - Sodium peak conductance in nS.
  E_K        double - Potassium reversal potential in mV.
- g_K        double - Potassium peak conductance in nS.
+ g_Kv1      double - Potassium peak conductance in nS.
+ g_Kv3      double - Potassium peak conductance in nS. 
  Act_m      double - Activation variable m
  Act_h      double - Activation variable h
  Inact_n    double - Inactivation variable n
  I_e        double - Constant external input current in pA.
-
-Problems/Todo:
-
- better spike detection
- initial wavelet/spike at simulation onset
 
 References:
 
  Spiking Neuron Models:
  Single Neurons, Populations, Plasticity
  Wulfram Gerstner, Werner Kistler,  Cambridge University Press
-
- Theoretical Neuroscience:
- Computational and Mathematical Modeling of Neural Systems
- Peter Dayan, L. F. Abbott, MIT Press (parameters taken from here)
+ 
+ Mancilla, J. G., Lewis, T. J., Pinto, D. J., 
+ Rinzel, J., and Connors, B. W.,
+ Synchronization of electrically coupled pairs 
+ of inhibitory interneurons in neocortex,
+ J. Neurosci. 27, 2058-2073 (2007), 
+ doi: 10.1523/JNEUROSCI.2715-06.2007 (parameters taken from here)
 
  Hodgkin, A. L. and Huxley, A. F.,
  A Quantitative Description of Membrane Current
  and Its Application to Conduction and Excitation in Nerve,
  Journal of Physiology, 117, 500-544 (1952)
 
-Sends: SpikeEvent
+Sends: SpikeEvent, GapJEvent
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Receives: SpikeEvent, GapJEvent, CurrentEvent, DataLoggingRequest
 
-Authors: Schrader
-SeeAlso: hh_cond_exp_traub
+Authors: Jan Hahne, Moritz Helias, Susanne Kunkel
+SeeAlso: hh_psc_alpha, hh_cond_exp_traub
 */
 
 class hh_psc_alpha_gap : public Archiving_Node
@@ -134,15 +132,10 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * We need to explicitly include sets of overloaded
-   * virtual functions into the current scope.
-   * According to the SUN C++ FAQ, this is the correct
-   * way of doing things, although all other compilers
-   * happily live without.
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
    */
-
-  //     using Node::connect_sender;
   using Node::handle;
+  using Node::handles_test_event;
 
   port send_test_event( Node& target, rport receptor_type, synindex, bool );
 
@@ -157,10 +150,7 @@ public:
   port handles_test_event( DataLoggingRequest&, rport );
   port handles_test_event( GapJEvent&, rport );
 
-  void
-  sends_secondary_event( GapJEvent& )
-  {
-  }
+  void sends_secondary_event( GapJEvent& ){}
 
   /**
    * Return membrane potential at time t.
@@ -321,8 +311,6 @@ private:
      * the first simulation, but not modified before later Simulate calls.
      */
     double_t I_stim_;
-
-    // Buffers_& operator=(const Buffers_&);
   };
 
   // ----------------------------------------------------------------

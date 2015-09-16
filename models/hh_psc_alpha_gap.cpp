@@ -175,8 +175,9 @@ nest::hh_psc_alpha_gap::Parameters_::Parameters_()
   tau_synE( 0.2 )
   , // ms
   tau_synI( 2.0 )
-  ,          // ms
-  I_e( 0.0 ) // pA
+  , // ms
+  I_e( 0.0 ) 
+    // pA
 {
 }
 
@@ -321,16 +322,6 @@ nest::hh_psc_alpha_gap::Buffers_::Buffers_( const Buffers_&, hh_psc_alpha_gap& n
   // init_buffers_().
 }
 
-/*nest::hh_psc_alpha_gap::Buffers_& nest::hh_psc_alpha_gap::Buffers_::operator=(const Buffers_& b)
-{
-  assert(this != &b);  // would be bad logical error in program
-
-  spike_exc_ = b.spike_exc_;
-  spike_inh_ = b.spike_inh_;
-  currents_ = b.currents_;
-  return *this;
-}*/
-
 /* ----------------------------------------------------------------
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
@@ -342,7 +333,6 @@ nest::hh_psc_alpha_gap::hh_psc_alpha_gap()
   , B_( *this )
 {
   recordablesMap_.create();
-  // std::cout << "hh_psc_alpha_gap::hh_psc_alpha_gap" << std::endl;
 }
 
 nest::hh_psc_alpha_gap::hh_psc_alpha_gap( const hh_psc_alpha_gap& n )
@@ -351,7 +341,6 @@ nest::hh_psc_alpha_gap::hh_psc_alpha_gap( const hh_psc_alpha_gap& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
-  // std::cout << "hh_psc_alpha_gap::hh_psc_alpha_gap" << std::endl;
 }
 
 nest::hh_psc_alpha_gap::~hh_psc_alpha_gap()
@@ -384,7 +373,7 @@ nest::hh_psc_alpha_gap::init_buffers_()
   B_.currents_.clear();  // includes resize
 
   // allocate strucure for gap events here
-  // function is called from Scheduler::resume before the
+  // function is called from Scheduler::prepare_nodes() before the
   // first call to update
   // so we already know which interpolation scheme to use according
   // to the properties of this neurons
@@ -452,11 +441,6 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
   const long_t to,
   const bool prelim )
 {
-
-  // std::cout << " sum of gij = " << V_.sumj_g_ij_ << std::endl;
-  // std::cout << " weighted sum of V_mean = " << V_.sumj_g_ij_V_mean_j_ << std::endl;
-
-  // State_ s = S_;
 
   assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
   assert( from < to );

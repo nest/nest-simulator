@@ -92,25 +92,9 @@ public:
   void
   check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType&  )
   {
-    // std::cout << "gap_junction::check_connection" << std::endl;
     EventType ge;
 
-    // check, if the sender wants to send events of type EventType
-    // this will throw IllegalConnection, if s does not send this event type
-
-    // std::cout << "type of pre node " << typeid(s).name() << std::endl;
-    // std::cout << "pre check" << std::endl;
-
-    // this check fails, if the source is on a remote machine,
-    // because it is then represented by a proxynode, which
-    // does not know about the secondary events
-    // could we circumvent this by using a node of the correct type
-    // as a proxy for the source instead of a proxynode?
     s.sends_secondary_event( ge );
-
-    // check, if the target can handle events of type
-    // EventType
-    // std::cout << "post check" << std::endl;
     ge.set_sender( s );
     Connection< targetidentifierT >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
     Connection< targetidentifierT >::target_.set_target( &t );

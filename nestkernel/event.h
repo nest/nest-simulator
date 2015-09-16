@@ -728,8 +728,6 @@ public:
   virtual size_t size() = 0;
   virtual fwit& operator<<( fwit& pos ) = 0;
   virtual fwit& operator>>( fwit& pos ) = 0;
-  // virtual uint_t * serialize( uint_t * ) = 0;
-  // virtual uint_t * deserialize( uint_t * ) = 0;
 };
 
 // iterator class for the GapJEvent coefficient-array

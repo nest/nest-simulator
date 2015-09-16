@@ -28,8 +28,8 @@ This script checks our coding style guidelines. The checks are
 performed in the same way as in our TravisCI setup. First it looks
 for changed files in the repository in the commit range <git-start>..<git-end>
 (by default this is master..HEAD). Only the changed files are checked.
-You can specify a different commit range or define the file, which
-should be checked, as an argument.
+You can specify a different commit range, or define the file to be checked,
+as an argument.
 
 The script expects to be run from the base directory of the
 NEST sources, i.e. all executions should start like:
@@ -41,7 +41,7 @@ Setup of the tooling is explained here:
 Options:
 
     --help               Print program options and exit.
-    --incremental        Do analysis one file after another.
+    --incremental        Do analysis on one file after another.
     --file=/path/to/file Perform the static analysis on this file only.
     --git-start=SHA      Enter the SHA from which git starts the diff.
                          (default=master)
@@ -125,6 +125,7 @@ $VERA --profile nest ./nest/main.cpp >/dev/null 2>&1 ||  bail_out "No profile ca
 echo "vera++ version: `vera++ --version`"
 
 # check cppcheck 1.69 is installed correctly
+# Previous versions of cppcheck halted on sli/tokenutils.cc (see https://github.com/nest/nest-simulator/pull/79)
 $CPPCHECK --enable=all --inconclusive --std=c++03 ./nest/main.cpp >/dev/null 2>&1 || usage 1 "Executable $CPPCHECK for cppcheck is not working!"
 cppcheck_version=`$CPPCHECK --version | sed 's/^Cppcheck //'`
 echo "cppcheck version: $cppcheck_version"
@@ -133,6 +134,9 @@ if [[ "x$cppcheck_version" != "x1.69" ]]; then
 fi
 
 # clang-format is installed correctly
+# clang-format version 3.5 and before do not understand all configuration
+# options we use. Version 3.7 has a different formatting behaviour. Since the
+# sources are formatted with 3.6, we require clang-format 3.6 for the checking.
 $CLANG_FORMAT -style=./.clang-format ./nest/main.cpp >/dev/null 2>&1 || usage 1 "Executable $CLANG_FORMAT for clang-format is not working!"
 clang_format_version=`$CLANG_FORMAT --version | sed -${EXTENDED_REGEX_PARAM} 's/^.*([0-9]\.[0-9])\..*/\1/'`
 echo "clang-format version: $clang_format_version"
@@ -210,7 +214,7 @@ for f in $file_names; do
 
       ;;
     *)
-      echo "$f : not a C/CPP file. Do not do static analysis / formatting checking."
+      echo "$f : not a C/CPP file. Skipping ..."
   esac
 done
 

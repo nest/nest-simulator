@@ -81,7 +81,7 @@ Ubuntu 15.10:
 
     apt-get install cppcheck
 
-Ubuntu before does not provide a package for 1.69. Please use the instructions to build from scratch.
+Earlier versions of Ubuntu do not provide a package for cppcheck 1.69. Please follow the instructions to build cppcheck from scratch.
 
 OS X:
 

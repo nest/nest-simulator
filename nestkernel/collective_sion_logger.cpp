@@ -406,7 +406,7 @@ nest::CollectiveSIONLogger::SIONBuffer::operator<<( const T data )
 
 nest::CollectiveSIONLogger::Parameters_::Parameters_()
   : file_ext_( "sion" )
-  , sion_buffer_size_( 2400 )
+  , sion_buffer_size_( 1 << 18 )
   , buffer_size_( 1024 )
 {
 }

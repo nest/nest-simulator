@@ -1,6 +1,12 @@
 #include <sstream>
 #include <map>
 
+#include <mpi.h>
+
+#ifdef BG_MULTIFILE
+#include <mpix.h>
+#endif // BG_MULTIFILE
+
 #include "recording_device.h"
 #include "sion_logger.h"
 
@@ -52,9 +58,13 @@ nest::SIONLogger::enroll( RecordingDevice& device, const std::vector< Name >& va
 void
 nest::SIONLogger::initialize()
 {
-  MPI_Comm local_comm;
   int rank;
   MPI_Comm_rank( MPI_COMM_WORLD, &rank );
+
+  MPI_Comm local_comm;
+#ifdef BG_MULTIFILE
+  MPIX_Pset_same_comm_create( &local_comm );
+#endif // BG_MULTIFILE
 
 #pragma omp parallel
   {
@@ -92,8 +102,12 @@ nest::SIONLogger::initialize()
     else
       test.close();
 
-    // SIONlib parameters
+// SIONlib parameters
+#ifdef BG_MULTIFILE
+    int n_files = -1;
+#else
     int n_files = 1;
+#endif // BG_MULTIFILE
     sion_int32 fs_block_size = -1;
 
     sion_int64 sion_buffer_size = P_.sion_buffer_size_;

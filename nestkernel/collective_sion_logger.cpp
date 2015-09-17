@@ -154,7 +154,6 @@ nest::CollectiveSIONLogger::finalize()
 
     if ( task == 0 )
     {
-
       info.t_end = Node::network()->get_time().get_ms();
 
       int mc;

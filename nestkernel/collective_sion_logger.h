@@ -24,6 +24,13 @@ public:
   {
   }
 
+  CollectiveSIONLogger( size_t buffer_size )
+    : files_()
+    , initialized_( false )
+  {
+    P_.sion_buffer_size_ = buffer_size;
+  }
+
   ~CollectiveSIONLogger() throw()
   {
   }

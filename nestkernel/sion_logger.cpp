@@ -1,4 +1,5 @@
 #include <sstream>
+#include <map>
 
 #include "recording_device.h"
 #include "sion_logger.h"

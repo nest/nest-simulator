@@ -58,9 +58,8 @@ Node::Node( const Node& n )
   , thread_( n.thread_ )
   , vp_( n.vp_ )
   , frozen_( n.frozen_ )
-  , buffers_initialized_( false )
-  , // copy must always initialized its own buffers
-  needs_prelim_up_( n.needs_prelim_up_ )
+  , buffers_initialized_( false ) // copy must always initialized its own buffers
+  , needs_prelim_up_( n.needs_prelim_up_ )
 {
 }
 

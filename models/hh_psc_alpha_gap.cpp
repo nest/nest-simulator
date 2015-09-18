@@ -332,6 +332,7 @@ nest::hh_psc_alpha_gap::hh_psc_alpha_gap()
   , S_( P_ )
   , B_( *this )
 {
+  Node::set_needs_prelim_update(true);
   recordablesMap_.create();
 }
 

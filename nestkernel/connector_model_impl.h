@@ -389,9 +389,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   {
     // case 1 or case 2
 
-    // the following line will throw an exception, if it does not work
-    c.check_connection( src, tgt, receptor_type, conn->get_t_lastspike(), get_common_properties() );
-
     bool b_has_primary = has_primary( conn );
     bool b_has_secondary = has_secondary( conn );
     // std::cout << "b_has_primary = " << b_has_primary << std::endl;
@@ -399,6 +396,9 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
     conn = validate_pointer( conn );
     // from here on we can use conn as a valid pointer
+    
+    // the following line will throw an exception, if it does not work
+    c.check_connection( src, tgt, receptor_type, conn->get_t_lastspike(), get_common_properties() );
 
     if ( conn->homogeneous_model() ) //  there is already a homogeneous entry
     {

@@ -96,7 +96,7 @@ Parameters:
   I_e        double - Constant external input current in pA.
   V_min      double - Absolute lower value for the membrane potential.
 
-Remarks: 
+Remarks:
 
   If tau_m is very close to tau_syn_ex or tau_syn_in, the model
   will numerically behave as if tau_m is equal to tau_syn_ex or

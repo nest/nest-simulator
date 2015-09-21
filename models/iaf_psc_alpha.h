@@ -97,13 +97,12 @@ Parameters:
   V_min      double - Absolute lower value for the membrane potential.
 
 Remarks: 
-If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-will numerically behave as if tau_m is equal to tau_syn_ex or
-tau_syn_in, respectively, to avoid numerical instabilities. The status
-dictionary provides information about which propagators are used
-through the /propagator_info entry. For details, please see
-IAF_Neruons_Singularity.ipynb in the NEST source code
-(docs/model_details).
+
+  If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+  will numerically behave as if tau_m is equal to tau_syn_ex or
+  tau_syn_in, respectively, to avoid numerical instabilities.
+  For details, please see IAF_Neruons_Singularity.ipynb in the
+  NEST source code (docs/model_details).
 
 References:
   [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear

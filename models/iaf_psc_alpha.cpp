@@ -31,7 +31,6 @@
 #include "universal_data_logger_impl.h"
 #include "propagator_stability.h"
 
-
 #include <limits>
 
 nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_;
@@ -227,7 +226,6 @@ iaf_psc_alpha::calibrate()
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 
   const double h = Time::get_resolution().get_ms();
-
 
   // these P are independent
   V_.P11_ex_ = V_.P22_ex_ = std::exp( -h / P_.tau_ex_ );

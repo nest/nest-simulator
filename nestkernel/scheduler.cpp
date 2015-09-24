@@ -321,8 +321,8 @@ nest::Scheduler::configure_spike_buffers_()
   // so all processes initially read out the same positions in the
   // global spike buffer
   std::vector< uint_t >::iterator pos = global_grid_spikes_.begin() + n_threads_ * min_delay_;
-  invalid_synindex >> pos;
-  true >> pos;
+  input_stream(invalid_synindex , pos);
+  input_stream(true, pos);
   // the following line fails on JUQUEEN, because
   // the way of reading out by streaming operators in deliver_events differs
   // global_grid_spikes_[n_threads_*min_delay_] = static_cast<uint_t>( invalid_synindex );
@@ -1542,9 +1542,9 @@ void nest::Scheduler::collocate_buffers_( bool done )
 
     // end marker after last secondary event
     // made sure in resize that this position is still allocated
-    invalid_synindex >> pos;
+    input_stream(invalid_synindex , pos);
     // append the boolean value indicating whether we are done here
-    done >> pos;
+    input_stream(done , pos);
     
     // the last two lines use our template streaming operators defined in event.h
     // this alternative code is incompatible on JUQUEEN
@@ -1675,7 +1675,7 @@ bool nest::Scheduler::deliver_events_( thread t )
 	// the encoding will be different on JUQUEEN for the
 	// index written into the buffer and read out of it
 	synindex synid;
-	synid << readpos;
+	output_stream(synid , readpos);
 
 	if ( synid == invalid_synindex )
 	  break;
@@ -1696,7 +1696,7 @@ bool nest::Scheduler::deliver_events_( thread t )
       // must be a bool (same type as on the sending side)
       // otherwise the encoding will be inconsistent on JUQUEEN
       bool done_p;
-      done_p << readpos;
+      output_stream(done_p , readpos);
       done = done && done_p;
     }
   }

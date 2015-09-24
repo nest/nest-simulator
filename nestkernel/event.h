@@ -24,6 +24,7 @@
 #define EVENT_H
 
 #include <cassert>
+#include <cstring>
 
 #include "nest.h"
 #include "nest_time.h"
@@ -857,25 +858,25 @@ size_t size_uint_t( T )
 }
 
 template < typename T >
-fwit& operator>>( T d, fwit& pos )
+void input_stream( T d, fwit& pos )
 {
-  *reinterpret_cast< T* >( &( *pos ) ) = d;
+  memcpy(&( *pos ),&d,sizeof( d ));
   pos += size_uint_t( d );
-  return pos;
+
 }
 
 template < typename T >
-fwit& operator<<( T& d, fwit& pos )
+void output_stream( T& d, fwit& pos )
 {
-  d = *reinterpret_cast< T* >( &( *pos ) );
+  memcpy(&d,&( *pos ),sizeof( d ));
   pos += size_uint_t( d );
-  return pos;
-}
+
+} 
 
 inline fwit& GapJEvent::operator<<( fwit& pos )
 {
   pos += size_uint_t( synid_ );
-  sender_gid_ << pos;
+  output_stream(sender_gid_ ,pos);
 
   // generating a copy of the coeffarray is too time consuming
   // therefore we save an iterator to the beginning+end of the coeffarray
@@ -891,8 +892,8 @@ inline fwit& GapJEvent::operator<<( fwit& pos )
 
 inline fwit& GapJEvent::operator>>( fwit& pos )
 {
-  synid_ >> pos;
-  sender_gid_ >> pos;
+  input_stream( synid_ , pos);
+  input_stream(sender_gid_ , pos);
   std::copy( begin().pos_, end().pos_, pos );
 
   return pos;

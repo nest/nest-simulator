@@ -29,7 +29,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
-#include "propagators.h"
+#include "propagator_stability.h"
 
 #include <limits>
 
@@ -240,7 +240,7 @@ iaf_psc_alpha::calibrate()
   V_.P21_ex_ = h * V_.P11_ex_;
   V_.P21_in_ = h * V_.P11_in_;
 
-  // these are determined depending on the relation of the time constants
+  // these are determined according to a numeric stability criterion
   V_.P31_ex_ = propagator_31( P_.tau_ex_, P_.Tau_, P_.C_, h );
   V_.P32_ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
   V_.P31_in_ = propagator_31( P_.tau_in_, P_.Tau_, P_.C_, h );

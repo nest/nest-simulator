@@ -29,7 +29,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
-#include "propagators.h"
+#include "propagator_stability.h"
 
 #include <limits>
 
@@ -231,7 +231,7 @@ nest::iaf_psc_exp::calibrate()
   V_.P22_ = std::exp( -h / P_.Tau_ );
   // P22_ = 1.0-h/Tau_;
 
-  // these are determined depending on the relation of the time constants
+  // these are determined according to a numeric stability criterion
   V_.P21ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
   V_.P21in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, h );
 

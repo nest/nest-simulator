@@ -29,7 +29,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
-#include "propagators.h"
+#include "propagator_stability.h"
 
 #include <limits>
 
@@ -267,7 +267,7 @@ iaf_psc_alpha_multisynapse::calibrate()
     V_.P11_syn_[ i ] = V_.P22_syn_[ i ] = std::exp( -h / P_.tau_syn_[ i ] );
     V_.P21_syn_[ i ] = h * V_.P11_syn_[ i ];
 
-    // these are determined depending on the relation of the time constants
+    // these are determined according to a numeric stability criterion
     V_.P31_syn_[ i ] = propagator_31( P_.tau_syn_[ i ], P_.Tau_, P_.C_, h );
     V_.P32_syn_[ i ] = propagator_32( P_.tau_syn_[ i ], P_.Tau_, P_.C_, h );
 

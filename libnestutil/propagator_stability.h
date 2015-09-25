@@ -1,5 +1,5 @@
 /*
- *  propagators.h
+ *  propagator_stability.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef PROPAGATORS_H
-#define PROPAGATORS_H
+#ifndef PROPAGATOR_STABILITY_H
+#define PROPAGATOR_STABILITY_H
 
 double propagator_31( double tau_syn, double tau, double C, double h );
 double propagator_32( double tau_syn, double tau, double C, double h );

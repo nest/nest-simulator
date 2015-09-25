@@ -25,7 +25,7 @@ Comparing precise and grid-based neuron models
 
 In traditional time-driven simulations, spikes are constrained to the
 time grid at a user-defined resolution. The precise spiking models
-overcome this by handling spikes in continuous time [1] [2].
+overcome this by handling spikes in continuous time [1, 2].
 
 The precise spiking neuron models in NEST include: iaf_psc_exp_ps,
 iaf_psc_alpha_canon, iaf_psc_alpha_presc, and iaf_psc_delta_canon.
@@ -34,8 +34,8 @@ found here:
   http://www.nest-simulator.org/simulations-with-precise-spike-times/
 
 This example compares the conventional grid-constrained model and the
-continuous-time version for an integrate-and-fire neuron model with
-exponential post-synaptic currents [2].
+precise version for an integrate-and-fire neuron model with exponential
+post-synaptic currents [2].
 
 References:
 [1] Morrison A, Straube S, Plesser HE, Diesmann M (2007) Exact

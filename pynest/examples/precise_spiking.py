@@ -107,6 +107,9 @@ illustrates the membrane potential excursion of the two models due to
 injected current simulated for 100 ms for a different timestep in each
 panel. The blue line is the voltage trace of the discrete-time neuron,
 the red line is that of the precise spiking version of the same model.
+
+Please note that the temporal differences between the traces in the
+different panels is caused by the different resolutions used.
 '''
 
 colors = ["#3465a4", "#cc0000"]

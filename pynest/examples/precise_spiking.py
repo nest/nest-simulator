@@ -38,12 +38,14 @@ continuous-time version for an integrate-and-fire neuron model with
 exponential post-synaptic currents [2].
 
 References:
-[1] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact
-    Subthreshold Integration with Continuous Spike Times in Discrete
-    Time Neural Network Simulations. Neural Computation.
-[2] Hanuschkin A, Kunkel S, Helias M, Morrison A & Diesmann M (2010) A
-    general and efficient method for incorporating exact spike times
-    in globally time-driven simulations Front Neuroinformatics, 4:113
+[1] Morrison A, Straube S, Plesser HE, Diesmann M (2007) Exact
+    subthreshold integration with continuous spike times in
+    discrete-time neural network simulations. Neural
+    Comput. 19(1):47-79. doi: 10.1162/neco.2007.19.1.47
+[2] Hanuschkin A, Kunkel S, Helias M, Morrison A and Diesmann M (2010)
+    A general and efficient method for incorporating precise spike
+    times in globally time-driven simulations. Front. Neuroinform.
+    4:113. doi:10.3389/fninf.2010.00113
 '''
 
 '''

@@ -12,7 +12,7 @@ version=""
 # check if we can run the git command
 if command -v git >/dev/null 2>&1; then
   # check if sourcedir is a git repository
-    if cd $1 && git status >/dev/null 2>&1; then
+    if (cd $1 && git status) >/dev/null 2>&1; then
     # replace branch and version with correct values
     branch=`cd $1; git rev-parse --abbrev-ref HEAD`
     version='@'`cd $1; git rev-parse --short HEAD`

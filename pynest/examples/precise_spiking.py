@@ -127,4 +127,7 @@ for v, h in enumerate(sorted(data)):
         plot.plot(times, potentials, "-", c=colors[i], ms=5, lw=2, label=model)
         plot.plot(spikes, spikes_y, ".", c=colors[i], ms=5, lw=2)
     
-    plot.legend(loc=4)
+    if v==2:
+        plot.legend(loc=4)
+    else:
+        plot.set_xticklabels('')

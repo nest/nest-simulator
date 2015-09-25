@@ -4,18 +4,18 @@
 #   $1: sourcedir
 #   $2: builddir
 
-# default values, if svn is not installed or
+# default values, if git is not installed or
 # if the source directory is not revisioned
 branch="no_rcsinfo_available"
 version=""
 
-# check if we can run the svn command
-if command -v svn >/dev/null 2>&1; then
-  # check if sourcedir is a repository
-  if svn info $1 >/dev/null 2>&1; then
+# check if we can run the git command
+if command -v git >/dev/null 2>&1; then
+  # check if sourcedir is a git repository
+    if cd $1 && git status >/dev/null 2>&1; then
     # replace branch and version with correct values
-    branch=`svn info $1 | grep ^URL\: | rev | cut -d'/' -f1 | rev | uniq`
-    version='@'`svnversion $1`
+    branch=`cd $1; git rev-parse --abbrev-ref HEAD`
+    version='@'`cd $1; git rev-parse --short HEAD`
   fi
 fi
 

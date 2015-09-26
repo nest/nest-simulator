@@ -13,9 +13,6 @@ ACLOCAL_AMFLAGS= -I libltdl/m4
 # One should use make distclean here, but make gets confused
 # then. So we remove files by hand.
 dist-hook:
-	test -f $(top_srcdir)/releasetools/clear_extra_modules.awk \
-	  && gawk -f  $(top_srcdir)/releasetools/clear_extra_modules.awk $(distdir)/configure.ac > $(distdir)/configure.ac.tmp \
-	  && mv $(distdir)/configure.ac.tmp $(distdir)/configure.ac || true
 	rm -rf `find $(distdir) -name .svn`
 	rm -rf $(distdir)/doc/doxygen
 	rm -f $(distdir)/doc/doxygen.log

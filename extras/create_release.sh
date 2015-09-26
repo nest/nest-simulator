@@ -26,7 +26,7 @@ set nest_blddir = __NEST_BUILD
 umask 022
 
 # remove any existing checkout
-#rm -rf $nest_srcdir
+rm -rf $nest_srcdir
 rm -rf $nest_blddir
 
 echo ""
@@ -51,7 +51,7 @@ set add_rev=`head -1`
 
 echo ""
 echo "Creating clone ..."
-#git clone $git_url $nest_srcdir
+git clone $git_url $nest_srcdir
 cd $nest_srcdir
 
 set label = ""
@@ -92,8 +92,8 @@ cd $workdir
 mv $nest_blddir/*.tar.gz $workdir
 
 echo "Cleaning up ..."
-#rm -rf $nest_srcdir
-#rm -rf $nest_blddir
+rm -rf $nest_srcdir
+rm -rf $nest_blddir
 	
 echo ""
 echo "Done."

@@ -76,8 +76,6 @@ public:
 
   bool is_active( Time const& T ) const;
 
-
-
   /**
    * Device type.
    */

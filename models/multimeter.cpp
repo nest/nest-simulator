@@ -26,7 +26,6 @@
 namespace nest
 {
 Multimeter::Multimeter()
-  //: Node() //FIXME: initialize RecordingDevice
   : P_()
   , S_()
   , B_()
@@ -34,7 +33,6 @@ Multimeter::Multimeter()
 }
 
 Multimeter::Multimeter( const Multimeter& n )
-  //: Node(n) //FIXME: initialize RecordingDevice
   : P_( n.P_ )
   , S_()
   , B_()
@@ -119,8 +117,8 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b 
 void
 Multimeter::init_state_( const Node& np )
 {
-  //const Multimeter& asd = dynamic_cast< const Multimeter& >( np );
-  //device_.init_state( asd.device_ );
+  // const Multimeter& asd = dynamic_cast< const Multimeter& >( np );
+  // device_.init_state( asd.device_ );
   S_.data_.clear();
 }
 
@@ -134,7 +132,6 @@ Multimeter::calibrate()
 {
   Logger* logger = Node::network()->get_logger();
   logger->enroll( *this, P_.record_from_ );
-  //device_.set_value_names( P_.record_from_ );
   RecordingDevice::calibrate();
 }
 
@@ -222,5 +219,4 @@ Multimeter::add_data_( DictionaryDatum& d ) const
     append_property( d, P_.record_from_[ v ], dv );
   }
 }
-
 }

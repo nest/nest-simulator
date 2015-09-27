@@ -252,31 +252,9 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
-    /** Flag active till first DataLoggingReply during an update() call processed.
-     * This flag is set to true by update() before dispatching the DataLoggingRequest
-     * event and is reset to false by handle() as soon as the first DataLoggingReply
-     * has been handled. This is needed when the Multimeter is running in accumulator
-     * mode.
-     */
-    bool new_request_;
-
-    /** Index to first S_.data_ entry for currently processed request.
-     *
-     * This variable is set by the first DataLoggingReply arriving after
-     * a DataLoggingRequest has been sent out. Subsequently arriving
-     * replies use it to find the correct entries for accumulating data.
-     */
-    size_t current_request_data_start_;
-  };
-
-  // ------------------------------------------------------------
-
   Parameters_ P_;
   State_ S_;
   Buffers_ B_;
-  Variables_ V_;
 };
 
 

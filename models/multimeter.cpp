@@ -30,7 +30,6 @@ Multimeter::Multimeter()
   : P_()
   , S_()
   , B_()
-  , V_()
 {
 }
 
@@ -39,7 +38,6 @@ Multimeter::Multimeter( const Multimeter& n )
   : P_( n.P_ )
   , S_()
   , B_()
-  , V_()
 {
 }
 
@@ -138,8 +136,6 @@ Multimeter::calibrate()
   logger->enroll( *this, P_.record_from_ );
   //device_.set_value_names( P_.record_from_ );
   RecordingDevice::calibrate();
-  V_.new_request_ = false;
-  V_.current_request_data_start_ = 0;
 }
 
 void
@@ -164,13 +160,7 @@ Multimeter::update( Time const& origin, const long_t from, const long_t )
   // ensures that the event is recorded.
   // handle() has access to request_, so it knows what we asked for.
   //
-  // Provided we are recording anything, V_.new_request_ is set to true. This informs
-  // handle() that the first incoming DataLoggingReply is for a new time slice, so that
-  // the data from that first Reply must be pushed back; all following Reply data is
-  // then added.
-  //
   // Note that not all nodes receiving the request will necessarily answer.
-  V_.new_request_ = B_.has_targets_ && !P_.record_from_.empty(); // no targets, no request
   DataLoggingRequest req;
   network()->send( *this, req );
 }

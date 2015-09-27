@@ -267,7 +267,6 @@ extern const Name S;                //!< Binary state (output) of neuron (Ginzbu
 extern const Name scientific;       //!< Recorder parameter
 extern const Name screen;           //!< Recorder parameter
 extern const Name senders;          //!< Recorder parameter
-extern const Name sion_buffer_size; //!< SIONLogger parameters
 extern const Name size_of;          //!< Connection parameters
 extern const Name source;           //!< Connection parameters
 extern const Name spike;            //!< true if the neuron spikes and false if not. (sli_neuron)
@@ -279,6 +278,7 @@ extern const Name std_mod;          //!< Miscellaneous parameters
 extern const Name stimulator;       //!< Node type
 extern const Name stop;             //!< Device parameters
 extern const Name structure;        //!< Node type
+extern const Name sion_chunksize; //!< SIONLogger parameters
 extern const Name success;
 extern const Name synapse;         //!< Node type
 extern const Name synapse_model;   //!< Connection parameters

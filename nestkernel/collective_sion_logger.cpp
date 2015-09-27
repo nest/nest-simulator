@@ -112,14 +112,14 @@ nest::CollectiveSIONLogger::initialize()
 
     sion_int32 fs_block_size = -1;
 
-    sion_int64 sion_buffer_size = P_.sion_buffer_size_;
+    sion_int64 sion_chunksize = P_.sion_chunksize_;
 
     file.sid = sion_paropen_ompi( filename_c,
       "bw,cmerge",
       &n_files,
       MPI_COMM_WORLD,
       &local_comm, // FIXME: does it do anything when not on JUQUEEN?
-      &sion_buffer_size,
+      &sion_chunksize,
       &fs_block_size,
       &rank,
       NULL,
@@ -422,7 +422,7 @@ nest::CollectiveSIONLogger::SIONBuffer::operator<<( const T data )
 
 nest::CollectiveSIONLogger::Parameters_::Parameters_()
   : file_ext_( "sion" )
-  , sion_buffer_size_( 1 << 18 )
+  , sion_chunksize_( 1 << 18 )
   , buffer_size_( 1024 )
 {
 }
@@ -433,7 +433,7 @@ nest::CollectiveSIONLogger::Parameters_::get( const CollectiveSIONLogger& al,
 {
   ( *d )[ names::file_extension ] = file_ext_;
   ( *d )[ names::buffer_size ] = buffer_size_;
-  ( *d )[ names::sion_buffer_size ] = sion_buffer_size_;
+  ( *d )[ names::sion_chunksize ] = sion_chunksize_;
 }
 
 void
@@ -441,7 +441,7 @@ nest::CollectiveSIONLogger::Parameters_::set( const CollectiveSIONLogger& al,
   const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::file_extension, file_ext_ );
-  updateValue< long >( d, names::sion_buffer_size, sion_buffer_size_ );
+  updateValue< long >( d, names::sion_chunksize, sion_chunksize_ );
   updateValue< long >( d, names::buffer_size, buffer_size_ );
 }
 

@@ -24,11 +24,11 @@ public:
   {
   }
 
-  CollectiveSIONLogger( size_t buffer_size )
+  CollectiveSIONLogger( size_t chunksize )
     : files_()
     , initialized_( false )
   {
-    P_.sion_buffer_size_ = buffer_size;
+    P_.sion_chunksize_ = chunksize;
   }
 
   ~CollectiveSIONLogger() throw()
@@ -127,7 +127,7 @@ private:
   {
     std::string file_ext_;  //!< the file name extension to use, without .
     long buffer_size_;      //!< the size of the internal buffer .
-    long sion_buffer_size_; //!< the size of SIONlib's buffer .
+    long sion_chunksize_;  //!< the size of SIONlib's buffer .
 
     Parameters_();
 

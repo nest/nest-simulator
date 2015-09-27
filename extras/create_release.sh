@@ -54,6 +54,10 @@ echo "Creating clone ..."
 git clone $git_url $nest_srcdir
 cd $nest_srcdir
 
+if ( "$tag" != "" ) then
+  git checkout releases
+endif
+
 set label = ""
 if ( $add_rev =~ [yY]* ) then
   set label = "-"`git rev-parse --short HEAD`
@@ -61,13 +65,16 @@ endif
 
 set nest_major = `grep SLI_MAJOR= configure.ac | cut -d= -f2`
 set nest_minor = `grep SLI_MINOR= configure.ac | cut -d= -f2`
-set nest_patch = `grep SLI_PATCHLEVEL= configure.ac | cut -d= -f2`$label
+set nest_patch = `grep SLI_PATCHLEVEL= configure.ac | cut -d= -f2 | cut -d- -f1`$label
 set nest_version = "$nest_major.$nest_minor.$nest_patch"
 
 sed -i'' -e "s/SLI_PATCHLEVEL=.*/SLI_PATCHLEVEL=$nest_patch/" configure.ac
-sed -i'' -e "s/AC_INIT.*/AC_INIT([nest], [$nest_version], [info@nest-initiative.org])/" configure.ac
+sed -i'' -e "s/AC_INIT.*/AC_INIT([nest], [$nest_version], [nest_user@nest-initiative.org])/" configure.ac
 
 if ( "$tag" != "" ) then
+  sed -i'' -e "s/version=\x22\x22/version=\x22Release: $tag\x22/" extras/create_rcsinfo.sh
+  git commit -a -m "$tag"
+  git push
   git tag -a $tag -m "Release of $tag"
   git push --tags
 endif

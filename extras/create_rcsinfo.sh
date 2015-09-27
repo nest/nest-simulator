@@ -6,7 +6,7 @@
 
 # default value, if git is not installed or if the source directory is
 # not under version control
-version=""
+version="v2.8.0"
 
 # check if we can run the git command
 if command -v git >/dev/null 2>&1; then

@@ -1,5 +1,5 @@
 AC_PREREQ(2.63)
-AC_INIT([nest], [git], [nest_user@nest-initiative.org])
+AC_INIT([nest], [2.8.0], [nest_user@nest-initiative.org])
 
 # Prevent automatic rebuilding of Makefile.ins and configure if their
 # content or timestamp changes. Not doing this lead to failing builds
@@ -13,7 +13,7 @@ AM_MAINTAINER_MODE([disable])
 # releasetools/buildnest
 SLI_MAJOR=2
 SLI_MINOR=8
-SLI_PATCHLEVEL=0-git
+SLI_PATCHLEVEL=0
 
 SLI_PRGNAME="nest-$SLI_MAJOR.$SLI_MINOR.$SLI_PATCHLEVEL"
 SLI_VERSION=$SLI_MAJOR.$SLI_MINOR.$SLI_PATCHLEVEL

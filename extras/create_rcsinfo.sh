@@ -11,15 +11,14 @@ version=""
 # check if we can run the git command
 if command -v git >/dev/null 2>&1; then
   # check if sourcedir is a git repository
-    if (cd $1 && git status) >/dev/null 2>&1; then
-    # replace branch and version with correct values
-    version=`cd $1; git rev-parse --abbrev-ref HEAD`
-    if [ $version = "HEAD" ] || [ $version = "master" ]; then
-      version=""
+  if (cd $1 && git status) >/dev/null 2>&1; then
+    branch=`cd $1; git rev-parse --abbrev-ref HEAD`
+    if [ $branch = "HEAD" ] || [ $branch = "master" ]; then
+      branch=""
     else
-      version=$version'@'
+      branch=$branch'@'
     fi
-    version=$version`cd $1; git rev-parse --short HEAD`
+    version=$branch`cd $1; git rev-parse --short HEAD`
   fi
 fi
 

@@ -32,15 +32,13 @@
 #include <numeric>
 
 nest::spike_detector::spike_detector()
-  //: Node() // FIXME
-    : user_set_precise_times_( false ),
-    has_proxies_( false ),
-    local_receiver_( true )
+  : user_set_precise_times_( false )
+  , has_proxies_( false )
+  , local_receiver_( true )
 {
 }
 
 nest::spike_detector::spike_detector( const spike_detector& n )
-  //: Node(n) // FIXME
   : user_set_precise_times_( n.user_set_precise_times_ )
   , has_proxies_( false )
   , local_receiver_( true )
@@ -66,7 +64,7 @@ nest::spike_detector::calibrate()
 {
   if ( !user_set_precise_times_ && network()->get_off_grid_communication() )
   {
-    //device_.set_precise( true ); FIXME: is this required?
+    // device_.set_precise( true ); FIXME: is this required?
 
     network()->message( SLIInterpreter::M_INFO,
       "spike_detector::calibrate",

@@ -32,7 +32,7 @@ void
 nest::RecordingDevice::Parameters_::get( const RecordingDevice& sl, DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
-  
+
   if ( !filename_.empty() )
   {
     initialize_property_array( d, names::filenames );

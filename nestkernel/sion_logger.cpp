@@ -113,7 +113,7 @@ nest::SIONLogger::initialize()
     sion_int64 sion_chunksize = P_.sion_chunksize_;
 
     file.sid = sion_paropen_ompi( filename_c,
-      "bw",
+      P_.sion_collective_ ? "bw,cmerge" : "bw",
       &n_files,
       MPI_COMM_WORLD,
       &local_comm, // FIXME: does it do anything when not on JUQUEEN?
@@ -222,6 +222,23 @@ nest::SIONLogger::finalize()
 }
 
 void
+nest::SIONLogger::synchronize()
+{
+  if ( !P_.sion_collective_ )
+    return;
+
+  Network& network = *( Node::network() );
+  thread t = network.get_thread_id();
+  int task = network.thread_to_vp( t );
+
+  FileEntry& file = files_[ task ];
+  SIONBuffer& buffer = file.buffer;
+
+  sion_coll_fwrite( buffer.read(), 1, buffer.get_size(), file.sid );
+  buffer.clear();
+}
+
+void
 nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
 {
   int task = device.get_vp();
@@ -241,6 +258,14 @@ nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
   int n_values = 0;
 
   unsigned int required_space = 3 * sizeof( int ) + sizeof( double );
+
+  if ( P_.sion_collective_ )
+  {
+    buffer.ensure_space( required_space );
+    buffer << gid << sender << time << n_values;
+    return;
+  }
+
   if ( buffer.get_capacity() > required_space )
   {
     if ( buffer.get_free() < required_space )
@@ -287,6 +312,18 @@ nest::SIONLogger::write( const RecordingDevice& device,
   int n_values = values.size();
 
   unsigned int required_space = 3 * sizeof( int ) + ( 1 + n_values ) * sizeof( double );
+
+  if ( P_.sion_collective_ )
+  {
+    buffer.ensure_space( required_space );
+    buffer << gid << sender << time << n_values;
+    for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
+    {
+      buffer << *val;
+    }
+    return;
+  }
+
   if ( buffer.get_capacity() > required_space )
   {
     if ( buffer.get_free() < required_space )
@@ -382,6 +419,15 @@ nest::SIONLogger::SIONBuffer::reserve( int size )
 }
 
 void
+nest::SIONLogger::SIONBuffer::ensure_space( int size )
+{
+  if ( get_free() < size )
+  {
+    reserve( max_size + 10 * size );
+  }
+}
+
+void
 nest::SIONLogger::SIONBuffer::write( const char* v, long unsigned int n )
 {
   if ( ptr + n <= max_size )
@@ -440,6 +486,7 @@ nest::SIONLogger::SIONBuffer::operator<<( const T data )
 
 nest::SIONLogger::Parameters_::Parameters_()
   : file_ext_( "dat" )
+  , sion_collective_( false )
   , sion_chunksize_( 2400 )
   , buffer_size_( 1024 )
 {

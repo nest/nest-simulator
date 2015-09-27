@@ -24,6 +24,13 @@ public:
   {
   }
 
+  SIONLogger( size_t chunksize )
+    : files_()
+    , initialized_( false )
+  {
+    P_.sion_chunksize_ = chunksize;
+  }
+
   ~SIONLogger() throw()
   {
   }
@@ -33,10 +40,7 @@ public:
 
   void initialize();
   void finalize();
-  void
-  synchronize()
-  {
-  }
+  void synchronize();
 
   void write( const RecordingDevice& device, const Event& event );
   void write( const RecordingDevice& device, const Event& event, const std::vector< double_t >& );
@@ -59,6 +63,7 @@ private:
     SIONBuffer( int size );
     ~SIONBuffer();
     void reserve( int size );
+    void ensure_space( int size );
     void write( const char* v, long unsigned int n );
     int get_capacity();
     int get_size();
@@ -123,6 +128,7 @@ private:
     std::string file_ext_; //!< the file name extension to use, without .
     long buffer_size_;     //!< the size of the internal buffer .
     long sion_chunksize_;  //!< the size of SIONlib's buffer .
+    bool sion_collective_; //!< use SIONlib's collective mode .
 
     Parameters_();
 

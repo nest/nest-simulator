@@ -279,6 +279,7 @@ extern const Name std_mod;        //!< Miscellaneous parameters
 extern const Name stimulator;     //!< Node type
 extern const Name stop;           //!< Device parameters
 extern const Name structure;      //!< Node type
+extern const Name sion_collective; //!< SIONLogger parameters
 extern const Name success;
 extern const Name synapse;         //!< Node type
 extern const Name synapse_model;   //!< Connection parameters

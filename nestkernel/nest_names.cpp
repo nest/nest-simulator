@@ -243,6 +243,7 @@ const Name scientific( "scientific" );
 const Name screen( "screen" );
 const Name senders( "senders" );
 const Name sion_chunksize( "sion_chunksize" );
+const Name sion_collective( "sion_collective" );
 const Name size_of( "sizeof" );
 const Name source( "source" );
 const Name spike( "spike" );

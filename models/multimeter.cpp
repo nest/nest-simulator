@@ -141,7 +141,7 @@ Multimeter::calibrate()
 void
 Multimeter::finalize()
 {
-  //device_.finalize();
+  RecordingDevice::finalize();
 }
 
 void

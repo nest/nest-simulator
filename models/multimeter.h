@@ -189,12 +189,6 @@ protected:
   void update( Time const&, const long_t, const long_t );
 
 private:
-  /** Indicate if recording device is active.
-   *  The argument is the time stamp of the data requested,
-   *  device is active if start_ < T <= stop_ and (T-start_)%interval_ == 0.
-   */
-  bool is_active( Time const& T ) const;
-
   /**
    * "Print" one value to file or screen, depending on settings in RecordingDevice.
    * @note The default implementation supports only EntryTypes which
@@ -291,6 +285,7 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
 {
   // get the data from the device
   RecordingDevice::get_status( d );
+  Device::get_status( d );
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads

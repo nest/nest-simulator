@@ -137,7 +137,7 @@ Multimeter::calibrate()
   Logger* logger = Node::network()->get_logger();
   logger->enroll( *this, P_.record_from_ );
   //device_.set_value_names( P_.record_from_ );
-  //device_.calibrate();
+  RecordingDevice::calibrate();
   V_.new_request_ = false;
   V_.current_request_data_start_ = 0;
 }
@@ -231,17 +231,6 @@ Multimeter::add_data_( DictionaryDatum& d ) const
     initialize_property_doublevector( d, P_.record_from_[ v ] );
     append_property( d, P_.record_from_[ v ], dv );
   }
-}
-
-bool
-Multimeter::is_active( Time const& T ) const
-{
-  const long_t stamp = T.get_steps();
-
-  // FIXME: restore original functionality
-  // return device_.get_t_min_() < stamp && stamp <= device_.get_t_max_();
-
-  return true;
 }
 
 }

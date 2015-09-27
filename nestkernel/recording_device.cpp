@@ -52,6 +52,8 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( *this, d );  // throws if BadProperty
 
+  Device::set_status( d );
+
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
 

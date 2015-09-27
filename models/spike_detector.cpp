@@ -77,6 +77,8 @@ nest::spike_detector::calibrate()
                           get_gid() ) );
   }
 
+  RecordingDevice::calibrate();
+
   Logger* logger = Node::network()->get_logger();
   logger->enroll( *this );
 }
@@ -111,7 +113,7 @@ void
 nest::spike_detector::get_status( DictionaryDatum& d ) const
 {
   // get the data from the device
-  //device_.get_status( d );
+  RecordingDevice::get_status( d );
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
@@ -130,7 +132,7 @@ nest::spike_detector::set_status( const DictionaryDatum& d )
   if ( d->known( names::precise_times ) )
     user_set_precise_times_ = true;
 
-  //device_.set_status( d );
+  RecordingDevice::set_status( d );
 }
 
 void
@@ -138,8 +140,7 @@ nest::spike_detector::handle( SpikeEvent& e )
 {
   // accept spikes only if detector was active when spike was
   // emitted
-  //if ( device_.is_active( e.get_stamp() ) ) // FIXME: add active stuff
-  if ( true )
+  if ( is_active( e.get_stamp() ) )
   {
     assert( e.get_multiplicity() > 0 );
 

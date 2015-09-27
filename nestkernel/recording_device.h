@@ -38,9 +38,46 @@
 namespace nest
 {
 
-class RecordingDevice : public Node
+class RecordingDevice : public Node, public Device
 {
 public:
+  void
+  init_parameters( const RecordingDevice& pr )
+  {
+    Device::init_parameters( pr );
+
+    P_ = pr.P_;
+    // S_ = pr.S_; // TODO: do we need state?
+  }
+
+  void
+  init_state( const RecordingDevice& pr )
+  {
+    Device::init_state( pr );
+    //S_ = pr.S_; // TODO: do we need state?
+  }
+
+
+  void init_buffers()
+  {
+    Device::init_buffers();
+  }
+
+  void
+  calibrate()
+  {
+    Device::calibrate();
+  }
+
+  void
+  finalize()
+  {
+  }
+
+  bool is_active( Time const& T ) const;
+
+
+
   /**
    * Device type.
    */
@@ -92,8 +129,18 @@ inline void
 RecordingDevice::get_status( DictionaryDatum& d ) const
 {
   P_.get( *this, d );
+  Device::get_status( d );
 
   ( *d )[ names::element_type ] = LiteralDatum( names::recorder );
+}
+
+
+inline bool
+RecordingDevice::is_active( Time const& T ) const
+{
+  const long_t stamp = T.get_steps();
+
+  return get_t_min_() < stamp && stamp <= get_t_max_();
 }
 
 } // namespace

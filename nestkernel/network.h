@@ -38,7 +38,7 @@
 #include "dictdatum.h"
 #include <ostream>
 #include <cmath>
-#include "screen_logger.h"
+#include "logger.h"
 
 #include "dirent.h"
 #include "errno.h"

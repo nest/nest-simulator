@@ -42,6 +42,7 @@
 #include "nestmodule.h"
 #include "sibling_container.h"
 #include "communicator_impl.h"
+#include "sion_logger.h"
 
 #include <cmath>
 #include <set>
@@ -91,7 +92,7 @@ Network::Network( SLIInterpreter& i )
   connruledict_ = new Dictionary();
   interpreter_.def( "connruledict", new DictionaryDatum( connruledict_ ) );
 
-  logger_ = new ScreenLogger();
+  logger_ = new SIONLogger();
 
   init_();
 }

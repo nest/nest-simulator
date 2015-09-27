@@ -54,10 +54,10 @@ extern const Name archiver_length; //!< used for ArchivingNode
 extern const Name as;              //!< Number of available release sites (property arrays)
 extern const Name autapses;        //!< Connectivity-related
 
-extern const Name b;      //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
-extern const Name beta;   //!< Specific to amat2_*
-extern const Name binary; //!< Recorder parameter
-extern const Name buffer_size;          //!< SIONLogger parameter
+extern const Name b;           //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
+extern const Name beta;        //!< Specific to amat2_*
+extern const Name binary;      //!< Recorder parameter
+extern const Name buffer_size; //!< SIONLogger parameter
 
 extern const Name c;                    //!< Specific to Izhikevich 2003
 extern const Name c_1;                  //!< Specific to stochastic neuron pp_psc_delta
@@ -263,22 +263,22 @@ extern const Name rport;                //!< Connection parameters
 extern const Name rports;               //!< Connection parameters
 extern const Name rule;                 //!< Connectivity-related
 
-extern const Name S;                //!< Binary state (output) of neuron (Ginzburg neuron)
-extern const Name scientific;       //!< Recorder parameter
-extern const Name screen;           //!< Recorder parameter
-extern const Name senders;          //!< Recorder parameter
-extern const Name size_of;          //!< Connection parameters
-extern const Name source;           //!< Connection parameters
-extern const Name spike;            //!< true if the neuron spikes and false if not. (sli_neuron)
-extern const Name spike_times;      //!< Recorder parameter
-extern const Name start;            //!< Device parameters
-extern const Name state;            //!< Node parameter
-extern const Name std;              //!< Miscellaneous parameters
-extern const Name std_mod;          //!< Miscellaneous parameters
-extern const Name stimulator;       //!< Node type
-extern const Name stop;             //!< Device parameters
-extern const Name structure;        //!< Node type
+extern const Name S;              //!< Binary state (output) of neuron (Ginzburg neuron)
+extern const Name scientific;     //!< Recorder parameter
+extern const Name screen;         //!< Recorder parameter
+extern const Name senders;        //!< Recorder parameter
 extern const Name sion_chunksize; //!< SIONLogger parameters
+extern const Name size_of;        //!< Connection parameters
+extern const Name source;         //!< Connection parameters
+extern const Name spike;          //!< true if the neuron spikes and false if not. (sli_neuron)
+extern const Name spike_times;    //!< Recorder parameter
+extern const Name start;          //!< Device parameters
+extern const Name state;          //!< Node parameter
+extern const Name std;            //!< Miscellaneous parameters
+extern const Name std_mod;        //!< Miscellaneous parameters
+extern const Name stimulator;     //!< Node type
+extern const Name stop;           //!< Device parameters
+extern const Name structure;      //!< Node type
 extern const Name success;
 extern const Name synapse;         //!< Node type
 extern const Name synapse_model;   //!< Connection parameters

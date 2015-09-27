@@ -125,8 +125,8 @@ private:
 
   struct Parameters_
   {
-    std::string file_ext_;  //!< the file name extension to use, without .
-    long buffer_size_;      //!< the size of the internal buffer .
+    std::string file_ext_; //!< the file name extension to use, without .
+    long buffer_size_;     //!< the size of the internal buffer .
     long sion_chunksize_;  //!< the size of SIONlib's buffer .
 
     Parameters_();

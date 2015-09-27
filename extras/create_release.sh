@@ -56,6 +56,7 @@ cd $nest_srcdir
 
 if ( "$tag" != "" ) then
   git checkout releases
+  git merge --commit master
 endif
 
 set label = ""
@@ -72,7 +73,7 @@ sed -i'' -e "s/SLI_PATCHLEVEL=.*/SLI_PATCHLEVEL=$nest_patch/" configure.ac
 sed -i'' -e "s/AC_INIT.*/AC_INIT([nest], [$nest_version], [nest_user@nest-initiative.org])/" configure.ac
 
 if ( "$tag" != "" ) then
-  sed -i'' -e "s/version=\x22\x22/version=\x22Release: $tag\x22/" extras/create_rcsinfo.sh
+  sed -i'' -e "s/version=\x22\x22/version=\x22$tag\x22/" extras/create_rcsinfo.sh
   git commit -a -m "$tag"
   git push
   git tag -a $tag -m "Release of $tag"

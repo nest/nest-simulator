@@ -16,7 +16,7 @@ rm -rf output/*
 find testscripts -name '*.sli' -exec $NEST -c '({}) (run_test.sli) run' \;
 
 # Perform diff
-diff -r -x .svn output reference && result="ok" || result="error"
+diff -r output reference && result="ok" || result="error"
 
 if [ $result = "ok" ] ; then
   echo "OK: Tests reproduced reference results"

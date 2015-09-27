@@ -8,21 +8,23 @@
 
 .PHONY: doc fulldoc
 
-doc:
-if DOXYGEN_AVAILABLE
-
+prep-doxygen-conf:
 	$(eval RCSINFO:=`@PKGSRCDIR@/extras/create_rcsinfo.sh @PKGSRCDIR@ /tmp`) \
 	  $(SED) -i'' -e "/^PROJECT_NUMBER/ s/=.*/= @SLI_VERSION@, $(RCSINFO)/" @PKGBUILDDIR@/doc/normaldoc.conf
+	$(eval RCSINFO:=`@PKGSRCDIR@/extras/create_rcsinfo.sh @PKGSRCDIR@ /tmp`) \
+	  $(SED) -i'' -e "/^PROJECT_NUMBER/ s/=.*/= @SLI_VERSION@, $(RCSINFO)/" @PKGBUILDDIR@/doc/fulldoc.conf
+
+doc: prep-doxygen-conf
+if DOXYGEN_AVAILABLE
+
 	$(DOXYGEN) @PKGBUILDDIR@/doc/normaldoc.conf
 
 endif
 
-fulldoc:
+fulldoc: prep-doxygen-conf
 if DOXYGEN_AVAILABLE
 if DOT_AVAILABLE
 
-	$(eval RCSINFO:=`@PKGSRCDIR@/extras/create_rcsinfo.sh @PKGSRCDIR@ /tmp`) \
-	  $(SED) -i'' -e "/^PROJECT_NUMBER/ s/=.*/= @SLI_VERSION@, $(RCSINFO)/" @PKGBUILDDIR@/doc/fulldoc.conf
 	$(DOXYGEN) @PKGBUILDDIR@/doc/fulldoc.conf
 
 ## is it possible to issue a message here if DOT is not available?

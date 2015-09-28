@@ -290,6 +290,32 @@ if test "x$HAVE_LIBNEUROSIM" != xno; then
   AC_DEFINE(HAVE_LIBNEUROSIM, 1, [libneurosim support enabled?])
 fi
 
+# enable SIONlib support
+SION_INCLUDE=""
+SION_LIBS=""
+AC_ARG_WITH(sionlib, [--with-sionlib[[=directory]] Request the use of SIONlib. Optionally give the directory, where sionconfig is located.],
+  [
+    if test "$withval" != "no"; then
+      if test "$SLI_distributed" != "set"; then
+         AC_MSG_ERROR([SIONlib requires --with-mpi.])
+      else
+        AC_DEFINE(HAVE_SION, 1, [SIONlib support enabled?])
+        if test "$withval" = "yes"; then
+          SION_INCLUDE=`sionconfig --gcc --cflags`
+          SION_LIBS=`sionconfig --gcc --ompi --libs`
+        else
+          SION_PATH="${withval}"
+          SION_INCLUDE=`${SION_PATH}/sionconfig --gcc --cflags`
+          SION_LIBS=`${SION_PATH}/sionconfig --gcc --ompi --libs`
+        fi
+      fi
+    else
+      unset HAVE_SION
+    fi
+  ])
+AC_SUBST([SION_INCLUDE])
+AC_SUBST([SION_LIBS])
+
 # Select optimization mode
 # note: see debugging mode selection
 #
@@ -1076,6 +1102,15 @@ if test "x$HAVE_LIBNEUROSIM" != xno; then
 else
   echo "Use libneurosim     : No"
 fi
+
+if test "x$SION_LIBS" != x; then
+  echo "Use SIONlib         : Yes"
+  echo "  SIONlib inlude    : $SION_INCLUDE"
+  echo "  SIONlib libs      : $SION_LIBS"
+else
+  echo "Use SIONlib         : No"
+fi
+
 
 
 echo

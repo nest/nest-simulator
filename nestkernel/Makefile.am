@@ -23,7 +23,7 @@ MAKEFLAGS= @MAKE_FLAGS@
 AM_CPPFLAGS=  -I$(top_srcdir)/libnestutil\
 		-I$(top_srcdir)/librandom\
 		-I$(top_srcdir)/sli\
-		@INCLTDL@ @GSL_CFLAGS@ @MUSIC_INCLUDE@ @MPI_INCLUDE@
+		@INCLTDL@ @GSL_CFLAGS@ @MUSIC_INCLUDE@ @MPI_INCLUDE@ @SION_INCLUDE@
 
 noinst_LTLIBRARIES= libnest.la
 
@@ -81,10 +81,9 @@ libnest_la_SOURCES=\
 		music_event_handler.h music_event_handler.cpp\
 		screen_logger.h screen_logger.cpp\
 		ascii_logger.h ascii_logger.cpp\
-		sion_logger.h sion_logger.cpp\
-		collective_sion_logger.h collective_sion_logger.cpp
+		sion_logger.h sion_logger.cpp
 
 # sionconfig --ompi
-libnest_la_LIBADD= @LIBLTDL@ @LIBADD_DL@ -L/homeb/slns/slns012/.local/lib -lsionompi_64 -lsiongen_64 -lsionser_64 -lsioncom_64 -lsioncom_64_lock_none
+libnest_la_LIBADD= @LIBLTDL@ @LIBADD_DL@ @SION_LIBS@
 
 EXTRA_DIST= README.md

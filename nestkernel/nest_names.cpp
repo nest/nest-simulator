@@ -343,5 +343,11 @@ const Name withweight( "withweight" );
 
 const Name x( "x" );
 const Name xs( "xs" );
+
+const Name recording( "recording" );
+const Name logger( "logger" );
+const Name ScreenLogger( "ScreenLogger" );
+const Name ASCIILogger( "ASCIILogger" );
+const Name SIONLogger( "SIONLogger" );
 }
 }

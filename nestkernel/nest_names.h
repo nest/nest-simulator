@@ -372,6 +372,12 @@ extern const Name withweight; //!< Recorder parameter
 extern const Name x;  //!< current scaling factor of the synaptic weight [0...1]
                       //!< (Tsodyks2_connection)
 extern const Name xs; //!< current scaling factor of the synaptic weight [0...1] (property arrays)
+
+extern const Name recording;
+extern const Name logger;
+extern const Name ScreenLogger;
+extern const Name ASCIILogger;
+extern const Name SIONLogger;
 }
 }
 

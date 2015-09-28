@@ -1321,7 +1321,8 @@ public:
     : models( nmodels )
   {
   }
-  bool operator()( int a, int b )
+  bool
+  operator()( int a, int b )
   {
     return models[ a ]->get_name() < models[ b ]->get_name();
   }

@@ -520,6 +520,7 @@ nest::SIONLogger::Parameters_::get( const SIONLogger& al, DictionaryDatum& d ) c
   ( *d )[ names::file_extension ] = file_ext_;
   ( *d )[ names::buffer_size ] = buffer_size_;
   ( *d )[ names::sion_chunksize ] = sion_chunksize_;
+  ( *d )[ names::sion_collective ] = sion_chunksize_;
 }
 
 void
@@ -528,6 +529,7 @@ nest::SIONLogger::Parameters_::set( const SIONLogger& al, const DictionaryDatum&
   updateValue< std::string >( d, names::file_extension, file_ext_ );
   updateValue< long >( d, names::sion_chunksize, sion_chunksize_ );
   updateValue< long >( d, names::buffer_size, buffer_size_ );
+  updateValue< bool >( d, names::sion_collective, sion_collective_ );
 }
 
 void

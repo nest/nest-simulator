@@ -32,6 +32,7 @@
 #include "mask.h"
 #include "parameter.h"
 #include "selector.h"
+#include "kernel_manager.h"
 
 namespace nest
 {
@@ -187,7 +188,7 @@ ConnectionCreator::connect_( index s,
   if ( Network::get_network().is_local_gid( target->get_gid() ) )
   {
     // check whether the target is on our thread
-    thread tid = Network::get_network().get_thread_id();
+    thread tid = kernel().vp_manager.get_thread_id();
     if ( tid == target_thread )
       Network::get_network().connect( s, target, target_thread, syn, d, w );
   }

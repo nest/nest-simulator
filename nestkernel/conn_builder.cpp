@@ -35,6 +35,7 @@
 #include "normal_randomdev.h"
 #include "gslrandomgen.h"
 #include "fdstream.h"
+#include "kernel_manager.h"
 
 #include <set>
 #ifdef _OPENMP
@@ -383,7 +384,7 @@ nest::OneToOneBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = Network::get_network().get_thread_id();
+    const int tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -436,7 +437,7 @@ nest::AllToAllBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = Network::get_network().get_thread_id();
+    const int tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -512,7 +513,7 @@ nest::FixedInDegreeBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = Network::get_network().get_thread_id();
+    const int tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -613,7 +614,7 @@ nest::FixedOutDegreeBuilder::connect_()
 #pragma omp parallel
     {
       // get thread id
-      const int tid = Network::get_network().get_thread_id();
+      const int tid = kernel().vp_manager.get_thread_id();
 
       try
       {
@@ -743,7 +744,7 @@ nest::FixedTotalNumberBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = Network::get_network().get_thread_id();
+    const int tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -807,7 +808,7 @@ nest::BernoulliBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = Network::get_network().get_thread_id();
+    const int tid = kernel().vp_manager.get_thread_id();
 
     try
     {

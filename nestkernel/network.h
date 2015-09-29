@@ -784,13 +784,6 @@ public:
   void update_music_event_handlers_( Time const&, const long_t, const long_t );
 #endif
 
-  /**
-   * Gets ID of local thread.
-   * Returns thread ID if OPENMP is installed
-   * and zero otherwise.
-   */
-  int get_thread_id() const;
-
   Node* thread_lid_to_node( thread t, targetindex thread_local_id ) const;
 
 private:
@@ -1552,16 +1545,6 @@ public:
     return models[ a ]->get_name() < models[ b ]->get_name();
   }
 };
-
-inline int
-Network::get_thread_id() const
-{
-#ifdef _OPENMP
-  return omp_get_thread_num();
-#else
-  return 0;
-#endif
-}
 
 /****** former Scheduler functions ******/
 

@@ -31,7 +31,7 @@ nest::KernelManager::create_kernel_manager()
 {
 #pragma omp critical( create_kernel_manager )
   {
-    if ( kernel_manager_instance_ != 0 )
+    if ( kernel_manager_instance_ == 0 )
     {
       kernel_manager_instance_ = new KernelManager();
       assert( kernel_manager_instance_ );
@@ -71,12 +71,8 @@ nest::KernelManager::set_status( const Dictionary& dict )
   vp_manager.set_status( dict );
 }
 
-Dictionary*
-nest::KernelManager::get_status()
+void
+nest::KernelManager::get_status( Dictionary& dict )
 {
-  Dictionary* dict = new Dictionary;
-
-  vp_manager.get_status( *dict );
-
-  return dict;
+  vp_manager.get_status( dict );
 }

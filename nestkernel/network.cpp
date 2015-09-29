@@ -138,6 +138,8 @@ Network::Network( SLIInterpreter& i )
   //
   network_instance_ = this;
   created_network_instance_ = true;
+  
+  kernel().init();
 
   init_scheduler_();
 
@@ -355,6 +357,8 @@ Network::clear_models_( bool called_from_destructor )
 void
 Network::reset()
 {
+  kernel().reset();
+
   destruct_nodes_();
   clear_models_();
 
@@ -385,6 +389,7 @@ Network::reset()
   global_offgrid_spikes_.clear();
 
   initialized_ = false;
+  kernel().init();
   init_scheduler_();
 
   connection_manager_.reset();
@@ -1042,6 +1047,9 @@ Network::set_status( index gid, const DictionaryDatum& d )
   // former scheduler_.set_status( d ); start
   // careful, this may invalidate all node pointers!
   assert( initialized_ );
+  
+  kernel().set_status( *d.get() );
+  d.unlock();
 
   // Create an instance of time converter here to capture the current
   // representation of time objects: TICS_PER_MS and TICS_PER_STEP
@@ -1471,6 +1479,9 @@ Network::get_status( index idx )
     // former scheduler_.get_status( d ) start
     def< long >( d, "local_num_threads", n_threads_ );
     def< long >( d, "total_num_virtual_procs", Communicator::get_num_virtual_processes() );
+    kernel().get_status( *d.get() );
+    d.unlock();
+    
     def< long >( d, "num_processes", Communicator::get_num_processes() );
 
     def< double_t >( d, "time", get_time().get_ms() );

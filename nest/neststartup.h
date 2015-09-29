@@ -38,11 +38,6 @@ Datum* CYTHON_unpackConnectionGeneratorDatum( PyObject* );
 #define CYTHON_unpackConnectionGeneratorDatum( x ) NULL
 #endif
 
-namespace nest
-{
-class Network;
-}
-
 class SLIInterpreter;
 
 #ifdef _IS_PYNEST

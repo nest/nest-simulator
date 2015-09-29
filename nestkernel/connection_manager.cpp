@@ -26,6 +26,8 @@
 #include "spikecounter.h"
 #include "nest_time.h"
 #include "nest_datums.h"
+#include "kernel_manager.h"
+
 #include <algorithm>
 
 #ifdef _OPENMP
@@ -395,7 +397,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
 #ifdef _OPENMP
 #pragma omp parallel
     {
-      thread t = Network::get_network().get_thread_id();
+      thread t = kernel().vp_manager.get_thread_id();
 #else
     for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
     {
@@ -437,7 +439,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
 #ifdef _OPENMP
 #pragma omp parallel
     {
-      thread t = Network::get_network().get_thread_id();
+      thread t = kernel().vp_manager.get_thread_id();
 #else
     for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
     {
@@ -484,7 +486,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
 #ifdef _OPENMP
 #pragma omp parallel
     {
-      size_t t = Network::get_network().get_thread_id();
+      size_t t = kernel().vp_manager.get_thread_id();
 #else
     for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
     {

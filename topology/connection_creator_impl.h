@@ -31,6 +31,7 @@
 
 #include "connection_creator.h"
 #include "binomial_randomdev.h"
+#include "kernel_manager.h"
 
 namespace nest
 {
@@ -212,7 +213,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source, Layer< D >& targe
     {
       const thread target_thread = ( *tgt_it )->get_thread();
 
-      if ( target_thread != Network::get_network().get_thread_id() )
+      if ( target_thread != kernel().vp_manager.get_thread_id() )
         continue;
 
       if ( target_filter_.select_model()

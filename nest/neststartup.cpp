@@ -48,6 +48,7 @@
 #include "sligraphics.h"
 #include "dynamicloader.h"
 #include "filesystem.h"
+#include "kernel_manager.h"
 
 #include "static_modules.h"
 
@@ -63,6 +64,7 @@ int
 neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepath )
 #endif
 {
+  nest::KernelManager::create_kernel_manager();
 
 #ifdef HAVE_MPI
   nest::Communicator::init( &argc, &argv );

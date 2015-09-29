@@ -45,6 +45,8 @@
 #include "nest_timemodifier.h"
 #include "nest_timeconverter.h"
 
+#include "kernel_manager.h"
+
 #include <cmath>
 #include <sys/time.h>
 #include <set>
@@ -2387,7 +2389,7 @@ Network::random_convergent_connect( TokenArray source_ids,
 #pragma omp parallel
   {
     int nrn_counter = 0;
-    int tid = get_thread_id();
+    int tid = kernel().vp_manager.get_thread_id();
 
     librandom::RngPtr rng = get_rng( tid );
 
@@ -2695,7 +2697,7 @@ nest::Network::finalize_nodes()
 // parallel section begins
 #pragma omp parallel
   {
-    index t = get_thread_id(); // which thread am I
+    index t = kernel().vp_manager.get_thread_id();
 #else
   for ( index t = 0; t < n_threads_; ++t )
   {
@@ -2782,7 +2784,7 @@ nest::Network::prepare_nodes()
 #ifdef _OPENMP
 #pragma omp parallel reduction( + : num_active_nodes )
   {
-    size_t t = get_thread_id();
+    size_t t = kernel().vp_manager.get_thread_id();
 #else
   for ( index t = 0; t < n_threads_; ++t )
   {
@@ -2911,7 +2913,7 @@ nest::Network::update()
 #pragma omp parallel
   {
     std::vector< Node* >::iterator i;
-    int t = get_thread_id(); // which thread am I
+    int t = kernel().vp_manager.get_thread_id();
 
     do
     {

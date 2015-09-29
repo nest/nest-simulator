@@ -252,7 +252,6 @@ public:
   static int get_rank();
   static int get_num_processes();
   static void set_num_processes( int );
-  static int get_num_virtual_processes();
   static int get_send_buffer_size();
   static int get_recv_buffer_size();
   static bool get_initialized();
@@ -482,7 +481,6 @@ public:
   static int get_rank();
   static int get_num_processes();
   static void set_num_processes( int );
-  static int get_num_virtual_processes();
   static int get_send_buffer_size();
   static int get_recv_buffer_size();
   static bool get_use_Allgather();
@@ -532,12 +530,6 @@ inline void
 Communicator::set_num_processes( int np )
 {
   num_processes_ = np;
-}
-
-inline int
-Communicator::get_num_virtual_processes()
-{
-  return n_vps_;
 }
 
 inline int

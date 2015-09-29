@@ -46,6 +46,8 @@
 #include "randomgen.h"
 #include "communicator.h"
 
+#include "kernel_manager.h"
+
 #ifdef M_ERROR
 #undef M_ERROR
 #endif
@@ -75,6 +77,7 @@ class Event;
 class Node;
 class GenericConnBuilderFactory;
 class GIDCollection;
+class VPManager;
 
 /**
  * @defgroup network Network access and administration
@@ -141,6 +144,8 @@ SeeAlso: Simulate, Node
 
 class Network
 {
+  friend class VPManager;
+
 private:
   Network( SLIInterpreter& );
   static Network* network_instance_;
@@ -554,42 +559,6 @@ public:
   librandom::RngPtr get_grng() const;
 
   /**
-   * Get number of threads.
-   * This function returns the total number of threads per process.
-   */
-  thread get_num_threads() const;
-
-  /**
-   * Return a thread number for a given global node id.
-   * Each node has a default thread on which it will run.
-   * The thread is defined by the relation:
-   * t = (gid div P) mod T, where P is the number of simulation processes and
-   * T the number of threads. This may be used by network::add_node()
-   * if the user has not specified anything.
-   */
-  thread suggest_vp( index ) const;
-
-  /**
-   * Return a thread number for a given global recording node id.
-   * Each node has a default thread on which it will run.
-   * The thread is defined by the relation:
-   * t = (gid div P) mod T, where P is the number of recording processes and
-   * T the number of threads. This may be used by network::add_node()
-   * if the user has not specified anything.
-   */
-  thread suggest_rec_vp( index ) const;
-
-  /**
-   * Convert a given VP ID to the corresponding thread ID
-   */
-  thread vp_to_thread( thread vp ) const;
-
-  /**
-   * Convert a given thread ID to the corresponding VP ID
-   */
-  thread thread_to_vp( thread t ) const;
-
-  /**
    * Return the number of processes used during simulation.
    * This functions returns the number of processes.
    * Since each process has the same number of threads, the total number
@@ -630,11 +599,6 @@ public:
    * Return true, if the given gid is on the local machine
    */
   bool is_local_gid( index gid ) const;
-
-  /**
-   * Return true, if the given VP is on the local machine
-   */
-  bool is_local_vp( thread ) const;
 
   /**
    * Return true, if the network has already been simulated for some time.
@@ -1022,13 +986,6 @@ public:
   void send_offgrid_remote( thread p, SpikeEvent&, const long_t lag = 0 );
 
   /**
-   * Set the number of threads by setting the internal variable
-   * n_threads_, the corresponding value in the Communicator, and
-   * the OpenMP number of threads.
-   */
-  void set_num_threads( thread n_threads );
-
-  /**
    * Return the process id for a given virtual process. The real process' id
    * of a virtual process is defined by the relation: p = (vp mod P), where
    * P is the total number of processes.
@@ -1157,9 +1114,6 @@ private:
   /******** Member variables former owned by the scheduler ********/
   bool initialized_;
   bool simulating_; //!< true if simulation in progress
-  bool force_singlethreading_;
-
-  index n_threads_; //!< Number of threads per process.
 
   index n_rec_procs_; //!< MPI processes dedicated for recording devices
   index n_sim_procs_; //!< MPI processes used for simulation
@@ -1412,12 +1366,6 @@ Network::get_cwn( void ) const
 }
 
 inline thread
-Network::get_num_threads() const
-{
-  return n_threads_;
-}
-
-inline thread
 Network::get_num_processes() const
 {
   return Communicator::get_num_processes();
@@ -1438,59 +1386,13 @@ Network::get_num_sim_processes() const
 inline bool
 Network::is_local_node( Node* n ) const
 {
-  return is_local_vp( n->get_vp() );
+  return kernel().vp_manager.is_local_vp( n->get_vp() );
 }
 
 inline bool
 Network::is_local_gid( index gid ) const
 {
   return local_nodes_.get_node_by_gid( gid ) != 0;
-}
-
-inline bool
-Network::is_local_vp( thread vp ) const
-{
-  return get_process_id( vp ) == Communicator::get_rank();
-}
-
-inline int
-Network::suggest_vp( index gid ) const
-{
-  return gid % ( n_sim_procs_ * n_threads_ );
-}
-
-inline int
-Network::suggest_rec_vp( index gid ) const
-{
-  return gid % ( n_rec_procs_ * n_threads_ ) + n_sim_procs_ * n_threads_;
-}
-
-inline thread
-Network::vp_to_thread( thread vp ) const
-{
-  if ( vp >= static_cast< thread >( n_sim_procs_ * n_threads_ ) )
-  {
-    return ( vp + n_sim_procs_ * ( 1 - n_threads_ ) - Communicator::get_rank() ) / n_rec_procs_;
-  }
-  else
-  {
-    return vp / n_sim_procs_;
-  }
-}
-
-inline thread
-Network::thread_to_vp( thread t ) const
-{
-  if ( Communicator::get_rank() >= static_cast< int >( n_sim_procs_ ) )
-  {
-    // Rank is a recording process
-    return t * n_rec_procs_ + Communicator::get_rank() - n_sim_procs_ + n_sim_procs_ * n_threads_;
-  }
-  else
-  {
-    // Rank is a simulating process
-    return t * n_sim_procs_ + Communicator::get_rank();
-  }
 }
 
 inline bool
@@ -1738,9 +1640,11 @@ Network::send_offgrid_remote( thread t, SpikeEvent& e, const long_t lag )
 inline thread
 Network::get_process_id( thread vp ) const
 {
-  if ( vp >= static_cast< thread >( n_sim_procs_ * n_threads_ ) ) // vp belongs to recording VPs
+  if ( vp >= static_cast< thread >( n_sim_procs_
+               * kernel().vp_manager.get_num_threads() ) ) // vp belongs to recording VPs
   {
-    return ( vp - n_sim_procs_ * n_threads_ ) % n_rec_procs_ + n_sim_procs_;
+    return ( vp - n_sim_procs_ * kernel().vp_manager.get_num_threads() ) % n_rec_procs_
+      + n_sim_procs_;
   }
   else // vp belongs to simulating VPs
   {

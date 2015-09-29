@@ -40,7 +40,7 @@ Model::Model( const std::string& name )
 void
 Model::set_threads()
 {
-  set_threads_( Network::get_network().get_num_threads() );
+  set_threads_( kernel().vp_manager.get_num_threads() );
 }
 
 void

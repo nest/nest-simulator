@@ -45,8 +45,6 @@
 #include "nest_timemodifier.h"
 #include "nest_timeconverter.h"
 
-#include "kernel_manager.h"
-
 #include <cmath>
 #include <sys/time.h>
 #include <set>
@@ -110,8 +108,6 @@ Network::Network( SLIInterpreter& i )
   , model_defaults_modified_( false )
   , initialized_( false ) // scheduler stuff
   , simulating_( false )
-  , force_singlethreading_( false )
-  , n_threads_( 1 )
   , n_rec_procs_( 0 )
   , n_sim_procs_( 0 )
   , n_gsd_( 0 )
@@ -138,7 +134,7 @@ Network::Network( SLIInterpreter& i )
   //
   network_instance_ = this;
   created_network_instance_ = true;
-  
+
   kernel().init();
 
   init_scheduler_();
@@ -202,20 +198,20 @@ Network::init_()
   SiblingContainer* root_container =
     static_cast< SiblingContainer* >( siblingcontainer_model->allocate( 0 ) );
   local_nodes_.add_local_node( *root_container );
-  root_container->reserve( get_num_threads() );
+  root_container->reserve( kernel().vp_manager.get_num_threads() );
   root_container->set_model_id( -1 );
 
   assert( !pristine_models_.empty() );
   Model* rootmodel = pristine_models_[ 0 ].first;
   assert( rootmodel != 0 );
 
-  for ( thread t = 0; t < get_num_threads(); ++t )
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
     Node* newnode = rootmodel->allocate( t );
     newnode->set_gid_( 0 );
     newnode->set_model_id( 0 );
     newnode->set_thread( t );
-    newnode->set_vp( thread_to_vp( t ) );
+    newnode->set_vp( kernel().vp_manager.thread_to_vp( t ) );
     root_container->push_back( newnode );
   }
 
@@ -242,8 +238,8 @@ Network::init_()
 
   // create proxy nodes, one for each thread and model
   // create dummy spike sources, one for each thread
-  proxy_nodes_.resize( get_num_threads() );
-  for ( thread t = 0; t < get_num_threads(); ++t )
+  proxy_nodes_.resize( kernel().vp_manager.get_num_threads() );
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
     for ( index i = 0; i < pristine_models_.size(); ++i )
     {
@@ -285,19 +281,6 @@ Network::init_scheduler_()
   // The following line is executed by all processes, no need to communicate
   // this change in delays.
   min_delay_ = max_delay_ = 1;
-
-#ifndef _OPENMP
-  if ( n_threads_ > 1 )
-  {
-    message( SLIInterpreter::M_ERROR,
-      "Network::reset",
-      "No multithreading available, using single threading" );
-    n_threads_ = 1;
-    force_singlethreading_ = true;
-  }
-#endif
-
-  set_num_threads( n_threads_ );
 
   n_sim_procs_ = Communicator::get_num_processes() - n_rec_procs_;
 
@@ -408,7 +391,7 @@ Network::reset_kernel()
    * part deleting all the old stuff, then perform settings for the
    * fresh kernel, then do remaining initialization.
    */
-  set_num_threads( 1 );
+  kernel().vp_manager.set_num_threads( 1 );
   set_num_rec_processes( 0, true );
   data_path_ = "";
   data_prefix_ = "";
@@ -493,7 +476,7 @@ index Network::add_node( index mod, long_t n ) // no_p
   if ( n < 1 )
     throw BadProperty();
 
-  const thread n_threads = get_num_threads();
+  const thread n_threads = kernel().vp_manager.get_num_threads();
   assert( n_threads > 0 );
 
   const index min_gid = local_nodes_.get_max_gid() + 1;
@@ -547,10 +530,10 @@ index Network::add_node( index mod, long_t n ) // no_p
 
     for ( size_t gid = min_gid; gid < max_gid; ++gid )
     {
-      const thread vp = suggest_rec_vp( get_n_gsd() );
-      const thread t = vp_to_thread( vp );
+      const thread vp = kernel().vp_manager.suggest_rec_vp( get_n_gsd() );
+      const thread t = kernel().vp_manager.vp_to_thread( vp );
 
-      if ( is_local_vp( vp ) )
+      if ( kernel().vp_manager.is_local_vp( vp ) )
       {
         Node* newnode = model->allocate( t );
         newnode->set_gid_( gid );
@@ -598,10 +581,10 @@ index Network::add_node( index mod, long_t n ) // no_p
 
     for ( size_t gid = min_gid; gid < max_gid; ++gid )
     {
-      const thread vp = suggest_vp( gid );
-      const thread t = vp_to_thread( vp );
+      const thread vp = kernel().vp_manager.suggest_vp( gid );
+      const thread t = kernel().vp_manager.vp_to_thread( vp );
 
-      if ( is_local_vp( vp ) )
+      if ( kernel().vp_manager.is_local_vp( vp ) )
       {
         Node* newnode = model->allocate( t );
         newnode->set_gid_( gid );
@@ -662,7 +645,7 @@ index Network::add_node( index mod, long_t n ) // no_p
       std::ceil( static_cast< double >( max_gid ) / get_num_sim_processes() ) + 50 );
     for ( index gid = min_gid; gid < max_gid; ++gid )
     {
-      thread thread_id = vp_to_thread( suggest_vp( gid ) );
+      thread thread_id = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
 
       // Create wrapper and register with nodes_ array.
       SiblingContainer* container =
@@ -680,7 +663,7 @@ index Network::add_node( index mod, long_t n ) // no_p
         newnode->set_gid_( gid ); // all instances get the same global id.
         newnode->set_model_id( mod );
         newnode->set_thread( t );
-        newnode->set_vp( thread_to_vp( t ) );
+        newnode->set_vp( kernel().vp_manager.thread_to_vp( t ) );
 
         // Register instance with wrapper
         // container has one entry for each thread
@@ -703,7 +686,7 @@ index Network::add_node( index mod, long_t n ) // no_p
       newnode->set_gid_( gid );
       newnode->set_model_id( mod );
       newnode->set_thread( 0 );
-      newnode->set_vp( thread_to_vp( 0 ) );
+      newnode->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
 
       // Register instance
       local_nodes_.add_local_node( *newnode );
@@ -1047,7 +1030,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
   // former scheduler_.set_status( d ); start
   // careful, this may invalidate all node pointers!
   assert( initialized_ );
-  
+
   kernel().set_status( *d.get() );
   d.unlock();
 
@@ -1086,89 +1069,9 @@ Network::set_status( index gid, const DictionaryDatum& d )
 
   updateValue< bool >( d, "print_time", print_time_ );
 
+  // have those two for later asking, whether threads have changed:
   long n_threads;
   bool n_threads_updated = updateValue< long >( d, "local_num_threads", n_threads );
-  if ( n_threads_updated )
-  {
-    if ( size() > 1 )
-      throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
-    if ( models_.size() > pristine_models_.size() )
-      throw KernelException(
-        "Custom neuron models exist: Thread/process number cannot be changed." );
-    if ( connection_manager_.has_user_prototypes() )
-      throw KernelException(
-        "Custom synapse types exist: Thread/process number cannot be changed." );
-    if ( connection_manager_.get_user_set_delay_extrema() )
-      throw KernelException(
-        "Delay extrema have been set: Thread/process number cannot be changed." );
-    if ( get_simulated() )
-      throw KernelException(
-        "The network has been simulated: Thread/process number cannot be changed." );
-    if ( not Time::resolution_is_default() )
-      throw KernelException(
-        "The resolution has been set: Thread/process number cannot be changed." );
-    if ( model_defaults_modified() )
-      throw KernelException(
-        "Model defaults have been modified: Thread/process number cannot be changed." );
-
-    if ( n_threads > 1 && force_singlethreading_ )
-    {
-      message( SLIInterpreter::M_WARNING,
-        "Network::set_status",
-        "No multithreading available, using single threading" );
-      n_threads_ = 1;
-    }
-
-    // it is essential to call reset() here to adapt memory pools and more
-    // to the new number of threads and VPs.
-    n_threads_ = n_threads;
-    reset();
-  }
-
-  long n_vps;
-  bool n_vps_updated = updateValue< long >( d, "total_num_virtual_procs", n_vps );
-  if ( n_vps_updated )
-  {
-    if ( size() > 1 )
-      throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
-    if ( models_.size() > pristine_models_.size() )
-      throw KernelException(
-        "Custom neuron models exist: Thread/process number cannot be changed." );
-    if ( connection_manager_.has_user_prototypes() )
-      throw KernelException(
-        "Custom synapse types exist: Thread/process number cannot be changed." );
-    if ( connection_manager_.get_user_set_delay_extrema() )
-      throw KernelException(
-        "Delay extrema have been set: Thread/process number cannot be changed." );
-    if ( get_simulated() )
-      throw KernelException(
-        "The network has been simulated: Thread/process number cannot be changed." );
-    if ( not Time::resolution_is_default() )
-      throw KernelException(
-        "The resolution has been set: Thread/process number cannot be changed." );
-    if ( model_defaults_modified() )
-      throw KernelException(
-        "Model defaults have been modified: Thread/process number cannot be changed." );
-
-    if ( n_vps % Communicator::get_num_processes() != 0 )
-      throw BadProperty(
-        "Number of virtual processes (threads*processes) must be an integer "
-        "multiple of the number of processes. Value unchanged." );
-
-    n_threads_ = n_vps / Communicator::get_num_processes();
-    if ( ( n_threads > 1 ) && ( force_singlethreading_ ) )
-    {
-      message( SLIInterpreter::M_WARNING,
-        "Network::set_status",
-        "No multithreading available, using single threading" );
-      n_threads_ = 1;
-    }
-
-    // it is essential to call reset() here to adapt memory pools and more
-    // to the new number of threads and VPs
-    set_num_threads( n_threads_ );
-    reset();
-  }
 
   // tics_per_ms and resolution must come after local_num_thread / total_num_threads
   // because they might reset the network and the time representation
@@ -1263,14 +1166,14 @@ Network::set_status( index gid, const DictionaryDatum& d )
 
     // n_threads_ is the new value after a change of the number of
     // threads
-    if ( ad->size() != ( size_t )( Communicator::get_num_virtual_processes() ) )
+    if ( ad->size() != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
     {
       message( SLIInterpreter::M_ERROR,
         "Network::set_status",
         "Number of RNGs must equal number of virtual processes (threads*processes). RNGs "
         "unchanged." );
       throw DimensionMismatch(
-        ( size_t )( Communicator::get_num_virtual_processes() ), ad->size() );
+        ( size_t )( kernel().vp_manager.get_num_virtual_processes() ), ad->size() );
     }
 
     // delete old generators, insert new generators this code is
@@ -1279,8 +1182,9 @@ Network::set_status( index gid, const DictionaryDatum& d )
     // upated
     rng_.clear();
     for ( index i = 0; i < ad->size(); ++i )
-      if ( is_local_vp( i ) )
-        rng_.push_back( getValue< librandom::RngDatum >( ( *ad )[ suggest_vp( i ) ] ) );
+      if ( kernel().vp_manager.is_local_vp( i ) )
+        rng_.push_back(
+          getValue< librandom::RngDatum >( ( *ad )[ kernel().vp_manager.suggest_vp( i ) ] ) );
   }
   else if ( n_threads_updated && size() == 0 )
   {
@@ -1295,14 +1199,14 @@ Network::set_status( index gid, const DictionaryDatum& d )
     if ( ad == 0 )
       throw BadProperty();
 
-    if ( ad->size() != ( size_t )( Communicator::get_num_virtual_processes() ) )
+    if ( ad->size() != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
     {
       message( SLIInterpreter::M_ERROR,
         "Network::set_status",
         "Number of seeds must equal number of virtual processes (threads*processes). RNGs "
         "unchanged." );
       throw DimensionMismatch(
-        ( size_t )( Communicator::get_num_virtual_processes() ), ad->size() );
+        ( size_t )( kernel().vp_manager.get_num_virtual_processes() ), ad->size() );
     }
 
     // check if seeds are unique
@@ -1324,8 +1228,8 @@ Network::set_status( index gid, const DictionaryDatum& d )
     {
       long s = ( *ad )[ i ];
 
-      if ( is_local_vp( i ) )
-        rng_[ vp_to_thread( suggest_vp( i ) ) ]->seed( s );
+      if ( kernel().vp_manager.is_local_vp( i ) )
+        rng_[ kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( i ) ) ]->seed( s );
 
       rng_seeds_[ i ] = s;
     }
@@ -1477,11 +1381,9 @@ Network::get_status( index idx )
   if ( target == root_ )
   {
     // former scheduler_.get_status( d ) start
-    def< long >( d, "local_num_threads", n_threads_ );
-    def< long >( d, "total_num_virtual_procs", Communicator::get_num_virtual_processes() );
     kernel().get_status( *d.get() );
     d.unlock();
-    
+
     def< long >( d, "num_processes", Communicator::get_num_processes() );
 
     def< double_t >( d, "time", get_time().get_ms() );
@@ -1564,7 +1466,7 @@ Network::connect( index sgid,
     if ( !source->has_proxies() ) // we do not allow to connect a device to a global receiver at the
                                   // moment
       return;
-    const thread n_threads = get_num_threads();
+    const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread t = 0; t < n_threads; t++ )
     {
       target = get_node( target->get_gid(), t );
@@ -1608,7 +1510,7 @@ Network::connect( index sgid,
     if ( !source->has_proxies() ) // we do not allow to connect a device to a global receiver at the
                                   // moment
       return;
-    const thread n_threads = get_num_threads();
+    const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread t = 0; t < n_threads; t++ )
     {
       target = get_node( target->get_gid(), t );
@@ -1655,7 +1557,7 @@ Network::connect( index source_id, index target_id, DictionaryDatum& params, ind
     if ( !source_ptr->has_proxies() ) // we do not allow to connect a device to a global receiver at
                                       // the moment
       return false;
-    const thread n_threads = get_num_threads();
+    const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread t = 0; t < n_threads; t++ )
     {
       target_ptr = get_node( target_id, t );
@@ -2523,7 +2425,7 @@ Network::copy_model( index old_id, std::string new_name )
   assert( proxy_model_id > 0 );
   Model* proxy_model = models_[ proxy_model_id ];
   assert( proxy_model != 0 );
-  for ( thread t = 0; t < get_num_threads(); ++t )
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
     Node* newnode = proxy_model->allocate( t );
     newnode->set_model_id( new_id );
@@ -2570,7 +2472,7 @@ Network::register_model( Model& m, bool private_model )
   Model* proxy_model = models_[ proxy_model_id ];
   assert( proxy_model != 0 );
 
-  for ( thread t = 0; t < get_num_threads(); ++t )
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
     Node* newnode = proxy_model->allocate( t );
     newnode->set_model_id( id );
@@ -2790,7 +2692,8 @@ nest::Network::prepare_nodes()
 
   size_t num_active_nodes = 0; // counts nodes that will be updated
 
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised( get_num_threads() );
+  std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
+    kernel().vp_manager.get_num_threads() );
 
 #ifdef _OPENMP
 #pragma omp parallel reduction( + : num_active_nodes )
@@ -2825,7 +2728,7 @@ nest::Network::prepare_nodes()
   } // end of parallel section / end of for threads
 
   // check if any exceptions have been raised
-  for ( thread thr = 0; thr < get_num_threads(); ++thr )
+  for ( index thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
     if ( exceptions_raised.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 
@@ -2862,9 +2765,9 @@ nest::Network::update_nodes_vec_()
     {
 
       /* We clear the existing nodes_vec_ and then rebuild it. */
-      assert( nodes_vec_.size() == n_threads_ );
+      assert( nodes_vec_.size() == kernel().vp_manager.get_num_threads() );
 
-      for ( index t = 0; t < n_threads_; ++t )
+      for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
       {
         nodes_vec_[ t ].clear();
 
@@ -2919,7 +2822,8 @@ nest::Network::update()
   message( SLIInterpreter::M_INFO, "Network::update", "Simulating using OpenMP." );
 #endif
 
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised( get_num_threads() );
+  std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
+    kernel().vp_manager.get_num_threads() );
 // parallel section begins
 #pragma omp parallel
   {
@@ -3011,7 +2915,7 @@ nest::Network::update()
 
   } // end of #pragma parallel omp
   // check if any exceptions have been raised
-  for ( thread thr = 0; thr < get_num_threads(); ++thr )
+  for ( index thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
     if ( exceptions_raised.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 }
@@ -3064,9 +2968,10 @@ nest::Network::collocate_buffers_()
       != static_cast< uint_t >( Communicator::get_recv_buffer_size() ) )
       global_grid_spikes_.resize( Communicator::get_recv_buffer_size(), 0 );
 
-    if ( num_spikes + ( n_threads_ * min_delay_ )
+    if ( num_spikes + ( kernel().vp_manager.get_num_threads() * min_delay_ )
       > static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
-      local_grid_spikes_.resize( ( num_spikes + ( min_delay_ * n_threads_ ) ), 0 );
+      local_grid_spikes_.resize(
+        ( num_spikes + ( min_delay_ * kernel().vp_manager.get_num_threads() ) ), 0 );
     else if ( local_grid_spikes_.size()
       < static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
       local_grid_spikes_.resize( Communicator::get_send_buffer_size(), 0 );
@@ -3119,10 +3024,11 @@ nest::Network::collocate_buffers_()
       != static_cast< uint_t >( Communicator::get_recv_buffer_size() ) )
       global_offgrid_spikes_.resize( Communicator::get_recv_buffer_size(), OffGridSpike( 0, 0.0 ) );
 
-    if ( num_spikes + ( n_threads_ * min_delay_ )
+    if ( num_spikes + ( kernel().vp_manager.get_num_threads() * min_delay_ )
       > static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
       local_offgrid_spikes_.resize(
-        ( num_spikes + ( min_delay_ * n_threads_ ) ), OffGridSpike( 0, 0.0 ) );
+        ( num_spikes + ( min_delay_ * kernel().vp_manager.get_num_threads() ) ),
+        OffGridSpike( 0, 0.0 ) );
     else if ( local_offgrid_spikes_.size()
       < static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
       local_offgrid_spikes_.resize( Communicator::get_send_buffer_size(), OffGridSpike( 0, 0.0 ) );
@@ -3190,7 +3096,7 @@ nest::Network::deliver_events_( thread t )
       prepared_timestamps[ lag ] = clock_ - Time::step( lag );
     }
 
-    for ( size_t vp = 0; vp < ( size_t ) Communicator::get_num_virtual_processes(); ++vp )
+    for ( size_t vp = 0; vp < ( size_t ) kernel().vp_manager.get_num_virtual_processes(); ++vp )
     {
       size_t pid = get_process_id( vp );
       int pos_pid = pos[ pid ];
@@ -3223,7 +3129,7 @@ nest::Network::deliver_events_( thread t )
       prepared_timestamps[ lag ] = clock_ - Time::step( lag );
     }
 
-    for ( size_t vp = 0; vp < ( size_t ) Communicator::get_num_virtual_processes(); ++vp )
+    for ( size_t vp = 0; vp < ( size_t ) kernel().vp_manager.get_num_virtual_processes(); ++vp )
     {
       size_t pid = get_process_id( vp );
       int pos_pid = pos[ pid ];
@@ -3407,21 +3313,24 @@ nest::Network::configure_spike_buffers_()
 
   spike_register_.clear();
   // the following line does not compile with gcc <= 3.3.5
-  spike_register_.resize( n_threads_, std::vector< std::vector< uint_t > >( min_delay_ ) );
+  spike_register_.resize(
+    kernel().vp_manager.get_num_threads(), std::vector< std::vector< uint_t > >( min_delay_ ) );
   for ( size_t j = 0; j < spike_register_.size(); ++j )
     for ( size_t k = 0; k < spike_register_[ j ].size(); ++k )
       spike_register_[ j ][ k ].clear();
 
   offgrid_spike_register_.clear();
   // the following line does not compile with gcc <= 3.3.5
-  offgrid_spike_register_.resize(
-    n_threads_, std::vector< std::vector< OffGridSpike > >( min_delay_ ) );
+  offgrid_spike_register_.resize( kernel().vp_manager.get_num_threads(),
+    std::vector< std::vector< OffGridSpike > >( min_delay_ ) );
   for ( size_t j = 0; j < offgrid_spike_register_.size(); ++j )
     for ( size_t k = 0; k < offgrid_spike_register_[ j ].size(); ++k )
       offgrid_spike_register_[ j ][ k ].clear();
 
   // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces.
-  int send_buffer_size = n_threads_ * min_delay_ > 2 ? n_threads_ * min_delay_ : 2;
+  int send_buffer_size = kernel().vp_manager.get_num_threads() * min_delay_ > 2
+    ? kernel().vp_manager.get_num_threads() * min_delay_
+    : 2;
   int recv_buffer_size = send_buffer_size * Communicator::get_num_processes();
   Communicator::set_buffer_sizes( send_buffer_size, recv_buffer_size );
 
@@ -3462,12 +3371,13 @@ nest::Network::create_rngs_( const bool ctor_call )
   if ( !ctor_call )
     message( SLIInterpreter::M_INFO, "Network::create_rngs_", "Creating default RNGs" );
 
-  rng_seeds_.resize( Communicator::get_num_virtual_processes() );
+  rng_seeds_.resize( kernel().vp_manager.get_num_virtual_processes() );
 
-  for ( index i = 0; i < static_cast< index >( Communicator::get_num_virtual_processes() ); ++i )
+  for ( index i = 0; i < static_cast< index >( kernel().vp_manager.get_num_virtual_processes() );
+        ++i )
   {
     unsigned long s = i + 1;
-    if ( is_local_vp( i ) )
+    if ( kernel().vp_manager.is_local_vp( i ) )
     {
 /*
  We have to ensure that each thread is provided with a different
@@ -3561,32 +3471,6 @@ nest::Network::set_num_rec_processes( int nrp, bool called_by_reset )
       n_sim_procs_ );
     message( SLIInterpreter::M_INFO, "Network::set_num_rec_processes", msg );
   }
-}
-
-void
-nest::Network::set_num_threads( thread n_threads )
-{
-  n_threads_ = n_threads;
-  nodes_vec_.resize( n_threads_ );
-
-#ifdef _OPENMP
-  omp_set_num_threads( n_threads_ );
-
-#ifdef USE_PMA
-// initialize the memory pools
-#ifdef IS_K
-  assert( n_threads <= MAX_THREAD && "MAX_THREAD is a constant defined in allocator.h" );
-
-#pragma omp parallel
-  poormansallocpool[ omp_get_thread_num() ].init();
-#else
-#pragma omp parallel
-  poormansallocpool.init();
-#endif
-#endif
-
-#endif
-  Communicator::set_num_threads( n_threads_ );
 }
 
 } // end of namespace

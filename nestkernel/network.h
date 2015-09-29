@@ -1054,12 +1054,6 @@ public:
   size_t get_slice() const;
 
   /**
-   * Return the global thread id of a local thread.
-   * @note NOT IMPLEMENTED
-   */
-  thread get_global_thread_id( thread lt ) const;
-
-  /**
    * Return (T+d) mod max_delay.
    */
   delay get_modulo( delay d );
@@ -1179,9 +1173,6 @@ private:
 
   index n_gsd_; //!< Total number of global spike detectors, used for distributing them over
                 //!< recording processes
-
-  volatile index entry_counter_; //!< Counter for entry barrier.
-  volatile index exit_counter_;  //!< Counter for exit barrier.
 
   vector< vector< Node* > > nodes_vec_; //!< Nodelists for unfrozen nodes
   index nodes_vec_network_size_;        //!< Network size when nodes_vec_ was last updated

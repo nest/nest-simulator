@@ -29,6 +29,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
+#include "propagator_stability.h"
 
 #include <limits>
 
@@ -136,11 +137,6 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d )
   if ( t_ref_ < 0 )
     throw BadProperty( "Refractory time must not be negative." );
 
-  if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
-    throw BadProperty(
-      "Membrane and synapse time constant(s) must differ."
-      "See note in documentation." );
-
   return delta_EL;
 }
 
@@ -235,15 +231,11 @@ nest::iaf_psc_exp::calibrate()
   V_.P22_ = std::exp( -h / P_.Tau_ );
   // P22_ = 1.0-h/Tau_;
 
-  // these depend on the above. Please do not change the order.
-  // TODO: use expm1 here to improve accuracy for small timesteps
+  // these are determined according to a numeric stability criterion
+  V_.P21ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
+  V_.P21in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, h );
 
-  V_.P21ex_ = P_.Tau_ / ( P_.C_ * ( 1.0 - P_.Tau_ / P_.tau_ex_ ) ) * V_.P11ex_
-    * ( 1.0 - std::exp( h * ( 1.0 / P_.tau_ex_ - 1.0 / P_.Tau_ ) ) );
   // P21ex_ = h/C_;
-
-  V_.P21in_ = P_.Tau_ / ( P_.C_ * ( 1.0 - P_.Tau_ / P_.tau_in_ ) ) * V_.P11in_
-    * ( 1.0 - std::exp( h * ( 1.0 / P_.tau_in_ - 1.0 / P_.Tau_ ) ) );
   // P21in_ = h/C_;
 
   V_.P20_ = P_.Tau_ / P_.C_ * ( 1.0 - V_.P22_ );

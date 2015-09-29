@@ -139,35 +139,6 @@ ConnectionManager::reset()
   init_();
 }
 
-
-synindex
-ConnectionManager::register_synapse_prototype( ConnectorModel* cf )
-{
-  std::string name = cf->get_name();
-
-  if ( synapsedict_->known( name ) )
-  {
-    delete cf;
-    throw NamingConflict("A synapse type called '" + name + "' already exists.\n"
-                         "Please choose a different name!");
-  }
-
-  pristine_prototypes_.push_back( cf );
-
-  const synindex id = prototypes_[ 0 ].size();
-  pristine_prototypes_[ id ]->set_syn_id( id );
-
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
-  {
-    prototypes_[ t ].push_back( cf->clone( name ) );
-    prototypes_[ t ][ id ]->set_syn_id( id );
-  }
-
-  synapsedict_->insert( name, id );
-
-  return id;
-}
-
 void
 ConnectionManager::calibrate( const TimeConverter& tc )
 {
@@ -219,71 +190,11 @@ ConnectionManager::get_user_set_delay_extrema() const
   return user_set_delay_extrema;
 }
 
-synindex
-ConnectionManager::copy_synapse_prototype( synindex old_id, std::string new_name )
-{
-  // we can assert here, as nestmodule checks this for us
-  assert( !synapsedict_->known( new_name ) );
-
-  int new_id = prototypes_[ 0 ].size();
-
-  if ( new_id == invalid_synindex ) // we wrapped around (=255), maximal id of synapse_model = 254
-  {
-    Network::get_network().message( SLIInterpreter::M_ERROR,
-      "ConnectionManager::copy_synapse_prototype",
-      "CopyModel cannot generate another synapse. Maximal synapse model count of 255 exceeded." );
-    throw KernelException( "Synapse model count exceeded" );
-  }
-  assert( new_id != invalid_synindex );
-
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
-  {
-    prototypes_[ t ].push_back( get_synapse_prototype( old_id ).clone( new_name ) );
-    prototypes_[ t ][ new_id ]->set_syn_id( new_id );
-  }
-
-  synapsedict_->insert( new_name, new_id );
-  return new_id;
-}
-
-
 void
 ConnectionManager::get_status( DictionaryDatum& d ) const
 {
   size_t n = get_num_connections();
   def< long >( d, "num_connections", n );
-}
-
-void
-ConnectionManager::set_prototype_status( synindex syn_id, const DictionaryDatum& d )
-{
-  assert_valid_syn_id( syn_id );
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
-  {
-    try
-    {
-      prototypes_[ t ][ syn_id ]->set_status( d );
-    }
-    catch ( BadProperty& e )
-    {
-      throw BadProperty( String::compose( "Setting status of prototype '%1': %2",
-        prototypes_[ t ][ syn_id ]->get_name(),
-        e.message() ) );
-    }
-  }
-}
-
-DictionaryDatum
-ConnectionManager::get_prototype_status( synindex syn_id ) const
-{
-  assert_valid_syn_id( syn_id );
-
-  DictionaryDatum dict( new Dictionary );
-
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
-    prototypes_[ t ][ syn_id ]->get_status( dict ); // each call adds to num_connections
-
-  return dict;
 }
 
 DictionaryDatum

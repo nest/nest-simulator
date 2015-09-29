@@ -61,12 +61,6 @@ public:
   void reset();
 
   /**
-   * Register a synapse type. This is called by Network::register_synapse_prototype.
-   * Returns an id for the prototype.
-   */
-  synindex register_synapse_prototype( ConnectorModel* cf );
-
-  /**
    * Checks, whether connections of the given type were created
    */
   bool synapse_prototype_in_use( synindex syn_id );
@@ -75,11 +69,6 @@ public:
    * Add ConnectionManager specific stuff to the root status dictionary
    */
   void get_status( DictionaryDatum& d ) const;
-
-  // aka SetDefaults for synapse models
-  void set_prototype_status( synindex syn_id, const DictionaryDatum& d );
-  // aka GetDefaults for synapse models
-  DictionaryDatum get_prototype_status( synindex syn_id ) const;
 
   // aka conndatum GetStatus
   DictionaryDatum get_synapse_status( index gid, synindex syn_id, port p, thread tid );
@@ -103,9 +92,6 @@ public:
     TokenArray const* source,
     TokenArray const* target,
     size_t syn_id ) const;
-
-  // aka CopyModel for synapse models
-  synindex copy_synapse_prototype( synindex old_id, std::string new_name );
 
   bool has_user_prototypes() const;
 

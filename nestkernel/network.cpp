@@ -461,20 +461,6 @@ Network::reset_network()
     "This will be implemented in a future version of NEST." );
 }
 
-int
-Network::get_model_id( const char name[] ) const
-{
-  const std::string model_name( name );
-  for ( int i = 0; i < ( int ) models_.size(); ++i )
-  {
-    assert( models_[ i ] != NULL );
-    if ( model_name == models_[ i ]->get_name() )
-      return i;
-  }
-  return -1;
-}
-
-
 index Network::add_node( index mod, long_t n ) // no_p
 {
   assert( current_ != 0 );
@@ -803,12 +789,6 @@ Network::get_thread_siblings( index n ) const
   assert( siblings != 0 );
 
   return siblings;
-}
-
-bool
-Network::model_in_use( index i )
-{
-  return node_model_ids_.model_in_use( i );
 }
 
 void

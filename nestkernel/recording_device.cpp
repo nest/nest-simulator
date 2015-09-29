@@ -31,6 +31,7 @@
 #include <iostream> // using cerr for error message.
 #include <iomanip>
 #include "fdstream.h"
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -392,7 +393,7 @@ nest::RecordingDevice::calibrate()
     {
       assert( !B_.fs_.is_open() );
 
-      if ( Network::get_network().overwrite_files() )
+      if ( kernel().io_manager.overwrite_files() )
       {
         if ( P_.binary_ )
           B_.fs_.open( P_.filename_.c_str(), std::ios::out | std::ios::binary );
@@ -641,10 +642,10 @@ nest::RecordingDevice::build_filename_() const
     std::floor( std::log10( static_cast< float >( Network::get_network().size() ) ) ) + 1 );
 
   std::ostringstream basename;
-  const std::string& path = Network::get_network().get_data_path();
+  const std::string& path = kernel().io_manager.get_data_path();
   if ( !path.empty() )
     basename << path << '/';
-  basename << Network::get_network().get_data_prefix();
+  basename << kernel().io_manager.get_data_prefix();
 
 
   if ( !P_.label_.empty() )

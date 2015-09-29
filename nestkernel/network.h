@@ -126,7 +126,6 @@ tics_per_step)
   num_rec_processes        integertype - The number of MPI processes reserved for recording spikes
   num_sim_processes        integertype - The number of MPI processes reserved for simulating neurons
   off_grid_spiking         booltype    - Whether to transmit precise spike times in MPI communicatio
-  overwrite_files          booltype    - Whether to overwrite existing data files
   print_time               booltype    - Whether to print progress information during the simulation
   resolution               doubletype  - The resolution of the simulation (in ms)
   tics_per_ms              doubletype  - The number of tics per milisecond (cf. ms_per_tic,
@@ -641,26 +640,6 @@ public:
   bool model_in_use( index i );
 
   /**
-   * The prefix for files written by devices.
-   * The prefix must not contain any part of a path.
-   * @see get_data_dir(), overwrite_files()
-   */
-  const std::string& get_data_prefix() const;
-
-  /**
-   * The path for files written by devices.
-   * It may be the empty string (use current directory).
-   * @see get_data_prefix(), overwrite_files()
-   */
-  const std::string& get_data_path() const;
-
-  /**
-   * Indicate if existing data files should be overwritten.
-   * @return true if existing data files should be overwritten by devices. Default: false.
-   */
-  bool overwrite_files() const;
-
-  /**
    * return current communication style.
    * A result of true means off_grid, false means on_grid communication.
    */
@@ -844,9 +823,6 @@ private:
    */
   void set_status_single_node_( Node&, const DictionaryDatum&, bool clear_flags = true );
 
-  //! Helper function to set device data path and prefix.
-  void set_data_path_prefix_( const DictionaryDatum& d );
-
   SLIInterpreter& interpreter_;
   SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
   ConnectionManager connection_manager_;
@@ -883,10 +859,6 @@ private:
   Dictionary* connruledict_; //!< Dictionary for connection rules.
 
   Model* siblingcontainer_model; //!< The model for the SiblingContainer class
-
-  std::string data_path_;   //!< Path for all files written by devices
-  std::string data_prefix_; //!< Prefix for all files written by devices
-  bool overwrite_files_;    //!< If true, overwrite existing data files.
 
   /**
    * The list of clean models. The first component of the pair is a
@@ -1526,24 +1498,6 @@ inline const modelrange&
 Network::get_contiguous_gid_range( index gid ) const
 {
   return node_model_ids_.get_range( gid );
-}
-
-inline const std::string&
-Network::get_data_path() const
-{
-  return data_path_;
-}
-
-inline const std::string&
-Network::get_data_prefix() const
-{
-  return data_prefix_;
-}
-
-inline bool
-Network::overwrite_files() const
-{
-  return overwrite_files_;
 }
 
 inline bool

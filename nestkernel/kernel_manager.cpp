@@ -22,8 +22,6 @@
 
 #include "kernel_manager.h"
 
-#include "dict.h"
-
 nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = 0;
 
 void
@@ -66,13 +64,13 @@ nest::KernelManager::reset()
 }
 
 void
-nest::KernelManager::set_status( const Dictionary& dict )
+nest::KernelManager::set_status( const DictionaryDatum& dict )
 {
   vp_manager.set_status( dict );
 }
 
 void
-nest::KernelManager::get_status( Dictionary& dict )
+nest::KernelManager::get_status( DictionaryDatum& dict )
 {
   vp_manager.get_status( dict );
 }

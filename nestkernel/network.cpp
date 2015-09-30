@@ -1031,8 +1031,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
   // careful, this may invalidate all node pointers!
   assert( initialized_ );
 
-  kernel().set_status( *d.get() );
-  d.unlock();
+  kernel().set_status( d );
 
   // Create an instance of time converter here to capture the current
   // representation of time objects: TICS_PER_MS and TICS_PER_STEP
@@ -1381,8 +1380,7 @@ Network::get_status( index idx )
   if ( target == root_ )
   {
     // former scheduler_.get_status( d ) start
-    kernel().get_status( *d.get() );
-    d.unlock();
+    kernel().get_status( d );
 
     def< long >( d, "num_processes", Communicator::get_num_processes() );
 

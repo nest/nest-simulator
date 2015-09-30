@@ -27,7 +27,7 @@
 
 #include "nest.h"
 #include "manager_interface.h"
-#include "dict.h"
+#include "dictdatum.h"
 #include "communicator.h"
 
 namespace nest
@@ -44,8 +44,8 @@ public:
   virtual void init();
   virtual void reset();
 
-  virtual void set_status( const Dictionary& );
-  virtual void get_status( Dictionary& );
+  virtual void set_status( const DictionaryDatum& );
+  virtual void get_status( DictionaryDatum& );
 
   /**
    * Gets ID of local thread.

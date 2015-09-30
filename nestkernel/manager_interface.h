@@ -23,7 +23,7 @@
 #ifndef MANAGER_INTERFACE_H
 #define MANAGER_INTERFACE_H
 
-class Dictionary;
+#include "dictdatum.h"
 
 namespace nest
 {
@@ -44,8 +44,8 @@ public:
   virtual void init() = 0;
   virtual void reset() = 0;
 
-  virtual void set_status( const Dictionary& ) = 0;
-  virtual void get_status( Dictionary& ) = 0;
+  virtual void set_status( const DictionaryDatum& ) = 0;
+  virtual void get_status( DictionaryDatum& ) = 0;
 };
 }
 

@@ -226,7 +226,7 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name, const Dictionary
   if ( syn_name == "cont_delay_synapse" )
   {
     if ( syn_spec->known( names::delay ) )
-      LOG( SLIInterpreter::M_WARNING,
+      LOG( M_WARNING,
         "Connect",
         "The delay will be rounded to the next multiple of the time step. "
         "To use a more precise time delay it needs to be defined within "
@@ -374,7 +374,7 @@ nest::OneToOneBuilder::connect_()
   // make sure that target and source population have the same size
   if ( sources_.size() != targets_.size() )
   {
-    LOG( SLIInterpreter::M_ERROR,
+    LOG( M_ERROR,
       "Connect",
       "Source and Target population must be of the same size." );
     throw DimensionMismatch();

@@ -214,7 +214,7 @@ NestModule::SetStatus_CDFunction::execute( SLIInterpreter* i ) const
         		                        "\nMaybe you tried to set common synapse properties through"
         		                        " an individual synapse?");
     else
-      LOG( SLIInterpreter::M_WARNING,
+      LOG( M_WARNING,
         "SetStatus",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -269,7 +269,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
         if ( Network::get_network().dict_miss_is_error() )
           throw UnaccessedDictionaryEntry( missed );
         else
-          LOG( SLIInterpreter::M_WARNING,
+          LOG( M_WARNING,
             "SetStatus",
             ( "Unread dictionary entries: " + missed ).c_str() );
       }
@@ -294,7 +294,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
         if ( Network::get_network().dict_miss_is_error() )
           throw UnaccessedDictionaryEntry( missed );
         else
-          LOG( SLIInterpreter::M_WARNING,
+          LOG( M_WARNING,
             "SetStatus",
             ( "Unread dictionary entries: " + missed ).c_str() );
       }
@@ -452,7 +452,7 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
       throw UnaccessedDictionaryEntry( missed );
     }
     else
-      LOG( SLIInterpreter::M_WARNING,
+      LOG( M_WARNING,
         "SetDefaults",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -517,7 +517,7 @@ NestModule::GetConnections_DFunction::execute( SLIInterpreter* i ) const
     if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      LOG( SLIInterpreter::M_WARNING,
+      LOG( M_WARNING,
         "GetConnections",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -547,7 +547,7 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
 
   std::ostringstream os;
   os << "Simulating " << time << " ms.";
-  LOG( SLIInterpreter::M_INFO, "Simulate", os.str().c_str() );
+  LOG( M_INFO, "Simulate", os.str().c_str() );
   Time t = Time::ms( time );
 
   // experimental callback and signal safe, uncomment for testing, MD 090105
@@ -629,7 +629,7 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
     if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      LOG( SLIInterpreter::M_WARNING,
+      LOG( M_WARNING,
         "CopyModel",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -860,7 +860,7 @@ void
 NestModule::ResetNetworkFunction::execute( SLIInterpreter* i ) const
 {
   Network::get_network().reset_network();
-  LOG( SLIInterpreter::M_INFO,
+  LOG( M_INFO,
     "ResetNetworkFunction",
     "The network has been reset. Random generators and time have NOT been reset." );
 
@@ -1027,7 +1027,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
     if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      LOG( SLIInterpreter::M_WARNING,
+      LOG( M_WARNING,
         "Connect",
         ( "The following synapse parameters are unused: " + missed ).c_str() );
   }

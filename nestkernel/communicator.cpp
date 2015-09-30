@@ -183,7 +183,7 @@ nest::Communicator::finalize()
 #endif /* #ifdef HAVE_MUSIC */
     else
     {
-      LOG( SLIInterpreter::M_INFO,
+      LOG( M_INFO,
         "Communicator::finalize()",
         "Calling MPI_Abort() due to errors in the script." );
       MPI_Abort( MPI_COMM_WORLD, Network::get_network().get_exitcode() );

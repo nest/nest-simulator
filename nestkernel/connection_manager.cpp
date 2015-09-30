@@ -230,7 +230,7 @@ ConnectionManager::copy_synapse_prototype( synindex old_id, std::string new_name
 
   if ( new_id == invalid_synindex ) // we wrapped around (=255), maximal id of synapse_model = 254
   {
-    LOG( SLIInterpreter::M_ERROR,
+    LOG( M_ERROR,
       "ConnectionManager::copy_synapse_prototype",
       "CopyModel cannot generate another synapse. Maximal synapse model count of 255 exceeded." );
     throw KernelException( "Synapse model count exceeded" );
@@ -348,7 +348,7 @@ ConnectionManager::get_connections( DictionaryDatum params ) const
   msg =
     String::compose( "Setting OpenMP num_threads to %1.", kernel().vp_manager.get_num_threads() );
   LOG(
-    SLIInterpreter::M_DEBUG, "ConnectionManager::get_connections", msg );
+    M_DEBUG, "ConnectionManager::get_connections", msg );
   omp_set_num_threads( kernel().vp_manager.get_num_threads() );
 #endif
 
@@ -637,7 +637,7 @@ bool
 ConnectionManager::connect( ArrayDatum& conns )
 {
   // #ifdef _OPENMP
-  //     LOG(SLIInterpreter::M_INFO, "ConnectionManager::Connect", msg);
+  //     LOG(M_INFO, "ConnectionManager::Connect", msg);
   // #endif
 
   // #ifdef _OPENMP

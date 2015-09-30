@@ -108,7 +108,7 @@ nest::izhikevich::Parameters_::set( const DictionaryDatum& d )
   if ( not consistent_integration_ && h != 1.0 )
   {
     LOG(
-      SLIInterpreter::M_INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
+      M_INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
   }
 }
 

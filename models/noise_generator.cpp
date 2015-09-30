@@ -164,7 +164,7 @@ nest::noise_generator::calibrate()
   device_.calibrate();
   if ( P_.num_targets_ != B_.amps_.size() )
   {
-    LOG( SLIInterpreter::M_INFO,
+    LOG( M_INFO,
       "noise_generator::calibrate()",
       "The number of targets has changed, drawing new amplitudes." );
     init_buffers_();

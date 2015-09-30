@@ -119,7 +119,7 @@ nest::sli_neuron::calibrate()
   {
     std::string msg =
       String::compose( "Node %1 has no /calibrate function in its status dictionary.", get_gid() );
-    LOG( SLIInterpreter::M_ERROR, "sli_neuron::calibrate", msg.c_str() );
+    LOG( M_ERROR, "sli_neuron::calibrate", msg.c_str() );
     terminate = true;
   }
 
@@ -127,7 +127,7 @@ nest::sli_neuron::calibrate()
   {
     std::string msg = String::compose(
       "Node %1 has no /update function in its status dictionary. Terminating.", get_gid() );
-    LOG( SLIInterpreter::M_ERROR, "sli_neuron::calibrate", msg.c_str() );
+    LOG( M_ERROR, "sli_neuron::calibrate", msg.c_str() );
     terminate = true;
   }
 
@@ -135,7 +135,7 @@ nest::sli_neuron::calibrate()
   {
     Network::get_network().terminate();
     LOG(
-      SLIInterpreter::M_ERROR, "sli_neuron::calibrate", "Terminating." );
+      M_ERROR, "sli_neuron::calibrate", "Terminating." );
     return;
   }
 
@@ -160,8 +160,8 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
   if ( state_->known( names::error ) )
   {
     std::string msg = String::compose( "Node %1 still has its error state set.", get_gid() );
-    LOG( SLIInterpreter::M_ERROR, "sli_neuron::update", msg.c_str() );
-    LOG( SLIInterpreter::M_ERROR,
+    LOG( M_ERROR, "sli_neuron::update", msg.c_str() );
+    LOG( M_ERROR,
       "sli_neuron::update",
       "Please check /calibrate and /update for errors" );
     Network::get_network().terminate();

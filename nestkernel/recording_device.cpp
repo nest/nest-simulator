@@ -205,14 +205,14 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   }
 
   if ( ( rec_change || have_record_to ) && to_file_ && to_memory_ )
-    LOG( SLIInterpreter::M_INFO,
+    LOG( M_INFO,
       "RecordingDevice::set_status",
       "Data will be recorded to file and to memory." );
 
   if ( to_accumulator_ && ( to_file_ || to_screen_ || to_memory_ || withgid_ || withweight_ ) )
   {
     to_file_ = to_screen_ = to_memory_ = withgid_ = withweight_ = false;
-    LOG( SLIInterpreter::M_WARNING,
+    LOG( M_WARNING,
       "RecordingDevice::set_status()",
       "Accumulator mode selected. All incompatible properties "
       "(to_file, to_screen, to_memory, withgid, withweight) "
@@ -383,7 +383,7 @@ nest::RecordingDevice::calibrate()
         std::string msg =
           String::compose( "Closing file '%1', opening file '%2'", P_.filename_, newname );
         LOG(
-          SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg );
+          M_INFO, "RecordingDevice::calibrate()", msg );
 
         B_.fs_.close(); // close old file
         P_.filename_ = newname;
@@ -414,7 +414,7 @@ nest::RecordingDevice::calibrate()
             "to true in the root node.",
             P_.filename_ );
           LOG(
-            SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+            M_ERROR, "RecordingDevice::calibrate()", msg );
           throw IOError();
         }
         else
@@ -449,7 +449,7 @@ nest::RecordingDevice::calibrate()
         "with many recording devices and threads.",
         P_.filename_ );
       LOG(
-        SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+        M_ERROR, "RecordingDevice::calibrate()", msg );
 
       if ( B_.fs_.is_open() )
         B_.fs_.close();
@@ -477,7 +477,7 @@ nest::RecordingDevice::calibrate()
         "file first.",
         P_.fbuffer_size_old_ );
       LOG(
-        SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+        M_ERROR, "RecordingDevice::calibrate()", msg );
       throw IOError();
     }
   }
@@ -500,7 +500,7 @@ nest::RecordingDevice::finalize()
     if ( !B_.fs_.good() )
     {
       std::string msg = String::compose( "I/O error while opening file '%1'", P_.filename_ );
-      LOG( SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg );
+      LOG( M_ERROR, "RecordingDevice::finalize()", msg );
 
       throw IOError();
     }

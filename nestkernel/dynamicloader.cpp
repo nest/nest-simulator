@@ -232,7 +232,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   new_module.pModule = pModule;
   dyn_modules_.push_back( new_module );
 
-  LOG( SLIInterpreter::M_INFO, "Install", ( "loaded module " + pModule->name() ).c_str() );
+  LOG( M_INFO, "Install", ( "loaded module " + pModule->name() ).c_str() );
 
   // remove operand and operator from stack
   i->OStack.pop();
@@ -269,19 +269,19 @@ DynamicLoaderModule::init( SLIInterpreter* i )
     const char* path = getenv( "SLI_MODULE_PATH" );
     if ( path != NULL )
     {
-      LOG( SLIInterpreter::M_INFO, "DynamicLoaderModule::init", "Setting module path to" );
-      LOG( SLIInterpreter::M_INFO, "DynamicLoaderModule::init", path );
+      LOG( M_INFO, "DynamicLoaderModule::init", "Setting module path to" );
+      LOG( M_INFO, "DynamicLoaderModule::init", path );
 
       dl_error = lt_dlsetsearchpath( path );
       if ( dl_error )
-        LOG( SLIInterpreter::M_ERROR,
+        LOG( M_ERROR,
           "DynamicLoaderModule::init",
           "Could not set dynamic module path." );
     }
   }
   else
   {
-    LOG( SLIInterpreter::M_ERROR,
+    LOG( M_ERROR,
       "DynamicLoaderModule::init",
       "Could not initialize libltdl. No dynamic modules will be avaiable." );
   }

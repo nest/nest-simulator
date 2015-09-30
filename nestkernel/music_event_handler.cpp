@@ -121,7 +121,7 @@ MusicEventHandler::publish_port()
       msg += String::compose( " and max buffered=%1 ticks", max_buffered_ );
     msg += ".";
     LOG(
-      SLIInterpreter::M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
+      M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
   }
 }
 

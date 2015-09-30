@@ -165,7 +165,7 @@ nest::music_event_out_proxy::calibrate()
     std::string msg = String::compose(
       "Mapping MUSIC output port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
     LOG(
-      SLIInterpreter::M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
+      M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
   }
 }
 

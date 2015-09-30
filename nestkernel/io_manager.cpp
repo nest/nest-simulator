@@ -25,12 +25,13 @@
 #include <dirent.h>
 #include <errno.h>
 
+#include "kernel_manager.h"
 #include "io_manager.h"
+#include "logging.h"
 
 
-//#include "dictutils.h"
-//#include "compose.hpp"
-//#include "interpret.h"
+#include "dictutils.h"
+#include "compose.hpp"
 
 nest::IOManager::IOManager()
   : overwrite_files_( false )
@@ -65,7 +66,7 @@ nest::IOManager::set_data_path_prefix_( const DictionaryDatum& d )
         break;
       }
 
-      message( SLIInterpreter::M_ERROR, "SetStatus", "Variable data_path not set: " + msg );
+      LOG( M_ERROR, "SetStatus", "Variable data_path not set: " + msg );
     }
   }
 
@@ -74,8 +75,7 @@ nest::IOManager::set_data_path_prefix_( const DictionaryDatum& d )
     if ( tmp.find( '/' ) == std::string::npos )
       data_prefix_ = tmp;
     else
-      message(
-        SLIInterpreter::M_ERROR, "SetStatus", "Data prefix must not contain path elements." );
+      LOG( M_ERROR, "SetStatus", "Data prefix must not contain path elements." );
   }
 }
 
@@ -83,13 +83,13 @@ void
 nest::IOManager::init()
 {
   // data_path and data_prefix can be set via environment variables
-  DictionaryDatum dict();
+  DictionaryDatum dict( new Dictionary );
   char* data_path = std::getenv( "NEST_DATA_PATH" );
   if ( data_path )
-    dict[ "data_path" ] = std::string( data_path );
+    (*dict)[ "data_path" ] = std::string( data_path );
   char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
   if ( data_prefix )
-    dict[ "data_prefix" ] = std::string( data_prefix );
+    (*dict)[ "data_prefix" ] = std::string( data_prefix );
   if ( !dict->empty() )
     set_data_path_prefix_( dict );
 }
@@ -115,7 +115,7 @@ nest::IOManager::set_status( const DictionaryDatum& d )
 void
 nest::IOManager::get_status( DictionaryDatum& d )
 {
-  d[ "data_path" ] = data_path_;
-  d[ "data_prefix" ] = data_prefix_;
-  d[ "overwrite_files" ] = overwrite_files_;
+  (*d)[ "data_path" ] = data_path_;
+  (*d)[ "data_prefix" ] = data_prefix_;
+  (*d)[ "overwrite_files" ] = overwrite_files_;
 }

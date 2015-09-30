@@ -56,6 +56,7 @@ nest::KernelManager::init()
 {
   logging_manager.init();
   vp_manager.init();
+  io_manager.init();
 }
 
 void
@@ -63,6 +64,7 @@ nest::KernelManager::reset()
 {
   logging_manager.reset();
   vp_manager.reset();
+  io_manager.init();
 }
 
 void
@@ -70,6 +72,7 @@ nest::KernelManager::set_status( const DictionaryDatum& dict )
 {
   logging_manager.set_status( dict );
   vp_manager.set_status( dict );
+  io_manager.set_status( dict );
 }
 
 void
@@ -77,4 +80,5 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
 {
   logging_manager.get_status( dict );
   vp_manager.get_status( dict );
+  io_manager.get_status( dict );
 }

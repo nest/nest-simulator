@@ -412,7 +412,7 @@ TopologyModule::CreateLayer_DFunction::execute( SLIInterpreter* i ) const
     if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      Network::get_network().message( SLIInterpreter::M_WARNING,
+      LOG( M_WARNING,
         "topology::CreateLayer",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -644,7 +644,7 @@ TopologyModule::CreateMask_DFunction::execute( SLIInterpreter* i ) const
     if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      Network::get_network().message( SLIInterpreter::M_WARNING,
+      LOG( M_WARNING,
         "topology::CreateMask",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -1025,7 +1025,7 @@ TopologyModule::ConnectLayers_i_i_DFunction::execute( SLIInterpreter* i ) const
     if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      Network::get_network().message( SLIInterpreter::M_WARNING,
+      LOG( M_WARNING,
         "topology::CreateLayers",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }
@@ -1073,7 +1073,7 @@ TopologyModule::CreateParameter_DFunction::execute( SLIInterpreter* i ) const
     if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      Network::get_network().message( SLIInterpreter::M_WARNING,
+      LOG( M_WARNING,
         "topology::CreateParameter",
         ( "Unread dictionary entries: " + missed ).c_str() );
   }

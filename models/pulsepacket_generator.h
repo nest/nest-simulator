@@ -26,7 +26,7 @@
 #include <vector>
 #include <deque>
 
-#include "nest.h"
+#include "nest_types.h"
 #include "event.h"
 #include "node.h"
 #include "stimulating_device.h"

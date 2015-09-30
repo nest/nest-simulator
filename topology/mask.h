@@ -23,7 +23,7 @@
 #ifndef MASK_H
 #define MASK_H
 
-#include "nest.h"
+#include "nest_types.h"
 #include "topology_names.h"
 #include "position.h"
 #include "dictdatum.h"

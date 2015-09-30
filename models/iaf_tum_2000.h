@@ -24,7 +24,7 @@
 #ifndef IAF_TUM_2000_H
 #define IAF_TUM_2000_H
 
-#include "nest.h"
+#include "nest_types.h"
 #include "event.h"
 #include "archiving_node.h"
 #include "ring_buffer.h"

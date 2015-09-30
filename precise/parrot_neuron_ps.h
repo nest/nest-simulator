@@ -23,7 +23,7 @@
 #ifndef PARROT_NEURON_PS_H
 #define PARROT_NEURON_PS_H
 
-#include "nest.h"
+#include "nest_types.h"
 #include "event.h"
 #include "node.h"
 #include "slice_ring_buffer.h"

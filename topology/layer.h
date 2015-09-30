@@ -26,7 +26,7 @@
 #include <iostream>
 #include <utility>
 #include <bitset>
-#include "nest.h"
+#include "nest_types.h"
 #include "subnet.h"
 #include "position.h"
 #include "dictutils.h"

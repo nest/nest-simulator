@@ -53,7 +53,7 @@ libnest_la_SOURCES=\
 		gid_collection.h gid_collection.cpp\
 		histentry.h histentry.cpp\
 		model.h model.cpp\
-		nest.h\
+		nest_types.h\
 		nest_datums.h nest_datums.cpp\
 		nest_names.cpp nest_names.h\
 		nestmodule.h nestmodule.cpp\
@@ -79,8 +79,10 @@ libnest_la_SOURCES=\
 		conn_builder_factory.h\
 		music_event_handler.h music_event_handler.cpp\
 		kernel_manager.h kernel_manager.cpp\
+
 		vp_manager.h vp_manager.cpp\
 		node_manager.h node_manager.cpp
+		io_manager.h io_manager.cpp
 
 libnest_la_LIBADD= @LIBLTDL@ @LIBADD_DL@
 

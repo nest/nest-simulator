@@ -22,8 +22,6 @@
 
 #include "kernel_manager.h"
 
-#include "dict.h"
-
 nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = 0;
 
 void
@@ -56,27 +54,35 @@ nest::KernelManager::~KernelManager()
 void
 nest::KernelManager::init()
 {
+  logging_manager.init();
   vp_manager.init();
+  io_manager.init();
   node_manager.init();
 }
 
 void
 nest::KernelManager::reset()
 {
+  logging_manager.reset();
   vp_manager.reset();
+  io_manager.init();
   node_manager.reset(); // put this before model_manager.reset()
 }
 
 void
-nest::KernelManager::set_status( const Dictionary& dict )
+nest::KernelManager::set_status( const DictionaryDatum& dict )
 {
+  logging_manager.set_status( dict );
   vp_manager.set_status( dict );
+  io_manager.set_status( dict );
   node_manager.set_status( dict );
 }
 
 void
-nest::KernelManager::get_status( Dictionary& dict )
+nest::KernelManager::get_status( DictionaryDatum& dict )
 {
+  logging_manager.get_status( dict );
   vp_manager.get_status( dict );
+  io_manager.get_status( dict );
   node_manager.get_status( dict );
 }

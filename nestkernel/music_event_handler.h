@@ -28,7 +28,7 @@
 #ifdef HAVE_MUSIC
 
 #include <music.hh>
-#include "nest.h"
+#include "nest_types.h"
 #include "node.h"
 
 #include <queue>

@@ -23,7 +23,7 @@
 #ifndef AEIF_COND_ALPHA_RK5_H
 #define AEIF_COND_ALPHA_RK5_H
 
-#include "nest.h"
+#include "nest_types.h"
 #include "event.h"
 #include "archiving_node.h"
 #include "ring_buffer.h"

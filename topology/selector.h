@@ -23,7 +23,7 @@
 #ifndef SELECTOR_H
 #define SELECTOR_H
 
-#include "nest.h"
+#include "nest_types.h"
 #include "dictdatum.h"
 
 namespace nest

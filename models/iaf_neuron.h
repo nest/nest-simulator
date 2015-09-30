@@ -23,7 +23,7 @@
 #ifndef IAF_NEURON_H
 #define IAF_NEURON_H
 
-#include "nest.h"
+#include "nest_types.h"
 #include "event.h"
 #include "archiving_node.h"
 #include "ring_buffer.h"

@@ -20,7 +20,7 @@
  *
  */
 
-#include "nest.h"
+#include "nest_types.h"
 #include "dictdatum.h"
 #include "common_synapse_properties.h"
 #include "connector_model.h"

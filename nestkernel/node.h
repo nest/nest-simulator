@@ -28,7 +28,7 @@
 #include <vector>
 #include <deque>
 #include <utility>
-#include "nest.h"
+#include "nest_types.h"
 #include "nest_time.h"
 #include "nest_names.h"
 #include "dictdatum.h"

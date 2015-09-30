@@ -36,9 +36,7 @@ nest::VPManager::init()
 #ifndef _OPENMP
   if ( n_threads_ > 1 )
   {
-    Network::get_network().message( SLIInterpreter::M_ERROR,
-      "Network::reset",
-      "No multithreading available, using single threading" );
+    LOG( M_ERROR, "Network::reset", "No multithreading available, using single threading" );
     n_threads_ = 1;
     force_singlethreading_ = true;
   }
@@ -50,12 +48,10 @@ nest::VPManager::init()
 void
 nest::VPManager::reset()
 {
-  force_singlethreading_ = false;
-  set_num_threads( 1 );
 }
 
 void
-nest::VPManager::set_status( const Dictionary& d )
+nest::VPManager::set_status( const DictionaryDatum& d )
 {
   long n_threads;
   bool n_threads_updated = updateValue< long >( d, "local_num_threads", n_threads );
@@ -84,16 +80,15 @@ nest::VPManager::set_status( const Dictionary& d )
 
     if ( n_threads > 1 && force_singlethreading_ )
     {
-      Network::get_network().message( SLIInterpreter::M_WARNING,
-        "Network::set_status",
-        "No multithreading available, using single threading" );
+      LOG(
+        M_WARNING, "Network::set_status", "No multithreading available, using single threading" );
       n_threads_ = 1;
     }
 
     // it is essential to call reset() here to adapt memory pools and more
     // to the new number of threads and VPs.
     n_threads_ = n_threads;
-    reset();
+    Network::get_network().reset();
   }
 
   long n_vps;
@@ -129,9 +124,8 @@ nest::VPManager::set_status( const Dictionary& d )
     n_threads_ = n_vps / Communicator::get_num_processes();
     if ( ( n_threads > 1 ) && ( force_singlethreading_ ) )
     {
-      Network::get_network().message( SLIInterpreter::M_WARNING,
-        "Network::set_status",
-        "No multithreading available, using single threading" );
+      LOG(
+        M_WARNING, "Network::set_status", "No multithreading available, using single threading" );
       n_threads_ = 1;
     }
 
@@ -143,7 +137,7 @@ nest::VPManager::set_status( const Dictionary& d )
 }
 
 void
-nest::VPManager::get_status( Dictionary& d )
+nest::VPManager::get_status( DictionaryDatum& d )
 {
   def< long >( d, "local_num_threads", n_threads_ );
   def< long >( d, "total_num_virtual_procs", kernel().vp_manager.get_num_virtual_processes() );
@@ -172,7 +166,6 @@ nest::VPManager::set_num_threads( nest::thread n_threads )
 #endif
 
 #endif
-  Communicator::set_num_threads( n_threads_ );
 }
 
 // TODO: put those functions as inlines in the header, as soon as all

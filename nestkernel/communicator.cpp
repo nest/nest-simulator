@@ -41,7 +41,6 @@
 
 int nest::Communicator::rank_ = 0;
 int nest::Communicator::num_processes_ = 1;
-int nest::Communicator::n_vps_ = 1;
 int nest::Communicator::send_buffer_size_ = 1;
 int nest::Communicator::recv_buffer_size_ = 1;
 bool nest::Communicator::initialized_ = false;
@@ -183,9 +182,7 @@ nest::Communicator::finalize()
 #endif /* #ifdef HAVE_MUSIC */
     else
     {
-      Network::get_network().message( SLIInterpreter::M_INFO,
-        "Communicator::finalize()",
-        "Calling MPI_Abort() due to errors in the script." );
+      LOG( M_INFO, "Communicator::finalize()", "Calling MPI_Abort() due to errors in the script." );
       MPI_Abort( MPI_COMM_WORLD, Network::get_network().get_exitcode() );
     }
   }

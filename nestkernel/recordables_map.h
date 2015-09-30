@@ -28,7 +28,7 @@
 #include <cassert>
 #include <string>
 #include "name.h"
-#include "nest.h"
+#include "nest_types.h"
 #include "arraydatum.h"
 
 namespace nest

@@ -27,7 +27,7 @@
 #include <vector>
 #include <map>
 
-#include "nest.h"
+#include "nest_types.h"
 
 namespace nest
 {

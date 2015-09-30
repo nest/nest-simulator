@@ -24,7 +24,7 @@
 #define MODELRANGEMANAGER_H
 
 #include <vector>
-#include "nest.h"
+#include "nest_types.h"
 #include "modelrange.h"
 
 namespace nest

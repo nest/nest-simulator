@@ -27,7 +27,7 @@
 
 #ifdef HAVE_GSL
 
-#include "nest.h"
+#include "nest_types.h"
 #include "randomgen.h"
 #include "event.h"
 #include "node.h"

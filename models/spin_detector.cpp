@@ -79,7 +79,7 @@ nest::spin_detector::calibrate()
   {
     device_.set_precise( true, 15 );
 
-    Network::get_network().message( SLIInterpreter::M_INFO,
+    LOG( M_INFO,
       "spin_detector::calibrate",
       String::compose( "Precise neuron models exist: the property precise_times "
                        "of the %1 with gid %2 has been set to true, precision has "

@@ -54,7 +54,7 @@ SeeAlso: Device, StimulatingDevice
 #define DC_GENERATOR_H
 
 #include <vector>
-#include "nest.h"
+#include "nest_types.h"
 #include "event.h"
 #include "node.h"
 #include "ring_buffer.h"

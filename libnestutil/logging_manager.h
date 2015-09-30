@@ -46,16 +46,49 @@ public:
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );
 
+  /**
+   * Register a logging client.
+   *
+   * Register a callback function that will receive all subsequent LoggingEvents.
+   * For the method signature see logging.h .
+   */
   void register_logging_client( const deliver_logging_event_ptr callback );
 
+  /**
+   * Set the logging level.
+   *
+   * All logging messages with a lower severity will not be
+   * forwarded to the logging clients.
+   */
   void set_logging_level( const severity_t level );
 
+  /**
+   * Get the current logging level.
+   */
   severity_t get_logging_level();
 
-  void
-  publish_log( const severity_t, const std::string&, const std::string&, const char*, const size_t );
+  /**
+   * Create a LoggingEvent.
+   *
+   * This function creates a LoggingEvent that will be delivered to all
+   * registered logging clients, if the severity is above the set logging
+   * level. Do not use this function to do actuall logging in the source code,
+   * insted use the LOG() function provided by the logging.h header.
+   *
+   */
+  void publish_log( const severity_t,
+    const std::string&,
+    const std::string&,
+    const char*,
+    const size_t );
 
 private:
+  /**
+   * Delivers a LoggingEvent to all registered clients.
+   *
+   * It iterates all callback from the client_callbacks_ and calls it with the
+   * LoggingEvent as argument.
+   */
   void deliver_logging_event_( const LoggingEvent& event );
 
 private:

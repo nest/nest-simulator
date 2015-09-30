@@ -321,9 +321,7 @@ Network::clear_models_( bool called_from_destructor )
 {
   // no message on destructor call, may come after MPI_Finalize()
   if ( not called_from_destructor )
-    LOG( M_INFO,
-      "Network::clear_models",
-      "Models will be cleared and parameters reset." );
+    LOG( M_INFO, "Network::clear_models", "Models will be cleared and parameters reset." );
 
   // We delete all models, which will also delete all nodes. The
   // built-in models will be recovered from the pristine_models_ in
@@ -500,9 +498,7 @@ index Network::add_node( index mod, long_t n ) // no_p
 
   if ( max_gid > local_nodes_.max_size() || max_gid < min_gid )
   {
-    LOG( M_ERROR,
-      "Network::add:node",
-      "Requested number of nodes will overflow the memory." );
+    LOG( M_ERROR, "Network::add:node", "Requested number of nodes will overflow the memory." );
     LOG( M_ERROR, "Network::add:node", "No nodes were created." );
     throw KernelException( "OutOfMemory" );
   }
@@ -817,8 +813,8 @@ Network::simulate( Time const& t )
   {
     LOG( M_ERROR,
       "Network::simulate",
-      String::compose( "Simulation time must be >= %1 ms (one time step).",
-               Time::get_resolution().get_ms() ) );
+      String::compose(
+           "Simulation time must be >= %1 ms (one time step).", Time::get_resolution().get_ms() ) );
     throw KernelException();
   }
 
@@ -903,9 +899,7 @@ Network::resume()
 #ifndef _OPENMP
   if ( n_threads_ > 1 )
   {
-    LOG( M_ERROR,
-      "Network::resume",
-      "No multithreading available, using single threading" );
+    LOG( M_ERROR, "Network::resume", "No multithreading available, using single threading" );
   }
 #endif
 
@@ -921,8 +915,7 @@ Network::resume()
   if ( terminate_ )
   {
     LOG( M_ERROR, "Network::resume", "Exiting on error or user signal." );
-    LOG(
-      M_ERROR, "Network::resume", "Network: Use 'ResumeSimulation' to resume." );
+    LOG( M_ERROR, "Network::resume", "Network: Use 'ResumeSimulation' to resume." );
 
     if ( SLIsignalflag != 0 )
     {
@@ -1121,8 +1114,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
         clock_.calibrate(); // adjust to new resolution
         connection_manager_.calibrate(
           time_converter ); // adjust delays in the connection system to new resolution
-        LOG(
-          M_INFO, "Network::set_status", "tics per ms and resolution changed." );
+        LOG( M_INFO, "Network::set_status", "tics per ms and resolution changed." );
       }
     }
     else if ( res_updated ) // only resolution changed
@@ -1187,8 +1179,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
   }
   else if ( n_threads_updated && size() == 0 )
   {
-    LOG(
-      M_WARNING, "Network::set_status", "Equipping threads with new default RNGs" );
+    LOG( M_WARNING, "Network::set_status", "Equipping threads with new default RNGs" );
     create_rngs_();
   }
 
@@ -1215,9 +1206,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
       long s = ( *ad )[ i ]; // SLI has no ulong tokens
       if ( !seedset.insert( s ).second )
       {
-        LOG( M_WARNING,
-          "Network::set_status",
-          "Seeds are not unique across threads!" );
+        LOG( M_WARNING, "Network::set_status", "Seeds are not unique across threads!" );
         break;
       }
     }
@@ -1242,8 +1231,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
   }
   else if ( n_threads_updated && size() == 0 )
   {
-    LOG(
-      M_WARNING, "Network::set_status", "Equipping threads with new default GRNG" );
+    LOG( M_WARNING, "Network::set_status", "Equipping threads with new default GRNG" );
     create_grng_();
   }
 
@@ -1265,9 +1253,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
         const long vpseed = ( *ad_rngseeds )[ i ]; // SLI has no ulong tokens
         if ( !seedset.insert( vpseed ).second )
         {
-          LOG( M_WARNING,
-            "Network::set_status",
-            "Seeds are not unique across threads!" );
+          LOG( M_WARNING, "Network::set_status", "Seeds are not unique across threads!" );
           break;
         }
       }
@@ -1318,9 +1304,7 @@ Network::set_status_single_node_( Node& target, const DictionaryDatum& d, bool c
       if ( dict_miss_is_error() )
         throw UnaccessedDictionaryEntry( missed );
       else
-        LOG( M_WARNING,
-          "Network::set_status",
-          ( "Unread dictionary entries: " + missed ).c_str() );
+        LOG( M_WARNING, "Network::set_status", ( "Unread dictionary entries: " + missed ).c_str() );
     }
   }
 }
@@ -1363,8 +1347,7 @@ Network::set_data_path_prefix_( const DictionaryDatum& d )
     if ( tmp.find( '/' ) == std::string::npos )
       data_prefix_ = tmp;
     else
-      LOG(
-        M_ERROR, "SetStatus", "Data prefix must not contain path elements." );
+      LOG( M_ERROR, "SetStatus", "Data prefix must not contain path elements." );
   }
 }
 
@@ -1597,8 +1580,7 @@ Network::divergent_connect( index source_id,
   Subnet* source_comp = dynamic_cast< Subnet* >( source );
   if ( source_comp != 0 )
   {
-    LOG(
-      M_INFO, "DivergentConnect", "Source ID is a subnet; I will iterate it." );
+    LOG( M_INFO, "DivergentConnect", "Source ID is a subnet; I will iterate it." );
 
     // collect all leaves in source subnet, then divergent-connect each leaf
     LocalLeafList local_sources( *source_comp );
@@ -1722,8 +1704,7 @@ Network::divergent_connect( index source_id, DictionaryDatum pars, index syn )
       std::string msg = String::compose(
         "Parameter '%1' must be a DoubleVectorArray or numpy.array. ", di_s->first.toString() );
       LOG( M_DEBUG, "DivergentConnect", msg );
-      LOG(
-        M_DEBUG, "DivergentConnect", "Trying to convert, but this takes time." );
+      LOG( M_DEBUG, "DivergentConnect", "Trying to convert, but this takes time." );
 
       IntVectorDatum const* tmpint = dynamic_cast< IntVectorDatum* >( di_s->second.datum() );
       if ( tmpint )
@@ -1767,9 +1748,8 @@ Network::divergent_connect( index source_id, DictionaryDatum pars, index syn )
   // check if we have consistent lists for weights and delays
   if ( !complete_wd_lists )
   {
-    LOG( M_ERROR,
-      "DivergentConnect",
-      "All lists in the paramter dictionary must be of equal size." );
+    LOG(
+      M_ERROR, "DivergentConnect", "All lists in the paramter dictionary must be of equal size." );
     throw DimensionMismatch();
   }
 
@@ -1778,8 +1758,7 @@ Network::divergent_connect( index source_id, DictionaryDatum pars, index syn )
   Subnet* source_comp = dynamic_cast< Subnet* >( source );
   if ( source_comp != 0 )
   {
-    LOG(
-      M_INFO, "DivergentConnect", "Source ID is a subnet; I will iterate it." );
+    LOG( M_INFO, "DivergentConnect", "Source ID is a subnet; I will iterate it." );
 
     // collect all leaves in source subnet, then divergent-connect each leaf
     LocalLeafList local_sources( *source_comp );
@@ -1879,18 +1858,14 @@ Network::random_divergent_connect( index source_id,
   // check if we have consistent lists for weights and delays
   if ( !( weights.size() == n || weights.size() == 0 ) && ( weights.size() == delays.size() ) )
   {
-    LOG( M_ERROR,
-      "RandomDivergentConnect",
-      "weights and delays must be lists of size n." );
+    LOG( M_ERROR, "RandomDivergentConnect", "weights and delays must be lists of size n." );
     throw DimensionMismatch();
   }
 
   Subnet* source_comp = dynamic_cast< Subnet* >( source );
   if ( source_comp != 0 )
   {
-    LOG( M_INFO,
-      "RandomDivergentConnect",
-      "Source ID is a subnet; I will iterate it." );
+    LOG( M_INFO, "RandomDivergentConnect", "Source ID is a subnet; I will iterate it." );
 
     // collect all leaves in source subnet, then divergent-connect each leaf
     LocalLeafList local_sources( *source_comp );
@@ -1966,8 +1941,7 @@ Network::convergent_connect( const TokenArray source_ids,
   Subnet* target_comp = dynamic_cast< Subnet* >( target );
   if ( target_comp != 0 )
   {
-    LOG(
-      M_INFO, "ConvergentConnect", "Target node is a subnet; I will iterate it." );
+    LOG( M_INFO, "ConvergentConnect", "Target node is a subnet; I will iterate it." );
 
     // we only iterate over local leaves, as remote targets are ignored anyways
     LocalLeafList target_nodes( *target_comp );
@@ -2172,17 +2146,14 @@ Network::random_convergent_connect( const TokenArray source_ids,
   // check if we have consistent lists for weights and delays
   if ( !( weights.size() == n || weights.size() == 0 ) && ( weights.size() == delays.size() ) )
   {
-    LOG(
-      M_ERROR, "ConvergentConnect", "weights and delays must be lists of size n." );
+    LOG( M_ERROR, "ConvergentConnect", "weights and delays must be lists of size n." );
     throw DimensionMismatch();
   }
 
   Subnet* target_comp = dynamic_cast< Subnet* >( target );
   if ( target_comp != 0 )
   {
-    LOG( M_INFO,
-      "RandomConvergentConnect",
-      "Target ID is a subnet; I will iterate it." );
+    LOG( M_INFO, "RandomConvergentConnect", "Target ID is a subnet; I will iterate it." );
 
     // we only consider local leaves as targets,
     LocalLeafList target_nodes( *target_comp );
@@ -2233,9 +2204,7 @@ Network::random_convergent_connect( TokenArray source_ids,
 {
 #ifndef _OPENMP
   // It only makes sense to call this function if we have openmp
-  LOG( M_ERROR,
-    "ConvergentConnect",
-    "This function can only be called using OpenMP threading." );
+  LOG( M_ERROR, "ConvergentConnect", "This function can only be called using OpenMP threading." );
   throw KernelException();
 #else
 
@@ -2258,8 +2227,7 @@ Network::random_convergent_connect( TokenArray source_ids,
   if ( !( weights.size() == ns.size() || weights.size() == 0 )
     && ( weights.size() == delays.size() ) )
   {
-    LOG(
-      M_ERROR, "ConvergentConnect", "weights, delays and ns must be same size." );
+    LOG( M_ERROR, "ConvergentConnect", "weights, delays and ns must be same size." );
     throw DimensionMismatch();
   }
 
@@ -2289,9 +2257,7 @@ Network::random_convergent_connect( TokenArray source_ids,
 
       if ( !( ws.size() == n || ws.size() == 0 ) && ( ws.size() == ds.size() ) )
       {
-        LOG( M_ERROR,
-          "ConvergentConnect",
-          "weights and delays must be lists of size n." );
+        LOG( M_ERROR, "ConvergentConnect", "weights and delays must be lists of size n." );
         throw DimensionMismatch();
       }
     }
@@ -2389,25 +2355,13 @@ Network::connect( const GIDCollection& sources,
     if ( dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      LOG(
-        M_WARNING, "Connect", ( "Unread dictionary entries: " + missed ).c_str() );
+      LOG( M_WARNING, "Connect", ( "Unread dictionary entries: " + missed ).c_str() );
   }
 
   cb->connect();
   delete cb;
 }
 
-/*void
-Network::message( int level, const char from[], const char text[] )
-{
-  interpreter_.message( level, from, text );
-}
-
-void
-Network::message( int level, const std::string& loc, const std::string& msg )
-{
-  message( level, loc.c_str(), msg.c_str() );
-}*/
 
 index
 Network::copy_model( index old_id, std::string new_name )
@@ -2733,7 +2687,7 @@ nest::Network::prepare_nodes()
   LOG( M_INFO,
     "Network::prepare_nodes",
     String::compose(
-             "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
+         "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
 }
 
 void
@@ -2895,8 +2849,7 @@ nest::Network::update()
 
         if ( SLIsignalflag != 0 )
         {
-          LOG(
-            M_INFO, "Network::update", "Simulation exiting on user signal." );
+          LOG( M_INFO, "Network::update", "Simulation exiting on user signal." );
           terminate_ = true;
         }
 
@@ -3358,9 +3311,7 @@ nest::Network::create_rngs_( const bool ctor_call )
   if ( !rng_.empty() )
   {
     if ( !ctor_call )
-      LOG( M_INFO,
-        "Network::create_rngs_",
-        "Deleting existing random number generators" );
+      LOG( M_INFO, "Network::create_rngs_", "Deleting existing random number generators" );
 
     rng_.clear();
   }
@@ -3396,8 +3347,7 @@ nest::Network::create_rngs_( const bool ctor_call )
       if ( !rng )
       {
         if ( !ctor_call )
-          LOG(
-            M_ERROR, "Network::create_rngs_", "Error initializing knuthlfg" );
+          LOG( M_ERROR, "Network::create_rngs_", "Error initializing knuthlfg" );
         else
           std::cerr << "\nNetwork::create_rngs_\n"
                     << "Error initializing knuthlfg" << std::endl;

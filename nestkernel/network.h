@@ -728,19 +728,6 @@ public:
    */
   void ensure_valid_thread_local_ids();
 
-  /** Display a message. This function displays a message at a
-   *  specific error level. Messages with an error level above
-   *  M_ERROR will be written to std::cerr in addition to
-   *  std::cout.
-   *  \n
-   *  \n
-   *  The message will ony be displayed if the current verbosity level
-   *  is greater than or equal to the input level.
-   *
-   *  @ingroup SLIMessaging
-   */
- // void message( int level, const char from[], const char text[] );
- // void message( int level, const std::string& loc, const std::string& msg );
 
   /**
    * Returns true if unread dictionary items should be treated as error.

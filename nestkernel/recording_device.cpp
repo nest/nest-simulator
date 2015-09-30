@@ -205,9 +205,7 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   }
 
   if ( ( rec_change || have_record_to ) && to_file_ && to_memory_ )
-    LOG( M_INFO,
-      "RecordingDevice::set_status",
-      "Data will be recorded to file and to memory." );
+    LOG( M_INFO, "RecordingDevice::set_status", "Data will be recorded to file and to memory." );
 
   if ( to_accumulator_ && ( to_file_ || to_screen_ || to_memory_ || withgid_ || withweight_ ) )
   {
@@ -382,8 +380,7 @@ nest::RecordingDevice::calibrate()
       {
         std::string msg =
           String::compose( "Closing file '%1', opening file '%2'", P_.filename_, newname );
-        LOG(
-          M_INFO, "RecordingDevice::calibrate()", msg );
+        LOG( M_INFO, "RecordingDevice::calibrate()", msg );
 
         B_.fs_.close(); // close old file
         P_.filename_ = newname;
@@ -413,8 +410,7 @@ nest::RecordingDevice::calibrate()
             "Please change data_path, data_prefix or label, or set /overwrite_files "
             "to true in the root node.",
             P_.filename_ );
-          LOG(
-            M_ERROR, "RecordingDevice::calibrate()", msg );
+          LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
           throw IOError();
         }
         else
@@ -448,8 +444,7 @@ nest::RecordingDevice::calibrate()
         "This may be caused by too many open files in networks "
         "with many recording devices and threads.",
         P_.filename_ );
-      LOG(
-        M_ERROR, "RecordingDevice::calibrate()", msg );
+      LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
 
       if ( B_.fs_.is_open() )
         B_.fs_.close();
@@ -476,8 +471,7 @@ nest::RecordingDevice::calibrate()
         "openeded with a buffer size of %1. Please close the "
         "file first.",
         P_.fbuffer_size_old_ );
-      LOG(
-        M_ERROR, "RecordingDevice::calibrate()", msg );
+      LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
       throw IOError();
     }
   }

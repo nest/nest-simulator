@@ -347,8 +347,7 @@ ConnectionManager::get_connections( DictionaryDatum params ) const
   std::string msg;
   msg =
     String::compose( "Setting OpenMP num_threads to %1.", kernel().vp_manager.get_num_threads() );
-  LOG(
-    M_DEBUG, "ConnectionManager::get_connections", msg );
+  LOG( M_DEBUG, "ConnectionManager::get_connections", msg );
   omp_set_num_threads( kernel().vp_manager.get_num_threads() );
 #endif
 

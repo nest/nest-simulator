@@ -374,9 +374,7 @@ nest::OneToOneBuilder::connect_()
   // make sure that target and source population have the same size
   if ( sources_.size() != targets_.size() )
   {
-    LOG( M_ERROR,
-      "Connect",
-      "Source and Target population must be of the same size." );
+    LOG( M_ERROR, "Connect", "Source and Target population must be of the same size." );
     throw DimensionMismatch();
   }
 

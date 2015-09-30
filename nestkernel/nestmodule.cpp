@@ -214,9 +214,7 @@ NestModule::SetStatus_CDFunction::execute( SLIInterpreter* i ) const
         		                        "\nMaybe you tried to set common synapse properties through"
         		                        " an individual synapse?");
     else
-      LOG( M_WARNING,
-        "SetStatus",
-        ( "Unread dictionary entries: " + missed ).c_str() );
+      LOG( M_WARNING, "SetStatus", ( "Unread dictionary entries: " + missed ).c_str() );
   }
 
   i->OStack.pop( 2 );
@@ -269,9 +267,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
         if ( Network::get_network().dict_miss_is_error() )
           throw UnaccessedDictionaryEntry( missed );
         else
-          LOG( M_WARNING,
-            "SetStatus",
-            ( "Unread dictionary entries: " + missed ).c_str() );
+          LOG( M_WARNING, "SetStatus", ( "Unread dictionary entries: " + missed ).c_str() );
       }
     }
   }
@@ -294,9 +290,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
         if ( Network::get_network().dict_miss_is_error() )
           throw UnaccessedDictionaryEntry( missed );
         else
-          LOG( M_WARNING,
-            "SetStatus",
-            ( "Unread dictionary entries: " + missed ).c_str() );
+          LOG( M_WARNING, "SetStatus", ( "Unread dictionary entries: " + missed ).c_str() );
       }
     }
   }
@@ -452,9 +446,7 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
       throw UnaccessedDictionaryEntry( missed );
     }
     else
-      LOG( M_WARNING,
-        "SetDefaults",
-        ( "Unread dictionary entries: " + missed ).c_str() );
+      LOG( M_WARNING, "SetDefaults", ( "Unread dictionary entries: " + missed ).c_str() );
   }
 
 
@@ -517,9 +509,7 @@ NestModule::GetConnections_DFunction::execute( SLIInterpreter* i ) const
     if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      LOG( M_WARNING,
-        "GetConnections",
-        ( "Unread dictionary entries: " + missed ).c_str() );
+      LOG( M_WARNING, "GetConnections", ( "Unread dictionary entries: " + missed ).c_str() );
   }
 
   i->OStack.pop();
@@ -629,9 +619,7 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
     if ( Network::get_network().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      LOG( M_WARNING,
-        "CopyModel",
-        ( "Unread dictionary entries: " + missed ).c_str() );
+      LOG( M_WARNING, "CopyModel", ( "Unread dictionary entries: " + missed ).c_str() );
   }
 
   i->OStack.pop( 3 );

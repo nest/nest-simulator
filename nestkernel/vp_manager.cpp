@@ -36,9 +36,7 @@ nest::VPManager::init()
 #ifndef _OPENMP
   if ( n_threads_ > 1 )
   {
-    LOG( M_ERROR,
-      "Network::reset",
-      "No multithreading available, using single threading" );
+    LOG( M_ERROR, "Network::reset", "No multithreading available, using single threading" );
     n_threads_ = 1;
     force_singlethreading_ = true;
   }
@@ -82,9 +80,8 @@ nest::VPManager::set_status( const DictionaryDatum& d )
 
     if ( n_threads > 1 && force_singlethreading_ )
     {
-      LOG( M_WARNING,
-        "Network::set_status",
-        "No multithreading available, using single threading" );
+      LOG(
+        M_WARNING, "Network::set_status", "No multithreading available, using single threading" );
       n_threads_ = 1;
     }
 
@@ -127,9 +124,8 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     n_threads_ = n_vps / Communicator::get_num_processes();
     if ( ( n_threads > 1 ) && ( force_singlethreading_ ) )
     {
-      LOG( M_WARNING,
-        "Network::set_status",
-        "No multithreading available, using single threading" );
+      LOG(
+        M_WARNING, "Network::set_status", "No multithreading available, using single threading" );
       n_threads_ = 1;
     }
 

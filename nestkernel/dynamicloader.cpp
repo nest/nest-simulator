@@ -274,9 +274,7 @@ DynamicLoaderModule::init( SLIInterpreter* i )
 
       dl_error = lt_dlsetsearchpath( path );
       if ( dl_error )
-        LOG( M_ERROR,
-          "DynamicLoaderModule::init",
-          "Could not set dynamic module path." );
+        LOG( M_ERROR, "DynamicLoaderModule::init", "Could not set dynamic module path." );
     }
   }
   else

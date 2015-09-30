@@ -145,15 +145,15 @@ Network::Network( SLIInterpreter& i )
   interpreter_.def( "modeldict", new DictionaryDatum( modeldict_ ) );
 
   Model* model = new GenericModel< Subnet >( "subnet" );
-  register_basis_model( *model );
+  pristine_models_.push_back( std::pair< Model*, bool >( model, false ) );
   model->set_type_id( 0 );
 
   siblingcontainer_model = new GenericModel< SiblingContainer >( "siblingcontainer" );
-  register_basis_model( *siblingcontainer_model, true );
+  pristine_models_.push_back( std::pair< Model*, bool >( model, true ) );
   siblingcontainer_model->set_type_id( 1 );
 
   model = new GenericModel< proxynode >( "proxynode" );
-  register_basis_model( *model, true );
+  pristine_models_.push_back( std::pair< Model*, bool >( model, true ) );
   model->set_type_id( 2 );
 
   synapsedict_ = new Dictionary();
@@ -2500,58 +2500,6 @@ Network::copy_model( index old_id, std::string new_name )
   }
   return new_id;
 }
-
-void
-Network::register_basis_model( Model& m, bool private_model )
-{
-  std::string name = m.get_name();
-
-  if ( !private_model && modeldict_->known( name ) )
-  {
-    delete &m;
-    throw NamingConflict("A model called '" + name + "' already exists. "
-        "Please choose a different name!");
-  }
-  pristine_models_.push_back( std::pair< Model*, bool >( &m, private_model ) );
-}
-
-
-index
-Network::register_model( Model& m, bool private_model )
-{
-  std::string name = m.get_name();
-
-  if ( !private_model && modeldict_->known( name ) )
-  {
-    delete &m;
-    throw NamingConflict("A model called '" + name + "' already exists.\n"
-        "Please choose a different name!");
-  }
-
-  const index id = models_.size();
-  m.set_model_id( id );
-  m.set_type_id( id );
-
-  pristine_models_.push_back( std::pair< Model*, bool >( &m, private_model ) );
-  models_.push_back( m.clone( name ) );
-  int proxy_model_id = get_model_id( "proxynode" );
-  assert( proxy_model_id > 0 );
-  Model* proxy_model = models_[ proxy_model_id ];
-  assert( proxy_model != 0 );
-
-  for ( thread t = 0; t < get_num_threads(); ++t )
-  {
-    Node* newnode = proxy_model->allocate( t );
-    newnode->set_model_id( id );
-    proxy_nodes_[ t ].push_back( newnode );
-  }
-
-  if ( !private_model )
-    modeldict_->insert( name, id );
-
-  return id;
-}
-
 
 /**
  * This function is not thread save and has to be called inside a omp critical

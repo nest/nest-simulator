@@ -31,27 +31,31 @@ namespace nest
 class ModelManager:ManagerInterface
 {
 public:
+  /**
+   *
+   */
   void init();
+
+  /**
+   *
+   */
   void reset();
 
+  /**
+   *
+   */
   void set_status( const Dictionary& );
+
+  /**
+   *
+   */
   void get_status( Dictionary& );
 
   /**
-   * Registers a fundamental model for use with the network.
-   * @param m Model object.
-   * @param private_model If true, model is not entered in modeldict.
-   * @return void
-   * @note The Network calls the Model object's destructor at exit.
-   * @see register_model
-   */
-  void register_basis_model( Model& m, bool private_model = false );
-
-  /**
-   * Register a built-in model for use with the network.
+   * Register a node model.
    * Also enters the model in modeldict, unless private_model is true.
-   * @param m model object.
-   * @param private_model set to true if model should not be added to modeldict.
+   * @param m Model object to be registered.
+   * @param private_model if true, don't add model to modeldict.
    * @return ID of the new model object.
    */
   index register_model( Model& m, bool private_model = false );
@@ -59,15 +63,16 @@ public:
   /**
    * Copy an existing model and register it as a new model.
    * This function allows users to create their own, cloned models.
-   * @param old_id The id of the existing model.
-   * @param new_name The name of the new model.
-   * @return model ID of the new Model object.
+   * @param old_id ID of existing model.
+   * @param new_name name of new model.
+   * @return model ID of new Model object.
    * @see copy_synapse_prototype()
    */
   index copy_model( index old_id, Name new_name );
 
   /**
    * Register a synapse type.
+   * @param cm ConnectorModel to be registered.
    * @return an ID for the synapse prototype.
    */
   synindex register_synapse_prototype( ConnectorModel* cf );

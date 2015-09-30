@@ -41,19 +41,6 @@ void ModelManager::get_status( Dictionary& );
 {
 }
 
-void ModelManager::register_basis_model( Model& m, bool private_model )
-{
-  Name name = m.get_name();
-
-  if ( !private_model && modeldict_->known( name ) )
-  {
-    delete &m;
-    throw NamingConflict("A model called '" + name + "' already exists. "
-        "Please choose a different name!");
-  }
-  pristine_models_.push_back( std::pair< Model*, bool >( &m, private_model ) );
-}
-
 index ModelManager::register_model( Model& m, bool private_model )
 {
   std::string name = m.get_name();

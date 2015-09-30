@@ -23,10 +23,75 @@
 #ifndef NEST_H
 #define NEST_H
 
-namespace nest {
+#include <ostream>
 
+#include "nest_types.h"
+#include "nest_time.h"
+#include "nest_datums.h"
+#include "randomgen.h"
+#include "dictdatum.h"
+#include "arraydatum.h"
+#include "logging.h"
 
+namespace nest
+{
 
+void Init( int argc, char* argv[] );
+void FailExit( int exitcode );
+
+void Install( const std::string& module_name );
+
+void ResetKernel();
+void ResetNetwork();
+
+void EnableDryrunMode( const index n_procs );
+
+void RegisterLoggerClient( const deliver_logging_event_ptr client_callback );
+void PrintNetwork( index gid, index depth, std::ostream& out = std::cout );
+
+librandom::RngPtr GetVpRNG( index target );
+librandom::RngPtr GetGlobalRNG();
+
+void SetKernelStatus( const DictionaryDatum& dict );
+DictionaryDatum GetKernelStatus();
+
+void SetNodeStatus( const index node_id, const DictionaryDatum& dict );
+DictionaryDatum GetNodeStatus( const index node_id );
+
+void SetConnectionStatus( const ConnectionDatum& conn, const DictionaryDatum& dict );
+DictionaryDatum GetConnectionStatus( const ConnectionDatum& conn );
+
+index Create( const Name& model_name, const index n );
+
+void Connect( const GIDCollection& sources,
+  const GIDCollection& targets,
+  const DictionaryDatum& connectivity,
+  const DictionaryDatum& synapse_params );
+ArrayDatum GetConnections( const DictionaryDatum& dict );
+
+void Simulate( const double_t& t );
+void ResumeSimulation();
+
+void CopyModel( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict );
+
+void SetModelDefaults( const Name& model_name, const DictionaryDatum& );
+DictionaryDatum GetModelDefaults( const Name& model_name );
+
+void SetNumRecProcesses( const index n_rec_procs );
+
+void ChangeSubnet( const index node_gid );
+index CurrentSubnet();
+
+ArrayDatum GetNodes( const index subnet_id,
+  const DictionaryDatum& params,
+  const bool include_remotes,
+  const bool return_gids_only );
+ArrayDatum
+GetLeaves( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
+ArrayDatum
+GetChildren( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
+
+void RestoreNodes( const ArrayDatum& node_list );
 }
 
 

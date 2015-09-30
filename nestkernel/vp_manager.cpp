@@ -166,7 +166,6 @@ nest::VPManager::set_num_threads( nest::thread n_threads )
 #endif
 
 #endif
-  Communicator::set_num_threads( n_threads_ );
 }
 
 // TODO: put those functions as inlines in the header, as soon as all

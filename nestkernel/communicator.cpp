@@ -41,7 +41,6 @@
 
 int nest::Communicator::rank_ = 0;
 int nest::Communicator::num_processes_ = 1;
-int nest::Communicator::n_vps_ = 1;
 int nest::Communicator::send_buffer_size_ = 1;
 int nest::Communicator::recv_buffer_size_ = 1;
 bool nest::Communicator::initialized_ = false;

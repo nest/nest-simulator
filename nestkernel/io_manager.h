@@ -84,7 +84,7 @@ public:
    */
   bool overwrite_files() const;
 
-private:  
+private:
   std::string data_path_;   //!< Path for all files written by devices
   std::string data_prefix_; //!< Prefix for all files written by devices
   bool overwrite_files_;    //!< If true, overwrite existing data files.

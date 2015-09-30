@@ -80,7 +80,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else
   {
-    Network::get_network().message( SLIInterpreter::M_ERROR,
+    LOG( SLIInterpreter::M_ERROR,
       "Connect",
       "Either two or no parameters in the Connection Set expected." );
     throw DimensionMismatch();
@@ -140,7 +140,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else
   {
-    Network::get_network().message( SLIInterpreter::M_ERROR,
+    LOG( SLIInterpreter::M_ERROR,
       "Connect",
       "Either two or no parameters in the Connection Set expected." );
     throw DimensionMismatch();

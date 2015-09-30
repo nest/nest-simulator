@@ -107,7 +107,7 @@ nest::izhikevich::Parameters_::set( const DictionaryDatum& d )
   const double_t h = Time::get_resolution().get_ms();
   if ( not consistent_integration_ && h != 1.0 )
   {
-    Network::get_network().message(
+    LOG(
       SLIInterpreter::M_INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
   }
 }

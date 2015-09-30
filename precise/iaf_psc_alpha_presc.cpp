@@ -494,7 +494,7 @@ nest::iaf_psc_alpha_presc::thresh_find_( double_t const dt ) const
   case CUBIC:
     return thresh_find3_( dt );
   default:
-    nest::Network::get_network().message( SLIInterpreter::M_ERROR,
+    nest::LOG( SLIInterpreter::M_ERROR,
       "iaf_psc_alpha_presc::thresh_find_()",
       "Invalid interpolation---Internal model error." );
     throw BadProperty();

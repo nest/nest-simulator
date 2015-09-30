@@ -157,7 +157,7 @@ nest::music_message_in_proxy::calibrate()
         P_.port_name_,
         S_.port_width_,
         P_.acceptable_latency_ );
-    Network::get_network().message(
+    LOG(
       SLIInterpreter::M_INFO, "music_message_in_proxy::calibrate()", msg.c_str() );
   }
 }

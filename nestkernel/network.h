@@ -739,8 +739,8 @@ public:
    *
    *  @ingroup SLIMessaging
    */
-  void message( int level, const char from[], const char text[] );
-  void message( int level, const std::string& loc, const std::string& msg );
+ // void message( int level, const char from[], const char text[] );
+ // void message( int level, const std::string& loc, const std::string& msg );
 
   /**
    * Returns true if unread dictionary items should be treated as error.

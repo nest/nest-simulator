@@ -121,18 +121,18 @@ ConnectionGeneratorModule::CGConnect_cg_i_i_D_lFunction::execute( SLIInterpreter
   Subnet* sources = dynamic_cast< Subnet* >( Network::get_network().get_node( source_id ) );
   if ( sources == NULL )
   {
-    i->message( SLIInterpreter::M_ERROR, "CGConnect_cg_i_i_D_l", "sources must be a subnet." );
+    LOG( SLIInterpreter::M_ERROR, "CGConnect_cg_i_i_D_l", "sources must be a subnet." );
     throw SubnetExpected();
   }
   if ( !sources->is_homogeneous() )
   {
-    i->message(
+    LOG(
       SLIInterpreter::M_ERROR, "CGConnect_cg_i_i_D_l", "sources must be a homogeneous subnet." );
     throw BadProperty();
   }
   if ( dynamic_cast< Subnet* >( *sources->local_begin() ) )
   {
-    i->message( SLIInterpreter::M_ERROR,
+    LOG( SLIInterpreter::M_ERROR,
       "CGConnect_cg_i_i_D_l",
       "Only 1-dim subnets are supported as sources." );
     throw BadProperty();
@@ -141,18 +141,18 @@ ConnectionGeneratorModule::CGConnect_cg_i_i_D_lFunction::execute( SLIInterpreter
   Subnet* targets = dynamic_cast< Subnet* >( Network::get_network().get_node( target_id ) );
   if ( targets == NULL )
   {
-    i->message( SLIInterpreter::M_ERROR, "CGConnect_cg_i_i_D_l", "targets must be a subnet." );
+    LOG( SLIInterpreter::M_ERROR, "CGConnect_cg_i_i_D_l", "targets must be a subnet." );
     throw SubnetExpected();
   }
   if ( !targets->is_homogeneous() )
   {
-    i->message(
+    LOG(
       SLIInterpreter::M_ERROR, "CGConnect_cg_i_i_D_l", "targets must be a homogeneous subnet." );
     throw BadProperty();
   }
   if ( dynamic_cast< Subnet* >( *targets->local_begin() ) )
   {
-    i->message( SLIInterpreter::M_ERROR,
+    LOG( SLIInterpreter::M_ERROR,
       "CGConnect_cg_i_i_D_l",
       "Only 1-dim subnets are supported as targets." );
     throw BadProperty();

@@ -205,14 +205,14 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   }
 
   if ( ( rec_change || have_record_to ) && to_file_ && to_memory_ )
-    Network::get_network().message( SLIInterpreter::M_INFO,
+    LOG( SLIInterpreter::M_INFO,
       "RecordingDevice::set_status",
       "Data will be recorded to file and to memory." );
 
   if ( to_accumulator_ && ( to_file_ || to_screen_ || to_memory_ || withgid_ || withweight_ ) )
   {
     to_file_ = to_screen_ = to_memory_ = withgid_ = withweight_ = false;
-    Network::get_network().message( SLIInterpreter::M_WARNING,
+    LOG( SLIInterpreter::M_WARNING,
       "RecordingDevice::set_status()",
       "Accumulator mode selected. All incompatible properties "
       "(to_file, to_screen, to_memory, withgid, withweight) "
@@ -382,7 +382,7 @@ nest::RecordingDevice::calibrate()
       {
         std::string msg =
           String::compose( "Closing file '%1', opening file '%2'", P_.filename_, newname );
-        Network::get_network().message(
+        LOG(
           SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg );
 
         B_.fs_.close(); // close old file
@@ -413,7 +413,7 @@ nest::RecordingDevice::calibrate()
             "Please change data_path, data_prefix or label, or set /overwrite_files "
             "to true in the root node.",
             P_.filename_ );
-          Network::get_network().message(
+          LOG(
             SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
           throw IOError();
         }
@@ -448,7 +448,7 @@ nest::RecordingDevice::calibrate()
         "This may be caused by too many open files in networks "
         "with many recording devices and threads.",
         P_.filename_ );
-      Network::get_network().message(
+      LOG(
         SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
 
       if ( B_.fs_.is_open() )
@@ -476,7 +476,7 @@ nest::RecordingDevice::calibrate()
         "openeded with a buffer size of %1. Please close the "
         "file first.",
         P_.fbuffer_size_old_ );
-      Network::get_network().message(
+      LOG(
         SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
       throw IOError();
     }
@@ -500,7 +500,7 @@ nest::RecordingDevice::finalize()
     if ( !B_.fs_.good() )
     {
       std::string msg = String::compose( "I/O error while opening file '%1'", P_.filename_ );
-      Network::get_network().message( SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg );
+      LOG( SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg );
 
       throw IOError();
     }

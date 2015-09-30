@@ -27,7 +27,7 @@
 #include "nest_types.h"
 #include "nest_datums.h"
 #include "network.h"
-#include "network_impl.h"
+#include "connection_builder_manager_impl.h"
 #include "nodelist.h"
 #include "interpret.h"
 #include "node.h"
@@ -889,7 +889,7 @@ NestModule::Connect_i_i_lFunction::execute( SLIInterpreter* i ) const
   {
     Node* const target_node = Network::get_network().get_node( target );
     const thread target_thread = target_node->get_thread();
-    Network::get_network().connect( source, target_node, target_thread, synmodel_id );
+    kernel().ConnectionBuilderManager.connect( source, target_node, target_thread, synmodel_id );
   }
 
   i->OStack.pop( 3 );
@@ -919,7 +919,7 @@ NestModule::Connect_i_i_d_d_lFunction::execute( SLIInterpreter* i ) const
   {
     Node* const target_node = Network::get_network().get_node( target );
     const thread target_thread = target_node->get_thread();
-    Network::get_network().connect(
+    kernel().ConnectionBuilderManager.connect(
       source, target_node, target_thread, synmodel_id, delay, weight );
   }
 
@@ -949,7 +949,7 @@ NestModule::Connect_i_i_D_lFunction::execute( SLIInterpreter* i ) const
   {
     Node* const target_node = Network::get_network().get_node( target );
     const thread target_thread = target_node->get_thread();
-    Network::get_network().connect( source, target_node, target_thread, synmodel_id, params );
+    kernel().ConnectionBuilderManager.connect( source, target_node, target_thread, synmodel_id, params );
   }
 
   i->OStack.pop( 4 );
@@ -969,7 +969,7 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by connect
-  Network::get_network().connect( sources, targets, connectivity, synapse_params );
+  kernel().ConnectionBuilderManager.connect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
   i->EStack.pop();
@@ -1072,7 +1072,7 @@ NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
   ArrayDatum connectome = getValue< ArrayDatum >( i->OStack.top() );
 
-  Network::get_network().connect( connectome );
+  kernel().ConnectionBuilderManager.connect( connectome );
   i->OStack.pop();
   i->EStack.pop();
 }
@@ -2052,12 +2052,12 @@ NestModule::init( SLIInterpreter* i )
 #endif
 
   // Add connection rules
-  Network::get_network().register_conn_builder< OneToOneBuilder >( "one_to_one" );
-  Network::get_network().register_conn_builder< AllToAllBuilder >( "all_to_all" );
-  Network::get_network().register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
-  Network::get_network().register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
-  Network::get_network().register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
-  Network::get_network().register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
+  kernel().ConnectionBuilderManager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
+  kernel().ConnectionBuilderManager.register_conn_builder< AllToAllBuilder >( "all_to_all" );
+  kernel().ConnectionBuilderManager.register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
+  kernel().ConnectionBuilderManager.register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
+  kernel().ConnectionBuilderManager.register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
+  kernel().ConnectionBuilderManager.register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
 
   Token statusd = i->baselookup( Name( "statusdict" ) );
   DictionaryDatum dd = getValue< DictionaryDatum >( statusd );

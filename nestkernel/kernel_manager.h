@@ -25,6 +25,7 @@
 
 #include "vp_manager.h"
 #include "logging_manager.h"
+#include "io_manager.h"
 
 #include "dictdatum.h"
 
@@ -59,6 +60,7 @@ public:
 
   VPManager vp_manager;
   LoggingManager logging_manager;
+  IOManager io_manager;
 };
 
 KernelManager& kernel();

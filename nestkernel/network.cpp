@@ -101,9 +101,6 @@ Network::Network( SLIInterpreter& i )
   , connection_manager_()
   , root_( 0 )
   , current_( 0 )
-  , data_path_()
-  , data_prefix_()
-  , overwrite_files_( false )
   , dict_miss_is_error_( true )
   , model_defaults_modified_( false )
   , initialized_( false ) // scheduler stuff
@@ -255,17 +252,6 @@ Network::init_()
     dummy_spike_sources_.push_back( newnode );
   }
 
-  // data_path and data_prefix can be set via environment variables
-  DictionaryDatum dict( new Dictionary );
-  char* data_path = std::getenv( "NEST_DATA_PATH" );
-  if ( data_path )
-    ( *dict )[ "data_path" ] = std::string( data_path );
-  char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
-  if ( data_prefix )
-    ( *dict )[ "data_prefix" ] = std::string( data_prefix );
-  if ( !dict->empty() )
-    set_data_path_prefix_( dict );
-
 #ifdef HAVE_MUSIC
   music_in_portlist_.clear();
 #endif
@@ -391,9 +377,6 @@ Network::reset_kernel()
    */
   kernel().vp_manager.set_num_threads( 1 );
   set_num_rec_processes( 0, true );
-  data_path_ = "";
-  data_prefix_ = "";
-  overwrite_files_ = false;
   dict_miss_is_error_ = true;
 
   reset();
@@ -1000,7 +983,6 @@ Network::set_status( index gid, const DictionaryDatum& d )
      In this case, we must
      - set scheduler properties
      - set properties for the compound representing each thread
-     - set the data_path, data_prefix and overwrite_files properties
 
      The main difficulty here is to handle the access control for
      dictionary items, since the dictionary is read in several places.
@@ -1008,7 +990,6 @@ Network::set_status( index gid, const DictionaryDatum& d )
      We proceed as follows:
      - clear access flags
      - set scheduler properties; this must be first, anyways
-     - set data_path, data_prefix, overwrite_files
      - at this point, all non-compound property flags are marked accessed
      - loop over all per-thread compounds
      - the first per-thread compound will flag all compound properties as read
@@ -1265,8 +1246,6 @@ Network::set_status( index gid, const DictionaryDatum& d )
   } // if grng_seed
   // former scheduler_.set_status( d ); end
 
-  set_data_path_prefix_( d );
-  updateValue< bool >( d, "overwrite_files", overwrite_files_ );
   updateValue< bool >( d, "dict_miss_is_error", dict_miss_is_error_ );
 
   std::string tmp;
@@ -1306,48 +1285,6 @@ Network::set_status_single_node_( Node& target, const DictionaryDatum& d, bool c
       else
         LOG( M_WARNING, "Network::set_status", ( "Unread dictionary entries: " + missed ).c_str() );
     }
-  }
-}
-
-void
-Network::set_data_path_prefix_( const DictionaryDatum& d )
-{
-  std::string tmp;
-  if ( updateValue< std::string >( d, "data_path", tmp ) )
-  {
-    DIR* testdir = opendir( tmp.c_str() );
-    if ( testdir != NULL )
-    {
-      data_path_ = tmp;    // absolute path & directory exists
-      closedir( testdir ); // we only opened it to check it exists
-    }
-    else
-    {
-      std::string msg;
-
-      switch ( errno )
-      {
-      case ENOTDIR:
-        msg = String::compose( "'%1' is not a directory.", tmp );
-        break;
-      case ENOENT:
-        msg = String::compose( "Directory '%1' does not exist.", tmp );
-        break;
-      default:
-        msg = String::compose( "Errno %1 received when trying to open '%2'", errno, tmp );
-        break;
-      }
-
-      LOG( M_ERROR, "SetStatus", "Variable data_path not set: " + msg );
-    }
-  }
-
-  if ( updateValue< std::string >( d, "data_prefix", tmp ) )
-  {
-    if ( tmp.find( '/' ) == std::string::npos )
-      data_prefix_ = tmp;
-    else
-      LOG( M_ERROR, "SetStatus", "Data prefix must not contain path elements." );
   }
 }
 
@@ -1395,9 +1332,6 @@ Network::get_status( index idx )
     connection_manager_.get_status( d );
 
     ( *d )[ "network_size" ] = size();
-    ( *d )[ "data_path" ] = data_path_;
-    ( *d )[ "data_prefix" ] = data_prefix_;
-    ( *d )[ "overwrite_files" ] = overwrite_files_;
     ( *d )[ "dict_miss_is_error" ] = dict_miss_is_error_;
 
     std::map< long, size_t > sna_cts = local_nodes_.get_step_ctr();

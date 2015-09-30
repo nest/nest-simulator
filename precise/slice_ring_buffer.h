@@ -30,7 +30,7 @@
 #include <vector>
 #include <cassert>
 
-#include "nest.h"
+#include "nest_types.h"
 #include "network.h"
 
 namespace nest

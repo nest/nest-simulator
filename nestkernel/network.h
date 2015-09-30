@@ -26,7 +26,7 @@
 #include <vector>
 #include <string>
 #include <typeinfo>
-#include "nest.h"
+#include "nest_types.h"
 #include "nest_time.h"
 #include "model.h"
 #include "exceptions.h"

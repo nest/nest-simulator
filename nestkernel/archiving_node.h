@@ -31,7 +31,7 @@
 #ifndef ARCHIVING_NODE_H
 #define ARCHIVING_NODE_H
 
-#include "nest.h"
+#include "nest_types.h"
 #include "node.h"
 #include "dictdatum.h"
 #include "nest_time.h"

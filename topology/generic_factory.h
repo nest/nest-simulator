@@ -24,7 +24,7 @@
 #define GENERIC_FACTORY_H
 
 #include <map>
-#include "nest.h"
+#include "nest_types.h"
 #include "dictdatum.h"
 
 namespace nest

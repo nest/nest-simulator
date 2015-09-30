@@ -23,7 +23,7 @@
 #ifndef IZHIKEVICH_H
 #define IZHIKEVICH_H
 
-#include "nest.h"
+#include "nest_types.h"
 #include "event.h"
 #include "archiving_node.h"
 #include "ring_buffer.h"

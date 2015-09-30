@@ -35,7 +35,7 @@
 #ifndef SPIKECOUNTER_H
 #define SPIKECOUNTER_H
 
-#include "nest.h"
+#include "nest_types.h"
 
 namespace nest
 {

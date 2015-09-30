@@ -24,7 +24,7 @@
 #ifdef HAVE_MUSIC
 
 #include "music_event_handler.h"
-#include "nest.h"
+#include "nest_types.h"
 #include "event.h"
 #include "communicator.h"
 #include "network.h"

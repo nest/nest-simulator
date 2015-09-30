@@ -29,7 +29,7 @@
 #include <cmath>
 #include <cstdlib>
 
-#include "nest.h"
+#include "nest_types.h"
 #include "numerics.h"
 
 class Token;

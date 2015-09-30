@@ -25,7 +25,7 @@
 
 #include <vector>
 #include <utility>
-#include "nest.h"
+#include "nest_types.h"
 
 namespace nest
 {

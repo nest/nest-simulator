@@ -28,7 +28,7 @@
 #include <numeric>
 
 #include "config.h"
-#include "nest.h"
+#include "nest_types.h"
 #include <iostream>
 #include <unistd.h>
 #include <limits>

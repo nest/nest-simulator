@@ -28,7 +28,7 @@
 
 #include <vector>
 #include <string>
-#include "nest.h"
+#include "nest_types.h"
 #include "node.h"
 #include "communicator.h"
 #include "arraydatum.h"

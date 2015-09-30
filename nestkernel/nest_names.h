@@ -54,10 +54,10 @@ extern const Name archiver_length; //!< used for ArchivingNode
 extern const Name as;              //!< Number of available release sites (property arrays)
 extern const Name autapses;        //!< Connectivity-related
 
-extern const Name b;      //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
-extern const Name beta;   //!< Specific to amat2_*
-extern const Name beta_Ca;//!< Increment in calcuim concentration with each spike
-extern const Name binary; //!< Recorder parameter
+extern const Name b;       //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
+extern const Name beta;    //!< Specific to amat2_*
+extern const Name beta_Ca; //!< Increment in calcuim concentration with each spike
+extern const Name binary;  //!< Recorder parameter
 
 extern const Name c;                    //!< Specific to Izhikevich 2003
 extern const Name c_1;                  //!< Specific to stochastic neuron pp_psc_delta

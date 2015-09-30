@@ -735,7 +735,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
       }
       Position< D > target_displ = displacements[ random_id ];
       index target_id = targets[ random_id ];
-      Node* target_ptr = Network::get_network().get_node( target_id );
+      Node* target_ptr = kernel().node_manager.get_node( target_id );
       double w, d;
       get_parameters_( target_displ, Network::get_network().get_grng(), w, d );
       Network::get_network().connect(

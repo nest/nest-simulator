@@ -140,7 +140,7 @@ public:
   get_target_ptr( thread t ) const
   {
     assert( target_ != invalid_targetindex );
-    return Network::get_network().thread_lid_to_node( t, target_ );
+    return kernel().node_manager.thread_lid_to_node( t, target_ );
   }
 
   rport
@@ -167,7 +167,7 @@ private:
 inline void
 TargetIdentifierIndex::set_target( Node* target )
 {
-  Network::get_network().ensure_valid_thread_local_ids();
+  kernel().node_manager.ensure_valid_thread_local_ids();
 
   index target_lid = target->get_thread_lid();
   if ( target_lid > max_targetindex )

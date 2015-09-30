@@ -145,23 +145,23 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   if ( layer_model.empty() )
     throw UnknownModelName( layer_model_name );
 
-  index layer_node = Network::get_network().add_node( layer_model );
+  index layer_node = kernel().node_manager.add_node( layer_model );
 
   // Remember original subnet
-  const index cwnode = Network::get_network().get_cwn()->get_gid();
+  const index cwnode = kernel().node_manager.get_cwn()->get_gid();
 
-  Network::get_network().go_to( layer_node );
+  kernel().node_manager.go_to( layer_node );
 
   // Create layer nodes.
   for ( size_t i = 0; i < element_ids.size(); ++i )
-    Network::get_network().add_node( element_ids[ i ], length );
+    kernel().node_manager.add_node( element_ids[ i ], length );
 
   // Return to original subnet
-  Network::get_network().go_to( cwnode );
+  kernel().node_manager.go_to( cwnode );
 
   // Set layer parameters according to input dictionary.
   AbstractLayer* layer =
-    dynamic_cast< AbstractLayer* >( Network::get_network().get_node( layer_node ) );
+    dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( layer_node ) );
   layer->depth_ = element_ids.size();
   layer->set_status( layer_dict );
 

@@ -113,8 +113,8 @@ NestModule::ChangeSubnet_iFunction::execute( SLIInterpreter* i ) const
 
   index node_gid = getValue< long >( i->OStack.pick( 0 ) );
 
-  if ( Network::get_network().get_node( node_gid )->is_subnet() )
-    Network::get_network().go_to( node_gid );
+  if ( kernel().node_manager.get_node( node_gid )->is_subnet() )
+    kernel().node_manager.go_to( node_gid );
   else
     throw SubnetExpected();
 
@@ -136,8 +136,8 @@ NestModule::ChangeSubnet_iFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::CurrentSubnetFunction::execute( SLIInterpreter* i ) const
 {
-  assert( Network::get_network().get_cwn() != 0 );
-  index current = Network::get_network().get_cwn()->get_gid();
+  assert( kernel().node_manager.get_cwn() != 0 );
+  index current = kernel().node_manager.get_cwn()->get_gid();
 
   i->OStack.push( current );
   i->EStack.pop();
@@ -181,7 +181,7 @@ NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
 
   // Network::set_status() performs entry access checks for each
   // target and throws UnaccessedDictionaryEntry where necessary
-  Network::get_network().set_status( node_id, dict );
+  kernel().node_manager.set_status( node_id, dict );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -200,7 +200,7 @@ NestModule::SetStatus_CDFunction::execute( SLIInterpreter* i ) const
   long port = getValue< long >( conn_dict, nest::names::port );
   long gid = getValue< long >( conn_dict, nest::names::source );
   thread tid = getValue< long >( conn_dict, nest::names::target_thread );
-  Network::get_network().get_node( gid ); // Just to check if the node exists
+  kernel().node_manager.get_node( gid ); // Just to check if the node exists
 
   dict->clear_access_flags();
 
@@ -356,7 +356,7 @@ NestModule::GetStatus_iFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   index node_id = getValue< long >( i->OStack.pick( 0 ) );
-  DictionaryDatum dict = Network::get_network().get_status( node_id );
+  DictionaryDatum dict = kernel().node_manager.get_status( node_id );
 
   i->OStack.pop();
   i->OStack.push( dict );
@@ -371,7 +371,7 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
   long gid = conn.get_source_gid();
-  Network::get_network().get_node( gid ); // Just to check if the node exists
+  kernel().node_manager.get_node( gid ); // Just to check if the node exists
 
   DictionaryDatum result_dict = Network::get_network().get_synapse_status(
     gid, conn.get_synapse_model_id(), conn.get_port(), conn.get_target_thread() );
@@ -676,7 +676,7 @@ NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const
 
   // create
   const index model_id = static_cast< index >( model );
-  const long last_node_id = Network::get_network().add_node( model_id, n_nodes );
+  const long last_node_id = kernel().node_manager.add_node( model_id, n_nodes );
   i->OStack.pop( 2 );
   i->OStack.push( last_node_id );
   i->EStack.pop();
@@ -687,7 +687,7 @@ NestModule::RestoreNodes_aFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
   ArrayDatum node_list = getValue< ArrayDatum >( i->OStack.top() );
-  Network::get_network().restore_nodes( node_list );
+  kernel().node_manager.restore_nodes( node_list );
   i->OStack.pop();
   i->EStack.pop();
 }
@@ -702,7 +702,7 @@ NestModule::GetNodes_i_D_b_bFunction::execute( SLIInterpreter* i ) const
   const DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 2 ) );
   const index node_id = getValue< long >( i->OStack.pick( 3 ) );
 
-  Subnet* subnet = dynamic_cast< Subnet* >( Network::get_network().get_node( node_id ) );
+  Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
   if ( subnet == NULL )
     throw SubnetExpected();
 
@@ -745,7 +745,7 @@ NestModule::GetChildren_i_D_bFunction::execute( SLIInterpreter* i ) const
   const DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const index node_id = getValue< long >( i->OStack.pick( 2 ) );
 
-  Subnet* subnet = dynamic_cast< Subnet* >( Network::get_network().get_node( node_id ) );
+  Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
   if ( subnet == NULL )
     throw SubnetExpected();
 
@@ -777,7 +777,7 @@ NestModule::GetLeaves_i_D_bFunction::execute( SLIInterpreter* i ) const
   const DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const index node_id = getValue< long >( i->OStack.pick( 2 ) );
 
-  Subnet* subnet = dynamic_cast< Subnet* >( Network::get_network().get_node( node_id ) );
+  Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
   if ( subnet == NULL )
     throw SubnetExpected();
 
@@ -885,9 +885,9 @@ NestModule::Connect_i_i_lFunction::execute( SLIInterpreter* i ) const
   const index synmodel_id = static_cast< index >( synmodel );
 
   // check whether the target is on this process
-  if ( Network::get_network().is_local_gid( target ) )
+  if ( kernel().node_manager.is_local_gid( target ) )
   {
-    Node* const target_node = Network::get_network().get_node( target );
+    Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
     Network::get_network().connect( source, target_node, target_thread, synmodel_id );
   }
@@ -915,9 +915,9 @@ NestModule::Connect_i_i_d_d_lFunction::execute( SLIInterpreter* i ) const
   const index synmodel_id = static_cast< index >( synmodel );
 
   // check whether the target is on this process
-  if ( Network::get_network().is_local_gid( target ) )
+  if ( kernel().node_manager.is_local_gid( target ) )
   {
-    Node* const target_node = Network::get_network().get_node( target );
+    Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
     Network::get_network().connect(
       source, target_node, target_thread, synmodel_id, delay, weight );
@@ -945,9 +945,9 @@ NestModule::Connect_i_i_D_lFunction::execute( SLIInterpreter* i ) const
   const index synmodel_id = static_cast< index >( synmodel );
 
   // check whether the target is on this process
-  if ( Network::get_network().is_local_gid( target ) )
+  if ( kernel().node_manager.is_local_gid( target ) )
   {
-    Node* const target_node = Network::get_network().get_node( target );
+    Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
     Network::get_network().connect( source, target_node, target_thread, synmodel_id, params );
   }
@@ -1427,7 +1427,7 @@ NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
 
   long gid = getValue< long >( i->OStack.pick( 1 ) );
   long depth = getValue< long >( i->OStack.pick( 0 ) );
-  Network::get_network().print( gid, depth - 1 );
+  kernel().node_manager.print( gid, depth - 1 );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -1789,9 +1789,9 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   index target = getValue< long >( i->OStack.pick( 0 ) );
-  Node* target_node = Network::get_network().get_node( target );
+  Node* target_node = kernel().node_manager.get_node( target );
 
-  if ( !Network::get_network().is_local_node( target_node ) )
+  if ( !kernel().node_manager.is_local_node( target_node ) )
     throw LocalNodeExpected( target );
 
   // Only nodes with proxies have a well-defined VP and thus thread.

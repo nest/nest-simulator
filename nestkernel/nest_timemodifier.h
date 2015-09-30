@@ -48,7 +48,7 @@ namespace nest
 class TimeModifier
 {
   // allow Network::set_status to change Time representation
-  friend void Network::set_status( index, const DictionaryDatum& );
+  friend void NodeManager::set_status( index, const DictionaryDatum& );
 
   // allow Network::rest to change Time representation
   friend void Network::reset();

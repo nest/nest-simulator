@@ -47,6 +47,7 @@ class Scheduler;
 class SiblingContainer : public Node
 {
   friend class Network;
+  friend class NodeManager;
   friend class Scheduler;
   friend class Subnet;
 

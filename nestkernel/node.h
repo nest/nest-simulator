@@ -94,6 +94,7 @@ class histentry;
 class Node
 {
   friend class Network;
+  friend class NodeManager;
   friend class Scheduler;
   friend class Subnet;
   friend class proxynode;
@@ -501,7 +502,7 @@ public:
   /**
    * Store the number of the thread to which the node is assigned.
    * The assignment is done after node creation by the Network class.
-   * @see: Network::add_node().
+   * @see: NodeManager::add_node().
    */
   void set_thread( thread );
 
@@ -512,7 +513,7 @@ public:
 
   /**
    * Store the number of the virtual process to which the node is assigned.
-   * This is assigned to the node in network::add_node().
+   * This is assigned to the node in NodeManager::add_node().
    */
   void set_vp( thread );
 
@@ -522,7 +523,7 @@ public:
   thread get_vp() const;
 
   /** Set the model id.
-   * This method is called by Network::add_node() when a node is created.
+   * This method is called by NodeManager::add_node() when a node is created.
    * @see get_model_id()
    */
   void set_model_id( int );

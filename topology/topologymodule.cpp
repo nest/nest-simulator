@@ -26,6 +26,7 @@
 #include "doubledatum.h"
 #include "arraydatum.h"
 #include "dictdatum.h"
+#include "kernel_manager.h"
 #include "network.h"
 #include "model.h"
 #include "genericmodel.h"
@@ -457,10 +458,10 @@ TopologyModule::GetPosition_iFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   index node_gid = getValue< long_t >( i->OStack.pick( 0 ) );
-  if ( not Network::get_network().is_local_gid( node_gid ) )
+  if ( not kernel().node_manager.is_local_gid( node_gid ) )
     throw KernelException( "GetPosition is currently implemented for local nodes only." );
 
-  Node const* const node = Network::get_network().get_node( node_gid );
+  Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
   if ( !layer )
@@ -524,10 +525,10 @@ TopologyModule::Displacement_a_iFunction::execute( SLIInterpreter* i ) const
   std::vector< double_t > point = getValue< std::vector< double_t > >( i->OStack.pick( 1 ) );
 
   index node_gid = getValue< long_t >( i->OStack.pick( 0 ) );
-  if ( not Network::get_network().is_local_gid( node_gid ) )
+  if ( not kernel().node_manager.is_local_gid( node_gid ) )
     throw KernelException( "Displacement is currently implemented for local nodes only." );
 
-  Node const* const node = Network::get_network().get_node( node_gid );
+  Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
   if ( !layer )
@@ -591,10 +592,10 @@ TopologyModule::Distance_a_iFunction::execute( SLIInterpreter* i ) const
   std::vector< double_t > point = getValue< std::vector< double_t > >( i->OStack.pick( 1 ) );
 
   index node_gid = getValue< long_t >( i->OStack.pick( 0 ) );
-  if ( not Network::get_network().is_local_gid( node_gid ) )
+  if ( not kernel().node_manager.is_local_gid( node_gid ) )
     throw KernelException( "Distance is currently implemented for local nodes only." );
 
-  Node const* const node = Network::get_network().get_node( node_gid );
+  Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
   if ( !layer )
@@ -798,7 +799,7 @@ TopologyModule::GetGlobalChildren_i_M_aFunction::execute( SLIInterpreter* i ) co
   std::vector< double_t > anchor = getValue< std::vector< double_t > >( i->OStack.pick( 0 ) );
 
   AbstractMask& mask = *maskd;
-  AbstractLayer* layer = dynamic_cast< AbstractLayer* >( Network::get_network().get_node( gid ) );
+  AbstractLayer* layer = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( gid ) );
   if ( layer == NULL )
     throw LayerExpected();
 
@@ -1007,9 +1008,9 @@ TopologyModule::ConnectLayers_i_i_DFunction::execute( SLIInterpreter* i ) const
   const DictionaryDatum connection_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   AbstractLayer* source =
-    dynamic_cast< AbstractLayer* >( Network::get_network().get_node( source_gid ) );
+    dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( source_gid ) );
   AbstractLayer* target =
-    dynamic_cast< AbstractLayer* >( Network::get_network().get_node( target_gid ) );
+    dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( target_gid ) );
 
   if ( ( source == NULL ) || ( target == NULL ) )
     throw LayerExpected();
@@ -1164,7 +1165,7 @@ TopologyModule::DumpLayerNodes_os_iFunction::execute( SLIInterpreter* i ) const
   OstreamDatum out = getValue< OstreamDatum >( i->OStack.pick( 1 ) );
 
   AbstractLayer const* const layer =
-    dynamic_cast< AbstractLayer* >( Network::get_network().get_node( layer_gid ) );
+    dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( layer_gid ) );
 
   if ( layer != 0 && out->good() )
     layer->dump_nodes( *out );
@@ -1226,7 +1227,7 @@ TopologyModule::DumpLayerConnections_os_i_lFunction::execute( SLIInterpreter* i 
   const Token syn_model = i->OStack.pick( 0 );
 
   AbstractLayer* const layer =
-    dynamic_cast< AbstractLayer* >( Network::get_network().get_node( layer_gid ) );
+    dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( layer_gid ) );
   if ( layer == NULL )
     throw TypeMismatch( "any layer type", "something else" );
 
@@ -1284,7 +1285,7 @@ TopologyModule::GetElement_i_iaFunction::execute( SLIInterpreter* i ) const
   case 2:
   {
     GridLayer< 2 >* layer =
-      dynamic_cast< GridLayer< 2 >* >( Network::get_network().get_node( layer_gid ) );
+      dynamic_cast< GridLayer< 2 >* >( kernel().node_manager.get_node( layer_gid ) );
     if ( layer == 0 )
     {
       throw TypeMismatch( "grid layer node", "something else" );
@@ -1298,7 +1299,7 @@ TopologyModule::GetElement_i_iaFunction::execute( SLIInterpreter* i ) const
   case 3:
   {
     GridLayer< 3 >* layer =
-      dynamic_cast< GridLayer< 3 >* >( Network::get_network().get_node( layer_gid ) );
+      dynamic_cast< GridLayer< 3 >* >( kernel().node_manager.get_node( layer_gid ) );
     if ( layer == 0 )
     {
       throw TypeMismatch( "grid layer node", "something else" );

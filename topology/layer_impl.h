@@ -343,7 +343,7 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
       double_t weight = getValue< double_t >( result_dict, names::weight );
       double_t delay = getValue< double_t >( result_dict, names::delay );
 
-      Node const* const target = Network::get_network().get_node( target_gid );
+      Node const* const target = kernel().node_manager.get_node( target_gid );
       assert( target );
 
       // Print source, target, weight, delay, rports

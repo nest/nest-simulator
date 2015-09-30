@@ -644,7 +644,7 @@ nest::RecordingDevice::build_filename_() const
     std::floor(
       std::log10( static_cast< float >( kernel().vp_manager.get_num_virtual_processes() ) ) ) + 1 );
   const int gidigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >( Network::get_network().size() ) ) ) + 1 );
+    std::floor( std::log10( static_cast< float >( kernel().node_manager.size() ) ) ) + 1 );
 
   std::ostringstream basename;
   const std::string& path = Network::get_network().get_data_path();

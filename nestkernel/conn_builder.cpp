@@ -400,13 +400,13 @@ nest::OneToOneBuilder::connect_()
           continue;
 
         // check whether the target is on this mpi machine
-        if ( not Network::get_network().is_local_gid( *tgid ) )
+        if ( not kernel().node_manager.is_local_gid( *tgid ) )
         {
           skip_conn_parameter_( tid );
           continue;
         }
 
-        Node* const target = Network::get_network().get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -446,7 +446,7 @@ nest::AllToAllBuilder::connect_()
       for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
       {
         // check whether the target is on this mpi machine
-        if ( not Network::get_network().is_local_gid( *tgid ) )
+        if ( not kernel().node_manager.is_local_gid( *tgid ) )
         {
           for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
                 ++sgid )
@@ -454,7 +454,7 @@ nest::AllToAllBuilder::connect_()
           continue;
         }
 
-        Node* const target = Network::get_network().get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -522,10 +522,10 @@ nest::FixedInDegreeBuilder::connect_()
       for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
       {
         // check whether the target is on this mpi machine
-        if ( not Network::get_network().is_local_gid( *tgid ) )
+        if ( not kernel().node_manager.is_local_gid( *tgid ) )
           continue;
 
-        Node* const target = Network::get_network().get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -624,10 +624,10 @@ nest::FixedOutDegreeBuilder::connect_()
               ++tgid )
         {
           // check whether the target is on this mpi machine
-          if ( not Network::get_network().is_local_gid( *tgid ) )
+          if ( not kernel().node_manager.is_local_gid( *tgid ) )
             continue;
 
-          Node* const target = Network::get_network().get_node( *tgid );
+          Node* const target = kernel().node_manager.get_node( *tgid );
           const thread target_thread = target->get_thread();
 
           // check whether the target is on our thread
@@ -769,7 +769,7 @@ nest::FixedTotalNumberBuilder::connect_()
           // targets_on_vp vector
           const long_t tgid = targets_on_vp[ vp_id ][ t_index ];
 
-          Node* const target = Network::get_network().get_node( tgid );
+          Node* const target = kernel().node_manager.get_node( tgid );
           const thread target_thread = target->get_thread();
 
           if ( autapses_ or sgid != tgid )
@@ -817,10 +817,10 @@ nest::BernoulliBuilder::connect_()
       for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
       {
         // check whether the target is on this mpi machine
-        if ( not Network::get_network().is_local_gid( *tgid ) )
+        if ( not kernel().node_manager.is_local_gid( *tgid ) )
           continue;
 
-        Node* const target = Network::get_network().get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread

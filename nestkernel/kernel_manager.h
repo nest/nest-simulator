@@ -24,13 +24,12 @@
 #define KERNEL_MANAGER_H
 
 #include "vp_manager.h"
+#include "node_manager.h"
 
 class Dictionary;
 
 namespace nest
 {
-
-class VPManager;
 
 class KernelManager
 {
@@ -57,6 +56,7 @@ public:
   void get_status( Dictionary& );
 
   VPManager vp_manager;
+  NodeManager node_manager;
 };
 
 KernelManager& kernel();

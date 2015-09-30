@@ -78,6 +78,7 @@ class Node;
 class GenericConnBuilderFactory;
 class GIDCollection;
 class VPManager;
+class NodeManager;
 
 /**
  * @defgroup network Network access and administration
@@ -145,6 +146,7 @@ SeeAlso: Simulate, Node
 class Network
 {
   friend class VPManager;
+  friend class NodeManager;
 
 private:
   Network( SLIInterpreter& );
@@ -255,43 +257,6 @@ public:
    * than the node with the given GID.
    */
   const modelrange& get_contiguous_gid_range( index gid ) const;
-
-  /**
-   * Add a number of nodes to the network.
-   * This function creates n Node objects of Model m and adds them
-   * to the Network at the current position.
-   * @param m valid Model ID.
-   * @param n Number of Nodes to be created. Defaults to 1 if not
-   * specified.
-   * @throws nest::UnknownModelID
-   */
-  index add_node( index m, long_t n = 1 );
-
-  /**
-   * Restore nodes from an array of status dictionaries.
-   * The following entries must be present in each dictionary:
-   * /model - with the name or index of a neuron mode.
-   *
-   * The following entries are optional:
-   * /parent - the node is created in the parent subnet
-   *
-   * Restore nodes uses the current working node as root. Thus, all
-   * GIDs in the status dictionaties are offset by the GID of the current
-   * working node. This allows entire subnetworks to be copied.
-   */
-  void restore_nodes( ArrayDatum& );
-
-  /**
-   * Set the state (observable dynamic variables) of a node to model defaults.
-   * @see Node::init_state()
-   */
-  void init_state( index );
-
-  /**
-   * Return total number of network nodes.
-   * The size also includes all Subnet objects.
-   */
-  index size() const;
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -438,16 +403,6 @@ public:
 
   ArrayDatum get_connections( DictionaryDatum dict );
 
-  Subnet* get_root() const; ///< return root subnet.
-  Subnet* get_cwn() const;  ///< current working node.
-
-  /**
-   * Change current working node. The specified node must
-   * exist and be a subnet.
-   * @throws nest::IllegalOperation Target is no subnet.
-   */
-  void go_to( index );
-
   /**
    * Simulate for the given time .
    * This function performs the following steps
@@ -480,8 +435,6 @@ public:
   int get_exitcode() const;
 
   void memory_info();
-
-  void print( index, int );
 
   /**
    * Triggered by volume transmitter in update.
@@ -591,16 +544,6 @@ public:
   void set_num_rec_processes( int nrp, bool called_by_reset );
 
   /**
-   * Return true, if the given Node is on the local machine
-   */
-  bool is_local_node( Node* ) const;
-
-  /**
-   * Return true, if the given gid is on the local machine
-   */
-  bool is_local_gid( index gid ) const;
-
-  /**
    * Return true, if the network has already been simulated for some time.
    * This does NOT indicate that simulate has been called (i.e. if Simulate
    * is called with 0 as argument, the flag is still set to false.)
@@ -611,27 +554,6 @@ public:
    * @defgroup net_access Network access
    * Functions to access network nodes.
    */
-
-  /**
-   * Return pointer of the specified Node.
-   * @param i Index of the specified Node.
-   * @param thr global thread index of the Node.
-   *
-   * @throws nest::UnknownNode       Target does not exist in the network.
-   *
-   * @ingroup net_access
-   */
-  Node* get_node( index, thread thr = 0 );
-
-  /**
-   * Return the Subnet that contains the thread siblings.
-   * @param i Index of the specified Node.
-   *
-   * @throws nest::NoThreadSiblingsAvailable     Node does not have thread siblings.
-   *
-   * @ingroup net_access
-   */
-  const SiblingContainer* get_thread_siblings( index n ) const;
 
   /**
    * Check, if there are instances of a given model.
@@ -665,20 +587,6 @@ public:
    * A result of true means off_grid, false means on_grid communication.
    */
   bool get_off_grid_communication() const;
-
-  /**
-   * Set properties of a Node. The specified node must exist.
-   * @throws nest::UnknownNode       Target does not exist in the network.
-   * @throws nest::UnaccessedDictionaryEntry  Non-proxy target did not read dict entry.
-   * @throws TypeMismatch            Array is not a flat & homogeneous array of integers.
-   */
-  void set_status( index, const DictionaryDatum& );
-
-  /**
-   * Get properties of a node. The specified node must exist.
-   * @throws nest::UnknownNode       Target does not exist in the network.
-   */
-  DictionaryDatum get_status( index );
 
   /**
    * Execute a SLI command in the neuron's namespace.
@@ -722,11 +630,6 @@ public:
    * Does the network contain copies of models created using CopyModel?
    */
   bool has_user_models() const;
-
-  /**
-   * Ensure that all nodes in the network have valid thread-local IDs.
-   */
-  void ensure_valid_thread_local_ids();
 
   /** Display a message. This function displays a message at a
    *  specific error level. Messages with an error level above
@@ -835,37 +738,16 @@ public:
     return model_defaults_modified_;
   }
 
-  Node* thread_lid_to_node( thread t, targetindex thread_local_id ) const;
-
 private:
-  /**
-   * Initialize the network data structures.
-   * init_() is used by the constructor and by reset().
-   * @see reset()
-   */
   void init_();
-  void destruct_nodes_();
-  void clear_models_( bool called_from_destructor = false );
 
-  /**
-   * Helper function to set properties on single node.
-   * @param node to set properties for
-   * @param dictionary containing properties
-   * @param if true (default), access flags are called before
-   *        each call so Node::set_status_()
-   * @throws UnaccessedDictionaryEntry
-   */
-  void set_status_single_node_( Node&, const DictionaryDatum&, bool clear_flags = true );
+  void clear_models_( bool called_from_destructor = false );
 
   //! Helper function to set device data path and prefix.
   void set_data_path_prefix_( const DictionaryDatum& d );
 
   SLIInterpreter& interpreter_;
-  SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
   ConnectionManager connection_manager_;
-
-  Subnet* root_;    //!< Root node.
-  Subnet* current_; //!< Current working node (for insertion).
 
   /* BeginDocumentation
      Name: synapsedict - Dictionary containing all synapse models.
@@ -894,8 +776,6 @@ private:
      SeeAlso: Connect
   */
   Dictionary* connruledict_; //!< Dictionary for connection rules.
-
-  Model* siblingcontainer_model; //!< The model for the SiblingContainer class
 
   std::string data_path_;   //!< Path for all files written by devices
   std::string data_prefix_; //!< Prefix for all files written by devices
@@ -1019,24 +899,6 @@ private:
 
   void init_scheduler_();
 
-  /**
-   * Prepare nodes for simulation and register nodes in node_list.
-   * Calls prepare_node_() for each pertaining Node.
-   * @see prepare_node_()
-   */
-  void prepare_nodes();
-
-  /**
-   * Initialized buffers, register in list of nodes to update/finalize.
-   * @see prepare_nodes()
-   */
-  void prepare_node_( Node* );
-
-  /**
-   * Invoke finalize() on nodes registered for finalization.
-   */
-  void finalize_nodes();
-
   void advance_time_();
 
   void print_progress_();
@@ -1071,13 +933,6 @@ private:
   void configure_spike_buffers_();
 
   /**
-   * Create up-to-date vector of local nodes, nodes_vec_.
-   *
-   * This method also sets the thread-local ID on all local nodes.
-   */
-  void update_nodes_vec_();
-
-  /**
    * Rearrange the spike_register into a 2-dim structure. This is
    * done by collecting the spikes from all threads in each slice of
    * the min_delay_ interval.
@@ -1100,16 +955,6 @@ private:
    */
   void deliver_events_( thread t );
 
-  /**
-   * Increment total number of global spike detectors by 1
-   */
-  void increment_n_gsd();
-
-  /**
-   * Get total number of global spike detectors
-   */
-  index get_n_gsd();
-
 private:
   /******** Member variables former owned by the scheduler ********/
   bool initialized_;
@@ -1117,12 +962,6 @@ private:
 
   index n_rec_procs_; //!< MPI processes dedicated for recording devices
   index n_sim_procs_; //!< MPI processes used for simulation
-
-  index n_gsd_; //!< Total number of global spike detectors, used for distributing them over
-                //!< recording processes
-
-  vector< vector< Node* > > nodes_vec_; //!< Nodelists for unfrozen nodes
-  index nodes_vec_network_size_;        //!< Network size when nodes_vec_ was last updated
 
   Time clock_;        //!< Network clock, updated once per slice
   delay slice_;       //!< current update slice
@@ -1274,18 +1113,6 @@ Network::get_exitcode() const
   return getValue< long >( statusdict, "exitcode" );
 }
 
-inline index
-Network::size() const
-{
-  return local_nodes_.get_max_gid() + 1;
-}
-
-inline Node*
-Network::thread_lid_to_node( thread t, targetindex thread_local_id ) const
-{
-  return nodes_vec_[ t ][ thread_local_id ];
-}
-
 inline void
 Network::connect( ArrayDatum& connectome )
 {
@@ -1353,18 +1180,6 @@ Network::get_time() const
   return clock_ + Time::step( from_step_ );
 }
 
-inline Subnet*
-Network::get_root() const
-{
-  return root_;
-}
-
-inline Subnet*
-Network::get_cwn( void ) const
-{
-  return current_;
-}
-
 inline thread
 Network::get_num_processes() const
 {
@@ -1381,18 +1196,6 @@ inline thread
 Network::get_num_sim_processes() const
 {
   return n_sim_procs_;
-}
-
-inline bool
-Network::is_local_node( Node* n ) const
-{
-  return kernel().vp_manager.is_local_vp( n->get_vp() );
-}
-
-inline bool
-Network::is_local_gid( index gid ) const
-{
-  return local_nodes_.get_node_by_gid( gid ) != 0;
 }
 
 inline bool
@@ -1612,15 +1415,6 @@ public:
 /****** former Scheduler functions ******/
 
 inline void
-Network::prepare_node_( Node* n )
-{
-  // Frozen nodes are initialized and calibrated, so that they
-  // have ring buffers and can accept incoming spikes.
-  n->init_buffers();
-  n->calibrate();
-}
-
-inline void
 Network::send_remote( thread t, SpikeEvent& e, const long_t lag )
 {
   // Put the spike in a buffer for the remote machines
@@ -1664,18 +1458,6 @@ Network::set_off_grid_communication( bool off_grid_spiking )
   off_grid_spiking_ = off_grid_spiking;
 }
 
-inline void
-Network::increment_n_gsd()
-{
-  ++n_gsd_;
-}
-
-inline index
-Network::get_n_gsd()
-{
-  return n_gsd_;
-}
-
 inline delay
 Network::get_modulo( delay d )
 {
@@ -1694,12 +1476,6 @@ Network::get_slice_modulo( delay d )
   assert( static_cast< vector< delay >::size_type >( d ) < slice_moduli_.size() );
 
   return slice_moduli_[ d ];
-}
-
-inline void
-Network::ensure_valid_thread_local_ids()
-{
-  update_nodes_vec_();
 }
 
 } // namespace

@@ -57,22 +57,26 @@ void
 nest::KernelManager::init()
 {
   vp_manager.init();
+  node_manager.init();
 }
 
 void
 nest::KernelManager::reset()
 {
   vp_manager.reset();
+  node_manager.reset(); // put this before model_manager.reset()
 }
 
 void
 nest::KernelManager::set_status( const Dictionary& dict )
 {
   vp_manager.set_status( dict );
+  node_manager.set_status( dict );
 }
 
 void
 nest::KernelManager::get_status( Dictionary& dict )
 {
   vp_manager.get_status( dict );
+  node_manager.get_status( dict );
 }

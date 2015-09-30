@@ -61,7 +61,7 @@ nest::VPManager::set_status( const Dictionary& d )
   bool n_threads_updated = updateValue< long >( d, "local_num_threads", n_threads );
   if ( n_threads_updated )
   {
-    if ( Network::get_network().size() > 1 )
+    if ( kernel().node_manager.size() > 1 )
       throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
     if ( Network::get_network().models_.size() > Network::get_network().pristine_models_.size() )
       throw KernelException(
@@ -100,7 +100,7 @@ nest::VPManager::set_status( const Dictionary& d )
   bool n_vps_updated = updateValue< long >( d, "total_num_virtual_procs", n_vps );
   if ( n_vps_updated )
   {
-    if ( Network::get_network().size() > 1 )
+    if ( kernel().node_manager.size() > 1 )
       throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
     if ( Network::get_network().models_.size() > Network::get_network().pristine_models_.size() )
       throw KernelException(
@@ -153,7 +153,7 @@ void
 nest::VPManager::set_num_threads( nest::thread n_threads )
 {
   n_threads_ = n_threads;
-  Network::get_network().nodes_vec_.resize( n_threads_ );
+  kernel().node_manager.get_nodes_vec().resize( n_threads_ );
 
 #ifdef _OPENMP
   omp_set_num_threads( n_threads_ );

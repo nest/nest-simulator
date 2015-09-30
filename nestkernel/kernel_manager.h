@@ -32,8 +32,6 @@
 namespace nest
 {
 
-class VPManager;
-
 class KernelManager
 {
 private:

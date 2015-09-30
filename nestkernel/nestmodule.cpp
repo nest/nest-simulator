@@ -2075,6 +2075,10 @@ NestModule::init( SLIInterpreter* i )
   net_->register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
   net_->register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
 
+  // Add MSP growth curves
+  net_->register_growth_curve< GrowthCurveGaussian >( "gaussian" );
+  net_->register_growth_curve< GrowthCurveLinear >( "linear" );
+
   Token statusd = i->baselookup( Name( "statusdict" ) );
   DictionaryDatum dd = getValue< DictionaryDatum >( statusd );
   dd->insert( Name( "kernelname" ), new StringDatum( "NEST" ) );

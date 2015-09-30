@@ -31,111 +31,7 @@
 #include "dictutils.h"
 #include "exceptions.h"
 #include "archiving_node.h"
-#include "network.h"
-
-/* ----------------------------------------------------------------
-* GrowthCurveLinear
-* ---------------------------------------------------------------- */
-nest::GrowthCurveLinear::GrowthCurveLinear()
-  : eps( 0.7 )
-{
-  name = names::linear.toString();
-}
-
-void
-nest::GrowthCurveLinear::get( DictionaryDatum& d ) const
-{
-  def< std::string >( d, names::growth_curve, name );
-  def< double_t >( d, names::eps, eps );
-}
-
-void
-nest::GrowthCurveLinear::set( const DictionaryDatum& d )
-{
-  updateValue< double_t >( d, names::eps, eps );
-}
-
-nest::double_t
-nest::GrowthCurveLinear::update( double_t t,
-  double_t t_minus,
-  double_t Ca_minus,
-  double_t z_minus,
-  double_t tau_Ca,
-  double_t growth_rate ) const
-{
-  double_t Ca, z_value;
-  Ca = Ca_minus * std::exp( ( t_minus - t ) / tau_Ca );
-  z_value =
-    growth_rate * tau_Ca * ( Ca - Ca_minus ) / eps + growth_rate * ( t - t_minus ) + z_minus;
-
-  if ( z_value > 0 )
-  {
-    return z_value;
-  }
-  else
-    return 0.0;
-}
-
-/* ----------------------------------------------------------------
-* GrowthCurveGaussian
-* ---------------------------------------------------------------- */
-nest::GrowthCurveGaussian::GrowthCurveGaussian()
-  : eta( 0.1 )
-  , eps( 0.7 )
-{
-  name = names::gaussian.toString();
-}
-
-void
-nest::GrowthCurveGaussian::get( DictionaryDatum& d ) const
-{
-  def< std::string >( d, names::growth_curve, name );
-  def< double_t >( d, names::eps, eps );
-  def< double_t >( d, names::eta, eta );
-}
-
-void
-nest::GrowthCurveGaussian::set( const DictionaryDatum& d )
-{
-  updateValue< double_t >( d, names::eps, eps );
-  updateValue< double_t >( d, names::eta, eta );
-}
-
-nest::double_t
-nest::GrowthCurveGaussian::update( double_t t,
-  double_t t_minus,
-  double_t Ca_minus,
-  double_t z_minus,
-  double_t tau_Ca,
-  double_t growth_rate ) const
-{
-  double_t lag, dz, zeta, xi, Ca, z_value;
-  const double_t h = Time::get_resolution().get_ms();
-
-  // Numerical integration from t_minus to t
-  // use standard forward Euler numerics
-  zeta = ( eta - eps ) / ( 2.0 * sqrt( log( 2.0 ) ) );
-  xi = ( eta + eps ) / 2.0;
-
-  z_value = z_minus;
-  Ca = Ca_minus;
-
-  for ( lag = t_minus; lag < ( t - h / 2.0 ); lag += h )
-  {
-    Ca = Ca - ( ( Ca / tau_Ca ) * h );
-    dz = h * growth_rate * ( 2.0 * exp( -pow( ( Ca - xi ) / zeta, 2 ) ) - 1.0 );
-    z_value = z_value + dz;
-  }
-
-  //  return z_value;
-  if ( z_value > 0 )
-  {
-    return z_value;
-  }
-  else
-    return 0.0;
-}
-
+#include "nestmodule.h"
 
 /* ----------------------------------------------------------------
 * SynapticElement
@@ -143,7 +39,7 @@ nest::GrowthCurveGaussian::update( double_t t,
 * ---------------------------------------------------------------- */
 
 nest::SynapticElement::SynapticElement()
-  : z( 0.0 )
+  : z_( 0.0 )
   , z_t_( 0.0 )
   , z_connected_( 0 )
   , continuous_( true )
@@ -154,14 +50,15 @@ nest::SynapticElement::SynapticElement()
 }
 
 nest::SynapticElement::SynapticElement( const SynapticElement& se )
-  : z( se.z )
+  : z_( se.z_ )
   , z_t_( se.z_t_ )
   , z_connected_( se.z_connected_ )
   , continuous_( se.continuous_ )
   , growth_rate_( se.growth_rate_ )
   , tau_vacant_( se.tau_vacant_ )
 {
-  growth_curve_ = new_growth_curve( se.growth_curve_->get_name() );
+  growth_curve_ = NestModule::get_network().new_growth_curve( se.growth_curve_->get_name() );
+  assert( growth_curve_ != 0 );
   DictionaryDatum gc_parameters = DictionaryDatum( new Dictionary );
   se.get( gc_parameters );
   growth_curve_->set( gc_parameters );
@@ -172,7 +69,8 @@ nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& 
   if ( this != &other )
   {
     // 1: allocate new memory and copy the elements
-    GrowthCurve* new_gc = new_growth_curve( other.growth_curve_->get_name() );
+    GrowthCurve* new_gc =
+      NestModule::get_network().new_growth_curve( other.growth_curve_->get_name() );
     DictionaryDatum gc_parameters = DictionaryDatum( new Dictionary );
 
     other.get( gc_parameters );
@@ -181,7 +79,7 @@ nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& 
     delete growth_curve_;
     growth_curve_ = new_gc;
 
-    z = other.z;
+    z_ = other.z_;
     z_t_ = other.z_t_;
     z_connected_ = other.z_connected_;
     continuous_ = other.continuous_;
@@ -189,20 +87,6 @@ nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& 
     tau_vacant_ = other.tau_vacant_;
   }
   return *this;
-}
-
-nest::GrowthCurve*
-nest::SynapticElement::new_growth_curve( std::string name )
-{
-  if ( not name.compare( names::gaussian.toString() ) )
-  {
-    return new GrowthCurveGaussian;
-  }
-  if ( not name.compare( names::linear.toString() ) )
-  {
-    return new GrowthCurveLinear;
-  }
-  throw BadProperty( "Unknown growth curve. Available growth curve are: linear, gaussian." );
 }
 
 /* ----------------------------------------------------------------
@@ -215,7 +99,7 @@ nest::SynapticElement::get( DictionaryDatum& d ) const
   def< double_t >( d, names::growth_rate, growth_rate_ );
   def< double_t >( d, names::tau_vacant, tau_vacant_ );
   def< bool >( d, names::continuous, continuous_ );
-  def< double_t >( d, names::z, z );
+  def< double_t >( d, names::z, z_ );
   def< int_t >( d, names::z_connected, z_connected_ );
 
   // Store growth curve
@@ -234,14 +118,14 @@ nest::SynapticElement::set( const DictionaryDatum& d )
   updateValue< double_t >( d, names::growth_rate, growth_rate_ );
   updateValue< double_t >( d, names::tau_vacant, new_tau_vacant );
   updateValue< bool >( d, names::continuous, continuous_ );
-  updateValue< double_t >( d, names::z, z );
+  updateValue< double_t >( d, names::z, z_ );
 
   if ( d->known( names::growth_curve ) )
   {
-    std::string growth_curve_name = getValue< std::string >( d, names::growth_curve );
+    Name growth_curve_name( getValue< std::string >( d, names::growth_curve ) );
     if ( not growth_curve_->is( growth_curve_name ) )
     {
-      growth_curve_ = new_growth_curve( growth_curve_name );
+      growth_curve_ = NestModule::get_network().new_growth_curve( growth_curve_name );
     }
   }
   growth_curve_->set( d );
@@ -266,6 +150,6 @@ nest::SynapticElement::update( double_t t, double_t t_minus, double_t Ca_minus, 
       "Last update of the calcium concentration does not match the last update of the synaptic "
       "element" );
   }
-  z = growth_curve_->update( t, t_minus, Ca_minus, z, tau_Ca, growth_rate_ );
+  z_ = growth_curve_->update( t, t_minus, Ca_minus, z_, tau_Ca, growth_rate_ );
   z_t_ = t;
 }

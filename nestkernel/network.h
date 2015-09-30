@@ -44,6 +44,8 @@
 
 #include "sparse_node_array.h"
 
+#include "growth_curve_factory.h"
+
 #ifdef M_ERROR
 #undef M_ERROR
 #endif
@@ -70,6 +72,7 @@ class SiblingContainer;
 class Event;
 class Node;
 class GenericConnBuilderFactory;
+class GenericGrowthCurveFactory;
 class GIDCollection;
 
 /**
@@ -206,6 +209,19 @@ public:
    */
   template < typename ConnBuilder >
   void register_conn_builder( const std::string& name );
+
+  /**
+   * Add a growth curve for MSP
+   */
+  template < typename GrowthCurve >
+  void register_growth_curve( const std::string& name );
+
+  /**
+   * Create a new Growth Curve object using the GrowthCurve Factory
+   * @param name which defines the type of GC to be created
+   * @return a new Growth Curve object of the type indicated by name
+   */
+  GrowthCurve* new_growth_curve( Name name );
 
   /**
    * Return the model id for a given model name.
@@ -891,6 +907,13 @@ private:
   */
   Dictionary* connruledict_; //!< Dictionary for connection rules.
 
+  /* BeginDocumentation
+     Name: growthcurvedict - dictionary containing all growth curves for MSP
+     Description:
+     This dictionary provides indexes for the growth curve factory
+  */
+  Dictionary* growthcurvedict_; //!< Dictionary for growth rules.
+
   Model* siblingcontainer_model; //!< The model for the SiblingContainer class
 
   std::string data_path_;   //!< Path for all files written by devices
@@ -913,6 +936,9 @@ private:
 
   std::vector< GenericConnBuilderFactory* >
     connbuilder_factories_; //! ConnBuilder factories, indexed by connruledict_ elements.
+
+  std::vector< GenericGrowthCurveFactory* >
+    growthcurve_factories_; //! GrowthCurve factories, indexed by growthcurvedict_ elements.
 
   Modelrangemanager node_model_ids_; //!< Records the model id of each neuron in the network
 
@@ -1328,6 +1354,13 @@ Network::get_thread_id() const
 #else
   return 0;
 #endif
+}
+
+inline GrowthCurve*
+Network::new_growth_curve( Name name )
+{
+  const long gc_id = ( *growthcurvedict_ )[ name ];
+  return growthcurve_factories_.at( gc_id )->create();
 }
 
 } // namespace

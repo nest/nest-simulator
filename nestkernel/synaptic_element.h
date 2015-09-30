@@ -34,6 +34,7 @@
 #include "dictdatum.h"
 #include "dictutils.h"
 #include "histentry.h"
+#include "growth_curve.h"
 #include <cmath>
 
 namespace nest
@@ -41,93 +42,8 @@ namespace nest
 
 class SynapticElement;
 class Archiving_Node;
-
-/**
- * \class GrowthCurve
- * Defines the way the number of synaptic elements changes through time
- * according to the calcium concentration of the neuron.
- */
-class GrowthCurve
-{
-public:
-  virtual ~GrowthCurve()
-  {
-  }
-  virtual void get( DictionaryDatum& d ) const = 0;
-  virtual void set( const DictionaryDatum& d ) = 0;
-  virtual double_t update( double_t t,
-    double_t t_minus,
-    double_t Ca_minus,
-    double_t z,
-    double_t tau_Ca,
-    double_t growth_rate ) const = 0;
-  virtual bool
-  is( std::string n )
-  {
-    return !n.compare( name );
-  }
-  std::string
-  get_name()
-  {
-    return name;
-  }
-
-protected:
-  std::string name;
-};
-
-/**
- * \class GrowthCurveLinear
- * Uses an exact integration method to update the number of synaptic elements:
- * dz/dt = nu (1 - (1/epsilon) * Ca(t)), where nu is the growth rate and
- * epsilon is the desired average calcium concentration.
- */
-class GrowthCurveLinear : public GrowthCurve
-{
-public:
-  GrowthCurveLinear();
-  void get( DictionaryDatum& d ) const;
-  void set( const DictionaryDatum& d );
-  double_t update( double_t t,
-    double_t t_minus,
-    double_t Ca_minus,
-    double_t z,
-    double_t tau_Ca,
-    double_t growth_rate ) const;
-
-private:
-  double_t eps;
-};
-
-/**
- * \class GrowthCurveGaussian
- * Uses a forward Euler integration method to update the number of synaptic
- * elements:
- * dz/dt = nu (2 * e^(- ((Ca(t) - xi)/zeta)^2 ) - 1)
- * where xi = (eta  + epsilon)/2,
- * zeta = (epsilon - eta)/2 * sqrt(ln(2))),
- * eta is the minimum calcium concentration required for any synaptic element
- * to be created, epsilon is the target mean calcium concentration in the
- * neuron and nu is the growth rate.
- */
-class GrowthCurveGaussian : public GrowthCurve
-{
-public:
-  GrowthCurveGaussian();
-  void get( DictionaryDatum& d ) const;
-  void set( const DictionaryDatum& d );
-  double_t update( double_t t,
-    double_t t_minus,
-    double_t Ca_minus,
-    double_t z,
-    double_t tau_Ca,
-    double_t growth_rate ) const;
-
-private:
-  double_t eta;
-  double_t eps;
-};
-
+class GrowthCurveGaussian;
+class GrowthCurveLinear;
 
 /**
  * \class SynapticElement
@@ -174,13 +90,6 @@ public:
   }
 
   /**
-   * \fn GrowthCurve* new_growth_curve(std::string name);
-   * @param name linear, gaussian
-   * @return pointer to a new GrowthCurve
-   */
-  GrowthCurve* new_growth_curve( std::string name );
-
-  /**
   * \fn void get(DictionaryDatum&) const
   * Store current values in a dictionary.
   * @param d to write data
@@ -214,7 +123,7 @@ public:
   int_t
   get_z_vacant() const
   {
-    return std::floor( z ) - z_connected_;
+    return std::floor( z_ ) - z_connected_;
   }
   /*
    * Retrieves the current number of synaptic elements bound to a synapse
@@ -238,12 +147,12 @@ public:
    * Used to define the dynamics of the synaptic elements using a Growth Curve
    */
   void
-  set_growth_curve( GrowthCurve* g )
+  set_growth_curve( GrowthCurve& g )
   {
-    if ( growth_curve_ != g )
+    if ( growth_curve_ != &g )
     {
       delete growth_curve_;
-      growth_curve_ = g;
+      growth_curve_ = &g;
     }
   }
 
@@ -259,12 +168,12 @@ public:
   void
   set_z( const double_t z_new )
   {
-    z = z_new;
+    z_ = z_new;
   }
   double_t
   get_z() const
   {
-    return z;
+    return z_;
   }
 
   bool
@@ -275,7 +184,7 @@ public:
 
 private:
   // The current number of synaptic elements at t = z_t_
-  double_t z;
+  double_t z_;
   // Last time stamp when the number of synaptic elements was updated
   double_t z_t_;
   // Number of synaptic elements bound to a synapse

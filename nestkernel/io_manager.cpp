@@ -30,7 +30,7 @@ nest::IOManager::IOManager()
 {}
 
 void
-nest::IOManager::set_data_path_prefix_( const Dictionary& d )
+nest::IOManager::set_data_path_prefix_( const DictionaryDatum& d )
 {
   std::string tmp;
   if ( updateValue< std::string >( d, "data_path", tmp ) )
@@ -76,7 +76,7 @@ void
 nest::IOManager::init()
 {
   // data_path and data_prefix can be set via environment variables
-  Dictionary dict();
+  DictionaryDatum dict();
   char* data_path = std::getenv( "NEST_DATA_PATH" );
   if ( data_path )
     dict[ "data_path" ] = std::string( data_path );
@@ -99,14 +99,14 @@ nest::IOManager::reset()
      - set the data_path, data_prefix and overwrite_files properties
 */
 void
-nest::IOManager::set_status( const Dictionary& d )
+nest::IOManager::set_status( const DictionaryDatum& d )
 {
   set_data_path_prefix_( d );
   updateValue< bool >( d, "overwrite_files", overwrite_files_ );
 }
 
 void
-nest::IOManager::get_status( Dictionary& )
+nest::IOManager::get_status( DictionaryDatum& d )
 {
   d[ "data_path" ] = data_path_;
   d[ "data_prefix" ] = data_prefix_;

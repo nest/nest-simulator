@@ -56,8 +56,8 @@ public:
   virtual void init();
   virtual void reset();
 
-  virtual void set_status( const Dictionary& );
-  virtual void get_status( Dictionary& );
+  virtual void set_status( const DictionaryDatum& );
+  virtual void get_status( DictionaryDatum& );
 
   IOManager();
 
@@ -76,7 +76,7 @@ public:
   const std::string& get_data_path() const;
 
   //! Helper function to set device data path and prefix.
-  void set_data_path_prefix_( const Dictionary& d );
+  void set_data_path_prefix_( const DictionaryDatum& d );
 
   /**
    * Indicate if existing data files should be overwritten.
@@ -93,19 +93,19 @@ private:
 
 
 inline const std::string&
-Network::get_data_path() const
+nest::IOManager::get_data_path() const
 {
   return data_path_;
 }
 
 inline const std::string&
-Network::get_data_prefix() const
+nest::IOManager::get_data_prefix() const
 {
   return data_prefix_;
 }
 
 inline bool
-Network::overwrite_files() const
+nest::IOManager::overwrite_files() const
 {
   return overwrite_files_;
 }

@@ -21,10 +21,38 @@
  */
 
 #include <cstdlib>
+#include <sys/types.h>
+#include <dirent.h>
+#include <errno.h>
 
 #include "io_manager.h"
 
-void
+#include "instance.h"
+#include "network.h"
+#include "network_impl.h"
+#include "genericmodel.h"
+#include "subnet.h"
+#include "sibling_container.h"
+#include "interpret.h"
+#include "dict.h"
+#include "dictstack.h"
+#include "integerdatum.h"
+#include "booldatum.h"
+#include "doubledatum.h"
+#include "dictutils.h"
+#include "tokenutils.h"
+#include "tokenarray.h"
+#include "exceptions.h"
+#include "sliexceptions.h"
+#include "processes.h"
+#include "nestmodule.h"
+#include "sibling_container.h"
+#include "communicator_impl.h"
+
+//#include "dictutils.h"
+//#include "compose.hpp"
+//#include "interpret.h"
+
 nest::IOManager::IOManager()
   : overwrite_files_( false )
 {}

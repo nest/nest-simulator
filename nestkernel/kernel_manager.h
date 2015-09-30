@@ -30,6 +30,8 @@ class Dictionary;
 namespace nest
 {
 
+class VPManager;
+
 class KernelManager
 {
 private:
@@ -52,7 +54,7 @@ public:
   void reset();
 
   void set_status( const Dictionary& );
-  Dictionary* get_status();
+  void get_status( Dictionary& );
 
   VPManager vp_manager;
 };

@@ -66,8 +66,7 @@ ConnectionManager::init_()
   synapsedict_->clear();
 
   // one list of prototypes per thread
-  std::vector< std::vector< ConnectorModel* > > tmp_proto(
-    Network::get_network().get_num_threads() );
+  std::vector< std::vector< ConnectorModel* > > tmp_proto( kernel().vp_manager.get_num_threads() );
   prototypes_.swap( tmp_proto );
 
   // (re-)append all synapse prototypes
@@ -77,12 +76,12 @@ ConnectionManager::init_()
     if ( *i != 0 )
     {
       std::string name = ( *i )->get_name();
-      for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+      for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
         prototypes_[ t ].push_back( ( *i )->clone( name ) );
       synapsedict_->insert( name, prototypes_[ 0 ].size() - 1 );
     }
 
-  tVSConnector tmp( Network::get_network().get_num_threads(), tSConnector() );
+  tVSConnector tmp( kernel().vp_manager.get_num_threads(), tSConnector() );
 
   connections_.swap( tmp );
 
@@ -144,7 +143,7 @@ ConnectionManager::reset()
 void
 ConnectionManager::calibrate( const TimeConverter& tc )
 {
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     for ( std::vector< ConnectorModel* >::iterator pt = prototypes_[ t ].begin();
           pt != prototypes_[ t ].end();
           ++pt )
@@ -158,7 +157,7 @@ ConnectionManager::get_min_delay() const
   Time min_delay = Time::pos_inf();
 
   std::vector< ConnectorModel* >::const_iterator it;
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
       if ( *it != 0 && ( *it )->get_num_connections() > 0 )
         min_delay = std::min( min_delay, ( *it )->get_min_delay() );
@@ -172,7 +171,7 @@ ConnectionManager::get_max_delay() const
   Time max_delay = Time::get_resolution();
 
   std::vector< ConnectorModel* >::const_iterator it;
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
       if ( *it != 0 && ( *it )->get_num_connections() > 0 )
         max_delay = std::max( max_delay, ( *it )->get_max_delay() );
@@ -185,7 +184,7 @@ ConnectionManager::get_user_set_delay_extrema() const
 {
   bool user_set_delay_extrema = false;
   std::vector< ConnectorModel* >::const_iterator it;
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
       user_set_delay_extrema |= ( *it )->get_user_set_delay_extrema();
 
@@ -257,11 +256,11 @@ ConnectionManager::get_connections( DictionaryDatum params ) const
 
 #ifdef _OPENMP
   std::string msg;
-  msg = String::compose(
-    "Setting OpenMP num_threads to %1.", Network::get_network().get_num_threads() );
+  msg =
+    String::compose( "Setting OpenMP num_threads to %1.", kernel().vp_manager.get_num_threads() );
   Network::get_network().message(
     SLIInterpreter::M_DEBUG, "ConnectionManager::get_connections", msg );
-  omp_set_num_threads( Network::get_network().get_num_threads() );
+  omp_set_num_threads( kernel().vp_manager.get_num_threads() );
 #endif
 
   // First we check, whether a synapse model is given.
@@ -298,7 +297,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
 {
   size_t num_connections = 0;
 
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     num_connections += prototypes_[ t ][ syn_id ]->get_num_connections();
 
   connectome.reserve( num_connections );
@@ -597,7 +596,7 @@ ConnectionManager::trigger_update_weight( const long_t vt_id,
   const vector< spikecounter >& dopa_spikes,
   const double_t t_trig )
 {
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
           it != connections_[ t ].nonempty_end();
           ++it )
@@ -616,7 +615,7 @@ size_t
 ConnectionManager::get_num_connections() const
 {
   num_connections_ = 0;
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     for ( std::vector< ConnectorModel* >::const_iterator i = prototypes_[ t ].begin();
           i != prototypes_[ t ].end();
           ++i )

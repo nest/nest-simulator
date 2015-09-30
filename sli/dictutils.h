@@ -203,6 +203,19 @@ def( DictionaryDatum& d, Name const n, FT const& value )
   d->insert_move( n, t );
 }
 
+/** Define a new dictionary entry from a fundamental type.
+ * @ingroup DictUtils
+ * @throws TypeMismatch Creating a Token from the fundamental type failed,
+ *         probably due to a missing template specialization.
+ */
+template < typename FT >
+void
+def( Dictionary& d, Name const n, FT const& value )
+{
+  Token t( value ); // we hope that we have a constructor for this.
+  d.insert_move( n, t );
+}
+
 /** Update a variable from a dictionary entry if it exists, skip call if it doesn't.
  * @ingroup DictUtils
  * @throws see getValue(DictionaryDatum, Name)
@@ -225,6 +238,32 @@ updateValue( DictionaryDatum const& d, Name const n, VT& value )
   if ( t.empty() )
     return false;
 
+  value = getValue< FT >( t );
+  return true;
+}
+
+/** Update a variable from a dictionary entry if it exists, skip call if it doesn't.
+ * @ingroup DictUtils
+ * @throws see getValue(DictionaryDatum, Name)
+ */
+template < typename FT, typename VT >
+bool
+updateValue( Dictionary const& d, Name const n, VT& value )
+{
+  // We will test for the name, and do nothing if it does not exist,
+  // instead of simply trying to getValue() it and catching a possible
+  // exception. The latter works, however, but non-existing names are
+  // the rule with updateValue(), not the exception, hence using the
+  // exception mechanism would be inappropriate. (Markus pointed this
+  // out, 05.02.2001, Ruediger.)
+  
+  // We must take a reference, so that access information can be stored in the
+  // token.
+  const Token& t = d.lookup( n );
+  
+  if ( t.empty() )
+    return false;
+  
   value = getValue< FT >( t );
   return true;
 }

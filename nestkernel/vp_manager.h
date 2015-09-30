@@ -25,8 +25,10 @@
 
 #include <omp.h>
 
+#include "nest.h"
 #include "manager_interface.h"
 #include "dict.h"
+#include "communicator.h"
 
 namespace nest
 {
@@ -34,6 +36,11 @@ namespace nest
 class VPManager : ManagerInterface
 {
 public:
+  VPManager();
+  ~VPManager()
+  {
+  }
+
   virtual void init();
   virtual void reset();
 
@@ -45,11 +52,68 @@ public:
    * Returns thread ID if OPENMP is installed
    * and zero otherwise.
    */
-  int get_thread_id() const;
+  thread get_thread_id() const;
+
+  /**
+   * Set the number of threads by setting the internal variable
+   * n_threads_, the corresponding value in the Communicator, and
+   * the OpenMP number of threads.
+   */
+  void set_num_threads( thread n_threads );
+
+  /**
+   * Get number of threads.
+   * This function returns the total number of threads per process.
+   */
+  index get_num_threads() const;
+
+  /**
+   * Return a thread number for a given global node id.
+   * Each node has a default thread on which it will run.
+   * The thread is defined by the relation:
+   * t = (gid div P) mod T, where P is the number of simulation processes and
+   * T the number of threads. This may be used by network::add_node()
+   * if the user has not specified anything.
+   */
+  thread suggest_vp( index ) const;
+
+  /**
+   * Return a thread number for a given global recording node id.
+   * Each node has a default thread on which it will run.
+   * The thread is defined by the relation:
+   * t = (gid div P) mod T, where P is the number of recording processes and
+   * T the number of threads. This may be used by network::add_node()
+   * if the user has not specified anything.
+   */
+  thread suggest_rec_vp( index ) const;
+
+  /**
+   * Convert a given VP ID to the corresponding thread ID
+   */
+  thread vp_to_thread( thread vp ) const;
+
+  /**
+   * Convert a given thread ID to the corresponding VP ID
+   */
+  thread thread_to_vp( thread t ) const;
+
+  /**
+   * Return true, if the given VP is on the local machine
+   */
+  bool is_local_vp( thread ) const;
+
+  /**
+   * Returns the number of virtual processes.
+   */
+  int get_num_virtual_processes() const;
+
+private:
+  bool force_singlethreading_;
+  index n_threads_; //!< Number of threads per process.
 };
 }
 
-inline int
+inline nest::thread
 nest::VPManager::get_thread_id() const
 {
 #ifdef _OPENMP
@@ -57,6 +121,18 @@ nest::VPManager::get_thread_id() const
 #else
   return 0;
 #endif
+}
+
+inline nest::index
+nest::VPManager::get_num_threads() const
+{
+  return n_threads_;
+}
+
+inline int
+nest::VPManager::get_num_virtual_processes() const
+{
+  return n_threads_ * Communicator::get_num_processes();
 }
 
 #endif /* VP_MANAGER_H */

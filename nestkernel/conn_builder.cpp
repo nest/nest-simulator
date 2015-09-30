@@ -50,7 +50,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   , targets_( targets )
   , autapses_( true )
   , multapses_( true )
-  , exceptions_raised_( Network::get_network().get_num_threads() )
+  , exceptions_raised_( kernel().vp_manager.get_num_threads() )
   , synapse_model_( Network::get_network().get_synapsedict()[ "static_synapse" ] )
   , weight_( 0 )
   , delay_( 0 )
@@ -100,23 +100,23 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   {
     weight_ = syn_spec->known( names::weight )
       ? ConnParameter::create(
-          ( *syn_spec )[ names::weight ], Network::get_network().get_num_threads() )
+          ( *syn_spec )[ names::weight ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create(
-          ( *syn_defaults )[ names::weight ], Network::get_network().get_num_threads() );
+          ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
     register_parameters_requiring_skipping_( *weight_ );
     delay_ = syn_spec->known( names::delay )
       ? ConnParameter::create(
-          ( *syn_spec )[ names::delay ], Network::get_network().get_num_threads() )
+          ( *syn_spec )[ names::delay ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create(
-          ( *syn_defaults )[ names::delay ], Network::get_network().get_num_threads() );
+          ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
   else if ( default_weight_ )
   {
     delay_ = syn_spec->known( names::delay )
       ? ConnParameter::create(
-          ( *syn_spec )[ names::delay ], Network::get_network().get_num_threads() )
+          ( *syn_spec )[ names::delay ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create(
-          ( *syn_defaults )[ names::delay ], Network::get_network().get_num_threads() );
+          ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
   register_parameters_requiring_skipping_( *delay_ );
 
@@ -145,8 +145,8 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
 
     if ( syn_spec->known( param_name ) )
     {
-      synapse_params_[ param_name ] = ConnParameter::create(
-        ( *syn_spec )[ param_name ], Network::get_network().get_num_threads() );
+      synapse_params_[ param_name ] =
+        ConnParameter::create( ( *syn_spec )[ param_name ], kernel().vp_manager.get_num_threads() );
       register_parameters_requiring_skipping_( *synapse_params_[ param_name ] );
     }
   }
@@ -156,7 +156,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   // once to avoid re-creating the object over and over again.
   if ( synapse_params_.size() > 0 )
   {
-    for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     {
       param_dicts_.push_back( new Dictionary() );
 
@@ -244,7 +244,7 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name, const Dictionary
         "volume transmitter of stdp_dopamine_synapse in syn_spec."
         "Use SetDefaults() or CopyModel()." );
     // setting of parameter c and n not thread save
-    if ( Network::get_network().get_num_threads() > 1 )
+    if ( kernel().vp_manager.get_num_threads() > 1 )
     {
       if ( syn_spec->known( names::c ) )
         throw NotImplemented(
@@ -277,7 +277,7 @@ nest::ConnBuilder::connect()
   connect_();
 
   // check if any exceptions have been raised
-  for ( thread thr = 0; thr < Network::get_network().get_num_threads(); ++thr )
+  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
     if ( exceptions_raised_.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
 }
@@ -304,8 +304,7 @@ nest::ConnBuilder::single_connect_( index sgid,
   }
   else
   {
-    assert(
-      Network::get_network().get_num_threads() == static_cast< thread >( param_dicts_.size() ) );
+    assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_.size() ) );
 
     for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
           it != synapse_params_.end();
@@ -680,7 +679,7 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( const GIDCollection& sou
 void
 nest::FixedTotalNumberBuilder::connect_()
 {
-  const int_t M = Communicator::get_num_virtual_processes();
+  const int_t M = kernel().vp_manager.get_num_virtual_processes();
   const long_t size_sources = sources_.size();
   const long_t size_targets = targets_.size();
 
@@ -690,7 +689,7 @@ nest::FixedTotalNumberBuilder::connect_()
   std::vector< std::vector< size_t > > targets_on_vp( M );
   for ( size_t t = 0; t < targets_.size(); t++ )
   {
-    targets_on_vp[ Network::get_network().suggest_vp( targets_[ t ] ) ].push_back( targets_[ t ] );
+    targets_on_vp[ kernel().vp_manager.suggest_vp( targets_[ t ] ) ].push_back( targets_[ t ] );
   }
 
   // We use the multinomial distribution to determine the number of
@@ -749,9 +748,9 @@ nest::FixedTotalNumberBuilder::connect_()
     try
     {
       // allocate pointer to thread specific random generator
-      const int_t vp_id = Network::get_network().thread_to_vp( tid );
+      const int_t vp_id = kernel().vp_manager.thread_to_vp( tid );
 
-      if ( Network::get_network().is_local_vp( vp_id ) )
+      if ( kernel().vp_manager.is_local_vp( vp_id ) )
       {
         librandom::RngPtr rng = Network::get_network().get_rng( tid );
 

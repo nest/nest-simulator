@@ -641,8 +641,8 @@ nest::RecordingDevice::build_filename_() const
 {
   // number of digits in number of virtual processes
   const int vpdigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >( Communicator::get_num_virtual_processes() ) ) )
-    + 1 );
+    std::floor(
+      std::log10( static_cast< float >( kernel().vp_manager.get_num_virtual_processes() ) ) ) + 1 );
   const int gidigits = static_cast< int >(
     std::floor( std::log10( static_cast< float >( Network::get_network().size() ) ) ) + 1 );
 

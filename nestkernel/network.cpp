@@ -2364,42 +2364,6 @@ Network::random_convergent_connect( TokenArray source_ids,
 }
 
 void
-Network::connect( const GIDCollection& sources,
-  const GIDCollection& targets,
-  const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
-{
-  conn_spec->clear_access_flags();
-  syn_spec->clear_access_flags();
-
-  if ( !conn_spec->known( names::rule ) )
-    throw BadProperty( "Connectivity spec must contain connectivity rule." );
-  const std::string rule_name = ( *conn_spec )[ names::rule ];
-
-  if ( !connruledict_->known( rule_name ) )
-    throw BadProperty( "Unknown connectivty rule: " + rule_name );
-  const long rule_id = ( *connruledict_ )[ rule_name ];
-
-  ConnBuilder* cb =
-    connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_spec );
-  assert( cb != 0 );
-
-  // at this point, all entries in conn_spec and syn_spec have been checked
-  std::string missed;
-  if ( !( conn_spec->all_accessed( missed ) && syn_spec->all_accessed( missed ) ) )
-  {
-    if ( dict_miss_is_error() )
-      throw UnaccessedDictionaryEntry( missed );
-    else
-      message(
-        SLIInterpreter::M_WARNING, "Connect", ( "Unread dictionary entries: " + missed ).c_str() );
-  }
-
-  cb->connect();
-  delete cb;
-}
-
-void
 Network::message( int level, const char from[], const char text[] )
 {
   interpreter_.message( level, from, text );

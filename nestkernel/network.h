@@ -908,7 +908,7 @@ private:
   Dictionary* connruledict_; //!< Dictionary for connection rules.
 
   /* BeginDocumentation
-     Name: growthcurvedict - dictionary containing all growth curves for MSP
+     Name: growthcurvedict - growth curves for Model of Structural Plasticity
      Description:
      This dictionary provides indexes for the growth curve factory
   */

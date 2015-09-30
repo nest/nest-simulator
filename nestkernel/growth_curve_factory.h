@@ -60,7 +60,6 @@ class GrowthCurveFactory : public GenericGrowthCurveFactory
 {
 
 public:
-  //~GrowthCurveFactory();
   GrowthCurve*
   create() const
   {

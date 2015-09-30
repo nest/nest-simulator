@@ -24,8 +24,9 @@
 #define KERNEL_MANAGER_H
 
 #include "vp_manager.h"
+#include "logging_manager.h"
 
-class Dictionary;
+#include "dictdatum.h"
 
 namespace nest
 {
@@ -53,10 +54,11 @@ public:
   void init();
   void reset();
 
-  void set_status( const Dictionary& );
-  void get_status( Dictionary& );
+  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& );
 
   VPManager vp_manager;
+  LoggingManager logging_manager;
 };
 
 KernelManager& kernel();

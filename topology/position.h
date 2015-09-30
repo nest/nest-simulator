@@ -29,7 +29,7 @@
 #include <sstream>
 #include <cassert>
 #include <cmath>
-#include "nest.h"
+#include "nest_types.h"
 #include "token.h"
 #include "compose.hpp"
 #include "exceptions.h"

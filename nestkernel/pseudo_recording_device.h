@@ -23,7 +23,7 @@
 #ifndef PSEUDO_RECORDING_DEVICE_H
 #define PSEUDO_RECORDING_DEVICE_H
 
-#include "nest.h"
+#include "nest_types.h"
 #include "dictdatum.h"
 #include "dictutils.h"
 #include "lockptr.h"

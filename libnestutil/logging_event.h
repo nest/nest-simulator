@@ -1,5 +1,5 @@
 /*
- *  modelrange.h
+ *  logging_event.h
  *
  *  This file is part of NEST.
  *
@@ -20,45 +20,38 @@
  *
  */
 
-#ifndef MODELRANGE_H
-#define MODELRANGE_H
 
-#include "nest_types.h"
+#ifndef LOGGING_EVENT_H
+#define LOGGING_EVENT_H
+
+#include "logging.h"
+
+#include <ostream>
+#include <string>
 
 namespace nest
 {
 
-class modelrange
+class LoggingEvent
 {
 public:
-  modelrange( index model, index first_gid, index last_gid );
-  bool
-  is_in_range( index gid ) const
-  {
-    return ( ( gid >= first_gid_ ) && ( gid <= last_gid_ ) );
-  }
-  index
-  get_model_id() const
-  {
-    return model_;
-  }
-  index
-  get_first_gid() const
-  {
-    return first_gid_;
-  }
-  index
-  get_last_gid() const
-  {
-    return last_gid_;
-  }
-  void extend_range( index new_last_gid );
+  LoggingEvent( const severity_t s,
+    const std::string& fctn,
+    const std::string& msg,
+    const char* file = "none",
+    const size_t line = 0 );
 
-private:
-  index model_;
-  index first_gid_;
-  index last_gid_;
+  friend std::ostream& operator<<( std::ostream&, const LoggingEvent& );
+
+public:
+  const std::string& message;
+  const std::string& function;
+  const severity_t severity;
+  const time_t time_stamp;
+  const char* file_name;
+  const size_t line_number;
 };
-}
 
-#endif
+} // namespace nest
+
+#endif // ifndef LOGGING_EVENT_H

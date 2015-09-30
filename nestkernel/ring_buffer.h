@@ -24,7 +24,7 @@
 #define RING_BUFFER_H
 #include <vector>
 #include <list>
-#include "nest.h"
+#include "nest_types.h"
 #include "network.h"
 #include "nest_time.h"
 

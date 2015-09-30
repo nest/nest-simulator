@@ -1,5 +1,5 @@
 /*
- *  manager_interface.h
+ *  logging.h
  *
  *  This file is part of NEST.
  *
@@ -20,33 +20,31 @@
  *
  */
 
-#ifndef MANAGER_INTERFACE_H
-#define MANAGER_INTERFACE_H
+#ifndef LOGGING_H
+#define LOGGING_H
 
-class Dictionary;
+#define LOG( s, fctn, msg ) \
+  nest::kernel().logging_manager.publish_log( ( s ), ( fctn ), ( msg ), __FILE__, __LINE__ )
 
 namespace nest
 {
 
-class ManagerInterface
+class LoggingEvent;
+class LoggingDeliverer;
+
+enum severity_t
 {
-private:
-  ManagerInterface( ManagerInterface const& ); // Don't Implement
-  void operator=( ManagerInterface const& );   // Don't Implement
-
-public:
-  ManagerInterface()
-  {
-  }
-  ~ManagerInterface()
-  {
-  }
-  virtual void init() = 0;
-  virtual void reset() = 0;
-
-  virtual void set_status( const Dictionary& ) = 0;
-  virtual void get_status( Dictionary& ) = 0;
+  M_ALL = 0,
+  M_DEBUG = 5,
+  M_STATUS = 7,
+  M_INFO = 10,
+  M_WARNING = 20,
+  M_ERROR = 30,
+  M_FATAL = 40,
+  M_QUIET = 100
 };
+
+typedef void ( *deliver_logging_event_ptr )( const LoggingEvent& e );
 }
 
-#endif /* MANAGER_INTERFACE_H */
+#endif

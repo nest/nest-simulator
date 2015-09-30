@@ -28,7 +28,7 @@
 #include <utility>
 #include <stdexcept>
 
-#include "nest.h"
+#include "nest_types.h"
 #include "tokenarray.h"
 #include "arraydatum.h"
 

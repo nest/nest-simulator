@@ -1,5 +1,5 @@
 /*
- *  modelrange.h
+ *  nest.h
  *
  *  This file is part of NEST.
  *
@@ -20,45 +20,14 @@
  *
  */
 
-#ifndef MODELRANGE_H
-#define MODELRANGE_H
+#ifndef NEST_H
+#define NEST_H
 
-#include "nest_types.h"
+namespace nest {
 
-namespace nest
-{
 
-class modelrange
-{
-public:
-  modelrange( index model, index first_gid, index last_gid );
-  bool
-  is_in_range( index gid ) const
-  {
-    return ( ( gid >= first_gid_ ) && ( gid <= last_gid_ ) );
-  }
-  index
-  get_model_id() const
-  {
-    return model_;
-  }
-  index
-  get_first_gid() const
-  {
-    return first_gid_;
-  }
-  index
-  get_last_gid() const
-  {
-    return last_gid_;
-  }
-  void extend_range( index new_last_gid );
 
-private:
-  index model_;
-  index first_gid_;
-  index last_gid_;
-};
 }
 
-#endif
+
+#endif /* NEST_H */

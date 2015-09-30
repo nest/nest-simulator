@@ -26,7 +26,7 @@
 #include <vector>
 #include <limits>
 
-#include "nest.h"
+#include "nest_types.h"
 #include "model.h"
 #include "dictutils.h"
 #include "nest_time.h"

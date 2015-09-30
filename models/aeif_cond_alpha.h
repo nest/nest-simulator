@@ -27,7 +27,7 @@
 
 #ifdef HAVE_GSL_1_11
 
-#include "nest.h"
+#include "nest_types.h"
 #include "event.h"
 #include "archiving_node.h"
 #include "ring_buffer.h"

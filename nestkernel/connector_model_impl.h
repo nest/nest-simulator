@@ -167,27 +167,27 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
     new_delay = Time( Time::ms( delay_tmp ) );
 
   if ( min_delay_updated xor max_delay_updated )
-    Network::get_network().message(
-      SLIInterpreter::M_ERROR, "SetDefaults", "Both min_delay and max_delay have to be specified" );
+    LOG(
+      M_ERROR, "SetDefaults", "Both min_delay and max_delay have to be specified" );
 
   if ( min_delay_updated && max_delay_updated )
   {
     if ( num_connections_ > 0 )
-      Network::get_network().message( SLIInterpreter::M_ERROR,
+      LOG( M_ERROR,
         "SetDefaults",
         "Connections already exist. Please call ResetKernel first" );
     else if ( min_delay > new_delay )
-      Network::get_network().message(
-        SLIInterpreter::M_ERROR, "SetDefaults", "min_delay is not compatible with default delay" );
+      LOG(
+        M_ERROR, "SetDefaults", "min_delay is not compatible with default delay" );
     else if ( max_delay < new_delay )
-      Network::get_network().message(
-        SLIInterpreter::M_ERROR, "SetDefaults", "max_delay is not compatible with default delay" );
+      LOG(
+        M_ERROR, "SetDefaults", "max_delay is not compatible with default delay" );
     else if ( min_delay < Time::get_resolution() )
-      Network::get_network().message( SLIInterpreter::M_ERROR,
+      LOG( M_ERROR,
         "SetDefaults",
         "min_delay must be greater than or equal to resolution" );
     else if ( max_delay < Time::get_resolution() )
-      Network::get_network().message( SLIInterpreter::M_ERROR,
+      LOG( M_ERROR,
         "SetDefaults",
         "max_delay must be greater than or equal to resolution" );
     else

@@ -1,5 +1,5 @@
 /*
- *  modelrange.h
+ *  manager_interface.h
  *
  *  This file is part of NEST.
  *
@@ -20,45 +20,33 @@
  *
  */
 
-#ifndef MODELRANGE_H
-#define MODELRANGE_H
+#ifndef MANAGER_INTERFACE_H
+#define MANAGER_INTERFACE_H
 
-#include "nest_types.h"
+#include "dictdatum.h"
 
 namespace nest
 {
 
-class modelrange
+class ManagerInterface
 {
-public:
-  modelrange( index model, index first_gid, index last_gid );
-  bool
-  is_in_range( index gid ) const
-  {
-    return ( ( gid >= first_gid_ ) && ( gid <= last_gid_ ) );
-  }
-  index
-  get_model_id() const
-  {
-    return model_;
-  }
-  index
-  get_first_gid() const
-  {
-    return first_gid_;
-  }
-  index
-  get_last_gid() const
-  {
-    return last_gid_;
-  }
-  void extend_range( index new_last_gid );
-
 private:
-  index model_;
-  index first_gid_;
-  index last_gid_;
+  ManagerInterface( ManagerInterface const& ); // Don't Implement
+  void operator=( ManagerInterface const& );   // Don't Implement
+
+public:
+  ManagerInterface()
+  {
+  }
+  ~ManagerInterface()
+  {
+  }
+  virtual void init() = 0;
+  virtual void reset() = 0;
+
+  virtual void set_status( const DictionaryDatum& ) = 0;
+  virtual void get_status( DictionaryDatum& ) = 0;
 };
 }
 
-#endif
+#endif /* MANAGER_INTERFACE_H */

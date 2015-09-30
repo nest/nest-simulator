@@ -24,6 +24,8 @@
 #define KERNEL_MANAGER_H
 
 #include "vp_manager.h"
+#include "logging_manager.h"
+
 #include "dictdatum.h"
 
 namespace nest
@@ -56,6 +58,7 @@ public:
   void get_status( DictionaryDatum& );
 
   VPManager vp_manager;
+  LoggingManager logging_manager;
 };
 
 KernelManager& kernel();

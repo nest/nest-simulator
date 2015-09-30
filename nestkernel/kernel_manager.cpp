@@ -56,6 +56,7 @@ nest::KernelManager::init()
 {
   logging_manager.init();
   vp_manager.init();
+  connection_builder_manager.init();
 }
 
 void
@@ -63,6 +64,7 @@ nest::KernelManager::reset()
 {
   logging_manager.reset();
   vp_manager.reset();
+  connection_builder_manager.reset();
 }
 
 void

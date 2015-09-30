@@ -59,6 +59,7 @@ public:
 
   VPManager vp_manager;
   LoggingManager logging_manager;
+  ConnectionBuilderManager connection_builder_manager;
 };
 
 KernelManager& kernel();

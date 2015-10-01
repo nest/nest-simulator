@@ -32,7 +32,8 @@
 #include "node.h"
 #include "grid_layer.h"
 
-#include "topologymodule.h" // LayerException
+#include "topologymodule.h" // LayerException, TopologyModule::create_parameter,
+                            // TopologyModule::create_mask
 
 #include "layer.h"
 
@@ -107,7 +108,7 @@ create_mask( const DictionaryDatum& mask_dict )
 {
   mask_dict->clear_access_flags();
 
-  MaskDatum datum( create_mask( mask_dict ) );
+  MaskDatum datum( TopologyModule::create_mask( mask_dict ) );
 
   std::string missed;
   if ( !mask_dict->all_accessed( missed ) )
@@ -223,7 +224,7 @@ create_parameter( const DictionaryDatum& param_dict )
 {
   param_dict->clear_access_flags();
 
-  ParameterDatum datum( create_parameter( param_dict ) );
+  ParameterDatum datum( TopologyModule::create_parameter( param_dict ) );
 
   std::string missed;
   if ( !param_dict->all_accessed( missed ) )

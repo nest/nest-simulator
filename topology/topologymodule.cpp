@@ -598,7 +598,7 @@ TopologyModule::CreateMask_DFunction::execute( SLIInterpreter* i ) const
 
   const DictionaryDatum mask_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  MaskDatum datum = create_mask( mask_dict );
+  MaskDatum datum = nest::create_mask( mask_dict );
 
   i->OStack.pop( 1 );
   i->OStack.push( datum );
@@ -981,7 +981,7 @@ TopologyModule::CreateParameter_DFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
   const DictionaryDatum param_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  ParameterDatum datum = create_parameter( param_dict );
+  ParameterDatum datum = nest::create_parameter( param_dict );
 
   i->OStack.pop( 1 );
   i->OStack.push( datum );

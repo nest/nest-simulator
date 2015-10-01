@@ -37,7 +37,6 @@ namespace nest
 class ConnectionGeneratorModule : public SLIModule
 {
 public:
-
   ConnectionGeneratorModule();
   ~ConnectionGeneratorModule();
 

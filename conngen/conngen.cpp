@@ -135,37 +135,43 @@ nest::cg_select_implementation( const StringDatum& library, const StringDatum& t
 }
 
 void
-nest::cg_set_masks(nest::ConnectionGeneratorDatum& cg, IntVectorDatum& sources, IntVectorDatum& targets)
+nest::cg_set_masks( nest::ConnectionGeneratorDatum& cg,
+  IntVectorDatum& sources,
+  IntVectorDatum& targets )
 {
   RangeSet source_ranges;
   cg_get_ranges( source_ranges, ( *sources ) );
-  
+
   RangeSet target_ranges;
   cg_get_ranges( target_ranges, ( *targets ) );
-  
+
   cg_set_masks( cg, source_ranges, target_ranges );
 }
 
 void
-nest::cg_start(nest::ConnectionGeneratorDatum& cgd)
+nest::cg_start( nest::ConnectionGeneratorDatum& cgd )
 {
   cgd->start();
 }
 
-bool nest::cg_next(nest::ConnectionGeneratorDatum& cgd, int& src, int& tgt, std::vector<double>& values)
+bool
+nest::cg_next( nest::ConnectionGeneratorDatum& cgd,
+  int& src,
+  int& tgt,
+  std::vector< double >& values )
 {
   ConnectionGenerator* generator = cgd.get();
-  
+
   int arity = generator->arity();
   double* tmp_values = new double[ arity ];
-  
-  values.resize(arity);
-  
+
+  values.resize( arity );
+
   if ( generator->next( src, tgt, tmp_values ) )
   {
     for ( int m = 0; m < arity; ++m )
     {
-      values[ m ] = tmp_values[m];
+      values[ m ] = tmp_values[ m ];
     }
     delete[] tmp_values;
     cgd.unlock();
@@ -177,12 +183,3 @@ bool nest::cg_next(nest::ConnectionGeneratorDatum& cgd, int& src, int& tgt, std:
     return false;
   }
 }
-
-
-
-
-
-
-
-
-

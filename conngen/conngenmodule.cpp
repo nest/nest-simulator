@@ -278,7 +278,7 @@ ConnectionGeneratorModule::CGSetMask_cg_iV_iVFunction::execute( SLIInterpreter* 
   IntVectorDatum sources = getValue< IntVectorDatum >( i->OStack.pick( 1 ) );
   IntVectorDatum targets = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
 
-  cg_set_masks(cg, sources, targets);
+  cg_set_masks( cg, sources, targets );
 
   i->OStack.pop( 3 );
   i->EStack.pop();
@@ -314,7 +314,7 @@ ConnectionGeneratorModule::CGStart_cgFunction::execute( SLIInterpreter* i ) cons
 
   ConnectionGeneratorDatum cgd = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
 
-  cg_start(cgd);
+  cg_start( cgd );
 
   i->OStack.pop( 1 );
   i->EStack.pop();
@@ -355,10 +355,10 @@ ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const
   ConnectionGeneratorDatum cgd = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
 
   int j, k;
-  std::vector<double> values;
+  std::vector< double > values;
   i->OStack.pop( 1 );
   i->EStack.pop();
-  if ( cg_next(cgd, j, k, values) )
+  if ( cg_next( cgd, j, k, values ) )
   {
     i->OStack.push( j );
     i->OStack.push( k );

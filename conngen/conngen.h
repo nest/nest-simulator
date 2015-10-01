@@ -54,9 +54,9 @@ ConnectionGeneratorDatum cg_parse_file( const StringDatum& xml );
 
 void cg_select_implementation( const StringDatum& library, const StringDatum& tag );
 
-void cg_set_masks(ConnectionGeneratorDatum& cg, IntVectorDatum& sources, IntVectorDatum& targets);
-void cg_start(ConnectionGeneratorDatum& cgd);
-bool cg_next(ConnectionGeneratorDatum& cgd, int& src, int& tgt, std::vector<double>& values);
+void cg_set_masks( ConnectionGeneratorDatum& cg, IntVectorDatum& sources, IntVectorDatum& targets );
+void cg_start( ConnectionGeneratorDatum& cgd );
+bool cg_next( ConnectionGeneratorDatum& cgd, int& src, int& tgt, std::vector< double >& values );
 }
 
 #endif /* CONNGEN_H */

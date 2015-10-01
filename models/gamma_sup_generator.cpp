@@ -30,6 +30,8 @@
 #include <algorithm>
 #include <limits>
 
+#include "kernel_manager.h"
+
 
 /* ----------------------------------------------------------------
  * Constructor of internal states class
@@ -229,7 +231,7 @@ nest::gamma_sup_generator::update( Time const& T, const long_t from, const long_
       continue; // no spike at this lag
 
     DSSpikeEvent se;
-    Network::get_network().send( *this, se, lag );
+    kernel().event_delivery_manager.send( *this, se, lag );
   }
 }
 

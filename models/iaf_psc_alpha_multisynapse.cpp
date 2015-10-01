@@ -33,6 +33,8 @@
 
 #include <limits>
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -328,7 +330,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin, const long_t from, const
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current

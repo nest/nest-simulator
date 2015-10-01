@@ -33,6 +33,8 @@
 
 #include <limits>
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -134,8 +136,7 @@ nest::sli_neuron::calibrate()
   if ( terminate )
   {
     Network::get_network().terminate();
-    LOG(
-      M_ERROR, "sli_neuron::calibrate", "Terminating." );
+    LOG( M_ERROR, "sli_neuron::calibrate", "Terminating." );
     return;
   }
 
@@ -161,9 +162,7 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
   {
     std::string msg = String::compose( "Node %1 still has its error state set.", get_gid() );
     LOG( M_ERROR, "sli_neuron::update", msg.c_str() );
-    LOG( M_ERROR,
-      "sli_neuron::update",
-      "Please check /calibrate and /update for errors" );
+    LOG( M_ERROR, "sli_neuron::update", "Please check /calibrate and /update for errors" );
     Network::get_network().terminate();
     return;
   }
@@ -192,7 +191,7 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
     {
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     B_.logger_.record_data( origin.get_steps() + lag );

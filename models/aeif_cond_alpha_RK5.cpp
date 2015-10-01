@@ -38,6 +38,8 @@
 #include <iostream>
 #include <cstdio>
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -463,7 +465,7 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        Network::get_network().send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     } // while
 

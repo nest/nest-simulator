@@ -28,6 +28,8 @@
 #include "network.h"
 #include "nest_time.h"
 
+#include "kernel_manager.h"
+
 namespace nest
 {
 
@@ -164,7 +166,7 @@ RingBuffer::get_value( const long_t offs )
 inline size_t
 RingBuffer::get_index_( const delay d ) const
 {
-  const long_t idx = Network::get_network().get_modulo( d );
+  const long_t idx = kernel().event_delivery_manager.get_modulo( d );
   assert( 0 <= idx );
   assert( ( size_t ) idx < buffer_.size() );
   return idx;
@@ -246,7 +248,7 @@ MultRBuffer::get_value( const long_t offs )
 inline size_t
 MultRBuffer::get_index_( const delay d ) const
 {
-  const long_t idx = Network::get_network().get_modulo( d );
+  const long_t idx = kernel().event_delivery_manager.get_modulo( d );
   assert( 0 <= idx && ( size_t ) idx < buffer_.size() );
   return idx;
 }
@@ -322,7 +324,7 @@ ListRingBuffer::get_list( const long_t offs )
 inline size_t
 ListRingBuffer::get_index_( const delay d ) const
 {
-  const long_t idx = Network::get_network().get_modulo( d );
+  const long_t idx = kernel().event_delivery_manager.get_modulo( d );
   assert( 0 <= idx );
   assert( ( size_t ) idx < buffer_.size() );
   return idx;

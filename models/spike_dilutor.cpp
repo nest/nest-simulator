@@ -28,6 +28,8 @@
 #include "exceptions.h"
 #include "gslrandomgen.h"
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
@@ -127,7 +129,7 @@ nest::spike_dilutor::update( Time const& T, const long_t from, const long_t to )
       DSSpikeEvent se;
 
       se.set_multiplicity( n_mother_spikes );
-      Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
   }
 }

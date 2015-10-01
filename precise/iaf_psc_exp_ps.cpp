@@ -34,6 +34,8 @@
 
 #include <limits>
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -462,7 +464,7 @@ nest::iaf_psc_exp_ps::emit_spike_( const Time& origin,
   SpikeEvent se;
 
   se.set_offset( spike_offset );
-  nest::Network::get_network().send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 }
 
 void
@@ -484,7 +486,7 @@ nest::iaf_psc_exp_ps::emit_instant_spike_( const Time& origin,
   SpikeEvent se;
 
   se.set_offset( S_.last_spike_offset_ );
-  nest::Network::get_network().send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 }
 
 nest::double_t

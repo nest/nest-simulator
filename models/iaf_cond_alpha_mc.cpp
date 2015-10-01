@@ -39,6 +39,8 @@
 #include <iostream>
 #include <cstdio>
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Compartment name list
  * ---------------------------------------------------------------- */
@@ -576,7 +578,7 @@ nest::iaf_cond_alpha_mc::update( Time const& origin, const long_t from, const lo
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input currents

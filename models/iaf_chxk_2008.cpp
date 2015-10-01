@@ -38,6 +38,8 @@
 #include <iostream>
 #include <cstdio>
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -407,7 +409,7 @@ nest::iaf_chxk_2008::update( Time const& origin, const long_t from, const long_t
 
       SpikeEvent se;
       se.set_offset( sigma );
-      Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // add incoming spikes

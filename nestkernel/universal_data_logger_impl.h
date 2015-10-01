@@ -25,6 +25,8 @@
 #include "network.h"
 #include "node.h"
 
+#include "kernel_manager.h"
+
 
 template < typename HostNode >
 nest::UniversalDataLogger< HostNode >::UniversalDataLogger( HostNode& host )
@@ -120,7 +122,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode&
   if ( num_vars_ < 1 || step < next_rec_step_ )
     return;
 
-  const size_t wt = Network::get_network().write_toggle();
+  const size_t wt = kernel().event_delivery_manager.write_toggle();
 
   assert( wt < next_rec_.size() );
   assert( wt < data_.size() );
@@ -167,7 +169,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host,
   assert( data_.size() == 2 );
 
   // get read toggle and start and end of slice
-  const size_t rt = Network::get_network().read_toggle();
+  const size_t rt = kernel().event_delivery_manager.read_toggle();
   assert( not data_[ rt ].empty() );
 
   // Check if we have valid data, i.e., data with time stamps within the
@@ -200,5 +202,5 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host,
   reply.set_port( request.get_port() );
 
   // send it off
-  Network::get_network().send_to_node( reply );
+  kernel().event_delivery_manager.send_to_node( reply );
 }

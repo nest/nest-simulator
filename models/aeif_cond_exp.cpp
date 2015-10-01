@@ -41,6 +41,8 @@
 #include <iostream>
 #include <cstdio>
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -425,7 +427,7 @@ nest::aeif_cond_exp::update( const Time& origin, const long_t from, const long_t
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        Network::get_network().send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
     S_.y_[ State_::G_EXC ] += B_.spike_exc_.get_value( lag );

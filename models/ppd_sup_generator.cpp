@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <limits>
 
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Constructor of age distribution class
@@ -243,7 +244,7 @@ nest::ppd_sup_generator::update( Time const& T, const long_t from, const long_t 
       V_.hazard_step_t_ = V_.hazard_step_;
 
     DSSpikeEvent se;
-    Network::get_network().send( *this, se, lag );
+    kernel().event_delivery_manager.send( *this, se, lag );
   }
 }
 

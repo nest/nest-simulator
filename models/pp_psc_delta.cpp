@@ -40,6 +40,7 @@
 
 #include <limits>
 
+#include "kernel_manager.h"
 
 namespace nest
 {
@@ -411,7 +412,7 @@ nest::pp_psc_delta::update( Time const& origin, const long_t from, const long_t 
           // And send the spike event
           SpikeEvent se;
           se.set_multiplicity( n_spikes );
-          Network::get_network().send( *this, se, lag );
+          kernel().event_delivery_manager.send( *this, se, lag );
 
           // Reset the potential if applicable
           if ( P_.with_reset_ )

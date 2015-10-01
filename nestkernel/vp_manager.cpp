@@ -23,6 +23,8 @@
 #include "vp_manager.h"
 #include "dictutils.h"
 #include "network.h"
+#include "logging.h"
+#include "kernel_manager.h"
 
 nest::VPManager::VPManager()
   : force_singlethreading_( false )

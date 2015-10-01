@@ -31,6 +31,8 @@
 #include <algorithm>
 #include <limits>
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
@@ -180,7 +182,7 @@ nest::poisson_generator_ps::update( Time const& T, const long_t from, const long
     // the event hook then sends out the real spikes with offgrid timing
     // We pretend to send at T+from
     DSSpikeEvent se;
-    Network::get_network().send( *this, se, from );
+    kernel().event_delivery_manager.send( *this, se, from );
   }
 }
 

@@ -34,6 +34,8 @@
 #include <cmath>
 #include <limits>
 
+#include "kernel_manager.h"
+
 namespace nest
 {
 RecordablesMap< sinusoidal_poisson_generator > sinusoidal_poisson_generator::recordablesMap_;
@@ -253,7 +255,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
       if ( P_.individual_spike_trains_ )
       {
         DSSpikeEvent se;
-        Network::get_network().send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
       else
       {
@@ -261,7 +263,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
         long_t n_spikes = V_.poisson_dev_.ldev( rng );
         SpikeEvent se;
         se.set_multiplicity( n_spikes );
-        Network::get_network().send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
   }

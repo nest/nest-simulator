@@ -34,6 +34,8 @@
 
 #include <limits>
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -285,7 +287,7 @@ nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const 
     // send spike
     SpikeEvent se;
     se.set_offset( S_.last_spike_offset_ );
-    nest::Network::get_network().send( *this, se, from );
+    kernel().event_delivery_manager.send( *this, se, from );
   }
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -368,7 +370,7 @@ nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const 
       // sent event
       SpikeEvent se;
       se.set_offset( S_.last_spike_offset_ );
-      nest::Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // Set new input current. The current change occurs at the

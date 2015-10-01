@@ -46,6 +46,9 @@
 #include "genericmodel.h"
 #include "conn_builder.h"
 
+#include "logging.h"
+#include "kernel_manager.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif

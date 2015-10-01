@@ -32,6 +32,8 @@
 
 #include <limits>
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -107,8 +109,7 @@ nest::izhikevich::Parameters_::set( const DictionaryDatum& d )
   const double_t h = Time::get_resolution().get_ms();
   if ( not consistent_integration_ && h != 1.0 )
   {
-    LOG(
-      M_INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
+    LOG( M_INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
   }
 }
 
@@ -232,7 +233,7 @@ nest::izhikevich::update( Time const& origin, const long_t from, const long_t to
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current

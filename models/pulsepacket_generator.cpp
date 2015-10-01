@@ -31,6 +31,8 @@
 #include "gslrandomgen.h"
 #include <algorithm>
 
+#include "kernel_manager.h"
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and variables
@@ -210,7 +212,7 @@ nest::pulsepacket_generator::update( Time const& T, const long_t from, const lon
     {
       SpikeEvent se;
       se.set_multiplicity( n_spikes );
-      Network::get_network().send( *this, se, prev_spike - T.get_steps() );
+      kernel().event_delivery_manager.send( *this, se, prev_spike - T.get_steps() );
       n_spikes = 0;
     }
   }

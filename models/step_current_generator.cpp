@@ -27,6 +27,8 @@
 #include "doubledatum.h"
 #include "dictutils.h"
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
@@ -159,7 +161,7 @@ nest::step_current_generator::update( Time const& origin, const long_t from, con
     {
       CurrentEvent ce;
       ce.set_current( B_.amp_ );
-      Network::get_network().send( *this, ce, offs );
+      kernel().event_delivery_manager.send( *this, ce, offs );
     }
   }
 }

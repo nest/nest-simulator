@@ -28,6 +28,8 @@
 #include "network.h"
 #include <string>
 
+#include "kernel_manager.h"
+
 #ifdef N_DEBUG
 #undef N_DEBUG
 #endif

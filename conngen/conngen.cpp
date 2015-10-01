@@ -31,6 +31,7 @@
 #include "token.h"
 #include "modelrange.h"
 
+#include "kernel_manager.h"
 
 void
 nest::cg_connect( nest::ConnectionGeneratorDatum& cg,

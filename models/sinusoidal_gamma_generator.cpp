@@ -39,6 +39,8 @@
 
 #include <gsl/gsl_sf_gamma.h>
 
+#include "kernel_manager.h"
+
 namespace nest
 {
 RecordablesMap< sinusoidal_gamma_generator > sinusoidal_gamma_generator::recordablesMap_;
@@ -307,14 +309,14 @@ nest::sinusoidal_gamma_generator::update( Time const& origin, const long_t from,
       if ( P_.individual_spike_trains_ )
       {
         DSSpikeEvent se;
-        Network::get_network().send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
       else
       {
         if ( V_.rng_->drand() < hazard_( 0 ) )
         {
           SpikeEvent se;
-          Network::get_network().send( *this, se, lag );
+          kernel().event_delivery_manager.send( *this, se, lag );
           B_.t0_ms_[ 0 ] = V_.t_ms_;
           B_.Lambda_t0_[ 0 ] = 0;
         }

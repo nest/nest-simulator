@@ -30,6 +30,7 @@
 #include "dictutils.h"
 #include "exceptions.h"
 
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -322,7 +323,7 @@ nest::spike_generator::update( Time const& sliceT0, const long_t from, const lon
       long_t lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
 
       // all spikes are sent locally, so offset information is always preserved
-      Network::get_network().send( *this, *se, lag );
+      kernel().event_delivery_manager.send( *this, *se, lag );
       delete se;
     }
 

@@ -25,7 +25,7 @@
 
 #include <omp.h>
 
-#include "nest.h"
+#include "nest_types.h"
 #include "manager_interface.h"
 #include "dict.h"
 #include "communicator.h"
@@ -46,11 +46,11 @@ public:
 
   virtual void init();
   virtual void reset();
-  virtual void reinit_nodes();
 
-  virtual void set_status( const Dictionary& );
-  virtual void get_status( Dictionary& );
+  virtual void set_status( const DictionaryDatum& );
+  virtual void get_status( DictionaryDatum& );
 
+  void reinit_nodes();
   /**
    * Get properties of a node. The specified node must exist.
    * @throws nest::UnknownNode       Target does not exist in the network.

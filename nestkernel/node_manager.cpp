@@ -22,18 +22,21 @@
 
 #include <omp.h>
 
-#include "nest.h"
-#include "node_manager.h"
-#include "node.h"
-#include "network.h"
-#include "genericmodel.h"
+#include <set>
+#include "nest_types.h"
+
 #include "kernel_manager.h"
+#include "node_manager.h"
+#include "logging.h"
+
+#include "network.h"
+#include "node.h"
+#include "genericmodel.h"
 #include "dictutils.h"
 #include "nest_timemodifier.h"
 #include "nest_timeconverter.h"
 #include "random_datums.h"
 #include "sibling_container.h"
-#include <set>
 
 
 namespace nest
@@ -188,10 +191,10 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
 
   if ( max_gid > local_nodes_.max_size() || max_gid < min_gid )
   {
-    Network::get_network().message( SLIInterpreter::M_ERROR,
+    LOG( M_ERROR,
       "NodeManager::add:node",
       "Requested number of nodes will overflow the memory." );
-    Network::get_network().message( SLIInterpreter::M_ERROR, "NodeManager::add:node", "No nodes were created." );
+    LOG( M_ERROR, "NodeManager::add:node", "No nodes were created." );
     throw KernelException( "OutOfMemory" );
   }
   Network::get_network().node_model_ids_.add_range( mod, min_gid, max_gid - 1 );
@@ -388,7 +391,7 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
   if ( model->is_off_grid() )
   {
     Network::get_network().set_off_grid_communication( true );
-    Network::get_network().message( SLIInterpreter::M_INFO,
+    LOG( M_INFO,
       "NodeManager::add_node",
       "Neuron models emitting precisely timed spikes exist: "
       "the kernel property off_grid_spiking has been set to true.\n\n"
@@ -604,7 +607,7 @@ NodeManager::set_status_single_node_( Node& target, const DictionaryDatum& d, bo
       if ( Network::get_network().dict_miss_is_error() )
         throw UnaccessedDictionaryEntry( missed );
       else
-        Network::get_network().message( SLIInterpreter::M_WARNING,
+        LOG( M_WARNING,
           "NodeManager::set_status",
           ( "Unread dictionary entries: " + missed ).c_str() );
     }
@@ -618,7 +621,7 @@ NodeManager::prepare_nodes()
 
   Network::get_network().init_moduli_();
 
-  Network::get_network().message( SLIInterpreter::M_INFO, "NodeManager::prepare_nodes_", "Please wait. Preparing elements." );
+  LOG( M_INFO, "NodeManager::prepare_nodes_", "Please wait. Preparing elements." );
 
   /* We initialize the buffers of each node and calibrate it. */
 
@@ -664,7 +667,7 @@ NodeManager::prepare_nodes()
     if ( exceptions_raised.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 
-  Network::get_network().message( SLIInterpreter::M_INFO,
+  LOG( M_INFO,
     "NodeManager::prepare_nodes_",
     String::compose(
              "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
@@ -675,7 +678,7 @@ void
 NodeManager::finalize_nodes()
 {
 #ifdef _OPENMP
-  Network::get_network().message( SLIInterpreter::M_INFO, "NodeManager::finalize_nodes()", " using OpenMP." );
+  LOG( M_INFO, "NodeManager::finalize_nodes()", " using OpenMP." );
 // parallel section begins
 #pragma omp parallel
   {

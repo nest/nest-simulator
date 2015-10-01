@@ -169,7 +169,7 @@ public:
   /**
    * Get node lists for unfrozen nodes
    */
-  vector< vector< Node* > > get_nodes_vec();
+  vector< vector< Node* > >& get_nodes_vec();
 
 
   /**
@@ -278,7 +278,7 @@ NodeManager::get_n_gsd()
   return n_gsd_;
 }
 
-inline vector< vector< Node* > >
+inline vector< vector< Node* > >&
 NodeManager::get_nodes_vec()
 {
   return nodes_vec_;

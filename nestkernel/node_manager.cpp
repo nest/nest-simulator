@@ -49,9 +49,7 @@ NodeManager::NodeManager()
   ,  nodes_vec_()
   ,  nodes_vec_network_size_( 0 ) // zero to force update
 {
-  siblingcontainer_model = new GenericModel< SiblingContainer >( "siblingcontainer" );
-  Network::get_network().register_basis_model( *siblingcontainer_model, true );
-  siblingcontainer_model->set_type_id( 1 );
+  siblingcontainer_model = 0;
 }
 
 NodeManager::~NodeManager()
@@ -68,6 +66,12 @@ NodeManager::init()
    * initialized network.
    */
   local_nodes_.reserve( 1 );
+  if (siblingcontainer_model == 0)
+  {
+    siblingcontainer_model = new GenericModel< SiblingContainer >( "siblingcontainer" );
+    Network::get_network().register_basis_model( *siblingcontainer_model, true );
+    siblingcontainer_model->set_type_id( 1 );
+  }
 
   SiblingContainer* root_container =
     static_cast< SiblingContainer* >( siblingcontainer_model->allocate( 0 ) );

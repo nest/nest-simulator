@@ -62,10 +62,10 @@ create_layer( const DictionaryDatum& layer_dict )
 std::vector< double_t >
 get_position( const index node_gid )
 {
-  if ( not Network::get_network().is_local_gid( node_gid ) )
+  if ( not kernel().node_manager.is_local_gid( node_gid ) )
     throw KernelException( "GetPosition is currently implemented for local nodes only." );
 
-  Node const* const node = Network::get_network().get_node( node_gid );
+  Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
   if ( !layer )
@@ -77,10 +77,10 @@ get_position( const index node_gid )
 std::vector< double_t >
 displacement( const std::vector< double_t >& point, const index node_gid )
 {
-  if ( not Network::get_network().is_local_gid( node_gid ) )
+  if ( not kernel().node_manager.is_local_gid( node_gid ) )
     throw KernelException( "Displacement is currently implemented for local nodes only." );
 
-  Node const* const node = Network::get_network().get_node( node_gid );
+  Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
   if ( !layer )
@@ -92,10 +92,10 @@ displacement( const std::vector< double_t >& point, const index node_gid )
 double_t
 distance( const std::vector< double_t >& point, const index node_gid )
 {
-  if ( not Network::get_network().is_local_gid( node_gid ) )
+  if ( not kernel().node_manager.is_local_gid( node_gid ) )
     throw KernelException( "Distance is currently implemented for local nodes only." );
 
-  Node const* const node = Network::get_network().get_node( node_gid );
+  Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
   if ( !layer )
@@ -176,7 +176,7 @@ get_global_children( const index gid,
   const MaskDatum& maskd,
   const std::vector< double_t >& anchor )
 {
-  AbstractLayer* layer = dynamic_cast< AbstractLayer* >( Network::get_network().get_node( gid ) );
+  AbstractLayer* layer = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( gid ) );
   if ( layer == NULL )
     throw LayerExpected();
 
@@ -196,9 +196,9 @@ connect_layers( const index source_gid,
   const DictionaryDatum& connection_dict )
 {
   AbstractLayer* source =
-    dynamic_cast< AbstractLayer* >( Network::get_network().get_node( source_gid ) );
+    dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( source_gid ) );
   AbstractLayer* target =
-    dynamic_cast< AbstractLayer* >( Network::get_network().get_node( target_gid ) );
+    dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( target_gid ) );
 
   if ( ( source == NULL ) || ( target == NULL ) )
     throw LayerExpected();
@@ -252,7 +252,7 @@ void
 dump_layer_nodes( const index layer_gid, OstreamDatum& out )
 {
   AbstractLayer const* const layer =
-    dynamic_cast< AbstractLayer* >( Network::get_network().get_node( layer_gid ) );
+    dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( layer_gid ) );
 
   if ( layer != 0 && out->good() )
     layer->dump_nodes( *out );
@@ -264,7 +264,7 @@ dump_layer_connections( const Token& syn_model, const index layer_gid, OstreamDa
   std::ostream& out = *out_file;
 
   AbstractLayer* const layer =
-    dynamic_cast< AbstractLayer* >( Network::get_network().get_node( layer_gid ) );
+    dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( layer_gid ) );
   if ( layer == NULL )
     throw TypeMismatch( "any layer type", "something else" );
 
@@ -281,7 +281,7 @@ get_element( const index layer_gid, const TokenArray array )
   case 2:
   {
     GridLayer< 2 >* layer =
-      dynamic_cast< GridLayer< 2 >* >( Network::get_network().get_node( layer_gid ) );
+      dynamic_cast< GridLayer< 2 >* >( kernel().node_manager.get_node( layer_gid ) );
     if ( layer == 0 )
     {
       throw TypeMismatch( "grid layer node", "something else" );
@@ -295,7 +295,7 @@ get_element( const index layer_gid, const TokenArray array )
   case 3:
   {
     GridLayer< 3 >* layer =
-      dynamic_cast< GridLayer< 3 >* >( Network::get_network().get_node( layer_gid ) );
+      dynamic_cast< GridLayer< 3 >* >( kernel().node_manager.get_node( layer_gid ) );
     if ( layer == 0 )
     {
       throw TypeMismatch( "grid layer node", "something else" );

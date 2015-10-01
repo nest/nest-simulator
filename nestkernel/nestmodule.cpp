@@ -198,16 +198,6 @@ NestModule::SetStatus_CDFunction::execute( SLIInterpreter* i ) const
 
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 1 ) );
-<<<<<<< HEAD
-  DictionaryDatum conn_dict = conn.get_dict();
-
-  long synapse_id = getValue< long >( conn_dict, nest::names::synapse_modelid );
-  long port = getValue< long >( conn_dict, nest::names::port );
-  long gid = getValue< long >( conn_dict, nest::names::source );
-  thread tid = getValue< long >( conn_dict, nest::names::target_thread );
-  kernel().node_manager.get_node( gid ); // Just to check if the node exists
-=======
->>>>>>> 2eb8b9ac69d5b40047e727cf631dd603964ade7d
 
   set_connection_status( conn, dict );
 

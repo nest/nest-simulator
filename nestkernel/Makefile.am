@@ -80,10 +80,10 @@ libnest_la_SOURCES=\
 		music_event_handler.h music_event_handler.cpp\
 		nest.h nest.cpp\
 		kernel_manager.h kernel_manager.cpp\
-		vp_manager.h vp_manager.cpp \
-		io_manager.h io_manager.cpp \
-		node_manager.h node_manager.cpp\
-		simulation_manager.h simulation_manager.cpp
+		vp_manager.h vp_manager.cpp\
+		io_manager.h io_manager.cpp\
+		simulation_manager.h simulation_manager.cpp\
+		node_manager.h node_manager.cpp
 
 libnest_la_LIBADD= @LIBLTDL@ @LIBADD_DL@
 

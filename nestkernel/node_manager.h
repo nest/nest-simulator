@@ -81,7 +81,7 @@ public:
    * GIDs in the status dictionaties are offset by the GID of the current
    * working node. This allows entire subnetworks to be copied.
    */
-  void restore_nodes( ArrayDatum& );
+  void restore_nodes( const ArrayDatum& );
 
 
   /**

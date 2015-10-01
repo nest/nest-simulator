@@ -407,7 +407,7 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
 }
 
 void
-NodeManager::restore_nodes( ArrayDatum& node_list )
+NodeManager::restore_nodes(const ArrayDatum& node_list )
 {
   Subnet* root = get_cwn();
   const index gid_offset = size() - 1;

@@ -143,63 +143,13 @@ NodeManager::reinit_nodes()
 DictionaryDatum
 NodeManager::get_status( index idx )
 {
+  assert( idx != 0 );
   Node* target = get_node( idx );
   assert( target != 0 );
   assert( Network::get_network().initialized_ );
 
   DictionaryDatum d = target->get_status_base();
 
-  if ( target == root_ )
-  {
-    // former scheduler_.get_status( d ) start
-    kernel().get_status( *d.get() );
-    d.unlock();
-
-    def< long >( d, "num_processes", Communicator::get_num_processes() );
-
-    def< double_t >( d, "time", Network::get_network().get_time().get_ms() );
-    def< long >( d, "to_do", Network::get_network().to_do_ );
-    def< bool >( d, "print_time", Network::get_network().print_time_ );
-
-    def< double >( d, "tics_per_ms", Time::get_tics_per_ms() );
-    def< double >( d, "resolution", Time::get_resolution().get_ms() );
-
-    Network::get_network().update_delay_extrema_();
-    def< double >( d, "min_delay", Time( Time::step( Network::get_network().min_delay_ ) ).get_ms() );
-    def< double >( d, "max_delay", Time( Time::step( Network::get_network().max_delay_ ) ).get_ms() );
-
-    def< double >( d, "ms_per_tic", Time::get_ms_per_tic() );
-    def< double >( d, "tics_per_ms", Time::get_tics_per_ms() );
-    def< long >( d, "tics_per_step", Time::get_tics_per_step() );
-
-    def< double >( d, "T_min", Time::min().get_ms() );
-    def< double >( d, "T_max", Time::max().get_ms() );
-
-    ( *d )[ "rng_seeds" ] = Token( Network::get_network().rng_seeds_ );
-    def< long >( d, "grng_seed", Network::get_network().grng_seed_ );
-    def< bool >( d, "off_grid_spiking", Network::get_network().off_grid_spiking_ );
-    def< long >( d, "send_buffer_size", Communicator::get_send_buffer_size() );
-    def< long >( d, "receive_buffer_size", Communicator::get_recv_buffer_size() );
-    // former scheduler_.get_status( d ) end
-
-    Network::get_network().connection_manager_.get_status( d );
-
-    ( *d )[ "network_size" ] = size();
-    ( *d )[ "data_path" ] = Network::get_network().data_path_;
-    ( *d )[ "data_prefix" ] = Network::get_network().data_prefix_;
-    ( *d )[ "overwrite_files" ] = Network::get_network().overwrite_files_;
-    ( *d )[ "dict_miss_is_error" ] = Network::get_network().dict_miss_is_error_;
-
-    std::map< long, size_t > sna_cts = local_nodes_.get_step_ctr();
-    DictionaryDatum cdict( new Dictionary );
-    for ( std::map< long, size_t >::const_iterator cit = sna_cts.begin(); cit != sna_cts.end();
-          ++cit )
-    {
-      std::stringstream s;
-      s << cit->first;
-      ( *cdict )[ s.str() ] = cit->second;
-    }
-  }
   return d;
 }
 
@@ -769,338 +719,33 @@ NodeManager::print( index p, int depth )
 void
   NodeManager::set_status( index gid, const DictionaryDatum& d )
 {
+  assert( gid > 0 or "This function cannot be called for the root node.");
   // we first handle normal nodes, except the root (GID 0)
-  if ( gid > 0 )
+  Node* target = local_nodes_.get_node_by_gid( gid );
+  if ( target != 0 )
   {
-    Node* target = local_nodes_.get_node_by_gid( gid );
-    if ( target != 0 )
-    {
-      // node is local
-      if ( target->num_thread_siblings_() == 0 )
-        set_status_single_node_( *target, d );
-      else
-        for ( size_t t = 0; t < target->num_thread_siblings_(); ++t )
-        {
-          // non-root container for devices without proxies and subnets
-          // we iterate over all threads
-          assert( target->get_thread_sibling_( t ) != 0 );
-          set_status_single_node_( *( target->get_thread_sibling_( t ) ), d );
-        }
-    }
-    return;
-  }
-
-  /* Code below is executed only for the root node, gid == 0
-
-     In this case, we must
-     - set scheduler properties
-     - set properties for the compound representing each thread
-     - set the data_path, data_prefix and overwrite_files properties
-
-     The main difficulty here is to handle the access control for
-     dictionary items, since the dictionary is read in several places.
-
-     We proceed as follows:
-     - clear access flags
-     - set scheduler properties; this must be first, anyways
-     - set data_path, data_prefix, overwrite_files
-     - at this point, all non-compound property flags are marked accessed
-     - loop over all per-thread compounds
-     - the first per-thread compound will flag all compound properties as read
-     - now, all dictionary entries must be flagged as accessed, otherwise the
-       dictionary contains unknown entries. Thus, set_status_single_node_
-       will not throw an exception
-     - since all items in the root node are of type Compound, all read the same
-       properties and we can leave the access flags set
-   */
-  d->clear_access_flags();
-
-  // former scheduler_.set_status( d ); start
-  // careful, this may invalidate all node pointers!
-  assert( Network::get_network().initialized_ );
-
-  kernel().set_status( *d.get() );
-  d.unlock();
-
-  // Create an instance of time converter here to capture the current
-  // representation of time objects: TICS_PER_MS and TICS_PER_STEP
-  // will be stored in time_converter.
-  // This object can then be used to convert times in steps
-  // (e.g. Connection::delay_) or tics to the new representation.
-  // We pass this object to ConnectionManager::calibrate to update
-  // all time objects in the connection system to the new representation.
-  // MH 08-04-14
-  TimeConverter time_converter;
-
-  double_t time;
-  if ( updateValue< double_t >( d, "time", time ) )
-  {
-    if ( time != 0.0 )
-      throw BadProperty( "The simulation time can only be set to 0.0." );
-
-    if ( Network::get_network().clock_ > TimeZero )
-    {
-      // reset only if time has passed
-      Network::get_network().message( SLIInterpreter::M_WARNING,
-        "Network::set_status",
-        "Simulation time reset to t=0.0. Resetting the simulation time is not "
-        "fully supported in NEST at present. Some spikes may be lost, and "
-        "stimulating devices may behave unexpectedly. PLEASE REVIEW YOUR "
-        "SIMULATION OUTPUT CAREFULLY!" );
-
-      Network::get_network().clock_ = Time::step( 0 );
-      Network::get_network().from_step_ = 0;
-      Network::get_network().slice_ = 0;
-      Network::get_network().configure_spike_buffers_(); // clear all old spikes
-    }
-  }
-  
-  updateValue< bool >( d, "print_time", Network::get_network().print_time_ );
-
-  // have those two for later asking, whether threads have changed:
-  long n_threads;
-  bool n_threads_updated = updateValue< long >( d, "local_num_threads", n_threads );
-
-  // tics_per_ms and resolution must come after local_num_thread / total_num_threads
-  // because they might reset the network and the time representation
-  double_t tics_per_ms;
-  bool tics_per_ms_updated = updateValue< double_t >( d, "tics_per_ms", tics_per_ms );
-  double_t resd;
-  bool res_updated = updateValue< double_t >( d, "resolution", resd );
-
-  if ( tics_per_ms_updated || res_updated )
-  {
-    if ( size() > 1 ) // root always exists
-    {
-      Network::get_network().message( SLIInterpreter::M_ERROR,
-        "Network::set_status",
-        "Cannot change time representation after nodes have been created. Please call ResetKernel "
-        "first." );
-      throw KernelException();
-    }
-    else if ( Network::get_network().get_simulated() ) // someone may have simulated empty network
-    {
-      Network::get_network().message( SLIInterpreter::M_ERROR,
-        "Network::set_status",
-        "Cannot change time representation after the network has been simulated. Please call "
-        "ResetKernel first." );
-      throw KernelException();
-    }
-    else if ( Network::get_network().connection_manager_.get_num_connections() != 0 )
-    {
-      Network::get_network().message( SLIInterpreter::M_ERROR,
-        "Network::set_status",
-        "Cannot change time representation after connections have been created. Please call "
-        "ResetKernel first." );
-      throw KernelException();
-    }
-    else if ( res_updated
-      && tics_per_ms_updated ) // only allow TICS_PER_MS to be changed together with resolution
-    {
-      if ( resd < 1.0 / tics_per_ms )
-      {
-        Network::get_network().message( SLIInterpreter::M_ERROR,
-          "Network::set_status",
-          "Resolution must be greater than or equal to one tic. Value unchanged." );
-        throw KernelException();
-      }
-      else
-      {
-        TimeModifier::set_time_representation( tics_per_ms, resd );
-        Network::get_network().clock_.calibrate(); // adjust to new resolution
-        Network::get_network().connection_manager_.calibrate(
-          time_converter ); // adjust delays in the connection system to new resolution
-        Network::get_network().message(
-          SLIInterpreter::M_INFO, "Network::set_status", "tics per ms and resolution changed." );
-      }
-    }
-    else if ( res_updated ) // only resolution changed
-    {
-      if ( resd < Time::get_ms_per_tic() )
-      {
-        Network::get_network().message( SLIInterpreter::M_ERROR,
-          "Network::set_status",
-          "Resolution must be greater than or equal to one tic. Value unchanged." );
-        throw KernelException();
-      }
-      else
-      {
-        Time::set_resolution( resd );
-        Network::get_network().clock_.calibrate(); // adjust to new resolution
-        Network::get_network().connection_manager_.calibrate(
-          time_converter ); // adjust delays in the connection system to new resolution
-        Network::get_network().message( SLIInterpreter::M_INFO, "Network::set_status", "Temporal resolution changed." );
-      }
-    }
+    // node is local
+    if ( target->num_thread_siblings_() == 0 )
+      set_status_single_node_( *target, d );
     else
-    {
-      Network::get_network().message( SLIInterpreter::M_ERROR,
-        "Network::set_status",
-        "change of tics_per_step requires simultaneous specification of resolution." );
-      throw KernelException();
-    }
-  }
-
-  updateValue< bool >( d, "off_grid_spiking", Network::get_network().off_grid_spiking_ );
-
-  // set RNGs --- MUST come after n_threads_ is updated
-  if ( d->known( "rngs" ) )
-  {
-    // this array contains pre-seeded RNGs, so they can be used
-    // directly, no seeding required
-    ArrayDatum* ad = dynamic_cast< ArrayDatum* >( ( *d )[ "rngs" ].datum() );
-    if ( ad == 0 )
-      throw BadProperty();
-
-    // n_threads_ is the new value after a change of the number of
-    // threads
-    if ( ad->size() != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
-    {
-      Network::get_network().message( SLIInterpreter::M_ERROR,
-        "Network::set_status",
-        "Number of RNGs must equal number of virtual processes (threads*processes). RNGs "
-        "unchanged." );
-      throw DimensionMismatch(
-        ( size_t )( kernel().vp_manager.get_num_virtual_processes() ), ad->size() );
-    }
-
-    // delete old generators, insert new generators this code is
-    // robust under change of thread number in this call to
-    // set_status, as long as it comes AFTER n_threads_ has been
-    // upated
-    Network::get_network().rng_.clear();
-    for ( index i = 0; i < ad->size(); ++i )
-      if ( kernel().vp_manager.is_local_vp( i ) )
-        Network::get_network().rng_.push_back(
-          getValue< librandom::RngDatum >( ( *ad )[ kernel().vp_manager.suggest_vp( i ) ] ) );
-  }
-  else if ( n_threads_updated && size() == 0 )
-  {
-    Network::get_network().message(
-      SLIInterpreter::M_WARNING, "Network::set_status", "Equipping threads with new default RNGs" );
-    Network::get_network().create_rngs_();
-  }
-
-  if ( d->known( "rng_seeds" ) )
-  {
-    ArrayDatum* ad = dynamic_cast< ArrayDatum* >( ( *d )[ "rng_seeds" ].datum() );
-    if ( ad == 0 )
-      throw BadProperty();
-
-    if ( ad->size() != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
-    {
-      Network::get_network().message( SLIInterpreter::M_ERROR,
-        "Network::set_status",
-        "Number of seeds must equal number of virtual processes (threads*processes). RNGs "
-        "unchanged." );
-      throw DimensionMismatch(
-        ( size_t )( kernel().vp_manager.get_num_virtual_processes() ), ad->size() );
-    }
-
-    // check if seeds are unique
-    std::set< ulong_t > seedset;
-    for ( index i = 0; i < ad->size(); ++i )
-    {
-      long s = ( *ad )[ i ]; // SLI has no ulong tokens
-      if ( !seedset.insert( s ).second )
+      for ( size_t t = 0; t < target->num_thread_siblings_(); ++t )
       {
-        Network::get_network().message( SLIInterpreter::M_WARNING,
-          "Network::set_status",
-          "Seeds are not unique across threads!" );
-        break;
+	// non-root container for devices without proxies and subnets
+	// we iterate over all threads
+	assert( target->get_thread_sibling_( t ) != 0 );
+	set_status_single_node_( *( target->get_thread_sibling_( t ) ), d );
       }
-    }
-
-    // now apply seeds, resets generators automatically
-    for ( index i = 0; i < ad->size(); ++i )
-    {
-      long s = ( *ad )[ i ];
-
-      if ( kernel().vp_manager.is_local_vp( i ) )
-        Network::get_network().rng_[ kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( i ) ) ]->seed( s );
-
-      Network::get_network().rng_seeds_[ i ] = s;
-    }
-  } // if rng_seeds
-
-  // set GRNG
-  if ( d->known( "grng" ) )
-  {
-    // pre-seeded grng that can be used directly, no seeding required
-    updateValue< librandom::RngDatum >( d, "grng", Network::get_network().grng_ );
-  }
-  else if ( n_threads_updated && size() == 0 )
-  {
-    Network::get_network().message(
-      SLIInterpreter::M_WARNING, "Network::set_status", "Equipping threads with new default GRNG" );
-    Network::get_network().create_grng_();
-  }
-
-  if ( d->known( "grng_seed" ) )
-  {
-    const long gseed = getValue< long >( d, "grng_seed" );
-
-    // check if grng seed is unique with respect to rng seeds
-    // if grng_seed and rng_seeds given in one SetStatus call
-    std::set< ulong_t > seedset;
-    seedset.insert( gseed );
-    if ( d->known( "rng_seeds" ) )
-    {
-      ArrayDatum* ad_rngseeds = dynamic_cast< ArrayDatum* >( ( *d )[ "rng_seeds" ].datum() );
-      if ( ad_rngseeds == 0 )
-        throw BadProperty();
-      for ( index i = 0; i < ad_rngseeds->size(); ++i )
-      {
-        const long vpseed = ( *ad_rngseeds )[ i ]; // SLI has no ulong tokens
-        if ( !seedset.insert( vpseed ).second )
-        {
-          Network::get_network().message( SLIInterpreter::M_WARNING,
-            "Network::set_status",
-            "Seeds are not unique across threads!" );
-          break;
-        }
-      }
-    }
-    // now apply seed, resets generator automatically
-    Network::get_network().grng_seed_ = gseed;
-    Network::get_network().grng_->seed( gseed );
-
-  } // if grng_seed
-  // former scheduler_.set_status( d ); end
-
-  Network::get_network().set_data_path_prefix_( d );
-  updateValue< bool >( d, "overwrite_files", Network::get_network().overwrite_files_ );
-  updateValue< bool >( d, "dict_miss_is_error", Network::get_network().dict_miss_is_error_ );
-
-  std::string tmp;
-  if ( !d->all_accessed( tmp ) ) // proceed only if there are unaccessed items left
-  {
-    // Fetch the target pointer here. We cannot do it above, since
-    // Network::set_status() may modify the root compound if the number
-    // of threads changes. HEP, 2008-10-20
-    Node* target = local_nodes_.get_node_by_gid( gid );
-    assert( target != 0 );
-
-    for ( size_t t = 0; t < target->num_thread_siblings_(); ++t )
-    {
-      // Root container for per-thread subnets. We must prevent clearing of access
-      // flags before each compound's properties are set by passing false as last arg
-      // we iterate over all threads
-      assert( target->get_thread_sibling_( t ) != 0 );
-      set_status_single_node_( *( target->get_thread_sibling_( t ) ), d, false );
-    }
   }
 }
 
 void
-NodeManager::get_status( Dictionary& d )
+NodeManager::get_status( DictionaryDatum& d )
 {
-  def< long >( d, "num_gsd_procs", n_gsd_ );
   def< long >( d, "network_size", nodes_vec_network_size_);
 }
 
 void
-  NodeManager::set_status( const Dictionary& d )
+  NodeManager::set_status( const DictionaryDatum& d )
 {}
 
 }

@@ -54,7 +54,6 @@ libnest_la_SOURCES=\
 		histentry.h histentry.cpp\
 		model.h model.cpp\
 		model_manager.h model_manager.cpp\
-		nest.h\
 		nest_types.h\
 		nest_datums.h nest_datums.cpp\
 		nest_names.cpp nest_names.h\

@@ -153,7 +153,7 @@ ConnectionManager::get_status( DictionaryDatum& d ) const
 DictionaryDatum
 ConnectionManager::get_synapse_status( index gid, synindex syn_id, port p, thread tid )
 {
-  assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id );
 
   DictionaryDatum dict( new Dictionary );
   connections_[ tid ].get( gid )->get_synapse_status( syn_id, dict, p );
@@ -171,11 +171,11 @@ ConnectionManager::set_synapse_status( index gid,
   thread tid,
   const DictionaryDatum& dict )
 {
-  assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id );
   try
   {
     connections_[ tid ].get( gid )->set_synapse_status(
-      syn_id, *( kernel().model_manager.get_synapse_prototype( tid, syn_id ) ), dict, p );
+      syn_id, kernel().model_manager.get_synapse_prototype( tid, syn_id ), dict, p );
   }
   catch ( BadProperty& e )
   {
@@ -220,7 +220,7 @@ ConnectionManager::get_connections( DictionaryDatum params ) const
   if ( not syn_model_t.empty() )
   {
     Name synmodel_name = getValue< Name >( syn_model_t );
-    const Token synmodel = synapsedict_->lookup( synmodel_name );
+    const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
     if ( !synmodel.empty() )
       syn_id = static_cast< size_t >( synmodel );
     else
@@ -229,7 +229,7 @@ ConnectionManager::get_connections( DictionaryDatum params ) const
   }
   else
   {
-    for ( syn_id = 0; syn_id < kernel().model_manager.get_num_prototypes( tid ); ++syn_id )
+    for ( syn_id = 0; syn_id < kernel().model_manager.get_num_prototypes( 0 ); ++syn_id )
     {
       ArrayDatum conn;
       get_connections( conn, source_a, target_a, syn_id );
@@ -408,7 +408,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
 ConnectorBase*
 ConnectionManager::validate_source_entry( thread tid, index s_gid, synindex syn_id )
 {
-  assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id );
 
   // resize sparsetable to full network size
   if ( connections_[ tid ].size() < Network::get_network().size() )
@@ -463,7 +463,7 @@ ConnectionManager::connect( Node& s,
 {
   // see comment above for explanation
   ConnectorBase* conn = validate_source_entry( tid, s_gid, syn );
-  ConnectorBase* c = kernel().model_manager.get_prototype( tid, syn )->add_connection( s, r, conn, syn, d, w );
+  ConnectorBase* c = kernel().model_manager.get_prototype( tid, syn ).add_connection( s, r, conn, syn, d, w );
   connections_[ tid ].set( s_gid, c );
 }
 
@@ -479,7 +479,7 @@ ConnectionManager::connect( Node& s,
 {
   // see comment above for explanation
   ConnectorBase* conn = validate_source_entry( tid, s_gid, syn );
-  ConnectorBase* c = kernel().model_manager.get_prototype( tid, syn )->add_connection( s, r, conn, syn, p, d, w );
+  ConnectorBase* c = kernel().model_manager.get_prototype( tid, syn ).add_connection( s, r, conn, syn, p, d, w );
   connections_[ tid ].set( s_gid, c );
 }
 
@@ -530,7 +530,7 @@ ConnectionManager::connect( ArrayDatum& conns )
         if ( !synmodel.empty() )
         {
           std::string synmodel_name = getValue< std::string >( synmodel );
-          synmodel = synapsedict_->lookup( synmodel_name );
+          synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
           if ( !synmodel.empty() )
             syn_id = static_cast< size_t >( synmodel );
           else

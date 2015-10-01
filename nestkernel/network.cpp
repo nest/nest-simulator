@@ -102,7 +102,6 @@ Network::Network( SLIInterpreter& i )
   , root_( 0 )
   , current_( 0 )
   , dict_miss_is_error_( true )
-  , model_defaults_modified_( false )
   , initialized_( false ) // scheduler stuff
   , simulating_( false )
   , n_rec_procs_( 0 )
@@ -260,31 +259,13 @@ Network::destruct_nodes_()
 }
 
 void
-Network::clear_models_( bool called_from_destructor )
-{
-  // no message on destructor call, may come after MPI_Finalize()
-  if ( not called_from_destructor )
-    LOG( M_INFO, "Network::clear_models", "Models will be cleared and parameters reset." );
-
-  // We delete all models, which will also delete all nodes. The
-  // built-in models will be recovered from the pristine_models_ in
-  // init_()
-  for ( vector< Model* >::iterator m = models_.begin(); m != models_.end(); ++m )
-    if ( *m != 0 )
-      delete *m;
-
-  models_.clear();
-  modeldict_->clear();
-  model_defaults_modified_ = false;
-}
-
-void
 Network::reset()
 {
   kernel().reset();
 
   destruct_nodes_();
-  clear_models_();
+
+  kernel().model_manager.reset();
 
   // We free all Node memory and set the number of threads.
   vector< std::pair< Model*, bool > >::iterator m;

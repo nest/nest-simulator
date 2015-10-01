@@ -44,47 +44,19 @@ ConnectionManager::ConnectionManager()
 ConnectionManager::~ConnectionManager()
 {
   delete_connections_();
-  clear_prototypes_();
-
-  for ( std::vector< ConnectorModel* >::iterator i = pristine_prototypes_.begin();
-        i != pristine_prototypes_.end();
-        ++i )
-    if ( *i != 0 )
-      delete *i;
 }
 
 void
-ConnectionManager::init( Dictionary* synapsedict )
+ConnectionManager::init()
 {
-  synapsedict_ = synapsedict;
   init_();
 }
 
 void
 ConnectionManager::init_()
 {
-  synapsedict_->clear();
-
-  // one list of prototypes per thread
-  std::vector< std::vector< ConnectorModel* > > tmp_proto( kernel().vp_manager.get_num_threads() );
-  prototypes_.swap( tmp_proto );
-
-  // (re-)append all synapse prototypes
-  for ( std::vector< ConnectorModel* >::iterator i = pristine_prototypes_.begin();
-        i != pristine_prototypes_.end();
-        ++i )
-    if ( *i != 0 )
-    {
-      std::string name = ( *i )->get_name();
-      for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-        prototypes_[ t ].push_back( ( *i )->clone( name ) );
-      synapsedict_->insert( name, prototypes_[ 0 ].size() - 1 );
-    }
-
   tVSConnector tmp( kernel().vp_manager.get_num_threads(), tSConnector() );
-
   connections_.swap( tmp );
-
   num_connections_ = 0;
 }
 
@@ -118,37 +90,10 @@ ConnectionManager::delete_connections_()
 }
 
 void
-ConnectionManager::clear_prototypes_()
-{
-  for ( std::vector< std::vector< ConnectorModel* > >::iterator it = prototypes_.begin();
-        it != prototypes_.end();
-        ++it )
-  {
-    for ( std::vector< ConnectorModel* >::iterator pt = it->begin(); pt != it->end(); ++pt )
-      if ( *pt != 0 )
-        delete *pt;
-    it->clear();
-  }
-  prototypes_.clear();
-}
-
-void
 ConnectionManager::reset()
 {
   delete_connections_();
-  clear_prototypes_();
   init_();
-}
-
-void
-ConnectionManager::calibrate( const TimeConverter& tc )
-{
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    for ( std::vector< ConnectorModel* >::iterator pt = prototypes_[ t ].begin();
-          pt != prototypes_[ t ].end();
-          ++pt )
-      if ( *pt != 0 )
-        ( *pt )->calibrate( tc );
 }
 
 const Time
@@ -156,11 +101,13 @@ ConnectionManager::get_min_delay() const
 {
   Time min_delay = Time::pos_inf();
 
-  std::vector< ConnectorModel* >::const_iterator it;
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
-      if ( *it != 0 && ( *it )->get_num_connections() > 0 )
-        min_delay = std::min( min_delay, ( *it )->get_min_delay() );
+// TODO Re-factor similar to get_num_connections below.
+//
+//  std::vector< ConnectorModel* >::const_iterator it;
+//  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+//    for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
+//      if ( *it != 0 && ( *it )->get_num_connections() > 0 )
+//        min_delay = std::min( min_delay, ( *it )->get_min_delay() );
 
   return min_delay;
 }
@@ -170,11 +117,13 @@ ConnectionManager::get_max_delay() const
 {
   Time max_delay = Time::get_resolution();
 
-  std::vector< ConnectorModel* >::const_iterator it;
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
-      if ( *it != 0 && ( *it )->get_num_connections() > 0 )
-        max_delay = std::max( max_delay, ( *it )->get_max_delay() );
+// TODO Re-factor similar to get_num_connections below.
+//
+//  std::vector< ConnectorModel* >::const_iterator it;
+//  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+//    for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
+//      if ( *it != 0 && ( *it )->get_num_connections() > 0 )
+//        max_delay = std::max( max_delay, ( *it )->get_max_delay() );
 
   return max_delay;
 }
@@ -183,10 +132,13 @@ bool
 ConnectionManager::get_user_set_delay_extrema() const
 {
   bool user_set_delay_extrema = false;
-  std::vector< ConnectorModel* >::const_iterator it;
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
-      user_set_delay_extrema |= ( *it )->get_user_set_delay_extrema();
+
+// TODO Re-factor similar to get_num_connections below.
+//
+//  std::vector< ConnectorModel* >::const_iterator it;
+//  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+//    for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
+//      user_set_delay_extrema |= ( *it )->get_user_set_delay_extrema();
 
   return user_set_delay_extrema;
 }
@@ -206,7 +158,8 @@ ConnectionManager::get_synapse_status( index gid, synindex syn_id, port p, threa
   DictionaryDatum dict( new Dictionary );
   connections_[ tid ].get( gid )->get_synapse_status( syn_id, dict, p );
   ( *dict )[ names::source ] = gid;
-  ( *dict )[ names::synapse_model ] = LiteralDatum( get_synapse_prototype( syn_id ).get_name() );
+  Name name = kernel().model_manager.get_synapse_prototype( tid, syn_id ).get_name();
+  ( *dict )[ names::synapse_model ] = LiteralDatum( name );
 
   return dict;
 }
@@ -222,13 +175,13 @@ ConnectionManager::set_synapse_status( index gid,
   try
   {
     connections_[ tid ].get( gid )->set_synapse_status(
-      syn_id, *( prototypes_[ tid ][ syn_id ] ), dict, p );
+      syn_id, *( kernel().model_manager.get_synapse_prototype( tid, syn_id ) ), dict, p );
   }
   catch ( BadProperty& e )
   {
     throw BadProperty(
       String::compose( "Setting status of '%1' connecting from GID %2 to port %3: %4",
-        prototypes_[ tid ][ syn_id ]->get_name(),
+        kernel().model_manager.get_synapse_prototype( tid, syn_id ).get_name(),
         gid,
         p,
         e.message() ) );
@@ -276,7 +229,7 @@ ConnectionManager::get_connections( DictionaryDatum params ) const
   }
   else
   {
-    for ( syn_id = 0; syn_id < prototypes_[ 0 ].size(); ++syn_id )
+    for ( syn_id = 0; syn_id < kernel().model_manager.get_num_prototypes( tid ); ++syn_id )
     {
       ArrayDatum conn;
       get_connections( conn, source_a, target_a, syn_id );
@@ -296,8 +249,10 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
 {
   size_t num_connections = 0;
 
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    num_connections += prototypes_[ t ][ syn_id ]->get_num_connections();
+  // TODO Use ConnectionManager::get_num_connections( t, syn_id),
+  // which has to be implemented. See TODO below.
+  //for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  //  num_connections += prototypes_[ t ][ syn_id ]->get_num_connections();
 
   connectome.reserve( num_connections );
 
@@ -508,7 +463,7 @@ ConnectionManager::connect( Node& s,
 {
   // see comment above for explanation
   ConnectorBase* conn = validate_source_entry( tid, s_gid, syn );
-  ConnectorBase* c = prototypes_[ tid ][ syn ]->add_connection( s, r, conn, syn, d, w );
+  ConnectorBase* c = kernel().model_manager.get_prototype( tid, syn )->add_connection( s, r, conn, syn, d, w );
   connections_[ tid ].set( s_gid, c );
 }
 
@@ -524,7 +479,7 @@ ConnectionManager::connect( Node& s,
 {
   // see comment above for explanation
   ConnectorBase* conn = validate_source_entry( tid, s_gid, syn );
-  ConnectorBase* c = prototypes_[ tid ][ syn ]->add_connection( s, r, conn, syn, p, d, w );
+  ConnectorBase* c = kernel().model_manager.get_prototype( tid, syn )->add_connection( s, r, conn, syn, p, d, w );
   connections_[ tid ].set( s_gid, c );
 }
 
@@ -599,7 +554,7 @@ ConnectionManager::trigger_update_weight( const long_t vt_id,
     for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
           it != connections_[ t ].nonempty_end();
           ++it )
-      ( *it )->trigger_update_weight( vt_id, t, dopa_spikes, t_trig, prototypes_[ t ] );
+      ( *it )->trigger_update_weight( vt_id, t, dopa_spikes, t_trig, kernel().model_manager.get_prototypes( t ) );
 }
 
 void
@@ -607,18 +562,28 @@ ConnectionManager::send( thread t, index sgid, Event& e )
 {
   if ( sgid < connections_[ t ].size() ) // probably test only fails, if there are no connections
     if ( connections_[ t ].get( sgid ) != 0 ) // only send, if connections exist
-      connections_[ t ].get( sgid )->send( e, t, prototypes_[ t ] );
+      connections_[ t ].get( sgid )->send( e, t, kernel().model_manager.get_prototypes( t ) );
 }
 
 size_t
 ConnectionManager::get_num_connections() const
 {
   num_connections_ = 0;
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    for ( std::vector< ConnectorModel* >::const_iterator i = prototypes_[ t ].begin();
-          i != prototypes_[ t ].end();
-          ++i )
-      num_connections_ += ( *i )->get_num_connections();
+
+// TODO is not moved to ModelManager as this function should be part
+// of the ConnectionManager. The iteration of 'prototypes' needs to be
+// replaced by an iteration of a new 2-dim (thread, syn_id)
+// datastructure to store the number of connections in the
+// ConnectionManager itself. The variable num_connections of
+// ConnectorModel needs to be removed and its increment in
+// connector_model_impl.h:431 needs to be replaced by a function call
+// to ConnectionManager::increment_num_connections(syn_id).
+//
+//  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+//    for ( std::vector< ConnectorModel* >::const_iterator i = prototypes_[ t ].begin();
+//          i != prototypes_[ t ].end();
+//          ++i )
+//      num_connections_ += ( *i )->get_num_connections();
 
   return num_connections_;
 }

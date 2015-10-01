@@ -412,43 +412,10 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const Name modelname = getValue< Name >( i->OStack.pick( 1 ) );
-  DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  const Name name = getValue< Name >( i->OStack.pick( 1 ) );
+  DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  const Token nodemodel = Network::get_network().get_modeldict().lookup( modelname );
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( modelname );
-
-  dict->clear_access_flags(); // set properties with access control
-
-  if ( !nodemodel.empty() )
-  {
-    const index model_id = static_cast< index >( nodemodel );
-    Network::get_network().get_model( model_id )->set_status( dict );
-    Network::get_network().set_model_defaults_modified();
-  }
-  else if ( !synmodel.empty() )
-  {
-    const index synapse_id = static_cast< index >( synmodel );
-    Network::get_network().set_connector_defaults( synapse_id, dict );
-    Network::get_network().set_model_defaults_modified();
-  }
-  else
-    throw UnknownModelName( modelname.toString() );
-
-
-  std::string missed;
-  if ( !dict->all_accessed( missed ) )
-  {
-
-    if ( Network::get_network().dict_miss_is_error() )
-    {
-
-      throw UnaccessedDictionaryEntry( missed );
-    }
-    else
-      LOG( M_WARNING, "SetDefaults", ( "Unread dictionary entries: " + missed ).c_str() );
-  }
-
+  kernel().model_manager.set_model_defaults(name, params);
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -584,43 +551,11 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 3 );
 
   // fetch existing model name from stack
-  const Name oldmodname = getValue< Name >( i->OStack.pick( 2 ) );
-  const std::string newmodname = getValue< std::string >( i->OStack.pick( 1 ) );
-  DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  const Name old_name = getValue< Name >( i->OStack.pick( 2 ) );
+  const Name new_name = getValue< Name >( i->OStack.pick( 1 ) );
+  DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  const Dictionary& modeldict = Network::get_network().get_modeldict();
-  const Dictionary& synapsedict = Network::get_network().get_synapsedict();
-
-  if ( modeldict.known( newmodname ) || synapsedict.known( newmodname ) )
-    throw NewModelNameExists( newmodname );
-
-  dict->clear_access_flags(); // set properties with access control
-  const Token oldnodemodel = modeldict.lookup( oldmodname );
-  const Token oldsynmodel = synapsedict.lookup( oldmodname );
-
-  if ( !oldnodemodel.empty() )
-  {
-    const index old_id = static_cast< index >( oldnodemodel );
-    const index new_id = Network::get_network().copy_model( old_id, newmodname );
-    Network::get_network().get_model( new_id )->set_status( dict );
-  }
-  else if ( !oldsynmodel.empty() )
-  {
-    const index old_id = static_cast< index >( oldsynmodel );
-    const index new_id = Network::get_network().copy_synapse_prototype( old_id, newmodname );
-    Network::get_network().set_connector_defaults( new_id, dict );
-  }
-  else
-    throw UnknownModelName( oldmodname );
-
-  std::string missed;
-  if ( !dict->all_accessed( missed ) )
-  {
-    if ( Network::get_network().dict_miss_is_error() )
-      throw UnaccessedDictionaryEntry( missed );
-    else
-      LOG( M_WARNING, "CopyModel", ( "Unread dictionary entries: " + missed ).c_str() );
-  }
+  kernel().model_manager.copy_model(old_name, new_name, params);
 
   i->OStack.pop( 3 );
   i->EStack.pop();

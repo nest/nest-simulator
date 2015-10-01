@@ -23,14 +23,16 @@
 #ifndef MODEL_MANAGER_H
 #define MODEL_MANAGER_H
 
-#include "dict.h"
-#include "nest_names.h"
+#include "kernel_manager.h"
 
 namespace nest
 {
 class ModelManager:ManagerInterface
 {
 public:
+  ModelManager();
+  ~ModelManager();
+
   /**
    *
    */
@@ -40,6 +42,18 @@ public:
    *
    */
   void reset();
+
+
+  /**
+   * Resize the structures for the Connector objects if necessary.
+   * This function should be called after number of threads, min_delay, max_delay,
+   * and time representation have been changed in the scheduler.
+   * The TimeConverter is used to convert times from the old to the new representation.
+   * It is also forwarding the calibration
+   * request to all ConnectorModel objects.
+   */
+  void calibrate( const TimeConverter& );
+
 
   /**
    *
@@ -60,6 +74,12 @@ public:
    *
    */
   Model* get_subnet_model();
+
+  /**
+   * Return pointer to protoype for given synapse id.
+   * @throws UnknownSynapseType
+   */
+  const ConnectorModel& get_synapse_prototype( synindex syn_id, thread t = 0 ) const;
 
   /**
    * Register a node-model prototype.
@@ -93,17 +113,27 @@ public:
    */
   template < class ModelT >
   index
-  register_preconf_node_model( const Name& name, DictionaryDatum& conf, bool private_model = false )
+    register_preconf_node_model( const Name& name, DictionaryDatum& conf, bool private_model = false );
 
   /**
    * Copy an existing model and register it as a new model.
    * This function allows users to create their own, cloned models.
-   * @param old_id ID of existing model.
+   * @param old_name name of existing model.
    * @param new_name name of new model.
+   * @param params default parameters of new model. 
    * @return model ID of new Model object.
-   * @see copy_synapse_prototype()
+   * @see copy_node_model_, copy_synapse_model_
    */
-  index copy_model( index old_id, Name new_name );
+  index copy_model( Name old_name, Name new_name, DictionaryDatum params );
+
+  /**
+   * Set the default parameters of a model.
+   * @param name of model.
+   * @param params default parameters to be set. 
+   * @see set_node_defaults_, set_synapse_defaults_
+   */
+  void
+  set_model_defaults( Name name, DictionaryDatum params )
 
   /**
    * Register a synapse type.
@@ -114,7 +144,7 @@ public:
 
   /**
    * Copy an existing synapse type.
-   * @see copy_model(), ConnectionManager::copy_synapse_prototype()
+   * @see copy_model(), ModelManager::copy_synapse_prototype()
    * @param old_id ID of synapse model to copy.
    * @param new_name name of new synapse model.
    * @return ID of new synapse model.
@@ -142,6 +172,17 @@ public:
   bool is_model_in_use( index i );
 
   /**
+   * Checks, whether connections of the given type were created
+   */
+  bool synapse_prototype_in_use( synindex syn_id );
+
+  /**
+   * Asserts validity of synapse index, otherwise throws exception.
+   * @throws UnknownSynapseType
+   */
+  void assert_valid_syn_id( synindex syn_id, thread t = 0 ) const;
+
+  /**
    * @return Reference to the model dictionary
    */
   const DictionaryDatum& get_modeldict();
@@ -156,12 +197,19 @@ public:
    */
   bool has_user_models() const;
 
-  bool is_model_defaults_modified() const;
-  void set_model_defaults_modified();
+  bool has_user_prototypes() const;
+
+  bool are_model_defaults_modified() const;
+
+  const std::vector< ConnectorModel* >& get_prototypes( const thread t ) const;
+
+  const ConnectorModel& get_prototype( const thread t, const synindex syn_id ) const;
+
+  size_t get_num_prototypes( const thread t ) const;
 
 private:
   /**
-   * The list of clean models. The first component of the pair is a
+   * The list of clean node models. The first component of the pair is a
    * pointer to the actual Model, the second is a flag indicating if
    * the model is private. Private models are not entered into the
    * modeldict.
@@ -170,8 +218,21 @@ private:
 
   std::vector< Model* > models_;  //!< List of available models
 
-  std::vector< std::vector< Node* > >
-    proxy_nodes_; //!< Placeholders for remote nodes, one per thread
+
+  /**
+   * The list of clean synapse models. The first component of the pair is a
+   * pointer to the actual Model, the second is a flag indicating if
+   * the model is private. Private models are not entered into the
+   * modeldict.
+   */
+  std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
+  std::vector< std::vector< ConnectorModel* > > prototypes_; //!< The list of available synapse
+                                                             //!< prototypes: first dimension one
+                                                             //!< entry per thread, second dimension
+                                                             //!< for each synapse type
+
+  Dictionary* synapsedict_; //!< The synapsedict (owned by the network)
+
 
   /* BeginDocumentation
      Name: modeldict - dictionary containing all devices and models of NEST
@@ -191,14 +252,60 @@ private:
   */
   DictionaryDatum* synapsedict_;  //!< DictionaryDatum of all synapse models
 
+
+  std::vector< std::vector< Node* > >
+    proxy_nodes_; //!< Placeholders for remote nodes, one per thread
+
+
   bool model_defaults_modified_;  //!< True if any model defaults have been modified
 
   /**  */
   void clear_models_( bool called_from_destructor = false );
 
   /**  */
+  void clear_prototypes_();
+
+  /**  */
   index
   register_node_model_( const Model* model, bool private_model = false );
+
+  /**
+   * Copy an existing node model and register it as a new model.
+   * @param old_id ID of existing model.
+   * @param new_name name of new model.
+   * @return model ID of new Model object.
+   * @see copy_model(), copy_synapse_model_()
+   */
+  index
+  copy_node_model_( index old_id, Name new_name );
+
+  /**
+   * Copy an existing synapse model and register it as a new model.
+   * @param old_id ID of existing model.
+   * @param new_name name of new model.
+   * @return model ID of new Model object.
+   * @see copy_model(), copy_node_model_()
+   */
+  index
+  copy_synapse_model_( index old_id, Name new_name );
+
+  /**
+   * Set the default parameters of a model.
+   * @param model_id of model.
+   * @param params default parameters to be set. 
+   * @see set_model_defaults, set_synapse_defaults_
+   */
+  void
+  set_node_defaults_(index model_id, const DictionaryDatum& params )
+
+  /**
+   * Set the default parameters of a model.
+   * @param name of model.
+   * @param params default parameters to be set. 
+   * @see set_model_defaults, set_node_defaults_
+   */
+  void
+  set_synapse_defaults_( index model_id, const DictionaryDatum& params )
 };
 
 inline
@@ -287,15 +394,9 @@ Model* ModelManager::get_model( index m ) const
 }
 
 inline
-bool ModelManager::is_model_defaults_modified() const
+bool ModelManager::are_model_defaults_modified() const
 {
   return model_defaults_modified_;
-}
-
-inline
-void ModelManager::set_model_defaults_modified()
-{
-  model_defaults_modified_ = true;
 }
 
 bool
@@ -324,6 +425,26 @@ ModelManager::has_user_models() const
   return models_.size() > pristine_models_.size();
 }
 
+inline const ConnectorModel&
+ModelManager::get_synapse_prototype( synindex syn_id, thread t ) const
+{
+  assert_valid_syn_id( syn_id );
+  return *( prototypes_[ t ][ syn_id ] );
 }
+
+inline void
+ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
+{
+  if ( syn_id >= prototypes_[ t ].size() || prototypes_[ t ][ syn_id ] == 0 )
+    throw UnknownSynapseType( syn_id );
+}
+
+inline bool
+ModelManager::has_user_prototypes() const
+{
+  return prototypes_[ 0 ].size() > pristine_prototypes_.size();
+}
+
+} // namespace nest
 
 #endif /* MODEL_MANAGER_H */

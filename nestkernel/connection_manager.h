@@ -61,11 +61,6 @@ public:
   void reset();
 
   /**
-   * Checks, whether connections of the given type were created
-   */
-  bool synapse_prototype_in_use( synindex syn_id );
-
-  /**
    * Add ConnectionManager specific stuff to the root status dictionary
    */
   void get_status( DictionaryDatum& d ) const;
@@ -92,8 +87,6 @@ public:
     TokenArray const* source,
     TokenArray const* target,
     size_t syn_id ) const;
-
-  bool has_user_prototypes() const;
 
   bool get_user_set_delay_extrema() const;
 
@@ -149,24 +142,7 @@ public:
 
   void send( thread t, index sgid, Event& e );
 
-  /**
-   * Resize the structures for the Connector objects if necessary.
-   * This function should be called after number of threads, min_delay, max_delay,
-   * and time representation have been changed in the scheduler.
-   * The TimeConverter is used to convert times from the old to the new representation.
-   * It is also forwarding the calibration
-   * request to all ConnectorModel objects.
-   */
-  void calibrate( const TimeConverter& );
-
 private:
-  std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
-  std::vector< std::vector< ConnectorModel* > > prototypes_; //!< The list of available synapse
-                                                             //!< prototypes: first dimension one
-                                                             //!< entry per thread, second dimension
-                                                             //!< for each synapse type
-
-  Dictionary* synapsedict_; //!< The synapsedict (owned by the network)
 
   /**
    * A 3-dim structure to hold the Connector objects which in turn hold the connection
@@ -182,43 +158,10 @@ private:
 
   void init_();
   void delete_connections_();
-  void clear_prototypes_();
 
   ConnectorBase* validate_source_entry( thread tid, index s_gid, synindex syn_id );
 
-  /**
-   * Return pointer to protoype for given synapse id.
-   * @throws UnknownSynapseType
-   */
-  const ConnectorModel& get_synapse_prototype( synindex syn_id, thread t = 0 ) const;
-
-  /**
-   * Asserts validity of synapse index, otherwise throws exception.
-   * @throws UnknownSynapseType
-   */
-  void assert_valid_syn_id( synindex syn_id, thread t = 0 ) const;
 };
-
-inline const ConnectorModel&
-ConnectionManager::get_synapse_prototype( synindex syn_id, thread t ) const
-{
-  assert_valid_syn_id( syn_id );
-  return *( prototypes_[ t ][ syn_id ] );
-}
-
-inline void
-ConnectionManager::assert_valid_syn_id( synindex syn_id, thread t ) const
-{
-  if ( syn_id >= prototypes_[ t ].size() || prototypes_[ t ][ syn_id ] == 0 )
-    throw UnknownSynapseType( syn_id );
-}
-
-inline bool
-ConnectionManager::has_user_prototypes() const
-{
-  return prototypes_[ 0 ].size() > pristine_prototypes_.size();
-}
-
 
 } // namespace
 

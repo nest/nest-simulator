@@ -39,6 +39,8 @@
 #include <limits>
 #include <algorithm>
 
+#include "kernel_manager.h"
+
 namespace nest
 {
 /* ----------------------------------------------------------------
@@ -408,7 +410,7 @@ nest::pp_pop_psc_delta::update( Time const& origin, const long_t from, const lon
     {
       SpikeEvent se;
       se.set_multiplicity( S_.n_spikes_past_[ S_.p_n_spikes_past_ ] );
-      Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
   }
 }

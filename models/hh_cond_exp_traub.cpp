@@ -44,6 +44,8 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_sf_exp.h>
 
+#include "kernel_manager.h"
+
 nest::RecordablesMap< nest::hh_cond_exp_traub > nest::hh_cond_exp_traub::recordablesMap_;
 
 namespace nest
@@ -398,7 +400,7 @@ nest::hh_cond_exp_traub::update( Time const& origin, const long_t from, const lo
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
         SpikeEvent se;
-        Network::get_network().send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
 

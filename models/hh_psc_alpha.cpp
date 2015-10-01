@@ -34,11 +34,13 @@
 #include "numerics.h"
 #include <limits>
 #include "universal_data_logger_impl.h"
-#include "network_impl.h"
+#include "event_delivery_manager_impl.h"
 
 #include <iomanip>
 #include <iostream>
 #include <cstdio>
+
+#include "kernel_manager.h"
 
 
 nest::RecordablesMap< nest::hh_psc_alpha > nest::hh_psc_alpha::recordablesMap_;
@@ -415,7 +417,7 @@ nest::hh_psc_alpha::update( Time const& origin, const long_t from, const long_t 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // log state data

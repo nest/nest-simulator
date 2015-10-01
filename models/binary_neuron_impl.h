@@ -32,10 +32,11 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
-#include "network_impl.h"
+#include "event_delivery_manager_impl.h"
 
 #include <limits>
 
+#include "kernel_manager.h"
 
 namespace nest
 {
@@ -207,7 +208,7 @@ binary_neuron< TGainfunction >::update( Time const& origin, const long_t from, c
         // use multiplicity 2 to signalize transition to 1 state
         // use multiplicity 1 to signalize transition to 0 state
         se.set_multiplicity( new_y ? 2 : 1 );
-        Network::get_network().send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
         S_.y_ = new_y;
       }
 

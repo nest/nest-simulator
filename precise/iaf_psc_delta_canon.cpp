@@ -36,6 +36,8 @@
 
 #include <limits>
 
+#include "kernel_manager.h"
+
 namespace nest
 {
 /* ----------------------------------------------------------------
@@ -448,7 +450,7 @@ nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
   // send spike
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  Network::get_network().send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 
   return;
 }
@@ -471,7 +473,7 @@ nest::iaf_psc_delta_canon::emit_instant_spike_( Time const& origin,
   // send spike
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  Network::get_network().send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 
   return;
 }

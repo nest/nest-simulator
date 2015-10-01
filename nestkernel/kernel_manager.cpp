@@ -58,7 +58,9 @@ nest::KernelManager::init()
   logging_manager.init();
   vp_manager.init();
   io_manager.init();
+  event_delivery_manager.init();
   simulation_manager.init();
+  modelrange_manager.init();
 
   initialized_ = true;
 }
@@ -71,9 +73,9 @@ nest::KernelManager::reset()
   logging_manager.reset();
   vp_manager.reset();
   io_manager.reset();
+  event_delivery_manager.reset();
   simulation_manager.reset();
-
-  init();
+  modelrange_manager.reset();
 }
 
 void
@@ -82,7 +84,9 @@ nest::KernelManager::set_status( const DictionaryDatum& dict )
   logging_manager.set_status( dict );
   vp_manager.set_status( dict );
   io_manager.set_status( dict );
+  event_delivery_manager.set_status( dict );
   simulation_manager.set_status( dict );
+  modelrange_manager.set_status( dict );
 }
 
 void
@@ -91,5 +95,7 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
   logging_manager.get_status( dict );
   vp_manager.get_status( dict );
   io_manager.get_status( dict );
+  event_delivery_manager.get_status( dict );
   simulation_manager.get_status( dict );
+  modelrange_manager.get_status( dict );
 }

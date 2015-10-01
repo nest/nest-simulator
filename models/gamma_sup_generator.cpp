@@ -29,7 +29,9 @@
 #include "datum.h"
 #include <algorithm>
 #include <limits>
-#include "network_impl.h"
+#include "event_delivery_manager_impl.h"
+
+#include "kernel_manager.h"
 
 
 /* ----------------------------------------------------------------
@@ -230,7 +232,7 @@ nest::gamma_sup_generator::update( Time const& T, const long_t from, const long_
       continue; // no spike at this lag
 
     DSSpikeEvent se;
-    Network::get_network().send( *this, se, lag );
+    kernel().event_delivery_manager.send( *this, se, lag );
   }
 }
 

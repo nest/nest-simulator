@@ -34,6 +34,7 @@
 #include "ntree.h"
 #include "connection_creator.h"
 #include "selector.h"
+#include "kernel_manager.h"
 
 namespace nest
 {

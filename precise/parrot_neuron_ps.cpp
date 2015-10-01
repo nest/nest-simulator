@@ -32,6 +32,8 @@
 
 #include <limits>
 
+#include "kernel_manager.h"
+
 namespace nest
 {
 
@@ -72,7 +74,7 @@ parrot_neuron_ps::update( Time const& origin, long_t const from, long_t const to
       // send spike
       SpikeEvent se;
       se.set_offset( ev_offset );
-      nest::Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
   }
 }

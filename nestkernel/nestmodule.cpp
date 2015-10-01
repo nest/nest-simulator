@@ -46,6 +46,7 @@
 #include "genericmodel.h"
 #include "conn_builder.h"
 
+#include "logging.h"
 #include "kernel_manager.h"
 
 #ifdef _OPENMP
@@ -470,7 +471,6 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
   i->EStack.pop();
 }
-
 
 /* BeginDocumentation
    Name: CopyModel - copy a model to a new name, set parameters for copy, if given

@@ -103,7 +103,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       clock_ = Time::step( 0 );
       from_step_ = 0;
       slice_ = 0;
-      Network::get_network().configure_spike_buffers_(); // clear all old spikes
+      kernel().event_delivery_manager.configure_spike_buffers(); // clear all old spikes
     }
   }
 
@@ -364,7 +364,7 @@ nest::SimulationManager::prepare_simulation_()
 
   // if at the beginning of a simulation, set up spike buffers
   if ( !simulated_ )
-    Network::get_network().configure_spike_buffers_();
+    kernel().event_delivery_manager.configure_spike_buffers();
 
   Network::get_network().update_nodes_vec_();
   Network::get_network().prepare_nodes();
@@ -407,7 +407,7 @@ nest::SimulationManager::update_()
 
       if ( from_step_ == 0 ) // deliver only at beginning of slice
       {
-        Network::get_network().deliver_events_( t );
+        kernel().event_delivery_manager.deliver_events( t );
 #ifdef HAVE_MUSIC
 // advance the time of music by one step (min_delay * h) must
 // be done after deliver_events_() since it calls
@@ -462,7 +462,7 @@ nest::SimulationManager::update_()
 #pragma omp master
       {
         if ( to_step_ == Network::get_network().get_min_delay() ) // gather only at end of slice
-          Network::get_network().gather_events_();
+          kernel().event_delivery_manager.gather_events();
 
         advance_time_();
 
@@ -551,7 +551,7 @@ nest::SimulationManager::reset_network()
   }
 
   // clear global spike buffers
-  Network::get_network().clear_pending_spikes();
+  kernel().event_delivery_manager.clear_pending_spikes();
 
   // ConnectionManager doesn't support resetting dynamic synapses yet
   LOG( M_WARNING,
@@ -571,7 +571,7 @@ nest::SimulationManager::advance_time_()
   {
     clock_ += Time::step( Network::get_network().min_delay_ );
     ++slice_;
-    Network::get_network().compute_moduli_();
+    kernel().event_delivery_manager.compute_moduli();
     from_step_ = 0;
   }
   else

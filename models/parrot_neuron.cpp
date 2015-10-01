@@ -32,6 +32,9 @@
 
 
 #include <limits>
+
+#include "kernel_manager.h"
+
 namespace nest
 {
 
@@ -62,7 +65,7 @@ parrot_neuron::update( Time const& origin, const long_t from, const long_t to )
     if ( current_spikes_n > 0 )
     {
       for ( ulong_t i_spike = 0; i_spike < current_spikes_n; i_spike++ )
-        Network::get_network().send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
     }
   }

@@ -28,8 +28,11 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "kernel_manager.h"
-#include "network_impl.h"
+#include "event_delivery_manager_impl.h"
 
+
+#include "logging.h"
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -261,7 +264,7 @@ nest::noise_generator::update( Time const& origin, const long_t from, const long
     }
 
     DSCurrentEvent ce;
-    Network::get_network().send( *this, ce, offs );
+    kernel().event_delivery_manager.send( *this, ce, offs );
   }
 }
 

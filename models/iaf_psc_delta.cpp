@@ -33,6 +33,9 @@
 #include "universal_data_logger_impl.h"
 
 #include <limits>
+
+#include "kernel_manager.h"
+
 namespace nest
 {
 
@@ -294,7 +297,7 @@ nest::iaf_psc_delta::update( Time const& origin, const long_t from, const long_t
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current

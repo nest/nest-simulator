@@ -30,7 +30,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "kernel_manager.h"
-#include "network_impl.h"
+#include "event_delivery_manager_impl.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -157,6 +157,6 @@ nest::ac_generator::update( Time const& origin, const long_t from, const long_t 
       S_.y_0_ = V_.A_00_ * y_0 + V_.A_01_ * S_.y_1_;
       S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
       ce.set_current( S_.y_1_ + P_.offset_ );
-      Network::get_network().send( *this, ce, lag );
+      kernel().event_delivery_manager.send( *this, ce, lag );
     }
 }

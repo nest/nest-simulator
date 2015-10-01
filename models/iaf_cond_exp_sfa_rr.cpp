@@ -39,6 +39,8 @@
 #include <iostream>
 #include <cstdio>
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -408,7 +410,7 @@ nest::iaf_cond_exp_sfa_rr::update( Time const& origin, const long_t from, const 
       S_.y_[ State_::G_RR ] += P_.q_rr;
 
       SpikeEvent se;
-      Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current

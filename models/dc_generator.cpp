@@ -26,7 +26,9 @@
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictutils.h"
-#include "network_impl.h"
+#include "event_delivery_manager_impl.h"
+
+#include "kernel_manager.h"
 
 
 /* ----------------------------------------------------------------
@@ -114,5 +116,5 @@ nest::dc_generator::update( Time const& origin, const long_t from, const long_t 
 
   for ( long_t offs = from; offs < to; ++offs )
     if ( device_.is_active( Time::step( start + offs ) ) )
-      Network::get_network().send( *this, ce, offs );
+      kernel().event_delivery_manager.send( *this, ce, offs );
 }

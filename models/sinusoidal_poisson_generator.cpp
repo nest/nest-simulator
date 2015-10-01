@@ -30,10 +30,12 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
-#include "network_impl.h"
+#include "event_delivery_manager_impl.h"
 
 #include <cmath>
 #include <limits>
+
+#include "kernel_manager.h"
 
 namespace nest
 {
@@ -254,7 +256,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
       if ( P_.individual_spike_trains_ )
       {
         DSSpikeEvent se;
-        Network::get_network().send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
       else
       {
@@ -262,7 +264,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
         long_t n_spikes = V_.poisson_dev_.ldev( rng );
         SpikeEvent se;
         se.set_multiplicity( n_spikes );
-        Network::get_network().send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
   }

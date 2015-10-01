@@ -30,9 +30,11 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 #include "propagator_stability.h"
-#include "network_impl.h"
+#include "event_delivery_manager_impl.h"
 
 #include <limits>
+
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -302,7 +304,7 @@ nest::iaf_psc_exp::update( const Time& origin, const long_t from, const long_t t
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current

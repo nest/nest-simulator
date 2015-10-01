@@ -31,53 +31,6 @@
 namespace nest
 {
 
-template < class EventT >
-inline
-void
-Network::send( Node& source, EventT& e, const long_t lag )
-{
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
-  e.set_sender( source );
-  thread t = source.get_thread();
-  index gid = source.get_gid();
-
-  assert( !source.has_proxies() );
-  connection_manager_.send( t, gid, e );
-}
-
-template <>
-inline
-void
-Network::send< SpikeEvent >( Node& source, SpikeEvent& e, const long_t lag )
-{
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
-  e.set_sender( source );
-  thread t = source.get_thread();
-
-  if ( source.has_proxies() )
-  {
-    if ( source.is_off_grid() )
-      send_offgrid_remote( t, e, lag );
-    else
-      send_remote( t, e, lag );
-  }
-  else
-    send_local( t, source, e );
-}
-
-template <>
-inline
-void
-Network::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long_t lag )
-{
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
-  e.set_sender( source );
-  thread t = source.get_thread();
-
-  assert( !source.has_proxies() );
-  send_local( t, source, e );
-}
-
 template < typename ConnBuilder >
 void
 Network::register_conn_builder( const std::string& name )

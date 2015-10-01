@@ -245,17 +245,6 @@ public:
   Model* get_model_of_gid( index );
 
   /**
-   * Return the Model ID for a given GID.
-   */
-  index get_model_id_of_gid( index );
-
-  /**
-   * Return the contiguous range of ids of nodes with the same model
-   * than the node with the given GID.
-   */
-  const modelrange& get_contiguous_gid_range( index gid ) const;
-
-  /**
    * Add a number of nodes to the network.
    * This function creates n Node objects of Model m and adds them
    * to the Network at the current position.
@@ -631,13 +620,6 @@ public:
    * @ingroup net_access
    */
   const SiblingContainer* get_thread_siblings( index n ) const;
-
-  /**
-   * Check, if there are instances of a given model.
-   * @param i index of the model to check for
-   * @return true, if model is instantiated at least once.
-   */
-  bool model_in_use( index i );
 
   /**
    * return current communication style.
@@ -1480,22 +1462,7 @@ Network::get_model( index m ) const
 inline Model*
 Network::get_model_of_gid( index gid )
 {
-  return models_[ get_model_id_of_gid( gid ) ];
-}
-
-inline index
-Network::get_model_id_of_gid( index gid )
-{
-  if ( not kernel().modelrange_manager.is_in_range( gid ) )
-    throw UnknownNode( gid );
-
-  return kernel().modelrange_manager.get_model_id( gid );
-}
-
-inline const modelrange&
-Network::get_contiguous_gid_range( index gid ) const
-{
-  return kernel().modelrange_manager.get_range( gid );
+  return models_[ kernel().modelrange_manager.get_model_id( gid ) ];
 }
 
 inline bool

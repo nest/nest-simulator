@@ -111,8 +111,18 @@ nest::ModelRangeManager::model_in_use( index i ) const
   return found;
 }
 
+index
+nest::ModelRangeManager::get_model_id( index gid )
+{
+  if ( not is_in_range( gid ) )
+    throw UnknownNode( gid );
+
+  return get_model_id( gid );
+}
+
+
 const modelrange&
-nest::ModelRangeManager::get_range( index gid ) const
+nest::ModelRangeManager::get_contiguous_gid_range( index gid ) const
 {
   if ( !is_in_range( gid ) )
     throw UnknownNode( gid );

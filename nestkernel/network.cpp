@@ -772,12 +772,6 @@ Network::get_thread_siblings( index n ) const
   return siblings;
 }
 
-bool
-Network::model_in_use( index i )
-{
-  return kernel().modelrange_manager.model_in_use( i );
-}
-
 void
 Network::simulate( Time const& t )
 {

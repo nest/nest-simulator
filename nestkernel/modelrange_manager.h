@@ -50,17 +50,17 @@ public:
   }
 
   /**
-   * Assign a range of gids for the given model
+   * Assign a range of GIDs for the given model
    */
   void add_range( index model, index first_gid, index last_gid );
 
   /**
-   * Check whether a gid is with the range of assigned gids
+   * Check whether a GID is with the range of assigned gids
    */
   bool is_in_range( index gid ) const;
 
   /**
-   * Get the ID of the model to which this gid is assigned
+   * Get the ID of the model to which this GID is assigned
    */
   index get_model_id( index gid ) const;
 
@@ -70,9 +70,16 @@ public:
   bool model_in_use( index i ) const;
 
   /**
-   * 
+   * Return the Model ID for a given GID.
    */
-  const modelrange& get_range( index gid ) const;
+  index get_model_id( index gid);
+
+  /**
+   * Return the contiguous range of IDs of nodes assigned to the same model
+   * as the node with the given GID.
+   */
+  const modelrange& get_contiguous_gid_range( index gid ) const;
+
 
 private:
   std::vector< modelrange > modelranges_;
@@ -86,5 +93,6 @@ nest::ModelRangeManager::is_in_range( index gid ) const
 {
   return ( ( gid <= last_gid_ ) && ( gid >= first_gid_ ) );
 }
+
 
 #endif

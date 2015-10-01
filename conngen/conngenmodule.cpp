@@ -34,12 +34,14 @@
 #include "stringdatum.h"
 #include "lockptrdatum_impl.h"
 
-template class lockPTRDatum< ConnectionGenerator,
-  &nest::ConnectionGeneratorModule::ConnectionGeneratorType >;
+template class lockPTRDatum< ConnectionGenerator, &nest::ConnectionGeneratorType >;
 
 namespace nest
 {
-SLIType ConnectionGeneratorModule::ConnectionGeneratorType;
+
+ConnectionGeneratorModule::ConnectionGeneratorModule()
+{
+}
 
 ConnectionGeneratorModule::~ConnectionGeneratorModule()
 {

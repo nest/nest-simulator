@@ -17,6 +17,7 @@ libconngenmodule_la_SOURCES= \
 		conngenmodule.cpp \
 		cg_connect.h \
 		cg_connect.cpp \
+		conngendatum.h conngendatum.cpp \
 		conngen.h conngen.cpp
 
 # do not change anything below this line ------------------------------

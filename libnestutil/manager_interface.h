@@ -38,9 +38,11 @@ public:
   ManagerInterface()
   {
   }
+
   ~ManagerInterface()
   {
   }
+
   virtual void init() = 0;
   virtual void reset() = 0;
 

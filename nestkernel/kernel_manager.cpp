@@ -64,7 +64,7 @@ nest::KernelManager::reset()
 {
   logging_manager.reset();
   vp_manager.reset();
-  io_manager.init();
+  io_manager.reset();
 }
 
 void

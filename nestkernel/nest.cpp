@@ -256,7 +256,8 @@ CopyModel( const Name& oldmodname, const Name& newmodname, const DictionaryDatum
   else if ( !oldsynmodel.empty() )
   {
     const index old_id = static_cast< index >( oldsynmodel );
-    const index new_id = Network::get_network().copy_synapse_prototype( old_id, newmodname.toString() );
+    const index new_id =
+      Network::get_network().copy_synapse_prototype( old_id, newmodname.toString() );
     Network::get_network().set_connector_defaults( new_id, dict );
   }
   else

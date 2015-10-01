@@ -80,9 +80,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else
   {
-    LOG( M_ERROR,
-      "Connect",
-      "Either two or no parameters in the Connection Set expected." );
+    LOG( M_ERROR, "Connect", "Either two or no parameters in the Connection Set expected." );
     throw DimensionMismatch();
   }
 }
@@ -140,9 +138,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else
   {
-    LOG( M_ERROR,
-      "Connect",
-      "Either two or no parameters in the Connection Set expected." );
+    LOG( M_ERROR, "Connect", "Either two or no parameters in the Connection Set expected." );
     throw DimensionMismatch();
   }
 }

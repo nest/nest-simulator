@@ -35,7 +35,7 @@ namespace nest
 
 class LoggingEvent;
 
-class LoggingManager : ManagerInterface
+class LoggingManager : public ManagerInterface
 {
 public:
   LoggingManager();

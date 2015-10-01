@@ -615,7 +615,7 @@ index Network::add_node( index mod, long_t n ) // no_p
 }
 
 void
-Network::restore_nodes( ArrayDatum& node_list )
+Network::restore_nodes( const ArrayDatum& node_list )
 {
   Subnet* root = get_cwn();
   const index gid_offset = size() - 1;

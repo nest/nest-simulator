@@ -550,7 +550,7 @@ ConnectionManager::trigger_update_weight( const long_t vt_id,
   const vector< spikecounter >& dopa_spikes,
   const double_t t_trig )
 {
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
           it != connections_[ t ].nonempty_end();
           ++it )

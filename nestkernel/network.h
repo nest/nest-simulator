@@ -227,7 +227,7 @@ public:
    * GIDs in the status dictionaties are offset by the GID of the current
    * working node. This allows entire subnetworks to be copied.
    */
-  void restore_nodes( ArrayDatum& );
+  void restore_nodes( const ArrayDatum& );
 
   /**
    * Set the state (observable dynamic variables) of a node to model defaults.
@@ -379,7 +379,7 @@ public:
     const DictionaryDatum& );
 
   DictionaryDatum get_synapse_status( index gid, index syn, port p, thread tid );
-  void set_synapse_status( index gid, index syn, port p, thread tid, DictionaryDatum& d );
+  void set_synapse_status( index gid, index syn, port p, thread tid, const DictionaryDatum& d );
 
   ArrayDatum get_connections( DictionaryDatum dict );
 
@@ -1136,7 +1136,7 @@ Network::get_synapse_status( index gid, index syn, port p, thread tid )
 }
 
 inline void
-Network::set_synapse_status( index gid, index syn, port p, thread tid, DictionaryDatum& d )
+Network::set_synapse_status( index gid, index syn, port p, thread tid, const DictionaryDatum& d )
 {
   connection_manager_.set_synapse_status( gid, syn, p, tid, d );
 }

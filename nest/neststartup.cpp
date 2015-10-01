@@ -26,6 +26,7 @@
 
 #include <fstream>
 
+#include "nest.h"
 #include "network.h"
 #include "interpret.h"
 #include "communicator.h"
@@ -78,7 +79,7 @@ neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepa
   nest::KernelManager::create_kernel_manager();
 
   engine_only_for_logging = &engine;
-  nest::kernel().logging_manager.register_logging_client( sli_logging );
+  register_logger_client( sli_logging );
 
 #ifdef HAVE_MPI
   nest::Communicator::init( &argc, &argv );

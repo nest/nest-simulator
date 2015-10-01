@@ -1,5 +1,5 @@
 /*
- *  nest.h
+ *  conngendatum.h
  *
  *  This file is part of NEST.
  *
@@ -20,14 +20,24 @@
  *
  */
 
-#ifndef NEST_H
-#define NEST_H
+#ifndef CONNGENDATUM_H
+#define CONNGENDATUM_H
 
-namespace nest {
+#include "slitype.h"
+#include "lockptrdatum.h"
 
+#include <neurosim/connection_generator.h>
 
+typedef std::vector< ConnectionGenerator::ClosedInterval > RangeSet;
+typedef ConnectionGenerator::ClosedInterval Range;
 
-}
+namespace nest
+{
 
+extern SLIType ConnectionGeneratorType;
 
-#endif /* NEST_H */
+typedef lockPTRDatum< ConnectionGenerator, &ConnectionGeneratorType > ConnectionGeneratorDatum;
+
+} // namespace nest
+
+#endif /* CONNGENDATUM_H */

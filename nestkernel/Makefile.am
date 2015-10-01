@@ -80,9 +80,11 @@ libnest_la_SOURCES=\
 		conn_builder.h conn_builder.cpp\
 		conn_builder_factory.h\
 		music_event_handler.h music_event_handler.cpp\
+		nest.h nest.cpp\
 		kernel_manager.h kernel_manager.cpp\
 		vp_manager.h vp_manager.cpp \
-		io_manager.h io_manager.cpp
+		io_manager.h io_manager.cpp \
+		simulation_manager.h simulation_manager.cpp
 
 libnest_la_LIBADD= @LIBLTDL@ @LIBADD_DL@
 

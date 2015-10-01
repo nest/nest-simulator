@@ -26,13 +26,12 @@
 #include "vp_manager.h"
 #include "logging_manager.h"
 #include "io_manager.h"
+#include "simulation_manager.h"
 
 #include "dictdatum.h"
 
 namespace nest
 {
-
-class VPManager;
 
 class KernelManager
 {
@@ -61,6 +60,7 @@ public:
   VPManager vp_manager;
   LoggingManager logging_manager;
   IOManager io_manager;
+  SimulationManager simulation_manager;
 };
 
 KernelManager& kernel();

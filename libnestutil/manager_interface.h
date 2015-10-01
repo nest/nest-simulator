@@ -28,19 +28,32 @@
 namespace nest
 {
 
+/**
+ * Interface for kernel manager classes.
+ *
+ * This class defines the common interface for all manager classes
+ * in the NEST kernel.
+ *
+ * @note Each manager shall be instantiated only once. Therefore, copy
+ * constructor and assignment operator are declared private and not implemented.
+ *
+ * @ingroup KernelManagers
+ */
 class ManagerInterface
 {
 private:
-  ManagerInterface( ManagerInterface const& ); // Don't Implement
-  void operator=( ManagerInterface const& );   // Don't Implement
+  ManagerInterface( ManagerInterface const& ); // do not implement
+  void operator=( ManagerInterface const& );   // do not implement
 
 public:
   ManagerInterface()
   {
   }
-  ~ManagerInterface()
+
+  virtual ~ManagerInterface()
   {
   }
+
   virtual void init() = 0;
   virtual void reset() = 0;
 

@@ -23,6 +23,8 @@
 #ifndef CONNGENMODULE_H
 #define CONNGENMODULE_H
 
+#include <string>
+
 #include "slimodule.h"
 #include "conngendatum.h"
 

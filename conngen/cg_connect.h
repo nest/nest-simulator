@@ -23,8 +23,11 @@
 #ifndef CG_CONNECT_H
 #define CG_CONNECT_H
 
-#include "conngenmodule.h"
-#include "vector"
+#include <vector>
+
+#include "nest_types.h"
+#include "dictdatum.h"
+#include "conngendatum.h"
 
 namespace nest
 {

@@ -240,11 +240,6 @@ public:
   Model* get_model( index ) const;
 
   /**
-   * Return the Model for a given GID.
-   */
-  Model* get_model_of_gid( index );
-
-  /**
    * Add a number of nodes to the network.
    * This function creates n Node objects of Model m and adds them
    * to the Network at the current position.
@@ -1459,11 +1454,6 @@ Network::get_model( index m ) const
   return models_[ m ];
 }
 
-inline Model*
-Network::get_model_of_gid( index gid )
-{
-  return models_[ kernel().modelrange_manager.get_model_id( gid ) ];
-}
 
 inline bool
 Network::get_off_grid_communication() const

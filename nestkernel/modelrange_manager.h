@@ -30,6 +30,7 @@
 
 namespace nest
 {
+class Model;
 
 class ModelRangeManager : ManagerInterface
 {
@@ -65,16 +66,16 @@ public:
    * Get the ID of the model to which this GID is assigned
    */
   index get_model_id( index gid ) const;
+  
+  /**
+   * Return the Model for a given GID.
+   */
+  Model* get_model_of_gid( index );
 
   /**
    * Check whether this model ID has any gids assigned to it
    */
   bool model_in_use( index i ) const;
-
-  /**
-   * Return the Model ID for a given GID.
-   */
-  index get_model_id( index gid );
 
   /**
    * Return the contiguous range of IDs of nodes assigned to the same model

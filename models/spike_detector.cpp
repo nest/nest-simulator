@@ -31,6 +31,8 @@
 
 #include <numeric>
 
+#include "kernel_manager.h"
+
 nest::spike_detector::spike_detector()
   : Node()
   , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true ) // record time and gid
@@ -139,7 +141,7 @@ nest::spike_detector::handle( SpikeEvent& e )
     assert( e.get_multiplicity() > 0 );
 
     long_t dest_buffer;
-    if ( Network::get_network().get_model_of_gid( e.get_sender_gid() )->has_proxies() )
+    if ( kernel().modelrange_manager.get_model_of_gid( e.get_sender_gid() )->has_proxies() )
       dest_buffer = Network::get_network().read_toggle(); // events from central queue
     else
       dest_buffer = Network::get_network().write_toggle(); // locally delivered events

@@ -21,9 +21,12 @@
  */
 
 #include <assert.h>
-#include <iostream>
+
 #include "modelrange_manager.h"
 #include "exceptions.h"
+
+#include "network.h"
+#include "model.h"
 
 namespace nest
 {
@@ -69,10 +72,12 @@ ModelRangeManager::add_range( index model, index first_gid, index last_gid )
 index
 ModelRangeManager::get_model_id( index gid ) const
 {
+  if ( not is_in_range( gid ) )
+    throw UnknownNode( gid );
+
   int left = -1;
   int right = modelranges_.size();
   assert( right >= 1 );
-  assert( is_in_range( gid ) );
 
   // to ensure thread-safety, use local range_idx
   size_t range_idx = right / 2; // start in center
@@ -93,6 +98,13 @@ ModelRangeManager::get_model_id( index gid ) const
   }
   return modelranges_[ range_idx ].get_model_id();
 }
+  
+//inline 
+nest::Model*
+nest::ModelRangeManager::get_model_of_gid( index gid )
+{
+  return Network::get_network().get_model( get_model_id( gid ) );
+}
 
 bool
 ModelRangeManager::model_in_use( index i ) const
@@ -110,16 +122,6 @@ ModelRangeManager::model_in_use( index i ) const
 
   return found;
 }
-
-index
-ModelRangeManager::get_model_id( index gid )
-{
-  if ( not is_in_range( gid ) )
-    throw UnknownNode( gid );
-
-  return get_model_id( gid );
-}
-
 
 const modelrange&
 ModelRangeManager::get_contiguous_gid_range( index gid ) const

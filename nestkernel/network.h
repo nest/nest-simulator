@@ -568,6 +568,20 @@ public:
   bool get_off_grid_communication() const;
 
   /**
+   * Set properties of a Node. The specified node must exist.
+   * @throws nest::UnknownNode       Target does not exist in the network.
+   * @throws nest::UnaccessedDictionaryEntry  Non-proxy target did not read dict entry.
+   * @throws TypeMismatch            Array is not a flat & homogeneous array of integers.
+   */
+  void set_status( index, const DictionaryDatum& );
+
+  /**
+   * Get properties of a node. The specified node must exist.
+   * @throws nest::UnknownNode       Target does not exist in the network.
+   */
+  DictionaryDatum get_status( index );
+
+  /**
    * Execute a SLI command in the neuron's namespace.
    */
   int execute_sli_protected( DictionaryDatum, Name );

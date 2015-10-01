@@ -1,5 +1,5 @@
 /*
- *  nest.cpp
+ *  random.h
  *
  *  This file is part of NEST.
  *
@@ -20,4 +20,29 @@
  *
  */
 
-#include "nest.h"
+#ifndef RANDOM_H
+#define RANDOM_H
+
+#include "arraydatum.h"
+#include "dictdatum.h"
+#include "random_datums.h"
+
+namespace librandom
+{
+
+librandom::RngDatum CreateRNG( const long seed, const RngFactoryDatum& factory );
+
+librandom::RdvDatum CreateRDV( const RdvFactoryDatum& factory, const RngDatum& rng );
+
+void SetStatus( const DictionaryDatum& dict, RdvDatum& rdv );
+DictionaryDatum GetStatus( const RdvDatum& rdv );
+
+void seed( const long seed, RngDatum& rng );
+unsigned long irand( const long N, RngDatum& rng );
+double drand( RngDatum& rng );
+
+ArrayDatum RandomArray( RdvDatum& rdv, const size_t n );
+long Random( RdvDatum& rdv );
+}
+
+#endif /* RANDOM_H */

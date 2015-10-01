@@ -165,7 +165,7 @@ nest::music_event_in_proxy::handle( SpikeEvent& e )
 {
   e.set_sender( *this );
 
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     Network::get_network().send_local( t, *this, e );
 }
 

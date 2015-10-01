@@ -184,7 +184,6 @@ Network::init_()
    * initialized network.
    */
   local_nodes_.reserve( 1 );
-  node_model_ids_.add_range( 0, 0, 0 );
 
   SiblingContainer* root_container =
     static_cast< SiblingContainer* >( siblingcontainer_model->allocate( 0 ) );
@@ -290,7 +289,6 @@ Network::destruct_nodes_()
   }
 
   local_nodes_.clear();
-  node_model_ids_.clear();
 
   proxy_nodes_.clear();
   dummy_spike_sources_.clear();
@@ -473,7 +471,7 @@ index Network::add_node( index mod, long_t n ) // no_p
     LOG( M_ERROR, "Network::add:node", "No nodes were created." );
     throw KernelException( "OutOfMemory" );
   }
-  node_model_ids_.add_range( mod, min_gid, max_gid - 1 );
+  kernel().modelrange_manager.add_range( mod, min_gid, max_gid - 1 );
 
   if ( model->potential_global_receiver() and get_num_rec_processes() > 0 )
   {
@@ -738,7 +736,7 @@ Node* Network::get_node( index n, thread thr ) // no_p
   Node* node = local_nodes_.get_node_by_gid( n );
   if ( node == 0 )
   {
-    return proxy_nodes_[ thr ].at( node_model_ids_.get_model_id( n ) );
+    return proxy_nodes_[ thr ].at( kernel().modelrange_manager.get_model_id( n ) );
   }
 
   if ( node->num_thread_siblings_() == 0 )
@@ -760,12 +758,6 @@ Network::get_thread_siblings( index n ) const
   assert( siblings != 0 );
 
   return siblings;
-}
-
-bool
-Network::model_in_use( index i )
-{
-  return node_model_ids_.model_in_use( i );
 }
 
 void

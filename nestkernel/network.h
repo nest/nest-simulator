@@ -32,8 +32,8 @@
 #include "exceptions.h"
 #include "proxynode.h"
 #include "connection_manager.h"
+#include "modelrange.h"
 #include "event.h"
-#include "modelrangemanager.h"
 #include "compose.hpp"
 #include "dictdatum.h"
 #include <ostream>
@@ -236,22 +236,6 @@ public:
    * Return the Model for a given model ID.
    */
   Model* get_model( index ) const;
-
-  /**
-   * Return the Model for a given GID.
-   */
-  Model* get_model_of_gid( index );
-
-  /**
-   * Return the Model ID for a given GID.
-   */
-  index get_model_id_of_gid( index );
-
-  /**
-   * Return the contiguous range of ids of nodes with the same model
-   * than the node with the given GID.
-   */
-  const modelrange& get_contiguous_gid_range( index gid ) const;
 
   /**
    * Add a number of nodes to the network.
@@ -607,14 +591,6 @@ public:
   const SiblingContainer* get_thread_siblings( index n ) const;
 
   /**
-   * Check, if there are instances of a given model.
-   * @param i index of the model to check for
-   * @return true, if model is instantiated at least once.
-   */
-  bool model_in_use( index i );
-
-
-  /**
    * Set properties of a Node. The specified node must exist.
    * @throws nest::UnknownNode       Target does not exist in the network.
    * @throws nest::UnaccessedDictionaryEntry  Non-proxy target did not read dict entry.
@@ -828,8 +804,6 @@ private:
 
   std::vector< GenericConnBuilderFactory* >
     connbuilder_factories_; //! ConnBuilder factories, indexed by connruledict_ elements.
-
-  Modelrangemanager node_model_ids_; //!< Records the model id of each neuron in the network
 
   bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 
@@ -1181,26 +1155,6 @@ Network::get_model( index m ) const
   return models_[ m ];
 }
 
-inline Model*
-Network::get_model_of_gid( index gid )
-{
-  return models_[ get_model_id_of_gid( gid ) ];
-}
-
-inline index
-Network::get_model_id_of_gid( index gid )
-{
-  if ( not node_model_ids_.is_in_range( gid ) )
-    throw UnknownNode( gid );
-
-  return node_model_ids_.get_model_id( gid );
-}
-
-inline const modelrange&
-Network::get_contiguous_gid_range( index gid ) const
-{
-  return node_model_ids_.get_range( gid );
-}
 
 
 inline const Dictionary&

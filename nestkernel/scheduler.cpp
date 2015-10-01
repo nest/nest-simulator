@@ -46,7 +46,6 @@
 #include "random_datums.h"
 #include "gslrandomgen.h"
 
-#include "nest_timemodifier.h"
 #include "nest_timeconverter.h"
 
 #ifdef N_DEBUG
@@ -115,7 +114,7 @@ nest::Scheduler::reset()
 {
   // Reset TICS_PER_MS, MS_PER_TICS and TICS_PER_STEP to the compiled in default values.
   // See ticket #217 for details.
-  nest::TimeModifier::reset_to_defaults();
+  //nest::TimeModifier::reset_to_defaults();
 
   clock_.set_to_zero(); // ensures consistent state
   to_do_ = 0;
@@ -948,7 +947,7 @@ nest::Scheduler::set_status( DictionaryDatum const& d )
       }
       else
       {
-        nest::TimeModifier::set_time_representation( tics_per_ms, resd );
+        //nest::TimeModifier::set_time_representation( tics_per_ms, resd );
         clock_.calibrate(); // adjust to new resolution
         net_->connection_manager_.calibrate(
           time_converter ); // adjust delays in the connection system to new resolution

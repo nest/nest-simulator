@@ -42,7 +42,6 @@
 #include "sibling_container.h"
 #include "communicator_impl.h"
 
-#include "nest_timemodifier.h"
 #include "nest_timeconverter.h"
 
 #include "kernel_manager.h"

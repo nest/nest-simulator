@@ -347,10 +347,10 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
 
-  register_model< FreeLayer< 2 > >( "topology_layer_free" );
-  register_model< FreeLayer< 3 > >( "topology_layer_free_3d" );
-  register_model< GridLayer< 2 > >( "topology_layer_grid" );
-  register_model< GridLayer< 3 > >( "topology_layer_grid_3d" );
+  kernel().model_manager.register_node_model< FreeLayer< 2 > >( "topology_layer_free" );
+  kernel().model_manager.register_node_model< FreeLayer< 3 > >( "topology_layer_free_3d" );
+  kernel().model_manager.register_node_model< GridLayer< 2 > >( "topology_layer_grid" );
+  kernel().model_manager.register_node_model< GridLayer< 3 > >( "topology_layer_grid_3d" );
 
   // Register mask types
   register_mask< BallMask< 2 > >();

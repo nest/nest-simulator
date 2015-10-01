@@ -37,6 +37,7 @@
 #include "config.h"
 #include "modelsmodule.h"
 #include "network.h"
+#include "kernel_manager.h"
 #include "model.h"
 #include "genericmodel.h"
 #include <string>
@@ -158,44 +159,44 @@ ModelsModule::commandstring( void ) const
 void
 ModelsModule::init( SLIInterpreter* )
 {
-  register_model< iaf_neuron >( "iaf_neuron" );
-  register_model< iaf_chs_2007 >( "iaf_chs_2007" );
-  register_model< iaf_psc_alpha >( "iaf_psc_alpha" );
-  register_model< iaf_psc_alpha_multisynapse >( "iaf_psc_alpha_multisynapse" );
-  register_model< iaf_psc_delta >( "iaf_psc_delta" );
-  register_model< iaf_psc_exp >( "iaf_psc_exp" );
-  register_model< iaf_psc_exp_multisynapse >( "iaf_psc_exp_multisynapse" );
-  register_model< iaf_tum_2000 >( "iaf_tum_2000" );
-  register_model< amat2_psc_exp >( "amat2_psc_exp" );
-  register_model< mat2_psc_exp >( "mat2_psc_exp" );
-  register_model< parrot_neuron >( "parrot_neuron" );
-  register_model< pp_psc_delta >( "pp_psc_delta" );
-  register_model< pp_pop_psc_delta >( "pp_pop_psc_delta" );
+  kernel().model_manager.register_node_model< iaf_neuron >( "iaf_neuron" );
+  kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha_multisynapse >( "iaf_psc_alpha_multisynapse" );
+  kernel().model_manager.register_node_model< iaf_psc_delta >( "iaf_psc_delta" );
+  kernel().model_manager.register_node_model< iaf_psc_exp >( "iaf_psc_exp" );
+  kernel().model_manager.register_node_model< iaf_psc_exp_multisynapse >( "iaf_psc_exp_multisynapse" );
+  kernel().model_manager.register_node_model< iaf_tum_2000 >( "iaf_tum_2000" );
+  kernel().model_manager.register_node_model< amat2_psc_exp >( "amat2_psc_exp" );
+  kernel().model_manager.register_node_model< mat2_psc_exp >( "mat2_psc_exp" );
+  kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
+  kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
+  kernel().model_manager.register_node_model< pp_pop_psc_delta >( "pp_pop_psc_delta" );
 
-  register_model< ac_generator >( "ac_generator" );
-  register_model< dc_generator >( "dc_generator" );
-  register_model< spike_generator >( "spike_generator" );
-  register_model< poisson_generator >( "poisson_generator" );
-  register_model< pulsepacket_generator >( "pulsepacket_generator" );
-  register_model< noise_generator >( "noise_generator" );
-  register_model< step_current_generator >( "step_current_generator" );
-  register_model< mip_generator >( "mip_generator" );
-  register_model< sinusoidal_poisson_generator >( "sinusoidal_poisson_generator" );
-  register_model< ppd_sup_generator >( "ppd_sup_generator" );
-  register_model< gamma_sup_generator >( "gamma_sup_generator" );
-  register_model< sli_neuron >( "sli_neuron" );
-  register_model< ginzburg_neuron >( "ginzburg_neuron" );
-  register_model< mcculloch_pitts_neuron >( "mcculloch_pitts_neuron" );
-  register_model< izhikevich >( "izhikevich" );
-  register_model< spike_dilutor >( "spike_dilutor" );
+  kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
+  kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
+  kernel().model_manager.register_node_model< spike_generator >( "spike_generator" );
+  kernel().model_manager.register_node_model< poisson_generator >( "poisson_generator" );
+  kernel().model_manager.register_node_model< pulsepacket_generator >( "pulsepacket_generator" );
+  kernel().model_manager.register_node_model< noise_generator >( "noise_generator" );
+  kernel().model_manager.register_node_model< step_current_generator >( "step_current_generator" );
+  kernel().model_manager.register_node_model< mip_generator >( "mip_generator" );
+  kernel().model_manager.register_node_model< sinusoidal_poisson_generator >( "sinusoidal_poisson_generator" );
+  kernel().model_manager.register_node_model< ppd_sup_generator >( "ppd_sup_generator" );
+  kernel().model_manager.register_node_model< gamma_sup_generator >( "gamma_sup_generator" );
+  kernel().model_manager.register_node_model< sli_neuron >( "sli_neuron" );
+  kernel().model_manager.register_node_model< ginzburg_neuron >( "ginzburg_neuron" );
+  kernel().model_manager.register_node_model< mcculloch_pitts_neuron >( "mcculloch_pitts_neuron" );
+  kernel().model_manager.register_node_model< izhikevich >( "izhikevich" );
+  kernel().model_manager.register_node_model< spike_dilutor >( "spike_dilutor" );
 
-  register_model< spike_detector >( "spike_detector" );
-  register_model< spin_detector >( "spin_detector" );
-  register_model< Multimeter >( "multimeter" );
-  register_model< correlation_detector >( "correlation_detector" );
-  register_model< correlomatrix_detector >( "correlomatrix_detector" );
-  register_model< correlospinmatrix_detector >( "correlospinmatrix_detector" );
-  register_model< volume_transmitter >( "volume_transmitter" );
+  kernel().model_manager.register_node_model< spike_detector >( "spike_detector" );
+  kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
+  kernel().model_manager.register_node_model< Multimeter >( "multimeter" );
+  kernel().model_manager.register_node_model< correlation_detector >( "correlation_detector" );
+  kernel().model_manager.register_node_model< correlomatrix_detector >( "correlomatrix_detector" );
+  kernel().model_manager.register_node_model< correlospinmatrix_detector >( "correlospinmatrix_detector" );
+  kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
 
   // Create voltmeter as a multimeter pre-configured to record V_m.
   /*BeginDocumentation
@@ -267,34 +268,34 @@ ModelsModule::init( SLIInterpreter* )
   ArrayDatum ad;
   ad.push_back( LiteralDatum( names::V_m.toString() ) );
   vmdict[ names::record_from ] = ad;
-  register_preconf_model< Multimeter >( "voltmeter", vmdict );
+  kernel().model_manager.register_preconf_node_model< Multimeter >( "voltmeter", vmdict );
 
 #ifdef HAVE_GSL
-  register_model< iaf_chxk_2008 >( "iaf_chxk_2008" );
-  register_model< iaf_cond_alpha >( "iaf_cond_alpha" );
-  register_model< iaf_cond_exp >( "iaf_cond_exp" );
-  register_model< iaf_cond_exp_sfa_rr >( "iaf_cond_exp_sfa_rr" );
-  register_model< iaf_cond_alpha_mc >( "iaf_cond_alpha_mc" );
-  register_model< hh_psc_alpha >( "hh_psc_alpha" );
-  register_model< hh_cond_exp_traub >( "hh_cond_exp_traub" );
-  register_model< sinusoidal_gamma_generator >( "sinusoidal_gamma_generator" );
+  kernel().model_manager.register_node_model< iaf_chxk_2008 >( "iaf_chxk_2008" );
+  kernel().model_manager.register_node_model< iaf_cond_alpha >( "iaf_cond_alpha" );
+  kernel().model_manager.register_node_model< iaf_cond_exp >( "iaf_cond_exp" );
+  kernel().model_manager.register_node_model< iaf_cond_exp_sfa_rr >( "iaf_cond_exp_sfa_rr" );
+  kernel().model_manager.register_node_model< iaf_cond_alpha_mc >( "iaf_cond_alpha_mc" );
+  kernel().model_manager.register_node_model< hh_psc_alpha >( "hh_psc_alpha" );
+  kernel().model_manager.register_node_model< hh_cond_exp_traub >( "hh_cond_exp_traub" );
+  kernel().model_manager.register_node_model< sinusoidal_gamma_generator >( "sinusoidal_gamma_generator" );
 #endif
 
 #ifdef HAVE_GSL_1_11
-  register_model< aeif_cond_alpha >( "aeif_cond_alpha" );
-  register_model< aeif_cond_exp >( "aeif_cond_exp" );
-  register_model< ht_neuron >( "ht_neuron" );
+  kernel().model_manager.register_node_model< aeif_cond_alpha >( "aeif_cond_alpha" );
+  kernel().model_manager.register_node_model< aeif_cond_exp >( "aeif_cond_exp" );
+  kernel().model_manager.register_node_model< ht_neuron >( "ht_neuron" );
 #endif
   // This version of the AdEx model does not depend on GSL.
-  register_model< aeif_cond_alpha_RK5 >( "aeif_cond_alpha_RK5" );
-  register_model< aeif_cond_alpha_multisynapse >( "aeif_cond_alpha_multisynapse" );
+  kernel().model_manager.register_node_model< aeif_cond_alpha_RK5 >( "aeif_cond_alpha_RK5" );
+  kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >( "aeif_cond_alpha_multisynapse" );
 
 #ifdef HAVE_MUSIC
   //// proxies for inter-application communication using MUSIC
-  register_model< music_event_in_proxy >( "music_event_in_proxy" );
-  register_model< music_event_out_proxy >( "music_event_out_proxy" );
-  register_model< music_cont_in_proxy >( "music_cont_in_proxy" );
-  register_model< music_message_in_proxy >( "music_message_in_proxy" );
+  kernel().model_manager.register_node_model< music_event_in_proxy >( "music_event_in_proxy" );
+  kernel().model_manager.register_node_model< music_event_out_proxy >( "music_event_out_proxy" );
+  kernel().model_manager.register_node_model< music_cont_in_proxy >( "music_cont_in_proxy" );
+  kernel().model_manager.register_node_model< music_message_in_proxy >( "music_message_in_proxy" );
 #endif
 
   // register synapses

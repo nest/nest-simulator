@@ -201,9 +201,7 @@ Network::init_()
   root_container->reserve( kernel().vp_manager.get_num_threads() );
   root_container->set_model_id( -1 );
 
-  assert( !pristine_models_.empty() );
-  Model* rootmodel = pristine_models_[ 0 ].first;
-  assert( rootmodel != 0 );
+  Model* rootmodel = kernel().model_manager.get_subnet_model();
 
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
@@ -220,40 +218,6 @@ Network::init_()
   /**
     Build modeldict, list of models and list of proxy nodes from clean prototypes.
    */
-
-  // Re-create the model list from the clean prototypes
-  for ( index i = 0; i < pristine_models_.size(); ++i )
-    if ( pristine_models_[ i ].first != 0 )
-    {
-      std::string name = pristine_models_[ i ].first->get_name();
-      models_.push_back( pristine_models_[ i ].first->clone( name ) );
-      if ( !pristine_models_[ i ].second )
-        modeldict_->insert( name, i );
-    }
-
-  int proxy_model_id = get_model_id( "proxynode" );
-  assert( proxy_model_id > 0 );
-  Model* proxy_model = models_[ proxy_model_id ];
-  assert( proxy_model != 0 );
-
-  // create proxy nodes, one for each thread and model
-  // create dummy spike sources, one for each thread
-  proxy_nodes_.resize( kernel().vp_manager.get_num_threads() );
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-    for ( index i = 0; i < pristine_models_.size(); ++i )
-    {
-      if ( pristine_models_[ i ].first != 0 )
-      {
-        Node* newnode = proxy_model->allocate( t );
-        newnode->set_model_id( i );
-        proxy_nodes_[ t ].push_back( newnode );
-      }
-    }
-    Node* newnode = proxy_model->allocate( t );
-    newnode->set_model_id( proxy_model_id );
-    dummy_spike_sources_.push_back( newnode );
-  }
 
   // data_path and data_prefix can be set via environment variables
   DictionaryDatum dict( new Dictionary );
@@ -311,9 +275,6 @@ Network::destruct_nodes_()
 
   local_nodes_.clear();
   node_model_ids_.clear();
-
-  proxy_nodes_.clear();
-  dummy_spike_sources_.clear();
 }
 
 void
@@ -2389,29 +2350,6 @@ void
 Network::message( int level, const std::string& loc, const std::string& msg )
 {
   message( level, loc.c_str(), msg.c_str() );
-}
-
-index
-Network::copy_model( index old_id, std::string new_name )
-{
-  // we can assert here, as nestmodule checks this for us
-  assert( !modeldict_->known( new_name ) );
-
-  Model* new_model = get_model( old_id )->clone( new_name );
-  models_.push_back( new_model );
-  int new_id = models_.size() - 1;
-  modeldict_->insert( new_name, new_id );
-  int proxy_model_id = get_model_id( "proxynode" );
-  assert( proxy_model_id > 0 );
-  Model* proxy_model = models_[ proxy_model_id ];
-  assert( proxy_model != 0 );
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-    Node* newnode = proxy_model->allocate( t );
-    newnode->set_model_id( new_id );
-    proxy_nodes_[ t ].push_back( newnode );
-  }
-  return new_id;
 }
 
 /**

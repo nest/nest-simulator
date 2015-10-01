@@ -795,11 +795,6 @@ private:
   std::string data_prefix_; //!< Prefix for all files written by devices
   bool overwrite_files_;    //!< If true, overwrite existing data files.
 
-  std::vector< std::vector< Node* > >
-    proxy_nodes_; //!< Placeholders for remote nodes, one per thread
-  std::vector< Node* >
-    dummy_spike_sources_; //!< Placeholders for spiking remote nodes, one per thread
-
   std::vector< GenericConnBuilderFactory* >
     connbuilder_factories_; //! ConnBuilder factories, indexed by connruledict_ elements.
 

@@ -44,21 +44,56 @@ public:
   /**
    *
    */
-  void set_status( const Dictionary& );
+  void set_status( const DictionaryDatum& );
 
   /**
    *
    */
-  void get_status( Dictionary& );
+  void get_status( DictionaryDatum& );
 
   /**
-   * Register a node model.
-   * Also enters the model in modeldict, unless private_model is true.
-   * @param m Model object to be registered.
+   *
+   */
+  Node* get_proxy_nodes(const index model_id);
+
+  /**
+   *
+   */
+  Model* get_subnet_model();
+
+  /**
+   * Register a node-model prototype.
+   * This function must be called exactly once for each model class to make
+   * it known in the simulator. The natural place for a call to this function
+   * is in a *module.cpp file.
+   * @param name of the new node model.
    * @param private_model if true, don't add model to modeldict.
    * @return ID of the new model object.
+   * @see register_private_prototype_model, register_preconf_node_model, register_prototype_connection
    */
-  index register_model( Model& m, bool private_model = false );
+  template < class ModelT >
+  index
+  register_node_model( const Name& name, bool private_model = false );
+  
+  /**
+   * Register a pre-configured model prototype with the network.
+   * This function must be called exactly once for each model class to make
+   * it known to the network. The natural place for a call to this function
+   * is in a *module.cpp file.
+   *
+   * Pre-configured models are models based on the same class, as
+   * another model, but have different parameter settings; e.g.,
+   * voltmeter is a pre-configured multimeter.
+   *
+   * @param name of the new node model.
+   * @param private_model if true, don't add model to modeldict.
+   * @param dictionary to use to pre-configure model
+   * @return ID of the new model object.
+   * @see register_private_prototype_model, register_node_model, register_prototype_connection
+   */
+  template < class ModelT >
+  index
+  register_preconf_node_model( const Name& name, DictionaryDatum& conf, bool private_model = false )
 
   /**
    * Copy an existing model and register it as a new model.
@@ -96,8 +131,8 @@ public:
    */
   Model* get_model( index ) const;
 
-  Dictionary get_connector_defaults( synindex syn_id ) const;
-  void set_connector_defaults( synindex syn_id, const Dictionary& d );
+  DictionaryDatum get_connector_defaults( synindex syn_id ) const;
+  void set_connector_defaults( synindex syn_id, const DictionaryDatum& d );
 
   /**
    * Check, if there are instances of a given model.
@@ -109,12 +144,12 @@ public:
   /**
    * @return Reference to the model dictionary
    */
-  const Dictionary& get_modeldict();
+  const DictionaryDatum& get_modeldict();
 
   /**
    * @return Reference to the synapse dictionary
    */
-  const Dictionary& get_synapsedict() const;
+  const DictionaryDatum& get_synapsedict() const;
 
   /**
    * Does the network contain copies of models created using CopyModel?
@@ -135,29 +170,112 @@ private:
 
   std::vector< Model* > models_;  //!< List of available models
 
+  std::vector< std::vector< Node* > >
+    proxy_nodes_; //!< Placeholders for remote nodes, one per thread
+
   /* BeginDocumentation
      Name: modeldict - dictionary containing all devices and models of NEST
      Description:
      'modeldict info' shows the contents of the dictionary
      SeeAlso: info, Device, RecordingDevice, iaf_neuron, subnet
   */
-  Dictionary* modeldict_;    //!< Dictionary of all models
+  DictionaryDatum* modeldict_;    //!< DictionaryDatum of all models
 
   /* BeginDocumentation
-     Name: synapsedict - Dictionary containing all synapse models.
+     Name: synapsedict - DictionaryDatum containing all synapse models.
      Description:
      'synapsedict info' shows the contents of the dictionary
      FirstVersion: October 2005
      Author: Jochen Martin Eppler
      SeeAlso: info
   */
-  Dictionary* synapsedict_;  //!< Dictionary of all synapse models
+  DictionaryDatum* synapsedict_;  //!< DictionaryDatum of all synapse models
 
   bool model_defaults_modified_;  //!< True if any model defaults have been modified
 
   /**  */
   void clear_models_( bool called_from_destructor = false );
+
+  /**  */
+  index
+  register_node_model_( const Model* model, bool private_model = false );
 };
+
+inline
+Node*
+get_proxy_nodes(const index model_id)
+{
+  thread t = kernel().vm_manager.get_thread_id();
+  return proxy_nodes_[ t ][ model_id ];
+}
+
+inline
+Model*
+get_subnet_model()
+{
+  Model* subnet_model = pristine_models_[0].first;
+  assert( subnet_model != 0 );
+  return subnet_model;
+}
+
+template < class ModelT >
+index
+register_node_model( const Name& name, bool private_model = false )
+{
+  if ( !private_model && modeldict_->known( name ) )
+  {
+    throw NamingConflict("A model called '" + name + "' already exists.\n"
+        "Please choose a different name!");
+  }
+
+  Model* model = new GenericModel< ModelT >( name );
+  return register_node_model_( model, private_model );
+}
+
+template < class ModelT >
+index
+register_preconf_node_model( const Name& name, DictionaryDatum& conf, bool private_model = false )
+{
+  if ( !private_model && modeldict_->known( name ) )
+  {
+    throw NamingConflict("A model called '" + name + "' already exists.\n"
+        "Please choose a different name!");
+  }
+
+  Model* model = new GenericModel< ModelT >( name );
+  conf.clear_access_flags();
+  model->set_status( conf );
+  Name missed;
+  assert( conf.all_accessed( missed ) ); // we only get here from C++ code, no need for exception
+  return register_node_model_( model, private_model );
+}
+
+index
+register_node_model_( const Model* model, bool private_model = false )
+{
+  const index id = models_.size();
+  model->set_model_id( id );
+  model->set_type_id( id );
+
+  pristine_models_.push_back( std::pair< Model*, bool >( model, private_model ) );
+  models_.push_back( model->clone( name ) );
+  int proxy_model_id = get_model_id( "proxynode" );
+  assert( proxy_model_id > 0 );
+  Model* proxy_model = models_[ proxy_model_id ];
+  assert( proxy_model != 0 );
+
+  for ( thread t = 0; t < get_num_threads(); ++t )
+  {
+    Node* newnode = proxy_model->allocate( t );
+    newnode->set_model_id( id );
+    proxy_nodes_[ t ].push_back( newnode );
+  }
+
+  if ( !private_model )
+    modeldict_->insert( name, id );
+
+  return id;
+}
 
 inline
 Model* ModelManager::get_model( index m ) const
@@ -186,14 +304,14 @@ ModelManager::model_in_use( index i )
   return node_model_ids_.model_in_use( i );
 }
 
-inline const Dictionary&
+inline const DictionaryDatum&
 ModelManager::get_modeldict()
 {
   assert( modeldict_ != 0 );
   return *modeldict_;
 }
 
-inline const Dictionary&
+inline const DictionaryDatum&
 ModelManager::get_synapsedict() const
 {
   assert( synapsedict_ != 0 );

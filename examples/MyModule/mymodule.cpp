@@ -190,7 +190,7 @@ mynest::MyModule::init( SLIInterpreter* i )
      Give node type as template argument and the name as second argument.
      The first argument is always a reference to the network.
   */
-  nest::register_model< pif_psc_alpha >( "pif_psc_alpha" );
+  nest::kernel().model_manager.register_model< pif_psc_alpha >( "pif_psc_alpha" );
 
   /* Register a synapse type.
      Give synapse type as template argument and the name as second argument.

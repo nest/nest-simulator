@@ -102,7 +102,6 @@ Network::Network( SLIInterpreter& i )
   , root_( 0 )
   , current_( 0 )
   , dict_miss_is_error_( true )
-  , model_defaults_modified_( false )
   , initialized_( false ) // scheduler stuff
   , simulating_( false )
   , n_rec_procs_( 0 )
@@ -140,15 +139,15 @@ Network::Network( SLIInterpreter& i )
   interpreter_.def( "modeldict", new DictionaryDatum( modeldict_ ) );
 
   Model* model = new GenericModel< Subnet >( "subnet" );
-  register_basis_model( *model );
+  pristine_models_.push_back( std::pair< Model*, bool >( model, false ) );
   model->set_type_id( 0 );
 
   siblingcontainer_model = new GenericModel< SiblingContainer >( "siblingcontainer" );
-  register_basis_model( *siblingcontainer_model, true );
+  pristine_models_.push_back( std::pair< Model*, bool >( model, true ) );
   siblingcontainer_model->set_type_id( 1 );
 
   model = new GenericModel< proxynode >( "proxynode" );
-  register_basis_model( *model, true );
+  pristine_models_.push_back( std::pair< Model*, bool >( model, true ) );
   model->set_type_id( 2 );
 
   synapsedict_ = new Dictionary();
@@ -198,9 +197,7 @@ Network::init_()
   root_container->reserve( kernel().vp_manager.get_num_threads() );
   root_container->set_model_id( -1 );
 
-  assert( !pristine_models_.empty() );
-  Model* rootmodel = pristine_models_[ 0 ].first;
-  assert( rootmodel != 0 );
+  Model* rootmodel = kernel().model_manager.get_subnet_model();
 
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
@@ -213,44 +210,6 @@ Network::init_()
   }
 
   current_ = root_ = static_cast< Subnet* >( ( *root_container ).get_thread_sibling_( 0 ) );
-
-  /**
-    Build modeldict, list of models and list of proxy nodes from clean prototypes.
-   */
-
-  // Re-create the model list from the clean prototypes
-  for ( index i = 0; i < pristine_models_.size(); ++i )
-    if ( pristine_models_[ i ].first != 0 )
-    {
-      std::string name = pristine_models_[ i ].first->get_name();
-      models_.push_back( pristine_models_[ i ].first->clone( name ) );
-      if ( !pristine_models_[ i ].second )
-        modeldict_->insert( name, i );
-    }
-
-  int proxy_model_id = get_model_id( "proxynode" );
-  assert( proxy_model_id > 0 );
-  Model* proxy_model = models_[ proxy_model_id ];
-  assert( proxy_model != 0 );
-
-  // create proxy nodes, one for each thread and model
-  // create dummy spike sources, one for each thread
-  proxy_nodes_.resize( kernel().vp_manager.get_num_threads() );
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-    for ( index i = 0; i < pristine_models_.size(); ++i )
-    {
-      if ( pristine_models_[ i ].first != 0 )
-      {
-        Node* newnode = proxy_model->allocate( t );
-        newnode->set_model_id( i );
-        proxy_nodes_[ t ].push_back( newnode );
-      }
-    }
-    Node* newnode = proxy_model->allocate( t );
-    newnode->set_model_id( proxy_model_id );
-    dummy_spike_sources_.push_back( newnode );
-  }
 
 #ifdef HAVE_MUSIC
   music_in_portlist_.clear();
@@ -297,28 +256,6 @@ Network::destruct_nodes_()
 
   local_nodes_.clear();
   node_model_ids_.clear();
-
-  proxy_nodes_.clear();
-  dummy_spike_sources_.clear();
-}
-
-void
-Network::clear_models_( bool called_from_destructor )
-{
-  // no message on destructor call, may come after MPI_Finalize()
-  if ( not called_from_destructor )
-    LOG( M_INFO, "Network::clear_models", "Models will be cleared and parameters reset." );
-
-  // We delete all models, which will also delete all nodes. The
-  // built-in models will be recovered from the pristine_models_ in
-  // init_()
-  for ( vector< Model* >::iterator m = models_.begin(); m != models_.end(); ++m )
-    if ( *m != 0 )
-      delete *m;
-
-  models_.clear();
-  modeldict_->clear();
-  model_defaults_modified_ = false;
 }
 
 void
@@ -327,7 +264,8 @@ Network::reset()
   kernel().reset();
 
   destruct_nodes_();
-  clear_models_();
+
+  kernel().model_manager.reset();
 
   // We free all Node memory and set the number of threads.
   vector< std::pair< Model*, bool > >::iterator m;
@@ -431,20 +369,6 @@ Network::reset_network()
     "Synapses with internal dynamics (facilitation, STDP) are not reset.\n"
     "This will be implemented in a future version of NEST." );
 }
-
-int
-Network::get_model_id( const char name[] ) const
-{
-  const std::string model_name( name );
-  for ( int i = 0; i < ( int ) models_.size(); ++i )
-  {
-    assert( models_[ i ] != NULL );
-    if ( model_name == models_[ i ]->get_name() )
-      return i;
-  }
-  return -1;
-}
-
 
 index Network::add_node( index mod, long_t n ) // no_p
 {
@@ -772,12 +696,6 @@ Network::get_thread_siblings( index n ) const
   assert( siblings != 0 );
 
   return siblings;
-}
-
-bool
-Network::model_in_use( index i )
-{
-  return node_model_ids_.model_in_use( i );
 }
 
 void
@@ -2294,81 +2212,6 @@ Network::connect( const GIDCollection& sources,
 
   cb->connect();
   delete cb;
-}
-
-
-index
-Network::copy_model( index old_id, std::string new_name )
-{
-  // we can assert here, as nestmodule checks this for us
-  assert( !modeldict_->known( new_name ) );
-
-  Model* new_model = get_model( old_id )->clone( new_name );
-  models_.push_back( new_model );
-  int new_id = models_.size() - 1;
-  modeldict_->insert( new_name, new_id );
-  int proxy_model_id = get_model_id( "proxynode" );
-  assert( proxy_model_id > 0 );
-  Model* proxy_model = models_[ proxy_model_id ];
-  assert( proxy_model != 0 );
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-    Node* newnode = proxy_model->allocate( t );
-    newnode->set_model_id( new_id );
-    proxy_nodes_[ t ].push_back( newnode );
-  }
-  return new_id;
-}
-
-void
-Network::register_basis_model( Model& m, bool private_model )
-{
-  std::string name = m.get_name();
-
-  if ( !private_model && modeldict_->known( name ) )
-  {
-    delete &m;
-    throw NamingConflict("A model called '" + name + "' already exists. "
-        "Please choose a different name!");
-  }
-  pristine_models_.push_back( std::pair< Model*, bool >( &m, private_model ) );
-}
-
-
-index
-Network::register_model( Model& m, bool private_model )
-{
-  std::string name = m.get_name();
-
-  if ( !private_model && modeldict_->known( name ) )
-  {
-    delete &m;
-    throw NamingConflict("A model called '" + name + "' already exists.\n"
-        "Please choose a different name!");
-  }
-
-  const index id = models_.size();
-  m.set_model_id( id );
-  m.set_type_id( id );
-
-  pristine_models_.push_back( std::pair< Model*, bool >( &m, private_model ) );
-  models_.push_back( m.clone( name ) );
-  int proxy_model_id = get_model_id( "proxynode" );
-  assert( proxy_model_id > 0 );
-  Model* proxy_model = models_[ proxy_model_id ];
-  assert( proxy_model != 0 );
-
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-    Node* newnode = proxy_model->allocate( t );
-    newnode->set_model_id( id );
-    proxy_nodes_[ t ].push_back( newnode );
-  }
-
-  if ( !private_model )
-    modeldict_->insert( name, id );
-
-  return id;
 }
 
 

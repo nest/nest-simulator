@@ -400,10 +400,10 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const Name modelname = getValue< Name >( i->OStack.pick( 1 ) );
-  DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  const Name name = getValue< Name >( i->OStack.pick( 1 ) );
+  DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  set_model_defaults( modelname, dict );
+  kernel().model_manager.set_model_defaults(name, params);
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -502,11 +502,11 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 3 );
 
   // fetch existing model name from stack
-  const Name oldmodname = getValue< Name >( i->OStack.pick( 2 ) );
-  const std::string newmodname = getValue< std::string >( i->OStack.pick( 1 ) );
-  DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  const Name old_name = getValue< Name >( i->OStack.pick( 2 ) );
+  const Name new_name = getValue< Name >( i->OStack.pick( 1 ) );
+  DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  copy_model( oldmodname, newmodname, dict );
+  kernel().model_manager.copy_model(old_name, new_name, params);
 
   i->OStack.pop( 3 );
   i->EStack.pop();

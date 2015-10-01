@@ -183,61 +183,10 @@ public:
   void reset_network();
 
   /**
-   * Registers a fundamental model for use with the network.
-   * @param   m     Model object.
-   * @param   private_model  If true, model is not entered in modeldict.
-   * @return void
-   * @note The Network calls the Model object's destructor at exit.
-   * @see register_model
-   */
-  void register_basis_model( Model& m, bool private_model = false );
-
-  /**
-   * Register a built-in model for use with the network.
-   * Also enters the model in modeldict, unless private_model is true.
-   * @param   m     Model object.
-   * @param   private_model  If true, model is not entered in modeldict.
-   * @return Model ID assigned by network
-   * @note The Network calls the Model object's destructor at exit.
-   */
-  index register_model( Model& m, bool private_model = false );
-
-  /**
-   * Copy an existing model and register it as a new model.
-   * This function allows users to create their own, cloned models.
-   * @param old_id The id of the existing model.
-   * @param new_name The name of the new model.
-   * @retval Index, identifying the new Model object.
-   * @see copy_synapse_prototype()
-   */
-  index copy_model( index old_id, std::string new_name );
-
-  /**
-   * Register a synapse prototype at the connection manager.
-   */
-  synindex register_synapse_prototype( ConnectorModel* cf );
-
-  /**
-   * Copy an existing synapse type.
-   * @see copy_model(), ConnectionManager::copy_synapse_prototype()
-   */
-  int copy_synapse_prototype( index sc, std::string );
-
-  /**
    * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
    */
   template < typename ConnBuilder >
   void register_conn_builder( const std::string& name );
-
-  /**
-   * Return the model id for a given model name.
-   */
-  int get_model_id( const char[] ) const;
-
-  /**
-   * Return the Model for a given model ID.
-   */
-  Model* get_model( index ) const;
 
   /**
    * Return the Model for a given GID.
@@ -428,9 +377,6 @@ public:
     const GIDCollection&,
     const DictionaryDatum&,
     const DictionaryDatum& );
-
-  DictionaryDatum get_connector_defaults( index sc );
-  void set_connector_defaults( const index sc, const DictionaryDatum& d );
 
   DictionaryDatum get_synapse_status( index gid, index syn, port p, thread tid );
   void set_synapse_status( index gid, index syn, port p, thread tid, const DictionaryDatum& d );
@@ -633,13 +579,6 @@ public:
   const SiblingContainer* get_thread_siblings( index n ) const;
 
   /**
-   * Check, if there are instances of a given model.
-   * @param i index of the model to check for
-   * @return true, if model is instantiated at least once.
-   */
-  bool model_in_use( index i );
-
-  /**
    * return current communication style.
    * A result of true means off_grid, false means on_grid communication.
    */
@@ -665,16 +604,6 @@ public:
   int execute_sli_protected( DictionaryDatum, Name );
 
   /**
-   * Return a reference to the model dictionary.
-   */
-  const Dictionary& get_modeldict();
-
-  /**
-   * Return the synapse dictionary
-   */
-  const Dictionary& get_synapsedict() const;
-
-  /**
    * Calibrate clock after resolution change.
    */
   void calibrate_clock();
@@ -696,11 +625,6 @@ public:
    * @see write_toggle
    */
   size_t read_toggle() const;
-
-  /**
-   * Does the network contain copies of models created using CopyModel?
-   */
-  bool has_user_models() const;
 
   /**
    * Ensure that all nodes in the network have valid thread-local IDs.
@@ -790,17 +714,6 @@ public:
   void update_music_event_handlers_( Time const&, const long_t, const long_t );
 #endif
 
-  void
-  set_model_defaults_modified()
-  {
-    model_defaults_modified_ = true;
-  }
-  bool
-  model_defaults_modified() const
-  {
-    return model_defaults_modified_;
-  }
-
   Node* thread_lid_to_node( thread t, targetindex thread_local_id ) const;
 
 private:
@@ -811,7 +724,6 @@ private:
    */
   void init_();
   void destruct_nodes_();
-  void clear_models_( bool called_from_destructor = false );
 
   /**
    * Helper function to set properties on single node.
@@ -831,24 +743,6 @@ private:
   Subnet* current_; //!< Current working node (for insertion).
 
   /* BeginDocumentation
-     Name: synapsedict - Dictionary containing all synapse models.
-     Description:
-     'synapsedict info' shows the contents of the dictionary
-     FirstVersion: October 2005
-     Author: Jochen Martin Eppler
-     SeeAlso: info
-  */
-  Dictionary* synapsedict_; //!< Dictionary for synapse models.
-
-  /* BeginDocumentation
-     Name: modeldict - dictionary containing all devices and models of NEST
-     Description:
-     'modeldict info' shows the contents of the dictionary
-     SeeAlso: info, Device, RecordingDevice, iaf_neuron, subnet
-  */
-  Dictionary* modeldict_; //!< Dictionary for models.
-
-  /* BeginDocumentation
      Name: connruledict - dictionary containing all connectivity rules
      Description:
      This dictionary provides the connection rules that can be used
@@ -860,28 +754,12 @@ private:
 
   Model* siblingcontainer_model; //!< The model for the SiblingContainer class
 
-  /**
-   * The list of clean models. The first component of the pair is a
-   * pointer to the actual Model, the second is a flag indicating if
-   * the model is private. Private models are not entered into the
-   * modeldict.
-   */
-  std::vector< std::pair< Model*, bool > > pristine_models_;
-
-  std::vector< Model* > models_; //!< The list of available models
-  std::vector< std::vector< Node* > >
-    proxy_nodes_; //!< Placeholders for remote nodes, one per thread
-  std::vector< Node* >
-    dummy_spike_sources_; //!< Placeholders for spiking remote nodes, one per thread
-
   std::vector< GenericConnBuilderFactory* >
     connbuilder_factories_; //! ConnBuilder factories, indexed by connruledict_ elements.
 
   Modelrangemanager node_model_ids_; //!< Records the model id of each neuron in the network
 
   bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
-
-  bool model_defaults_modified_; //!< whether any model defaults have been modified
 
   /************ Previously Scheduler ***************/
 public:
@@ -1269,30 +1147,6 @@ Network::get_connections( DictionaryDatum params )
   return connection_manager_.get_connections( params );
 }
 
-inline void
-Network::set_connector_defaults( const index sc, const DictionaryDatum& d )
-{
-  connection_manager_.set_prototype_status( sc, d );
-}
-
-inline DictionaryDatum
-Network::get_connector_defaults( index sc )
-{
-  return connection_manager_.get_prototype_status( sc );
-}
-
-inline synindex
-Network::register_synapse_prototype( ConnectorModel* cm )
-{
-  return connection_manager_.register_synapse_prototype( cm );
-}
-
-inline int
-Network::copy_synapse_prototype( index sc, std::string name )
-{
-  return connection_manager_.copy_synapse_prototype( sc, name );
-}
-
 inline Time const&
 Network::get_slice_origin() const
 {
@@ -1504,26 +1358,6 @@ inline bool
 Network::get_off_grid_communication() const
 {
   return off_grid_spiking_;
-}
-
-inline const Dictionary&
-Network::get_modeldict()
-{
-  assert( modeldict_ != 0 );
-  return *modeldict_;
-}
-
-inline const Dictionary&
-Network::get_synapsedict() const
-{
-  assert( synapsedict_ != 0 );
-  return *synapsedict_;
-}
-
-inline bool
-Network::has_user_models() const
-{
-  return models_.size() > pristine_models_.size();
 }
 
 inline bool

@@ -74,7 +74,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     if ( not Time::resolution_is_default() )
       throw KernelException(
         "The resolution has been set: Thread/process number cannot be changed." );
-    if ( Network::get_network().model_defaults_modified() )
+    if ( kernel().model_manager.are_model_defaults_modified() )
       throw KernelException(
         "Model defaults have been modified: Thread/process number cannot be changed." );
 
@@ -112,7 +112,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     if ( not Time::resolution_is_default() )
       throw KernelException(
         "The resolution has been set: Thread/process number cannot be changed." );
-    if ( Network::get_network().model_defaults_modified() )
+    if ( kernel().model_manager.are_model_defaults_modified() )
       throw KernelException(
         "Model defaults have been modified: Thread/process number cannot be changed." );
 

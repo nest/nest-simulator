@@ -28,7 +28,7 @@
 #include <numeric>
 
 #include "config.h"
-#include "nest.h"
+#include "nest_types.h"
 #include <iostream>
 #include <unistd.h>
 #include <limits>
@@ -262,7 +262,6 @@ public:
 private:
   static int rank_;             //!< the rank of the machine
   static int num_processes_;    //!< the number of mpi-processes
-  static int n_vps_;            //!< the number of virtual processes
   static int send_buffer_size_; //!< expected size of send buffer
   static int recv_buffer_size_; //!< size of receive buffer
   static bool initialized_;     //!< whether MPI is initialized
@@ -492,7 +491,6 @@ public:
 private:
   static int rank_;             //!< the rank of the machine
   static int num_processes_;    //!< the number of mpi-processes
-  static int n_vps_;            //!< the number of virtual processes
   static int send_buffer_size_; //!< expected size of send buffer
   static int recv_buffer_size_; //!< size of receive buffer
   static bool initialized_;     //!< whether MPI is initialized
@@ -550,11 +548,6 @@ Communicator::get_initialized()
   return initialized_;
 }
 
-inline void
-Communicator::set_num_threads( thread num_threads )
-{
-  n_vps_ = num_processes_ * num_threads;
-}
 
 inline void
 Communicator::set_buffer_sizes( int send_buffer_size, int recv_buffer_size )

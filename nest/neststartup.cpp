@@ -49,12 +49,23 @@
 #include "dynamicloader.h"
 #include "filesystem.h"
 #include "kernel_manager.h"
+#include "logging.h"
+#include "logging_event.h"
 
 #include "static_modules.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+SLIInterpreter* engine_only_for_logging;
+
+void
+sli_logging( const nest::LoggingEvent& e )
+{
+  engine_only_for_logging->message(
+    static_cast< int >( e.severity ), e.function.c_str(), e.message.c_str() );
+}
 
 #ifndef _IS_PYNEST
 int
@@ -65,6 +76,9 @@ neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepa
 #endif
 {
   nest::KernelManager::create_kernel_manager();
+
+  engine_only_for_logging = &engine;
+  nest::kernel().logging_manager.register_logging_client( sli_logging );
 
 #ifdef HAVE_MPI
   nest::Communicator::init( &argc, &argv );

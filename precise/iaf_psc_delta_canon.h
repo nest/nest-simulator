@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "nest.h"
+#include "nest_types.h"
 #include "event.h"
 #include "node.h"
 #include "slice_ring_buffer.h"

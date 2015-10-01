@@ -31,6 +31,7 @@
 #include <iostream> // using cerr for error message.
 #include <iomanip>
 #include "fdstream.h"
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -205,14 +206,12 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   }
 
   if ( ( rec_change || have_record_to ) && to_file_ && to_memory_ )
-    Network::get_network().message( SLIInterpreter::M_INFO,
-      "RecordingDevice::set_status",
-      "Data will be recorded to file and to memory." );
+    LOG( M_INFO, "RecordingDevice::set_status", "Data will be recorded to file and to memory." );
 
   if ( to_accumulator_ && ( to_file_ || to_screen_ || to_memory_ || withgid_ || withweight_ ) )
   {
     to_file_ = to_screen_ = to_memory_ = withgid_ = withweight_ = false;
-    Network::get_network().message( SLIInterpreter::M_WARNING,
+    LOG( M_WARNING,
       "RecordingDevice::set_status()",
       "Accumulator mode selected. All incompatible properties "
       "(to_file, to_screen, to_memory, withgid, withweight) "
@@ -382,8 +381,7 @@ nest::RecordingDevice::calibrate()
       {
         std::string msg =
           String::compose( "Closing file '%1', opening file '%2'", P_.filename_, newname );
-        Network::get_network().message(
-          SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg );
+        LOG( M_INFO, "RecordingDevice::calibrate()", msg );
 
         B_.fs_.close(); // close old file
         P_.filename_ = newname;
@@ -395,7 +393,7 @@ nest::RecordingDevice::calibrate()
     {
       assert( !B_.fs_.is_open() );
 
-      if ( Network::get_network().overwrite_files() )
+      if ( kernel().io_manager.overwrite_files() )
       {
         if ( P_.binary_ )
           B_.fs_.open( P_.filename_.c_str(), std::ios::out | std::ios::binary );
@@ -413,8 +411,7 @@ nest::RecordingDevice::calibrate()
             "Please change data_path, data_prefix or label, or set /overwrite_files "
             "to true in the root node.",
             P_.filename_ );
-          Network::get_network().message(
-            SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+          LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
           throw IOError();
         }
         else
@@ -448,8 +445,7 @@ nest::RecordingDevice::calibrate()
         "This may be caused by too many open files in networks "
         "with many recording devices and threads.",
         P_.filename_ );
-      Network::get_network().message(
-        SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+      LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
 
       if ( B_.fs_.is_open() )
         B_.fs_.close();
@@ -476,8 +472,7 @@ nest::RecordingDevice::calibrate()
         "openeded with a buffer size of %1. Please close the "
         "file first.",
         P_.fbuffer_size_old_ );
-      Network::get_network().message(
-        SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+      LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
       throw IOError();
     }
   }
@@ -500,7 +495,7 @@ nest::RecordingDevice::finalize()
     if ( !B_.fs_.good() )
     {
       std::string msg = String::compose( "I/O error while opening file '%1'", P_.filename_ );
-      Network::get_network().message( SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg );
+      LOG( M_ERROR, "RecordingDevice::finalize()", msg );
 
       throw IOError();
     }
@@ -647,10 +642,10 @@ nest::RecordingDevice::build_filename_() const
     std::floor( std::log10( static_cast< float >( Network::get_network().size() ) ) ) + 1 );
 
   std::ostringstream basename;
-  const std::string& path = Network::get_network().get_data_path();
+  const std::string& path = kernel().io_manager.get_data_path();
   if ( !path.empty() )
     basename << path << '/';
-  basename << Network::get_network().get_data_prefix();
+  basename << kernel().io_manager.get_data_prefix();
 
 
   if ( !P_.label_.empty() )

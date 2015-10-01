@@ -25,7 +25,7 @@
 
 #include <cassert>
 
-#include "nest.h"
+#include "nest_types.h"
 #include "nest_time.h"
 #include "lockptr.h"
 #include "exceptions.h"

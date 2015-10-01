@@ -101,9 +101,6 @@ Network::Network( SLIInterpreter& i )
   , connection_manager_()
   , root_( 0 )
   , current_( 0 )
-  , data_path_()
-  , data_prefix_()
-  , overwrite_files_( false )
   , dict_miss_is_error_( true )
   , model_defaults_modified_( false )
   , initialized_( false ) // scheduler stuff
@@ -215,21 +212,6 @@ Network::init_()
 
   current_ = root_ = static_cast< Subnet* >( ( *root_container ).get_thread_sibling_( 0 ) );
 
-  /**
-    Build modeldict, list of models and list of proxy nodes from clean prototypes.
-   */
-
-  // data_path and data_prefix can be set via environment variables
-  DictionaryDatum dict( new Dictionary );
-  char* data_path = std::getenv( "NEST_DATA_PATH" );
-  if ( data_path )
-    ( *dict )[ "data_path" ] = std::string( data_path );
-  char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
-  if ( data_prefix )
-    ( *dict )[ "data_prefix" ] = std::string( data_prefix );
-  if ( !dict->empty() )
-    set_data_path_prefix_( dict );
-
 #ifdef HAVE_MUSIC
   music_in_portlist_.clear();
 #endif
@@ -282,9 +264,7 @@ Network::clear_models_( bool called_from_destructor )
 {
   // no message on destructor call, may come after MPI_Finalize()
   if ( not called_from_destructor )
-    message( SLIInterpreter::M_INFO,
-      "Network::clear_models",
-      "Models will be cleared and parameters reset." );
+    LOG( M_INFO, "Network::clear_models", "Models will be cleared and parameters reset." );
 
   // We delete all models, which will also delete all nodes. The
   // built-in models will be recovered from the pristine_models_ in
@@ -354,9 +334,6 @@ Network::reset_kernel()
    */
   kernel().vp_manager.set_num_threads( 1 );
   set_num_rec_processes( 0, true );
-  data_path_ = "";
-  data_prefix_ = "";
-  overwrite_files_ = false;
   dict_miss_is_error_ = true;
 
   reset();
@@ -406,7 +383,7 @@ Network::reset_network()
   clear_pending_spikes();
 
   // ConnectionManager doesn't support resetting dynamic synapses yet
-  message( SLIInterpreter::M_WARNING,
+  LOG( M_WARNING,
     "ResetNetwork",
     "Synapses with internal dynamics (facilitation, STDP) are not reset.\n"
     "This will be implemented in a future version of NEST." );
@@ -447,10 +424,8 @@ index Network::add_node( index mod, long_t n ) // no_p
 
   if ( max_gid > local_nodes_.max_size() || max_gid < min_gid )
   {
-    message( SLIInterpreter::M_ERROR,
-      "Network::add:node",
-      "Requested number of nodes will overflow the memory." );
-    message( SLIInterpreter::M_ERROR, "Network::add:node", "No nodes were created." );
+    LOG( M_ERROR, "Network::add:node", "Requested number of nodes will overflow the memory." );
+    LOG( M_ERROR, "Network::add:node", "No nodes were created." );
     throw KernelException( "OutOfMemory" );
   }
   node_model_ids_.add_range( mod, min_gid, max_gid - 1 );
@@ -647,7 +622,7 @@ index Network::add_node( index mod, long_t n ) // no_p
   if ( model->is_off_grid() )
   {
     set_off_grid_communication( true );
-    message( SLIInterpreter::M_INFO,
+    LOG( M_INFO,
       "network::add_node",
       "Neuron models emitting precisely timed spikes exist: "
       "the kernel property off_grid_spiking has been set to true.\n\n"
@@ -756,10 +731,10 @@ Network::simulate( Time const& t )
 
   if ( t < Time::step( 1 ) )
   {
-    message( SLIInterpreter::M_ERROR,
+    LOG( M_ERROR,
       "Network::simulate",
-      String::compose( "Simulation time must be >= %1 ms (one time step).",
-               Time::get_resolution().get_ms() ) );
+      String::compose(
+           "Simulation time must be >= %1 ms (one time step).", Time::get_resolution().get_ms() ) );
     throw KernelException();
   }
 
@@ -773,7 +748,7 @@ Network::simulate( Time const& t )
         "clock first!",
         ( Time::max() - clock_ ).get_ms(),
         t.get_ms() );
-      message( SLIInterpreter::M_ERROR, "Network::simulate", msg );
+      LOG( M_ERROR, "Network::simulate", msg );
       throw KernelException();
     }
   }
@@ -783,7 +758,7 @@ Network::simulate( Time const& t )
       "The requested simulation time exceeds the largest time NEST can handle "
       "(T_max = %1 ms). Please use a shorter time!",
       Time::max().get_ms() );
-    message( SLIInterpreter::M_ERROR, "Network::simulate", msg );
+    LOG( M_ERROR, "Network::simulate", msg );
     throw KernelException();
   }
 
@@ -807,7 +782,7 @@ Network::simulate( Time const& t )
   // This test cannot come any earlier, because we first need to compute min_delay_
   // above.
   if ( t.get_steps() % min_delay_ != 0 )
-    message( SLIInterpreter::M_WARNING,
+    LOG( M_WARNING,
       "Network::simulate",
       "The requested simulation time is not an integer multiple of the minimal delay in the "
       "network. "
@@ -844,9 +819,7 @@ Network::resume()
 #ifndef _OPENMP
   if ( n_threads_ > 1 )
   {
-    message( SLIInterpreter::M_ERROR,
-      "Network::resume",
-      "No multithreading available, using single threading" );
+    LOG( M_ERROR, "Network::resume", "No multithreading available, using single threading" );
   }
 #endif
 
@@ -861,9 +834,8 @@ Network::resume()
 
   if ( terminate_ )
   {
-    message( SLIInterpreter::M_ERROR, "Network::resume", "Exiting on error or user signal." );
-    message(
-      SLIInterpreter::M_ERROR, "Network::resume", "Network: Use 'ResumeSimulation' to resume." );
+    LOG( M_ERROR, "Network::resume", "Exiting on error or user signal." );
+    LOG( M_ERROR, "Network::resume", "Network: Use 'ResumeSimulation' to resume." );
 
     if ( SLIsignalflag != 0 )
     {
@@ -875,7 +847,7 @@ Network::resume()
       throw SimulationError();
   }
 
-  message( SLIInterpreter::M_INFO, "Network::resume", "Simulation finished." );
+  LOG( M_INFO, "Network::resume", "Simulation finished." );
 }
 
 void
@@ -948,7 +920,6 @@ Network::set_status( index gid, const DictionaryDatum& d )
      In this case, we must
      - set scheduler properties
      - set properties for the compound representing each thread
-     - set the data_path, data_prefix and overwrite_files properties
 
      The main difficulty here is to handle the access control for
      dictionary items, since the dictionary is read in several places.
@@ -956,7 +927,6 @@ Network::set_status( index gid, const DictionaryDatum& d )
      We proceed as follows:
      - clear access flags
      - set scheduler properties; this must be first, anyways
-     - set data_path, data_prefix, overwrite_files
      - at this point, all non-compound property flags are marked accessed
      - loop over all per-thread compounds
      - the first per-thread compound will flag all compound properties as read
@@ -972,8 +942,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
   // careful, this may invalidate all node pointers!
   assert( initialized_ );
 
-  kernel().set_status( *d.get() );
-  d.unlock();
+  kernel().set_status( d );
 
   // Create an instance of time converter here to capture the current
   // representation of time objects: TICS_PER_MS and TICS_PER_STEP
@@ -994,7 +963,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
     if ( clock_ > TimeZero )
     {
       // reset only if time has passed
-      message( SLIInterpreter::M_WARNING,
+      LOG( M_WARNING,
         "Network::set_status",
         "Simulation time reset to t=0.0. Resetting the simulation time is not "
         "fully supported in NEST at present. Some spikes may be lost, and "
@@ -1025,7 +994,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
   {
     if ( size() > 1 ) // root always exists
     {
-      message( SLIInterpreter::M_ERROR,
+      LOG( M_ERROR,
         "Network::set_status",
         "Cannot change time representation after nodes have been created. Please call ResetKernel "
         "first." );
@@ -1033,7 +1002,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
     }
     else if ( get_simulated() ) // someone may have simulated empty network
     {
-      message( SLIInterpreter::M_ERROR,
+      LOG( M_ERROR,
         "Network::set_status",
         "Cannot change time representation after the network has been simulated. Please call "
         "ResetKernel first." );
@@ -1041,7 +1010,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
     }
     else if ( connection_manager_.get_num_connections() != 0 )
     {
-      message( SLIInterpreter::M_ERROR,
+      LOG( M_ERROR,
         "Network::set_status",
         "Cannot change time representation after connections have been created. Please call "
         "ResetKernel first." );
@@ -1052,7 +1021,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
     {
       if ( resd < 1.0 / tics_per_ms )
       {
-        message( SLIInterpreter::M_ERROR,
+        LOG( M_ERROR,
           "Network::set_status",
           "Resolution must be greater than or equal to one tic. Value unchanged." );
         throw KernelException();
@@ -1063,15 +1032,14 @@ Network::set_status( index gid, const DictionaryDatum& d )
         clock_.calibrate(); // adjust to new resolution
         connection_manager_.calibrate(
           time_converter ); // adjust delays in the connection system to new resolution
-        message(
-          SLIInterpreter::M_INFO, "Network::set_status", "tics per ms and resolution changed." );
+        LOG( M_INFO, "Network::set_status", "tics per ms and resolution changed." );
       }
     }
     else if ( res_updated ) // only resolution changed
     {
       if ( resd < Time::get_ms_per_tic() )
       {
-        message( SLIInterpreter::M_ERROR,
+        LOG( M_ERROR,
           "Network::set_status",
           "Resolution must be greater than or equal to one tic. Value unchanged." );
         throw KernelException();
@@ -1082,12 +1050,12 @@ Network::set_status( index gid, const DictionaryDatum& d )
         clock_.calibrate(); // adjust to new resolution
         connection_manager_.calibrate(
           time_converter ); // adjust delays in the connection system to new resolution
-        message( SLIInterpreter::M_INFO, "Network::set_status", "Temporal resolution changed." );
+        LOG( M_INFO, "Network::set_status", "Temporal resolution changed." );
       }
     }
     else
     {
-      message( SLIInterpreter::M_ERROR,
+      LOG( M_ERROR,
         "Network::set_status",
         "change of tics_per_step requires simultaneous specification of resolution." );
       throw KernelException();
@@ -1109,7 +1077,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
     // threads
     if ( ad->size() != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
     {
-      message( SLIInterpreter::M_ERROR,
+      LOG( M_ERROR,
         "Network::set_status",
         "Number of RNGs must equal number of virtual processes (threads*processes). RNGs "
         "unchanged." );
@@ -1129,8 +1097,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
   }
   else if ( n_threads_updated && size() == 0 )
   {
-    message(
-      SLIInterpreter::M_WARNING, "Network::set_status", "Equipping threads with new default RNGs" );
+    LOG( M_WARNING, "Network::set_status", "Equipping threads with new default RNGs" );
     create_rngs_();
   }
 
@@ -1142,7 +1109,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
 
     if ( ad->size() != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
     {
-      message( SLIInterpreter::M_ERROR,
+      LOG( M_ERROR,
         "Network::set_status",
         "Number of seeds must equal number of virtual processes (threads*processes). RNGs "
         "unchanged." );
@@ -1157,9 +1124,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
       long s = ( *ad )[ i ]; // SLI has no ulong tokens
       if ( !seedset.insert( s ).second )
       {
-        message( SLIInterpreter::M_WARNING,
-          "Network::set_status",
-          "Seeds are not unique across threads!" );
+        LOG( M_WARNING, "Network::set_status", "Seeds are not unique across threads!" );
         break;
       }
     }
@@ -1184,8 +1149,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
   }
   else if ( n_threads_updated && size() == 0 )
   {
-    message(
-      SLIInterpreter::M_WARNING, "Network::set_status", "Equipping threads with new default GRNG" );
+    LOG( M_WARNING, "Network::set_status", "Equipping threads with new default GRNG" );
     create_grng_();
   }
 
@@ -1207,9 +1171,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
         const long vpseed = ( *ad_rngseeds )[ i ]; // SLI has no ulong tokens
         if ( !seedset.insert( vpseed ).second )
         {
-          message( SLIInterpreter::M_WARNING,
-            "Network::set_status",
-            "Seeds are not unique across threads!" );
+          LOG( M_WARNING, "Network::set_status", "Seeds are not unique across threads!" );
           break;
         }
       }
@@ -1221,8 +1183,6 @@ Network::set_status( index gid, const DictionaryDatum& d )
   } // if grng_seed
   // former scheduler_.set_status( d ); end
 
-  set_data_path_prefix_( d );
-  updateValue< bool >( d, "overwrite_files", overwrite_files_ );
   updateValue< bool >( d, "dict_miss_is_error", dict_miss_is_error_ );
 
   std::string tmp;
@@ -1260,53 +1220,8 @@ Network::set_status_single_node_( Node& target, const DictionaryDatum& d, bool c
       if ( dict_miss_is_error() )
         throw UnaccessedDictionaryEntry( missed );
       else
-        message( SLIInterpreter::M_WARNING,
-          "Network::set_status",
-          ( "Unread dictionary entries: " + missed ).c_str() );
+        LOG( M_WARNING, "Network::set_status", ( "Unread dictionary entries: " + missed ).c_str() );
     }
-  }
-}
-
-void
-Network::set_data_path_prefix_( const DictionaryDatum& d )
-{
-  std::string tmp;
-  if ( updateValue< std::string >( d, "data_path", tmp ) )
-  {
-    DIR* testdir = opendir( tmp.c_str() );
-    if ( testdir != NULL )
-    {
-      data_path_ = tmp;    // absolute path & directory exists
-      closedir( testdir ); // we only opened it to check it exists
-    }
-    else
-    {
-      std::string msg;
-
-      switch ( errno )
-      {
-      case ENOTDIR:
-        msg = String::compose( "'%1' is not a directory.", tmp );
-        break;
-      case ENOENT:
-        msg = String::compose( "Directory '%1' does not exist.", tmp );
-        break;
-      default:
-        msg = String::compose( "Errno %1 received when trying to open '%2'", errno, tmp );
-        break;
-      }
-
-      message( SLIInterpreter::M_ERROR, "SetStatus", "Variable data_path not set: " + msg );
-    }
-  }
-
-  if ( updateValue< std::string >( d, "data_prefix", tmp ) )
-  {
-    if ( tmp.find( '/' ) == std::string::npos )
-      data_prefix_ = tmp;
-    else
-      message(
-        SLIInterpreter::M_ERROR, "SetStatus", "Data prefix must not contain path elements." );
   }
 }
 
@@ -1322,8 +1237,7 @@ Network::get_status( index idx )
   if ( target == root_ )
   {
     // former scheduler_.get_status( d ) start
-    kernel().get_status( *d.get() );
-    d.unlock();
+    kernel().get_status( d );
 
     def< long >( d, "num_processes", Communicator::get_num_processes() );
 
@@ -1355,9 +1269,6 @@ Network::get_status( index idx )
     connection_manager_.get_status( d );
 
     ( *d )[ "network_size" ] = size();
-    ( *d )[ "data_path" ] = data_path_;
-    ( *d )[ "data_prefix" ] = data_prefix_;
-    ( *d )[ "overwrite_files" ] = overwrite_files_;
     ( *d )[ "dict_miss_is_error" ] = dict_miss_is_error_;
 
     std::map< long, size_t > sna_cts = local_nodes_.get_step_ctr();
@@ -1528,7 +1439,7 @@ Network::divergent_connect( index source_id,
   // check if we have consistent lists for weights and delays
   if ( !( complete_wd_lists || short_wd_lists || no_wd_lists ) )
   {
-    message( SLIInterpreter::M_ERROR,
+    LOG( M_ERROR,
       "DivergentConnect",
       "If explicitly specified, weights and delays must be either doubles or lists of "
       "equal size. If given as lists, their size must be 1 or the same size as targets." );
@@ -1540,8 +1451,7 @@ Network::divergent_connect( index source_id,
   Subnet* source_comp = dynamic_cast< Subnet* >( source );
   if ( source_comp != 0 )
   {
-    message(
-      SLIInterpreter::M_INFO, "DivergentConnect", "Source ID is a subnet; I will iterate it." );
+    LOG( M_INFO, "DivergentConnect", "Source ID is a subnet; I will iterate it." );
 
     // collect all leaves in source subnet, then divergent-connect each leaf
     LocalLeafList local_sources( *source_comp );
@@ -1607,7 +1517,7 @@ Network::divergent_connect( index source_id,
         targets[ i ]->get_gid() );
       if ( !e.message().empty() )
         msg += "\nDetails: " + e.message();
-      message( SLIInterpreter::M_WARNING, "DivergentConnect", msg.c_str() );
+      LOG( M_WARNING, "DivergentConnect", msg.c_str() );
       continue;
     }
     catch ( UnknownReceptorType& e )
@@ -1620,7 +1530,7 @@ Network::divergent_connect( index source_id,
         targets[ i ]->get_gid() );
       if ( !e.message().empty() )
         msg += "\nDetails: " + e.message();
-      message( SLIInterpreter::M_WARNING, "DivergentConnect", msg.c_str() );
+      LOG( M_WARNING, "DivergentConnect", msg.c_str() );
       continue;
     }
     catch ( TypeMismatch& e )
@@ -1633,7 +1543,7 @@ Network::divergent_connect( index source_id,
         targets[ i ]->get_gid() );
       if ( !e.message().empty() )
         msg += "\nDetails: " + e.message();
-      message( SLIInterpreter::M_WARNING, "DivergentConnect", msg.c_str() );
+      LOG( M_WARNING, "DivergentConnect", msg.c_str() );
       continue;
     }
   }
@@ -1664,9 +1574,8 @@ Network::divergent_connect( index source_id, DictionaryDatum pars, index syn )
 
       std::string msg = String::compose(
         "Parameter '%1' must be a DoubleVectorArray or numpy.array. ", di_s->first.toString() );
-      message( SLIInterpreter::M_DEBUG, "DivergentConnect", msg );
-      message(
-        SLIInterpreter::M_DEBUG, "DivergentConnect", "Trying to convert, but this takes time." );
+      LOG( M_DEBUG, "DivergentConnect", msg );
+      LOG( M_DEBUG, "DivergentConnect", "Trying to convert, but this takes time." );
 
       IntVectorDatum const* tmpint = dynamic_cast< IntVectorDatum* >( di_s->second.datum() );
       if ( tmpint )
@@ -1710,9 +1619,8 @@ Network::divergent_connect( index source_id, DictionaryDatum pars, index syn )
   // check if we have consistent lists for weights and delays
   if ( !complete_wd_lists )
   {
-    message( SLIInterpreter::M_ERROR,
-      "DivergentConnect",
-      "All lists in the paramter dictionary must be of equal size." );
+    LOG(
+      M_ERROR, "DivergentConnect", "All lists in the paramter dictionary must be of equal size." );
     throw DimensionMismatch();
   }
 
@@ -1721,8 +1629,7 @@ Network::divergent_connect( index source_id, DictionaryDatum pars, index syn )
   Subnet* source_comp = dynamic_cast< Subnet* >( source );
   if ( source_comp != 0 )
   {
-    message(
-      SLIInterpreter::M_INFO, "DivergentConnect", "Source ID is a subnet; I will iterate it." );
+    LOG( M_INFO, "DivergentConnect", "Source ID is a subnet; I will iterate it." );
 
     // collect all leaves in source subnet, then divergent-connect each leaf
     LocalLeafList local_sources( *source_comp );
@@ -1751,7 +1658,7 @@ Network::divergent_connect( index source_id, DictionaryDatum pars, index syn )
         target_ids[ i ] );
       if ( !e.message().empty() )
         msg += "\nDetails: " + e.message();
-      message( SLIInterpreter::M_WARNING, "DivergentConnect", msg.c_str() );
+      LOG( M_WARNING, "DivergentConnect", msg.c_str() );
       continue;
     }
 
@@ -1776,7 +1683,7 @@ Network::divergent_connect( index source_id, DictionaryDatum pars, index syn )
         target_ids[ i ] );
       if ( !e.message().empty() )
         msg += "\nDetails: " + e.message();
-      message( SLIInterpreter::M_WARNING, "DivergentConnect", msg.c_str() );
+      LOG( M_WARNING, "DivergentConnect", msg.c_str() );
       continue;
     }
     catch ( IllegalConnection& e )
@@ -1787,7 +1694,7 @@ Network::divergent_connect( index source_id, DictionaryDatum pars, index syn )
         target_ids[ i ] );
       if ( !e.message().empty() )
         msg += "\nDetails: " + e.message();
-      message( SLIInterpreter::M_WARNING, "DivergentConnect", msg.c_str() );
+      LOG( M_WARNING, "DivergentConnect", msg.c_str() );
       continue;
     }
     catch ( UnknownReceptorType& e )
@@ -1800,7 +1707,7 @@ Network::divergent_connect( index source_id, DictionaryDatum pars, index syn )
         target_ids[ i ] );
       if ( !e.message().empty() )
         msg += "\nDetails: " + e.message();
-      message( SLIInterpreter::M_WARNING, "DivergentConnect", msg.c_str() );
+      LOG( M_WARNING, "DivergentConnect", msg.c_str() );
       continue;
     }
   }
@@ -1822,18 +1729,14 @@ Network::random_divergent_connect( index source_id,
   // check if we have consistent lists for weights and delays
   if ( !( weights.size() == n || weights.size() == 0 ) && ( weights.size() == delays.size() ) )
   {
-    message( SLIInterpreter::M_ERROR,
-      "RandomDivergentConnect",
-      "weights and delays must be lists of size n." );
+    LOG( M_ERROR, "RandomDivergentConnect", "weights and delays must be lists of size n." );
     throw DimensionMismatch();
   }
 
   Subnet* source_comp = dynamic_cast< Subnet* >( source );
   if ( source_comp != 0 )
   {
-    message( SLIInterpreter::M_INFO,
-      "RandomDivergentConnect",
-      "Source ID is a subnet; I will iterate it." );
+    LOG( M_INFO, "RandomDivergentConnect", "Source ID is a subnet; I will iterate it." );
 
     // collect all leaves in source subnet, then divergent-connect each leaf
     LocalLeafList local_sources( *source_comp );
@@ -1894,7 +1797,7 @@ Network::convergent_connect( const TokenArray source_ids,
   // check if we have consistent lists for weights and delays
   if ( !( complete_wd_lists || short_wd_lists || no_wd_lists ) )
   {
-    message( SLIInterpreter::M_ERROR,
+    LOG( M_ERROR,
       "ConvergentConnect",
       "weights and delays must be either doubles or lists of equal size. "
       "If given as lists, their size must be 1 or the same size as sources." );
@@ -1909,8 +1812,7 @@ Network::convergent_connect( const TokenArray source_ids,
   Subnet* target_comp = dynamic_cast< Subnet* >( target );
   if ( target_comp != 0 )
   {
-    message(
-      SLIInterpreter::M_INFO, "ConvergentConnect", "Target node is a subnet; I will iterate it." );
+    LOG( M_INFO, "ConvergentConnect", "Target node is a subnet; I will iterate it." );
 
     // we only iterate over local leaves, as remote targets are ignored anyways
     LocalLeafList target_nodes( *target_comp );
@@ -1964,7 +1866,7 @@ Network::convergent_connect( const TokenArray source_ids,
         target->get_gid() );
       if ( !e.message().empty() )
         msg += "\nDetails: " + e.message();
-      message( SLIInterpreter::M_WARNING, "ConvergentConnect", msg.c_str() );
+      LOG( M_WARNING, "ConvergentConnect", msg.c_str() );
       continue;
     }
     catch ( UnknownReceptorType& e )
@@ -1977,7 +1879,7 @@ Network::convergent_connect( const TokenArray source_ids,
         target->get_gid() );
       if ( !e.message().empty() )
         msg += "\nDetails: " + e.message();
-      message( SLIInterpreter::M_WARNING, "ConvergentConnect", msg.c_str() );
+      LOG( M_WARNING, "ConvergentConnect", msg.c_str() );
       continue;
     }
     catch ( TypeMismatch& e )
@@ -1990,7 +1892,7 @@ Network::convergent_connect( const TokenArray source_ids,
         target->get_gid() );
       if ( !e.message().empty() )
         msg += "\nDetails: " + e.message();
-      message( SLIInterpreter::M_WARNING, "ConvergentConnect", msg.c_str() );
+      LOG( M_WARNING, "ConvergentConnect", msg.c_str() );
       continue;
     }
   }
@@ -2064,7 +1966,7 @@ Network::convergent_connect( const std::vector< index >& source_ids,
         target->get_gid() );
       if ( !e.message().empty() )
         msg += "\nDetails: " + e.message();
-      message( SLIInterpreter::M_WARNING, "ConvergentConnect", msg.c_str() );
+      LOG( M_WARNING, "ConvergentConnect", msg.c_str() );
       continue;
     }
     catch ( UnknownReceptorType& e )
@@ -2077,7 +1979,7 @@ Network::convergent_connect( const std::vector< index >& source_ids,
         target->get_gid() );
       if ( !e.message().empty() )
         msg += "\nDetails: " + e.message();
-      message( SLIInterpreter::M_WARNING, "ConvergentConnect", msg.c_str() );
+      LOG( M_WARNING, "ConvergentConnect", msg.c_str() );
       continue;
     }
     catch ( TypeMismatch& e )
@@ -2090,7 +1992,7 @@ Network::convergent_connect( const std::vector< index >& source_ids,
         target->get_gid() );
       if ( !e.message().empty() )
         msg += "\nDetails: " + e.message();
-      message( SLIInterpreter::M_WARNING, "ConvergentConnect", msg.c_str() );
+      LOG( M_WARNING, "ConvergentConnect", msg.c_str() );
       continue;
     }
   }
@@ -2115,17 +2017,14 @@ Network::random_convergent_connect( const TokenArray source_ids,
   // check if we have consistent lists for weights and delays
   if ( !( weights.size() == n || weights.size() == 0 ) && ( weights.size() == delays.size() ) )
   {
-    message(
-      SLIInterpreter::M_ERROR, "ConvergentConnect", "weights and delays must be lists of size n." );
+    LOG( M_ERROR, "ConvergentConnect", "weights and delays must be lists of size n." );
     throw DimensionMismatch();
   }
 
   Subnet* target_comp = dynamic_cast< Subnet* >( target );
   if ( target_comp != 0 )
   {
-    message( SLIInterpreter::M_INFO,
-      "RandomConvergentConnect",
-      "Target ID is a subnet; I will iterate it." );
+    LOG( M_INFO, "RandomConvergentConnect", "Target ID is a subnet; I will iterate it." );
 
     // we only consider local leaves as targets,
     LocalLeafList target_nodes( *target_comp );
@@ -2176,9 +2075,7 @@ Network::random_convergent_connect( TokenArray source_ids,
 {
 #ifndef _OPENMP
   // It only makes sense to call this function if we have openmp
-  message( SLIInterpreter::M_ERROR,
-    "ConvergentConnect",
-    "This function can only be called using OpenMP threading." );
+  LOG( M_ERROR, "ConvergentConnect", "This function can only be called using OpenMP threading." );
   throw KernelException();
 #else
 
@@ -2201,8 +2098,7 @@ Network::random_convergent_connect( TokenArray source_ids,
   if ( !( weights.size() == ns.size() || weights.size() == 0 )
     && ( weights.size() == delays.size() ) )
   {
-    message(
-      SLIInterpreter::M_ERROR, "ConvergentConnect", "weights, delays and ns must be same size." );
+    LOG( M_ERROR, "ConvergentConnect", "weights, delays and ns must be same size." );
     throw DimensionMismatch();
   }
 
@@ -2219,7 +2115,7 @@ Network::random_convergent_connect( TokenArray source_ids,
     }
     catch ( const std::bad_cast& e )
     {
-      message( SLIInterpreter::M_ERROR, "ConvergentConnect", "ns must consist of integers only." );
+      LOG( M_ERROR, "ConvergentConnect", "ns must consist of integers only." );
       throw KernelException();
     }
 
@@ -2232,9 +2128,7 @@ Network::random_convergent_connect( TokenArray source_ids,
 
       if ( !( ws.size() == n || ws.size() == 0 ) && ( ws.size() == ds.size() ) )
       {
-        message( SLIInterpreter::M_ERROR,
-          "ConvergentConnect",
-          "weights and delays must be lists of size n." );
+        LOG( M_ERROR, "ConvergentConnect", "weights and delays must be lists of size n." );
         throw DimensionMismatch();
       }
     }
@@ -2332,25 +2226,13 @@ Network::connect( const GIDCollection& sources,
     if ( dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
-      message(
-        SLIInterpreter::M_WARNING, "Connect", ( "Unread dictionary entries: " + missed ).c_str() );
+      LOG( M_WARNING, "Connect", ( "Unread dictionary entries: " + missed ).c_str() );
   }
 
   cb->connect();
   delete cb;
 }
 
-void
-Network::message( int level, const char from[], const char text[] )
-{
-  interpreter_.message( level, from, text );
-}
-
-void
-Network::message( int level, const std::string& loc, const std::string& msg )
-{
-  message( level, loc.c_str(), msg.c_str() );
-}
 
 /**
  * This function is not thread save and has to be called inside a omp critical
@@ -2374,8 +2256,8 @@ Network::execute_sli_protected( DictionaryDatum state, Name cmd )
     std::string model = getValue< std::string >( ( *state )[ names::model ] );
     std::string msg = String::compose( "Error in %1 with global id %2.", model, g_id );
 
-    message( SLIInterpreter::M_ERROR, cmd.toString().c_str(), msg.c_str() );
-    message( SLIInterpreter::M_ERROR, "execute_sli_protected", "Terminating." );
+    LOG( M_ERROR, cmd.toString().c_str(), msg.c_str() );
+    LOG( M_ERROR, "execute_sli_protected", "Terminating." );
 
     terminate();
   }
@@ -2472,7 +2354,7 @@ void
 nest::Network::finalize_nodes()
 {
 #ifdef _OPENMP
-  message( SLIInterpreter::M_INFO, "Network::finalize_nodes()", " using OpenMP." );
+  LOG( M_INFO, "Network::finalize_nodes()", " using OpenMP." );
 // parallel section begins
 #pragma omp parallel
   {
@@ -2515,7 +2397,7 @@ nest::Network::prepare_simulation()
   {
     if ( !Communicator::grng_synchrony( grng_->ulrand( 100000 ) ) )
     {
-      message( SLIInterpreter::M_ERROR,
+      LOG( M_ERROR,
         "Network::simulate",
         "Global Random Number Generators are not synchronized prior to simulation." );
       throw KernelException();
@@ -2539,7 +2421,7 @@ nest::Network::prepare_simulation()
 
     double tick = Time::get_resolution().get_ms() * min_delay_;
     std::string msg = String::compose( "Entering MUSIC runtime with tick = %1 ms", tick );
-    message( SLIInterpreter::M_INFO, "Network::resume", msg );
+    LOG( M_INFO, "Network::resume", msg );
     Communicator::enter_runtime( tick );
   }
 #endif
@@ -2552,7 +2434,7 @@ nest::Network::prepare_nodes()
 
   init_moduli_();
 
-  message( SLIInterpreter::M_INFO, "Network::prepare_nodes", "Please wait. Preparing elements." );
+  LOG( M_INFO, "Network::prepare_nodes", "Please wait. Preparing elements." );
 
   /* We initialize the buffers of each node and calibrate it. */
 
@@ -2598,10 +2480,10 @@ nest::Network::prepare_nodes()
     if ( exceptions_raised.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 
-  message( SLIInterpreter::M_INFO,
+  LOG( M_INFO,
     "Network::prepare_nodes",
     String::compose(
-             "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
+         "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
 }
 
 void
@@ -2685,7 +2567,7 @@ void
 nest::Network::update()
 {
 #ifdef _OPENMP
-  message( SLIInterpreter::M_INFO, "Network::update", "Simulating using OpenMP." );
+  LOG( M_INFO, "Network::update", "Simulating using OpenMP." );
 #endif
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
@@ -2763,8 +2645,7 @@ nest::Network::update()
 
         if ( SLIsignalflag != 0 )
         {
-          message(
-            SLIInterpreter::M_INFO, "Network::update", "Simulation exiting on user signal." );
+          LOG( M_INFO, "Network::update", "Simulation exiting on user signal." );
           terminate_ = true;
         }
 
@@ -2797,7 +2678,7 @@ nest::Network::finalize_simulation()
   if ( Communicator::get_num_processes() > 1 )
     if ( !Communicator::grng_synchrony( grng_->ulrand( 100000 ) ) )
     {
-      message( SLIInterpreter::M_ERROR,
+      LOG( M_ERROR,
         "Network::simulate",
         "Global Random Number Generators are not synchronized after simulation." );
       throw KernelException();
@@ -3217,7 +3098,7 @@ nest::Network::configure_spike_buffers_()
 void
 nest::Network::create_rngs_( const bool ctor_call )
 {
-  // message(SLIInterpreter::M_INFO, ) calls must not be called
+  // LOG(M_INFO, ) calls must not be called
   // if create_rngs_ is called from Network::Network(), since net_
   // is not fully constructed then
 
@@ -3226,16 +3107,14 @@ nest::Network::create_rngs_( const bool ctor_call )
   if ( !rng_.empty() )
   {
     if ( !ctor_call )
-      message( SLIInterpreter::M_INFO,
-        "Network::create_rngs_",
-        "Deleting existing random number generators" );
+      LOG( M_INFO, "Network::create_rngs_", "Deleting existing random number generators" );
 
     rng_.clear();
   }
 
   // create new rngs
   if ( !ctor_call )
-    message( SLIInterpreter::M_INFO, "Network::create_rngs_", "Creating default RNGs" );
+    LOG( M_INFO, "Network::create_rngs_", "Creating default RNGs" );
 
   rng_seeds_.resize( kernel().vp_manager.get_num_virtual_processes() );
 
@@ -3264,8 +3143,7 @@ nest::Network::create_rngs_( const bool ctor_call )
       if ( !rng )
       {
         if ( !ctor_call )
-          message(
-            SLIInterpreter::M_ERROR, "Network::create_rngs_", "Error initializing knuthlfg" );
+          LOG( M_ERROR, "Network::create_rngs_", "Error initializing knuthlfg" );
         else
           std::cerr << "\nNetwork::create_rngs_\n"
                     << "Error initializing knuthlfg" << std::endl;
@@ -3286,7 +3164,7 @@ nest::Network::create_grng_( const bool ctor_call )
 
   // create new grng
   if ( !ctor_call )
-    message( SLIInterpreter::M_INFO, "Network::create_grng_", "Creating new default global RNG" );
+    LOG( M_INFO, "Network::create_grng_", "Creating new default global RNG" );
 
 // create default RNG with default seed
 #ifdef HAVE_GSL
@@ -3299,7 +3177,7 @@ nest::Network::create_grng_( const bool ctor_call )
   if ( !grng_ )
   {
     if ( !ctor_call )
-      message( SLIInterpreter::M_ERROR, "Network::create_grng_", "Error initializing knuthlfg" );
+      LOG( M_ERROR, "Network::create_grng_", "Error initializing knuthlfg" );
     else
       std::cerr << "\nNetwork::create_grng_\n"
                 << "Error initializing knuthlfg" << std::endl;
@@ -3335,7 +3213,7 @@ nest::Network::set_num_rec_processes( int nrp, bool called_by_reset )
       "processes.",
       n_rec_procs_,
       n_sim_procs_ );
-    message( SLIInterpreter::M_INFO, "Network::set_num_rec_processes", msg );
+    LOG( M_INFO, "Network::set_num_rec_processes", msg );
   }
 }
 

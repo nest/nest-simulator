@@ -25,7 +25,7 @@
 
 #include "nest_time.h"
 #include "nest_timeconverter.h"
-#include "nest.h"
+#include "nest_types.h"
 #include "node.h"
 #include "event.h"
 #include "dict.h"

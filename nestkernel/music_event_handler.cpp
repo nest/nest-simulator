@@ -24,7 +24,7 @@
 #ifdef HAVE_MUSIC
 
 #include "music_event_handler.h"
-#include "nest.h"
+#include "nest_types.h"
 #include "event.h"
 #include "communicator.h"
 #include "network.h"
@@ -120,8 +120,7 @@ MusicEventHandler::publish_port()
     if ( max_buffered_ > 0 )
       msg += String::compose( " and max buffered=%1 ticks", max_buffered_ );
     msg += ".";
-    Network::get_network().message(
-      SLIInterpreter::M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
+    LOG( M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
   }
 }
 

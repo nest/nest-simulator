@@ -24,7 +24,7 @@
 #define PARAMETER_H
 
 #include <limits>
-#include "nest.h"
+#include "nest_types.h"
 #include "randomgen.h"
 #include "nest_names.h"
 #include "topology_names.h"

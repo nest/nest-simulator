@@ -23,7 +23,7 @@
 #ifndef PP_PSC_DELTA_H
 #define PP_PSC_DELTA_H
 
-#include "nest.h"
+#include "nest_types.h"
 #include "event.h"
 #include "archiving_node.h"
 #include "ring_buffer.h"

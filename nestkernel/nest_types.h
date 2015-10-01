@@ -1,5 +1,5 @@
 /*
- *  nest.h
+ *  nest_types.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef NEST_H
-#define NEST_H
+#ifndef NEST_TYPES_H
+#define NEST_TYPES_H
 
 #include <cstddef>
 #include <climits>
@@ -66,7 +66,7 @@ namespace nest
 {
 
 /**
- * \file nest.h
+ * \file nest_types.h
  * Default types used by the NEST kernel.
  * These typedefs should be used
  * in place of the primitive C/C++ types.
@@ -181,4 +181,4 @@ const long_t delay_max = long_t_max;
 const long_t delay_min = long_t_min;
 }
 
-#endif
+#endif // NEST_TYPES_H

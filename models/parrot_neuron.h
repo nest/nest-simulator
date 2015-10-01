@@ -76,7 +76,7 @@ Author:  May 2006, Reichert, Morrison
 #ifndef PARROT_NEURON_H
 #define PARROT_NEURON_H
 
-#include "nest.h"
+#include "nest_types.h"
 #include "event.h"
 #include "archiving_node.h"
 #include "ring_buffer.h"

@@ -30,7 +30,7 @@
 #include <fstream>
 #include <sys/time.h>
 
-#include "nest.h"
+#include "nest_types.h"
 #include "nest_time.h"
 #include "nodelist.h"
 #include "event.h"

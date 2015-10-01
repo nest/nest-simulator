@@ -22,7 +22,7 @@
 
 #ifndef INSTANCE_H
 #define INSTANCE_H
-#include "nest.h"
+#include "nest_types.h"
 #include "allocator.h"
 
 

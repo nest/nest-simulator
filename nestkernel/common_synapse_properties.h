@@ -23,7 +23,7 @@
 #ifndef COMMON_SYNAPSE_PROPERTIES_H
 #define COMMON_SYNAPSE_PROPERTIES_H
 
-#include "nest.h"
+#include "nest_types.h"
 #include "dictdatum.h"
 #include "node.h"
 #include "connector_model.h"

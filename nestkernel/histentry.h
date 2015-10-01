@@ -32,7 +32,7 @@
 #ifndef HISTENTRY_H
 #define HISTENTRY_H
 
-#include "nest.h"
+#include "nest_types.h"
 
 namespace nest
 {

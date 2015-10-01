@@ -1,5 +1,5 @@
 /*
- *  modelrangemanager.h
+ *  modelrange_manager.h
  *
  *  This file is part of NEST.
  *
@@ -26,24 +26,52 @@
 #include <vector>
 #include "nest_types.h"
 #include "modelrange.h"
+#include "manager_interface.h"
 
 namespace nest
 {
 
-class Modelrangemanager
+class ModelRangeManager : ManagerInterface
 {
 public:
-  Modelrangemanager();
-  void add_range( index model, index first_gid, index last_gid );
-  bool
-  is_in_range( index gid ) const
+  ModelRangeManager();
+  ~ModelRangeManager()
   {
-    return ( ( gid <= last_gid_ ) && ( gid >= first_gid_ ) );
   }
-  long_t get_model_id( index gid );
+
+  virtual void init();
+  virtual void reset();
+
+  virtual void set_status( const DictionaryDatum& )
+  {
+  }
+  virtual void get_status( DictionaryDatum& )
+  {
+  }
+
+  /**
+   * Assign a range of gids for the given model
+   */
+  void add_range( index model, index first_gid, index last_gid );
+
+  /**
+   * Check whether a gid is with the range of assigned gids
+   */
+  bool is_in_range( index gid ) const;
+
+  /**
+   * Get the ID of the model to which this gid is assigned
+   */
+  index get_model_id( index gid ) const;
+
+  /**
+   * Check whether this model ID has any gids assigned to it
+   */
   bool model_in_use( index i ) const;
-  void clear();
-  void print() const;
+
+  /**
+   * 
+   */
   const modelrange& get_range( index gid ) const;
 
 private:
@@ -52,4 +80,11 @@ private:
   index last_gid_;
 };
 }
+
+inline bool 
+nest::ModelRangeManager::is_in_range( index gid ) const
+{
+  return ( ( gid <= last_gid_ ) && ( gid >= first_gid_ ) );
+}
+
 #endif

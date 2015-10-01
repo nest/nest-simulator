@@ -32,8 +32,8 @@
 #include "exceptions.h"
 #include "proxynode.h"
 #include "connection_manager.h"
+#include "modelrange.h"
 #include "event.h"
-#include "modelrangemanager.h"
 #include "compose.hpp"
 #include "dictdatum.h"
 #include <ostream>
@@ -877,8 +877,6 @@ private:
   std::vector< GenericConnBuilderFactory* >
     connbuilder_factories_; //! ConnBuilder factories, indexed by connruledict_ elements.
 
-  Modelrangemanager node_model_ids_; //!< Records the model id of each neuron in the network
-
   bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 
   bool model_defaults_modified_; //!< whether any model defaults have been modified
@@ -1488,16 +1486,16 @@ Network::get_model_of_gid( index gid )
 inline index
 Network::get_model_id_of_gid( index gid )
 {
-  if ( not node_model_ids_.is_in_range( gid ) )
+  if ( not kernel().modelrange_manager.is_in_range( gid ) )
     throw UnknownNode( gid );
 
-  return node_model_ids_.get_model_id( gid );
+  return kernel().modelrange_manager.get_model_id( gid );
 }
 
 inline const modelrange&
 Network::get_contiguous_gid_range( index gid ) const
 {
-  return node_model_ids_.get_range( gid );
+  return kernel().modelrange_manager.get_range( gid );
 }
 
 inline bool

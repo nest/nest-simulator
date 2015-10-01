@@ -61,7 +61,7 @@ libnest_la_SOURCES=\
 		nest_timeconverter.h nest_timeconverter.cpp \
 		nest_timemodifier.h nest_timemodifier.cpp\
 		modelrange.h modelrange.cpp\
-		modelrangemanager.h modelrangemanager.cpp\
+		modelrange_manager.h modelrange_manager.cpp\
 		multirange.h multirange.cpp\
 		network.h network_impl.h network.cpp\
 		node.h node.cpp\

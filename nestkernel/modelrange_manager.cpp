@@ -1,5 +1,5 @@
 /*
- *  modelrangemanager.cpp
+ *  modelrange_manager.cpp
  *
  *  This file is part of NEST.
  *
@@ -22,20 +22,32 @@
 
 #include <assert.h>
 #include <iostream>
-#include "modelrangemanager.h"
+#include "modelrange_manager.h"
 #include "exceptions.h"
 
 namespace nest
 {
 
-Modelrangemanager::Modelrangemanager()
+nest::ModelRangeManager::ModelRangeManager()
   : first_gid_( 0 )
   , last_gid_( 0 )
 {
 }
 
 void
-Modelrangemanager::add_range( index model, index first_gid, index last_gid )
+nest::ModelRangeManager::init()
+{
+  add_range( 0, 0, 0 );
+}
+
+void
+nest::ModelRangeManager::reset()
+{
+  modelranges_.clear();
+}
+
+void
+nest::ModelRangeManager::add_range( index model, index first_gid, index last_gid )
 {
   if ( !modelranges_.empty() )
   {
@@ -54,8 +66,8 @@ Modelrangemanager::add_range( index model, index first_gid, index last_gid )
   last_gid_ = last_gid;
 }
 
-long_t
-Modelrangemanager::get_model_id( index gid )
+index
+nest::ModelRangeManager::get_model_id( index gid ) const
 {
   int left = -1;
   int right = modelranges_.size();
@@ -83,7 +95,7 @@ Modelrangemanager::get_model_id( index gid )
 }
 
 bool
-Modelrangemanager::model_in_use( index i ) const
+nest::ModelRangeManager::model_in_use( index i ) const
 {
   bool found = false;
 
@@ -99,14 +111,8 @@ Modelrangemanager::model_in_use( index i ) const
   return found;
 }
 
-void
-Modelrangemanager::clear()
-{
-  modelranges_.clear();
-}
-
 const modelrange&
-Modelrangemanager::get_range( index gid ) const
+nest::ModelRangeManager::get_range( index gid ) const
 {
   if ( !is_in_range( gid ) )
     throw UnknownNode( gid );

@@ -26,23 +26,23 @@
 #include "nest_types.h"
 #include "nest_names.h"
 
+#include "arraydatum.h"
+#include "stringdatum.h"
+#include "dictdatum.h"
+#include "conngendatum.h"
+
 namespace nest
 {
-class ConnectionGeneratorDatum;
-class IntVectorDatum;
-class DictionaryDatum;
-class StringDatum;
 
-
-void CGConnect( const ConnectionGeneratorDatum& cg,
+void CGConnect( ConnectionGeneratorDatum& cg,
   const index source_id,
   const index target_id,
   const DictionaryDatum& params_map,
   const Name& synmodel_name );
 
-void CGConnect( const ConnectionGeneratorDatum& cg,
-  const IntVectorDatum& source_id,
-  const IntVectorDatum& target_id,
+void CGConnect( ConnectionGeneratorDatum& cg,
+  IntVectorDatum& source_id,
+  IntVectorDatum& target_id,
   const DictionaryDatum& params_map,
   const Name& synmodel_name );
 

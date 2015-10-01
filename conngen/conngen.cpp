@@ -22,10 +22,7 @@
 
 #include "conngen.h"
 
-#include "conngenmodule.h" // ConnectionGeneratorDatum, RangeSet
-#include "arraydatum.h"    // IntVectorDatum
-#include "stringdatum.h"
-#include "dictdatum.h"
+#include "cg_connect.h"
 
 #include "subnet.h"
 #include "network.h"
@@ -36,7 +33,7 @@
 
 
 void
-nest::CGConnect( const nest::ConnectionGeneratorDatum& cg,
+nest::CGConnect( nest::ConnectionGeneratorDatum& cg,
   const index source_id,
   const index target_id,
   const DictionaryDatum& params_map,
@@ -98,9 +95,9 @@ nest::CGConnect( const nest::ConnectionGeneratorDatum& cg,
 }
 
 void
-nest::CGConnect( const nest::ConnectionGeneratorDatum& cg,
-  const IntVectorDatum& source_id,
-  const IntVectorDatum& target_id,
+nest::CGConnect( nest::ConnectionGeneratorDatum& cg,
+  IntVectorDatum& sources,
+  IntVectorDatum& targets,
   const DictionaryDatum& params_map,
   const Name& synmodel_name )
 {

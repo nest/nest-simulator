@@ -38,28 +38,28 @@ namespace nest
 {
 
 void
-Init( int argc, char* argv[] )
+init_nest( int argc, char* argv[] )
 {
 }
 
 void
-FailExit( int exitcode )
+fail_exit( int exitcode )
 {
 }
 
 void
-Install( const std::string& module_name )
+install_module( const std::string& module_name )
 {
 }
 
 void
-ResetKernel()
+reset_kernel()
 {
   Network::get_network().reset_kernel();
 }
 
 void
-ResetNetwork()
+reset_network()
 {
   Network::get_network().reset_network();
   LOG( M_INFO,
@@ -68,25 +68,25 @@ ResetNetwork()
 }
 
 void
-EnableDryrunMode( const index n_procs )
+enable_dryrun_mode( const index n_procs )
 {
   Communicator::set_num_processes( n_procs );
 }
 
 void
-RegisterLoggerClient( const deliver_logging_event_ptr client_callback )
+register_logger_client( const deliver_logging_event_ptr client_callback )
 {
   kernel().logging_manager.register_logging_client( client_callback );
 }
 
 void
-PrintNetwork( index gid, index depth, std::ostream& out )
+print_network( index gid, index depth, std::ostream& out )
 {
   Network::get_network().print( gid, depth - 1 );
 }
 
 librandom::RngPtr
-GetVpRNG( index target )
+get_vp_rng( index target )
 {
   Node* target_node = Network::get_network().get_node( target );
 
@@ -102,37 +102,37 @@ GetVpRNG( index target )
 }
 
 librandom::RngPtr
-GetGlobalRNG()
+get_global_rng()
 {
   return Network::get_network().get_grng();
 }
 
 void
-SetKernelStatus( const DictionaryDatum& dict )
+set_kernel_status( const DictionaryDatum& dict )
 {
   Network::get_network().set_status( 0, dict );
 }
 
 DictionaryDatum
-GetKernelStatus()
+get_kernel_status()
 {
   return Network::get_network().get_status( 0 );
 }
 
 void
-SetNodeStatus( const index node_id, const DictionaryDatum& dict )
+set_node_status( const index node_id, const DictionaryDatum& dict )
 {
   Network::get_network().set_status( node_id, dict );
 }
 
 DictionaryDatum
-GetNodeStatus( const index node_id )
+get_node_status( const index node_id )
 {
   return Network::get_network().get_status( node_id );
 }
 
 void
-SetConnectionStatus( const ConnectionDatum& conn, const DictionaryDatum& dict )
+set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict )
 {
   DictionaryDatum conn_dict = conn.get_dict();
   long synapse_id = getValue< long >( conn_dict, nest::names::synapse_modelid );
@@ -162,7 +162,7 @@ SetConnectionStatus( const ConnectionDatum& conn, const DictionaryDatum& dict )
 }
 
 DictionaryDatum
-GetConnectionStatus( const ConnectionDatum& conn )
+get_connection_status( const ConnectionDatum& conn )
 {
   long gid = conn.get_source_gid();
   Network::get_network().get_node( gid ); // Just to check if the node exists
@@ -172,7 +172,7 @@ GetConnectionStatus( const ConnectionDatum& conn )
 }
 
 index
-Create( const Name& model_name, const index n_nodes )
+create( const Name& model_name, const index n_nodes )
 {
   if ( n_nodes == 0 )
   {
@@ -190,7 +190,7 @@ Create( const Name& model_name, const index n_nodes )
 }
 
 void
-Connect( const GIDCollection& sources,
+connect( const GIDCollection& sources,
   const GIDCollection& targets,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params )
@@ -199,7 +199,7 @@ Connect( const GIDCollection& sources,
 }
 
 ArrayDatum
-GetConnections( const DictionaryDatum& dict )
+get_connections( const DictionaryDatum& dict )
 {
   dict->clear_access_flags();
 
@@ -218,7 +218,7 @@ GetConnections( const DictionaryDatum& dict )
 }
 
 void
-Simulate( const double_t& time )
+simulate( const double_t& time )
 {
   std::ostringstream os;
   os << "Simulating " << time << " ms.";
@@ -229,13 +229,13 @@ Simulate( const double_t& time )
 }
 
 void
-ResumeSimulation()
+resume_simulation()
 {
   Network::get_network().resume();
 }
 
 void
-CopyModel( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict )
+copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict )
 {
   const Dictionary& modeldict = Network::get_network().get_modeldict();
   const Dictionary& synapsedict = Network::get_network().get_synapsedict();
@@ -278,7 +278,7 @@ CopyModel( const Name& oldmodname, const Name& newmodname, const DictionaryDatum
 }
 
 void
-SetModelDefaults( const Name& modelname, const DictionaryDatum& dict )
+set_model_defaults( const Name& modelname, const DictionaryDatum& dict )
 {
   const Token nodemodel = Network::get_network().get_modeldict().lookup( modelname );
   const Token synmodel = Network::get_network().get_synapsedict().lookup( modelname );
@@ -320,7 +320,7 @@ SetModelDefaults( const Name& modelname, const DictionaryDatum& dict )
 }
 
 DictionaryDatum
-GetModelDefaults( const Name& modelname )
+get_model_defaults( const Name& modelname )
 {
   const Token nodemodel = Network::get_network().get_modeldict().lookup( modelname );
   const Token synmodel = Network::get_network().get_synapsedict().lookup( modelname );
@@ -347,13 +347,13 @@ GetModelDefaults( const Name& modelname )
 }
 
 void
-SetNumRecProcesses( const index n_rec_procs )
+set_num_rec_processes( const index n_rec_procs )
 {
   Network::get_network().set_num_rec_processes( n_rec_procs, false );
 }
 
 void
-ChangeSubnet( const index node_gid )
+change_subnet( const index node_gid )
 {
   if ( Network::get_network().get_node( node_gid )->is_subnet() )
   {
@@ -366,14 +366,14 @@ ChangeSubnet( const index node_gid )
 }
 
 index
-CurrentSubnet()
+current_subnet()
 {
   assert( Network::get_network().get_cwn() != 0 );
   return Network::get_network().get_cwn()->get_gid();
 }
 
 ArrayDatum
-GetNodes( const index node_id,
+get_nodes( const index node_id,
   const DictionaryDatum& params,
   const bool include_remotes,
   const bool return_gids_only )
@@ -417,7 +417,7 @@ GetNodes( const index node_id,
 }
 
 ArrayDatum
-GetLeaves( const index node_id, const DictionaryDatum& params, const bool include_remotes )
+get_leaves( const index node_id, const DictionaryDatum& params, const bool include_remotes )
 {
   Subnet* subnet = dynamic_cast< Subnet* >( Network::get_network().get_node( node_id ) );
   if ( subnet == NULL )
@@ -450,7 +450,7 @@ GetLeaves( const index node_id, const DictionaryDatum& params, const bool includ
 }
 
 ArrayDatum
-GetChildren( const index node_id, const DictionaryDatum& params, const bool include_remotes )
+get_children( const index node_id, const DictionaryDatum& params, const bool include_remotes )
 {
   Subnet* subnet = dynamic_cast< Subnet* >( Network::get_network().get_node( node_id ) );
   if ( subnet == NULL )
@@ -482,7 +482,7 @@ GetChildren( const index node_id, const DictionaryDatum& params, const bool incl
 }
 
 void
-RestoreNodes( const ArrayDatum& node_list )
+restore_nodes( const ArrayDatum& node_list )
 {
   Network::get_network().restore_nodes( node_list );
 }

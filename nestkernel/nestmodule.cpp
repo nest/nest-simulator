@@ -114,7 +114,7 @@ NestModule::ChangeSubnet_iFunction::execute( SLIInterpreter* i ) const
 
   index node_gid = getValue< long >( i->OStack.pick( 0 ) );
 
-  ChangeSubnet( node_gid );
+  change_subnet( node_gid );
 
   i->OStack.pop();
   i->EStack.pop();
@@ -134,7 +134,7 @@ NestModule::ChangeSubnet_iFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::CurrentSubnetFunction::execute( SLIInterpreter* i ) const
 {
-  index current = CurrentSubnet();
+  index current = current_subnet();
 
   i->OStack.push( current );
   i->EStack.pop();
@@ -180,11 +180,11 @@ NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
   // target and throws UnaccessedDictionaryEntry where necessary
   if ( node_id == 0 )
   {
-    SetKernelStatus( dict );
+    set_kernel_status( dict );
   }
   else
   {
-    Network::get_network().set_status( node_id, dict );
+    set_node_status( node_id, dict );
   }
 
   i->OStack.pop( 2 );
@@ -199,7 +199,7 @@ NestModule::SetStatus_CDFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 1 ) );
 
-  SetConnectionStatus( conn, dict );
+  set_connection_status( conn, dict );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -337,11 +337,11 @@ NestModule::GetStatus_iFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum dict;
   if ( node_id == 0 )
   {
-    dict = GetKernelStatus();
+    dict = get_kernel_status();
   }
   else
   {
-    dict = GetNodeStatus( node_id );
+    dict = get_node_status( node_id );
   }
 
   i->OStack.pop();
@@ -356,7 +356,7 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
 
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
-  DictionaryDatum result_dict = GetConnectionStatus( conn );
+  DictionaryDatum result_dict = get_connection_status( conn );
 
   i->OStack.pop();
   i->OStack.push( result_dict );
@@ -403,7 +403,7 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
   const Name modelname = getValue< Name >( i->OStack.pick( 1 ) );
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  SetModelDefaults( modelname, dict );
+  set_model_defaults( modelname, dict );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -423,7 +423,7 @@ NestModule::GetDefaults_lFunction::execute( SLIInterpreter* i ) const
 
   const Name modelname = getValue< Name >( i->OStack.pick( 0 ) );
 
-  DictionaryDatum dict = GetModelDefaults( modelname );
+  DictionaryDatum dict = get_model_defaults( modelname );
 
   i->OStack.pop();
   i->OStack.push( dict );
@@ -437,7 +437,7 @@ NestModule::GetConnections_DFunction::execute( SLIInterpreter* i ) const
 
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  ArrayDatum array = GetConnections( dict );
+  ArrayDatum array = get_connections( dict );
 
   i->OStack.pop();
   i->OStack.push( array );
@@ -462,7 +462,7 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
 
   const double time = i->OStack.top();
 
-  Simulate( time );
+  simulate( time );
 
   // successful end of simulate
   i->OStack.pop();
@@ -476,7 +476,7 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::ResumeSimulationFunction::execute( SLIInterpreter* i ) const
 {
-  ResumeSimulation();
+  resume_simulation();
   i->EStack.pop();
 }
 
@@ -506,7 +506,7 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
   const std::string newmodname = getValue< std::string >( i->OStack.pick( 1 ) );
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  CopyModel( oldmodname, newmodname, dict );
+  copy_model( oldmodname, newmodname, dict );
 
   i->OStack.pop( 3 );
   i->EStack.pop();
@@ -545,7 +545,7 @@ NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const
 
   const std::string modname = getValue< std::string >( i->OStack.pick( 1 ) );
 
-  const long last_node_id = Create( modname, n_nodes );
+  const long last_node_id = create( modname, n_nodes );
 
   i->OStack.pop( 2 );
   i->OStack.push( last_node_id );
@@ -558,7 +558,7 @@ NestModule::RestoreNodes_aFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
   ArrayDatum node_list = getValue< ArrayDatum >( i->OStack.top() );
 
-  RestoreNodes( node_list );
+  restore_nodes( node_list );
 
   i->OStack.pop();
   i->EStack.pop();
@@ -574,7 +574,7 @@ NestModule::GetNodes_i_D_b_bFunction::execute( SLIInterpreter* i ) const
   const DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 2 ) );
   const index node_id = getValue< long >( i->OStack.pick( 3 ) );
 
-  ArrayDatum result = GetNodes( node_id, params, include_remote, return_gids_only );
+  ArrayDatum result = get_nodes( node_id, params, include_remote, return_gids_only );
 
   i->OStack.pop( 4 );
   i->OStack.push( result );
@@ -590,7 +590,7 @@ NestModule::GetChildren_i_D_bFunction::execute( SLIInterpreter* i ) const
   const DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const index node_id = getValue< long >( i->OStack.pick( 2 ) );
 
-  ArrayDatum result = GetChildren( node_id, params, include_remote );
+  ArrayDatum result = get_children( node_id, params, include_remote );
 
   i->OStack.pop( 3 );
   i->OStack.push( result );
@@ -606,7 +606,7 @@ NestModule::GetLeaves_i_D_bFunction::execute( SLIInterpreter* i ) const
   const DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const index node_id = getValue< long >( i->OStack.pick( 2 ) );
 
-  ArrayDatum result = GetLeaves( node_id, params, include_remote );
+  ArrayDatum result = get_leaves( node_id, params, include_remote );
 
   i->OStack.pop( 3 );
   i->OStack.push( result );
@@ -636,7 +636,7 @@ NestModule::GetLeaves_i_D_bFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
 {
-  ResetKernel();
+  reset_kernel();
   i->EStack.pop();
 }
 
@@ -671,7 +671,7 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::ResetNetworkFunction::execute( SLIInterpreter* i ) const
 {
-  ResetNetwork();
+  reset_network();
 
   i->EStack.pop();
 }
@@ -778,7 +778,7 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by connect
-  Connect( sources, targets, connectivity, synapse_params );
+  connect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
   i->EStack.pop();
@@ -1236,7 +1236,8 @@ NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
 
   long gid = getValue< long >( i->OStack.pick( 1 ) );
   long depth = getValue< long >( i->OStack.pick( 0 ) );
-  PrintNetwork( gid, depth - 1 );
+
+  print_network( gid, depth - 1 );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -1328,7 +1329,9 @@ NestModule::SetFakeNumProcesses_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
   long n_procs = getValue< long >( i->OStack.pick( 0 ) );
-  EnableDryrunMode( n_procs );
+
+  enable_dryrun_mode( n_procs );
+
   i->OStack.pop( 1 );
   i->EStack.pop();
 }
@@ -1352,7 +1355,9 @@ NestModule::SetNumRecProcesses_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
   long n_rec_procs = getValue< long >( i->OStack.pick( 0 ) );
-  SetNumRecProcesses( n_rec_procs );
+
+  set_num_rec_processes( n_rec_procs );
+
   i->OStack.pop( 1 );
   i->EStack.pop();
 }
@@ -1599,7 +1604,7 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
 
   index target = getValue< long >( i->OStack.pick( 0 ) );
 
-  librandom::RngPtr rng = GetVpRNG( target );
+  librandom::RngPtr rng = get_vp_rng( target );
 
   Token rt( new librandom::RngDatum( rng ) );
   i->OStack.pop( 1 );
@@ -1637,7 +1642,7 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::GetGlobalRngFunction::execute( SLIInterpreter* i ) const
 {
-  librandom::RngPtr rng = GetGlobalRNG();
+  librandom::RngPtr rng = get_global_rng();
 
   Token rt( new librandom::RngDatum( rng ) );
   i->OStack.push_move( rt );

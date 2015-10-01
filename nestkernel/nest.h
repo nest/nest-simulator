@@ -36,62 +36,65 @@
 namespace nest
 {
 
-void Init( int argc, char* argv[] );
-void FailExit( int exitcode );
+void init_nest( int argc, char* argv[] );
+void fail_exit( int exitcode );
 
-void Install( const std::string& module_name );
+void install_module( const std::string& module_name );
 
-void ResetKernel();
-void ResetNetwork();
+void reset_kernel();
+void reset_network();
 
-void EnableDryrunMode( const index n_procs );
+void enable_dryrun_mode( const index n_procs );
 
-void RegisterLoggerClient( const deliver_logging_event_ptr client_callback );
-void PrintNetwork( index gid, index depth, std::ostream& out = std::cout );
+void register_logger_client( const deliver_logging_event_ptr client_callback );
+void print_network( index gid, index depth, std::ostream& out = std::cout );
 
-librandom::RngPtr GetVpRNG( index target );
-librandom::RngPtr GetGlobalRNG();
+librandom::RngPtr get_vp_rng( index target );
+librandom::RngPtr get_global_rng();
 
-void SetKernelStatus( const DictionaryDatum& dict );
-DictionaryDatum GetKernelStatus();
+void set_kernel_status( const DictionaryDatum& dict );
+DictionaryDatum get_kernel_status();
 
-void SetNodeStatus( const index node_id, const DictionaryDatum& dict );
-DictionaryDatum GetNodeStatus( const index node_id );
+void set_node_status( const index node_id, const DictionaryDatum& dict );
+DictionaryDatum get_node_status( const index node_id );
 
-void SetConnectionStatus( const ConnectionDatum& conn, const DictionaryDatum& dict );
-DictionaryDatum GetConnectionStatus( const ConnectionDatum& conn );
+void set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict );
+DictionaryDatum get_connection_status( const ConnectionDatum& conn );
 
-index Create( const Name& model_name, const index n );
+index create( const Name& model_name, const index n );
 
-void Connect( const GIDCollection& sources,
+void connect( const GIDCollection& sources,
   const GIDCollection& targets,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params );
-ArrayDatum GetConnections( const DictionaryDatum& dict );
 
-void Simulate( const double_t& t );
-void ResumeSimulation();
+ArrayDatum get_connections( const DictionaryDatum& dict );
 
-void CopyModel( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict );
+void simulate( const double_t& t );
+void resume_simulation();
 
-void SetModelDefaults( const Name& model_name, const DictionaryDatum& );
-DictionaryDatum GetModelDefaults( const Name& model_name );
+void copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict );
 
-void SetNumRecProcesses( const index n_rec_procs );
+void set_model_defaults( const Name& model_name, const DictionaryDatum& );
+DictionaryDatum get_model_defaults( const Name& model_name );
 
-void ChangeSubnet( const index node_gid );
-index CurrentSubnet();
+void set_num_rec_processes( const index n_rec_procs );
 
-ArrayDatum GetNodes( const index subnet_id,
+void change_subnet( const index node_gid );
+index current_subnet();
+
+ArrayDatum get_nodes( const index subnet_id,
   const DictionaryDatum& params,
   const bool include_remotes,
   const bool return_gids_only );
-ArrayDatum
-GetLeaves( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
-ArrayDatum
-GetChildren( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
 
-void RestoreNodes( const ArrayDatum& node_list );
+ArrayDatum
+get_leaves( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
+
+ArrayDatum
+get_children( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
+
+void restore_nodes( const ArrayDatum& node_list );
 }
 
 

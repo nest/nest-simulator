@@ -23,6 +23,8 @@
 #ifndef CONNGEN_H
 #define CONNGEN_H
 
+#include <vector>
+
 #include "nest_types.h"
 #include "nest_names.h"
 
@@ -34,23 +36,27 @@
 namespace nest
 {
 
-void CGConnect( ConnectionGeneratorDatum& cg,
+void cg_connect( ConnectionGeneratorDatum& cg,
   const index source_id,
   const index target_id,
   const DictionaryDatum& params_map,
   const Name& synmodel_name );
 
-void CGConnect( ConnectionGeneratorDatum& cg,
+void cg_connect( ConnectionGeneratorDatum& cg,
   IntVectorDatum& source_id,
   IntVectorDatum& target_id,
   const DictionaryDatum& params_map,
   const Name& synmodel_name );
 
-ConnectionGeneratorDatum CGParse( const StringDatum& xml );
+ConnectionGeneratorDatum cg_parse( const StringDatum& xml );
 
-ConnectionGeneratorDatum CGParseFile( const StringDatum& xml );
+ConnectionGeneratorDatum cg_parse_file( const StringDatum& xml );
 
-void CGSelectImplementation( const StringDatum& library, const StringDatum& tag );
+void cg_select_implementation( const StringDatum& library, const StringDatum& tag );
+
+void cg_set_masks(ConnectionGeneratorDatum& cg, IntVectorDatum& sources, IntVectorDatum& targets);
+void cg_start(ConnectionGeneratorDatum& cgd);
+bool cg_next(ConnectionGeneratorDatum& cgd, int& src, int& tgt, std::vector<double>& values);
 }
 
 #endif /* CONNGEN_H */

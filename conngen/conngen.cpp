@@ -33,7 +33,7 @@
 
 
 void
-nest::CGConnect( nest::ConnectionGeneratorDatum& cg,
+nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
   const index source_id,
   const index target_id,
   const DictionaryDatum& params_map,
@@ -95,7 +95,7 @@ nest::CGConnect( nest::ConnectionGeneratorDatum& cg,
 }
 
 void
-nest::CGConnect( nest::ConnectionGeneratorDatum& cg,
+nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
   IntVectorDatum& sources,
   IntVectorDatum& targets,
   const DictionaryDatum& params_map,
@@ -117,19 +117,72 @@ nest::CGConnect( nest::ConnectionGeneratorDatum& cg,
 }
 
 nest::ConnectionGeneratorDatum
-nest::CGParse( const StringDatum& xml )
+nest::cg_parse( const StringDatum& xml )
 {
   return ConnectionGenerator::fromXML( xml );
 }
 
 nest::ConnectionGeneratorDatum
-nest::CGParseFile( const StringDatum& xml )
+nest::cg_parse_file( const StringDatum& xml )
 {
   return ConnectionGenerator::fromXMLFile( xml );
 }
 
 void
-nest::CGSelectImplementation( const StringDatum& library, const StringDatum& tag )
+nest::cg_select_implementation( const StringDatum& library, const StringDatum& tag )
 {
   ConnectionGenerator::selectCGImplementation( tag, library );
 }
+
+void
+nest::cg_set_masks(nest::ConnectionGeneratorDatum& cg, IntVectorDatum& sources, IntVectorDatum& targets)
+{
+  RangeSet source_ranges;
+  cg_get_ranges( source_ranges, ( *sources ) );
+  
+  RangeSet target_ranges;
+  cg_get_ranges( target_ranges, ( *targets ) );
+  
+  cg_set_masks( cg, source_ranges, target_ranges );
+}
+
+void
+nest::cg_start(nest::ConnectionGeneratorDatum& cgd)
+{
+  cgd->start();
+}
+
+bool nest::cg_next(nest::ConnectionGeneratorDatum& cgd, int& src, int& tgt, std::vector<double>& values)
+{
+  ConnectionGenerator* generator = cgd.get();
+  
+  int arity = generator->arity();
+  double* tmp_values = new double[ arity ];
+  
+  values.resize(arity);
+  
+  if ( generator->next( src, tgt, tmp_values ) )
+  {
+    for ( int m = 0; m < arity; ++m )
+    {
+      values[ m ] = tmp_values[m];
+    }
+    delete[] tmp_values;
+    cgd.unlock();
+    return true;
+  }
+  else
+  {
+    cgd.unlock();
+    return false;
+  }
+}
+
+
+
+
+
+
+
+
+

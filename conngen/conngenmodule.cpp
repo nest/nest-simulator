@@ -122,7 +122,7 @@ ConnectionGeneratorModule::CGConnect_cg_i_i_D_lFunction::execute( SLIInterpreter
   DictionaryDatum params_map = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  CGConnect( cg, source_id, target_id, params_map, synmodel_name );
+  cg_connect( cg, source_id, target_id, params_map, synmodel_name );
 
   i->OStack.pop( 5 );
   i->EStack.pop();
@@ -140,7 +140,7 @@ ConnectionGeneratorModule::CGConnect_cg_iV_iV_D_lFunction::execute( SLIInterpret
   DictionaryDatum params_map = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  CGConnect( cg, sources, targets, params_map, synmodel_name );
+  cg_connect( cg, sources, targets, params_map, synmodel_name );
 
   i->OStack.pop( 5 );
   i->EStack.pop();
@@ -171,7 +171,7 @@ ConnectionGeneratorModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   StringDatum xml = getValue< StringDatum >( i->OStack.pick( 0 ) );
-  ConnectionGeneratorDatum cgd = CGParse( xml );
+  ConnectionGeneratorDatum cgd = cg_parse( xml );
 
   i->OStack.pop( 1 );
   i->OStack.push( cgd );
@@ -203,7 +203,7 @@ ConnectionGeneratorModule::CGParseFile_sFunction::execute( SLIInterpreter* i ) c
   i->assert_stack_load( 1 );
 
   StringDatum xml = getValue< StringDatum >( i->OStack.pick( 0 ) );
-  ConnectionGeneratorDatum cgd = CGParseFile( xml );
+  ConnectionGeneratorDatum cgd = cg_parse_file( xml );
 
   i->OStack.pop( 1 );
   i->OStack.push( cgd );
@@ -237,7 +237,7 @@ ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute( SLIInter
   StringDatum library = getValue< StringDatum >( i->OStack.pick( 0 ) );
   StringDatum tag = getValue< StringDatum >( i->OStack.pick( 1 ) );
 
-  CGSelectImplementation( library, tag );
+  cg_select_implementation( library, tag );
 
   i->OStack.pop( 1 );
   i->EStack.pop();
@@ -278,13 +278,7 @@ ConnectionGeneratorModule::CGSetMask_cg_iV_iVFunction::execute( SLIInterpreter* 
   IntVectorDatum sources = getValue< IntVectorDatum >( i->OStack.pick( 1 ) );
   IntVectorDatum targets = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
 
-  RangeSet source_ranges;
-  cg_get_ranges( source_ranges, ( *sources ) );
-
-  RangeSet target_ranges;
-  cg_get_ranges( target_ranges, ( *targets ) );
-
-  cg_set_masks( cg, source_ranges, target_ranges );
+  cg_set_masks(cg, sources, targets);
 
   i->OStack.pop( 3 );
   i->EStack.pop();
@@ -320,7 +314,7 @@ ConnectionGeneratorModule::CGStart_cgFunction::execute( SLIInterpreter* i ) cons
 
   ConnectionGeneratorDatum cgd = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
 
-  cgd->start();
+  cg_start(cgd);
 
   i->OStack.pop( 1 );
   i->EStack.pop();
@@ -359,26 +353,25 @@ ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   ConnectionGeneratorDatum cgd = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
-  ConnectionGenerator* generator = cgd.get();
 
   int j, k;
-  int arity = generator->arity();
-  double* values = new double[ arity ];
+  std::vector<double> values;
   i->OStack.pop( 1 );
   i->EStack.pop();
-  if ( generator->next( j, k, values ) )
+  if ( cg_next(cgd, j, k, values) )
   {
     i->OStack.push( j );
     i->OStack.push( k );
-    for ( int m = 0; m < arity; ++m )
+    for ( int m = 0; m < values.size(); ++m )
+    {
       i->OStack.push( values[ m ] );
-    delete[] values;
+    }
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
-
-  cgd.unlock();
+  }
 }
 
 

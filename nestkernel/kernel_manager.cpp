@@ -75,7 +75,7 @@ nest::KernelManager::set_status( const DictionaryDatum& dict )
   logging_manager.set_status( dict );
   vp_manager.set_status( dict );
   io_manager.set_status( dict );
-  node_manager.set_status( dict );
+  node_manager.set_status( dict ); // has to be called last
 }
 
 void

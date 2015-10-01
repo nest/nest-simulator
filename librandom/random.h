@@ -30,19 +30,19 @@
 namespace librandom
 {
 
-librandom::RngDatum CreateRNG( const long seed, const RngFactoryDatum& factory );
+librandom::RngDatum create_rng( const long seed, const RngFactoryDatum& factory );
 
-librandom::RdvDatum CreateRDV( const RdvFactoryDatum& factory, const RngDatum& rng );
+librandom::RdvDatum create_rdv( const RdvFactoryDatum& factory, const RngDatum& rng );
 
-void SetStatus( const DictionaryDatum& dict, RdvDatum& rdv );
-DictionaryDatum GetStatus( const RdvDatum& rdv );
+void set_status( const DictionaryDatum& dict, RdvDatum& rdv );
+DictionaryDatum get_status( const RdvDatum& rdv );
 
 void seed( const long seed, RngDatum& rng );
 unsigned long irand( const long N, RngDatum& rng );
 double drand( RngDatum& rng );
 
-ArrayDatum RandomArray( RdvDatum& rdv, const size_t n );
-long Random( RdvDatum& rdv );
+ArrayDatum random_array( RdvDatum& rdv, const size_t n );
+long random( RdvDatum& rdv );
 }
 
 #endif /* RANDOM_H */

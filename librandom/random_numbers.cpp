@@ -190,7 +190,7 @@ RandomNumbers::CreateRNGFunction::execute( SLIInterpreter* i ) const
   librandom::RngFactoryDatum factory =
     getValue< librandom::RngFactoryDatum >( i->OStack.pick( 1 ) );
 
-  librandom::RngDatum rng = librandom::CreateRNG( seed, factory );
+  librandom::RngDatum rng = librandom::create_rng( seed, factory );
 
   i->OStack.pop( 2 );
   i->OStack.push( rng );
@@ -206,7 +206,7 @@ RandomNumbers::CreateRDVFunction::execute( SLIInterpreter* i ) const
   librandom::RdvFactoryDatum factory = getValue< librandom::RdvFactoryDatum >( i->OStack.top() );
   librandom::RngDatum rng = getValue< librandom::RngDatum >( i->OStack.pick( 1 ) );
 
-  librandom::RdvDatum rdv = librandom::CreateRDV( factory, rng );
+  librandom::RdvDatum rdv = librandom::create_rdv( factory, rng );
 
   i->OStack.pop( 2 );
   i->OStack.push( rdv );
@@ -222,7 +222,7 @@ RandomNumbers::SetStatus_vdFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
   librandom::RdvDatum rdv = getValue< librandom::RdvDatum >( i->OStack.pick( 1 ) );
 
-  librandom::SetStatus( dict, rdv );
+  librandom::set_status( dict, rdv );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -236,7 +236,7 @@ RandomNumbers::GetStatus_vFunction::execute( SLIInterpreter* i ) const
 
   librandom::RdvDatum rdv = getValue< librandom::RdvDatum >( i->OStack.top() );
 
-  DictionaryDatum dict = librandom::GetStatus( rdv );
+  DictionaryDatum dict = librandom::get_status( rdv );
 
   i->OStack.pop();
   i->OStack.push( dict );
@@ -299,7 +299,7 @@ RandomNumbers::RandomArrayFunction::execute( SLIInterpreter* i ) const
   librandom::RdvDatum rdv = getValue< librandom::RdvDatum >( i->OStack.pick( 1 ) );
   const long n = getValue< long >( i->OStack.pick( 0 ) );
 
-  ArrayDatum result = librandom::RandomArray( rdv, n );
+  ArrayDatum result = librandom::random_array( rdv, n );
 
   i->OStack.pop( 2 );
   i->OStack.push( ArrayDatum( result ) );
@@ -314,7 +314,7 @@ RandomNumbers::RandomFunction::execute( SLIInterpreter* i ) const
 
   librandom::RdvDatum rdv = getValue< librandom::RdvDatum >( i->OStack.top() );
 
-  long result = librandom::Random( rdv );
+  long result = librandom::random( rdv );
 
   i->OStack.pop();
   i->OStack.push( result );

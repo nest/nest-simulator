@@ -30,19 +30,19 @@
 
 
 librandom::RngDatum
-librandom::CreateRNG( const long seed, const RngFactoryDatum& factory )
+librandom::create_rng( const long seed, const RngFactoryDatum& factory )
 {
   return librandom::RngDatum( factory->create( seed ) );
 }
 
 librandom::RdvDatum
-librandom::CreateRDV( const RdvFactoryDatum& factory, const RngDatum& rng )
+librandom::create_rdv( const RdvFactoryDatum& factory, const RngDatum& rng )
 {
   return librandom::RdvDatum( factory->create( rng ) );
 }
 
 void
-librandom::SetStatus( const DictionaryDatum& dict, RdvDatum& rdv )
+librandom::set_status( const DictionaryDatum& dict, RdvDatum& rdv )
 {
   dict->clear_access_flags();
   rdv->set_status( dict );
@@ -52,7 +52,7 @@ librandom::SetStatus( const DictionaryDatum& dict, RdvDatum& rdv )
 }
 
 DictionaryDatum
-librandom::GetStatus( const RdvDatum& rdv )
+librandom::get_status( const RdvDatum& rdv )
 {
   DictionaryDatum dict( new Dictionary );
   assert( dict.valid() );
@@ -81,7 +81,7 @@ librandom::drand( RngDatum& rng )
 }
 
 ArrayDatum
-librandom::RandomArray( RdvDatum& rdv, const size_t n )
+librandom::random_array( RdvDatum& rdv, const size_t n )
 {
   TokenArray result;
   result.reserve( n );
@@ -105,7 +105,7 @@ librandom::RandomArray( RdvDatum& rdv, const size_t n )
 }
 
 long
-librandom::Random( RdvDatum& rdv )
+librandom::random( RdvDatum& rdv )
 {
   if ( rdv->has_ldev() )
   {

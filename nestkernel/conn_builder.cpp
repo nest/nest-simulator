@@ -156,7 +156,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   // once to avoid re-creating the object over and over again.
   if ( synapse_params_.size() > 0 )
   {
-    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+    for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     {
       param_dicts_.push_back( new Dictionary() );
 
@@ -277,7 +277,7 @@ nest::ConnBuilder::connect()
   connect_();
 
   // check if any exceptions have been raised
-  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  for ( index thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
     if ( exceptions_raised_.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
 }
@@ -304,7 +304,7 @@ nest::ConnBuilder::single_connect_( index sgid,
   }
   else
   {
-    assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_.size() ) );
+    assert( kernel().vp_manager.get_num_threads() == param_dicts_.size() );
 
     for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
           it != synapse_params_.end();

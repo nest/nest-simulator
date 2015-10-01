@@ -34,8 +34,9 @@
 #include "network.h"
 
 /* ----------------------------------------------------------------
-* GrowthCurveLinear
-* ---------------------------------------------------------------- */
+ * GrowthCurveLinear
+ * ---------------------------------------------------------------- */
+
 nest::GrowthCurveLinear::GrowthCurveLinear()
   : GrowthCurve( names::linear )
   , eps_( 0.7 )
@@ -63,18 +64,17 @@ nest::GrowthCurveLinear::update( double_t t,
   double_t tau_Ca,
   double_t growth_rate ) const
 {
-  double_t Ca;
-  double_t z_value;
-  Ca = Ca_minus * std::exp( ( t_minus - t ) / tau_Ca );
-  z_value =
+  const double_t Ca = Ca_minus * std::exp( ( t_minus - t ) / tau_Ca );
+  const double_t z_value =
     growth_rate * tau_Ca * ( Ca - Ca_minus ) / eps_ + growth_rate * ( t - t_minus ) + z_minus;
 
   return std::max( z_value, 0.0 );
 }
 
 /* ----------------------------------------------------------------
-* GrowthCurveGaussian
-* ---------------------------------------------------------------- */
+ * GrowthCurveGaussian
+ * ---------------------------------------------------------------- */
+
 nest::GrowthCurveGaussian::GrowthCurveGaussian()
   : GrowthCurve( names::gaussian )
   , eta_( 0.1 )
@@ -105,31 +105,21 @@ nest::GrowthCurveGaussian::update( double_t t,
   double_t tau_Ca,
   double_t growth_rate ) const
 {
-  double_t dz;
-  double_t Ca;
-  double_t z_value;
-  const double_t h = Time::get_resolution().get_ms();
-
   // Numerical integration from t_minus to t
   // use standard forward Euler numerics
+  const double_t h = Time::get_resolution().get_ms();
   const double_t zeta = ( eta_ - eps_ ) / ( 2.0 * sqrt( log( 2.0 ) ) );
   const double_t xi = ( eta_ + eps_ ) / 2.0;
 
-  z_value = z_minus;
-  Ca = Ca_minus;
+  double_t z_value = z_minus;
+  double_t Ca = Ca_minus;
 
   for ( double_t lag = t_minus; lag < ( t - h / 2.0 ); lag += h )
   {
     Ca = Ca - ( ( Ca / tau_Ca ) * h );
-    dz = h * growth_rate * ( 2.0 * exp( -pow( ( Ca - xi ) / zeta, 2 ) ) - 1.0 );
+    const double_t dz = h * growth_rate * ( 2.0 * exp( -pow( ( Ca - xi ) / zeta, 2 ) ) - 1.0 );
     z_value = z_value + dz;
   }
 
-  //  return z_value;
-  if ( z_value > 0.0 )
-  {
-    return z_value;
-  }
-  else
-    return 0.0;
+  return std::max( z_value, 0.0 );
 }

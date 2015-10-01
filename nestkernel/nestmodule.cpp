@@ -46,6 +46,8 @@
 #include "genericmodel.h"
 #include "conn_builder.h"
 
+#include "kernel_manager.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -469,16 +471,6 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*BeginDocumentation
-  Name: ResumeSimulation - resume an interrupted simulation
-  SeeAlso: Simulate
-*/
-void
-NestModule::ResumeSimulationFunction::execute( SLIInterpreter* i ) const
-{
-  resume_simulation();
-  i->EStack.pop();
-}
 
 /* BeginDocumentation
    Name: CopyModel - copy a model to a new name, set parameters for copy, if given
@@ -1794,7 +1786,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "SetDefaults_l_D", &setdefaults_l_Dfunction );
   i->createcommand( "GetDefaults_l", &getdefaults_lfunction );
 
-  i->createcommand( "ResumeSimulation", &resumesimulationfunction );
   i->createcommand( "Create_l_i", &create_l_ifunction );
 
   i->createcommand( "Connect_i_i_l", &connect_i_i_lfunction );

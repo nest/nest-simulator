@@ -45,6 +45,8 @@
 #include "nest_timemodifier.h"
 #include "nest_timeconverter.h"
 
+#include "kernel_manager.h"
+
 #include <cmath>
 #include <sys/time.h>
 #include <set>
@@ -2812,6 +2814,36 @@ nest::Network::set_num_rec_processes( int nrp, bool called_by_reset )
       n_rec_procs_,
       n_sim_procs_ );
     LOG( M_INFO, "Network::set_num_rec_processes", msg );
+  }
+}
+
+// inline
+bool
+Network::is_local_node( Node* n ) const
+{
+  return kernel().vp_manager.is_local_vp( n->get_vp() );
+}
+
+// inline
+size_t
+Network::write_toggle() const
+{
+  return kernel().simulation_manager.get_slice() % 2;
+}
+
+// inline
+thread
+Network::get_process_id( thread vp ) const
+{
+  if ( vp >= static_cast< thread >( n_sim_procs_
+               * kernel().vp_manager.get_num_threads() ) ) // vp belongs to recording VPs
+  {
+    return ( vp - n_sim_procs_ * kernel().vp_manager.get_num_threads() ) % n_rec_procs_
+      + n_sim_procs_;
+  }
+  else // vp belongs to simulating VPs
+  {
+    return vp % n_sim_procs_;
   }
 }
 

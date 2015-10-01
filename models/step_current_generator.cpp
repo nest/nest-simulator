@@ -26,6 +26,7 @@
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictutils.h"
+#include "network_impl.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

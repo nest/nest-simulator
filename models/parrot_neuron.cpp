@@ -28,6 +28,8 @@
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "numerics.h"
+#include "kernel_manager.h"
+
 
 #include <limits>
 namespace nest

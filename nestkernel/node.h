@@ -99,6 +99,7 @@ class Node
   friend class proxynode;
   friend class Synapse;
   friend class Model;
+  friend class SimulationManager;
 
   Node& operator=( const Node& ); //!< not implemented
 

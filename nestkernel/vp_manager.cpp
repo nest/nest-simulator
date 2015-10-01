@@ -21,6 +21,7 @@
  */
 
 #include "vp_manager.h"
+#include "kernel_manager.h"
 #include "dictutils.h"
 #include "network.h"
 

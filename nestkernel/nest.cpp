@@ -229,12 +229,6 @@ simulate( const double_t& time )
 }
 
 void
-resume_simulation()
-{
-  Network::get_network().resume();
-}
-
-void
 copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict )
 {
   const Dictionary& modeldict = Network::get_network().get_modeldict();

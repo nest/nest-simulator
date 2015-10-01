@@ -27,6 +27,7 @@
 #include "doubledatum.h"
 #include "arraydatum.h"
 #include "dictutils.h"
+#include "network_impl.h"
 
 #include <algorithm>
 #include <limits>

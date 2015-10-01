@@ -29,6 +29,7 @@
 #include "datum.h"
 #include <algorithm>
 #include <limits>
+#include "network_impl.h"
 
 
 /* ----------------------------------------------------------------

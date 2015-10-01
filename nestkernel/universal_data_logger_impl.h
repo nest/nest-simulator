@@ -24,6 +24,7 @@
 #include "nest_time.h"
 #include "network.h"
 #include "node.h"
+#include "kernel_manager.h"
 
 
 template < typename HostNode >

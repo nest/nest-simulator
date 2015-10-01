@@ -30,6 +30,7 @@
 #include "arraydatum.h"
 #include "connector_base.h"
 #include "spikecounter.h"
+#include "kernel_manager.h"
 
 #include <numeric>
 

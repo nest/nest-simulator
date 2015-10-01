@@ -33,6 +33,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
+#include "network_impl.h"
 
 #include <cmath>
 #include <limits>

@@ -46,7 +46,6 @@
 #include "randomgen.h"
 #include "communicator.h"
 
-#include "kernel_manager.h"
 
 #ifdef M_ERROR
 #undef M_ERROR
@@ -1228,12 +1227,6 @@ Network::get_num_sim_processes() const
 }
 
 inline bool
-Network::is_local_node( Node* n ) const
-{
-  return kernel().vp_manager.is_local_vp( n->get_vp() );
-}
-
-inline bool
 Network::is_local_gid( index gid ) const
 {
   return local_nodes_.get_node_by_gid( gid ) != 0;
@@ -1259,50 +1252,6 @@ Network::trigger_update_weight( const long_t vt_gid,
   connection_manager_.trigger_update_weight( vt_gid, dopa_spikes, t_trig );
 }
 
-template < class EventT >
-inline void
-Network::send( Node& source, EventT& e, const long_t lag )
-{
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
-  e.set_sender( source );
-  thread t = source.get_thread();
-  index gid = source.get_gid();
-
-  assert( !source.has_proxies() );
-  connection_manager_.send( t, gid, e );
-}
-
-template <>
-inline void
-Network::send< SpikeEvent >( Node& source, SpikeEvent& e, const long_t lag )
-{
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
-  e.set_sender( source );
-  thread t = source.get_thread();
-
-  if ( source.has_proxies() )
-  {
-    if ( source.is_off_grid() )
-      send_offgrid_remote( t, e, lag );
-    else
-      send_remote( t, e, lag );
-  }
-  else
-    send_local( t, source, e );
-}
-
-template <>
-inline void
-Network::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long_t lag )
-{
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
-  e.set_sender( source );
-  thread t = source.get_thread();
-
-  assert( !source.has_proxies() );
-  send_local( t, source, e );
-}
-
 inline void
 Network::send_local( thread t, Node& source, Event& e )
 {
@@ -1315,12 +1264,6 @@ inline void
 Network::send_to_node( Event& e )
 {
   e();
-}
-
-inline size_t
-Network::write_toggle() const
-{
-  return kernel().simulation_manager.get_slice() % 2;
 }
 
 inline size_t
@@ -1449,21 +1392,6 @@ Network::send_offgrid_remote( thread t, SpikeEvent& e, const long_t lag )
   OffGridSpike ogs( e.get_sender().get_gid(), e.get_offset() );
   for ( int_t i = 0; i < e.get_multiplicity(); ++i )
     offgrid_spike_register_[ t ][ lag ].push_back( ogs );
-}
-
-inline thread
-Network::get_process_id( thread vp ) const
-{
-  if ( vp >= static_cast< thread >( n_sim_procs_
-               * kernel().vp_manager.get_num_threads() ) ) // vp belongs to recording VPs
-  {
-    return ( vp - n_sim_procs_ * kernel().vp_manager.get_num_threads() ) % n_rec_procs_
-      + n_sim_procs_;
-  }
-  else // vp belongs to simulating VPs
-  {
-    return vp % n_sim_procs_;
-  }
 }
 
 inline void

@@ -26,6 +26,7 @@
 #ifdef HAVE_GSL_1_11
 
 #include "universal_data_logger_impl.h"
+#include "kernel_manager.h"
 
 #include "exceptions.h"
 #include "network.h"

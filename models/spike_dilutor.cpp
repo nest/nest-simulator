@@ -27,6 +27,8 @@
 #include "dictutils.h"
 #include "exceptions.h"
 #include "gslrandomgen.h"
+#include "kernel_manager.h"
+#include "network_impl.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

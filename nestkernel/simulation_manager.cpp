@@ -21,8 +21,16 @@
  */
 
 #include "simulation_manager.h"
+
+#include <sys/time.h>
+
+#include "kernel_manager.h"
+#include "nest_timemodifier.h"
+#include "sibling_container.h"
+
 #include "dictutils.h"
 #include "network.h"
+#include "psignal.h"
 
 nest::SimulationManager::SimulationManager()
   : simulating_( false )
@@ -53,10 +61,7 @@ nest::SimulationManager::init()
 void
 nest::SimulationManager::reset()
 {
-  // former scheduler.reset()
-   // Reset TICS_PER_MS, MS_PER_TICS and TICS_PER_STEP to the compiled-in default values.
-   // See ticket #217 for details.
-  nest::TimeModifier::reset_to_defaults();
+  nest::Time::reset_to_defaults();
 
    clock_.set_to_zero(); // ensures consistent state
    to_do_ = 0;
@@ -149,7 +154,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       }
       else
       {
-        nest::TimeModifier::set_time_representation( tics_per_ms, resd );
+        nest::Time::set_resolution( tics_per_ms, resd );
         clock_.calibrate(); // adjust to new resolution
         Network::get_network().connection_manager_.calibrate(
           time_converter ); // adjust delays in the connection system to new resolution

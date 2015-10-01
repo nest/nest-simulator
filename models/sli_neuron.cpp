@@ -23,7 +23,6 @@
 #include "exceptions.h"
 #include "sli_neuron.h"
 #include "network.h"
-#include ""
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
@@ -31,6 +30,7 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 #include "dictstack.h"
+#include "network_impl.h"
 
 #include <limits>
 

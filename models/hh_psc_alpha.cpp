@@ -34,6 +34,7 @@
 #include "numerics.h"
 #include <limits>
 #include "universal_data_logger_impl.h"
+#include "network_impl.h"
 
 #include <iomanip>
 #include <iostream>

@@ -24,6 +24,9 @@
 #include "connector_model.h"
 #include "connector_base.h"
 
+#include "kernel_manager.h"
+
+
 namespace nest
 {
 

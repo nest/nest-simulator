@@ -27,6 +27,8 @@
 #include "manager_interface.h"
 #include "dictdatum.h"
 
+#include "network.h"  // remove later
+
 namespace nest
 {
 

@@ -29,6 +29,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
+#include "kernel_manager.h"
 
 #include <limits>
 

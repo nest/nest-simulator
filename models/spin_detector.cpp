@@ -28,6 +28,7 @@
 #include "dictutils.h"
 #include "arraydatum.h"
 #include "sibling_container.h"
+#include "kernel_manager.h"
 
 #include <numeric>
 

@@ -30,6 +30,7 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 #include "propagator_stability.h"
+#include "network_impl.h"
 
 #include <limits>
 

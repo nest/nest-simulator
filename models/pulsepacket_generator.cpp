@@ -30,6 +30,7 @@
 #include "numerics.h"
 #include "gslrandomgen.h"
 #include <algorithm>
+#include "kernel_manager.h"
 
 
 /* ----------------------------------------------------------------

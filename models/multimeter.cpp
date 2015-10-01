@@ -22,6 +22,7 @@
 
 #include "network.h"
 #include "multimeter.h"
+#include "network_impl.h"
 
 namespace nest
 {

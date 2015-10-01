@@ -152,7 +152,7 @@ Network::Network( SLIInterpreter& i )
 
   synapsedict_ = new Dictionary();
   interpreter_.def( "synapsedict", new DictionaryDatum( synapsedict_ ) );
-  connection_manager_.init( synapsedict_ );
+  connection_manager_.init();
 
   connruledict_ = new Dictionary();
   interpreter_.def( "connruledict", new DictionaryDatum( connruledict_ ) );

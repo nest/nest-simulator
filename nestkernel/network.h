@@ -1324,19 +1324,11 @@ Network::get_grng() const
   return grng_;
 }
 
-inline Model*
-Network::get_model( index m ) const
-{
-  if ( m >= models_.size() || models_[ m ] == 0 )
-    throw UnknownModelID( m );
-
-  return models_[ m ];
-}
 
 inline Model*
 Network::get_model_of_gid( index gid )
 {
-  return models_[ get_model_id_of_gid( gid ) ];
+  return kernel().model_manager.get_model( get_model_id_of_gid( gid ) );
 }
 
 inline index

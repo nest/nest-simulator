@@ -27,6 +27,7 @@
 #include "logging_manager.h"
 #include "io_manager.h"
 #include "simulation_manager.h"
+#include "model_manager.h"
 
 #include "dictdatum.h"
 
@@ -61,6 +62,7 @@ public:
   LoggingManager logging_manager;
   IOManager io_manager;
   SimulationManager simulation_manager;
+  ModelManager model_manager;
 };
 
 KernelManager& kernel();

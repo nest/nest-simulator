@@ -57,7 +57,7 @@ public:
   ConnectionManager();
   ~ConnectionManager();
 
-  void init( Dictionary* );
+  void init();
   void reset();
 
   /**

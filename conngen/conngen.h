@@ -1,5 +1,5 @@
 /*
- *  cg_connect.h
+ *  conngen.h
  *
  *  This file is part of NEST.
  *
@@ -20,39 +20,43 @@
  *
  */
 
-#ifndef CG_CONNECT_H
-#define CG_CONNECT_H
+#ifndef CONNGEN_H
+#define CONNGEN_H
 
 #include <vector>
 
 #include "nest_types.h"
+#include "nest_names.h"
+
+#include "arraydatum.h"
+#include "stringdatum.h"
 #include "dictdatum.h"
 #include "conngendatum.h"
 
 namespace nest
 {
-void cg_connect( ConnectionGeneratorDatum& cg,
-  RangeSet& sources,
-  index source_offset,
-  RangeSet& targets,
-  index target_offset,
-  DictionaryDatum params_map,
-  index syn );
-void cg_connect( ConnectionGeneratorDatum& cg,
-  RangeSet& sources,
-  std::vector< long >& source_gids,
-  RangeSet& targets,
-  std::vector< long >& target_gids,
-  DictionaryDatum params_map,
-  index syn );
 
-void cg_set_masks( ConnectionGeneratorDatum& cg, RangeSet& sources, RangeSet& targets );
-void cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
-  RangeSet& sources,
-  RangeSet& targets );
+void cg_connect( ConnectionGeneratorDatum& cg,
+  const index source_id,
+  const index target_id,
+  const DictionaryDatum& params_map,
+  const Name& synmodel_name );
 
-index cg_get_right_border( index left, size_t step, std::vector< long >& gids );
-void cg_get_ranges( RangeSet& ranges, std::vector< long >& gids );
+void cg_connect( ConnectionGeneratorDatum& cg,
+  IntVectorDatum& source_id,
+  IntVectorDatum& target_id,
+  const DictionaryDatum& params_map,
+  const Name& synmodel_name );
+
+ConnectionGeneratorDatum cg_parse( const StringDatum& xml );
+
+ConnectionGeneratorDatum cg_parse_file( const StringDatum& xml );
+
+void cg_select_implementation( const StringDatum& library, const StringDatum& tag );
+
+void cg_set_masks( ConnectionGeneratorDatum& cg, IntVectorDatum& sources, IntVectorDatum& targets );
+void cg_start( ConnectionGeneratorDatum& cgd );
+bool cg_next( ConnectionGeneratorDatum& cgd, int& src, int& tgt, std::vector< double >& values );
 }
 
-#endif /* #ifndef CG_CONNECT_H */
+#endif /* CONNGEN_H */

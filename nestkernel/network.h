@@ -395,10 +395,10 @@ public:
     const DictionaryDatum& );
 
   DictionaryDatum get_connector_defaults( index sc );
-  void set_connector_defaults( index sc, DictionaryDatum& d );
+  void set_connector_defaults( const index sc, const DictionaryDatum& d );
 
   DictionaryDatum get_synapse_status( index gid, index syn, port p, thread tid );
-  void set_synapse_status( index gid, index syn, port p, thread tid, DictionaryDatum& d );
+  void set_synapse_status( index gid, index syn, port p, thread tid, const DictionaryDatum& d );
 
   ArrayDatum get_connections( DictionaryDatum dict );
 
@@ -1098,7 +1098,7 @@ Network::get_synapse_status( index gid, index syn, port p, thread tid )
 }
 
 inline void
-Network::set_synapse_status( index gid, index syn, port p, thread tid, DictionaryDatum& d )
+Network::set_synapse_status( index gid, index syn, port p, thread tid, const DictionaryDatum& d )
 {
   connection_manager_.set_synapse_status( gid, syn, p, tid, d );
 }
@@ -1110,7 +1110,7 @@ Network::get_connections( DictionaryDatum params )
 }
 
 inline void
-Network::set_connector_defaults( index sc, DictionaryDatum& d )
+Network::set_connector_defaults( const index sc, const DictionaryDatum& d )
 {
   connection_manager_.set_prototype_status( sc, d );
 }

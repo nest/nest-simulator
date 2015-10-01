@@ -26,7 +26,11 @@
 #include "vp_manager.h"
 #include "logging_manager.h"
 #include "io_manager.h"
+<<<<<<< HEAD
 #include "node_manager.h"
+=======
+#include "simulation_manager.h"
+>>>>>>> 2eb8b9ac69d5b40047e727cf631dd603964ade7d
 
 #include "dictdatum.h"
 
@@ -60,7 +64,11 @@ public:
   VPManager vp_manager;
   LoggingManager logging_manager;
   IOManager io_manager;
+<<<<<<< HEAD
   NodeManager node_manager;
+=======
+  SimulationManager simulation_manager;
+>>>>>>> 2eb8b9ac69d5b40047e727cf631dd603964ade7d
 };
 
 KernelManager& kernel();

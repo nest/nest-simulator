@@ -23,6 +23,8 @@
 #include "config.h"
 #include "conngenmodule.h"
 
+#include "conngen.h"
+
 #include "network.h"
 #include "communicator.h"
 #include "modelrange.h"
@@ -32,12 +34,14 @@
 #include "stringdatum.h"
 #include "lockptrdatum_impl.h"
 
-template class lockPTRDatum< ConnectionGenerator,
-  &nest::ConnectionGeneratorModule::ConnectionGeneratorType >;
+template class lockPTRDatum< ConnectionGenerator, &nest::ConnectionGeneratorType >;
 
 namespace nest
 {
-SLIType ConnectionGeneratorModule::ConnectionGeneratorType;
+
+ConnectionGeneratorModule::ConnectionGeneratorModule()
+{
+}
 
 ConnectionGeneratorModule::~ConnectionGeneratorModule()
 {
@@ -118,65 +122,7 @@ ConnectionGeneratorModule::CGConnect_cg_i_i_D_lFunction::execute( SLIInterpreter
   DictionaryDatum params_map = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  Subnet* sources = dynamic_cast< Subnet* >( Network::get_network().get_node( source_id ) );
-  if ( sources == NULL )
-  {
-    LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "sources must be a subnet." );
-    throw SubnetExpected();
-  }
-  if ( !sources->is_homogeneous() )
-  {
-    LOG(
-      M_ERROR, "CGConnect_cg_i_i_D_l", "sources must be a homogeneous subnet." );
-    throw BadProperty();
-  }
-  if ( dynamic_cast< Subnet* >( *sources->local_begin() ) )
-  {
-    LOG( M_ERROR,
-      "CGConnect_cg_i_i_D_l",
-      "Only 1-dim subnets are supported as sources." );
-    throw BadProperty();
-  }
-
-  Subnet* targets = dynamic_cast< Subnet* >( Network::get_network().get_node( target_id ) );
-  if ( targets == NULL )
-  {
-    LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "targets must be a subnet." );
-    throw SubnetExpected();
-  }
-  if ( !targets->is_homogeneous() )
-  {
-    LOG(
-      M_ERROR, "CGConnect_cg_i_i_D_l", "targets must be a homogeneous subnet." );
-    throw BadProperty();
-  }
-  if ( dynamic_cast< Subnet* >( *targets->local_begin() ) )
-  {
-    LOG( M_ERROR,
-      "CGConnect_cg_i_i_D_l",
-      "Only 1-dim subnets are supported as targets." );
-    throw BadProperty();
-  }
-
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  const modelrange source_range =
-    Network::get_network().get_contiguous_gid_range( ( *sources->local_begin() )->get_gid() );
-  index source_offset = source_range.get_first_gid();
-  RangeSet source_ranges;
-  source_ranges.push_back( Range( source_range.get_first_gid(), source_range.get_last_gid() ) );
-
-  const modelrange target_range =
-    Network::get_network().get_contiguous_gid_range( ( *targets->local_begin() )->get_gid() );
-  index target_offset = target_range.get_first_gid();
-  RangeSet target_ranges;
-  target_ranges.push_back( Range( target_range.get_first_gid(), target_range.get_last_gid() ) );
-
-  cg_connect(
-    cg, source_ranges, source_offset, target_ranges, target_offset, params_map, synmodel_id );
+  cg_connect( cg, source_id, target_id, params_map, synmodel_name );
 
   i->OStack.pop( 5 );
   i->EStack.pop();
@@ -194,19 +140,7 @@ ConnectionGeneratorModule::CGConnect_cg_iV_iV_D_lFunction::execute( SLIInterpret
   DictionaryDatum params_map = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  RangeSet source_ranges;
-  cg_get_ranges( source_ranges, ( *sources ) );
-
-  RangeSet target_ranges;
-  cg_get_ranges( target_ranges, ( *targets ) );
-
-  cg_connect(
-    cg, source_ranges, ( *sources ), target_ranges, ( *targets ), params_map, synmodel_id );
+  cg_connect( cg, sources, targets, params_map, synmodel_name );
 
   i->OStack.pop( 5 );
   i->EStack.pop();
@@ -237,7 +171,7 @@ ConnectionGeneratorModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   StringDatum xml = getValue< StringDatum >( i->OStack.pick( 0 ) );
-  ConnectionGeneratorDatum cgd = ConnectionGenerator::fromXML( xml );
+  ConnectionGeneratorDatum cgd = cg_parse( xml );
 
   i->OStack.pop( 1 );
   i->OStack.push( cgd );
@@ -269,7 +203,7 @@ ConnectionGeneratorModule::CGParseFile_sFunction::execute( SLIInterpreter* i ) c
   i->assert_stack_load( 1 );
 
   StringDatum xml = getValue< StringDatum >( i->OStack.pick( 0 ) );
-  ConnectionGeneratorDatum cgd = ConnectionGenerator::fromXMLFile( xml );
+  ConnectionGeneratorDatum cgd = cg_parse_file( xml );
 
   i->OStack.pop( 1 );
   i->OStack.push( cgd );
@@ -302,7 +236,8 @@ ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute( SLIInter
 
   StringDatum library = getValue< StringDatum >( i->OStack.pick( 0 ) );
   StringDatum tag = getValue< StringDatum >( i->OStack.pick( 1 ) );
-  ConnectionGenerator::selectCGImplementation( tag, library );
+
+  cg_select_implementation( library, tag );
 
   i->OStack.pop( 1 );
   i->EStack.pop();
@@ -343,13 +278,7 @@ ConnectionGeneratorModule::CGSetMask_cg_iV_iVFunction::execute( SLIInterpreter* 
   IntVectorDatum sources = getValue< IntVectorDatum >( i->OStack.pick( 1 ) );
   IntVectorDatum targets = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
 
-  RangeSet source_ranges;
-  cg_get_ranges( source_ranges, ( *sources ) );
-
-  RangeSet target_ranges;
-  cg_get_ranges( target_ranges, ( *targets ) );
-
-  cg_set_masks( cg, source_ranges, target_ranges );
+  cg_set_masks( cg, sources, targets );
 
   i->OStack.pop( 3 );
   i->EStack.pop();
@@ -385,7 +314,7 @@ ConnectionGeneratorModule::CGStart_cgFunction::execute( SLIInterpreter* i ) cons
 
   ConnectionGeneratorDatum cgd = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
 
-  cgd->start();
+  cg_start( cgd );
 
   i->OStack.pop( 1 );
   i->EStack.pop();
@@ -424,26 +353,25 @@ ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   ConnectionGeneratorDatum cgd = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
-  ConnectionGenerator* generator = cgd.get();
 
   int j, k;
-  int arity = generator->arity();
-  double* values = new double[ arity ];
+  std::vector< double > values;
   i->OStack.pop( 1 );
   i->EStack.pop();
-  if ( generator->next( j, k, values ) )
+  if ( cg_next( cgd, j, k, values ) )
   {
     i->OStack.push( j );
     i->OStack.push( k );
-    for ( int m = 0; m < arity; ++m )
+    for ( int m = 0; m < values.size(); ++m )
+    {
       i->OStack.push( values[ m ] );
-    delete[] values;
+    }
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
-
-  cgd.unlock();
+  }
 }
 
 

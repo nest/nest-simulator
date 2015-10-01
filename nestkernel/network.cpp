@@ -558,9 +558,8 @@ Network::set_status( index gid, const DictionaryDatum& d )
   // former scheduler_.set_status( d ); start
   // careful, this may invalidate all node pointers!
   assert( initialized_ );
-  std::cout << "HERE" << std::endl;
   kernel().set_status( d );
-  std::cout << "HERE2" << std::endl;
+
   // Create an instance of time converter here to capture the current
   // representation of time objects: TICS_PER_MS and TICS_PER_STEP
   // will be stored in time_converter.

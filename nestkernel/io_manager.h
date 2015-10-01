@@ -23,11 +23,10 @@
 #ifndef IO_MANAGER_H
 #define IO_MANAGER_H
 
-#include <omp.h>
 #include <string>
 
 #include "manager_interface.h"
-#include "dict.h"
+#include "dictdatum.h"
 
 
 /*
@@ -50,7 +49,7 @@ Linked Data Structures:
 namespace nest
 {
 
-class IOManager : ManagerInterface
+class IOManager : public ManagerInterface
 {
 public:
   virtual void init();

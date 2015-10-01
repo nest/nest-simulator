@@ -23,15 +23,12 @@
 #ifndef CONNGENMODULE_H
 #define CONNGENMODULE_H
 
+#include <string>
+
 #include "slimodule.h"
-#include "slitype.h"
+#include "conngendatum.h"
 
 #include "modelrange.h"
-
-#include <neurosim/connection_generator.h>
-
-typedef std::vector< ConnectionGenerator::ClosedInterval > RangeSet;
-typedef ConnectionGenerator::ClosedInterval Range;
 
 #include "dictdatum.h"
 
@@ -40,8 +37,6 @@ namespace nest
 class ConnectionGeneratorModule : public SLIModule
 {
 public:
-  static SLIType ConnectionGeneratorType;
-
   ConnectionGeneratorModule();
   ~ConnectionGeneratorModule();
 
@@ -94,9 +89,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } cgnext_cgfunction;
 };
-
-typedef lockPTRDatum< ConnectionGenerator,
-  &nest::ConnectionGeneratorModule::ConnectionGeneratorType > ConnectionGeneratorDatum;
 
 } // namespace nest
 

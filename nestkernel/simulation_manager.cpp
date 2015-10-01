@@ -42,6 +42,10 @@ nest::SimulationManager::SimulationManager()
 void
 nest::SimulationManager::init()
 {
+  // set resolution, ensure clock is calibrated to new resolution
+  Time::reset_resolution();
+  clock_.calibrate();
+
   simulated_ = false;
 
 }
@@ -50,9 +54,9 @@ void
 nest::SimulationManager::reset()
 {
   // former scheduler.reset()
-   // Reset TICS_PER_MS, MS_PER_TICS and TICS_PER_STEP to the compiled in default values.
+   // Reset TICS_PER_MS, MS_PER_TICS and TICS_PER_STEP to the compiled-in default values.
    // See ticket #217 for details.
-   nest::TimeModifier::reset_to_defaults();
+  nest::TimeModifier::reset_to_defaults();
 
    clock_.set_to_zero(); // ensures consistent state
    to_do_ = 0;
@@ -117,7 +121,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "first." );
       throw KernelException();
     }
-    else if ( get_simulated() ) // someone may have simulated empty network
+    else if ( has_been_simulated() ) // someone may have simulated empty network
     {
       LOG( M_ERROR,
         "Network::set_status",
@@ -241,7 +245,7 @@ nest::SimulationManager::simulate( Time const& t )
   to_do_ += t.get_steps();
   to_do_total_ = to_do_;
 
-  prepare_simulation();
+  prepare_simulation_();
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -268,13 +272,13 @@ nest::SimulationManager::simulate( Time const& t )
       "Simulate "
       "is called repeatedly with simulation times that are not multiples of the minimal delay." );
 
-  resume();
+  resume_();
 
-  finalize_simulation();
+  finalize_simulation_();
 }
 
 void
-nest::SimulationManager::resume()
+nest::SimulationManager::resume_()
 {
   assert( kernel().is_initialized() );
 
@@ -301,7 +305,7 @@ nest::SimulationManager::resume()
   }
 #endif
 
-  update();
+  update_();
 
   simulating_ = false;
 
@@ -329,7 +333,7 @@ nest::SimulationManager::resume()
 }
 
 void
-nest::SimulationManager::prepare_simulation()
+nest::SimulationManager::prepare_simulation_()
 {
   if ( to_do_ == 0 )
     return;
@@ -377,7 +381,7 @@ nest::SimulationManager::prepare_simulation()
 }
 
 void
-nest::SimulationManager::update()
+nest::SimulationManager::update_()
 {
 #ifdef _OPENMP
   LOG( M_INFO, "Network::update", "Simulating using OpenMP." );
@@ -482,7 +486,7 @@ nest::SimulationManager::update()
 }
 
 void
-nest::SimulationManager::finalize_simulation()
+nest::SimulationManager::finalize_simulation_()
 {
   if ( not simulated_ )
     return;
@@ -504,7 +508,7 @@ nest::SimulationManager::finalize_simulation()
 void
 nest::SimulationManager::reset_network()
 {
-  if ( not kernel().simulation_manager.get_simulated() )
+  if ( not kernel().simulation_manager.has_been_simulated() )
     return; // nothing to do
 
   /* Reinitialize state on all nodes, force init_buffers() on next

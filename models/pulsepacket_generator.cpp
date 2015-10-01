@@ -134,7 +134,7 @@ nest::pulsepacket_generator::calibrate()
   else
     V_.tolerance = 1.0;
 
-  const double_t now = ( Network::get_network().get_time() ).get_ms();
+  const double_t now = ( kernel().simulation_manager.get_time() ).get_ms();
 
   V_.start_center_idx_ = 0;
   V_.stop_center_idx_ = 0;

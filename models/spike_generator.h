@@ -302,7 +302,7 @@ spike_generator::set_status( const DictionaryDatum& d )
     origin = Time::ms( v );
   else
     origin = device_.get_origin();
-  ptmp.set( d, S_, origin, Network::get_network().get_time() ); // throws if BadProperty
+  ptmp.set( d, S_, origin, kernel().simulation_manager.get_time() ); // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

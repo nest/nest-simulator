@@ -1768,10 +1768,6 @@ NestModule::init( SLIInterpreter* i )
   GIDCollectionType.settypename( "gidcollectiontype" );
   GIDCollectionType.setdefaultaction( SLIInterpreter::datatypefunction );
 
-  // set resolution, ensure clock is calibrated to new resolution
-  Time::reset_resolution();
-  Network::get_network().calibrate_clock();
-
   // register interface functions with interpreter
   i->createcommand( "ChangeSubnet", &changesubnet_ifunction );
   i->createcommand( "CurrentSubnet", &currentsubnetfunction );

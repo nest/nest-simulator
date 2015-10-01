@@ -42,20 +42,6 @@ public:
   virtual void get_status( DictionaryDatum& );
 
   /**
-   * Set properties of a Node. The specified node must exist.
-   * @throws nest::UnknownNode       Target does not exist in the SimulationManager.
-   * @throws nest::UnaccessedDictionaryEntry  Non-proxy target did not read dict entry.
-   * @throws TypeMismatch            Array is not a flat & homogeneous array of integers.
-   */
-  void set_status( index, const DictionaryDatum& );
-
-  /**
-   * Get properties of a node. The specified node must exist.
-   * @throws nest::UnknownNode       Target does not exist in the SimulationManager.
-   */
-  DictionaryDatum get_status( index );
-
-  /**
    * Simulate for the given time .
    * This function performs the following steps
    * 1. set the new simulation time
@@ -64,11 +50,6 @@ public:
    * 4. call finalize_simulation()
    */
   void simulate( Time const& );
-
-  /**
-   * Resume the simulation after it was terminated.
-   */
-  void resume();
 
   /**
    * Terminate the simulation after the time-slice is finished.
@@ -97,31 +78,12 @@ public:
    * This does NOT indicate that simulate has been called (i.e. if Simulate
    * is called with 0 as argument, the flag is still set to false.)
    */
-  bool get_simulated() const;
-
-  /**
-   * Calibrate clock after resolution change.
-   */
-  void calibrate_clock();
+  bool has_been_simulated() const;
 
   /**
    * Reset the SimulationManager to the state at T = 0.
    */
   void reset_network();
-
-  /**
-   * All steps that must be done before a simulation.
-   */
-  void prepare_simulation();
-
-  /**
-   * Cleanup after the simulation.
-   * @note never called?
-   */
-  void finalize_simulation();
-
-  /** Update with OpenMP threading, if enabled. */
-  void update();
 
   /**
    * Get slice number. Increased by one for each slice. Can be used
@@ -143,8 +105,12 @@ public:
 
 private:
 
-  void advance_time_();  //! Update time to next time step
-  void print_progress_();  //! TODO: Remove, replace by logging!
+  void resume_();          //!< actually run simulation; TODO: review
+  void prepare_simulation_();   //! setup before simulation start
+  void finalize_simulation_();  //! wrap-up after simulation end
+  void update_();          //! actually perform simulation
+  void advance_time_();    //!< Update time to next time step
+  void print_progress_();  //!< TODO: Remove, replace by logging!
 
   bool simulating_; //!< true if simulation in progress
   Time clock_; //!< SimulationManager clock, updated once per slice
@@ -187,15 +153,9 @@ SimulationManager::get_time() const
 }
 
 inline bool
-SimulationManager::get_simulated() const
+SimulationManager::has_been_simulated() const
 {
   return simulated_;
-}
-
-inline void
-SimulationManager::calibrate_clock()
-{
-  clock_.calibrate();
 }
 
 inline size_t

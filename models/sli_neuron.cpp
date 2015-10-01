@@ -23,6 +23,7 @@
 #include "exceptions.h"
 #include "sli_neuron.h"
 #include "network.h"
+#include ""
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
@@ -133,7 +134,7 @@ nest::sli_neuron::calibrate()
 
   if ( terminate )
   {
-    Network::get_network().terminate();
+    kernel().simulation_manager.terminate();
     LOG(
       M_ERROR, "sli_neuron::calibrate", "Terminating." );
     return;
@@ -164,7 +165,7 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
     LOG( M_ERROR,
       "sli_neuron::update",
       "Please check /calibrate and /update for errors" );
-    Network::get_network().terminate();
+    kernel().simulation_manager.terminate();
     return;
   }
 
@@ -206,10 +207,10 @@ nest::sli_neuron::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.in_spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+    B_.in_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 
@@ -223,7 +224,7 @@ nest::sli_neuron::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * I );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
 }
 
 void

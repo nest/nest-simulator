@@ -346,10 +346,10 @@ iaf_psc_alpha::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
     B_.ex_spikes_.add_value(
-      e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), s );
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
   else
     B_.in_spikes_.add_value(
-      e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), s );
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
 }
 
 void
@@ -361,7 +361,7 @@ iaf_psc_alpha::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * I );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
 }
 
 void

@@ -24,7 +24,7 @@
 
 #include <iostream>
 #include <sstream>
-#include "../nest/nest.h"
+#include "nest.h"
 #include "nest_types.h"
 #include "nest_datums.h"
 #include "network.h"

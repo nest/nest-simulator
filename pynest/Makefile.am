@@ -50,11 +50,9 @@ pynestkernel_la_CPPFLAGS = \
 
 pynestkernel_la_CXXFLAGS = $(PYNEST_CXXFLAGS)
 
-# TODO replace $(top_builddir)/nest/nest.o by actuall library
 pynestkernel_la_LIBADD= \
 	@SLI_USER_MODULES_LDADD@ \
 	@SLI_MODULES_LDADD@ \
-	$(top_builddir)/nest/nest.o \
 	$(top_builddir)/nestkernel/libnest.la \
 	$(top_builddir)/librandom/librandom.la \
 	$(top_builddir)/libnestutil/libnestutil.la \

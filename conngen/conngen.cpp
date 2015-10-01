@@ -79,13 +79,13 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
   const index synmodel_id = static_cast< index >( synmodel );
 
   const modelrange source_range =
-    Network::get_network().get_contiguous_gid_range( ( *sources->local_begin() )->get_gid() );
+    kernel().modelrange_manager.get_contiguous_gid_range( ( *sources->local_begin() )->get_gid() );
   index source_offset = source_range.get_first_gid();
   RangeSet source_ranges;
   source_ranges.push_back( Range( source_range.get_first_gid(), source_range.get_last_gid() ) );
 
   const modelrange target_range =
-    Network::get_network().get_contiguous_gid_range( ( *targets->local_begin() )->get_gid() );
+    kernel().modelrange_manager.get_contiguous_gid_range( ( *targets->local_begin() )->get_gid() );
   index target_offset = target_range.get_first_gid();
   RangeSet target_ranges;
   target_ranges.push_back( Range( target_range.get_first_gid(), target_range.get_last_gid() ) );

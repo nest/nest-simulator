@@ -295,7 +295,7 @@ Network::destruct_nodes_()
   }
 
   local_nodes_.clear();
-  
+
   proxy_nodes_.clear();
   dummy_spike_sources_.clear();
 }

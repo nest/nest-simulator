@@ -42,10 +42,12 @@ public:
   virtual void init();
   virtual void reset();
 
-  virtual void set_status( const DictionaryDatum& )
+  virtual void
+  set_status( const DictionaryDatum& )
   {
   }
-  virtual void get_status( DictionaryDatum& )
+  virtual void
+  get_status( DictionaryDatum& )
   {
   }
 
@@ -72,7 +74,7 @@ public:
   /**
    * Return the Model ID for a given GID.
    */
-  index get_model_id( index gid);
+  index get_model_id( index gid );
 
   /**
    * Return the contiguous range of IDs of nodes assigned to the same model
@@ -88,7 +90,7 @@ private:
 };
 }
 
-inline bool 
+inline bool
 nest::ModelRangeManager::is_in_range( index gid ) const
 {
   return ( ( gid <= last_gid_ ) && ( gid >= first_gid_ ) );

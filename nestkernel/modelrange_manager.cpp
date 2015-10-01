@@ -28,26 +28,26 @@
 namespace nest
 {
 
-nest::ModelRangeManager::ModelRangeManager()
+ModelRangeManager::ModelRangeManager()
   : first_gid_( 0 )
   , last_gid_( 0 )
 {
 }
 
 void
-nest::ModelRangeManager::init()
+ModelRangeManager::init()
 {
   add_range( 0, 0, 0 );
 }
 
 void
-nest::ModelRangeManager::reset()
+ModelRangeManager::reset()
 {
   modelranges_.clear();
 }
 
 void
-nest::ModelRangeManager::add_range( index model, index first_gid, index last_gid )
+ModelRangeManager::add_range( index model, index first_gid, index last_gid )
 {
   if ( !modelranges_.empty() )
   {
@@ -67,7 +67,7 @@ nest::ModelRangeManager::add_range( index model, index first_gid, index last_gid
 }
 
 index
-nest::ModelRangeManager::get_model_id( index gid ) const
+ModelRangeManager::get_model_id( index gid ) const
 {
   int left = -1;
   int right = modelranges_.size();
@@ -95,7 +95,7 @@ nest::ModelRangeManager::get_model_id( index gid ) const
 }
 
 bool
-nest::ModelRangeManager::model_in_use( index i ) const
+ModelRangeManager::model_in_use( index i ) const
 {
   bool found = false;
 
@@ -112,7 +112,7 @@ nest::ModelRangeManager::model_in_use( index i ) const
 }
 
 index
-nest::ModelRangeManager::get_model_id( index gid )
+ModelRangeManager::get_model_id( index gid )
 {
   if ( not is_in_range( gid ) )
     throw UnknownNode( gid );
@@ -122,7 +122,7 @@ nest::ModelRangeManager::get_model_id( index gid )
 
 
 const modelrange&
-nest::ModelRangeManager::get_contiguous_gid_range( index gid ) const
+ModelRangeManager::get_contiguous_gid_range( index gid ) const
 {
   if ( !is_in_range( gid ) )
     throw UnknownNode( gid );

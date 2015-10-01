@@ -354,7 +354,7 @@ GridLayer< D >::insert_global_positions_( Ins iter, const Selector& filter )
   {
 
     if ( filter.select_model()
-	 && ( ( int ) kernel().modelrange_manager.get_model_id( *gi ) != filter.model ) )
+      && ( ( int ) kernel().modelrange_manager.get_model_id( *gi ) != filter.model ) )
       continue;
 
     *iter++ = std::pair< Position< D >, index >( lid_to_position( i ), *gi );
@@ -479,7 +479,7 @@ typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::opera
     else
     {
       if ( filter_.select_model()
-	   && ( kernel().modelrange_manager().get_model_id( layer_.gids_[ depth_ * layer_size_ ] )
+        && ( kernel().modelrange_manager().get_model_id( layer_.gids_[ depth_ * layer_size_ ] )
              != index( filter_.model ) ) )
         return operator++();
       else
@@ -502,7 +502,7 @@ typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::opera
   } while ( not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) );
 
   if ( filter_.select_model()
-       && ( kernel().modelrange_manager.get_model_id( layer_.gids_[ depth_ * layer_size_ ] )
+    && ( kernel().modelrange_manager.get_model_id( layer_.gids_[ depth_ * layer_size_ ] )
          != index( filter_.model ) ) )
     return operator++();
 

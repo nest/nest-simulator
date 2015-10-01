@@ -144,6 +144,7 @@ SeeAlso: Simulate, Node
 class Network
 {
   friend class VPManager;
+  friend class SimulationManager;
 
 private:
   Network( SLIInterpreter& );
@@ -176,11 +177,6 @@ public:
    * empty string and call reset().
    */
   void reset_kernel();
-
-  /**
-   * Reset the network to the state at T = 0.
-   */
-  void reset_network();
 
   /**
    * Registers a fundamental model for use with the network.
@@ -448,26 +444,6 @@ public:
   void go_to( index );
 
   /**
-   * Simulate for the given time .
-   * This function performs the following steps
-   * 1. set the new simulation time
-   * 2. call prepare_simulation()
-   * 3. call resume()
-   * 4. call finalize_simulation()
-   */
-  void simulate( Time const& );
-
-  /**
-   * Resume the simulation after it was terminated.
-   */
-  void resume();
-
-  /**
-   * Terminate the simulation after the time-slice is finished.
-   */
-  void terminate();
-
-  /**
    * Return true if NEST will be quit because of an error, false otherwise.
    */
   bool quit_by_error() const;
@@ -527,23 +503,6 @@ public:
   delay get_max_delay() const;
 
   /**
-   * Get the time at the beginning of the current time slice.
-   */
-  Time const& get_slice_origin() const;
-
-  /**
-   * Get the time at the beginning of the previous time slice.
-   */
-  Time get_previous_slice_origin() const;
-
-  /**
-   * Precise time of simulation.
-   * @note The precise time of the simulation is defined only
-   *       while the simulation is not in progress.
-   */
-  Time const get_time() const;
-
-  /**
    * Get random number client of a thread.
    * Defaults to thread 0 to allow use in non-threaded
    * context.  One may consider to introduce an additional
@@ -598,13 +557,6 @@ public:
    * Return true, if the given gid is on the local machine
    */
   bool is_local_gid( index gid ) const;
-
-  /**
-   * Return true, if the network has already been simulated for some time.
-   * This does NOT indicate that simulate has been called (i.e. if Simulate
-   * is called with 0 as argument, the flag is still set to false.)
-   */
-  bool get_simulated() const;
 
   /**
    * @defgroup net_access Network access
@@ -673,11 +625,6 @@ public:
    * Return the synapse dictionary
    */
   const Dictionary& get_synapsedict() const;
-
-  /**
-   * Calibrate clock after resolution change.
-   */
-  void calibrate_clock();
 
   /**
    * Return 0 for even, 1 for odd time slices.
@@ -892,20 +839,6 @@ public:
   void clear_pending_spikes();
 
   /**
-   * All steps that must be done before a simulation.
-   */
-  void prepare_simulation();
-
-  /**
-   * Cleanup after the simulation.
-   * @note never called?
-   */
-  void finalize_simulation();
-
-  /** Update with OpenMP threading, if enabled. */
-  void update();
-
-  /**
    * Add global id of event sender to the spike_register.
    * An event sent through this method will remain in the queue until
    * the network time has advanced by min_delay_ steps. After this period
@@ -957,12 +890,6 @@ public:
   void set_off_grid_communication( bool off_grid_spiking );
 
   /**
-   * Get slice number. Increased by one for each slice. Can be used
-   * to choose alternating buffers.
-   */
-  size_t get_slice() const;
-
-  /**
    * Return (T+d) mod max_delay.
    */
   delay get_modulo( delay d );
@@ -996,9 +923,6 @@ private:
    */
   void finalize_nodes();
 
-  void advance_time_();
-
-  void print_progress_();
 
   /**
    * Re-compute table of fixed modulos, including slice-based.
@@ -1072,7 +996,6 @@ private:
 private:
   /******** Member variables former owned by the scheduler ********/
   bool initialized_;
-  bool simulating_; //!< true if simulation in progress
 
   index n_rec_procs_; //!< MPI processes dedicated for recording devices
   index n_sim_procs_; //!< MPI processes used for simulation
@@ -1083,21 +1006,7 @@ private:
   vector< vector< Node* > > nodes_vec_; //!< Nodelists for unfrozen nodes
   index nodes_vec_network_size_;        //!< Network size when nodes_vec_ was last updated
 
-  Time clock_;        //!< Network clock, updated once per slice
-  delay slice_;       //!< current update slice
-  delay to_do_;       //!< number of pending cycles.
-  delay to_do_total_; //!< number of requested cycles in current simulation.
-  delay from_step_;   //!< update clock_+from_step<=T<clock_+to_step_
-  delay to_step_;     //!< update clock_+from_step<=T<clock_+to_step_
-
-  timeval t_slice_begin_; //!< Wall-clock time at the begin of a time slice
-  timeval t_slice_end_;   //!< Wall-clock time at the end of time slice
-  long t_real_;           //!< Accumunated wall-clock time spent simulating (in us)
-
-  bool terminate_; //!< Terminate on signal or error
-  bool simulated_; //!< indicates whether the network has already been simulated for some time
   bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid
-  bool print_time_;       //!< Indicates whether time should be printed during simulations (or not)
 
   std::vector< long_t > rng_seeds_; //!< The seeds of the local RNGs. These do not neccessarily
                                     //!< describe the state of the RNGs.
@@ -1209,11 +1118,6 @@ Network::get_network()
   return *network_instance_;
 }
 
-inline void
-Network::terminate()
-{
-  terminate_ = true;
-}
 
 inline bool
 Network::quit_by_error() const
@@ -1293,25 +1197,6 @@ Network::copy_synapse_prototype( index sc, std::string name )
   return connection_manager_.copy_synapse_prototype( sc, name );
 }
 
-inline Time const&
-Network::get_slice_origin() const
-{
-  return clock_;
-}
-
-inline Time
-Network::get_previous_slice_origin() const
-{
-  return clock_ - Time::step( min_delay_ );
-}
-
-inline Time const
-Network::get_time() const
-{
-  assert( not simulating_ );
-  return clock_ + Time::step( from_step_ );
-}
-
 inline Subnet*
 Network::get_root() const
 {
@@ -1354,12 +1239,6 @@ Network::is_local_gid( index gid ) const
   return local_nodes_.get_node_by_gid( gid ) != 0;
 }
 
-inline bool
-Network::get_simulated() const
-{
-  return simulated_;
-}
-
 inline delay
 Network::get_min_delay() const
 {
@@ -1384,7 +1263,7 @@ template < class EventT >
 inline void
 Network::send( Node& source, EventT& e, const long_t lag )
 {
-  e.set_stamp( get_slice_origin() + Time::step( lag + 1 ) );
+  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
   thread t = source.get_thread();
   index gid = source.get_gid();
@@ -1397,7 +1276,7 @@ template <>
 inline void
 Network::send< SpikeEvent >( Node& source, SpikeEvent& e, const long_t lag )
 {
-  e.set_stamp( get_slice_origin() + Time::step( lag + 1 ) );
+  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
   thread t = source.get_thread();
 
@@ -1416,7 +1295,7 @@ template <>
 inline void
 Network::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long_t lag )
 {
-  e.set_stamp( get_slice_origin() + Time::step( lag + 1 ) );
+  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
   thread t = source.get_thread();
 
@@ -1438,16 +1317,10 @@ Network::send_to_node( Event& e )
   e();
 }
 
-inline void
-Network::calibrate_clock()
-{
-  clock_.calibrate();
-}
-
 inline size_t
 Network::write_toggle() const
 {
-  return get_slice() % 2;
+  return kernel().simulation_manager.get_slice() % 2;
 }
 
 inline size_t
@@ -1591,12 +1464,6 @@ Network::get_process_id( thread vp ) const
   {
     return vp % n_sim_procs_;
   }
-}
-
-inline size_t
-Network::get_slice() const
-{
-  return slice_;
 }
 
 inline void

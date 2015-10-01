@@ -44,6 +44,7 @@ nest::KernelManager::destroy_kernel_manager()
 }
 
 nest::KernelManager::KernelManager()
+  : initialized_(false)
 {
 }
 
@@ -58,15 +59,21 @@ nest::KernelManager::init()
   vp_manager.init();
   io_manager.init();
   simulation_manager.init();
+
+  initialized_ = true;
 }
 
 void
 nest::KernelManager::reset()
 {
+  initialized_ = false;
+
   logging_manager.reset();
   vp_manager.reset();
   io_manager.reset();
   simulation_manager.reset();
+
+  init();
 }
 
 void

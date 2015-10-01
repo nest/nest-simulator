@@ -40,8 +40,8 @@ private:
   ~KernelManager();
   static KernelManager* kernel_manager_instance_;
 
-  KernelManager( KernelManager const& );  // Don't Implement
-  void operator=( KernelManager const& ); // Don't Implement
+  KernelManager( KernelManager const& );  // do not implement
+  void operator=( KernelManager const& ); // do not implement
 
 public:
   /**
@@ -57,10 +57,16 @@ public:
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& );
 
+  //! Returns true if kernel is initialized
+  bool is_initialized() const;
+
   VPManager vp_manager;
   LoggingManager logging_manager;
   IOManager io_manager;
   SimulationManager simulation_manager;
+
+private:
+  bool initialized_;   //!< true if all sub-managers initialized
 };
 
 KernelManager& kernel();
@@ -80,5 +86,10 @@ nest::kernel()
   return KernelManager::get_kernel_manager();
 }
 
+inline bool
+nest::KernelManager::is_initialized() const
+{
+  return initialized_;
+}
 
 #endif /* KERNEL_MANAGER_H */

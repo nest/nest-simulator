@@ -58,6 +58,7 @@ nest::KernelManager::init()
   logging_manager.init();
   vp_manager.init();
   io_manager.init();
+  connection_builder_manager.init();
   event_delivery_manager.init();
   simulation_manager.init();
   modelrange_manager.init();
@@ -73,6 +74,7 @@ nest::KernelManager::reset()
   logging_manager.reset();
   vp_manager.reset();
   io_manager.reset();
+  connection_builder_manager.reset();
   event_delivery_manager.reset();
   simulation_manager.reset();
   modelrange_manager.reset();

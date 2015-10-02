@@ -26,6 +26,7 @@
 #include "vp_manager.h"
 #include "logging_manager.h"
 #include "io_manager.h"
+#include "connection_builder_manager.h"
 #include "simulation_manager.h"
 #include "modelrange_manager.h"
 #include "event_delivery_manager.h"
@@ -65,6 +66,7 @@ public:
   VPManager vp_manager;
   LoggingManager logging_manager;
   IOManager io_manager;
+  ConnectionBuilderManager connection_builder_manager;
   SimulationManager simulation_manager;
   ModelRangeManager modelrange_manager;
   EventDeliveryManager event_delivery_manager;

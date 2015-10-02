@@ -142,6 +142,7 @@ class Network
 {
   friend class VPManager;
   friend class SimulationManager;
+  friend class ConnectionBuilderManager;
   friend class EventDeliveryManager;
 
 private:
@@ -216,12 +217,6 @@ public:
    * @see copy_model(), ConnectionManager::copy_synapse_prototype()
    */
   int copy_synapse_prototype( index sc, std::string );
-
-  /**
-   * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
-   */
-  template < typename ConnBuilder >
-  void register_conn_builder( const std::string& name );
 
   /**
    * Return the model id for a given model name.
@@ -398,14 +393,6 @@ public:
     bool,
     bool,
     index syn );
-
-  /**
-   * Create connections.
-   */
-  void connect( const GIDCollection&,
-    const GIDCollection&,
-    const DictionaryDatum&,
-    const DictionaryDatum& );
 
   DictionaryDatum get_connector_defaults( index sc );
   void set_connector_defaults( const index sc, const DictionaryDatum& d );
@@ -727,17 +714,6 @@ private:
      SeeAlso: info, Device, RecordingDevice, iaf_neuron, subnet
   */
   Dictionary* modeldict_; //!< Dictionary for models.
-
-  /* BeginDocumentation
-     Name: connruledict - dictionary containing all connectivity rules
-     Description:
-     This dictionary provides the connection rules that can be used
-     in Connect.
-     'connruledict info' shows the contents of the dictionary.
-     SeeAlso: Connect
-  */
-  Dictionary* connruledict_; //!< Dictionary for connection rules.
-
   Model* siblingcontainer_model; //!< The model for the SiblingContainer class
 
   /**
@@ -753,14 +729,7 @@ private:
     proxy_nodes_; //!< Placeholders for remote nodes, one per thread
   std::vector< Node* >
     dummy_spike_sources_; //!< Placeholders for spiking remote nodes, one per thread
-
-  std::vector< GenericConnBuilderFactory* >
-    connbuilder_factories_; //! ConnBuilder factories, indexed by connruledict_ elements.
-
-  bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
-
   bool model_defaults_modified_; //!< whether any model defaults have been modified
-
   /************ Previously Scheduler ***************/
 public:
 
@@ -901,12 +870,6 @@ inline Node*
 Network::thread_lid_to_node( thread t, targetindex thread_local_id ) const
 {
   return nodes_vec_[ t ][ thread_local_id ];
-}
-
-inline void
-Network::connect( ArrayDatum& connectome )
-{
-  connection_manager_.connect( connectome );
 }
 
 inline DictionaryDatum

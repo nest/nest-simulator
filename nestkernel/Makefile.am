@@ -82,7 +82,8 @@ libnest_la_SOURCES=\
 		vp_manager.h vp_manager.cpp \
 		io_manager.h io_manager.cpp \
 		simulation_manager.h simulation_manager.cpp \
-		event_delivery_manager.h event_delivery_manager.cpp
+		event_delivery_manager.h event_delivery_manager.cpp \
+		connection_builder_manager.h connection_builder_manager.cpp
 
 libnest_la_LIBADD= @LIBLTDL@ @LIBADD_DL@
 

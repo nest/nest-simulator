@@ -1,5 +1,5 @@
 /*
- *  network_impl.h
+ *  connection_builder_manager_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef NETWORK_IMPL_H
-#define NETWORK_IMPL_H
+#ifndef CONNECTIONBUILDERMANAGER_IMPL_H
+#define CONNECTIONBUILDERMANAGER_IMPL_H
 
-#include "network.h"
+#include "connection_builder_manager.h"
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
 #include "kernel_manager.h"
@@ -33,7 +33,7 @@ namespace nest
 
 template < typename ConnBuilder >
 void
-Network::register_conn_builder( const std::string& name )
+ConnectionBuilderManager::register_conn_builder( const std::string& name )
 {
   assert( !connruledict_->known( name ) );
   GenericConnBuilderFactory* cb = new ConnBuilderFactory< ConnBuilder >();

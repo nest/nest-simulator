@@ -57,7 +57,7 @@ public:
   ConnectionManager();
   ~ConnectionManager();
 
-  void init( Dictionary* );
+  void init();
   void reset();
 
   /**
@@ -121,6 +121,7 @@ public:
     index syn,
     double_t d = NAN,
     double_t w = NAN );
+
   void connect( Node& s,
     Node& r,
     index s_gid,

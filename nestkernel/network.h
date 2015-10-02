@@ -881,17 +881,6 @@ Network::get_grng() const
   return grng_;
 }
 
-inline Model*
-Network::get_model( index m ) const
-{
-  if ( m >= models_.size() || models_[ m ] == 0 )
-    throw UnknownModelID( m );
-
-  return models_[ m ];
-}
-
-
-
 inline bool
 Network::dict_miss_is_error() const
 {
@@ -910,10 +899,8 @@ public:
     : models( nmodels )
   {
   }
-  bool operator()( int a, int b )
-  {
-    return models[ a ]->get_name() < models[ b ]->get_name();
-  }
+
+  bool operator()( int a, int b );
 };
 
 /****** former Scheduler functions ******/

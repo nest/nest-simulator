@@ -179,7 +179,7 @@ create( const Name& model_name, const index n_nodes )
     throw RangeCheck();
   }
 
-  const Token model = Network::get_network().get_modeldict().lookup( model_name );
+  const Token model = kernel().model_manager.get_modeldict()->lookup( model_name );
   if ( model.empty() )
     throw UnknownModelName( model_name );
 
@@ -231,106 +231,33 @@ simulate( const double_t& time )
 void
 copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict )
 {
-  const Dictionary& modeldict = Network::get_network().get_modeldict();
-  const Dictionary& synapsedict = Network::get_network().get_synapsedict();
-
-  if ( modeldict.known( newmodname ) || synapsedict.known( newmodname ) )
-    throw NewModelNameExists( newmodname );
-
-  dict->clear_access_flags(); // set properties with access control
-  const Token oldnodemodel = modeldict.lookup( oldmodname );
-  const Token oldsynmodel = synapsedict.lookup( oldmodname );
-
-  if ( !oldnodemodel.empty() )
-  {
-    const index old_id = static_cast< index >( oldnodemodel );
-    const index new_id = Network::get_network().copy_model( old_id, newmodname.toString() );
-    Network::get_network().get_model( new_id )->set_status( dict );
-  }
-  else if ( !oldsynmodel.empty() )
-  {
-    const index old_id = static_cast< index >( oldsynmodel );
-    const index new_id =
-      Network::get_network().copy_synapse_prototype( old_id, newmodname.toString() );
-    Network::get_network().set_connector_defaults( new_id, dict );
-  }
-  else
-    throw UnknownModelName( oldmodname );
-
-  std::string missed;
-  if ( !dict->all_accessed( missed ) )
-  {
-    if ( Network::get_network().dict_miss_is_error() )
-    {
-      throw UnaccessedDictionaryEntry( missed );
-    }
-    else
-    {
-      LOG( M_WARNING, "CopyModel", "Unread dictionary entries: " + missed );
-    }
-  }
+  kernel().model_manager.copy_model(oldmodname, newmodname, dict);
 }
 
 void
 set_model_defaults( const Name& modelname, const DictionaryDatum& dict )
 {
-  const Token nodemodel = Network::get_network().get_modeldict().lookup( modelname );
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( modelname );
-
-  dict->clear_access_flags(); // set properties with access control
-
-  if ( !nodemodel.empty() )
-  {
-    const index model_id = static_cast< index >( nodemodel );
-    Network::get_network().get_model( model_id )->set_status( dict );
-    Network::get_network().set_model_defaults_modified();
-  }
-  else if ( !synmodel.empty() )
-  {
-    const index synapse_id = static_cast< index >( synmodel );
-    Network::get_network().set_connector_defaults( synapse_id, dict );
-    Network::get_network().set_model_defaults_modified();
-  }
-  else
-  {
-    throw UnknownModelName( modelname.toString() );
-  }
-
-
-  std::string missed;
-  if ( !dict->all_accessed( missed ) )
-  {
-
-    if ( Network::get_network().dict_miss_is_error() )
-    {
-
-      throw UnaccessedDictionaryEntry( missed );
-    }
-    else
-    {
-      LOG( M_WARNING, "SetDefaults", ( "Unread dictionary entries: " + missed ).c_str() );
-    }
-  }
+  kernel().model_manager.set_model_defaults(modelname, dict);
 }
 
 DictionaryDatum
 get_model_defaults( const Name& modelname )
 {
-  const Token nodemodel = Network::get_network().get_modeldict().lookup( modelname );
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( modelname );
+  const Token nodemodel = kernel().model_manager.get_modeldict()->lookup( modelname );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( modelname );
 
   DictionaryDatum dict;
 
   if ( !nodemodel.empty() )
   {
     const long model_id = static_cast< long >( nodemodel );
-    Model* m = Network::get_network().get_model( model_id );
+    Model* m = kernel().model_manager.get_model( model_id );
     dict = m->get_status();
   }
   else if ( !synmodel.empty() )
   {
     const long synapse_id = static_cast< long >( synmodel );
-    dict = Network::get_network().get_connector_defaults( synapse_id );
+    dict = kernel().model_manager.get_connector_defaults( synapse_id );
   }
   else
   {

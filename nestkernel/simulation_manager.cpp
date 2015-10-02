@@ -155,7 +155,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       {
         nest::Time::set_resolution( tics_per_ms, resd );
         clock_.calibrate(); // adjust to new resolution
-        Network::get_network().connection_manager_.calibrate(
+        kernel().model_manager.calibrate(
           time_converter ); // adjust delays in the connection system to new resolution
         LOG( M_INFO, "Network::set_status", "tics per ms and resolution changed." );
       }
@@ -173,7 +173,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       {
         Time::set_resolution( resd );
         clock_.calibrate(); // adjust to new resolution
-        Network::get_network().connection_manager_.calibrate(
+        kernel().model_manager.calibrate(
           time_converter ); // adjust delays in the connection system to new resolution
         LOG( M_INFO, "Network::set_status", "Temporal resolution changed." );
       }

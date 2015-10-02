@@ -30,6 +30,8 @@
 #include "dictutils.h"
 #include "compose.hpp"
 
+#include "kernel_manager.h"
+
 namespace nest
 {
 
@@ -66,7 +68,7 @@ Node::~Node()
 void
 Node::init_state()
 {
-  Model const* const model = Network::get_network().get_model( model_id_ );
+  Model const* const model = kernel().model_manager.get_model( model_id_ );
   assert( model );
   init_state_( model->get_prototype() );
 }
@@ -88,7 +90,7 @@ Node::get_name() const
   if ( model_id_ < 0 )
     return std::string( "UnknownNode" );
 
-  return Network::get_network().get_model( model_id_ )->get_name();
+  return kernel().model_manager.get_model( model_id_ )->get_name();
 }
 
 Model&
@@ -97,7 +99,7 @@ Node::get_model_() const
   if ( model_id_ < 0 )
     throw UnknownModelID( model_id_ );
 
-  return *Network::get_network().get_model( model_id_ );
+  return *kernel().model_manager.get_model( model_id_ );
 }
 
 bool

@@ -62,10 +62,10 @@ nest::VPManager::set_status( const DictionaryDatum& d )
   {
     if ( Network::get_network().size() > 1 )
       throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
-    if ( Network::get_network().models_.size() > Network::get_network().pristine_models_.size() )
+    if ( kernel().model_manager.has_user_models() )
       throw KernelException(
         "Custom neuron models exist: Thread/process number cannot be changed." );
-    if ( Network::get_network().connection_manager_.has_user_prototypes() )
+    if ( kernel().model_manager.has_user_prototypes() )
       throw KernelException(
         "Custom synapse types exist: Thread/process number cannot be changed." );
     if ( Network::get_network().connection_manager_.get_user_set_delay_extrema() )
@@ -100,10 +100,10 @@ nest::VPManager::set_status( const DictionaryDatum& d )
   {
     if ( Network::get_network().size() > 1 )
       throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
-    if ( Network::get_network().models_.size() > Network::get_network().pristine_models_.size() )
+    if ( kernel().model_manager.has_user_models() )
       throw KernelException(
         "Custom neuron models exist: Thread/process number cannot be changed." );
-    if ( Network::get_network().connection_manager_.has_user_prototypes() )
+    if ( kernel().model_manager.has_user_prototypes() )
       throw KernelException(
         "Custom synapse types exist: Thread/process number cannot be changed." );
     if ( Network::get_network().connection_manager_.get_user_set_delay_extrema() )

@@ -23,11 +23,17 @@
 #ifndef MODEL_MANAGER_H
 #define MODEL_MANAGER_H
 
-#include "kernel_manager.h"
+#include "manager_interface.h"
+#include "nest_types.h"
+#include "nest_time.h"
+#include "nest_timeconverter.h"
+#include "node.h"
+#include "genericmodel.h"
+#include "connector_model.h"
 
 namespace nest
 {
-class ModelManager:ManagerInterface
+class ModelManager: ManagerInterface
 {
 public:
   ModelManager();
@@ -43,6 +49,11 @@ public:
    */
   void reset();
 
+
+  // TODO: register subnet, proxynode and siblingcontainer in the
+  // constructor and provide three getters for them. See L130 and
+  // following in network.cpp. Also make sure that the ModelManager is
+  // initialized before the NodeManager is.
 
   /**
    * Resize the structures for the Connector objects if necessary.
@@ -68,18 +79,27 @@ public:
   /**
    *
    */
-  Node* get_proxy_nodes(const index model_id);
+  Model* get_subnet_model();
 
   /**
    *
    */
-  Model* get_subnet_model();
+  Model* get_siblingcontainer_model();
+
+  /**
+   *
+   */
+  Node* get_proxy_node( thread, index );
 
   /**
    * Return pointer to protoype for given synapse id.
    * @throws UnknownSynapseType
    */
-  const ConnectorModel& get_synapse_prototype( synindex syn_id, thread t = 0 ) const;
+  //
+  //  TODO: make the return type const, after the increment of
+  //  num_connections and the min_ and max_delay setting in
+  //  ConnectorBase was moved out to the ConnectionManager
+  ConnectorModel& get_synapse_prototype( synindex syn_id, thread t = 0 );
 
   /**
    * Register a node-model prototype.
@@ -133,7 +153,7 @@ public:
    * @see set_node_defaults_, set_synapse_defaults_
    */
   void
-  set_model_defaults( Name name, DictionaryDatum params )
+  set_model_defaults( Name name, DictionaryDatum params );
 
   /**
    * Register a synapse type.
@@ -141,6 +161,15 @@ public:
    * @return an ID for the synapse prototype.
    */
   synindex register_synapse_prototype( ConnectorModel* cf );
+
+
+  /**
+   * Register a synape with default Connector and without any common properties.
+   */
+  template < class ConnectionT >
+  synindex
+  register_connection_model( const std::string& name );
+
 
   /**
    * Copy an existing synapse type.
@@ -203,9 +232,9 @@ public:
 
   const std::vector< ConnectorModel* >& get_prototypes( const thread t ) const;
 
-  const ConnectorModel& get_prototype( const thread t, const synindex syn_id ) const;
+  size_t get_num_node_models() const;
 
-  size_t get_num_prototypes( const thread t ) const;
+  size_t get_num_synapse_prototypes() const;
 
 private:
   /**
@@ -231,8 +260,6 @@ private:
                                                              //!< entry per thread, second dimension
                                                              //!< for each synapse type
 
-  Dictionary* synapsedict_; //!< The synapsedict (owned by the network)
-
 
   /* BeginDocumentation
      Name: modeldict - dictionary containing all devices and models of NEST
@@ -240,7 +267,7 @@ private:
      'modeldict info' shows the contents of the dictionary
      SeeAlso: info, Device, RecordingDevice, iaf_neuron, subnet
   */
-  DictionaryDatum* modeldict_;    //!< DictionaryDatum of all models
+  DictionaryDatum modeldict_;    //!< DictionaryDatum of all models
 
   /* BeginDocumentation
      Name: synapsedict - DictionaryDatum containing all synapse models.
@@ -250,12 +277,14 @@ private:
      Author: Jochen Martin Eppler
      SeeAlso: info
   */
-  DictionaryDatum* synapsedict_;  //!< DictionaryDatum of all synapse models
+  DictionaryDatum synapsedict_;  //!< DictionaryDatum of all synapse models
 
+  Model* subnet_model_;
+  Model* siblingcontainer_model_;
+  Model* proxynode_model_;
 
   std::vector< std::vector< Node* > >
     proxy_nodes_; //!< Placeholders for remote nodes, one per thread
-
 
   bool model_defaults_modified_;  //!< True if any model defaults have been modified
 
@@ -267,7 +296,7 @@ private:
 
   /**  */
   index
-  register_node_model_( const Model* model, bool private_model = false );
+  register_node_model_( Model* model, bool private_model = false );
 
   /**
    * Copy an existing node model and register it as a new model.
@@ -296,7 +325,7 @@ private:
    * @see set_model_defaults, set_synapse_defaults_
    */
   void
-  set_node_defaults_(index model_id, const DictionaryDatum& params )
+    set_node_defaults_(index model_id, const DictionaryDatum& params );
 
   /**
    * Set the default parameters of a model.
@@ -305,145 +334,8 @@ private:
    * @see set_model_defaults, set_node_defaults_
    */
   void
-  set_synapse_defaults_( index model_id, const DictionaryDatum& params )
+    set_synapse_defaults_( index model_id, const DictionaryDatum& params );
 };
-
-inline
-Node*
-get_proxy_nodes(const index model_id)
-{
-  thread t = kernel().vm_manager.get_thread_id();
-  return proxy_nodes_[ t ][ model_id ];
-}
-
-inline
-Model*
-get_subnet_model()
-{
-  Model* subnet_model = pristine_models_[0].first;
-  assert( subnet_model != 0 );
-  return subnet_model;
-}
-
-template < class ModelT >
-index
-register_node_model( const Name& name, bool private_model = false )
-{
-  if ( !private_model && modeldict_->known( name ) )
-  {
-    throw NamingConflict("A model called '" + name + "' already exists.\n"
-        "Please choose a different name!");
-  }
-
-  Model* model = new GenericModel< ModelT >( name );
-  return register_node_model_( model, private_model );
-}
-
-template < class ModelT >
-index
-register_preconf_node_model( const Name& name, DictionaryDatum& conf, bool private_model = false )
-{
-  if ( !private_model && modeldict_->known( name ) )
-  {
-    throw NamingConflict("A model called '" + name + "' already exists.\n"
-        "Please choose a different name!");
-  }
-
-  Model* model = new GenericModel< ModelT >( name );
-  conf.clear_access_flags();
-  model->set_status( conf );
-  Name missed;
-  assert( conf.all_accessed( missed ) ); // we only get here from C++ code, no need for exception
-  return register_node_model_( model, private_model );
-}
-
-index
-register_node_model_( const Model* model, bool private_model = false )
-{
-  const index id = models_.size();
-  model->set_model_id( id );
-  model->set_type_id( id );
-
-  pristine_models_.push_back( std::pair< Model*, bool >( model, private_model ) );
-  models_.push_back( model->clone( name ) );
-  int proxy_model_id = get_model_id( "proxynode" );
-  assert( proxy_model_id > 0 );
-  Model* proxy_model = models_[ proxy_model_id ];
-  assert( proxy_model != 0 );
-
-  for ( thread t = 0; t < get_num_threads(); ++t )
-  {
-    Node* newnode = proxy_model->allocate( t );
-    newnode->set_model_id( id );
-    proxy_nodes_[ t ].push_back( newnode );
-  }
-
-  if ( !private_model )
-    modeldict_->insert( name, id );
-
-  return id;
-}
-
-inline
-Model* ModelManager::get_model( index m ) const
-{
-  if ( m >= models_.size() || models_[ m ] == 0 )
-    throw UnknownModelID( m );
-
-  return models_[ m ];
-}
-
-inline
-bool ModelManager::are_model_defaults_modified() const
-{
-  return model_defaults_modified_;
-}
-
-bool
-ModelManager::model_in_use( index i )
-{
-  return node_model_ids_.model_in_use( i );
-}
-
-inline const DictionaryDatum&
-ModelManager::get_modeldict()
-{
-  assert( modeldict_ != 0 );
-  return *modeldict_;
-}
-
-inline const DictionaryDatum&
-ModelManager::get_synapsedict() const
-{
-  assert( synapsedict_ != 0 );
-  return *synapsedict_;
-}
-
-inline bool
-ModelManager::has_user_models() const
-{
-  return models_.size() > pristine_models_.size();
-}
-
-inline const ConnectorModel&
-ModelManager::get_synapse_prototype( synindex syn_id, thread t ) const
-{
-  assert_valid_syn_id( syn_id );
-  return *( prototypes_[ t ][ syn_id ] );
-}
-
-inline void
-ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
-{
-  if ( syn_id >= prototypes_[ t ].size() || prototypes_[ t ][ syn_id ] == 0 )
-    throw UnknownSynapseType( syn_id );
-}
-
-inline bool
-ModelManager::has_user_prototypes() const
-{
-  return prototypes_[ 0 ].size() > pristine_prototypes_.size();
-}
 
 } // namespace nest
 

@@ -23,10 +23,10 @@
 #include <assert.h>
 
 #include "modelrange_manager.h"
-#include "exceptions.h"
 
-#include "network.h"
+#include "kernel_manager.h"
 #include "model.h"
+
 
 namespace nest
 {
@@ -103,7 +103,7 @@ ModelRangeManager::get_model_id( index gid ) const
 nest::Model*
 nest::ModelRangeManager::get_model_of_gid( index gid )
 {
-  return Network::get_network().get_model( get_model_id( gid ) );
+  return kernel().model_manager.get_model( get_model_id( gid ) );
 }
 
 bool

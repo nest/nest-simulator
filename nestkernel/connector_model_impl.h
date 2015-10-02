@@ -434,22 +434,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 }
 
 
-/////////////////////////////////////////////////////////////////////////////////
-// Convenient versions of template functions for registering new synapse types //
-// by modules                                                                  //
-/////////////////////////////////////////////////////////////////////////////////
-
-/**
- * Register a synape with default Connector and without any common properties.
- */
-template < class ConnectionT >
-synindex
-register_connection_model( const std::string& name )
-{
-  return Network::get_network().register_synapse_prototype(
-    new GenericConnectorModel< ConnectionT >( name ) );
-}
-
 } // namespace nest
 
 #endif

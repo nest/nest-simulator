@@ -125,24 +125,8 @@ Network::Network( SLIInterpreter& i )
 
   init_scheduler_();
 
-  modeldict_ = new Dictionary();
-  interpreter_.def( "modeldict", new DictionaryDatum( modeldict_ ) );
-
-  Model* model = new GenericModel< Subnet >( "subnet" );
-  pristine_models_.push_back( std::pair< Model*, bool >( model, false ) );
-  model->set_type_id( 0 );
-
-  siblingcontainer_model = new GenericModel< SiblingContainer >( "siblingcontainer" );
-  pristine_models_.push_back( std::pair< Model*, bool >( model, true ) );
-  siblingcontainer_model->set_type_id( 1 );
-
-  model = new GenericModel< proxynode >( "proxynode" );
-  pristine_models_.push_back( std::pair< Model*, bool >( model, true ) );
-  model->set_type_id( 2 );
-
-  synapsedict_ = new Dictionary();
-  interpreter_.def( "synapsedict", new DictionaryDatum( synapsedict_ ) );
-  connection_manager_.init( synapsedict_ );
+  interpreter_.def( "synapsedict", kernel().model_manager.get_synapsedict() );
+  interpreter_.def( "modeldict", kernel().model_manager.get_modeldict() );
 
   connruledict_ = new Dictionary();
   interpreter_.def( "connruledict", new DictionaryDatum( connruledict_ ) );
@@ -153,14 +137,6 @@ Network::Network( SLIInterpreter& i )
 Network::~Network()
 {
   destruct_nodes_();     // We must destruct nodes properly, since devices may need to close files.
-  clear_models_( true ); // mark call from destructor
-
-  // Now we can delete the clean model prototypes
-  vector< std::pair< Model*, bool > >::iterator i;
-  for ( i = pristine_models_.begin(); i != pristine_models_.end(); ++i )
-    if ( ( *i ).first != 0 )
-      delete ( *i ).first;
-
   initialized_ = false;
 }
 
@@ -248,15 +224,6 @@ Network::reset()
 
   kernel().model_manager.reset();
 
-  // We free all Node memory and set the number of threads.
-  vector< std::pair< Model*, bool > >::iterator m;
-  for ( m = pristine_models_.begin(); m != pristine_models_.end(); ++m )
-  {
-    // delete all nodes, because cloning the model may have created instances.
-    ( *m ).first->clear();
-    ( *m ).first->set_threads();
-  }
-
   initialized_ = false;
   kernel().init();
   init_scheduler_();
@@ -290,7 +257,7 @@ index Network::add_node( index mod, long_t n ) // no_p
   assert( current_ != 0 );
   assert( root_ != 0 );
 
-  if ( mod >= models_.size() )
+  if ( mod >= kernel().model_manager.get_num_node_models() )
     throw UnknownModelID( mod );
 
   if ( n < 1 )
@@ -302,7 +269,7 @@ index Network::add_node( index mod, long_t n ) // no_p
   const index min_gid = local_nodes_.get_max_gid() + 1;
   const index max_gid = min_gid + n;
 
-  Model* model = models_[ mod ];
+  Model* model = kernel().model_manager.get_model( mod );
   assert( model != 0 );
 
   /* current_ points to the instance of the current subnet on thread 0.
@@ -550,7 +517,7 @@ Network::restore_nodes( const ArrayDatum& node_list )
   {
     DictionaryDatum node_props = getValue< DictionaryDatum >( *node_t );
     std::string model_name = ( *node_props )[ names::model ];
-    index model_id = get_model_id( model_name.c_str() );
+    index model_id = kernel().model_manager.get_model_id( model_name );
     index parent_gid = ( *node_props )[ names::parent ];
     index local_parent_gid = parent_gid;
     if ( parent_gid >= min_gid )      // if the parent is one of the restored nodes
@@ -589,7 +556,7 @@ Node* Network::get_node( index n, thread thr ) // no_p
   Node* node = local_nodes_.get_node_by_gid( n );
   if ( node == 0 )
   {
-    return proxy_nodes_[ thr ].at( kernel().modelrange_manager.get_model_id( n ) );
+    return kernel().model_manager.get_proxy_node( thr, n );
   }
 
   if ( node->num_thread_siblings_() == 0 )
@@ -616,32 +583,38 @@ Network::get_thread_siblings( index n ) const
 void
 Network::memory_info()
 {
-  std::cout.setf( std::ios::left );
-  std::vector< index > idx( models_.size() );
+  // TODO We decided to remove the memory_info function, so for now we
+  // just comment it out. If we want to keep it, it has to go to the
+  // ModelManager prints the models unsorted
 
-  for ( index i = 0; i < models_.size(); ++i )
-    idx[ i ] = i;
-
-  std::sort( idx.begin(), idx.end(), ModelComp( models_ ) );
-
-  std::string sep( "--------------------------------------------------" );
-
-  std::cout << sep << std::endl;
-  std::cout << std::setw( 25 ) << "Name" << std::setw( 13 ) << "Capacity" << std::setw( 13 )
-            << "Available" << std::endl;
-  std::cout << sep << std::endl;
-
-  for ( index i = 0; i < models_.size(); ++i )
-  {
-    Model* mod = models_[ idx[ i ] ];
-    if ( mod->mem_capacity() != 0 )
-      std::cout << std::setw( 25 ) << mod->get_name() << std::setw( 13 )
-                << mod->mem_capacity() * mod->get_element_size() << std::setw( 13 )
-                << mod->mem_available() * mod->get_element_size() << std::endl;
-  }
-
-  std::cout << sep << std::endl;
-  std::cout.unsetf( std::ios::left );
+//
+//  std::cout.setf( std::ios::left );
+//  std::vector< index > idx( kernel().model_manager.get_num_node_models() );
+//
+//
+//  for ( index i = 0; i < kernel().model_manager.get_num_node_models(); ++i )
+//    idx[ i ] = i;
+//
+//  std::sort( idx.begin(), idx.end(), ModelComp( models_ ) );
+//
+//  std::string sep( "--------------------------------------------------" );
+//
+//  std::cout << sep << std::endl;
+//  std::cout << std::setw( 25 ) << "Name" << std::setw( 13 ) << "Capacity" << std::setw( 13 )
+//            << "Available" << std::endl;
+//  std::cout << sep << std::endl;
+//
+//  for ( index i = 0; i < kernel().model_manager.get_num_node_models(); ++i )
+//  {
+//    Model* mod = models_[ idx[ i ] ];
+//    if ( mod->mem_capacity() != 0 )
+//      std::cout << std::setw( 25 ) << mod->get_name() << std::setw( 13 )
+//                << mod->mem_capacity() * mod->get_element_size() << std::setw( 13 )
+//                << mod->mem_available() * mod->get_element_size() << std::endl;
+//  }
+//
+//  std::cout << sep << std::endl;
+//  std::cout.unsetf( std::ios::left );
 }
 
 void
@@ -2330,6 +2303,12 @@ Network::get_process_id( thread vp ) const
   {
     return vp % n_sim_procs_;
   }
+}
+
+bool
+ModelComp::operator()( int a, int b )
+{
+  return kernel().model_manager.get_model( a )->get_name() < kernel().model_manager.get_model( b )->get_name();
 }
 
 } // end of namespace

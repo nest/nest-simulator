@@ -118,7 +118,7 @@ Model::get_status( void )
     tmp[ t ] = memory_[ t ].get_instantiations();
 
   ( *d )[ "instantiations" ] = Token( tmp );
-  ( *d )[ "type_id" ] = LiteralDatum( Network::get_network().get_model( type_id_ )->get_name() );
+  ( *d )[ "type_id" ] = LiteralDatum( kernel().model_manager.get_model( type_id_ )->get_name() );
 
   for ( size_t t = 0; t < tmp.size(); ++t )
     tmp[ t ] = memory_[ t ].get_total();

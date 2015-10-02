@@ -20,6 +20,7 @@
  *
  */
 
+#include "kernel_manager.h"
 #include "network.h"
 #include "dictdatum.h"
 #include "connector_model.h"
@@ -75,7 +76,7 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
   long_t vtgid;
   if ( updateValue< long_t >( d, "vt", vtgid ) )
   {
-    vt_ = dynamic_cast< volume_transmitter* >( Network::get_network().get_node( vtgid ) );
+    vt_ = dynamic_cast< volume_transmitter* >( kernel().node_manager.get_node( vtgid ) );
 
     if ( vt_ == 0 )
       throw BadProperty( "Dopamine source must be volume transmitter" );

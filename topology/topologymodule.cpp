@@ -26,6 +26,7 @@
 #include "doubledatum.h"
 #include "arraydatum.h"
 #include "dictdatum.h"
+#include "kernel_manager.h"
 #include "network.h"
 #include "model.h"
 #include "genericmodel.h"

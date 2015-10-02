@@ -185,7 +185,7 @@ ConnectionCreator::connect_( index s,
   index syn )
 {
   // check whether the target is on this process
-  if ( Network::get_network().is_local_gid( target->get_gid() ) )
+  if ( kernel().node_manager.is_local_gid( target->get_gid() ) )
   {
     // check whether the target is on our thread
     thread tid = kernel().vp_manager.get_thread_id();

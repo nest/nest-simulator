@@ -61,6 +61,7 @@ nest::KernelManager::init()
   event_delivery_manager.init();
   simulation_manager.init();
   modelrange_manager.init();
+  node_manager.init();
 
   initialized_ = true;
 }
@@ -72,6 +73,7 @@ nest::KernelManager::reset()
 
   logging_manager.reset();
   vp_manager.reset();
+  node_manager.reset(); // put this before model_manager.reset()
   io_manager.reset();
   event_delivery_manager.reset();
   simulation_manager.reset();
@@ -87,6 +89,7 @@ nest::KernelManager::set_status( const DictionaryDatum& dict )
   event_delivery_manager.set_status( dict );
   simulation_manager.set_status( dict );
   modelrange_manager.set_status( dict );
+  node_manager.set_status( dict ); // has to be called last
 }
 
 void
@@ -98,4 +101,5 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
   event_delivery_manager.get_status( dict );
   simulation_manager.get_status( dict );
   modelrange_manager.get_status( dict );
+  node_manager.get_status( dict );
 }

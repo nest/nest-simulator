@@ -193,14 +193,19 @@ public:
   void gather_events();
 
   /**
-   * Re-compute table of fixed modulos, including slice-based.
+   * Update table of fixed modulos, including slice-based.
    */
-  void compute_moduli();
+  void update_moduli();
+
+  /**
+   * Initialize modulo table.
+   *
+   * TODO This is currently called from SimulationManager::init(),
+   * check if that call should not come from elsewhere.
+   */
+  void init_moduli();
 
 private:
-
-  void init_moduli_();
-
 
   /**
    * Rearrange the spike_register into a 2-dim structure. This is

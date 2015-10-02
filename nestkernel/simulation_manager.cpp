@@ -23,6 +23,7 @@
 #include "simulation_manager.h"
 
 #include <sys/time.h>
+#include <vector>
 
 #include "kernel_manager.h"
 #include "sibling_container.h"
@@ -52,9 +53,9 @@ nest::SimulationManager::init()
   // set resolution, ensure clock is calibrated to new resolution
   Time::reset_resolution();
   clock_.calibrate();
+  kernel().event_delivery_manager.init_moduli();  // TODO: move elsewhere?
 
   simulated_ = false;
-
 }
 
 void
@@ -117,7 +118,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   if ( tics_per_ms_updated || res_updated )
   {
-    if ( Network::get_network().size() > 1 ) // root always exists
+    if ( kernel().node_manager.size() > 1 ) // root always exists
     {
       LOG( M_ERROR,
         "Network::set_status",
@@ -365,8 +366,8 @@ nest::SimulationManager::prepare_simulation_()
   if ( !simulated_ )
     kernel().event_delivery_manager.configure_spike_buffers();
 
-  Network::get_network().update_nodes_vec_();
-  Network::get_network().prepare_nodes();
+  kernel().node_manager.ensure_valid_thread_local_ids();
+  kernel().node_manager.prepare_nodes();
 
 #ifdef HAVE_MUSIC
   // we have to do enter_runtime after prepre_nodes, since we use
@@ -396,8 +397,7 @@ nest::SimulationManager::update_()
 // parallel section begins
 #pragma omp parallel
   {
-    std::vector< Node* >::iterator i;
-    int t = kernel().vp_manager.get_thread_id();
+    const int thrd = kernel().vp_manager.get_thread_id();
 
     do
     {
@@ -406,7 +406,7 @@ nest::SimulationManager::update_()
 
       if ( from_step_ == 0 ) // deliver only at beginning of slice
       {
-        kernel().event_delivery_manager.deliver_events( t );
+        kernel().event_delivery_manager.deliver_events( thrd );
 #ifdef HAVE_MUSIC
 // advance the time of music by one step (min_delay * h) must
 // be done after deliver_events_() since it calls
@@ -434,20 +434,22 @@ nest::SimulationManager::update_()
 #endif
       }
 
-      for ( i = Network::get_network().nodes_vec_[ t ].begin();
-            i != Network::get_network().nodes_vec_[ t ].end(); ++i )
+      const std::vector< Node* >& thread_local_nodes
+         = kernel().node_manager.get_nodes_on_thread(thrd);
+      for ( std::vector< Node* >::const_iterator node = thread_local_nodes.begin();
+            node != thread_local_nodes.end(); ++node )
       {
         // We update in a parallel region. Therefore, we need to catch exceptions
         // here and then handle them after the parallel region.
         try
         {
-          if ( not( *i )->is_frozen() )
-            ( *i )->update( clock_, from_step_, to_step_ );
+          if ( not( *node )->is_frozen() )
+            ( *node )->update( clock_, from_step_, to_step_ );
         }
         catch ( std::exception& e )
         {
           // so throw the exception after parallel region
-          exceptions_raised.at( t ) =
+          exceptions_raised.at( thrd ) =
             lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
           terminate_ = true;
         }
@@ -483,10 +485,11 @@ nest::SimulationManager::update_()
     } while ( ( to_do_ != 0 ) && ( !terminate_ ) );
 
   } // end of #pragma parallel omp
+
   // check if any exceptions have been raised
-  for ( index thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
-    if ( exceptions_raised.at( thr ).valid() )
-      throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
+  for ( index thrd = 0; thrd < kernel().vp_manager.get_num_threads(); ++thrd )
+    if ( exceptions_raised.at( thrd ).valid() )
+      throw WrappedThreadException( *( exceptions_raised.at( thrd ) ) );
 }
 
 void
@@ -506,7 +509,7 @@ nest::SimulationManager::finalize_simulation_()
       throw KernelException();
     }
 
-  Network::get_network().finalize_nodes();
+  kernel().node_manager.finalize_nodes();
 }
 
 void
@@ -515,42 +518,10 @@ nest::SimulationManager::reset_network()
   if ( not kernel().simulation_manager.has_been_simulated() )
     return; // nothing to do
 
-  /* Reinitialize state on all nodes, force init_buffers() on next
-     call to simulate().
-     Finding all nodes is non-trivial:
-     - We iterate over local nodes only.
-     - Nodes without proxies are not registered in nodes_. Instead, a
-       SiblingContainer is created as container, and this container is
-       stored in nodes_. The container then contains the actual nodes,
-       which need to be reset.
-     Thus, we iterate nodes_; additionally, we iterate the content of
-     a Node if it's model id is -1, which indicates that it is a
-     container.  Subnets are not iterated, since their nodes are
-     registered in nodes_ directly.
-   */
-  for ( size_t n = 0; n < Network::get_network().local_nodes_.size(); ++n )
-  {
-    Node* node = Network::get_network().local_nodes_.get_node_by_index( n );
-    assert( node != 0 );
-    if ( node->num_thread_siblings_() == 0 ) // not a SiblingContainer
-    {
-      node->init_state();
-      node->set_buffers_initialized( false );
-    }
-    else if ( node->get_model_id() == -1 )
-    {
-      SiblingContainer* const c = dynamic_cast< SiblingContainer* >( node );
-      assert( c );
-      for ( vector< Node* >::iterator it = c->begin(); it != c->end(); ++it )
-      {
-        ( *it )->init_state();
-        ( *it )->set_buffers_initialized( false );
-      }
-    }
-  }
 
-  // clear global spike buffers
   kernel().event_delivery_manager.clear_pending_spikes();
+
+  kernel().node_manager.reset_nodes_state();
 
   // ConnectionManager doesn't support resetting dynamic synapses yet
   LOG( M_WARNING,
@@ -570,7 +541,7 @@ nest::SimulationManager::advance_time_()
   {
     clock_ += Time::step( Network::get_network().min_delay_ );
     ++slice_;
-    kernel().event_delivery_manager.compute_moduli();
+    kernel().event_delivery_manager.update_moduli();
     from_step_ = 0;
   }
   else

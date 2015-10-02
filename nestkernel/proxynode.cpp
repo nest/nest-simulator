@@ -25,6 +25,7 @@
 #include "dictutils.h"
 #include "proxynode.h"
 #include "connection.h"
+#include "kernel_manager.h"
 
 namespace nest
 {
@@ -33,7 +34,7 @@ proxynode::proxynode( index gid, index parent_gid, index model_id, index vp )
   : Node()
 {
   set_gid_( gid );
-  Subnet* parent = dynamic_cast< Subnet* >( Network::get_network().get_node( parent_gid ) );
+  Subnet* parent = dynamic_cast< Subnet* >( kernel().node_manager.get_node( parent_gid ) );
   assert( parent );
   set_parent_( parent );
   set_model_id( model_id );

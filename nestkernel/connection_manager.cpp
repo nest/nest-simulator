@@ -545,8 +545,8 @@ ConnectionManager::validate_source_entry( thread tid, index s_gid, synindex syn_
   assert_valid_syn_id( syn_id );
 
   // resize sparsetable to full network size
-  if ( connections_[ tid ].size() < Network::get_network().size() )
-    connections_[ tid ].resize( Network::get_network().size() );
+  if ( connections_[ tid ].size() < kernel().node_manager.size() )
+    connections_[ tid ].resize( kernel().node_manager.size() );
 
   // check, if entry exists
   // if not put in zero pointer
@@ -648,7 +648,7 @@ ConnectionManager::connect( ArrayDatum& conns )
     {
       DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
       index target_gid = static_cast< size_t >( ( *cd )[ names::target ] );
-      Node* target_node = Network::get_network().get_node( target_gid );
+      Node* target_node = kernel().node_manager.get_node( target_gid );
       size_t thr = target_node->get_thread();
 
       // #ifdef _OPENMP
@@ -670,7 +670,7 @@ ConnectionManager::connect( ArrayDatum& conns )
           else
             throw UnknownModelName( synmodel_name );
         }
-        Node* source_node = Network::get_network().get_node( source_gid );
+        Node* source_node = kernel().node_manager.get_node( source_gid );
         //#pragma omp critical
         connect( *source_node, *target_node, source_gid, thr, syn_id, cd );
       }

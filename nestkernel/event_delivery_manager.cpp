@@ -122,7 +122,7 @@ EventDeliveryManager::configure_spike_buffers()
 }
 
 void
-EventDeliveryManager::init_moduli_()
+EventDeliveryManager::init_moduli()
 {
   delay min_delay = Network::get_network().min_delay_;
   delay max_delay = Network::get_network().max_delay_;
@@ -160,7 +160,7 @@ EventDeliveryManager::init_moduli_()
  * a lookup-table and this table is rotated once per time slice.
  */
 void
-EventDeliveryManager::compute_moduli()
+EventDeliveryManager::update_moduli()
 {
   assert( Network::get_network().min_delay_ != 0 );
   assert( Network::get_network().max_delay_ != 0 );

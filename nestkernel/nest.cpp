@@ -82,15 +82,15 @@ register_logger_client( const deliver_logging_event_ptr client_callback )
 void
 print_network( index gid, index depth, std::ostream& out )
 {
-  Network::get_network().print( gid, depth - 1 );
+  kernel().node_manager.print( gid, depth - 1 );
 }
 
 librandom::RngPtr
 get_vp_rng( index target )
 {
-  Node* target_node = Network::get_network().get_node( target );
+  Node* target_node = kernel().node_manager.get_node( target );
 
-  if ( !Network::get_network().is_local_node( target_node ) )
+  if ( !kernel().node_manager.is_local_node( target_node ) )
     throw LocalNodeExpected( target );
 
   // Only nodes with proxies have a well-defined VP and thus thread.
@@ -139,7 +139,7 @@ set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict 
   long port = getValue< long >( conn_dict, nest::names::port );
   long gid = getValue< long >( conn_dict, nest::names::source );
   thread tid = getValue< long >( conn_dict, nest::names::target_thread );
-  Network::get_network().get_node( gid ); // Just to check if the node exists
+  kernel().node_manager.get_node( gid ); // Just to check if the node exists
 
   dict->clear_access_flags();
 
@@ -165,7 +165,7 @@ DictionaryDatum
 get_connection_status( const ConnectionDatum& conn )
 {
   long gid = conn.get_source_gid();
-  Network::get_network().get_node( gid ); // Just to check if the node exists
+  kernel().node_manager.get_node( gid ); // Just to check if the node exists
 
   return Network::get_network().get_synapse_status(
     gid, conn.get_synapse_model_id(), conn.get_port(), conn.get_target_thread() );
@@ -186,7 +186,7 @@ create( const Name& model_name, const index n_nodes )
   // create
   const index model_id = static_cast< index >( model );
 
-  return Network::get_network().add_node( model_id, n_nodes );
+  return kernel().node_manager.add_node( model_id, n_nodes );
 }
 
 void
@@ -349,9 +349,9 @@ set_num_rec_processes( const index n_rec_procs )
 void
 change_subnet( const index node_gid )
 {
-  if ( Network::get_network().get_node( node_gid )->is_subnet() )
+  if ( kernel().node_manager.get_node( node_gid )->is_subnet() )
   {
-    Network::get_network().go_to( node_gid );
+    kernel().node_manager.go_to( node_gid );
   }
   else
   {
@@ -362,8 +362,8 @@ change_subnet( const index node_gid )
 index
 current_subnet()
 {
-  assert( Network::get_network().get_cwn() != 0 );
-  return Network::get_network().get_cwn()->get_gid();
+  assert( kernel().node_manager.get_cwn() != 0 );
+  return kernel().node_manager.get_cwn()->get_gid();
 }
 
 ArrayDatum
@@ -372,7 +372,7 @@ get_nodes( const index node_id,
   const bool include_remotes,
   const bool return_gids_only )
 {
-  Subnet* subnet = dynamic_cast< Subnet* >( Network::get_network().get_node( node_id ) );
+  Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
   if ( subnet == NULL )
     throw SubnetExpected();
 
@@ -413,7 +413,7 @@ get_nodes( const index node_id,
 ArrayDatum
 get_leaves( const index node_id, const DictionaryDatum& params, const bool include_remotes )
 {
-  Subnet* subnet = dynamic_cast< Subnet* >( Network::get_network().get_node( node_id ) );
+  Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
   if ( subnet == NULL )
   {
     throw SubnetExpected();
@@ -446,7 +446,7 @@ get_leaves( const index node_id, const DictionaryDatum& params, const bool inclu
 ArrayDatum
 get_children( const index node_id, const DictionaryDatum& params, const bool include_remotes )
 {
-  Subnet* subnet = dynamic_cast< Subnet* >( Network::get_network().get_node( node_id ) );
+  Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
   if ( subnet == NULL )
   {
     throw SubnetExpected();
@@ -478,7 +478,7 @@ get_children( const index node_id, const DictionaryDatum& params, const bool inc
 void
 restore_nodes( const ArrayDatum& node_list )
 {
-  Network::get_network().restore_nodes( node_list );
+  kernel().node_manager.restore_nodes( node_list );
 }
 
 } // namespace nest

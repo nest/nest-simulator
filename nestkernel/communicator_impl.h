@@ -24,6 +24,7 @@
 #include "network.h"
 
 #include "config.h"
+#include "kernel_manager.h"
 
 /* To avoid problems on BlueGene/L, mpi.h MUST be the
    first included file after config.h.
@@ -161,7 +162,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
         // select those nodes fulfilling the key/value pairs of the dictionary
         bool match = true;
         index gid = ( *n )->get_gid();
-        DictionaryDatum node_status = Network::get_network().get_status( gid );
+        DictionaryDatum node_status = kernel().node_manager.get_status( gid );
         for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
         {
           if ( node_status->known( i->first ) )
@@ -230,7 +231,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
       {
         bool match = true;
         index gid = ( *n )->get_gid();
-        DictionaryDatum node_status = Network::get_network().get_status( gid );
+        DictionaryDatum node_status = kernel().node_manager.get_status( gid );
         for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
         {
           if ( node_status->known( i->first ) )
@@ -288,7 +289,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
     {
       bool match = true;
       index gid = ( *n )->get_gid();
-      DictionaryDatum node_status = Network::get_network().get_status( gid );
+      DictionaryDatum node_status = kernel().node_manager.get_status( gid );
       for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
       {
         if ( node_status->known( i->first ) )

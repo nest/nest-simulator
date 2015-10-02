@@ -32,7 +32,8 @@ namespace nest
 {
 
 ModelRangeManager::ModelRangeManager()
-  : first_gid_( 0 )
+  : modelranges_()
+  , first_gid_( 0 )
   , last_gid_( 0 )
 {
 }
@@ -40,13 +41,14 @@ ModelRangeManager::ModelRangeManager()
 void
 ModelRangeManager::init()
 {
-  add_range( 0, 0, 0 );
 }
 
 void
 ModelRangeManager::reset()
 {
   modelranges_.clear();
+  first_gid_ = 0;
+  last_gid_ = 0;
 }
 
 void

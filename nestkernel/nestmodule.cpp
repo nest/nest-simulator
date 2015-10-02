@@ -359,7 +359,11 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
 
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
-  DictionaryDatum result_dict = get_connection_status( conn );
+  long gid = conn.get_source_gid();
+  kernel().node_manager.get_node( gid ); // Just to check if the node exists
+
+  DictionaryDatum result_dict = Network::get_network().get_synapse_status(
+    gid, conn.get_synapse_model_id(), conn.get_port(), conn.get_target_thread() );
 
   i->OStack.pop();
   i->OStack.push( result_dict );
@@ -686,9 +690,9 @@ NestModule::Connect_i_i_lFunction::execute( SLIInterpreter* i ) const
   const index synmodel_id = static_cast< index >( synmodel );
 
   // check whether the target is on this process
-  if ( Network::get_network().is_local_gid( target ) )
+  if ( kernel().node_manager.is_local_gid( target ) )
   {
-    Node* const target_node = Network::get_network().get_node( target );
+    Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
     Network::get_network().connect( source, target_node, target_thread, synmodel_id );
   }
@@ -716,9 +720,9 @@ NestModule::Connect_i_i_d_d_lFunction::execute( SLIInterpreter* i ) const
   const index synmodel_id = static_cast< index >( synmodel );
 
   // check whether the target is on this process
-  if ( Network::get_network().is_local_gid( target ) )
+  if ( kernel().node_manager.is_local_gid( target ) )
   {
-    Node* const target_node = Network::get_network().get_node( target );
+    Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
     Network::get_network().connect(
       source, target_node, target_thread, synmodel_id, delay, weight );
@@ -746,9 +750,9 @@ NestModule::Connect_i_i_D_lFunction::execute( SLIInterpreter* i ) const
   const index synmodel_id = static_cast< index >( synmodel );
 
   // check whether the target is on this process
-  if ( Network::get_network().is_local_gid( target ) )
+  if ( kernel().node_manager.is_local_gid( target ) )
   {
-    Node* const target_node = Network::get_network().get_node( target );
+    Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
     Network::get_network().connect( source, target_node, target_thread, synmodel_id, params );
   }

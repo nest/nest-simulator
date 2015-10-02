@@ -24,7 +24,7 @@
 #define MULTIMETER_H
 
 #include <vector>
-
+#include "kernel_manager.h"
 #include "recording_device.h"
 #include "name.h"
 #include "node.h"
@@ -313,7 +313,7 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings = Network::get_network().get_thread_siblings( get_gid() );
+    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
     for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
       ( *sibling )->get_status( d );

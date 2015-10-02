@@ -218,7 +218,7 @@ public: // Public methods
    * Each node has a default thread on which it will run.
    * The thread is defined by the relation:
    * t = (gid div P) mod T, where P is the number of simulation processes and
-   * T the number of threads. This may be used by network::add_node()
+   * T the number of threads. This may be used by NodeManager::add_node()
    * if the user has not specified anything.
    */
   thread suggest_vp( index gid ) const;
@@ -228,7 +228,7 @@ public: // Public methods
    * Each node has a default thread on which it will run.
    * The thread is defined by the relation:
    * t = (gid div P) mod T, where P is the number of recording processes and
-   * T the number of threads. This may be used by network::add_node()
+   * T the number of threads. This may be used by NodeManager::add_node()
    * if the user has not specified anything.
    */
   thread suggest_rec_vp( index gid ) const;

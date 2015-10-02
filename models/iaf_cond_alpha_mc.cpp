@@ -39,6 +39,8 @@
 #include <iostream>
 #include <cstdio>
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Compartment name list
  * ---------------------------------------------------------------- */
@@ -576,7 +578,7 @@ nest::iaf_cond_alpha_mc::update( Time const& origin, const long_t from, const lo
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input currents
@@ -595,7 +597,7 @@ nest::iaf_cond_alpha_mc::handle( SpikeEvent& e )
   assert( 0 <= e.get_rport() && e.get_rport() < 2 * NCOMP );
 
   B_.spikes_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -607,7 +609,7 @@ nest::iaf_cond_alpha_mc::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_current() );
 }
 

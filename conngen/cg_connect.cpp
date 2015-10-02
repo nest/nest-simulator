@@ -25,6 +25,9 @@
 #include "network.h"
 #include "communicator.h"
 
+#include "logging.h"
+#include "kernel_manager.h"
+
 namespace nest
 {
 void

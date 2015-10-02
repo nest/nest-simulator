@@ -30,6 +30,9 @@
 #include "numerics.h"
 #include "gslrandomgen.h"
 #include <algorithm>
+#include "kernel_manager.h"
+
+#include "kernel_manager.h"
 
 
 /* ----------------------------------------------------------------
@@ -134,7 +137,7 @@ nest::pulsepacket_generator::calibrate()
   else
     V_.tolerance = 1.0;
 
-  const double_t now = ( Network::get_network().get_time() ).get_ms();
+  const double_t now = ( kernel().simulation_manager.get_time() ).get_ms();
 
   V_.start_center_idx_ = 0;
   V_.stop_center_idx_ = 0;
@@ -210,7 +213,7 @@ nest::pulsepacket_generator::update( Time const& T, const long_t from, const lon
     {
       SpikeEvent se;
       se.set_multiplicity( n_spikes );
-      Network::get_network().send( *this, se, prev_spike - T.get_steps() );
+      kernel().event_delivery_manager.send( *this, se, prev_spike - T.get_steps() );
       n_spikes = 0;
     }
   }

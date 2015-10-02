@@ -26,6 +26,9 @@
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "exceptions.h"
+#include "event_delivery_manager_impl.h"
+
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -122,7 +125,7 @@ nest::poisson_generator::update( Time const& T, const long_t from, const long_t 
       continue; // no spike at this lag
 
     DSSpikeEvent se;
-    Network::get_network().send( *this, se, lag );
+    kernel().event_delivery_manager.send( *this, se, lag );
   }
 }
 

@@ -61,9 +61,8 @@ libnest_la_SOURCES=\
 		nestmodule.h nestmodule.cpp\
 		nest_time.h nest_time.cpp \
 		nest_timeconverter.h nest_timeconverter.cpp \
-		nest_timemodifier.h nest_timemodifier.cpp\
 		modelrange.h modelrange.cpp\
-		modelrangemanager.h modelrangemanager.cpp\
+		modelrange_manager.h modelrange_manager.cpp\
 		multirange.h multirange.cpp\
 		network.h network_impl.h network.cpp\
 		node.h node.cpp\
@@ -84,7 +83,8 @@ libnest_la_SOURCES=\
 		kernel_manager.h kernel_manager.cpp\
 		vp_manager.h vp_manager.cpp \
 		io_manager.h io_manager.cpp \
-		simulation_manager.h simulation_manager.cpp
+		simulation_manager.h simulation_manager.cpp \
+		event_delivery_manager.h event_delivery_manager.cpp
 
 libnest_la_LIBADD= @LIBLTDL@ @LIBADD_DL@
 

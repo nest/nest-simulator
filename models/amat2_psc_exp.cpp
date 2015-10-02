@@ -33,6 +33,8 @@
 
 #include <limits>
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -396,7 +398,7 @@ nest::amat2_psc_exp::update( Time const& origin, const long_t from, const long_t
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
         SpikeEvent se;
-        Network::get_network().send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
     else
@@ -417,10 +419,10 @@ nest::amat2_psc_exp::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spikes_in_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+    B_.spikes_in_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 
@@ -434,7 +436,7 @@ nest::amat2_psc_exp::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

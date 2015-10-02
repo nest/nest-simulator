@@ -726,7 +726,7 @@ public:
   }
 
 protected:
-  Parameter *parameter1_, *parameter2_;
+  Parameter* parameter1_, *parameter2_;
 };
 
 /**
@@ -783,7 +783,7 @@ public:
   }
 
 protected:
-  Parameter *parameter1_, *parameter2_;
+  Parameter* parameter1_, *parameter2_;
 };
 
 /**
@@ -840,7 +840,7 @@ public:
   }
 
 protected:
-  Parameter *parameter1_, *parameter2_;
+  Parameter* parameter1_, *parameter2_;
 };
 
 /**
@@ -897,7 +897,7 @@ public:
   }
 
 protected:
-  Parameter *parameter1_, *parameter2_;
+  Parameter* parameter1_, *parameter2_;
 };
 
 /**

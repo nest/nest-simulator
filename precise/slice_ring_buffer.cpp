@@ -25,6 +25,8 @@
 #include <limits>
 #include <cmath>
 
+#include "kernel_manager.h"
+
 nest::SliceRingBuffer::SliceRingBuffer()
   : refract_( std::numeric_limits< long_t >::max(), 0, 0 )
 {
@@ -61,7 +63,7 @@ void
 nest::SliceRingBuffer::prepare_delivery()
 {
   // vector to deliver from in this slice
-  deliver_ = &( queue_[ Network::get_network().get_slice_modulo( 0 ) ] );
+  deliver_ = &( queue_[ kernel().event_delivery_manager.get_slice_modulo( 0 ) ] );
 
   // sort events, first event last
   std::sort( deliver_->begin(), deliver_->end(), std::greater< SpikeInfo >() );
@@ -71,7 +73,7 @@ void
 nest::SliceRingBuffer::discard_events()
 {
   // vector to deliver from in this slice
-  deliver_ = &( queue_[ Network::get_network().get_slice_modulo( 0 ) ] );
+  deliver_ = &( queue_[ kernel().event_delivery_manager.get_slice_modulo( 0 ) ] );
 
   deliver_->clear();
 }

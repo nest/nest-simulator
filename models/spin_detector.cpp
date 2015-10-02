@@ -28,8 +28,13 @@
 #include "dictutils.h"
 #include "arraydatum.h"
 #include "sibling_container.h"
+#include "kernel_manager.h"
 
 #include <numeric>
+
+#include "logging.h"
+#include "kernel_manager.h"
+#include "event_delivery_manager_impl.h"
 
 nest::spin_detector::spin_detector()
   : Node()
@@ -74,17 +79,18 @@ nest::spin_detector::init_buffers_()
 void
 nest::spin_detector::calibrate()
 {
-  if ( !user_set_precise_times_ && Network::get_network().get_off_grid_communication() )
+  if ( !user_set_precise_times_ && kernel().event_delivery_manager.get_off_grid_communication() )
   {
     device_.set_precise( true, 15 );
 
     LOG( M_INFO,
       "spin_detector::calibrate",
-      String::compose( "Precise neuron models exist: the property precise_times "
-                       "of the %1 with gid %2 has been set to true, precision has "
-                       "been set to 15.",
-                                      get_name(),
-                                      get_gid() ) );
+      String::compose(
+           "Precise neuron models exist: the property precise_times "
+           "of the %1 with gid %2 has been set to true, precision has "
+           "been set to 15.",
+           get_name(),
+           get_gid() ) );
   }
 
   device_.calibrate();
@@ -93,10 +99,10 @@ nest::spin_detector::calibrate()
 void
 nest::spin_detector::update( Time const&, const long_t, const long_t )
 {
-  for (
-    std::vector< Event* >::iterator e = B_.spikes_[ Network::get_network().read_toggle() ].begin();
-    e != B_.spikes_[ Network::get_network().read_toggle() ].end();
-    ++e )
+  for ( std::vector< Event* >::iterator e =
+          B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].begin();
+        e != B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].end();
+        ++e )
   {
     assert( *e != 0 );
     device_.record_event( **e );
@@ -105,7 +111,7 @@ nest::spin_detector::update( Time const&, const long_t, const long_t )
 
   // do not use swap here to clear, since we want to keep the reserved()
   // memory for the next round
-  B_.spikes_[ Network::get_network().read_toggle() ].clear();
+  B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].clear();
 }
 
 void
@@ -146,10 +152,10 @@ nest::spin_detector::handle( SpikeEvent& e )
     assert( e.get_multiplicity() > 0 );
 
     long_t dest_buffer;
-    if ( Network::get_network().get_model_of_gid( e.get_sender_gid() )->has_proxies() )
-      dest_buffer = Network::get_network().read_toggle(); // events from central queue
+    if ( kernel().modelrange_manager.get_model_of_gid( e.get_sender_gid() )->has_proxies() )
+      dest_buffer = kernel().event_delivery_manager.read_toggle(); // events from central queue
     else
-      dest_buffer = Network::get_network().write_toggle(); // locally delivered events
+      dest_buffer = kernel().event_delivery_manager.write_toggle(); // locally delivered events
 
 
     // The following logic implements the decoding

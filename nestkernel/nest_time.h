@@ -65,7 +65,7 @@ namespace nest
 
    @NOTE
    - The time base (tics per millisecond) can only be set at
-     compile time and by the TimeModifier class.
+     compile time and by the Time::set_resolution().
    - Times in ms are rounded up to the next tic interval.
      This ensures that the time intervals (0, h] are open at the left
      point and closed at the right point. It also ensures compatibility with

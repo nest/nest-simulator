@@ -289,31 +289,6 @@ spike_generator::get_status( DictionaryDatum& d ) const
   device_.get_status( d );
 }
 
-inline void
-spike_generator::set_status( const DictionaryDatum& d )
-{
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-
-  // To detect "now" spikes and shift them, we need the origin. In case
-  // it is set in this call, we need to extract it explicitly here.
-  Time origin;
-  double_t v;
-  if ( updateValue< double_t >( d, names::origin, v ) )
-    origin = Time::ms( v );
-  else
-    origin = device_.get_origin();
-  ptmp.set( d, S_, origin, Network::get_network().get_time() ); // throws if BadProperty
-
-  // We now know that ptmp is consistent. We do not write it back
-  // to P_ before we are also sure that the properties to be set
-  // in the parent class are internally consistent.
-  device_.set_status( d );
-
-  // if we get here, temporary contains consistent set of properties
-  P_ = ptmp;
-}
-
-
 } // namespace
 
 #endif /* #ifndef SPIKE_GENERATOR_H */

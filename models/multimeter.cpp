@@ -22,6 +22,9 @@
 
 #include "network.h"
 #include "multimeter.h"
+#include "event_delivery_manager_impl.h"
+
+#include "kernel_manager.h"
 
 namespace nest
 {
@@ -172,7 +175,7 @@ Multimeter::update( Time const& origin, const long_t from, const long_t )
   // Note that not all nodes receiving the request will necessarily answer.
   V_.new_request_ = B_.has_targets_ && !P_.record_from_.empty(); // no targets, no request
   DataLoggingRequest req;
-  Network::get_network().send( *this, req );
+  kernel().event_delivery_manager.send( *this, req );
 }
 
 void

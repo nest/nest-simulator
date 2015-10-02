@@ -39,6 +39,8 @@
 #include <limits>
 #include <algorithm>
 
+#include "kernel_manager.h"
+
 namespace nest
 {
 /* ----------------------------------------------------------------
@@ -408,7 +410,7 @@ nest::pp_pop_psc_delta::update( Time const& origin, const long_t from, const lon
     {
       SpikeEvent se;
       se.set_multiplicity( S_.n_spikes_past_[ S_.p_n_spikes_past_ ] );
-      Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
   }
 }
@@ -422,7 +424,7 @@ nest::pp_pop_psc_delta::handle( SpikeEvent& e )
   //     explicitly, since it depends on delay and offset within
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
-  B_.spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -436,7 +438,7 @@ nest::pp_pop_psc_delta::handle( CurrentEvent& e )
 
   // Add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

@@ -40,6 +40,7 @@
 
 #include <limits>
 
+#include "kernel_manager.h"
 
 namespace nest
 {
@@ -411,7 +412,7 @@ nest::pp_psc_delta::update( Time const& origin, const long_t from, const long_t 
           // And send the spike event
           SpikeEvent se;
           se.set_multiplicity( n_spikes );
-          Network::get_network().send( *this, se, lag );
+          kernel().event_delivery_manager.send( *this, se, lag );
 
           // Reset the potential if applicable
           if ( P_.with_reset_ )
@@ -443,7 +444,7 @@ nest::pp_psc_delta::handle( SpikeEvent& e )
   //     explicitly, since it depends on delay and offset within
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
-  B_.spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -457,7 +458,7 @@ nest::pp_psc_delta::handle( CurrentEvent& e )
 
   // Add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

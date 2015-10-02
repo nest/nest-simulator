@@ -29,8 +29,11 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
+#include "event_delivery_manager_impl.h"
 
 #include <limits>
+
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -107,8 +110,7 @@ nest::izhikevich::Parameters_::set( const DictionaryDatum& d )
   const double_t h = Time::get_resolution().get_ms();
   if ( not consistent_integration_ && h != 1.0 )
   {
-    LOG(
-      M_INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
+    LOG( M_INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
   }
 }
 
@@ -232,7 +234,7 @@ nest::izhikevich::update( Time const& origin, const long_t from, const long_t to
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current
@@ -247,7 +249,7 @@ void
 nest::izhikevich::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
-  B_.spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -259,7 +261,7 @@ nest::izhikevich::handle( CurrentEvent& e )
   const double_t c = e.get_current();
   const double_t w = e.get_weight();
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

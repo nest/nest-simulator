@@ -44,6 +44,8 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_sf_exp.h>
 
+#include "kernel_manager.h"
+
 nest::RecordablesMap< nest::hh_cond_exp_traub > nest::hh_cond_exp_traub::recordablesMap_;
 
 namespace nest
@@ -398,7 +400,7 @@ nest::hh_cond_exp_traub::update( Time const& origin, const long_t from, const lo
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
         SpikeEvent se;
-        Network::get_network().send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
 
@@ -417,14 +419,14 @@ nest::hh_cond_exp_traub::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
     // add with negative weight, ie positive value, since we are changing a
     // conductance
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -439,7 +441,7 @@ nest::hh_cond_exp_traub::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

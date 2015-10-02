@@ -34,6 +34,8 @@
 
 #include <limits>
 
+#include "kernel_manager.h"
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -285,7 +287,7 @@ nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const 
     // send spike
     SpikeEvent se;
     se.set_offset( S_.last_spike_offset_ );
-    nest::Network::get_network().send( *this, se, from );
+    kernel().event_delivery_manager.send( *this, se, from );
   }
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -368,7 +370,7 @@ nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const 
       // sent event
       SpikeEvent se;
       se.set_offset( S_.last_spike_offset_ );
-      nest::Network::get_network().send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // Set new input current. The current change occurs at the
@@ -389,7 +391,7 @@ nest::iaf_psc_alpha_presc::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   const long_t Tdeliver =
-    e.get_rel_delivery_steps( nest::Network::get_network().get_slice_origin() );
+    e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() );
 
   const double_t spike_weight = V_.PSCInitialValue_ * e.get_weight() * e.get_multiplicity();
   const double_t dt = e.get_offset();
@@ -417,7 +419,7 @@ nest::iaf_psc_alpha_presc::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( nest::Network::get_network().get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

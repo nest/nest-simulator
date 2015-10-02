@@ -27,6 +27,8 @@
 #include "compose.hpp"
 #include <algorithm>
 
+#include "kernel_manager.h"
+
 namespace nest
 {
 

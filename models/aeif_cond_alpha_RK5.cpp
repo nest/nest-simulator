@@ -30,6 +30,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
+#include "kernel_manager.h"
 
 #include <limits>
 
@@ -37,6 +38,8 @@
 #include <iomanip>
 #include <iostream>
 #include <cstdio>
+
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -463,7 +466,7 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        Network::get_network().send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     } // while
 
@@ -487,10 +490,10 @@ nest::aeif_cond_alpha_RK5::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() ); // keep conductances positive
 }
 
@@ -504,7 +507,7 @@ nest::aeif_cond_alpha_RK5::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

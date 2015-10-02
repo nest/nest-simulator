@@ -42,8 +42,9 @@
 #include "sibling_container.h"
 #include "communicator_impl.h"
 
-#include "nest_timemodifier.h"
 #include "nest_timeconverter.h"
+
+#include "kernel_manager.h"
 
 #include <cmath>
 #include <sys/time.h>
@@ -103,25 +104,14 @@ Network::Network( SLIInterpreter& i )
   , current_( 0 )
   , dict_miss_is_error_( true )
   , initialized_( false ) // scheduler stuff
-  , simulating_( false )
   , n_rec_procs_( 0 )
   , n_sim_procs_( 0 )
   , n_gsd_( 0 )
   , nodes_vec_()
   , nodes_vec_network_size_( 0 ) // zero to force update
-  , clock_( Time::tic( 0L ) )
-  , slice_( 0L )
-  , to_do_( 0L )
-  , to_do_total_( 0L )
-  , from_step_( 0L )
-  , to_step_( 0L ) // consistent with to_do_ == 0
-  , terminate_( false )
-  , off_grid_spiking_( false )
-  , print_time_( false )
   , min_delay_( 1 )
   , max_delay_( 1 )
   , rng_()
-  , comm_marker_( 0 )
 {
   // the subsequent function-calls need a
   // network instance, hence the instance
@@ -171,12 +161,6 @@ Network::~Network()
     if ( ( *i ).first != 0 )
       delete ( *i ).first;
 
-  // clear the buffers
-  local_grid_spikes_.clear();
-  global_grid_spikes_.clear();
-  local_offgrid_spikes_.clear();
-  global_offgrid_spikes_.clear();
-
   initialized_ = false;
 }
 
@@ -189,7 +173,6 @@ Network::init_()
    * initialized network.
    */
   local_nodes_.reserve( 1 );
-  node_model_ids_.add_range( 0, 0, 0 );
 
   SiblingContainer* root_container =
     static_cast< SiblingContainer* >( siblingcontainer_model->allocate( 0 ) );
@@ -221,7 +204,6 @@ Network::init_scheduler_()
 {
   assert( initialized_ == false );
 
-  simulated_ = false;
 
   // The following line is executed by all processes, no need to communicate
   // this change in delays.
@@ -255,7 +237,6 @@ Network::destruct_nodes_()
   }
 
   local_nodes_.clear();
-  node_model_ids_.clear();
 }
 
 void
@@ -275,23 +256,6 @@ Network::reset()
     ( *m ).first->clear();
     ( *m ).first->set_threads();
   }
-
-  // former scheduler.reset()
-  // Reset TICS_PER_MS, MS_PER_TICS and TICS_PER_STEP to the compiled in default values.
-  // See ticket #217 for details.
-  nest::TimeModifier::reset_to_defaults();
-
-  clock_.set_to_zero(); // ensures consistent state
-  to_do_ = 0;
-  slice_ = 0;
-  from_step_ = 0;
-  to_step_ = 0; // consistent with to_do_ = 0
-
-  // clear the buffers
-  local_grid_spikes_.clear();
-  global_grid_spikes_.clear();
-  local_offgrid_spikes_.clear();
-  global_offgrid_spikes_.clear();
 
   initialized_ = false;
   kernel().init();
@@ -320,55 +284,6 @@ Network::reset_kernel()
   reset();
 }
 
-void
-Network::reset_network()
-{
-  if ( not get_simulated() )
-    return; // nothing to do
-
-  /* Reinitialize state on all nodes, force init_buffers() on next
-     call to simulate().
-     Finding all nodes is non-trivial:
-     - We iterate over local nodes only.
-     - Nodes without proxies are not registered in nodes_. Instead, a
-       SiblingContainer is created as container, and this container is
-       stored in nodes_. The container then contains the actual nodes,
-       which need to be reset.
-     Thus, we iterate nodes_; additionally, we iterate the content of
-     a Node if it's model id is -1, which indicates that it is a
-     container.  Subnets are not iterated, since their nodes are
-     registered in nodes_ directly.
-   */
-  for ( size_t n = 0; n < local_nodes_.size(); ++n )
-  {
-    Node* node = local_nodes_.get_node_by_index( n );
-    assert( node != 0 );
-    if ( node->num_thread_siblings_() == 0 ) // not a SiblingContainer
-    {
-      node->init_state();
-      node->set_buffers_initialized( false );
-    }
-    else if ( node->get_model_id() == -1 )
-    {
-      SiblingContainer* const c = dynamic_cast< SiblingContainer* >( node );
-      assert( c );
-      for ( vector< Node* >::iterator it = c->begin(); it != c->end(); ++it )
-      {
-        ( *it )->init_state();
-        ( *it )->set_buffers_initialized( false );
-      }
-    }
-  }
-
-  // clear global spike buffers
-  clear_pending_spikes();
-
-  // ConnectionManager doesn't support resetting dynamic synapses yet
-  LOG( M_WARNING,
-    "ResetNetwork",
-    "Synapses with internal dynamics (facilitation, STDP) are not reset.\n"
-    "This will be implemented in a future version of NEST." );
-}
 
 index Network::add_node( index mod, long_t n ) // no_p
 {
@@ -409,7 +324,7 @@ index Network::add_node( index mod, long_t n ) // no_p
     LOG( M_ERROR, "Network::add:node", "No nodes were created." );
     throw KernelException( "OutOfMemory" );
   }
-  node_model_ids_.add_range( mod, min_gid, max_gid - 1 );
+  kernel().modelrange_manager.add_range( mod, min_gid, max_gid - 1 );
 
   if ( model->potential_global_receiver() and get_num_rec_processes() > 0 )
   {
@@ -602,7 +517,7 @@ index Network::add_node( index mod, long_t n ) // no_p
   // set off-grid spike communication if necessary
   if ( model->is_off_grid() )
   {
-    set_off_grid_communication( true );
+    kernel().event_delivery_manager.set_off_grid_communication( true );
     LOG( M_INFO,
       "network::add_node",
       "Neuron models emitting precisely timed spikes exist: "
@@ -674,7 +589,7 @@ Node* Network::get_node( index n, thread thr ) // no_p
   Node* node = local_nodes_.get_node_by_gid( n );
   if ( node == 0 )
   {
-    return proxy_nodes_[ thr ].at( node_model_ids_.get_model_id( n ) );
+    return proxy_nodes_[ thr ].at( kernel().modelrange_manager.get_model_id( n ) );
   }
 
   if ( node->num_thread_siblings_() == 0 )
@@ -696,139 +611,6 @@ Network::get_thread_siblings( index n ) const
   assert( siblings != 0 );
 
   return siblings;
-}
-
-void
-Network::simulate( Time const& t )
-{
-  assert( initialized_ );
-
-  t_real_ = 0;
-  t_slice_begin_ = timeval();
-  t_slice_end_ = timeval();
-
-  if ( t == Time::ms( 0.0 ) )
-    return;
-
-  if ( t < Time::step( 1 ) )
-  {
-    LOG( M_ERROR,
-      "Network::simulate",
-      String::compose(
-           "Simulation time must be >= %1 ms (one time step).", Time::get_resolution().get_ms() ) );
-    throw KernelException();
-  }
-
-  if ( t.is_finite() )
-  {
-    Time time1 = clock_ + t;
-    if ( !time1.is_finite() )
-    {
-      std::string msg = String::compose(
-        "A clock overflow will occur after %1 of %2 ms. Please reset network "
-        "clock first!",
-        ( Time::max() - clock_ ).get_ms(),
-        t.get_ms() );
-      LOG( M_ERROR, "Network::simulate", msg );
-      throw KernelException();
-    }
-  }
-  else
-  {
-    std::string msg = String::compose(
-      "The requested simulation time exceeds the largest time NEST can handle "
-      "(T_max = %1 ms). Please use a shorter time!",
-      Time::max().get_ms() );
-    LOG( M_ERROR, "Network::simulate", msg );
-    throw KernelException();
-  }
-
-  to_do_ += t.get_steps();
-  to_do_total_ = to_do_;
-
-  prepare_simulation();
-
-  // from_step_ is not touched here.  If we are at the beginning
-  // of a simulation, it has been reset properly elsewhere.  If
-  // a simulation was ended and is now continued, from_step_ will
-  // have the proper value.  to_step_ is set as in advance_time().
-
-  delay end_sim = from_step_ + to_do_;
-  if ( min_delay_ < end_sim )
-    to_step_ = min_delay_; // update to end of time slice
-  else
-    to_step_ = end_sim; // update to end of simulation time
-
-  // Warn about possible inconsistencies, see #504.
-  // This test cannot come any earlier, because we first need to compute min_delay_
-  // above.
-  if ( t.get_steps() % min_delay_ != 0 )
-    LOG( M_WARNING,
-      "Network::simulate",
-      "The requested simulation time is not an integer multiple of the minimal delay in the "
-      "network. "
-      "This may result in inconsistent results under the following conditions: (i) A network "
-      "contains "
-      "more than one source of randomness, e.g., two different poisson_generators, and (ii) "
-      "Simulate "
-      "is called repeatedly with simulation times that are not multiples of the minimal delay." );
-
-  resume();
-
-  finalize_simulation();
-}
-
-void
-Network::resume()
-{
-  assert( initialized_ );
-
-  terminate_ = false;
-
-  if ( to_do_ == 0 )
-    return;
-
-  if ( print_time_ )
-  {
-    std::cout << std::endl;
-    print_progress_();
-  }
-
-  simulating_ = true;
-  simulated_ = true;
-
-#ifndef _OPENMP
-  if ( n_threads_ > 1 )
-  {
-    LOG( M_ERROR, "Network::resume", "No multithreading available, using single threading" );
-  }
-#endif
-
-  update();
-
-  simulating_ = false;
-
-  if ( print_time_ )
-    std::cout << std::endl;
-
-  Communicator::synchronize();
-
-  if ( terminate_ )
-  {
-    LOG( M_ERROR, "Network::resume", "Exiting on error or user signal." );
-    LOG( M_ERROR, "Network::resume", "Network: Use 'ResumeSimulation' to resume." );
-
-    if ( SLIsignalflag != 0 )
-    {
-      SystemSignal signal( SLIsignalflag );
-      SLIsignalflag = 0;
-      throw signal;
-    }
-    else
-      throw SimulationError();
-  }
-
-  LOG( M_INFO, "Network::resume", "Simulation finished." );
 }
 
 void
@@ -925,125 +707,12 @@ Network::set_status( index gid, const DictionaryDatum& d )
 
   kernel().set_status( d );
 
-  // Create an instance of time converter here to capture the current
-  // representation of time objects: TICS_PER_MS and TICS_PER_STEP
-  // will be stored in time_converter.
-  // This object can then be used to convert times in steps
-  // (e.g. Connection::delay_) or tics to the new representation.
-  // We pass this object to ConnectionManager::calibrate to update
-  // all time objects in the connection system to the new representation.
-  // MH 08-04-14
-  TimeConverter time_converter;
-
-  double_t time;
-  if ( updateValue< double_t >( d, "time", time ) )
-  {
-    if ( time != 0.0 )
-      throw BadProperty( "The simulation time can only be set to 0.0." );
-
-    if ( clock_ > TimeZero )
-    {
-      // reset only if time has passed
-      LOG( M_WARNING,
-        "Network::set_status",
-        "Simulation time reset to t=0.0. Resetting the simulation time is not "
-        "fully supported in NEST at present. Some spikes may be lost, and "
-        "stimulating devices may behave unexpectedly. PLEASE REVIEW YOUR "
-        "SIMULATION OUTPUT CAREFULLY!" );
-
-      clock_ = Time::step( 0 );
-      from_step_ = 0;
-      slice_ = 0;
-      configure_spike_buffers_(); // clear all old spikes
-    }
-  }
-
-  updateValue< bool >( d, "print_time", print_time_ );
 
   // have those two for later asking, whether threads have changed:
   long n_threads;
   bool n_threads_updated = updateValue< long >( d, "local_num_threads", n_threads );
 
-  // tics_per_ms and resolution must come after local_num_thread / total_num_threads
-  // because they might reset the network and the time representation
-  nest::double_t tics_per_ms;
-  bool tics_per_ms_updated = updateValue< nest::double_t >( d, "tics_per_ms", tics_per_ms );
-  double_t resd;
-  bool res_updated = updateValue< double_t >( d, "resolution", resd );
 
-  if ( tics_per_ms_updated || res_updated )
-  {
-    if ( size() > 1 ) // root always exists
-    {
-      LOG( M_ERROR,
-        "Network::set_status",
-        "Cannot change time representation after nodes have been created. Please call ResetKernel "
-        "first." );
-      throw KernelException();
-    }
-    else if ( get_simulated() ) // someone may have simulated empty network
-    {
-      LOG( M_ERROR,
-        "Network::set_status",
-        "Cannot change time representation after the network has been simulated. Please call "
-        "ResetKernel first." );
-      throw KernelException();
-    }
-    else if ( connection_manager_.get_num_connections() != 0 )
-    {
-      LOG( M_ERROR,
-        "Network::set_status",
-        "Cannot change time representation after connections have been created. Please call "
-        "ResetKernel first." );
-      throw KernelException();
-    }
-    else if ( res_updated
-      && tics_per_ms_updated ) // only allow TICS_PER_MS to be changed together with resolution
-    {
-      if ( resd < 1.0 / tics_per_ms )
-      {
-        LOG( M_ERROR,
-          "Network::set_status",
-          "Resolution must be greater than or equal to one tic. Value unchanged." );
-        throw KernelException();
-      }
-      else
-      {
-        nest::TimeModifier::set_time_representation( tics_per_ms, resd );
-        clock_.calibrate(); // adjust to new resolution
-        connection_manager_.calibrate(
-          time_converter ); // adjust delays in the connection system to new resolution
-        LOG( M_INFO, "Network::set_status", "tics per ms and resolution changed." );
-      }
-    }
-    else if ( res_updated ) // only resolution changed
-    {
-      if ( resd < Time::get_ms_per_tic() )
-      {
-        LOG( M_ERROR,
-          "Network::set_status",
-          "Resolution must be greater than or equal to one tic. Value unchanged." );
-        throw KernelException();
-      }
-      else
-      {
-        Time::set_resolution( resd );
-        clock_.calibrate(); // adjust to new resolution
-        connection_manager_.calibrate(
-          time_converter ); // adjust delays in the connection system to new resolution
-        LOG( M_INFO, "Network::set_status", "Temporal resolution changed." );
-      }
-    }
-    else
-    {
-      LOG( M_ERROR,
-        "Network::set_status",
-        "change of tics_per_step requires simultaneous specification of resolution." );
-      throw KernelException();
-    }
-  }
-
-  updateValue< bool >( d, "off_grid_spiking", off_grid_spiking_ );
 
   // set RNGs --- MUST come after n_threads_ is updated
   if ( d->known( "rngs" ) )
@@ -1222,10 +891,6 @@ Network::get_status( index idx )
 
     def< long >( d, "num_processes", Communicator::get_num_processes() );
 
-    def< double_t >( d, "time", get_time().get_ms() );
-    def< long >( d, "to_do", to_do_ );
-    def< bool >( d, "print_time", print_time_ );
-
     def< double >( d, "tics_per_ms", Time::get_tics_per_ms() );
     def< double >( d, "resolution", Time::get_resolution().get_ms() );
 
@@ -1242,7 +907,6 @@ Network::get_status( index idx )
 
     ( *d )[ "rng_seeds" ] = Token( rng_seeds_ );
     def< long >( d, "grng_seed", grng_seed_ );
-    def< bool >( d, "off_grid_spiking", off_grid_spiking_ );
     def< long >( d, "send_buffer_size", Communicator::get_send_buffer_size() );
     def< long >( d, "receive_buffer_size", Communicator::get_recv_buffer_size() );
     // former scheduler_.get_status( d ) end
@@ -2240,7 +1904,7 @@ Network::execute_sli_protected( DictionaryDatum state, Name cmd )
     LOG( M_ERROR, cmd.toString().c_str(), msg.c_str() );
     LOG( M_ERROR, "execute_sli_protected", "Terminating." );
 
-    terminate();
+    kernel().simulation_manager.terminate();
   }
 
   return result;
@@ -2341,7 +2005,7 @@ nest::Network::finalize_nodes()
   {
     index t = kernel().vp_manager.get_thread_id();
 #else
-  for ( index t = 0; t < n_threads_; ++t )
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads() ; ++t )
   {
 #endif
     for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
@@ -2361,59 +2025,13 @@ nest::Network::finalize_nodes()
   }
 }
 
-void
-nest::Network::prepare_simulation()
-{
-  if ( to_do_ == 0 )
-    return;
-
-  // find shortest and longest delay across all MPI processes
-  // this call sets the member variables
-  update_delay_extrema_();
-
-  // Check for synchronicity of global rngs over processes.
-  // We need to do this ahead of any simulation in case random numbers
-  // have been consumed on the SLI level.
-  if ( Communicator::get_num_processes() > 1 )
-  {
-    if ( !Communicator::grng_synchrony( grng_->ulrand( 100000 ) ) )
-    {
-      LOG( M_ERROR,
-        "Network::simulate",
-        "Global Random Number Generators are not synchronized prior to simulation." );
-      throw KernelException();
-    }
-  }
-
-  // if at the beginning of a simulation, set up spike buffers
-  if ( !simulated_ )
-    configure_spike_buffers_();
-
-  update_nodes_vec_();
-  prepare_nodes();
-
-#ifdef HAVE_MUSIC
-  // we have to do enter_runtime after prepre_nodes, since we use
-  // calibrate to map the ports of MUSIC devices, which has to be done
-  // before enter_runtime
-  if ( !simulated_ ) // only enter the runtime mode once
-  {
-    publish_music_in_ports_();
-
-    double tick = Time::get_resolution().get_ms() * min_delay_;
-    std::string msg = String::compose( "Entering MUSIC runtime with tick = %1 ms", tick );
-    LOG( M_INFO, "Network::resume", msg );
-    Communicator::enter_runtime( tick );
-  }
-#endif
-}
 
 void
 nest::Network::prepare_nodes()
 {
   assert( initialized_ );
 
-  init_moduli_();
+  kernel().event_delivery_manager.init_moduli_();
 
   LOG( M_INFO, "Network::prepare_nodes", "Please wait. Preparing elements." );
 
@@ -2429,7 +2047,7 @@ nest::Network::prepare_nodes()
   {
     size_t t = kernel().vp_manager.get_thread_id();
 #else
-  for ( index t = 0; t < n_threads_; ++t )
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads() ; ++t )
   {
 #endif
 
@@ -2451,7 +2069,6 @@ nest::Network::prepare_nodes()
       // so throw the exception after parallel region
       exceptions_raised.at( t ) =
         lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
-      terminate_ = true;
     }
 
   } // end of parallel section / end of for threads
@@ -2544,465 +2161,7 @@ nest::Network::update_nodes_vec_()
 #endif
 }
 
-void
-nest::Network::update()
-{
-#ifdef _OPENMP
-  LOG( M_INFO, "Network::update", "Simulating using OpenMP." );
-#endif
 
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
-    kernel().vp_manager.get_num_threads() );
-// parallel section begins
-#pragma omp parallel
-  {
-    std::vector< Node* >::iterator i;
-    int t = kernel().vp_manager.get_thread_id();
-
-    do
-    {
-      if ( print_time_ )
-        gettimeofday( &t_slice_begin_, NULL );
-
-      if ( from_step_ == 0 ) // deliver only at beginning of slice
-      {
-        deliver_events_( t );
-#ifdef HAVE_MUSIC
-// advance the time of music by one step (min_delay * h) must
-// be done after deliver_events_() since it calls
-// music_event_out_proxy::handle(), which hands the spikes over to
-// MUSIC *before* MUSIC time is advanced
-
-// wait until all threads are done -> synchronize
-#pragma omp barrier
-// the following block is executed by the master thread only
-// the other threads are enforced to wait at the end of the block
-#pragma omp master
-        {
-          // advance the time of music by one step (min_delay * h) must
-          // be done after deliver_events_() since it calls
-          // music_event_out_proxy::handle(), which hands the spikes over to
-          // MUSIC *before* MUSIC time is advanced
-          if ( slice_ > 0 )
-            Communicator::advance_music_time( 1 );
-
-          // the following could be made thread-safe
-          update_music_event_handlers_( clock_, from_step_, to_step_ );
-        }
-// end of master section, all threads have to synchronize at this point
-#pragma omp barrier
-#endif
-      }
-
-      for ( i = nodes_vec_[ t ].begin(); i != nodes_vec_[ t ].end(); ++i )
-      {
-        // We update in a parallel region. Therefore, we need to catch exceptions
-        // here and then handle them after the parallel region.
-        try
-        {
-          if ( not( *i )->is_frozen() )
-            ( *i )->update( clock_, from_step_, to_step_ );
-        }
-        catch ( std::exception& e )
-        {
-          // so throw the exception after parallel region
-          exceptions_raised.at( t ) =
-            lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
-          terminate_ = true;
-        }
-      }
-
-// parallel section ends, wait until all threads are done -> synchronize
-#pragma omp barrier
-
-// the following block is executed by the master thread only
-// the other threads are enforced to wait at the end of the block
-#pragma omp master
-      {
-        if ( to_step_ == min_delay_ ) // gather only at end of slice
-          gather_events_();
-
-        advance_time_();
-
-        if ( SLIsignalflag != 0 )
-        {
-          LOG( M_INFO, "Network::update", "Simulation exiting on user signal." );
-          terminate_ = true;
-        }
-
-        if ( print_time_ )
-        {
-          gettimeofday( &t_slice_end_, NULL );
-          print_progress_();
-        }
-      }
-// end of master section, all threads have to synchronize at this point
-#pragma omp barrier
-
-    } while ( ( to_do_ != 0 ) && ( !terminate_ ) );
-
-  } // end of #pragma parallel omp
-  // check if any exceptions have been raised
-  for ( index thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
-    if ( exceptions_raised.at( thr ).valid() )
-      throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
-}
-
-void
-nest::Network::finalize_simulation()
-{
-  if ( not simulated_ )
-    return;
-
-  // Check for synchronicity of global rngs over processes
-  // TODO: This seems double up, there is such a test at end of simulate()
-  if ( Communicator::get_num_processes() > 1 )
-    if ( !Communicator::grng_synchrony( grng_->ulrand( 100000 ) ) )
-    {
-      LOG( M_ERROR,
-        "Network::simulate",
-        "Global Random Number Generators are not synchronized after simulation." );
-      throw KernelException();
-    }
-
-  finalize_nodes();
-}
-
-void
-nest::Network::collocate_buffers_()
-{
-  // count number of spikes in registers
-  int num_spikes = 0;
-  int num_grid_spikes = 0;
-  int num_offgrid_spikes = 0;
-
-  std::vector< std::vector< std::vector< uint_t > > >::iterator i;
-  std::vector< std::vector< uint_t > >::iterator j;
-  for ( i = spike_register_.begin(); i != spike_register_.end(); ++i )
-    for ( j = i->begin(); j != i->end(); ++j )
-      num_grid_spikes += j->size();
-
-  std::vector< std::vector< std::vector< OffGridSpike > > >::iterator it;
-  std::vector< std::vector< OffGridSpike > >::iterator jt;
-  for ( it = offgrid_spike_register_.begin(); it != offgrid_spike_register_.end(); ++it )
-    for ( jt = it->begin(); jt != it->end(); ++jt )
-      num_offgrid_spikes += jt->size();
-
-  num_spikes = num_grid_spikes + num_offgrid_spikes;
-  if ( !off_grid_spiking_ ) // on grid spiking
-  {
-    // make sure buffers are correctly sized
-    if ( global_grid_spikes_.size()
-      != static_cast< uint_t >( Communicator::get_recv_buffer_size() ) )
-      global_grid_spikes_.resize( Communicator::get_recv_buffer_size(), 0 );
-
-    if ( num_spikes + ( kernel().vp_manager.get_num_threads() * min_delay_ )
-      > static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
-      local_grid_spikes_.resize(
-        ( num_spikes + ( min_delay_ * kernel().vp_manager.get_num_threads() ) ), 0 );
-    else if ( local_grid_spikes_.size()
-      < static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
-      local_grid_spikes_.resize( Communicator::get_send_buffer_size(), 0 );
-
-    // collocate the entries of spike_registers into local_grid_spikes__
-    std::vector< uint_t >::iterator pos = local_grid_spikes_.begin();
-    if ( num_offgrid_spikes == 0 )
-      for ( i = spike_register_.begin(); i != spike_register_.end(); ++i )
-        for ( j = i->begin(); j != i->end(); ++j )
-        {
-          pos = std::copy( j->begin(), j->end(), pos );
-          *pos = comm_marker_;
-          ++pos;
-        }
-    else
-    {
-      std::vector< OffGridSpike >::iterator n;
-      it = offgrid_spike_register_.begin();
-      for ( i = spike_register_.begin(); i != spike_register_.end(); ++i )
-      {
-        jt = it->begin();
-        for ( j = i->begin(); j != i->end(); ++j )
-        {
-          pos = std::copy( j->begin(), j->end(), pos );
-          for ( n = jt->begin(); n != jt->end(); ++n )
-          {
-            *pos = n->get_gid();
-            ++pos;
-          }
-          *pos = comm_marker_;
-          ++pos;
-          ++jt;
-        }
-        ++it;
-      }
-      for ( it = offgrid_spike_register_.begin(); it != offgrid_spike_register_.end(); ++it )
-        for ( jt = it->begin(); jt != it->end(); ++jt )
-          jt->clear();
-    }
-
-    // remove old spikes from the spike_register_
-    for ( i = spike_register_.begin(); i != spike_register_.end(); ++i )
-      for ( j = i->begin(); j != i->end(); ++j )
-        j->clear();
-  }
-  else // off_grid_spiking
-  {
-    // make sure buffers are correctly sized
-    if ( global_offgrid_spikes_.size()
-      != static_cast< uint_t >( Communicator::get_recv_buffer_size() ) )
-      global_offgrid_spikes_.resize( Communicator::get_recv_buffer_size(), OffGridSpike( 0, 0.0 ) );
-
-    if ( num_spikes + ( kernel().vp_manager.get_num_threads() * min_delay_ )
-      > static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
-      local_offgrid_spikes_.resize(
-        ( num_spikes + ( min_delay_ * kernel().vp_manager.get_num_threads() ) ),
-        OffGridSpike( 0, 0.0 ) );
-    else if ( local_offgrid_spikes_.size()
-      < static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
-      local_offgrid_spikes_.resize( Communicator::get_send_buffer_size(), OffGridSpike( 0, 0.0 ) );
-
-    // collocate the entries of spike_registers into local_offgrid_spikes__
-    std::vector< OffGridSpike >::iterator pos = local_offgrid_spikes_.begin();
-    if ( num_grid_spikes == 0 )
-      for ( it = offgrid_spike_register_.begin(); it != offgrid_spike_register_.end(); ++it )
-        for ( jt = it->begin(); jt != it->end(); ++jt )
-        {
-          pos = std::copy( jt->begin(), jt->end(), pos );
-          pos->set_gid( comm_marker_ );
-          ++pos;
-        }
-    else
-    {
-      std::vector< uint_t >::iterator n;
-      i = spike_register_.begin();
-      for ( it = offgrid_spike_register_.begin(); it != offgrid_spike_register_.end(); ++it )
-      {
-        j = i->begin();
-        for ( jt = it->begin(); jt != it->end(); ++jt )
-        {
-          pos = std::copy( jt->begin(), jt->end(), pos );
-          for ( n = j->begin(); n != j->end(); ++n )
-          {
-            *pos = OffGridSpike( *n, 0 );
-            ++pos;
-          }
-          pos->set_gid( comm_marker_ );
-          ++pos;
-          ++j;
-        }
-        ++i;
-      }
-      for ( i = spike_register_.begin(); i != spike_register_.end(); ++i )
-        for ( j = i->begin(); j != i->end(); ++j )
-          j->clear();
-    }
-
-    // empty offgrid_spike_register_
-    for ( it = offgrid_spike_register_.begin(); it != offgrid_spike_register_.end(); ++it )
-      for ( jt = it->begin(); jt != it->end(); ++jt )
-        jt->clear();
-  }
-}
-
-void
-nest::Network::deliver_events_( thread t )
-{
-  // deliver only at beginning of time slice
-  if ( from_step_ > 0 )
-    return;
-
-  SpikeEvent se;
-
-  std::vector< int > pos( displacements_ );
-
-  if ( !off_grid_spiking_ ) // on_grid_spiking
-  {
-    // prepare Time objects for every possible time stamp within min_delay_
-    std::vector< Time > prepared_timestamps( min_delay_ );
-    for ( size_t lag = 0; lag < ( size_t ) min_delay_; lag++ )
-    {
-      prepared_timestamps[ lag ] = clock_ - Time::step( lag );
-    }
-
-    for ( size_t vp = 0; vp < ( size_t ) kernel().vp_manager.get_num_virtual_processes(); ++vp )
-    {
-      size_t pid = get_process_id( vp );
-      int pos_pid = pos[ pid ];
-      int lag = min_delay_ - 1;
-      while ( lag >= 0 )
-      {
-        index nid = global_grid_spikes_[ pos_pid ];
-        if ( nid != static_cast< index >( comm_marker_ ) )
-        {
-          // tell all local nodes about spikes on remote machines.
-          se.set_stamp( prepared_timestamps[ lag ] );
-          se.set_sender_gid( nid );
-          connection_manager_.send( t, nid, se );
-        }
-        else
-        {
-          --lag;
-        }
-        ++pos_pid;
-      }
-      pos[ pid ] = pos_pid;
-    }
-  }
-  else // off grid spiking
-  {
-    // prepare Time objects for every possible time stamp within min_delay_
-    std::vector< Time > prepared_timestamps( min_delay_ );
-    for ( size_t lag = 0; lag < ( size_t ) min_delay_; lag++ )
-    {
-      prepared_timestamps[ lag ] = clock_ - Time::step( lag );
-    }
-
-    for ( size_t vp = 0; vp < ( size_t ) kernel().vp_manager.get_num_virtual_processes(); ++vp )
-    {
-      size_t pid = get_process_id( vp );
-      int pos_pid = pos[ pid ];
-      int lag = min_delay_ - 1;
-      while ( lag >= 0 )
-      {
-        index nid = global_offgrid_spikes_[ pos_pid ].get_gid();
-        if ( nid != static_cast< index >( comm_marker_ ) )
-        {
-          // tell all local nodes about spikes on remote machines.
-          se.set_stamp( prepared_timestamps[ lag ] );
-          se.set_sender_gid( nid );
-          se.set_offset( global_offgrid_spikes_[ pos_pid ].get_offset() );
-          connection_manager_.send( t, nid, se );
-        }
-        else
-        {
-          --lag;
-        }
-        ++pos_pid;
-      }
-      pos[ pid ] = pos_pid;
-    }
-  }
-}
-
-void
-nest::Network::gather_events_()
-{
-  collocate_buffers_();
-  if ( off_grid_spiking_ )
-    Communicator::communicate( local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
-  else
-    Communicator::communicate( local_grid_spikes_, global_grid_spikes_, displacements_ );
-}
-
-void
-nest::Network::advance_time_()
-{
-  // time now advanced time by the duration of the previous step
-  to_do_ -= to_step_ - from_step_;
-
-  // advance clock, update modulos, slice counter only if slice completed
-  if ( ( delay ) to_step_ == min_delay_ )
-  {
-    clock_ += Time::step( min_delay_ );
-    ++slice_;
-    compute_moduli_();
-    from_step_ = 0;
-  }
-  else
-    from_step_ = to_step_;
-
-  long_t end_sim = from_step_ + to_do_;
-
-  if ( min_delay_ < ( delay ) end_sim )
-    to_step_ = min_delay_; // update to end of time slice
-  else
-    to_step_ = end_sim; // update to end of simulation time
-
-  assert( to_step_ - from_step_ <= ( long_t ) min_delay_ );
-}
-
-void
-nest::Network::print_progress_()
-{
-  double_t rt_factor = 0.0;
-
-  if ( t_slice_end_.tv_sec != 0 )
-  {
-    long t_real_s = ( t_slice_end_.tv_sec - t_slice_begin_.tv_sec ) * 1e6;   // usec
-    t_real_ += t_real_s + ( t_slice_end_.tv_usec - t_slice_begin_.tv_usec ); // usec
-    double_t t_real_acc = ( t_real_ ) / 1000.;                               // ms
-    double_t t_sim_acc = ( to_do_total_ - to_do_ ) * Time::get_resolution().get_ms();
-    rt_factor = t_sim_acc / t_real_acc;
-  }
-
-  int_t percentage = ( 100 - int( float( to_do_ ) / to_do_total_ * 100 ) );
-
-  std::cout << "\r" << std::setw( 3 ) << std::right << percentage << " %: "
-            << "network time: " << std::fixed << std::setprecision( 1 ) << clock_.get_ms()
-            << " ms, "
-            << "realtime factor: " << std::setprecision( 4 ) << rt_factor
-            << std::resetiosflags( std::ios_base::floatfield );
-  std::flush( std::cout );
-}
-
-void
-nest::Network::init_moduli_()
-{
-  assert( min_delay_ != 0 );
-  assert( max_delay_ != 0 );
-
-  /*
-   * Ring buffers use modulos to determine where to store incoming events
-   * with given time stamps, relative to the beginning of the slice in which
-   * the spikes are delivered from the queue, ie, the slice after the one
-   * in which they were generated. The pertaining offsets are 0..max_delay-1.
-   */
-
-  moduli_.resize( min_delay_ + max_delay_ );
-
-  for ( delay d = 0; d < min_delay_ + max_delay_; ++d )
-    moduli_[ d ] = ( clock_.get_steps() + d ) % ( min_delay_ + max_delay_ );
-
-  // Slice-based ring-buffers have one bin per min_delay steps,
-  // up to max_delay.  Time is counted as for normal ring buffers.
-  // The slice_moduli_ table maps time steps to these bins
-  const size_t nbuff = static_cast< size_t >(
-    std::ceil( static_cast< double >( min_delay_ + max_delay_ ) / min_delay_ ) );
-  slice_moduli_.resize( min_delay_ + max_delay_ );
-  for ( delay d = 0; d < min_delay_ + max_delay_; ++d )
-    slice_moduli_[ d ] = ( ( clock_.get_steps() + d ) / min_delay_ ) % nbuff;
-}
-
-/**
- * This function is called after all nodes have been updated.
- * We can compute the value of (T+d) mod max_delay without explicit
- * reference to the network clock, because compute_moduli_ is
- * called whenever the network clock advances.
- * The various modulos for all available delays are stored in
- * a lookup-table and this table is rotated once per time slice.
- */
-void
-nest::Network::compute_moduli_()
-{
-  assert( min_delay_ != 0 );
-  assert( max_delay_ != 0 );
-
-  /*
-   * Note that for updating the modulos, it is sufficient
-   * to rotate the buffer to the left.
-   */
-  assert( moduli_.size() == ( index )( min_delay_ + max_delay_ ) );
-  std::rotate( moduli_.begin(), moduli_.begin() + min_delay_, moduli_.end() );
-
-  /* For the slice-based ring buffer, we cannot rotate the table, but
-   have to re-compute it, since max_delay_ may not be a multiple of
-   min_delay_.  Reference time is the time at the beginning of the slice.
-   */
-  const size_t nbuff = static_cast< size_t >(
-    std::ceil( static_cast< double >( min_delay_ + max_delay_ ) / min_delay_ ) );
-  for ( delay d = 0; d < min_delay_ + max_delay_; ++d )
-    slice_moduli_[ d ] = ( ( clock_.get_steps() + d ) / min_delay_ ) % nbuff;
-}
 
 void
 nest::Network::update_delay_extrema_()
@@ -3027,54 +2186,6 @@ nest::Network::update_delay_extrema_()
     min_delay_ = Time::get_resolution().get_steps();
 }
 
-
-void
-nest::Network::clear_pending_spikes()
-{
-  configure_spike_buffers_();
-}
-
-void
-nest::Network::configure_spike_buffers_()
-{
-  assert( min_delay_ != 0 );
-
-  spike_register_.clear();
-  // the following line does not compile with gcc <= 3.3.5
-  spike_register_.resize(
-    kernel().vp_manager.get_num_threads(), std::vector< std::vector< uint_t > >( min_delay_ ) );
-  for ( size_t j = 0; j < spike_register_.size(); ++j )
-    for ( size_t k = 0; k < spike_register_[ j ].size(); ++k )
-      spike_register_[ j ][ k ].clear();
-
-  offgrid_spike_register_.clear();
-  // the following line does not compile with gcc <= 3.3.5
-  offgrid_spike_register_.resize( kernel().vp_manager.get_num_threads(),
-    std::vector< std::vector< OffGridSpike > >( min_delay_ ) );
-  for ( size_t j = 0; j < offgrid_spike_register_.size(); ++j )
-    for ( size_t k = 0; k < offgrid_spike_register_[ j ].size(); ++k )
-      offgrid_spike_register_[ j ][ k ].clear();
-
-  // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces.
-  int send_buffer_size = kernel().vp_manager.get_num_threads() * min_delay_ > 2
-    ? kernel().vp_manager.get_num_threads() * min_delay_
-    : 2;
-  int recv_buffer_size = send_buffer_size * Communicator::get_num_processes();
-  Communicator::set_buffer_sizes( send_buffer_size, recv_buffer_size );
-
-  // DEC cxx required 0U literal, HEP 2007-03-26
-  local_grid_spikes_.clear();
-  local_grid_spikes_.resize( send_buffer_size, 0U );
-  local_offgrid_spikes_.clear();
-  local_offgrid_spikes_.resize( send_buffer_size, OffGridSpike( 0, 0.0 ) );
-  global_grid_spikes_.clear();
-  global_grid_spikes_.resize( recv_buffer_size, 0U );
-  global_offgrid_spikes_.clear();
-  global_offgrid_spikes_.resize( recv_buffer_size, OffGridSpike( 0, 0.0 ) );
-
-  displacements_.clear();
-  displacements_.resize( Communicator::get_num_processes(), 0 );
-}
 
 void
 nest::Network::create_rngs_( const bool ctor_call )
@@ -3195,6 +2306,29 @@ nest::Network::set_num_rec_processes( int nrp, bool called_by_reset )
       n_rec_procs_,
       n_sim_procs_ );
     LOG( M_INFO, "Network::set_num_rec_processes", msg );
+  }
+}
+
+// inline
+bool
+Network::is_local_node( Node* n ) const
+{
+  return kernel().vp_manager.is_local_vp( n->get_vp() );
+}
+
+// inline
+thread
+Network::get_process_id( thread vp ) const
+{
+  if ( vp >= static_cast< thread >( n_sim_procs_
+               * kernel().vp_manager.get_num_threads() ) ) // vp belongs to recording VPs
+  {
+    return ( vp - n_sim_procs_ * kernel().vp_manager.get_num_threads() ) % n_rec_procs_
+      + n_sim_procs_;
+  }
+  else // vp belongs to simulating VPs
+  {
+    return vp % n_sim_procs_;
   }
 }
 

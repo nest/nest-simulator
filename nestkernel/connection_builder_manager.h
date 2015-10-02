@@ -25,7 +25,7 @@
 
 #include <omp.h>
 
-#include "nest.h"
+#include "nest_types.h"
 #include "manager_interface.h"
 #include "kernel_manager.h"
 

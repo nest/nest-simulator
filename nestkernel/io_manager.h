@@ -39,13 +39,13 @@ namespace nest
 class IOManager : public ManagerInterface
 {
 public:
-  virtual void init();
-  virtual void reset();
+  virtual void init(); // called from meta-manager to construct
+  virtual void reset(); // called from meta-manger to reinit
 
-  virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
+  virtual void set_status( const DictionaryDatum& ); // set parameters
+  virtual void get_status( DictionaryDatum& ); // get parameters
 
-  IOManager();
+  IOManager(); // Construct only by meta-manager
 
   /**
    * The prefix for files written by devices.

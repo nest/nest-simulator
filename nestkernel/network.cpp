@@ -22,7 +22,7 @@
 
 #include "instance.h"
 #include "network.h"
-#include "network_impl.h"
+#include "connection_builder_manager_impl.h"
 #include "genericmodel.h"
 #include "subnet.h"
 #include "sibling_container.h"

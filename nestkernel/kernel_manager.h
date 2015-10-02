@@ -25,6 +25,7 @@
 
 #include "vp_manager.h"
 #include "logging_manager.h"
+#include "connection_builder_manager.h"
 
 #include "dictdatum.h"
 

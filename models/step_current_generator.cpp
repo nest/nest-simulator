@@ -26,6 +26,7 @@
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictutils.h"
+#include "event_delivery_manager_impl.h"
 
 #include "kernel_manager.h"
 

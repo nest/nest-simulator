@@ -27,6 +27,9 @@
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "numerics.h"
+#include "kernel_manager.h"
+#include "event_delivery_manager_impl.h"
+
 
 #include "logging.h"
 #include "kernel_manager.h"
@@ -176,7 +179,7 @@ nest::noise_generator::calibrate()
   V_.dt_steps_ = P_.dt_.get_steps();
 
   const double_t h = Time::get_resolution().get_ms();
-  const double_t t = Network::get_network().get_time().get_ms();
+  const double_t t = kernel().simulation_manager.get_time().get_ms();
 
   // scale Hz to ms
   const double_t omega = 2.0 * numerics::pi * P_.freq_ / 1000.0;

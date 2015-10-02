@@ -24,8 +24,9 @@
 #include "nest_time.h"
 #include "network.h"
 #include "node.h"
-
 #include "kernel_manager.h"
+
+#include "event_delivery_manager_impl.h"
 
 
 template < typename HostNode >
@@ -86,7 +87,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
 
   // Next recording step is in current slice or beyond, indicates that
   // buffer is properly initialized.
-  if ( next_rec_step_ >= Network::get_network().get_slice_origin().get_steps() )
+  if ( next_rec_step_ >= kernel().simulation_manager.get_slice_origin().get_steps() )
     return;
 
   // If we get here, the buffer has either never been initialized or has
@@ -102,7 +103,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
   // left of update intervals, and we want time stamps at right end of
   // update interval to be multiples of recording interval
   next_rec_step_ =
-    ( Network::get_network().get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
+    ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
 
   // number of data points per slice
   const long_t recs_per_slice = static_cast< long_t >(
@@ -176,7 +177,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host,
   // past time slice. This may not be the case if the node has been frozen.
   // In that case, we still reset the recording marker, to prepare for the next
   // round.
-  if ( data_[ rt ][ 0 ].timestamp <= Network::get_network().get_previous_slice_origin() )
+  if ( data_[ rt ][ 0 ].timestamp <= kernel().simulation_manager.get_previous_slice_origin() )
   {
     next_rec_[ rt ] = 0;
     return;

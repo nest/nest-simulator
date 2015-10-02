@@ -30,10 +30,9 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 #include "dictstack.h"
+#include "event_delivery_manager_impl.h"
 
 #include <limits>
-
-#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -135,8 +134,9 @@ nest::sli_neuron::calibrate()
 
   if ( terminate )
   {
-    Network::get_network().terminate();
-    LOG( M_ERROR, "sli_neuron::calibrate", "Terminating." );
+    kernel().simulation_manager.terminate();
+    LOG(
+      M_ERROR, "sli_neuron::calibrate", "Terminating." );
     return;
   }
 
@@ -162,8 +162,10 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
   {
     std::string msg = String::compose( "Node %1 still has its error state set.", get_gid() );
     LOG( M_ERROR, "sli_neuron::update", msg.c_str() );
-    LOG( M_ERROR, "sli_neuron::update", "Please check /calibrate and /update for errors" );
-    Network::get_network().terminate();
+    LOG( M_ERROR,
+      "sli_neuron::update",
+      "Please check /calibrate and /update for errors" );
+    kernel().simulation_manager.terminate();
     return;
   }
 
@@ -205,10 +207,10 @@ nest::sli_neuron::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.in_spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+    B_.in_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 
@@ -222,7 +224,7 @@ nest::sli_neuron::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * I );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
 }
 
 void

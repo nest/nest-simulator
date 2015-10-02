@@ -61,7 +61,7 @@ reset_kernel()
 void
 reset_network()
 {
-  Network::get_network().reset_network();
+  kernel().simulation_manager.reset_network();
   LOG( M_INFO,
     "ResetNetworkFunction",
     "The network has been reset. Random generators and time have NOT been reset." );
@@ -225,13 +225,7 @@ simulate( const double_t& time )
   LOG( M_INFO, "Simulate", os.str() );
   Time t = Time::ms( time );
 
-  Network::get_network().simulate( t );
-}
-
-void
-resume_simulation()
-{
-  Network::get_network().resume();
+  kernel().simulation_manager.simulate( t );
 }
 
 void

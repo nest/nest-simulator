@@ -27,6 +27,8 @@
 #include "manager_interface.h"
 #include "dictdatum.h"
 
+#include "network.h"  // remove later
+
 namespace nest
 {
 
@@ -41,43 +43,148 @@ public:
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );
 
-  /*
-  void set_status( index, const DictionaryDatum& );
-  DictionaryDatum get_status( index );
-  void simulate( Time const& );
-  void resume();
-  void terminate();
-  Time const& get_slice_origin() const;
-  Time get_previous_slice_origin() const;
-  Time const get_time() const;
-  bool get_simulated() const; // => is_simulated
-  void calibrate_clock();
-  void reset_network();
-  void prepare_simulation();
-  void finalize_simulation();
-  void update();
-  size_t get_slice() const;
-  void advance_time_();
-  void print_progress_();
-  */
-
-  /*
-    bool simulating_; //!< true if simulation in progress
-Time clock_; //!< Network clock, updated once per slice
-delay slice_; //!< current update slice
-delay to_do_; //!< number of pending cycles.
-delay to_do_total_; //!< number of requested cycles in current simulation.
-delay from_step_; //!< update clock_+from_step<=T<clock_+to_step_
-delay to_step_; //!< update clock_+from_step<=T<clock_+to_step_
-timeval t_slice_begin_; //!< Wall-clock time at the begin of a time slice
-timeval t_slice_end_; //!< Wall-clock time at the end of time slice
-long t_real_; //!< Accumunated wall-clock time spent simulating (in us)
-bool terminate_; //!< Terminate on signal or error
-bool simulated_; //!< indicates whether the network has already been simulated for some time
-bool print_time_; //!< Indicates whether time should be printed during simulations (or not)
+  /**
+   * Simulate for the given time .
+   * This function performs the following steps
+   * 1. set the new simulation time
+   * 2. call prepare_simulation()
+   * 3. call resume()
+   * 4. call finalize_simulation()
    */
+  void simulate( Time const& );
 
+  /**
+   * Terminate the simulation after the time-slice is finished.
+   */
+  void terminate();
+
+  /**
+   * Get the time at the beginning of the current time slice.
+   */
+  Time const& get_slice_origin() const;
+
+  /**
+   * Get the time at the beginning of the previous time slice.
+   */
+  Time get_previous_slice_origin() const;
+
+  /**
+   * Precise time of simulation.
+   * @note The precise time of the simulation is defined only
+   *       while the simulation is not in progress.
+   */
+  Time const get_time() const;
+
+  /**
+   * Return true, if the SimulationManager has already been simulated for some time.
+   * This does NOT indicate that simulate has been called (i.e. if Simulate
+   * is called with 0 as argument, the flag is still set to false.)
+   */
+  bool has_been_simulated() const;
+
+  /**
+   * Reset the SimulationManager to the state at T = 0.
+   */
+  void reset_network();
+
+  /**
+   * Get slice number. Increased by one for each slice. Can be used
+   * to choose alternating buffers.
+   */
+  size_t get_slice() const;
+
+  //! Return current simulation time.
+  // TODO: Precisely how defined? Rename!
+  Time const& get_clock() const;
+
+  //! Return start of current time slice, in steps.
+  // TODO: rename / precisely how defined?
+  delay get_from_step() const;
+
+  //! Return end of current time slice, in steps.
+  // TODO: rename / precisely how defined?
+  delay get_to_step() const;
+
+private:
+
+  void resume_();          //!< actually run simulation; TODO: review
+  void prepare_simulation_();   //! setup before simulation start
+  void finalize_simulation_();  //! wrap-up after simulation end
+  void update_();          //! actually perform simulation
+  void advance_time_();    //!< Update time to next time step
+  void print_progress_();  //!< TODO: Remove, replace by logging!
+
+  bool simulating_; //!< true if simulation in progress
+  Time clock_; //!< SimulationManager clock, updated once per slice
+  delay slice_; //!< current update slice
+  delay to_do_; //!< number of pending cycles.
+  delay to_do_total_; //!< number of requested cycles in current simulation.
+  delay from_step_; //!< update clock_+from_step<=T<clock_+to_step_
+  delay to_step_; //!< update clock_+from_step<=T<clock_+to_step_
+  timeval t_slice_begin_; //!< Wall-clock time at the begin of a time slice
+  timeval t_slice_end_; //!< Wall-clock time at the end of time slice
+  long t_real_; //!< Accumunated wall-clock time spent simulating (in us)
+  bool terminate_; //!< Terminate on signal or error
+  bool simulated_; //!< indicates whether the SimulationManager has already been simulated for some time
+  bool print_time_; //!< Indicates whether time should be printed during simulations (or not)
 };
+
+inline void
+SimulationManager::terminate()
+{
+  terminate_ = true;
 }
+
+inline Time const&
+SimulationManager::get_slice_origin() const
+{
+  return clock_;
+}
+
+inline Time
+SimulationManager::get_previous_slice_origin() const
+{
+  return clock_ - Time::step( Network::get_network().get_min_delay() );
+}
+
+inline Time const
+SimulationManager::get_time() const
+{
+  assert( not simulating_ );
+  return clock_ + Time::step( from_step_ );
+}
+
+inline bool
+SimulationManager::has_been_simulated() const
+{
+  return simulated_;
+}
+
+inline size_t
+SimulationManager::get_slice() const
+{
+  return slice_;
+}
+
+inline Time const&
+SimulationManager::get_clock() const
+{
+  return clock_;
+}
+
+inline delay
+SimulationManager::get_from_step() const
+{
+  return from_step_;
+}
+
+inline delay
+SimulationManager::get_to_step() const
+{
+  return to_step_;
+}
+
+}
+
 
 #endif /* SIMULATION_MANAGER_H */

@@ -29,9 +29,8 @@
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "numerics.h"
-
 #include "kernel_manager.h"
-
+#include "event_delivery_manager_impl.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -128,7 +127,7 @@ nest::ac_generator::calibrate()
   device_.calibrate();
 
   const double_t h = Time::get_resolution().get_ms();
-  const double_t t = Network::get_network().get_time().get_ms();
+  const double_t t = kernel().simulation_manager.get_time().get_ms();
 
   // scale Hz to ms
   const double_t omega = 2.0 * numerics::pi * P_.freq_ / 1000.0;

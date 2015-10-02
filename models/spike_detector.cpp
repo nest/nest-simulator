@@ -28,11 +28,12 @@
 #include "dictutils.h"
 #include "arraydatum.h"
 #include "sibling_container.h"
+#include "kernel_manager.h"
 
 #include <numeric>
 
 #include "logging.h"
-#include "kernel_manager.h"
+#include "event_delivery_manager_impl.h"
 
 nest::spike_detector::spike_detector()
   : Node()

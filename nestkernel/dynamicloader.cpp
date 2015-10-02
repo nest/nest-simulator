@@ -48,6 +48,9 @@
 
 #include "model.h"
 
+#include "kernel_manager.h"
+
+
 namespace nest
 {
 

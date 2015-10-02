@@ -30,6 +30,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
+#include "event_delivery_manager_impl.h"
 
 #include <cmath>
 #include <limits>
@@ -202,7 +203,7 @@ nest::sinusoidal_poisson_generator::calibrate()
 
   // time resolution
   V_.h_ = Time::get_resolution().get_ms();
-  const double_t t = Network::get_network().get_time().get_ms();
+  const double_t t = kernel().simulation_manager.get_time().get_ms();
 
   // initial state
   S_.y_0_ = P_.amplitude_ * std::cos( P_.om_ * t + P_.phi_ );

@@ -165,14 +165,6 @@ public:
    */
   delay get_slice_modulo( delay d );
 
-private:
-  /**
-   * Re-compute table of fixed modulos, including slice-based.
-   */
-  void compute_moduli_();
-
-  void init_moduli_();
-
   /**
    * Resize spike_register and comm_buffer to correct dimensions.
    * Resizes also offgrid_*_buffer_.
@@ -182,19 +174,7 @@ private:
    * simulate() has been called. ConnectorModel::check_delay() and
    * Network::set_status() ensure this.
    */
-  void configure_spike_buffers_();
-
-  /**
-   * Rearrange the spike_register into a 2-dim structure. This is
-   * done by collecting the spikes from all threads in each slice of
-   * the min_delay_ interval.
-   */
-  void collocate_buffers_();
-
-  /**
-   * Collocate buffers and exchange events with other MPI processes.
-   */
-  void gather_events_();
+  void configure_spike_buffers();
 
   /**
    * Read all event buffers for thread t and send the corresponding
@@ -205,7 +185,30 @@ private:
    * ordering applies to time stamps only, it does NOT take into
    * account the offsets of precise spikes.
    */
-  void deliver_events_( thread t );
+  void deliver_events( thread t );
+
+  /**
+   * Collocate buffers and exchange events with other MPI processes.
+   */
+  void gather_events();
+
+  /**
+   * Re-compute table of fixed modulos, including slice-based.
+   */
+  void compute_moduli();
+
+private:
+
+  void init_moduli_();
+
+
+  /**
+   * Rearrange the spike_register into a 2-dim structure. This is
+   * done by collecting the spikes from all threads in each slice of
+   * the min_delay_ interval.
+   */
+  void collocate_buffers_();
+
 
 private:
   bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid
@@ -291,49 +294,6 @@ private:
   const uint_t comm_marker_;
 };
 
-template < class EventT >
-inline void
-EventDeliveryManager::send( Node& source, EventT& e, const long_t lag )
-{
-  e.set_stamp( Network::get_network().get_slice_origin() + Time::step( lag + 1 ) );
-  e.set_sender( source );
-  thread t = source.get_thread();
-  index gid = source.get_gid();
-
-  assert( !source.has_proxies() );
-  Network::get_network().connection_manager_.send( t, gid, e );
-}
-
-template <>
-inline void
-EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const long_t lag )
-{
-  e.set_stamp( Network::get_network().get_slice_origin() + Time::step( lag + 1 ) );
-  e.set_sender( source );
-  thread t = source.get_thread();
-
-  if ( source.has_proxies() )
-  {
-    if ( source.is_off_grid() )
-      send_offgrid_remote( t, e, lag );
-    else
-      send_remote( t, e, lag );
-  }
-  else
-    send_local( t, source, e );
-}
-
-template <>
-inline void
-EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long_t lag )
-{
-  e.set_stamp( Network::get_network().get_slice_origin() + Time::step( lag + 1 ) );
-  e.set_sender( source );
-  thread t = source.get_thread();
-
-  assert( !source.has_proxies() );
-  send_local( t, source, e );
-}
 
 inline void
 EventDeliveryManager::send_local( thread t, Node& source, Event& e )
@@ -376,12 +336,6 @@ inline void
 EventDeliveryManager::set_off_grid_communication( bool off_grid_spiking )
 {
   off_grid_spiking_ = off_grid_spiking;
-}
-
-inline size_t
-EventDeliveryManager::write_toggle() const
-{
-  return Network::get_network().get_slice() % 2;
 }
 
 inline size_t

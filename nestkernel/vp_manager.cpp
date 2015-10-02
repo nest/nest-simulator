@@ -21,6 +21,7 @@
  */
 
 #include "vp_manager.h"
+#include "kernel_manager.h"
 #include "dictutils.h"
 #include "network.h"
 #include "logging.h"
@@ -70,7 +71,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     if ( Network::get_network().connection_manager_.get_user_set_delay_extrema() )
       throw KernelException(
         "Delay extrema have been set: Thread/process number cannot be changed." );
-    if ( Network::get_network().get_simulated() )
+    if ( kernel().simulation_manager.has_been_simulated() )
       throw KernelException(
         "The network has been simulated: Thread/process number cannot be changed." );
     if ( not Time::resolution_is_default() )
@@ -108,7 +109,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     if ( Network::get_network().connection_manager_.get_user_set_delay_extrema() )
       throw KernelException(
         "Delay extrema have been set: Thread/process number cannot be changed." );
-    if ( Network::get_network().get_simulated() )
+    if ( kernel().simulation_manager.has_been_simulated() )
       throw KernelException(
         "The network has been simulated: Thread/process number cannot be changed." );
     if ( not Time::resolution_is_default() )

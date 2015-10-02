@@ -27,6 +27,7 @@
 #include "dictutils.h"
 #include "exceptions.h"
 #include "gslrandomgen.h"
+#include "event_delivery_manager_impl.h"
 
 #include "kernel_manager.h"
 

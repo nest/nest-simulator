@@ -27,6 +27,7 @@
 #include "doubledatum.h"
 #include "arraydatum.h"
 #include "dictutils.h"
+#include "event_delivery_manager_impl.h"
 
 #include <algorithm>
 #include <limits>

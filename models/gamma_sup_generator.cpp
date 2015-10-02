@@ -29,6 +29,7 @@
 #include "datum.h"
 #include <algorithm>
 #include <limits>
+#include "event_delivery_manager_impl.h"
 
 #include "kernel_manager.h"
 

@@ -229,12 +229,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } simulatefunction;
 
-  class ResumeSimulationFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } resumesimulationfunction;
-
   class Create_l_iFunction : public SLIFunction
   {
   public:

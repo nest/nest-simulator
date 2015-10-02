@@ -26,10 +26,14 @@
 #include "network.h"
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
+#include "kernel_manager.h"
+
+namespace nest
+{
 
 template < typename ConnBuilder >
 void
-nest::Network::register_conn_builder( const std::string& name )
+Network::register_conn_builder( const std::string& name )
 {
   assert( !connruledict_->known( name ) );
   GenericConnBuilderFactory* cb = new ConnBuilderFactory< ConnBuilder >();
@@ -37,6 +41,8 @@ nest::Network::register_conn_builder( const std::string& name )
   const int id = connbuilder_factories_.size();
   connbuilder_factories_.push_back( cb );
   connruledict_->insert( name, id );
+}
+
 }
 
 #endif

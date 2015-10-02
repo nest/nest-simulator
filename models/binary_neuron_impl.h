@@ -32,6 +32,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
+#include "event_delivery_manager_impl.h"
 
 #include <limits>
 
@@ -246,7 +247,7 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
     {
       // received twice the same gid, so transition 0->1
       // take double weight to compensate for subtracting first event
-      B_.spikes_.add_value( e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ),
+      B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
         2.0 * e.get_weight() );
     }
     else
@@ -254,7 +255,7 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
       // count this event negatively, assuming it comes as single event
       // transition 1->0
       B_.spikes_.add_value(
-        e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), -e.get_weight() );
+        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), -e.get_weight() );
     }
   }
   else // multiplicity != 1
@@ -262,7 +263,7 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
   {
     // count this event positively, transition 0->1
     B_.spikes_.add_value(
-      e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), e.get_weight() );
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() );
   }
 
   S_.last_in_gid_ = gid;
@@ -282,7 +283,7 @@ binary_neuron< TGainfunction >::handle( CurrentEvent& e )
   // but also to handle the incoming current events added
   // both contributions are directly added to the variable h
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( Network::get_network().get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 

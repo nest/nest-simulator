@@ -75,11 +75,11 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
 void
 EventDeliveryManager::clear_pending_spikes()
 {
-  configure_spike_buffers_();
+  configure_spike_buffers();
 }
 
 void
-EventDeliveryManager::configure_spike_buffers_()
+EventDeliveryManager::configure_spike_buffers()
 {
   assert( Network::get_network().min_delay_ != 0 );
 
@@ -139,7 +139,7 @@ EventDeliveryManager::init_moduli_()
   moduli_.resize( min_delay + max_delay );
 
   for ( delay d = 0; d < min_delay + max_delay; ++d )
-    moduli_[ d ] = ( Network::get_network().clock_.get_steps() + d ) % ( min_delay + max_delay );
+    moduli_[ d ] = ( kernel().simulation_manager.get_clock().get_steps() + d ) % ( min_delay + max_delay );
 
   // Slice-based ring-buffers have one bin per min_delay steps,
   // up to max_delay.  Time is counted as for normal ring buffers.
@@ -148,7 +148,7 @@ EventDeliveryManager::init_moduli_()
     std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
   slice_moduli_.resize( min_delay + max_delay );
   for ( delay d = 0; d < min_delay + max_delay; ++d )
-    slice_moduli_[ d ] = ( ( Network::get_network().clock_.get_steps() + d ) / min_delay ) % nbuff;
+    slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
 }
 
 /**
@@ -160,7 +160,7 @@ EventDeliveryManager::init_moduli_()
  * a lookup-table and this table is rotated once per time slice.
  */
 void
-EventDeliveryManager::compute_moduli_()
+EventDeliveryManager::compute_moduli()
 {
   assert( Network::get_network().min_delay_ != 0 );
   assert( Network::get_network().max_delay_ != 0 );
@@ -183,7 +183,7 @@ EventDeliveryManager::compute_moduli_()
     / Network::get_network().min_delay_ ) );
   for ( delay d = 0; d < Network::get_network().min_delay_ + Network::get_network().max_delay_;
         ++d )
-    slice_moduli_[ d ] = ( ( Network::get_network().clock_.get_steps() + d )
+    slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d )
                            / Network::get_network().min_delay_ ) % nbuff;
 }
 
@@ -325,10 +325,10 @@ EventDeliveryManager::collocate_buffers_()
 }
 
 void
-EventDeliveryManager::deliver_events_( thread t )
+EventDeliveryManager::deliver_events( thread t )
 {
   // deliver only at beginning of time slice
-  if ( Network::get_network().from_step_ > 0 )
+  if ( kernel().simulation_manager.get_from_step() > 0 )
     return;
 
   SpikeEvent se;
@@ -341,7 +341,7 @@ EventDeliveryManager::deliver_events_( thread t )
     std::vector< Time > prepared_timestamps( Network::get_network().min_delay_ );
     for ( size_t lag = 0; lag < ( size_t ) Network::get_network().min_delay_; lag++ )
     {
-      prepared_timestamps[ lag ] = Network::get_network().clock_ - Time::step( lag );
+      prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() - Time::step( lag );
     }
 
     for ( size_t vp = 0; vp < ( size_t ) kernel().vp_manager.get_num_virtual_processes(); ++vp )
@@ -374,7 +374,7 @@ EventDeliveryManager::deliver_events_( thread t )
     std::vector< Time > prepared_timestamps( Network::get_network().min_delay_ );
     for ( size_t lag = 0; lag < ( size_t ) Network::get_network().min_delay_; lag++ )
     {
-      prepared_timestamps[ lag ] = Network::get_network().clock_ - Time::step( lag );
+      prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() - Time::step( lag );
     }
 
     for ( size_t vp = 0; vp < ( size_t ) kernel().vp_manager.get_num_virtual_processes(); ++vp )
@@ -405,7 +405,7 @@ EventDeliveryManager::deliver_events_( thread t )
 }
 
 void
-EventDeliveryManager::gather_events_()
+EventDeliveryManager::gather_events()
 {
   collocate_buffers_();
   if ( off_grid_spiking_ )

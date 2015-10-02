@@ -246,19 +246,16 @@ public:
     const double_t t_trig );
 
   /**
-   * Return minimal connection delay.
+   * Return minimal connection delay, which is precomputed by update_delay_extrema_().
    */
   delay get_min_delay() const;
 
   /**
-   * Return maximal connection delay.
+   * Return maximal connection delay, which is precomputed by update_delay_extrema_().
    */
   delay get_max_delay() const;
 
   bool get_user_set_delay_extrema() const;
-
-  const Time get_min_delay_time() const;
-  const Time get_max_delay_time() const;
 
   void send( thread t, index sgid, Event& e );
 
@@ -285,10 +282,25 @@ private:
    * called from const-method get_status() as well.
    */
   void update_delay_extrema_();
+  
+  /**
+   * This method queries and finds the minimum delay
+   * of all local connections
+   */
+  const Time get_min_delay_time_() const;
+  
+  /**
+   * This method queries and finds the minimum delay
+   * of all local connections
+   */
+  const Time get_max_delay_time_() const;
 
+  /**
+   * Deletes all connections and also frees the PMA.
+   */
   void delete_connections_();
 
-  ConnectorBase* validate_source_entry( thread tid, index s_gid, synindex syn_id );
+  ConnectorBase* validate_source_entry_( thread tid, index s_gid, synindex syn_id );
 
   /**
    * Connect is used to establish a connection between a sender and

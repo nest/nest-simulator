@@ -166,7 +166,7 @@ nest::ConnectionBuilderManager::delete_connections_()
 }
 
 const nest::Time
-nest::ConnectionBuilderManager::get_min_delay_time() const
+nest::ConnectionBuilderManager::get_min_delay_time_() const
 {
   Time min_delay = Time::pos_inf();
 
@@ -182,7 +182,7 @@ nest::ConnectionBuilderManager::get_min_delay_time() const
 }
 
 const nest::Time
-nest::ConnectionBuilderManager::get_max_delay_time() const
+nest::ConnectionBuilderManager::get_max_delay_time_() const
 {
   Time max_delay = Time::get_resolution();
 
@@ -261,8 +261,8 @@ nest::ConnectionBuilderManager::connect( const GIDCollection& sources,
 void
 nest::ConnectionBuilderManager::update_delay_extrema_()
 {
-  min_delay_ = get_min_delay_time().get_steps();
-  max_delay_ = get_max_delay_time().get_steps();
+  min_delay_ = get_min_delay_time_().get_steps();
+  max_delay_ = get_max_delay_time_().get_steps();
 
   if ( Communicator::get_num_processes() > 1 )
   {
@@ -459,7 +459,7 @@ nest::ConnectionBuilderManager::connect_( Node& s,
   double_t w )
 {
   // see comment above for explanation
-  ConnectorBase* conn = validate_source_entry( tid, s_gid, syn );
+  ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
   ConnectorBase* c =
     Network::get_network().connection_manager_.prototypes_[ tid ][ syn ]->add_connection(
       s, r, conn, syn, d, w );
@@ -477,7 +477,7 @@ nest::ConnectionBuilderManager::connect_( Node& s,
   double_t w )
 {
   // see comment above for explanation
-  ConnectorBase* conn = validate_source_entry( tid, s_gid, syn );
+  ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
   ConnectorBase* c =
     Network::get_network().connection_manager_.prototypes_[ tid ][ syn ]->add_connection(
       s, r, conn, syn, p, d, w );
@@ -908,7 +908,7 @@ nest::ConnectionBuilderManager::connect( ArrayDatum& conns )
 }
 
 nest::ConnectorBase*
-nest::ConnectionBuilderManager::validate_source_entry( thread tid, index s_gid, synindex syn_id )
+nest::ConnectionBuilderManager::validate_source_entry_( thread tid, index s_gid, synindex syn_id )
 {
   Network::get_network().connection_manager_.assert_valid_syn_id( syn_id );
 

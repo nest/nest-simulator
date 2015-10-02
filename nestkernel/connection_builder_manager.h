@@ -87,7 +87,8 @@ public:
 inline void
 ConnectionBuilderManager::connect( ArrayDatum& connectome )
 {
-  kernel().connection_manager.connect( connectome );
+  //kernel().connection_manager.connect( connectome );
+  nest::Network::get_network().connection_manager.connect( connectome );
 }
 
 } // namespace nest

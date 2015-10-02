@@ -31,9 +31,14 @@
 #include "genericmodel.h"
 #include "connector_model.h"
 
+#include "dictutils.h"
+#include "network.h"
+#include "model.h"
+#include "genericmodel.h"
+
 namespace nest
 {
-class ModelManager: ManagerInterface
+class ModelManager : public ManagerInterface
 {
 public:
   ModelManager();
@@ -95,7 +100,7 @@ public:
    * Return pointer to protoype for given synapse id.
    * @throws UnknownSynapseType
    */
-  //
+
   //  TODO: make the return type const, after the increment of
   //  num_connections and the min_ and max_delay setting in
   //  ConnectorBase was moved out to the ConnectionManager
@@ -325,7 +330,7 @@ private:
    * @see set_model_defaults, set_synapse_defaults_
    */
   void
-    set_node_defaults_(index model_id, const DictionaryDatum& params );
+  set_node_defaults_(index model_id, const DictionaryDatum& params );
 
   /**
    * Set the default parameters of a model.
@@ -334,7 +339,7 @@ private:
    * @see set_model_defaults, set_node_defaults_
    */
   void
-    set_synapse_defaults_( index model_id, const DictionaryDatum& params );
+  set_synapse_defaults_( index model_id, const DictionaryDatum& params );
 };
 
 } // namespace nest

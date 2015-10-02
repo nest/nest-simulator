@@ -265,142 +265,10 @@ public:
    */
   index size() const;
 
-  /**
-   * Connect two nodes. The source node is defined by its global ID.
-   * The target node is defined by the node. The connection is
-   * established on the thread/process that owns the target node.
-   *
-   * The parameters delay and weight have the default value NAN.
-   * NAN is a special value in cmath, which describes double values that
-   * are not a number. If delay or weight is omitted in a connect call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
-   *
-   * \param s GID of the sending Node.
-   * \param target Pointer to target Node.
-   * \param target_thread Thread that hosts the target node.
-   * \param syn The synapse model to use.
-   * \param d Delay of the connection (in ms).
-   * \param w Weight of the connection.
-   */
-  void connect( index s,
-    Node* target,
-    thread target_thread,
-    index syn,
-    double_t d = NAN,
-    double_t w = NAN );
-
-  /**
-   * Connect two nodes. The source node is defined by its global ID.
-   * The target node is defined by the node. The connection is
-   * established on the thread/process that owns the target node.
-   *
-   * The parameters delay and weight have the default value NAN.
-   * NAN is a special value in cmath, which describes double values that
-   * are not a number. If delay or weight is omitted in an connect call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
-   *
-   * \param s GID of the sending Node.
-   * \param target Pointer to target Node.
-   * \param target_thread Thread that hosts the target node.
-   * \param syn The synapse model to use.
-   * \param params parameter dict to configure the synapse
-   * \param d Delay of the connection (in ms).
-   * \param w Weight of the connection.
-   */
-  void connect( index s,
-    Node* target,
-    thread target_thread,
-    index syn,
-    DictionaryDatum& params,
-    double_t d = NAN,
-    double_t w = NAN );
-
-  /**
-   * Connect two nodes. The source node is defined by its global ID.
-   * The target node is defined by the node. The connection is
-   * established on the thread/process that owns the target node.
-   *
-   * \param s GID of the sending Node.
-   * \param target pointer to target Node.
-   * \param target_thread thread that hosts the target node
-   * \param params parameter dict to configure the synapse
-   * \param syn The synapse model to use.
-   */
-  bool connect( index s, index r, DictionaryDatum& params, index syn );
-
-  void subnet_connect( Subnet&, Subnet&, int, index syn );
-
-  /**
-   * Connect from an array of dictionaries.
-   */
-  void connect( ArrayDatum& connectome );
-
-  void divergent_connect( index s,
-    const TokenArray r,
-    const TokenArray weights,
-    const TokenArray delays,
-    index syn );
-  /**
-   * Connect one source node with many targets.
-   * The dictionary d contains arrays for all the connections of type syn.
-   */
-
-  void divergent_connect( index s, DictionaryDatum d, index syn );
-
-  void random_divergent_connect( index s,
-    const TokenArray r,
-    index n,
-    const TokenArray w,
-    const TokenArray d,
-    bool,
-    bool,
-    index syn );
-
-  void convergent_connect( const TokenArray s,
-    index r,
-    const TokenArray weights,
-    const TokenArray delays,
-    index syn );
-
-  /**
-   * Specialized version of convegent_connect
-   * called by random_convergent_connect threaded
-   */
-  void convergent_connect( const std::vector< index >& s_id,
-    index r,
-    const TokenArray& weight,
-    const TokenArray& delays,
-    index syn );
-
-  void random_convergent_connect( const TokenArray s,
-    index t,
-    index n,
-    const TokenArray w,
-    const TokenArray d,
-    bool,
-    bool,
-    index syn );
-
-  /**
-   * Use openmp threaded parallelization to speed up connection.
-   * Parallelize over target list.
-   */
-  void random_convergent_connect( TokenArray s,
-    TokenArray t,
-    TokenArray n,
-    TokenArray w,
-    TokenArray d,
-    bool,
-    bool,
-    index syn );
 
   DictionaryDatum get_connector_defaults( index sc );
   void set_connector_defaults( const index sc, const DictionaryDatum& d );
 
-  DictionaryDatum get_synapse_status( index gid, index syn, port p, thread tid );
-  void set_synapse_status( index gid, index syn, port p, thread tid, const DictionaryDatum& d );
-
-  ArrayDatum get_connections( DictionaryDatum dict );
 
   Subnet* get_root() const; ///< return root subnet.
   Subnet* get_cwn() const;  ///< current working node.
@@ -427,25 +295,6 @@ public:
 
   void print( index, int );
 
-  /**
-   * Triggered by volume transmitter in update.
-   * Triggeres updates for all connectors of dopamine synapses that
-   * are registered with the volume transmitter with gid vt_gid.
-   */
-  void trigger_update_weight( const long_t vt_gid,
-    const vector< spikecounter >& dopa_spikes,
-    const double_t t_trig );
-
-
-  /**
-   * Return minimal connection delay.
-   */
-  delay get_min_delay() const;
-
-  /**
-   * Return maximal connection delay.
-   */
-  delay get_max_delay() const;
 
   /**
    * Get random number client of a thread.
@@ -713,7 +562,7 @@ private:
      'modeldict info' shows the contents of the dictionary
      SeeAlso: info, Device, RecordingDevice, iaf_neuron, subnet
   */
-  Dictionary* modeldict_; //!< Dictionary for models.
+  Dictionary* modeldict_;        //!< Dictionary for models.
   Model* siblingcontainer_model; //!< The model for the SiblingContainer class
 
   /**
@@ -729,10 +578,13 @@ private:
     proxy_nodes_; //!< Placeholders for remote nodes, one per thread
   std::vector< Node* >
     dummy_spike_sources_; //!< Placeholders for spiking remote nodes, one per thread
+
+  bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
+
   bool model_defaults_modified_; //!< whether any model defaults have been modified
+
   /************ Previously Scheduler ***************/
 public:
-
   /**
    * Return the process id for a given virtual process. The real process' id
    * of a virtual process is defined by the relation: p = (vp mod P), where
@@ -764,17 +616,8 @@ private:
   void finalize_nodes();
 
 
-
   void create_rngs_( const bool ctor_call = false );
   void create_grng_( const bool ctor_call = false );
-
-  /**
-   * Update delay extrema to current values.
-   *
-   * Static since it only operates in static variables. This allows it to be
-   * called from const-method get_status() as well.
-   */
-  void update_delay_extrema_();
 
 
   /**
@@ -816,10 +659,6 @@ private:
 
   long_t
     grng_seed_; //!< The seed of the global RNG, not neccessarily describing the state of the GRNG.
-
-  delay min_delay_; //!< Value of the smallest delay in the network.
-
-  delay max_delay_; //!< Value of the largest delay in the network in steps.
 
   /**
    * Vector of random number generators for threads.
@@ -870,24 +709,6 @@ inline Node*
 Network::thread_lid_to_node( thread t, targetindex thread_local_id ) const
 {
   return nodes_vec_[ t ][ thread_local_id ];
-}
-
-inline DictionaryDatum
-Network::get_synapse_status( index gid, index syn, port p, thread tid )
-{
-  return connection_manager_.get_synapse_status( gid, syn, p, tid );
-}
-
-inline void
-Network::set_synapse_status( index gid, index syn, port p, thread tid, const DictionaryDatum& d )
-{
-  connection_manager_.set_synapse_status( gid, syn, p, tid, d );
-}
-
-inline ArrayDatum
-Network::get_connections( DictionaryDatum params )
-{
-  return connection_manager_.get_connections( params );
 }
 
 inline void
@@ -950,26 +771,6 @@ Network::is_local_gid( index gid ) const
   return local_nodes_.get_node_by_gid( gid ) != 0;
 }
 
-inline delay
-Network::get_min_delay() const
-{
-  return min_delay_;
-}
-
-inline delay
-Network::get_max_delay() const
-{
-  return max_delay_;
-}
-
-inline void
-Network::trigger_update_weight( const long_t vt_gid,
-  const vector< spikecounter >& dopa_spikes,
-  const double_t t_trig )
-{
-  connection_manager_.trigger_update_weight( vt_gid, dopa_spikes, t_trig );
-}
-
 inline librandom::RngPtr
 Network::get_rng( thread t ) const
 {
@@ -991,7 +792,6 @@ Network::get_model( index m ) const
 
   return models_[ m ];
 }
-
 
 
 inline const Dictionary&

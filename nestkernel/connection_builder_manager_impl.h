@@ -42,7 +42,6 @@ ConnectionBuilderManager::register_conn_builder( const std::string& name )
   connbuilder_factories_.push_back( cb );
   connruledict_->insert( name, id );
 }
-
 }
 
 #endif

@@ -291,15 +291,16 @@ nest::ConnBuilder::single_connect_( index sgid,
   if ( param_dicts_.empty() ) // indicates we have no synapse params
   {
     if ( default_weight_and_delay_ )
-      kernel().ConnectionBuilderManager.connect( sgid, &target, target_thread, synapse_model_ );
+      kernel().connection_builder_manager.connect( sgid, &target, target_thread, synapse_model_ );
     else if ( default_weight_ )
-      kernel().ConnectionBuilderManager.connect(
+      kernel().connection_builder_manager.connect(
         sgid, &target, target_thread, synapse_model_, delay_->value_double( target_thread, rng ) );
     else
     {
       double delay = delay_->value_double( target_thread, rng );
       double weight = weight_->value_double( target_thread, rng );
-      kernel().ConnectionBuilderManager.connect( sgid, &target, target_thread, synapse_model_, delay, weight );
+      kernel().connection_builder_manager.connect(
+        sgid, &target, target_thread, synapse_model_, delay, weight );
     }
   }
   else
@@ -334,10 +335,10 @@ nest::ConnBuilder::single_connect_( index sgid,
     }
 
     if ( default_weight_and_delay_ )
-      kernel().ConnectionBuilderManager.connect(
+      kernel().connection_builder_manager.connect(
         sgid, &target, target_thread, synapse_model_, param_dicts_[ target_thread ] );
     else if ( default_weight_ )
-      kernel().ConnectionBuilderManager.connect( sgid,
+      kernel().connection_builder_manager.connect( sgid,
         &target,
         target_thread,
         synapse_model_,
@@ -347,7 +348,7 @@ nest::ConnBuilder::single_connect_( index sgid,
     {
       double delay = delay_->value_double( target_thread, rng );
       double weight = weight_->value_double( target_thread, rng );
-      kernel().ConnectionBuilderManager.connect( sgid,
+      kernel().connection_builder_manager.connect( sgid,
         &target,
         target_thread,
         synapse_model_,

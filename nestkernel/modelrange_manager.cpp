@@ -98,8 +98,8 @@ ModelRangeManager::get_model_id( index gid ) const
   }
   return modelranges_[ range_idx ].get_model_id();
 }
-  
-//inline 
+
+// inline
 nest::Model*
 nest::ModelRangeManager::get_model_of_gid( index gid )
 {

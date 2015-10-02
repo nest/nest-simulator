@@ -72,7 +72,7 @@ public:
   EventDeliveryManager event_delivery_manager;
 
 private:
-  bool initialized_;   //!< true if all sub-managers initialized
+  bool initialized_; //!< true if all sub-managers initialized
 };
 
 KernelManager& kernel();

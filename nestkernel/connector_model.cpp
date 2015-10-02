@@ -83,8 +83,8 @@ ConnectorModel::assert_valid_delay_ms( double_t requested_new_delay )
   // min_delay and the max_delay which have been used during simulation
   if ( kernel().simulation_manager.has_been_simulated() )
   {
-    Time sim_min_delay = Time::step( Network::get_network().get_min_delay() );
-    Time sim_max_delay = Time::step( Network::get_network().get_max_delay() );
+    Time sim_min_delay = Time::step( kernel().connection_builder_manager.get_min_delay() );
+    Time sim_max_delay = Time::step( kernel().connection_builder_manager.get_max_delay() );
     const bool bad_min_delay = new_delay < sim_min_delay;
     const bool bad_max_delay = new_delay > sim_max_delay;
 
@@ -125,8 +125,8 @@ ConnectorModel::assert_two_valid_delays_steps( long_t new_delay1, long_t new_del
 
   if ( kernel().simulation_manager.has_been_simulated() )
   {
-    const bool bad_min_delay = ldelay < Network::get_network().get_min_delay();
-    const bool bad_max_delay = hdelay > Network::get_network().get_max_delay();
+    const bool bad_min_delay = ldelay < kernel().connection_builder_manager.get_min_delay();
+    const bool bad_max_delay = hdelay > kernel().connection_builder_manager.get_max_delay();
 
     if ( bad_min_delay )
       throw BadDelay( Time::delay_steps_to_ms( ldelay ),

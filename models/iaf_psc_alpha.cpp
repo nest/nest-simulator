@@ -282,7 +282,7 @@ iaf_psc_alpha::calibrate()
 void
 iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )

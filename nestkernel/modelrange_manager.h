@@ -66,7 +66,7 @@ public:
    * Get the ID of the model to which this GID is assigned
    */
   index get_model_id( index gid ) const;
-  
+
   /**
    * Return the Model for a given GID.
    */

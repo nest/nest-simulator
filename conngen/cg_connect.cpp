@@ -26,7 +26,7 @@
 #include "communicator.h"
 
 #include "logging.h"
-#include "kernel_manager.h"
+#include "kernel_manager.h" // TODO implement in terms of nest-API
 
 namespace nest
 {
@@ -52,7 +52,8 @@ cg_connect( ConnectionGeneratorDatum& cg,
       {
         Node* const target_node = Network::get_network().get_node( target + target_offset );
         const thread target_thread = target_node->get_thread();
-        Network::get_network().connect( source + source_offset, target_node, target_thread, syn );
+        kernel().connection_builder_manager.connect(
+          source + source_offset, target_node, target_thread, syn );
       }
     }
   }
@@ -72,7 +73,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
       {
         Node* const target_node = Network::get_network().get_node( target + target_offset );
         const thread target_thread = target_node->get_thread();
-        Network::get_network().connect( source + source_offset,
+        kernel().connection_builder_manager.connect( source + source_offset,
           target_node,
           target_thread,
           syn,
@@ -110,7 +111,8 @@ cg_connect( ConnectionGeneratorDatum& cg,
       {
         Node* const target_node = Network::get_network().get_node( target_gids.at( target ) );
         const thread target_thread = target_node->get_thread();
-        Network::get_network().connect( source_gids.at( source ), target_node, target_thread, syn );
+        kernel().connection_builder_manager.connect(
+          source_gids.at( source ), target_node, target_thread, syn );
       }
     }
   }
@@ -130,7 +132,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
       {
         Node* const target_node = Network::get_network().get_node( target_gids.at( target ) );
         const thread target_thread = target_node->get_thread();
-        Network::get_network().connect( source_gids.at( source ),
+        kernel().connection_builder_manager.connect( source_gids.at( source ),
           target_node,
           target_thread,
           syn,

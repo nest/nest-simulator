@@ -25,6 +25,7 @@
 #include "dict.h"
 #include "dictutils.h"
 #include "arraydatum.h"
+#include "kernel_manager.h"
 
 #include <numeric>
 #include <functional> // for bind2nd
@@ -374,7 +375,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       }
       const double_t tau_edge = P_.tau_max_.get_steps() + P_.delta_tau_.get_steps();
 
-      const delay min_delay = Network::get_network().get_min_delay();
+      const delay min_delay = kernel().connection_builder_manager.get_min_delay();
       while (
         !otherPulses.empty() && ( t_min_on - otherPulses.front().t_off_ ) >= tau_edge + min_delay )
         otherPulses.pop_front();

@@ -44,7 +44,7 @@ nest::KernelManager::destroy_kernel_manager()
 }
 
 nest::KernelManager::KernelManager()
-  : initialized_(false)
+  : initialized_( false )
 {
 }
 
@@ -86,6 +86,7 @@ nest::KernelManager::set_status( const DictionaryDatum& dict )
   logging_manager.set_status( dict );
   vp_manager.set_status( dict );
   io_manager.set_status( dict );
+  connection_builder_manager.set_status( dict );
   event_delivery_manager.set_status( dict );
   simulation_manager.set_status( dict );
   modelrange_manager.set_status( dict );
@@ -97,6 +98,7 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
   logging_manager.get_status( dict );
   vp_manager.get_status( dict );
   io_manager.get_status( dict );
+  connection_builder_manager.get_status( dict );
   event_delivery_manager.get_status( dict );
   simulation_manager.get_status( dict );
   modelrange_manager.get_status( dict );

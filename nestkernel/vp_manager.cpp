@@ -68,7 +68,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     if ( Network::get_network().connection_manager_.has_user_prototypes() )
       throw KernelException(
         "Custom synapse types exist: Thread/process number cannot be changed." );
-    if ( Network::get_network().connection_manager_.get_user_set_delay_extrema() )
+    if ( kernel().connection_builder_manager.get_user_set_delay_extrema() )
       throw KernelException(
         "Delay extrema have been set: Thread/process number cannot be changed." );
     if ( kernel().simulation_manager.has_been_simulated() )
@@ -106,7 +106,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     if ( Network::get_network().connection_manager_.has_user_prototypes() )
       throw KernelException(
         "Custom synapse types exist: Thread/process number cannot be changed." );
-    if ( Network::get_network().connection_manager_.get_user_set_delay_extrema() )
+    if ( kernel().connection_builder_manager.get_user_set_delay_extrema() )
       throw KernelException(
         "Delay extrema have been set: Thread/process number cannot be changed." );
     if ( kernel().simulation_manager.has_been_simulated() )

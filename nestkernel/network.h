@@ -119,9 +119,6 @@ current directory)
 tics_per_step)
   network_size             integertype - The number of nodes in the network
   num_connections          integertype - The number of connections in the network
-  num_processes            integertype - The number of MPI processes
-  num_rec_processes        integertype - The number of MPI processes reserved for recording spikes
-  num_sim_processes        integertype - The number of MPI processes reserved for simulating neurons
   off_grid_spiking         booltype    - Whether to transmit precise spike times in MPI communicatio
   print_time               booltype    - Whether to print progress information during the simulation
   resolution               doubletype  - The resolution of the simulation (in ms)
@@ -143,6 +140,7 @@ class Network
   friend class VPManager;
   friend class SimulationManager;
   friend class EventDeliveryManager;
+  friend class MPIManager;
 
 private:
   Network( SLIInterpreter& );
@@ -475,38 +473,6 @@ public:
   librandom::RngPtr get_grng() const;
 
   /**
-   * Return the number of processes used during simulation.
-   * This functions returns the number of processes.
-   * Since each process has the same number of threads, the total number
-   * of threads is given by get_num_threads()*get_num_processes().
-   */
-  thread get_num_processes() const;
-
-  /**
-   * Get number of recording processes.
-   */
-  thread get_num_rec_processes() const;
-
-  /**
-   * Get number of simulating processes.
-   */
-  thread get_num_sim_processes() const;
-
-  /**
-   * Set number of recording processes, switches NEST to global
-   * spike detection mode.
-   *
-   * @param nrp  number of recording processes
-   * @param called_by_reset   pass true when calling from Scheduler::reset()
-   *
-   * @note The `called_by_reset` parameter is a cludge to avoid a chicken-and-egg
-   *       problem when resetting the kernel. It surpresses a test for existing
-   *       nodes, trusting that the kernel will immediately afterwards delete all
-   *       existing nodes.
-   */
-  void set_num_rec_processes( int nrp, bool called_by_reset );
-
-  /**
    * Return true, if the given Node is on the local machine
    */
   bool is_local_node( Node* ) const;
@@ -771,6 +737,28 @@ public:
    */
   thread get_process_id( thread vp ) const;
 
+  /**
+   * set communication style to off_grid (true) or on_grid
+   */
+  void set_off_grid_communication( bool off_grid_spiking );
+
+  /**
+   * Get slice number. Increased by one for each slice. Can be used
+   * to choose alternating buffers.
+   */
+  size_t get_slice() const;
+
+  /**
+   * Return (T+d) mod max_delay.
+   */
+  delay get_modulo( delay d );
+
+  /**
+   * Index to slice-based buffer.
+   * Return ((T+d)/min_delay) % ceil(max_delay/min_delay).
+   */
+  delay get_slice_modulo( delay d );
+
 private:
   /******** Member functions former owned by the scheduler ********/
 
@@ -829,9 +817,7 @@ private:
 private:
   /******** Member variables former owned by the scheduler ********/
   bool initialized_;
-
-  index n_rec_procs_; //!< MPI processes dedicated for recording devices
-  index n_sim_procs_; //!< MPI processes used for simulation
+  bool simulating_; //!< true if simulation in progress
 
   index n_gsd_; //!< Total number of global spike detectors, used for distributing them over
                 //!< recording processes
@@ -963,24 +949,6 @@ Network::get_cwn( void ) const
   return current_;
 }
 
-inline thread
-Network::get_num_processes() const
-{
-  return Communicator::get_num_processes();
-}
-
-inline thread
-Network::get_num_rec_processes() const
-{
-  return n_rec_procs_;
-}
-
-inline thread
-Network::get_num_sim_processes() const
-{
-  return n_sim_procs_;
-}
-
 inline bool
 Network::is_local_gid( index gid ) const
 {
@@ -1085,7 +1053,6 @@ Network::prepare_node_( Node* n )
   n->init_buffers();
   n->calibrate();
 }
-
 
 inline void
 Network::increment_n_gsd()

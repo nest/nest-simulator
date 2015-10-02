@@ -36,7 +36,7 @@
 namespace nest
 {
 
-void init_nest( int argc, char* argv[] );
+void init_nest( int* argc, char** argv[] );
 void fail_exit( int exitcode );
 
 void install_module( const std::string& module_name );

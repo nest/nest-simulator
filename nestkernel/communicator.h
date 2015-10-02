@@ -203,7 +203,7 @@ public:
   static void register_music_event_in_proxy( std::string portname, int channel, nest::Node* mp );
 #endif
 
-  static void init( int* argc, char** argv[] );
+  static void init();
   static void finalize();
   static void mpi_abort( int exitcode );
 
@@ -249,8 +249,6 @@ public:
 
   static std::string get_processor_name();
 
-  static int get_rank();
-  static int get_num_processes();
   static void set_num_processes( int );
   static int get_send_buffer_size();
   static int get_recv_buffer_size();
@@ -260,8 +258,6 @@ public:
   static void set_buffer_sizes( int send_buffer_size, int recv_buffer_size );
 
 private:
-  static int rank_;             //!< the rank of the machine
-  static int num_processes_;    //!< the number of mpi-processes
   static int send_buffer_size_; //!< expected size of send buffer
   static int recv_buffer_size_; //!< size of receive buffer
   static bool initialized_;     //!< whether MPI is initialized
@@ -476,9 +472,6 @@ public:
   }
 
   static std::string get_processor_name();
-
-  static int get_rank();
-  static int get_num_processes();
   static void set_num_processes( int );
   static int get_send_buffer_size();
   static int get_recv_buffer_size();
@@ -489,8 +482,6 @@ public:
   static void set_buffer_sizes( int send_buffer_size, int recv_buffer_size );
 
 private:
-  static int rank_;             //!< the rank of the machine
-  static int num_processes_;    //!< the number of mpi-processes
   static int send_buffer_size_; //!< expected size of send buffer
   static int recv_buffer_size_; //!< size of receive buffer
   static bool initialized_;     //!< whether MPI is initialized
@@ -511,24 +502,12 @@ Communicator::get_processor_name()
 
 namespace nest
 {
-
-inline int
-Communicator::get_rank()
-{
-  return rank_;
-}
-
-inline int
-Communicator::get_num_processes()
-{
-  return num_processes_;
-}
-
-inline void
-Communicator::set_num_processes( int np )
-{
-  num_processes_ = np;
-}
+  //what is this for?
+  //inline void
+  //Communicator::set_num_processes( int np )
+  //{
+  //num_processes_ = np;
+  //}
 
 inline int
 Communicator::get_send_buffer_size()

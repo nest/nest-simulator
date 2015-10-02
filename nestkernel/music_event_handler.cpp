@@ -28,6 +28,8 @@
 #include "event.h"
 #include "communicator.h"
 #include "network.h"
+#include "kernel_manager.h"
+#include "logging.h"
 
 namespace nest
 {

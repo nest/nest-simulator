@@ -1252,7 +1252,7 @@ NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::RankFunction::execute( SLIInterpreter* i ) const
 {
-  i->OStack.push( Communicator::get_rank() );
+  i->OStack.push( kernel().mpi_manager.get_rank() );
   i->EStack.pop();
 }
 
@@ -1270,7 +1270,7 @@ NestModule::RankFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
 {
-  i->OStack.push( Communicator::get_num_processes() );
+  i->OStack.push( kernel().mpi_manager.get_num_processes() );
   i->EStack.pop();
 }
 

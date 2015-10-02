@@ -41,6 +41,7 @@
 #include "nestmodule.h"
 #include "sibling_container.h"
 #include "communicator_impl.h"
+#include "vp_manager_impl.h"
 
 #include "nest_timeconverter.h"
 
@@ -105,8 +106,7 @@ Network::Network( SLIInterpreter& i )
   , dict_miss_is_error_( true )
   , model_defaults_modified_( false )
   , initialized_( false ) // scheduler stuff
-  , n_rec_procs_( 0 )
-  , n_sim_procs_( 0 )
+  , simulating_( false )
   , n_gsd_( 0 )
   , nodes_vec_()
   , nodes_vec_network_size_( 0 ) // zero to force update
@@ -250,8 +250,6 @@ Network::init_scheduler_()
   // this change in delays.
   min_delay_ = max_delay_ = 1;
 
-  n_sim_procs_ = Communicator::get_num_processes() - n_rec_procs_;
-
   // explicitly force construction of nodes_vec_ to ensure consistent state
   update_nodes_vec_();
 
@@ -340,7 +338,7 @@ Network::reset_kernel()
    * fresh kernel, then do remaining initialization.
    */
   kernel().vp_manager.set_num_threads( 1 );
-  set_num_rec_processes( 0, true );
+  kernel().mpi_manager.set_num_rec_processes( 0, true );
   dict_miss_is_error_ = true;
 
   reset();
@@ -402,19 +400,19 @@ index Network::add_node( index mod, long_t n ) // no_p
   }
   kernel().modelrange_manager.add_range( mod, min_gid, max_gid - 1 );
 
-  if ( model->potential_global_receiver() and get_num_rec_processes() > 0 )
+  if ( model->potential_global_receiver() and kernel().mpi_manager.get_num_rec_processes() > 0 )
   {
     // In this branch we create nodes for all GIDs which are on a local thread
-    const int n_per_process = n / get_num_rec_processes();
+    const int n_per_process = n / kernel().mpi_manager.get_num_rec_processes();
     const int n_per_thread = n_per_process / n_threads + 1;
 
     // We only need to reserve memory on the ranks on which we
     // actually create nodes. In this if-branch ---> Only on recording
     // processes
-    if ( Communicator::get_rank() >= get_num_sim_processes() )
+    if ( kernel().mpi_manager.get_rank() >= kernel().mpi_manager.get_num_sim_processes() )
     {
-      local_nodes_.reserve(
-        std::ceil( static_cast< double >( max_gid ) / get_num_sim_processes() ) );
+      local_nodes_.reserve( std::ceil( static_cast< double >( max_gid ) / 
+				      kernel().mpi_manager.get_num_sim_processes() ) );
       for ( thread t = 0; t < n_threads; ++t )
       {
         // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
@@ -453,18 +451,18 @@ index Network::add_node( index mod, long_t n ) // no_p
   else if ( model->has_proxies() )
   {
     // In this branch we create nodes for all GIDs which are on a local thread
-    const int n_per_process = n / get_num_sim_processes();
+    const int n_per_process = n / kernel().mpi_manager.get_num_sim_processes();
     const int n_per_thread = n_per_process / n_threads + 1;
 
     // We only need to reserve memory on the ranks on which we
     // actually create nodes. In this if-branch ---> Only on
     // simulation processes
-    if ( Communicator::get_rank() < get_num_sim_processes() )
+    if ( kernel().mpi_manager.get_rank() < kernel().mpi_manager.get_num_sim_processes() )
     {
       // TODO: This will work reasonably for round-robin. The extra 50 entries are
       //       for subnets and devices.
       local_nodes_.reserve(
-        std::ceil( static_cast< double >( max_gid ) / get_num_sim_processes() ) + 50 );
+        std::ceil( static_cast< double >( max_gid ) / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
       for ( thread t = 0; t < n_threads; ++t )
       {
         // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
@@ -536,7 +534,7 @@ index Network::add_node( index mod, long_t n ) // no_p
     // and filled with one instance per thread, in total n * n_thread nodes in
     // n wrappers.
     local_nodes_.reserve(
-      std::ceil( static_cast< double >( max_gid ) / get_num_sim_processes() ) + 50 );
+      std::ceil( static_cast< double >( max_gid ) / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
     for ( index gid = min_gid; gid < max_gid; ++gid )
     {
       thread thread_id = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
@@ -965,7 +963,7 @@ Network::get_status( index idx )
     // former scheduler_.get_status( d ) start
     kernel().get_status( d );
 
-    def< long >( d, "num_processes", Communicator::get_num_processes() );
+    
 
     def< double >( d, "tics_per_ms", Time::get_tics_per_ms() );
     def< double >( d, "resolution", Time::get_resolution().get_ms() );
@@ -2176,7 +2174,6 @@ nest::Network::finalize_nodes()
   }
 }
 
-
 void
 nest::Network::prepare_nodes()
 {
@@ -2313,22 +2310,21 @@ nest::Network::update_nodes_vec_()
 }
 
 
-
 void
 nest::Network::update_delay_extrema_()
 {
   min_delay_ = connection_manager_.get_min_delay().get_steps();
   max_delay_ = connection_manager_.get_max_delay().get_steps();
 
-  if ( Communicator::get_num_processes() > 1 )
+  if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
-    std::vector< delay > min_delays( Communicator::get_num_processes() );
-    min_delays[ Communicator::get_rank() ] = min_delay_;
+    std::vector< delay > min_delays( kernel().mpi_manager.get_num_processes() );
+    min_delays[ kernel().mpi_manager.get_rank() ] = min_delay_;
     Communicator::communicate( min_delays );
     min_delay_ = *std::min_element( min_delays.begin(), min_delays.end() );
 
-    std::vector< delay > max_delays( Communicator::get_num_processes() );
-    max_delays[ Communicator::get_rank() ] = max_delay_;
+    std::vector< delay > max_delays( kernel().mpi_manager.get_num_processes() );
+    max_delays[ kernel().mpi_manager.get_rank() ] = max_delay_;
     Communicator::communicate( max_delays );
     max_delay_ = *std::max_element( max_delays.begin(), max_delays.end() );
   }
@@ -2437,29 +2433,6 @@ nest::Network::create_grng_( const bool ctor_call )
   grng_->seed( s );
 }
 
-void
-nest::Network::set_num_rec_processes( int nrp, bool called_by_reset )
-{
-  if ( size() > 1 and not called_by_reset )
-    throw KernelException(
-      "Global spike detection mode must be enabled before nodes are created." );
-  if ( nrp >= Communicator::get_num_processes() )
-    throw KernelException(
-      "Number of processes used for recording must be smaller than total number of processes." );
-  n_rec_procs_ = nrp;
-  n_sim_procs_ = Communicator::get_num_processes() - n_rec_procs_;
-  create_rngs_( true );
-  if ( nrp > 0 )
-  {
-    std::string msg = String::compose(
-      "Entering global spike detection mode with %1 recording MPI processes and %2 simulating MPI "
-      "processes.",
-      n_rec_procs_,
-      n_sim_procs_ );
-    LOG( M_INFO, "Network::set_num_rec_processes", msg );
-  }
-}
-
 // inline
 bool
 Network::is_local_node( Node* n ) const
@@ -2471,15 +2444,18 @@ Network::is_local_node( Node* n ) const
 thread
 Network::get_process_id( thread vp ) const
 {
-  if ( vp >= static_cast< thread >( n_sim_procs_
+  if ( vp >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes()
                * kernel().vp_manager.get_num_threads() ) ) // vp belongs to recording VPs
   {
-    return ( vp - n_sim_procs_ * kernel().vp_manager.get_num_threads() ) % n_rec_procs_
-      + n_sim_procs_;
+    return ( vp
+	     - kernel().mpi_manager.get_num_sim_processes()
+	       * kernel().vp_manager.get_num_threads() )
+             % kernel().mpi_manager.get_num_rec_processes()
+             + kernel().mpi_manager.get_num_sim_processes();
   }
   else // vp belongs to simulating VPs
   {
-    return vp % n_sim_procs_;
+    return vp % kernel().mpi_manager.get_num_sim_processes();
   }
 }
 

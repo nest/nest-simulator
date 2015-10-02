@@ -29,6 +29,7 @@
 #include "simulation_manager.h"
 #include "modelrange_manager.h"
 #include "event_delivery_manager.h"
+#include "mpi_manager.h"
 
 #include "dictdatum.h"
 
@@ -62,12 +63,13 @@ public:
   //! Returns true if kernel is initialized
   bool is_initialized() const;
 
-  VPManager vp_manager;
   LoggingManager logging_manager;
+  MPIManager mpi_manager;
+  VPManager vp_manager;
   IOManager io_manager;
+  EventDeliveryManager event_delivery_manager;
   SimulationManager simulation_manager;
   ModelRangeManager modelrange_manager;
-  EventDeliveryManager event_delivery_manager;
 
 private:
   bool initialized_;   //!< true if all sub-managers initialized

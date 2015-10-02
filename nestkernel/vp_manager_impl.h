@@ -1,5 +1,5 @@
 /*
- *  conngendatum.cpp
+ *  vp_manager_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,6 +20,16 @@
  *
  */
 
-#include "conngendatum.h"
+#ifndef VP_MANAGER_IMPL_H
+#define VP_MANAGER_IMPL_H
 
-SLIType nest::ConnectionGeneratorType;
+#include "kernel_manager.h"
+#include "vp_manager.h"
+
+inline int
+nest::VPManager::get_num_virtual_processes() const
+{
+  return n_threads_ * kernel ().mpi_manager.get_num_processes();
+}
+
+#endif /* VP_MANAGER_IMPL_H */

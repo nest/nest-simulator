@@ -26,7 +26,7 @@
 
 #include "dictutils.h"
 #include "logging.h"
-#include "kernel_manager.h"
+#include "vp_manager_impl.h"
 
 namespace nest
 {
@@ -104,7 +104,7 @@ EventDeliveryManager::configure_spike_buffers()
     kernel().vp_manager.get_num_threads() * Network::get_network().min_delay_ > 2
     ? kernel().vp_manager.get_num_threads() * Network::get_network().min_delay_
     : 2;
-  int recv_buffer_size = send_buffer_size * Communicator::get_num_processes();
+  int recv_buffer_size = send_buffer_size * kernel().mpi_manager.get_num_processes();
   Communicator::set_buffer_sizes( send_buffer_size, recv_buffer_size );
 
   // DEC cxx required 0U literal, HEP 2007-03-26
@@ -118,7 +118,7 @@ EventDeliveryManager::configure_spike_buffers()
   global_offgrid_spikes_.resize( recv_buffer_size, OffGridSpike( 0, 0.0 ) );
 
   displacements_.clear();
-  displacements_.resize( Communicator::get_num_processes(), 0 );
+  displacements_.resize( kernel().mpi_manager.get_num_processes(), 0 );
 }
 
 void

@@ -24,6 +24,7 @@
 
 #include <cassert>
 #include <set>
+#include <cmath>
 
 #include "compose.hpp"
 #include "dictutils.h"
@@ -43,6 +44,7 @@
 #include "tokenutils.h"
 #include "connector_base.h"
 #include "sliexceptions.h"
+#include "connection_register.h"
 
 #include "network.h"
 
@@ -64,8 +66,10 @@ void
 nest::ConnectionBuilderManager::init()
 {
   tVSConnector tmp( kernel().vp_manager.get_num_threads(), tSConnector() );
-
   connections_.swap( tmp );
+  
+  tVVRegister tmp2( kernel().vp_manager.get_num_threads(), tVRegister(Network::get_network().connection_manager_.prototypes_[0].size()) );
+  register_.swap( tmp2 );
 
   num_connections_ = 0;
 
@@ -83,6 +87,13 @@ nest::ConnectionBuilderManager::reset()
 void
 nest::ConnectionBuilderManager::set_status( const DictionaryDatum& d )
 {
+  
+ /*tVRegister::iterator it;
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+    for ( it = register_[ t ].begin();
+         it != register_[ t ].end();
+         ++it )
+      it->set_status(d);*/
 }
 
 void
@@ -170,13 +181,13 @@ nest::ConnectionBuilderManager::get_min_delay_time_() const
 {
   Time min_delay = Time::pos_inf();
 
-  std::vector< ConnectorModel* >::const_iterator it;
+  tVRegister::const_iterator it;
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    for ( it = Network::get_network().connection_manager_.prototypes_[ t ].begin();
-          it != Network::get_network().connection_manager_.prototypes_[ t ].end();
+    for ( it = register_[ t ].begin();
+          it != register_[ t ].end();
           ++it )
-      if ( *it != 0 && ( *it )->get_num_connections() > 0 )
-        min_delay = std::min( min_delay, ( *it )->get_min_delay() );
+      if ( it->get_num_connections() > 0 )
+        min_delay = std::min( min_delay, it->get_min_delay() );
 
   return min_delay;
 }
@@ -186,13 +197,13 @@ nest::ConnectionBuilderManager::get_max_delay_time_() const
 {
   Time max_delay = Time::get_resolution();
 
-  std::vector< ConnectorModel* >::const_iterator it;
+  tVRegister::const_iterator it;
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    for ( it = Network::get_network().connection_manager_.prototypes_[ t ].begin();
-          it != Network::get_network().connection_manager_.prototypes_[ t ].end();
+    for ( it = register_[ t ].begin();
+          it != register_[ t ].end();
           ++it )
-      if ( *it != 0 && ( *it )->get_num_connections() > 0 )
-        max_delay = std::max( max_delay, ( *it )->get_max_delay() );
+      if ( it->get_num_connections() > 0 )
+        max_delay = std::max( max_delay, it->get_max_delay() );
 
   return max_delay;
 }
@@ -201,12 +212,12 @@ bool
 nest::ConnectionBuilderManager::get_user_set_delay_extrema() const
 {
   bool user_set_delay_extrema = false;
-  std::vector< ConnectorModel* >::const_iterator it;
+  tVRegister::const_iterator it;
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    for ( it = Network::get_network().connection_manager_.prototypes_[ t ].begin();
-          it != Network::get_network().connection_manager_.prototypes_[ t ].end();
+    for ( it = register_[ t ].begin();
+          it != register_[ t ].end();
           ++it )
-      user_set_delay_extrema |= ( *it )->get_user_set_delay_extrema();
+      user_set_delay_extrema |= it->get_user_set_delay_extrema();
 
   return user_set_delay_extrema;
 }
@@ -1373,12 +1384,12 @@ size_t
 nest::ConnectionBuilderManager::get_num_connections() const
 {
   num_connections_ = 0;
+  tVRegister::const_iterator i;
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    for ( std::vector< ConnectorModel* >::const_iterator i =
-            Network::get_network().connection_manager_.prototypes_[ t ].begin();
-          i != Network::get_network().connection_manager_.prototypes_[ t ].end();
+    for ( i = register_[ t ].begin();
+          i != register_[ t ].end();
           ++i )
-      num_connections_ += ( *i )->get_num_connections();
+      num_connections_ += i->get_num_connections();
 
   return num_connections_;
 }
@@ -1446,8 +1457,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
   size_t num_connections = 0;
 
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    num_connections +=
-      Network::get_network().connection_manager_.prototypes_[ t ][ syn_id ]->get_num_connections();
+    num_connections += register_[ t ][ syn_id ].get_num_connections();
 
   connectome.reserve( num_connections );
 

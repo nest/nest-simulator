@@ -46,9 +46,13 @@ class spikecounter;
 class Node;
 class Subnet;
 class Event;
+class ConnectionRegister;
 
 typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons having targets
 typedef std::vector< tSConnector > tVSConnector;           // for all threads
+
+typedef std::vector< ConnectionRegister > tVRegister;
+typedef std::vector< tVRegister > tVVRegister;
 
 class ConnectionBuilderManager : public ManagerInterface
 {
@@ -213,6 +217,8 @@ public:
   // aka conndatum SetStatus
   void set_synapse_status( index gid, synindex syn, port p, thread tid, const DictionaryDatum& d );
 
+  
+  
   /**
    * Return connections between pairs of neurons.
    * The params dictionary can have the following entries:
@@ -340,8 +346,9 @@ private:
    * - Second dim: A std::vector for each node on each thread
    * - Third dim: A std::vector for each synapse prototype, holding the Connector objects
    */
-
   tVSConnector connections_;
+  
+  tVVRegister register_;
 
   mutable size_t num_connections_; //!< The global counter for the number of synapses
 

@@ -20,11 +20,10 @@
  *
  */
 
+#include "proxynode.h"
 
 #include "network.h"
 #include "dictutils.h"
-#include "proxynode.h"
-#include "connection.h"
 
 namespace nest
 {

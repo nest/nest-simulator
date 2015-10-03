@@ -195,6 +195,28 @@ nest::SIONLogger::close_files_()
       buffer.clear();
     }
 
+// let's try to collect the number of recorded events per device. UUUGLYYYYY. Might be slow as hell.
+#pragma omp master
+    {
+      for ( device_map::mapped_type::iterator it = devices_[ task ].begin();
+            it != devices_[ task ].end();
+            ++it )
+      {
+        int gid = it->first;
+
+        int n_rec = 0;
+
+        for ( device_map::iterator jj = devices_.begin(); jj != devices_.end(); ++jj )
+        {
+          n_rec += jj->second.find( gid )->second.info.n_rec;
+        }
+
+        int n_rec_total = 0;
+        MPI_Reduce( &n_rec, &n_rec_total, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD );
+        it->second.info.n_rec = n_rec_total;
+      }
+    }
+
     if ( task == 0 )
     {
       info.t_end = Node::network()->get_time().get_ms();
@@ -219,6 +241,9 @@ nest::SIONLogger::close_files_()
         char name[ 16 ];
         strncpy( name, dev_info.name.c_str(), 16 );
         sion_fwrite( &name, sizeof( char ), 16, file.sid );
+
+        int n_rec = dev_info.n_rec;
+        sion_fwrite( &n_rec, sizeof( int ), 1, file.sid );
 
         int n_val = dev_info.value_names.size();
         sion_fwrite( &n_val, sizeof( int ), 1, file.sid );

@@ -38,8 +38,11 @@ namespace nest
 {
 
 void
-init_nest( int argc, char* argv[] )
+init_nest( int* argc, char** argv[] )
 {
+  KernelManager::create_kernel_manager();
+  kernel().mpi_manager.init_mpi(argc, argv);
+  //kernel().init(); currently called from network.cpp
 }
 
 void
@@ -70,7 +73,7 @@ reset_network()
 void
 enable_dryrun_mode( const index n_procs )
 {
-  Communicator::set_num_processes( n_procs );
+  kernel().mpi_manager.set_num_processes( n_procs );
 }
 
 void
@@ -343,7 +346,7 @@ get_model_defaults( const Name& modelname )
 void
 set_num_rec_processes( const index n_rec_procs )
 {
-  Network::get_network().set_num_rec_processes( n_rec_procs, false );
+  kernel().mpi_manager.set_num_rec_processes( n_rec_procs, false );
 }
 
 void

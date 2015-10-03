@@ -25,7 +25,7 @@
 #include "dictutils.h"
 #include "network.h"
 #include "logging.h"
-#include "kernel_manager.h"
+#include "vp_manager_impl.h"
 
 nest::VPManager::VPManager()
   : force_singlethreading_( false )
@@ -119,12 +119,12 @@ nest::VPManager::set_status( const DictionaryDatum& d )
       throw KernelException(
         "Model defaults have been modified: Thread/process number cannot be changed." );
 
-    if ( n_vps % Communicator::get_num_processes() != 0 )
+    if ( n_vps % kernel().mpi_manager.get_num_processes() != 0 )
       throw BadProperty(
         "Number of virtual processes (threads*processes) must be an integer "
         "multiple of the number of processes. Value unchanged." );
 
-    n_threads_ = n_vps / Communicator::get_num_processes();
+    n_threads_ = n_vps / kernel().mpi_manager.get_num_processes();
     if ( ( n_threads > 1 ) && ( force_singlethreading_ ) )
     {
       LOG(
@@ -177,48 +177,48 @@ nest::VPManager::set_num_threads( nest::thread n_threads )
 bool
 nest::VPManager::is_local_vp( nest::thread vp ) const
 {
-  return Network::get_network().get_process_id( vp ) == Communicator::get_rank();
+  return Network::get_network().get_process_id( vp ) == kernel().mpi_manager.get_rank();
 }
 
 nest::thread
 nest::VPManager::suggest_vp( nest::index gid ) const
 {
-  return gid % ( Network::get_network().n_sim_procs_ * n_threads_ );
+  return gid % ( kernel().mpi_manager.get_num_sim_processes() * n_threads_ );
 }
 
 nest::thread
 nest::VPManager::suggest_rec_vp( nest::index gid ) const
 {
-  return gid % ( Network::get_network().n_rec_procs_ * n_threads_ )
-    + Network::get_network().n_sim_procs_ * n_threads_;
+  return gid % ( kernel().mpi_manager.get_num_rec_processes() * n_threads_ )
+    + kernel().mpi_manager.get_num_sim_processes() * n_threads_;
 }
 
 nest::thread
 nest::VPManager::vp_to_thread( nest::thread vp ) const
 {
-  if ( vp >= static_cast< thread >( Network::get_network().n_sim_procs_ * n_threads_ ) )
+  if ( vp >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes() * n_threads_ ) )
   {
-    return ( vp + Network::get_network().n_sim_procs_ * ( 1 - n_threads_ )
-             - Communicator::get_rank() ) / Network::get_network().n_rec_procs_;
+    return ( vp + kernel().mpi_manager.get_num_sim_processes() * ( 1 - n_threads_ )
+             - kernel().mpi_manager.get_rank() ) / kernel().mpi_manager.get_num_rec_processes();
   }
   else
   {
-    return vp / Network::get_network().n_sim_procs_;
+    return vp / kernel().mpi_manager.get_num_sim_processes();
   }
 }
 
 nest::thread
 nest::VPManager::thread_to_vp( nest::thread t ) const
 {
-  if ( Communicator::get_rank() >= static_cast< int >( Network::get_network().n_sim_procs_ ) )
+  if ( kernel().mpi_manager.get_rank() >= static_cast< int >( kernel().mpi_manager.get_num_sim_processes() ) )
   {
     // Rank is a recording process
-    return t * Network::get_network().n_rec_procs_ + Communicator::get_rank()
-      - Network::get_network().n_sim_procs_ + Network::get_network().n_sim_procs_ * n_threads_;
+    return t * kernel().mpi_manager.get_num_rec_processes() + kernel().mpi_manager.get_rank()
+      - kernel().mpi_manager.get_num_sim_processes() + kernel().mpi_manager.get_num_sim_processes() * n_threads_;
   }
   else
   {
     // Rank is a simulating process
-    return t * Network::get_network().n_sim_procs_ + Communicator::get_rank();
+    return t * kernel().mpi_manager.get_num_sim_processes() + kernel().mpi_manager.get_rank();
   }
 }

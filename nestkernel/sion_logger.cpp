@@ -195,7 +195,6 @@ nest::SIONLogger::close_files_()
       buffer.clear();
     }
 
-// let's try to collect the number of recorded events per device. UUUGLYYYYY. Might be slow as hell.
 #pragma omp master
     {
       for ( device_map::mapped_type::iterator it = devices_[ task ].begin();

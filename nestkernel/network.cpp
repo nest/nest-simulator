@@ -791,11 +791,10 @@ Network::set_status( index gid, const DictionaryDatum& d )
   if ( updateValue< DictionaryDatum >( d, "recording", dd ) )
   {
     std::string logger;
-    updateValue< std::string >( dd, names::logger, logger );
+    if ( updateValue< std::string >( dd, names::logger, logger ) )
+      set_logger( logger );
 
-    bool valid = set_logger( logger );
-    if ( valid )
-      logger_->set_status( dd );
+    logger_->set_status( dd );
   }
 
   std::string tmp;

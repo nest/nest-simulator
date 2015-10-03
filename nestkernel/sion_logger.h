@@ -148,10 +148,10 @@ private:
 
   struct Parameters_
   {
-    std::string file_ext_; //!< the file name extension to use, without .
-    long buffer_size_;     //!< the size of the internal buffer .
-    long sion_chunksize_;  //!< the size of SIONlib's buffer .
-    bool sion_collective_; //!< use SIONlib's collective mode .
+    std::string file_ext_;      //!< the file name extension to use, without .
+    long buffer_size_;          //!< the size of the internal buffer .
+    long sion_chunksize_;       //!< the size of SIONlib's buffer .
+    bool sion_collective_;      //!< use SIONlib's collective mode .
     bool close_after_simulate_; //!< if true, finalize() shall close the stream
 
     Parameters_();

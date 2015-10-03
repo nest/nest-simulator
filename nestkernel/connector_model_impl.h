@@ -29,7 +29,7 @@
 #include "network.h"
 #include "connector_model.h"
 #include "connector_base.h"
-#include "connection_register.h"
+#include "delay_checker.h"
 
 
 template < typename T, typename C >

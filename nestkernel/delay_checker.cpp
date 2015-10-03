@@ -1,5 +1,5 @@
 /*
- *  connection_register.h
+ *  delay_checker.h
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "connection_register.h"
+#include "delay_checker.h"
 
 #include <algorithm> // min, max
 
@@ -28,19 +28,17 @@
 #include "kernel_manager.h"
 #include "nest_timeconverter.h"
 
-nest::ConnectionRegister::ConnectionRegister()
+nest::DelayChecker::DelayChecker()
 : min_delay_( Time::pos_inf() )
 , max_delay_( Time::neg_inf() )
-, num_connections_( 0 )
 , default_delay_needs_check_( true )
 , user_set_delay_extrema_( false )
 {
 }
 
-nest::ConnectionRegister::ConnectionRegister( const ConnectionRegister& cr)
+nest::DelayChecker::DelayChecker( const DelayChecker& cr)
 : min_delay_( cr.min_delay_ )
 , max_delay_( cr.max_delay_ )
-, num_connections_( 0 )
 , default_delay_needs_check_( true )
 , user_set_delay_extrema_( cr.user_set_delay_extrema_ )
 {
@@ -49,7 +47,7 @@ nest::ConnectionRegister::ConnectionRegister( const ConnectionRegister& cr)
 }
 
 void
-nest::ConnectionRegister::calibrate( const TimeConverter& tc )
+nest::DelayChecker::calibrate( const TimeConverter& tc )
 {
   // Calibrate will be called after a change in resolution, when there are no
   // network elements present.
@@ -58,12 +56,12 @@ nest::ConnectionRegister::calibrate( const TimeConverter& tc )
 }
 
 void 
-get_status( DictionaryDatum& ) const
+nest::DelayChecker::get_status( DictionaryDatum& d) const
 {
   ( *d )[ "min_delay" ] = get_min_delay().get_ms();
   ( *d )[ "max_delay" ] = get_max_delay().get_ms();
   
-  long_t old_count;
+  /*long_t old_count;
   // if field "num_connections" already exists
   // we will add to this number
   // used to add up connections from connector_models
@@ -72,10 +70,11 @@ get_status( DictionaryDatum& ) const
     ( *d )[ "num_connections" ] = old_count + get_num_connections();
   else
     ( *d )[ "num_connections" ] = get_num_connections();
+   */
 }
 
 void
-set_status( const DictionaryDatum& )
+nest::DelayChecker::set_status( const DictionaryDatum& d)
 {
   /*
    * In the following code, we do not round delays to steps. For min and max delay,
@@ -103,9 +102,10 @@ set_status( const DictionaryDatum& )
   
   if ( min_delay_updated && max_delay_updated )
   {
-    if ( num_connections_ > 0 )
-      LOG( M_ERROR, "SetDefaults", "Connections already exist. Please call ResetKernel first" );
-    else if ( min_delay > new_delay )
+    //if ( num_connections_ > 0 )
+    //  LOG( M_ERROR, "SetDefaults", "Connections already exist. Please call ResetKernel first" );
+    //else 
+    if ( min_delay > new_delay )
       LOG( M_ERROR, "SetDefaults", "min_delay is not compatible with default delay" );
     else if ( max_delay < new_delay )
       LOG( M_ERROR, "SetDefaults", "max_delay is not compatible with default delay" );
@@ -126,7 +126,7 @@ set_status( const DictionaryDatum& )
 }
 
 void
-nest::ConnectionRegister::used_default_delay()
+nest::DelayChecker::used_default_delay()
 {
   // if not used before, check now. Solves bug #138, MH 08-01-08
   // replaces whole delay checking for the default delay, see bug #217, MH 08-04-24
@@ -140,7 +140,7 @@ nest::ConnectionRegister::used_default_delay()
 }
 
 void
-nest::ConnectionRegister::update_delay_extrema( const double_t mindelay_cand, const double_t maxdelay_cand )
+nest::DelayChecker::update_delay_extrema( const double_t mindelay_cand, const double_t maxdelay_cand )
 {
   // check min delay candidate
   Time delay_cand = Time( Time::ms( mindelay_cand ) );
@@ -154,7 +154,7 @@ nest::ConnectionRegister::update_delay_extrema( const double_t mindelay_cand, co
 }
 
 void
-nest::ConnectionRegister::assert_valid_delay_ms( double_t requested_new_delay )
+nest::DelayChecker::assert_valid_delay_ms( double_t requested_new_delay )
 {
   // We have to convert the delay in ms to a Time object then to steps and back the ms again
   // in order to get the value in ms which can be represented with an integer number of steps
@@ -201,7 +201,7 @@ nest::ConnectionRegister::assert_valid_delay_ms( double_t requested_new_delay )
 }
 
 void
-nest::ConnectionRegister::assert_two_valid_delays_steps( long_t new_delay1, long_t new_delay2 )
+nest::DelayChecker::assert_two_valid_delays_steps( long_t new_delay1, long_t new_delay2 )
 {
   const long_t ldelay = std::min( new_delay1, new_delay2 );
   const long_t hdelay = std::max( new_delay1, new_delay2 );

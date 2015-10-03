@@ -1,5 +1,5 @@
 /*
- *  connection_register.h
+ *  delay_checker.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CONNECTION_REGISTER_H
-#define CONNECTION_REGISTER_H
+#ifndef DELAY_CHECKER_H
+#define DELAY_CHECKER_H
 
 #include "nest_time.h"
 #include "dictdatum.h"
@@ -30,14 +30,12 @@ namespace nest
 {
   class TimeConverter;
   
-  class ConnectionRegister
+  class DelayChecker
   {
   public:
     
-    
-    size_t get_num_connections() const;
-    
-    void incr_connections();
+    DelayChecker();
+    DelayChecker(const DelayChecker& );
     
     const Time& get_min_delay() const;
 
@@ -75,40 +73,27 @@ namespace nest
   private:
     Time min_delay_;                 //!< Minimal delay of all created synapses.
     Time max_delay_;                 //!< Maximal delay of all created synapses.
-    size_t num_connections_;         //!< The number of connections registered with this type
     bool default_delay_needs_check_; //!< Flag indicating, that the default delay must be checked
     bool user_set_delay_extrema_;    //!< Flag indicating if the user set the delay extrema.
     bool used_default_delay_;
   };
   
   inline const Time&
-  ConnectionRegister::get_min_delay() const
+  DelayChecker::get_min_delay() const
   {
     return min_delay_;
   }
   
   inline const Time&
-  ConnectionRegister::get_max_delay() const
+  DelayChecker::get_max_delay() const
   {
     return max_delay_;
   }
   
   inline bool
-  ConnectionRegister::get_user_set_delay_extrema() const
+  DelayChecker::get_user_set_delay_extrema() const
   {
     return user_set_delay_extrema_;
-  }
-  
-  inline size_t
-  ConnectionRegister::get_num_connections() const
-  {
-    return num_connections_;
-  }
-  
-  inline void
-  ConnectionRegister::incr_connections()
-  {
-    ++num_connections_;
   }
 }
 
@@ -116,4 +101,4 @@ namespace nest
 
 
 
-#endif /* CONNECTION_REGISTER_H */
+#endif /* DELAY_CHECKER_H */

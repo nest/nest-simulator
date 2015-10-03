@@ -46,13 +46,16 @@ class spikecounter;
 class Node;
 class Subnet;
 class Event;
-class ConnectionRegister;
+class DelayChecker;
 
 typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons having targets
 typedef std::vector< tSConnector > tVSConnector;           // for all threads
 
-typedef std::vector< ConnectionRegister > tVRegister;
-typedef std::vector< tVRegister > tVVRegister;
+typedef std::vector< DelayChecker > tVDelayChecker;
+typedef std::vector< tVDelayChecker > tVVDelayChecker;
+  
+typedef std::vector< size_t > tVCounter;
+typedef std::vector< tVCounter > tVVCounter;
 
 class ConnectionBuilderManager : public ManagerInterface
 {
@@ -348,8 +351,9 @@ private:
    */
   tVSConnector connections_;
   
-  tVVRegister register_;
+  tVVDelayChecker delay_checkers_;
 
+  tVVCounter vv_num_connections_;
   mutable size_t num_connections_; //!< The global counter for the number of synapses
 
   /**

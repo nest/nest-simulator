@@ -23,13 +23,14 @@
 #ifndef VP_MANAGER_IMPL_H
 #define VP_MANAGER_IMPL_H
 
-#include "kernel_manager.h"
 #include "vp_manager.h"
 
-inline int
+#include "kernel_manager.h"
+
+inline nest::thread
 nest::VPManager::get_num_virtual_processes() const
 {
-  return n_threads_ * kernel ().mpi_manager.get_num_processes();
+  return n_threads_ * kernel().mpi_manager.get_num_processes();
 }
 
 #endif /* VP_MANAGER_IMPL_H */

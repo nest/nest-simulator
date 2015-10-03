@@ -24,9 +24,11 @@
 #define CONNECTIONBUILDERMANAGER_IMPL_H
 
 #include "connection_builder_manager.h"
+
+#include <string>
+
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
-#include "kernel_manager.h"
 
 namespace nest
 {

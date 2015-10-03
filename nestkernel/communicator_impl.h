@@ -21,9 +21,9 @@
  */
 
 #include "communicator.h"
-#include "network.h"
 
-#include "config.h"
+#include "kernel_manager.h"
+#include "mpi_manager_impl.h"
 
 /* To avoid problems on BlueGene/L, mpi.h MUST be the
    first included file after config.h.

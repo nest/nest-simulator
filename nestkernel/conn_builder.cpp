@@ -35,6 +35,8 @@
 #include "normal_randomdev.h"
 #include "gslrandomgen.h"
 #include "fdstream.h"
+#include "kernel_manager.h"
+#include "logging.h"
 #include "vp_manager_impl.h"
 
 #include <set>

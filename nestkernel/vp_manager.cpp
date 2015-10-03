@@ -26,6 +26,7 @@
 #include "network.h"
 #include "logging.h"
 #include "vp_manager_impl.h"
+#include "mpi_manager_impl.h"
 
 nest::VPManager::VPManager()
   : force_singlethreading_( false )
@@ -177,7 +178,7 @@ nest::VPManager::set_num_threads( nest::thread n_threads )
 bool
 nest::VPManager::is_local_vp( nest::thread vp ) const
 {
-  return Network::get_network().get_process_id( vp ) == kernel().mpi_manager.get_rank();
+  return kernel().mpi_manager.get_process_id( vp ) == kernel().mpi_manager.get_rank();
 }
 
 nest::thread

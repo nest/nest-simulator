@@ -23,8 +23,12 @@
 #ifndef MPI_MANAGER_IMPL_H
 #define MPI_MANAGER_IMPL_H
 
-inline thread
-MPIManager::get_process_id( thread vp ) const
+#include "mpi_manager.h"
+
+#include "kernel_manager.h"
+
+inline nest::thread
+nest::MPIManager::get_process_id( nest::thread vp ) const
 {
   if ( vp >= static_cast< thread >( n_sim_procs_
                * kernel().vp_manager.get_num_threads() ) ) // vp belongs to recording VPs

@@ -26,7 +26,10 @@
 
 #include "dictutils.h"
 #include "logging.h"
+
+#include "kernel_manager.h"
 #include "vp_manager_impl.h"
+#include "mpi_manager_impl.h"
 
 namespace nest
 {
@@ -357,7 +360,7 @@ EventDeliveryManager::deliver_events( thread t )
 
     for ( size_t vp = 0; vp < ( size_t ) kernel().vp_manager.get_num_virtual_processes(); ++vp )
     {
-      size_t pid = Network::get_network().get_process_id( vp );
+      size_t pid = kernel().mpi_manager.get_process_id( vp );
       int pos_pid = pos[ pid ];
       int lag = kernel().connection_builder_manager.get_min_delay() - 1;
       while ( lag >= 0 )
@@ -391,7 +394,7 @@ EventDeliveryManager::deliver_events( thread t )
 
     for ( size_t vp = 0; vp < ( size_t ) kernel().vp_manager.get_num_virtual_processes(); ++vp )
     {
-      size_t pid = Network::get_network().get_process_id( vp );
+      size_t pid = kernel().mpi_manager.get_process_id( vp );
       int pos_pid = pos[ pid ];
       int lag = kernel().connection_builder_manager.get_min_delay() - 1;
       while ( lag >= 0 )

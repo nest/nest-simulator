@@ -31,6 +31,8 @@
 #include <iostream> // using cerr for error message.
 #include <iomanip>
 #include "fdstream.h"
+#include "kernel_manager.h"
+#include "logging.h"
 #include "vp_manager_impl.h"
 
 /* ----------------------------------------------------------------

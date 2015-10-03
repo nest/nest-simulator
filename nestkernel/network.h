@@ -549,36 +549,6 @@ private:
 
   bool model_defaults_modified_; //!< whether any model defaults have been modified
 
-  /************ Previously Scheduler ***************/
-public:
-  /**
-   * Return the process id for a given virtual process. The real process' id
-   * of a virtual process is defined by the relation: p = (vp mod P), where
-   * P is the total number of processes.
-   */
-  thread get_process_id( thread vp ) const;
-
-  /**
-   * set communication style to off_grid (true) or on_grid
-   */
-  void set_off_grid_communication( bool off_grid_spiking );
-
-  /**
-   * Get slice number. Increased by one for each slice. Can be used
-   * to choose alternating buffers.
-   */
-  size_t get_slice() const;
-
-  /**
-   * Return (T+d) mod max_delay.
-   */
-  delay get_modulo( delay d );
-
-  /**
-   * Index to slice-based buffer.
-   * Return ((T+d)/min_delay) % ceil(max_delay/min_delay).
-   */
-  delay get_slice_modulo( delay d );
 
 private:
   /******** Member functions former owned by the scheduler ********/
@@ -629,7 +599,6 @@ private:
 private:
   /******** Member variables former owned by the scheduler ********/
   bool initialized_;
-  bool simulating_; //!< true if simulation in progress
 
   index n_gsd_; //!< Total number of global spike detectors, used for distributing them over
                 //!< recording processes
@@ -637,8 +606,6 @@ private:
   vector< vector< Node* > > nodes_vec_; //!< Nodelists for unfrozen nodes
   index nodes_vec_network_size_;        //!< Network size when nodes_vec_ was last updated
 
-
-  bool print_time_; //!< Indicates whether time should be printed during simulations (or not)
 
   std::vector< long_t > rng_seeds_; //!< The seeds of the local RNGs. These do not neccessarily
                                     //!< describe the state of the RNGs.

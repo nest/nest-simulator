@@ -22,7 +22,6 @@
 
 #include "instance.h"
 #include "network.h"
-#include "connection_builder_manager_impl.h"
 #include "genericmodel.h"
 #include "subnet.h"
 #include "sibling_container.h"
@@ -41,11 +40,13 @@
 #include "nestmodule.h"
 #include "sibling_container.h"
 #include "communicator_impl.h"
-#include "vp_manager_impl.h"
-
-#include "nest_timeconverter.h"
+#include "random_datums.h"
 
 #include "kernel_manager.h"
+#include "vp_manager_impl.h"
+#include "connection_builder_manager_impl.h"
+
+#include "nest_timeconverter.h"
 
 #include <cmath>
 #include <sys/time.h>
@@ -106,7 +107,6 @@ Network::Network( SLIInterpreter& i )
   , dict_miss_is_error_( true )
   , model_defaults_modified_( false )
   , initialized_( false ) // scheduler stuff
-  , simulating_( false )
   , n_gsd_( 0 )
   , nodes_vec_()
   , nodes_vec_network_size_( 0 ) // zero to force update
@@ -1350,30 +1350,6 @@ nest::Network::update_nodes_vec_()
 
 
 void
-nest::Network::update_delay_extrema_()
-{
-  min_delay_ = connection_manager_.get_min_delay().get_steps();
-  max_delay_ = connection_manager_.get_max_delay().get_steps();
-
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
-  {
-    std::vector< delay > min_delays( kernel().mpi_manager.get_num_processes() );
-    min_delays[ kernel().mpi_manager.get_rank() ] = min_delay_;
-    Communicator::communicate( min_delays );
-    min_delay_ = *std::min_element( min_delays.begin(), min_delays.end() );
-
-    std::vector< delay > max_delays( kernel().mpi_manager.get_num_processes() );
-    max_delays[ kernel().mpi_manager.get_rank() ] = max_delay_;
-    Communicator::communicate( max_delays );
-    max_delay_ = *std::max_element( max_delays.begin(), max_delays.end() );
-  }
-
-  if ( min_delay_ == Time::pos_inf().get_steps() )
-    min_delay_ = Time::get_resolution().get_steps();
-}
-
-
-void
 nest::Network::create_rngs_( const bool ctor_call )
 {
   // LOG(M_INFO, ) calls must not be called
@@ -1477,25 +1453,6 @@ bool
 Network::is_local_node( Node* n ) const
 {
   return kernel().vp_manager.is_local_vp( n->get_vp() );
-}
-
-// inline
-thread
-Network::get_process_id( thread vp ) const
-{
-  if ( vp >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes()
-               * kernel().vp_manager.get_num_threads() ) ) // vp belongs to recording VPs
-  {
-    return ( vp
-	     - kernel().mpi_manager.get_num_sim_processes()
-	       * kernel().vp_manager.get_num_threads() )
-             % kernel().mpi_manager.get_num_rec_processes()
-             + kernel().mpi_manager.get_num_sim_processes();
-  }
-  else // vp belongs to simulating VPs
-  {
-    return vp % kernel().mpi_manager.get_num_sim_processes();
-  }
 }
 
 } // end of namespace

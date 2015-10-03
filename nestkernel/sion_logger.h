@@ -71,6 +71,7 @@ public:
   void get_status( DictionaryDatum& ) const;
 
 private:
+  void close_files_();
   const std::string build_filename_() const;
 
   class SIONBuffer
@@ -151,6 +152,7 @@ private:
     long buffer_size_;     //!< the size of the internal buffer .
     long sion_chunksize_;  //!< the size of SIONlib's buffer .
     bool sion_collective_; //!< use SIONlib's collective mode .
+    bool close_after_simulate_; //!< if true, finalize() shall close the stream
 
     Parameters_();
 

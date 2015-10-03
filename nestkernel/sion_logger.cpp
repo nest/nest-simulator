@@ -167,6 +167,13 @@ nest::SIONLogger::initialize()
 void
 nest::SIONLogger::finalize()
 {
+  if ( P_.close_after_simulate_ )
+    close_files_();
+}
+
+void
+nest::SIONLogger::close_files_()
+{
 #pragma omp parallel
   {
     Network& network = *( Node::network() );
@@ -508,6 +515,7 @@ nest::SIONLogger::SIONBuffer::operator<<( const T data )
 
 nest::SIONLogger::Parameters_::Parameters_()
   : file_ext_( "dat" )
+  , close_after_simulate_( true )
   , sion_collective_( false )
   , sion_chunksize_( 2400 )
   , buffer_size_( 1024 )
@@ -521,6 +529,7 @@ nest::SIONLogger::Parameters_::get( const SIONLogger& al, DictionaryDatum& d ) c
   ( *d )[ names::buffer_size ] = buffer_size_;
   ( *d )[ names::sion_chunksize ] = sion_chunksize_;
   ( *d )[ names::sion_collective ] = sion_chunksize_;
+  ( *d )[ names::close_after_simulate ] = close_after_simulate_;
 }
 
 void
@@ -530,6 +539,7 @@ nest::SIONLogger::Parameters_::set( const SIONLogger& al, const DictionaryDatum&
   updateValue< long >( d, names::sion_chunksize, sion_chunksize_ );
   updateValue< long >( d, names::buffer_size, buffer_size_ );
   updateValue< bool >( d, names::sion_collective, sion_collective_ );
+  updateValue< bool >( d, names::close_after_simulate, close_after_simulate_ );
 }
 
 void

@@ -31,7 +31,6 @@
 nest::DelayChecker::DelayChecker()
 : min_delay_( Time::pos_inf() )
 , max_delay_( Time::neg_inf() )
-//, default_delay_needs_check_( true )
 , user_set_delay_extrema_( false )
 {
 }
@@ -39,7 +38,6 @@ nest::DelayChecker::DelayChecker()
 nest::DelayChecker::DelayChecker( const DelayChecker& cr)
 : min_delay_( cr.min_delay_ )
 , max_delay_( cr.max_delay_ )
-//, default_delay_needs_check_( true )
 , user_set_delay_extrema_( cr.user_set_delay_extrema_ )
 {
   min_delay_.calibrate(); // in case of change in resolution
@@ -122,20 +120,6 @@ nest::DelayChecker::set_status( const DictionaryDatum& d)
   
   // we've possibly just got a new default delay. So enforce checking next time it is used
   //default_delay_needs_check_ = true;
-}
-
-void
-nest::DelayChecker::used_default_delay()
-{
-  // if not used before, check now. Solves bug #138, MH 08-01-08
-  // replaces whole delay checking for the default delay, see bug #217, MH 08-04-24
-  // get_default_delay_ must be overridded by derived class to return the correct default delay
-  // (either from commonprops or default connection)
-  //if ( default_delay_needs_check_ )
-  //{
-    //assert_valid_delay_ms( default_connection_.get_delay() );
-    //default_delay_needs_check_ = false;
-  //}
 }
 
 void

@@ -65,17 +65,13 @@ namespace nest
     
     void calibrate( const TimeConverter& );
     
-    void used_default_delay();
-    
     void get_status( DictionaryDatum& ) const;
     void set_status( const DictionaryDatum& );
     
   private:
     Time min_delay_;                 //!< Minimal delay of all created synapses.
     Time max_delay_;                 //!< Maximal delay of all created synapses.
-    //bool default_delay_needs_check_; //!< Flag indicating, that the default delay must be checked
     bool user_set_delay_extrema_;    //!< Flag indicating if the user set the delay extrema.
-    //bool used_default_delay_;
   };
   
   inline const Time&

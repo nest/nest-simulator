@@ -29,6 +29,8 @@
 #include "network.h"
 #include "connector_model.h"
 #include "connector_base.h"
+
+#include "kernel_manager.h"
 #include "delay_checker.h"
 
 
@@ -138,6 +140,21 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
 
 template < typename ConnectionT >
 void
+GenericConnectorModel< ConnectionT >::used_default_delay()
+{
+  // if not used before, check now. Solves bug #138, MH 08-01-08
+  // replaces whole delay checking for the default delay, see bug #217, MH 08-04-24
+  // get_default_delay_ must be overridded by derived class to return the correct default delay
+  // (either from commonprops or default connection)
+  if ( default_delay_needs_check_ )
+  {
+    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( default_connection_.get_delay() );
+    default_delay_needs_check_ = false;
+  }
+}
+
+template < typename ConnectionT >
+void
 GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 {
   default_connection_.set_syn_id( syn_id );
@@ -159,7 +176,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   double_t weight )
 {
   if ( !std::isnan( delay ) )
-    assert_valid_delay_ms( delay );
+    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
 
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
@@ -198,7 +215,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 {
   if ( !std::isnan( delay ) )
   {
-    assert_valid_delay_ms( delay );
+    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
 
     if ( p->known( names::delay ) )
       throw BadParameter(
@@ -210,7 +227,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     double_t delay = 0.0;
 
     if ( updateValue< double_t >( p, names::delay, delay ) )
-      assert_valid_delay_ms( delay );
+      kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
     else
       used_default_delay();
   }
@@ -336,8 +353,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       }
     }
   }
-
-  num_connections_++;
 
   return conn;
 }

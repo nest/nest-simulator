@@ -71,7 +71,7 @@ nest::ConnectionBuilderManager::init()
   tVDelayChecker tmp2( kernel().vp_manager.get_num_threads() );
   delay_checkers_.swap( tmp2 );
   
-  tVVCounter tmp3( kernel().vp_manager.get_num_threads(), tVCounter(Network::get_network().connection_manager_.prototypes_[0].size(), 0));
+  tVVCounter tmp3( kernel().vp_manager.get_num_threads(), tVCounter() );
   vv_num_connections_.swap(tmp3);
 
   // The following line is executed by all processes, no need to communicate
@@ -472,6 +472,10 @@ nest::ConnectionBuilderManager::connect_( Node& s,
     Network::get_network().connection_manager_.prototypes_[ tid ][ syn ]->add_connection(
       s, r, conn, syn, d, w );
   connections_[ tid ].set( s_gid, c );
+  if (vv_num_connections_[tid].size() <= syn) 
+  {
+    vv_num_connections_[tid].reserve(syn+1);
+  }
   ++vv_num_connections_[tid][syn];
 }
 
@@ -491,6 +495,10 @@ nest::ConnectionBuilderManager::connect_( Node& s,
     Network::get_network().connection_manager_.prototypes_[ tid ][ syn ]->add_connection(
       s, r, conn, syn, p, d, w );
   connections_[ tid ].set( s_gid, c );
+  if (vv_num_connections_[tid].size() <= syn) 
+  {
+    vv_num_connections_[tid].reserve(syn+1);
+  }
   ++vv_num_connections_[tid][syn];
 }
 
@@ -1454,7 +1462,12 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
   size_t num_connections = 0;
 
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    num_connections += vv_num_connections_[ t ][ syn_id ];
+  {
+    if (vv_num_connections_[t].size() > syn_id) 
+    {
+      num_connections += vv_num_connections_[ t ][ syn_id ];
+    }
+  }
 
   connectome.reserve( num_connections );
 

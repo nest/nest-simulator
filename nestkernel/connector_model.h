@@ -83,6 +83,7 @@ public:
 
 protected:
   std::string name_;
+  bool default_delay_needs_check_; //!< Flag indicating, that the default delay must be checked
 
 }; // ConnectorModel
 
@@ -145,6 +146,8 @@ public:
   }
 
 private:
+  void used_default_delay();
+
   ConnectorBase* add_connection( Node& src,
     Node& tgt,
     ConnectorBase* conn,

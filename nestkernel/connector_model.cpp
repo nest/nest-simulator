@@ -26,6 +26,7 @@
 #include "connector_base.h"
 
 #include "kernel_manager.h"
+#include "delay_checker.h"
 
 
 namespace nest
@@ -33,11 +34,13 @@ namespace nest
 
 ConnectorModel::ConnectorModel( const std::string name )
   : name_( name )
+  , default_delay_needs_check_(true)
 {
 }
 
 ConnectorModel::ConnectorModel( const ConnectorModel& cm, const std::string name )
   : name_( name )
+  , default_delay_needs_check_(true)
 {
 }
 

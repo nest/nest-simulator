@@ -52,7 +52,6 @@ typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons ha
 typedef std::vector< tSConnector > tVSConnector;           // for all threads
 
 typedef std::vector< DelayChecker > tVDelayChecker;
-typedef std::vector< tVDelayChecker > tVVDelayChecker;
   
 typedef std::vector< size_t > tVCounter;
 typedef std::vector< tVCounter > tVVCounter;
@@ -283,6 +282,11 @@ public:
    */
   void calibrate( const TimeConverter& );
 
+  /**
+   * Returns the delay checker for the current thread.
+   */
+  DelayChecker& get_delay_checker();
+  
 private:
   /**
    * Update delay extrema to current values.
@@ -351,10 +355,9 @@ private:
    */
   tVSConnector connections_;
   
-  tVVDelayChecker delay_checkers_;
+  tVDelayChecker delay_checkers_;
 
   tVVCounter vv_num_connections_;
-  mutable size_t num_connections_; //!< The global counter for the number of synapses
 
   /**
    * BeginDocumentation

@@ -68,13 +68,11 @@ nest::ConnectionBuilderManager::init()
   tVSConnector tmp( kernel().vp_manager.get_num_threads(), tSConnector() );
   connections_.swap( tmp );
   
-  tVVDelayChecker tmp2( kernel().vp_manager.get_num_threads(), tVDelayChecker(Network::get_network().connection_manager_.prototypes_[0].size()) );
+  tVDelayChecker tmp2( kernel().vp_manager.get_num_threads() );
   delay_checkers_.swap( tmp2 );
   
   tVVCounter tmp3( kernel().vp_manager.get_num_threads(), tVCounter(Network::get_network().connection_manager_.prototypes_[0].size(), 0));
   vv_num_connections_.swap(tmp3);
-
-  num_connections_ = 0;
 
   // The following line is executed by all processes, no need to communicate
   // this change in delays.
@@ -97,6 +95,12 @@ nest::ConnectionBuilderManager::set_status( const DictionaryDatum& d )
          it != delay_checkers_[ t ].end();
          ++it )
       it->set_status(d);*/
+}
+
+nest::DelayChecker& 
+nest::ConnectionBuilderManager::get_delay_checker()
+{
+  return delay_checkers_[ kernel().vp_manager.get_thread_id() ];
 }
 
 void
@@ -184,10 +188,9 @@ nest::ConnectionBuilderManager::get_min_delay_time_() const
 {
   Time min_delay = Time::pos_inf();
 
-  for ( index t = 0; t < delay_checkers_.size(); ++t )
-    for ( index s = 0; s < delay_checkers_[ t ].size(); ++s )
-      if ( vv_num_connections_[t][s] > 0 )
-        min_delay = std::min( min_delay, delay_checkers_[t][s].get_min_delay() );
+  tVDelayChecker::const_iterator it;
+  for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
+    min_delay = std::min( min_delay, it->get_min_delay() );
 
   return min_delay;
 }
@@ -197,10 +200,9 @@ nest::ConnectionBuilderManager::get_max_delay_time_() const
 {
   Time max_delay = Time::get_resolution();
 
-  for ( index t = 0; t < delay_checkers_.size(); ++t )
-    for ( index s = 0; s < delay_checkers_[ t ].size(); ++s )
-      if ( vv_num_connections_[t][s] > 0 )
-        max_delay = std::max( max_delay,  delay_checkers_[t][s].get_max_delay() );
+  tVDelayChecker::const_iterator it;
+  for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
+        max_delay = std::max( max_delay,  it->get_max_delay() );
 
   return max_delay;
 }
@@ -209,11 +211,9 @@ bool
 nest::ConnectionBuilderManager::get_user_set_delay_extrema() const
 {
   bool user_set_delay_extrema = false;
+
   tVDelayChecker::const_iterator it;
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    for ( it = delay_checkers_[ t ].begin();
-          it != delay_checkers_[ t ].end();
-          ++it )
+  for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
       user_set_delay_extrema |= it->get_user_set_delay_extrema();
 
   return user_set_delay_extrema;
@@ -1382,13 +1382,13 @@ nest::ConnectionBuilderManager::send( thread t, index sgid, Event& e )
 size_t
 nest::ConnectionBuilderManager::get_num_connections() const
 {
-  num_connections_ = 0;
+  size_t num_connections = 0;
   tVDelayChecker::const_iterator i;
   for ( index t = 0; t < vv_num_connections_.size(); ++t )
     for ( index s = 0; s < vv_num_connections_[t].size(); ++s )
-      num_connections_ += vv_num_connections_[t][s];
+      num_connections += vv_num_connections_[t][s];
 
-  return num_connections_;
+  return num_connections;
 }
 
 ArrayDatum

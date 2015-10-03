@@ -119,9 +119,6 @@ current directory)
 tics_per_step)
   network_size             integertype - The number of nodes in the network
   num_connections          integertype - The number of connections in the network
-  num_processes            integertype - The number of MPI processes
-  num_rec_processes        integertype - The number of MPI processes reserved for recording spikes
-  num_sim_processes        integertype - The number of MPI processes reserved for simulating neurons
   off_grid_spiking         booltype    - Whether to transmit precise spike times in MPI communicatio
   print_time               booltype    - Whether to print progress information during the simulation
   resolution               doubletype  - The resolution of the simulation (in ms)
@@ -144,6 +141,7 @@ class Network
   friend class SimulationManager;
   friend class ConnectionBuilderManager;
   friend class EventDeliveryManager;
+  friend class MPIManager;
 
 private:
   Network( SLIInterpreter& );
@@ -309,38 +307,6 @@ public:
    * This grng must be used synchronized from all threads.
    */
   librandom::RngPtr get_grng() const;
-
-  /**
-   * Return the number of processes used during simulation.
-   * This functions returns the number of processes.
-   * Since each process has the same number of threads, the total number
-   * of threads is given by get_num_threads()*get_num_processes().
-   */
-  thread get_num_processes() const;
-
-  /**
-   * Get number of recording processes.
-   */
-  thread get_num_rec_processes() const;
-
-  /**
-   * Get number of simulating processes.
-   */
-  thread get_num_sim_processes() const;
-
-  /**
-   * Set number of recording processes, switches NEST to global
-   * spike detection mode.
-   *
-   * @param nrp  number of recording processes
-   * @param called_by_reset   pass true when calling from Scheduler::reset()
-   *
-   * @note The `called_by_reset` parameter is a cludge to avoid a chicken-and-egg
-   *       problem when resetting the kernel. It surpresses a test for existing
-   *       nodes, trusting that the kernel will immediately afterwards delete all
-   *       existing nodes.
-   */
-  void set_num_rec_processes( int nrp, bool called_by_reset );
 
   /**
    * Return true, if the given Node is on the local machine
@@ -583,14 +549,6 @@ private:
 
   bool model_defaults_modified_; //!< whether any model defaults have been modified
 
-  /************ Previously Scheduler ***************/
-public:
-  /**
-   * Return the process id for a given virtual process. The real process' id
-   * of a virtual process is defined by the relation: p = (vp mod P), where
-   * P is the total number of processes.
-   */
-  thread get_process_id( thread vp ) const;
 
 private:
   /******** Member functions former owned by the scheduler ********/
@@ -642,17 +600,12 @@ private:
   /******** Member variables former owned by the scheduler ********/
   bool initialized_;
 
-  index n_rec_procs_; //!< MPI processes dedicated for recording devices
-  index n_sim_procs_; //!< MPI processes used for simulation
-
   index n_gsd_; //!< Total number of global spike detectors, used for distributing them over
                 //!< recording processes
 
   vector< vector< Node* > > nodes_vec_; //!< Nodelists for unfrozen nodes
   index nodes_vec_network_size_;        //!< Network size when nodes_vec_ was last updated
 
-
-  bool print_time_; //!< Indicates whether time should be printed during simulations (or not)
 
   std::vector< long_t > rng_seeds_; //!< The seeds of the local RNGs. These do not neccessarily
                                     //!< describe the state of the RNGs.
@@ -747,24 +700,6 @@ Network::get_cwn( void ) const
   return current_;
 }
 
-inline thread
-Network::get_num_processes() const
-{
-  return Communicator::get_num_processes();
-}
-
-inline thread
-Network::get_num_rec_processes() const
-{
-  return n_rec_procs_;
-}
-
-inline thread
-Network::get_num_sim_processes() const
-{
-  return n_sim_procs_;
-}
-
 inline bool
 Network::is_local_gid( index gid ) const
 {
@@ -848,7 +783,6 @@ Network::prepare_node_( Node* n )
   n->init_buffers();
   n->calibrate();
 }
-
 
 inline void
 Network::increment_n_gsd()

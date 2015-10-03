@@ -29,6 +29,7 @@
 #include "network.h"
 #include "model.h"
 #include "genericmodel.h"
+#include "kernel_manager.h"
 #include "communicator.h"
 #include "communicator_impl.h"
 #include "topologymodule.h"

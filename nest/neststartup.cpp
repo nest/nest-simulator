@@ -76,14 +76,10 @@ int
 neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepath )
 #endif
 {
-  nest::KernelManager::create_kernel_manager();
+  nest::init_nest (&argc, &argv);
 
   engine_only_for_logging = &engine;
   register_logger_client( sli_logging );
-
-#ifdef HAVE_MPI
-  nest::Communicator::init( &argc, &argv );
-#endif
 
 #ifdef _OPENMP
   /* The next line is required because we use the OpenMP

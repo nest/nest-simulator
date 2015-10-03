@@ -28,37 +28,24 @@
 #include "manager_interface.h"
 #include "dictdatum.h"
 
-
-/*
-Linked Functions:
-
-    void set_status( index, const DictionaryDatum& );
-    DictionaryDatum get_status( index );
-    const std::string& get_data_prefix() const;
-    const std::string& get_data_path() const;
-    void set_data_path_prefix_( const DictionaryDatum& d );
-    bool overwrite_files() const;
-
-Linked Data Structures:
-
-    std::string data_path_; //!< Path for all files written by devices
-    std::string data_prefix_; //!< Prefix for all files written by devices
-    bool overwrite_files_; //!< If true, overwrite existing data files.
-*/
-
 namespace nest
 {
 
+/*
+  IOManager: Handles data storage files from spike detectors and
+  multimeters to file system(s)/memory/output. Distinct from logging
+  for error streams.
+*/
 class IOManager : public ManagerInterface
 {
 public:
-  virtual void init();
-  virtual void reset();
+  virtual void init(); // called from meta-manager to construct
+  virtual void reset(); // called from meta-manger to reinit
 
-  virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
+  virtual void set_status( const DictionaryDatum& ); // set parameters
+  virtual void get_status( DictionaryDatum& ); // get parameters
 
-  IOManager();
+  IOManager(); // Construct only by meta-manager
 
   /**
    * The prefix for files written by devices.

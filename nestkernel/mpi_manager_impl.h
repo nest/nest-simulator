@@ -1,5 +1,5 @@
 /*
- *  conngendatum.cpp
+ *  mpi_manager_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,6 +20,26 @@
  *
  */
 
-#include "conngendatum.h"
+#ifndef MPI_MANAGER_IMPL_H
+#define MPI_MANAGER_IMPL_H
 
-SLIType nest::ConnectionGeneratorType;
+#include "mpi_manager.h"
+
+#include "kernel_manager.h"
+
+inline nest::thread
+nest::MPIManager::get_process_id( nest::thread vp ) const
+{
+  if ( vp >= static_cast< thread >( n_sim_procs_
+               * kernel().vp_manager.get_num_threads() ) ) // vp belongs to recording VPs
+  {
+    return ( vp - n_sim_procs_ * kernel().vp_manager.get_num_threads() ) % n_rec_procs_
+      + n_sim_procs_;
+  }
+  else // vp belongs to simulating VPs
+  {
+    return vp % n_sim_procs_;
+  }
+}
+
+#endif /* MPI_MANAGER_IMPL_H */

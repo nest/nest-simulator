@@ -28,7 +28,6 @@
 #include "nest_types.h"
 #include "nest_datums.h"
 #include "network.h"
-#include "connection_builder_manager_impl.h"
 #include "nodelist.h"
 #include "interpret.h"
 #include "node.h"
@@ -46,8 +45,9 @@
 #include "genericmodel.h"
 #include "conn_builder.h"
 
-#include "logging.h"
 #include "kernel_manager.h"
+#include "logging.h"
+#include "connection_builder_manager_impl.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -1255,7 +1255,7 @@ NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::RankFunction::execute( SLIInterpreter* i ) const
 {
-  i->OStack.push( Communicator::get_rank() );
+  i->OStack.push( kernel().mpi_manager.get_rank() );
   i->EStack.pop();
 }
 
@@ -1273,7 +1273,7 @@ NestModule::RankFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
 {
-  i->OStack.push( Communicator::get_num_processes() );
+  i->OStack.push( kernel().mpi_manager.get_num_processes() );
   i->EStack.pop();
 }
 

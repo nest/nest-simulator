@@ -274,20 +274,20 @@ nest::ConnectionBuilderManager::update_delay_extrema_()
 {
   min_delay_ = get_min_delay_time_().get_steps();
   max_delay_ = get_max_delay_time_().get_steps();
-
-  if ( Communicator::get_num_processes() > 1 )
+  
+  if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
-    std::vector< delay > min_delays( Communicator::get_num_processes() );
-    min_delays[ Communicator::get_rank() ] = min_delay_;
+    std::vector< delay > min_delays( kernel().mpi_manager.get_num_processes() );
+    min_delays[ kernel().mpi_manager.get_rank() ] = min_delay_;
     Communicator::communicate( min_delays );
     min_delay_ = *std::min_element( min_delays.begin(), min_delays.end() );
-
-    std::vector< delay > max_delays( Communicator::get_num_processes() );
-    max_delays[ Communicator::get_rank() ] = max_delay_;
+    
+    std::vector< delay > max_delays( kernel().mpi_manager.get_num_processes() );
+    max_delays[ kernel().mpi_manager.get_rank() ] = max_delay_;
     Communicator::communicate( max_delays );
     max_delay_ = *std::max_element( max_delays.begin(), max_delays.end() );
   }
-
+  
   if ( min_delay_ == Time::pos_inf().get_steps() )
     min_delay_ = Time::get_resolution().get_steps();
 }

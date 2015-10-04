@@ -191,7 +191,7 @@ Multimeter::handle( DataLoggingReply& reply )
     const double offset = reply.get_offset();
 
     Logger* logger = Node::network()->get_logger();
-    logger->write( *this, reply );
+    logger->write( *this, reply, info[ j ].data );
 
     S_.data_.push_back( info[ j ].data );
   }

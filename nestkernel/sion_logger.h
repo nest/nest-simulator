@@ -107,6 +107,7 @@ private:
     int gid;
     int type;
     std::string name;
+    std::string label;
     unsigned long n_rec;
     std::vector< std::string > value_names;
   };

@@ -61,6 +61,7 @@ nest::SIONLogger::enroll( RecordingDevice& device, const std::vector< Name >& va
     info.gid = device.get_gid();
     info.type = device.get_type();
     info.name = device.get_name();
+    info.label = device.get_label();
 
     info.value_names.reserve( value_names.size() );
     for ( std::vector< Name >::const_iterator it = value_names.begin(); it != value_names.end();
@@ -240,6 +241,10 @@ nest::SIONLogger::close_files_()
         char name[ 16 ];
         strncpy( name, dev_info.name.c_str(), 16 );
         sion_fwrite( &name, sizeof( char ), 16, file.sid );
+
+        char label[ 16 ];
+        strncpy( label, dev_info.label.c_str(), 16 );
+        sion_fwrite( &label, sizeof( char ), 16, file.sid );
 
         int n_rec = dev_info.n_rec;
         sion_fwrite( &n_rec, sizeof( int ), 1, file.sid );

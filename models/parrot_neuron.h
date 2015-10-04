@@ -49,7 +49,7 @@ to a parrot neuron, the communication cost associated with outgoing
 spikes is much bigger for the latter.
 
 Only spikes incoming on connections to port 0 will be repeated.
-Connections onto port 1 will be accepted, but spikes incoming 
+Connections onto port 1 will be accepted, but spikes incoming
 through port 1 will be inignored.
 
 Receives: SpikeEvent
@@ -148,15 +148,21 @@ parrot_neuron::send_test_event( Node& target, rport receptor_type, synindex, boo
 
 inline port
 parrot_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
-{ 
+{
   // Allow connections to port 0 (spikes to be repeated)
   // and port 1 (spikes to be ignored).
   if ( receptor_type == 0 )
+  {
     return 0;
+  }
   else if ( receptor_type == 1 )
+  {
     return 1;
+  }
   else
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
 }
 
 } // namespace

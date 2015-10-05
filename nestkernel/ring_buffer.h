@@ -22,7 +22,7 @@
 
 #ifndef RING_BUFFER_H
 #define RING_BUFFER_H
-#include <valarray>
+#include <vector>
 #include <list>
 #include "nest.h"
 #include "scheduler.h"
@@ -69,7 +69,7 @@ namespace nest
 
    so that the ring buffer needs max_del elements.
 
-   Each field represents an entry in the valarray.
+   Each field represents an entry in the vector.
 
 */
 
@@ -131,7 +131,7 @@ public:
 
 private:
   //! Buffered data
-  std::valarray< double_t > buffer_;
+  std::vector< double_t > buffer_;
 
   /**
    * Obtain buffer index.
@@ -231,7 +231,7 @@ public:
 
 private:
   //! Buffered data
-  std::valarray< double_t > buffer_;
+  std::vector< double_t > buffer_;
 
   /**
    * Obtain buffer index.

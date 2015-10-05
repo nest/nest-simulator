@@ -24,9 +24,6 @@ cache:
   pip: true
 #virtualenv:
  # system_site_packages: true
-#addons:
-#  artifacts:
- #  debug: true
 
 before_install:
   - echo $LANG
@@ -61,24 +58,46 @@ before_install:
   - sudo apt-get install -y python-nose
 
   # static code analysis
-  - sudo apt-get install -y libllvm3.6 clang-format-3.6 vera++ cppcheck
+  - sudo apt-get install -y libllvm3.6 clang-format-3.6 vera++
+
+  # used for building cppcheck-1.69
+  - sudo apt-get install -y libpcre3 libpcre3-dev
+
+  # process json output from github api
+  - sudo apt-get install -y jq
 
 install: 
-  - cppcheck --version
   - cython --version
   - python --version
+
 before_script:
   - chmod +x build.sh 
 
 script: ./build.sh  
 
-after_failure:
+before_deploy:
   - cd $TRAVIS_BUILD_DIR/build
-  - |
-    echo "config.log: "
-    cat config.log
-    for i in $(find reports -type f); do
-      echo "###########################"
-      echo "File: $i"
-      cat $i
-    done
+  - tar -zcvf logfiles.tar.gz ./*.log
+  - tar -zcvf reports.tar.gz ./reports 
+  - mkdir -p $TRAVIS_BUILD_DIR/build/artefacts_upload
+  - mv logfiles.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+  - mv reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+  
+#S3 deployment    
+
+deploy:
+  provider: s3
+  access_key_id:
+    secure: $ARTIFACTS_KEY
+  secret_access_key:
+    secure: $ARTIFACTS_SECRET
+  bucket: "nest-travis-artefacts"
+  region: eu-central-1
+  skip_cleanup: true
+  on:
+    repo: nest/nest-simulator
+    branch: master
+  local-dir: "$TRAVIS_BUILD_DIR/build/artefacts_upload"
+  upload-dir: "$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER"
+  acl: bucket_owner_full_control
+

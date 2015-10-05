@@ -856,10 +856,11 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
 
    Remarks:
    - Time and random number generators are NOT reset.
-   - Files belonging to recording devices (spike detector, voltmeter, etc)
-     are closed. You must change the file name before simulating again, otherwise
-     the files will be overwritten og you will receive an error, depending on
-     the value of /overwrite_files (in root node).
+   - Files belonging to recording devices (spike detector, multimeter,
+     voltmeter, etc) are closed. You must change the file name before
+     simulating again, otherwise the files will be overwritten and you
+     will receive an error, depending on the value of /overwrite_files
+     (in the root node).
    - ResetNetwork will reset the nodes to the state values stored in the model
      prototypes. So if you have used SetDefaults to change a state value of a
      model since you called Simulate the first time, the network will NOT be reset
@@ -1790,7 +1791,7 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
    [1] Morrison A, Mehring C, Geisel T, Aertsen A, and Diesmann M (2005)
        Advancing the boundaries of high connectivity network simulation
        with distributed computing. Neural Computation 17(8):1776-1801
-       The article is available at www.nest-initiative.org
+       The article is available at www.nest-simulator.org
 
    Author: Tobias Potjans, Moritz Helias, Diesmann
    SeeAlso: GetGlobalRNG, RandomConvergentConnect
@@ -1841,7 +1842,7 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
    [1] Morrison A, Mehring C, Geisel T, Aertsen A, and Diesmann M (2005)
        Advancing the boundaries of high connectivity network simulation
        with distributed computing. Neural Computation 17(8):1776-1801
-       The article is available at www.nest-initiative.org
+       The article is available at www.nest-simulator.org
 
    Author: Tobias Potjans, Moritz Helias, Diesmann
    SeeAlso: GetVpRNG, RandomDivergentConnect

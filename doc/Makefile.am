@@ -8,21 +8,23 @@
 
 .PHONY: doc fulldoc
 
-doc:
+prep-doxygen-conf:
+	$(eval RCSINFO:=`@PKGSRCDIR@/extras/create_rcsinfo.sh @PKGSRCDIR@ /tmp`) \
+	  $(SED) -i'' -e "/^PROJECT_NUMBER/ s/=.*/= @SLI_VERSION@, $(RCSINFO)/" @PKGBUILDDIR@/doc/normaldoc.conf
+	$(eval RCSINFO:=`@PKGSRCDIR@/extras/create_rcsinfo.sh @PKGSRCDIR@ /tmp`) \
+	  $(SED) -i'' -e "/^PROJECT_NUMBER/ s/=.*/= @SLI_VERSION@, $(RCSINFO)/" @PKGBUILDDIR@/doc/fulldoc.conf
+
+doc: prep-doxygen-conf
 if DOXYGEN_AVAILABLE
 
-	$(eval RCSINFO:=`@PKGSRCDIR@/extras/create_rcsinfo.sh @PKGSRCDIR@ /tmp`) \
-	  $(SED) -i '' "/^PROJECT_NUMBER/ s/=.*/= @SLI_VERSION@, $(RCSINFO)/" @PKGBUILDDIR@/doc/normaldoc.conf
 	$(DOXYGEN) @PKGBUILDDIR@/doc/normaldoc.conf
 
 endif
 
-fulldoc:
+fulldoc: prep-doxygen-conf
 if DOXYGEN_AVAILABLE
 if DOT_AVAILABLE
 
-	$(eval RCSINFO:=`@PKGSRCDIR@/extras/create_rcsinfo.sh @PKGSRCDIR@ /tmp`) \
-	  $(SED) -i '' "/^PROJECT_NUMBER/ s/=.*/= @SLI_VERSION@, $(RCSINFO)/" @PKGBUILDDIR@/doc/fulldoc.conf
 	$(DOXYGEN) @PKGBUILDDIR@/doc/fulldoc.conf
 
 ## is it possible to issue a message here if DOT is not available?
@@ -42,4 +44,3 @@ nobase_data_DATA=\
 	quickref.html\
 	doc_header.txt\
 	model_details/noise_generator.ipynb
-	

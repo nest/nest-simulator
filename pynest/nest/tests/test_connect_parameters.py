@@ -27,7 +27,6 @@ The tests for all rules will run these tests separately.
 
 import unittest
 import numpy as np
-import nest
 from . import test_connect_helpers as hf
 
 class TestParams(unittest.TestCase):
@@ -54,8 +53,8 @@ class TestParams(unittest.TestCase):
 
     # for now only tests if a multi-thread connect is successfull, not whether the the threading is actually used
     def setUp(self):
-        nest.ResetKernel()
-        nest.SetKernelStatus({'local_num_threads': self.nr_threads})
+        hf.nest.ResetKernel()
+        hf.nest.SetKernelStatus({'local_num_threads': self.nr_threads})
         #pass
        
     def setUpNetwork(self, conn_dict=None, syn_dict=None, N1=None, N2=None):
@@ -63,23 +62,26 @@ class TestParams(unittest.TestCase):
             N1 = self.N1
         if N2 == None:
             N2 = self.N2
-        self.pop1 = nest.Create('iaf_neuron', N1)
-        self.pop2 = nest.Create('iaf_neuron', N2)
-        nest.set_verbosity('M_FATAL')
-        nest.Connect(self.pop1, self.pop2, conn_dict, syn_dict)
+        self.pop1 = hf.nest.Create('iaf_neuron', N1)
+        self.pop2 = hf.nest.Create('iaf_neuron', N2)
+        hf.nest.set_verbosity('M_FATAL')
+        hf.nest.Connect(self.pop1, self.pop2, conn_dict, syn_dict)
+
+    def setUpNetworkOnePop(self, conn_dict=None, syn_dict=None, N=None):
+        if N == None:
+            N = self.N1
+        self.pop = hf.nest.Create('iaf_neuron', N)
+        hf.nest.set_verbosity('M_FATAL')
+        hf.nest.Connect(self.pop, self.pop, conn_dict, syn_dict)
                 
     def testWeightSetting(self):
         ## test if weights are set correctly
         
         # one weight for all connections
         w0 = 0.351
-        syn_params = {'weight': w0}
-        self.setUpNetwork(conn_dict=self.conn_dict,syn_dict=syn_params)
-        connections =  nest.GetStatus(nest.GetConnections(self.pop1, self.pop2))
-        nest_weights = [connection['weight'] for connection in connections]
-        self.assertTrue(hf.mpi_assert(nest_weights, w0))
-        
-        # TODO: write test for insertion of generell weight iterator
+        label = 'weight'
+        syn_params = {label: w0}
+        hf.check_synapse([label], [syn_params['weight']], syn_params, self)
         
     def testDelaySetting(self):
         ## test if delays are set correctly
@@ -88,10 +90,10 @@ class TestParams(unittest.TestCase):
         d0 = 0.275
         syn_params = {'delay': d0}
         self.setUpNetwork(self.conn_dict, syn_params)
-        connections =  nest.GetStatus(nest.GetConnections(self.pop1, self.pop2))
+        connections =  hf.nest.GetStatus(hf.nest.GetConnections(self.pop1, self.pop2))
         nest_delays = [connection['delay'] for connection in connections]
         # all delays need to be equal
-        self.assertTrue(hf.mpi_assert(nest_delays, nest_delays[0]))
+        self.assertTrue(hf.all_equal(nest_delays))
         # delay (rounded) needs to equal the delay that was put in
         self.assertTrue(abs(d0-nest_delays[0]) < self.dt)
 
@@ -99,26 +101,28 @@ class TestParams(unittest.TestCase):
         neuron_model = 'iaf_psc_exp_multisynapse'
         neuron_dict = {'tau_syn': [0.5, 0.7]}
         rtype = 2
-        self.pop1 = nest.Create(neuron_model, self.N1, neuron_dict)
-        self.pop2 = nest.Create(neuron_model, self.N2, neuron_dict)       
+        self.pop1 = hf.nest.Create(neuron_model, self.N1, neuron_dict)
+        self.pop2 = hf.nest.Create(neuron_model, self.N2, neuron_dict)       
         syn_params = {'model': 'static_synapse', 'receptor_type': rtype}
-        nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
-        conns = nest.GetStatus(nest.GetConnections(self.pop1, self.pop2))
+        hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
+        conns = hf.nest.GetStatus(hf.nest.GetConnections(self.pop1, self.pop2))
         ports = [conn['receptor'] for conn in conns]
-        self.assertTrue(hf.mpi_assert(ports, rtype))
+        self.assertTrue(hf.all_equal(ports))
+        self.assertTrue(ports[0] == rtype)
 
     def testSynapseSetting(self):
-        nest.CopyModel("static_synapse", 'test_syn', {'receptor_type': 0})
+        hf.nest.CopyModel("static_synapse", 'test_syn', {'receptor_type': 0})
         syn_params = {'model': 'test_syn'}
         self.setUpNetwork(self.conn_dict, syn_params)
-        conns = nest.GetStatus(nest.GetConnections(self.pop1, self.pop2))
+        conns = hf.nest.GetStatus(hf.nest.GetConnections(self.pop1, self.pop2))
         syns = [str(conn['synapse_model']) for conn in conns]
-        self.assertTrue(hf.mpi_assert(syns, syn_params['model']))
+        self.assertTrue(hf.all_equal(syns))
+        self.assertTrue(syns[0] == syn_params['model'])
 
     # tested on each mpi process separatly
     def testDefaultParams(self):
         self.setUpNetwork(self.conn_dict)
-        conns = nest.GetStatus(nest.GetConnections(self.pop1, self.pop2))
+        conns = hf.nest.GetStatus(hf.nest.GetConnections(self.pop1, self.pop2))
         self.assertTrue(all(x['weight'] == self.w0 for x in conns))
         self.assertTrue(all(x['delay'] == self.d0 for x in conns))
         self.assertTrue(all(x['receptor'] == self.r0 for x in conns))
@@ -129,120 +133,82 @@ class TestParams(unittest.TestCase):
         
         # test that autapses exist
         conn_params['autapses'] = True        
-        self.pop1 = nest.Create('iaf_neuron', self.N1)
-        nest.Connect(self.pop1, self.pop1, conn_params)
+        self.pop1 = hf.nest.Create('iaf_neuron', self.N1)
+        hf.nest.Connect(self.pop1, self.pop1, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(self.pop1, self.pop1)
-        self.assertTrue(hf.mpi_assert(M, np.ones(self.N1), 'diagonal')) 
-        nest.ResetKernel()
+        hf.mpi_assert(np.diag(M), np.ones(self.N1), self) 
+        hf.nest.ResetKernel()
 
         # test that autapses were excluded
         conn_params['autapses'] = False        
-        self.pop1 = nest.Create('iaf_neuron', self.N1)
-        nest.Connect(self.pop1, self.pop1, conn_params)
+        self.pop1 = hf.nest.Create('iaf_neuron', self.N1)
+        hf.nest.Connect(self.pop1, self.pop1, conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(self.pop1, self.pop1)
-        self.assertTrue(hf.mpi_assert(M, np.zeros(self.N1), 'diagonal'))
+        hf.mpi_assert(np.diag(M), np.zeros(self.N1), self) 
 
     def testHtSynapse(self):
         params = ['P', 'delta_P']
         values = [0.987, 0.362]
-        for i, param in enumerate(params):
-            syn_params = {'model': 'ht_synapse'}
-            syn_params[param] = values[i]
-            self.setUpNetwork(self.conn_dict, syn_params)
-            a = hf.get_weighted_connection_array(self.pop1, self.pop2, param)
-            self.assertTrue(hf.mpi_assert(a, np.ones(len(a))*values[i]))
+        syn_params = {'model': 'ht_synapse'}
+        hf.check_synapse(params, values, syn_params, self)
 
     def testQuantalStpSynapse(self):
         # params a and n are not tested since Connect cannot handle integer parameter yet
         # Connect will throw an error is a or n are set in syn_spec
         params = ['U', 'tau_fac', 'tau_rec', 'u']
         values = [0.679, 8.45, 746.2, 0.498]
-        for i, param in enumerate(params):
-            syn_params = {'model': 'quantal_stp_synapse'}
-            syn_params[param] = values[i]
-            self.setUpNetwork(self.conn_dict, syn_params)
-            a = hf.get_weighted_connection_array(self.pop1, self.pop2, param)
-            self.assertTrue(hf.mpi_assert(a, np.ones(len(a))*values[i])) 
+        syn_params = {'model': 'quantal_stp_synapse'}
+        hf.check_synapse(params, values, syn_params, self)
 
     def testStdpFacetshwSynapseHom(self):
         params = [ 'a_acausal', 'a_causal', 'a_thresh_th', 'a_thresh_tl',
                    'next_readout_time'
                  ]
         values = [0.162, 0.263, 20.46, 19.83, 0.1]
-        for i, param in enumerate(params):
-            syn_params = {'model': 'stdp_facetshw_synapse_hom'}
-            syn_params[param] = values[i]
-            self.setUpNetwork(self.conn_dict, syn_params)
-            a = hf.get_weighted_connection_array(self.pop1, self.pop2, param)
-            self.assertTrue(hf.mpi_assert(a, np.ones(len(a))*values[i])) 
+        syn_params = {'model': 'stdp_facetshw_synapse_hom'}
+        hf.check_synapse(params, values, syn_params, self)
 
     def testStdpPlSynapseHom(self):
         params = ['Kplus']
         values = [0.173]
-        for i, param in enumerate(params):
-            syn_params = {'model': 'stdp_pl_synapse_hom'}
-            syn_params[param] = values[i]
-            self.setUpNetwork(self.conn_dict, syn_params)
-            a = hf.get_weighted_connection_array(self.pop1, self.pop2, param)
-            self.assertTrue(hf.mpi_assert(a, np.ones(len(a))*values[i]))
+        syn_params = {'model': 'stdp_pl_synapse_hom'}
+        hf.check_synapse(params, values, syn_params, self)
             
     def testStdpSynapseHom(self):
         params = ['Kplus']
         values = [0.382]
-        for i, param in enumerate(params):
-            syn_params = {'model': 'stdp_synapse_hom'}
-            syn_params[param] = values[i]
-            self.setUpNetwork(self.conn_dict, syn_params)
-            a = hf.get_weighted_connection_array(self.pop1, self.pop2, param)
-            self.assertTrue(hf.mpi_assert(a, np.ones(len(a))*values[i]))
+        syn_params = {'model': 'stdp_synapse_hom'}
+        hf.check_synapse(params, values, syn_params, self)
             
     def testStdpSynapse(self):
         params = ['Wmax', 'alpha', 'lambda', 'mu_minus', 'mu_plus', 'tau_plus']
         values = [98.34, 0.945, 0.02, 0.945, 1.26, 19.73]
-        for i, param in enumerate(params):
-            syn_params = {'model': 'stdp_synapse'}
-            syn_params[param] = values[i]
-            self.setUpNetwork(self.conn_dict, syn_params)
-            a = hf.get_weighted_connection_array(self.pop1, self.pop2, param)
-            self.assertTrue(hf.mpi_assert(a, np.ones(len(a))*values[i]))
+        syn_params = {'model': 'stdp_synapse'}
+        hf.check_synapse(params, values, syn_params, self)
             
     def testTsodyks2Synapse(self):
         params = ['U', 'tau_fac', 'tau_rec', 'u', 'x']
         values = [0.362, 0.152, 789.2, 0.683, 0.945]
-        for i, param in enumerate(params):
-            syn_params = {'model': 'tsodyks2_synapse'}
-            syn_params[param] = values[i]
-            self.setUpNetwork(self.conn_dict, syn_params)
-            a = hf.get_weighted_connection_array(self.pop1, self.pop2, param)
-            self.assertTrue(hf.mpi_assert(a, np.ones(len(a))*values[i]))
-            
+        syn_params = {'model': 'tsodyks2_synapse'}
+        hf.check_synapse(params, values, syn_params, self)
+
     def testTsodyksSynapse(self):
         params = ['U', 'tau_fac', 'tau_psc', 'tau_rec', 'x', 'y', 'u']
         values = [0.452, 0.263, 2.56, 801.34, 0.567, 0.376, 0.102]
-        for i, param in enumerate(params):
-            syn_params = {'model': 'tsodyks_synapse'}
-            if param == 'y':
-                syn_params['x'] = 0.98 - values[i] 
-            syn_params[param] = values[i]
-            self.setUpNetwork(self.conn_dict, syn_params)
-            a = hf.get_weighted_connection_array(self.pop1, self.pop2, param)
-            self.assertTrue(hf.mpi_assert(a, np.ones(len(a))*values[i]))
+        syn_params = {'model': 'tsodyks_synapse'}
+        hf.check_synapse(params, values, syn_params, self)
             
     def testStdpDopamineSynapse(self):
         # ResetKernel() since parameter setting not thread save for this synapse type
-        nest.ResetKernel()
-        vol = nest.Create('volume_transmitter')
-        nest.SetDefaults('stdp_dopamine_synapse',{'vt':vol[0]})
+        hf.nest.ResetKernel()
+        vol = hf.nest.Create('volume_transmitter')
+        hf.nest.SetDefaults('stdp_dopamine_synapse',{'vt':vol[0]})
         params = ['c', 'n']
         values = [0.153, 0.365]
-        for i, param in enumerate(params):
-            syn_params = {'model': 'stdp_dopamine_synapse'}
-            syn_params[param] = values[i]
-            self.setUpNetwork(self.conn_dict, syn_params)
-            a = hf.get_weighted_connection_array(self.pop1, self.pop2, param)
-            self.assertTrue(hf.mpi_assert(a, np.ones(len(a))*values[i]))
+        syn_params = {'model': 'stdp_dopamine_synapse'}
+        hf.check_synapse(params, values, syn_params, self)
             
     def testRPortAllSynapses(self):
         syns = [ 'cont_delay_synapse', 'ht_synapse', 'quantal_stp_synapse',
@@ -255,15 +221,17 @@ class TestParams(unittest.TestCase):
             
         for i, syn in enumerate(syns):
             if syn == 'stdp_dopamine_synapse':
-                vol = nest.Create('volume_transmitter')
-                nest.SetDefaults('stdp_dopamine_synapse',{'vt':vol[0]})
+                vol = hf.nest.Create('volume_transmitter')
+                hf.nest.SetDefaults('stdp_dopamine_synapse',{'vt':vol[0]})
             syn_params['model'] = syn
-            self.pop1 = nest.Create('iaf_psc_exp_multisynapse', self.N1, {'tau_syn': [0.2,0.5]})
-            self.pop2 = nest.Create('iaf_psc_exp_multisynapse', self.N2, {'tau_syn': [0.2,0.5]})
-            nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
-            a = hf.get_weighted_connection_array(self.pop1, self.pop2, 'receptor')
-            self.assertTrue(hf.mpi_assert(a, np.ones(len(a))))
-            nest.ResetKernel()
+            self.pop1 = hf.nest.Create('iaf_psc_exp_multisynapse', self.N1, {'tau_syn': [0.2,0.5]})
+            self.pop2 = hf.nest.Create('iaf_psc_exp_multisynapse', self.N2, {'tau_syn': [0.2,0.5]})
+            hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
+            conns = hf.nest.GetStatus(hf.nest.GetConnections(self.pop1, self.pop2))
+            conn_params = [conn['receptor'] for conn in conns]
+            self.assertTrue(hf.all_equal(conn_params))
+            self.assertTrue(conn_params[0] == syn_params['receptor_type'])
+            hf.nest.ResetKernel()
             self.setUp
 
     def testWeightAllSynapses(self):
@@ -279,12 +247,10 @@ class TestParams(unittest.TestCase):
 
         for i, syn in enumerate(syns):
             if syn == 'stdp_dopamine_synapse':
-                vol = nest.Create('volume_transmitter')
-                nest.SetDefaults('stdp_dopamine_synapse',{'vt':vol[0]})
+                vol = hf.nest.Create('volume_transmitter')
+                hf.nest.SetDefaults('stdp_dopamine_synapse',{'vt':vol[0]})
             syn_params['model'] = syn
-            self.setUpNetwork(self.conn_dict, syn_params)
-            a = hf.get_weighted_connection_array(self.pop1, self.pop2, 'weight')
-            self.assertTrue(hf.mpi_assert(a, np.ones(len(a))*syn_params['weight']))
+            hf.check_synapse(['weight'], [syn_params['weight']], syn_params, self)
             self.setUp()
 
     def testDelayAllSynapses(self):
@@ -300,12 +266,10 @@ class TestParams(unittest.TestCase):
 
         for i, syn in enumerate(syns):
             if syn == 'stdp_dopamine_synapse':
-                vol = nest.Create('volume_transmitter')
-                nest.SetDefaults('stdp_dopamine_synapse',{'vt':vol[0]})
+                vol = hf.nest.Create('volume_transmitter')
+                hf.nest.SetDefaults('stdp_dopamine_synapse',{'vt':vol[0]})
             syn_params['model'] = syn
-            self.setUpNetwork(self.conn_dict, syn_params)
-            a = hf.get_weighted_connection_array(self.pop1, self.pop2, 'delay')
-            self.assertTrue(hf.mpi_assert(a, np.ones(len(a))*syn_params['delay']))
+            hf.check_synapse(['delay'], [syn_params['delay']], syn_params, self)
             self.setUp()
 
     

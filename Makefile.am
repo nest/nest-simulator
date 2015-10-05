@@ -6,26 +6,18 @@ SUBDIRS= libltdl @SLI_SUBDIRS@ doc examples extras testsuite @PYNEST_SUBDIR@
 # should clean this up when we create a proper install
 # target.  HEP, 2004-12-02
 DIST_SUBDIRS= @SLI_DIST_SUBDIRS@ libltdl
-EXTRA_DIST= doc examples testsuite extras lib LICENSE bootstrap.sh libltdl install-sh configure.ac.in README.md
+EXTRA_DIST= doc examples testsuite extras lib LICENSE bootstrap.sh libltdl install-sh README.md
 ACLOCAL_AMFLAGS= -I libltdl/m4
 
 # note: the cleaning of libltdl below is not really clean.
 # One should use make distclean here, but make gets confused
 # then. So we remove files by hand.
 dist-hook:
-	test -f $(top_srcdir)/releasetools/clear_extra_modules.awk \
-	  && gawk -f  $(top_srcdir)/releasetools/clear_extra_modules.awk $(distdir)/configure.ac > $(distdir)/configure.ac.tmp \
-	  && mv $(distdir)/configure.ac.tmp $(distdir)/configure.ac || true
-	rm -rf `find $(distdir) -name .svn`
 	rm -rf $(distdir)/doc/doxygen
 	rm -f $(distdir)/doc/doxygen.log
-	rm -rf $(distdir)/examples/nest/FacetsBenchmarks/debugging_versions
 	rm -f $(distdir)/libltdl/{config.h,config.log,config.status,Makefile,stamp-h1,libtool}
 	rm -rf $(distdir)/libltdl/.deps
-	rm -f $(distdir)/extras/logos/*.{ai,svg}
-	rm -f $(distdir)/extras/logos/nest-initiative-logo*.*
 	@PKGSRCDIR@/extras/create_rcsinfo.sh @PKGSRCDIR@ $(distdir)
-
 
 .PHONY: doc fulldoc install-slidoc-recursive
 

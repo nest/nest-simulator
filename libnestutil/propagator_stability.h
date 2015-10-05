@@ -1,5 +1,5 @@
 /*
- *  dynmodule.cpp
+ *  propagator_stability.h
  *
  *  This file is part of NEST.
  *
@@ -20,21 +20,10 @@
  *
  */
 
-#include "dynmodule.h"
-#include "interpret.h"
+#ifndef PROPAGATOR_STABILITY_H
+#define PROPAGATOR_STABILITY_H
 
-void
-DynModule::install( std::ostream&, SLIInterpreter* i, nest::Network* net )
-{
-  // Output stream for all messages are now decided by the message
-  // level.
-  //  i->message(out,5, name().c_str(), "Initializing.");
-  i->message( 5, name().c_str(), "Initializing." );
-  init( i, net );
-}
+double propagator_31( double tau_syn, double tau, double C, double h );
+double propagator_32( double tau_syn, double tau, double C, double h );
 
-const std::string
-DynModule::commandstring( void ) const
-{
-  return std::string();
-}
+#endif

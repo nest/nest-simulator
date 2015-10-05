@@ -61,14 +61,38 @@ librandom::UniformIntRandomDev::set_status( const DictionaryDatum& d )
 
   // The following test is based on
   // https://www.securecoding.cert.org/confluence/display/c/INT32-C.+Ensure+that+operations+on+signed+integers+do+not+result+in+overflow
-  // The third condition tests that we can add 1 to the difference; by the time we reach
-  // that clause, we know that the first two are false, so that the difference does not overflow.
-  if ( ( new_nmin > 0 && new_nmax < std::numeric_limits< long >::min() + new_nmin )
-    || ( new_nmin < 0 && new_nmax > std::numeric_limits< long >::max() + new_nmin )
-    || ( new_nmax - new_nmin > std::numeric_limits< long >::max() - 1 ) )
+
+  // Rollover cases (integer bounds min, max):
+  // new_nmax = n+, new_nmin = n-
+  //
+  //   a) n+ >= n-:
+  // 	   1) n- >= 0: 0 <= n+ - n- <= max
+  //       2) n- <  0: 0 <= n+ - n-
+  // 	     must confirm that n+ - n- <= max
+  //
+  //   b) n+ < n-:
+  // 	   1) n- <= 0: 0 > n+ - n- >= min
+  //       2) n- >  0: 0 > n+ - n-
+  // 	     must confirm that n+ - n- >= min
+  //
+  //  Case b) is eliminated by the first test above.
+  //  Case a) is checked by confirming that
+  //    n+ <= max + n-
+  //    which can not rollover when n- < 0
+  //
+  //  Additionally, we set range = 1 + (n+ - n-)
+  //  a1: n+ - n- < max
+  //    n+ < max + n-
+  //  a2: n+ - n- < max
+  //
+  //  so we need to confirm that n+ - n- != max.
+  //  See pull request #61
+
+  const long max = std::numeric_limits< long >::max();
+  if ( ( new_nmin < 0 && new_nmax >= max + new_nmin ) || ( new_nmax - new_nmin == max ) )
   {
-    throw BadParameterValue( String::compose( "Uniformint RDV: high - low < %1 required.",
-      static_cast< double >( std::numeric_limits< long >::max() ) ) );
+    throw BadParameterValue( String::compose(
+      "Uniformint RDV: high - low < %1 required.", static_cast< double >( max ) ) );
   }
 
   nmin_ = new_nmin;

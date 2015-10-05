@@ -82,7 +82,7 @@ Håkon Enger\\[1ex]
 \normalsize Department of Mathematical Sciences and Technology\\\normalsize Norwegian University of Life Sciences\\
 \normalsize 1432 Ås, Norway}
 \date{NEST 2.2, 2.4, and 2.6 (r9977 or later)\\[8cm]
-\centerline{\includegraphics{nest-initiative-logo}}}
+\centerline{\includegraphics{nest-initiative.pdf}}}
 
 
 \begin{document}
@@ -124,7 +124,7 @@ Håkon Enger\\[1ex]
 
 The Topology Module provides the NEST simulator\footnote{NEST is
   available under an open source license at
-\url{www.nest-initiative.org}.}
+\url{www.nest-simulator.org}.}
 \citep{Gewa:2007(1430)} with a convenient interface for creating
 layers of neurons placed in space and connecting neurons in such
 layers with probabilities and properties depending on the relative
@@ -1109,6 +1109,21 @@ type of connections or parameters for plastic synapse models. These
 can not be set in distance-dependent ways at present.
 
 
+\section{Connecting devices to subregions of layers}\label{sec:dev_subregions}
+
+It is possible to connect stimulation and recording devices only to specific
+subregions of layers. A simple way to achieve this is to create a layer
+which contains only the device placed typically in its center.
+For connecting the device layer to a neuron layer, an appropriate mask
+needs to be specified and optionally also an anchor for shifting the
+center of the mask.
+As demonstrated in the following example, stimulation devices require the
+divergent and recording devices the convergent connection type:
+\lstinputlisting[linerange=conn9-end]{user_manual_scripts/connections.py}
+\lstinputlisting[linerange=conn10-end]{user_manual_scripts/connections.py}
+
+
+
 \chapter{Inspecting Layers}\label{sec:inspection}
 
 We strongly recommend that you inspect the layers created by Topology
@@ -1131,7 +1146,7 @@ SLI documentation.
   from NEST perspective. \\
   \lstinline!nest.GetConnections()! & Retrieve connections
   (all or for a given source or target); see also
-  \url{http://www.nest-initiative.org/index.php/Connection_Management}. \\
+  \url{http://www.nest-simulator.org/connection_management}. \\
   \lstinline!nest.GetNodes()! & Applied to a layer, returns GIDs of
   the layer elements. For simple layers, these are the actual model
   neurons,
@@ -1209,7 +1224,7 @@ adding custom kernel functions and masks. Some knowledge of the C++
 programming language is needed for this. The functions will be added as a
 part of an extension module which is dynamically loaded into NEST. For more
 information on writing an extension module, see the section titled
-\href{http://www.nest-initiative.org/index.php/Writing_an_Extension_Module}{``Writing an Extension Module''}
+\href{http://nest.github.io/nest-simulator/extension_modules}{``Writing an Extension Module''}
 in the NEST Developer Manual. The basic steps required to get started are:
 \begin{enumerate}
 \item From the NEST source directory, copy directory examples/MyModule to

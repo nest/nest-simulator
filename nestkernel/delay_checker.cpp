@@ -50,8 +50,8 @@ nest::DelayChecker::calibrate( const TimeConverter& tc )
 {
   // Calibrate will be called after a change in resolution, when there are no
   // network elements present.
-  min_delay_ = tc.from_old_steps( min_delay_.get_steps() );
-  max_delay_ = tc.from_old_steps( max_delay_.get_steps() );
+  min_delay_ = tc.from_old_tics( min_delay_.get_tics() );
+  max_delay_ = tc.from_old_tics( max_delay_.get_tics() );
 }
 
 void 

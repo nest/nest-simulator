@@ -219,12 +219,19 @@ void
 nest::ConnectionBuilderManager::calibrate( const TimeConverter& tc )
 {
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
+    delay_checkers_[t].calibrate(tc);
     for ( std::vector< ConnectorModel* >::iterator pt =
             Network::get_network().connection_manager_.prototypes_[ t ].begin();
           pt != Network::get_network().connection_manager_.prototypes_[ t ].end();
           ++pt )
+    {
       if ( *pt != 0 )
+      {
         ( *pt )->calibrate( tc );
+      }
+    }
+  }
 }
 
 void

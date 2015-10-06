@@ -1,0 +1,102 @@
+/*
+ *  test_delay_after_res_change.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /* BeginDocumentation
+    Name: testsuite::test_delay_after_res_change - sli script to test delay after the resolution has changed
+
+    Synopsis: (test_delay_after_res_change) run
+
+    Description: This script checks that the min and max delays and the default delays
+    are still correct after the resolution has changed.
+
+    FirstVersion: Oct 2015
+    Author: Tammo Ippen
+  */
+
+(unittest) run
+/unittest using
+
+% expected_min_delay expected_max_delay check_min_max_delay
+/check_min_max_delay
+{
+  << >> begin
+    /e_max_d Set
+    /e_min_d Set
+
+    0 GetStatus begin
+    { min_delay e_min_d eq max_delay e_max_d eq and } assert_or_die
+    end
+
+  end
+}
+def
+
+% expected_default_delay check_delay
+/check_delay
+{
+  << >> begin
+    /e_d Set
+
+    /static_synapse GetDefaults begin
+    { delay e_d eq } assert_or_die
+    end
+
+  end
+}
+def
+
+% Setup test
+/mindelay 2.1 def
+/maxdelay 12.3 def
+/defdelay 3.0 def
+
+0 <<
+  /resolution 0.1
+  /min_delay mindelay
+  /max_delay maxdelay
+>> SetStatus
+
+/static_synapse << /delay defdelay >> SetDefaults
+
+mindelay maxdelay check_min_max_delay
+defdelay check_delay
+
+% Test 1: Change resolution.
+0 <<
+  /resolution 0.001
+>> SetStatus
+
+mindelay maxdelay check_min_max_delay
+
+defdelay check_delay
+
+% Test 2: Change tics_per_ms.
+0 <<
+  /tics_per_ms 10000.0
+  /resolution 0.001
+>> SetStatus
+
+mindelay maxdelay check_min_max_delay
+
+defdelay check_delay
+
+endusing

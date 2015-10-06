@@ -955,18 +955,6 @@ Network::get_status( index idx )
     // former scheduler_.get_status( d ) start
     kernel().get_status( d );
 
-    
-
-    def< double >( d, "tics_per_ms", Time::get_tics_per_ms() );
-    def< double >( d, "resolution", Time::get_resolution().get_ms() );
-
-    def< double >( d, "ms_per_tic", Time::get_ms_per_tic() );
-    def< double >( d, "tics_per_ms", Time::get_tics_per_ms() );
-    def< long >( d, "tics_per_step", Time::get_tics_per_step() );
-
-    def< double >( d, "T_min", Time::min().get_ms() );
-    def< double >( d, "T_max", Time::max().get_ms() );
-
     ( *d )[ "rng_seeds" ] = Token( rng_seeds_ );
     def< long >( d, "grng_seed", grng_seed_ );
     def< long >( d, "send_buffer_size", Communicator::get_send_buffer_size() );

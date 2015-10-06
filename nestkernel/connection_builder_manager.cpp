@@ -88,13 +88,9 @@ nest::ConnectionBuilderManager::reset()
 void
 nest::ConnectionBuilderManager::set_status( const DictionaryDatum& d )
 {
-  
- /*tVRegister::iterator it;
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    for ( it = delay_checkers_[ t ].begin();
-         it != delay_checkers_[ t ].end();
-         ++it )
-      it->set_status(d);*/
+  for (size_t i = 0; i < delay_checkers_.size(); ++i) {
+    delay_checkers_[i].set_status(d);
+  }
 }
 
 nest::DelayChecker& 
@@ -202,7 +198,7 @@ nest::ConnectionBuilderManager::get_max_delay_time_() const
 
   tVDelayChecker::const_iterator it;
   for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
-        max_delay = std::max( max_delay,  it->get_max_delay() );
+    max_delay = std::max( max_delay,  it->get_max_delay() );
 
   return max_delay;
 }
@@ -472,9 +468,10 @@ nest::ConnectionBuilderManager::connect_( Node& s,
     Network::get_network().connection_manager_.prototypes_[ tid ][ syn ]->add_connection(
       s, r, conn, syn, d, w );
   connections_[ tid ].set( s_gid, c );
+  // TODO: set size of vv_num_connections in init
   if (vv_num_connections_[tid].size() <= syn) 
   {
-    vv_num_connections_[tid].reserve(syn+1);
+    vv_num_connections_[tid].resize(syn+1);
   }
   ++vv_num_connections_[tid][syn];
 }
@@ -495,9 +492,10 @@ nest::ConnectionBuilderManager::connect_( Node& s,
     Network::get_network().connection_manager_.prototypes_[ tid ][ syn ]->add_connection(
       s, r, conn, syn, p, d, w );
   connections_[ tid ].set( s_gid, c );
+  // TODO: set size of vv_num_connections in init
   if (vv_num_connections_[tid].size() <= syn) 
   {
-    vv_num_connections_[tid].reserve(syn+1);
+    vv_num_connections_[tid].resize(syn+1);
   }
   ++vv_num_connections_[tid][syn];
 }
@@ -1399,6 +1397,21 @@ nest::ConnectionBuilderManager::get_num_connections() const
   return num_connections;
 }
 
+size_t
+nest::ConnectionBuilderManager::get_num_connections(synindex syn_id) const
+{
+  size_t num_connections = 0;
+  tVDelayChecker::const_iterator i;
+  for ( index t = 0; t < vv_num_connections_.size(); ++t )
+  {
+    if (vv_num_connections_[t].size() > syn_id) {
+      num_connections += vv_num_connections_[t][syn_id];
+    }
+  }
+
+  return num_connections;
+}
+
 ArrayDatum
 nest::ConnectionBuilderManager::get_connections( DictionaryDatum params ) const
 {
@@ -1459,15 +1472,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
   TokenArray const* target,
   size_t syn_id ) const
 {
-  size_t num_connections = 0;
-
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-    if (vv_num_connections_[t].size() > syn_id) 
-    {
-      num_connections += vv_num_connections_[ t ][ syn_id ];
-    }
-  }
+  size_t num_connections = get_num_connections(syn_id);
 
   connectome.reserve( num_connections );
 

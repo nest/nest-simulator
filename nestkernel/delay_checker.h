@@ -44,6 +44,22 @@ namespace nest
     void update_delay_extrema( const double_t mindelay_cand, const double_t maxdelay_cand );
     
     /**
+     * This method freezes the min/ max delay update in the update_delay_extrema
+     * method. This is used, when the delay of default connections in the ConnectorModel
+     * is set: we do not know, whether new connections with this delay will ever be
+     * created.
+     */
+    bool freeze_delay_update();
+    
+    /**
+     * This method enables the min/ max delay update in the update_delay_extrema
+     * method. This is used, when the delay of default connections in the ConnectorModel
+     * is set: we do not know, whether new connections with this delay will ever be
+     * created.
+     */
+    bool enable_delay_update();
+
+    /**
      * Raise exception if delay value in milliseconds is invalid.
      *
      * @note Not const, since it may update delay extrema as a side-effect.
@@ -72,6 +88,7 @@ namespace nest
     Time min_delay_;                 //!< Minimal delay of all created synapses.
     Time max_delay_;                 //!< Maximal delay of all created synapses.
     bool user_set_delay_extrema_;    //!< Flag indicating if the user set the delay extrema.
+    bool freeze_delay_update_;
   };
   
   inline const Time&
@@ -90,6 +107,18 @@ namespace nest
   DelayChecker::get_user_set_delay_extrema() const
   {
     return user_set_delay_extrema_;
+  }
+  
+  inline bool
+  DelayChecker::freeze_delay_update()
+  {
+    freeze_delay_update_ = true;
+  }
+  
+  inline bool
+  DelayChecker::enable_delay_update()
+  {
+    freeze_delay_update_ = false;
   }
 }
 

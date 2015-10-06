@@ -239,10 +239,14 @@ public:
     size_t syn_id ) const;
 
   /**
-   * Make sure that the connection counters are up-to-date and return
-   * the total number of connections in the network.
+   * Returns the number of connections in the network.
    */
   size_t get_num_connections() const;
+  
+  /**
+   * Returns the number of connections of this synapse type.
+   */
+  size_t get_num_connections(synindex syn_id) const;
 
   /**
    * Triggered by volume transmitter in update.

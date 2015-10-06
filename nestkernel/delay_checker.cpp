@@ -1,5 +1,5 @@
 /*
- *  delay_checker.h
+ *  delay_checker.cpp
  *
  *  This file is part of NEST.
  *
@@ -32,6 +32,7 @@ nest::DelayChecker::DelayChecker()
 : min_delay_( Time::pos_inf() )
 , max_delay_( Time::neg_inf() )
 , user_set_delay_extrema_( false )
+, freeze_delay_update_(false)
 {
 }
 
@@ -58,17 +59,6 @@ nest::DelayChecker::get_status( DictionaryDatum& d) const
 {
   ( *d )[ "min_delay" ] = get_min_delay().get_ms();
   ( *d )[ "max_delay" ] = get_max_delay().get_ms();
-  
-  /*long_t old_count;
-  // if field "num_connections" already exists
-  // we will add to this number
-  // used to add up connections from connector_models
-  // for different threads
-  if ( updateValue< long_t >( d, "num_connections", old_count ) )
-    ( *d )[ "num_connections" ] = old_count + get_num_connections();
-  else
-    ( *d )[ "num_connections" ] = get_num_connections();
-   */
 }
 
 void
@@ -88,13 +78,6 @@ nest::DelayChecker::set_status( const DictionaryDatum& d)
   bool max_delay_updated = updateValue< double_t >( d, "max_delay", delay_tmp );
   max_delay = Time( Time::ms( delay_tmp ) );
   
-  // the delay might also be updated, so check new_min_delay and new_max_delay against new_delay, if
-  // given
-  // if ( !updateValue< double_t >( d, "delay", delay_tmp ) )
-  //   new_delay = Time( Time::ms( default_connection_.get_delay() ) );
-  // else
-  //   new_delay = Time( Time::ms( delay_tmp ) );
-  
   if ( min_delay_updated xor max_delay_updated )
     LOG( M_ERROR, "SetDefaults", "Both min_delay and max_delay have to be specified" );
   
@@ -102,10 +85,6 @@ nest::DelayChecker::set_status( const DictionaryDatum& d)
   {
     if ( kernel().connection_builder_manager.get_num_connections() > 0 )
       LOG( M_ERROR, "SetDefaults", "Connections already exist. Please call ResetKernel first" );
-    //else if ( min_delay > new_delay )
-    //  LOG( M_ERROR, "SetDefaults", "min_delay is not compatible with default delay" );
-    //else if ( max_delay < new_delay )
-    //  LOG( M_ERROR, "SetDefaults", "max_delay is not compatible with default delay" );
     else if ( min_delay < Time::get_resolution() )
       LOG( M_ERROR, "SetDefaults", "min_delay must be greater than or equal to resolution" );
     else if ( max_delay < Time::get_resolution() )
@@ -117,23 +96,23 @@ nest::DelayChecker::set_status( const DictionaryDatum& d)
       user_set_delay_extrema_ = true;
     }
   }
-  
-  // we've possibly just got a new default delay. So enforce checking next time it is used
-  //default_delay_needs_check_ = true;
 }
 
 void
 nest::DelayChecker::update_delay_extrema( const double_t mindelay_cand, const double_t maxdelay_cand )
 {
-  // check min delay candidate
-  Time delay_cand = Time( Time::ms( mindelay_cand ) );
-  if ( delay_cand < min_delay_ )
-    min_delay_ = delay_cand;
-  
-  // check max delay candidate
-  delay_cand = Time( Time::ms( maxdelay_cand ) );
-  if ( delay_cand > max_delay_ )
-    max_delay_ = delay_cand;
+  if (not freeze_delay_update_)
+  {
+    // check min delay candidate
+    Time delay_cand = Time( Time::ms( mindelay_cand ) );
+    if ( delay_cand < min_delay_ )
+      min_delay_ = delay_cand;
+    
+    // check max delay candidate
+    delay_cand = Time( Time::ms( maxdelay_cand ) );
+    if ( delay_cand > max_delay_ )
+      max_delay_ = delay_cand;
+  }
 }
 
 void

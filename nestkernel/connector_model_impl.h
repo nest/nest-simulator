@@ -133,9 +133,15 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   updateValue< long_t >( d, names::music_channel, receptor_type_ );
 #endif
 
+  kernel().connection_builder_manager.get_delay_checker().freeze_delay_update();
+
   cp_.set_status( d, *this );
   default_connection_.set_status( d, *this );
 
+  kernel().connection_builder_manager.get_delay_checker().enable_delay_update();
+
+  // we've possibly just got a new default delay. So enforce checking next time it is used
+  default_delay_needs_check_ = true;
 }
 
 template < typename ConnectionT >

@@ -49,7 +49,7 @@ namespace nest
      * is set: we do not know, whether new connections with this delay will ever be
      * created.
      */
-    bool freeze_delay_update();
+    void freeze_delay_update();
     
     /**
      * This method enables the min/ max delay update in the update_delay_extrema
@@ -57,7 +57,7 @@ namespace nest
      * is set: we do not know, whether new connections with this delay will ever be
      * created.
      */
-    bool enable_delay_update();
+    void enable_delay_update();
 
     /**
      * Raise exception if delay value in milliseconds is invalid.
@@ -109,13 +109,13 @@ namespace nest
     return user_set_delay_extrema_;
   }
   
-  inline bool
+  inline void
   DelayChecker::freeze_delay_update()
   {
     freeze_delay_update_ = true;
   }
   
-  inline bool
+  inline void
   DelayChecker::enable_delay_update()
   {
     freeze_delay_update_ = false;

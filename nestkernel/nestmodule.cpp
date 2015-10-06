@@ -1599,7 +1599,7 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
 
   index target = getValue< long >( i->OStack.pick( 0 ) );
 
-  librandom::RngPtr rng = get_vp_rng( target );
+  librandom::RngPtr rng = get_vp_rng_of_gid( target );
 
   Token rt( new librandom::RngDatum( rng ) );
   i->OStack.pop( 1 );

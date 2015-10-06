@@ -89,7 +89,7 @@ print_network( index gid, index depth, std::ostream& out )
 }
 
 librandom::RngPtr
-get_vp_rng( index target )
+get_vp_rng_of_gid( index target )
 {
   Node* target_node = Network::get_network().get_node( target );
 
@@ -102,6 +102,14 @@ get_vp_rng( index target )
     throw NodeWithProxiesExpected( target );
 
   return kernel().rng_manager.get_rng( target_node->get_thread() );
+}
+  
+librandom::RngPtr
+get_vp_rng( thread tid )
+{
+  assert(tid >=0);
+  assert(tid < kernel().vp_manager.get_num_threads());
+  return kernel().rng_manager.get_rng( tid );
 }
 
 librandom::RngPtr

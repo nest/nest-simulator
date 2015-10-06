@@ -35,6 +35,39 @@
 
 #include "dictdatum.h"
 
+// clang-format off
+/* BeginDocumentation
+ Name: kernel - Global properties of the simulation kernel.
+ 
+ Description:
+ (start here.)
+ 
+ Parameters:
+ The following parameters can be set in the status dictionary.
+ 
+ data_path                stringtype  - A path, where all data is written to (default is the current directory)
+ data_prefix              stringtype  - A common prefix for all data files
+ dict_miss_is_error       booltype    - Whether missed dictionary entries are treated as errors
+ local_num_threads        integertype - The local number of threads (cf. global_num_virt_procs)
+ max_delay                doubletype  - The maximum delay in the network
+ min_delay                doubletype  - The minimum delay in the network
+ ms_per_tic               doubletype  - The number of miliseconds per tic (cf. tics_per_ms, tics_per_step)
+ network_size             integertype - The number of nodes in the network
+ num_connections          integertype - The number of connections in the network
+ off_grid_spiking         booltype    - Whether to transmit precise spike times in MPI communicatio
+ print_time               booltype    - Whether to print progress information during the simulation
+ resolution               doubletype  - The resolution of the simulation (in ms)
+ tics_per_ms              doubletype  - The number of tics per milisecond (cf. ms_per_tic, tics_per_step)
+ tics_per_step            integertype - The number of tics per simulation time step (cf. ms_per_tic, tics_per_ms)
+ time                     doubletype  - The current simulation time
+ total_num_virtual_procs  integertype - The total number of virtual processes (cf. local_num_threads)
+ to_do                    integertype - The number of steps yet to be simulated
+ T_max                    doubletype  - The largest representable time value
+ T_min                    doubletype  - The smallest representable time value
+ SeeAlso: Simulate, Node
+ */
+// clang-format on
+
 namespace nest
 {
 

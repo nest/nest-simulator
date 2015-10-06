@@ -546,7 +546,7 @@ nest::SIONLogger::Parameters_::Parameters_()
   : file_ext_( "sion" )
   , close_after_simulate_( true )
   , sion_collective_( false )
-  , sion_chunksize_( 2400 )
+  , sion_chunksize_( 1 << 18 )
   , buffer_size_( 1024 )
 {
 }

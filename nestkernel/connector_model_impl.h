@@ -100,7 +100,7 @@ GenericConnectorModel< ConnectionT >::calibrate( const TimeConverter& tc )
 {
   // calibrate the dalay of the default properties here
   default_connection_.calibrate( tc );
-  
+
   // Calibrate will be called after a change in resolution, when there are no network elements
   // present.
 
@@ -154,7 +154,8 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
   // (either from commonprops or default connection)
   if ( default_delay_needs_check_ )
   {
-    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( default_connection_.get_delay() );
+    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms(
+      default_connection_.get_delay() );
     default_delay_needs_check_ = false;
   }
 }

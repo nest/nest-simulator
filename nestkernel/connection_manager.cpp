@@ -195,10 +195,11 @@ ConnectionManager::get_prototype_status( synindex syn_id ) const
   DictionaryDatum dict( new Dictionary );
 
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    prototypes_[ t ][ syn_id ]->get_status( dict ); 
-  
-  ( *dict )[ "num_connections" ] = kernel().connection_builder_manager.get_num_connections(syn_id);
-  
+    prototypes_[ t ][ syn_id ]->get_status( dict );
+
+  ( *dict )[ "num_connections" ] =
+    kernel().connection_builder_manager.get_num_connections( syn_id );
+
   return dict;
 }
 

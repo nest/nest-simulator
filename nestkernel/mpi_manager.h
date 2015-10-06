@@ -64,7 +64,7 @@ public:
    * Get rank of MPI process
    */
   thread get_rank() const;
-  
+
   /**
    * Get number of recording processes.
    */
@@ -101,7 +101,6 @@ private:
   int rank_;          //!< rank of the MPI process
   index n_rec_procs_; //!< MPI processes dedicated for recording devices
   index n_sim_procs_; //!< MPI processes used for simulation
-
 };
 
 inline thread
@@ -115,7 +114,7 @@ MPIManager::set_num_processes( thread n_procs )
 {
   num_processes_ = n_procs;
 }
- 
+
 inline thread
 MPIManager::get_rank() const
 {
@@ -133,7 +132,6 @@ MPIManager::get_num_sim_processes() const
 {
   return n_sim_procs_;
 }
-
 }
 
 #endif /* MPI_MANAGER_H */

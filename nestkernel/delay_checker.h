@@ -28,102 +28,98 @@
 
 namespace nest
 {
-  class TimeConverter;
-  
-  class DelayChecker
-  {
-  public:
-    
-    DelayChecker();
-    DelayChecker(const DelayChecker& );
-    
-    const Time& get_min_delay() const;
+class TimeConverter;
 
-    const Time& get_max_delay() const;
+class DelayChecker
+{
+public:
+  DelayChecker();
+  DelayChecker( const DelayChecker& );
 
-    void update_delay_extrema( const double_t mindelay_cand, const double_t maxdelay_cand );
-    
-    /**
-     * This method freezes the min/ max delay update in the update_delay_extrema
-     * method. This is used, when the delay of default connections in the ConnectorModel
-     * is set: we do not know, whether new connections with this delay will ever be
-     * created.
-     */
-    void freeze_delay_update();
-    
-    /**
-     * This method enables the min/ max delay update in the update_delay_extrema
-     * method. This is used, when the delay of default connections in the ConnectorModel
-     * is set: we do not know, whether new connections with this delay will ever be
-     * created.
-     */
-    void enable_delay_update();
+  const Time& get_min_delay() const;
 
-    /**
-     * Raise exception if delay value in milliseconds is invalid.
-     *
-     * @note Not const, since it may update delay extrema as a side-effect.
-     */
-    void assert_valid_delay_ms( double_t );
-    
-    /**
-     * Raise exception if either of the two delays in steps is invalid.
-     *
-     * @note Setting continuous delays requires testing d and d+1. This function
-     *       implements this more efficiently than two calls to assert_valid_delay().
-     * @note This test accepts the delays in steps, as this makes more sense when
-     *       working with continuous delays.
-     * @note Not const, since it may update delay extrema as a side-effect.
-     */
-    void assert_two_valid_delays_steps( long_t, long_t );
+  const Time& get_max_delay() const;
 
-    bool get_user_set_delay_extrema() const;
-    
-    void calibrate( const TimeConverter& );
-    
-    void get_status( DictionaryDatum& ) const;
-    void set_status( const DictionaryDatum& );
-    
-  private:
-    Time min_delay_;                 //!< Minimal delay of all created synapses.
-    Time max_delay_;                 //!< Maximal delay of all created synapses.
-    bool user_set_delay_extrema_;    //!< Flag indicating if the user set the delay extrema.
-    bool freeze_delay_update_;
-  };
-  
-  inline const Time&
-  DelayChecker::get_min_delay() const
-  {
-    return min_delay_;
-  }
-  
-  inline const Time&
-  DelayChecker::get_max_delay() const
-  {
-    return max_delay_;
-  }
-  
-  inline bool
-  DelayChecker::get_user_set_delay_extrema() const
-  {
-    return user_set_delay_extrema_;
-  }
-  
-  inline void
-  DelayChecker::freeze_delay_update()
-  {
-    freeze_delay_update_ = true;
-  }
-  
-  inline void
-  DelayChecker::enable_delay_update()
-  {
-    freeze_delay_update_ = false;
-  }
+  void update_delay_extrema( const double_t mindelay_cand, const double_t maxdelay_cand );
+
+  /**
+   * This method freezes the min/ max delay update in the update_delay_extrema
+   * method. This is used, when the delay of default connections in the ConnectorModel
+   * is set: we do not know, whether new connections with this delay will ever be
+   * created.
+   */
+  void freeze_delay_update();
+
+  /**
+   * This method enables the min/ max delay update in the update_delay_extrema
+   * method. This is used, when the delay of default connections in the ConnectorModel
+   * is set: we do not know, whether new connections with this delay will ever be
+   * created.
+   */
+  void enable_delay_update();
+
+  /**
+   * Raise exception if delay value in milliseconds is invalid.
+   *
+   * @note Not const, since it may update delay extrema as a side-effect.
+   */
+  void assert_valid_delay_ms( double_t );
+
+  /**
+   * Raise exception if either of the two delays in steps is invalid.
+   *
+   * @note Setting continuous delays requires testing d and d+1. This function
+   *       implements this more efficiently than two calls to assert_valid_delay().
+   * @note This test accepts the delays in steps, as this makes more sense when
+   *       working with continuous delays.
+   * @note Not const, since it may update delay extrema as a side-effect.
+   */
+  void assert_two_valid_delays_steps( long_t, long_t );
+
+  bool get_user_set_delay_extrema() const;
+
+  void calibrate( const TimeConverter& );
+
+  void get_status( DictionaryDatum& ) const;
+  void set_status( const DictionaryDatum& );
+
+private:
+  Time min_delay_;              //!< Minimal delay of all created synapses.
+  Time max_delay_;              //!< Maximal delay of all created synapses.
+  bool user_set_delay_extrema_; //!< Flag indicating if the user set the delay extrema.
+  bool freeze_delay_update_;
+};
+
+inline const Time&
+DelayChecker::get_min_delay() const
+{
+  return min_delay_;
 }
 
+inline const Time&
+DelayChecker::get_max_delay() const
+{
+  return max_delay_;
+}
 
+inline bool
+DelayChecker::get_user_set_delay_extrema() const
+{
+  return user_set_delay_extrema_;
+}
 
+inline void
+DelayChecker::freeze_delay_update()
+{
+  freeze_delay_update_ = true;
+}
+
+inline void
+DelayChecker::enable_delay_update()
+{
+  freeze_delay_update_ = false;
+}
+}
 
 
 #endif /* DELAY_CHECKER_H */

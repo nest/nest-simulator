@@ -67,12 +67,12 @@ nest::ConnectionBuilderManager::init()
 {
   tVSConnector tmp( kernel().vp_manager.get_num_threads(), tSConnector() );
   connections_.swap( tmp );
-  
+
   tVDelayChecker tmp2( kernel().vp_manager.get_num_threads() );
   delay_checkers_.swap( tmp2 );
-  
+
   tVVCounter tmp3( kernel().vp_manager.get_num_threads(), tVCounter() );
-  vv_num_connections_.swap(tmp3);
+  vv_num_connections_.swap( tmp3 );
 
   // The following line is executed by all processes, no need to communicate
   // this change in delays.
@@ -88,12 +88,13 @@ nest::ConnectionBuilderManager::reset()
 void
 nest::ConnectionBuilderManager::set_status( const DictionaryDatum& d )
 {
-  for (size_t i = 0; i < delay_checkers_.size(); ++i) {
-    delay_checkers_[i].set_status(d);
+  for ( size_t i = 0; i < delay_checkers_.size(); ++i )
+  {
+    delay_checkers_[ i ].set_status( d );
   }
 }
 
-nest::DelayChecker& 
+nest::DelayChecker&
 nest::ConnectionBuilderManager::get_delay_checker()
 {
   return delay_checkers_[ kernel().vp_manager.get_thread_id() ];
@@ -198,7 +199,7 @@ nest::ConnectionBuilderManager::get_max_delay_time_() const
 
   tVDelayChecker::const_iterator it;
   for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
-    max_delay = std::max( max_delay,  it->get_max_delay() );
+    max_delay = std::max( max_delay, it->get_max_delay() );
 
   return max_delay;
 }
@@ -210,7 +211,7 @@ nest::ConnectionBuilderManager::get_user_set_delay_extrema() const
 
   tVDelayChecker::const_iterator it;
   for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
-      user_set_delay_extrema |= it->get_user_set_delay_extrema();
+    user_set_delay_extrema |= it->get_user_set_delay_extrema();
 
   return user_set_delay_extrema;
 }
@@ -220,7 +221,7 @@ nest::ConnectionBuilderManager::calibrate( const TimeConverter& tc )
 {
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
-    delay_checkers_[t].calibrate(tc);
+    delay_checkers_[ t ].calibrate( tc );
     for ( std::vector< ConnectorModel* >::iterator pt =
             Network::get_network().connection_manager_.prototypes_[ t ].begin();
           pt != Network::get_network().connection_manager_.prototypes_[ t ].end();
@@ -274,20 +275,20 @@ nest::ConnectionBuilderManager::update_delay_extrema_()
 {
   min_delay_ = get_min_delay_time_().get_steps();
   max_delay_ = get_max_delay_time_().get_steps();
-  
+
   if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
     std::vector< delay > min_delays( kernel().mpi_manager.get_num_processes() );
     min_delays[ kernel().mpi_manager.get_rank() ] = min_delay_;
     Communicator::communicate( min_delays );
     min_delay_ = *std::min_element( min_delays.begin(), min_delays.end() );
-    
+
     std::vector< delay > max_delays( kernel().mpi_manager.get_num_processes() );
     max_delays[ kernel().mpi_manager.get_rank() ] = max_delay_;
     Communicator::communicate( max_delays );
     max_delay_ = *std::max_element( max_delays.begin(), max_delays.end() );
   }
-  
+
   if ( min_delay_ == Time::pos_inf().get_steps() )
     min_delay_ = Time::get_resolution().get_steps();
 }
@@ -476,11 +477,11 @@ nest::ConnectionBuilderManager::connect_( Node& s,
       s, r, conn, syn, d, w );
   connections_[ tid ].set( s_gid, c );
   // TODO: set size of vv_num_connections in init
-  if (vv_num_connections_[tid].size() <= syn) 
+  if ( vv_num_connections_[ tid ].size() <= syn )
   {
-    vv_num_connections_[tid].resize(syn+1);
+    vv_num_connections_[ tid ].resize( syn + 1 );
   }
-  ++vv_num_connections_[tid][syn];
+  ++vv_num_connections_[ tid ][ syn ];
 }
 
 void
@@ -500,11 +501,11 @@ nest::ConnectionBuilderManager::connect_( Node& s,
       s, r, conn, syn, p, d, w );
   connections_[ tid ].set( s_gid, c );
   // TODO: set size of vv_num_connections in init
-  if (vv_num_connections_[tid].size() <= syn) 
+  if ( vv_num_connections_[ tid ].size() <= syn )
   {
-    vv_num_connections_[tid].resize(syn+1);
+    vv_num_connections_[ tid ].resize( syn + 1 );
   }
-  ++vv_num_connections_[tid][syn];
+  ++vv_num_connections_[ tid ][ syn ];
 }
 
 // -----------------------------------------------------------------------------
@@ -1398,21 +1399,22 @@ nest::ConnectionBuilderManager::get_num_connections() const
   size_t num_connections = 0;
   tVDelayChecker::const_iterator i;
   for ( index t = 0; t < vv_num_connections_.size(); ++t )
-    for ( index s = 0; s < vv_num_connections_[t].size(); ++s )
-      num_connections += vv_num_connections_[t][s];
+    for ( index s = 0; s < vv_num_connections_[ t ].size(); ++s )
+      num_connections += vv_num_connections_[ t ][ s ];
 
   return num_connections;
 }
 
 size_t
-nest::ConnectionBuilderManager::get_num_connections(synindex syn_id) const
+nest::ConnectionBuilderManager::get_num_connections( synindex syn_id ) const
 {
   size_t num_connections = 0;
   tVDelayChecker::const_iterator i;
   for ( index t = 0; t < vv_num_connections_.size(); ++t )
   {
-    if (vv_num_connections_[t].size() > syn_id) {
-      num_connections += vv_num_connections_[t][syn_id];
+    if ( vv_num_connections_[ t ].size() > syn_id )
+    {
+      num_connections += vv_num_connections_[ t ][ syn_id ];
     }
   }
 
@@ -1479,7 +1481,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
   TokenArray const* target,
   size_t syn_id ) const
 {
-  size_t num_connections = get_num_connections(syn_id);
+  size_t num_connections = get_num_connections( syn_id );
 
   connectome.reserve( num_connections );
 

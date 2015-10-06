@@ -30,7 +30,7 @@
 #ifdef HAVE_MPI
 #include <mpi.h>
 
-extern MPI_Comm comm; //for now---should be moved from communicator.cpp
+extern MPI_Comm comm; // for now---should be moved from communicator.cpp
 #endif
 
 nest::MPIManager::MPIManager()
@@ -112,4 +112,3 @@ nest::MPIManager::set_num_rec_processes( int nrp, bool called_by_reset )
     LOG( M_INFO, "Network::set_num_rec_processes", msg );
   }
 }
-

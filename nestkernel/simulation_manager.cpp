@@ -194,10 +194,10 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, "tics_per_ms", Time::get_tics_per_ms() );
   def< long >( d, "tics_per_step", Time::get_tics_per_step() );
   def< double >( d, "resolution", Time::get_resolution().get_ms() );
-  
+
   def< double >( d, "T_min", Time::min().get_ms() );
   def< double >( d, "T_max", Time::max().get_ms() );
-  
+
   def< double_t >( d, "time", get_time().get_ms() );
   def< long >( d, "to_do", to_do_ );
   def< bool >( d, "print_time", print_time_ );

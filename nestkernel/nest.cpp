@@ -41,8 +41,8 @@ void
 init_nest( int* argc, char** argv[] )
 {
   KernelManager::create_kernel_manager();
-  kernel().mpi_manager.init_mpi(argc, argv);
-  //kernel().init(); currently called from network.cpp
+  kernel().mpi_manager.init_mpi( argc, argv );
+  // kernel().init(); currently called from network.cpp
 }
 
 void

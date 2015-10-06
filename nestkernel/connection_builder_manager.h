@@ -52,7 +52,7 @@ typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons ha
 typedef std::vector< tSConnector > tVSConnector;           // for all threads
 
 typedef std::vector< DelayChecker > tVDelayChecker;
-  
+
 typedef std::vector< size_t > tVCounter;
 typedef std::vector< tVCounter > tVVCounter;
 
@@ -219,8 +219,7 @@ public:
   // aka conndatum SetStatus
   void set_synapse_status( index gid, synindex syn, port p, thread tid, const DictionaryDatum& d );
 
-  
-  
+
   /**
    * Return connections between pairs of neurons.
    * The params dictionary can have the following entries:
@@ -242,11 +241,11 @@ public:
    * Returns the number of connections in the network.
    */
   size_t get_num_connections() const;
-  
+
   /**
    * Returns the number of connections of this synapse type.
    */
-  size_t get_num_connections(synindex syn_id) const;
+  size_t get_num_connections( synindex syn_id ) const;
 
   /**
    * Triggered by volume transmitter in update.
@@ -290,7 +289,7 @@ public:
    * Returns the delay checker for the current thread.
    */
   DelayChecker& get_delay_checker();
-  
+
 private:
   /**
    * Update delay extrema to current values.
@@ -299,13 +298,13 @@ private:
    * called from const-method get_status() as well.
    */
   void update_delay_extrema_();
-  
+
   /**
    * This method queries and finds the minimum delay
    * of all local connections
    */
   const Time get_min_delay_time_() const;
-  
+
   /**
    * This method queries and finds the minimum delay
    * of all local connections
@@ -358,7 +357,7 @@ private:
    * - Third dim: A std::vector for each synapse prototype, holding the Connector objects
    */
   tVSConnector connections_;
-  
+
   tVDelayChecker delay_checkers_;
 
   tVVCounter vv_num_connections_;

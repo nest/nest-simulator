@@ -34,13 +34,13 @@ namespace nest
 
 ConnectorModel::ConnectorModel( const std::string name )
   : name_( name )
-  , default_delay_needs_check_(true)
+  , default_delay_needs_check_( true )
 {
 }
 
 ConnectorModel::ConnectorModel( const ConnectorModel& cm, const std::string name )
   : name_( name )
-  , default_delay_needs_check_(true)
+  , default_delay_needs_check_( true )
 {
 }
 

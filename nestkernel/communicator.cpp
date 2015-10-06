@@ -39,7 +39,7 @@
 #include "dictutils.h"
 #include "nodelist.h"
 
-//MDJ#include "kernel_manager.h"
+// MDJ#include "kernel_manager.h"
 
 
 int nest::Communicator::send_buffer_size_ = 1;
@@ -83,7 +83,7 @@ std::vector< int > nest::Communicator::comm_step_ = std::vector< int >();
 void
 nest::Communicator::init()
 {
-  
+
   recv_buffer_size_ = send_buffer_size_ * kernel().mpi_manager.get_num_processes();
 
   // create off-grid-spike type for MPI communication
@@ -490,8 +490,8 @@ nest::Communicator::synchronize()
 void
 nest::Communicator::test_link( int sender, int receiver )
 {
-  assert( sender < kernel().mpi_manager.get_num_processes() && 
-	  receiver < kernel().mpi_manager.get_num_processes() );
+  assert( sender < kernel().mpi_manager.get_num_processes()
+    && receiver < kernel().mpi_manager.get_num_processes() );
 
   if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
@@ -549,7 +549,8 @@ nest::Communicator::time_communicate( int num_bytes, int samples )
   if ( packet_length < 1 )
     packet_length = 1;
   std::vector< uint_t > test_send_buffer( packet_length );
-  std::vector< uint_t > test_recv_buffer( packet_length * kernel().mpi_manager.get_num_processes() );
+  std::vector< uint_t > test_recv_buffer(
+    packet_length * kernel().mpi_manager.get_num_processes() );
   // start time measurement here
   Stopwatch foo;
   foo.start();
@@ -576,7 +577,8 @@ nest::Communicator::time_communicatev( int num_bytes, int samples )
   if ( packet_length < 1 )
     packet_length = 1;
   std::vector< uint_t > test_send_buffer( packet_length );
-  std::vector< uint_t > test_recv_buffer( packet_length * kernel().mpi_manager.get_num_processes() );
+  std::vector< uint_t > test_recv_buffer(
+    packet_length * kernel().mpi_manager.get_num_processes() );
   std::vector< int > n_nodes( kernel().mpi_manager.get_num_processes(), packet_length );
   std::vector< int > displacements( kernel().mpi_manager.get_num_processes(), 0 );
 
@@ -604,7 +606,8 @@ nest::Communicator::time_communicate_offgrid( int num_bytes, int samples )
   if ( packet_length < 1 )
     packet_length = 1;
   std::vector< OffGridSpike > test_send_buffer( packet_length );
-  std::vector< OffGridSpike > test_recv_buffer( packet_length * kernel().mpi_manager.get_num_processes() );
+  std::vector< OffGridSpike > test_recv_buffer(
+    packet_length * kernel().mpi_manager.get_num_processes() );
   // start time measurement here
   Stopwatch foo;
   foo.start();
@@ -628,8 +631,8 @@ nest::Communicator::time_communicate_alltoall( int num_bytes, int samples )
   if ( kernel().mpi_manager.get_num_processes() == 1 )
     return 0.0;
   uint_t packet_length = num_bytes / sizeof( uint_t ); // this size should be sent to each process
-  uint_t total_packet_length =
-    packet_length * kernel().mpi_manager.get_num_processes(); // total size of send and receive buffers
+  uint_t total_packet_length = packet_length
+    * kernel().mpi_manager.get_num_processes(); // total size of send and receive buffers
   if ( total_packet_length < 1 )
     total_packet_length = 1;
   std::vector< uint_t > test_send_buffer( total_packet_length );
@@ -659,8 +662,8 @@ nest::Communicator::time_communicate_alltoallv( int num_bytes, int samples )
   if ( kernel().mpi_manager.get_num_processes() == 1 )
     return 0.0;
   uint_t packet_length = num_bytes / sizeof( uint_t ); // this size should be sent to each process
-  uint_t total_packet_length =
-    packet_length * kernel().mpi_manager.get_num_processes(); // total size of send and receive buffers
+  uint_t total_packet_length = packet_length
+    * kernel().mpi_manager.get_num_processes(); // total size of send and receive buffers
   if ( total_packet_length < 1 )
     total_packet_length = 1;
   std::vector< uint_t > test_send_buffer( total_packet_length );

@@ -211,11 +211,13 @@ nest::VPManager::vp_to_thread( nest::thread vp ) const
 nest::thread
 nest::VPManager::thread_to_vp( nest::thread t ) const
 {
-  if ( kernel().mpi_manager.get_rank() >= static_cast< int >( kernel().mpi_manager.get_num_sim_processes() ) )
+  if ( kernel().mpi_manager.get_rank()
+    >= static_cast< int >( kernel().mpi_manager.get_num_sim_processes() ) )
   {
     // Rank is a recording process
     return t * kernel().mpi_manager.get_num_rec_processes() + kernel().mpi_manager.get_rank()
-      - kernel().mpi_manager.get_num_sim_processes() + kernel().mpi_manager.get_num_sim_processes() * n_threads_;
+      - kernel().mpi_manager.get_num_sim_processes()
+      + kernel().mpi_manager.get_num_sim_processes() * n_threads_;
   }
   else
   {

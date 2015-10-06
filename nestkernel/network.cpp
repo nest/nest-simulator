@@ -404,8 +404,8 @@ index Network::add_node( index mod, long_t n ) // no_p
     // processes
     if ( kernel().mpi_manager.get_rank() >= kernel().mpi_manager.get_num_sim_processes() )
     {
-      local_nodes_.reserve( std::ceil( static_cast< double >( max_gid ) / 
-				      kernel().mpi_manager.get_num_sim_processes() ) );
+      local_nodes_.reserve( std::ceil(
+        static_cast< double >( max_gid ) / kernel().mpi_manager.get_num_sim_processes() ) );
       for ( thread t = 0; t < n_threads; ++t )
       {
         // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
@@ -454,8 +454,8 @@ index Network::add_node( index mod, long_t n ) // no_p
     {
       // TODO: This will work reasonably for round-robin. The extra 50 entries are
       //       for subnets and devices.
-      local_nodes_.reserve(
-        std::ceil( static_cast< double >( max_gid ) / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
+      local_nodes_.reserve( std::ceil( static_cast< double >( max_gid )
+                              / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
       for ( thread t = 0; t < n_threads; ++t )
       {
         // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
@@ -526,8 +526,8 @@ index Network::add_node( index mod, long_t n ) // no_p
     // The following loop creates n nodes. For each node, a wrapper is created
     // and filled with one instance per thread, in total n * n_thread nodes in
     // n wrappers.
-    local_nodes_.reserve(
-      std::ceil( static_cast< double >( max_gid ) / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
+    local_nodes_.reserve( std::ceil( static_cast< double >( max_gid )
+                            / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
     for ( index gid = min_gid; gid < max_gid; ++gid )
     {
       thread thread_id = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );

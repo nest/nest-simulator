@@ -44,7 +44,7 @@ public:
   virtual ~ConnectorModel()
   {
   }
-  
+
   /**
    * NAN is a special value in cmath, which describes double values that
    * are not a number. If delay or weight is omitted in an add_connection call,
@@ -156,8 +156,6 @@ private:
     rport receptor_type );
 
 }; // GenericConnectorModel
-
-
 
 
 } // namespace nest

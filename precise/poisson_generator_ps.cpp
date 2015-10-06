@@ -197,7 +197,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
   assert( 0 <= prt && static_cast< size_t >( prt ) < B_.next_spike_.size() );
 
   // obtain rng
-  librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
 
   // introduce nextspk as a shorthand
   Buffers_::SpikeTime& nextspk = B_.next_spike_[ prt ];

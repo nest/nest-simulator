@@ -256,7 +256,7 @@ nest::noise_generator::update( Time const& origin, const long_t from, const long
       {
         *it = P_.mean_
           + std::sqrt( P_.std_ * P_.std_ + S_.y_1_ * P_.std_mod_ * P_.std_mod_ )
-            * V_.normal_dev_( Network::get_network().get_rng( get_thread() ) );
+            * V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
       }
 
       // use now as reference, in case we woke up from inactive period

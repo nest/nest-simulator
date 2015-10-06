@@ -841,7 +841,7 @@ nest::ConnectionBuilderManager::random_divergent_connect( index source_id,
     return;
   }
 
-  librandom::RngPtr rng = Network::get_network().get_grng();
+  librandom::RngPtr rng = kernel().rng_manager.get_grng();
 
   TokenArray chosen_targets;
 
@@ -1205,7 +1205,7 @@ nest::ConnectionBuilderManager::random_convergent_connect( const TokenArray sour
     return;
   }
 
-  librandom::RngPtr rng = Network::get_network().get_rng( target->get_thread() );
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( target->get_thread() );
   TokenArray chosen_sources;
 
   std::set< long > ch_ids;
@@ -1309,7 +1309,7 @@ nest::ConnectionBuilderManager::random_convergent_connect( TokenArray source_ids
     int nrn_counter = 0;
     int tid = kernel().vp_manager.get_thread_id();
 
-    librandom::RngPtr rng = Network::get_network().get_rng( tid );
+    librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
     for ( size_t i = 0; i < target_ids.size(); i++ )
     {

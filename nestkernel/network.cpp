@@ -110,7 +110,6 @@ Network::Network( SLIInterpreter& i )
   , n_gsd_( 0 )
   , nodes_vec_()
   , nodes_vec_network_size_( 0 ) // zero to force update
-  , rng_()
 {
   // the subsequent function-calls need a
   // network instance, hence the instance
@@ -246,8 +245,6 @@ Network::init_scheduler_()
   // explicitly force construction of nodes_vec_ to ensure consistent state
   update_nodes_vec_();
 
-  create_rngs_( true ); // flag that this is a call from the ctr
-  create_grng_( true ); // flag that this is a call from the ctr
 
   initialized_ = true;
 }
@@ -775,128 +772,6 @@ Network::set_status( index gid, const DictionaryDatum& d )
   kernel().set_status( d );
 
 
-  // have those two for later asking, whether threads have changed:
-  long n_threads;
-  bool n_threads_updated = updateValue< long >( d, "local_num_threads", n_threads );
-
-
-  // set RNGs --- MUST come after n_threads_ is updated
-  if ( d->known( "rngs" ) )
-  {
-    // this array contains pre-seeded RNGs, so they can be used
-    // directly, no seeding required
-    ArrayDatum* ad = dynamic_cast< ArrayDatum* >( ( *d )[ "rngs" ].datum() );
-    if ( ad == 0 )
-      throw BadProperty();
-
-    // n_threads_ is the new value after a change of the number of
-    // threads
-    if ( ad->size() != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
-    {
-      LOG( M_ERROR,
-        "Network::set_status",
-        "Number of RNGs must equal number of virtual processes (threads*processes). RNGs "
-        "unchanged." );
-      throw DimensionMismatch(
-        ( size_t )( kernel().vp_manager.get_num_virtual_processes() ), ad->size() );
-    }
-
-    // delete old generators, insert new generators this code is
-    // robust under change of thread number in this call to
-    // set_status, as long as it comes AFTER n_threads_ has been
-    // upated
-    rng_.clear();
-    for ( index i = 0; i < ad->size(); ++i )
-      if ( kernel().vp_manager.is_local_vp( i ) )
-        rng_.push_back(
-          getValue< librandom::RngDatum >( ( *ad )[ kernel().vp_manager.suggest_vp( i ) ] ) );
-  }
-  else if ( n_threads_updated && size() == 0 )
-  {
-    LOG( M_WARNING, "Network::set_status", "Equipping threads with new default RNGs" );
-    create_rngs_();
-  }
-
-  if ( d->known( "rng_seeds" ) )
-  {
-    ArrayDatum* ad = dynamic_cast< ArrayDatum* >( ( *d )[ "rng_seeds" ].datum() );
-    if ( ad == 0 )
-      throw BadProperty();
-
-    if ( ad->size() != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
-    {
-      LOG( M_ERROR,
-        "Network::set_status",
-        "Number of seeds must equal number of virtual processes (threads*processes). RNGs "
-        "unchanged." );
-      throw DimensionMismatch(
-        ( size_t )( kernel().vp_manager.get_num_virtual_processes() ), ad->size() );
-    }
-
-    // check if seeds are unique
-    std::set< ulong_t > seedset;
-    for ( index i = 0; i < ad->size(); ++i )
-    {
-      long s = ( *ad )[ i ]; // SLI has no ulong tokens
-      if ( !seedset.insert( s ).second )
-      {
-        LOG( M_WARNING, "Network::set_status", "Seeds are not unique across threads!" );
-        break;
-      }
-    }
-
-    // now apply seeds, resets generators automatically
-    for ( index i = 0; i < ad->size(); ++i )
-    {
-      long s = ( *ad )[ i ];
-
-      if ( kernel().vp_manager.is_local_vp( i ) )
-        rng_[ kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( i ) ) ]->seed( s );
-
-      rng_seeds_[ i ] = s;
-    }
-  } // if rng_seeds
-
-  // set GRNG
-  if ( d->known( "grng" ) )
-  {
-    // pre-seeded grng that can be used directly, no seeding required
-    updateValue< librandom::RngDatum >( d, "grng", grng_ );
-  }
-  else if ( n_threads_updated && size() == 0 )
-  {
-    LOG( M_WARNING, "Network::set_status", "Equipping threads with new default GRNG" );
-    create_grng_();
-  }
-
-  if ( d->known( "grng_seed" ) )
-  {
-    const long gseed = getValue< long >( d, "grng_seed" );
-
-    // check if grng seed is unique with respect to rng seeds
-    // if grng_seed and rng_seeds given in one SetStatus call
-    std::set< ulong_t > seedset;
-    seedset.insert( gseed );
-    if ( d->known( "rng_seeds" ) )
-    {
-      ArrayDatum* ad_rngseeds = dynamic_cast< ArrayDatum* >( ( *d )[ "rng_seeds" ].datum() );
-      if ( ad_rngseeds == 0 )
-        throw BadProperty();
-      for ( index i = 0; i < ad_rngseeds->size(); ++i )
-      {
-        const long vpseed = ( *ad_rngseeds )[ i ]; // SLI has no ulong tokens
-        if ( !seedset.insert( vpseed ).second )
-        {
-          LOG( M_WARNING, "Network::set_status", "Seeds are not unique across threads!" );
-          break;
-        }
-      }
-    }
-    // now apply seed, resets generator automatically
-    grng_seed_ = gseed;
-    grng_->seed( gseed );
-
-  } // if grng_seed
   // former scheduler_.set_status( d ); end
 
   updateValue< bool >( d, "dict_miss_is_error", dict_miss_is_error_ );
@@ -955,8 +830,7 @@ Network::get_status( index idx )
     // former scheduler_.get_status( d ) start
     kernel().get_status( d );
 
-    ( *d )[ "rng_seeds" ] = Token( rng_seeds_ );
-    def< long >( d, "grng_seed", grng_seed_ );
+
     def< long >( d, "send_buffer_size", Communicator::get_send_buffer_size() );
     def< long >( d, "receive_buffer_size", Communicator::get_recv_buffer_size() );
     // former scheduler_.get_status( d ) end
@@ -1334,106 +1208,6 @@ nest::Network::update_nodes_vec_()
 #ifdef _OPENMP
   } // end of omp critical region
 #endif
-}
-
-
-void
-nest::Network::create_rngs_( const bool ctor_call )
-{
-  // LOG(M_INFO, ) calls must not be called
-  // if create_rngs_ is called from Network::Network(), since net_
-  // is not fully constructed then
-
-  // if old generators exist, remove them; since rng_ contains
-  // lockPTRs, we don't have to worry about deletion
-  if ( !rng_.empty() )
-  {
-    if ( !ctor_call )
-      LOG( M_INFO, "Network::create_rngs_", "Deleting existing random number generators" );
-
-    rng_.clear();
-  }
-
-  // create new rngs
-  if ( !ctor_call )
-    LOG( M_INFO, "Network::create_rngs_", "Creating default RNGs" );
-
-  rng_seeds_.resize( kernel().vp_manager.get_num_virtual_processes() );
-
-  for ( index i = 0; i < static_cast< index >( kernel().vp_manager.get_num_virtual_processes() );
-        ++i )
-  {
-    unsigned long s = i + 1;
-    if ( kernel().vp_manager.is_local_vp( i ) )
-    {
-/*
- We have to ensure that each thread is provided with a different
- stream of random numbers.  The seeding method for Knuth's LFG
- generator guarantees that different seeds yield non-overlapping
- random number sequences.
-
- We therefore have to seed with known numbers: using random
- seeds here would run the risk of using the same seed twice.
- For simplicity, we use 1 .. n_vps.
- */
-#ifdef HAVE_GSL
-      librandom::RngPtr rng( new librandom::GslRandomGen( gsl_rng_knuthran2002, s ) );
-#else
-      librandom::RngPtr rng = librandom::RandomGen::create_knuthlfg_rng( s );
-#endif
-
-      if ( !rng )
-      {
-        if ( !ctor_call )
-          LOG( M_ERROR, "Network::create_rngs_", "Error initializing knuthlfg" );
-        else
-          std::cerr << "\nNetwork::create_rngs_\n"
-                    << "Error initializing knuthlfg" << std::endl;
-
-        throw KernelException();
-      }
-
-      rng_.push_back( rng );
-    }
-
-    rng_seeds_[ i ] = s;
-  }
-}
-
-void
-nest::Network::create_grng_( const bool ctor_call )
-{
-
-  // create new grng
-  if ( !ctor_call )
-    LOG( M_INFO, "Network::create_grng_", "Creating new default global RNG" );
-
-// create default RNG with default seed
-#ifdef HAVE_GSL
-  grng_ = librandom::RngPtr(
-    new librandom::GslRandomGen( gsl_rng_knuthran2002, librandom::RandomGen::DefaultSeed ) );
-#else
-  grng_ = librandom::RandomGen::create_knuthlfg_rng( librandom::RandomGen::DefaultSeed );
-#endif
-
-  if ( !grng_ )
-  {
-    if ( !ctor_call )
-      LOG( M_ERROR, "Network::create_grng_", "Error initializing knuthlfg" );
-    else
-      std::cerr << "\nNetwork::create_grng_\n"
-                << "Error initializing knuthlfg" << std::endl;
-
-    throw KernelException();
-  }
-
-  /*
-   The seed for the global rng should be different from the seeds
-   of the local rngs_ for each thread seeded with 1,..., n_vps.
-   */
-  long s = 0;
-  grng_seed_ = s;
-  grng_->seed( s );
 }
 
 // inline

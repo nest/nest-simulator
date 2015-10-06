@@ -261,7 +261,7 @@ nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
 
   // age_distribution object propagates one time step and returns number of spikes
   ulong_t n_spikes = B_.age_distributions_[ prt ].update(
-    V_.hazard_step_t_, Network::get_network().get_rng( get_thread() ) );
+    V_.hazard_step_t_, kernel().rng_manager.get_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

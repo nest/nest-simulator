@@ -43,7 +43,7 @@
 #include "errno.h"
 
 #include "sparse_node_array.h"
-#include "randomgen.h"
+
 #include "communicator.h"
 
 #ifdef M_ERROR
@@ -293,20 +293,6 @@ public:
 
   void print( index, int );
 
-
-  /**
-   * Get random number client of a thread.
-   * Defaults to thread 0 to allow use in non-threaded
-   * context.  One may consider to introduce an additional
-   * RNG just for the non-threaded context.
-   */
-  librandom::RngPtr get_rng( thread thrd = 0 ) const;
-
-  /**
-   * Get global random number client.
-   * This grng must be used synchronized from all threads.
-   */
-  librandom::RngPtr get_grng() const;
 
   /**
    * Return true, if the given Node is on the local machine
@@ -574,10 +560,6 @@ private:
   void finalize_nodes();
 
 
-  void create_rngs_( const bool ctor_call = false );
-  void create_grng_( const bool ctor_call = false );
-
-
   /**
    * Create up-to-date vector of local nodes, nodes_vec_.
    *
@@ -605,25 +587,6 @@ private:
 
   vector< vector< Node* > > nodes_vec_; //!< Nodelists for unfrozen nodes
   index nodes_vec_network_size_;        //!< Network size when nodes_vec_ was last updated
-
-
-  std::vector< long_t > rng_seeds_; //!< The seeds of the local RNGs. These do not neccessarily
-                                    //!< describe the state of the RNGs.
-
-  long_t
-    grng_seed_; //!< The seed of the global RNG, not neccessarily describing the state of the GRNG.
-
-  /**
-   * Vector of random number generators for threads.
-   * There must be PRECISELY one rng per thread.
-   */
-  vector< librandom::RngPtr > rng_;
-
-  /**
-   * Global random number generator.
-   * This rng must be synchronized on all threads
-   */
-  librandom::RngPtr grng_;
 };
 
 inline Network&
@@ -704,19 +667,6 @@ inline bool
 Network::is_local_gid( index gid ) const
 {
   return local_nodes_.get_node_by_gid( gid ) != 0;
-}
-
-inline librandom::RngPtr
-Network::get_rng( thread t ) const
-{
-  assert( t < static_cast< thread >( rng_.size() ) );
-  return rng_[ t ];
-}
-
-inline librandom::RngPtr
-Network::get_grng() const
-{
-  return grng_;
 }
 
 inline Model*

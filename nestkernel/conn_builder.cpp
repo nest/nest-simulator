@@ -389,7 +389,7 @@ nest::OneToOneBuilder::connect_()
     try
     {
       // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = Network::get_network().get_rng( tid );
+      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
       for ( GIDCollection::const_iterator tgid = targets_.begin(), sgid = sources_.begin();
             tgid != targets_.end();
@@ -442,7 +442,7 @@ nest::AllToAllBuilder::connect_()
     try
     {
       // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = Network::get_network().get_rng( tid );
+      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
       for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
       {
@@ -518,7 +518,7 @@ nest::FixedInDegreeBuilder::connect_()
     try
     {
       // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = Network::get_network().get_rng( tid );
+      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
       for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
       {
@@ -585,7 +585,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( const GIDCollection& sources
 void
 nest::FixedOutDegreeBuilder::connect_()
 {
-  librandom::RngPtr grng = Network::get_network().get_grng();
+  librandom::RngPtr grng = kernel().rng_manager.get_grng();
 
   for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end(); ++sgid )
   {
@@ -619,7 +619,7 @@ nest::FixedOutDegreeBuilder::connect_()
       try
       {
         // allocate pointer to thread specific random generator
-        librandom::RngPtr rng = Network::get_network().get_rng( tid );
+        librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
         for ( std::vector< index >::const_iterator tgid = tgt_ids_.begin(); tgid != tgt_ids_.end();
               ++tgid )
@@ -709,7 +709,7 @@ nest::FixedTotalNumberBuilder::connect_()
 
   // calculate exact multinomial distribution
   // get global rng that is tested for synchronization for all threads
-  librandom::RngPtr grng = Network::get_network().get_grng();
+  librandom::RngPtr grng = kernel().rng_manager.get_grng();
 
   // HEP: instead of counting upwards, we might count remaining_targets and remaining_partitions
   // down. why?
@@ -753,7 +753,7 @@ nest::FixedTotalNumberBuilder::connect_()
 
       if ( kernel().vp_manager.is_local_vp( vp_id ) )
       {
-        librandom::RngPtr rng = Network::get_network().get_rng( tid );
+        librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
         while ( num_conns_on_vp[ vp_id ] > 0 )
         {
@@ -813,7 +813,7 @@ nest::BernoulliBuilder::connect_()
     try
     {
       // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = Network::get_network().get_rng( tid );
+      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
       for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
       {

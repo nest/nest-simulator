@@ -149,7 +149,7 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
   // store the number of mother spikes again during the next call of event_hook().
   // reichert
 
-  librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
   ulong_t n_mother_spikes = e.get_multiplicity();
   ulong_t n_spikes = 0;
 

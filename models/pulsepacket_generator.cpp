@@ -179,7 +179,7 @@ nest::pulsepacket_generator::update( Time const& T, const long_t from, const lon
   if ( V_.start_center_idx_ < V_.stop_center_idx_ )
   {
     // obtain rng
-    librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
+    librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
 
     bool needtosort = false;
 

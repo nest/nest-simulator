@@ -29,6 +29,7 @@
 #include "network.h"
 #include "connector_model.h"
 #include "connector_base.h"
+#include "compose.hpp"
 
 #include "kernel_manager.h"
 #include "delay_checker.h"
@@ -154,8 +155,17 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
   // (either from commonprops or default connection)
   if ( default_delay_needs_check_ )
   {
-    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms(
-      default_connection_.get_delay() );
+    try {
+      kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms(
+                                                                                    default_connection_.get_delay() );
+    } catch (BadDelay& e) {
+      throw BadDelay(default_connection_.get_delay(), 
+                     String::compose("Default delay of '%s' must be in range of min_delay %f and max_delay %f.", 
+                                     get_name(), 
+                                     kernel().connection_builder_manager.get_min_delay(), 
+                                     kernel().connection_builder_manager.get_max_delay())
+                    );
+    }
     default_delay_needs_check_ = false;
   }
 }

@@ -352,7 +352,7 @@ nest::SimulationManager::prepare_simulation_()
   // have been consumed on the SLI level.
   if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
-    if ( !Communicator::grng_synchrony( Network::get_network().grng_->ulrand( 100000 ) ) )
+    if ( !Communicator::grng_synchrony( kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
       LOG( M_ERROR,
         "Network::simulate",
@@ -500,7 +500,7 @@ nest::SimulationManager::finalize_simulation_()
   // Check for synchronicity of global rngs over processes
   // TODO: This seems double up, there is such a test at end of simulate()
   if ( kernel().mpi_manager.get_num_processes() > 1 )
-    if ( !Communicator::grng_synchrony( Network::get_network().grng_->ulrand( 100000 ) ) )
+    if ( !Communicator::grng_synchrony( kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
       LOG( M_ERROR,
         "Network::simulate",

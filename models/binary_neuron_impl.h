@@ -164,7 +164,7 @@ void
 binary_neuron< TGainfunction >::calibrate()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
-  V_.rng_ = Network::get_network().get_rng( get_thread() );
+  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 
   // draw next time of update for the neuron from exponential distribution
   // only if not yet initialized

@@ -192,7 +192,7 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e,
   // Compute number of sites that recovered during the interval.
   for ( int depleted = n_ - a_; depleted > 0; --depleted )
   {
-    if ( Network::get_network().get_rng( vp )->drand() < ( 1.0 - p_decay ) )
+    if ( kernel().rng_manager.get_rng( vp )->drand() < ( 1.0 - p_decay ) )
       ++a_;
   }
 
@@ -200,7 +200,7 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e,
   int n_release = 0;
   for ( int i = a_; i > 0; --i )
   {
-    if ( Network::get_network().get_rng( vp )->drand() < u_ )
+    if ( kernel().rng_manager.get_rng( vp )->drand() < u_ )
       ++n_release;
   }
 

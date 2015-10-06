@@ -101,13 +101,13 @@ get_vp_rng( index target )
   if ( !target_node->has_proxies() )
     throw NodeWithProxiesExpected( target );
 
-  return Network::get_network().get_rng( target_node->get_thread() );
+  return kernel().rng_manager.get_rng( target_node->get_thread() );
 }
 
 librandom::RngPtr
 get_global_rng()
 {
-  return Network::get_network().get_grng();
+  return kernel().rng_manager.get_grng();
 }
 
 void

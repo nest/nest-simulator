@@ -31,6 +31,7 @@
 #include "modelrange_manager.h"
 #include "event_delivery_manager.h"
 #include "mpi_manager.h"
+#include "rng_manager.h"
 
 #include "dictdatum.h"
 
@@ -72,6 +73,7 @@ public:
   EventDeliveryManager event_delivery_manager;
   SimulationManager simulation_manager;
   ModelRangeManager modelrange_manager;
+  RNGManager rng_manager;
 
 private:
   bool initialized_; //!< true if all sub-managers initialized

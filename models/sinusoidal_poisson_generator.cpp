@@ -224,7 +224,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
   const long_t start = origin.get_steps();
 
   // random number generator
-  librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
 
   // We iterate the dynamics even when the device is turned off,
   // but do not issue spikes while it is off. In this way, the
@@ -273,7 +273,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
 void
 nest::sinusoidal_poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
   V_.poisson_dev_.set_lambda( S_.rate_ * V_.h_ );
   long_t n_spikes = V_.poisson_dev_.ldev( rng );
 

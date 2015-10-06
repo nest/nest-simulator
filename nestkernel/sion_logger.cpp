@@ -543,7 +543,7 @@ nest::SIONLogger::SIONBuffer::operator<<( const T data )
  * ---------------------------------------------------------------- */
 
 nest::SIONLogger::Parameters_::Parameters_()
-  : file_ext_( "dat" )
+  : file_ext_( "sion" )
   , close_after_simulate_( true )
   , sion_collective_( false )
   , sion_chunksize_( 2400 )

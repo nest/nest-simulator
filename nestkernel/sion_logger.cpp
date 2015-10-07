@@ -84,10 +84,14 @@ nest::SIONLogger::initialize()
   int rank;
   MPI_Comm_rank( MPI_COMM_WORLD, &rank );
 
-  MPI_Comm local_comm;
+  MPI_Comm local_comm = MPI_COMM_NULL;
 #ifdef BG_MULTIFILE
   MPIX_Pset_same_comm_create( &local_comm );
 #endif // BG_MULTIFILE
+
+  // we need to delay the throwing of exceptions to the end of the parallel section
+  std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
+    Node::network()->get_num_threads() );
 
 #pragma omp parallel
   {
@@ -95,78 +99,91 @@ nest::SIONLogger::initialize()
     const thread t = network.get_thread_id();
     const thread task = network.thread_to_vp( t );
 
+	try
+    {
 #pragma omp critical
-    {
-      if ( files_.find( task ) == files_.end() )
       {
-        files_.insert( std::make_pair( task, FileEntry() ) );
+        if ( files_.find( task ) == files_.end() )
+        {
+          files_.insert( std::make_pair( task, FileEntry() ) );
+        }
       }
-    }
 
-    FileEntry& file = files_[ task ];
-    FileInfo& info = file.info;
+      FileEntry& file = files_[ task ];
+      FileInfo& info = file.info;
 
-    std::string filename = build_filename_();
-    char* filename_c = strdup( filename.c_str() );
+      std::string filename = build_filename_();
+      char* filename_c = strdup( filename.c_str() );
 
-    std::ifstream test( filename.c_str() );
-    if ( test.good() & !Node::network()->overwrite_files() )
-    {
+      std::ifstream test( filename.c_str() );
+      if ( test.good() & !Node::network()->overwrite_files() )
+      {
 #ifndef NESTIO
-      std::string msg = String::compose(
-        "The device file '%1' exists already and will not be overwritten. "
-        "Please change data_path, or data_prefix, or set /overwrite_files "
-        "to true in the root node.",
-        filename );
-      Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+        std::string msg = String::compose(
+          "The device file '%1' exists already and will not be overwritten. "
+          "Please change data_path, or data_prefix, or set /overwrite_files "
+          "to true in the root node.",
+          filename );
+        Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+		throw IOError();
 #endif // NESTIO
-      throw IOError();
-    }
-    else
-      test.close();
+      }
+      else
+        test.close();
 
 // SIONlib parameters
 #ifdef BG_MULTIFILE
-    int n_files = -1;
+      int n_files = -1;
 #else
-    int n_files = 1;
+      int n_files = 1;
 #endif // BG_MULTIFILE
-    sion_int32 fs_block_size = -1;
+      sion_int32 fs_block_size = -1;
 
-    sion_int64 sion_chunksize = P_.sion_chunksize_;
+      sion_int64 sion_chunksize = P_.sion_chunksize_;
 
-    file.sid = sion_paropen_ompi( filename_c,
-      P_.sion_collective_ ? "bw,cmerge" : "bw",
-      &n_files,
-      MPI_COMM_WORLD,
-      &local_comm, // FIXME: does it do anything when not on JUQUEEN?
-      &sion_chunksize,
-      &fs_block_size,
-      &rank,
-      NULL,
-      NULL ); // FIXME: nullptr allowed here? Readback filename?
+      file.sid = sion_paropen_ompi( filename_c,
+        P_.sion_collective_ ? "bw,cmerge" : "bw",
+        &n_files,
+        MPI_COMM_WORLD,
+        &local_comm,
+        &sion_chunksize,
+        &fs_block_size,
+        &rank,
+        NULL,
+        NULL );
 
-    int mc;
-    sion_int64* cs;
-    int body_blk;
-    sion_get_current_location( file.sid, &body_blk, &( info.body_pos ), &mc, &cs );
+      int mc;
+      sion_int64* cs;
+      int body_blk;
+      sion_get_current_location( file.sid, &body_blk, &( info.body_pos ), &mc, &cs );
 
-    // upcast of body_blk necessary due to inconsistency in SIONlib interface
-    info.body_blk = static_cast< sion_int64 >( body_blk );
+      // upcast of body_blk necessary due to inconsistency in SIONlib interface
+      info.body_blk = static_cast< sion_int64 >( body_blk );
 
-    info.t_start = Node::network()->get_time().get_ms();
+      info.t_start = Node::network()->get_time().get_ms();
 
-    file.buffer.reserve( P_.buffer_size_ );
-    file.buffer.clear();
+      file.buffer.reserve( P_.buffer_size_ );
+      file.buffer.clear();
 
-    for ( device_map::mapped_type::iterator it = devices_[ task ].begin();
-          it != devices_[ task ].end();
-          ++it )
+      for ( device_map::mapped_type::iterator it = devices_[ task ].begin();
+            it != devices_[ task ].end();
+            ++it )
+      {
+        RecordingDevice& device = it->second.device;
+        device.set_filename( filename );
+      }
+    }
+    catch ( std::exception& e )
     {
-      RecordingDevice& device = it->second.device;
-      device.set_filename( filename );
+      exceptions_raised.at( t ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
     }
   } // parallel
+
+  // check if any exceptions have been raised
+  for ( thread thr = 0; thr < Node::network()->get_num_threads(); ++thr )
+    if ( exceptions_raised.at( thr ).valid() )
+      throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 }
 
 void

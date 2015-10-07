@@ -52,197 +52,232 @@ nest::ASCIILogger::enroll( RecordingDevice& device, const std::vector< Name >& v
 
   if ( files_[ task ].find( gid ) == files_[ task ].end() )
   {
-    files_[ task ].insert(
-      std::make_pair( gid, std::make_pair( &device, new std::ofstream() ) ) );
+    files_[ task ].insert( std::make_pair( gid, std::make_pair( &device, new std::ofstream() ) ) );
   }
 }
 
 void
 nest::ASCIILogger::initialize()
 {
+  // we need to delay the throwing of exceptions to the end of the parallel section
+  std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
+    Node::network()->get_num_threads() );
+
 #pragma omp parallel
   {
     Network& network = *( Node::network() );
     thread t = network.get_thread_id();
     int vp = network.thread_to_vp( t );
 
-    // extract the inner map (containing the registered devices) for the specific VP
+    try
+    {
+// extract the inner map (containing the registered devices) for the specific VP
 #pragma omp critical
-    {
-      if ( files_.find( vp ) == files_.end() )
       {
-        files_.insert( std::make_pair( vp, file_map::mapped_type() ) );
-      }
-    }
-
-    typedef file_map::mapped_type inner_map;
-    inner_map inner = files_.find( vp )->second;
-
-    // iterate over registed devices and their corresponding fstreams
-    for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )
-    {
-      int gid = jj->first;
-      std::ofstream& file = *( jj->second.second );
-      RecordingDevice& device = *( jj->second.first );
-
-      // initialize file according to parameters
-      std::string filename;
-
-      // do we need to (re-)open the file
-      bool newfile = false;
-
-      if ( !file.is_open() )
-      {
-        newfile = true; // no file from before
-        filename = build_filename_( device );
-        device.set_filename( filename );
-      }
-
-      else
-      {
-        std::string newname = build_filename_( device );
-        if ( newname != device.get_filename() )
+        if ( files_.find( vp ) == files_.end() )
         {
-#ifndef NESTIO
-          std::string msg = String::compose(
-            "Closing file '%1', opening file '%2'", device.get_filename(), newname );
-          Node::network()->message( SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg );
-#endif // NESTIO
-
-          file.close(); // close old file
-          device.set_filename( newname );
-          newfile = true;
+          files_.insert( std::make_pair( vp, file_map::mapped_type() ) );
         }
       }
 
-      if ( newfile )
-      {
-        assert( !file.is_open() );
+      typedef file_map::mapped_type inner_map;
+      inner_map inner = files_.find( vp )->second;
 
-        if ( Node::network()->overwrite_files() )
+      // iterate over registed devices and their corresponding fstreams
+      for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )
+      {
+        int gid = jj->first;
+        std::ofstream& file = *( jj->second.second );
+        RecordingDevice& device = *( jj->second.first );
+
+        // initialize file according to parameters
+        std::string filename;
+
+        // do we need to (re-)open the file
+        bool newfile = false;
+
+        if ( !file.is_open() )
         {
-          file.open( filename.c_str() );
+          newfile = true; // no file from before
+          filename = build_filename_( device );
+          device.set_filename( filename );
         }
+
         else
         {
-          // try opening for reading
-          std::ifstream test( filename.c_str() );
-          if ( test.good() )
+          std::string newname = build_filename_( device );
+          if ( newname != device.get_filename() )
           {
 #ifndef NESTIO
             std::string msg = String::compose(
-              "The device file '%1' exists already and will not be overwritten. "
-              "Please change data_path, data_prefix or label, or set /overwrite_files "
-              "to true in the root node.",
-              filename );
-            Node::network()->message(
-              SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+              "Closing file '%1', opening file '%2'", device.get_filename(), newname );
+            Node::network()->message( SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg );
 #endif // NESTIO
-            throw IOError();
+
+            file.close(); // close old file
+            device.set_filename( newname );
+            newfile = true;
+          }
+        }
+
+        if ( newfile )
+        {
+          assert( !file.is_open() );
+
+          if ( Node::network()->overwrite_files() )
+          {
+            file.open( filename.c_str() );
           }
           else
-            test.close();
+          {
+            // try opening for reading
+            std::ifstream test( filename.c_str() );
+            if ( test.good() )
+            {
+#ifndef NESTIO
+              std::string msg = String::compose(
+                "The device file '%1' exists already and will not be overwritten. "
+                "Please change data_path, data_prefix or label, or set /overwrite_files "
+                "to true in the root node.",
+                filename );
+              Node::network()->message(
+                SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+#endif // NESTIO
+              throw IOError();
+            }
+            else
+              test.close();
 
-          // file does not exist, so we can open
-          file.open( filename.c_str() );
+            // file does not exist, so we can open
+            file.open( filename.c_str() );
+          }
+
+          if ( P_.fbuffer_size_ != P_.fbuffer_size_old_ )
+          {
+            if ( P_.fbuffer_size_ == 0 )
+              file.rdbuf()->pubsetbuf( 0, 0 );
+            else
+            {
+              std::vector< char >* buffer = new std::vector< char >( P_.fbuffer_size_ );
+              file.rdbuf()->pubsetbuf(
+                reinterpret_cast< char* >( &buffer[ 0 ] ), P_.fbuffer_size_ );
+            }
+
+            P_.fbuffer_size_old_ = P_.fbuffer_size_;
+          }
         }
+
+        if ( !file.good() )
+        {
+#ifndef NESTIO
+          std::string msg = String::compose(
+            "I/O error while opening file '%1'. "
+            "This may be caused by too many open files in networks "
+            "with many recording devices and threads.",
+            filename );
+          Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+#endif // NESTIO
+
+          if ( file.is_open() )
+            file.close();
+          filename.clear();
+          throw IOError();
+        }
+
+        /* Set formatting */
+        file << std::fixed;
+        file << std::setprecision( 3 );
 
         if ( P_.fbuffer_size_ != P_.fbuffer_size_old_ )
         {
-          if ( P_.fbuffer_size_ == 0 )
-            file.rdbuf()->pubsetbuf( 0, 0 );
-          else
-          {
-            std::vector< char >* buffer = new std::vector< char >( P_.fbuffer_size_ );
-            file.rdbuf()->pubsetbuf( reinterpret_cast< char* >( &buffer[ 0 ] ), P_.fbuffer_size_ );
-          }
-
-          P_.fbuffer_size_old_ = P_.fbuffer_size_;
+#ifndef NESTIO
+          std::string msg = String::compose(
+            "Cannot set file buffer size, as the file is already "
+            "openeded with a buffer size of %1. Please close the "
+            "file first.",
+            P_.fbuffer_size_old_ );
+          Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+#endif // NESTIO
+          throw IOError();
         }
       }
-
-      if ( !file.good() )
-      {
-#ifndef NESTIO
-        std::string msg = String::compose(
-          "I/O error while opening file '%1'. "
-          "This may be caused by too many open files in networks "
-          "with many recording devices and threads.",
-          filename );
-        Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
-#endif // NESTIO
-
-        if ( file.is_open() )
-          file.close();
-        filename.clear();
-        throw IOError();
-      }
-
-      /* Set formatting */
-      file << std::fixed;
-      file << std::setprecision( 3 );
-
-      if ( P_.fbuffer_size_ != P_.fbuffer_size_old_ )
-      {
-#ifndef NESTIO
-        std::string msg = String::compose(
-          "Cannot set file buffer size, as the file is already "
-          "openeded with a buffer size of %1. Please close the "
-          "file first.",
-          P_.fbuffer_size_old_ );
-        Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
-#endif // NESTIO
-        throw IOError();
-      }
     }
-  }
+    catch ( std::exception& e )
+    {
+      exceptions_raised.at( t ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
+    }
+  } // parallel
+
+  // check if any exceptions have been raised
+  for ( thread thr = 0; thr < Node::network()->get_num_threads(); ++thr )
+    if ( exceptions_raised.at( thr ).valid() )
+      throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 }
 
 void
 nest::ASCIILogger::finalize()
 {
+  // we need to delay the throwing of exceptions to the end of the parallel section
+  std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
+    Node::network()->get_num_threads() );
+
 #pragma omp parallel
   {
     Network& network = *( Node::network() );
     thread t = network.get_thread_id();
     int vp = network.thread_to_vp( t );
 
-    // extract the inner map (containing the registered devices) for the specific VP
-    typedef file_map::mapped_type inner_map;
-    inner_map inner = files_[ vp ];
-    // iterate over registed devices and their corresponding fstreams
-    for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )
+    try
     {
-      int gid = jj->first;
-      std::ofstream& file = *( jj->second.second );
-      RecordingDevice& device = *( jj->second.first );
-
-      if ( file.is_open() )
+      // extract the inner map (containing the registered devices) for the specific VP
+      typedef file_map::mapped_type inner_map;
+      inner_map inner = files_[ vp ];
+      // iterate over registed devices and their corresponding fstreams
+      for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )
       {
-        if ( P_.close_after_simulate_ )
-        {
-          file.close();
-        }
-        else
-        {
-          if ( P_.flush_after_simulate_ )
-            file.flush();
+        int gid = jj->first;
+        std::ofstream& file = *( jj->second.second );
+        RecordingDevice& device = *( jj->second.first );
 
-          // FIXME: can this ever happen / does the message make sense?
-          if ( !file.good() )
+        if ( file.is_open() )
+        {
+          if ( P_.close_after_simulate_ )
           {
+            file.close();
+          }
+          else
+          {
+            if ( P_.flush_after_simulate_ )
+              file.flush();
+
+            // FIXME: can this ever happen / does the message make sense?
+            if ( !file.good() )
+            {
 #ifndef NESTIO
-            std::string msg =
-              String::compose( "I/O error while closing file '%1'", device.get_filename() );
-            Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg );
+              std::string msg =
+                String::compose( "I/O error while closing file '%1'", device.get_filename() );
+              Node::network()->message(
+                SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg );
 #endif // NESTIO
 
-            throw IOError();
+              throw IOError();
+            }
           }
         }
       }
     }
-  }
+    catch ( std::exception& e )
+    {
+      exceptions_raised.at( t ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
+    }
+  } // parallel
+
+  // check if any exceptions have been raised
+  for ( thread thr = 0; thr < Node::network()->get_num_threads(); ++thr )
+    if ( exceptions_raised.at( thr ).valid() )
+      throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 }
 
 void

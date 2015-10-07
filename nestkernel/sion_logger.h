@@ -104,11 +104,11 @@ private:
     {
     }
 
-    int gid;
-    int type;
+    index gid;
+    unsigned int type;
     std::string name;
     std::string label;
-    unsigned long n_rec;
+    unsigned long int n_rec;
     std::vector< std::string > value_names;
   };
 
@@ -126,7 +126,7 @@ private:
 
   struct FileInfo
   {
-    int body_blk, info_blk;
+    sion_int64 body_blk, info_blk;
     sion_int64 body_pos, info_pos;
 
     double t_start, t_end, resolution;
@@ -141,10 +141,10 @@ private:
     FileInfo info;
   };
 
-  typedef std::map< int, std::map< int, DeviceEntry > > device_map;
+  typedef std::map< thread, std::map< index, DeviceEntry > > device_map;
   device_map devices_;
 
-  typedef std::map< int, FileEntry > file_map;
+  typedef std::map< thread, FileEntry > file_map;
   file_map files_;
 
   struct Parameters_

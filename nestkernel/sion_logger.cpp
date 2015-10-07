@@ -42,8 +42,8 @@ nest::SIONLogger::enroll( RecordingDevice& device )
 void
 nest::SIONLogger::enroll( RecordingDevice& device, const std::vector< Name >& value_names )
 {
-  const int task = device.get_vp();
-  const int gid = device.get_gid();
+  const thread task = device.get_vp();
+  const thread gid = device.get_gid();
 
 #pragma omp critical
   {
@@ -58,8 +58,8 @@ nest::SIONLogger::enroll( RecordingDevice& device, const std::vector< Name >& va
     DeviceEntry entry( device );
     DeviceInfo& info = entry.info;
 
-    info.gid = device.get_gid();
-    info.type = device.get_type();
+    info.gid = gid;
+    info.type = static_cast< unsigned int >( device.get_type() );
     info.name = device.get_name();
     info.label = device.get_label();
 
@@ -92,8 +92,8 @@ nest::SIONLogger::initialize()
 #pragma omp parallel
   {
     Network& network = *( Node::network() );
-    thread t = network.get_thread_id();
-    int task = network.thread_to_vp( t );
+    const thread t = network.get_thread_id();
+    const thread task = network.thread_to_vp( t );
 
 #pragma omp critical
     {
@@ -148,7 +148,11 @@ nest::SIONLogger::initialize()
 
     int mc;
     sion_int64* cs;
-    sion_get_current_location( file.sid, &( info.body_blk ), &( info.body_pos ), &mc, &cs );
+    int body_blk;
+    sion_get_current_location( file.sid, &body_blk, &( info.body_pos ), &mc, &cs );
+
+    // upcast of body_blk necessary due to inconsistency in SIONlib interface
+    info.body_blk = static_cast< sion_int64 >( body_blk );
 
     info.t_start = Node::network()->get_time().get_ms();
 
@@ -178,8 +182,8 @@ nest::SIONLogger::close_files_()
 #pragma omp parallel
   {
     Network& network = *( Node::network() );
-    thread t = network.get_thread_id();
-    int task = network.thread_to_vp( t );
+    const thread t = network.get_thread_id();
+    const thread task = network.thread_to_vp( t );
 
     if ( files_.find( task ) == files_.end() )
     {
@@ -202,17 +206,17 @@ nest::SIONLogger::close_files_()
             it != devices_[ task ].end();
             ++it )
       {
-        int gid = it->first;
-
-        int n_rec = 0;
+        const index gid = it->first;
+        sion_uint64 n_rec = 0;
 
         for ( device_map::iterator jj = devices_.begin(); jj != devices_.end(); ++jj )
         {
           n_rec += jj->second.find( gid )->second.info.n_rec;
         }
 
-        int n_rec_total = 0;
-        MPI_Reduce( &n_rec, &n_rec_total, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD );
+        // this is potentially dangerous, since we use MPI_Redcuce on "fixed size" data type!
+        sion_uint64 n_rec_total = 0;
+        MPI_Reduce( &n_rec, &n_rec_total, 1, MPI_UNSIGNED_LONG, MPI_SUM, 0, MPI_COMM_WORLD );
         it->second.info.n_rec = n_rec_total;
       }
     }
@@ -223,11 +227,20 @@ nest::SIONLogger::close_files_()
 
       int mc;
       sion_int64* cs;
-      sion_get_current_location( file.sid, &( info.info_blk ), &( info.info_pos ), &mc, &cs );
+      int info_blk;
+      sion_get_current_location( file.sid, &info_blk, &( info.info_pos ), &mc, &cs );
+
+      // upcast of info_blk necessary due to inconsistency in SIONlib interface
+      info.info_blk = info_blk;
 
       // write device info
-      int n_dev = devices_[ task ].size();
-      sion_fwrite( &n_dev, sizeof( int ), 1, file.sid );
+      const sion_uint64 n_dev = static_cast< sion_uint64 >( devices_[ task ].size() );
+      sion_fwrite( &n_dev, sizeof( sion_uint64 ), 1, file.sid );
+
+      sion_uint64 gid;
+      sion_uint32 type;
+      sion_uint64 n_rec;
+      sion_uint32 n_val;
 
       for ( device_map::mapped_type::iterator it = devices_[ task ].begin();
             it != devices_[ task ].end();
@@ -235,8 +248,11 @@ nest::SIONLogger::close_files_()
       {
         DeviceInfo& dev_info = it->second.info;
 
-        sion_fwrite( &( dev_info.gid ), sizeof( int ), 1, file.sid );
-        sion_fwrite( &( dev_info.type ), sizeof( int ), 1, file.sid );
+        gid = static_cast< sion_uint64 >( dev_info.gid );
+        type = static_cast< sion_uint32 >( dev_info.type );
+
+        sion_fwrite( &gid, sizeof( sion_uint64 ), 1, file.sid );
+        sion_fwrite( &type, sizeof( sion_uint32 ), 1, file.sid );
 
         char name[ 16 ];
         strncpy( name, dev_info.name.c_str(), 16 );
@@ -246,17 +262,18 @@ nest::SIONLogger::close_files_()
         strncpy( label, dev_info.label.c_str(), 16 );
         sion_fwrite( &label, sizeof( char ), 16, file.sid );
 
-        int n_rec = dev_info.n_rec;
-        sion_fwrite( &n_rec, sizeof( int ), 1, file.sid );
+        n_rec = static_cast< sion_uint64 >( dev_info.n_rec );
+        sion_fwrite( &n_rec, sizeof( sion_uint64 ), 1, file.sid );
 
-        int n_val = dev_info.value_names.size();
-        sion_fwrite( &n_val, sizeof( int ), 1, file.sid );
+        // potentially dangerous downcasting from size_t assuming that we do
+        // not have that many observables
+        n_val = static_cast< sion_uint32 >( dev_info.value_names.size() );
+        sion_fwrite( &n_val, sizeof( sion_uint32 ), 1, file.sid );
 
         for ( std::vector< std::string >::iterator it = dev_info.value_names.begin();
               it != dev_info.value_names.end();
               ++it )
         {
-
           char name[ 8 ];
           strncpy( name, it->c_str(), 8 );
           sion_fwrite( &name, sizeof( char ), 8, file.sid );
@@ -264,10 +281,10 @@ nest::SIONLogger::close_files_()
       }
 
       // write tail
-      sion_fwrite( &( info.body_blk ), sizeof( int ), 1, file.sid );
+      sion_fwrite( &( info.body_blk ), sizeof( sion_int64 ), 1, file.sid );
       sion_fwrite( &( info.body_pos ), sizeof( sion_int64 ), 1, file.sid );
 
-      sion_fwrite( &( info.info_blk ), sizeof( int ), 1, file.sid );
+      sion_fwrite( &( info.info_blk ), sizeof( sion_int64 ), 1, file.sid );
       sion_fwrite( &( info.info_pos ), sizeof( sion_int64 ), 1, file.sid );
 
       sion_fwrite( &( info.t_start ), sizeof( double ), 1, file.sid );
@@ -286,8 +303,8 @@ nest::SIONLogger::synchronize()
     return;
 
   Network& network = *( Node::network() );
-  thread t = network.get_thread_id();
-  int task = network.thread_to_vp( t );
+  const thread t = network.get_thread_id();
+  const thread task = network.thread_to_vp( t );
 
   FileEntry& file = files_[ task ];
   SIONBuffer& buffer = file.buffer;
@@ -299,28 +316,28 @@ nest::SIONLogger::synchronize()
 void
 nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
 {
-  int task = device.get_vp();
-  int gid = device.get_gid();
+  const thread task = device.get_vp();
+  const index device_gid = device.get_gid();
 
-  // FIXME: use proper type for sender (was: index)
-  const int sender = event.get_sender_gid();
+  const index sender_gid = event.get_sender_gid();
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
 
   FileEntry& file = files_[ task ];
   SIONBuffer& buffer = file.buffer;
 
-  devices_.find( task )->second.find( gid )->second.info.n_rec++;
+  devices_.find( task )->second.find( device_gid )->second.info.n_rec++;
 
-  double time = stamp.get_ms() - offset;
-  int n_values = 0;
+  const double time = stamp.get_ms() - offset;
+  const sion_uint32 n_values = 0;
 
-  unsigned int required_space = 3 * sizeof( int ) + sizeof( double );
+  const unsigned int required_space =
+    2 * sizeof( sion_uint64 ) + sizeof( double ) + sizeof( sion_uint32 );
 
   if ( P_.sion_collective_ )
   {
     buffer.ensure_space( required_space );
-    buffer << gid << sender << time << n_values;
+    buffer << device_gid << sender_gid << time << n_values;
     return;
   }
 
@@ -332,7 +349,7 @@ nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
       buffer.clear();
     }
 
-    buffer << gid << sender << time << n_values;
+    buffer << device_gid << sender_gid << time << n_values;
   }
   else
   {
@@ -342,10 +359,10 @@ nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
       buffer.clear();
     }
 
-    sion_fwrite( &gid, sizeof( int ), 1, file.sid );
-    sion_fwrite( &sender, sizeof( int ), 1, file.sid );
+    sion_fwrite( &device_gid, sizeof( sion_uint64 ), 1, file.sid );
+    sion_fwrite( &sender_gid, sizeof( sion_uint64 ), 1, file.sid );
     sion_fwrite( &time, sizeof( double ), 1, file.sid );
-    sion_fwrite( &n_values, sizeof( int ), 1, file.sid );
+    sion_fwrite( &n_values, sizeof( sion_uint32 ), 1, file.sid );
   }
 }
 
@@ -354,27 +371,28 @@ nest::SIONLogger::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double_t >& values )
 {
-  int task = device.get_vp();
-  int gid = device.get_gid();
+  const thread task = device.get_vp();
+  const sion_uint64 device_gid = static_cast< sion_uint64 >( device.get_gid() );
 
-  const int sender = event.get_sender_gid();
+  const sion_uint64 sender_gid = static_cast< sion_uint64 >( event.get_sender_gid() );
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
 
   FileEntry& file = files_[ task ];
   SIONBuffer& buffer = file.buffer;
 
-  devices_.find( task )->second.find( gid )->second.info.n_rec++;
+  devices_.find( task )->second.find( device_gid )->second.info.n_rec++;
 
-  double time = stamp.get_ms() - offset;
-  int n_values = values.size();
+  const double time = stamp.get_ms() - offset;
+  const unsigned int n_values = values.size();
 
-  unsigned int required_space = 3 * sizeof( int ) + ( 1 + n_values ) * sizeof( double );
+  const unsigned int required_space =
+    2 * sizeof( sion_uint64 ) + ( 1 + n_values ) * sizeof( double ) + sizeof( sion_uint32 );
 
   if ( P_.sion_collective_ )
   {
     buffer.ensure_space( required_space );
-    buffer << gid << sender << time << n_values;
+    buffer << device_gid << sender_gid << time << n_values;
     for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
     {
       buffer << *val;
@@ -390,7 +408,7 @@ nest::SIONLogger::write( const RecordingDevice& device,
       buffer.clear();
     }
 
-    buffer << gid << sender << time << n_values;
+    buffer << device_gid << sender_gid << time << n_values;
     for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
     {
       buffer << *val;
@@ -404,10 +422,10 @@ nest::SIONLogger::write( const RecordingDevice& device,
       buffer.clear();
     }
 
-    sion_fwrite( &gid, sizeof( int ), 1, file.sid );
-    sion_fwrite( &sender, sizeof( int ), 1, file.sid );
+    sion_fwrite( &device_gid, sizeof( sion_uint64 ), 1, file.sid );
+    sion_fwrite( &sender_gid, sizeof( sion_uint64 ), 1, file.sid );
     sion_fwrite( &time, sizeof( double ), 1, file.sid );
-    sion_fwrite( &n_values, sizeof( int ), 1, file.sid );
+    sion_fwrite( &n_values, sizeof( sion_uint32 ), 1, file.sid );
 
     for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
     {

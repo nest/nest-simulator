@@ -51,28 +51,12 @@ fi
 NEST_VPATH=build
 NEST_RESULT=result
 
-mkdir "$NEST_VPATH" "$NEST_RESULT"
+mkdir "$NEST_VPATH" "$NEST_RESULT" 
+mkdir "$NEST_VPATH/reports"
 
 NEST_RESULT=$(readlink -f $NEST_RESULT)
 
-cd "$NEST_VPATH"
-
-../configure \
-    --prefix="$NEST_RESULT"  CC=mpicc CXX=mpic++ \
-    $CONFIGURE_MPI \
-    $CONFIGURE_PYTHON \
-    $CONFIGURE_GSL \
-
-export PYTHONPATH=$NEST_RESULT/lib/python2.7/site-packages:$PYTHONPATH
-export PYTHONPATH=/usr/local/bin:$NEST_RESULT/lib64/python2.7/site-packages:$PYTHONPATH
-export PATH=~/.local/bin:/usr/local/bin:$NEST_RESULT/bin:$PATH
-make
-make install
-make installcheck
-
 # static code analysis
-cd .. # go back to source dir
-
 # initialize vera++
 mkdir -p vera_home
 
@@ -124,6 +108,7 @@ cppcheck --version
 cd ..
 
 # Extracting changed files in PR / push
+echo "Extract changed files..."
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   file_names=`curl "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
 else
@@ -159,6 +144,7 @@ for f in $file_names; do
       # writes the differences to a temp file
       echo "\n - clang-format for $f:"
       diff $f ${f_base}_formatted_$TRAVIS_COMMIT.txt | tee ${f_base}_clang_format.txt
+      cat ${f_base}_clang_format.txt
 
       # remove temporary files
       rm ${f_base}_formatted_$TRAVIS_COMMIT.txt
@@ -174,6 +160,21 @@ for f in $file_names; do
       continue
   esac
 done
+
+cd "$NEST_VPATH"
+
+../configure \
+    --prefix="$NEST_RESULT"  CC=mpicc CXX=mpic++ \
+    $CONFIGURE_MPI \
+    $CONFIGURE_PYTHON \
+    $CONFIGURE_GSL \
+
+export PYTHONPATH=$NEST_RESULT/lib/python2.7/site-packages:$PYTHONPATH
+export PYTHONPATH=/usr/local/bin:$NEST_RESULT/lib64/python2.7/site-packages:$PYTHONPATH
+export PATH=~/.local/bin:/usr/local/bin:$NEST_RESULT/bin:$PATH
+make
+make install
+make installcheck
 
 if [ "$format_error_files" != "" ]; then
   echo "There are files with a formatting error: $format_error_files ."

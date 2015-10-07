@@ -290,24 +290,36 @@ if test "x$HAVE_LIBNEUROSIM" != xno; then
   AC_DEFINE(HAVE_LIBNEUROSIM, 1, [libneurosim support enabled?])
 fi
 
+AC_TRY_CPP()
+AC_LANG(C++)
+AC_TRY_CPP()
+
 # enable SIONlib support
 SION_INCLUDE=""
 SION_LIBS=""
+SION_CFLAGS=""
 AC_ARG_WITH(sionlib, [--with-sionlib[[=directory]] Request the use of SIONlib. Optionally give the directory, where sionconfig is located.],
   [
     if test "$withval" != "no"; then
+      gcc_append=""
+      if test "x${ac_cv_cxx_compiler_gnu}" = "xyes"; then
+        gcc_append="--gcc"
+      fi
       if test "$SLI_distributed" != "set"; then
-         AC_MSG_ERROR([SIONlib requires --with-mpi.])
+        AC_MSG_ERROR([SIONlib requires --with-mpi.])
       else
         AC_DEFINE(HAVE_SION, 1, [SIONlib support enabled?])
         if test "$withval" = "yes"; then
-          SION_INCLUDE=`sionconfig --gcc --cflags`
-          SION_LIBS=`sionconfig --gcc --ompi --libs`
+          SION_INCLUDE=`sionconfig --cflags $gcc_append`
+          SION_LIBS=`sionconfig --ompi --libs $gcc_append`
         else
           SION_PATH="${withval}"
-          SION_INCLUDE=`${SION_PATH}/sionconfig --gcc --cflags`
-          SION_LIBS=`${SION_PATH}/sionconfig --gcc --ompi --libs`
+          SION_INCLUDE=`${SION_PATH}/sionconfig --cflags $gcc_append`
+          SION_LIBS=`${SION_PATH}/sionconfig --ompi --libs $gcc_append`
         fi
+      fi
+      if test "x$configure_bluegene" == "xyes"; then
+        SION_CFLAGS="-DBG_MULTIFILE"
       fi
     else
       unset HAVE_SION
@@ -315,6 +327,9 @@ AC_ARG_WITH(sionlib, [--with-sionlib[[=directory]] Request the use of SIONlib. O
   ])
 AC_SUBST([SION_INCLUDE])
 AC_SUBST([SION_LIBS])
+AC_SUBST([SION_CFLAGS])
+
+AC_LANG(C)
 
 # Select optimization mode
 # note: see debugging mode selection

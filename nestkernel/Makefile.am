@@ -23,7 +23,7 @@ MAKEFLAGS= @MAKE_FLAGS@
 AM_CPPFLAGS=  -I$(top_srcdir)/libnestutil\
 		-I$(top_srcdir)/librandom\
 		-I$(top_srcdir)/sli\
-		@INCLTDL@ @GSL_CFLAGS@ @MUSIC_INCLUDE@ @MPI_INCLUDE@ @SION_INCLUDE@
+		@INCLTDL@ @GSL_CFLAGS@ @MUSIC_INCLUDE@ @MPI_INCLUDE@ @SION_INCLUDE@ @SION_CFLAGS@
 
 noinst_LTLIBRARIES= libnest.la
 

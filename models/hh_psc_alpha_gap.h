@@ -61,9 +61,11 @@ extern "C" int hh_psc_alpha_gap_dynamics( double, const double*, double*, void* 
 /* BeginDocumentation 
 Name: hh_psc_alpha_gap - Hodgkin Huxley neuron model with gap-junction support. 
 
-Description: TODO update description
+Description:
 
  hh_psc_alpha_gap is an implementation of a spiking neuron using the Hodkin-Huxley formalism.
+ In contrast to hh_psc_alpha the implementation additionally supports gap junctions.
+ 
 
  (1) Post-syaptic currents
  Incoming spike events induce a post-synaptic change of current modelled
@@ -73,6 +75,9 @@ Description: TODO update description
  (2) Spike Detection
  Spike detection is done by a combined threshold-and-local-maximum search: if there
  is a local maximum above a certain threshold of the membrane potential, it is considered a spike.
+ 
+ (3) Gap Junctions
+ Gap Junctions are implemented by a gap current of the form g_ij( V_i - V_j).
 
 Parameters:
 
@@ -111,13 +116,20 @@ References:
  A Quantitative Description of Membrane Current
  and Its Application to Conduction and Excitation in Nerve,
  Journal of Physiology, 117, 500-544 (1952)
+ 
+ Hahne, J., Helias, M., Kunkel, S., Igarashi, J., 
+ Bolten, M., Frommer, A. and Diesmann, M.,
+ A unified framework for spiking and gap-junction interactions
+ in distributed neuronal network simulations, 
+ Front. Neuroinform. 9:22. (2015), 
+ doi: 10.3389/fninf.2015.00022
 
 Sends: SpikeEvent, GapJEvent
 
 Receives: SpikeEvent, GapJEvent, CurrentEvent, DataLoggingRequest
 
-Authors: Jan Hahne, Moritz Helias, Susanne Kunkel
-SeeAlso: hh_psc_alpha, hh_cond_exp_traub
+Author: Jan Hahne, Moritz Helias, Susanne Kunkel
+SeeAlso: hh_psc_alpha, hh_cond_exp_traub, gap_junction
 */
 
 class hh_psc_alpha_gap : public Archiving_Node

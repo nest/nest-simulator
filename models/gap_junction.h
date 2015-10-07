@@ -22,22 +22,41 @@
 
 
 /* BeginDocumentation
-   Name: gap_junction
+Name: gap_junction - Synapse type for gap-junction connections.
 
-   Description:
-     TODO
+Description:
+ gap_junction is a connector to create gap junctions between pairs
+ of neurons. Please note that gap junctions are two-way connections:
+ In order to create an accurate gap-junction connection between two
+ neurons i and j two connections are required:
+ 
+ i j conn_spec gap_junction   Connect
+ j i conn_spec gap_junction   Connect
+ 
+ The value of the parameter "delay" is ignored for connections of type gap_junction.
 
-   Transmits: GapJEvent
+Transmits: GapJEvent
 
-   Parameters:
-     No Parameters
-
-   References:
-     TODO
-   FirstVersion: April 2008
-   Author: Susanne Kunkel, Moritz Helias
-   SeeAlso: synapsedict, static_synapse
+References:
+   
+ Hahne, J., Helias, M., Kunkel, S., Igarashi, J., 
+ Bolten, M., Frommer, A. and Diesmann, M.,
+ A unified framework for spiking and gap-junction interactions
+ in distributed neuronal network simulations, 
+ Front. Neuroinform. 9:22. (2015), 
+ doi: 10.3389/fninf.2015.00022
+ 
+ Mancilla, J. G., Lewis, T. J., Pinto, D. J., 
+ Rinzel, J., and Connors, B. W.,
+ Synchronization of electrically coupled pairs 
+ of inhibitory interneurons in neocortex,
+ J. Neurosci. 27, 2058-2073 (2007), 
+ doi: 10.1523/JNEUROSCI.2715-06.2007
+ 
+Author: Jan Hahne, Moritz Helias, Susanne Kunkel
+SeeAlso: synapsedict, hh_psc_alpha_gap
 */
+
 
 #ifndef GAP_JUNCTION_H
 #define GAP_JUNCTION_H
@@ -50,10 +69,6 @@ namespace nest
 /**
  * Class representing a gap-junction connection. A gap-junction connection has the properties weight, delay and
  * receiver port.
- * TODO
- * 
- * 
- * 
  */
 
 template < typename targetidentifierT >

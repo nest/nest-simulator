@@ -76,7 +76,7 @@ before_script:
 script:
   - set -o pipefail
   - ./build.sh 2>&1 | tee build.sh.log
-  - ./extras/parse_travis_log.py build.sh.log
+  - python extras/parse_travis_log.py build.sh.log
 
 before_deploy:
   - cd $TRAVIS_BUILD_DIR/build

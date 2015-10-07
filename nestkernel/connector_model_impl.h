@@ -382,7 +382,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     conn = allocate< Connector< 1, ConnectionT > >( c );
 
     // there is only one connection, so either it is primary or secondary
-    // std::cout << "case 0: is_primary = " << is_primary_ << std::endl;
     conn = pack_pointer( conn, is_primary_, !is_primary_ );
   }
   else
@@ -391,8 +390,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
     bool b_has_primary = has_primary( conn );
     bool b_has_secondary = has_secondary( conn );
-    // std::cout << "b_has_primary = " << b_has_primary << std::endl;
-    // std::cout << "b_has_secondary = " << b_has_secondary << std::endl;
 
     conn = validate_pointer( conn );
     // from here on we can use conn as a valid pointer
@@ -411,8 +408,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
         // of the
         // same type as the existing ones
         conn = pack_pointer( &vc->push_back( c ), b_has_primary, b_has_secondary );
-        // std::cout << "resurrecting Connector at " << conn << ": " <<
-        // typeid(*validate_pointer(conn)).name() <<  std::endl;
       }
       else
       {
@@ -423,9 +418,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
         // add existing connector
         // we read out the primary/secondary property of the existing connector conn above
-        // std::cout << "before add_connector" << std::endl;
         hc->add_connector( b_has_primary, conn );
-        // std::cout << "after addconnector" << std::endl;
 
         // create hom connector for new synid
         vector_like< ConnectionT >* vc = allocate< Connector< 1, ConnectionT > >( c );
@@ -436,10 +429,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
         // make entry in connections_[sgid] point to new heterogeneous connector
         // the existing connections had b_has_primary or b_has_secondary,
         // our new connection is_primary
-        // std::cout << "about to pack pointer...\n";
-        // std::cout << b_has_primary << ' ' << b_has_secondary << ' ' << is_primary_ << std::endl;
-        // std::cout << (b_has_primary || is_primary_) <<  (b_has_secondary || (!is_primary_)) <<
-        // std::endl;
         conn =
           pack_pointer( hc, b_has_primary || is_primary_, b_has_secondary || ( !is_primary_ ) );
       }
@@ -470,7 +459,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
         vector_like< ConnectionT >* vc = allocate< Connector< 1, ConnectionT > >( c );
 
         hc->add_connector( is_primary_, vc );
-        // std::cout << "appended type " << typeid(*vc).name() << " exists\n";
 
         conn =
           pack_pointer( hc, b_has_primary || is_primary_, b_has_secondary || ( !is_primary_ ) );
@@ -508,13 +496,11 @@ synindex
 register_secondary_connection_model( Network& net, const std::string& name )
 {
   ConnectorModel& cm = *( new GenericSecondaryConnectorModel< ConnectionT >( net, name ) );
-  // std::cout << "type of cm (register) = " << typeid(cm).name() << std::endl;
 
   synindex synid = net.register_secondary_synapse_prototype( &cm );
 
   ConnectionT::EventType::set_syn_id( synid );
-  // std::cout << "registering secondary with synid = " << static_cast<uint_t>( synid ) <<
-  // std::endl;
+
   return synid;
 }
 

@@ -328,16 +328,16 @@ nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
 
   devices_.find( task )->second.find( device_gid )->second.info.n_rec++;
 
-  const double time = stamp.get_ms() - offset;
+  const sion_int64 step = static_cast< sion_int64 >( stamp.get_steps() );
   const sion_uint32 n_values = 0;
 
   const unsigned int required_space =
-    2 * sizeof( sion_uint64 ) + sizeof( double ) + sizeof( sion_uint32 );
+    2 * sizeof( sion_uint64 ) + sizeof( sion_int64 ) + sizeof( double ) + sizeof( sion_uint32 );
 
   if ( P_.sion_collective_ )
   {
     buffer.ensure_space( required_space );
-    buffer << device_gid << sender_gid << time << n_values;
+    buffer << device_gid << sender_gid << step << offset << n_values;
     return;
   }
 
@@ -349,7 +349,7 @@ nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
       buffer.clear();
     }
 
-    buffer << device_gid << sender_gid << time << n_values;
+    buffer << device_gid << sender_gid << step << offset << n_values;
   }
   else
   {
@@ -361,7 +361,8 @@ nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
 
     sion_fwrite( &device_gid, sizeof( sion_uint64 ), 1, file.sid );
     sion_fwrite( &sender_gid, sizeof( sion_uint64 ), 1, file.sid );
-    sion_fwrite( &time, sizeof( double ), 1, file.sid );
+    sion_fwrite( &step, sizeof( sion_int64 ), 1, file.sid );
+    sion_fwrite( &offset, sizeof( double ), 1, file.sid );
     sion_fwrite( &n_values, sizeof( sion_uint32 ), 1, file.sid );
   }
 }
@@ -383,16 +384,16 @@ nest::SIONLogger::write( const RecordingDevice& device,
 
   devices_.find( task )->second.find( device_gid )->second.info.n_rec++;
 
-  const double time = stamp.get_ms() - offset;
-  const unsigned int n_values = values.size();
+  const sion_int64 step = static_cast< sion_int64 >( stamp.get_steps() );
+  const sion_uint32 n_values = static_cast< sion_uint32 >( values.size() );
 
-  const unsigned int required_space =
-    2 * sizeof( sion_uint64 ) + ( 1 + n_values ) * sizeof( double ) + sizeof( sion_uint32 );
+  const unsigned int required_space = 2 * sizeof( sion_uint64 ) + sizeof( sion_int64 )
+    + ( 1 + n_values ) * sizeof( double ) + sizeof( sion_uint32 );
 
   if ( P_.sion_collective_ )
   {
     buffer.ensure_space( required_space );
-    buffer << device_gid << sender_gid << time << n_values;
+    buffer << device_gid << sender_gid << step << offset << n_values;
     for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
     {
       buffer << *val;
@@ -408,7 +409,7 @@ nest::SIONLogger::write( const RecordingDevice& device,
       buffer.clear();
     }
 
-    buffer << device_gid << sender_gid << time << n_values;
+    buffer << device_gid << sender_gid << step << offset << n_values;
     for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
     {
       buffer << *val;
@@ -424,7 +425,8 @@ nest::SIONLogger::write( const RecordingDevice& device,
 
     sion_fwrite( &device_gid, sizeof( sion_uint64 ), 1, file.sid );
     sion_fwrite( &sender_gid, sizeof( sion_uint64 ), 1, file.sid );
-    sion_fwrite( &time, sizeof( double ), 1, file.sid );
+    sion_fwrite( &step, sizeof( sion_int64 ), 1, file.sid );
+    sion_fwrite( &offset, sizeof( double ), 1, file.sid );
     sion_fwrite( &n_values, sizeof( sion_uint32 ), 1, file.sid );
 
     for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )

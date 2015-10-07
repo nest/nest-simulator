@@ -415,7 +415,6 @@ hh_psc_alpha_gap::handles_test_event( DataLoggingRequest& dlr, rport receptor_ty
 inline port
 hh_psc_alpha_gap::handles_test_event( GapJEvent&, rport receptor_type )
 {
-  // std::cout << " hh_psc_alpha_gap::handles_test_event" << std::endl;
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
   return 0;

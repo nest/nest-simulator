@@ -36,7 +36,6 @@
 
 namespace nest
 {
-
 class SIONLogger : public Logger
 {
 public:

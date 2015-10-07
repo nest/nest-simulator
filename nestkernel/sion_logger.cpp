@@ -166,7 +166,7 @@ nest::SIONLogger::initialize()
       RecordingDevice& device = it->second.device;
       device.set_filename( filename );
     }
-  }
+  } // parallel
 }
 
 void

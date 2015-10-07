@@ -867,13 +867,9 @@ Scheduler::send_remote( thread t, SpikeEvent& e, const delay lag )
 inline void
 Scheduler::send_remote( thread t, SecondaryEvent& e )
 {
-  // std::cout << "send remote (Secondary)\n";
-  // std::cout << "synid=" << static_cast<unsigned int>(e.get_syn_id()) << std::endl;
 
   // put the secondary events in a buffer for the remote machines
   size_t old_size = secondary_events_buffer_[ t ].size();
-
-  // std::cout << "event size = " << e.size() << std::endl;
 
   secondary_events_buffer_[ t ].resize( old_size + e.size() );
   fwit it = secondary_events_buffer_[ t ].begin() + old_size;

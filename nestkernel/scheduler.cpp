@@ -1442,7 +1442,6 @@ void nest::Scheduler::create_grng_( const bool ctor_call )
 
 void nest::Scheduler::collocate_buffers_( bool done )
 {
-  // std::cout << "Scheduler::collocate_buffers_()" << std::endl;
 
   // count number of spikes in registers
   int num_spikes = 0;
@@ -1662,8 +1661,6 @@ bool nest::Scheduler::deliver_events_( thread t )
     // here we are done with the spiking events
     // pos[pid] for each pid now points to the first entry of
     // the secondary events
-    // std::cout << "global_grid_spikes_[start_vp] = " << global_grid_spikes_[start_vp] <<
-    // std::endl;
 
     for ( size_t pid = 0; pid < ( size_t ) Communicator::get_num_processes(); ++pid )
     {

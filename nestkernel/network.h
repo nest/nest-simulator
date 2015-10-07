@@ -1193,7 +1193,6 @@ Network::send_secondary( Node& source, SecondaryEvent& e )
   e.set_stamp( get_slice_origin() + Time::step( 1 ) );
   e.set_sender( source );
   e.set_sender_gid( source.get_gid() );
-  // std::cout << "Network::send_secondary, gid = " << e.get_sender_gid() << std::endl;
   thread t = source.get_thread();
   scheduler_.send_remote( t, e );
 }

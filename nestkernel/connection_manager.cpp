@@ -684,7 +684,6 @@ ConnectionManager::trigger_update_weight( const long_t vt_id,
 void
 ConnectionManager::send( thread t, index sgid, Event& e )
 {
-  // std::cout << "ConnectionManager::send\n";
   if ( sgid < connections_[ t ].size() ) // probably test only fails, if there are no connections
   {
     ConnectorBase* p = connections_[ t ].get( sgid );
@@ -693,10 +692,8 @@ ConnectionManager::send( thread t, index sgid, Event& e )
       // the two least significant bits of the pointer
       // contain the information, whether there are
       // primary and secondary connections behind
-      // std::cout << "!=0\n";
       if ( has_primary( p ) )
       {
-        // std::cout << "has primary\n";
         // erase 2 least significant bits to obtain the correct pointer
         validate_pointer( p )->send( e, t, prototypes_[t] );
       }

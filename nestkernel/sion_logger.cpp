@@ -531,8 +531,7 @@ nest::SIONLogger::SIONBuffer::read()
 }
 
 template < typename T >
-nest::SIONLogger::SIONBuffer&
-nest::SIONLogger::SIONBuffer::operator<<( const T data )
+nest::SIONLogger::SIONBuffer& nest::SIONLogger::SIONBuffer::operator<<( const T data )
 {
   write( ( const char* ) &data, sizeof( T ) );
   return *this;

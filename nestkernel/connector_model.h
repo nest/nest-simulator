@@ -79,6 +79,18 @@ public:
     double_t delay = NAN,
     double_t weight = NAN ) = 0;
 
+  /**
+   * Delete a connection of a given type directed to a defined target Node
+   * @param tgt Target node
+   * @param target_thread Thread of the target
+   * @param conn Connector Base from where the connection will be deleted
+   * @param syn_id Synapse type
+   * @return A new Connector, equal to the original but with an erased
+   * connection to the defined target.
+   */
+  virtual ConnectorBase*
+  delete_connection( Node& tgt, size_t target_thread, ConnectorBase* conn, synindex syn_id ) = 0;
+
   virtual ConnectorModel* clone( std::string ) const = 0;
 
   virtual void calibrate( const TimeConverter& tc ) = 0;
@@ -175,6 +187,9 @@ public:
     DictionaryDatum& d,
     double_t weight,
     double_t delay );
+
+  ConnectorBase*
+  delete_connection( Node& tgt, size_t target_thread, ConnectorBase* conn, synindex syn_id );
 
   ConnectorModel* clone( std::string ) const;
 

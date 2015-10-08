@@ -161,6 +161,9 @@ for f in $file_names; do
   esac
 done
 
+# Remove cppcheck files, otherwise 'regressiontests/ticket-659-copyright.py' will complain
+rm -rf ./cppcheck
+
 cd "$NEST_VPATH"
 
 ../configure \

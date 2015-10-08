@@ -19,11 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# This script parses the TravisCI output as it is generated
-# by ./build.sh and outputs a shorter summary. It is hard-coded
-# to the output of ./build.sh, ./bootstrap.sh, make installcheck,
-# and ../configure --prefix=... . Changing any of those, requires
-# adapting this script.
+"""
+This script parses the TravisCI output as it is generated
+by ./build.sh and outputs a shorter summary. It is hard-coded
+to the output of ./build.sh, ./bootstrap.sh, make installcheck,
+and ../configure --prefix=... . Changing any of those, requires
+adapting this script.
+"""
 
 INDENT = "  "
 
@@ -240,6 +242,7 @@ if __name__ == '__main__':
                 make_installcheck_all, make_installcheck_failed, line = process_installcheck(
                     f)
 
+    print("\n--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
     print("Bootstrapping:     " + ("Ok" if bootstrapping_ok else "Error"))
     print("Vera init:         " + ("Ok" if vera_init else "Error"))
     print("Cppcheck init:     " + ("Ok" if cppcheck_init else "Error"))
@@ -252,6 +255,7 @@ if __name__ == '__main__':
           str(make_installcheck_failed) + " / " + str(make_installcheck_all) + ")")
     print("\nStatic analysis:" )
     print_static_analysis(static_analysis)
+    print("--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
 
     if not (bootstrapping_ok and 
             vera_init and 

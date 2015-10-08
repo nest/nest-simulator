@@ -186,7 +186,7 @@ ConnectionManager::get_min_delay() const
   std::vector< ConnectorModel* >::const_iterator it;
   for ( thread t = 0; t < net_.get_num_threads(); ++t )
     for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
-      if ( *it != 0 && ( *it )->get_num_connections() > 0 )
+      if ( *it != 0 && ( *it )->get_num_connections() > 0 && (*it)->has_delay() )
         min_delay = std::min( min_delay, ( *it )->get_min_delay() );
 
   return min_delay;
@@ -200,7 +200,7 @@ ConnectionManager::get_max_delay() const
   std::vector< ConnectorModel* >::const_iterator it;
   for ( thread t = 0; t < net_.get_num_threads(); ++t )
     for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
-      if ( *it != 0 && ( *it )->get_num_connections() > 0 )
+      if ( *it != 0 && ( *it )->get_num_connections() > 0 && (*it)->has_delay() )
         max_delay = std::max( max_delay, ( *it )->get_max_delay() );
 
   return max_delay;

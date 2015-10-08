@@ -74,7 +74,7 @@ class ConnectorModel
 {
 
 public:
-  ConnectorModel( Network& net, const std::string, bool is_primary );
+  ConnectorModel( Network& net, const std::string, bool is_primary, bool has_delay );
   ConnectorModel( const ConnectorModel&, const std::string );
   virtual ~ConnectorModel()
   {
@@ -170,6 +170,12 @@ public:
   {
     return is_primary_;
   }
+  
+  bool
+  has_delay() const
+  {
+    return has_delay_;
+  }
 
 protected:
   Network& net_;                   //!< The Network instance.
@@ -180,9 +186,9 @@ protected:
   bool user_set_delay_extrema_;    //!< Flag indicating if the user set the delay extrema.
   bool used_default_delay_;
   std::string name_;
-  bool
-    is_primary_; //!< indicates, whether this ConnectorModel belongs to a primary connection or not
-
+  bool is_primary_; //!< indicates, whether this ConnectorModel belongs to a primary connection or not
+  bool has_delay_; //!< indicates, that ConnectorModel has a delay
+    
 }; // ConnectorModel
 
 
@@ -198,8 +204,8 @@ private:
   rport receptor_type_;
 
 public:
-  GenericConnectorModel( Network& net, const std::string name, bool is_primary )
-    : ConnectorModel( net, name, is_primary )
+  GenericConnectorModel( Network& net, const std::string name, bool is_primary, bool has_delay )
+    : ConnectorModel( net, name, is_primary, has_delay )
     , receptor_type_( 0 )
   {
   }
@@ -293,8 +299,8 @@ private:
     pev_; //!< used to create secondary events that belong to secondary connections
 
 public:
-  GenericSecondaryConnectorModel( Network& net, const std::string name )
-    : GenericConnectorModel< ConnectionT >( net, name, false )
+  GenericSecondaryConnectorModel( Network& net, const std::string name, bool has_delay )
+    : GenericConnectorModel< ConnectionT >( net, name, /*is _primary=*/false, has_delay )
     , pev_( 0 )
   {
     pev_ = new typename ConnectionT::EventType();

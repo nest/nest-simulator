@@ -482,10 +482,10 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
  */
 template < class ConnectionT >
 synindex
-register_connection_model( Network& net, const std::string& name )
+register_connection_model( Network& net, const std::string& name)
 {
   return net.register_synapse_prototype(
-    new GenericConnectorModel< ConnectionT >( net, name, true ) );
+    new GenericConnectorModel< ConnectionT >( net, name, /*is_primary=*/true, /*has_delay=*/true) );
 }
 
 /**
@@ -493,9 +493,9 @@ register_connection_model( Network& net, const std::string& name )
  */
 template < class ConnectionT >
 synindex
-register_secondary_connection_model( Network& net, const std::string& name )
+register_secondary_connection_model( Network& net, const std::string& name , bool has_delay=true  )
 {
-  ConnectorModel& cm = *( new GenericSecondaryConnectorModel< ConnectionT >( net, name ) );
+  ConnectorModel& cm = *( new GenericSecondaryConnectorModel< ConnectionT >( net, name, has_delay ) );
 
   synindex synid = net.register_secondary_synapse_prototype( &cm );
 

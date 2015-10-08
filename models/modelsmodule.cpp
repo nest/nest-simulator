@@ -329,7 +329,7 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
     net_, "static_synapse_hom_w_hpc" );
   register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
-    net_, "gap_junction" );
+    net_, "gap_junction", false );
 
 
   /* BeginDocumentation

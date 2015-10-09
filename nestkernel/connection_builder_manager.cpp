@@ -302,7 +302,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
   double_t d,
   double_t w )
 {
-  Node* const source = Network::get_network().get_node( sgid, target_thread );
+  Node* const source = kernel().node_manager.get_node( sgid, target_thread );
 
   // normal nodes and devices with proxies
   if ( target->has_proxies() )
@@ -317,7 +317,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
     if ( ( source->get_thread() != target_thread ) && ( source->has_proxies() ) )
     {
       target_thread = source->get_thread();
-      target = Network::get_network().get_node( target->get_gid(), target_thread );
+      target = kernel().node_manager.get_node( target->get_gid(), target_thread );
     }
 
     connect_( *source, *target, sgid, target_thread, syn, d, w );
@@ -330,7 +330,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
     const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread t = 0; t < n_threads; t++ )
     {
-      target = Network::get_network().get_node( target->get_gid(), t );
+      target = kernel().node_manager.get_node( target->get_gid(), t );
       connect_( *source, *target, sgid, t, syn, d, w );
     }
   }
@@ -346,7 +346,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
   double_t d,
   double_t w )
 {
-  Node* const source = Network::get_network().get_node( sgid, target_thread );
+  Node* const source = kernel().node_manager.get_node( sgid, target_thread );
 
   // normal nodes and devices with proxies
   if ( target->has_proxies() )
@@ -361,7 +361,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
     if ( ( source->get_thread() != target_thread ) && ( source->has_proxies() ) )
     {
       target_thread = source->get_thread();
-      target = Network::get_network().get_node( target->get_gid(), target_thread );
+      target = kernel().node_manager.get_node( target->get_gid(), target_thread );
     }
 
     connect_( *source, *target, sgid, target_thread, syn, params, d, w );
@@ -374,7 +374,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
     const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread t = 0; t < n_threads; t++ )
     {
-      target = Network::get_network().get_node( target->get_gid(), t );
+      target = kernel().node_manager.get_node( target->get_gid(), t );
       connect_( *source, *target, sgid, t, syn, params, d, w );
     }
   }
@@ -388,15 +388,15 @@ nest::ConnectionBuilderManager::connect( index source_id,
   index syn )
 {
 
-  if ( !Network::get_network().is_local_gid( target_id ) )
+  if ( !kernel().node_manager.is_local_gid( target_id ) )
     return false;
 
-  Node* target_ptr = Network::get_network().get_node( target_id );
+  Node* target_ptr = kernel().node_manager.get_node( target_id );
 
   // target_thread defaults to 0 for devices
   thread target_thread = target_ptr->get_thread();
 
-  Node* source_ptr = Network::get_network().get_node( source_id, target_thread );
+  Node* source_ptr = kernel().node_manager.get_node( source_id, target_thread );
 
   // normal nodes and devices with proxies
   if ( target_ptr->has_proxies() )
@@ -411,7 +411,7 @@ nest::ConnectionBuilderManager::connect( index source_id,
     if ( ( source_ptr->get_thread() != target_thread ) && ( source_ptr->has_proxies() ) )
     {
       target_thread = source_ptr->get_thread();
-      target_ptr = Network::get_network().get_node( target_id, target_thread );
+      target_ptr = kernel().node_manager.get_node( target_id, target_thread );
     }
 
     connect_( *source_ptr, *target_ptr, source_id, target_thread, syn, params );
@@ -424,7 +424,7 @@ nest::ConnectionBuilderManager::connect( index source_id,
     const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread t = 0; t < n_threads; t++ )
     {
-      target_ptr = Network::get_network().get_node( target_id, t );
+      target_ptr = kernel().node_manager.get_node( target_id, t );
       connect_( *source_ptr, *target_ptr, source_id, t, syn, params );
     }
   }
@@ -533,7 +533,7 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
     throw DimensionMismatch();
   }
 
-  Node* source = Network::get_network().get_node( source_id );
+  Node* source = kernel().node_manager.get_node( source_id );
 
   Subnet* source_comp = dynamic_cast< Subnet* >( source );
   if ( source_comp != 0 )
@@ -561,8 +561,8 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
   for ( index i = 0; i < target_ids.size(); ++i )
   {
     index gid = getValue< long >( target_ids[ i ] );
-    if ( Network::get_network().is_local_gid( gid ) )
-      targets.push_back( Network::get_network().get_node( gid ) );
+    if ( kernel().node_manager.is_local_gid( gid ) )
+      targets.push_back( kernel().node_manager.get_node( gid ) );
   }
 
   for ( index i = 0; i < targets.size(); ++i )
@@ -570,7 +570,7 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
     thread target_thread = targets[ i ]->get_thread();
 
     if ( source->get_thread() != target_thread )
-      source = Network::get_network().get_node( source_id, target_thread );
+      source = kernel().node_manager.get_node( source_id, target_thread );
 
     if ( !targets[ i ]->has_proxies() && source->is_proxy() )
       continue;
@@ -713,7 +713,7 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
     throw DimensionMismatch();
   }
 
-  Node* source = Network::get_network().get_node( source_id );
+  Node* source = kernel().node_manager.get_node( source_id );
 
   Subnet* source_comp = dynamic_cast< Subnet* >( source );
   if ( source_comp != 0 )
@@ -737,7 +737,7 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
   {
     try
     {
-      Network::get_network().get_node( target_ids[ i ] );
+      kernel().node_manager.get_node( target_ids[ i ] );
     }
     catch ( UnknownNode& e )
     {
@@ -813,7 +813,7 @@ nest::ConnectionBuilderManager::random_divergent_connect( index source_id,
   bool allow_autapses,
   index syn )
 {
-  Node* source = Network::get_network().get_node( source_id );
+  Node* source = kernel().node_manager.get_node( source_id );
 
   // check if we have consistent lists for weights and delays
   if ( !( weights.size() == n || weights.size() == 0 ) && ( weights.size() == delays.size() ) )
@@ -899,7 +899,7 @@ nest::ConnectionBuilderManager::connect( ArrayDatum& conns )
     {
       DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
       index target_gid = static_cast< size_t >( ( *cd )[ names::target ] );
-      Node* target_node = Network::get_network().get_node( target_gid );
+      Node* target_node = kernel().node_manager.get_node( target_gid );
       size_t thr = target_node->get_thread();
 
       // #ifdef _OPENMP
@@ -922,7 +922,7 @@ nest::ConnectionBuilderManager::connect( ArrayDatum& conns )
           else
             throw UnknownModelName( synmodel_name );
         }
-        Node* source_node = Network::get_network().get_node( source_gid );
+        Node* source_node = kernel().node_manager.get_node( source_gid );
         //#pragma omp critical
         connect_( *source_node, *target_node, source_gid, thr, syn_id, cd );
       }
@@ -937,8 +937,8 @@ nest::ConnectionBuilderManager::validate_source_entry_( thread tid, index s_gid,
   Network::get_network().connection_manager_.assert_valid_syn_id( syn_id );
 
   // resize sparsetable to full network size
-  if ( connections_[ tid ].size() < Network::get_network().size() )
-    connections_[ tid ].resize( Network::get_network().size() );
+  if ( connections_[ tid ].size() < kernel().node_manager.size() )
+    connections_[ tid ].resize( kernel().node_manager.size() );
 
   // check, if entry exists
   // if not put in zero pointer
@@ -974,10 +974,10 @@ nest::ConnectionBuilderManager::convergent_connect( const TokenArray source_ids,
     throw DimensionMismatch();
   }
 
-  if ( !Network::get_network().is_local_gid( target_id ) )
+  if ( !kernel().node_manager.is_local_gid( target_id ) )
     return;
 
-  Node* target = Network::get_network().get_node( target_id );
+  Node* target = kernel().node_manager.get_node( target_id );
 
   Subnet* target_comp = dynamic_cast< Subnet* >( target );
   if ( target_comp != 0 )
@@ -995,7 +995,7 @@ nest::ConnectionBuilderManager::convergent_connect( const TokenArray source_ids,
   for ( index i = 0; i < source_ids.size(); ++i )
   {
     index source_id = source_ids.get( i );
-    Node* source = Network::get_network().get_node( getValue< long >( source_id ) );
+    Node* source = kernel().node_manager.get_node( getValue< long >( source_id ) );
 
     thread target_thread = target->get_thread();
 
@@ -1006,7 +1006,7 @@ nest::ConnectionBuilderManager::convergent_connect( const TokenArray source_ids,
 
       // If target is on the wrong thread, we need to get the right one now.
       if ( target->get_thread() != target_thread )
-        target = Network::get_network().get_node( target_id, target_thread );
+        target = kernel().node_manager.get_node( target_id, target_thread );
 
       if ( source->is_proxy() )
         continue;
@@ -1089,10 +1089,10 @@ nest::ConnectionBuilderManager::convergent_connect( const std::vector< index >& 
   // Check if we have consistent lists for weights and delays
   // already checked in previous RCC call
 
-  Node* target = Network::get_network().get_node( target_id );
+  Node* target = kernel().node_manager.get_node( target_id );
   for ( index i = 0; i < source_ids.size(); ++i )
   {
-    Node* source = Network::get_network().get_node( source_ids[ i ] );
+    Node* source = kernel().node_manager.get_node( source_ids[ i ] );
     thread target_thread = target->get_thread();
 
     if ( !target->has_proxies() )
@@ -1101,7 +1101,7 @@ nest::ConnectionBuilderManager::convergent_connect( const std::vector< index >& 
 
       // If target is on the wrong thread, we need to get the right one now.
       if ( target->get_thread() != target_thread )
-        target = Network::get_network().get_node( target_id, target_thread );
+        target = kernel().node_manager.get_node( target_id, target_thread );
 
       if ( source->is_proxy() )
         continue;
@@ -1179,10 +1179,10 @@ nest::ConnectionBuilderManager::random_convergent_connect( const TokenArray sour
   bool allow_autapses,
   index syn )
 {
-  if ( !Network::get_network().is_local_gid( target_id ) )
+  if ( !kernel().node_manager.is_local_gid( target_id ) )
     return;
 
-  Node* target = Network::get_network().get_node( target_id );
+  Node* target = kernel().node_manager.get_node( target_id );
 
   // check if we have consistent lists for weights and delays
   if ( !( weights.size() == n || weights.size() == 0 ) && ( weights.size() == delays.size() ) )
@@ -1316,10 +1316,10 @@ nest::ConnectionBuilderManager::random_convergent_connect( TokenArray source_ids
       index target_id = target_ids.get( i );
 
       // This is true for neurons on remote processes
-      if ( !Network::get_network().is_local_gid( target_id ) )
+      if ( !kernel().node_manager.is_local_gid( target_id ) )
         continue;
 
-      Node* target = Network::get_network().get_node( target_id, tid );
+      Node* target = kernel().node_manager.get_node( target_id, tid );
 
       // Check, if target is on our thread
       if ( target->get_thread() != tid )

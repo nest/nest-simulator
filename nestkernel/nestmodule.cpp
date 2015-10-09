@@ -362,8 +362,9 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
   long gid = conn.get_source_gid();
   kernel().node_manager.get_node( gid ); // Just to check if the node exists
 
-  DictionaryDatum result_dict = Network::get_network().get_synapse_status(
-    gid, conn.get_synapse_model_id(), conn.get_port(), conn.get_target_thread() );
+  DictionaryDatum result_dict =
+    kernel().connection_builder_manager.get_synapse_status(gid,
+    conn.get_synapse_model_id(), conn.get_port(), conn.get_target_thread() );
 
   i->OStack.pop();
   i->OStack.push( result_dict );

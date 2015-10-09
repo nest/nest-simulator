@@ -191,8 +191,6 @@ public:
    */
   Model* get_model( index ) const;
 
-  /**
-
   DictionaryDatum get_connector_defaults( index sc );
   void set_connector_defaults( const index sc, const DictionaryDatum& d );
 
@@ -402,7 +400,6 @@ private:
 
 
 
-  /**
   /******** Member variables former owned by the scheduler ********/
   bool initialized_;
 

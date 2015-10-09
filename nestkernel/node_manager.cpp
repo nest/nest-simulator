@@ -216,19 +216,19 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
   }
   kernel().modelrange_manager.add_range( mod, min_gid, max_gid - 1 );
 
-  if ( model->potential_global_receiver() and Network::get_network().get_num_rec_processes() > 0 )
+  if ( model->potential_global_receiver() and kernel().mpi_manager.get_num_rec_processes() > 0 )
   {
     // In this branch we create nodes for all GIDs which are on a local thread
-    const int n_per_process = n / Network::get_network().get_num_rec_processes();
+    const int n_per_process = n / kernel().mpi_manager.get_num_rec_processes();
     const int n_per_thread = n_per_process / n_threads + 1;
 
     // We only need to reserve memory on the ranks on which we
     // actually create nodes. In this if-branch ---> Only on recording
     // processes
-    if ( Communicator::get_rank() >= Network::get_network().get_num_sim_processes() )
+    if ( kernel().mpi_manager.get_rank() >= kernel().mpi_manager.get_num_sim_processes() )
     {
       local_nodes_.reserve(
-        std::ceil( static_cast< double >( max_gid ) / Network::get_network().get_num_sim_processes() ) );
+        std::ceil( static_cast< double >( max_gid ) / kernel().mpi_manager.get_num_sim_processes() ) );
       for ( thread t = 0; t < n_threads; ++t )
       {
         // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
@@ -267,18 +267,18 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
   else if ( model->has_proxies() )
   {
     // In this branch we create nodes for all GIDs which are on a local thread
-    const int n_per_process = n / Network::get_network().get_num_sim_processes();
+    const int n_per_process = n / kernel().mpi_manager.get_num_sim_processes();
     const int n_per_thread = n_per_process / n_threads + 1;
 
     // We only need to reserve memory on the ranks on which we
     // actually create nodes. In this if-branch ---> Only on
     // simulation processes
-    if ( Communicator::get_rank() < Network::get_network().get_num_sim_processes() )
+    if ( kernel().mpi_manager.  get_rank() < kernel().mpi_manager.get_num_sim_processes() )
     {
       // TODO: This will work reasonably for round-robin. The extra 50 entries are
       //       for subnets and devices.
       local_nodes_.reserve(
-        std::ceil( static_cast< double >( max_gid ) / Network::get_network().get_num_sim_processes() ) + 50 );
+        std::ceil( static_cast< double >( max_gid ) / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
       for ( thread t = 0; t < n_threads; ++t )
       {
         // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
@@ -350,7 +350,7 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
     // and filled with one instance per thread, in total n * n_thread nodes in
     // n wrappers.
     local_nodes_.reserve(
-      std::ceil( static_cast< double >( max_gid ) / Network::get_network().get_num_sim_processes() ) + 50 );
+      std::ceil( static_cast< double >( max_gid ) / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
     for ( index gid = min_gid; gid < max_gid; ++gid )
     {
       thread thread_id = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );

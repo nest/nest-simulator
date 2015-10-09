@@ -582,11 +582,4 @@ Network::update_music_event_handlers_( Time const& origin, const long_t from, co
 }
 #endif
 
-/****** Previously Scheduler functions ***********/
-
-
-
-
-void
-// inline
 } // end of namespace

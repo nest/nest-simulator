@@ -33,6 +33,8 @@
 
 #include "network.h"
 
+#include "vp_manager_impl.h"
+
 
 nest::RNGManager::RNGManager()
   : rng_()
@@ -89,7 +91,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
         rng_.push_back(
           getValue< librandom::RngDatum >( ( *ad )[ kernel().vp_manager.suggest_vp( i ) ] ) );
   }
-  else if ( n_threads_updated && Network::get_network().size() == 0 )
+  else if ( n_threads_updated && kernel().node_manager.size() == 0 )
   {
     LOG( M_WARNING, "Network::set_status", "Equipping threads with new default RNGs" );
     create_rngs_();
@@ -141,7 +143,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     // pre-seeded grng that can be used directly, no seeding required
     updateValue< librandom::RngDatum >( d, "grng", grng_ );
   }
-  else if ( n_threads_updated && Network::get_network().size() == 0 )
+  else if ( n_threads_updated && kernel().node_manager.size() == 0 )
   {
     LOG( M_WARNING, "Network::set_status", "Equipping threads with new default GRNG" );
     create_grng_();

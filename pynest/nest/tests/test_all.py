@@ -44,6 +44,7 @@ from . import test_networks
 from . import test_threads
 from . import test_csa
 from . import test_quantal_stp_synapse
+from . import test_parrot_neuron
 
 
 def suite():
@@ -70,7 +71,8 @@ def suite():
     suite.addTest(test_threads.suite())    
     suite.addTest(test_csa.suite())    
     suite.addTest(test_quantal_stp_synapse.suite())    
-    
+    suite.addTest(test_parrot_neuron.suite()) 
+
     return suite
 
 

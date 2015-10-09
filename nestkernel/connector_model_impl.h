@@ -160,10 +160,10 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
                                                                                     default_connection_.get_delay() );
     } catch (BadDelay& e) {
       throw BadDelay(default_connection_.get_delay(), 
-                     String::compose("Default delay of '%s' must be in range of min_delay %f and max_delay %f.", 
+                     String::compose("Default delay of '%1' must be between min_delay %2 and max_delay %3.",
                                      get_name(), 
-                                     kernel().connection_builder_manager.get_min_delay(), 
-                                     kernel().connection_builder_manager.get_max_delay())
+                                     Time::delay_steps_to_ms(kernel().connection_builder_manager.get_min_delay()),
+                                     Time::delay_steps_to_ms(kernel().connection_builder_manager.get_max_delay()))
                     );
     }
     default_delay_needs_check_ = false;

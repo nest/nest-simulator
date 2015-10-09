@@ -146,10 +146,10 @@ template < typename targetidentifierT >
 void
 GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
-  // We do not call ConnectionBase::get_status( d ) 
-  // because gap_junctions have no delay
-  // and we dont want the delay to be displayed
-  ConnectionBase::target_.get_status( d );
+  // We have to include the delay here to prevent
+  // errors due to internal calls of 
+  // this function in SLI/pyNEST
+  ConnectionBase::get_status( d );
   def< double_t >( d, names::weight, weight_ );
   def< long_t >( d, names::size_of, sizeof( *this ) );
 }
@@ -158,10 +158,11 @@ template < typename targetidentifierT >
 void
 GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
-  // If the delay is set we throw a BadProperty
+  // If the delay is set, we throw a BadProperty
   if( d->known( names::delay ) )
     throw BadProperty( "gap_junction connection has no delay" );
   
+  ConnectionBase::set_status( d, cm ); 
   updateValue< double_t >( d, names::weight, weight_ );
 }
 

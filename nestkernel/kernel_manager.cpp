@@ -56,15 +56,18 @@ void
 nest::KernelManager::init()
 {
   logging_manager.init();
+
   mpi_manager.init();
   vp_manager.init();
+
   rng_manager.init();
   io_manager.init();
+
   connection_builder_manager.init();
-  event_delivery_manager.init();
   simulation_manager.init();
+  event_delivery_manager.init();  // after sim_mgr and conn_bldr_mgr
   modelrange_manager.init();
-  node_manager.init();
+  node_manager.init();  // must come last
 
   initialized_ = true;
 }

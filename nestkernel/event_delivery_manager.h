@@ -200,8 +200,7 @@ public:
   /**
    * Initialize modulo table.
    *
-   * TODO This is currently called from SimulationManager::init(),
-   * check if that call should not come from elsewhere.
+   * TODO: can probably be private
    */
   void init_moduli();
 

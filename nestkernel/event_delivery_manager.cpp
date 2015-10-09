@@ -51,6 +51,7 @@ EventDeliveryManager::~EventDeliveryManager()
 void
 EventDeliveryManager::init()
 {
+  init_moduli();
 }
 
 void

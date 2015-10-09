@@ -393,17 +393,6 @@ private:
   bool model_defaults_modified_; //!< whether any model defaults have been modified
 
 
-private:
-  /******** Member functions former owned by the scheduler ********/
-
-  void init_scheduler_();
-
-
-
-  /******** Member variables former owned by the scheduler ********/
-  bool initialized_;
-
-
 };
 
 inline Network&

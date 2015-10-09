@@ -104,7 +104,6 @@ Network::Network( SLIInterpreter& i )
   , connection_manager_()
   , dict_miss_is_error_( true )
   , model_defaults_modified_( false )
-  , initialized_( false ) // scheduler stuff
 {
   // the subsequent function-calls need a
   // network instance, hence the instance
@@ -130,7 +129,6 @@ Network::Network( SLIInterpreter& i )
   model->set_type_id( 2 );
 
   kernel().init();
-  init_scheduler_();
 
   synapsedict_ = new Dictionary();
   interpreter_.def( "synapsedict", new DictionaryDatum( synapsedict_ ) );
@@ -151,8 +149,6 @@ Network::~Network()
   for ( i = pristine_models_.begin(); i != pristine_models_.end(); ++i )
     if ( ( *i ).first != 0 )
       delete ( *i ).first;
-
-  initialized_ = false;
 }
 
 void
@@ -207,14 +203,6 @@ Network::init_()
 #endif
 }
 
-void
-Network::init_scheduler_()
-{
-  assert( initialized_ == false );
-
-
-  initialized_ = true;
-}
 
 void
 Network::clear_models_( bool called_from_destructor )
@@ -251,9 +239,7 @@ Network::reset()
     ( *m ).first->set_threads();
   }
 
-  initialized_ = false;
   kernel().init();
-  init_scheduler_();
 
   connection_manager_.reset();
 
@@ -357,7 +343,6 @@ Network::set_status( index gid, const DictionaryDatum& d )
 
   // former scheduler_.set_status( d ); start
   // careful, this may invalidate all node pointers!
-  assert( initialized_ );
   kernel().set_status( d );
 
 
@@ -369,9 +354,10 @@ Network::set_status( index gid, const DictionaryDatum& d )
 DictionaryDatum
 Network::get_status( index idx )
 {
+  assert( kernel().is_initialized() );
+
   Node* target = kernel().node_manager.get_node( idx );
   assert( target != 0 );
-  assert( initialized_ );
 
   DictionaryDatum d = target->get_status_base();
 

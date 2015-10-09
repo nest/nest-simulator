@@ -102,13 +102,13 @@ public:
   LoggingManager logging_manager;
   MPIManager mpi_manager;
   VPManager vp_manager;
+  RNGManager rng_manager;
   IOManager io_manager;
   ConnectionBuilderManager connection_builder_manager;
-  EventDeliveryManager event_delivery_manager;
-  NodeManager node_manager;
   SimulationManager simulation_manager;
+  EventDeliveryManager event_delivery_manager;
   ModelRangeManager modelrange_manager;
-  RNGManager rng_manager;
+  NodeManager node_manager;
 
 private:
   bool initialized_; //!< true if all sub-managers initialized

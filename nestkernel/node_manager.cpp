@@ -48,7 +48,7 @@ NodeManager::NodeManager()
   :  local_nodes_()
   ,  root_( 0 )
   ,  current_( 0 )
-  ,  siblingcontainer_model(0)
+  ,  siblingcontainer_model_(0)
   ,  n_gsd_( 0 )
   ,  nodes_vec_()
   ,  nodes_vec_network_size_( 0 ) // zero to force update
@@ -83,13 +83,15 @@ NodeManager::init()
   assert( Network::get_network().pristine_models_.size() > 1 );
 
   Model* rootmodel = Network::get_network().pristine_models_[ 0 ].first;
+  assert( rootmodel != 0 );
   assert( rootmodel->get_name() == "subnet" );
 
-  Model* siblingcontainer_model = Network::get_network().pristine_models_[ 1 ].first;
-  assert( siblingcontainer_model->get_name() == "siblingcontainer" );
+  siblingcontainer_model_ = Network::get_network().pristine_models_[ 1 ].first;
+  assert( siblingcontainer_model_ != 0 );
+  assert( siblingcontainer_model_->get_name() == "siblingcontainer" );
 
   SiblingContainer* root_container =
-    static_cast< SiblingContainer* >( siblingcontainer_model->allocate( 0 ) );
+    static_cast< SiblingContainer* >( siblingcontainer_model_->allocate( 0 ) );
   local_nodes_.add_local_node( *root_container );
   root_container->reserve( kernel().vp_manager.get_num_threads() );
   root_container->set_model_id( -1 );
@@ -163,10 +165,11 @@ NodeManager::reinit_nodes()
 DictionaryDatum
 NodeManager::get_status( index idx )
 {
+  assert( kernel().is_initialized() ); // TODO: Do we need this?
+
   assert( idx != 0 );
   Node* target = get_node( idx );
   assert( target != 0 );
-  assert( Network::get_network().initialized_ );
 
   DictionaryDatum d = target->get_status_base();
 
@@ -342,7 +345,7 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
     for ( thread t = 0; t < n_threads; ++t )
     {
       model->reserve_additional( t, n );
-      siblingcontainer_model->reserve_additional( t, container_per_thread );
+      siblingcontainer_model_->reserve_additional( t, container_per_thread );
       static_cast< Subnet* >( subnet_container->get_thread_sibling_( t ) )->reserve( n );
     }
 
@@ -357,7 +360,7 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
 
       // Create wrapper and register with nodes_ array.
       SiblingContainer* container =
-        static_cast< SiblingContainer* >( siblingcontainer_model->allocate( thread_id ) );
+        static_cast< SiblingContainer* >( siblingcontainer_model_->allocate( thread_id ) );
       container->set_model_id(
         -1 ); // mark as pseudo-container wrapping replicas, see reset_network()
       container->reserve( n_threads ); // space for one instance per thread
@@ -622,6 +625,7 @@ NodeManager::set_status_single_node_( Node& target, const DictionaryDatum& d, bo
     std::string missed;
     if ( !d->all_accessed( missed ) )
     {
+      // TODO: Not sure this check should be at single neuron level; advantage is it stops after first failure.
       if ( Network::get_network().dict_miss_is_error() )
         throw UnaccessedDictionaryEntry( missed );
       else
@@ -635,7 +639,7 @@ NodeManager::set_status_single_node_( Node& target, const DictionaryDatum& d, bo
 void
 NodeManager::prepare_nodes()
 {
-  assert( Network::get_network().initialized_ );
+  assert( kernel().is_initialized() );
 
   LOG( M_INFO, "NodeManager::prepare_nodes_", "Please wait. Preparing elements." );
 

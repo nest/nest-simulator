@@ -221,7 +221,7 @@ private:
   Subnet* root_;    //!< Root node.
   Subnet* current_; //!< Current working node (for insertion).
 
-  Model* siblingcontainer_model; //!< The model for the SiblingContainer class
+  Model* siblingcontainer_model_; //!< The model for the SiblingContainer class
 
   index n_gsd_; //!< Total number of global spike detectors, used for distributing them over
                 //!< recording processes

@@ -48,9 +48,12 @@ example a poisson generator with a high firing rate is connected
 to a parrot neuron, the communication cost associated with outgoing
 spikes is much bigger for the latter.
 
-Only spikes incoming on connections to port 0 will be repeated.
+Only spikes arriving on connections to port 0 will be repeated.
 Connections onto port 1 will be accepted, but spikes incoming
-through port 1 will be inignored.
+through port 1 will be ignored. This allows setting exact pre-
+and post-synaptic spike times for STDP protocols by connecting
+two parrot neurons spiking at desired times by, e.g., a
+stdp_synapse onto port 1 on the post-synaptic parrot neuron.
 
 Receives: SpikeEvent
 
@@ -151,13 +154,9 @@ parrot_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   // Allow connections to port 0 (spikes to be repeated)
   // and port 1 (spikes to be ignored).
-  if ( receptor_type == 0 )
+  if ( receptor_type == 0 or receptor_type == 1 )
   {
-    return 0;
-  }
-  else if ( receptor_type == 1 )
-  {
-    return 1;
+    return receptor_type;
   }
   else
   {

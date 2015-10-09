@@ -293,7 +293,7 @@ nest::mat2_psc_exp::calibrate()
 void
 nest::mat2_psc_exp::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each

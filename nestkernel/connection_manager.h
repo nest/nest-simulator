@@ -32,15 +32,14 @@
 #include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "arraydatum.h"
-#include "sparsetable.h"
+
 
 #include <cmath>
 
 namespace nest
 {
-class ConnectorBase;
+
 class ConnectorModel;
-class spikecounter;
 class Network;
 
 /**
@@ -49,9 +48,7 @@ class Network;
  */
 class ConnectionManager
 {
-
-  typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons having targets
-  typedef std::vector< tSConnector > tVSConnector;           // for all threads
+  friend class ConnectionBuilderManager;
 
 public:
   ConnectionManager();
@@ -81,97 +78,10 @@ public:
   // aka GetDefaults for synapse models
   DictionaryDatum get_prototype_status( synindex syn_id ) const;
 
-  // aka conndatum GetStatus
-  DictionaryDatum get_synapse_status( index gid, synindex syn_id, port p, thread tid );
-  // aka conndatum SetStatus
-  void
-  set_synapse_status( index gid, synindex syn_id, port p, thread tid, const DictionaryDatum& d );
-
-  /**
-   * Return connections between pairs of neurons.
-   * The params dictionary can have the following entries:
-   * 'source' a token array with GIDs of source neurons.
-   * 'target' a token array with GIDs of target neuron.
-   * If either of these does not exist, all neuron are used for the respective entry.
-   * 'synapse_model' name of the synapse model, or all synapse models are searched.
-   * The function then iterates all entries in source and collects the connection IDs to all neurons
-   * in target.
-   */
-  ArrayDatum get_connections( DictionaryDatum params ) const;
-
-  void get_connections( ArrayDatum& connectome,
-    TokenArray const* source,
-    TokenArray const* target,
-    size_t syn_id ) const;
-
   // aka CopyModel for synapse models
   synindex copy_synapse_prototype( synindex old_id, std::string new_name );
 
   bool has_user_prototypes() const;
-
-  bool get_user_set_delay_extrema() const;
-
-  const Time get_min_delay() const;
-  const Time get_max_delay() const;
-
-  /**
-   * Make sure that the connection counters are up-to-date and return
-   * the total number of connections in the network.
-   */
-  size_t get_num_connections() const;
-
-  /**
-   * Connect is used to establish a connection between a sender and
-   * receiving node.
-   *
-   * The parameters delay and weight have the default value NAN.
-   * NAN is a special value in cmath, which describes double values that
-   * are not a number. If delay or weight is omitted in an connect call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
-   *
-   * \param s A reference to the sending Node.
-   * \param r A reference to the receiving Node.
-   * \param t The thread of the target node.
-   * \param syn The synapse model to use.
-   * \returns The receiver port number for the new connection
-   */
-  void connect( Node& s,
-    Node& r,
-    index s_gid,
-    thread tid,
-    index syn,
-    double_t d = NAN,
-    double_t w = NAN );
-  void connect( Node& s,
-    Node& r,
-    index s_gid,
-    thread tid,
-    index syn,
-    DictionaryDatum& p,
-    double_t d = NAN,
-    double_t w = NAN );
-
-
-  /**
-   * Experimental bulk connector. See documentation in network.h
-   */
-  bool connect( ArrayDatum& d );
-
-  void trigger_update_weight( const long_t vt_gid,
-    const std::vector< spikecounter >& dopa_spikes,
-    const double_t t_trig );
-
-  void send( thread t, index sgid, Event& e );
-
-  /**
-   * Resize the structures for the Connector objects if necessary.
-   * This function should be called after number of threads, min_delay, max_delay,
-   * and time representation have been changed in the scheduler.
-   * The TimeConverter is used to convert times from the old to the new representation.
-   * It is also forwarding the calibration
-   * request to all ConnectorModel objects.
-   */
-  void calibrate( const TimeConverter& );
 
 private:
   std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
@@ -182,23 +92,11 @@ private:
 
   Dictionary* synapsedict_; //!< The synapsedict (owned by the network)
 
-  /**
-   * A 3-dim structure to hold the Connector objects which in turn hold the connection
-   * information.
-   * - First dim: A std::vector for each local thread
-   * - Second dim: A std::vector for each node on each thread
-   * - Third dim: A std::vector for each synapse prototype, holding the Connector objects
-   */
-
-  tVSConnector connections_;
-
-  mutable size_t num_connections_; //!< The global counter for the number of synapses
 
   void init_();
-  void delete_connections_();
+
   void clear_prototypes_();
 
-  ConnectorBase* validate_source_entry( thread tid, index s_gid, synindex syn_id );
 
   /**
    * Return pointer to protoype for given synapse id.

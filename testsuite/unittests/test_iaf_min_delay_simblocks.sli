@@ -57,12 +57,15 @@ SeeAlso: iaf_neuron, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, 
 
   ResetKernel
 
-  0 << /local_num_threads 1 /resolution h >> SetStatus
-
-  /static_synapse <<
-    /delay delay  
+  0 <<
+    /local_num_threads 1
+    /resolution h
     /min_delay min_del
     /max_delay delay
+  >> SetStatus
+
+  /static_synapse <<
+    /delay delay
   >> SetDefaults
 
 %  /iaf_psc_alpha_canon Create /neuron Set

@@ -22,5 +22,4 @@
 
 #include "conngendatum.h"
 
-
 SLIType nest::ConnectionGeneratorType;

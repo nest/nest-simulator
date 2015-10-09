@@ -29,6 +29,10 @@
 #include "network.h"
 #include "connector_model.h"
 #include "connector_base.h"
+#include "compose.hpp"
+
+#include "kernel_manager.h"
+#include "delay_checker.h"
 
 
 template < typename T, typename C >
@@ -103,9 +107,6 @@ GenericConnectorModel< ConnectionT >::calibrate( const TimeConverter& tc )
 
   // calibrate any time objects that might reside in CommonProperties
   cp_.calibrate( tc );
-
-  min_delay_ = tc.from_old_steps( min_delay_.get_steps() );
-  max_delay_ = tc.from_old_steps( max_delay_.get_steps() );
 }
 
 template < typename ConnectionT >
@@ -119,20 +120,8 @@ GenericConnectorModel< ConnectionT >::get_status( DictionaryDatum& d ) const
   // then get default properties for individual synapses
   default_connection_.get_status( d );
 
-  ( *d )[ "min_delay" ] = get_min_delay().get_ms();
-  ( *d )[ "max_delay" ] = get_max_delay().get_ms();
   ( *d )[ names::receptor_type ] = receptor_type_;
   ( *d )[ "synapsemodel" ] = LiteralDatum( name_ );
-
-  long_t old_count;
-  // if field "num_connections" already exists
-  // we will add to this number
-  // used to add up connections from connector_models
-  // for different threads
-  if ( updateValue< long_t >( d, "num_connections", old_count ) )
-    ( *d )[ "num_connections" ] = old_count + get_num_connections();
-  else
-    ( *d )[ "num_connections" ] = get_num_connections();
 }
 
 template < typename ConnectionT >
@@ -145,67 +134,12 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   updateValue< long_t >( d, names::music_channel, receptor_type_ );
 #endif
 
-  /*
-   * In the following code, we do not round delays to steps. For min and max delay,
-   * this is not strictly necessary. For a newly set delay, the rounding will be
-   * handled in cp_.set_status() or default_connection_.set_status().
-   * Since min_/max_delay are Time-objects and comparison is defined on Time
-   * objects, we should use it.
-   */
-  Time min_delay, max_delay, new_delay;
-  double_t delay_tmp;
-  bool min_delay_updated = updateValue< double_t >( d, "min_delay", delay_tmp );
-  min_delay = Time( Time::ms( delay_tmp ) );
-  bool max_delay_updated = updateValue< double_t >( d, "max_delay", delay_tmp );
-  max_delay = Time( Time::ms( delay_tmp ) );
-
-  // the delay might also be updated, so check new_min_delay and new_max_delay against new_delay, if
-  // given
-  if ( !updateValue< double_t >( d, "delay", delay_tmp ) )
-    new_delay = Time( Time::ms( default_connection_.get_delay() ) );
-  else
-    new_delay = Time( Time::ms( delay_tmp ) );
-
-  if ( min_delay_updated xor max_delay_updated )
-    LOG( M_ERROR, "SetDefaults", "Both min_delay and max_delay have to be specified" );
-
-  if ( min_delay_updated && max_delay_updated )
-  {
-    if ( num_connections_ > 0 )
-      LOG( M_ERROR, "SetDefaults", "Connections already exist. Please call ResetKernel first" );
-    else if ( min_delay > new_delay )
-      LOG( M_ERROR, "SetDefaults", "min_delay is not compatible with default delay" );
-    else if ( max_delay < new_delay )
-      LOG( M_ERROR, "SetDefaults", "max_delay is not compatible with default delay" );
-    else if ( min_delay < Time::get_resolution() )
-      LOG( M_ERROR, "SetDefaults", "min_delay must be greater than or equal to resolution" );
-    else if ( max_delay < Time::get_resolution() )
-      LOG( M_ERROR, "SetDefaults", "max_delay must be greater than or equal to resolution" );
-    else
-    {
-      min_delay_ = min_delay;
-      max_delay_ = max_delay;
-      user_set_delay_extrema_ = true;
-    }
-  }
-
-  // common_props_.set_status(d, *this) AND defaults_.set_status(d, *this);
-  // has to be done after adapting min_delay / max_delay, since Connection::set_status
-  // and CommonProperties::set_status might want to check the delay
-
-  // store min_delay_, max_delay_
-  // calling set_status will check the delay.
-  // and so may modify min_delay, max_delay, if the specified delay exceeds one of these bounds
-  // we have to save min/max_delay because we dont know, if the default will ever be used
-  Time min_delay_tmp = min_delay_;
-  Time max_delay_tmp = max_delay_;
+  kernel().connection_builder_manager.get_delay_checker().freeze_delay_update();
 
   cp_.set_status( d, *this );
   default_connection_.set_status( d, *this );
 
-  // restore min_delay_, max_delay_
-  min_delay_ = min_delay_tmp;
-  max_delay_ = max_delay_tmp;
+  kernel().connection_builder_manager.get_delay_checker().enable_delay_update();
 
   // we've possibly just got a new default delay. So enforce checking next time it is used
   default_delay_needs_check_ = true;
@@ -221,7 +155,17 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
   // (either from commonprops or default connection)
   if ( default_delay_needs_check_ )
   {
-    assert_valid_delay_ms( default_connection_.get_delay() );
+    try {
+      kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms(
+                                                                                    default_connection_.get_delay() );
+    } catch (BadDelay& e) {
+      throw BadDelay(default_connection_.get_delay(), 
+                     String::compose("Default delay of '%s' must be in range of min_delay %f and max_delay %f.", 
+                                     get_name(), 
+                                     kernel().connection_builder_manager.get_min_delay(), 
+                                     kernel().connection_builder_manager.get_max_delay())
+                    );
+    }
     default_delay_needs_check_ = false;
   }
 }
@@ -249,7 +193,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   double_t weight )
 {
   if ( !std::isnan( delay ) )
-    assert_valid_delay_ms( delay );
+    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
 
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
@@ -266,7 +210,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     // tell the connector model, that we used the default delay
     used_default_delay();
   }
-
 
   return add_connection( src, tgt, conn, syn_id, c, receptor_type_ );
 }
@@ -289,7 +232,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 {
   if ( !std::isnan( delay ) )
   {
-    assert_valid_delay_ms( delay );
+    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
 
     if ( p->known( names::delay ) )
       throw BadParameter(
@@ -301,7 +244,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     double_t delay = 0.0;
 
     if ( updateValue< double_t >( p, names::delay, delay ) )
-      assert_valid_delay_ms( delay );
+      kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
     else
       used_default_delay();
   }
@@ -427,8 +370,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       }
     }
   }
-
-  num_connections_++;
 
   return conn;
 }

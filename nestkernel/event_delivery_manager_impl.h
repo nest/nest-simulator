@@ -24,6 +24,7 @@
 #define EVENT_DELIVERY_MANAGER_IMPL_H
 
 #include "event_delivery_manager.h"
+
 #include "kernel_manager.h"
 
 namespace nest
@@ -39,7 +40,7 @@ EventDeliveryManager::send( Node& source, EventT& e, const long_t lag )
   index gid = source.get_gid();
 
   assert( !source.has_proxies() );
-  Network::get_network().connection_manager_.send( t, gid, e );
+  kernel().connection_builder_manager.send( t, gid, e );
 }
 
 template <>
@@ -79,8 +80,13 @@ EventDeliveryManager::write_toggle() const
   return kernel().simulation_manager.get_slice() % 2;
 }
 
+inline void
+EventDeliveryManager::send_local( thread t, Node& source, Event& e )
+{
+  index sgid = source.get_gid();
+  e.set_sender_gid( sgid );
+  kernel().connection_builder_manager.send( t, sgid, e );
+}
 }
 
 #endif
-
-

@@ -44,7 +44,7 @@ nest::KernelManager::destroy_kernel_manager()
 }
 
 nest::KernelManager::KernelManager()
-  : initialized_(false)
+  : initialized_( false )
 {
 }
 
@@ -56,8 +56,11 @@ void
 nest::KernelManager::init()
 {
   logging_manager.init();
+  mpi_manager.init();
   vp_manager.init();
+  rng_manager.init();
   io_manager.init();
+  connection_builder_manager.init();
   event_delivery_manager.init();
   simulation_manager.init();
   modelrange_manager.init();
@@ -72,9 +75,12 @@ nest::KernelManager::reset()
   initialized_ = false;
 
   logging_manager.reset();
+  mpi_manager.reset();
   vp_manager.reset();
+  rng_manager.reset();
   node_manager.reset(); // put this before model_manager.reset()
   io_manager.reset();
+  connection_builder_manager.reset();
   event_delivery_manager.reset();
   simulation_manager.reset();
   modelrange_manager.reset();
@@ -84,8 +90,11 @@ void
 nest::KernelManager::set_status( const DictionaryDatum& dict )
 {
   logging_manager.set_status( dict );
+  mpi_manager.set_status( dict );
   vp_manager.set_status( dict );
+  rng_manager.set_status( dict ); // set RNGs --- MUST come after n_threads_ is updated
   io_manager.set_status( dict );
+  connection_builder_manager.set_status( dict );
   event_delivery_manager.set_status( dict );
   simulation_manager.set_status( dict );
   modelrange_manager.set_status( dict );
@@ -96,8 +105,11 @@ void
 nest::KernelManager::get_status( DictionaryDatum& dict )
 {
   logging_manager.get_status( dict );
+  mpi_manager.get_status( dict );
   vp_manager.get_status( dict );
+  rng_manager.get_status( dict );
   io_manager.get_status( dict );
+  connection_builder_manager.get_status( dict );
   event_delivery_manager.get_status( dict );
   simulation_manager.get_status( dict );
   modelrange_manager.get_status( dict );

@@ -151,7 +151,6 @@ protected:
   {
     static tic_t TICS_PER_STEP;
     static tic_t TICS_PER_STEP_RND;
-    static tic_t OLD_TICS_PER_STEP;
 
     static double_t TICS_PER_MS;
     static double_t MS_PER_TIC;

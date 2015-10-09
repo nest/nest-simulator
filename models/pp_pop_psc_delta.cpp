@@ -240,7 +240,7 @@ nest::pp_pop_psc_delta::calibrate()
   B_.logger_.init();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = Network::get_network().get_rng( get_thread() );
+  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
   V_.min_double_ = std::numeric_limits< double_t >::min();
 
   double_t tau_eta_max = -1; // finding max of taus_eta_
@@ -303,7 +303,7 @@ nest::pp_pop_psc_delta::calibrate()
 void
 nest::pp_pop_psc_delta::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )

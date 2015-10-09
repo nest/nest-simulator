@@ -276,7 +276,7 @@ nest::pp_psc_delta::calibrate()
   B_.logger_.init();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = Network::get_network().get_rng( get_thread() );
+  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 
   V_.P33_ = std::exp( -V_.h_ / P_.tau_m_ );
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
@@ -340,7 +340,7 @@ void
 nest::pp_psc_delta::update( Time const& origin, const long_t from, const long_t to )
 {
 
-  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   double_t q_temp_;

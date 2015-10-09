@@ -327,14 +327,14 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
 
     source_array[ 0 ] = source_gid;
     def( gcdict, names::source, source_array );
-    ArrayDatum connectome = Network::get_network().get_connections( gcdict );
+    ArrayDatum connectome = kernel().connection_builder_manager.get_connections( gcdict );
 
     // Print information about all local connections for current source
     for ( size_t i = 0; i < connectome.size(); ++i )
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( connectome.get( i ) );
       DictionaryDatum result_dict =
-        Network::get_network().get_synapse_status( con_id.get_source_gid(),
+        kernel().connection_builder_manager.get_synapse_status( con_id.get_source_gid(),
           con_id.get_synapse_model_id(),
           con_id.get_port(),
           con_id.get_target_thread() );

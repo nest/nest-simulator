@@ -25,7 +25,9 @@
 #include <string>
 #include <ostream>
 
+#include "nest.h"
 #include "network.h"
+
 #include "sliexceptions.h"
 #include "exceptions.h"
 #include "logging.h"
@@ -243,7 +245,7 @@ create_parameter( const DictionaryDatum& param_dict )
 double_t
 get_value( const std::vector< double_t >& point, const ParameterDatum& param )
 {
-  librandom::RngPtr rng = Network::get_network().get_grng();
+  librandom::RngPtr rng = get_global_rng();
   return param->value( point, rng );
 }
 

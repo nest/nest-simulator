@@ -36,7 +36,7 @@
 namespace nest
 {
 
-void init_nest( int argc, char* argv[] );
+void init_nest( int* argc, char** argv[] );
 void fail_exit( int exitcode );
 
 void install_module( const std::string& module_name );
@@ -49,7 +49,8 @@ void enable_dryrun_mode( const index n_procs );
 void register_logger_client( const deliver_logging_event_ptr client_callback );
 void print_network( index gid, index depth, std::ostream& out = std::cout );
 
-librandom::RngPtr get_vp_rng( index target );
+librandom::RngPtr get_vp_rng_of_gid( index target );
+librandom::RngPtr get_vp_rng( thread tid );
 librandom::RngPtr get_global_rng();
 
 void set_kernel_status( const DictionaryDatum& dict );

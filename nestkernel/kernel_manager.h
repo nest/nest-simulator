@@ -26,12 +26,48 @@
 #include "vp_manager.h"
 #include "logging_manager.h"
 #include "io_manager.h"
+#include "connection_builder_manager.h"
 #include "node_manager.h"
 #include "simulation_manager.h"
 #include "modelrange_manager.h"
 #include "event_delivery_manager.h"
+#include "mpi_manager.h"
+#include "rng_manager.h"
 
 #include "dictdatum.h"
+
+// clang-format off
+/* BeginDocumentation
+ Name: kernel - Global properties of the simulation kernel.
+ 
+ Description:
+ (start here.)
+ 
+ Parameters:
+ The following parameters can be set in the status dictionary.
+ 
+ data_path                stringtype  - A path, where all data is written to (default is the current directory)
+ data_prefix              stringtype  - A common prefix for all data files
+ dict_miss_is_error       booltype    - Whether missed dictionary entries are treated as errors
+ local_num_threads        integertype - The local number of threads (cf. global_num_virt_procs)
+ max_delay                doubletype  - The maximum delay in the network
+ min_delay                doubletype  - The minimum delay in the network
+ ms_per_tic               doubletype  - The number of miliseconds per tic (cf. tics_per_ms, tics_per_step)
+ network_size             integertype - The number of nodes in the network
+ num_connections          integertype - The number of connections in the network
+ off_grid_spiking         booltype    - Whether to transmit precise spike times in MPI communicatio
+ print_time               booltype    - Whether to print progress information during the simulation
+ resolution               doubletype  - The resolution of the simulation (in ms)
+ tics_per_ms              doubletype  - The number of tics per milisecond (cf. ms_per_tic, tics_per_step)
+ tics_per_step            integertype - The number of tics per simulation time step (cf. ms_per_tic, tics_per_ms)
+ time                     doubletype  - The current simulation time
+ total_num_virtual_procs  integertype - The total number of virtual processes (cf. local_num_threads)
+ to_do                    integertype - The number of steps yet to be simulated
+ T_max                    doubletype  - The largest representable time value
+ T_min                    doubletype  - The smallest representable time value
+ SeeAlso: Simulate, Node
+ */
+// clang-format on
 
 namespace nest
 {
@@ -63,16 +99,19 @@ public:
   //! Returns true if kernel is initialized
   bool is_initialized() const;
 
-  VPManager vp_manager;
   LoggingManager logging_manager;
+  MPIManager mpi_manager;
+  VPManager vp_manager;
   IOManager io_manager;
+  ConnectionBuilderManager connection_builder_manager;
+  EventDeliveryManager event_delivery_manager;
   NodeManager node_manager;
   SimulationManager simulation_manager;
   ModelRangeManager modelrange_manager;
-  EventDeliveryManager event_delivery_manager;
+  RNGManager rng_manager;
 
 private:
-  bool initialized_;   //!< true if all sub-managers initialized
+  bool initialized_; //!< true if all sub-managers initialized
 };
 
 KernelManager& kernel();

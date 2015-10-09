@@ -28,7 +28,6 @@
 #include "nest_types.h"
 #include "nest_datums.h"
 #include "network.h"
-#include "network_impl.h"
 #include "nodelist.h"
 #include "interpret.h"
 #include "node.h"
@@ -46,8 +45,9 @@
 #include "genericmodel.h"
 #include "conn_builder.h"
 
-#include "logging.h"
 #include "kernel_manager.h"
+#include "logging.h"
+#include "connection_builder_manager_impl.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -243,10 +243,10 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      Network::get_network().set_synapse_status( con_id.get_source_gid(), // source_gid
-        con_id.get_synapse_model_id(),                                    // synapse_id
-        con_id.get_port(),                                                // port
-        con_id.get_target_thread(),                                       // target thread
+      kernel().connection_builder_manager.set_synapse_status( con_id.get_source_gid(), // source_gid
+        con_id.get_synapse_model_id(),                                                 // synapse_id
+        con_id.get_port(),                                                             // port
+        con_id.get_target_thread(), // target thread
         dict );
       std::string missed;
       if ( !dict->all_accessed( missed ) )
@@ -266,10 +266,10 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ con ] );
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      Network::get_network().set_synapse_status( con_id.get_source_gid(), // source_gid
-        con_id.get_synapse_model_id(),                                    // synapse_id
-        con_id.get_port(),                                                // port
-        con_id.get_target_thread(),                                       // target thread
+      kernel().connection_builder_manager.set_synapse_status( con_id.get_source_gid(), // source_gid
+        con_id.get_synapse_model_id(),                                                 // synapse_id
+        con_id.get_port(),                                                             // port
+        con_id.get_target_thread(), // target thread
         dict );
       std::string missed;
       if ( !dict->all_accessed( missed ) )
@@ -383,7 +383,7 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
   {
     ConnectionDatum con_id = getValue< ConnectionDatum >( conns.get( nt ) );
     DictionaryDatum result_dict =
-      Network::get_network().get_synapse_status( con_id.get_source_gid(),
+      kernel().connection_builder_manager.get_synapse_status( con_id.get_source_gid(),
         con_id.get_synapse_model_id(),
         con_id.get_port(),
         con_id.get_target_thread() );
@@ -694,7 +694,7 @@ NestModule::Connect_i_i_lFunction::execute( SLIInterpreter* i ) const
   {
     Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
-    Network::get_network().connect( source, target_node, target_thread, synmodel_id );
+    kernel().connection_builder_manager.connect( source, target_node, target_thread, synmodel_id );
   }
 
   i->OStack.pop( 3 );
@@ -724,7 +724,7 @@ NestModule::Connect_i_i_d_d_lFunction::execute( SLIInterpreter* i ) const
   {
     Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
-    Network::get_network().connect(
+    kernel().connection_builder_manager.connect(
       source, target_node, target_thread, synmodel_id, delay, weight );
   }
 
@@ -754,7 +754,8 @@ NestModule::Connect_i_i_D_lFunction::execute( SLIInterpreter* i ) const
   {
     Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
-    Network::get_network().connect( source, target_node, target_thread, synmodel_id, params );
+    kernel().connection_builder_manager.connect(
+      source, target_node, target_thread, synmodel_id, params );
   }
 
   i->OStack.pop( 4 );
@@ -774,7 +775,7 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by connect
-  connect( sources, targets, connectivity, synapse_params );
+  kernel().connection_builder_manager.connect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
   i->EStack.pop();
@@ -824,7 +825,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  Network::get_network().divergent_connect( source, params, synmodel_id );
+  kernel().connection_builder_manager.divergent_connect( source, params, synmodel_id );
   // dict access control only if we actually made a connection
   std::string missed;
   if ( !params->all_accessed( missed ) )
@@ -877,7 +878,7 @@ NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
   ArrayDatum connectome = getValue< ArrayDatum >( i->OStack.top() );
 
-  Network::get_network().connect( connectome );
+  kernel().connection_builder_manager.connect( connectome );
   i->OStack.pop();
   i->EStack.pop();
 }
@@ -929,7 +930,8 @@ NestModule::DivergentConnect_i_ia_a_a_lFunction::execute( SLIInterpreter* i ) co
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  Network::get_network().divergent_connect( source_adr, target_adr, weights, delays, synmodel_id );
+  kernel().connection_builder_manager.divergent_connect(
+    source_adr, target_adr, weights, delays, synmodel_id );
 
   i->OStack.pop( 5 );
   i->EStack.pop();
@@ -956,7 +958,7 @@ NestModule::RDivergentConnect_i_i_ia_da_da_b_b_lFunction::execute( SLIInterprete
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  Network::get_network().random_divergent_connect(
+  kernel().connection_builder_manager.random_divergent_connect(
     source_adr, target_adr, n, weights, delays, allow_multapses, allow_autapses, synmodel_id );
 
   i->OStack.pop( 8 );
@@ -1010,7 +1012,8 @@ NestModule::ConvergentConnect_ia_i_a_a_lFunction::execute( SLIInterpreter* i ) c
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  Network::get_network().convergent_connect( source_adr, target_adr, weights, delays, synmodel_id );
+  kernel().connection_builder_manager.convergent_connect(
+    source_adr, target_adr, weights, delays, synmodel_id );
 
   i->OStack.pop( 5 );
   i->EStack.pop();
@@ -1038,7 +1041,7 @@ NestModule::RConvergentConnect_ia_i_i_da_da_b_b_lFunction::execute( SLIInterpret
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  Network::get_network().random_convergent_connect(
+  kernel().connection_builder_manager.random_convergent_connect(
     source_adr, target_adr, n, weights, delays, allow_multapses, allow_autapses, synmodel_id );
 
   i->OStack.pop( 8 );
@@ -1066,7 +1069,7 @@ NestModule::RConvergentConnect_ia_ia_ia_daa_daa_b_b_lFunction::execute( SLIInter
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  Network::get_network().random_convergent_connect(
+  kernel().connection_builder_manager.random_convergent_connect(
     source_adr, target_adr, n, weights, delays, allow_multapses, allow_autapses, synmodel_id );
 
   i->OStack.pop( 8 );
@@ -1256,7 +1259,7 @@ NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::RankFunction::execute( SLIInterpreter* i ) const
 {
-  i->OStack.push( Communicator::get_rank() );
+  i->OStack.push( kernel().mpi_manager.get_rank() );
   i->EStack.pop();
 }
 
@@ -1274,7 +1277,7 @@ NestModule::RankFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
 {
-  i->OStack.push( Communicator::get_num_processes() );
+  i->OStack.push( kernel().mpi_manager.get_num_processes() );
   i->EStack.pop();
 }
 
@@ -1600,7 +1603,7 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
 
   index target = getValue< long >( i->OStack.pick( 0 ) );
 
-  librandom::RngPtr rng = get_vp_rng( target );
+  librandom::RngPtr rng = get_vp_rng_of_gid( target );
 
   Token rt( new librandom::RngDatum( rng ) );
   i->OStack.pop( 1 );
@@ -1848,12 +1851,16 @@ NestModule::init( SLIInterpreter* i )
 #endif
 
   // Add connection rules
-  Network::get_network().register_conn_builder< OneToOneBuilder >( "one_to_one" );
-  Network::get_network().register_conn_builder< AllToAllBuilder >( "all_to_all" );
-  Network::get_network().register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
-  Network::get_network().register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
-  Network::get_network().register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
-  Network::get_network().register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
+  kernel().connection_builder_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
+  kernel().connection_builder_manager.register_conn_builder< AllToAllBuilder >( "all_to_all" );
+  kernel().connection_builder_manager.register_conn_builder< FixedInDegreeBuilder >(
+    "fixed_indegree" );
+  kernel().connection_builder_manager.register_conn_builder< FixedOutDegreeBuilder >(
+    "fixed_outdegree" );
+  kernel().connection_builder_manager.register_conn_builder< BernoulliBuilder >(
+    "pairwise_bernoulli" );
+  kernel().connection_builder_manager.register_conn_builder< FixedTotalNumberBuilder >(
+    "fixed_total_number" );
 
   Token statusd = i->baselookup( Name( "statusdict" ) );
   DictionaryDatum dd = getValue< DictionaryDatum >( statusd );

@@ -21,10 +21,9 @@
  */
 
 #include "communicator.h"
-#include "network.h"
 
-#include "config.h"
 #include "kernel_manager.h"
+#include "mpi_manager_impl.h"
 
 /* To avoid problems on BlueGene/L, mpi.h MUST be the
    first included file after config.h.
@@ -83,7 +82,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
   vector< NodeAddressingData >& all_nodes,
   bool remote )
 {
-  size_t np = Communicator::num_processes_;
+  size_t np = kernel().mpi_manager.get_num_processes();
   if ( np > 1 && remote )
   {
     vector< long_t > localnodes;
@@ -95,7 +94,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
     }
     // get size of buffers
     std::vector< nest::int_t > n_nodes( np );
-    n_nodes[ Communicator::rank_ ] = localnodes.size();
+    n_nodes[ kernel().mpi_manager.get_rank() ] = localnodes.size();
     communicate( n_nodes );
     // Set up displacements vector.
     std::vector< int > displacements( np, 0 );
@@ -141,7 +140,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
   DictionaryDatum params,
   bool remote )
 {
-  size_t np = Communicator::num_processes_;
+  size_t np = kernel().mpi_manager.get_num_processes();
 
   if ( np > 1 && remote )
   {
@@ -162,7 +161,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
         // select those nodes fulfilling the key/value pairs of the dictionary
         bool match = true;
         index gid = ( *n )->get_gid();
-        DictionaryDatum node_status = kernel().node_manager.get_status( gid );
+        DictionaryDatum node_status = Network::get_network().get_status( gid );
         for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
         {
           if ( node_status->known( i->first ) )
@@ -186,7 +185,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 
     // get size of buffers
     std::vector< nest::int_t > n_nodes( np );
-    n_nodes[ Communicator::rank_ ] = localnodes.size();
+    n_nodes[ kernel().mpi_manager.get_rank() ] = localnodes.size();
     communicate( n_nodes );
 
     // Set up displacements vector.
@@ -231,7 +230,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
       {
         bool match = true;
         index gid = ( *n )->get_gid();
-        DictionaryDatum node_status = kernel().node_manager.get_status( gid );
+        DictionaryDatum node_status = Network::get_network().get_status( gid );
         for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
         {
           if ( node_status->known( i->first ) )
@@ -289,7 +288,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
     {
       bool match = true;
       index gid = ( *n )->get_gid();
-      DictionaryDatum node_status = kernel().node_manager.get_status( gid );
+      DictionaryDatum node_status = Network::get_network().get_status( gid );
       for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
       {
         if ( node_status->known( i->first ) )

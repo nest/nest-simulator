@@ -164,7 +164,7 @@ void
 binary_neuron< TGainfunction >::calibrate()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
-  V_.rng_ = Network::get_network().get_rng( get_thread() );
+  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 
   // draw next time of update for the neuron from exponential distribution
   // only if not yet initialized
@@ -181,7 +181,7 @@ template < class TGainfunction >
 void
 binary_neuron< TGainfunction >::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )

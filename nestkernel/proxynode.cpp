@@ -20,10 +20,10 @@
  *
  */
 
+#include "proxynode.h"
 
 #include "network.h"
 #include "dictutils.h"
-#include "proxynode.h"
 #include "connection.h"
 #include "kernel_manager.h"
 

@@ -25,7 +25,6 @@
 #include <vector>
 #include <list>
 #include "nest_types.h"
-#include "network.h"
 #include "nest_time.h"
 
 #include "kernel_manager.h"
@@ -153,7 +152,7 @@ inline double
 RingBuffer::get_value( const long_t offs )
 {
   assert( 0 <= offs && ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < Network::get_network().get_min_delay() );
+  assert( ( delay ) offs < kernel().connection_builder_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -235,7 +234,7 @@ inline double
 MultRBuffer::get_value( const long_t offs )
 {
   assert( 0 <= offs && ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < Network::get_network().get_min_delay() );
+  assert( ( delay ) offs < kernel().connection_builder_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -313,7 +312,7 @@ inline std::list< double_t >&
 ListRingBuffer::get_list( const long_t offs )
 {
   assert( 0 <= offs && ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < Network::get_network().get_min_delay() );
+  assert( ( delay ) offs < kernel().connection_builder_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing

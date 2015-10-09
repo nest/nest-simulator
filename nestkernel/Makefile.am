@@ -79,9 +79,13 @@ libnest_la_SOURCES=\
 		music_event_handler.h music_event_handler.cpp\
 		nest.h nest.cpp\
 		kernel_manager.h kernel_manager.cpp\
-		vp_manager.h vp_manager.cpp\
-		io_manager.h io_manager.cpp\
+		vp_manager.h vp_manager_impl.h vp_manager.cpp \
+		io_manager.h io_manager.cpp \
+		mpi_manager.h mpi_manager_impl.h mpi_manager.cpp \
 		simulation_manager.h simulation_manager.cpp \
+		connection_builder_manager.h connection_builder_manager.cpp \
+		delay_checker.h delay_checker.cpp \
+		rng_manager.h rng_manager.cpp \
 		event_delivery_manager.h event_delivery_manager_impl.h\
 		event_delivery_manager.cpp\
 		node_manager.h node_manager.cpp

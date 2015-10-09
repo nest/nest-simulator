@@ -259,7 +259,7 @@ nest::sinusoidal_gamma_generator::calibrate()
   device_.calibrate();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = Network::get_network().get_rng( get_thread() );
+  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 
   const double t_ms = kernel().simulation_manager.get_time().get_ms();
 
@@ -292,7 +292,7 @@ nest::sinusoidal_gamma_generator::hazard_( port tgt_idx ) const
 void
 nest::sinusoidal_gamma_generator::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )

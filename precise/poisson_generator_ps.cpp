@@ -162,7 +162,7 @@ nest::poisson_generator_ps::calibrate()
 void
 nest::poisson_generator_ps::update( Time const& T, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
@@ -197,7 +197,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
   assert( 0 <= prt && static_cast< size_t >( prt ) < B_.next_spike_.size() );
 
   // obtain rng
-  librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
 
   // introduce nextspk as a shorthand
   Buffers_::SpikeTime& nextspk = B_.next_spike_[ prt ];

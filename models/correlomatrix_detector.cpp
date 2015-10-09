@@ -25,6 +25,7 @@
 #include "dict.h"
 #include "dictutils.h"
 #include "arraydatum.h"
+#include "kernel_manager.h"
 
 #include <numeric>
 #include <functional> // for bind2nd
@@ -296,7 +297,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 
     // throw away all spikes which are too old to
     // enter the correlation window
-    const delay min_delay = Network::get_network().get_min_delay();
+    const delay min_delay = kernel().connection_builder_manager.get_min_delay();
     while (
       !otherSpikes.empty() && ( spike_i - otherSpikes.front().timestep_ ) >= tau_edge + min_delay )
       otherSpikes.pop_front();

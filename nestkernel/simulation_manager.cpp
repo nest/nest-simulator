@@ -31,6 +31,7 @@
 #include "dictutils.h"
 #include "network.h"
 #include "psignal.h"
+#include "nest_time.h"
 
 nest::SimulationManager::SimulationManager()
   : simulating_( false )
@@ -40,7 +41,7 @@ nest::SimulationManager::SimulationManager()
   , to_do_total_( 0L )
   , from_step_( 0L )
   , to_step_( 0L ) // consistent with to_do_ == 0
-  , t_real_ ( 0L )
+  , t_real_( 0L )
   , terminate_( false )
   , simulated_( false )
   , print_time_( false )
@@ -63,12 +64,11 @@ nest::SimulationManager::reset()
 {
   nest::Time::reset_to_defaults();
 
-   clock_.set_to_zero(); // ensures consistent state
-   to_do_ = 0;
-   slice_ = 0;
-   from_step_ = 0;
-   to_step_ = 0; // consistent with to_do_ = 0
-
+  clock_.set_to_zero(); // ensures consistent state
+  to_do_ = 0;
+  slice_ = 0;
+  from_step_ = 0;
+  to_step_ = 0; // consistent with to_do_ = 0
 }
 
 void
@@ -134,7 +134,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "ResetKernel first." );
       throw KernelException();
     }
-    else if ( Network::get_network().connection_manager_.get_num_connections() != 0 )
+    else if ( kernel().connection_builder_manager.get_num_connections() != 0 )
     {
       LOG( M_ERROR,
         "Network::set_status",
@@ -156,7 +156,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       {
         nest::Time::set_resolution( tics_per_ms, resd );
         clock_.calibrate(); // adjust to new resolution
-        Network::get_network().connection_manager_.calibrate(
+        kernel().connection_builder_manager.calibrate(
           time_converter ); // adjust delays in the connection system to new resolution
         LOG( M_INFO, "Network::set_status", "tics per ms and resolution changed." );
       }
@@ -174,7 +174,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       {
         Time::set_resolution( resd );
         clock_.calibrate(); // adjust to new resolution
-        Network::get_network().connection_manager_.calibrate(
+        kernel().connection_builder_manager.calibrate(
           time_converter ); // adjust delays in the connection system to new resolution
         LOG( M_INFO, "Network::set_status", "Temporal resolution changed." );
       }
@@ -187,18 +187,22 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       throw KernelException();
     }
   }
-
-
 }
 
 void
 nest::SimulationManager::get_status( DictionaryDatum& d )
 {
+  def< double >( d, "ms_per_tic", Time::get_ms_per_tic() );
+  def< double >( d, "tics_per_ms", Time::get_tics_per_ms() );
+  def< long >( d, "tics_per_step", Time::get_tics_per_step() );
+  def< double >( d, "resolution", Time::get_resolution().get_ms() );
+
+  def< double >( d, "T_min", Time::min().get_ms() );
+  def< double >( d, "T_max", Time::max().get_ms() );
+
   def< double_t >( d, "time", get_time().get_ms() );
   def< long >( d, "to_do", to_do_ );
   def< bool >( d, "print_time", print_time_ );
-
-
 }
 
 void
@@ -218,8 +222,7 @@ nest::SimulationManager::simulate( Time const& t )
     LOG( M_ERROR,
       "Network::simulate",
       String::compose(
-           "Simulation time must be >= %1 ms (one time step).",
-           Time::get_resolution().get_ms() ) );
+           "Simulation time must be >= %1 ms (one time step).", Time::get_resolution().get_ms() ) );
     throw KernelException();
   }
 
@@ -258,15 +261,15 @@ nest::SimulationManager::simulate( Time const& t )
   // have the proper value.  to_step_ is set as in advance_time().
 
   delay end_sim = from_step_ + to_do_;
-  if ( Network::get_network().get_min_delay() < end_sim )
-    to_step_ = Network::get_network().get_min_delay(); // update to end of time slice
+  if ( kernel().connection_builder_manager.get_min_delay() < end_sim )
+    to_step_ = kernel().connection_builder_manager.get_min_delay(); // update to end of time slice
   else
     to_step_ = end_sim; // update to end of simulation time
 
   // Warn about possible inconsistencies, see #504.
   // This test cannot come any earlier, because we first need to compute min_delay_
   // above.
-  if ( t.get_steps() % Network::get_network().get_min_delay() != 0 )
+  if ( t.get_steps() % kernel().connection_builder_manager.get_min_delay() != 0 )
     LOG( M_WARNING,
       "Network::simulate",
       "The requested simulation time is not an integer multiple of the minimal delay in the "
@@ -305,8 +308,7 @@ nest::SimulationManager::resume_()
 #ifndef _OPENMP
   if ( kernel().vp_manager.get_num_threads() > 1 )
   {
-    LOG( M_ERROR, "Network::resume",
-        "No multithreading available, using single threading" );
+    LOG( M_ERROR, "SimulationManager::resume", "No multithreading available, using single threading" );
   }
 #endif
 
@@ -345,15 +347,14 @@ nest::SimulationManager::prepare_simulation_()
 
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables
-  Network::get_network().update_delay_extrema_();
+  kernel().connection_builder_manager.update_delay_extrema_();
 
   // Check for synchronicity of global rngs over processes.
   // We need to do this ahead of any simulation in case random numbers
   // have been consumed on the SLI level.
-  if ( Communicator::get_num_processes() > 1 )
+  if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
-    if ( !Communicator::grng_synchrony(
-        Network::get_network().grng_->ulrand( 100000 ) ) )
+    if ( !Communicator::grng_synchrony( kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
       LOG( M_ERROR,
         "Network::simulate",
@@ -462,7 +463,8 @@ nest::SimulationManager::update_()
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
       {
-        if ( to_step_ == Network::get_network().get_min_delay() ) // gather only at end of slice
+        if ( to_step_
+          == kernel().connection_builder_manager.get_min_delay() ) // gather only at end of slice
           kernel().event_delivery_manager.gather_events();
 
         advance_time_();
@@ -500,8 +502,8 @@ nest::SimulationManager::finalize_simulation_()
 
   // Check for synchronicity of global rngs over processes
   // TODO: This seems double up, there is such a test at end of simulate()
-  if ( Communicator::get_num_processes() > 1 )
-    if ( !Communicator::grng_synchrony( Network::get_network().grng_->ulrand( 100000 ) ) )
+  if ( kernel().mpi_manager.get_num_processes() > 1 )
+    if ( !Communicator::grng_synchrony( kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
       LOG( M_ERROR,
         "Network::simulate",
@@ -537,9 +539,9 @@ nest::SimulationManager::advance_time_()
   to_do_ -= to_step_ - from_step_;
 
   // advance clock, update modulos, slice counter only if slice completed
-  if ( ( delay ) to_step_ == Network::get_network().min_delay_ )
+  if ( ( delay ) to_step_ == kernel().connection_builder_manager.get_min_delay() )
   {
-    clock_ += Time::step( Network::get_network().min_delay_ );
+    clock_ += Time::step( kernel().connection_builder_manager.get_min_delay() );
     ++slice_;
     kernel().event_delivery_manager.update_moduli();
     from_step_ = 0;
@@ -549,12 +551,12 @@ nest::SimulationManager::advance_time_()
 
   long_t end_sim = from_step_ + to_do_;
 
-  if ( Network::get_network().min_delay_ < ( delay ) end_sim )
-    to_step_ = Network::get_network().min_delay_; // update to end of time slice
+  if ( kernel().connection_builder_manager.get_min_delay() < ( delay ) end_sim )
+    to_step_ = kernel().connection_builder_manager.get_min_delay(); // update to end of time slice
   else
     to_step_ = end_sim; // update to end of simulation time
 
-  assert( to_step_ - from_step_ <= ( long_t ) Network::get_network().min_delay_ );
+  assert( to_step_ - from_step_ <= ( long_t ) kernel().connection_builder_manager.get_min_delay() );
 }
 
 void
@@ -579,4 +581,11 @@ nest::SimulationManager::print_progress_()
             << "realtime factor: " << std::setprecision( 4 ) << rt_factor
             << std::resetiosflags( std::ios_base::floatfield );
   std::flush( std::cout );
+}
+
+// inline
+nest::Time
+nest::SimulationManager::get_previous_slice_origin() const
+{
+  return clock_ - Time::step( kernel().connection_builder_manager.get_min_delay() );
 }

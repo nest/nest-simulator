@@ -1,5 +1,5 @@
 /*
- *  network_impl.h
+ *  mpi_manager_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,29 +20,26 @@
  *
  */
 
-#ifndef NETWORK_IMPL_H
-#define NETWORK_IMPL_H
+#ifndef MPI_MANAGER_IMPL_H
+#define MPI_MANAGER_IMPL_H
 
-#include "network.h"
-#include "conn_builder.h"
-#include "conn_builder_factory.h"
+#include "mpi_manager.h"
+
 #include "kernel_manager.h"
 
-namespace nest
+inline nest::thread
+nest::MPIManager::get_process_id( nest::thread vp ) const
 {
-
-template < typename ConnBuilder >
-void
-Network::register_conn_builder( const std::string& name )
-{
-  assert( !connruledict_->known( name ) );
-  GenericConnBuilderFactory* cb = new ConnBuilderFactory< ConnBuilder >();
-  assert( cb != 0 );
-  const int id = connbuilder_factories_.size();
-  connbuilder_factories_.push_back( cb );
-  connruledict_->insert( name, id );
+  if ( vp >= static_cast< thread >( n_sim_procs_
+               * kernel().vp_manager.get_num_threads() ) ) // vp belongs to recording VPs
+  {
+    return ( vp - n_sim_procs_ * kernel().vp_manager.get_num_threads() ) % n_rec_procs_
+      + n_sim_procs_;
+  }
+  else // vp belongs to simulating VPs
+  {
+    return vp % n_sim_procs_;
+  }
 }
 
-}
-
-#endif
+#endif /* MPI_MANAGER_IMPL_H */

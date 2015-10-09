@@ -113,7 +113,7 @@ nest::poisson_generator::calibrate()
 void
 nest::poisson_generator::update( Time const& T, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 )
@@ -132,7 +132,7 @@ nest::poisson_generator::update( Time const& T, const long_t from, const long_t 
 void
 nest::poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
   long_t n_spikes = V_.poisson_dev_.ldev( rng );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0

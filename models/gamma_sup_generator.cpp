@@ -218,7 +218,7 @@ nest::gamma_sup_generator::calibrate()
 void
 nest::gamma_sup_generator::update( Time const& T, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
@@ -249,7 +249,7 @@ nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
 
   // age_distribution object propagates one time step and returns number of spikes
   ulong_t n_spikes = B_.internal_states_[ prt ].update(
-    V_.transition_prob_, Network::get_network().get_rng( get_thread() ) );
+    V_.transition_prob_, kernel().rng_manager.get_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

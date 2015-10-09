@@ -103,11 +103,13 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
   // left of update intervals, and we want time stamps at right end of
   // update interval to be multiples of recording interval
   next_rec_step_ =
-    ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
+    ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_
+    - 1;
 
   // number of data points per slice
-  const long_t recs_per_slice = static_cast< long_t >(
-    std::ceil( Network::get_network().get_min_delay() / static_cast< double >( rec_int_steps_ ) ) );
+  const long_t recs_per_slice =
+    static_cast< long_t >( std::ceil( kernel().connection_builder_manager.get_min_delay()
+      / static_cast< double >( rec_int_steps_ ) ) );
 
   data_.resize(
     2, DataLoggingReply::Container( recs_per_slice, DataLoggingReply::Item( num_vars_ ) ) );

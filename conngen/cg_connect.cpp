@@ -26,7 +26,7 @@
 #include "communicator.h"
 
 #include "logging.h"
-#include "kernel_manager.h"
+#include "kernel_manager.h" // TODO implement in terms of nest-API
 
 namespace nest
 {
@@ -52,7 +52,8 @@ cg_connect( ConnectionGeneratorDatum& cg,
       {
         Node* const target_node = Network::get_network().get_node( target + target_offset );
         const thread target_thread = target_node->get_thread();
-        Network::get_network().connect( source + source_offset, target_node, target_thread, syn );
+        kernel().connection_builder_manager.connect(
+          source + source_offset, target_node, target_thread, syn );
       }
     }
   }
@@ -72,7 +73,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
       {
         Node* const target_node = Network::get_network().get_node( target + target_offset );
         const thread target_thread = target_node->get_thread();
-        Network::get_network().connect( source + source_offset,
+        kernel().connection_builder_manager.connect( source + source_offset,
           target_node,
           target_thread,
           syn,
@@ -110,7 +111,8 @@ cg_connect( ConnectionGeneratorDatum& cg,
       {
         Node* const target_node = Network::get_network().get_node( target_gids.at( target ) );
         const thread target_thread = target_node->get_thread();
-        Network::get_network().connect( source_gids.at( source ), target_node, target_thread, syn );
+        kernel().connection_builder_manager.connect(
+          source_gids.at( source ), target_node, target_thread, syn );
       }
     }
   }
@@ -130,7 +132,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
       {
         Node* const target_node = Network::get_network().get_node( target_gids.at( target ) );
         const thread target_thread = target_node->get_thread();
-        Network::get_network().connect( source_gids.at( source ),
+        kernel().connection_builder_manager.connect( source_gids.at( source ),
           target_node,
           target_thread,
           syn,
@@ -157,11 +159,11 @@ cg_connect( ConnectionGeneratorDatum& cg,
 void
 cg_set_masks( ConnectionGeneratorDatum& cg, RangeSet& sources, RangeSet& targets )
 {
-  long np = Communicator::get_num_processes();
+  long np = kernel().mpi_manager.get_num_processes();
   std::vector< ConnectionGenerator::Mask > masks( np, ConnectionGenerator::Mask( 1, np ) );
 
   cg_create_masks( &masks, sources, targets );
-  cg->setMask( masks, Communicator::get_rank() );
+  cg->setMask( masks, kernel().mpi_manager.get_rank() );
 }
 
 /**
@@ -212,7 +214,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
   {
     size_t num_elements = source->last - source->first;
     size_t right = cg_idx_left + num_elements;
-    for ( size_t proc = 0; proc < static_cast< size_t >( Communicator::get_num_processes() );
+    for ( size_t proc = 0; proc < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
           ++proc )
       ( *masks )[ proc ].sources.insert( cg_idx_left, right );
     cg_idx_left += num_elements + 1;
@@ -225,7 +227,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
   for ( RangeSet::iterator target = targets.begin(); target != targets.end(); ++target )
   {
     size_t num_elements = target->last - target->first;
-    for ( size_t proc = 0; proc < static_cast< size_t >( Communicator::get_num_processes() );
+    for ( size_t proc = 0; proc < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
           ++proc )
     {
       // Make sure that the range is only added on as many ranks as
@@ -247,7 +249,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
         // of neurons in NEST. This ensures that the mask is set for
         // the rank where left acutally is the first neuron fromt
         // the currently looked at range.
-        ( *masks )[ ( proc + target->first ) % Communicator::get_num_processes() ].targets.insert(
+        ( *masks )[ ( proc + target->first ) % kernel().mpi_manager.get_num_processes() ].targets.insert(
           left, right );
       }
     }

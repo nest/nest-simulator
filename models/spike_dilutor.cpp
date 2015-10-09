@@ -115,7 +115,7 @@ nest::spike_dilutor::calibrate()
 void
 nest::spike_dilutor::update( Time const& T, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Network::get_network().get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -149,7 +149,7 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
   // store the number of mother spikes again during the next call of event_hook().
   // reichert
 
-  librandom::RngPtr rng = Network::get_network().get_rng( get_thread() );
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
   ulong_t n_mother_spikes = e.get_multiplicity();
   ulong_t n_spikes = 0;
 

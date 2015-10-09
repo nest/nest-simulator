@@ -42,7 +42,7 @@
 #include "errno.h"
 
 #include "sparse_node_array.h"
-#include "randomgen.h"
+
 #include "communicator.h"
 
 #ifdef M_ERROR
@@ -99,50 +99,13 @@ class NodeManager;
  * @ingroup network
  */
 
-/* BeginDocumentation
-Name: kernel - Global properties of the simulation kernel.
-
-Description:
-(start here.)
-
-Parameters:
-  The following parameters can be set in the status dictionary.
-
-  data_path                stringtype  - A path, where all data is written to (default is the
-current directory)
-  data_prefix              stringtype  - A common prefix for all data files
-  dict_miss_is_error       booltype    - Whether missed dictionary entries are treated as errors
-  local_num_threads        integertype - The local number of threads (cf. global_num_virt_procs)
-  max_delay                doubletype  - The maximum delay in the network
-  min_delay                doubletype  - The minimum delay in the network
-  ms_per_tic               doubletype  - The number of miliseconds per tic (cf. tics_per_ms,
-tics_per_step)
-  network_size             integertype - The number of nodes in the network
-  num_connections          integertype - The number of connections in the network
-  num_processes            integertype - The number of MPI processes
-  num_rec_processes        integertype - The number of MPI processes reserved for recording spikes
-  num_sim_processes        integertype - The number of MPI processes reserved for simulating neurons
-  off_grid_spiking         booltype    - Whether to transmit precise spike times in MPI communicatio
-  print_time               booltype    - Whether to print progress information during the simulation
-  resolution               doubletype  - The resolution of the simulation (in ms)
-  tics_per_ms              doubletype  - The number of tics per milisecond (cf. ms_per_tic,
-tics_per_step)
-  tics_per_step            integertype - The number of tics per simulation time step (cf.
-ms_per_tic, tics_per_ms)
-  time                     doubletype  - The current simulation time
-  total_num_virtual_procs  integertype - The total number of virtual processes (cf.
-local_num_threads)
-  to_do                    integertype - The number of steps yet to be simulated
-  T_max                    doubletype  - The largest representable time value
-  T_min                    doubletype  - The smallest representable time value
-SeeAlso: Simulate, Node
-*/
-
 class Network
 {
   friend class VPManager;
   friend class SimulationManager;
+  friend class ConnectionBuilderManager;
   friend class EventDeliveryManager;
+  friend class MPIManager;
   friend class NodeManager;
 
 private:
@@ -219,12 +182,6 @@ public:
   int copy_synapse_prototype( index sc, std::string );
 
   /**
-   * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
-   */
-  template < typename ConnBuilder >
-  void register_conn_builder( const std::string& name );
-
-  /**
    * Return the model id for a given model name.
    */
   int get_model_id( const char[] ) const;
@@ -235,149 +192,10 @@ public:
   Model* get_model( index ) const;
 
   /**
-   * Connect two nodes. The source node is defined by its global ID.
-   * The target node is defined by the node. The connection is
-   * established on the thread/process that owns the target node.
-   *
-   * The parameters delay and weight have the default value NAN.
-   * NAN is a special value in cmath, which describes double values that
-   * are not a number. If delay or weight is omitted in a connect call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
-   *
-   * \param s GID of the sending Node.
-   * \param target Pointer to target Node.
-   * \param target_thread Thread that hosts the target node.
-   * \param syn The synapse model to use.
-   * \param d Delay of the connection (in ms).
-   * \param w Weight of the connection.
-   */
-  void connect( index s,
-    Node* target,
-    thread target_thread,
-    index syn,
-    double_t d = NAN,
-    double_t w = NAN );
-
-  /**
-   * Connect two nodes. The source node is defined by its global ID.
-   * The target node is defined by the node. The connection is
-   * established on the thread/process that owns the target node.
-   *
-   * The parameters delay and weight have the default value NAN.
-   * NAN is a special value in cmath, which describes double values that
-   * are not a number. If delay or weight is omitted in an connect call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
-   *
-   * \param s GID of the sending Node.
-   * \param target Pointer to target Node.
-   * \param target_thread Thread that hosts the target node.
-   * \param syn The synapse model to use.
-   * \param params parameter dict to configure the synapse
-   * \param d Delay of the connection (in ms).
-   * \param w Weight of the connection.
-   */
-  void connect( index s,
-    Node* target,
-    thread target_thread,
-    index syn,
-    DictionaryDatum& params,
-    double_t d = NAN,
-    double_t w = NAN );
-
-  /**
-   * Connect two nodes. The source node is defined by its global ID.
-   * The target node is defined by the node. The connection is
-   * established on the thread/process that owns the target node.
-   *
-   * \param s GID of the sending Node.
-   * \param target pointer to target Node.
-   * \param target_thread thread that hosts the target node
-   * \param params parameter dict to configure the synapse
-   * \param syn The synapse model to use.
-   */
-  bool connect( index s, index r, DictionaryDatum& params, index syn );
-
-  void subnet_connect( Subnet&, Subnet&, int, index syn );
-
-  /**
-   * Connect from an array of dictionaries.
-   */
-  void connect( ArrayDatum& connectome );
-
-  void divergent_connect( index s,
-    const TokenArray r,
-    const TokenArray weights,
-    const TokenArray delays,
-    index syn );
-  /**
-   * Connect one source node with many targets.
-   * The dictionary d contains arrays for all the connections of type syn.
-   */
-
-  void divergent_connect( index s, DictionaryDatum d, index syn );
-
-  void random_divergent_connect( index s,
-    const TokenArray r,
-    index n,
-    const TokenArray w,
-    const TokenArray d,
-    bool,
-    bool,
-    index syn );
-
-  void convergent_connect( const TokenArray s,
-    index r,
-    const TokenArray weights,
-    const TokenArray delays,
-    index syn );
-
-  /**
-   * Specialized version of convegent_connect
-   * called by random_convergent_connect threaded
-   */
-  void convergent_connect( const std::vector< index >& s_id,
-    index r,
-    const TokenArray& weight,
-    const TokenArray& delays,
-    index syn );
-
-  void random_convergent_connect( const TokenArray s,
-    index t,
-    index n,
-    const TokenArray w,
-    const TokenArray d,
-    bool,
-    bool,
-    index syn );
-
-  /**
-   * Use openmp threaded parallelization to speed up connection.
-   * Parallelize over target list.
-   */
-  void random_convergent_connect( TokenArray s,
-    TokenArray t,
-    TokenArray n,
-    TokenArray w,
-    TokenArray d,
-    bool,
-    bool,
-    index syn );
-
-  /**
-   * Create connections.
-   */
-  void connect( const GIDCollection&,
-    const GIDCollection&,
-    const DictionaryDatum&,
-    const DictionaryDatum& );
 
   DictionaryDatum get_connector_defaults( index sc );
   void set_connector_defaults( const index sc, const DictionaryDatum& d );
 
-  DictionaryDatum get_synapse_status( index gid, index syn, port p, thread tid );
-  void set_synapse_status( index gid, index syn, port p, thread tid, const DictionaryDatum& d );
-
-  ArrayDatum get_connections( DictionaryDatum dict );
 
   /**
    * Return true if NEST will be quit because of an error, false otherwise.
@@ -392,71 +210,6 @@ public:
 
   void memory_info();
 
-  /**
-   * Triggered by volume transmitter in update.
-   * Triggeres updates for all connectors of dopamine synapses that
-   * are registered with the volume transmitter with gid vt_gid.
-   */
-  void trigger_update_weight( const long_t vt_gid,
-    const vector< spikecounter >& dopa_spikes,
-    const double_t t_trig );
-
-
-  /**
-   * Return minimal connection delay.
-   */
-  delay get_min_delay() const;
-
-  /**
-   * Return maximal connection delay.
-   */
-  delay get_max_delay() const;
-
-  /**
-   * Get random number client of a thread.
-   * Defaults to thread 0 to allow use in non-threaded
-   * context.  One may consider to introduce an additional
-   * RNG just for the non-threaded context.
-   */
-  librandom::RngPtr get_rng( thread thrd = 0 ) const;
-
-  /**
-   * Get global random number client.
-   * This grng must be used synchronized from all threads.
-   */
-  librandom::RngPtr get_grng() const;
-
-  /**
-   * Return the number of processes used during simulation.
-   * This functions returns the number of processes.
-   * Since each process has the same number of threads, the total number
-   * of threads is given by get_num_threads()*get_num_processes().
-   */
-  thread get_num_processes() const;
-
-  /**
-   * Get number of recording processes.
-   */
-  thread get_num_rec_processes() const;
-
-  /**
-   * Get number of simulating processes.
-   */
-  thread get_num_sim_processes() const;
-
-  /**
-   * Set number of recording processes, switches NEST to global
-   * spike detection mode.
-   *
-   * @param nrp  number of recording processes
-   * @param called_by_reset   pass true when calling from Scheduler::reset()
-   *
-   * @note The `called_by_reset` parameter is a cludge to avoid a chicken-and-egg
-   *       problem when resetting the kernel. It surpresses a test for existing
-   *       nodes, trusting that the kernel will immediately afterwards delete all
-   *       existing nodes.
-   */
-  void set_num_rec_processes( int nrp, bool called_by_reset );
 
   /**
    * @defgroup net_access Network access
@@ -620,17 +373,8 @@ private:
      'modeldict info' shows the contents of the dictionary
      SeeAlso: info, Device, RecordingDevice, iaf_neuron, subnet
   */
-  Dictionary* modeldict_; //!< Dictionary for models.
-
-  /* BeginDocumentation
-     Name: connruledict - dictionary containing all connectivity rules
-     Description:
-     This dictionary provides the connection rules that can be used
-     in Connect.
-     'connruledict info' shows the contents of the dictionary.
-     SeeAlso: Connect
-  */
-  Dictionary* connruledict_; //!< Dictionary for connection rules.
+  Dictionary* modeldict_;        //!< Dictionary for models.
+  Model* siblingcontainer_model; //!< The model for the SiblingContainer class
 
   /**
    * The list of clean models. The first component of the pair is a
@@ -646,22 +390,10 @@ private:
   std::vector< Node* >
     dummy_spike_sources_; //!< Placeholders for spiking remote nodes, one per thread
 
-  std::vector< GenericConnBuilderFactory* >
-    connbuilder_factories_; //! ConnBuilder factories, indexed by connruledict_ elements.
-
   bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 
   bool model_defaults_modified_; //!< whether any model defaults have been modified
 
-  /************ Previously Scheduler ***************/
-public:
-
-  /**
-   * Return the process id for a given virtual process. The real process' id
-   * of a virtual process is defined by the relation: p = (vp mod P), where
-   * P is the total number of processes.
-   */
-  thread get_process_id( thread vp ) const;
 
 private:
   /******** Member functions former owned by the scheduler ********/
@@ -670,48 +402,11 @@ private:
 
 
 
-  void create_rngs_( const bool ctor_call = false );
-  void create_grng_( const bool ctor_call = false );
-
   /**
-   * Update delay extrema to current values.
-   *
-   * Static since it only operates in static variables. This allows it to be
-   * called from const-method get_status() as well.
-   */
-  void update_delay_extrema_();
-
-
-  private:
   /******** Member variables former owned by the scheduler ********/
   bool initialized_;
 
-  index n_rec_procs_; //!< MPI processes dedicated for recording devices
-  index n_sim_procs_; //!< MPI processes used for simulation
 
-
-
-  std::vector< long_t > rng_seeds_; //!< The seeds of the local RNGs. These do not neccessarily
-                                    //!< describe the state of the RNGs.
-
-  long_t
-    grng_seed_; //!< The seed of the global RNG, not neccessarily describing the state of the GRNG.
-
-  delay min_delay_; //!< Value of the smallest delay in the network.
-
-  delay max_delay_; //!< Value of the largest delay in the network in steps.
-
-  /**
-   * Vector of random number generators for threads.
-   * There must be PRECISELY one rng per thread.
-   */
-  vector< librandom::RngPtr > rng_;
-
-  /**
-   * Global random number generator.
-   * This rng must be synchronized on all threads
-   */
-  librandom::RngPtr grng_;
 };
 
 inline Network&
@@ -741,30 +436,6 @@ Network::get_exitcode() const
 }
 
 inline void
-Network::connect( ArrayDatum& connectome )
-{
-  connection_manager_.connect( connectome );
-}
-
-inline DictionaryDatum
-Network::get_synapse_status( index gid, index syn, port p, thread tid )
-{
-  return connection_manager_.get_synapse_status( gid, syn, p, tid );
-}
-
-inline void
-Network::set_synapse_status( index gid, index syn, port p, thread tid, const DictionaryDatum& d )
-{
-  connection_manager_.set_synapse_status( gid, syn, p, tid, d );
-}
-
-inline ArrayDatum
-Network::get_connections( DictionaryDatum params )
-{
-  return connection_manager_.get_connections( params );
-}
-
-inline void
 Network::set_connector_defaults( const index sc, const DictionaryDatum& d )
 {
   connection_manager_.set_prototype_status( sc, d );
@@ -788,57 +459,6 @@ Network::copy_synapse_prototype( index sc, std::string name )
   return connection_manager_.copy_synapse_prototype( sc, name );
 }
 
-inline thread
-Network::get_num_processes() const
-{
-  return Communicator::get_num_processes();
-}
-
-inline thread
-Network::get_num_rec_processes() const
-{
-  return n_rec_procs_;
-}
-
-inline thread
-Network::get_num_sim_processes() const
-{
-  return n_sim_procs_;
-}
-
-inline delay
-Network::get_min_delay() const
-{
-  return min_delay_;
-}
-
-inline delay
-Network::get_max_delay() const
-{
-  return max_delay_;
-}
-
-inline void
-Network::trigger_update_weight( const long_t vt_gid,
-  const vector< spikecounter >& dopa_spikes,
-  const double_t t_trig )
-{
-  connection_manager_.trigger_update_weight( vt_gid, dopa_spikes, t_trig );
-}
-
-inline librandom::RngPtr
-Network::get_rng( thread t ) const
-{
-  assert( t < static_cast< thread >( rng_.size() ) );
-  return rng_[ t ];
-}
-
-inline librandom::RngPtr
-Network::get_grng() const
-{
-  return grng_;
-}
-
 inline Model*
 Network::get_model( index m ) const
 {
@@ -847,7 +467,6 @@ Network::get_model( index m ) const
 
   return models_[ m ];
 }
-
 
 
 inline const Dictionary&

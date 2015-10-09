@@ -38,8 +38,11 @@ namespace nest
 {
 
 void
-init_nest( int argc, char* argv[] )
+init_nest( int* argc, char** argv[] )
 {
+  KernelManager::create_kernel_manager();
+  kernel().mpi_manager.init_mpi( argc, argv );
+  // kernel().init(); currently called from network.cpp
 }
 
 void
@@ -70,7 +73,7 @@ reset_network()
 void
 enable_dryrun_mode( const index n_procs )
 {
-  Communicator::set_num_processes( n_procs );
+  kernel().mpi_manager.set_num_processes( n_procs );
 }
 
 void
@@ -86,7 +89,7 @@ print_network( index gid, index depth, std::ostream& out )
 }
 
 librandom::RngPtr
-get_vp_rng( index target )
+get_vp_rng_of_gid( index target )
 {
   Node* target_node = kernel().node_manager.get_node( target );
 
@@ -98,13 +101,21 @@ get_vp_rng( index target )
   if ( !target_node->has_proxies() )
     throw NodeWithProxiesExpected( target );
 
-  return Network::get_network().get_rng( target_node->get_thread() );
+  return kernel().rng_manager.get_rng( target_node->get_thread() );
+}
+  
+librandom::RngPtr
+get_vp_rng( thread tid )
+{
+  assert(tid >=0);
+  assert(tid < kernel().vp_manager.get_num_threads());
+  return kernel().rng_manager.get_rng( tid );
 }
 
 librandom::RngPtr
 get_global_rng()
 {
-  return Network::get_network().get_grng();
+  return kernel().rng_manager.get_grng();
 }
 
 void
@@ -143,7 +154,7 @@ set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict 
 
   dict->clear_access_flags();
 
-  Network::get_network().set_synapse_status( gid, synapse_id, port, tid, dict );
+  kernel().connection_builder_manager.set_synapse_status( gid, synapse_id, port, tid, dict );
 
   std::string missed;
   if ( !dict->all_accessed( missed ) )
@@ -167,7 +178,7 @@ get_connection_status( const ConnectionDatum& conn )
   long gid = conn.get_source_gid();
   kernel().node_manager.get_node( gid ); // Just to check if the node exists
 
-  return Network::get_network().get_synapse_status(
+  return kernel().connection_builder_manager.get_synapse_status(
     gid, conn.get_synapse_model_id(), conn.get_port(), conn.get_target_thread() );
 }
 
@@ -195,7 +206,7 @@ connect( const GIDCollection& sources,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params )
 {
-  Network::get_network().connect( sources, targets, connectivity, synapse_params );
+  kernel().connection_builder_manager.connect( sources, targets, connectivity, synapse_params );
 }
 
 ArrayDatum
@@ -203,7 +214,7 @@ get_connections( const DictionaryDatum& dict )
 {
   dict->clear_access_flags();
 
-  ArrayDatum array = Network::get_network().get_connections( dict );
+  ArrayDatum array = kernel().connection_builder_manager.get_connections( dict );
 
   std::string missed;
   if ( !dict->all_accessed( missed ) )
@@ -343,7 +354,7 @@ get_model_defaults( const Name& modelname )
 void
 set_num_rec_processes( const index n_rec_procs )
 {
-  Network::get_network().set_num_rec_processes( n_rec_procs, false );
+  kernel().mpi_manager.set_num_rec_processes( n_rec_procs, false );
 }
 
 void

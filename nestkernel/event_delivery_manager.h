@@ -301,14 +301,6 @@ private:
 
 
 inline void
-EventDeliveryManager::send_local( thread t, Node& source, Event& e )
-{
-  index sgid = source.get_gid();
-  e.set_sender_gid( sgid );
-  Network::get_network().connection_manager_.send( t, sgid, e );
-}
-
-inline void
 EventDeliveryManager::send_to_node( Event& e )
 {
   e();

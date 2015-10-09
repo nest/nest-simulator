@@ -129,10 +129,4 @@ nest::VPManager::get_num_threads() const
   return n_threads_;
 }
 
-inline int
-nest::VPManager::get_num_virtual_processes() const
-{
-  return n_threads_ * Communicator::get_num_processes();
-}
-
 #endif /* VP_MANAGER_H */

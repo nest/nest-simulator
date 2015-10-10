@@ -316,6 +316,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
   if ( gid > 0 )
   {
     kernel().node_manager.set_status(gid, d);
+    return;
   }
 
   /* Code below is executed only for the root node, gid == 0

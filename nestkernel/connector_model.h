@@ -170,7 +170,7 @@ public:
   {
     return is_primary_;
   }
-  
+
   bool
   has_delay() const
   {
@@ -186,7 +186,7 @@ protected:
   bool user_set_delay_extrema_;    //!< Flag indicating if the user set the delay extrema.
   bool used_default_delay_;
   std::string name_;
-  bool is_primary_; //!< indicates, whether this ConnectorModel belongs to a primary connection or not
+  bool is_primary_; //!< indicates, whether this ConnectorModel belongs to a primary connection
   bool has_delay_; //!< indicates, that ConnectorModel has a delay
     
 }; // ConnectorModel
@@ -261,12 +261,13 @@ public:
     return default_connection_;
   }
   
-  virtual std::vector<SecondaryEvent*> create_event(size_t n) const
+  virtual std::vector<SecondaryEvent*>
+  create_event(size_t n) const
   {
     // Should not be called for a ConnectorModel belonging to a primary
     // connection. Only required for secondary connection types.
-    assert(false);
-    std::vector<SecondaryEvent*> prototype_events;
+    assert( false );
+    std::vector< SecondaryEvent* > prototype_events;
     return prototype_events;
   }
 
@@ -279,7 +280,6 @@ private:
     synindex syn_id,
     ConnectionT& c,
     rport receptor_type );
-  
 
 
 }; // GenericConnectorModel

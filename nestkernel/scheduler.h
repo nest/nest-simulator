@@ -424,8 +424,8 @@ private:
   index nodes_vec_network_size_;        //!< Network size when nodes_vec_ was last updated
 
   vector< vector< Node* > > nodes_prelim_up_vec_; //!< Nodelists for unfrozen nodes that require an
-                                                  //additional preliminary update (e.g. gap
-                                                  //junctions)
+   //additional preliminary update (e.g. gap
+   //junctions)
 
   Time clock_;        //!< Network clock, updated once per slice
   delay slice_;       //!< current update slice
@@ -803,7 +803,7 @@ Scheduler::register_secondary_synapse_prototype( ConnectorModel* cm, synindex sy
 {
   // idea: save *cm in data structure
   // otherwise when number of threads is increased no way to get further elements
-  if ( secondary_connector_models_.size() < synid + (unsigned int)1 )
+  if ( secondary_connector_models_.size() < synid + ( unsigned int ) 1 )
     secondary_connector_models_.resize( synid + 1, NULL );
 
   secondary_connector_models_[ synid ] = cm;

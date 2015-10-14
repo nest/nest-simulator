@@ -216,18 +216,17 @@ private:
   void clear_prototypes_();
 
   ConnectorBase* validate_source_entry( thread tid, index s_gid, synindex syn_id );
-
 };
 
 inline const ConnectorModel&
-ConnectionManager::get_synapse_prototype( synindex syn_id) const
+ConnectionManager::get_synapse_prototype( synindex syn_id ) const
 {
   assert_valid_syn_id( syn_id );
   return *( prototypes_[ 0 ][ syn_id ] );
 }
 
 inline void
-ConnectionManager::assert_valid_syn_id( synindex syn_id) const
+ConnectionManager::assert_valid_syn_id( synindex syn_id ) const
 {
   if ( syn_id >= prototypes_[ 0 ].size() || prototypes_[ 0 ][ syn_id ] == 0 )
     throw UnknownSynapseType( syn_id );

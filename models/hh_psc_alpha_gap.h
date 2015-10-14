@@ -58,8 +58,8 @@ using std::vector;
  */
 extern "C" int hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
 
-/* BeginDocumentation 
-Name: hh_psc_alpha_gap - Hodgkin Huxley neuron model with gap-junction support. 
+/* BeginDocumentation
+Name: hh_psc_alpha_gap - Hodgkin Huxley neuron model with gap-junction support.
 
 Description:
 
@@ -93,7 +93,7 @@ Parameters:
  g_Na       double - Sodium peak conductance in nS.
  E_K        double - Potassium reversal potential in mV.
  g_Kv1      double - Potassium peak conductance in nS.
- g_Kv3      double - Potassium peak conductance in nS. 
+ g_Kv3      double - Potassium peak conductance in nS.
  Act_m      double - Activation variable m
  Act_h      double - Activation variable h
  Inact_n    double - Inactivation variable n
@@ -105,11 +105,11 @@ References:
  Single Neurons, Populations, Plasticity
  Wulfram Gerstner, Werner Kistler,  Cambridge University Press
  
- Mancilla, J. G., Lewis, T. J., Pinto, D. J., 
+ Mancilla, J. G., Lewis, T. J., Pinto, D. J.,
  Rinzel, J., and Connors, B. W.,
- Synchronization of electrically coupled pairs 
+ Synchronization of electrically coupled pairs
  of inhibitory interneurons in neocortex,
- J. Neurosci. 27, 2058-2073 (2007), 
+ J. Neurosci. 27, 2058-2073 (2007),
  doi: 10.1523/JNEUROSCI.2715-06.2007 (parameters taken from here)
 
  Hodgkin, A. L. and Huxley, A. F.,
@@ -117,11 +117,11 @@ References:
  and Its Application to Conduction and Excitation in Nerve,
  Journal of Physiology, 117, 500-544 (1952)
  
- Hahne, J., Helias, M., Kunkel, S., Igarashi, J., 
+ Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
  Bolten, M., Frommer, A. and Diesmann, M.,
  A unified framework for spiking and gap-junction interactions
- in distributed neuronal network simulations, 
- Front. Neuroinform. 9:22. (2015), 
+ in distributed neuronal network simulations,
+ Front. Neuroinform. 9:22. (2015),
  doi: 10.3389/fninf.2015.00022
 
 Sends: SpikeEvent, GapJEvent
@@ -162,7 +162,10 @@ public:
   port handles_test_event( DataLoggingRequest&, rport );
   port handles_test_event( GapJEvent&, rport );
 
-  void sends_secondary_event( GapJEvent& ){}
+  void
+  sends_secondary_event( GapJEvent& )
+  {
+  }
 
   /**
    * Return membrane potential at time t.

@@ -29,28 +29,29 @@ Description:
  of neurons. Please note that gap junctions are two-way connections:
  In order to create an accurate gap-junction connection between two
  neurons i and j two connections are required:
- 
+
  i j conn_spec gap_junction   Connect
  j i conn_spec gap_junction   Connect
  
- The value of the parameter "delay" is ignored for connections of type gap_junction.
+ The value of the parameter "delay" is ignored for connections of
+ type gap_junction.
 
 Transmits: GapJEvent
 
 References:
-   
- Hahne, J., Helias, M., Kunkel, S., Igarashi, J., 
+
+ Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
  Bolten, M., Frommer, A. and Diesmann, M.,
  A unified framework for spiking and gap-junction interactions
- in distributed neuronal network simulations, 
- Front. Neuroinform. 9:22. (2015), 
+ in distributed neuronal network simulations,
+ Front. Neuroinform. 9:22. (2015),
  doi: 10.3389/fninf.2015.00022
- 
- Mancilla, J. G., Lewis, T. J., Pinto, D. J., 
+
+ Mancilla, J. G., Lewis, T. J., Pinto, D. J.,
  Rinzel, J., and Connors, B. W.,
- Synchronization of electrically coupled pairs 
+ Synchronization of electrically coupled pairs
  of inhibitory interneurons in neocortex,
- J. Neurosci. 27, 2058-2073 (2007), 
+ J. Neurosci. 27, 2058-2073 (2007),
  doi: 10.1523/JNEUROSCI.2715-06.2007
  
 Author: Jan Hahne, Moritz Helias, Susanne Kunkel
@@ -67,8 +68,8 @@ namespace nest
 {
 
 /**
- * Class representing a gap-junction connection. A gap-junction connection has the properties weight, delay and
- * receiver port.
+ * Class representing a gap-junction connection. A gap-junction connection
+ * has the properties weight, delay and receiver port.
  */
 
 template < typename targetidentifierT >
@@ -105,7 +106,7 @@ public:
 
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType&  )
+  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType& )
   {
     EventType ge;
 
@@ -147,7 +148,7 @@ void
 GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   // We have to include the delay here to prevent
-  // errors due to internal calls of 
+  // errors due to internal calls of
   // this function in SLI/pyNEST
   ConnectionBase::get_status( d );
   def< double_t >( d, names::weight, weight_ );
@@ -159,10 +160,10 @@ void
 GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
-  if( d->known( names::delay ) )
+  if ( d->known( names::delay ) )
     throw BadProperty( "gap_junction connection has no delay" );
   
-  ConnectionBase::set_status( d, cm ); 
+  ConnectionBase::set_status( d, cm );
   updateValue< double_t >( d, names::weight, weight_ );
 }
 

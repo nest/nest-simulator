@@ -186,7 +186,7 @@ ConnectionManager::get_min_delay() const
   std::vector< ConnectorModel* >::const_iterator it;
   for ( thread t = 0; t < net_.get_num_threads(); ++t )
     for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
-      if ( *it != 0 && ( *it )->get_num_connections() > 0 && (*it)->has_delay() )
+      if ( *it != 0 && ( *it )->get_num_connections() > 0 && ( *it )->has_delay() )
         min_delay = std::min( min_delay, ( *it )->get_min_delay() );
 
   return min_delay;
@@ -200,7 +200,7 @@ ConnectionManager::get_max_delay() const
   std::vector< ConnectorModel* >::const_iterator it;
   for ( thread t = 0; t < net_.get_num_threads(); ++t )
     for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
-      if ( *it != 0 && ( *it )->get_num_connections() > 0 && (*it)->has_delay() )
+      if ( *it != 0 && ( *it )->get_num_connections() > 0 && ( *it )->has_delay() )
         max_delay = std::max( max_delay, ( *it )->get_max_delay() );
 
   return max_delay;
@@ -309,7 +309,7 @@ ConnectionManager::set_synapse_status( index gid,
   try
   {
     validate_pointer( connections_[ tid ].get( gid ) )
-      ->set_synapse_status( syn_id, *( prototypes_[tid][ syn_id ] ), dict, p );
+      ->set_synapse_status( syn_id, *( prototypes_[ tid ][ syn_id ] ), dict, p );
   }
   catch ( BadProperty& e )
   {
@@ -503,7 +503,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
         {
           if ( target == 0 )
           {
-            validate_pointer(connections_[ t ].get( source_id ) )
+            validate_pointer( connections_[ t ].get( source_id ) )
               ->get_connections( source_id, t, syn_id, conns_in_thread );
           }
           else
@@ -678,7 +678,8 @@ ConnectionManager::trigger_update_weight( const long_t vt_id,
     for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
           it != connections_[ t ].nonempty_end();
           ++it )
-      validate_pointer( *it )->trigger_update_weight( vt_id, t, dopa_spikes, t_trig, prototypes_[ t ] );
+      validate_pointer( *it )->trigger_update_weight(
+        vt_id, t, dopa_spikes, t_trig, prototypes_[ t ] );
 }
 
 void
@@ -695,7 +696,7 @@ ConnectionManager::send( thread t, index sgid, Event& e )
       if ( has_primary( p ) )
       {
         // erase 2 least significant bits to obtain the correct pointer
-        validate_pointer( p )->send( e, t, prototypes_[t] );
+        validate_pointer( p )->send( e, t, prototypes_[ t ] );
       }
     }
   }
@@ -721,10 +722,10 @@ ConnectionManager::send_secondary( thread t, SecondaryEvent& e )
         if ( p->homogeneous_model() )
         {
           if ( p->get_syn_id() == e.get_syn_id() )
-            p->send( e, t, prototypes_[t] );
+            p->send( e, t, prototypes_[ t ] );
         }
         else
-          p->send_secondary( e, t, prototypes_[t] );
+          p->send_secondary( e, t, prototypes_[ t ] );
       }
     }
   }

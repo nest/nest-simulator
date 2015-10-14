@@ -154,30 +154,18 @@ hh_psc_alpha_gap_dynamics( double time, const double y[], double f[], void* pnod
  * ---------------------------------------------------------------- */
 
 nest::hh_psc_alpha_gap::Parameters_::Parameters_()
-  : t_ref_( 2.0 )
-  , // ms
-  g_Na( 4500. )
-  , // nS
-  g_Kv1( 9.0 )
-  , // nS
-  g_Kv3( 9000.0 )
-  , // nS
-  g_L( 10.0 )
-  , // nS
-  C_m( 40.0 )
-  , // pF
-  E_Na( 74.0 )
-  , // mV
-  E_K( -90.0 )
-  , // mV
-  E_L( -70. )
-  , // mV
-  tau_synE( 0.2 )
-  , // ms
-  tau_synI( 2.0 )
-  , // ms
-  I_e( 0.0 ) 
-    // pA
+  : t_ref_( 2.0 )   // ms
+  , g_Na( 4500. )   // nS
+  , g_Kv1( 9.0 )    // nS
+  , g_Kv3( 9000.0 ) // nS
+  , g_L( 10.0 )     // nS
+  , C_m( 40.0 )     // pF
+  , E_Na( 74.0 )    // mV
+  , E_K( -90.0 )    // mV
+  , E_L( -70. )     // mV
+  , tau_synE( 0.2 ) // ms
+  , tau_synI( 2.0 ) // ms
+  , I_e( 0.0 )      // pA
 {
 }
 
@@ -332,7 +320,7 @@ nest::hh_psc_alpha_gap::hh_psc_alpha_gap()
   , S_( P_ )
   , B_( *this )
 {
-  Node::set_needs_prelim_update(true);
+  Node::set_needs_prelim_update( true );
   recordablesMap_.create();
 }
 

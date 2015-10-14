@@ -143,7 +143,7 @@ public:
    * Sets local_receiver_ member variable (to switch to global spike detection mode)
    */
   virtual void set_local_receiver( const bool );
-  
+
   /**
    * Returns true if the node only receives events from nodes/devices
    * on the same thread.
@@ -240,12 +240,12 @@ public:
    * Returns true if the node requires a preliminary update step
    */
   bool needs_prelim_update() const;
-  
+
   /**
    * Sets needs_prelim_up_ member variable
    * (to be able to set it to "true" for any class derived from Node)
    */
-  void set_needs_prelim_update(const bool);
+  void set_needs_prelim_update( const bool );
   
   /**
    * Return pointer to network driver class.
@@ -855,7 +855,7 @@ Node::needs_prelim_update() const
 }
 
 inline void
-Node::set_needs_prelim_update(const bool npu)
+Node::set_needs_prelim_update( const bool npu )
 {
   needs_prelim_up_ = npu;
 }

@@ -424,8 +424,8 @@ private:
   index nodes_vec_network_size_;        //!< Network size when nodes_vec_ was last updated
 
   vector< vector< Node* > > nodes_prelim_up_vec_; //!< Nodelists for unfrozen nodes that require an
-   //additional preliminary update (e.g. gap
-   //junctions)
+  //additional preliminary update (e.g. gap
+  //junctions)
 
   Time clock_;        //!< Network clock, updated once per slice
   delay slice_;       //!< current update slice

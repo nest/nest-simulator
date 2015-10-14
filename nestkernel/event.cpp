@@ -35,7 +35,6 @@
 #include "event.h"
 #include "scheduler.h"
 
-nest::size_t nest::GapJEvent::coeff_length_ = 0;
 
 namespace nest
 {
@@ -124,4 +123,5 @@ void GapJEvent::operator()()
 }
 
 synindex GapJEvent::synid_ = invalid_synindex;
+size_t GapJEvent::coeff_length_ = 0;
 }

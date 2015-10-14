@@ -27,7 +27,10 @@
 namespace nest
 {
 
-ConnectorModel::ConnectorModel( Network& net, const std::string name, bool is_primary, bool has_delay )
+ConnectorModel::ConnectorModel( Network& net,
+  const std::string name,
+  bool is_primary,
+  bool has_delay )
   : net_( net )
   , min_delay_( Time::pos_inf() )
   , max_delay_( Time::neg_inf() )

@@ -522,7 +522,6 @@ public:
   void
   send( Event& e, thread t, const std::vector< ConnectorModel* >& cm )
   {
-    // std::cout << "Connector<K_cutoff>::send\n";
     synindex syn_id = C_[ 0 ].get_syn_id();
 
     for ( size_t i = 0; i < C_.size(); i++ )

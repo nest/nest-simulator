@@ -65,7 +65,7 @@ Description:
 
  hh_psc_alpha_gap is an implementation of a spiking neuron using the Hodkin-Huxley formalism.
  In contrast to hh_psc_alpha the implementation additionally supports gap junctions.
- 
+
 
  (1) Post-syaptic currents
  Incoming spike events induce a post-synaptic change of current modelled
@@ -75,7 +75,7 @@ Description:
  (2) Spike Detection
  Spike detection is done by a combined threshold-and-local-maximum search: if there
  is a local maximum above a certain threshold of the membrane potential, it is considered a spike.
- 
+
  (3) Gap Junctions
  Gap Junctions are implemented by a gap current of the form g_ij( V_i - V_j).
 
@@ -104,7 +104,7 @@ References:
  Spiking Neuron Models:
  Single Neurons, Populations, Plasticity
  Wulfram Gerstner, Werner Kistler,  Cambridge University Press
- 
+
  Mancilla, J. G., Lewis, T. J., Pinto, D. J.,
  Rinzel, J., and Connors, B. W.,
  Synchronization of electrically coupled pairs
@@ -116,7 +116,7 @@ References:
  A Quantitative Description of Membrane Current
  and Its Application to Conduction and Excitation in Nerve,
  Journal of Physiology, 117, 500-544 (1952)
- 
+
  Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
  Bolten, M., Frommer, A. and Diesmann, M.,
  A unified framework for spiking and gap-junction interactions

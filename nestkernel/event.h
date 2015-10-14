@@ -871,12 +871,12 @@ output_stream( T& d, fwit& pos )
 {
   memcpy( &d, &( *pos ), sizeof( d ) );
   pos += size_uint_t( d );
-} 
+}
 
 inline fwit& GapJEvent::operator<<( fwit& pos )
 {
   pos += size_uint_t( synid_ );
-  output_stream( sender_gid_ , pos);
+  output_stream( sender_gid_, pos );
 
   // generating a copy of the coeffarray is too time consuming
   // therefore we save an iterator to the beginning+end of the coeffarray
@@ -892,8 +892,8 @@ inline fwit& GapJEvent::operator<<( fwit& pos )
 
 inline fwit& GapJEvent::operator>>( fwit& pos )
 {
-  input_stream( synid_ , pos);
-  input_stream( sender_gid_ , pos);
+  input_stream( synid_, pos );
+  input_stream( sender_gid_, pos );
   std::copy( begin().pos_, end().pos_, pos );
 
   return pos;

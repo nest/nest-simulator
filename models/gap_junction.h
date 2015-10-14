@@ -32,7 +32,7 @@ Description:
 
  i j conn_spec gap_junction   Connect
  j i conn_spec gap_junction   Connect
- 
+
  The value of the parameter "delay" is ignored for connections of
  type gap_junction.
 
@@ -53,7 +53,7 @@ References:
  of inhibitory interneurons in neocortex,
  J. Neurosci. 27, 2058-2073 (2007),
  doi: 10.1523/JNEUROSCI.2715-06.2007
- 
+
 Author: Jan Hahne, Moritz Helias, Susanne Kunkel
 SeeAlso: synapsedict, hh_psc_alpha_gap
 */
@@ -162,7 +162,7 @@ GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d, Connecto
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
     throw BadProperty( "gap_junction connection has no delay" );
-  
+
   ConnectionBase::set_status( d, cm );
   updateValue< double_t >( d, names::weight, weight_ );
 }

@@ -246,7 +246,7 @@ public:
    * (to be able to set it to "true" for any class derived from Node)
    */
   void set_needs_prelim_update( const bool );
-  
+
   /**
    * Return pointer to network driver class.
    * @todo This member should return a reference, not a pointer.

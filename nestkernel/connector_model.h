@@ -188,7 +188,7 @@ protected:
   std::string name_;
   bool is_primary_; //!< indicates, whether this ConnectorModel belongs to a primary connection
   bool has_delay_;  //!< indicates, that ConnectorModel has a delay
-    
+
 }; // ConnectorModel
 
 
@@ -260,7 +260,7 @@ public:
   {
     return default_connection_;
   }
-  
+
   virtual std::vector< SecondaryEvent* >
   create_event( size_t n ) const
   {

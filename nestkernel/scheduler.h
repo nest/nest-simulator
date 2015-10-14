@@ -320,7 +320,6 @@ public: // Public methods
   static delay get_min_delay();
 
   static double_t get_prelim_tol();
-
   static size_t get_prelim_interpolation_order();
 
   /**
@@ -424,8 +423,8 @@ private:
   index nodes_vec_network_size_;        //!< Network size when nodes_vec_ was last updated
 
   vector< vector< Node* > > nodes_prelim_up_vec_; //!< Nodelists for unfrozen nodes that require an
-  //additional preliminary update (e.g. gap
-  //junctions)
+  // additional preliminary update (e.g. gap
+  // junctions)
 
   Time clock_;        //!< Network clock, updated once per slice
   delay slice_;       //!< current update slice
@@ -854,7 +853,6 @@ Scheduler::thread_lid_to_node( thread t, targetindex thread_local_id ) const
 {
   return nodes_vec_[ t ][ thread_local_id ];
 }
-
 
 inline void
 Scheduler::send_remote( thread t, SpikeEvent& e, const delay lag )

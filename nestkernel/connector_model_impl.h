@@ -493,7 +493,7 @@ register_connection_model( Network& net, const std::string& name )
  */
 template < class ConnectionT >
 synindex
-register_secondary_connection_model( Network& net, const std::string& name, bool has_delay = true  )
+register_secondary_connection_model( Network& net, const std::string& name, bool has_delay = true )
 {
   ConnectorModel& cm =
     *( new GenericSecondaryConnectorModel< ConnectionT >( net, name, has_delay ) );

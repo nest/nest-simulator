@@ -174,7 +174,7 @@ public:
    * request to all ConnectorModel objects.
    */
   void calibrate( const TimeConverter& );
-  
+
   /**
    * Return pointer to protoype for given synapse id.
    * @throws UnknownSynapseType
@@ -214,7 +214,6 @@ private:
   void clear_prototypes_();
 
   ConnectorBase* validate_source_entry( thread tid, index s_gid, synindex syn_id );
-
 };
 
 inline const ConnectorModel&

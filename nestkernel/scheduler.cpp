@@ -763,11 +763,11 @@ nest::Scheduler::prepare_nodes()
       {
         prepare_node_( *it );
         if ( not( *it )->is_frozen() )
-	   {
-	     ++num_active_nodes;
-	     if ( ( *it )->needs_prelim_update() )
-	       ++num_active_prelim_nodes;
-	   }
+           {
+             ++num_active_nodes;
+             if ( ( *it )->needs_prelim_update() )
+               ++num_active_prelim_nodes;
+           }
       }
     }
     catch ( std::exception& e )
@@ -785,23 +785,23 @@ nest::Scheduler::prepare_nodes()
     if ( exceptions_raised.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 
-  if( num_active_prelim_nodes == 0 )
+  if ( num_active_prelim_nodes == 0 )
   {
     net_->message(
       SLIInterpreter::M_INFO,
       "Scheduler::prepare_nodes",
       String::compose(
-           "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
+        "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
   }
   else
   {
     net_->message( SLIInterpreter::M_INFO,
       "Scheduler::prepare_nodes",
       String::compose( "Simulating %1 local node%2 of which %3 need%4 prelim_update.",
-                     num_active_nodes, 
+                     num_active_nodes,
                      num_active_nodes == 1 ? "" : "s",
                      num_active_prelim_nodes,
-                     num_active_prelim_nodes == 1 ? "s" : ""  ) );
+                     num_active_prelim_nodes == 1 ? "s" : "" ) );
   }
 }
 
@@ -1074,8 +1074,8 @@ nest::Scheduler::set_status( DictionaryDatum const& d )
     {
       net_->message( SLIInterpreter::M_ERROR,
         "Scheduler::set_status",
-        "Cannot change time representation after nodes have been created. Please call "
-        "ResetKernel first." );
+        "Cannot change time representation after nodes have been created. Please call ResetKernel "
+        "first." );
       throw KernelException();
     }
     else if ( net_->get_simulated() ) // someone may have simulated empty network
@@ -1373,14 +1373,14 @@ nest::Scheduler::create_rngs_( const bool ctor_call )
     if ( is_local_vp( i ) )
     {
 /*
-We have to ensure that each thread is provided with a different
-stream of random numbers.  The seeding method for Knuth's LFG
-generator guarantees that different seeds yield non-overlapping
-random number sequences.
+ We have to ensure that each thread is provided with a different
+ stream of random numbers.  The seeding method for Knuth's LFG
+ generator guarantees that different seeds yield non-overlapping
+ random number sequences.
 
-We therefore have to seed with known numbers: using random
-seeds here would run the risk of using the same seed twice.
-For simplicity, we use 1 .. n_vps.
+ We therefore have to seed with known numbers: using random
+ seeds here would run the risk of using the same seed twice.
+ For simplicity, we use 1 .. n_vps.
 */
 #ifdef HAVE_GSL
       librandom::RngPtr rng( new librandom::GslRandomGen( gsl_rng_knuthran2002, s ) );
@@ -1437,9 +1437,9 @@ nest::Scheduler::create_grng_( const bool ctor_call )
   }
 
   /*
-    The seed for the global rng should be different from the seeds
-    of the local rngs_ for each thread seeded with 1,..., n_vps.
-    */
+   The seed for the global rng should be different from the seeds
+   of the local rngs_ for each thread seeded with 1,..., n_vps.
+   */
   long s = 0;
   grng_seed_ = s;
   grng_->seed( s );
@@ -1550,12 +1550,7 @@ nest::Scheduler::collocate_buffers_( bool done )
     input_stream( invalid_synindex, pos );
     // append the boolean value indicating whether we are done here
     input_stream( done, pos );
-    
-    // the last two lines use our template streaming operators defined in event.h
-    // this alternative code is incompatible on JUQUEEN
-    //*pos = static_cast<uint_t>(invalid_synindex);
-    // pos++;
-    //*pos = static_cast<uint_t>(done);
+
   }
   else // off_grid_spiking
   {
@@ -1815,8 +1810,8 @@ nest::Scheduler::set_num_rec_processes( int nrp, bool called_by_reset )
   if ( nrp > 0 )
   {
     std::string msg = String::compose(
-      "Entering global spike detection mode with %1 recording MPI processes and %2 simulating "
-      "MPI processes.",
+      "Entering global spike detection mode with %1 recording MPI processes and %2 simulating MPI "
+      "processes.",
       n_rec_procs_,
       n_sim_procs_ );
     net_->message( SLIInterpreter::M_INFO, "Scheduler::set_num_rec_processes", msg );

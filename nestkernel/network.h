@@ -1252,9 +1252,6 @@ Network::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long_t lag )
   e.set_sender( source );
   thread t = source.get_thread();
 
-  // std::cout << "Network::send<DSSpikeEvent> " << e.get_sender().get_gid() << std::endl;
-  // std::cout << "event type =" << typeid(e).name() << std::endl;
-
   assert( !source.has_proxies() );
   send_local( t, source, e );
 }

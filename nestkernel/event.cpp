@@ -35,7 +35,6 @@
 #include "event.h"
 #include "scheduler.h"
 
-
 namespace nest
 {
 Event::Event()

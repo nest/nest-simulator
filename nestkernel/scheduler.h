@@ -440,6 +440,7 @@ private:
   bool terminate_; //!< Terminate on signal or error
   bool simulated_; //!< indicates whether the network has already been simulated for some time
   bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid
+  bool print_time_;       //!< Indicates whether time should be printed during simulations (or not)
 
   bool needs_prelim_update_; //!< there is at least one neuron model that needs preliminary update
   long max_num_prelim_iterations_; //!< maximal number of iterations used for preliminary update
@@ -447,8 +448,6 @@ private:
   static size_t prelim_interpolation_order; //!< interpolation order for prelim iterations
 
   static double_t prelim_tol; //!< Tolerance of prelim iterations
-
-  bool print_time_; //!< Indicates whether time should be printed during simulations (or not)
 
   std::vector< long_t > rng_seeds_; //!< The seeds of the local RNGs. These do not neccessarily
                                     //!< describe the state of the RNGs.

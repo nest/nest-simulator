@@ -99,9 +99,9 @@ nest::Scheduler::Scheduler( Network& net )
   , to_step_( 0L ) // consistent with to_do_ == 0
   , terminate_( false )
   , off_grid_spiking_( false )
+  , print_time_( false )
   , needs_prelim_update_( false )
   , max_num_prelim_iterations_( 15 )
-  , print_time_( false )
   , rng_()
 {
   net_ = &net;
@@ -763,11 +763,11 @@ nest::Scheduler::prepare_nodes()
       {
         prepare_node_( *it );
         if ( not( *it )->is_frozen() )
-           {
-             ++num_active_nodes;
-             if ( ( *it )->needs_prelim_update() )
-               ++num_active_prelim_nodes;
-           }
+        {
+          ++num_active_nodes;
+          if ( ( *it )->needs_prelim_update() )
+            ++num_active_prelim_nodes;
+        }
       }
     }
     catch ( std::exception& e )
@@ -902,7 +902,6 @@ nest::Scheduler::update_nodes_vec_()
 #ifdef _OPENMP
   } // end of omp critical region
 #endif
-
 }
 
 //!< This function is called only if the thread data structures are properly set up.
@@ -1381,7 +1380,7 @@ nest::Scheduler::create_rngs_( const bool ctor_call )
  We therefore have to seed with known numbers: using random
  seeds here would run the risk of using the same seed twice.
  For simplicity, we use 1 .. n_vps.
-*/
+ */
 #ifdef HAVE_GSL
       librandom::RngPtr rng( new librandom::GslRandomGen( gsl_rng_knuthran2002, s ) );
 #else
@@ -1448,7 +1447,6 @@ nest::Scheduler::create_grng_( const bool ctor_call )
 void
 nest::Scheduler::collocate_buffers_( bool done )
 {
-
   // count number of spikes in registers
   int num_spikes = 0;
   int num_grid_spikes = 0;
@@ -1550,7 +1548,6 @@ nest::Scheduler::collocate_buffers_( bool done )
     input_stream( invalid_synindex, pos );
     // append the boolean value indicating whether we are done here
     input_stream( done, pos );
-
   }
   else // off_grid_spiking
   {

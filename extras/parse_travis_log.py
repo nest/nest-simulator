@@ -206,6 +206,7 @@ if __name__ == '__main__':
     cppcheck_init = False
     changed_files = False
     static_analysis = {}
+    uploading_results = True
 
     with open(filename, 'r') as f:
         while True:
@@ -241,18 +242,22 @@ if __name__ == '__main__':
             if make_installcheck_failed == -1 and line.startswith('+make installcheck'):
                 make_installcheck_all, make_installcheck_failed, line = process_installcheck(
                     f)
+            if line.strip() == 'WARNING: Not uploading results as this is a pull request':
+                uploading_results = False
 
     print("\n--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
-    print("Bootstrapping:     " + ("Ok" if bootstrapping_ok else "Error"))
-    print("Vera init:         " + ("Ok" if vera_init else "Error"))
-    print("Cppcheck init:     " + ("Ok" if cppcheck_init else "Error"))
-    print("Changed files:     " + str(changed_files))
-    print("Formatting:        " + ("Ok" if all([ i['clang-format']['Ok?'] for i in static_analysis.itervalues()]) else "Error"))
-    print("Configure:         " + ("Ok" if configure_ok else "Error"))
-    print("Make:              " + ("Ok" if make_ok else "Error"))
-    print("Make install:      " + ("Ok" if make_install_ok else "Error"))
-    print("Make installcheck: " + ("Ok (" if make_installcheck_failed == 0 else "Error (") +
+    print("Bootstrapping:       " + ("Ok" if bootstrapping_ok else "Error"))
+    print("Vera init:           " + ("Ok" if vera_init else "Error"))
+    print("Cppcheck init:       " + ("Ok" if cppcheck_init else "Error"))
+    print("Changed files:       " + str(changed_files))
+    print("Formatting:          " + ("Ok" if all([ i['clang-format']['Ok?'] for i in static_analysis.itervalues()]) else "Error"))
+    print("Configure:           " + ("Ok" if configure_ok else "Error"))
+    print("Make:                " + ("Ok" if make_ok else "Error"))
+    print("Make install:        " + ("Ok" if make_install_ok else "Error"))
+    print("Make installcheck:   " + ("Ok (" if make_installcheck_failed == 0 else "Error (") +
           str(make_installcheck_failed) + " / " + str(make_installcheck_all) + ")")
+    print("Logs uploaded to S3: " + ("Yes" if uploading_results else "No"))
+
     print("\nStatic analysis:" )
     print_static_analysis(static_analysis)
     print("--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")

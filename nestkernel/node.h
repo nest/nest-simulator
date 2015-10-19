@@ -93,7 +93,6 @@ class histentry;
    SeeAlso: GetStatus, SetStatus, elementstates
  */
 
-
 class Node
 {
   friend class Network;
@@ -631,6 +630,27 @@ public:
   virtual bool is_subnet() const;
 
   /**
+   * @returns type of signal this node produces
+   * used in check_connection to only connect neurons which send / receive compatible information
+   */
+  virtual signal_type
+  sends_signal() const
+  {
+    return spike;
+  }
+
+  /**
+   * @returns type of signal this node consumes
+   * used in check_connection to only connect neurons which send / receive compatible information
+   */
+  virtual signal_type
+  receives_signal() const
+  {
+    return spike;
+  }
+
+
+  /**
    *  Return a dictionary with the node's properties.
    *
    *  get_status_base() first gets a dictionary with the basic
@@ -790,6 +810,7 @@ private:
   thread vp_;                //!< virtual process node is assigned to
   bool frozen_;              //!< node shall not be updated if true
   bool buffers_initialized_; //!< Buffers have been initialized
+
 
 protected:
   static Network* net_; //!< Pointer to global network driver.

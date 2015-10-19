@@ -174,10 +174,18 @@ public:
    */
   using Node::handle;
   using Node::handles_test_event;
+  using Node::sends_signal;
 
   port send_test_event( Node&, rport, synindex, bool );
 
   void handle( DataLoggingReply& );
+
+  signal_type
+  sends_signal() const
+  {
+    std::cout << "hello I'm here\n";
+    return all;
+  }
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );

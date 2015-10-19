@@ -118,8 +118,15 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
    */
   using Node::event_hook;
+  using Node::sends_signal;
 
   port send_test_event( Node&, rport, synindex, bool );
+
+  signal_type
+  sends_signal() const
+  {
+    return all;
+  }
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );

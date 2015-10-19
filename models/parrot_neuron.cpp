@@ -72,6 +72,7 @@ void
 parrot_neuron::get_status( DictionaryDatum& d ) const
 {
   def< double >( d, names::t_spike, get_spiketime_ms() );
+  Archiving_Node::get_status( d );
 }
 
 void

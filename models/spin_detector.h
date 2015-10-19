@@ -117,10 +117,17 @@ public:
    */
   using Node::handle;
   using Node::handles_test_event;
+  using Node::receives_signal;
 
   void handle( SpikeEvent& );
 
   port handles_test_event( SpikeEvent&, rport );
+
+  signal_type
+  receives_signal() const
+  {
+    return binary;
+  }
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );

@@ -184,6 +184,20 @@ typedef double_t weight;
 typedef long_t delay;
 const long_t delay_max = long_t_max;
 const long_t delay_min = long_t_min;
+
+
+/**
+ * enum type of signal conveyed by spike events of a node
+ * is used upon connect to check if spikes sent by one
+ * neuron are intepreted the same way by receiving neuron
+ */
+enum signal_type
+{
+  none = 0,
+  spike = 1,
+  binary = 2,
+  all = -1
+};
 }
 
 #endif

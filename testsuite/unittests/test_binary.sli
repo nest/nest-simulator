@@ -66,14 +66,14 @@
 
     sg << /spike_times [10. 10. 15.] >> SetStatus
 
-    sg nrn 1. 1. Connect	
+    sg nrn 1. 1. Connect
 
     /multi /multimeter Create def
 
     multi << /record_from [/h] >> SetStatus
 
     multi nrn Connect
-
+    
     20. Simulate
     
     multi /events get /h get cva
@@ -100,7 +100,7 @@
     nrn1 << /theta -10. /tau_m 1. >> SetStatus
 
     nrn1 sp Connect
-
+    
     100. Simulate
     
     % should have two events

@@ -39,12 +39,12 @@ ModelRangeManager::ModelRangeManager()
 }
 
 void
-ModelRangeManager::init()
+ModelRangeManager::initialize()
 {
 }
 
 void
-ModelRangeManager::reset()
+ModelRangeManager::finalize()
 {
   modelranges_.clear();
   first_gid_ = 0;

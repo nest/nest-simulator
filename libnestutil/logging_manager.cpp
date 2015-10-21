@@ -32,12 +32,12 @@ nest::LoggingManager::LoggingManager()
 }
 
 void
-nest::LoggingManager::init()
+nest::LoggingManager::initialize()
 {
 }
 
 void
-nest::LoggingManager::reset()
+nest::LoggingManager::finalize()
 {
 }
 

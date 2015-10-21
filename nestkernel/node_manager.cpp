@@ -61,7 +61,7 @@ NodeManager::~NodeManager()
 }
 
 void
-NodeManager::init()
+NodeManager::initialize()
 {
   /*
    * TODO The code until the "END" comment below adds the root subnet.
@@ -117,7 +117,7 @@ NodeManager::init()
 }
 
 void
-NodeManager::reset()
+NodeManager::finalize()
 {
   destruct_nodes_();
 

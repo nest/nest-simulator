@@ -49,13 +49,13 @@ EventDeliveryManager::~EventDeliveryManager()
 }
 
 void
-EventDeliveryManager::init()
+EventDeliveryManager::initialize()
 {
   init_moduli();
 }
 
 void
-EventDeliveryManager::reset()
+EventDeliveryManager::finalize()
 {
   // clear the buffers
   local_grid_spikes_.clear();

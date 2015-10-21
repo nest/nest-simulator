@@ -35,7 +35,7 @@ nest::VPManager::VPManager()
 }
 
 void
-nest::VPManager::init()
+nest::VPManager::initialize()
 {
 #ifndef _OPENMP
   if ( n_threads_ > 1 )
@@ -50,7 +50,7 @@ nest::VPManager::init()
 }
 
 void
-nest::VPManager::reset()
+nest::VPManager::finalize()
 {
 }
 

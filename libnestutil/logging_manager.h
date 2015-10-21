@@ -40,8 +40,8 @@ class LoggingManager : public ManagerInterface
 public:
   LoggingManager();
 
-  virtual void init();
-  virtual void reset();
+  virtual void initialize();
+  virtual void finalize();
 
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );

@@ -54,8 +54,37 @@ public:
   {
   }
 
-  virtual void init() = 0;
-  virtual void reset() = 0;
+  /**
+   * Prepare manager for operation.
+   *
+   * After this method has completed, the manager should be completely
+   * initialized and "ready for action".
+   *
+   * @note Initialization of any given manager may depend on other
+   * managers having been initialized before. KernelManager::initialize()
+   * is responsible for calling the initialization routines on the
+   * specific managers in correct order.
+   *
+   * @see finalize()
+   */
+  virtual void initialize() = 0;
+
+  /**
+   * Take down manager after operation.
+   *
+   * After this method has completed, all dynamic data structures created by
+   * the manager shall be deallocated and containers emptied. Plain variables
+   * need not be reset.
+   *
+   * @note Finalization of any given manager may depend on other
+   * managers not having been finalized yet. KernelManager::finalize()
+   * is responsible for calling the initialization routines on the
+   * specific managers in correct order, i.e., the opposite order of
+   * initialize() calls.
+   *
+   * @see initialize()
+   */
+   virtual void finalize() = 0;
 
   virtual void set_status( const DictionaryDatum& ) = 0;
   virtual void get_status( DictionaryDatum& ) = 0;

@@ -63,7 +63,7 @@ nest::ConnectionBuilderManager::~ConnectionBuilderManager()
 }
 
 void
-nest::ConnectionBuilderManager::init()
+nest::ConnectionBuilderManager::initialize()
 {
   tVSConnector tmp( kernel().vp_manager.get_num_threads(), tSConnector() );
   connections_.swap( tmp );
@@ -80,7 +80,7 @@ nest::ConnectionBuilderManager::init()
 }
 
 void
-nest::ConnectionBuilderManager::reset()
+nest::ConnectionBuilderManager::finalize()
 {
   delete_connections_();
 }
@@ -168,13 +168,13 @@ nest::ConnectionBuilderManager::delete_connections_()
 #pragma omp parallel
   {
     poormansallocpool[ omp_get_thread_num() ].destruct();
-    poormansallocpool[ omp_get_thread_num() ].init();
+    poormansallocpool[ omp_get_thread_num() ].initialize();
   }
 #else
 #pragma omp parallel
   {
     poormansallocpool.destruct();
-    poormansallocpool.init();
+    poormansallocpool.initialize();
   }
 #endif
 #endif

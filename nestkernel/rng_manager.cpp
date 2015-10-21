@@ -42,14 +42,14 @@ nest::RNGManager::RNGManager()
 }
 
 void
-nest::RNGManager::init()
+nest::RNGManager::initialize()
 {
   create_rngs_( true ); // flag that this is a call from the ctr
   create_grng_( true ); // flag that this is a call from the ctr
 }
 
 void
-nest::RNGManager::reset()
+nest::RNGManager::finalize()
 {
 }
 

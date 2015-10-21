@@ -40,8 +40,8 @@ public:
   {
   }
 
-  virtual void init();
-  virtual void reset();
+  virtual void initialize();
+  virtual void finalize();
 
   virtual void
   set_status( const DictionaryDatum& )

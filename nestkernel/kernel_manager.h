@@ -90,7 +90,33 @@ public:
   static void destroy_kernel_manager();
   static KernelManager& get_kernel_manager();
 
-  void init();
+   /**
+    * Prepare kernel for operation.
+    *
+    * This method calls the initialization methods of the specific
+    * managers in the proper order.
+    *
+    * @see finalize(), reset()
+    */
+  void initialize();
+
+  /**
+   * Take down kernel after operation.
+   *
+   * This method calls the finalization methods of the specific managers
+   * in the proper order, i.e., inverse to initialize().
+   *
+   * @see initialize(), reset()
+   */
+  void finalize();
+
+  /**
+   * Reset kernel.
+   *
+   * Resets kernel by finalizing and initalizing.
+   *
+   * @see initialize(), finalize()
+   */
   void reset();
 
   void set_status( const DictionaryDatum& );

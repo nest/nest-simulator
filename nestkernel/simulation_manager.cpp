@@ -49,7 +49,7 @@ nest::SimulationManager::SimulationManager()
 }
 
 void
-nest::SimulationManager::init()
+nest::SimulationManager::initialize()
 {
   // set resolution, ensure clock is calibrated to new resolution
   Time::reset_resolution();
@@ -59,7 +59,7 @@ nest::SimulationManager::init()
 }
 
 void
-nest::SimulationManager::reset()
+nest::SimulationManager::finalize()
 {
   nest::Time::reset_to_defaults();
 

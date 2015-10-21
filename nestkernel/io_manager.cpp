@@ -81,7 +81,7 @@ nest::IOManager::set_data_path_prefix_( const DictionaryDatum& d )
 }
 
 void
-nest::IOManager::init()
+nest::IOManager::initialize()
 {
   // data_path and data_prefix can be set via environment variables
   DictionaryDatum dict( new Dictionary );
@@ -96,7 +96,7 @@ nest::IOManager::init()
 }
 
 void
-nest::IOManager::reset()
+nest::IOManager::finalize()
 {
   data_path_ = "";
   data_prefix_ = "";

@@ -128,7 +128,7 @@ Network::Network( SLIInterpreter& i )
   register_basis_model( *model, true );
   model->set_type_id( 2 );
 
-  kernel().init();
+  kernel().initialize();
 
   synapsedict_ = new Dictionary();
   interpreter_.def( "synapsedict", new DictionaryDatum( synapsedict_ ) );
@@ -226,7 +226,7 @@ Network::clear_models_( bool called_from_destructor )
 void
 Network::reset()
 {
-  kernel().reset();
+  kernel().finalize();
 
   clear_models_();
 
@@ -239,7 +239,7 @@ Network::reset()
     ( *m ).first->set_threads();
   }
 
-  kernel().init();
+  kernel().initialize();
 
   connection_manager_.reset();
 

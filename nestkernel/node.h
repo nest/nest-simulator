@@ -154,6 +154,8 @@ public:
    * not have proxies on remote threads. This is used to
    * discriminate between different types of nodes, when adding new
    * nodes to the network.
+   *
+   * TODO: Is this true for *any* model at all? Maybe MUSIC related?
    */
   virtual bool one_node_per_process() const;
 

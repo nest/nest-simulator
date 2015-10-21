@@ -35,6 +35,15 @@ namespace nest
 {
 EventDeliveryManager::EventDeliveryManager()
   : off_grid_spiking_( false )
+  , moduli_()
+  , slice_moduli_()
+  , spike_register_()
+  , offgrid_spike_register_()
+  , local_grid_spikes_()
+  , global_grid_spikes_()
+  , local_offgrid_spikes_()
+  , global_offgrid_spikes_()
+  , displacements_()
   , comm_marker_( 0 )
 {
 }
@@ -144,8 +153,10 @@ EventDeliveryManager::init_moduli()
   moduli_.resize( min_delay + max_delay );
 
   for ( delay d = 0; d < min_delay + max_delay; ++d )
+  {
     moduli_[ d ] =
       ( kernel().simulation_manager.get_clock().get_steps() + d ) % ( min_delay + max_delay );
+  }
 
   // Slice-based ring-buffers have one bin per min_delay steps,
   // up to max_delay.  Time is counted as for normal ring buffers.
@@ -154,8 +165,10 @@ EventDeliveryManager::init_moduli()
     std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
   slice_moduli_.resize( min_delay + max_delay );
   for ( delay d = 0; d < min_delay + max_delay; ++d )
+  {
     slice_moduli_[ d ] =
       ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
+  }
 }
 
 /**
@@ -169,32 +182,29 @@ EventDeliveryManager::init_moduli()
 void
 EventDeliveryManager::update_moduli()
 {
-  assert( kernel().connection_builder_manager.get_min_delay() != 0 );
-  assert( kernel().connection_builder_manager.get_max_delay() != 0 );
+  delay min_delay = kernel().connection_builder_manager.get_min_delay();
+  delay max_delay = kernel().connection_builder_manager.get_max_delay();
+  assert( min_delay != 0 );
+  assert( max_delay != 0 );
 
   /*
    * Note that for updating the modulos, it is sufficient
    * to rotate the buffer to the left.
    */
-  assert( moduli_.size() == ( index )( kernel().connection_builder_manager.get_min_delay()
-                              + kernel().connection_builder_manager.get_max_delay() ) );
-  std::rotate( moduli_.begin(),
-    moduli_.begin() + kernel().connection_builder_manager.get_min_delay(),
-    moduli_.end() );
+  assert( moduli_.size() == ( index )( min_delay + max_delay ) );
+  std::rotate( moduli_.begin(), moduli_.begin() + min_delay, moduli_.end() );
 
   /* For the slice-based ring buffer, we cannot rotate the table, but
    have to re-compute it, since max_delay_ may not be a multiple of
    min_delay_.  Reference time is the time at the beginning of the slice.
    */
   const size_t nbuff = static_cast< size_t >(
-    std::ceil( static_cast< double >( kernel().connection_builder_manager.get_min_delay()
-                 + kernel().connection_builder_manager.get_max_delay() )
-      / kernel().connection_builder_manager.get_min_delay() ) );
-  for ( delay d = 0; d < kernel().connection_builder_manager.get_min_delay()
-            + kernel().connection_builder_manager.get_max_delay();
-        ++d )
+    std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
+  for ( delay d = 0; d < min_delay + max_delay; ++d )
+  {
     slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d )
-                           / kernel().connection_builder_manager.get_min_delay() ) % nbuff;
+                           / min_delay ) % nbuff;
+  }
 }
 
 void

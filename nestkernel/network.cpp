@@ -344,12 +344,12 @@ Network::set_status( index gid, const DictionaryDatum& d )
 
   // former scheduler_.set_status( d ); start
   // careful, this may invalidate all node pointers!
+  updateValue< bool >( d, "dict_miss_is_error", dict_miss_is_error_ );
   kernel().set_status( d );
 
 
   // former scheduler_.set_status( d ); end
 
-  updateValue< bool >( d, "dict_miss_is_error", dict_miss_is_error_ );
 }
 
 DictionaryDatum

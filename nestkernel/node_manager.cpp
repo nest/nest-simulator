@@ -1,5 +1,5 @@
 /*
- *  vp_manager.cpp
+ *  node_manager.cpp
  *
  *  This file is part of NEST.
  *
@@ -120,8 +120,6 @@ void
 NodeManager::finalize()
 {
   destruct_nodes_();
-
-  init();
 }
 
 void
@@ -608,7 +606,6 @@ NodeManager::destruct_nodes_()
   }
 
   local_nodes_.clear();
-  kernel().modelrange_manager.reset();
 
   Network::get_network().dummy_spike_sources_.clear();
 }

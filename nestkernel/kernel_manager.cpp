@@ -53,40 +53,68 @@ nest::KernelManager::~KernelManager()
 }
 
 void
-nest::KernelManager::init()
+nest::KernelManager::initialize()
 {
-  logging_manager.init();
+  logging_manager.initialize();   // must come first so others can log
+  io_manager.initialize();        // independent of others
 
-  mpi_manager.init();
-  vp_manager.init();
+  mpi_manager.initialize();       // set up inter-process communication
+  vp_manager.initialize();        // set up threads
 
-  rng_manager.init();
-  io_manager.init();
+  // invariant: process infrastructure (MPI, threads) in place
 
-  connection_builder_manager.init();
-  simulation_manager.init();
-  event_delivery_manager.init();  // after sim_mgr and conn_bldr_mgr
-  modelrange_manager.init();
-  node_manager.init();  // must come last
+  rng_manager.initialize();       // depends on number of VPs
+
+  // invariant: supporting managers set up
+
+  // "Core kernel managers" follow
+  simulation_manager.initialize();          // independent of others
+  modelrange_manager.initialize();          // independent of others
+  connection_builder_manager.initialize();  // depends only on num of VPs
+
+  // prerequisites:
+  //   - min_delay/max_delay available (connection_builder_manager)
+  //   - clock initialized (simulation_manager)
+  event_delivery_manager.initialize();
+
+  // model_manager comes here
+
+  // prerequisites:
+  //   - modelrange_manager initialized
+  //   - model_manager for pristine models
+  //   - vp_manager for number of threads
+  node_manager.initialize();  // must come last
 
   initialized_ = true;
 }
 
 void
-nest::KernelManager::reset()
+nest::KernelManager::finalize()
 {
   initialized_ = false;
 
-  logging_manager.reset();
-  mpi_manager.reset();
-  vp_manager.reset();
-  rng_manager.reset();
-  node_manager.reset(); // put this before model_manager.reset()
-  io_manager.reset();
-  connection_builder_manager.reset();
-  event_delivery_manager.reset();
-  simulation_manager.reset();
-  modelrange_manager.reset();
+  // reverse order of calls as in initialize()
+  node_manager.finalize();
+  // model_manager.finalize();
+  event_delivery_manager.finalize();
+  connection_builder_manager.finalize();
+  modelrange_manager.finalize();
+  simulation_manager.finalize();
+
+  rng_manager.finalize();
+
+  vp_manager.finalize();
+  mpi_manager.finalize();
+
+  io_manager.finalize();
+  logging_manager.finalize();
+}
+
+void
+nest::KernelManager::reset()
+{
+  finalize();
+  initialize();
 }
 
 void

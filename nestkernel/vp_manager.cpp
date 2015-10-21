@@ -57,7 +57,7 @@ nest::VPManager::finalize()
 void
 nest::VPManager::set_status( const DictionaryDatum& d )
 {
-  long n_threads;
+  long n_threads = get_num_threads();
   bool n_threads_updated = updateValue< long >( d, "local_num_threads", n_threads );
   if ( n_threads_updated )
   {
@@ -86,16 +86,16 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     {
       LOG(
         M_WARNING, "Network::set_status", "No multithreading available, using single threading" );
-      n_threads_ = 1;
+      n_threads = 1;
     }
 
     // it is essential to call reset() here to adapt memory pools and more
     // to the new number of threads and VPs.
-    n_threads_ = n_threads;
+    set_num_threads(n_threads);
     Network::get_network().reset();
   }
 
-  long n_vps;
+  long n_vps = get_num_virtual_processes();
   bool n_vps_updated = updateValue< long >( d, "total_num_virtual_procs", n_vps );
   if ( n_vps_updated )
   {
@@ -125,17 +125,17 @@ nest::VPManager::set_status( const DictionaryDatum& d )
         "Number of virtual processes (threads*processes) must be an integer "
         "multiple of the number of processes. Value unchanged." );
 
-    n_threads_ = n_vps / kernel().mpi_manager.get_num_processes();
+    long n_threads = n_vps / kernel().mpi_manager.get_num_processes();
     if ( ( n_threads > 1 ) && ( force_singlethreading_ ) )
     {
       LOG(
         M_WARNING, "Network::set_status", "No multithreading available, using single threading" );
-      n_threads_ = 1;
+      n_threads = 1;
     }
 
     // it is essential to call reset() here to adapt memory pools and more
     // to the new number of threads and VPs
-    set_num_threads( n_threads_ );
+    set_num_threads( n_threads );
     Network::get_network().reset();
   }
 }
@@ -161,10 +161,10 @@ nest::VPManager::set_num_threads( nest::thread n_threads )
   assert( n_threads <= MAX_THREAD && "MAX_THREAD is a constant defined in allocator.h" );
 
 #pragma omp parallel
-  poormansallocpool[ omp_get_thread_num() ].init();
+  poormansallocpool[ omp_get_thread_num() ].initialize();
 #else
 #pragma omp parallel
-  poormansallocpool.init();
+  poormansallocpool.initialize();
 #endif
 #endif
 

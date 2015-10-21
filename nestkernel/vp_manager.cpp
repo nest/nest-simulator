@@ -159,20 +159,6 @@ nest::VPManager::set_num_threads( nest::thread n_threads )
 
 #ifdef _OPENMP
   omp_set_num_threads( n_threads_ );
-
-#ifdef USE_PMA
-// initialize the memory pools
-#ifdef IS_K
-  assert( n_threads <= MAX_THREAD && "MAX_THREAD is a constant defined in allocator.h" );
-
-#pragma omp parallel
-  poormansallocpool[ omp_get_thread_num() ].initialize();
-#else
-#pragma omp parallel
-  poormansallocpool.initialize();
-#endif
-#endif
-
 #endif
 }
 

@@ -54,7 +54,6 @@ nest::SimulationManager::init()
   // set resolution, ensure clock is calibrated to new resolution
   Time::reset_resolution();
   clock_.calibrate();
-  kernel().event_delivery_manager.init_moduli();  // TODO: move elsewhere?
 
   simulated_ = false;
 }
@@ -348,6 +347,7 @@ nest::SimulationManager::prepare_simulation_()
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables
   kernel().connection_builder_manager.update_delay_extrema_();
+  kernel().event_delivery_manager.init_moduli();
 
   // Check for synchronicity of global rngs over processes.
   // We need to do this ahead of any simulation in case random numbers

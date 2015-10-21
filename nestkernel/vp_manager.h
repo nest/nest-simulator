@@ -108,7 +108,7 @@ public:
   int get_num_virtual_processes() const;
 
 private:
-  bool force_singlethreading_;
+  const bool force_singlethreading_;
   index n_threads_; //!< Number of threads per process.
 };
 }

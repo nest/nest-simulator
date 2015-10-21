@@ -29,7 +29,11 @@
 #include "mpi_manager_impl.h"
 
 nest::VPManager::VPManager()
+#ifdef _OPENMP
   : force_singlethreading_( false )
+#else
+  : force_singlethreading_( true )
+#endif
   , n_threads_( 1 )
 {
 }
@@ -42,10 +46,9 @@ nest::VPManager::initialize()
   {
     LOG( M_ERROR, "Network::reset", "No multithreading available, using single threading" );
     n_threads_ = 1;
-    force_singlethreading_ = true;
   }
 #endif
-
+  
   set_num_threads( get_num_threads() );
 }
 
@@ -143,7 +146,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
 void
 nest::VPManager::get_status( DictionaryDatum& d )
 {
-  def< long >( d, "local_num_threads", n_threads_ );
+  def< long >( d, "local_num_threads", get_num_threads() );
   def< long >( d, "total_num_virtual_procs", kernel().vp_manager.get_num_virtual_processes() );
 }
 
@@ -183,22 +186,22 @@ nest::VPManager::is_local_vp( nest::thread vp ) const
 nest::thread
 nest::VPManager::suggest_vp( nest::index gid ) const
 {
-  return gid % ( kernel().mpi_manager.get_num_sim_processes() * n_threads_ );
+  return gid % ( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() );
 }
 
 nest::thread
 nest::VPManager::suggest_rec_vp( nest::index gid ) const
 {
-  return gid % ( kernel().mpi_manager.get_num_rec_processes() * n_threads_ )
-    + kernel().mpi_manager.get_num_sim_processes() * n_threads_;
+  return gid % ( kernel().mpi_manager.get_num_rec_processes() * get_num_threads() )
+    + kernel().mpi_manager.get_num_sim_processes() * get_num_threads();
 }
 
 nest::thread
 nest::VPManager::vp_to_thread( nest::thread vp ) const
 {
-  if ( vp >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes() * n_threads_ ) )
+  if ( vp >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() ) )
   {
-    return ( vp + kernel().mpi_manager.get_num_sim_processes() * ( 1 - n_threads_ )
+    return ( vp + kernel().mpi_manager.get_num_sim_processes() * ( 1 - get_num_threads() )
              - kernel().mpi_manager.get_rank() ) / kernel().mpi_manager.get_num_rec_processes();
   }
   else
@@ -216,7 +219,7 @@ nest::VPManager::thread_to_vp( nest::thread t ) const
     // Rank is a recording process
     return t * kernel().mpi_manager.get_num_rec_processes() + kernel().mpi_manager.get_rank()
       - kernel().mpi_manager.get_num_sim_processes()
-      + kernel().mpi_manager.get_num_sim_processes() * n_threads_;
+      + kernel().mpi_manager.get_num_sim_processes() * get_num_threads();
   }
   else
   {

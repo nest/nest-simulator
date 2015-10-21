@@ -30,7 +30,7 @@
 inline nest::thread
 nest::VPManager::get_num_virtual_processes() const
 {
-  return n_threads_ * kernel().mpi_manager.get_num_processes();
+  return get_num_threads() * kernel().mpi_manager.get_num_processes();
 }
 
 #endif /* VP_MANAGER_IMPL_H */

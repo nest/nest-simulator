@@ -173,13 +173,13 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
   {
     index old_id = static_cast< index >( oldnodemodel );
     new_id = copy_node_model_( old_id, new_name);
-    set_node_defaults_( old_id, params );
+    set_node_defaults_( new_id, params );
   }
   else if ( !oldsynmodel.empty() )
   {
     index old_id = static_cast< index >( oldsynmodel );
     new_id = copy_synapse_model_( old_id, new_name );
-    set_synapse_defaults_( old_id, params );
+    set_synapse_defaults_( new_id, params );
   }
   else
     throw UnknownModelName( old_name );

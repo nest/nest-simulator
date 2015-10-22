@@ -90,7 +90,6 @@ Network::destroy_network()
 
 Network::Network( SLIInterpreter& i )
   : interpreter_( i )
-  , connection_manager_()
   , dict_miss_is_error_( true )
 {
   // the subsequent function-calls need a
@@ -129,13 +128,7 @@ Network::init_()
 void
 Network::reset()
 {
-  kernel().finalize();
-
-  kernel().model_manager.finalize();
-
-  kernel().initialize();
-
-  connection_manager_.reset();
+  kernel().reset();
 
   init_();
 }
@@ -257,8 +250,6 @@ Network::get_status( index idx )
     def< long >( d, "send_buffer_size", Communicator::get_send_buffer_size() );
     def< long >( d, "receive_buffer_size", Communicator::get_recv_buffer_size() );
     // former scheduler_.get_status( d ) end
-
-    connection_manager_.get_status( d );
 
     ( *d )[ "dict_miss_is_error" ] = dict_miss_is_error_;
 

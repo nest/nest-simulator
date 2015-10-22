@@ -31,7 +31,6 @@
 #include "model.h"
 #include "exceptions.h"
 #include "proxynode.h"
-#include "connection_manager.h"
 #include "event.h"
 #include "compose.hpp"
 #include "dictdatum.h"
@@ -272,7 +271,6 @@ private:
   void clear_models_( bool called_from_destructor = false );
 
   SLIInterpreter& interpreter_;
-  ConnectionManager connection_manager_;
   
   bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 };

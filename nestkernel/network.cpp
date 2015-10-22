@@ -59,17 +59,6 @@
 #undef N_DEBUG
 #endif
 
-#ifdef USE_PMA
-#ifdef IS_K
-extern PaddedPMA poormansallocpool[];
-#else
-extern PoorMansAllocator poormansallocpool;
-#ifdef _OPENMP
-#pragma omp threadprivate( poormansallocpool )
-#endif
-#endif
-#endif
-
 extern int SLIsignalflag;
 
 namespace nest

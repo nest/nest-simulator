@@ -49,6 +49,18 @@
 
 #include "network.h"
 
+#ifdef USE_PMA
+#include "allocator.h"
+#ifdef IS_K
+extern PaddedPMA poormansallocpool[];
+#else // not IS_K
+extern PoorMansAllocator poormansallocpool;
+#ifdef _OPENMP
+#pragma omp threadprivate( poormansallocpool )
+#endif // _OPENMP
+#endif // IS_K
+#endif // USE_PMA
+
 nest::ConnectionBuilderManager::ConnectionBuilderManager()
   : connruledict_( new Dictionary() )
   , connbuilder_factories_()

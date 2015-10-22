@@ -68,10 +68,10 @@ nest::VPManager::set_status( const DictionaryDatum& d )
   {
     if ( kernel().node_manager.size() > 1 )
       throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
-    if ( Network::get_network().models_.size() > Network::get_network().pristine_models_.size() )
+    if ( kernel().model_manager.has_user_models() )
       throw KernelException(
         "Custom neuron models exist: Thread/process number cannot be changed." );
-    if ( Network::get_network().connection_manager_.has_user_prototypes() )
+    if ( kernel().model_manager.has_user_prototypes() )
       throw KernelException(
         "Custom synapse types exist: Thread/process number cannot be changed." );
     if ( kernel().connection_builder_manager.get_user_set_delay_extrema() )
@@ -83,7 +83,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     if ( not Time::resolution_is_default() )
       throw KernelException(
         "The resolution has been set: Thread/process number cannot be changed." );
-    if ( Network::get_network().model_defaults_modified() )
+    if ( kernel().model_manager.are_model_defaults_modified() )
       throw KernelException(
         "Model defaults have been modified: Thread/process number cannot be changed." );
 
@@ -106,10 +106,10 @@ nest::VPManager::set_status( const DictionaryDatum& d )
   {
     if ( kernel().node_manager.size() > 1 )
       throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
-    if ( Network::get_network().models_.size() > Network::get_network().pristine_models_.size() )
+    if ( kernel().model_manager.has_user_models() )
       throw KernelException(
         "Custom neuron models exist: Thread/process number cannot be changed." );
-    if ( Network::get_network().connection_manager_.has_user_prototypes() )
+    if ( kernel().model_manager.has_user_prototypes() )
       throw KernelException(
         "Custom synapse types exist: Thread/process number cannot be changed." );
     if ( kernel().connection_builder_manager.get_user_set_delay_extrema() )
@@ -121,7 +121,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     if ( not Time::resolution_is_default() )
       throw KernelException(
         "The resolution has been set: Thread/process number cannot be changed." );
-    if ( Network::get_network().model_defaults_modified() )
+    if ( kernel().model_manager.are_model_defaults_modified() )
       throw KernelException(
         "Model defaults have been modified: Thread/process number cannot be changed." );
 

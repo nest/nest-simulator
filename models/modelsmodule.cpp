@@ -37,6 +37,7 @@
 #include "config.h"
 #include "modelsmodule.h"
 #include "network.h"
+#include "kernel_manager.h"
 #include "model.h"
 #include "genericmodel.h"
 #include <string>
@@ -158,44 +159,44 @@ ModelsModule::commandstring( void ) const
 void
 ModelsModule::init( SLIInterpreter* )
 {
-  register_model< iaf_neuron >( "iaf_neuron" );
-  register_model< iaf_chs_2007 >( "iaf_chs_2007" );
-  register_model< iaf_psc_alpha >( "iaf_psc_alpha" );
-  register_model< iaf_psc_alpha_multisynapse >( "iaf_psc_alpha_multisynapse" );
-  register_model< iaf_psc_delta >( "iaf_psc_delta" );
-  register_model< iaf_psc_exp >( "iaf_psc_exp" );
-  register_model< iaf_psc_exp_multisynapse >( "iaf_psc_exp_multisynapse" );
-  register_model< iaf_tum_2000 >( "iaf_tum_2000" );
-  register_model< amat2_psc_exp >( "amat2_psc_exp" );
-  register_model< mat2_psc_exp >( "mat2_psc_exp" );
-  register_model< parrot_neuron >( "parrot_neuron" );
-  register_model< pp_psc_delta >( "pp_psc_delta" );
-  register_model< pp_pop_psc_delta >( "pp_pop_psc_delta" );
+  kernel().model_manager.register_node_model< iaf_neuron >( "iaf_neuron" );
+  kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha_multisynapse >( "iaf_psc_alpha_multisynapse" );
+  kernel().model_manager.register_node_model< iaf_psc_delta >( "iaf_psc_delta" );
+  kernel().model_manager.register_node_model< iaf_psc_exp >( "iaf_psc_exp" );
+  kernel().model_manager.register_node_model< iaf_psc_exp_multisynapse >( "iaf_psc_exp_multisynapse" );
+  kernel().model_manager.register_node_model< iaf_tum_2000 >( "iaf_tum_2000" );
+  kernel().model_manager.register_node_model< amat2_psc_exp >( "amat2_psc_exp" );
+  kernel().model_manager.register_node_model< mat2_psc_exp >( "mat2_psc_exp" );
+  kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
+  kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
+  kernel().model_manager.register_node_model< pp_pop_psc_delta >( "pp_pop_psc_delta" );
 
-  register_model< ac_generator >( "ac_generator" );
-  register_model< dc_generator >( "dc_generator" );
-  register_model< spike_generator >( "spike_generator" );
-  register_model< poisson_generator >( "poisson_generator" );
-  register_model< pulsepacket_generator >( "pulsepacket_generator" );
-  register_model< noise_generator >( "noise_generator" );
-  register_model< step_current_generator >( "step_current_generator" );
-  register_model< mip_generator >( "mip_generator" );
-  register_model< sinusoidal_poisson_generator >( "sinusoidal_poisson_generator" );
-  register_model< ppd_sup_generator >( "ppd_sup_generator" );
-  register_model< gamma_sup_generator >( "gamma_sup_generator" );
-  register_model< sli_neuron >( "sli_neuron" );
-  register_model< ginzburg_neuron >( "ginzburg_neuron" );
-  register_model< mcculloch_pitts_neuron >( "mcculloch_pitts_neuron" );
-  register_model< izhikevich >( "izhikevich" );
-  register_model< spike_dilutor >( "spike_dilutor" );
+  kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
+  kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
+  kernel().model_manager.register_node_model< spike_generator >( "spike_generator" );
+  kernel().model_manager.register_node_model< poisson_generator >( "poisson_generator" );
+  kernel().model_manager.register_node_model< pulsepacket_generator >( "pulsepacket_generator" );
+  kernel().model_manager.register_node_model< noise_generator >( "noise_generator" );
+  kernel().model_manager.register_node_model< step_current_generator >( "step_current_generator" );
+  kernel().model_manager.register_node_model< mip_generator >( "mip_generator" );
+  kernel().model_manager.register_node_model< sinusoidal_poisson_generator >( "sinusoidal_poisson_generator" );
+  kernel().model_manager.register_node_model< ppd_sup_generator >( "ppd_sup_generator" );
+  kernel().model_manager.register_node_model< gamma_sup_generator >( "gamma_sup_generator" );
+  kernel().model_manager.register_node_model< sli_neuron >( "sli_neuron" );
+  kernel().model_manager.register_node_model< ginzburg_neuron >( "ginzburg_neuron" );
+  kernel().model_manager.register_node_model< mcculloch_pitts_neuron >( "mcculloch_pitts_neuron" );
+  kernel().model_manager.register_node_model< izhikevich >( "izhikevich" );
+  kernel().model_manager.register_node_model< spike_dilutor >( "spike_dilutor" );
 
-  register_model< spike_detector >( "spike_detector" );
-  register_model< spin_detector >( "spin_detector" );
-  register_model< Multimeter >( "multimeter" );
-  register_model< correlation_detector >( "correlation_detector" );
-  register_model< correlomatrix_detector >( "correlomatrix_detector" );
-  register_model< correlospinmatrix_detector >( "correlospinmatrix_detector" );
-  register_model< volume_transmitter >( "volume_transmitter" );
+  kernel().model_manager.register_node_model< spike_detector >( "spike_detector" );
+  kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
+  kernel().model_manager.register_node_model< Multimeter >( "multimeter" );
+  kernel().model_manager.register_node_model< correlation_detector >( "correlation_detector" );
+  kernel().model_manager.register_node_model< correlomatrix_detector >( "correlomatrix_detector" );
+  kernel().model_manager.register_node_model< correlospinmatrix_detector >( "correlospinmatrix_detector" );
+  kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
 
   // Create voltmeter as a multimeter pre-configured to record V_m.
   /*BeginDocumentation
@@ -263,38 +264,39 @@ ModelsModule::init( SLIInterpreter* )
 
   SeeAlso: Device, RecordingDevice, multimeter
   */
-  Dictionary vmdict;
+  DictionaryDatum vmdict = DictionaryDatum(new Dictionary);
   ArrayDatum ad;
   ad.push_back( LiteralDatum( names::V_m.toString() ) );
-  vmdict[ names::record_from ] = ad;
-  register_preconf_model< Multimeter >( "voltmeter", vmdict );
+  (*vmdict)[ names::record_from ] = ad;
+  const Name name = "voltmeter";
+  kernel().model_manager.register_preconf_node_model< Multimeter >( name, vmdict, false );
 
 #ifdef HAVE_GSL
-  register_model< iaf_chxk_2008 >( "iaf_chxk_2008" );
-  register_model< iaf_cond_alpha >( "iaf_cond_alpha" );
-  register_model< iaf_cond_exp >( "iaf_cond_exp" );
-  register_model< iaf_cond_exp_sfa_rr >( "iaf_cond_exp_sfa_rr" );
-  register_model< iaf_cond_alpha_mc >( "iaf_cond_alpha_mc" );
-  register_model< hh_psc_alpha >( "hh_psc_alpha" );
-  register_model< hh_cond_exp_traub >( "hh_cond_exp_traub" );
-  register_model< sinusoidal_gamma_generator >( "sinusoidal_gamma_generator" );
+  kernel().model_manager.register_node_model< iaf_chxk_2008 >( "iaf_chxk_2008" );
+  kernel().model_manager.register_node_model< iaf_cond_alpha >( "iaf_cond_alpha" );
+  kernel().model_manager.register_node_model< iaf_cond_exp >( "iaf_cond_exp" );
+  kernel().model_manager.register_node_model< iaf_cond_exp_sfa_rr >( "iaf_cond_exp_sfa_rr" );
+  kernel().model_manager.register_node_model< iaf_cond_alpha_mc >( "iaf_cond_alpha_mc" );
+  kernel().model_manager.register_node_model< hh_psc_alpha >( "hh_psc_alpha" );
+  kernel().model_manager.register_node_model< hh_cond_exp_traub >( "hh_cond_exp_traub" );
+  kernel().model_manager.register_node_model< sinusoidal_gamma_generator >( "sinusoidal_gamma_generator" );
 #endif
 
 #ifdef HAVE_GSL_1_11
-  register_model< aeif_cond_alpha >( "aeif_cond_alpha" );
-  register_model< aeif_cond_exp >( "aeif_cond_exp" );
-  register_model< ht_neuron >( "ht_neuron" );
+  kernel().model_manager.register_node_model< aeif_cond_alpha >( "aeif_cond_alpha" );
+  kernel().model_manager.register_node_model< aeif_cond_exp >( "aeif_cond_exp" );
+  kernel().model_manager.register_node_model< ht_neuron >( "ht_neuron" );
 #endif
   // This version of the AdEx model does not depend on GSL.
-  register_model< aeif_cond_alpha_RK5 >( "aeif_cond_alpha_RK5" );
-  register_model< aeif_cond_alpha_multisynapse >( "aeif_cond_alpha_multisynapse" );
+  kernel().model_manager.register_node_model< aeif_cond_alpha_RK5 >( "aeif_cond_alpha_RK5" );
+  kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >( "aeif_cond_alpha_multisynapse" );
 
 #ifdef HAVE_MUSIC
   //// proxies for inter-application communication using MUSIC
-  register_model< music_event_in_proxy >( "music_event_in_proxy" );
-  register_model< music_event_out_proxy >( "music_event_out_proxy" );
-  register_model< music_cont_in_proxy >( "music_cont_in_proxy" );
-  register_model< music_message_in_proxy >( "music_message_in_proxy" );
+  kernel().model_manager.register_node_model< music_event_in_proxy >( "music_event_in_proxy" );
+  kernel().model_manager.register_node_model< music_event_out_proxy >( "music_event_out_proxy" );
+  kernel().model_manager.register_node_model< music_cont_in_proxy >( "music_cont_in_proxy" );
+  kernel().model_manager.register_node_model< music_message_in_proxy >( "music_message_in_proxy" );
 #endif
 
   // register synapses
@@ -310,17 +312,17 @@ ModelsModule::init( SLIInterpreter* )
 
      SeeAlso: synapsedict, static_synapse
   */
-  register_connection_model< StaticConnection< TargetIdentifierPtrRport > >( "static_synapse" );
-  register_connection_model< StaticConnection< TargetIdentifierIndex > >( "static_synapse_hpc" );
+  kernel().model_manager.register_connection_model< StaticConnection< TargetIdentifierPtrRport > >( "static_synapse" );
+  kernel().model_manager.register_connection_model< StaticConnection< TargetIdentifierIndex > >( "static_synapse_hpc" );
 
 
   /* BeginDocumentation
      Name: static_synapse_hom_w_hpc - Variant of static_synapse_hom_w with low memory consumption.
      SeeAlso: synapsedict, static_synapse_hom_w, static_synapse_hpc
   */
-  register_connection_model< StaticConnectionHomW< TargetIdentifierPtrRport > >(
+  kernel().model_manager.register_connection_model< StaticConnectionHomW< TargetIdentifierPtrRport > >(
     "static_synapse_hom_w" );
-  register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
+  kernel().model_manager.register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
     "static_synapse_hom_w_hpc" );
 
 
@@ -328,17 +330,17 @@ ModelsModule::init( SLIInterpreter* )
      Name: stdp_synapse_hpc - Variant of stdp_synapse with low memory consumption.
      SeeAlso: synapsedict, stdp_synapse, static_synapse_hpc
   */
-  register_connection_model< STDPConnection< TargetIdentifierPtrRport > >( "stdp_synapse" );
-  register_connection_model< STDPConnection< TargetIdentifierIndex > >( "stdp_synapse_hpc" );
+  kernel().model_manager.register_connection_model< STDPConnection< TargetIdentifierPtrRport > >( "stdp_synapse" );
+  kernel().model_manager.register_connection_model< STDPConnection< TargetIdentifierIndex > >( "stdp_synapse_hpc" );
 
 
   /* BeginDocumentation
      Name: stdp_pl_synapse_hom_hpc - Variant of stdp_pl_synapse_hom with low memory consumption.
      SeeAlso: synapsedict, stdp_pl_synapse_hom, static_synapse_hpc
   */
-  register_connection_model< STDPPLConnectionHom< TargetIdentifierPtrRport > >(
+  kernel().model_manager.register_connection_model< STDPPLConnectionHom< TargetIdentifierPtrRport > >(
     "stdp_pl_synapse_hom" );
-  register_connection_model< STDPPLConnectionHom< TargetIdentifierIndex > >(
+  kernel().model_manager.register_connection_model< STDPPLConnectionHom< TargetIdentifierIndex > >(
     "stdp_pl_synapse_hom_hpc" );
 
 
@@ -346,9 +348,9 @@ ModelsModule::init( SLIInterpreter* )
      Name: quantal_stp_synapse_hpc - Variant of quantal_stp_synapse with low memory consumption.
      SeeAlso: synapsedict, quantal_stp_synapse, static_synapse_hpc
   */
-  register_connection_model< Quantal_StpConnection< TargetIdentifierPtrRport > >(
+  kernel().model_manager.register_connection_model< Quantal_StpConnection< TargetIdentifierPtrRport > >(
     "quantal_stp_synapse" );
-  register_connection_model< Quantal_StpConnection< TargetIdentifierIndex > >(
+  kernel().model_manager.register_connection_model< Quantal_StpConnection< TargetIdentifierIndex > >(
     "quantal_stp_synapse_hpc" );
 
 
@@ -356,8 +358,8 @@ ModelsModule::init( SLIInterpreter* )
      Name: stdp_synapse_hom_hpc - Variant of quantal_stp_synapse with low memory consumption.
      SeeAlso: synapsedict, stdp_synapse_hom, static_synapse_hpc
   */
-  register_connection_model< STDPConnectionHom< TargetIdentifierPtrRport > >( "stdp_synapse_hom" );
-  register_connection_model< STDPConnectionHom< TargetIdentifierIndex > >( "stdp_synapse_hom_hpc" );
+  kernel().model_manager.register_connection_model< STDPConnectionHom< TargetIdentifierPtrRport > >( "stdp_synapse_hom" );
+  kernel().model_manager.register_connection_model< STDPConnectionHom< TargetIdentifierIndex > >( "stdp_synapse_hom_hpc" );
 
 
   /* BeginDocumentation
@@ -365,9 +367,9 @@ ModelsModule::init( SLIInterpreter* )
      consumption.
      SeeAlso: synapsedict, stdp_facetshw_synapse_hom, static_synapse_hpc
   */
-  register_connection_model< STDPFACETSHWConnectionHom< TargetIdentifierPtrRport > >(
+  kernel().model_manager.register_connection_model< STDPFACETSHWConnectionHom< TargetIdentifierPtrRport > >(
     "stdp_facetshw_synapse_hom" );
-  register_connection_model< STDPFACETSHWConnectionHom< TargetIdentifierIndex > >(
+  kernel().model_manager.register_connection_model< STDPFACETSHWConnectionHom< TargetIdentifierIndex > >(
     "stdp_facetshw_synapse_hom_hpc" );
 
 
@@ -375,9 +377,9 @@ ModelsModule::init( SLIInterpreter* )
      Name: cont_delay_synapse_hpc - Variant of cont_delay_synapse with low memory consumption.
      SeeAlso: synapsedict, cont_delay_synapse, static_synapse_hpc
   */
-  register_connection_model< ContDelayConnection< TargetIdentifierPtrRport > >(
+  kernel().model_manager.register_connection_model< ContDelayConnection< TargetIdentifierPtrRport > >(
     "cont_delay_synapse" );
-  register_connection_model< ContDelayConnection< TargetIdentifierIndex > >(
+  kernel().model_manager.register_connection_model< ContDelayConnection< TargetIdentifierIndex > >(
     "cont_delay_synapse_hpc" );
 
 
@@ -385,16 +387,16 @@ ModelsModule::init( SLIInterpreter* )
      Name: tsodyks_synapse_hpc - Variant of tsodyks_synapse with low memory consumption.
      SeeAlso: synapsedict, tsodyks_synapse, static_synapse_hpc
   */
-  register_connection_model< TsodyksConnection< TargetIdentifierPtrRport > >( "tsodyks_synapse" );
-  register_connection_model< TsodyksConnection< TargetIdentifierIndex > >( "tsodyks_synapse_hpc" );
+  kernel().model_manager.register_connection_model< TsodyksConnection< TargetIdentifierPtrRport > >( "tsodyks_synapse" );
+  kernel().model_manager.register_connection_model< TsodyksConnection< TargetIdentifierIndex > >( "tsodyks_synapse_hpc" );
 
 
   /* BeginDocumentation
      Name: tsodyks2_synapse_hpc - Variant of tsodyks2_synapse with low memory consumption.
      SeeAlso: synapsedict, tsodyks2_synapse, static_synapse_hpc
   */
-  register_connection_model< Tsodyks2Connection< TargetIdentifierPtrRport > >( "tsodyks2_synapse" );
-  register_connection_model< Tsodyks2Connection< TargetIdentifierIndex > >(
+  kernel().model_manager.register_connection_model< Tsodyks2Connection< TargetIdentifierPtrRport > >( "tsodyks2_synapse" );
+  kernel().model_manager.register_connection_model< Tsodyks2Connection< TargetIdentifierIndex > >(
     "tsodyks2_synapse_hpc" );
 
 
@@ -402,17 +404,17 @@ ModelsModule::init( SLIInterpreter* )
      Name: ht_synapse_hpc - Variant of ht_synapse with low memory consumption.
      SeeAlso: synapsedict, ht_synapse, static_synapse_hpc
   */
-  register_connection_model< HTConnection< TargetIdentifierPtrRport > >( "ht_synapse" );
-  register_connection_model< HTConnection< TargetIdentifierIndex > >( "ht_synapse_hpc" );
+  kernel().model_manager.register_connection_model< HTConnection< TargetIdentifierPtrRport > >( "ht_synapse" );
+  kernel().model_manager.register_connection_model< HTConnection< TargetIdentifierIndex > >( "ht_synapse_hpc" );
 
 
   /* BeginDocumentation
      Name: stdp_dopamine_synapse_hpc - Variant of stdp_dopamine_synapse with low memory consumption.
      SeeAlso: synapsedict, stdp_dopamine_synapse, static_synapse_hpc
   */
-  register_connection_model< STDPDopaConnection< TargetIdentifierPtrRport > >(
+  kernel().model_manager.register_connection_model< STDPDopaConnection< TargetIdentifierPtrRport > >(
     "stdp_dopamine_synapse" );
-  register_connection_model< STDPDopaConnection< TargetIdentifierIndex > >(
+  kernel().model_manager.register_connection_model< STDPDopaConnection< TargetIdentifierIndex > >(
     "stdp_dopamine_synapse_hpc" );
 }
 

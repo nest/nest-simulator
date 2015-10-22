@@ -92,7 +92,6 @@ Network::Network( SLIInterpreter& i )
   : interpreter_( i )
   , connection_manager_()
   , dict_miss_is_error_( true )
-  , model_defaults_modified_( false )
 {
   // the subsequent function-calls need a
   // network instance, hence the instance
@@ -102,26 +101,7 @@ Network::Network( SLIInterpreter& i )
   network_instance_ = this;
   created_network_instance_ = true;
 
-  modeldict_ = new Dictionary();
-  interpreter_.def( "modeldict", new DictionaryDatum( modeldict_ ) );
-
-  Model* model = new GenericModel< Subnet >( "subnet" );
-  register_basis_model( *model );
-  model->set_type_id( 0 );
-
-  model = new GenericModel< SiblingContainer >( "siblingcontainer" );
-  register_basis_model( *model, true );
-  model->set_type_id( 1 );
-
-  model = new GenericModel< proxynode >( "proxynode" );
-  register_basis_model( *model, true );
-  model->set_type_id( 2 );
-
   kernel().initialize();
-
-  synapsedict_ = new Dictionary();
-  interpreter_.def( "synapsedict", new DictionaryDatum( synapsedict_ ) );
-  connection_manager_.init( synapsedict_ );
 
   interpreter_.def(
     "connruledict", new DictionaryDatum( kernel().connection_builder_manager.get_connruledict() ) );
@@ -131,13 +111,6 @@ Network::Network( SLIInterpreter& i )
 
 Network::~Network()
 {
-  clear_models_( true ); // mark call from destructor
-
-  // Now we can delete the clean model prototypes
-  vector< std::pair< Model*, bool > >::iterator i;
-  for ( i = pristine_models_.begin(); i != pristine_models_.end(); ++i )
-    if ( ( *i ).first != 0 )
-      delete ( *i ).first;
 }
 
 void
@@ -148,68 +121,9 @@ Network::init_()
    * Note that we MUST NOT call add_node(), since it expects a properly
    * initialized network.
    */
-
-  /**
-    Build modeldict, list of models and list of proxy nodes from clean prototypes.
-   */
-
-  // Re-create the model list from the clean prototypes
-  for ( index i = 0; i < pristine_models_.size(); ++i )
-    if ( pristine_models_[ i ].first != 0 )
-    {
-      std::string name = pristine_models_[ i ].first->get_name();
-      models_.push_back( pristine_models_[ i ].first->clone( name ) );
-      if ( !pristine_models_[ i ].second )
-        modeldict_->insert( name, i );
-    }
-
-  int proxy_model_id = get_model_id( "proxynode" );
-  assert( proxy_model_id > 0 );
-  Model* proxy_model = models_[ proxy_model_id ];
-  assert( proxy_model != 0 );
-
-  // create proxy nodes, one for each thread and model
-  // create dummy spike sources, one for each thread
-  proxy_nodes_.resize( kernel().vp_manager.get_num_threads() );
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-    for ( index i = 0; i < pristine_models_.size(); ++i )
-    {
-      if ( pristine_models_[ i ].first != 0 )
-      {
-        Node* newnode = proxy_model->allocate( t );
-        newnode->set_model_id( i );
-        proxy_nodes_[ t ].push_back( newnode );
-      }
-    }
-    Node* newnode = proxy_model->allocate( t );
-    newnode->set_model_id( proxy_model_id );
-    dummy_spike_sources_.push_back( newnode );
-  }
-
 #ifdef HAVE_MUSIC
   music_in_portlist_.clear();
 #endif
-}
-
-
-void
-Network::clear_models_( bool called_from_destructor )
-{
-  // no message on destructor call, may come after MPI_Finalize()
-  if ( not called_from_destructor )
-    LOG( M_INFO, "Network::clear_models", "Models will be cleared and parameters reset." );
-
-  // We delete all models, which will also delete all nodes. The
-  // built-in models will be recovered from the pristine_models_ in
-  // init_()
-  for ( vector< Model* >::iterator m = models_.begin(); m != models_.end(); ++m )
-    if ( *m != 0 )
-      delete *m;
-
-  models_.clear();
-  modeldict_->clear();
-  model_defaults_modified_ = false;
 }
 
 void
@@ -217,16 +131,7 @@ Network::reset()
 {
   kernel().finalize();
 
-  clear_models_();
-
-  // We free all Node memory and set the number of threads.
-  vector< std::pair< Model*, bool > >::iterator m;
-  for ( m = pristine_models_.begin(); m != pristine_models_.end(); ++m )
-  {
-    // delete all nodes, because cloning the model may have created instances.
-    ( *m ).first->clear();
-    ( *m ).first->set_threads();
-  }
+  kernel().model_manager.finalize();
 
   kernel().initialize();
 
@@ -253,49 +158,41 @@ Network::reset_kernel()
   reset();
 }
 
-
-int
-Network::get_model_id( const char name[] ) const
-{
-  const std::string model_name( name );
-  for ( int i = 0; i < ( int ) models_.size(); ++i )
-  {
-    assert( models_[ i ] != NULL );
-    if ( model_name == models_[ i ]->get_name() )
-      return i;
-  }
-  return -1;
-}
-
 void
 Network::memory_info()
 {
-  std::cout.setf( std::ios::left );
-  std::vector< index > idx( models_.size() );
+  // TODO We decided to remove the memory_info function, so for now we
+  // just comment it out. If we want to keep it, it has to go to the
+  // ModelManager prints the models unsorted
 
-  for ( index i = 0; i < models_.size(); ++i )
-    idx[ i ] = i;
-
-  std::sort( idx.begin(), idx.end(), ModelComp( models_ ) );
-
-  std::string sep( "--------------------------------------------------" );
-
-  std::cout << sep << std::endl;
-  std::cout << std::setw( 25 ) << "Name" << std::setw( 13 ) << "Capacity" << std::setw( 13 )
-            << "Available" << std::endl;
-  std::cout << sep << std::endl;
-
-  for ( index i = 0; i < models_.size(); ++i )
-  {
-    Model* mod = models_[ idx[ i ] ];
-    if ( mod->mem_capacity() != 0 )
-      std::cout << std::setw( 25 ) << mod->get_name() << std::setw( 13 )
-                << mod->mem_capacity() * mod->get_element_size() << std::setw( 13 )
-                << mod->mem_available() * mod->get_element_size() << std::endl;
-  }
-
-  std::cout << sep << std::endl;
-  std::cout.unsetf( std::ios::left );
+//
+//  std::cout.setf( std::ios::left );
+//  std::vector< index > idx( kernel().model_manager.get_num_node_models() );
+//
+//
+//  for ( index i = 0; i < kernel().model_manager.get_num_node_models(); ++i )
+//    idx[ i ] = i;
+//
+//  std::sort( idx.begin(), idx.end(), ModelComp( models_ ) );
+//
+//  std::string sep( "--------------------------------------------------" );
+//
+//  std::cout << sep << std::endl;
+//  std::cout << std::setw( 25 ) << "Name" << std::setw( 13 ) << "Capacity" << std::setw( 13 )
+//            << "Available" << std::endl;
+//  std::cout << sep << std::endl;
+//
+//  for ( index i = 0; i < kernel().model_manager.get_num_node_models(); ++i )
+//  {
+//    Model* mod = models_[ idx[ i ] ];
+//    if ( mod->mem_capacity() != 0 )
+//      std::cout << std::setw( 25 ) << mod->get_name() << std::setw( 13 )
+//                << mod->mem_capacity() * mod->get_element_size() << std::setw( 13 )
+//                << mod->mem_available() * mod->get_element_size() << std::endl;
+//  }
+//
+//  std::cout << sep << std::endl;
+//  std::cout.unsetf( std::ios::left );
 }
 
 void
@@ -367,81 +264,6 @@ Network::get_status( index idx )
 
   }
   return d;
-}
-
-
-index
-Network::copy_model( index old_id, std::string new_name )
-{
-  // we can assert here, as nestmodule checks this for us
-  assert( !modeldict_->known( new_name ) );
-
-  Model* new_model = get_model( old_id )->clone( new_name );
-  models_.push_back( new_model );
-  int new_id = models_.size() - 1;
-  modeldict_->insert( new_name, new_id );
-  int proxy_model_id = get_model_id( "proxynode" );
-  assert( proxy_model_id > 0 );
-  Model* proxy_model = models_[ proxy_model_id ];
-  assert( proxy_model != 0 );
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-    Node* newnode = proxy_model->allocate( t );
-    newnode->set_model_id( new_id );
-    proxy_nodes_[ t ].push_back( newnode );
-  }
-  return new_id;
-}
-
-void
-Network::register_basis_model( Model& m, bool private_model )
-{
-  std::string name = m.get_name();
-
-  if ( !private_model && modeldict_->known( name ) )
-  {
-    delete &m;
-    throw NamingConflict("A model called '" + name + "' already exists. "
-        "Please choose a different name!");
-  }
-  pristine_models_.push_back( std::pair< Model*, bool >( &m, private_model ) );
-}
-
-
-index
-Network::register_model( Model& m, bool private_model )
-{
-  std::string name = m.get_name();
-
-  if ( !private_model && modeldict_->known( name ) )
-  {
-    delete &m;
-    throw NamingConflict("A model called '" + name + "' already exists.\n"
-        "Please choose a different name!");
-  }
-
-  const index id = models_.size();
-  m.set_model_id( id );
-  m.set_type_id( id );
-
-  pristine_models_.push_back( std::pair< Model*, bool >( &m, private_model ) );
-  models_.push_back( m.clone( name ) );
-  int proxy_model_id = get_model_id( "proxynode" );
-  assert( proxy_model_id > 0 );
-  Model* proxy_model = models_[ proxy_model_id ];
-  assert( proxy_model != 0 );
-
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-    Node* newnode = proxy_model->allocate( t );
-    newnode->set_model_id( id );
-    proxy_nodes_[ t ].push_back( newnode );
-  }
-
-  if ( !private_model )
-    modeldict_->insert( name, id );
-
-  return id;
 }
 
 
@@ -557,5 +379,13 @@ Network::update_music_event_handlers_( Time const& origin, const long_t from, co
     it->second.update( origin, from, to );
 }
 #endif
+
+
+
+bool
+ModelComp::operator()( int a, int b )
+{
+  return kernel().model_manager.get_model( a )->get_name() < kernel().model_manager.get_model( b )->get_name();
+}
 
 } // end of namespace

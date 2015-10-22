@@ -30,6 +30,7 @@
 #include "node_manager.h"
 #include "simulation_manager.h"
 #include "modelrange_manager.h"
+#include "model_manager.h"
 #include "event_delivery_manager.h"
 #include "mpi_manager.h"
 #include "rng_manager.h"
@@ -132,6 +133,7 @@ public:
   IOManager io_manager;
   ConnectionBuilderManager connection_builder_manager;
   SimulationManager simulation_manager;
+  ModelManager model_manager;
   EventDeliveryManager event_delivery_manager;
   ModelRangeManager modelrange_manager;
   NodeManager node_manager;

@@ -408,10 +408,10 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const Name modelname = getValue< Name >( i->OStack.pick( 1 ) );
-  DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  const Name name = getValue< Name >( i->OStack.pick( 1 ) );
+  DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  set_model_defaults( modelname, dict );
+  kernel().model_manager.set_model_defaults(name, params);
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -499,11 +499,11 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 3 );
 
   // fetch existing model name from stack
-  const Name oldmodname = getValue< Name >( i->OStack.pick( 2 ) );
-  const std::string newmodname = getValue< std::string >( i->OStack.pick( 1 ) );
-  DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  const Name old_name = getValue< Name >( i->OStack.pick( 2 ) );
+  const Name new_name = getValue< Name >( i->OStack.pick( 1 ) );
+  DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  copy_model( oldmodname, newmodname, dict );
+  kernel().model_manager.copy_model(old_name, new_name, params);
 
   i->OStack.pop( 3 );
   i->EStack.pop();
@@ -685,7 +685,7 @@ NestModule::Connect_i_i_lFunction::execute( SLIInterpreter* i ) const
   index target = getValue< long >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
@@ -715,7 +715,7 @@ NestModule::Connect_i_i_d_d_lFunction::execute( SLIInterpreter* i ) const
   double_t delay = getValue< double_t >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
@@ -745,7 +745,7 @@ NestModule::Connect_i_i_D_lFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
@@ -821,7 +821,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
@@ -926,7 +926,7 @@ NestModule::DivergentConnect_i_ia_a_a_lFunction::execute( SLIInterpreter* i ) co
   TokenArray delays = getValue< TokenArray >( i->OStack.pick( 1 ) );
 
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
@@ -954,7 +954,7 @@ NestModule::RDivergentConnect_i_i_ia_da_da_b_b_lFunction::execute( SLIInterprete
   bool allow_autapses = getValue< bool >( i->OStack.pick( 1 ) );
 
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
@@ -1008,7 +1008,7 @@ NestModule::ConvergentConnect_ia_i_a_a_lFunction::execute( SLIInterpreter* i ) c
   TokenArray delays = getValue< TokenArray >( i->OStack.pick( 1 ) );
 
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
@@ -1037,7 +1037,7 @@ NestModule::RConvergentConnect_ia_i_i_da_da_b_b_lFunction::execute( SLIInterpret
   bool allow_autapses = getValue< bool >( i->OStack.pick( 1 ) );
 
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
@@ -1065,7 +1065,7 @@ NestModule::RConvergentConnect_ia_ia_ia_daa_daa_b_b_lFunction::execute( SLIInter
   bool allow_autapses = getValue< bool >( i->OStack.pick( 1 ) );
 
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );

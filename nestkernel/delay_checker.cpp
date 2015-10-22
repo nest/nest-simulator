@@ -40,6 +40,7 @@ nest::DelayChecker::DelayChecker( const DelayChecker& cr )
   : min_delay_( cr.min_delay_ )
   , max_delay_( cr.max_delay_ )
   , user_set_delay_extrema_( cr.user_set_delay_extrema_ )
+  , freeze_delay_update_( cr.freeze_delay_update_ )
 {
   min_delay_.calibrate(); // in case of change in resolution
   max_delay_.calibrate();

@@ -71,7 +71,7 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 void
 nest::MPIManager::initialize()
 {
-  n_sim_procs_ = num_processes_ - n_rec_procs_;
+  set_num_rec_processes( 0, true );
 }
 
 void

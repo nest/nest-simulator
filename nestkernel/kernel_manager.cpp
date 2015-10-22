@@ -81,14 +81,14 @@ nest::KernelManager::initialize()
   // "Core kernel managers" follow
   simulation_manager.initialize();          // independent of others
   modelrange_manager.initialize();          // independent of others
-  connection_builder_manager.initialize();  // depends only on num of VPs
+  connection_builder_manager.initialize();  // depends only on num of threads
 
   // prerequisites:
   //   - min_delay/max_delay available (connection_builder_manager)
   //   - clock initialized (simulation_manager)
   event_delivery_manager.initialize();
 
-  model_manager.initialize();
+  model_manager.initialize();   // depends on number of threads
 
   // prerequisites:
   //   - modelrange_manager initialized
@@ -126,6 +126,22 @@ nest::KernelManager::reset()
 {
   finalize();
   initialize();
+}
+
+void
+nest::KernelManager::num_threads_changed_reset()
+{
+  node_manager.finalize();
+  model_manager.finalize();
+  connection_builder_manager.finalize();
+  modelrange_manager.finalize(); 
+  rng_manager.finalize();
+
+  rng_manager.initialize();
+  modelrange_manager.initialize(); // independant of threads, but node_manager needs it reset
+  connection_builder_manager.initialize();
+  model_manager.initialize();
+  node_manager.initialize();
 }
 
 void

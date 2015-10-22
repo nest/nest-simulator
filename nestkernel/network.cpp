@@ -129,14 +129,6 @@ Network::init_()
 }
 
 void
-Network::reset()
-{
-  kernel().reset();
-
-  init_();
-}
-
-void
 Network::reset_kernel()
 {
   /*
@@ -147,11 +139,10 @@ Network::reset_kernel()
    * part deleting all the old stuff, then perform settings for the
    * fresh kernel, then do remaining initialization.
    */
-  kernel().vp_manager.set_num_threads( 1 );
-  kernel().mpi_manager.set_num_rec_processes( 0, true );
-  dict_miss_is_error_ = true;
 
-  reset();
+  kernel().reset();
+  
+  init_();
 }
 
 void

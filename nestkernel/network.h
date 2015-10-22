@@ -126,14 +126,6 @@ public:
   ~Network();
 
   /**
-   * Reset deletes all nodes and reallocates all memory pools for
-   * nodes.
-   * @note Threading parameters as well as random number state
-   * are not reset. This has to be done manually.
-   */
-  void reset();
-
-  /**
    * Reset number of threads to one, reset device prefix to the
    * empty string and call reset().
    */

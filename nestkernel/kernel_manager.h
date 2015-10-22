@@ -119,6 +119,15 @@ public:
    * @see initialize(), finalize()
    */
   void reset();
+  
+  /**
+   * Reset kernel after num threads have changed.
+   *
+   * No need to reset all managers, only those affected by num thread changes.
+   *
+   * @see initialize(), finalize()
+   */
+  void num_threads_changed_reset();
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& );

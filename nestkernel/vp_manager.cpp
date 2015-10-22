@@ -43,15 +43,9 @@ nest::VPManager::VPManager()
 void
 nest::VPManager::initialize()
 {
-#ifndef _OPENMP
-  if ( n_threads_ > 1 )
-  {
-    LOG( M_ERROR, "Network::reset", "No multithreading available, using single threading" );
-    n_threads_ = 1;
-  }
-#endif
-  
-  set_num_threads( get_num_threads() );
+  // When the VPManager is initialized, you will have 1 thread again.
+  // Setting more threads will be done via nest::set_kernel_status
+  set_num_threads( 1 );
 }
 
 void
@@ -97,7 +91,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     // it is essential to call reset() here to adapt memory pools and more
     // to the new number of threads and VPs.
     set_num_threads(n_threads);
-    Network::get_network().reset();
+    kernel().num_threads_changed_reset();
   }
 
   long n_vps = get_num_virtual_processes();
@@ -141,7 +135,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     // it is essential to call reset() here to adapt memory pools and more
     // to the new number of threads and VPs
     set_num_threads( n_threads );
-    Network::get_network().reset();
+    kernel().num_threads_changed_reset();
   }
 }
 

@@ -21,11 +21,13 @@
  */
 
 #include "vp_manager.h"
+#include "vp_manager_impl.h"
+
 #include "kernel_manager.h"
 #include "dictutils.h"
 #include "network.h"
 #include "logging.h"
-#include "vp_manager_impl.h"
+#include "mpi_manager.h"
 #include "mpi_manager_impl.h"
 
 nest::VPManager::VPManager()

@@ -35,6 +35,7 @@
 #include "kernel_manager.h"
 
 #include "communicator.h"
+#include "communicator_impl.h"
 
 #include "node.h"
 #include "subnet.h"

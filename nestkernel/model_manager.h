@@ -220,12 +220,12 @@ public:
   /**
    * @return Reference to the model dictionary
    */
-  const DictionaryDatum& get_modeldict();
+  Dictionary& get_modeldict();
 
   /**
    * @return Reference to the synapse dictionary
    */
-  const DictionaryDatum& get_synapsedict() const;
+  Dictionary& get_synapsedict();
 
   /**
    * Does the network contain copies of models created using CopyModel?
@@ -385,15 +385,15 @@ private:
   }
   
   inline
-  const DictionaryDatum&
+  Dictionary&
   ModelManager::get_modeldict()
   {
     return modeldict_;
   }
   
   inline
-  const DictionaryDatum&
-  ModelManager::get_synapsedict() const
+  Dictionary&
+  ModelManager::get_synapsedict()
   {
     return synapsedict_;
   }

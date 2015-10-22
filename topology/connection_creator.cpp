@@ -33,7 +33,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   , number_of_connections_( 0 )
   , mask_()
   , kernel_()
-  , synapse_model_( (*kernel().model_manager.get_synapsedict())[ "static_synapse" ] )
+  , synapse_model_( kernel().model_manager.get_synapsedict()[ "static_synapse" ] )
   , weight_()
   , delay_()
 {
@@ -82,7 +82,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
 
       const std::string syn_name = getValue< std::string >( dit->second );
 
-      const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( syn_name );
+      const Token synmodel = kernel().model_manager.get_synapsedict().lookup( syn_name );
 
       if ( synmodel.empty() )
         throw UnknownSynapseType( syn_name );

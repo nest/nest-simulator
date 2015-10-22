@@ -933,7 +933,7 @@ nest::ConnectionBuilderManager::connect( ArrayDatum& conns )
         {
           std::string synmodel_name = getValue< std::string >( synmodel );
           synmodel =
-            kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
+            kernel().model_manager.get_synapsedict().lookup( synmodel_name );
           if ( !synmodel.empty() )
             syn_id = static_cast< size_t >( synmodel );
           else
@@ -1470,7 +1470,7 @@ nest::ConnectionBuilderManager::get_connections( DictionaryDatum params ) const
   {
     Name synmodel_name = getValue< Name >( syn_model_t );
     const Token synmodel =
-      kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
+      kernel().model_manager.get_synapsedict().lookup( synmodel_name );
     if ( !synmodel.empty() )
       syn_id = static_cast< size_t >( synmodel );
     else

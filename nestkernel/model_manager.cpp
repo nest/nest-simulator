@@ -114,7 +114,7 @@ void ModelManager::initialize()
     dummy_spike_sources_.push_back( newnode );
   }
 
-  synapsedict_->clear();
+  synapsedict_.clear();
 
   // one list of prototypes per thread
   std::vector< std::vector< ConnectorModel* > > tmp_proto( kernel().vp_manager.get_num_threads() );
@@ -124,13 +124,15 @@ void ModelManager::initialize()
   for ( std::vector< ConnectorModel* >::iterator i = pristine_prototypes_.begin();
         i != pristine_prototypes_.end();
         ++i )
+  {
     if ( *i != 0 )
     {
       std::string name = ( *i )->get_name();
       for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
         prototypes_[ t ].push_back( ( *i )->clone( name ) );
-      synapsedict_->insert( name, prototypes_[ 0 ].size() - 1 );
+      synapsedict_.insert( name, prototypes_[ 0 ].size() - 1 );
     }
+  }
 }
 
 void ModelManager::finalize()
@@ -160,11 +162,11 @@ void ModelManager::get_status( DictionaryDatum& )
 index
 ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
 {
-  if ( modeldict_->known( new_name ) || synapsedict_->known( new_name ) )
+  if ( modeldict_.known( new_name ) || synapsedict_.known( new_name ) )
     throw NewModelNameExists( new_name );
 
-  const Token oldnodemodel = modeldict_->lookup( old_name );
-  const Token oldsynmodel = synapsedict_->lookup( old_name );
+  const Token oldnodemodel = modeldict_.lookup( old_name );
+  const Token oldsynmodel = synapsedict_.lookup( old_name );
 
   index new_id;
   if ( !oldnodemodel.empty() )
@@ -209,7 +211,7 @@ ModelManager::register_node_model_( Model* model, bool private_model)
   }
   
   if ( !private_model )
-  modeldict_->insert( name, id );
+  modeldict_.insert( name, id );
   
   return id;
 }
@@ -221,7 +223,7 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
   models_.push_back( new_model );
 
   index new_id = models_.size() - 1;
-  modeldict_->insert( new_name, new_id );
+  modeldict_.insert( new_name, new_id );
 
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
@@ -252,7 +254,7 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
     prototypes_[ t ][ new_id ]->set_syn_id( new_id );
   }
 
-  synapsedict_->insert( new_name, new_id );
+  synapsedict_.insert( new_name, new_id );
   return new_id;
 }
 
@@ -260,8 +262,8 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
 void
 ModelManager::set_model_defaults( Name name, DictionaryDatum params )
 {
-  const Token nodemodel = modeldict_->lookup( name );
-  const Token synmodel = synapsedict_->lookup( name );
+  const Token nodemodel = modeldict_.lookup( name );
+  const Token synmodel = synapsedict_.lookup( name );
 
   index id;
   if ( !nodemodel.empty() )
@@ -385,7 +387,7 @@ ModelManager::clear_models_( bool called_from_destructor )
   proxy_nodes_.clear();
   dummy_spike_sources_.clear();
 
-  modeldict_->clear();
+  modeldict_.clear();
 
   model_defaults_modified_ = false;
 }

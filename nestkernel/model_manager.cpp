@@ -360,7 +360,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
 {
   assert_valid_syn_id( syn_id );
 
-  DictionaryDatum dict;
+  DictionaryDatum dict( new Dictionary() );
 
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
     prototypes_[ t ][ syn_id ]->get_status( dict ); // each call adds to num_connections

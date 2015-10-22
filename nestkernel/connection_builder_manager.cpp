@@ -98,10 +98,10 @@ nest::ConnectionBuilderManager::initialize()
   assert( n_threads <= MAX_THREAD && "MAX_THREAD is a constant defined in allocator.h" );
   
 #pragma omp parallel
-  poormansallocpool[ kernel().vp_manager.get_thread_id() ].initialize();
+  poormansallocpool[ kernel().vp_manager.get_thread_id() ].init();
 #else
 #pragma omp parallel
-  poormansallocpool.initialize();
+  poormansallocpool.init();
 #endif
 #endif
 #endif
@@ -196,13 +196,13 @@ nest::ConnectionBuilderManager::delete_connections_()
 #pragma omp parallel
   {
     poormansallocpool[ omp_get_thread_num() ].destruct();
-    poormansallocpool[ omp_get_thread_num() ].initialize();
+    poormansallocpool[ omp_get_thread_num() ].init();
   }
 #else
 #pragma omp parallel
   {
     poormansallocpool.destruct();
-    poormansallocpool.initialize();
+    poormansallocpool.init();
   }
 #endif
 #endif

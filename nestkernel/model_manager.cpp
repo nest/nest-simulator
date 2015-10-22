@@ -31,19 +31,19 @@ namespace nest
 {
 
 ModelManager::ModelManager()
-  : model_defaults_modified_( false )
+  : pristine_models_()
+  , models_()
+  , pristine_prototypes_()
+  , prototypes_()
+  , modeldict_()
+  , synapsedict_()
+  , subnet_model_(0)
+  , siblingcontainer_model_(0)
+  , proxynode_model_(0)
+  , proxy_nodes_()
+  , dummy_spike_sources_()
+  , model_defaults_modified_( false )
 {
-  subnet_model_ = new GenericModel< Subnet >( "subnet" );
-  subnet_model_->set_type_id( 0 );
-  pristine_models_.push_back( std::pair< Model*, bool >( subnet_model_, false ) );
-
-  siblingcontainer_model_ = new GenericModel< SiblingContainer >( "siblingcontainer" );
-  siblingcontainer_model_->set_type_id( 1 );
-  pristine_models_.push_back( std::pair< Model*, bool >( siblingcontainer_model_, true ) );
-
-  proxynode_model_ = new GenericModel< proxynode >( "proxynode" );
-  proxynode_model_->set_type_id( 2 );
-  pristine_models_.push_back( std::pair< Model*, bool >( proxynode_model_, true ) );
 }
 
 ModelManager::~ModelManager()
@@ -66,15 +66,34 @@ ModelManager::~ModelManager()
 
 void ModelManager::initialize()
 {
+  if (subnet_model_ == 0 && siblingcontainer_model_ == 0 && proxynode_model_ == 0) {
+    // initialize these models only once outside of the constructor
+    // as the node model asks for the # of threads to setup slipools
+    // but during construction of ModelManager, the KernelManager is not created
+    subnet_model_ = new GenericModel< Subnet >( "subnet" );
+    subnet_model_->set_type_id( 0 );
+    pristine_models_.push_back( std::pair< Model*, bool >( subnet_model_, false ) );
+    
+    siblingcontainer_model_ = new GenericModel< SiblingContainer >( "siblingcontainer" );
+    siblingcontainer_model_->set_type_id( 1 );
+    pristine_models_.push_back( std::pair< Model*, bool >( siblingcontainer_model_, true ) );
+    
+    proxynode_model_ = new GenericModel< proxynode >( "proxynode" );
+    proxynode_model_->set_type_id( 2 );
+    pristine_models_.push_back( std::pair< Model*, bool >( proxynode_model_, true ) );
+  }
+
   // Re-create the model list from the clean prototypes
   for ( index i = 0; i < pristine_models_.size(); ++i )
+  {
     if ( pristine_models_[ i ].first != 0 )
     {
       std::string name = pristine_models_[ i ].first->get_name();
       models_.push_back( pristine_models_[ i ].first->clone( name ) );
       if ( !pristine_models_[ i ].second )
-        modeldict_->insert( name, i );
+        modeldict_.insert( name, i );
     }
+  }
 
   // create proxy nodes, one for each thread and model
   proxy_nodes_.resize( kernel().vp_manager.get_num_threads() );

@@ -243,59 +243,6 @@ public:
   size_t get_num_synapse_prototypes() const;
 
 private:
-  /**
-   * The list of clean node models. The first component of the pair is a
-   * pointer to the actual Model, the second is a flag indicating if
-   * the model is private. Private models are not entered into the
-   * modeldict.
-   */
-  std::vector< std::pair< Model*, bool > > pristine_models_;
-
-  std::vector< Model* > models_;  //!< List of available models
-
-
-  /**
-   * The list of clean synapse models. The first component of the pair is a
-   * pointer to the actual Model, the second is a flag indicating if
-   * the model is private. Private models are not entered into the
-   * modeldict.
-   */
-  std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
-  std::vector< std::vector< ConnectorModel* > > prototypes_; //!< The list of available synapse
-                                                             //!< prototypes: first dimension one
-                                                             //!< entry per thread, second dimension
-                                                             //!< for each synapse type
-
-
-  /* BeginDocumentation
-     Name: modeldict - dictionary containing all devices and models of NEST
-     Description:
-     'modeldict info' shows the contents of the dictionary
-     SeeAlso: info, Device, RecordingDevice, iaf_neuron, subnet
-  */
-  DictionaryDatum modeldict_;    //!< DictionaryDatum of all models
-
-  /* BeginDocumentation
-     Name: synapsedict - DictionaryDatum containing all synapse models.
-     Description:
-     'synapsedict info' shows the contents of the dictionary
-     FirstVersion: October 2005
-     Author: Jochen Martin Eppler
-     SeeAlso: info
-  */
-  DictionaryDatum synapsedict_;  //!< DictionaryDatum of all synapse models
-
-  Model* subnet_model_;
-  Model* siblingcontainer_model_;
-  Model* proxynode_model_;
-
-  std::vector< std::vector< Node* > >
-    proxy_nodes_; //!< Placeholders for remote nodes, one per thread
-  std::vector< Node* >
-    dummy_spike_sources_; //!< Placeholders for spiking remote nodes, one per thread
-
-  bool model_defaults_modified_;  //!< True if any model defaults have been modified
-
   /**  */
   void clear_models_( bool called_from_destructor = false );
 
@@ -343,6 +290,59 @@ private:
    */
   void
   set_synapse_defaults_( index model_id, const DictionaryDatum& params );
+  
+  /**
+   * The list of clean node models. The first component of the pair is a
+   * pointer to the actual Model, the second is a flag indicating if
+   * the model is private. Private models are not entered into the
+   * modeldict.
+   */
+  std::vector< std::pair< Model*, bool > > pristine_models_;
+  
+  std::vector< Model* > models_;  //!< List of available models
+  
+  
+  /**
+   * The list of clean synapse models. The first component of the pair is a
+   * pointer to the actual Model, the second is a flag indicating if
+   * the model is private. Private models are not entered into the
+   * modeldict.
+   */
+  std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
+  std::vector< std::vector< ConnectorModel* > > prototypes_; //!< The list of available synapse
+  //!< prototypes: first dimension one
+  //!< entry per thread, second dimension
+  //!< for each synapse type
+  
+  
+  /* BeginDocumentation
+   Name: modeldict - dictionary containing all devices and models of NEST
+   Description:
+   'modeldict info' shows the contents of the dictionary
+   SeeAlso: info, Device, RecordingDevice, iaf_neuron, subnet
+   */
+  Dictionary modeldict_;    //!< Dictionary of all models
+  
+  /* BeginDocumentation
+   Name: synapsedict - Dictionary containing all synapse models.
+   Description:
+   'synapsedict info' shows the contents of the dictionary
+   FirstVersion: October 2005
+   Author: Jochen Martin Eppler
+   SeeAlso: info
+   */
+  Dictionary synapsedict_;  //!< Dictionary of all synapse models
+  
+  Model* subnet_model_;
+  Model* siblingcontainer_model_;
+  Model* proxynode_model_;
+  
+  std::vector< std::vector< Node* > >
+    proxy_nodes_; //!< Placeholders for remote nodes, one per thread
+  std::vector< Node* >
+    dummy_spike_sources_; //!< Placeholders for spiking remote nodes, one per thread
+  
+  bool model_defaults_modified_;  //!< True if any model defaults have been modified
 };
   
   

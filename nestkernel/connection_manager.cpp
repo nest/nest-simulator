@@ -164,7 +164,7 @@ ConnectionManager::copy_synapse_prototype( synindex old_id, std::string new_name
 
 
 void
-ConnectionManager::get_status( DictionaryDatum& d ) const
+ConnectionManager::get_status( DictionaryDatum& ) const
 {
 }
 

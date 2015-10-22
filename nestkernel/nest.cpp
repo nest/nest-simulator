@@ -108,7 +108,7 @@ librandom::RngPtr
 get_vp_rng( thread tid )
 {
   assert(tid >=0);
-  assert(tid < kernel().vp_manager.get_num_threads());
+  assert(tid < static_cast< thread >( kernel().vp_manager.get_num_threads()) );
   return kernel().rng_manager.get_rng( tid );
 }
 

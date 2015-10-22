@@ -51,10 +51,10 @@ class DelayChecker;
 typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons having targets
 typedef std::vector< tSConnector > tVSConnector;           // for all threads
 
-typedef std::vector< DelayChecker > tVDelayChecker;
+typedef std::vector< DelayChecker > tVDelayChecker; // each thread checks delays themselve
 
-typedef std::vector< size_t > tVCounter;
-typedef std::vector< tVCounter > tVVCounter;
+typedef std::vector< size_t > tVCounter;     // each synapse type has a counter
+typedef std::vector< tVCounter > tVVCounter; // and each threads counts for all its synapses
 
 class ConnectionBuilderManager : public ManagerInterface
 {

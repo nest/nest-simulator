@@ -364,6 +364,8 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
 
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
     prototypes_[ t ][ syn_id ]->get_status( dict ); // each call adds to num_connections
+  
+  ( *dict )[ "num_connections" ] = kernel().connection_builder_manager.get_num_connections(syn_id);
 
   return dict;
 }

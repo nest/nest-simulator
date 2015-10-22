@@ -1493,7 +1493,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
     {
       thread t = kernel().vp_manager.get_thread_id();
 #else
-    for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     {
 #endif
       ArrayDatum conns_in_thread;
@@ -1535,7 +1535,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
     {
       thread t = kernel().vp_manager.get_thread_id();
 #else
-    for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     {
 #endif
       ArrayDatum conns_in_thread;
@@ -1582,7 +1582,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
     {
       size_t t = kernel().vp_manager.get_thread_id();
 #else
-    for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     {
 #endif
       ArrayDatum conns_in_thread;

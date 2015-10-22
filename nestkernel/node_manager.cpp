@@ -652,7 +652,7 @@ NodeManager::prepare_nodes()
   {
     size_t t = kernel().vp_manager.get_thread_id();
 #else
-  for ( index t = 0; t < n_threads_; ++t )
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
 #endif
 
@@ -700,7 +700,7 @@ NodeManager::finalize_nodes()
   {
     index t = kernel().vp_manager.get_thread_id();
 #else
-  for ( index t = 0; t < n_threads_; ++t )
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
 #endif
     for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )

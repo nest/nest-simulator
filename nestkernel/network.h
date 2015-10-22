@@ -169,16 +169,6 @@ public:
    */
   int execute_sli_protected( DictionaryDatum, Name );
 
-  /**
-   * Calibrate clock after resolution change.
-   */
-  void calibrate_clock();
-
-  /**
-   * Returns true if unread dictionary items should be treated as error.
-   */
-  bool dict_miss_is_error() const;
-
 #ifdef HAVE_MUSIC
 public:
   /**
@@ -263,8 +253,6 @@ private:
   void clear_models_( bool called_from_destructor = false );
 
   SLIInterpreter& interpreter_;
-  
-  bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 };
 
 inline Network&
@@ -293,11 +281,7 @@ Network::get_exitcode() const
   return getValue< long >( statusdict, "exitcode" );
 }
 
-inline bool
-Network::dict_miss_is_error() const
-{
-  return dict_miss_is_error_;
-}
+
 
 typedef lockPTR< Network > NetPtr;
 

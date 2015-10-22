@@ -90,7 +90,6 @@ Network::destroy_network()
 
 Network::Network( SLIInterpreter& i )
   : interpreter_( i )
-  , dict_miss_is_error_( true )
 {
   // the subsequent function-calls need a
   // network instance, hence the instance
@@ -217,7 +216,6 @@ Network::set_status( index gid, const DictionaryDatum& d )
 
   // former scheduler_.set_status( d ); start
   // careful, this may invalidate all node pointers!
-  updateValue< bool >( d, "dict_miss_is_error", dict_miss_is_error_ );
   kernel().set_status( d );
 
 
@@ -243,9 +241,6 @@ Network::get_status( index idx )
 
     def< long >( d, "send_buffer_size", Communicator::get_send_buffer_size() );
     def< long >( d, "receive_buffer_size", Communicator::get_recv_buffer_size() );
-    // former scheduler_.get_status( d ) end
-
-    ( *d )[ "dict_miss_is_error" ] = dict_miss_is_error_;
 
   }
   return d;

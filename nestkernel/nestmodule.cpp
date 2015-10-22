@@ -252,7 +252,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       std::string missed;
       if ( !dict->all_accessed( missed ) )
       {
-        if ( Network::get_network().dict_miss_is_error() )
+        if ( kernel().dict_miss_is_error() )
           throw UnaccessedDictionaryEntry( missed );
         else
           LOG( M_WARNING, "SetStatus", ( "Unread dictionary entries: " + missed ).c_str() );
@@ -275,7 +275,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       std::string missed;
       if ( !dict->all_accessed( missed ) )
       {
-        if ( Network::get_network().dict_miss_is_error() )
+        if ( kernel().dict_miss_is_error() )
           throw UnaccessedDictionaryEntry( missed );
         else
           LOG( M_WARNING, "SetStatus", ( "Unread dictionary entries: " + missed ).c_str() );
@@ -832,7 +832,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
   std::string missed;
   if ( !params->all_accessed( missed ) )
   {
-    if ( Network::get_network().dict_miss_is_error() )
+    if ( kernel().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
       LOG( M_WARNING,

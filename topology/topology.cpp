@@ -51,7 +51,7 @@ create_layer( const DictionaryDatum& layer_dict )
   std::string missed;
   if ( !layer_dict->all_accessed( missed ) )
   {
-    if ( Network::get_network().dict_miss_is_error() )
+    if ( kernel().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
       LOG( M_WARNING, "topology::CreateLayer", ( "Unread dictionary entries: " + missed ).c_str() );
@@ -115,7 +115,7 @@ create_mask( const DictionaryDatum& mask_dict )
   std::string missed;
   if ( !mask_dict->all_accessed( missed ) )
   {
-    if ( Network::get_network().dict_miss_is_error() )
+    if ( kernel().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
       LOG( M_WARNING, "topology::CreateMask", ( "Unread dictionary entries: " + missed ).c_str() );
@@ -211,7 +211,7 @@ connect_layers( const index source_gid,
   std::string missed;
   if ( !connection_dict->all_accessed( missed ) )
   {
-    if ( Network::get_network().dict_miss_is_error() )
+    if ( kernel().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
       LOG(
@@ -231,7 +231,7 @@ create_parameter( const DictionaryDatum& param_dict )
   std::string missed;
   if ( !param_dict->all_accessed( missed ) )
   {
-    if ( Network::get_network().dict_miss_is_error() )
+    if ( kernel().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
       LOG( M_WARNING,

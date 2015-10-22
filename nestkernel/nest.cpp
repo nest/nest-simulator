@@ -159,7 +159,7 @@ set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict 
   std::string missed;
   if ( !dict->all_accessed( missed ) )
   {
-    if ( Network::get_network().dict_miss_is_error() )
+    if ( kernel().dict_miss_is_error() )
     {
       throw UnaccessedDictionaryEntry(missed +
                                       "\nMaybe you tried to set common synapse properties through"
@@ -219,7 +219,7 @@ get_connections( const DictionaryDatum& dict )
   std::string missed;
   if ( !dict->all_accessed( missed ) )
   {
-    if ( Network::get_network().dict_miss_is_error() )
+    if ( kernel().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
       LOG( M_WARNING, "GetConnections", ( "Unread dictionary entries: " + missed ).c_str() );

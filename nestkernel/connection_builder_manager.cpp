@@ -278,7 +278,7 @@ nest::ConnectionBuilderManager::connect( const GIDCollection& sources,
   std::string missed;
   if ( !( conn_spec->all_accessed( missed ) && syn_spec->all_accessed( missed ) ) )
   {
-    if ( Network::get_network().dict_miss_is_error() )
+    if ( kernel().dict_miss_is_error() )
       throw UnaccessedDictionaryEntry( missed );
     else
       LOG( M_WARNING, "Connect", String::compose( "Unread dictionary entries: %s", missed ) );

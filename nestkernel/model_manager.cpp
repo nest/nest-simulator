@@ -294,7 +294,7 @@ ModelManager::set_node_defaults_(index model_id, const DictionaryDatum& params )
   std::string missed;
   if ( !params->all_accessed( missed ) )
   {
-    if ( Network::get_network().dict_miss_is_error() )
+    if ( kernel().dict_miss_is_error() )
     {
       throw UnaccessedDictionaryEntry( missed );
     }
@@ -329,7 +329,7 @@ ModelManager::set_synapse_defaults_( index model_id, const DictionaryDatum& para
   std::string missed;
   if ( !params->all_accessed( missed ) )
   {
-    if ( Network::get_network().dict_miss_is_error() )
+    if ( kernel().dict_miss_is_error() )
     {
       throw UnaccessedDictionaryEntry( missed );
     }

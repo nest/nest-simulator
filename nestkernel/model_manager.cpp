@@ -78,6 +78,7 @@ void ModelManager::initialize()
 
   // create proxy nodes, one for each thread and model
   proxy_nodes_.resize( kernel().vp_manager.get_num_threads() );
+  int proxy_model_id = get_model_id( "proxynode" );
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
     for ( index i = 0; i < pristine_models_.size(); ++i )
@@ -89,6 +90,9 @@ void ModelManager::initialize()
         proxy_nodes_[ t ].push_back( newnode );
       }
     }
+    Node* newnode = proxynode_model_->allocate( t );
+    newnode->set_model_id( proxy_model_id );
+    dummy_spike_sources_.push_back( newnode );
   }
 
   synapsedict_->clear();
@@ -286,37 +290,6 @@ ModelManager::set_synapse_defaults_( index model_id, const DictionaryDatum& para
   }
 }
 
-synindex
-ModelManager::register_synapse_prototype( ConnectorModel* cf )
-{
-  Name name = cf->get_name();
-
-  if ( synapsedict_->known( name ) )
-  {
-    delete cf;
-    std::string msg = String::compose("A synapse type called '%1' already exists.\n"
-				      "Please choose a different name!", name);
-    throw NamingConflict(msg);
-  }
-
-  pristine_prototypes_.push_back( cf );
-
-  const synindex id = prototypes_[ 0 ].size();
-  pristine_prototypes_[ id ]->set_syn_id( id );
-
-  for ( thread t = 0; t < static_cast < thread >( kernel().vp_manager.get_num_threads() ); ++t )
-  {
-    prototypes_[ t ].push_back( cf->clone( name.toString() ) );
-    prototypes_[ t ][ id ]->set_syn_id( id );
-  }
-
-  synapsedict_->insert( name, id );
-
-  return id;
-}
-
-
-
 // TODO: replace int with index and return value -1 with invalid_index, also change all pertaining code
 int
 ModelManager::get_model_id( const Name name ) const
@@ -362,6 +335,7 @@ ModelManager::clear_models_( bool called_from_destructor )
 
   models_.clear();
   proxy_nodes_.clear();
+  dummy_spike_sources_.clear();
 
   modeldict_->clear();
 

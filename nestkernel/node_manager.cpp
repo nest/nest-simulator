@@ -80,13 +80,14 @@ NodeManager::initialize()
 
   // TODO The access to the base models below is maximally bad,
   //      and should be done in some elegant way vs ModelManager.
-  assert( Network::get_network().pristine_models_.size() > 1 );
+  // TODO formerly used pristine_models_ here - hope the models_ works to
+  assert( kernel().model_manager.get_num_node_models() > 1 );
 
-  Model* rootmodel = Network::get_network().pristine_models_[ 0 ].first;
+  Model* rootmodel = kernel().model_manager.get_model( 0 );
   assert( rootmodel != 0 );
   assert( rootmodel->get_name() == "subnet" );
 
-  siblingcontainer_model_ = Network::get_network().pristine_models_[ 1 ].first;
+  siblingcontainer_model_ = kernel().model_manager.get_model( 1 );
   assert( siblingcontainer_model_ != 0 );
   assert( siblingcontainer_model_->get_name() == "siblingcontainer" );
 
@@ -179,7 +180,7 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
   assert( current_ != 0 );
   assert( root_ != 0 );
 
-  if ( mod >= Network::get_network().models_.size() )
+  if ( mod >= kernel().model_manager.get_num_node_models() )
     throw UnknownModelID( mod );
 
   if ( n < 1 )
@@ -191,7 +192,7 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
   const index min_gid = local_nodes_.get_max_gid() + 1;
   const index max_gid = min_gid + n;
 
-  Model* model = Network::get_network().models_[ mod ];
+  Model* model = kernel().model_manager.get_model( mod );
   assert( model != 0 );
 
   /* current_ points to the instance of the current subnet on thread 0.
@@ -441,7 +442,7 @@ NodeManager::restore_nodes(const ArrayDatum& node_list )
   {
     DictionaryDatum node_props = getValue< DictionaryDatum >( *node_t );
     std::string model_name = ( *node_props )[ names::model ];
-    index model_id = Network::get_network().get_model_id( model_name.c_str() );
+    index model_id = kernel().model_manager.get_model_id( model_name.c_str() );
     index parent_gid = ( *node_props )[ names::parent ];
     index local_parent_gid = parent_gid;
     if ( parent_gid >= min_gid )      // if the parent is one of the restored nodes
@@ -487,7 +488,7 @@ Node* NodeManager::get_node( index n, thread thr ) // no_p
   Node* node = local_nodes_.get_node_by_gid( n );
   if ( node == 0 )
   {
-    return Network::get_network().proxy_nodes_.at( thr ).at( kernel().modelrange_manager.get_model_id( n ) );
+    return kernel().model_manager.get_proxy_node( thr, n );
   }
 
   if ( node->num_thread_siblings_() == 0 )
@@ -606,8 +607,6 @@ NodeManager::destruct_nodes_()
   }
 
   local_nodes_.clear();
-
-  Network::get_network().dummy_spike_sources_.clear();
 }
 
 void

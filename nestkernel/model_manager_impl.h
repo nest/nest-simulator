@@ -20,6 +20,8 @@
  *
  */
 
+#include "model_manager.h"
+
 #include "kernel_manager.h"
 
 namespace nest
@@ -36,7 +38,7 @@ ModelManager::register_node_model( const Name& name, bool private_model)
     throw NamingConflict(msg);
   }
 
-  Model* model = new GenericModel< ModelT >( name );
+  Model* model = new GenericModel< ModelT >( name.toString() );
   return register_node_model_( model, private_model );
 }
 
@@ -51,7 +53,7 @@ ModelManager::register_preconf_node_model( const Name& name, DictionaryDatum& co
     throw NamingConflict(msg);
   }
 
-  Model* model = new GenericModel< ModelT >( name );
+  Model* model = new GenericModel< ModelT >( name.toString() );
   conf->clear_access_flags();
   model->set_status( conf );
   std::string missed;
@@ -90,9 +92,32 @@ ModelManager::register_node_model_( Model* model, bool private_model)
 
 template < class ConnectionT >
 synindex
-register_connection_model( const std::string& name )
+ModelManager::register_connection_model( const std::string& name )
 {
-  return register_synapse_prototype(new GenericConnectorModel< ConnectionT >( name ) );
+  ConnectorModel* cf = new GenericConnectorModel< ConnectionT >( name );
+  
+  if ( synapsedict_->known( name ) )
+  {
+    delete cf;
+    std::string msg = String::compose("A synapse type called '%1' already exists.\n"
+                                      "Please choose a different name!", name);
+    throw NamingConflict(msg);
+  }
+  
+  pristine_prototypes_.push_back( cf );
+  
+  const synindex syn_id = prototypes_[ 0 ].size();
+  pristine_prototypes_[ syn_id ]->set_syn_id( syn_id );
+  
+  for ( thread t = 0; t < static_cast < thread >( kernel().vp_manager.get_num_threads() ); ++t )
+  {
+    prototypes_[ t ].push_back( cf->clone( name ) );
+    prototypes_[ t ][ syn_id ]->set_syn_id( syn_id );
+  }
+  
+  synapsedict_->insert( name, syn_id );
+  
+  return syn_id;
 }
 
 inline
@@ -124,6 +149,13 @@ Node*
 ModelManager::get_proxy_node( thread tid, index gid )
 {
   return proxy_nodes_[ tid ].at( kernel().modelrange_manager.get_model_id( gid ) );
+}
+
+inline
+Node*
+ModelManager::get_dummy_spike_source( thread tid )
+{
+  return dummy_spike_sources_[ tid ];
 }
 
 inline
@@ -168,6 +200,13 @@ ModelManager::get_synapse_prototype( synindex syn_id, thread t )
   return *( prototypes_[ t ][ syn_id ] );
 }
 
+inline
+const std::vector< ConnectorModel* >& 
+ModelManager::get_synapse_prototypes( thread tid )
+{
+  return prototypes_[ tid ];
+}
+  
 inline
 size_t
 ModelManager::get_num_node_models() const

@@ -94,7 +94,12 @@ public:
   /**
    *
    */
-  Node* get_proxy_node( thread, index );
+  Node* get_proxy_node( thread tid, index gid );
+  
+  /**
+   *
+   */
+  Node* get_dummy_spike_source( thread );
 
   /**
    * Return pointer to protoype for given synapse id.
@@ -105,6 +110,8 @@ public:
   //  num_connections and the min_ and max_delay setting in
   //  ConnectorBase was moved out to the ConnectionManager
   ConnectorModel& get_synapse_prototype( synindex syn_id, thread t = 0 );
+  
+  const std::vector< ConnectorModel* >& get_synapse_prototypes( thread tid );
 
   /**
    * Register a node-model prototype.
@@ -161,15 +168,9 @@ public:
   set_model_defaults( Name name, DictionaryDatum params );
 
   /**
-   * Register a synapse type.
-   * @param cm ConnectorModel to be registered.
-   * @return an ID for the synapse prototype.
-   */
-  synindex register_synapse_prototype( ConnectorModel* cf );
-
-
-  /**
    * Register a synape with default Connector and without any common properties.
+   * @param name The name under which the ConnectorModel will be registered.
+   * @return an ID for the synapse prototype.
    */
   template < class ConnectionT >
   synindex
@@ -290,6 +291,8 @@ private:
 
   std::vector< std::vector< Node* > >
     proxy_nodes_; //!< Placeholders for remote nodes, one per thread
+  std::vector< Node* >
+    dummy_spike_sources_; //!< Placeholders for spiking remote nodes, one per thread
 
   bool model_defaults_modified_;  //!< True if any model defaults have been modified
 

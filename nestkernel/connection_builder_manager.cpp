@@ -142,13 +142,13 @@ nest::ConnectionBuilderManager::get_status( DictionaryDatum& d )
 DictionaryDatum
 nest::ConnectionBuilderManager::get_synapse_status( index gid, synindex syn_id, port p, thread tid )
 {
-  Network::get_network().connection_manager_.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id );
 
   DictionaryDatum dict( new Dictionary );
   connections_[ tid ].get( gid )->get_synapse_status( syn_id, dict, p );
   ( *dict )[ names::source ] = gid;
   ( *dict )[ names::synapse_model ] = LiteralDatum(
-    Network::get_network().connection_manager_.get_synapse_prototype( syn_id ).get_name() );
+    kernel().model_manager.get_synapse_prototype( syn_id ).get_name() );
 
   return dict;
 }
@@ -160,11 +160,11 @@ nest::ConnectionBuilderManager::set_synapse_status( index gid,
   thread tid,
   const DictionaryDatum& dict )
 {
-  Network::get_network().connection_manager_.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id );
   try
   {
     connections_[ tid ].get( gid )->set_synapse_status( syn_id,
-      *( Network::get_network().connection_manager_.prototypes_[ tid ][ syn_id ] ),
+      kernel().model_manager.get_synapse_prototype( syn_id, tid ),
       dict,
       p );
   }
@@ -172,7 +172,7 @@ nest::ConnectionBuilderManager::set_synapse_status( index gid,
   {
     throw BadProperty(
       String::compose( "Setting status of '%1' connecting from GID %2 to port %3: %4",
-        Network::get_network().connection_manager_.prototypes_[ tid ][ syn_id ]->get_name(),
+        kernel().model_manager.get_synapse_prototype( syn_id, tid ).get_name(),
         gid,
         p,
         e.message() ) );
@@ -250,16 +250,6 @@ nest::ConnectionBuilderManager::calibrate( const TimeConverter& tc )
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
     delay_checkers_[ t ].calibrate( tc );
-    for ( std::vector< ConnectorModel* >::iterator pt =
-            Network::get_network().connection_manager_.prototypes_[ t ].begin();
-          pt != Network::get_network().connection_manager_.prototypes_[ t ].end();
-          ++pt )
-    {
-      if ( *pt != 0 )
-      {
-        ( *pt )->calibrate( tc );
-      }
-    }
   }
 }
 
@@ -501,8 +491,7 @@ nest::ConnectionBuilderManager::connect_( Node& s,
   // see comment above for explanation
   ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
   ConnectorBase* c =
-    Network::get_network().connection_manager_.prototypes_[ tid ][ syn ]->add_connection(
-      s, r, conn, syn, d, w );
+    kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection( s, r, conn, syn, d, w );
   connections_[ tid ].set( s_gid, c );
   // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
@@ -525,7 +514,7 @@ nest::ConnectionBuilderManager::connect_( Node& s,
   // see comment above for explanation
   ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
   ConnectorBase* c =
-    Network::get_network().connection_manager_.prototypes_[ tid ][ syn ]->add_connection(
+    kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection(
       s, r, conn, syn, p, d, w );
   connections_[ tid ].set( s_gid, c );
   // TODO: set size of vv_num_connections in init
@@ -944,7 +933,7 @@ nest::ConnectionBuilderManager::connect( ArrayDatum& conns )
         {
           std::string synmodel_name = getValue< std::string >( synmodel );
           synmodel =
-            Network::get_network().connection_manager_.synapsedict_->lookup( synmodel_name );
+            kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
           if ( !synmodel.empty() )
             syn_id = static_cast< size_t >( synmodel );
           else
@@ -962,7 +951,7 @@ nest::ConnectionBuilderManager::connect( ArrayDatum& conns )
 nest::ConnectorBase*
 nest::ConnectionBuilderManager::validate_source_entry_( thread tid, index s_gid, synindex syn_id )
 {
-  Network::get_network().connection_manager_.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id );
 
   // resize sparsetable to full network size
   if ( connections_[ tid ].size() < kernel().node_manager.size() )
@@ -1409,7 +1398,7 @@ nest::ConnectionBuilderManager::trigger_update_weight( const long_t vt_id,
         t,
         dopa_spikes,
         t_trig,
-        Network::get_network().connection_manager_.prototypes_[ t ] );
+        kernel().model_manager.get_synapse_prototypes( t ) );
 }
 
 void
@@ -1418,7 +1407,7 @@ nest::ConnectionBuilderManager::send( thread t, index sgid, Event& e )
   if ( sgid < connections_[ t ].size() ) // probably test only fails, if there are no connections
     if ( connections_[ t ].get( sgid ) != 0 ) // only send, if connections exist
       connections_[ t ].get( sgid )->send(
-        e, t, Network::get_network().connection_manager_.prototypes_[ t ] );
+        e, t, kernel().model_manager.get_synapse_prototypes( t ) );
 }
 
 size_t
@@ -1481,7 +1470,7 @@ nest::ConnectionBuilderManager::get_connections( DictionaryDatum params ) const
   {
     Name synmodel_name = getValue< Name >( syn_model_t );
     const Token synmodel =
-      Network::get_network().connection_manager_.synapsedict_->lookup( synmodel_name );
+      kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
     if ( !synmodel.empty() )
       syn_id = static_cast< size_t >( synmodel );
     else
@@ -1490,7 +1479,7 @@ nest::ConnectionBuilderManager::get_connections( DictionaryDatum params ) const
   }
   else
   {
-    for ( syn_id = 0; syn_id < Network::get_network().connection_manager_.prototypes_[ 0 ].size();
+    for ( syn_id = 0; syn_id < kernel().model_manager.get_num_synapse_prototypes();
           ++syn_id )
     {
       ArrayDatum conn;

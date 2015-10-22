@@ -165,6 +165,35 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
 
   return new_id;
 }
+  
+index
+ModelManager::register_node_model_( Model* model, bool private_model)
+{
+  const index id = models_.size();
+  model->set_model_id( id );
+  model->set_type_id( id );
+  
+  std::string name = model->get_name();
+  
+  pristine_models_.push_back( std::pair< Model*, bool >( model, private_model ) );
+  models_.push_back( model->clone( name ) );
+  int proxy_model_id = get_model_id( "proxynode" );
+  assert( proxy_model_id > 0 );
+  Model* proxy_model = models_[ proxy_model_id ];
+  assert( proxy_model != 0 );
+  
+  for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
+  {
+    Node* newnode = proxy_model->allocate( t );
+    newnode->set_model_id( id );
+    proxy_nodes_[ t ].push_back( newnode );
+  }
+  
+  if ( !private_model )
+  modeldict_->insert( name, id );
+  
+  return id;
+}
 
 index
 ModelManager::copy_node_model_( index old_id, Name new_name )

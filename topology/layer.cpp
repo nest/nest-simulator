@@ -27,7 +27,7 @@
 #include "dictutils.h"
 #include "integerdatum.h"
 #include "exceptions.h"
-#include "network.h"
+#include "kernel_manager.h"
 
 namespace nest
 {

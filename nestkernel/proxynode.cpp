@@ -27,8 +27,6 @@
 #include "connection.h"
 #include "kernel_manager.h"
 
-#include "kernel_manager.h"
-
 namespace nest
 {
 

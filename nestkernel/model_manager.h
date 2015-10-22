@@ -344,6 +344,110 @@ private:
   void
   set_synapse_defaults_( index model_id, const DictionaryDatum& params );
 };
+  
+  
+  inline
+  Model* 
+  ModelManager::get_model( index m ) const
+  {
+    if ( m >= models_.size() || models_[ m ] == 0 )
+    throw UnknownModelID( m );
+    
+    return models_[ m ];
+  }
+  
+  inline
+  Model*
+  ModelManager::get_subnet_model()
+  {
+    return subnet_model_;
+  }
+  
+  inline
+  Model*
+  ModelManager::get_siblingcontainer_model()
+  {
+    return siblingcontainer_model_;
+  }
+  
+  inline
+  Node*
+  ModelManager::get_dummy_spike_source( thread tid )
+  {
+    return dummy_spike_sources_[ tid ];
+  }
+  
+  inline
+  bool 
+  ModelManager::are_model_defaults_modified() const
+  {
+    return model_defaults_modified_;
+  }
+  
+  inline
+  const DictionaryDatum&
+  ModelManager::get_modeldict()
+  {
+    return modeldict_;
+  }
+  
+  inline
+  const DictionaryDatum&
+  ModelManager::get_synapsedict() const
+  {
+    return synapsedict_;
+  }
+  
+  inline
+  bool
+  ModelManager::has_user_models() const
+  {
+    return models_.size() > pristine_models_.size();
+  }
+  
+  inline
+  ConnectorModel&
+  ModelManager::get_synapse_prototype( synindex syn_id, thread t )
+  {
+    assert_valid_syn_id( syn_id );
+    return *( prototypes_[ t ][ syn_id ] );
+  }
+  
+  inline
+  const std::vector< ConnectorModel* >& 
+  ModelManager::get_synapse_prototypes( thread tid )
+  {
+    return prototypes_[ tid ];
+  }
+  
+  inline
+  size_t
+  ModelManager::get_num_node_models() const
+  {
+    return models_.size();
+  }
+  
+  inline
+  size_t
+  ModelManager::get_num_synapse_prototypes() const
+  {
+    return prototypes_[ 0 ].size();
+  }
+  
+  inline
+  void
+  ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
+  {
+    if ( syn_id >= prototypes_[ t ].size() || prototypes_[ t ][ syn_id ] == 0 )
+    throw UnknownSynapseType( syn_id );
+  }
+  
+  inline
+  bool
+  ModelManager::has_user_prototypes() const
+  {
+    return prototypes_[ 0 ].size() > pristine_prototypes_.size();
+  }
 
 } // namespace nest
 

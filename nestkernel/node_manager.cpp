@@ -40,6 +40,7 @@
 #include "event_delivery_manager.h"
 #include "vp_manager.h"
 #include "simulation_manager.h"
+#include "model_manager_impl.h"
 
 namespace nest
 {

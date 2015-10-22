@@ -19,6 +19,7 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "topologymodule.h"
 
 #include "config.h"
 #include "integerdatum.h"
@@ -26,14 +27,8 @@
 #include "doubledatum.h"
 #include "arraydatum.h"
 #include "dictdatum.h"
-#include "kernel_manager.h"
-#include "network.h"
 #include "model.h"
 #include "genericmodel.h"
-#include "kernel_manager.h"
-#include "communicator.h"
-#include "communicator_impl.h"
-#include "topologymodule.h"
 #include "layer.h"
 #include "layer_impl.h"
 #include "free_layer.h"
@@ -45,6 +40,11 @@
 #include "parameter.h"
 #include "lockptrdatum_impl.h"
 #include "iostreamdatum.h"
+
+#include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "communicator.h"
+#include "communicator_impl.h"
 
 #include "topology.h"
 

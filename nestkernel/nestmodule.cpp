@@ -48,6 +48,7 @@
 #include "kernel_manager.h"
 #include "logging.h"
 #include "connection_builder_manager_impl.h"
+#include "model_manager_impl.h"
 
 #ifdef _OPENMP
 #include <omp.h>

@@ -34,13 +34,15 @@
     First Version: June 2006
 */
 
-#include "config.h"
 #include "modelsmodule.h"
-#include "network.h"
+
+#include <string>
+
+#include "config.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "model.h"
 #include "genericmodel.h"
-#include <string>
 
 // Neuron models
 #include "aeif_cond_alpha.h"

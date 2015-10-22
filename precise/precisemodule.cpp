@@ -34,7 +34,8 @@
 
 #include "config.h"
 #include "precisemodule.h"
-#include "network.h"
+#include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "model.h"
 #include "genericmodel.h"
 #include <string>

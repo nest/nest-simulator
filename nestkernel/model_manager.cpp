@@ -88,6 +88,8 @@ void ModelManager::initialize()
   {
     if ( pristine_models_[ i ].first != 0 )
     {
+      // set the num of threads for the number of sli pools
+      pristine_models_[ i ].first->set_threads();
       std::string name = pristine_models_[ i ].first->get_name();
       models_.push_back( pristine_models_[ i ].first->clone( name ) );
       if ( !pristine_models_[ i ].second )
@@ -140,13 +142,12 @@ void ModelManager::finalize()
   clear_models_();
   clear_prototypes_();
 
-  // We free all Node memory and set the number of threads.
+  // We free all Node memory
   vector< std::pair< Model*, bool > >::iterator m;
   for ( m = pristine_models_.begin(); m != pristine_models_.end(); ++m )
   {
     // delete all nodes, because cloning the model may have created instances.
     ( *m ).first->clear();
-    ( *m ).first->set_threads();
   }
 
 }

@@ -619,17 +619,9 @@ NodeManager::set_status_single_node_( Node& target, const DictionaryDatum& d, bo
     if ( clear_flags )
       d->clear_access_flags();
     target.set_status_base( d );
-    std::string missed;
-    if ( !d->all_accessed( missed ) )
-    {
-      // TODO: Not sure this check should be at single neuron level; advantage is it stops after first failure.
-      if ( kernel().dict_miss_is_error() )
-        throw UnaccessedDictionaryEntry( missed );
-      else
-        LOG( M_WARNING,
-          "NodeManager::set_status",
-          ( "Unread dictionary entries: " + missed ).c_str() );
-    }
+    
+    // TODO: Not sure this check should be at single neuron level; advantage is it stops after first failure.
+    ALL_ENTRIES_ACCESSED( *d, "NodeManager::set_status", "Unread dictionary entries: ");
   }
 }
 

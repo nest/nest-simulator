@@ -156,20 +156,8 @@ set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict 
 
   kernel().connection_builder_manager.set_synapse_status( gid, synapse_id, port, tid, dict );
 
-  std::string missed;
-  if ( !dict->all_accessed( missed ) )
-  {
-    if ( kernel().dict_miss_is_error() )
-    {
-      throw UnaccessedDictionaryEntry(missed +
-                                      "\nMaybe you tried to set common synapse properties through"
-                                      " an individual synapse?");
-    }
-    else
-    {
-      LOG( M_WARNING, "SetStatus", ( "Unread dictionary entries: " + missed ).c_str() );
-    }
-  }
+  ALL_ENTRIES_ACCESSED2( *dict, "SetStatus", "Unread dictionary entries: ", 
+    "Maybe you tried to set common synapse properties through an individual synapse?");
 }
 
 DictionaryDatum
@@ -216,14 +204,7 @@ get_connections( const DictionaryDatum& dict )
 
   ArrayDatum array = kernel().connection_builder_manager.get_connections( dict );
 
-  std::string missed;
-  if ( !dict->all_accessed( missed ) )
-  {
-    if ( kernel().dict_miss_is_error() )
-      throw UnaccessedDictionaryEntry( missed );
-    else
-      LOG( M_WARNING, "GetConnections", ( "Unread dictionary entries: " + missed ).c_str() );
-  }
+  ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: ");
 
   return array;
 }

@@ -28,7 +28,7 @@
 nest::LoggingEvent::LoggingEvent( const nest::severity_t s,
   const std::string& fctn,
   const std::string& msg,
-  const char* file,
+  const std::string& file,
   const size_t line )
   : message( msg )
   , function( fctn )

@@ -22,6 +22,8 @@
 
 #include "kernel_manager.h"
 
+#include "logging.h"
+
 nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = 0;
 
 void
@@ -56,7 +58,6 @@ nest::KernelManager::KernelManager()
   , model_manager()
   , node_manager()
   , initialized_( false )
-  , dict_miss_is_error_( true )
 {
 }
 
@@ -125,7 +126,6 @@ nest::KernelManager::finalize()
 void
 nest::KernelManager::reset()
 {
-  dict_miss_is_error_ = true;
   finalize();
   initialize();
 }
@@ -149,8 +149,6 @@ nest::KernelManager::num_threads_changed_reset()
 void
 nest::KernelManager::set_status( const DictionaryDatum& dict )
 {
-  updateValue< bool >( dict, "dict_miss_is_error", dict_miss_is_error_ );
-
   logging_manager.set_status( dict );
   io_manager.set_status( dict );
   
@@ -186,6 +184,4 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
   model_manager.get_status( dict );
 
   node_manager.get_status( dict );
-  
-  ( *dict )[ "dict_miss_is_error" ] = dict_miss_is_error_;
 }

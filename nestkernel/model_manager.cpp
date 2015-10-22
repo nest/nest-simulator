@@ -291,19 +291,7 @@ ModelManager::set_node_defaults_(index model_id, const DictionaryDatum& params )
 
   get_model( model_id )->set_status( params );
   
-  std::string missed;
-  if ( !params->all_accessed( missed ) )
-  {
-    if ( kernel().dict_miss_is_error() )
-    {
-      throw UnaccessedDictionaryEntry( missed );
-    }
-    else
-    {
-      std::string msg = String::compose("Unread dictionary entries: '%1'", missed);
-      LOG( M_WARNING, "ModelManager::set_node_defaults_", msg);
-    }
-  }
+  ALL_ENTRIES_ACCESSED( *params, "ModelManager::set_node_defaults_", "Unread dictionary entries: ");
 }
 
 void
@@ -325,20 +313,8 @@ ModelManager::set_synapse_defaults_( index model_id, const DictionaryDatum& para
         e.message() ) );
     }
   }
-
-  std::string missed;
-  if ( !params->all_accessed( missed ) )
-  {
-    if ( kernel().dict_miss_is_error() )
-    {
-      throw UnaccessedDictionaryEntry( missed );
-    }
-    else
-    {
-      std::string msg = String::compose( "Unread dictionary entries: '%1'", missed );
-      LOG( M_WARNING, "ModelManager::set_synapse_defaults_", msg );
-    }
-  }
+  
+  ALL_ENTRIES_ACCESSED( *params, "ModelManager::set_synapse_defaults_", "Unread dictionary entries: ");
 }
 
 // TODO: replace int with index and return value -1 with invalid_index, also change all pertaining code

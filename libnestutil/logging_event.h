@@ -38,7 +38,7 @@ public:
   LoggingEvent( const severity_t s,
     const std::string& fctn,
     const std::string& msg,
-    const char* file = "none",
+    const std::string& file = "none",
     const size_t line = 0 );
 
   friend std::ostream& operator<<( std::ostream&, const LoggingEvent& );
@@ -48,7 +48,7 @@ public:
   const std::string& function;
   const severity_t severity;
   const time_t time_stamp;
-  const char* file_name;
+  const std::string& file_name;
   const size_t line_number;
 };
 

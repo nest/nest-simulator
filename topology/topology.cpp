@@ -48,14 +48,7 @@ create_layer( const DictionaryDatum& layer_dict )
 
   index layernode = AbstractLayer::create_layer( layer_dict );
 
-  std::string missed;
-  if ( !layer_dict->all_accessed( missed ) )
-  {
-    if ( kernel().dict_miss_is_error() )
-      throw UnaccessedDictionaryEntry( missed );
-    else
-      LOG( M_WARNING, "topology::CreateLayer", ( "Unread dictionary entries: " + missed ).c_str() );
-  }
+  ALL_ENTRIES_ACCESSED( *layer_dict, "topology::CreateLayer", "Unread dictionary entries: ");
 
   return layernode;
 }
@@ -112,14 +105,7 @@ create_mask( const DictionaryDatum& mask_dict )
 
   MaskDatum datum( TopologyModule::create_mask( mask_dict ) );
 
-  std::string missed;
-  if ( !mask_dict->all_accessed( missed ) )
-  {
-    if ( kernel().dict_miss_is_error() )
-      throw UnaccessedDictionaryEntry( missed );
-    else
-      LOG( M_WARNING, "topology::CreateMask", ( "Unread dictionary entries: " + missed ).c_str() );
-  }
+  ALL_ENTRIES_ACCESSED( *mask_dict, "topology::CreateMask", "Unread dictionary entries: ");
 
   return datum;
 }
@@ -208,15 +194,7 @@ connect_layers( const index source_gid,
 
   ConnectionCreator connector( connection_dict );
 
-  std::string missed;
-  if ( !connection_dict->all_accessed( missed ) )
-  {
-    if ( kernel().dict_miss_is_error() )
-      throw UnaccessedDictionaryEntry( missed );
-    else
-      LOG(
-        M_WARNING, "topology::CreateLayers", ( "Unread dictionary entries: " + missed ).c_str() );
-  }
+  ALL_ENTRIES_ACCESSED( *connection_dict, "topology::CreateLayers", "Unread dictionary entries: ");
 
   source->connect( *target, connector );
 }
@@ -228,16 +206,7 @@ create_parameter( const DictionaryDatum& param_dict )
 
   ParameterDatum datum( TopologyModule::create_parameter( param_dict ) );
 
-  std::string missed;
-  if ( !param_dict->all_accessed( missed ) )
-  {
-    if ( kernel().dict_miss_is_error() )
-      throw UnaccessedDictionaryEntry( missed );
-    else
-      LOG( M_WARNING,
-        "topology::CreateParameter",
-        ( "Unread dictionary entries: " + missed ).c_str() );
-  }
+  ALL_ENTRIES_ACCESSED( *param_dict, "topology::CreateParameter", "Unread dictionary entries: ");
 
   return datum;
 }

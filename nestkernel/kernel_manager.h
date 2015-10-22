@@ -131,10 +131,6 @@ public:
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& );
-  
-  
-  //! Returns true if unread dictionary items should be treated as error.
-  bool dict_miss_is_error() const;
 
   //! Returns true if kernel is initialized
   bool is_initialized() const;
@@ -153,7 +149,6 @@ public:
 
 private:
   bool initialized_;        //!< true if all sub-managers initialized
-  bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 };
 
 KernelManager& kernel();
@@ -177,12 +172,6 @@ inline bool
 nest::KernelManager::is_initialized() const
 {
   return initialized_;
-}
-
-inline bool
-nest::KernelManager::dict_miss_is_error() const
-{
-  return dict_miss_is_error_;
 }
 
 #endif /* KERNEL_MANAGER_H */

@@ -249,14 +249,8 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
         con_id.get_port(),                                                             // port
         con_id.get_target_thread(), // target thread
         dict );
-      std::string missed;
-      if ( !dict->all_accessed( missed ) )
-      {
-        if ( kernel().dict_miss_is_error() )
-          throw UnaccessedDictionaryEntry( missed );
-        else
-          LOG( M_WARNING, "SetStatus", ( "Unread dictionary entries: " + missed ).c_str() );
-      }
+      
+      ALL_ENTRIES_ACCESSED(*dict, "SetStatus", "Unread dictionary entries: ");
     }
   }
   else
@@ -272,14 +266,8 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
         con_id.get_port(),                                                             // port
         con_id.get_target_thread(), // target thread
         dict );
-      std::string missed;
-      if ( !dict->all_accessed( missed ) )
-      {
-        if ( kernel().dict_miss_is_error() )
-          throw UnaccessedDictionaryEntry( missed );
-        else
-          LOG( M_WARNING, "SetStatus", ( "Unread dictionary entries: " + missed ).c_str() );
-      }
+
+      ALL_ENTRIES_ACCESSED(*dict, "SetStatus", "Unread dictionary entries: ");
     }
   }
 
@@ -828,17 +816,8 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
   const index synmodel_id = static_cast< index >( synmodel );
 
   kernel().connection_builder_manager.divergent_connect( source, params, synmodel_id );
-  // dict access control only if we actually made a connection
-  std::string missed;
-  if ( !params->all_accessed( missed ) )
-  {
-    if ( kernel().dict_miss_is_error() )
-      throw UnaccessedDictionaryEntry( missed );
-    else
-      LOG( M_WARNING,
-        "Connect",
-        ( "The following synapse parameters are unused: " + missed ).c_str() );
-  }
+
+  ALL_ENTRIES_ACCESSED(*params, "Connect", "The following synapse parameters are unused: ");
 
   i->OStack.pop( 3 );
   i->EStack.pop();

@@ -65,7 +65,7 @@ public:
   /**
    * Get the current logging level.
    */
-  severity_t get_logging_level();
+  severity_t get_logging_level() const;
 
   /**
    * Create a LoggingEvent.
@@ -79,8 +79,25 @@ public:
   void publish_log( const severity_t,
     const std::string&,
     const std::string&,
-    const char*,
-    const size_t );
+    const std::string&,
+    const size_t ) const;
+  
+  /**
+   * Implements standard behaviour for dictionary entry misses. Use with define
+   * ALL_ENTRIES_ACCESSED.
+   */
+  void all_entries_accessed( const Dictionary&, 
+    const std::string&, 
+    const std::string&, 
+    const std::string&, 
+    const size_t) const;
+  
+  void all_entries_accessed( const Dictionary&, 
+    const std::string&, 
+    const std::string&, 
+    const std::string&, 
+    const std::string&, 
+    const size_t) const;
 
 private:
   /**
@@ -89,13 +106,14 @@ private:
    * It iterates all callback from the client_callbacks_ and calls it with the
    * LoggingEvent as argument.
    */
-  void deliver_logging_event_( const LoggingEvent& event );
+  void deliver_logging_event_( const LoggingEvent& event ) const;
   
-  void default_logging_callback_( const LoggingEvent& event );
+  void default_logging_callback_( const LoggingEvent& event ) const;
 
 private:
   std::vector< deliver_logging_event_ptr > client_callbacks_;
   nest::severity_t logging_level_;
+  bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 };
 } // namespace nest
 

@@ -275,14 +275,8 @@ nest::ConnectionBuilderManager::connect( const GIDCollection& sources,
   assert( cb != 0 );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
-  std::string missed;
-  if ( !( conn_spec->all_accessed( missed ) && syn_spec->all_accessed( missed ) ) )
-  {
-    if ( kernel().dict_miss_is_error() )
-      throw UnaccessedDictionaryEntry( missed );
-    else
-      LOG( M_WARNING, "Connect", String::compose( "Unread dictionary entries: %s", missed ) );
-  }
+  ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: ");
+  ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries in syn_spec: ");
 
   cb->connect();
   delete cb;

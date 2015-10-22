@@ -48,10 +48,41 @@ namespace nest
 std::ostream& operator<<( std::ostream& out, const LoggingEvent& e )
 {
   struct tm* ptm = localtime( &e.time_stamp );
-  out << "LoggingEvent(Severity = " << e.severity << ", " << e.function << ", '" << e.message
-      << "', " << ptm->tm_year + 1900 << "." << ptm->tm_mon + 1 << "." << ptm->tm_mday << " "
-      << ptm->tm_hour << ":" << ptm->tm_min << ":" << ptm->tm_sec << ", " << e.file_name << ":"
-      << e.line_number << ")";
+  switch (e.severity) {
+    case M_ALL:
+      out << "[ALL] ";
+      break;
+    case M_DEBUG:
+      out << "[DEBUG] ";
+      break;
+    case M_STATUS:
+      out << "[STATUS] ";
+      break;
+    case M_INFO:
+      out << "[INFO] ";
+      break;
+    case M_WARNING:
+      out << "[WARNING] ";
+      break;
+    case M_ERROR:
+      out << "[ERROR] ";
+      break;
+    case M_FATAL:
+      out << "[FATAL] ";
+      break;
+    case M_QUIET:
+      out << "[QUIET] ";
+      break;
+    default:
+      out << "[" << e.severity << "] ";
+      break;
+  }
+  // print time and day
+  out << "[" << ptm->tm_year + 1900 << "." << ptm->tm_mon + 1 << "." << ptm->tm_mday << " "
+      << ptm->tm_hour << ":" << ptm->tm_min << ":" << ptm->tm_sec << " ";
+
+  out << e.file_name << ":" << e.line_number << " @ " << e.function << "] : " << e.message;
+
   return out;
 }
 }

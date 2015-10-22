@@ -90,6 +90,8 @@ private:
    * LoggingEvent as argument.
    */
   void deliver_logging_event_( const LoggingEvent& event );
+  
+  void default_logging_callback_( const LoggingEvent& event );
 
 private:
   std::vector< deliver_logging_event_ptr > client_callbacks_;

@@ -24,6 +24,7 @@
 #include "logging_event.h"
 
 #include <cassert>
+#include <iostream>
 
 nest::LoggingManager::LoggingManager()
   : client_callbacks_()
@@ -63,6 +64,10 @@ nest::LoggingManager::register_logging_client( const deliver_logging_event_ptr c
 void
 nest::LoggingManager::deliver_logging_event_( const LoggingEvent& event )
 {
+  if ( client_callbacks_.empty() )
+  {
+    default_logging_callback_( event );
+  }
   std::vector< deliver_logging_event_ptr >::iterator it;
   for ( std::vector< deliver_logging_event_ptr >::const_iterator it = client_callbacks_.begin();
         it != client_callbacks_.end();
@@ -70,6 +75,23 @@ nest::LoggingManager::deliver_logging_event_( const LoggingEvent& event )
   {
     ( *it )( event );
   }
+}
+
+void
+nest::LoggingManager::default_logging_callback_( const LoggingEvent& event )
+{
+  std::ostream *out;
+  
+  if ( event.severity < M_WARNING )
+  {
+    out = &std::cout;
+  }
+  else
+  {
+    out = &std::cerr;
+  }
+  
+  *out << event << std::endl;
 }
 
 void

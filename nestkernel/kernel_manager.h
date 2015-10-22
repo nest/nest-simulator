@@ -127,15 +127,15 @@ public:
   bool is_initialized() const;
 
   LoggingManager logging_manager;
+  IOManager io_manager;
   MPIManager mpi_manager;
   VPManager vp_manager;
   RNGManager rng_manager;
-  IOManager io_manager;
-  ConnectionBuilderManager connection_builder_manager;
   SimulationManager simulation_manager;
-  ModelManager model_manager;
-  EventDeliveryManager event_delivery_manager;
   ModelRangeManager modelrange_manager;
+  ConnectionBuilderManager connection_builder_manager;
+  EventDeliveryManager event_delivery_manager;
+  ModelManager model_manager;
   NodeManager node_manager;
 
 private:

@@ -44,7 +44,18 @@ nest::KernelManager::destroy_kernel_manager()
 }
 
 nest::KernelManager::KernelManager()
-  : initialized_( false )
+  : logging_manager()
+  , io_manager()
+  , mpi_manager()
+  , vp_manager()
+  , rng_manager()
+  , simulation_manager()
+  , modelrange_manager()
+  , connection_builder_manager()
+  , event_delivery_manager()
+  , model_manager()
+  , node_manager()
+  , initialized_( false )
 {
 }
 
@@ -77,7 +88,7 @@ nest::KernelManager::initialize()
   //   - clock initialized (simulation_manager)
   event_delivery_manager.initialize();
 
-  // model_manager comes here
+  model_manager.initialize();
 
   // prerequisites:
   //   - modelrange_manager initialized
@@ -95,7 +106,7 @@ nest::KernelManager::finalize()
 
   // reverse order of calls as in initialize()
   node_manager.finalize();
-  // model_manager.finalize();
+  model_manager.finalize();
   event_delivery_manager.finalize();
   connection_builder_manager.finalize();
   modelrange_manager.finalize();
@@ -121,14 +132,19 @@ void
 nest::KernelManager::set_status( const DictionaryDatum& dict )
 {
   logging_manager.set_status( dict );
+  io_manager.set_status( dict );
+  
   mpi_manager.set_status( dict );
   vp_manager.set_status( dict );
+  
   rng_manager.set_status( dict ); // set RNGs --- MUST come after n_threads_ is updated
-  io_manager.set_status( dict );
-  connection_builder_manager.set_status( dict );
-  event_delivery_manager.set_status( dict );
   simulation_manager.set_status( dict );
   modelrange_manager.set_status( dict );
+  connection_builder_manager.set_status( dict );
+  
+  event_delivery_manager.set_status( dict );
+  model_manager.set_status( dict );
+  
   node_manager.set_status( dict ); // has to be called last
 }
 
@@ -136,13 +152,18 @@ void
 nest::KernelManager::get_status( DictionaryDatum& dict )
 {
   logging_manager.get_status( dict );
+  io_manager.get_status( dict );
+
   mpi_manager.get_status( dict );
   vp_manager.get_status( dict );
+
   rng_manager.get_status( dict );
-  io_manager.get_status( dict );
-  connection_builder_manager.get_status( dict );
-  event_delivery_manager.get_status( dict );
   simulation_manager.get_status( dict );
   modelrange_manager.get_status( dict );
+  connection_builder_manager.get_status( dict );
+
+  event_delivery_manager.get_status( dict );
+  model_manager.get_status( dict );
+
   node_manager.get_status( dict );
 }

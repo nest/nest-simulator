@@ -1,8 +1,30 @@
+# -*- coding: utf-8 -*-
+#
+# include_checker.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 import os
 import re
 import sys
 
 excludes=["autom4te.cache", "debian", "lib", "libltdl"]
+excludes_files=["sparsetable.h", "libc_allocator_with_realloc.h", "hashtable-common.h", "sparseconfig.h", "template_util.h"]
 
 class IncludeInfo():
     filename = ""
@@ -86,7 +108,8 @@ def get_includes_from(file, all_headers):
     return includes
 
 def is_include_order_ok(includes):
-    return includes == sorted(includes)
+    s_incs = sorted(includes)
+    return len(includes) - len( [ i for i,s in zip(includes, s_incs) if i.name == s.name ] )
 
 def print_includes(includes):
     s_incs = sorted(includes)
@@ -120,30 +143,56 @@ def print_includes(includes):
 
         print(i.to_string())
 
-def process_source(path, f, all_header, print_all=False, ok_silent=True):
+def process_source(path, f, all_header, print_suggestion):
+    if f in excludes_files:
+        return 0
     includes = get_includes_from(path + "/" + f, all_header)
     order_ok = is_include_order_ok(includes)
-    if order_ok and not ok_silent:
-        print("Includes for " + f + " are OK!")
-    if not order_ok or print_all:
-        print("\n##############################")
-        print("Suggested includes for " + f + ":")
-        print("##############################\n")
-        print_includes(includes)
-        print("\n##############################")
+    if order_ok <= 2:
+        print("Includes for " + f + " are OK! Includes in wrong order: " + str(order_ok))
+    if order_ok > 2:
+        print("Includes for " + f + " are WRONG! Includes in wrong order: " + str(order_ok))
+        if print_suggestion:
+            print("\n##############################")
+            print("Suggested includes for " + f + ":")
+            print("##############################\n")
+            print_includes(includes)
+            print("\n##############################")
 
-def process_all_sources(path, print_all=False, ok_silent=True):
+    return order_ok
+
+def process_all_sources(path, print_suggestion):
     all_header = all_includes(path)
-
+    count = 0
     dirs = [d for d in next(os.walk(path))[1] if d[0] != '.' and not d in excludes ]
     for d in dirs:
         for root, dirs, files in os.walk(path + "/" + d):
             for f in files:
                 if re.search("\.h$|\.hpp$|\.c$|\.cc|\.cpp$",f):
                     # valid source file
-                    process_source(root, f, all_header, print_all, ok_silent)
+                    count += process_source(root, f, all_header, print_suggestion)
+    return count
 
 
 if __name__ == '__main__':
-    process_all_sources( sys.argv[1], print_all=True )
+    print_suggestion = True
+    if len(sys.argv) != 3:
+        print("Use like:")
+        print("  " + sys.argv[0] + " (-f <filename> | -d <directory>)")
+        sys.exit(1)
+
+    if sys.argv[1] == '-f' and os.path.isfile(sys.argv[2]):
+        path = os.path.dirname(sys.argv[2])
+        file = os.path.basename(sys.argv[2])
+        all_header = all_includes(path)
+        process_source(path, file, all_header, print_suggestion)
+
+    elif sys.argv[1] == '-d' and os.path.isdir(sys.argv[2]):
+        dir = sys.argv[2]
+        process_all_sources( dir, print_suggestion )
+
+    else:
+        print("Use like:")
+        print("  " + sys.argv[0] + " (-f <filename> | -d <directory>)")
+        sys.exit(1)
 

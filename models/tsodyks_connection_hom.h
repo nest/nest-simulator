@@ -25,7 +25,7 @@
 
 
 /* BeginDocumentation
-  Name: tsodyks_synapse - Synapse type with short term plasticity using homogeneous
+  Name: tsodyks_synapse_hom - Synapse type with short term plasticity using homogeneous
    parameters, i.e. all synapses have the same parameters.
 
   Description:
@@ -75,6 +75,10 @@
      x         double - initial fraction of synaptic vesicles in the readily releasable pool [0,1]
      y         double - initial fraction of synaptic vesicles in the synaptic cleft [0,1]
 
+  Remarks:
+   The weight and the parameters U, tau_psc, tau_fac, and tau_rec are common to all
+   synapses of the model and must be set using SetDefaults on the synapse model.
+
   References:
    [1] Tsodyks, Uziel, Markram (2000) Synchrony Generation in Recurrent Networks
        with Frequency-Dependent Synapses. Journal of Neuroscience, vol 20 RC50
@@ -82,8 +86,9 @@
   Transmits: SpikeEvent
 
   FirstVersion: March 2006
-  Author: Moritz Helias, Susanne Kunkel
-  SeeAlso: synapsedict, stdp_synapse_hom, static_synapse_hom_wd, iaf_psc_exp, iaf_tum_2000
+  Author: Susanne Kunkel, Moritz Helias
+  SeeAlso: synapsedict, tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w, iaf_psc_exp,
+  iaf_tum_2000
 */
 
 
@@ -241,7 +246,6 @@ TsodyksConnectionHom< targetidentifierT >::send( Event& e,
   double_t Pyy = std::exp( -h / cp.tau_psc_ );
   double_t Pzz = std::exp( -h / cp.tau_rec_ );
 
-  // double_t Pzy = (Pyy - Pzz) * tau_rec_ / (tau_psc_ - tau_rec_);
   double_t Pxy =
     ( ( Pzz - 1.0 ) * cp.tau_rec_ - ( Pyy - 1.0 ) * cp.tau_psc_ ) / ( cp.tau_psc_ - cp.tau_rec_ );
   double_t Pxz = 1.0 - Pzz;
@@ -253,7 +257,6 @@ TsodyksConnectionHom< targetidentifierT >::send( Event& e,
 
   u_ *= Puu;
   x_ += Pxy * y_ + Pxz * z;
-  // z = Pzz * z_ + Pzy * y_;
   y_ *= Pyy;
 
   // delta function u

@@ -60,11 +60,6 @@
 #include "tokenutils.h"
 #include "triedatum.h"
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
-
 // This function is the only interface to the driver program
 extern void init_slidict( SLIInterpreter* );
 extern void init_slicontrol( SLIInterpreter* );

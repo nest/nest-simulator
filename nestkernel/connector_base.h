@@ -29,6 +29,7 @@
 // Includes from nestkernel:
 #include "connector_model.h"
 #include "event.h"
+#include "kernel_manager.h"
 #include "nest_datums.h"
 #include "nest_names.h"
 #include "node.h"
@@ -36,11 +37,6 @@
 
 // Includes from sli:
 #include "dictutils.h"
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 
 #ifdef USE_PMA
 
@@ -66,7 +62,7 @@ suicide_and_resurrect( Told* connector, C connection )
 {
 #ifdef USE_PMA
 #ifdef IS_K
-  Tnew* p = new ( poormansallocpool[ omp_get_thread_num() ].alloc( sizeof( Tnew ) ) )
+  Tnew* p = new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( Tnew ) ) )
     Tnew( *connector, connection );
 #else
   Tnew* p = new ( poormansallocpool.alloc( sizeof( Tnew ) ) ) Tnew( *connector, connection );

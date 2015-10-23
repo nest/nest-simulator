@@ -47,11 +47,6 @@
 #include "fdstream.h"
 #include "name.h"
 
-#ifdef _OPENMP
-// C includes:
-#include <omp.h>
-#endif
-
 nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   const GIDCollection& targets,
   const DictionaryDatum& conn_spec,

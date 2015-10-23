@@ -57,10 +57,6 @@
 #include "slistartup.h"
 #include "specialfunctionsmodule.h"
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #ifndef _IS_PYNEST
 #include <gnureadline.h>
 #endif
@@ -86,17 +82,6 @@ neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepa
 
   engine_only_for_logging = &engine;
   register_logger_client( sli_logging );
-
-#ifdef _OPENMP
-  /* The next line is required because we use the OpenMP
-     threadprivate() directive in the allocator, see OpenMP
-     API Specifications v 3.1, Ch 2.9.2, p 89, l 14f.
-     It keeps OpenMP from automagically changing the number
-     of threads used for parallel regions.
-  */
-  omp_set_dynamic( false );
-  omp_set_num_threads( 1 );
-#endif
 
 // We disable synchronization between stdio and istd::ostreams
 // this has to be done before any in- or output has been done.

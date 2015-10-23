@@ -22,9 +22,6 @@
 
 #include "slistartup.h"
 
-// C includes:
-#include <crt_externs.h>
-
 // C++ includes:
 #include <cstdlib>
 #include <cstring>

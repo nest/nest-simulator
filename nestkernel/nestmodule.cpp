@@ -57,11 +57,6 @@
 #include "stringdatum.h"
 #include "tokenutils.h"
 
-#ifdef _OPENMP
-// C includes:
-#include <omp.h>
-#endif
-
 extern int SLIsignalflag;
 
 namespace nest

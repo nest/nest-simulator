@@ -147,7 +147,7 @@ mynest::MyModule::StepPatternConnect_Vi_i_Vi_i_lFunction::execute( SLIInterprete
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) ); // top
 
   // Obtain synapse model index
-  const Token synmodel = nest::Network::get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = nest::kernel().model_manager.get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw nest::UnknownSynapseType( synmodel_name.toString() );
   const nest::index synmodel_id = static_cast< nest::index >( synmodel );
@@ -164,9 +164,10 @@ mynest::MyModule::StepPatternConnect_Vi_i_Vi_i_lFunction::execute( SLIInterprete
     // We must first obtain the GID of the source as integer
     const nest::long_t sgid = getValue< nest::long_t >( sources[ s ] );
 
-    // nest::network::divergent_connect() requires weight and delay arrays. We want to use
+    // nest::kernel().connection_builder_manager.divergent_connect 
+    // requires weight and delay arrays. We want to use
     // default values from the synapse model, so we pass empty arrays.
-    nest::Network::get_network().divergent_connect(
+    nest::kernel().connection_builder_manager.divergent_connect(
       sgid, selected_targets, TokenArray(), TokenArray(), synmodel_id );
     Nconn += selected_targets.size();
   }
@@ -188,13 +189,11 @@ mynest::MyModule::init( SLIInterpreter* i )
 {
   /* Register a neuron or device model.
      Give node type as template argument and the name as second argument.
-     The first argument is always a reference to the network.
   */
   nest::kernel().model_manager.register_model< pif_psc_alpha >( "pif_psc_alpha" );
 
   /* Register a synapse type.
      Give synapse type as template argument and the name as second argument.
-     The first argument is always a reference to the network.
 
      There are two choices for the template argument:
          - nest::TargetIdentifierPtrRport

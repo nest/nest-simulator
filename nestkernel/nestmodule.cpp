@@ -1075,7 +1075,7 @@ NestModule::RConvergentConnect_ia_ia_ia_daa_daa_b_b_lFunction::execute( SLIInter
 void
 NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
 {
-  Network::get_network().memory_info();
+  kernel().model_manager.memory_info();
   i->EStack.pop();
 }
 

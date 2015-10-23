@@ -64,8 +64,8 @@ public:
   librandom::RngPtr get_grng() const;
 
 private:
-  void create_rngs_( const bool ctor_call = false );
-  void create_grng_( const bool ctor_call = false );
+  void create_rngs_();
+  void create_grng_();
 
   /**
    * Vector of random number generators for threads.

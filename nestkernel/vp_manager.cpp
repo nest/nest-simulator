@@ -84,7 +84,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     if ( n_threads > 1 && force_singlethreading_ )
     {
       LOG(
-        M_WARNING, "Network::set_status", "No multithreading available, using single threading" );
+        M_WARNING, "VPManager::set_status", "No multithreading available, using single threading" );
       n_threads = 1;
     }
 
@@ -128,7 +128,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     if ( ( n_threads > 1 ) && ( force_singlethreading_ ) )
     {
       LOG(
-        M_WARNING, "Network::set_status", "No multithreading available, using single threading" );
+        M_WARNING, "VPManager::set_status", "No multithreading available, using single threading" );
       n_threads = 1;
     }
 

@@ -44,8 +44,8 @@ nest::RNGManager::RNGManager()
 void
 nest::RNGManager::initialize()
 {
-  create_rngs_( true ); // flag that this is a call from the ctr
-  create_grng_( true ); // flag that this is a call from the ctr
+  create_rngs_();
+  create_grng_();
 }
 
 void
@@ -74,7 +74,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     if ( ad->size() != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
     {
       LOG( M_ERROR,
-        "Network::set_status",
+        "RNGManager::set_status",
         "Number of RNGs must equal number of virtual processes (threads*processes). RNGs "
         "unchanged." );
       throw DimensionMismatch(
@@ -93,7 +93,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
   }
   else if ( n_threads_updated && kernel().node_manager.size() == 0 )
   {
-    LOG( M_WARNING, "Network::set_status", "Equipping threads with new default RNGs" );
+    LOG( M_WARNING, "RNGManager::set_status", "Equipping threads with new default RNGs" );
     create_rngs_();
   }
 
@@ -106,7 +106,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     if ( ad->size() != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
     {
       LOG( M_ERROR,
-        "Network::set_status",
+        "RNGManager::set_status",
         "Number of seeds must equal number of virtual processes (threads*processes). RNGs "
         "unchanged." );
       throw DimensionMismatch(
@@ -120,7 +120,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
       long s = ( *ad )[ i ]; // SLI has no ulong tokens
       if ( !seedset.insert( s ).second )
       {
-        LOG( M_WARNING, "Network::set_status", "Seeds are not unique across threads!" );
+        LOG( M_WARNING, "RNGManager::set_status", "Seeds are not unique across threads!" );
         break;
       }
     }
@@ -145,7 +145,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
   }
   else if ( n_threads_updated && kernel().node_manager.size() == 0 )
   {
-    LOG( M_WARNING, "Network::set_status", "Equipping threads with new default GRNG" );
+    LOG( M_WARNING, "RNGManager::set_status", "Equipping threads with new default GRNG" );
     create_grng_();
   }
 
@@ -167,7 +167,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
         const long vpseed = ( *ad_rngseeds )[ i ]; // SLI has no ulong tokens
         if ( !seedset.insert( vpseed ).second )
         {
-          LOG( M_WARNING, "Network::set_status", "Seeds are not unique across threads!" );
+          LOG( M_WARNING, "RNGManager::set_status", "Seeds are not unique across threads!" );
           break;
         }
       }
@@ -188,25 +188,18 @@ nest::RNGManager::get_status( DictionaryDatum& d )
 
 
 void
-nest::RNGManager::create_rngs_( const bool ctor_call )
+nest::RNGManager::create_rngs_()
 {
-  // LOG(M_INFO, ) calls must not be called
-  // if create_rngs_ is called from Network::Network(), since net_
-  // is not fully constructed then
-
   // if old generators exist, remove them; since rng_ contains
   // lockPTRs, we don't have to worry about deletion
   if ( !rng_.empty() )
   {
-    if ( !ctor_call )
-      LOG( M_INFO, "Network::create_rngs_", "Deleting existing random number generators" );
+    LOG( M_INFO, "Network::create_rngs_", "Deleting existing random number generators" );
 
     rng_.clear();
   }
 
-  // create new rngs
-  if ( !ctor_call )
-    LOG( M_INFO, "Network::create_rngs_", "Creating default RNGs" );
+  LOG( M_INFO, "Network::create_rngs_", "Creating default RNGs" );
 
   rng_seeds_.resize( kernel().vp_manager.get_num_virtual_processes() );
 
@@ -234,11 +227,7 @@ nest::RNGManager::create_rngs_( const bool ctor_call )
 
       if ( !rng )
       {
-        if ( !ctor_call )
-          LOG( M_ERROR, "Network::create_rngs_", "Error initializing knuthlfg" );
-        else
-          std::cerr << "\nNetwork::create_rngs_\n"
-                    << "Error initializing knuthlfg" << std::endl;
+        LOG( M_ERROR, "Network::create_rngs_", "Error initializing knuthlfg" );
 
         throw KernelException();
       }
@@ -251,11 +240,10 @@ nest::RNGManager::create_rngs_( const bool ctor_call )
 }
 
 void
-nest::RNGManager::create_grng_( const bool ctor_call )
+nest::RNGManager::create_grng_()
 {
   // create new grng
-  if ( !ctor_call )
-    LOG( M_INFO, "Network::create_grng_", "Creating new default global RNG" );
+  LOG( M_INFO, "Network::create_grng_", "Creating new default global RNG" );
 
 // create default RNG with default seed
 #ifdef HAVE_GSL
@@ -267,11 +255,7 @@ nest::RNGManager::create_grng_( const bool ctor_call )
 
   if ( !grng_ )
   {
-    if ( !ctor_call )
-      LOG( M_ERROR, "Network::create_grng_", "Error initializing knuthlfg" );
-    else
-      std::cerr << "\nNetwork::create_grng_\n"
-                << "Error initializing knuthlfg" << std::endl;
+    LOG( M_ERROR, "Network::create_grng_", "Error initializing knuthlfg" );
 
     throw KernelException();
   }

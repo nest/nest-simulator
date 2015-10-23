@@ -40,7 +40,7 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
   const DictionaryDatum& params_map,
   const Name& synmodel_name )
 {
-  Subnet* sources = dynamic_cast< Subnet* >( Network::get_network().get_node( source_id ) );
+  Subnet* sources = dynamic_cast< Subnet* >( kernel().node_manager.get_node( source_id ) );
   if ( sources == NULL )
   {
     LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "sources must be a subnet." );
@@ -57,7 +57,7 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
     throw BadProperty();
   }
 
-  Subnet* targets = dynamic_cast< Subnet* >( Network::get_network().get_node( target_id ) );
+  Subnet* targets = dynamic_cast< Subnet* >( kernel().node_manager.get_node( target_id ) );
   if ( targets == NULL )
   {
     LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "targets must be a subnet." );
@@ -74,7 +74,7 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
     throw BadProperty();
   }
 
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = kernel().model_manager.get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
@@ -102,7 +102,7 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
   const DictionaryDatum& params_map,
   const Name& synmodel_name )
 {
-  const Token synmodel = Network::get_network().get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = kernel().model_manager.get_synapsedict().lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );

@@ -48,9 +48,9 @@ cg_connect( ConnectionGeneratorDatum& cg,
     // connect source to target
     while ( cg->next( source, target, NULL ) )
     {
-      if ( Network::get_network().is_local_gid( target + target_offset ) )
+      if ( kernel().node_manager.is_local_gid( target + target_offset ) )
       {
-        Node* const target_node = Network::get_network().get_node( target + target_offset );
+        Node* const target_node = kernel().node_manager.get_node( target + target_offset );
         const thread target_thread = target_node->get_thread();
         kernel().connection_builder_manager.connect(
           source + source_offset, target_node, target_thread, syn );
@@ -69,9 +69,9 @@ cg_connect( ConnectionGeneratorDatum& cg,
     // connect source to target with weight and delay
     while ( cg->next( source, target, &params[ 0 ] ) )
     {
-      if ( Network::get_network().is_local_gid( target + target_offset ) )
+      if ( kernel().node_manager.is_local_gid( target + target_offset ) )
       {
-        Node* const target_node = Network::get_network().get_node( target + target_offset );
+        Node* const target_node = kernel().node_manager.get_node( target + target_offset );
         const thread target_thread = target_node->get_thread();
         kernel().connection_builder_manager.connect( source + source_offset,
           target_node,
@@ -107,9 +107,9 @@ cg_connect( ConnectionGeneratorDatum& cg,
     // connect source to target
     while ( cg->next( source, target, NULL ) )
     {
-      if ( Network::get_network().is_local_gid( target_gids.at( target ) ) )
+      if ( kernel().node_manager.is_local_gid( target_gids.at( target ) ) )
       {
-        Node* const target_node = Network::get_network().get_node( target_gids.at( target ) );
+        Node* const target_node = kernel().node_manager.get_node( target_gids.at( target ) );
         const thread target_thread = target_node->get_thread();
         kernel().connection_builder_manager.connect(
           source_gids.at( source ), target_node, target_thread, syn );
@@ -128,9 +128,9 @@ cg_connect( ConnectionGeneratorDatum& cg,
     // connect source to target with weight and delay
     while ( cg->next( source, target, &params[ 0 ] ) )
     {
-      if ( Network::get_network().is_local_gid( target_gids.at( target ) ) )
+      if ( kernel().node_manager.is_local_gid( target_gids.at( target ) ) )
       {
-        Node* const target_node = Network::get_network().get_node( target_gids.at( target ) );
+        Node* const target_node = kernel().node_manager.get_node( target_gids.at( target ) );
         const thread target_thread = target_node->get_thread();
         kernel().connection_builder_manager.connect( source_gids.at( source ),
           target_node,

@@ -346,7 +346,7 @@ EventDeliveryManager::get_modulo( delay d )
 {
   // Note, here d may be 0, since bin 0 represents the "current" time
   // when all evens due are read out.
-  assert( static_cast< vector< delay >::size_type >( d ) < moduli_.size() );
+  assert( static_cast< std::vector< delay >::size_type >( d ) < moduli_.size() );
 
   return moduli_[ d ];
 }
@@ -356,7 +356,7 @@ EventDeliveryManager::get_slice_modulo( delay d )
 {
   /// Note, here d may be 0, since bin 0 represents the "current" time
   // when all evens due are read out.
-  assert( static_cast< vector< delay >::size_type >( d ) < slice_moduli_.size() );
+  assert( static_cast< std::vector< delay >::size_type >( d ) < slice_moduli_.size() );
 
   return slice_moduli_[ d ];
 }

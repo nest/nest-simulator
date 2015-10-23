@@ -58,7 +58,7 @@ ModelManager::~ModelManager()
     if ( *i != 0 )
       delete *i;
 
-  vector< std::pair< Model*, bool > >::iterator j;
+  std::vector< std::pair< Model*, bool > >::iterator j;
   for ( j = pristine_models_.begin(); j != pristine_models_.end(); ++j )
     if ( ( *j ).first != 0 )
       delete ( *j ).first;
@@ -143,7 +143,7 @@ void ModelManager::finalize()
   clear_prototypes_();
 
   // We free all Node memory
-  vector< std::pair< Model*, bool > >::iterator m;
+  std::vector< std::pair< Model*, bool > >::iterator m;
   for ( m = pristine_models_.begin(); m != pristine_models_.end(); ++m )
   {
     // delete all nodes, because cloning the model may have created instances.
@@ -358,7 +358,7 @@ ModelManager::clear_models_( bool called_from_destructor )
   // We delete all models, which will also delete all nodes. The
   // built-in models will be recovered from the pristine_models_ in
   // init()
-  for ( vector< Model* >::iterator m = models_.begin(); m != models_.end(); ++m )
+  for ( std::vector< Model* >::iterator m = models_.begin(); m != models_.end(); ++m )
     if ( *m != 0 )
       delete *m;
 

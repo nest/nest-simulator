@@ -79,13 +79,13 @@ nest::Communicator::communicate_Allgatherv( std::vector< T >& send_buffer,
 template < typename NodeListType >
 void
 nest::Communicator::communicate( const NodeListType& local_nodes,
-  vector< NodeAddressingData >& all_nodes,
+  std::vector< NodeAddressingData >& all_nodes,
   bool remote )
 {
   size_t np = kernel().mpi_manager.get_num_processes();
   if ( np > 1 && remote )
   {
-    vector< long_t > localnodes;
+    std::vector< long_t > localnodes;
     for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
     {
       localnodes.push_back( ( *n )->get_gid() );
@@ -105,7 +105,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
     // Calculate total number of node data items to be gathered.
     size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
     assert( n_globals % 3 == 0 );
-    vector< long_t > globalnodes;
+    std::vector< long_t > globalnodes;
     if ( n_globals != 0 )
     {
       globalnodes.resize( n_globals, 0L );
@@ -118,7 +118,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 
       // get rid of any multiple entries
       std::sort( all_nodes.begin(), all_nodes.end() );
-      vector< NodeAddressingData >::iterator it;
+      std::vector< NodeAddressingData >::iterator it;
       it = std::unique( all_nodes.begin(), all_nodes.end() );
       all_nodes.resize( it - all_nodes.begin() );
     }
@@ -136,7 +136,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 template < typename NodeListType >
 void
 nest::Communicator::communicate( const NodeListType& local_nodes,
-  vector< NodeAddressingData >& all_nodes,
+  std::vector< NodeAddressingData >& all_nodes,
   DictionaryDatum params,
   bool remote )
 {
@@ -144,7 +144,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 
   if ( np > 1 && remote )
   {
-    vector< long_t > localnodes;
+    std::vector< long_t > localnodes;
     if ( params->empty() )
     {
       for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
@@ -161,7 +161,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
         // select those nodes fulfilling the key/value pairs of the dictionary
         bool match = true;
         index gid = ( *n )->get_gid();
-        DictionaryDatum node_status = Network::get_network().get_status( gid );
+        DictionaryDatum node_status = kernel().node_manager.get_status( gid );
         for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
         {
           if ( node_status->known( i->first ) )
@@ -197,7 +197,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
     // Calculate sum of global connections.
     size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
     assert( n_globals % 3 == 0 );
-    vector< long_t > globalnodes;
+    std::vector< long_t > globalnodes;
     if ( n_globals != 0 )
     {
       globalnodes.resize( n_globals, 0L );
@@ -210,7 +210,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 
       // get rid of any multiple entries
       std::sort( all_nodes.begin(), all_nodes.end() );
-      vector< NodeAddressingData >::iterator it;
+      std::vector< NodeAddressingData >::iterator it;
       it = std::unique( all_nodes.begin(), all_nodes.end() );
       all_nodes.resize( it - all_nodes.begin() );
     }
@@ -230,7 +230,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
       {
         bool match = true;
         index gid = ( *n )->get_gid();
-        DictionaryDatum node_status = Network::get_network().get_status( gid );
+        DictionaryDatum node_status = kernel().node_manager.get_status( gid );
         for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
         {
           if ( node_status->known( i->first ) )

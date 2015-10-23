@@ -53,7 +53,7 @@ LocalNodeListBase< LocalNodeListIterator >::begin() const
     return end();
 
   Subnet* current_subnet = &subnet_; // start at wrapped subnet
-  vector< Node* >::iterator node;    // node we are looking at
+  std::vector< Node* >::iterator node;    // node we are looking at
 
   do
   {
@@ -152,7 +152,7 @@ LocalNodeListBase< LocalLeafListIterator >::begin() const
     return end();
 
   Subnet* current_subnet = &subnet_; // start at wrapped subnet
-  vector< Node* >::iterator node;    // node we are looking at
+  std::vector< Node* >::iterator node;    // node we are looking at
 
   do
   {

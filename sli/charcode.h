@@ -34,8 +34,6 @@
 #include <cassert>
 #include <cstddef>
 
-using std::size_t;
-
 class CharCode : public std::vector< size_t >
 {
 public:

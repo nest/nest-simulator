@@ -296,7 +296,7 @@ get_nodes( const index node_id,
     throw SubnetExpected();
 
   LocalNodeList localnodes( *subnet );
-  vector< Communicator::NodeAddressingData > globalnodes;
+  std::vector< Communicator::NodeAddressingData > globalnodes;
   if ( params->empty() )
   {
     Communicator::communicate( localnodes, globalnodes, include_remotes );
@@ -308,7 +308,7 @@ get_nodes( const index node_id,
 
   ArrayDatum result;
   result.reserve( globalnodes.size() );
-  for ( vector< Communicator::NodeAddressingData >::iterator n = globalnodes.begin();
+  for ( std::vector< Communicator::NodeAddressingData >::iterator n = globalnodes.begin();
         n != globalnodes.end();
         ++n )
   {
@@ -341,7 +341,7 @@ get_leaves( const index node_id, const DictionaryDatum& params, const bool inclu
   LocalLeafList localnodes( *subnet );
   ArrayDatum result;
 
-  vector< Communicator::NodeAddressingData > globalnodes;
+  std::vector< Communicator::NodeAddressingData > globalnodes;
   if ( params->empty() )
   {
     nest::Communicator::communicate( localnodes, globalnodes, include_remotes );
@@ -352,7 +352,7 @@ get_leaves( const index node_id, const DictionaryDatum& params, const bool inclu
   }
   result.reserve( globalnodes.size() );
 
-  for ( vector< Communicator::NodeAddressingData >::iterator n = globalnodes.begin();
+  for ( std::vector< Communicator::NodeAddressingData >::iterator n = globalnodes.begin();
         n != globalnodes.end();
         ++n )
   {
@@ -374,7 +374,7 @@ get_children( const index node_id, const DictionaryDatum& params, const bool inc
   LocalChildList localnodes( *subnet );
   ArrayDatum result;
 
-  vector< Communicator::NodeAddressingData > globalnodes;
+  std::vector< Communicator::NodeAddressingData > globalnodes;
   if ( params->empty() )
   {
     nest::Communicator::communicate( localnodes, globalnodes, include_remotes );
@@ -384,7 +384,7 @@ get_children( const index node_id, const DictionaryDatum& params, const bool inc
     nest::Communicator::communicate( localnodes, globalnodes, params, include_remotes );
   }
   result.reserve( globalnodes.size() );
-  for ( vector< Communicator::NodeAddressingData >::iterator n = globalnodes.begin();
+  for ( std::vector< Communicator::NodeAddressingData >::iterator n = globalnodes.begin();
         n != globalnodes.end();
         ++n )
   {

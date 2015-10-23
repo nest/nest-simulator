@@ -153,7 +153,7 @@ NodeManager::reinit_nodes()
     {
       SiblingContainer* const c = dynamic_cast< SiblingContainer* >( node );
       assert( c );
-      for ( vector< Node* >::iterator it = c->begin(); it != c->end(); ++it )
+      for ( std::vector< Node* >::iterator it = c->begin(); it != c->end(); ++it )
       {
         ( *it )->init_state();
         ( *it )->set_buffers_initialized( false );
@@ -715,6 +715,15 @@ NodeManager::finalize_nodes()
     }
   }
 }
+  
+inline void
+NodeManager::prepare_node_( Node* n )
+{
+  // Frozen nodes are initialized and calibrated, so that they
+  // have ring buffers and can accept incoming spikes.
+  n->init_buffers();
+  n->calibrate();
+}
 
 void
 NodeManager::print( index p, int depth )
@@ -823,7 +832,7 @@ NodeManager::reset_nodes_state()
     {
       SiblingContainer* const c = dynamic_cast< SiblingContainer* >( node );
       assert( c );
-      for ( vector< Node* >::iterator it = c->begin(); it != c->end(); ++it )
+      for ( std::vector< Node* >::iterator it = c->begin(); it != c->end(); ++it )
       {
         ( *it )->init_state();
         ( *it )->set_buffers_initialized( false );

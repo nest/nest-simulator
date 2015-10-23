@@ -43,9 +43,6 @@
 
 namespace nest
 {
-
-using std::vector;
-
 /**
  * Function computing right-hand side of ODE for GSL solver.
  * @note Must be declared here so we can befriend it in class.

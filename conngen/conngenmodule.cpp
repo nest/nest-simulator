@@ -362,7 +362,7 @@ ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const
   {
     i->OStack.push( j );
     i->OStack.push( k );
-    for ( int m = 0; m < values.size(); ++m )
+    for ( size_t m = 0; m < values.size(); ++m )
     {
       i->OStack.push( values[ m ] );
     }

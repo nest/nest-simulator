@@ -114,7 +114,7 @@ public:
 
   virtual void trigger_update_weight( long_t vt_gid,
     thread t,
-    const vector< spikecounter >& dopa_spikes,
+    const std::vector< spikecounter >& dopa_spikes,
     double_t t_trig,
     const std::vector< ConnectorModel* >& cm ) = 0;
 
@@ -255,7 +255,7 @@ public:
   void
   trigger_update_weight( long_t vt_gid,
     thread t,
-    const vector< spikecounter >& dopa_spikes,
+    const std::vector< spikecounter >& dopa_spikes,
     double_t t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
@@ -389,7 +389,7 @@ public:
   void
   trigger_update_weight( long_t vt_gid,
     thread t,
-    const vector< spikecounter >& dopa_spikes,
+    const std::vector< spikecounter >& dopa_spikes,
     double_t t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
@@ -532,7 +532,7 @@ public:
   void
   trigger_update_weight( long_t vt_gid,
     thread t,
-    const vector< spikecounter >& dopa_spikes,
+    const std::vector< spikecounter >& dopa_spikes,
     double_t t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
@@ -566,7 +566,7 @@ public:
 // nested indefinitely
 // the logic in add_connection, however, assumes that these entries are
 // homogeneous connectors
-class HetConnector : public vector< ConnectorBase* >, public ConnectorBase
+class HetConnector : public std::vector< ConnectorBase* >, public ConnectorBase
 {
 
 public:

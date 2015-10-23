@@ -553,9 +553,9 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
 
     // collect all leaves in source subnet, then divergent-connect each leaf
     LocalLeafList local_sources( *source_comp );
-    vector< Communicator::NodeAddressingData > global_sources;
+    std::vector< Communicator::NodeAddressingData > global_sources;
     nest::Communicator::communicate( local_sources, global_sources );
-    for ( vector< Communicator::NodeAddressingData >::iterator src = global_sources.begin();
+    for ( std::vector< Communicator::NodeAddressingData >::iterator src = global_sources.begin();
           src != global_sources.end();
           ++src )
       divergent_connect( src->get_gid(), target_ids, weights, delays, syn );
@@ -733,9 +733,9 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
 
     // collect all leaves in source subnet, then divergent-connect each leaf
     LocalLeafList local_sources( *source_comp );
-    vector< Communicator::NodeAddressingData > global_sources;
+    std::vector< Communicator::NodeAddressingData > global_sources;
     nest::Communicator::communicate( local_sources, global_sources );
-    for ( vector< Communicator::NodeAddressingData >::iterator src = global_sources.begin();
+    for ( std::vector< Communicator::NodeAddressingData >::iterator src = global_sources.begin();
           src != global_sources.end();
           ++src )
       divergent_connect( src->get_gid(), pars, syn );
@@ -840,10 +840,10 @@ nest::ConnectionBuilderManager::random_divergent_connect( index source_id,
 
     // collect all leaves in source subnet, then divergent-connect each leaf
     LocalLeafList local_sources( *source_comp );
-    vector< Communicator::NodeAddressingData > global_sources;
+    std::vector< Communicator::NodeAddressingData > global_sources;
     nest::Communicator::communicate( local_sources, global_sources );
 
-    for ( vector< Communicator::NodeAddressingData >::iterator src = global_sources.begin();
+    for ( std::vector< Communicator::NodeAddressingData >::iterator src = global_sources.begin();
           src != global_sources.end();
           ++src )
       random_divergent_connect(
@@ -1351,7 +1351,7 @@ nest::ConnectionBuilderManager::random_convergent_connect( TokenArray source_ids
         ds = getValue< TokenArray >( delays.get( i ) );
       }
 
-      vector< index > chosen_source_ids( n );
+      std::vector< index > chosen_source_ids( n );
       std::set< long > ch_ids;
 
       long n_rnd = vsource_ids.size();
@@ -1381,7 +1381,7 @@ nest::ConnectionBuilderManager::random_convergent_connect( TokenArray source_ids
 
 void
 nest::ConnectionBuilderManager::trigger_update_weight( const long_t vt_id,
-  const vector< spikecounter >& dopa_spikes,
+  const std::vector< spikecounter >& dopa_spikes,
   const double_t t_trig )
 {
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )

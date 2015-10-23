@@ -263,7 +263,7 @@ nest::pp_pop_psc_delta::calibrate()
     for ( int_t j = 0; j < V_.len_eta_; j++ )
       S_.n_spikes_past_.push_back( 0 );
 
-    vector< double > ts;
+    std::vector< double > ts;
     ts.clear();
     for ( int_t j = 0; j < V_.len_eta_; j++ )
       ts.push_back( j * V_.h_ );

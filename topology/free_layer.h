@@ -119,7 +119,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     const index nodes_per_depth = this->global_size() / this->depth_;
     const index first_lid = this->nodes_[ 0 ]->get_lid();
 
-    for ( vector< Node* >::iterator i = this->local_begin(); i != this->local_end(); ++i )
+    for ( std::vector< Node* >::iterator i = this->local_begin(); i != this->local_end(); ++i )
     {
 
       // Nodes are grouped by depth. When lid % nodes_per_depth ==

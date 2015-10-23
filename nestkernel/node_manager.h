@@ -276,15 +276,6 @@ NodeManager::thread_lid_to_node( thread t, targetindex thread_local_id ) const
 }
 
 inline void
-NodeManager::prepare_node_( Node* n )
-{
-  // Frozen nodes are initialized and calibrated, so that they
-  // have ring buffers and can accept incoming spikes.
-  n->init_buffers();
-  n->calibrate();
-}
-
-inline void
 NodeManager::increment_n_gsd()
 {
   ++n_gsd_;
@@ -296,7 +287,7 @@ NodeManager::get_n_gsd()
   return n_gsd_;
 }
 
-inline const vector< Node* >&
+inline const std::vector< Node* >&
 NodeManager::get_nodes_on_thread(thread t) const
 {
   return nodes_vec_.at(t);

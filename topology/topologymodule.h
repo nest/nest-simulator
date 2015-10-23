@@ -23,11 +23,16 @@
 #ifndef TOPOLOGYMODULE_H
 #define TOPOLOGYMODULE_H
 
-#include "slimodule.h"
-#include "position.h"
-#include "ntree.h"
+// Includes from nestkernel:
 #include "exceptions.h"
+
+// Includes from sli:
+#include "slimodule.h"
+
+// Includes from topology:
 #include "generic_factory.h"
+#include "ntree.h"
+#include "position.h"
 
 namespace nest
 {

@@ -33,6 +33,7 @@
 
 #include "event.h"
 
+// Includes from nestkernel:
 #include "node.h"
 
 namespace nest

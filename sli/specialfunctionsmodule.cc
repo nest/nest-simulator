@@ -20,20 +20,27 @@
  *
  */
 
-#include "config.h" // has definition of HAVE_GSL
-#include <cmath>
 #include "specialfunctionsmodule.h"
+
+// C++ includes:
+#include <cmath>
+
+// Generated includes:
+#include "config.h" // has definition of HAVE_GSL
+
+// Includes from sli:
 #include "doubledatum.h" // Include the data-types we use!
 
 #ifdef HAVE_GSL
 
-#include <gsl/gsl_math.h>
+// External includes:
 #include <gsl/gsl_errno.h>
-#include <gsl/gsl_sf.h>
 #include <gsl/gsl_integration.h>
+#include <gsl/gsl_math.h>
+#include <gsl/gsl_sf.h>
+#include <gsl/gsl_sf_erf.h>   // as more and more special functions get
+#include <gsl/gsl_sf_gamma.h> // added, replace by <gsl/gsl_sf.h>
 #include <gsl/gsl_sf_lambert.h>
-#include <gsl/gsl_sf_gamma.h> // as more and more special functions get
-#include <gsl/gsl_sf_erf.h>   // added, replace by <gsl/gsl_sf.h>
 
 #endif
 

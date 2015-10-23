@@ -23,9 +23,11 @@
 #ifndef QUANTAL_STP_CONNECTION_H
 #define QUANTAL_STP_CONNECTION_H
 
-#include "connection.h"
-
+// Includes from librandom:
 #include "binomial_randomdev.h"
+
+// Includes from nestkernel:
+#include "connection.h"
 
 /* BeginDocumentation
   Name: quantal_stp_synapse - Probabilistic synapse model with short term plasticity.

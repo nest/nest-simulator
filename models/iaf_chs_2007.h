@@ -23,14 +23,17 @@
 #ifndef IAF_CHS_2007_H
 #define IAF_CHS_2007_H
 
-#include "nest_types.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
-#include "universal_data_logger.h"
-#include "recordables_map.h"
+// Includes from librandom:
 #include "normal_randomdev.h"
+
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
 namespace nest
 {

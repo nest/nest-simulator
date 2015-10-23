@@ -23,9 +23,12 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
+// Includes from librandom:
+#include "random_datums.h"
+
+// Includes from sli:
 #include "arraydatum.h"
 #include "dictdatum.h"
-#include "random_datums.h"
 
 namespace librandom
 {

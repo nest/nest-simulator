@@ -22,14 +22,18 @@
 
 #include "correlomatrix_detector.h"
 
-#include <numeric>
-#include <functional> // for bind2nd
+// C++ includes:
 #include <cmath>      // for less
+#include <functional> // for bind2nd
+#include <numeric>
 
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "arraydatum.h"
-#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

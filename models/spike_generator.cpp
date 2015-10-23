@@ -22,15 +22,19 @@
 
 #include "spike_generator.h"
 
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "booldatum.h"
-#include "arraydatum.h"
-#include "dictutils.h"
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "event_delivery_manager_impl.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "booldatum.h"
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

@@ -22,35 +22,43 @@
 
 #include "nestmodule.h"
 
+// C++ includes:
 #include <iostream>
 #include <sstream>
 
-#include "nest.h"
-#include "nest_types.h"
-#include "nest_datums.h"
-#include "nodelist.h"
-#include "interpret.h"
-#include "node.h"
-#include "subnet.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "booldatum.h"
-#include "arraydatum.h"
-#include "stringdatum.h"
-#include "tokenutils.h"
-#include "sliexceptions.h"
+// Includes from libnestutil:
+#include "logging.h"
+
+// Includes from librandom:
 #include "random_datums.h"
+
+// Includes from nestkernel:
 #include "communicator.h"
 #include "communicator_impl.h"
-#include "genericmodel.h"
 #include "conn_builder.h"
-
-#include "kernel_manager.h"
-#include "logging.h"
 #include "connection_builder_manager_impl.h"
+#include "genericmodel.h"
+#include "kernel_manager.h"
 #include "model_manager_impl.h"
+#include "nest.h"
+#include "nest_datums.h"
+#include "nest_types.h"
+#include "node.h"
+#include "nodelist.h"
+#include "subnet.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "booldatum.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "interpret.h"
+#include "sliexceptions.h"
+#include "stringdatum.h"
+#include "tokenutils.h"
 
 #ifdef _OPENMP
+// C includes:
 #include <omp.h>
 #endif
 

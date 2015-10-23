@@ -23,10 +23,15 @@
 #ifndef RANDOMDEV_H
 #define RANDOMDEV_H
 
+// C++ includes:
 #include <cassert>
-#include "randomgen.h"
-#include "dictdatum.h"
+
+// Includes from librandom:
 #include "librandom_exceptions.h"
+#include "randomgen.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 /**
  * @defgroup RandomDeviateGenerators Random Deviate Generators.

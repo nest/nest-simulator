@@ -23,13 +23,19 @@
 #ifndef NODE_MANAGER_H
 #define NODE_MANAGER_H
 
+// C++ includes:
 #include <vector>
 
-#include "dictdatum.h"
-#include "nest_types.h"
+// Includes from libnestutil:
 #include "manager_interface.h"
-#include "arraydatum.h"
+
+// Includes from nestkernel:
+#include "nest_types.h"
 #include "sparse_node_array.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dictdatum.h"
 
 namespace nest
 {

@@ -20,13 +20,21 @@
  *
  */
 
-#include <string>
 #include "nest_time.h"
-#include "token.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
+
+// C++ includes:
+#include <string>
+
+// Generated includes:
 #include "config.h"
+
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from sli:
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "token.h"
 
 using namespace nest;
 

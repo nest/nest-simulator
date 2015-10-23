@@ -19,15 +19,23 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "conngenmodule.h"
 
-#include "tokenutils.h"
+// Generated includes:
 #include "config.h"
-#include "conngen.h"
-#include "communicator.h"
+
+// Includes from conngen:
 #include "cg_connect.h"
-#include "stringdatum.h"
+#include "conngen.h"
+
+// Includes from nestkernel:
+#include "communicator.h"
+
+// Includes from sli:
 #include "lockptrdatum_impl.h"
+#include "stringdatum.h"
+#include "tokenutils.h"
 
 template class lockPTRDatum< ConnectionGenerator, &nest::ConnectionGeneratorType >;
 

@@ -22,15 +22,21 @@
 
 #include "ac_generator.h"
 
+// C++ includes:
 #include <cmath>
 
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+// Includes from libnestutil:
 #include "numerics.h"
-#include "kernel_manager.h"
+
+// Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

@@ -24,11 +24,13 @@
 
 #ifdef HAVE_MUSIC
 
+// External includes:
 #include <music.hh>
 
-#include "integerdatum.h"
-#include "doubledatum.h"
+// Includes from sli:
 #include "arraydatum.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------

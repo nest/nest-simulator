@@ -22,12 +22,15 @@
 
 #include "dc_generator.h"
 
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "kernel_manager.h"
+// Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------

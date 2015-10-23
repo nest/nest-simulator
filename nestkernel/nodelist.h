@@ -23,6 +23,7 @@
 #ifndef NODELIST_H
 #define NODELIST_H
 
+// Includes from nestkernel:
 #include "node.h"
 #include "subnet.h"
 

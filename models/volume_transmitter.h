@@ -23,11 +23,14 @@
 #ifndef VOLUME_TRANSMITTER_H
 #define VOLUME_TRANSMITTER_H
 
-#include "nest_types.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
+#include "event.h"
+#include "nest_types.h"
 #include "ring_buffer.h"
 #include "spikecounter.h"
+
+// Includes from sli:
 #include "namedatum.h"
 
 

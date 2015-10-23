@@ -21,13 +21,19 @@
  */
 
 #include "layer.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dictutils.h"
+#include "integerdatum.h"
+
+// Includes from topology:
 #include "free_layer.h"
 #include "grid_layer.h"
 #include "topology_names.h"
-#include "dictutils.h"
-#include "integerdatum.h"
-#include "exceptions.h"
-#include "kernel_manager.h"
 
 namespace nest
 {

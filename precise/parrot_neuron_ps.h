@@ -23,11 +23,14 @@
 #ifndef PARROT_NEURON_PS_H
 #define PARROT_NEURON_PS_H
 
-#include "nest_types.h"
-#include "event.h"
-#include "node.h"
-#include "slice_ring_buffer.h"
+// Includes from nestkernel:
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "node.h"
+
+// Includes from precise:
+#include "slice_ring_buffer.h"
 
 /* BeginDocumentation
 Name: parrot_neuron_ps - Neuron that repeats incoming spikes handling

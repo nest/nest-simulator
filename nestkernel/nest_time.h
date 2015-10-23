@@ -22,15 +22,20 @@
 
 #ifndef NEST_TIME_H
 #define NEST_TIME_H
-#include <string>
-#include <iostream>
+
+// C++ includes:
 #include <cassert>
-#include <limits>
 #include <cmath>
 #include <cstdlib>
+#include <iostream>
+#include <limits>
+#include <string>
 
-#include "nest_types.h"
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from nestkernel:
+#include "nest_types.h"
 
 class Token;
 

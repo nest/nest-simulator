@@ -20,17 +20,20 @@
  *
  */
 
+#include "sligraphics.h"
+
+// C++ includes:
 #include <cctype> // for isspace
 #include <cstdio>
 #include <iostream>
 
-#include "arraydatum.h"
-#include "stringdatum.h"
-#include "integerdatum.h"
+// Includes from sli:
 #include "aggregatedatum.h"
-#include "numericdatum.h"
+#include "arraydatum.h"
 #include "fdstream.h"
-#include "sligraphics.h"
+#include "integerdatum.h"
+#include "numericdatum.h"
+#include "stringdatum.h"
 
 
 /*   BeginDocumentation

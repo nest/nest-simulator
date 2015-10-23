@@ -23,8 +23,12 @@
 #ifndef LAYER_IMPL_H
 #define LAYER_IMPL_H
 
-#include "nest_datums.h"
 #include "layer.h"
+
+// Includes from nestkernel:
+#include "nest_datums.h"
+
+// Includes from topology:
 #include "grid_layer.h"
 #include "grid_mask.h"
 

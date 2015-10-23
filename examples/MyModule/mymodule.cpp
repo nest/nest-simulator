@@ -22,24 +22,28 @@
 
 #include "mymodule.h"
 
-// include necessary NEST headers
+// Generated includes:
 #include "config.h"
-#include "kernel_manager.h"
-#include "model.h"
-#include "dynamicloader.h"
-#include "genericmodel.h"
-#include "booldatum.h"
-#include "integerdatum.h"
-#include "tokenarray.h"
-#include "exceptions.h"
-#include "sliexceptions.h"
-#include "nestmodule.h"
-#include "connector_model_impl.h"
-#include "target_identifier.h"
 
 // include headers with your own stuff
-#include "pif_psc_alpha.h"
 #include "drop_odd_spike_connection.h"
+#include "pif_psc_alpha.h"
+
+// Includes from nestkernel:
+#include "connector_model_impl.h"
+#include "dynamicloader.h"
+#include "exceptions.h"
+#include "genericmodel.h"
+#include "kernel_manager.h"
+#include "model.h"
+#include "nestmodule.h"
+#include "target_identifier.h"
+
+// Includes from sli:
+#include "booldatum.h"
+#include "integerdatum.h"
+#include "sliexceptions.h"
+#include "tokenarray.h"
 
 // -- Interface to dynamic module loader ---------------------------------------
 

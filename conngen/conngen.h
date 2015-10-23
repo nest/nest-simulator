@@ -23,15 +23,20 @@
 #ifndef CONNGEN_H
 #define CONNGEN_H
 
+// C++ includes:
 #include <vector>
 
-#include "nest_types.h"
-#include "nest_names.h"
-
-#include "arraydatum.h"
-#include "stringdatum.h"
-#include "dictdatum.h"
+// Includes from conngen:
 #include "conngendatum.h"
+
+// Includes from nestkernel:
+#include "nest_names.h"
+#include "nest_types.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dictdatum.h"
+#include "stringdatum.h"
 
 namespace nest
 {

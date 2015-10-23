@@ -22,12 +22,20 @@
 
 #include "simulation_manager.h"
 
+// C includes:
 #include <sys/time.h>
+
+// C++ includes:
 #include <vector>
 
+// Includes from libnestutil:
 #include "compose.hpp"
+
+// Includes from nestkernel:
 #include "kernel_manager.h"
 #include "sibling_container.h"
+
+// Includes from sli:
 #include "dictutils.h"
 #include "psignal.h"
 

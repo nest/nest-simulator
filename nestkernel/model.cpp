@@ -22,12 +22,18 @@
 
 #include "model.h"
 
+// C++ includes:
 #include <algorithm>
 
-#include "exceptions.h"
-#include "dictutils.h"
+// Includes from libnestutil:
 #include "compose.hpp"
+
+// Includes from nestkernel:
+#include "exceptions.h"
 #include "kernel_manager.h"
+
+// Includes from sli:
+#include "dictutils.h"
 
 namespace nest
 {

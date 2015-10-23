@@ -21,13 +21,17 @@
  */
 
 #include "model_manager.h"
-#include "model_manager_impl.h"
 
-#include <vector>
-#include <iostream>
+// C++ includes:
 #include <algorithm>
+#include <iostream>
+#include <vector>
 
+// Includes from libnestutil:
 #include "compose.hpp"
+
+// Includes from nestkernel:
+#include "model_manager_impl.h"
 #include "proxynode.h"
 #include "sibling_container.h"
 #include "subnet.h"

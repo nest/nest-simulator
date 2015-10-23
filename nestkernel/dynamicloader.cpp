@@ -36,16 +36,24 @@
 
 #ifdef HAVE_LIBLTDL
 
+// External includes:
 #include <ltdl.h>
 
+// Generated includes:
 #include "sliconfig.h"
-#include "network.h"
-#include "interpret.h"
-#include "integerdatum.h"
-#include "stringdatum.h"
-#include "kernel_manager.h"
+
+// Includes from libnestutil:
 #include "logging.h"
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
 #include "model.h"
+#include "network.h"
+
+// Includes from sli:
+#include "integerdatum.h"
+#include "interpret.h"
+#include "stringdatum.h"
 
 
 namespace nest

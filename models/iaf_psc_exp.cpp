@@ -22,18 +22,24 @@
 
 #include "iaf_psc_exp.h"
 
+// C++ includes:
 #include <limits>
 
-#include "exceptions.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+// Includes from libnestutil:
 #include "numerics.h"
-#include "universal_data_logger_impl.h"
 #include "propagator_stability.h"
+
+// Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map

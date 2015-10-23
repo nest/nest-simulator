@@ -20,9 +20,14 @@
  *
  */
 
+// Generated includes:
 #include "config.h"
-#include "interpret.h"
+
+// Includes from nest:
 #include "neststartup.h"
+
+// Includes from sli:
+#include "interpret.h"
 
 int
 main( int argc, char* argv[] )

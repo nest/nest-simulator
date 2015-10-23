@@ -23,11 +23,15 @@
 #ifndef SIBLING_CONTAINER_H
 #define SIBLING_CONTAINER_H
 
-#include <vector>
+// C++ includes:
 #include <string>
+#include <vector>
 
+// Includes from nestkernel:
 #include "nest_types.h"
 #include "node.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 
 namespace nest

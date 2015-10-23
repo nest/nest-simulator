@@ -22,21 +22,28 @@
 
 #include "topology.h"
 
-#include <string>
+// C++ includes:
 #include <ostream>
+#include <string>
 
-#include "nest.h"
-#include "kernel_manager.h"
-#include "sliexceptions.h"
-#include "exceptions.h"
+// Includes from libnestutil:
 #include "logging.h"
-#include "node.h"
-#include "grid_layer.h"
 
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest.h"
+#include "node.h"
+
+// Includes from sli:
+#include "sliexceptions.h"
+
+// Includes from topology:
+#include "grid_layer.h"
+#include "layer.h"
 #include "topologymodule.h" // LayerException, TopologyModule::create_parameter,
                             // TopologyModule::create_mask
 
-#include "layer.h"
 
 namespace nest
 {

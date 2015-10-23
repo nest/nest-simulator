@@ -23,17 +23,22 @@
 #ifndef EVENT_DELIVERY_MANAGER_H
 #define EVENT_DELIVERY_MANAGER_H
 
-#include <vector>
+// C++ includes:
 #include <cassert>
+#include <vector>
 
+// Includes from libnestutil:
 #include "manager_interface.h"
 
-#include "nest_types.h"
-#include "nest_time.h"
-#include "dictdatum.h"
-#include "node.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "communicator.h" // OffGridSpike
+#include "event.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {

@@ -23,25 +23,35 @@
 #ifndef COMMUNICATOR_H
 #define COMMUNICATOR_H
 
-#include <vector>
-#include <cassert>
-#include <numeric>
-
-#include "config.h"
-#include "nest_types.h"
-#include <iostream>
+// C includes:
 #include <unistd.h>
-#include <limits>
 
-#include "dictdatum.h"
+// C++ includes:
+#include <cassert>
+#include <iostream>
+#include <limits>
+#include <numeric>
+#include <vector>
+
+// Generated includes:
+#include "config.h"
+
+// Includes from nestkernel:
+#include "nest_types.h"
 #include "nodelist.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 #ifdef HAVE_MPI
 // Do NOT include mpi.h in this header file, otherwise we get into
 // trouble on the Blue Gene/L. mpi.h is included in communicator_impl.h
 
 #ifdef HAVE_MUSIC
+// External include
 #include <music.hh>
+
+// Includes from nestkernel:
 #include "music_event_handler.h"
 #endif
 

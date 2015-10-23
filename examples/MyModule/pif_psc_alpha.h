@@ -23,12 +23,15 @@
 #ifndef PIF_PSC_ALPHA_H
 #define PIF_PSC_ALPHA_H
 
-#include "nest_types.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 
 namespace mynest

@@ -23,10 +23,13 @@
 #ifndef NEST_TYPES_H
 #define NEST_TYPES_H
 
-#include <cstddef>
-#include <climits>
+// C++ includes:
 #include <cfloat>
+#include <climits>
+#include <cstddef>
 #include <limits>
+
+// Generated includes:
 #include "config.h"
 
 /**

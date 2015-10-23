@@ -23,10 +23,15 @@
 #ifndef MPI_MANAGER_H
 #define MPI_MANAGER_H
 
-#include "nest_types.h"
+// Includes from libnestutil:
 #include "manager_interface.h"
-#include "dictdatum.h"
+
+// Includes from nestkernel:
 #include "communicator.h"
+#include "nest_types.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {

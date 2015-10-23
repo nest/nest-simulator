@@ -22,13 +22,19 @@
 
 #include "mpi_manager.h"
 
+// Includes from libnestutil:
 #include "compose.hpp"
-#include "communicator.h"
-#include "dictutils.h"
-#include "kernel_manager.h"
 #include "logging.h"
 
+// Includes from nestkernel:
+#include "communicator.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dictutils.h"
+
 #ifdef HAVE_MPI
+// C includes:
 #include <mpi.h>
 
 extern MPI_Comm comm; // for now---should be moved from communicator.cpp
@@ -81,7 +87,7 @@ nest::MPIManager::finalize()
 }
 
 void
-nest::MPIManager::set_status( const DictionaryDatum& d )
+nest::MPIManager::set_status( const DictionaryDatum& )
 {
 }
 

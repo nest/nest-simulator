@@ -30,9 +30,11 @@
 #ifndef NEST_TIME_CONVERTER_H
 #define NEST_TIME_CONVERTER_H
 
+#include "nest_types.h"
+
 namespace nest
 {
-
+class Time;
 /**
  * Class to convert times from one representation to another.
  * Createing an object of TimeCOnverter at a current time representation

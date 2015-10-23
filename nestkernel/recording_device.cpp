@@ -22,20 +22,28 @@
 
 #include "recording_device.h"
 
-#include <iostream> // using cerr for error message.
+// C++ includes:
 #include <iomanip>
+#include <iostream> // using cerr for error message.
 
-#include "compose.hpp"
-#include "dictutils.h"
-#include "iostreamdatum.h"
-#include "arraydatum.h"
+// Generated includes:
 #include "config.h"
-#include "exceptions.h"
-#include "sliexceptions.h"
-#include "fdstream.h"
-#include "kernel_manager.h"
+
+// Includes from libnestutil:
+#include "compose.hpp"
 #include "logging.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "vp_manager_impl.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dictutils.h"
+#include "fdstream.h"
+#include "iostreamdatum.h"
+#include "sliexceptions.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

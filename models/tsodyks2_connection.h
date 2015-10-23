@@ -78,8 +78,10 @@
  * GenericConnector.
  */
 
+// C++ includes:
 #include <cmath>
 
+// Includes from nestkernel:
 #include "connection.h"
 
 namespace nest

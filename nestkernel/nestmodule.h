@@ -23,13 +23,15 @@
 #ifndef NESTMODULE_H
 #define NESTMODULE_H
 
-#include "slimodule.h"
-#include "slitype.h"
-#include "slifunction.h"
-#include "dict.h"
-
+// Includes from nestkernel:
 #include "event.h"
 #include "exceptions.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "slifunction.h"
+#include "slimodule.h"
+#include "slitype.h"
 
 namespace nest
 {

@@ -22,8 +22,10 @@
 
 #include "delay_checker.h"
 
+// C++ includes:
 #include <algorithm> // min, max
 
+// Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest_timeconverter.h"

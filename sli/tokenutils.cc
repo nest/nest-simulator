@@ -21,16 +21,20 @@
  */
 
 #include "tokenutils.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "namedatum.h"
-#include "booldatum.h"
+
+// C++ includes:
+#include <cmath> // for sqrt()
 #include <string>
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "booldatum.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "namedatum.h"
+#include "sliexceptions.h"
 #include "stringdatum.h"
 #include "symboldatum.h"
-#include "arraydatum.h"
-#include <cmath> // for sqrt()
-#include "sliexceptions.h"
 
 template <>
 long

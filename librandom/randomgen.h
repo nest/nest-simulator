@@ -191,9 +191,11 @@
  *         small simulations anyway) (WS, 01.05.15; see #947).
  */
 
-#include <vector>
+// C++ includes:
 #include <cmath>
+#include <vector>
 
+// Includes from libnestutil:
 #include "lockptr.h"
 
 /**

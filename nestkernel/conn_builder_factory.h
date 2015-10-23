@@ -23,11 +23,16 @@
 #ifndef CONN_BUILDER_FACTORY_H
 #define CONN_BUILDER_FACTORY_H
 
+// C++ includes:
 #include <map>
-#include "name.h"
+
+// Includes from nestkernel:
+#include "conn_builder.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "lockptrdatum.h"
-#include "conn_builder.h"
+#include "name.h"
 
 namespace nest
 {

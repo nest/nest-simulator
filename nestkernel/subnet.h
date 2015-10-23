@@ -23,12 +23,16 @@
 #ifndef SUBNET_H
 #define SUBNET_H
 
-#include <vector>
+// C++ includes:
 #include <string>
+#include <vector>
 
-#include "node.h"
-#include "dictdatum.h"
+// Includes from nestkernel:
 #include "multirange.h"
+#include "node.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 /* BeginDocumentation
 

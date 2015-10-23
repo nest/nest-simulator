@@ -23,6 +23,7 @@
 #ifndef GRID_LAYER_H
 #define GRID_LAYER_H
 
+// Includes from topology:
 #include "layer.h"
 
 namespace nest

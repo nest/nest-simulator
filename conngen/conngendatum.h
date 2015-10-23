@@ -23,10 +23,12 @@
 #ifndef CONNGENDATUM_H
 #define CONNGENDATUM_H
 
-#include "slitype.h"
-#include "lockptrdatum.h"
-
+// External includes:
 #include <neurosim/connection_generator.h>
+
+// Includes from sli:
+#include "lockptrdatum.h"
+#include "slitype.h"
 
 typedef std::vector< ConnectionGenerator::ClosedInterval > RangeSet;
 typedef ConnectionGenerator::ClosedInterval Range;

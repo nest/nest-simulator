@@ -23,18 +23,22 @@
 #ifndef KERNEL_MANAGER_H
 #define KERNEL_MANAGER_H
 
-#include "vp_manager.h"
+// Includes from libnestutil:
 #include "logging_manager.h"
-#include "io_manager.h"
-#include "connection_builder_manager.h"
-#include "node_manager.h"
-#include "simulation_manager.h"
-#include "modelrange_manager.h"
-#include "model_manager.h"
-#include "event_delivery_manager.h"
-#include "mpi_manager.h"
-#include "rng_manager.h"
 
+// Includes from nestkernel:
+#include "connection_builder_manager.h"
+#include "event_delivery_manager.h"
+#include "io_manager.h"
+#include "model_manager.h"
+#include "modelrange_manager.h"
+#include "mpi_manager.h"
+#include "node_manager.h"
+#include "rng_manager.h"
+#include "simulation_manager.h"
+#include "vp_manager.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 
 // clang-format off

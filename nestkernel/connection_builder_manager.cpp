@@ -22,30 +22,33 @@
 
 #include "connection_builder_manager.h"
 
+// C++ includes:
 #include <cassert>
-#include <set>
 #include <cmath>
+#include <set>
 
+// Includes from libnestutil:
 #include "compose.hpp"
-#include "dictutils.h"
-#include "conn_builder_factory.h"
-#include "conn_builder.h"
-
 #include "logging.h"
-#include "kernel_manager.h"
 
+// Includes from nestkernel:
 #include "communicator.h"
 #include "communicator_impl.h"
-
+#include "conn_builder.h"
+#include "conn_builder_factory.h"
+#include "connector_base.h"
+#include "delay_checker.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
 #include "node.h"
 #include "subnet.h"
-#include "nest_names.h"
-#include "exceptions.h"
+
+// Includes from sli:
+#include "dictutils.h"
+#include "sliexceptions.h"
 #include "token.h"
 #include "tokenutils.h"
-#include "connector_base.h"
-#include "sliexceptions.h"
-#include "delay_checker.h"
 
 #ifdef USE_PMA
 #include "allocator.h"

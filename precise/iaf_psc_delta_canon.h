@@ -23,14 +23,19 @@
 #ifndef IAF_PSC_DELTA_CANON_H
 #define IAF_PSC_DELTA_CANON_H
 
+// Generated includes:
 #include "config.h"
-#include "nest_types.h"
-#include "event.h"
-#include "node.h"
-#include "slice_ring_buffer.h"
-#include "ring_buffer.h"
+
+// Includes from nestkernel:
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "node.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
+
+// Includes from precise:
+#include "slice_ring_buffer.h"
 
 namespace nest
 {

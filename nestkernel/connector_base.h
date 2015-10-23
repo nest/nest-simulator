@@ -23,15 +23,19 @@
 #ifndef CONNECTOR_BASE_H
 #define CONNECTOR_BASE_H
 
+// C++ includes:
 #include <vector>
 
-#include "node.h"
-#include "event.h"
-#include "dictutils.h"
-#include "spikecounter.h"
-#include "nest_names.h"
+// Includes from nestkernel:
 #include "connector_model.h"
+#include "event.h"
 #include "nest_datums.h"
+#include "nest_names.h"
+#include "node.h"
+#include "spikecounter.h"
+
+// Includes from sli:
+#include "dictutils.h"
 
 #ifdef _OPENMP
 #include <omp.h>

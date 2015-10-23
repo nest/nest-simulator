@@ -23,12 +23,18 @@
 #ifndef CONNGENMODULE_H
 #define CONNGENMODULE_H
 
+// C++ includes:
 #include <string>
 
-#include "slimodule.h"
+// Includes from conngen:
 #include "conngendatum.h"
+
+// Includes from nestkernel:
 #include "modelrange.h"
+
+// Includes from sli:
 #include "dictdatum.h"
+#include "slimodule.h"
 
 namespace nest
 {

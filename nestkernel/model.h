@@ -23,12 +23,18 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <string>
+// C++ includes:
 #include <new>
+#include <string>
 #include <vector>
 
-#include "node.h"
+// Includes from libnestutil:
 #include "allocator.h"
+
+// Includes from nestkernel:
+#include "node.h"
+
+// Includes from sli:
 #include "dictutils.h"
 
 namespace nest

@@ -23,16 +23,20 @@
 #ifndef MULTIMETER_H
 #define MULTIMETER_H
 
+// C++ includes:
 #include <vector>
 
-#include "kernel_manager.h"
-#include "recording_device.h"
-#include "name.h"
-#include "node.h"
+// Includes from nestkernel:
 #include "connection.h"
-#include "dictutils.h"
 #include "exceptions.h"
+#include "kernel_manager.h"
+#include "node.h"
+#include "recording_device.h"
 #include "sibling_container.h"
+
+// Includes from sli:
+#include "dictutils.h"
+#include "name.h"
 
 /*BeginDocumentation
 Name: multimeter - Device to record analog data from neurons.

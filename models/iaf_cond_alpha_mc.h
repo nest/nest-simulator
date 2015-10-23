@@ -23,23 +23,29 @@
 #ifndef IAF_COND_ALPHA_MC_H
 #define IAF_COND_ALPHA_MC_H
 
+// Generated includes:
 #include "config.h"
 
 #ifdef HAVE_GSL
 
+// C++ includes:
 #include <vector>
 
+// C includes:
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
 
-#include "nest_types.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
-#include "universal_data_logger.h"
+#include "event.h"
+#include "nest_types.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "name.h"
 

@@ -23,36 +23,42 @@
 /*
     Definitions for the SLI Interpreter class
 */
-#include <functional>
+
+#include "interpret.h"
+
+// C++ includes:
 #include <algorithm>
 #include <ctime>
-#include <string>
-#include "numerics.h"
 #include <exception>
-#include "psignal.h"
-#include "interpret.h"
-#include "scanner.h"
-#include "parser.h"
-#include "functiondatum.h"
-#include "booldatum.h"
-#include "namedatum.h"
-//#include "arraydatum.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-#include "dictstack.h"
-#include "functional.h"
-#include "stringdatum.h"
-#include "iostreamdatum.h"
-#include "dictdatum.h"
-#include "tokenutils.h"
-#include "dictutils.h"
-#include "triedatum.h"
+#include <fstream>
+#include <functional>
+#include <sstream>
+#include <string>
+
+// Generated includes:
 #include "config.h"
 
+// Includes from libnestutil:
 #include "compose.hpp"
+#include "numerics.h"
 
-#include <sstream>
-#include <fstream>
+// Includes from sli:
+#include "booldatum.h"
+#include "dictdatum.h"
+#include "dictstack.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "functional.h"
+#include "functiondatum.h"
+#include "integerdatum.h"
+#include "iostreamdatum.h"
+#include "namedatum.h"
+#include "parser.h"
+#include "psignal.h"
+#include "scanner.h"
+#include "stringdatum.h"
+#include "tokenutils.h"
+#include "triedatum.h"
 
 #ifdef _OPENMP
 #include <omp.h>

@@ -22,18 +22,24 @@
 
 #include "spin_detector.h"
 
-#include <numeric> 
+// C++ includes:
+#include <numeric>
 
+// Includes from libnestutil:
 #include "compose.hpp"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "arraydatum.h"
-#include "sibling_container.h"
 #include "logging.h"
-#include "kernel_manager.h"
+
+// Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
+#include "sibling_container.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 nest::spin_detector::spin_detector()
   : Node()

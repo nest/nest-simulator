@@ -19,14 +19,19 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifdef HAVE_MUSIC
 
 #include "music_event_handler.h"
-#include "nest_types.h"
-#include "event.h"
-#include "communicator.h"
-#include "kernel_manager.h"
+
+#ifdef HAVE_MUSIC
+
+// Includes from libnestutil:
 #include "logging.h"
+
+// Includes from nestkernel:
+#include "communicator.h"
+#include "event.h"
+#include "kernel_manager.h"
+#include "nest_types.h"
 
 namespace nest
 {

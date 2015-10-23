@@ -22,10 +22,11 @@
 
 #include "universal_data_logger.h"
 
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
 #include "nest_time.h"
 #include "node.h"
-#include "kernel_manager.h"
-#include "event_delivery_manager_impl.h"
 
 
 template < typename HostNode >

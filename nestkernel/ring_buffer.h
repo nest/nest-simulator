@@ -22,12 +22,15 @@
 
 #ifndef RING_BUFFER_H
 #define RING_BUFFER_H
-#include <vector>
-#include <list>
-#include "nest_types.h"
-#include "nest_time.h"
 
+// C++ includes:
+#include <list>
+#include <vector>
+
+// Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest_time.h"
+#include "nest_types.h"
 
 namespace nest
 {

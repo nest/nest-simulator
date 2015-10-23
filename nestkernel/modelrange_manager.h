@@ -23,10 +23,15 @@
 #ifndef MODELRANGEMANAGER_H
 #define MODELRANGEMANAGER_H
 
+// C++ includes:
 #include <vector>
-#include "nest_types.h"
-#include "modelrange.h"
+
+// Includes from libnestutil:
 #include "manager_interface.h"
+
+// Includes from nestkernel:
+#include "modelrange.h"
+#include "nest_types.h"
 
 namespace nest
 {

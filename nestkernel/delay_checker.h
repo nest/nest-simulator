@@ -23,7 +23,10 @@
 #ifndef DELAY_CHECKER_H
 #define DELAY_CHECKER_H
 
+// Includes from nestkernel:
 #include "nest_time.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 
 namespace nest

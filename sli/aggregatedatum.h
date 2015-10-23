@@ -22,9 +22,15 @@
 
 #ifndef AGGREGATEDATUM_H
 #define AGGREGATEDATUM_H
-#include "datum.h"
-#include "allocator.h"
+
+// Generated includes:
 #include "config.h"
+
+// Includes from libnestutil:
+#include "allocator.h"
+
+// Includes from sli:
+#include "datum.h"
 
 /*
     Datum template for aggregate data types.

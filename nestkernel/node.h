@@ -23,19 +23,23 @@
 #ifndef NODE_H
 #define NODE_H
 
+// C++ includes:
 #include <bitset>
-#include <string>
-#include <sstream>
-#include <vector>
 #include <deque>
+#include <sstream>
+#include <string>
 #include <utility>
+#include <vector>
 
-#include "nest_types.h"
-#include "nest_time.h"
-#include "nest_names.h"
-#include "dictdatum.h"
-#include "histentry.h"
+// Includes from nestkernel:
 #include "event.h"
+#include "histentry.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 /** @file node.h
  * Declarations for base class Node

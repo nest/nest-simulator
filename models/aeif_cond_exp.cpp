@@ -24,23 +24,27 @@
 
 #ifdef HAVE_GSL_1_11
 
-#include <limits>
-
+// C++ includes:
 #include <cmath>
+#include <cstdio>
 #include <iomanip>
 #include <iostream>
-#include <cstdio>
+#include <limits>
 
-#include "nest_names.h"
-#include "universal_data_logger_impl.h"
-#include "exceptions.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+// Includes from libnestutil:
 #include "numerics.h"
 
+// Includes from nestkernel:
+#include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_names.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map

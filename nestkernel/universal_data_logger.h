@@ -23,12 +23,14 @@
 #ifndef UNIVERSAL_DATA_LOGGER_H
 #define UNIVERSAL_DATA_LOGGER_H
 
-#include "nest_types.h"
-#include "event.h"
-#include "recordables_map.h"
-#include "nest_time.h"
-
+// C++ includes:
 #include <vector>
+
+// Includes from nestkernel:
+#include "event.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "recordables_map.h"
 
 namespace nest
 {

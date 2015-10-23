@@ -22,15 +22,19 @@
 
 #include "communicator.h"
 
-#include "kernel_manager.h"
-#include "mpi_manager_impl.h"
+#include "config.h"
 
 /* To avoid problems on BlueGene/L, mpi.h MUST be the
-   first included file after config.h.
+ first included file after config.h.
  */
 #ifdef HAVE_MPI
+// C includes:
 #include <mpi.h>
 #endif /* #ifdef HAVE_MPI */
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
+#include "mpi_manager_impl.h"
 
 #ifdef HAVE_MPI
 

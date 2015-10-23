@@ -22,14 +22,19 @@
 
 #include "event_delivery_manager.h"
 
-#include <algorithm>
+// C++ includes:
+#include <algorithm> // rotate
 
-#include "dictutils.h"
+// Includes from libnestutil:
 #include "logging.h"
 
+// Includes from nestkernel:
 #include "kernel_manager.h"
-#include "vp_manager_impl.h"
 #include "mpi_manager_impl.h"
+#include "vp_manager_impl.h"
+
+// Includes from sli:
+#include "dictutils.h"
 
 namespace nest
 {

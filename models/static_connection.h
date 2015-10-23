@@ -42,6 +42,7 @@
 #ifndef STATICCONNECTION_H
 #define STATICCONNECTION_H
 
+// Includes from nestkernel:
 #include "connection.h"
 
 namespace nest

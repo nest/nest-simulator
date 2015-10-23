@@ -20,24 +20,32 @@
  *
  */
 
-#include "communicator.h"
+#include "config.h"
 
 /* To avoid problems on BlueGene/L, mpi.h MUST be the
-   first included file after config.h.
-*/
+ first included file after config.h.
+ */
 #ifdef HAVE_MPI
 #include <mpi.h>
 #endif /* #ifdef HAVE_MPI */
 
+#include "communicator.h"
+
+// C++ includes:
 #include <limits>
 #include <numeric>
-#include "stopwatch.h"
-#include "network.h" // quit_by_error, get_exitcode
-#include "kernel_manager.h"
-#include "communicator_impl.h"
 
-#include "dictutils.h"
+// Includes from libnestutil:
+#include "stopwatch.h"
+
+// Includes from nestkernel:
+#include "communicator_impl.h"
+#include "kernel_manager.h"
+#include "network.h"
 #include "nodelist.h"
+
+// Includes from sli:
+#include "dictutils.h"
 
 // MDJ#include "kernel_manager.h"
 

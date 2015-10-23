@@ -19,19 +19,28 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include <cassert>
+
 #include "filesystem.h"
-#include "arraydatum.h"
-#include "stringdatum.h"
-#include <errno.h>
+
+// C includes:
 #include <dirent.h>
+#include <errno.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <fstream>
+#include <unistd.h>
+
+// C++ includes:
+#include <cassert>
 #include <ctime>
+#include <fstream>
+
+// Includes from libnestutil:
 #include "compose.hpp"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "stringdatum.h"
 
 
 void

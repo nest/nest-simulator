@@ -23,16 +23,22 @@
 #ifndef IAF_PSC_ALPHA_CANON_H
 #define IAF_PSC_ALPHA_CANON_H
 
+// C++ includes:
 #include <vector>
 
+// Generated includes:
 #include "config.h"
-#include "nest_types.h"
+
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "ring_buffer.h"
-#include "slice_ring_buffer.h"
-#include "connection.h"
 #include "universal_data_logger.h"
+
+// Includes from precise:
+#include "slice_ring_buffer.h"
 
 /*BeginDocumentation
 Name: iaf_psc_alpha_canon - Leaky integrate-and-fire neuron

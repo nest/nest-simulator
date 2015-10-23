@@ -23,16 +23,20 @@
 #ifndef CONNECTION_CREATOR_H
 #define CONNECTION_CREATOR_H
 
+// C++ includes:
 #include <vector>
 
-#include "position.h"
-#include "topologymodule.h"
-#include "topology_names.h"
-#include "vose.h"
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
+// Includes from topology:
 #include "mask.h"
 #include "parameter.h"
+#include "position.h"
 #include "selector.h"
-#include "kernel_manager.h"
+#include "topology_names.h"
+#include "topologymodule.h"
+#include "vose.h"
 
 namespace nest
 {

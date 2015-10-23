@@ -22,14 +22,19 @@
 
 #include "noise_generator.h"
 
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include "kernel_manager.h"
-#include "event_delivery_manager_impl.h"
+// Includes from libnestutil:
 #include "logging.h"
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

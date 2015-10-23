@@ -22,6 +22,7 @@
 
 #include "multimeter.h"
 
+// Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 
 namespace nest

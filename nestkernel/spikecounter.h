@@ -35,6 +35,7 @@
 #ifndef SPIKECOUNTER_H
 #define SPIKECOUNTER_H
 
+// Includes from nestkernel:
 #include "nest_types.h"
 
 namespace nest

@@ -22,7 +22,10 @@
 
 #include "model_manager.h"
 
+// Includes from libnestutil:
 #include "compose.hpp"
+
+// Includes from nestkernel:
 #include "kernel_manager.h"
 
 

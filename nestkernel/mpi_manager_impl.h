@@ -25,6 +25,7 @@
 
 #include "mpi_manager.h"
 
+// Includes from nestkernel:
 #include "kernel_manager.h"
 
 inline nest::thread

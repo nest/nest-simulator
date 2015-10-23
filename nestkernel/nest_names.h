@@ -23,6 +23,7 @@
 #ifndef NEST_NAMES_H
 #define NEST_NAMES_H
 
+// Includes from sli:
 #include "name.h"
 
 namespace nest

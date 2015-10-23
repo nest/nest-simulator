@@ -22,14 +22,18 @@
 
 #include "correlospinmatrix_detector.h"
 
+// C++ includes:
+#include <cmath>
+#include <functional>
 #include <numeric>
-#include <functional> // for bind2nd
-#include <cmath>      // for less
 
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "arraydatum.h"
-#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

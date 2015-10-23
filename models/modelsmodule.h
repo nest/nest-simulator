@@ -23,8 +23,10 @@
 #ifndef MODELSMODULE_H
 #define MODELSMODULE_H
 
+// C++ includes:
 #include <string>
 
+// Includes from sli:
 #include "slimodule.h"
 
 namespace nest

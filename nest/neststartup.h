@@ -23,14 +23,19 @@
 #ifndef NEST_STARTUP_H
 #define NEST_STARTUP_H
 
+// Generated includes:
 #include "config.h"
 
 #if defined( HAVE_LIBNEUROSIM ) && defined( _IS_PYNEST )
 
+// External includes:
 #include <neurosim/pyneurosim.h>
 
-#include "datum.h"
+// Includes from conngen:
 #include "conngenmodule.h"
+
+// Includes from sli:
+#include "datum.h"
 
 #define CYTHON_isConnectionGenerator( x ) PNS::isConnectionGenerator( x )
 Datum* CYTHON_unpackConnectionGeneratorDatum( PyObject* );

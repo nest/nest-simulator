@@ -23,15 +23,23 @@
 #ifndef NEST_H
 #define NEST_H
 
+// C++ includes:
 #include <ostream>
 
-#include "nest_types.h"
-#include "nest_time.h"
-#include "nest_datums.h"
-#include "randomgen.h"
-#include "dictdatum.h"
-#include "arraydatum.h"
+// Includes from libnestutil:
 #include "logging.h"
+
+// Includes from librandom:
+#include "randomgen.h"
+
+// Includes from nestkernel:
+#include "nest_datums.h"
+#include "nest_time.h"
+#include "nest_types.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dictdatum.h"
 
 namespace nest
 {

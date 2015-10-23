@@ -23,9 +23,14 @@
 #ifndef SIMULATION_MANAGER_H
 #define SIMULATION_MANAGER_H
 
-#include "nest_types.h"
-#include "nest_time.h"
+// Includes from libnestutil:
 #include "manager_interface.h"
+
+// Includes from nestkernel:
+#include "nest_time.h"
+#include "nest_types.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 
 namespace nest

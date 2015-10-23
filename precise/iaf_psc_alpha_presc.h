@@ -23,14 +23,18 @@
 #ifndef IAF_PSC_ALPHA_PRESC_H
 #define IAF_PSC_ALPHA_PRESC_H
 
+// C++ includes:
 #include <vector>
 
+// Generated includes:
 #include "config.h"
-#include "nest_types.h"
+
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "ring_buffer.h"
-#include "connection.h"
 #include "universal_data_logger.h"
 
 /*BeginDocumentation

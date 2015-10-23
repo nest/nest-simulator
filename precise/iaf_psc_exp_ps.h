@@ -23,17 +23,23 @@
 #ifndef IAF_PSC_EXP_PS_H
 #define IAF_PSC_EXP_PS_H
 
+// C++ includes:
 #include <vector>
 
+// Generated includes:
 #include "config.h"
-#include "nest_types.h"
-#include "event.h"
-#include "node.h"
-#include "ring_buffer.h"
-#include "slice_ring_buffer.h"
+
+// Includes from nestkernel:
 #include "connection.h"
-#include "universal_data_logger.h"
+#include "event.h"
+#include "nest_types.h"
+#include "node.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
+
+// Includes from precise:
+#include "slice_ring_buffer.h"
 
 /*BeginDocumentation
 Name: iaf_psc_exp_ps - Leaky integrate-and-fire neuron

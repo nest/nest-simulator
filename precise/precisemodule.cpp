@@ -34,21 +34,25 @@
 
 #include "precisemodule.h"
 
+// C++ includes:
 #include <string>
 
+// Generated includes:
 #include "config.h"
-#include "kernel_manager.h"
-#include "model_manager_impl.h"
-#include "model.h"
-#include "genericmodel.h"
 
-// Node headers
-#include "iaf_psc_delta_canon.h"
+// Includes from nestkernel:
+#include "genericmodel.h"
+#include "kernel_manager.h"
+#include "model.h"
+#include "model_manager_impl.h"
+
+// Includes from precise:
 #include "iaf_psc_alpha_canon.h"
 #include "iaf_psc_alpha_presc.h"
+#include "iaf_psc_delta_canon.h"
 #include "iaf_psc_exp_ps.h"
-#include "poisson_generator_ps.h"
 #include "parrot_neuron_ps.h"
+#include "poisson_generator_ps.h"
 
 namespace nest
 {

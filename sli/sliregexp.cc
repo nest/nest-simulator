@@ -21,13 +21,17 @@
  */
 
 #include "sliregexp.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
+
+// C includes:
+#include <regex.h>
+
+// Includes from sli:
 #include "arraydatum.h"
 #include "dictdatum.h"
-#include "stringdatum.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 #include "lockptrdatum_impl.h"
-#include <regex.h>
+#include "stringdatum.h"
 
 
 SLIType RegexpModule::RegexType;

@@ -23,6 +23,7 @@
 #ifndef GINZBURG_NEURON_H
 #define GINZBURG_NEURON_H
 
+// Includes from models:
 #include "binary_neuron.h"
 #include "binary_neuron_impl.h"
 

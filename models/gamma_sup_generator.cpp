@@ -22,16 +22,22 @@
 
 #include "gamma_sup_generator.h"
 
+// C++ includes:
 #include <algorithm>
 #include <limits>
 
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
+// Includes from libnestutil:
 #include "numerics.h"
-#include "datum.h"
-#include "kernel_manager.h"
+
+// Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "datum.h"
+#include "dict.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------

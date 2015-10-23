@@ -22,31 +22,40 @@
 
 #include "neststartup.h"
 
+// C++ includes:
 #include <fstream>
 
+// Generated includes:
 #include "config.h"
-#include "nest.h"
-#include "network.h"
-#include "interpret.h"
-#include "communicator.h"
-#include "dict.h"
-#include "dictdatum.h"
-#include "random_numbers.h"
-#include "slistartup.h"
-#include "sliarray.h"
-#include "oosupport.h"
-#include "processes.h"
-#include "nestmodule.h"
-#include "sliregexp.h"
-#include "specialfunctionsmodule.h"
-#include "sligraphics.h"
-#include "dynamicloader.h"
-#include "filesystem.h"
-#include "kernel_manager.h"
+#include "static_modules.h"
+
+// Includes from libnestutil:
 #include "logging.h"
 #include "logging_event.h"
 
-#include "static_modules.h"
+// Includes from librandom:
+#include "random_numbers.h"
+
+// Includes from nestkernel:
+#include "communicator.h"
+#include "dynamicloader.h"
+#include "kernel_manager.h"
+#include "nest.h"
+#include "nestmodule.h"
+#include "network.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictdatum.h"
+#include "filesystem.h"
+#include "interpret.h"
+#include "oosupport.h"
+#include "processes.h"
+#include "sliarray.h"
+#include "sligraphics.h"
+#include "sliregexp.h"
+#include "slistartup.h"
+#include "specialfunctionsmodule.h"
 
 #ifdef _OPENMP
 #include <omp.h>

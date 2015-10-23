@@ -23,12 +23,15 @@
 #ifndef SINUSOIDAL_POISSON_GENERATOR_H
 #define SINUSOIDAL_POISSON_GENERATOR_H
 
-#include "nest_types.h"
+// Includes from librandom:
+#include "poisson_randomdev.h"
+
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "stimulating_device.h"
-#include "poisson_randomdev.h"
-#include "connection.h"
 #include "universal_data_logger.h"
 
 namespace nest

@@ -23,6 +23,7 @@
 #ifndef MANAGER_INTERFACE_H
 #define MANAGER_INTERFACE_H
 
+// Includes from sli:
 #include "dictdatum.h"
 
 namespace nest

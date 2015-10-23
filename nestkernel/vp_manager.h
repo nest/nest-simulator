@@ -23,12 +23,20 @@
 #ifndef VP_MANAGER_H
 #define VP_MANAGER_H
 
-#include <omp.h>
-
-#include "nest_types.h"
+// Includes from libnestutil:
 #include "manager_interface.h"
-#include "dictdatum.h"
+
+// Includes from nestkernel:
 #include "communicator.h"
+#include "nest_types.h"
+
+// Includes from sli:
+#include "dictdatum.h"
+
+#ifdef _OPENMP
+// C includes:
+#include <omp.h>
+#endif
 
 namespace nest
 {

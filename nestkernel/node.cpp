@@ -23,12 +23,17 @@
 
 #include "node.h"
 
+// Includes from libnestutil:
+#include "compose.hpp"
+
+// Includes from nestkernel:
 #include "exceptions.h"
-#include "namedatum.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
 #include "arraydatum.h"
 #include "dictutils.h"
-#include "compose.hpp"
-#include "kernel_manager.h"
+#include "namedatum.h"
 
 namespace nest
 {

@@ -23,18 +23,26 @@
 #ifndef MUSIC_CONT_IN_PROXY_H
 #define MUSIC_CONT_IN_PROXY_H
 
+// Generated includes:
 #include "config.h"
 
 #ifdef HAVE_MUSIC
 
+// C includes:
+#include <mpi.h>
+
+// C++ includes:
 #include <vector>
 
-#include <mpi.h>
+// External includes:
 #include <music.hh>
 
+// Includes from nestkernel:
+#include "communicator.h"
 #include "nest_types.h"
 #include "node.h"
-#include "communicator.h"
+
+// Includes from sli:
 #include "arraydatum.h"
 
 /*BeginDocumentation

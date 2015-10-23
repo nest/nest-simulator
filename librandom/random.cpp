@@ -22,9 +22,11 @@
 
 #include "random.h"
 
-#include <string>
+// C++ includes:
 #include <cassert>
+#include <string>
 
+// Includes from sli:
 #include "sliexceptions.h"
 #include "tokenarray.h"
 

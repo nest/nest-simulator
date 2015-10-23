@@ -22,8 +22,6 @@
 
 #include "kernel_manager.h"
 
-#include "logging.h"
-
 nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = 0;
 
 void

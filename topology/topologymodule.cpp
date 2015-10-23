@@ -19,33 +19,39 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "topologymodule.h"
 
+// Generated includes:
 #include "config.h"
-#include "integerdatum.h"
-#include "booldatum.h"
-#include "doubledatum.h"
-#include "arraydatum.h"
-#include "dictdatum.h"
-#include "model.h"
-#include "genericmodel.h"
-#include "layer.h"
-#include "layer_impl.h"
-#include "free_layer.h"
-#include "grid_layer.h"
-#include "mask.h"
-#include "mask_impl.h"
-#include "grid_mask.h"
-#include "connection_creator_impl.h"
-#include "parameter.h"
-#include "lockptrdatum_impl.h"
-#include "iostreamdatum.h"
 
-#include "kernel_manager.h"
-#include "model_manager_impl.h"
+// Includes from nestkernel:
 #include "communicator.h"
 #include "communicator_impl.h"
+#include "genericmodel.h"
+#include "kernel_manager.h"
+#include "model.h"
+#include "model_manager_impl.h"
 
+// Includes from sli:
+#include "arraydatum.h"
+#include "booldatum.h"
+#include "dictdatum.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "iostreamdatum.h"
+#include "lockptrdatum_impl.h"
+
+// Includes from topology:
+#include "connection_creator_impl.h"
+#include "free_layer.h"
+#include "grid_layer.h"
+#include "grid_mask.h"
+#include "layer.h"
+#include "layer_impl.h"
+#include "mask.h"
+#include "mask_impl.h"
+#include "parameter.h"
 #include "topology.h"
 
 namespace nest

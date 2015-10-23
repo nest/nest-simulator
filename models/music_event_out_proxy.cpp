@@ -24,13 +24,15 @@
 
 #ifdef HAVE_MUSIC
 
+// C++ includes:
 #include <numeric>
 
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+// Includes from sli:
 #include "arraydatum.h"
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

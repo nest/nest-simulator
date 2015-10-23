@@ -23,16 +23,22 @@
 #ifndef TOPOLOGY_H
 #define TOPOLOGY_H
 
+// C++ includes:
 #include <vector>
 
+// Includes from nestkernel:
 #include "nest_types.h"
-#include "dictdatum.h"
-#include "booldatum.h"
+
+// Includes from sli:
 #include "arraydatum.h"
+#include "booldatum.h"
+#include "dictdatum.h"
+#include "iostreamdatum.h"
 #include "token.h"
+
+// Includes from topology:
 #include "mask.h"
 #include "parameter.h"
-#include "iostreamdatum.h"
 
 
 namespace nest

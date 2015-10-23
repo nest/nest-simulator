@@ -24,10 +24,12 @@
 
 #ifdef HAVE_GSL_1_11
 
+// C++ includes:
 #include <cmath>
 
-#include "universal_data_logger_impl.h"
+// Includes from nestkernel:
 #include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {

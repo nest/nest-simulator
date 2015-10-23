@@ -23,20 +23,24 @@
 #ifndef CONNECTIONBUILDER_MANAGER_H
 #define CONNECTIONBUILDER_MANAGER_H
 
+// C++ includes:
 #include <string>
 #include <vector>
 
-#include "nest_types.h"
+// Includes from libnestutil:
 #include "manager_interface.h"
-#include "dict.h"
-#include "dictdatum.h"
-#include "arraydatum.h"
+#include "sparsetable.h"
+
+// Includes from nestkernel:
 #include "gid_collection.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
+#include "nest_types.h"
 
-
-#include "sparsetable.h"
+// Includes from sli:
+#include "arraydatum.h"
+#include "dict.h"
+#include "dictdatum.h"
 
 namespace nest
 {

@@ -22,15 +22,23 @@
 
 #include "rng_manager.h"
 
+// C++ includes:
 #include <set>
 
+// Includes from libnestutil:
 #include "logging.h"
-#include "kernel_manager.h"
-#include "arraydatum.h"
-#include "random_datums.h"
-#include "exceptions.h"
+
+// Includes from librandom:
 #include "gslrandomgen.h"
+#include "random_datums.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "vp_manager_impl.h"
+
+// Includes from sli:
+#include "arraydatum.h"
 
 
 nest::RNGManager::RNGManager()

@@ -24,14 +24,16 @@
 #define SPIKE_GENERATOR_H
 
 
+// C++ includes:
 #include <vector>
 
-#include "nest_types.h"
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_time.h"
+#include "nest_types.h"
 #include "node.h"
 #include "stimulating_device.h"
-#include "connection.h"
-#include "nest_time.h"
 
 namespace nest
 {

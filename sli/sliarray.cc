@@ -23,19 +23,28 @@
 /*
     SLI's data access functions
 */
-#include <cmath>
-#include "numerics.h"
+
 #include "sliarray.h"
-#include "arraydatum.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "stringdatum.h"
-#include "namedatum.h"
-#include "booldatum.h"
-#include "tokenutils.h"
-#include "config.h"
+
+// C++ includes:
+#include <cmath>
 #include <vector>
+
+// Generated includes:
+#include "config.h"
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "booldatum.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "namedatum.h"
 #include "slinames.h"
+#include "stringdatum.h"
+#include "tokenutils.h"
 
 const std::string
 SLIArrayModule::commandstring( void ) const

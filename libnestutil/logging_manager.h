@@ -23,11 +23,15 @@
 #ifndef LOGGING_MANAGER_H
 #define LOGGING_MANAGER_H
 
-#include <vector>
+// C++ includes:
 #include <string>
+#include <vector>
 
+// Includes from libnestutil:
 #include "logging.h"
 #include "manager_interface.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 
 class Dictionary;

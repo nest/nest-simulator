@@ -22,17 +22,21 @@
 
 #include "volume_transmitter.h"
 
+// C++ includes:
 #include <numeric>
 
-#include "exceptions.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "arraydatum.h"
+// Includes from nestkernel:
 #include "connector_base.h"
-#include "spikecounter.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
+#include "spikecounter.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters

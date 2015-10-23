@@ -22,17 +22,23 @@
 
 #include "pif_psc_alpha.h"
 
+// C++ includes:
 #include <limits>
 
-#include "exceptions.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+// Includes from libnestutil:
 #include "numerics.h"
-#include "universal_data_logger_impl.h"
-#include "lockptrdatum.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
 #include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "lockptrdatum.h"
 
 using namespace nest;
 

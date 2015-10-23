@@ -23,16 +23,19 @@
 #ifndef DYNAMICLOADER_H
 #define DYNAMICLOADER_H
 
+// Generated includes:
 #include "config.h"
 
 // DynamicLoaderModule defined only if libltdl is available
 
 #ifdef HAVE_LIBLTDL
 
-#include "slimodule.h"
-#include "slifunction.h"
-
+// C++ includes:
 #include <vector>
+
+// Includes from sli:
+#include "slifunction.h"
+#include "slimodule.h"
 
 namespace nest
 {

@@ -20,18 +20,25 @@
  *
  */
 
-#include <cstdlib>
-#include <sys/types.h>
+#include "io_manager.h"
+
+// C includes:
 #include <dirent.h>
 #include <errno.h>
+#include <sys/types.h>
 
-#include "kernel_manager.h"
-#include "io_manager.h"
+// C++ includes:
+#include <cstdlib>
+
+// Includes from libnestutil:
+#include "compose.hpp"
 #include "logging.h"
 
+// Includes from nestkernel:
+#include "kernel_manager.h"
 
+// Includes from sli:
 #include "dictutils.h"
-#include "compose.hpp"
 
 nest::IOManager::IOManager()
   : overwrite_files_( false )

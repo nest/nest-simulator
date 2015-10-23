@@ -23,18 +23,24 @@
 #ifndef MODEL_MANAGER_H
 #define MODEL_MANAGER_H
 
+// C++ includes:
 #include <string>
 
+// Includes from libnestutil:
 #include "manager_interface.h"
-#include "nest_types.h"
+
+// Includes from nestkernel:
+#include "connector_model.h"
+#include "genericmodel.h"
+#include "genericmodel.h"
+#include "model.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
+#include "nest_types.h"
 #include "node.h"
-#include "genericmodel.h"
-#include "connector_model.h"
+
+// Includes from sli:
 #include "dictutils.h"
-#include "model.h"
-#include "genericmodel.h"
 
 namespace nest
 {

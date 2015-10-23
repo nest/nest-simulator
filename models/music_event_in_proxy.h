@@ -23,16 +23,19 @@
 #ifndef MUSIC_EVENT_IN_PROXY_H
 #define MUSIC_EVENT_IN_PROXY_H
 
+// Generated includes:
 #include "config.h"
 
 #ifdef HAVE_MUSIC
 
+// C++ includes:
 #include <vector>
 
-#include "nest_types.h"
-#include "event.h"
-#include "node.h"
+// Includes from nestkernel:
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "node.h"
 
 /*BeginDocumentation
 

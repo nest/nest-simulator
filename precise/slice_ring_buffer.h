@@ -23,14 +23,18 @@
 #ifndef SLICE_RING_BUFFER_H
 #define SLICE_RING_BUFFER_H
 
+// C++ includes:
 #include <algorithm>
+#include <cassert>
 #include <functional>
 #include <vector>
-#include <cassert>
 
+// Generated includes:
 #include "config.h"
-#include "nest_types.h"
+
+// Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest_types.h"
 
 namespace nest
 {

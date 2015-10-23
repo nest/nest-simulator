@@ -21,25 +21,34 @@
  */
 
 #include "conn_builder.h"
-#include "conn_parameter.h"
 
-#include "dict.h"
-#include "name.h"
+// C++ includes:
+#include <set>
+
+// Includes from libnestutil:
+#include "logging.h"
+
+// Includes from librandom:
+#include "binomial_randomdev.h"
+#include "gsl_binomial_randomdev.h"
+#include "gslrandomgen.h"
+#include "normal_randomdev.h"
+
+// Includes from nestkernel:
+#include "conn_parameter.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "nest_names.h"
 #include "node.h"
-#include "exceptions.h"
-
-#include "gsl_binomial_randomdev.h"
-#include "binomial_randomdev.h"
-#include "normal_randomdev.h"
-#include "gslrandomgen.h"
-#include "fdstream.h"
-#include "kernel_manager.h"
-#include "logging.h"
 #include "vp_manager_impl.h"
 
-#include <set>
+// Includes from sli:
+#include "dict.h"
+#include "fdstream.h"
+#include "name.h"
+
 #ifdef _OPENMP
+// C includes:
 #include <omp.h>
 #endif
 

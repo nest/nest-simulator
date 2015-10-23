@@ -22,19 +22,25 @@
 
 #include "sli_neuron.h"
 
+// C++ includes:
 #include <limits>
 
-#include "network.h" // execute_sli_protected
+// Includes from libnestutil:
 #include "compose.hpp"
-#include "exceptions.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
 #include "numerics.h"
-#include "universal_data_logger_impl.h"
-#include "dictstack.h"
+
+// Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "network.h" // execute_sli_protected
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictstack.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 
 

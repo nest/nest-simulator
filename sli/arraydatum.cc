@@ -21,8 +21,12 @@
  */
 
 #include "arraydatum.h"
-#include "lockptrdatum_impl.h"
+
+// C++ includes:
 #include <iterator>
+
+// Includes from sli:
+#include "lockptrdatum_impl.h"
 
 // explicit instantiations
 template class AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >;

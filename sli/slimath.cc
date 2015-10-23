@@ -24,14 +24,19 @@
     slimath.cc
 */
 #define NDEBUG
-#include <cmath>
-
-#include "config.h"
 
 #include "slimath.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
+
+// C++ includes:
+#include <cmath>
+
+// Generated includes:
+#include "config.h"
+
+// Includes from sli:
 #include "booldatum.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 #include "namedatum.h"
 #include "stringdatum.h"
 

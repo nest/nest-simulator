@@ -22,13 +22,17 @@
 
 #include "subnet.h"
 
+// C++ includes:
 #include <string>
 
+// Includes from nestkernel:
 #include "event.h"
-#include "dictdatum.h"
-#include "arraydatum.h"
-#include "dictutils.h"
 #include "kernel_manager.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dictdatum.h"
+#include "dictutils.h"
 
 #ifdef N_DEBUG
 #undef N_DEBUG

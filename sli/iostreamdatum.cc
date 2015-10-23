@@ -20,9 +20,11 @@
  *
  */
 
+#include "iostreamdatum.h"
 
-#include "lockptrdatum_impl.h"
+// Includes from sli:
 #include "interpret.h"
+#include "lockptrdatum_impl.h"
 
 template class lockPTRDatum< std::istream, &SLIInterpreter::Istreamtype >;
 template class lockPTRDatum< std::istream, &SLIInterpreter::XIstreamtype >;

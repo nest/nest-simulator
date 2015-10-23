@@ -23,8 +23,9 @@
 #ifndef MYMODULE_H
 #define MYMODULE_H
 
-#include "slimodule.h"
+// Includes from sli:
 #include "slifunction.h"
+#include "slimodule.h"
 
 // Put your stuff into your own namespace.
 namespace mynest

@@ -23,6 +23,7 @@
 #ifndef PRECISEMODULE_H
 #define PRECISEMODULE_H
 
+// Includes from sli:
 #include "slimodule.h"
 
 namespace nest

@@ -26,18 +26,24 @@
 
 #include "pp_pop_psc_delta.h"
 
-#include <limits>
+// C++ includes:
 #include <algorithm>
+#include <limits>
 
-#include "exceptions.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include "universal_data_logger_impl.h"
+// Includes from libnestutil:
 #include "compose.hpp"
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
 #include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 namespace nest
 {

@@ -23,9 +23,12 @@
 #ifndef STOPWATCH_H
 #define STOPWATCH_H
 
-#include <iostream>
+// C includes:
 #include <sys/time.h>
+
+// C++ includes:
 #include <cassert>
+#include <iostream>
 
 namespace nest
 {

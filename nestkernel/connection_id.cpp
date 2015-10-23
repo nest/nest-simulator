@@ -21,8 +21,13 @@
  */
 
 #include "connection_id.h"
+
+// Includes from nestkernel:
 #include "nest_names.h"
+
+// Includes from sli:
 #include "integerdatum.h"
+
 namespace nest
 {
 

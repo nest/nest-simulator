@@ -23,8 +23,11 @@
 #ifndef MULTIRANGE_H
 #define MULTIRANGE_H
 
-#include <vector>
+// C++ includes:
 #include <utility>
+#include <vector>
+
+// Includes from nestkernel:
 #include "nest_types.h"
 
 namespace nest

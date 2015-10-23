@@ -23,13 +23,16 @@
 #ifndef MUSIC_EVENT_HANDLER
 #define MUSIC_EVENT_HANDLER
 
-#ifdef HAVE_MUSIC
-
+// Generated includes:
 #include "config.h"
 
-#include <queue>
-#include <music.hh>
+#ifdef HAVE_MUSIC
 
+// C++ includes:
+#include <music.hh>
+#include <queue>
+
+// Includes from nestkernel:
 #include "nest_types.h"
 #include "node.h"
 

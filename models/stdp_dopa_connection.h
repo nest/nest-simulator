@@ -88,10 +88,15 @@
    SeeAlso: volume_transmitter
 */
 
-#include "connection.h"
-#include "volume_transmitter.h"
-#include "spikecounter.h"
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from models:
+#include "volume_transmitter.h"
+
+// Includes from nestkernel:
+#include "connection.h"
+#include "spikecounter.h"
 
 namespace nest
 {

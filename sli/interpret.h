@@ -26,15 +26,17 @@
     interpret.h defines the SLI Interpreter class
 */
 
-#include <typeinfo>
+// C++ includes:
 #include <list>
+#include <typeinfo>
 
-#include "token.h"
-#include "slitype.h"
-#include "tokenstack.h"
+// Includes from sli:
 #include "sliactions.h"
 #include "slibuiltins.h"
 #include "slimodule.h"
+#include "slitype.h"
+#include "token.h"
+#include "tokenstack.h"
 
 /**
  * @defgroup SLIOutput How to notify the SLI user

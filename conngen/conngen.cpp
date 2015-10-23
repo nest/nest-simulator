@@ -22,15 +22,20 @@
 
 #include "conngen.h"
 
+// Includes from conngen:
 #include "cg_connect.h"
 
-#include "subnet.h"
+// Includes from libnestutil:
 #include "logging.h"
-#include "exceptions.h"
-#include "token.h"
-#include "modelrange.h"
 
+// Includes from nestkernel:
+#include "exceptions.h"
 #include "kernel_manager.h"
+#include "modelrange.h"
+#include "subnet.h"
+
+// Includes from sli:
+#include "token.h"
 
 void
 nest::cg_connect( nest::ConnectionGeneratorDatum& cg,

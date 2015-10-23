@@ -22,17 +22,21 @@
 
 #include "nest.h"
 
+// C++ includes:
 #include <cassert>
 
+// Includes from nestkernel:
+#include "communicator.h"
+#include "communicator_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "network.h"
 #include "nodelist.h"
 #include "subnet.h"
-#include "kernel_manager.h"
-#include "communicator.h"
-#include "communicator_impl.h"
-#include "token.h"
+
+// Includes from sli:
 #include "sliexceptions.h"
-#include "exceptions.h"
+#include "token.h"
 
 namespace nest
 {

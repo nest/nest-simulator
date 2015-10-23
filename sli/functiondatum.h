@@ -26,10 +26,14 @@
     Datum class for SLI builtin functions.
 */
 
+// Includes from libnestutil:
+#include "allocator.h"
+
+// Includes from sli:
 #include "datum.h"
 #include "interpret.h"
 #include "slifunction.h"
-#include "allocator.h"
+
 /*
   Each SLI command is represented by a derived class of class SLIFunction.
   For each command, the constructor of the interpreter must then create

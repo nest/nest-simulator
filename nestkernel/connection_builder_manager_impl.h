@@ -25,8 +25,10 @@
 
 #include "connection_builder_manager.h"
 
+// C++ includes:
 #include <string>
 
+// Includes from nestkernel:
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
 

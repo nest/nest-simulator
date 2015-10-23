@@ -22,9 +22,13 @@
 
 #include "proxynode.h"
 
-#include "dictutils.h"
+// Includes from nestkernel:
 #include "connection.h"
 #include "kernel_manager.h"
+
+// Includes from sli:
+#include "dictutils.h"
+
 
 namespace nest
 {

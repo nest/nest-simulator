@@ -30,9 +30,10 @@
 /***************************************************************/
 /* class CharCode                                              */
 /***************************************************************/
-#include <vector>
+// C++ includes:
 #include <cassert>
 #include <cstddef>
+#include <vector>
 
 class CharCode : public std::vector< size_t >
 {

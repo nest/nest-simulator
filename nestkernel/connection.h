@@ -23,22 +23,24 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
+// Includes from nestkernel:
+#include "common_synapse_properties.h"
+#include "delay_checker.h"
+#include "event.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "node.h"
-#include "event.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "arraydatum.h"
-#include "doubledatum.h"
-#include "common_synapse_properties.h"
-#include "nest_names.h"
 #include "spikecounter.h"
 #include "syn_id_delay.h"
 
-#include "kernel_manager.h"
-#include "delay_checker.h"
+// Includes from sli:
+#include "arraydatum.h"
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
 
 namespace nest
 {

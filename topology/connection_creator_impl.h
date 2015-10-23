@@ -23,17 +23,17 @@
 #ifndef CONNECTION_CREATOR_IMPL_H
 #define CONNECTION_CREATOR_IMPL_H
 
-#include <vector>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
-
 #include "connection_creator.h"
+
+// C++ includes:
+#include <vector>
+
+// Includes from librandom:
 #include "binomial_randomdev.h"
 
+// Includes from nestkernel:
+#include "kernel_manager.h"
 #include "nest.h"
-#include "kernel_manager.h" // TODO implement in terms of nest-API
 
 namespace nest
 {

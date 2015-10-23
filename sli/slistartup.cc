@@ -20,19 +20,28 @@
  *
  */
 
+#include "slistartup.h"
+
+// C includes:
+#include <crt_externs.h>
+
+// C++ includes:
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
-#include "slistartup.h"
-#include "interpret.h"
-#include "namedatum.h"
-#include "iostreamdatum.h"
+
+// Generated includes:
+#include "config.h"
+
+// Includes from sli:
 #include "arraydatum.h"
-#include "stringdatum.h"
-#include "integerdatum.h"
 #include "booldatum.h"
 #include "dictdatum.h"
-#include "config.h"
+#include "integerdatum.h"
+#include "interpret.h"
+#include "iostreamdatum.h"
+#include "namedatum.h"
+#include "stringdatum.h"
 
 extern int SLIsignalflag;
 

@@ -31,15 +31,22 @@
  *
  */
 
+// C++ includes:
 #include <map>
 #include <vector>
 
-#include "dictdatum.h"
-#include "gid_collection.h"
+// Includes from libnestutil:
 #include "lockptr.h"
-#include "sliexceptions.h"
 
+// Includes from librandom:
 #include "gslrandomgen.h"
+
+// Includes from nestkernel:
+#include "gid_collection.h"
+
+// Includes from sli:
+#include "dictdatum.h"
+#include "sliexceptions.h"
 
 namespace nest
 {

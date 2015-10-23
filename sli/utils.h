@@ -22,8 +22,11 @@
 
 #ifndef UTILS_H
 #define UTILS_H
+
+// C++ includes:
 #include <vector>
 
+// Includes from sli:
 #include "token.h"
 #include "tokenarray.h"
 

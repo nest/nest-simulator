@@ -23,14 +23,17 @@
 #ifndef SLIPGM_H
 #define SLIPGM_H
 
+// C++ includes:
 #include <iostream>
 #include <string>
 #include <vector>
-#include "stringdatum.h"
+
+// Includes from sli:
 #include "fdstream.h"
-#include "slimodule.h"
-#include "slifunction.h"
 #include "interpret.h"
+#include "slifunction.h"
+#include "slimodule.h"
+#include "stringdatum.h"
 
 class SLIgraphics : public SLIModule
 {

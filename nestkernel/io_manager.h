@@ -23,9 +23,13 @@
 #ifndef IO_MANAGER_H
 #define IO_MANAGER_H
 
+// C++ includes:
 #include <string>
 
+// Includes from libnestutil:
 #include "manager_interface.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 
 namespace nest

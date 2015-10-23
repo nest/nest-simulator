@@ -22,13 +22,17 @@
 
 #include "logging_manager.h"
 
+// C++ includes:
 #include <cassert>
 #include <iostream>
 
+// Includes from libnestutil:
 #include "logging_event.h"
-#include "sliexceptions.h"
+
+// Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
+#include "sliexceptions.h"
 
 nest::LoggingManager::LoggingManager()
   : client_callbacks_()

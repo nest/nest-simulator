@@ -20,8 +20,10 @@
  *
  */
 
-#include <stdexcept>
 #include "multirange.h"
+
+// C++ includes:
+#include <stdexcept>
 
 nest::index nest::Multirange::operator[]( index n ) const
 {

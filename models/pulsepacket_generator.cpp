@@ -22,17 +22,25 @@
 
 #include "pulsepacket_generator.h"
 
+// C++ includes:
 #include <algorithm>
 
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from librandom:
+#include "gslrandomgen.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
 #include "dict.h"
+#include "dictutils.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
-#include "dictutils.h"
-#include "exceptions.h"
-#include "numerics.h"
-#include "gslrandomgen.h"
-#include "kernel_manager.h"
-#include "event_delivery_manager_impl.h"
 
 
 /* ----------------------------------------------------------------

@@ -23,15 +23,20 @@
 #ifndef CONNECTOR_MODEL_IMPL_H
 #define CONNECTOR_MODEL_IMPL_H
 
-#include "nest_time.h"
-#include "nest_timeconverter.h"
-#include "dictutils.h"
 #include "connector_model.h"
-#include "connector_base.h"
+
+// Includes from libnestutil:
 #include "compose.hpp"
 
-#include "kernel_manager.h"
+// Includes from nestkernel:
+#include "connector_base.h"
 #include "delay_checker.h"
+#include "kernel_manager.h"
+#include "nest_time.h"
+#include "nest_timeconverter.h"
+
+// Includes from sli:
+#include "dictutils.h"
 
 
 template < typename T, typename C >

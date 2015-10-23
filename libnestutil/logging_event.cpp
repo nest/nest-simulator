@@ -22,8 +22,9 @@
 
 #include "logging_event.h"
 
-#include <ctime>
+// C++ includes:
 #include <cassert>
+#include <ctime>
 
 nest::LoggingEvent::LoggingEvent( const nest::severity_t s,
   const std::string& fctn,

@@ -21,8 +21,14 @@
  */
 
 #include "selector.h"
-#include "dictutils.h"
+
+// Includes from nestkernel:
 #include "kernel_manager.h"
+
+// Includes from sli:
+#include "dictutils.h"
+
+// Includes from topology:
 #include "topology_names.h"
 
 

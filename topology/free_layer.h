@@ -23,13 +23,18 @@
 #ifndef FREE_LAYER_H
 #define FREE_LAYER_H
 
+// C++ includes:
+#include <algorithm>
 #include <limits>
 #include <sstream>
-#include <algorithm>
-#include "layer.h"
-#include "topology_names.h"
+
+// Includes from sli:
 #include "dictutils.h"
+
+// Includes from topology:
+#include "layer.h"
 #include "ntree_impl.h"
+#include "topology_names.h"
 
 namespace nest
 {

@@ -23,6 +23,7 @@
 /*******************************/
 /* signal handling code  */
 #include "psignal.h"
+
 /* Do Not switch the order of the #include and #define statements!!! */
 #ifndef _POSIX_SOURCE
 #define _SYNOD__SET_POSIX_SOURCE

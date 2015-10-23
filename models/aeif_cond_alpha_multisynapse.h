@@ -23,11 +23,12 @@
 #ifndef AEIF_COND_ALPHA_MULTISYNAPSE_H
 #define AEIF_COND_ALPHA_MULTISYNAPSE_H
 
-#include "nest_types.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 /* BeginDocumentation

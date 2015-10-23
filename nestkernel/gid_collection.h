@@ -23,14 +23,18 @@
 #ifndef GID_COLLECTION_H
 #define GID_COLLECTION_H
 
-#include <vector>
+// C++ includes:
 #include <ostream>
-#include <utility>
-#include <stdexcept>
+#include <stdexcept> // out_of_range
+#include <utility> // pair
+#include <vector>
 
+// Includes from nestkernel:
 #include "nest_types.h"
-#include "tokenarray.h"
+
+// Includes from sli:
 #include "arraydatum.h"
+#include "tokenarray.h"
 
 namespace nest
 {

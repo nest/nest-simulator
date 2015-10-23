@@ -23,13 +23,21 @@
 #ifndef RNG_MANAGER_H
 #define RNG_MANAGER_H
 
+// C++ includes:
 #include <vector>
 
-#include "nest_types.h"
+// Includes from libnestutil:
 #include "manager_interface.h"
-#include "dictdatum.h"
+
+// Includes from librandom:
 #include "randomgen.h"
+
+// Includes from nestkernel:
 #include "mpi_manager.h"
+#include "nest_types.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {

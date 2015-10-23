@@ -23,12 +23,16 @@
 
 #include "sibling_container.h"
 
+// C++ includes:
 #include <string>
 
-#include "dictdatum.h"
-#include "arraydatum.h"
-#include "dictutils.h"
+// Includes from nestkernel:
 #include "event.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dictdatum.h"
+#include "dictutils.h"
 
 #ifdef N_DEBUG
 #undef N_DEBUG

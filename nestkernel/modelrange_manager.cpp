@@ -20,10 +20,12 @@
  *
  */
 
-#include <assert.h>
-
 #include "modelrange_manager.h"
 
+// C includes:
+#include <assert.h>
+
+// Includes from nestkernel:
 #include "kernel_manager.h"
 #include "model.h"
 

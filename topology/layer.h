@@ -23,18 +23,25 @@
 #ifndef LAYER_H
 #define LAYER_H
 
+// C++ includes:
+#include <bitset>
 #include <iostream>
 #include <utility>
-#include <bitset>
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
 #include "nest_types.h"
 #include "subnet.h"
-#include "position.h"
+
+// Includes from sli:
 #include "dictutils.h"
-#include "topology_names.h"
-#include "ntree.h"
+
+// Includes from topology:
 #include "connection_creator.h"
+#include "ntree.h"
+#include "position.h"
 #include "selector.h"
-#include "kernel_manager.h"
+#include "topology_names.h"
 
 namespace nest
 {

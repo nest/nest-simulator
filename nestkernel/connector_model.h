@@ -23,12 +23,16 @@
 #ifndef CONNECTOR_MODEL_H
 #define CONNECTOR_MODEL_H
 
-#include "nest_time.h"
-#include "dictutils.h"
-#include "nest_types.h"
-
+// C++ includes:
 #include <cmath>
 #include <string>
+
+// Includes from nestkernel:
+#include "nest_time.h"
+#include "nest_types.h"
+
+// Includes from sli:
+#include "dictutils.h"
 
 namespace nest
 {

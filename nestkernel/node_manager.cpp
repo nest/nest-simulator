@@ -22,20 +22,25 @@
 
 #include "node_manager.h"
 
-#include <omp.h>
+// C++ includes:
 #include <set>
 
+// Includes from libnestutil:
 #include "compose.hpp"
-#include "kernel_manager.h"
 #include "logging.h"
-#include "node.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager.h"
 #include "genericmodel.h"
-#include "dictutils.h"
+#include "kernel_manager.h"
+#include "model.h"
+#include "model_manager_impl.h"
+#include "node.h"
 #include "sibling_container.h"
 #include "subnet.h"
-#include "event_delivery_manager.h"
-#include "model_manager_impl.h"
-#include "model.h"
+
+// Includes from sli:
+#include "dictutils.h"
 
 namespace nest
 {

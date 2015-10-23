@@ -82,8 +82,6 @@
 
 namespace nest
 {
-class Network;
-
 /**
  * Conductance based exponential integrate-and-fire neuron model according to Brette and Gerstner
  * (2005) with multiple ports.

@@ -21,14 +21,14 @@
  */
 
 #include "correlation_detector.h"
-#include "network.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "arraydatum.h"
 
 #include <numeric>
 #include <functional> // for bind2nd
 #include <cmath>      // for less
+
+#include "dict.h"
+#include "dictutils.h"
+#include "arraydatum.h"
 
 
 /* ----------------------------------------------------------------

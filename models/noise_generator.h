@@ -23,8 +23,8 @@
 #ifndef NOISE_GENERATOR_H
 #define NOISE_GENERATOR_H
 
-
 #include <vector>
+
 #include "nest_types.h"
 #include "event.h"
 #include "node.h"

@@ -24,18 +24,20 @@
 #define MUSIC_MESSAGE_IN_PROXY_H
 
 #include "config.h"
+
 #ifdef HAVE_MUSIC
 
+#include <mpi.h>
 #include <vector>
 #include <string>
+
+#include <music.hh>
+
 #include "nest_types.h"
 #include "node.h"
 #include "communicator.h"
 #include "arraydatum.h"
 #include "dictutils.h"
-
-#include "mpi.h"
-#include "music.hh"
 
 /*BeginDocumentation
 

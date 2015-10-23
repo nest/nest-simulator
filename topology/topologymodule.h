@@ -24,7 +24,6 @@
 #define TOPOLOGYMODULE_H
 
 #include "slimodule.h"
-#include "network.h"
 #include "position.h"
 #include "ntree.h"
 #include "exceptions.h"

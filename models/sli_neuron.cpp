@@ -20,9 +20,13 @@
  *
  */
 
-#include "exceptions.h"
 #include "sli_neuron.h"
-#include "network.h"
+
+#include <limits>
+
+#include "network.h" // execute_sli_protected
+#include "compose.hpp"
+#include "exceptions.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
@@ -32,7 +36,7 @@
 #include "dictstack.h"
 #include "event_delivery_manager_impl.h"
 
-#include <limits>
+
 
 /* ----------------------------------------------------------------
  * Recordables map

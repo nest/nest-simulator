@@ -27,9 +27,12 @@
 /* pp_psc_delta is a stochastically spiking neuron where the potential jumps on each spike arrival.
  */
 
-#include "exceptions.h"
+
 #include "pp_psc_delta.h"
-#include "network.h"
+
+#include <limits>
+
+#include "exceptions.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
@@ -37,9 +40,6 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 #include "compose.hpp"
-
-#include <limits>
-
 #include "kernel_manager.h"
 
 namespace nest

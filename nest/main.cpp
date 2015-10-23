@@ -20,12 +20,9 @@
  *
  */
 
-#include <config.h>
-
-#include "neststartup.h"
-
-#include "network.h"
+#include "config.h"
 #include "interpret.h"
+#include "neststartup.h"
 
 int
 main( int argc, char* argv[] )

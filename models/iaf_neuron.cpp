@@ -20,9 +20,11 @@
  *
  */
 
-#include "exceptions.h"
 #include "iaf_neuron.h"
-#include "network.h"
+
+#include <limits>
+
+#include "exceptions.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
@@ -31,9 +33,6 @@
 #include "universal_data_logger_impl.h"
 #include "propagator_stability.h"
 #include "event_delivery_manager_impl.h"
-
-#include <limits>
-
 #include "kernel_manager.h"
 
 /* ----------------------------------------------------------------

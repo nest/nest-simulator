@@ -21,17 +21,17 @@
  */
 
 #include "gamma_sup_generator.h"
-#include "network.h"
+
+#include <algorithm>
+#include <limits>
+
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "numerics.h"
 #include "datum.h"
-#include <algorithm>
-#include <limits>
-#include "event_delivery_manager_impl.h"
-
 #include "kernel_manager.h"
+#include "event_delivery_manager_impl.h"
 
 
 /* ----------------------------------------------------------------

@@ -23,15 +23,16 @@
 #ifndef MUSIC_EVENT_HANDLER
 #define MUSIC_EVENT_HANDLER
 
-#include "config.h"
-
 #ifdef HAVE_MUSIC
 
+#include "config.h"
+
+#include <queue>
 #include <music.hh>
+
 #include "nest_types.h"
 #include "node.h"
 
-#include <queue>
 
 namespace nest
 {

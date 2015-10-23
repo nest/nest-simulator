@@ -23,14 +23,14 @@
 #ifndef RECORDING_DEVICE_H
 #define RECORDING_DEVICE_H
 
+#include <vector>
+#include <fstream>
+
 #include "nest_types.h"
 #include "dictdatum.h"
 #include "dictutils.h"
 #include "lockptr.h"
 #include "device.h"
-
-#include <vector>
-#include <fstream>
 
 namespace nest
 {

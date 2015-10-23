@@ -21,7 +21,7 @@
  */
 
 #include "noise_generator.h"
-#include "network.h"
+
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
@@ -29,10 +29,7 @@
 #include "numerics.h"
 #include "kernel_manager.h"
 #include "event_delivery_manager_impl.h"
-
-
 #include "logging.h"
-#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

@@ -24,6 +24,7 @@
 #define ppd_sup_generator_H
 
 #include <vector>
+
 #include "nest_types.h"
 #include "event.h"
 #include "node.h"

@@ -77,8 +77,10 @@
  * A suitable Connector containing these connections can be obtained from the template
  * GenericConnector.
  */
-#include "connection.h"
+
 #include <cmath>
+
+#include "connection.h"
 
 namespace nest
 {

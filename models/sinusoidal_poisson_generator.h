@@ -33,9 +33,6 @@
 
 namespace nest
 {
-
-class Network;
-
 /* BeginDocumentation
    Name: sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson spike trains.
 

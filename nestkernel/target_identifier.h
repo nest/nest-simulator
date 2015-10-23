@@ -28,8 +28,6 @@
  * @file Provide classes to be used as template arguments to Connection<T>.
  */
 
-#include "network.h"
-
 namespace nest
 {
 

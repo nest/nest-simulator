@@ -20,18 +20,18 @@
  *
  */
 
-#include "config.h"
+#include "music_event_in_proxy.h"
 
 #ifdef HAVE_MUSIC
 
-#include "music_event_in_proxy.h"
-#include "network.h"
+#include <music.hh>
+
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "arraydatum.h"
 #include "dictutils.h"
-#include "music.hh"
+
 
 
 /* ----------------------------------------------------------------

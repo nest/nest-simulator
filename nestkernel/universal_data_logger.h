@@ -32,9 +32,6 @@
 
 namespace nest
 {
-
-class Network;
-
 /**
  * Universal data-logging plug-in for neuron models.
  *

@@ -93,9 +93,9 @@
  * GenericConnector.
  */
 
+#include <cmath>
 
 #include "connection.h"
-#include <cmath>
 
 namespace nest
 {

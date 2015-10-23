@@ -22,8 +22,9 @@
 
 #include "iaf_psc_alpha_canon.h"
 
+#include <limits>
+
 #include "exceptions.h"
-#include "network.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
@@ -31,9 +32,6 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 #include "propagator_stability.h"
-
-#include <limits>
-
 #include "kernel_manager.h"
 
 /* ----------------------------------------------------------------

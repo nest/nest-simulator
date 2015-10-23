@@ -22,12 +22,14 @@
 
 #ifndef NODE_H
 #define NODE_H
+
 #include <bitset>
 #include <string>
 #include <sstream>
 #include <vector>
 #include <deque>
 #include <utility>
+
 #include "nest_types.h"
 #include "nest_time.h"
 #include "nest_names.h"
@@ -42,10 +44,8 @@
 namespace nest
 {
 class Model;
-
 class Subnet;
 class Archiving_Node;
-class histentry;
 
 
 /**
@@ -93,9 +93,7 @@ class histentry;
 
 class Node
 {
-  friend class Network;
   friend class NodeManager;
-  friend class Scheduler;
   friend class Subnet;
   friend class proxynode;
   friend class Synapse;

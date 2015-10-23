@@ -25,6 +25,7 @@
 
 
 #include <vector>
+
 #include "nest_types.h"
 #include "event.h"
 #include "node.h"
@@ -67,9 +68,6 @@ SeeAlso: spike_detector, Device, RecordingDevice
 
 namespace nest
 {
-
-class Network;
-
 /**
  * Spike detector class.
  *

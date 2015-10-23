@@ -24,21 +24,16 @@
 #define IAF_PSC_DELTA_CANON_H
 
 #include "config.h"
-
 #include "nest_types.h"
 #include "event.h"
 #include "node.h"
 #include "slice_ring_buffer.h"
 #include "ring_buffer.h"
 #include "connection.h"
-
 #include "universal_data_logger.h"
 
 namespace nest
 {
-
-class Network;
-
 /* BeginDocumentation
    Name: iaf_psc_delta_canon - Leaky integrate-and-fire neuron model.
 

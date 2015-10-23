@@ -59,9 +59,6 @@
 
 namespace nest
 {
-
-class Network;
-
 class ac_generator : public Node
 {
 

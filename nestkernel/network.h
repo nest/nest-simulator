@@ -22,27 +22,23 @@
 
 #ifndef NETWORK_H
 #define NETWORK_H
-#include "config.h"
+
+#include <dirent.h>
+#include <errno.h>
+
 #include <vector>
 #include <string>
 #include <typeinfo>
-#include "nest_types.h"
-#include "nest_time.h"
-#include "model.h"
-#include "exceptions.h"
-#include "proxynode.h"
-#include "event.h"
-#include "compose.hpp"
-#include "dictdatum.h"
 #include <ostream>
 #include <cmath>
 
-#include "dirent.h"
-#include "errno.h"
+#include "config.h"
+#include "nest_types.h"
+#include "nest_time.h"
+#include "model.h"
+#include "dict.h"
+#include "dictdatum.h"
 
-#include "sparse_node_array.h"
-
-#include "communicator.h"
 
 #ifdef M_ERROR
 #undef M_ERROR
@@ -60,18 +56,11 @@
  * @file network.h
  * Declarations for class Network.
  */
-class TokenArray;
 class SLIInterpreter;
 
 namespace nest
 {
 
-class Subnet;
-class SiblingContainer;
-class Event;
-class Node;
-class GenericConnBuilderFactory;
-class GIDCollection;
 class VPManager;
 class NodeManager;
 

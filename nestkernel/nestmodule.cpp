@@ -24,10 +24,10 @@
 
 #include <iostream>
 #include <sstream>
+
 #include "nest.h"
 #include "nest_types.h"
 #include "nest_datums.h"
-#include "network.h"
 #include "nodelist.h"
 #include "interpret.h"
 #include "node.h"

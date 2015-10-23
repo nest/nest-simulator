@@ -20,14 +20,14 @@
  *
  */
 
-#include "event.h"
 #include "subnet.h"
+
+#include <string>
+
+#include "event.h"
 #include "dictdatum.h"
 #include "arraydatum.h"
 #include "dictutils.h"
-#include "network.h"
-#include <string>
-
 #include "kernel_manager.h"
 
 #ifdef N_DEBUG

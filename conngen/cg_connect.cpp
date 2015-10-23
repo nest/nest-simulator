@@ -22,11 +22,10 @@
 
 #include "cg_connect.h"
 
-#include "network.h"
 #include "communicator.h"
 
-#include "logging.h"
 #include "kernel_manager.h" // TODO implement in terms of nest-API
+#include "logging.h"
 
 namespace nest
 {

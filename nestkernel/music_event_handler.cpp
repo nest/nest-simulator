@@ -19,15 +19,12 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "config.h"
-
 #ifdef HAVE_MUSIC
 
 #include "music_event_handler.h"
 #include "nest_types.h"
 #include "event.h"
 #include "communicator.h"
-#include "network.h"
 #include "kernel_manager.h"
 #include "logging.h"
 

@@ -20,11 +20,11 @@
  *
  */
 
+#include "common_synapse_properties.h"
+
 #include "kernel_manager.h"
-#include "network.h"
 #include "dictdatum.h"
 #include "connector_model.h"
-#include "common_synapse_properties.h"
 #include "stdp_dopa_connection.h"
 #include "event.h"
 

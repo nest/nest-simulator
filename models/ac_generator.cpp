@@ -20,10 +20,10 @@
  *
  */
 
+#include "ac_generator.h"
+
 #include <cmath>
 
-#include "ac_generator.h"
-#include "network.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"

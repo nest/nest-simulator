@@ -23,6 +23,8 @@
 #ifndef BINARY_NEURON_H
 #define BINARY_NEURON_H
 
+#include <cmath>
+
 #include "nest_types.h"
 #include "event.h"
 #include "archiving_node.h"
@@ -31,13 +33,9 @@
 #include "universal_data_logger.h"
 #include "recordables_map.h"
 #include "exp_randomdev.h"
-#include <cmath>
 
 namespace nest
 {
-
-class Network;
-
 /**
  * Binary stochastic neuron with linear or sigmoidal gain function.
  *

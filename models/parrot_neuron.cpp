@@ -20,9 +20,11 @@
  *
  */
 
-#include "exceptions.h"
 #include "parrot_neuron.h"
-#include "network.h"
+
+#include <limits>
+
+#include "exceptions.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
@@ -30,11 +32,6 @@
 #include "numerics.h"
 #include "kernel_manager.h"
 #include "event_delivery_manager_impl.h"
-
-
-#include <limits>
-
-#include "kernel_manager.h"
 
 namespace nest
 {

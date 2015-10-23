@@ -20,16 +20,15 @@
  *
  */
 
-#include "config.h"
+#include "music_message_in_proxy.h"
 
 #ifdef HAVE_MUSIC
 
-#include "music_message_in_proxy.h"
-#include "network.h"
+#include <music.hh>
+
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "arraydatum.h"
-#include "music.hh"
 
 
 /* ----------------------------------------------------------------

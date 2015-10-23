@@ -24,10 +24,9 @@
 #define SIMULATION_MANAGER_H
 
 #include "nest_types.h"
+#include "nest_time.h"
 #include "manager_interface.h"
 #include "dictdatum.h"
-
-#include "network.h" // remove later
 
 namespace nest
 {

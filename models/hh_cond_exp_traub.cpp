@@ -25,17 +25,7 @@
 
 #ifdef HAVE_GSL
 
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
 #include <limits>
-
-#include "universal_data_logger_impl.h"
-
 #include <iomanip>
 #include <iostream>
 #include <cstdio>
@@ -44,7 +34,14 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_sf_exp.h>
 
+#include "exceptions.h"
+#include "dict.h"
+#include "integerdatum.h"
+#include "doubledatum.h"
+#include "dictutils.h"
+#include "numerics.h"
 #include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
 
 nest::RecordablesMap< nest::hh_cond_exp_traub > nest::hh_cond_exp_traub::recordablesMap_;
 

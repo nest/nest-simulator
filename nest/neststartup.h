@@ -23,6 +23,8 @@
 #ifndef NEST_STARTUP_H
 #define NEST_STARTUP_H
 
+#include "config.h"
+
 #if defined( HAVE_LIBNEUROSIM ) && defined( _IS_PYNEST )
 
 #include <neurosim/pyneurosim.h>

@@ -26,7 +26,6 @@
 #include "dict.h"
 #include "name.h"
 #include "nest_names.h"
-#include "network.h"
 #include "node.h"
 #include "exceptions.h"
 

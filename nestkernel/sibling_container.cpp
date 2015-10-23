@@ -20,13 +20,15 @@
  *
  */
 
-#include "event.h"
+
 #include "sibling_container.h"
+
+#include <string>
+
 #include "dictdatum.h"
 #include "arraydatum.h"
 #include "dictutils.h"
-#include "network.h"
-#include <string>
+#include "event.h"
 
 #ifdef N_DEBUG
 #undef N_DEBUG

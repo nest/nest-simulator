@@ -43,12 +43,9 @@
 #include "interpret.h"
 #include "integerdatum.h"
 #include "stringdatum.h"
+#include "kernel_manager.h"
 #include "logging.h"
-#include "kernel_manager.h"
-
 #include "model.h"
-
-#include "kernel_manager.h"
 
 
 namespace nest

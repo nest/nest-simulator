@@ -23,12 +23,14 @@
 #ifndef LOGGING_MANAGER_H
 #define LOGGING_MANAGER_H
 
+#include <vector>
+#include <string>
+
 #include "logging.h"
 #include "manager_interface.h"
 #include "dictdatum.h"
 
-#include <vector>
-#include <string>
+class Dictionary;
 
 namespace nest
 {

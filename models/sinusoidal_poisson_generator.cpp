@@ -20,9 +20,13 @@
  *
  */
 
-#include "exceptions.h"
+
 #include "sinusoidal_poisson_generator.h"
-#include "network.h"
+
+#include <cmath>
+#include <limits>
+
+#include "exceptions.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
@@ -31,10 +35,6 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 #include "event_delivery_manager_impl.h"
-
-#include <cmath>
-#include <limits>
-
 #include "kernel_manager.h"
 
 namespace nest

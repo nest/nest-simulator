@@ -21,14 +21,13 @@
  */
 
 #include "device.h"
-#include "dictutils.h"
-#include "exceptions.h"
 
 #include <limits>
 #include <climits>
 
 #include "node.h"
-#include "network.h"
+#include "dictutils.h"
+#include "exceptions.h"
 #include "nest_names.h"
 
 /* ----------------------------------------------------------------

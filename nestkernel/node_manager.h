@@ -24,12 +24,10 @@
 #define NODE_MANAGER_H
 
 #include <vector>
-#include <omp.h>
 
+#include "dictdatum.h"
 #include "nest_types.h"
 #include "manager_interface.h"
-#include "dict.h"
-#include "communicator.h"
 #include "arraydatum.h"
 #include "sparse_node_array.h"
 
@@ -38,6 +36,8 @@ namespace nest
 
 class SiblingContainer;
 class Node;
+class Subnet;
+class Model;
 
 class NodeManager : ManagerInterface
 {
@@ -239,10 +239,6 @@ private:
     */
   std::vector< std::vector< Node* > > nodes_vec_;
   index nodes_vec_network_size_;        //!< Network size when nodes_vec_ was last updated
-
-
-
-
 };
 
 inline index

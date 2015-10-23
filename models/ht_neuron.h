@@ -23,21 +23,23 @@
 #ifndef HT_NEURON_H
 #define HT_NEURON_H
 
-#include "archiving_node.h"
-#include <vector>
-#include <string>
-#include "stringdatum.h"
+#include "config.h"
 
 #ifdef HAVE_GSL_1_11
 
-#include "ring_buffer.h"
-#include "connection.h"
-#include "universal_data_logger.h"
-#include "recordables_map.h"
+#include <vector>
+#include <string>
 
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
+
+#include "archiving_node.h"
+#include "ring_buffer.h"
+#include "connection.h"
+#include "universal_data_logger.h"
+#include "recordables_map.h"
+#include "stringdatum.h"
 
 /* BeginDocumentation
    Name: ht_neuron - Neuron model after Hill & Tononi (2005).

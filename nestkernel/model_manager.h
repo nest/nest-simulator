@@ -23,6 +23,8 @@
 #ifndef MODEL_MANAGER_H
 #define MODEL_MANAGER_H
 
+#include <string>
+
 #include "manager_interface.h"
 #include "nest_types.h"
 #include "nest_time.h"
@@ -30,9 +32,7 @@
 #include "node.h"
 #include "genericmodel.h"
 #include "connector_model.h"
-
 #include "dictutils.h"
-#include "network.h"
 #include "model.h"
 #include "genericmodel.h"
 

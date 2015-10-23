@@ -24,6 +24,7 @@
 #define POISSON_GENERATOR_PS_H
 
 #include <vector>
+
 #include "nest_types.h"
 #include "event.h"
 #include "node.h"

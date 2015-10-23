@@ -23,18 +23,16 @@
 #ifndef IAF_PSC_ALPHA_CANON_H
 #define IAF_PSC_ALPHA_CANON_H
 
-#include "config.h"
+#include <vector>
 
+#include "config.h"
 #include "nest_types.h"
 #include "event.h"
 #include "node.h"
 #include "ring_buffer.h"
 #include "slice_ring_buffer.h"
 #include "connection.h"
-
 #include "universal_data_logger.h"
-
-#include <vector>
 
 /*BeginDocumentation
 Name: iaf_psc_alpha_canon - Leaky integrate-and-fire neuron
@@ -136,9 +134,6 @@ namespace nest
  */
 class iaf_psc_alpha_canon : public Node
 {
-
-  class Network;
-
 public:
   /** Basic constructor.
       This constructor should only be used by GenericModel to create

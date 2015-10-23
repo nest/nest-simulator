@@ -21,7 +21,7 @@
  */
 
 #include "quantal_stp_connection.h"
-#include "network.h"
+
 #include "connection.h"
 #include "connector_model.h"
 #include "nest_names.h"

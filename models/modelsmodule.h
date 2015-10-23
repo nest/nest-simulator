@@ -23,6 +23,8 @@
 #ifndef MODELSMODULE_H
 #define MODELSMODULE_H
 
+#include <string>
+
 #include "slimodule.h"
 
 namespace nest

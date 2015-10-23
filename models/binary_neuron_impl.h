@@ -23,9 +23,11 @@
 #ifndef BINARY_NEURON_IMPL_H
 #define BINARY_NEURON_IMPL_H
 
-#include "exceptions.h"
 #include "binary_neuron.h"
-#include "network.h"
+
+#include <limits>
+
+#include "exceptions.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
@@ -33,8 +35,6 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 #include "event_delivery_manager_impl.h"
-
-#include <limits>
 
 #include "kernel_manager.h"
 

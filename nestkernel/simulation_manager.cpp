@@ -25,13 +25,11 @@
 #include <sys/time.h>
 #include <vector>
 
+#include "compose.hpp"
 #include "kernel_manager.h"
 #include "sibling_container.h"
-
 #include "dictutils.h"
-#include "network.h"
 #include "psignal.h"
-#include "nest_time.h"
 
 nest::SimulationManager::SimulationManager()
   : simulating_( false )

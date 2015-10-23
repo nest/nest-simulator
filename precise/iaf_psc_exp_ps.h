@@ -23,8 +23,9 @@
 #ifndef IAF_PSC_EXP_PS_H
 #define IAF_PSC_EXP_PS_H
 
-#include "config.h"
+#include <vector>
 
+#include "config.h"
 #include "nest_types.h"
 #include "event.h"
 #include "node.h"
@@ -33,8 +34,6 @@
 #include "connection.h"
 #include "universal_data_logger.h"
 #include "recordables_map.h"
-
-#include <vector>
 
 /*BeginDocumentation
 Name: iaf_psc_exp_ps - Leaky integrate-and-fire neuron
@@ -120,9 +119,6 @@ namespace nest
  */
 class iaf_psc_exp_ps : public Node
 {
-
-  class Network;
-
 public:
   /** Basic constructor.
       This constructor should only be used by GenericModel to create

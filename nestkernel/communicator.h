@@ -48,12 +48,8 @@
 
 namespace nest
 {
-class Network;
-
 class Communicator
 {
-  friend class Network;
-
 public:
   Communicator()
   {
@@ -290,12 +286,8 @@ private:
 
 namespace nest
 {
-class Network;
-
 class Communicator
 {
-  friend class Network;
-
 public:
   Communicator()
   {

@@ -36,8 +36,6 @@
 
 #include "modelsmodule.h"
 
-#include <string>
-
 #include "config.h"
 #include "kernel_manager.h"
 #include "model_manager_impl.h"

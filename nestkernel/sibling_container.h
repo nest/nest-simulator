@@ -25,16 +25,13 @@
 
 #include <vector>
 #include <string>
+
+#include "nest_types.h"
 #include "node.h"
 #include "dictdatum.h"
 
 namespace nest
 {
-
-class Node;
-class Network;
-class Scheduler;
-
 /**
  * SiblingContainer class.
  * This class is used to group the replicas of nodes on different
@@ -44,9 +41,7 @@ class Scheduler;
  */
 class SiblingContainer : public Node
 {
-  friend class Network;
   friend class NodeManager;
-  friend class Scheduler;
   friend class Subnet;
 
 public:

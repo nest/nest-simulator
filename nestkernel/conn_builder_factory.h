@@ -31,9 +31,6 @@
 
 namespace nest
 {
-
-class Network;
-
 /**
  * Generic factory class for ConnBuilder objects.
  *

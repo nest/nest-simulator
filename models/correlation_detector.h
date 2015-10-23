@@ -26,6 +26,7 @@
 
 #include <vector>
 #include <deque>
+
 #include "nest_types.h"
 #include "event.h"
 #include "node.h"
@@ -108,9 +109,6 @@
 
 namespace nest
 {
-
-class Network;
-
 /**
  * Correlation detector class.
  *

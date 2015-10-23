@@ -20,17 +20,7 @@
  *
  */
 
-
-#include "exceptions.h"
 #include "aeif_cond_alpha_RK5.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include "universal_data_logger_impl.h"
-#include "kernel_manager.h"
 
 #include <limits>
 
@@ -38,6 +28,14 @@
 #include <iomanip>
 #include <iostream>
 #include <cstdio>
+
+#include "exceptions.h"
+#include "dict.h"
+#include "integerdatum.h"
+#include "doubledatum.h"
+#include "dictutils.h"
+#include "numerics.h"
+#include "universal_data_logger_impl.h"
 
 #include "kernel_manager.h"
 

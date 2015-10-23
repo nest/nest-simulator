@@ -32,7 +32,7 @@
 #include <limits>
 #include <numeric>
 #include "stopwatch.h"
-#include "network.h"
+#include "network.h" // quit_by_error, get_exitcode
 #include "kernel_manager.h"
 #include "communicator_impl.h"
 

@@ -23,16 +23,13 @@
 #ifndef SLICE_RING_BUFFER_H
 #define SLICE_RING_BUFFER_H
 
-#include "config.h"
-
 #include <algorithm>
 #include <functional>
 #include <vector>
 #include <cassert>
 
+#include "config.h"
 #include "nest_types.h"
-#include "network.h"
-
 #include "kernel_manager.h"
 
 namespace nest

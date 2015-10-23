@@ -20,9 +20,11 @@
  *
  */
 
-#include "exceptions.h"
 #include "volume_transmitter.h"
-#include "network.h"
+
+#include <numeric>
+
+#include "exceptions.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
@@ -31,8 +33,6 @@
 #include "connector_base.h"
 #include "spikecounter.h"
 #include "kernel_manager.h"
-
-#include <numeric>
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters

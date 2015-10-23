@@ -25,7 +25,6 @@
 
 #include "kernel_manager.h"
 #include "dictutils.h"
-#include "network.h"
 #include "logging.h"
 #include "mpi_manager.h"
 #include "mpi_manager_impl.h"

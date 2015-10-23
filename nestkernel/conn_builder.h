@@ -43,8 +43,6 @@
 
 namespace nest
 {
-
-class Network;
 class Node;
 class ConnParameter;
 

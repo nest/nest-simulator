@@ -19,18 +19,13 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-#include "config.h"
 #include "conngenmodule.h"
 
+#include "tokenutils.h"
+#include "config.h"
 #include "conngen.h"
-
-#include "network.h"
 #include "communicator.h"
-#include "modelrange.h"
-
 #include "cg_connect.h"
-
 #include "stringdatum.h"
 #include "lockptrdatum_impl.h"
 

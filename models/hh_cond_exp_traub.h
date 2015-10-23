@@ -27,6 +27,8 @@
 
 #ifdef HAVE_GSL
 
+#include <gsl/gsl_odeiv.h>
+
 #include "nest_types.h"
 #include "event.h"
 #include "archiving_node.h"
@@ -34,8 +36,6 @@
 #include "connection.h"
 #include "universal_data_logger.h"
 #include "recordables_map.h"
-
-#include <gsl/gsl_odeiv.h>
 
 namespace nest
 {

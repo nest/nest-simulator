@@ -32,13 +32,15 @@
     First Version: June 2006
 */
 
-#include "config.h"
 #include "precisemodule.h"
+
+#include <string>
+
+#include "config.h"
 #include "kernel_manager.h"
 #include "model_manager_impl.h"
 #include "model.h"
 #include "genericmodel.h"
-#include <string>
 
 // Node headers
 #include "iaf_psc_delta_canon.h"

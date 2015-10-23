@@ -21,15 +21,17 @@
  */
 
 #include "recording_device.h"
-#include "network.h"
+
+#include <iostream> // using cerr for error message.
+#include <iomanip>
+
+#include "compose.hpp"
 #include "dictutils.h"
 #include "iostreamdatum.h"
 #include "arraydatum.h"
 #include "config.h"
 #include "exceptions.h"
 #include "sliexceptions.h"
-#include <iostream> // using cerr for error message.
-#include <iomanip>
 #include "fdstream.h"
 #include "kernel_manager.h"
 #include "logging.h"

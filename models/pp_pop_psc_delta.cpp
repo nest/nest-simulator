@@ -24,10 +24,12 @@
  *  Multimeter support by Yury V. Zaytsev.
  */
 
+#include "pp_pop_psc_delta.h"
+
+#include <limits>
+#include <algorithm>
 
 #include "exceptions.h"
-#include "pp_pop_psc_delta.h"
-#include "network.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
@@ -35,10 +37,6 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 #include "compose.hpp"
-
-#include <limits>
-#include <algorithm>
-
 #include "kernel_manager.h"
 
 namespace nest

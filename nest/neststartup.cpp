@@ -20,25 +20,18 @@
  *
  */
 
-#include "config.h"
-
 #include "neststartup.h"
 
 #include <fstream>
 
+#include "config.h"
 #include "nest.h"
 #include "network.h"
 #include "interpret.h"
 #include "communicator.h"
-
 #include "dict.h"
 #include "dictdatum.h"
 #include "random_numbers.h"
-
-#ifndef _IS_PYNEST
-#include "gnureadline.h"
-#endif
-
 #include "slistartup.h"
 #include "sliarray.h"
 #include "oosupport.h"
@@ -57,6 +50,10 @@
 
 #ifdef _OPENMP
 #include <omp.h>
+#endif
+
+#ifndef _IS_PYNEST
+#include <gnureadline.h>
 #endif
 
 SLIInterpreter* engine_only_for_logging;

@@ -26,8 +26,7 @@
 #include <ostream>
 
 #include "nest.h"
-#include "network.h"
-
+#include "kernel_manager.h"
 #include "sliexceptions.h"
 #include "exceptions.h"
 #include "logging.h"

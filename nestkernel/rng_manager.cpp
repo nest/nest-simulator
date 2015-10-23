@@ -30,9 +30,6 @@
 #include "random_datums.h"
 #include "exceptions.h"
 #include "gslrandomgen.h"
-
-#include "network.h"
-
 #include "vp_manager_impl.h"
 
 

@@ -119,9 +119,6 @@
 
 namespace nest
 {
-
-class Network;
-
 /**
  * Correlospinmatrixdetector class.
  *

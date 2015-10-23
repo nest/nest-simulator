@@ -47,8 +47,6 @@
 #include "sliexceptions.h"
 #include "delay_checker.h"
 
-#include "network.h"
-
 #ifdef USE_PMA
 #include "allocator.h"
 #ifdef IS_K

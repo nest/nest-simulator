@@ -25,8 +25,6 @@
 #include <limits>
 #include <cmath>
 
-#include "kernel_manager.h"
-
 nest::SliceRingBuffer::SliceRingBuffer()
   : refract_( std::numeric_limits< long_t >::max(), 0, 0 )
 {

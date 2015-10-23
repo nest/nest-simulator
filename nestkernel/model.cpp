@@ -21,12 +21,12 @@
  */
 
 #include "model.h"
-#include "exceptions.h"
-#include "dictutils.h"
-#include "network.h"
-#include "compose.hpp"
+
 #include <algorithm>
 
+#include "exceptions.h"
+#include "dictutils.h"
+#include "compose.hpp"
 #include "kernel_manager.h"
 
 namespace nest

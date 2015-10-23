@@ -20,27 +20,22 @@
  *
  */
 
-#include <omp.h>
-
-#include <set>
-#include "nest_types.h"
-
-#include "kernel_manager.h"
 #include "node_manager.h"
-#include "logging.h"
 
-#include "network.h"
+#include <omp.h>
+#include <set>
+
+#include "compose.hpp"
+#include "kernel_manager.h"
+#include "logging.h"
 #include "node.h"
 #include "genericmodel.h"
 #include "dictutils.h"
-#include "nest_timeconverter.h"
-#include "random_datums.h"
 #include "sibling_container.h"
-
+#include "subnet.h"
 #include "event_delivery_manager.h"
-#include "vp_manager.h"
-#include "simulation_manager.h"
 #include "model_manager_impl.h"
+#include "model.h"
 
 namespace nest
 {

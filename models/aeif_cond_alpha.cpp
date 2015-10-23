@@ -21,26 +21,24 @@
  */
 
 #include "aeif_cond_alpha.h"
-#include "nest_names.h"
 
 #ifdef HAVE_GSL_1_11
 
-#include "universal_data_logger_impl.h"
-#include "kernel_manager.h"
-
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
 #include <limits>
 
 #include <cmath>
 #include <iomanip>
 #include <iostream>
 #include <cstdio>
+
+#include "nest_names.h"
+#include "universal_data_logger_impl.h"
+#include "exceptions.h"
+#include "dict.h"
+#include "integerdatum.h"
+#include "doubledatum.h"
+#include "dictutils.h"
+#include "numerics.h"
 
 #include "kernel_manager.h"
 

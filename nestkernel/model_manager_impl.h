@@ -22,7 +22,9 @@
 
 #include "model_manager.h"
 
+#include "compose.hpp"
 #include "kernel_manager.h"
+
 
 namespace nest
 {

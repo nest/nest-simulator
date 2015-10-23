@@ -27,8 +27,6 @@
 
 namespace nest
 {
-class Network;
-
 /**
  * Module supplying models support precise spike timing.
  */

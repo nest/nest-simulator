@@ -22,10 +22,11 @@
 
 #ifndef MODEL_H
 #define MODEL_H
-#include <string>
 
+#include <string>
 #include <new>
 #include <vector>
+
 #include "node.h"
 #include "allocator.h"
 #include "dictutils.h"

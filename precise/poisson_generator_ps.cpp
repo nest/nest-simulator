@@ -21,18 +21,18 @@
  */
 
 #include "poisson_generator_ps.h"
-#include "network.h"
+
+#include <algorithm>
+#include <limits>
+
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "arraydatum.h"
 #include "dictutils.h"
+#include "kernel_manager.h"
 #include "event_delivery_manager_impl.h"
 
-#include <algorithm>
-#include <limits>
-
-#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

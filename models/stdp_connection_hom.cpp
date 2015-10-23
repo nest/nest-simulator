@@ -19,12 +19,11 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "stdp_connection_hom.h"
 
-#include "network.h"
 #include "dictdatum.h"
 #include "connector_model.h"
 #include "common_synapse_properties.h"
-#include "stdp_connection_hom.h"
 #include "event.h"
 
 namespace nest

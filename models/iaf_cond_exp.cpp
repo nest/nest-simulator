@@ -24,22 +24,19 @@
 
 #ifdef HAVE_GSL
 
+#include <iomanip>
+#include <iostream>
+#include <cstdio>
+#include <limits>
+
 #include "exceptions.h"
-#include "network.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "numerics.h"
-#include <limits>
-
 #include "universal_data_logger_impl.h"
 #include "event.h"
-
-#include <iomanip>
-#include <iostream>
-#include <cstdio>
-
 #include "kernel_manager.h"
 
 /* ----------------------------------------------------------------

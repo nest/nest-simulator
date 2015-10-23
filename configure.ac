@@ -819,7 +819,7 @@ AC_CONFIG_COMMANDS([nest/static_modules.h],
 	           [printf "$guard$module_includes$standard_includes$function_signature$module_loaders$end" > nest/static_modules.h],
 		   [guard="#ifndef STATIC_MODULES_H\n#define STATIC_MODULES_H\n\n"
 		    module_includes='$MODULE_INCLUDES\n'
-		    standard_includes="#include \"interpret.h\"\n#include \"network.h\"\n\n"
+		    standard_includes="#include \"interpret.h\"\n\n"
 		    function_signature="void add_static_modules(SLIInterpreter& engine)\n{\n"
 		    module_loaders='$ADD_STATIC_MODULES'
 		    end="}\n\n#endif\n"])

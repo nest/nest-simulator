@@ -21,14 +21,13 @@
  */
 
 #include "mip_generator.h"
-#include "network.h"
+
 #include "dict.h"
 #include "random_datums.h"
 #include "dictutils.h"
 #include "exceptions.h"
 #include "gslrandomgen.h"
 #include "event_delivery_manager_impl.h"
-
 #include "kernel_manager.h"
 
 /* ----------------------------------------------------------------

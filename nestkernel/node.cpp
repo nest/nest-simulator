@@ -22,14 +22,12 @@
 
 
 #include "node.h"
+
 #include "exceptions.h"
-#include "event.h"
-#include "network.h"
 #include "namedatum.h"
 #include "arraydatum.h"
 #include "dictutils.h"
 #include "compose.hpp"
-
 #include "kernel_manager.h"
 
 namespace nest

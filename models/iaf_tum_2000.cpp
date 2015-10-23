@@ -20,9 +20,11 @@
  *
  */
 
-#include "exceptions.h"
 #include "iaf_tum_2000.h"
-#include "network.h"
+
+#include <limits>
+
+#include "exceptions.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
@@ -30,9 +32,6 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 #include "propagator_stability.h"
-
-#include <limits>
-
 #include "kernel_manager.h"
 
 /* ----------------------------------------------------------------

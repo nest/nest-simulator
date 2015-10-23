@@ -21,13 +21,14 @@
  */
 
 #include "logging_manager.h"
-#include "logging_event.h"
-
-#include "sliexceptions.h"
-#include "dictutils.h"
 
 #include <cassert>
 #include <iostream>
+
+#include "logging_event.h"
+#include "sliexceptions.h"
+#include "dict.h"
+#include "dictutils.h"
 
 nest::LoggingManager::LoggingManager()
   : client_callbacks_()

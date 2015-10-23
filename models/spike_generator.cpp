@@ -21,6 +21,7 @@
  */
 
 #include "spike_generator.h"
+
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"

@@ -29,14 +29,10 @@
 #include "archiving_node.h"
 #include "ring_buffer.h"
 #include "connection.h"
-
 #include "universal_data_logger.h"
 
 namespace nest
 {
-
-class Network;
-
 /* BeginDocumentation
    Name: iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential PSCs.
 

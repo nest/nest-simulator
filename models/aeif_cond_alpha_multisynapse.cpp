@@ -20,18 +20,17 @@
  *
  */
 
-#include "exceptions.h"
 #include "aeif_cond_alpha_multisynapse.h"
-#include "network.h"
+
+#include <limits>
+
+#include "exceptions.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
-#include "kernel_manager.h"
-
-#include <limits>
 
 #include "kernel_manager.h"
 

@@ -27,8 +27,8 @@
 
 #ifdef HAVE_MUSIC
 
-
 #include <vector>
+
 #include "nest_types.h"
 #include "event.h"
 #include "node.h"

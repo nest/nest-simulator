@@ -32,8 +32,6 @@
 
 namespace nest
 {
-class Network;
-
 /* BeginDocumentation
 Name: iaf_neuron - Leaky integrate-and-fire neuron model.
 

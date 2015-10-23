@@ -20,19 +20,17 @@
  *
  */
 
-#include "config.h"
+#include "music_event_out_proxy.h"
 
 #ifdef HAVE_MUSIC
 
-#include "music_event_out_proxy.h"
-#include "network.h"
+#include <numeric>
+
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "arraydatum.h"
-
-#include <numeric>
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

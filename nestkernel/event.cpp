@@ -31,9 +31,9 @@
  *  @note Presently included in network.h and connection.h
  */
 
-#include "node.h"
 #include "event.h"
-#include "network.h"
+
+#include "node.h"
 
 namespace nest
 {

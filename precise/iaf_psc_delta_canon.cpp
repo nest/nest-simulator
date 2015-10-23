@@ -22,20 +22,17 @@
 
 /* iaf_psc_delta_canon is a neuron where the potential jumps on each spike arrival. */
 
-#include "config.h"
+#include "iaf_psc_delta_canon.h"
+
+#include <limits>
 
 #include "exceptions.h"
-#include "iaf_psc_delta_canon.h"
-#include "network.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
-
-#include <limits>
-
 #include "kernel_manager.h"
 
 namespace nest

@@ -74,11 +74,11 @@
 
 #include "connection.h"
 
-//#include "network.h"
-//#include "dictdatum.h"
-//#include "connector_model.h"
-//#include "common_synapse_properties.h"
-//#include "event.h"
+#include "dictdatum.h"
+#include "dictutils.h"
+#include "connector_model.h"
+#include "common_synapse_properties.h"
+#include "event.h"
 
 
 namespace nest

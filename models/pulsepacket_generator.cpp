@@ -21,6 +21,9 @@
  */
 
 #include "pulsepacket_generator.h"
+
+#include <algorithm>
+
 #include "dict.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
@@ -28,8 +31,6 @@
 #include "exceptions.h"
 #include "numerics.h"
 #include "gslrandomgen.h"
-#include <algorithm>
-
 #include "kernel_manager.h"
 #include "event_delivery_manager_impl.h"
 

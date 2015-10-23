@@ -28,8 +28,6 @@
 
 #include "manager_interface.h"
 
-#include "network.h"
-
 #include "nest_types.h"
 #include "nest_time.h"
 #include "dictdatum.h"
@@ -43,7 +41,6 @@ typedef Communicator::OffGridSpike OffGridSpike;
 
 class EventDeliveryManager : public ManagerInterface
 {
-  friend class Network; // TODO: replace by SimulationManager, NodeManager
 public:
   EventDeliveryManager();
   virtual ~EventDeliveryManager();

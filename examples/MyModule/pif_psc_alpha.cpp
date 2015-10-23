@@ -20,9 +20,11 @@
  *
  */
 
-#include "exceptions.h"
 #include "pif_psc_alpha.h"
-#include "network.h"
+
+#include <limits>
+
+#include "exceptions.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
@@ -30,8 +32,7 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 #include "lockptrdatum.h"
-
-#include <limits>
+#include "kernel_manager.h"
 
 using namespace nest;
 

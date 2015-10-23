@@ -23,24 +23,13 @@
 #ifndef CONNECTION_MANAGER_H
 #define CONNECTION_MANAGER_H
 
-#include <vector>
-#include <limits>
+#include "dictdatum.h"
 
-#include "nest_types.h"
-#include "model.h"
-#include "dictutils.h"
-#include "nest_time.h"
-#include "nest_timeconverter.h"
-#include "arraydatum.h"
-
-
-#include <cmath>
 
 namespace nest
 {
 
-class ConnectorModel;
-class Network;
+
 
 /**
  * Manages the available connection prototypes and connections. It provides
@@ -48,7 +37,6 @@ class Network;
  */
 class ConnectionManager
 {
-  friend class ConnectionBuilderManager;
 
 public:
   ConnectionManager();

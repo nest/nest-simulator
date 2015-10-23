@@ -20,9 +20,11 @@
  *
  */
 
+#include "mymodule.h"
+
 // include necessary NEST headers
 #include "config.h"
-#include "network.h"
+#include "kernel_manager.h"
 #include "model.h"
 #include "dynamicloader.h"
 #include "genericmodel.h"
@@ -36,7 +38,6 @@
 #include "target_identifier.h"
 
 // include headers with your own stuff
-#include "mymodule.h"
 #include "pif_psc_alpha.h"
 #include "drop_odd_spike_connection.h"
 

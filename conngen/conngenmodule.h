@@ -27,9 +27,7 @@
 
 #include "slimodule.h"
 #include "conngendatum.h"
-
 #include "modelrange.h"
-
 #include "dictdatum.h"
 
 namespace nest

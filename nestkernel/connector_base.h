@@ -27,12 +27,12 @@
 
 #include "node.h"
 #include "event.h"
-#include "network.h"
 #include "dictutils.h"
 #include "spikecounter.h"
 #include "nest_names.h"
 #include "connector_model.h"
 #include "nest_datums.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif

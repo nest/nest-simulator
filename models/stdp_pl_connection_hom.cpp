@@ -20,11 +20,11 @@
  *
  */
 
-#include "network.h"
+#include "stdp_pl_connection_hom.h"
+
 #include "dictdatum.h"
 #include "connector_model.h"
 #include "common_synapse_properties.h"
-#include "stdp_pl_connection_hom.h"
 #include "event.h"
 
 namespace nest

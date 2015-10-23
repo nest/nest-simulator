@@ -77,8 +77,9 @@
   SeeAlso: synapsedict, tsodyks_synapse, static_synapse
 */
 
-#include "connection.h"
 #include <cmath>
+
+#include "connection.h"
 
 namespace nest
 {

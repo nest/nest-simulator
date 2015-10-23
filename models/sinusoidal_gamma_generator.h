@@ -27,6 +27,8 @@
 
 #ifdef HAVE_GSL
 
+#include <vector>
+
 #include "nest_types.h"
 #include "randomgen.h"
 #include "event.h"
@@ -35,13 +37,8 @@
 #include "connection.h"
 #include "universal_data_logger.h"
 
-#include <vector>
-
 namespace nest
 {
-
-class Network;
-
 /* BeginDocumentation
    Name: sinusoidal_gamma_generator - Generates sinusoidally modulated gamma spike trains.
 

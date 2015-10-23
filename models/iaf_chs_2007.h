@@ -34,8 +34,6 @@
 
 namespace nest
 {
-class Network;
-
 /* BeginDocumentation
    Name: iaf_chs_2007 - Spike-response model used in Carandini et al 2007.
 

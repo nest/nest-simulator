@@ -24,7 +24,7 @@
 #define CONNECTION_CREATOR_H
 
 #include <vector>
-#include "network.h"
+
 #include "position.h"
 #include "topologymodule.h"
 #include "topology_names.h"

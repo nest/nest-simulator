@@ -22,7 +22,6 @@
 
 #include "proxynode.h"
 
-#include "network.h"
 #include "dictutils.h"
 #include "connection.h"
 #include "kernel_manager.h"

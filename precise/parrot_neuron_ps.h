@@ -78,8 +78,6 @@ namespace nest
 {
 class parrot_neuron_ps : public Node
 {
-  class Network;
-
 public:
   parrot_neuron_ps();
 

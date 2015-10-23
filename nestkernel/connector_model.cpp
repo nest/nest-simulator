@@ -22,12 +22,6 @@
 
 #include "connector_model.h"
 
-#include "network.h"
-#include "connector_base.h"
-
-#include "kernel_manager.h"
-#include "delay_checker.h"
-
 
 namespace nest
 {

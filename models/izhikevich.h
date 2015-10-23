@@ -32,9 +32,6 @@
 
 namespace nest
 {
-
-class Network;
-
 /* BeginDocumentation
    Name: izhikevich - Izhikevich neuron model
 

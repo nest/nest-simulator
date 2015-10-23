@@ -25,7 +25,6 @@
 #include "cg_connect.h"
 
 #include "subnet.h"
-#include "network.h"
 #include "logging.h"
 #include "exceptions.h"
 #include "token.h"

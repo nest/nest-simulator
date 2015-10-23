@@ -22,16 +22,15 @@
 
 #include "amat2_psc_exp.h"
 
+#include <limits>
+
 #include "exceptions.h"
-#include "network.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
-
-#include <limits>
 
 #include "kernel_manager.h"
 

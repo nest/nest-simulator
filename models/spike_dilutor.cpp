@@ -21,7 +21,7 @@
  */
 
 #include "spike_dilutor.h"
-#include "network.h"
+
 #include "dict.h"
 #include "random_datums.h"
 #include "dictutils.h"
@@ -29,8 +29,6 @@
 #include "gslrandomgen.h"
 #include "kernel_manager.h"
 #include "event_delivery_manager_impl.h"
-
-#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

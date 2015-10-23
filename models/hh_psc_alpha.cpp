@@ -25,22 +25,20 @@
 
 #ifdef HAVE_GSL
 
+#include <limits>
+#include <iomanip>
+#include <iostream>
+#include <cstdio>
+
 #include "exceptions.h"
-#include "network.h"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "numerics.h"
-#include <limits>
-#include "universal_data_logger_impl.h"
-#include "event_delivery_manager_impl.h"
-
-#include <iomanip>
-#include <iostream>
-#include <cstdio>
-
 #include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+#include "event_delivery_manager_impl.h" 
 
 
 nest::RecordablesMap< nest::hh_psc_alpha > nest::hh_psc_alpha::recordablesMap_;

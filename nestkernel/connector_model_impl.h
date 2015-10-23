@@ -26,7 +26,6 @@
 #include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "dictutils.h"
-#include "network.h"
 #include "connector_model.h"
 #include "connector_base.h"
 #include "compose.hpp"

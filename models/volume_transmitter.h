@@ -88,7 +88,6 @@ SeeAlso: stdp_dopamine_synapse
 namespace nest
 {
 
-class Network;
 class ConnectorBase;
 
 /**

@@ -24,6 +24,7 @@
 #define MULTIMETER_H
 
 #include <vector>
+
 #include "kernel_manager.h"
 #include "recording_device.h"
 #include "name.h"
@@ -119,9 +120,6 @@ SeeAlso: Device, RecordingDevice
 
 namespace nest
 {
-
-class Network;
-
 /**
  * General analog data recorder.
  *

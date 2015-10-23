@@ -21,18 +21,16 @@
  */
 
 #include "spin_detector.h"
-#include "kernel_manager.h"
-#include "network.h"
+
+#include <numeric> 
+
+#include "compose.hpp"
 #include "dict.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "arraydatum.h"
 #include "sibling_container.h"
-#include "kernel_manager.h"
-
-#include <numeric>
-
 #include "logging.h"
 #include "kernel_manager.h"
 #include "event_delivery_manager_impl.h"

@@ -33,8 +33,6 @@
 namespace nest
 {
 
-class Network;
-
 /* BeginDocumentation
 Name: sli_neuron - neuron with SLI callback
 

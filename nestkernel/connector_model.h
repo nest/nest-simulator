@@ -26,7 +26,9 @@
 #include "nest_time.h"
 #include "dictutils.h"
 #include "nest_types.h"
+
 #include <cmath>
+#include <string>
 
 namespace nest
 {

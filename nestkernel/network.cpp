@@ -20,33 +20,16 @@
  *
  */
 
-#include "instance.h"
 #include "network.h"
-#include "genericmodel.h"
-#include "subnet.h"
-#include "sibling_container.h"
-#include "interpret.h"
-#include "dict.h"
+
+#include "compose.hpp"
 #include "dictstack.h"
-#include "integerdatum.h"
-#include "booldatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "tokenutils.h"
-#include "tokenarray.h"
-#include "exceptions.h"
-#include "sliexceptions.h"
-#include "processes.h"
+#include "interpret.h"
 #include "nestmodule.h"
-#include "sibling_container.h"
+#include "communicator.h"
 #include "communicator_impl.h"
-#include "random_datums.h"
 
 #include "kernel_manager.h"
-#include "vp_manager_impl.h"
-#include "connection_builder_manager_impl.h"
-
-#include "nest_timeconverter.h"
 
 #include <cmath>
 #include <sys/time.h>

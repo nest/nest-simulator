@@ -21,8 +21,9 @@
  */
 
 #include "mpi_manager.h"
+
+#include "compose.hpp"
 #include "communicator.h"
-#include "network.h"
 #include "dictutils.h"
 #include "kernel_manager.h"
 #include "logging.h"

@@ -24,14 +24,16 @@
 #define MUSIC_EVENT_OUT_PROXY_H
 
 #include "config.h"
+
 #ifdef HAVE_MUSIC
 
 #include <vector>
+#include <music.hh>
+
 #include "nest_types.h"
 #include "event.h"
 #include "node.h"
 #include "exceptions.h"
-#include "music.hh"
 
 /* BeginDocumentation
 

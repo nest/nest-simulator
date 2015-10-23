@@ -27,6 +27,12 @@
 
 #ifdef HAVE_GSL
 
+#include <vector>
+
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_odeiv.h>
+
 #include "nest_types.h"
 #include "event.h"
 #include "archiving_node.h"
@@ -36,12 +42,6 @@
 #include "recordables_map.h"
 #include "dictdatum.h"
 #include "name.h"
-
-#include <vector>
-
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_odeiv.h>
 
 /* BeginDocumentation
 Name: iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky integrate-and-fire

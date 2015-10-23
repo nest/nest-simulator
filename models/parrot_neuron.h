@@ -84,8 +84,6 @@ Author:  May 2006, Reichert, Morrison
 
 namespace nest
 {
-class Network;
-
 class parrot_neuron : public Archiving_Node
 {
 

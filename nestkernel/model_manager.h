@@ -241,6 +241,12 @@ public:
   size_t get_num_node_models() const;
 
   size_t get_num_synapse_prototypes() const;
+  
+  /**
+   * Print out the memory information for each node model.
+   * @see sli::pool
+   */
+  void memory_info() const;
 
 private:
   /**  */
@@ -290,6 +296,9 @@ private:
    */
   void
   set_synapse_defaults_( index model_id, const DictionaryDatum& params );
+  
+  //! Compares model ids for sorting in memory_info
+  static bool compare_model_by_id_( const int a, const int b );
   
   /**
    * The list of clean node models. The first component of the pair is a

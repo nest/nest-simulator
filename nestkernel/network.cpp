@@ -145,43 +145,6 @@ Network::reset_kernel()
 }
 
 void
-Network::memory_info()
-{
-  // TODO We decided to remove the memory_info function, so for now we
-  // just comment it out. If we want to keep it, it has to go to the
-  // ModelManager prints the models unsorted
-
-//
-//  std::cout.setf( std::ios::left );
-//  std::vector< index > idx( kernel().model_manager.get_num_node_models() );
-//
-//
-//  for ( index i = 0; i < kernel().model_manager.get_num_node_models(); ++i )
-//    idx[ i ] = i;
-//
-//  std::sort( idx.begin(), idx.end(), ModelComp( models_ ) );
-//
-//  std::string sep( "--------------------------------------------------" );
-//
-//  std::cout << sep << std::endl;
-//  std::cout << std::setw( 25 ) << "Name" << std::setw( 13 ) << "Capacity" << std::setw( 13 )
-//            << "Available" << std::endl;
-//  std::cout << sep << std::endl;
-//
-//  for ( index i = 0; i < kernel().model_manager.get_num_node_models(); ++i )
-//  {
-//    Model* mod = models_[ idx[ i ] ];
-//    if ( mod->mem_capacity() != 0 )
-//      std::cout << std::setw( 25 ) << mod->get_name() << std::setw( 13 )
-//                << mod->mem_capacity() * mod->get_element_size() << std::setw( 13 )
-//                << mod->mem_available() * mod->get_element_size() << std::endl;
-//  }
-//
-//  std::cout << sep << std::endl;
-//  std::cout.unsetf( std::ios::left );
-}
-
-void
 Network::set_status( index gid, const DictionaryDatum& d )
 {
   // we first handle normal nodes, except the root (GID 0)
@@ -359,13 +322,5 @@ Network::update_music_event_handlers_( Time const& origin, const long_t from, co
     it->second.update( origin, from, to );
 }
 #endif
-
-
-
-bool
-ModelComp::operator()( int a, int b )
-{
-  return kernel().model_manager.get_model( a )->get_name() < kernel().model_manager.get_model( b )->get_name();
-}
 
 } // end of namespace

@@ -23,6 +23,12 @@
 #include "model_manager.h"
 #include "model_manager_impl.h"
 
+#include <vector>
+#include <iostream>
+#include <algorithm>
+
+#include "compose.hpp"
+#include "proxynode.h"
 #include "sibling_container.h"
 #include "subnet.h"
 
@@ -395,6 +401,47 @@ ModelManager::calibrate( const TimeConverter& tc )
           ++pt )
       if ( *pt != 0 )
         ( *pt )->calibrate( tc );
+}
+  
+//!< Functor to compare Models by their name.
+bool
+ModelManager::compare_model_by_id_( const int a, const int b )
+{
+  return kernel().model_manager.get_model( a )->get_name() 
+       < kernel().model_manager.get_model( b )->get_name();
+}
+
+void
+ModelManager::memory_info() const
+{
+  
+  std::cout.setf( std::ios::left );
+  std::vector< index > idx( kernel().model_manager.get_num_node_models() );
+  
+  
+  for ( index i = 0; i < kernel().model_manager.get_num_node_models(); ++i )
+    idx[ i ] = i;
+  
+  std::sort( idx.begin(), idx.end(), compare_model_by_id_ );
+  
+  std::string sep( "--------------------------------------------------" );
+  
+  std::cout << sep << std::endl;
+  std::cout << std::setw( 25 ) << "Name" << std::setw( 13 ) << "Capacity" << std::setw( 13 )
+            << "Available" << std::endl;
+  std::cout << sep << std::endl;
+  
+  for ( index i = 0; i < kernel().model_manager.get_num_node_models(); ++i )
+  {
+    Model* mod = models_[ idx[ i ] ];
+    if ( mod->mem_capacity() != 0 )
+      std::cout << std::setw( 25 ) << mod->get_name() << std::setw( 13 )
+                << mod->mem_capacity() * mod->get_element_size() << std::setw( 13 )
+                << mod->mem_available() * mod->get_element_size() << std::endl;
+  }
+  
+  std::cout << sep << std::endl;
+  std::cout.unsetf( std::ios::left );
 }
 
 } // namespace nest

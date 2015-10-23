@@ -142,7 +142,7 @@ public:
    */
   int get_exitcode() const;
 
-  void memory_info();
+  
 
 
   /**
@@ -280,24 +280,6 @@ Network::get_exitcode() const
   DictionaryDatum statusdict = getValue< DictionaryDatum >( t );
   return getValue< long >( statusdict, "exitcode" );
 }
-
-
-
-typedef lockPTR< Network > NetPtr;
-
-//!< Functor to compare Models by their name.
-class ModelComp : public std::binary_function< int, int, bool >
-{
-  const std::vector< Model* >& models;
-
-public:
-  ModelComp( const vector< Model* >& nmodels )
-    : models( nmodels )
-  {
-  }
-
-  bool operator()( int a, int b );
-};
 
 /****** former Scheduler functions ******/
 

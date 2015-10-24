@@ -226,12 +226,12 @@ public:
   /**
    * @return Reference to the model dictionary
    */
-  Dictionary& get_modeldict();
+  DictionaryDatum& get_modeldict();
 
   /**
    * @return Reference to the synapse dictionary
    */
-  Dictionary& get_synapsedict();
+  DictionaryDatum& get_synapsedict();
 
   /**
    * Does the network contain copies of models created using CopyModel?
@@ -336,7 +336,7 @@ private:
    'modeldict info' shows the contents of the dictionary
    SeeAlso: info, Device, RecordingDevice, iaf_neuron, subnet
    */
-  Dictionary modeldict_;    //!< Dictionary of all models
+  DictionaryDatum modeldict_;    //!< Dictionary of all models
   
   /* BeginDocumentation
    Name: synapsedict - Dictionary containing all synapse models.
@@ -346,7 +346,7 @@ private:
    Author: Jochen Martin Eppler
    SeeAlso: info
    */
-  Dictionary synapsedict_;  //!< Dictionary of all synapse models
+  DictionaryDatum synapsedict_;  //!< Dictionary of all synapse models
   
   Model* subnet_model_;
   Model* siblingcontainer_model_;
@@ -400,14 +400,14 @@ private:
   }
   
   inline
-  Dictionary&
+  DictionaryDatum&
   ModelManager::get_modeldict()
   {
     return modeldict_;
   }
   
   inline
-  Dictionary&
+  DictionaryDatum&
   ModelManager::get_synapsedict()
   {
     return synapsedict_;

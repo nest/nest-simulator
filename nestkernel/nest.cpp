@@ -182,7 +182,7 @@ create( const Name& model_name, const index n_nodes )
     throw RangeCheck();
   }
 
-  const Token model = kernel().model_manager.get_modeldict().lookup( model_name );
+  const Token model = kernel().model_manager.get_modeldict()->lookup( model_name );
   if ( model.empty() )
     throw UnknownModelName( model_name );
 
@@ -239,8 +239,8 @@ set_model_defaults( const Name& modelname, const DictionaryDatum& dict )
 DictionaryDatum
 get_model_defaults( const Name& modelname )
 {
-  const Token nodemodel = kernel().model_manager.get_modeldict().lookup( modelname );
-  const Token synmodel = kernel().model_manager.get_synapsedict().lookup( modelname );
+  const Token nodemodel = kernel().model_manager.get_modeldict()->lookup( modelname );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( modelname );
 
   DictionaryDatum dict;
 

@@ -78,7 +78,7 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
     throw BadProperty();
   }
 
-  const Token synmodel = kernel().model_manager.get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
@@ -106,7 +106,7 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
   const DictionaryDatum& params_map,
   const Name& synmodel_name )
 {
-  const Token synmodel = kernel().model_manager.get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );

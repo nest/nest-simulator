@@ -36,7 +36,7 @@ template < class ModelT >
 index
 ModelManager::register_node_model( const Name& name, bool private_model)
 {
-  if ( !private_model && modeldict_.known( name ) )
+  if ( !private_model && modeldict_->known( name ) )
   {
     std::string msg = String::compose("A model called '%1' already exists.\n"
       "Please choose a different name!", name);
@@ -51,7 +51,7 @@ template < class ModelT >
 index
 ModelManager::register_preconf_node_model( const Name& name, DictionaryDatum& conf, bool private_model )
 {
-  if ( !private_model && modeldict_.known( name ) )
+  if ( !private_model && modeldict_->known( name ) )
   {
     std::string msg = String::compose("A model called '%1' already exists.\n"
       "Please choose a different name!", name);
@@ -72,7 +72,7 @@ ModelManager::register_connection_model( const std::string& name )
 {
   ConnectorModel* cf = new GenericConnectorModel< ConnectionT >( name );
   
-  if ( synapsedict_.known( name ) )
+  if ( synapsedict_->known( name ) )
   {
     delete cf;
     std::string msg = String::compose("A synapse type called '%1' already exists.\n"
@@ -91,7 +91,7 @@ ModelManager::register_connection_model( const std::string& name )
     prototypes_[ t ][ syn_id ]->set_syn_id( syn_id );
   }
   
-  synapsedict_.insert( name, syn_id );
+  synapsedict_->insert( name, syn_id );
   
   return syn_id;
 }

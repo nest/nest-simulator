@@ -56,7 +56,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   , autapses_( true )
   , multapses_( true )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
-  , synapse_model_( kernel().model_manager.get_synapsedict()[ "static_synapse" ] )
+  , synapse_model_( kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
   , weight_( 0 )
   , delay_( 0 )
   , param_dicts_()
@@ -72,7 +72,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   if ( !syn_spec->known( names::model ) )
     throw BadProperty( "Synapse spec must contain synapse model." );
   const std::string syn_name = ( *syn_spec )[ names::model ];
-  if ( !kernel().model_manager.get_synapsedict().known( syn_name ) )
+  if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
     throw UnknownSynapseType( syn_name );
 
   // if another synapse than static_synapse is defined we need to make
@@ -80,7 +80,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   if ( syn_name != "static_synapse" )
     check_synapse_params_( syn_name, syn_spec );
 
-  synapse_model_ = kernel().model_manager.get_synapsedict()[ syn_name ];
+  synapse_model_ = kernel().model_manager.get_synapsedict()->lookup( syn_name );
 
   DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_ );
 

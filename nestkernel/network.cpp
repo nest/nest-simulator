@@ -86,9 +86,9 @@ Network::Network( SLIInterpreter& i )
   
   // this can make problems with reference counting, if 
   // the intepreter decides cleans up memory before NEST is ready
-  interpreter_.def( "modeldict", new DictionaryDatum( kernel().model_manager.get_modeldict() ) );
-  interpreter_.def( "synapsedict", new DictionaryDatum( kernel().model_manager.get_synapsedict() ) );
-  interpreter_.def( "connruledict", new DictionaryDatum( kernel().connection_builder_manager.get_connruledict() ) );
+  interpreter_.def( "modeldict", kernel().model_manager.get_modeldict()  );
+  interpreter_.def( "synapsedict", kernel().model_manager.get_synapsedict()  );
+  interpreter_.def( "connruledict", kernel().connection_builder_manager.get_connruledict() );
 
   init_();
 }

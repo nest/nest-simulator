@@ -73,7 +73,7 @@ public:
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );
 
-  Dictionary* get_connruledict();
+  DictionaryDatum& get_connruledict();
 
   /**
    * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
@@ -375,7 +375,7 @@ private:
    * 'connruledict info' shows the contents of the dictionary.
    * SeeAlso: Connect
    */
-  Dictionary* connruledict_; //!< Dictionary for connection rules.
+  DictionaryDatum connruledict_; //!< Dictionary for connection rules.
 
   std::vector< GenericConnBuilderFactory* >
     connbuilder_factories_; //! ConnBuilder factories, indexed by connruledict_ elements.
@@ -385,7 +385,7 @@ private:
   delay max_delay_; //!< Value of the largest delay in the network in steps.
 };
 
-inline Dictionary*
+inline DictionaryDatum&
 ConnectionBuilderManager::get_connruledict()
 {
   return connruledict_;

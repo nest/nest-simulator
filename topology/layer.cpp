@@ -64,7 +64,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     {
 
       element_name = std::string( *tp );
-      element_model = kernel().model_manager.get_modeldict().lookup( element_name );
+      element_model = kernel().model_manager.get_modeldict()->lookup( element_name );
 
       if ( element_model.empty() )
         throw UnknownModelName( element_name );
@@ -89,7 +89,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   {
 
     element_name = getValue< std::string >( layer_dict, names::elements );
-    element_model = kernel().model_manager.get_modeldict().lookup( element_name );
+    element_model = kernel().model_manager.get_modeldict()->lookup( element_name );
 
     if ( element_model.empty() )
       throw UnknownModelName( element_name );
@@ -147,7 +147,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   }
 
   assert( layer_model_name != 0 );
-  Token layer_model = kernel().model_manager.get_modeldict().lookup( layer_model_name );
+  Token layer_model = kernel().model_manager.get_modeldict()->lookup( layer_model_name );
   if ( layer_model.empty() )
     throw UnknownModelName( layer_model_name );
 

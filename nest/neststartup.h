@@ -58,6 +58,6 @@ int neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modu
 int neststartup( int argc, char** argv, SLIInterpreter& engine );
 #endif
 
-void nestshutdown( void );
+void nestshutdown( int exitcode );
 
 #endif

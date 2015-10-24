@@ -161,7 +161,7 @@ cdef class NESTEngine(object):
 
     def __dealloc__(self):
 
-        nestshutdown()
+        nestshutdown( 0 )
 
         del self.pEngine
 

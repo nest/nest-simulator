@@ -126,7 +126,7 @@ nest::Communicator::init()
  * Finish off MPI routines
  */
 void
-nest::Communicator::finalize()
+nest::Communicator::finalize( int exitcode )
 {
   MPI_Type_free( &MPI_OFFGRID_SPIKE );
 
@@ -138,7 +138,7 @@ nest::Communicator::finalize()
 
   if ( finalized == 0 && initialized == 1 )
   {
-    if ( not Network::get_network().quit_by_error() )
+    if ( exitcode == 0 )
 #ifdef HAVE_MUSIC
     {
       if ( music_runtime == 0 )
@@ -157,7 +157,7 @@ nest::Communicator::finalize()
     else
     {
       LOG( M_INFO, "Communicator::finalize()", "Calling MPI_Abort() due to errors in the script." );
-      MPI_Abort( MPI_COMM_WORLD, Network::get_network().get_exitcode() );
+      mpi_abort( exitcode );
     }
   }
 }

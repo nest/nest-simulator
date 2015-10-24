@@ -44,7 +44,7 @@ main( int argc, char* argv[] )
   // start the interpreter session
   int exitcode = engine.execute();
 
-  nestshutdown();
+  nestshutdown( exitcode );
 
   return exitcode;
 }

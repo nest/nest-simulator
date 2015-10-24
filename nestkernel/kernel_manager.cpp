@@ -40,6 +40,7 @@ nest::KernelManager::create_kernel_manager()
 void
 nest::KernelManager::destroy_kernel_manager()
 {
+  kernel_manager_instance_->finalize();
   delete kernel_manager_instance_;
 }
 

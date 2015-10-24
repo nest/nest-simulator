@@ -138,7 +138,7 @@ cdef extern from "network.h" namespace "nest":
 
 cdef extern from "neststartup.h":
     int neststartup(int, char**, SLIInterpreter&, string) except +
-    void nestshutdown() except +
+    void nestshutdown(int) except +
 
 
 cdef extern from *:

@@ -161,12 +161,13 @@ neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepa
 }
 
 void
-nestshutdown( void )
+nestshutdown( int exitcode )
 {
 #ifdef HAVE_MPI
-  nest::Communicator::finalize();
+  nest::Communicator::finalize( exitcode );
 #endif
   nest::Network::destroy_network();
+  nest::KernelManager::destroy_kernel_manager();
 }
 
 #if defined( HAVE_LIBNEUROSIM ) && defined( _IS_PYNEST )

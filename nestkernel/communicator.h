@@ -210,7 +210,7 @@ public:
 #endif
 
   static void init();
-  static void finalize();
+  static void finalize( int exitcode );
   static void mpi_abort( int exitcode );
 
   static void communicate( std::vector< uint_t >& send_buffer,

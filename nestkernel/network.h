@@ -121,20 +121,6 @@ public:
   void reset_kernel();
 
   /**
-   * Return true if NEST will be quit because of an error, false otherwise.
-   */
-  bool quit_by_error() const;
-
-  /**
-   * Return the exitcode that would be returned to the calling shell
-   * if NEST would quit now.
-   */
-  int get_exitcode() const;
-
-  
-
-
-  /**
    * @defgroup net_access Network access
    * Functions to access network nodes.
    */
@@ -249,25 +235,6 @@ Network::get_network()
 {
   assert( created_network_instance_ );
   return *network_instance_;
-}
-
-
-inline bool
-Network::quit_by_error() const
-{
-  Token t = interpreter_.baselookup( Name( "systemdict" ) );
-  DictionaryDatum systemdict = getValue< DictionaryDatum >( t );
-  t = systemdict->lookup( Name( "errordict" ) );
-  DictionaryDatum errordict = getValue< DictionaryDatum >( t );
-  return getValue< bool >( errordict, "quitbyerror" );
-}
-
-inline int
-Network::get_exitcode() const
-{
-  Token t = interpreter_.baselookup( Name( "statusdict" ) );
-  DictionaryDatum statusdict = getValue< DictionaryDatum >( t );
-  return getValue< long >( statusdict, "exitcode" );
 }
 
 /****** former Scheduler functions ******/

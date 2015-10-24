@@ -416,8 +416,6 @@ SLIInterpreter::SLIInterpreter( void )
   , iforallindexedarray_name( "::forallindexed_a" )
   , iforallindexedstring_name( "::forallindexed_s" )
   , iforallstring_name( "::forall_s" )
-  ,
-
 
   /* BeginDocumentation
    Name: Pi - Value of the constant Pi= 3.1415...
@@ -429,8 +427,7 @@ SLIInterpreter::SLIInterpreter( void )
    SeeAlso: E, sin, cos
   */
 
-  pi_name( "Pi" )
-  ,
+  , pi_name( "Pi" )
 
   /* BeginDocumentation
    Name: E - Value of the Euler constant E=2.718...
@@ -443,10 +440,8 @@ SLIInterpreter::SLIInterpreter( void )
    SeeAlso: exp
   */
 
-  e_name( "E" )
-  ,
-
-  iparse_name( "::parse" )
+  , e_name( "E" )
+  , iparse_name( "::parse" )
   , stop_name( "stop" )
   , end_name( "end" )
   , null_name( "null" )
@@ -456,7 +451,6 @@ SLIInterpreter::SLIInterpreter( void )
   , istopped_name( "::stopped" )
   , systemdict_name( "systemdict" )
   , userdict_name( "userdict" )
-  ,
 
   /* BeginDocumentation
    Name: errordict - pushes error dictionary on operand stack
@@ -487,10 +481,8 @@ SLIInterpreter::SLIInterpreter( void )
    SeeAlso: raiseerror, raiseagain, info
    References: The Red Book 2nd. ed. p. 408
   */
-  errordict_name( "errordict" )
-  ,
-
-  quitbyerror_name( "quitbyerror" )
+  , errordict_name( "errordict" )
+  , quitbyerror_name( "quitbyerror" )
   , newerror_name( "newerror" )
   , errorname_name( "errorname" )
   , commandname_name( "commandname" )
@@ -501,9 +493,7 @@ SLIInterpreter::SLIInterpreter( void )
   , dstack_name( "dstack" )
   , commandstring_name( "moduleinitializers" )
   , interpreter_name( "SLIInterpreter::execute" )
-  ,
-
-  ArgumentTypeError( "ArgumentType" )
+  , ArgumentTypeError( "ArgumentType" )
   , StackUnderflowError( "StackUnderflow" )
   , UndefinedNameError( "UndefinedName" )
   , WriteProtectedError( "WriteProtected" )
@@ -517,10 +507,7 @@ SLIInterpreter::SLIInterpreter( void )
   , BadErrorHandler( "BadErrorHandler" )
   , KernelError( "KernelError" )
   , InternalKernelError( "InternalKernelError" )
-  ,
-
-
-  OStack( 100 )
+  , OStack( 100 )
   , EStack( 100 )
 {
   inittypes();

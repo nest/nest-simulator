@@ -262,7 +262,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 template < typename NodeListType >
 void
 nest::Communicator::communicate( const NodeListType& local_nodes,
-  vector< NodeAddressingData >& all_nodes,
+    std::vector< NodeAddressingData >& all_nodes,
   bool )
 {
   for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
@@ -274,7 +274,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 template < typename NodeListType >
 void
 nest::Communicator::communicate( const NodeListType& local_nodes,
-  vector< NodeAddressingData >& all_nodes,
+  std::vector< NodeAddressingData >& all_nodes,
   DictionaryDatum params,
   bool )
 {
@@ -292,7 +292,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
     {
       bool match = true;
       index gid = ( *n )->get_gid();
-      DictionaryDatum node_status = Network::get_network().get_status( gid );
+      DictionaryDatum node_status = kernel().node_manager.get_status( gid );
       for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
       {
         if ( node_status->known( i->first ) )

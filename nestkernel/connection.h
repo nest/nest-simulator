@@ -277,7 +277,7 @@ Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& )
 {
   double_t delay;
   if ( updateValue< double_t >( d, names::delay, delay ) )

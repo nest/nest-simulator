@@ -125,7 +125,8 @@ get_global_rng()
 void
 set_kernel_status( const DictionaryDatum& dict )
 {
-  Network::get_network().set_status( 0, dict );
+  dict->clear_access_flags();
+  kernel().set_status( dict );
 }
 
 DictionaryDatum
@@ -137,7 +138,7 @@ get_kernel_status()
 void
 set_node_status( const index node_id, const DictionaryDatum& dict )
 {
-  Network::get_network().set_status( node_id, dict );
+  kernel().node_manager.set_status( node_id, dict );
 }
 
 DictionaryDatum

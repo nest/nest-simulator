@@ -125,13 +125,6 @@ public:
    * Functions to access network nodes.
    */
 
-  /**
-   * Set properties of a Node. The specified node must exist.
-   * @throws nest::UnknownNode       Target does not exist in the network.
-   * @throws nest::UnaccessedDictionaryEntry  Non-proxy target did not read dict entry.
-   * @throws TypeMismatch            Array is not a flat & homogeneous array of integers.
-   */
-  void set_status( index, const DictionaryDatum& );
 
   /**
    * Get properties of a node. The specified node must exist.
@@ -223,10 +216,6 @@ public:
 
 
 private:
-  void init_();
-
-  void clear_models_( bool called_from_destructor = false );
-
   SLIInterpreter& interpreter_;
 };
 

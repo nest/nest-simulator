@@ -90,24 +90,13 @@ Network::Network( SLIInterpreter& i )
   interpreter_.def( "synapsedict", kernel().model_manager.get_synapsedict()  );
   interpreter_.def( "connruledict", kernel().connection_builder_manager.get_connruledict() );
 
-  init_();
+#ifdef HAVE_MUSIC
+  music_in_portlist_.clear();
+#endif
 }
 
 Network::~Network()
 {
-}
-
-void
-Network::init_()
-{
-  /*
-   * We initialise the network with one subnet that is the root of the tree.
-   * Note that we MUST NOT call add_node(), since it expects a properly
-   * initialized network.
-   */
-#ifdef HAVE_MUSIC
-  music_in_portlist_.clear();
-#endif
 }
 
 void
@@ -124,49 +113,9 @@ Network::reset_kernel()
 
   kernel().reset();
   
-  init_();
-}
-
-void
-Network::set_status( index gid, const DictionaryDatum& d )
-{
-  // we first handle normal nodes, except the root (GID 0)
-  if ( gid > 0 )
-  {
-    kernel().node_manager.set_status(gid, d);
-    return;
-  }
-
-  /* Code below is executed only for the root node, gid == 0
-
-     In this case, we must
-     - set scheduler properties
-     - set properties for the compound representing each thread
-
-     The main difficulty here is to handle the access control for
-     dictionary items, since the dictionary is read in several places.
-
-     We proceed as follows:
-     - clear access flags
-     - set scheduler properties; this must be first, anyways
-     - at this point, all non-compound property flags are marked accessed
-     - loop over all per-thread compounds
-     - the first per-thread compound will flag all compound properties as read
-     - now, all dictionary entries must be flagged as accessed, otherwise the
-       dictionary contains unknown entries. Thus, kernel().node_manager.set_status_single_node
-       will not throw an exception
-     - since all items in the root node are of type Compound, all read the same
-       properties and we can leave the access flags set
-   */
-  d->clear_access_flags();
-
-  // former scheduler_.set_status( d ); start
-  // careful, this may invalidate all node pointers!
-  kernel().set_status( d );
-
-
-  // former scheduler_.set_status( d ); end
-
+#ifdef HAVE_MUSIC
+  music_in_portlist_.clear();
+#endif
 }
 
 DictionaryDatum

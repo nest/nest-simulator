@@ -31,6 +31,9 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
+// Includes from sli:
+#include "dictdatum.h"
+
 namespace nest
 {
 
@@ -127,6 +130,11 @@ private:
   void calibrate();
 
   void update( Time const&, const long_t, const long_t );
+  
+  /**
+   * Execute a SLI command in the neuron's namespace.
+   */
+  int execute_sli_protected( DictionaryDatum, Name );
 
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary

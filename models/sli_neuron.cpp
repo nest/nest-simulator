@@ -32,7 +32,7 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
-#include "network.h" // execute_sli_protected
+#include "network.h" // interpreter_
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -152,8 +152,7 @@ nest::sli_neuron::calibrate()
 
 #pragma omp critical( sli_neuron )
   {
-    Network::get_network().execute_sli_protected(
-      state_, names::calibrate_node ); // call interpreter
+    execute_sli_protected( state_, names::calibrate_node ); // call interpreter
   }
 }
 
@@ -190,8 +189,7 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
 
 #pragma omp critical( sli_neuron )
     {
-      Network::get_network().execute_sli_protected(
-        state_, names::update_node ); // call interpreter
+      execute_sli_protected( state_, names::update_node ); // call interpreter
     }
 
     bool spike_emission = false;
@@ -208,6 +206,37 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
 
     B_.logger_.record_data( origin.get_steps() + lag );
   }
+}
+
+/**
+ * This function is not thread save and has to be called inside a omp critical
+ * region.
+ */
+int
+nest::sli_neuron::execute_sli_protected( DictionaryDatum state, Name cmd )
+{
+  SLIInterpreter& i = Network::get_network().interpreter_;
+  
+  i.DStack->push( state ); // push state dictionary as top namespace
+  size_t exitlevel = i.EStack.load();
+  i.EStack.push( new NameDatum( cmd ) );
+  int result = i.execute_( exitlevel );
+  i.DStack->pop(); // pop neuron's namespace
+  
+  if ( state->known( "error" ) )
+  {
+    assert( state->known( names::global_id ) );
+    index g_id = ( *state )[ names::global_id ];
+    std::string model = getValue< std::string >( ( *state )[ names::model ] );
+    std::string msg = String::compose( "Error in %1 with global id %2.", model, g_id );
+    
+    LOG( M_ERROR, cmd.toString().c_str(), msg.c_str() );
+    LOG( M_ERROR, "execute_sli_protected", "Terminating." );
+    
+    kernel().simulation_manager.terminate();
+  }
+  
+  return result;
 }
 
 

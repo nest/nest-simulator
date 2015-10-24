@@ -142,36 +142,7 @@ Network::get_status( index idx )
 }
 
 
-/**
- * This function is not thread save and has to be called inside a omp critical
- * region, e.g. sli_neuron.
- */
-int
-Network::execute_sli_protected( DictionaryDatum state, Name cmd )
-{
-  SLIInterpreter& i = interpreter_;
 
-  i.DStack->push( state ); // push state dictionary as top namespace
-  size_t exitlevel = i.EStack.load();
-  i.EStack.push( new NameDatum( cmd ) );
-  int result = i.execute_( exitlevel );
-  i.DStack->pop(); // pop neuron's namespace
-
-  if ( state->known( "error" ) )
-  {
-    assert( state->known( names::global_id ) );
-    index g_id = ( *state )[ names::global_id ];
-    std::string model = getValue< std::string >( ( *state )[ names::model ] );
-    std::string msg = String::compose( "Error in %1 with global id %2.", model, g_id );
-
-    LOG( M_ERROR, cmd.toString().c_str(), msg.c_str() );
-    LOG( M_ERROR, "execute_sli_protected", "Terminating." );
-
-    kernel().simulation_manager.terminate();
-  }
-
-  return result;
-}
 
 #ifdef HAVE_MUSIC
 void

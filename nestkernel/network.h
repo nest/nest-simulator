@@ -63,6 +63,7 @@ namespace nest
 
 class VPManager;
 class NodeManager;
+class sli_neuron; // needs a handle to the interpreter_
 
 /**
  * @defgroup network Network access and administration
@@ -95,6 +96,7 @@ class Network
   friend class EventDeliveryManager;
   friend class MPIManager;
   friend class NodeManager;
+  friend class sli_neuron;
 
 private:
   Network( SLIInterpreter& );
@@ -131,11 +133,6 @@ public:
    * @throws nest::UnknownNode       Target does not exist in the network.
    */
   DictionaryDatum get_status( index );
-
-  /**
-   * Execute a SLI command in the neuron's namespace.
-   */
-  int execute_sli_protected( DictionaryDatum, Name );
 
 #ifdef HAVE_MUSIC
 public:

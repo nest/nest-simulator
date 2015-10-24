@@ -183,13 +183,18 @@ void
 nest::ConnectionBuilderManager::delete_connections_()
 {
   for ( tVSConnector::iterator it = connections_.begin(); it != connections_.end(); ++it )
+  {
     for ( tSConnector::nonempty_iterator iit = it->nonempty_begin(); iit != it->nonempty_end();
           ++iit )
+    {
 #ifdef USE_PMA
       ( *iit )->~ConnectorBase();
 #else
       delete ( *iit );
 #endif
+    }
+    it->clear();
+  }
 
 #if defined _OPENMP && defined USE_PMA
 #ifdef IS_K

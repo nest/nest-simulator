@@ -42,7 +42,6 @@ libnest_la_SOURCES=\
 		syn_id_delay.h\
 		connector_base.h connector_base.cpp\
 		connector_model.h connector_model_impl.h connector_model.cpp\
-		connection_manager.h connection_manager.cpp\
 		connection_id.h connection_id.cpp\
 		device.h device.cpp\
 		dynamicloader.h dynamicloader.cpp\

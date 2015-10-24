@@ -46,6 +46,7 @@
 #include "random_datums.h"
 #include "gslrandomgen.h"
 
+#include "nest_timemodifier.h"
 #include "nest_timeconverter.h"
 
 #ifdef N_DEBUG
@@ -88,14 +89,16 @@ nest::Scheduler::Scheduler( Network& net )
   , entry_counter_( 0 )
   , exit_counter_( 0 )
   , nodes_vec_( n_threads_ )
-  , nodes_vec_network_size_( 0 ) // zero to force update
-  , clock_( Time::tic( 0L ) )
+  , nodes_vec_network_size_( 0 )
+  , // zero to force update
+  clock_( Time::tic( 0L ) )
   , slice_( 0L )
   , to_do_( 0L )
   , to_do_total_( 0L )
   , from_step_( 0L )
-  , to_step_( 0L ) // consistent with to_do_ == 0
-  , terminate_( false )
+  , to_step_( 0L )
+  , // consistent with to_do_ == 0
+  terminate_( false )
   , off_grid_spiking_( false )
   , print_time_( false )
   , rng_()
@@ -114,7 +117,7 @@ nest::Scheduler::reset()
 {
   // Reset TICS_PER_MS, MS_PER_TICS and TICS_PER_STEP to the compiled in default values.
   // See ticket #217 for details.
-  //nest::TimeModifier::reset_to_defaults();
+  nest::TimeModifier::reset_to_defaults();
 
   clock_.set_to_zero(); // ensures consistent state
   to_do_ = 0;
@@ -947,7 +950,7 @@ nest::Scheduler::set_status( DictionaryDatum const& d )
       }
       else
       {
-        //nest::TimeModifier::set_time_representation( tics_per_ms, resd );
+        nest::TimeModifier::set_time_representation( tics_per_ms, resd );
         clock_.calibrate(); // adjust to new resolution
         net_->connection_manager_.calibrate(
           time_converter ); // adjust delays in the connection system to new resolution
@@ -984,6 +987,11 @@ nest::Scheduler::set_status( DictionaryDatum const& d )
   }
 
   updateValue< bool >( d, "off_grid_spiking", off_grid_spiking_ );
+
+  bool comm_allgather;
+  bool commstyle_updated = updateValue< bool >( d, "communicate_allgather", comm_allgather );
+  if ( commstyle_updated )
+    Communicator::set_use_Allgather( comm_allgather );
 
   // set RNGs --- MUST come after n_threads_ is updated
   if ( d->known( "rngs" ) )
@@ -1141,6 +1149,7 @@ nest::Scheduler::get_status( DictionaryDatum& d ) const
   ( *d )[ "rng_seeds" ] = Token( rng_seeds_ );
   def< long >( d, "grng_seed", grng_seed_ );
   def< bool >( d, "off_grid_spiking", off_grid_spiking_ );
+  def< bool >( d, "communicate_allgather", Communicator::get_use_Allgather() );
   def< long >( d, "send_buffer_size", Communicator::get_send_buffer_size() );
   def< long >( d, "receive_buffer_size", Communicator::get_recv_buffer_size() );
 }

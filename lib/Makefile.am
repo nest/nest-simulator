@@ -11,7 +11,6 @@ nobase_pkgdata_DATA=\
   sli/oosupport.sli\
   sli/processes.sli\
   sli/ps-lib.sli\
-  sli/rcsinfo.sli\
   sli/regexp.sli\
   sli/sli-init.sli\
   sli/typeinit.sli\

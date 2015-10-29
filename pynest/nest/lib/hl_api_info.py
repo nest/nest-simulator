@@ -127,3 +127,81 @@ def message(level,sender,text):
     sps(sender)
     sps(text)
     sr('message')
+
+
+@check_stack
+def SetStatus(nodes, params, val=None):
+    """
+    Set the parameters of nodes (identified by global ids) or
+    connections (identified by handles as returned by
+    GetConnections()) to params, which may be a single dictionary or a
+    list of dictionaries. If val is given, params has to be the name
+    of an attribute, which is set to val on the nodes/connections. val
+    can be a single value or a list of the same size as nodes.
+    """
+
+    if not is_coercible_to_sli_array(nodes):
+        raise TypeError("nodes must be a list of nodes or synapses")
+
+    # This was added to ensure that the function is a nop (instead of,
+    # for instance, raising an exception) when applied to an empty list,
+    # which is an artifact of the API operating on lists, rather than
+    # relying on language idioms, such as comprehensions
+    #
+    if len(nodes) == 0:
+        return
+
+    if val is not None and is_literal(params):
+        if is_iterable(val) and not isinstance(val, (uni_str, dict)):
+            params = [{params: x} for x in val]
+        else:
+            params = {params: val}
+
+    params = broadcast(params, len(nodes), (dict,), "params")
+    if len(nodes) != len(params):
+        raise TypeError("status dict must be a dict, or list of dicts of length 1 or len(nodes)")
+
+    if is_sequence_of_connections(nodes):
+        pcd(nodes)
+    else:
+        sps(nodes)
+
+    sps(params)
+    sr('2 arraystore')
+    sr('Transpose { arrayload pop SetStatus } forall')
+
+
+@check_stack
+def GetStatus(nodes, keys=None):
+    """
+    Return the parameter dictionaries of the given list of nodes
+    (identified by global ids) or connections (identified
+    by handles as returned by GetConnections()). If keys is given, a
+    list of values is returned instead. keys may also be a list, in
+    which case the returned list contains lists of values.
+    """
+
+    if not is_coercible_to_sli_array(nodes):
+        raise TypeError("nodes must be a list of nodes or synapses")
+
+    if len(nodes) == 0:
+        return nodes
+
+    if keys is None:
+        cmd = '{ GetStatus } Map'
+    elif is_literal(keys):
+        cmd = '{{ GetStatus /{0} get }} Map'.format(keys)
+    elif is_iterable(keys):
+        keys_str = " ".join("/{0}".format(x) for x in keys)
+        cmd = '{{ GetStatus }} Map {{ [ [ {0} ] ] get }} Map'.format(keys_str)
+    else:
+        raise TypeError("keys should be either a string or an iterable")
+
+    if is_sequence_of_connections(nodes):
+        pcd(nodes)
+    else:
+        sps(nodes)
+
+    sr(cmd)
+
+    return spp()

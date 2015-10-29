@@ -25,6 +25,11 @@ Using CSA with Topology layers
 
 This example shows a brute-force way of specifying connections
 between NEST Topology layers using Connection Set Algebra.
+
+See also Djurfeldt M, Davison AP and Eppler JM (2014) **Efficient
+generation of connectivity in neuronal networks from
+simulator-independent descriptions**, *Front. Neuroinform.*
+http://dx.doi.org/10.3389/fninf.2014.00043
 """
 
 """

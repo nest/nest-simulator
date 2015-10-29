@@ -19,57 +19,96 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+'''
+Using CSA for connection setup
+------------------------------
+
+This example sets up a simple network in NEST using the Connection Set
+Algebra (CSA). The network uses random connectivity with a connection 
+probability of 10%.
+
+See also Djurfeldt M, Davison AP and Eppler JM (2014) **Efficient
+generation of connectivity in neuronal networks from
+simulator-independent descriptions**, *Front. Neuroinform.*
+http://dx.doi.org/10.3389/fninf.2014.00043
+'''
+
+'''
+First, we import necessary modules for simulation and plotting.
+'''
+
+import sys
 import nest
+from nest import voltage_trace
+from nest import visualization
+
+'''
+We now check for the availability of the CSA Python module and
+exit with an error message, if we don't have it.
+'''
 
 try:
     import csa
     haveCSA = True
 except ImportError:
-    haveCSA = False
+    print("This example requires CSA to be installed in order to run!")
+    sys.exit()
 
-try:
-    from PIL import Image
-    havePIL = True
-except ImportError:
-    havePIL = False
+'''
+We create a ``random`` connection set with a probability of 0.1
+and two values (10000.0 and 1.0) used as weight and delay,
+respectively.
+'''
 
-def csa_example():
+cs = csa.cset(csa.random(0.1), 10000.0, 1.0)
 
-    cs = csa.cset(csa.random(0.1), 10000.0, 1.0)
+'''
+The neurons of the pre- and postsynaptic populations are
+created. Each of them contains 16 neurons.
+'''
 
-    pop1 = nest.LayoutNetwork("iaf_neuron", [16])
-    pop2 = nest.LayoutNetwork("iaf_neuron", [16])
+pre = nest.Create("iaf_neuron", 16)
+post = nest.Create("iaf_neuron", 16)
 
-    nest.PrintNetwork(10)
+'''
+The populations are connected using the `CGConnect` function, which
+takes the ids of pre- and postsynaptic neurons (``pre`` and ``post``),
+the connection set (``cs``) and a dictionary that maps the parameters
+weight and delay to positions in the value set associated with the
+connection set.
+'''
 
-    nest.CGConnect(pop1, pop2, cs, {"weight": 0, "delay": 1})
+nest.CGConnect(pre, post, cs, {"weight": 0, "delay": 1})
 
-    pg = nest.Create("poisson_generator", params={"rate": 80000.0})
-    nest.DivergentConnect(pg, nest.GetLeaves(pop1)[0], 1.2, 1.0)
+'''
+A `poisson_generator` is created and set to fire with a rate of
+80000.0 spikes per second. It is connected to the neurons of the
+pre-synaptic population with a weight of 1.2 and a delay of 1.0ms.
+'''
 
-    vm_params = {"record_to": ["memory"], "withgid": True,
-                 "withtime": True, "interval": 0.1}
-    vm = nest.Create("voltmeter", params=vm_params)
-    nest.DivergentConnect(vm, nest.GetLeaves(pop2)[0])
+pg = nest.Create("poisson_generator", params={"rate": 80000.0})
+nest.DivergentConnect(pg, pre, 1.2, 1.0)
 
-    nest.Simulate(50.0)
+'''
+A `voltmeter` is created and connected to all post-synaptic nodes.
+'''
 
-    from nest import visualization
-    allnodes = pg + nest.GetLeaves(pop1)[0] + nest.GetLeaves(pop2)[0] + vm
-    visualization.plot_network(allnodes, "test_csa.png")
+vm = nest.Create("voltmeter")
+nest.DivergentConnect(vm, post)
 
-    if havePIL:
-        im = Image.open("test_csa.png")
-        im.show()
+'''
+We save the whole connection graph as an image using the
+`plot_network` function of the `visualization` submodule of PyNEST.
 
-    from nest import voltage_trace
-    voltage_trace.from_device(vm)
+'''
 
+allnodes = pg + pre + post + vm
+visualization.plot_network(allnodes, "csa_example_graph.png")
 
-if __name__ == "__main__":
+'''
+We simulate the network for 50 ms. The voltage traces of the
+post-synaptic nodes are plotted.
+'''
 
-    if haveCSA:
-        nest.ResetKernel()
-        csa_example()
-    else:
-        print("This example requires CSA to be installed in order to run!")
+nest.Simulate(50.0)
+voltage_trace.from_device(vm)

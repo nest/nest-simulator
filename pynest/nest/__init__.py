@@ -176,6 +176,10 @@ def test():
 from .pynestkernel import *
 from lib.hl_api_helper import *
 
+# We search through the subdirectory "lib" of the "nest" module
+# directory and import the content of all Python files therein into
+# the global namespace. This makes the API functions of PyNEST itself
+# and those of extra modules available to the user.
 for name in os.listdir(os.path.join(os.path.dirname(__file__), "lib")):
     if name.endswith(".py") and not name.startswith('__'):
         exec("from lib.{0} import *".format(name[:-3]))

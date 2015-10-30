@@ -225,6 +225,42 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
  * NAN indicates this and weight/delay are set only, if they are valid.
  */
 template < typename ConnectionT >
+void
+GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
+  Node& tgt,
+  HetConnector* hetconn,
+  synindex syn_id,
+  double_t delay,
+  double_t weight )
+{
+  if ( !std::isnan( delay ) )
+    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+
+  // create a new instance of the default connection
+  ConnectionT c = ConnectionT( default_connection_ );
+  if ( !std::isnan( weight ) )
+  {
+    c.set_weight( weight );
+  }
+  if ( !std::isnan( delay ) )
+  {
+    c.set_delay( delay );
+  }
+  else
+  {
+    // tell the connector model, that we used the default delay
+    used_default_delay();
+  }
+  add_connection_5g_( src, tgt, hetconn, syn_id, c, receptor_type_ );
+}
+
+/**
+ * delay and weight have the default value NAN.
+ * NAN is a special value in cmath, which describes double values that
+ * are not a number. If delay or weight is omitted in an add_connection call,
+ * NAN indicates this and weight/delay are set only, if they are valid.
+ */
+template < typename ConnectionT >
 ConnectorBase*
 GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   Node& tgt,
@@ -278,6 +314,68 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   updateValue< long_t >( p, names::receptor_type, actual_receptor_type );
 
   return add_connection( src, tgt, conn, syn_id, c, actual_receptor_type );
+}
+
+/**
+ * delay and weight have the default value NAN.
+ * NAN is a special value in cmath, which describes double values that
+ * are not a number. If delay or weight is omitted in an add_connection call,
+ * NAN indicates this and weight/delay are set only, if they are valid.
+ */
+template < typename ConnectionT >
+void
+GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
+  Node& tgt,
+  HetConnector* hetconn,
+  synindex syn_id,
+  DictionaryDatum& p,
+  double_t delay,
+  double_t weight )
+{
+  if ( !std::isnan( delay ) )
+  {
+    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+
+    if ( p->known( names::delay ) )
+      throw BadParameter(
+        "Parameter dictionary must not contain delay if delay is given explicitly." );
+  }
+  else
+  {
+    // check delay
+    double_t delay = 0.0;
+
+    if ( updateValue< double_t >( p, names::delay, delay ) )
+      kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+    else
+      used_default_delay();
+  }
+
+  // create a new instance of the default connection
+  ConnectionT c = ConnectionT( default_connection_ );
+  if ( !p->empty() )
+    c.set_status( p, *this ); // reference to connector model needed here to check delay (maybe this
+                              // could be done one level above?)
+  if ( !std::isnan( weight ) )
+  {
+    c.set_weight( weight );
+  }
+  if ( !std::isnan( delay ) )
+  {
+    c.set_delay( delay );
+  }
+
+  // We must use a local variable here to hold the actual value of the
+  // receptor type. We must not change the receptor_type_ data member, because
+  // that represents the *default* value. See #921.
+  rport actual_receptor_type = receptor_type_;
+#ifdef HAVE_MUSIC
+  // We allow music_channel as alias for receptor_type during connection setup
+  updateValue< long_t >( p, names::music_channel, actual_receptor_type );
+#endif
+  updateValue< long_t >( p, names::receptor_type, actual_receptor_type );
+
+  add_connection_5g_( src, tgt, hetconn, syn_id, c, actual_receptor_type );
 }
 
 
@@ -379,6 +477,48 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   }
 
   return conn;
+}
+
+
+template < typename ConnectionT >
+void
+GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
+  Node& tgt,
+  HetConnector* hetconn,
+  synindex syn_id,
+  ConnectionT& c,
+  rport receptor_type )
+{
+  // here we need to distinguish two cases:
+  // 1) no homogeneous Connector with this syn_id exists, in this case conn is a null pointer
+  //    and we need to create a new homogeneous Connector
+  // 2) a homogeneous Connector with synapse type syn_id exists
+
+  synindex syn_index = hetconn->find_synapse_index( syn_id );
+  ConnectorBase* conn = 0;
+
+  if ( syn_index == invalid_synindex )
+  {
+    // the following line will throw an exception, if it does not work
+    c.check_connection(
+      src, tgt, receptor_type, 0., get_common_properties() ); // set last_spike to 0
+
+    // no entry at all, so create a homogeneous container for this connection type
+    conn = allocate< Connector< ConnectionT > >();
+    syn_index = hetconn->size();
+    hetconn->resize( syn_index + 1);
+  }
+  else
+  {
+    conn = (*hetconn)[ syn_index ];
+    // the following line will throw an exception, if it does not work
+    c.check_connection( src, tgt, receptor_type, conn->get_t_lastspike(), get_common_properties() );
+  }
+
+  Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( conn );
+  conn = &vc->push_back( c );
+
+  (*hetconn)[ syn_index ] = conn;
 }
 
 

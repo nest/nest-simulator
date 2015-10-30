@@ -375,6 +375,20 @@ public:
   {
     return false;
   }
+
+  synindex
+  find_synapse_index( synindex syn_id ) const
+  {
+    for ( size_t i = 0; i < size(); ++i )
+    {
+      if( at( i )->get_syn_id() == syn_id )
+      {
+        return i;
+      }
+    }
+    return invalid_synindex;
+  }
+
 };
 
 } // of namespace nest

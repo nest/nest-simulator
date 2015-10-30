@@ -37,6 +37,7 @@
 namespace nest
 {
 class ConnectorBase;
+class HetConnector;
 class CommonSynapseProperties;
 class TimeConverter;
 class Node;
@@ -65,6 +66,20 @@ public:
   virtual ConnectorBase* add_connection( Node& src,
     Node& tgt,
     ConnectorBase* conn,
+    synindex syn_id,
+    DictionaryDatum& d,
+    double_t delay = NAN,
+    double_t weight = NAN ) = 0;
+
+  virtual void add_connection_5g( Node& src,
+    Node& tgt,
+    HetConnector* hetconn,
+    synindex syn_id,
+    double_t delay = NAN,
+    double_t weight = NAN ) = 0;
+  virtual void add_connection_5g( Node& src,
+    Node& tgt,
+    HetConnector* hetconn,
     synindex syn_id,
     DictionaryDatum& d,
     double_t delay = NAN,
@@ -130,6 +145,20 @@ public:
     double_t weight,
     double_t delay );
 
+  void add_connection_5g( Node& src,
+    Node& tgt,
+    HetConnector* hetconn,
+    synindex syn_id,
+    double_t delay,
+    double_t weight );
+  void add_connection_5g(Node& src,
+    Node& tgt,
+    HetConnector* hetconn,
+    synindex syn_id,
+    DictionaryDatum& d,
+    double_t delay,
+    double_t weight );
+
   ConnectorModel* clone( std::string ) const;
 
   void calibrate( const TimeConverter& tc );
@@ -157,6 +186,13 @@ private:
   ConnectorBase* add_connection( Node& src,
     Node& tgt,
     ConnectorBase* conn,
+    synindex syn_id,
+    ConnectionT& c,
+    rport receptor_type );
+
+  void add_connection_5g_( Node& src,
+    Node& tgt,
+    HetConnector* hetconn,
     synindex syn_id,
     ConnectionT& c,
     rport receptor_type );

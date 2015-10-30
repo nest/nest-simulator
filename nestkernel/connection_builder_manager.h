@@ -46,6 +46,7 @@
 namespace nest
 {
 class ConnectorBase;
+class HetConnector;
 class GenericConnBuilderFactory;
 class spikecounter;
 class Node;
@@ -320,8 +321,10 @@ private:
    * Deletes all connections and also frees the PMA.
    */
   void delete_connections_();
+  void delete_connections_5g_();
 
   ConnectorBase* validate_source_entry_( thread tid, index s_gid, synindex syn_id );
+  synindex validate_source_entry_5g_( thread tid, synindex syn_id );
 
   /**
    * Connect is used to establish a connection between a sender and
@@ -362,6 +365,7 @@ private:
    * - Third dim: A std::vector for each synapse prototype, holding the Connector objects
    */
   tVSConnector connections_;
+  std::vector< HetConnector* > connections_5g_;
   SourceTable source_table_;
 
   tVDelayChecker delay_checkers_;

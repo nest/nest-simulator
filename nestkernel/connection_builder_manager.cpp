@@ -73,12 +73,21 @@ nest::ConnectionBuilderManager::ConnectionBuilderManager()
 nest::ConnectionBuilderManager::~ConnectionBuilderManager()
 {
   source_table_.finalize();
+  delete_connections_5g_();
   delete_connections_();
 }
 
 void
 nest::ConnectionBuilderManager::initialize()
 {
+  thread num_threads = kernel().vp_manager.get_num_threads();
+  connections_5g_.resize( num_threads );
+  for( thread tid = 0; tid < num_threads; ++tid)
+  {
+    connections_5g_[ tid ] = new HetConnector();
+  }
+  source_table_.initialize();
+
   tVSConnector tmp( kernel().vp_manager.get_num_threads(), tSConnector() );
   connections_.swap( tmp );
 
@@ -106,14 +115,14 @@ nest::ConnectionBuilderManager::initialize()
 #endif
 #endif
 #endif
-  source_table_.initialize();
 }
 
 void
 nest::ConnectionBuilderManager::finalize()
 {
-  delete_connections_();
   source_table_.finalize();
+  delete_connections_5g_();
+  delete_connections_();
 }
 
 void
@@ -180,6 +189,17 @@ nest::ConnectionBuilderManager::set_synapse_status( index gid,
         p,
         e.message() ) );
   }
+}
+
+void
+nest::ConnectionBuilderManager::delete_connections_5g_()
+{
+  for( std::vector< HetConnector* >::iterator it = connections_5g_.begin();
+       it != connections_5g_.end(); ++it)
+  {
+    delete *it;
+  }
+  connections_5g_.clear();
 }
 
 void
@@ -495,7 +515,13 @@ nest::ConnectionBuilderManager::connect_( Node& s,
   ConnectorBase* c =
     kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection( s, r, conn, syn, d, w );
   connections_[ tid ].set( s_gid, c );
+
+  // TODO@5g:
+  kernel().model_manager.assert_valid_syn_id( syn );
+  kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection_5g(
+    s, r, connections_5g_[ tid ], syn, d, w );
   source_table_.add_source( tid, syn, s_gid );
+
   // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
   {
@@ -520,7 +546,12 @@ nest::ConnectionBuilderManager::connect_( Node& s,
     kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection(
       s, r, conn, syn, p, d, w );
   connections_[ tid ].set( s_gid, c );
+
+  kernel().model_manager.assert_valid_syn_id( syn );
+  kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection_5g(
+    s, r, connections_5g_[ tid ], syn, p, d, w );
   source_table_.add_source( tid, syn, s_gid );
+
   // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
   {

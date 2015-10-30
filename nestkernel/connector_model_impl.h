@@ -310,7 +310,9 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       src, tgt, receptor_type, 0., get_common_properties() ); // set last_spike to 0
 
     // no entry at all, so start with homogeneous container for exactly one connection
-    conn = allocate< Connector< 1, ConnectionT > >( c );
+    conn = allocate< Connector< ConnectionT > >();
+    Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( conn );
+    conn = &vc->push_back( c );
   }
   else
   {
@@ -324,7 +326,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       if ( conn->get_syn_id() == syn_id ) // case 1: connector for this syn_id
       {
         // we can safely static cast, because we checked syn_id == syn_id(connectionT)
-        vector_like< ConnectionT >* vc = static_cast< vector_like< ConnectionT >* >( conn );
+        Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( conn );
         conn = &vc->push_back( c );
       }
       else
@@ -338,7 +340,8 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
         hc->push_back( conn );
 
         // create hom connector for new synid
-        vector_like< ConnectionT >* vc = allocate< Connector< 1, ConnectionT > >( c );
+        Connector< ConnectionT >* vc = allocate< Connector<ConnectionT > >();
+        vc->push_back( c );
 
         // append new homogeneous connector to heterogeneous connector
         hc->push_back( vc );
@@ -353,22 +356,22 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       // if not found create new entry for this syn_id
       HetConnector* hc = static_cast< HetConnector* >( conn );
       bool found = false;
-      for ( size_t i = 0; i < hc->size() && !found; i++ )
+      for ( size_t i = 0; i < hc->size() && not found; i++ )
       {
         // need to cast to vector_like to access syn_id
         if ( ( *hc )[ i ]->get_syn_id() == syn_id ) // there is already an entry for this type
         {
           // here we know that the type is vector_like<connectionT>, because syn_id agrees
           // so we can savely static cast
-          vector_like< ConnectionT >* vc =
-            static_cast< vector_like< ConnectionT >* >( ( *hc )[ i ] );
+          Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >(( *hc )[ i ]);
           ( *hc )[ i ] = &vc->push_back( c );
           found = true;
         }
       }             // of for
-      if ( !found ) // we need to create a new entry for this type of connection
+      if ( not found ) // we need to create a new entry for this type of connection
       {
-        vector_like< ConnectionT >* vc = allocate< Connector< 1, ConnectionT > >( c );
+        Connector< ConnectionT >* vc = allocate< Connector< ConnectionT > >();
+        vc->push_back( c );
 
         hc->push_back( vc );
       }

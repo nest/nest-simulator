@@ -76,9 +76,6 @@ suicide_and_resurrect( Told* connector, C connection )
 }
 
 
-// when to truncate the recursive instantiation
-#define K_cutoff 3
-
 namespace nest
 {
 
@@ -142,304 +139,18 @@ private:
   double_t t_lastspike_;
 };
 
-// vector with 1 vtable overhead
-// vector like base class to abstract away the template argument K
-// provides interface like vector i.p. (suicidal) push_back
-template < typename ConnectionT >
-class vector_like : public ConnectorBase
-{
-
-public:
-  virtual ConnectorBase& push_back( const ConnectionT& c ) = 0;
-};
-
-// homogeneous connector containing K entries
-template < size_t K, typename ConnectionT >
-class Connector : public vector_like< ConnectionT > // unfortunately, we need the virtual base class
-{
-  ConnectionT C_[ K ];
-
-public:
-  Connector( const Connector< K - 1, ConnectionT >& Cm1,
-    const ConnectionT& c ) //: syn_id_(Cm1.get_syn_id())
-  {
-    for ( size_t i = 0; i < K - 1; i++ )
-      C_[ i ] = Cm1.get_C()[ i ];
-    C_[ K - 1 ] = c;
-  }
-
-  ~Connector()
-  {
-  }
-
-  void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
-  {
-    if ( syn_id == C_[ 0 ].get_syn_id() )
-    {
-      assert( p >= 0 && static_cast< size_t >( p ) < K );
-      C_[ p ].get_status( d );
-    }
-  }
-
-  void
-  set_synapse_status( synindex syn_id, ConnectorModel& cm, const DictionaryDatum& d, port p )
-  {
-    if ( syn_id == C_[ 0 ].get_syn_id() )
-    {
-      assert( p >= 0 && static_cast< size_t >( p ) < K );
-      C_[ p ].set_status( d, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
-    }
-  }
-
-  size_t
-  get_num_connections()
-  {
-    return K;
-  }
-
-  size_t
-  get_num_connections( synindex syn_id )
-  {
-    if ( syn_id == get_syn_id() )
-      return K;
-    else
-      return 0;
-  }
-
-  Connector< K + 1, ConnectionT >&
-  push_back( const ConnectionT& c )
-  {
-    return *suicide_and_resurrect< Connector< K + 1, ConnectionT > >( this, c );
-  }
-
-  void
-  get_connections( size_t source_gid, size_t thrd, synindex synapse_id, ArrayDatum& conns ) const
-  {
-    for ( size_t i = 0; i < K; i++ )
-      if ( get_syn_id() == synapse_id )
-        conns.push_back( ConnectionDatum( ConnectionID(
-          source_gid, C_[ i ].get_target( thrd )->get_gid(), thrd, synapse_id, i ) ) );
-  }
-
-  void
-  get_connections( size_t source_gid,
-    size_t target_gid,
-    size_t thrd,
-    size_t synapse_id,
-    ArrayDatum& conns ) const
-  {
-    for ( size_t i = 0; i < K; i++ )
-      if ( get_syn_id() == synapse_id )
-        if ( C_[ i ].get_target( thrd )->get_gid() == target_gid )
-          conns.push_back(
-            ConnectionDatum( ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) ) );
-  }
-
-  void
-  send( Event& e, thread t, const std::vector< ConnectorModel* >& cm )
-  {
-    synindex syn_id = C_[ 0 ].get_syn_id();
-    for ( size_t i = 0; i < K; i++ )
-    {
-      e.set_port( i );
-      C_[ i ].send( e,
-        t,
-        ConnectorBase::get_t_lastspike(),
-        static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-          ->get_common_properties() );
-    }
-    ConnectorBase::set_t_lastspike( e.get_stamp().get_ms() );
-  }
-
-  void
-  trigger_update_weight( long_t vt_gid,
-    thread t,
-    const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
-    const std::vector< ConnectorModel* >& cm )
-  {
-    synindex syn_id = C_[ 0 ].get_syn_id();
-    for ( size_t i = 0; i < K; i++ )
-      if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-             ->get_common_properties()
-             .get_vt_gid() == vt_gid )
-        C_[ i ].trigger_update_weight( t,
-          dopa_spikes,
-          t_trig,
-          static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-            ->get_common_properties() );
-  }
-
-  synindex
-  get_syn_id() const
-  {
-    // return syn_id_;
-    return C_[ 0 ].get_syn_id();
-  }
-
-  const ConnectionT*
-  get_C() const
-  {
-    return C_;
-  }
-
-  bool
-  homogeneous_model()
-  {
-    return true;
-  }
-};
-
-// homogeneous connector containing 1 entry (specialization to define constructor)
-template < typename ConnectionT >
-class Connector< 1, ConnectionT > : public vector_like< ConnectionT >
-{
-  ConnectionT C_[ 1 ];
-
-public:
-  // Connector(const ConnectionT &c, synindex syn_id) : syn_id_(syn_id)
-  Connector( const ConnectionT& c )
-  {
-    C_[ 0 ] = c;
-  };
-
-  ~Connector()
-  {
-  }
-
-  void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
-  {
-    if ( syn_id == C_[ 0 ].get_syn_id() )
-    {
-      assert( static_cast< size_t >( p ) == 0 );
-      C_[ 0 ].get_status( d );
-    }
-  }
-
-  void
-  set_synapse_status( synindex syn_id, ConnectorModel& cm, const DictionaryDatum& d, port p )
-  {
-    if ( syn_id == C_[ 0 ].get_syn_id() )
-    {
-      assert( static_cast< size_t >( p ) == 0 );
-      C_[ 0 ].set_status( d, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
-    }
-  }
-
-  size_t
-  get_num_connections()
-  {
-    return 1;
-  }
-
-  size_t
-  get_num_connections( synindex syn_id )
-  {
-    if ( syn_id == get_syn_id() )
-      return 1;
-    else
-      return 0;
-  }
-
-  Connector< 2, ConnectionT >&
-  push_back( const ConnectionT& c )
-  {
-    return *suicide_and_resurrect< Connector< 2, ConnectionT > >( this, c );
-  }
-
-  void
-  get_connections( size_t source_gid, size_t thrd, synindex synapse_id, ArrayDatum& conns ) const
-  {
-    if ( get_syn_id() == synapse_id )
-    {
-      conns.push_back( ConnectionDatum(
-        ConnectionID( source_gid, C_[ 0 ].get_target( thrd )->get_gid(), thrd, synapse_id, 0 ) ) );
-    }
-  }
-
-  void
-  get_connections( size_t source_gid,
-    size_t target_gid,
-    size_t thrd,
-    size_t synapse_id,
-    ArrayDatum& conns ) const
-  {
-    if ( get_syn_id() == synapse_id )
-    {
-      if ( C_[ 0 ].get_target( thrd )->get_gid() == target_gid )
-        conns.push_back(
-          ConnectionDatum( ConnectionID( source_gid, target_gid, thrd, synapse_id, 0 ) ) );
-    }
-  }
-
-  void
-  send( Event& e, thread t, const std::vector< ConnectorModel* >& cm )
-  {
-    e.set_port( 0 );
-    C_[ 0 ].send( e,
-      t,
-      ConnectorBase::get_t_lastspike(),
-      static_cast< GenericConnectorModel< ConnectionT >* >( cm[ C_[ 0 ].get_syn_id() ] )
-        ->get_common_properties() );
-    ConnectorBase::set_t_lastspike( e.get_stamp().get_ms() );
-  }
-
-  void
-  trigger_update_weight( long_t vt_gid,
-    thread t,
-    const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
-    const std::vector< ConnectorModel* >& cm )
-  {
-    synindex syn_id = C_[ 0 ].get_syn_id();
-    if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-           ->get_common_properties()
-           .get_vt_gid() == vt_gid )
-      C_[ 0 ].trigger_update_weight( t,
-        dopa_spikes,
-        t_trig,
-        static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-          ->get_common_properties() );
-  }
-
-  synindex
-  get_syn_id() const
-  {
-    return C_[ 0 ].get_syn_id();
-  }
-
-  const ConnectionT*
-  get_C() const
-  {
-    return C_;
-  }
-
-  bool
-  homogeneous_model()
-  {
-    return true;
-  }
-};
-
-
 // homogeneous connector containing >=K_cutoff entries
 // specialization to define recursion termination for push_back
 // internally use a normal vector to store elements
 template < typename ConnectionT >
-class Connector< K_cutoff, ConnectionT > : public vector_like< ConnectionT >
+class Connector : public ConnectorBase
 {
   std::vector< ConnectionT > C_;
 
 public:
-  Connector( const Connector< K_cutoff - 1, ConnectionT >& C, const ConnectionT& c )
-    : C_( K_cutoff ) //, syn_id_(C.get_syn_id())
+  Connector()
   {
-    for ( size_t i = 0; i < K_cutoff - 1; i++ )
-      C_[ i ] = C.get_C()[ i ];
-    C_[ K_cutoff - 1 ] = c;
-  };
+  }
 
   ~Connector()
   {
@@ -480,7 +191,7 @@ public:
       return 0;
   }
 
-  Connector< K_cutoff, ConnectionT >&
+  Connector< ConnectionT >&
   push_back( const ConnectionT& c )
   {
     C_.push_back( c );

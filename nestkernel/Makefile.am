@@ -88,7 +88,8 @@ libnest_la_SOURCES=\
 		rng_manager.h rng_manager.cpp \
 		event_delivery_manager.h event_delivery_manager_impl.h\
 		event_delivery_manager.cpp\
-		node_manager.h node_manager.cpp
+		node_manager.h node_manager.cpp\
+		source_table.h source_table.cpp
 
 libnest_la_LIBADD= @LIBLTDL@ @LIBADD_DL@
 

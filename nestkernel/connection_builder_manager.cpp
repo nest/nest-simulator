@@ -72,6 +72,7 @@ nest::ConnectionBuilderManager::ConnectionBuilderManager()
 
 nest::ConnectionBuilderManager::~ConnectionBuilderManager()
 {
+  source_table_.finalize();
   delete_connections_();
 }
 
@@ -105,12 +106,14 @@ nest::ConnectionBuilderManager::initialize()
 #endif
 #endif
 #endif
+  source_table_.initialize();
 }
 
 void
 nest::ConnectionBuilderManager::finalize()
 {
   delete_connections_();
+  source_table_.finalize();
 }
 
 void
@@ -492,6 +495,7 @@ nest::ConnectionBuilderManager::connect_( Node& s,
   ConnectorBase* c =
     kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection( s, r, conn, syn, d, w );
   connections_[ tid ].set( s_gid, c );
+  source_table_.add_source( tid, syn, s_gid );
   // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
   {
@@ -516,6 +520,7 @@ nest::ConnectionBuilderManager::connect_( Node& s,
     kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection(
       s, r, conn, syn, p, d, w );
   connections_[ tid ].set( s_gid, c );
+  source_table_.add_source( tid, syn, s_gid );
   // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
   {

@@ -36,6 +36,7 @@
 #include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
+#include "source_table.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -361,6 +362,7 @@ private:
    * - Third dim: A std::vector for each synapse prototype, holding the Connector objects
    */
   tVSConnector connections_;
+  SourceTable source_table_;
 
   tVDelayChecker delay_checkers_;
 

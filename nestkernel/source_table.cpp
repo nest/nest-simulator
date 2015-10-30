@@ -25,7 +25,19 @@
 
 nest::SourceTable::SourceTable()
 {
-  for( thread tid = 0; kernel().vp_manager.get_num_threads(); ++tid)
+}
+
+nest::SourceTable::~SourceTable()
+{
+}
+
+void
+nest::SourceTable::initialize()
+{
+  thread num_threads = kernel().vp_manager.get_num_threads();
+  synapse_ids_.resize( num_threads );
+  sources_.resize( num_threads );
+  for( thread tid = 0; tid < num_threads; ++tid)
   {
     synapse_ids_[ tid ] = new std::map< synindex, synindex >();
     sources_[ tid ] = new std::vector< std::vector< Source > >(
@@ -33,33 +45,33 @@ nest::SourceTable::SourceTable()
   }
 }
 
-nest::SourceTable::~SourceTable()
+void
+nest::SourceTable::finalize()
 {
-  for( thread tid = 0; kernel().vp_manager.get_num_threads(); ++tid)
+  for( std::vector< std::map< synindex, synindex >* >::iterator it =
+         synapse_ids_.begin(); it != synapse_ids_.end(); ++it )
   {
-    delete synapse_ids_[ tid ];
-    delete sources_[ tid ];
+    delete *it;
   }
+  synapse_ids_.clear();
+  for( std::vector< std::vector< std::vector< Source > >* >::iterator it =
+         sources_.begin(); it != sources_.end(); ++it )
+  {
+    delete *it;
+  }
+  sources_.clear();
 }
 
-void
-nest::SourceTable::reserve( thread tid, synindex syn_id, index n_sources )
-{
-  std::map< synindex, synindex >::iterator it = synapse_ids_[ tid ]->find( syn_id );
-  if (it != synapse_ids_[ tid ]->end())
-  {
-    synindex syn_index = it->second;
-    index prev_n_sources = (*sources_[ tid ])[ syn_index ].size();
-    (*sources_[ tid ])[ syn_index ].reserve( prev_n_sources + n_sources );
-  }
-  else
-  {
-    index prev_n_synapse_types = synapse_ids_[ tid ]->size();
-    (*synapse_ids_[ tid ])[ syn_id ] = prev_n_synapse_types;
-    sources_[ tid ]->resize( prev_n_synapse_types + 1);
-    sources_[ tid ][ prev_n_synapse_types ].reserve( n_sources );
-  }
-}
+// TODO@5g: benchmark with and without reserving memory for synapses
+// TODO@5g: if we use reserve, we need to make sure the synapse type is known
+// void
+// nest::SourceTable::reserve( thread tid, synindex syn_id, index n_sources )
+// {
+//   std::map< synindex, synindex >::iterator it = synapse_ids_[ tid ]->find( syn_id );
+//   synindex syn_index = it->second;
+//   index prev_n_sources = (*sources_[ tid ])[ syn_index ].size();
+//   (*sources_[ tid ])[ syn_index ].reserve( prev_n_sources + n_sources );
+// }
 
 nest::index
 nest::SourceTable::get_next_source( thread tid )

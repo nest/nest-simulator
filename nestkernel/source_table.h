@@ -44,12 +44,14 @@ struct Source
   Source( index );
 };
 
+inline
 Source::Source()
   : gid( invalid_index )
   , processed( false )
 {
 }
 
+inline
 Source::Source( index gid )
   : gid( gid )
   , processed( false )
@@ -65,7 +67,9 @@ private:
 public:
   SourceTable();
   ~SourceTable();
-  void reserve( thread, synindex, index );
+  void initialize();
+  void finalize();
+  // void reserve( thread, synindex, index );
   void add_source( thread, synindex, index );
   index get_next_source( thread );
   void reject_last_source( thread );
@@ -77,9 +81,19 @@ void
 nest::SourceTable::add_source( thread tid, synindex syn_id, index gid)
 {
   std::map< synindex, synindex >::iterator it = synapse_ids_[ tid ]->find( syn_id );
-  assert( it != synapse_ids_[ tid ]->end() );
   Source src( gid );
-  (*sources_[ tid ])[ it->second ].push_back( src );
+  // if this synapse type is not known yet, create entry for new synapse vector
+  if (it == synapse_ids_[ tid ]->end())
+  {
+    index prev_n_synapse_types = synapse_ids_[ tid ]->size();
+    (*synapse_ids_[ tid ])[ syn_id ] = prev_n_synapse_types;
+    sources_[ tid ]->resize( prev_n_synapse_types + 1);
+    (*sources_[ tid ])[ prev_n_synapse_types ].push_back( src );
+  }
+  else
+  {
+    (*sources_[ tid ])[ it->second ].push_back( src );
+  }
 }
 
 inline

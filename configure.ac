@@ -614,6 +614,10 @@ if test "$ac_have_std_isnan" = yes ; then
 fi
 AC_MSG_RESULT($ac_have_std_isnan)
 
+if test "$ac_have_std_isnan" = no && test "$ac_have_isnan" = no; then
+  AC_MSG_ERROR([You need either std::isnan or isnan to compile NEST.])
+fi
+
 #-- Look for programs needed in the Makefile
 AC_PROG_CXXCPP
 

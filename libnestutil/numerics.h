@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <cassert>
 #include <limits>
 #include <cmath>
 
@@ -32,17 +33,10 @@
 #include <math.h>
 #endif
 
-#if defined( IS_K )
-#undef HAVE_STD_ISNAN
-#undef HAVE_ISNAN
-#endif
-
 #if defined( HAVE_STD_ISNAN )
 #include <cmath>
 #elif defined( HAVE_ISNAN )
 #include <math.h>
-#else
-#include <cstring>
 #endif
 
 namespace numerics
@@ -85,17 +79,17 @@ expm1( double x )
 #endif
 }
 
-template < class T >
+template < typename T >
 bool
-isnan( T f )
+is_nan( T f )
 {
 #if defined( HAVE_STD_ISNAN )
   return std::isnan( f );
 #elif defined( HAVE_ISNAN )
   return isnan( f );
 #else
-  T _nan = ( T ) nan;
-  return 0 == memcmp( ( void* ) &f, ( void* ) &_nan, sizeof( T ) );
+  assert( false ); // HAVE_STD_ISNAN or HAVE_ISNAN is required
+  return false;
 #endif
 }
 }

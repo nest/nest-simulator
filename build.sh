@@ -11,11 +11,6 @@ EOF
 
 if [ "$xMPI" = "1" ] ; then
 
-   #openmpi
-   export LD_LIBRARY_PATH="/usr/lib/openmpi/lib:$LD_LIBRARY_PATH"
-   export CPATH="/usr/lib/openmpi/include:$CPATH"
-   export PATH="/usr/include/mpi:$PATH"
-   
 cat > $HOME/.nestrc <<EOF
     % ZYV: NEST MPI configuration
     /mpirun
@@ -63,9 +58,6 @@ cd "$NEST_VPATH"
     $CONFIGURE_PYTHON \
     $CONFIGURE_GSL \
 
-export PYTHONPATH=$NEST_RESULT/lib/python2.7/site-packages:$PYTHONPATH
-export PYTHONPATH=/usr/local/bin:$NEST_RESULT/lib64/python2.7/site-packages:$PYTHONPATH
-export PATH=~/.local/bin:/usr/local/bin:$NEST_RESULT/bin:$PATH
 make
 make install
 make installcheck

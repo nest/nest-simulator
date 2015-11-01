@@ -74,7 +74,7 @@ def process_changed_files(f):
 
         # +file_names=extras/scan_travis_log.py nestkernel/connector_model.h nestkernel/nestmodule.cpp nestkernel/network.cpp 
         if line.startswith('+file_names='):
-            return line.strip().split('=')[1].split(' '), line
+            return filter(lambda x: x != '', line.strip().split('=')[1].split(' ')), line
 
 
 def process_vera(f, filename):

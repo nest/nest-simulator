@@ -1721,7 +1721,7 @@ NestModule::SetAcceptableLatencyFunction::execute( SLIInterpreter* i ) const
   std::string port_name = getValue< std::string >( i->OStack.pick( 1 ) );
   double latency = getValue< double >( i->OStack.pick( 0 ) );
 
-  Network::get_network().set_music_in_port_acceptable_latency( port_name, latency );
+  kernel().music_manager.set_music_in_port_acceptable_latency( port_name, latency );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -1735,7 +1735,7 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
   std::string port_name = getValue< std::string >( i->OStack.pick( 1 ) );
   int maxBuffered = getValue< long >( i->OStack.pick( 0 ) );
 
-  Network::get_network().set_music_in_port_max_buffered( port_name, maxBuffered );
+  kernel().music_manager.set_music_in_port_max_buffered( port_name, maxBuffered );
 
   i->OStack.pop( 2 );
   i->EStack.pop();

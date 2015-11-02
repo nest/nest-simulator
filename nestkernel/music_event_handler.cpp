@@ -25,6 +25,7 @@
 #ifdef HAVE_MUSIC
 
 // Includes from libnestutil:
+#include "compose.hpp"
 #include "logging.h"
 
 // Includes from nestkernel:

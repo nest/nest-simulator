@@ -33,6 +33,7 @@
 #include "model_manager.h"
 #include "modelrange_manager.h"
 #include "mpi_manager.h"
+#include "music_manager.h"
 #include "node_manager.h"
 #include "rng_manager.h"
 #include "simulation_manager.h"
@@ -149,6 +150,7 @@ public:
   ConnectionBuilderManager connection_builder_manager;
   EventDeliveryManager event_delivery_manager;
   ModelManager model_manager;
+  MUSICManager music_manager;
   NodeManager node_manager;
 
 private:

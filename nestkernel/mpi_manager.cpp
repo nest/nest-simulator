@@ -60,9 +60,9 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   {
 
 #ifdef HAVE_MUSIC
-    music_setup = new MUSIC::Setup( *argc, *argv, MPI_THREAD_FUNNELED, &provided_thread_level );
+    kernel().music_manager.init_music( argc, argv );
     // get a communicator from MUSIC
-    comm = music_setup->communicator();
+    comm = kernel().music_manager.communicator();
 #else  /* #ifdef HAVE_MUSIC */
     MPI_Init_thread( argc, argv, MPI_THREAD_FUNNELED, &provided_thread_level );
     comm = MPI_COMM_WORLD;

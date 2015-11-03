@@ -798,7 +798,7 @@ void
       // flags before each compound's properties are set by passing false as last arg
       // we iterate over all threads
       assert( target->get_thread_sibling_( t ) != 0 );
-      kernel().node_manager.set_status_single_node_( *( target->get_thread_sibling_( t ) ), d, false );
+      set_status_single_node_( *( target->get_thread_sibling_( t ) ), d, false );
     }
   }
 }

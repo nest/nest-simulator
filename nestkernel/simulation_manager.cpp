@@ -525,7 +525,7 @@ nest::SimulationManager::finalize_simulation_()
 void
 nest::SimulationManager::reset_network()
 {
-  if ( not kernel().simulation_manager.has_been_simulated() )
+  if ( not has_been_simulated() )
     return; // nothing to do
 
 

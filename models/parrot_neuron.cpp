@@ -60,7 +60,9 @@ parrot_neuron::update( Time const& origin, const long_t from, const long_t to )
     if ( current_spikes_n > 0 )
     {
       for ( ulong_t i_spike = 0; i_spike < current_spikes_n; i_spike++ )
+      {
         network()->send( *this, se, lag );
+      }
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
     }
   }
@@ -70,6 +72,7 @@ void
 parrot_neuron::get_status( DictionaryDatum& d ) const
 {
   def< double >( d, names::t_spike, get_spiketime_ms() );
+  Archiving_Node::get_status( d );
 }
 
 void
@@ -81,8 +84,12 @@ parrot_neuron::set_status( const DictionaryDatum& d )
 void
 parrot_neuron::handle( SpikeEvent& e )
 {
-  B_.n_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
-    static_cast< double_t >( e.get_multiplicity() ) );
+  // Repeat only spikes incoming on port 0, port 1 will be ignored
+  if ( 0 == e.get_rport() )
+  {
+    B_.n_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+      static_cast< double_t >( e.get_multiplicity() ) );
+  }
 }
 
 } // namespace

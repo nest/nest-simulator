@@ -528,9 +528,9 @@ nest::ConnectionBuilderManager::connect_( Node& s,
 
 void
 nest::ConnectionBuilderManager::divergent_connect( index source_id,
-  const TokenArray target_ids,
-  const TokenArray weights,
-  const TokenArray delays,
+  const TokenArray& target_ids,
+  const TokenArray& weights,
+  const TokenArray& delays,
   index syn )
 {
   bool complete_wd_lists = ( target_ids.size() == weights.size() && weights.size() != 0
@@ -821,10 +821,10 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
 
 void
 nest::ConnectionBuilderManager::random_divergent_connect( index source_id,
-  const TokenArray target_ids,
+  const TokenArray& target_ids,
   index n,
-  const TokenArray weights,
-  const TokenArray delays,
+  const TokenArray& weights,
+  const TokenArray& delays,
   bool allow_multapses,
   bool allow_autapses,
   index syn )
@@ -968,10 +968,10 @@ nest::ConnectionBuilderManager::validate_source_entry_( thread tid, index s_gid,
 // -----------------------------------------------------------------------------
 
 void
-nest::ConnectionBuilderManager::convergent_connect( const TokenArray source_ids,
+nest::ConnectionBuilderManager::convergent_connect( const TokenArray& source_ids,
   index target_id,
-  const TokenArray weights,
-  const TokenArray delays,
+  const TokenArray& weights,
+  const TokenArray& delays,
   index syn )
 {
   bool complete_wd_lists = ( source_ids.size() == weights.size() && weights.size() != 0
@@ -1186,11 +1186,11 @@ nest::ConnectionBuilderManager::convergent_connect( const std::vector< index >& 
 
 
 void
-nest::ConnectionBuilderManager::random_convergent_connect( const TokenArray source_ids,
+nest::ConnectionBuilderManager::random_convergent_connect( const TokenArray& source_ids,
   index target_id,
   index n,
-  const TokenArray weights,
-  const TokenArray delays,
+  const TokenArray& weights,
+  const TokenArray& delays,
   bool allow_multapses,
   bool allow_autapses,
   index syn )
@@ -1250,11 +1250,11 @@ nest::ConnectionBuilderManager::random_convergent_connect( const TokenArray sour
 // This function loops over all targets, with every thread taking
 // care only of its own target nodes
 void
-nest::ConnectionBuilderManager::random_convergent_connect( TokenArray source_ids,
-  TokenArray target_ids,
-  TokenArray ns,
-  TokenArray weights,
-  TokenArray delays,
+nest::ConnectionBuilderManager::random_convergent_connect( TokenArray& source_ids,
+  TokenArray& target_ids,
+  TokenArray& ns,
+  TokenArray& weights,
+  TokenArray& delays,
   bool allow_multapses,
   bool allow_autapses,
   index syn )

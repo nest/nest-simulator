@@ -30,11 +30,12 @@ class ParrotNeuronTestCase(unittest.TestCase):
     """Check parrot_neuron spike repetition properties"""
 
     def setUp(self):
-        nest.set_verbosity(100)
+        nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
 
         # set up source spike generator, as well as parrot neurons
         self.spike_time = 1.
+        self.delay = .2
         self.source = nest.Create("spike_generator", 1, {"spike_times": [self.spike_time]})
         self.parrot = nest.Create('parrot_neuron')
         self.spikes = nest.Create("spike_detector")
@@ -43,17 +44,15 @@ class ParrotNeuronTestCase(unittest.TestCase):
         nest.Connect(self.source, self.spikes)
         nest.Connect(self.parrot, self.spikes)
 
-        self.gid_source = nest.GetStatus(self.source)[0]["global_id"]
-        self.gid_parrot = nest.GetStatus(self.parrot)[0]["global_id"]
+        self.gid_source = self.source[0]
+        self.gid_parrot = self.parrot[0]
 
     def test_ParrotNeuronRepeatSpike(self):
         """Check parrot_neuron repeats spikes on port 0"""
 
         # connect with arbitrary delay
-        delay = .7
-        nest.Connect(self.source, self.parrot, syn_spec={"delay": delay})
-
-        nest.Simulate(3.)
+        nest.Connect(self.source, self.parrot, syn_spec={"delay": self.delay})
+        nest.Simulate(self.spike_time + 2 * self.delay)
 
         # get spike from parrot neuron
         events = nest.GetStatus(self.spikes)[0]["events"]
@@ -61,14 +60,14 @@ class ParrotNeuronTestCase(unittest.TestCase):
 
         # assert spike was repeated at correct time
         assert post_time, "Parrot neuron failed to repeat spike."
-        assert self.spike_time + delay == post_time, "Parrot neuron repeated spike at wrong delay"
+        assert self.spike_time + self.delay == post_time, "Parrot neuron repeated spike at wrong delay"
 
     def test_ParrotNeuronIgnoreSpike(self):
         """Check parrot_neuron ignores spikes on port 1"""
 
         # connect with arbitrary delay to port 1
-        nest.Connect(self.source, self.parrot, syn_spec={"receptor_type": 1})
-        nest.Simulate(3.)
+        nest.Connect(self.source, self.parrot, syn_spec={"receptor_type": 1, "delay": self.delay})
+        nest.Simulate(self.spike_time + 2. * self.delay)
 
         # get spike from parrot neuron, assert it was ignored
         events = nest.GetStatus(self.spikes)[0]["events"]
@@ -86,18 +85,19 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
     by setting the stdp_synapse to connect to port 1.
     """
 
-    def test_ParrotNeuronSTDPProtocol(self):
-        """Check STDP between parrot_neurons changes weights, ignores transmitted spikes"""
+    def run_protocol(self, dt):
+
+        """Set up a network with pre-post spike pairings with t_post - t_pre = dt"""
 
         nest.set_verbosity("M_WARNING")
         nest.ResetKernel()
 
         # set pre and postsynaptic spike times
-        dt = 5.
         delay = 1.  # delay for connections
+        dspike = 100.  # ISI
 
-        pre_times = [100., 300., 500., 700., 900.]
-        pre_times = [k-delay for k in pre_times]  # set the correct real spike times
+        # set the correct real spike times for generators (correcting for delays)
+        pre_times = [100., 100. + dspike]
         post_times = [k+dt for k in pre_times]
 
         # create spike_generators with these times
@@ -107,11 +107,13 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
         # create parrot neurons and connect spike_generators
         pre_parrot = nest.Create("parrot_neuron", 1)
         post_parrot = nest.Create("parrot_neuron", 1)
+
         nest.Connect(pre_spikes, pre_parrot, syn_spec={"delay": delay})
         nest.Connect(post_spikes, post_parrot, syn_spec={"delay": delay})
 
         # create spike detector
         spikes = nest.Create("spike_detector")
+        nest.Connect(pre_parrot, spikes)
         nest.Connect(post_parrot, spikes)
 
         # connect both parrot neurons with a stdp synapse onto port 1
@@ -126,22 +128,33 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
         }
         nest.Connect(pre_parrot, post_parrot, syn_spec=syn_spec, conn_spec=conn_spec)
 
-        # get STDP synapse and initial weight
+        # get STDP synapse and weight before protocol
         syn = nest.GetConnections(source=pre_parrot, synapse_model="stdp_synapse")
-        initial_weight = nest.GetStatus(syn)[0]['weight']
+        syn_status = nest.GetStatus(syn)[0]
+        w_pre = syn_status['weight']
 
-        nest.Simulate(1000)
+        last_time = max(pre_times[-1], post_times[-1])
+        nest.Simulate(last_time + 2 * delay)
 
-        # check that the STDP protocol has elicited a weight change.
-        final_weight = nest.GetStatus(syn)[0]['weight']
-        assert final_weight != initial_weight, "Parrot neuron STDP protocol failed to elicit weight changes"
+        # get weight post protocol
+        syn_status = nest.GetStatus(syn)[0]
+        w_post = syn_status['weight']
 
-        # check that postsynaptic spikes are only and exactly those received
-        # by the spike_generator.
-        post_spiketimes = nest.GetStatus(spikes)[0]['events']['times']
-        assert (
-            len(post_times) == len(post_spiketimes) and all(post_spiketimes - post_times == delay)
-        ), "Parrot neuron failed to ignore transmitted spikes"
+        return w_pre, w_post
+
+    def test_ParrotNeuronSTDPProtocolPotentiation(self):
+        """Check pre-post spike pairings between parrot_neurons increments weights."""
+
+        dt = 10.
+        w_pre, w_post = self.run_protocol(dt)
+        assert w_pre < w_post, "Parrot neuron STDP potentiation protocol failed to elicit positive weight changes."
+
+    def test_ParrotNeuronSTDPProtocolDepression(self):
+        """Check post-pre spike pairings between parrot_neurons decrement weights."""
+
+        dt = -10.
+        w_pre, w_post = self.run_protocol(dt)
+        assert w_pre > w_post, "Parrot neuron STDP potentiation protocol failed to elicit negative weight changes."
 
 
 def suite():

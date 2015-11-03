@@ -165,7 +165,7 @@ def process_static_analysis(f, line):
         if line.startswith('+echo Static analysis on file '):
             return res
 
-        if line.startswith('+format_error_files='):
+        if line.startswith('+rm -rf ./cppcheck'):
             return res
 
         if line.startswith(' - vera++ for '):

@@ -106,3 +106,12 @@ rm -rf $nest_blddir
 echo ""
 echo "Done."
 echo ""
+
+if ( "$tag" != "" ) then
+  echo "Now, please do the following:"
+  echo " * Update the version number and release date on Wikipedia:"
+  echo "   https://en.wikipedia.org/wiki/NEST_%28software%29"
+  echo " * Add the release notes and tarball to the release on GitHub:"
+  echo "   https://github.com/nest/nest-simulator/releases/tag/$tag"
+  echo ""
+endif

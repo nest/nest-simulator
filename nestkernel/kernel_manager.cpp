@@ -148,6 +148,7 @@ nest::KernelManager::num_threads_changed_reset()
 void
 nest::KernelManager::set_status( const DictionaryDatum& dict )
 {
+  assert( is_initialized() );
   logging_manager.set_status( dict );
   io_manager.set_status( dict );
   
@@ -168,6 +169,7 @@ nest::KernelManager::set_status( const DictionaryDatum& dict )
 void
 nest::KernelManager::get_status( DictionaryDatum& dict )
 {
+  assert( is_initialized() );
   logging_manager.get_status( dict );
   io_manager.get_status( dict );
 

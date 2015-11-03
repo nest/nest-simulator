@@ -165,8 +165,6 @@ NodeManager::reinit_nodes()
 DictionaryDatum
 NodeManager::get_status( index idx )
 {
-  assert( kernel().is_initialized() ); // TODO: Do we need this?
-
   assert( idx != 0 );
   Node* target = get_node( idx );
   assert( target != 0 );

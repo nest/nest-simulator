@@ -25,7 +25,7 @@ setup(name         = 'Topology',
       version      = '@SLI_VERSION@',
       description  = 'Python bindings for NEST Topology module',
       author       = 'The NEST Initiative',
-      url          = 'http://www.nest-initiative.org',     
+      url          = 'http://www.nest-simulator.org',
       packages     = ['nest.topology', 'nest.topology.tests'],
       package_dir  = {'nest.topology': '@PKGSRCDIR@/topology/pynest',
                       'nest.topology.tests': '@PKGSRCDIR@/topology/pynest/tests'})

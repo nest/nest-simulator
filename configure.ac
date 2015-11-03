@@ -1,5 +1,5 @@
 AC_PREREQ(2.63)
-AC_INIT([nest], [2.6.1], [nest_user@nest-initiative.org])
+AC_INIT([nest], [git], [nest_user@nest-initiative.org])
 
 # Prevent automatic rebuilding of Makefile.ins and configure if their
 # content or timestamp changes. Not doing this lead to failing builds
@@ -12,8 +12,8 @@ AM_MAINTAINER_MODE([disable])
 # The patchlevel is updated automatically by the script
 # releasetools/buildnest
 SLI_MAJOR=2
-SLI_MINOR=6
-SLI_PATCHLEVEL=1
+SLI_MINOR=8
+SLI_PATCHLEVEL=0-git
 
 SLI_PRGNAME="nest-$SLI_MAJOR.$SLI_MINOR.$SLI_PATCHLEVEL"
 SLI_VERSION=$SLI_MAJOR.$SLI_MINOR.$SLI_PATCHLEVEL
@@ -730,11 +730,11 @@ SLI_USER_MODULES=""
 # SLI_USER_MODULES_LDADD collects what needs to be added to LDADD
 SLI_USER_MODULES_LDADD=""
 
-AC_ARG_WITH(modules,[  --with-modules = external modules to be linked in],
+AC_ARG_WITH(modules,[  --with-modules=MODULES external modules to be linked in],
 [
 if test "$withval" != no; then
   for mod in $withval; do
-    SLI_USER_MODULES_LDADD=" $prefix/lib/nest/lib$mod.la"
+    SLI_USER_MODULES_LDADD="$SLI_USER_MODULES_LDADD $prefix/lib/nest/lib$mod.la"
     SLI_USER_MODULES="$SLI_USER_MODULES $mod"
   done
 fi
@@ -1154,8 +1154,8 @@ if test $SLI_distributed = set; then
   echo
 fi
 
-echo "If you experience problems with the installation or the use of"
-echo "NEST, please see http://nest-initiative.org/index.php/FAQ, or"
-echo "go to http://nest-initiative.org/index.php/Community to find out"
-echo "how to join the user mailing list."
+echo "If you experience problems with the installation or the use of NEST,"
+echo "please see http://www.nest-simulator.org/frequently_asked_questions"
+echo "or go to http://www.nest-simulator.org/community to find out how to"
+echo "join the user mailing list."
 echo

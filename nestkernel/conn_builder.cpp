@@ -56,6 +56,7 @@ nest::ConnBuilder::ConnBuilder( Network& net,
   , weight_( 0 )
   , delay_( 0 )
   , param_dicts_()
+  , parameters_requiring_skipping_()
 {
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above
@@ -99,18 +100,20 @@ nest::ConnBuilder::ConnBuilder( Network& net,
   if ( !default_weight_and_delay_ )
   {
     weight_ = syn_spec->known( names::weight )
-      ? ConnParameter::create( ( *syn_spec )[ names::weight ] )
-      : ConnParameter::create( ( *syn_defaults )[ names::weight ] );
+      ? ConnParameter::create( ( *syn_spec )[ names::weight ], net_.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::weight ], net_.get_num_threads() );
+    register_parameters_requiring_skipping_( *weight_ );
     delay_ = syn_spec->known( names::delay )
-      ? ConnParameter::create( ( *syn_spec )[ names::delay ] )
-      : ConnParameter::create( ( *syn_defaults )[ names::delay ] );
+      ? ConnParameter::create( ( *syn_spec )[ names::delay ], net_.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::delay ], net_.get_num_threads() );
   }
-  else if ( !default_weight_ )
+  else if ( default_weight_ )
   {
     delay_ = syn_spec->known( names::delay )
-      ? ConnParameter::create( ( *syn_spec )[ names::delay ] )
-      : ConnParameter::create( ( *syn_defaults )[ names::delay ] );
+      ? ConnParameter::create( ( *syn_spec )[ names::delay ], net_.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::delay ], net_.get_num_threads() );
   }
+  register_parameters_requiring_skipping_( *delay_ );
 
   // synapse-specific parameters
   // TODO: Can we create this set once and for all?
@@ -136,7 +139,11 @@ nest::ConnBuilder::ConnBuilder( Network& net,
       continue; // weight, delay or not-settable parameter
 
     if ( syn_spec->known( param_name ) )
-      synapse_params_[ param_name ] = ConnParameter::create( ( *syn_spec )[ param_name ] );
+    {
+      synapse_params_[ param_name ] =
+        ConnParameter::create( ( *syn_spec )[ param_name ], net_.get_num_threads() );
+      register_parameters_requiring_skipping_( *synapse_params_[ param_name ] );
+    }
   }
 
   // Now create dictionary with dummy values that we will use
@@ -170,6 +177,15 @@ nest::ConnBuilder::~ConnBuilder()
         it != synapse_params_.end();
         ++it )
     delete it->second;
+}
+
+inline void
+nest::ConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
+{
+  if ( param.is_array() )
+  {
+    parameters_requiring_skipping_.push_back( &param );
+  }
 }
 
 inline void
@@ -267,18 +283,17 @@ nest::ConnBuilder::single_connect_( index sgid,
   thread target_thread,
   librandom::RngPtr& rng )
 {
-  index tgid = target.get_gid();
   if ( param_dicts_.empty() ) // indicates we have no synapse params
   {
     if ( default_weight_and_delay_ )
       net_.connect( sgid, &target, target_thread, synapse_model_ );
     else if ( default_weight_ )
       net_.connect(
-        sgid, &target, target_thread, synapse_model_, delay_->value_double( sgid, tgid, rng ) );
+        sgid, &target, target_thread, synapse_model_, delay_->value_double( target_thread, rng ) );
     else
     {
-      double delay = delay_->value_double( sgid, tgid, rng );
-      double weight = weight_->value_double( sgid, tgid, rng );
+      double delay = delay_->value_double( target_thread, rng );
+      double weight = weight_->value_double( target_thread, rng );
       net_.connect( sgid, &target, target_thread, synapse_model_, delay, weight );
     }
   }
@@ -297,7 +312,7 @@ nest::ConnBuilder::single_connect_( index sgid,
           // change value of dictionary entry without allocating new datum
           IntegerDatum* id = static_cast< IntegerDatum* >(
             ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-          ( *id ) = it->second->value_int( sgid, tgid, rng );
+          ( *id ) = it->second->value_int( target_thread, rng );
         }
         catch ( KernelException& e )
         {
@@ -309,7 +324,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         // change value of dictionary entry without allocating new datum
         DoubleDatum* dd = static_cast< DoubleDatum* >(
           ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-        ( *dd ) = it->second->value_double( sgid, tgid, rng );
+        ( *dd ) = it->second->value_double( target_thread, rng );
       }
     }
 
@@ -321,11 +336,11 @@ nest::ConnBuilder::single_connect_( index sgid,
         target_thread,
         synapse_model_,
         param_dicts_[ target_thread ],
-        delay_->value_double( sgid, tgid, rng ) );
+        delay_->value_double( target_thread, rng ) );
     else
     {
-      double delay = delay_->value_double( sgid, tgid, rng );
-      double weight = weight_->value_double( sgid, tgid, rng );
+      double delay = delay_->value_double( target_thread, rng );
+      double weight = weight_->value_double( target_thread, rng );
       net_.connect( sgid,
         &target,
         target_thread,
@@ -336,6 +351,16 @@ nest::ConnBuilder::single_connect_( index sgid,
     }
   }
 }
+
+inline void
+nest::ConnBuilder::skip_conn_parameter_( thread target_thread )
+{
+  for ( std::vector< ConnParameter* >::iterator it = parameters_requiring_skipping_.begin();
+        it != parameters_requiring_skipping_.end();
+        ++it )
+    ( *it )->skip( target_thread );
+}
+
 
 void
 nest::OneToOneBuilder::connect_()
@@ -370,14 +395,20 @@ nest::OneToOneBuilder::connect_()
 
         // check whether the target is on this mpi machine
         if ( !net_.is_local_gid( *tgid ) )
+        {
+          skip_conn_parameter_( tid );
           continue;
+        }
 
         Node* const target = net_.get_node( *tgid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
         if ( tid != target_thread )
+        {
+          skip_conn_parameter_( tid );
           continue;
+        }
 
         single_connect_( *sgid, *target, target_thread, rng );
       }
@@ -410,20 +441,33 @@ nest::AllToAllBuilder::connect_()
       {
         // check whether the target is on this mpi machine
         if ( !net_.is_local_gid( *tgid ) )
+        {
+          for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+                ++sgid )
+            skip_conn_parameter_( tid );
           continue;
+        }
 
         Node* const target = net_.get_node( *tgid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
         if ( tid != target_thread )
+        {
+          for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+                ++sgid )
+            skip_conn_parameter_( tid );
           continue;
+        }
 
         for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
               ++sgid )
         {
           if ( not autapses_ and *sgid == *tgid )
+          {
+            skip_conn_parameter_( target_thread );
             continue;
+          }
 
           single_connect_( *sgid, *target, target_thread, rng );
         }

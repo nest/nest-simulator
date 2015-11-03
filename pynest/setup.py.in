@@ -26,10 +26,9 @@ setup(
     version='@SLI_VERSION@',
     description='PyNEST provides Python bindings for NEST',
     author='The NEST Initiative',
-    author_email='nest_user@nest-initiative.org',
-    url='http://www.nest-initiative.org',
+    url='http://www.nest-simulator.org',
     license='GPLv2+',
-    packages=['nest', 'nest.tests'],
+    packages=['nest', 'nest.tests', 'nest.tests.test_msp'],
     package_dir={'nest': '@PKGSRCDIR@/pynest/nest'},
     package_data={'nest': ['pynest-init.sli']},
 )

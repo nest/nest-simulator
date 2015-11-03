@@ -33,7 +33,7 @@
  * @mainpage NEST: Neural Simulation Tool
  *
  * The main resource on information about NEST is the homepage of the
- * NEST Initiative at http://www.nest-initiative.org
+ * NEST simulator at http://www.nest-simulator.org
  * <p>
  *
  * @see Diesmann, Markus and Gewaltig, Marc-Oliver (2002) NEST: An
@@ -81,8 +81,13 @@ namespace nest
 
 #ifdef HAVE_LONG_LONG
 typedef long long tic_t;
+#ifdef IS_K
+const tic_t tic_t_max = LLONG_MAX;
+const tic_t tic_t_min = LLONG_MIN;
+#else
 const tic_t tic_t_max = LONG_LONG_MAX;
 const tic_t tic_t_min = LONG_LONG_MIN;
+#endif
 #else
 typedef long tic_t;
 const tic_t tic_t_max = LONG_MAX;

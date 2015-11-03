@@ -25,6 +25,7 @@ libmodelsmodule_la_SOURCES= \
 		cont_delay_connection.h cont_delay_connection_impl.h\
 		correlation_detector.h correlation_detector.cpp\
 		correlomatrix_detector.h correlomatrix_detector.cpp\
+		correlospinmatrix_detector.h correlospinmatrix_detector.cpp\
 		dc_generator.h dc_generator.cpp\
 		gamma_sup_generator.h gamma_sup_generator.cpp\
 		ginzburg_neuron.h ginzburg_neuron.cpp\

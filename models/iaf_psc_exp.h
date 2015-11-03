@@ -91,10 +91,13 @@ class Network;
    I_e          double - Constant input current in pA.
    t_spike      double - Point in time of last spike in ms.
 
-   Remarks:
-   tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
-   degenerate case of the ODE describing the model [1]. For very similar values,
-   numerics will be unstable.
+Remarks:
+
+   If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+   will numerically behave as if tau_m is equal to tau_syn_ex or
+   tau_syn_in, respectively, to avoid numerical instabilities.
+   For details, please see IAF_Neruons_Singularity.ipynb in the
+   NEST source code (docs/model_details).
 
    References:
    [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation in Recurrent

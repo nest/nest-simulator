@@ -71,6 +71,20 @@ class ParrotNeuronTestCase(unittest.TestCase):
         post_time = events['times'][events['senders'] == self.parrot[0]]
         assert len(post_time) == 0, "Parrot neuron failed to ignore spike arriving on port 1"
 
+    def test_ParrotNeuronMultiplicity(self):
+        """Check parrot_neuron correctly repeats spikes with multiplicity"""
+
+        # connect twice
+        nest.Connect(self.source, self.parrot, syn_spec={"delay": self.delay})
+        nest.Connect(self.source, self.parrot, syn_spec={"delay": self.delay})
+        nest.Simulate(self.spike_time + 2. * self.delay)
+
+        # get spikes from parrot neuron, assert two were transmitted
+        events = nest.GetStatus(self.spikes)[0]["events"]
+        post_times = events['times'][events['senders'] == self.parrot[0]]
+        assert len(post_times) == 2 and post_times[0] == post_times[1], \
+            "Parrot neuron failed to correctly repeat spikes with multiplicity."
+
 
 @nest.check_stack
 class ParrotNeuronSTDPTestCase(unittest.TestCase):

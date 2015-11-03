@@ -23,25 +23,30 @@
 Using CSA with Topology layers
 ------------------------------
 
-This example shows a brute-force way of specifying connections
-between NEST Topology layers using Connection Set Algebra.
+This example shows a brute-force way of specifying connections between
+NEST Topology layers using Connection Set Algebra instead of the
+built-in connection routines.
 
-See also Djurfeldt M, Davison AP and Eppler JM (2014) **Efficient
-generation of connectivity in neuronal networks from
-simulator-independent descriptions**, *Front. Neuroinform.*
+Using the CSA requires NEST to be compiled with support for
+libneurosim. For details, see Djurfeldt M, Davison AP and Eppler JM
+(2014) **Efficient generation of connectivity in neuronal networks
+from simulator-independent descriptions**, *Front. Neuroinform.*
 http://dx.doi.org/10.3389/fninf.2014.00043
+
+For a related example, see csa_example.py
+
 """
 
 """
-First, we import necessary modules.
+First, we import all necessary modules.
 """
 
 import nest
 import nest.topology as topo
 
 """
-We now check for the availability of the CSA Python module and
-exit with an error message, if we don't have it.
+Next, we check for the availability of the CSA Python module. If it
+does not import, we exit with an error message.
 """
 
 try:
@@ -90,26 +95,26 @@ g2 = geometryFunction(pop2)
 d = csa.euclidMetric2d(g1, g2)
 
 """
-The connection set describes Gaussian connectivity profile with
-sigma = 0.2 and cutoff at 0.5, and two values (10000.0 and 1.0) used
-as weight and delay, respectively.
+The connection set ``cs`` describes a Gaussian connectivity profile
+with sigma = 0.2 and cutoff at 0.5, and two values (10000.0 and 1.0)
+used as weight and delay, respectively.
 """
 
 cs = csa.cset(csa.random * (csa.gaussian(0.2, 0.5) * d), 10000.0, 1.0)
 
 """
-The populations are connected using the `CGConnect` function, which
-takes the ids of pre- and postsynaptic neurons (``pop1`` and ``pop2``),
-the connection set (``cs``) and a dictionary that maps the parameters
-weight and delay to positions in the value set associated with the
-connection set.
+We can now connect the populations using the `CGConnect` function.
+It takes the IDs of pre- and postsynaptic neurons (``pop1`` and
+``pop2``), the connection set (``cs``) and a dictionary that maps
+the parameters weight and delay to positions in the value set
+associated with the connection set.
 """
 
 nest.CGConnect(pop1, pop2, cs, {"weight": 0, "delay": 1})
 
 """
-We use the `PlotTargets` function to show all targets of the
-center neuron from `pop1`.
+Finally, we use the `PlotTargets` function to show all targets in
+``pop2`` starting at the center neuron of ``pop1``.
 """
 
 topo.PlotTargets(topo.FindCenterElement(pop1), pop2)

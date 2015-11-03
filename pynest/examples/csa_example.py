@@ -87,13 +87,12 @@ nest.CGConnect(pre, post, cs, {"weight": 0, "delay": 1})
 
 """
 To stimulate the network, we create a `poisson_generator` and set it
-up to fire with a rate of 80000 spikes per second. It is connected to
-the neurons of the pre-synaptic population with a weight of 1.2 and a
-delay of 1.0 ms.
+up to fire with a rate of 100000 spikes per second. It is connected to
+the neurons of the pre-synaptic population.
 """
 
-pg = nest.Create("poisson_generator", params={"rate": 80000.0})
-nest.DivergentConnect(pg, pre, 1.2, 1.0)
+pg = nest.Create("poisson_generator", params={"rate": 100000.0})
+nest.Connect(pg, pre, "all_to_all")
 
 """
 To measure and record the membrane potentials of the neurons, we
@@ -101,7 +100,7 @@ create a `voltmeter` and connect it to all post-synaptic nodes.
 """
 
 vm = nest.Create("voltmeter")
-nest.DivergentConnect(vm, post)
+nest.Connect(vm, post, "all_to_all")
 
 """
 We save the whole connection graph of the network as a PNG image

@@ -24,6 +24,7 @@ Functions for node handling
 """
 
 from .hl_api_helper import *
+from .hl_api_info import SetStatus
 
 @check_stack
 def Create(model, n=1, params=None):

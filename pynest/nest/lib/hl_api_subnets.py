@@ -24,7 +24,8 @@ Functions for hierarchical networks
 """
 
 from .hl_api_helper import *
-from .hl_api_nodes import Create, GetStatus, SetStatus
+from .hl_api_nodes import Create
+from .hl_api_info import GetStatus, SetStatus
 
 @check_stack
 def PrintNetwork(depth=1, subnet=None) :

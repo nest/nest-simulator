@@ -24,7 +24,8 @@ Functions for connection handling
 """
 
 from .hl_api_helper import *
-from .hl_api_nodes import Create, GetStatus
+from .hl_api_nodes import Create
+from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 
 import numpy

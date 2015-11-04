@@ -255,9 +255,21 @@ Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d, C
   updateValue< double_t >( d, names::weight, weight_ );
 
   updateValue< double_t >( d, names::dU, U_ );
+  if ( U_ > 1.0 || U_ < 0.0 )
+    throw BadProperty( "U must be in [0,1]." );
+
   updateValue< double_t >( d, names::u, u_ );
+  if ( u_ > 1.0 || u_ < 0.0 )
+    throw BadProperty( "u must be in [0,1]." );
+
   updateValue< double_t >( d, names::tau_rec, tau_rec_ );
+  if ( tau_rec_ <= 0.0 )
+    throw BadProperty( "tau_rec must be > 0." );
+
   updateValue< double_t >( d, names::tau_fac, tau_fac_ );
+  if ( tau_fac_ < 0.0 )
+    throw BadProperty( "tau_fac must be >= 0." );
+
   updateValue< double_t >( d, names::x, x_ );
 }
 

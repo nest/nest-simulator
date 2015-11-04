@@ -56,12 +56,16 @@ parrot_neuron::update( Time const& origin, const long_t from, const long_t to )
     const ulong_t current_spikes_n = static_cast< ulong_t >( B_.n_spikes_.get_value( lag ) );
     if ( current_spikes_n > 0 )
     {
-      // create a new SpikeEvent and set its multiplicity
+      // create a new SpikeEvent, set its multiplicity and send it
       SpikeEvent se;
       se.set_multiplicity( current_spikes_n );
-
       network()->send( *this, se, lag );
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+
+      // set the spike times, respecting the multiplicity
+      for ( ulong_t i = 0; i < current_spikes_n; i++ )
+      {
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+      }
     }
   }
 }

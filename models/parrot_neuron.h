@@ -54,7 +54,8 @@ Sends: SpikeEvent
 Parameters:
 No parameters to be set in the status dictionary.
 
-Author:  May 2006, Reichert, Morrison
+Author: David Reichert, Abigail Morrison, Alexander Seeholzer, Hans Ekkehard Plesser
+FirstVersion: May 2006
 */
 
 
@@ -64,9 +65,6 @@ Author:  May 2006, Reichert, Morrison
  * time step.
  * Instead of the accumulated weigths of the incoming spikes, the
  * number of the spikes is stored within a ring buffer.
- *
- * \author David Reichert
- * \date may 2006
  */
 
 #ifndef PARROT_NEURON_H

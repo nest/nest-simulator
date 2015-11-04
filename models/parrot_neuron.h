@@ -27,26 +27,18 @@ Name: parrot_neuron - Neuron that repeats incoming spikes.
 Description:
 
 The parrot neuron simply emits one spike for every incoming spike.
-One possible application for this is to create different channels
-for the output of generator devices such as the poisson_generator
-or the mip_generator.
+An important application is to provide identical poisson spike
+trains to a group of neurons. The poisson_generator sends a different
+spike train to each of its target neurons. By connecting one
+poisson_generator to a parrot_neuron and then that parrot_neuron to
+a group of neurons, all target neurons will receive the same poisson
+spike train.
 
 Remarks:
 
-Network-wise the parrot neuron behaves like other neuron models
-regarding connections and communication. While the number of
-outgoing spikes equals that of incoming ones, the weigth of the
-outgoing spikes solely depends on the weigth of outgoing connections.
-
-A Poisson generator that would send multiple spikes during a single
-time step due to a high rate will send single spikes with
-multiple synaptic strength instead, for effiacy reasons.
-This can be realized because of the way devices are implemented
-in the threaded environment. A parrot neuron on the other
-hand always emits single spikes. Hence, in a situation where for
-example a poisson generator with a high firing rate is connected
-to a parrot neuron, the communication cost associated with outgoing
-spikes is much bigger for the latter.
+- Weights on connection to the parrot_neuron are ignored.
+- Weights on connections from the parrot_neuron are handled as usual.
+- Delays are honored on incoming and outgoing connections.
 
 Only spikes arriving on connections to port 0 will be repeated.
 Connections onto port 1 will be accepted, but spikes incoming
@@ -60,22 +52,19 @@ Receives: SpikeEvent
 Sends: SpikeEvent
 
 Parameters:
-
 No parameters to be set in the status dictionary.
-
-References:
-No references
 
 Author:  May 2006, Reichert, Morrison
 */
 
 
 /**
- * The parrot neuron emits one spike for every incoming spike.
- * It is a (strongly) simplified version of the iaf_neuron class,
- * stripped of the dynamics and unneeded features.
- * Instead of the accumulated weigths of the incoming spikes the
+ * The parrot neuron emits one spike for every incoming spike,
+ * but may use multiplicity to indicate number of spikes in a single
+ * time step.
+ * Instead of the accumulated weigths of the incoming spikes, the
  * number of the spikes is stored within a ring buffer.
+ *
  * \author David Reichert
  * \date may 2006
  */

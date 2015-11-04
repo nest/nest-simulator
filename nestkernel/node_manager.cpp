@@ -165,8 +165,6 @@ NodeManager::reinit_nodes()
 DictionaryDatum
 NodeManager::get_status( index idx )
 {
-  assert( kernel().is_initialized() ); // TODO: Do we need this?
-
   assert( idx != 0 );
   Node* target = get_node( idx );
   assert( target != 0 );
@@ -798,7 +796,7 @@ void
       // flags before each compound's properties are set by passing false as last arg
       // we iterate over all threads
       assert( target->get_thread_sibling_( t ) != 0 );
-      kernel().node_manager.set_status_single_node_( *( target->get_thread_sibling_( t ) ), d, false );
+      set_status_single_node_( *( target->get_thread_sibling_( t ) ), d, false );
     }
   }
 }

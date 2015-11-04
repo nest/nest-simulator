@@ -162,9 +162,9 @@ public:
   bool connect( ArrayDatum& connectome );
 
   void divergent_connect( index s,
-    const TokenArray r,
-    const TokenArray weights,
-    const TokenArray delays,
+    const TokenArray& r,
+    const TokenArray& weights,
+    const TokenArray& delays,
     index syn );
   /**
    * Connect one source node with many targets.
@@ -174,18 +174,18 @@ public:
   void divergent_connect( index s, DictionaryDatum d, index syn );
 
   void random_divergent_connect( index s,
-    const TokenArray r,
+    const TokenArray& r,
     index n,
-    const TokenArray w,
-    const TokenArray d,
+    const TokenArray& w,
+    const TokenArray& d,
     bool,
     bool,
     index syn );
 
-  void convergent_connect( const TokenArray s,
+  void convergent_connect( const TokenArray& s,
     index r,
-    const TokenArray weights,
-    const TokenArray delays,
+    const TokenArray& weights,
+    const TokenArray& delays,
     index syn );
 
   /**
@@ -198,11 +198,11 @@ public:
     const TokenArray& delays,
     index syn );
 
-  void random_convergent_connect( const TokenArray s,
+  void random_convergent_connect( const TokenArray& s,
     index t,
     index n,
-    const TokenArray w,
-    const TokenArray d,
+    const TokenArray& w,
+    const TokenArray& d,
     bool,
     bool,
     index syn );
@@ -211,11 +211,11 @@ public:
    * Use openmp threaded parallelization to speed up connection.
    * Parallelize over target list.
    */
-  void random_convergent_connect( TokenArray s,
-    TokenArray t,
-    TokenArray n,
-    TokenArray w,
-    TokenArray d,
+  void random_convergent_connect( TokenArray& s,
+    TokenArray& t,
+    TokenArray& n,
+    TokenArray& w,
+    TokenArray& d,
     bool,
     bool,
     index syn );

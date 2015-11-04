@@ -70,7 +70,7 @@ public:
   /**
    * Get the time at the beginning of the previous time slice.
    */
-  Time get_previous_slice_origin() const;
+  Time const get_previous_slice_origin() const;
 
   /**
    * Precise time of simulation.

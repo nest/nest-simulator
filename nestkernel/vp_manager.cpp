@@ -156,7 +156,7 @@ void
 nest::VPManager::get_status( DictionaryDatum& d )
 {
   def< long >( d, "local_num_threads", get_num_threads() );
-  def< long >( d, "total_num_virtual_procs", kernel().vp_manager.get_num_virtual_processes() );
+  def< long >( d, "total_num_virtual_procs", get_num_virtual_processes() );
 }
 
 void

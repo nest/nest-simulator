@@ -151,7 +151,7 @@ public:
    */
   template < class ModelT >
   index
-    register_preconf_node_model( const Name& name, DictionaryDatum& conf, bool private_model = false );
+  register_preconf_node_model( const Name& name, DictionaryDatum& conf, bool private_model = false );
 
   /**
    * Copy an existing model and register it as a new model.
@@ -181,16 +181,6 @@ public:
   template < class ConnectionT >
   synindex
   register_connection_model( const std::string& name );
-
-
-  /**TODO: is this used???
-   * Copy an existing synapse type.
-   * @see copy_model(), ModelManager::copy_synapse_prototype()
-   * @param old_id ID of synapse model to copy.
-   * @param new_name name of new synapse model.
-   * @return ID of new synapse model.
-   */
-  synindex copy_synapse_prototype( synindex old_id, Name new_name );
 
   /**
    * @return The model id of a given model name

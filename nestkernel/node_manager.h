@@ -63,6 +63,14 @@ public:
    * @throws nest::UnknownNode       Target does not exist in the network.
    */
   DictionaryDatum get_status( index );
+  
+  /**
+   * Set properties of a Node. The specified node must exist.
+   * @throws nest::UnknownNode       Target does not exist in the network.
+   * @throws nest::UnaccessedDictionaryEntry  Non-proxy target did not read dict entry.
+   * @throws TypeMismatch            Array is not a flat & homogeneous array of integers.
+   */
+  void set_status( index, const DictionaryDatum& );
 
   /**
    * Add a number of nodes to the network.
@@ -143,14 +151,6 @@ public:
    */
   Node* get_node( index, thread thr = 0 );
 
-/**
-   * Set properties of a Node. The specified node must exist.
-   * @throws nest::UnknownNode       Target does not exist in the network.
-   * @throws nest::UnaccessedDictionaryEntry  Non-proxy target did not read dict entry.
-   * @throws TypeMismatch            Array is not a flat & homogeneous array of integers.
-   */
-  void set_status( index, const DictionaryDatum& );
-
   /**
    * Return the Subnet that contains the thread siblings.
    * @param i Index of the specified Node.
@@ -183,7 +183,7 @@ public:
   /**
    * Get list of nodes on given thread.
    */
-  const std::vector< Node* >& get_nodes_on_thread(thread) const;
+  const std::vector< Node* >& get_nodes_on_thread( thread ) const;
 
   /**
    * Prepare nodes for simulation and register nodes in node_list.

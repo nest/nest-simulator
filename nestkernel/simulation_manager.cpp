@@ -525,7 +525,7 @@ nest::SimulationManager::finalize_simulation_()
 void
 nest::SimulationManager::reset_network()
 {
-  if ( not kernel().simulation_manager.has_been_simulated() )
+  if ( not has_been_simulated() )
     return; // nothing to do
 
 
@@ -592,7 +592,7 @@ nest::SimulationManager::print_progress_()
 }
 
 // inline
-nest::Time
+nest::Time const
 nest::SimulationManager::get_previous_slice_origin() const
 {
   return clock_ - Time::step( kernel().connection_builder_manager.get_min_delay() );

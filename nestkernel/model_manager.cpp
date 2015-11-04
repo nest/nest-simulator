@@ -420,10 +420,10 @@ ModelManager::memory_info() const
 {
   
   std::cout.setf( std::ios::left );
-  std::vector< index > idx( kernel().model_manager.get_num_node_models() );
+  std::vector< index > idx( get_num_node_models() );
   
   
-  for ( index i = 0; i < kernel().model_manager.get_num_node_models(); ++i )
+  for ( index i = 0; i < get_num_node_models(); ++i )
     idx[ i ] = i;
   
   std::sort( idx.begin(), idx.end(), compare_model_by_id_ );
@@ -435,7 +435,7 @@ ModelManager::memory_info() const
             << "Available" << std::endl;
   std::cout << sep << std::endl;
   
-  for ( index i = 0; i < kernel().model_manager.get_num_node_models(); ++i )
+  for ( index i = 0; i < get_num_node_models(); ++i )
   {
     Model* mod = models_[ idx[ i ] ];
     if ( mod->mem_capacity() != 0 )

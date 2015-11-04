@@ -186,7 +186,7 @@ public:
   // data members of each connection
   double_t weight_;
   double_t tau_plus_;
-  double_t tau_plus_triplet;
+  double_t tau_plus_triplet_;
   double_t Aplus_;
   double_t Aminus_;
   double_t Aplus_triplet_;
@@ -241,7 +241,7 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
   }
 
   // depression due to new pre-synaptic spike
-  Kplus_triplet_ *= std::exp( ( t_lastspike - t_spike ) / tau_plus_triplet );
+  Kplus_triplet_ *= std::exp( ( t_lastspike - t_spike ) / tau_plus_triplet_);
 
   // dendritic delay means we must look back in time by that amount
   // for determining the K value, because the K value must propagate
@@ -264,7 +264,7 @@ STDPTripletConnection< targetidentifierT >::STDPTripletConnection()
   : ConnectionBase()
   , weight_( 1.0 )
   , tau_plus_( 16.8 )
-  , tau_plus_triplet( 101.0 )
+  , tau_plus_triplet_( 101.0 )
   , Aplus_( 5e-10 )
   , Aminus_( 7e-3 )
   , Aplus_triplet_( 6.2e-3 )
@@ -280,7 +280,7 @@ STDPTripletConnection< targetidentifierT >::STDPTripletConnection(
   : ConnectionBase(rhs)
   , weight_( rhs.weight_ )
   , tau_plus_( rhs.tau_plus_ )
-  , tau_plus_triplet( rhs.tau_plus_triplet )
+  , tau_plus_triplet_( rhs.tau_plus_triplet_)
   , Aplus_( rhs.Aplus_ )
   , Aminus_( rhs.Aminus_ )
   , Aplus_triplet_( rhs.Aplus_triplet_ )
@@ -297,13 +297,13 @@ STDPTripletConnection< targetidentifierT >::get_status( DictionaryDatum& d ) con
   ConnectionBase::get_status( d );
   def< double_t >( d, names::weight, weight_ );
   def< double_t >( d, "tau_plus", tau_plus_ );
-  def< double_t >( d, "tau_x", tau_plus_triplet );
+  def< double_t >( d, "tau_plus_triplet", tau_plus_triplet_);
   def< double_t >( d, "Aplus", Aplus_ );
   def< double_t >( d, "Aminus", Aminus_ );
-  def< double_t >( d, "Aplus_triplet_", Aplus_triplet_ );
+  def< double_t >( d, "Aplus_triplet", Aplus_triplet_ );
   def< double_t >( d, "Aminus_triplet", Aminus_triplet_ );
   def< double_t >( d, "Kplus", Kplus_ );
-  def<double_t>( d, "Kplus_triplet_", Kplus_triplet_ );
+  def<double_t>( d, "Kplus_triplet", Kplus_triplet_ );
 } // TBD names
 
 template < typename targetidentifierT >
@@ -313,13 +313,25 @@ STDPTripletConnection< targetidentifierT >::set_status( const DictionaryDatum& d
   ConnectionBase::set_status( d, cm );
   updateValue< double_t >( d, names::weight, weight_ );
   updateValue< double_t >( d, "tau_plus", tau_plus_ );
-  updateValue< double_t >( d, "tau_x", tau_plus_triplet );
+  updateValue< double_t >( d, "tau_plus_triplet", tau_plus_triplet_);
   updateValue< double_t >( d, "Aplus", Aplus_ );
   updateValue< double_t >( d, "Aminus", Aminus_ );
-  updateValue< double_t >( d, "Aplus_triplet_", Aplus_triplet_ );
+  updateValue< double_t >( d, "Aplus_triplet", Aplus_triplet_ );
   updateValue< double_t >( d, "Aminus_triplet", Aminus_triplet_ );
   updateValue< double_t >( d, "Kplus", Kplus_ );
-  updateValue<double_t>( d, "Kplus_triplet_", Kplus_triplet_ );
+  updateValue<double_t>( d, "Kplus_triplet", Kplus_triplet_ );
+	
+  if ( ! ( tau_plus_triplet_ > tau_plus_ ) ) {
+    throw BadProperty( "Potentiation time-constant for triplet (tau_plus_triplet) must be bigger than pair-based one (tau_plus)." );
+  }
+	
+  if ( ! ( Kplus_ >= 0 ) ) {
+	throw BadProperty( "Variable Kplus must be positive." );
+  }
+
+  if ( ! ( Kplus_triplet_ >= 0 ) ) {
+    throw BadProperty( "Variable Kplus_triplet must be positive." );
+  }
 }
 
 } // of namespace nest

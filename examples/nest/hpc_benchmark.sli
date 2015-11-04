@@ -81,7 +81,7 @@
 
   /mean_potential 5.7 mV
   /sigma_potential 7.2 mV
- 
+  /randomize_Vm true
 
   /delay  1.5 ms         % synaptic delay, all connections [ms] 
 
@@ -143,6 +143,28 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
   /I_from I_net 1 add def                    % gid of first child
   /I_to 0 GetStatus /network_size get 1 sub def % gid of last child
 
+  randomize_Vm
+  {
+      M_INFO (BuildNetwork)
+      (Randomzing membrane potentials.) message
+
+      0 GetStatus /rng_seeds get Last 1 add 0 /vp get add 
+      rngdict/MT19937 :: exch CreateRNG 
+      rdevdict/normal :: CreateRDV /normal Set
+
+      [E_from E_to] Range
+      { 
+	  << /V_m mean_potential sigma_potential normal Random mul add >> 
+	  SetStatus 
+      } forall
+
+      [I_from I_to] Range
+      { 
+	  << /V_m mean_potential sigma_potential normal Random mul add >> 
+	  SetStatus 
+      } forall
+  } if
+   
   /E_neurons E_from E_to cvgidcollection def % get memory efficient gid-collection
 
   /I_neurons I_from I_to cvgidcollection def % get memory efficient gid-collection

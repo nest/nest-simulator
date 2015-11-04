@@ -20,8 +20,6 @@
  *
  */
 
-
-#include "config.h"
 #include "numerics.h"
 
 
@@ -52,6 +50,11 @@
 #define M_PI_OK
 #endif
 
+#if defined( HAVE_STD_NAN )
+#include <cmath>
+#elif defined( HAVE_NAN )
+#include <math.h>
+#endif
 
 //
 //   e
@@ -78,6 +81,13 @@ const double numerics::pi = 3.14159265358979323846264338328;
 
 #endif
 
+#if defined( HAVE_STD_NAN )
+const double numerics::nan = std::nan( NULL );
+#elif defined( HAVE_NAN )
+const double numerics::nan = NAN;
+#else
+const double numerics::nan = 0.0 / 0.0;
+#endif
 
 // later also in namespace
 long

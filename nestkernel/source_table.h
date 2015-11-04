@@ -46,7 +46,7 @@ struct Source
 
 inline
 Source::Source()
-  : gid( invalid_index )
+  : gid( 0 )
   , processed( false )
 {
 }

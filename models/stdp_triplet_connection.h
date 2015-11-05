@@ -24,42 +24,51 @@
 #define STDP_TRIPLET_CONNECTION_H
 
 /* BeginDocumentation
-  Name: stdp_triplet_synapse - Synapse type for spike-timing dependent
+  Name: stdp_triplet_synapse - Synapse type with spike-timing dependent
   plasticity accounting for spike triplets as described in [1].
 
   Description:
-   stdp_triplet_synapse is a connector to create synapses with spike time
-   dependent plasticity accounting for spike triplets (as defined in [1]).
+    stdp_triplet_synapse is a connection with spike time dependent
+    plasticity accounting for spike triplet effects (as defined in [1]).
 
-   Here, a multiplicative weight dependence is added (in contrast to [1])
-   to depression resulting in a stable weight distribution.
+    Here, a multiplicative weight dependence is added (in contrast to [1])
+    to depression resulting in a stable weight distribution.
 
   STDP examples:
-   pair-based   Aplus_triplet_ = Aminus_triplet = 0.0
-   triplet      Aplus_triplet_ = Aminus_triplet = 1.0
+    pair-based   Aplus_triplet = Aminus_triplet = 0.0
+    triplet      Aplus_triplet = Aminus_triplet = 1.0
 
   Parameters:
-   tau_plus          double: time constant of STDP window, potentiation
-                     (tau_minus defined in post-synaptic neuron)
-   tau_x             double: time constant of triplet potentiation
-   tau_y             double: time constant of triplet depression
-   Aplus             double: weight of pair potentiation rule
-   Aminus            double: weight of pair depression rule
-   Aplus_triplet_    double: weight of triplet potentiation rule
-   Aminus_triplet    double: weight of triplet depression rule
-   Kplus             double: pre-synaptic variable (e.g. amount of glutamate bound...)
-   Kplus_triplet     double: triplet pre-synaptic variable (e.g. number of NMDA receptors...)
+    tau_plus           double: time constant of short presynaptic trace (tau_plus of [1])
+    tau_plus_triplet   double: time constant of long presynaptic trace (tau_x of [1])
+    Aplus              double: weight of pair potentiation rule (A_plus_2 of [1])
+    Aplus_triplet      double: weight of triplet potentiation rule (A_plus_3 of [1])
+    Aminus             double: weight of pair depression rule (A_minus_2 of [1])
+    Aminus_triplet     double: weight of triplet depression rule (A_minus_3 of [1])
+
+  States:
+    Kplus              double: pre-synaptic trace (r_1 of [1])
+    Kplus_triplet      double: triplet pre-synaptic trace (r_2 of [1])
 
   Transmits: SpikeEvent
 
   References:
-   [1] J.-P. Pfister & W. Gerstner (2006) Triplets of Spikes in a Model
-   of Spike Timing-Dependent Plasticity.  The Journal of Neuroscience
-   26(38):9673-9682; doi:10.1523/JNEUROSCI.1425-06.2006
+    [1] J.-P. Pfister & W. Gerstner (2006) Triplets of Spikes in a Model
+        of Spike Timing-Dependent Plasticity.  The Journal of Neuroscience
+        26(38):9673-9682; doi:10.1523/JNEUROSCI.1425-06.2006
+
+  Notes:
+    - Presynaptic traces r_1 and r_2 of [1] are stored in the connection as
+      Kplus and Kplus_triplet and decay with time-constants tau_plus and
+      tau_plus_triplet, respectively.
+    - Postsynaptic traces o_1 and o_2 of [1] are acquired from the post-synaptic
+      neuron states Kminus_ and triplet_Kminus_ which decay on time-constants
+      tau_minus and tau_minus_triplet, respectively. These two time-constants can
+      can be set as properties of the postsynaptic neuron.
 
   FirstVersion: Nov 2007
-  Author: Moritz Helias, Abigail Morrison, Eilif Muller, Alex Seeholzer, Teo Stocco
-  SeeAlso: synapsedict, stdp_synapse, tsodyks_synapse, static_synapse
+  Author: Moritz Helias, Abigail Morrison, Eilif Muller, Alexander Seeholzer, Teo Stocco
+  SeeAlso: synapsedict, stdp_synapse, static_synapse
 */
 
 #include <cmath>
@@ -232,7 +241,6 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
     // the post synaptic spike, implementing the t-epsilon in
     // Pfister et al, 2006
     double_t ky = start->triplet_Kminus_ - 1.0;
-
     ++start;
     if ( minus_dt == 0 )
     {
@@ -327,18 +335,18 @@ STDPTripletConnection< targetidentifierT >::set_status( const DictionaryDatum& d
   if ( not( tau_plus_triplet_ > tau_plus_ ) )
   {
     throw BadProperty(
-      "Potentiation time-constant for triplet (tau_plus_triplet) must be bigger than pair-based "
-      "one (tau_plus)." );
+      "Parameter tau_plus_triplet (time-constant of long trace) must be larger than tau_plus "
+      "(time-constant of short trace)." );
   }
 
   if ( not( Kplus_ >= 0 ) )
   {
-    throw BadProperty( "Variable Kplus must be positive." );
+    throw BadProperty( "State Kplus must be positive." );
   }
 
   if ( not( Kplus_triplet_ >= 0 ) )
   {
-    throw BadProperty( "Variable Kplus_triplet must be positive." );
+    throw BadProperty( "State Kplus_triplet must be positive." );
   }
 }
 

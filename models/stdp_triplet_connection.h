@@ -68,7 +68,7 @@
 
   FirstVersion: Nov 2007
   Author: Moritz Helias, Abigail Morrison, Eilif Muller, Alexander Seeholzer, Teo Stocco
-  SeeAlso: synapsedict, stdp_synapse, static_synapse
+  SeeAlso: stdp_triplet_synapse_hpc, synapsedict, stdp_synapse, static_synapse
 */
 
 #include <cmath>

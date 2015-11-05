@@ -31,9 +31,6 @@
     stdp_triplet_synapse is a connection with spike time dependent
     plasticity accounting for spike triplet effects (as defined in [1]).
 
-    Here, a multiplicative weight dependence is added (in contrast to [1])
-    to depression resulting in a stable weight distribution.
-
   STDP examples:
     pair-based   Aplus_triplet = Aminus_triplet = 0.0
     triplet      Aplus_triplet = Aminus_triplet = 1.0
@@ -65,6 +62,9 @@
       neuron states Kminus_ and triplet_Kminus_ which decay on time-constants
       tau_minus and tau_minus_triplet, respectively. These two time-constants can
       can be set as properties of the postsynaptic neuron.
+    - This version implements the 'all-to-all' spike interaction of [1]. The 'nearest-spike'
+      interaction of [1] can currently not be implemented without changing the postsynaptic
+      archiving-node (clip the traces to a maximum of 1).
 
   FirstVersion: Nov 2007
   Author: Moritz Helias, Abigail Morrison, Eilif Muller, Alexander Seeholzer, Teo Stocco

@@ -41,7 +41,9 @@
 
 /nvp 1 def % total number of virtual processes
 /scale 0.2 def %  scaling factor of the network size, total network size = scale*11250 neurons
-/Tsim 1000. def % total simulation time in ms
+/simtime 1000. def % total simulation time in ms
+/presimtime 100. ms def % simulation time until reaching equilibrium
+/dt         0.1 ms def % simulation step
 /record_spikes true def % switch to record spikes of excitatory neurons to file
 /path_name (.) def % path where all files will have to be written
 /log_file (log) def % naming scheme for the log files
@@ -51,13 +53,7 @@
 /brunel_params
 <<
 
-  /virtual_processes nvp      % number of virtual processes to use
-  /simtime Tsim ms        % simulated time
-  /presimtime 100. ms     % simulation time until reaching equilibrium
-  /dt         0.1 ms        % simulation step
 
-  /scale scale def
-  
   /NE 9000 scale mul round cvi   % number of excitatory neurons
   /NI 2250 scale mul round cvi   % number of inhibitory neurons
 
@@ -125,7 +121,7 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
   % set global kernel parameters
   0
   <<
-     /total_num_virtual_procs virtual_processes
+     /total_num_virtual_procs nvp
      /resolution  dt
      /overwrite_files true
   >> SetStatus

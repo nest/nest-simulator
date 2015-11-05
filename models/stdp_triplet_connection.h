@@ -182,7 +182,7 @@ public:
 
 private:
   inline double_t
-    facilitate_( double_t w, double_t kplus, double_t ky )
+  facilitate_( double_t w, double_t kplus, double_t ky )
   {
     return w + kplus * ( Aplus_ + Aplus_triplet_ * ky );
   }

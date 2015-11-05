@@ -181,7 +181,7 @@ public:
   }
 
 private:
-  inline double_t // TBD
+  inline double_t
     facilitate_( double_t w, double_t kplus, double_t ky )
   {
     return w + kplus * ( Aplus_ + Aplus_triplet_ * ky );
@@ -192,7 +192,7 @@ private:
   {
     double new_w = w - kminus * ( Aminus_ + Aminus_triplet_ * Kplus_triplet_ );
     return new_w > 0.0 ? new_w : 0.0;
-  } // TBD max weight
+  }
 
   // data members of each connection
   double_t weight_;
@@ -314,7 +314,7 @@ STDPTripletConnection< targetidentifierT >::get_status( DictionaryDatum& d ) con
   def< double_t >( d, "Aminus_triplet", Aminus_triplet_ );
   def< double_t >( d, "Kplus", Kplus_ );
   def< double_t >( d, "Kplus_triplet", Kplus_triplet_ );
-} // TBD names
+}
 
 template < typename targetidentifierT >
 void

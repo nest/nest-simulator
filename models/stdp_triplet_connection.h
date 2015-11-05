@@ -24,20 +24,20 @@
 #define STDP_TRIPLET_CONNECTION_H
 
 /* BeginDocumentation
-  Name: stdp_triplet_synapse - Synapse type for spike-timing dependent 
+  Name: stdp_triplet_synapse - Synapse type for spike-timing dependent
   plasticity accounting for spike triplets as described in [1].
 
   Description:
-   stdp_triplet_synapse is a connector to create synapses with spike time 
-   dependent plasticity accounting for spike triplets (as defined in [1]). 
-   
-   Here, a multiplicative weight dependence is added (in contrast to [1]) 
+   stdp_triplet_synapse is a connector to create synapses with spike time
+   dependent plasticity accounting for spike triplets (as defined in [1]).
+
+   Here, a multiplicative weight dependence is added (in contrast to [1])
    to depression resulting in a stable weight distribution.
-  
+
   STDP examples:
    pair-based   Aplus_triplet_ = Aminus_triplet = 0.0
    triplet      Aplus_triplet_ = Aminus_triplet = 1.0
- 
+
   Parameters:
    tau_plus          double: time constant of STDP window, potentiation
                      (tau_minus defined in post-synaptic neuron)
@@ -53,8 +53,8 @@
   Transmits: SpikeEvent
 
   References:
-   [1] J.-P. Pfister & W. Gerstner (2006) Triplets of Spikes in a Model 
-   of Spike Timing-Dependent Plasticity.  The Journal of Neuroscience 
+   [1] J.-P. Pfister & W. Gerstner (2006) Triplets of Spikes in a Model
+   of Spike Timing-Dependent Plasticity.  The Journal of Neuroscience
    26(38):9673-9682; doi:10.1523/JNEUROSCI.1425-06.2006
 
   FirstVersion: Nov 2007
@@ -67,12 +67,12 @@
 
 namespace nest
 {
-// connections are templates of target identifier type 
+// connections are templates of target identifier type
 // (used for pointer / target index addressing)
 // derived from generic connection template
 template < typename targetidentifierT >
 class STDPTripletConnection : public Connection< targetidentifierT >
-{ 
+{
 
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
@@ -88,16 +88,18 @@ public:
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPTripletConnection(const STDPTripletConnection &);
+  STDPTripletConnection( const STDPTripletConnection& );
 
   /**
    * Default Destructor.
    */
-  ~STDPTripletConnection() {}
+  ~STDPTripletConnection()
+  {
+  }
 
-  // Explicitly declare all methods inherited from the dependent base 
-  // ConnectionBase. This avoids explicit name prefixes in all places 
-  // these functions are used. Since ConnectionBase depends on the template 
+  // Explicitly declare all methods inherited from the dependent base
+  // ConnectionBase. This avoids explicit name prefixes in all places
+  // these functions are used. Since ConnectionBase depends on the template
   // parameter, they are not automatically found in the base class.
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
@@ -134,7 +136,7 @@ public:
       return invalid_port_;
     }
   };
-  
+
   /*
    * This function calls check_connection on the sender and checks if the receiver
    * accepts the event type and receptor type requested by the sender.
@@ -167,11 +169,11 @@ public:
   set_weight( double_t w )
   {
     weight_ = w;
-  } 
+  }
 
- private:
+private:
   inline double_t // TBD
-  facilitate_( double_t w, double_t kplus, double_t ky )
+    facilitate_( double_t w, double_t kplus, double_t ky )
   {
     return w + kplus * ( Aplus_ + Aplus_triplet_ * ky );
   }
@@ -193,7 +195,7 @@ public:
   double_t Aminus_triplet_;
   double_t Kplus_;
   double_t Kplus_triplet_;
-  };
+};
 
 /**
  * Send an event to the receiver of this connection.
@@ -213,35 +215,35 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
   double_t t_spike = e.get_stamp().get_ms();
   double_t dendritic_delay = get_delay();
   Node* target = get_target( t );
-	
+
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
-  std::deque<histentry>::iterator start;
-  std::deque<histentry>::iterator finish;    
+  std::deque< histentry >::iterator start;
+  std::deque< histentry >::iterator finish;
   target->get_history( t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
-	
+
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
-  while (start != finish)
+  while ( start != finish )
   {
     // post-synaptic spike is delayed by dendritic_delay so that
     // it is effectively late by that much at the synapse.
-    double_t minus_dt = t_lastspike - (start->t_ + dendritic_delay);
-	  
+    double_t minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
+
     // subtract 1.0 yields the triplet_Kminus value just prior to
-    // the post synaptic spike, implementing the t-epsilon in 
+    // the post synaptic spike, implementing the t-epsilon in
     // Pfister et al, 2006
     double_t ky = start->triplet_Kminus_ - 1.0;
-	  
+
     ++start;
-	if ( minus_dt == 0 )
-	{
+    if ( minus_dt == 0 )
+    {
       continue;
-	}
-	  
+    }
+
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ), ky );
   }
 
   // depression due to new pre-synaptic spike
-  Kplus_triplet_ *= std::exp( ( t_lastspike - t_spike ) / tau_plus_triplet_);
+  Kplus_triplet_ *= std::exp( ( t_lastspike - t_spike ) / tau_plus_triplet_ );
 
   // dendritic delay means we must look back in time by that amount
   // for determining the K value, because the K value must propagate
@@ -250,7 +252,7 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
 
   Kplus_triplet_ += 1.0;
   Kplus_ = Kplus_ * std::exp( ( t_lastspike - t_spike ) / tau_plus_ ) + 1.0;
-	
+
   e.set_receiver( *target );
   e.set_weight( weight_ );
   e.set_delay( get_delay_steps() );
@@ -277,14 +279,14 @@ STDPTripletConnection< targetidentifierT >::STDPTripletConnection()
 template < typename targetidentifierT >
 STDPTripletConnection< targetidentifierT >::STDPTripletConnection(
   const STDPTripletConnection< targetidentifierT >& rhs )
-  : ConnectionBase(rhs)
+  : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , tau_plus_( rhs.tau_plus_ )
-  , tau_plus_triplet_( rhs.tau_plus_triplet_)
+  , tau_plus_triplet_( rhs.tau_plus_triplet_ )
   , Aplus_( rhs.Aplus_ )
   , Aminus_( rhs.Aminus_ )
   , Aplus_triplet_( rhs.Aplus_triplet_ )
-  , Aminus_triplet_( rhs.Aminus_triplet_)
+  , Aminus_triplet_( rhs.Aminus_triplet_ )
   , Kplus_( rhs.Kplus_ )
   , Kplus_triplet_( rhs.Kplus_triplet_ )
 {
@@ -297,39 +299,45 @@ STDPTripletConnection< targetidentifierT >::get_status( DictionaryDatum& d ) con
   ConnectionBase::get_status( d );
   def< double_t >( d, names::weight, weight_ );
   def< double_t >( d, "tau_plus", tau_plus_ );
-  def< double_t >( d, "tau_plus_triplet", tau_plus_triplet_);
+  def< double_t >( d, "tau_plus_triplet", tau_plus_triplet_ );
   def< double_t >( d, "Aplus", Aplus_ );
   def< double_t >( d, "Aminus", Aminus_ );
   def< double_t >( d, "Aplus_triplet", Aplus_triplet_ );
   def< double_t >( d, "Aminus_triplet", Aminus_triplet_ );
   def< double_t >( d, "Kplus", Kplus_ );
-  def<double_t>( d, "Kplus_triplet", Kplus_triplet_ );
+  def< double_t >( d, "Kplus_triplet", Kplus_triplet_ );
 } // TBD names
 
 template < typename targetidentifierT >
 void
-STDPTripletConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+STDPTripletConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double_t >( d, names::weight, weight_ );
   updateValue< double_t >( d, "tau_plus", tau_plus_ );
-  updateValue< double_t >( d, "tau_plus_triplet", tau_plus_triplet_);
+  updateValue< double_t >( d, "tau_plus_triplet", tau_plus_triplet_ );
   updateValue< double_t >( d, "Aplus", Aplus_ );
   updateValue< double_t >( d, "Aminus", Aminus_ );
   updateValue< double_t >( d, "Aplus_triplet", Aplus_triplet_ );
   updateValue< double_t >( d, "Aminus_triplet", Aminus_triplet_ );
   updateValue< double_t >( d, "Kplus", Kplus_ );
-  updateValue<double_t>( d, "Kplus_triplet", Kplus_triplet_ );
-	
-  if ( ! ( tau_plus_triplet_ > tau_plus_ ) ) {
-    throw BadProperty( "Potentiation time-constant for triplet (tau_plus_triplet) must be bigger than pair-based one (tau_plus)." );
-  }
-	
-  if ( ! ( Kplus_ >= 0 ) ) {
-	throw BadProperty( "Variable Kplus must be positive." );
+  updateValue< double_t >( d, "Kplus_triplet", Kplus_triplet_ );
+
+  if ( not( tau_plus_triplet_ > tau_plus_ ) )
+  {
+    throw BadProperty(
+      "Potentiation time-constant for triplet (tau_plus_triplet) must be bigger than pair-based "
+      "one (tau_plus)." );
   }
 
-  if ( ! ( Kplus_triplet_ >= 0 ) ) {
+  if ( not( Kplus_ >= 0 ) )
+  {
+    throw BadProperty( "Variable Kplus must be positive." );
+  }
+
+  if ( not( Kplus_triplet_ >= 0 ) )
+  {
     throw BadProperty( "Variable Kplus_triplet must be positive." );
   }
 }

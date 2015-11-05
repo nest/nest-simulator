@@ -363,7 +363,7 @@ ModelsModule::init( SLIInterpreter* )
   */
   register_connection_model< STDPTripletConnection< TargetIdentifierPtrRport > >(
     net_, "stdp_triplet_synapse" );
-  register_connection_model< STDPTripletConnection< TargetIdentifierIndex > >( 
+  register_connection_model< STDPTripletConnection< TargetIdentifierIndex > >(
     net_, "stdp_triplet_synapse_hpc" );
 
 

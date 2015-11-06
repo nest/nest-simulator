@@ -50,6 +50,30 @@
 
 % -------------------------------------------------------------------------------------
 
+%%% DEFINE FUNCTION TO CONVERT SYNAPSE WEIGHT FROM mV to pA %%%%%%%%%%
+
+/ConvertSynapseWeight
+{
+  /tauMem Set
+  /tauSyn Set
+  /CMem Set
+  % This function is specific to the used neuron model
+  % Leaky integrate-and-fire neuron with alpha-shaped
+  % postsynaptic currents
+  (
+  a = tauMem / tauSyn;
+  b = 1.0 / tauSyn - 1.0 / tauMem;
+  % time of maximum
+  t_max = 1.0/b * (-LambertWm1(-exp(-1.0/a)/a)-1.0/a);
+  % maximum of PSP for current of unit amplitude
+  exp(1.0)/(tauSyn*CMem*b) * ((exp(-t_max/tauMem) - exp(-t_max/tauSyn)) / b - t_max*exp(-t_max/tauSyn))
+  ) ExecMath
+  1 exch div
+}
+def
+
+% -------------------------------------------------------------------------------------
+
 /brunel_params
 <<
 
@@ -81,9 +105,9 @@
 
   /delay  1.5 ms         % synaptic delay, all connections [ms] 
 
-   % synaptic strengths
-  /JE 325.78288268410768 0.14 mul pA    %peak of EPSC
-
+   % synaptic weight
+  /JE 0.14 mV %peak of EPSP
+  
   /sigma_w 3.47 pA      %standard dev. of E->E synapses [pA]
   /g  -5.0 	
     
@@ -175,7 +199,12 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
   (Creating excitatory stimulus generator.) message
 
   model_params using
-  /nu_thresh V_th CE tau_m C_m div mul JE mul 1.0 exp mul tau_syn mul div def
+   
+  % Convert synapse weight from mV to pA
+  C_m tau_syn tau_m ConvertSynapseWeight /conversion_factor Set
+  /JE_pA conversion_factor JE mul def
+  
+  /nu_thresh V_th CE tau_m C_m div mul JE_pA mul 1.0 exp mul tau_syn mul div def
   /nu_ext nu_thresh eta mul def
   endusing
     
@@ -218,10 +247,10 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
   % our excitatory and inhibitory connections
   /static_synapse_hpc << /delay delay >> SetDefaults
   /static_synapse_hpc /syn_std  CopyModel
-  /static_synapse_hpc /syn_ex << /weight JE >> CopyModel
-  /static_synapse_hpc /syn_in << /weight JE g mul >> CopyModel
+  /static_synapse_hpc /syn_ex << /weight JE_pA >> CopyModel
+  /static_synapse_hpc /syn_in << /weight JE_pA g mul >> CopyModel
       	
-  stdp_params /weight JE put	
+  stdp_params /weight JE_pA put	
   /stdp_pl_synapse_hom_hpc stdp_params SetDefaults
 
   

@@ -72,6 +72,27 @@
 }
 def
 
+%%% Rise time of synaptic currents
+
+% The synaptic rise time is chosen such that the rise time of the
+% evoked post-synaptic potential is 1.700759 ms.
+% For alpha-shaped postynaptic currents, the rise time of the post-synaptic
+% potential follows from the synaptic rise time as
+
+/PSP_rise_time
+{
+  /taumem set
+  /tausyn set
+  
+  (
+  a = taumem / tausyn;
+  b = 1.0 / tausyn - 1.0 / taumem;
+  ) execmath
+  
+} def
+
+% Inverting this equation leads to tau_syn = 0.32582722403722841 ms, as specified in model_params below.
+
 % -------------------------------------------------------------------------------------
 
 /brunel_params

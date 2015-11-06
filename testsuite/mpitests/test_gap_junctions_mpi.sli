@@ -41,7 +41,7 @@ is_threaded not
 statusdict/have_gsl :: not
 or 
 { 
-  exit_test_gracefully 
+  statusdict/exitcodes/success :: quit_i
 } 
 if
 

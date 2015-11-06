@@ -50,7 +50,7 @@
 
 % -------------------------------------------------------------------------------------
 
-%%% DEFINE FUNCTION TO CONVERT SYNAPSE WEIGHT FROM mV to pA %%%%%%%%%%
+%%% Define function to convert synapse weight from  mV to pA %%%%%%%%%%
 
 /ConvertSynapseWeight
 {
@@ -86,7 +86,7 @@ def
 
   /model_params
    <<
-   % Set variables for iaf_psc_exp
+   % Set variables for iaf_neuron
     /E_L     0.0  mV  % Resting membrane potential [mV]
     /C_m   250.0  pF  % Capacity of the membrane [pF]
     /tau_m  10.0  ms  % Membrane time constant [ms]

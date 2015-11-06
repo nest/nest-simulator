@@ -34,12 +34,16 @@
     SeeAlso: testsuite::test_hh_psc_alpha_gap, hh_psc_alpha_gap, gap_junction
   */
 
-% The following test needs the model hh_psc_alpha_gap, so
-% this test should only run if we have GSL
-statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if  
-  
 (unittest) run
 /unittest using
+
+% The following test needs the model hh_psc_alpha_gap, so
+% this test should only run if we have GSL
+statusdict/have_gsl :: not
+{
+  exit_test_gracefully
+}
+if
 
 M_ERROR setverbosity
 

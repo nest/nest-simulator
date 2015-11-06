@@ -35,18 +35,18 @@
     SeeAlso: testsuite::test_gap_junction, hh_psc_alpha_gap, gap_junction
 */
 
+(unittest) run
+/unittest using
+
 % The following test needs the model hh_psc_alpha_gap, so
 % this test should only run if we have GSL
 is_threaded not 
 statusdict/have_gsl :: not
 or 
 { 
-  statusdict/exitcodes/success :: quit_i
+  exit_test_gracefully
 } 
 if
-
-(unittest) run
-/unittest using
 
 /total_vps 4 def
 

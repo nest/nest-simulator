@@ -93,7 +93,7 @@ public:
   ClippedRedrawContinuousRandomDev( RngPtr );
   ClippedRedrawContinuousRandomDev(); // threaded
 
-#if not defined( HAVE_XLC_ICE_ON_USING )
+#if not defined( HAVE_XLC_ICE_ON_USING ) and not defined( IS_K )
   using RandomDev::operator();
 #endif
 
@@ -200,7 +200,7 @@ public:
 // to ensure that they forward to the clipped generator.
 // Null-pointer checking is done in the underlying generator.
 
-#if not defined( HAVE_XLC_ICE_ON_USING )
+#if not defined( HAVE_XLC_ICE_ON_USING ) and not defined( IS_K )
   using RandomDev::operator();
   using RandomDev::ldev;
 #endif
@@ -333,7 +333,7 @@ public:
   ClippedToBoundaryContinuousRandomDev( RngPtr );
   ClippedToBoundaryContinuousRandomDev(); // threaded
 
-#if not defined( HAVE_XLC_ICE_ON_USING )
+#if not defined( HAVE_XLC_ICE_ON_USING ) and not defined( IS_K )
   using RandomDev::operator();
 #endif
 
@@ -442,7 +442,7 @@ public:
 // to ensure that they forward to the clipped generator.
 // Null-pointer checking is done in the underlying generator.
 
-#if not defined( HAVE_XLC_ICE_ON_USING )
+#if not defined( HAVE_XLC_ICE_ON_USING ) and not defined( IS_K )
   using RandomDev::operator();
   using RandomDev::ldev;
 #endif

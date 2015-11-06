@@ -33,6 +33,7 @@
 #include "nest_timeconverter.h"
 #include "arraydatum.h"
 #include "sparsetable.h"
+#include "numerics.h"
 #include "../models/volume_transmitter.h"
 #include <cmath>
 
@@ -139,16 +140,16 @@ public:
     index s_gid,
     thread tid,
     index syn,
-    double_t d = NAN,
-    double_t w = NAN );
+    double_t d = numerics::nan,
+    double_t w = numerics::nan );
   void connect( Node& s,
     Node& r,
     index s_gid,
     thread tid,
     index syn,
     DictionaryDatum& p,
-    double_t d = NAN,
-    double_t w = NAN );
+    double_t d = numerics::nan,
+    double_t w = numerics::nan );
 
 
   /**

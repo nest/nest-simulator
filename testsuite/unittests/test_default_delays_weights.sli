@@ -1,0 +1,103 @@
+/*
+ *  test_default_delays_weights.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+  Name: testsuite::test_default_delays_weights - test default delay and weight handling
+
+  Synopsis: (test_default_delays_weights) run
+
+  Description: Test that correct delays and weights are set if synaptic defaults
+  are given or overridden. This in particular also tests that NaN-detection works
+  on an architecture (see Github #127).
+
+  FirstVersion: October 2015
+  Author: Ippen, Plesser, Hahne
+ */
+
+(unittest) run
+/unittest using
+
+% This tests individual setting of weight and delay on synapses.
+% 
+% Four connections will be created:
+% * 1 -> 5  : use default delay and default weight
+% * 2 -> 5  : use default weight; set delay
+% * 3 -> 5  : use default delay; set weight
+% * 4 -> 5  : set delay and set weight
+% 
+% Afterwards the settings will be checked. Sample output:
+%    $ nest connection_test.sli
+%    NEST v2.8.0-git (C) 2004 The NEST Initiative
+%    default weight and delay connection:
+%      default weight = 2.3 synapse weight = 2.3 : equal ? true
+%      default delay  = 1.5 synapse delay  = 1.5 : equal ? true
+%    default weight; delay = 15.5ms connection:
+%      default weight = 2.3  synapse weight = 2.3  : equal ? true
+%      expected delay = 15.5 synapse delay  = 15.5 : equal ? true
+%    default delay ; weight = 23.4 connection:
+%      default weight = 23.4 synapse weight = 23.4 : equal ? true
+%      default delay  = 1.5  synapse delay  = 1.5  : equal ? true
+%    delay = 15.5 ms ; weight = 23.4 connection:
+%      default weight = 23.4 synapse weight = 23.4 : equal ? true
+%      expected delay = 15.5 synapse delay  = 15.5 : equal ? true
+% 
+% When 8 true's appear at the end, everything is set correctly.
+
+ResetKernel
+
+/static_synapse << /delay 1.5 /weight 2.3 >> SetDefaults
+/static_synapse GetDefaults /defaults Set
+
+/d 15.5 def
+/w 23.4 def
+
+/iaf_neuron 5 Create ;
+
+% default weight and delay
+[1] cvgidcollection [5] cvgidcollection /one_to_one << /model /static_synapse >> Connect
+
+% default weight; delay = 15ms
+[2] cvgidcollection [5] cvgidcollection /one_to_one << /model /static_synapse /delay d >> Connect
+
+% default delay; weight = 23
+[3] cvgidcollection [5] cvgidcollection /one_to_one << /model /static_synapse /weight w >> Connect
+
+% delay = 15ms ; weight = 23
+[4] cvgidcollection [5] cvgidcollection /one_to_one << /model /static_synapse /delay d /weight w >> Connect
+
+<< /source [1] >> GetConnections GetSynapseStatus 0 get /syn Set
+{ defaults /weight get syn /weight get eq } assert_or_die
+{ defaults /delay get syn /delay get eq } assert_or_die
+
+<< /source [2] >> GetConnections GetSynapseStatus 0 get /syn Set
+{ defaults /weight get syn /weight get eq } assert_or_die
+{ d syn /delay get eq } assert_or_die
+
+<< /source [3] >> GetConnections GetSynapseStatus 0 get /syn Set
+{ w syn /weight get eq } assert_or_die
+{ defaults /delay get syn /delay get eq } assert_or_die
+
+<< /source [4] >> GetConnections GetSynapseStatus 0 get /syn Set
+{ w syn /weight get eq } assert_or_die
+{ d syn /delay get eq } assert_or_die
+
+endusing

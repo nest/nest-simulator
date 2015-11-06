@@ -108,6 +108,7 @@
 #include "cont_delay_connection.h"
 #include "cont_delay_connection_impl.h"
 #include "tsodyks_connection.h"
+#include "tsodyks_connection_hom.h"
 #include "tsodyks2_connection.h"
 #include "quantal_stp_connection.h"
 #include "quantal_stp_connection_impl.h"
@@ -399,6 +400,16 @@ ModelsModule::init( SLIInterpreter* )
     net_, "tsodyks_synapse" );
   register_connection_model< TsodyksConnection< TargetIdentifierIndex > >(
     net_, "tsodyks_synapse_hpc" );
+
+
+  /* BeginDocumentation
+     Name: tsodyks_synapse_hom_hpc - Variant of tsodyks_synapse_hom with low memory consumption.
+     SeeAlso: synapsedict, tsodyks_synapse_hom, static_synapse_hpc
+  */
+  register_connection_model< TsodyksConnectionHom< TargetIdentifierPtrRport > >(
+    net_, "tsodyks_synapse_hom" );
+  register_connection_model< TsodyksConnectionHom< TargetIdentifierIndex > >(
+    net_, "tsodyks_synapse_hom_hpc" );
 
 
   /* BeginDocumentation

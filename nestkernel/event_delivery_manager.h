@@ -26,6 +26,7 @@
 // C++ includes:
 #include <cassert>
 #include <vector>
+#include <limits>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
@@ -42,7 +43,12 @@
 
 namespace nest
 {
+  struct TargetData;
+  
 typedef Communicator::OffGridSpike OffGridSpike;
+const index target_data_empty_marker = std::numeric_limits< index >::max();
+const index target_data_completed_marker = std::numeric_limits< index >::max() - 1;
+const size_t mpi_buffer_size_target_data = 30000;
 
 class EventDeliveryManager : public ManagerInterface
 {
@@ -194,6 +200,8 @@ public:
    */
   void gather_events();
 
+  void gather_target_data();
+
   /**
    * Update table of fixed modulos, including slice-based.
    */
@@ -215,6 +223,13 @@ private:
    */
   void collocate_buffers_();
 
+  void collocate_target_data_buffers_( const thread tid, std::vector< TargetData >& send_buffer );
+
+  void distribute_target_data_buffers_( const thread tid, const std::vector< TargetData >& recv_buffer );
+
+  bool check_target_data_completed_( const std::vector< TargetData >& buffer, const index marker );
+
+  void prepare_target_data_buffers_( const bool me_completed, std::vector< TargetData >& send_buffer );
 
 private:
   bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid
@@ -298,6 +313,9 @@ private:
    * steps during communication.
    */
   const uint_t comm_marker_;
+
+  std::vector< TargetData > send_buffer_target_data_;
+  std::vector< TargetData > recv_buffer_target_data_;
 };
 
 

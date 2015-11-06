@@ -34,6 +34,8 @@
 namespace nest
 {
 
+struct TargetData;
+
 struct Source
 {
   // TODO@5g: use nest_types: index
@@ -63,7 +65,15 @@ class SourceTable
 private:
   std::vector< std::vector< std::vector< Source > >* > sources_;
   std::vector< std::map< synindex, synindex >* > synapse_ids_;
-  
+  std::vector< bool > is_cleared_;
+  std::vector< unsigned int > current_tid_;
+  std::vector< unsigned int > current_syn_id_;
+  std::vector< unsigned int > current_lcid_;
+  std::vector< unsigned int > save_tid_;
+  std::vector< unsigned int > save_syn_id_;
+  std::vector< unsigned int > save_lcid_;
+  std::vector< bool > saved_entry_point_;
+
 public:
   SourceTable();
   ~SourceTable();
@@ -71,9 +81,13 @@ public:
   void finalize();
   // void reserve( thread, synindex, index );
   void add_source( thread, synindex, index );
-  index get_next_source( thread );
-  void reject_last_source( thread );
   void clear( thread );
+  bool is_cleared() const;
+  void get_next_target_data( const thread tid, TargetData& next_target_data );
+  void reject_last_target_data( const thread tid );
+  void save_entry_point( const thread tid );
+  void restore_entry_point( const thread tid );
+  void reset_entry_point( const thread tid );
 };
 
 inline
@@ -101,6 +115,7 @@ void
 nest::SourceTable::clear( thread tid )
 {
   sources_[ tid ]->clear();
+  is_cleared_[ tid ] = true;
 }
 
 } // namespace nest

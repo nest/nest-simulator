@@ -20,7 +20,9 @@
  *
  */
 
+// Includes from nestkernel:
 #include "source_table.h"
+#include "target_table.h"
 #include "kernel_manager.h"
 
 nest::SourceTable::SourceTable()
@@ -37,11 +39,22 @@ nest::SourceTable::initialize()
   thread num_threads = kernel().vp_manager.get_num_threads();
   synapse_ids_.resize( num_threads );
   sources_.resize( num_threads );
+  is_cleared_.resize( num_threads );
+  saved_entry_point_.resize( num_threads );
+  current_tid_.resize( num_threads );
+  current_syn_id_.resize( num_threads );
+  current_lcid_.resize( num_threads );
+  save_tid_.resize( num_threads );
+  save_syn_id_.resize( num_threads );
+  save_lcid_.resize( num_threads );
+
   for( thread tid = 0; tid < num_threads; ++tid)
   {
     synapse_ids_[ tid ] = new std::map< synindex, synindex >();
     sources_[ tid ] = new std::vector< std::vector< Source > >(
       0, std::vector< Source >( 0, Source() ) );
+    is_cleared_[ tid ] = false;
+    saved_entry_point_[ tid ] = false;
   }
 }
 
@@ -73,12 +86,98 @@ nest::SourceTable::finalize()
 //   (*sources_[ tid ])[ syn_index ].reserve( prev_n_sources + n_sources );
 // }
 
-nest::index
-nest::SourceTable::get_next_source( thread tid )
+bool
+nest::SourceTable::is_cleared() const
 {
+  bool all_cleared = true;
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    all_cleared &= is_cleared_[ tid ];
+  }
+  return all_cleared;
 }
 
 void
-nest::SourceTable::reject_last_source( thread tid )
+nest::SourceTable::get_next_target_data( const thread tid, TargetData& next_target_data )
 {
+  while ( true )
+  {
+    if ( current_tid_[ tid ] == sources_.size() )
+    {
+      next_target_data.gid = invalid_index;
+      return;
+    }
+    else
+    {
+      if ( current_syn_id_[ tid ] == sources_[ current_tid_[ tid ] ]->size() )
+      {
+        current_syn_id_[ tid ] = 0;
+        ++current_tid_[ tid ];
+        continue;
+      }
+      else
+      {
+        if ( current_lcid_[ tid ] == (*sources_[ current_tid_[ tid ] ])[ current_syn_id_[ tid ] ].size() )
+        {
+          current_lcid_[ tid ] = 0;
+          ++current_syn_id_[ tid ];
+          continue;
+        }
+        else
+        {
+          Source* current_source = &( *sources_[ current_tid_[ tid ] ] )[ current_syn_id_[ tid ] ][ current_lcid_[ tid ] ];
+          if ( current_source->processed )
+          {
+            ++current_lcid_[ tid ];
+            continue;
+          }
+          next_target_data.gid = current_source->gid;
+          current_source->processed = true;
+          next_target_data.target.tid = current_tid_[ tid ];
+          next_target_data.target.rank = kernel().mpi_manager.get_rank();
+          next_target_data.target.processed = false;
+          next_target_data.target.syn_index = current_syn_id_[ tid ];
+          next_target_data.target.lcid = current_lcid_[ tid ];
+          ++current_lcid_[ tid ];
+          return;
+        }
+      }
+    }
+  }
+}
+
+void
+nest::SourceTable::reject_last_target_data( const thread tid )
+{
+  --current_lcid_[ tid ];
+  ( *sources_[ current_tid_[ tid ] ] )[ current_syn_id_[ tid ] ][ current_lcid_[ tid ]  ].processed = false;
+}
+
+void
+nest::SourceTable::save_entry_point( const thread tid )
+{
+  if ( not saved_entry_point_[ tid ] )
+  {
+    save_tid_[ tid ] = current_tid_[ tid ];
+    save_syn_id_[ tid ] = current_syn_id_[ tid ];
+    save_lcid_[ tid ] = current_lcid_[ tid ];
+    saved_entry_point_[ tid ] = true;
+  }
+}
+
+void
+nest::SourceTable::restore_entry_point( const thread tid )
+{
+  current_tid_[ tid ] = save_tid_[ tid ];
+  current_syn_id_[ tid ] = save_syn_id_[ tid ];
+  current_lcid_[ tid ] = save_lcid_[ tid ];
+  saved_entry_point_[ tid ] = false;
+}
+
+void
+nest::SourceTable::reset_entry_point( const thread tid )
+{
+  save_tid_[ tid ] = 0;
+  save_syn_id_[ tid ] = 0;
+  save_lcid_[ tid ] = 0;
 }

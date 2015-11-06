@@ -22,6 +22,9 @@
 
 #include "target_table.h"
 
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
 nest::TargetTable::TargetTable()
 {
 }
@@ -51,6 +54,12 @@ nest::TargetTable::finalize()
     delete *it;
   }
   targets_.clear();
+}
+
+void
+nest::TargetTable::prepare( thread tid )
+{
+  targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes() );
 }
 
 // TODO@5g: benchmark with and without reserving memory for synapses

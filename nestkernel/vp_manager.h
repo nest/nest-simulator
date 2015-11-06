@@ -76,6 +76,16 @@ public:
   index get_num_threads() const;
 
   /**
+   * Returns true if the given global node exists on this thread.
+   */
+  bool is_thread_local( index gid ) const;
+
+  /**
+   * Returns in thread local index of a given global node.
+   */
+  index gid_to_lid( index gid ) const;
+
+  /**
    * Return a thread number for a given global node id.
    * Each node has a default thread on which it will run.
    * The thread is defined by the relation:
@@ -114,6 +124,15 @@ public:
    * Returns the number of virtual processes.
    */
   int get_num_virtual_processes() const;
+
+  /**
+   * Returns the number of processes that are taken care of by a single thread
+   * while processing MPI buffers in a multithreaded environment
+   */
+  unsigned int get_num_assigned_ranks_per_thread() const;
+
+  unsigned int get_start_rank_per_thread() const;
+  unsigned int get_end_rank_per_thread() const;
 
 private:
   const bool force_singlethreading_;

@@ -43,6 +43,8 @@
 #include "nest_names.h"
 #include "node.h"
 #include "subnet.h"
+#include "target_table.h"
+#include "target_table_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -87,6 +89,7 @@ nest::ConnectionBuilderManager::initialize()
     connections_5g_[ tid ] = new HetConnector();
   }
   source_table_.initialize();
+  target_table_.initialize();
 
   tVSConnector tmp( kernel().vp_manager.get_num_threads(), tSConnector() );
   connections_.swap( tmp );
@@ -121,6 +124,7 @@ void
 nest::ConnectionBuilderManager::finalize()
 {
   source_table_.finalize();
+  target_table_.finalize();
   delete_connections_5g_();
   delete_connections_();
 }
@@ -138,6 +142,48 @@ nest::DelayChecker&
 nest::ConnectionBuilderManager::get_delay_checker()
 {
   return delay_checkers_[ kernel().vp_manager.get_thread_id() ];
+}
+
+void
+nest::ConnectionBuilderManager::prepare_target_table( const thread tid )
+{
+  target_table_.prepare( tid );
+}
+
+void
+nest::ConnectionBuilderManager::get_next_target_data( const thread tid, TargetData& next_target_data )
+{
+  source_table_.get_next_target_data( tid, next_target_data );
+}
+
+void
+nest::ConnectionBuilderManager::reject_last_target_data( const thread tid )
+{
+  source_table_.reject_last_target_data( tid );
+}
+
+void
+nest::ConnectionBuilderManager::save_source_table_entry_point( const thread tid )
+{
+  source_table_.save_entry_point( tid );
+}
+
+void
+nest::ConnectionBuilderManager::reset_source_table_entry_point( const thread tid )
+{
+  source_table_.reset_entry_point( tid );
+}
+
+void
+nest::ConnectionBuilderManager::restore_source_table_entry_point( const thread tid )
+{
+  source_table_.restore_entry_point( tid );
+}
+
+void
+nest::ConnectionBuilderManager::add_target( const thread tid, const TargetData& target_data)
+{
+  target_table_.add_target( tid, target_data );
 }
 
 void

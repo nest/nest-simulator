@@ -466,12 +466,17 @@ NodeManager::init_state( index GID )
   n->init_state();
 }
 
+index
+NodeManager::get_max_num_local_nodes() const
+{
+  return ceil( float( size() ) / kernel().vp_manager.get_num_virtual_processes() );
+}
+
 bool
 NodeManager::is_local_node( Node* n ) const
 {
   return kernel().vp_manager.is_local_vp( n->get_vp() );
 }
-
 
 void
 NodeManager::go_to( index n )

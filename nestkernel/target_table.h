@@ -30,11 +30,11 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
-#include "kernel_manager.h"
 
 namespace nest
 {
 
+// TODO@5g: documentation
 struct Target
 {
   // TODO@5g: additional types in nest_types?
@@ -44,6 +44,7 @@ struct Target
   unsigned int syn_index : 6;  //!< index of synapse type
   unsigned int lcid : 25;          //! local index of connection to target
   Target();
+  Target( const Target& target );
   Target( thread tid, unsigned int rank, unsigned int syn_index, unsigned int lcid);
 };
 
@@ -58,12 +59,45 @@ Target::Target()
 }
 
 inline
+Target::Target( const Target& target )
+  : tid( target.tid )
+  , rank( target.rank )
+  , processed( false )
+  , syn_index( target.syn_index )
+  , lcid( target.lcid )
+{
+}
+
+inline
 Target::Target( thread tid, unsigned int rank, unsigned int syn_index, unsigned int lcid)
   : tid( tid )
   , rank( rank )
   , processed( false )
   , syn_index( syn_index )
   , lcid( lcid )
+{
+}
+
+// TODO@5g: documentation
+struct TargetData
+{
+  index gid;
+  Target target;
+  TargetData();
+  TargetData( index gid, Target& target);
+};
+
+inline
+TargetData::TargetData()
+  : gid( 0 )
+  , target( Target() )
+{
+}
+
+inline
+TargetData::TargetData( index gid, Target& target )
+  : gid( gid )
+  , target( target )
 {
 }
 
@@ -77,21 +111,13 @@ public:
   ~TargetTable();
   void initialize();
   void finalize();
+  void prepare( thread tid );
   // void reserve( thread, synindex, index );
-  void add_target( thread tid, index lid, unsigned int vp, synindex syn_index, unsigned int lcid );
+  void add_target( thread tid, const TargetData& target_data );
   index get_next_target( thread );
   void reject_last_target( thread );
   void clear( thread );
 };
-
-inline
-void
-nest::TargetTable::add_target( thread tid, index lid, unsigned int vp, synindex syn_index, unsigned int lcid)
-{
-  thread target_tid = vp % kernel().vp_manager.get_num_threads();
-  unsigned int target_rank = vp  /  kernel().vp_manager.get_num_threads();
-  (*targets_[tid])[lid].push_back( Target( target_tid, target_rank, syn_index, lcid ) );
-}
 
 } // namespace nest
 

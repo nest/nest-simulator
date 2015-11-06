@@ -24,6 +24,7 @@
 
 // C++ includes:
 #include <algorithm> // rotate
+#include <iostream>
 
 // Includes from libnestutil:
 #include "logging.h"
@@ -32,6 +33,7 @@
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "vp_manager_impl.h"
+#include "target_table.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -66,6 +68,8 @@ void
 EventDeliveryManager::initialize()
 {
   init_moduli();
+  send_buffer_target_data_.resize( mpi_buffer_size_target_data );
+  recv_buffer_target_data_.resize( mpi_buffer_size_target_data );
 }
 
 void
@@ -444,4 +448,148 @@ EventDeliveryManager::gather_events()
   else
     Communicator::communicate( local_grid_spikes_, global_grid_spikes_, displacements_ );
 }
+
+void
+EventDeliveryManager::gather_target_data()
+{
+  assert( not kernel().connection_builder_manager.is_source_table_cleared() );
+  bool me_completed = false;
+  bool others_completed = false;
+  unsigned int send_recv_count = sizeof( TargetData ) / sizeof( unsigned int ) *
+    ceil( send_buffer_target_data_.size() / kernel().mpi_manager.get_num_processes() );
+
+#pragma omp parallel
+  {
+    unsigned int comm_round = 0;
+    thread tid = kernel().vp_manager.get_thread_id();
+    kernel().connection_builder_manager.prepare_target_table( tid );
+    kernel().connection_builder_manager.reset_source_table_entry_point( tid );
+    while ( not others_completed || not me_completed )
+    {
+      kernel().connection_builder_manager.restore_source_table_entry_point( tid );
+      prepare_target_data_buffers_( me_completed, send_buffer_target_data_ );
+      
+#pragma omp barrier
+      collocate_target_data_buffers_( tid, send_buffer_target_data_ );
+#pragma omp barrier
+      me_completed = check_target_data_completed_( send_buffer_target_data_, target_data_empty_marker );
+      if ( me_completed )
+      {
+        prepare_target_data_buffers_( me_completed, send_buffer_target_data_ );
+      }
+      
+      kernel().connection_builder_manager.save_source_table_entry_point( tid );      
+#pragma omp single
+      {
+        unsigned int* send_buffer_int = reinterpret_cast< unsigned int* >( &send_buffer_target_data_[0] );
+        unsigned int* recv_buffer_int = reinterpret_cast< unsigned int* >( &recv_buffer_target_data_[0] );
+        Communicator::communicate_Alltoall( send_buffer_int, recv_buffer_int, send_recv_count );
+        
+      } // of omp single
+      
+      others_completed  = check_target_data_completed_( recv_buffer_target_data_,
+                                                        target_data_completed_marker );
+      distribute_target_data_buffers_( tid, recv_buffer_target_data_ );
+    }
+    ++comm_round;
+  } // of omp parallel
 }
+
+bool
+EventDeliveryManager::check_target_data_completed_( const std::vector< TargetData >& buffer,
+                                                    const index marker )
+{
+  for ( std::vector< TargetData >::const_iterator it = buffer.begin(); it != buffer.end(); ++it )
+  {
+    if ( it->gid != marker )
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
+void
+EventDeliveryManager::prepare_target_data_buffers_( const bool me_completed, std::vector< TargetData >& send_buffer )
+{
+  if ( not me_completed )
+  {
+#pragma omp for
+    for ( unsigned int i = 0; i < send_buffer.size(); ++i )
+    {
+      send_buffer[ i ].gid = target_data_empty_marker;
+    } // of omp for
+  }
+  else
+  {
+#pragma omp for
+    for ( unsigned int i = 0; i < send_buffer.size(); ++i )
+    {
+      send_buffer[ i ].gid = target_data_completed_marker;
+    } // of omp for
+  }
+}
+
+void
+EventDeliveryManager::collocate_target_data_buffers_( const thread tid, std::vector< TargetData >& send_buffer )
+{
+  unsigned int num_assigned_ranks_per_thread = kernel().vp_manager.get_num_assigned_ranks_per_thread();
+  unsigned int rank_start = kernel().vp_manager.get_start_rank_per_thread();
+  unsigned int rank_end = kernel().vp_manager.get_end_rank_per_thread();
+  // store how far each segment in sendbuffer is filled
+  std::vector< unsigned int > send_buffer_offset( num_assigned_ranks_per_thread, 0 );
+  unsigned int sum_send_buffer_offset = 0;
+  unsigned int num_target_data_per_rank = ceil( send_buffer.size() / kernel().mpi_manager.get_num_processes() );
+  TargetData next_target_data;
+
+  if ( rank_start != rank_end )
+  {
+    while ( true )
+    {
+      kernel().connection_builder_manager.get_next_target_data( tid, next_target_data );
+      if ( next_target_data.gid == invalid_index )
+      {
+        break;
+      }
+      else
+      {
+        thread target_rank = kernel().mpi_manager.get_process_id_of_gid( next_target_data.gid );
+        if ( rank_start <= target_rank && target_rank < rank_end )
+        {
+          thread target_rank_index = target_rank - rank_start;
+          if ( send_buffer_offset[ target_rank_index ] < num_target_data_per_rank )
+          {
+            unsigned int idx = target_rank * num_target_data_per_rank + send_buffer_offset[ target_rank_index ];
+            send_buffer[ idx ] = next_target_data;
+            ++send_buffer_offset[ target_rank_index ];
+            ++sum_send_buffer_offset;
+          }
+          else
+          {
+            kernel().connection_builder_manager.reject_last_target_data( tid );
+            kernel().connection_builder_manager.save_source_table_entry_point( tid );
+          }
+        }
+      }
+      if ( sum_send_buffer_offset == ( num_target_data_per_rank * num_assigned_ranks_per_thread ) )
+      {
+        break;
+      }
+    }
+  }
+}
+
+void
+nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid, const std::vector< TargetData >& recv_buffer )
+{
+  for ( std::vector< TargetData >::const_iterator it = recv_buffer.begin(); it != recv_buffer.end(); ++it )
+  {
+    if ( ( it->gid != target_data_empty_marker ) && ( it->gid != target_data_completed_marker )
+         && kernel().vp_manager.is_thread_local( it->gid ) )
+    {
+      kernel().connection_builder_manager.add_target( tid, *it );
+    }
+  }
+}
+
+} // of namespace nest

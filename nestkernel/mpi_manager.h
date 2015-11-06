@@ -101,6 +101,16 @@ public:
    */
   thread get_process_id( thread vp ) const;
 
+  /**
+   * Returns the rank for a given global node id.
+   */
+  thread get_process_id_of_gid( index gid ) const;
+
+  /**
+   * Returns true if the given global node exists on this process.
+   */
+  bool is_process_local( index gid ) const;
+
 private:
   int num_processes_; //!< number of MPI processes
   int rank_;          //!< rank of the MPI process
@@ -137,6 +147,13 @@ MPIManager::get_num_sim_processes() const
 {
   return n_sim_procs_;
 }
+
+inline bool
+MPIManager::is_process_local( index gid ) const
+{
+  return get_rank() == get_process_id_of_gid ( gid );
+}
+  
 }
 
 #endif /* MPI_MANAGER_H */

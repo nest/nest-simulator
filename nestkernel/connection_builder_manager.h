@@ -37,6 +37,7 @@
 #include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "source_table.h"
+#include "target_table.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -296,6 +297,22 @@ public:
    */
   DelayChecker& get_delay_checker();
 
+  bool is_source_table_cleared() const;
+
+  void prepare_target_table( const thread tid );
+
+  void get_next_target_data( const thread tid, TargetData& next_target_data );
+
+  void reject_last_target_data( const thread tid );
+
+  void save_source_table_entry_point( const thread tid );
+
+  void reset_source_table_entry_point( const thread tid );
+
+  void restore_source_table_entry_point( const thread tid );
+
+  void add_target( const thread tid, const TargetData& target_data);
+
 private:
   /**
    * Update delay extrema to current values.
@@ -367,6 +384,7 @@ private:
   tVSConnector connections_;
   std::vector< HetConnector* > connections_5g_;
   SourceTable source_table_;
+  TargetTable target_table_;
 
   tVDelayChecker delay_checkers_;
 
@@ -407,6 +425,12 @@ inline delay
 ConnectionBuilderManager::get_max_delay() const
 {
   return max_delay_;
+}
+
+inline bool
+ConnectionBuilderManager::is_source_table_cleared() const
+{
+  return source_table_.is_cleared();
 }
 
 } // namespace nest

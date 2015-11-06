@@ -43,6 +43,7 @@
 #include "kernel_manager.h"
 #include "network.h"
 #include "nodelist.h"
+#include "source_table.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -467,6 +468,21 @@ void
 nest::Communicator::communicate( std::vector< long_t >& buffer )
 {
   communicate_Allgather( buffer );
+}
+
+void
+nest::Communicator::communicate_Alltoall(
+  unsigned int* send_buffer,
+  unsigned int* recv_buffer,
+  const unsigned int send_recv_count)
+{
+  MPI_Alltoall( send_buffer,
+                send_recv_count,
+                MPI::UNSIGNED,
+                recv_buffer,
+                send_recv_count,
+                MPI::UNSIGNED,
+                comm);
 }
 
 void

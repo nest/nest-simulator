@@ -58,6 +58,7 @@
 
 namespace nest
 {
+  
 class Communicator
 {
 public:
@@ -225,6 +226,11 @@ public:
   static void communicate( double_t, std::vector< double_t >& );
   static void communicate( std::vector< int_t >& );
   static void communicate( std::vector< long_t >& );
+
+  static void communicate_Alltoall(
+    unsigned int* send_buffer,
+    unsigned int* recv_buffer,
+    const unsigned int send_recv_count);
 
   /**
    * Collect GIDs for all nodes in a given node list across processes.

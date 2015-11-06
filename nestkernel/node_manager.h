@@ -118,6 +118,11 @@ public:
    */
   index size() const;
 
+  /**
+   * Returns the maximal number of nodes per virtual process.
+   */
+  index get_max_num_local_nodes() const;
+
   Subnet* get_root() const; ///< return root subnet.
   Subnet* get_cwn() const;  ///< current working node.
 

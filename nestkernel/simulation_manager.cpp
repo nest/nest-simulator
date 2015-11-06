@@ -392,6 +392,11 @@ nest::SimulationManager::prepare_simulation_()
     Communicator::enter_runtime( tick );
   }
 #endif
+
+  if ( !simulated_ )
+  {
+    kernel().event_delivery_manager.gather_target_data();
+  }
 }
 
 void

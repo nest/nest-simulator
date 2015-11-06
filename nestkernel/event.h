@@ -715,7 +715,18 @@ typedef std::vector< uint_t >::iterator fwit;
 typedef std::vector< double_t >::iterator dfwit;
 
 /**
- * Base class of secondary events. Provides interface for serialization and deserialization.
+ * Base class of secondary events. Provides interface for
+ * serialization and deserialization. This event type may be
+ * used to transmit data on a regular basis
+ * Further information about secondary events and
+ * their usage with gap junctions can be found in
+ *
+ * Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
+ * Bolten, M., Frommer, A. and Diesmann, M.,
+ * A unified framework for spiking and gap-junction interactions
+ * in distributed neuronal network simulations,
+ * Front. Neuroinform. 9:22. (2015),
+ * doi: 10.3389/fninf.2015.00022
  */
 class SecondaryEvent : public Event
 {
@@ -731,9 +742,11 @@ public:
   virtual fwit& operator>>( fwit& pos ) = 0;
 };
 
-// iterator class for the GapJEvent coefficient-array
-// generating a copy of the coeffarray at several times is too time consuming
-// therefore we use iterators pointing to the "old" location of the coeffarray
+/**
+ * Iterator class for the GapJEvent data array.
+ * Generating a copy of the array at several times is too time consuming,
+ * therefore we use iterators pointing to the "old" memory location of the array
+ */
 class CoeffArrayIterator
 {
 
@@ -788,7 +801,11 @@ public:
 };
 
 /**
- * Event for gap junction information.
+ * Event for gap-junction information.
+ * The event transmits the interpolation of the membrane potential
+ * to the connected neurons.
+ * Technically the GapJEvent only contains Iterators pointing to
+ * the memory location of the interpolation array.
  */
 class GapJEvent : public SecondaryEvent
 {

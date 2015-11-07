@@ -30,40 +30,80 @@ import unittest
 class SplSynapseTestCase(unittest.TestCase):
     """Compare quantal_stp_synapse with its deterministic equivalent."""
 
-    def test_create_connect_simulate(self):
-
-        nest.CopyModel("stdp_spl_synapse_hom", "testsyn", {
-            'tau': 3.,
-            'tau_slow': 300.
-            })
+    def test_resize(self):
 
         syn_spec = {
            "model": "testsyn",
            "receptor_type": 1,
         }
         conn_spec = {
-           "rule": "one_to_one",
+           "rule": "all_to_all",
         }
-        nest.Connect(self.pre_parrot, self.post_parrot, syn_spec=syn_spec, conn_spec=conn_spec)
-
-        # get STDP synapse and weight before protocol
-        syn = nest.GetConnections(source=self.pre_parrot, synapse_model="testsyn")
-        nest.SetStatus(syn, {'tau_plus': 3.})
-        nest.Simulate(210.)
         
-        syn_status = nest.GetStatus(syn)[0]
-        print syn_status
+        # a single potential connection
+        self.setUp_net(1)
+        nest.Connect(self.pre_parrot, self.post_parrot, syn_spec=syn_spec, conn_spec=conn_spec)
+        syn = nest.GetConnections(source=self.pre_parrot, synapse_model="testsyn")
+        nest.SetStatus(syn, {'n_pot_conns': 1})
+        nest.Simulate(210.)
+        syn_status = nest.GetStatus(syn)
+        assert len(syn_status[0]['weights']) == 1, "Resizing failed"
 
-    def setUp(self):
+        # resizing potential conns
+        self.setUp_net(1)
+        nest.Connect(self.pre_parrot, self.post_parrot, syn_spec=syn_spec, conn_spec=conn_spec)
+        syn = nest.GetConnections(source=self.pre_parrot, synapse_model="testsyn")
+        nest.SetStatus(syn, {'n_pot_conns': 2})
+        nest.Simulate(210.)
+        syn_status = nest.GetStatus(syn)
+        assert len(syn_status[0]['weights']) == 2, "Resizing failed"
+
+    def test_resize_asymmetric(self):
+
+        syn_spec = {
+           "model": "testsyn",
+           "receptor_type": 1,
+        }
+        conn_spec = {
+           "rule": "all_to_all",
+        }
+
+        # two syns, different number of potential conns
+        self.setUp_net(2)
+        nest.Connect(self.pre_parrot, self.post_parrot, syn_spec=syn_spec, conn_spec=conn_spec)
+        syn = nest.GetConnections(source=self.pre_parrot, synapse_model="testsyn")
+        assert len(syn) == 2, "Not enought connections created"
+
+        npot = [1, 2]
+        for i, s in enumerate(syn):
+            nest.SetStatus([s], {'n_pot_conns': npot[i]})
+
+        nest.Simulate(210.)
+
+        print ""
+        print ""
+        print ""
+        print nest.GetStatus(syn)
+        print ""
+        print nest.GetStatus(self.spikes)
+        print ""
+        print ""
+        print ""
+        # 
+        # 
+        # syn_status = nest.GetStatus(syn)
+
+        # assert len(syn_status[0]['weights'] == 1) \
+        #     and len(syn_status[0]['weights'] == 2)
+
+    def setUp_net(self, n_post):
 
         nest.set_verbosity("M_WARNING")
         nest.ResetKernel()
         nest.SetKernelStatus({"resolution": 1.})
 
         # set pre and postsynaptic spike times
-        dt = 10.
         delay = 1.  # delay for connections
-        dspike = 50.  # ISI
 
         # set the correct real spike times for generators (correcting for delays)
         pre_times = [100. - delay, 200. - delay]
@@ -75,21 +115,28 @@ class SplSynapseTestCase(unittest.TestCase):
 
         # create parrot neurons and connect spike_generators
         self.pre_parrot = nest.Create("parrot_neuron", 1)
-        self.post_parrot = nest.Create("parrot_neuron", 1)
-        nest.SetStatus(self.post_parrot, {'tau_minus': 20., 'tau_minus_triplet': 2000.})
+        self.post_parrot = nest.Create("parrot_neuron", n_post)
 
         nest.Connect(pre_spikes, self.pre_parrot, syn_spec={"delay": delay})
-        nest.Connect(post_spikes, self.post_parrot, syn_spec={"delay": delay})
+        nest.Connect(post_spikes, self.post_parrot, syn_spec={"delay": delay}, conn_spec={"rule": "all_to_all"})
 
         # create spike detector
         self.spikes = nest.Create("spike_detector")
-        nest.Connect(self.pre_parrot, self.spikes)
-        nest.Connect(self.post_parrot, self.spikes)
+        nest.Connect(self.pre_parrot, self.spikes, conn_spec={"rule": "all_to_all"})
+        nest.Connect(self.post_parrot, self.spikes, conn_spec={"rule": "all_to_all"})
+
+        nest.CopyModel('stdp_spl_synapse_hom', 'testsyn', {
+            'tau': 20.,
+            'tau_slow': 300.,
+            'p_fail': .2
+            })
+
 
 def suite():
 
-    suite = unittest.makeSuite(SplSynapseTestCase,'test')
+    suite = unittest.makeSuite(SplSynapseTestCase, 'test')
     return suite
+
 
 def run():
     runner = unittest.TextTestRunner(verbosity=2)
@@ -98,5 +145,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
-

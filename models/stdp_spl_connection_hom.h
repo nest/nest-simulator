@@ -113,6 +113,12 @@ public:
   double_t dt_;
   double_t p_fail_;
   double_t w0_;
+
+  double_t e_dtalpha_;
+  double_t e_dt_tau_;
+  double_t e_dt_tau_slow_;
+  double_t tau_m1_;
+  double_t tau_slow_m1_;
 };
 
 // connections are templates of target identifier type
@@ -221,7 +227,10 @@ public:
   void
   set_weight( double_t w )
   {
-    //weight_ = w;
+    for ( long_t i=0; i<n_conns_; i++ )
+    {
+      w_jk_[i] = w;
+    }
   }
 
 private:
@@ -383,7 +392,7 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
 template < typename targetidentifierT >
 STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom()
   : ConnectionBase()
-  , n_conns_( 10 )
+  , n_conns_( 1 )
 {
   w_jk_.resize(n_conns_,.1);
   w_create_steps_.resize(n_conns_,0);
@@ -423,7 +432,7 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectionBase::set_status( d, cm );
   updateValue< long_t >( d, "n_pot_conns", n_conns_ );
 
-  if ( not( n_conns_ > 1) )
+  if ( not( n_conns_ > 0) )
   {
     throw BadProperty( "Number of potential connections must be positive" );
   }

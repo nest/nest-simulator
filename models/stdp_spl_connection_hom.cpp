@@ -43,8 +43,13 @@ STDPSplHomCommonProperties::STDPSplHomCommonProperties()
   , alpha_( 1.27142e-6 )
   , lambda_( 0.028/(24. * 60. * 1e3) )
   , dt_( 1.0 )
-  , w0_(0.01)
-  , p_fail_(0.2)
+  , w0_( 0.01 )
+  , p_fail_( 0.2 )
+  , e_dtalpha_( 0.999998728580808 )
+  , e_dt_tau_( 0.951229424500714 )
+  , e_dt_tau_slow_( 0.999500124979169 )
+  , tau_m1_( 0.05 )
+  , tau_slow_m1_( 0.0005)
 {
 }
 
@@ -92,6 +97,12 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
   {
     throw BadProperty( "lambda must be positive." );
   }
+
+  e_dtalpha_ = exp(-dt_*alpha_);
+  e_dt_tau_ = exp(-dt_/tau_);
+  e_dt_tau_slow_ = exp(-dt_/tau_slow_);
+  tau_m1_ = 1./tau_;
+  tau_slow_m1_ = 1./tau_slow_;
 }
 
 } // of namespace nest

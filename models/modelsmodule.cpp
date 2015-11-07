@@ -112,6 +112,8 @@
 #include "quantal_stp_connection.h"
 #include "quantal_stp_connection_impl.h"
 #include "stdp_connection.h"
+#include "stdp_spl_connection.h"
+#include "stdp_spl_connection_hom.h"
 #include "stdp_connection_hom.h"
 #include "stdp_connection_facetshw_hom.h"
 #include "stdp_connection_facetshw_hom_impl.h"
@@ -335,6 +337,19 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< STDPConnection< TargetIdentifierPtrRport > >( net_, "stdp_synapse" );
   register_connection_model< STDPConnection< TargetIdentifierIndex > >( net_, "stdp_synapse_hpc" );
 
+  /* BeginDocumentation
+     Name: stdp_spl_synapse_hpc - Variant of stdp_spl_synapse with low memory consumption.
+     SeeAlso: synapsedict, stdp_spl_synapse, static_synapse_hpc
+  */
+  register_connection_model< STDPSplConnection< TargetIdentifierPtrRport > >( net_, "stdp_spl_synapse" );
+  register_connection_model< STDPSplConnection< TargetIdentifierIndex > >( net_, "stdp_spl_synapse_hpc" );
+
+  /* BeginDocumentation
+     Name: stdp_spl_synapse_hom_hpc - Variant of stdp_spl_synapse_hom with low memory consumption.
+     SeeAlso: synapsedict, stdp_spl_synapse_hom, static_synapse_hom_hpc
+  */
+  register_connection_model< STDPSplConnectionHom< TargetIdentifierPtrRport > >( net_, "stdp_spl_synapse_hom" );
+  register_connection_model< STDPSplConnectionHom< TargetIdentifierIndex > >( net_, "stdp_spl_synapse_hom_hpc" );
 
   /* BeginDocumentation
      Name: stdp_pl_synapse_hom_hpc - Variant of stdp_pl_synapse_hom with low memory consumption.

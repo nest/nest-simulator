@@ -30,10 +30,15 @@ import unittest
 class SplSynapseTestCase(unittest.TestCase):
     """Compare quantal_stp_synapse with its deterministic equivalent."""
 
-    def test_creation(self):
+    def test_create_connect_simulate(self):
+
+        nest.CopyModel("stdp_spl_synapse_hom", "testsyn", {
+            'tau': 3.,
+            'tau_slow': 300.
+            })
 
         syn_spec = {
-           "model": "stdp_spl_synapse",
+           "model": "testsyn",
            "receptor_type": 1,
         }
         conn_spec = {
@@ -42,12 +47,11 @@ class SplSynapseTestCase(unittest.TestCase):
         nest.Connect(self.pre_parrot, self.post_parrot, syn_spec=syn_spec, conn_spec=conn_spec)
 
         # get STDP synapse and weight before protocol
-        syn = nest.GetConnections(source=self.pre_parrot, synapse_model="stdp_spl_synapse")
-        nest.SetStatus(syn, {'n_pot_conns': 3})
-        syn_status = nest.GetStatus(syn)[0]
-
+        syn = nest.GetConnections(source=self.pre_parrot, synapse_model="testsyn")
+        nest.SetStatus(syn, {'tau_plus': 3.})
         nest.Simulate(210.)
-
+        
+        syn_status = nest.GetStatus(syn)[0]
         print syn_status
 
     def setUp(self):

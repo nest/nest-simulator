@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STDP_SPL_CONNECTION_H
-#define STDP_SPL_CONNECTION_H
+#ifndef STDP_SPL_CONNECTION_HOM_H
+#define STDP_SPL_CONNECTION_HOM_H
 
 /* BeginDocumentation
   Name: stdp_triplet_synapse - Synapse type with spike-timing dependent
@@ -78,34 +78,76 @@
 
 namespace nest
 {
+
+/**
+ * Class containing the common properties for all synapses of type STDPConnectionHom.
+ */
+class STDPSplHomCommonProperties : public CommonSynapseProperties
+{
+
+public:
+  /**
+   * Default constructor.
+   * Sets all property values to defaults.
+   */
+  STDPSplHomCommonProperties();
+
+  /**
+   * Get all properties and put them into a dictionary.
+   */
+  void get_status( DictionaryDatum& d ) const;
+
+  /**
+   * Set properties from the values given in dictionary.
+   */
+  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+
+  // data members common to all connections
+  double_t tau_slow_;
+  double_t tau_;
+  double_t A2_corr_;
+  double_t A4_corr_;
+  double_t A4_post_;
+  double_t alpha_;
+  double_t lambda_;
+  double_t dt_;
+  double_t p_fail_;
+  double_t w0_;
+};
+
 // connections are templates of target identifier type
 // (used for pointer / target index addressing)
 // derived from generic connection template
 template < typename targetidentifierT >
-class STDPSplConnection : public Connection< targetidentifierT >
+class STDPSplConnectionHom : public Connection< targetidentifierT >
 {
 
 public:
-  typedef CommonSynapseProperties CommonPropertiesType;
+  typedef STDPSplHomCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  STDPSplConnection();
+  STDPSplConnectionHom();
 
   /**
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPSplConnection( const STDPSplConnection& );
+  STDPSplConnectionHom( const STDPSplConnectionHom& );
 
   /**
    * Default Destructor.
    */
-  ~STDPSplConnection()
+  ~STDPSplConnectionHom()
   {
+    // delete allocated vector elements.
+    // Do we need this?
+    // No, not for private variables.
+    // delete c_jk_;
+    // delete r_jk_;
   }
 
   // Explicitly declare all methods inherited from the dependent base
@@ -133,7 +175,7 @@ public:
    * \param t_lastspike Point in time of last spike sent.
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, double_t t_lastspike, const STDPSplHomCommonProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -185,8 +227,9 @@ public:
 private:
 
   void
-  propagate_(Network* net, const int vp)//double_t &r_post_before, double_t &R_post_before)
+  propagate_(Network* net, const int vp, const STDPSplHomCommonProperties& cp )//double_t &r_post_before, double_t &R_post_before)
   {  
+
     // propagate all variables
     for ( long_t i=0; i<n_conns_; i++ )
     {
@@ -198,7 +241,7 @@ private:
         // dynamics pick this up in the next time-step
         if ( w_create_steps_[i] == 1 )
         {
-          w_jk_[i] = w0_;
+          w_jk_[i] = cp.w0_;
         }
         
         w_create_steps_[i]--;
@@ -206,28 +249,27 @@ private:
       // EQ 1 only for nonzero synapses, i.e. created ones
       else
       {
-
         // delete synapse with negative or zero weights
         if ( w_jk_[i] <= 0. )
         { 
           // generate an exponentially distributed number
-          w_create_steps_[i] = ceil( -std::log( net->get_rng( vp )->drandpos() ) / lambda_ ); // random numbers are in ms == steps
+          w_create_steps_[i] = ceil( -std::log( net->get_rng( vp )->drandpos() ) / cp.lambda_ ); // random numbers are in ms == steps
         }
         else
         {
-          w_jk_[i] *= exp(-dt_*alpha_);
-          w_jk_[i] += A2_corr_ * c_jk_[i] + A4_corr_ * pow(c_jk_[i],2) + A4_post_ * pow(r_jk_[i],4);
+          w_jk_[i] *= exp(-cp.dt_*cp.alpha_);
+          w_jk_[i] += cp.A2_corr_ * c_jk_[i] + cp.A4_corr_ * pow(c_jk_[i],2) + cp.A4_post_ * pow(r_jk_[i],4);
         }
       }
       
       // EQ 2
-      c_jk_[i] *= exp(-dt_/tau_);
-      c_jk_[i] += dt_ * (r_jk_[i] * (r_post_));
+      c_jk_[i] *= exp(-cp.dt_/cp.tau_);
+      c_jk_[i] += cp.dt_ * (r_jk_[i] * (r_post_));
       // EQ 4
-      r_jk_[i] *= exp(-dt_/tau_);
+      r_jk_[i] *= exp(-cp.dt_/cp.tau_);
     }
-    r_post_ *= exp(-dt_/tau_);
-    R_post_ *= exp(-dt_/tau_);
+    r_post_ *= exp(-cp.dt_/cp.tau_);
+    R_post_ *= exp(-cp.dt_/cp.tau_);
   }
 
   // data members of each connection
@@ -244,19 +286,6 @@ private:
   double_t R_post_;
   double_t r_post_;
 
-  double_t tau_slow_;
-  double_t tau_;
-  double_t A2_corr_;
-  double_t A4_corr_;
-  double_t A4_post_;
-  double_t alpha_;
-  double_t lambda_;
-  double_t dt_;
-  double_t p_fail_;
-
-  double_t cutoff_;  
-  double_t w0_;  
-
 };
 
 /**
@@ -268,10 +297,10 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-STDPSplConnection< targetidentifierT >::send( Event& e,
+STDPSplConnectionHom< targetidentifierT >::send( Event& e,
   thread t,
   double_t t_lastspike,
-  const CommonSynapseProperties& )
+  const STDPSplHomCommonProperties& cp )
 {
 
   double_t t_spike = e.get_stamp().get_ms();
@@ -289,8 +318,7 @@ STDPSplConnection< targetidentifierT >::send( Event& e,
 
   while ( start != finish )
   {
-    // post-synaptic spike is delayed by dendritic_delay so that
-    // it is effectively late by that much at the synapse.
+    
     double_t delta = start->t_ - t_last_postspike;
 
     std::cout << "time0: " << t_last_postspike << "\n";
@@ -303,21 +331,15 @@ STDPSplConnection< targetidentifierT >::send( Event& e,
       ++start;
       continue;
     }
-
-    // get values of K after the last postspike
-    // target->get_K_values( t_last_postspike, r_post_before, R_post_before );
-    // r_post_before = (r_post_before)/tau_;
-    // R_post_before = (R_post_before)/tau_slow_;
       
     std::cout << "r_post from neuron: " << r_post_ << "\n";
     std::cout << "R_post from neuron: " << R_post_ << "\n";
     std::cout << "w_jk_: " << w_jk_[0] << "\n---->\n";
 
-    //double_t ky = start->triplet_Kminus_ - 1.0;
     // update iteratively all variables in the time start -> 
     for ( long_t k=0; k<floor(delta); k++ )
     {
-      propagate_(net, vp);//r_post_before, R_post_before);
+      propagate_(net, vp, cp);
     }
 
     t_last_postspike = start->t_;
@@ -326,26 +348,16 @@ STDPSplConnection< targetidentifierT >::send( Event& e,
     std::cout << "r_post after decay: " << r_post_ << "\n";
     std::cout << "R_post after decay: " << R_post_ << "\n";
     std::cout << "w_jk_ after decay: " << w_jk_[0] << "\n\n";
-
-    // subtract 1.0 yields the triplet_Kminus value just prior to
-    // the post synaptic spike, implementing the t-epsilon in
-    // Pfister et al, 2006
-    //double_t ky = start->triplet_Kminus_ - 1.0;
-    //std::cout << "ky: " << ky << "\n";
-
     
     // update postsynaptic traces
-    r_post_ += 1./tau_;
-    R_post_ += 1./tau_slow_;
-
-    //weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_slow_ ), ky );
-    //    double_t minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
+    r_post_ += 1./cp.tau_;
+    R_post_ += 1./cp.tau_slow_;
   }
 
   double_t remaing_delta_ = t_spike - t_last_postspike;
   for ( long_t k=0; k<floor(remaing_delta_); k++ )
   {
-    propagate_(net, vp);//r_post_before, R_post_before);
+    propagate_(net, vp, cp);
   }
   
   // spike failure at rate 20%, i.e. presynaptic traces only get updated by this spike
@@ -354,9 +366,9 @@ STDPSplConnection< targetidentifierT >::send( Event& e,
   for ( long_t i=0; i<n_conns_; i++ )
   {
     rr = net->get_rng( vp )->drand();
-    if ( rr > p_fail_ )
+    if ( rr > cp.p_fail_ )
     {
-      r_jk_[i] += 1./tau_;
+      r_jk_[i] += 1./cp.tau_;
     }
   }
 
@@ -369,22 +381,11 @@ STDPSplConnection< targetidentifierT >::send( Event& e,
 
 // Defaults come from reference [1] data fitting and table 3.
 template < typename targetidentifierT >
-STDPSplConnection< targetidentifierT >::STDPSplConnection()
+STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom()
   : ConnectionBase()
   , n_conns_( 10 )
-  , tau_slow_( 2000.0 )
-  , tau_( 20.0 )
-  , A2_corr_( 1.0e-6 )
-  , A4_corr_( 0.02453e-6 )
-  , A4_post_( 0.0163e-6 )
-  , alpha_( 1.27142e-6 )
-  , lambda_( 0.028/(24. * 60. * 1e3) )
-  , dt_( 1.0 )
-  , cutoff_( 0. )
-  , w0_(0.01)
-  , p_fail_(0.2)
 {
-  w_jk_.resize(n_conns_,0.);
+  w_jk_.resize(n_conns_,.1);
   w_create_steps_.resize(n_conns_,0);
   r_jk_.resize(n_conns_,0.);
   c_jk_.resize(n_conns_,0.);
@@ -393,82 +394,41 @@ STDPSplConnection< targetidentifierT >::STDPSplConnection()
 }
 
 template < typename targetidentifierT >
-STDPSplConnection< targetidentifierT >::STDPSplConnection(
-  const STDPSplConnection< targetidentifierT >& rhs )
+STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom(
+  const STDPSplConnectionHom< targetidentifierT >& rhs )
   : ConnectionBase( rhs )
   , n_conns_( rhs.n_conns_ )
-  , tau_slow_( rhs.tau_slow_ )
-  , tau_( rhs.tau_ )
-  , A2_corr_( rhs.A2_corr_ )
-  , A4_corr_( rhs.A4_corr_ )
-  , A4_post_( rhs.A4_post_ )
-  , alpha_( rhs.alpha_ )
-  , lambda_( rhs.lambda_ )
-  , dt_( rhs.dt_ )
-  , cutoff_( rhs.cutoff_ )
-  , w0_( rhs.w0_ )
-  , p_fail_( rhs.p_fail_ )
 {
 }
 
 template < typename targetidentifierT >
 void
-STDPSplConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+STDPSplConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< long_t >( d, "n_pot_conns", n_conns_ );
-  def< double_t >( d, "tau_slow", tau_slow_ );
-  def< double_t >( d, "tau", tau_ );
-  def< double_t >( d, "A2_corr", A2_corr_ );
-  def< double_t >( d, "A4_post", A4_post_ );
-  def< double_t >( d, "A4_corr", A4_corr_ );
-  def< double_t >( d, "alpha", alpha_ );
-  def< double_t >( d, "lambda", lambda_ );
-  def< double_t >( d, "dt", dt_ );
-  def< double_t >( d, "cutoff", cutoff_ );
-  def< double_t >( d, "w0", w0_ );
-  def< double_t >( d, "p_fail", p_fail_ );
-
-  def< std::vector< double_t > >( d, "weights", w_jk_ );   
+  def< std::vector< double_t > >( d, "weights", w_jk_ );
+  def< double_t >( d, "r_post", r_post_ );   
+  def< double_t >( d, "R_post", R_post_ );   
+  def< std::vector< double_t > >( d, "c_jk", c_jk_ );
+  def< std::vector< double_t > >( d, "r_jk", r_jk_ );
+  def< std::vector< long_t > >( d, "w_create_steps", w_create_steps_ );   
 }
 
 template < typename targetidentifierT >
 void
-STDPSplConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< long_t >( d, "n_pot_conns", n_conns_ );
-  updateValue< double_t >( d, "tau_slow", tau_slow_ );
-  updateValue< double_t >( d, "tau", tau_ );
-  updateValue< double_t >( d, "A2_corr", A2_corr_ );
-  updateValue< double_t >( d, "A4_corr", A4_corr_ );
-  updateValue< double_t >( d, "A4_post", A4_post_ );
-  updateValue< double_t >( d, "alpha", alpha_ );
-  updateValue< double_t >( d, "lambda", lambda_ );
-  updateValue< double_t >( d, "dt", dt_ );
-  updateValue< double_t >( d, "cutoff", cutoff_ );
-  updateValue< double_t >( d, "w0", w0_ );
-  updateValue< double_t >( d, "p_fail", p_fail_ );
-
-  if ( not( tau_slow_ > tau_ ) )
-  {
-    throw BadProperty(
-      "Parameter tau_slow_triplet (time-constant of long trace) must be larger than tau_plus "
-      "(time-constant of short trace)." );
-  }
-
-  if ( not( lambda_ >= 0 ) )
-  {
-    throw BadProperty( "lambda must be positive." );
-  }
 
   if ( not( n_conns_ > 1) )
   {
     throw BadProperty( "Number of potential connections must be positive" );
   }
 
-  w_jk_.resize(n_conns_,0.);
+  w_jk_.resize(n_conns_,.1);
   w_create_steps_.resize(n_conns_,0);
 
   r_jk_.resize(n_conns_,0.);
@@ -479,4 +439,4 @@ STDPSplConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
 
 } // of namespace nest
 
-#endif // of #ifndef STDP_SPL_CONNECTION_H
+#endif // of #ifndef STDP_SPL_CONNECTION_HOM_H

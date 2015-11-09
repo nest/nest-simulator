@@ -153,6 +153,8 @@ extern const Name g_ahp;         //!< Specific to iaf_chxk_2008 neuron
 extern const Name g_ex;          //!< Excitatory conductance
 extern const Name g_in;          //!< inhibitory conductance
 extern const Name g_K;           //!< Potassium conductance
+extern const Name g_Kv1;         //!< Kv1 Potassium conductance
+extern const Name g_Kv3;         //!< Kv3 Potassium conductance
 extern const Name g_L;           //!< Leak conductance
 extern const Name g_Na;          //!< Sodium conductance
 extern const Name g_rr;          //!< Other adaptation
@@ -186,6 +188,7 @@ extern const Name I_syn_in;  //!< Total inhibitory synaptic current (iaf_tum_200
 extern const Name I_total;   //!< Total current (current homeostasis)
 extern const Name in_spikes; //!< Number of arriving inhibitory spikes
 extern const Name Inact_n;   //!< Specific to Hodgkin Huxley models
+extern const Name Inact_p;   //!< Specific to Hodgkin Huxley models with gap junctions
 extern const Name index_map; //!< Parameters for MUSIC devices
 extern const Name individual_spike_trains; //!< Generator parameters
 extern const Name inh_conductance;         //!< Recorder parameter
@@ -219,9 +222,10 @@ extern const Name N;          //!< Specific to population point process model (p
 extern const Name N_channels; //!< Specific to correlomatrix_detector
 extern const Name n_events;   //!< Recorder parameter
 extern const Name n_proc;     //!< Number of component processes of ppd_sup_/gamma_sup_generator
-extern const Name neuron;     //!< Node type
-extern const Name noise;      //!< Specific to iaf_chs_2008 neuron
-extern const Name ns;         //!< Number of release sites (property arrays)
+extern const Name needs_prelim_update; //!< Node parameter
+extern const Name neuron;              //!< Node type
+extern const Name noise;               //!< Specific to iaf_chs_2008 neuron
+extern const Name ns;                  //!< Number of release sites (property arrays)
 
 extern const Name offset;  //!< Miscellaneous parameters
 extern const Name offsets; //!< Recorder parameter

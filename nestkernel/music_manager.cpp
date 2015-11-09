@@ -98,7 +98,7 @@ MUSICManager::enter_runtime( double_t h_min_delay )
   LOG( M_INFO, "MUSICManager::enter_runtime", msg );
 
   // MUSIC needs the step size in seconds
-  // std::cout << "nest::Communicator::enter_runtime\n";
+  // std::cout << "nest::MPIManager::enter_runtime\n";
   // std::cout << "timestep = " << h_min_delay*1e-3 << std::endl;
 
   if ( music_runtime == 0 )

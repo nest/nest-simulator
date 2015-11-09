@@ -29,7 +29,7 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "communicator.h"
+#include "mpi_manager.h"
 #include "event.h"
 #include "kernel_manager.h"
 #include "nest_types.h"

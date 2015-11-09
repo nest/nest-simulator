@@ -23,11 +23,26 @@
 #ifndef MPI_MANAGER_H
 #define MPI_MANAGER_H
 
+// Generated includes:
+#include "config.h"
+
+// C includes:
+#include <unistd.h>
+#ifdef HAVE_MPI
+#include <mpi.h>
+#endif
+
+// C++ includes:
+#include <cassert>
+#include <iostream>
+#include <limits>
+#include <numeric>
+#include <vector>
+
 // Includes from libnestutil:
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-#include "communicator.h"
 #include "nest_types.h"
 
 // Includes from sli:
@@ -35,7 +50,7 @@
 
 namespace nest
 {
-
+  
 class MPIManager : ManagerInterface
 {
 public:
@@ -112,6 +127,392 @@ private:
   int rank_;          //!< rank of the MPI process
   index n_rec_procs_; //!< MPI processes dedicated for recording devices
   index n_sim_procs_; //!< MPI processes used for simulation
+
+#ifdef HAVE_MPI
+
+public:
+  /**
+   * Combined storage of GID and offset information for off-grid spikes.
+   *
+   * @note This class actually stores the GID as @c double_t internally.
+   *       This is done so that the user-defined MPI type MPI_OFFGRID_SPIKE,
+   *       which we use to communicate off-grid spikes, is homogeneous.
+   *       Otherwise, OpenMPI spends extreme amounts of time on packing
+   *       and unpacking the data, see #458.
+   */
+  class OffGridSpike
+  {
+  public:
+    //! We defined this type explicitly, so that the assert function below always tests the correct
+    //! type.
+    typedef uint_t gid_external_type;
+
+    OffGridSpike()
+      : gid_( 0 )
+      , offset_( 0.0 )
+    {
+    }
+    OffGridSpike( gid_external_type gidv, double_t offsetv )
+      : gid_( gidv )
+      , offset_( offsetv )
+    {
+    }
+
+    uint_t
+    get_gid() const
+    {
+      return static_cast< gid_external_type >( gid_ );
+    }
+    void
+    set_gid( gid_external_type gid )
+    {
+      gid_ = static_cast< double_t >( gid );
+    }
+    double_t
+    get_offset() const
+    {
+      return offset_;
+    }
+
+  private:
+    friend class MPIManager; // void MPIManager::init_(int*, char**);
+
+    double_t gid_;    //!< GID of neuron that spiked
+    double_t offset_; //!< offset of spike from grid
+
+    //! This function asserts that doubles can hold GIDs without loss
+    static void
+    assert_datatype_compatibility()
+    {
+      assert( std::numeric_limits< double_t >::digits
+        > std::numeric_limits< gid_external_type >::digits );
+
+      // the next one is doubling up, better be safe than sorry
+      const gid_external_type maxgid = std::numeric_limits< gid_external_type >::max();
+      OffGridSpike ogs( maxgid, 0.0 );
+      assert( maxgid == ogs.get_gid() );
+    }
+  };
+
+  class NodeAddressingData
+  {
+  public:
+    NodeAddressingData()
+      : gid_( 0 )
+      , parent_gid_( 0 )
+      , vp_( 0 )
+    {
+    }
+    NodeAddressingData( uint_t gid, uint_t parent_gid, uint_t vp )
+      : gid_( gid )
+      , parent_gid_( parent_gid )
+      , vp_( vp )
+    {
+    }
+
+    uint_t
+    get_gid() const
+    {
+      return gid_;
+    }
+    uint_t
+    get_parent_gid() const
+    {
+      return parent_gid_;
+    }
+    uint_t
+    get_vp() const
+    {
+      return vp_;
+    }
+    bool operator<( const NodeAddressingData& other ) const
+    {
+      return this->gid_ < other.gid_;
+    }
+    bool operator==( const NodeAddressingData& other ) const
+    {
+      return this->gid_ == other.gid_;
+    }
+
+  private:
+    friend class MPIManager;
+    uint_t gid_;        //!< GID of neuron
+    uint_t parent_gid_; //!< GID of neuron's parent
+    uint_t vp_;         //!< virtual process of neuron
+  };
+
+  void init_();
+  void mpi_abort( int exitcode );
+
+  void communicate( std::vector< uint_t >& send_buffer,
+    std::vector< uint_t >& recv_buffer,
+    std::vector< int >& displacements );
+  void communicate( std::vector< OffGridSpike >& send_buffer,
+    std::vector< OffGridSpike >& recv_buffer,
+    std::vector< int >& displacements );
+  void communicate( std::vector< double_t >& send_buffer,
+    std::vector< double_t >& recv_buffer,
+    std::vector< int >& displacements );
+  void communicate( double_t, std::vector< double_t >& );
+  void communicate( std::vector< int_t >& );
+  void communicate( std::vector< long_t >& );
+
+  /**
+   * Collect GIDs for all nodes in a given node list across processes.
+   * The NodeListType should be one of LocalNodeList, LocalLeafList, LocalChildList.
+   */
+  template < typename NodeListType >
+  void communicate( const NodeListType& local_nodes,
+    std::vector< NodeAddressingData >& all_nodes,
+    bool remote = false );
+  template < typename NodeListType >
+  void communicate( const NodeListType& local_nodes,
+    std::vector< NodeAddressingData >& all_nodes,
+    DictionaryDatum params,
+    bool remote = false );
+
+  void communicate_connector_properties( DictionaryDatum& dict );
+
+  void synchronize();
+  void test_link( int, int );
+  void test_links();
+
+  bool grng_synchrony( unsigned long );
+  double_t time_communicate( int num_bytes, int samples = 1000 );
+  double_t time_communicatev( int num_bytes, int samples = 1000 );
+  double_t time_communicate_offgrid( int num_bytes, int samples = 1000 );
+  double_t time_communicate_alltoall( int num_bytes, int samples = 1000 );
+  double_t time_communicate_alltoallv( int num_bytes, int samples = 1000 );
+
+  std::string get_processor_name();
+
+  int get_send_buffer_size();
+  int get_recv_buffer_size();
+  bool get_initialized();
+
+  void set_num_threads( thread num_threads );
+  void set_buffer_sizes( int send_buffer_size, int recv_buffer_size );
+
+private:
+  int send_buffer_size_; //!< expected size of send buffer
+  int recv_buffer_size_; //!< size of receive buffer
+  bool initialized_;     //!< whether MPI is initialized
+
+  std::vector< int > comm_step_; //!< array containing communication partner for each step.
+  uint_t COMM_OVERFLOW_ERROR;
+
+// Variable to hold the MPI communicator to use (the datatype matters).
+#ifdef HAVE_MUSIC
+  MPI::Intracomm comm;
+#else  /* #ifdef HAVE_MUSIC */
+  MPI_Comm comm;
+#endif /* #ifdef HAVE_MUSIC */
+  MPI_Datatype MPI_OFFGRID_SPIKE;
+  
+  void communicate_Allgather( std::vector< uint_t >& send_buffer,
+    std::vector< uint_t >& recv_buffer,
+    std::vector< int >& displacements );
+  void communicate_Allgather( std::vector< OffGridSpike >& send_buffer,
+    std::vector< OffGridSpike >& recv_buffer,
+    std::vector< int >& displacements );
+  void communicate_Allgather( std::vector< int_t >& );
+  void communicate_Allgather( std::vector< long_t >& );
+
+  template < typename T >
+  void communicate_Allgatherv( std::vector< T >& send_buffer,
+    std::vector< T >& recv_buffer,
+    std::vector< int >& displacements,
+    std::vector< int >& recv_counts );
+
+  template < typename T >
+  void communicate_Allgather( std::vector< T >& send_buffer,
+    std::vector< T >& recv_buffer,
+    std::vector< int >& displacements );
+
+#else /* #ifdef HAVE_MPI */
+public:
+  class OffGridSpike
+  {
+  public:
+    OffGridSpike()
+      : gid_( 0 )
+      , offset_( 0.0 )
+    {
+    }
+    OffGridSpike( uint_t gidv, double_t offsetv )
+      : gid_( gidv )
+      , offset_( offsetv )
+    {
+    }
+
+    uint_t
+    get_gid() const
+    {
+      return static_cast< uint_t >( gid_ );
+    }
+    void
+    set_gid( uint_t gid )
+    {
+      gid_ = static_cast< double_t >( gid );
+    }
+    double_t
+    get_offset() const
+    {
+      return offset_;
+    }
+
+  private:
+    friend class MPIManager; // void MPIManager::init(int*, char**);
+
+    double_t gid_;    //!< GID of neuron that spiked
+    double_t offset_; //!< offset of spike from grid
+  };
+
+  class NodeAddressingData
+  {
+  public:
+    NodeAddressingData()
+      : gid_( 0 )
+      , parent_gid_( 0 )
+      , vp_( 0 )
+    {
+    }
+    NodeAddressingData( uint_t gid, uint_t parent_gid, uint_t vp )
+      : gid_( gid )
+      , parent_gid_( parent_gid )
+      , vp_( vp )
+    {
+    }
+
+    uint_t
+    get_gid() const
+    {
+      return gid_;
+    }
+    uint_t
+    get_parent_gid() const
+    {
+      return parent_gid_;
+    }
+    uint_t
+    get_vp() const
+    {
+      return vp_;
+    }
+    bool operator<( const NodeAddressingData& other ) const
+    {
+      return this->gid_ < other.gid_;
+    }
+    bool operator==( const NodeAddressingData& other ) const
+    {
+      return this->gid_ == other.gid_;
+    }
+
+  private:
+    friend class MPIManager;
+    uint_t gid_;        //!< GID of neuron
+    uint_t parent_gid_; //!< GID of neuron's parent
+    uint_t vp_;         //!< virtual process of neuron
+  };
+
+  void communicate( std::vector< uint_t >& send_buffer,
+    std::vector< uint_t >& recv_buffer,
+    std::vector< int >& displacements );
+  void communicate( std::vector< OffGridSpike >& send_buffer,
+    std::vector< OffGridSpike >& recv_buffer,
+    std::vector< int >& displacements );
+  void communicate( std::vector< double_t >& send_buffer,
+    std::vector< double_t >& recv_buffer,
+    std::vector< int >& displacements );
+  void communicate( double_t, std::vector< double_t >& );
+  void
+  communicate( std::vector< int_t >& )
+  {
+  }
+  void
+  communicate( std::vector< long_t >& )
+  {
+  }
+
+  /**
+  * Collect GIDs for all nodes in a given node list across processes.
+  * The NodeListType should be one of LocalNodeList, LocalLeafList, LocalChildList.
+  */
+  /**
+   * Collect GIDs for all nodes in a given node list across processes.
+   * The NodeListType should be one of LocalNodeList, LocalLeafList, LocalChildList.
+   */
+  template < typename NodeListType >
+  void communicate( const NodeListType& local_nodes,
+    std::vector< NodeAddressingData >& all_nodes,
+    bool remote = false );
+  template < typename NodeListType >
+  void communicate( const NodeListType& local_nodes,
+    std::vector< NodeAddressingData >& all_nodes,
+    DictionaryDatum params,
+    bool remote = false );
+
+  void
+  communicate_connector_properties( DictionaryDatum& )
+  {
+  }
+
+  void
+  synchronize()
+  {
+  }
+
+  /* replaced u_long with unsigned long since u_long is not known when
+         mpi.h is not available. This is a rather ugly fix.
+         HEP 2007-03-09
+   */
+  bool
+  grng_synchrony( unsigned long )
+  {
+    return true;
+  }
+  double_t
+  time_communicate( int, int )
+  {
+    return 0.0;
+  }
+  double_t
+  time_communicatev( int, int )
+  {
+    return 0.0;
+  }
+  double_t
+  time_communicate_offgrid( int, int )
+  {
+    return 0.0;
+  }
+  double_t
+  time_communicate_alltoall( int, int )
+  {
+    return 0.0;
+  }
+  double_t
+  time_communicate_alltoallv( int, int )
+  {
+    return 0.0;
+  }
+
+  std::string get_processor_name();
+  int get_send_buffer_size();
+  int get_recv_buffer_size();
+  bool get_use_Allgather();
+  bool get_initialized();
+
+  void set_num_threads( thread num_threads );
+  void set_buffer_sizes( int send_buffer_size, int recv_buffer_size );
+
+private:
+  int send_buffer_size_; //!< expected size of send buffer
+  int recv_buffer_size_; //!< size of receive buffer
+  bool initialized_;     //!< whether MPI is initialized
+  bool use_Allgather_;   //!< using Allgather communication
+
+#endif /* #ifdef HAVE_MPI */
 };
 
 inline thread
@@ -143,6 +544,44 @@ MPIManager::get_num_sim_processes() const
 {
   return n_sim_procs_;
 }
+
+#ifndef HAVE_MPI
+inline std::string
+MPIManager::get_processor_name()
+{
+  char name[ 1024 ];
+  name[ 1023 ] = '\0';
+  gethostname( name, 1023 );
+  return name;
+}
+#endif
+
+inline int
+MPIManager::get_send_buffer_size()
+{
+  return send_buffer_size_;
+}
+
+inline int
+MPIManager::get_recv_buffer_size()
+{
+  return recv_buffer_size_;
+}
+
+inline bool
+MPIManager::get_initialized()
+{
+  return initialized_;
+}
+
+
+inline void
+MPIManager::set_buffer_sizes( int send_buffer_size, int recv_buffer_size )
+{
+  send_buffer_size_ = send_buffer_size;
+  recv_buffer_size_ = recv_buffer_size;
+}
+ 
 }
 
 #endif /* MPI_MANAGER_H */

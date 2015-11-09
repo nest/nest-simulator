@@ -26,8 +26,9 @@
 #include "dictstack.h"
 #include "interpret.h"
 #include "nestmodule.h"
-#include "communicator.h"
-#include "communicator_impl.h"
+#include "subnet.h"
+#include "mpi_manager.h"
+#include "mpi_manager_impl.h"
 
 #include "kernel_manager.h"
 
@@ -126,8 +127,8 @@ Network::get_status( index idx )
     kernel().get_status( d );
 
 
-    def< long >( d, "send_buffer_size", Communicator::get_send_buffer_size() );
-    def< long >( d, "receive_buffer_size", Communicator::get_recv_buffer_size() );
+    def< long >( d, "send_buffer_size", kernel().mpi_manager.get_send_buffer_size() );
+    def< long >( d, "receive_buffer_size", kernel().mpi_manager.get_recv_buffer_size() );
 
   }
   return d;

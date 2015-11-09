@@ -124,7 +124,7 @@ EventDeliveryManager::configure_spike_buffers()
     ? kernel().vp_manager.get_num_threads() * kernel().connection_builder_manager.get_min_delay()
     : 2;
   int recv_buffer_size = send_buffer_size * kernel().mpi_manager.get_num_processes();
-  Communicator::set_buffer_sizes( send_buffer_size, recv_buffer_size );
+  kernel().mpi_manager.set_buffer_sizes( send_buffer_size, recv_buffer_size );
 
   // DEC cxx required 0U literal, HEP 2007-03-26
   local_grid_spikes_.clear();
@@ -237,19 +237,19 @@ EventDeliveryManager::collocate_buffers_()
   {
     // make sure buffers are correctly sized
     if ( global_grid_spikes_.size()
-      != static_cast< uint_t >( Communicator::get_recv_buffer_size() ) )
-      global_grid_spikes_.resize( Communicator::get_recv_buffer_size(), 0 );
+      != static_cast< uint_t >( kernel().mpi_manager.get_recv_buffer_size() ) )
+      global_grid_spikes_.resize( kernel().mpi_manager.get_recv_buffer_size(), 0 );
 
     if ( num_spikes + ( kernel().vp_manager.get_num_threads()
                         * kernel().connection_builder_manager.get_min_delay() )
-      > static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
+      > static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
       local_grid_spikes_.resize(
         ( num_spikes + ( kernel().connection_builder_manager.get_min_delay()
                          * kernel().vp_manager.get_num_threads() ) ),
         0 );
     else if ( local_grid_spikes_.size()
-      < static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
-      local_grid_spikes_.resize( Communicator::get_send_buffer_size(), 0 );
+      < static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
+      local_grid_spikes_.resize( kernel().mpi_manager.get_send_buffer_size(), 0 );
 
     // collocate the entries of spike_registers into local_grid_spikes__
     std::vector< uint_t >::iterator pos = local_grid_spikes_.begin();
@@ -296,19 +296,19 @@ EventDeliveryManager::collocate_buffers_()
   {
     // make sure buffers are correctly sized
     if ( global_offgrid_spikes_.size()
-      != static_cast< uint_t >( Communicator::get_recv_buffer_size() ) )
-      global_offgrid_spikes_.resize( Communicator::get_recv_buffer_size(), OffGridSpike( 0, 0.0 ) );
+      != static_cast< uint_t >( kernel().mpi_manager.get_recv_buffer_size() ) )
+      global_offgrid_spikes_.resize( kernel().mpi_manager.get_recv_buffer_size(), OffGridSpike( 0, 0.0 ) );
 
     if ( num_spikes + ( kernel().vp_manager.get_num_threads()
                         * kernel().connection_builder_manager.get_min_delay() )
-      > static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
+      > static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
       local_offgrid_spikes_.resize(
         ( num_spikes + ( kernel().connection_builder_manager.get_min_delay()
                          * kernel().vp_manager.get_num_threads() ) ),
         OffGridSpike( 0, 0.0 ) );
     else if ( local_offgrid_spikes_.size()
-      < static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
-      local_offgrid_spikes_.resize( Communicator::get_send_buffer_size(), OffGridSpike( 0, 0.0 ) );
+      < static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
+      local_offgrid_spikes_.resize( kernel().mpi_manager.get_send_buffer_size(), OffGridSpike( 0, 0.0 ) );
 
     // collocate the entries of spike_registers into local_offgrid_spikes__
     std::vector< OffGridSpike >::iterator pos = local_offgrid_spikes_.begin();
@@ -440,8 +440,8 @@ EventDeliveryManager::gather_events()
 {
   collocate_buffers_();
   if ( off_grid_spiking_ )
-    Communicator::communicate( local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
+    kernel().mpi_manager.communicate( local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
   else
-    Communicator::communicate( local_grid_spikes_, global_grid_spikes_, displacements_ );
+    kernel().mpi_manager.communicate( local_grid_spikes_, global_grid_spikes_, displacements_ );
 }
 }

@@ -37,7 +37,11 @@
 // C includes:
 #include <mpi.h>
 
+#ifdef HAVE_MUSIC
+extern MPI::Intracomm comm;
+#else
 extern MPI_Comm comm; // for now---should be moved from communicator.cpp
+#endif
 #endif
 
 nest::MPIManager::MPIManager()
@@ -120,4 +124,36 @@ nest::MPIManager::set_num_rec_processes( int nrp, bool called_by_reset )
       n_sim_procs_ );
     LOG( M_INFO, "MPIManager::set_num_rec_processes", msg );
   }
+}
+
+#ifdef HAVE_MPI
+extern MPI_Datatype MPI_OFFGRID_SPIKE; //*fixme*
+#endif
+
+/**
+ * Finish off MPI routines
+ */
+void
+nest::MPIManager::mpi_finalize( int exitcode )
+{
+#ifdef HAVE_MPI
+  MPI_Type_free( &MPI_OFFGRID_SPIKE );
+
+  int finalized;
+  MPI_Finalized( &finalized );
+
+  int initialized;
+  MPI_Initialized( &initialized );
+
+  if ( finalized == 0 && initialized == 1 )
+  {
+    if ( exitcode == 0 )
+      kernel().music_manager.music_finalize(); // calls MPI_Finalize()
+    else
+    {
+      LOG( M_INFO, "Communicator::finalize()", "Calling MPI_Abort() due to errors in the script." );
+      Communicator::mpi_abort( exitcode );
+    }
+  }
+#endif /* #ifdef HAVE_MPI */
 }

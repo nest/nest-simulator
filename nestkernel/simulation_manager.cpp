@@ -378,20 +378,14 @@ nest::SimulationManager::prepare_simulation_()
   kernel().node_manager.ensure_valid_thread_local_ids();
   kernel().node_manager.prepare_nodes();
 
-#ifdef HAVE_MUSIC
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime
   if ( !simulated_ ) // only enter the runtime mode once
   {
-    publish_music_in_ports_();
-
-    double tick = Time::get_resolution().get_ms() * min_delay_;
-    std::string msg = String::compose( "Entering MUSIC runtime with tick = %1 ms", tick );
-    LOG( M_INFO, "Network::resume", msg );
-    Communicator::enter_runtime( tick );
+    double tick = Time::get_resolution().get_ms() * kernel().connection_builder_manager.get_min_delay();
+    kernel().music_manager.enter_runtime( tick );
   }
-#endif
 }
 
 void
@@ -433,10 +427,10 @@ nest::SimulationManager::update_()
           // music_event_out_proxy::handle(), which hands the spikes over to
           // MUSIC *before* MUSIC time is advanced
           if ( slice_ > 0 )
-            Communicator::advance_music_time( 1 );
+            kernel().music_manager.advance_music_time();
 
           // the following could be made thread-safe
-          update_music_event_handlers_( clock_, from_step_, to_step_ );
+          kernel().music_manager.update_music_event_handlers( clock_, from_step_, to_step_ );
         }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier

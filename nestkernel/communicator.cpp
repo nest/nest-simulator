@@ -56,12 +56,7 @@ bool nest::Communicator::initialized_ = false;
 
 #ifdef HAVE_MPI
 
-#ifdef HAVE_MUSIC
-MUSIC::Setup* nest::Communicator::music_setup = 0;
-MUSIC::Runtime* nest::Communicator::music_runtime = 0;
-#endif /* #ifdef HAVE_MUSIC */
-
-// Variable to hold the MPI communicator to use.
+// Variable to hold the MPI communicator to use (the datatype matters).
 #ifdef HAVE_MUSIC
 MPI::Intracomm comm = 0;
 #else  /* #ifdef HAVE_MUSIC */
@@ -120,46 +115,6 @@ nest::Communicator::init()
   MPI_Type_commit( &MPI_OFFGRID_SPIKE );
 
   initialized_ = true;
-}
-
-/**
- * Finish off MPI routines
- */
-void
-nest::Communicator::finalize( int exitcode )
-{
-  MPI_Type_free( &MPI_OFFGRID_SPIKE );
-
-  int finalized;
-  MPI_Finalized( &finalized );
-
-  int initialized;
-  MPI_Initialized( &initialized );
-
-  if ( finalized == 0 && initialized == 1 )
-  {
-    if ( exitcode == 0 )
-#ifdef HAVE_MUSIC
-    {
-      if ( music_runtime == 0 )
-      {
-        // we need a Runtime object to call finalize(), so we create
-        // one, if we don't have one already
-        music_runtime = new MUSIC::Runtime( music_setup, 1e-3 );
-      }
-
-      music_runtime->finalize();
-      delete music_runtime;
-    }
-#else  /* #ifdef HAVE_MUSIC */
-      MPI_Finalize();
-#endif /* #ifdef HAVE_MUSIC */
-    else
-    {
-      LOG( M_INFO, "Communicator::finalize()", "Calling MPI_Abort() due to errors in the script." );
-      mpi_abort( exitcode );
-    }
-  }
 }
 
 void
@@ -769,39 +724,6 @@ nest::Communicator::communicate_connector_properties( DictionaryDatum& dict )
     }
   }
 }
-
-
-#ifdef HAVE_MUSIC // functions for interaction with MUSIC library
-MUSIC::Setup*
-nest::Communicator::get_music_setup()
-{
-  return music_setup;
-}
-
-MUSIC::Runtime*
-nest::Communicator::get_music_runtime()
-{
-  return music_runtime;
-}
-
-void
-nest::Communicator::enter_runtime( double_t h_min_delay )
-{
-  // MUSIC needs the step size in seconds
-  // std::cout << "nest::Communicator::enter_runtime\n";
-  // std::cout << "timestep = " << h_min_delay*1e-3 << std::endl;
-
-  if ( music_runtime == 0 )
-    music_runtime = new MUSIC::Runtime( music_setup, h_min_delay * 1e-3 );
-}
-
-void
-nest::Communicator::advance_music_time( long_t num_steps )
-{
-  for ( int s = 0; s < num_steps; s++ )
-    music_runtime->tick();
-}
-#endif /* #ifdef HAVE_MUSIC */
 
 #else /* #ifdef HAVE_MPI */
 

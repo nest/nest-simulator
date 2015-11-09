@@ -101,6 +101,12 @@ public:
    */
   thread get_process_id( thread vp ) const;
 
+  /**
+   * Finalize MPI communication (needs to be separate from MPIManager::finalize
+   * when compiled with MUSIC since spikes can arrive and handlers called here)
+   */
+  void mpi_finalize( int exitcode );
+
 private:
   int num_processes_; //!< number of MPI processes
   int rank_;          //!< rank of the MPI process

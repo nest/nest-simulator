@@ -31,7 +31,12 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
+// Includes from libnestutil:
+#include "compose.hpp"
+#include "logging.h"
 
+// Includes from nestkernel:
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -129,7 +134,7 @@ nest::music_cont_in_proxy::calibrate()
   // only publish the port once
   if ( !S_.published_ )
   {
-    MUSIC::Setup* s = nest::Communicator::get_music_setup();
+    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
     if ( s == 0 )
       throw MUSICSimulationHasRun( get_name() );
 

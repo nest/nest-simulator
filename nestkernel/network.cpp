@@ -89,10 +89,6 @@ Network::Network( SLIInterpreter& i )
   interpreter_.def( "modeldict", kernel().model_manager.get_modeldict()  );
   interpreter_.def( "synapsedict", kernel().model_manager.get_synapsedict()  );
   interpreter_.def( "connruledict", kernel().connection_builder_manager.get_connruledict() );
-
-#ifdef HAVE_MUSIC
-  music_in_portlist_.clear();
-#endif
 }
 
 Network::~Network()
@@ -112,10 +108,6 @@ Network::reset_kernel()
    */
 
   kernel().reset();
-  
-#ifdef HAVE_MUSIC
-  music_in_portlist_.clear();
-#endif
 }
 
 DictionaryDatum
@@ -141,89 +133,5 @@ Network::get_status( index idx )
   return d;
 }
 
-
-
-
-#ifdef HAVE_MUSIC
-void
-Network::register_music_in_port( std::string portname )
-{
-  std::map< std::string, MusicPortData >::iterator it;
-  it = music_in_portlist_.find( portname );
-  if ( it == music_in_portlist_.end() )
-    music_in_portlist_[ portname ] = MusicPortData( 1, 0.0, -1 );
-  else
-    music_in_portlist_[ portname ].n_input_proxies++;
-}
-
-void
-Network::unregister_music_in_port( std::string portname )
-{
-  std::map< std::string, MusicPortData >::iterator it;
-  it = music_in_portlist_.find( portname );
-  if ( it == music_in_portlist_.end() )
-    throw MUSICPortUnknown( portname );
-  else
-    music_in_portlist_[ portname ].n_input_proxies--;
-
-  if ( music_in_portlist_[ portname ].n_input_proxies == 0 )
-    music_in_portlist_.erase( it );
-}
-
-void
-Network::register_music_event_in_proxy( std::string portname, int channel, nest::Node* mp )
-{
-  std::map< std::string, MusicEventHandler >::iterator it;
-  it = music_in_portmap_.find( portname );
-  if ( it == music_in_portmap_.end() )
-  {
-    MusicEventHandler tmp( portname,
-      music_in_portlist_[ portname ].acceptable_latency,
-      music_in_portlist_[ portname ].max_buffered );
-    tmp.register_channel( channel, mp );
-    music_in_portmap_[ portname ] = tmp;
-  }
-  else
-    it->second.register_channel( channel, mp );
-}
-
-void
-Network::set_music_in_port_acceptable_latency( std::string portname, double latency )
-{
-  std::map< std::string, MusicPortData >::iterator it;
-  it = music_in_portlist_.find( portname );
-  if ( it == music_in_portlist_.end() )
-    throw MUSICPortUnknown( portname );
-  else
-    music_in_portlist_[ portname ].acceptable_latency = latency;
-}
-
-void
-Network::set_music_in_port_max_buffered( std::string portname, int_t maxbuffered )
-{
-  std::map< std::string, MusicPortData >::iterator it;
-  it = music_in_portlist_.find( portname );
-  if ( it == music_in_portlist_.end() )
-    throw MUSICPortUnknown( portname );
-  else
-    music_in_portlist_[ portname ].max_buffered = maxbuffered;
-}
-
-void
-Network::publish_music_in_ports_()
-{
-  std::map< std::string, MusicEventHandler >::iterator it;
-  for ( it = music_in_portmap_.begin(); it != music_in_portmap_.end(); ++it )
-    it->second.publish_port();
-}
-
-void
-Network::update_music_event_handlers_( Time const& origin, const long_t from, const long_t to )
-{
-  std::map< std::string, MusicEventHandler >::iterator it;
-  for ( it = music_in_portmap_.begin(); it != music_in_portmap_.end(); ++it )
-    it->second.update( origin, from, to );
-}
-#endif
 
 } // end of namespace

@@ -48,10 +48,6 @@
 #include <omp.h>
 #endif
 
-#ifdef HAVE_MUSIC
-#include "music_event_handler.h"
-#endif
-
 /**
  * @file network.h
  * Declarations for class Network.
@@ -133,83 +129,6 @@ public:
    * @throws nest::UnknownNode       Target does not exist in the network.
    */
   DictionaryDatum get_status( index );
-
-#ifdef HAVE_MUSIC
-public:
-  /**
-   * Register a MUSIC input port (portname) with the port list.
-   * This will increment the counter of the respective entry in the
-   * music_in_portlist.
-   */
-  void register_music_in_port( std::string portname );
-
-  /**
-   * Unregister a MUSIC input port (portname) from the port list.
-   * This will decrement the counter of the respective entry in the
-   * music_in_portlist and remove the entry if the counter is 0
-   * after decrementing it.
-   */
-  void unregister_music_in_port( std::string portname );
-
-  /**
-   * Register a node (of type music_input_proxy) with a given MUSIC
-   * port (portname) and a specific channel. The proxy will be
-   * notified, if a MUSIC event is being received on the respective
-   * channel and port.
-   */
-  void register_music_event_in_proxy( std::string portname, int channel, nest::Node* mp );
-
-  /**
-   * Set the acceptable latency (latency) for a music input port (portname).
-   */
-  void set_music_in_port_acceptable_latency( std::string portname, double_t latency );
-  void set_music_in_port_max_buffered( std::string portname, int_t maxbuffered );
-  /**
-   * Data structure to hold variables and parameters associated with a port.
-   */
-  struct MusicPortData
-  {
-    MusicPortData( size_t n, double_t latency, int_t m )
-      : n_input_proxies( n )
-      , acceptable_latency( latency )
-      , max_buffered( m )
-    {
-    }
-    MusicPortData()
-    {
-    }
-    size_t n_input_proxies; // Counter for number of music_input proxies
-                            // connected to this port
-    double_t acceptable_latency;
-    int_t max_buffered;
-  };
-
-  /**
-   * The mapping between MUSIC input ports identified by portname
-   * and the corresponding port variables and parameters.
-   * @see register_music_in_port()
-   * @see unregister_music_in_port()
-   */
-  std::map< std::string, MusicPortData > music_in_portlist_;
-
-  /**
-   * The mapping between MUSIC input ports identified by portname
-   * and the corresponding MUSIC event handler.
-   */
-  std::map< std::string, MusicEventHandler > music_in_portmap_;
-
-  /**
-   * Publish all MUSIC input ports that were registered using
-   * Network::register_music_event_in_proxy().
-   */
-  void publish_music_in_ports_();
-
-  /**
-   * Call update() for each of the registered MUSIC event handlers
-   * to deliver all queued events to the target music_in_proxies.
-   */
-  void update_music_event_handlers_( Time const&, const long_t, const long_t );
-#endif
 
 
 private:

@@ -340,8 +340,10 @@ ModelsModule::init( SLIInterpreter* )
      Name: stdp_spl_synapse_hom_hpc - Variant of stdp_spl_synapse_hom with low memory consumption.
      SeeAlso: synapsedict, stdp_spl_synapse_hom, static_synapse_hom_hpc
   */
-  register_connection_model< STDPSplConnectionHom< TargetIdentifierPtrRport > >( net_, "stdp_spl_synapse_hom" );
-  register_connection_model< STDPSplConnectionHom< TargetIdentifierIndex > >( net_, "stdp_spl_synapse_hom_hpc" );
+  register_connection_model< STDPSplConnectionHom< TargetIdentifierPtrRport > >(
+    net_, "stdp_spl_synapse_hom" );
+  register_connection_model< STDPSplConnectionHom< TargetIdentifierIndex > >(
+    net_, "stdp_spl_synapse_hom_hpc" );
 
   /* BeginDocumentation
      Name: stdp_pl_synapse_hom_hpc - Variant of stdp_pl_synapse_hom with low memory consumption.

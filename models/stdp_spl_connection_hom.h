@@ -111,8 +111,8 @@ public:
   double_t alpha_;
   double_t lambda_;
   double_t dt_;
-  double_t p_fail_;
   double_t w0_;
+  double_t p_fail_;
 
   double_t e_dtalpha_;
   double_t e_dt_tau_;
@@ -227,74 +227,74 @@ public:
   void
   set_weight( double_t w )
   {
-    for ( long_t i=0; i<n_conns_; i++ )
+    for ( long_t i = 0; i < n_conns_; i++ )
     {
-      w_jk_[i] = w;
+      w_jk_[ i ] = w;
     }
   }
 
 private:
-
-  void
-  propagate_(Network* net, const int vp, const STDPSplHomCommonProperties& cp )//double_t &r_post_before, double_t &R_post_before)
-  {  
+  void propagate_( Network* net,
+    const int vp,
+    const STDPSplHomCommonProperties& cp ) // double_t &r_post_before, double_t &R_post_before)
+  {
 
     // propagate all variables
-    for ( long_t i=0; i<n_conns_; i++ )
+    for ( long_t i = 0; i < n_conns_; i++ )
     {
-      
-      // decrease creation step timer      
-      if ( w_create_steps_[i] > 0 )
-      { 
+      // std::cout << i << " of " << n_conns_ << ", ";
+      // decrease creation step timer
+      if ( w_create_steps_[ i ] > 0 )
+      {
         // if this synapse gets created, set it to nonzero.
         // dynamics pick this up in the next time-step
-        if ( w_create_steps_[i] == 1 )
+        if ( w_create_steps_[ i ] == 1 )
         {
-          w_jk_[i] = cp.w0_;
+          w_jk_[ i ] = cp.w0_;
         }
-        
-        w_create_steps_[i]--;
+
+        w_create_steps_[ i ]--;
       }
       // EQ 1 only for nonzero synapses, i.e. created ones
       else
       {
+        w_jk_[ i ] *= exp( -cp.dt_ * cp.alpha_ );
+        w_jk_[ i ] += cp.A2_corr_ * c_jk_[ i ] - cp.A4_corr_ * pow( c_jk_[ i ], 2 )
+          - cp.A4_post_ * pow( R_post_, 4 );
         // delete synapse with negative or zero weights
-        if ( w_jk_[i] <= 0. )
-        { 
-          // generate an exponentially distributed number
-          w_create_steps_[i] = ceil( -std::log( net->get_rng( vp )->drandpos() ) / cp.lambda_ ); // random numbers are in ms == steps
-        }
-        else
+        if ( w_jk_[ i ] <= 0. )
         {
-          w_jk_[i] *= exp(-cp.dt_*cp.alpha_);
-          w_jk_[i] += cp.A2_corr_ * c_jk_[i] + cp.A4_corr_ * pow(c_jk_[i],2) + cp.A4_post_ * pow(r_jk_[i],4);
+          // generate an exponentially distributed number
+          w_create_steps_[ i ] = ceil( -std::log( net->get_rng( vp )->drandpos() )
+            / cp.lambda_ ); // random numbers are in ms == steps
+          // set synapse to equal zero
+          w_jk_[ i ] = 0.;
         }
       }
-      
+
       // EQ 2
-      c_jk_[i] *= exp(-cp.dt_/cp.tau_);
-      c_jk_[i] += cp.dt_ * (r_jk_[i] * (r_post_));
+      c_jk_[ i ] *= exp( -cp.dt_ / cp.tau_slow_ );
+      c_jk_[ i ] += cp.dt_ / cp.tau_slow_ * ( r_jk_[ i ] * r_post_ );
       // EQ 4
-      r_jk_[i] *= exp(-cp.dt_/cp.tau_);
+      r_jk_[ i ] *= exp( -cp.dt_ / cp.tau_ );
     }
-    r_post_ *= exp(-cp.dt_/cp.tau_);
-    R_post_ *= exp(-cp.dt_/cp.tau_);
+    r_post_ *= exp( -cp.dt_ / cp.tau_ );
+    R_post_ *= exp( -cp.dt_ / cp.tau_slow_ );
   }
 
   // data members of each connection
-   
+
   long_t n_conns_;
   // weights of this connection
-  std::vector< double_t >  w_jk_;
+  std::vector< double_t > w_jk_;
   // steps until creation of new weight
-  std::vector< long_t >  w_create_steps_;
+  std::vector< long_t > w_create_steps_;
 
   // traces
-  std::vector< double_t >  c_jk_;
-  std::vector< double_t >  r_jk_;
+  std::vector< double_t > c_jk_;
+  std::vector< double_t > r_jk_;
   double_t R_post_;
   double_t r_post_;
-
 };
 
 /**
@@ -327,62 +327,65 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
 
   while ( start != finish )
   {
-    
+
     double_t delta = start->t_ - t_last_postspike;
-
-    std::cout << "time0: " << t_last_postspike << "\n";
-    std::cout << "time1: " << start->t_ << "\n";
-    std::cout << "delta: " << delta << "\n";
-
     if ( delta == 0 )
     {
       t_last_postspike = start->t_;
       ++start;
       continue;
     }
-      
-    std::cout << "r_post from neuron: " << r_post_ << "\n";
-    std::cout << "R_post from neuron: " << R_post_ << "\n";
-    std::cout << "w_jk_: " << w_jk_[0] << "\n---->\n";
 
-    // update iteratively all variables in the time start -> 
-    for ( long_t k=0; k<floor(delta); k++ )
+    // std::cout << "r_post from neuron: " << r_post_ << "\n";
+    // std::cout << "R_post from neuron: " << R_post_ << "\n";
+    // std::cout << "w_jk_: " << w_jk_[0] << "\n---->\n";
+
+    // update iteratively all variables in the time start ->
+    for ( long_t k = 0; k < floor( delta ); k++ )
     {
-      propagate_(net, vp, cp);
+      propagate_( net, vp, cp );
     }
 
     t_last_postspike = start->t_;
     ++start;
 
-    std::cout << "r_post after decay: " << r_post_ << "\n";
-    std::cout << "R_post after decay: " << R_post_ << "\n";
-    std::cout << "w_jk_ after decay: " << w_jk_[0] << "\n\n";
-    
+    // std::cout << "r_post after decay: " << r_post_ << "\n";
+    // std::cout << "R_post after decay: " << R_post_ << "\n";
+    // std::cout << "w_jk_ after decay: " << w_jk_[0] << "\n\n";
+
     // update postsynaptic traces
-    r_post_ += 1./cp.tau_;
-    R_post_ += 1./cp.tau_slow_;
+    r_post_ += 1. / cp.tau_;
+    R_post_ += 1. / cp.tau_slow_;
   }
 
-  double_t remaing_delta_ = t_spike - t_last_postspike;
-  for ( long_t k=0; k<floor(remaing_delta_); k++ )
+  double_t remaining_delta_ = t_spike - t_last_postspike;
+  for ( long_t k = 0; k < floor( remaining_delta_ ); k++ )
   {
-    propagate_(net, vp, cp);
+    propagate_( net, vp, cp );
   }
-  
-  // spike failure at rate 20%, i.e. presynaptic traces only get updated by this spike
-  // in 80% of the transmitted spikes.
-  double_t rr;
-  for ( long_t i=0; i<n_conns_; i++ )
+
+  // spike failure at rate p_fail, i.e. presynaptic traces only get updated by this spike
+  // in 1-p_fail of the transmitted spikes.
+  double_t weight_tot = 0.;
+  for ( long_t i = 0; i < n_conns_; i++ )
   {
-    rr = net->get_rng( vp )->drand();
+    double_t rr = net->get_rng( vp )->drand();
+
     if ( rr > cp.p_fail_ )
     {
-      r_jk_[i] += 1./cp.tau_;
+      r_jk_[ i ] += 1. / cp.tau_;
+
+      // count only existing synapses to total weight
+      // only transmitted for successful spikes
+      if ( w_jk_[ i ] >= 0. )
+      {
+        weight_tot += w_jk_[ i ];
+      }
     }
   }
 
   e.set_receiver( *target );
-  e.set_weight( 1. );
+  e.set_weight( weight_tot );
   e.set_delay( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
@@ -394,10 +397,10 @@ STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom()
   : ConnectionBase()
   , n_conns_( 1 )
 {
-  w_jk_.resize(n_conns_,.1);
-  w_create_steps_.resize(n_conns_,0);
-  r_jk_.resize(n_conns_,0.);
-  c_jk_.resize(n_conns_,0.);
+  w_jk_.resize( n_conns_, .1 );
+  w_create_steps_.resize( n_conns_, 0 );
+  r_jk_.resize( n_conns_, 0. );
+  c_jk_.resize( n_conns_, 0. );
   r_post_ = 0.;
   R_post_ = 0.;
 }
@@ -408,6 +411,12 @@ STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom(
   : ConnectionBase( rhs )
   , n_conns_( rhs.n_conns_ )
 {
+  w_jk_ = rhs.w_jk_;
+  w_create_steps_ = rhs.w_create_steps_;
+  r_jk_ = rhs.r_jk_;
+  c_jk_ = rhs.c_jk_;
+  r_post_ = rhs.r_post_;
+  R_post_ = rhs.R_post_;
 }
 
 template < typename targetidentifierT >
@@ -416,12 +425,12 @@ STDPSplConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) cons
 {
   ConnectionBase::get_status( d );
   def< long_t >( d, "n_pot_conns", n_conns_ );
-  def< std::vector< double_t > >( d, "weights", w_jk_ );
-  def< double_t >( d, "r_post", r_post_ );   
-  def< double_t >( d, "R_post", R_post_ );   
+  def< std::vector< double_t > >( d, "w_jk", w_jk_ );
+  def< double_t >( d, "r_post", r_post_ );
+  def< double_t >( d, "R_post", R_post_ );
   def< std::vector< double_t > >( d, "c_jk", c_jk_ );
   def< std::vector< double_t > >( d, "r_jk", r_jk_ );
-  def< std::vector< long_t > >( d, "w_create_steps", w_create_steps_ );   
+  def< std::vector< long_t > >( d, "w_create_steps", w_create_steps_ );
 }
 
 template < typename targetidentifierT >
@@ -430,20 +439,62 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< long_t >( d, "n_pot_conns", n_conns_ );
+  bool n_updated = updateValue< long_t >( d, "n_pot_conns", n_conns_ );
+  updateValue< long_t >( d, "r_post", r_post_ );
+  updateValue< long_t >( d, "R_post", R_post_ );
 
-  if ( not( n_conns_ > 0) )
+  if ( not( n_conns_ > 0 ) )
   {
     throw BadProperty( "Number of potential connections must be positive" );
   }
 
-  w_jk_.resize(n_conns_,.1);
-  w_create_steps_.resize(n_conns_,0);
+  if ( n_updated == true )
+  {
+    w_jk_.resize( n_conns_, .1 );
+    w_create_steps_.resize( n_conns_, 0 );
+    r_jk_.resize( n_conns_, 0. );
+    c_jk_.resize( n_conns_, 0. );
+  }
 
-  r_jk_.resize(n_conns_,0.);
-  c_jk_.resize(n_conns_,0.);
-  r_post_ = 0.;
-  R_post_ = 0.;
+  std::vector< double_t > r_jk_tmp;
+  if ( updateValue< std::vector< double > >( d, "r_jk", r_jk_tmp ) )
+  {
+    if ( r_jk_tmp.size() != ( unsigned ) n_conns_ )
+    {
+      throw BadProperty( "Size of r_jk must be equal to n_pot_conns" );
+    }
+    r_jk_ = r_jk_tmp;
+  }
+
+  std::vector< double_t > c_jk_tmp;
+  if ( updateValue< std::vector< double > >( d, "c_jk", c_jk_tmp ) )
+  {
+    if ( c_jk_tmp.size() != ( unsigned ) n_conns_ )
+    {
+      throw BadProperty( "Size of c_jk must be equal to n_pot_conns" );
+    }
+    c_jk_ = c_jk_tmp;
+  }
+
+  std::vector< double_t > w_jk_tmp;
+  if ( updateValue< std::vector< double > >( d, "w_jk", w_jk_tmp ) )
+  {
+    if ( w_jk_tmp.size() != ( unsigned ) n_conns_ )
+    {
+      throw BadProperty( "Size of w_jk must be equal to n_pot_conns" );
+    }
+    w_jk_ = w_jk_tmp;
+  }
+
+  std::vector< long_t > w_create_steps_tmp;
+  if ( updateValue< std::vector< long_t > >( d, "w_create_steps", w_create_steps_tmp ) )
+  {
+    if ( w_create_steps_tmp.size() != ( unsigned ) n_conns_ )
+    {
+      throw BadProperty( "Size of w_create_steps must be equal to n_pot_conns" );
+    }
+    w_create_steps_ = w_create_steps_tmp;
+  }
 }
 
 } // of namespace nest

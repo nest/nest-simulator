@@ -72,6 +72,9 @@ public:
   using Node::handle;
 
   port send_test_event( Node&, rport, synindex, bool );
+
+  void sends_secondary_event( GapJEvent& );
+
   void
   handle( SpikeEvent& )
   {

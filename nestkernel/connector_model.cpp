@@ -27,7 +27,10 @@
 namespace nest
 {
 
-ConnectorModel::ConnectorModel( Network& net, const std::string name )
+ConnectorModel::ConnectorModel( Network& net,
+  const std::string name,
+  bool is_primary,
+  bool has_delay )
   : net_( net )
   , min_delay_( Time::pos_inf() )
   , max_delay_( Time::neg_inf() )
@@ -35,6 +38,8 @@ ConnectorModel::ConnectorModel( Network& net, const std::string name )
   , default_delay_needs_check_( true )
   , user_set_delay_extrema_( false )
   , name_( name )
+  , is_primary_( is_primary )
+  , has_delay_( has_delay )
 {
 }
 
@@ -46,6 +51,8 @@ ConnectorModel::ConnectorModel( const ConnectorModel& cm, const std::string name
   , default_delay_needs_check_( true )
   , user_set_delay_extrema_( cm.user_set_delay_extrema_ )
   , name_( name )
+  , is_primary_( cm.is_primary_ )
+  , has_delay_( cm.has_delay_ )
 {
   min_delay_.calibrate(); // in case of change in resolution
   max_delay_.calibrate();

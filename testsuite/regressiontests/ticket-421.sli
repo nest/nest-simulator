@@ -50,7 +50,7 @@ Author: Hans Ekkehard Plesser, 2010-05-05
 % steady state
 /exclude_models [/aeif_cond_exp /aeif_cond_alpha /aeif_cond_alpha_RK5 /a2eif_cond_exp /a2eif_cond_exp_HW /aeif_cond_alpha_multisynapse
                  /hh_cond_exp_traub
-                 /hh_psc_alpha /ht_neuron /ht_neuron_fs /iaf_cond_exp_sfa_rr /izhikevich] def
+                 /hh_psc_alpha /hh_psc_alpha_gap /ht_neuron /ht_neuron_fs /iaf_cond_exp_sfa_rr /izhikevich] def
 
 % use power-of-two resolution to avoid roundof problems
 /res -3 dexp def
@@ -77,8 +77,8 @@ M_WARNING setverbosity
       /n model Create def
       res Simulate
 
-      % check membrane potential for exact equality
-      n /V_m get Vm0 eq
+      % check membrane potential for equality
+      n /V_m get Vm0 sub abs 1e-13 lt
 
       dup 
       { (*** OK: ) model cvs join ( *** ) join == } 

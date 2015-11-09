@@ -49,6 +49,7 @@
 #include "amat2_psc_exp.h"
 #include "hh_cond_exp_traub.h"
 #include "hh_psc_alpha.h"
+#include "hh_psc_alpha_gap.h"
 #include "ht_neuron.h"
 #include "iaf_chs_2007.h"
 #include "iaf_chxk_2008.h"
@@ -117,6 +118,7 @@
 #include "stdp_connection_facetshw_hom_impl.h"
 #include "stdp_pl_connection_hom.h"
 #include "stdp_dopa_connection.h"
+#include "gap_junction.h"
 #include "ht_connection.h"
 #include "spike_dilutor.h"
 
@@ -278,6 +280,7 @@ ModelsModule::init( SLIInterpreter* )
   register_model< iaf_cond_exp_sfa_rr >( net_, "iaf_cond_exp_sfa_rr" );
   register_model< iaf_cond_alpha_mc >( net_, "iaf_cond_alpha_mc" );
   register_model< hh_psc_alpha >( net_, "hh_psc_alpha" );
+  register_model< hh_psc_alpha_gap >( net_, "hh_psc_alpha_gap" );
   register_model< hh_cond_exp_traub >( net_, "hh_cond_exp_traub" );
   register_model< sinusoidal_gamma_generator >( net_, "sinusoidal_gamma_generator" );
 #endif
@@ -326,6 +329,8 @@ ModelsModule::init( SLIInterpreter* )
     net_, "static_synapse_hom_w" );
   register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
     net_, "static_synapse_hom_w_hpc" );
+  register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
+    net_, "gap_junction", false );
 
 
   /* BeginDocumentation

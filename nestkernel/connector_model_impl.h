@@ -469,7 +469,7 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
     // delete the first Connection corresponding to the target
     for ( size_t i = 0; i < vc->size(); i++ )
     {
-      ConnectionT* connection = &vc->operator[]( i );
+      ConnectionT* connection = &vc->at( i );
       if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
       {
         conn = &vc->erase( i );
@@ -496,7 +496,7 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
         // Find and delete the first Connection corresponding to the target
         for ( size_t j = 0; j < vc->size(); j++ )
         {
-          ConnectionT* connection = &vc->operator[]( j );
+          ConnectionT* connection = &vc->at( j );
           if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
           {
             // Get rid of the ConnectionBase for this type of synapse if there is only this element

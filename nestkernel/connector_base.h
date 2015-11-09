@@ -95,16 +95,14 @@ suicide_and_resurrect( Told* connector, size_t i )
 }
 
 template < typename Tnew, typename Told >
-inline Tnew*
+inline void
 suicide( Told* connector )
 {
-  Tnew* p = 0;
 #ifdef USE_PMA
   connector->~Told();
 #else
   delete connector; // suicide
 #endif
-  return p;
 }
 
 // when to truncate the recursive instantiation
@@ -188,7 +186,7 @@ public:
   virtual ConnectorBase& push_back( const ConnectionT& c ) = 0;
   virtual ConnectorBase& erase( size_t i ) = 0;
   virtual size_t size() = 0;
-  virtual ConnectionT& operator[]( size_t i ) = 0;
+  virtual ConnectionT& at( size_t i ) = 0;
 };
 
 // homogeneous connector containing K entries
@@ -322,9 +320,13 @@ public:
    * @param i the index of the connection to be retrieved.
    * @return The connection stored at position i.
    */
-  ConnectionT& operator[]( size_t i )
+  ConnectionT&
+  at( size_t i )
   {
-    assert( i < K && i >= 0 );
+    if ( i >= K || i < 0 )
+    {
+      throw std::out_of_range( "Invalid attempt to access a connection at an out of range index" );
+    }
     return C_[ i ];
   }
 
@@ -519,7 +521,9 @@ public:
   ConnectorBase& erase( size_t )
   {
     // Should destroy the Connector
-    return *suicide< Connector< 1, ConnectionT > >( this );
+    suicide< Connector< 1, ConnectionT > >( this );
+    ConnectorBase* p = 0;
+    return *p;
   }
 
   size_t
@@ -528,9 +532,14 @@ public:
     return 1;
   }
 
-  ConnectionT& operator[]( size_t i )
+  ConnectionT&
+  at( size_t i )
   {
-    assert( i == 0 );
+
+    if ( i != 0 )
+    {
+      throw std::out_of_range( "Invalid attempt to access a connection at an out of range index" );
+    }
     return C_[ i ];
   }
 
@@ -733,9 +742,11 @@ public:
     return C_.size();
   }
 
-  ConnectionT& operator[]( size_t i )
+  ConnectionT&
+  at( size_t i )
   {
-    assert( i < C_.size() && i >= 0 );
+    if ( i >= C_.size() || i < 0 )
+      throw std::out_of_range( "Invalid attempt to access a connection at an out of range index" );
     return C_[ i ];
   }
 

@@ -26,7 +26,7 @@
 /* BeginDocumentation
   Name: stdp_spl_synapse
 
-  All time units are ms!
+  All time units are seconds!
 
   FirstVersion: Nov 2015
   Author: Alexander Seeholzer, Moritz Deger
@@ -217,14 +217,14 @@ private:
       else
       {
         w_jk_[ i ] *= cp.e_dt_alpha_; 
-        w_jk_[ i ] += cp.A2_corr_ * c_jk_[ i ] - cp.A4_corr_ * pow( c_jk_[ i ], 2 )
-          - cp.A4_post_ * pow( R_post_, 4 );
+        w_jk_[ i ] += ( cp.A2_corr_ * c_jk_[ i ] - cp.A4_corr_ * pow( c_jk_[ i ], 2 )
+          - cp.A4_post_ * pow( R_post_, 4 ) * cp.dt_ );
         // delete synapse with negative or zero weights
         if ( w_jk_[ i ] <= 0. )
         {
           // generate an exponentially distributed number
           w_create_steps_[ i ] = ceil( -std::log( rng_->drandpos() )
-            / cp.lambda_ ); // random numbers are in ms == steps
+            / (cp.lambda_*1e-3) ); // random numbers are in ms == steps
           // set synapse to equal zero
           w_jk_[ i ] = 0.;
         }

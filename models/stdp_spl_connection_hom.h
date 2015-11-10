@@ -204,19 +204,17 @@ private:
     // propagate all variables
     for ( long_t i = 0; i < n_conns_; i++ )
     {
-      // std::cout << i << " of " << n_conns_ << ", ";
-      // decrease creation step timer
-      if ( w_create_steps_[ i ] > 0 )
-      {
-        // if this synapse gets created, set it to nonzero.
-        // dynamics pick this up in the next time-step
-        if ( w_create_steps_[ i ] == 1 )
-        {
-          w_jk_[ i ] = cp.w0_;
-        }
 
+      // decrease creation step timer
+      if ( w_create_steps_[ i ] > 1 )
+      {
         w_create_steps_[ i ]--;
       }
+      else if ( w_create_steps_[ i ] == 1 )
+        {
+          w_jk_[ i ] = cp.w0_;
+          w_create_steps_[ i ]--;
+        }
       // EQ 1 only for nonzero synapses, i.e. created ones
       else
       {

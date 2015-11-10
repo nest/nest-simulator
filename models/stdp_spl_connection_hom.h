@@ -290,8 +290,7 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
   target->get_history( t_lastspike, t_spike, &start, &finish );
 
   Network* net = Node::network();
-  const int vp = get_target( t )->get_vp();
-  rng_ = net->get_rng( vp );
+  rng_ = net->get_rng( target->get_vp() );
 
   double_t t_last_postspike = t_lastspike;
 
@@ -359,12 +358,15 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
       }
     }
   }
-
-  e.set_receiver( *target );
-  e.set_weight( weight_tot );
-  e.set_delay( get_delay_steps() );
-  e.set_rport( get_rport() );
-  e();
+  // only send the spike if it has a nonzero total weight
+  if ( weight_tot > 0. ) 
+    {
+    e.set_receiver( *target );
+    e.set_weight( weight_tot );
+    e.set_delay( get_delay_steps() );
+    e.set_rport( get_rport() );
+    e();
+    }
 }
 
 // Defaults come from reference [1] data fitting and table 3.

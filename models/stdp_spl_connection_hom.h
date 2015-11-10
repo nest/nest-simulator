@@ -26,8 +26,10 @@
 /* BeginDocumentation
   Name: stdp_spl_synapse
 
+  All time units are ms!
+
   FirstVersion: Nov 2015
-  Author: Alexander Seeholzer
+  Author: Alexander Seeholzer, Moritz Deger
   SeeAlso: stdp_spl_synapse_hpc, stdp_synapse, static_synapse
 */
 
@@ -74,7 +76,7 @@ public:
   double_t w0_;
   double_t p_fail_;
 
-  double_t e_dtalpha_;
+  double_t e_dt_alpha_;
   double_t e_dt_tau_;
   double_t e_dt_tau_slow_;
   double_t tau_m1_;
@@ -196,7 +198,7 @@ public:
 private:
   void propagate_( Network* net,
     const int vp,
-    const STDPSplHomCommonProperties& cp ) // double_t &r_post_before, double_t &R_post_before)
+    const STDPSplHomCommonProperties& cp ) 
   {
 
     // propagate all variables
@@ -218,7 +220,7 @@ private:
       // EQ 1 only for nonzero synapses, i.e. created ones
       else
       {
-        w_jk_[ i ] *= exp( -cp.dt_ * cp.alpha_ );
+        w_jk_[ i ] *= cp.e_dt_alpha_; 
         w_jk_[ i ] += cp.A2_corr_ * c_jk_[ i ] - cp.A4_corr_ * pow( c_jk_[ i ], 2 )
           - cp.A4_post_ * pow( R_post_, 4 );
         // delete synapse with negative or zero weights
@@ -233,13 +235,13 @@ private:
       }
 
       // EQ 2
-      c_jk_[ i ] *= exp( -cp.dt_ / cp.tau_slow_ );
+      c_jk_[ i ] *= cp.e_dt_tau_slow_;
       c_jk_[ i ] += cp.dt_ / cp.tau_slow_ * ( r_jk_[ i ] * r_post_ );
       // EQ 4
-      r_jk_[ i ] *= exp( -cp.dt_ / cp.tau_ );
+      r_jk_[ i ] *= cp.e_dt_tau_;
     }
-    r_post_ *= exp( -cp.dt_ / cp.tau_ );
-    R_post_ *= exp( -cp.dt_ / cp.tau_slow_ );
+    r_post_ *= cp.e_dt_tau_;
+    R_post_ *= cp.e_dt_tau_slow_;
   }
 
   // data members of each connection
@@ -400,8 +402,8 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
 {
   ConnectionBase::set_status( d, cm );
   bool n_updated = updateValue< long_t >( d, "n_pot_conns", n_conns_ );
-  updateValue< long_t >( d, "r_post", r_post_ );
-  updateValue< long_t >( d, "R_post", R_post_ );
+  updateValue< double_t >( d, "r_post", r_post_ );
+  updateValue< double_t >( d, "R_post", R_post_ );
 
   if ( not( n_conns_ > 0 ) )
   {

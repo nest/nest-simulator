@@ -79,8 +79,9 @@ public:
   double_t e_dt_alpha_;
   double_t e_dt_tau_;
   double_t e_dt_tau_slow_;
-  double_t tau_m1_;
-  double_t tau_slow_m1_;
+  double_t e_dt_alpha_1m_;
+  double_t e_dt_tau_1m_;
+  double_t e_dt_tau_slow_1m_;
 };
 
 // connections are templates of target identifier type
@@ -216,9 +217,16 @@ private:
       // EQ 1 only for nonzero synapses, i.e. created ones
       else
       {
-        w_jk_[ i ] *= cp.e_dt_alpha_; 
-        w_jk_[ i ] += ( cp.A2_corr_ * c_jk_[ i ] - cp.A4_corr_ * pow( c_jk_[ i ], 2 )
-          - cp.A4_post_ * pow( R_post_, 4 ) * cp.dt_ );
+//        // exact intagration does not work here because alpha is too small,
+//        // cp.e_dt_alpha_1m_ is typically equal to zero.
+//        w_jk_[ i ] *= cp.e_dt_alpha_; 
+//        w_jk_[ i ] += ( cp.A2_corr_ * c_jk_[ i ] - cp.A4_corr_ * pow( c_jk_[ i ], 2 )
+//          - cp.A4_post_ * pow( R_post_, 4 ) * cp.e_dt_alpha_1m_ / cp.alpha_ );
+        // so we use the forward-Euler method
+        w_jk_[ i ] = w_jk_[ i ] + cp.dt_ * 
+          ( cp.A2_corr_ * c_jk_[ i ] - cp.A4_corr_ * pow( c_jk_[ i ], 2 )
+          - cp.A4_post_ * pow( R_post_, 4 ) - cp.alpha_ * w_jk_[ i ] );
+
         // delete synapse with negative or zero weights
         if ( w_jk_[ i ] <= 0. )
         {
@@ -232,7 +240,7 @@ private:
 
       // EQ 2
       c_jk_[ i ] *= cp.e_dt_tau_slow_;
-      c_jk_[ i ] += cp.dt_ / cp.tau_slow_ * ( r_jk_[ i ] * r_post_ );
+      c_jk_[ i ] += cp.e_dt_tau_slow_1m_ * ( r_jk_[ i ] * r_post_ );
       // EQ 4
       r_jk_[ i ] *= cp.e_dt_tau_;
     }

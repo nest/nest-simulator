@@ -296,7 +296,7 @@ class SplSynapseTestCase(unittest.TestCase):
         c_jk = np.zeros(201)
         for i in range(1, 201):
             c_jk[i] = c_jk[i-1] * np.exp(-dt/tau_slow)
-            c_jk[i] = c_jk[i] + dt/tau_slow * (r_post[i-1] * r_jk[i-1])
+            c_jk[i] = c_jk[i] + (-np.expm1(-dt/tau_slow)) * (r_post[i-1] * r_jk[i-1])
 
         w_jk = np.zeros(201)
         w_jk[0] = 1.

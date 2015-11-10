@@ -317,7 +317,7 @@ class SplSynapseTestCase(unittest.TestCase):
             'A4_corr': 1e8,
             'A4_post': 0.,
             'alpha': 0.,
-            'lambda': 1./30.,
+            'lambda': 1./30.*1e3,  # units in [s]
         })
 
         # this seed lets the first spike on syn 0 and the second spike on syn 1 pass

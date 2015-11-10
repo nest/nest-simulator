@@ -412,6 +412,13 @@ nest::pp_psc_delta::update( Time const& origin, const long_t from, const long_t 
           SpikeEvent se;
           se.set_multiplicity( n_spikes );
           network()->send( *this, se, lag );
+          
+          // set spike time for STDP to work, 
+          // see https://github.com/nest/nest-simulator/issues/77
+          for ( uint_t i = 0; i < n_spikes; i++ )
+          {
+            set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+          }
 
           // Reset the potential if applicable
           if ( P_.with_reset_ )

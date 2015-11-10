@@ -173,7 +173,7 @@ class SplSynapseTestCase(unittest.TestCase):
         """Stochastic and selective increase of r_jk, plus decay"""
         self.setUp_decay(params={'p_fail': .2, 'n_pot_conns': 2})
 
-        # this seed lets the first spike on syn 0 and the second spike on syn 1 pass 
+        # this seed lets the first spike on syn 0 and the second spike on syn 1 pass
         msd = 4
         N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
         nest.SetKernelStatus({'grng_seed': msd + N_vp})
@@ -204,7 +204,7 @@ class SplSynapseTestCase(unittest.TestCase):
         syn_defaults = nest.GetDefaults('testsyn')
         w0 = syn_defaults['w0']
 
-        # this seed lets the first spike on syn 0 and the second spike on syn 1 pass 
+        # this seed lets the first spike on syn 0 and the second spike on syn 1 pass
         msd = 4
         N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
         nest.SetKernelStatus({'grng_seed': msd + N_vp})
@@ -541,6 +541,133 @@ class SplSynapseTestCase(unittest.TestCase):
         """Improve assetAlmostEqual with detailed message. by Teo Stocco."""
         messageWithValues = "%s (expected: `%s` was: `%s`" % (message, str(expected), str(given))
         self.assertAlmostEqual(given, expected, msg=messageWithValues)
+
+    def test_spike_multiplicity_pre(self):
+        """Multiplicity of presynpatic spikes is correcly reproduced"""
+
+        """ TODO add here true spike multiplicity. right now this just sends multiple spikes in the same timestep"""
+        nest.set_verbosity("M_WARNING")
+        nest.ResetKernel()
+        nest.SetKernelStatus({"resolution": 1.})
+
+        # set pre and postsynaptic spike times
+        delay = 1.  # delay for connections
+
+        # set the correct real spike times for generators (correcting for delays)
+        pre_times = [100. - delay, 200. - delay]
+        post_times = [150. - delay]
+
+        # create parrot neurons and connect spike_generators
+        self.pre_parrot = nest.Create("parrot_neuron", 1)
+        self.post_parrot = nest.Create("parrot_neuron", 1)
+
+        # create spike_generators with these times
+        pre_spikes = nest.Create("spike_generator", 1, {"spike_times": pre_times})
+        post_spikes = nest.Create("spike_generator", 1, {"spike_times": post_times})
+
+        # connect twice
+        nest.Connect(pre_spikes, self.pre_parrot, syn_spec={"delay": delay})
+        nest.Connect(pre_spikes, self.pre_parrot, syn_spec={"delay": delay})
+        nest.Connect(post_spikes, self.post_parrot, syn_spec={"delay": delay})
+
+        pars = {
+            'p_fail': 0.,
+            'n_pot_conns': 1,
+            'tau': 10.
+        }
+        nest.CopyModel('stdp_spl_synapse_hom', 'testsyn', pars)
+
+        syn_spec = {
+           "model": "testsyn",
+           "receptor_type": 1,
+        }
+
+        conn_spec = {
+           "rule": "all_to_all",
+        }
+
+        # two syns, different number of potential conns
+        nest.Connect(self.pre_parrot, self.post_parrot, syn_spec=syn_spec, conn_spec=conn_spec)
+        syn = nest.GetConnections(source=self.pre_parrot, synapse_model="testsyn")
+
+        nest.Simulate(150.)
+
+        syn_defaults = nest.GetDefaults('testsyn')
+        val_exp = 1./syn_defaults['tau'] * 2.
+        val = nest.GetStatus(syn)[0]['r_jk'][0]
+        self.assertAlmostEqualDetailed(val_exp, val, "Multiple presynaptic spikes not treated properly")
+
+    def test_spike_multiplicity_post(self):
+        """Multiplicity of postsynaptic spikes is correcly reproduced"""
+
+        """ TODO add here true spike multiplicity. right now this just sends multiple spikes in the same timestep"""
+        nest.set_verbosity("M_WARNING")
+        nest.ResetKernel()
+        nest.SetKernelStatus({"resolution": 1.})
+
+        # set pre and postsynaptic spike times
+        delay = 1.  # delay for connections
+
+        # set the correct real spike times for generators (correcting for delays)
+        pre_times = [100. - delay, 200. - delay]
+        post_times = [150. - delay]
+
+        # create parrot neurons and connect spike_generators
+        self.pre_parrot = nest.Create("parrot_neuron", 1)
+        self.post_parrot = nest.Create("parrot_neuron", 1)
+
+        # create spike_generators with these times
+        pre_spikes = nest.Create("spike_generator", 1, {"spike_times": pre_times})
+        post_spikes = nest.Create("spike_generator", 1, {"spike_times": post_times})
+
+        # connect twice
+        nest.Connect(pre_spikes, self.pre_parrot, syn_spec={"delay": delay})
+        nest.Connect(post_spikes, self.post_parrot, syn_spec={"delay": delay})
+        nest.Connect(post_spikes, self.post_parrot, syn_spec={"delay": delay})
+
+        pars = {
+            'p_fail': 0.,
+            'n_pot_conns': 1,
+            'tau': 10.
+        }
+        nest.CopyModel('stdp_spl_synapse_hom', 'testsyn', pars)
+
+        syn_spec = {
+           "model": "testsyn",
+           "receptor_type": 1,
+        }
+
+        conn_spec = {
+           "rule": "all_to_all",
+        }
+
+        # two syns, different number of potential conns
+        nest.Connect(self.pre_parrot, self.post_parrot, syn_spec=syn_spec, conn_spec=conn_spec)
+        syn = nest.GetConnections(source=self.pre_parrot, synapse_model="testsyn")
+
+        nest.Simulate(210.)
+
+        syn_defaults = nest.GetDefaults('testsyn')
+        tau = syn_defaults['tau']
+        tau_slow = syn_defaults['tau_slow']
+        dt = syn_defaults['dt']
+
+        val_exp_r_post = 1./syn_defaults['tau'] * 2. * np.exp(-dt/tau)**50.
+        val_r_post = nest.GetStatus(syn)[0]['r_post']
+
+        val_exp_R_post = 1./syn_defaults['tau_slow'] * 2. * np.exp(-dt/tau_slow)**50.
+        val_R_post = nest.GetStatus(syn)[0]['R_post']
+
+        self.assertAlmostEqualDetailed(
+            val_exp_r_post,
+            val_r_post,
+            "r_post does not integrate multiple postsynaptic spikes properly"
+        )
+        self.assertAlmostEqualDetailed(
+            val_exp_R_post,
+            val_R_post,
+            "R_post does not integrate multiple postsynaptic spikes properly"
+        )
 
 
 def suite():

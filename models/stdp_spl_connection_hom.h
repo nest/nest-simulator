@@ -196,9 +196,7 @@ public:
   }
 
 private:
-  void propagate_( Network* net,
-    const int vp,
-    const STDPSplHomCommonProperties& cp ) 
+  void propagate_( const STDPSplHomCommonProperties& cp ) 
   {
 
     // propagate all variables
@@ -225,7 +223,7 @@ private:
         if ( w_jk_[ i ] <= 0. )
         {
           // generate an exponentially distributed number
-          w_create_steps_[ i ] = ceil( -std::log( net->get_rng( vp )->drandpos() )
+          w_create_steps_[ i ] = ceil( -std::log( rng_->drandpos() )
             / cp.lambda_ ); // random numbers are in ms == steps
           // set synapse to equal zero
           w_jk_[ i ] = 0.;
@@ -255,6 +253,9 @@ private:
   std::vector< double_t > r_jk_;
   double_t R_post_;
   double_t r_post_;
+  
+  // Random number generator pointer
+  librandom::RngPtr rng_;
 };
 
 /**
@@ -280,10 +281,11 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
   std::deque< histentry >::iterator finish;
   target->get_history( t_lastspike, t_spike, &start, &finish );
 
-  double_t t_last_postspike = t_lastspike;
-
   Network* net = Node::network();
   const int vp = get_target( t )->get_vp();
+  rng_ = net->get_rng( vp );
+
+  double_t t_last_postspike = t_lastspike;
 
   while ( start != finish )
   {
@@ -303,7 +305,7 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
     // update iteratively all variables in the time start ->
     for ( long_t k = 0; k < floor( delta ); k++ )
     {
-      propagate_( net, vp, cp );
+      propagate_( cp );
     }
 
     t_last_postspike = start->t_;
@@ -321,7 +323,7 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
   double_t remaining_delta_ = t_spike - t_last_postspike;
   for ( long_t k = 0; k < floor( remaining_delta_ ); k++ )
   {
-    propagate_( net, vp, cp );
+    propagate_( cp );
   }
 
   // spike failure at rate p_fail, i.e. presynaptic traces only get updated by this spike
@@ -329,7 +331,7 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
   double_t weight_tot = 0.;
   for ( long_t i = 0; i < n_conns_; i++ )
   {
-    double_t rr = net->get_rng( vp )->drand();
+    double_t rr = rng_->drand();
 
     if ( rr > cp.p_fail_ )
     {
@@ -402,6 +404,7 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
+
   bool n_updated = updateValue< long_t >( d, "n_pot_conns", n_conns_ );
   updateValue< double_t >( d, "r_post", r_post_ );
   updateValue< double_t >( d, "R_post", R_post_ );

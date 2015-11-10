@@ -336,19 +336,22 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
       r_jk_[ i ] += 1. / cp.tau_;
 
       // count only existing synapses to total weight
-      // only transmitted for successful spikes
-      if ( w_jk_[ i ] >= 0. )
+      if ( w_jk_[ i ] > 0. )
       {
         weight_tot += w_jk_[ i ];
       }
     }
   }
 
-  e.set_receiver( *target );
-  e.set_weight( weight_tot );
-  e.set_delay( get_delay_steps() );
-  e.set_rport( get_rport() );
-  e();
+  // only transmitted for successful spikes
+  if (weight_tot > 0.)
+      {
+      e.set_receiver( *target );
+      e.set_weight( weight_tot );
+      e.set_delay( get_delay_steps() );
+      e.set_rport( get_rport() );
+      e();
+      }
 }
 
 // Defaults come from reference [1] data fitting and table 3.

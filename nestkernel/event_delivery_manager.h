@@ -313,9 +313,6 @@ private:
    * steps during communication.
    */
   const uint_t comm_marker_;
-
-  std::vector< TargetData > send_buffer_target_data_;
-  std::vector< TargetData > recv_buffer_target_data_;
 };
 
 

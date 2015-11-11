@@ -453,45 +453,47 @@ void
 EventDeliveryManager::gather_target_data()
 {
   assert( not kernel().connection_builder_manager.is_source_table_cleared() );
+
+  std::vector< TargetData > send_buffer_target_data( mpi_buffer_size_target_data );
+  std::vector< TargetData > recv_buffer_target_data( mpi_buffer_size_target_data );
+
   bool me_completed = false;
   bool others_completed = false;
   unsigned int send_recv_count = sizeof( TargetData ) / sizeof( unsigned int ) *
-    ceil( send_buffer_target_data_.size() / kernel().mpi_manager.get_num_processes() );
+    ceil( send_buffer_target_data.size() / kernel().mpi_manager.get_num_processes() );
 
 #pragma omp parallel
   {
-    unsigned int comm_round = 0;
     thread tid = kernel().vp_manager.get_thread_id();
     kernel().connection_builder_manager.prepare_target_table( tid );
     kernel().connection_builder_manager.reset_source_table_entry_point( tid );
     while ( not others_completed || not me_completed )
     {
       kernel().connection_builder_manager.restore_source_table_entry_point( tid );
-      prepare_target_data_buffers_( me_completed, send_buffer_target_data_ );
+      prepare_target_data_buffers_( me_completed, send_buffer_target_data );
       
 #pragma omp barrier
-      collocate_target_data_buffers_( tid, send_buffer_target_data_ );
+      collocate_target_data_buffers_( tid, send_buffer_target_data );
 #pragma omp barrier
-      me_completed = check_target_data_completed_( send_buffer_target_data_, target_data_empty_marker );
+      me_completed = check_target_data_completed_( send_buffer_target_data, target_data_empty_marker );
       if ( me_completed )
       {
-        prepare_target_data_buffers_( me_completed, send_buffer_target_data_ );
+        prepare_target_data_buffers_( me_completed, send_buffer_target_data );
       }
       
       kernel().connection_builder_manager.save_source_table_entry_point( tid );      
 #pragma omp single
       {
-        unsigned int* send_buffer_int = reinterpret_cast< unsigned int* >( &send_buffer_target_data_[0] );
-        unsigned int* recv_buffer_int = reinterpret_cast< unsigned int* >( &recv_buffer_target_data_[0] );
+        unsigned int* send_buffer_int = reinterpret_cast< unsigned int* >( &send_buffer_target_data[0] );
+        unsigned int* recv_buffer_int = reinterpret_cast< unsigned int* >( &recv_buffer_target_data[0] );
         Communicator::communicate_Alltoall( send_buffer_int, recv_buffer_int, send_recv_count );
         
       } // of omp single
       
-      others_completed  = check_target_data_completed_( recv_buffer_target_data_,
+      others_completed  = check_target_data_completed_( recv_buffer_target_data,
                                                         target_data_completed_marker );
-      distribute_target_data_buffers_( tid, recv_buffer_target_data_ );
+      distribute_target_data_buffers_( tid, recv_buffer_target_data );
     }
-    ++comm_round;
   } // of omp parallel
 }
 

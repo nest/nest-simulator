@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_quantal_stp_synapse.py
+# test_spl_synapse.py
 #
 # This file is part of NEST.
 #

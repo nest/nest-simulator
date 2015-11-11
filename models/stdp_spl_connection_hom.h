@@ -1,5 +1,5 @@
 /*
- *  stdp_triplet_connection.h
+ *  stdp_spl_connection_hom.h
  *
  *  This file is part of NEST.
  *

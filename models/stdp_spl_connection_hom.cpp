@@ -1,5 +1,5 @@
 /*
- *  stdp_connection_hom.cpp
+ *  stdp_spl_connection_hom.cpp
  *
  *  This file is part of NEST.
  *

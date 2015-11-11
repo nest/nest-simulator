@@ -37,18 +37,22 @@
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
+#include "target_table.h"
+#include "spike_register_table.h"
 
 // Includes from sli:
 #include "dictdatum.h"
 
 namespace nest
 {
-  struct TargetData;
+
+struct TargetData;
   
 typedef Communicator::OffGridSpike OffGridSpike;
-const index target_data_empty_marker = std::numeric_limits< index >::max();
-const index target_data_completed_marker = std::numeric_limits< index >::max() - 1;
+
+// TODO@5g: move this to communicator.h and implement getter
 const size_t mpi_buffer_size_target_data = 30000;
+const size_t mpi_buffer_size_spike_data = 30000;
 
 class EventDeliveryManager : public ManagerInterface
 {
@@ -200,8 +204,10 @@ public:
    */
   void gather_events();
 
-  void gather_target_data();
+  void gather_spike_data();
 
+  void gather_target_data();
+  
   /**
    * Update table of fixed modulos, including slice-based.
    */
@@ -223,11 +229,21 @@ private:
    */
   void collocate_buffers_();
 
+  bool check_spike_data_me_completed_();
+
+  bool check_spike_data_others_completed_();
+
+  void prepare_spike_data_buffers_( const bool me_completed );
+
+  void collocate_spike_data_buffers_( const thread tid );
+
   void collocate_target_data_buffers_( const thread tid, std::vector< TargetData >& send_buffer );
 
   void distribute_target_data_buffers_( const thread tid, const std::vector< TargetData >& recv_buffer );
 
-  bool check_target_data_completed_( const std::vector< TargetData >& buffer, const index marker );
+  bool check_target_data_me_completed_( const std::vector< TargetData >& buffer );
+
+  bool check_target_data_others_completed_( const std::vector< TargetData >& buffer );
 
   void prepare_target_data_buffers_( const bool me_completed, std::vector< TargetData >& send_buffer );
 
@@ -264,6 +280,8 @@ private:
    * - Third dim: The gids.
    */
   std::vector< std::vector< std::vector< uint_t > > > spike_register_;
+
+  SpikeRegisterTable spike_register_table_;
 
   /**
    * Register for off-grid spikes.
@@ -313,6 +331,9 @@ private:
    * steps during communication.
    */
   const uint_t comm_marker_;
+
+  std::vector< SpikeData > send_buffer_spike_data_;
+  std::vector< SpikeData > recv_buffer_spike_data_;
 };
 
 
@@ -320,14 +341,6 @@ inline void
 EventDeliveryManager::send_to_node( Event& e )
 {
   e();
-}
-
-inline void
-EventDeliveryManager::send_remote( thread t, SpikeEvent& e, const long_t lag )
-{
-  // Put the spike in a buffer for the remote machines
-  for ( int_t i = 0; i < e.get_multiplicity(); ++i )
-    spike_register_[ t ][ lag ].push_back( e.get_sender().get_gid() );
 }
 
 inline void

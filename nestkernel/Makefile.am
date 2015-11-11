@@ -90,7 +90,8 @@ libnest_la_SOURCES=\
 		event_delivery_manager.cpp\
 		node_manager.h node_manager.cpp\
 		source_table.h source_table.cpp\
-		target_table.h target_table.cpp
+		target_table.h target_table.cpp\
+		spike_register_table.h spike_register_table.cpp
 
 libnest_la_LIBADD= @LIBLTDL@ @LIBADD_DL@
 

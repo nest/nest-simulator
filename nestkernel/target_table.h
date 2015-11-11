@@ -33,6 +33,7 @@
 
 namespace nest
 {
+struct SpikeData;
 
 // TODO@5g: documentation
 struct Target
@@ -45,7 +46,7 @@ struct Target
   unsigned int lcid : 25;          //! local index of connection to target
   Target();
   Target( const Target& target );
-  Target( thread tid, unsigned int rank, unsigned int syn_index, unsigned int lcid);
+  Target( const thread tid, const unsigned int rank, const unsigned int syn_index, const unsigned int lcid);
 };
 
 inline
@@ -69,7 +70,7 @@ Target::Target( const Target& target )
 }
 
 inline
-Target::Target( thread tid, unsigned int rank, unsigned int syn_index, unsigned int lcid)
+Target::Target( const thread tid, const unsigned int rank, const unsigned int syn_index, const unsigned int lcid)
   : tid( tid )
   , rank( rank )
   , processed( false )
@@ -83,8 +84,14 @@ struct TargetData
 {
   index gid;
   Target target;
+  static const index empty_marker; // std::numeric_limits< index >::max()
+  static const index complete_marker; // std::numeric_limits< index >::max() - 1
   TargetData();
-  TargetData( index gid, Target& target);
+  TargetData( const index gid, const Target& target);
+  void set_empty();
+  void set_complete();
+  bool is_empty() const;
+  bool is_complete() const;
 };
 
 inline
@@ -95,16 +102,41 @@ TargetData::TargetData()
 }
 
 inline
-TargetData::TargetData( index gid, Target& target )
+TargetData::TargetData( const index gid, const Target& target )
   : gid( gid )
   , target( target )
 {
+}
+
+inline void
+TargetData::set_empty()
+{
+  gid = empty_marker;
+}
+
+inline void
+TargetData::set_complete()
+{
+  gid = complete_marker;
+}
+
+inline bool
+TargetData::is_empty() const
+{
+  return gid == empty_marker;
+}
+
+inline bool
+TargetData::is_complete() const
+{
+  return gid == complete_marker;
 }
 
 class TargetTable
 {
 private:
   std::vector< std::vector< std::vector< Target > >* > targets_;
+  std::vector< index > current_target_index_;
   
 public:
   TargetTable();
@@ -114,9 +146,9 @@ public:
   void prepare( thread tid );
   // void reserve( thread, synindex, index );
   void add_target( thread tid, const TargetData& target_data );
-  index get_next_target( thread );
-  void reject_last_target( thread );
   void clear( thread );
+  bool get_next_spike_data( const thread tid, const thread current_tid, const index lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end );
+  void reject_last_spike_data( const thread tid, const thread current_tid, const index lid );
 };
 
 } // namespace nest

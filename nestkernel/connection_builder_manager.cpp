@@ -150,10 +150,22 @@ nest::ConnectionBuilderManager::prepare_target_table( const thread tid )
   target_table_.prepare( tid );
 }
 
-void
-nest::ConnectionBuilderManager::get_next_target_data( const thread tid, TargetData& next_target_data )
+bool
+nest::ConnectionBuilderManager::get_next_spike_data( const thread tid, const thread current_tid, const index lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end)
 {
-  source_table_.get_next_target_data( tid, next_target_data );
+  target_table_.get_next_spike_data( tid, current_tid, lid, rank, next_spike_data, rank_start, rank_end );
+}
+
+void
+nest::ConnectionBuilderManager::reject_last_spike_data( const thread tid, const thread current_tid, const index lid )
+{
+  target_table_.reject_last_spike_data( tid, current_tid, lid );
+}
+
+void
+nest::ConnectionBuilderManager::get_next_target_data( const thread tid, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end )
+{
+  source_table_.get_next_target_data( tid, next_target_data, rank_start, rank_end );
 }
 
 void
@@ -557,10 +569,10 @@ nest::ConnectionBuilderManager::connect_( Node& s,
   double_t w )
 {
   // see comment above for explanation
-  ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
-  ConnectorBase* c =
-    kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection( s, r, conn, syn, d, w );
-  connections_[ tid ].set( s_gid, c );
+  // ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
+  // ConnectorBase* c =
+  //   kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection( s, r, conn, syn, d, w );
+  // connections_[ tid ].set( s_gid, c );
 
   // TODO@5g:
   kernel().model_manager.assert_valid_syn_id( syn );
@@ -587,11 +599,11 @@ nest::ConnectionBuilderManager::connect_( Node& s,
   double_t w )
 {
   // see comment above for explanation
-  ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
-  ConnectorBase* c =
-    kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection(
-      s, r, conn, syn, p, d, w );
-  connections_[ tid ].set( s_gid, c );
+  // ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
+  // ConnectorBase* c =
+  //   kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection(
+  //     s, r, conn, syn, p, d, w );
+  // connections_[ tid ].set( s_gid, c );
 
   kernel().model_manager.assert_valid_syn_id( syn );
   kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection_5g(

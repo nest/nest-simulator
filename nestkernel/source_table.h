@@ -83,7 +83,7 @@ public:
   void add_source( thread, synindex, index );
   void clear( thread );
   bool is_cleared() const;
-  void get_next_target_data( const thread tid, TargetData& next_target_data );
+  void get_next_target_data( const thread tid, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end );
   void reject_last_target_data( const thread tid );
   void save_entry_point( const thread tid );
   void restore_entry_point( const thread tid );
@@ -117,6 +117,16 @@ nest::SourceTable::clear( thread tid )
   sources_[ tid ]->clear();
   is_cleared_[ tid ] = true;
 }
+
+inline
+void
+nest::SourceTable::reject_last_target_data( const thread tid )
+{
+  assert( current_lcid_[ tid ] > 0 );
+  --current_lcid_[ tid ];
+  ( *sources_[ current_tid_[ tid ] ] )[ current_syn_id_[ tid ] ][ current_lcid_[ tid ]  ].processed = false;
+}
+
 
 } // namespace nest
 

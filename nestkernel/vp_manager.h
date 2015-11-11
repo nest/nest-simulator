@@ -81,7 +81,7 @@ public:
   bool is_thread_local( index gid ) const;
 
   /**
-   * Returns in thread local index of a given global node.
+   * Returns thread local index of a given global node.
    */
   index gid_to_lid( index gid ) const;
 

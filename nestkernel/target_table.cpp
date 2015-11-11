@@ -25,6 +25,9 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
+const nest::index nest::TargetData::empty_marker = std::numeric_limits< index >::max();
+const nest::index nest::TargetData::complete_marker = std::numeric_limits< index >::max() - 1;
+
 nest::TargetTable::TargetTable()
 {
 }
@@ -57,7 +60,7 @@ nest::TargetTable::finalize()
 }
 
 void
-nest::TargetTable::prepare( thread tid )
+nest::TargetTable::prepare( const thread tid )
 {
   targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes() );
 }
@@ -69,12 +72,50 @@ nest::TargetTable::prepare( thread tid )
 // {
 // }
 
-nest::index
-nest::TargetTable::get_next_target( thread tid )
+bool
+nest::TargetTable::get_next_spike_data( const thread tid, const thread current_tid, const index lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end )
 {
+  while ( true )
+  {
+    if ( current_target_index_[ tid ] == (*targets_[ current_tid ])[ lid ].size() )
+    {
+      current_target_index_[ tid ] = 0;
+      return false;
+    }
+    else
+    {
+      Target& current_target = (*targets_[ current_tid ])[ lid ][ current_target_index_[ tid ] ];
+      if ( rank_start <= current_target.rank && current_target.rank < rank_end )
+      {
+        if ( current_target.processed )
+        {
+          ++current_target_index_[ tid ];
+          continue;
+        }
+        else
+        {
+          current_target.processed = true;
+          rank = current_target.rank;
+          next_spike_data.tid = current_target.tid;
+          next_spike_data.syn_index = current_target.syn_index;
+          next_spike_data.lcid = current_target.lcid;
+          ++current_target_index_[ tid ];
+          return true;
+        }
+      }
+      else
+      {
+        ++current_target_index_[ tid ];
+        continue;
+      }
+    }
+  }
 }
 
 void
-nest::TargetTable::reject_last_target( thread tid )
+nest::TargetTable::reject_last_spike_data( const thread tid, const thread current_tid, const index lid )
 {
+  assert( current_target_index_[ tid ] > 0 );
+  --current_target_index_[ tid ];
+  ( *targets_[ current_tid ])[ lid ][ current_target_index_[ tid ] ].processed = false;
 }

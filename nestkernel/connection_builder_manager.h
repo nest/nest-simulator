@@ -54,6 +54,7 @@ class Node;
 class Subnet;
 class Event;
 class DelayChecker;
+struct SpikeData;
 
 typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons having targets
 typedef std::vector< tSConnector > tVSConnector;           // for all threads
@@ -277,10 +278,12 @@ public:
 
   void send( thread t, index sgid, Event& e );
 
+  // void send_5g( thread tid, index sgid, Event& e );
+
   /**
    * Send event e to all targets of node source on thread t
    */
-  void send_local( thread t, Node& source, Event& e );
+  // void send_local( thread t, Node& source, Event& e );
 
   /**
    * Resize the structures for the Connector objects if necessary.
@@ -301,7 +304,11 @@ public:
 
   void prepare_target_table( const thread tid );
 
-  void get_next_target_data( const thread tid, TargetData& next_target_data );
+  bool get_next_spike_data( const thread tid, const thread current_tid, const index lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end);
+
+  void reject_last_spike_data( const thread tid, const thread current_tid, const index lid );
+
+  void get_next_target_data( const thread tid, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end );
 
   void reject_last_target_data( const thread tid );
 

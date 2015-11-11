@@ -98,7 +98,7 @@ nest::SourceTable::is_cleared() const
 }
 
 void
-nest::SourceTable::get_next_target_data( const thread tid, TargetData& next_target_data )
+nest::SourceTable::get_next_target_data( const thread tid, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end )
 {
   while ( true )
   {
@@ -125,32 +125,34 @@ nest::SourceTable::get_next_target_data( const thread tid, TargetData& next_targ
         }
         else
         {
-          Source* current_source = &( *sources_[ current_tid_[ tid ] ] )[ current_syn_id_[ tid ] ][ current_lcid_[ tid ] ];
-          if ( current_source->processed )
+          Source& current_source = ( *sources_[ current_tid_[ tid ] ] )[ current_syn_id_[ tid ] ][ current_lcid_[ tid ] ];
+          const thread target_rank = kernel().mpi_manager.get_process_id_of_gid( current_source.gid );
+          if ( rank_start <= target_rank && target_rank < rank_end )
+          {
+            if ( current_source.processed )
+            {
+              ++current_lcid_[ tid ];
+              continue;
+            }
+            current_source.processed = true;
+            next_target_data.gid = current_source.gid;
+            next_target_data.target.tid = current_tid_[ tid ];
+            next_target_data.target.rank = kernel().mpi_manager.get_rank();
+            next_target_data.target.processed = false;
+            next_target_data.target.syn_index = current_syn_id_[ tid ];
+            next_target_data.target.lcid = current_lcid_[ tid ];
+            ++current_lcid_[ tid ];
+            return;
+          }
+          else
           {
             ++current_lcid_[ tid ];
             continue;
           }
-          next_target_data.gid = current_source->gid;
-          current_source->processed = true;
-          next_target_data.target.tid = current_tid_[ tid ];
-          next_target_data.target.rank = kernel().mpi_manager.get_rank();
-          next_target_data.target.processed = false;
-          next_target_data.target.syn_index = current_syn_id_[ tid ];
-          next_target_data.target.lcid = current_lcid_[ tid ];
-          ++current_lcid_[ tid ];
-          return;
         }
       }
     }
   }
-}
-
-void
-nest::SourceTable::reject_last_target_data( const thread tid )
-{
-  --current_lcid_[ tid ];
-  ( *sources_[ current_tid_[ tid ] ] )[ current_syn_id_[ tid ] ][ current_lcid_[ tid ]  ].processed = false;
 }
 
 void

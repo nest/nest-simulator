@@ -27,6 +27,7 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "spike_register_table_impl.h"
 
 namespace nest
 {
@@ -88,6 +89,18 @@ EventDeliveryManager::send_local( thread t, Node& source, Event& e )
   e.set_sender_gid( sgid );
   kernel().connection_builder_manager.send( t, sgid, e );
 }
+
+inline void
+EventDeliveryManager::send_remote( thread t, SpikeEvent& e, const long_t lag )
+{
+  // Put the spike in a buffer for the remote machines
+  for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+  {
+    spike_register_[ t ][ lag ].push_back( e.get_sender().get_gid() );
+    spike_register_table_.add_spike( t, e, lag );
+  }
 }
+
+} // of namespace nest
 
 #endif

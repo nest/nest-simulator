@@ -478,7 +478,9 @@ nest::SimulationManager::update_()
       {
         if ( to_step_
           == kernel().connection_builder_manager.get_min_delay() ) // gather only at end of slice
+        {
           kernel().event_delivery_manager.gather_events();
+        }
 
         advance_time_();
 

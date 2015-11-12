@@ -302,14 +302,6 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
     // if delta == 0, several postsynaptic spikes occurred 
     // in this timestep. We have increment the traces to account
     // for these spikes too.
-    if ( delta == 0 )
-    {
-      t_last_postspike = start->t_;
-      ++start;
-      r_post_ += 1. / cp.tau_;
-      R_post_ += 1. / cp.tau_slow_;
-      continue;
-    }
 
     // std::cout << "r_post from neuron: " << r_post_ << "\n";
     // std::cout << "R_post from neuron: " << R_post_ << "\n";

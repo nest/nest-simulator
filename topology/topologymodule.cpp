@@ -26,8 +26,6 @@
 #include "config.h"
 
 // Includes from nestkernel:
-#include "mpi_manager.h"
-#include "mpi_manager_impl.h"
 #include "genericmodel.h"
 #include "kernel_manager.h"
 #include "model.h"

@@ -26,12 +26,10 @@
 #include <cassert>
 
 // Includes from nestkernel:
-#include "mpi_manager.h"
-#include "mpi_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "network.h"
 #include "nodelist.h"
+#include "mpi_manager_impl.h"
 #include "subnet.h"
 
 // Includes from sli:
@@ -46,7 +44,7 @@ init_nest( int* argc, char** argv[] )
 {
   KernelManager::create_kernel_manager();
   kernel().mpi_manager.init_mpi( argc, argv );
-  // kernel().init(); currently called from network.cpp
+  kernel().initialize();
 }
 
 void
@@ -62,7 +60,7 @@ install_module( const std::string& module_name )
 void
 reset_kernel()
 {
-  Network::get_network().reset_kernel();
+  kernel().reset();
 }
 
 void
@@ -132,7 +130,15 @@ set_kernel_status( const DictionaryDatum& dict )
 DictionaryDatum
 get_kernel_status()
 {
-  return Network::get_network().get_status( 0 );
+  assert( kernel().is_initialized() );
+
+  Node* root = kernel().node_manager.get_root();
+  assert( root != 0 );
+  
+  DictionaryDatum d = root->get_status_base();
+  kernel().get_status( d );
+
+  return d;
 }
 
 void
@@ -144,7 +150,7 @@ set_node_status( const index node_id, const DictionaryDatum& dict )
 DictionaryDatum
 get_node_status( const index node_id )
 {
-  return Network::get_network().get_status( node_id );
+  return kernel().node_manager.get_status( node_id );
 }
 
 void

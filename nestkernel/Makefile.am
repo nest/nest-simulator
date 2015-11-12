@@ -61,7 +61,6 @@ libnest_la_SOURCES=\
 		modelrange.h modelrange.cpp\
 		modelrange_manager.h modelrange_manager.cpp\
 		multirange.h multirange.cpp\
-		network.h network.cpp\
 		node.h node.cpp\
 		nodelist.h nodelist.cpp\
 		proxynode.h proxynode.cpp\

@@ -64,7 +64,6 @@ libmodelsmodule_la_SOURCES= \
 		ppd_sup_generator.h ppd_sup_generator.cpp\
 		pulsepacket_generator.h pulsepacket_generator.cpp\
 		quantal_stp_connection.h quantal_stp_connection_impl.h\
-		sli_neuron.h sli_neuron.cpp\
 		sinusoidal_poisson_generator.h sinusoidal_poisson_generator.cpp \
 		sinusoidal_gamma_generator.h sinusoidal_gamma_generator.cpp \
 		spike_detector.h spike_detector.cpp\

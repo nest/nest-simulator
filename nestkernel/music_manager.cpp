@@ -23,9 +23,6 @@
 #include "music_manager.h"
 
 // C includes:
-//#include <dirent.h>
-//#include <errno.h>
-//#include <sys/types.h>
 #ifdef HAVE_MPI
 #ifndef HAVE_MUSIC
 #include <mpi.h>

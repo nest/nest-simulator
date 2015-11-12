@@ -27,13 +27,13 @@
 #include <numeric>
 
 // Includes from libnestutil:
-#include "stopwatch.h"
 #include "compose.hpp"
 #include "logging.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
-#include "mpi_manager_impl.h"
 #include "kernel_manager.h"
+#include "mpi_manager_impl.h"
 #include "nest_types.h"
 #include "nodelist.h"
 
@@ -117,6 +117,8 @@ void
 nest::MPIManager::get_status( DictionaryDatum& d )
 {
   def< long >( d, "num_processes", num_processes_ );
+  def< long >( d, "send_buffer_size", send_buffer_size_ );
+  def< long >( d, "receive_buffer_size", recv_buffer_size_ );
 }
 
 void

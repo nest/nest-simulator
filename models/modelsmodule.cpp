@@ -68,7 +68,6 @@
 #include "parrot_neuron.h"
 #include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
-#include "sli_neuron.h"
 
 // Stimulation devices
 #include "ac_generator.h"
@@ -151,6 +150,7 @@ ModelsModule::name( void ) const
 const std::string
 ModelsModule::commandstring( void ) const
 {
+  // TODO: Move models-init.sli to sli_neuron....
   return std::string( "(models-init) run" );
 }
 
@@ -184,7 +184,6 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< sinusoidal_poisson_generator >( "sinusoidal_poisson_generator" );
   kernel().model_manager.register_node_model< ppd_sup_generator >( "ppd_sup_generator" );
   kernel().model_manager.register_node_model< gamma_sup_generator >( "gamma_sup_generator" );
-  kernel().model_manager.register_node_model< sli_neuron >( "sli_neuron" );
   kernel().model_manager.register_node_model< ginzburg_neuron >( "ginzburg_neuron" );
   kernel().model_manager.register_node_model< mcculloch_pitts_neuron >( "mcculloch_pitts_neuron" );
   kernel().model_manager.register_node_model< izhikevich >( "izhikevich" );

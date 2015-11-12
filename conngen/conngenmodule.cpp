@@ -29,9 +29,6 @@
 #include "cg_connect.h"
 #include "conngen.h"
 
-// Includes from nestkernel:
-#include "communicator.h"
-
 // Includes from sli:
 #include "lockptrdatum_impl.h"
 #include "stringdatum.h"

@@ -32,18 +32,17 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "mpi_manager.h"
-#include "mpi_manager_impl.h"
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
 #include "connector_base.h"
 #include "delay_checker.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "mpi_manager_impl.h"
 #include "nest_names.h"
 #include "node.h"
-#include "subnet.h"
 #include "nodelist.h"
+#include "subnet.h"
 
 // Includes from sli:
 #include "dictutils.h"

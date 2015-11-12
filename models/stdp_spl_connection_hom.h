@@ -37,6 +37,7 @@
 #include "connection.h"
 #include <iostream>
 #include <cstdio>
+#include "exp_randomdev.h"
 
 namespace nest
 {
@@ -231,8 +232,9 @@ private:
         if ( w_jk_[ i ] <= 0. )
         {
           // generate an exponentially distributed number
-          w_create_steps_[ i ] = ceil( -std::log( rng_->drandpos() )
-            / (cp.lambda_*1e-3) ); // random numbers are in ms == steps
+          w_create_steps_[ i ] = Time( Time::ms( 
+            exp_dev_( rng_ ) / cp.lambda_ *1e3 ) ).get_steps();
+          
           // set synapse to equal zero
           w_jk_[ i ] = 0.;
         }
@@ -264,6 +266,8 @@ private:
   
   // Random number generator pointer
   librandom::RngPtr rng_;
+  // random deviate generator
+  librandom::ExpRandomDev exp_dev_; 
 };
 
 /**
@@ -290,7 +294,7 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
   target->get_history( t_lastspike, t_spike, &start, &finish );
 
   Network* net = Node::network();
-  rng_ = net->get_rng( target->get_vp() );
+  rng_ = net->get_rng( target->get_vp() ); // random number generator of target thread
 
   double_t t_last_postspike = t_lastspike;
 

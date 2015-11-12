@@ -190,6 +190,7 @@ public:
   virtual ConnectorBase& erase( size_t i ) = 0;
   virtual size_t size() = 0;
   virtual ConnectionT& at( size_t i ) = 0;
+
   void
   send_secondary( SecondaryEvent&, thread, const std::vector< ConnectorModel* >& )
   {
@@ -212,9 +213,16 @@ public:
     C_[ K - 1 ] = c;
   }
 
-  /*
-   * Create a new connector and remove the ith connection. Returns a connector
+  /**
+   * Creates a new connector and remove the ith connection. To do so, the contents
+   * of the original connector are copied into the new one. The copy is performed
+   * in two parts, first up to the specified index and then the rest of the
+   * connections after the specified index in order to
+   * exclude the ith connection from the copy. As a result, returns a connector
    * with size K from a connector of size K+1.
+   *
+   * @param Cm1 the original connector
+   * @param i the index of the connection to be deleted
    */
   Connector( const Connector< K + 1, ConnectionT >& Cm1, size_t i ) //: syn_id_(Cm1.get_syn_id())
   {
@@ -333,7 +341,8 @@ public:
   {
     if ( i >= K || i < 0 )
     {
-      throw std::out_of_range( "Invalid attempt to access a connection at an out of range index" );
+      throw std::out_of_range(
+        String::compose( "Invalid attempt to access a connection: index %1 out of range.", i ) );
     }
     return C_[ i ];
   }
@@ -528,7 +537,7 @@ public:
 
   ConnectorBase& erase( size_t )
   {
-    // Should destroy the Connector
+    // Destroys the Connector
     suicide< Connector< 1, ConnectionT > >( this );
     ConnectorBase* p = 0;
     return *p;
@@ -546,7 +555,8 @@ public:
 
     if ( i != 0 )
     {
-      throw std::out_of_range( "Invalid attempt to access a connection at an out of range index" );
+      throw std::out_of_range(
+        String::compose( "Invalid attempt to access a connection: index %1 out of range.", i ) );
     }
     return C_[ i ];
   }
@@ -653,7 +663,13 @@ public:
   };
 
   /**
-   * Create a new connector and remove the ith connection
+   * Creates a new connector and removes the ith connection. To do so, the contents
+   * of the original connector are copied into the new one. The copy is performed
+   * in two parts, first up to the specified index and then the rest of the
+   * connections after the specified index in order to
+   * exclude the ith connection from the copy. As a result, returns a connector
+   * with size K_cutoff-1 from a connector of size K_cutoff.
+   *
    * @param Cm1 Original connector of size K_cutoff.
    * @param i The index of the connection to be deleted.
    */
@@ -754,7 +770,8 @@ public:
   at( size_t i )
   {
     if ( i >= C_.size() || i < 0 )
-      throw std::out_of_range( "Invalid attempt to access a connection at an out of range index" );
+      throw std::out_of_range(
+        String::compose( "Invalid attempt to access a connection: index %1 out of range.", i ) );
     return C_[ i ];
   }
 

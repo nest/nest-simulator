@@ -94,7 +94,7 @@ class SplSynapseTestCase(unittest.TestCase):
         syn_defaults = nest.GetDefaults('testsyn')
         val = syn_status[0]['r_post']
 
-        dt = 1.
+        dt = 0.001
         tau = syn_defaults['tau']
         prop = np.exp(-dt/tau)
 
@@ -113,7 +113,7 @@ class SplSynapseTestCase(unittest.TestCase):
         syn_status = nest.GetStatus(self.syn)
         syn_defaults = nest.GetDefaults('testsyn')
         val = syn_status[0]['R_post']
-        dt = 1.
+        dt = 0.001
         tau = syn_defaults['tau_slow']
         prop = np.exp(-dt/tau)
 
@@ -134,7 +134,7 @@ class SplSynapseTestCase(unittest.TestCase):
         syn_status = nest.GetStatus(self.syn)
         syn_defaults = nest.GetDefaults('testsyn')
         val = syn_status[0]['c_jk']
-        dt = 1.
+        dt = 0.001
         tau = syn_defaults['tau_slow']
         prop = np.exp(-dt/tau)
 
@@ -150,7 +150,7 @@ class SplSynapseTestCase(unittest.TestCase):
         syn_status = nest.GetStatus(self.syn)
         syn_defaults = nest.GetDefaults('testsyn')
         val = syn_status[0]['r_jk']
-        dt = 1.
+        dt = 0.001
         tau = syn_defaults['tau']
         prop = np.exp(-dt/tau)
 
@@ -184,7 +184,7 @@ class SplSynapseTestCase(unittest.TestCase):
         syn_status = nest.GetStatus(self.syn)
         syn_defaults = nest.GetDefaults('testsyn')
         val = syn_status[0]['r_jk']
-        dt = 1.
+        dt = 0.001
         tau = syn_defaults['tau']
         prop = np.exp(-dt/tau)
 
@@ -246,7 +246,7 @@ class SplSynapseTestCase(unittest.TestCase):
         nest.Simulate(100.)
         syn_status = nest.GetStatus(self.syn)
 
-        dt = 1.
+        dt = 0.001
         prop = np.exp(-dt*alpha)
 
         val = syn_status[0]['w_jk'][0]
@@ -280,7 +280,7 @@ class SplSynapseTestCase(unittest.TestCase):
         post_times = np.where(np.in1d(times, [120., 140., 160.]))[0]
         pre_times = np.where(np.in1d(times, [100., 200.]))[0]
 
-        dt = 1.
+        dt = 0.001
         r_jk = np.zeros(201)
         for i in range(1, 201):
             r_jk[i] = r_jk[i-1] * np.exp(-dt/tau)
@@ -341,7 +341,7 @@ class SplSynapseTestCase(unittest.TestCase):
         post_times = np.where(np.in1d(times, [120., 140., 160.]))[0]
         pre_times = np.where(np.in1d(times, [100., 200.]))[0]
 
-        dt = 1.
+        dt = 0.001
         r_jk = np.zeros(201)
         for i in range(1, 201):
             r_jk[i] = r_jk[i-1] * np.exp(-dt/tau)
@@ -398,7 +398,7 @@ class SplSynapseTestCase(unittest.TestCase):
         times = np.arange(0, 201, 1)
         post_times = np.where(np.in1d(times, [120., 140., 160.]))[0]
 
-        dt = 1.
+        dt = 0.001
         R_post = np.zeros(201)
         for i in range(1, 201):
             R_post[i] = R_post[i-1] * np.exp(-dt/tau_slow)

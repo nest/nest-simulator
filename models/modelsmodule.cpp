@@ -150,6 +150,7 @@ ModelsModule::name( void ) const
 const std::string
 ModelsModule::commandstring( void ) const
 {
+  // TODO: Move models-init.sli to sli_neuron....
   return std::string( "(models-init) run" );
 }
 

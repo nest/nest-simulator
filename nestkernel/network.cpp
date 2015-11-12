@@ -82,14 +82,6 @@ Network::Network( SLIInterpreter& i )
   //
   network_instance_ = this;
   created_network_instance_ = true;
-
-  kernel().initialize();
-  
-  // this can make problems with reference counting, if 
-  // the intepreter decides cleans up memory before NEST is ready
-  interpreter_.def( "modeldict", kernel().model_manager.get_modeldict()  );
-  interpreter_.def( "synapsedict", kernel().model_manager.get_synapsedict()  );
-  interpreter_.def( "connruledict", kernel().connection_builder_manager.get_connruledict() );
 }
 
 Network::~Network()
@@ -99,40 +91,9 @@ Network::~Network()
 void
 Network::reset_kernel()
 {
-  /*
-   * TODO: reset() below mixes both destruction of old nodes and
-   * configuration of the fresh kernel. set_num_rec_processes() chokes
-   * on this, as it expects a kernel without nodes. We now suppress that
-   * test manually. Ideally, though, we should split reset() into one
-   * part deleting all the old stuff, then perform settings for the
-   * fresh kernel, then do remaining initialization.
-   */
 
-  kernel().reset();
 }
 
-DictionaryDatum
-Network::get_status( index idx )
-{
-  assert( kernel().is_initialized() );
-
-  Node* target = kernel().node_manager.get_node( idx );
-  assert( target != 0 );
-
-  DictionaryDatum d = target->get_status_base();
-
-  if ( target == kernel().node_manager.get_root() )
-  {
-    // former scheduler_.get_status( d ) start
-    kernel().get_status( d );
-
-
-    def< long >( d, "send_buffer_size", kernel().mpi_manager.get_send_buffer_size() );
-    def< long >( d, "receive_buffer_size", kernel().mpi_manager.get_recv_buffer_size() );
-
-  }
-  return d;
-}
 
 
 } // end of namespace

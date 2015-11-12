@@ -48,7 +48,6 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "model.h"
-#include "network.h"
 
 // Includes from sli:
 #include "integerdatum.h"

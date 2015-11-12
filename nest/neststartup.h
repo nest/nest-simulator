@@ -40,10 +40,10 @@
 #define CYTHON_isConnectionGenerator( x ) PNS::isConnectionGenerator( x )
 Datum* CYTHON_unpackConnectionGeneratorDatum( PyObject* );
 
-#else
+#else // #if defined( HAVE_LIBNEUROSIM ) && defined( _IS_PYNEST )
 #define CYTHON_isConnectionGenerator( x ) 0
 #define CYTHON_unpackConnectionGeneratorDatum( x ) NULL
-#endif
+#endif // #if defined( HAVE_LIBNEUROSIM ) && defined( _IS_PYNEST )
 
 class SLIInterpreter;
 
@@ -54,10 +54,12 @@ class SLIInterpreter;
 
 #include <string>
 int neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepath = "" );
-#else
+#else // #ifdef _IS_PYNEST
 int neststartup( int argc, char** argv, SLIInterpreter& engine );
-#endif
+#endif // #ifdef _IS_PYNEST
 
 void nestshutdown( int exitcode );
 
-#endif
+SLIInterpreter& get_engine();
+
+#endif // #ifndef NEST_STARTUP_H

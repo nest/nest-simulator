@@ -29,10 +29,12 @@
 #include "compose.hpp"
 #include "numerics.h"
 
+// includes from nest:
+#include "neststartup.h" // get_engine()
+
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
-#include "network.h" // interpreter_
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -215,7 +217,7 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
 int
 nest::sli_neuron::execute_sli_protected( DictionaryDatum state, Name cmd )
 {
-  SLIInterpreter& i = Network::get_network().interpreter_;
+  SLIInterpreter& i = get_engine();
   
   i.DStack->push( state ); // push state dictionary as top namespace
   size_t exitlevel = i.EStack.load();

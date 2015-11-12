@@ -39,7 +39,6 @@
 #include <music.hh>
 
 // Includes from nestkernel:
-#include "communicator.h"
 #include "nest_types.h"
 #include "node.h"
 

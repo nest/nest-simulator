@@ -26,7 +26,6 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "communicator.h"
 #include "kernel_manager.h" // TODO implement in terms of nest-API
 
 

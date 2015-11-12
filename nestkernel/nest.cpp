@@ -26,12 +26,11 @@
 #include <cassert>
 
 // Includes from nestkernel:
-#include "mpi_manager.h"
-#include "mpi_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "network.h"
 #include "nodelist.h"
+#include "mpi_manager_impl.h"
 #include "subnet.h"
 
 // Includes from sli:

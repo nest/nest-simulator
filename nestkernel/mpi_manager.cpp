@@ -27,13 +27,13 @@
 #include <numeric>
 
 // Includes from libnestutil:
-#include "stopwatch.h"
 #include "compose.hpp"
 #include "logging.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
-#include "mpi_manager_impl.h"
 #include "kernel_manager.h"
+#include "mpi_manager_impl.h"
 #include "nest_types.h"
 #include "nodelist.h"
 

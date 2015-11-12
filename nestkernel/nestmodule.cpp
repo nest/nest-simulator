@@ -33,8 +33,6 @@
 #include "random_datums.h"
 
 // Includes from nestkernel:
-#include "mpi_manager.h"
-#include "mpi_manager_impl.h"
 #include "conn_builder.h"
 #include "connection_builder_manager_impl.h"
 #include "genericmodel.h"

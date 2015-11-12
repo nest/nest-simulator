@@ -63,7 +63,7 @@ public:
    * @throws nest::UnknownNode       Target does not exist in the network.
    */
   DictionaryDatum get_status( index );
-  
+
   /**
    * Set properties of a Node. The specified node must exist.
    * @throws nest::UnknownNode       Target does not exist in the network.
@@ -224,27 +224,27 @@ private:
 
 private:
   SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
-  Subnet* root_;    //!< Root node.
-  Subnet* current_; //!< Current working node (for insertion).
+  Subnet* root_;                //!< Root node.
+  Subnet* current_;             //!< Current working node (for insertion).
 
   Model* siblingcontainer_model_; //!< The model for the SiblingContainer class
 
   index n_gsd_; //!< Total number of global spike detectors, used for distributing them over
                 //!< recording processes
 
-   /**
-    * Data structure holding node pointers per thread.
-    *
-    * The outer dimension of indexes threads. Each per-thread vector
-    * contains all nodes on that thread, except subnets, since these
-    * are never updated.
-    *
-    * @note Frozen nodes are included, so that we do not need to regenerate
-    * these vectors when the frozen status on nodes is changed (which is
-    * essentially undetectable).
-    */
+  /**
+   * Data structure holding node pointers per thread.
+   *
+   * The outer dimension of indexes threads. Each per-thread vector
+   * contains all nodes on that thread, except subnets, since these
+   * are never updated.
+   *
+   * @note Frozen nodes are included, so that we do not need to regenerate
+   * these vectors when the frozen status on nodes is changed (which is
+   * essentially undetectable).
+   */
   std::vector< std::vector< Node* > > nodes_vec_;
-  index nodes_vec_network_size_;        //!< Network size when nodes_vec_ was last updated
+  index nodes_vec_network_size_; //!< Network size when nodes_vec_ was last updated
 };
 
 inline index
@@ -290,11 +290,11 @@ NodeManager::get_n_gsd()
 }
 
 inline const std::vector< Node* >&
-NodeManager::get_nodes_on_thread(thread t) const
+NodeManager::get_nodes_on_thread( thread t ) const
 {
-  return nodes_vec_.at(t);
+  return nodes_vec_.at( t );
 }
 
-} // namespace 
+} // namespace
 
 #endif /* NODE_MANAGER_H */

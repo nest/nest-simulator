@@ -413,7 +413,8 @@ nest::iaf_psc_alpha_canon::handle( SpikeEvent& e )
      in the queue.  The time is computed according to Time Memo, Rule 3.
   */
   const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
-  B_.events_.add_spike( e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ),
+  B_.events_.add_spike(
+    e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );

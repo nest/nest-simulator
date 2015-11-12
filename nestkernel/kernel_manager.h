@@ -96,14 +96,14 @@ public:
   static void destroy_kernel_manager();
   static KernelManager& get_kernel_manager();
 
-   /**
-    * Prepare kernel for operation.
-    *
-    * This method calls the initialization methods of the specific
-    * managers in the proper order.
-    *
-    * @see finalize(), reset()
-    */
+  /**
+   * Prepare kernel for operation.
+   *
+   * This method calls the initialization methods of the specific
+   * managers in the proper order.
+   *
+   * @see finalize(), reset()
+   */
   void initialize();
 
   /**
@@ -124,7 +124,7 @@ public:
    * @see initialize(), finalize()
    */
   void reset();
-  
+
   /**
    * Reset kernel after num threads have changed.
    *
@@ -154,7 +154,7 @@ public:
   NodeManager node_manager;
 
 private:
-  bool initialized_;        //!< true if all sub-managers initialized
+  bool initialized_; //!< true if all sub-managers initialized
 };
 
 KernelManager& kernel();

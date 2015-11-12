@@ -252,7 +252,8 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
     {
       // received twice the same gid, so transition 0->1
       // take double weight to compensate for subtracting first event
-      B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+      B_.spikes_.add_value(
+        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
         2.0 * e.get_weight() );
     }
     else
@@ -260,7 +261,8 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
       // count this event negatively, assuming it comes as single event
       // transition 1->0
       B_.spikes_.add_value(
-        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), -e.get_weight() );
+        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+        -e.get_weight() );
     }
   }
   else // multiplicity != 1

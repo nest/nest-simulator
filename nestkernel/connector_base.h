@@ -62,8 +62,9 @@ suicide_and_resurrect( Told* connector, C connection )
 {
 #ifdef USE_PMA
 #ifdef IS_K
-  Tnew* p = new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( Tnew ) ) )
-    Tnew( *connector, connection );
+  Tnew* p =
+    new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( Tnew ) ) )
+      Tnew( *connector, connection );
 #else
   Tnew* p = new ( poormansallocpool.alloc( sizeof( Tnew ) ) ) Tnew( *connector, connection );
 #endif

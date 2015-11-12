@@ -90,13 +90,13 @@ nest::ConnectionBuilderManager::initialize()
   // The following line is executed by all processes, no need to communicate
   // this change in delays.
   min_delay_ = max_delay_ = 1;
-  
+
 #ifdef _OPENMP
 #ifdef USE_PMA
-  // initialize the memory pools
+// initialize the memory pools
 #ifdef IS_K
   assert( n_threads <= MAX_THREAD && "MAX_THREAD is a constant defined in allocator.h" );
-  
+
 #pragma omp parallel
   poormansallocpool[ kernel().vp_manager.get_thread_id() ].init();
 #else
@@ -147,8 +147,8 @@ nest::ConnectionBuilderManager::get_synapse_status( index gid, synindex syn_id, 
   DictionaryDatum dict( new Dictionary );
   connections_[ tid ].get( gid )->get_synapse_status( syn_id, dict, p );
   ( *dict )[ names::source ] = gid;
-  ( *dict )[ names::synapse_model ] = LiteralDatum(
-    kernel().model_manager.get_synapse_prototype( syn_id ).get_name() );
+  ( *dict )[ names::synapse_model ] =
+    LiteralDatum( kernel().model_manager.get_synapse_prototype( syn_id ).get_name() );
 
   return dict;
 }
@@ -163,10 +163,8 @@ nest::ConnectionBuilderManager::set_synapse_status( index gid,
   kernel().model_manager.assert_valid_syn_id( syn_id );
   try
   {
-    connections_[ tid ].get( gid )->set_synapse_status( syn_id,
-      kernel().model_manager.get_synapse_prototype( syn_id, tid ),
-      dict,
-      p );
+    connections_[ tid ].get( gid )->set_synapse_status(
+      syn_id, kernel().model_manager.get_synapse_prototype( syn_id, tid ), dict, p );
   }
   catch ( BadProperty& e )
   {
@@ -280,8 +278,8 @@ nest::ConnectionBuilderManager::connect( const GIDCollection& sources,
   assert( cb != 0 );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
-  ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: ");
-  ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries in syn_spec: ");
+  ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
+  ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries in syn_spec: " );
 
   cb->connect();
   delete cb;
@@ -489,8 +487,9 @@ nest::ConnectionBuilderManager::connect_( Node& s,
 {
   // see comment above for explanation
   ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
-  ConnectorBase* c =
-    kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection( s, r, conn, syn, d, w );
+  ConnectorBase* c = kernel()
+                       .model_manager.get_synapse_prototype( syn, tid )
+                       .add_connection( s, r, conn, syn, d, w );
   connections_[ tid ].set( s_gid, c );
   // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
@@ -512,9 +511,9 @@ nest::ConnectionBuilderManager::connect_( Node& s,
 {
   // see comment above for explanation
   ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
-  ConnectorBase* c =
-    kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection(
-      s, r, conn, syn, p, d, w );
+  ConnectorBase* c = kernel()
+                       .model_manager.get_synapse_prototype( syn, tid )
+                       .add_connection( s, r, conn, syn, p, d, w );
   connections_[ tid ].set( s_gid, c );
   // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
@@ -931,8 +930,7 @@ nest::ConnectionBuilderManager::connect( ArrayDatum& conns )
         if ( !synmodel.empty() )
         {
           std::string synmodel_name = getValue< std::string >( synmodel );
-          synmodel =
-            kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
+          synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
           if ( !synmodel.empty() )
             syn_id = static_cast< size_t >( synmodel );
           else
@@ -1393,11 +1391,8 @@ nest::ConnectionBuilderManager::trigger_update_weight( const long_t vt_id,
     for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
           it != connections_[ t ].nonempty_end();
           ++it )
-      ( *it )->trigger_update_weight( vt_id,
-        t,
-        dopa_spikes,
-        t_trig,
-        kernel().model_manager.get_synapse_prototypes( t ) );
+      ( *it )->trigger_update_weight(
+        vt_id, t, dopa_spikes, t_trig, kernel().model_manager.get_synapse_prototypes( t ) );
 }
 
 void
@@ -1468,8 +1463,7 @@ nest::ConnectionBuilderManager::get_connections( DictionaryDatum params ) const
   if ( not syn_model_t.empty() )
   {
     Name synmodel_name = getValue< Name >( syn_model_t );
-    const Token synmodel =
-      kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
+    const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
     if ( !synmodel.empty() )
       syn_id = static_cast< size_t >( synmodel );
     else
@@ -1478,8 +1472,7 @@ nest::ConnectionBuilderManager::get_connections( DictionaryDatum params ) const
   }
   else
   {
-    for ( syn_id = 0; syn_id < kernel().model_manager.get_num_synapse_prototypes();
-          ++syn_id )
+    for ( syn_id = 0; syn_id < kernel().model_manager.get_num_synapse_prototypes(); ++syn_id )
     {
       ArrayDatum conn;
       get_connections( conn, source_a, target_a, syn_id );

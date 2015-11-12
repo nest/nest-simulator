@@ -105,12 +105,12 @@ get_vp_rng_of_gid( index target )
 
   return kernel().rng_manager.get_rng( target_node->get_thread() );
 }
-  
+
 librandom::RngPtr
 get_vp_rng( thread tid )
 {
-  assert(tid >=0);
-  assert(tid < static_cast< thread >( kernel().vp_manager.get_num_threads()) );
+  assert( tid >= 0 );
+  assert( tid < static_cast< thread >( kernel().vp_manager.get_num_threads() ) );
   return kernel().rng_manager.get_rng( tid );
 }
 
@@ -134,7 +134,7 @@ get_kernel_status()
 
   Node* root = kernel().node_manager.get_root();
   assert( root != 0 );
-  
+
   DictionaryDatum d = root->get_status_base();
   kernel().get_status( d );
 
@@ -167,8 +167,10 @@ set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict 
 
   kernel().connection_builder_manager.set_synapse_status( gid, synapse_id, port, tid, dict );
 
-  ALL_ENTRIES_ACCESSED2( *dict, "SetStatus", "Unread dictionary entries: ", 
-    "Maybe you tried to set common synapse properties through an individual synapse?");
+  ALL_ENTRIES_ACCESSED2( *dict,
+    "SetStatus",
+    "Unread dictionary entries: ",
+    "Maybe you tried to set common synapse properties through an individual synapse?" );
 }
 
 DictionaryDatum
@@ -215,7 +217,7 @@ get_connections( const DictionaryDatum& dict )
 
   ArrayDatum array = kernel().connection_builder_manager.get_connections( dict );
 
-  ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: ");
+  ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: " );
 
   return array;
 }
@@ -234,13 +236,13 @@ simulate( const double_t& time )
 void
 copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict )
 {
-  kernel().model_manager.copy_model(oldmodname, newmodname, dict);
+  kernel().model_manager.copy_model( oldmodname, newmodname, dict );
 }
 
 void
 set_model_defaults( const Name& modelname, const DictionaryDatum& dict )
 {
-  kernel().model_manager.set_model_defaults(modelname, dict);
+  kernel().model_manager.set_model_defaults( modelname, dict );
 }
 
 DictionaryDatum

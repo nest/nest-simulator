@@ -224,6 +224,5 @@ GenericModel< ElementT >::set_model_id( int i )
 {
   proto_.set_model_id( i );
 }
-
 }
 #endif

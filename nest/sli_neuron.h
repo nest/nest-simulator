@@ -130,7 +130,7 @@ private:
   void calibrate();
 
   void update( Time const&, const long_t, const long_t );
-  
+
   /**
    * Execute a SLI command in the neuron's namespace.
    */

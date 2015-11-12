@@ -250,8 +250,8 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
         // of neurons in NEST. This ensures that the mask is set for
         // the rank where left acutally is the first neuron fromt
         // the currently looked at range.
-        ( *masks )[ ( proc + target->first ) % kernel().mpi_manager.get_num_processes() ].targets.insert(
-          left, right );
+        ( *masks )[ ( proc + target->first ) % kernel().mpi_manager.get_num_processes() ]
+          .targets.insert( left, right );
       }
     }
 

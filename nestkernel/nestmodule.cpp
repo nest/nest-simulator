@@ -250,8 +250,8 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
         con_id.get_port(),                                                             // port
         con_id.get_target_thread(), // target thread
         dict );
-      
-      ALL_ENTRIES_ACCESSED(*dict, "SetStatus", "Unread dictionary entries: ");
+
+      ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
     }
   }
   else
@@ -268,7 +268,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
         con_id.get_target_thread(), // target thread
         dict );
 
-      ALL_ENTRIES_ACCESSED(*dict, "SetStatus", "Unread dictionary entries: ");
+      ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
     }
   }
 
@@ -352,9 +352,8 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
   long gid = conn.get_source_gid();
   kernel().node_manager.get_node( gid ); // Just to check if the node exists
 
-  DictionaryDatum result_dict =
-    kernel().connection_builder_manager.get_synapse_status(gid,
-    conn.get_synapse_model_id(), conn.get_port(), conn.get_target_thread() );
+  DictionaryDatum result_dict = kernel().connection_builder_manager.get_synapse_status(
+    gid, conn.get_synapse_model_id(), conn.get_port(), conn.get_target_thread() );
 
   i->OStack.pop();
   i->OStack.push( result_dict );
@@ -401,7 +400,7 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
   const Name name = getValue< Name >( i->OStack.pick( 1 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  kernel().model_manager.set_model_defaults(name, params);
+  kernel().model_manager.set_model_defaults( name, params );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -493,7 +492,7 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
   const Name new_name = getValue< Name >( i->OStack.pick( 1 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  kernel().model_manager.copy_model(old_name, new_name, params);
+  kernel().model_manager.copy_model( old_name, new_name, params );
 
   i->OStack.pop( 3 );
   i->EStack.pop();
@@ -818,7 +817,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 
   kernel().connection_builder_manager.divergent_connect( source, params, synmodel_id );
 
-  ALL_ENTRIES_ACCESSED(*params, "Connect", "The following synapse parameters are unused: ");
+  ALL_ENTRIES_ACCESSED( *params, "Connect", "The following synapse parameters are unused: " );
 
   i->OStack.pop( 3 );
   i->EStack.pop();

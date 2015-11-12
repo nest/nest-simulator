@@ -45,11 +45,11 @@ ModelManager::ModelManager()
   , models_()
   , pristine_prototypes_()
   , prototypes_()
-  , modeldict_(new Dictionary)
-  , synapsedict_(new Dictionary)
-  , subnet_model_(0)
-  , siblingcontainer_model_(0)
-  , proxynode_model_(0)
+  , modeldict_( new Dictionary )
+  , synapsedict_( new Dictionary )
+  , subnet_model_( 0 )
+  , siblingcontainer_model_( 0 )
+  , proxynode_model_( 0 )
   , proxy_nodes_()
   , dummy_spike_sources_()
   , model_defaults_modified_( false )
@@ -61,7 +61,7 @@ ModelManager::~ModelManager()
   clear_models_( true );
 
   clear_prototypes_();
-  
+
   // Now we can delete the clean model prototypes
   std::vector< ConnectorModel* >::iterator i;
   for ( i = pristine_prototypes_.begin(); i != pristine_prototypes_.end(); ++i )
@@ -74,20 +74,22 @@ ModelManager::~ModelManager()
       delete ( *j ).first;
 }
 
-void ModelManager::initialize()
+void
+ModelManager::initialize()
 {
-  if (subnet_model_ == 0 && siblingcontainer_model_ == 0 && proxynode_model_ == 0) {
+  if ( subnet_model_ == 0 && siblingcontainer_model_ == 0 && proxynode_model_ == 0 )
+  {
     // initialize these models only once outside of the constructor
     // as the node model asks for the # of threads to setup slipools
     // but during construction of ModelManager, the KernelManager is not created
     subnet_model_ = new GenericModel< Subnet >( "subnet" );
     subnet_model_->set_type_id( 0 );
     pristine_models_.push_back( std::pair< Model*, bool >( subnet_model_, false ) );
-    
+
     siblingcontainer_model_ = new GenericModel< SiblingContainer >( "siblingcontainer" );
     siblingcontainer_model_->set_type_id( 1 );
     pristine_models_.push_back( std::pair< Model*, bool >( siblingcontainer_model_, true ) );
-    
+
     proxynode_model_ = new GenericModel< proxynode >( "proxynode" );
     proxynode_model_->set_type_id( 2 );
     pristine_models_.push_back( std::pair< Model*, bool >( proxynode_model_, true ) );
@@ -147,7 +149,8 @@ void ModelManager::initialize()
   }
 }
 
-void ModelManager::finalize()
+void
+ModelManager::finalize()
 {
   clear_models_();
   clear_prototypes_();
@@ -159,14 +162,15 @@ void ModelManager::finalize()
     // delete all nodes, because cloning the model may have created instances.
     ( *m ).first->clear();
   }
-
 }
 
-void ModelManager::set_status( const DictionaryDatum& )
+void
+ModelManager::set_status( const DictionaryDatum& )
 {
 }
 
-void ModelManager::get_status( DictionaryDatum& )
+void
+ModelManager::get_status( DictionaryDatum& )
 {
 }
 
@@ -183,7 +187,7 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
   if ( !oldnodemodel.empty() )
   {
     index old_id = static_cast< index >( oldnodemodel );
-    new_id = copy_node_model_( old_id, new_name);
+    new_id = copy_node_model_( old_id, new_name );
     set_node_defaults_( new_id, params );
   }
   else if ( !oldsynmodel.empty() )
@@ -197,33 +201,33 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
 
   return new_id;
 }
-  
+
 index
-ModelManager::register_node_model_( Model* model, bool private_model)
+ModelManager::register_node_model_( Model* model, bool private_model )
 {
   const index id = models_.size();
   model->set_model_id( id );
   model->set_type_id( id );
-  
+
   std::string name = model->get_name();
-  
+
   pristine_models_.push_back( std::pair< Model*, bool >( model, private_model ) );
   models_.push_back( model->clone( name ) );
   int proxy_model_id = get_model_id( "proxynode" );
   assert( proxy_model_id > 0 );
   Model* proxy_model = models_[ proxy_model_id ];
   assert( proxy_model != 0 );
-  
+
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
     Node* newnode = proxy_model->allocate( t );
     newnode->set_model_id( id );
     proxy_nodes_[ t ].push_back( newnode );
   }
-  
+
   if ( !private_model )
-  modeldict_->insert( name, id );
-  
+    modeldict_->insert( name, id );
+
   return id;
 }
 
@@ -253,8 +257,9 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
 
   if ( new_id == invalid_synindex ) // we wrapped around (=255), maximal id of synapse_model = 254
   {
-    LOG( M_ERROR, "ModelManager::copy_synapse_model_",
-	 "CopyModel cannot generate another synapse. Maximal synapse model count of 255 exceeded." );
+    LOG( M_ERROR,
+      "ModelManager::copy_synapse_model_",
+      "CopyModel cannot generate another synapse. Maximal synapse model count of 255 exceeded." );
     throw KernelException( "Synapse model count exceeded" );
   }
   assert( new_id != invalid_synindex );
@@ -295,13 +300,14 @@ ModelManager::set_model_defaults( Name name, DictionaryDatum params )
 
 
 void
-ModelManager::set_node_defaults_(index model_id, const DictionaryDatum& params )
+ModelManager::set_node_defaults_( index model_id, const DictionaryDatum& params )
 {
   params->clear_access_flags();
 
   get_model( model_id )->set_status( params );
-  
-  ALL_ENTRIES_ACCESSED( *params, "ModelManager::set_node_defaults_", "Unread dictionary entries: ");
+
+  ALL_ENTRIES_ACCESSED(
+    *params, "ModelManager::set_node_defaults_", "Unread dictionary entries: " );
 }
 
 void
@@ -323,11 +329,13 @@ ModelManager::set_synapse_defaults_( index model_id, const DictionaryDatum& para
         e.message() ) );
     }
   }
-  
-  ALL_ENTRIES_ACCESSED( *params, "ModelManager::set_synapse_defaults_", "Unread dictionary entries: ");
+
+  ALL_ENTRIES_ACCESSED(
+    *params, "ModelManager::set_synapse_defaults_", "Unread dictionary entries: " );
 }
 
-// TODO: replace int with index and return value -1 with invalid_index, also change all pertaining code
+// TODO: replace int with index and return value -1 with invalid_index, also change all pertaining
+// code
 int
 ModelManager::get_model_id( const Name name ) const
 {
@@ -351,8 +359,9 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
 
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
     prototypes_[ t ][ syn_id ]->get_status( dict ); // each call adds to num_connections
-  
-  ( *dict )[ "num_connections" ] = kernel().connection_builder_manager.get_num_connections(syn_id);
+
+  ( *dict )[ "num_connections" ] =
+    kernel().connection_builder_manager.get_num_connections( syn_id );
 
   return dict;
 }
@@ -362,8 +371,7 @@ ModelManager::clear_models_( bool called_from_destructor )
 {
   // no message on destructor call, may come after MPI_Finalize()
   if ( not called_from_destructor )
-    LOG( M_INFO, "ModelManager::clear_models_",
-	 "Models will be cleared and parameters reset." );
+    LOG( M_INFO, "ModelManager::clear_models_", "Models will be cleared and parameters reset." );
 
   // We delete all models, which will also delete all nodes. The
   // built-in models will be recovered from the pristine_models_ in
@@ -406,35 +414,35 @@ ModelManager::calibrate( const TimeConverter& tc )
       if ( *pt != 0 )
         ( *pt )->calibrate( tc );
 }
-  
+
 //!< Functor to compare Models by their name.
 bool
 ModelManager::compare_model_by_id_( const int a, const int b )
 {
-  return kernel().model_manager.get_model( a )->get_name() 
-       < kernel().model_manager.get_model( b )->get_name();
+  return kernel().model_manager.get_model( a )->get_name()
+    < kernel().model_manager.get_model( b )->get_name();
 }
 
 void
 ModelManager::memory_info() const
 {
-  
+
   std::cout.setf( std::ios::left );
   std::vector< index > idx( get_num_node_models() );
-  
-  
+
+
   for ( index i = 0; i < get_num_node_models(); ++i )
     idx[ i ] = i;
-  
+
   std::sort( idx.begin(), idx.end(), compare_model_by_id_ );
-  
+
   std::string sep( "--------------------------------------------------" );
-  
+
   std::cout << sep << std::endl;
   std::cout << std::setw( 25 ) << "Name" << std::setw( 13 ) << "Capacity" << std::setw( 13 )
             << "Available" << std::endl;
   std::cout << sep << std::endl;
-  
+
   for ( index i = 0; i < get_num_node_models(); ++i )
   {
     Model* mod = models_[ idx[ i ] ];
@@ -443,7 +451,7 @@ ModelManager::memory_info() const
                 << mod->mem_capacity() * mod->get_element_size() << std::setw( 13 )
                 << mod->mem_available() * mod->get_element_size() << std::endl;
   }
-  
+
   std::cout << sep << std::endl;
   std::cout.unsetf( std::ios::left );
 }

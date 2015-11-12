@@ -34,13 +34,15 @@ namespace nest
 
 template < class ModelT >
 index
-ModelManager::register_node_model( const Name& name, bool private_model)
+ModelManager::register_node_model( const Name& name, bool private_model )
 {
   if ( !private_model && modeldict_->known( name ) )
   {
-    std::string msg = String::compose("A model called '%1' already exists.\n"
-      "Please choose a different name!", name);
-    throw NamingConflict(msg);
+    std::string msg = String::compose(
+      "A model called '%1' already exists.\n"
+      "Please choose a different name!",
+      name );
+    throw NamingConflict( msg );
   }
 
   Model* model = new GenericModel< ModelT >( name.toString() );
@@ -49,13 +51,17 @@ ModelManager::register_node_model( const Name& name, bool private_model)
 
 template < class ModelT >
 index
-ModelManager::register_preconf_node_model( const Name& name, DictionaryDatum& conf, bool private_model )
+ModelManager::register_preconf_node_model( const Name& name,
+  DictionaryDatum& conf,
+  bool private_model )
 {
   if ( !private_model && modeldict_->known( name ) )
   {
-    std::string msg = String::compose("A model called '%1' already exists.\n"
-      "Please choose a different name!", name);
-    throw NamingConflict(msg);
+    std::string msg = String::compose(
+      "A model called '%1' already exists.\n"
+      "Please choose a different name!",
+      name );
+    throw NamingConflict( msg );
   }
 
   Model* model = new GenericModel< ModelT >( name.toString() );
@@ -71,42 +77,42 @@ synindex
 ModelManager::register_connection_model( const std::string& name )
 {
   ConnectorModel* cf = new GenericConnectorModel< ConnectionT >( name );
-  
+
   if ( synapsedict_->known( name ) )
   {
     delete cf;
-    std::string msg = String::compose("A synapse type called '%1' already exists.\n"
-                                      "Please choose a different name!", name);
-    throw NamingConflict(msg);
+    std::string msg = String::compose(
+      "A synapse type called '%1' already exists.\n"
+      "Please choose a different name!",
+      name );
+    throw NamingConflict( msg );
   }
-  
+
   pristine_prototypes_.push_back( cf );
-  
+
   const synindex syn_id = prototypes_[ 0 ].size();
   pristine_prototypes_[ syn_id ]->set_syn_id( syn_id );
-  
-  for ( thread t = 0; t < static_cast < thread >( kernel().vp_manager.get_num_threads() ); ++t )
+
+  for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
     prototypes_[ t ].push_back( cf->clone( name ) );
     prototypes_[ t ][ syn_id ]->set_syn_id( syn_id );
   }
-  
+
   synapsedict_->insert( name, syn_id );
-  
+
   return syn_id;
 }
 
 
-inline
-Node*
+inline Node*
 ModelManager::get_proxy_node( thread tid, index gid )
 {
   return proxy_nodes_[ tid ].at( kernel().modelrange_manager.get_model_id( gid ) );
 }
 
 
-inline
-bool
+inline bool
 ModelManager::is_model_in_use( index i )
 {
   return kernel().modelrange_manager.model_in_use( i );

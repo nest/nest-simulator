@@ -73,8 +73,8 @@ namespace nest
 class MUSICManager : ManagerInterface
 {
 public:
-  virtual void initialize();  // called from meta-manager to construct
-  virtual void finalize(); // called from meta-manger to reinit
+  virtual void initialize(); // called from meta-manager to construct
+  virtual void finalize();   // called from meta-manger to reinit
 
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );
@@ -94,11 +94,11 @@ public:
    * Advance the time of music by 1 simulation step.
    */
   void advance_music_time();
-  
+
   void music_finalize(); // called from MPIManager::mpi_finalize
-  
+
 #ifdef HAVE_MUSIC
-  MPI::Intracomm communicator ();
+  MPI::Intracomm communicator();
 
   MUSIC::Setup* get_music_setup();
   MUSIC::Runtime* get_music_runtime();

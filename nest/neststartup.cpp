@@ -65,7 +65,8 @@
 
 SLIInterpreter* sli_engine;
 
-SLIInterpreter& get_engine()
+SLIInterpreter&
+get_engine()
 {
   assert( sli_engine );
   return *sli_engine;
@@ -74,8 +75,7 @@ SLIInterpreter& get_engine()
 void
 sli_logging( const nest::LoggingEvent& e )
 {
-  sli_engine->message(
-    static_cast< int >( e.severity ), e.function.c_str(), e.message.c_str() );
+  sli_engine->message( static_cast< int >( e.severity ), e.function.c_str(), e.message.c_str() );
 }
 
 #ifndef _IS_PYNEST
@@ -86,7 +86,7 @@ int
 neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepath )
 #endif
 {
-  nest::init_nest(&argc, &argv);
+  nest::init_nest( &argc, &argv );
 
   sli_engine = &engine;
   register_logger_client( sli_logging );
@@ -125,13 +125,13 @@ neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepa
 
   // register NestModule class
   addmodule< nest::NestModule >( engine );
-  
-  // this can make problems with reference counting, if 
+
+  // this can make problems with reference counting, if
   // the intepreter decides cleans up memory before NEST is ready
-  engine.def( "modeldict", nest::kernel().model_manager.get_modeldict()  );
-  engine.def( "synapsedict", nest::kernel().model_manager.get_synapsedict()  );
+  engine.def( "modeldict", nest::kernel().model_manager.get_modeldict() );
+  engine.def( "synapsedict", nest::kernel().model_manager.get_synapsedict() );
   engine.def( "connruledict", nest::kernel().connection_builder_manager.get_connruledict() );
-  
+
   // register sli_neuron
   nest::kernel().model_manager.register_node_model< nest::sli_neuron >( "sli_neuron" );
 

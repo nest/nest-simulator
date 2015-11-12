@@ -207,8 +207,8 @@ EventDeliveryManager::update_moduli()
     std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
   for ( delay d = 0; d < min_delay + max_delay; ++d )
   {
-    slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d )
-                           / min_delay ) % nbuff;
+    slice_moduli_[ d ] =
+      ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
   }
 }
 
@@ -297,7 +297,8 @@ EventDeliveryManager::collocate_buffers_()
     // make sure buffers are correctly sized
     if ( global_offgrid_spikes_.size()
       != static_cast< uint_t >( kernel().mpi_manager.get_recv_buffer_size() ) )
-      global_offgrid_spikes_.resize( kernel().mpi_manager.get_recv_buffer_size(), OffGridSpike( 0, 0.0 ) );
+      global_offgrid_spikes_.resize(
+        kernel().mpi_manager.get_recv_buffer_size(), OffGridSpike( 0, 0.0 ) );
 
     if ( num_spikes + ( kernel().vp_manager.get_num_threads()
                         * kernel().connection_builder_manager.get_min_delay() )
@@ -308,7 +309,8 @@ EventDeliveryManager::collocate_buffers_()
         OffGridSpike( 0, 0.0 ) );
     else if ( local_offgrid_spikes_.size()
       < static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
-      local_offgrid_spikes_.resize( kernel().mpi_manager.get_send_buffer_size(), OffGridSpike( 0, 0.0 ) );
+      local_offgrid_spikes_.resize(
+        kernel().mpi_manager.get_send_buffer_size(), OffGridSpike( 0, 0.0 ) );
 
     // collocate the entries of spike_registers into local_offgrid_spikes__
     std::vector< OffGridSpike >::iterator pos = local_offgrid_spikes_.begin();
@@ -440,7 +442,8 @@ EventDeliveryManager::gather_events()
 {
   collocate_buffers_();
   if ( off_grid_spiking_ )
-    kernel().mpi_manager.communicate( local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
+    kernel().mpi_manager.communicate(
+      local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
   else
     kernel().mpi_manager.communicate( local_grid_spikes_, global_grid_spikes_, displacements_ );
 }

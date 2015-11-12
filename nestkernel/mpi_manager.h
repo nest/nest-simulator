@@ -50,7 +50,7 @@
 
 namespace nest
 {
-  
+
 class MPIManager : ManagerInterface
 {
 public:
@@ -308,7 +308,7 @@ private:
   MPI_Comm comm;
 #endif /* #ifdef HAVE_MUSIC */
   MPI_Datatype MPI_OFFGRID_SPIKE;
-  
+
   void communicate_Allgather( std::vector< uint_t >& send_buffer,
     std::vector< uint_t >& recv_buffer,
     std::vector< int >& displacements );
@@ -581,7 +581,6 @@ MPIManager::set_buffer_sizes( int send_buffer_size, int recv_buffer_size )
   send_buffer_size_ = send_buffer_size;
   recv_buffer_size_ = recv_buffer_size;
 }
- 
 }
 
 #endif /* MPI_MANAGER_H */

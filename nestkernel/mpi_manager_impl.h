@@ -264,7 +264,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 template < typename NodeListType >
 void
 nest::MPIManager::communicate( const NodeListType& local_nodes,
-    std::vector< NodeAddressingData >& all_nodes,
+  std::vector< NodeAddressingData >& all_nodes,
   bool )
 {
   for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )

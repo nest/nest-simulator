@@ -35,9 +35,10 @@ nest::SliceRingBuffer::SliceRingBuffer()
 void
 nest::SliceRingBuffer::resize()
 {
-  long_t newsize = static_cast< long_t >( std::ceil(
-    static_cast< double >( kernel().connection_builder_manager.get_min_delay()
-      + kernel().connection_builder_manager.get_max_delay() ) / kernel().connection_builder_manager.get_min_delay() ) );
+  long_t newsize = static_cast< long_t >(
+    std::ceil( static_cast< double >( kernel().connection_builder_manager.get_min_delay()
+                 + kernel().connection_builder_manager.get_max_delay() )
+      / kernel().connection_builder_manager.get_min_delay() ) );
   if ( queue_.size() != static_cast< ulong_t >( newsize ) )
   {
     queue_.resize( newsize );

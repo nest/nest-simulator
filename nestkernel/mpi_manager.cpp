@@ -132,9 +132,9 @@ nest::MPIManager::set_num_rec_processes( int nrp, bool called_by_reset )
       "Number of processes used for recording must be smaller than total number of processes." );
   n_rec_procs_ = nrp;
   n_sim_procs_ = num_processes_ - n_rec_procs_;
-  
+
   kernel().rng_manager.create_rngs_();
-  
+
   if ( nrp > 0 )
   {
     std::string msg = String::compose(

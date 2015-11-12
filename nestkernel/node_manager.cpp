@@ -46,19 +46,19 @@ namespace nest
 {
 
 NodeManager::NodeManager()
-  :  local_nodes_()
-  ,  root_( 0 )
-  ,  current_( 0 )
-  ,  siblingcontainer_model_(0)
-  ,  n_gsd_( 0 )
-  ,  nodes_vec_()
-  ,  nodes_vec_network_size_( 0 ) // zero to force update
+  : local_nodes_()
+  , root_( 0 )
+  , current_( 0 )
+  , siblingcontainer_model_( 0 )
+  , n_gsd_( 0 )
+  , nodes_vec_()
+  , nodes_vec_network_size_( 0 ) // zero to force update
 {
 }
 
 NodeManager::~NodeManager()
 {
-  destruct_nodes_();     // We must destruct nodes properly, since devices may need to close files.
+  destruct_nodes_(); // We must destruct nodes properly, since devices may need to close files.
 }
 
 void
@@ -77,7 +77,7 @@ NodeManager::initialize()
    * initialized network.
    */
   local_nodes_.reserve( 1 );
-  kernel().modelrange_manager.add_range(0, 0, 0);
+  kernel().modelrange_manager.add_range( 0, 0, 0 );
 
   // TODO The access to the base models below is maximally bad,
   //      and should be done in some elegant way vs ModelManager.
@@ -114,8 +114,6 @@ NodeManager::initialize()
 
   // explicitly force construction of nodes_vec_ to ensure consistent state
   ensure_valid_thread_local_ids();
-
-
 }
 
 void
@@ -127,19 +125,19 @@ NodeManager::finalize()
 void
 NodeManager::reinit_nodes()
 {
- /* Reinitialize state on all nodes, force init_buffers() on next
-     call to simulate().
-     Finding all nodes is non-trivial:
-     - We iterate over local nodes only.
-     - Nodes without proxies are not registered in nodes_. Instead, a
-       SiblingContainer is created as container, and this container is
-       stored in nodes_. The container then contains the actual nodes,
-       which need to be reset.
-     Thus, we iterate nodes_; additionally, we iterate the content of
-     a Node if it's model id is -1, which indicates that it is a
-     container.  Subnets are not iterated, since their nodes are
-     registered in nodes_ directly.
-   */
+  /* Reinitialize state on all nodes, force init_buffers() on next
+      call to simulate().
+      Finding all nodes is non-trivial:
+      - We iterate over local nodes only.
+      - Nodes without proxies are not registered in nodes_. Instead, a
+        SiblingContainer is created as container, and this container is
+        stored in nodes_. The container then contains the actual nodes,
+        which need to be reset.
+      Thus, we iterate nodes_; additionally, we iterate the content of
+      a Node if it's model id is -1, which indicates that it is a
+      container.  Subnets are not iterated, since their nodes are
+      registered in nodes_ directly.
+    */
   for ( size_t n = 0; n < local_nodes_.size(); ++n )
   {
     Node* node = local_nodes_.get_node_by_index( n );
@@ -209,9 +207,7 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
 
   if ( max_gid > local_nodes_.max_size() || max_gid < min_gid )
   {
-    LOG( M_ERROR,
-      "NodeManager::add:node",
-      "Requested number of nodes will overflow the memory." );
+    LOG( M_ERROR, "NodeManager::add:node", "Requested number of nodes will overflow the memory." );
     LOG( M_ERROR, "NodeManager::add:node", "No nodes were created." );
     throw KernelException( "OutOfMemory" );
   }
@@ -228,8 +224,8 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
     // processes
     if ( kernel().mpi_manager.get_rank() >= kernel().mpi_manager.get_num_sim_processes() )
     {
-      local_nodes_.reserve(
-        std::ceil( static_cast< double >( max_gid ) / kernel().mpi_manager.get_num_sim_processes() ) );
+      local_nodes_.reserve( std::ceil(
+        static_cast< double >( max_gid ) / kernel().mpi_manager.get_num_sim_processes() ) );
       for ( thread t = 0; t < n_threads; ++t )
       {
         // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
@@ -274,12 +270,12 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
     // We only need to reserve memory on the ranks on which we
     // actually create nodes. In this if-branch ---> Only on
     // simulation processes
-    if ( kernel().mpi_manager.  get_rank() < kernel().mpi_manager.get_num_sim_processes() )
+    if ( kernel().mpi_manager.get_rank() < kernel().mpi_manager.get_num_sim_processes() )
     {
       // TODO: This will work reasonably for round-robin. The extra 50 entries are
       //       for subnets and devices.
-      local_nodes_.reserve(
-        std::ceil( static_cast< double >( max_gid ) / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
+      local_nodes_.reserve( std::ceil( static_cast< double >( max_gid )
+                              / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
       for ( thread t = 0; t < n_threads; ++t )
       {
         // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
@@ -350,8 +346,8 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
     // The following loop creates n nodes. For each node, a wrapper is created
     // and filled with one instance per thread, in total n * n_thread nodes in
     // n wrappers.
-    local_nodes_.reserve(
-      std::ceil( static_cast< double >( max_gid ) / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
+    local_nodes_.reserve( std::ceil( static_cast< double >( max_gid )
+                            / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
     for ( index gid = min_gid; gid < max_gid; ++gid )
     {
       thread thread_id = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
@@ -421,7 +417,7 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
 }
 
 void
-NodeManager::restore_nodes(const ArrayDatum& node_list )
+NodeManager::restore_nodes( const ArrayDatum& node_list )
 {
   Subnet* root = get_cwn();
   const index gid_offset = size() - 1;
@@ -617,9 +613,10 @@ NodeManager::set_status_single_node_( Node& target, const DictionaryDatum& d, bo
     if ( clear_flags )
       d->clear_access_flags();
     target.set_status_base( d );
-    
-    // TODO: Not sure this check should be at single neuron level; advantage is it stops after first failure.
-    ALL_ENTRIES_ACCESSED( *d, "NodeManager::set_status", "Unread dictionary entries: ");
+
+    // TODO: Not sure this check should be at single neuron level; advantage is it stops after first
+    // failure.
+    ALL_ENTRIES_ACCESSED( *d, "NodeManager::set_status", "Unread dictionary entries: " );
   }
 }
 
@@ -642,8 +639,8 @@ NodeManager::prepare_nodes()
   {
     size_t t = kernel().vp_manager.get_thread_id();
 #else
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
+    for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+    {
 #endif
 
     // We prepare nodes in a parallel region. Therefore, we need to catch exceptions
@@ -676,7 +673,7 @@ NodeManager::prepare_nodes()
   LOG( M_INFO,
     "NodeManager::prepare_nodes_",
     String::compose(
-             "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
+         "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
 }
 
 //!< This function is called only if the thread data structures are properly set up.
@@ -690,8 +687,8 @@ NodeManager::finalize_nodes()
   {
     index t = kernel().vp_manager.get_thread_id();
 #else
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
+    for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+    {
 #endif
     for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
     {
@@ -713,7 +710,7 @@ NodeManager::finalize_nodes()
     }
   }
 }
-  
+
 inline void
 NodeManager::prepare_node_( Node* n )
 {
@@ -738,7 +735,7 @@ void
 NodeManager::set_status( index gid, const DictionaryDatum& d )
 {
 
-  assert( gid > 0 or "This function cannot be called for the root node.");
+  assert( gid > 0 or "This function cannot be called for the root node." );
   if ( gid > 0 )
   {
     // we first handle normal nodes, except the root (GID 0)
@@ -764,22 +761,21 @@ NodeManager::set_status( index gid, const DictionaryDatum& d )
 void
 NodeManager::get_status( DictionaryDatum& d )
 {
-    def< long >( d, "network_size", nodes_vec_network_size_);
+  def< long >( d, "network_size", nodes_vec_network_size_ );
 
-    std::map< long, size_t > sna_cts = local_nodes_.get_step_ctr();
-    DictionaryDatum cdict( new Dictionary );
-    for ( std::map< long, size_t >::const_iterator cit = sna_cts.begin(); cit != sna_cts.end();
-          ++cit )
-    {
-      std::stringstream s;
-      s << cit->first;
-      ( *cdict )[ s.str() ] = cit->second;
-    }
-
+  std::map< long, size_t > sna_cts = local_nodes_.get_step_ctr();
+  DictionaryDatum cdict( new Dictionary );
+  for ( std::map< long, size_t >::const_iterator cit = sna_cts.begin(); cit != sna_cts.end();
+        ++cit )
+  {
+    std::stringstream s;
+    s << cit->first;
+    ( *cdict )[ s.str() ] = cit->second;
+  }
 }
 
 void
-  NodeManager::set_status( const DictionaryDatum& d )
+NodeManager::set_status( const DictionaryDatum& d )
 {
   std::string tmp;
   if ( !d->all_accessed( tmp ) ) // proceed only if there are unaccessed items left
@@ -839,4 +835,3 @@ NodeManager::reset_nodes_state()
   }
 }
 }
-

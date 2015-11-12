@@ -207,7 +207,6 @@ public:
   void init_moduli();
 
 private:
-
   /**
    * Rearrange the spike_register into a 2-dim structure. This is
    * done by collecting the spikes from all threads in each slice of

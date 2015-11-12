@@ -159,16 +159,19 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
   // (either from commonprops or default connection)
   if ( default_delay_needs_check_ )
   {
-    try {
+    try
+    {
       kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms(
-                                                                                    default_connection_.get_delay() );
-    } catch (BadDelay& e) {
-      throw BadDelay(default_connection_.get_delay(), 
-                     String::compose("Default delay of '%1' must be between min_delay %2 and max_delay %3.",
-                                     get_name(), 
-                                     Time::delay_steps_to_ms(kernel().connection_builder_manager.get_min_delay()),
-                                     Time::delay_steps_to_ms(kernel().connection_builder_manager.get_max_delay()))
-                    );
+        default_connection_.get_delay() );
+    }
+    catch ( BadDelay& e )
+    {
+      throw BadDelay(
+        default_connection_.get_delay(),
+        String::compose( "Default delay of '%1' must be between min_delay %2 and max_delay %3.",
+          get_name(),
+          Time::delay_steps_to_ms( kernel().connection_builder_manager.get_min_delay() ),
+          Time::delay_steps_to_ms( kernel().connection_builder_manager.get_max_delay() ) ) );
     }
     default_delay_needs_check_ = false;
   }

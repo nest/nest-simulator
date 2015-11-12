@@ -68,29 +68,29 @@ nest::KernelManager::~KernelManager()
 void
 nest::KernelManager::initialize()
 {
-  logging_manager.initialize();   // must come first so others can log
-  io_manager.initialize();        // independent of others
+  logging_manager.initialize(); // must come first so others can log
+  io_manager.initialize();      // independent of others
 
-  mpi_manager.initialize();       // set up inter-process communication
-  vp_manager.initialize();        // set up threads
+  mpi_manager.initialize(); // set up inter-process communication
+  vp_manager.initialize();  // set up threads
 
   // invariant: process infrastructure (MPI, threads) in place
 
-  rng_manager.initialize();       // depends on number of VPs
+  rng_manager.initialize(); // depends on number of VPs
 
   // invariant: supporting managers set up
 
   // "Core kernel managers" follow
-  simulation_manager.initialize();          // independent of others
-  modelrange_manager.initialize();          // independent of others
-  connection_builder_manager.initialize();  // depends only on num of threads
+  simulation_manager.initialize();         // independent of others
+  modelrange_manager.initialize();         // independent of others
+  connection_builder_manager.initialize(); // depends only on num of threads
 
   // prerequisites:
   //   - min_delay/max_delay available (connection_builder_manager)
   //   - clock initialized (simulation_manager)
   event_delivery_manager.initialize();
 
-  model_manager.initialize();   // depends on number of threads
+  model_manager.initialize(); // depends on number of threads
 
   music_manager.initialize();
 
@@ -98,7 +98,7 @@ nest::KernelManager::initialize()
   //   - modelrange_manager initialized
   //   - model_manager for pristine models
   //   - vp_manager for number of threads
-  node_manager.initialize();  // must come last
+  node_manager.initialize(); // must come last
 
   initialized_ = true;
 }
@@ -139,7 +139,7 @@ nest::KernelManager::num_threads_changed_reset()
   node_manager.finalize();
   model_manager.finalize();
   connection_builder_manager.finalize();
-  modelrange_manager.finalize(); 
+  modelrange_manager.finalize();
   rng_manager.finalize();
 
   rng_manager.initialize();
@@ -156,19 +156,19 @@ nest::KernelManager::set_status( const DictionaryDatum& dict )
   assert( is_initialized() );
   logging_manager.set_status( dict );
   io_manager.set_status( dict );
-  
+
   mpi_manager.set_status( dict );
   vp_manager.set_status( dict );
-  
+
   rng_manager.set_status( dict ); // set RNGs --- MUST come after n_threads_ is updated
   simulation_manager.set_status( dict );
   modelrange_manager.set_status( dict );
   connection_builder_manager.set_status( dict );
-  
+
   event_delivery_manager.set_status( dict );
   model_manager.set_status( dict );
   music_manager.set_status( dict );
-  
+
   node_manager.set_status( dict ); // has to be called last
 }
 

@@ -26,7 +26,7 @@
 // C++ includes:
 #include <ostream>
 #include <stdexcept> // out_of_range
-#include <utility> // pair
+#include <utility>   // pair
 #include <vector>
 
 // Includes from nestkernel:

@@ -42,7 +42,8 @@
 // Includes from sli:
 #include "dictutils.h"
 
-namespace nest {
+namespace nest
+{
 
 MUSICManager::MUSICManager()
 {
@@ -89,9 +90,8 @@ void
 MUSICManager::enter_runtime( double_t h_min_delay )
 {
 #ifdef HAVE_MUSIC
-  publish_music_in_ports_ ();
-  std::string msg = String::compose( "Entering MUSIC runtime with tick = %1 ms",
-				     h_min_delay );
+  publish_music_in_ports_();
+  std::string msg = String::compose( "Entering MUSIC runtime with tick = %1 ms", h_min_delay );
   LOG( M_INFO, "MUSICManager::enter_runtime", msg );
 
   // MUSIC needs the step size in seconds
@@ -108,15 +108,15 @@ MUSICManager::music_finalize()
 {
 #ifdef HAVE_MUSIC
   if ( music_runtime == 0 )
-    {
-      // we need a Runtime object to call finalize(), so we create
-      // one, if we don't have one already
-      music_runtime = new MUSIC::Runtime( music_setup, 1e-3 );
-    }
+  {
+    // we need a Runtime object to call finalize(), so we create
+    // one, if we don't have one already
+    music_runtime = new MUSIC::Runtime( music_setup, 1e-3 );
+  }
 
   music_runtime->finalize();
   delete music_runtime;
-#else  /* #ifdef HAVE_MUSIC */
+#else /* #ifdef HAVE_MUSIC */
 #ifdef HAVE_MPI
   MPI_Finalize();
 #endif
@@ -127,7 +127,7 @@ MUSICManager::music_finalize()
 MPI::Intracomm
 MUSICManager::communicator()
 {
-  return music_setup->communicator ();
+  return music_setup->communicator();
 }
 
 MUSIC::Setup*
@@ -228,5 +228,4 @@ MUSICManager::update_music_event_handlers( Time const& origin, const long_t from
     it->second.update( origin, from, to );
 }
 #endif
-
 }

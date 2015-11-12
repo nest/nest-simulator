@@ -54,7 +54,7 @@ class SLIInterpreter;
 
 #include <string>
 int neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepath = "" );
-#else // #ifdef _IS_PYNEST
+#else  // #ifdef _IS_PYNEST
 int neststartup( int argc, char** argv, SLIInterpreter& engine );
 #endif // #ifdef _IS_PYNEST
 

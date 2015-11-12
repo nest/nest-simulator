@@ -163,7 +163,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         clock_.calibrate(); // adjust to new resolution
         // adjust delays in the connection system to new resolution
         kernel().connection_builder_manager.calibrate( time_converter );
-        kernel().model_manager.calibrate( time_converter ); 
+        kernel().model_manager.calibrate( time_converter );
         LOG( M_INFO, "Network::set_status", "tics per ms and resolution changed." );
       }
     }
@@ -182,7 +182,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         clock_.calibrate(); // adjust to new resolution
         // adjust delays in the connection system to new resolution
         kernel().connection_builder_manager.calibrate( time_converter );
-        kernel().model_manager.calibrate( time_converter ); 
+        kernel().model_manager.calibrate( time_converter );
         LOG( M_INFO, "Network::set_status", "Temporal resolution changed." );
       }
     }
@@ -315,7 +315,8 @@ nest::SimulationManager::resume_()
 #ifndef _OPENMP
   if ( kernel().vp_manager.get_num_threads() > 1 )
   {
-    LOG( M_ERROR, "SimulationManager::resume", "No multithreading available, using single threading" );
+    LOG(
+      M_ERROR, "SimulationManager::resume", "No multithreading available, using single threading" );
   }
 #endif
 
@@ -383,7 +384,8 @@ nest::SimulationManager::prepare_simulation_()
   // before enter_runtime
   if ( !simulated_ ) // only enter the runtime mode once
   {
-    double tick = Time::get_resolution().get_ms() * kernel().connection_builder_manager.get_min_delay();
+    double tick =
+      Time::get_resolution().get_ms() * kernel().connection_builder_manager.get_min_delay();
     kernel().music_manager.enter_runtime( tick );
   }
 }
@@ -437,10 +439,11 @@ nest::SimulationManager::update_()
 #endif
       }
 
-      const std::vector< Node* >& thread_local_nodes
-         = kernel().node_manager.get_nodes_on_thread(thrd);
+      const std::vector< Node* >& thread_local_nodes =
+        kernel().node_manager.get_nodes_on_thread( thrd );
       for ( std::vector< Node* >::const_iterator node = thread_local_nodes.begin();
-            node != thread_local_nodes.end(); ++node )
+            node != thread_local_nodes.end();
+            ++node )
       {
         // We update in a parallel region. Therefore, we need to catch exceptions
         // here and then handle them after the parallel region.

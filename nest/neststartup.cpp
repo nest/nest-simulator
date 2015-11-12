@@ -163,9 +163,7 @@ neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepa
 void
 nestshutdown( int exitcode )
 {
-#ifdef HAVE_MPI
-  nest::Communicator::finalize( exitcode );
-#endif
+  nest::kernel().mpi_manager.mpi_finalize( exitcode );
   nest::Network::destroy_network();
   nest::KernelManager::destroy_kernel_manager();
 }

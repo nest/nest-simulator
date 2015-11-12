@@ -33,8 +33,8 @@
 #include "random_datums.h"
 
 // Includes from nestkernel:
-#include "communicator.h"
-#include "communicator_impl.h"
+#include "mpi_manager.h"
+#include "mpi_manager_impl.h"
 #include "conn_builder.h"
 #include "connection_builder_manager_impl.h"
 #include "genericmodel.h"
@@ -1362,7 +1362,7 @@ NestModule::SetNumRecProcesses_iFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::SyncProcessesFunction::execute( SLIInterpreter* i ) const
 {
-  Communicator::synchronize();
+  kernel().mpi_manager.synchronize();
   i->EStack.pop();
 }
 
@@ -1386,9 +1386,9 @@ NestModule::TimeCommunication_i_i_bFunction::execute( SLIInterpreter* i ) const
 
   double_t time = 0.0;
   if ( offgrid )
-    time = Communicator::time_communicate_offgrid( num_bytes, samples );
+    time = kernel().mpi_manager.time_communicate_offgrid( num_bytes, samples );
   else
-    time = Communicator::time_communicate( num_bytes, samples );
+    time = kernel().mpi_manager.time_communicate( num_bytes, samples );
 
   i->OStack.pop( 3 );
   i->OStack.push( time );
@@ -1416,7 +1416,7 @@ NestModule::TimeCommunicationv_i_iFunction::execute( SLIInterpreter* i ) const
 
   double_t time = 0.0;
 
-  time = Communicator::time_communicatev( num_bytes, samples );
+  time = kernel().mpi_manager.time_communicatev( num_bytes, samples );
 
   i->OStack.pop( 2 );
   i->OStack.push( time );
@@ -1445,7 +1445,7 @@ NestModule::TimeCommunicationAlltoall_i_iFunction::execute( SLIInterpreter* i ) 
 
   double_t time = 0.0;
 
-  time = Communicator::time_communicate_alltoall( num_bytes, samples );
+  time = kernel().mpi_manager.time_communicate_alltoall( num_bytes, samples );
 
   i->OStack.pop( 2 );
   i->OStack.push( time );
@@ -1474,7 +1474,7 @@ NestModule::TimeCommunicationAlltoallv_i_iFunction::execute( SLIInterpreter* i )
 
   double_t time = 0.0;
 
-  time = Communicator::time_communicate_alltoallv( num_bytes, samples );
+  time = kernel().mpi_manager.time_communicate_alltoallv( num_bytes, samples );
 
   i->OStack.pop( 2 );
   i->OStack.push( time );
@@ -1500,7 +1500,7 @@ NestModule::TimeCommunicationAlltoallv_i_iFunction::execute( SLIInterpreter* i )
 void
 NestModule::ProcessorNameFunction::execute( SLIInterpreter* i ) const
 {
-  i->OStack.push( Communicator::get_processor_name() );
+  i->OStack.push( kernel().mpi_manager.get_processor_name() );
   i->EStack.pop();
 }
 
@@ -1526,7 +1526,7 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
   long exitcode = getValue< long >( i->OStack.pick( 0 ) );
-  Communicator::mpi_abort( exitcode );
+  kernel().mpi_manager.mpi_abort( exitcode );
   i->EStack.pop();
 }
 #endif
@@ -1721,7 +1721,7 @@ NestModule::SetAcceptableLatencyFunction::execute( SLIInterpreter* i ) const
   std::string port_name = getValue< std::string >( i->OStack.pick( 1 ) );
   double latency = getValue< double >( i->OStack.pick( 0 ) );
 
-  Network::get_network().set_music_in_port_acceptable_latency( port_name, latency );
+  kernel().music_manager.set_music_in_port_acceptable_latency( port_name, latency );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -1735,7 +1735,7 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
   std::string port_name = getValue< std::string >( i->OStack.pick( 1 ) );
   int maxBuffered = getValue< long >( i->OStack.pick( 0 ) );
 
-  Network::get_network().set_music_in_port_max_buffered( port_name, maxBuffered );
+  kernel().music_manager.set_music_in_port_max_buffered( port_name, maxBuffered );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -1849,7 +1849,7 @@ NestModule::init( SLIInterpreter* i )
   Token statusd = i->baselookup( Name( "statusdict" ) );
   DictionaryDatum dd = getValue< DictionaryDatum >( statusd );
   dd->insert( Name( "kernelname" ), new StringDatum( "NEST" ) );
-  dd->insert( Name( "is_mpi" ), new BoolDatum( Communicator::get_initialized() ) );
+  dd->insert( Name( "is_mpi" ), new BoolDatum( kernel().mpi_manager.get_initialized() ) );
 }
 
 } // namespace nest

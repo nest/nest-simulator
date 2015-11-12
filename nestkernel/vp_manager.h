@@ -27,7 +27,7 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-#include "communicator.h"
+#include "mpi_manager.h"
 #include "nest_types.h"
 
 // Includes from sli:

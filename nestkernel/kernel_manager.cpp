@@ -55,6 +55,7 @@ nest::KernelManager::KernelManager()
   , connection_builder_manager()
   , event_delivery_manager()
   , model_manager()
+  , music_manager()
   , node_manager()
   , initialized_( false )
 {
@@ -91,6 +92,8 @@ nest::KernelManager::initialize()
 
   model_manager.initialize();   // depends on number of threads
 
+  music_manager.initialize();
+
   // prerequisites:
   //   - modelrange_manager initialized
   //   - model_manager for pristine models
@@ -107,6 +110,7 @@ nest::KernelManager::finalize()
 
   // reverse order of calls as in initialize()
   node_manager.finalize();
+  music_manager.finalize();
   model_manager.finalize();
   event_delivery_manager.finalize();
   connection_builder_manager.finalize();
@@ -142,6 +146,7 @@ nest::KernelManager::num_threads_changed_reset()
   modelrange_manager.initialize(); // independant of threads, but node_manager needs it reset
   connection_builder_manager.initialize();
   model_manager.initialize();
+  music_manager.initialize();
   node_manager.initialize();
 }
 
@@ -162,6 +167,7 @@ nest::KernelManager::set_status( const DictionaryDatum& dict )
   
   event_delivery_manager.set_status( dict );
   model_manager.set_status( dict );
+  music_manager.set_status( dict );
   
   node_manager.set_status( dict ); // has to be called last
 }
@@ -183,6 +189,7 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
 
   event_delivery_manager.get_status( dict );
   model_manager.get_status( dict );
+  music_manager.get_status( dict );
 
   node_manager.get_status( dict );
 }

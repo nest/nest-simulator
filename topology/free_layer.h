@@ -219,7 +219,7 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
   // This array will be filled with GID,pos_x,pos_y[,pos_z] for global nodes:
   std::vector< double_t > global_gid_pos;
   std::vector< int > displacements;
-  Communicator::communicate( local_gid_pos, global_gid_pos, displacements );
+  kernel().mpi_manager.communicate( local_gid_pos, global_gid_pos, displacements );
 
   // To avoid copying the vector one extra time in order to sort, we
   // sneakishly use reinterpret_cast

@@ -31,7 +31,7 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-#include "communicator.h" // OffGridSpike
+#include "mpi_manager.h" // OffGridSpike
 #include "event.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -42,7 +42,7 @@
 
 namespace nest
 {
-typedef Communicator::OffGridSpike OffGridSpike;
+typedef MPIManager::OffGridSpike OffGridSpike;
 
 class EventDeliveryManager : public ManagerInterface
 {

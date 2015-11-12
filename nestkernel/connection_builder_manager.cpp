@@ -32,8 +32,8 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "communicator.h"
-#include "communicator_impl.h"
+#include "mpi_manager.h"
+#include "mpi_manager_impl.h"
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
 #include "connector_base.h"
@@ -43,6 +43,7 @@
 #include "nest_names.h"
 #include "node.h"
 #include "subnet.h"
+#include "nodelist.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -297,12 +298,12 @@ nest::ConnectionBuilderManager::update_delay_extrema_()
   {
     std::vector< delay > min_delays( kernel().mpi_manager.get_num_processes() );
     min_delays[ kernel().mpi_manager.get_rank() ] = min_delay_;
-    Communicator::communicate( min_delays );
+    kernel().mpi_manager.communicate( min_delays );
     min_delay_ = *std::min_element( min_delays.begin(), min_delays.end() );
 
     std::vector< delay > max_delays( kernel().mpi_manager.get_num_processes() );
     max_delays[ kernel().mpi_manager.get_rank() ] = max_delay_;
-    Communicator::communicate( max_delays );
+    kernel().mpi_manager.communicate( max_delays );
     max_delay_ = *std::max_element( max_delays.begin(), max_delays.end() );
   }
 
@@ -558,9 +559,9 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
 
     // collect all leaves in source subnet, then divergent-connect each leaf
     LocalLeafList local_sources( *source_comp );
-    std::vector< Communicator::NodeAddressingData > global_sources;
-    nest::Communicator::communicate( local_sources, global_sources );
-    for ( std::vector< Communicator::NodeAddressingData >::iterator src = global_sources.begin();
+    std::vector< MPIManager::NodeAddressingData > global_sources;
+    kernel().mpi_manager.communicate( local_sources, global_sources );
+    for ( std::vector< MPIManager::NodeAddressingData >::iterator src = global_sources.begin();
           src != global_sources.end();
           ++src )
       divergent_connect( src->get_gid(), target_ids, weights, delays, syn );
@@ -738,9 +739,9 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
 
     // collect all leaves in source subnet, then divergent-connect each leaf
     LocalLeafList local_sources( *source_comp );
-    std::vector< Communicator::NodeAddressingData > global_sources;
-    nest::Communicator::communicate( local_sources, global_sources );
-    for ( std::vector< Communicator::NodeAddressingData >::iterator src = global_sources.begin();
+    std::vector< MPIManager::NodeAddressingData > global_sources;
+    kernel().mpi_manager.communicate( local_sources, global_sources );
+    for ( std::vector< MPIManager::NodeAddressingData >::iterator src = global_sources.begin();
           src != global_sources.end();
           ++src )
       divergent_connect( src->get_gid(), pars, syn );
@@ -845,10 +846,10 @@ nest::ConnectionBuilderManager::random_divergent_connect( index source_id,
 
     // collect all leaves in source subnet, then divergent-connect each leaf
     LocalLeafList local_sources( *source_comp );
-    std::vector< Communicator::NodeAddressingData > global_sources;
-    nest::Communicator::communicate( local_sources, global_sources );
+    std::vector< MPIManager::NodeAddressingData > global_sources;
+    kernel().mpi_manager.communicate( local_sources, global_sources );
 
-    for ( std::vector< Communicator::NodeAddressingData >::iterator src = global_sources.begin();
+    for ( std::vector< MPIManager::NodeAddressingData >::iterator src = global_sources.begin();
           src != global_sources.end();
           ++src )
       random_divergent_connect(

@@ -47,14 +47,6 @@
 // Do NOT include mpi.h in this header file, otherwise we get into
 // trouble on the Blue Gene/L. mpi.h is included in communicator_impl.h
 
-#ifdef HAVE_MUSIC
-// External include
-#include <music.hh>
-
-// Includes from nestkernel:
-#include "music_event_handler.h"
-#endif
-
 
 namespace nest
 {
@@ -67,11 +59,6 @@ public:
   ~Communicator()
   {
   }
-
-#ifdef HAVE_MUSIC
-  static MUSIC::Setup* music_setup;     //!< pointer to a MUSIC setup object
-  static MUSIC::Runtime* music_runtime; //!< pointer to a MUSIC runtime object
-#endif
 
   /**
    * Combined storage of GID and offset information for off-grid spikes.
@@ -183,34 +170,7 @@ public:
     uint_t vp_;         //!< virtual process of neuron
   };
 
-#ifdef HAVE_MUSIC
-  /**
-   * Enter the runtime mode. This must be done before simulating. After having entered runtime mode
-   * ports cannot be published anymore.
-   * \param h_min_delay is the length of a time slice, after which commmunication should take place.
-   */
-  static void enter_runtime( double_t h_min_delay );
-
-  static MUSIC::Setup* get_music_setup();
-  static MUSIC::Runtime* get_music_runtime();
-
-  /**
-   * Advance the time of music by num_steps simulation steps.
-   * \param num_steps number of simulation steps, the time to propagate.
-   * /TODO: put this into scheduler.
-   */
-  static void advance_music_time( long_t num_steps );
-
-  /**
-   * Register a music_event_in_proxy for a given port and a given channel.
-   * As a consequence, the proxy will be informed, whenever an event over this port and
-   * channel comes in.
-   */
-  static void register_music_event_in_proxy( std::string portname, int channel, nest::Node* mp );
-#endif
-
   static void init();
-  static void finalize( int exitcode );
   static void mpi_abort( int exitcode );
 
   static void communicate( std::vector< uint_t >& send_buffer,

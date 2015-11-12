@@ -497,6 +497,14 @@ class SplSynapseTestCase(unittest.TestCase):
         self.setUp_net(n, params)
         nest.Connect(self.pre_parrot, self.post_parrot, syn_spec=syn_spec, conn_spec=conn_spec)
         self.syn = nest.GetConnections(source=self.pre_parrot, synapse_model="testsyn")
+        
+        # set the initial weight of all contacts to 0.1
+        for syn_ in self.syn:
+            n_pot_conns_ = nest.GetStatus( [syn_], \
+                keys=['n_pot_conns'] )[0][0]
+            nest.SetStatus( [syn_], params='w_jk', \
+                val=[(np.ones(n_pot_conns_)*0.1)] )
+        
 
     def setUp_net(self, n_post, params={}):
         """Set up a net and parrots"""

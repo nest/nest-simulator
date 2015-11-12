@@ -658,7 +658,7 @@ class SplSynapseTestCase(unittest.TestCase):
         syn_defaults = nest.GetDefaults('testsyn')
         tau = syn_defaults['tau']
         tau_slow = syn_defaults['tau_slow']
-        dt = syn_defaults['dt']
+        dt = nest.GetKernelStatus()['resolution'] * 0.001
 
         val_exp_r_post = 1./syn_defaults['tau'] * 2. * np.exp(-dt/tau)**50.
         val_r_post = nest.GetStatus(syn)[0]['r_post']

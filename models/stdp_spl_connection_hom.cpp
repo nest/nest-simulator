@@ -43,7 +43,6 @@ STDPSplHomCommonProperties::STDPSplHomCommonProperties()
   , A4_post_( 0.0163e-6 )
   , alpha_( 1.27142e-6 )
   , lambda_( 0.028 / ( 24. * 60. * 60. ) )
-  , dt_( 0.001 )
   , w0_( 0.01 )
   , p_fail_( 0.2 )
 {
@@ -61,7 +60,6 @@ STDPSplHomCommonProperties::get_status( DictionaryDatum& d ) const
   def< double_t >( d, "A4_corr", A4_corr_ );
   def< double_t >( d, "alpha", alpha_ );
   def< double_t >( d, "lambda", lambda_ );
-  def< double_t >( d, "dt", dt_ );
   def< double_t >( d, "w0", w0_ );
   def< double_t >( d, "p_fail", p_fail_ );
 }
@@ -78,7 +76,6 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
   updateValue< double_t >( d, "A4_post", A4_post_ );
   updateValue< double_t >( d, "alpha", alpha_ );
   updateValue< double_t >( d, "lambda", lambda_ );
-  updateValue< double_t >( d, "dt", dt_ );
   updateValue< double_t >( d, "w0", w0_ );
   updateValue< double_t >( d, "p_fail", p_fail_ );
 
@@ -94,6 +91,7 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
     throw BadProperty( "lambda must be positive." );
   }
 
+  dt_ = Time::get_resolution().get_ms() * 0.001;
   e_dt_alpha_ = std::exp( -dt_ * alpha_ );
   e_dt_tau_ = std::exp( -dt_ / tau_ );
   e_dt_tau_slow_ = std::exp( -dt_ / tau_slow_ );

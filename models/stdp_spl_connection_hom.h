@@ -296,8 +296,7 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
 
   while ( start != finish )
   {
-
-    double_t delta = start->t_ - t_last_postspike;
+    long_t delta = Time( Time::ms( start->t_ - t_last_postspike ) ).get_steps();
 
     // if delta == 0, several postsynaptic spikes occurred 
     // in this timestep. We have increment the traces to account
@@ -308,7 +307,7 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
     // std::cout << "w_jk_: " << w_jk_[0] << "\n---->\n";
 
     // update iteratively all variables in the time start ->
-    for ( long_t k = 0; k < floor( delta ); k++ )
+    for ( long_t k = 0; k < delta; k++ )
     {
       propagate_( cp );
     }
@@ -325,8 +324,9 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
     R_post_ += 1. / cp.tau_slow_;
   }
 
-  double_t remaining_delta_ = t_spike - t_last_postspike;
-  for ( long_t k = 0; k < floor( remaining_delta_ ); k++ )
+  long_t remaining_delta = 
+    Time( Time::ms( t_spike - t_last_postspike ) ).get_steps();
+  for ( long_t k = 0; k < remaining_delta; k++ )
   {
     propagate_( cp );
   }

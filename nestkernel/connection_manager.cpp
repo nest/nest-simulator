@@ -23,11 +23,8 @@
 #include "connection_manager.h"
 #include "connector_base.h"
 #include "network.h"
-#include "spikecounter.h"
 #include "nest_time.h"
 #include "nest_datums.h"
-#include "kernel_manager.h"
-
 #include <algorithm>
 
 #ifdef _OPENMP
@@ -41,7 +38,8 @@
 namespace nest
 {
 
-ConnectionManager::ConnectionManager()
+ConnectionManager::ConnectionManager( Network& net )
+  : net_( net )
 {
 }
 
@@ -70,8 +68,7 @@ ConnectionManager::init_()
   synapsedict_->clear();
 
   // one list of prototypes per thread
-  std::vector< std::vector< ConnectorModel* > > tmp_proto(
-    Network::get_network().get_num_threads() );
+  std::vector< std::vector< ConnectorModel* > > tmp_proto( net_.get_num_threads() );
   prototypes_.swap( tmp_proto );
 
   // (re-)append all synapse prototypes
@@ -81,12 +78,12 @@ ConnectionManager::init_()
     if ( *i != 0 )
     {
       std::string name = ( *i )->get_name();
-      for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+      for ( thread t = 0; t < net_.get_num_threads(); ++t )
         prototypes_[ t ].push_back( ( *i )->clone( name ) );
       synapsedict_->insert( name, prototypes_[ 0 ].size() - 1 );
     }
 
-  tVSConnector tmp( Network::get_network().get_num_threads(), tSConnector() );
+  tVSConnector tmp( net_.get_num_threads(), tSConnector() );
 
   connections_.swap( tmp );
 
@@ -163,7 +160,7 @@ ConnectionManager::register_synapse_prototype( ConnectorModel* cf )
   const synindex id = prototypes_[ 0 ].size();
   pristine_prototypes_[ id ]->set_syn_id( id );
 
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < net_.get_num_threads(); ++t )
   {
     prototypes_[ t ].push_back( cf->clone( name ) );
     prototypes_[ t ][ id ]->set_syn_id( id );
@@ -177,7 +174,7 @@ ConnectionManager::register_synapse_prototype( ConnectorModel* cf )
 void
 ConnectionManager::calibrate( const TimeConverter& tc )
 {
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < net_.get_num_threads(); ++t )
     for ( std::vector< ConnectorModel* >::iterator pt = prototypes_[ t ].begin();
           pt != prototypes_[ t ].end();
           ++pt )
@@ -191,7 +188,7 @@ ConnectionManager::get_min_delay() const
   Time min_delay = Time::pos_inf();
 
   std::vector< ConnectorModel* >::const_iterator it;
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < net_.get_num_threads(); ++t )
     for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
       if ( *it != 0 && ( *it )->get_num_connections() > 0 )
         min_delay = std::min( min_delay, ( *it )->get_min_delay() );
@@ -205,7 +202,7 @@ ConnectionManager::get_max_delay() const
   Time max_delay = Time::get_resolution();
 
   std::vector< ConnectorModel* >::const_iterator it;
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < net_.get_num_threads(); ++t )
     for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
       if ( *it != 0 && ( *it )->get_num_connections() > 0 )
         max_delay = std::max( max_delay, ( *it )->get_max_delay() );
@@ -218,7 +215,7 @@ ConnectionManager::get_user_set_delay_extrema() const
 {
   bool user_set_delay_extrema = false;
   std::vector< ConnectorModel* >::const_iterator it;
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < net_.get_num_threads(); ++t )
     for ( it = prototypes_[ t ].begin(); it != prototypes_[ t ].end(); ++it )
       user_set_delay_extrema |= ( *it )->get_user_set_delay_extrema();
 
@@ -235,14 +232,14 @@ ConnectionManager::copy_synapse_prototype( synindex old_id, std::string new_name
 
   if ( new_id == invalid_synindex ) // we wrapped around (=255), maximal id of synapse_model = 254
   {
-    Network::get_network().message( SLIInterpreter::M_ERROR,
+    net_.message( SLIInterpreter::M_ERROR,
       "ConnectionManager::copy_synapse_prototype",
       "CopyModel cannot generate another synapse. Maximal synapse model count of 255 exceeded." );
     throw KernelException( "Synapse model count exceeded" );
   }
   assert( new_id != invalid_synindex );
 
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < net_.get_num_threads(); ++t )
   {
     prototypes_[ t ].push_back( get_synapse_prototype( old_id ).clone( new_name ) );
     prototypes_[ t ][ new_id ]->set_syn_id( new_id );
@@ -264,7 +261,7 @@ void
 ConnectionManager::set_prototype_status( synindex syn_id, const DictionaryDatum& d )
 {
   assert_valid_syn_id( syn_id );
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < net_.get_num_threads(); ++t )
   {
     try
     {
@@ -286,7 +283,7 @@ ConnectionManager::get_prototype_status( synindex syn_id ) const
 
   DictionaryDatum dict( new Dictionary );
 
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < net_.get_num_threads(); ++t )
     prototypes_[ t ][ syn_id ]->get_status( dict ); // each call adds to num_connections
 
   return dict;
@@ -350,11 +347,9 @@ ConnectionManager::get_connections( DictionaryDatum params ) const
 
 #ifdef _OPENMP
   std::string msg;
-  msg = String::compose(
-    "Setting OpenMP num_threads to %1.", Network::get_network().get_num_threads() );
-  Network::get_network().message(
-    SLIInterpreter::M_DEBUG, "ConnectionManager::get_connections", msg );
-  omp_set_num_threads( Network::get_network().get_num_threads() );
+  msg = String::compose( "Setting OpenMP num_threads to %1.", net_.get_num_threads() );
+  net_.message( SLIInterpreter::M_DEBUG, "ConnectionManager::get_connections", msg );
+  omp_set_num_threads( net_.get_num_threads() );
 #endif
 
   // First we check, whether a synapse model is given.
@@ -391,7 +386,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
 {
   size_t num_connections = 0;
 
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < net_.get_num_threads(); ++t )
     num_connections += prototypes_[ t ][ syn_id ]->get_num_connections();
 
   connectome.reserve( num_connections );
@@ -401,9 +396,9 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
 #ifdef _OPENMP
 #pragma omp parallel
     {
-      thread t = kernel().vp_manager.get_thread_id();
+      thread t = net_.get_thread_id();
 #else
-    for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+    for ( thread t = 0; t < net_.get_num_threads(); ++t )
     {
 #endif
       ArrayDatum conns_in_thread;
@@ -417,7 +412,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
       }
 
 #ifdef _OPENMP
-#pragma omp critical( get_connections )
+#pragma omp critical
 #endif
       conns_in_thread.reserve( num_connections_in_thread );
       for ( index source_id = 1; source_id < connections_[ t ].size(); ++source_id )
@@ -430,7 +425,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
       if ( conns_in_thread.size() > 0 )
       {
 #ifdef _OPENMP
-#pragma omp critical( get_connections )
+#pragma omp critical
 #endif
         connectome.append_move( conns_in_thread );
       }
@@ -443,9 +438,9 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
 #ifdef _OPENMP
 #pragma omp parallel
     {
-      thread t = kernel().vp_manager.get_thread_id();
+      thread t = net_.get_thread_id();
 #else
-    for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+    for ( thread t = 0; t < net_.get_num_threads(); ++t )
     {
 #endif
       ArrayDatum conns_in_thread;
@@ -459,7 +454,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
       }
 
 #ifdef _OPENMP
-#pragma omp critical( get_connections )
+#pragma omp critical
 #endif
       conns_in_thread.reserve( num_connections_in_thread );
       for ( index source_id = 1; source_id < connections_[ t ].size(); ++source_id )
@@ -478,7 +473,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
       if ( conns_in_thread.size() > 0 )
       {
 #ifdef _OPENMP
-#pragma omp critical( get_connections )
+#pragma omp critical
 #endif
         connectome.append_move( conns_in_thread );
       }
@@ -490,9 +485,9 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
 #ifdef _OPENMP
 #pragma omp parallel
     {
-      size_t t = kernel().vp_manager.get_thread_id();
+      size_t t = net_.get_thread_id();
 #else
-    for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+    for ( thread t = 0; t < net_.get_num_threads(); ++t )
     {
 #endif
       ArrayDatum conns_in_thread;
@@ -506,7 +501,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
       }
 
 #ifdef _OPENMP
-#pragma omp critical( get_connections )
+#pragma omp critical
 #endif
       conns_in_thread.reserve( num_connections_in_thread );
       for ( index s = 0; s < source->size(); ++s )
@@ -536,7 +531,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
       if ( conns_in_thread.size() > 0 )
       {
 #ifdef _OPENMP
-#pragma omp critical( get_connections )
+#pragma omp critical
 #endif
         connectome.append_move( conns_in_thread );
       }
@@ -551,8 +546,8 @@ ConnectionManager::validate_source_entry( thread tid, index s_gid, synindex syn_
   assert_valid_syn_id( syn_id );
 
   // resize sparsetable to full network size
-  if ( connections_[ tid ].size() < Network::get_network().size() )
-    connections_[ tid ].resize( Network::get_network().size() );
+  if ( connections_[ tid ].size() < net_.size() )
+    connections_[ tid ].resize( net_.size() );
 
   // check, if entry exists
   // if not put in zero pointer
@@ -642,7 +637,7 @@ bool
 ConnectionManager::connect( ArrayDatum& conns )
 {
   // #ifdef _OPENMP
-  //     Network::get_network().message(SLIInterpreter::M_INFO, "ConnectionManager::Connect", msg);
+  //     net_.message(SLIInterpreter::M_INFO, "ConnectionManager::Connect", msg);
   // #endif
 
   // #ifdef _OPENMP
@@ -654,7 +649,7 @@ ConnectionManager::connect( ArrayDatum& conns )
     {
       DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
       index target_gid = static_cast< size_t >( ( *cd )[ names::target ] );
-      Node* target_node = Network::get_network().get_node( target_gid );
+      Node* target_node = net_.get_node( target_gid );
       size_t thr = target_node->get_thread();
 
       // #ifdef _OPENMP
@@ -676,7 +671,7 @@ ConnectionManager::connect( ArrayDatum& conns )
           else
             throw UnknownModelName( synmodel_name );
         }
-        Node* source_node = Network::get_network().get_node( source_gid );
+        Node* source_node = net_.get_node( source_gid );
         //#pragma omp critical
         connect( *source_node, *target_node, source_gid, thr, syn_id, cd );
       }
@@ -690,7 +685,7 @@ ConnectionManager::trigger_update_weight( const long_t vt_id,
   const vector< spikecounter >& dopa_spikes,
   const double_t t_trig )
 {
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < net_.get_num_threads(); ++t )
     for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
           it != connections_[ t ].nonempty_end();
           ++it )
@@ -709,7 +704,7 @@ size_t
 ConnectionManager::get_num_connections() const
 {
   num_connections_ = 0;
-  for ( thread t = 0; t < Network::get_network().get_num_threads(); ++t )
+  for ( thread t = 0; t < net_.get_num_threads(); ++t )
     for ( std::vector< ConnectorModel* >::const_iterator i = prototypes_[ t ].begin();
           i != prototypes_[ t ].end();
           ++i )

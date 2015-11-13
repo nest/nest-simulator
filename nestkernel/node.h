@@ -859,6 +859,7 @@ private:
   bool needs_prelim_up_;     //!< node requires preliminary update step
 
 
+
 protected:
   static Network* net_; //!< Pointer to global network driver.
 };

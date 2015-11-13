@@ -679,20 +679,20 @@ public:
    * @returns type of signal this node produces
    * used in check_connection to only connect neurons which send / receive compatible information
    */
-  virtual signal_type
+  virtual SignalType
   sends_signal() const
   {
-    return spike;
+    return SPIKE;
   }
 
   /**
    * @returns type of signal this node consumes
    * used in check_connection to only connect neurons which send / receive compatible information
    */
-  virtual signal_type
+  virtual SignalType
   receives_signal() const
   {
-    return spike;
+    return SPIKE;
   }
 
 

@@ -180,11 +180,10 @@ public:
 
   void handle( DataLoggingReply& );
 
-  signal_type
+  SignalType
   sends_signal() const
   {
-    std::cout << "hello I'm here\n";
-    return all;
+    return ALL;
   }
 
   void get_status( DictionaryDatum& ) const;

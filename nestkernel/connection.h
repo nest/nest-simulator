@@ -266,8 +266,7 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
 
   // 3. do the events sent by source mean the same thing as they are
   // interpreted in target?
-  if ( !( source.sends_signal() == all || target.receives_signal() == all )
-    && ( source.sends_signal() != target.receives_signal() ) )
+  if ( ! (source.sends_signal() & target.receives_signal()) )
     throw IllegalConnection();
 
   target_.set_target( &target );

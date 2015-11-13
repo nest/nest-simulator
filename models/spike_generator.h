@@ -197,10 +197,10 @@ public:
 
   void event_hook( DSSpikeEvent& );
 
-  signal_type
+  SignalType
   sends_signal() const
   {
-    return all;
+    return ALL;
   }
 
 

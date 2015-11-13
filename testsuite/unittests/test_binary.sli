@@ -128,5 +128,28 @@ forall
 
 
 
+/mcculloch_pitts_neuron Create /binary Set
+/iaf_neuron Create /spiking Set
+/spike_generator Create /sg Set
+/spike_detector Create /sd Set
+
+% check if connecting a binary to a spiking neuron throws exception
+{
+    binary spiking Connect
+} fail_or_die
+
+% check if connecting a spiking neuron to a binary throws exception
+{
+    spiking binary Connect
+} fail_or_die
+
+% check if connecting a binary or a spiking neuron to general device works
+{
+    sg spiking Connect
+    sg binary Connect
+    spiking sd Connect
+    binary sd Connect
+} pass_or_die
+
 
 

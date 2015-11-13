@@ -63,7 +63,7 @@ namespace nest
    The decoding scheme relies on the feature that spikes with multiplicity
    larger 1 are delivered consecutively, also in a parallel setting.
    The creation of double connections between binary neurons will
-   destroy the deconding scheme, as this effectively duplicates
+   destroy the decoding scheme, as this effectively duplicates
    every event. Using random connection routines it is therefore
    advisable to set the property 'multapses' to false.
    The neuron accepts several sources of currents, e.g. from a

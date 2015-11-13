@@ -123,10 +123,10 @@ public:
 
   port handles_test_event( SpikeEvent&, rport );
 
-  signal_type
+  SignalType
   receives_signal() const
   {
-    return binary;
+    return BINARY;
   }
 
   void get_status( DictionaryDatum& ) const;

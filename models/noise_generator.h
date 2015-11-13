@@ -122,10 +122,10 @@ public:
 
   port send_test_event( Node&, rport, synindex, bool );
 
-  signal_type
+  SignalType
   sends_signal() const
   {
-    return all;
+    return ALL;
   }
 
   void get_status( DictionaryDatum& ) const;

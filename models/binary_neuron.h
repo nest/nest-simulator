@@ -72,8 +72,8 @@ public:
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
-  signal_type sends_signal() const;
-  signal_type receives_signal() const;
+  SignalType sends_signal() const;
+  SignalType receives_signal() const;
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -234,17 +234,17 @@ binary_neuron< TGainfunction >::handles_test_event( DataLoggingRequest& dlr, rpo
 
 
 template < class TGainfunction >
-inline signal_type
+inline SignalType
 binary_neuron< TGainfunction >::sends_signal() const
 {
-  return binary;
+  return BINARY;
 }
 
 template < class TGainfunction >
-inline signal_type
+inline SignalType
 binary_neuron< TGainfunction >::receives_signal() const
 {
-  return binary;
+  return BINARY;
 }
 
 

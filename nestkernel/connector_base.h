@@ -60,7 +60,7 @@ template < typename Tnew, typename Told, typename C >
 inline Tnew*
 suicide_and_resurrect( Told* connector, C connection )
 {
-#ifdef USE_PMA
+#if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
   Tnew* p = new ( poormansallocpool[ omp_get_thread_num() ].alloc( sizeof( Tnew ) ) )
     Tnew( *connector, connection );

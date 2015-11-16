@@ -35,7 +35,7 @@ template < typename T, typename C >
 inline T*
 allocate( C c )
 {
-#ifdef USE_PMA
+#if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
   T* p = new ( poormansallocpool[ omp_get_thread_num() ].alloc( sizeof( T ) ) ) T( c );
 #else
@@ -55,7 +55,7 @@ template < typename T >
 inline T*
 allocate()
 {
-#ifdef USE_PMA
+#if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
   T* p = new ( poormansallocpool[ omp_get_thread_num() ].alloc( sizeof( T ) ) ) T();
 #else

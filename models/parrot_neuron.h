@@ -93,8 +93,12 @@ public:
    */
   using Node::handle;
   using Node::handles_test_event;
+  using Node::sends_signal;
+  using Node::receives_signal;
 
   port send_test_event( Node&, rport, synindex, bool );
+  SignalType sends_signal() const;
+  SignalType receives_signal() const;
 
   void handle( SpikeEvent& );
   port handles_test_event( SpikeEvent&, rport );
@@ -149,6 +153,18 @@ parrot_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
+}
+
+inline SignalType
+parrot_neuron::sends_signal() const
+{
+  return ALL;
+}
+
+inline SignalType
+parrot_neuron::receives_signal() const
+{
+  return ALL;
 }
 
 } // namespace

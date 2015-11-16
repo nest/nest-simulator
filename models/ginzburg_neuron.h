@@ -77,7 +77,7 @@ namespace nest
    The neuron accepts several sources of currents, e.g. from a
    noise_generator.
 
-   
+
    Parameters:
    tau_m      double - Membrane time constant (mean inter-update-interval) in ms.
    theta      double - threshold for sigmoidal activation function mV

@@ -277,7 +277,7 @@ public:
   }
 
   virtual std::vector< SecondaryEvent* >
-  create_event( size_t n ) const
+  create_event( size_t ) const
   {
     // Should not be called for a ConnectorModel belonging to a primary
     // connection. Only required for secondary connection types.

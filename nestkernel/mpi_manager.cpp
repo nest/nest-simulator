@@ -77,15 +77,14 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   int init;
   MPI_Initialized( &init );
 
-  int provided_thread_level;
   if ( init == 0 )
   {
-
 #ifdef HAVE_MUSIC
     kernel().music_manager.init_music( argc, argv );
     // get a communicator from MUSIC
     comm = kernel().music_manager.communicator();
 #else  /* #ifdef HAVE_MUSIC */
+    int provided_thread_level;
     MPI_Init_thread( argc, argv, MPI_THREAD_FUNNELED, &provided_thread_level );
     comm = MPI_COMM_WORLD;
 #endif /* #ifdef HAVE_MUSIC */
@@ -95,7 +94,7 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   MPI_Comm_rank( comm, &rank_ );
 
   recv_buffer_size_ = send_buffer_size_ * kernel().mpi_manager.get_num_processes();
-  
+
   // create off-grid-spike type for MPI communication
   // creating derived datatype
   OffGridSpike::assert_datatype_compatibility_();
@@ -104,23 +103,23 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   MPI_Aint offsets[ 2 ];
   MPI_Aint start_address, address;
   OffGridSpike ogs( 0, 0.0 );
-  
+
   // OffGridSpike.gid
   offsets[ 0 ] = 0;
   source_types[ 0 ] = MPI_DOUBLE;
   blockcounts[ 0 ] = 1;
-  
+
   // OffGridSpike.offset
   MPI_Address( &( ogs.gid_ ), &start_address );
   MPI_Address( &( ogs.offset_ ), &address );
   offsets[ 1 ] = address - start_address;
   source_types[ 1 ] = MPI_DOUBLE;
   blockcounts[ 1 ] = 1;
-  
+
   // generate and commit struct
   MPI_Type_struct( 2, blockcounts, offsets, source_types, &MPI_OFFGRID_SPIKE );
   MPI_Type_commit( &MPI_OFFGRID_SPIKE );
-  
+
   use_mpi_ = true;
 #endif /* #ifdef HAVE_MPI */
 }
@@ -192,7 +191,9 @@ nest::MPIManager::mpi_finalize( int exitcode )
   if ( finalized == 0 && initialized == 1 )
   {
     if ( exitcode == 0 )
+    {
       kernel().music_manager.music_finalize(); // calls MPI_Finalize()
+    }
     else
     {
       LOG( M_INFO, "MPIManager::finalize()", "Calling MPI_Abort() due to errors in the script." );

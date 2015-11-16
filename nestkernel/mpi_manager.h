@@ -142,6 +142,7 @@ public:
    */
   class OffGridSpike
   {
+    friend void MPIManager::init_mpi(int*, char***);
   public:
     //! We defined this type explicitly, so that the assert function below always tests the correct
     //! type.
@@ -175,14 +176,12 @@ public:
     }
 
   private:
-    friend class MPIManager; // void MPIManager::init_(int*, char**);
-
     double_t gid_;    //!< GID of neuron that spiked
     double_t offset_; //!< offset of spike from grid
 
     //! This function asserts that doubles can hold GIDs without loss
     static void
-    assert_datatype_compatibility()
+    assert_datatype_compatibility_()
     {
       assert( std::numeric_limits< double_t >::digits
         > std::numeric_limits< gid_external_type >::digits );
@@ -235,13 +234,11 @@ public:
     }
 
   private:
-    friend class MPIManager;
     uint_t gid_;        //!< GID of neuron
     uint_t parent_gid_; //!< GID of neuron's parent
     uint_t vp_;         //!< virtual process of neuron
   };
 
-  void init_();
   void mpi_abort( int exitcode );
 
   void communicate( std::vector< uint_t >& send_buffer,
@@ -362,8 +359,6 @@ public:
     }
 
   private:
-    friend class MPIManager; // void MPIManager::init(int*, char**);
-
     double_t gid_;    //!< GID of neuron that spiked
     double_t offset_; //!< offset of spike from grid
   };
@@ -409,7 +404,6 @@ public:
     }
 
   private:
-    friend class MPIManager;
     uint_t gid_;        //!< GID of neuron
     uint_t parent_gid_; //!< GID of neuron's parent
     uint_t vp_;         //!< virtual process of neuron

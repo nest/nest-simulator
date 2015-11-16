@@ -93,7 +93,35 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 
   MPI_Comm_size( comm, &num_processes_ );
   MPI_Comm_rank( comm, &rank_ );
-  init_();
+
+  recv_buffer_size_ = send_buffer_size_ * kernel().mpi_manager.get_num_processes();
+  
+  // create off-grid-spike type for MPI communication
+  // creating derived datatype
+  OffGridSpike::assert_datatype_compatibility_();
+  MPI_Datatype source_types[ 2 ];
+  int blockcounts[ 2 ];
+  MPI_Aint offsets[ 2 ];
+  MPI_Aint start_address, address;
+  OffGridSpike ogs( 0, 0.0 );
+  
+  // OffGridSpike.gid
+  offsets[ 0 ] = 0;
+  source_types[ 0 ] = MPI_DOUBLE;
+  blockcounts[ 0 ] = 1;
+  
+  // OffGridSpike.offset
+  MPI_Address( &( ogs.gid_ ), &start_address );
+  MPI_Address( &( ogs.offset_ ), &address );
+  offsets[ 1 ] = address - start_address;
+  source_types[ 1 ] = MPI_DOUBLE;
+  blockcounts[ 1 ] = 1;
+  
+  // generate and commit struct
+  MPI_Type_struct( 2, blockcounts, offsets, source_types, &MPI_OFFGRID_SPIKE );
+  MPI_Type_commit( &MPI_OFFGRID_SPIKE );
+  
+  use_mpi_ = true;
 #endif /* #ifdef HAVE_MPI */
 }
 
@@ -176,43 +204,6 @@ nest::MPIManager::mpi_finalize( int exitcode )
 
 
 #ifdef HAVE_MPI
-
-/**
- * Set up MPI and establish number of processes and rank
- */
-void
-nest::MPIManager::init_()
-{
-
-  recv_buffer_size_ = send_buffer_size_ * kernel().mpi_manager.get_num_processes();
-
-  // create off-grid-spike type for MPI communication
-  // creating derived datatype
-  OffGridSpike::assert_datatype_compatibility();
-  MPI_Datatype source_types[ 2 ];
-  int blockcounts[ 2 ];
-  MPI_Aint offsets[ 2 ];
-  MPI_Aint start_address, address;
-  OffGridSpike ogs( 0, 0.0 );
-
-  // OffGridSpike.gid
-  offsets[ 0 ] = 0;
-  source_types[ 0 ] = MPI_DOUBLE;
-  blockcounts[ 0 ] = 1;
-
-  // OffGridSpike.offset
-  MPI_Address( &( ogs.gid_ ), &start_address );
-  MPI_Address( &( ogs.offset_ ), &address );
-  offsets[ 1 ] = address - start_address;
-  source_types[ 1 ] = MPI_DOUBLE;
-  blockcounts[ 1 ] = 1;
-
-  // generate and commit struct
-  MPI_Type_struct( 2, blockcounts, offsets, source_types, &MPI_OFFGRID_SPIKE );
-  MPI_Type_commit( &MPI_OFFGRID_SPIKE );
-
-  initialized_ = true;
-}
 
 void
 nest::MPIManager::mpi_abort( int exitcode )

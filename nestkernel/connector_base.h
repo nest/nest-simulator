@@ -350,7 +350,11 @@ public:
   }
 
   void
-  get_connections( size_t source_gid, size_t thrd, synindex synapse_id, long label, ArrayDatum& conns ) const
+  get_connections( size_t source_gid,
+    size_t thrd,
+    synindex synapse_id,
+    long label,
+    ArrayDatum& conns ) const
   {
     for ( size_t i = 0; i < K; i++ )
       if ( get_syn_id() == synapse_id )
@@ -567,14 +571,18 @@ public:
   }
 
   void
-  get_connections( size_t source_gid, size_t thrd, synindex synapse_id, long label, ArrayDatum& conns ) const
+  get_connections( size_t source_gid,
+    size_t thrd,
+    synindex synapse_id,
+    long label,
+    ArrayDatum& conns ) const
   {
     if ( get_syn_id() == synapse_id )
     {
       if ( label == UNLABELED_CONNECTION || C_[ 0 ].get_label() == label )
       {
-        conns.push_back( ConnectionDatum(
-          ConnectionID( source_gid, C_[ 0 ].get_target( thrd )->get_gid(), thrd, synapse_id, 0 ) ) );
+        conns.push_back( ConnectionDatum( ConnectionID(
+          source_gid, C_[ 0 ].get_target( thrd )->get_gid(), thrd, synapse_id, 0 ) ) );
       }
     }
   }
@@ -788,7 +796,11 @@ public:
   }
 
   void
-  get_connections( size_t source_gid, size_t thrd, synindex synapse_id, long label, ArrayDatum& conns ) const
+  get_connections( size_t source_gid,
+    size_t thrd,
+    synindex synapse_id,
+    long label,
+    ArrayDatum& conns ) const
   {
     for ( size_t i = 0; i < C_.size(); i++ )
       if ( get_syn_id() == synapse_id )
@@ -953,7 +965,11 @@ public:
   }
 
   void
-  get_connections( size_t source_gid, size_t thrd, synindex synapse_id, long label, ArrayDatum& conns ) const
+  get_connections( size_t source_gid,
+    size_t thrd,
+    synindex synapse_id,
+    long label,
+    ArrayDatum& conns ) const
   {
     for ( size_t i = 0; i < size(); i++ )
       at( i )->get_connections( source_gid, thrd, synapse_id, label, conns );

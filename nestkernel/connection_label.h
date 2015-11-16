@@ -32,25 +32,24 @@ namespace nest
 {
 class ConnectorModel;
 
-template <class Connection_t>
-class ConnectionLabel: public Connection_t
+template < class Connection_t >
+class ConnectionLabel : public Connection_t
 {
 public:
-  
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
   void get_status( DictionaryDatum& d ) const;
-  
+
   /**
    * Set properties of this connection from the values given in dictionary.
    *
    * @note Target and Rport cannot be changed after a connection has been created.
    */
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
-  
+
   long get_label() const;
-  
+
 private:
   long label_;
 };

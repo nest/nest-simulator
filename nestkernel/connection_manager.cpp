@@ -346,8 +346,8 @@ ConnectionManager::get_connections( DictionaryDatum params ) const
     source_a = dynamic_cast< TokenArray const* >( source_t.datum() );
   if ( not target_t.empty() )
     target_a = dynamic_cast< TokenArray const* >( target_t.datum() );
-  
-  if (not label_token.empty() )
+
+  if ( not label_token.empty() )
   {
     label = getValue< long >( label_token );
   }

@@ -91,7 +91,7 @@ def
   
 } def
 
-% Inverting this equation leads to tau_syn = 0.32582722403722841 ms, as specified in model_params below.
+% Inverting this equation numerically leads to tau_syn = 0.32582722403722841 ms, as specified in model_params below.
 
 % -------------------------------------------------------------------------------------
 

@@ -159,7 +159,9 @@ nest::ConnBuilder::ConnBuilder( Network& net,
             it != synapse_params_.end();
             ++it )
       {
-        if ( it->first == names::receptor_type || it->first == names::music_channel )
+        if ( it->first == names::receptor_type 
+            || it->first == names::music_channel
+            || it->first == names::synapse_label)
           ( *param_dicts_[ t ] )[ it->first ] = Token( new IntegerDatum( 0 ) );
         else
           ( *param_dicts_[ t ] )[ it->first ] = Token( new DoubleDatum( 0.0 ) );
@@ -305,7 +307,7 @@ nest::ConnBuilder::single_connect_( index sgid,
           it != synapse_params_.end();
           ++it )
     {
-      if ( it->first == names::receptor_type || it->first == names::music_channel )
+      if ( it->first == names::receptor_type || it->first == names::music_channel || it->first == names::synapse_label )
       {
         try
         {

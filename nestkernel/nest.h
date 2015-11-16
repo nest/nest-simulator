@@ -121,6 +121,8 @@ const index invalid_index = std::numeric_limits< index >::max();
 typedef unsigned char synindex;
 const synindex invalid_synindex = std::numeric_limits< synindex >::max();
 
+#define UNLABELED_CONNECTION -1
+
 /**
  * Unsigned short type for compact target representation.
  *

@@ -201,6 +201,11 @@ public:
     return syn_id_delay_.syn_id;
   }
 
+  long
+  get_label() const
+  {
+    return UNLABELED_CONNECTION;
+  }
 
   /**
    * triggers an update of a synaptic weight

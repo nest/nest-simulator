@@ -1846,7 +1846,7 @@ NestModule::init( SLIInterpreter* i )
   Token statusd = i->baselookup( Name( "statusdict" ) );
   DictionaryDatum dd = getValue< DictionaryDatum >( statusd );
   dd->insert( Name( "kernelname" ), new StringDatum( "NEST" ) );
-  dd->insert( Name( "is_mpi" ), new BoolDatum( kernel().mpi_manager.get_initialized() ) );
+  dd->insert( Name( "is_mpi" ), new BoolDatum( kernel().mpi_manager.is_mpi_used() ) );
 }
 
 } // namespace nest

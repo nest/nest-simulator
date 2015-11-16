@@ -288,7 +288,7 @@ public:
 
   int get_send_buffer_size();
   int get_recv_buffer_size();
-  bool get_initialized();
+  bool is_mpi_used();
 
   void set_num_threads( thread num_threads );
   void set_buffer_sizes( int send_buffer_size, int recv_buffer_size );
@@ -296,7 +296,7 @@ public:
 private:
   int send_buffer_size_; //!< expected size of send buffer
   int recv_buffer_size_; //!< size of receive buffer
-  bool initialized_;     //!< whether MPI is initialized
+  bool use_mpi_;         //!< whether MPI is used
 
   std::vector< int > comm_step_; //!< array containing communication partner for each step.
   uint_t COMM_OVERFLOW_ERROR;
@@ -501,7 +501,7 @@ public:
   int get_send_buffer_size();
   int get_recv_buffer_size();
   bool get_use_Allgather();
-  bool get_initialized();
+  bool is_mpi_used();
 
   void set_num_threads( thread num_threads );
   void set_buffer_sizes( int send_buffer_size, int recv_buffer_size );
@@ -509,7 +509,7 @@ public:
 private:
   int send_buffer_size_; //!< expected size of send buffer
   int recv_buffer_size_; //!< size of receive buffer
-  bool initialized_;     //!< whether MPI is initialized
+  bool use_mpi_;         //!< whether MPI is used
   bool use_Allgather_;   //!< using Allgather communication
 
 #endif /* #ifdef HAVE_MPI */
@@ -569,9 +569,9 @@ MPIManager::get_recv_buffer_size()
 }
 
 inline bool
-MPIManager::get_initialized()
+MPIManager::is_mpi_used()
 {
-  return initialized_;
+  return use_mpi_;
 }
 
 

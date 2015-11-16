@@ -60,7 +60,7 @@ nest::MPIManager::MPIManager()
   , n_sim_procs_( 0 )
   , send_buffer_size_( 1 )
   , recv_buffer_size_( 1 )
-  , initialized_( false )
+  , use_mpi_( false )
 #ifdef HAVE_MPI
   , comm_step_( std::vector< int >() )
   , COMM_OVERFLOW_ERROR( std::numeric_limits< unsigned int >::max() )

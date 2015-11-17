@@ -9,6 +9,7 @@ In future static documentation will be created here in github markdown.
 
 ####generator/generate_example2html.py
 Extract documentation and code from the PYNEST examples (in pynest/examples/) and combines everything into HTML files.
+
 **Usage:**
 ```
 cd generator/

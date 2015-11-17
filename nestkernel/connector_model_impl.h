@@ -559,6 +559,14 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
 // by modules                                                                  //
 /////////////////////////////////////////////////////////////////////////////////
 
+inline bool
+ends_with(std::string const & value, std::string const & ending)
+{
+  if (ending.size() > value.size()) 
+    return false;
+  return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+}
+
 /**
  * Register a synape with default Connector and without any common properties.
  */
@@ -568,29 +576,27 @@ register_connection_model( Network& net, const std::string& name )
 {
   net.register_synapse_prototype( new GenericConnectorModel< ConnectionT >(
     net, name, /*is_primary=*/true, /*has_delay=*/true ) );
-  net.register_synapse_prototype( new GenericConnectorModel< ConnectionLabel< ConnectionT > >(
-    net, name + "_lbl", /*is_primary=*/true, /*has_delay=*/true ) );
+  if ( not ends_with( name, "_hpc" ) )
+  {
+    net.register_synapse_prototype( new GenericConnectorModel< ConnectionLabel< ConnectionT > >(
+      net, name + "_lbl", /*is_primary=*/true, /*has_delay=*/true ) );
+  }
 }
 
 /**
  * Register a synape with default Connector and without any common properties.
  */
 template < class ConnectionT >
-void
+synindex
 register_secondary_connection_model( Network& net, const std::string& name, bool has_delay = true )
 {
-  ConnectorModel* cm = new GenericSecondaryConnectorModel< ConnectionT >( net, name, has_delay );
+  ConnectorModel& cm =
+    *( new GenericSecondaryConnectorModel< ConnectionT >( net, name, has_delay ) );
 
-  synindex synid = net.register_secondary_synapse_prototype( cm );
+  synindex synid = net.register_secondary_synapse_prototype( &cm );
 
   ConnectionT::EventType::set_syn_id( synid );
-
-  cm = new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT > >(
-    net, name + "_lbl", has_delay );
-
-  synid = net.register_secondary_synapse_prototype( cm );
-
-  ConnectionLabel< ConnectionT >::EventType::set_syn_id( synid );
+  return synid;
 }
 
 } // namespace nest

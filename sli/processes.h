@@ -310,7 +310,7 @@ public:
   };
 #endif
 
-#if defined __APPLE__ && HAVE_MACH_MACH_H
+#if defined __APPLE__ && defined HAVE_MACH_MACH_H
   class MemoryThisjobDarwinFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
@@ -360,7 +360,7 @@ public:
   MemoryThisjobBgFunction memorythisjobbgfunction;
 #endif
 
-#if defined __APPLE__ && HAVE_MACH_MACH_H
+#if defined __APPLE__ && defined HAVE_MACH_MACH_H
   MemoryThisjobDarwinFunction memorythisjobdarwinfunction;
 #endif
 

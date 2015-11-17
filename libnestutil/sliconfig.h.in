@@ -16,9 +16,9 @@
 #define SLI_MINOR_REVISION @SLI_MINOR@
 #define SLI_PATCHLEVEL "@SLI_PATCHLEVEL@"
 
-#define SLI_HOST "@host@"
-#define SLI_HOSTOS "@host_os@"
-#define SLI_HOSTCPU "@host_cpu@"
+#define SLI_HOST "@CMAKE_HOST_SYSTEM_PROCESSOR@-@host_vendor@-@CMAKE_HOST_SYSTEM@"
+#define SLI_HOSTOS "@CMAKE_HOST_SYSTEM@"
+#define SLI_HOSTCPU "@CMAKE_HOST_SYSTEM_PROCESSOR@"
 #define SLI_HOSTVENDOR "@host_vendor@"
 
 #define SLI_SOURCEDIR "@PKGSRCDIR@"

@@ -3,7 +3,6 @@
 autom4te.cache/
 libltdl/
 
-libnestutil/config.h.in
 Makefile.in
 
 aclocal.m4

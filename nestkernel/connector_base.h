@@ -132,14 +132,14 @@ public:
   virtual void get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long label,
+    long_t label,
     ArrayDatum& conns ) const = 0;
 
   virtual void get_connections( size_t source_gid,
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long label,
+    long_t label,
     ArrayDatum& conns ) const = 0;
 
   virtual void
@@ -353,7 +353,7 @@ public:
   get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long label,
+    long_t label,
     ArrayDatum& conns ) const
   {
     for ( size_t i = 0; i < K; i++ )
@@ -368,7 +368,7 @@ public:
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long label,
+    long_t label,
     ArrayDatum& conns ) const
   {
     for ( size_t i = 0; i < K; i++ )
@@ -574,7 +574,7 @@ public:
   get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long label,
+    long_t label,
     ArrayDatum& conns ) const
   {
     if ( get_syn_id() == synapse_id )
@@ -592,7 +592,7 @@ public:
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long label,
+    long_t label,
     ArrayDatum& conns ) const
   {
     if ( get_syn_id() == synapse_id )
@@ -799,7 +799,7 @@ public:
   get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long label,
+    long_t label,
     ArrayDatum& conns ) const
   {
     for ( size_t i = 0; i < C_.size(); i++ )
@@ -814,7 +814,7 @@ public:
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long label,
+    long_t label,
     ArrayDatum& conns ) const
   {
     if ( get_syn_id() == synapse_id )
@@ -968,7 +968,7 @@ public:
   get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long label,
+    long_t label,
     ArrayDatum& conns ) const
   {
     for ( size_t i = 0; i < size(); i++ )
@@ -980,7 +980,7 @@ public:
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long label,
+    long_t label,
     ArrayDatum& conns ) const
   {
     for ( size_t i = 0; i < size(); i++ )

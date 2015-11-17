@@ -201,7 +201,7 @@ public:
     return syn_id_delay_.syn_id;
   }
 
-  long
+  long_t
   get_label() const
   {
     return UNLABELED_CONNECTION;

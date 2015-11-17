@@ -340,7 +340,7 @@ ConnectionManager::get_connections( DictionaryDatum params ) const
   const Token& label_token = params->lookup( names::synapse_label );
   const TokenArray* source_a = 0;
   const TokenArray* target_a = 0;
-  long label = UNLABELED_CONNECTION;
+  long_t label = UNLABELED_CONNECTION;
 
   if ( not source_t.empty() )
     source_a = dynamic_cast< TokenArray const* >( source_t.datum() );
@@ -349,7 +349,7 @@ ConnectionManager::get_connections( DictionaryDatum params ) const
 
   if ( not label_token.empty() )
   {
-    label = getValue< long >( label_token );
+    label = getValue< long_t >( label_token );
   }
 
   size_t syn_id = 0;
@@ -392,7 +392,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
   TokenArray const* source,
   TokenArray const* target,
   size_t syn_id,
-  long label ) const
+  long_t label ) const
 {
   size_t num_connections = 0;
 

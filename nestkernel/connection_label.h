@@ -48,10 +48,10 @@ public:
    */
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
-  long get_label() const;
+  long_t get_label() const;
 
 private:
-  long label_;
+  long_t label_;
 };
 
 template < typename Connection_t >
@@ -68,7 +68,7 @@ template < typename Connection_t >
 void
 ConnectionLabel< Connection_t >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
-  long lbl;
+  long_t lbl;
   if ( updateValue< long >( d, names::synapse_label, lbl ) )
   {
     if ( lbl >= 0 )
@@ -84,7 +84,7 @@ ConnectionLabel< Connection_t >::set_status( const DictionaryDatum& d, Connector
 }
 
 template < typename Connection_t >
-inline long
+inline long_t
 ConnectionLabel< Connection_t >::get_label() const
 {
   return label_;

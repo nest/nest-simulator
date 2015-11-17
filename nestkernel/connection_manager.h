@@ -104,7 +104,7 @@ public:
     TokenArray const* source,
     TokenArray const* target,
     size_t syn_id,
-    long label ) const;
+    long_t label ) const;
 
   // aka CopyModel for synapse models
   synindex copy_synapse_prototype( synindex old_id, std::string new_name );

@@ -58,8 +58,10 @@ template < typename Connection_t >
 void
 ConnectionLabel< Connection_t >::get_status( DictionaryDatum& d ) const
 {
-  def< long >( d, names::synapse_label, label_ );
   Connection_t::get_status( d );
+  def< long_t >( d, names::synapse_label, label_ );
+  // override, as the size changes here
+  def< long_t >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename Connection_t >

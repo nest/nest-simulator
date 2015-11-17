@@ -103,7 +103,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
   std::vector< NodeAddressingData >& all_nodes,
   bool remote )
 {
-  size_t np = kernel().mpi_manager.get_num_processes();
+  size_t np = get_num_processes();
   if ( np > 1 && remote )
   {
     std::vector< long_t > localnodes;
@@ -115,7 +115,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     }
     // get size of buffers
     std::vector< nest::int_t > n_nodes( np );
-    n_nodes[ kernel().mpi_manager.get_rank() ] = localnodes.size();
+    n_nodes[ get_rank() ] = localnodes.size();
     communicate( n_nodes );
     // Set up displacements vector.
     std::vector< int > displacements( np, 0 );
@@ -161,7 +161,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
   DictionaryDatum params,
   bool remote )
 {
-  size_t np = kernel().mpi_manager.get_num_processes();
+  size_t np = get_num_processes();
 
   if ( np > 1 && remote )
   {
@@ -206,7 +206,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 
     // get size of buffers
     std::vector< nest::int_t > n_nodes( np );
-    n_nodes[ kernel().mpi_manager.get_rank() ] = localnodes.size();
+    n_nodes[ get_rank() ] = localnodes.size();
     communicate( n_nodes );
 
     // Set up displacements vector.

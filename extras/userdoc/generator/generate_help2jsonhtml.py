@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# colormaps.py
+# generate_help2jsonhtml.py
 #
 # This file is part of NEST.
 #

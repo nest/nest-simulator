@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# colormaps.py
+# generate_example2ipynb.py
 #
 # This file is part of NEST.
 #

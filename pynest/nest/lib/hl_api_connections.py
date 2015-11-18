@@ -444,7 +444,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
             for key,value in syn_spec.items():
 
                 # if value is a list, it is converted to a numpy array
-                if isinstance(value, list):
+                if isinstance(value, (list, tuple)):
                     value = numpy.asarray(value)
 
                 if isinstance(value, (numpy.ndarray, numpy.generic)):

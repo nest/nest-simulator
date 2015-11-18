@@ -1,3 +1,24 @@
+# -*- coding: utf-8 -*-
+#
+# test_pp_psc_delta_stdp.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 #
 # Moritz Deger, moritz.deger@epfl.ch, Aug 14, 2015
 #
@@ -60,13 +81,13 @@ pylab.ylabel('weight [mV]')
 pylab.legend(loc='best')
 ylims = pylab.ylim()
 pylab.ylim(ylims[0]-5, ylims[1]+5)
-pylab.savefig('test_pp_psc_delta_stdp_fig1.pdf')
+pylab.savefig('test_pp_psc_delta_stdp_fig1.png')
 
 nest.raster_plot.from_device(sd)
 ylims = pylab.ylim()
 pylab.ylim(ylims[0]-.5, ylims[1]+.5)
 pylab.show()
-pylab.savefig('test_pp_psc_delta_stdp_fig2.pdf')
+pylab.savefig('test_pp_psc_delta_stdp_fig2.png')
 
 
 print 'archiver-lengths are different:'

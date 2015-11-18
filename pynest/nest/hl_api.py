@@ -1134,11 +1134,19 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
             sr("cvlit")
         elif isinstance(syn_spec, dict):
             for key,value in syn_spec.items():
-                if isinstance(value, (np.ndarray, np.generic)):
+
+                # if value is a list, it is converted to a numpy array
+                if isinstance(value, list):
+                    value = np.asarray(value)
+
+                # if value is a numpy array, the dimensions are checked, matrices are converted to vectors
+                if isinstance(value, (np.ndarray, np.generic)): 
                     if len(value.shape) == 1:
                         if rule == 'one_to_one':
                             if value.shape[0] is not len(pre):
                                 raise NESTError("'" + key + "' has to be an array of dimension " + str(len(pre)) + ", a scalar or a dictionary.")
+                            else:
+                                syn_spec[key] = value
                         else:
                             raise NESTError("'" + key + "' has the wrong type. One-dimensional parameter arrays can only be used in conjunction with rule 'one_to_one'.")
                     elif len(value.shape) == 2:
@@ -1149,6 +1157,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                                 syn_spec[key] = value.flatten()
                         else:
                             raise NESTError("'" + key + "' has the wrong type. Two-dimensional parameter arrays can only be used in conjunction with rule 'all_to_all'.")
+
             sps(syn_spec)
         else:
             raise NESTError("syn_spec needs to be a string or dictionary.")

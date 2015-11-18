@@ -55,10 +55,9 @@ changed either.
 
 Instructions:
 
-1. Download NEST (http://www.nest-initiative.org/index.php/Software:Download)
+1. Download NEST (http://www.nest-simulator.org/download)
 
-2. Compile NEST according to the instructions on
-   http://www.nest-initiative.org/index.php/Software:Installation
+2. Compile NEST: http://www.nest-simulator.org/installation
    Use the --with-mpi flag to configure with MPI support
 
 3. In user_params.sli adjust output_dir, mpi_path, and nest_path to your system

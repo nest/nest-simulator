@@ -1,0 +1,101 @@
+/*
+ *  test_gap_junctions_mpi.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+    Name: testsuite::test_gap_junctions_mpi - Test gap junction functionality in parallel
+
+    Synopsis: (test_gap_junctions_mpi) run -> - 
+
+    Description:
+    test_gap_junctions_mpi.sli is an overall test of the hh_psc_alpha_gap model connected
+    by gap_junction connection. The test checks if the gap junction functionality
+    works in parallel.
+    
+    Author:  Jan Hahne, Hans Ekkehard Plesser
+    SeeAlso: testsuite::test_gap_junction, hh_psc_alpha_gap, gap_junction
+*/
+
+(unittest) run
+/unittest using
+
+% The following test needs the model hh_psc_alpha_gap, so
+% this test should only run if we have GSL
+is_threaded not 
+statusdict/have_gsl :: not
+or 
+{ 
+  exit_test_gracefully
+} 
+if
+
+/total_vps 4 def
+
+[1 2 4]
+{
+  0.1 /h Set
+  
+  0 << 
+        /total_num_virtual_procs total_vps 
+        /resolution h
+        /prelim_tol 0.0001
+        /prelim_interpolation_order 3
+        /max_num_prelim_iterations 10
+    >> SetStatus
+      
+  /hh_psc_alpha_gap Create /neuron1 Set
+  /hh_psc_alpha_gap Create /neuron2 Set
+  /hh_psc_alpha_gap Create /neuron3 Set
+  /hh_psc_alpha_gap Create /neuron4 Set
+  
+  neuron1
+  << 
+    /I_e 400.
+  >> SetStatus
+  
+  /sd /spike_detector << /record_to [/memory] 
+                           /withgid true 
+                           /withtime true 
+                        >> Create def
+  
+  neuron1 neuron2 << /weight 10.0 >> /gap_junction Connect
+  neuron2 neuron1 << /weight 10.0 >> /gap_junction Connect
+  
+  neuron1 neuron3 << /weight  8.0 >> /gap_junction Connect
+  neuron3 neuron1 << /weight  8.0 >> /gap_junction Connect
+  
+  neuron1 neuron4 << /weight 12.0 >> /gap_junction Connect
+  neuron4 neuron1 << /weight 12.0 >> /gap_junction Connect
+  
+  neuron1 sd Connect
+  neuron2 sd Connect
+  neuron3 sd Connect
+  neuron4 sd Connect
+  
+  50 Simulate
+
+  % get events, replace vectors with SLI arrays    
+  /ev sd /events get def
+  ev keys { /k Set ev dup k get cva k exch put } forall
+  ev 
+
+} distributed_process_invariant_events_assert_or_die

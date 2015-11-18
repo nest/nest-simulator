@@ -23,11 +23,10 @@
 import unittest
 import numpy as np
 import scipy.stats
-import nest
 from . import test_connect_helpers as hf
 from .test_connect_parameters import TestParams
 
-@nest.check_stack
+@hf.nest.check_stack
 class TestAllToAll(TestParams):
 
     # specify connection pattern
@@ -36,6 +35,8 @@ class TestAllToAll(TestParams):
     # sizes of populations
     N1 = 6
     N2 = 7
+    N1_array = 500
+    N2_array = 10
             
     #def testErrorMessages(self):
       
@@ -44,40 +45,73 @@ class TestAllToAll(TestParams):
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(self.pop1, self.pop2)
         M_all = np.ones((len(self.pop2), len(self.pop1)))
-        self.assertTrue(hf.mpi_assert(M, M_all))
+        hf.mpi_assert(M, M_all, self)
         # make sure no connections were drawn from the target to the source population
         M = hf.get_connectivity_matrix(self.pop2, self.pop1)
         M_none = np.zeros((len(self.pop1), len(self.pop2)))
-        self.assertTrue(hf.mpi_assert(M, M_none))
+        hf.mpi_assert(M, M_none, self)
         
-    # def testInputArray(self):
-    #     # TODO: check what happens if autapses is set to false
-    #     # arrays not implemented for multithreading or mpi
-    #     if self.comm.Get_size() == 1:
-    #         nest.ResetKernel()
-    #         syn_params = {}
-    #         for label in ['weight', 'delay']:
-    #             if label == 'weight':
-    #                 self.twodarray = np.random.rand(self.N2,self.N1)
-    #             elif label == 'delay':
-    #                 self.twodarray = np.random.randint(1,100,size=(self.N2,self.N1))*0.1
-    #             syn_params[label] = self.twodarray.flatten()
-    #             self.setUpNetwork(self.conn_dict,syn_dict=syn_params)
-    #             M_nest = hf.get_weighted_connectivity_matrix(self.pop1,self.pop2,label)
-    #             self.assertTrue(np.allclose(M_nest,self.twodarray))
+    def testInputArray(self):
+        for label in ['weight', 'delay']:
+            syn_params = {}
+            if label == 'weight':
+                self.param_array = np.arange(self.N1_array*self.N2_array, dtype=float).reshape(self.N2_array,self.N1_array)
+            elif label == 'delay':
+                self.param_array = np.arange(1,self.N1_array*self.N2_array+1).reshape(self.N2_array,self.N1_array)*0.1
+            syn_params[label] = self.param_array
+            self.setUpNetwork(self.conn_dict, syn_params, N1=self.N1_array, N2=self.N2_array)
+            M_nest = hf.get_weighted_connectivity_matrix(self.pop1,self.pop2,label)
+            hf.mpi_assert(M_nest, self.param_array, self)
+    
+    def testInputArrayWithoutAutapses(self):
+        self.conn_dict['autapses'] = False
+        for label in ['weight', 'delay']:
+            syn_params = {}
+            if label == 'weight':
+                self.param_array = np.arange(self.N1*self.N1, dtype=float).reshape(self.N1,self.N1)
+            elif label == 'delay':
+                self.param_array = np.arange(1,self.N1*self.N1+1).reshape(self.N1,self.N1)*0.1
+            syn_params[label] = self.param_array
+            self.setUpNetworkOnePop(self.conn_dict, syn_params)
+            M_nest = hf.get_weighted_connectivity_matrix(self.pop,self.pop,label)
+            np.fill_diagonal(self.param_array,0)
+            hf.mpi_assert(M_nest, self.param_array, self)
+
+    def testInputArrayRPort(self):
+        syn_params = {}
+        neuron_model = 'iaf_psc_exp_multisynapse'
+        neuron_dict = {'tau_syn': [0.1+i for i in range(self.N2)]}
+        self.pop1 = hf.nest.Create(neuron_model, self.N1)
+        self.pop2 = hf.nest.Create(neuron_model, self.N2, neuron_dict)
+        self.param_array = np.transpose(np.asarray([np.arange(1,self.N2+1) for i in range(self.N1)]))
+        syn_params['receptor_type'] = self.param_array
+        hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
+        M = hf.get_weighted_connectivity_matrix(self.pop1, self.pop2, 'receptor')
+        hf.mpi_assert(M, self.param_array, self)
+
+    def testInputArrayToStdpSynapse(self):
+        params = ['Wmax', 'alpha', 'lambda', 'mu_minus', 'mu_plus', 'tau_plus']
+        syn_params = {'model': 'stdp_synapse'}
+        values = [np.arange(self.N1*self.N2, dtype=float).reshape(self.N2,self.N1) for i in range(6)]
+        for i, param in enumerate(params):
+            syn_params[param] = values[i]
+        self.setUpNetwork(self.conn_dict, syn_params)
+        for i, param in enumerate(params):
+            a = hf.get_weighted_connectivity_matrix(self.pop1, self.pop2, param)
+            hf.mpi_assert(a, values[i], self)
 
     # test single threaded for now        
     def testRPortDistribution(self):
         n_rport = 10
         nr_neurons = 20
-        nest.ResetKernel()
+        hf.nest.ResetKernel()
         neuron_model = 'iaf_psc_exp_multisynapse'
         neuron_dict = {'tau_syn': [0.1+i for i in range(n_rport)]}
-        self.pop1 = nest.Create(neuron_model, nr_neurons, neuron_dict)
-        self.pop2 = nest.Create(neuron_model, nr_neurons, neuron_dict)       
+        self.pop1 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)
+        self.pop2 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)       
         syn_params = {'model': 'static_synapse'}
         syn_params['receptor_type'] = {'distribution': 'uniform_int', 'low': 1, 'high': n_rport}
-        nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
+        hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
         M = hf.get_weighted_connectivity_matrix(self.pop1, self.pop2, 'receptor')
         M = hf.gather_data(M)
         if M is not None:
@@ -85,7 +119,7 @@ class TestAllToAll(TestParams):
             frequencies = scipy.stats.itemfreq(M)
             self.assertTrue(np.array_equal(frequencies[:, 0], np.arange(1, n_rport+1)), 'Missing or invalid rports')
             chi, p = scipy.stats.chisquare(frequencies[:, 1])
-            self.assertGreater(p, self.pval, 'Chi2 test failed.')
+            self.assertGreater(p, self.pval)
 
 
 def suite():

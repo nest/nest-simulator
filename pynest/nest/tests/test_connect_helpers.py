@@ -62,24 +62,25 @@ def mpi_barrier():
     if haveMPI4Py:
         MPI.COMM_WORLD.Barrier()
 
-def mpi_assert(data_original, data_test, label=None):
+def mpi_assert(data_original, data_test, TestCase):
     '''
-    Compares data_original and data_test in a manner depending on the form of the two input parameters and the label.
-    Returns True is the two data sets are considered equal and False otherwise.
+    Compares data_original and data_test using assertTrue from the TestCase.
     '''
+    
     data_original = gather_data(data_original)
-    if data_original == None:
-        return True
-    else:
-        if is_array(data_original) and  not is_array(data_test):
-            return all(x == data_test for x in data_original)
-        elif label != None:
-            if label == 'diagonal':
-                return np.allclose(np.diag(data_original), data_test)
-        elif isinstance(data_original, (np.ndarray, np.generic)) and isinstance(data_test, (np.ndarray, np.generic)):
-            return np.allclose(data_original, data_test)
+    # only test if on rank 0
+    if data_original is not None:
+        if isinstance(data_original, (np.ndarray, np.generic)) and isinstance(data_test, (np.ndarray, np.generic)):
+            TestCase.assertTrue(np.allclose(data_original, data_test))
         else:
-            return data_original == data_test
+            TestCase.assertTrue(data_original == data_test)
+
+def all_equal(x):
+    '''
+    Tests if all elements in a list are equal.
+    Returns True or False
+    '''
+    return x.count(x[0]) == len(x)
         
 
 def get_connectivity_matrix(pop1,pop2):
@@ -128,26 +129,15 @@ def get_weighted_connectivity_matrix(pop1,pop2,label):
         M[index_dic[target_id]][index_dic[source_id]] += weight
     return M
 
-def get_weighted_connection_array(pop1,pop2,label):
-    '''
-    returns a weighted connection array which reads out the value of one parameter
-    for each connection
-    '''
-    
-    a = []
-    connections = nest.GetConnections(pop1,pop2)
-    index_dic = {}
-    pop1 = np.asarray(pop1)
-    pop2 = np.asarray(pop2)
-    for node in pop1:
-        index_dic[node] = np.where(pop1==node)[0][0]
-    for node in pop2:
-        index_dic[node] = np.where(pop2==node)[0][0]
-    for conn in connections:
-        source_id = conn[0]
-        target_id = conn[1]
-        a.append(nest.GetStatus(nest.GetConnections([source_id],[target_id]))[0][label])
-    return np.asarray(a)
+def check_synapse(params, values, syn_params, TestCase):
+    for i, param in enumerate(params):
+            syn_params[param] = values[i]
+    TestCase.setUpNetwork(TestCase.conn_dict, syn_params)
+    for i, param in enumerate(params):
+        conns = nest.GetStatus(nest.GetConnections(TestCase.pop1, TestCase.pop2))
+        conn_params = [conn[param] for conn in conns]
+        TestCase.assertTrue(all_equal(conn_params))
+        TestCase.assertTrue(conn_params[0] == values[i])
 
 # copied from Masterthesis, Daniel Hjertholm 
 def counter(x, fan, source_pop, target_pop):

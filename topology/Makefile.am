@@ -83,7 +83,6 @@ install-data-hook:
 	mkdir -p $(DESTDIR)@PKGDOCDIR@/topology
 	rm -rf $(DESTDIR)@PKGDOCDIR@/topology/testsuite
 	cp -r @PKGSRCDIR@/$(subdir)/testsuite $(DESTDIR)@PKGDOCDIR@/topology
-	rm -rf `find $(DESTDIR)@PKGDOCDIR@/topology -name .svn`
 
 clean-local:
 	-rm -rf $(abs_builddir)/build

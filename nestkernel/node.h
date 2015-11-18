@@ -237,6 +237,17 @@ public:
   bool is_frozen() const;
 
   /**
+   * Returns true if the node requires a preliminary update step
+   */
+  bool needs_prelim_update() const;
+
+  /**
+   * Sets needs_prelim_up_ member variable
+   * (to be able to set it to "true" for any class derived from Node)
+   */
+  void set_needs_prelim_update( const bool );
+
+  /**
    * Return pointer to network driver class.
    * @todo This member should return a reference, not a pointer.
    */
@@ -309,6 +320,23 @@ public:
    */
   virtual void update( Time const&, const long_t, const long_t ) = 0;
 
+  /**
+   * Bring the node from state $t$ to $t+n*dt$, sends SecondaryEvents
+   * (e.g. GapJEvent) and resets state variables to values at $t$.
+   *
+   * n->prelim_update(T, from, to) performs the update steps beginning
+   * at T+from .. T+to-1.
+   *
+   * Does not emit spikes, does not log state variables.
+   *
+   * throws UnexpectedEvent if not reimplemented in derived class
+   *
+   * @param Time   network time at beginning of time slice.
+   * @param long_t initial step inside time slice
+   * @param long_t post-final step inside time slice
+   *
+   */
+  virtual bool prelim_update( Time const&, const long_t, const long_t );
 
   /**
    * @defgroup status_interface Configuration interface.
@@ -397,6 +425,16 @@ public:
   virtual port handles_test_event( DoubleDataEvent&, rport receptor_type );
   virtual port handles_test_event( DSSpikeEvent&, rport receptor_type );
   virtual port handles_test_event( DSCurrentEvent&, rport receptor_type );
+  virtual port handles_test_event( GapJEvent&, rport receptor_type );
+
+  /**
+   * Required to check, if source neuron may send a SecondaryEvent.
+   * This base class implementation throws IllegalConnection
+   * and needs to be overwritten in the derived class.
+   * @ingroup event_interface
+   * @throws IllegalConnection
+   */
+  virtual void sends_secondary_event( GapJEvent& ge );
 
   /**
    * Register a STDP connection
@@ -467,6 +505,103 @@ public:
    * @throws UnexpectedEvent
    */
   virtual void handle( DoubleDataEvent& e );
+
+  /**
+   * Handler for gap junction events.
+   * @see handle(thread, GapJEvent&)
+   * @ingroup event_interface
+   * @throws UnexpectedEvent
+   */
+  virtual void handle( GapJEvent& e );
+
+  /**
+   * @defgroup MSP_functions Model of Structural Plasticity in NEST.
+   * Functions related to accessibility and setup of variables required for
+   * the implementation of MSP in NEST.
+   *
+   */
+
+  /**
+   * Return the Ca_minus value at time Ca_t which corresponds to the time of
+   * the last update in Calcium concentration which is performed each time
+   * a Node spikes.
+   * Return 0.0 if not overridden
+   * @ingroup MSP_functions
+   */
+  virtual double_t
+  get_Ca_minus() const
+  {
+    return 0.0;
+  }
+
+  /**
+   * Get the number of synaptic element for the current Node at Ca_t which
+   * corresponds to the time of the last spike.
+   * Return 0.0 if not overridden
+   * @ingroup MSP_functions
+   */
+  virtual double_t get_synaptic_elements( Name ) const
+  {
+    return 0.0;
+  }
+
+  /**
+   * Get the number of vacant synaptic element for the current Node
+   * Return 0 if not overridden
+   * @ingroup MSP_functions
+   */
+  virtual int_t get_synaptic_elements_vacant( Name ) const
+  {
+    return 0;
+  }
+
+  /**
+   * Get the number of connected synaptic element for the current Node
+   * Return 0 if not overridden
+   * @ingroup MSP_functions
+   */
+  virtual int_t get_synaptic_elements_connected( Name ) const
+  {
+    return 0;
+  }
+
+  /**
+   * Get the number of all synaptic elements for the current Node at time t
+   * Return an empty map if not overridden
+   * @ingroup MSP_functions
+   */
+  virtual std::map< Name, double_t >
+  get_synaptic_elements()
+  {
+    return std::map< Name, double >();
+  }
+
+  /**
+   * Triggers the update of all SynapticElements
+   * stored in the synaptic_element_map_. It also updates the calcium concentration.
+   * @param t double_t time when the update is being performed
+   * @ingroup MSP_functions
+   */
+  virtual void update_synaptic_elements( double_t ){};
+
+  /**
+   * Is used to reduce the number of synaptic elements in the node through
+   * time.
+   * @param p double_t correspond the the proportion of synaptic elements
+   * to be removed.
+   * @ingroup MSP_functions
+   */
+  virtual void decay_synaptic_elements_vacant( double_t ){};
+
+  /**
+   * Is used to update the number of connected
+   * synaptic elements (SynapticElement::z_connected_) when a synapse
+   * is formed or deleted.
+   * @param type Name, name of the synaptic element to connect
+   * @param n int_t number of new connections of the given type
+   * @ingroup MSP_functions
+   */
+  virtual void connect_synaptic_element( Name, int_t ){};
 
   /**
    * return the Kminus value at t (in ms).
@@ -701,6 +836,7 @@ private:
   thread vp_;                //!< virtual process node is assigned to
   bool frozen_;              //!< node shall not be updated if true
   bool buffers_initialized_; //!< Buffers have been initialized
+  bool needs_prelim_up_;     //!< node requires preliminary update step
 
 protected:
   static Network* net_; //!< Pointer to global network driver.
@@ -710,6 +846,18 @@ inline bool
 Node::is_frozen() const
 {
   return frozen_;
+}
+
+inline bool
+Node::needs_prelim_update() const
+{
+  return needs_prelim_up_;
+}
+
+inline void
+Node::set_needs_prelim_update( const bool npu )
+{
+  needs_prelim_up_ = npu;
 }
 
 inline bool

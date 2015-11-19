@@ -8,12 +8,18 @@
 # rm -rf ../build/temp
 
 set -e
-mypath="pwd"
+
+os=$(uname)
 clear
 read -p "Please enter your NEST installation path (eg "/home/yourname/opt") : " nestpath
 echo ""
 
-export PYTHONPATH=$nestpath/nest/lib/python2.7/site-packages
+# see /nest/bin/nest_vars.sh
+# There are problems with executing it directly. So using this:
+export NEST_INSTALL_DIR=$nestpath/nest
+export PYTHONPATH=$NEST_INSTALL_DIR/lib/python2.7/site-packages:$PYTHONPATH
+export PYTHONPATH=$NEST_INSTALL_DIR/lib64/python2.7/site-packages:$PYTHONPATH
+export PATH=$NEST_INSTALL_DIR/bin:$PATH
 
 mkdir -p ../build/examples
 mkdir -p ../build/temp/
@@ -29,14 +35,13 @@ do
 	recode -f utf-8 $value
 	# append after last line
     	echo "import pylab \npylab.savefig('$value.png')" >> $value
-        sed '/savefig/s/\.py//' -i $value
+		if [$os == 'FreeBSD'] || [$os == 'Darwin']; then
+			sed -i '' '/savefig/s/\.py//' $value
+		else
+			sed '/savefig/s/\.py//' -i $value
+		fi
     	# generate
     	ipython $value
-	# delete last line
-	sed -i '$d' $value
-	# agaiin
-	sed -i '$d' $value
-	# sed '1,5d' -i $value
 done
 
 cp ../build/temp/*.png ../build/examples/examples

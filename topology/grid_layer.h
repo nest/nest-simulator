@@ -480,7 +480,7 @@ typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::opera
     else
     {
       if ( filter_.select_model()
-        && ( kernel().modelrange_manager().get_model_id( layer_.gids_[ depth_ * layer_size_ ] )
+        && ( kernel().modelrange_manager.get_model_id( layer_.gids_[ depth_ * layer_size_ ] )
              != index( filter_.model ) ) )
         return operator++();
       else

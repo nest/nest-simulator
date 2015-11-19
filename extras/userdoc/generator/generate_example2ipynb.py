@@ -23,11 +23,6 @@ import glob
 import json
 from json.encoder import JSONEncoder
 import os
-# import pprint
-# from pprint import pprint
-# import re
-# import sys
-
 
 with open('ipynbdata.json') as data_file:
     data = json.load(data_file)
@@ -56,6 +51,12 @@ Using it for py to ipynb conversion is outdatet!
 
 My Hack: Using string conversions
 
+.. todo::
+    - Before the imports, you could include %matplotlib inline. This makes plots
+      appear inside the notebook. See line 122
+    - The docstring of functions split the function signature and the function body
+      into two cells. This is an error for ipython notebook.
+    - The same goes for class definitions: they cannot be put into different cells.
 '''
 
 for example in dirList:
@@ -75,6 +76,7 @@ for example in dirList:
     current = 0
     linenumber = 0
     sepnumber = 1
+    plotinline = '%matplotlib inline\n'
 
     commentlines = {}
     commenttypes = {}
@@ -113,6 +115,11 @@ for example in dirList:
 
         if line.startswith('#'):  # hey, you are a docline
             allblocks.update({linenumber: [current, 'comment', '\\' + line]})
+
+        # Before the imports, you could include %matplotlib inline. This makes plots appear inside the notebook
+        # todo: find a solution to integrate it BEFORE the import-Block
+        if line.strip() == 'import nest':
+            allblocks.update({linenumber: [current, 'code', plotinline + line]})
     # print(allblocks)
     '''
     Building blocks

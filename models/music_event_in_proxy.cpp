@@ -104,7 +104,7 @@ nest::music_event_in_proxy::music_event_in_proxy( const music_event_in_proxy& n 
   , P_( n.P_ )
   , S_( n.S_ )
 {
-  network()->register_music_in_port( P_.port_name_ );
+  network()->register_music_in_port( P_.port_name_, true );
 }
 
 

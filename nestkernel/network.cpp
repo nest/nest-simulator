@@ -191,7 +191,7 @@ Network::init_()
     set_data_path_prefix_( dict );
 
 #ifdef HAVE_MUSIC
-  music_in_portlist_.clear();
+  music_in_portlist_ = pristine_music_in_portlist_;
 #endif
 }
 
@@ -1986,7 +1986,7 @@ Network::execute_sli_protected( DictionaryDatum state, Name cmd )
 
 #ifdef HAVE_MUSIC
 void
-Network::register_music_in_port( std::string portname )
+Network::register_music_in_port( std::string portname, bool pristine )
 {
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
@@ -1994,6 +1994,8 @@ Network::register_music_in_port( std::string portname )
     music_in_portlist_[ portname ] = MusicPortData( 1, 0.0, -1 );
   else
     music_in_portlist_[ portname ].n_input_proxies++;
+  if ( pristine )
+    pristine_music_in_portlist_[ portname ] = music_in_portlist_[ portname ];
 }
 
 void

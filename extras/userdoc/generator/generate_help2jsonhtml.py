@@ -94,9 +94,10 @@ def write_help_html(doc_dic):
 def coll_data(keywords, documentation, num, file, f_file):
     iname = ""
     see = ""
-    relfile = cut_it("/nest-2.8.0/", file)
-    relfile = relfile[1].strip()
-    doc_dic = {"Id": str(num), "File": relfile}
+    # relfile = cut_it("/nest-2.8.0/", file)
+    # relfile = relfile[1].strip()
+    # doc_dic = {"Id": str(num), "File": relfile}
+    doc_dic = {"Id": str(num), "File": file.replace(path, "")}
     for k in keywords:
         if k in documentation:
             if k == "Name:":
@@ -135,7 +136,7 @@ for file in allfiles:
     items = re.findall(docstring, filetext, re.DOTALL)  # Multiline matiching
     for item in items:
         num = num + 1
-        keywords = ["Name:", "Synopsis:", "Parameters:", "Description:", "Options:", "Examples:", "Variants:", "Bugs:", "Diagnostics:", "Author:", "FirstVersion:", "Remarks:", "Availability:", "References:", "SeeAlso:", "Source:", "Sends:", "Receives:", "Transmits:"]
+        keywords = ["Name:", "Synopsis:", "Parameters:", "Description:", "Options:", "Examples:", "Variants:", "Bugs:", "Diagnostics:", "Author:", "FirstVersion:", "Remarks:", "Availability:", "References:", "SeeAlso:", "Source:", "Sends:", "Receives:", "Transmits:", "Requires:"]
         documentation = {}
         for token in item.split():
             if token in keywords:
@@ -144,7 +145,8 @@ for file in allfiles:
             else:
                 if keyword_curr in documentation:
                     documentation[keyword_curr] += " " + token
-        all_data = coll_data(keywords, documentation, num, file, f_file)
+        # all_data = coll_data(keywords, documentation, num, file, f_file)
+        all_data = coll_data(keywords, documentation, num, file.replace(path, ""), f_file)
         name_list.append(all_data)
 sorted_name_list = sorted(name_list)
 # print(sorted_name_list)

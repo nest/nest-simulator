@@ -776,8 +776,11 @@ public:
    * Register a MUSIC input port (portname) with the port list.
    * This will increment the counter of the respective entry in the
    * music_in_portlist.
+   *
+   * The argument pristine should be set to true when the pristine
+   * music_in_port model registers the initial port name.
    */
-  void register_music_in_port( std::string portname );
+  void register_music_in_port( std::string portname, bool pristine = false );
 
   /**
    * Unregister a MUSIC input port (portname) from the port list.
@@ -827,6 +830,13 @@ public:
    * @see unregister_music_in_port()
    */
   std::map< std::string, MusicPortData > music_in_portlist_;
+
+  /**
+   * A copy of music_in_portlist_ at the pristine state.
+   *
+   * This is used to reset music_in_portlist_ to its initial state.
+   */
+  std::map< std::string, MusicPortData > pristine_music_in_portlist_;
 
   /**
    * The mapping between MUSIC input ports identified by portname

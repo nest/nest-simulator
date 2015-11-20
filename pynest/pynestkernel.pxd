@@ -137,7 +137,7 @@ cdef extern from "network.h" namespace "nest":
     cppclass Network
 
 cdef extern from "neststartup.h":
-    int neststartup(int, char**, SLIInterpreter&, Network*&, string) except +
+    int neststartup(int*, char***, SLIInterpreter&, Network*&, string) except +
     void nestshutdown() except +
 
 

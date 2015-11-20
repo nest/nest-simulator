@@ -779,10 +779,10 @@ public:
    *
    * The argument pristine should be set to true when a model
    * registers the initial port name. This typically happens when the
-   * constructor of the model registers a port, as in
+   * copy constructor of the model registers a port, as in
    * models/music_event_in_proxy.cpp. Setting pristine = true causes
-   * the port to be added to pristine_music_in_portlist.  See also
-   * comment above Network::pristine_music_in_portlist_.
+   * the port to be also added to pristine_music_in_portlist.  See
+   * also comment above Network::pristine_music_in_portlist_.
    */
   void register_music_in_port( std::string portname, bool pristine = false );
 

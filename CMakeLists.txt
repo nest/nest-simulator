@@ -109,20 +109,25 @@ if(K_COMPUTER)
 endif(K_COMPUTER)
 
 if(ENABLE_BLUEGENE)
+  # use the -DCMAKE_TOOLCHAIN_FILE= argument
   if(${ENABLE_BLUEGENE} STREQUAL "L")
     set(IS_BLUEGENE_L ON)
-    include(Platform/BlueGeneL-static)
+    #include(Platform/BlueGeneL-static)
   elseif(${ENABLE_BLUEGENE} STREQUAL "P")
     set(IS_BLUEGENE_P ON)
-    include(Platform/BlueGeneP-static)
+    #include(Platform/BlueGeneP-static)
   elseif(${ENABLE_BLUEGENE} STREQUAL "Q")
     set(IS_BLUEGENE_Q ON)
-    include(Platform/BlueGeneQ-static)
+    #include(Platform/BlueGeneQ-static)
   else()
     message(SEND_ERROR "Only L/P/Q is allowed for ENABLE_BLUEGENE.")
   endif()
   set(IS_BLUEGENE ON)
   set(STATIC_LIBRARIES ON)
+  
+  # not sure if this is working
+  set(WITH_READLINE OFF)
+  set(WITH_PYTHON OFF)
 endif(ENABLE_BLUEGENE)
 
 find_package(LTDL)

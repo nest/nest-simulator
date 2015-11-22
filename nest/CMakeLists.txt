@@ -1,5 +1,3 @@
-message("Hi from nest...")
-
 set(nest_sources
   neststartup.cpp neststartup.h 
   sli_neuron.h sli_neuron.cpp

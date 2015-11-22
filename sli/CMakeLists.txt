@@ -1,5 +1,3 @@
-message("Hi from sli...")
-
 set(sli_sources
   allocator.h allocator.cpp
   aggregatedatum.h

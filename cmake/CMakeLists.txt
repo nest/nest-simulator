@@ -30,7 +30,7 @@ set(SLI_EXITCODE_SEGFAULT 139 PARENT_SCOPE)
 message("Check whether the compiler ignores cmath makros.")
 try_compile(COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/CMathMacros.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/CMathMacros.cxx
   OUTPUT_VARIABLE OUTPUT
 )
 if(COMPILE_RESULT)
@@ -43,7 +43,7 @@ message("Check whether the compiler ignores cmath makros. ${HAVE_SIGUSR_IGNORED}
 message("Check whether the compiler does NOT include <*.h> headers ISO conformant.")
 try_compile(COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/AlphaCXXBug.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/AlphaCXXBug.cxx
   OUTPUT_VARIABLE OUTPUT
 )
 if(COMPILE_RESULT)
@@ -56,7 +56,7 @@ message("Check whether the compiler does NOT include <*.h> headers ISO conforman
 message("Check whether the compiler respects symbolic signal names in signal.h.")
 try_compile(COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/SigUsrIgnored.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/SigUsrIgnored.cxx
   OUTPUT_VARIABLE OUTPUT
 )
 if(COMPILE_RESULT)
@@ -69,7 +69,7 @@ message("Check whether the compiler respects symbolic signal names in signal.h. 
 message("Check whether static template member declaration succeeds.")
 try_compile(COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/StaticTemplateDeclaration.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/StaticTemplateDeclaration.cxx
   OUTPUT_VARIABLE OUTPUT
 )
 if(COMPILE_RESULT)
@@ -82,7 +82,7 @@ message("Check whether static template member declaration succeeds. ${HAVE_STATI
 message("Check for STL vector capacity base unity.")
 try_run(RUN_RESULT COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/VectorCapacity.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/VectorCapacity.cxx
   COMPILE_OUTPUT_VARIABLE COMPILE_OUTPUT_VAR
   RUN_OUTPUT_VARIABLE RUN_OUTPUT_VAR)
 if(RUN_RESULT EQUAL 0)
@@ -95,7 +95,7 @@ message("Check for STL vector capacity base unity. ${HAVE_STL_VECTOR_CAPACITY_BA
 message("Check for STL vector capacity doubling strategy.")
 try_run(RUN_RESULT COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/VectorCapacityDoubling.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/VectorCapacityDoubling.cxx
   COMPILE_OUTPUT_VARIABLE COMPILE_OUTPUT_VAR
   RUN_OUTPUT_VARIABLE RUN_OUTPUT_VAR)
 if(RUN_RESULT EQUAL 0)
@@ -115,7 +115,7 @@ message("Check for STL vector capacity doubling strategy. ${HAVE_STL_VECTOR_CAPA
 message("Check whether the compiler fails with ICE.")
 try_compile(COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/ICE.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/ICE.cxx
   OUTPUT_VARIABLE OUTPUT
 )
 if(COMPILE_RESULT)

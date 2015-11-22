@@ -1,5 +1,3 @@
-message("Hi from librandom...")
-
 set(random_sources
   librandom_exceptions.h
   exp_randomdev.h

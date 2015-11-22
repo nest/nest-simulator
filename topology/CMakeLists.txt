@@ -1,7 +1,3 @@
-message("Hi from topology...")
-
-add_subdirectory(doc)
-
 set(topo_sources
   topologymodule.h
   topologymodule.cpp
@@ -60,3 +56,5 @@ endif()
 
 install(FILES sli/topology-interface.sli
   DESTINATION ${INSTALL_DATA_DIR}/sli)
+
+add_subdirectory(doc)

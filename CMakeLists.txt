@@ -89,10 +89,18 @@ option(WITH_PYTHON "Find a Python interpreter [default=ON]. To ignore the Python
 option(EXTERNAL_MODULES "External modules to be linked in. Devided by ; ." OFF)
 option(STATIC_LIBRARIES "Build static libraries. [default=no]" OFF)
 option(PS_ARRAYS "Use PS array construction semantics" ON)
+SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
+    "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+    FORCE)
 
 # not defined yet
 option(WITH_SCALI "Request compilation with Scali MPI; optionally give directory with Scali installation.[/opt/scali]" OFF)
 option(WITH_MUSIC "Request the use of MUSIC; optionally give the directory, where MUSIC is installed." OFF)
+
+
+# needed for target doc and fulldoc
+find_package(Doxygen)
+find_program(SED NAMES sed gsed)
 
 if(WITH_OPTIMIZE)
   list(APPEND CMAKE_C_FLAGS ${WITH_OPTIMIZE})
@@ -112,13 +120,10 @@ if(ENABLE_BLUEGENE)
   # use the -DCMAKE_TOOLCHAIN_FILE= argument
   if(${ENABLE_BLUEGENE} STREQUAL "L")
     set(IS_BLUEGENE_L ON)
-    #include(Platform/BlueGeneL-static)
   elseif(${ENABLE_BLUEGENE} STREQUAL "P")
     set(IS_BLUEGENE_P ON)
-    #include(Platform/BlueGeneP-static)
   elseif(${ENABLE_BLUEGENE} STREQUAL "Q")
     set(IS_BLUEGENE_Q ON)
-    #include(Platform/BlueGeneQ-static)
   else()
     message(SEND_ERROR "Only L/P/Q is allowed for ENABLE_BLUEGENE.")
   endif()
@@ -133,8 +138,7 @@ endif(ENABLE_BLUEGENE)
 find_package(LTDL)
 if(LTDL_FOUND)
   set(HAVE_LIBLTDL ON)
-  message("-- LTDL_INCLUDE_DIR: ${LTDL_INCLUDE_DIR}")
-  message("-- LTDL_LIBRARIES: ${LTDL_LIBRARIES}")
+
   include_directories(${LTDL_INCLUDE_DIR})
   link_libraries(${LTDL_LIBRARIES})
 endif(LTDL_FOUND)
@@ -289,9 +293,16 @@ if(WITH_MPI)
   link_libraries(${MPI_CXX_LIBRARIES})
 endif(WITH_MPI)
 
+if(WITH_MUSIC)
+  # TODO Music
+else(WITH_MUSIC)
+  set(HAVE_MUSIC OFF)
+endif(WITH_MUSIC)
 
 add_subdirectory(cmake)
-add_subdirectory(conngen)
+if(LIBNEUROSIM)
+  add_subdirectory(conngen)
+endif(LIBNEUROSIM)
 add_subdirectory(doc)
 add_subdirectory(examples)
 add_subdirectory(extras)
@@ -303,7 +314,9 @@ add_subdirectory(sli)
 add_subdirectory(nest)
 add_subdirectory(nestkernel)
 add_subdirectory(precise)
-add_subdirectory(pynest)
+if(HAVE_PYTHON)
+  add_subdirectory(pynest)
+endif(HAVE_PYTHON)
 add_subdirectory(testsuite)
 add_subdirectory(topology)
 #add_subdirectory($SLI_MODULES)
@@ -311,22 +324,42 @@ add_subdirectory(topology)
 
 configure_file(
   "${PROJECT_SOURCE_DIR}/libnestutil/config.h.in"
-  "${PROJECT_BINARY_DIR}/libnestutil/config.h"
+  "${PROJECT_BINARY_DIR}/libnestutil/config.h" @ONLY
 )
 
 configure_file(
   "${PROJECT_SOURCE_DIR}/libnestutil/sliconfig.h.in"
-  "${PROJECT_BINARY_DIR}/libnestutil/sliconfig.h"
+  "${PROJECT_BINARY_DIR}/libnestutil/sliconfig.h" @ONLY
 )
 
 configure_file(
   "${PROJECT_SOURCE_DIR}/pynest/setup.py.in"
-  "${PROJECT_BINARY_DIR}/pynest/setup.py"
+  "${PROJECT_BINARY_DIR}/pynest/setup.py" @ONLY
 )
 
 configure_file(
   "${PROJECT_SOURCE_DIR}/pynest/do_tests.py.in"
-  "${PROJECT_BINARY_DIR}/pynest/do_tests.py"
+  "${PROJECT_BINARY_DIR}/pynest/do_tests.py" @ONLY
+)
+
+configure_file(
+  "${PROJECT_SOURCE_DIR}/testsuite/do_tests.sh.in"
+  "${PROJECT_BINARY_DIR}/testsuite/do_tests.sh" @ONLY
+)
+
+configure_file(
+  "${PROJECT_SOURCE_DIR}/extras/emacs/sli.el.in"
+  "${PROJECT_BINARY_DIR}/extras/emacs/sli.el" @ONLY
+)
+
+configure_file(
+  "${PROJECT_SOURCE_DIR}/extras/nest-config.in"
+  "${PROJECT_BINARY_DIR}/extras/nest-config" @ONLY
+)
+
+configure_file(
+  "${PROJECT_SOURCE_DIR}/extras/nest_vars.sh.in"
+  "${PROJECT_BINARY_DIR}/extras/nest_vars.sh" @ONLY
 )
 
 add_custom_target(installcheck
@@ -338,10 +371,204 @@ add_custom_target(installcheck
   COMMAND
     ${PKGDATADIR}/extras/do_tests.sh --test-pynest --source-dir=${PROJECT_SOURCE_DIR}
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-  COMMENT "Execute NEST's testsuite....")
+  COMMENT "Execute NEST's testsuite...."
+)
 
-message("C_FLAGS: ${CMAKE_C_FLAGS}")
-message("CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
-message("EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
-message("INCLUDE_DIRECTORIES: ${INCLUDE_DIRECTORIES}")
-message("LINK_LIBRARIES: ${LINK_LIBRARIES}")
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+  set(ALL_CFLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG}")
+  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+  set(ALL_CFLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}")
+  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+  set(ALL_CFLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELWITHDEBINFO}")
+  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
+  set(ALL_CFLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_MINSIZEREL}")
+  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "None")
+  set(ALL_CFLAGS "${CMAKE_C_FLAGS}")
+  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS}")
+else()
+  message(SEND_ERROR "Unknown build type: '${CMAKE_BUILD_TYPE}'")
+endif()
+
+message("")
+message("--------------------------------------------------------------------------------")
+message("NEST Configuration Summary")
+message("--------------------------------------------------------------------------------")
+message("")
+message("C compiler          : ${CMAKE_C_COMPILER}")
+message("C compiler flags    : ${ALL_CFLAGS}")
+message("C++ compiler        : ${CMAKE_CXX_COMPILER}")
+message("C++ compiler flags  : ${ALL_CXXFLAGS}")
+message("Build dynamic       : ${BUILD_SHARED_LIBS}")
+message("")
+message("Built-in modules    : ${SLI_MODULES}")
+if(EXTERNAL_MODULES)
+  message("User modules        : ${EXTERNAL_MODULES}")
+else(EXTERNAL_MODULES)
+  message("User modules        : None")
+endif(EXTERNAL_MODULES)
+
+if(HAVE_PYTHON)
+  message("Python bindings     : Yes (Python ${PYTHON_VERSION}: ${PYTHON})")
+  message("Cython bindings     : Yes (Cython: ${CYTHON_EXECUTABLE})")
+else(HAVE_PYTHON)
+  message("Python bindings     : No")
+endif(HAVE_PYTHON)
+
+if(OPENMP_FOUND)
+  message("Use threading       : Yes (OpenMP: ${OpenMP_CXX_FLAGS})")
+else(OPENMP_FOUND)
+  message("Use threading       : No")
+endif(OPENMP_FOUND)
+
+if(HAVE_GSL)
+  message("Use GSL             : Yes (GSL ${GSL_VERSION})")
+  message("    Includes        : ${GSL_INCLUDE_DIRS}")
+  message("    Libraries       : ${GSL_LIBRARIES}")
+  message("")
+else(HAVE_GSL)
+  message("Use GSL             : No")
+endif(HAVE_GSL)
+
+if(HAVE_READLINE)
+  message("Use Readline        : Yes")
+  message("    Includes        : ${READLINE_INCLUDE_DIRS}")
+  message("    Libraries       : ${READLINE_LIBRARIES}")
+  message("")
+else(HAVE_READLINE)
+  message("Use Readline        : No")
+endif(HAVE_READLINE)
+
+if(HAVE_LIBLTDL)
+  message("Use libltdl         : Yes")
+  message("    Includes        : ${LTDL_INCLUDE_DIR}")
+  message("    Libraries       : ${LTDL_LIBRARIES}")
+  message("")
+else(HAVE_LIBLTDL)
+  message("Use libltdl         : No")
+endif(HAVE_LIBLTDL)
+
+if(DOXYGEN_FOUND)
+  message("Use doxygen         : Yes (${DOXYGEN_EXECUTABLE})")
+  message("                    : target `doc` available")
+  if(DOXYGEN_DOT_FOUND)
+    message("    `dot` available : Yes (${DOXYGEN_DOT_EXECUTABLE})")
+    message("                    : target `fulldoc` available")
+  endif(DOXYGEN_DOT_FOUND)
+else(DOXYGEN_FOUND)
+  message("Use doxygen         : No")
+endif(DOXYGEN_FOUND)
+
+if(HAVE_MPI)
+  message("Use MPI             : Yes (MPI: ${MPI_CXX_COMPILER})")
+  message("    FLAGS           : ${MPI_CXX_COMPILE_FLAGS}")
+  message("    Includes        : ${MPI_CXX_INCLUDE_PATH}")
+  message("    Link Flags      : ${MPI_CXX_LINK_FLAGS}")
+  message("    Libraries       : ${MPI_CXX_LIBRARIES}")
+  message("")
+else(HAVE_MPI)
+  message("Use MPI             : No")
+endif(HAVE_MPI)
+
+if(HAVE_MUSIC)
+  message("Use MUSIC           : Yes")
+  message("    Includes        : ${MUSIC_INCLUDE_DIRS}")
+  message("    Libraries       : ${MUSIC_LIBRARIES})")
+  message("")
+else(HAVE_MUSIC)
+  message("Use MUSIC           : No")
+endif(HAVE_MUSIC)
+
+if(HAVE_LIBNEUROSIM)
+  message("Use libneurosim     : Yes")
+  message("    Includes        : ${LIBNEUROSIM_INCLUDE_DIRS})")
+  message("    Libraries       : ${LIBNEUROSIM_LIBRARIES})")
+  message("")
+else(HAVE_LIBNEUROSIM)
+  message("Use libneurosim     : No")
+endif(HAVE_LIBNEUROSIM)
+
+message("")
+message("--------------------------------------------------------------------------------")
+message("")
+message("The NEST executable will be installed to:")
+message("  ${SLI_PREFIX}/${INSTALL_BIN_DIR}/")
+message("")
+message("Documentation and examples will be installed to:")
+message( "  ${PKGDOCDIR}/")
+message("")
+if( HAVE_PYTHON )
+    message("PyNEST will be installed to:")
+    message("    ${SLI_PREFIX}/${PYEXECDIR}")
+    message("")
+endif( HAVE_PYTHON )
+message("To set necessary environment variables, add the following line")
+message("to your ~/.bashrc :")
+message("  source ${SLI_PREFIX}/bin/nest_vars.sh")
+message("")
+message("--------------------------------------------------------------------------------")
+message("")
+
+if( WITH_SCALI )
+  message("")
+  message("WARNING: We advise against using the SCALI MPI Library for the time being,")
+  message("WARNING: because of instabilities observed when simulating with 28 or more")
+  message("WARNING: processes. We recommend using OpenMPI (www.open-mpi.org) instead!")
+  message("")
+  message("--------------------------------------------------------------------------------")
+  message("")
+endif( WITH_SCALI )
+
+if(HAVE_GSL)
+  if(NOT HAVE_GSL_1_2)
+    message("")
+    message("Your GNU Scientific Library is earlier than GSL v 1.2.")
+    message("GSL Random Number Generators will not be available.")
+    message("See http://www.gnu.org/software/gsl for newer versions.")
+    message("")
+    message("--------------------------------------------------------------------------------")
+    message("")
+  endif(NOT HAVE_GSL_1_2)
+  if (NOT HAVE_GSL_1_11)
+    message("")
+    message("Your GNU Scientific Library is earlier than GSL v 1.11.")
+    message("The aeif_cond_alpha neuron will not be available.")
+    message("See http://www.gnu.org/software/gsl for newer versions.")
+    message("")
+    message("--------------------------------------------------------------------------------")
+    message("")
+  endif(NOT HAVE_GSL_1_11)
+else()
+  message("")
+  message("ATTENTION!")
+  message("You are about to compile NEST without the GNU Scientific")
+  message("Library. This means that conductance-based neuron models")
+  message("and some random number generators will not be available.")
+  message("")
+  message("--------------------------------------------------------------------------------")
+  message("")
+endif(HAVE_GSL)
+
+message("You can now build and install NEST with")
+message("  make")
+message("  make install")
+message("  make installcheck")
+message("")
+
+if(HAVE_MPI)
+  message("You have configured NEST with support for distributed computing.")
+  message("After running make install, please tell NEST how to start a")
+  message("distributed job on your system before running make installcheck.")
+  message("You can do this by modifying the template for command /mpirun in")
+  message("~/.nestrc, which is created by the first start of NEST.")
+  message("")
+endif(HAVE_MPI)
+
+message("If you experience problems with the installation or the use of NEST,")
+message("please see http://www.nest-simulator.org/frequently_asked_questions")
+message("or go to http://www.nest-simulator.org/community to find out how to")
+message("join the user mailing list.")
+message("")

@@ -1,5 +1,3 @@
-message("Hi from examples/nest...")
-
 set(EXAMPLES_NEST_DATA_DIRS
   Brette_et_al_2007
   music
@@ -17,9 +15,10 @@ set(EXAMPLES_NEST_DATA_FILES
 
 install(DIRECTORY ${EXAMPLES_NEST_DATA_DIRS}
   DESTINATION ${INSTALL_DOC_DIR}/examples
-  USE_SOURCE_PERMISSIONS)
+  USE_SOURCE_PERMISSIONS
+)
 
 install(FILES ${EXAMPLES_NEST_DATA_FILES}
   DESTINATION ${INSTALL_DOC_DIR}/examples
-  )
+)
 

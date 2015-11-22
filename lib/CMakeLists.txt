@@ -1,5 +1,3 @@
-message("Hi from lib...")
-
 set( LIB_DATA 
   sli/FormattedIO.sli
   sli/arraylib.sli

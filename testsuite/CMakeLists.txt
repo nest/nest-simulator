@@ -1,9 +1,3 @@
-message("Hi from testsuite...")
-
-configure_file(
-  "${PROJECT_SOURCE_DIR}/testsuite/do_tests.sh.in"
-  "${PROJECT_BINARY_DIR}/testsuite/do_tests.sh" @ONLY
-)
 
 set(TESTSUBDIRS
   selftests

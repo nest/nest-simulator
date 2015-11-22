@@ -1,0 +1,11 @@
+execute_process(
+  COMMAND @PKGSRCDIR@/extras/create_rcsinfo.sh @PKGSRCDIR@ /tmp
+  OUTPUT_VARIABLE RCSINFO
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+
+execute_process(
+  COMMAND @SED@ -i "" -e "/^PROJECT_NUMBER/ s/=.*/= @SLI_VERSION@, ${RCSINFO} /" @PKGBUILDDIR@/doc/normaldoc.conf
+  COMMAND @SED@ -i "" -e "/^PROJECT_NUMBER/ s/=.*/= @SLI_VERSION@, ${RCSINFO} /" @PKGBUILDDIR@/doc/fulldoc.conf
+)

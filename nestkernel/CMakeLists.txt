@@ -1,5 +1,3 @@
-message("Hi from nestkernel...")
-
 set(nestkernel_sources
   universal_data_logger_impl.h universal_data_logger.h
   recordables_map.h

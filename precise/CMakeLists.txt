@@ -1,5 +1,3 @@
-message("Hi from precise...")
-
 set(precise_sources
   slice_ring_buffer.cpp   slice_ring_buffer.h
   iaf_psc_delta_canon.cpp iaf_psc_delta_canon.h

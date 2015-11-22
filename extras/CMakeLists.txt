@@ -1,7 +1,3 @@
-message("Hi from extras...")
-
-add_subdirectory(ConnPlotter)
-
 set( EXTRAS_DOC
   bibliography/nest.bib
   logos/nest.pdf
@@ -29,21 +25,6 @@ if(EXISTS ${PROJECT_BINARY_DIR}/lib/sli/rcsinfo.sli)
     DESTINATION ${INSTALL_DATA_DIR}/sli)
 endif()
 
-configure_file(
-  "${PROJECT_SOURCE_DIR}/extras/emacs/sli.el.in"
-  "${PROJECT_BINARY_DIR}/extras/emacs/sli.el" @ONLY
-)
-
-configure_file(
-  "${PROJECT_SOURCE_DIR}/extras/nest-config.in"
-  "${PROJECT_BINARY_DIR}/extras/nest-config" @ONLY
-)
-
-configure_file(
-  "${PROJECT_SOURCE_DIR}/extras/nest_vars.sh.in"
-  "${PROJECT_BINARY_DIR}/extras/nest_vars.sh" @ONLY
-)
-
 install(DIRECTORY bibliography logos
   DESTINATION ${INSTALL_DOC_DIR})
 
@@ -53,3 +34,5 @@ install(FILES emacs/postscript-sli.el emacs/psvn.el ${CMAKE_CURRENT_BINARY_DIR}/
 install(PROGRAMS ${PROJECT_BINARY_DIR}/extras/nest-config 
     nest_indirect nest_serial ${PROJECT_BINARY_DIR}/extras/nest_vars.sh
   DESTINATION ${INSTALL_BIN_DIR})
+
+add_subdirectory(ConnPlotter)

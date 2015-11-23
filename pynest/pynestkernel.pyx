@@ -176,7 +176,7 @@ cdef class NESTEngine(object):
         if self.pEngine is not NULL:
             raise NESTError("engine already initialized")
 
-        cdef int argc = len(argv)
+        cdef int argc = <int> len(argv)
 
         if argc <= 0:
             raise NESTError("argv can't be empty")
@@ -199,15 +199,16 @@ cdef class NESTEngine(object):
 
             self.pEngine = new SLIInterpreter()
 
-            neststartup(cython.address (argc),
-                        cython.address (argv_bytes),
-                        deref(self.pEngine),
-                        self.pNet,
-                        modulepath_str)
+            neststartup(&argc,
+			&argv_bytes,
+			deref(self.pEngine),
+			self.pNet,
+			modulepath_str)
             # If using MPI, argv might now have changed, so rebuild it
             del argv[:]
             for i in range(argc):
-                # str(...) will convert to ordinary string in Python2.7
+                # str(...) will convert to ordinary string in Python2,
+		# otherwise Python2 will return a unicode string
                 argv.append(str(argv_bytes[i].decode()))
         finally:
             free(argv_bytes)

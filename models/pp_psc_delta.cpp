@@ -283,7 +283,7 @@ nest::pp_psc_delta::calibrate()
   V_.P33_ = std::exp( -V_.h_ / P_.tau_m_ );
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
 
-  if ( P_.dead_time_ != 0 && P_.dead_time_ < V_.h_ ) 
+  if ( P_.dead_time_ != 0 && P_.dead_time_ < V_.h_ )
     {P_.dead_time_ = V_.h_; }
 
   // initializing internal state
@@ -345,14 +345,12 @@ nest::pp_psc_delta::update( Time const& origin, const long_t from, const long_t 
   assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
   assert( from < to );
 
-  double_t q_temp_;
-
   for ( long_t lag = from; lag < to; ++lag )
   {
 
     S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + B_.spikes_.get_value( lag );
 
-    q_temp_ = 0;
+    double_t q_temp_ = 0;
     for ( uint_t i = 0; i < S_.q_elems_.size(); i++ )
     {
 
@@ -384,7 +382,7 @@ nest::pp_psc_delta::update( Time const& origin, const long_t from, const long_t 
         if ( P_.dead_time_ > 0.0 )
         {
           // Draw random number and compare to prob to have a spike
-          if ( V_.rng_->drand() <= -numerics::expm1( -rate * V_.h_ * 1e-3 ) ) 
+          if ( V_.rng_->drand() <= -numerics::expm1( -rate * V_.h_ * 1e-3 ) )
           {  n_spikes = 1; }
         }
         else

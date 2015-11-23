@@ -179,28 +179,29 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
       q_sfa_.size() ) );
    }
 
-  if ( c_m_ <= 0 ) {
-    throw BadProperty( "Capacitance must be strictly positive." ); }
+  if ( c_m_ <= 0 ) 
+    {throw BadProperty( "Capacitance must be strictly positive." ); }
 
-  if ( dead_time_ < 0 ) {
-    throw BadProperty( "Absolute refractory time must not be negative." ); }
+  if ( dead_time_ < 0 ) 
+    {throw BadProperty( "Absolute refractory time must not be negative." ); }
 
-  if ( dead_time_shape_ < 1 ) {
-    throw BadProperty( "Shape of the dead time gamma distribution must not be smaller than 1." ); }
+  if ( dead_time_shape_ < 1 ) 
+    {throw BadProperty( "Shape of the dead time gamma distribution must not be smaller than 1." ); }
 
-  if ( tau_m_ <= 0 ) {
-    throw BadProperty( "All time constants must be strictly positive." ); }
+  if ( tau_m_ <= 0 ) 
+    {throw BadProperty( "All time constants must be strictly positive." ); }
 
-  for ( uint_t i = 0; i < tau_sfa_.size(); i++ ) {
-    if ( tau_sfa_[ i ] <= 0 ) {
-      throw BadProperty( "All time constants must be strictly positive." );}
-      }
+  for ( uint_t i = 0; i < tau_sfa_.size(); i++ ) 
+    {
+    if ( tau_sfa_[ i ] <= 0 ) 
+      {throw BadProperty( "All time constants must be strictly positive." );}
+    }
 
-  if ( t_ref_remaining_ < 0 ) {
-    throw BadProperty( "Remaining refractory time can not be negative." );}
+  if ( t_ref_remaining_ < 0 ) 
+    {throw BadProperty( "Remaining refractory time can not be negative." );}
 
-  if ( c_3_ < 0 ) {
-    throw BadProperty( "C_3 must be positive." );}
+  if ( c_3_ < 0 ) 
+    {throw BadProperty( "c_3 must be positive." );}
 }
 
 void

@@ -45,7 +45,7 @@ class Node;
 class Subnet;
 class Model;
 
-class NodeManager : ManagerInterface
+class NodeManager : public ManagerInterface
 {
 public:
   NodeManager();

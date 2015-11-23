@@ -32,6 +32,8 @@ namespace nest
 {
 class ConnectorModel;
 
+const long_t UNLABELED_CONNECTION = -1;
+
 template < class Connection_t >
 class ConnectionLabel : public Connection_t
 {

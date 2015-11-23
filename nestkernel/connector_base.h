@@ -32,6 +32,7 @@
 #include "spikecounter.h"
 #include "nest_names.h"
 #include "connector_model.h"
+#include "connection_label.h"
 #include "nest_datums.h"
 #ifdef _OPENMP
 #include <omp.h>

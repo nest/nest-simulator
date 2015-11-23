@@ -510,7 +510,7 @@ def
 
    Remarks:
    1. See synapsedict for the synapse-model-id's for all synapse models.
-   2. The /synapse_label property can only be assigned to synapse models with its name ending
+   2. The /synapse_label property can only be assigned to synapse models with names ending
       with '_lbl'. All other synapses have the default synapse_label UNLABELED_CONNECTION (-1).
    3. The "port" enumerates connections per source, thread and synapse model. It is
       mainly important for NEST internally.

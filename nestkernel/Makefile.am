@@ -37,7 +37,8 @@ libnest_la_SOURCES=\
 		communicator.h communicator_impl.h communicator.cpp\
 		sibling_container.h sibling_container.cpp\
 		subnet.h subnet.cpp\
-		connection.h connection_label.h\
+		connection.h\
+		connection_label.h\
 		common_properties_hom_w.h\
 		syn_id_delay.h\
 		connector_base.h connector_base.cpp\

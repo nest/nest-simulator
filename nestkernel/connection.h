@@ -33,6 +33,7 @@
 #include "arraydatum.h"
 #include "doubledatum.h"
 #include "common_synapse_properties.h"
+#include "connection_label.h"
 #include "nest_names.h"
 #include "spikecounter.h"
 #include "syn_id_delay.h"

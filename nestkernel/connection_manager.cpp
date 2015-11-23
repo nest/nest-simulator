@@ -22,6 +22,7 @@
 
 #include "connection_manager.h"
 #include "connector_base.h"
+#include "connection_label.h"
 #include "network.h"
 #include "nest_time.h"
 #include "nest_datums.h"
@@ -337,20 +338,15 @@ ConnectionManager::get_connections( DictionaryDatum params ) const
   const Token& source_t = params->lookup( names::source );
   const Token& target_t = params->lookup( names::target );
   const Token& syn_model_t = params->lookup( names::synapse_model );
-  const Token& label_token = params->lookup( names::synapse_label );
   const TokenArray* source_a = 0;
   const TokenArray* target_a = 0;
   long_t label = UNLABELED_CONNECTION;
+  updateValue< long_t >( params, names::synapse_label, label );
 
   if ( not source_t.empty() )
     source_a = dynamic_cast< TokenArray const* >( source_t.datum() );
   if ( not target_t.empty() )
     target_a = dynamic_cast< TokenArray const* >( target_t.datum() );
-
-  if ( not label_token.empty() )
-  {
-    label = getValue< long_t >( label_token );
-  }
 
   size_t syn_id = 0;
 

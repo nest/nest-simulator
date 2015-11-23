@@ -171,34 +171,36 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
 
 
   if ( tau_sfa_.size() != q_sfa_.size() )
+   {
     throw BadProperty( String::compose(
       "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of tau_sfa: %1\nSize of q_sfa: "
       "%2",
       tau_sfa_.size(),
       q_sfa_.size() ) );
+   }
 
+  if ( c_m_ <= 0 ) {
+    throw BadProperty( "Capacitance must be strictly positive." ); }
 
-  if ( c_m_ <= 0 )
-    throw BadProperty( "Capacitance must be strictly positive." );
+  if ( dead_time_ < 0 ) {
+    throw BadProperty( "Absolute refractory time must not be negative." ); }
 
-  if ( dead_time_ < 0 )
-    throw BadProperty( "Absolute refractory time must not be negative." );
+  if ( dead_time_shape_ < 1 ) {
+    throw BadProperty( "Shape of the dead time gamma distribution must not be smaller than 1." ); }
 
-  if ( dead_time_shape_ < 1 )
-    throw BadProperty( "Shape of the dead time gamma distribution must not be smaller than 1." );
+  if ( tau_m_ <= 0 ) {
+    throw BadProperty( "All time constants must be strictly positive." ); }
 
-  if ( tau_m_ <= 0 )
-    throw BadProperty( "All time constants must be strictly positive." );
+  for ( uint_t i = 0; i < tau_sfa_.size(); i++ ) {
+    if ( tau_sfa_[ i ] <= 0 ) {
+      throw BadProperty( "All time constants must be strictly positive." );}
+      }
 
-  for ( uint_t i = 0; i < tau_sfa_.size(); i++ )
-    if ( tau_sfa_[ i ] <= 0 )
-      throw BadProperty( "All time constants must be strictly positive." );
+  if ( t_ref_remaining_ < 0 ) {
+    throw BadProperty( "Remaining refractory time can not be negative." );}
 
-  if ( t_ref_remaining_ < 0 )
-    throw BadProperty( "Remaining refractory time can not be negative." );
-
-  if ( c_3_ < 0 )
-    throw BadProperty( "C_3 must be positive." );
+  if ( c_3_ < 0 ) {
+    throw BadProperty( "C_3 must be positive." );}
 }
 
 void
@@ -280,11 +282,11 @@ nest::pp_psc_delta::calibrate()
   V_.P33_ = std::exp( -V_.h_ / P_.tau_m_ );
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
 
-  if ( P_.dead_time_ != 0 && P_.dead_time_ < V_.h_ )
-    P_.dead_time_ = V_.h_;
+  if ( P_.dead_time_ != 0 && P_.dead_time_ < V_.h_ ) {
+    P_.dead_time_ = V_.h_; }
 
   // initializing internal state
-  if ( !S_.initialized_ )
+  if ( not S_.initialized_ )
   {
     for ( uint_t i = 0; i < P_.tau_sfa_.size(); i++ )
     {
@@ -381,8 +383,8 @@ nest::pp_psc_delta::update( Time const& origin, const long_t from, const long_t 
         if ( P_.dead_time_ > 0.0 )
         {
           // Draw random number and compare to prob to have a spike
-          if ( V_.rng_->drand() <= -numerics::expm1( -rate * V_.h_ * 1e-3 ) )
-            n_spikes = 1;
+          if ( V_.rng_->drand() <= -numerics::expm1( -rate * V_.h_ * 1e-3 ) ) {
+            n_spikes = 1; }
         }
         else
         {
@@ -412,8 +414,8 @@ nest::pp_psc_delta::update( Time const& origin, const long_t from, const long_t 
           SpikeEvent se;
           se.set_multiplicity( n_spikes );
           network()->send( *this, se, lag );
-          
-          // set spike time for STDP to work, 
+
+          // set spike time for STDP to work,
           // see https://github.com/nest/nest-simulator/issues/77
           for ( uint_t i = 0; i < n_spikes; i++ )
           {

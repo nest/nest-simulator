@@ -176,7 +176,7 @@
 #cmakedefine IS_K
 
 /* Name of package */
-#cmakedefine PACKAGE
+#define PACKAGE @PROJECT_NAME@
 
 /* Use PS array construction semantics */
 #cmakedefine PS_ARRAYS

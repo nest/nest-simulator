@@ -1,17 +1,10 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 2.8.12)
+# juqueen 2.8.12.2
 
 # add cmake modules
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Platform)
 
 project(nest CXX C)
-
-# install directories
-set(INSTALL_BIN_DIR bin)
-set(INSTALL_LIB_DIR lib)
-set(INSTALL_DATA_DIR share/nest)
-set(INSTALL_DOC_DIR share/doc/nest)
-
-set(PACKAGE nest)
 
 # VERSION exported to libnestutil/config.h
 set(SLI_MAJOR 2)
@@ -19,12 +12,18 @@ set(SLI_MINOR 8)
 set(SLI_PATCHLEVEL 0-git)
 
 set(SLI_VERSION "${SLI_MAJOR}.${SLI_MINOR}.${SLI_PATCHLEVEL}")
-set(SLI_PRGNAME "${PACKAGE}-${SLI_VERSION}")
+set(SLI_PRGNAME "${PROJECT_NAME}-${SLI_VERSION}")
 
 set(SLI_PREFIX ${CMAKE_INSTALL_PREFIX})
 
 # on OS X
 set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+
+# some default directories
+set(INSTALL_BIN_DIR bin)
+set(INSTALL_LIB_DIR lib)
+set(INSTALL_DATA_DIR share/nest)
+set(INSTALL_DOC_DIR share/doc/nest)
 
 set(PKGSRCDIR ${PROJECT_SOURCE_DIR})
 set(PKGBUILDDIR ${PROJECT_BINARY_DIR})
@@ -53,21 +52,24 @@ check_include_file_cxx(sstream HAVE_SSTREAM)
 check_include_file_cxx(istream HAVE_ISTREAM)
 check_include_file_cxx(ostream HAVE_OSTREAM)
 
+# Check types exist
 include(CheckTypeSize)
 CHECK_TYPE_SIZE("long long" LONG_LONG_SIZE) # also sets HAVE_LONG_LONG
 if( LONG_LONG_SIZE GREATER 0 )
   set(HAVE_LONG_LONG ON)
 endif()
 
+# Check symbols / defines exist
 include(CheckSymbolExists)
 check_symbol_exists(NAN "math.h" HAVE_NAN)
+check_symbol_exists(isnan "math.h" HAVE_ISNAN)
 
 include(CheckCXXSymbolExists)
 check_cxx_symbol_exists(M_E "cmath" HAVE_M_E)
 check_cxx_symbol_exists(M_PI "cmath" HAVE_M_PI)
 
+# Check functions exist
 include(CheckFunctionExists)
-check_function_exists(isnan "math.h" HAVE_ISNAN)
 check_function_exists(expm1 "math.h" HAVE_EXPM1)
 check_function_exists(fork "unistd.h" HAVE_FORK)
 check_function_exists(execvp "unistd.h" HAVE_EXECVP)
@@ -102,22 +104,24 @@ option(WITH_MUSIC "Request the use of MUSIC; optionally give the directory, wher
 find_package(Doxygen)
 find_program(SED NAMES sed gsed)
 
+# add custom warnings and optimizations
 if(WITH_OPTIMIZE)
-  list(APPEND CMAKE_C_FLAGS ${WITH_OPTIMIZE})
-  list(APPEND CMAKE_CXX_FLAGS ${WITH_OPTIMIZE})
+  list(APPEND CMAKE_C_FLAGS "${WITH_OPTIMIZE}")
+  list(APPEND CMAKE_CXX_FLAGS "${WITH_OPTIMIZE}")
 endif(WITH_OPTIMIZE)
 
 if(WITH_WARNING)
-  list(APPEND CMAKE_C_FLAGS ${WITH_WARNING})
-  list(APPEND CMAKE_CXX_FLAGS ${WITH_WARNING})
+  list(APPEND CMAKE_C_FLAGS "${WITH_WARNING}")
+  list(APPEND CMAKE_CXX_FLAGS "${WITH_WARNING}")
 endif(WITH_WARNING)
 
 if(K_COMPUTER)
+  # TODO use the -DCMAKE_TOOLCHAIN_FILE= argument
   set(IS_K ON)
 endif(K_COMPUTER)
 
 if(ENABLE_BLUEGENE)
-  # use the -DCMAKE_TOOLCHAIN_FILE= argument
+  # TODO use the -DCMAKE_TOOLCHAIN_FILE= argument
   if(${ENABLE_BLUEGENE} STREQUAL "L")
     set(IS_BLUEGENE_L ON)
   elseif(${ENABLE_BLUEGENE} STREQUAL "P")
@@ -129,8 +133,8 @@ if(ENABLE_BLUEGENE)
   endif()
   set(IS_BLUEGENE ON)
   set(STATIC_LIBRARIES ON)
-  
-  # not sure if this is working
+
+  # TODO not sure if this is working
   set(WITH_READLINE OFF)
   set(WITH_PYTHON OFF)
 endif(ENABLE_BLUEGENE)
@@ -143,7 +147,7 @@ if(LTDL_FOUND)
   link_libraries(${LTDL_LIBRARIES})
 endif(LTDL_FOUND)
 
-
+# build static or shared libraries
 if( STATIC_LIBRARIES )
   set(BUILD_SHARED_LIBS OFF)
 else( STATIC_LIBRARIES )
@@ -174,6 +178,7 @@ else( STATIC_LIBRARIES )
   # TODO dynamic linking stuff
 endif( STATIC_LIBRARIES )
 
+# write static_modules.h
 file(WRITE ${PROJECT_BINARY_DIR}/nest/static_modules.h "#ifndef STATIC_MODULES_H\n")
 file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "#define STATIC_MODULES_H\n\n")
 foreach(mod ${SLI_MODULES})
@@ -189,8 +194,9 @@ foreach(mod ${SLI_MODULES})
   file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "  engine.addmodule(new nest::${Mod}Module());\n")
 endforeach(mod)
 file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "}\n\n#endif\n")
-# Static modules
+# write static_modules.h
 
+# Set tics per ms / step
 if( TICS_PER_MS )
   set(HAVE_TICS_PER_MS ON)
 endif( TICS_PER_MS )
@@ -200,7 +206,6 @@ if( TICS_PER_STEP )
 endif( TICS_PER_STEP )
 
 # !!!GSL finding!!!
-
 if( GSL_PREFIX )
   # use this prefix
   set(GSL_ROOT_DIR ${GSL_PREFIX})
@@ -222,10 +227,7 @@ if( GSL_FOUND )
   link_libraries(${GSL_LIBRARIES})
 endif( GSL_FOUND )
 
-# !!!GSL finding!!!
-
 # Python executable finding
-
 if(WITH_PYTHON)
   if (NOT ${WITH_PYTHON} STREQUAL "ON")
     # a path is set
@@ -246,10 +248,7 @@ else(WITH_PYTHON)
   set(HAVE_PYTHON OFF)
 endif(WITH_PYTHON)
 
-# Python executable finding
-
 # Find readline
-
 if(WITH_READLINE)
   if (NOT ${WITH_READLINE} STREQUAL "ON")
     # a path is set
@@ -267,14 +266,12 @@ else(WITH_READLINE)
   set(HAVE_READLINE OFF)
 endif(WITH_READLINE)
 
-# Find readline
-
 # OPENMP finding
 if(NOT WITHOUT_OPENMP)
   find_package(OpenMP)
   if(OPENMP_FOUND)
-    list(APPEND CMAKE_C_FLAGS ${OpenMP_C_FLAGS})
-    list(APPEND CMAKE_CXX_FLAGS ${OpenMP_CXX_FLAGS})
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
   endif(OPENMP_FOUND)
 endif(NOT WITHOUT_OPENMP)
 
@@ -285,10 +282,10 @@ if(WITH_MPI)
     set(HAVE_MPI ON)
   endif()
 
-  list(APPEND CMAKE_C_FLAGS ${MPI_C_COMPILE_FLAGS})
-  list(APPEND CMAKE_CXX_FLAGS ${MPI_CXX_COMPILE_FLAGS})
+  list(APPEND CMAKE_C_FLAGS "${MPI_C_COMPILE_FLAGS}")
+  list(APPEND CMAKE_CXX_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
   
-  list(APPEND CMAKE_EXE_LINKER_FLAGS ${MPI_CXX_LINK_FLAGS})
+  list(APPEND CMAKE_EXE_LINKER_FLAGS "${MPI_CXX_LINK_FLAGS}")
   include_directories(${MPI_CXX_INCLUDE_PATH})
   link_libraries(${MPI_CXX_LIBRARIES})
 endif(WITH_MPI)
@@ -319,8 +316,6 @@ if(HAVE_PYTHON)
 endif(HAVE_PYTHON)
 add_subdirectory(testsuite)
 add_subdirectory(topology)
-#add_subdirectory($SLI_MODULES)
-#add_subdirectory(libltdl)
 
 configure_file(
   "${PROJECT_SOURCE_DIR}/libnestutil/config.h.in"
@@ -368,6 +363,10 @@ add_custom_target(installcheck
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
   COMMENT "Execute NEST's testsuite...."
 )
+
+################################################################################
+##################            Configuation Summary            ##################
+################################################################################
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   set(ALL_CFLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG}")

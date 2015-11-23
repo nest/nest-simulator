@@ -57,7 +57,7 @@
       {
         n << /V_m n /V_th get 15.0 add >> SetStatus
         res Simulate
-        n /t_spike get res eq    % works also for precise models
+        n /t_spike get res leq    % works also for precise models
         dup not { (FAILED: ) model cvs join == n ShowStatus } if      
       }
       { true }

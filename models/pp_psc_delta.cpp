@@ -179,28 +179,28 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
       q_sfa_.size() ) );
    }
 
-  if ( c_m_ <= 0 ) 
+  if ( c_m_ <= 0 )
     {throw BadProperty( "Capacitance must be strictly positive." ); }
 
-  if ( dead_time_ < 0 ) 
+  if ( dead_time_ < 0 )
     {throw BadProperty( "Absolute refractory time must not be negative." ); }
 
-  if ( dead_time_shape_ < 1 ) 
+  if ( dead_time_shape_ < 1 )
     {throw BadProperty( "Shape of the dead time gamma distribution must not be smaller than 1." ); }
 
-  if ( tau_m_ <= 0 ) 
+  if ( tau_m_ <= 0 )
     {throw BadProperty( "All time constants must be strictly positive." ); }
 
-  for ( uint_t i = 0; i < tau_sfa_.size(); i++ ) 
+  for ( uint_t i = 0; i < tau_sfa_.size(); i++ )
     {
-    if ( tau_sfa_[ i ] <= 0 ) 
+    if ( tau_sfa_[ i ] <= 0 )
       {throw BadProperty( "All time constants must be strictly positive." );}
     }
 
-  if ( t_ref_remaining_ < 0 ) 
+  if ( t_ref_remaining_ < 0 )
     {throw BadProperty( "Remaining refractory time can not be negative." );}
 
-  if ( c_3_ < 0 ) 
+  if ( c_3_ < 0 )
     {throw BadProperty( "c_3 must be positive." );}
 }
 
@@ -283,8 +283,8 @@ nest::pp_psc_delta::calibrate()
   V_.P33_ = std::exp( -V_.h_ / P_.tau_m_ );
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
 
-  if ( P_.dead_time_ != 0 && P_.dead_time_ < V_.h_ ) {
-    P_.dead_time_ = V_.h_; }
+  if ( P_.dead_time_ != 0 && P_.dead_time_ < V_.h_ ) 
+    {P_.dead_time_ = V_.h_; }
 
   // initializing internal state
   if ( not S_.initialized_ )
@@ -384,8 +384,8 @@ nest::pp_psc_delta::update( Time const& origin, const long_t from, const long_t 
         if ( P_.dead_time_ > 0.0 )
         {
           // Draw random number and compare to prob to have a spike
-          if ( V_.rng_->drand() <= -numerics::expm1( -rate * V_.h_ * 1e-3 ) ) {
-            n_spikes = 1; }
+          if ( V_.rng_->drand() <= -numerics::expm1( -rate * V_.h_ * 1e-3 ) ) 
+          {  n_spikes = 1; }
         }
         else
         {

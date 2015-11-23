@@ -44,7 +44,6 @@ exclude_files = [
     'libnestutil/config.h',
     'libnestutil/hashtable-common.h',
     'libnestutil/libc_allocator_with_realloc.h',
-    'libnestutil/sliconfig.h',
     'libnestutil/sparseconfig.h',
     'libnestutil/sparsetable.h',
     'libnestutil/template_util.h',

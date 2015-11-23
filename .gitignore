@@ -29,7 +29,6 @@ build/
 /juqueen/
 /extras/nest-config
 /libnestutil/config.h
-/libnestutil/sliconfig.h
 /libnestutil/stamp-h1
 /librandom/randomtest
 /libtool

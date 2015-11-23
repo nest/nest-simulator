@@ -40,7 +40,7 @@
 #include <ltdl.h>
 
 // Generated includes:
-#include "sliconfig.h"
+#include "config.h"
 
 // Includes from libnestutil:
 #include "logging.h"

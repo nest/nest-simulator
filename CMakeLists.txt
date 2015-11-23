@@ -13,7 +13,7 @@ set(INSTALL_DOC_DIR share/doc/nest)
 
 set(PACKAGE nest)
 
-# VERSION exported to libnestutil/sliconfig.h
+# VERSION exported to libnestutil/config.h
 set(SLI_MAJOR 2)
 set(SLI_MINOR 8)
 set(SLI_PATCHLEVEL 0-git)
@@ -325,11 +325,6 @@ add_subdirectory(topology)
 configure_file(
   "${PROJECT_SOURCE_DIR}/libnestutil/config.h.in"
   "${PROJECT_BINARY_DIR}/libnestutil/config.h" @ONLY
-)
-
-configure_file(
-  "${PROJECT_SOURCE_DIR}/libnestutil/sliconfig.h.in"
-  "${PROJECT_BINARY_DIR}/libnestutil/sliconfig.h" @ONLY
 )
 
 configure_file(

@@ -49,6 +49,7 @@
 #include "amat2_psc_exp.h"
 #include "hh_cond_exp_traub.h"
 #include "hh_psc_alpha.h"
+#include "hh_psc_alpha_gap.h"
 #include "ht_neuron.h"
 #include "iaf_chs_2007.h"
 #include "iaf_chxk_2008.h"
@@ -92,6 +93,7 @@
 #include "multimeter.h"
 #include "correlation_detector.h"
 #include "correlomatrix_detector.h"
+#include "correlospinmatrix_detector.h"
 
 #include "volume_transmitter.h"
 
@@ -106,6 +108,7 @@
 #include "cont_delay_connection.h"
 #include "cont_delay_connection_impl.h"
 #include "tsodyks_connection.h"
+#include "tsodyks_connection_hom.h"
 #include "tsodyks2_connection.h"
 #include "quantal_stp_connection.h"
 #include "quantal_stp_connection_impl.h"
@@ -115,6 +118,7 @@
 #include "stdp_connection_facetshw_hom_impl.h"
 #include "stdp_pl_connection_hom.h"
 #include "stdp_dopa_connection.h"
+#include "gap_junction.h"
 #include "ht_connection.h"
 #include "spike_dilutor.h"
 
@@ -194,9 +198,75 @@ ModelsModule::init( SLIInterpreter* )
   register_model< Multimeter >( net_, "multimeter" );
   register_model< correlation_detector >( net_, "correlation_detector" );
   register_model< correlomatrix_detector >( net_, "correlomatrix_detector" );
+  register_model< correlospinmatrix_detector >( net_, "correlospinmatrix_detector" );
   register_model< volume_transmitter >( net_, "volume_transmitter" );
 
   // Create voltmeter as a multimeter pre-configured to record V_m.
+  /*BeginDocumentation
+  Name: voltmeter - Device to record membrane potential from neurons.
+  Synopsis: voltmeter Create
+
+  Description:
+  A voltmeter records the membrane potential (V_m) of connected nodes
+  to memory, file or stdout.
+
+  By default, voltmeters record values once per ms. Set the parameter
+  /interval to change this. The recording interval cannot be smaller
+  than the resolution.
+
+  Results are returned in the /events entry of the status dictionary,
+  which contains membrane potential as vector /V_m and pertaining
+  times as vector /times and node GIDs as /senders, if /withtime and
+  /withgid are set, respectively.
+
+  Accumulator mode:
+  Voltmeter can operate in accumulator mode. In this case, values for all recorded
+  variables are added across all recorded nodes (but kept separate in time). This can
+  be useful to record average membrane potential in a population.
+
+  To activate accumulator mode, either set /to_accumulator to true, or set
+  /record_to [ /accumulator ].  In accumulator mode, you cannot record to file,
+  to memory, to screen, with GID or with weight. You must activate accumulator mode
+  before simulating. Accumulator data is never written to file. You must extract it
+  from the device using GetStatus.
+
+  Remarks:
+   - The voltmeter model is implemented as a multimeter preconfigured to
+     record /V_m.
+   - The set of variables to record and the recording interval must be set
+     BEFORE the voltmeter is connected to any node, and cannot be changed
+     afterwards.
+   - A voltmeter cannot be frozen.
+   - If you record with voltmeter in accumulator mode and some of the nodes
+     you record from are frozen and others are not, data will only be collected
+     from the unfrozen nodes. Most likely, this will lead to confusing results,
+     so you should not use voltmeter with frozen nodes.
+
+  Parameters:
+       The following parameter can be set in the status dictionary:
+       interval     double - Recording interval in ms
+
+  Examples:
+  SLI ] /iaf_cond_alpha Create /n Set
+  SLI ] /voltmeter Create /vm Set
+  SLI ] vm << /interval 0.5 >> SetStatus
+  SLI ] vm n Connect
+  SLI ] 10 Simulate
+  SLI ] vm /events get info
+  --------------------------------------------------
+  Name                     Type                Value
+  --------------------------------------------------
+  senders                  intvectortype       <intvectortype>
+  times                    doublevectortype    <doublevectortype>
+  V_m                      doublevectortype    <doublevectortype>
+  --------------------------------------------------
+  Total number of entries: 3
+
+
+  Sends: DataLoggingRequest
+
+  SeeAlso: Device, RecordingDevice, multimeter
+  */
   Dictionary vmdict;
   ArrayDatum ad;
   ad.push_back( LiteralDatum( names::V_m.toString() ) );
@@ -210,6 +280,7 @@ ModelsModule::init( SLIInterpreter* )
   register_model< iaf_cond_exp_sfa_rr >( net_, "iaf_cond_exp_sfa_rr" );
   register_model< iaf_cond_alpha_mc >( net_, "iaf_cond_alpha_mc" );
   register_model< hh_psc_alpha >( net_, "hh_psc_alpha" );
+  register_model< hh_psc_alpha_gap >( net_, "hh_psc_alpha_gap" );
   register_model< hh_cond_exp_traub >( net_, "hh_cond_exp_traub" );
   register_model< sinusoidal_gamma_generator >( net_, "sinusoidal_gamma_generator" );
 #endif
@@ -258,6 +329,8 @@ ModelsModule::init( SLIInterpreter* )
     net_, "static_synapse_hom_w" );
   register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
     net_, "static_synapse_hom_w_hpc" );
+  register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
+    net_, "gap_junction", false );
 
 
   /* BeginDocumentation
@@ -327,6 +400,16 @@ ModelsModule::init( SLIInterpreter* )
     net_, "tsodyks_synapse" );
   register_connection_model< TsodyksConnection< TargetIdentifierIndex > >(
     net_, "tsodyks_synapse_hpc" );
+
+
+  /* BeginDocumentation
+     Name: tsodyks_synapse_hom_hpc - Variant of tsodyks_synapse_hom with low memory consumption.
+     SeeAlso: synapsedict, tsodyks_synapse_hom, static_synapse_hpc
+  */
+  register_connection_model< TsodyksConnectionHom< TargetIdentifierPtrRport > >(
+    net_, "tsodyks_synapse_hom" );
+  register_connection_model< TsodyksConnectionHom< TargetIdentifierIndex > >(
+    net_, "tsodyks_synapse_hom_hpc" );
 
 
   /* BeginDocumentation

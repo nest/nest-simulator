@@ -16,6 +16,7 @@ libnestutil_la_SOURCES= \
 		stopwatch.h stopwatch.cpp \
 		numerics.h numerics.cpp \
 		allocator.h allocator.cpp \
+		propagator_stability.h propagator_stability.cpp \
 		instance.h \
 		lockptr.h \
 		sparseconfig.h \

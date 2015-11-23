@@ -33,6 +33,7 @@ class TestOneToOne(TestParams):
     N = 6
     N1 = N
     N2 = N
+    N_array = 1000
     
     #def testErrorMessages(self):
         
@@ -49,11 +50,11 @@ class TestOneToOne(TestParams):
         syn_params = {}
         for label in ['weight', 'delay']:
             if label == 'weight':
-                self.param_array = np.arange(self.N1, dtype=float)
+                self.param_array = np.arange(self.N_array, dtype=float)
             elif label == 'delay':
-                self.param_array = np.arange(1,self.N1+1)*0.1
+                self.param_array = np.arange(1,self.N_array+1)*0.1
             syn_params[label] = self.param_array
-            self.setUpNetwork(self.conn_dict, syn_params)
+            self.setUpNetwork(self.conn_dict, syn_params, N1=self.N_array, N2=self.N_array)
             M_nest = hf.get_weighted_connectivity_matrix(self.pop1,self.pop2,label)
             hf.mpi_assert(M_nest, np.diag(self.param_array), self)
 

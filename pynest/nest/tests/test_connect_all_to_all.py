@@ -35,6 +35,8 @@ class TestAllToAll(TestParams):
     # sizes of populations
     N1 = 6
     N2 = 7
+    N1_array = 500
+    N2_array = 10
             
     #def testErrorMessages(self):
       
@@ -53,11 +55,11 @@ class TestAllToAll(TestParams):
         for label in ['weight', 'delay']:
             syn_params = {}
             if label == 'weight':
-                self.param_array = np.arange(self.N1*self.N2, dtype=float).reshape(self.N2,self.N1)
+                self.param_array = np.arange(self.N1_array*self.N2_array, dtype=float).reshape(self.N2_array,self.N1_array)
             elif label == 'delay':
-                self.param_array = np.arange(1,self.N1*self.N2+1).reshape(self.N2,self.N1)*0.1
+                self.param_array = np.arange(1,self.N1_array*self.N2_array+1).reshape(self.N2_array,self.N1_array)*0.1
             syn_params[label] = self.param_array
-            self.setUpNetwork(self.conn_dict, syn_params)
+            self.setUpNetwork(self.conn_dict, syn_params, N1=self.N1_array, N2=self.N2_array)
             M_nest = hf.get_weighted_connectivity_matrix(self.pop1,self.pop2,label)
             hf.mpi_assert(M_nest, self.param_array, self)
     
@@ -117,7 +119,7 @@ class TestAllToAll(TestParams):
             frequencies = scipy.stats.itemfreq(M)
             self.assertTrue(np.array_equal(frequencies[:, 0], np.arange(1, n_rport+1)), 'Missing or invalid rports')
             chi, p = scipy.stats.chisquare(frequencies[:, 1])
-            self.assertGreater(p, self.pval, 'Chi2 test failed.')
+            self.assertGreater(p, self.pval)
 
 
 def suite():

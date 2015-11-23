@@ -29,6 +29,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
+#include "propagator_stability.h"
 
 #include <limits>
 
@@ -140,10 +141,6 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
   if ( tau_ex_ <= 0.0 || tau_in_ <= 0.0 )
     throw BadProperty( "All synaptic time constants must be > 0." );
 
-  if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
-    throw BadProperty(
-      "Membrane and synapse time constant(s) must differ. See note in documentation." );
-
   if ( TauR_ < 0.0 )
     throw BadProperty( "The refractory time t_ref can't be negative." );
 
@@ -240,16 +237,14 @@ iaf_psc_alpha::calibrate()
 
   // these depend on the above. Please do not change the order.
   V_.P30_ = -P_.Tau_ / P_.C_ * numerics::expm1( -h / P_.Tau_ );
-
   V_.P21_ex_ = h * V_.P11_ex_;
-  V_.P31_ex_ = 1 / P_.C_ * ( ( V_.P11_ex_ - V_.P33_ ) / ( -1 / P_.tau_ex_ - -1 / P_.Tau_ )
-                             - h * V_.P11_ex_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_ex_ );
-  V_.P32_ex_ = 1 / P_.C_ * ( V_.P33_ - V_.P11_ex_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_ex_ );
-
   V_.P21_in_ = h * V_.P11_in_;
-  V_.P31_in_ = 1 / P_.C_ * ( ( V_.P11_in_ - V_.P33_ ) / ( -1 / P_.tau_in_ - -1 / P_.Tau_ )
-                             - h * V_.P11_in_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_in_ );
-  V_.P32_in_ = 1 / P_.C_ * ( V_.P33_ - V_.P11_in_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_in_ );
+
+  // these are determined according to a numeric stability criterion
+  V_.P31_ex_ = propagator_31( P_.tau_ex_, P_.Tau_, P_.C_, h );
+  V_.P32_ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
+  V_.P31_in_ = propagator_31( P_.tau_in_, P_.Tau_, P_.C_, h );
+  V_.P32_in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, h );
 
   V_.EPSCInitialValue_ = 1.0 * numerics::e / P_.tau_ex_;
   V_.IPSCInitialValue_ = 1.0 * numerics::e / P_.tau_in_;

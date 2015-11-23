@@ -18,7 +18,6 @@ noinst_LTLIBRARIES= libsli.la
 
 libsli_la_SOURCES=\
 		aggregatedatum.h\
-		array.h\
 		arraydatum.cc arraydatum.h\
 		booldatum.cc booldatum.h\
 		callbackdatum.h\

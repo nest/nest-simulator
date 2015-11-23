@@ -1943,10 +1943,9 @@ StartFunction::execute( SLIInterpreter* i ) const
     "Start",
     "Something went wrong "
     "during initialization of NEST or one of its modules. Probably "
-    "there is a bug in the startup scripts. Please send the output "
-    "of NEST to the nest_user@nest-initiative.org mailing list to help "
-    "us to diagnose the problem. You can try to find the bug by "
-    "re-starting NEST with the option: --debug" );
+    "there is a bug in the startup scripts. Please report the output "
+    "of NEST at https://github.com/nest/nest-simulator/issues . You "
+    "can try to find the bug by starting NEST with the option --debug" );
 }
 
 void

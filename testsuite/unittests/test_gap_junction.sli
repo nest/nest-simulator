@@ -1,0 +1,75 @@
+/*
+ *  test_gap_junction.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+  /* BeginDocumentation
+
+    Name: testsuite::test_gap_junction - Ensure that gap_junction connection can only be created between neurons which support them.
+
+    Synopsis: (test_gap_junction) run -> NEST exits if test fails
+
+    Description:
+    Ensure that NEST throws an exception if one tries to create illegal gap-junction connections. 
+    Furthermore it is checked that the delay can not be set for gap-junction connections.
+
+    Author: Jan Hahne, October 2015
+    SeeAlso: testsuite::test_hh_psc_alpha_gap, hh_psc_alpha_gap, gap_junction
+  */
+
+(unittest) run
+/unittest using
+
+% The following test needs the model hh_psc_alpha_gap, so
+% this test should only run if we have GSL
+statusdict/have_gsl :: not
+{
+  exit_test_gracefully
+}
+if
+
+M_ERROR setverbosity
+
+ResetKernel
+
+/iaf_neuron Create /neuron_no_gap Set
+/hh_psc_alpha_gap Create /neuron_gap Set
+
+% Check if accurate gap-junction connections can be created
+{
+  neuron_gap neuron_gap << /weight 2.0 >> /gap_junction Connect
+} pass_or_die
+
+%Gap junctions have no delay - therefore it is not allowed to set the /delay
+{
+  neuron_gap neuron_gap << /delay 2.0 >> /gap_junction Connect
+} fail_or_die
+
+% Check if illegal gap-junction connections can be created
+{
+  neuron_no_gap neuron_no_gap << /delay 2.0 >> /gap_junction Connect
+} fail_or_die
+
+% Check if illegal gap-junction connections can be created
+{
+  neuron_no_gap neuron_gap << /delay 2.0 >> /gap_junction Connect
+} fail_or_die
+
+endusing

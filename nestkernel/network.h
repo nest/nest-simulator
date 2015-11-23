@@ -36,6 +36,7 @@
 #include "modelrangemanager.h"
 #include "compose.hpp"
 #include "dictdatum.h"
+#include "numerics.h"
 #include <ostream>
 #include <cmath>
 
@@ -43,6 +44,8 @@
 #include "errno.h"
 
 #include "sparse_node_array.h"
+
+#include "growth_curve_factory.h"
 
 #ifdef M_ERROR
 #undef M_ERROR
@@ -70,6 +73,7 @@ class SiblingContainer;
 class Event;
 class Node;
 class GenericConnBuilderFactory;
+class GenericGrowthCurveFactory;
 class GIDCollection;
 
 /**
@@ -132,6 +136,9 @@ local_num_threads)
   to_do                    integertype - The number of steps yet to be simulated
   T_max                    doubletype  - The largest representable time value
   T_min                    doubletype  - The smallest representable time value
+  prelim_tol		   doubletype  - Tolerance of prelim iterations
+  prelim_interpolation_order integertype - Interpolation order of polynomial used in prelim
+iterations
 SeeAlso: Simulate, Node
 */
 
@@ -196,6 +203,11 @@ public:
   synindex register_synapse_prototype( ConnectorModel* cf );
 
   /**
+   * Register a synapse prototype for a secondary synapse at the connection manager.
+   */
+  synindex register_secondary_synapse_prototype( ConnectorModel* cf );
+
+  /**
    * Copy an existing synapse type.
    * @see copy_model(), ConnectionManager::copy_synapse_prototype()
    */
@@ -206,6 +218,19 @@ public:
    */
   template < typename ConnBuilder >
   void register_conn_builder( const std::string& name );
+
+  /**
+   * Add a growth curve for MSP
+   */
+  template < typename GrowthCurve >
+  void register_growth_curve( const std::string& name );
+
+  /**
+   * Create a new Growth Curve object using the GrowthCurve Factory
+   * @param name which defines the type of GC to be created
+   * @return a new Growth Curve object of the type indicated by name
+   */
+  GrowthCurve* new_growth_curve( Name name );
 
   /**
    * Return the model id for a given model name.
@@ -291,8 +316,8 @@ public:
     Node* target,
     thread target_thread,
     index syn,
-    double_t d = NAN,
-    double_t w = NAN );
+    double_t d = numerics::nan,
+    double_t w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -317,8 +342,8 @@ public:
     thread target_thread,
     index syn,
     DictionaryDatum& params,
-    double_t d = NAN,
-    double_t w = NAN );
+    double_t d = numerics::nan,
+    double_t w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -473,6 +498,13 @@ public:
   template < class EventT >
   void send( Node& source, EventT& e, const long_t lag = 0 );
 
+
+  /**
+   * Send a secondary event.
+   */
+  void send_secondary( Node& source, SecondaryEvent& e );
+
+
   /**
    * Send event e to all targets of node source on thread t
    */
@@ -494,6 +526,9 @@ public:
    * Return maximal connection delay.
    */
   delay get_max_delay() const;
+
+  size_t get_prelim_interpolation_order() const;
+  double_t get_prelim_tol() const;
 
   /**
    * Get the time at the beginning of the current time slice.
@@ -891,6 +926,13 @@ private:
   */
   Dictionary* connruledict_; //!< Dictionary for connection rules.
 
+  /* BeginDocumentation
+     Name: growthcurvedict - growth curves for Model of Structural Plasticity
+     Description:
+     This dictionary provides indexes for the growth curve factory
+  */
+  Dictionary* growthcurvedict_; //!< Dictionary for growth rules.
+
   Model* siblingcontainer_model; //!< The model for the SiblingContainer class
 
   std::string data_path_;   //!< Path for all files written by devices
@@ -913,6 +955,9 @@ private:
 
   std::vector< GenericConnBuilderFactory* >
     connbuilder_factories_; //! ConnBuilder factories, indexed by connruledict_ elements.
+
+  std::vector< GenericGrowthCurveFactory* >
+    growthcurve_factories_; //! GrowthCurve factories, indexed by growthcurvedict_ elements.
 
   Modelrangemanager node_model_ids_; //!< Records the model id of each neuron in the network
 
@@ -997,6 +1042,16 @@ inline synindex
 Network::register_synapse_prototype( ConnectorModel* cm )
 {
   return connection_manager_.register_synapse_prototype( cm );
+}
+
+inline synindex
+Network::register_secondary_synapse_prototype( ConnectorModel* cm )
+{
+  synindex synid = connection_manager_.register_synapse_prototype( cm );
+  // call function in scheduler to register secondary synapse type
+  // and create corresponding event
+  scheduler_.register_secondary_synapse_prototype( cm, synid );
+  return synid;
 }
 
 inline int
@@ -1125,6 +1180,18 @@ Network::get_max_delay() const
   return scheduler_.get_max_delay();
 }
 
+inline size_t
+Network::get_prelim_interpolation_order() const
+{
+  return scheduler_.get_prelim_interpolation_order();
+}
+
+inline double_t
+Network::get_prelim_tol() const
+{
+  return scheduler_.get_prelim_tol();
+}
+
 inline void
 Network::trigger_update_weight( const long_t vt_gid,
   const vector< spikecounter >& dopa_spikes,
@@ -1145,6 +1212,18 @@ Network::send( Node& source, EventT& e, const long_t lag )
   assert( !source.has_proxies() );
   connection_manager_.send( t, gid, e );
 }
+
+
+inline void
+Network::send_secondary( Node& source, SecondaryEvent& e )
+{
+  e.set_stamp( get_slice_origin() + Time::step( 1 ) );
+  e.set_sender( source );
+  e.set_sender_gid( source.get_gid() );
+  thread t = source.get_thread();
+  scheduler_.send_remote( t, e );
+}
+
 
 template <>
 inline void
@@ -1169,6 +1248,7 @@ template <>
 inline void
 Network::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long_t lag )
 {
+
   e.set_stamp( get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
   thread t = source.get_thread();
@@ -1328,6 +1408,13 @@ Network::get_thread_id() const
 #else
   return 0;
 #endif
+}
+
+inline GrowthCurve*
+Network::new_growth_curve( Name name )
+{
+  const long gc_id = ( *growthcurvedict_ )[ name ];
+  return growthcurve_factories_.at( gc_id )->create();
 }
 
 } // namespace

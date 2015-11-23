@@ -35,11 +35,11 @@ def Models(mtype="all", sel=None):
     it.
 
     Synapse model names ending with '_hpc' provide minimal memory
-    requirments by using thread-local target neuron IDs and fixing
+    requirements by using thread-local target neuron IDs and fixing
     the `rport` to 0.
     Synapse model names ending with '_lbl' allow to assign an individual
     integer label (`synapse_label`) to created synapses at the cost
-    of increased memory requirments.
+    of increased memory requirements.
     """
 
     if mtype not in ("all", "nodes", "synapses"):

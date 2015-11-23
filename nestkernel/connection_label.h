@@ -32,8 +32,22 @@ namespace nest
 {
 class ConnectorModel;
 
+/**
+ * Connections are unlabeled by default. Unlabeled connections cannot be specified
+ * as a search criterion in the `GetConnections` function.
+ * @see ConnectionLabel
+ */
 const long_t UNLABELED_CONNECTION = -1;
 
+/**
+ * The class ConnectionLabel enables synapse model to be labeled by a positive integer. The
+ * label can be set / retrieved with the `names::synapse_label` property in the parameter
+ * dictionary of `Set/GetStatus` or `Connect`.
+ * Using the `GetConnections` function, synapses with the same label can be specified.
+ *
+ * The name of synapse models, which can be labels, end with '_lbl'.
+ * @see nest::ConnectionManager::get_connections
+ */
 template < class Connection_t >
 class ConnectionLabel : public Connection_t
 {

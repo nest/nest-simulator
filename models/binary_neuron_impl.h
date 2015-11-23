@@ -203,10 +203,15 @@ binary_neuron< TGainfunction >::update( Time const& origin, const long_t from, c
       if ( new_y != S_.y_ )
       {
         SpikeEvent se;
-        // use multiplicity 2 to signalize transition to 1 state
-        // use multiplicity 1 to signalize transition to 0 state
+        // use multiplicity 2 to signal transition to 1 state
+        // use multiplicity 1 to signal transition to 0 state
         se.set_multiplicity( new_y ? 2 : 1 );
         network()->send( *this, se, lag );
+
+        // As multiplicity is used only to signal internal information
+        // to other binary neurons, we only set spiketime once, independent
+        // of multiplicity.
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         S_.y_ = new_y;
       }
 

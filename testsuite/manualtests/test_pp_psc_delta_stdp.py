@@ -81,16 +81,16 @@ pylab.ylabel('weight [mV]')
 pylab.legend(loc='best')
 ylims = pylab.ylim()
 pylab.ylim(ylims[0]-5, ylims[1]+5)
-pylab.savefig('test_pp_psc_delta_stdp_fig1.png')
+# pylab.savefig('test_pp_psc_delta_stdp_fig1.png')
 
 nest.raster_plot.from_device(sd)
 ylims = pylab.ylim()
 pylab.ylim(ylims[0]-.5, ylims[1]+.5)
 pylab.show()
-pylab.savefig('test_pp_psc_delta_stdp_fig2.png')
+# pylab.savefig('test_pp_psc_delta_stdp_fig2.png')
 
 
-print 'archiver-lengths are different:'
+print 'Archiver lengths shall be equal:'
 for nrn in [nrn_post1, nrn_post2]:
     print nest.GetStatus(nrn, keys=['model', 'archiver_length'])[0]
 

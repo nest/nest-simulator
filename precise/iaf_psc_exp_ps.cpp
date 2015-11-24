@@ -164,8 +164,6 @@ nest::iaf_psc_exp_ps::State_::get( DictionaryDatum& d, const Parameters_& p ) co
 {
   def< double >( d, names::V_m, y2_ + p.E_L_ ); // Membrane potential
   def< bool >( d, names::is_refractory, is_refractory_ );
-  def< double >( d, names::t_spike, Time( Time::step( last_spike_step_ ) ).get_ms() );
-  def< double >( d, names::offset, last_spike_offset_ );
 }
 
 void
@@ -182,7 +180,7 @@ nest::iaf_psc_exp_ps::State_::set( const DictionaryDatum& d, const Parameters_& 
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_exp_ps::iaf_psc_exp_ps()
-  : Node()
+  : Archiving_Node()
   , P_()
   , S_()
   , B_( *this )
@@ -191,7 +189,7 @@ nest::iaf_psc_exp_ps::iaf_psc_exp_ps()
 }
 
 nest::iaf_psc_exp_ps::iaf_psc_exp_ps( const iaf_psc_exp_ps& n )
-  : Node( n )
+  : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -217,6 +215,8 @@ nest::iaf_psc_exp_ps::init_buffers_()
   B_.events_.clear();
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();
+
+  Archiving_Node::clear_history();
 }
 
 void
@@ -410,12 +410,6 @@ nest::iaf_psc_exp_ps::handle( DataLoggingRequest& e )
 
 // auxiliary functions ---------------------------------------------
 
-inline void
-nest::iaf_psc_exp_ps::set_spiketime( const Time& now )
-{
-  S_.last_spike_step_ = now.get_steps();
-}
-
 void
 nest::iaf_psc_exp_ps::propagate_( const double_t dt )
 {
@@ -450,7 +444,7 @@ nest::iaf_psc_exp_ps::emit_spike_( const Time& origin,
   // compute spike time relative to beginning of step
   const double_t spike_offset = V_.h_ms_ - ( t0 + bisectioning_( dt ) );
 
-  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
   S_.last_spike_offset_ = spike_offset;
 
   // reset neuron and make it refractory
@@ -458,6 +452,7 @@ nest::iaf_psc_exp_ps::emit_spike_( const Time& origin,
   S_.is_refractory_ = true;
 
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
 
   se.set_offset( spike_offset );
@@ -472,7 +467,7 @@ nest::iaf_psc_exp_ps::emit_instant_spike_( const Time& origin,
   assert( S_.y2_ >= P_.U_th_ ); // ensure we are superthreshold
 
   // set stamp and offset for spike
-  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
   S_.last_spike_offset_ = spike_offs;
 
   // reset neuron and make it refractory
@@ -480,6 +475,7 @@ nest::iaf_psc_exp_ps::emit_instant_spike_( const Time& origin,
   S_.is_refractory_ = true;
 
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
 
   se.set_offset( S_.last_spike_offset_ );

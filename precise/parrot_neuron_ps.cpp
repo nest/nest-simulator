@@ -70,19 +70,18 @@ parrot_neuron_ps::update( Time const& origin, long_t const from, long_t const to
     while ( B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) )
     {
       // send spike
+      set_spiketime( Time::step( T + 1 ), ev_offset );
       SpikeEvent se;
       se.set_offset( ev_offset );
       network()->send( *this, se, lag );
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
     }
   }
 }
 
-
 void
 parrot_neuron_ps::get_status( DictionaryDatum& d ) const
 {
-  def< double >( d, names::t_spike, get_spiketime_ms() );
+  Archiving_Node::get_status( d );
 }
 
 void
@@ -90,7 +89,6 @@ parrot_neuron_ps::set_status( const DictionaryDatum& d )
 {
   Archiving_Node::set_status( d );
 }
-
 
 // function handles exact spike times
 void

@@ -188,7 +188,7 @@ nest::pp_pop_psc_delta::Buffers_::Buffers_( const Buffers_&, pp_pop_psc_delta& n
  * ---------------------------------------------------------------- */
 
 nest::pp_pop_psc_delta::pp_pop_psc_delta()
-  : Archiving_Node()
+  : Node()
   , P_()
   , S_()
   , B_( *this )
@@ -197,7 +197,7 @@ nest::pp_pop_psc_delta::pp_pop_psc_delta()
 }
 
 nest::pp_pop_psc_delta::pp_pop_psc_delta( const pp_pop_psc_delta& n )
-  : Archiving_Node( n )
+  : Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -221,7 +221,6 @@ nest::pp_pop_psc_delta::init_buffers_()
   B_.spikes_.clear();   //!< includes resize
   B_.currents_.clear(); //!< includes resize
   B_.logger_.reset();   //!< includes resize
-  Archiving_Node::clear_history();
 }
 
 
@@ -409,13 +408,6 @@ nest::pp_pop_psc_delta::update( Time const& origin, const long_t from, const lon
       SpikeEvent se;
       se.set_multiplicity( S_.n_spikes_past_[ S_.p_n_spikes_past_ ] );
       network()->send( *this, se, lag );
-
-      // set spike time for STDP to work,
-      // see https://github.com/nest/nest-simulator/issues/77
-      for ( int_t i = 0; i < S_.n_spikes_past_[ S_.p_n_spikes_past_ ]; i++ )
-      {
-        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
-      }
     }
   }
 }

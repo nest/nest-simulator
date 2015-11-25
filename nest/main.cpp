@@ -39,7 +39,7 @@ main( int argc, char* argv[] )
    */
   SLIInterpreter engine;
 
-  neststartup( argc, argv, engine, pNet );
+  neststartup( &argc, &argv, engine, pNet );
 
   // start the interpreter session
   int exitcode = engine.execute();

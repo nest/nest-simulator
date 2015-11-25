@@ -106,6 +106,12 @@ option(EXTERNAL_MODULES "External modules to be linked in. Devided by ; ." OFF)
 option(STATIC_LIBRARIES "Build static libraries. [default=no]" OFF)
 option(PS_ARRAYS "Use PS array construction semantics" ON)
 
+if(NOT CMAKE_BUILD_TYPE)
+   set(CMAKE_BUILD_TYPE RelWithDebInfo
+       CACHE STRING "Choose the type of build : None Debug Release RelWithDebInfo MinSizeRel."
+       FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
+
 # not defined yet
 option(WITH_SCALI "Request compilation with Scali MPI; optionally give directory with Scali installation.[/opt/scali]" OFF)
 option(WITH_MUSIC "Request the use of MUSIC; optionally give the directory, where MUSIC is installed." OFF)
@@ -629,3 +635,8 @@ message("please see http://www.nest-simulator.org/frequently_asked_questions")
 message("or go to http://www.nest-simulator.org/community to find out how to")
 message("join the user mailing list.")
 message("")
+
+if( ${CMAKE_INSTALL_PREFIX} STREQUAL "/usr/local" )
+  # no prefix given?
+  message(WARNING "Are you sure to install into '${CMAKE_INSTALL_PREFIX}'? If not, set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>.")
+endif()

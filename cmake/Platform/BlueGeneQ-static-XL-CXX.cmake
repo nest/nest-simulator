@@ -145,5 +145,10 @@ __BlueGeneQ_setup_static(XL C)
 __BlueGeneQ_setup_static(XL CXX)
 
 set(CMAKE_SYSTEM_NAME BlueGeneQ-static CACHE STRING "Cross-compiling for BlueGene/Q" FORCE)
+
+set(CMAKE_C_FLAGS_DEBUG "-g" CACHE STRING "Compiler optimization flags")
+set(CMAKE_CXX_FLAGS_DEBUG "-g" CACHE STRING "Compiler optimization flags")
 set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" CACHE STRING "Compiler optimization flags")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" CACHE STRING "Compiler optimization flags")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g" CACHE STRING "Compiler optimization flags")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g" CACHE STRING "Compiler optimization flags")

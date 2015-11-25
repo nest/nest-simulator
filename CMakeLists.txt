@@ -443,6 +443,7 @@ message("-----------------------------------------------------------------------
 message("NEST Configuration Summary")
 message("--------------------------------------------------------------------------------")
 message("")
+message("Build type          : ${CMAKE_BUILD_TYPE}")
 message("C compiler          : ${CMAKE_C_COMPILER}")
 message("C compiler flags    : ${ALL_CFLAGS}")
 message("C++ compiler        : ${CMAKE_CXX_COMPILER}")

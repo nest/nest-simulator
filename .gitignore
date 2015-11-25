@@ -28,6 +28,7 @@ build/
 
 /juqueen/
 /extras/nest-config
+/extras/create_release.sh
 /libnestutil/config.h
 /libnestutil/stamp-h1
 /librandom/randomtest

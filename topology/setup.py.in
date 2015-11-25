@@ -22,7 +22,7 @@
 from distutils.core import setup
 
 setup(name         = 'Topology',
-      version      = '@SLI_VERSION@',
+      version      = '@NEST_VERSION_VERSION@',
       description  = 'Python bindings for NEST Topology module',
       author       = 'The NEST Initiative',
       url          = 'http://www.nest-simulator.org',

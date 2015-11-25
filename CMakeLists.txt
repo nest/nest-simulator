@@ -5,21 +5,18 @@ cmake_minimum_required(VERSION 2.8.12)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Platform)
 
 project(nest CXX C)
+set(NEST_USER_EMAIL "nest_user@nest-initiative.org")
 
-# VERSION exported to libnestutil/config.h
-set(SLI_MAJOR 2)
-set(SLI_MINOR 8)
-set(SLI_PATCHLEVEL 0-git)
+# VERSION exported to libnestutil/config.h, extras/create_release.sh
+set(NEST_VERSION_MAJOR 2)
+set(NEST_VERSION_MINOR 8)
+set(NEST_VERSION_PATCHLEVEL 0-git)
 
-set(SLI_VERSION "${SLI_MAJOR}.${SLI_MINOR}.${SLI_PATCHLEVEL}")
-set(SLI_PRGNAME "${PROJECT_NAME}-${SLI_VERSION}")
-
-set(SLI_PREFIX ${CMAKE_INSTALL_PREFIX})
-
-# on OS X
-set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+set(NEST_VERSION_VERSION "${NEST_VERSION_MAJOR}.${NEST_VERSION_MINOR}.${NEST_VERSION_PATCHLEVEL}")
+set(NEST_VERSION_PRGNAME "${PROJECT_NAME}-${NEST_VERSION_VERSION}")
 
 # some default directories
+# install prefix is set with -DCMAKE_INSTALL_PREFIX:PATH=...
 set(INSTALL_BIN_DIR bin)
 set(INSTALL_LIB_DIR lib)
 set(INSTALL_DATA_DIR share/nest)
@@ -30,6 +27,9 @@ set(PKGBUILDDIR ${PROJECT_BINARY_DIR})
 set(PKGDATADIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR})
 set(PKGDOCDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR})
 set(TESTSUITE_BASEDIR ${PKGDOCDIR})
+
+# on OS X
+set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 
 ################################################################################
 #################    Check for includes/ functions /symbols    #################
@@ -390,6 +390,11 @@ configure_file(
 configure_file(
   "${PROJECT_SOURCE_DIR}/extras/nest-config.in"
   "${PROJECT_BINARY_DIR}/extras/nest-config" @ONLY
+)
+
+configure_file(
+  "${PROJECT_SOURCE_DIR}/extras/create_release.sh.in"
+  "${PROJECT_BINARY_DIR}/extras/create_release.sh" @ONLY
 )
 
 configure_file(

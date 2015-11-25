@@ -1,6 +1,6 @@
 #! /bin/sh
 
-prefix=@SLI_PREFIX@
+prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
 srcdir=@PKGSRCDIR@
 builddir=@PKGBUILDDIR@
@@ -54,7 +54,7 @@ while test $# -gt 0; do
         ;;
 
     --version)
-        echo @SLI_VERSION@
+        echo @NEST_VERSION_VERSION@
         exit 0
         ;;
 

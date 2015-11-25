@@ -29,7 +29,12 @@ set(PKGDOCDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR})
 set(TESTSUITE_BASEDIR ${PKGDOCDIR})
 
 # on OS X
-set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+#set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+set(CMAKE_MACOSX_RPATH ON)
+
+# set the rpath only when installed
+# https://cmake.org/Wiki/CMake_RPATH_handling#Mac_OS_X_and_the_RPATH
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
 ################################################################################
 #################    Check for includes/ functions /symbols    #################

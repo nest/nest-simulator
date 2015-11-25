@@ -85,12 +85,12 @@ check_function_exists(opendir "dirent.h" HAVE_OPENDIR)
 
 set(ENABLE_BLUEGENE OFF CACHE STRING "Configure for Blue Gene; the specific BG model must be given as argument (=L/P/Q)." FORCE)
 option(K_COMPUTER "Enable K computer." OFF)
-set(TICS_PER_MS "1000.0" CACHE STRING "Specify elementary unit of time." FORCE)
-set(TICS_PER_STEP "100" CACHE STRING "Specify resolution." FORCE)
+set(TICS_PER_MS "1000.0" CACHE STRING "Specify elementary unit of time.")
+set(TICS_PER_STEP "100" CACHE STRING "Specify resolution.")
 option(WITH_MPI "Request compilation with MPI; optionally give directory with MPI installation." OFF)
 option(LIBNEUROSIM "Request the use of libneurosim; optionally give the directory, where libneurosim is installed." OFF)
-set(WITH_OPTIMIZE OFF CACHE STRING "Enable user defined optimizations." FORCE)
-set(WITH_WARNING OFF CACHE STRING "Enable user defined warnings." FORCE)
+set(WITH_OPTIMIZE OFF CACHE STRING "Enable user defined optimizations.")
+set(WITH_WARNING OFF CACHE STRING "Enable user defined warnings.")
 option(GSL_PREFIX "Prefix where GSL is installed. (optional)" OFF)
 option(WITH_READLINE "Find a readline library [default=ON]. To ignore readline set to OFF. To set a specific readline, set install path." ON)
 option(WITH_OPENMP "Enable OpenMP multithreading [default=ON]. Optional: set OMP flag." ON)
@@ -98,9 +98,6 @@ option(WITH_PYTHON "Find a Python interpreter [default=ON]. To ignore the Python
 option(EXTERNAL_MODULES "External modules to be linked in. Devided by ; ." OFF)
 option(STATIC_LIBRARIES "Build static libraries. [default=no]" OFF)
 option(PS_ARRAYS "Use PS array construction semantics" ON)
-SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
-    "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
-    FORCE)
 
 # not defined yet
 option(WITH_SCALI "Request compilation with Scali MPI; optionally give directory with Scali installation.[/opt/scali]" OFF)

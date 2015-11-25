@@ -472,7 +472,7 @@ STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom()
   : ConnectionBase()
   , n_conns_( 1 )
 {
-  w_jk_.resize( n_conns_, 0. );
+  w_jk_.resize( n_conns_, 1. );
   w_create_steps_.resize( n_conns_, 0 );
   r_jk_.resize( n_conns_, 0. );
   c_jk_.resize( n_conns_, 0. );
@@ -526,7 +526,7 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
 
   if ( n_updated == true )
   {
-    w_jk_.resize( n_conns_, 0. );
+    w_jk_.resize( n_conns_, 1. );
     w_create_steps_.resize( n_conns_, 0 );
     r_jk_.resize( n_conns_, 0. );
     c_jk_.resize( n_conns_, 0. );

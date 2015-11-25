@@ -385,15 +385,15 @@ SLIStartup::init( SLIInterpreter* i )
   statusdict->insert( prgpatch_name, Token( new StringDatum( NEST_VERSION_PATCHLEVEL ) ) );
   statusdict->insert(
     prgbuilt_name, Token( new StringDatum( String::compose( "%1 %2", __DATE__, __TIME__ ) ) ) );
-  statusdict->insert( prefix_name, Token( new StringDatum( SLI_PREFIX ) ) );
+  statusdict->insert( prefix_name, Token( new StringDatum( NEST_PREFIX ) ) );
   statusdict->insert( prgsourcedir_name, Token( new StringDatum( PKGSOURCEDIR ) ) );
-  statusdict->insert( prgbuilddir_name, Token( new StringDatum( SLI_BUILDDIR ) ) );
+  statusdict->insert( prgbuilddir_name, Token( new StringDatum( NEST_BUILDDIR ) ) );
   statusdict->insert( prgdatadir_name, Token( new StringDatum( slihomepath ) ) );
   statusdict->insert( prgdocdir_name, Token( new StringDatum( slidocdir ) ) );
-  statusdict->insert( host_name, Token( new StringDatum( SLI_HOST ) ) );
-  statusdict->insert( hostos_name, Token( new StringDatum( SLI_HOSTOS ) ) );
-  statusdict->insert( hostvendor_name, Token( new StringDatum( SLI_HOSTVENDOR ) ) );
-  statusdict->insert( hostcpu_name, Token( new StringDatum( SLI_HOSTCPU ) ) );
+  statusdict->insert( host_name, Token( new StringDatum( NEST_HOST ) ) );
+  statusdict->insert( hostos_name, Token( new StringDatum( NEST_HOSTOS ) ) );
+  statusdict->insert( hostvendor_name, Token( new StringDatum( NEST_HOSTVENDOR ) ) );
+  statusdict->insert( hostcpu_name, Token( new StringDatum( NEST_HOSTCPU ) ) );
 
   // expose platform model for code branching without assuming
   // configure leads to a unique setting
@@ -487,9 +487,9 @@ SLIStartup::init( SLIInterpreter* i )
 
   exitcodes->insert( exitcode_success_name, Token( new IntegerDatum( EXIT_SUCCESS ) ) );
   exitcodes->insert( exitcode_scripterror_name, Token( new IntegerDatum( 126 ) ) );
-  exitcodes->insert( exitcode_abort_name, Token( new IntegerDatum( SLI_EXITCODE_ABORT ) ) );
+  exitcodes->insert( exitcode_abort_name, Token( new IntegerDatum( NEST_EXITCODE_ABORT ) ) );
   exitcodes->insert( exitcode_userabort_name, Token( new IntegerDatum( 15 ) ) );
-  exitcodes->insert( exitcode_segfault_name, Token( new IntegerDatum( SLI_EXITCODE_SEGFAULT ) ) );
+  exitcodes->insert( exitcode_segfault_name, Token( new IntegerDatum( NEST_EXITCODE_SEGFAULT ) ) );
   exitcodes->insert( exitcode_exception_name, Token( new IntegerDatum( 125 ) ) );
   exitcodes->insert( exitcode_fatal_name, Token( new IntegerDatum( 127 ) ) );
   exitcodes->insert( exitcode_unknownerror_name, Token( new IntegerDatum( 10 ) ) );

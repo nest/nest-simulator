@@ -169,11 +169,11 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
 
   // call lt_dlerror() to reset any error messages hanging around
   lt_dlerror();
-  int searchpath_result = lt_dlsetsearchpath( SLI_PREFIX "/lib/nest" );
+  int searchpath_result = lt_dlsetsearchpath( NEST_PREFIX "/lib/nest" );
   if ( searchpath_result != 0 )
   {
     char* errstr = ( char* ) lt_dlerror();
-    std::string msg = "Could not set user search path: " SLI_PREFIX "/lib/nest";
+    std::string msg = "Could not set user search path: " NEST_PREFIX "/lib/nest";
     if ( errstr )
       msg += "\nThe dynamic loader returned the following error: '" + std::string( errstr ) + "'.";
     throw DynamicModuleManagementError( msg );

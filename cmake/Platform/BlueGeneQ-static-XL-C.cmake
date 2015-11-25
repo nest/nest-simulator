@@ -13,4 +13,5 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
+include(Platform/BlueGeneQ-static)
 __BlueGeneQ_setup_static(XL C)

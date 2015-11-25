@@ -249,6 +249,113 @@ private:
     r_post_ *= cp.e_dt_tau_;
     R_post_ *= cp.e_dt_tau_slow_;
   }
+  
+  
+  void integrate_( const STDPSplHomCommonProperties& cp, long_t delta )
+  {
+
+   // integrate all state variables the duration t analytically, assuming no spikes arrive
+  
+    double_t t_delta_ = Time( Time::step(delta) ).get_ms() / 1000.;  
+//    std::cout << "t_delta_, delta: " << t_delta_ << "  " << delta <<  "\n";
+  
+    // propagate all variables
+    for ( long_t i = 0; i < n_conns_; i++ )
+    {
+
+      // for how long should w be integrated for this contact?
+      long_t delta_i;
+
+      if ( w_create_steps_[ i ] > delta )
+      {
+        // decrease creation step timer
+        delta_i = 0;
+        w_create_steps_[ i ] -= delta;
+      }
+      else if ( w_create_steps_[ i ] > 1 )
+      {
+        // a contact is created within the delta.
+        // memorize how many steps are left to be integrated
+        delta_i = delta - w_create_steps_[ i ];
+        w_create_steps_[ i ] = 0;
+        w_jk_[ i ] = cp.w0_;
+      }
+      else
+      {
+        delta_i = delta;
+      }
+
+      // EQ 1 only for nonzero synapses, i.e. created ones
+      if (delta_i>0)
+      {
+        double_t t_i_ = Time( Time::step(delta_i) ).get_ms() / 1000.;
+      
+        // use analytical solution
+      w_jk_[ i ] = (2*cp.A4_corr_*std::exp(t_i_*(cp.alpha_ - 1/cp.tau_slow_))*r_jk_[ i ]*r_post_*std::pow(cp.tau_,2)*(-4 + cp.alpha_*cp.tau_)*
+      (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_)*
+      (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_) + 
+     cp.A2_corr_*std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 1/cp.tau_slow_))*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
+      (-(r_jk_[ i ]*r_post_*cp.tau_) + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))*(cp.tau_ - 2*cp.tau_slow_)*cp.tau_slow_*
+      (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
+     cp.A4_corr_*std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 2/cp.tau_slow_))*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*
+      std::pow(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_,2)*(-4 + cp.alpha_*cp.tau_slow_)*
+      (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
+     cp.A4_post_*std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 4/cp.tau_slow_))*std::pow(R_post_,4)*(-4 + cp.alpha_*cp.tau_)*
+      (-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+      (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
+     cp.A4_corr_*std::exp(t_i_*(cp.alpha_ - 2/cp.tau_))*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*
+      std::pow(cp.tau_,3)*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+      (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
+     cp.A2_corr_*std::exp(t_i_*cp.alpha_)*r_jk_[ i ]*r_post_*std::pow(cp.tau_,2)*(-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
+      (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+      (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
+     std::exp((2*t_i_)/cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*
+      (w_jk_[ i ]*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
+         (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
+        cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
+         (r_jk_[ i ]*r_post_*cp.tau_ + c_jk_[ i ]*(2 - cp.alpha_*cp.tau_)*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_))\
+         + (-2 + cp.alpha_*cp.tau_)*(-1 + cp.alpha_*cp.tau_slow_)*
+         (cp.A4_post_*std::pow(R_post_,4)*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*
+            (-cp.tau_ - 2*cp.tau_slow_ + cp.alpha_*cp.tau_*cp.tau_slow_) + 
+           cp.A4_corr_*(-4 + cp.alpha_*cp.tau_slow_)*
+            (2*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*std::pow(cp.tau_,2) - 
+              c_jk_[ i ]*(c_jk_[ i ] + 2*r_jk_[ i ]*r_post_)*cp.tau_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_ + 
+              std::pow(c_jk_[ i ],2)*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_slow_,2)))))/
+   (std::exp(t_i_*(cp.alpha_ + 2/cp.tau_))*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*
+     (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+     (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)));
+
+        // delete synapse with negative or zero weights
+        // Here we only check this at spike times. We will miss zero crossing within ISIs. This may be improved.
+        if ( w_jk_[ i ] <= 0. )
+        {
+          // generate an exponentially distributed number
+          w_create_steps_[ i ] = Time( Time::ms( 
+            exp_dev_( rng_ ) / cp.lambda_ *1e3 ) ).get_steps();
+          
+          // set synapse to equal zero
+          w_jk_[ i ] = 0.;
+        }
+      }
+
+      // EQ 2 by analytical solution
+      c_jk_[ i ] = ((-1 + std::exp(t_delta_*(-2/cp.tau_ + 1/cp.tau_slow_)))*
+            r_jk_[ i ]*r_post_*cp.tau_ 
+            + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))/
+            (std::exp(t_delta_/cp.tau_slow_)*(cp.tau_ - 2*cp.tau_slow_));
+      
+      // EQ 4 by analytical solution
+      r_jk_[ i ] *= std::exp( -t_delta_/cp.tau_ );
+    }
+  
+   // update the postsynaptic rates
+
+    r_post_ *= std::exp( -t_delta_/cp.tau_ );
+    R_post_ *= std::exp( -t_delta_/cp.tau_slow_ );
+  }
+  
+  
+  
 
   // data members of each connection
 
@@ -311,10 +418,7 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
     // std::cout << "w_jk_: " << w_jk_[0] << "\n---->\n";
 
     // update iteratively all variables in the time start ->
-    for ( long_t k = 0; k < delta; k++ )
-    {
-      propagate_( cp );
-    }
+    integrate_( cp, delta);
 
     t_last_postspike = start->t_;
     ++start;
@@ -330,10 +434,7 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
 
   long_t remaining_delta = 
     Time( Time::ms( t_spike - t_last_postspike ) ).get_steps();
-  for ( long_t k = 0; k < remaining_delta; k++ )
-  {
-    propagate_( cp );
-  }
+  integrate_( cp, remaining_delta );
 
   // spike failure at rate p_fail, i.e. presynaptic traces only get updated by this spike
   // in 1-p_fail of the transmitted spikes.

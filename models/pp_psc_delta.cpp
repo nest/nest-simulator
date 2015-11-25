@@ -171,37 +171,51 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
 
 
   if ( tau_sfa_.size() != q_sfa_.size() )
-   {
+  {
     throw BadProperty( String::compose(
       "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of tau_sfa: %1\nSize of q_sfa: "
       "%2",
       tau_sfa_.size(),
       q_sfa_.size() ) );
-   }
+  }
 
   if ( c_m_ <= 0 )
-    {throw BadProperty( "Capacitance must be strictly positive." ); }
+  {
+    throw BadProperty( "Capacitance must be strictly positive." );
+  }
 
   if ( dead_time_ < 0 )
-    {throw BadProperty( "Absolute refractory time must not be negative." ); }
+  {
+    throw BadProperty( "Absolute refractory time must not be negative." );
+  }
 
   if ( dead_time_shape_ < 1 )
-    {throw BadProperty( "Shape of the dead time gamma distribution must not be smaller than 1." ); }
+  {
+    throw BadProperty( "Shape of the dead time gamma distribution must not be smaller than 1." );
+  }
 
   if ( tau_m_ <= 0 )
-    {throw BadProperty( "All time constants must be strictly positive." ); }
+  {
+    throw BadProperty( "All time constants must be strictly positive." );
+  }
 
   for ( uint_t i = 0; i < tau_sfa_.size(); i++ )
-    {
+  {
     if ( tau_sfa_[ i ] <= 0 )
-      {throw BadProperty( "All time constants must be strictly positive." );}
+    {
+      throw BadProperty( "All time constants must be strictly positive." );
     }
+  }
 
   if ( t_ref_remaining_ < 0 )
-    {throw BadProperty( "Remaining refractory time can not be negative." );}
+  {
+    throw BadProperty( "Remaining refractory time can not be negative." );
+  }
 
   if ( c_3_ < 0 )
-    {throw BadProperty( "c_3 must be positive." );}
+  {
+    throw BadProperty( "c_3 must be positive." );
+  }
 }
 
 void
@@ -284,7 +298,9 @@ nest::pp_psc_delta::calibrate()
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
 
   if ( P_.dead_time_ != 0 && P_.dead_time_ < V_.h_ )
-    {P_.dead_time_ = V_.h_; }
+  {
+    P_.dead_time_ = V_.h_;
+  }
 
   // initializing internal state
   if ( not S_.initialized_ )
@@ -383,7 +399,9 @@ nest::pp_psc_delta::update( Time const& origin, const long_t from, const long_t 
         {
           // Draw random number and compare to prob to have a spike
           if ( V_.rng_->drand() <= -numerics::expm1( -rate * V_.h_ * 1e-3 ) )
-          {  n_spikes = 1; }
+          {
+            n_spikes = 1;
+          }
         }
         else
         {

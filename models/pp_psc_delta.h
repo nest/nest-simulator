@@ -90,7 +90,7 @@ class Network;
    This adaptation kernel may also be chosen as the sum of n exponential
    kernels. To use this feature, q_sfa and tau_sfa have to be given as a list
    of n values each.
-   
+
    The firing of pp_psc_delta is usually not a renewal process. For example,
    its firing may depend on its past spikes if it has non-zero adaptation terms
    (q_sfa). But if so, it will depend on all its previous spikes, not just the
@@ -99,7 +99,7 @@ class Network;
    ("forget") its membrane potential each time a spike is emitted, which makes
    it a renewal process model (where "rate" above is its hazard function,
    also known as conditional intensity).
-   
+
    pp_psc_delta may also be called a spike-response model with escape-noise [6]
    (for vanishing, non-random dead_time). If c_1>0 and c_2==0, the rate is a
    convolution of the inputs with exponential filters -- which is a model known
@@ -379,7 +379,9 @@ inline port
 pp_psc_delta::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
-    {throw UnknownReceptorType( receptor_type, get_name() );}
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -387,7 +389,9 @@ inline port
 pp_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
-    {throw UnknownReceptorType( receptor_type, get_name() );}
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -395,7 +399,9 @@ inline port
 pp_psc_delta::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
-    {throw UnknownReceptorType( receptor_type, get_name() );}
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

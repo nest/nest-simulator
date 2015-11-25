@@ -86,7 +86,7 @@ set(WITH_OPTIMIZE OFF CACHE STRING "Enable user defined optimizations." FORCE)
 set(WITH_WARNING OFF CACHE STRING "Enable user defined warnings." FORCE)
 option(GSL_PREFIX "Prefix where GSL is installed. (optional)" OFF)
 option(WITH_READLINE "Find a readline library [default=ON]. To ignore readline set to OFF. To set a specific readline, set install path." ON)
-option(WITHOUT_OPENMP "Disable OpenMP multithreading." OFF)
+option(WITH_OPENMP "Enable OpenMP multithreading [default=ON]. Optional: set OMP flag." ON)
 option(WITH_PYTHON "Find a Python interpreter [default=ON]. To ignore the Python set to OFF. To set a specific Python, set path." ON)
 option(EXTERNAL_MODULES "External modules to be linked in. Devided by ; ." OFF)
 option(STATIC_LIBRARIES "Build static libraries. [default=no]" OFF)
@@ -146,18 +146,27 @@ if( STATIC_LIBRARIES )
     # On Linux .a is the static library suffix, on Mac OS X .lib can also
     # be used, so we'll add both to the preference list.
     SET(CMAKE_FIND_LIBRARY_SUFFIXES ".lib;.a" ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    # -static GCC
+    SET(CMAKE_EXE_LINKER_FLAGS "-static")
   endif()
 else( STATIC_LIBRARIES )
   set(BUILD_SHARED_LIBS ON)
 endif( STATIC_LIBRARIES)
 
-find_package(LTDL)
-if(LTDL_FOUND)
-  set(HAVE_LIBLTDL ON)
-
-  include_directories(${LTDL_INCLUDE_DIR})
-  link_libraries(${LTDL_LIBRARIES})
-endif(LTDL_FOUND)
+# Only find libLTDL if we link dynamically
+if( NOT STATIC_LIBRARIES )
+  find_package(LTDL)
+  if(LTDL_FOUND)
+    set(HAVE_LIBLTDL ON)
+  
+    include_directories(${LTDL_INCLUDE_DIR})
+    link_libraries(${LTDL_LIBRARIES})
+  else()
+    set(HAVE_LIBLTDL OFF)
+  endif(LTDL_FOUND)
+else()
+  set(HAVE_LIBLTDL OFF)
+endif()
 
 # Static modules
 set(SLI_MODULES models precise topology)
@@ -272,13 +281,19 @@ else(WITH_READLINE)
 endif(WITH_READLINE)
 
 # OPENMP finding
-if(NOT WITHOUT_OPENMP)
-  find_package(OpenMP)
-  if(OPENMP_FOUND)
-    set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${OpenMP_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-  endif(OPENMP_FOUND)
-endif(NOT WITHOUT_OPENMP)
+if(WITH_OPENMP)
+  if (NOT ${WITH_OPENMP} STREQUAL "ON")
+    # a path is set
+    set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${WITH_OPENMP}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WITH_OPENMP}")
+  else()
+    find_package(OpenMP)
+    if(OPENMP_FOUND)
+      set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${OpenMP_C_FLAGS}")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    endif(OPENMP_FOUND)
+  endif()
+endif(NOT WITH_OPENMP)
 
 # MPI finding
 if(WITH_MPI)

@@ -44,16 +44,6 @@ install(TARGETS topology
   RUNTIME DESTINATION ${INSTALL_BIN_DIR}
 )
 
-if(MPI_COMPILE_FLAGS)
-  set_target_properties(topology PROPERTIES
-    COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
-endif()
-
-if(MPI_LINK_FLAGS)
-  set_target_properties(topology PROPERTIES
-    LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-endif()
-
 install(FILES sli/topology-interface.sli
   DESTINATION ${INSTALL_DATA_DIR}/sli)
 

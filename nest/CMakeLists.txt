@@ -32,26 +32,6 @@ target_include_directories(nest_lib PRIVATE
   ${STATIC_MODULES_INDCLUDE_DIRS}
 )
 
-if(MPI_COMPILE_FLAGS)
-  set_target_properties(nest PROPERTIES
-    COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
-endif()
-
-if(MPI_LINK_FLAGS)
-  set_target_properties(nest PROPERTIES
-    LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-endif()
-
-if(MPI_COMPILE_FLAGS)
-  set_target_properties(nest_lib PROPERTIES
-    COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
-endif()
-
-if(MPI_LINK_FLAGS)
-  set_target_properties(nest_lib PROPERTIES
-    LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-endif()
-
 if(HAVE_PYTHON)
   target_compile_definitions(nest_lib PRIVATE 
     -D_IS_PYNEST

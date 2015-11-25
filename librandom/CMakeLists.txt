@@ -30,16 +30,6 @@ target_include_directories(random PRIVATE
   ${PROJECT_SOURCE_DIR}/sli
 )
 
-if(MPI_COMPILE_FLAGS)
-  set_target_properties(random PROPERTIES
-    COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
-endif()
-
-if(MPI_LINK_FLAGS)
-  set_target_properties(random PROPERTIES
-    LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-endif()
-
 install(TARGETS random
   LIBRARY DESTINATION ${INSTALL_LIB_DIR}
   ARCHIVE DESTINATION ${INSTALL_LIB_DIR}

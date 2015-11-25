@@ -31,6 +31,10 @@ set(PKGDATADIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR})
 set(PKGDOCDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR})
 set(TESTSUITE_BASEDIR ${PKGDOCDIR})
 
+################################################################################
+#################    Check for includes/ functions /symbols    #################
+################################################################################
+
 
 include(CheckIncludeFiles)
 check_include_files(unistd.h HAVE_UNISTD_H)
@@ -75,6 +79,9 @@ check_function_exists(fork "unistd.h" HAVE_FORK)
 check_function_exists(execvp "unistd.h" HAVE_EXECVP)
 check_function_exists(opendir "dirent.h" HAVE_OPENDIR)
 
+################################################################################
+##################         All User Defined options           ##################
+################################################################################
 
 set(ENABLE_BLUEGENE OFF CACHE STRING "Configure for Blue Gene; the specific BG model must be given as argument (=L/P/Q)." FORCE)
 option(K_COMPUTER "Enable K computer." OFF)
@@ -99,10 +106,17 @@ SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
 option(WITH_SCALI "Request compilation with Scali MPI; optionally give directory with Scali installation.[/opt/scali]" OFF)
 option(WITH_MUSIC "Request the use of MUSIC; optionally give the directory, where MUSIC is installed." OFF)
 
+################################################################################
+##################           Find utility programs            ##################
+################################################################################
 
 # needed for target doc and fulldoc
 find_package(Doxygen)
 find_program(SED NAMES sed gsed)
+
+################################################################################
+##################          Process custom options            ##################
+################################################################################
 
 # add custom warnings and optimizations
 if(WITH_OPTIMIZE)
@@ -132,11 +146,10 @@ if(ENABLE_BLUEGENE)
     message(SEND_ERROR "Only L/P/Q is allowed for ENABLE_BLUEGENE.")
   endif()
   set(IS_BLUEGENE ON)
-  set(STATIC_LIBRARIES ON)
 
-  # TODO not sure if this is working
-  set(WITH_READLINE OFF)
-  set(WITH_PYTHON OFF)
+  # Override options for JUQUEEN
+  option(STATIC_LIBRARIES ON)
+  option(WITH_READLINE OFF)
 endif(ENABLE_BLUEGENE)
 
 # build static or shared libraries
@@ -145,28 +158,13 @@ if( STATIC_LIBRARIES )
   if (UNIX OR APPLE)
     # On Linux .a is the static library suffix, on Mac OS X .lib can also
     # be used, so we'll add both to the preference list.
-    SET(CMAKE_FIND_LIBRARY_SUFFIXES ".lib;.a" ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib;.a" ${CMAKE_FIND_LIBRARY_SUFFIXES})
     # -static GCC
-    SET(CMAKE_EXE_LINKER_FLAGS "-static")
+    set(CMAKE_EXE_LINKER_FLAGS "-static")
   endif()
 else( STATIC_LIBRARIES )
   set(BUILD_SHARED_LIBS ON)
 endif( STATIC_LIBRARIES)
-
-# Only find libLTDL if we link dynamically
-if( NOT STATIC_LIBRARIES )
-  find_package(LTDL)
-  if(LTDL_FOUND)
-    set(HAVE_LIBLTDL ON)
-  
-    include_directories(${LTDL_INCLUDE_DIR})
-    link_libraries(${LTDL_LIBRARIES})
-  else()
-    set(HAVE_LIBLTDL OFF)
-  endif(LTDL_FOUND)
-else()
-  set(HAVE_LIBLTDL OFF)
-endif()
 
 # Static modules
 set(SLI_MODULES models precise topology)
@@ -219,9 +217,28 @@ if( TICS_PER_STEP )
   set(HAVE_TICS_PER_STEP ON)
 endif( TICS_PER_STEP )
 
-# !!!GSL finding!!!
+################################################################################
+##################            Find Libraries here             ##################
+################################################################################
+
+# Only find libLTDL if we link dynamically
+if( NOT STATIC_LIBRARIES )
+  find_package(LTDL)
+  if(LTDL_FOUND)
+    set(HAVE_LIBLTDL ON)
+  
+    include_directories(${LTDL_INCLUDE_DIR})
+    link_libraries(${LTDL_LIBRARIES})
+  else()
+    set(HAVE_LIBLTDL OFF)
+  endif(LTDL_FOUND)
+else()
+  set(HAVE_LIBLTDL OFF)
+endif()
+
+# GSL finding
 if( GSL_PREFIX )
-  # use this prefix
+  # if set, use this prefix
   set(GSL_ROOT_DIR ${GSL_PREFIX})
 endif( GSL_PREFIX )
 
@@ -293,7 +310,7 @@ if(WITH_OPENMP)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
     endif(OPENMP_FOUND)
   endif()
-endif(NOT WITH_OPENMP)
+endif(WITH_OPENMP)
 
 # MPI finding
 if(WITH_MPI)
@@ -316,6 +333,10 @@ else(WITH_MUSIC)
   set(HAVE_MUSIC OFF)
 endif(WITH_MUSIC)
 
+################################################################################
+##################        Define Subdirectories here          ##################
+################################################################################
+
 add_subdirectory(cmake)
 if(LIBNEUROSIM)
   add_subdirectory(conngen)
@@ -336,6 +357,10 @@ if(HAVE_PYTHON)
 endif(HAVE_PYTHON)
 add_subdirectory(testsuite)
 add_subdirectory(topology)
+
+################################################################################
+##################           File generation here             ##################
+################################################################################
 
 configure_file(
   "${PROJECT_SOURCE_DIR}/libnestutil/config.h.in"
@@ -371,6 +396,10 @@ configure_file(
   "${PROJECT_SOURCE_DIR}/extras/nest_vars.sh.in"
   "${PROJECT_BINARY_DIR}/extras/nest_vars.sh" @ONLY
 )
+
+################################################################################
+##################           Custom Global Targets            ##################
+################################################################################
 
 add_custom_target(installcheck
   COMMAND cmake --build ${PROJECT_BINARY_DIR} --target install

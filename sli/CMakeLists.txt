@@ -65,8 +65,8 @@ set(sli_sources
   utils.cc utils.h
 )
 
-add_library(sli_lib ${sli_sources} )
-target_link_libraries(sli_lib nestutil )
+add_library(sli_lib ${sli_sources})
+target_link_libraries(sli_lib nestutil)
 
 # add the executable
 add_executable(sli puresli.cc)
@@ -87,26 +87,6 @@ target_compile_definitions(sli_lib PRIVATE
   -DPKGDOCDIR=\"${CMAKE_INSTALL_PREFIX}/share/doc\"
   -DPKGSOURCEDIR=\"${PROJECT_SOURCE_DIR}\"
 )
-
-if(MPI_COMPILE_FLAGS)
-  set_target_properties(sli_lib PROPERTIES
-    COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
-endif()
-
-if(MPI_LINK_FLAGS)
-  set_target_properties(sli_lib PROPERTIES
-    LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-endif()
-
-if(MPI_COMPILE_FLAGS)
-  set_target_properties(sli PROPERTIES
-    COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
-endif()
-
-if(MPI_LINK_FLAGS)
-  set_target_properties(sli PROPERTIES
-    LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-endif()
 
 install(TARGETS sli_lib sli
   LIBRARY DESTINATION ${INSTALL_LIB_DIR}

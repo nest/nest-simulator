@@ -21,16 +21,6 @@ target_include_directories(precise PRIVATE
   ${PROJECT_SOURCE_DIR}/nestkernel
 )
 
-if(MPI_COMPILE_FLAGS)
-  set_target_properties(precise PROPERTIES
-    COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
-endif()
-
-if(MPI_LINK_FLAGS)
-  set_target_properties(precise PROPERTIES
-    LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-endif()
-
 install(TARGETS precise
   LIBRARY DESTINATION ${INSTALL_LIB_DIR}
   ARCHIVE DESTINATION ${INSTALL_LIB_DIR}

@@ -71,16 +71,6 @@ target_include_directories(nestkernel PRIVATE
   ${PROJECT_SOURCE_DIR}/sli
 )
 
-if(MPI_COMPILE_FLAGS)
-  set_target_properties(nestkernel PROPERTIES
-    COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
-endif()
-
-if(MPI_LINK_FLAGS)
-  set_target_properties(nestkernel PROPERTIES
-    LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
-endif()
-
 install(TARGETS nestkernel
   LIBRARY DESTINATION ${INSTALL_LIB_DIR}
   ARCHIVE DESTINATION ${INSTALL_LIB_DIR}

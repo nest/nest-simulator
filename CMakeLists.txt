@@ -83,7 +83,9 @@ check_function_exists(opendir "dirent.h" HAVE_OPENDIR)
 ##################         All User Defined options           ##################
 ################################################################################
 
-set(ENABLE_BLUEGENE OFF CACHE STRING "Configure for Blue Gene; the specific BG model must be given as argument (=L/P/Q)." FORCE)
+# will be set in toolchain file
+set(ENABLE_BLUEGENE OFF CACHE STRING "Configure for BlueGene.")
+
 option(K_COMPUTER "Enable K computer." OFF)
 set(TICS_PER_MS "1000.0" CACHE STRING "Specify elementary unit of time.")
 set(TICS_PER_STEP "100" CACHE STRING "Specify resolution.")
@@ -131,6 +133,7 @@ if(K_COMPUTER)
   set(IS_K ON)
 endif(K_COMPUTER)
 
+# is set in the BlueGeneQ.cmake file
 if(ENABLE_BLUEGENE)
   # TODO use the -DCMAKE_TOOLCHAIN_FILE= argument
   if(${ENABLE_BLUEGENE} STREQUAL "L")
@@ -143,25 +146,16 @@ if(ENABLE_BLUEGENE)
     message(SEND_ERROR "Only L/P/Q is allowed for ENABLE_BLUEGENE.")
   endif()
   set(IS_BLUEGENE ON)
-
-  # Override options for JUQUEEN
-  option(STATIC_LIBRARIES ON)
-  option(WITH_READLINE OFF)
+else()
+  set(IS_BLUEGENE OFF)
 endif(ENABLE_BLUEGENE)
 
 # build static or shared libraries
-if( STATIC_LIBRARIES )
+if( STATIC_LIBRARIES OR IS_BLUEGENE )
   set(BUILD_SHARED_LIBS OFF)
-  if (UNIX OR APPLE)
-    # On Linux .a is the static library suffix, on Mac OS X .lib can also
-    # be used, so we'll add both to the preference list.
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib;.a" ${CMAKE_FIND_LIBRARY_SUFFIXES})
-    # -static GCC
-    set(CMAKE_EXE_LINKER_FLAGS "-static")
-  endif()
-else( STATIC_LIBRARIES )
+else()
   set(BUILD_SHARED_LIBS ON)
-endif( STATIC_LIBRARIES)
+endif()
 
 # Static modules
 set(SLI_MODULES models precise topology)
@@ -175,7 +169,7 @@ foreach(mod ${SLI_MODULES})
   set(STATIC_MODULES_INDCLUDE_DIRS ${STATIC_MODULES_INDCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/${mod} )
 endforeach(mod)
 
-if( STATIC_LIBRARIES )
+if( STATIC_LIBRARIES OR IS_BLUEGENE )
   # TODO include path?
   # TODO lib path?
   if( EXTERNAL_MODULES )
@@ -183,9 +177,9 @@ if( STATIC_LIBRARIES )
       set(SLI_MODULES ${SLI_MODULES} ${mod})
     endforeach(mod)
   endif( EXTERNAL_MODULES )
-else( STATIC_LIBRARIES )
+else()
   # TODO dynamic linking stuff
-endif( STATIC_LIBRARIES )
+endif()
 
 # write static_modules.h
 file(WRITE ${PROJECT_BINARY_DIR}/nest/static_modules.h "#ifndef STATIC_MODULES_H\n")
@@ -219,7 +213,7 @@ endif( TICS_PER_STEP )
 ################################################################################
 
 # Only find libLTDL if we link dynamically
-if( NOT STATIC_LIBRARIES )
+if( NOT STATIC_LIBRARIES AND NOT IS_BLUEGENE )
   find_package(LTDL)
   if(LTDL_FOUND)
     set(HAVE_LIBLTDL ON)
@@ -277,7 +271,7 @@ else(WITH_PYTHON)
 endif(WITH_PYTHON)
 
 # Find readline
-if(WITH_READLINE)
+if(WITH_READLINE AND NOT IS_BLUEGENE)
   if (NOT ${WITH_READLINE} STREQUAL "ON")
     # a path is set
     set(READLINE_ROOT_DIR ${WITH_READLINE})
@@ -290,9 +284,9 @@ if(WITH_READLINE)
 
   include_directories(${READLINE_INCLUDE_DIRS})
   link_libraries(${READLINE_LIBRARIES})
-else(WITH_READLINE)
+else()
   set(HAVE_READLINE OFF)
-endif(WITH_READLINE)
+endif()
 
 # OPENMP finding
 if(WITH_OPENMP)
@@ -310,7 +304,7 @@ if(WITH_OPENMP)
 endif(WITH_OPENMP)
 
 # MPI finding
-if(WITH_MPI)
+if(WITH_MPI OR IS_BLUEGENE)
   find_package(MPI)
   if(MPI_CXX_FOUND)
     set(HAVE_MPI ON)
@@ -322,7 +316,7 @@ if(WITH_MPI)
   list(APPEND CMAKE_EXE_LINKER_FLAGS "${MPI_CXX_LINK_FLAGS}")
   include_directories(${MPI_CXX_INCLUDE_PATH})
   link_libraries(${MPI_CXX_LIBRARIES})
-endif(WITH_MPI)
+endif()
 
 if(WITH_MUSIC)
   # TODO Music
@@ -444,6 +438,7 @@ message("NEST Configuration Summary")
 message("--------------------------------------------------------------------------------")
 message("")
 message("Build type          : ${CMAKE_BUILD_TYPE}")
+message("Target System       : ${CMAKE_SYSTEM_NAME}")
 message("C compiler          : ${CMAKE_C_COMPILER}")
 message("C compiler flags    : ${ALL_CFLAGS}")
 message("C++ compiler        : ${CMAKE_CXX_COMPILER}")

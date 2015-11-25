@@ -139,6 +139,18 @@ if(ENABLE_BLUEGENE)
   set(WITH_PYTHON OFF)
 endif(ENABLE_BLUEGENE)
 
+# build static or shared libraries
+if( STATIC_LIBRARIES )
+  set(BUILD_SHARED_LIBS OFF)
+  if (UNIX OR APPLE)
+    # On Linux .a is the static library suffix, on Mac OS X .lib can also
+    # be used, so we'll add both to the preference list.
+    SET(CMAKE_FIND_LIBRARY_SUFFIXES ".lib;.a" ${CMAKE_FIND_LIBRARY_SUFFIXES})
+  endif()
+else( STATIC_LIBRARIES )
+  set(BUILD_SHARED_LIBS ON)
+endif( STATIC_LIBRARIES)
+
 find_package(LTDL)
 if(LTDL_FOUND)
   set(HAVE_LIBLTDL ON)
@@ -146,13 +158,6 @@ if(LTDL_FOUND)
   include_directories(${LTDL_INCLUDE_DIR})
   link_libraries(${LTDL_LIBRARIES})
 endif(LTDL_FOUND)
-
-# build static or shared libraries
-if( STATIC_LIBRARIES )
-  set(BUILD_SHARED_LIBS OFF)
-else( STATIC_LIBRARIES )
-  set(BUILD_SHARED_LIBS ON)
-endif( STATIC_LIBRARIES)
 
 # Static modules
 set(SLI_MODULES models precise topology)
@@ -270,7 +275,7 @@ endif(WITH_READLINE)
 if(NOT WITHOUT_OPENMP)
   find_package(OpenMP)
   if(OPENMP_FOUND)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${OpenMP_C_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
   endif(OPENMP_FOUND)
 endif(NOT WITHOUT_OPENMP)
@@ -282,8 +287,8 @@ if(WITH_MPI)
     set(HAVE_MPI ON)
   endif()
 
-  list(APPEND CMAKE_C_FLAGS "${MPI_C_COMPILE_FLAGS}")
-  list(APPEND CMAKE_CXX_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
+  set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${MPI_C_COMPILE_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MPI_CXX_COMPILE_FLAGS}")
   
   list(APPEND CMAKE_EXE_LINKER_FLAGS "${MPI_CXX_LINK_FLAGS}")
   include_directories(${MPI_CXX_INCLUDE_PATH})
@@ -365,23 +370,23 @@ add_custom_target(installcheck
 )
 
 ################################################################################
-##################            Configuation Summary            ##################
+##################           Configuration Summary            ##################
 ################################################################################
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-  set(ALL_CFLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG}")
+  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_DEBUG}")
   set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-  set(ALL_CFLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}")
+  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELEASE}")
   set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
-  set(ALL_CFLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELWITHDEBINFO}")
+  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELWITHDEBINFO}")
   set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
-  set(ALL_CFLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_MINSIZEREL}")
+  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_MINSIZEREL}")
   set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}")
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "None")
-  set(ALL_CFLAGS "${CMAKE_C_FLAGS}")
+  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}")
   set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS}")
 else()
   message(SEND_ERROR "Unknown build type: '${CMAKE_BUILD_TYPE}'")

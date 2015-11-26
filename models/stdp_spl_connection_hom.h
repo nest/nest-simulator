@@ -293,15 +293,14 @@ private:
         // use analytical solution
         
       // compute expensive terms before
-      double_t exp_term_1_ = std::exp(t_i_*(cp.alpha_ - 1/cp.tau_slow_));             // pos. arg
-      double_t exp_term_2_ = std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 1/cp.tau_slow_)); // pos. arg
-      double_t exp_term_3_ = std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 2/cp.tau_slow_)); // pos. arg
-      double_t exp_term_4_ = std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 4/cp.tau_slow_)); // pos. arg
-      double_t exp_term_5_ = std::exp(t_i_*(cp.alpha_ - 2/cp.tau_));                  // neg. arg
-      double_t exp_term_6_ = std::exp(t_i_*cp.alpha_);                                // pos. arg
-      double_t exp_term_7_ = std::exp((2*t_i_)/cp.tau_);                              // pos. arg
-      double_t exp_term_8_ = std::exp(t_i_*(cp.alpha_ + 2/cp.tau_));                  // pos. arg
-        
+      double_t exp_term_1_ = std::exp( t_i_*(cp.alpha_ - 1/cp.tau_slow_) - t_i_*(cp.alpha_ + 2/cp.tau_));
+      double_t exp_term_2_ = std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 1/cp.tau_slow_) - t_i_*(cp.alpha_ + 2/cp.tau_)); 
+      double_t exp_term_3_ = std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 2/cp.tau_slow_) - t_i_*(cp.alpha_ + 2/cp.tau_)); 
+      double_t exp_term_4_ = std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 4/cp.tau_slow_) - t_i_*(cp.alpha_ + 2/cp.tau_)); 
+      double_t exp_term_5_ = std::exp(t_i_*(cp.alpha_ - 2/cp.tau_) - t_i_*(cp.alpha_ + 2/cp.tau_));
+      double_t exp_term_6_ = std::exp(t_i_*cp.alpha_ - t_i_*(cp.alpha_ + 2/cp.tau_));
+      double_t exp_term_7_ = std::exp((2*t_i_)/cp.tau_ - t_i_*(cp.alpha_ + 2/cp.tau_));
+      
       w_jk_[ i ] = (2*cp.A4_corr_*exp_term_1_*r_jk_[ i ]*r_post_*std::pow(cp.tau_,2)*(-4 + cp.alpha_*cp.tau_)*
       (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_)*
       (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_) + 
@@ -332,7 +331,7 @@ private:
             (2*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*std::pow(cp.tau_,2) - 
               c_jk_[ i ]*(c_jk_[ i ] + 2*r_jk_[ i ]*r_post_)*cp.tau_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_ + 
               std::pow(c_jk_[ i ],2)*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_slow_,2)))))/
-   (exp_term_8_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*
+   ((-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*
      (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
      (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)));
 

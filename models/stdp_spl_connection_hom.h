@@ -259,6 +259,12 @@ private:
     double_t t_delta_ = Time( Time::step(delta) ).get_ms() / 1000.;  
 //    std::cout << "t_delta_, delta: " << t_delta_ << "  " << delta <<  "\n";
   
+  
+    // precompute exponentials
+    double_t exp_term_8_ =  std::exp( -t_delta_/cp.tau_ );
+    double_t exp_term_9_ =  std::exp( -t_delta_/cp.tau_slow_ );
+    double_t exp_term_10_ = std::pow( exp_term_8_, 2 ) / exp_term_9_; // std::exp( t_delta_*(-2/cp.tau_ + 1/cp.tau_slow_) )
+  
     // propagate all variables
     for ( long_t i = 0; i < n_conns_; i++ )
     {
@@ -288,80 +294,92 @@ private:
       // EQ 1 only for nonzero synapses, i.e. created ones
       if (delta_i>0)
       {
-        double_t t_i_ = Time( Time::step(delta_i) ).get_ms() / 1000.;
-      
-        // use analytical solution
-        
-      // compute expensive terms before
-      double_t exp_term_1_ = std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
-      double_t exp_term_2_ = std::exp( -t_i_ / cp.tau_slow_ ); 
-      double_t exp_term_3_ = std::exp( -t_i_*( 2/cp.tau_slow_) ); 
-      double_t exp_term_4_ = std::exp( -t_i_*( 4/cp.tau_slow_) ); 
-      double_t exp_term_5_ = std::exp( -t_i_*( 4/cp.tau_ ));
-      double_t exp_term_6_ = std::exp( -t_i_*( 2/cp.tau_ ));
-      double_t exp_term_7_ = std::exp( -t_i_* cp.alpha_ );
-      
-      w_jk_[ i ] = (2*cp.A4_corr_*exp_term_1_*r_jk_[ i ]*r_post_*std::pow(cp.tau_,2)*(-4 + cp.alpha_*cp.tau_)*
-      (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_)*
-      (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_) + 
-     cp.A2_corr_*exp_term_2_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
-      (-(r_jk_[ i ]*r_post_*cp.tau_) + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))*(cp.tau_ - 2*cp.tau_slow_)*cp.tau_slow_*
-      (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
-     cp.A4_corr_*exp_term_3_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*
-      std::pow(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_,2)*(-4 + cp.alpha_*cp.tau_slow_)*
-      (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
-     cp.A4_post_*exp_term_4_*std::pow(R_post_,4)*(-4 + cp.alpha_*cp.tau_)*
-      (-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
-      (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
-     cp.A4_corr_*exp_term_5_*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*
-      std::pow(cp.tau_,3)*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
-      (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
-     cp.A2_corr_*exp_term_6_*r_jk_[ i ]*r_post_*std::pow(cp.tau_,2)*(-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
-      (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
-      (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
-     exp_term_7_*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*
-      (w_jk_[ i ]*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
-         (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
-        cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
-         (r_jk_[ i ]*r_post_*cp.tau_ + c_jk_[ i ]*(2 - cp.alpha_*cp.tau_)*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_))\
-         + (-2 + cp.alpha_*cp.tau_)*(-1 + cp.alpha_*cp.tau_slow_)*
-         (cp.A4_post_*std::pow(R_post_,4)*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*
-            (-cp.tau_ - 2*cp.tau_slow_ + cp.alpha_*cp.tau_*cp.tau_slow_) + 
-           cp.A4_corr_*(-4 + cp.alpha_*cp.tau_slow_)*
-            (2*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*std::pow(cp.tau_,2) - 
-              c_jk_[ i ]*(c_jk_[ i ] + 2*r_jk_[ i ]*r_post_)*cp.tau_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_ + 
-              std::pow(c_jk_[ i ],2)*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_slow_,2)))))/
-   ((-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*
-     (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
-     (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)));
-
-        // delete synapse with negative or zero weights
-        // Here we only check this at spike times. We will miss zero crossing within ISIs. This may be improved.
-        if ( w_jk_[ i ] <= 0. )
-        {
-          // generate an exponentially distributed number
-          w_create_steps_[ i ] = Time( Time::ms( 
-            exp_dev_( rng_ ) / cp.lambda_ *1e3 ) ).get_steps();
+          double_t t_i_ = Time( Time::step(delta_i) ).get_ms() / 1000.;
+          double_t exp_term_2_;
+          double_t exp_term_6_;
+         
+          // use analytical solution of EQ1
+            
+          // compute expensive terms first
+          if (delta_i==delta)
+          {
+             // in this case we can reuse the precomputed terms from above
+            exp_term_2_ = exp_term_9_;
+            exp_term_6_ = std::pow( exp_term_8_, 2 );
+          }
+          else
+          { 
+            // we compute the new exponential terms
+            double_t exp_term_2_ = std::exp( -t_i_ / cp.tau_slow_ );  
+            double_t exp_term_6_ = std::exp( -t_i_* 2 / cp.tau_ );    
+          }
+          double_t exp_term_1_ = exp_term_2_ * exp_term_6_;       // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
+          double_t exp_term_3_ = std::pow( exp_term_2_, 2 );      // std::exp( -t_i_*( 2/cp.tau_slow_) ); 
+          double_t exp_term_4_ = std::pow( exp_term_2_, 4 );      // std::exp( -t_i_*( 4/cp.tau_slow_) ); 
+          double_t exp_term_5_ = std::pow( exp_term_6_, 2 );      // std::exp( -t_i_*( 4/cp.tau_ ));
+          double_t exp_term_7_ = std::exp( -t_i_* cp.alpha_ );
           
-          // set synapse to equal zero
-          w_jk_[ i ] = 0.;
-        }
+          w_jk_[ i ] = (2*cp.A4_corr_*exp_term_1_*r_jk_[ i ]*r_post_*std::pow(cp.tau_,2)*(-4 + cp.alpha_*cp.tau_)*
+              (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_)*
+              (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_) + 
+             cp.A2_corr_*exp_term_2_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
+              (-(r_jk_[ i ]*r_post_*cp.tau_) + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))*(cp.tau_ - 2*cp.tau_slow_)*cp.tau_slow_*
+              (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
+             cp.A4_corr_*exp_term_3_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*
+              std::pow(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_,2)*(-4 + cp.alpha_*cp.tau_slow_)*
+              (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
+             cp.A4_post_*exp_term_4_*std::pow(R_post_,4)*(-4 + cp.alpha_*cp.tau_)*
+              (-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+              (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
+             cp.A4_corr_*exp_term_5_*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*
+              std::pow(cp.tau_,3)*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+              (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
+             cp.A2_corr_*exp_term_6_*r_jk_[ i ]*r_post_*std::pow(cp.tau_,2)*(-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
+              (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+              (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
+             exp_term_7_*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*
+              (w_jk_[ i ]*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
+                 (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
+                cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
+                 (r_jk_[ i ]*r_post_*cp.tau_ + c_jk_[ i ]*(2 - cp.alpha_*cp.tau_)*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_))\
+                 + (-2 + cp.alpha_*cp.tau_)*(-1 + cp.alpha_*cp.tau_slow_)*
+                 (cp.A4_post_*std::pow(R_post_,4)*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*
+                    (-cp.tau_ - 2*cp.tau_slow_ + cp.alpha_*cp.tau_*cp.tau_slow_) + 
+                   cp.A4_corr_*(-4 + cp.alpha_*cp.tau_slow_)*
+                    (2*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*std::pow(cp.tau_,2) - 
+                      c_jk_[ i ]*(c_jk_[ i ] + 2*r_jk_[ i ]*r_post_)*cp.tau_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_ + 
+                      std::pow(c_jk_[ i ],2)*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_slow_,2)))))/
+               ((-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*
+                 (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+                 (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)));
+
+            // delete synapse with negative or zero weights
+            // Here we only check this at spike times. We will miss zero crossing within ISIs. This may be improved.
+            if ( w_jk_[ i ] <= 0. )
+            {
+              // generate an exponentially distributed number
+              w_create_steps_[ i ] = Time( Time::ms( 
+                exp_dev_( rng_ ) / cp.lambda_ *1e3 ) ).get_steps();
+              
+              // set synapse to equal zero
+              w_jk_[ i ] = 0.;
+            }
       }
 
       // EQ 2 by analytical solution
-      c_jk_[ i ] = ((-1 + std::exp(t_delta_*(-2/cp.tau_ + 1/cp.tau_slow_)))*
+      c_jk_[ i ] = ((-1 + exp_term_10_)*
             r_jk_[ i ]*r_post_*cp.tau_ 
             + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))/
-            (std::exp(t_delta_/cp.tau_slow_)*(cp.tau_ - 2*cp.tau_slow_));
+            (cp.tau_ - 2*cp.tau_slow_) * exp_term_9_;
       
       // EQ 4 by analytical solution
-      r_jk_[ i ] *= std::exp( -t_delta_/cp.tau_ );
+      r_jk_[ i ] *= exp_term_8_;
     }
   
    // update the postsynaptic rates
 
-    r_post_ *= std::exp( -t_delta_/cp.tau_ );
-    R_post_ *= std::exp( -t_delta_/cp.tau_slow_ );
+    r_post_ *= exp_term_8_;
+    R_post_ *= exp_term_9_;
   }
   
   

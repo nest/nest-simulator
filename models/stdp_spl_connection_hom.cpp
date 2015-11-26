@@ -91,9 +91,9 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
     throw BadProperty( "lambda must be positive." );
   }
 
-  dt_ = Time::get_resolution().get_ms() * 0.001;
-  e_dt_alpha_ = std::exp( -dt_ * alpha_ );
-  e_dt_alpha_1m_ = -numerics::expm1( -dt_ * alpha_ );
+//  dt_ = Time::get_resolution().get_ms() * 0.001;
+//  e_dt_alpha_ = std::exp( -dt_ * alpha_ );
+//  e_dt_alpha_1m_ = -numerics::expm1( -dt_ * alpha_ );
   
 //    if ExactIntegration:
 //        dec_f = np.exp(-sim_dt/tau)
@@ -112,10 +112,18 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
 //        dec_f_slow = 1.-sim_dt/tau_slow
 //        inp_f_slow = sim_dt/tau_slow
 
-  e_dt_tau_ = 1. - dt_ / tau_ ;
-  e_dt_tau_slow_ = 1. - dt_ / tau_slow_ ;
-  e_dt_tau_1m_ = dt_ / tau_ ;
-  e_dt_tau_slow_1m_ = dt_ / tau_slow_ ;
+//  e_dt_tau_ = 1. - dt_ / tau_ ;
+//  e_dt_tau_slow_ = 1. - dt_ / tau_slow_ ;
+//  e_dt_tau_1m_ = dt_ / tau_ ;
+//  e_dt_tau_slow_1m_ = dt_ / tau_slow_ ;
+  
+  pow_term_1_ = std::pow(tau_,2);
+  pow_term_2_ = std::pow(tau_ - 2*tau_slow_,2);
+  pow_term_3_ = std::pow(tau_,2);
+  pow_term_4_ = std::pow(tau_,3);
+  pow_term_5_ = std::pow(tau_ - 2*tau_slow_,2);
+  pow_term_6_ = std::pow(tau_slow_,2);
+  
   
   
 // std::cout << "e_dt_alpha_: " << e_dt_alpha_ << "\n";

@@ -77,12 +77,20 @@ public:
   double_t w0_;
   double_t p_fail_;
 
-  double_t e_dt_alpha_;
-  double_t e_dt_tau_;
-  double_t e_dt_tau_slow_;
-  double_t e_dt_alpha_1m_;
-  double_t e_dt_tau_1m_;
-  double_t e_dt_tau_slow_1m_;
+//  double_t e_dt_alpha_;
+//  double_t e_dt_tau_;
+//  double_t e_dt_tau_slow_;
+//  double_t e_dt_alpha_1m_;
+//  double_t e_dt_tau_1m_;
+//  double_t e_dt_tau_slow_1m_;
+
+  double_t pow_term_1_;
+  double_t pow_term_2_;
+  double_t pow_term_3_;
+  double_t pow_term_4_;
+  double_t pow_term_5_;
+  double_t pow_term_6_;
+
 };
 
 // connections are templates of target identifier type
@@ -198,58 +206,6 @@ public:
   }
 
 private:
-  void propagate_( const STDPSplHomCommonProperties& cp ) 
-  {
-
-    // propagate all variables
-    for ( long_t i = 0; i < n_conns_; i++ )
-    {
-
-      // decrease creation step timer
-      if ( w_create_steps_[ i ] > 1 )
-      {
-        w_create_steps_[ i ]--;
-      }
-      else if ( w_create_steps_[ i ] == 1 )
-        {
-          w_jk_[ i ] = cp.w0_;
-          w_create_steps_[ i ]--;
-        }
-      // EQ 1 only for nonzero synapses, i.e. created ones
-      else
-      {
-//        // exact intagration does not work here because alpha is too small,
-//        // cp.e_dt_alpha_1m_ is typically equal to zero.
-//        w_jk_[ i ] *= cp.e_dt_alpha_; 
-//        w_jk_[ i ] += ( cp.A2_corr_ * c_jk_[ i ] - cp.A4_corr_ * pow( c_jk_[ i ], 2 )
-//          - cp.A4_post_ * pow( R_post_, 4 ) * cp.e_dt_alpha_1m_ / cp.alpha_ );
-        // so we use the forward-Euler method
-        w_jk_[ i ] = w_jk_[ i ] + cp.dt_ * 
-          ( cp.A2_corr_ * c_jk_[ i ] - cp.A4_corr_ * pow( c_jk_[ i ], 2 )
-          - cp.A4_post_ * pow( R_post_, 4 ) - cp.alpha_ * w_jk_[ i ] );
-
-        // delete synapse with negative or zero weights
-        if ( w_jk_[ i ] <= 0. )
-        {
-          // generate an exponentially distributed number
-          w_create_steps_[ i ] = Time( Time::ms( 
-            exp_dev_( rng_ ) / cp.lambda_ *1e3 ) ).get_steps();
-          
-          // set synapse to equal zero
-          w_jk_[ i ] = 0.;
-        }
-      }
-
-      // EQ 2
-      c_jk_[ i ] *= cp.e_dt_tau_slow_;
-      c_jk_[ i ] += cp.e_dt_tau_slow_1m_ * ( r_jk_[ i ] * r_post_ );
-      // EQ 4
-      r_jk_[ i ] *= cp.e_dt_tau_;
-    }
-    r_post_ *= cp.e_dt_tau_;
-    R_post_ *= cp.e_dt_tau_slow_;
-  }
-  
   
   void integrate_( const STDPSplHomCommonProperties& cp, long_t delta )
   {
@@ -310,8 +266,8 @@ private:
           else
           { 
             // we compute the new exponential terms
-            double_t exp_term_2_ = std::exp( -t_i_ / cp.tau_slow_ );  
-            double_t exp_term_6_ = std::exp( -t_i_* 2 / cp.tau_ );    
+            exp_term_2_ = std::exp( -t_i_ / cp.tau_slow_ );  
+            exp_term_6_ = std::exp( -t_i_* 2 / cp.tau_ );
           }
           double_t exp_term_1_ = exp_term_2_ * exp_term_6_;       // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
           double_t exp_term_3_ = std::pow( exp_term_2_, 2 );      // std::exp( -t_i_*( 2/cp.tau_slow_) ); 
@@ -319,7 +275,7 @@ private:
           double_t exp_term_5_ = std::pow( exp_term_6_, 2 );      // std::exp( -t_i_*( 4/cp.tau_ ));
           double_t exp_term_7_ = std::exp( -t_i_* cp.alpha_ );
           
-          w_jk_[ i ] = (2*cp.A4_corr_*exp_term_1_*r_jk_[ i ]*r_post_*std::pow(cp.tau_,2)*(-4 + cp.alpha_*cp.tau_)*
+          w_jk_[ i ] = (2*cp.A4_corr_*exp_term_1_*r_jk_[ i ]*r_post_*cp.pow_term_1_*(-4 + cp.alpha_*cp.tau_)*
               (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_)*
               (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_) + 
              cp.A2_corr_*exp_term_2_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
@@ -329,15 +285,15 @@ private:
               std::pow(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_,2)*(-4 + cp.alpha_*cp.tau_slow_)*
               (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
              cp.A4_post_*exp_term_4_*std::pow(R_post_,4)*(-4 + cp.alpha_*cp.tau_)*
-              (-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+              (-2 + cp.alpha_*cp.tau_)*cp.pow_term_2_*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
               (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
              cp.A4_corr_*exp_term_5_*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*
-              std::pow(cp.tau_,3)*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+              cp.pow_term_4_*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
               (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
-             cp.A2_corr_*exp_term_6_*r_jk_[ i ]*r_post_*std::pow(cp.tau_,2)*(-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
+             cp.A2_corr_*exp_term_6_*r_jk_[ i ]*r_post_*cp.pow_term_3_*(-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
               (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
               (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
-             exp_term_7_*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*
+             exp_term_7_*cp.pow_term_5_*
               (w_jk_[ i ]*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
                  (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
                 cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
@@ -346,10 +302,10 @@ private:
                  (cp.A4_post_*std::pow(R_post_,4)*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*
                     (-cp.tau_ - 2*cp.tau_slow_ + cp.alpha_*cp.tau_*cp.tau_slow_) + 
                    cp.A4_corr_*(-4 + cp.alpha_*cp.tau_slow_)*
-                    (2*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*std::pow(cp.tau_,2) - 
+                    (2*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*cp.pow_term_1_ - 
                       c_jk_[ i ]*(c_jk_[ i ] + 2*r_jk_[ i ]*r_post_)*cp.tau_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_ + 
-                      std::pow(c_jk_[ i ],2)*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_slow_,2)))))/
-               ((-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*
+                      std::pow(c_jk_[ i ],2)*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.pow_term_6_))))/
+               ((-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.pow_term_5_*
                  (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
                  (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)));
 

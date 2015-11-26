@@ -63,8 +63,7 @@ void
 nest::ASCIILogger::initialize()
 {
   // we need to delay the throwing of exceptions to the end of the parallel section
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
-    kernel().vp_manager.get_num_threads());
+  WrappedThreadException* we = NULL;
 
 #pragma omp parallel
   {
@@ -205,23 +204,24 @@ nest::ASCIILogger::initialize()
     }
     catch ( std::exception& e )
     {
-      exceptions_raised.at( t ) =
-        lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
+#pragma omp critical
+      if (! we) we = new WrappedThreadException(e);
     }
   } // parallel
 
   // check if any exceptions have been raised
-  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
-    if ( exceptions_raised.at( thr ).valid() )
-      throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
+  if (we) {
+    WrappedThreadException wec(*we);
+    delete we;
+    throw wec;
+  }
 }
 
 void
 nest::ASCIILogger::finalize()
 {
   // we need to delay the throwing of exceptions to the end of the parallel section
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
-    kernel().vp_manager.get_num_threads() );
+  WrappedThreadException* we = NULL;
 
 #pragma omp parallel
   {
@@ -269,15 +269,17 @@ nest::ASCIILogger::finalize()
     }
     catch ( std::exception& e )
     {
-      exceptions_raised.at( t ) =
-        lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
+#pragma omp critical
+      if (! we) we = new WrappedThreadException(e);
     }
   } // parallel
 
   // check if any exceptions have been raised
-  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
-    if ( exceptions_raised.at( thr ).valid() )
-      throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
+  if (we) {
+    WrappedThreadException wec(*we);
+    delete we;
+    throw wec;
+  }
 }
 
 void

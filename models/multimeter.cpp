@@ -132,7 +132,7 @@ Multimeter::init_buffers_()
 void
 Multimeter::calibrate()
 {
-  Logger* logger = Node::network()->get_logger();
+  Logger* logger = kernel().io_manager.get_logger();
   logger->enroll( *this, P_.record_from_ );
   RecordingDevice::calibrate();
 }
@@ -192,7 +192,7 @@ Multimeter::handle( DataLoggingReply& reply )
     const Time stamp = reply.get_stamp();
     const double offset = reply.get_offset();
 
-    Logger* logger = Node::network()->get_logger();
+    Logger* logger = kernel().io_manager.get_logger();
     logger->write( *this, reply, info[ j ].data );
 
     S_.data_.push_back( info[ j ].data );

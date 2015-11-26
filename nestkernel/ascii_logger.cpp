@@ -26,8 +26,11 @@
 #include <cmath>
 #include <sstream>
 
+#include "kernel_manager.h"
 #include "recording_device.h"
 #include "ascii_logger.h"
+#include "vp_manager_impl.h"
+#include "compose.hpp"
 
 void
 nest::ASCIILogger::enroll( RecordingDevice& device )
@@ -61,13 +64,12 @@ nest::ASCIILogger::initialize()
 {
   // we need to delay the throwing of exceptions to the end of the parallel section
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
-    Node::network()->get_num_threads() );
+    kernel().vp_manager.get_num_threads());
 
 #pragma omp parallel
   {
-    Network& network = *( Node::network() );
-    thread t = network.get_thread_id();
-    int vp = network.thread_to_vp( t );
+    thread t = kernel().vp_manager.get_thread_id();
+    int vp = kernel().vp_manager.thread_to_vp( t );
 
     try
     {
@@ -111,7 +113,7 @@ nest::ASCIILogger::initialize()
 #ifndef NESTIO
             std::string msg = String::compose(
               "Closing file '%1', opening file '%2'", device.get_filename(), newname );
-            Node::network()->message( SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg );
+            LOG( M_INFO, "RecordingDevice::calibrate()", msg );
 #endif // NESTIO
 
             file.close(); // close old file
@@ -123,8 +125,7 @@ nest::ASCIILogger::initialize()
         if ( newfile )
         {
           assert( !file.is_open() );
-
-          if ( Node::network()->overwrite_files() )
+          if ( kernel().io_manager.overwrite_files() )
           {
             file.open( filename.c_str() );
           }
@@ -140,8 +141,8 @@ nest::ASCIILogger::initialize()
                 "Please change data_path, data_prefix or label, or set /overwrite_files "
                 "to true in the root node.",
                 filename );
-              Node::network()->message(
-                SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+              LOG(
+                M_ERROR, "RecordingDevice::calibrate()", msg );
 #endif // NESTIO
               throw IOError();
             }
@@ -175,7 +176,7 @@ nest::ASCIILogger::initialize()
             "This may be caused by too many open files in networks "
             "with many recording devices and threads.",
             filename );
-          Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+          LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
 #endif // NESTIO
 
           if ( file.is_open() )
@@ -196,7 +197,7 @@ nest::ASCIILogger::initialize()
             "openeded with a buffer size of %1. Please close the "
             "file first.",
             P_.fbuffer_size_old_ );
-          Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+          LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
 #endif // NESTIO
           throw IOError();
         }
@@ -210,7 +211,7 @@ nest::ASCIILogger::initialize()
   } // parallel
 
   // check if any exceptions have been raised
-  for ( thread thr = 0; thr < Node::network()->get_num_threads(); ++thr )
+  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
     if ( exceptions_raised.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 }
@@ -220,13 +221,12 @@ nest::ASCIILogger::finalize()
 {
   // we need to delay the throwing of exceptions to the end of the parallel section
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
-    Node::network()->get_num_threads() );
+    kernel().vp_manager.get_num_threads() );
 
 #pragma omp parallel
   {
-    Network& network = *( Node::network() );
-    thread t = network.get_thread_id();
-    int vp = network.thread_to_vp( t );
+    thread t = kernel().vp_manager.get_thread_id();
+    int vp = kernel().vp_manager.thread_to_vp( t );
 
     try
     {
@@ -257,8 +257,8 @@ nest::ASCIILogger::finalize()
 #ifndef NESTIO
               std::string msg =
                 String::compose( "I/O error while closing file '%1'", device.get_filename() );
-              Node::network()->message(
-                SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg );
+              LOG(
+                M_ERROR, "RecordingDevice::finalize()", msg );
 #endif // NESTIO
 
               throw IOError();
@@ -275,7 +275,7 @@ nest::ASCIILogger::finalize()
   } // parallel
 
   // check if any exceptions have been raised
-  for ( thread thr = 0; thr < Node::network()->get_num_threads(); ++thr )
+  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
     if ( exceptions_raised.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 }
@@ -322,16 +322,16 @@ nest::ASCIILogger::build_filename_( const RecordingDevice& device ) const
 {
   // number of digits in number of virtual processes
   const int vpdigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >( Communicator::get_num_virtual_processes() ) ) )
+    std::floor( std::log10( static_cast< float >( kernel().vp_manager.get_num_virtual_processes() ) ) )
     + 1 );
   const int gidigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >( Node::network()->size() ) ) ) + 1 );
+    std::floor( std::log10( static_cast< float >( kernel().node_manager.size() ) ) ) + 1 );
 
   std::ostringstream basename;
-  const std::string& path = Node::network()->get_data_path();
+  const std::string& path = kernel().io_manager.get_data_path();
   if ( !path.empty() )
     basename << path << '/';
-  basename << Node::network()->get_data_prefix();
+  basename << kernel().io_manager.get_data_prefix();
 
   const std::string& label = device.get_label();
   if ( !label.empty() )

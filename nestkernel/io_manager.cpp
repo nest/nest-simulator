@@ -36,13 +36,18 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "screen_logger.h"
+#include "ascii_logger.h"
+#include "sion_logger.h"
 
 // Includes from sli:
 #include "dictutils.h"
 
 nest::IOManager::IOManager()
   : overwrite_files_( false )
+  , logger_( NULL )
 {
+  set_logger( names::ScreenLogger );
 }
 
 void
@@ -118,6 +123,17 @@ nest::IOManager::set_status( const DictionaryDatum& d )
 {
   set_data_path_prefix_( d );
   updateValue< bool >( d, "overwrite_files", overwrite_files_ );
+
+  // Setup logger and its options
+  DictionaryDatum dd;
+  if ( updateValue< DictionaryDatum >( d, "recording", dd ) )
+  {
+    std::string logger;
+    if ( updateValue< std::string >( dd, names::logger, logger ) )
+      set_logger( logger );
+
+    logger_->set_status( dd );
+  }
 }
 
 void
@@ -126,4 +142,38 @@ nest::IOManager::get_status( DictionaryDatum& d )
   ( *d )[ "data_path" ] = data_path_;
   ( *d )[ "data_prefix" ] = data_prefix_;
   ( *d )[ "overwrite_files" ] = overwrite_files_;
+}
+
+bool
+nest::IOManager::set_logger( Name name )
+{
+  if ( name == names::ScreenLogger )
+  {
+    if ( logger_ != 0 )
+      delete logger_;
+
+    logger_ = new ScreenLogger();
+  }
+  else if ( name == names::ASCIILogger )
+  {
+    if ( logger_ != 0 )
+      delete logger_;
+
+    logger_ = new ASCIILogger();
+  }
+#ifdef HAVE_SION
+  else if ( name == names::SIONLogger )
+  {
+    if ( logger_ != 0 )
+      delete logger_;
+    logger_ = new SIONLogger();
+  }
+#endif // HAVE_SION
+  else
+  {
+    std::string msg = String::compose( "Logger is not known: '%1'", name );
+    LOG( M_WARNING, "IOManager::set_status", msg.c_str() );
+    return false;
+  }
+  return true;
 }

@@ -33,7 +33,6 @@
 // Includes from nestkernel:
 #include "node.h"
 #include "device.h"
-#include "network.h"
 #include "logger.h"
 #include "nest_types.h"
 

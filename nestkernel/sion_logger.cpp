@@ -29,8 +29,10 @@
 #include <mpix.h>
 #endif // BG_MULTIFILE
 
+#include "kernel_manager.h"
 #include "recording_device.h"
 #include "sion_logger.h"
+#include "compose.hpp"
 
 void
 nest::SIONLogger::enroll( RecordingDevice& device )
@@ -91,13 +93,12 @@ nest::SIONLogger::initialize()
 
   // we need to delay the throwing of exceptions to the end of the parallel section
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
-    Node::network()->get_num_threads() );
+    kernel().vp_manager.get_num_threads() );
 
 #pragma omp parallel
   {
-    Network& network = *( Node::network() );
-    const thread t = network.get_thread_id();
-    const thread task = network.thread_to_vp( t );
+    const thread t = kernel().vp_manager.get_thread_id();
+    const thread task = kernel().vp_manager.thread_to_vp( t );
 
 	try
     {
@@ -116,7 +117,7 @@ nest::SIONLogger::initialize()
       char* filename_c = strdup( filename.c_str() );
 
       std::ifstream test( filename.c_str() );
-      if ( test.good() & !Node::network()->overwrite_files() )
+      if ( test.good() & !kernel().io_manager.overwrite_files() )
       {
 #ifndef NESTIO
         std::string msg = String::compose(
@@ -124,7 +125,7 @@ nest::SIONLogger::initialize()
           "Please change data_path, or data_prefix, or set /overwrite_files "
           "to true in the root node.",
           filename );
-        Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+        LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
 		throw IOError();
 #endif // NESTIO
       }
@@ -160,7 +161,7 @@ nest::SIONLogger::initialize()
       // upcast of body_blk necessary due to inconsistency in SIONlib interface
       info.body_blk = static_cast< sion_int64 >( body_blk );
 
-      info.t_start = Node::network()->get_time().get_ms();
+      info.t_start = kernel().simulation_manager.get_time().get_ms();
 
       file.buffer.reserve( P_.buffer_size_ );
       file.buffer.clear();
@@ -181,7 +182,7 @@ nest::SIONLogger::initialize()
   } // parallel
 
   // check if any exceptions have been raised
-  for ( thread thr = 0; thr < Node::network()->get_num_threads(); ++thr )
+  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
     if ( exceptions_raised.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 }
@@ -198,9 +199,8 @@ nest::SIONLogger::close_files_()
 {
 #pragma omp parallel
   {
-    Network& network = *( Node::network() );
-    const thread t = network.get_thread_id();
-    const thread task = network.thread_to_vp( t );
+    const thread t = kernel().vp_manager.get_thread_id();
+    const thread task = kernel().vp_manager.thread_to_vp( t );
 
     if ( files_.find( task ) == files_.end() )
     {
@@ -240,7 +240,7 @@ nest::SIONLogger::close_files_()
 
     if ( task == 0 )
     {
-      info.t_end = Node::network()->get_time().get_ms();
+      info.t_end = kernel().simulation_manager.get_time().get_ms();
 
       int mc;
       sion_int64* cs;
@@ -319,9 +319,8 @@ nest::SIONLogger::synchronize()
   if ( !P_.sion_collective_ )
     return;
 
-  Network& network = *( Node::network() );
-  const thread t = network.get_thread_id();
-  const thread task = network.thread_to_vp( t );
+  const thread t = kernel().vp_manager.get_thread_id();
+  const thread task = kernel().vp_manager.thread_to_vp( t );
 
   FileEntry& file = files_[ task ];
   SIONBuffer& buffer = file.buffer;
@@ -458,10 +457,10 @@ const std::string
 nest::SIONLogger::build_filename_() const
 {
   std::ostringstream basename;
-  const std::string& path = Node::network()->get_data_path();
+  const std::string& path = kernel().io_manager.get_data_path();
   if ( !path.empty() )
     basename << path << '/';
-  basename << Node::network()->get_data_prefix();
+  basename << kernel().io_manager.get_data_prefix();
 
   basename << "output";
 

@@ -379,6 +379,9 @@ nest::SimulationManager::prepare_simulation_()
   kernel().node_manager.ensure_valid_thread_local_ids();
   kernel().node_manager.prepare_nodes();
 
+  // initialize abstract i/o back-end
+  kernel().io_manager.get_logger()->initialize();
+
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime
@@ -397,6 +400,8 @@ nest::SimulationManager::update_()
   LOG( M_INFO, "Network::update", "Simulating using OpenMP." );
 #endif
 
+  Logger* logger = kernel().io_manager.get_logger();
+  
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
     kernel().vp_manager.get_num_threads() );
 // parallel section begins
@@ -486,6 +491,7 @@ nest::SimulationManager::update_()
           print_progress_();
         }
       }
+      logger->synchronize();
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 
@@ -515,6 +521,9 @@ nest::SimulationManager::finalize_simulation_()
         "Global Random Number Generators are not synchronized after simulation." );
       throw KernelException();
     }
+
+  // close abstract logger files/back-ends
+  kernel().io_manager.get_logger()->finalize();
 
   kernel().node_manager.finalize_nodes();
 }

@@ -740,9 +740,6 @@ public:
    */
   bool dict_miss_is_error() const;
 
-  bool set_logger( Name name );
-  Logger* get_logger();
-
 
 #ifdef HAVE_MUSIC
 public:

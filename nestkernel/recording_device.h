@@ -23,17 +23,23 @@
 #ifndef RECORDING_DEVICE_H
 #define RECORDING_DEVICE_H
 
-#include "nest.h"
-#include "dictdatum.h"
-#include "dictutils.h"
+// C++ includes:
+#include <fstream>
+#include <vector>
+
+// Includes from libnestutil:
 #include "lockptr.h"
+
+// Includes from nestkernel:
 #include "node.h"
 #include "device.h"
 #include "network.h"
 #include "logger.h"
+#include "nest_types.h"
 
-#include <vector>
-#include <fstream>
+// Includes from sli:
+#include "dictdatum.h"
+#include "dictutils.h"
 
 namespace nest
 {

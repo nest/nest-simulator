@@ -20,17 +20,25 @@
  *
  */
 
-#include "exceptions.h"
 #include "iaf_psc_exp_multisynapse.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+#include "propagator_stability.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -251,8 +259,8 @@ nest::iaf_psc_exp_multisynapse::calibrate()
   for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
   {
     V_.P11_syn_[ i ] = std::exp( -h / P_.tau_syn_[ i ] );
-    V_.P21_syn_[ i ] = P_.Tau_ / ( P_.C_ * ( 1.0 - P_.Tau_ / P_.tau_syn_[ i ] ) ) * V_.P11_syn_[ i ]
-      * ( 1.0 - std::exp( h * ( 1.0 / P_.tau_syn_[ i ] - 1.0 / P_.Tau_ ) ) );
+    // these are determined according to a numeric stability criterion
+    V_.P21_syn_[ i ] = propagator_32( P_.tau_syn_[ i ], P_.Tau_, P_.C_, h );
 
     B_.spikes_[ i ].resize();
   }
@@ -266,7 +274,7 @@ nest::iaf_psc_exp_multisynapse::calibrate()
 void
 iaf_psc_exp_multisynapse::update( const Time& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -302,7 +310,7 @@ iaf_psc_exp_multisynapse::update( const Time& origin, const long_t from, const l
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current
@@ -332,7 +340,8 @@ iaf_psc_exp_multisynapse::handle( SpikeEvent& e )
   {
     if ( P_.receptor_types_[ i ] == e.get_rport() )
     {
-      B_.spikes_[ i ].add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+      B_.spikes_[ i ].add_value(
+        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
         e.get_weight() * e.get_multiplicity() );
     }
   }
@@ -347,7 +356,8 @@ iaf_psc_exp_multisynapse::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * I );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
 }
 
 void

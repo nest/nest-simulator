@@ -23,20 +23,20 @@
 #ifndef CONNECTOR_BASE_H
 #define CONNECTOR_BASE_H
 
+// C++ includes:
 #include <vector>
 
-#include "node.h"
-#include "event.h"
-#include "network.h"
-#include "dictutils.h"
-#include "spikecounter.h"
-#include "nest_names.h"
+// Includes from nestkernel:
 #include "connector_model.h"
+#include "event.h"
+#include "kernel_manager.h"
 #include "nest_datums.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+#include "nest_names.h"
+#include "node.h"
+#include "spikecounter.h"
 
+// Includes from sli:
+#include "dictutils.h"
 
 #ifdef USE_PMA
 
@@ -62,8 +62,9 @@ suicide_and_resurrect( Told* connector, C connection )
 {
 #ifdef USE_PMA
 #ifdef IS_K
-  Tnew* p = new ( poormansallocpool[ omp_get_thread_num() ].alloc( sizeof( Tnew ) ) )
-    Tnew( *connector, connection );
+  Tnew* p =
+    new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( Tnew ) ) )
+      Tnew( *connector, connection );
 #else
   Tnew* p = new ( poormansallocpool.alloc( sizeof( Tnew ) ) ) Tnew( *connector, connection );
 #endif
@@ -114,7 +115,7 @@ public:
 
   virtual void trigger_update_weight( long_t vt_gid,
     thread t,
-    const vector< spikecounter >& dopa_spikes,
+    const std::vector< spikecounter >& dopa_spikes,
     double_t t_trig,
     const std::vector< ConnectorModel* >& cm ) = 0;
 
@@ -255,7 +256,7 @@ public:
   void
   trigger_update_weight( long_t vt_gid,
     thread t,
-    const vector< spikecounter >& dopa_spikes,
+    const std::vector< spikecounter >& dopa_spikes,
     double_t t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
@@ -389,7 +390,7 @@ public:
   void
   trigger_update_weight( long_t vt_gid,
     thread t,
-    const vector< spikecounter >& dopa_spikes,
+    const std::vector< spikecounter >& dopa_spikes,
     double_t t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
@@ -532,7 +533,7 @@ public:
   void
   trigger_update_weight( long_t vt_gid,
     thread t,
-    const vector< spikecounter >& dopa_spikes,
+    const std::vector< spikecounter >& dopa_spikes,
     double_t t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
@@ -566,7 +567,7 @@ public:
 // nested indefinitely
 // the logic in add_connection, however, assumes that these entries are
 // homogeneous connectors
-class HetConnector : public vector< ConnectorBase* >, public ConnectorBase
+class HetConnector : public std::vector< ConnectorBase* >, public ConnectorBase
 {
 
 public:

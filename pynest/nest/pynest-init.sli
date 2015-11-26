@@ -92,8 +92,7 @@ def
 
   cout
   (Problems or suggestions?) <- endl
-  (  Website     : http://www.nest-initiative.org) <- endl
-  (  Mailing list: nest_user@nest-initiative.org) <- endl
+  (  Visit http://www.nest-simulator.org) <- endl
 
   endl
   (Type 'nest.help()' to find out more about NEST.) <- endl ;

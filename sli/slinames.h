@@ -23,6 +23,7 @@
 #ifndef SLINAMES_H
 #define SLINAMES_H
 
+// Includes from sli:
 #include "name.h"
 
 namespace sli

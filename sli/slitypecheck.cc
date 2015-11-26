@@ -20,14 +20,17 @@
  *
  */
 
+#include "slitypecheck.h"
+
+// C++ includes:
 #include <sstream>
 
-#include "slitypecheck.h"
+// Includes from sli:
+#include "arraydatum.h"
 #include "interpret.h"
+#include "iostreamdatum.h"
 #include "namedatum.h"
 #include "triedatum.h"
-#include "arraydatum.h"
-#include "iostreamdatum.h"
 
 /*BeginDocumentation
 Name: trie - Create a new type-trie object

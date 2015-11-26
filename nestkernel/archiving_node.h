@@ -31,12 +31,17 @@
 #ifndef ARCHIVING_NODE_H
 #define ARCHIVING_NODE_H
 
-#include "nest.h"
-#include "node.h"
-#include "dictdatum.h"
-#include "nest_time.h"
-#include "histentry.h"
+// C++ includes:
 #include <deque>
+
+// Includes from nestkernel:
+#include "histentry.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 #define DEBUG_ARCHIVER 1
 

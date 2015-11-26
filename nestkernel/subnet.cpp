@@ -20,13 +20,19 @@
  *
  */
 
-#include "event.h"
 #include "subnet.h"
-#include "dictdatum.h"
-#include "arraydatum.h"
-#include "dictutils.h"
-#include "network.h"
+
+// C++ includes:
 #include <string>
+
+// Includes from nestkernel:
+#include "event.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dictdatum.h"
+#include "dictutils.h"
 
 #ifdef N_DEBUG
 #undef N_DEBUG
@@ -238,9 +244,9 @@ void
 nest::Subnet::set_label( std::string const l )
 {
   // set the new label on all sibling threads
-  for ( thread t = 0; t < network()->get_num_threads(); ++t )
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
-    Node* n = network()->get_node( get_gid(), t );
+    Node* n = kernel().node_manager.get_node( get_gid(), t );
     Subnet* c = dynamic_cast< Subnet* >( n );
     assert( c );
     c->label_ = l;

@@ -22,16 +22,23 @@
 
 #include "iaf_psc_alpha_canon.h"
 
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+#include "propagator_stability.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -159,11 +166,6 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const DictionaryDatum& d )
   if ( tau_m_ <= 0 || tau_syn_ <= 0 )
     throw BadProperty( "All time constants must be strictly positive." );
 
-  if ( tau_m_ == tau_syn_ )
-    throw BadProperty(
-      "Membrane and synapse time constant(s) must differ."
-      "See note in documentation." );
-
   return delta_EL;
 }
 
@@ -261,9 +263,9 @@ nest::iaf_psc_alpha_canon::calibrate()
   V_.expm1_tau_m_ = numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
   V_.expm1_tau_syn_ = numerics::expm1( -V_.h_ms_ / P_.tau_syn_ );
   V_.P30_ = -P_.tau_m_ / P_.c_m_ * V_.expm1_tau_m_;
-  V_.P31_ = V_.gamma_sq_ * V_.expm1_tau_m_ - V_.gamma_sq_ * V_.expm1_tau_syn_
-    - V_.h_ms_ * V_.gamma_ * V_.expm1_tau_syn_ - V_.h_ms_ * V_.gamma_;
-  V_.P32_ = V_.gamma_ * V_.expm1_tau_m_ - V_.gamma_ * V_.expm1_tau_syn_;
+  // these are determined according to a numeric stability criterion
+  V_.P31_ = propagator_31( P_.tau_syn_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
+  V_.P32_ = propagator_32( P_.tau_syn_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
 
   // t_ref_ is the refractory period in ms
   // refractory_steps_ is the duration of the refractory period in whole
@@ -280,7 +282,7 @@ void
 nest::iaf_psc_alpha_canon::update( Time const& origin, const long_t from, const long_t to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < Scheduler::get_min_delay() );
+  assert( static_cast< delay >( from ) < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
@@ -411,7 +413,8 @@ nest::iaf_psc_alpha_canon::handle( SpikeEvent& e )
      in the queue.  The time is computed according to Time Memo, Rule 3.
   */
   const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
-  B_.events_.add_spike( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.events_.add_spike(
+    e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -426,7 +429,8 @@ nest::iaf_psc_alpha_canon::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void
@@ -490,7 +494,7 @@ nest::iaf_psc_alpha_canon::emit_spike_( Time const& origin,
   // send spike
   SpikeEvent se;
   se.set_offset( spike_offset );
-  network()->send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 
   return;
 }
@@ -513,7 +517,7 @@ nest::iaf_psc_alpha_canon::emit_instant_spike_( Time const& origin,
   // send spike
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  network()->send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 
   return;
 }

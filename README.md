@@ -1,4 +1,4 @@
-## README for the Neural Simulation Tool NEST
+## README for the Neural Simulation Tool NEST [![Build Status](https://travis-ci.org/nest/nest-simulator.svg?branch=master)](https://travis-ci.org/nest/nest-simulator)
 Generic installation instructions can be found in the file INSTALL that
 you received with the NEST sources.
 

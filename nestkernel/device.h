@@ -24,10 +24,13 @@
 #define DEVICE_H
 
 
-#include "nest.h"
-#include "node.h"
-#include "dictdatum.h"
+// Includes from nestkernel:
 #include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {

@@ -26,14 +26,19 @@
     token.h defines the base objects used by the SLI interpreter.
 */
 
-#include <typeinfo>
-#include <iostream>
+// C++ includes:
 #include <iomanip>
+#include <iostream>
 #include <string>
+#include <typeinfo>
 #include <vector>
-#include <valarray>
+
+// Generated includes:
 #include "config.h"
+
+// Includes from sli:
 #include "datum.h"
+
 class Name;
 class Token;
 class TokenArray;
@@ -114,7 +119,6 @@ public:
   Token( const char* );
   Token( std::string );
   Token( const std::vector< double >& );
-  Token( const std::valarray< double >& );
   Token( const std::vector< long >& );
   Token( const std::vector< size_t >& );
   Token( const std::ostream& );

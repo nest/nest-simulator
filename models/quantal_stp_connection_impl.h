@@ -21,10 +21,13 @@
  */
 
 #include "quantal_stp_connection.h"
-#include "network.h"
+
+// Includes from nestkernel:
 #include "connection.h"
 #include "connector_model.h"
 #include "nest_names.h"
+
+// Includes from sli:
 #include "dictutils.h"
 
 namespace nest

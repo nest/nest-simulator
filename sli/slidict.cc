@@ -23,16 +23,22 @@
 /*
     SLI Dictionary access
 */
-#include <typeinfo>
+
 #include "slidict.h"
-#include "dictdatum.h"
-#include "namedatum.h"
-#include "dictstack.h"
-#include "iostreamdatum.h"
-#include "integerdatum.h"
+
+// C++ includes:
+#include <typeinfo>
+
+// Includes from sli:
 #include "arraydatum.h"
 #include "booldatum.h"
+#include "dictdatum.h"
+#include "dictstack.h"
+#include "integerdatum.h"
+#include "iostreamdatum.h"
+#include "namedatum.h"
 #include "tokenutils.h"
+
 /*
 BeginDocumentation
 

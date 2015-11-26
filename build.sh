@@ -123,8 +123,14 @@ cppcheck --version
 # go back to NEST sources
 cd ..
 
-# Extracting changed files between two commits
-file_names=`git diff --name-only $TRAVIS_COMMIT_RANGE`
+# Extracting changed files in PR / push
+if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+  file_names=`curl "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
+else
+  # extract filenames via git => has some problems with history rewrites
+  # see https://github.com/travis-ci/travis-ci/issues/2668
+  file_names=`(git diff --name-only $TRAVIS_COMMIT_RANGE || echo "") | tr '\n' ' '`
+fi
 format_error_files=""
 
 for f in $file_names; do
@@ -172,5 +178,10 @@ done
 if [ "$format_error_files" != "" ]; then
   echo "There are files with a formatting error: $format_error_files ."
   exit 42
+fi
+
+if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+  echo "WARNING: Not uploading results as this is a pull request" >&2
+  exit 0
 fi
 

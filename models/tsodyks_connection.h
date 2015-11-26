@@ -93,9 +93,11 @@
  * GenericConnector.
  */
 
-
-#include "connection.h"
+// C++ includes:
 #include <cmath>
+
+// Includes from nestkernel:
+#include "connection.h"
 
 namespace nest
 {

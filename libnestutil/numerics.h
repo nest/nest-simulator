@@ -23,8 +23,12 @@
 #ifndef NUMERICS_H
 #define NUMERICS_H
 
-#include <limits>
+// C++ includes:
 #include <cmath>
+#include <limits>
+
+// Generated includes:
+#include "config.h"
 
 #if HAVE_EXPM1
 #include <math.h>

@@ -19,15 +19,19 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "config.h"
+
+#include "music_event_handler.h"
 
 #ifdef HAVE_MUSIC
 
-#include "music_event_handler.h"
-#include "nest.h"
+// Includes from libnestutil:
+#include "compose.hpp"
+#include "logging.h"
+
+// Includes from nestkernel:
 #include "event.h"
-#include "communicator.h"
-#include "network.h" // needed for event_impl.h to be included
+#include "kernel_manager.h"
+#include "nest_types.h"
 
 namespace nest
 {
@@ -43,15 +47,13 @@ MusicEventHandler::MusicEventHandler()
 
 MusicEventHandler::MusicEventHandler( std::string portname,
   double acceptable_latency,
-  int max_buffered,
-  Network* net )
+  int max_buffered )
   : music_port_( 0 )
   , music_perm_ind_( 0 )
   , published_( false )
   , portname_( portname )
   , acceptable_latency_( acceptable_latency )
   , max_buffered_( max_buffered )
-  , net_( net )
 {
 }
 
@@ -88,7 +90,7 @@ MusicEventHandler::publish_port()
 {
   if ( !published_ )
   {
-    music_port_ = Communicator::get_music_setup()->publishEventInput( portname_ );
+    music_port_ = kernel().music_manager.get_music_setup()->publishEventInput( portname_ );
 
     // MUSIC wants seconds, NEST has miliseconds
     double_t acceptable_latency = acceptable_latency_ / 1000.0;
@@ -122,7 +124,7 @@ MusicEventHandler::publish_port()
     if ( max_buffered_ > 0 )
       msg += String::compose( " and max buffered=%1 ticks", max_buffered_ );
     msg += ".";
-    net_->message( SLIInterpreter::M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
+    LOG( M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
   }
 }
 

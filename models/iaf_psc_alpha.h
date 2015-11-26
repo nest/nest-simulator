@@ -23,13 +23,14 @@
 #ifndef IAF_PSC_ALPHA_H
 #define IAF_PSC_ALPHA_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
-#include "universal_data_logger.h"
+#include "event.h"
+#include "nest_types.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
 /* BeginDocumentation
 Name: iaf_psc_alpha - Leaky integrate-and-fire neuron model.
@@ -97,9 +98,12 @@ Parameters:
   V_min      double - Absolute lower value for the membrane potential.
 
 Remarks:
-  tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
-  degenerate case of the ODE describing the model [1]. For very similar values,
-  numerics will be unstable.
+
+  If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+  will numerically behave as if tau_m is equal to tau_syn_ex or
+  tau_syn_in, respectively, to avoid numerical instabilities.
+  For details, please see IAF_Neruons_Singularity.ipynb in
+  the NEST source code (docs/model_details).
 
 References:
   [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
@@ -122,8 +126,6 @@ SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 
 namespace nest
 {
-class Network;
-
 /**
  * Leaky integrate-and-fire neuron with alpha-shaped PSCs.
  */

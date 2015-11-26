@@ -23,18 +23,23 @@
 #ifndef IAF_PSC_EXP_PS_H
 #define IAF_PSC_EXP_PS_H
 
+// C++ includes:
+#include <vector>
+
+// Generated includes:
 #include "config.h"
 
-#include "nest.h"
-#include "event.h"
-#include "node.h"
-#include "ring_buffer.h"
-#include "slice_ring_buffer.h"
+// Includes from nestkernel:
 #include "connection.h"
-#include "universal_data_logger.h"
+#include "event.h"
+#include "nest_types.h"
+#include "node.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
-#include <vector>
+// Includes from precise:
+#include "slice_ring_buffer.h"
 
 /*BeginDocumentation
 Name: iaf_psc_exp_ps - Leaky integrate-and-fire neuron
@@ -84,9 +89,11 @@ Remarks:
   in addition to the on-grid spike times.
 
 Remarks:
-  tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
-  degenerate case of the ODE describing the model [1]. For very similar values,
-  numerics will be unstable.
+  If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+  will numerically behave as if tau_m is equal to tau_syn_ex or
+  tau_syn_in, respectively, to avoid numerical instabilities.
+  For details, please see IAF_Neruons_Singularity.ipynb in the
+  NEST source code (docs/model_details).
 
 References:
   [1] Morrison A, Straube S, Plesser HE & Diesmann M (2007) Exact subthreshold
@@ -118,9 +125,6 @@ namespace nest
  */
 class iaf_psc_exp_ps : public Node
 {
-
-  class Network;
-
 public:
   /** Basic constructor.
       This constructor should only be used by GenericModel to create

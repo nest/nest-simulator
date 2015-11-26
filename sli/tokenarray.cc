@@ -21,8 +21,10 @@
  */
 
 #include "tokenarray.h"
-#include "integerdatum.h"
+
+// Includes from sli:
 #include "doubledatum.h"
+#include "integerdatum.h"
 #include "stringdatum.h"
 #include "tokenutils.h"
 
@@ -60,39 +62,6 @@ TokenArray::TokenArray( const std::vector< size_t >& a )
 }
 
 TokenArray::TokenArray( const std::vector< double >& a )
-  : data( new TokenArrayObj( a.size(), Token(), 0 ) )
-{
-  assert( data != NULL );
-  for ( size_t i = 0; i < a.size(); ++i )
-  {
-    Token ddt( new DoubleDatum( a[ i ] ) );
-    ( *data )[ i ].move( ddt );
-  }
-}
-
-TokenArray::TokenArray( const std::valarray< long >& a )
-  : data( new TokenArrayObj( a.size(), Token(), 0 ) )
-{
-  assert( data != NULL );
-  for ( size_t i = 0; i < a.size(); ++i )
-  {
-    Token ddt( new IntegerDatum( a[ i ] ) );
-    ( *data )[ i ].move( ddt );
-  }
-}
-
-TokenArray::TokenArray( const std::valarray< double >& a )
-  : data( new TokenArrayObj( a.size(), Token(), 0 ) )
-{
-  assert( data != NULL );
-  for ( size_t i = 0; i < a.size(); ++i )
-  {
-    Token ddt( new DoubleDatum( a[ i ] ) );
-    ( *data )[ i ].move( ddt );
-  }
-}
-
-TokenArray::TokenArray( const std::valarray< float >& a )
   : data( new TokenArrayObj( a.size(), Token(), 0 ) )
 {
   assert( data != NULL );
@@ -185,41 +154,6 @@ TokenArray::toVector( std::vector< std::string >& a ) const
   }
 }
 
-void
-TokenArray::toValarray( std::valarray< long >& a ) const
-{
-  a.resize( size() );
-  size_t i = 0;
-
-  for ( Token* idx = begin(); idx != end(); ++idx, ++i )
-  {
-    IntegerDatum* targetid = dynamic_cast< IntegerDatum* >( idx->datum() );
-    if ( targetid == NULL )
-    {
-      IntegerDatum const d;
-      throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
-    }
-    a[ i ] = targetid->get();
-  }
-}
-
-void
-TokenArray::toValarray( std::valarray< double >& a ) const
-{
-  a.resize( size() );
-  size_t i = 0;
-
-  for ( Token* idx = begin(); idx != end(); ++idx, ++i )
-  {
-    DoubleDatum* targetid = dynamic_cast< DoubleDatum* >( idx->datum() );
-    if ( targetid == NULL )
-    {
-      DoubleDatum const d;
-      throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
-    }
-    a[ i ] = targetid->get();
-  }
-}
 
 bool
 TokenArray::valid( void ) const

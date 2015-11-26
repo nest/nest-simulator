@@ -78,7 +78,7 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
                        """\
                        {0} is deprecated and will be removed in a future version of NEST.
                        Please use {1} instead!
-                       For details, see the documentation at http://www.nest-simulator.org/connection_management\
+                       For details, see http://www.nest-simulator.org/connection_management\
                        """.format(func_name, alt_func_name)
                    )
 
@@ -304,7 +304,7 @@ def help(obj=None, pager="less"):
         print("Type 'nest.sysinfo()' to see details on the system configuration.")
         print("Type 'nest.version()' for information about the NEST version.")
         print()
-        print("For more information visit http://www.nest-initiative.org.")
+        print("For more information visit http://www.nest-simulator.org.")
 
 
 @check_stack
@@ -1137,13 +1137,13 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                 if isinstance(value, (np.ndarray, np.generic)):
                     if len(value.shape) == 1:
                         if rule == 'one_to_one':
-                            if value.shape[0] is not len(pre):
+                            if value.shape[0] != len(pre):
                                 raise NESTError("'" + key + "' has to be an array of dimension " + str(len(pre)) + ", a scalar or a dictionary.")
                         else:
                             raise NESTError("'" + key + "' has the wrong type. One-dimensional parameter arrays can only be used in conjunction with rule 'one_to_one'.")
                     elif len(value.shape) == 2:
                         if rule == 'all_to_all':
-                            if value.shape[0] is not len(post) or value.shape[1] is not len(pre):
+                            if value.shape[0] != len(post) or value.shape[1] != len(pre):
                                 raise NESTError("'" + key + "' has to be an array of dimension " + str(len(post)) + "x" + str(len(pre)) + " (n_target x n_sources), a scalar or a dictionary.")
                             else:
                                 syn_spec[key] = value.flatten()

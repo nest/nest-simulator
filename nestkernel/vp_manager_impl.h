@@ -1,5 +1,5 @@
 /*
- *  network_impl.h
+ *  vp_manager_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,23 +20,18 @@
  *
  */
 
-#ifndef NETWORK_IMPL_H
-#define NETWORK_IMPL_H
+#ifndef VP_MANAGER_IMPL_H
+#define VP_MANAGER_IMPL_H
 
-#include "network.h"
-#include "conn_builder.h"
-#include "conn_builder_factory.h"
+#include "vp_manager.h"
 
-template < typename ConnBuilder >
-void
-nest::Network::register_conn_builder( const std::string& name )
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
+inline nest::thread
+nest::VPManager::get_num_virtual_processes() const
 {
-  assert( !connruledict_->known( name ) );
-  GenericConnBuilderFactory* cb = new ConnBuilderFactory< ConnBuilder >();
-  assert( cb != 0 );
-  const int id = connbuilder_factories_.size();
-  connbuilder_factories_.push_back( cb );
-  connruledict_->insert( name, id );
+  return get_num_threads() * kernel().mpi_manager.get_num_processes();
 }
 
-#endif
+#endif /* VP_MANAGER_IMPL_H */

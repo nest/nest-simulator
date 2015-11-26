@@ -22,16 +22,23 @@
 
 #include "iaf_psc_alpha_presc.h"
 
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+#include "propagator_stability.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -157,11 +164,6 @@ nest::iaf_psc_alpha_presc::Parameters_::set( const DictionaryDatum& d )
   if ( tau_m_ <= 0 || tau_syn_ <= 0 )
     throw BadProperty( "All time constants must be strictly positive." );
 
-  if ( tau_m_ == tau_syn_ )
-    throw BadProperty(
-      "Membrane and synapse time constant(s) must differ."
-      "See note in documentation." );
-
   return delta_EL;
 }
 
@@ -254,9 +256,9 @@ nest::iaf_psc_alpha_presc::calibrate()
   V_.expm1_tau_m_ = numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
   V_.expm1_tau_syn_ = numerics::expm1( -V_.h_ms_ / P_.tau_syn_ );
   V_.P30_ = -P_.tau_m_ / P_.c_m_ * V_.expm1_tau_m_;
-  V_.P31_ = V_.gamma_sq_ * V_.expm1_tau_m_ - V_.gamma_sq_ * V_.expm1_tau_syn_
-    - V_.h_ms_ * V_.gamma_ * V_.expm1_tau_syn_ - V_.h_ms_ * V_.gamma_;
-  V_.P32_ = V_.gamma_ * V_.expm1_tau_m_ - V_.gamma_ * V_.expm1_tau_syn_;
+  // these are determined according to a numeric stability criterion
+  V_.P31_ = propagator_31( P_.tau_syn_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
+  V_.P32_ = propagator_32( P_.tau_syn_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
 
   // t_ref_ is the refractory period in ms
   // refractory_steps_ is the duration of the refractory period in whole
@@ -270,7 +272,7 @@ void
 nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const long_t to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < Scheduler::get_min_delay() );
+  assert( static_cast< delay >( from ) < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   /* Neurons may have been initialized to superthreshold potentials.
@@ -289,7 +291,7 @@ nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const 
     // send spike
     SpikeEvent se;
     se.set_offset( S_.last_spike_offset_ );
-    network()->send( *this, se, from );
+    kernel().event_delivery_manager.send( *this, se, from );
   }
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -372,7 +374,7 @@ nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const 
       // sent event
       SpikeEvent se;
       se.set_offset( S_.last_spike_offset_ );
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // Set new input current. The current change occurs at the
@@ -392,7 +394,8 @@ nest::iaf_psc_alpha_presc::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const long_t Tdeliver = e.get_rel_delivery_steps( network()->get_slice_origin() );
+  const long_t Tdeliver =
+    e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() );
 
   const double_t spike_weight = V_.PSCInitialValue_ * e.get_weight() * e.get_multiplicity();
   const double_t dt = e.get_offset();
@@ -419,7 +422,8 @@ nest::iaf_psc_alpha_presc::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void
@@ -496,7 +500,7 @@ nest::iaf_psc_alpha_presc::thresh_find_( double_t const dt ) const
   case CUBIC:
     return thresh_find3_( dt );
   default:
-    network()->message( SLIInterpreter::M_ERROR,
+    LOG( M_ERROR,
       "iaf_psc_alpha_presc::thresh_find_()",
       "Invalid interpolation---Internal model error." );
     throw BadProperty();

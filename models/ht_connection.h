@@ -23,6 +23,7 @@
 #ifndef HT_CONNECTION_H
 #define HT_CONNECTION_H
 
+// Includes from nestkernel:
 #include "connection.h"
 
 /* BeginDocumentation

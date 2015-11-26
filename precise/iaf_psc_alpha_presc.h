@@ -23,17 +23,19 @@
 #ifndef IAF_PSC_ALPHA_PRESC_H
 #define IAF_PSC_ALPHA_PRESC_H
 
+// C++ includes:
+#include <vector>
+
+// Generated includes:
 #include "config.h"
 
-#include "nest.h"
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "ring_buffer.h"
-#include "connection.h"
-
 #include "universal_data_logger.h"
-
-#include <vector>
 
 /*BeginDocumentation
   Name: iaf_psc_alpha_presc - Leaky integrate-and-fire neuron
@@ -79,9 +81,11 @@
   in addition to the on-grid spike times.
 
   Remarks:
-  tau_m != tau_syn is required by the current implementation to avoid a
-  degenerate case of the ODE describing the model [1]. For very similar values,
-  numerics will be unstable.
+  If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+  will numerically behave as if tau_m is equal to tau_syn_ex or
+  tau_syn_in, respectively, to avoid numerical instabilities.
+  For details, please see IAF_Neruons_Singularity.ipynb in
+  the NEST source code (docs/model_details).
 
   References:
   [1] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact Subthreshold
@@ -112,9 +116,6 @@ namespace nest
  */
 class iaf_psc_alpha_presc : public Node
 {
-
-  class Network;
-
 public:
   /** Basic constructor.
       This constructor should only be used by GenericModel to create

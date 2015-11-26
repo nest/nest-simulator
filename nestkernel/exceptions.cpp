@@ -19,11 +19,17 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "exceptions.h"
-#include "interpret.h"
+
+// C++ includes:
+#include <sstream>
+
+// Generated includes:
 #include "config.h"
 
-#include <sstream>
+// Includes from sli:
+#include "interpret.h"
 
 std::string
 nest::UnknownModelName::message()
@@ -251,8 +257,8 @@ nest::InvalidDefaultResolution::message()
   msg << "The default resolution of " << Time::get_resolution()
       << " is not consistent with the value " << val_ << " of property '" << prop_.toString()
       << "' in model " << model_ << ".\n"
-      << "This is an internal NEST error, please report to the "
-         "nest_user@nest-initiative.org mailing list!";
+      << "This is an internal NEST error, please report it at "
+         "https://github.com/nest/nest-simulator/issues";
   return msg.str();
 }
 
@@ -357,9 +363,7 @@ nest::GSLSolverFailure::message()
   msg << "In model " << model_ << ", the GSL solver "
       << "returned with exit status " << status_ << ".\n"
       << "Please make sure you have installed a recent "
-      << "GSL version (> gsl-1.10), or contact the "
-      << "nest_user@nest-initiative.org mailing list"
-      << "for further support.";
+      << "GSL version (> gsl-1.10).";
   return msg.str();
 }
 

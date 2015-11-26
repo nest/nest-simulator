@@ -20,13 +20,16 @@
  *
  */
 
+// C++ includes:
 #include <typeinfo>
-#include "namedatum.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "stringdatum.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "dictstack.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "namedatum.h"
+#include "stringdatum.h"
 
 //
 // test program for class DictionaryStack

@@ -41,10 +41,16 @@ class TestDists(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        #nest.SetKernelStatus({'local_num_threads': 1})
-        nest.SetKernelStatus({'local_num_threads': 2,
-                              'grng_seed': 120,
-                              'rng_seeds': [576, 886]})
+        nest.sr("statusdict/threading :: (no) eq not")
+        if not nest.spp():
+          # no multi-threading
+          nest.SetKernelStatus({'grng_seed': 120,
+                               'rng_seeds': [576]})
+        else:
+          # multi-threading
+          nest.SetKernelStatus({'local_num_threads': 2,
+                               'grng_seed': 120,
+                               'rng_seeds': [576, 886]})
         pass
 
     def setUpNetwork(self, conn_params=None, syn_dict=None):

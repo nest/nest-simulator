@@ -23,6 +23,7 @@
 #ifndef MCCULLOCH_PITTS_NEURON_H
 #define MCCULLOCH_PITTS_NEURON_H
 
+// Includes from models:
 #include "binary_neuron.h"
 #include "binary_neuron_impl.h"
 

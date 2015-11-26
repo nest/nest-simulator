@@ -52,6 +52,10 @@
 #include <omp.h>
 #endif
 
+// !!!!!!Depricated!!!!!!
+// Do not use anymore! Will be removed!
+#error Do not use network.cpp in any place in your nest code!
+
 namespace nest
 {
 

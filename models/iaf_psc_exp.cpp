@@ -20,17 +20,26 @@
  *
  */
 
-#include "exceptions.h"
 #include "iaf_psc_exp.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+#include "propagator_stability.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -136,11 +145,6 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d )
   if ( t_ref_ < 0 )
     throw BadProperty( "Refractory time must not be negative." );
 
-  if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
-    throw BadProperty(
-      "Membrane and synapse time constant(s) must differ."
-      "See note in documentation." );
-
   return delta_EL;
 }
 
@@ -235,15 +239,11 @@ nest::iaf_psc_exp::calibrate()
   V_.P22_ = std::exp( -h / P_.Tau_ );
   // P22_ = 1.0-h/Tau_;
 
-  // these depend on the above. Please do not change the order.
-  // TODO: use expm1 here to improve accuracy for small timesteps
+  // these are determined according to a numeric stability criterion
+  V_.P21ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
+  V_.P21in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, h );
 
-  V_.P21ex_ = P_.Tau_ / ( P_.C_ * ( 1.0 - P_.Tau_ / P_.tau_ex_ ) ) * V_.P11ex_
-    * ( 1.0 - std::exp( h * ( 1.0 / P_.tau_ex_ - 1.0 / P_.Tau_ ) ) );
   // P21ex_ = h/C_;
-
-  V_.P21in_ = P_.Tau_ / ( P_.C_ * ( 1.0 - P_.Tau_ / P_.tau_in_ ) ) * V_.P11in_
-    * ( 1.0 - std::exp( h * ( 1.0 / P_.tau_in_ - 1.0 / P_.Tau_ ) ) );
   // P21in_ = h/C_;
 
   V_.P20_ = P_.Tau_ / P_.C_ * ( 1.0 - V_.P22_ );
@@ -274,7 +274,7 @@ nest::iaf_psc_exp::calibrate()
 void
 nest::iaf_psc_exp::update( const Time& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -309,7 +309,7 @@ nest::iaf_psc_exp::update( const Time& origin, const long_t from, const long_t t
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current
@@ -327,10 +327,12 @@ nest::iaf_psc_exp::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spikes_ex_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spikes_in_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spikes_in_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 
@@ -345,11 +347,13 @@ nest::iaf_psc_exp::handle( CurrentEvent& e )
   // add weighted current; HEP 2002-10-04
   if ( 0 == e.get_rport() )
   {
-    B_.currents_[ 0 ].add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+    B_.currents_[ 0 ].add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
   }
   if ( 1 == e.get_rport() )
   {
-    B_.currents_[ 1 ].add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+    B_.currents_[ 1 ].add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
   }
 }
 

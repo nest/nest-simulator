@@ -23,6 +23,7 @@
 #ifndef PROXYNODE_H
 #define PROXYNODE_H
 
+// Includes from nestkernel:
 #include "node.h"
 
 namespace nest

@@ -22,15 +22,20 @@
 
 #ifndef NEST_TIME_H
 #define NEST_TIME_H
-#include <string>
-#include <iostream>
+
+// C++ includes:
 #include <cassert>
-#include <limits>
 #include <cmath>
 #include <cstdlib>
+#include <iostream>
+#include <limits>
+#include <string>
 
-#include "nest.h"
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from nestkernel:
+#include "nest_types.h"
 
 class Token;
 
@@ -65,7 +70,7 @@ namespace nest
 
    @NOTE
    - The time base (tics per millisecond) can only be set at
-     compile time and by the TimeModifier class.
+     compile time and by the Time::set_resolution().
    - Times in ms are rounded up to the next tic interval.
      This ensures that the time intervals (0, h] are open at the left
      point and closed at the right point. It also ensures compatibility with
@@ -151,7 +156,6 @@ protected:
   {
     static tic_t TICS_PER_STEP;
     static tic_t TICS_PER_STEP_RND;
-    static tic_t OLD_TICS_PER_STEP;
 
     static double_t TICS_PER_MS;
     static double_t MS_PER_TIC;

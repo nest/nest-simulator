@@ -23,6 +23,7 @@
 #ifndef EVENT_PRIORITY_H
 #define EVENT_PRIORITY_H
 
+// Includes from nestkernel:
 #include "event.h"
 
 namespace nest

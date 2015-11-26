@@ -23,14 +23,17 @@
 /*
     Interpreter builtins
 */
+
 #include "slibuiltins.h"
-#include "interpret.h"
-#include "callbackdatum.h"
+
+// Includes from sli:
 #include "arraydatum.h"
-#include "integerdatum.h"
-#include "stringdatum.h"
-#include "iteratordatum.h"
+#include "callbackdatum.h"
 #include "functiondatum.h"
+#include "integerdatum.h"
+#include "interpret.h"
+#include "iteratordatum.h"
+#include "stringdatum.h"
 
 void
 IlookupFunction::execute( SLIInterpreter* i ) const

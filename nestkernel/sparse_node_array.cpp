@@ -21,9 +21,10 @@
  */
 
 #include "sparse_node_array.h"
-#include "node.h"
+
+// Includes from nestkernel:
 #include "exceptions.h"
-#include "communicator.h"
+#include "node.h"
 
 nest::SparseNodeArray::NodeEntry_::NodeEntry_( Node& node, index gid )
   : node_( &node )

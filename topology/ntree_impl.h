@@ -24,6 +24,8 @@
 #define NTREE_IMPL_H
 
 #include "ntree.h"
+
+// Includes from topology:
 #include "mask.h"
 
 namespace nest

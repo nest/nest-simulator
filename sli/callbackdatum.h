@@ -26,6 +26,7 @@
     Datum class, implementing SLI callbacks.
 */
 
+// Includes from sli:
 #include "genericdatum.h"
 #include "interpret.h"
 

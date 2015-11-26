@@ -26,12 +26,15 @@
     Reference Counted Array class specialized on Token objects.
 */
 
-#include <typeinfo>
+// C++ includes:
+#include <algorithm>
 #include <cstddef>
+#include <typeinfo>
 #include <vector>
-#include <valarray>
-#include "tarrayobj.h"
+
+// Includes from sli:
 #include "sliexceptions.h"
+#include "tarrayobj.h"
 
 // class Tokenarray uses reference counting and lazy evaluation.
 // This means that only a pointer
@@ -120,9 +123,6 @@ public:
 
   TokenArray( const std::vector< size_t >& );
   TokenArray( const std::vector< long >& );
-  TokenArray( const std::valarray< long >& );
-  TokenArray( const std::valarray< double >& );
-  TokenArray( const std::valarray< float >& );
   TokenArray( const std::vector< double >& );
   TokenArray( const std::vector< float >& );
 
@@ -412,8 +412,6 @@ public:
   const TokenArray& operator=( const TokenArray& );
   const TokenArray& operator=( const std::vector< long >& );
   const TokenArray& operator=( const std::vector< double >& );
-  const TokenArray& operator=( const std::valarray< long >& );
-  const TokenArray& operator=( const std::valarray< double >& );
 
   bool operator==( const TokenArray& a ) const
   {
@@ -434,8 +432,6 @@ public:
   void toVector( std::vector< long >& ) const;
   void toVector( std::vector< double >& ) const;
   void toVector( std::vector< std::string >& ) const;
-  void toValarray( std::valarray< long >& ) const;
-  void toValarray( std::valarray< double >& ) const;
 
   bool valid( void ) const; // check integrity
 

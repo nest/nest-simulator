@@ -21,9 +21,7 @@
  */
 
 
-#include "config.h"
 #include "numerics.h"
-
 
 #ifndef HAVE_M_E
 

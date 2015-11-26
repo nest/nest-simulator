@@ -50,8 +50,9 @@
 #ifndef STATICCONNECTION_HOM_W_H
 #define STATICCONNECTION_HOM_W_H
 
-#include "connection.h"
+// Includes from nestkernel:
 #include "common_properties_hom_w.h"
+#include "connection.h"
 
 namespace nest
 {

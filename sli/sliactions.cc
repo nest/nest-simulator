@@ -23,15 +23,18 @@
 /*
     Actions associated with SLI types.
 */
+
 #include "sliactions.h"
-#include "interpret.h"
-#include "namedatum.h"
+
+// Includes from sli:
 #include "arraydatum.h"
-#include "functiondatum.h"
 #include "callbackdatum.h"
-#include "integerdatum.h"
 #include "dictstack.h"
+#include "functiondatum.h"
+#include "integerdatum.h"
+#include "interpret.h"
 #include "iostreamdatum.h"
+#include "namedatum.h"
 #include "triedatum.h"
 
 #define SLIDEBUG 1

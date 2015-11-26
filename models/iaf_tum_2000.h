@@ -24,19 +24,16 @@
 #ifndef IAF_TUM_2000_H
 #define IAF_TUM_2000_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
-
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
 {
-
-class Network;
-
 /* BeginDocumentation
    Name: iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential PSCs.
 
@@ -102,9 +99,11 @@ class Network;
    t_spike      double - Point in time of last spike in ms.
 
    Remarks:
-   tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
-   degenerate case of the ODE describing the model [1]. For very similar values,
-   numerics will be unstable.
+   If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+   will numerically behave as if tau_m is equal to tau_syn_ex or
+   tau_syn_in, respectively, to avoid numerical instabilities.
+   For details, please see IAF_Neruons_Singularity.ipynb in
+   the NEST source code (docs/model_details).
 
    References:
    [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation in Recurrent

@@ -23,13 +23,18 @@
 #ifndef RECORDABLES_MAP_H
 #define RECORDABLES_MAP_H
 
-#include <map>
-#include <utility>
+// C++ includes:
 #include <cassert>
+#include <map>
 #include <string>
-#include "name.h"
-#include "nest.h"
+#include <utility>
+
+// Includes from nestkernel:
+#include "nest_types.h"
+
+// Includes from sli:
 #include "arraydatum.h"
+#include "name.h"
 
 namespace nest
 {

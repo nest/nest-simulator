@@ -23,19 +23,19 @@
 #ifndef SINUSOIDAL_POISSON_GENERATOR_H
 #define SINUSOIDAL_POISSON_GENERATOR_H
 
-#include "nest.h"
+// Includes from librandom:
+#include "poisson_randomdev.h"
+
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "stimulating_device.h"
-#include "poisson_randomdev.h"
-#include "connection.h"
 #include "universal_data_logger.h"
 
 namespace nest
 {
-
-class Network;
-
 /* BeginDocumentation
    Name: sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson spike trains.
 

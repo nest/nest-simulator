@@ -39,7 +39,8 @@ libtopologymodule_la_SOURCES= \
 	parameter.h \
 	parameter.cpp \
 	selector.h \
-	selector.cpp
+	selector.cpp \
+	topology.h topology.cpp
 
 nobase_pkgdata_DATA=\
 	sli/topology-interface.sli
@@ -83,7 +84,6 @@ install-data-hook:
 	mkdir -p $(DESTDIR)@PKGDOCDIR@/topology
 	rm -rf $(DESTDIR)@PKGDOCDIR@/topology/testsuite
 	cp -r @PKGSRCDIR@/$(subdir)/testsuite $(DESTDIR)@PKGDOCDIR@/topology
-	rm -rf `find $(DESTDIR)@PKGDOCDIR@/topology -name .svn`
 
 clean-local:
 	-rm -rf $(abs_builddir)/build

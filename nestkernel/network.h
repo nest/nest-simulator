@@ -57,6 +57,10 @@
 #include "music_event_handler.h"
 #endif
 
+// !!!!!!Depricated!!!!!!
+// Do not use anymore! Will be removed!
+#error Do not use network.h in any place in your nest code!
+
 /**
  * @file network.h
  * Declarations for class Network.

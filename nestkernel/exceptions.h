@@ -23,9 +23,12 @@
 #ifndef EXCEPTIONS_H
 #define EXCEPTIONS_H
 
-#include "sliexceptions.h"
+// Includes from nestkernel:
 #include "nest_time.h"
+
+// Includes from sli:
 #include "name.h"
+#include "sliexceptions.h"
 
 class SLIInterpreter;
 

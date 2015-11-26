@@ -20,17 +20,26 @@
  *
  */
 
-#include "exceptions.h"
 #include "iaf_neuron.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+#include "propagator_stability.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -126,11 +135,6 @@ nest::iaf_neuron::Parameters_::set( const DictionaryDatum& d )
   if ( Tau_ <= 0 || tau_syn_ <= 0 || TauR_ <= 0 )
     throw BadProperty( "All time constants must be strictly positive." );
 
-  if ( Tau_ == tau_syn_ )
-    throw BadProperty(
-      "Membrane and synapse time constant(s) must differ."
-      "See note in documentation." );
-
   return delta_EL;
 }
 
@@ -213,11 +217,13 @@ nest::iaf_neuron::calibrate()
   V_.P33_ = std::exp( -h / P_.Tau_ );
   V_.P21_ = h * V_.P11_;
 
-  // these depend on the above. Please do not change the order.
+  // this depends on the above. Please do not change the order.
   V_.P30_ = 1 / P_.C_ * ( 1 - V_.P33_ ) * P_.Tau_;
-  V_.P31_ = 1 / P_.C_ * ( ( V_.P11_ - V_.P33_ ) / ( -1 / P_.tau_syn_ - -1 / P_.Tau_ )
-                          - h * V_.P11_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_syn_ );
-  V_.P32_ = 1 / P_.C_ * ( V_.P33_ - V_.P11_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_syn_ );
+
+  // these are determined according to a numeric stability criterion
+  V_.P31_ = propagator_31( P_.tau_syn_, P_.Tau_, P_.C_, h );
+  V_.P32_ = propagator_32( P_.tau_syn_, P_.Tau_, P_.C_, h );
+
   V_.PSCInitialValue_ = 1.0 * numerics::e / P_.tau_syn_;
 
 
@@ -252,7 +258,7 @@ nest::iaf_neuron::calibrate()
 void
 nest::iaf_neuron::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -285,7 +291,7 @@ nest::iaf_neuron::update( Time const& origin, const long_t from, const long_t to
       // independent of the computation step size, see [2,3] for details.
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current
@@ -301,7 +307,7 @@ nest::iaf_neuron::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  B_.spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -314,7 +320,8 @@ nest::iaf_neuron::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

@@ -21,15 +21,18 @@
  */
 
 #include "device.h"
-#include "dictutils.h"
-#include "exceptions.h"
 
-#include <limits>
+// C++ includes:
 #include <climits>
+#include <limits>
 
-#include "node.h"
-#include "network.h"
+// Includes from nestkernel:
+#include "exceptions.h"
 #include "nest_names.h"
+#include "node.h"
+
+// Includes from sli:
+#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters

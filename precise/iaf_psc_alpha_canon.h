@@ -23,18 +23,22 @@
 #ifndef IAF_PSC_ALPHA_CANON_H
 #define IAF_PSC_ALPHA_CANON_H
 
+// C++ includes:
+#include <vector>
+
+// Generated includes:
 #include "config.h"
 
-#include "nest.h"
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "ring_buffer.h"
-#include "slice_ring_buffer.h"
-#include "connection.h"
-
 #include "universal_data_logger.h"
 
-#include <vector>
+// Includes from precise:
+#include "slice_ring_buffer.h"
 
 /*BeginDocumentation
 Name: iaf_psc_alpha_canon - Leaky integrate-and-fire neuron
@@ -98,9 +102,11 @@ The following parameters can be set in the status dictionary.
                         0-none, 1-linear, 2-quadratic, 3-cubic
 
 Remarks:
-  tau_m != tau_syn is required by the current implementation to avoid a
-  degenerate case of the ODE describing the model [1]. For very similar values,
-  numerics will be unstable.
+If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+will numerically behave as if tau_m is equal to tau_syn_ex or
+tau_syn_in, respectively, to avoid numerical instabilities.
+For details, please see IAF_Neruons_Singularity.ipynb in
+the NEST source code (docs/model_details).
 
 References:
 [1] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact Subthreshold
@@ -134,9 +140,6 @@ namespace nest
  */
 class iaf_psc_alpha_canon : public Node
 {
-
-  class Network;
-
 public:
   /** Basic constructor.
       This constructor should only be used by GenericModel to create

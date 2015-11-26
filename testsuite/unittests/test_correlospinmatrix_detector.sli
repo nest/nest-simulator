@@ -1,0 +1,108 @@
+/*
+ *  test_correlospinmatrix_detector.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* simple example of usage for the
+   tests the device correlospinmatrix detector
+*/
+
+
+
+
+(unittest) run
+/unittest using
+
+
+ResetKernel
+
+0.1 /h Set
+
+0 << 
+      /local_num_threads 1 
+      /resolution h
+  >> SetStatus
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%
+% Expected output
+% 
+% The output send to std::cout is a superposition of the output of  
+% the voltmeter and the spike detector. Both, voltmeter and spike 
+% detector are connected to the same neuron. 
+%
+% 3-tensor of correlation functions
+/expected_corr
+[
+  [
+   [ 0 0 0 0 0 10 20 30 40 50 60 50 40 30 20 10 0 0 0 0 0 ]
+   [ 0 10 20 30 40 50 50 40 30 20 10 0 0 0 0 0 0 0 0 0 0 ]
+   [ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
+  ]
+  [
+   [ 0 0 0 0 0 0 0 0 0 0 10 20 30 40 50 50 40 30 20 10 0 ]
+   [ 0 0 0 0 0 0 10 20 30 40 50 40 30 20 10 0 0 0 0 0 0 ]
+   [ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
+  ]
+  [
+   [ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
+   [ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
+   [ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
+  ]
+]
+def
+
+
+modeldict begin
+
+/sg1 /spike_generator Create def
+/sg2 /spike_generator Create def
+/sg3 /spike_generator Create def
+
+/csd /correlospinmatrix_detector Create def
+/sd /spike_detector << /to_screen true >> Create def
+
+csd << /N_channels 3 /tau_max 10. /delta_tau 1.0 >> SetStatus
+
+sg1 << /spike_times [10. 10. 16.] >> SetStatus  % binary pulse starting at 10. ending at 16.
+sg2 << /spike_times [15. 15. 20.] >> SetStatus  % binary pulse starting at 15. ending at 20.
+
+sg1 GetStatus info
+
+sg1 sd << /receptor_type 0 >> Connect
+
+% one final event needed so that last down transition will be detected
+sg3 << /spike_times [25.] >> SetStatus
+
+
+sg1 csd << /receptor_type 0 >> Connect
+sg2 csd << /receptor_type 1 >> Connect
+sg3 csd << /receptor_type 2 >> Connect
+
+100. Simulate
+
+csd GetStatus /count_covariance get cva  % 3-tensor of recorded raw correlation functions
+expected_corr                            % expected result
+eq
+assert_or_die
+
+modeldict end

@@ -23,11 +23,13 @@
 #ifndef SPARSE_NODE_ARRAY_H
 #define SPARSE_NODE_ARRAY_H
 
+// C++ includes:
 #include <cassert>
-#include <vector>
 #include <map>
+#include <vector>
 
-#include "nest.h"
+// Includes from nestkernel:
+#include "nest_types.h"
 
 namespace nest
 {

@@ -25,6 +25,10 @@
 
 #include "config.h"
 
+// !!!!!!Depricated!!!!!!
+// Do not use anymore! Will be removed!
+#error Do not use communicator_impl.h in any place in your nest code!
+
 /* To avoid problems on BlueGene/L, mpi.h MUST be the
    first included file after config.h.
  */

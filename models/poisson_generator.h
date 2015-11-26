@@ -28,12 +28,15 @@
 /*                  Implementation: hep */
 /****************************************/
 
-#include "nest.h"
+// Includes from librandom:
+#include "poisson_randomdev.h"
+
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "stimulating_device.h"
-#include "connection.h"
-#include "poisson_randomdev.h"
 
 namespace nest
 {
@@ -85,7 +88,7 @@ Remarks:
    guarantee reproducibility of the simulations across varying machine
    numbers.
 
-   Therefore, first, as network()->send sends spikes to all the
+   Therefore, first, as Network::get_network().send sends spikes to all the
    recipients, differentiation has to happen in the hook, second, the
    hook can use the RNG from the thread where the recipient neuron sits,
    which explains the current design of the generator. For details,

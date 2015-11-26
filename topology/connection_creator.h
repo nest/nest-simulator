@@ -23,15 +23,20 @@
 #ifndef CONNECTION_CREATOR_H
 #define CONNECTION_CREATOR_H
 
+// C++ includes:
 #include <vector>
-#include "network.h"
-#include "position.h"
-#include "topologymodule.h"
-#include "topology_names.h"
-#include "vose.h"
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
+// Includes from topology:
 #include "mask.h"
 #include "parameter.h"
+#include "position.h"
 #include "selector.h"
+#include "topology_names.h"
+#include "topologymodule.h"
+#include "vose.h"
 
 namespace nest
 {
@@ -173,8 +178,6 @@ private:
   index synapse_model_;
   lockPTR< Parameter > weight_;
   lockPTR< Parameter > delay_;
-
-  Network& net_;
 };
 
 inline void
@@ -186,12 +189,13 @@ ConnectionCreator::connect_( index s,
   index syn )
 {
   // check whether the target is on this process
-  if ( net_.is_local_gid( target->get_gid() ) )
+  if ( kernel().node_manager.is_local_gid( target->get_gid() ) )
   {
     // check whether the target is on our thread
-    thread tid = net_.get_thread_id();
+    thread tid = kernel().vp_manager.get_thread_id();
     if ( tid == target_thread )
-      net_.connect( s, target, target_thread, syn, d, w );
+      kernel().connection_builder_manager.connect(
+        s, target, target_thread, syn, d, w ); // TODO implement in terms of nest-api
   }
 }
 

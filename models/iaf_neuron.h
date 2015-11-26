@@ -23,17 +23,16 @@
 #ifndef IAF_NEURON_H
 #define IAF_NEURON_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
 {
-class Network;
-
 /* BeginDocumentation
 Name: iaf_neuron - Leaky integrate-and-fire neuron model.
 
@@ -97,9 +96,11 @@ tau_syn    double - Rise time of the excitatory synaptic alpha function in ms.
 I_e        double - Constant external input current in pA.
 
 Remarks:
-tau_m != tau_syn is required by the current implementation to avoid a
-degenerate case of the ODE describing the model [1]. For very similar values,
-numerics will be unstable.
+If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+will numerically behave as if tau_m is equal to tau_syn_ex or
+tau_syn_in, respectively, to avoid numerical instabilities.
+For details, please see IAF_Neruons_Singularity.ipynb in
+the NEST source code (docs/model_details).
 
 References:
 [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear

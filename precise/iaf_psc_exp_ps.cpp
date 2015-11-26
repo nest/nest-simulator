@@ -22,16 +22,23 @@
 
 #include "iaf_psc_exp_ps.h"
 
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+#include "propagator_stability.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -155,11 +162,6 @@ nest::iaf_psc_exp_ps::Parameters_::set( const DictionaryDatum& d )
   if ( tau_m_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
     throw BadProperty( "All time constants must be strictly positive." );
 
-  if ( tau_m_ == tau_ex_ || tau_m_ == tau_in_ )
-    throw BadProperty(
-      "Membrane and synapse time constant(s) must differ."
-      "See note in documentation." );
-
   return delta_EL;
 }
 
@@ -234,10 +236,10 @@ nest::iaf_psc_exp_ps::calibrate()
   V_.expm1_tau_ex_ = numerics::expm1( -V_.h_ms_ / P_.tau_ex_ );
   V_.expm1_tau_in_ = numerics::expm1( -V_.h_ms_ / P_.tau_in_ );
   V_.P20_ = -P_.tau_m_ / P_.c_m_ * V_.expm1_tau_m_;
-  V_.P21_ex_ = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ ) / P_.c_m_
-    * ( V_.expm1_tau_ex_ - V_.expm1_tau_m_ );
-  V_.P21_in_ = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ ) / P_.c_m_
-    * ( V_.expm1_tau_in_ - V_.expm1_tau_m_ );
+
+  // these are determined according to a numeric stability criterion
+  V_.P21_ex_ = propagator_32( P_.tau_ex_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
+  V_.P21_in_ = propagator_32( P_.tau_in_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
 
   V_.refractory_steps_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   assert( V_.refractory_steps_ >= 1 ); // since t_ref_ >= sim step size, this can only fail in error
@@ -251,7 +253,7 @@ void
 nest::iaf_psc_exp_ps::update( const Time& origin, const long_t from, const long_t to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < Scheduler::get_min_delay() );
+  assert( static_cast< delay >( from ) < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
@@ -388,7 +390,8 @@ nest::iaf_psc_exp_ps::handle( SpikeEvent& e )
   */
   const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
 
-  B_.events_.add_spike( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.events_.add_spike(
+    e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -403,7 +406,8 @@ nest::iaf_psc_exp_ps::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void
@@ -465,7 +469,7 @@ nest::iaf_psc_exp_ps::emit_spike_( const Time& origin,
   SpikeEvent se;
 
   se.set_offset( spike_offset );
-  network()->send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 }
 
 void
@@ -487,7 +491,7 @@ nest::iaf_psc_exp_ps::emit_instant_spike_( const Time& origin,
   SpikeEvent se;
 
   se.set_offset( S_.last_spike_offset_ );
-  network()->send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 }
 
 nest::double_t

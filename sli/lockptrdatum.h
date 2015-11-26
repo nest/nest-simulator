@@ -23,8 +23,11 @@
 #ifndef LOCKPTRDATUM_H
 #define LOCKPTRDATUM_H
 
-#include "datum.h"
+// Includes from libnestutil:
 #include "lockptr.h"
+
+// Includes from sli:
+#include "datum.h"
 
 // prefixed all references to members of lockPTR, TypedDatum with this->,
 // since HP's aCC otherwise complains about them not being declared

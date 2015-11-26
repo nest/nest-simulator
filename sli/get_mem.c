@@ -20,8 +20,11 @@
  *
  */
 
+// Generated includes:
 #include "config.h"
-#include "assert.h"
+
+// C includes:
+#include <assert.h>
 
 #if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
 

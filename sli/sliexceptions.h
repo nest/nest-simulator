@@ -23,10 +23,13 @@
 #ifndef SLIEXCEPTIONS_H
 #define SLIEXCEPTIONS_H
 
+// C++ includes:
 #include <iostream>
 #include <string>
-#include "name.h"
 #include <vector>
+
+// Includes from sli:
+#include "name.h"
 
 class SLIInterpreter;
 

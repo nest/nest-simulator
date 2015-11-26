@@ -1,5 +1,5 @@
 /*
- *  modelrangemanager.h
+ *  propagator_stability.h
  *
  *  This file is part of NEST.
  *
@@ -20,36 +20,10 @@
  *
  */
 
-#ifndef MODELRANGEMANAGER_H
-#define MODELRANGEMANAGER_H
+#ifndef PROPAGATOR_STABILITY_H
+#define PROPAGATOR_STABILITY_H
 
-#include <vector>
-#include "nest.h"
-#include "modelrange.h"
+double propagator_31( double tau_syn, double tau, double C, double h );
+double propagator_32( double tau_syn, double tau, double C, double h );
 
-namespace nest
-{
-
-class Modelrangemanager
-{
-public:
-  Modelrangemanager();
-  void add_range( index model, index first_gid, index last_gid );
-  bool
-  is_in_range( index gid ) const
-  {
-    return ( ( gid <= last_gid_ ) && ( gid >= first_gid_ ) );
-  }
-  long_t get_model_id( index gid );
-  bool model_in_use( index i ) const;
-  void clear();
-  void print() const;
-  const modelrange& get_range( index gid ) const;
-
-private:
-  std::vector< modelrange > modelranges_;
-  index first_gid_;
-  index last_gid_;
-};
-}
 #endif

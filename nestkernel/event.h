@@ -23,12 +23,18 @@
 #ifndef EVENT_H
 #define EVENT_H
 
+// C++ includes:
 #include <cassert>
 
-#include "nest.h"
-#include "nest_time.h"
+// Includes from libnestutil:
 #include "lockptr.h"
+
+// Includes from nestkernel:
 #include "exceptions.h"
+#include "nest_time.h"
+#include "nest_types.h"
+
+// Includes from sli:
 #include "name.h"
 
 namespace nest
@@ -149,8 +155,6 @@ public:
    * expected to arrive at the receiver.
    */
   delay get_delay() const;
-
-  delay get_max_delay() const;
 
   /**
    * Relative spike delivery time in steps.

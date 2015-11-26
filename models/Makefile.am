@@ -25,6 +25,7 @@ libmodelsmodule_la_SOURCES= \
 		cont_delay_connection.h cont_delay_connection_impl.h\
 		correlation_detector.h correlation_detector.cpp\
 		correlomatrix_detector.h correlomatrix_detector.cpp\
+		correlospinmatrix_detector.h correlospinmatrix_detector.cpp\
 		dc_generator.h dc_generator.cpp\
 		gamma_sup_generator.h gamma_sup_generator.cpp\
 		ginzburg_neuron.h ginzburg_neuron.cpp\
@@ -63,7 +64,6 @@ libmodelsmodule_la_SOURCES= \
 		ppd_sup_generator.h ppd_sup_generator.cpp\
 		pulsepacket_generator.h pulsepacket_generator.cpp\
 		quantal_stp_connection.h quantal_stp_connection_impl.h\
-		sli_neuron.h sli_neuron.cpp\
 		sinusoidal_poisson_generator.h sinusoidal_poisson_generator.cpp \
 		sinusoidal_gamma_generator.h sinusoidal_gamma_generator.cpp \
 		spike_detector.h spike_detector.cpp\

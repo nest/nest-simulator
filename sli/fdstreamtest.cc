@@ -32,9 +32,11 @@
   Hans Ekkehard Plesser, 2003-03-21
 */
 
+// C++ includes:
 #include <iostream>
 #include <string>
 
+// Includes from sli:
 #include "fdstream.h"
 
 int

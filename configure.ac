@@ -1,5 +1,5 @@
 AC_PREREQ(2.63)
-AC_INIT([nest], [2.6.1], [nest_user@nest-initiative.org])
+AC_INIT([nest], [git], [nest_user@nest-initiative.org])
 
 # Prevent automatic rebuilding of Makefile.ins and configure if their
 # content or timestamp changes. Not doing this lead to failing builds
@@ -12,8 +12,8 @@ AM_MAINTAINER_MODE([disable])
 # The patchlevel is updated automatically by the script
 # releasetools/buildnest
 SLI_MAJOR=2
-SLI_MINOR=6
-SLI_PATCHLEVEL=1
+SLI_MINOR=8
+SLI_PATCHLEVEL=0-git
 
 SLI_PRGNAME="nest-$SLI_MAJOR.$SLI_MINOR.$SLI_PATCHLEVEL"
 SLI_VERSION=$SLI_MAJOR.$SLI_MINOR.$SLI_PATCHLEVEL
@@ -819,7 +819,7 @@ for mod in $SLI_MODULES; do
   Mod=`grep SLIModule ${srcdir}/${modheader} | sed -n 's/class *\(.*\) *:.*/\1/p' | tr -d ' '`
   SLI_CHECK_SOURCE_FILE([$srcdir/$mod/Makefile.am],
     [MODULE_INCLUDES="${MODULE_INCLUDES}#include \"../${modheader}\"\n"
-     ADD_STATIC_MODULES="${ADD_STATIC_MODULES}  engine.addmodule(new nest::${Mod}(net));\n"],
+     ADD_STATIC_MODULES="${ADD_STATIC_MODULES}  engine.addmodule(new nest::${Mod}());\n"],
     [printf ""])
 
 done
@@ -860,8 +860,8 @@ AC_CONFIG_COMMANDS([nest/static_modules.h],
 	           [printf "$guard$module_includes$standard_includes$function_signature$module_loaders$end" > nest/static_modules.h],
 		   [guard="#ifndef STATIC_MODULES_H\n#define STATIC_MODULES_H\n\n"
 		    module_includes='$MODULE_INCLUDES\n'
-		    standard_includes="#include \"interpret.h\"\n#include \"network.h\"\n\n"
-		    function_signature="void add_static_modules(SLIInterpreter& engine, nest::Network& net)\n{\n"
+		    standard_includes="#include \"interpret.h\"\n\n"
+		    function_signature="void add_static_modules(SLIInterpreter& engine)\n{\n"
 		    module_loaders='$ADD_STATIC_MODULES'
 		    end="}\n\n#endif\n"])
 
@@ -1204,8 +1204,8 @@ if test $SLI_distributed = set; then
   echo
 fi
 
-echo "If you experience problems with the installation or the use of"
-echo "NEST, please see http://nest-initiative.org/index.php/FAQ, or"
-echo "go to http://nest-initiative.org/index.php/Community to find out"
-echo "how to join the user mailing list."
+echo "If you experience problems with the installation or the use of NEST,"
+echo "please see http://www.nest-simulator.org/frequently_asked_questions"
+echo "or go to http://www.nest-simulator.org/community to find out how to"
+echo "join the user mailing list."
 echo

@@ -23,14 +23,18 @@
 #ifndef SLICE_RING_BUFFER_H
 #define SLICE_RING_BUFFER_H
 
-#include "config.h"
-
+// C++ includes:
 #include <algorithm>
+#include <cassert>
 #include <functional>
 #include <vector>
 
-#include "nest.h"
-#include "scheduler.h"
+// Generated includes:
+#include "config.h"
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
+#include "nest_types.h"
 
 namespace nest
 {
@@ -153,7 +157,7 @@ SliceRingBuffer::add_spike( const delay rel_delivery,
   const double ps_offset,
   const double weight )
 {
-  const delay idx = Scheduler::get_slice_modulo( rel_delivery );
+  const delay idx = kernel().event_delivery_manager.get_slice_modulo( rel_delivery );
   assert( ( size_t ) idx < queue_.size() );
   assert( ps_offset >= 0 );
 

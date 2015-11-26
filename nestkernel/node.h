@@ -22,18 +22,24 @@
 
 #ifndef NODE_H
 #define NODE_H
+
+// C++ includes:
 #include <bitset>
-#include <string>
-#include <sstream>
-#include <vector>
 #include <deque>
+#include <sstream>
+#include <string>
 #include <utility>
-#include "nest.h"
-#include "nest_time.h"
-#include "nest_names.h"
-#include "dictdatum.h"
-#include "histentry.h"
+#include <vector>
+
+// Includes from nestkernel:
 #include "event.h"
+#include "histentry.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 /** @file node.h
  * Declarations for base class Node
@@ -41,14 +47,9 @@
 
 namespace nest
 {
-
-class Scheduler;
 class Model;
-
 class Subnet;
-class Network;
 class Archiving_Node;
-class histentry;
 
 
 /**
@@ -96,12 +97,12 @@ class histentry;
 
 class Node
 {
-  friend class Network;
-  friend class Scheduler;
+  friend class NodeManager;
   friend class Subnet;
   friend class proxynode;
   friend class Synapse;
   friend class Model;
+  friend class SimulationManager;
 
   Node& operator=( const Node& ); //!< not implemented
 
@@ -155,6 +156,8 @@ public:
    * not have proxies on remote threads. This is used to
    * discriminate between different types of nodes, when adding new
    * nodes to the network.
+   *
+   * TODO: Is this true for *any* model at all? Maybe MUSIC related?
    */
   virtual bool one_node_per_process() const;
 
@@ -237,12 +240,6 @@ public:
   bool is_frozen() const;
 
   /**
-   * Return pointer to network driver class.
-   * @todo This member should return a reference, not a pointer.
-   */
-  static Network* network();
-
-  /**
    * Returns true if the node is allocated in the local process.
    */
   bool is_local() const;
@@ -287,7 +284,7 @@ public:
   /**
    * Finalize node.
    * Override this function if a node needs to "wrap up" things after a simulation,
-   * i.e., before Scheduler::resume() returns. Typical use-cases are devices
+   * i.e., before Network::get_network().resume() returns. Typical use-cases are devices
    * that need to flush buffers or disconnect from external files or pipes.
    */
   virtual void
@@ -510,7 +507,7 @@ public:
   /**
    * Store the number of the thread to which the node is assigned.
    * The assignment is done after node creation by the Network class.
-   * @see: Network::add_node().
+   * @see: NodeManager::add_node().
    */
   void set_thread( thread );
 
@@ -521,7 +518,7 @@ public:
 
   /**
    * Store the number of the virtual process to which the node is assigned.
-   * This is assigned to the node in network::add_node().
+   * This is assigned to the node in NodeManager::add_node().
    */
   void set_vp( thread );
 
@@ -531,7 +528,7 @@ public:
   thread get_vp() const;
 
   /** Set the model id.
-   * This method is called by Network::add_node() when a node is created.
+   * This method is called by NodeManager::add_node() when a node is created.
    * @see get_model_id()
    */
   void set_model_id( int );
@@ -701,9 +698,6 @@ private:
   thread vp_;                //!< virtual process node is assigned to
   bool frozen_;              //!< node shall not be updated if true
   bool buffers_initialized_; //!< Buffers have been initialized
-
-protected:
-  static Network* net_; //!< Pointer to global network driver.
 };
 
 inline bool
@@ -812,12 +806,6 @@ inline void
 Node::set_parent_( Subnet* c )
 {
   parent_ = c;
-}
-
-inline Network*
-Node::network()
-{
-  return net_;
 }
 
 inline void

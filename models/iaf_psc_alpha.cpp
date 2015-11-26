@@ -20,17 +20,25 @@
  *
  */
 
-#include "exceptions.h"
 #include "iaf_psc_alpha.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+#include "propagator_stability.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_;
 
@@ -140,10 +148,6 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
   if ( tau_ex_ <= 0.0 || tau_in_ <= 0.0 )
     throw BadProperty( "All synaptic time constants must be > 0." );
 
-  if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
-    throw BadProperty(
-      "Membrane and synapse time constant(s) must differ. See note in documentation." );
-
   if ( TauR_ < 0.0 )
     throw BadProperty( "The refractory time t_ref can't be negative." );
 
@@ -240,16 +244,14 @@ iaf_psc_alpha::calibrate()
 
   // these depend on the above. Please do not change the order.
   V_.P30_ = -P_.Tau_ / P_.C_ * numerics::expm1( -h / P_.Tau_ );
-
   V_.P21_ex_ = h * V_.P11_ex_;
-  V_.P31_ex_ = 1 / P_.C_ * ( ( V_.P11_ex_ - V_.P33_ ) / ( -1 / P_.tau_ex_ - -1 / P_.Tau_ )
-                             - h * V_.P11_ex_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_ex_ );
-  V_.P32_ex_ = 1 / P_.C_ * ( V_.P33_ - V_.P11_ex_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_ex_ );
-
   V_.P21_in_ = h * V_.P11_in_;
-  V_.P31_in_ = 1 / P_.C_ * ( ( V_.P11_in_ - V_.P33_ ) / ( -1 / P_.tau_in_ - -1 / P_.Tau_ )
-                             - h * V_.P11_in_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_in_ );
-  V_.P32_in_ = 1 / P_.C_ * ( V_.P33_ - V_.P11_in_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_in_ );
+
+  // these are determined according to a numeric stability criterion
+  V_.P31_ex_ = propagator_31( P_.tau_ex_, P_.Tau_, P_.C_, h );
+  V_.P32_ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
+  V_.P31_in_ = propagator_31( P_.tau_in_, P_.Tau_, P_.C_, h );
+  V_.P32_in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, h );
 
   V_.EPSCInitialValue_ = 1.0 * numerics::e / P_.tau_ex_;
   V_.IPSCInitialValue_ = 1.0 * numerics::e / P_.tau_in_;
@@ -285,7 +287,7 @@ iaf_psc_alpha::calibrate()
 void
 iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -331,7 +333,7 @@ iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current
@@ -350,9 +352,11 @@ iaf_psc_alpha::handle( SpikeEvent& e )
   const double_t s = e.get_weight() * e.get_multiplicity();
 
   if ( e.get_weight() > 0.0 )
-    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), s );
+    B_.ex_spikes_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
   else
-    B_.in_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), s );
+    B_.in_spikes_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
 }
 
 void
@@ -363,7 +367,8 @@ iaf_psc_alpha::handle( CurrentEvent& e )
   const double_t I = e.get_current();
   const double_t w = e.get_weight();
 
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * I );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
 }
 
 void

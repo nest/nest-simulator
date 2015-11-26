@@ -23,13 +23,20 @@
 #ifndef CLIPPED_RANDOMDEV_H
 #define CLIPPED_RANDOMDEV_H
 
+// C++ includes:
 #include <cmath>
 #include <limits>
-#include "randomgen.h"
+
+// Generated includes:
+#include "config.h"
+
+// Includes from librandom:
 #include "randomdev.h"
+#include "randomgen.h"
+
+// Includes from sli:
 #include "dictutils.h"
 #include "sliexceptions.h"
-#include "config.h"
 
 namespace librandom
 {

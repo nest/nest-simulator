@@ -23,21 +23,23 @@
 #ifndef BINARY_NEURON_H
 #define BINARY_NEURON_H
 
-#include "nest.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
-#include "universal_data_logger.h"
-#include "recordables_map.h"
-#include "exp_randomdev.h"
+// C++ includes:
 #include <cmath>
+
+// Includes from librandom:
+#include "exp_randomdev.h"
+
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
 namespace nest
 {
-
-class Network;
-
 /**
  * Binary stochastic neuron with linear or sigmoidal gain function.
  *

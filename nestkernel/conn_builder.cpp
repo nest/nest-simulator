@@ -318,7 +318,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         }
         catch ( KernelException& e )
         {
-          if( it->first == names::receptor_type )
+          if ( it->first == names::receptor_type )
           {
             throw BadProperty( "Receptor type must be of type integer." );
           }
@@ -330,7 +330,6 @@ nest::ConnBuilder::single_connect_( index sgid,
           {
             throw BadProperty( "Synapse label must be of type integer." );
           }
-          
         }
       }
       else

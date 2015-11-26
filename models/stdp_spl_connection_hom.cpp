@@ -91,47 +91,12 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
     throw BadProperty( "lambda must be positive." );
   }
 
-//  dt_ = Time::get_resolution().get_ms() * 0.001;
-//  e_dt_alpha_ = std::exp( -dt_ * alpha_ );
-//  e_dt_alpha_1m_ = -numerics::expm1( -dt_ * alpha_ );
+  pow_term_1_ = tau_ * tau_;
+  pow_term_2_ = tau_ - 2*tau_slow_;
+  pow_term_2_ *= pow_term_2_;
+  pow_term_4_ = tau_ * tau_ * tau_;
+  pow_term_6_ = tau_slow_ * tau_slow_;
   
-//    if ExactIntegration:
-//        dec_f = np.exp(-sim_dt/tau)
-//        inp_f = 1.-np.exp(-sim_dt/tau)
-//        dec_f_slow = np.exp(-sim_dt/tau_slow)
-//        inp_f_slow = 1.-np.exp(-sim_dt/tau_slow)
-  
-//  e_dt_tau_ = std::exp( -dt_ / tau_ );
-//  e_dt_tau_slow_ = std::exp( -dt_ / tau_slow_ );
-//  e_dt_tau_1m_ = -numerics::expm1( -dt_ / tau_ );
-//  e_dt_tau_slow_1m_ = -numerics::expm1( -dt_ / tau_slow_ );
-  
-//    else:  # Forward Euler integration
-//        dec_f = 1.-sim_dt/tau
-//        inp_f = sim_dt/tau    
-//        dec_f_slow = 1.-sim_dt/tau_slow
-//        inp_f_slow = sim_dt/tau_slow
-
-//  e_dt_tau_ = 1. - dt_ / tau_ ;
-//  e_dt_tau_slow_ = 1. - dt_ / tau_slow_ ;
-//  e_dt_tau_1m_ = dt_ / tau_ ;
-//  e_dt_tau_slow_1m_ = dt_ / tau_slow_ ;
-  
-  pow_term_1_ = std::pow(tau_,2);
-  pow_term_2_ = std::pow(tau_ - 2*tau_slow_,2);
-  pow_term_3_ = std::pow(tau_,2);
-  pow_term_4_ = std::pow(tau_,3);
-  pow_term_5_ = std::pow(tau_ - 2*tau_slow_,2);
-  pow_term_6_ = std::pow(tau_slow_,2);
-  
-  
-  
-// std::cout << "e_dt_alpha_: " << e_dt_alpha_ << "\n";
-// std::cout << "e_dt_tau_: " << e_dt_tau_ << "\n";
-// std::cout << "e_dt_tau_slow_: " << e_dt_tau_slow_ << "\n";
-// std::cout << "e_dt_alpha_1m_: " << e_dt_alpha_1m_ << "\n";  
-// std::cout << "e_dt_tau_1m_: " << e_dt_tau_1m_ << "\n";
-// std::cout << "e_dt_tau_slow_1m_: " << e_dt_tau_slow_1m_ << "\n";
 }
 
 } // of namespace nest

@@ -219,7 +219,7 @@ private:
     // precompute exponentials
     double_t exp_term_8_ =  std::exp( -t_delta_/cp.tau_ );
     double_t exp_term_9_ =  std::exp( -t_delta_/cp.tau_slow_ );
-    double_t exp_term_10_ = std::pow( exp_term_8_, 2 ) / exp_term_9_; // std::exp( t_delta_*(-2/cp.tau_ + 1/cp.tau_slow_) )
+    double_t exp_term_10_ = exp_term_8_ * exp_term_8_ / exp_term_9_; // std::exp( t_delta_*(-2/cp.tau_ + 1/cp.tau_slow_) )
   
     // propagate all variables
     for ( long_t i = 0; i < n_conns_; i++ )
@@ -261,7 +261,7 @@ private:
           {
              // in this case we can reuse the precomputed terms from above
             exp_term_2_ = exp_term_9_;
-            exp_term_6_ = std::pow( exp_term_8_, 2 );
+            exp_term_6_ = exp_term_8_ * exp_term_8_;
           }
           else
           { 
@@ -269,11 +269,19 @@ private:
             exp_term_2_ = std::exp( -t_i_ / cp.tau_slow_ );  
             exp_term_6_ = std::exp( -t_i_* 2 / cp.tau_ );
           }
-          double_t exp_term_1_ = exp_term_2_ * exp_term_6_;       // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
-          double_t exp_term_3_ = std::pow( exp_term_2_, 2 );      // std::exp( -t_i_*( 2/cp.tau_slow_) ); 
-          double_t exp_term_4_ = std::pow( exp_term_2_, 4 );      // std::exp( -t_i_*( 4/cp.tau_slow_) ); 
-          double_t exp_term_5_ = std::pow( exp_term_6_, 2 );      // std::exp( -t_i_*( 4/cp.tau_ ));
+          double_t exp_term_1_ = exp_term_2_ * exp_term_6_;                                 // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
+          double_t exp_term_3_ = exp_term_2_ * exp_term_2_;                                 // std::exp( -t_i_*( 2/cp.tau_slow_) ); 
+          double_t exp_term_4_ = exp_term_2_ * exp_term_2_ * exp_term_2_ * exp_term_2_;     // std::exp( -t_i_*( 4/cp.tau_slow_) ); 
+          double_t exp_term_5_ = exp_term_6_ * exp_term_6_;                                 // std::exp( -t_i_*( 4/cp.tau_ ));
           double_t exp_term_7_ = std::exp( -t_i_* cp.alpha_ );
+          
+          // precompute power terms without using std::pow
+          double_t pow_term_1_ = -(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_;
+          pow_term_1_ *= pow_term_1_;
+          double_t pow_term_2_ = R_post_ * R_post_ * R_post_ * R_post_;  //std::pow(R_post_,4)
+          double_t pow_term_3_ = r_jk_[ i ] * r_jk_[ i ];                //std::pow(r_jk_[ i ],2)
+          double_t pow_term_4_ = r_post_ * r_post_;                      //std::pow(r_post_,2)
+          double_t pow_term_5_ = c_jk_[ i ] * c_jk_[ i ];                //std::pow(c_jk_[ i ],2)
           
           w_jk_[ i ] = (2*cp.A4_corr_*exp_term_1_*r_jk_[ i ]*r_post_*cp.pow_term_1_*(-4 + cp.alpha_*cp.tau_)*
               (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_)*
@@ -282,30 +290,30 @@ private:
               (-(r_jk_[ i ]*r_post_*cp.tau_) + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))*(cp.tau_ - 2*cp.tau_slow_)*cp.tau_slow_*
               (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
              cp.A4_corr_*exp_term_3_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*
-              std::pow(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_,2)*(-4 + cp.alpha_*cp.tau_slow_)*
+              pow_term_1_*(-4 + cp.alpha_*cp.tau_slow_)*
               (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
-             cp.A4_post_*exp_term_4_*std::pow(R_post_,4)*(-4 + cp.alpha_*cp.tau_)*
+             cp.A4_post_*exp_term_4_* pow_term_2_ *(-4 + cp.alpha_*cp.tau_)*
               (-2 + cp.alpha_*cp.tau_)*cp.pow_term_2_*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
               (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
-             cp.A4_corr_*exp_term_5_*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*
+             cp.A4_corr_*exp_term_5_*pow_term_3_*pow_term_4_*
               cp.pow_term_4_*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
               (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
-             cp.A2_corr_*exp_term_6_*r_jk_[ i ]*r_post_*cp.pow_term_3_*(-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
+             cp.A2_corr_*exp_term_6_*r_jk_[ i ]*r_post_*cp.pow_term_1_*(-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
               (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
               (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
-             exp_term_7_*cp.pow_term_5_*
+             exp_term_7_*cp.pow_term_2_*
               (w_jk_[ i ]*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
                  (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
                 cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
                  (r_jk_[ i ]*r_post_*cp.tau_ + c_jk_[ i ]*(2 - cp.alpha_*cp.tau_)*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_))\
                  + (-2 + cp.alpha_*cp.tau_)*(-1 + cp.alpha_*cp.tau_slow_)*
-                 (cp.A4_post_*std::pow(R_post_,4)*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*
+                 (cp.A4_post_*pow_term_2_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*
                     (-cp.tau_ - 2*cp.tau_slow_ + cp.alpha_*cp.tau_*cp.tau_slow_) + 
                    cp.A4_corr_*(-4 + cp.alpha_*cp.tau_slow_)*
-                    (2*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*cp.pow_term_1_ - 
+                    (2*pow_term_3_*pow_term_4_*cp.pow_term_1_ - 
                       c_jk_[ i ]*(c_jk_[ i ] + 2*r_jk_[ i ]*r_post_)*cp.tau_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_ + 
-                      std::pow(c_jk_[ i ],2)*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.pow_term_6_))))/
-               ((-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.pow_term_5_*
+                      pow_term_5_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.pow_term_6_))))/
+               ((-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.pow_term_2_*
                  (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
                  (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)));
 

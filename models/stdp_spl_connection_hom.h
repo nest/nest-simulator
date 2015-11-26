@@ -291,25 +291,36 @@ private:
         double_t t_i_ = Time( Time::step(delta_i) ).get_ms() / 1000.;
       
         // use analytical solution
-      w_jk_[ i ] = (2*cp.A4_corr_*std::exp(t_i_*(cp.alpha_ - 1/cp.tau_slow_))*r_jk_[ i ]*r_post_*std::pow(cp.tau_,2)*(-4 + cp.alpha_*cp.tau_)*
+        
+      // compute expensive terms before
+      double_t exp_term_1_ = std::exp(t_i_*(cp.alpha_ - 1/cp.tau_slow_));             // pos. arg
+      double_t exp_term_2_ = std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 1/cp.tau_slow_)); // pos. arg
+      double_t exp_term_3_ = std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 2/cp.tau_slow_)); // pos. arg
+      double_t exp_term_4_ = std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 4/cp.tau_slow_)); // pos. arg
+      double_t exp_term_5_ = std::exp(t_i_*(cp.alpha_ - 2/cp.tau_));                  // neg. arg
+      double_t exp_term_6_ = std::exp(t_i_*cp.alpha_);                                // pos. arg
+      double_t exp_term_7_ = std::exp((2*t_i_)/cp.tau_);                              // pos. arg
+      double_t exp_term_8_ = std::exp(t_i_*(cp.alpha_ + 2/cp.tau_));                  // pos. arg
+        
+      w_jk_[ i ] = (2*cp.A4_corr_*exp_term_1_*r_jk_[ i ]*r_post_*std::pow(cp.tau_,2)*(-4 + cp.alpha_*cp.tau_)*
       (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_)*
       (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_) + 
-     cp.A2_corr_*std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 1/cp.tau_slow_))*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
+     cp.A2_corr_*exp_term_2_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
       (-(r_jk_[ i ]*r_post_*cp.tau_) + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))*(cp.tau_ - 2*cp.tau_slow_)*cp.tau_slow_*
       (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
-     cp.A4_corr_*std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 2/cp.tau_slow_))*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*
+     cp.A4_corr_*exp_term_3_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*
       std::pow(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_,2)*(-4 + cp.alpha_*cp.tau_slow_)*
       (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
-     cp.A4_post_*std::exp(t_i_*(cp.alpha_ + 2/cp.tau_ - 4/cp.tau_slow_))*std::pow(R_post_,4)*(-4 + cp.alpha_*cp.tau_)*
+     cp.A4_post_*exp_term_4_*std::pow(R_post_,4)*(-4 + cp.alpha_*cp.tau_)*
       (-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
       (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) - 
-     cp.A4_corr_*std::exp(t_i_*(cp.alpha_ - 2/cp.tau_))*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*
+     cp.A4_corr_*exp_term_5_*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*
       std::pow(cp.tau_,3)*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
       (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
-     cp.A2_corr_*std::exp(t_i_*cp.alpha_)*r_jk_[ i ]*r_post_*std::pow(cp.tau_,2)*(-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
+     cp.A2_corr_*exp_term_6_*r_jk_[ i ]*r_post_*std::pow(cp.tau_,2)*(-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
       (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
       (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
-     std::exp((2*t_i_)/cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*
+     exp_term_7_*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*
       (w_jk_[ i ]*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
          (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
         cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
@@ -321,7 +332,7 @@ private:
             (2*std::pow(r_jk_[ i ],2)*std::pow(r_post_,2)*std::pow(cp.tau_,2) - 
               c_jk_[ i ]*(c_jk_[ i ] + 2*r_jk_[ i ]*r_post_)*cp.tau_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_ + 
               std::pow(c_jk_[ i ],2)*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_slow_,2)))))/
-   (std::exp(t_i_*(cp.alpha_ + 2/cp.tau_))*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*
+   (exp_term_8_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*std::pow(cp.tau_ - 2*cp.tau_slow_,2)*
      (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
      (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)));
 
@@ -413,19 +424,23 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
     // in this timestep. We have increment the traces to account
     // for these spikes too.
 
-    // std::cout << "r_post from neuron: " << r_post_ << "\n";
-    // std::cout << "R_post from neuron: " << R_post_ << "\n";
-    // std::cout << "w_jk_: " << w_jk_[0] << "\n---->\n";
-
+//     std::cout << "r_post from neuron: " << r_post_ << "\n";
+//     std::cout << "R_post from neuron: " << R_post_ << "\n";
+//     std::cout << "r_jk_: " << r_jk_[0] << "\n";
+//     std::cout << "c_jk_: " << c_jk_[0] << "\n";
+//     std::cout << "w_jk_: " << w_jk_[0] << "\n---->\n";
+     
     // update iteratively all variables in the time start ->
     integrate_( cp, delta);
 
     t_last_postspike = start->t_;
     ++start;
 
-    // std::cout << "r_post after decay: " << r_post_ << "\n";
-    // std::cout << "R_post after decay: " << R_post_ << "\n";
-    // std::cout << "w_jk_ after decay: " << w_jk_[0] << "\n\n";
+//     std::cout << "r_post after decay: " << r_post_ << "\n";
+//     std::cout << "R_post after decay: " << R_post_ << "\n";
+//     std::cout << "r_jk_ after decay: " << r_jk_[0] << "\n";
+//     std::cout << "c_jk_ after decay: " << c_jk_[0] << "\n";
+//     std::cout << "w_jk_ after decay: " << w_jk_[0] << "\n\n";
 
     // update postsynaptic traces
     r_post_ += 1. / cp.tau_;

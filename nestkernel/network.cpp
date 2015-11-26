@@ -42,9 +42,6 @@
 #include "nestmodule.h"
 #include "sibling_container.h"
 #include "communicator_impl.h"
-#include "screen_logger.h"
-#include "ascii_logger.h"
-#include "sion_logger.h"
 
 #include <cmath>
 #include <set>
@@ -71,7 +68,6 @@ Network::Network( SLIInterpreter& i )
   , overwrite_files_( false )
   , dict_miss_is_error_( true )
   , model_defaults_modified_( false )
-  , logger_( 0 )
 {
   Node::net_ = this;
   Communicator::net_ = this;
@@ -97,8 +93,6 @@ Network::Network( SLIInterpreter& i )
 
   connruledict_ = new Dictionary();
   interpreter_.def( "connruledict", new DictionaryDatum( connruledict_ ) );
-
-  set_logger( names::ScreenLogger );
 
   init_();
 }
@@ -789,17 +783,6 @@ Network::set_status( index gid, const DictionaryDatum& d )
   set_data_path_prefix_( d );
   updateValue< bool >( d, "overwrite_files", overwrite_files_ );
   updateValue< bool >( d, "dict_miss_is_error", dict_miss_is_error_ );
-
-  // Setup logger and its options
-  DictionaryDatum dd;
-  if ( updateValue< DictionaryDatum >( d, "recording", dd ) )
-  {
-    std::string logger;
-    if ( updateValue< std::string >( dd, names::logger, logger ) )
-      set_logger( logger );
-
-    logger_->set_status( dd );
-  }
 
   std::string tmp;
   if ( !d->all_accessed( tmp ) ) // proceed only if there are unaccessed items left
@@ -2002,12 +1985,6 @@ Network::execute_sli_protected( DictionaryDatum state, Name cmd )
   return result;
 }
 
-Logger*
-Network::get_logger()
-{
-  return logger_;
-}
-
 #ifdef HAVE_MUSIC
 void
 Network::register_music_in_port( std::string portname )
@@ -2090,40 +2067,5 @@ Network::update_music_event_handlers_( Time const& origin, const long_t from, co
     it->second.update( origin, from, to );
 }
 #endif // HAVE_MUSIC
-
-bool
-Network::set_logger( Name name )
-{
-  if ( name == names::ScreenLogger )
-  {
-    if ( logger_ != 0 )
-      delete logger_;
-
-    logger_ = new ScreenLogger();
-  }
-  else if ( name == names::ASCIILogger )
-  {
-    if ( logger_ != 0 )
-      delete logger_;
-
-    logger_ = new ASCIILogger();
-  }
-#ifdef HAVE_SION
-  else if ( name == names::SIONLogger )
-  {
-    if ( logger_ != 0 )
-      delete logger_;
-    logger_ = new SIONLogger();
-  }
-#endif // HAVE_SION
-  else
-  {
-    std::string msg = String::compose( "Logger is not known: '%1'", name );
-    message( SLIInterpreter::M_WARNING, "Network::set_status", msg.c_str() );
-    return false;
-  }
-  return true;
-}
-
 
 } // end of namespace

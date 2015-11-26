@@ -38,7 +38,6 @@
 #include "dictdatum.h"
 #include <ostream>
 #include <cmath>
-#include "logger.h"
 
 #include "dirent.h"
 #include "errno.h"
@@ -860,8 +859,6 @@ private:
 
   //! Helper function to set device data path and prefix.
   void set_data_path_prefix_( const DictionaryDatum& d );
-
-  Logger* logger_;
 
   SLIInterpreter& interpreter_;
   SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes

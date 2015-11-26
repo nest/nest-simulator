@@ -93,7 +93,7 @@ ConnectionLabel< Connection_t >::set_status( const DictionaryDatum& d, Connector
     }
     else
     {
-      throw BadProperty( "Connection label must be positive." );
+      throw BadProperty( "Connection label must not be negative." );
     }
   }
   Connection_t::set_status( d, cm );

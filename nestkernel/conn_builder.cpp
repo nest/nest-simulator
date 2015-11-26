@@ -318,7 +318,19 @@ nest::ConnBuilder::single_connect_( index sgid,
         }
         catch ( KernelException& e )
         {
-          throw BadProperty( "Receptor type must be of type integer." );
+          if( it->first == names::receptor_type )
+          {
+            throw BadProperty( "Receptor type must be of type integer." );
+          }
+          else if ( it->first == names::music_channel )
+          {
+            throw BadProperty( "Music channel type must be of type integer." );
+          }
+          else if ( it->first == names::synapse_label )
+          {
+            throw BadProperty( "Synapse label must be of type integer." );
+          }
+          
         }
       }
       else

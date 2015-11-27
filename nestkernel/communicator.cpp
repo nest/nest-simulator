@@ -542,7 +542,6 @@ nest::Communicator::communicate( std::vector< OffGridSpike >& send_buffer,
   else
     communicate_CPEX( send_buffer, recv_buffer, displacements );
 }
-}
 
 void
 nest::Communicator::communicate_Allgather( std::vector< OffGridSpike >& send_buffer,

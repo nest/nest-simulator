@@ -81,13 +81,9 @@ public:
 
   // precomputed values
   long_t exp_cache_len_;
-  std::vector<double_t> exp_1_;
   std::vector<double_t> exp_2_;
-  std::vector<double_t> exp_3_;
-  std::vector<double_t> exp_4_;
-  std::vector<double_t> exp_5_;
-  std::vector<double_t> exp_6_;
   std::vector<double_t> exp_7_;
+  std::vector<double_t> exp_8_;
   double_t pow_term_1_;
   double_t pow_term_2_;
   double_t pow_term_3_;
@@ -213,43 +209,47 @@ private:
   
   inline std::vector<double_t> get_exps_( const STDPSplHomCommonProperties& cp, long_t delta_i )
   {
-      std::vector<double_t> ret_;
+      
+      double_t exp_term_2_;
+      double_t exp_term_8_;
+      double_t exp_term_7_;
+      
       if ( delta_i < cp.exp_cache_len_ )
       {
           // we read the precomputed values from cp
-          ret_.push_back( cp.exp_7_[delta_i] );
-          ret_.push_back( cp.exp_2_[delta_i] );
-          ret_.push_back( cp.exp_3_[delta_i] );
-          ret_.push_back( cp.exp_4_[delta_i] );
-          ret_.push_back( cp.exp_6_[delta_i] );
-          ret_.push_back( cp.exp_1_[delta_i] );
-          ret_.push_back( cp.exp_5_[delta_i] );
+          exp_term_2_ = cp.exp_2_[delta_i];
+          exp_term_8_ = cp.exp_8_[delta_i];
+          exp_term_7_ = cp.exp_7_[delta_i];
       }
       else
       {
-          double_t t_i_ = Time( Time::step(delta_i) ).get_ms() / 1000.;
-         
           // we compute the exponential terms
-          double_t exp_term_2_ = std::exp( -t_i_ / cp.tau_slow_ );  
-          double_t exp_term_6_ = std::exp( -t_i_* 2 / cp.tau_ );
-          double_t exp_term_1_ = exp_term_2_ * exp_term_6_;                                 // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
-          double_t exp_term_3_ = exp_term_2_ * exp_term_2_;                                 // std::exp( -t_i_*( 2/cp.tau_slow_) ); 
-          double_t exp_term_4_ = exp_term_2_ * exp_term_2_ * exp_term_2_ * exp_term_2_;     // std::exp( -t_i_*( 4/cp.tau_slow_) ); 
-          double_t exp_term_5_ = exp_term_6_ * exp_term_6_;                                 // std::exp( -t_i_*( 4/cp.tau_ ));
-          double_t exp_term_7_ = std::exp( -t_i_* cp.alpha_ );
-
-          // insert the terms into the vector to be returned
-          // this vector is now ordered by exponent magnitude:
-          // exp_term_7_, exp_term_2_, exp_term_3_, exp_term_4_, exp_term_6_, exp_term_1_, exp_term_5_
-          // in short: 7, 2, 3, 4, 6, 1, 5
-          ret_.push_back( exp_term_7_ );
-          ret_.push_back( exp_term_2_ );
-          ret_.push_back( exp_term_3_ );
-          ret_.push_back( exp_term_4_ );
-          ret_.push_back( exp_term_6_ );
-          ret_.push_back( exp_term_1_ );
-          ret_.push_back( exp_term_5_ );
+          double_t t_i_ = Time( Time::step(delta_i) ).get_ms() / 1000.;
+          exp_term_2_ = std::exp( -t_i_ / cp.tau_slow_ );  
+          exp_term_8_ = std::exp( -t_i_ / cp.tau_ );
+          exp_term_7_ = std::exp( -t_i_* cp.alpha_ );
       }
+      
+      // the remaining terms are derived from the three basic ones
+      double_t exp_term_6_ = exp_term_8_ * exp_term_8_;                                 // std::exp( -t_i_*( 2/cp.tau_) ); 
+      double_t exp_term_1_ = exp_term_2_ * exp_term_6_;                                 // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
+      double_t exp_term_3_ = exp_term_2_ * exp_term_2_;                                 // std::exp( -t_i_*( 2/cp.tau_slow_) ); 
+      double_t exp_term_4_ = exp_term_2_ * exp_term_2_ * exp_term_2_ * exp_term_2_;     // std::exp( -t_i_*( 4/cp.tau_slow_) ); 
+      double_t exp_term_5_ = exp_term_6_ * exp_term_6_;                                 // std::exp( -t_i_*( 4/cp.tau_ ));
+
+      // insert the terms into the vector to be returned
+      // this vector is now ordered by exponent magnitude:
+      // exp_term_7_, exp_term_2_, exp_term_3_, exp_term_4_, exp_term_6_, exp_term_1_, exp_term_5_
+      // in short: 7, 2, 3, 4, 6, 1, 5
+      std::vector<double_t> ret_;
+      ret_.push_back( exp_term_7_ );
+      ret_.push_back( exp_term_2_ );
+      ret_.push_back( exp_term_3_ );
+      ret_.push_back( exp_term_4_ );
+      ret_.push_back( exp_term_6_ );
+      ret_.push_back( exp_term_1_ );
+      ret_.push_back( exp_term_5_ );
+      
       return ret_;
   }
   
@@ -350,17 +350,16 @@ private:
     int_t possible_;
     if (sign_changes_ < 2)
     {
-        std::cout << "INFO   : no         zero crossings possible. " << sign_changes_ << "\n";
+        // std::cout << "INFO   : no         zero crossings possible. " << sign_changes_ << "\n";
         possible_ = 0;
     }
     else
     {
-        std::cout << "WARNING: undetected zero crossings possible. " << sign_changes_ << "\n";
+        // std::cout << "WARNING: undetected zero crossings possible. " << sign_changes_ << "\n";
         possible_ = 1;
     }
     return possible_;
   }
-
 
 
   void integrate_( const STDPSplHomCommonProperties& cp, long_t delta )
@@ -369,11 +368,21 @@ private:
    // integrate all state variables the duration t analytically, assuming no spikes arrive
   
     double_t t_delta_ = Time( Time::step(delta) ).get_ms() / 1000.;  
-//    std::cout << "t_delta_, delta: " << t_delta_ << "  " << delta <<  "\n";
+    // std::cout << "t_delta_, delta: " << t_delta_ << "  " << delta <<  "\n";
   
     // precompute exponentials
-    double_t exp_term_8_ =  std::exp( -t_delta_/cp.tau_ );
-    double_t exp_term_9_ =  std::exp( -t_delta_/cp.tau_slow_ );
+    double_t exp_term_8_; 
+    double_t exp_term_9_;
+    if ( delta < cp.exp_cache_len_ )
+    {
+        exp_term_8_ = cp.exp_8_[delta];
+        exp_term_9_ = cp.exp_2_[delta];
+    }
+    else
+    {
+        exp_term_8_ =  std::exp( -t_delta_/cp.tau_ );
+        exp_term_9_ =  std::exp( -t_delta_/cp.tau_slow_ );
+    }
     double_t exp_term_10_ = exp_term_8_ * exp_term_8_ / exp_term_9_; // std::exp( t_delta_*(-2/cp.tau_ + 1/cp.tau_slow_) )
   
     // propagate all variables
@@ -395,7 +404,10 @@ private:
         // memorize how many steps are left to be integrated
         delta_i = delta - w_create_steps_[ i ];
         w_create_steps_[ i ] = 0;
+        // set contact weight to creation value
         w_jk_[ i ] = cp.w0_;
+        // increment deletion counter
+        n_create_ += 1;
       }
       else
       {
@@ -423,13 +435,11 @@ private:
               std::cout << "deletion triggered in spike-time check."  << "\n";
               deletion_trigger = 1;
           }
-          else
+          else if ( check_crossing_possible_( amps_, exps_ )==1 )
           {
-            if ( check_crossing_possible_( amps_, exps_ )==1 )
-              {
               // if we cannot exclude zero crossings in general, 
               // we search numerically if there is a zero crossings
-              // on the time grid spanned by the simulation resolution
+              // on the time grid spanned by the simulation resolution.
               std::vector<double_t> exps_d_;
               double_t w_d_;
               for (long_t d_=0; d_<delta_i; d_++)
@@ -443,14 +453,8 @@ private:
                     break;
                 }
               }
-              }
           }
           
-          
-          
-//          std::cout << "amps_: " << amp_1_ << ", " << amp_2_ << ", " << amp_3_ << ", " << amp_4_ << ", " << amp_5_ << ", " << amp_6_ << ", " << amp_7_ << ", "  << "\n";
-//          std::cout << "taus_: " << std::log( exp_term_1_ ) / (-t_i_) << ", " << std::log( exp_term_2_ ) / (-t_i_) << ", " std::log( exp_term_3_ ) / (-t_i_) << ", " std::log( exp_term_4_ ) / (-t_i_) << ", " std::log( exp_term_5_ ) / (-t_i_) << ", " std::log( exp_term_6_ ) / (-t_i_) << ", " std::log( exp_term_7_ ) / (-t_i_) << ", "  << "\n\n\n";
-             
           if ( deletion_trigger == 1 )
           {
             // generate an exponentially distributed number
@@ -459,12 +463,14 @@ private:
             
             // set synapse to equal zero
             w_jk_[ i ] = 0.;
+            
+            // increment deletion counter
+            n_delete_ += 1;
           }
       }
 
       // EQ 2 by analytical solution
-      c_jk_[ i ] = ((-1 + exp_term_10_)*
-            r_jk_[ i ]*r_post_*cp.tau_ 
+      c_jk_[ i ] = ((-1 + exp_term_10_) * r_jk_[ i ]*r_post_*cp.tau_ 
             + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))/
             (cp.tau_ - 2*cp.tau_slow_) * exp_term_9_;
       
@@ -473,7 +479,6 @@ private:
     }
   
    // update the postsynaptic rates
-
     r_post_ *= exp_term_8_;
     R_post_ *= exp_term_9_;
   }
@@ -484,6 +489,8 @@ private:
   // data members of each connection
 
   long_t n_conns_;
+  long_t n_create_;
+  long_t n_delete_;
   // weights of this connection
   std::vector< double_t > w_jk_;
   // steps until creation of new weight
@@ -606,6 +613,8 @@ STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom()
   c_jk_.resize( n_conns_, 0. );
   r_post_ = 0.;
   R_post_ = 0.;
+  n_create_ = 0;
+  n_delete_ = 0;
 }
 
 template < typename targetidentifierT >
@@ -620,6 +629,8 @@ STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom(
   c_jk_ = rhs.c_jk_;
   r_post_ = rhs.r_post_;
   R_post_ = rhs.R_post_;
+  n_create_ = rhs.n_create_;
+  n_delete_ = rhs.n_delete_;
 }
 
 template < typename targetidentifierT >
@@ -628,6 +639,8 @@ STDPSplConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) cons
 {
   ConnectionBase::get_status( d );
   def< long_t >( d, "n_pot_conns", n_conns_ );
+  def< long_t >( d, "n_create", n_create_ );
+  def< long_t >( d, "n_delete", n_delete_ );
   def< std::vector< double_t > >( d, "w_jk", w_jk_ );
   def< double_t >( d, "r_post", r_post_ );
   def< double_t >( d, "R_post", R_post_ );
@@ -644,6 +657,9 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectionBase::set_status( d, cm );
 
   bool n_updated = updateValue< long_t >( d, "n_pot_conns", n_conns_ );
+  updateValue< long_t >( d, "n_create", n_create_ );
+  updateValue< long_t >( d, "n_delete", n_delete_ );
+  updateValue< long_t >( d, "n_pot_conns", n_conns_ );
   updateValue< double_t >( d, "r_post", r_post_ );
   updateValue< double_t >( d, "R_post", R_post_ );
 
@@ -658,6 +674,16 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
     w_create_steps_.resize( n_conns_, 0 );
     r_jk_.resize( n_conns_, 0. );
     c_jk_.resize( n_conns_, 0. );
+  }
+
+  if ( not( n_create_ >= 0 ) )
+  {
+    throw BadProperty( "Number of creation events must be positive" );
+  }
+
+  if ( not( n_delete_ >= 0 ) )
+  {
+    throw BadProperty( "Number of deletion events must be positive" );
   }
 
   std::vector< double_t > r_jk_tmp;

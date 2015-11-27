@@ -94,30 +94,28 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
     throw BadProperty( "lambda must be positive." );
   }
 
+  if ( not( t_cache_ >= 0. ) )
+  {
+    throw BadProperty( "The time interval for caching of exponentials must be positive" );
+  }
+
+  // precompute power terms that occur frequently
   pow_term_1_ = tau_ * tau_;
   pow_term_2_ = tau_ - 2*tau_slow_;
   pow_term_2_ *= pow_term_2_;
   pow_term_4_ = tau_ * tau_ * tau_;
   pow_term_6_ = tau_slow_ * tau_slow_;
   
-  // precompute the exponential values up to intervals of t_cache
+  // precompute exponential decay values up to an interval of t_cache_ seconds
   exp_cache_len_ = Time( Time::ms( t_cache_ * 1000. )).get_steps();
-  exp_1_.resize( exp_cache_len_ );
   exp_2_.resize( exp_cache_len_ );
-  exp_3_.resize( exp_cache_len_ );
-  exp_4_.resize( exp_cache_len_ );
-  exp_5_.resize( exp_cache_len_ );
-  exp_6_.resize( exp_cache_len_ );
   exp_7_.resize( exp_cache_len_ );
+  exp_8_.resize( exp_cache_len_ );
   for (long_t i=0; i<exp_cache_len_; i++)
   {
       double_t t_i_ = Time( Time::step(i) ).get_ms() / 1000.;
       exp_2_[i] = std::exp( -t_i_ / tau_slow_ );  
-      exp_6_[i] = std::exp( -t_i_* 2 / tau_ );
-      exp_1_[i] = exp_2_[i] * exp_6_[i];                                 // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
-      exp_3_[i] = exp_2_[i] * exp_2_[i];                                 // std::exp( -t_i_*( 2/cp.tau_slow_) ); 
-      exp_4_[i] = exp_2_[i] * exp_2_[i] * exp_2_[i] * exp_2_[i];     // std::exp( -t_i_*( 4/cp.tau_slow_) ); 
-      exp_5_[i] = exp_6_[i] * exp_6_[i];                                 // std::exp( -t_i_*( 4/cp.tau_ ));
+      exp_8_[i] = std::exp( -t_i_ / tau_ );
       exp_7_[i] = std::exp( -t_i_* alpha_ );
   }
 }

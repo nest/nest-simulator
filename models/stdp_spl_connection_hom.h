@@ -344,11 +344,9 @@ private:
         sign_last_ = std::signbit( amps_partial_sum_ );
     }
     // according to the theorem, the number of zeros is not greater than
-    // sign_changes_. But if this number is 1, then we would have detected the
-    // zero crossing above, if any, because the weight would still be negative. 
-    // So only if sign_changes_ is 2 or greater, we might have an undetected crossing.
+    // sign_changes_. 
     int_t possible_;
-    if (sign_changes_ < 2)
+    if (sign_changes_ == 0)
     {
         // std::cout << "INFO   : no         zero crossings possible. " << sign_changes_ << "\n";
         possible_ = 0;
@@ -432,7 +430,7 @@ private:
           {
               // Here we only check this at spike times. Misses zero crossing 
               // within ISIs. This may be improved.
-              std::cout << "deletion triggered in spike-time check."  << "\n";
+              //std::cout << "deletion triggered in spike-time check."  << "\n";
               deletion_trigger = 1;
           }
           else if ( check_crossing_possible_( amps_, exps_ )==1 )
@@ -448,7 +446,7 @@ private:
                 w_d_ = compose_w_sol_( amps_, exps_d_ );
                 if (w_d_<=0.)
                 {
-                    std::cout << "deletion triggered in step-wise check."  << "\n";
+                    //std::cout << "deletion triggered in step-wise check."  << "\n";
                     deletion_trigger = 1;
                     break;
                 }

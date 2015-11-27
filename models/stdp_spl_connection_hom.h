@@ -34,6 +34,7 @@
 */
 
 #include <cmath>
+#include <math.h>
 #include "connection.h"
 #include <iostream>
 #include <cstdio>
@@ -76,14 +77,17 @@ public:
   double_t dt_;
   double_t w0_;
   double_t p_fail_;
+  double_t t_cache_;
 
-//  double_t e_dt_alpha_;
-//  double_t e_dt_tau_;
-//  double_t e_dt_tau_slow_;
-//  double_t e_dt_alpha_1m_;
-//  double_t e_dt_tau_1m_;
-//  double_t e_dt_tau_slow_1m_;
-
+  // precomputed values
+  long_t exp_cache_len_;
+  std::vector<double_t> exp_1_;
+  std::vector<double_t> exp_2_;
+  std::vector<double_t> exp_3_;
+  std::vector<double_t> exp_4_;
+  std::vector<double_t> exp_5_;
+  std::vector<double_t> exp_6_;
+  std::vector<double_t> exp_7_;
   double_t pow_term_1_;
   double_t pow_term_2_;
   double_t pow_term_3_;
@@ -207,30 +211,45 @@ public:
 
 private:
   
-  inline std::vector<double_t> compute_exps_( const STDPSplHomCommonProperties& cp, long_t delta_i )
+  inline std::vector<double_t> get_exps_( const STDPSplHomCommonProperties& cp, long_t delta_i )
   {
-      double_t t_i_ = Time( Time::step(delta_i) ).get_ms() / 1000.;
-     
-      // use analytical solution of EQ1
-     
-      // we compute the exponential terms
-      double_t exp_term_2_ = std::exp( -t_i_ / cp.tau_slow_ );  
-      double_t exp_term_6_ = std::exp( -t_i_* 2 / cp.tau_ );
-      double_t exp_term_1_ = exp_term_2_ * exp_term_6_;                                 // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
-      double_t exp_term_3_ = exp_term_2_ * exp_term_2_;                                 // std::exp( -t_i_*( 2/cp.tau_slow_) ); 
-      double_t exp_term_4_ = exp_term_2_ * exp_term_2_ * exp_term_2_ * exp_term_2_;     // std::exp( -t_i_*( 4/cp.tau_slow_) ); 
-      double_t exp_term_5_ = exp_term_6_ * exp_term_6_;                                 // std::exp( -t_i_*( 4/cp.tau_ ));
-      double_t exp_term_7_ = std::exp( -t_i_* cp.alpha_ );
+      std::vector<double_t> ret_;
+      if ( delta_i < cp.exp_cache_len_ )
+      {
+          // we read the precomputed values from cp
+          ret_.push_back( cp.exp_7_[delta_i] );
+          ret_.push_back( cp.exp_2_[delta_i] );
+          ret_.push_back( cp.exp_3_[delta_i] );
+          ret_.push_back( cp.exp_4_[delta_i] );
+          ret_.push_back( cp.exp_6_[delta_i] );
+          ret_.push_back( cp.exp_1_[delta_i] );
+          ret_.push_back( cp.exp_5_[delta_i] );
+      }
+      else
+      {
+          double_t t_i_ = Time( Time::step(delta_i) ).get_ms() / 1000.;
+         
+          // we compute the exponential terms
+          double_t exp_term_2_ = std::exp( -t_i_ / cp.tau_slow_ );  
+          double_t exp_term_6_ = std::exp( -t_i_* 2 / cp.tau_ );
+          double_t exp_term_1_ = exp_term_2_ * exp_term_6_;                                 // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
+          double_t exp_term_3_ = exp_term_2_ * exp_term_2_;                                 // std::exp( -t_i_*( 2/cp.tau_slow_) ); 
+          double_t exp_term_4_ = exp_term_2_ * exp_term_2_ * exp_term_2_ * exp_term_2_;     // std::exp( -t_i_*( 4/cp.tau_slow_) ); 
+          double_t exp_term_5_ = exp_term_6_ * exp_term_6_;                                 // std::exp( -t_i_*( 4/cp.tau_ ));
+          double_t exp_term_7_ = std::exp( -t_i_* cp.alpha_ );
 
-      // insert the terms into the vector to be returned
-      std::vector<double_t> ret_; 
-      ret_.push_back( exp_term_1_ );
-      ret_.push_back( exp_term_2_ );
-      ret_.push_back( exp_term_3_ );
-      ret_.push_back( exp_term_4_ );
-      ret_.push_back( exp_term_5_ );
-      ret_.push_back( exp_term_6_ );
-      ret_.push_back( exp_term_7_ );
+          // insert the terms into the vector to be returned
+          // this vector is now ordered by exponent magnitude:
+          // exp_term_7_, exp_term_2_, exp_term_3_, exp_term_4_, exp_term_6_, exp_term_1_, exp_term_5_
+          // in short: 7, 2, 3, 4, 6, 1, 5
+          ret_.push_back( exp_term_7_ );
+          ret_.push_back( exp_term_2_ );
+          ret_.push_back( exp_term_3_ );
+          ret_.push_back( exp_term_4_ );
+          ret_.push_back( exp_term_6_ );
+          ret_.push_back( exp_term_1_ );
+          ret_.push_back( exp_term_5_ );
+      }
       return ret_;
   }
   
@@ -281,14 +300,15 @@ private:
                   pow_term_5_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.pow_term_6_))) )/ denom_;  
 
       // insert the amplitude terms into the vector to be returned
+      // the order is sorted by the exp_terms magnitude: 7, 2, 3, 4, 6, 1, 5
       std::vector<double_t> ret_; 
-      ret_.push_back( amp_1_ );
+      ret_.push_back( amp_7_ );
       ret_.push_back( amp_2_ );
       ret_.push_back( amp_3_ );
       ret_.push_back( amp_4_ );
-      ret_.push_back( amp_5_ );
       ret_.push_back( amp_6_ );
-      ret_.push_back( amp_7_ );
+      ret_.push_back( amp_1_ );
+      ret_.push_back( amp_5_ );
       return ret_;
   }
   
@@ -307,76 +327,42 @@ private:
   
   inline int_t check_crossing_possible_( std::vector<double_t> amps_, std::vector<double_t> exps_ )
   {
-      // checks to detect zero crossings within interval
-
-      // make new pointers to collect positive and negative exponentials
-      std::vector<double_t*> ptr_pos_exp_term_;
-      std::vector<double_t*> ptr_neg_exp_term_;
-      std::vector<double_t*> ptr_pos_amp_;
-      std::vector<double_t*> ptr_neg_amp_;
-      for ( int_t k = 0; k < 7; k++ )
-      {
-        if ( amps_[k] >= 0 )
+    // We apply theorem 4.7 in http://www.maths.lancs.ac.uk/~jameson/zeros.pdf
+    // G.J.O. Jameson (Math. Gazette 90, no. 518 (2006), 223–234)
+    // Counting zeros of generalized polynomials: Descartes’ rule of signs and Laguerre’s extensions
+    // Here we assume that the amplitudes (amps_) are ordered with descending decay rate (exp_terms).
+    double_t amps_partial_sum_ = amps_[0];
+    int_t sign_last_ = std::signbit( amps_partial_sum_ );
+    int_t sign_changes_ = 0;
+    for (int_t k=1; k<exps_.size(); k++)
+    {
+        amps_partial_sum_ += amps_[k];
+        if ( std::signbit( amps_partial_sum_ ) != sign_last_ )
         {
-            ptr_pos_exp_term_.push_back( &exps_[k] );
-            ptr_pos_amp_.push_back( &amps_[k] );
+            sign_changes_ += 1;
         }
-        else
-        {    
-            ptr_neg_exp_term_.push_back( &exps_[k] );
-            ptr_neg_amp_.push_back( &amps_[k] );
-        }
-      }
-      
-      int_t possible_ = 1;
-      
-      int_t n_neg_ = ptr_neg_exp_term_.size();
-      if ( n_neg_ == 0 )
-      {
-        // no zero crossings possible, only positive terms
+        sign_last_ = std::signbit( amps_partial_sum_ );
+    }
+    // according to the theorem, the number of zeros is not greater than
+    // sign_changes_. But if this number is 1, then we would have detected the
+    // zero crossing above, if any, because the weight would still be negative. 
+    // So only if sign_changes_ is 2 or greater, we might have an undetected crossing.
+    int_t possible_;
+    if (sign_changes_ < 2)
+    {
+        std::cout << "INFO   : no         zero crossings possible. " << sign_changes_ << "\n";
         possible_ = 0;
-      }
-      else
-      {
-        // now we consider the amplitudes
-        double_t neg_sum_amps_ = 0.;
-        double_t neg_max_exp_term_ = 0.;
-        for ( int_t k = 0; k < n_neg_; k++ )
-        {
-            neg_sum_amps_ += *ptr_neg_amp_[k];
-            if (*ptr_neg_exp_term_[k] > neg_max_exp_term_ )
-            {
-                neg_max_exp_term_ = *ptr_neg_exp_term_[k];
-            }
-        }
-        // do the slower positive ones balance the summed neg. amplitude
-        double_t pos_sum_amps_ = 0.;
-        for ( int_t k = 0; k < ptr_pos_exp_term_.size(); k++ )
-        {
-            if (*ptr_pos_exp_term_[k] > neg_max_exp_term_ )
-            {
-                pos_sum_amps_ += *ptr_pos_amp_[k];
-            }
-        }
-        if (pos_sum_amps_ + neg_sum_amps_ >= 0)
-        {
-            possible_ = 0;
-        }
-        else
-            {
-            // if false, no zero crossings possible, positive terms dominate
-            std::cout << "WARNING: undetected zero crossings possible."  << "\n";
-//                    std::cout << "amps_: " << amp_1_ << ", " << amp_2_ << ", " << amp_3_ << ", " << amp_4_ << ", " 
-//                      << amp_5_ << ", " << amp_6_ << ", " << amp_7_ << ", "  << "\n";
-//                    std::cout << "exps_: " << exp_term_1_ << ", " << exp_term_2_ << ", " << exp_term_3_ << ", " << exp_term_4_ << ", " 
-//                      << exp_term_5_ << ", " << exp_term_6_ << ", " << exp_term_7_ << ", "  << "\n\n";
-            
-            }
-       }
-       return possible_;
+    }
+    else
+    {
+        std::cout << "WARNING: undetected zero crossings possible. " << sign_changes_ << "\n";
+        possible_ = 1;
+    }
+    return possible_;
   }
-  
-  
+
+
+
   void integrate_( const STDPSplHomCommonProperties& cp, long_t delta )
   {
 
@@ -423,7 +409,7 @@ private:
           std::vector<double_t> amps_ = compute_amps_( cp, i );
 
           // compute exponentials
-          std::vector<double_t> exps_ = compute_exps_( cp, delta_i );
+          std::vector<double_t> exps_ = get_exps_( cp, delta_i );
 
           // compose the solution
           w_jk_[ i ] = compose_w_sol_( amps_, exps_ );
@@ -446,9 +432,9 @@ private:
               // on the time grid spanned by the simulation resolution
               std::vector<double_t> exps_d_;
               double_t w_d_;
-              for (long_t d_; d_<delta_i; d_++)
+              for (long_t d_=0; d_<delta_i; d_++)
               {
-                std::vector<double_t> exps_d_ = compute_exps_( cp, d_ );
+                std::vector<double_t> exps_d_ = get_exps_( cp, d_ );
                 w_d_ = compose_w_sol_( amps_, exps_d_ );
                 if (w_d_<=0.)
                 {

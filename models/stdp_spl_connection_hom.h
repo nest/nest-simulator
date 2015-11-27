@@ -207,6 +207,176 @@ public:
 
 private:
   
+  inline std::vector<double_t> compute_exps_( const STDPSplHomCommonProperties& cp, long_t delta_i )
+  {
+      double_t t_i_ = Time( Time::step(delta_i) ).get_ms() / 1000.;
+     
+      // use analytical solution of EQ1
+     
+      // we compute the exponential terms
+      double_t exp_term_2_ = std::exp( -t_i_ / cp.tau_slow_ );  
+      double_t exp_term_6_ = std::exp( -t_i_* 2 / cp.tau_ );
+      double_t exp_term_1_ = exp_term_2_ * exp_term_6_;                                 // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
+      double_t exp_term_3_ = exp_term_2_ * exp_term_2_;                                 // std::exp( -t_i_*( 2/cp.tau_slow_) ); 
+      double_t exp_term_4_ = exp_term_2_ * exp_term_2_ * exp_term_2_ * exp_term_2_;     // std::exp( -t_i_*( 4/cp.tau_slow_) ); 
+      double_t exp_term_5_ = exp_term_6_ * exp_term_6_;                                 // std::exp( -t_i_*( 4/cp.tau_ ));
+      double_t exp_term_7_ = std::exp( -t_i_* cp.alpha_ );
+
+      // insert the terms into the vector to be returned
+      std::vector<double_t> ret_; 
+      ret_.push_back( exp_term_1_ );
+      ret_.push_back( exp_term_2_ );
+      ret_.push_back( exp_term_3_ );
+      ret_.push_back( exp_term_4_ );
+      ret_.push_back( exp_term_5_ );
+      ret_.push_back( exp_term_6_ );
+      ret_.push_back( exp_term_7_ );
+      return ret_;
+  }
+  
+  
+  inline std::vector<double_t> compute_amps_( const STDPSplHomCommonProperties& cp, long_t i )
+  {
+      // precompute power terms without using std::pow
+      double_t pow_term_1_ = -(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_;
+      pow_term_1_ *= pow_term_1_;
+      double_t pow_term_2_ = R_post_ * R_post_ * R_post_ * R_post_;  //std::pow(R_post_,4)
+      double_t pow_term_3_ = r_jk_[ i ] * r_jk_[ i ];                //std::pow(r_jk_[ i ],2)
+      double_t pow_term_4_ = r_post_ * r_post_;                      //std::pow(r_post_,2)
+      double_t pow_term_5_ = c_jk_[ i ] * c_jk_[ i ];                //std::pow(c_jk_[ i ],2)  
+      
+      // compute amplitudes of exp_terms
+      double_t denom_ = ((-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.pow_term_2_*
+             (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+             (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)));
+      double_t amp_1_ = (2*cp.A4_corr_*r_jk_[ i ]*r_post_*cp.pow_term_1_*(-4 + cp.alpha_*cp.tau_)*
+              (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_)*
+              (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_) ) / denom_;
+      double_t amp_2_ = ( cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
+          (-(r_jk_[ i ]*r_post_*cp.tau_) + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))*(cp.tau_ - 2*cp.tau_slow_)*cp.tau_slow_*
+          (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
+      double_t amp_3_ = -( cp.A4_corr_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*
+          pow_term_1_*(-4 + cp.alpha_*cp.tau_slow_)*
+          (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
+      double_t amp_4_ = -( cp.A4_post_* pow_term_2_ *(-4 + cp.alpha_*cp.tau_)*
+          (-2 + cp.alpha_*cp.tau_)*cp.pow_term_2_*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+          (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
+      double_t amp_5_ = -( cp.A4_corr_*pow_term_3_*pow_term_4_*
+          cp.pow_term_4_*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+          (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
+      double_t amp_6_ = ( cp.A2_corr_*r_jk_[ i ]*r_post_*cp.pow_term_1_*(-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
+          (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+          (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
+      double_t amp_7_ = ( cp.pow_term_2_*
+          (w_jk_[ i ]*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
+             (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
+            cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
+             (r_jk_[ i ]*r_post_*cp.tau_ + c_jk_[ i ]*(2 - cp.alpha_*cp.tau_)*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_))\
+             + (-2 + cp.alpha_*cp.tau_)*(-1 + cp.alpha_*cp.tau_slow_)*
+             (cp.A4_post_*pow_term_2_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*
+                (-cp.tau_ - 2*cp.tau_slow_ + cp.alpha_*cp.tau_*cp.tau_slow_) + 
+               cp.A4_corr_*(-4 + cp.alpha_*cp.tau_slow_)*
+                (2*pow_term_3_*pow_term_4_*cp.pow_term_1_ - 
+                  c_jk_[ i ]*(c_jk_[ i ] + 2*r_jk_[ i ]*r_post_)*cp.tau_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_ + 
+                  pow_term_5_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.pow_term_6_))) )/ denom_;  
+
+      // insert the amplitude terms into the vector to be returned
+      std::vector<double_t> ret_; 
+      ret_.push_back( amp_1_ );
+      ret_.push_back( amp_2_ );
+      ret_.push_back( amp_3_ );
+      ret_.push_back( amp_4_ );
+      ret_.push_back( amp_5_ );
+      ret_.push_back( amp_6_ );
+      ret_.push_back( amp_7_ );
+      return ret_;
+  }
+  
+  
+  inline double_t compose_w_sol_( std::vector<double_t> amps_, std::vector<double_t> exps_ )
+  {
+      // compose weight solution
+      double_t w_ = 0.;
+      for (int_t k=0; k<exps_.size(); k++)
+      {
+        w_ += amps_[k] * exps_[k];
+      }
+      return w_;
+  }
+  
+  
+  inline int_t check_crossing_possible_( std::vector<double_t> amps_, std::vector<double_t> exps_ )
+  {
+      // checks to detect zero crossings within interval
+
+      // make new pointers to collect positive and negative exponentials
+      std::vector<double_t*> ptr_pos_exp_term_;
+      std::vector<double_t*> ptr_neg_exp_term_;
+      std::vector<double_t*> ptr_pos_amp_;
+      std::vector<double_t*> ptr_neg_amp_;
+      for ( int_t k = 0; k < 7; k++ )
+      {
+        if ( amps_[k] >= 0 )
+        {
+            ptr_pos_exp_term_.push_back( &exps_[k] );
+            ptr_pos_amp_.push_back( &amps_[k] );
+        }
+        else
+        {    
+            ptr_neg_exp_term_.push_back( &exps_[k] );
+            ptr_neg_amp_.push_back( &amps_[k] );
+        }
+      }
+      
+      int_t possible_ = 1;
+      
+      int_t n_neg_ = ptr_neg_exp_term_.size();
+      if ( n_neg_ == 0 )
+      {
+        // no zero crossings possible, only positive terms
+        possible_ = 0;
+      }
+      else
+      {
+        // now we consider the amplitudes
+        double_t neg_sum_amps_ = 0.;
+        double_t neg_max_exp_term_ = 0.;
+        for ( int_t k = 0; k < n_neg_; k++ )
+        {
+            neg_sum_amps_ += *ptr_neg_amp_[k];
+            if (*ptr_neg_exp_term_[k] > neg_max_exp_term_ )
+            {
+                neg_max_exp_term_ = *ptr_neg_exp_term_[k];
+            }
+        }
+        // do the slower positive ones balance the summed neg. amplitude
+        double_t pos_sum_amps_ = 0.;
+        for ( int_t k = 0; k < ptr_pos_exp_term_.size(); k++ )
+        {
+            if (*ptr_pos_exp_term_[k] > neg_max_exp_term_ )
+            {
+                pos_sum_amps_ += *ptr_pos_amp_[k];
+            }
+        }
+        if (pos_sum_amps_ + neg_sum_amps_ >= 0)
+        {
+            possible_ = 0;
+        }
+        else
+            {
+            // if false, no zero crossings possible, positive terms dominate
+            std::cout << "WARNING: undetected zero crossings possible."  << "\n";
+//                    std::cout << "amps_: " << amp_1_ << ", " << amp_2_ << ", " << amp_3_ << ", " << amp_4_ << ", " 
+//                      << amp_5_ << ", " << amp_6_ << ", " << amp_7_ << ", "  << "\n";
+//                    std::cout << "exps_: " << exp_term_1_ << ", " << exp_term_2_ << ", " << exp_term_3_ << ", " << exp_term_4_ << ", " 
+//                      << exp_term_5_ << ", " << exp_term_6_ << ", " << exp_term_7_ << ", "  << "\n\n";
+            
+            }
+       }
+       return possible_;
+  }
+  
+  
   void integrate_( const STDPSplHomCommonProperties& cp, long_t delta )
   {
 
@@ -214,7 +384,6 @@ private:
   
     double_t t_delta_ = Time( Time::step(delta) ).get_ms() / 1000.;  
 //    std::cout << "t_delta_, delta: " << t_delta_ << "  " << delta <<  "\n";
-  
   
     // precompute exponentials
     double_t exp_term_8_ =  std::exp( -t_delta_/cp.tau_ );
@@ -250,165 +419,45 @@ private:
       // EQ 1 only for nonzero synapses, i.e. created ones
       if (delta_i>0)
       {
-          double_t t_i_ = Time( Time::step(delta_i) ).get_ms() / 1000.;
-          double_t exp_term_2_;
-          double_t exp_term_6_;
-         
-          // use analytical solution of EQ1
-            
-          // compute expensive terms first
-          if (delta_i==delta)
-          {
-             // in this case we can reuse the precomputed terms from above
-            exp_term_2_ = exp_term_9_;
-            exp_term_6_ = exp_term_8_ * exp_term_8_;
-          }
-          else
-          { 
-            // we compute the new exponential terms
-            exp_term_2_ = std::exp( -t_i_ / cp.tau_slow_ );  
-            exp_term_6_ = std::exp( -t_i_* 2 / cp.tau_ );
-          }
-          double_t exp_term_1_ = exp_term_2_ * exp_term_6_;                                 // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
-          double_t exp_term_3_ = exp_term_2_ * exp_term_2_;                                 // std::exp( -t_i_*( 2/cp.tau_slow_) ); 
-          double_t exp_term_4_ = exp_term_2_ * exp_term_2_ * exp_term_2_ * exp_term_2_;     // std::exp( -t_i_*( 4/cp.tau_slow_) ); 
-          double_t exp_term_5_ = exp_term_6_ * exp_term_6_;                                 // std::exp( -t_i_*( 4/cp.tau_ ));
-          double_t exp_term_7_ = std::exp( -t_i_* cp.alpha_ );
-          
-          // precompute power terms without using std::pow
-          double_t pow_term_1_ = -(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_;
-          pow_term_1_ *= pow_term_1_;
-          double_t pow_term_2_ = R_post_ * R_post_ * R_post_ * R_post_;  //std::pow(R_post_,4)
-          double_t pow_term_3_ = r_jk_[ i ] * r_jk_[ i ];                //std::pow(r_jk_[ i ],2)
-          double_t pow_term_4_ = r_post_ * r_post_;                      //std::pow(r_post_,2)
-          double_t pow_term_5_ = c_jk_[ i ] * c_jk_[ i ];                //std::pow(c_jk_[ i ],2)
-          
-          // compute amplitudes of exp_terms
-          double_t denom_ = ((-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.pow_term_2_*
-                 (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
-                 (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)));
-          double_t amp_1_ = (2*cp.A4_corr_*r_jk_[ i ]*r_post_*cp.pow_term_1_*(-4 + cp.alpha_*cp.tau_)*
-                  (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_)*
-                  (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_) ) / denom_;
-          double_t amp_2_ = ( cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
-              (-(r_jk_[ i ]*r_post_*cp.tau_) + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))*(cp.tau_ - 2*cp.tau_slow_)*cp.tau_slow_*
-              (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
-          double_t amp_3_ = -( cp.A4_corr_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*
-              pow_term_1_*(-4 + cp.alpha_*cp.tau_slow_)*
-              (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
-          double_t amp_4_ = -( cp.A4_post_* pow_term_2_ *(-4 + cp.alpha_*cp.tau_)*
-              (-2 + cp.alpha_*cp.tau_)*cp.pow_term_2_*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
-              (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
-          double_t amp_5_ = -( cp.A4_corr_*pow_term_3_*pow_term_4_*
-              cp.pow_term_4_*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
-              (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
-          double_t amp_6_ = ( cp.A2_corr_*r_jk_[ i ]*r_post_*cp.pow_term_1_*(-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
-              (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
-              (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
-          double_t amp_7_ = ( cp.pow_term_2_*
-              (w_jk_[ i ]*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
-                 (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
-                cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
-                 (r_jk_[ i ]*r_post_*cp.tau_ + c_jk_[ i ]*(2 - cp.alpha_*cp.tau_)*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_))\
-                 + (-2 + cp.alpha_*cp.tau_)*(-1 + cp.alpha_*cp.tau_slow_)*
-                 (cp.A4_post_*pow_term_2_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*
-                    (-cp.tau_ - 2*cp.tau_slow_ + cp.alpha_*cp.tau_*cp.tau_slow_) + 
-                   cp.A4_corr_*(-4 + cp.alpha_*cp.tau_slow_)*
-                    (2*pow_term_3_*pow_term_4_*cp.pow_term_1_ - 
-                      c_jk_[ i ]*(c_jk_[ i ] + 2*r_jk_[ i ]*r_post_)*cp.tau_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_ + 
-                      pow_term_5_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.pow_term_6_))) )/ denom_;
-          
-          // compose weight update
-          w_jk_[ i ] = ( 
-             exp_term_1_* amp_1_ + exp_term_2_* amp_2_ + exp_term_3_* amp_3_ + 
-             exp_term_4_* amp_4_ + exp_term_5_* amp_5_ + exp_term_6_* amp_6_ + 
-             exp_term_7_* amp_7_ );
-          
+          // compute amplitudes
+          std::vector<double_t> amps_ = compute_amps_( cp, i );
+
+          // compute exponentials
+          std::vector<double_t> exps_ = compute_exps_( cp, delta_i );
+
+          // compose the solution
+          w_jk_[ i ] = compose_w_sol_( amps_, exps_ );
     
           // delete synapse with negative or zero weights
-          
-          int_t deletion_triggered = 0;
-
+          int_t deletion_trigger = 0;
           if ( w_jk_[ i ] <= 0. )
-              {
+          {
               // Here we only check this at spike times. Misses zero crossing 
               // within ISIs. This may be improved.
-              deletion_triggered = 1;
-              }
-          else  
+              std::cout << "deletion triggered in spike-time check."  << "\n";
+              deletion_trigger = 1;
+          }
+          else
           {
-              // checks to detect zero crossings within interval
-
-              // make vector pointers to the exp_terms and amps to loop over below
-              std::vector<double_t*> ptr_exp_term_;
-              ptr_exp_term_.push_back( &exp_term_1_ );
-              ptr_exp_term_.push_back( &exp_term_2_ );
-              ptr_exp_term_.push_back( &exp_term_3_ );
-              ptr_exp_term_.push_back( &exp_term_4_ );
-              ptr_exp_term_.push_back( &exp_term_5_ );
-              ptr_exp_term_.push_back( &exp_term_6_ );
-              ptr_exp_term_.push_back( &exp_term_7_ );
-
-              std::vector<double_t*> ptr_amp_;
-              ptr_amp_.push_back( &amp_1_ );
-              ptr_amp_.push_back( &amp_2_ );
-              ptr_amp_.push_back( &amp_3_ );
-              ptr_amp_.push_back( &amp_4_ );
-              ptr_amp_.push_back( &amp_5_ );
-              ptr_amp_.push_back( &amp_6_ );
-              ptr_amp_.push_back( &amp_7_ );
-
-              // make new pointers to collect positive and negative exponentials
-              std::vector<double_t*> ptr_pos_exp_term_;
-              std::vector<double_t*> ptr_neg_exp_term_;
-              std::vector<double_t*> ptr_pos_amp_;
-              std::vector<double_t*> ptr_neg_amp_;
-              for ( int_t k = 0; k < 7; k++ )
+            if ( check_crossing_possible_( amps_, exps_ )==1 )
               {
-                if (*ptr_amp_[k] >= 0)
+              // if we cannot exclude zero crossings in general, 
+              // we search numerically if there is a zero crossings
+              // on the time grid spanned by the simulation resolution
+              std::vector<double_t> exps_d_;
+              double_t w_d_;
+              for (long_t d_; d_<delta_i; d_++)
+              {
+                std::vector<double_t> exps_d_ = compute_exps_( cp, d_ );
+                w_d_ = compose_w_sol_( amps_, exps_d_ );
+                if (w_d_<=0.)
                 {
-                    ptr_pos_exp_term_.push_back( ptr_exp_term_[k] );
-                    ptr_pos_amp_.push_back( ptr_amp_[k] );
-                }
-                else
-                {    
-                    ptr_neg_exp_term_.push_back( ptr_exp_term_[k] );
-                    ptr_neg_amp_.push_back( ptr_amp_[k] );
+                    std::cout << "deletion triggered in step-wise check."  << "\n";
+                    deletion_trigger = 1;
+                    break;
                 }
               }
-              
-              int_t n_neg_ = ptr_neg_exp_term_.size();
-              if ( n_neg_ > 0 )
-              {
-                // if false, no zero crossings possible, only positive terms
-                // now we consider the amplitudes
-                double_t neg_sum_amps_ = 0.;
-                double_t neg_max_exp_term_ = 0.;
-                for ( int_t k = 0; k < n_neg_; k++ )
-                    {
-                    neg_sum_amps_ += *ptr_neg_amp_[k];
-                    if (*ptr_neg_exp_term_[k] > neg_max_exp_term_ )
-                    {
-                        neg_max_exp_term_ = *ptr_neg_exp_term_[k];
-                    }
-                    }
-                // do the slower positive ones balance the summed neg. amplitude
-                double_t pos_sum_amps_ = 0.;
-                for ( int_t k = 0; k < ptr_pos_exp_term_.size(); k++ )
-                    {
-                    if (*ptr_pos_exp_term_[k] > neg_max_exp_term_ )
-                    pos_sum_amps_ += *ptr_pos_amp_[k];
-                    }
-                if (pos_sum_amps_ + neg_sum_amps_ < 0)
-                    {
-                    // if false, no zero crossings possible, positive terms dominate
-                    std::cout << "WARNING: undetected zero crossings possible."  << "\n";
-                    std::cout << "amps_: " << amp_1_ << ", " << amp_2_ << ", " << amp_3_ << ", " << amp_4_ << ", " 
-                      << amp_5_ << ", " << amp_6_ << ", " << amp_7_ << ", "  << "\n";
-                    std::cout << "exps_: " << exp_term_1_ << ", " << exp_term_2_ << ", " << exp_term_3_ << ", " << exp_term_4_ << ", " 
-                      << exp_term_5_ << ", " << exp_term_6_ << ", " << exp_term_7_ << ", "  << "\n\n";                      
-                    }
-               }
+              }
           }
           
           
@@ -416,7 +465,7 @@ private:
 //          std::cout << "amps_: " << amp_1_ << ", " << amp_2_ << ", " << amp_3_ << ", " << amp_4_ << ", " << amp_5_ << ", " << amp_6_ << ", " << amp_7_ << ", "  << "\n";
 //          std::cout << "taus_: " << std::log( exp_term_1_ ) / (-t_i_) << ", " << std::log( exp_term_2_ ) / (-t_i_) << ", " std::log( exp_term_3_ ) / (-t_i_) << ", " std::log( exp_term_4_ ) / (-t_i_) << ", " std::log( exp_term_5_ ) / (-t_i_) << ", " std::log( exp_term_6_ ) / (-t_i_) << ", " std::log( exp_term_7_ ) / (-t_i_) << ", "  << "\n\n\n";
              
-          if ( deletion_triggered == 1 )
+          if ( deletion_trigger == 1 )
           {
             // generate an exponentially distributed number
             w_create_steps_[ i ] = Time( Time::ms( 

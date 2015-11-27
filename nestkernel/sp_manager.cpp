@@ -163,7 +163,7 @@ SPManager::set_status( const DictionaryDatum& d )
 }
 
 /**
- * Retrieve the min delay for the dynamic creation of synapses using 
+ * Retrieve the min delay for the dynamic creation of synapses using
  * structural plasticity
  * @return the min delay to use in the synapse creation
  */
@@ -184,7 +184,7 @@ SPManager::get_min_delay() const
 }
 
 /**
- * Retrieve the max delay for the dynamic creation of synapses using 
+ * Retrieve the max delay for the dynamic creation of synapses using
  * structural plasticity
  * @return the max delay to use in the synapse creation
  */
@@ -217,9 +217,9 @@ SPManager::update_structural_plasticity()
 
 /**
  * Handles the general dynamic creation and deletion of synapses when
- * structural plasticity is enabled. Retrieves the number of available 
- * synaptic elements to create new synapses. Retrieves the number of 
- * deleted synaptic elements to delete already created synapses. 
+ * structural plasticity is enabled. Retrieves the number of available
+ * synaptic elements to create new synapses. Retrieves the number of
+ * deleted synaptic elements to delete already created synapses.
  * @param sp_builder The structural plasticity connection builder to use
  */
 void

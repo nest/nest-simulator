@@ -973,7 +973,7 @@ Network::disconnect( index sgid, Node* target, thread target_thread, index syn )
 
 /**
  * Obtains the right connection builder and performs a synapse deletion according
- * to the specified connection specs. 
+ * to the specified connection specs.
  * @param sources collection of sources
  * @param targets collection of targets
  * @param conn_spec disconnection specs. For now only all to all and one to one

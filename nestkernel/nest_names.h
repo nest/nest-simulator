@@ -292,8 +292,9 @@ extern const Name std_mod;     //!< Miscellaneous parameters
 extern const Name stimulator;  //!< Node type
 extern const Name stop;        //!< Device parameters
 extern const Name structural_plasticity_synapses; //!< Synapses defined for structural plasticity
-extern const Name structural_plasticity_update_interval; //!< Update interval for structural plasticity
-extern const Name structure;   //!< Node type
+extern const Name
+  structural_plasticity_update_interval; //!< Update interval for structural plasticity
+extern const Name structure;             //!< Node type
 extern const Name success;
 extern const Name synapse;           //!< Node type
 extern const Name synapse_model;     //!< Connection parameters

@@ -39,8 +39,8 @@ class SPBuilder;
 /**
  * The SPManager class is in charge of managing the dynamic creation and deletion
  * of synapses in the simulation when structural plasticity is enabled. Otherwise
- * it behaves as the normal ConnectionManager. 
- * @param 
+ * it behaves as the normal ConnectionManager.
+ * @param
  */
 class SPManager : public ConnectionManager
 {
@@ -69,19 +69,19 @@ public:
     std::vector< index >& post_vacant_id,
     std::vector< int_t >& post_vacant_n,
     SPBuilder* sp_conn_builder );
-  //Deletion of synapses on the pre synaptic side
+  // Deletion of synapses on the pre synaptic side
   void delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
     std::vector< int_t >& pre_deleted_n,
     index synapse_model,
     std::string se_pre_name,
     std::string se_post_name );
-  //Deletion of synapses on the post synaptic side
+  // Deletion of synapses on the post synaptic side
   void delete_synapses_from_post( std::vector< index >& post_deleted_id,
     std::vector< int_t >& post_deleted_n,
     index synapse_model,
     std::string se_pre_name,
     std::string se_post_name );
-  //Deletion of synapses
+  // Deletion of synapses
   void delete_synapse( index source,
     index target,
     long syn_id,
@@ -104,8 +104,8 @@ public:
   void global_shuffle( std::vector< index >& v );
   void global_shuffle( std::vector< index >& v, size_t n );
 
-  //Time interval for structural plasticity update (creation/deletion of synapses)
-  static long_t structural_plasticity_update_interval; 
+  // Time interval for structural plasticity update (creation/deletion of synapses)
+  static long_t structural_plasticity_update_interval;
   std::vector< SPBuilder* > sp_conn_builders;
 
 private:

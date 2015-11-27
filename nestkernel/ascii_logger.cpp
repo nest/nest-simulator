@@ -32,6 +32,8 @@
 #include "vp_manager_impl.h"
 #include "compose.hpp"
 
+#include "dictutils.h"
+
 void
 nest::ASCIILogger::enroll( RecordingDevice& device )
 {
@@ -186,7 +188,7 @@ nest::ASCIILogger::initialize()
 
         /* Set formatting */
         file << std::fixed;
-        file << std::setprecision( 3 );
+        file << std::setprecision( P_.precision_ );
 
         if ( P_.fbuffer_size_ != P_.fbuffer_size_old_ )
         {
@@ -397,6 +399,8 @@ nest::ASCIILogger::Parameters_::set( const ASCIILogger& al, const DictionaryDatu
 void
 nest::ASCIILogger::set_status( const DictionaryDatum& d )
 {
+  d->info(std::cout);
+  
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( *this, d );  // throws if BadProperty
 

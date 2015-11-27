@@ -129,8 +129,6 @@ private:
     sion_int64 body_pos, info_pos;
 
     double t_start, t_end, resolution;
-
-    SIONBuffer buffer;
   };
 
   struct FileEntry

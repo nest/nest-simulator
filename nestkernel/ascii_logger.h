@@ -31,26 +31,64 @@
 namespace nest
 {
 
+/**
+ * ASCII specialization of the Logger interface.
+ * Recorded data is written to plain text files on a per-device-per-thread basis.
+ * Some formatting options are available to allow some compatibility to legacy NEST output files.
+ *
+ * ASCIILogger maintains a data structure mapping one file stream to every recording device instance
+ * on every thread. Files are opened and inserted into the map during the initialize() call and
+ * closed in finalize().
+ */
 class ASCIILogger : public Logger
 {
 public:
+  /**
+   * ASCIILogger constructor.
+   * The actual setup is done in initialize().
+   */
   ASCIILogger()
     : files_()
   {
   }
 
+  /**
+   * ASCIILogger descructor.
+   * File handling is done in finalize().
+   */
   ~ASCIILogger() throw()
   {
-    // FIXME: close remaining files
+    // remaining files are not closed here but should be handled gracefully on NEST shutdown.
   }
 
+  /**
+   * Functions called by all instantiated recording devices to register themselves with their
+   * metadata.
+   */
   void enroll( RecordingDevice& device );
   void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
 
+  /**
+   * Initialize the ASCIILogger during simulation preparation. Here, files are opened for all
+   * previously enrolled devices.
+   */
   void initialize();
-  void finalize();
-  void synchronize() {}
 
+  /**
+   * Finalize the ASCIILogger after the simulation has finished. Files are flushed and/or closed
+   * according to `close_after_simulate` and `flush_after_simulate` parameters.
+   */
+  void finalize();
+
+  /**
+   * Trivial synchronization function. The ASCIILogger does not need explicit synchronization after
+   * each time step.
+   */
+  void synchronize();
+
+  /**
+   * Functions to write data to file.
+   */
   void write( const RecordingDevice& device, const Event& event );
   void write( const RecordingDevice& device, const Event& event, const std::vector< double_t >& );
 
@@ -58,6 +96,12 @@ public:
   void get_status( DictionaryDatum& ) const;
 
 private:
+  /**
+   * Build filename from parts.
+   * The filename consists of the data path set in IOManager, the devices' labels (or names as a
+   * fallback if no label is given), the device GID, and the virtual process ID, all separated by
+   * dashes.
+   */
   const std::string build_filename_( const RecordingDevice& device ) const;
 
   struct Parameters_

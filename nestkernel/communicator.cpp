@@ -46,6 +46,7 @@ int nest::Communicator::n_vps_ = 1;
 int nest::Communicator::send_buffer_size_ = 1;
 int nest::Communicator::recv_buffer_size_ = 1;
 bool nest::Communicator::initialized_ = false;
+bool nest::Communicator::use_Allgather_ = true;
 
 #ifdef HAVE_MPI
 
@@ -69,6 +70,8 @@ template <>
 MPI_Datatype MPI_Type< nest::long_t >::type = MPI_LONG;
 template <>
 MPI_Datatype MPI_Type< nest::uint_t >::type = MPI_INT;
+template <>
+MPI_Datatype MPI_Type< nest::ulong_t >::type = MPI_UNSIGNED_LONG;
 
 MPI_Datatype MPI_OFFGRID_SPIKE = 0;
 
@@ -146,7 +149,9 @@ nest::Communicator::init( int* argc, char** argv[] )
   // generate and commit struct
   MPI_Type_struct( 2, blockcounts, offsets, source_types, &MPI_OFFGRID_SPIKE );
   MPI_Type_commit( &MPI_OFFGRID_SPIKE );
-
+  // set up order of communication if using CPEX
+  if ( !use_Allgather_ )
+    init_communication();
   initialized_ = true;
 }
 
@@ -209,6 +214,40 @@ nest::Communicator::get_processor_name()
   return name;
 }
 
+
+/**
+ * Perform the CPEX algorithm to determine the communication partner
+ * of the process for each communication step.
+ * See: A. Tam and C. Wang: Efficient scheduling of complete exchange
+ *      on clusters. In 13th International Conference on Parallel
+ *      and Distributed Computing Systems (PDCS 2000), Las Vegas, 2000
+ */
+void
+nest::Communicator::init_communication()
+{
+
+  // number of communication steps required is (num_processes_ - 1) if
+  // num_processes_ is even, and (num_processes_) if odd.
+  int num_comm_steps = ( num_processes_ - 1 ) + ( num_processes_ % 2 );
+  comm_step_.clear();
+  comm_step_.resize( num_comm_steps );
+
+  int partner;
+  for ( int step = 1; step <= num_comm_steps; ++step )
+  {
+    if ( rank_ < num_comm_steps )
+      partner = step - rank_;
+    else if ( step % 2 )
+      partner = ( step + num_comm_steps ) / 2;
+    else
+      partner = step / 2;
+    partner = ( partner + num_comm_steps ) % num_comm_steps;
+    if ( partner == rank_ )
+      partner = ( num_processes_ % 2 ) ? -1 : num_comm_steps;
+    comm_step_[ step - 1 ] = partner;
+  }
+}
+
 void
 nest::Communicator::communicate( std::vector< uint_t >& send_buffer,
   std::vector< uint_t >& recv_buffer,
@@ -224,9 +263,13 @@ nest::Communicator::communicate( std::vector< uint_t >& send_buffer,
     }
     recv_buffer.swap( send_buffer );
   }
-  else
+  else if ( ( num_processes_ > 1 ) && use_Allgather_ ) // communicate using Allgather
   {
     communicate_Allgather( send_buffer, recv_buffer, displacements );
+  }
+  else
+  {
+    communicate_CPEX( send_buffer, recv_buffer, displacements );
   }
 }
 
@@ -239,6 +282,7 @@ nest::Communicator::communicate_Allgather( std::vector< uint_t >& send_buffer,
 
   // attempt Allgather
   if ( send_buffer.size() == static_cast< uint_t >( send_buffer_size_ ) )
+  {
     MPI_Allgather( &send_buffer[ 0 ],
       send_buffer_size_,
       MPI_UNSIGNED,
@@ -246,6 +290,7 @@ nest::Communicator::communicate_Allgather( std::vector< uint_t >& send_buffer,
       send_buffer_size_,
       MPI_UNSIGNED,
       comm );
+  }
   else
   {
     // DEC cxx required 0U literal, HEP 2007-03-26
@@ -273,7 +318,9 @@ nest::Communicator::communicate_Allgather( std::vector< uint_t >& send_buffer,
       overflow = true;
       recv_counts[ pid ] = recv_buffer[ block_disp + 1 ];
       if ( static_cast< uint_t >( recv_counts[ pid ] ) > max_recv_count )
+      {
         max_recv_count = recv_counts[ pid ];
+      }
     }
     disp += recv_counts[ pid ];
   }
@@ -290,6 +337,120 @@ nest::Communicator::communicate_Allgather( std::vector< uint_t >& send_buffer,
       &displacements[ 0 ],
       MPI_UNSIGNED,
       comm );
+    send_buffer_size_ = max_recv_count;
+    recv_buffer_size_ = send_buffer_size_ * num_processes_;
+  }
+}
+
+void
+nest::Communicator::communicate_CPEX( std::vector< uint_t >& send_buffer,
+  std::vector< uint_t >& recv_buffer,
+  std::vector< int >& displacements )
+{
+  MPI_Status status;
+  int partner;
+  int disp;
+  std::vector< int > recv_counts( num_processes_, send_buffer_size_ );
+
+  if ( send_buffer.size() == static_cast< uint_t >( send_buffer_size_ ) ) // no overflow condition
+  {
+    for ( size_t step = 0; step < comm_step_.size(); ++step )
+    {
+      partner = comm_step_[ step ];
+      disp = partner * send_buffer_size_;
+      if ( partner >= 0 )
+      {
+        if ( rank_ < partner )
+        {
+          MPI_Send( &send_buffer[ 0 ], send_buffer_size_, MPI_UNSIGNED, partner, 1, comm );
+          MPI_Recv(
+            &recv_buffer[ disp ], send_buffer_size_, MPI_UNSIGNED, partner, 1, comm, &status );
+        }
+        else
+        {
+          MPI_Recv(
+            &recv_buffer[ disp ], send_buffer_size_, MPI_UNSIGNED, partner, 1, comm, &status );
+          MPI_Send( &send_buffer[ 0 ], send_buffer_size_, MPI_UNSIGNED, partner, 1, comm );
+        }
+      }
+    }
+    disp = rank_ * send_buffer_size_;
+    std::copy( send_buffer.begin(), send_buffer.end(), recv_buffer.begin() + disp );
+  }
+  else // overflow
+  {
+    // DEC cxx required 0U literal, HEP 2007-03-26
+    std::vector< uint_t > overflow_buffer( send_buffer_size_, 0U );
+    overflow_buffer[ 0 ] = COMM_OVERFLOW_ERROR;
+    overflow_buffer[ 1 ] = send_buffer.size();
+    for ( size_t step = 0; step < comm_step_.size(); ++step )
+    {
+      partner = comm_step_[ step ];
+      disp = partner * send_buffer_size_;
+      displacements[ partner ] = disp;
+      if ( partner >= 0 )
+      {
+        if ( rank_ < partner )
+        {
+          MPI_Send( &overflow_buffer[ 0 ], send_buffer_size_, MPI_UNSIGNED, partner, 1, comm );
+          MPI_Recv(
+            &recv_buffer[ disp ], send_buffer_size_, MPI_UNSIGNED, partner, 1, comm, &status );
+        }
+        else
+        {
+          MPI_Recv(
+            &recv_buffer[ disp ], send_buffer_size_, MPI_UNSIGNED, partner, 1, comm, &status );
+          MPI_Send( &overflow_buffer[ 0 ], send_buffer_size_, MPI_UNSIGNED, partner, 1, comm );
+        }
+      }
+    }
+    disp = rank_ * send_buffer_size_;
+    std::copy( overflow_buffer.begin(), overflow_buffer.end(), recv_buffer.begin() + disp );
+  }
+
+  // check for overflow in recv_buffer
+  disp = 0;
+  uint_t max_recv_count = send_buffer_size_;
+  bool overflow = false;
+  for ( int pid = 0; pid < num_processes_; ++pid )
+  {
+    uint_t block_disp = pid * send_buffer_size_;
+    displacements[ pid ] = disp;
+    if ( recv_buffer[ block_disp ] == COMM_OVERFLOW_ERROR )
+    {
+      overflow = true;
+      recv_counts[ pid ] = recv_buffer[ block_disp + 1 ];
+      if ( static_cast< uint_t >( recv_counts[ pid ] ) > max_recv_count )
+        max_recv_count = recv_counts[ pid ];
+    }
+    disp += recv_counts[ pid ];
+  }
+
+  if ( overflow )
+  {
+    recv_buffer.resize( disp, 0 );
+    for ( size_t step = 0; step < comm_step_.size(); ++step )
+    {
+      partner = comm_step_[ step ];
+      disp = displacements[ partner ];
+      if ( partner >= 0 )
+      {
+        if ( rank_ < partner )
+        {
+          MPI_Send( &send_buffer[ 0 ], send_buffer.size(), MPI_UNSIGNED, partner, 1, comm );
+          MPI_Recv(
+            &recv_buffer[ disp ], recv_counts[ partner ], MPI_UNSIGNED, partner, 1, comm, &status );
+        }
+        else
+        {
+          MPI_Recv(
+            &recv_buffer[ disp ], recv_counts[ partner ], MPI_UNSIGNED, partner, 1, comm, &status );
+          MPI_Send( &send_buffer[ 0 ], send_buffer.size(), MPI_UNSIGNED, partner, 1, comm );
+        }
+      }
+    }
+    std::copy(
+      send_buffer.begin(), send_buffer.end(), recv_buffer.begin() + displacements[ rank_ ] );
     send_buffer_size_ = max_recv_count;
     recv_buffer_size_ = send_buffer_size_ * num_processes_;
   }
@@ -376,10 +537,11 @@ nest::Communicator::communicate( std::vector< OffGridSpike >& send_buffer,
     }
     recv_buffer.swap( send_buffer );
   }
-  else
-  {
+  else if ( ( num_processes_ > 1 ) && use_Allgather_ ) // communicate using Allgather
     communicate_Allgather( send_buffer, recv_buffer, displacements );
-  }
+  else
+    communicate_CPEX( send_buffer, recv_buffer, displacements );
+}
 }
 
 void
@@ -446,6 +608,130 @@ nest::Communicator::communicate_Allgather( std::vector< OffGridSpike >& send_buf
   }
 }
 
+void
+nest::Communicator::communicate_CPEX( std::vector< OffGridSpike >& send_buffer,
+  std::vector< OffGridSpike >& recv_buffer,
+  std::vector< int >& displacements )
+{
+  MPI_Status status;
+  int partner;
+  int disp;
+  std::vector< int > recv_counts( num_processes_, send_buffer_size_ );
+
+
+  if ( send_buffer.size() == static_cast< uint_t >( send_buffer_size_ ) ) // no overflow condition
+  {
+    for ( size_t step = 0; step < comm_step_.size(); ++step )
+    {
+      partner = comm_step_[ step ];
+      disp = partner * send_buffer_size_;
+      if ( partner >= 0 )
+      {
+        if ( rank_ < partner )
+        {
+          MPI_Send( &send_buffer[ 0 ], send_buffer_size_, MPI_OFFGRID_SPIKE, partner, 1, comm );
+          MPI_Recv(
+            &recv_buffer[ disp ], send_buffer_size_, MPI_OFFGRID_SPIKE, partner, 1, comm, &status );
+        }
+        else
+        {
+          MPI_Recv(
+            &recv_buffer[ disp ], send_buffer_size_, MPI_OFFGRID_SPIKE, partner, 1, comm, &status );
+          MPI_Send( &send_buffer[ 0 ], send_buffer_size_, MPI_OFFGRID_SPIKE, partner, 1, comm );
+        }
+      }
+    }
+    disp = rank_ * send_buffer_size_;
+    std::copy( send_buffer.begin(), send_buffer.end(), recv_buffer.begin() + disp );
+  }
+  else // overflow
+  {
+    std::vector< OffGridSpike > overflow_buffer( send_buffer_size_ );
+    overflow_buffer[ 0 ] = OffGridSpike( COMM_OVERFLOW_ERROR, 0.0 );
+    overflow_buffer[ 1 ] = OffGridSpike( send_buffer.size(), 0.0 );
+    for ( size_t step = 0; step < comm_step_.size(); ++step )
+    {
+      partner = comm_step_[ step ];
+      disp = partner * send_buffer_size_;
+      displacements[ partner ] = disp;
+      if ( partner >= 0 )
+      {
+        if ( rank_ < partner )
+        {
+          MPI_Send( &overflow_buffer[ 0 ], send_buffer_size_, MPI_OFFGRID_SPIKE, partner, 1, comm );
+          MPI_Recv(
+            &recv_buffer[ disp ], send_buffer_size_, MPI_OFFGRID_SPIKE, partner, 1, comm, &status );
+        }
+        else
+        {
+          MPI_Recv(
+            &recv_buffer[ disp ], send_buffer_size_, MPI_OFFGRID_SPIKE, partner, 1, comm, &status );
+          MPI_Send( &overflow_buffer[ 0 ], send_buffer_size_, MPI_OFFGRID_SPIKE, partner, 1, comm );
+        }
+      }
+    }
+    disp = rank_ * send_buffer_size_;
+    std::copy( overflow_buffer.begin(), overflow_buffer.end(), recv_buffer.begin() + disp );
+  }
+
+  // check for overflow in recv_buffer
+  disp = 0;
+  uint_t max_recv_count = send_buffer_size_;
+  bool overflow = false;
+  for ( int pid = 0; pid < num_processes_; ++pid )
+  {
+    uint_t block_disp = pid * send_buffer_size_;
+    displacements[ pid ] = disp;
+    if ( ( recv_buffer[ block_disp ] ).get_gid() == COMM_OVERFLOW_ERROR )
+    {
+      overflow = true;
+      recv_counts[ pid ] = ( recv_buffer[ block_disp + 1 ] ).get_gid();
+      if ( static_cast< uint_t >( recv_counts[ pid ] ) > max_recv_count )
+        max_recv_count = recv_counts[ pid ];
+    }
+    disp += recv_counts[ pid ];
+  }
+
+  if ( overflow )
+  {
+    recv_buffer.resize( disp );
+    for ( size_t step = 0; step < comm_step_.size(); ++step )
+    {
+      partner = comm_step_[ step ];
+      disp = displacements[ partner ];
+      if ( partner >= 0 )
+      {
+        if ( rank_ < partner )
+        {
+          MPI_Send( &send_buffer[ 0 ], send_buffer.size(), MPI_OFFGRID_SPIKE, partner, 1, comm );
+          MPI_Recv( &recv_buffer[ disp ],
+            recv_counts[ partner ],
+            MPI_OFFGRID_SPIKE,
+            partner,
+            1,
+            comm,
+            &status );
+        }
+        else
+        {
+          MPI_Recv( &recv_buffer[ disp ],
+            recv_counts[ partner ],
+            MPI_OFFGRID_SPIKE,
+            partner,
+            1,
+            comm,
+            &status );
+          MPI_Send( &send_buffer[ 0 ], send_buffer.size(), MPI_OFFGRID_SPIKE, partner, 1, comm );
+        }
+      }
+    }
+    std::copy(
+      send_buffer.begin(), send_buffer.end(), recv_buffer.begin() + displacements[ rank_ ] );
+    send_buffer_size_ = max_recv_count;
+    recv_buffer_size_ = send_buffer_size_ * num_processes_;
+  }
+}
+
 
 void
 nest::Communicator::communicate( std::vector< double_t >& send_buffer,
@@ -475,6 +761,61 @@ nest::Communicator::communicate( std::vector< double_t >& send_buffer,
   }
 }
 
+void
+nest::Communicator::communicate( std::vector< ulong_t >& send_buffer,
+  std::vector< ulong_t >& recv_buffer,
+  std::vector< int >& displacements )
+{
+  // get size of buffers
+  std::vector< int > n_nodes( num_processes_ );
+  n_nodes[ rank_ ] = send_buffer.size();
+  communicate( n_nodes );
+  // Set up displacements vector.
+  displacements.resize( num_processes_, 0 );
+  for ( int i = 1; i < num_processes_; ++i )
+    displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+
+  // Calculate total number of node data items to be gathered.
+  size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
+
+  if ( n_globals != 0 )
+  {
+    recv_buffer.resize( n_globals, 0.0 );
+    communicate_Allgatherv( send_buffer, recv_buffer, displacements, n_nodes );
+  }
+  else
+  {
+    recv_buffer.clear();
+  }
+}
+
+void
+nest::Communicator::communicate( std::vector< int_t >& send_buffer,
+  std::vector< int_t >& recv_buffer,
+  std::vector< int >& displacements )
+{
+  // get size of buffers
+  std::vector< int > n_nodes( num_processes_ );
+  n_nodes[ rank_ ] = send_buffer.size();
+  communicate( n_nodes );
+  // Set up displacements vector.
+  displacements.resize( num_processes_, 0 );
+  for ( int i = 1; i < num_processes_; ++i )
+    displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+
+  // Calculate total number of node data items to be gathered.
+  size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
+
+  if ( n_globals != 0 )
+  {
+    recv_buffer.resize( n_globals, 0.0 );
+    communicate_Allgatherv( send_buffer, recv_buffer, displacements, n_nodes );
+  }
+  else
+  {
+    recv_buffer.clear();
+  }
+}
 
 void
 nest::Communicator::communicate( double_t send_val, std::vector< double_t >& recv_buffer )
@@ -490,13 +831,19 @@ nest::Communicator::communicate( double_t send_val, std::vector< double_t >& rec
 void
 nest::Communicator::communicate( std::vector< int_t >& buffer )
 {
-  communicate_Allgather( buffer );
+  if ( use_Allgather_ )
+    communicate_Allgather( buffer );
+  else
+    communicate_CPEX( buffer );
 }
 
 void
 nest::Communicator::communicate( std::vector< long_t >& buffer )
 {
-  communicate_Allgather( buffer );
+  if ( use_Allgather_ )
+    communicate_Allgather( buffer );
+  else
+    communicate_CPEX( buffer );
 }
 
 void
@@ -508,12 +855,97 @@ nest::Communicator::communicate_Allgather( std::vector< int_t >& buffer )
 }
 
 void
+nest::Communicator::communicate_CPEX( std::vector< int_t >& buffer )
+{
+  MPI_Status status;
+  int partner;
+  for ( size_t step = 0; step < comm_step_.size(); ++step )
+  {
+    partner = comm_step_[ step ];
+    if ( partner >= 0 )
+    {
+      if ( rank_ < partner ) // smaller process number sends first
+      {
+        MPI_Send( &( buffer[ rank_ ] ), 1, MPI_INT, partner, 1, comm );
+        MPI_Recv( &( buffer[ partner ] ), 1, MPI_INT, partner, 1, comm, &status );
+      }
+      else
+      {
+        MPI_Recv( &buffer[ partner ], 1, MPI_INT, partner, 1, comm, &status );
+        MPI_Send( &buffer[ rank_ ], 1, MPI_INT, partner, 1, comm );
+      }
+    }
+  }
+}
+
+/*
+ * Sum across all rank
+ */
+void
+nest::Communicator::communicate_Allreduce_sum_in_place( double_t buffer )
+{
+  MPI_Allreduce( MPI_IN_PLACE, &buffer, 1, MPI_Type< double_t >::type, MPI_SUM, comm );
+}
+
+void
+nest::Communicator::communicate_Allreduce_sum_in_place( std::vector< double_t >& buffer )
+{
+  MPI_Allreduce(
+    MPI_IN_PLACE, &buffer[ 0 ], buffer.size(), MPI_Type< double_t >::type, MPI_SUM, comm );
+}
+
+void
+nest::Communicator::communicate_Allreduce_sum_in_place( std::vector< int_t >& buffer )
+{
+  MPI_Allreduce(
+    MPI_IN_PLACE, &buffer[ 0 ], buffer.size(), MPI_Type< int_t >::type, MPI_SUM, comm );
+}
+
+void
+nest::Communicator::communicate_Allreduce_sum( std::vector< double_t >& send_buffer,
+  std::vector< double_t >& recv_buffer )
+{
+  assert( recv_buffer.size() == send_buffer.size() );
+  MPI_Allreduce( &send_buffer[ 0 ],
+    &recv_buffer[ 0 ],
+    send_buffer.size(),
+    MPI_Type< double_t >::type,
+    MPI_SUM,
+    comm );
+}
+
+void
 nest::Communicator::communicate_Allgather( std::vector< long_t >& buffer )
 {
   // avoid aliasing, see http://www.mpi-forum.org/docs/mpi-11-html/node10.html
   long_t my_val = buffer[ rank_ ];
   MPI_Allgather( &my_val, 1, MPI_LONG, &buffer[ 0 ], 1, MPI_LONG, comm );
 }
+
+void
+nest::Communicator::communicate_CPEX( std::vector< long_t >& buffer )
+{
+  MPI_Status status;
+  int partner;
+  for ( size_t step = 0; step < comm_step_.size(); ++step )
+  {
+    partner = comm_step_[ step ];
+    if ( partner >= 0 )
+    {
+      if ( rank_ < partner ) // smaller process number sends first
+      {
+        MPI_Send( &( buffer[ rank_ ] ), 1, MPI_LONG, partner, 1, comm );
+        MPI_Recv( &( buffer[ partner ] ), 1, MPI_LONG, partner, 1, comm, &status );
+      }
+      else
+      {
+        MPI_Recv( &buffer[ partner ], 1, MPI_LONG, partner, 1, comm, &status );
+        MPI_Send( &buffer[ rank_ ], 1, MPI_LONG, partner, 1, comm );
+      }
+    }
+  }
+}
+
 
 /**
  * Ensure all processes have reached the same stage by waiting until all
@@ -876,10 +1308,53 @@ nest::Communicator::communicate( std::vector< double_t >& send_buffer,
 }
 
 void
+nest::Communicator::communicate( std::vector< ulong_t >& send_buffer,
+  std::vector< ulong_t >& recv_buffer,
+  std::vector< int >& displacements )
+{
+  displacements.resize( 1 );
+  displacements[ 0 ] = 0;
+  recv_buffer.swap( send_buffer );
+}
+
+void
+nest::Communicator::communicate( std::vector< int_t >& send_buffer,
+  std::vector< int_t >& recv_buffer,
+  std::vector< int >& displacements )
+{
+  displacements.resize( 1 );
+  displacements[ 0 ] = 0;
+  recv_buffer.swap( send_buffer );
+}
+
+void
 nest::Communicator::communicate( double_t send_val, std::vector< double_t >& recv_buffer )
 {
   recv_buffer.resize( 1 );
   recv_buffer[ 0 ] = send_val;
+}
+
+
+void
+communicate_Allreduce_sum_in_place( double_t buffer )
+{
+}
+
+void
+nest::Communicator::communicate_Allreduce_sum_in_place( std::vector< double_t >& buffer )
+{
+}
+
+void
+nest::Communicator::communicate_Allreduce_sum_in_place( std::vector< int_t >& buffer )
+{
+}
+
+void
+nest::Communicator::communicate_Allreduce_sum( std::vector< double_t >& send_buffer,
+  std::vector< double_t >& recv_buffer )
+{
+  recv_buffer.swap( send_buffer );
 }
 
 #endif /* #ifdef HAVE_MPI */

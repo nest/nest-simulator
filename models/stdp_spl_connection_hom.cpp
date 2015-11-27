@@ -46,6 +46,7 @@ STDPSplHomCommonProperties::STDPSplHomCommonProperties()
   , w0_( 0.01 )
   , p_fail_( 0.2 )
   , t_cache_( 1. )
+  , safe_mode_( 0 )
 {
 }
 
@@ -64,6 +65,7 @@ STDPSplHomCommonProperties::get_status( DictionaryDatum& d ) const
   def< double_t >( d, "w0", w0_ );
   def< double_t >( d, "p_fail", p_fail_ );
   def< double_t >( d, "t_cache", t_cache_ );
+  def< int_t >( d, "safe_mode", safe_mode_ );
 }
 
 void
@@ -81,6 +83,7 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
   updateValue< double_t >( d, "w0", w0_ );
   updateValue< double_t >( d, "p_fail", p_fail_ );
   updateValue< double_t >( d, "t_cache", t_cache_ );
+  updateValue< double_t >( d, "safe_mode", safe_mode_ );
 
   if ( not( tau_slow_ > tau_ ) )
   {
@@ -97,6 +100,11 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
   if ( not( t_cache_ >= 0. ) )
   {
     throw BadProperty( "The time interval for caching of exponentials must be positive" );
+  }
+
+  if ( not( (safe_mode_==0) or (safe_mode_==1) ) )
+  {
+    throw BadProperty( "safe_mode has to be either 0 or 1" );
   }
 
   // precompute power terms that occur frequently

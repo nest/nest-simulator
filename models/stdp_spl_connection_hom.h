@@ -78,6 +78,7 @@ public:
   double_t w0_;
   double_t p_fail_;
   double_t t_cache_;
+  int_t safe_mode_;
 
   // precomputed values
   long_t exp_cache_len_;
@@ -433,6 +434,11 @@ private:
               //std::cout << "deletion triggered in spike-time check."  << "\n";
               deletion_trigger = 1;
           }
+          else if (cp.safe_mode_ == 0)
+              {
+              // if safe mode is off, we don't check for zero crossings within
+              // the intervals
+              }
           else if ( check_crossing_possible_( amps_, exps_ )==1 )
           {
               // if we cannot exclude zero crossings in general, 

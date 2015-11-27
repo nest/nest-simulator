@@ -28,25 +28,54 @@
 namespace nest
 {
 
+/**
+ * A simple logger implementation that prints all recorded data to screen.
+ */
 class ScreenLogger : public Logger
 {
 public:
+  /**
+   * ScreenLogger constructor
+   * The actual initialization is happening in Logger::initialize()
+   */
   ScreenLogger()
-    : initialized_( false )
   {
   }
 
+  /**
+   * ScreenLogger destructor
+   * The actual finalization is happening in Logger::finalize()
+   */
   ~ScreenLogger() throw()
   {
   }
 
+  /**
+   * Functions called by all instantiated recording devices to register themselves with their
+   * metadata.
+   * Both functions are implemented trivially, since the ScreenLogger does not handle metadata.
+   */
   void enroll( RecordingDevice& device );
   void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
 
+  /**
+   * Initialization function. In this case, only floating point precision of the standard output
+   * stream is configured according to the parameters.
+   */
   void initialize();
+  /**
+   * Finalization function. Nothing has to be finalized in case of the ScreenLogger.
+   */
   void finalize();
-  void synchronize() {}
+  /**
+   * Synchronization function called at the end of each time step.
+   * Again, the ScreenLogger is not doing anything in this function.
+   */
+  void synchronize();
 
+  /**
+   * Write functions simply dumping all recorded data to standard output.
+   */
   void write( const RecordingDevice& device, const Event& event );
   void write( const RecordingDevice& device, const Event& event, const std::vector< double_t >& );
 
@@ -65,8 +94,6 @@ private:
   };
 
   Parameters_ P_;
-
-  bool initialized_;
 };
 
 inline void

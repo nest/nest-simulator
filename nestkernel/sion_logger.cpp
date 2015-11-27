@@ -54,37 +54,33 @@ nest::SIONLogger::enroll( RecordingDevice& device, const std::vector< Name >& va
       devices_.insert( std::make_pair( task, device_map::mapped_type() ) );
     }
   }
+#pragma omp barrier
 
-  if ( devices_[ task ].find( gid ) == devices_[ task ].end() )
+  // guarantee that the device has not been enrolled previously
+  assert( devices_[ task ].find( gid ) == devices_[ task ].end() );
+
+  DeviceEntry entry( device );
+  DeviceInfo& info = entry.info;
+
+  info.gid = gid;
+  info.type = static_cast< unsigned int >( device.get_type() );
+  info.name = device.get_name();
+  info.label = device.get_label();
+
+  info.value_names.reserve( value_names.size() );
+  for ( std::vector< Name >::const_iterator it = value_names.begin(); it != value_names.end();
+        ++it )
   {
-    DeviceEntry entry( device );
-    DeviceInfo& info = entry.info;
-
-    info.gid = gid;
-    info.type = static_cast< unsigned int >( device.get_type() );
-    info.name = device.get_name();
-    info.label = device.get_label();
-
-    info.value_names.reserve( value_names.size() );
-    for ( std::vector< Name >::const_iterator it = value_names.begin(); it != value_names.end();
-          ++it )
-    {
-      info.value_names.push_back( it->toString() );
-    }
-
-    devices_[ task ].insert( std::make_pair( gid, entry ) );
+    info.value_names.push_back( it->toString() );
   }
-  else
-  {
-    // TODO: device already enrolled! error handling!
-  }
+
+  devices_[ task ].insert( std::make_pair( gid, entry ) );
 }
 
 void
 nest::SIONLogger::initialize()
 {
-  int rank;
-  MPI_Comm_rank( MPI_COMM_WORLD, &rank );
+  int rank = kernel().mpi_manager.get_rank();
 
   MPI_Comm local_comm = MPI_COMM_NULL;
 #ifdef BG_MULTIFILE
@@ -99,7 +95,7 @@ nest::SIONLogger::initialize()
     const thread t = kernel().vp_manager.get_thread_id();
     const thread task = kernel().vp_manager.thread_to_vp( t );
 
-	try
+    try
     {
 #pragma omp critical
       {
@@ -108,6 +104,7 @@ nest::SIONLogger::initialize()
           files_.insert( std::make_pair( task, FileEntry() ) );
         }
       }
+#pragma omp barrier
 
       FileEntry& file = files_[ task ];
       FileInfo& info = file.info;
@@ -125,7 +122,7 @@ nest::SIONLogger::initialize()
           "to true in the root node.",
           filename );
         LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
-		throw IOError();
+        throw IOError();
 #endif // NESTIO
       }
       else
@@ -138,7 +135,6 @@ nest::SIONLogger::initialize()
       int n_files = 1;
 #endif // BG_MULTIFILE
       sion_int32 fs_block_size = -1;
-
       sion_int64 sion_chunksize = P_.sion_chunksize_;
 
       file.sid = sion_paropen_ompi( filename_c,
@@ -161,6 +157,7 @@ nest::SIONLogger::initialize()
       info.body_blk = static_cast< sion_int64 >( body_blk );
 
       info.t_start = kernel().simulation_manager.get_time().get_ms();
+      info.resolution = Time::get_resolution().get_ms();
 
       file.buffer.reserve( P_.buffer_size_ );
       file.buffer.clear();
@@ -176,13 +173,15 @@ nest::SIONLogger::initialize()
     catch ( std::exception& e )
     {
 #pragma omp critical
-      if (! we) we = new WrappedThreadException(e);
+      if ( !we )
+        we = new WrappedThreadException( e );
     }
   } // parallel
 
   // check if any exceptions have been raised
-  if (we) {
-    WrappedThreadException wec(*we);
+  if ( we )
+  {
+    WrappedThreadException wec( *we );
     delete we;
     throw wec;
   }
@@ -203,10 +202,8 @@ nest::SIONLogger::close_files_()
     const thread t = kernel().vp_manager.get_thread_id();
     const thread task = kernel().vp_manager.thread_to_vp( t );
 
-    if ( files_.find( task ) == files_.end() )
-    {
-      // TODO: error handling
-    }
+    assert( ( files_.find( task ) != files_.end() )
+      && "initialize() was not called before calling finalize()" );
 
     FileEntry& file = files_[ task ];
     FileInfo& info = file.info;
@@ -220,6 +217,8 @@ nest::SIONLogger::close_files_()
 
 #pragma omp master
     {
+      // This is potentially dangerous, since we assume that the same set of devices exists on every
+      // MPI rank. This should be safe in most situations, excluding e.g. the global spike detector.
       for ( device_map::mapped_type::iterator it = devices_[ task ].begin();
             it != devices_[ task ].end();
             ++it )
@@ -232,10 +231,10 @@ nest::SIONLogger::close_files_()
           n_rec += jj->second.find( gid )->second.info.n_rec;
         }
 
-        // this is potentially dangerous, since we use MPI_Redcuce on "fixed size" data type!
-        sion_uint64 n_rec_total = 0;
+        unsigned long n_rec_total = 0;
         MPI_Reduce( &n_rec, &n_rec_total, 1, MPI_UNSIGNED_LONG, MPI_SUM, 0, MPI_COMM_WORLD );
-        it->second.info.n_rec = n_rec_total;
+        assert( sizeof( unsigned long ) <= sizeof( sion_uint64 ) );
+        it->second.info.n_rec = static_cast< sion_uint64 >( n_rec_total );
       }
     }
 
@@ -338,16 +337,19 @@ nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
 
   const index sender_gid = event.get_sender_gid();
   const Time stamp = event.get_stamp();
+  const delay steps = stamp.get_steps();
   const double offset = event.get_offset();
 
   FileEntry& file = files_[ task ];
   SIONBuffer& buffer = file.buffer;
 
+  // increase number of recored entries for the device in question on the corresponding thread
   devices_.find( task )->second.find( device_gid )->second.info.n_rec++;
 
-  const sion_int64 step = static_cast< sion_int64 >( stamp.get_steps() );
+  const sion_int64 step = static_cast< sion_int64 >( steps );
   const sion_uint32 n_values = 0;
 
+  // 2 * GID (device, source) + time in steps + offset (double) + number of values
   const unsigned int required_space =
     2 * sizeof( sion_uint64 ) + sizeof( sion_int64 ) + sizeof( double ) + sizeof( sion_uint32 );
 
@@ -357,6 +359,8 @@ nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
     buffer << device_gid << sender_gid << step << offset << n_values;
     return;
   }
+
+  // we only continue if we are not in collective mode
 
   if ( buffer.get_capacity() > required_space )
   {
@@ -472,7 +476,6 @@ nest::SIONLogger::build_filename_() const
  * Buffer
  * ---------------------------------------------------------------- */
 
-
 nest::SIONLogger::SIONBuffer::SIONBuffer()
   : buffer( NULL )
   , ptr( 0 )
@@ -483,13 +486,9 @@ nest::SIONLogger::SIONBuffer::SIONBuffer()
 nest::SIONLogger::SIONBuffer::SIONBuffer( int size )
   : buffer( NULL )
   , ptr( 0 )
+  , max_size( 0 )
 {
-  if ( size > 0 )
-  {
-    buffer = new char[ size ];
-    max_size = size;
-  }
-  max_size = 0;
+  reserve( size );
 }
 
 nest::SIONLogger::SIONBuffer::~SIONBuffer()
@@ -525,6 +524,7 @@ nest::SIONLogger::SIONBuffer::ensure_space( int size )
 void
 nest::SIONLogger::SIONBuffer::write( const char* v, long unsigned int n )
 {
+  // TODO: replace by get_free()
   if ( ptr + n <= max_size )
   {
     memcpy( buffer + ptr, v, n );
@@ -532,6 +532,7 @@ nest::SIONLogger::SIONBuffer::write( const char* v, long unsigned int n )
   }
   else
   {
+	// TODO: use NEST logging framework here
     std::cerr << "SIONBuffer: buffer overflow: ptr=" << ptr << " n=" << n
               << " max_size=" << max_size << std::endl;
   }
@@ -568,7 +569,8 @@ nest::SIONLogger::SIONBuffer::read()
 }
 
 template < typename T >
-nest::SIONLogger::SIONBuffer& nest::SIONLogger::SIONBuffer::operator<<( const T data )
+nest::SIONLogger::SIONBuffer&
+nest::SIONLogger::SIONBuffer::operator<<( const T data )
 {
   write( ( const char* ) &data, sizeof( T ) );
   return *this;

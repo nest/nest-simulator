@@ -49,16 +49,18 @@ nest::ASCIILogger::enroll( RecordingDevice& device, const std::vector< Name >& v
 
 #pragma omp critical
   {
+    // Check if the map already contains a submap for the task the device is instantiated on. Create
+    // it if that is not the case.
     if ( files_.find( task ) == files_.end() )
     {
       files_.insert( std::make_pair( task, file_map::mapped_type() ) );
     }
   }
 
-  if ( files_[ task ].find( gid ) == files_[ task ].end() )
-  {
-    files_[ task ].insert( std::make_pair( gid, std::make_pair( &device, new std::ofstream() ) ) );
-  }
+  // Insert the device with a newly created file stream into the thread-local map.
+  // Devices can not be enrolled more than once.
+  assert( files_[ task ].find( gid ) == files_[ task ].end() );
+  files_[ task ].insert( std::make_pair( gid, std::make_pair( &device, new std::ofstream() ) ) );
 }
 
 void
@@ -70,23 +72,26 @@ nest::ASCIILogger::initialize()
 #pragma omp parallel
   {
     thread t = kernel().vp_manager.get_thread_id();
-    int vp = kernel().vp_manager.thread_to_vp( t );
+    thread task = kernel().vp_manager.thread_to_vp( t );
 
     try
     {
-// extract the inner map (containing the registered devices) for the specific VP
 #pragma omp critical
       {
-        if ( files_.find( vp ) == files_.end() )
+        // Insert an empty map to guarantee its existance and allow simpler handling at later
+        // points.
+        if ( files_.find( task ) == files_.end() )
         {
-          files_.insert( std::make_pair( vp, file_map::mapped_type() ) );
+          files_.insert( std::make_pair( task, file_map::mapped_type() ) );
         }
       }
+#pragma omp barrier
 
+      // extract the inner map (containing the registered devices) for the specific VP
       typedef file_map::mapped_type inner_map;
-      inner_map inner = files_.find( vp )->second;
+      inner_map inner = files_.find( task )->second;
 
-      // iterate over registed devices and their corresponding fstreams
+      // iterate over registed devices and their corresponding file streams
       for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )
       {
         int gid = jj->first;
@@ -105,7 +110,6 @@ nest::ASCIILogger::initialize()
           filename = build_filename_( device );
           device.set_filename( filename );
         }
-
         else
         {
           std::string newname = build_filename_( device );
@@ -142,8 +146,7 @@ nest::ASCIILogger::initialize()
                 "Please change data_path, data_prefix or label, or set /overwrite_files "
                 "to true in the root node.",
                 filename );
-              LOG(
-                M_ERROR, "RecordingDevice::calibrate()", msg );
+              LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
 #endif // NESTIO
               throw IOError();
             }
@@ -207,13 +210,15 @@ nest::ASCIILogger::initialize()
     catch ( std::exception& e )
     {
 #pragma omp critical
-      if (! we) we = new WrappedThreadException(e);
+      if ( !we )
+        we = new WrappedThreadException( e );
     }
   } // parallel
 
   // check if any exceptions have been raised
-  if (we) {
-    WrappedThreadException wec(*we);
+  if ( we )
+  {
+    WrappedThreadException wec( *we );
     delete we;
     throw wec;
   }
@@ -228,14 +233,17 @@ nest::ASCIILogger::finalize()
 #pragma omp parallel
   {
     thread t = kernel().vp_manager.get_thread_id();
-    int vp = kernel().vp_manager.thread_to_vp( t );
+    thread task = kernel().vp_manager.thread_to_vp( t );
 
     try
     {
+      // guarantee that we have initialized the inner map
+      assert( ( files_.find( task ) != files_.end() ) && "initialize() has not been called" );
+
       // extract the inner map (containing the registered devices) for the specific VP
       typedef file_map::mapped_type inner_map;
-      inner_map inner = files_[ vp ];
-      // iterate over registed devices and their corresponding fstreams
+      inner_map inner = files_[ task ];
+      // iterate over registed devices and their corresponding file streams
       for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )
       {
         int gid = jj->first;
@@ -259,8 +267,7 @@ nest::ASCIILogger::finalize()
 #ifndef NESTIO
               std::string msg =
                 String::compose( "I/O error while closing file '%1'", device.get_filename() );
-              LOG(
-                M_ERROR, "RecordingDevice::finalize()", msg );
+              LOG( M_ERROR, "RecordingDevice::finalize()", msg );
 #endif // NESTIO
 
               throw IOError();
@@ -272,16 +279,23 @@ nest::ASCIILogger::finalize()
     catch ( std::exception& e )
     {
 #pragma omp critical
-      if (! we) we = new WrappedThreadException(e);
+      if ( !we )
+        we = new WrappedThreadException( e );
     }
   } // parallel
 
   // check if any exceptions have been raised
-  if (we) {
-    WrappedThreadException wec(*we);
+  if ( we )
+  {
+    WrappedThreadException wec( *we );
     delete we;
     throw wec;
   }
+}
+
+void
+nest::ASCIILogger::synchronize()
+{
 }
 
 void
@@ -325,8 +339,8 @@ const std::string
 nest::ASCIILogger::build_filename_( const RecordingDevice& device ) const
 {
   // number of digits in number of virtual processes
-  const int vpdigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >( kernel().vp_manager.get_num_virtual_processes() ) ) )
+  const int vpdigits = static_cast< int >( std::floor( std::log10( static_cast< float >(
+                                             kernel().vp_manager.get_num_virtual_processes() ) ) )
     + 1 );
   const int gidigits = static_cast< int >(
     std::floor( std::log10( static_cast< float >( kernel().node_manager.size() ) ) ) + 1 );

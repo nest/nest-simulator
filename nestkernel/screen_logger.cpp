@@ -39,13 +39,8 @@ nest::ScreenLogger::enroll( RecordingDevice& device, const std::vector< Name >& 
 void
 nest::ScreenLogger::initialize()
 {
-  if ( initialized_ )
-    return;
-
   std::cout << std::fixed;
   std::cout << std::setprecision( P_.precision_ );
-
-  initialized_ = true;
 }
 
 void
@@ -65,7 +60,9 @@ nest::ScreenLogger::write( const RecordingDevice& device, const Event& event )
 }
 
 void
-nest::ScreenLogger::write( const RecordingDevice& device, const Event& event, const std::vector< double_t >& values )
+nest::ScreenLogger::write( const RecordingDevice& device,
+  const Event& event,
+  const std::vector< double_t >& values )
 {
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
@@ -102,7 +99,11 @@ nest::ScreenLogger::Parameters_::get( const ScreenLogger& sl, DictionaryDatum& d
 void
 nest::ScreenLogger::Parameters_::set( const ScreenLogger& sl, const DictionaryDatum& d )
 {
-  updateValue< long >( d, names::precision, precision_ );
+  if ( updateValue< long >( d, names::precision, precision_ ) )
+  {
+    std::cout << std::fixed;
+    std::cout << std::setprecision( precision_ );
+  }
 }
 
 void

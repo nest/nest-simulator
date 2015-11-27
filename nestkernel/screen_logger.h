@@ -32,7 +32,6 @@ class ScreenLogger : public Logger
 {
 public:
   ScreenLogger()
-    : initialized_( false )
   {
   }
 
@@ -65,8 +64,6 @@ private:
   };
 
   Parameters_ P_;
-
-  bool initialized_;
 };
 
 inline void

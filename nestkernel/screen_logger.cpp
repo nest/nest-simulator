@@ -49,6 +49,11 @@ nest::ScreenLogger::finalize()
 }
 
 void
+nest::ScreenLogger::synchronize()
+{
+}
+
+void
 nest::ScreenLogger::write( const RecordingDevice& device, const Event& event )
 {
   const index sender = event.get_sender_gid();

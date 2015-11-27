@@ -44,12 +44,20 @@ public:
     , initialized_( false )
   {
   }
-
-  SIONLogger( size_t chunksize )
+  
+  SIONLogger( std::string file_ext,
+    long buffer_size,
+    long sion_chunksize,
+    bool sion_collective,
+    bool close_after_simulate )
     : files_()
     , initialized_( false )
   {
-    P_.sion_chunksize_ = chunksize;
+    P_.file_ext_ = file_ext;
+    P_.buffer_size_ = buffer_size;
+    P_.sion_chunksize_ = sion_chunksize;
+    P_.sion_collective_ = sion_collective;
+    P_.close_after_simulate_ = close_after_simulate;
   }
 
   ~SIONLogger() throw()
@@ -76,6 +84,7 @@ private:
   class SIONBuffer
   {
   private:
+	// TODO: add underscores
     char* buffer;
     int ptr;
     int max_size;

@@ -45,7 +45,7 @@ const long_t UNLABELED_CONNECTION = -1;
  * dictionary of `Set/GetStatus` or `Connect`.
  * Using the `GetConnections` function, synapses with the same label can be specified.
  *
- * The name of synapse models, which can be labels, end with '_lbl'.
+ * The name of synapse models, which can be labeled, end with '_lbl'.
  * @see nest::ConnectionManager::get_connections
  */
 template < class Connection_t >

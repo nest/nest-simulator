@@ -348,8 +348,8 @@ private:
   }
   
   
-  inline double_t compose_w_sol_( const std::vector<double_t> amps_, 
-                                  const std::vector<double_t> exps_ )
+  inline double_t compose_w_sol_( const std::vector<double_t>& amps_, 
+                                  const std::vector<double_t>& exps_ )
   {
       // compose weight solution
       double_t w_ = 0.;
@@ -361,7 +361,7 @@ private:
   }
   
   
-  bool check_crossing_possible_( const std::vector<double_t> amps_ )
+  bool check_crossing_possible_( const std::vector<double_t>& amps_ )
   {
     // We apply theorem 4.7 in http://www.maths.lancs.ac.uk/~jameson/zeros.pdf
     // G.J.O. Jameson (Math. Gazette 90, no. 518 (2006), 223–234)

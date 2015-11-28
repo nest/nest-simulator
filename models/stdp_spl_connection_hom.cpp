@@ -46,7 +46,7 @@ STDPSplHomCommonProperties::STDPSplHomCommonProperties()
   , w0_( 0.01 )
   , p_fail_( 0.2 )
   , t_cache_( 1. )
-  , safe_mode_( 0 )
+  , safe_mode_( true )
 {
 }
 
@@ -65,7 +65,7 @@ STDPSplHomCommonProperties::get_status( DictionaryDatum& d ) const
   def< double_t >( d, "w0", w0_ );
   def< double_t >( d, "p_fail", p_fail_ );
   def< double_t >( d, "t_cache", t_cache_ );
-  def< int_t >( d, "safe_mode", safe_mode_ );
+  def< bool >( d, "safe_mode", safe_mode_ );
 }
 
 void
@@ -83,7 +83,7 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
   updateValue< double_t >( d, "w0", w0_ );
   updateValue< double_t >( d, "p_fail", p_fail_ );
   updateValue< double_t >( d, "t_cache", t_cache_ );
-  updateValue< double_t >( d, "safe_mode", safe_mode_ );
+  updateValue< bool >( d, "safe_mode", safe_mode_ );
 
   if ( not( tau_slow_ > tau_ ) )
   {
@@ -102,9 +102,27 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
     throw BadProperty( "The time interval for caching of exponentials must be positive" );
   }
 
-  if ( not( (safe_mode_==0) or (safe_mode_==1) ) )
+  if (safe_mode_)
   {
-    throw BadProperty( "safe_mode has to be either 0 or 1" );
+    // check that the order of the solution's time constants is correct. 
+    // this is assumed for the zero-crossing theorem below (check_...)
+    // 7, 2, 3, 4, 6, 1, 5
+    std::vector<double_t> rates_;
+    rates_.resize(0);
+    rates_.push_back( - alpha_ );
+    rates_.push_back( -1 / tau_slow_ );
+    rates_.push_back( -2 / tau_slow_);
+    rates_.push_back( -4 / tau_slow_);
+    rates_.push_back( -2 / tau_);
+    rates_.push_back( -1 * ( 1/tau_slow_ + 2/tau_));
+    rates_.push_back( -4 / tau_ );
+    for (int_t i=1; i<7; i++)
+    {
+       if ( not (rates_[i] < rates_[i-1] ))
+       {
+           throw BadProperty( "Safe mode is not supported for the supplied time constants" );
+       }
+    }
   }
 
   // precompute power terms that occur frequently

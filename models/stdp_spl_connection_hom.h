@@ -78,7 +78,7 @@ public:
   double_t w0_;
   double_t p_fail_;
   double_t t_cache_;
-  int_t safe_mode_;
+  bool safe_mode_;
 
   // precomputed values
   long_t exp_cache_len_;
@@ -208,7 +208,8 @@ public:
 
 private:
   
-  inline std::vector<double_t> get_exps_( const STDPSplHomCommonProperties& cp, long_t delta_i )
+  std::vector<double_t> get_exps_( const STDPSplHomCommonProperties& cp, 
+                                   const long_t delta_i )
   {
       
       double_t exp_term_2_;
@@ -255,7 +256,8 @@ private:
   }
   
   
-  inline std::vector<double_t> compute_amps_( const STDPSplHomCommonProperties& cp, long_t i )
+  std::vector<double_t> compute_amps_( const STDPSplHomCommonProperties& cp, 
+                                       const long_t i )
   {
       // precompute power terms without using std::pow
       double_t pow_term_1_ = -(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_;
@@ -266,39 +268,61 @@ private:
       double_t pow_term_5_ = c_jk_[ i ] * c_jk_[ i ];                //std::pow(c_jk_[ i ],2)  
       
       // compute amplitudes of exp_terms
-      double_t denom_ = ((-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.pow_term_2_*
-             (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+      double_t denom_ = ((-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
+            cp.pow_term_2_*
+             (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
+             (-1 + cp.alpha_*cp.tau_slow_)*
              (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)));
-      double_t amp_1_ = (2*cp.A4_corr_*r_jk_[ i ]*r_post_*cp.pow_term_1_*(-4 + cp.alpha_*cp.tau_)*
-              (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_)*
-              (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_) ) / denom_;
-      double_t amp_2_ = ( cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
-          (-(r_jk_[ i ]*r_post_*cp.tau_) + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))*(cp.tau_ - 2*cp.tau_slow_)*cp.tau_slow_*
-          (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
-      double_t amp_3_ = -( cp.A4_corr_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*
+      double_t amp_1_ = (2*cp.A4_corr_*r_jk_[ i ]*r_post_*cp.pow_term_1_*
+             (-4 + cp.alpha_*cp.tau_)*
+             (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-(c_jk_[ i ]*cp.tau_) + 
+             r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_)*
+              (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
+              (-1 + cp.alpha_*cp.tau_slow_) ) / denom_;
+      double_t amp_2_ = ( cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*
+             (-2 + cp.alpha_*cp.tau_)*
+          (-(r_jk_[ i ]*r_post_*cp.tau_) + c_jk_[ i ]*(cp.tau_ - 
+          2*cp.tau_slow_))*(cp.tau_ - 2*cp.tau_slow_)*cp.tau_slow_*
+          (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
+          (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
+      double_t amp_3_ = -( cp.A4_corr_*(-4 + cp.alpha_*cp.tau_)*
+          (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*
           pow_term_1_*(-4 + cp.alpha_*cp.tau_slow_)*
-          (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
+          (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + 
+          cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
       double_t amp_4_ = -( cp.A4_post_* pow_term_2_ *(-4 + cp.alpha_*cp.tau_)*
-          (-2 + cp.alpha_*cp.tau_)*cp.pow_term_2_*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+          (-2 + cp.alpha_*cp.tau_)*cp.pow_term_2_*cp.tau_slow_*
+          (-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
           (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
       double_t amp_5_ = -( cp.A4_corr_*pow_term_3_*pow_term_4_*
-          cp.pow_term_4_*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+          cp.pow_term_4_*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*
+          (-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
           (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
-      double_t amp_6_ = ( cp.A2_corr_*r_jk_[ i ]*r_post_*cp.pow_term_1_*(-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
-          (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
+      double_t amp_6_ = ( cp.A2_corr_*r_jk_[ i ]*r_post_*cp.pow_term_1_*
+          (-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
+          (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
+          (-1 + cp.alpha_*cp.tau_slow_)*
           (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
       double_t amp_7_ = ( cp.pow_term_2_*
-          (w_jk_[ i ]*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
-             (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) + 
-            cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
-             (r_jk_[ i ]*r_post_*cp.tau_ + c_jk_[ i ]*(2 - cp.alpha_*cp.tau_)*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_))\
+          (w_jk_[ i ]*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
+          (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
+             (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*
+             (-1 + cp.alpha_*cp.tau_slow_)) + 
+            cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*
+            (-2 + cp.alpha_*cp.tau_slow_)*
+             (r_jk_[ i ]*r_post_*cp.tau_ + c_jk_[ i ]*(2 - cp.alpha_*cp.tau_)*
+             cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*
+             cp.tau_slow_))\
              + (-2 + cp.alpha_*cp.tau_)*(-1 + cp.alpha_*cp.tau_slow_)*
-             (cp.A4_post_*pow_term_2_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-2 + cp.alpha_*cp.tau_slow_)*
+             (cp.A4_post_*pow_term_2_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_*
+             (-2 + cp.alpha_*cp.tau_slow_)*
                 (-cp.tau_ - 2*cp.tau_slow_ + cp.alpha_*cp.tau_*cp.tau_slow_) + 
                cp.A4_corr_*(-4 + cp.alpha_*cp.tau_slow_)*
                 (2*pow_term_3_*pow_term_4_*cp.pow_term_1_ - 
-                  c_jk_[ i ]*(c_jk_[ i ] + 2*r_jk_[ i ]*r_post_)*cp.tau_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_ + 
-                  pow_term_5_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*cp.pow_term_6_))) )/ denom_;  
+                  c_jk_[ i ]*(c_jk_[ i ] + 2*r_jk_[ i ]*r_post_)*
+                  cp.tau_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_ + 
+                  pow_term_5_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
+                  cp.pow_term_6_))) )/ denom_;  
 
       // insert the amplitude terms into the vector to be returned
       // the order is sorted by the exp_terms magnitude: 7, 2, 3, 4, 6, 1, 5
@@ -314,7 +338,8 @@ private:
   }
   
   
-  inline double_t compose_w_sol_( std::vector<double_t> amps_, std::vector<double_t> exps_ )
+  inline double_t compose_w_sol_( const std::vector<double_t> amps_, 
+                                  const std::vector<double_t> exps_ )
   {
       // compose weight solution
       double_t w_ = 0.;
@@ -326,7 +351,7 @@ private:
   }
   
   
-  inline int_t check_crossing_possible_( std::vector<double_t> amps_, std::vector<double_t> exps_ )
+  bool check_crossing_possible_( const std::vector<double_t> amps_ )
   {
     // We apply theorem 4.7 in http://www.maths.lancs.ac.uk/~jameson/zeros.pdf
     // G.J.O. Jameson (Math. Gazette 90, no. 518 (2006), 223–234)
@@ -335,7 +360,7 @@ private:
     double_t amps_partial_sum_ = amps_[0];
     int_t sign_last_ = std::signbit( amps_partial_sum_ );
     int_t sign_changes_ = 0;
-    for (int_t k=1; k<exps_.size(); k++)
+    for (int_t k=1; k<amps_.size(); k++)
     {
         amps_partial_sum_ += amps_[k];
         if ( std::signbit( amps_partial_sum_ ) != sign_last_ )
@@ -346,22 +371,22 @@ private:
     }
     // according to the theorem, the number of zeros is not greater than
     // sign_changes_. 
-    int_t possible_;
+    bool possible_;
     if (sign_changes_ == 0)
     {
         // std::cout << "INFO   : no         zero crossings possible. " << sign_changes_ << "\n";
-        possible_ = 0;
+        possible_ = false;
     }
     else
     {
         // std::cout << "WARNING: undetected zero crossings possible. " << sign_changes_ << "\n";
-        possible_ = 1;
+        possible_ = true;
     }
     return possible_;
   }
 
 
-  void integrate_( const STDPSplHomCommonProperties& cp, long_t delta )
+  void integrate_( const STDPSplHomCommonProperties& cp, const long_t delta )
   {
 
    // integrate all state variables the duration t analytically, assuming no spikes arrive
@@ -426,20 +451,20 @@ private:
           w_jk_[ i ] = compose_w_sol_( amps_, exps_ );
     
           // delete synapse with negative or zero weights
-          int_t deletion_trigger = 0;
+          bool deletion_trigger = false;
           if ( w_jk_[ i ] <= 0. )
           {
               // Here we only check this at spike times. Misses zero crossing 
               // within ISIs. This may be improved.
               //std::cout << "deletion triggered in spike-time check."  << "\n";
-              deletion_trigger = 1;
+              deletion_trigger = true;
           }
-          else if (cp.safe_mode_ == 0)
+          else if (not cp.safe_mode_)
               {
               // if safe mode is off, we don't check for zero crossings within
               // the intervals
               }
-          else if ( check_crossing_possible_( amps_, exps_ )==1 )
+          else if ( check_crossing_possible_( amps_ ) )
           {
               // if we cannot exclude zero crossings in general, 
               // we search numerically if there is a zero crossings
@@ -453,13 +478,13 @@ private:
                 if (w_d_<=0.)
                 {
                     //std::cout << "deletion triggered in step-wise check."  << "\n";
-                    deletion_trigger = 1;
+                    deletion_trigger = true;
                     break;
                 }
               }
           }
           
-          if ( deletion_trigger == 1 )
+          if ( deletion_trigger )
           {
             // generate an exponentially distributed number
             w_create_steps_[ i ] = Time( Time::ms( 

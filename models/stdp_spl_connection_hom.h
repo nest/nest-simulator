@@ -421,7 +421,7 @@ private:
         // set contact weight to creation value
         w_jk_[ i ] = cp.w0_;
         // increment deletion counter
-        n_create_ += 1;
+        n_create_ ++;
       }
       else
       {
@@ -484,7 +484,7 @@ private:
             w_jk_[ i ] = 0.;
             
             // increment deletion counter
-            n_delete_ += 1;
+            n_delete_ ++;
           }
       }
 

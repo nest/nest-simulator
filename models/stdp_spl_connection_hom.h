@@ -358,31 +358,21 @@ private:
     // Counting zeros of generalized polynomials: Descartes’ rule of signs and Laguerre’s extensions
     // Here we assume that the amplitudes (amps_) are ordered with descending decay rate (exp_terms).
     double_t amps_partial_sum_ = amps_[0];
-    int_t sign_last_ = std::signbit( amps_partial_sum_ );
-    int_t sign_changes_ = 0;
+    bool sign_last_ = std::signbit( amps_partial_sum_ );
     for (int_t k=1; k<amps_.size(); k++)
     {
         amps_partial_sum_ += amps_[k];
         if ( std::signbit( amps_partial_sum_ ) != sign_last_ )
         {
-            sign_changes_ += 1;
+            return true;
         }
         sign_last_ = std::signbit( amps_partial_sum_ );
     }
     // according to the theorem, the number of zeros is not greater than
-    // sign_changes_. 
-    bool possible_;
-    if (sign_changes_ == 0)
-    {
-        // std::cout << "INFO   : no         zero crossings possible. " << sign_changes_ << "\n";
-        possible_ = false;
-    }
-    else
-    {
-        // std::cout << "WARNING: undetected zero crossings possible. " << sign_changes_ << "\n";
-        possible_ = true;
-    }
-    return possible_;
+    // the number of sign changes_..
+    // That means if we get here, there was no sign change, and so  there can
+    // be no zero crossing in (0, infty).
+    return false;
   }
 
 

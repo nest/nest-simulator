@@ -353,7 +353,7 @@ private:
   {
       // compose weight solution
       double_t w_ = 0.;
-      for (int_t k=0; k<exps_.size(); k++)
+      for (int_t k=0; k<7; k++)
       {
         w_ += amps_[k] * exps_[k];
       }
@@ -371,7 +371,7 @@ private:
     // decay rate (exp_terms). This is checked for in set_status.
     double_t amps_partial_sum_ = amps_[0];
     bool sign_last_ = std::signbit( amps_partial_sum_ );
-    for (int_t k=1; k<amps_.size(); k++)
+    for (int_t k=1; k<7; k++)
     {
         amps_partial_sum_ += amps_[k];
         if ( std::signbit( amps_partial_sum_ ) != sign_last_ )

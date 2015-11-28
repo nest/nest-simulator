@@ -233,15 +233,21 @@ private:
       }
       
       // the remaining terms are derived from the three basic ones
-      double_t exp_term_6_ = exp_term_8_ * exp_term_8_;                                 // std::exp( -t_i_*( 2/cp.tau_) ); 
-      double_t exp_term_1_ = exp_term_2_ * exp_term_6_;                                 // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
-      double_t exp_term_3_ = exp_term_2_ * exp_term_2_;                                 // std::exp( -t_i_*( 2/cp.tau_slow_) ); 
-      double_t exp_term_4_ = exp_term_2_ * exp_term_2_ * exp_term_2_ * exp_term_2_;     // std::exp( -t_i_*( 4/cp.tau_slow_) ); 
-      double_t exp_term_5_ = exp_term_6_ * exp_term_6_;                                 // std::exp( -t_i_*( 4/cp.tau_ ));
+      // std::exp( -t_i_*( 2/cp.tau_) ); 
+      double_t exp_term_6_ = exp_term_8_ * exp_term_8_;
+      // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
+      double_t exp_term_1_ = exp_term_2_ * exp_term_6_;
+      // std::exp( -t_i_*( 2/cp.tau_slow_) ); 
+      double_t exp_term_3_ = exp_term_2_ * exp_term_2_;
+      // std::exp( -t_i_*( 4/cp.tau_slow_) ); 
+      double_t exp_term_4_ = exp_term_2_*exp_term_2_*exp_term_2_*exp_term_2_;
+      // std::exp( -t_i_*( 4/cp.tau_ ));
+      double_t exp_term_5_ = exp_term_6_ * exp_term_6_;
 
       // insert the terms into the vector to be returned
       // this vector is now ordered by exponent magnitude:
-      // exp_term_7_, exp_term_2_, exp_term_3_, exp_term_4_, exp_term_6_, exp_term_1_, exp_term_5_
+      // exp_term_7_, exp_term_2_, exp_term_3_, exp_term_4_, exp_term_6_, 
+      // exp_term_1_, exp_term_5_
       // in short: 7, 2, 3, 4, 6, 1, 5
       std::vector<double_t> ret_;
       ret_.push_back( exp_term_7_ );
@@ -251,7 +257,6 @@ private:
       ret_.push_back( exp_term_6_ );
       ret_.push_back( exp_term_1_ );
       ret_.push_back( exp_term_5_ );
-      
       return ret_;
   }
   
@@ -260,12 +265,17 @@ private:
                                        const long_t i )
   {
       // precompute power terms without using std::pow
-      double_t pow_term_1_ = -(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_;
+      double_t pow_term_1_ = -(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ 
+                                + 2*c_jk_[ i ]*cp.tau_slow_;
       pow_term_1_ *= pow_term_1_;
-      double_t pow_term_2_ = R_post_ * R_post_ * R_post_ * R_post_;  //std::pow(R_post_,4)
-      double_t pow_term_3_ = r_jk_[ i ] * r_jk_[ i ];                //std::pow(r_jk_[ i ],2)
-      double_t pow_term_4_ = r_post_ * r_post_;                      //std::pow(r_post_,2)
-      double_t pow_term_5_ = c_jk_[ i ] * c_jk_[ i ];                //std::pow(c_jk_[ i ],2)  
+      //std::pow(R_post_,4)
+      double_t pow_term_2_ = R_post_ * R_post_ * R_post_ * R_post_;
+      //std::pow(r_jk_[ i ],2)
+      double_t pow_term_3_ = r_jk_[ i ] * r_jk_[ i ];
+      //std::pow(r_post_,2)
+      double_t pow_term_4_ = r_post_ * r_post_;
+      //std::pow(c_jk_[ i ],2)  
+      double_t pow_term_5_ = c_jk_[ i ] * c_jk_[ i ];
       
       // compute amplitudes of exp_terms
       double_t denom_ = ((-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
@@ -355,8 +365,10 @@ private:
   {
     // We apply theorem 4.7 in http://www.maths.lancs.ac.uk/~jameson/zeros.pdf
     // G.J.O. Jameson (Math. Gazette 90, no. 518 (2006), 223–234)
-    // Counting zeros of generalized polynomials: Descartes’ rule of signs and Laguerre’s extensions
-    // Here we assume that the amplitudes (amps_) are ordered with descending decay rate (exp_terms).
+    // Counting zeros of generalized polynomials: Descartes’ rule 
+    // of signs and Laguerre’s extensions
+    // Here we assume that the amplitudes (amps_) are ordered with descending 
+    // decay rate (exp_terms). This is checked for in set_status.
     double_t amps_partial_sum_ = amps_[0];
     bool sign_last_ = std::signbit( amps_partial_sum_ );
     for (int_t k=1; k<amps_.size(); k++)
@@ -379,12 +391,13 @@ private:
   void integrate_( const STDPSplHomCommonProperties& cp, const long_t delta )
   {
 
-   // integrate all state variables the duration t analytically, assuming no spikes arrive
+   // integrate all state variables the duration t analytically, assuming 
+   // no spikes arrive during the delta.
   
     double_t t_delta_ = Time( Time::step(delta) ).get_ms() / 1000.;  
     // std::cout << "t_delta_, delta: " << t_delta_ << "  " << delta <<  "\n";
   
-    // precompute exponentials
+    // precompute some exponentials
     double_t exp_term_8_; 
     double_t exp_term_9_;
     if ( delta < cp.exp_cache_len_ )
@@ -397,15 +410,14 @@ private:
         exp_term_8_ =  std::exp( -t_delta_/cp.tau_ );
         exp_term_9_ =  std::exp( -t_delta_/cp.tau_slow_ );
     }
-    double_t exp_term_10_ = exp_term_8_ * exp_term_8_ / exp_term_9_; // std::exp( t_delta_*(-2/cp.tau_ + 1/cp.tau_slow_) )
+    // std::exp( t_delta_*(-2/cp.tau_ + 1/cp.tau_slow_) )
+    double_t exp_term_10_ = exp_term_8_ * exp_term_8_ / exp_term_9_;
   
     // propagate all variables
     for ( long_t i = 0; i < n_conns_; i++ )
     {
-
       // for how long should w be integrated for this contact?
       long_t delta_i;
-
       if ( w_create_steps_[ i ] > delta )
       {
         // decrease creation step timer
@@ -506,7 +518,6 @@ private:
   
 
   // data members of each connection
-
   long_t n_conns_;
   long_t n_create_;
   long_t n_delete_;
@@ -590,8 +601,8 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
     Time( Time::ms( t_spike - t_last_postspike ) ).get_steps();
   integrate_( cp, remaining_delta );
 
-  // spike failure at rate p_fail, i.e. presynaptic traces only get updated by this spike
-  // in 1-p_fail of the transmitted spikes.
+  // spike failure at rate p_fail, i.e. presynaptic traces only get updated 
+  // by this spike with probability 1-p_fail.
   double_t weight_tot = 0.;
   for ( long_t i = 0; i < n_conns_; i++ )
   {
@@ -736,11 +747,12 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   }
 
   std::vector< long_t > w_create_steps_tmp;
-  if ( updateValue< std::vector< long_t > >( d, "w_create_steps", w_create_steps_tmp ) )
+  if ( updateValue< std::vector< long_t > >( d, "w_create_steps", 
+                                             w_create_steps_tmp ) )
   {
     if ( w_create_steps_tmp.size() != ( unsigned ) n_conns_ )
     {
-      throw BadProperty( "Size of w_create_steps must be equal to n_pot_conns" );
+    throw BadProperty( "Size of w_create_steps must be equal to n_pot_conns" );
     }
     w_create_steps_ = w_create_steps_tmp;
   }

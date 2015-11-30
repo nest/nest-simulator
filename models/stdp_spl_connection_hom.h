@@ -711,6 +711,15 @@ STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom(
   R_post_ = rhs.R_post_;
   n_create_ = rhs.n_create_;
   n_delete_ = rhs.n_delete_;
+  r_post_i_ = rhs.r_post_i_;
+  R_post_i_ = rhs.R_post_i_;
+  exp_term_8_ = rhs.exp_term_8_; 
+  exp_term_9_ = rhs.exp_term_9_;
+  exp_term_10_ = rhs.exp_term_10_;
+  deletion_trigger = rhs.deletion_trigger;
+  stepeval_trigger = rhs.stepeval_trigger;
+  amps_ = rhs.amps_;
+  exps_ = rhs.exps_;
 }
 
 template < typename targetidentifierT >

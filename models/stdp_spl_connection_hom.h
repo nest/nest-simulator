@@ -208,9 +208,7 @@ public:
 
 private:
   
-  void get_exps_( const STDPSplHomCommonProperties& cp, 
-                                   const long_t& delta_i, 
-                                   std::vector<double_t>& exps_ )
+  void get_exps_( const STDPSplHomCommonProperties& cp, const long_t delta_i )
   {
       double_t exp_term_2_;
       double_t exp_term_8_;
@@ -258,11 +256,7 @@ private:
   }
   
   
-  void compute_amps_( const STDPSplHomCommonProperties& cp, 
-                                       const long_t& i, 
-                                       const double_t& r_post_i_, 
-                                       const double_t& R_post_i_,
-                                       std::vector<double_t>& amps_)
+  void compute_amps_( const STDPSplHomCommonProperties& cp, const long_t i )
   {
       // precompute power terms without using std::pow
       double_t pow_term_1_ = -(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_i_*cp.tau_ 
@@ -346,8 +340,7 @@ private:
   }
   
   
-  inline double_t compose_w_sol_( const std::vector<double_t>& amps_, 
-                                  const std::vector<double_t>& exps_ )
+  inline double_t compose_w_sol_( )
   {
       // compose weight solution
       double_t w_ = 0.;
@@ -359,7 +352,7 @@ private:
   }
   
   
-  inline bool check_crossing_possible_( const std::vector<double_t>& amps_ )
+  inline bool check_crossing_possible_( )
   {
     // We apply theorem 4.7 in http://www.maths.lancs.ac.uk/~jameson/zeros.pdf
     // G.J.O. Jameson (Math. Gazette 90, no. 518 (2006), 223–234)
@@ -444,13 +437,13 @@ private:
           // Therefore we update r_jk and the other variables at every round.
           
           // compute amplitudes of exponential terms of w_jk solution
-          compute_amps_( cp, i, r_post_i_, R_post_i_, amps_ );
+          compute_amps_( cp, i ); //, r_post_i_, R_post_i_, amps_ );
 
           // compute exponentials terms
-          get_exps_( cp, delta_i, exps_ );
+          get_exps_( cp, delta_i ); //, exps_ );
 
           // compose the solution
-          w_jk_[ i ] = compose_w_sol_( amps_, exps_ );
+          w_jk_[ i ] = compose_w_sol_( ); //amps_, exps_ );
     
           // delete contacts with negative or zero weights
           if ( w_jk_[ i ] <= 0. )
@@ -470,7 +463,7 @@ private:
                  // if we cannot exclude zero crossings in the interval, 
                  // we search numerically if there is a zero crossings,
                  // on the time grid spanned by the simulation resolution.
-                 stepeval_trigger = check_crossing_possible_( amps_ );
+                 stepeval_trigger = check_crossing_possible_( );
               }
               else
               {
@@ -484,8 +477,8 @@ private:
               // on the time grid spanned by the simulation resolution.
               while (d_stepeval_<delta_i)
               {
-                get_exps_( cp, d_stepeval_, exps_ );
-                double_t w_stepeval_ = compose_w_sol_( amps_, exps_ );
+                get_exps_( cp, d_stepeval_ ); //, exps_ );
+                double_t w_stepeval_ = compose_w_sol_( ); //amps_, exps_ );
                 if (w_stepeval_<=0.)
                 {
                     // we stop searching because we have found the first zero

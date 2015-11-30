@@ -366,7 +366,6 @@ nest::NumericalInstability::message()
 {
   std::ostringstream msg;
   msg << "NEST detected a numerical instability while "
-      << "updating " << model_ << ". Try to reduce "
-      << "gsl_error_tol for the model.";
+      << "updating " << model_ << ".";
   return msg.str();
 }

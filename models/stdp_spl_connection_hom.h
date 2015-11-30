@@ -208,14 +208,13 @@ public:
 
 private:
   
-  std::vector<double_t> get_exps_( const STDPSplHomCommonProperties& cp, 
-                                   const long_t delta_i )
+  void get_exps_( const STDPSplHomCommonProperties& cp, 
+                                   const long_t& delta_i, 
+                                   std::vector<double_t>& exps_ )
   {
-      
       double_t exp_term_2_;
       double_t exp_term_8_;
       double_t exp_term_7_;
-      
       if ( delta_i < cp.exp_cache_len_ )
       {
           // we read the precomputed values from cp
@@ -249,22 +248,21 @@ private:
       // exp_term_7_, exp_term_2_, exp_term_3_, exp_term_4_, exp_term_6_, 
       // exp_term_1_, exp_term_5_
       // in short: 7, 2, 3, 4, 6, 1, 5
-      std::vector<double_t> ret_;
-      ret_.push_back( exp_term_7_ );
-      ret_.push_back( exp_term_2_ );
-      ret_.push_back( exp_term_3_ );
-      ret_.push_back( exp_term_4_ );
-      ret_.push_back( exp_term_6_ );
-      ret_.push_back( exp_term_1_ );
-      ret_.push_back( exp_term_5_ );
-      return ret_;
+      exps_[0] = exp_term_7_ ;
+      exps_[1] = exp_term_2_ ;
+      exps_[2] = exp_term_3_ ;
+      exps_[3] = exp_term_4_ ;
+      exps_[4] = exp_term_6_ ;
+      exps_[5] = exp_term_1_ ;
+      exps_[6] = exp_term_5_ ;
   }
   
   
-  std::vector<double_t> compute_amps_( const STDPSplHomCommonProperties& cp, 
-                                       const long_t i, 
+  void compute_amps_( const STDPSplHomCommonProperties& cp, 
+                                       const long_t& i, 
                                        const double_t& r_post_i_, 
-                                       const double_t& R_post_i_)
+                                       const double_t& R_post_i_,
+                                       std::vector<double_t>& amps_)
   {
       // precompute power terms without using std::pow
       double_t pow_term_1_ = -(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_i_*cp.tau_ 
@@ -338,15 +336,13 @@ private:
 
       // insert the amplitude terms into the vector to be returned
       // the order is sorted by the exp_terms magnitude: 7, 2, 3, 4, 6, 1, 5
-      std::vector<double_t> ret_; 
-      ret_.push_back( amp_7_ );
-      ret_.push_back( amp_2_ );
-      ret_.push_back( amp_3_ );
-      ret_.push_back( amp_4_ );
-      ret_.push_back( amp_6_ );
-      ret_.push_back( amp_1_ );
-      ret_.push_back( amp_5_ );
-      return ret_;
+      amps_[0] = amp_7_ ;
+      amps_[1] = amp_2_ ;
+      amps_[2] = amp_3_ ;
+      amps_[3] = amp_4_ ;
+      amps_[4] = amp_6_ ;
+      amps_[5] = amp_1_ ;
+      amps_[6] = amp_5_ ;
   }
   
   
@@ -363,7 +359,7 @@ private:
   }
   
   
-  bool check_crossing_possible_( const std::vector<double_t>& amps_ )
+  inline bool check_crossing_possible_( const std::vector<double_t>& amps_ )
   {
     // We apply theorem 4.7 in http://www.maths.lancs.ac.uk/~jameson/zeros.pdf
     // G.J.O. Jameson (Math. Gazette 90, no. 518 (2006), 223–234)
@@ -395,17 +391,12 @@ private:
 
     // integrate all state variables the duration t analytically, assuming 
     // no spikes arrive during the delta.
-
-    // we need local copies of these, because intermediate values are
-    // required as we go through the contacts.
-    double_t r_post_i_= r_post_;
-    double_t R_post_i_= R_post_;
   
     // propagate all variables
     for ( long_t i = 0; i < n_conns_; i++ )
     {
-      // initialize the local r_post/R_post (for this contact) to the global 
-      // initial value
+      // set the local r_post/R_post (for this contact) to the global 
+      // initial value at beginning of contact update loop
       r_post_i_ = r_post_;
       R_post_i_ = R_post_;
 
@@ -413,7 +404,7 @@ private:
       while ( delta_done < delta )
       {
       // how many steps are left to be processed?
-      long_t delta_this = delta-delta_done;
+      long_t delta_this = delta - delta_done;
 
       // for how long should we integrate w_jk in this round?
       long_t delta_i;
@@ -453,18 +444,15 @@ private:
           // Therefore we update r_jk and the other variables at every round.
           
           // compute amplitudes of exponential terms of w_jk solution
-          std::vector<double_t> amps_ = 
-                compute_amps_( cp, i, r_post_i_, R_post_i_ );
+          compute_amps_( cp, i, r_post_i_, R_post_i_, amps_ );
 
           // compute exponentials terms
-          std::vector<double_t> exps_ = get_exps_( cp, delta_i );
+          get_exps_( cp, delta_i, exps_ );
 
           // compose the solution
           w_jk_[ i ] = compose_w_sol_( amps_, exps_ );
     
-          // delete synapse with negative or zero weights
-          bool deletion_trigger;
-          bool stepeval_trigger;
+          // delete contacts with negative or zero weights
           if ( w_jk_[ i ] <= 0. )
           {
               deletion_trigger = true;
@@ -496,9 +484,8 @@ private:
               // on the time grid spanned by the simulation resolution.
               while (d_stepeval_<delta_i)
               {
-                std::vector<double_t> exps_stepeval_ = 
-                                                get_exps_( cp, d_stepeval_ );
-                double_t w_stepeval_ = compose_w_sol_( amps_, exps_stepeval_ );
+                get_exps_( cp, d_stepeval_, exps_ );
+                double_t w_stepeval_ = compose_w_sol_( amps_, exps_ );
                 if (w_stepeval_<=0.)
                 {
                     // we stop searching because we have found the first zero
@@ -538,8 +525,6 @@ private:
       // now we integrate the remaining variables for delta_this steps
 
       // precompute some exponentials
-      double_t exp_term_8_; 
-      double_t exp_term_9_;
       if ( delta_this < cp.exp_cache_len_ )
       {
           // we copy the exp terms from the cache if possible
@@ -554,7 +539,7 @@ private:
           exp_term_9_ =  std::exp( -t_delta_/cp.tau_slow_ );
       }
       // std::exp( t_delta_*(-2/cp.tau_ + 1/cp.tau_slow_) )
-      double_t exp_term_10_ = exp_term_8_ * exp_term_8_ / exp_term_9_;
+      exp_term_10_ = exp_term_8_ * exp_term_8_ / exp_term_9_;
 
       // c_jk update by analytical solution
       c_jk_[ i ] = ((-1 + exp_term_10_) * r_jk_[ i ]*r_post_i_*cp.tau_ 
@@ -597,6 +582,18 @@ private:
   librandom::RngPtr rng_;
   // random deviate generator
   librandom::ExpRandomDev exp_dev_; 
+
+  // we need local copies of these, because intermediate values are
+  // required as we go through the contacts.
+  double_t r_post_i_;
+  double_t R_post_i_;
+  double_t exp_term_8_; 
+  double_t exp_term_9_;
+  double_t exp_term_10_;
+  bool deletion_trigger;
+  bool stepeval_trigger;
+  std::vector<double_t> amps_;
+  std::vector<double_t> exps_;
 };
 
 /**
@@ -703,6 +700,8 @@ STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom()
   R_post_ = 0.;
   n_create_ = 0;
   n_delete_ = 0;
+  amps_.resize(7);
+  exps_.resize(7);
 }
 
 template < typename targetidentifierT >

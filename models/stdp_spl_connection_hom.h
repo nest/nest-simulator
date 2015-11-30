@@ -262,18 +262,20 @@ private:
   
   
   std::vector<double_t> compute_amps_( const STDPSplHomCommonProperties& cp, 
-                                       const long_t i )
+                                       const long_t i, 
+                                       const double_t& r_post_i_, 
+                                       const double_t& R_post_i_)
   {
       // precompute power terms without using std::pow
-      double_t pow_term_1_ = -(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_*cp.tau_ 
+      double_t pow_term_1_ = -(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_i_*cp.tau_ 
                                 + 2*c_jk_[ i ]*cp.tau_slow_;
       pow_term_1_ *= pow_term_1_;
       //std::pow(R_post_,4)
-      double_t pow_term_2_ = R_post_ * R_post_ * R_post_ * R_post_;
+      double_t pow_term_2_ = R_post_i_ * R_post_i_ * R_post_i_ * R_post_i_;
       //std::pow(r_jk_[ i ],2)
       double_t pow_term_3_ = r_jk_[ i ] * r_jk_[ i ];
       //std::pow(r_post_,2)
-      double_t pow_term_4_ = r_post_ * r_post_;
+      double_t pow_term_4_ = r_post_i_ * r_post_i_;
       //std::pow(c_jk_[ i ],2)  
       double_t pow_term_5_ = c_jk_[ i ] * c_jk_[ i ];
       
@@ -283,15 +285,15 @@ private:
              (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
              (-1 + cp.alpha_*cp.tau_slow_)*
              (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)));
-      double_t amp_1_ = (2*cp.A4_corr_*r_jk_[ i ]*r_post_*cp.pow_term_1_*
+      double_t amp_1_ = (2*cp.A4_corr_*r_jk_[ i ]*r_post_i_*cp.pow_term_1_*
              (-4 + cp.alpha_*cp.tau_)*
              (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-(c_jk_[ i ]*cp.tau_) + 
-             r_jk_[ i ]*r_post_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_)*
+             r_jk_[ i ]*r_post_i_*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_)*
               (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
               (-1 + cp.alpha_*cp.tau_slow_) ) / denom_;
       double_t amp_2_ = ( cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*
              (-2 + cp.alpha_*cp.tau_)*
-          (-(r_jk_[ i ]*r_post_*cp.tau_) + c_jk_[ i ]*(cp.tau_ - 
+          (-(r_jk_[ i ]*r_post_i_*cp.tau_) + c_jk_[ i ]*(cp.tau_ - 
           2*cp.tau_slow_))*(cp.tau_ - 2*cp.tau_slow_)*cp.tau_slow_*
           (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
           (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
@@ -308,7 +310,7 @@ private:
           cp.pow_term_4_*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*
           (-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
           (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
-      double_t amp_6_ = ( cp.A2_corr_*r_jk_[ i ]*r_post_*cp.pow_term_1_*
+      double_t amp_6_ = ( cp.A2_corr_*r_jk_[ i ]*r_post_i_*cp.pow_term_1_*
           (-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
           (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
           (-1 + cp.alpha_*cp.tau_slow_)*
@@ -320,7 +322,7 @@ private:
              (-1 + cp.alpha_*cp.tau_slow_)) + 
             cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*
             (-2 + cp.alpha_*cp.tau_slow_)*
-             (r_jk_[ i ]*r_post_*cp.tau_ + c_jk_[ i ]*(2 - cp.alpha_*cp.tau_)*
+             (r_jk_[ i ]*r_post_i_*cp.tau_ + c_jk_[ i ]*(2 - cp.alpha_*cp.tau_)*
              cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*
              cp.tau_slow_))\
              + (-2 + cp.alpha_*cp.tau_)*(-1 + cp.alpha_*cp.tau_slow_)*
@@ -329,7 +331,7 @@ private:
                 (-cp.tau_ - 2*cp.tau_slow_ + cp.alpha_*cp.tau_*cp.tau_slow_) + 
                cp.A4_corr_*(-4 + cp.alpha_*cp.tau_slow_)*
                 (2*pow_term_3_*pow_term_4_*cp.pow_term_1_ - 
-                  c_jk_[ i ]*(c_jk_[ i ] + 2*r_jk_[ i ]*r_post_)*
+                  c_jk_[ i ]*(c_jk_[ i ] + 2*r_jk_[ i ]*r_post_i_)*
                   cp.tau_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_ + 
                   pow_term_5_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
                   cp.pow_term_6_))) )/ denom_;  
@@ -391,133 +393,192 @@ private:
   void integrate_( const STDPSplHomCommonProperties& cp, const long_t delta )
   {
 
-   // integrate all state variables the duration t analytically, assuming 
-   // no spikes arrive during the delta.
-  
-    double_t t_delta_ = Time( Time::step(delta) ).get_ms() / 1000.;  
-    // std::cout << "t_delta_, delta: " << t_delta_ << "  " << delta <<  "\n";
-  
-    // precompute some exponentials
-    double_t exp_term_8_; 
-    double_t exp_term_9_;
-    if ( delta < cp.exp_cache_len_ )
-    {
-        exp_term_8_ = cp.exp_8_[delta];
-        exp_term_9_ = cp.exp_2_[delta];
-    }
-    else
-    {
-        exp_term_8_ =  std::exp( -t_delta_/cp.tau_ );
-        exp_term_9_ =  std::exp( -t_delta_/cp.tau_slow_ );
-    }
-    // std::exp( t_delta_*(-2/cp.tau_ + 1/cp.tau_slow_) )
-    double_t exp_term_10_ = exp_term_8_ * exp_term_8_ / exp_term_9_;
+    // integrate all state variables the duration t analytically, assuming 
+    // no spikes arrive during the delta.
+
+    // we need local copies of these, because intermediate values are
+    // required as we go through the contacts.
+    double_t r_post_i_= r_post_;
+    double_t R_post_i_= R_post_;
   
     // propagate all variables
     for ( long_t i = 0; i < n_conns_; i++ )
     {
-      // for how long should w be integrated for this contact?
-      long_t delta_i;
-      if ( w_create_steps_[ i ] > delta )
+      // initialize the local r_post/R_post (for this contact) to the global 
+      // initial value
+      r_post_i_ = r_post_;
+      R_post_i_ = R_post_;
+
+      long_t delta_done = 0;
+      while ( delta_done < delta )
       {
-        // decrease creation step timer
+      // how many steps are left to be processed?
+      long_t delta_this = delta-delta_done;
+
+      // for how long should we integrate w_jk in this round?
+      long_t delta_i;
+      if ( w_create_steps_[ i ] > delta_this )
+      {
+        // if the contact is waiting for creation, decrease creation step timer
+        w_create_steps_[ i ] -= delta_this;
+        // no integration to be done
         delta_i = 0;
-        w_create_steps_[ i ] -= delta;
       }
       else if ( w_create_steps_[ i ] > 1 )
       {
-        // a contact is created within the delta.
-        // memorize how many steps are left to be integrated
-        delta_i = delta - w_create_steps_[ i ];
-        w_create_steps_[ i ] = 0;
+        // the contact is going to be created within this delta.
+        // how many steps will elapse until this happens?
+        delta_this = w_create_steps_[ i ];
+        // no integration to be done
+        delta_i = 0;
         // set contact weight to creation value
         w_jk_[ i ] = cp.w0_;
-        // increment deletion counter
+        // clear creation step counter
+        w_create_steps_[ i ] = 0;
+        // increment creation counter
         n_create_ ++;
       }
       else
       {
-        delta_i = delta;
+        // the contact exists, so it can be integrated for the remaining delta
+        delta_i = delta_this;
       }
-
-      // EQ 1 only for nonzero synapses, i.e. created ones
+      
+      // weight integration, only for existing contacts
       if (delta_i>0)
       {
-          // compute amplitudes
-          std::vector<double_t> amps_ = compute_amps_( cp, i );
+          // the delta_done in this case may be different from delta_this, in
+          // case the contact is deleted before delta_this is elapsed. If so,
+          // we reenter this while loop from the top.
+          // Therefore we update r_jk and the other variables at every round.
+          
+          // compute amplitudes of exponential terms of w_jk solution
+          std::vector<double_t> amps_ = 
+                compute_amps_( cp, i, r_post_i_, R_post_i_ );
 
-          // compute exponentials
+          // compute exponentials terms
           std::vector<double_t> exps_ = get_exps_( cp, delta_i );
 
           // compose the solution
           w_jk_[ i ] = compose_w_sol_( amps_, exps_ );
     
           // delete synapse with negative or zero weights
-          bool deletion_trigger = false;
+          bool deletion_trigger;
+          bool stepeval_trigger;
           if ( w_jk_[ i ] <= 0. )
           {
-              // Here we only check this at spike times. Misses zero crossing 
-              // within ISIs. This may be improved.
-              //std::cout << "deletion triggered in spike-time check."  << "\n";
               deletion_trigger = true;
+              // in safe mode we compute the exact zero crossing times in case
+              // of deletions, to correct the creation step counter.
+              stepeval_trigger = cp.safe_mode_;
           }
-          else if (not cp.safe_mode_)
-              {
-              // if safe mode is off, we don't check for zero crossings within
-              // the intervals
-              }
-          else if ( check_crossing_possible_( amps_ ) )
+          else 
           {
-              // if we cannot exclude zero crossings in general, 
-              // we search numerically if there is a zero crossings
-              // on the time grid spanned by the simulation resolution.
-              std::vector<double_t> exps_d_;
-              double_t w_d_;
-              for (long_t d_=0; d_<delta_i; d_++)
+              // no deletion has been triggered yet (w_jk is positive).
+              // There may have been a zero crossing before, though.
+              deletion_trigger = false;
+              if (cp.safe_mode_)
               {
-                std::vector<double_t> exps_d_ = get_exps_( cp, d_ );
-                w_d_ = compose_w_sol_( amps_, exps_d_ );
-                if (w_d_<=0.)
+                 // if we cannot exclude zero crossings in the interval, 
+                 // we search numerically if there is a zero crossings,
+                 // on the time grid spanned by the simulation resolution.
+                 stepeval_trigger = check_crossing_possible_( amps_ );
+              }
+              else
+              {
+                 stepeval_trigger = false;
+              }
+          }
+          if (stepeval_trigger)
+          {
+              long_t d_stepeval_ = 0;
+              // we search numerically for a zero crossing
+              // on the time grid spanned by the simulation resolution.
+              while (d_stepeval_<delta_i)
+              {
+                std::vector<double_t> exps_stepeval_ = 
+                                                get_exps_( cp, d_stepeval_ );
+                double_t w_stepeval_ = compose_w_sol_( amps_, exps_stepeval_ );
+                if (w_stepeval_<=0.)
                 {
+                    // we stop searching because we have found the first zero
+                    // crossing, upon which the contact is immediately deleted.
                     //std::cout << "deletion triggered in step-wise check."  << "\n";
                     deletion_trigger = true;
                     break;
                 }
+                d_stepeval_++;
               }
+              // because the deletion may have happened before reaching 
+              // delta_this, the effective interval that was integrated 
+              // may have been shorter
+              delta_this = d_stepeval_;
+          }
+          else
+          {
+              // if stepeval was not triggered (not in safe mode), 
+              // we assume that the deletion event, if any, happened at the end  
+              // of the integration interval, so that we have integrated the 
+              // whole delta_i
+              delta_this = delta_i;
           }
           
           if ( deletion_trigger )
           {
-            // generate an exponentially distributed number
+            // generate an exponentially distributed number.
             w_create_steps_[ i ] = Time( Time::ms( 
               exp_dev_( rng_ ) / cp.lambda_ *1e3 ) ).get_steps();
-            
             // set synapse to equal zero
             w_jk_[ i ] = 0.;
-            
             // increment deletion counter
             n_delete_ ++;
           }
       }
 
-      // EQ 2 by analytical solution
-      c_jk_[ i ] = ((-1 + exp_term_10_) * r_jk_[ i ]*r_post_*cp.tau_ 
+      // now we integrate the remaining variables for delta_this steps
+
+      // precompute some exponentials
+      double_t exp_term_8_; 
+      double_t exp_term_9_;
+      if ( delta_this < cp.exp_cache_len_ )
+      {
+          // we copy the exp terms from the cache if possible
+          exp_term_8_ = cp.exp_8_[delta_this];
+          exp_term_9_ = cp.exp_2_[delta_this];
+      }
+      else
+      {
+          // otherwise we compute them
+          double_t t_delta_ = Time( Time::step(delta_this) ).get_ms() / 1000.;  
+          exp_term_8_ =  std::exp( -t_delta_/cp.tau_ );
+          exp_term_9_ =  std::exp( -t_delta_/cp.tau_slow_ );
+      }
+      // std::exp( t_delta_*(-2/cp.tau_ + 1/cp.tau_slow_) )
+      double_t exp_term_10_ = exp_term_8_ * exp_term_8_ / exp_term_9_;
+
+      // c_jk update by analytical solution
+      c_jk_[ i ] = ((-1 + exp_term_10_) * r_jk_[ i ]*r_post_i_*cp.tau_ 
             + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))/
             (cp.tau_ - 2*cp.tau_slow_) * exp_term_9_;
       
-      // EQ 4 by analytical solution
+      // r_jk update by analytical solution
       r_jk_[ i ] *= exp_term_8_;
+
+      // r/R post update by analytical solution
+      r_post_i_ *= exp_term_8_;
+      R_post_i_ *= exp_term_9_;
+      
+      // increment the step counter of the loop over delta
+      delta_done += delta_this;
+      }
     }
-  
-   // update the postsynaptic rates
-    r_post_ *= exp_term_8_;
-    R_post_ *= exp_term_9_;
+   // When we get here all contacts have been updated for the whole delta.
+   // We copy the last postsynaptic values as the new postsynaptic state.
+   r_post_ = r_post_i_;
+   R_post_ = R_post_i_;
   }
   
-  
-  
-
-  // data members of each connection
+  // declarations of data members of each connection
   long_t n_conns_;
   long_t n_create_;
   long_t n_delete_;
@@ -546,70 +607,65 @@ private:
  * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
-inline void
+void
 STDPSplConnectionHom< targetidentifierT >::send( Event& e,
   thread t,
   double_t t_lastspike,
   const STDPSplHomCommonProperties& cp )
 {
-
+  // once the synapse receives a spike event, it updates its state, from the 
+  // last spike to this one.
   double_t t_spike = e.get_stamp().get_ms();
-  Node* target = get_target( t );
 
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
+  Node* target = get_target( t );
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
   target->get_history( t_lastspike, t_spike, &start, &finish );
 
+  // get random number generator of target thread
   Network* net = Node::network();
-  rng_ = net->get_rng( target->get_vp() ); // random number generator of target thread
+  rng_ = net->get_rng( target->get_vp() ); 
 
+  // integration of synapse state starts from the last spike received
   double_t t_last_postspike = t_lastspike;
 
+  // integration proceeds from postsynaptic spike to postsyn. spike in range.
   while ( start != finish )
   {
     long_t delta = Time( Time::ms( start->t_ - t_last_postspike ) ).get_steps();
-
-    // if delta == 0, several postsynaptic spikes occurred 
-    // in this timestep. We have increment the traces to account
-    // for these spikes too.
-
-//     std::cout << "r_post from neuron: " << r_post_ << "\n";
-//     std::cout << "R_post from neuron: " << R_post_ << "\n";
-//     std::cout << "r_jk_: " << r_jk_[0] << "\n";
-//     std::cout << "c_jk_: " << c_jk_[0] << "\n";
-//     std::cout << "w_jk_: " << w_jk_[0] << "\n---->\n";
      
-    // update iteratively all variables in the time start ->
-    integrate_( cp, delta);
+    // integrate the state variables for this delta
+    // here we use the analytical solution of the ODEs in between spikes
+    // (homogeneous solution)
+    integrate_( cp, delta );
 
-    t_last_postspike = start->t_;
-    ++start;
-
-//     std::cout << "r_post after decay: " << r_post_ << "\n";
-//     std::cout << "R_post after decay: " << R_post_ << "\n";
-//     std::cout << "r_jk_ after decay: " << r_jk_[0] << "\n";
-//     std::cout << "c_jk_ after decay: " << c_jk_[0] << "\n";
-//     std::cout << "w_jk_ after decay: " << w_jk_[0] << "\n\n";
-
-    // update postsynaptic traces
+    // increment postsynaptic traces once for each spike
     r_post_ += 1. / cp.tau_;
     R_post_ += 1. / cp.tau_slow_;
+
+    // proceed to the next postsynaptic spike
+    t_last_postspike = start->t_;
+    ++start;
   }
 
+  // it remains to integrate from the last postsynaptic spike to the time of 
+  // the presynaptic spike received.
   long_t remaining_delta = 
     Time( Time::ms( t_spike - t_last_postspike ) ).get_steps();
   integrate_( cp, remaining_delta );
 
-  // spike failure at rate p_fail, i.e. presynaptic traces only get updated 
-  // by this spike with probability 1-p_fail.
+  // Now, after updating the synapse state, we are ready to transmit the spike.
+  // Spike transmission failures occur at each contact with rate p_fail, i.e. 
+  // presynaptic traces only get updated by the spike with probability 1-p_fail.
   double_t weight_tot = 0.;
   for ( long_t i = 0; i < n_conns_; i++ )
   {
+    // go through all synaptic contacts and draw a random number
     double_t rr = rng_->drand();
-
     if ( rr > cp.p_fail_ )
     {
+      // increment the presynaptic trace of contact i if transmission successful
       r_jk_[ i ] += 1. / cp.tau_;
 
       // count only existing synapses to total weight
@@ -620,8 +676,10 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
       }
     }
   }
-  // only send the spike if it has a nonzero total weight
-  if ( weight_tot > 0. ) 
+  // Only send the spike if it has a nonzero total weight
+  // Sending spikes causes computations in postsynaptic neurons and 
+  // network communication, which is not necessary for zero-weight spikes. 
+  if ( weight_tot > 0. )
     {
     e.set_receiver( *target );
     e.set_weight( weight_tot );
@@ -631,7 +689,7 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
     }
 }
 
-// Defaults come from reference [1] data fitting and table 3.
+
 template < typename targetidentifierT >
 STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom()
   : ConnectionBase()

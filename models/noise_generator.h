@@ -122,11 +122,7 @@ public:
 
   port send_test_event( Node&, rport, synindex, bool );
 
-  SignalType
-  sends_signal() const
-  {
-    return ALL;
-  }
+  SignalType sends_signal() const;
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -244,6 +240,12 @@ noise_generator::set_status( const DictionaryDatum& d )
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   P_.num_targets_ = ptmp.num_targets_;
+}
+
+inline SignalType
+noise_generator::sends_signal() const
+{
+  return ALL;
 }
 }
 #endif // NOISE_GENERATOR_H

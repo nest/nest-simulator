@@ -266,6 +266,8 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
 
   // 3. do the events sent by source mean the same thing as they are
   // interpreted in target?
+  // note that we here use a bitwise and operation (&), because we interpret each
+  // bit in the signal type as a collection of individual flags
   if ( !( source.sends_signal() & target.receives_signal() ) )
     throw IllegalConnection();
 

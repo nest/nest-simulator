@@ -123,11 +123,7 @@ public:
 
   port handles_test_event( SpikeEvent&, rport );
 
-  SignalType
-  receives_signal() const
-  {
-    return BINARY;
-  }
+  SignalType receives_signal() const;
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -192,6 +188,12 @@ inline void
 spin_detector::finalize()
 {
   device_.finalize();
+}
+
+inline SignalType
+spin_detector::receives_signal() const
+{
+  return BINARY;
 }
 
 } // namespace

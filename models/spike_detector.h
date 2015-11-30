@@ -130,11 +130,7 @@ public:
 
   port handles_test_event( SpikeEvent&, rport );
 
-  SignalType
-  receives_signal() const
-  {
-    return ALL;
-  }
+  SignalType receives_signal() const;
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -212,6 +208,12 @@ inline void
 spike_detector::finalize()
 {
   device_.finalize();
+}
+
+inline SignalType
+spike_detector::receives_signal() const
+{
+  return ALL;
 }
 
 } // namespace

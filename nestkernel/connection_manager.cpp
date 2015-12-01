@@ -235,6 +235,7 @@ ConnectionManager::copy_synapse_prototype( synindex old_id, std::string new_name
   }
   assert( new_id != invalid_synindex );
 
+  // This is a hot-fix for issue #172: CopyModel on gap_junction does not work.
   if ( get_synapse_prototype( old_id ).is_primary() == false )
   {
     net_.message( SLIInterpreter::M_ERROR,

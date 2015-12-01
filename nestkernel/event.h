@@ -736,6 +736,10 @@ public:
 
   virtual synindex get_syn_id() const = 0;
 
+  virtual void add_syn_id( const synindex synid ) = 0;
+
+  virtual bool has_syn_id( const synindex synid ) const = 0;
+
   //! size of event in units of uint_t
   virtual size_t size() = 0;
   virtual fwit& operator<<( fwit& pos ) = 0;
@@ -810,7 +814,19 @@ public:
 class GapJEvent : public SecondaryEvent
 {
 private:
+  /*
+  Conceptual there is an one-to-one mapping between a SecondaryEvent
+  and a SecondaryConnectorModel. The synindex of this particular
+  SecondaryConnectorModel is stored in the static synid_ member variable
+  on model registeration. There are however reasons (e.g. the usage of
+  CopyModel or the creation of the labeled synapse model duplicates for pyNN)
+  which make it necessary to register several SecondaryConnectorModels with
+  one SecondaryEvent. Therefore the synindices of all these models are
+  stored  in the synid_vector_. The has_syn_id()-function allows testing
+  if a particular synid is mapped with the SecondaryEvent in question.
+  */
   static synindex synid_;
+  static std::vector< synindex > synid_vector_;
   static size_t coeff_length_; // length of coeffarray
 
   CoeffArrayIterator diit_begin_;
@@ -827,7 +843,31 @@ public:
   static void
   set_syn_id( const synindex synid )
   {
-    synid_ = synid;
+    if(synid_ == invalid_synindex)
+      synid_ = synid;
+
+    synid_vector_.push_back(synid);
+  }
+
+  void
+  add_syn_id( const synindex synid )
+  {
+    synid_vector_.push_back(synid);
+  }
+
+  bool
+  has_syn_id( const synindex synid ) const
+  {
+    bool has_syn_id = false;
+    for ( unsigned int i = 0; i < synid_vector_.size(); i++ )
+    {
+      if( synid_vector_[i] == synid )
+      {
+        has_syn_id = true;
+        break;
+      }
+    }
+    return has_syn_id;
   }
 
   synindex

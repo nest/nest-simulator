@@ -234,7 +234,14 @@ ConnectionManager::copy_synapse_prototype( synindex old_id, std::string new_name
     throw KernelException( "Synapse model count exceeded" );
   }
   assert( new_id != invalid_synindex );
-
+  
+  // if the copied synapse is a secondary connector model the synid of the copy has to
+  // be mapped to the corresponding secondary event type
+  if ( get_synapse_prototype( old_id ).is_primary() == false )
+  {
+    ( get_synapse_prototype( old_id ).get_event() )->add_syn_id( new_id );
+  }
+  
   for ( thread t = 0; t < net_.get_num_threads(); ++t )
   {
     prototypes_[ t ].push_back( get_synapse_prototype( old_id ).clone( new_name ) );
@@ -721,7 +728,7 @@ ConnectionManager::send_secondary( thread t, SecondaryEvent& e )
 
         if ( p->homogeneous_model() )
         {
-          if ( p->get_syn_id() == e.get_syn_id() )
+          if ( e.has_syn_id ( p->get_syn_id() ) )
             p->send( e, t, prototypes_[ t ] );
         }
         else

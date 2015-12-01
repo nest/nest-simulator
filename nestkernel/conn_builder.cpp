@@ -127,10 +127,11 @@ nest::ConnBuilder::ConnBuilder( Network& net,
   else
   {
     if ( syn_spec->known( names::pre_synaptic_element )
-    || syn_spec->known( names::post_synaptic_element ) )
+      || syn_spec->known( names::post_synaptic_element ) )
     {
-        throw BadProperty(
-        "In order to use structural plasticity, both a pre and post synaptic element must be specified" ); 
+      throw BadProperty(
+        "In order to use structural plasticity, both a pre and post synaptic element must be "
+        "specified" );
     }
     pre_synaptic_element_name = "";
     post_synaptic_element_name = "";
@@ -286,7 +287,6 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name, const Dictionary
     return;
   }
 }
-
 /**
  * Updates the number of connected synaptic elements in the
  * target and the source.
@@ -654,13 +654,13 @@ nest::OneToOneBuilder::sp_connect_()
         if ( *sgid == *tgid and not autapses_ )
           continue;
 
-        Node* const target = net_.get_node( *tgid );
-        const thread target_thread = target->get_thread();
         if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
         {
           skip_conn_parameter_( tid );
           continue;
         }
+        Node* const target = net_.get_node( *tgid );
+        const thread target_thread = target->get_thread();
 
         single_connect_( *sgid, *target, target_thread, rng );
       }
@@ -712,11 +712,10 @@ nest::OneToOneBuilder::sp_disconnect_()
         if ( *sgid == *tgid and not autapses_ )
           continue;
 
-        Node* const target = net_.get_node( *tgid );
-        const thread target_thread = target->get_thread();
-
         if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           continue;
+        Node* const target = net_.get_node( *tgid );
+        const thread target_thread = target->get_thread();
 
         single_disconnect_( *sgid, *target, target_thread );
       }
@@ -820,8 +819,6 @@ nest::AllToAllBuilder::sp_connect_()
             skip_conn_parameter_( tid );
             continue;
           }
-          Node* const target = net_.get_node( *tgid );
-          const thread target_thread = target->get_thread();
           if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
           {
             for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
@@ -829,6 +826,8 @@ nest::AllToAllBuilder::sp_connect_()
               skip_conn_parameter_( tid );
             continue;
           }
+          Node* const target = net_.get_node( *tgid );
+          const thread target_thread = target->get_thread();
           single_connect_( *sgid, *target, target_thread, rng );
         }
       }
@@ -934,8 +933,6 @@ nest::AllToAllBuilder::sp_disconnect_()
           if ( not autapses_ and *sgid == *tgid )
             continue;
 
-          Node* const target = net_.get_node( *tgid );
-          const thread target_thread = target->get_thread();
           if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           {
             for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
@@ -943,6 +940,8 @@ nest::AllToAllBuilder::sp_disconnect_()
               skip_conn_parameter_( tid );
             continue;
           }
+          Node* const target = net_.get_node( *tgid );
+          const thread target_thread = target->get_thread();
           single_disconnect_( *sgid, *target, target_thread );
         }
       }
@@ -1420,7 +1419,8 @@ nest::SPBuilder::connect( GIDCollection sources, GIDCollection targets )
 void
 nest::SPBuilder::connect_()
 {
-  connect_( sources_, targets_ );
+  throw NotImplemented(
+    "Connection without structural plasticity is not possible for this connection builder" );
 }
 
 /**
@@ -1441,49 +1441,39 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
     throw DimensionMismatch();
   }
 
-  // get thread id
-  const int tid = net_.get_thread_id();
-
-  try
+#pragma omp parallel
   {
-    // allocate pointer to thread specific random generator
-    librandom::RngPtr rng = net_.get_rng( tid );
+    // get thread id
+    const int tid = net_.get_thread_id();
 
-    for ( GIDCollection::const_iterator tgid = targets.begin(), sgid = sources.begin();
-          tgid != targets.end();
-          ++tgid, ++sgid )
+    try
     {
-      assert( sgid != sources.end() );
+      // allocate pointer to thread specific random generator
+      librandom::RngPtr rng = net_.get_rng( tid );
 
-      if ( *sgid == *tgid and not autapses_ )
-        continue;
-
-      // check whether the sources is on this mpi machine
-      if ( net_.is_local_gid( *sgid ) )
+      for ( GIDCollection::const_iterator tgid = targets.begin(), sgid = sources.begin();
+            tgid != targets.end();
+            ++tgid, ++sgid )
       {
-        Node* const source = net_.get_node( *sgid );
-        // update the number of connected synaptic elements
-        source->connect_synaptic_element( pre_synaptic_element_name, 1 );
+        assert( sgid != sources.end() );
+
+        if ( *sgid == *tgid and not autapses_ )
+          continue;
+
+        if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
+          continue;
+        Node* const target = net_.get_node( *tgid );
+        const thread target_thread = target->get_thread();
+
+        single_connect_( *sgid, *target, target_thread, rng );
       }
-
-      // check whether the target is on this mpi machine
-      if ( !net_.is_local_gid( *tgid ) )
-        continue;
-
-      Node* const target = net_.get_node( *tgid );
-      const thread target_thread = target->get_thread();
-
-      // update the number of connected synaptic elements
-      target->connect_synaptic_element( post_synaptic_element_name, 1 );
-
-      single_connect_( *sgid, *target, target_thread, rng );
     }
-  }
-  catch ( std::exception& err )
-  {
-    // We must create a new exception here, err's lifetime ends at
-    // the end of the catch block.
-    exceptions_raised_.at( tid ) =
-      lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
   }
 }

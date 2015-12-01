@@ -433,7 +433,7 @@ SPManager::delete_synapse( index sgid,
     Node* const source = net_.local_nodes_.get_node_by_gid( sgid );
     source->connect_synaptic_element( se_pre_name, -1 );
   }
-  
+
   if ( net_.is_local_gid( tgid ) )
   {
     Node* const target = net_.local_nodes_.get_node_by_gid( tgid );
@@ -599,7 +599,8 @@ nest::SPManager::get_sources( std::vector< index > targets,
       target_it = targets.begin();
       for ( ; target_it != targets.end(); target_it++, source_it++ )
       {
-        num_connections = validate_pointer( *iit )->get_num_connections( *target_it, thread_id, synapse_model );
+        num_connections =
+          validate_pointer( *iit )->get_num_connections( *target_it, thread_id, synapse_model );
         for ( size_t c = 0; c < num_connections; c++ )
         {
           ( *source_it ).push_back( source_gid );
@@ -633,7 +634,8 @@ nest::SPManager::get_targets( std::vector< index > sources,
     {
       if ( ( *it ).get( *source_it ) != 0 )
       {
-        validate_pointer(( *it ).get( *source_it ))->get_target_gids( ( *target_it ), thread_id, synapse_model );
+        validate_pointer( ( *it ).get( *source_it ) )
+          ->get_target_gids( ( *target_it ), thread_id, synapse_model );
       }
     }
   }

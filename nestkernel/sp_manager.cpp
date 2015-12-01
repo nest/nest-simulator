@@ -293,7 +293,7 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
       post_vacant_n,
       post_deleted_id,
       post_deleted_n );
-    assert( post_deleted_id.size() == 0 && "Post deleted id" );
+    assert( post_deleted_id.size() == 0 );
   }
 
   // Communicate vacant elements
@@ -433,13 +433,13 @@ SPManager::delete_synapse( index sgid,
     Node* const source = net_.local_nodes_.get_node_by_gid( sgid );
     source->connect_synaptic_element( se_pre_name, -1 );
   }
-
+  
   if ( net_.is_local_gid( tgid ) )
   {
     Node* const target = net_.local_nodes_.get_node_by_gid( tgid );
     thread target_thread = target->get_thread();
     // get the ConnectorBase corresponding to the source
-    ConnectorBase* conn = connections_[ target_thread ].get( sgid );
+    ConnectorBase* conn = validate_pointer( connections_[ target_thread ].get( sgid ) );
     ConnectorBase* c = prototypes_[ target_thread ][ syn_id ]->delete_connection(
       *target, target_thread, conn, syn_id );
     if ( c == 0 )
@@ -599,7 +599,7 @@ nest::SPManager::get_sources( std::vector< index > targets,
       target_it = targets.begin();
       for ( ; target_it != targets.end(); target_it++, source_it++ )
       {
-        num_connections = ( *iit )->get_num_connections( *target_it, thread_id, synapse_model );
+        num_connections = validate_pointer( *iit )->get_num_connections( *target_it, thread_id, synapse_model );
         for ( size_t c = 0; c < num_connections; c++ )
         {
           ( *source_it ).push_back( source_gid );
@@ -617,13 +617,11 @@ nest::SPManager::get_targets( std::vector< index > sources,
   thread thread_id;
   std::vector< index >::iterator source_it;
   std::vector< std::vector< index > >::iterator target_it;
-
   targets.resize( sources.size() );
   for ( std::vector< std::vector< index > >::iterator i = targets.begin(); i != targets.end(); i++ )
   {
     ( *i ).clear();
   }
-
 
   for ( tVSConnector::iterator it = connections_.begin(); it != connections_.end(); ++it )
   {
@@ -635,7 +633,7 @@ nest::SPManager::get_targets( std::vector< index > sources,
     {
       if ( ( *it ).get( *source_it ) != 0 )
       {
-        ( *it ).get( *source_it )->get_target_gids( ( *target_it ), thread_id, synapse_model );
+        validate_pointer(( *it ).get( *source_it ))->get_target_gids( ( *target_it ), thread_id, synapse_model );
       }
     }
   }

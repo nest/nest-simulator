@@ -544,9 +544,7 @@ ConnectionManager::validate_source_entry( thread tid, index s_gid, synindex syn_
   // if not put in zero pointer
   if ( connections_[ tid ].test( s_gid ) )
   {
-    return connections_[ tid ].get( s_gid ); // validate_pointer(connections_[ tid ].get(s_gid ));
-                                             // // returns non-const reference to stored type, here
-                                             // ConnectorBase*
+    return connections_[ tid ].get( s_gid );
   }
   else
     return 0; // if non-existing

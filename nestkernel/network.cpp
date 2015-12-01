@@ -2088,43 +2088,6 @@ Network::register_model( Model& m, bool private_model )
   return id;
 }
 
-void
-Network::unregister_model( index m_id )
-{
-  Model* m = get_model( m_id ); // may throw UnknownModelID
-  std::string name = m->get_name();
-
-  if ( model_in_use( m_id ) )
-    throw ModelInUse( name );
-
-  modeldict_->remove( name );
-
-  // unregister from the pristine_models_ list
-  delete pristine_models_[ m_id ].first;
-  pristine_models_[ m_id ].first = 0;
-
-  // unregister from the models_ list
-  delete models_[ m_id ];
-  models_[ m_id ] = 0;
-
-  // unregister from proxy_nodes_ list
-
-  for ( thread t = 0; t < get_num_threads(); ++t )
-  {
-    delete proxy_nodes_[ t ][ m_id ];
-    proxy_nodes_[ t ][ m_id ] = 0;
-  }
-}
-
-void
-Network::try_unregister_model( index m_id )
-{
-  Model* m = get_model( m_id ); // may throw UnknownModelID
-  std::string name = m->get_name();
-
-  if ( model_in_use( m_id ) )
-    throw ModelInUse( name );
-}
 
 /**
  * This function is not thread save and has to be called inside a omp critical

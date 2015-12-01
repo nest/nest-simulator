@@ -126,6 +126,12 @@ nest::ConnBuilder::ConnBuilder( Network& net,
   }
   else
   {
+    if ( syn_spec->known( names::pre_synaptic_element )
+    || syn_spec->known( names::post_synaptic_element ) )
+    {
+        throw BadProperty(
+        "In order to use structural plasticity, both a pre and post synaptic element must be specified" ); 
+    }
     pre_synaptic_element_name = "";
     post_synaptic_element_name = "";
   }

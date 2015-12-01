@@ -818,7 +818,7 @@ private:
   Conceptual there is an one-to-one mapping between a SecondaryEvent
   and a SecondaryConnectorModel. The synindex of this particular
   SecondaryConnectorModel is stored in the static synid_ member variable
-  on model registeration. There are however reasons (e.g. the usage of
+  on model registration. There are however reasons (e.g. the usage of
   CopyModel or the creation of the labeled synapse model duplicates for pyNN)
   which make it necessary to register several SecondaryConnectorModels with
   one SecondaryEvent. Therefore the synindices of all these models are

@@ -597,7 +597,7 @@ NestModule::ResumeSimulationFunction::execute( SLIInterpreter* i ) const
    A copy of model is created and registered in modeldict or synapsedict
    under the name new_model. If a parameter dictionary is given, the parameters
    are set in new_model.
-   
+
    Note: Copying the `gap_junction` model (or any other model using SecondaryEvents)
          is not possible at this time. Please see issue #172.
  */

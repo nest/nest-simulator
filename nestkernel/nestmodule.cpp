@@ -609,17 +609,6 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
   const std::string newmodname = getValue< std::string >( i->OStack.pick( 1 ) );
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  if ( oldmodname.toString() == "gap_junction" )
-  {
-    get_network().message( SLIInterpreter::M_WARNING,
-      "CopyModel",
-      "Cannot copy the `gap_junction` model. Please use the "
-      "`syn_spec` to change parameters during `Connect`." );
-    i->OStack.pop( 3 );
-    i->EStack.pop();
-    return;
-  }
-
   const Dictionary& modeldict = get_network().get_modeldict();
   const Dictionary& synapsedict = get_network().get_synapsedict();
 

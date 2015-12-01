@@ -131,10 +131,9 @@ cppcheck_version=`$CPPCHECK --version | sed 's/^Cppcheck //'`
 echo "cppcheck version: $cppcheck_version"
 IFS=\. read -a cppcheck_version_a <<< "$cppcheck_version"
 if [[ ${cppcheck_version_a[0]} -lt 1 ]]; then
-  bail_out "Require cppcheck version 1.69. Not $cppcheck_version ."
-fi
-if [[ ${cppcheck_version_a[1]} -lt 69 ]]; then
-  bail_out "Require cppcheck version 1.69. Not $cppcheck_version ."
+  bail_out "Require cppcheck version 1.69 or later. Not $cppcheck_version ."
+elif [[ ${cppcheck_version_a[0]} -eq 1 && ${cppcheck_version_a[1]} -lt 69 ]]; then
+  bail_out "Require cppcheck version 1.69 or later. Not $cppcheck_version ."
 fi
 
 # clang-format is installed correctly

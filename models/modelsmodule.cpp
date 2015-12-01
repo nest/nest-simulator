@@ -333,7 +333,7 @@ ModelsModule::init( SLIInterpreter* )
   /* BeginDocumentation
      Name: gap_junction - Connection model for gap junctions.
      SeeAlso: synapsedict
-  */  
+  */ 
   register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
     net_, "gap_junction", false );
 

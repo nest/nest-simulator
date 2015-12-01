@@ -843,16 +843,16 @@ public:
   static void
   set_syn_id( const synindex synid )
   {
-    if(synid_ == invalid_synindex)
+    if ( synid_ == invalid_synindex )
       synid_ = synid;
 
-    synid_vector_.push_back(synid);
+    synid_vector_.push_back( synid );
   }
 
   void
   add_syn_id( const synindex synid )
   {
-    synid_vector_.push_back(synid);
+    synid_vector_.push_back( synid );
   }
 
   bool
@@ -861,7 +861,7 @@ public:
     bool has_syn_id = false;
     for ( unsigned int i = 0; i < synid_vector_.size(); i++ )
     {
-      if( synid_vector_[i] == synid )
+      if ( synid_vector_[ i ] == synid )
       {
         has_syn_id = true;
         break;

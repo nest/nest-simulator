@@ -237,7 +237,7 @@ ConnectionManager::copy_synapse_prototype( synindex old_id, std::string new_name
 
   // if the copied synapse is a secondary connector model the synid of the copy has to
   // be mapped to the corresponding secondary event type
-  if ( get_synapse_prototype( old_id ).is_primary() == false )
+  if ( not get_synapse_prototype( old_id ).is_primary() )
   {
     ( get_synapse_prototype( old_id ).get_event() )->add_syn_id( new_id );
   }
@@ -728,7 +728,7 @@ ConnectionManager::send_secondary( thread t, SecondaryEvent& e )
 
         if ( p->homogeneous_model() )
         {
-          if ( e.has_syn_id( p->get_syn_id() ) )
+          if ( e.supports_syn_id( p->get_syn_id() ) )
             p->send( e, t, prototypes_[ t ] );
         }
         else

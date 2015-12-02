@@ -25,6 +25,8 @@
 
 #include <cassert>
 #include <cstring>
+#include <algorithm>
+#include <vector>
 
 #include "nest.h"
 #include "nest_time.h"
@@ -734,11 +736,9 @@ class SecondaryEvent : public Event
 public:
   virtual SecondaryEvent* clone() const = 0;
 
-  virtual synindex get_syn_id() const = 0;
-
   virtual void add_syn_id( const synindex synid ) = 0;
 
-  virtual bool has_syn_id( const synindex synid ) const = 0;
+  virtual bool supports_syn_id( const synindex synid ) const = 0;
 
   //! size of event in units of uint_t
   virtual size_t size() = 0;
@@ -815,7 +815,7 @@ class GapJEvent : public SecondaryEvent
 {
 private:
   /*
-  Conceptual there is an one-to-one mapping between a SecondaryEvent
+  Conceptually, there is a one-to-one mapping between a SecondaryEvent
   and a SecondaryConnectorModel. The synindex of this particular
   SecondaryConnectorModel is stored in the static synid_ member variable
   on model registration. There are however reasons (e.g. the usage of
@@ -826,7 +826,7 @@ private:
   if a particular synid is mapped with the SecondaryEvent in question.
   */
   static synindex synid_;
-  static std::vector< synindex > synid_vector_;
+  static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
   CoeffArrayIterator diit_begin_;
@@ -846,34 +846,19 @@ public:
     if ( synid_ == invalid_synindex )
       synid_ = synid;
 
-    synid_vector_.push_back( synid );
+    supported_syn_ids_.push_back( synid );
   }
 
   void
   add_syn_id( const synindex synid )
   {
-    synid_vector_.push_back( synid );
+    supported_syn_ids_.push_back( synid );
   }
 
   bool
-  has_syn_id( const synindex synid ) const
+  supports_syn_id( const synindex synid ) const
   {
-    bool has_syn_id = false;
-    for ( unsigned int i = 0; i < synid_vector_.size(); i++ )
-    {
-      if ( synid_vector_[ i ] == synid )
-      {
-        has_syn_id = true;
-        break;
-      }
-    }
-    return has_syn_id;
-  }
-
-  synindex
-  get_syn_id() const
-  {
-    return synid_;
+    return std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid ) != supported_syn_ids_.end();
   }
 
   void

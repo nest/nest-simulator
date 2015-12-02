@@ -122,6 +122,6 @@ void GapJEvent::operator()()
 }
 
 synindex GapJEvent::synid_ = invalid_synindex;
-std::vector< synindex > GapJEvent::synid_vector_;
+std::vector< synindex > GapJEvent::supported_syn_ids_;
 size_t GapJEvent::coeff_length_ = 0;
 }

@@ -855,7 +855,8 @@ public:
   bool
   supports_syn_id( const synindex synid ) const
   {
-    return std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid ) != supported_syn_ids_.end();
+    return std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid )
+      != supported_syn_ids_.end();
   }
 
   void

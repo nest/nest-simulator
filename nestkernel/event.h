@@ -817,15 +817,15 @@ private:
   /*
   Conceptually, there is a one-to-one mapping between a SecondaryEvent
   and a SecondaryConnectorModel. The synindex of this particular
-  SecondaryConnectorModel is stored in the static synid_ member variable
-  on model registration. There are however reasons (e.g. the usage of
-  CopyModel or the creation of the labeled synapse model duplicates for pyNN)
-  which make it necessary to register several SecondaryConnectorModels with
-  one SecondaryEvent. Therefore the synindices of all these models are
-  stored  in the synid_vector_. The has_syn_id()-function allows testing
-  if a particular synid is mapped with the SecondaryEvent in question.
+  SecondaryConnectorModel is stored as first element in the static vector
+  supported_syn_ids_ on model registration. There are however reasons (e.g.
+  the usage of CopyModel or the creation of the labeled synapse model
+  duplicates for pyNN) which make it necessary to register several
+  SecondaryConnectorModels with one SecondaryEvent. Therefore the synindices
+  of all these models are added to supported_syn_ids_. The
+  supports_syn_id()-function allows testing if a particular synid is mapped
+  with the SecondaryEvent in question.
   */
-  static synindex synid_;
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
@@ -843,9 +843,6 @@ public:
   static void
   set_syn_id( const synindex synid )
   {
-    if ( synid_ == invalid_synindex )
-      synid_ = synid;
-
     supported_syn_ids_.push_back( synid );
   }
 
@@ -915,9 +912,12 @@ output_stream( T& d, fwit& pos )
   pos += size_uint_t( d );
 }
 
+// The following operator is used to read the information
+// of the GapJEvent from the buffer in Scheduler::deliver_events_
+// The synid can be skipped here as it is stored in a static vector.
 inline fwit& GapJEvent::operator<<( fwit& pos )
 {
-  pos += size_uint_t( synid_ );
+  pos += size_uint_t( *( supported_syn_ids_.begin() ) );
   output_stream( sender_gid_, pos );
 
   // generating a copy of the coeffarray is too time consuming
@@ -932,9 +932,13 @@ inline fwit& GapJEvent::operator<<( fwit& pos )
   return pos;
 }
 
+// The following operator is used to write the information
+// of the GapJEvent into the secondary_events_buffer_
+// All GapJEvents are identified by the synid of the
+// first element in supported_syn_ids_
 inline fwit& GapJEvent::operator>>( fwit& pos )
 {
-  input_stream( synid_, pos );
+  input_stream( *( supported_syn_ids_.begin() ), pos );
   input_stream( sender_gid_, pos );
   std::copy( begin().pos_, end().pos_, pos );
 
@@ -944,7 +948,7 @@ inline fwit& GapJEvent::operator>>( fwit& pos )
 inline size_t
 GapJEvent::size()
 {
-  size_t s = size_uint_t( sender_gid_ ) + size_uint_t( synid_ );
+  size_t s = size_uint_t( sender_gid_ ) + size_uint_t( *( supported_syn_ids_.begin() ) );
   double_t elem = 0.0;
   s += size_uint_t( elem ) * coeff_length_;
 

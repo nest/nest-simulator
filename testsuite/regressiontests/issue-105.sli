@@ -22,13 +22,13 @@
 
 /* BeginDocumentation
 
-Name: testsuite::issue-105 Ensure that min_delay is set correctly
+Name: testsuite::issue-105 Ensure that min_delay and max_delay are set correctly
 
 Synopsis: (issue-105) run -> NEST exits if test fails
 
 Description:
-This ticket ensures that NEST sets min_delay correctly also for delays
-that are not multiples of the resolution.
+This ticket ensures that NEST sets min_delay and max_delay correctly also for 
+delays that are not multiples of the resolution.
 
 Author: Hans E Plesser, 2015-12-01 based on material by Jafet Diaz
  */
@@ -38,6 +38,7 @@ Author: Hans E Plesser, 2015-12-01 based on material by Jafet Diaz
 
 M_ERROR setverbosity
 
+% Test min_delay on fresh connection
 {
   ResetKernel
   
@@ -51,13 +52,100 @@ M_ERROR setverbosity
     [ n ] dup /one_to_one << /delay delay >> Connect
   } forall
   
-  << >> GetConnections { GetStatus /delay get } Map
+  << >> GetConnections { /delay get } Map
   
   % should all be 0.8
   dup true exch { 0.8 eq and } Fold
   exch
   0 get 
-  0 GetStatus /min_delay get 
+  0 /min_delay get 
+  eq 
+  and
+} assert_or_die
+
+% Test min_delay on SetStatus
+{
+  ResetKernel
+  
+  0 << /resolution 0.1 >> SetStatus
+  
+  /n /iaf_neuron Create def
+  
+  /delays [ 0.81 0.82 0.8499 ] def
+  
+  delays
+  {
+    ;
+    [ n ] dup Connect
+  } forall
+
+  [ << >> GetConnections delays ]
+  { /d Set << /delay d >> SetStatus }
+  ScanThread
+  
+  << >> GetConnections { GetStatus /delay get } Map
+  
+  % should all be 0.8 
+  dup true exch { 0.8 eq and } Fold
+  exch
+  0 get 
+  0 /min_delay get 
+  eq 
+  and
+} assert_or_die
+
+% Test max_delay on fresh connection
+{
+  ResetKernel
+  
+  0 << /resolution 0.1 >> SetStatus
+  
+  /n /iaf_neuron Create def
+  
+  [ 0.85 0.86 0.8999 ]
+  {
+    /delay Set
+    [ n ] dup /one_to_one << /delay delay >> Connect
+  } forall
+  
+  << >> GetConnections { /delay get } Map
+  
+  % should all be 0.9
+  dup true exch { 0.9 eq and } Fold
+  exch
+  0 get 
+  0 /max_delay get 
+  eq 
+  and
+} assert_or_die
+
+% Test max_delay on SetStatus
+{
+  ResetKernel
+  
+  0 << /resolution 0.1 >> SetStatus
+  
+  /n /iaf_neuron Create def
+  
+  /delays [ 0.85 0.86 0.8999 ] def
+  
+  delays
+  {
+    ;
+    [ n ] dup Connect
+  } forall
+
+  [ << >> GetConnections delays ]
+  { /d Set << /delay d >> SetStatus }
+  ScanThread
+  
+  << >> GetConnections { GetStatus /delay get } Map dup ==
+
+  % should all be 0.9
+  dup true exch { 0.9 eq and } Fold
+  exch
+  0 get 
+  0 /max_delay get dup == 
   eq 
   and
 } assert_or_die

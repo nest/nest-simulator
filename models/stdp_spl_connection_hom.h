@@ -431,10 +431,15 @@ private:
       // weight integration, only for existing contacts
       if (delta_i>0)
       {
+          // these local switches control the flow below
+          bool deletion_trigger;
+          bool stepeval_trigger;
+        
           // the delta_done in this case may be different from delta_this, in
           // case the contact is deleted before delta_this is elapsed. If so,
           // we reenter this while loop from the top.
-          // Therefore we update r_jk and the other variables at every round.
+          // Therefore we update r_jk and the other variables at every round, to
+          // have initial conditions consistent with delta_done.
           
           // compute amplitudes of exponential terms of w_jk solution
           compute_amps_( cp, i ); //, r_post_i_, R_post_i_, amps_ );
@@ -583,8 +588,6 @@ private:
   double_t exp_term_8_; 
   double_t exp_term_9_;
   double_t exp_term_10_;
-  bool deletion_trigger;
-  bool stepeval_trigger;
   std::vector<double_t> amps_;
   std::vector<double_t> exps_;
 };
@@ -716,8 +719,6 @@ STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom(
   exp_term_8_ = rhs.exp_term_8_; 
   exp_term_9_ = rhs.exp_term_9_;
   exp_term_10_ = rhs.exp_term_10_;
-  deletion_trigger = rhs.deletion_trigger;
-  stepeval_trigger = rhs.stepeval_trigger;
   amps_ = rhs.amps_;
   exps_ = rhs.exps_;
 }

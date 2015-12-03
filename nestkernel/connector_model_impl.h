@@ -153,76 +153,71 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   updateValue< long_t >( d, names::music_channel, receptor_type_ );
 #endif
 
-  /*
-   * In the following code, we do not round delays to steps. For min and max delay,
-   * this is not strictly necessary. For a newly set delay, the rounding will be
-   * handled in cp_.set_status() or default_connection_.set_status().
-   * Since min_/max_delay are Time-objects and comparison is defined on Time
-   * objects, we should use it.
-   */
-  Time min_delay, max_delay, new_delay;
+  // For the minimum delay, we always round down. The easiest way to do this,
+  // is to round up and then subtract one step. The only remaining edge case
+  // is that the min delay is exactly at a step, in which case one would get
+  // a min delay that is one step too small. We can detect this by an
+  // additional test.
   double_t delay_tmp;
   bool min_delay_updated = updateValue< double_t >( d, "min_delay", delay_tmp );
-  min_delay = Time( Time::ms( delay_tmp ) );
-  bool max_delay_updated = updateValue< double_t >( d, "max_delay", delay_tmp );
-  max_delay = Time( Time::ms( delay_tmp ) );
+  Time new_min_delay;
+  if ( min_delay_updated )
+  {
+    delay new_min_delay_steps = Time( Time::ms_stamp( delay_tmp ) ).get_steps();
+    if ( Time( Time::step( new_min_delay_steps ) ).get_ms() > delay_tmp )
+    {
+      new_min_delay_steps -= 1;
+    }
+    new_min_delay = Time( Time::step( new_min_delay_steps ) );
+  }
 
-  // the delay might also be updated, so check new_min_delay and new_max_delay against new_delay, if
-  // given
-  if ( !updateValue< double_t >( d, "delay", delay_tmp ) )
-    new_delay = Time( Time::ms( default_connection_.get_delay() ) );
-  else
-    new_delay = Time( Time::ms( delay_tmp ) );
+  // For the maximum delay, we always round up, using ms_stamp
+  bool max_delay_updated = updateValue< double_t >( d, "max_delay", delay_tmp );
+  Time new_max_delay = Time( Time::ms_stamp( delay_tmp ) );
 
   if ( min_delay_updated xor max_delay_updated )
-    net_.message(
-      SLIInterpreter::M_ERROR, "SetDefaults", "Both min_delay and max_delay have to be specified" );
+  {
+    throw BadProperty( "Both min_delay and max_delay have to be specified" );
+  }
 
   if ( min_delay_updated && max_delay_updated )
   {
     if ( num_connections_ > 0 )
-      net_.message( SLIInterpreter::M_ERROR,
-        "SetDefaults",
-        "Connections already exist. Please call ResetKernel first" );
-    else if ( min_delay > new_delay )
-      net_.message(
-        SLIInterpreter::M_ERROR, "SetDefaults", "min_delay is not compatible with default delay" );
-    else if ( max_delay < new_delay )
-      net_.message(
-        SLIInterpreter::M_ERROR, "SetDefaults", "max_delay is not compatible with default delay" );
-    else if ( min_delay < Time::get_resolution() )
-      net_.message( SLIInterpreter::M_ERROR,
-        "SetDefaults",
-        "min_delay must be greater than or equal to resolution" );
-    else if ( max_delay < Time::get_resolution() )
-      net_.message( SLIInterpreter::M_ERROR,
-        "SetDefaults",
-        "max_delay must be greater than or equal to resolution" );
+    {
+      throw BadProperty( "Connections already exist. Please call ResetKernel first" );
+    }
+    else if ( new_min_delay < Time::get_resolution() )
+    {
+      throw BadDelay(
+        new_min_delay.get_ms(), "min_delay must be greater than or equal to resolution." );
+    }
+    else if ( new_max_delay < new_min_delay )
+    {
+      throw BadDelay(
+        new_min_delay.get_ms(), "min_delay must be smaller than or equal to max_delay." );
+    }
     else
     {
-      min_delay_ = min_delay;
-      max_delay_ = max_delay;
+      min_delay_ = new_min_delay;
+      max_delay_ = new_max_delay;
       user_set_delay_extrema_ = true;
     }
   }
 
-  // common_props_.set_status(d, *this) AND defaults_.set_status(d, *this);
-  // has to be done after adapting min_delay / max_delay, since Connection::set_status
-  // and CommonProperties::set_status might want to check the delay
+  // If the parameter dict d contains /delay, this should set the delay
+  // on the default connection, but not affect the actual min/max_delay
+  // until a connection with that default delay is created. Since the
+  // set_status calls on common properties and default connection may
+  // modify min/max delay, we need to preserve and restore.
 
-  // store min_delay_, max_delay_
-  // calling set_status will check the delay.
-  // and so may modify min_delay, max_delay, if the specified delay exceeds one of these bounds
-  // we have to save min/max_delay because we dont know, if the default will ever be used
-  Time min_delay_tmp = min_delay_;
-  Time max_delay_tmp = max_delay_;
+  const Time save_min_delay_ = min_delay_;
+  const Time save_max_delay_ = max_delay_;
 
   cp_.set_status( d, *this );
   default_connection_.set_status( d, *this );
 
-  // restore min_delay_, max_delay_
-  min_delay_ = min_delay_tmp;
-  max_delay_ = max_delay_tmp;
+  min_delay_ = save_min_delay_;
+  max_delay_ = save_max_delay_;
 
   // we've possibly just got a new default delay. So enforce checking next time it is used
   default_delay_needs_check_ = true;
@@ -234,7 +229,7 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
 {
   // if not used before, check now. Solves bug #138, MH 08-01-08
   // replaces whole delay checking for the default delay, see bug #217, MH 08-04-24
-  // get_default_delay_ must be overridded by derived class to return the correct default delay
+  // get_default_delay_ must be overridden by derived class to return the correct default delay
   // (either from commonprops or default connection)
   if ( default_delay_needs_check_ )
   {

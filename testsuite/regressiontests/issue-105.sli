@@ -127,7 +127,9 @@ M_ERROR setverbosity
   
   /n /iaf_neuron Create def
   
-  /delays [ 0.85 0.86 0.8999 ] def
+  % test delays must be longer than 1.0, since we
+  % first create default connections with delay 1
+  /delays [ 1.95 1.96 1.9999 ] def
   
   delays
   {
@@ -139,13 +141,54 @@ M_ERROR setverbosity
   { /d Set << /delay d >> SetStatus }
   ScanThread
   
-  << >> GetConnections { GetStatus /delay get } Map dup ==
+  << >> GetConnections { GetStatus /delay get } Map
 
-  % should all be 0.9
-  dup true exch { 0.9 eq and } Fold
+  % should all be 2.0
+  dup true exch { 2.0 eq and } Fold
   exch
   0 get 
-  0 /max_delay get dup == 
+  0 /max_delay get 
   eq 
+  and
+} assert_or_die
+
+% Test that setting min_delay and max_delay works so that setting certain
+% min/max values will allow those values to be used in subsequent connections.
+% Note that effects can only be seen in the kernel status after a connection
+% has been created.
+
+{
+  ResetKernel
+  
+  /min_delay 0.81 def  % rounded to 0.8
+  /max_delay 1.49 def  % rounded to 1.5
+  
+  /static_synapse << /min_delay min_delay /max_delay max_delay >> SetDefaults
+  
+  /n /iaf_neuron Create def
+  
+  [ n ] dup /one_to_one << /delay min_delay >> Connect
+  [ n ] dup /one_to_one << /delay max_delay >> Connect
+  
+  0 /min_delay get 0.8 eq
+  0 /max_delay get 1.5 eq
+  and
+} assert_or_die
+
+{
+  ResetKernel
+  
+  /min_delay 0.89 def  % rounded to 0.8
+  /max_delay 1.41 def  % rounded to 1.5
+  
+  /static_synapse << /min_delay min_delay /max_delay max_delay >> SetDefaults
+  
+  /n /iaf_neuron Create def
+  
+  [ n ] dup /one_to_one << /delay min_delay >> Connect
+  [ n ] dup /one_to_one << /delay max_delay >> Connect
+  
+  0 /min_delay get 0.8 eq
+  0 /max_delay get 1.5 eq
   and
 } assert_or_die

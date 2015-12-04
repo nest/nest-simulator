@@ -41,17 +41,29 @@ The code has to compile without warnings (in the default settings of the build i
 
 The [clang-format](http://clang.llvm.org/docs/ClangFormat.html) tool is build on the clang compile fronted. It allows to pretty print input files in a configurable manner, and has vim and emacs integration. We supply a [.clang-format](#clang-format-file) configuration file to enforce some parts of the coding style. During the code review process we check that there is no difference between the committed files and the formatted version of the committed files:
 
+Developers can benefit from the tool by formatting their changes before issuing a pull request: for fixing the formatting of a single file consider using `clang-format -i <committed file>` on that file. For fixing more files at once we provide a script that applies the formatting. From the source directory call:
 
-Developer can benefit from the tool by formatting their changes before issuing a pull request: `clang-format -i <committed file>`. We use clang-format version 3.6 in the TravisCI. Older versions do not understand all formatting options we defined in `.clang-format`. Version 3.7 has formatting differences to 3.6 .
+    ./extras/format_all_c_c++_files.sh [start folder, defaults to '$PWD']
+
+We use clang-format version 3.6 in the TravisCI. Older versions do not understand all formatting options we defined in `.clang-format`. Version 3.7 has formatting differences to 3.6 .
 
 Get `clang-format`:
 Ubuntu (see [here](http://llvm.org/apt/)):
 
     # To retrieve the archive signature:
     wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
-    sudo sh -c 'echo -n "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.6 main" >> /etc/apt/sources.list'
+
+    # Repository for Trusty (14.04)
+    sudo sh -c 'echo "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.6 main" >> /etc/apt/sources.list'
+
+    # Repositories for Precise (12.04)
+    sudo sh -c 'echo "\ndeb http://llvm.org/apt/precise/ llvm-toolchain-precise-3.6 main" >> /etc/apt/sources.list'
+    sudo sh -c 'echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu precise main" >> /etc/apt/sources.list'
+    # make sure each 'deb ...' is on its own line in /etc/apt/sources.list
+
+    # install clang-format with:
     sudo apt-get update
-    sudo apt-get install clang-format-3.6
+    sudo apt-get install libstdc++6 libllvm3.6 clang-format-3.6
 
 OS X:
 

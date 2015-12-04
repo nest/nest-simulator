@@ -571,7 +571,7 @@ public:
    * @ingroup MSP_functions
    */
   virtual std::map< Name, double_t >
-  get_synaptic_elements()
+  get_synaptic_elements() const
   {
     return std::map< Name, double >();
   }

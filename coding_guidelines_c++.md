@@ -41,7 +41,7 @@ The code has to compile without warnings (in the default settings of the build i
 
 The [clang-format](http://clang.llvm.org/docs/ClangFormat.html) tool is build on the clang compile fronted. It allows to pretty print input files in a configurable manner, and has vim and emacs integration. We supply a [.clang-format](#clang-format-file) configuration file to enforce some parts of the coding style. During the code review process we check that there is no difference between the committed files and the formatted version of the committed files:
 
-Developer can benefit from the tool by formatting their changes before issuing a pull request: for fixing the formatting of a single file consider using `clang-format -i <committed file>` on that file. For fixing more files at once we provide a script that applies the formatting. From the source directory call:
+Developers can benefit from the tool by formatting their changes before issuing a pull request: for fixing the formatting of a single file consider using `clang-format -i <committed file>` on that file. For fixing more files at once we provide a script that applies the formatting. From the source directory call:
 
     ./extras/format_all_c_c++_files.sh [start folder, defaults to '$PWD']
 

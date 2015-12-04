@@ -44,8 +44,10 @@
 #include <gsl/gsl_odeiv.h>
 
 /* BeginDocumentation
-Name: iaf_cond_alpha_mc_fixedca - PROTOTYPE Multi-compartment conductance-based leaky integrate-and-fire
-neuron model with calcium spike at distal compartment modeled using threshold triggered fixed waveform.
+Name: iaf_cond_alpha_mc_fixedca - PROTOTYPE Multi-compartment conductance-based leaky
+integrate-and-fire
+neuron model with calcium spike at distal compartment modeled using threshold triggered fixed
+waveform.
 
 Description:
 THIS MODEL IS A PROTOTYPE FOR ILLUSTRATION PURPOSES. IT IS NOT YET
@@ -68,11 +70,11 @@ C_m.d d/dt V_m.d = ...                          - g_pd ( V_m.d - V_m.p ) + ICa
 
 A spike is fired when the somatic membrane potential exceeds threshold,
 V_m.s >= V_th. Upon threshold crossing, somatic membrane potential is set to
-a maximum potential, V_m.s == V_max, and somatic leak set to a larger leak value 
-for the refractory period. Depending on value of the reset flag, the somatic 
-membrane potential maybe reset to reset value at end of refractory period. 
-To emulate backpropagating action potential, an alpha shaped current is 
-introduced 1ms and 2ms after spike at proximal and distal compartment respectively. 
+a maximum potential, V_m.s == V_max, and somatic leak set to a larger leak value
+for the refractory period. Depending on value of the reset flag, the somatic
+membrane potential maybe reset to reset value at end of refractory period.
+To emulate backpropagating action potential, an alpha shaped current is
+introduced 1ms and 2ms after spike at proximal and distal compartment respectively.
 Dendritic membrane potentials are not manipulated after a spike.
 The spike threshold is adaptive, whereby it jumps by a jump value upon crossing,
 and then decays exponentially back to baseline value.
@@ -89,10 +91,10 @@ the receptor types given in the receptor_types entry of the state dictionary. No
 that in contrast to the single-compartment iaf_cond_alpha model, all synaptic
 weights must be positive numbers!
 
-Depending on value of active flag, calcium spike maybe triggered upon threshold crossing, 
-V_m.d >= V_thCa. The spike is modeled using a fixed waveform, a current array with fixed length. 
-The duration of the calcium spike is of same length as its refractory period, hence no new 
-calcium spike maybe triggered while a calcium spike is still active.  
+Depending on value of active flag, calcium spike maybe triggered upon threshold crossing,
+V_m.d >= V_thCa. The spike is modeled using a fixed waveform, a current array with fixed length.
+The duration of the calcium spike is of same length as its refractory period, hence no new
+calcium spike maybe triggered while a calcium spike is still active.
 
 Parameters:
 The following parameters can be set in the status dictionary. Parameters
@@ -111,9 +113,10 @@ tau_syn_in*  double - Rise time of the inhibitory synaptic alpha function in ms.
 I_e*         double - Constant input current in pA.
 t_L*         double - Leak during refractory period in nS
 nt_L*        double - Leak at other times in ns
-tau_curAP*   double - Time constant of active current at each compartment after action potential in pA
+tau_curAP*   double - Time constant of active current at each compartment after action potential in
+pA
 amp_curAP*   double - Amplitude of active current at each compartment after action potential in pA
- 
+
 
 g_sp         double - Conductance connecting soma and proximal dendrite, in nS.
 g_pd         double - Conductance connecting proximal and distal dendrite, in nS.
@@ -121,14 +124,15 @@ t_ref        double - Duration of refractory period in ms.
 V_th         double - Spike threshold in mV.
 V_reset      double - Reset potential of the membrane in mV.
 V_max        double - Peak voltage at spike in mV
-reset_flag   double - flag to set somatic membrane potential to reset value at end of refractory period 
+reset_flag   double - flag to set somatic membrane potential to reset value at end of refractory
+period
 jump_Th      double - Jump in adaptive threshold upon spike in mV
 tau_Th       double - Time constant for adaptive threshold in ms
 V_thCa       double - Threshold for calcium spike in mV
 amp          double - Amplitude factor for calcium spike current
 Ca_amp [CA_SIZE]  double - Waveform for calcium spike current in pA
 t_refCa      double - Refractory period for calcium spike in ms
-act_flag     double - flag to turn on calcium spikes 
+act_flag     double - flag to turn on calcium spikes
 
 
 Example:
@@ -155,10 +159,10 @@ single pyramidal cells.  Proc. Natl. Acad. Sci. USA, 88(24),
 11569–11573.
 
 Chua, Y., Morrison, A., & Moritz, H. (2015).
-Modeling the calcium spike as a threshold triggered fixed waveform for 
+Modeling the calcium spike as a threshold triggered fixed waveform for
 synchronous inputs in the fluctuation regime. Frontiers in Computational Neuroscience.,
 9(00091).
- 
+
 
 Author: Plesser (multicompartment neuron), Yansong Chua (calcium spike added in neuron)
 
@@ -270,8 +274,8 @@ private:
 
   static const size_t NUM_CURR_RECEPTORS = SUP_CURR_RECEPTOR - MIN_CURR_RECEPTOR;
 
-  // for sye 1.0 syi 2.0		
-  static const size_t CA_SIZE = 1000;	
+  // for sye 1.0 syi 2.0
+  static const size_t CA_SIZE = 1000;
 
   // Friends --------------------------------------------------------
 
@@ -303,35 +307,37 @@ private:
    */
   struct Parameters_
   {
-    double_t V_th;                //!< Threshold Potential in mV
-    double_t V_reset;             //!< Reset Potential in mV
-    double_t t_ref;               //!< Refractory period in ms
-    //changes
-    double_t V_max;      //!< Peak voltage at spike in mV
-    double_t V_thCa;     //!< Threshold for calcium spike in mV
-    double_t amp;        //!< Amplitude factor for calcium spike current
-    double_t Ca_amp [CA_SIZE];     //!< Waveform for calcium spike current in pA
-    double_t jump_Th;    //!< Jump in adaptive threshold upon spike in mV
-    double_t tau_Th;     //!< Time constant for adaptive threshold in ms
-    double_t t_refCa;    //!< Refractory period for calcium spike in ms
-    double_t act_flag;   //!< flag to turn on calcium spikes 
-    double_t reset_flag;   //!< flag to set somatic membrane potential to reset value at end of refractory period 
+    double_t V_th;    //!< Threshold Potential in mV
+    double_t V_reset; //!< Reset Potential in mV
+    double_t t_ref;   //!< Refractory period in ms
+    // changes
+    double_t V_max;             //!< Peak voltage at spike in mV
+    double_t V_thCa;            //!< Threshold for calcium spike in mV
+    double_t amp;               //!< Amplitude factor for calcium spike current
+    double_t Ca_amp[ CA_SIZE ]; //!< Waveform for calcium spike current in pA
+    double_t jump_Th;           //!< Jump in adaptive threshold upon spike in mV
+    double_t tau_Th;            //!< Time constant for adaptive threshold in ms
+    double_t t_refCa;           //!< Refractory period for calcium spike in ms
+    double_t act_flag;          //!< flag to turn on calcium spikes
+    double_t reset_flag;        //!< flag to set somatic membrane potential to reset value at end of
+                                //refractory period
 
     double_t g_conn[ NCOMP - 1 ]; //!< Conductances connecting compartments, in nS
-    double_t t_L[NCOMP];         //!< Leak during refractory period in nS
-    double_t nt_L[NCOMP];        //!< Leak at other times in ns 
+    double_t t_L[ NCOMP ];        //!< Leak during refractory period in nS
+    double_t nt_L[ NCOMP ];       //!< Leak at other times in ns
 
-    double_t g_L[ NCOMP ];        //!< Leak Conductance in nS
-    double_t C_m[ NCOMP ];        //!< Membrane Capacitance in pF
-    double_t E_ex[ NCOMP ];       //!< Excitatory reversal Potential in mV
-    double_t E_in[ NCOMP ];       //!< Inhibitory reversal Potential in mV
-    double_t E_L[ NCOMP ];        //!< Leak reversal Potential (aka resting potential) in mV
-    double_t tau_synE[ NCOMP ];   //!< Synaptic Time Constant Excitatory Synapse in ms
-    double_t tau_synI[ NCOMP ];   //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double_t I_e[ NCOMP ];        //!< Constant Current in pA
-    //changes
-    double_t tau_curAP[NCOMP];   //!< Time constant of active current at each compartment after AP in pA
-    double_t amp_curAP[NCOMP];   //!< Amplitude of active current at each compartment after AP in pA
+    double_t g_L[ NCOMP ];      //!< Leak Conductance in nS
+    double_t C_m[ NCOMP ];      //!< Membrane Capacitance in pF
+    double_t E_ex[ NCOMP ];     //!< Excitatory reversal Potential in mV
+    double_t E_in[ NCOMP ];     //!< Inhibitory reversal Potential in mV
+    double_t E_L[ NCOMP ];      //!< Leak reversal Potential (aka resting potential) in mV
+    double_t tau_synE[ NCOMP ]; //!< Synaptic Time Constant Excitatory Synapse in ms
+    double_t tau_synI[ NCOMP ]; //!< Synaptic Time Constant for Inhibitory Synapse in ms
+    double_t I_e[ NCOMP ];      //!< Constant Current in pA
+    // changes
+    double_t
+      tau_curAP[ NCOMP ]; //!< Time constant of active current at each compartment after AP in pA
+    double_t amp_curAP[ NCOMP ]; //!< Amplitude of active current at each compartment after AP in pA
 
     Parameters_();                                //!< Sets default parameter values
     Parameters_( const Parameters_& );            //!< needed to copy C-arrays
@@ -377,10 +383,10 @@ public:
     //! neuron state, must be C-array for GSL solver
     double_t y_[ STATE_VEC_SIZE ];
     int_t r_; //!< number of refractory steps remaining
-    //changes
-    int_t    rCa_;   //!< number of refractory steps remaining for calcium spike
-    int_t    numCa_; // num of calcium spikes
-    double_t th_;    // adaptive spike threshold
+    // changes
+    int_t rCa_;   //!< number of refractory steps remaining for calcium spike
+    int_t numCa_; // num of calcium spikes
+    double_t th_; // adaptive spike threshold
     double_t ICa_;
 
     State_( const Parameters_& ); //!< Default initialization
@@ -461,16 +467,15 @@ private:
     double_t PSConInit_I_[ NCOMP ];
 
     /** initial value to normalise current after AP */
-    double_t PSConInit_AP_[NCOMP]; 
+    double_t PSConInit_AP_[ NCOMP ];
 
     int_t RefractoryCounts_;
 
-    //changes
+    // changes
     /** initial value to normalise calcium spike */
-    double_t PSConInit_Ca_;    
-      
-    int_t    RefractoryCountsCa_;
+    double_t PSConInit_Ca_;
 
+    int_t RefractoryCountsCa_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -493,13 +498,29 @@ private:
     return Time::get_resolution().get_ms() * S_.r_;
   }
 
-  //changes
+  // changes
   //! Read out number of refractory steps for calcium spikes, used by UniversalDataLogger
-  double_t get_rCa_() const { return Time::get_resolution().get_ms() * S_.rCa_; }
+  double_t
+  get_rCa_() const
+  {
+    return Time::get_resolution().get_ms() * S_.rCa_;
+  }
   //! Read out number of threshold, used by UniversalDataLogger
-  double_t get_th_() const { return S_.th_; }
-  double_t get_ca_() const { return S_.numCa_; }    
-  double_t get_ICa_() const { return S_.ICa_; }   
+  double_t
+  get_th_() const
+  {
+    return S_.th_;
+  }
+  double_t
+  get_ca_() const
+  {
+    return S_.numCa_;
+  }
+  double_t
+  get_ICa_() const
+  {
+    return S_.ICa_;
+  }
 
 
   // Data members ----------------------------------------------------

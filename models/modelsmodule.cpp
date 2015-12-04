@@ -281,8 +281,8 @@ ModelsModule::init( SLIInterpreter* )
   register_model< iaf_cond_exp >( net_, "iaf_cond_exp" );
   register_model< iaf_cond_exp_sfa_rr >( net_, "iaf_cond_exp_sfa_rr" );
   register_model< iaf_cond_alpha_mc >( net_, "iaf_cond_alpha_mc" );
-  register_model<iaf_cond_alpha_mc_kinetics>(net_,   "iaf_cond_alpha_mc_kinetics");
-  register_model<iaf_cond_alpha_mc_fixedca>(net_,   "iaf_cond_alpha_mc_fixedca");
+  register_model< iaf_cond_alpha_mc_kinetics >( net_, "iaf_cond_alpha_mc_kinetics" );
+  register_model< iaf_cond_alpha_mc_fixedca >( net_, "iaf_cond_alpha_mc_fixedca" );
   register_model< hh_psc_alpha >( net_, "hh_psc_alpha" );
   register_model< hh_psc_alpha_gap >( net_, "hh_psc_alpha_gap" );
   register_model< hh_cond_exp_traub >( net_, "hh_cond_exp_traub" );

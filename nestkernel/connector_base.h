@@ -206,8 +206,7 @@ class Connector : public vector_like< ConnectionT >
   ConnectionT C_[ K ];
 
 public:
-  Connector( const Connector< K - 1, ConnectionT >& Cm1,
-    const ConnectionT& c )
+  Connector( const Connector< K - 1, ConnectionT >& Cm1, const ConnectionT& c )
   {
     for ( size_t i = 0; i < K - 1; i++ )
       C_[ i ] = Cm1.get_C()[ i ];

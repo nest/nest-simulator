@@ -23,6 +23,7 @@
 #ifndef CONNECTOR_BASE_H
 #define CONNECTOR_BASE_H
 
+#include <cstdlib>
 #include <vector>
 
 #include "node.h"
@@ -302,7 +303,7 @@ public:
     return num_connections;
   }
 
-  Connector< K + 1, ConnectionT >&
+  ConnectorBase&
   push_back( const ConnectionT& c )
   {
     return *suicide_and_resurrect< Connector< K + 1, ConnectionT > >( this, c );
@@ -313,7 +314,7 @@ public:
    * @param i the index of the connection to be erased
    * @return A connector of size K-1
    */
-  Connector< K - 1, ConnectionT >&
+  ConnectorBase&
   erase( size_t i )
   {
     // try to cast the connector one size shorter
@@ -529,7 +530,7 @@ public:
     return num_connections;
   }
 
-  Connector< 2, ConnectionT >&
+  ConnectorBase&
   push_back( const ConnectionT& c )
   {
     return *suicide_and_resurrect< Connector< 2, ConnectionT > >( this, c );
@@ -537,10 +538,11 @@ public:
 
   ConnectorBase& erase( size_t )
   {
-    // Destroys the Connector
-    suicide< Connector< 1, ConnectionT > >( this );
-    ConnectorBase* p = 0;
-    return *p;
+    // erase() must never be called on a connector with just as single synapse.
+    // Delete the connector instead.
+    assert(false); 
+    std::abort();  // we must not pass this point even if compiled with -DNDEBUG
+    return *this;   // dummy value, will never be returned
   }
 
   size_t
@@ -744,14 +746,14 @@ public:
     return num_connections;
   }
 
-  Connector< K_cutoff, ConnectionT >&
+  ConnectorBase&
   push_back( const ConnectionT& c )
   {
     C_.push_back( c );
     return *this;
   }
 
-  Connector< K_cutoff, ConnectionT >&
+  ConnectorBase&
   erase( size_t i )
   {
     typename std::vector< ConnectionT >::iterator it;

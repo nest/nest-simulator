@@ -625,9 +625,9 @@ nest::hh_psc_alpha_gap::handle( GapJEvent& e )
   B_.sumj_g_ij_ += e.get_weight();
 
   size_t i = 0;
-  for ( CoeffArrayIterator it = e.begin(); it != e.end(); ++it )
+  for ( fwit it = e.begin(); it != e.end(); e.next( it ) )
   {
-    B_.interpolation_coefficients[ i ] += e.get_weight() * ( *it );
+    B_.interpolation_coefficients[ i ] += e.get_weight() * e.get_value( it );
     i++;
   }
 }

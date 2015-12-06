@@ -746,63 +746,32 @@ public:
   virtual fwit& operator>>( fwit& pos ) = 0;
 };
 
-/**
- * Iterator class for the GapJEvent data array.
- * Generating a copy of the array at several times is too time consuming,
- * therefore we use iterators pointing to the "old" memory location of the array
- */
-class CoeffArrayIterator
+template < typename T >
+size_t size_uint_t( T )
 {
+  if ( sizeof( T ) < sizeof( uint_t ) )
+    return 1;
+  else if ( sizeof( T ) % sizeof( uint_t ) != 0 )
+    return sizeof( T ) / sizeof( uint_t ) + 1;
+  else
+    return sizeof( T ) / sizeof( uint_t );
+}
 
-  friend class GapJEvent;
+template < typename T >
+void
+input_stream( T d, fwit& pos )
+{
+  memcpy( &( *pos ), &d, sizeof( d ) );
+  pos += size_uint_t( d );
+}
 
-private:
-  fwit pos_;
-
-public:
-  CoeffArrayIterator()
-  {
-  }
-
-  CoeffArrayIterator( const fwit& rhs )
-    : pos_( rhs )
-  {
-  }
-
-  CoeffArrayIterator( const dfwit& rhs )
-  {
-    fwit iit( reinterpret_cast< uint_t* >( &( *rhs ) ) );
-    pos_ = iit;
-  }
-
-  CoeffArrayIterator( const CoeffArrayIterator& rhs )
-    : pos_( rhs.pos_ )
-  {
-  }
-
-  CoeffArrayIterator& operator++()
-  {
-    size_t inc = 0;
-    if ( sizeof( double ) % sizeof( uint_t ) != 0 )
-      inc = sizeof( double ) / sizeof( uint_t ) + 1;
-    else
-      inc = sizeof( double ) / sizeof( uint_t );
-
-    pos_ += inc;
-
-    return ( *this );
-  }
-
-  double& operator*()
-  {
-    return *reinterpret_cast< double* >( &( *pos_ ) );
-  }
-
-  bool operator!=( const CoeffArrayIterator& rhs )
-  {
-    return pos_ != rhs.pos_;
-  }
-};
+template < typename T >
+void
+output_stream( T& d, fwit& pos )
+{
+  memcpy( &d, &( *pos ), sizeof( d ) );
+  pos += size_uint_t( d );
+}
 
 /**
  * Event for gap-junction information.
@@ -829,8 +798,10 @@ private:
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
-  CoeffArrayIterator diit_begin_;
-  CoeffArrayIterator diit_end_;
+  dfwit dit_begin_;
+  dfwit dit_end_;
+  fwit uiit_begin_;
+  fwit uiit_end_;
 
 public:
   GapJEvent()
@@ -875,8 +846,8 @@ public:
   void
   set_coeffarray( std::vector< double_t >& ca )
   {
-    diit_begin_ = ca.begin();
-    diit_end_ = ca.end();
+    dit_begin_ = ca.begin();
+    dit_end_ = ca.end();
     coeff_length_ = ca.size();
   }
 
@@ -885,7 +856,22 @@ public:
    * of the GapJEvent from the buffer in Scheduler::deliver_events_
    * The synid can be skipped here as it is stored in a static vector.
    */
-  fwit& operator<<( fwit& pos );
+  fwit& operator<<( fwit& pos )
+  {
+    pos += size_uint_t( *( supported_syn_ids_.begin() ) );
+    output_stream( sender_gid_, pos );
+
+    // generating a copy of the coeffarray is too time consuming
+    // therefore we save an iterator to the beginning+end of the coeffarray
+    uiit_begin_ = pos;
+
+    double_t elem = 0.0;
+    pos += coeff_length_ * size_uint_t( elem );
+
+    uiit_end_ = pos;
+
+    return pos;
+  }
 
   /**
    * The following operator is used to write the information
@@ -893,85 +879,57 @@ public:
    * All GapJEvents are identified by the synid of the
    * first element in supported_syn_ids_
    */
-  fwit& operator>>( fwit& pos );
+  fwit& operator>>( fwit& pos )
+  {
+    input_stream( *( supported_syn_ids_.begin() ), pos );
+    input_stream( sender_gid_, pos );
+    for ( dfwit i = dit_begin_; i != dit_end_; i++ )
+    {
+      input_stream( *i, pos );
+    }
+    return pos;
+  }
 
-  size_t size();
+  size_t
+  size()
+  {
+    size_t s = size_uint_t( sender_gid_ ) + size_uint_t( *( supported_syn_ids_.begin() ) );
+    double_t elem = 0.0;
+    s += size_uint_t( elem ) * coeff_length_;
 
-  const CoeffArrayIterator&
+    return s;
+  }
+
+  const fwit&
   begin()
   {
-    return diit_begin_;
+    return uiit_begin_;
   }
 
-  const CoeffArrayIterator&
+  const fwit&
   end()
   {
-    return diit_end_;
+    return uiit_end_;
   }
+
+  double_t get_value( const fwit& pos );
+
+  void next( fwit& pos );
 };
 
-template < typename T >
-size_t size_uint_t( T )
+inline double_t
+GapJEvent::get_value( const fwit& pos )
 {
-  if ( sizeof( T ) < sizeof( uint_t ) )
-    return 1;
-  else if ( sizeof( T ) % sizeof( uint_t ) != 0 )
-    return sizeof( T ) / sizeof( uint_t ) + 1;
-  else
-    return sizeof( T ) / sizeof( uint_t );
-}
-
-template < typename T >
-void
-input_stream( T d, fwit& pos )
-{
-  memcpy( &( *pos ), &d, sizeof( d ) );
-  pos += size_uint_t( d );
-}
-
-template < typename T >
-void
-output_stream( T& d, fwit& pos )
-{
-  memcpy( &d, &( *pos ), sizeof( d ) );
-  pos += size_uint_t( d );
-}
-
-inline fwit& GapJEvent::operator<<( fwit& pos )
-{
-  pos += size_uint_t( *( supported_syn_ids_.begin() ) );
-  output_stream( sender_gid_, pos );
-
-  // generating a copy of the coeffarray is too time consuming
-  // therefore we save an iterator to the beginning+end of the coeffarray
-  diit_begin_ = pos;
-
   double_t elem = 0.0;
-  pos += coeff_length_ * size_uint_t( elem );
-
-  diit_end_ = pos;
-
-  return pos;
+  memcpy( &elem, &( *pos ), sizeof( elem ) );
+  return elem;
 }
 
-inline fwit& GapJEvent::operator>>( fwit& pos )
+inline void
+GapJEvent::next( fwit& pos )
 {
-  input_stream( *( supported_syn_ids_.begin() ), pos );
-  input_stream( sender_gid_, pos );
-  std::copy( begin().pos_, end().pos_, pos );
-
-  return pos;
-}
-
-inline size_t
-GapJEvent::size()
-{
-  size_t s = size_uint_t( sender_gid_ ) + size_uint_t( *( supported_syn_ids_.begin() ) );
   double_t elem = 0.0;
-  s += size_uint_t( elem ) * coeff_length_;
-
-
-  return s;
+  pos += size_uint_t( elem );
 }
 
 inline GapJEvent*

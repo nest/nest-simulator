@@ -107,7 +107,7 @@ suicide( Told* connector )
 }
 
 // when to truncate the recursive instantiation
-#define K_cutoff 3
+#define K_CUTOFF 3
 
 namespace nest
 {
@@ -207,7 +207,7 @@ class Connector : public vector_like< ConnectionT >
 
 public:
   Connector( const Connector< K - 1, ConnectionT >& Cm1,
-    const ConnectionT& c ) //: syn_id_(Cm1.get_syn_id())
+    const ConnectionT& c )
   {
     for ( size_t i = 0; i < K - 1; i++ )
       C_[ i ] = Cm1.get_C()[ i ];
@@ -452,7 +452,6 @@ class Connector< 1, ConnectionT > : public vector_like< ConnectionT >
   ConnectionT C_[ 1 ];
 
 public:
-  // Connector(const ConnectionT &c, synindex syn_id) : syn_id_(syn_id)
   Connector( const ConnectionT& c )
   {
     C_[ 0 ] = c;
@@ -647,21 +646,21 @@ public:
 };
 
 
-// homogeneous connector containing >=K_cutoff entries
+// homogeneous connector containing >=K_CUTOFF entries
 // specialization to define recursion termination for push_back
 // internally use a normal vector to store elements
 template < typename ConnectionT >
-class Connector< K_cutoff, ConnectionT > : public vector_like< ConnectionT >
+class Connector< K_CUTOFF, ConnectionT > : public vector_like< ConnectionT >
 {
   std::vector< ConnectionT > C_;
 
 public:
-  Connector( const Connector< K_cutoff - 1, ConnectionT >& C, const ConnectionT& c )
-    : C_( K_cutoff ) //, syn_id_(C.get_syn_id())
+  Connector( const Connector< K_CUTOFF - 1, ConnectionT >& C, const ConnectionT& c )
+    : C_( K_CUTOFF ) //, syn_id_(C.get_syn_id())
   {
-    for ( size_t i = 0; i < K_cutoff - 1; i++ )
+    for ( size_t i = 0; i < K_CUTOFF - 1; i++ )
       C_[ i ] = C.get_C()[ i ];
-    C_[ K_cutoff - 1 ] = c;
+    C_[ K_CUTOFF - 1 ] = c;
   };
 
   /**
@@ -670,12 +669,12 @@ public:
    * in two parts, first up to the specified index and then the rest of the
    * connections after the specified index in order to
    * exclude the ith connection from the copy. As a result, returns a connector
-   * with size K_cutoff-1 from a connector of size K_cutoff.
+   * with size K_CUTOFF-1 from a connector of size K_CUTOFF.
    *
-   * @param Cm1 Original connector of size K_cutoff.
+   * @param Cm1 Original connector of size K_CUTOFF
    * @param i The index of the connection to be deleted.
    */
-  Connector( const Connector< K_cutoff, ConnectionT >& Cm1, size_t i ) //: syn_id_(Cm1.get_syn_id())
+  Connector( const Connector< K_CUTOFF, ConnectionT >& Cm1, size_t i ) //: syn_id_(Cm1.get_syn_id())
   {
     assert( i < Cm1.get_C().size() && i >= 0 );
     for ( size_t k = 0; k < i; k++ )
@@ -683,7 +682,7 @@ public:
       C_[ k ] = Cm1.get_C()[ k ];
     }
 
-    for ( size_t k = i + 1; k < K_cutoff; k++ )
+    for ( size_t k = i + 1; k < K_CUTOFF; k++ )
     {
       C_[ k ] = Cm1.get_C()[ k + 1 ];
     }

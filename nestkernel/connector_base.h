@@ -201,7 +201,7 @@ public:
 
 // homogeneous connector containing K entries
 template < size_t K, typename ConnectionT >
-class Connector : public vector_like< ConnectionT > // unfortunately, we need the virtual base class
+class Connector : public vector_like< ConnectionT >
 {
   ConnectionT C_[ K ];
 
@@ -225,7 +225,7 @@ public:
    * @param Cm1 the original connector
    * @param i the index of the connection to be deleted
    */
-  Connector( const Connector< K + 1, ConnectionT >& Cm1, size_t i ) //: syn_id_(Cm1.get_syn_id())
+  Connector( const Connector< K + 1, ConnectionT >& Cm1, size_t i )
   {
     assert( i < K && i >= 0 );
     for ( size_t k = 0; k < i; k++ )
@@ -464,7 +464,7 @@ public:
    * @param Cm1 Original Connector of size 2
    * @param i Index of the connection to be erased
    */
-  Connector( const Connector< 2, ConnectionT >& Cm1, size_t i ) //: syn_id_(Cm1.get_syn_id())
+  Connector( const Connector< 2, ConnectionT >& Cm1, size_t i )
   {
     assert( i < 2 && i >= 0 );
     if ( i == 0 )
@@ -540,9 +540,9 @@ public:
   {
     // erase() must never be called on a connector with just as single synapse.
     // Delete the connector instead.
-    assert(false); 
-    std::abort();  // we must not pass this point even if compiled with -DNDEBUG
-    return *this;   // dummy value, will never be returned
+    assert( false );
+    std::abort(); // we must not pass this point even if compiled with -DNDEBUG
+    return *this; // dummy value, will never be returned
   }
 
   size_t

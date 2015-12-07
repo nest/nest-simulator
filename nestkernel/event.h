@@ -744,8 +744,8 @@ public:
 
 /**
  * This template function returns the number of uints covered by a variable of
- * type T. Together with input_stream this function is used to write data of
- * type T into the NEST communication buffer, which is of type std::vector< uint_t>.
+ * type T. This function is used to determine the storage demands for a variable of
+ * type T in the NEST communication buffer, which is of type std::vector< uint_t>.
  */
 template < typename T >
 size_t
@@ -759,20 +759,54 @@ number_of_uints_covered( void )
   return num_uints;
 }
 
+/**
+ * This template function writes data of type T to a given position of a
+ * std::vector< uint_t >. Please note that this function does not increase the
+ * size of the vector, it just writes the data to the position given by the iterator.
+ * The function is used to write data from SecondaryEvents to the NEST communcation buffer.
+ */
 template < typename T >
 void
-input_stream( T d, std::vector< uint_t >::iterator& pos )
+write_to_comm_buffer( T d, std::vector< uint_t >::iterator& pos )
 {
-  memcpy( &( *pos ), &d, sizeof( d ) );
-  pos += number_of_uints_covered< T >();
+  char* c = reinterpret_cast< char* >( &d );
+
+  size_t num_uints = number_of_uints_covered< T >();
+  size_t left_to_copy = sizeof( T );
+
+  for ( int i = 0; i < num_uints; i++ )
+  {
+    memcpy( &( *( pos + i ) ),
+      c + i * sizeof( uint_t ),
+      left_to_copy < sizeof( uint_t ) ? left_to_copy : sizeof( uint_t ) );
+    left_to_copy -= sizeof( uint_t );
+  }
+
+  pos += num_uints;
 }
 
+/**
+ * This template function reads data of type T from a given position of a std::vector< uint_t >.
+ * The function is used to read SecondaryEvents data from the NEST communcation buffer.
+ */
 template < typename T >
 void
-output_stream( T& d, std::vector< uint_t >::iterator& pos )
+read_from_comm_buffer( T& d, std::vector< uint_t >::iterator& pos )
 {
-  memcpy( &d, &( *pos ), sizeof( d ) );
-  pos += number_of_uints_covered< T >();
+  char* c = reinterpret_cast< char* >( &d );
+
+  size_t num_uints = number_of_uints_covered< T >();
+  size_t left_to_copy = sizeof( T );
+
+  for ( int i = 0; i < num_uints; i++ )
+  {
+    memcpy( c + i * sizeof( uint_t ),
+      &( *( pos + i ) ),
+      left_to_copy < sizeof( uint_t ) ? left_to_copy : sizeof( uint_t ) );
+    left_to_copy -= sizeof( uint_t );
+  }
+
+  pos += num_uints;
 }
 
 /**
@@ -856,12 +890,12 @@ public:
   /**
    * The following operator is used to read the information
    * of the GapJunctionEvent from the buffer in Scheduler::deliver_events_
-   * The synid can be skipped here as it is stored in a static vector.
    */
   std::vector< uint_t >::iterator& operator<<( std::vector< uint_t >::iterator& pos )
   {
+    // The synid can be skipped here as it is stored in a static vector
     pos += number_of_uints_covered< synindex >();
-    output_stream( sender_gid_, pos );
+    read_from_comm_buffer( sender_gid_, pos );
 
     // generating a copy of the coeffarray is too time consuming
     // therefore we save an iterator to the beginning+end of the coeffarray
@@ -882,13 +916,13 @@ public:
    */
   std::vector< uint_t >::iterator& operator>>( std::vector< uint_t >::iterator& pos )
   {
-    input_stream( *( supported_syn_ids_.begin() ), pos );
-    input_stream( sender_gid_, pos );
+    write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
+    write_to_comm_buffer( sender_gid_, pos );
     for ( std::vector< double_t >::iterator i = coeffarray_as_doubles_begin_;
           i != coeffarray_as_doubles_end_;
           i++ )
     {
-      input_stream( *i, pos );
+      write_to_comm_buffer( *i, pos );
     }
     return pos;
   }
@@ -922,7 +956,7 @@ inline double_t
 GapJunctionEvent::get_coeffvalue( std::vector< uint_t >::iterator& pos )
 {
   double_t elem = 0.0;
-  output_stream( elem, pos );
+  read_from_comm_buffer( elem, pos );
   return elem;
 }
 

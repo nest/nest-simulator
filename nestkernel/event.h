@@ -915,23 +915,15 @@ public:
     return coeffarray_as_uints_end_;
   }
 
-  double_t get_value( const std::vector< uint_t >::iterator& pos );
-
-  void next( std::vector< uint_t >::iterator& pos );
+  double_t get_coeffvalue( std::vector< uint_t >::iterator& pos );
 };
 
 inline double_t
-GapJunctionEvent::get_value( const std::vector< uint_t >::iterator& pos )
+GapJunctionEvent::get_coeffvalue( std::vector< uint_t >::iterator& pos )
 {
   double_t elem = 0.0;
-  memcpy( &elem, &( *pos ), sizeof( elem ) );
+  output_stream( elem, pos );
   return elem;
-}
-
-inline void
-GapJunctionEvent::next( std::vector< uint_t >::iterator& pos )
-{
-  pos += number_of_uints_covered< double_t >();
 }
 
 inline GapJunctionEvent*

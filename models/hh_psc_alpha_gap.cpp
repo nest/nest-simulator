@@ -625,9 +625,10 @@ nest::hh_psc_alpha_gap::handle( GapJunctionEvent& e )
   B_.sumj_g_ij_ += e.get_weight();
 
   size_t i = 0;
-  for ( std::vector< uint_t >::iterator it = e.begin(); it != e.end(); e.next( it ) )
+  std::vector< uint_t >::iterator it = e.begin();
+  while ( it != e.end() )
   {
-    B_.interpolation_coefficients[ i ] += e.get_weight() * e.get_value( it );
+    B_.interpolation_coefficients[ i ] += e.get_weight() * e.get_coeffvalue( it );
     i++;
   }
 }

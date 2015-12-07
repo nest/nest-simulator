@@ -587,16 +587,22 @@ register_connection_model( Network& net, const std::string& name )
  * Register a synape with default Connector and without any common properties.
  */
 template < class ConnectionT >
-synindex
+void
 register_secondary_connection_model( Network& net, const std::string& name, bool has_delay = true )
 {
-  ConnectorModel& cm =
-    *( new GenericSecondaryConnectorModel< ConnectionT >( net, name, has_delay ) );
+  ConnectorModel* cm = new GenericSecondaryConnectorModel< ConnectionT >( net, name, has_delay );
 
-  synindex synid = net.register_secondary_synapse_prototype( &cm );
+  synindex synid = net.register_secondary_synapse_prototype( cm );
 
   ConnectionT::EventType::set_syn_id( synid );
-  return synid;
+
+  // create labeled secondary event connection model
+  cm = new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT > >(
+    net, name + "_lbl", has_delay );
+
+  synid = net.register_secondary_synapse_prototype( cm );
+
+  ConnectionT::EventType::set_syn_id( synid );
 }
 
 } // namespace nest

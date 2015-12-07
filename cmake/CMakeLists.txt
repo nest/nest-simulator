@@ -1,32 +1,60 @@
+# For checking abort and segfault exitcodes
+# you cannot simply use `try_run`, as it handles 
+# these errors special and does not give correct
+# return values. Also, you cannot just call execute_process
+# on the compiled program, as this will halt the cmake
+# configuration. Hence, let a shell script execute the
+# program and return the exit code.
 
-# TODO set correctly
-set(SLI_EXITCODE_ABORT 134 PARENT_SCOPE)
-set(SLI_EXITCODE_SEGFAULT 139 PARENT_SCOPE)
+####### NEST_EXITCODE_ABORT ########
+message("Check the abort exitcode.")
+set(ABORT_ERR "")
+try_compile(COMPILE_VAR
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/assert_value.c
+  #CMAKE_FLAGS -DCMAKE_C_FLAGS:String=-O3
+  COPY_FILE "${CMAKE_BINARY_DIR}/assert_value"
+  COPY_FILE_ERROR CP_ERR
+)
 
-#try_run(RUN_RESULT_VAR COMPILE_RESULT_VAR
-#  ${CMAKE_BINARY_DIR}
-#  ${CMAKE_CURRENT_SOURCE_DIR}/segfault_value.c
-#  CMAKE_FLAGS -DCMAKE_C_FLAGS:String=-O3
-#  COMPILE_OUTPUT_VARIABLE COMPILE_OUTPUT_VAR
-#  RUN_OUTPUT_VARIABLE RUN_OUTPUT_VAR)
-#
-#if(${COMPILE_RESULT_VAR})
-#  message("Compile output:\n${COMPILE_OUTPUT_VAR}")
-#else()
-#  if(${RUN_RESULT_VAR} EQUAL "FAILED_TO_RUN")
-#    message("RUN_OUTPUT_VAR: ${RUN_OUTPUT_VAR}")
-#  else()
-#    message("RUN_OUTPUT_VAR: ${RUN_OUTPUT_VAR}")
-#    message("RUN_RESULT_VAR: ${RUN_RESULT_VAR}")
-#  endif()
-#endif()
-#
-#message("COMPILE_RESULT_VAR: ${COMPILE_RESULT_VAR}")
-#message("COMPILE_OUTPUT_VAR: ${COMPILE_OUTPUT_VAR}")
-#message("RUN_OUTPUT_VAR: ${RUN_OUTPUT_VAR}")
-#message("RUN_RESULT_VAR: ${RUN_RESULT_VAR}")
-#
+if(COMPILE_VAR AND NOT CMAKE_CROSSCOMPILING)
+  execute_process(
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/check_return_val.sh "${CMAKE_BINARY_DIR}/assert_value"
+    RESULT_VARIABLE RETURN_VALUE
+    ERROR_QUIET OUTPUT_QUIET
+  )
+  if(NOT RETURN_VALUE EQUAL 0)
+    set(ABORT_ERR ${RETURN_VALUE})
+  endif()
+endif()
+set(NEST_EXITCODE_ABORT ${ABORT_ERR} CACHE STRING "Abort exit code." FORCE)
+message("Check the abort exitcode. ${NEST_EXITCODE_ABORT}")
 
+####### NEST_EXITCODE_SEGFAULT ########
+message("Check the segmentation fault exitcode.")
+set(SEG_ERR "")
+try_compile(COMPILE_VAR
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/segfault_value.c
+  #CMAKE_FLAGS -DCMAKE_C_FLAGS:String=-O3
+  COPY_FILE "${CMAKE_BINARY_DIR}/segfault_value"
+  COPY_FILE_ERROR CP_ERR
+)
+
+if(COMPILE_VAR AND NOT CMAKE_CROSSCOMPILING)
+  execute_process(
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/check_return_val.sh "${CMAKE_BINARY_DIR}/segfault_value"
+    RESULT_VARIABLE RETURN_VALUE
+    ERROR_QUIET OUTPUT_QUIET
+  )
+  if(NOT RETURN_VALUE EQUAL 0)
+    set(SEG_ERR ${RETURN_VALUE})
+  endif()
+endif()
+set(NEST_EXITCODE_SEGFAULT ${SEG_ERR} CACHE STRING "Segmentation exit code." FORCE)
+message("Check the segmentation fault exitcode. ${NEST_EXITCODE_SEGFAULT}")
+
+####### HAVE_CMATH_MAKROS_IGNORED ########
 message("Check whether the compiler ignores cmath makros.")
 try_compile(COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
@@ -40,6 +68,7 @@ else()
 endif()
 message("Check whether the compiler ignores cmath makros. ${HAVE_SIGUSR_IGNORED}")
 
+####### HAVE_ALPHA_CXX_STD_BUG ########
 message("Check whether the compiler does NOT include <*.h> headers ISO conformant.")
 try_compile(COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
@@ -53,6 +82,7 @@ else()
 endif()
 message("Check whether the compiler does NOT include <*.h> headers ISO conformant. ${HAVE_ALPHA_CXX_STD_BUG}")
 
+####### HAVE_SIGUSR_IGNORED ########
 message("Check whether the compiler respects symbolic signal names in signal.h.")
 try_compile(COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
@@ -66,6 +96,7 @@ else()
 endif()
 message("Check whether the compiler respects symbolic signal names in signal.h. ${HAVE_SIGUSR_IGNORED}")
 
+####### HAVE_STATIC_TEMPLATE_DECLARATION_FAIL ########
 message("Check whether static template member declaration succeeds.")
 try_compile(COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
@@ -79,6 +110,7 @@ else()
 endif()
 message("Check whether static template member declaration succeeds. ${HAVE_STATIC_TEMPLATE_DECLARATION_FAIL}")
 
+####### HAVE_STL_VECTOR_CAPACITY_BASE_UNITY ########
 message("Check for STL vector capacity base unity.")
 set(RUN_RESULT 0)
 set(RUN_RESULT__TRYRUN_OUTPUT "")
@@ -94,6 +126,7 @@ else()
 endif()
 message("Check for STL vector capacity base unity. ${HAVE_STL_VECTOR_CAPACITY_BASE_UNITY}")
 
+####### HAVE_STL_VECTOR_CAPACITY_DOUBLING ########
 message("Check for STL vector capacity doubling strategy.")
 try_run(RUN_RESULT COMPILE_RESULT
   ${CMAKE_BINARY_DIR}

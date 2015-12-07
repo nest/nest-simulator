@@ -320,7 +320,7 @@ private:
     double_t t_refCa;           //!< Refractory period for calcium spike in ms
     double_t act_flag;          //!< flag to turn on calcium spikes
     double_t reset_flag;        //!< flag to set somatic membrane potential to reset value at end of
-                                //refractory period
+    // refractory period
 
     double_t g_conn[ NCOMP - 1 ]; //!< Conductances connecting compartments, in nS
     double_t t_L[ NCOMP ];        //!< Leak during refractory period in nS

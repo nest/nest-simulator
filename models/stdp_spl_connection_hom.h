@@ -316,7 +316,7 @@ private:
             (-2 + cp.alpha_*cp.tau_slow_)*
              (r_jk_[ i ]*r_post_i_*cp.tau_ + c_jk_[ i ]*(2 - cp.alpha_*cp.tau_)*
              cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*
-             cp.tau_slow_))\
+             cp.tau_slow_))
              + (-2 + cp.alpha_*cp.tau_)*(-1 + cp.alpha_*cp.tau_slow_)*
              (cp.A4_post_*pow_term_2_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_*
              (-2 + cp.alpha_*cp.tau_slow_)*

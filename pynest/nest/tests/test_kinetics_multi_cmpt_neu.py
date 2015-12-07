@@ -31,6 +31,9 @@ from scipy import *
 from scipy.integrate import ode
 import unittest
 
+HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+
+@unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 @nest.check_stack
 
 class mc_neuron_ode():

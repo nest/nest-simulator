@@ -31,8 +31,11 @@ install(DIRECTORY bibliography logos
 install(FILES emacs/postscript-sli.el emacs/psvn.el ${CMAKE_CURRENT_BINARY_DIR}/emacs/sli.el
   DESTINATION ${INSTALL_DATA_DIR}/extras/emacs)
 
-install(PROGRAMS ${PROJECT_BINARY_DIR}/extras/nest-config 
-    nest_indirect nest_serial ${PROJECT_BINARY_DIR}/extras/nest_vars.sh
+install(PROGRAMS
+  ${PROJECT_BINARY_DIR}/extras/nest-config
+  nest_indirect
+  nest_serial
+  ${PROJECT_BINARY_DIR}/extras/nest_vars.sh
   DESTINATION ${INSTALL_BIN_DIR})
 
 add_subdirectory(ConnPlotter)

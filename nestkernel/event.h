@@ -748,7 +748,8 @@ public:
  * type T into the NEST communication buffer, which is of type std::vector< uint_t>.
  */
 template < typename T >
-size_t number_of_uints_covered( T )
+size_t
+number_of_uints_covered( void )
 {
   size_t num_uints = sizeof( T ) / sizeof( uint_t );
   if ( num_uints * sizeof( uint_t ) < sizeof( T ) )
@@ -763,7 +764,7 @@ void
 input_stream( T d, std::vector< uint_t >::iterator& pos )
 {
   memcpy( &( *pos ), &d, sizeof( d ) );
-  pos += number_of_uints_covered( d );
+  pos += number_of_uints_covered< T >();
 }
 
 template < typename T >
@@ -771,7 +772,7 @@ void
 output_stream( T& d, std::vector< uint_t >::iterator& pos )
 {
   memcpy( &d, &( *pos ), sizeof( d ) );
-  pos += number_of_uints_covered( d );
+  pos += number_of_uints_covered< T >();
 }
 
 /**
@@ -859,15 +860,14 @@ public:
    */
   std::vector< uint_t >::iterator& operator<<( std::vector< uint_t >::iterator& pos )
   {
-    pos += number_of_uints_covered( *( supported_syn_ids_.begin() ) );
+    pos += number_of_uints_covered< synindex >();
     output_stream( sender_gid_, pos );
 
     // generating a copy of the coeffarray is too time consuming
     // therefore we save an iterator to the beginning+end of the coeffarray
     coeffarray_as_uints_begin_ = pos;
 
-    double_t elem = 0.0;
-    pos += coeff_length_ * number_of_uints_covered( elem );
+    pos += coeff_length_ * number_of_uints_covered< double_t >();
 
     coeffarray_as_uints_end_ = pos;
 
@@ -896,10 +896,9 @@ public:
   size_t
   size()
   {
-    size_t s = number_of_uints_covered( sender_gid_ )
-      + number_of_uints_covered( *( supported_syn_ids_.begin() ) );
-    double_t elem = 0.0;
-    s += number_of_uints_covered( elem ) * coeff_length_;
+    size_t s = number_of_uints_covered< synindex >();
+    s += number_of_uints_covered< index >();
+    s += number_of_uints_covered< double_t >() * coeff_length_;
 
     return s;
   }
@@ -932,8 +931,7 @@ GapJunctionEvent::get_value( const std::vector< uint_t >::iterator& pos )
 inline void
 GapJunctionEvent::next( std::vector< uint_t >::iterator& pos )
 {
-  double_t elem = 0.0;
-  pos += number_of_uints_covered( elem );
+  pos += number_of_uints_covered< double_t >();
 }
 
 inline GapJunctionEvent*

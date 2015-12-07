@@ -93,3 +93,15 @@ install(TARGETS sli_lib sli
   ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
   RUNTIME DESTINATION ${INSTALL_BIN_DIR}
 )
+
+# install help (depends on sli installed)
+install(CODE
+  "execute_process(COMMAND ${CMAKE_COMMAND}
+        -DDOC_DIR='${PKGDOCDIR}'
+        -DDATA_DIR='${PKGDATADIR}'
+        -DSOURCE_DIR='${PROJECT_SOURCE_DIR}'
+        -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
+        -P ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
+      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    )"
+)

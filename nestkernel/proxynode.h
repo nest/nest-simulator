@@ -73,7 +73,7 @@ public:
 
   port send_test_event( Node&, rport, synindex, bool );
 
-  void sends_secondary_event( GapJEvent& );
+  void sends_secondary_event( GapJunctionEvent& );
 
   void
   handle( SpikeEvent& )

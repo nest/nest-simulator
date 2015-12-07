@@ -636,7 +636,7 @@ nest::Scheduler::update()
             for ( size_t i = 0; i < done.size(); i++ )
               done_all = done[ i ] && done_all;
 
-            // gather SecondaryEvents (e.g. GapJEvents)
+            // gather SecondaryEvents (e.g. GapJunctionEvents)
             gather_events_( done_all );
 
             // reset done and done_all
@@ -1661,7 +1661,7 @@ nest::Scheduler::deliver_events_( thread t )
 
     for ( size_t pid = 0; pid < ( size_t ) Communicator::get_num_processes(); ++pid )
     {
-      fwit readpos = global_grid_spikes_.begin() + pos[ pid ];
+      std::vector< uint_t >::iterator readpos = global_grid_spikes_.begin() + pos[ pid ];
 
       while ( true )
       {

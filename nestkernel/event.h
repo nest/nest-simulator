@@ -712,10 +712,6 @@ DoubleDataEvent::clone() const
   return new DoubleDataEvent( *this );
 }
 
-// needed to serialize and deserialize SecondaryEvents
-typedef std::vector< uint_t >::iterator fwit;
-typedef std::vector< double_t >::iterator dfwit;
-
 /**
  * Base class of secondary events. Provides interface for
  * serialization and deserialization. This event type may be
@@ -742,8 +738,8 @@ public:
 
   //! size of event in units of uint_t
   virtual size_t size() = 0;
-  virtual fwit& operator<<( fwit& pos ) = 0;
-  virtual fwit& operator>>( fwit& pos ) = 0;
+  virtual std::vector< uint_t >::iterator& operator<<( std::vector< uint_t >::iterator& pos ) = 0;
+  virtual std::vector< uint_t >::iterator& operator>>( std::vector< uint_t >::iterator& pos ) = 0;
 };
 
 template < typename T >
@@ -759,7 +755,7 @@ size_t size_uint_t( T )
 
 template < typename T >
 void
-input_stream( T d, fwit& pos )
+input_stream( T d, std::vector< uint_t >::iterator& pos )
 {
   memcpy( &( *pos ), &d, sizeof( d ) );
   pos += size_uint_t( d );
@@ -767,7 +763,7 @@ input_stream( T d, fwit& pos )
 
 template < typename T >
 void
-output_stream( T& d, fwit& pos )
+output_stream( T& d, std::vector< uint_t >::iterator& pos )
 {
   memcpy( &d, &( *pos ), sizeof( d ) );
   pos += size_uint_t( d );
@@ -777,7 +773,7 @@ output_stream( T& d, fwit& pos )
  * Event for gap-junction information.
  * The event transmits the interpolation of the membrane potential
  * to the connected neurons.
- * Technically the GapJEvent only contains iterators pointing to
+ * Technically the GapJunctionEvent only contains iterators pointing to
  * the memory location of the interpolation array.
  *
  * Conceptually, there is a one-to-one mapping between a SecondaryEvent
@@ -791,25 +787,25 @@ output_stream( T& d, fwit& pos )
  * supports_syn_id()-function allows testing if a particular synid is mapped
  * with the SecondaryEvent in question.
  */
-class GapJEvent : public SecondaryEvent
+class GapJunctionEvent : public SecondaryEvent
 {
 private:
   // we chose std::vector over std::set because we expect this always to be short
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
-  dfwit dit_begin_;
-  dfwit dit_end_;
-  fwit uiit_begin_;
-  fwit uiit_end_;
+  std::vector< double_t >::iterator coeffarray_as_doubles_begin_;
+  std::vector< double_t >::iterator coeffarray_as_doubles_end_;
+  std::vector< uint_t >::iterator coeffarray_as_uints_begin_;
+  std::vector< uint_t >::iterator coeffarray_as_uints_end_;
 
 public:
-  GapJEvent()
+  GapJunctionEvent()
   {
   }
 
   void operator()();
-  GapJEvent* clone() const;
+  GapJunctionEvent* clone() const;
 
   /**
    * This function is needed to set the synid on model registration
@@ -846,44 +842,46 @@ public:
   void
   set_coeffarray( std::vector< double_t >& ca )
   {
-    dit_begin_ = ca.begin();
-    dit_end_ = ca.end();
+    coeffarray_as_doubles_begin_ = ca.begin();
+    coeffarray_as_doubles_end_ = ca.end();
     coeff_length_ = ca.size();
   }
 
   /**
    * The following operator is used to read the information
-   * of the GapJEvent from the buffer in Scheduler::deliver_events_
+   * of the GapJunctionEvent from the buffer in Scheduler::deliver_events_
    * The synid can be skipped here as it is stored in a static vector.
    */
-  fwit& operator<<( fwit& pos )
+  std::vector< uint_t >::iterator& operator<<( std::vector< uint_t >::iterator& pos )
   {
     pos += size_uint_t( *( supported_syn_ids_.begin() ) );
     output_stream( sender_gid_, pos );
 
     // generating a copy of the coeffarray is too time consuming
     // therefore we save an iterator to the beginning+end of the coeffarray
-    uiit_begin_ = pos;
+    coeffarray_as_uints_begin_ = pos;
 
     double_t elem = 0.0;
     pos += coeff_length_ * size_uint_t( elem );
 
-    uiit_end_ = pos;
+    coeffarray_as_uints_end_ = pos;
 
     return pos;
   }
 
   /**
    * The following operator is used to write the information
-   * of the GapJEvent into the secondary_events_buffer_
-   * All GapJEvents are identified by the synid of the
+   * of the GapJunctionEvent into the secondary_events_buffer_
+   * All GapJunctionEvents are identified by the synid of the
    * first element in supported_syn_ids_
    */
-  fwit& operator>>( fwit& pos )
+  std::vector< uint_t >::iterator& operator>>( std::vector< uint_t >::iterator& pos )
   {
     input_stream( *( supported_syn_ids_.begin() ), pos );
     input_stream( sender_gid_, pos );
-    for ( dfwit i = dit_begin_; i != dit_end_; i++ )
+    for ( std::vector< double_t >::iterator i = coeffarray_as_doubles_begin_;
+          i != coeffarray_as_doubles_end_;
+          i++ )
     {
       input_stream( *i, pos );
     }
@@ -900,25 +898,25 @@ public:
     return s;
   }
 
-  const fwit&
+  const std::vector< uint_t >::iterator&
   begin()
   {
-    return uiit_begin_;
+    return coeffarray_as_uints_begin_;
   }
 
-  const fwit&
+  const std::vector< uint_t >::iterator&
   end()
   {
-    return uiit_end_;
+    return coeffarray_as_uints_end_;
   }
 
-  double_t get_value( const fwit& pos );
+  double_t get_value( const std::vector< uint_t >::iterator& pos );
 
-  void next( fwit& pos );
+  void next( std::vector< uint_t >::iterator& pos );
 };
 
 inline double_t
-GapJEvent::get_value( const fwit& pos )
+GapJunctionEvent::get_value( const std::vector< uint_t >::iterator& pos )
 {
   double_t elem = 0.0;
   memcpy( &elem, &( *pos ), sizeof( elem ) );
@@ -926,16 +924,16 @@ GapJEvent::get_value( const fwit& pos )
 }
 
 inline void
-GapJEvent::next( fwit& pos )
+GapJunctionEvent::next( std::vector< uint_t >::iterator& pos )
 {
   double_t elem = 0.0;
   pos += size_uint_t( elem );
 }
 
-inline GapJEvent*
-GapJEvent::clone() const
+inline GapJunctionEvent*
+GapJunctionEvent::clone() const
 {
-  return new GapJEvent( *this );
+  return new GapJunctionEvent( *this );
 }
 
 //*************************************************************

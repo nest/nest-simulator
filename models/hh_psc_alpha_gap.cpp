@@ -575,7 +575,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
   }
 
   // Send gap-event
-  GapJEvent ge;
+  GapJunctionEvent ge;
   ge.set_coeffarray( new_coefficients );
   network()->send_secondary( *this, ge );
 
@@ -619,13 +619,13 @@ nest::hh_psc_alpha_gap::handle( DataLoggingRequest& e )
 }
 
 void
-nest::hh_psc_alpha_gap::handle( GapJEvent& e )
+nest::hh_psc_alpha_gap::handle( GapJunctionEvent& e )
 {
 
   B_.sumj_g_ij_ += e.get_weight();
 
   size_t i = 0;
-  for ( fwit it = e.begin(); it != e.end(); e.next( it ) )
+  for ( std::vector< uint_t >::iterator it = e.begin(); it != e.end(); e.next( it ) )
   {
     B_.interpolation_coefficients[ i ] += e.get_weight() * e.get_value( it );
     i++;

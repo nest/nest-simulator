@@ -147,7 +147,7 @@ public:
 
   virtual port send_test_event( Node&, rport, synindex, bool ) = 0;
 
-  virtual void sends_secondary_event( GapJEvent& ge ) = 0;
+  virtual void sends_secondary_event( GapJunctionEvent& ge ) = 0;
 
   /**
    * Return the size of the prototype.

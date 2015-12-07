@@ -742,15 +742,20 @@ public:
   virtual std::vector< uint_t >::iterator& operator>>( std::vector< uint_t >::iterator& pos ) = 0;
 };
 
+/**
+ * This template function returns the number of uints covered by a variable of
+ * type T. Together with input_stream this function is used to write data of
+ * type T into the NEST communication buffer, which is of type std::vector< uint_t>.
+ */
 template < typename T >
-size_t size_uint_t( T )
+size_t number_of_uints_covered( T )
 {
-  if ( sizeof( T ) < sizeof( uint_t ) )
-    return 1;
-  else if ( sizeof( T ) % sizeof( uint_t ) != 0 )
-    return sizeof( T ) / sizeof( uint_t ) + 1;
-  else
-    return sizeof( T ) / sizeof( uint_t );
+  size_t num_uints = sizeof( T ) / sizeof( uint_t );
+  if ( num_uints * sizeof( uint_t ) < sizeof( T ) )
+  {
+    num_uints += 1;
+  }
+  return num_uints;
 }
 
 template < typename T >
@@ -758,7 +763,7 @@ void
 input_stream( T d, std::vector< uint_t >::iterator& pos )
 {
   memcpy( &( *pos ), &d, sizeof( d ) );
-  pos += size_uint_t( d );
+  pos += number_of_uints_covered( d );
 }
 
 template < typename T >
@@ -766,7 +771,7 @@ void
 output_stream( T& d, std::vector< uint_t >::iterator& pos )
 {
   memcpy( &d, &( *pos ), sizeof( d ) );
-  pos += size_uint_t( d );
+  pos += number_of_uints_covered( d );
 }
 
 /**
@@ -854,7 +859,7 @@ public:
    */
   std::vector< uint_t >::iterator& operator<<( std::vector< uint_t >::iterator& pos )
   {
-    pos += size_uint_t( *( supported_syn_ids_.begin() ) );
+    pos += number_of_uints_covered( *( supported_syn_ids_.begin() ) );
     output_stream( sender_gid_, pos );
 
     // generating a copy of the coeffarray is too time consuming
@@ -862,7 +867,7 @@ public:
     coeffarray_as_uints_begin_ = pos;
 
     double_t elem = 0.0;
-    pos += coeff_length_ * size_uint_t( elem );
+    pos += coeff_length_ * number_of_uints_covered( elem );
 
     coeffarray_as_uints_end_ = pos;
 
@@ -891,9 +896,10 @@ public:
   size_t
   size()
   {
-    size_t s = size_uint_t( sender_gid_ ) + size_uint_t( *( supported_syn_ids_.begin() ) );
+    size_t s = number_of_uints_covered( sender_gid_ )
+      + number_of_uints_covered( *( supported_syn_ids_.begin() ) );
     double_t elem = 0.0;
-    s += size_uint_t( elem ) * coeff_length_;
+    s += number_of_uints_covered( elem ) * coeff_length_;
 
     return s;
   }
@@ -927,7 +933,7 @@ inline void
 GapJunctionEvent::next( std::vector< uint_t >::iterator& pos )
 {
   double_t elem = 0.0;
-  pos += size_uint_t( elem );
+  pos += number_of_uints_covered( elem );
 }
 
 inline GapJunctionEvent*

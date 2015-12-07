@@ -24,12 +24,67 @@
 #define STDP_SPL_CONNECTION_HOM_H
 
 /* BeginDocumentation
-  Name: stdp_spl_synapse
 
-  All time units are seconds!
+  Name: stdp_spl_synapse - Synapse type for spike-timing dependent
+   structural plasticity using homogeneous parameters.
+
+  Description:
+   stdp_spl_synapse_hom is a connector to create synapses with spike time
+   dependent plasticity as defined in [1]. Each synapse (connection) of this
+   model consists of several (n_pot_conns) synaptic contacts. If the weight of
+   a contact drops below 0 the contact is deleted. Deleted contacts are re-
+   created randomly with a constant rate. 
+
+   Parameters controlling plasticity are identical for all synapses of the 
+   model, reducing the memory required per synapse considerably.
+   Furthermore, stdp_spl_synapse requires several exponential and power terms
+   every time it updates its state. These terms are precomputed and are also 
+   stored in the "CommonProperties", which allows them to be accessed by all
+   synapses of the model without excessively consuming memory.
+
+  Common parameters:
+   tau        double - Time constant of fast traces (STDP window) (in s)
+   tau_slow   double - Time constant of slow filtering of correlations and 
+                       postsynaptic rate
+   A2_corr    double - Amplitude of second-order correlation term of the STDP 
+                       rule (in s)
+   A4_corr    double - Amplitude of fourth-order correlation term of the STDP 
+                       rule (in s^3)
+   A4_post    double - Amplitude of fourth-order postsynaptic term of the STDP 
+                       rule (in s^3)
+   alpha      double - Weight decay rate (in 1/s)
+   lambda     double - Contact creation rate (in 1/s)
+   w0         double - Weight of newly created contacts
+   p_fail     double - Probability of synaptic transmission failure (at each 
+                       contact)
+   t_cache    double - Exponential terms are precomputed for time intervals up 
+                       to t_cache (in s)
+   safe_mode  bool   - In safe mode zero-crossings of the contact weights within 
+                       integration intervals are excluded. Disabeling safe mode
+                       may result in a considerable speed increase.
+  
+  Individual parameters:
+   n_pot_conns   int - Number of synaptic contacts of this synapse
+
+  Remarks:
+   The common parameters are common to all synapses of the model and must be 
+   set using SetDefaults on the synapse model.
+   The individual parameters are accessed using SetStatus on connection 
+   identifiers, which can be obtained via GetConnections.
+   If n_pot_conns is increased via GetStatus, new contacts are initialized to 
+   a weight of 1, irrespective of w0. 
+   In cases where the total weight is 0, e.g. if all weights of the synapse are 
+   zero, or if all contacts have a transmission failure, the spike event is not 
+   transmitted to the target.
+
+  Transmits: SpikeEvent
+
+  References:
+   [1] Deger, M. & Gerstner, W. A spike timing dependent model of 
+       dendritic spine plasticity and turnover. in preparation.
 
   FirstVersion: Nov 2015
-  Author: Alexander Seeholzer, Moritz Deger
+  Author: Moritz Deger, Alexander Seeholzer
   SeeAlso: stdp_spl_synapse_hpc, stdp_synapse, static_synapse
 */
 
@@ -74,7 +129,6 @@ public:
   double_t A4_post_;
   double_t alpha_;
   double_t lambda_;
-  double_t dt_;
   double_t w0_;
   double_t p_fail_;
   double_t t_cache_;

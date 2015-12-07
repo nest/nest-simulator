@@ -332,13 +332,6 @@ STDPTripletConnection< targetidentifierT >::set_status( const DictionaryDatum& d
   updateValue< double_t >( d, "Kplus", Kplus_ );
   updateValue< double_t >( d, "Kplus_triplet", Kplus_triplet_ );
 
-  if ( not( tau_plus_triplet_ > tau_plus_ ) )
-  {
-    throw BadProperty(
-      "Parameter tau_plus_triplet (time-constant of long trace) must be larger than tau_plus "
-      "(time-constant of short trace)." );
-  }
-
   if ( not( Kplus_ >= 0 ) )
   {
     throw BadProperty( "State Kplus must be positive." );

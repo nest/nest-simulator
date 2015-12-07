@@ -106,7 +106,6 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
         badPropertyWith("Kplus", {"Kplus": -1.0})
         badPropertyWith("Kplus_triplet", {"Kplus_triplet": -1.0})
-        badPropertyWith("tau_plus_triplet(.+)tau_plus", {"tau_plus": 1.0, "tau_plus_triplet": 1.0})
 
     def test_varsZeroAtStart(self):
         """Check that pre and post-synaptic variables are zero at start."""

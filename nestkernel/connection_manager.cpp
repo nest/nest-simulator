@@ -523,7 +523,8 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
             {
               size_t target_id = target->get( t_id );
               validate_pointer( connections_[ t ].get( source_id ) )
-                ->get_connections( source_id, target_id, t, syn_id, synapse_label, conns_in_thread );
+                ->get_connections(
+                  source_id, target_id, t, syn_id, synapse_label, conns_in_thread );
             }
           }
         }

@@ -53,7 +53,7 @@ class ConnectionLabel : public ConnectionT
 {
 public:
   ConnectionLabel();
-  
+
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
@@ -71,11 +71,11 @@ public:
 private:
   long_t label_;
 };
-  
+
 template < typename ConnectionT >
 ConnectionLabel< ConnectionT >::ConnectionLabel()
   : ConnectionT()
-  , label_(UNLABELED_CONNECTION)
+  , label_( UNLABELED_CONNECTION )
 {
 }
 
@@ -86,7 +86,7 @@ ConnectionLabel< ConnectionT >::get_status( DictionaryDatum& d ) const
   ConnectionT::get_status( d );
   def< long_t >( d, names::synapse_label, label_ );
   // override names::size_of from ConnectionT,
-  // as the size from ConnectionLabel< ConnectionT > is 
+  // as the size from ConnectionLabel< ConnectionT > is
   // one long_t larger
   def< long_t >( d, names::size_of, sizeof( *this ) );
 }

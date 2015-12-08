@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# disconnect.py
+# test_disconnect.py
 #
 # This file is part of NEST.
 #

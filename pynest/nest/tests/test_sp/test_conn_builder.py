@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# conn_builder.py
+# test_conn_builder.py
 #
 # This file is part of NEST.
 #

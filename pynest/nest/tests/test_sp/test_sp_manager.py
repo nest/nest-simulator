@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# sp_manager.py
+# test_sp_manager.py
 #
 # This file is part of NEST.
 #

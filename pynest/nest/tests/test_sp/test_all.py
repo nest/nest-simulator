@@ -23,24 +23,24 @@ __author__ = 'naveau'
 import unittest
 import nest
 
-from . import synaptic_elements
-from . import conn_builder
-from . import growth_curves
-from . import sp_manager
-from . import disconnect
-from . import disconnect_multiple
+from . import test_synaptic_elements
+from . import test_conn_builder
+from . import test_growth_curves
+from . import test_sp_manager
+from . import test_disconnect
+from . import test_disconnect_multiple
 
 
 def suite():
     test_suite = unittest.TestSuite()
 
-    test_suite.addTest(synaptic_elements.suite())
-    test_suite.addTest(conn_builder.suite())
-    test_suite.addTest(growth_curves.suite())
-    test_suite.addTest(sp_manager.suite())
-    test_suite.addTest(synaptic_elements.suite())
-    test_suite.addTest(disconnect.suite())
-    test_suite.addTest(disconnect_multiple.suite())
+    test_suite.addTest(test_synaptic_elements.suite())
+    test_suite.addTest(test_conn_builder.suite())
+    test_suite.addTest(test_growth_curves.suite())
+    test_suite.addTest(test_sp_manager.suite())
+    test_suite.addTest(test_synaptic_elements.suite())
+    test_suite.addTest(test_disconnect.suite())
+    test_suite.addTest(test_disconnect_multiple.suite())
 
     return test_suite
 

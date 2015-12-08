@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# growth_curves.py
+# test_growth_curves.py
 #
 # This file is part of NEST.
 #

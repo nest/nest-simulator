@@ -30,6 +30,7 @@
 #include "connector_model.h"
 #include "connector_base.h"
 #include "connection_label.h"
+#include "string_utils.h"
 
 
 template < typename T, typename C >
@@ -558,14 +559,6 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
 // Convenient versions of template functions for registering new synapse types //
 // by modules                                                                  //
 /////////////////////////////////////////////////////////////////////////////////
-
-inline bool
-ends_with( std::string const& value, std::string const& ending )
-{
-  if ( ending.size() > value.size() )
-    return false;
-  return std::equal( ending.rbegin(), ending.rend(), value.rbegin() );
-}
 
 /**
  * Register a synape with default Connector and without any common properties.

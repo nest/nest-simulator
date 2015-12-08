@@ -33,6 +33,7 @@
 #include "arraydatum.h"
 #include "doubledatum.h"
 #include "common_synapse_properties.h"
+#include "connection_label.h"
 #include "nest_names.h"
 #include "spikecounter.h"
 #include "syn_id_delay.h"
@@ -201,6 +202,11 @@ public:
     return syn_id_delay_.syn_id;
   }
 
+  long_t
+  get_label() const
+  {
+    return UNLABELED_CONNECTION;
+  }
 
   /**
    * triggers an update of a synaptic weight

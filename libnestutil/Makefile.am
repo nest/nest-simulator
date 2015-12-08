@@ -25,7 +25,8 @@ libnestutil_la_SOURCES= \
 		libc_allocator_with_realloc.h \
 		hashtable-common.h \
 		sparsetable.h \
-		compose.hpp
+		compose.hpp \
+		string_utils.h
 
 
 common_cppflags= -I$(top_srcdir)/librandom \

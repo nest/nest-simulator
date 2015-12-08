@@ -37,7 +37,7 @@ class ConnectorModel;
  * as a search criterion in the `GetConnections` function.
  * @see ConnectionLabel
  */
-const long_t UNLABELED_CONNECTION = -1;
+const static long_t UNLABELED_CONNECTION = -1;
 
 /**
  * The class ConnectionLabel enables synapse model to be labeled by a positive integer. The
@@ -48,10 +48,12 @@ const long_t UNLABELED_CONNECTION = -1;
  * The name of synapse models, which can be labeled, end with '_lbl'.
  * @see nest::ConnectionManager::get_connections
  */
-template < class Connection_t >
-class ConnectionLabel : public Connection_t
+template < typename ConnectionT >
+class ConnectionLabel : public ConnectionT
 {
 public:
+  ConnectionLabel();
+  
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
@@ -69,20 +71,29 @@ public:
 private:
   long_t label_;
 };
-
-template < typename Connection_t >
-void
-ConnectionLabel< Connection_t >::get_status( DictionaryDatum& d ) const
+  
+template < typename ConnectionT >
+ConnectionLabel< ConnectionT >::ConnectionLabel()
+  : ConnectionT()
+  , label_(UNLABELED_CONNECTION)
 {
-  Connection_t::get_status( d );
+}
+
+template < typename ConnectionT >
+void
+ConnectionLabel< ConnectionT >::get_status( DictionaryDatum& d ) const
+{
+  ConnectionT::get_status( d );
   def< long_t >( d, names::synapse_label, label_ );
-  // override, as the size changes here
+  // override names::size_of from ConnectionT,
+  // as the size from ConnectionLabel< ConnectionT > is 
+  // one long_t larger
   def< long_t >( d, names::size_of, sizeof( *this ) );
 }
 
-template < typename Connection_t >
+template < typename ConnectionT >
 void
-ConnectionLabel< Connection_t >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+ConnectionLabel< ConnectionT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   long_t lbl;
   if ( updateValue< long >( d, names::synapse_label, lbl ) )
@@ -96,12 +107,12 @@ ConnectionLabel< Connection_t >::set_status( const DictionaryDatum& d, Connector
       throw BadProperty( "Connection label must not be negative." );
     }
   }
-  Connection_t::set_status( d, cm );
+  ConnectionT::set_status( d, cm );
 }
 
-template < typename Connection_t >
+template < typename ConnectionT >
 inline long_t
-ConnectionLabel< Connection_t >::get_label() const
+ConnectionLabel< ConnectionT >::get_label() const
 {
   return label_;
 }

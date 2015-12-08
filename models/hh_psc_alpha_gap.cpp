@@ -626,6 +626,7 @@ nest::hh_psc_alpha_gap::handle( GapJunctionEvent& e )
 
   size_t i = 0;
   std::vector< uint_t >::iterator it = e.begin();
+  // The call to get_coeffvalue( it ) in this loop also advances the iterator it
   while ( it != e.end() )
   {
     B_.interpolation_coefficients[ i ] += e.get_weight() * e.get_coeffvalue( it );

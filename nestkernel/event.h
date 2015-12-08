@@ -743,8 +743,8 @@ public:
 };
 
 /**
- * This template function returns the number of uints covered by a variable of
- * type T. This function is used to determine the storage demands for a variable of
+ * This template function returns the number of uints covered by a variable of type T.
+ * This function is used to determine the storage demands for a variable of
  * type T in the NEST communication buffer, which is of type std::vector< uint_t>.
  */
 template < typename T >
@@ -760,25 +760,25 @@ number_of_uints_covered( void )
 }
 
 /**
- * This template function writes data of type T to a given position of a
- * std::vector< uint_t >. Please note that this function does not increase the
- * size of the vector, it just writes the data to the position given by the iterator.
+ * This template function writes data of type T to a given position of a std::vector< uint_t >.
+ * Please note that this function does not increase the size of the vector,
+ * it just writes the data to the position given by the iterator.
  * The function is used to write data from SecondaryEvents to the NEST communcation buffer.
+ * The pos iterator is advanced during execution.
  */
 template < typename T >
 void
 write_to_comm_buffer( T d, std::vector< uint_t >::iterator& pos )
 {
-  char* c = reinterpret_cast< char* >( &d );
+  char* const c = reinterpret_cast< char* >( &d );
 
-  size_t num_uints = number_of_uints_covered< T >();
+  const size_t num_uints = number_of_uints_covered< T >();
   size_t left_to_copy = sizeof( T );
 
   for ( int i = 0; i < num_uints; i++ )
   {
-    memcpy( &( *( pos + i ) ),
-      c + i * sizeof( uint_t ),
-      left_to_copy < sizeof( uint_t ) ? left_to_copy : sizeof( uint_t ) );
+    memcpy(
+      &( *( pos + i ) ), c + i * sizeof( uint_t ), std::min( left_to_copy, sizeof( uint_t ) ) );
     left_to_copy -= sizeof( uint_t );
   }
 
@@ -788,21 +788,21 @@ write_to_comm_buffer( T d, std::vector< uint_t >::iterator& pos )
 /**
  * This template function reads data of type T from a given position of a std::vector< uint_t >.
  * The function is used to read SecondaryEvents data from the NEST communcation buffer.
+ * The pos iterator is advanced during execution.
  */
 template < typename T >
 void
 read_from_comm_buffer( T& d, std::vector< uint_t >::iterator& pos )
 {
-  char* c = reinterpret_cast< char* >( &d );
+  char* const c = reinterpret_cast< char* >( &d );
 
-  size_t num_uints = number_of_uints_covered< T >();
+  const size_t num_uints = number_of_uints_covered< T >();
   size_t left_to_copy = sizeof( T );
 
   for ( int i = 0; i < num_uints; i++ )
   {
-    memcpy( c + i * sizeof( uint_t ),
-      &( *( pos + i ) ),
-      left_to_copy < sizeof( uint_t ) ? left_to_copy : sizeof( uint_t ) );
+    memcpy(
+      c + i * sizeof( uint_t ), &( *( pos + i ) ), std::min( left_to_copy, sizeof( uint_t ) ) );
     left_to_copy -= sizeof( uint_t );
   }
 
@@ -848,7 +848,7 @@ public:
   GapJunctionEvent* clone() const;
 
   /**
-   * This function is needed to set the synid on model registration
+   * This function is needed to set the synid on model registration.
    * At this point no object of this type is available and the
    * add_syn_id-function cannot be used as it is virtual in the base class
    * and therefore cannot be declared as static.

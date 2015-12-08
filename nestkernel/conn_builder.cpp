@@ -1461,7 +1461,10 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
           continue;
 
         if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
+        {
+          skip_conn_parameter_( tid );
           continue;
+        }
         Node* const target = net_.get_node( *tgid );
         const thread target_thread = target->get_thread();
 

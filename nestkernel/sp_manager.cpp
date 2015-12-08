@@ -273,7 +273,11 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
       pre_vacant_n,
       pre_deleted_id,
       pre_deleted_n );
-    assert( pre_deleted_id.size() == 0 );
+    get_synaptic_elements( sp_builder->get_post_synaptic_element_name(),
+      post_vacant_id,
+      post_vacant_n,
+      post_deleted_id,
+      post_deleted_n );
   }
 
   // Communicate the number of deleted post-synaptic elements
@@ -287,13 +291,16 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
       sp_builder->get_synapse_model(),
       sp_builder->get_pre_synaptic_element_name(),
       sp_builder->get_post_synaptic_element_name() );
-
+    get_synaptic_elements( sp_builder->get_pre_synaptic_element_name(),
+      pre_vacant_id,
+      pre_vacant_n,
+      pre_deleted_id,
+      pre_deleted_n );
     get_synaptic_elements( sp_builder->get_post_synaptic_element_name(),
       post_vacant_id,
       post_vacant_n,
       post_deleted_id,
       post_deleted_n );
-    assert( post_deleted_id.size() == 0 );
   }
 
   // Communicate vacant elements
@@ -428,29 +435,38 @@ SPManager::delete_synapse( index sgid,
   std::string se_pre_name,
   std::string se_post_name )
 {
+  // get thread id
+  const int tid = net_.get_thread_id();
   if ( net_.is_local_gid( sgid ) )
   {
     Node* const source = net_.local_nodes_.get_node_by_gid( sgid );
-    source->connect_synaptic_element( se_pre_name, -1 );
+    const thread source_thread = source->get_thread();
+    if ( tid == source_thread )
+    {
+      source->connect_synaptic_element( se_pre_name, -1 );
+    }
   }
 
   if ( net_.is_local_gid( tgid ) )
   {
     Node* const target = net_.local_nodes_.get_node_by_gid( tgid );
     thread target_thread = target->get_thread();
-    // get the ConnectorBase corresponding to the source
-    ConnectorBase* conn = validate_pointer( connections_[ target_thread ].get( sgid ) );
-    ConnectorBase* c = prototypes_[ target_thread ][ syn_id ]->delete_connection(
-      *target, target_thread, conn, syn_id );
-    if ( c == 0 )
+    if ( tid == target_thread )
     {
-      connections_[ target_thread ].erase( sgid );
+      // get the ConnectorBase corresponding to the source
+      ConnectorBase* conn = connections_[ target_thread ].get( sgid );
+      ConnectorBase* c = prototypes_[ target_thread ][ syn_id ]->delete_connection(
+        *target, target_thread, conn, syn_id );
+      if ( c == 0 )
+      {
+        connections_[ target_thread ].erase( sgid );
+      }
+      else
+      {
+        connections_[ target_thread ].set( sgid, c );
+      }
+      target->connect_synaptic_element( se_post_name, -1 );
     }
-    else
-    {
-      connections_[ target_thread ].set( sgid, c );
-    }
-    target->connect_synaptic_element( se_post_name, -1 );
   }
 }
 

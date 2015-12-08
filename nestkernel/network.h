@@ -209,17 +209,6 @@ public:
   index register_model( Model& m, bool private_model = false );
 
   /**
-   * Unregister a previously registered model.
-   */
-  void unregister_model( index m_id );
-
-  /**
-   * Try unregistering model prototype.
-   * Throws ModelInUseException, if not possible, does not unregister.
-   */
-  void try_unregister_model( index m_id );
-
-  /**
    * Copy an existing model and register it as a new model.
    * This function allows users to create their own, cloned models.
    * @param old_id The id of the existing model.

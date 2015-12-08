@@ -129,8 +129,11 @@ echo "vera++ version: `vera++ --version`"
 $CPPCHECK --enable=all --inconclusive --std=c++03 ./nest/main.cpp >/dev/null 2>&1 || usage 1 "Executable $CPPCHECK for cppcheck is not working!"
 cppcheck_version=`$CPPCHECK --version | sed 's/^Cppcheck //'`
 echo "cppcheck version: $cppcheck_version"
-if [[ "x$cppcheck_version" != "x1.69" ]]; then
-  bail_out "Require cppcheck version 1.69. Not $cppcheck_version ."
+IFS=\. read -a cppcheck_version_a <<< "$cppcheck_version"
+if [[ ${cppcheck_version_a[0]} -lt 1 ]]; then
+  bail_out "Require cppcheck version 1.69 or later. Not $cppcheck_version ."
+elif [[ ${cppcheck_version_a[0]} -eq 1 && ${cppcheck_version_a[1]} -lt 69 ]]; then
+  bail_out "Require cppcheck version 1.69 or later. Not $cppcheck_version ."
 fi
 
 # clang-format is installed correctly

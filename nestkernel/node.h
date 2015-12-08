@@ -93,7 +93,6 @@ class histentry;
    SeeAlso: GetStatus, SetStatus, elementstates
  */
 
-
 class Node
 {
   friend class Network;
@@ -571,7 +570,7 @@ public:
    * @ingroup SP_functions
    */
   virtual std::map< Name, double_t >
-  get_synaptic_elements()
+  get_synaptic_elements() const
   {
     return std::map< Name, double >();
   }
@@ -675,6 +674,27 @@ public:
    * @returns true if node is a subnet.
    */
   virtual bool is_subnet() const;
+
+  /**
+   * @returns type of signal this node produces
+   * used in check_connection to only connect neurons which send / receive compatible information
+   */
+  virtual SignalType
+  sends_signal() const
+  {
+    return SPIKE;
+  }
+
+  /**
+   * @returns type of signal this node consumes
+   * used in check_connection to only connect neurons which send / receive compatible information
+   */
+  virtual SignalType
+  receives_signal() const
+  {
+    return SPIKE;
+  }
+
 
   /**
    *  Return a dictionary with the node's properties.
@@ -837,6 +857,7 @@ private:
   bool frozen_;              //!< node shall not be updated if true
   bool buffers_initialized_; //!< Buffers have been initialized
   bool needs_prelim_up_;     //!< node requires preliminary update step
+
 
 protected:
   static Network* net_; //!< Pointer to global network driver.

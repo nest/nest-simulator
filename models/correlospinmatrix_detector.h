@@ -155,10 +155,13 @@ public:
    */
   using Node::handle;
   using Node::handles_test_event;
+  using Node::receives_signal;
 
   void handle( SpikeEvent& );
 
   port handles_test_event( SpikeEvent&, rport );
+
+  SignalType receives_signal() const;
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -302,6 +305,13 @@ nest::correlospinmatrix_detector::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   if ( reset_required == true )
     S_.reset( P_ );
+}
+
+
+inline SignalType
+nest::correlospinmatrix_detector::receives_signal() const
+{
+  return BINARY;
 }
 
 } // namespace

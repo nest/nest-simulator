@@ -145,7 +145,8 @@ class mc_neuron_ode():
 		self.r.integrate(self.r.t+self.resolution)
 		self.u = self.r.y
 
-
+@unittest.skipIf(not HAVE_GSL, 'GSL is not available')
+@nest.check_stack
 class KineticsMultiCmptNeuTestCase(unittest.TestCase):		
 
     def test_KineticsMultiCmptNeu(self):

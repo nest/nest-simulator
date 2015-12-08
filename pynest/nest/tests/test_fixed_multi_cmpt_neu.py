@@ -144,7 +144,8 @@ class mc_neuron_ode():
 				self.reftmp = self.refca
 				self.catmp = self.ca[0]
 		
-
+@unittest.skipIf(not HAVE_GSL, 'GSL is not available')
+@nest.check_stack
 class FixedMultiCmptNeuTestCase(unittest.TestCase):		
 
     def test_FixedMultiCmptNeu(self):		

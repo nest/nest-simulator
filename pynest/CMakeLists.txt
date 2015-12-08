@@ -57,3 +57,13 @@ install(FILES ${pynest_examples}
 
 install(DIRECTORY examples/LeNovere_2012
   DESTINATION ${INSTALL_DOC_DIR}/examples/pynest)
+
+if(HAVE_PYTHON)
+  find_program (NOSETESTS nosetests)
+  if(NOT NOSETESTS-NOTFOUND)
+    add_test(NAME PyNEST
+      COMMAND ${NOSETESTS} -v --with-xunit 
+                              --xunit-file=${PROJECT_BINARY_DIR}/reports/pynest_tests.xml 
+                              ${PYEXECDIR}/nest/tests)
+  endif()
+endif(HAVE_PYTHON)

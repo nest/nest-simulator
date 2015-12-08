@@ -405,6 +405,10 @@ endif(WITH_MUSIC)
 ################################################################################
 ##################        Define Subdirectories here          ##################
 ################################################################################
+enable_testing()
+set(TEST_LOGFILE ${PROJECT_BINARY_DIR}/reports/installcheck.log)
+file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/)
+
 
 add_subdirectory(cmake)
 if(LIBNEUROSIM)
@@ -421,11 +425,11 @@ add_subdirectory(sli)
 add_subdirectory(nest)
 add_subdirectory(nestkernel)
 add_subdirectory(precise)
+add_subdirectory(testsuite)
+add_subdirectory(topology)
 if(HAVE_PYTHON)
   add_subdirectory(pynest)
 endif(HAVE_PYTHON)
-add_subdirectory(testsuite)
-add_subdirectory(topology)
 
 ################################################################################
 ##################           File generation here             ##################
@@ -477,14 +481,19 @@ configure_file(
 
 add_custom_target(installcheck
   COMMAND ${CMAKE_MAKE_PROGRAM} install
-  COMMAND export PATH="${CMAKE_INSTALL_PREFIX}/bin:$ENV{PATH}" &&
-          export PYTHON="${PYTHON}" &&
-          export PYTHONPATH="${PYEXECDIR}:$(PYTHONPATH)" &&
-          export exec_prefix="${CMAKE_INSTALL_PREFIX}" &&
+  COMMAND ${CMAKE_COMMAND} -E env PATH="${CMAKE_INSTALL_PREFIX}/bin:$ENV{PATH}" 
+                                  PYTHON="${PYTHON}"
+                                  PYTHONPATH="${PYEXECDIR}:$(PYTHONPATH)"
+                                  exec_prefix="${CMAKE_INSTALL_PREFIX}"
           ${PKGDATADIR}/extras/do_tests.sh --test-pynest --source-dir=${PROJECT_SOURCE_DIR}
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
   COMMENT "Execute NEST's testsuite...."
 )
+
+add_custom_target(check
+    COMMAND ${CMAKE_COMMAND} -E env CTEST_OUTPUT_ON_FAILURE=1 
+      ${CMAKE_CTEST_COMMAND} -C $<CONFIG>
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 ################################################################################
 ##################           Configuration Summary            ##################

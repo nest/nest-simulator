@@ -26,7 +26,10 @@ Test setting and getting labels on synapses.
 import unittest
 import nest
 
+HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+
 @nest.check_stack
+@unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class LabeledSynapsesTestCase(unittest.TestCase):
     """Test labeled synapses"""
 
@@ -38,7 +41,8 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         nest.SetDefaults('stdp_dopamine_synapse_lbl',{'vt':vol[1]})
         nest.SetDefaults('stdp_dopamine_synapse_hpc',{'vt':vol[2]})
 
-        # create a neuron that accepts all synapse connections...
+        # create neurons that accept all synapse connections (especially gap junctions)...
+        # hh_psc_alpha_gap is only available with GSL, hence the skipIf above
         return nest.Create("hh_psc_alpha_gap", 5)
 
     def test_SetLabelToSynapseOnConnect(self):

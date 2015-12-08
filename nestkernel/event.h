@@ -765,11 +765,14 @@ number_of_uints_covered( void )
  * it just writes the data to the position given by the iterator.
  * The function is used to write data from SecondaryEvents to the NEST communcation buffer.
  * The pos iterator is advanced during execution.
+ * For a discussion on the functionality of this function see github issue #181 and pull request
+ * #184.
  */
 template < typename T >
 void
 write_to_comm_buffer( T d, std::vector< uint_t >::iterator& pos )
 {
+  // there is no aliasing problem here, since cast to char* invalidate strict aliasing assumptions
   char* const c = reinterpret_cast< char* >( &d );
 
   const size_t num_uints = number_of_uints_covered< T >();
@@ -789,11 +792,14 @@ write_to_comm_buffer( T d, std::vector< uint_t >::iterator& pos )
  * This template function reads data of type T from a given position of a std::vector< uint_t >.
  * The function is used to read SecondaryEvents data from the NEST communcation buffer.
  * The pos iterator is advanced during execution.
+ * For a discussion on the functionality of this function see github issue #181 and pull request
+ * #184.
  */
 template < typename T >
 void
 read_from_comm_buffer( T& d, std::vector< uint_t >::iterator& pos )
 {
+  // there is no aliasing problem here, since cast to char* invalidate strict aliasing assumptions
   char* const c = reinterpret_cast< char* >( &d );
 
   const size_t num_uints = number_of_uints_covered< T >();

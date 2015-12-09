@@ -1,10 +1,10 @@
 # Based on the BlueGeneQ-static-XL-CXX platform file
 
-include(CMakeForceCompiler)
-set(CMAKE_SYSTEM_NAME BlueGeneQ-static CACHE STRING "Cross-compiling for BlueGene/Q" FORCE)
-# specify the cross compiler
-cmake_force_c_compiler(bgxlc_r XL)
-cmake_force_cxx_compiler(bgxlc++_r XL)
+set(CMAKE_SYSTEM_NAME BlueGeneQ_XLC CACHE STRING "Cross-compiling for BlueGene/Q" FORCE)
+
+# set the compiler
+set(CMAKE_C_COMPILER bgxlc_r)
+set(CMAKE_CXX_COMPILER bgxlc++_r)
 
 #
 # Set ENABLE_BLUEGENE for main CMakeList.txt
@@ -69,11 +69,6 @@ set(CMAKE_SYSTEM_LIBRARY_PATH
   /bgsys/drivers/ppcfloor/gnu-linux/lib
   /bgsys/drivers/ppcfloor/gnu-linux/powerpc64-bgq-linux/lib
 )
-
-# create C/CXX objects
-set(CMAKE_C_COMPILE_OBJECT   "<CMAKE_C_COMPILER>   <DEFINES> <INCLUDES> <FLAGS> -o <OBJECT> -c <SOURCE>")
-set(CMAKE_CXX_COMPILE_OBJECT "<CMAKE_CXX_COMPILER> <DEFINES> <INCLUDES> <FLAGS> -o <OBJECT> -c <SOURCE>")
-
 
 # For static C executables, use default link settings.
 set(BGQ_C_DEFAULT_EXE_FLAGS "<FLAGS> <CMAKE_C_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")

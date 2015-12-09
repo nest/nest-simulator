@@ -92,6 +92,20 @@ if( GSL_USE_PKGCONFIG )
   endif()
 endif()
 
+if(NOT GSL_ROOT_DIR AND NOT GSL_INCLUDEDIR AND NOT GSL_LIBDIR)
+  # not found yet... try gsl-config and set GSL_ROOT_DIR
+  # 1. If gsl-config exists, query for the version.
+  find_program( GSL_CONFIG_EXECUTABLE
+    NAMES gsl-config
+    )
+  if( EXISTS "${GSL_CONFIG_EXECUTABLE}" )
+    execute_process(
+      COMMAND "${GSL_CONFIG_EXECUTABLE}" --prefix
+      OUTPUT_VARIABLE GSL_ROOT_DIR
+      OUTPUT_STRIP_TRAILING_WHITESPACE )
+  endif()
+endif()
+
 #=============================================================================
 # Set GSL_INCLUDE_DIRS and GSL_LIBRARIES. If we skipped the PkgConfig step, try
 # to find the libraries at $GSL_ROOT_DIR (if provided) or in standard system
@@ -169,70 +183,3 @@ find_package_handle_standard_args( GSL
 mark_as_advanced( GSL_ROOT_DIR GSL_VERSION GSL_LIBRARY GSL_INCLUDE_DIR
   GSL_CBLAS_LIBRARY GSL_LIBRARY_DEBUG GSL_CBLAS_LIBRARY_DEBUG
   GSL_USE_PKGCONFIG GSL_CONFIG )
-
-#=============================================================================
-# Register imported libraries:
-# 1. If we can find a Windows .dll file (or if we can find both Debug and
-#    Release libraries), we will set appropriate target properties for these.
-# 2. However, for most systems, we will only register the import location and
-#    include directory.
-
-# Look for dlls, or Release and Debug libraries.
-if(WIN32)
-  string( REPLACE ".lib" ".dll" GSL_LIBRARY_DLL       "${GSL_LIBRARY}" )
-  string( REPLACE ".lib" ".dll" GSL_CBLAS_LIBRARY_DLL "${GSL_CBLAS_LIBRARY}" )
-  string( REPLACE ".lib" ".dll" GSL_LIBRARY_DEBUG_DLL "${GSL_LIBRARY_DEBUG}" )
-  string( REPLACE ".lib" ".dll" GSL_CBLAS_LIBRARY_DEBUG_DLL "${GSL_CBLAS_LIBRARY_DEBUG}" )
-endif()
-
-if( GSL_FOUND AND NOT TARGET GSL::gsl )
-  if( EXISTS "${GSL_LIBRARY_DLL}" AND EXISTS "${GSL_CBLAS_LIBRARY_DLL}")
-
-    # Windows systems with dll libraries.
-    add_library( GSL::gsl      SHARED IMPORTED )
-    add_library( GSL::gslcblas SHARED IMPORTED )
-
-    # Windows with dlls, but only Release libraries.
-    set_target_properties( GSL::gslcblas PROPERTIES
-      IMPORTED_LOCATION_RELEASE         "${GSL_CBLAS_LIBRARY_DLL}"
-      IMPORTED_IMPLIB                   "${GSL_CBLAS_LIBRARY}"
-      INTERFACE_INCLUDE_DIRECTORIES     "${GSL_INCLUDE_DIRS}"
-      IMPORTED_CONFIGURATIONS           Release
-      IMPORTED_LINK_INTERFACE_LANGUAGES "C" )
-    set_target_properties( GSL::gsl PROPERTIES
-      IMPORTED_LOCATION_RELEASE         "${GSL_LIBRARY_DLL}"
-      IMPORTED_IMPLIB                   "${GSL_LIBRARY}"
-      INTERFACE_INCLUDE_DIRECTORIES     "${GSL_INCLUDE_DIRS}"
-      IMPORTED_CONFIGURATIONS           Release
-      IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-      INTERFACE_LINK_LIBRARIES          GSL::gslcblas )
-
-    # If we have both Debug and Release libraries
-    if( EXISTS "${GSL_LIBRARY_DEBUG_DLL}" AND EXISTS "${GSL_CBLAS_LIBRARY_DEBUG_DLL}")
-      set_property( TARGET GSL::gslcblas APPEND PROPERTY IMPORTED_CONFIGURATIONS Debug )
-      set_target_properties( GSL::gslcblas PROPERTIES
-        IMPORTED_LOCATION_DEBUG           "${GSL_CBLAS_LIBRARY_DEBUG_DLL}"
-        IMPORTED_IMPLIB_DEBUG             "${GSL_CBLAS_LIBRARY_DEBUG}" )
-      set_property( TARGET GSL::gsl APPEND PROPERTY IMPORTED_CONFIGURATIONS Debug )
-      set_target_properties( GSL::gsl PROPERTIES
-        IMPORTED_LOCATION_DEBUG           "${GSL_LIBRARY_DEBUG_DLL}"
-        IMPORTED_IMPLIB_DEBUG             "${GSL_LIBRARY_DEBUG}" )
-    endif()
-
-  else()
-
-    # For all other environments (ones without dll libraries), create
-    # the imported library targets.
-    add_library( GSL::gsl      UNKNOWN IMPORTED )
-    add_library( GSL::gslcblas UNKNOWN IMPORTED )
-    set_target_properties( GSL::gslcblas PROPERTIES
-      IMPORTED_LOCATION                 "${GSL_CBLAS_LIBRARY}"
-      INTERFACE_INCLUDE_DIRECTORIES     "${GSL_INCLUDE_DIRS}"
-      IMPORTED_LINK_INTERFACE_LANGUAGES "C" )
-    set_target_properties( GSL::gsl PROPERTIES
-      IMPORTED_LOCATION                 "${GSL_LIBRARY}"
-      INTERFACE_INCLUDE_DIRECTORIES     "${GSL_INCLUDE_DIRS}"
-      IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-      INTERFACE_LINK_LIBRARIES          GSL::gslcblas )
-  endif()
-endif()

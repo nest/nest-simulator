@@ -234,7 +234,6 @@ endif()
 # Static modules
 set(SLI_MODULES models precise topology)
 if( LIBNEUROSIM )
-  set(HAVE_LIBNEUROSIM ON)
   set(SLI_MODULES ${SLI_MODULES} conngen)
 endif( LIBNEUROSIM )
 
@@ -264,10 +263,15 @@ endforeach(mod)
 file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "\n#include \"interpret.h\"\n\n")
 file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "void add_static_modules(SLIInterpreter& engine)\n{\n")
 foreach(mod ${SLI_MODULES})
-  #mod is the lower-case string
-  string(SUBSTRING ${mod} 0 1 FIRST_LETTER)
-  string(TOUPPER ${FIRST_LETTER} FIRST_LETTER)
-  string(REGEX REPLACE "^.(.*)" "${FIRST_LETTER}\\1" Mod "${mod}")
+  # TODO read classname from file
+  if(mod STREQUAL "conngen")
+    set(Mod "ConnectionGenerator")
+  else()
+    #mod is the lower-case string
+    string(SUBSTRING ${mod} 0 1 FIRST_LETTER)
+    string(TOUPPER ${FIRST_LETTER} FIRST_LETTER)
+    string(REGEX REPLACE "^.(.*)" "${FIRST_LETTER}\\1" Mod "${mod}")
+  endif()
   file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "  engine.addmodule(new nest::${Mod}Module());\n")
 endforeach(mod)
 file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "}\n\n#endif\n")
@@ -323,6 +327,19 @@ if( GSL_FOUND )
   link_libraries(${GSL_LIBRARIES})
 endif( GSL_FOUND )
 
+# libneurosim
+if( LIBNEUROSIM )
+  if (NOT ${LIBNEUROSIM} STREQUAL "ON")
+    # a path is set
+    set(LIBNEUROSIM_ROOT ${LIBNEUROSIM})
+  endif()
+
+  find_package(LibNeurosim)
+  if(LIBNEUROSIM_FOUND)
+    set(HAVE_LIBNEUROSIM ON)
+  endif(LIBNEUROSIM_FOUND)
+endif( LIBNEUROSIM )
+
 # Python executable finding
 if(WITH_PYTHON)
   if (NOT ${WITH_PYTHON} STREQUAL "ON")
@@ -332,9 +349,14 @@ if(WITH_PYTHON)
 
   find_package(PythonInterp)
   if(PYTHONINTERP_FOUND)
-    set(HAVE_PYTHON ON)
     set(PYTHON ${PYTHON_EXECUTABLE})
     set(PYTHON_VERSION ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR})
+    
+    # need python lib and header...
+    find_package(PythonLibs)
+    if(PYTHONLIBS_FOUND)
+      set(HAVE_PYTHON ON)
+    endif()
   endif()
 
   find_package(Cython)
@@ -412,9 +434,9 @@ file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/)
 
 
 add_subdirectory(cmake)
-if(LIBNEUROSIM)
+if(HAVE_LIBNEUROSIM)
   add_subdirectory(conngen)
-endif(LIBNEUROSIM)
+endif(HAVE_LIBNEUROSIM)
 add_subdirectory(doc)
 add_subdirectory(examples)
 add_subdirectory(extras)
@@ -612,7 +634,7 @@ endif(HAVE_MUSIC)
 
 if(HAVE_LIBNEUROSIM)
   message("Use libneurosim     : Yes")
-  message("    Includes        : ${LIBNEUROSIM_INCLUDE_DIRS})")
+  message("    Includes        : ${LIBNEUROSIM_INCLUDE_DIR})")
   message("    Libraries       : ${LIBNEUROSIM_LIBRARIES})")
   message("")
 else(HAVE_LIBNEUROSIM)

@@ -15,6 +15,7 @@ target_include_directories(pynestkernel PRIVATE
   ${PROJECT_SOURCE_DIR}/librandom
   ${PROJECT_SOURCE_DIR}/sli
   ${STATIC_MODULES_INDCLUDE_DIRS}
+  ${LIBNEUROSIM_INCLUDE_DIR}
 )
 
 target_compile_definitions(pynestkernel PRIVATE 
@@ -60,7 +61,7 @@ install(DIRECTORY examples/LeNovere_2012
 
 if(HAVE_PYTHON)
   find_program (NOSETESTS nosetests)
-  if(NOT NOSETESTS-NOTFOUND)
+  if(NOT NOSETESTS STREQUAL "NOSETESTS-NOTFOUND")
     add_test(NAME PyNEST
       COMMAND ${NOSETESTS} -v --with-xunit 
                               --xunit-file=${PROJECT_BINARY_DIR}/reports/pynest_tests.xml 

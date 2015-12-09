@@ -7,10 +7,11 @@ add_executable(nest main.cpp ${nest_sources})
 
 add_library(nest_lib ${nest_sources})
 
-target_link_libraries(nest nestutil
-  nestkernel random sli_lib ${SLI_MODULES})
-target_link_libraries(nest_lib
+target_link_libraries(nest
   nestutil nestkernel random sli_lib ${SLI_MODULES})
+
+target_link_libraries(nest_lib
+  nestutil nestkernel random sli_lib ${SLI_MODULES} ${PYTHON_LIBRARIES})
 
 target_include_directories(nest PRIVATE
   ${PROJECT_BINARY_DIR}/nest
@@ -20,6 +21,7 @@ target_include_directories(nest PRIVATE
   ${PROJECT_SOURCE_DIR}/sli
   ${PROJECT_SOURCE_DIR}/nestkernel
   ${STATIC_MODULES_INDCLUDE_DIRS}
+  ${LIBNEUROSIM_INCLUDE_DIR}
 )
 
 target_include_directories(nest_lib PRIVATE
@@ -30,7 +32,12 @@ target_include_directories(nest_lib PRIVATE
   ${PROJECT_SOURCE_DIR}/sli
   ${PROJECT_SOURCE_DIR}/nestkernel
   ${STATIC_MODULES_INDCLUDE_DIRS}
+  ${LIBNEUROSIM_INCLUDE_DIR}
+  ${PYTHON_INCLUDE_PATH}
 )
+
+#include_directories(${PYTHON_INCLUDE_PATH})
+#link_libraries(${PYTHON_LIBRARIES})
 
 if(HAVE_PYTHON)
   target_compile_definitions(nest_lib PRIVATE 

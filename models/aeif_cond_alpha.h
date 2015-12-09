@@ -229,7 +229,6 @@ public:
 
     double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
     int_t r_;                      //!< number of refractory steps remaining
-    double_t r_offset_;            // offset on the refractory time if it is not a multiple of step_
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -294,7 +293,6 @@ public:
     double_t g0_in_;
 
     int_t RefractoryCounts_;
-    double_t RefractoryOffset_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------

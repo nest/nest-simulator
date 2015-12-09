@@ -1,5 +1,5 @@
 /*
- *  aeif_cond_exp.h
+ *  aeif_cond_alpha.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AEIF_COND_EXP_H
-#define AEIF_COND_EXP_H
+#ifndef AEIF_COND_ALPHA_H
+#define AEIF_COND_ALPHA_H
 
 #include "config.h"
 
@@ -40,17 +40,17 @@
 #include <gsl/gsl_odeiv.h>
 
 /* BeginDocumentation
-Name: aeif_cond_exp - Conductance based exponential integrate-and-fire neuron model according to
+Name: aeif_cond_alpha -  Conductance based exponential integrate-and-fire neuron model according to
 Brette and Gerstner (2005).
 
 Description:
+aeif_cond_alpha is the adaptive exponential integrate and fire neuron according to Brette and
+Gerstner (2005).
+Synaptic conductances are modelled as alpha-functions.
 
-aeif_cond_exp is the adaptive exponential integrate and fire neuron
-according to Brette and Gerstner (2005), with post-synaptic
-conductances in the form of truncated exponentials.
-
-This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
-solver with adaptive stepsize to integrate the differential equation.
+This implementation uses the embedded 4th order Runge-Kutta-Fehlberg solver with adaptive stepsize
+to integrate
+the differential equation.
 
 The membrane potential is given by the following differential equation:
 C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e) -g_i(t)(V-E_i)-w +I_e
@@ -59,18 +59,15 @@ and
 
 tau_w * dw/dt= a(V-E_L) -W
 
-
-Note that the spike detection threshold V_peak is automatically set to
-V_th+10 mV to avoid numerical instabilites that may result from
-setting V_peak too high.
-
 Parameters:
 The following parameters can be set in the status dictionary.
 
 Dynamic state variables:
   V_m        double - Membrane potential in mV
   g_ex       double - Excitatory synaptic conductance in nS.
+  dg_ex      double - First derivative of g_ex in nS/ms
   g_in       double - Inhibitory synaptic conductance in nS.
+  dg_in      double - First derivative of g_in in nS/ms.
   w          double - Spike-adaptation current in pA.
 
 Membrane Parameters:
@@ -86,20 +83,20 @@ Spike adaptation parameters:
   b          double - Spike-triggered adaptation in pA.
   Delta_T    double - Slope factor in mV
   tau_w      double - Adaptation time constant in ms
-  V_t        double - Spike initiation threshold in mV
+  V_th       double - Spike initiation threshold in mV
   V_peak     double - Spike detection threshold in mV.
 
 Synaptic parameters
   E_ex       double - Excitatory reversal potential in mV.
-  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (exp function).
+  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (alpha function).
   E_in       double - Inhibitory reversal potential in mV.
-  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms (exp function).
+  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms (alpha function).
 
 Integration parameters
   gsl_error_tol  double - This parameter controls the admissible error of the GSL integrator.
                           Reduce it if NEST complains about numerical instabilities.
 
-Author: Adapted from aeif_cond_alpha by Lyle Muller
+Author: Marc-Oliver Gewaltig
 
 Sends: SpikeEvent
 
@@ -108,7 +105,7 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 References: Brette R and Gerstner W (2005) Adaptive Exponential Integrate-and-Fire Model as
             an Effective Description of Neuronal Activity. J Neurophysiol 94:3637-3642
 
-SeeAlso: iaf_cond_exp, aeif_cond_alpha
+SeeAlso: iaf_cond_alpha, aeif_cond_exp
 */
 
 namespace nest
@@ -123,15 +120,15 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int aeif_cond_exp_dynamics( double, const double*, double*, void* );
+extern "C" int aeif_cond_alpha_dynamics( double, const double*, double*, void* );
 
-class aeif_cond_exp : public Archiving_Node
+class aeif_cond_alpha : public Archiving_Node
 {
 
 public:
-  aeif_cond_exp();
-  aeif_cond_exp( const aeif_cond_exp& );
-  ~aeif_cond_exp();
+  aeif_cond_alpha();
+  aeif_cond_alpha( const aeif_cond_alpha& );
+  ~aeif_cond_alpha();
 
   /**
    * Import sets of overloaded virtual functions.
@@ -157,18 +154,18 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  void update( const Time&, const long_t, const long_t );
+  void update( Time const&, const long_t, const long_t );
 
   // END Boilerplate function declarations ----------------------------
 
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int aeif_cond_exp_dynamics( double, const double*, double*, void* );
+  friend int aeif_cond_alpha_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< aeif_cond_exp >;
-  friend class UniversalDataLogger< aeif_cond_exp >;
+  friend class RecordablesMap< aeif_cond_alpha >;
+  friend class UniversalDataLogger< aeif_cond_alpha >;
 
 private:
   // ----------------------------------------------------------------
@@ -222,14 +219,17 @@ public:
     enum StateVecElems
     {
       V_M = 0,
-      G_EXC, // 1
-      G_INH, // 2
-      W,     // 3
+      DG_EXC, // 1
+      G_EXC,  // 2
+      DG_INH, // 3
+      G_INH,  // 4
+      W,      // 5
       STATE_VEC_SIZE
     };
 
     double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
     int_t r_;                      //!< number of refractory steps remaining
+    double_t r_offset_;            // offset on the refractory time if it is not a multiple of step_
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -246,11 +246,11 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_cond_exp& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_cond_exp& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_cond_alpha& );                  //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_cond_alpha& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
-    UniversalDataLogger< aeif_cond_exp > logger_;
+    UniversalDataLogger< aeif_cond_alpha > logger_;
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spike_exc_;
@@ -287,7 +287,14 @@ public:
    */
   struct Variables_
   {
+    /** initial value to normalise excitatory synaptic conductance */
+    double_t g0_ex_;
+
+    /** initial value to normalise inhibitory synaptic conductance */
+    double_t g0_in_;
+
     int_t RefractoryCounts_;
+    double_t RefractoryOffset_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -308,11 +315,11 @@ public:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< aeif_cond_exp > recordablesMap_;
+  static RecordablesMap< aeif_cond_alpha > recordablesMap_;
 };
 
 inline port
-aeif_cond_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+aeif_cond_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -321,7 +328,7 @@ aeif_cond_exp::send_test_event( Node& target, rport receptor_type, synindex, boo
 }
 
 inline port
-aeif_cond_exp::handles_test_event( SpikeEvent&, rport receptor_type )
+aeif_cond_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -329,7 +336,7 @@ aeif_cond_exp::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline port
-aeif_cond_exp::handles_test_event( CurrentEvent&, rport receptor_type )
+aeif_cond_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -337,7 +344,7 @@ aeif_cond_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-aeif_cond_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+aeif_cond_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -345,7 +352,7 @@ aeif_cond_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type 
 }
 
 inline void
-aeif_cond_exp::get_status( DictionaryDatum& d ) const
+aeif_cond_alpha::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -355,7 +362,7 @@ aeif_cond_exp::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-aeif_cond_exp::set_status( const DictionaryDatum& d )
+aeif_cond_alpha::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
@@ -376,4 +383,4 @@ aeif_cond_exp::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL_1_11
-#endif // AEIF_COND_EXP_H
+#endif // AEIF_COND_ALPHA_H

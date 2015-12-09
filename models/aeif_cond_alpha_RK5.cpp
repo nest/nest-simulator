@@ -89,7 +89,6 @@ nest::aeif_cond_alpha_RK5::Parameters_::Parameters_()
 
 nest::aeif_cond_alpha_RK5::State_::State_( const Parameters_& p )
   : r_( 0 )
-  , r_offset_( 0. )
 {
   y_[ 0 ] = p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
@@ -98,7 +97,6 @@ nest::aeif_cond_alpha_RK5::State_::State_( const Parameters_& p )
 
 nest::aeif_cond_alpha_RK5::State_::State_( const State_& s )
   : r_( s.r_ )
-  , r_offset_( s.r_offset_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
     y_[ i ] = s.y_[ i ];
@@ -111,7 +109,6 @@ nest::aeif_cond_alpha_RK5::State_& nest::aeif_cond_alpha_RK5::State_::operator=(
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
     y_[ i ] = s.y_[ i ];
   r_ = s.r_;
-  r_offset_ = s.r_offset_;
   return *this;
 }
 
@@ -301,9 +298,7 @@ nest::aeif_cond_alpha_RK5::calibrate()
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  V_.RefractoryOffset_ = P_.t_ref_ - V_.RefractoryCounts_ * Time::get_resolution().get_ms();
   assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
-  assert( V_.RefractoryOffset_ >= 0. );
 }
 
 /* ----------------------------------------------------------------

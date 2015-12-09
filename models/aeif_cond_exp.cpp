@@ -143,7 +143,6 @@ nest::aeif_cond_exp::Parameters_::Parameters_()
 
 nest::aeif_cond_exp::State_::State_( const Parameters_& p )
   : r_( 0 )
-  , r_offset_( 0. )
 {
   y_[ 0 ] = p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
@@ -152,7 +151,6 @@ nest::aeif_cond_exp::State_::State_( const Parameters_& p )
 
 nest::aeif_cond_exp::State_::State_( const State_& s )
   : r_( s.r_ )
-  , r_offset_( s.r_offset_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
     y_[ i ] = s.y_[ i ];
@@ -165,7 +163,6 @@ nest::aeif_cond_exp::State_& nest::aeif_cond_exp::State_::operator=( const State
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
     y_[ i ] = s.y_[ i ];
   r_ = s.r_;
-  r_offset_ = s.r_offset_;
   return *this;
 }
 
@@ -367,9 +364,7 @@ nest::aeif_cond_exp::calibrate()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  V_.RefractoryOffset_ = P_.t_ref_ - V_.RefractoryCounts_ * Time::get_resolution().get_ms();
   assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
-  assert( V_.RefractoryOffset_ >= 0. );
 }
 
 /* ----------------------------------------------------------------
@@ -379,96 +374,69 @@ nest::aeif_cond_exp::calibrate()
 void
 nest::aeif_cond_exp::update( const Time& origin, const long_t from, const long_t to )
 {
-   assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
-   assert( from < to );
-   assert( State_::V_M == 0 );
+  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( from < to );
+  assert( State_::V_M == 0 );
 
-   for ( long_t lag = from; lag < to; ++lag )
-   {
-      double t = 0.0;
-      double V_m_old;
-      double w_old;
-      double t_old;
-      double t_crossing;
+  for ( long_t lag = from; lag < to; ++lag )
+  {
+    double t = 0.0;
 
+    if ( S_.r_ > 0 )
+      --S_.r_;
+
+    // numerical integration with adaptive step size control:
+    // ------------------------------------------------------
+    // gsl_odeiv_evolve_apply performs only a single numerical
+    // integration step, starting from t and bounded by step;
+    // the while-loop ensures integration over the whole simulation
+    // step (0, step] if more than one integration step is needed due
+    // to a small integration step size;
+    // note that (t+IntegrationStep > step) leads to integration over
+    // (t, step] and afterwards setting t to step, but it does not
+    // enforce setting IntegrationStep to step-t
+    while ( t < B_.step_ )
+    {
+      const int status = gsl_odeiv_evolve_apply( B_.e_,
+        B_.c_,
+        B_.s_,
+        &B_.sys_,             // system of ODE
+        &t,                   // from t
+        B_.step_,             // to t <= step
+        &B_.IntegrationStep_, // integration step size
+        S_.y_ );              // neuronal state
+
+      if ( status != GSL_SUCCESS )
+        throw GSLSolverFailure( get_name(), status );
+
+      // check for unreasonable values; we allow V_M to explode
+      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
+        throw NumericalInstability( get_name() );
+
+      // spikes are handled inside the while-loop
+      // due to spike-driven adaptation
       if ( S_.r_ > 0 )
-         --S_.r_;
-
-      // numerical integration with adaptive step size control:
-      // ------------------------------------------------------
-      // gsl_odeiv_evolve_apply performs only a single numerical
-      // integration step, starting from t and bounded by step;
-      // the while-loop ensures integration over the whole simulation
-      // step (0, step] if more than one integration step is needed due
-      // to a small integration step size;
-      // note that (t+IntegrationStep > step) leads to integration over
-      // (t, step] and afterwards setting t to step, but it does not
-      // enforce setting IntegrationStep to step-t
-      while ( t < B_.step_ )
+        S_.y_[ State_::V_M ] = P_.V_reset_;
+      else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ )
       {
-         // store the previous values of V_m, w, and t
-         V_m_old = S_.y_[ State_::V_M ];
-         w_old = S_.y_[ State_::W ];
-         t_old = t;
+        S_.y_[ State_::V_M ] = P_.V_reset_;
+        S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
+        S_.r_ = V_.RefractoryCounts_;
 
-         // propagate the ODE
-         const int status = gsl_odeiv_evolve_apply( B_.e_,
-           B_.c_,
-           B_.s_,
-           &B_.sys_,             // system of ODE
-           &t,                   // from t
-           B_.step_,             // to t <= step
-           &B_.IntegrationStep_, // integration step size
-           S_.y_ );              // neuronal state
-
-         if ( status != GSL_SUCCESS )
-            throw GSLSolverFailure( get_name(), status );
-
-         // check for unreasonable values; we allow V_M to explode
-         if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
-            throw NumericalInstability( get_name() );
-
-         // spikes are handled inside the while-loop
-         // due to spike-driven adaptation
-         if ( S_.r_ > 0 || t < S_.r_offset_)
-            S_.y_[ State_::V_M ] = P_.V_reset_; // only V_m is frozen
-         else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ )
-         {
-            // find the exact time when the threshold was crossed
-            double dt_crossing = ( P_.V_peak_ - V_m_old ) * ( t - t_old ) / ( S_.y_[ State_::V_M ] - V_m_old );
-            t_crossing = t_old + dt_crossing;
-            t = t_crossing;
-            
-            // reset
-            S_.y_[ State_::V_M ] = P_.V_reset_;
-            S_.y_[ State_::W ] = w_old + P_.b; // spike-driven adaptation
-            S_.r_ = V_.RefractoryCounts_;
-            S_.r_offset_ = ( S_.r_ == 0) ? 0. : V_.RefractoryOffset_ - (B_.step_ - t);
-            if ( S_.r_offset_ < 0. )
-            {
-               --S_.r_;
-               S_.r_offset_ = B_.step_ + S_.r_offset_;
-            }
-
-            set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
-            SpikeEvent se;
-            network()->send( *this, se, lag );
-         }
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        SpikeEvent se;
+        network()->send( *this, se, lag );
       }
+    }
+    S_.y_[ State_::G_EXC ] += B_.spike_exc_.get_value( lag );
+    S_.y_[ State_::G_INH ] += B_.spike_inh_.get_value( lag );
 
-      // deduce the elapsed time since the spike from the refractory offset if necessary
-      if ( S_.r_ == 0 )
-         S_.r_offset_ = std::max( 0., S_.r_offset_ + t_crossing - t );
-      
-      S_.y_[ State_::G_EXC ] += B_.spike_exc_.get_value( lag );
-      S_.y_[ State_::G_INH ] += B_.spike_inh_.get_value( lag );
+    // set new input current
+    B_.I_stim_ = B_.currents_.get_value( lag );
 
-      // set new input current
-      B_.I_stim_ = B_.currents_.get_value( lag );
-
-      // log state data
-      B_.logger_.record_data( origin.get_steps() + lag );
-   }
+    // log state data
+    B_.logger_.record_data( origin.get_steps() + lag );
+  }
 }
 
 void

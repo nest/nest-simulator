@@ -1,5 +1,5 @@
 /*
- *  aeif_cond_exp.h
+ *  aeif_cond_exp_gridprecise.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AEIF_COND_EXP_H
-#define AEIF_COND_EXP_H
+#ifndef AEIF_COND_EXP_GRIDPRECISE_H
+#define AEIF_COND_EXP_GRIDPRECISE_H
 
 #include "config.h"
 
@@ -40,12 +40,12 @@
 #include <gsl/gsl_odeiv.h>
 
 /* BeginDocumentation
-Name: aeif_cond_exp - Conductance based exponential integrate-and-fire neuron model according to
+Name: aeif_cond_exp_gridprecise - Conductance based exponential integrate-and-fire neuron model according to
 Brette and Gerstner (2005).
 
 Description:
 
-aeif_cond_exp is the adaptive exponential integrate and fire neuron
+aeif_cond_exp_gridprecise is the adaptive exponential integrate and fire neuron
 according to Brette and Gerstner (2005), with post-synaptic
 conductances in the form of truncated exponentials.
 
@@ -123,15 +123,15 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int aeif_cond_exp_dynamics( double, const double*, double*, void* );
+extern "C" int aeif_cond_exp_gridprecise_dynamics( double, const double*, double*, void* );
 
-class aeif_cond_exp : public Archiving_Node
+class aeif_cond_exp_gridprecise : public Archiving_Node
 {
 
 public:
-  aeif_cond_exp();
-  aeif_cond_exp( const aeif_cond_exp& );
-  ~aeif_cond_exp();
+  aeif_cond_exp_gridprecise();
+  aeif_cond_exp_gridprecise( const aeif_cond_exp_gridprecise& );
+  ~aeif_cond_exp_gridprecise();
 
   /**
    * Import sets of overloaded virtual functions.
@@ -164,11 +164,11 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int aeif_cond_exp_dynamics( double, const double*, double*, void* );
+  friend int aeif_cond_exp_gridprecise_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< aeif_cond_exp >;
-  friend class UniversalDataLogger< aeif_cond_exp >;
+  friend class RecordablesMap< aeif_cond_exp_gridprecise >;
+  friend class UniversalDataLogger< aeif_cond_exp_gridprecise >;
 
 private:
   // ----------------------------------------------------------------
@@ -230,6 +230,7 @@ public:
 
     double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
     int_t r_;                      //!< number of refractory steps remaining
+    double_t r_offset_;      // offset on the refractory time if it is not a multiple of step_
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -246,11 +247,11 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_cond_exp& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_cond_exp& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_cond_exp_gridprecise& );                  //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_cond_exp_gridprecise& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
-    UniversalDataLogger< aeif_cond_exp > logger_;
+    UniversalDataLogger< aeif_cond_exp_gridprecise > logger_;
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spike_exc_;
@@ -288,6 +289,7 @@ public:
   struct Variables_
   {
     int_t RefractoryCounts_;
+    double_t RefractoryOffset_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -308,11 +310,11 @@ public:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< aeif_cond_exp > recordablesMap_;
+  static RecordablesMap< aeif_cond_exp_gridprecise > recordablesMap_;
 };
 
 inline port
-aeif_cond_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+aeif_cond_exp_gridprecise::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -321,7 +323,7 @@ aeif_cond_exp::send_test_event( Node& target, rport receptor_type, synindex, boo
 }
 
 inline port
-aeif_cond_exp::handles_test_event( SpikeEvent&, rport receptor_type )
+aeif_cond_exp_gridprecise::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -329,7 +331,7 @@ aeif_cond_exp::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline port
-aeif_cond_exp::handles_test_event( CurrentEvent&, rport receptor_type )
+aeif_cond_exp_gridprecise::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -337,7 +339,7 @@ aeif_cond_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-aeif_cond_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+aeif_cond_exp_gridprecise::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -345,7 +347,7 @@ aeif_cond_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type 
 }
 
 inline void
-aeif_cond_exp::get_status( DictionaryDatum& d ) const
+aeif_cond_exp_gridprecise::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -355,7 +357,7 @@ aeif_cond_exp::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-aeif_cond_exp::set_status( const DictionaryDatum& d )
+aeif_cond_exp_gridprecise::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
@@ -376,4 +378,4 @@ aeif_cond_exp::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL_1_11
-#endif // AEIF_COND_EXP_H
+#endif // AEIF_COND_EXP_GRIDPRECISE_H

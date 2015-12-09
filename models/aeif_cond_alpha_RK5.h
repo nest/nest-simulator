@@ -222,6 +222,7 @@ public:
     double_t ynew[ STATE_VEC_SIZE ]; //!< 5th order update
     double_t yref[ STATE_VEC_SIZE ]; //!< 4th order update
     int_t r_;                        //!< number of refractory steps remaining
+    double_t r_offset_;              // offset on the refractory time if it is not a multiple of step_
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -280,6 +281,7 @@ public:
     double_t g0_in_;
 
     int_t RefractoryCounts_;
+    double_t RefractoryOffset_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------

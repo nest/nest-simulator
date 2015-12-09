@@ -1,5 +1,5 @@
 /*
- *  aeif_cond_alpha_RK5.h
+ *  aeif_cond_exp_gridprecise.h
  *
  *  This file is part of NEST.
  *
@@ -20,35 +20,49 @@
  *
  */
 
-#ifndef AEIF_COND_ALPHA_RK5_H
-#define AEIF_COND_ALPHA_RK5_H
+#ifndef AEIF_COND_EXP_GRIDPRECISE_H
+#define AEIF_COND_EXP_GRIDPRECISE_H
 
-// Includes from nestkernel:
-#include "archiving_node.h"
-#include "connection.h"
+#include "config.h"
+
+#ifdef HAVE_GSL_1_11
+
+#include "nest.h"
 #include "event.h"
-#include "nest_types.h"
+#include "archiving_node.h"
 #include "ring_buffer.h"
+#include "connection.h"
 #include "universal_data_logger.h"
+#include "recordables_map.h"
+
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_odeiv.h>
 
 /* BeginDocumentation
-Name: aeif_cond_alpha_RK5 -  Conductance based exponential integrate-and-fire neuron model according
-to Brette and Gerstner (2005).
+Name: aeif_cond_exp_gridprecise - Conductance based exponential integrate-and-fire neuron model according to
+Brette and Gerstner (2005).
 
 Description:
-aeif_cond_alpha_RK5 is the adaptive exponential integrate and fire neuron according to Brette and
-Gerstner (2005).
-Synaptic conductances are modelled as alpha-functions.
 
-This implementation uses a 5th order Runge-Kutta solver with adaptive stepsize to integrate
-the differential equation (see Numerical Recipes 3rd Edition, Press et al. 2007, Ch. 17.2).
+aeif_cond_exp_gridprecise is the adaptive exponential integrate and fire neuron
+according to Brette and Gerstner (2005), with post-synaptic
+conductances in the form of truncated exponentials.
+
+This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
+solver with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
 C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e) -g_i(t)(V-E_i)-w +I_e
 
 and
 
-tau_w * dw/dt= a(V-E_L) -w
+tau_w * dw/dt= a(V-E_L) -W
+
+
+Note that the spike detection threshold V_peak is automatically set to
+V_th+10 mV to avoid numerical instabilites that may result from
+setting V_peak too high.
 
 Parameters:
 The following parameters can be set in the status dictionary.
@@ -56,16 +70,14 @@ The following parameters can be set in the status dictionary.
 Dynamic state variables:
   V_m        double - Membrane potential in mV
   g_ex       double - Excitatory synaptic conductance in nS.
-  dg_ex      double - First derivative of g_ex in nS/ms
   g_in       double - Inhibitory synaptic conductance in nS.
-  dg_in      double - First derivative of g_in in nS/ms.
   w          double - Spike-adaptation current in pA.
 
 Membrane Parameters:
   C_m        double - Capacity of the membrane in pF
   t_ref      double - Duration of refractory period in ms.
   V_reset    double - Reset value for V_m after a spike. In mV.
- E_L        double - Leak reversal potential in mV.
+  E_L        double - Leak reversal potential in mV.
   g_L        double - Leak conductance in nS.
   I_e        double - Constant external input current in pA.
 
@@ -74,24 +86,20 @@ Spike adaptation parameters:
   b          double - Spike-triggered adaptation in pA.
   Delta_T    double - Slope factor in mV
   tau_w      double - Adaptation time constant in ms
-  V_th       double - Spike initiation threshold in mV
+  V_t        double - Spike initiation threshold in mV
   V_peak     double - Spike detection threshold in mV.
 
-Synaptic parameters:
+Synaptic parameters
   E_ex       double - Excitatory reversal potential in mV.
-  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (alpha function).
+  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (exp function).
   E_in       double - Inhibitory reversal potential in mV.
-  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms (alpha function).
+  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms (exp function).
 
-Numerical integration parameters:
-  HMIN       double - Minimal stepsize for numerical integration in ms (default 0.001ms).
-  MAXERR     double - Error estimate tolerance for adaptive stepsize control (steps accepted if
-err<=MAXERR). In mV.
-                      Note that the error refers to the difference between the 4th and 5th order RK
-terms.
-                      Default 1e-10 mV.
+Integration parameters
+  gsl_error_tol  double - This parameter controls the admissible error of the GSL integrator.
+                          Reduce it if NEST complains about numerical instabilities.
 
-Authors: Stefan Bucher, Marc-Oliver Gewaltig.
+Author: Adapted from aeif_cond_alpha by Lyle Muller
 
 Sends: SpikeEvent
 
@@ -100,19 +108,30 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 References: Brette R and Gerstner W (2005) Adaptive Exponential Integrate-and-Fire Model as
             an Effective Description of Neuronal Activity. J Neurophysiol 94:3637-3642
 
-SeeAlso: iaf_cond_alpha, aeif_cond_exp, aeif_cond_alpha
+SeeAlso: iaf_cond_exp, aeif_cond_alpha
 */
 
 namespace nest
 {
+/**
+ * Function computing right-hand side of ODE for GSL solver.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int aeif_cond_exp_gridprecise_dynamics( double, const double*, double*, void* );
 
-class aeif_cond_alpha_RK5 : public Archiving_Node
+class aeif_cond_exp_gridprecise : public Archiving_Node
 {
 
 public:
-  aeif_cond_alpha_RK5();
-  aeif_cond_alpha_RK5( const aeif_cond_alpha_RK5& );
-  ~aeif_cond_alpha_RK5();
+  aeif_cond_exp_gridprecise();
+  aeif_cond_exp_gridprecise( const aeif_cond_exp_gridprecise& );
+  ~aeif_cond_exp_gridprecise();
 
   /**
    * Import sets of overloaded virtual functions.
@@ -138,19 +157,18 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-
-  void update( Time const&, const long_t, const long_t );
-
-  inline void aeif_cond_alpha_RK5_dynamics( const double*, double* );
+  void update( const Time&, const long_t, const long_t );
 
   // END Boilerplate function declarations ----------------------------
 
   // Friends --------------------------------------------------------
 
-  // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< aeif_cond_alpha_RK5 >;
-  friend class UniversalDataLogger< aeif_cond_alpha_RK5 >;
+  // make dynamics function quasi-member
+  friend int aeif_cond_exp_gridprecise_dynamics( double, const double*, double*, void* );
 
+  // The next two classes need to be friends to access the State_ class/member
+  friend class RecordablesMap< aeif_cond_exp_gridprecise >;
+  friend class UniversalDataLogger< aeif_cond_exp_gridprecise >;
 
 private:
   // ----------------------------------------------------------------
@@ -174,11 +192,12 @@ private:
     double_t V_th;       //!< Spike threshold in mV.
     double_t t_ref;      //!< Refractory period in ms.
     double_t tau_syn_ex; //!< Excitatory synaptic rise time.
-    double_t tau_syn_in; //!< Inhibitory synaptic rise time.
+    double_t tau_syn_in; //!< Excitatory synaptic rise time.
     double_t I_e;        //!< Intrinsic current in pA.
-    double_t MAXERR;     //!< Maximal error for adaptive stepsize solver
-    double_t HMIN;       //!< Smallest permissible stepsize in ms.
-    Parameters_();       //!< Sets default parameter values
+
+    double_t gsl_error_tol; //!< error bound for GSL integrator
+
+    Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum& ); //!< Set values from dicitonary
@@ -196,33 +215,22 @@ public:
   {
     /**
      * Enumeration identifying elements in state array State_::y_.
-     * The state vector is passed as a C array. This enum
+     * The state vector must be passed to GSL as a C array. This enum
      * identifies the elements of the vector. It must be public to be
      * accessible from the iteration function.
      */
     enum StateVecElems
     {
       V_M = 0,
-      DG_EXC, // 1
-      G_EXC,  // 2
-      DG_INH, // 3
-      G_INH,  // 4
-      W,      // 5
+      G_EXC, // 1
+      G_INH, // 2
+      W,     // 3
       STATE_VEC_SIZE
     };
 
-    double_t y_[ STATE_VEC_SIZE ];   //!< neuron state
-    double_t k1[ STATE_VEC_SIZE ];   //!< Runge-Kutta variable
-    double_t k2[ STATE_VEC_SIZE ];   //!< Runge-Kutta variable
-    double_t k3[ STATE_VEC_SIZE ];   //!< Runge-Kutta variable
-    double_t k4[ STATE_VEC_SIZE ];   //!< Runge-Kutta variable
-    double_t k5[ STATE_VEC_SIZE ];   //!< Runge-Kutta variable
-    double_t k6[ STATE_VEC_SIZE ];   //!< Runge-Kutta variable
-    double_t k7[ STATE_VEC_SIZE ];   //!< Runge-Kutta variable
-    double_t yin[ STATE_VEC_SIZE ];  //!< Runge-Kutta variable
-    double_t ynew[ STATE_VEC_SIZE ]; //!< 5th order update
-    double_t yref[ STATE_VEC_SIZE ]; //!< 4th order update
-    int_t r_;                        //!< number of refractory steps remaining
+    double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
+    int_t r_;                      //!< number of refractory steps remaining
+    double_t r_offset_;      // offset on the refractory time if it is not a multiple of step_
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -239,23 +247,29 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_cond_alpha_RK5& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_cond_alpha_RK5& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_cond_exp_gridprecise& );                  //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_cond_exp_gridprecise& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
-    UniversalDataLogger< aeif_cond_alpha_RK5 > logger_;
+    UniversalDataLogger< aeif_cond_exp_gridprecise > logger_;
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spike_exc_;
     RingBuffer spike_inh_;
     RingBuffer currents_;
 
+    /** GSL ODE stuff */
+    gsl_odeiv_step* s_;    //!< stepping function
+    gsl_odeiv_control* c_; //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;  //!< evolution function
+    gsl_odeiv_system sys_; //!< struct describing system
+
     // IntergrationStep_ should be reset with the neuron on ResetNetwork,
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double_t step_;          //!< simulation step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by solver
+    double_t step_;          //!< step size in ms
+    double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**
      * Input current injected by CurrentEvent.
@@ -274,13 +288,8 @@ public:
    */
   struct Variables_
   {
-    /** initial value to normalise excitatory synaptic conductance */
-    double_t g0_ex_;
-
-    /** initial value to normalise inhibitory synaptic conductance */
-    double_t g0_in_;
-
     int_t RefractoryCounts_;
+    double_t RefractoryOffset_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -301,11 +310,11 @@ public:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< aeif_cond_alpha_RK5 > recordablesMap_;
+  static RecordablesMap< aeif_cond_exp_gridprecise > recordablesMap_;
 };
 
 inline port
-aeif_cond_alpha_RK5::send_test_event( Node& target, rport receptor_type, synindex, bool )
+aeif_cond_exp_gridprecise::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -314,7 +323,7 @@ aeif_cond_alpha_RK5::send_test_event( Node& target, rport receptor_type, syninde
 }
 
 inline port
-aeif_cond_alpha_RK5::handles_test_event( SpikeEvent&, rport receptor_type )
+aeif_cond_exp_gridprecise::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -322,7 +331,7 @@ aeif_cond_alpha_RK5::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline port
-aeif_cond_alpha_RK5::handles_test_event( CurrentEvent&, rport receptor_type )
+aeif_cond_exp_gridprecise::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -330,7 +339,7 @@ aeif_cond_alpha_RK5::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-aeif_cond_alpha_RK5::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+aeif_cond_exp_gridprecise::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -338,7 +347,7 @@ aeif_cond_alpha_RK5::handles_test_event( DataLoggingRequest& dlr, rport receptor
 }
 
 inline void
-aeif_cond_alpha_RK5::get_status( DictionaryDatum& d ) const
+aeif_cond_exp_gridprecise::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -348,7 +357,7 @@ aeif_cond_alpha_RK5::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-aeif_cond_alpha_RK5::set_status( const DictionaryDatum& d )
+aeif_cond_exp_gridprecise::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
@@ -366,57 +375,7 @@ aeif_cond_alpha_RK5::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-/**
- * Function computing right-hand side of ODE for the ODE solver.
- * @param y State vector (input).
- * @param f Derivatives (output).
- */
-inline void
-aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics( const double y[], double f[] )
-{
-  // a shorthand
-  typedef aeif_cond_alpha_RK5::State_ S;
-
-  // y[] is the current internal state of the integrator (yin), not the state vector in the node,
-  // node.S_.y[].
-
-  // The following code is verbose for the sake of clarity. We assume that a
-  // good compiler will optimize the verbosity away ...
-
-  // shorthand for state variables
-  const double_t& V = y[ S::V_M ];
-  const double_t& dg_ex = y[ S::DG_EXC ];
-  const double_t& g_ex = y[ S::G_EXC ];
-  const double_t& dg_in = y[ S::DG_INH ];
-  const double_t& g_in = y[ S::G_INH ];
-  const double_t& w = y[ S::W ];
-
-  const double_t I_syn_exc = g_ex * ( V - P_.E_ex );
-  const double_t I_syn_inh = g_in * ( V - P_.E_in );
-
-  // We pre-compute the argument of the exponential
-  const double_t exp_arg = ( V - P_.V_th ) / P_.Delta_T;
-
-  // Upper bound for exponential argument to avoid numerical instabilities
-  const double_t MAX_EXP_ARG = 10.;
-
-  // If the argument is too large, we clip it.
-  const double_t I_spike = P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
-
-  // dv/dt
-  f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh - w + P_.I_e
-                  + B_.I_stim_ ) / P_.C_m;
-  f[ S::DG_EXC ] = -dg_ex / P_.tau_syn_ex;
-  f[ S::G_EXC ] = dg_ex - g_ex / P_.tau_syn_ex; // Synaptic Conductance (nS)
-
-  f[ S::DG_INH ] = -dg_in / P_.tau_syn_in;
-  f[ S::G_INH ] = dg_in - g_in / P_.tau_syn_in; // Synaptic Conductance (nS)
-
-  // Adaptation current w.
-  f[ S::W ] = ( P_.a * ( V - P_.E_L ) - w ) / P_.tau_w;
-}
-
-
 } // namespace
 
-#endif // AEIF_COND_ALPHA_RK5_H
+#endif // HAVE_GSL_1_11
+#endif // AEIF_COND_EXP_GRIDPRECISE_H

@@ -20,28 +20,23 @@
  *
  */
 
-#include "aeif_cond_alpha_RK5.h"
 
-// C++ includes:
-#include <cmath>
-#include <cstdio>
-#include <iomanip>
-#include <iostream>
-#include <limits>
-
-// Includes from libnestutil:
-#include "numerics.h"
-
-// Includes from nestkernel:
 #include "exceptions.h"
-#include "kernel_manager.h"
+#include "aeif_cond_alpha_RK5.h"
+#include "network.h"
+#include "dict.h"
+#include "integerdatum.h"
+#include "doubledatum.h"
+#include "dictutils.h"
+#include "numerics.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
+#include <limits>
+
+#include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <cstdio>
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -94,6 +89,7 @@ nest::aeif_cond_alpha_RK5::Parameters_::Parameters_()
 
 nest::aeif_cond_alpha_RK5::State_::State_( const Parameters_& p )
   : r_( 0 )
+  , r_offset_( 0. )
 {
   y_[ 0 ] = p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
@@ -102,6 +98,7 @@ nest::aeif_cond_alpha_RK5::State_::State_( const Parameters_& p )
 
 nest::aeif_cond_alpha_RK5::State_::State_( const State_& s )
   : r_( s.r_ )
+  , r_offset_( s.r_offset_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
     y_[ i ] = s.y_[ i ];
@@ -114,6 +111,7 @@ nest::aeif_cond_alpha_RK5::State_& nest::aeif_cond_alpha_RK5::State_::operator=(
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
     y_[ i ] = s.y_[ i ];
   r_ = s.r_;
+  r_offset_ = s.r_offset_;
   return *this;
 }
 
@@ -303,7 +301,9 @@ nest::aeif_cond_alpha_RK5::calibrate()
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
+  V_.RefractoryOffset_ = P_.t_ref_ - V_.RefractoryCounts_ * Time::get_resolution().get_ms();
   assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  assert( V_.RefractoryOffset_ >= 0. );
 }
 
 /* ----------------------------------------------------------------
@@ -320,7 +320,7 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
   const long_t from,
   const long_t to ) // proceed in time
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -468,7 +468,7 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
+        network()->send( *this, se, lag );
       }
     } // while
 
@@ -492,12 +492,10 @@ nest::aeif_cond_alpha_RK5::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.spike_exc_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spike_inh_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() ); // keep conductances positive
 }
 
@@ -510,8 +508,7 @@ nest::aeif_cond_alpha_RK5::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
 }
 
 void

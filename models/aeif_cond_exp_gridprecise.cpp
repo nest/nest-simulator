@@ -404,6 +404,7 @@ nest::aeif_cond_exp_gridprecise::update( const Time& origin, const long_t from, 
       // note that (t+IntegrationStep > step) leads to integration over
       // (t, step] and afterwards setting t to step, but it does not
       // enforce setting IntegrationStep to step-t
+      
       while ( t < B_.step_ )
       {
          // store the previous values of V_m, w, and t

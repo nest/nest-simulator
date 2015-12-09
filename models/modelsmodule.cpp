@@ -46,6 +46,7 @@
 #include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_alpha_multisynapse.h"
 #include "aeif_cond_exp.h"
+#include "aeif_cond_exp_gridprecise.h"
 #include "amat2_psc_exp.h"
 #include "hh_cond_exp_traub.h"
 #include "hh_psc_alpha.h"
@@ -288,6 +289,7 @@ ModelsModule::init( SLIInterpreter* )
 #ifdef HAVE_GSL_1_11
   register_model< aeif_cond_alpha >( net_, "aeif_cond_alpha" );
   register_model< aeif_cond_exp >( net_, "aeif_cond_exp" );
+  register_model< aeif_cond_exp_gridprecise >( net_, "aeif_cond_exp_gridprecise" );
   register_model< ht_neuron >( net_, "ht_neuron" );
 #endif
   // This version of the AdEx model does not depend on GSL.

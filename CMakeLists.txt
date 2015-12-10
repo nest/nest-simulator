@@ -366,7 +366,7 @@ else(WITH_PYTHON)
 endif(WITH_PYTHON)
 
 # Find readline
-if(WITH_READLINE AND NOT IS_BLUEGENE)
+if(WITH_READLINE)
   if (NOT ${WITH_READLINE} STREQUAL "ON")
     # a path is set
     set(READLINE_ROOT_DIR ${WITH_READLINE})
@@ -400,7 +400,7 @@ if(WITH_OPENMP)
 endif(WITH_OPENMP)
 
 # MPI finding
-if(WITH_MPI OR IS_BLUEGENE)
+if(WITH_MPI)
   find_package(MPI)
   if(MPI_CXX_FOUND)
     set(HAVE_MPI ON)

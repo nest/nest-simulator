@@ -39,8 +39,7 @@ nobase_data_DATA=\
 	Potjans_2014/run_microcircuit.sh\
 	Potjans_2014/sim_params.sli\
 	Potjans_2014/spike_analysis.py\
-	Potjans_2014/user_params.sli\
-	structural_plasticity.py
+	Potjans_2014/user_params.sli
 
 install-data-hook:
 	chmod 755 $(DESTDIR)@PKGDOCDIR@/examples/music/conttest.py

@@ -3,8 +3,16 @@
 
 """ Script to initiate NEST and the functions """
 
+try:
+   import nngt
+   with_nngt = True
+except:
+   with_nngt = False
 import nest
+
+import time
 import numpy as np
+
 import matplotlib
 matplotlib.use('QT4Agg') # avoid tk related errors on multiple runs
 import matplotlib.cm as cm

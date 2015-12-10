@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-""" NEST scipt to invoke after init_nest_adexp.py """
+""" NEST script to invoke after init_nest_adexp.py """
 
 
 #
 #---
-# NEST
+# NEST model
 #--------------------
 
 nest.ResetKernel()
+nest.SetKernelStatus({"local_num_threads": 10})
 r_resolution = 0.01
 nest.SetKernelStatus({"resolution":r_resolution})
 d_step_current = 160.
@@ -36,14 +37,6 @@ lst_names = [ "aeif_cond_alpha", "aeif_cond_alpha_RK5", "aeif_cond_exp_gridpreci
 lst_neurons = [ nest.Create(name,params=di_param) for name in lst_names ]
 num_neurons = len(lst_neurons)
 
-#~ di_param_tmp = di_param.copy()
-#~ # get nullclines
-#~ daa_v_null_init = V_nullcline(r_min_voltage,0,1000,di_param_tmp)
-#~ di_param_tmp["I_e"] = d_step_current
-#~ daa_v_null = V_nullcline(r_min_voltage,0,1000,di_param_tmp)
-#~ daa_w_null = w_nullcline(r_min_voltage,0,1000,di_param_tmp)
-
-# create the step current generator to compare the dynamics of the different neurons
 step_gen = nest.Create("step_current_generator",1,{"amplitude_times": [50.,1500.], "amplitude_values":[d_step_current,0.]})
 multimeter = nest.Create("multimeter",num_neurons)
 nest.SetStatus(multimeter, {"withtime":True, "interval":r_resolution, "record_from":["V_m","w"]})
@@ -59,6 +52,7 @@ nest.Simulate(1600.0)
 #---
 # Plotting
 #--------------------
+
 plt.close("all")
 
 plt.figure(1)
@@ -75,26 +69,44 @@ plt.legend()
 plt.xlabel('Time (ms)')
 plt.ylabel('Voltage (mV)')
 
-#~ plt.figure(2)
-#~ plt.plot(daa_v_null_init[0],daa_v_null_init[1],'b:')
-#~ plt.plot(daa_v_null[0],daa_v_null[1],'b--')
-#~ plt.plot(daa_w_null[0],daa_w_null[1],'b--')
-#~ # insert nan at spike time to get discontinuous lines
-#~ pos = np.where(np.abs(da_voltage-di_param['V_reset'])<0.01)[0]
-#~ pos2 = np.where(np.abs(np.diff(da_voltage))>=5)[0]+1
-#~ pos = np.intersect1d(pos,pos2)
-#~ da_lim = da_adapt[pos-1]
-#~ pos += np.arange(0,2*len(pos),2).astype(int)
-#~ for i,val in enumerate(pos):
-	#~ da_adapt = np.insert(da_adapt, val, [da_lim[i],np.nan])
-	#~ da_voltage = np.insert(da_voltage, val, [di_param['V_peak'],np.nan])
-#~ plt.plot(da_voltage,da_adapt,'k')
-#~ plt.scatter(np.repeat(di_param['V_reset'],len(pos)),da_lim+di_param['b'],edgecolors='k',facecolors='none',marker='s')
-#~ plt.scatter(di_param['V_m'],0,edgecolors='k',facecolors='k',marker='o')
-#~ plt.scatter(da_voltage[-1],da_adapt[-1],edgecolors='k',facecolors='none',marker='+')
-#~ 
-#~ plt.xlim(r_min_voltage, -35)
-#~ plt.ylim(-150, 200)
-#~ plt.xlabel('Voltage (mV)')
-#~ plt.ylabel('Current (pA)')
+
+#
+#---
+# Time comparison
+#--------------------
+
+if with_nngt:   
+   # model to use
+   models = ["aeif_cond_exp" , "aeif_cond_exp_gridprecise" ]
+   
+   # time the simulations for each neural model and network size
+   sim_time = 20.
+   lst_network_sizes = np.arange(100, 4000, 500)
+   num_runs = len(lst_network_sizes)
+   lst_times = [ np.zeros(num_runs) for _ in range(len(models)) ]
+   for i,size in enumerate(lst_network_sizes):
+      for j,model in enumerate(models):
+         # create the population of neurons and the synaptic strength distribution
+         pop = nngt.NeuralPop.ei_population(size, en_model=model, in_model=model)
+         # synaptic weight
+         weight = 120. if "exp" in model else 33.
+         # create the network
+         graph = nngt.SpatialNetwork(pop)
+         nngt.generation.erdos_renyi(density=0.09, from_graph=graph)
+         # in nest
+         nest.ResetKernel()
+         nest.SetKernelStatus({"local_num_threads": 10})
+         subnet, gids = nngt.simulation.make_nest_network(graph)
+         dc = nest.Create("dc_generator",params={"amplitude": 800.})
+         nest.Connect(dc, gids[::3])
+         
+         start = time.time()
+         nest.Simulate(sim_time)
+         lst_times[j][i] = time.time() - start
+   
+   fig, ax = plt.subplots()
+   for i, model in enumerate(models):
+      ax.plot(lst_network_sizes, lst_times[i], label=model)
+   print("done")
+plt.legend()
 plt.show()

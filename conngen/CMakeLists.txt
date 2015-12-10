@@ -26,5 +26,5 @@ install(TARGETS conngen
   RUNTIME DESTINATION ${INSTALL_BIN_DIR}
 )
 
-install(FILES sli/conngen-interface.sli
+install(DIRECTORY sli
   DESTINATION ${INSTALL_DATA_DIR})

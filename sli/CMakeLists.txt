@@ -83,8 +83,8 @@ target_include_directories(sli_lib PRIVATE
 )
 
 target_compile_definitions(sli_lib PRIVATE 
-  -DPKGDATADIR=\"${CMAKE_INSTALL_PREFIX}/share/nest\"
-  -DPKGDOCDIR=\"${CMAKE_INSTALL_PREFIX}/share/doc\"
+  -DPKGDATADIR=\"${PKGDATADIR}\"
+  -DPKGDOCDIR=\"${PKGDOCDIR}\"
   -DPKGSOURCEDIR=\"${PROJECT_SOURCE_DIR}\"
 )
 

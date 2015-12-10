@@ -47,4 +47,24 @@ install(TARGETS topology
 install(FILES sli/topology-interface.sli
   DESTINATION ${INSTALL_DATA_DIR}/sli)
 
-add_subdirectory(doc)
+install(FILES doc/Topology_UserManual.pdf
+  DESTINATION ${INSTALL_DOC_DIR}/topology)
+
+if(HAVE_PYTHON)
+  install(CODE "execute_process(
+    COMMAND ${PYTHON} setup.py build --build-base=${CMAKE_CURRENT_BINARY_DIR}/build
+                               install --prefix=${CMAKE_INSTALL_PREFIX}
+                                       --install-lib=${PYEXECDIR}
+                                       --install-scripts=${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}
+                                       --install-data=${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})"
+  )
+
+  file(GLOB topo_examples "examples/*")
+  install(FILES ${topo_examples}
+    DESTINATION ${INSTALL_DOC_DIR}/examples/topology
+  )
+  install(DIRECTORY testsuite
+    DESTINATION ${INSTALL_DOC_DIR}/topology
+  )
+endif(HAVE_PYTHON)

@@ -1,16 +1,9 @@
-set(DOC_DATA 
-  ../LICENSE
-)
-set(DOC_EXTRA_DIST
-  doc_header.txt README.md
-)
-set(nobase_data_DATA
-  conngen/conngen.txt
-  index.html
-  quickref.html
-  doc_header.txt
-  model_details/noise_generator.ipynb
-)
+
+install(DIRECTORY conngen model_details
+  DESTINATION ${INSTALL_DOC_DIR})
+
+install(FILES index.html quickref.html doc_header.txt
+  DESTINATION ${INSTALL_DOC_DIR})
 
 if(DOXYGEN_FOUND)
   configure_file(

@@ -30,12 +30,11 @@ set(PKGDOCDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR})
 set(TESTSUITE_BASEDIR ${PKGDOCDIR})
 
 # on OS X
-#set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 set(CMAKE_MACOSX_RPATH ON)
 
 # set the rpath only when installed
 # https://cmake.org/Wiki/CMake_RPATH_handling#Mac_OS_X_and_the_RPATH
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}")
 
 # CPack stuff
 set(CPACK_GENERATOR TGZ)
@@ -156,7 +155,7 @@ option(LIBNEUROSIM "Request the use of libneurosim; optionally give the director
 set(WITH_OPTIMIZE OFF CACHE STRING "Enable user defined optimizations.")
 set(WITH_WARNING OFF CACHE STRING "Enable user defined warnings.")
 option(GSL_PREFIX "Prefix where GSL is installed. (optional)" OFF)
-option(WITH_READLINE "Find a readline library [default=ON]. To ignore readline set to OFF. To set a specific readline, set install path." ON)
+option(WITH_READLINE "Find a readline library [default=ON]. To set a specific readline, set install path." ON)
 option(WITH_OPENMP "Enable OpenMP multithreading [default=ON]. Optional: set OMP flag." ON)
 option(WITH_PYTHON "Find a Python interpreter [default=ON]. To ignore the Python set to OFF. To set a specific Python, set path." ON)
 option(EXTERNAL_MODULES "External modules to be linked in. Devided by ; ." OFF)
@@ -219,7 +218,7 @@ else()
 endif(ENABLE_BLUEGENE)
 
 # build static or shared libraries
-if( STATIC_LIBRARIES OR IS_BLUEGENE )
+if( STATIC_LIBRARIES )
   set(BUILD_SHARED_LIBS OFF)
   if(UNIX OR APPLE)
     # On Linux .a is the static library suffix, on Mac OS X .lib can also
@@ -242,7 +241,7 @@ foreach(mod ${SLI_MODULES})
   set(STATIC_MODULES_INDCLUDE_DIRS ${STATIC_MODULES_INDCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/${mod} )
 endforeach(mod)
 
-if( STATIC_LIBRARIES OR IS_BLUEGENE )
+if( STATIC_LIBRARIES )
   # TODO include path?
   # TODO lib path?
   if( EXTERNAL_MODULES )
@@ -291,7 +290,7 @@ endif( TICS_PER_STEP )
 ################################################################################
 
 # Only find libLTDL if we link dynamically
-if( NOT STATIC_LIBRARIES AND NOT IS_BLUEGENE )
+if( NOT STATIC_LIBRARIES )
   find_package(LTDL)
   if(LTDL_FOUND)
     set(HAVE_LIBLTDL ON)
@@ -361,7 +360,7 @@ if(WITH_PYTHON)
 
   find_package(Cython)
 
-  set(PYEXECDIR ${CMAKE_INSTALL_PREFIX}/lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages)
+  set(PYEXECDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages)
 else(WITH_PYTHON)
   set(HAVE_PYTHON OFF)
 endif(WITH_PYTHON)
@@ -474,6 +473,11 @@ configure_file(
 )
 
 configure_file(
+  "${PROJECT_SOURCE_DIR}/topology/setup.py.in"
+  "${PROJECT_BINARY_DIR}/topology/setup.py" @ONLY
+)
+
+configure_file(
   "${PROJECT_SOURCE_DIR}/testsuite/do_tests.sh.in"
   "${PROJECT_BINARY_DIR}/testsuite/do_tests.sh" @ONLY
 )
@@ -504,9 +508,9 @@ configure_file(
 
 add_custom_target(installcheck
   COMMAND ${CMAKE_MAKE_PROGRAM} install
-  COMMAND ${CMAKE_COMMAND} -E env PATH="${CMAKE_INSTALL_PREFIX}/bin:$ENV{PATH}" 
+  COMMAND ${CMAKE_COMMAND} -E env PATH="${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}:$ENV{PATH}" 
                                   PYTHON="${PYTHON}"
-                                  PYTHONPATH="${PYEXECDIR}:$(PYTHONPATH)"
+                                  PYTHONPATH="${PYEXECDIR}:$ENV{PYTHONPATH}"
                                   exec_prefix="${CMAKE_INSTALL_PREFIX}"
           ${PKGDATADIR}/extras/do_tests.sh --test-pynest --source-dir=${PROJECT_SOURCE_DIR}
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
@@ -517,6 +521,9 @@ add_custom_target(check
     COMMAND ${CMAKE_COMMAND} -E env CTEST_OUTPUT_ON_FAILURE=1 
       ${CMAKE_CTEST_COMMAND} -C $<CONFIG>
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+install(FILES LICENSE README.md NEWS
+  DESTINATION ${INSTALL_DOC_DIR})
 
 ################################################################################
 ##################           Configuration Summary            ##################
@@ -657,7 +664,7 @@ if( HAVE_PYTHON )
 endif( HAVE_PYTHON )
 message("To set necessary environment variables, add the following line")
 message("to your ~/.bashrc :")
-message("  source ${CMAKE_INSTALL_PREFIX}/bin/nest_vars.sh")
+message("  source ${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}/nest_vars.sh")
 message("")
 message("--------------------------------------------------------------------------------")
 message("")

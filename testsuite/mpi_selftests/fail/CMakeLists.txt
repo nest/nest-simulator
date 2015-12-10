@@ -4,7 +4,7 @@ if(HAVE_MPI)
   
   foreach(script ${scripts})
     add_test(NAME mpi_selftests/fail/${script}
-      COMMAND ${CMAKE_INSTALL_PREFIX}/bin/nest_indirect
+      COMMAND ${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}/nest_indirect
       ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR}/mpi_selftests/fail/${script} # use the installed version
     )
     set_tests_properties(mpi_selftests/fail/${script}

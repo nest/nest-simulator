@@ -29,7 +29,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
         nest.set_verbosity('M_INFO')
-        self.exclude_synapse_model = ['stdp_dopamine_synapse', 'stdp_dopamine_synapse_hpc', 'gap_junction']
+        self.exclude_synapse_model = ['stdp_dopamine_synapse', 'stdp_dopamine_synapse_hpc', 'gap_junction', 'gap_junction_lbl']
 
     def test_register_synapses(self):
         for syn_model in nest.Models('synapses'):

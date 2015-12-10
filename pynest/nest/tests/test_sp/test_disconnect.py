@@ -28,7 +28,7 @@ class TestDisconnectSingle(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
         nest.set_verbosity('M_ERROR')
-        self.exclude_synapse_model = ['stdp_dopamine_synapse', 'stdp_dopamine_synapse_hpc', 'gap_junction']
+        self.exclude_synapse_model = ['stdp_dopamine_synapse', 'stdp_dopamine_synapse_hpc', 'gap_junction', 'gap_junction_lbl']
 
    
     def test_synapse_deletion_one_to_one_no_sp(self):

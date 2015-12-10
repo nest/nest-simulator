@@ -35,7 +35,7 @@
  * ---------------------------------------------------------------- */
 
 nest::correlomatrix_detector::Parameters_::Parameters_()
-  : delta_tau_( Time::ms( 0.5 ) )
+  : delta_tau_( 5 * Time::get_resolution() )
   , tau_max_( 10 * delta_tau_ )
   , Tstart_( Time::ms( 0.0 ) )
   , Tstop_( Time::pos_inf() )

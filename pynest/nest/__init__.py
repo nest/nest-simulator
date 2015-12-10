@@ -26,16 +26,15 @@ Initializer of PyNEST.
 import sys, os
 
 # This is a workaround to avoid segmentation faults when importing
-# scipy after nest. See https://github.com/numpy/numpy/issues/2521
-# and 
+# scipy *after* nest. See https://github.com/numpy/numpy/issues/2521
 try:
     import scipy
 except:
     pass
 
 
-# The following is a workaround to make MPI-enabled NEST import
-# properly. The basic problem is that the shared object pynestkernel
+# This is a workaround to make MPI-enabled NEST import properly. The
+# underlying problem is that the shared object pynestkernel
 # dynamically opens other libraries that open other libraries...
 try:
     try:
@@ -44,25 +43,24 @@ try:
         import DLFCN as dl
     sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)
 except:
-    # this is a hack for Python 2.6 on Mac, where RTDL_NOW is nowhere to
-    # be found. See ticket #397
+    # this is a hack for Python 2.6 on Mac, where RTDL_NOW is nowhere
+    # to be found. See trac ticket #397
     import ctypes
     sys.setdlopenflags(ctypes.RTLD_GLOBAL) 
 
+
 from . import pynestkernel as _kernel
-from . import hl_api
+import lib.hl_api_helper as hl_api
 
 engine = _kernel.NESTEngine()
 
-sli_push = engine.push
-hl_api.sps = sli_push
-
-sli_pop = engine.pop
-hl_api.spp = sli_pop
-
+sli_push = hl_api.sps = engine.push
+sli_pop = hl_api.spp = engine.pop
 hl_api.pcd = engine.push_connection_datums
+hl_api.kernel = _kernel
 
 initialized = False
+
 
 def catching_sli_run(cmd):
     """
@@ -78,12 +76,9 @@ def catching_sli_run(cmd):
         message = sli_pop()
         commandname = sli_pop()
         engine.run('clear')
-        raise hl_api.NESTError("{0} in {1}{2}".format(errorname, commandname, message))
+        raise _kernel.NESTError("{0} in {1}{2}".format(errorname, commandname, message))
 
-
-sli_run = catching_sli_run
-hl_api.sr = sli_run
-
+sli_run = hl_api.sr = catching_sli_run
 
 def sli_func(s, *args, **kwargs):
     """This function is a convenience function for executing the 
@@ -112,7 +107,7 @@ def sli_func(s, *args, **kwargs):
         if kwargs['litconv']:
             slifun = 'sli_func_litconv'
     elif len(kwargs) > 0:
-        hl_api.NESTError("'namespace' and 'litconv' are the only valid keyword arguments.")
+        _kernel.NESTError("'namespace' and 'litconv' are the only valid keyword arguments.")
     
     sli_push(args)       # push array of arguments on SLI stack
     sli_push(s)          # push command string
@@ -135,7 +130,7 @@ def init(argv):
     global initialized
 
     if initialized:
-        raise hl_api.NESTError("NEST already initialized.")
+        raise _kernel.NESTError("NEST already initialized.")
         return
 
     quiet = False
@@ -157,12 +152,12 @@ def init(argv):
         else:
             try:
                 import keyword
-                keyword.kwlist += hl_api.Models()
+                keyword.kwlist += Models()
             except ImportError:
                 pass
 
     else:
-        hl_api.NESTError("Initiatization of NEST failed.")
+        _kernel.NESTError("Initiatization of NEST failed.")
 
 
 def test():
@@ -178,8 +173,16 @@ def test():
 
     hl_api.set_debug(debug)
 
+from .pynestkernel import *
+from lib.hl_api_helper import *
+
+# We search through the subdirectory "lib" of the "nest" module
+# directory and import the content of all Python files therein into
+# the global namespace. This makes the API functions of PyNEST itself
+# and those of extra modules available to the user.
+for name in os.listdir(os.path.join(os.path.dirname(__file__), "lib")):
+    if name.endswith(".py") and not name.startswith('__'):
+        exec("from lib.{0} import *".format(name[:-3]))
 
 if not 'DELAY_PYNEST_INIT' in os.environ:
     init(sys.argv)
-
-from .hl_api import *

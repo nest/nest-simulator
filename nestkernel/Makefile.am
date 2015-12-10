@@ -38,6 +38,7 @@ libnest_la_SOURCES=\
 		sibling_container.h sibling_container.cpp\
 		subnet.h subnet.cpp\
 		connection.h\
+		connection_label.h\
 		common_properties_hom_w.h\
 		syn_id_delay.h\
 		connector_base.h connector_base.cpp\
@@ -78,8 +79,10 @@ libnest_la_SOURCES=\
 		conn_parameter.h conn_parameter.cpp\
 		conn_builder.h conn_builder.cpp\
 		conn_builder_factory.h\
-		music_event_handler.h music_event_handler.cpp
-
+		music_event_handler.h music_event_handler.cpp\
+		synaptic_element.h synaptic_element.cpp\
+		growth_curve.h growth_curve.cpp\
+		growth_curve_factory.h
 libnest_la_LIBADD= @LIBLTDL@ @LIBADD_DL@
 
 EXTRA_DIST= README.md

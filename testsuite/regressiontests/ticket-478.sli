@@ -43,19 +43,32 @@ Author: Hans Ekkehard Plesser, 2010-10-22
 
 M_ERROR setverbosity
 
+
+% Gap junctions not relevant for spiking devices as senders
+/excluded_synapses [ /gap_junction ] def
+
 % find all static and plastic synapses
-% we identifiy as static all synapses that have the same default parameter names
-% as static_synapse
+% we identify as static all synapses that have the same default parameter names
+% as static_synapse or static_synapse_lbl
 /static_defaults
   /static_synapse GetDefaults keys { cvs } Map Sort
 def
+/static_lbl_defaults
+  /static_synapse_lbl GetDefaults keys { cvs } Map Sort
+def
 
 /static_syn_models
-  synapsedict keys { GetDefaults keys { cvs } Map Sort static_defaults eq } Select
+  synapsedict keys
+  { excluded_synapses exch MemberQ not } Select
+  { GetDefaults keys { cvs } Map Sort static_defaults eq } Select
+  { GetDefaults keys { cvs } Map Sort static_lbl_defaults eq } Select
 def
 
 /plastic_syn_models
-  synapsedict keys { GetDefaults keys { cvs } Map Sort static_defaults neq } Select
+  synapsedict keys
+  { excluded_synapses exch MemberQ not } Select
+  { GetDefaults keys { cvs } Map Sort static_defaults neq } Select
+  { GetDefaults keys { cvs } Map Sort static_lbl_defaults neq } Select
 def
 
 % We perform the tests first for all relevant generators

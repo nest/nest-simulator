@@ -303,7 +303,7 @@ TokenArrayObj::reduce( Token* first, Token* last )
 
   // First step: shift all elements to the begin of
   // the array.
-  Token *i = p, *l = first;
+  Token* i = p, * l = first;
 
   if ( first > begin() )
   {
@@ -582,7 +582,7 @@ bool TokenArrayObj::operator==( const TokenArrayObj& a ) const
   if ( size() != a.size() )
     return false;
 
-  Token *i = begin(), *j = a.begin();
+  Token* i = begin(), * j = a.begin();
   while ( i < end() )
     if ( !( *i++ == *j++ ) )
       return false;

@@ -81,8 +81,13 @@ namespace nest
 
 #ifdef HAVE_LONG_LONG
 typedef long long tic_t;
+#ifdef IS_K
+const tic_t tic_t_max = LLONG_MAX;
+const tic_t tic_t_min = LLONG_MIN;
+#else
 const tic_t tic_t_max = LONG_LONG_MAX;
 const tic_t tic_t_min = LONG_LONG_MIN;
+#endif
 #else
 typedef long tic_t;
 const tic_t tic_t_max = LONG_MAX;
@@ -179,6 +184,29 @@ typedef double_t weight;
 typedef long_t delay;
 const long_t delay_max = long_t_max;
 const long_t delay_min = long_t_min;
+
+
+/**
+ * enum type of signal conveyed by spike events of a node.
+ * These types are used upon connect to check if spikes sent by one
+ * neuron are intepreted the same way by receiving neuron.
+ *
+ * Each possible signal that may be represented (currently SPIKE and BINARY)
+ * is interpreted as a separate bit flag. This way, upon connection, we determine
+ * by a bitwise AND operation if sender and receiver are compatible.
+ * The check takes place in connection::check_connection().
+ *
+ * A device, such as the spike-generator or spike_detector,
+ * that can in a meaningful way be connected to either neuron model
+ * can use the wildcard ALL, that will match any connection partner.
+ */
+enum SignalType
+{
+  NONE = 0,
+  SPIKE = 1,
+  BINARY = 2,
+  ALL = SPIKE | BINARY
+};
 }
 
 #endif

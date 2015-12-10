@@ -49,6 +49,8 @@
 #include "nest_timemodifier.h"
 #include "nest_timeconverter.h"
 
+#include "connector_model.h"
+
 #ifdef N_DEBUG
 #undef N_DEBUG
 #endif
@@ -73,6 +75,8 @@ std::vector< nest::delay > nest::Scheduler::slice_moduli_;
 
 nest::delay nest::Scheduler::max_delay_ = 1;
 nest::delay nest::Scheduler::min_delay_ = 1;
+nest::size_t nest::Scheduler::prelim_interpolation_order = 3;
+nest::double_t nest::Scheduler::prelim_tol = 0.0001;
 
 const nest::delay nest::Scheduler::comm_marker_ = 0;
 
@@ -86,6 +90,7 @@ nest::Scheduler::Scheduler( Network& net )
   , exit_counter_( 0 )
   , nodes_vec_( n_threads_ )
   , nodes_vec_network_size_( 0 ) // zero to force update
+  , nodes_prelim_up_vec_( n_threads_ )
   , clock_( Time::tic( 0L ) )
   , slice_( 0L )
   , to_do_( 0L )
@@ -95,6 +100,8 @@ nest::Scheduler::Scheduler( Network& net )
   , terminate_( false )
   , off_grid_spiking_( false )
   , print_time_( false )
+  , needs_prelim_update_( false )
+  , max_num_prelim_iterations_( 15 )
   , rng_()
 {
   net_ = &net;
@@ -171,6 +178,8 @@ nest::Scheduler::finalize_()
   global_grid_spikes_.clear();
   local_offgrid_spikes_.clear();
   global_offgrid_spikes_.clear();
+
+  delete_secondary_events_prototypes();
 
   initialized_ = false;
 }
@@ -277,9 +286,21 @@ nest::Scheduler::configure_spike_buffers_()
     for ( size_t k = 0; k < offgrid_spike_register_[ j ].size(); ++k )
       offgrid_spike_register_[ j ][ k ].clear();
 
-  // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces.
-  int send_buffer_size = n_threads_ * min_delay_ > 2 ? n_threads_ * min_delay_ : 2;
+
+  // this should also clear all contained elements
+  // so no loop required
+  secondary_events_buffer_.clear();
+  secondary_events_buffer_.resize( n_threads_ );
+
+
+  // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces
+  // plus the fiunal marker and the done flag for iterations
+  // + 1 for the final markers of each thread (invalid_synindex) of secondary events
+  // + 1 for the done flag (true) of each process
+  int send_buffer_size = n_threads_ * min_delay_ + 2 > 4 ? n_threads_ * min_delay_ + 2 : 4;
+
   int recv_buffer_size = send_buffer_size * Communicator::get_num_processes();
+
   Communicator::set_buffer_sizes( send_buffer_size, recv_buffer_size );
 
   // DEC cxx required 0U literal, HEP 2007-03-26
@@ -287,8 +308,21 @@ nest::Scheduler::configure_spike_buffers_()
   local_grid_spikes_.resize( send_buffer_size, 0U );
   local_offgrid_spikes_.clear();
   local_offgrid_spikes_.resize( send_buffer_size, OffGridSpike( 0, 0.0 ) );
+
   global_grid_spikes_.clear();
   global_grid_spikes_.resize( recv_buffer_size, 0U );
+
+  // insert the end marker for payload event (==invalid_synindex)
+  // and insert the done flag (==true)
+  // after min_delay 0's (== comm_marker)
+  // use the template functions defined in event.h
+  // this only needs to be done for one process, because displacements is set to 0
+  // so all processes initially read out the same positions in the
+  // global spike buffer
+  std::vector< uint_t >::iterator pos = global_grid_spikes_.begin() + n_threads_ * min_delay_;
+  write_to_comm_buffer( invalid_synindex, pos );
+  write_to_comm_buffer( true, pos );
+
   global_offgrid_spikes_.clear();
   global_offgrid_spikes_.resize( recv_buffer_size, OffGridSpike( 0, 0.0 ) );
 
@@ -407,6 +441,8 @@ nest::Scheduler::prepare_simulation()
   update_nodes_vec_();
   prepare_nodes();
 
+  create_secondary_events_prototypes();
+
 #ifdef HAVE_MUSIC
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
@@ -505,9 +541,15 @@ nest::Scheduler::resume()
 void
 nest::Scheduler::update()
 {
+
 #ifdef _OPENMP
   net_->message( SLIInterpreter::M_INFO, "Scheduler::update", "Simulating using OpenMP." );
 #endif
+
+  // to store done values of the different threads
+  std::vector< bool > done;
+  bool done_all = true;
+  delay old_to_step;
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised( net_->get_num_threads() );
 // parallel section begins
@@ -551,6 +593,81 @@ nest::Scheduler::update()
 #endif
       }
 
+      // preliminary update of nodes, e.g. for gapjunctions
+      if ( needs_prelim_update_ )
+      {
+#pragma omp single
+        {
+          // if the end of the simulation is in the middle
+          // of a min_delay_ step, we need to make a complete
+          // step in the preliminary update and only do
+          // the partial step in the final update
+          // needs to be done in omp single since to_step_ is a scheduler variable
+          old_to_step = to_step_;
+          if ( to_step_ < min_delay_ )
+            to_step_ = min_delay_;
+        }
+
+        bool max_iterations_reached = true;
+        for ( long_t n = 0; n < max_num_prelim_iterations_; ++n )
+        {
+          bool done_p = true;
+
+          // this loop may be empty for those threads
+          // that do not have any nodes requiring preliminary update
+          for ( i = nodes_prelim_up_vec_[ t ].begin(); i != nodes_prelim_up_vec_[ t ].end(); ++i )
+            done_p = prelim_update_( *i ) && done_p;
+
+// add done value of thread p to done vector
+#pragma omp critical
+          done.push_back( done_p );
+// parallel section ends, wait until all threads are done -> synchronize
+#pragma omp barrier
+
+// the following block is executed by a single thread
+// the other threads wait at the end of the block
+#pragma omp single
+          {
+            // set done_all
+            for ( size_t i = 0; i < done.size(); i++ )
+              done_all = done[ i ] && done_all;
+
+            // gather SecondaryEvents (e.g. GapJunctionEvents)
+            gather_events_( done_all );
+
+            // reset done and done_all
+            //(needs to be in the single threaded part)
+            done_all = true;
+            done.clear();
+          }
+
+          // deliver SecondaryEvents generated during preliminary update
+          // returns the done value over all threads
+          done_p = deliver_events_( t );
+
+          if ( done_p )
+          {
+            max_iterations_reached = false;
+            break;
+          }
+        } // of for (max_num_prelim_iterations_) ...
+
+#pragma omp single
+        {
+          to_step_ = old_to_step;
+          if ( max_iterations_reached )
+          {
+            std::string msg =
+              String::compose( "Maximum number of iterations reached at interval %1-%2 ms",
+                clock_.get_ms(),
+                clock_.get_ms() + to_step_ * Time::get_resolution().get_ms() );
+            net_->message( SLIInterpreter::M_WARNING, "Scheduler::prelim_update", msg );
+          }
+        }
+
+      } // of if(needs_prelim_update_)
+      // end preliminary update
+
       for ( i = nodes_vec_[ t ].begin(); i != nodes_vec_[ t ].end(); ++i )
       {
         // We update in a parallel region. Therefore, we need to catch exceptions
@@ -577,7 +694,7 @@ nest::Scheduler::update()
 #pragma omp master
       {
         if ( to_step_ == min_delay_ ) // gather only at end of slice
-          gather_events_();
+          gather_events_( true );
 
         advance_time_();
 
@@ -618,12 +735,13 @@ nest::Scheduler::prepare_nodes()
 
   /* We initialize the buffers of each node and calibrate it. */
 
-  size_t num_active_nodes = 0; // counts nodes that will be updated
+  size_t num_active_nodes = 0;        // counts nodes that will be updated
+  size_t num_active_prelim_nodes = 0; // counts nodes that need preliminary updates
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised( net_->get_num_threads() );
 
 #ifdef _OPENMP
-#pragma omp parallel reduction( + : num_active_nodes )
+#pragma omp parallel reduction( + : num_active_nodes, num_active_prelim_nodes )
   {
     size_t t = net_->get_thread_id();
 #else
@@ -641,7 +759,11 @@ nest::Scheduler::prepare_nodes()
       {
         prepare_node_( *it );
         if ( not( *it )->is_frozen() )
+        {
           ++num_active_nodes;
+          if ( ( *it )->needs_prelim_update() )
+            ++num_active_prelim_nodes;
+        }
       }
     }
     catch ( std::exception& e )
@@ -659,11 +781,24 @@ nest::Scheduler::prepare_nodes()
     if ( exceptions_raised.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 
-  net_->message(
-    SLIInterpreter::M_INFO,
-    "Scheduler::prepare_nodes",
-    String::compose(
-      "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
+  if ( num_active_prelim_nodes == 0 )
+  {
+    net_->message(
+      SLIInterpreter::M_INFO,
+      "Scheduler::prepare_nodes",
+      String::compose(
+        "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
+  }
+  else
+  {
+    net_->message( SLIInterpreter::M_INFO,
+      "Scheduler::prepare_nodes",
+      String::compose( "Simulating %1 local node%2 of which %3 need%4 prelim_update.",
+                     num_active_nodes,
+                     num_active_nodes == 1 ? "" : "s",
+                     num_active_prelim_nodes,
+                     num_active_prelim_nodes == 1 ? "s" : "" ) );
+  }
 }
 
 void
@@ -694,22 +829,30 @@ nest::Scheduler::update_nodes_vec_()
 
       /* We clear the existing nodes_vec_ and then rebuild it. */
       assert( nodes_vec_.size() == n_threads_ );
+      assert( nodes_prelim_up_vec_.size() == n_threads_ );
 
       for ( index t = 0; t < n_threads_; ++t )
       {
         nodes_vec_[ t ].clear();
+        nodes_prelim_up_vec_[ t ].clear();
 
         // Loops below run from index 1, because index 0 is always the root network,
         // which is never updated.
         size_t num_thread_local_nodes = 0;
+        size_t num_thread_local_prelim_nodes = 0;
         for ( size_t idx = 1; idx < net_->local_nodes_.size(); ++idx )
         {
           Node* node = net_->local_nodes_.get_node_by_index( idx );
           if ( !node->is_subnet() && ( static_cast< index >( node->get_thread() ) == t
                                        || node->num_thread_siblings_() > 0 ) )
+          {
             num_thread_local_nodes++;
+            if ( node->needs_prelim_update() )
+              num_thread_local_prelim_nodes++;
+          }
         }
         nodes_vec_[ t ].reserve( num_thread_local_nodes );
+        nodes_prelim_up_vec_[ t ].reserve( num_thread_local_prelim_nodes );
 
         for ( size_t idx = 1; idx < net_->local_nodes_.size(); ++idx )
         {
@@ -732,11 +875,25 @@ nest::Scheduler::update_nodes_vec_()
             // these nodes cannot be subnets
             node->set_thread_lid( nodes_vec_[ t ].size() );
             nodes_vec_[ t ].push_back( node );
+
+            if ( node->needs_prelim_update() )
+              nodes_prelim_up_vec_[ t ].push_back( node );
           }
         }
       } // end of for threads
 
       nodes_vec_network_size_ = net_->size();
+
+      needs_prelim_update_ = false;
+      // needs prelim update indicates, whether at least one
+      // of the threads has a neuron that requires preliminary
+      // update
+      // all threads then need to perform a preliminary update
+      // step, because gather_events() has to be done in a
+      // openmp single section
+      for ( index t = 0; t < n_threads_; ++t )
+        if ( nodes_prelim_up_vec_[ t ].size() > 0 )
+          needs_prelim_update_ = true;
     }
 #ifdef _OPENMP
   } // end of omp critical region
@@ -1106,6 +1263,40 @@ nest::Scheduler::set_status( DictionaryDatum const& d )
     grng_->seed( gseed );
 
   } // if grng_seed
+
+  // set the number of preliminary update cycles
+  // e.g. for the implementation of gap junctions
+  long nprelim;
+  if ( updateValue< long >( d, "max_num_prelim_iterations", nprelim ) )
+  {
+    if ( nprelim < 0 )
+      net_->message( SLIInterpreter::M_ERROR,
+        "Scheduler::set_status",
+        "Number of preliminary update iterations must be zero or positive." );
+    else
+      max_num_prelim_iterations_ = nprelim;
+  }
+
+  double_t tol;
+  if ( updateValue< double_t >( d, "prelim_tol", tol ) )
+  {
+    if ( tol < 0.0 )
+      net_->message(
+        SLIInterpreter::M_ERROR, "Scheduler::set_status", "Tolerance must be zero or positive" );
+    else
+      prelim_tol = tol;
+  }
+
+  long interp_order;
+  if ( updateValue< long >( d, "prelim_interpolation_order", interp_order ) )
+  {
+    if ( ( interp_order < 0 ) || ( interp_order == 2 ) || ( interp_order > 3 ) )
+      net_->message( SLIInterpreter::M_ERROR,
+        "Scheduler::set_status",
+        "Interpolation order must be 0, 1, or 3." );
+    else
+      prelim_interpolation_order = interp_order;
+  }
 }
 
 void
@@ -1140,6 +1331,10 @@ nest::Scheduler::get_status( DictionaryDatum& d ) const
   def< bool >( d, "off_grid_spiking", off_grid_spiking_ );
   def< long >( d, "send_buffer_size", Communicator::get_send_buffer_size() );
   def< long >( d, "receive_buffer_size", Communicator::get_recv_buffer_size() );
+
+  def< long >( d, "max_num_prelim_iterations", max_num_prelim_iterations_ );
+  def< long >( d, "prelim_interpolation_order", prelim_interpolation_order );
+  def< double >( d, "prelim_tol", prelim_tol );
 }
 
 void
@@ -1245,14 +1440,14 @@ nest::Scheduler::create_grng_( const bool ctor_call )
   grng_->seed( s );
 }
 
-
 void
-nest::Scheduler::collocate_buffers_()
+nest::Scheduler::collocate_buffers_( bool done )
 {
   // count number of spikes in registers
   int num_spikes = 0;
   int num_grid_spikes = 0;
   int num_offgrid_spikes = 0;
+  int uintsize_secondary_events = 0;
 
   std::vector< std::vector< std::vector< uint_t > > >::iterator i;
   std::vector< std::vector< uint_t > >::iterator j;
@@ -1266,7 +1461,19 @@ nest::Scheduler::collocate_buffers_()
     for ( jt = it->begin(); jt != it->end(); ++jt )
       num_offgrid_spikes += jt->size();
 
-  num_spikes = num_grid_spikes + num_offgrid_spikes;
+  // here we need to count the secondary events and take them
+  // into account in the size of the buffers
+  // assume that we already serialized all secondary
+  // events into the secondary_events_buffer_
+  // and that secondary_events_buffer_.size() contains the correct size
+  // of this buffer in units of uint_t
+
+  for ( j = secondary_events_buffer_.begin(); j != secondary_events_buffer_.end(); ++j )
+    uintsize_secondary_events += j->size();
+
+  // +1 because we need one end marker invalid_synindex
+  // +1 for bool-value done
+  num_spikes = num_grid_spikes + num_offgrid_spikes + uintsize_secondary_events + 2;
   if ( !off_grid_spiking_ ) // on grid spiking
   {
     // make sure buffers are correctly sized
@@ -1284,6 +1491,7 @@ nest::Scheduler::collocate_buffers_()
     // collocate the entries of spike_registers into local_grid_spikes__
     std::vector< uint_t >::iterator pos = local_grid_spikes_.begin();
     if ( num_offgrid_spikes == 0 )
+    {
       for ( i = spike_register_.begin(); i != spike_register_.end(); ++i )
         for ( j = i->begin(); j != i->end(); ++j )
         {
@@ -1291,6 +1499,7 @@ nest::Scheduler::collocate_buffers_()
           *pos = comm_marker_;
           ++pos;
         }
+    }
     else
     {
       std::vector< OffGridSpike >::iterator n;
@@ -1321,6 +1530,20 @@ nest::Scheduler::collocate_buffers_()
     for ( i = spike_register_.begin(); i != spike_register_.end(); ++i )
       for ( j = i->begin(); j != i->end(); ++j )
         j->clear();
+
+    // here all spikes have been written to the local_grid_spikes buffer
+    // pos points to next position in this outgoing communication buffer
+    for ( j = secondary_events_buffer_.begin(); j != secondary_events_buffer_.end(); ++j )
+    {
+      pos = std::copy( j->begin(), j->end(), pos );
+      j->clear();
+    }
+
+    // end marker after last secondary event
+    // made sure in resize that this position is still allocated
+    write_to_comm_buffer( invalid_synindex, pos );
+    // append the boolean value indicating whether we are done here
+    write_to_comm_buffer( done, pos );
   }
   else // off_grid_spiking
   {
@@ -1380,12 +1603,16 @@ nest::Scheduler::collocate_buffers_()
   }
 }
 
-void
+// returns the done value
+bool
 nest::Scheduler::deliver_events_( thread t )
 {
+  // are we done?
+  bool done = true;
+
   // deliver only at beginning of time slice
   if ( from_step_ > 0 )
-    return;
+    return done;
 
   SpikeEvent se;
 
@@ -1423,6 +1650,43 @@ nest::Scheduler::deliver_events_( thread t )
       }
       pos[ pid ] = pos_pid;
     }
+
+    // here we are done with the spiking events
+    // pos[pid] for each pid now points to the first entry of
+    // the secondary events
+
+    for ( size_t pid = 0; pid < ( size_t ) Communicator::get_num_processes(); ++pid )
+    {
+      std::vector< uint_t >::iterator readpos = global_grid_spikes_.begin() + pos[ pid ];
+
+      while ( true )
+      {
+        // we must not use uint_t for the type, otherwise
+        // the encoding will be different on JUQUEEN for the
+        // index written into the buffer and read out of it
+        synindex synid;
+        read_from_comm_buffer( synid, readpos );
+
+        if ( synid == invalid_synindex )
+          break;
+        --readpos;
+
+        net_->connection_manager_.assert_valid_syn_id( synid );
+
+        *( secondary_events_prototypes_[ t ][ synid ] ) << readpos;
+
+        net_->connection_manager_.send_secondary(
+          t, *( secondary_events_prototypes_[ t ][ synid ] ) );
+      } // of while (true)
+
+      // read the done value of the p-th num_process
+
+      // must be a bool (same type as on the sending side)
+      // otherwise the encoding will be inconsistent on JUQUEEN
+      bool done_p;
+      read_from_comm_buffer( done_p, readpos );
+      done = done && done_p;
+    }
   }
   else // off grid spiking
   {
@@ -1458,12 +1722,15 @@ nest::Scheduler::deliver_events_( thread t )
       pos[ pid ] = pos_pid;
     }
   }
+
+
+  return done;
 }
 
 void
-nest::Scheduler::gather_events_()
+nest::Scheduler::gather_events_( bool done )
 {
-  collocate_buffers_();
+  collocate_buffers_( done );
   if ( off_grid_spiking_ )
     Communicator::communicate( local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
   else
@@ -1549,6 +1816,7 @@ nest::Scheduler::set_num_threads( thread n_threads )
 {
   n_threads_ = n_threads;
   nodes_vec_.resize( n_threads_ );
+  nodes_prelim_up_vec_.resize( n_threads_ );
 
 #ifdef _OPENMP
   omp_set_num_threads( n_threads_ );

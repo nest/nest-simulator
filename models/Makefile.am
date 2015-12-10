@@ -28,9 +28,11 @@ libmodelsmodule_la_SOURCES= \
 		correlospinmatrix_detector.h correlospinmatrix_detector.cpp\
 		dc_generator.h dc_generator.cpp\
 		gamma_sup_generator.h gamma_sup_generator.cpp\
+		gap_junction.h\
 		ginzburg_neuron.h ginzburg_neuron.cpp\
 		hh_cond_exp_traub.h hh_cond_exp_traub.cpp\
 		hh_psc_alpha.h hh_psc_alpha.cpp\
+		hh_psc_alpha_gap.h hh_psc_alpha_gap.cpp\
 		ht_connection.h\
 		ht_neuron.h ht_neuron.cpp\
 		iaf_chxk_2008.cpp iaf_chxk_2008.h\
@@ -81,6 +83,7 @@ libmodelsmodule_la_SOURCES= \
 		step_current_generator.h step_current_generator.cpp\
 		tsodyks2_connection.h\
 		tsodyks_connection.h\
+		tsodyks_connection_hom.h tsodyks_connection_hom.cpp\
 		volume_transmitter.h volume_transmitter.cpp\
 		spike_dilutor.h spike_dilutor.cpp
 

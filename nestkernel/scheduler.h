@@ -38,6 +38,7 @@
 #include "randomgen.h"
 #include "lockptr.h"
 #include "communicator.h"
+#include "connector_model.h"
 
 namespace nest
 {
@@ -125,7 +126,9 @@ public: // Public methods
    * in a synchronised (single threaded) state.
    * @see send_to_targets()
    */
-  void send_remote( thread p, SpikeEvent&, const long_t lag = 0 );
+  void send_remote( thread t, SpikeEvent& e, const long_t lag = 0 );
+  void send_remote( thread t, SecondaryEvent& e );
+
 
   /**
    * Add global id of event sender to the spike_register.
@@ -316,6 +319,9 @@ public: // Public methods
    */
   static delay get_min_delay();
 
+  static double_t get_prelim_tol();
+  static size_t get_prelim_interpolation_order();
+
   /**
    * Return maximal connection delay.
    */
@@ -331,6 +337,10 @@ public: // Public methods
    * Calibrate clock after resolution change.
    */
   void calibrate_clock();
+
+  void register_secondary_synapse_prototype( ConnectorModel* cm, synindex synid );
+  void create_secondary_events_prototypes();
+  void delete_secondary_events_prototypes();
 
   /**
    * Ensure that all nodes in the network have valid thread-local IDs.
@@ -351,6 +361,8 @@ private:
    * Finalize the scheduler by freeing the buffers and destoying the mutexes.
    */
   void finalize_();
+
+  bool prelim_update_( Node* );
 
   void advance_time_();
 
@@ -410,6 +422,10 @@ private:
   vector< vector< Node* > > nodes_vec_; //!< Nodelists for nodes for each thread
   index nodes_vec_network_size_;        //!< Network size when nodes_vec_ was last updated
 
+  vector< vector< Node* > > nodes_prelim_up_vec_; //!< Nodelists for unfrozen nodes that require an
+  // additional preliminary update (e.g. gap
+  // junctions)
+
   Time clock_;        //!< Network clock, updated once per slice
   delay slice_;       //!< current update slice
   delay to_do_;       //!< number of pending cycles.
@@ -425,6 +441,13 @@ private:
   bool simulated_; //!< indicates whether the network has already been simulated for some time
   bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid
   bool print_time_;       //!< Indicates whether time should be printed during simulations (or not)
+
+  bool needs_prelim_update_; //!< there is at least one neuron model that needs preliminary update
+  long max_num_prelim_iterations_; //!< maximal number of iterations used for preliminary update
+
+  static size_t prelim_interpolation_order; //!< interpolation order for prelim iterations
+
+  static double_t prelim_tol; //!< Tolerance of prelim iterations
 
   std::vector< long_t > rng_seeds_; //!< The seeds of the local RNGs. These do not neccessarily
                                     //!< describe the state of the RNGs.
@@ -487,6 +510,11 @@ private:
   librandom::RngPtr grng_;
 
   /**
+   * prototypes of events
+   */
+  std::vector< Event* > event_prototypes_;
+
+  /**
    * Register for gids of neurons that spiked. This is a 3-dim
    * structure.
    * - First dim: Each thread has its own vector to write to.
@@ -503,6 +531,12 @@ private:
    * - Third dim: Struct containing GID and offset.
    */
   std::vector< std::vector< std::vector< OffGridSpike > > > offgrid_spike_register_;
+
+  /**
+   * Buffer to collect the secondary events
+   * after serialization.
+   */
+  std::vector< std::vector< uint_t > > secondary_events_buffer_;
 
   /**
    * Buffer containing the gids of local neurons that spiked in the
@@ -539,6 +573,9 @@ private:
   std::vector< int > displacements_;
 
 
+  std::vector< ConnectorModel* > secondary_connector_models_;
+  std::vector< std::vector< SecondaryEvent* > > secondary_events_prototypes_;
+
   /**
    * Marker Value to be put between the data fields from different time
    * steps during communication.
@@ -569,12 +606,12 @@ private:
    * done by collecting the spikes from all threads in each slice of
    * the min_delay_ interval.
    */
-  void collocate_buffers_();
+  void collocate_buffers_( bool );
 
   /**
    * Collocate buffers and exchange events with other MPI processes.
    */
-  void gather_events_();
+  void gather_events_( bool );
 
   /**
    * Read all event buffers for thread t and send the corresponding
@@ -585,8 +622,14 @@ private:
    * ordering applies to time stamps only, it does NOT take into
    * account the offsets of precise spikes.
    */
-  void deliver_events_( thread t );
+  bool deliver_events_( thread t );
 };
+
+inline bool
+Scheduler::prelim_update_( Node* n )
+{
+  return ( n->prelim_update( clock_, from_step_, to_step_ ) );
+}
 
 inline Time const&
 Scheduler::get_slice_origin() const
@@ -753,6 +796,57 @@ Scheduler::prepare_node_( Node* n )
   n->calibrate();
 }
 
+inline void
+Scheduler::register_secondary_synapse_prototype( ConnectorModel* cm, synindex synid )
+{
+  // idea: save *cm in data structure
+  // otherwise when number of threads is increased no way to get further elements
+  if ( secondary_connector_models_.size() < synid + ( unsigned int ) 1 )
+    secondary_connector_models_.resize( synid + 1, NULL );
+
+  secondary_connector_models_[ synid ] = cm;
+}
+
+inline void
+Scheduler::create_secondary_events_prototypes()
+{
+  if ( secondary_events_prototypes_.size() < n_threads_ )
+  {
+    delete_secondary_events_prototypes();
+    std::vector< SecondaryEvent* > prototype;
+    prototype.resize( secondary_connector_models_.size(), NULL );
+    secondary_events_prototypes_.resize( n_threads_, prototype );
+
+
+    for ( size_t i = 0; i < secondary_connector_models_.size(); i++ )
+    {
+      if ( secondary_connector_models_[ i ] != NULL )
+      {
+        prototype = secondary_connector_models_[ i ]->create_event( n_threads_ );
+        for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
+          secondary_events_prototypes_[ j ][ i ] = prototype[ j ];
+      }
+    }
+  }
+}
+
+inline void
+Scheduler::delete_secondary_events_prototypes()
+{
+  for ( size_t i = 0; i < secondary_connector_models_.size(); i++ )
+  {
+    if ( secondary_connector_models_[ i ] != NULL )
+    {
+      for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
+        delete secondary_events_prototypes_[ j ][ i ];
+    }
+  }
+
+  for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
+    secondary_events_prototypes_[ j ].clear();
+  secondary_events_prototypes_.clear();
+}
+
 inline Node*
 Scheduler::thread_lid_to_node( thread t, targetindex thread_local_id ) const
 {
@@ -765,6 +859,18 @@ Scheduler::send_remote( thread t, SpikeEvent& e, const delay lag )
   // Put the spike in a buffer for the remote machines
   for ( int_t i = 0; i < e.get_multiplicity(); ++i )
     spike_register_[ t ][ lag ].push_back( e.get_sender().get_gid() );
+}
+
+inline void
+Scheduler::send_remote( thread t, SecondaryEvent& e )
+{
+
+  // put the secondary events in a buffer for the remote machines
+  size_t old_size = secondary_events_buffer_[ t ].size();
+
+  secondary_events_buffer_[ t ].resize( old_size + e.size() );
+  std::vector< uint_t >::iterator it = secondary_events_buffer_[ t ].begin() + old_size;
+  e >> it;
 }
 
 inline void
@@ -806,6 +912,18 @@ inline delay
 Scheduler::get_max_delay()
 {
   return max_delay_;
+}
+
+inline double_t
+Scheduler::get_prelim_tol()
+{
+  return prelim_tol;
+}
+
+inline size_t
+Scheduler::get_prelim_interpolation_order()
+{
+  return prelim_interpolation_order;
 }
 
 inline size_t

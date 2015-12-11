@@ -207,8 +207,10 @@ if(ENABLE_BLUEGENE)
     message(SEND_ERROR "Only L/P/Q is allowed for ENABLE_BLUEGENE.")
   endif()
   set(IS_BLUEGENE ON)
+  set(configure_bluegene "yes") # for nest-config
 else()
   set(IS_BLUEGENE OFF)
+  set(configure_bluegene "no") # for nest-config
 endif(ENABLE_BLUEGENE)
 
 # build static or shared libraries
@@ -221,7 +223,10 @@ if( STATIC_LIBRARIES )
   endif()
 else()
   set(BUILD_SHARED_LIBS ON)
-  set(CMAKE_FIND_LIBRARY_SUFFIXES ".so;.dylib;.a;.lib")
+  if(UNIX OR APPLE)
+    # reverse the search order for lib extensions
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ".so;.dylib;.a;.lib")
+  endif()
 endif()
 
 # Static modules
@@ -466,6 +471,50 @@ if(HAVE_PYTHON)
 endif(HAVE_PYTHON)
 
 ################################################################################
+##################           Summary of flags                 ##################
+################################################################################
+
+# used in nest-config
+
+# all compiler flags
+if(NOT CMAKE_BUILD_TYPE OR "${CMAKE_BUILD_TYPE}" STREQUAL "None")
+  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}")
+  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS}")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_DEBUG}")
+  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELEASE}")
+  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELWITHDEBINFO}")
+  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
+  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_MINSIZEREL}")
+  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}")
+else()
+  message(SEND_ERROR "Unknown build type: '${CMAKE_BUILD_TYPE}'")
+endif()
+
+# all libraries
+set(ALL_LIBS "${OpenMP_CXX_FLAGS};${LTDL_LIBRARIES};${READLINE_LIBRARIES};${GSL_LIBRARIES};${LIBNEUROSIM_LIBRARIES};${MUSIC_LIBRARY};${MPI_CXX_LIBRARIES}")
+string(REPLACE ";" " " ALL_LIBS "${ALL_LIBS}")
+
+# all includes
+set(ALL_INCLUDES_tmp "${LTDL_INCLUDE_DIR};${READLINE_INCLUDE_DIRS};${GSL_INCLUDE_DIRS};${LIBNEUROSIM_INCLUDE_DIR};${MUSIC_INCLUDE_DIR};${MPI_CXX_INCLUDE_PATH}")
+set(ALL_INCLUDES "")
+foreach(INC ${ALL_INCLUDES_tmp})
+  if(NOT INC STREQUAL "")
+    set(ALL_INCLUDES "${ALL_INCLUDES} -I${INC}")
+  endif()
+endforeach()
+
+if(HAVE_LIBNEUROSIM)
+  set(ALL_LIBS "-lconngen ${ALL_LIBS}")
+  set(ALL_INCLUDES "-I${PROJECT_SOURCE_DIR}/conngen ${ALL_INCLUDES}")
+endif(HAVE_LIBNEUROSIM)
+
+################################################################################
 ##################           File generation here             ##################
 ################################################################################
 
@@ -553,25 +602,6 @@ install(FILES LICENSE README.md NEWS
 ################################################################################
 ##################           Configuration Summary            ##################
 ################################################################################
-
-if(NOT CMAKE_BUILD_TYPE OR "${CMAKE_BUILD_TYPE}" STREQUAL "None")
-  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}")
-  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS}")
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_DEBUG}")
-  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELEASE}")
-  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
-  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELWITHDEBINFO}")
-  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
-  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_MINSIZEREL}")
-  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}")
-else()
-  message(SEND_ERROR "Unknown build type: '${CMAKE_BUILD_TYPE}'")
-endif()
 
 message("")
 message("--------------------------------------------------------------------------------")

@@ -8,6 +8,7 @@ if(NOT CMAKE_CROSSCOMPILING)
   file(REMOVE_RECURSE "${DOC_DIR}/help")
   file(MAKE_DIRECTORY "${DOC_DIR}/help")
 
+  # TODO limit to used source folders
   # base dirs + dirs/sli
   file(GLOB children ${SOURCE_DIR}/*)
   set(HELPDIRS "")

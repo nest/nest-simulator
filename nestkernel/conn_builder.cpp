@@ -575,18 +575,12 @@ nest::OneToOneBuilder::disconnect_()
 
     try
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = net_.get_rng( tid );
-
       for ( GIDCollection::const_iterator tgid = targets_.begin(), sgid = sources_.begin();
             tgid != targets_.end();
             ++tgid, ++sgid )
       {
 
         assert( sgid != sources_.end() );
-
-        if ( *sgid == *tgid and not autapses_ )
-          continue;
 
         // check whether the target is on this mpi machine
         if ( !net_.is_local_gid( *tgid ) )
@@ -700,17 +694,11 @@ nest::OneToOneBuilder::sp_disconnect_()
 
     try
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = net_.get_rng( tid );
-
       for ( GIDCollection::const_iterator tgid = targets_.begin(), sgid = sources_.begin();
             tgid != targets_.end();
             ++tgid, ++sgid )
       {
         assert( sgid != sources_.end() );
-
-        if ( *sgid == *tgid and not autapses_ )
-          continue;
 
         if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           continue;
@@ -857,9 +845,6 @@ nest::AllToAllBuilder::disconnect_()
 
     try
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = net_.get_rng( tid );
-
       for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
       {
         // check whether the target is on this mpi machine
@@ -886,12 +871,6 @@ nest::AllToAllBuilder::disconnect_()
         for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
               ++sgid )
         {
-          if ( not autapses_ and *sgid == *tgid )
-          {
-            skip_conn_parameter_( target_thread );
-            continue;
-          }
-
           single_disconnect_( *sgid, *target, target_thread );
         }
       }
@@ -922,17 +901,11 @@ nest::AllToAllBuilder::sp_disconnect_()
 
     try
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = net_.get_rng( tid );
-
       for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
       {
         for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
               ++sgid )
         {
-          if ( not autapses_ and *sgid == *tgid )
-            continue;
-
           if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           {
             for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();

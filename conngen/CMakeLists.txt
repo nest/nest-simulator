@@ -9,7 +9,7 @@ set(conngen_sources
 
 add_library(conngen ${conngen_sources})
 
-target_link_libraries(conngen nestutil sli_lib nestkernel ${LIBNEUROSIM_LIBRARIES})
+target_link_libraries(conngen nestutil sli_lib nestkernel)
 
 target_include_directories(conngen PRIVATE
   ${PROJECT_BINARY_DIR}/libnestutil
@@ -17,7 +17,6 @@ target_include_directories(conngen PRIVATE
   ${PROJECT_SOURCE_DIR}/nestkernel
   ${PROJECT_SOURCE_DIR}/sli
   ${PROJECT_SOURCE_DIR}/librandom
-  ${LIBNEUROSIM_INCLUDE_DIR}
 )
 
 install(TARGETS conngen

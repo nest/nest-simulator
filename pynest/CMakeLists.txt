@@ -17,7 +17,6 @@ if(HAVE_PYTHON)
     ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/sli
     ${STATIC_MODULES_INDCLUDE_DIRS}
-    ${LIBNEUROSIM_INCLUDE_DIR}
   )
   
   target_compile_definitions(pynestkernel PRIVATE 

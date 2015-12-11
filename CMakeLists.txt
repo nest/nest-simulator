@@ -34,26 +34,26 @@ set(CMAKE_MACOSX_RPATH ON)
 
 # set the rpath only when installed
 # https://cmake.org/Wiki/CMake_RPATH_handling#Mac_OS_X_and_the_RPATH
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}")
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}")
 
 # CPack stuff
 set(CPACK_GENERATOR TGZ)
 set(CPACK_SOURCE_GENERATOR TGZ)
 
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "nest::The Neural Simulation Tool")
-SET(CPACK_PACKAGE_VENDOR "NEST Initiative (http://www.nest-initiative.org/)")
-SET(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/extras/logos/nest.png")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "nest::The Neural Simulation Tool")
+set(CPACK_PACKAGE_VENDOR "NEST Initiative (http://www.nest-initiative.org/)")
+set(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/extras/logos/nest.png")
 
-SET(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
-SET(CPACK_RESOURCE_FILE_README "${PROJECT_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${PROJECT_SOURCE_DIR}/README.md")
 
-SET(CPACK_PACKAGE_VERSION_MAJOR ${NEST_VERSION_MAJOR})
-SET(CPACK_PACKAGE_VERSION_MINOR ${NEST_VERSION_MINOR})
-SET(CPACK_PACKAGE_VERSION_PATCH ${NEST_VERSION_PATCHLEVEL})
-SET(CPACK_PACKAGE_VERSION ${NEST_VERSION_VERSION})
-SET(CPACK_PACKAGE_EXECUTABLES "nest" "nest")
+set(CPACK_PACKAGE_VERSION_MAJOR ${NEST_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${NEST_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${NEST_VERSION_PATCHLEVEL})
+set(CPACK_PACKAGE_VERSION ${NEST_VERSION_VERSION})
+set(CPACK_PACKAGE_EXECUTABLES "nest" "nest")
 
-SET(CPACK_SOURCE_IGNORE_FILES
+set(CPACK_SOURCE_IGNORE_FILES
   "\\\\.gitignore"
   "\\\\.git/"
   "\\\\.travis\\\\.yml"
@@ -75,22 +75,11 @@ SET(CPACK_SOURCE_IGNORE_FILES
   "CMakeCache\\\\.txt"
   "CPackConfig\\\\.cmake"
   "CPackSourceConfig\\\\.cmake"
-  )
-SET(CPACK_SOURCE_PACKAGE_FILE_NAME ${NEST_VERSION_PRGNAME})
+)
+set(CPACK_SOURCE_PACKAGE_FILE_NAME ${NEST_VERSION_PRGNAME})
 
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY "NEST ${NEST_VERSION_VERSION}")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "NEST ${NEST_VERSION_VERSION}")
 include(CPack)
-
-# add make dist target
-add_custom_target(dist
-  # create current rcsinfo.sli
-  # target dir is PROJECT_SOURCE_DIR as this will be the `install dir` from cmake package_source
-  COMMAND ${PROJECT_SOURCE_DIR}/extras/create_rcsinfo.sh ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}
-  COMMAND ${CMAKE_MAKE_PROGRAM} package_source
-  # not sure about this... seems, that it will be removed before dist...
-  # DEPENDS doc
-  COMMENT "Creating a source distribution from NEST..."
-  )
 
 ################################################################################
 #################    Check for includes/ functions /symbols    #################
@@ -152,8 +141,9 @@ set(TICS_PER_MS "1000.0" CACHE STRING "Specify elementary unit of time.")
 set(TICS_PER_STEP "100" CACHE STRING "Specify resolution.")
 option(WITH_MPI "Request compilation with MPI; optionally give directory with MPI installation." OFF)
 option(LIBNEUROSIM "Request the use of libneurosim; optionally give the directory, where libneurosim is installed." OFF)
-set(WITH_OPTIMIZE OFF CACHE STRING "Enable user defined optimizations.")
+set(WITH_OPTIMIZE OFF CACHE STRING "Enable user defined optimizations. [default, when ON, '-O3']")
 set(WITH_WARNING OFF CACHE STRING "Enable user defined warnings.")
+set(WITH_DEBUG OFF CACHE STRING "Enable user defined debug flags. [default, when ON '-g']")
 option(GSL_PREFIX "Prefix where GSL is installed. (optional)" OFF)
 option(WITH_READLINE "Find a readline library [default=ON]. To set a specific readline, set install path." ON)
 option(WITH_OPENMP "Enable OpenMP multithreading [default=ON]. Optional: set OMP flag." ON)
@@ -161,12 +151,6 @@ option(WITH_PYTHON "Find a Python interpreter [default=ON]. To ignore the Python
 option(EXTERNAL_MODULES "External modules to be linked in. Devided by ; ." OFF)
 option(STATIC_LIBRARIES "Build static libraries. [default=no]" OFF)
 option(PS_ARRAYS "Use PS array construction semantics" ON)
-
-if(NOT CMAKE_BUILD_TYPE)
-   set(CMAKE_BUILD_TYPE RelWithDebInfo
-       CACHE STRING "Choose the type of build : None Debug Release RelWithDebInfo MinSizeRel."
-       FORCE)
-endif(NOT CMAKE_BUILD_TYPE)
 
 # not defined yet
 option(WITH_SCALI "Request compilation with Scali MPI; optionally give directory with Scali installation.[/opt/scali]" OFF)
@@ -186,9 +170,20 @@ find_program(SED NAMES sed gsed)
 
 # add custom warnings and optimizations
 if(WITH_OPTIMIZE)
+  if(WITH_OPTIMIZE STREQUAL "ON")
+    set(WITH_OPTIMIZE "-O3")
+  endif()
   set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${WITH_OPTIMIZE}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WITH_OPTIMIZE}")
 endif(WITH_OPTIMIZE)
+
+if(WITH_DEBUG)
+  if(WITH_DEBUG STREQUAL "ON")
+    set(WITH_DEBUG "-g")
+  endif()
+  set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${WITH_DEBUG}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WITH_DEBUG}")
+endif(WITH_DEBUG)
 
 if(WITH_WARNING)
   set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${WITH_WARNING}")
@@ -202,7 +197,6 @@ endif(K_COMPUTER)
 
 # is set in the BlueGeneQ.cmake file
 if(ENABLE_BLUEGENE)
-  # TODO use the -DCMAKE_TOOLCHAIN_FILE= argument
   if(${ENABLE_BLUEGENE} STREQUAL "L")
     set(IS_BLUEGENE_L ON)
   elseif(${ENABLE_BLUEGENE} STREQUAL "P")
@@ -336,6 +330,9 @@ if( LIBNEUROSIM )
   find_package(LibNeurosim)
   if(LIBNEUROSIM_FOUND)
     set(HAVE_LIBNEUROSIM ON)
+
+    include_directories(${LIBNEUROSIM_INCLUDE_DIR})
+    link_libraries(${LIBNEUROSIM_LIBRARIES})
   endif(LIBNEUROSIM_FOUND)
 endif( LIBNEUROSIM )
 
@@ -419,7 +416,22 @@ else()
 endif()
 
 if(WITH_MUSIC)
-  # TODO Music
+  if (NOT ${WITH_MUSIC} STREQUAL "ON")
+    # a path is set
+    set(MUSIC_ROOT_DIR "${WITH_MUSIC}")
+  endif()
+
+  if(NOT HAVE_MPI)
+    message(SEND_ERROR "MUSIC requires -DWITH_MPI=ON.")
+  endif(NOT HAVE_MPI)
+
+  include_directories(${MUSIC_INCLUDE_DIR})
+  link_libraries(${MUSIC_LIBRARY})
+  find_package(Music)
+  if(MUSIC_FOUND)
+
+    set(HAVE_MUSIC ON)
+  endif(MUSIC_FOUND)
 else(WITH_MUSIC)
   set(HAVE_MUSIC OFF)
 endif(WITH_MUSIC)
@@ -520,16 +532,32 @@ add_custom_target(installcheck
 add_custom_target(check
     COMMAND export CTEST_OUTPUT_ON_FAILURE=1 &&
       ${CMAKE_CTEST_COMMAND} -C $<CONFIG>
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+
+# add make dist target
+add_custom_target(dist
+  # create current rcsinfo.sli
+  # target dir is PROJECT_SOURCE_DIR as this will be the `install dir` from cmake package_source
+  COMMAND ${PROJECT_SOURCE_DIR}/extras/create_rcsinfo.sh ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}
+  COMMAND ${CMAKE_MAKE_PROGRAM} package_source
+  # not sure about this... seems, that it will be removed before dist...
+  # DEPENDS doc
+  COMMENT "Creating a source distribution from NEST..."
+)
 
 install(FILES LICENSE README.md NEWS
-  DESTINATION ${INSTALL_DOC_DIR})
+  DESTINATION ${INSTALL_DOC_DIR}
+)
 
 ################################################################################
 ##################           Configuration Summary            ##################
 ################################################################################
 
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if(NOT CMAKE_BUILD_TYPE OR "${CMAKE_BUILD_TYPE}" STREQUAL "None")
+  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}")
+  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS}")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_DEBUG}")
   set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
@@ -541,9 +569,6 @@ elseif(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
   set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_MINSIZEREL}")
   set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}")
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "None")
-  set(ALL_CFLAGS   "${CMAKE_C_FLAGS}")
-  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS}")
 else()
   message(SEND_ERROR "Unknown build type: '${CMAKE_BUILD_TYPE}'")
 endif()
@@ -632,8 +657,8 @@ endif(HAVE_MPI)
 
 if(HAVE_MUSIC)
   message("Use MUSIC           : Yes")
-  message("    Includes        : ${MUSIC_INCLUDE_DIRS}")
-  message("    Libraries       : ${MUSIC_LIBRARIES})")
+  message("    Includes        : ${MUSIC_INCLUDE_DIR}")
+  message("    Libraries       : ${MUSIC_LIBRARY})")
   message("")
 else(HAVE_MUSIC)
   message("Use MUSIC           : No")

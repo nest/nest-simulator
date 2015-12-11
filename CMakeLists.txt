@@ -508,17 +508,17 @@ configure_file(
 
 add_custom_target(installcheck
   COMMAND ${CMAKE_MAKE_PROGRAM} install
-  COMMAND ${CMAKE_COMMAND} -E env PATH="${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}:$ENV{PATH}" 
-                                  PYTHON="${PYTHON}"
-                                  PYTHONPATH="${PYEXECDIR}:$ENV{PYTHONPATH}"
-                                  exec_prefix="${CMAKE_INSTALL_PREFIX}"
+  COMMAND export PATH="${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}:$ENV{PATH}" &&
+          export PYTHON="${PYTHON}" &&
+          export PYTHONPATH="${PYEXECDIR}:$ENV{PYTHONPATH}" &&
+          export exec_prefix="${CMAKE_INSTALL_PREFIX}" &&
           ${PKGDATADIR}/extras/do_tests.sh --test-pynest --source-dir=${PROJECT_SOURCE_DIR}
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
   COMMENT "Execute NEST's testsuite...."
 )
 
 add_custom_target(check
-    COMMAND ${CMAKE_COMMAND} -E env CTEST_OUTPUT_ON_FAILURE=1 
+    COMMAND export CTEST_OUTPUT_ON_FAILURE=1 &&
       ${CMAKE_CTEST_COMMAND} -C $<CONFIG>
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 

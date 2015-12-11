@@ -94,14 +94,53 @@ install(TARGETS sli_lib sli
   RUNTIME DESTINATION ${INSTALL_BIN_DIR}
 )
 
-# install help (depends on sli installed)
+# DIRS for help
+# TODO limit to used source folders
+# base dirs + dirs/sli
+file(GLOB children ${PROJECT_SOURCE_DIR}/*)
+set(HELPDIRS "")
+foreach(child ${children})
+  if(IS_DIRECTORY ${child})
+    set(HELPDIRS "${HELPDIRS}${child}:")
+    # Automatically include sli directory if it exists
+    if(IS_DIRECTORY ${child}/sli)
+      set(HELPDIRS "${HELPDIRS}${child}/sli:")
+    endif()
+  endif()
+endforeach()
+
+# testsuite dirs
+file(GLOB children ${PROJECT_SOURCE_DIR}/testsuite/*/)
+foreach(child ${children})
+  if(IS_DIRECTORY ${child})
+    set(HELPDIRS "${HELPDIRS}${child}:")
+  endif()
+  if(IS_DIRECTORY ${child}/pass)
+    set(HELPDIRS "${HELPDIRS}${child}/pass:")
+  endif()
+  if(IS_DIRECTORY ${child}/fail)
+    set(HELPDIRS "${HELPDIRS}${child}/fail:")
+  endif()
+endforeach()
+
+# install help (depends on sli and lib/sli/* installed)
 install(CODE
-  "execute_process(COMMAND ${CMAKE_COMMAND}
+  "execute_process(
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${PKGDOCDIR}/help/sli
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${PKGDOCDIR}/help/cc
+    COMMAND ${CMAKE_COMMAND} -E remove ${PKGDOCDIR}/help/helpindex.html
+    COMMAND ${CMAKE_COMMAND} -E remove ${PKGDOCDIR}/help/helpindex.hlp
+
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${PKGDOCDIR}/help
+    COMMAND ${CMAKE_COMMAND}
         -DDOC_DIR='${PKGDOCDIR}'
         -DDATA_DIR='${PKGDATADIR}'
-        -DSOURCE_DIR='${PROJECT_SOURCE_DIR}'
+        -DHELPDIRS='${HELPDIRS}'
         -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
         -P ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
-      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+      WORKING_DIRECTORY \"${PROJECT_BINARY_DIR}\"
     )"
 )
+
+install(FILES ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
+  DESTINATION ${INSTALL_DOC_DIR})

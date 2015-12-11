@@ -8,10 +8,10 @@ add_executable(nest main.cpp ${nest_sources})
 add_library(nest_lib ${nest_sources})
 
 target_link_libraries(nest
-  nestutil nestkernel random sli_lib ${SLI_MODULES})
+  nestutil nestkernel random sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES})
 
 target_link_libraries(nest_lib
-  nestutil nestkernel random sli_lib ${SLI_MODULES})
+  nestutil nestkernel random sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES})
 
 target_include_directories(nest PRIVATE
   ${PROJECT_BINARY_DIR}/nest
@@ -20,7 +20,7 @@ target_include_directories(nest PRIVATE
   ${PROJECT_SOURCE_DIR}/librandom
   ${PROJECT_SOURCE_DIR}/sli
   ${PROJECT_SOURCE_DIR}/nestkernel
-  ${STATIC_MODULES_INDCLUDE_DIRS}
+  ${SLI_MODULE_INCLUDE_DIRS}
 )
 
 target_include_directories(nest_lib PRIVATE
@@ -30,7 +30,7 @@ target_include_directories(nest_lib PRIVATE
   ${PROJECT_SOURCE_DIR}/librandom
   ${PROJECT_SOURCE_DIR}/sli
   ${PROJECT_SOURCE_DIR}/nestkernel
-  ${STATIC_MODULES_INDCLUDE_DIRS}
+  ${SLI_MODULE_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
 )
 

@@ -20,6 +20,7 @@ set(NEST_VERSION_PRGNAME "${PROJECT_NAME}-${NEST_VERSION_VERSION}")
 # install prefix is set with -DCMAKE_INSTALL_PREFIX:PATH=...
 set(INSTALL_BIN_DIR bin)
 set(INSTALL_LIB_DIR lib)
+set(INSTALL_INC_DIR include)
 set(INSTALL_DATA_DIR share/nest)
 set(INSTALL_DOC_DIR share/doc/nest)
 
@@ -34,7 +35,7 @@ set(CMAKE_MACOSX_RPATH ON)
 
 # set the rpath only when installed
 # https://cmake.org/Wiki/CMake_RPATH_handling#Mac_OS_X_and_the_RPATH
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}")
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}" "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/nest")
 
 # CPack stuff
 set(CPACK_GENERATOR TGZ)
@@ -204,13 +205,11 @@ if(ENABLE_BLUEGENE)
   elseif(${ENABLE_BLUEGENE} STREQUAL "Q")
     set(IS_BLUEGENE_Q ON)
   else()
-    message(SEND_ERROR "Only L/P/Q is allowed for ENABLE_BLUEGENE.")
+    message(FATAL_ERROR "Only L/P/Q is allowed for ENABLE_BLUEGENE.")
   endif()
   set(IS_BLUEGENE ON)
-  set(configure_bluegene "yes") # for nest-config
 else()
   set(IS_BLUEGENE OFF)
-  set(configure_bluegene "no") # for nest-config
 endif(ENABLE_BLUEGENE)
 
 # build static or shared libraries
@@ -235,43 +234,91 @@ if( LIBNEUROSIM )
   set(SLI_MODULES ${SLI_MODULES} conngen)
 endif( LIBNEUROSIM )
 
-set(STATIC_MODULES_INDCLUDE_DIRS)
+set(SLI_MODULE_INCLUDE_DIRS)
 foreach(mod ${SLI_MODULES})
-  set(STATIC_MODULES_INDCLUDE_DIRS ${STATIC_MODULES_INDCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/${mod} )
-endforeach(mod)
+  list(APPEND SLI_MODULE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/${mod}")
+endforeach()
 
-if( STATIC_LIBRARIES )
-  # TODO include path?
-  # TODO lib path?
-  if( EXTERNAL_MODULES )
-    foreach(mod ${EXTERNAL_MODULES})
-      set(SLI_MODULES ${SLI_MODULES} ${mod})
-    endforeach(mod)
-  endif( EXTERNAL_MODULES )
-else()
-  # TODO dynamic linking stuff
-endif()
+if( EXTERNAL_MODULES )
+  # headers from external modules will be installed here
+  include_directories("${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}")
+
+  # put all external libs into this variable
+  set(EXTERNAL_MODULE_LIBRARIES)
+  # put all external headers into this variable
+  set(EXTERNAL_MODULE_INCLUDES)
+  foreach(mod ${EXTERNAL_MODULES})
+    # find module header
+    find_file(${mod}_EXT_MOD_INCLUDE
+      NAMES ${mod}module.h
+      HINTS "${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}"
+    )
+    if(${mod}_EXT_MOD_INCLUDE STREQUAL "${mod}_EXT_MOD_INCLUDE-NOTFOUND")
+      message(FATAL_ERROR "Cannot find header for external module '${mod}'. Should be '${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}/${mod}module.h' .")
+    endif()
+    list(APPEND EXTERNAL_MODULE_INCLUDES ${${mod}_EXT_MOD_INCLUDE})
+
+    # find module library
+    find_library(${mod}_EXT_MOD_LIBRARY
+      NAMES ${mod}module
+      HINTS ${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/nest
+    )
+    if(${mod}_EXT_MOD_LIBRARY STREQUAL "${mod}_EXT_MOD_LIBRARY-NOTFOUND")
+      message(FATAL_ERROR "Cannot find library for external module '${mod}'.")
+    endif()
+    list(APPEND EXTERNAL_MODULE_LIBRARIES "${${mod}_EXT_MOD_LIBRARY}")
+  endforeach(mod)
+endif( EXTERNAL_MODULES )
+
 
 # write static_modules.h
 file(WRITE ${PROJECT_BINARY_DIR}/nest/static_modules.h "#ifndef STATIC_MODULES_H\n")
 file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "#define STATIC_MODULES_H\n\n")
+file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "// Add all in source modules:\n")
 foreach(mod ${SLI_MODULES})
   file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "#include \"${mod}module.h\"\n")
 endforeach(mod)
+
+# when we build statically, we need to add headers and addmodule for external modules
+# just as if it were a in source module.
+if(STATIC_LIBRARIES AND EXTERNAL_MODULES)
+  file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "\n// Add all external modules:\n")
+  foreach(mod ${EXTERNAL_MODULES})
+    file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "#include \"${mod}module.h\"\n")
+  endforeach(mod)
+endif(STATIC_LIBRARIES AND EXTERNAL_MODULES)
 file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "\n#include \"interpret.h\"\n\n")
 file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "void add_static_modules(SLIInterpreter& engine)\n{\n")
+file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "  // Add all in source modules:\n")
 foreach(mod ${SLI_MODULES})
-  # TODO read classname from file
-  if(mod STREQUAL "conngen")
-    set(Mod "ConnectionGenerator")
-  else()
-    #mod is the lower-case string
-    string(SUBSTRING ${mod} 0 1 FIRST_LETTER)
-    string(TOUPPER ${FIRST_LETTER} FIRST_LETTER)
-    string(REGEX REPLACE "^.(.*)" "${FIRST_LETTER}\\1" Mod "${mod}")
-  endif()
-  file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "  engine.addmodule(new nest::${Mod}Module());\n")
-endforeach(mod)
+  # get class name, is always in nest namespace
+  file( STRINGS "${PROJECT_SOURCE_DIR}/${mod}/${mod}module.h" module_class_string REGEX "class.*: public SLIModule")
+  string( REGEX REPLACE "class ([a-zA-Z0-9_]+) : public SLIModule" "\\1" module_class ${module_class_string} )
+  file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "  engine.addmodule(new nest::${module_class}());\n")
+endforeach()
+
+# when we build statically, we need to add headers and addmodule for external modules
+# just as if it were a in source module.
+if(STATIC_LIBRARIES AND EXTERNAL_MODULES)
+  file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "\n  // Add all external modules:\n")
+  foreach(mod_header ${EXTERNAL_MODULE_INCLUDES})
+    # get namespace:
+    file( STRINGS "${mod_header}" module_namespace_string REGEX "^namespace.*")
+    if(NOT module_namespace_string)
+      message(FATAL_ERROR "Could not find namespace in '${mod_header}'.")
+    endif()
+    string( REGEX REPLACE "namespace ([a-zA-Z0-9_]+)" "\\1" module_namespace ${module_namespace_string} )
+  
+    # get class name
+    file( STRINGS "${mod_header}" module_class_string REGEX "^class.*: public SLIModule")
+    if(NOT module_class_string)
+      message(FATAL_ERROR "Could not find class that extends SLIModule in '${mod_header}'.")
+    endif()
+    string( REGEX REPLACE "class ([a-zA-Z0-9_]+) : public SLIModule" "\\1" module_class ${module_class_string} )
+    file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "  engine.addmodule(new ${module_namespace}::${module_class}());\n")
+  endforeach()
+endif(STATIC_LIBRARIES AND EXTERNAL_MODULES)
+
 file(APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "}\n\n#endif\n")
 # write static_modules.h
 
@@ -427,7 +474,7 @@ if(WITH_MUSIC)
   endif()
 
   if(NOT HAVE_MPI)
-    message(SEND_ERROR "MUSIC requires -DWITH_MPI=ON.")
+    message(FATAL_ERROR "MUSIC requires -DWITH_MPI=ON.")
   endif(NOT HAVE_MPI)
 
   include_directories(${MUSIC_INCLUDE_DIR})
@@ -447,7 +494,6 @@ endif(WITH_MUSIC)
 enable_testing()
 set(TEST_LOGFILE ${PROJECT_BINARY_DIR}/reports/installcheck.log)
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/)
-
 
 add_subdirectory(cmake)
 if(HAVE_LIBNEUROSIM)
@@ -493,7 +539,7 @@ elseif(${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
   set(ALL_CFLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_MINSIZEREL}")
   set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}")
 else()
-  message(SEND_ERROR "Unknown build type: '${CMAKE_BUILD_TYPE}'")
+  message(FATAL_ERROR "Unknown build type: '${CMAKE_BUILD_TYPE}'")
 endif()
 
 # all libraries
@@ -573,22 +619,22 @@ add_custom_target(installcheck
           export PYTHON="${PYTHON}" &&
           export PYTHONPATH="${PYEXECDIR}:$ENV{PYTHONPATH}" &&
           export exec_prefix="${CMAKE_INSTALL_PREFIX}" &&
-          ${PKGDATADIR}/extras/do_tests.sh --test-pynest --source-dir=${PROJECT_SOURCE_DIR}
-  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+          ${PKGDATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
+  WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
   COMMENT "Execute NEST's testsuite...."
 )
 
 add_custom_target(check
     COMMAND export CTEST_OUTPUT_ON_FAILURE=1 &&
       ${CMAKE_CTEST_COMMAND} -C $<CONFIG>
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
 )
 
 # add make dist target
 add_custom_target(dist
   # create current rcsinfo.sli
   # target dir is PROJECT_SOURCE_DIR as this will be the `install dir` from cmake package_source
-  COMMAND ${PROJECT_SOURCE_DIR}/extras/create_rcsinfo.sh ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}
+  COMMAND ${PROJECT_SOURCE_DIR}/extras/create_rcsinfo.sh "${PROJECT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}"
   COMMAND ${CMAKE_MAKE_PROGRAM} package_source
   # not sure about this... seems, that it will be removed before dist...
   # DEPENDS doc
@@ -619,6 +665,12 @@ message("")
 message("Built-in modules    : ${SLI_MODULES}")
 if(EXTERNAL_MODULES)
   message("User modules        : ${EXTERNAL_MODULES}")
+  foreach(mod ${EXTERNAL_MODULES})
+    message("  ${mod}:")
+    message("    Header          : ${${mod}_EXT_MOD_INCLUDE}")
+    message("    Library         : ${${mod}_EXT_MOD_LIBRARY}")
+    message("")
+  endforeach()
 else(EXTERNAL_MODULES)
   message("User modules        : None")
 endif(EXTERNAL_MODULES)
@@ -688,7 +740,7 @@ endif(HAVE_MPI)
 if(HAVE_MUSIC)
   message("Use MUSIC           : Yes")
   message("    Includes        : ${MUSIC_INCLUDE_DIR}")
-  message("    Libraries       : ${MUSIC_LIBRARY})")
+  message("    Libraries       : ${MUSIC_LIBRARY}")
   message("")
 else(HAVE_MUSIC)
   message("Use MUSIC           : No")
@@ -696,8 +748,8 @@ endif(HAVE_MUSIC)
 
 if(HAVE_LIBNEUROSIM)
   message("Use libneurosim     : Yes")
-  message("    Includes        : ${LIBNEUROSIM_INCLUDE_DIR})")
-  message("    Libraries       : ${LIBNEUROSIM_LIBRARIES})")
+  message("    Includes        : ${LIBNEUROSIM_INCLUDE_DIR}")
+  message("    Libraries       : ${LIBNEUROSIM_LIBRARIES}")
   message("")
 else(HAVE_LIBNEUROSIM)
   message("Use libneurosim     : No")

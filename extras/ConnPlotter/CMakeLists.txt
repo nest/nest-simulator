@@ -6,7 +6,7 @@ install(CODE "execute_process(
                                      --install-lib=${PYEXECDIR}
                                      --install-scripts=${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}
                                      --install-data=${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})")
+    WORKING_DIRECTORY \"${CMAKE_CURRENT_SOURCE_DIR}\")")
 
 install(FILES examples/connplotter_tutorial.py
   DESTINATION ${INSTALL_DOC_DIR}/examples/ConnPlotter)

@@ -57,7 +57,7 @@ if(HAVE_PYTHON)
                                        --install-lib=${PYEXECDIR}
                                        --install-scripts=${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}
                                        --install-data=${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})"
+    WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")"
   )
 
   file(GLOB topo_examples "examples/*")

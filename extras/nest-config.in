@@ -16,7 +16,7 @@ Known values for OPTION are:
   --libs                print library linking information
   --cflags              print pre-processor and compiler flags
   --compiler            print the compiler used to compile NEST
-  --configure-bluegene  print "yes" if configured for BlueGene, "no" otherwise
+  --static-libraries    print "ON" if configured for static libraries, "OFF" otherwise
   --help                display this help and exit
   --version             output version information
 
@@ -70,7 +70,7 @@ while test $# -gt 0; do
         ;;
 
     --libs)
-        NEST_LDFLAGS="-l{nest_lib,random,sli_lib,nestkernel,nestutil,precise,topology} @ALL_LIBS@ -export-dynamic"
+        NEST_LDFLAGS="-lnest_lib -lrandom -lsli_lib -lnestkernel -lnestutil -lprecise -ltopology @ALL_LIBS@"
         # cmake: all libs are installed
         NEST_LDFLAGS="-L@CMAKE_INSTALL_PREFIX@/@INSTALL_LIB_DIR@ $NEST_LDFLAGS"
         echo $NEST_LDFLAGS
@@ -80,8 +80,8 @@ while test $# -gt 0; do
         echo @CMAKE_CXX_COMPILER@
         ;;
 
-    --configure-bluegene)
-        echo ${configure_bluegene}
+    --static-libraries)
+        echo @STATIC_LIBRARIES@
         ;;
 
     *)

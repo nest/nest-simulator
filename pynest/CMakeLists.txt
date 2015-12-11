@@ -7,7 +7,7 @@ if(HAVE_PYTHON)
   cython_add_module( pynestkernel pynestkernel.pyx )
   
   target_link_libraries(pynestkernel
-    nest_lib nestutil nestkernel random sli_lib ${SLI_MODULES})
+    nest_lib nestutil nestkernel random sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES})
   
   target_include_directories(pynestkernel PRIVATE
     ${PROJECT_BINARY_DIR}/libnestutil
@@ -16,7 +16,7 @@ if(HAVE_PYTHON)
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/sli
-    ${STATIC_MODULES_INDCLUDE_DIRS}
+    ${SLI_MODULE_INCLUDE_DIRS}
   )
   
   target_compile_definitions(pynestkernel PRIVATE 
@@ -29,7 +29,7 @@ if(HAVE_PYTHON)
                                        --install-lib=${PYEXECDIR}
                                        --install-scripts=${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}
                                        --install-data=${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})"
+    WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")"
   )
   install(TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/)
   install(FILES ${PROJECT_BINARY_DIR}/pynest/do_tests.py

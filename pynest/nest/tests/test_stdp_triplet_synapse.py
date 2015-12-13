@@ -112,12 +112,6 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         self.assertAlmostEqualDetailed(0.0, self.status("Kplus"), "Kplus should be zero")
         self.assertAlmostEqualDetailed(0.0, self.status("Kplus_triplet"), "Kplus_triplet should be zero")
 
-        # Currently there is no way to access the postsynaptic Kminus, Kminus_triplet from pynest.
-        # The lines below will be uncommented in a future PR, after archiving_node has been adapted.
-
-        # self.assertAlmostEqualDetailed(0.0, self.status("Kminus"), "Kminus should be zero")
-        # self.assertAlmostEqualDetailed(0.0, self.status("Kminus_triplet"), "Kminus_triplet should be zero")
-
     def test_preVarsIncreaseWithPreSpike(self):
         """Check that pre-synaptic variables (Kplus, Kplus_triplet) increase after each pre-synaptic spike."""
 
@@ -130,23 +124,6 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         self.assertAlmostEqualDetailed(Kplus + 1.0, self.status("Kplus"), "Kplus should have increased by 1")
         self.assertAlmostEqualDetailed(Kplus_triplet + 1.0, self.status("Kplus_triplet"),
                                        "Kplus_triplet should have increased by 1")
-
-    def test_postVarsIncreaseWithPostSpike(self):
-        """Check that post-synaptic variables (Kminus, Kminus_triplet) increase after each post-synaptic spike."""
-
-        # Currently there is no way to access the postsynaptic Kminus, Kminus_triplet from pynest.
-        # This test will be uncommented in a future PR, after archiving_node has been adapted.
-
-        # self.generateSpikes(self.post_neuron, [2.0])
-        # self.generateSpikes(self.pre_neuron, [2.0 + self.dendritic_delay]) # trigger computation
-        #
-        # Kminus = self.status("Kminus")
-        # Kminus_triplet = self.status("Kminus_triplet")
-        #
-        # nest.Simulate(20.0)
-        # self.assertAlmostEqualDetailed(Kminus + 1.0, self.status("Kminus"), "Kminus should have increased by 1")
-        # self.assertAlmostEqualDetailed(Kminus_triplet + 1.0, self.status("Kminus_triplet"),
-        #                                "Kminus_triplet should have increased by 1")
 
     def test_preVarsDecayAfterPreSpike(self):
         """Check that pre-synaptic variables (Kplus, Kplus_triplet) decay after each pre-synaptic spike."""
@@ -177,46 +154,6 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         self.assertAlmostEqualDetailed(Kplus, self.status("Kplus"), "Kplus should have decay")
         self.assertAlmostEqualDetailed(Kplus_triplet, self.status("Kplus_triplet"), "Kplus_triplet should have decay")
 
-    def test_postVarsDecayAfterPreSpike(self):
-        """Check that post-synaptic variables (Kminus, Kminus_triplet) decay after each pre-synaptic spike."""
-
-        # Currently there is no way to access the postsynaptic Kminus, Kminus_triplet from pynest.
-        # This test will be uncommented in a future PR, after archiving_node has been adapted.
-
-        # self.generateSpikes(self.post_neuron, [2.0])
-        # self.generateSpikes(self.pre_neuron, [2.0 + self.dendritic_delay + self.decay_duration]) # trigger computation
-        #
-        # (_, _, Kminus, Kminus_triplet) = self.decay(self.decay_duration, 0.0, 0.0, 1.0, 1.0)
-        #
-        # nest.Simulate(20.0)
-        # self.assertAlmostEqualDetailed(Kminus, self.status("Kminus"), "Kminus should have decay")
-        # self.assertAlmostEqualDetailed(Kminus_triplet, self.status("Kminus_triplet"),
-        #                                "Kminus_triplet should have decay")
-
-    def test_postVarsDecayAfterPostSpike(self):
-        """Check that post-synaptic variables (Kminus, Kminus_triplet) decay after each post-synaptic spike."""
-
-        # Currently there is no way to access the postsynaptic Kminus, Kminus_triplet from pynest.
-        # This test will be uncommented in a future PR, after archiving_node has been adapted.
-
-        # self.generateSpikes(self.post_neuron, [2.0, 3.0, 4.0])
-        # self.generateSpikes(self.pre_neuron, [2.0 + self.dendritic_delay + self.decay_duration]) # trigger computation
-        #
-        # (_, _, Kminus, Kminus_triplet) = self.decay(1.0, 0.0, 0.0, 1.0, 1.0)
-        # Kminus += 1.0
-        # Kminus_triplet += 1.0
-        #
-        # (_, _, Kminus, Kminus_triplet) = self.decay(1.0, 0.0, 0.0, Kminus, Kminus_triplet)
-        # Kminus += 1.0
-        # Kminus_triplet += 1.0
-        #
-        # (_, _, Kminus, Kminus_triplet) = self.decay(self.decay_duration - 2.0, 0.0, 0.0, Kminus, Kminus_triplet)
-        #
-        # nest.Simulate(20.0)
-        # self.assertAlmostEqualDetailed(Kminus, self.status("Kminus"), "Kminus should have decay")
-        # self.assertAlmostEqualDetailed(Kminus_triplet, self.status("Kminus_triplet"),
-        #                                "Kminus_triplet should have decay")
-
     def test_weightChangeWhenPrePostSpikes(self):
         """Check that weight changes whenever a pre-post spike pair happen."""
 
@@ -226,8 +163,8 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
         Kplus = self.status("Kplus")
         Kplus_triplet = self.status("Kplus_triplet")
-        Kminus = 0.0  # self.status("Kminus")
-        Kminus_triplet = 0.0  # self.status("Kminus_triplet")
+        Kminus = 0.0
+        Kminus_triplet = 0.0
         weight = self.status("weight")
 
         (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(2.0, Kplus, Kplus_triplet, Kminus, Kminus_triplet)
@@ -257,8 +194,8 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
         Kplus = self.status("Kplus")
         Kplus_triplet = self.status("Kplus_triplet")
-        Kminus = 0.0  # self.status("Kminus")
-        Kminus_triplet = 0.0  # self.status("Kminus_triplet")
+        Kminus = 0.0
+        Kminus_triplet = 0.0
         weight = self.status("weight")
 
         (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(2.0, Kplus, Kplus_triplet, Kminus, Kminus_triplet)

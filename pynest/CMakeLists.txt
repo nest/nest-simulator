@@ -1,13 +1,37 @@
 if(HAVE_PYTHON)
-  include( UseCython )
-  set_source_files_properties(
-    ${CMAKE_CURRENT_SOURCE_DIR}/pynestkernel.pyx
-    PROPERTIES CYTHON_IS_CXX TRUE )
   
-  cython_add_module( pynestkernel pynestkernel.pyx )
-  
+  if(CYTHON_FOUND)
+    include( UseCython )
+    set_source_files_properties(
+      pynestkernel.pyx
+      PROPERTIES CYTHON_IS_CXX TRUE )
+
+    cython_add_module( pynestkernel pynestkernel.pyx )
+  else()
+    # require the source pynest/pynestkernel.cxx precompiled
+    set(pynestkernel_generated_file "NOTFOUND")
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/pynestkernel.cxx)
+      set(pynestkernel_generated_file pynestkernel.cxx)
+    elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/pynestkernel.cpp)
+      set(pynestkernel_generated_file pynestkernel.cpp)
+    endif()
+
+    if(pynestkernel_generated_file STREQUAL "NOTFOUND")
+      message(FATAL_ERROR "Need the source pynestkernel.cxx/cpp precompiled in '${CMAKE_CURRENT_SOURCE_DIR}', "
+        "e.g. use `cythonize pynestkernel.pyx` in that directory.")
+    endif()
+    python_add_module( pynestkernel ${pynestkernel_generated_file} pynestkernel.pxd )
+    if( APPLE )
+      set_target_properties( pynestkernel PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )
+    else()
+      target_link_libraries( pynestkernel ${PYTHON_LIBRARIES} )
+    endif()
+  endif(CYTHON_FOUND)
+
   target_link_libraries(pynestkernel
-    nest_lib nestutil nestkernel random sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES})
+    nest_lib nestutil nestkernel random sli_lib
+    ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES}
+  )
   
   target_include_directories(pynestkernel PRIVATE
     ${PROJECT_BINARY_DIR}/libnestutil
@@ -17,8 +41,9 @@ if(HAVE_PYTHON)
     ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/sli
     ${SLI_MODULE_INCLUDE_DIRS}
+    ${PYTHON_INCLUDE_DIRS}
   )
-  
+
   target_compile_definitions(pynestkernel PRIVATE 
     -D_IS_PYNEST
   )

@@ -24,8 +24,7 @@
 #define STDP_TRIPLET_CONNECTION_H
 
 /* BeginDocumentation
-  Name: stdp_triplet_synapse - Synapse type with spike-timing dependent
-  plasticity accounting for spike triplets as described in [1].
+  Name: stdp_triplet_synapse - Synapse type with spike-timing dependent plasticity (triplets).
 
   Description:
     stdp_triplet_synapse is a connection with spike time dependent

@@ -55,6 +55,14 @@ nest::double_t Time::Range::MS_PER_TIC = 1 / Time::Range::TICS_PER_MS;
 nest::double_t Time::Range::MS_PER_STEP = TICS_PER_STEP / TICS_PER_MS;
 nest::double_t Time::Range::STEPS_PER_MS = 1 / Time::Range::MS_PER_STEP;
 
+// define for unit -- const'ness is in the header
+// should only be necessary when not folded away
+// by the compiler as compile time consts
+const tic_t Time::LimitPosInf::tics;
+const delay Time::LimitPosInf::steps;
+const tic_t Time::LimitNegInf::tics;
+const delay Time::LimitNegInf::steps;
+
 tic_t
 Time::compute_max()
 {

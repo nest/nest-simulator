@@ -129,8 +129,7 @@ nest::SourceTable::get_next_target_data( const thread tid, TargetData& next_targ
         }
         else
         {
-          // the current position is containing an entry, so we
-          // retrieve it
+          // the current position contains an entry, so we retrieve it
           Source& current_source = ( *sources_[ current_tid_[ tid ] ] )[ current_syn_id_[ tid ] ][ current_lcid_[ tid ] ];
           const thread target_rank = kernel().mpi_manager.get_process_id_of_gid( current_source.gid );
           // now we need to determine whether this thread is
@@ -140,7 +139,7 @@ nest::SourceTable::get_next_target_data( const thread tid, TargetData& next_targ
           {
             if ( current_source.processed )
             {
-              // looks like we've processed this alread, let's
+              // looks like we've processed this already, let's
               // continue
               ++current_lcid_[ tid ];
               continue;

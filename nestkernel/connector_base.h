@@ -376,6 +376,9 @@ public:
     return false;
   }
 
+  // we check whether an entry with this synapse id already exists in
+  // this heterogeneous connector, if not we return a flag indicating
+  // an invalid index
   synindex
   find_synapse_index( synindex syn_id ) const
   {

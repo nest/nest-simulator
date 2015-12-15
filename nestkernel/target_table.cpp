@@ -75,25 +75,38 @@ nest::TargetTable::prepare( const thread tid )
 bool
 nest::TargetTable::get_next_spike_data( const thread tid, const thread current_tid, const index lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end )
 {
+  // we stay in this loop either until we can return a valid SpikeData
+  // object or we have reached the end of the target vector for this
+  // node
   while ( true )
   {
     if ( current_target_index_[ tid ] == (*targets_[ current_tid ])[ lid ].size() )
     {
+      // reached the end of the target vector for this node, so we
+      // reset the current_target_index and return false.
       current_target_index_[ tid ] = 0;
       return false;
     }
     else
     {
+      // the current position contains an entry, so we retrieve it
       Target& current_target = (*targets_[ current_tid ])[ lid ][ current_target_index_[ tid ] ];
+      // we determine whether this thread is responsible for this part
+      // of the MPI buffer; if not, we continue with the loop
       if ( rank_start <= current_target.rank && current_target.rank < rank_end )
       {
         if ( current_target.processed )
         {
+          // looks like we've processed this already, let's
+          // continue
           ++current_target_index_[ tid ];
           continue;
         }
         else
         {
+          // ***TODO@5g: this break for more than one communication round***
+          // we have found a valid entry, so mark it as processed and
+          // set appropiate values for rank and next_spike_data
           current_target.processed = true;
           rank = current_target.rank;
           next_spike_data.tid = current_target.tid;
@@ -110,12 +123,4 @@ nest::TargetTable::get_next_spike_data( const thread tid, const thread current_t
       }
     }
   }
-}
-
-void
-nest::TargetTable::reject_last_spike_data( const thread tid, const thread current_tid, const index lid )
-{
-  assert( current_target_index_[ tid ] > 0 );
-  --current_target_index_[ tid ];
-  ( *targets_[ current_tid ])[ lid ][ current_target_index_[ tid ] ].processed = false;
 }

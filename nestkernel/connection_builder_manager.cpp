@@ -75,8 +75,8 @@ nest::ConnectionBuilderManager::ConnectionBuilderManager()
 nest::ConnectionBuilderManager::~ConnectionBuilderManager()
 {
   source_table_.finalize();
-  delete_connections_5g_();
   delete_connections_();
+  delete_connections_5g_();
 }
 
 void
@@ -125,8 +125,8 @@ nest::ConnectionBuilderManager::finalize()
 {
   source_table_.finalize();
   target_table_.finalize();
-  delete_connections_5g_();
   delete_connections_();
+  delete_connections_5g_();
 }
 
 void
@@ -258,6 +258,7 @@ nest::ConnectionBuilderManager::delete_connections_5g_()
     delete *it;
   }
   connections_5g_.clear();
+
 }
 
 void
@@ -532,7 +533,7 @@ nest::ConnectionBuilderManager::connect( index source_id,
 }
 
 /*
- Connection::Manager::connect()
+ Connection::Manager::connect() ***OUTDATED COMMENT***TODO@5g
 
  Here a short description of the logic of the following connect() methods
  (from a mail conversation between HEP and MH, 2013-07-03)
@@ -568,16 +569,18 @@ nest::ConnectionBuilderManager::connect_( Node& s,
   double_t d,
   double_t w )
 {
-  // see comment above for explanation
+  // see comment above for explanation ***OUTDATED***TODO@5g
   // ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
   // ConnectorBase* c =
   //   kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection( s, r, conn, syn, d, w );
   // connections_[ tid ].set( s_gid, c );
 
-  // TODO@5g:
   kernel().model_manager.assert_valid_syn_id( syn );
+  // 
   kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection_5g(
     s, r, connections_5g_[ tid ], syn, d, w );
+
+  // we add the presynaptic neuron to the source table
   source_table_.add_source( tid, syn, s_gid );
 
   // TODO: set size of vv_num_connections in init
@@ -598,7 +601,7 @@ nest::ConnectionBuilderManager::connect_( Node& s,
   double_t d,
   double_t w )
 {
-  // see comment above for explanation
+  // see comment above for explanation ***OUTDATED***TODO@5g
   // ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
   // ConnectorBase* c =
   //   kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection(
@@ -608,6 +611,8 @@ nest::ConnectionBuilderManager::connect_( Node& s,
   kernel().model_manager.assert_valid_syn_id( syn );
   kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection_5g(
     s, r, connections_5g_[ tid ], syn, p, d, w );
+
+  // we add the presynaptic neuron to the source table
   source_table_.add_source( tid, syn, s_gid );
 
   // TODO: set size of vv_num_connections in init
@@ -1041,23 +1046,23 @@ nest::ConnectionBuilderManager::connect( ArrayDatum& conns )
   return true;
 }
 
-nest::ConnectorBase*
-nest::ConnectionBuilderManager::validate_source_entry_( thread tid, index s_gid, synindex syn_id )
-{
-  kernel().model_manager.assert_valid_syn_id( syn_id );
+// nest::ConnectorBase*
+// nest::ConnectionBuilderManager::validate_source_entry_( thread tid, index s_gid, synindex syn_id )
+// {
+//   kernel().model_manager.assert_valid_syn_id( syn_id );
 
-  // resize sparsetable to full network size
-  if ( connections_[ tid ].size() < kernel().node_manager.size() )
-    connections_[ tid ].resize( kernel().node_manager.size() );
+//   // resize sparsetable to full network size
+//   if ( connections_[ tid ].size() < kernel().node_manager.size() )
+//     connections_[ tid ].resize( kernel().node_manager.size() );
 
-  // check, if entry exists
-  // if not put in zero pointer
-  if ( connections_[ tid ].test( s_gid ) )
-    return connections_[ tid ].get(
-      s_gid ); // returns non-const reference to stored type, here ConnectorBase*
-  else
-    return 0; // if non-existing
-}
+//   // check, if entry exists
+//   // if not put in zero pointer
+//   if ( connections_[ tid ].test( s_gid ) )
+//     return connections_[ tid ].get(
+//       s_gid ); // returns non-const reference to stored type, here ConnectorBase*
+//   else
+//     return 0; // if non-existing
+// }
 
 // -----------------------------------------------------------------------------
 

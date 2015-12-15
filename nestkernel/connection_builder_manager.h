@@ -345,10 +345,11 @@ private:
    * Deletes all connections and also frees the PMA.
    */
   void delete_connections_();
+
+  //! deletes all (postsynaptic) connections and frees the PMA.
   void delete_connections_5g_();
 
-  ConnectorBase* validate_source_entry_( thread tid, index s_gid, synindex syn_id );
-  synindex validate_source_entry_5g_( thread tid, synindex syn_id );
+  // ConnectorBase* validate_source_entry_( thread tid, index s_gid, synindex syn_id );
 
   /**
    * Connect is used to establish a connection between a sender and
@@ -389,8 +390,24 @@ private:
    * - Third dim: A std::vector for each synapse prototype, holding the Connector objects
    */
   tVSConnector connections_;
+
+  /** A structure to hold the Connector objects which in turn hold the
+   * connection information. Corresponds to a three dimensional
+   * structure: threads|synapses|connections */
   std::vector< HetConnector* > connections_5g_;
+
+  /**
+   * A structure to hold the global ids of presynaptic neurons during
+   * postsynaptic connection creation, before the connection
+   * information has been transferred to the presynaptic side.
+   * Internally arragend in a 3d structure: threads|synapses|gids
+   */
   SourceTable source_table_;
+
+  /** A structure to hold the information about targets for each
+   * neuron on the presynaptic side. Internally arranged in a 3d
+   * structure: threads|localnodes|targets
+   */
   TargetTable target_table_;
 
   tVDelayChecker delay_checkers_;

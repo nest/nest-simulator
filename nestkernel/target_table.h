@@ -35,15 +35,18 @@ namespace nest
 {
 struct SpikeData;
 
-// TODO@5g: documentation
+/** A data structure containing all information required to uniquely
+ * identify a target neuron on a machine. Used in TargetTable for
+ * presynaptic part of connection infrastructure.
+ */
 struct Target
 {
   // TODO@5g: additional types in nest_types?
   unsigned int tid : 10;            //!< thread of target neuron
-  unsigned int rank : 22;         //!< rank of target neuron
-  unsigned int processed : 1;
-  unsigned int syn_index : 6;  //!< index of synapse type
-  unsigned int lcid : 25;          //! local index of connection to target
+  unsigned int rank : 22;           //!< rank of target neuron
+  unsigned int processed : 1;       //!< has this entry been processed
+  unsigned int syn_index : 6;       //!< index of synapse type
+  unsigned int lcid : 25;           //! local index of connection to target
   Target();
   Target( const Target& target );
   Target( const thread tid, const unsigned int rank, const unsigned int syn_index, const unsigned int lcid);
@@ -79,7 +82,9 @@ Target::Target( const thread tid, const unsigned int rank, const unsigned int sy
 {
 }
 
-// TODO@5g: documentation
+/** A data structure used to communicate part of the infrastructure
+ * from post- to presynaptic side.
+ */
 struct TargetData
 {
   index gid;
@@ -132,24 +137,53 @@ TargetData::is_complete() const
   return gid == complete_marker;
 }
 
+/** This data structure stores the targets of the local neurons, i.e.,
+ * the presynaptic part of the connection infrastructure. The core
+ * structure is a three dimensional vector, which is arranged as
+ * follows:
+ * 1st dimension: threads
+ * 2nd dimension: local nodes/neurons
+ * 3rd dimension: targets
+ */
 class TargetTable
 {
 private:
+  //! 3d structure storing targets of local neurons
   std::vector< std::vector< std::vector< Target > >* > targets_;
+  //! this variable is needed during creation of MPI buffer for
+  //! communicating spikes, i.e., when translating the thread local
+  //! spike_register to entries in the MPI buffer
   std::vector< index > current_target_index_;
   
 public:
   TargetTable();
   ~TargetTable();
+  //! initialize data structures
   void initialize();
+  //! delete data structure
   void finalize();
-  void prepare( thread tid );
+  //! adjust targets table's size to number of local nodes
+  void prepare( const thread tid );
   // void reserve( thread, synindex, index );
+  //! add entry to target table
   void add_target( thread tid, const TargetData& target_data );
-  void clear( thread );
+  // void clear( thread );
+  //! returns the next spike data according to current_target_index
   bool get_next_spike_data( const thread tid, const thread current_tid, const index lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end );
+  //! rejects the last spike data and resets current_target_index accordingly
   void reject_last_spike_data( const thread tid, const thread current_tid, const index lid );
+  // TODO@5g: don't we need save/restore/reset as in communication of source table?
 };
+
+inline
+void
+nest::TargetTable::reject_last_spike_data( const thread tid, const thread current_tid, const index lid )
+{
+  assert( current_target_index_[ tid ] > 0 );
+  --current_target_index_[ tid ];
+  ( *targets_[ current_tid ])[ lid ][ current_target_index_[ tid ] ].processed = false;
+}
+
 
 } // namespace nest
 

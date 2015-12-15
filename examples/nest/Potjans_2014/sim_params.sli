@@ -37,7 +37,6 @@
 
 /t_sim 1000.0 def     % simulated time (ms)
 /dt 0.1 def           % simulation step (ms). Default is 0.1 ms.
-/allgather true def   % communication protocol
 
 % master seed for random number generators
 % actual seeds will be master_seed ... master_seed + 2*n_vp

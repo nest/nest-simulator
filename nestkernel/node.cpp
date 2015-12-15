@@ -307,20 +307,20 @@ Node::handles_test_event( DSCurrentEvent&, rport )
 }
 
 void
-Node::handle( GapJEvent& )
+Node::handle( GapJunctionEvent& )
 {
   throw UnexpectedEvent();
 }
 
 port
-Node::handles_test_event( GapJEvent&, rport )
+Node::handles_test_event( GapJunctionEvent&, rport )
 {
   throw IllegalConnection();
   return invalid_port_;
 }
 
 void
-Node::sends_secondary_event( GapJEvent& )
+Node::sends_secondary_event( GapJunctionEvent& )
 {
   throw IllegalConnection();
 }

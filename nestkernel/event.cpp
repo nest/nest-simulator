@@ -116,11 +116,11 @@ void DataLoggingReply::operator()()
   receiver_->handle( *this );
 }
 
-void GapJEvent::operator()()
+void GapJunctionEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-synindex GapJEvent::synid_ = invalid_synindex;
-size_t GapJEvent::coeff_length_ = 0;
+std::vector< synindex > GapJunctionEvent::supported_syn_ids_;
+size_t GapJunctionEvent::coeff_length_ = 0;
 }

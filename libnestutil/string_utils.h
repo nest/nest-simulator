@@ -1,5 +1,5 @@
 /*
- *  main.cpp
+ *  string_utils.h
  *
  *  This file is part of NEST.
  *
@@ -20,36 +20,25 @@
  *
  */
 
-#include <config.h>
+#ifndef STRING_UTILS_H
+#define STRING_UTILS_H
 
-#include "neststartup.h"
+#include <algorithm>
+#include <string>
 
-#include "network.h"
-#include "interpret.h"
+/**
+ * This header is supposed to group string related utility functions.
+ */
 
-int
-main( int argc, char* argv[] )
+/**
+ * Returns true, if the string `value` ends with the string `ending`.
+ */
+inline bool
+ends_with( std::string const& value, std::string const& ending )
 {
-  nest::Network* pNet = 0;
-
-  /**
-   * Create the interpreter object. Due to its dependence
-   * on various static objects (e.g. of class Name), the
-   * interpreter engine MUST NOT be global.
-   */
-  SLIInterpreter engine;
-
-  neststartup( &argc, &argv, engine, pNet );
-
-  // start the interpreter session
-  int exitcode = engine.execute();
-
-  nestshutdown();
-
-  // delete the Network before modules are deleted by interpreter's destructor
-  // because otherwise models defined in a module might still be referenced by
-  // the Network
-  delete pNet;
-
-  return exitcode;
+  if ( ending.size() > value.size() )
+    return false;
+  return std::equal( ending.rbegin(), ending.rend(), value.rbegin() );
 }
+
+#endif /* STRING_UTILS_H */

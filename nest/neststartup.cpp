@@ -57,11 +57,11 @@
 
 #ifndef _IS_PYNEST
 int
-neststartup( int argc, char** argv, SLIInterpreter& engine, nest::Network*& pNet )
+neststartup( int* argc, char*** argv, SLIInterpreter& engine, nest::Network*& pNet )
 #else
 int
-neststartup( int argc,
-  char** argv,
+neststartup( int* argc,
+  char*** argv,
   SLIInterpreter& engine,
   nest::Network*& pNet,
   std::string modulepath )
@@ -69,7 +69,7 @@ neststartup( int argc,
 {
 
 #ifdef HAVE_MPI
-  nest::Communicator::init( &argc, &argv );
+  nest::Communicator::init( argc, argv );
 #endif
 
 #ifdef _OPENMP
@@ -110,7 +110,7 @@ neststartup( int argc,
   addmodule< SLIArrayModule >( engine );
   addmodule< SpecialFunctionsModule >( engine ); // safe without GSL
   addmodule< SLIgraphics >( engine );
-  engine.addmodule( new SLIStartup( argc, argv ) );
+  engine.addmodule( new SLIStartup( *argc, *argv ) );
   addmodule< Processes >( engine );
   addmodule< RegexpModule >( engine );
   addmodule< FilesystemModule >( engine );

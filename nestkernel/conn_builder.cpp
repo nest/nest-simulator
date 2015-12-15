@@ -159,7 +159,8 @@ nest::ConnBuilder::ConnBuilder( Network& net,
             it != synapse_params_.end();
             ++it )
       {
-        if ( it->first == names::receptor_type || it->first == names::music_channel )
+        if ( it->first == names::receptor_type || it->first == names::music_channel
+          || it->first == names::synapse_label )
           ( *param_dicts_[ t ] )[ it->first ] = Token( new IntegerDatum( 0 ) );
         else
           ( *param_dicts_[ t ] )[ it->first ] = Token( new DoubleDatum( 0.0 ) );
@@ -305,7 +306,8 @@ nest::ConnBuilder::single_connect_( index sgid,
           it != synapse_params_.end();
           ++it )
     {
-      if ( it->first == names::receptor_type || it->first == names::music_channel )
+      if ( it->first == names::receptor_type || it->first == names::music_channel
+        || it->first == names::synapse_label )
       {
         try
         {
@@ -316,7 +318,18 @@ nest::ConnBuilder::single_connect_( index sgid,
         }
         catch ( KernelException& e )
         {
-          throw BadProperty( "Receptor type must be of type integer." );
+          if ( it->first == names::receptor_type )
+          {
+            throw BadProperty( "Receptor type must be of type integer." );
+          }
+          else if ( it->first == names::music_channel )
+          {
+            throw BadProperty( "Music channel type must be of type integer." );
+          }
+          else if ( it->first == names::synapse_label )
+          {
+            throw BadProperty( "Synapse label must be of type integer." );
+          }
         }
       }
       else

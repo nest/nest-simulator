@@ -217,7 +217,7 @@ nest::Communicator::communicate( std::vector< uint_t >& send_buffer,
   std::vector< uint_t >& recv_buffer,
   std::vector< int >& displacements )
 {
-  displacements.resize(num_processes_);
+  displacements.resize( num_processes_ );
   if ( num_processes_ == 1 ) // purely thread-based
   {
     displacements[ 0 ] = 0;
@@ -374,7 +374,7 @@ nest::Communicator::communicate( std::vector< OffGridSpike >& send_buffer,
   std::vector< OffGridSpike >& recv_buffer,
   std::vector< int >& displacements )
 {
-  displacements.resize(num_processes_);
+  displacements.resize( num_processes_ );
   if ( num_processes_ == 1 ) // purely thread-based
   {
     displacements[ 0 ] = 0;

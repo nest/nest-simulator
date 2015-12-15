@@ -469,9 +469,8 @@ nest::iaf_psc_alpha_canon::emit_spike_( Time const& origin,
   // we know that the potential is subthreshold at t0, super at t0+dt
 
   // compute spike time relative to beginning of step
-  const double_t spike_offset = V_.h_ms_ - ( t0 + thresh_find_( dt ) );
   S_.last_spike_step_ = origin.get_steps() + lag + 1;
-  S_.last_spike_offset_ = spike_offset;
+  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + thresh_find_( dt ) );
 
   // reset neuron and make it refractory
   S_.y3_ = P_.U_reset_;
@@ -480,7 +479,7 @@ nest::iaf_psc_alpha_canon::emit_spike_( Time const& origin,
   // send spike
   set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
-  se.set_offset( spike_offset );
+  se.set_offset( S_.last_spike_offset_ );
   network()->send( *this, se, lag );
 
   return;

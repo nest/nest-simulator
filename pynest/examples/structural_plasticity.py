@@ -279,6 +279,8 @@ class StructralPlasticityExample:
     through time is generated.
     '''
     def simulate(self):
+        if nest.NumProcesses() > 1:
+            sys.exit("For simplicity, this example only works for a single process.")
         nest.EnableStructuralPlasticity()
         print("Starting simulation")
         sim_steps = numpy.arange(0, self.t_sim, self.record_interval)

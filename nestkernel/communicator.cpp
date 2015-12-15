@@ -217,7 +217,7 @@ nest::Communicator::communicate( std::vector< uint_t >& send_buffer,
   std::vector< uint_t >& recv_buffer,
   std::vector< int >& displacements )
 {
-  displacements.resize( num_processes_ );
+  displacements.resize( num_processes_, 0 );
   if ( num_processes_ == 1 ) // purely thread-based
   {
     displacements[ 0 ] = 0;
@@ -374,7 +374,7 @@ nest::Communicator::communicate( std::vector< OffGridSpike >& send_buffer,
   std::vector< OffGridSpike >& recv_buffer,
   std::vector< int >& displacements )
 {
-  displacements.resize( num_processes_ );
+  displacements.resize( num_processes_, 0 );
   if ( num_processes_ == 1 ) // purely thread-based
   {
     displacements[ 0 ] = 0;
@@ -939,7 +939,7 @@ nest::Communicator::communicate( std::vector< uint_t >& send_buffer,
   std::vector< uint_t >& recv_buffer,
   std::vector< int >& displacements )
 {
-  displacements.resize( 1 );
+  displacements.resize( num_processes_, 0 );
   displacements[ 0 ] = 0;
   if ( static_cast< size_t >( recv_buffer_size_ ) < send_buffer.size() )
   {
@@ -957,7 +957,7 @@ nest::Communicator::communicate( std::vector< OffGridSpike >& send_buffer,
   std::vector< OffGridSpike >& recv_buffer,
   std::vector< int >& displacements )
 {
-  displacements.resize( 1 );
+  displacements.resize( num_processes_, 0 );
   displacements[ 0 ] = 0;
   if ( static_cast< size_t >( recv_buffer_size_ ) < send_buffer.size() )
   {
@@ -972,7 +972,7 @@ nest::Communicator::communicate( std::vector< double_t >& send_buffer,
   std::vector< double_t >& recv_buffer,
   std::vector< int >& displacements )
 {
-  displacements.resize( 1 );
+  displacements.resize( num_processes_, 0 );
   displacements[ 0 ] = 0;
   recv_buffer.swap( send_buffer );
 }
@@ -982,7 +982,7 @@ nest::Communicator::communicate( std::vector< ulong_t >& send_buffer,
   std::vector< ulong_t >& recv_buffer,
   std::vector< int >& displacements )
 {
-  displacements.resize( 1 );
+  displacements.resize( num_processes_, 0 );
   displacements[ 0 ] = 0;
   recv_buffer.swap( send_buffer );
 }
@@ -992,7 +992,7 @@ nest::Communicator::communicate( std::vector< int_t >& send_buffer,
   std::vector< int_t >& recv_buffer,
   std::vector< int >& displacements )
 {
-  displacements.resize( 1 );
+  displacements.resize( num_processes_, 0 );
   displacements[ 0 ] = 0;
   recv_buffer.swap( send_buffer );
 }

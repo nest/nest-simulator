@@ -154,32 +154,3 @@ nest::SourceTable::get_next_target_data( const thread tid, TargetData& next_targ
     }
   }
 }
-
-void
-nest::SourceTable::save_entry_point( const thread tid )
-{
-  if ( not saved_entry_point_[ tid ] )
-  {
-    save_tid_[ tid ] = current_tid_[ tid ];
-    save_syn_id_[ tid ] = current_syn_id_[ tid ];
-    save_lcid_[ tid ] = current_lcid_[ tid ];
-    saved_entry_point_[ tid ] = true;
-  }
-}
-
-void
-nest::SourceTable::restore_entry_point( const thread tid )
-{
-  current_tid_[ tid ] = save_tid_[ tid ];
-  current_syn_id_[ tid ] = save_syn_id_[ tid ];
-  current_lcid_[ tid ] = save_lcid_[ tid ];
-  saved_entry_point_[ tid ] = false;
-}
-
-void
-nest::SourceTable::reset_entry_point( const thread tid )
-{
-  save_tid_[ tid ] = 0;
-  save_syn_id_[ tid ] = 0;
-  save_lcid_[ tid ] = 0;
-}

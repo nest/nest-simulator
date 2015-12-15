@@ -82,7 +82,7 @@ public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
-  typedef GapJEvent EventType;
+  typedef GapJunctionEvent EventType;
 
 
   /**

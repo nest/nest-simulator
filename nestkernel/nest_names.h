@@ -297,6 +297,7 @@ extern const Name
 extern const Name structure;             //!< Node type
 extern const Name success;
 extern const Name synapse;           //!< Node type
+extern const Name synapse_label;     //!< Label id of synapses with labels
 extern const Name synapse_model;     //!< Connection parameters
 extern const Name synapse_modelid;   //!< Connection parameters
 extern const Name synaptic_elements; //!< Synaptic elements used in structural plasticity

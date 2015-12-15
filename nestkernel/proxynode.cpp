@@ -50,7 +50,7 @@ proxynode::send_test_event( Node& target, rport receptor_type, synindex syn_id, 
 }
 
 void
-proxynode::sends_secondary_event( GapJEvent& ge )
+proxynode::sends_secondary_event( GapJunctionEvent& ge )
 {
   network()->get_model( get_model_id() )->sends_secondary_event( ge );
 }

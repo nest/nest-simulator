@@ -271,6 +271,7 @@ const Name structural_plasticity_update_interval( "structural_plasticity_update_
 const Name structure( "structure" );
 const Name success( "success" );
 const Name synapse( "synapse" );
+const Name synapse_label( "synapse_label" );
 const Name synapse_model( "synapse_model" );
 const Name synapse_modelid( "synapse_modelid" );
 const Name synaptic_elements( "synaptic_elements" );

@@ -317,17 +317,13 @@ nest::Scheduler::configure_spike_buffers_()
   // insert the end marker for payload event (==invalid_synindex)
   // and insert the done flag (==true)
   // after min_delay 0's (== comm_marker)
-  // use the streaming operator defined in event.h
-  // because otherwise readout will be incompatible on JUQUEEN
+  // use the template functions defined in event.h
   // this only needs to be done for one process, because displacements is set to 0
   // so all processes initially read out the same positions in the
   // global spike buffer
   std::vector< uint_t >::iterator pos = global_grid_spikes_.begin() + n_threads_ * min_delay_;
-  input_stream( invalid_synindex, pos );
-  input_stream( true, pos );
-  // the following line fails on JUQUEEN, because
-  // the way of reading out by streaming operators in deliver_events differs
-  // global_grid_spikes_[n_threads_*min_delay_] = static_cast<uint_t>( invalid_synindex );
+  write_to_comm_buffer( invalid_synindex, pos );
+  write_to_comm_buffer( true, pos );
 
   global_offgrid_spikes_.clear();
   global_offgrid_spikes_.resize( recv_buffer_size, OffGridSpike( 0, 0.0 ) );
@@ -655,7 +651,7 @@ nest::Scheduler::update()
             for ( size_t i = 0; i < done.size(); i++ )
               done_all = done[ i ] && done_all;
 
-            // gather SecondaryEvents (e.g. GapJEvents)
+            // gather SecondaryEvents (e.g. GapJunctionEvents)
             gather_events_( done_all );
 
             // reset done and done_all
@@ -1569,9 +1565,9 @@ nest::Scheduler::collocate_buffers_( bool done )
 
     // end marker after last secondary event
     // made sure in resize that this position is still allocated
-    input_stream( invalid_synindex, pos );
+    write_to_comm_buffer( invalid_synindex, pos );
     // append the boolean value indicating whether we are done here
-    input_stream( done, pos );
+    write_to_comm_buffer( done, pos );
   }
   else // off_grid_spiking
   {
@@ -1685,7 +1681,7 @@ nest::Scheduler::deliver_events_( thread t )
 
     for ( size_t pid = 0; pid < ( size_t ) Communicator::get_num_processes(); ++pid )
     {
-      fwit readpos = global_grid_spikes_.begin() + pos[ pid ];
+      std::vector< uint_t >::iterator readpos = global_grid_spikes_.begin() + pos[ pid ];
 
       while ( true )
       {
@@ -1693,7 +1689,7 @@ nest::Scheduler::deliver_events_( thread t )
         // the encoding will be different on JUQUEEN for the
         // index written into the buffer and read out of it
         synindex synid;
-        output_stream( synid, readpos );
+        read_from_comm_buffer( synid, readpos );
 
         if ( synid == invalid_synindex )
           break;
@@ -1712,7 +1708,7 @@ nest::Scheduler::deliver_events_( thread t )
       // must be a bool (same type as on the sending side)
       // otherwise the encoding will be inconsistent on JUQUEEN
       bool done_p;
-      output_stream( done_p, readpos );
+      read_from_comm_buffer( done_p, readpos );
       done = done && done_p;
     }
   }

@@ -869,7 +869,7 @@ Scheduler::send_remote( thread t, SecondaryEvent& e )
   size_t old_size = secondary_events_buffer_[ t ].size();
 
   secondary_events_buffer_[ t ].resize( old_size + e.size() );
-  fwit it = secondary_events_buffer_[ t ].begin() + old_size;
+  std::vector< uint_t >::iterator it = secondary_events_buffer_[ t ].begin() + old_size;
   e >> it;
 }
 

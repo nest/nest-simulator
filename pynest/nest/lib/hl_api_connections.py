@@ -82,7 +82,7 @@ def FindConnections(source, target=None, synapse_model=None, synapse_type=None):
 
 
 @check_stack
-def GetConnections(source=None, target=None, synapse_model=None):
+def GetConnections(source=None, target=None, synapse_model=None, synapse_label=None):
     """
     Return an array of connection identifiers.
     
@@ -90,6 +90,7 @@ def GetConnections(source=None, target=None, synapse_model=None):
     source - list of source GIDs
     target - list of target GIDs
     synapse_model - string with the synapse model
+    synapse_label - non negative integer with synapse label
     
     If GetConnections is called without parameters, all connections
     in the network are returned.
@@ -102,9 +103,12 @@ def GetConnections(source=None, target=None, synapse_model=None):
 
     If a synapse model is given, only connections with this synapse
     type are returned.
+    
+    If a synapse label is given, only connections with this synapse
+    label are returned.
 
-    Any combination of source, target and synapse_model parameters
-    is permitted.
+    Any combination of source, target, synapse_model and synapse_label
+    parameters is permitted.
 
     Each connection id is a 5-tuple or, if available, a NumPy
     array with the following five entries:
@@ -128,6 +132,9 @@ def GetConnections(source=None, target=None, synapse_model=None):
 
     if synapse_model is not None:
         params['synapse_model'] = kernel.SLILiteral(synapse_model)
+
+    if synapse_label is not None:
+        params['synapse_label'] = synapse_label
 
     sps(params)
     sr("GetConnections")

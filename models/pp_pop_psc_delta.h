@@ -25,7 +25,7 @@
 
 #include "nest.h"
 #include "event.h"
-#include "archiving_node.h"
+#include "node.h"
 #include "ring_buffer.h"
 #include "connection.h"
 #include "binomial_randomdev.h"
@@ -149,7 +149,7 @@ class Network;
  */
 
 
-class pp_pop_psc_delta : public Archiving_Node
+class pp_pop_psc_delta : public Node
 {
 
 public:
@@ -375,7 +375,6 @@ pp_pop_psc_delta::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -386,12 +385,6 @@ pp_pop_psc_delta::set_status( const DictionaryDatum& d )
   ptmp.set( d );         // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
   stmp.set( d, ptmp );   // throws if BadProperty
-
-  // We now know that (ptmp, stmp) are consistent. We do not
-  // write them back to (P_, S_) before we are also sure that
-  // the properties to be set in the parent class are internally
-  // consistent.
-  Archiving_Node::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

@@ -170,10 +170,10 @@ public:
 
 protected:
   /**
-   * \fn void set_spiketime(Time const & t_sp)
+   * \fn void set_spiketime(Time const & t_sp, double_t offset)
    * record spike history
    */
-  void set_spiketime( Time const& t_sp );
+  void set_spiketime( Time const& t_sp, double_t offset = 0.0 );
 
   /**
    * \fn double_t get_spiketime()

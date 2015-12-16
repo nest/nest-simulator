@@ -26,6 +26,7 @@
 #include "network.h"
 #include "nest_time.h"
 #include "nest_datums.h"
+#include "conn_builder.h"
 #include <algorithm>
 
 #ifdef _OPENMP
@@ -554,8 +555,9 @@ ConnectionManager::validate_source_entry( thread tid, index s_gid, synindex syn_
   // check, if entry exists
   // if not put in zero pointer
   if ( connections_[ tid ].test( s_gid ) )
-    return connections_[ tid ].get(
-      s_gid ); // returns non-const reference to stored type, here ConnectorBase*
+  {
+    return connections_[ tid ].get( s_gid );
+  }
   else
     return 0; // if non-existing
 }
@@ -617,6 +619,34 @@ ConnectionManager::connect( Node& s,
   ConnectorBase* conn = validate_source_entry( tid, s_gid, syn );
   ConnectorBase* c = prototypes_[ tid ][ syn ]->add_connection( s, r, conn, syn, p, d, w );
   connections_[ tid ].set( s_gid, c );
+}
+
+/**
+ * Works in a similar way to connect, same logic but removes a connection.
+ * @param target target node
+ * @param sgid id of the source
+ * @param target_thread thread of the target
+ * @param syn_id type of synapse
+ */
+void
+ConnectionManager::disconnect( Node& target, index sgid, thread target_thread, index syn_id )
+{
+
+  if ( net_.is_local_gid( target.get_gid() ) )
+  {
+    // get the ConnectorBase corresponding to the source
+    ConnectorBase* conn = validate_pointer( validate_source_entry( target_thread, sgid, syn_id ) );
+    ConnectorBase* c = prototypes_[ target_thread ][ syn_id ]->delete_connection(
+      target, target_thread, conn, syn_id );
+    if ( c == 0 )
+    {
+      connections_[ target_thread ].erase( sgid );
+    }
+    else
+    {
+      connections_[ target_thread ].set( sgid, c );
+    }
+  }
 }
 
 /**

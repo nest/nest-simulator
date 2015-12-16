@@ -38,6 +38,7 @@
 #include "gid_collection.h"
 #include "lockptr.h"
 #include "sliexceptions.h"
+#include "nest_time.h"
 
 #include "gslrandomgen.h"
 
@@ -71,6 +72,7 @@ public:
    * where conn_spec_dict speficies connection type and its parameters.
    */
   virtual void connect();
+  virtual void disconnect();
 
   //! parameters: sources, targets, specifications
   ConnBuilder( Network&,
@@ -80,12 +82,45 @@ public:
     const DictionaryDatum& );
   virtual ~ConnBuilder();
 
+  index
+  get_synapse_model() const
+  {
+    return synapse_model_;
+  }
+
+  bool
+  get_default_delay() const
+  {
+    return default_delay_;
+  }
+
+  void set_pre_synaptic_element_name( std::string name );
+  void set_post_synaptic_element_name( std::string name );
+
+  int change_connected_synaptic_elements( index, index, const int, int );
+
 protected:
   //! Implements the actual connection algorithm
   virtual void connect_() = 0;
+  virtual void
+  sp_connect_()
+  {
+    throw NotImplemented( "This connection rule is not implemented for structural plasticity" );
+  }
+  virtual void
+  disconnect_()
+  {
+    throw NotImplemented( "This disconnection rule is not implemented" );
+  }
+  virtual void
+  sp_disconnect_()
+  {
+    throw NotImplemented( "This connection rule is not implemented for structural plasticity" );
+  }
 
   //! Create connection between given nodes, fill parameter values
   void single_connect_( index, Node&, thread, librandom::RngPtr& );
+  void single_disconnect_( index, Node&, thread );
 
   /**
    * Moves pointer in parameter array.
@@ -109,6 +144,10 @@ protected:
   //! buffer for exceptions raised in threads
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
 
+  // Name of the pre synaptic and post synaptic elements for this connection builder
+  std::string pre_synaptic_element_name;
+  std::string post_synaptic_element_name;
+
 private:
   typedef std::map< Name, ConnParameter* > ConnParameterMap;
 
@@ -119,6 +158,9 @@ private:
 
   //! indicate that weight should not be set per synapse
   bool default_weight_;
+
+  //! indicate that delay should not be set per synapse
+  bool default_delay_;
 
   // null-pointer indicates that default be used
   ConnParameter* weight_;
@@ -163,6 +205,9 @@ public:
 
 protected:
   void connect_();
+  void sp_connect_();
+  void disconnect_();
+  void sp_disconnect_();
 };
 
 class AllToAllBuilder : public ConnBuilder
@@ -179,6 +224,9 @@ public:
 
 protected:
   void connect_();
+  void sp_connect_();
+  void disconnect_();
+  void sp_disconnect_();
 };
 
 
@@ -246,6 +294,38 @@ private:
   double p_; //!< connection probability
 };
 
+class SPBuilder : public ConnBuilder
+{
+public:
+  SPBuilder( Network& net,
+    const GIDCollection& sources,
+    const GIDCollection& targets,
+    const DictionaryDatum& conn_spec,
+    const DictionaryDatum& syn_spec );
+
+  Time get_min_delay() const;
+  Time get_max_delay() const;
+
+  std::string
+  get_pre_synaptic_element_name() const
+  {
+    return pre_synaptic_element_name;
+  }
+  std::string
+  get_post_synaptic_element_name() const
+  {
+    return post_synaptic_element_name;
+  }
+
+  void connect( GIDCollection sources, GIDCollection targets );
+
+protected:
+  void connect_();
+  void connect_( GIDCollection sources, GIDCollection targets );
+
+  Time min_delay;
+  Time max_delay;
+};
 
 } // namespace nest
 

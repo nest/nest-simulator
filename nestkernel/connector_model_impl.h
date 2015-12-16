@@ -491,6 +491,12 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
   bool found = false;
   vector_like< ConnectionT >* vc;
 
+  bool b_has_primary = has_primary( conn );
+  bool b_has_secondary = has_secondary( conn );
+
+  conn = validate_pointer( conn );
+  // from here on we can use conn as a valid pointer
+
   if ( conn->homogeneous_model() )
   {
     assert( conn->get_syn_id() == syn_id );
@@ -501,7 +507,15 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
       ConnectionT* connection = &vc->at( i );
       if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
       {
-        conn = &vc->erase( i );
+        if ( vc->get_num_connections() > 1 )
+          conn = &vc->erase( i );
+        else
+        {
+          delete vc;
+          conn = 0;
+        }
+        if ( conn != 0 )
+          conn = pack_pointer( conn, is_primary_, !is_primary_ );
         found = true;
         break;
       }
@@ -536,11 +550,19 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
               // Test if the homogeneous vector of connections went back to only 1 type of
               // synapse... then go back to the simple vector_like case.
               if ( hc->size() == 1 )
+              {
                 conn = static_cast< vector_like< ConnectionT >* >( ( *hc )[ 0 ] );
+                conn = pack_pointer( conn, b_has_primary, b_has_secondary );
+              }
+              else
+              {
+                conn = pack_pointer( hc, b_has_primary, b_has_secondary );
+              }
             } // Otherwise, just remove the desired connection
             else
             {
               ( *hc )[ i ] = &vc->erase( j );
+              conn = pack_pointer( hc, b_has_primary, b_has_secondary );
             }
             found = true;
             break;

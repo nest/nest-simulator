@@ -31,7 +31,7 @@
 #include "scheduler.h"
 #include "exceptions.h"
 #include "proxynode.h"
-#include "connection_manager.h"
+#include "sp_manager.h"
 #include "event.h"
 #include "modelrangemanager.h"
 #include "compose.hpp"
@@ -108,6 +108,7 @@ Global properties of the simulation kernel.
 Parameters:
   The following parameters are available in the kernel status dictionary.
 
+
   Time and resolution
   resolution               doubletype  - The resolution of the simulation (in ms)
   time                     doubletype  - The current simulation time
@@ -157,13 +158,13 @@ Parameters:
   prelim_tol		   doubletype  - Tolerance of prelim iterations
   prelim_interpolation_order integertype - Interpolation order of polynomial used in prelim
                                            iterations
-
 SeeAlso: Simulate, Node
 */
 
 class Network
 {
   friend class Scheduler;
+  friend class SPManager;
 
 public:
   Network( SLIInterpreter& );
@@ -192,7 +193,7 @@ public:
    * @param   private_model  If true, model is not entered in modeldict.
    * @return void
    * @note The Network calls the Model object's destructor at exit.
-   * @see register_model
+   * @see register_model, unregister_model, register_user_model
    */
   void register_basis_model( Model& m, bool private_model = false );
 
@@ -203,6 +204,7 @@ public:
    * @param   private_model  If true, model is not entered in modeldict.
    * @return Model ID assigned by network
    * @note The Network calls the Model object's destructor at exit.
+   * @see unregister_model, register_user_model
    */
   index register_model( Model& m, bool private_model = false );
 
@@ -313,6 +315,44 @@ public:
    * The size also includes all Subnet objects.
    */
   index size() const;
+
+  /**
+  * Disconnect two nodes. The source node is defined by its global ID.
+  * The target node is defined by the node. The connection is
+  * established on the thread/process that owns the target node.
+  * Identifies if the network is Structural Plasticity enabled or not and then performs
+  * a single disconnect between the two nodes.
+  *
+  * \param s GID of the sending Node.
+  * \param target Pointer to target Node.
+  * \param target_thread Thread that hosts the target node.
+  * \param syn The synapse model to use.
+  */
+  void disconnect_single( index s, Node* target, thread target_thread, DictionaryDatum& syn );
+
+  /**
+   * Disconnect two collections of nodes.  The connection is
+   * established on the thread/process that owns the target node.
+   *
+   * \param sources GID Collection of the source Nodes.
+   * \param targets GID Collection of the target Nodes.
+   * \param connectivityParams connectivity Dictionary
+   * \param synapseParams synapse parameters Dictionary
+   */
+  void disconnect( GIDCollection&, GIDCollection&, DictionaryDatum&, DictionaryDatum& );
+
+  /**
+  * Disconnect two nodes.
+  * The source node is defined by its global ID.
+  * The target node is defined by the node. The connection is
+  * established on the thread/process that owns the target node.
+  *
+  * \param s GID of the sending Node.
+  * \param target Pointer to target Node.
+  * \param target_thread Thread that hosts the target node.
+  * \param syn The synapse model to use.
+  */
+  void disconnect( index s, Node* target, thread target_thread, index syn );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -458,6 +498,8 @@ public:
   void set_synapse_status( index gid, index syn, port p, thread tid, DictionaryDatum& d );
 
   ArrayDatum get_connections( DictionaryDatum dict );
+
+  void update_structural_plasticity();
 
   Subnet* get_root() const; ///< return root subnet.
   Subnet* get_cwn() const;  ///< current working node.
@@ -884,6 +926,26 @@ public:
 #endif
 
   /**
+   * Set structural plasticity status parameters using a dictionary
+   */
+  void set_structural_plasticity_status( const DictionaryDatum& );
+
+  /**
+   * Get the current status of structural plasticity parameters in the network
+   */
+  void get_structural_plasticity_status( DictionaryDatum& );
+
+  /*
+   Enable  structural plasticity
+   */
+  void enable_structural_plasticity();
+
+  /*
+   Disable  structural plasticity
+   */
+  void disable_structural_plasticity();
+
+  /**
    * Gets ID of local thread.
    * Returns thread ID if OPENMP is installed
    * and zero otherwise.
@@ -929,7 +991,7 @@ private:
   SLIInterpreter& interpreter_;
   SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
   Scheduler scheduler_;
-  ConnectionManager connection_manager_;
+  SPManager connection_manager_;
 
   Subnet* root_;    //!< Root node.
   Subnet* current_; //!< Current working node (for insertion).
@@ -1004,6 +1066,9 @@ private:
   bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 
   bool model_defaults_modified_; //!< whether any model defaults have been modified
+
+  bool structural_plasticity_enabled_; // Indicates whether the Structrual Plasticity functionality
+                                       // is On (True) of Off (False)
 };
 
 inline void
@@ -1064,6 +1129,12 @@ inline ArrayDatum
 Network::get_connections( DictionaryDatum params )
 {
   return connection_manager_.get_connections( params );
+}
+
+inline void
+Network::update_structural_plasticity()
+{
+  connection_manager_.update_structural_plasticity();
 }
 
 inline void

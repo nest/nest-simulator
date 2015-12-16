@@ -49,7 +49,7 @@ class Network;
  */
 class ConnectionManager
 {
-
+protected:
   typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons having targets
   typedef std::vector< tSConnector > tVSConnector;           // for all threads
 
@@ -75,6 +75,7 @@ public:
    * Add ConnectionManager specific stuff to the root status dictionary
    */
   void get_status( DictionaryDatum& d ) const;
+  void set_status( const DictionaryDatum& d );
 
   // aka SetDefaults for synapse models
   void set_prototype_status( synindex syn_id, const DictionaryDatum& d );
@@ -153,7 +154,7 @@ public:
     double_t d = numerics::nan,
     double_t w = numerics::nan );
 
-
+  void disconnect( Node& target, index sgid, thread target_thread, index syn_id );
   /**
    * Experimental bulk connector. See documentation in network.h
    */
@@ -190,7 +191,7 @@ public:
    */
   void assert_valid_syn_id( synindex syn_id, thread t = 0 ) const;
 
-private:
+protected:
   std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
   std::vector< std::vector< ConnectorModel* > > prototypes_; //!< The list of available synapse
                                                              //!< prototypes: first dimension one

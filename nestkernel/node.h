@@ -514,9 +514,9 @@ public:
   virtual void handle( GapJunctionEvent& e );
 
   /**
-   * @defgroup MSP_functions Model of Structural Plasticity in NEST.
+   * @defgroup SP_functions Structural Plasticity in NEST.
    * Functions related to accessibility and setup of variables required for
-   * the implementation of MSP in NEST.
+   * the implementation of a model of Structural Plasticity in NEST.
    *
    */
 
@@ -525,7 +525,7 @@ public:
    * the last update in Calcium concentration which is performed each time
    * a Node spikes.
    * Return 0.0 if not overridden
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual double_t
   get_Ca_minus() const
@@ -537,7 +537,7 @@ public:
    * Get the number of synaptic element for the current Node at Ca_t which
    * corresponds to the time of the last spike.
    * Return 0.0 if not overridden
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual double_t get_synaptic_elements( Name ) const
   {
@@ -547,7 +547,7 @@ public:
   /**
    * Get the number of vacant synaptic element for the current Node
    * Return 0 if not overridden
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual int_t get_synaptic_elements_vacant( Name ) const
   {
@@ -557,7 +557,7 @@ public:
   /**
    * Get the number of connected synaptic element for the current Node
    * Return 0 if not overridden
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual int_t get_synaptic_elements_connected( Name ) const
   {
@@ -567,7 +567,7 @@ public:
   /**
    * Get the number of all synaptic elements for the current Node at time t
    * Return an empty map if not overridden
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual std::map< Name, double_t >
   get_synaptic_elements() const
@@ -579,7 +579,7 @@ public:
    * Triggers the update of all SynapticElements
    * stored in the synaptic_element_map_. It also updates the calcium concentration.
    * @param t double_t time when the update is being performed
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual void update_synaptic_elements( double_t ){};
 
@@ -588,7 +588,7 @@ public:
    * time.
    * @param p double_t correspond the the proportion of synaptic elements
    * to be removed.
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual void decay_synaptic_elements_vacant( double_t ){};
 
@@ -598,7 +598,7 @@ public:
    * is formed or deleted.
    * @param type Name, name of the synaptic element to connect
    * @param n int_t number of new connections of the given type
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual void connect_synaptic_element( Name, int_t ){};
 

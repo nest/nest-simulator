@@ -66,7 +66,7 @@
       archiving-node (clip the traces to a maximum of 1).
 
   FirstVersion: Nov 2007
-  Author: Moritz Helias, Abigail Morrison, Eilif Muller, Alexander Seeholzer, Teo Stocco
+  Author: Abigail Morrison, Eilif Muller, Alexander Seeholzer, Teo Stocco
   SeeAlso: stdp_triplet_synapse_hpc, synapsedict, stdp_synapse, static_synapse
 */
 

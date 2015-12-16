@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# synaptic_elements.py
+# test_synaptic_elements.py
 #
 # This file is part of NEST.
 #

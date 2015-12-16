@@ -654,3 +654,81 @@ def CGSelectImplementation(tag, library):
     sps(tag)
     sps(library)
     sr("CGSelectImplementation")
+
+@check_stack 
+def DisconnectOneToOne(source, target, syn_spec):
+    """
+    Disconnect a currently existing synapse
+    """
+    
+    sps(source)
+    sps(target)
+    if syn_spec is not None:
+        sps(syn_spec)
+        if is_string(syn_spec):
+            sr("cvlit")
+    sr('Disconnect')
+
+@check_stack
+def Disconnect(pre, post, conn_spec, syn_spec):
+    """
+    Disconnect pre neurons from post neurons.
+
+    Neurons in pre and post are disconnected using the specified disconnection
+    rule (one-to-one by default) and synapse type (static_synapse by default).
+    Details depend on the disconnection rule.
+
+    Note:
+    Disconnect does not iterate over subnets, it only connects explicitly
+    specified nodes.
+
+    pre - presynaptic neurons, given as list of GIDs
+    post - presynaptic neurons, given as list of GIDs
+    conn_spec - name or dictionary specifying disconnection rule, see below
+    syn_spec - name or dictionary specifying synapses, see below
+
+    Disconnection specs:
+    
+    Apply the same rules as for connectivity specs in the connection method
+
+    Available rules and the associated parameters are:
+     - 'one_to_one'
+     - 'all_to_all'
+     
+    Possible choices of the conn_spec are:
+    - 'one_to_one'
+    - 'all_to_all'
+
+    Synapse:
+
+    The synapse model and its properties can be inserted either as a string describing
+    one synapse model (synapse models are listed in the synapsedict)
+    or as a dictionary as described below.
+    If no synapse model is specified the default model 'static_synapse' will be used.
+    Available keys in the synapse dictionary are 'model', 'weight', 'delay',
+    'receptor_type' and parameters specific to the synapse model choosen.
+    All parameters are optional and if not specified will use the default values determined
+    by the current synapse model.
+    'model' determines the synapse type, taken from pre-defined synapse types in NEST or
+    manually specified synapses created via CopyModel().
+    All other parameters are not currently implemented
+
+    Note: model is alias for syn_spec for backward compatibility.
+    """
+
+    sps(pre)
+    sr('cvgidcollection')
+    sps(post)
+    sr('cvgidcollection')
+
+    if conn_spec is not None:
+        sps(conn_spec)
+        if is_string(conn_spec):
+            sr("cvlit")
+
+    if syn_spec is not None:
+        sps(syn_spec)
+        if is_string(syn_spec):
+            sr("cvlit")
+    
+    sr('Disconnect_g_g_D_D')

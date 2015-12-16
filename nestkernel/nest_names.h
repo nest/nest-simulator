@@ -234,23 +234,25 @@ extern const Name order;   //!< Specific to sinusoidally modulated generators
 extern const Name origin;  //!< Device parameters
 extern const Name other;   //!< Node type
 
-extern const Name p;                  //!< current release probability  (Tsodyks2_connection)
-extern const Name p_copy;             //!< Specific to mip_generator
-extern const Name parent;             //!< Node parameter
-extern const Name phase;              //!< Signal phase in degrees
-extern const Name phi;                //!< Specific to mirollo_strogatz_ps
-extern const Name phi_th;             //!< Specific to mirollo_strogatz_ps
-extern const Name port;               //!< Connection parameters
-extern const Name port_name;          //!< Parameters for MUSIC devices
-extern const Name port_width;         //!< Parameters for MUSIC devices
-extern const Name pot_spikes;         //!< used for iaflossless_count_exp
-extern const Name potentials;         //!< Recorder parameter
-extern const Name precise_times;      //!< Recorder parameter
-extern const Name precision;          //!< Recorder parameter
-extern const Name ps;                 //!< current release probability [0...1] (property arrays)
-extern const Name PSC_adapt_step;     //!< PSC increment (current homeostasis)
-extern const Name PSC_Unit_amplitude; //!< Scaling of PSC (current homeostasis)
-extern const Name published;          //!< Parameters for MUSIC devices
+extern const Name p;                     //!< current release probability  (Tsodyks2_connection)
+extern const Name p_copy;                //!< Specific to mip_generator
+extern const Name parent;                //!< Node parameter
+extern const Name phase;                 //!< Signal phase in degrees
+extern const Name phi;                   //!< Specific to mirollo_strogatz_ps
+extern const Name phi_th;                //!< Specific to mirollo_strogatz_ps
+extern const Name port;                  //!< Connection parameters
+extern const Name port_name;             //!< Parameters for MUSIC devices
+extern const Name port_width;            //!< Parameters for MUSIC devices
+extern const Name post_synaptic_element; //!< Post synaptic elements
+extern const Name pot_spikes;            //!< used for iaflossless_count_exp
+extern const Name potentials;            //!< Recorder parameter
+extern const Name pre_synaptic_element;  //!< Pre synaptic elements
+extern const Name precise_times;         //!< Recorder parameter
+extern const Name precision;             //!< Recorder parameter
+extern const Name ps;                    //!< current release probability [0...1] (property arrays)
+extern const Name PSC_adapt_step;        //!< PSC increment (current homeostasis)
+extern const Name PSC_Unit_amplitude;    //!< Scaling of PSC (current homeostasis)
+extern const Name published;             //!< Parameters for MUSIC devices
 
 extern const Name q_rr;  //!< Other adaptation
 extern const Name q_sfa; //!< Other adaptation
@@ -289,7 +291,10 @@ extern const Name std;         //!< Miscellaneous parameters
 extern const Name std_mod;     //!< Miscellaneous parameters
 extern const Name stimulator;  //!< Node type
 extern const Name stop;        //!< Device parameters
-extern const Name structure;   //!< Node type
+extern const Name structural_plasticity_synapses; //!< Synapses defined for structural plasticity
+extern const Name
+  structural_plasticity_update_interval; //!< Update interval for structural plasticity
+extern const Name structure;             //!< Node type
 extern const Name success;
 extern const Name synapse;           //!< Node type
 extern const Name synapse_label;     //!< Label id of synapses with labels

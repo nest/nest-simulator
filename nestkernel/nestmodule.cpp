@@ -44,6 +44,7 @@
 #include "communicator_impl.h"
 #include "genericmodel.h"
 #include "conn_builder.h"
+#include "dictstack.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -878,6 +879,47 @@ NestModule::ResetNetworkFunction::execute( SLIInterpreter* i ) const
     "ResetNetworkFunction",
     "The network has been reset. Random generators and time have NOT been reset." );
 
+  i->EStack.pop();
+}
+
+// Disconnect for gid gid syn_model
+// See lib/sli/nest-init.sli for details
+void
+NestModule::Disconnect_i_i_lFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 3 );
+
+  index source = getValue< long >( i->OStack.pick( 2 ) );
+  index target = getValue< long >( i->OStack.pick( 1 ) );
+  DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+
+  // check whether the target is on this process
+  if ( get_network().is_local_gid( target ) )
+  {
+    Node* const target_node = get_network().get_node( target );
+    const thread target_thread = target_node->get_thread();
+    get_network().disconnect_single( source, target_node, target_thread, synapse_params );
+  }
+
+  i->OStack.pop( 3 );
+  i->EStack.pop();
+}
+
+// Disconnect for gidcollection gidcollection conn_spec syn_spec
+void
+NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 4 );
+
+  GIDCollectionDatum sources = getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
+  GIDCollectionDatum targets = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+
+  // dictionary access checking is handled by disconnect
+  get_network().disconnect( sources, targets, connectivity, synapse_params );
+
+  i->OStack.pop( 4 );
   i->EStack.pop();
 }
 
@@ -1967,6 +2009,71 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
 }
 #endif
 
+/* BeginDocumentation
+   Name: EnableStructuralPlasticity - Enable structural plasticity functionality in the network.
+
+   Synopsis:
+   Allows the user to treat the nodes as neurons with synaptic elements, allowing
+   new synapses to be created and existing synapses to be deleted during the simulation
+   acoording to a set of growth and homeostatic rules.
+
+   Parameters:
+   structural_plasticity_dictionary - is a dictionary which states the settings for the
+   structural plasticity functionality
+
+   Author: Mikael Naveau, Sandra Diaz
+   FirstVersion: December 2014
+*/
+void
+NestModule::SetStructuralPlasticityStatus_DFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  DictionaryDatum structural_plasticity_dictionary =
+    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+
+  get_network().set_structural_plasticity_status( structural_plasticity_dictionary );
+
+  i->OStack.pop( 1 );
+  i->EStack.pop();
+}
+
+void
+NestModule::GetStructuralPlasticityStatus_DFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  DictionaryDatum current_status = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  get_network().get_structural_plasticity_status( current_status );
+
+  i->OStack.pop( 1 );
+  i->OStack.push( current_status );
+  i->EStack.pop();
+}
+
+/**
+ * Enable Structural Plasticity within the simulation. This means, allowing
+ * dynamic rewiring of the network based on mean electrical activity.
+ * @param i
+ */
+void
+NestModule::EnableStructuralPlasticity_Function::execute( SLIInterpreter* i ) const
+{
+  get_network().enable_structural_plasticity();
+
+  i->EStack.pop();
+}
+/**
+ * Disable Structural Plasticity in the network.
+ * @param i
+ */
+void
+NestModule::DisableStructuralPlasticity_Function::execute( SLIInterpreter* i ) const
+{
+  get_network().disable_structural_plasticity();
+
+  i->EStack.pop();
+}
+
 void
 NestModule::init( SLIInterpreter* i )
 {
@@ -2066,7 +2173,12 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "SetAcceptableLatency", &setacceptablelatency_l_dfunction );
   i->createcommand( "SetMaxBuffered", &setmaxbuffered_l_ifunction );
 #endif
-
+  i->createcommand( "EnableStructuralPlasticity", &enablestructuralplasticity_function );
+  i->createcommand( "DisableStructuralPlasticity", &disablestructuralplasticity_function );
+  i->createcommand( "SetStructuralPlasticityStatus", &setstructuralplasticitystatus_Dfunction );
+  i->createcommand( "GetStructuralPlasticityStatus", &getstructuralplasticitystatus_function );
+  i->createcommand( "Disconnect", &disconnect_i_i_lfunction );
+  i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
   // Add connection rules
   net_->register_conn_builder< OneToOneBuilder >( "one_to_one" );
   net_->register_conn_builder< AllToAllBuilder >( "all_to_all" );

@@ -760,6 +760,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
 
      In this case, we must
      - set scheduler properties
+     - set connection_manager properties
      - set properties for the compound representing each thread
      - set the data_path, data_prefix and overwrite_files properties
 
@@ -769,6 +770,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
      We proceed as follows:
      - clear access flags
      - set scheduler properties; this must be first, anyways
+     - set connection_manager properties
      - set data_path, data_prefix, overwrite_files
      - at this point, all non-compound property flags are marked accessed
      - loop over all per-thread compounds
@@ -781,6 +783,7 @@ Network::set_status( index gid, const DictionaryDatum& d )
    */
   d->clear_access_flags();
   scheduler_.set_status( d ); // careful, this may invalidate all node pointers!
+  connection_manager_.set_status( d );
   set_data_path_prefix_( d );
   updateValue< bool >( d, "overwrite_files", overwrite_files_ );
   updateValue< bool >( d, "dict_miss_is_error", dict_miss_is_error_ );
@@ -899,6 +902,137 @@ Network::get_status( index idx )
     }
   }
   return d;
+}
+
+/**
+ * Disconnects a single synapse. Uses the structural plasticity builder to remove
+ * the synapse and updates number of connected synaptic elements.
+ * @param sgid source id
+ * @param target target node
+ * @param target_thread target thread
+ * @param syn dictionary with the synapse definition
+ */
+void
+Network::disconnect_single( index sgid, Node* target, thread target_thread, DictionaryDatum& syn )
+{
+
+  if ( syn->known( names::pre_synaptic_element ) && syn->known( names::post_synaptic_element ) )
+  {
+    GIDCollection* sources = new GIDCollection();
+    GIDCollection* targets = new GIDCollection();
+    DictionaryDatum* conn_spec = new DictionaryDatum( new Dictionary() );
+    SPBuilder* cb = new SPBuilder( *this, *sources, *targets, *conn_spec, syn );
+    cb->change_connected_synaptic_elements( sgid, target->get_gid(), target->get_thread(), -1 );
+  }
+  const std::string syn_name = ( *syn )[ names::model ];
+  disconnect( sgid, target, target_thread, get_synapsedict()[ syn_name ] );
+}
+
+/**
+ * Deletes synapses between a source and a target.
+ * @param sgid
+ * @param target
+ * @param target_thread
+ * @param syn
+ */
+void
+Network::disconnect( index sgid, Node* target, thread target_thread, index syn )
+{
+  Node* const source = get_node( sgid );
+  // normal nodes and devices with proxies
+  if ( target->has_proxies() )
+  {
+    connection_manager_.disconnect( *target, sgid, target_thread, syn );
+  }
+  else if ( target->local_receiver() ) // normal devices
+  {
+    if ( source->is_proxy() )
+      return;
+    if ( ( source->get_thread() != target_thread ) && ( source->has_proxies() ) )
+    {
+      target_thread = source->get_thread();
+      target = get_node( target->get_gid(), sgid );
+    }
+    // thread target_thread = target->get_thread();
+    connection_manager_.disconnect( *target, sgid, target_thread, syn );
+  }
+  else // globally receiving devices iterate over all target threads
+  {
+    if ( !source->has_proxies() ) // we do not allow to connect a device to a global receiver at the
+                                  // moment
+      return;
+    const thread n_threads = get_num_threads();
+    for ( thread t = 0; t < n_threads; t++ )
+    {
+      target = get_node( target->get_gid(), t );
+      target_thread = target->get_thread();
+      connection_manager_.disconnect( *target, sgid, target_thread, syn ); // tgid
+    }
+  }
+}
+
+/**
+ * Obtains the right connection builder and performs a synapse deletion according
+ * to the specified connection specs.
+ * @param sources collection of sources
+ * @param targets collection of targets
+ * @param conn_spec disconnection specs. For now only all to all and one to one
+ * rules are implemented.
+ * @param syn_spec synapse specs
+ */
+void
+Network::disconnect( GIDCollection& sources,
+  GIDCollection& targets,
+  DictionaryDatum& conn_spec,
+  DictionaryDatum& syn_spec )
+{
+  ConnBuilder* cb = NULL;
+  conn_spec->clear_access_flags();
+  syn_spec->clear_access_flags();
+
+  if ( !conn_spec->known( names::rule ) )
+    throw BadProperty( "Disconnection spec must contain disconnection rule." );
+  const std::string rule_name = ( *conn_spec )[ names::rule ];
+
+  if ( !connruledict_->known( rule_name ) )
+    throw BadProperty( "Unknown connectivty rule: " + rule_name );
+  const long rule_id = ( *connruledict_ )[ rule_name ];
+
+  if ( !connection_manager_.sp_conn_builders.empty() )
+  { // Implement a getter for sp_conn_builders
+
+    for (
+      std::vector< SPBuilder* >::const_iterator i = connection_manager_.sp_conn_builders.begin();
+      i != connection_manager_.sp_conn_builders.end();
+      i++ )
+    {
+      std::string synModel = getValue< std::string >( syn_spec, names::model );
+      if ( ( *i )->get_synapse_model() == ( index )( get_synapsedict()[ synModel ] ) )
+      {
+        cb = connbuilder_factories_.at( rule_id )->create(
+          *this, sources, targets, conn_spec, syn_spec );
+        cb->set_post_synaptic_element_name( ( *i )->get_post_synaptic_element_name() );
+        cb->set_pre_synaptic_element_name( ( *i )->get_pre_synaptic_element_name() );
+      }
+    }
+  }
+  else
+    cb =
+      connbuilder_factories_.at( rule_id )->create( *this, sources, targets, conn_spec, syn_spec );
+  assert( cb != 0 );
+
+  // at this point, all entries in conn_spec and syn_spec have been checked
+  std::string missed;
+  if ( !( conn_spec->all_accessed( missed ) && syn_spec->all_accessed( missed ) ) )
+  {
+    if ( dict_miss_is_error() )
+      throw UnaccessedDictionaryEntry( missed );
+    else
+      message(
+        SLIInterpreter::M_WARNING, "Connect", ( "Unread dictionary entries: " + missed ).c_str() );
+  }
+  cb->disconnect();
+  delete cb;
 }
 
 // gid node thread syn delay weight
@@ -2072,5 +2206,39 @@ Network::update_music_event_handlers_( Time const& origin, const long_t from, co
     it->second.update( origin, from, to );
 }
 #endif
+
+/*
+ Set structural plasticity status parameters using a dictionary
+ */
+void
+Network::set_structural_plasticity_status( const DictionaryDatum& structural_plasticity_dictionary )
+{
+  connection_manager_.set_status( structural_plasticity_dictionary );
+}
+/*
+ Get the current status of structural plasticity parameters in the network
+ */
+void
+Network::get_structural_plasticity_status( DictionaryDatum& structural_plasticity_dictionary )
+{
+  connection_manager_.get_status( structural_plasticity_dictionary );
+}
+
+/*
+ Enable structural plasticity
+ */
+void
+Network::enable_structural_plasticity()
+{
+  structural_plasticity_enabled_ = true;
+}
+/*
+ Disable  structural plasticity
+ */
+void
+Network::disable_structural_plasticity()
+{
+  structural_plasticity_enabled_ = false;
+}
 
 } // end of namespace

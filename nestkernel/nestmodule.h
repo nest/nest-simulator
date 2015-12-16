@@ -294,6 +294,18 @@ public:
     void execute( SLIInterpreter* ) const;
   } dataconnect_afunction;
 
+  class Disconnect_i_i_lFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } disconnect_i_i_lfunction;
+
+  class Disconnect_g_g_D_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } disconnect_g_g_D_Dfunction;
+
   class Connect_i_i_lFunction : public SLIFunction
   {
   public:
@@ -473,6 +485,30 @@ public:
     void execute( SLIInterpreter* ) const;
   } setmaxbuffered_l_ifunction;
 #endif
+
+  class SetStructuralPlasticityStatus_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } setstructuralplasticitystatus_Dfunction;
+
+  class GetStructuralPlasticityStatus_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getstructuralplasticitystatus_function;
+
+  class EnableStructuralPlasticity_Function : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } enablestructuralplasticity_function;
+
+  class DisableStructuralPlasticity_Function : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } disablestructuralplasticity_function;
 
   //@}
 

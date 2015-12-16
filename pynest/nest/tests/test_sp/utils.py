@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_all.py
+# utils.py
 #
 # This file is part of NEST.
 #
@@ -20,21 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 __author__ = 'naveau'
 
-import unittest
-import nest
 
-from . import synaptic_elements
+def extract_dict_a_from_b(a, b):
 
-
-def suite():
-    test_suite = unittest.TestSuite()
-
-    test_suite.addTest(synaptic_elements.suite())
-
-    return test_suite
-
-
-if __name__ == "__main__":
-    nest.set_verbosity('M_WARNING')
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
+    return dict([(k, b[k]) for k in a.keys() if k in b.keys()])

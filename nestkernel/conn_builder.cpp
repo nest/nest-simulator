@@ -85,11 +85,13 @@ nest::ConnBuilder::ConnBuilder( Network& net,
   // be possible to set the delay without the weight.
   default_weight_ = !syn_spec->known( names::weight );
 
+  default_delay_ = !syn_spec->known( names::delay );
+
   // If neither weight nor delay are given in the dict, we handle this
   // separately. Important for hom_w synapses, on which weight cannot
   // be set. However, we use default weight and delay for _all_ types
   // of synapses.
-  default_weight_and_delay_ = ( default_weight_ && !syn_spec->known( names::delay ) );
+  default_weight_and_delay_ = ( default_weight_ && default_delay_ );
 
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during
@@ -114,6 +116,26 @@ nest::ConnBuilder::ConnBuilder( Network& net,
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], net_.get_num_threads() );
   }
   register_parameters_requiring_skipping_( *delay_ );
+  // Structural plasticity parameters
+  // Check if both pre and post synaptic element are provided
+  if ( syn_spec->known( names::pre_synaptic_element )
+    && syn_spec->known( names::post_synaptic_element ) )
+  {
+    pre_synaptic_element_name = getValue< std::string >( syn_spec, names::pre_synaptic_element );
+    post_synaptic_element_name = getValue< std::string >( syn_spec, names::post_synaptic_element );
+  }
+  else
+  {
+    if ( syn_spec->known( names::pre_synaptic_element )
+      || syn_spec->known( names::post_synaptic_element ) )
+    {
+      throw BadProperty(
+        "In order to use structural plasticity, both a pre and post synaptic element must be "
+        "specified" );
+    }
+    pre_synaptic_element_name = "";
+    post_synaptic_element_name = "";
+  }
 
   // synapse-specific parameters
   // TODO: Can we create this set once and for all?
@@ -266,11 +288,96 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name, const Dictionary
     return;
   }
 }
+/**
+ * Updates the number of connected synaptic elements in the
+ * target and the source.
+ * Returns 0 if the target is either on another
+ * MPI machine or another thread. Returns 1 otherwise.
+ *
+ * @param sgid id of the source
+ * @param tgid id of the target
+ * @param tid thread id
+ * @param update amount of connected synaptic elements to update
+ * @return
+ */
+int
+nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
+  index tgid,
+  const int tid,
+  int update )
+{
 
+  int local = 1;
+  // check whether the source is on this mpi machine
+  if ( net_.is_local_gid( sgid ) )
+  {
+    Node* const source = net_.get_node( sgid );
+    const thread source_thread = source->get_thread();
+
+    // check whether the source is on our thread
+    if ( tid == source_thread )
+    {
+      // update the number of connected synaptic elements
+      source->connect_synaptic_element( pre_synaptic_element_name, update );
+    }
+  }
+
+  // check whether the target is on this mpi machine
+  if ( !net_.is_local_gid( tgid ) )
+  {
+    local = 0;
+  }
+  else
+  {
+    Node* const target = net_.get_node( tgid );
+    const thread target_thread = target->get_thread();
+    // check whether the target is on our thread
+    if ( tid != target_thread )
+      local = 0;
+    else
+    {
+      // update the number of connected synaptic elements
+      target->connect_synaptic_element( post_synaptic_element_name, update );
+    }
+  }
+  return local;
+}
+
+/**
+ * Now we can connect with or without structural plasticity
+ */
 void
 nest::ConnBuilder::connect()
 {
-  connect_();
+  if ( pre_synaptic_element_name != "" && post_synaptic_element_name != "" )
+  {
+    sp_connect_();
+  }
+  else
+  {
+    connect_();
+  }
+
+  // check if any exceptions have been raised
+  for ( thread thr = 0; thr < net_.get_num_threads(); ++thr )
+    if ( exceptions_raised_.at( thr ).valid() )
+      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+}
+
+/**
+ * Now we can delete synapses with or without structural plasticity
+ */
+void
+nest::ConnBuilder::disconnect()
+{
+  if ( pre_synaptic_element_name != "" && post_synaptic_element_name != "" )
+  {
+    sp_disconnect_();
+  }
+  else
+  {
+    disconnect_();
+  }
 
   // check if any exceptions have been raised
   for ( thread thr = 0; thr < net_.get_num_threads(); ++thr )
@@ -374,6 +481,27 @@ nest::ConnBuilder::skip_conn_parameter_( thread target_thread )
     ( *it )->skip( target_thread );
 }
 
+inline void
+nest::ConnBuilder::single_disconnect_( index sgid, Node& target, thread target_thread )
+{
+  // index tgid = target.get_gid();
+  // This is the most simple case in which only the synapse_model_ has been
+  // defined. TODO: Add functionality to delete synapses with a given weight
+  // or a given delay
+  net_.disconnect( sgid, &target, target_thread, synapse_model_ );
+}
+
+void
+nest::ConnBuilder::set_pre_synaptic_element_name( std::string name )
+{
+  pre_synaptic_element_name = name;
+}
+
+void
+nest::ConnBuilder::set_post_synaptic_element_name( std::string name )
+{
+  post_synaptic_element_name = name;
+}
 
 void
 nest::OneToOneBuilder::connect_()
@@ -436,6 +564,173 @@ nest::OneToOneBuilder::connect_()
   }
 }
 
+/**
+ * Solves the disconnection of two nodes on a OneToOne basis without
+ * structural plasticity. This means this method can be manually called
+ * by the user to delete existing synapses.
+ */
+void
+nest::OneToOneBuilder::disconnect_()
+{
+  // make sure that target and source population have the same size
+  if ( sources_.size() != targets_.size() )
+  {
+    net_.message( SLIInterpreter::M_ERROR,
+      "Disconnect",
+      "Source and Target population must be of the same size." );
+    throw DimensionMismatch();
+  }
+
+#pragma omp parallel
+  {
+    // get thread id
+    const int tid = net_.get_thread_id();
+
+    try
+    {
+      for ( GIDCollection::const_iterator tgid = targets_.begin(), sgid = sources_.begin();
+            tgid != targets_.end();
+            ++tgid, ++sgid )
+      {
+
+        assert( sgid != sources_.end() );
+
+        // check whether the target is on this mpi machine
+        if ( !net_.is_local_gid( *tgid ) )
+        {
+          skip_conn_parameter_( tid );
+          continue;
+        }
+
+        Node* const target = net_.get_node( *tgid );
+        const thread target_thread = target->get_thread();
+
+        // check whether the target is on our thread
+        if ( tid != target_thread )
+        {
+          skip_conn_parameter_( tid );
+          continue;
+        }
+        single_disconnect_( *sgid, *target, target_thread );
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
+/**
+ * Solves the connection of two nodes on a OneToOne basis with
+ * structural plasticity. This means this method is used by the
+ * structural plasticity manager based on the homostatic rules defined
+ * for the synaptic elements on each node.
+ */
+void
+nest::OneToOneBuilder::sp_connect_()
+{
+  // make sure that target and source population have the same size
+  if ( sources_.size() != targets_.size() )
+  {
+    net_.message( SLIInterpreter::M_ERROR,
+      "Connect",
+      "Source and Target population must be of the same size." );
+    throw DimensionMismatch();
+  }
+
+#pragma omp parallel
+  {
+    // get thread id
+    const int tid = net_.get_thread_id();
+
+    try
+    {
+      // allocate pointer to thread specific random generator
+      librandom::RngPtr rng = net_.get_rng( tid );
+
+      for ( GIDCollection::const_iterator tgid = targets_.begin(), sgid = sources_.begin();
+            tgid != targets_.end();
+            ++tgid, ++sgid )
+      {
+        assert( sgid != sources_.end() );
+
+        if ( *sgid == *tgid and not autapses_ )
+          continue;
+
+        if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
+        {
+          skip_conn_parameter_( tid );
+          continue;
+        }
+        Node* const target = net_.get_node( *tgid );
+        const thread target_thread = target->get_thread();
+
+        single_connect_( *sgid, *target, target_thread, rng );
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
+/**
+ * Solves the disconnection of two nodes on a OneToOne basis with
+ * structural plasticity. This means this method is used by the
+ * structural plasticity manager based on the homostatic rules defined
+ * for the synaptic elements on each node.
+ */
+void
+nest::OneToOneBuilder::sp_disconnect_()
+{
+  // make sure that target and source population have the same size
+  if ( sources_.size() != targets_.size() )
+  {
+    net_.message( SLIInterpreter::M_ERROR,
+      "Disconnect",
+      "Source and Target population must be of the same size." );
+    throw DimensionMismatch();
+  }
+
+#pragma omp parallel
+  {
+    // get thread id
+    const int tid = net_.get_thread_id();
+
+    try
+    {
+      for ( GIDCollection::const_iterator tgid = targets_.begin(), sgid = sources_.begin();
+            tgid != targets_.end();
+            ++tgid, ++sgid )
+      {
+        assert( sgid != sources_.end() );
+
+        if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
+          continue;
+        Node* const target = net_.get_node( *tgid );
+        const thread target_thread = target->get_thread();
+
+        single_disconnect_( *sgid, *target, target_thread );
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
 void
 nest::AllToAllBuilder::connect_()
 {
@@ -483,6 +778,157 @@ nest::AllToAllBuilder::connect_()
           }
 
           single_connect_( *sgid, *target, target_thread, rng );
+        }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
+/**
+ * Solves the connection of two nodes on a AllToAll basis with
+ * structural plasticity. This means this method is used by the
+ * structural plasticity manager based on the homostatic rules defined
+ * for the synaptic elements on each node.
+ */
+void
+nest::AllToAllBuilder::sp_connect_()
+{
+#pragma omp parallel
+  {
+    // get thread id
+    const int tid = net_.get_thread_id();
+
+    try
+    {
+      // allocate pointer to thread specific random generator
+      librandom::RngPtr rng = net_.get_rng( tid );
+
+      for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
+      {
+        for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+              ++sgid )
+        {
+          if ( not autapses_ and *sgid == *tgid )
+          {
+            skip_conn_parameter_( tid );
+            continue;
+          }
+          if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
+          {
+            for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+                  ++sgid )
+              skip_conn_parameter_( tid );
+            continue;
+          }
+          Node* const target = net_.get_node( *tgid );
+          const thread target_thread = target->get_thread();
+          single_connect_( *sgid, *target, target_thread, rng );
+        }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
+/**
+ * Solves the disconnection of two nodes on a AllToAll basis without
+ * structural plasticity. This means this method can be manually called
+ * by the user to delete existing synapses.
+ */
+void
+nest::AllToAllBuilder::disconnect_()
+{
+#pragma omp parallel
+  {
+    // get thread id
+    const int tid = net_.get_thread_id();
+
+    try
+    {
+      for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
+      {
+        // check whether the target is on this mpi machine
+        if ( !net_.is_local_gid( *tgid ) )
+        {
+          for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+                ++sgid )
+            skip_conn_parameter_( tid );
+          continue;
+        }
+
+        Node* const target = net_.get_node( *tgid );
+        const thread target_thread = target->get_thread();
+
+        // check whether the target is on our thread
+        if ( tid != target_thread )
+        {
+          for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+                ++sgid )
+            skip_conn_parameter_( tid );
+          continue;
+        }
+
+        for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+              ++sgid )
+        {
+          single_disconnect_( *sgid, *target, target_thread );
+        }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
+/**
+ * Solves the disconnection of two nodes on a AllToAll basis with
+ * structural plasticity. This means this method is used by the
+ * structural plasticity manager based on the homostatic rules defined
+ * for the synaptic elements on each node.
+ */
+void
+nest::AllToAllBuilder::sp_disconnect_()
+{
+#pragma omp parallel
+  {
+    // get thread id
+    const int tid = net_.get_thread_id();
+
+    try
+    {
+      for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
+      {
+        for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+              ++sgid )
+        {
+          if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
+          {
+            for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+                  ++sgid )
+              skip_conn_parameter_( tid );
+            continue;
+          }
+          Node* const target = net_.get_node( *tgid );
+          const thread target_thread = target->get_thread();
+          single_disconnect_( *sgid, *target, target_thread );
         }
       }
     }
@@ -852,6 +1298,163 @@ nest::BernoulliBuilder::connect_()
 
           single_connect_( *sgid, *target, target_thread, rng );
         }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
+/**
+ * The SPBuilder is in charge of the creation of synapses during the simulation
+ * under the control of the structural plasticity manager
+ * @param net the network
+ * @param sources the source nodes on which synapses can be created/deleted
+ * @param targets the target nodes on which synapses can be created/deleted
+ * @param conn_spec connectivity specs
+ * @param syn_spec synapse specs
+ */
+nest::SPBuilder::SPBuilder( Network& net,
+  const GIDCollection& sources,
+  const GIDCollection& targets,
+  const DictionaryDatum& conn_spec,
+  const DictionaryDatum& syn_spec )
+  : ConnBuilder( net, sources, targets, conn_spec, syn_spec )
+{
+  // Check that both pre and post synaptic element are provided
+  if ( pre_synaptic_element_name == "" || post_synaptic_element_name == "" )
+  {
+    throw BadProperty( "pre_synaptic_element and/or post_synaptic_elements is missing" );
+  }
+}
+
+/**
+ * Makes sure that the min delay has been configured correctly for the creation
+ * of new synapses
+ * @return the min_delay configured for the dynamically created synapses
+ */
+nest::Time
+nest::SPBuilder::get_min_delay() const
+{
+  Time min_delay;
+  DictionaryDatum syn_defaults;
+  bool delay = get_default_delay();
+  syn_defaults = net_.get_connector_defaults( get_synapse_model() );
+  if ( !delay ) // delay can be random so min_delay must be defined in the synapse prototype
+  {
+    min_delay = Time::ms( getValue< double_t >( syn_defaults, "min_delay" ) );
+    if ( min_delay == Time::pos_inf() )
+    {
+      throw BadProperty(
+        "Structural Plasticity: to use different delays for the synapses you must specify the min "
+        "and max delay in the synapse default parameters." );
+    }
+  }
+  else // we used the default delay
+  {
+    min_delay = Time::ms( getValue< double_t >( syn_defaults, "delay" ) );
+  }
+  return min_delay;
+}
+
+/**
+ * Makes sure that the max delay has been configured correctly for the creation
+ * of new synapses
+ * @return the max_delay configured for the dynamically created synapses
+ */
+nest::Time
+nest::SPBuilder::get_max_delay() const
+{
+  Time max_delay;
+  DictionaryDatum syn_defaults;
+  bool delay = get_default_delay();
+  syn_defaults = net_.get_connector_defaults( get_synapse_model() );
+  if ( !delay ) // delay can be random so max_delay must be defined in the synapse prototype
+  {
+    max_delay = Time::ms( getValue< double_t >( syn_defaults, "max_delay" ) );
+    if ( max_delay == Time::neg_inf() )
+    {
+      throw BadProperty(
+        "Structural Plasticity: to use different delays for the synapses you must specify the min "
+        "and max delay in the synapse default parameters." );
+    }
+  }
+  else // we used the default delay
+  {
+    max_delay = Time::ms( getValue< double_t >( syn_defaults, "delay" ) );
+  }
+  return max_delay;
+}
+
+void
+nest::SPBuilder::connect( GIDCollection sources, GIDCollection targets )
+{
+  connect_( sources, targets );
+
+  // check if any exceptions have been raised
+  for ( thread thr = 0; thr < net_.get_num_threads(); ++thr )
+    if ( exceptions_raised_.at( thr ).valid() )
+      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+}
+
+void
+nest::SPBuilder::connect_()
+{
+  throw NotImplemented(
+    "Connection without structural plasticity is not possible for this connection builder" );
+}
+
+/**
+ * In charge of dynamically creating the new synapses
+ * @param sources nodes from which synapses can be created
+ * @param targets target nodes for the newly created synapses
+ */
+void
+nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
+{
+  // Code copied and adapted from OneToOneBuilder::connect_()
+  // make sure that target and source population have the same size
+  if ( sources.size() != targets.size() )
+  {
+    net_.message( SLIInterpreter::M_ERROR,
+      "Connect",
+      "Source and Target population must be of the same size." );
+    throw DimensionMismatch();
+  }
+
+#pragma omp parallel
+  {
+    // get thread id
+    const int tid = net_.get_thread_id();
+
+    try
+    {
+      // allocate pointer to thread specific random generator
+      librandom::RngPtr rng = net_.get_rng( tid );
+
+      for ( GIDCollection::const_iterator tgid = targets.begin(), sgid = sources.begin();
+            tgid != targets.end();
+            ++tgid, ++sgid )
+      {
+        assert( sgid != sources.end() );
+
+        if ( *sgid == *tgid and not autapses_ )
+          continue;
+
+        if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
+        {
+          skip_conn_parameter_( tid );
+          continue;
+        }
+        Node* const target = net_.get_node( *tgid );
+        const thread target_thread = target->get_thread();
+
+        single_connect_( *sgid, *target, target_thread, rng );
       }
     }
     catch ( std::exception& err )

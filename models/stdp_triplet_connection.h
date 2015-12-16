@@ -41,6 +41,7 @@
     Aplus_triplet      double: weight of triplet potentiation rule (A_plus_3 of [1])
     Aminus             double: weight of pair depression rule (A_minus_2 of [1])
     Aminus_triplet     double: weight of triplet depression rule (A_minus_3 of [1])
+    Wmax               double: maximum allowed weight
 
   States:
     Kplus              double: pre-synaptic trace (r_1 of [1])
@@ -183,13 +184,14 @@ private:
   inline double_t
   facilitate_( double_t w, double_t kplus, double_t ky )
   {
-    return w + kplus * ( Aplus_ + Aplus_triplet_ * ky );
+    double_t new_w = w + kplus * ( Aplus_ + Aplus_triplet_ * ky );
+    return new_w < Wmax_ ? new_w : Wmax_;
   }
 
   inline double_t
   depress_( double_t w, double_t kminus, double_t Kplus_triplet_ )
   {
-    double new_w = w - kminus * ( Aminus_ + Aminus_triplet_ * Kplus_triplet_ );
+    double_t new_w = w - kminus * ( Aminus_ + Aminus_triplet_ * Kplus_triplet_ );
     return new_w > 0.0 ? new_w : 0.0;
   }
 
@@ -203,6 +205,7 @@ private:
   double_t Aminus_triplet_;
   double_t Kplus_;
   double_t Kplus_triplet_;
+  double_t Wmax_;
 };
 
 /**
@@ -280,6 +283,7 @@ STDPTripletConnection< targetidentifierT >::STDPTripletConnection()
   , Aminus_triplet_( 2.3e-4 )
   , Kplus_( 0.0 )
   , Kplus_triplet_( 0.0 )
+  , Wmax_( 100.0 )
 {
 }
 
@@ -296,6 +300,7 @@ STDPTripletConnection< targetidentifierT >::STDPTripletConnection(
   , Aminus_triplet_( rhs.Aminus_triplet_ )
   , Kplus_( rhs.Kplus_ )
   , Kplus_triplet_( rhs.Kplus_triplet_ )
+  , Wmax_( rhs.Wmax_ )
 {
 }
 
@@ -313,6 +318,7 @@ STDPTripletConnection< targetidentifierT >::get_status( DictionaryDatum& d ) con
   def< double_t >( d, "Aminus_triplet", Aminus_triplet_ );
   def< double_t >( d, "Kplus", Kplus_ );
   def< double_t >( d, "Kplus_triplet", Kplus_triplet_ );
+  def< double_t >( d, "Wmax", Wmax_ );
 }
 
 template < typename targetidentifierT >
@@ -330,6 +336,7 @@ STDPTripletConnection< targetidentifierT >::set_status( const DictionaryDatum& d
   updateValue< double_t >( d, "Aminus_triplet", Aminus_triplet_ );
   updateValue< double_t >( d, "Kplus", Kplus_ );
   updateValue< double_t >( d, "Kplus_triplet", Kplus_triplet_ );
+  updateValue< double_t >( d, "Wmax", Wmax_ );
 
   if ( not( Kplus_ >= 0 ) )
   {

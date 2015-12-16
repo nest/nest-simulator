@@ -51,6 +51,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
             "Aminus_triplet": 0.1,
             "Kplus": 0.0,
             "Kplus_triplet": 0.0,
+			"Wmax": 100.0,
         }
         self.post_neuron_params = {
             "tau_minus": 33.7,
@@ -221,6 +222,19 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         nest.Simulate(20.0)
         self.assertAlmostEqualDetailed(weight, self.status("weight"), "weight should have decreased")
 
+    def test_maxWeightStaturatesWeight(self):
+        """Check that setting maximum weight property keep weight limited."""
+
+        limited_weight = self.status("weight") + 1e-10
+        limited_syn_spec = self.syn_spec.copy()
+        limited_syn_spec.update({"Wmax": limited_weight })
+        nest.Connect(self.pre_neuron, self.post_neuron, syn_spec=limited_syn_spec)
+
+        self.generateSpikes(self.pre_neuron, [2.0])
+        self.generateSpikes(self.pre_neuron, [3.0])  # trigger computation
+
+        nest.Simulate(20.0)
+        self.assertAlmostEqualDetailed(limited_weight, self.status("weight"), "weight should have been limited")
 
 def suite():
     return unittest.makeSuite(STDPTripletConnectionTestCase, "test")

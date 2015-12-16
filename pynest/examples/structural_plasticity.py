@@ -45,6 +45,7 @@ First, we import all necessary modules.
 import nest
 import numpy
 import matplotlib.pyplot as pl
+import sys
 
 class StructralPlasticityExample:
     def __init__(self):

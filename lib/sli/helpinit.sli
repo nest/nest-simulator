@@ -575,7 +575,7 @@ SeeAlso: helpindex, help, makehelp, :makeallhelp
   </tr>
 </table>
 <p style="text-align:center">
-  &copy; 2000-2010 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+  &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
 </p>
 </body>\n</html>) <- endl closeostream
     } forall
@@ -742,7 +742,7 @@ SeeAlso: helpindex, help, makehelp, :makeallhelp
 </table>
 
 <p style="text-align:center">
-  &copy; 2000-2010 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+  &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
 </p>
 </body>\n</html>) <- endl ;
   end

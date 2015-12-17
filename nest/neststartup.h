@@ -51,14 +51,14 @@ class SLIInterpreter;
 #define CYTHON_ADDR( x ) ( &x )
 
 #include <string>
-int neststartup( int argc,
-  char** argv,
+int neststartup( int* argc,
+  char*** argv,
   SLIInterpreter& engine,
   nest::Network*& pNet,
   std::string modulepath = "" );
 
 #else
-int neststartup( int argc, char** argv, SLIInterpreter& engine, nest::Network*& pNet );
+int neststartup( int* argc, char*** argv, SLIInterpreter& engine, nest::Network*& pNet );
 #endif
 
 void nestshutdown( void );

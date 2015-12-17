@@ -75,9 +75,9 @@ Remarks:
    afterwards.
  - A multimeter cannot be frozen.
  - If you record with multimeter in accumulator mode and some of the nodes
-   you record from and others are not, data will only be collected from the
-   unfrozen nodes. Most likely, this will lead to confusing results, so
-   you should not use multimeter with frozen nodes.
+   you record from are frozen and others are not, data will only be collected
+   from the unfrozen nodes. Most likely, this will lead to confusing results,
+   so you should not use multimeter with frozen nodes.
 
 Parameters:
      The following parameters can be set in the status dictionary:
@@ -147,11 +147,7 @@ class Network;
  *
  * @note If you want to pick up values at every time stamp,
  *       you must set the interval to the simulation resolution.
- *
- * @todo Testing and Code Review:
- *   - performance: currently about 5% slower than plain voltmeter;
- * but check asserts in universal_data_logger.
- *
+ * *
  * @ingroup Devices
  * @see UniversalDataLogger
  */
@@ -178,10 +174,13 @@ public:
    */
   using Node::handle;
   using Node::handles_test_event;
+  using Node::sends_signal;
 
   port send_test_event( Node&, rport, synindex, bool );
 
   void handle( DataLoggingReply& );
+
+  SignalType sends_signal() const;
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -344,6 +343,11 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
   P_ = ptmp;
 }
 
+inline SignalType
+nest::Multimeter::sends_signal() const
+{
+  return ALL;
+}
 
 } // Namespace
 

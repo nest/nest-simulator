@@ -111,9 +111,16 @@ void DataLoggingRequest::operator()()
   receiver_->handle( *this );
 }
 
-
 void DataLoggingReply::operator()()
 {
   receiver_->handle( *this );
 }
+
+void GapJunctionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+std::vector< synindex > GapJunctionEvent::supported_syn_ids_;
+size_t GapJunctionEvent::coeff_length_ = 0;
 }

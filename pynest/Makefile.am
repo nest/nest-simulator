@@ -110,7 +110,8 @@ data_DATA=\
 	examples/testiaf.py \
 	examples/tsodyks_depressing.py \
 	examples/tsodyks_facilitating.py \
-	examples/vinit_example.py
+	examples/vinit_example.py \
+	examples/structural_plasticity.py
 
 lenoveredir=@PKGDOCDIR@/examples/pynest/LeNovere_2012
 

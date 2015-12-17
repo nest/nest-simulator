@@ -42,6 +42,7 @@ build/
 /sli/sli
 /testsuite/do_tests.sh
 /topology/setup.py
+/topology/doc/Topology_UserManual.out
 
 *.kdev4
 

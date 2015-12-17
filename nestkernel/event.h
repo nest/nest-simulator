@@ -24,6 +24,9 @@
 #define EVENT_H
 
 #include <cassert>
+#include <cstring>
+#include <algorithm>
+#include <vector>
 
 #include "nest.h"
 #include "nest_time.h"
@@ -707,6 +710,266 @@ inline DoubleDataEvent*
 DoubleDataEvent::clone() const
 {
   return new DoubleDataEvent( *this );
+}
+
+/**
+ * Base class of secondary events. Provides interface for
+ * serialization and deserialization. This event type may be
+ * used to transmit data on a regular basis
+ * Further information about secondary events and
+ * their usage with gap junctions can be found in
+ *
+ * Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
+ * Bolten, M., Frommer, A. and Diesmann, M.,
+ * A unified framework for spiking and gap-junction interactions
+ * in distributed neuronal network simulations,
+ * Front. Neuroinform. 9:22. (2015),
+ * doi: 10.3389/fninf.2015.00022
+ */
+class SecondaryEvent : public Event
+{
+
+public:
+  virtual SecondaryEvent* clone() const = 0;
+
+  virtual void add_syn_id( const synindex synid ) = 0;
+
+  virtual bool supports_syn_id( const synindex synid ) const = 0;
+
+  //! size of event in units of uint_t
+  virtual size_t size() = 0;
+  virtual std::vector< uint_t >::iterator& operator<<( std::vector< uint_t >::iterator& pos ) = 0;
+  virtual std::vector< uint_t >::iterator& operator>>( std::vector< uint_t >::iterator& pos ) = 0;
+};
+
+/**
+ * This template function returns the number of uints covered by a variable of type T.
+ * This function is used to determine the storage demands for a variable of
+ * type T in the NEST communication buffer, which is of type std::vector< uint_t>.
+ */
+template < typename T >
+size_t
+number_of_uints_covered( void )
+{
+  size_t num_uints = sizeof( T ) / sizeof( uint_t );
+  if ( num_uints * sizeof( uint_t ) < sizeof( T ) )
+  {
+    num_uints += 1;
+  }
+  return num_uints;
+}
+
+/**
+ * This template function writes data of type T to a given position of a std::vector< uint_t >.
+ * Please note that this function does not increase the size of the vector,
+ * it just writes the data to the position given by the iterator.
+ * The function is used to write data from SecondaryEvents to the NEST communcation buffer.
+ * The pos iterator is advanced during execution.
+ * For a discussion on the functionality of this function see github issue #181 and pull request
+ * #184.
+ */
+template < typename T >
+void
+write_to_comm_buffer( T d, std::vector< uint_t >::iterator& pos )
+{
+  // there is no aliasing problem here, since cast to char* invalidate strict aliasing assumptions
+  char* const c = reinterpret_cast< char* >( &d );
+
+  const size_t num_uints = number_of_uints_covered< T >();
+  size_t left_to_copy = sizeof( T );
+
+  for ( int i = 0; i < num_uints; i++ )
+  {
+    memcpy(
+      &( *( pos + i ) ), c + i * sizeof( uint_t ), std::min( left_to_copy, sizeof( uint_t ) ) );
+    left_to_copy -= sizeof( uint_t );
+  }
+
+  pos += num_uints;
+}
+
+/**
+ * This template function reads data of type T from a given position of a std::vector< uint_t >.
+ * The function is used to read SecondaryEvents data from the NEST communcation buffer.
+ * The pos iterator is advanced during execution.
+ * For a discussion on the functionality of this function see github issue #181 and pull request
+ * #184.
+ */
+template < typename T >
+void
+read_from_comm_buffer( T& d, std::vector< uint_t >::iterator& pos )
+{
+  // there is no aliasing problem here, since cast to char* invalidate strict aliasing assumptions
+  char* const c = reinterpret_cast< char* >( &d );
+
+  const size_t num_uints = number_of_uints_covered< T >();
+  size_t left_to_copy = sizeof( T );
+
+  for ( int i = 0; i < num_uints; i++ )
+  {
+    memcpy(
+      c + i * sizeof( uint_t ), &( *( pos + i ) ), std::min( left_to_copy, sizeof( uint_t ) ) );
+    left_to_copy -= sizeof( uint_t );
+  }
+
+  pos += num_uints;
+}
+
+/**
+ * Event for gap-junction information.
+ * The event transmits the interpolation of the membrane potential
+ * to the connected neurons.
+ * Technically the GapJunctionEvent only contains iterators pointing to
+ * the memory location of the interpolation array.
+ *
+ * Conceptually, there is a one-to-one mapping between a SecondaryEvent
+ * and a SecondaryConnectorModel. The synindex of this particular
+ * SecondaryConnectorModel is stored as first element in the static vector
+ * supported_syn_ids_ on model registration. There are however reasons (e.g.
+ * the usage of CopyModel or the creation of the labeled synapse model
+ * duplicates for pyNN) which make it necessary to register several
+ * SecondaryConnectorModels with one SecondaryEvent. Therefore the synindices
+ * of all these models are added to supported_syn_ids_. The
+ * supports_syn_id()-function allows testing if a particular synid is mapped
+ * with the SecondaryEvent in question.
+ */
+class GapJunctionEvent : public SecondaryEvent
+{
+private:
+  // we chose std::vector over std::set because we expect this always to be short
+  static std::vector< synindex > supported_syn_ids_;
+  static size_t coeff_length_; // length of coeffarray
+
+  std::vector< double_t >::iterator coeffarray_as_doubles_begin_;
+  std::vector< double_t >::iterator coeffarray_as_doubles_end_;
+  std::vector< uint_t >::iterator coeffarray_as_uints_begin_;
+  std::vector< uint_t >::iterator coeffarray_as_uints_end_;
+
+public:
+  GapJunctionEvent()
+  {
+  }
+
+  void operator()();
+  GapJunctionEvent* clone() const;
+
+  /**
+   * This function is needed to set the synid on model registration.
+   * At this point no object of this type is available and the
+   * add_syn_id-function cannot be used as it is virtual in the base class
+   * and therefore cannot be declared as static.
+   */
+  static void
+  set_syn_id( const synindex synid )
+  {
+    supported_syn_ids_.push_back( synid );
+  }
+
+  /**
+   * This function is needed to add additional synids when the
+   * corresponded connector model is copied.
+   * This function needs to be a virtual function of the base class as
+   * it is called from a pointer on SecondaryEvent.
+   */
+  void
+  add_syn_id( const synindex synid )
+  {
+    assert( not supports_syn_id( synid ) );
+    supported_syn_ids_.push_back( synid );
+  }
+
+  bool
+  supports_syn_id( const synindex synid ) const
+  {
+    return ( std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid )
+      != supported_syn_ids_.end() );
+  }
+
+  void
+  set_coeffarray( std::vector< double_t >& ca )
+  {
+    coeffarray_as_doubles_begin_ = ca.begin();
+    coeffarray_as_doubles_end_ = ca.end();
+    coeff_length_ = ca.size();
+  }
+
+  /**
+   * The following operator is used to read the information
+   * of the GapJunctionEvent from the buffer in Scheduler::deliver_events_
+   */
+  std::vector< uint_t >::iterator& operator<<( std::vector< uint_t >::iterator& pos )
+  {
+    // The synid can be skipped here as it is stored in a static vector
+    pos += number_of_uints_covered< synindex >();
+    read_from_comm_buffer( sender_gid_, pos );
+
+    // generating a copy of the coeffarray is too time consuming
+    // therefore we save an iterator to the beginning+end of the coeffarray
+    coeffarray_as_uints_begin_ = pos;
+
+    pos += coeff_length_ * number_of_uints_covered< double_t >();
+
+    coeffarray_as_uints_end_ = pos;
+
+    return pos;
+  }
+
+  /**
+   * The following operator is used to write the information
+   * of the GapJunctionEvent into the secondary_events_buffer_
+   * All GapJunctionEvents are identified by the synid of the
+   * first element in supported_syn_ids_
+   */
+  std::vector< uint_t >::iterator& operator>>( std::vector< uint_t >::iterator& pos )
+  {
+    write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
+    write_to_comm_buffer( sender_gid_, pos );
+    for ( std::vector< double_t >::iterator i = coeffarray_as_doubles_begin_;
+          i != coeffarray_as_doubles_end_;
+          i++ )
+    {
+      write_to_comm_buffer( *i, pos );
+    }
+    return pos;
+  }
+
+  size_t
+  size()
+  {
+    size_t s = number_of_uints_covered< synindex >();
+    s += number_of_uints_covered< index >();
+    s += number_of_uints_covered< double_t >() * coeff_length_;
+
+    return s;
+  }
+
+  const std::vector< uint_t >::iterator&
+  begin()
+  {
+    return coeffarray_as_uints_begin_;
+  }
+
+  const std::vector< uint_t >::iterator&
+  end()
+  {
+    return coeffarray_as_uints_end_;
+  }
+
+  double_t get_coeffvalue( std::vector< uint_t >::iterator& pos );
+};
+
+inline double_t
+GapJunctionEvent::get_coeffvalue( std::vector< uint_t >::iterator& pos )
+{
+  double_t elem = 0.0;
+  read_from_comm_buffer( elem, pos );
+  return elem;
+}
+
+inline GapJunctionEvent*
+GapJunctionEvent::clone() const
+{
+  return new GapJunctionEvent( *this );
 }
 
 //*************************************************************

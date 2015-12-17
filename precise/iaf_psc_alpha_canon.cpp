@@ -30,6 +30,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
+#include "propagator_stability.h"
 
 #include <limits>
 
@@ -49,10 +50,8 @@ template <>
 void
 RecordablesMap< iaf_psc_alpha_canon >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_psc_alpha_canon::get_V_m_ );
-  insert_( "y2", &iaf_psc_alpha_canon::get_y2_ );
-  insert_( "y1", &iaf_psc_alpha_canon::get_y1_ );
 }
 }
 
@@ -159,11 +158,6 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const DictionaryDatum& d )
   if ( tau_m_ <= 0 || tau_syn_ <= 0 )
     throw BadProperty( "All time constants must be strictly positive." );
 
-  if ( tau_m_ == tau_syn_ )
-    throw BadProperty(
-      "Membrane and synapse time constant(s) must differ."
-      "See note in documentation." );
-
   return delta_EL;
 }
 
@@ -173,8 +167,6 @@ nest::iaf_psc_alpha_canon::State_::get( DictionaryDatum& d, const Parameters_& p
   def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
   def< double >( d, "y1", y1_ );                // y1 state
   def< double >( d, "y2", y2_ );                // y2 state
-  def< double >( d, names::t_spike, Time( Time::step( last_spike_step_ ) ).get_ms() );
-  def< double >( d, names::offset, last_spike_offset_ );
   def< bool >( d, names::is_refractory, is_refractory_ );
 }
 
@@ -208,7 +200,7 @@ nest::iaf_psc_alpha_canon::Buffers_::Buffers_( const Buffers_&, iaf_psc_alpha_ca
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_alpha_canon::iaf_psc_alpha_canon()
-  : Node()
+  : Archiving_Node()
   , P_()
   , S_()
   , B_( *this )
@@ -217,7 +209,7 @@ nest::iaf_psc_alpha_canon::iaf_psc_alpha_canon()
 }
 
 nest::iaf_psc_alpha_canon::iaf_psc_alpha_canon( const iaf_psc_alpha_canon& n )
-  : Node( n )
+  : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -242,6 +234,8 @@ nest::iaf_psc_alpha_canon::init_buffers_()
   B_.events_.clear();
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();
+
+  Archiving_Node::clear_history();
 }
 
 void
@@ -261,9 +255,9 @@ nest::iaf_psc_alpha_canon::calibrate()
   V_.expm1_tau_m_ = numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
   V_.expm1_tau_syn_ = numerics::expm1( -V_.h_ms_ / P_.tau_syn_ );
   V_.P30_ = -P_.tau_m_ / P_.c_m_ * V_.expm1_tau_m_;
-  V_.P31_ = V_.gamma_sq_ * V_.expm1_tau_m_ - V_.gamma_sq_ * V_.expm1_tau_syn_
-    - V_.h_ms_ * V_.gamma_ * V_.expm1_tau_syn_ - V_.h_ms_ * V_.gamma_;
-  V_.P32_ = V_.gamma_ * V_.expm1_tau_m_ - V_.gamma_ * V_.expm1_tau_syn_;
+  // these are determined according to a numeric stability criterion
+  V_.P31_ = propagator_31( P_.tau_syn_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
+  V_.P32_ = propagator_32( P_.tau_syn_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
 
   // t_ref_ is the refractory period in ms
   // refractory_steps_ is the duration of the refractory period in whole
@@ -437,12 +431,6 @@ nest::iaf_psc_alpha_canon::handle( DataLoggingRequest& e )
 
 // auxiliary functions ---------------------------------------------
 
-inline void
-nest::iaf_psc_alpha_canon::set_spiketime( Time const& now )
-{
-  S_.last_spike_step_ = now.get_steps();
-}
-
 void
 nest::iaf_psc_alpha_canon::propagate_( const double_t dt )
 {
@@ -480,7 +468,7 @@ nest::iaf_psc_alpha_canon::emit_spike_( Time const& origin,
 
   // compute spike time relative to beginning of step
   const double_t spike_offset = V_.h_ms_ - ( t0 + thresh_find_( dt ) );
-  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
   S_.last_spike_offset_ = spike_offset;
 
   // reset neuron and make it refractory
@@ -488,6 +476,7 @@ nest::iaf_psc_alpha_canon::emit_spike_( Time const& origin,
   S_.is_refractory_ = true;
 
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   se.set_offset( spike_offset );
   network()->send( *this, se, lag );
@@ -503,7 +492,7 @@ nest::iaf_psc_alpha_canon::emit_instant_spike_( Time const& origin,
   assert( S_.y3_ >= P_.U_th_ ); // ensure we are superthreshold
 
   // set stamp and offset for spike
-  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
   S_.last_spike_offset_ = spike_offs;
 
   // reset neuron and make it refractory
@@ -511,6 +500,7 @@ nest::iaf_psc_alpha_canon::emit_instant_spike_( Time const& origin,
   S_.is_refractory_ = true;
 
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
   network()->send( *this, se, lag );

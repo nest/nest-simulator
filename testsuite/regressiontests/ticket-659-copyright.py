@@ -34,7 +34,7 @@ except KeyError:
 
 exclude_dirs = [
     'libltdl',
-    '.svn',
+    '.git',
 ]
 
 exclude_files = [

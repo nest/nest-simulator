@@ -420,7 +420,7 @@ nest::SimulationManager::update_()
 
       if ( from_step_ == 0 ) // deliver only at beginning of slice
       {
-        kernel().event_delivery_manager.deliver_events( thrd );
+        // kernel().event_delivery_manager.deliver_events( thrd );
 #ifdef HAVE_MUSIC
 // advance the time of music by one step (min_delay * h) must
 // be done after deliver_events_() since it calls
@@ -479,7 +479,8 @@ nest::SimulationManager::update_()
         if ( to_step_
           == kernel().connection_builder_manager.get_min_delay() ) // gather only at end of slice
         {
-          kernel().event_delivery_manager.gather_events();
+          // kernel().event_delivery_manager.gather_events();
+          kernel().event_delivery_manager.gather_spike_data();
         }
 
         advance_time_();

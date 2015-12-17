@@ -278,7 +278,7 @@ public:
 
   void send( thread t, index sgid, Event& e );
 
-  // void send_5g( thread tid, index sgid, Event& e );
+  void send_5g( thread tid, synindex syn_index, unsigned int lcid, Event& e );
 
   /**
    * Send event e to all targets of node source on thread t

@@ -247,6 +247,8 @@ private:
 
   void prepare_target_data_buffers_( const bool me_completed, std::vector< TargetData >& send_buffer );
 
+  void deliver_events_5g_( const thread tid );
+
 private:
   bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid
 

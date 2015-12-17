@@ -150,9 +150,7 @@ class TargetTable
 private:
   //! 3d structure storing targets of local neurons
   std::vector< std::vector< std::vector< Target > >* > targets_;
-  //! this variable is needed during creation of MPI buffer for
-  //! communicating spikes, i.e., when translating the thread local
-  //! spike_register to entries in the MPI buffer
+  //! for each thread, keep track of index in target vector
   std::vector< index > current_target_index_;
   
 public:

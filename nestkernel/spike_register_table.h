@@ -41,8 +41,8 @@ struct SpikeData
   unsigned int syn_index : 6;
   unsigned int lcid : 25;
   unsigned int lag : 6;
-  const static unsigned int empty_marker; // 1024
-  const static unsigned int complete_marker; // 1024 - 1
+  const static unsigned int empty_marker; // 1024 - 1
+  const static unsigned int complete_marker; // 1024 - 2
   SpikeData();
   SpikeData( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag );
   void set_empty();

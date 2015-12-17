@@ -199,6 +199,12 @@ nest::ConnectionBuilderManager::add_target( const thread tid, const TargetData& 
 }
 
 void
+nest::ConnectionBuilderManager::send_5g( thread tid, synindex syn_index, unsigned int lcid, Event& e )
+{
+  connections_5g_[ tid ]->send( tid, syn_index, lcid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+}
+
+void
 nest::ConnectionBuilderManager::get_status( DictionaryDatum& d )
 {
   update_delay_extrema_();

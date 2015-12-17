@@ -38,9 +38,6 @@
 // Includes from sli:
 #include "dictutils.h"
 
-const unsigned int nest::SpikeData::empty_marker = 1024;
-const unsigned int nest::SpikeData::complete_marker = 1024 - 1;
-
 namespace nest
 {
 EventDeliveryManager::EventDeliveryManager()
@@ -492,7 +489,7 @@ EventDeliveryManager::gather_spike_data()
       } // of omp single
       
       others_completed  = check_spike_data_others_completed_();
-      // distribute_spike_data_buffers_( tid );
+      deliver_events_5g_( tid );
     }
 
   } // of omp parallel  
@@ -593,6 +590,35 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
       }
     }
   }
+}
+
+void
+EventDeliveryManager::deliver_events_5g_( const thread tid )
+{
+  // deliver only at beginning of time slice
+  if ( kernel().simulation_manager.get_from_step() > 0 )
+    return;
+
+  SpikeEvent se;
+
+  // prepare Time objects for every possible time stamp within min_delay_
+  std::vector< Time > prepared_timestamps( kernel().connection_builder_manager.get_min_delay() );
+  for ( size_t lag = 0; lag < ( size_t ) kernel().connection_builder_manager.get_min_delay();
+        lag++ )
+  {
+    prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() + Time::step( lag + 1 );
+  }
+
+  for ( std::vector< SpikeData >::const_iterator it = recv_buffer_spike_data_.begin();
+        it != recv_buffer_spike_data_.end(); ++it )
+  {
+    if ( it->tid == tid )
+    {
+      se.set_stamp( prepared_timestamps[ it->lag ] );
+      kernel().connection_builder_manager.send_5g( tid, it->syn_index, it->lcid, se );
+    }
+  }
+
 }
 
 void

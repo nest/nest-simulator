@@ -108,6 +108,8 @@ public:
     ArrayDatum& conns ) const = 0;
 
   virtual void send( Event& e, thread t, const std::vector< ConnectorModel* >& cm ) = 0;
+  virtual void send( thread tid, synindex syn_index, unsigned int lcid, Event& e, const std::vector< ConnectorModel* >& cm ) = 0;
+
 
   virtual void trigger_update_weight( long_t vt_gid,
     thread t,
@@ -139,7 +141,7 @@ private:
   double_t t_lastspike_;
 };
 
-// homogeneous connector containing >=K_cutoff entries
+// homogeneous connector containing >=K_cutoff entries ***OUTDATED***TODO@5g
 // specialization to define recursion termination for push_back
 // internally use a normal vector to store elements
 template < typename ConnectionT >
@@ -238,6 +240,15 @@ public:
     }
 
     ConnectorBase::set_t_lastspike( e.get_stamp().get_ms() );
+  }
+
+  void
+  send( thread tid, synindex syn_index, unsigned int lcid, Event& e, const std::vector< ConnectorModel* >& cm )
+  {
+    const synindex syn_id = C_[ 0 ].get_syn_id();
+    e.set_port( lcid );
+    C_[ lcid ].send( e, tid, -1., static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+                  ->get_common_properties() );
   }
 
   void
@@ -349,6 +360,12 @@ public:
     // for all delegate send to homogeneous connectors
     for ( size_t i = 0; i < size(); i++ )
       at( i )->send( e, t, cm );
+  }
+
+  void
+  send( thread tid, synindex syn_index, unsigned int lcid, Event& e, const std::vector< ConnectorModel* >& cm )
+  {
+    at( syn_index )->send( tid, syn_index, lcid, e, cm );
   }
 
   void

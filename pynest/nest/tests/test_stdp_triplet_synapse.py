@@ -51,7 +51,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
             "Aminus_triplet": 0.1,
             "Kplus": 0.0,
             "Kplus_triplet": 0.0,
-			"Wmax": 100.0,
+            "Wmax": 100.0,
         }
         self.post_neuron_params = {
             "tau_minus": 33.7,

@@ -31,7 +31,6 @@
 
 // Includes from sli:
 #include "dictutils.h"
-#include "network.h"
 
 namespace nest
 {

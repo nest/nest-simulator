@@ -33,6 +33,7 @@
 
 // Includes from nestkernel:
 #include "gid_collection.h"
+#include "growth_curve_factory.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
@@ -51,6 +52,7 @@ class Node;
 class Subnet;
 class Event;
 class DelayChecker;
+class GrowthCurve;
 
 typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons having targets
 typedef std::vector< tSConnector > tVSConnector;           // for all threads
@@ -74,12 +76,26 @@ public:
   virtual void get_status( DictionaryDatum& );
 
   DictionaryDatum& get_connruledict();
+  DictionaryDatum& get_growthcurvedict();
 
   /**
    * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
    */
   template < typename ConnBuilder >
   void register_conn_builder( const std::string& name );
+  
+  /**
+   * Add a growth curve for MSP
+   */
+  template < typename GrowthCurve >
+  void register_growth_curve( const std::string& name );
+  
+  /**
+   * Create a new Growth Curve object using the GrowthCurve Factory
+   * @param name which defines the type of GC to be created
+   * @return a new Growth Curve object of the type indicated by name
+   */
+  GrowthCurve* new_growth_curve( Name name );
 
   /**
    * Create connections.
@@ -376,9 +392,19 @@ private:
    * SeeAlso: Connect
    */
   DictionaryDatum connruledict_; //!< Dictionary for connection rules.
+  
+  /* BeginDocumentation
+   Name: growthcurvedict - growth curves for Model of Structural Plasticity
+   Description:
+   This dictionary provides indexes for the growth curve factory
+   */
+  DictionaryDatum growthcurvedict_; //!< Dictionary for growth rules.
 
   std::vector< GenericConnBuilderFactory* >
     connbuilder_factories_; //! ConnBuilder factories, indexed by connruledict_ elements.
+  
+  std::vector< GenericGrowthCurveFactory* >
+  growthcurve_factories_; //! GrowthCurve factories, indexed by growthcurvedict_ elements.
 
   delay min_delay_; //!< Value of the smallest delay in the network.
 
@@ -387,6 +413,12 @@ private:
 
 inline DictionaryDatum&
 ConnectionBuilderManager::get_connruledict()
+{
+  return connruledict_;
+}
+
+inline DictionaryDatum&
+ConnectionBuilderManager::get_growthcurvedict()
 {
   return connruledict_;
 }
@@ -401,6 +433,13 @@ inline delay
 ConnectionBuilderManager::get_max_delay() const
 {
   return max_delay_;
+}
+
+inline GrowthCurve*
+ConnectionBuilderManager::new_growth_curve( Name name )
+{
+  const long gc_id = ( *growthcurvedict_ )[ name ];
+  return growthcurve_factories_.at( gc_id )->create();
 }
 
 } // namespace nest

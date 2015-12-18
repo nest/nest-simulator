@@ -64,6 +64,7 @@ extern PoorMansAllocator poormansallocpool;
 
 nest::ConnectionBuilderManager::ConnectionBuilderManager()
   : connruledict_( new Dictionary() )
+  , growthcurvedict_( new Dictionary() )
   , connbuilder_factories_()
   , min_delay_( 1 )
   , max_delay_( 1 )

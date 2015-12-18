@@ -48,11 +48,10 @@ ConnectionBuilderManager::register_conn_builder( const std::string& name )
   connbuilder_factories_.push_back( cb );
   connruledict_->insert( name, id );
 }
-}
 
 template < typename GrowthCurve >
 void
-nest::Network::register_growth_curve( const std::string& name )
+ConnectionBuilderManager::register_growth_curve( const std::string& name )
 {
   assert( !growthcurvedict_->known( name ) );
   GenericGrowthCurveFactory* gc = new GrowthCurveFactory< GrowthCurve >();
@@ -60,6 +59,8 @@ nest::Network::register_growth_curve( const std::string& name )
   const int id = growthcurve_factories_.size();
   growthcurve_factories_.push_back( gc );
   growthcurvedict_->insert( name, id );
+}
+
 }
 
 #endif

@@ -417,7 +417,7 @@ MPIManager::get_processor_name()
 }
 
 inline void
-MPIManager::mpi_abort( int exitcode )
+MPIManager::mpi_abort( int )
 {
 }
 

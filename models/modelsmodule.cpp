@@ -409,18 +409,18 @@ ModelsModule::init( SLIInterpreter* )
   */
   kernel().model_manager.register_connection_model< TsodyksConnection< TargetIdentifierPtrRport > >(
     "tsodyks_synapse" );
-  register_connection_model< TsodyksConnection< TargetIdentifierIndex > >(
-    net_, "tsodyks_synapse_hpc" );
+  kernel().model_manager.register_connection_model< TsodyksConnection< TargetIdentifierIndex > >(
+    "tsodyks_synapse_hpc" );
 
 
   /* BeginDocumentation
      Name: tsodyks_synapse_hom_hpc - Variant of tsodyks_synapse_hom with low memory consumption.
      SeeAlso: synapsedict, tsodyks_synapse_hom, static_synapse_hpc
   */
-  register_connection_model< TsodyksConnectionHom< TargetIdentifierPtrRport > >(
-    net_, "tsodyks_synapse_hom" );
-  register_connection_model< TsodyksConnectionHom< TargetIdentifierIndex > >(
-    net_, "tsodyks_synapse_hom_hpc" );
+  kernel().model_manager.register_connection_model< TsodyksConnectionHom< TargetIdentifierPtrRport > >(
+    "tsodyks_synapse_hom" );
+  kernel().model_manager.register_connection_model< TsodyksConnectionHom< TargetIdentifierIndex > >(
+    "tsodyks_synapse_hom_hpc" );
 
 
   /* BeginDocumentation

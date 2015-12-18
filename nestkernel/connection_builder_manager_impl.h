@@ -31,6 +31,8 @@
 // Includes from nestkernel:
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
+#include "growth_curve.h"
+#include "growth_curve_factory.h"
 
 namespace nest
 {
@@ -46,6 +48,18 @@ ConnectionBuilderManager::register_conn_builder( const std::string& name )
   connbuilder_factories_.push_back( cb );
   connruledict_->insert( name, id );
 }
+}
+
+template < typename GrowthCurve >
+void
+nest::Network::register_growth_curve( const std::string& name )
+{
+  assert( !growthcurvedict_->known( name ) );
+  GenericGrowthCurveFactory* gc = new GrowthCurveFactory< GrowthCurve >();
+  assert( gc != 0 );
+  const int id = growthcurve_factories_.size();
+  growthcurve_factories_.push_back( gc );
+  growthcurvedict_->insert( name, id );
 }
 
 #endif

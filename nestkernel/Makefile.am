@@ -75,6 +75,9 @@ libnest_la_SOURCES=\
 		conn_builder.h conn_builder.cpp\
 		conn_builder_factory.h\
 		music_event_handler.h music_event_handler.cpp\
+		synaptic_element.h synaptic_element.cpp\
+		growth_curve.h growth_curve.cpp\
+		growth_curve_factory.h
 		music_manager.cpp music_manager.h\
 		nest.h nest.cpp\
 		kernel_manager.h kernel_manager.cpp\

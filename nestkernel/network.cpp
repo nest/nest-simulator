@@ -94,6 +94,9 @@ Network::Network( SLIInterpreter& i )
   connruledict_ = new Dictionary();
   interpreter_.def( "connruledict", new DictionaryDatum( connruledict_ ) );
 
+  growthcurvedict_ = new Dictionary();
+  interpreter_.def( "growthcurvedict", new DictionaryDatum( growthcurvedict_ ) );
+
   init_();
 }
 

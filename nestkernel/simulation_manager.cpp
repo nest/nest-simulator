@@ -472,16 +472,17 @@ nest::SimulationManager::update_()
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
 
-// the following block is executed by the master thread only
-// the other threads are enforced to wait at the end of the block
-#pragma omp master
-      {
         if ( to_step_
           == kernel().connection_builder_manager.get_min_delay() ) // gather only at end of slice
         {
           // kernel().event_delivery_manager.gather_events();
-          kernel().event_delivery_manager.gather_spike_data();
+          kernel().event_delivery_manager.gather_spike_data( thrd );
         }
+
+// the following block is executed by the master thread only
+// the other threads are enforced to wait at the end of the block
+#pragma omp master
+      {
 
         advance_time_();
 

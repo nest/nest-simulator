@@ -455,48 +455,58 @@ EventDeliveryManager::gather_events()
 }
 
 void
-EventDeliveryManager::gather_spike_data()
+EventDeliveryManager::gather_spike_data( const thread tid )
 {
-  bool me_completed = false;
-  bool others_completed = false;
   unsigned int send_recv_count = sizeof( SpikeData ) / sizeof( unsigned int ) *
     ceil( send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes() );
 
-#pragma omp parallel
+  spike_register_table_.reset_entry_point( tid );
+  while ( true )
   {
-    thread tid = kernel().vp_manager.get_thread_id();
-    spike_register_table_.reset_entry_point( tid );
-    while ( not others_completed || not me_completed )
-    {
-      spike_register_table_.restore_entry_point( tid );
-      prepare_spike_data_buffers_( me_completed );
-      
-#pragma omp barrier
-      collocate_spike_data_buffers_( tid );
-#pragma omp barrier
-      me_completed = check_spike_data_me_completed_();
-      if ( me_completed )
-      {
-        prepare_spike_data_buffers_( me_completed );
-      }
-      
-      spike_register_table_.save_entry_point( tid );
+    static bool me_completed;
+    static bool others_completed;
 #pragma omp single
-      {
-        unsigned int* send_buffer_int = reinterpret_cast< unsigned int* >( &send_buffer_spike_data_[0] );
-        unsigned int* recv_buffer_int = reinterpret_cast< unsigned int* >( &recv_buffer_spike_data_[0] );
-        Communicator::communicate_Alltoall( send_buffer_int, recv_buffer_int, send_recv_count );
-      } // of omp single
-      
-      others_completed  = check_spike_data_others_completed_();
-      deliver_events_5g_( tid );
+    {
+      me_completed = false;
+      others_completed = false;
     }
-
-  } // of omp parallel  
+    spike_register_table_.restore_entry_point( tid );
+    prepare_spike_data_buffers_( me_completed );
+      
+#pragma omp barrier
+    collocate_spike_data_buffers_( tid );
+#pragma omp barrier
+#pragma omp single
+    {
+      me_completed = check_spike_data_me_completed_();
+    }
+    if ( me_completed )
+    {
+#pragma omp barrier
+      prepare_spike_data_buffers_( me_completed );
+    }
+      
+    spike_register_table_.save_entry_point( tid );
+#pragma omp single
+    {
+      unsigned int* send_buffer_int = reinterpret_cast< unsigned int* >( &send_buffer_spike_data_[0] );
+      unsigned int* recv_buffer_int = reinterpret_cast< unsigned int* >( &recv_buffer_spike_data_[0] );
+      Communicator::communicate_Alltoall( send_buffer_int, recv_buffer_int, send_recv_count );
+    } // of omp single
+#pragma omp single
+    {
+      others_completed = check_spike_data_others_completed_();
+    }
+    deliver_events_5g_( tid );
+    if ( me_completed && others_completed )
+    {
+      break;
+    }
+  } // of while(true)
 }
 
 bool
-EventDeliveryManager::check_spike_data_me_completed_()
+EventDeliveryManager::check_spike_data_me_completed_() const
 {
   for ( std::vector< SpikeData >::const_iterator it = send_buffer_spike_data_.begin();
         it != send_buffer_spike_data_.end(); ++it )
@@ -510,10 +520,10 @@ EventDeliveryManager::check_spike_data_me_completed_()
 }
 
 bool
-EventDeliveryManager::check_spike_data_others_completed_()
+EventDeliveryManager::check_spike_data_others_completed_() const
 {
-  for ( std::vector< SpikeData >::const_iterator it = send_buffer_spike_data_.begin();
-        it != send_buffer_spike_data_.end(); ++it )
+  for ( std::vector< SpikeData >::const_iterator it = recv_buffer_spike_data_.begin();
+        it != recv_buffer_spike_data_.end(); ++it )
   {
     if ( not it->is_complete() )
     {
@@ -767,8 +777,9 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid, c
   for ( std::vector< TargetData >::const_iterator it = recv_buffer.begin(); it != recv_buffer.end(); ++it )
   {
     if ( ( not it->is_empty() ) && ( not it->is_complete() )
-         && kernel().vp_manager.is_thread_local( it->gid ) )
+         && kernel().vp_manager.is_vp_local( it->gid ) )
     {
+      std::cout << kernel().vp_manager.get_vp() << " add conn" << std::endl;
       kernel().connection_builder_manager.add_target( tid, *it );
     }
   }

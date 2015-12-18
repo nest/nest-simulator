@@ -76,14 +76,19 @@ public:
   index get_num_threads() const;
 
   /**
-   * Returns true if the given global node exists on this thread.
+   * Returns true if the given global node exists on this vp.
    */
-  bool is_thread_local( index gid ) const;
+  bool is_vp_local( index gid ) const;
 
   /**
    * Returns thread local index of a given global node.
    */
   index gid_to_lid( index gid ) const;
+
+  /**
+   * Returns virtual process index
+   */
+  thread get_vp() const;
 
   /**
    * Return a thread number for a given global node id.

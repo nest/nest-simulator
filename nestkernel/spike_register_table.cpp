@@ -39,7 +39,8 @@ nest::SpikeRegisterTable::~SpikeRegisterTable()
 void
 nest::SpikeRegisterTable::initialize()
 {
-  thread num_threads = kernel().vp_manager.get_num_threads();
+  const thread num_threads = kernel().vp_manager.get_num_threads();
+
   
   spike_register_.resize( num_threads );
 

@@ -134,6 +134,7 @@ nest::KernelManager::num_threads_changed_reset()
 {
   node_manager.finalize();
   model_manager.finalize();
+  event_delivery_manager.finalize();
   connection_builder_manager.finalize();
   modelrange_manager.finalize(); 
   rng_manager.finalize();
@@ -141,6 +142,7 @@ nest::KernelManager::num_threads_changed_reset()
   rng_manager.initialize();
   modelrange_manager.initialize(); // independant of threads, but node_manager needs it reset
   connection_builder_manager.initialize();
+  event_delivery_manager.initialize();
   model_manager.initialize();
   node_manager.initialize();
 }

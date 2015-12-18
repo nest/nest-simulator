@@ -29,21 +29,27 @@
 #include "kernel_manager.h"
 
 inline nest::thread
+nest::VPManager::get_vp() const
+{
+  return kernel().mpi_manager.get_rank() + get_thread_id() * kernel().mpi_manager.get_num_processes();
+}
+
+inline nest::thread
 nest::VPManager::get_num_virtual_processes() const
 {
   return get_num_threads() * kernel().mpi_manager.get_num_processes();
 }
 
 inline bool
-nest::VPManager::is_thread_local( index gid ) const
+nest::VPManager::is_vp_local( index gid ) const
 {
-  return ( get_thread_id() == ( gid % n_threads_ ) ) && ( kernel().mpi_manager.is_process_local( gid ) );
+  return ( gid % ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() ) == get_vp() );
 }
 
 inline nest::index
 nest::VPManager::gid_to_lid( const index gid ) const
 {
-  assert( is_thread_local( gid ) );
+  assert( is_vp_local( gid ) );
   return gid / ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() );
 }
 

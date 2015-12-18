@@ -204,7 +204,7 @@ public:
    */
   void gather_events();
 
-  void gather_spike_data();
+  void gather_spike_data( const thread tid );
 
   void gather_target_data();
   
@@ -229,9 +229,9 @@ private:
    */
   void collocate_buffers_();
 
-  bool check_spike_data_me_completed_();
+  bool check_spike_data_me_completed_() const;
 
-  bool check_spike_data_others_completed_();
+  bool check_spike_data_others_completed_() const;
 
   void prepare_spike_data_buffers_( const bool me_completed );
 

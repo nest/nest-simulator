@@ -37,7 +37,16 @@ class CommonSynapseProperties;
 class TimeConverter;
 class Node;
 
-
+/**
+ * This function sets the two lowest bits of the pointer depending on the existing connections.
+ *
+ * - If *p contains primary connections the lowest bit is set to 1
+ * - If *p contains secondary connections the second lowest bit is set to 1
+ *
+ * This implementation relies on the assumption that the two lowest bits of the pointer are 0.
+ * This can be assumed with some certainty (see github issue #186 for a discussion).
+ * The assumption is secured by an assert in the allocate()-function.
+ */
 inline ConnectorBase*
 pack_pointer( ConnectorBase* p, bool has_primary, bool has_secondary )
 {
@@ -45,6 +54,10 @@ pack_pointer( ConnectorBase* p, bool has_primary, bool has_secondary )
     reinterpret_cast< unsigned long >( p ) | has_primary | ( has_secondary << 1 ) );
 }
 
+/**
+ * This function removes the setting of the two lowest bits done in the pack_pointer()-function.
+ * The returned pointer can again be used as a valid pointer.
+ */
 inline ConnectorBase*
 validate_pointer( ConnectorBase* p )
 {
@@ -56,16 +69,14 @@ validate_pointer( ConnectorBase* p )
 inline bool
 has_primary( ConnectorBase* p )
 {
-  // the lowest bit is set, if there is at least one primary
-  // connection
+  // the lowest bit is set, if there is at least one primary connection
   return static_cast< bool >( reinterpret_cast< unsigned long >( p ) & 1 );
 }
 
 inline bool
 has_secondary( ConnectorBase* p )
 {
-  // the second lowest bit is set, if there is at least one secondary
-  // connection
+  // the second lowest bit is set, if there is at least one secondary connection
   return static_cast< bool >( reinterpret_cast< unsigned long >( p ) & 2 );
 }
 

@@ -87,7 +87,9 @@ ConnectorModel::assert_valid_delay_ms( double_t requested_new_delay )
   {
     if ( user_set_delay_extrema_ )
     {
-      throw BadDelay( new_delay_ms, "Delay must be greater than or equal to min_delay." );
+      throw BadDelay( new_delay_ms,
+    		          "Delay must be greater than or equal to min_delay. "
+    		          "You may set min_delay before creating connections." );
     }
     else
     {
@@ -99,7 +101,9 @@ ConnectorModel::assert_valid_delay_ms( double_t requested_new_delay )
   {
     if ( user_set_delay_extrema_ )
     {
-      throw BadDelay( new_delay_ms, "Delay must be smaller than or equal to max_delay." );
+      throw BadDelay( new_delay_ms,
+    		          "Delay must be smaller than or equal to max_delay. "
+    		          "You may set min_delay before creating connections." );
     }
     else
     {

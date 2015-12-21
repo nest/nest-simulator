@@ -98,13 +98,12 @@ public:
   {
     return min_delay_;
   }
+
   const Time&
   get_max_delay() const
   {
     return max_delay_;
   }
-
-  void update_delay_extrema( const double_t mindelay_cand, const double_t maxdelay_cand );
 
   /**
    * NAN is a special value in cmath, which describes double values that
@@ -117,6 +116,7 @@ public:
     synindex syn_id,
     double_t delay = numerics::nan,
     double_t weight = numerics::nan ) = 0;
+
   virtual ConnectorBase* add_connection( Node& src,
     Node& tgt,
     ConnectorBase* conn,
@@ -168,7 +168,7 @@ public:
    *       working with continuous delays.
    * @note Not const, since it may update delay extrema as a side-effect.
    */
-  void assert_two_valid_delays_steps( long_t, long_t );
+  void assert_two_valid_delays_steps( delay, delay );
 
   std::string
   get_name() const

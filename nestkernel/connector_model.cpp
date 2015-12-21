@@ -59,71 +59,64 @@ ConnectorModel::ConnectorModel( const ConnectorModel& cm, const std::string name
 }
 
 void
-ConnectorModel::update_delay_extrema( const double_t mindelay_cand, const double_t maxdelay_cand )
-{
-  // check min delay candidate
-  Time delay_cand = Time( Time::ms( mindelay_cand ) );
-  if ( delay_cand < min_delay_ )
-    min_delay_ = delay_cand;
-
-  // check max delay candidate
-  delay_cand = Time( Time::ms( maxdelay_cand ) );
-  if ( delay_cand > max_delay_ )
-    max_delay_ = delay_cand;
-}
-
-void
 ConnectorModel::assert_valid_delay_ms( double_t requested_new_delay )
 {
-  // We have to convert the delay in ms to a Time object then to steps and back the ms again
-  // in order to get the value in ms which can be represented with an integer number of steps
-  // in the currently chosen Time representation.
-  // See also bug #217, MH 08-04-23
-  // This is also done by creating a Time object out of the provided ms.
-  const Time new_delay = Time( Time::ms( requested_new_delay ) );
+  const delay new_delay = Time::delay_ms_to_steps( requested_new_delay );
+  const double new_delay_ms = Time::delay_steps_to_ms( new_delay );
 
-  if ( new_delay < Time::get_resolution() )
-    throw BadDelay( new_delay.get_ms(), "Delay must be greater than or equal to resolution" );
+  if ( new_delay < Time::get_resolution().get_steps() )
+    throw BadDelay( new_delay_ms, "Delay must be greater than or equal to resolution" );
 
   // if already simulated, the new delay has to be checked against the
   // min_delay and the max_delay which have been used during simulation
   if ( net_.get_simulated() )
   {
-    Time sim_min_delay = Time::step( net_.get_min_delay() );
-    Time sim_max_delay = Time::step( net_.get_max_delay() );
-    const bool bad_min_delay = new_delay < sim_min_delay;
-    const bool bad_max_delay = new_delay > sim_max_delay;
+    const bool bad_min_delay = new_delay < net_.get_min_delay();
+    const bool bad_max_delay = new_delay > net_.get_max_delay();
 
     if ( bad_min_delay || bad_max_delay )
-      throw BadDelay( new_delay.get_ms(),
-        "Minimum and maximum delay cannot be changed after Simulate has been called." );
+      throw BadDelay( new_delay_ms,
+        "Minimum and maximum delay cannot be changed "
+        "after Simulate has been called." );
   }
 
-  const bool new_min_delay = new_delay < min_delay_;
-  const bool new_max_delay = new_delay > max_delay_;
+  const bool new_min_delay = new_delay < min_delay_.get_steps();
+  const bool new_max_delay = new_delay > max_delay_.get_steps();
 
   if ( new_min_delay )
   {
     if ( user_set_delay_extrema_ )
-      throw BadDelay( new_delay.get_ms(), "Delay must be greater than or equal to min_delay." );
+    {
+      throw BadDelay( new_delay_ms,
+        "Delay must be greater than or equal to min_delay. "
+        "You may set min_delay before creating connections." );
+    }
     else
-      update_delay_extrema( new_delay.get_ms(), max_delay_.get_ms() );
+    {
+      min_delay_ = Time( Time::step( new_delay ) );
+    }
   }
 
   if ( new_max_delay )
   {
     if ( user_set_delay_extrema_ )
-      throw BadDelay( new_delay.get_ms(), "Delay must be smaller than or equal to max_delay." );
+    {
+      throw BadDelay( new_delay_ms,
+        "Delay must be smaller than or equal to max_delay. "
+        "You may set min_delay before creating connections." );
+    }
     else
-      update_delay_extrema( min_delay_.get_ms(), new_delay.get_ms() );
+    {
+      max_delay_ = Time( Time::step( new_delay ) );
+    }
   }
 }
 
 void
-ConnectorModel::assert_two_valid_delays_steps( long_t new_delay1, long_t new_delay2 )
+ConnectorModel::assert_two_valid_delays_steps( delay new_delay1, delay new_delay2 )
 {
-  const long_t ldelay = std::min( new_delay1, new_delay2 );
-  const long_t hdelay = std::max( new_delay1, new_delay2 );
+  const delay ldelay = std::min( new_delay1, new_delay2 );
+  const delay hdelay = std::max( new_delay1, new_delay2 );
 
   if ( ldelay < Time::get_resolution().get_steps() )
     throw BadDelay(
@@ -149,19 +142,29 @@ ConnectorModel::assert_two_valid_delays_steps( long_t new_delay1, long_t new_del
   if ( new_min_delay )
   {
     if ( user_set_delay_extrema_ )
-      throw BadDelay(
-        Time::delay_steps_to_ms( ldelay ), "Delay must be greater than or equal to min_delay." );
+    {
+      throw BadDelay( Time::delay_steps_to_ms( ldelay ),
+        "Delay must be greater than or equal to min_delay. "
+        "You may set min_delay before creating connections." );
+    }
     else
-      update_delay_extrema( Time::delay_steps_to_ms( ldelay ), max_delay_.get_ms() );
+    {
+      min_delay_ = Time( Time::step( ldelay ) );
+    }
   }
 
   if ( new_max_delay )
   {
     if ( user_set_delay_extrema_ )
-      throw BadDelay(
-        Time::delay_steps_to_ms( hdelay ), "Delay must be smaller than or equal to max_delay." );
+    {
+      throw BadDelay( Time::delay_steps_to_ms( hdelay ),
+        "Delay must be smaller than or equal to max_delay. "
+        "You may set max_delay before creating connections." );
+    }
     else
-      update_delay_extrema( min_delay_.get_ms(), Time::delay_steps_to_ms( hdelay ) );
+    {
+      max_delay_ = Time( Time::step( hdelay ) );
+    }
   }
 }
 

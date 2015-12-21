@@ -216,9 +216,25 @@ public:
   static void communicate( std::vector< double_t >& send_buffer,
     std::vector< double_t >& recv_buffer,
     std::vector< int >& displacements );
+  static void communicate( std::vector< ulong_t >& send_buffer,
+    std::vector< ulong_t >& recv_buffer,
+    std::vector< int >& displacements );
+  static void communicate( std::vector< int_t >& send_buffer,
+    std::vector< int_t >& recv_buffer,
+    std::vector< int >& displacements );
+
   static void communicate( double_t, std::vector< double_t >& );
   static void communicate( std::vector< int_t >& );
   static void communicate( std::vector< long_t >& );
+
+  /*
+   * Sum across all rank
+   */
+  static void communicate_Allreduce_sum_in_place( double_t buffer );
+  static void communicate_Allreduce_sum_in_place( std::vector< double_t >& buffer );
+  static void communicate_Allreduce_sum_in_place( std::vector< int_t >& buffer );
+  static void communicate_Allreduce_sum( std::vector< double_t >& send_buffer,
+    std::vector< double_t >& recv_buffer );
 
   /**
    * Collect GIDs for all nodes in a given node list across processes.
@@ -407,6 +423,13 @@ public:
   static void communicate( std::vector< double_t >& send_buffer,
     std::vector< double_t >& recv_buffer,
     std::vector< int >& displacements );
+  static void communicate( std::vector< ulong_t >& send_buffer,
+    std::vector< ulong_t >& recv_buffer,
+    std::vector< int >& displacements );
+  static void communicate( std::vector< int_t >& send_buffer,
+    std::vector< int_t >& recv_buffer,
+    std::vector< int >& displacements );
+
   static void communicate( double_t, std::vector< double_t >& );
   static void
   communicate( std::vector< int_t >& )
@@ -416,6 +439,17 @@ public:
   communicate( std::vector< long_t >& )
   {
   }
+
+  /*
+   * Sum across all rank
+   */
+  static void communicate_Allreduce_sum_in_place( double_t buffer );
+  static void communicate_Allreduce_sum_in_place( std::vector< double_t >& buffer );
+  static void communicate_Allreduce_sum_in_place( std::vector< int_t >& buffer );
+
+
+  static void communicate_Allreduce_sum( std::vector< double_t >& send_buffer,
+    std::vector< double_t >& recv_buffer );
 
   /**
   * Collect GIDs for all nodes in a given node list across processes.

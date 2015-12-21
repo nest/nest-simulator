@@ -93,7 +93,6 @@ class histentry;
    SeeAlso: GetStatus, SetStatus, elementstates
  */
 
-
 class Node
 {
   friend class Network;
@@ -322,7 +321,7 @@ public:
 
   /**
    * Bring the node from state $t$ to $t+n*dt$, sends SecondaryEvents
-   * (e.g. GapJEvent) and resets state variables to values at $t$.
+   * (e.g. GapJunctionEvent) and resets state variables to values at $t$.
    *
    * n->prelim_update(T, from, to) performs the update steps beginning
    * at T+from .. T+to-1.
@@ -425,7 +424,7 @@ public:
   virtual port handles_test_event( DoubleDataEvent&, rport receptor_type );
   virtual port handles_test_event( DSSpikeEvent&, rport receptor_type );
   virtual port handles_test_event( DSCurrentEvent&, rport receptor_type );
-  virtual port handles_test_event( GapJEvent&, rport receptor_type );
+  virtual port handles_test_event( GapJunctionEvent&, rport receptor_type );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -434,7 +433,7 @@ public:
    * @ingroup event_interface
    * @throws IllegalConnection
    */
-  virtual void sends_secondary_event( GapJEvent& ge );
+  virtual void sends_secondary_event( GapJunctionEvent& ge );
 
   /**
    * Register a STDP connection
@@ -508,16 +507,16 @@ public:
 
   /**
    * Handler for gap junction events.
-   * @see handle(thread, GapJEvent&)
+   * @see handle(thread, GapJunctionEvent&)
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle( GapJEvent& e );
+  virtual void handle( GapJunctionEvent& e );
 
   /**
-   * @defgroup MSP_functions Model of Structural Plasticity in NEST.
+   * @defgroup SP_functions Structural Plasticity in NEST.
    * Functions related to accessibility and setup of variables required for
-   * the implementation of MSP in NEST.
+   * the implementation of a model of Structural Plasticity in NEST.
    *
    */
 
@@ -526,7 +525,7 @@ public:
    * the last update in Calcium concentration which is performed each time
    * a Node spikes.
    * Return 0.0 if not overridden
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual double_t
   get_Ca_minus() const
@@ -538,7 +537,7 @@ public:
    * Get the number of synaptic element for the current Node at Ca_t which
    * corresponds to the time of the last spike.
    * Return 0.0 if not overridden
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual double_t get_synaptic_elements( Name ) const
   {
@@ -548,7 +547,7 @@ public:
   /**
    * Get the number of vacant synaptic element for the current Node
    * Return 0 if not overridden
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual int_t get_synaptic_elements_vacant( Name ) const
   {
@@ -558,7 +557,7 @@ public:
   /**
    * Get the number of connected synaptic element for the current Node
    * Return 0 if not overridden
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual int_t get_synaptic_elements_connected( Name ) const
   {
@@ -568,10 +567,10 @@ public:
   /**
    * Get the number of all synaptic elements for the current Node at time t
    * Return an empty map if not overridden
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual std::map< Name, double_t >
-  get_synaptic_elements()
+  get_synaptic_elements() const
   {
     return std::map< Name, double >();
   }
@@ -580,7 +579,7 @@ public:
    * Triggers the update of all SynapticElements
    * stored in the synaptic_element_map_. It also updates the calcium concentration.
    * @param t double_t time when the update is being performed
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual void update_synaptic_elements( double_t ){};
 
@@ -589,7 +588,7 @@ public:
    * time.
    * @param p double_t correspond the the proportion of synaptic elements
    * to be removed.
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual void decay_synaptic_elements_vacant( double_t ){};
 
@@ -599,7 +598,7 @@ public:
    * is formed or deleted.
    * @param type Name, name of the synaptic element to connect
    * @param n int_t number of new connections of the given type
-   * @ingroup MSP_functions
+   * @ingroup SP_functions
    */
   virtual void connect_synaptic_element( Name, int_t ){};
 
@@ -675,6 +674,27 @@ public:
    * @returns true if node is a subnet.
    */
   virtual bool is_subnet() const;
+
+  /**
+   * @returns type of signal this node produces
+   * used in check_connection to only connect neurons which send / receive compatible information
+   */
+  virtual SignalType
+  sends_signal() const
+  {
+    return SPIKE;
+  }
+
+  /**
+   * @returns type of signal this node consumes
+   * used in check_connection to only connect neurons which send / receive compatible information
+   */
+  virtual SignalType
+  receives_signal() const
+  {
+    return SPIKE;
+  }
+
 
   /**
    *  Return a dictionary with the node's properties.
@@ -837,6 +857,7 @@ private:
   bool frozen_;              //!< node shall not be updated if true
   bool buffers_initialized_; //!< Buffers have been initialized
   bool needs_prelim_up_;     //!< node requires preliminary update step
+
 
 protected:
   static Network* net_; //!< Pointer to global network driver.

@@ -74,7 +74,9 @@ public:
    */
   port send_test_event( Node&, rport, synindex, bool );
 
-  void sends_secondary_event( GapJEvent& ge );
+  void sends_secondary_event( GapJunctionEvent& ge );
+
+  SignalType sends_signal() const;
 
   Node const& get_prototype() const;
 
@@ -189,9 +191,16 @@ GenericModel< ElementT >::send_test_event( Node& target,
 
 template < typename ElementT >
 inline void
-GenericModel< ElementT >::sends_secondary_event( GapJEvent& ge )
+GenericModel< ElementT >::sends_secondary_event( GapJunctionEvent& ge )
 {
   return proto_.sends_secondary_event( ge );
+}
+
+template < typename ElementT >
+inline nest::SignalType
+GenericModel< ElementT >::sends_signal() const
+{
+  return proto_.sends_signal();
 }
 
 template < typename ElementT >

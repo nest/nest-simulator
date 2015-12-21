@@ -193,7 +193,16 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
    */
   using Node::event_hook;
+  using Node::sends_signal;
+
   void event_hook( DSSpikeEvent& );
+
+  SignalType
+  sends_signal() const
+  {
+    return ALL;
+  }
+
 
 private:
   void init_state_( const Node& );

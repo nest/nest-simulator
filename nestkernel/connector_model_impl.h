@@ -29,6 +29,8 @@
 #include "network.h"
 #include "connector_model.h"
 #include "connector_base.h"
+#include "connection_label.h"
+#include "string_utils.h"
 
 
 template < typename T, typename C >
@@ -381,6 +383,10 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   {
     // case 1 or case 2
 
+    // Already existing pointers of type ConnectorBase contain (in their two lowest bits) the
+    // information if *conn has primary and/or secondary connections. Before the pointer can
+    // be used as a valid pointer this information needs to be read and the original pointer
+    // needs to be restored by calling validate_pointer( conn ).
     bool b_has_primary = has_primary( conn );
     bool b_has_secondary = has_secondary( conn );
 
@@ -398,8 +404,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
         vector_like< ConnectionT >* vc = static_cast< vector_like< ConnectionT >* >( conn );
 
         // we do not need to change the flags is_primary or is_secondary, because the new synapse is
-        // of the
-        // same type as the existing ones
+        // of the same type as the existing ones
         conn = pack_pointer( &vc->push_back( c ), b_has_primary, b_has_secondary );
       }
       else
@@ -484,6 +489,12 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
   bool found = false;
   vector_like< ConnectionT >* vc;
 
+  bool b_has_primary = has_primary( conn );
+  bool b_has_secondary = has_secondary( conn );
+
+  conn = validate_pointer( conn );
+  // from here on we can use conn as a valid pointer
+
   if ( conn->homogeneous_model() )
   {
     assert( conn->get_syn_id() == syn_id );
@@ -494,7 +505,15 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
       ConnectionT* connection = &vc->at( i );
       if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
       {
-        conn = &vc->erase( i );
+        if ( vc->get_num_connections() > 1 )
+          conn = &vc->erase( i );
+        else
+        {
+          delete vc;
+          conn = 0;
+        }
+        if ( conn != 0 )
+          conn = pack_pointer( conn, is_primary_, !is_primary_ );
         found = true;
         break;
       }
@@ -529,11 +548,19 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
               // Test if the homogeneous vector of connections went back to only 1 type of
               // synapse... then go back to the simple vector_like case.
               if ( hc->size() == 1 )
+              {
                 conn = static_cast< vector_like< ConnectionT >* >( ( *hc )[ 0 ] );
+                conn = pack_pointer( conn, b_has_primary, b_has_secondary );
+              }
+              else
+              {
+                conn = pack_pointer( hc, b_has_primary, b_has_secondary );
+              }
             } // Otherwise, just remove the desired connection
             else
             {
               ( *hc )[ i ] = &vc->erase( j );
+              conn = pack_pointer( hc, b_has_primary, b_has_secondary );
             }
             found = true;
             break;
@@ -557,28 +584,38 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
  * Register a synape with default Connector and without any common properties.
  */
 template < class ConnectionT >
-synindex
+void
 register_connection_model( Network& net, const std::string& name )
 {
-  return net.register_synapse_prototype( new GenericConnectorModel< ConnectionT >(
+  net.register_synapse_prototype( new GenericConnectorModel< ConnectionT >(
     net, name, /*is_primary=*/true, /*has_delay=*/true ) );
+  if ( not ends_with( name, "_hpc" ) )
+  {
+    net.register_synapse_prototype( new GenericConnectorModel< ConnectionLabel< ConnectionT > >(
+      net, name + "_lbl", /*is_primary=*/true, /*has_delay=*/true ) );
+  }
 }
 
 /**
  * Register a synape with default Connector and without any common properties.
  */
 template < class ConnectionT >
-synindex
+void
 register_secondary_connection_model( Network& net, const std::string& name, bool has_delay = true )
 {
-  ConnectorModel& cm =
-    *( new GenericSecondaryConnectorModel< ConnectionT >( net, name, has_delay ) );
+  ConnectorModel* cm = new GenericSecondaryConnectorModel< ConnectionT >( net, name, has_delay );
 
-  synindex synid = net.register_secondary_synapse_prototype( &cm );
+  synindex synid = net.register_secondary_synapse_prototype( cm );
 
   ConnectionT::EventType::set_syn_id( synid );
 
-  return synid;
+  // create labeled secondary event connection model
+  cm = new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT > >(
+    net, name + "_lbl", has_delay );
+
+  synid = net.register_secondary_synapse_prototype( cm );
+
+  ConnectionT::EventType::set_syn_id( synid );
 }
 
 } // namespace nest

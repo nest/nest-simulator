@@ -38,6 +38,7 @@ libnest_la_SOURCES=\
 		sibling_container.h sibling_container.cpp\
 		subnet.h subnet.cpp\
 		connection.h\
+		connection_label.h\
 		common_properties_hom_w.h\
 		syn_id_delay.h\
 		connector_base.h connector_base.cpp\
@@ -62,6 +63,7 @@ libnest_la_SOURCES=\
 		nest_timemodifier.h nest_timemodifier.cpp\
 		modelrange.h modelrange.cpp\
 		modelrangemanager.h modelrangemanager.cpp\
+		sp_manager.h sp_manager.cpp\
 		multirange.h multirange.cpp\
 		network.h network_impl.h network.cpp\
 		node.h node.cpp\

@@ -164,9 +164,10 @@ nest::Archiving_Node::get_history( double_t t1,
 }
 
 void
-nest::Archiving_Node::set_spiketime( Time const& t_sp )
+nest::Archiving_Node::set_spiketime( Time const& t_sp, double_t offset )
 {
-  update_synaptic_elements( t_sp.get_ms() );
+  const double_t t_sp_ms = t_sp.get_ms() - offset;
+  update_synaptic_elements( t_sp_ms );
   Ca_minus_ += beta_Ca_;
 
   if ( n_incoming_ )
@@ -183,15 +184,15 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp )
         break;
     }
     // update spiking history
-    Kminus_ = Kminus_ * std::exp( ( last_spike_ - t_sp.get_ms() ) / tau_minus_ ) + 1.0;
+    Kminus_ = Kminus_ * std::exp( ( last_spike_ - t_sp_ms ) / tau_minus_ ) + 1.0;
     triplet_Kminus_ =
-      triplet_Kminus_ * std::exp( ( last_spike_ - t_sp.get_ms() ) / tau_minus_triplet_ ) + 1.0;
-    last_spike_ = t_sp.get_ms();
+      triplet_Kminus_ * std::exp( ( last_spike_ - t_sp_ms ) / tau_minus_triplet_ ) + 1.0;
+    last_spike_ = t_sp_ms;
     history_.push_back( histentry( last_spike_, Kminus_, triplet_Kminus_, 0 ) );
   }
   else
   {
-    last_spike_ = t_sp.get_ms();
+    last_spike_ = t_sp_ms;
   }
 }
 
@@ -275,7 +276,7 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
   std::pair< std::map< Name, SynapticElement >::iterator, bool > insert_result;
 
   synaptic_elements_map_ = std::map< Name, SynapticElement >();
-  synaptic_elements_d = getValue< DictionaryDatum >( d, "synaptic_elements" );
+  synaptic_elements_d = getValue< DictionaryDatum >( d, names::synaptic_elements );
 
   for ( Dictionary::const_iterator i = synaptic_elements_d->begin();
         i != synaptic_elements_d->end();

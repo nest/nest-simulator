@@ -35,11 +35,10 @@ namespace nest
    The mcculloch_pitts_neuron is an implementation of a binary
    neuron that is irregularly updated as Poisson time points [1]. At
    each update point the total synaptic input h into the neuron is
-   summed up, passed through a gain function g whose output is
-   interpreted as the probability of the neuron to be in the active
-   (1) state.
-   The gain function g used here is g(h) = H(h-theta), with H the
-   Heaviside function.  The time constant tau_m is defined as the
+   summed up, passed through a Heaviside gain function g(h) = H(h-theta),
+   whose output is either 1 (if input is above) or 0 (if input is below
+   threshold theta).
+   The time constant tau_m is defined as the
    mean inter-update-interval that is drawn from an exponential
    distribution with this parameter. Using this neuron to reprodce
    simulations with asynchronous update [1], the time constant needs
@@ -61,6 +60,12 @@ namespace nest
    only sends a spike if a transition of its state occurs. If the
    state makes an up-transition it sends a spike with multiplicity 2,
    if a down transition occurs, it sends a spike with multiplicity 1.
+   The decoding scheme relies on the feature that spikes with multiplicity
+   larger 1 are delivered consecutively, also in a parallel setting.
+   The creation of double connections between binary neurons will
+   destroy the decoding scheme, as this effectively duplicates
+   every event. Using random connection routines it is therefore
+   advisable to set the property 'multapses' to false.
    The neuron accepts several sources of currents, e.g. from a
    noise_generator.
 

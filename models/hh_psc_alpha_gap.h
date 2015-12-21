@@ -124,9 +124,9 @@ References:
  Front. Neuroinform. 9:22. (2015),
  doi: 10.3389/fninf.2015.00022
 
-Sends: SpikeEvent, GapJEvent
+Sends: SpikeEvent, GapJunctionEvent
 
-Receives: SpikeEvent, GapJEvent, CurrentEvent, DataLoggingRequest
+Receives: SpikeEvent, GapJunctionEvent, CurrentEvent, DataLoggingRequest
 
 Author: Jan Hahne, Moritz Helias, Susanne Kunkel
 SeeAlso: hh_psc_alpha, hh_cond_exp_traub, gap_junction
@@ -155,15 +155,15 @@ public:
   void handle( SpikeEvent& );
   void handle( CurrentEvent& );
   void handle( DataLoggingRequest& );
-  void handle( GapJEvent& );
+  void handle( GapJunctionEvent& );
 
   port handles_test_event( SpikeEvent&, rport );
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
-  port handles_test_event( GapJEvent&, rport );
+  port handles_test_event( GapJunctionEvent&, rport );
 
   void
-  sends_secondary_event( GapJEvent& )
+  sends_secondary_event( GapJunctionEvent& )
   {
   }
 
@@ -416,7 +416,7 @@ hh_psc_alpha_gap::handles_test_event( DataLoggingRequest& dlr, rport receptor_ty
 }
 
 inline port
-hh_psc_alpha_gap::handles_test_event( GapJEvent&, rport receptor_type )
+hh_psc_alpha_gap::handles_test_event( GapJunctionEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

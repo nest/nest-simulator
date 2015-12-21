@@ -482,7 +482,8 @@ def
    Synopsis:
    << /source [sgid1 sgid2 ...] 
       /target [tgid1 tgid2 ...]
-      /synapse_model /smodel    >> GetConnections -> [ conn1 conn2 ... ]
+      /synapse_model /smodel    
+      /synapse_label label      >> GetConnections -> [ conn1 conn2 ... ]
 
    Parameters:
    A dictionary that may contain the following fields (all are optional):
@@ -491,7 +492,9 @@ def
    /target  - array with GIDs of post-synaptic nodes whose connections are sought.
               If not given, all neurons are searched as targets.
    /synapse_model - literal specifying synapse model
-                    If not given, connections of all synapse models are returned. 
+                    If not given, connections of all synapse models are returned.
+   /synapse_label - integer specifying synapse label
+                    If not given, connections of all synapse labels are returned.
 
    Description:
    1. If called with an empty dictionary, GetConnections returns all connections of the 
@@ -501,16 +504,19 @@ def
    3. The optional dictionary elements /source and /target can be used to filter 
       for specific pre- and post-synaptic neurons, respectively.
    4. The optional parameter /synapse_model can be used to filter for a specific synapse model.
-   5. In a parallel simulation, GetConnections only returns connections with *targets*
+   5. The optional parameter /synapse_label can be used to filter for a specific synapse label.
+   6. In a parallel simulation, GetConnections only returns connections with *targets*
       on the MPI process executing the function. 
 
    Remarks:
    1. See synapsedict for the synapse-model-id's for all synapse models.
-   2. The "port" enumerates connections per source, thread and synapse model. It is
+   2. The /synapse_label property can only be assigned to synapse models with names ending
+      with '_lbl'. All other synapses have the default synapse_label UNLABELED_CONNECTION (-1).
+   3. The "port" enumerates connections per source, thread and synapse model. It is
       mainly important for NEST internally.
-   3. In OpenMP mode, GetConnections works thread-parallel for better performance.
-   4. Connection objects can be converted to SLI lists with cva.
-   5. Connection objects can be passed to SetSynapseStatus, GetSynapseStatus, and DataConnect
+   4. In OpenMP mode, GetConnections works thread-parallel for better performance.
+   5. Connection objects can be converted to SLI lists with cva.
+   6. Connection objects can be passed to SetSynapseStatus, GetSynapseStatus, and DataConnect
 
    SeeAlso: DataConnect, SetSynapseStatus, GetSynapseStatus, synapsedict
 */

@@ -199,16 +199,16 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   double_t delay,
   double_t weight )
 {
-  if ( !std::isnan( delay ) )
+  if ( not numerics::is_nan( delay ) )
     kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
 
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
-  if ( !std::isnan( weight ) )
+  if ( not numerics::is_nan( weight ) )
   {
     c.set_weight( weight );
   }
-  if ( !std::isnan( delay ) )
+  if ( not numerics::is_nan( delay ) )
   {
     c.set_delay( delay );
   }
@@ -237,7 +237,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   double_t delay,
   double_t weight )
 {
-  if ( !std::isnan( delay ) )
+  if ( not numerics::is_nan( delay ) )
   {
     kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
 
@@ -261,11 +261,11 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   if ( !p->empty() )
     c.set_status( p, *this ); // reference to connector model needed here to check delay (maybe this
                               // could be done one level above?)
-  if ( !std::isnan( weight ) )
+  if ( not numerics::is_nan( weight ) )
   {
     c.set_weight( weight );
   }
-  if ( !std::isnan( delay ) )
+  if ( not numerics::is_nan( delay ) )
   {
     c.set_delay( delay );
   }

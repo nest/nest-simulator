@@ -36,6 +36,7 @@
 #include "modelrangemanager.h"
 #include "compose.hpp"
 #include "dictdatum.h"
+#include "numerics.h"
 #include <ostream>
 #include <cmath>
 
@@ -311,8 +312,8 @@ public:
     Node* target,
     thread target_thread,
     index syn,
-    double_t d = NAN,
-    double_t w = NAN );
+    double_t d = numerics::nan,
+    double_t w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -337,8 +338,8 @@ public:
     thread target_thread,
     index syn,
     DictionaryDatum& params,
-    double_t d = NAN,
-    double_t w = NAN );
+    double_t d = numerics::nan,
+    double_t w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.

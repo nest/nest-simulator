@@ -27,6 +27,9 @@
 #include <cmath>
 #include <string>
 
+// Includes from libnestutil:
+#include "numerics.h"
+
 // Includes from nestkernel:
 #include "nest_time.h"
 #include "nest_types.h"
@@ -60,15 +63,15 @@ public:
     Node& tgt,
     ConnectorBase* conn,
     synindex syn_id,
-    double_t delay = NAN,
-    double_t weight = NAN ) = 0;
+    double_t delay = numerics::nan,
+    double_t weight = numerics::nan ) = 0;
   virtual ConnectorBase* add_connection( Node& src,
     Node& tgt,
     ConnectorBase* conn,
     synindex syn_id,
     DictionaryDatum& d,
-    double_t delay = NAN,
-    double_t weight = NAN ) = 0;
+    double_t delay = numerics::nan,
+    double_t weight = numerics::nan ) = 0;
 
   virtual ConnectorModel* clone( std::string ) const = 0;
 

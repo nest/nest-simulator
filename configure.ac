@@ -572,6 +572,52 @@ if test "$ac_have_expm1" = yes ; then
 fi
 AC_MSG_RESULT($ac_have_expm1)
 
+# check if NAN is available after we have switched to C++
+AC_MSG_CHECKING([for NAN ])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>]],
+[[double x = NAN;]])],
+ac_have_nan="yes", ac_have_nan="no")
+if test "$ac_have_nan" = yes ; then
+  AC_DEFINE(HAVE_NAN, 1, ["Define if NAN is available"])
+fi
+AC_MSG_RESULT($ac_have_nan)
+
+# check if std::nan(NULL) is available after we have switched to C++
+# since c++11
+AC_MSG_CHECKING([for std::nan(NULL) ])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <cmath>]],
+[[double x = std::nan(NULL);]])],
+ac_have_std_nan="yes", ac_have_std_nan="no")
+if test "$ac_have_std_nan" = yes ; then
+  AC_DEFINE(HAVE_STD_NAN, 1, ["Define if std::nan(NULL) is available"])
+fi
+AC_MSG_RESULT($ac_have_std_nan)
+
+# check if isnan is available after we have switched to C++
+AC_MSG_CHECKING([for isnan ])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>]],
+[[isnan(0.0f/0.0f);]])],
+ac_have_isnan="yes", ac_have_isnan="no")
+if test "$ac_have_isnan" = yes ; then
+  AC_DEFINE(HAVE_ISNAN,1, ["Define if isnan() is available"])
+fi
+AC_MSG_RESULT($ac_have_isnan)
+
+# check if std::isnan is available after we have switched to C++
+# since c++11
+AC_MSG_CHECKING([for std::isnan ])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <cmath>]],
+[[std::isnan(0.0f/0.0f);]])],
+ac_have_std_isnan="yes", ac_have_std_isnan="no")
+if test "$ac_have_std_isnan" = yes ; then
+  AC_DEFINE(HAVE_STD_ISNAN,1, ["Define if std::isnan() is available"])
+fi
+AC_MSG_RESULT($ac_have_std_isnan)
+
+if test "$ac_have_std_isnan" = no && test "$ac_have_isnan" = no; then
+  AC_MSG_ERROR([You need either std::isnan or isnan to compile NEST.])
+fi
+
 #-- Look for programs needed in the Makefile
 AC_PROG_CXXCPP
 

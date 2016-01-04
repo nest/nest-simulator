@@ -61,19 +61,21 @@ parrot_neuron::update( Time const& origin, const long_t from, const long_t to )
   assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
-  SpikeEvent se;
-
   for ( long_t lag = from; lag < to; ++lag )
   {
     const ulong_t current_spikes_n = static_cast< ulong_t >( B_.n_spikes_.get_value( lag ) );
-
     if ( current_spikes_n > 0 )
     {
-      for ( ulong_t i_spike = 0; i_spike < current_spikes_n; i_spike++ )
+      // create a new SpikeEvent, set its multiplicity and send it
+      SpikeEvent se;
+      se.set_multiplicity( current_spikes_n );
+      kernel().event_delivery_manager.send( *this, se, lag );
+
+      // set the spike times, respecting the multiplicity
+      for ( ulong_t i = 0; i < current_spikes_n; i++ )
       {
-        kernel().event_delivery_manager.send( *this, se, lag );
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       }
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
     }
   }
 }

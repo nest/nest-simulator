@@ -1434,7 +1434,7 @@ nest::ConnectionBuilderManager::send_secondary( thread t, SecondaryEvent& e )
         
         if ( p->homogeneous_model() )
         {
-          if ( p->get_syn_id() == e.get_syn_id() )
+          if ( e.supports_syn_id( p->get_syn_id() ) )
             p->send( e, t, kernel().model_manager.get_synapse_prototypes(t) );
         }
         else

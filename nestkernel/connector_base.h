@@ -995,7 +995,7 @@ public:
   {
     // for all secondary connections delegate send to the matching homogeneous connector only
     for ( size_t i = primary_end_; i < size(); i++ )
-      if ( at( i )->get_syn_id() == e.get_syn_id() )
+      if ( e.supports_syn_id( at( i )->get_syn_id() ) )
       {
         at( i )->send( e, t, cm );
         break;

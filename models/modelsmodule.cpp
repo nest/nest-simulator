@@ -331,11 +331,15 @@ ModelsModule::init( SLIInterpreter* )
      Name: static_synapse_hom_w_hpc - Variant of static_synapse_hom_w with low memory consumption.
      SeeAlso: synapsedict, static_synapse_hom_w, static_synapse_hpc
   */
-  kernel()
-    .model_manager.register_connection_model< StaticConnectionHomW< TargetIdentifierPtrRport > >(
-      "static_synapse_hom_w" );
+  kernel().model_manager.register_connection_model< StaticConnectionHomW< TargetIdentifierPtrRport > >(
+    "static_synapse_hom_w" );
   kernel().model_manager.register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
     "static_synapse_hom_w_hpc" );
+
+  /* BeginDocumentation
+     Name: gap_junction - Connection model for gap junctions.
+     SeeAlso: synapsedict
+  */
   kernel().model_manager.register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >( "gap_junction", false );
 
 

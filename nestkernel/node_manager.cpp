@@ -52,6 +52,8 @@ NodeManager::NodeManager()
   , siblingcontainer_model_( 0 )
   , n_gsd_( 0 )
   , nodes_vec_()
+  , nodes_prelim_up_vec_()
+  , needs_prelim_update_( false )
   , nodes_vec_network_size_( 0 ) // zero to force update
 {
 }
@@ -536,22 +538,31 @@ NodeManager::ensure_valid_thread_local_ids()
       /* We clear the existing nodes_vec_ and then rebuild it. */
       nodes_vec_.clear();
       nodes_vec_.resize( kernel().vp_manager.get_num_threads() );
+      nodes_prelim_up_vec_.clear();
+      nodes_prelim_up_vec_.resize( kernel().vp_manager.get_num_threads() );
 
       for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
       {
         nodes_vec_[ t ].clear();
+        nodes_prelim_up_vec_[ t ].clear();
 
         // Loops below run from index 1, because index 0 is always the root network,
         // which is never updated.
         size_t num_thread_local_nodes = 0;
+        size_t num_thread_local_prelim_nodes = 0;
         for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
         {
           Node* node = local_nodes_.get_node_by_index( idx );
           if ( !node->is_subnet() && ( static_cast< index >( node->get_thread() ) == t
                                        || node->num_thread_siblings_() > 0 ) )
+          {
             num_thread_local_nodes++;
+            if ( node->needs_prelim_update() )
+              num_thread_local_prelim_nodes++;
+          }
         }
         nodes_vec_[ t ].reserve( num_thread_local_nodes );
+        nodes_prelim_up_vec_[ t ].reserve( num_thread_local_prelim_nodes );
 
         for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
         {
@@ -574,11 +585,25 @@ NodeManager::ensure_valid_thread_local_ids()
             // these nodes cannot be subnets
             node->set_thread_lid( nodes_vec_[ t ].size() );
             nodes_vec_[ t ].push_back( node );
+
+            if ( node->needs_prelim_update() )
+              nodes_prelim_up_vec_[ t ].push_back( node );
           }
         }
       } // end of for threads
 
       nodes_vec_network_size_ = size();
+
+      needs_prelim_update_ = false;
+      // needs prelim update indicates, whether at least one
+      // of the threads has a neuron that requires preliminary
+      // update
+      // all threads then need to perform a preliminary update
+      // step, because gather_events() has to be done in a
+      // openmp single section
+      for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+        if ( nodes_prelim_up_vec_[ t ].size() > 0 )
+          needs_prelim_update_ = true;
     }
 #ifdef _OPENMP
   } // end of omp critical region
@@ -629,13 +654,14 @@ NodeManager::prepare_nodes()
 
   /* We initialize the buffers of each node and calibrate it. */
 
-  size_t num_active_nodes = 0; // counts nodes that will be updated
+  size_t num_active_nodes = 0;        // counts nodes that will be updated
+  size_t num_active_prelim_nodes = 0; // counts nodes that need preliminary updates
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
     kernel().vp_manager.get_num_threads() );
 
 #ifdef _OPENMP
-#pragma omp parallel reduction( + : num_active_nodes )
+#pragma omp parallel reduction( + : num_active_nodes, num_active_prelim_nodes )
   {
     size_t t = kernel().vp_manager.get_thread_id();
 #else
@@ -653,7 +679,11 @@ NodeManager::prepare_nodes()
       {
         prepare_node_( *it );
         if ( not( *it )->is_frozen() )
+        {
           ++num_active_nodes;
+          if ( ( *it )->needs_prelim_update() )
+            ++num_active_prelim_nodes;
+        }
       }
     }
     catch ( std::exception& e )
@@ -670,10 +700,23 @@ NodeManager::prepare_nodes()
     if ( exceptions_raised.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 
-  LOG( M_INFO,
-    "NodeManager::prepare_nodes_",
-    String::compose(
-         "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
+    if ( num_active_prelim_nodes == 0 )
+    {
+      LOG( M_INFO,
+        "NodeManager::prepare_nodes_",
+        String::compose(
+             "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
+    }
+    else
+    {
+      LOG( M_INFO,
+        "Scheduler::prepare_nodes",
+        String::compose( "Simulating %1 local node%2 of which %3 need%4 prelim_update.",
+                        num_active_nodes,
+                        num_active_nodes == 1 ? "" : "s",
+                        num_active_prelim_nodes,
+                        num_active_prelim_nodes == 1 ? "s" : "" ) );
+    }
 }
 
 //!< This function is called only if the thread data structures are properly set up.

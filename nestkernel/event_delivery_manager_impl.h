@@ -75,6 +75,16 @@ EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const
   send_local( t, source, e );
 }
 
+inline void
+EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
+{
+  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
+  e.set_sender( source );
+  e.set_sender_gid( source.get_gid() );
+  thread t = source.get_thread();
+  send_remote( t, e );
+}
+
 inline size_t
 EventDeliveryManager::write_toggle() const
 {

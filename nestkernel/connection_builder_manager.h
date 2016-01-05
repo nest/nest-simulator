@@ -51,6 +51,7 @@ class spikecounter;
 class Node;
 class Subnet;
 class Event;
+class SecondaryEvent;
 class DelayChecker;
 class GrowthCurve;
 
@@ -289,6 +290,8 @@ public:
   bool get_user_set_delay_extrema() const;
 
   void send( thread t, index sgid, Event& e );
+  
+  void send_secondary( thread t, SecondaryEvent& e );
 
   /**
    * Send event e to all targets of node source on thread t

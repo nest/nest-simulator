@@ -410,35 +410,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
   return conn;
 }
-
-/**
- * Register a synape with default Connector and without any common properties.
- */
-template < class ConnectionT >
-synindex
-register_connection_model( Network& net, const std::string& name )
-{
-  return net.register_synapse_prototype( new GenericConnectorModel< ConnectionT >(
-    net, name, /*is_primary=*/true, /*has_delay=*/true ) );
-}
-
-/**
- * Register a synape with default Connector and without any common properties.
- */
-template < class ConnectionT >
-synindex
-register_secondary_connection_model( Network& net, const std::string& name, bool has_delay = true )
-{
-  ConnectorModel& cm =
-    *( new GenericSecondaryConnectorModel< ConnectionT >( net, name, has_delay ) );
-
-  synindex synid = net.register_secondary_synapse_prototype( &cm );
-
-  ConnectionT::EventType::set_syn_id( synid );
-
-  return synid;
-}
-
 } // namespace nest
 
 #endif

@@ -23,6 +23,9 @@
 #ifndef SIMULATION_MANAGER_H
 #define SIMULATION_MANAGER_H
 
+// C++ includes:
+#include <vector>
+
 // Includes from libnestutil:
 #include "manager_interface.h"
 
@@ -35,6 +38,7 @@
 
 namespace nest
 {
+class Node;
 
 class SimulationManager : public ManagerInterface
 {
@@ -61,6 +65,16 @@ public:
    * Terminate the simulation after the time-slice is finished.
    */
   void terminate();
+
+  /**
+   *
+   */
+  size_t get_prelim_interpolation_order() const;
+  
+  /**
+   *
+   */
+  double_t get_prelim_tol() const;
 
   /**
    * Get the time at the beginning of the current time slice.
@@ -114,6 +128,7 @@ private:
   void prepare_simulation_();  //! setup before simulation start
   void finalize_simulation_(); //! wrap-up after simulation end
   void update_();              //! actually perform simulation
+  bool prelim_update_( Node* );
   void advance_time_();        //!< Update time to next time step
   void print_progress_();      //!< TODO: Remove, replace by logging!
 
@@ -132,6 +147,9 @@ private:
                           //!< simulated for sometime
   bool print_time_;       //!< Indicates whether time should be printed during
                           //!< simulations (or not)
+  long max_num_prelim_iterations_;    //!< maximal number of iterations used for preliminary update
+  size_t prelim_interpolation_order_; //!< interpolation order for prelim iterations
+  double_t prelim_tol_;               //!< Tolerance of prelim iterations
 };
 
 inline void
@@ -182,6 +200,19 @@ SimulationManager::get_to_step() const
 {
   return to_step_;
 }
+
+inline size_t
+SimulationManager::get_prelim_interpolation_order() const
+{
+  return prelim_interpolation_order_;
+}
+
+inline double_t
+SimulationManager::get_prelim_tol() const
+{
+  return prelim_tol_;
+}
+
 }
 
 

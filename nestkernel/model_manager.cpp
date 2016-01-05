@@ -31,6 +31,7 @@
 #include "compose.hpp"
 
 // Includes from nestkernel:
+#include "kernel_manager.h"
 #include "model_manager_impl.h"
 #include "proxynode.h"
 #include "sibling_container.h"
@@ -154,6 +155,7 @@ ModelManager::finalize()
 {
   clear_models_();
   clear_prototypes_();
+  delete_secondary_events_prototypes();
 
   // We free all Node memory
   std::vector< std::pair< Model*, bool > >::iterator m;
@@ -454,6 +456,58 @@ ModelManager::memory_info() const
 
   std::cout << sep << std::endl;
   std::cout.unsetf( std::ios::left );
+}
+
+void
+ModelManager::create_secondary_events_prototypes()
+{
+  if ( secondary_events_prototypes_.size() < kernel().vp_manager.get_num_threads() )
+  {
+    delete_secondary_events_prototypes();
+    std::vector< SecondaryEvent* > prototype;
+    prototype.resize( secondary_connector_models_.size(), NULL );
+    secondary_events_prototypes_.resize( kernel().vp_manager.get_num_threads(), prototype );
+    
+    
+    for ( size_t i = 0; i < secondary_connector_models_.size(); i++ )
+    {
+      if ( secondary_connector_models_[ i ] != NULL )
+      {
+        prototype = secondary_connector_models_[ i ]->create_event( kernel().vp_manager.get_num_threads() );
+        for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
+          secondary_events_prototypes_[ j ][ i ] = prototype[ j ];
+      }
+    }
+  }
+}
+  
+synindex
+ModelManager::register_connection_model_( ConnectorModel* cf )
+{
+  if ( synapsedict_->known( cf->get_name() ) )
+  {
+    delete cf;
+    std::string msg = String::compose(
+                                      "A synapse type called '%1' already exists.\n"
+                                      "Please choose a different name!",
+                                      cf->get_name() );
+    throw NamingConflict( msg );
+  }
+  
+  pristine_prototypes_.push_back( cf );
+  
+  const synindex syn_id = prototypes_[ 0 ].size();
+  pristine_prototypes_[ syn_id ]->set_syn_id( syn_id );
+  
+  for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
+  {
+    prototypes_[ t ].push_back( cf->clone( cf->get_name() ) );
+    prototypes_[ t ][ syn_id ]->set_syn_id( syn_id );
+  }
+  
+  synapsedict_->insert( cf->get_name(), syn_id );
+  
+  return syn_id;
 }
 
 } // namespace nest

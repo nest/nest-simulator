@@ -184,6 +184,11 @@ public:
    * Get list of nodes on given thread.
    */
   const std::vector< Node* >& get_nodes_on_thread( thread ) const;
+  
+  /**
+   * Get list of nodes on given thread.
+   */
+  const std::vector< Node* >& get_nodes_prelim_up_on_thread( thread ) const;
 
   /**
    * Prepare nodes for simulation and register nodes in node_list.
@@ -196,6 +201,11 @@ public:
    * Invoke finalize() on nodes registered for finalization.
    */
   void finalize_nodes();
+  
+  /**
+   *
+   */
+  bool needs_prelim_update() const;
 
 private:
   /**
@@ -244,6 +254,10 @@ private:
    * essentially undetectable).
    */
   std::vector< std::vector< Node* > > nodes_vec_;
+  std::vector< std::vector< Node* > > nodes_prelim_up_vec_; //!< Nodelists for unfrozen nodes that require an
+                                                            //!< additional preliminary update (e.g. gap
+                                                            //!< junctions)
+  bool needs_prelim_update_;     //!< there is at least one neuron model that needs preliminary update
   index nodes_vec_network_size_; //!< Network size when nodes_vec_ was last updated
 };
 
@@ -293,6 +307,18 @@ inline const std::vector< Node* >&
 NodeManager::get_nodes_on_thread( thread t ) const
 {
   return nodes_vec_.at( t );
+}
+
+inline const std::vector< Node* >&
+NodeManager::get_nodes_prelim_up_on_thread( thread t ) const
+{
+  return nodes_prelim_up_vec_.at( t );
+}
+  
+inline bool
+NodeManager::needs_prelim_update() const
+{
+  return needs_prelim_update_;
 }
 
 } // namespace

@@ -146,7 +146,7 @@ nest::ConnectionBuilderManager::get_synapse_status( index gid, synindex syn_id, 
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
   DictionaryDatum dict( new Dictionary );
-  connections_[ tid ].get( gid )->get_synapse_status( syn_id, dict, p );
+  validate_pointer( connections_[ tid ].get( gid ) )->get_synapse_status( syn_id, dict, p );
   ( *dict )[ names::source ] = gid;
   ( *dict )[ names::synapse_model ] =
     LiteralDatum( kernel().model_manager.get_synapse_prototype( syn_id ).get_name() );
@@ -164,7 +164,7 @@ nest::ConnectionBuilderManager::set_synapse_status( index gid,
   kernel().model_manager.assert_valid_syn_id( syn_id );
   try
   {
-    connections_[ tid ].get( gid )->set_synapse_status(
+    validate_pointer( connections_[ tid ].get( gid ) )->set_synapse_status(
       syn_id, kernel().model_manager.get_synapse_prototype( syn_id, tid ), dict, p );
   }
   catch ( BadProperty& e )
@@ -187,9 +187,9 @@ nest::ConnectionBuilderManager::delete_connections_()
           ++iit )
     {
 #ifdef USE_PMA
-      ( *iit )->~ConnectorBase();
+      validate_pointer( *iit )->~ConnectorBase();
 #else
-      delete ( *iit );
+      delete validate_pointer( *iit );
 #endif
     }
     it->clear();
@@ -1392,7 +1392,7 @@ nest::ConnectionBuilderManager::trigger_update_weight( const long_t vt_id,
     for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
           it != connections_[ t ].nonempty_end();
           ++it )
-      ( *it )->trigger_update_weight(
+      validate_pointer( *it )->trigger_update_weight(
         vt_id, t, dopa_spikes, t_trig, kernel().model_manager.get_synapse_prototypes( t ) );
 }
 
@@ -1400,9 +1400,48 @@ void
 nest::ConnectionBuilderManager::send( thread t, index sgid, Event& e )
 {
   if ( sgid < connections_[ t ].size() ) // probably test only fails, if there are no connections
-    if ( connections_[ t ].get( sgid ) != 0 ) // only send, if connections exist
-      connections_[ t ].get( sgid )->send(
-        e, t, kernel().model_manager.get_synapse_prototypes( t ) );
+  {
+    ConnectorBase* p = connections_[ t ].get( sgid );
+    if ( p != 0 ) // only send, if connections exist
+    {
+      // the two least significant bits of the pointer
+      // contain the information, whether there are
+      // primary and secondary connections behind
+      if ( has_primary( p ) )
+      {
+        // erase 2 least significant bits to obtain the correct pointer
+        validate_pointer( p )->send( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
+      }
+    }
+  }
+}
+
+void
+nest::ConnectionBuilderManager::send_secondary( thread t, SecondaryEvent& e )
+{
+  
+  index sgid = e.get_sender_gid();
+  
+  if ( sgid < connections_[ t ].size() ) // probably test only fails, if there are no connections
+  {
+    ConnectorBase* p = connections_[ t ].get( sgid );
+    if ( p != 0 ) // only send, if connections exist
+    {
+      if ( has_secondary( p ) )
+      {
+        // erase 2 least significant bits to obtain the correct pointer
+        p = validate_pointer( p );
+        
+        if ( p->homogeneous_model() )
+        {
+          if ( p->get_syn_id() == e.get_syn_id() )
+            p->send( e, t, kernel().model_manager.get_synapse_prototypes(t) );
+        }
+        else
+          p->send_secondary( e, t, kernel().model_manager.get_synapse_prototypes(t) );
+      }
+    }
+  }
 }
 
 size_t
@@ -1512,7 +1551,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
             it != connections_[ t ].nonempty_end();
             ++it )
       {
-        num_connections_in_thread += ( *it )->get_num_connections();
+        num_connections_in_thread += validate_pointer( *it )->get_num_connections();
       }
 
 #ifdef _OPENMP
@@ -1522,8 +1561,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
       for ( index source_id = 1; source_id < connections_[ t ].size(); ++source_id )
       {
         if ( connections_[ t ].get( source_id ) != 0 )
-          connections_[ t ]
-            .get( source_id )
+          validate_pointer( connections_[ t ].get( source_id ) )
             ->get_connections( source_id, t, syn_id, conns_in_thread );
       }
       if ( conns_in_thread.size() > 0 )
@@ -1554,7 +1592,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
             it != connections_[ t ].nonempty_end();
             ++it )
       {
-        num_connections_in_thread += ( *it )->get_num_connections();
+        num_connections_in_thread += validate_pointer( *it )->get_num_connections();
       }
 
 #ifdef _OPENMP
@@ -1563,13 +1601,12 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
       conns_in_thread.reserve( num_connections_in_thread );
       for ( index source_id = 1; source_id < connections_[ t ].size(); ++source_id )
       {
-        if ( connections_[ t ].get( source_id ) != 0 )
+        if ( validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
         {
           for ( index t_id = 0; t_id < target->size(); ++t_id )
           {
             size_t target_id = target->get( t_id );
-            connections_[ t ]
-              .get( source_id )
+            validate_pointer( connections_[ t ].get( source_id ) )
               ->get_connections( source_id, target_id, t, syn_id, conns_in_thread );
           }
         }
@@ -1601,7 +1638,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
             it != connections_[ t ].nonempty_end();
             ++it )
       {
-        num_connections_in_thread += ( *it )->get_num_connections();
+        num_connections_in_thread += validate_pointer( *it )->get_num_connections();
       }
 
 #ifdef _OPENMP
@@ -1611,12 +1648,11 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
       for ( index s = 0; s < source->size(); ++s )
       {
         size_t source_id = source->get( s );
-        if ( source_id < connections_[ t ].size() && connections_[ t ].get( source_id ) != 0 )
+        if ( source_id < connections_[ t ].size() && validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
         {
           if ( target == 0 )
           {
-            connections_[ t ]
-              .get( source_id )
+            validate_pointer( connections_[ t ].get( source_id ) )
               ->get_connections( source_id, t, syn_id, conns_in_thread );
           }
           else
@@ -1624,8 +1660,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
             for ( index t_id = 0; t_id < target->size(); ++t_id )
             {
               size_t target_id = target->get( t_id );
-              connections_[ t ]
-                .get( source_id )
+              validate_pointer( connections_[ t ].get( source_id ) )
                 ->get_connections( source_id, target_id, t, syn_id, conns_in_thread );
             }
           }

@@ -284,7 +284,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< iaf_cond_exp_sfa_rr >( "iaf_cond_exp_sfa_rr" );
   kernel().model_manager.register_node_model< iaf_cond_alpha_mc >( "iaf_cond_alpha_mc" );
   kernel().model_manager.register_node_model< hh_psc_alpha >( "hh_psc_alpha" );
-  kernel().model_manager.register_model< hh_psc_alpha_gap >( "hh_psc_alpha_gap" );
+  kernel().model_manager.register_node_model< hh_psc_alpha_gap >( "hh_psc_alpha_gap" );
   kernel().model_manager.register_node_model< hh_cond_exp_traub >( "hh_cond_exp_traub" );
   kernel().model_manager.register_node_model< sinusoidal_gamma_generator >(
     "sinusoidal_gamma_generator" );

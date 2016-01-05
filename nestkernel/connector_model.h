@@ -129,18 +129,6 @@ public:
   }
 
   bool
-  get_user_set_delay_extrema() const
-  {
-    return user_set_delay_extrema_;
-  }
-
-  Network&
-  network() const
-  {
-    return net_;
-  }
-
-  bool
   is_primary() const
   {
     return is_primary_;
@@ -231,7 +219,7 @@ public:
   }
 
   virtual std::vector< SecondaryEvent* >
-  create_event( size_t n ) const
+  create_event( size_t ) const
   {
     // Should not be called for a ConnectorModel belonging to a primary
     // connection. Only required for secondary connection types.

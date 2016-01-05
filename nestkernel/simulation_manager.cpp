@@ -51,6 +51,9 @@ nest::SimulationManager::SimulationManager()
   , terminate_( false )
   , simulated_( false )
   , print_time_( false )
+  , max_num_prelim_iterations_( 15 )
+  , prelim_interpolation_order_( 3 )
+  , prelim_tol_( 0.0001 )
 {
 }
 
@@ -194,6 +197,39 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       throw KernelException();
     }
   }
+  
+  // set the number of preliminary update cycles
+  // e.g. for the implementation of gap junctions
+  long nprelim;
+  if ( updateValue< long >( d, "max_num_prelim_iterations", nprelim ) )
+  {
+    if ( nprelim < 0 )
+      LOG( M_ERROR,
+           "Scheduler::set_status",
+           "Number of preliminary update iterations must be zero or positive." );
+    else
+      max_num_prelim_iterations_ = nprelim;
+  }
+
+  double_t tol;
+  if ( updateValue< double_t >( d, "prelim_tol", tol ) )
+  {
+    if ( tol < 0.0 )
+      LOG( M_ERROR, "Scheduler::set_status", "Tolerance must be zero or positive" );
+    else
+      prelim_tol_ = tol;
+  }
+
+  long interp_order;
+  if ( updateValue< long >( d, "prelim_interpolation_order", interp_order ) )
+  {
+    if ( ( interp_order < 0 ) || ( interp_order == 2 ) || ( interp_order > 3 ) )
+      LOG( M_ERROR,
+           "Scheduler::set_status",
+           "Interpolation order must be 0, 1, or 3." );
+    else
+      prelim_interpolation_order_ = interp_order;
+  }
 }
 
 void
@@ -210,6 +246,10 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double_t >( d, "time", get_time().get_ms() );
   def< long >( d, "to_do", to_do_ );
   def< bool >( d, "print_time", print_time_ );
+
+  def< long >( d, "max_num_prelim_iterations", max_num_prelim_iterations_ );
+  def< long >( d, "prelim_interpolation_order", prelim_interpolation_order_ );
+  def< double >( d, "prelim_tol", prelim_tol_ );
 }
 
 void
@@ -378,6 +418,8 @@ nest::SimulationManager::prepare_simulation_()
 
   kernel().node_manager.ensure_valid_thread_local_ids();
   kernel().node_manager.prepare_nodes();
+  
+  kernel().model_manager.create_secondary_events_prototypes();
 
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
@@ -390,12 +432,23 @@ nest::SimulationManager::prepare_simulation_()
   }
 }
 
+bool
+nest::SimulationManager::prelim_update_( Node* n )
+{
+  return ( n->prelim_update( clock_, from_step_, to_step_ ) );
+}
+
 void
 nest::SimulationManager::update_()
 {
 #ifdef _OPENMP
   LOG( M_INFO, "Network::update", "Simulating using OpenMP." );
 #endif
+
+  // to store done values of the different threads
+  std::vector< bool > done;
+  bool done_all = true;
+  delay old_to_step;
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
     kernel().vp_manager.get_num_threads() );
@@ -438,6 +491,85 @@ nest::SimulationManager::update_()
 #pragma omp barrier
 #endif
       }
+      
+      // preliminary update of nodes, e.g. for gapjunctions
+      if ( kernel().node_manager.needs_prelim_update() )
+      {
+#pragma omp single
+        {
+          // if the end of the simulation is in the middle
+          // of a min_delay_ step, we need to make a complete
+          // step in the preliminary update and only do
+          // the partial step in the final update
+          // needs to be done in omp single since to_step_ is a scheduler variable
+          old_to_step = to_step_;
+          if ( to_step_ < kernel().connection_builder_manager.get_min_delay() )
+            to_step_ = kernel().connection_builder_manager.get_min_delay();
+        }
+        
+        bool max_iterations_reached = true;
+        const std::vector< Node* >& thread_local_nodes_prelim_up =
+          kernel().node_manager.get_nodes_prelim_up_on_thread( thrd );
+        for ( long_t n = 0; n < max_num_prelim_iterations_; ++n )
+        {
+          bool done_p = true;
+          
+          // this loop may be empty for those threads
+          // that do not have any nodes requiring preliminary update
+          for ( std::vector< Node* >::const_iterator i = thread_local_nodes_prelim_up.begin(); 
+                i != thread_local_nodes_prelim_up.end(); 
+                ++i )
+            done_p = prelim_update_( *i ) && done_p;
+          
+          // add done value of thread p to done vector
+#pragma omp critical
+          done.push_back( done_p );
+          // parallel section ends, wait until all threads are done -> synchronize
+#pragma omp barrier
+          
+          // the following block is executed by a single thread
+          // the other threads wait at the end of the block
+#pragma omp single
+          {
+            // set done_all
+            for ( size_t i = 0; i < done.size(); i++ )
+              done_all = done[ i ] && done_all;
+            
+            // gather SecondaryEvents (e.g. GapJEvents)
+            kernel().event_delivery_manager.gather_events( done_all );
+            
+            // reset done and done_all
+            //(needs to be in the single threaded part)
+            done_all = true;
+            done.clear();
+          }
+          
+          // deliver SecondaryEvents generated during preliminary update
+          // returns the done value over all threads
+          done_p = kernel().event_delivery_manager.deliver_events( thrd );
+          
+          if ( done_p )
+          {
+            max_iterations_reached = false;
+            break;
+          }
+        } // of for (max_num_prelim_iterations_) ...
+        
+#pragma omp single
+        {
+          to_step_ = old_to_step;
+          if ( max_iterations_reached )
+          {
+            std::string msg =
+            String::compose( "Maximum number of iterations reached at interval %1-%2 ms",
+                            clock_.get_ms(),
+                            clock_.get_ms() + to_step_ * Time::get_resolution().get_ms() );
+            LOG( M_WARNING, "Scheduler::prelim_update", msg );
+          }
+        }
+        
+      } // of if(needs_prelim_update_)
+      // end preliminary update
 
       const std::vector< Node* >& thread_local_nodes =
         kernel().node_manager.get_nodes_on_thread( thrd );
@@ -470,7 +602,7 @@ nest::SimulationManager::update_()
       {
         if ( to_step_
           == kernel().connection_builder_manager.get_min_delay() ) // gather only at end of slice
-          kernel().event_delivery_manager.gather_events();
+          kernel().event_delivery_manager.gather_events( true );
 
         advance_time_();
 

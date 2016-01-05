@@ -602,7 +602,7 @@ nest::Scheduler::update()
       }
 
       // preliminary update of nodes, e.g. for gapjunctions
-      if ( needs_prelim_update_ )
+      if ( kernel().node_manager.needs_prelim_update() )
       {
 #pragma omp single
         {

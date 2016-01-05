@@ -66,14 +66,14 @@
 
     sg << /spike_times [10. 10. 15.] >> SetStatus
 
-    sg nrn 1. 1. Connect	
+    sg nrn 1. 1. Connect
 
     /multi /multimeter Create def
 
     multi << /record_from [/h] >> SetStatus
 
     multi nrn Connect
-
+    
     20. Simulate
     
     multi /events get /h get cva
@@ -100,7 +100,7 @@
     nrn1 << /theta -10. /tau_m 1. >> SetStatus
 
     nrn1 sp Connect
-
+    
     100. Simulate
     
     % should have two events
@@ -127,6 +127,29 @@
 forall
 
 
+
+/mcculloch_pitts_neuron Create /binary Set
+/iaf_neuron Create /spiking Set
+/spike_generator Create /sg Set
+/spike_detector Create /sd Set
+
+% check if connecting a binary to a spiking neuron throws exception
+{
+    binary spiking Connect
+} fail_or_die
+
+% check if connecting a spiking neuron to a binary throws exception
+{
+    spiking binary Connect
+} fail_or_die
+
+% check if connecting a binary or a spiking neuron to general device works
+{
+    sg spiking Connect
+    sg binary Connect
+    spiking sd Connect
+    binary sd Connect
+} pass_or_die
 
 
 

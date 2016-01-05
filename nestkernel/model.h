@@ -157,6 +157,14 @@ public:
   virtual void sends_secondary_event( GapJEvent& ge ) = 0;
 
   /**
+   * Check what type of signal this model is sending.
+   * Required so that proxynode can formward this call
+   * to model that in turn delegates the call to the underlying
+   * prototype.
+   */
+  virtual SignalType sends_signal() const = 0;
+
+  /**
    * Return the size of the prototype.
    */
   virtual size_t get_element_size() const = 0;

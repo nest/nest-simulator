@@ -79,6 +79,8 @@ public:
 
   void sends_secondary_event( GapJEvent& ge );
 
+  SignalType sends_signal() const;
+
   Node const& get_prototype() const;
 
   void set_model_id( int );
@@ -195,6 +197,13 @@ inline void
 GenericModel< ElementT >::sends_secondary_event( GapJEvent& ge )
 {
   return proto_.sends_secondary_event( ge );
+}
+
+template < typename ElementT >
+inline nest::SignalType
+GenericModel< ElementT >::sends_signal() const
+{
+  return proto_.sends_signal();
 }
 
 template < typename ElementT >

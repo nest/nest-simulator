@@ -94,7 +94,6 @@ class Archiving_Node;
    SeeAlso: GetStatus, SetStatus, elementstates
  */
 
-
 class Node
 {
   friend class NodeManager;
@@ -672,6 +671,27 @@ public:
    * @returns true if node is a subnet.
    */
   virtual bool is_subnet() const;
+
+  /**
+   * @returns type of signal this node produces
+   * used in check_connection to only connect neurons which send / receive compatible information
+   */
+  virtual SignalType
+  sends_signal() const
+  {
+    return SPIKE;
+  }
+
+  /**
+   * @returns type of signal this node consumes
+   * used in check_connection to only connect neurons which send / receive compatible information
+   */
+  virtual SignalType
+  receives_signal() const
+  {
+    return SPIKE;
+  }
+
 
   /**
    *  Return a dictionary with the node's properties.

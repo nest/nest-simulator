@@ -535,7 +535,7 @@ nest::SimulationManager::update_()
             for ( size_t i = 0; i < done.size(); i++ )
               done_all = done[ i ] && done_all;
             
-            // gather SecondaryEvents (e.g. GapJEvents)
+            // gather SecondaryEvents (e.g. GapJunctionEvents)
             kernel().event_delivery_manager.gather_events( done_all );
             
             // reset done and done_all

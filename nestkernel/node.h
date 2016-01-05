@@ -318,7 +318,7 @@ public:
 
   /**
    * Bring the node from state $t$ to $t+n*dt$, sends SecondaryEvents
-   * (e.g. GapJEvent) and resets state variables to values at $t$.
+   * (e.g. GapJunctionEvent) and resets state variables to values at $t$.
    *
    * n->prelim_update(T, from, to) performs the update steps beginning
    * at T+from .. T+to-1.
@@ -421,7 +421,7 @@ public:
   virtual port handles_test_event( DoubleDataEvent&, rport receptor_type );
   virtual port handles_test_event( DSSpikeEvent&, rport receptor_type );
   virtual port handles_test_event( DSCurrentEvent&, rport receptor_type );
-  virtual port handles_test_event( GapJEvent&, rport receptor_type );
+  virtual port handles_test_event( GapJunctionEvent&, rport receptor_type );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -430,7 +430,7 @@ public:
    * @ingroup event_interface
    * @throws IllegalConnection
    */
-  virtual void sends_secondary_event( GapJEvent& ge );
+  virtual void sends_secondary_event( GapJunctionEvent& ge );
 
   /**
    * Register a STDP connection
@@ -504,11 +504,11 @@ public:
 
   /**
    * Handler for gap junction events.
-   * @see handle(thread, GapJEvent&)
+   * @see handle(thread, GapJunctionEvent&)
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle( GapJEvent& e );
+  virtual void handle( GapJunctionEvent& e );
 
   /**
    * @defgroup MSP_functions Model of Structural Plasticity in NEST.

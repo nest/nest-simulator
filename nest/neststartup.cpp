@@ -80,13 +80,13 @@ sli_logging( const nest::LoggingEvent& e )
 
 #ifndef _IS_PYNEST
 int
-neststartup( int argc, char** argv, SLIInterpreter& engine )
+neststartup( int* argc, char*** argv, SLIInterpreter& engine )
 #else
 int
-neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepath )
+neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string modulepath )
 #endif
 {
-  nest::init_nest( &argc, &argv );
+  nest::init_nest( argc, argv );
 
   sli_engine = &engine;
   register_logger_client( sli_logging );
@@ -118,7 +118,7 @@ neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepa
   addmodule< SLIArrayModule >( engine );
   addmodule< SpecialFunctionsModule >( engine ); // safe without GSL
   addmodule< SLIgraphics >( engine );
-  engine.addmodule( new SLIStartup( argc, argv ) );
+  engine.addmodule( new SLIStartup( *argc, *argv ) );
   addmodule< Processes >( engine );
   addmodule< RegexpModule >( engine );
   addmodule< FilesystemModule >( engine );

@@ -56,6 +56,7 @@ namespace nest
  */
 class Archiving_Node : public Node
 {
+  using Node::get_synaptic_elements;
 
 public:
   /**

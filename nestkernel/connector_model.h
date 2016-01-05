@@ -68,8 +68,8 @@ has_primary( ConnectorBase* p )
   // connection
   return static_cast< bool >( reinterpret_cast< unsigned long >( p ) & 1 );
 }
-inline bool
 
+inline bool
 has_secondary( ConnectorBase* p )
 {
   // the second lowest bit is set, if there is at least one secondary
@@ -233,8 +233,7 @@ public:
     return default_connection_;
   }
 
-  virtual std::vector< SecondaryEvent* >
-  create_event( size_t ) const
+  virtual std::vector< SecondaryEvent* > create_event( size_t ) const
   {
     // Should not be called for a ConnectorModel belonging to a primary
     // connection. Only required for secondary connection types.

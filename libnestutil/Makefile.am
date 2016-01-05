@@ -27,6 +27,7 @@ libnestutil_la_SOURCES= \
 		sparsetable.h \
 		compose.hpp \
 		manager_interface.h \
+		string_utils.h \
 		logging.h \
 		logging_manager.h logging_manager.cpp \
 		logging_event.h logging_event.cpp

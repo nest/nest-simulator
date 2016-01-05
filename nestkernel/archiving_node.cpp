@@ -275,7 +275,7 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
   std::pair< std::map< Name, SynapticElement >::iterator, bool > insert_result;
 
   synaptic_elements_map_ = std::map< Name, SynapticElement >();
-  synaptic_elements_d = getValue< DictionaryDatum >( d, "synaptic_elements" );
+  synaptic_elements_d = getValue< DictionaryDatum >( d, names::synaptic_elements );
 
   for ( Dictionary::const_iterator i = synaptic_elements_d->begin();
         i != synaptic_elements_d->end();

@@ -23,6 +23,7 @@
 #include <cmath>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <set>
 
 #include "config.h"
@@ -129,6 +130,7 @@ nest::Scheduler::reset()
   slice_ = 0;
   from_step_ = 0;
   to_step_ = 0; // consistent with to_do_ = 0
+  SPManager::structural_plasticity_update_interval = 10000;
   finalize_();
   init_();
 }
@@ -143,7 +145,7 @@ void
 nest::Scheduler::init_()
 {
   assert( initialized_ == false );
-
+  SPManager::structural_plasticity_update_interval = 10000;
   simulated_ = false;
 
   // The following line is executed by all processes, no need to communicate
@@ -567,6 +569,23 @@ nest::Scheduler::update()
       if ( print_time_ )
         gettimeofday( &t_slice_begin_, NULL );
 
+      if ( net_->structural_plasticity_enabled_
+        && ( clock_.get_steps() + from_step_ ) % SPManager::structural_plasticity_update_interval
+          == 0 )
+      {
+        for ( i = nodes_vec_[ t ].begin(); i != nodes_vec_[ t ].end(); ++i )
+          ( *i )->update_synaptic_elements(
+            Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
+#pragma omp barrier
+#pragma omp single
+        {
+          net_->update_structural_plasticity();
+        }
+        // Remove 10% of the vacant elements
+        for ( i = nodes_vec_[ t ].begin(); i != nodes_vec_[ t ].end(); ++i )
+          ( *i )->decay_synaptic_elements_vacant( 0.1 );
+      }
+
       if ( from_step_ == 0 ) // deliver only at beginning of slice
       {
         deliver_events_( t );
@@ -719,6 +738,11 @@ nest::Scheduler::update()
 #pragma omp barrier
 
     } while ( ( to_do_ != 0 ) && ( !terminate_ ) );
+
+    // End of the slice, we update the number of synaptic element
+    for ( i = nodes_vec_[ t ].begin(); i != nodes_vec_[ t ].end(); ++i )
+      ( *i )->update_synaptic_elements(
+        Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
 
   } // end of #pragma parallel omp
   // check if any exceptions have been raised

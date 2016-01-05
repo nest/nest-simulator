@@ -782,7 +782,7 @@ write_to_comm_buffer( T d, std::vector< uint_t >::iterator& pos )
   const size_t num_uints = number_of_uints_covered< T >();
   size_t left_to_copy = sizeof( T );
 
-  for ( int i = 0; i < num_uints; i++ )
+  for ( size_t i = 0; i < num_uints; i++ )
   {
     memcpy(
       &( *( pos + i ) ), c + i * sizeof( uint_t ), std::min( left_to_copy, sizeof( uint_t ) ) );
@@ -809,7 +809,7 @@ read_from_comm_buffer( T& d, std::vector< uint_t >::iterator& pos )
   const size_t num_uints = number_of_uints_covered< T >();
   size_t left_to_copy = sizeof( T );
 
-  for ( int i = 0; i < num_uints; i++ )
+  for ( size_t i = 0; i < num_uints; i++ )
   {
     memcpy(
       c + i * sizeof( uint_t ), &( *( pos + i ) ), std::min( left_to_copy, sizeof( uint_t ) ) );

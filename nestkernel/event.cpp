@@ -101,9 +101,16 @@ void DataLoggingRequest::operator()()
   receiver_->handle( *this );
 }
 
-
 void DataLoggingReply::operator()()
 {
   receiver_->handle( *this );
 }
+
+void GapJEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+synindex GapJEvent::synid_ = invalid_synindex;
+size_t GapJEvent::coeff_length_ = 0;
 }

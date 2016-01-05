@@ -31,6 +31,7 @@
 #include "numerics.h"
 
 // Includes from nestkernel:
+#include "event.h"
 #include "nest_time.h"
 #include "nest_types.h"
 
@@ -44,11 +45,44 @@ class CommonSynapseProperties;
 class TimeConverter;
 class Node;
 
+
+inline ConnectorBase*
+pack_pointer( ConnectorBase* p, bool has_primary, bool has_secondary )
+{
+  return reinterpret_cast< ConnectorBase* >(
+    reinterpret_cast< unsigned long >( p ) | has_primary | ( has_secondary << 1 ) );
+}
+
+inline ConnectorBase*
+validate_pointer( ConnectorBase* p )
+{
+  // erase 2 least significant bits to obtain the correct pointer
+  return reinterpret_cast< ConnectorBase* >(
+    ( reinterpret_cast< unsigned long >( p ) & ( -1l - 3l ) ) );
+}
+
+inline bool
+has_primary( ConnectorBase* p )
+{
+  // the lowest bit is set, if there is at least one primary
+  // connection
+  return static_cast< bool >( reinterpret_cast< unsigned long >( p ) & 1 );
+}
+inline bool
+
+has_secondary( ConnectorBase* p )
+{
+  // the second lowest bit is set, if there is at least one secondary
+  // connection
+  return static_cast< bool >( reinterpret_cast< unsigned long >( p ) & 2 );
+}
+
+
 class ConnectorModel
 {
 
 public:
-  ConnectorModel( const std::string );
+  ConnectorModel( const std::string, bool is_primary, bool has_delay );
   ConnectorModel( const ConnectorModel&, const std::string );
   virtual ~ConnectorModel()
   {
@@ -82,7 +116,11 @@ public:
 
   virtual const CommonSynapseProperties& get_common_properties() const = 0;
 
+  virtual SecondaryEvent* get_event() const = 0;
+
   virtual void set_syn_id( synindex syn_id ) = 0;
+
+  virtual std::vector< SecondaryEvent* > create_event( size_t n ) const = 0;
 
   std::string
   get_name() const
@@ -90,9 +128,35 @@ public:
     return name_;
   }
 
+  bool
+  get_user_set_delay_extrema() const
+  {
+    return user_set_delay_extrema_;
+  }
+
+  Network&
+  network() const
+  {
+    return net_;
+  }
+
+  bool
+  is_primary() const
+  {
+    return is_primary_;
+  }
+
+  bool
+  has_delay() const
+  {
+    return has_delay_;
+  }
+
 protected:
   std::string name_;
   bool default_delay_needs_check_; //!< Flag indicating, that the default delay must be checked
+  bool is_primary_; //!< indicates, whether this ConnectorModel belongs to a primary connection
+  bool has_delay_;  //!< indicates, that ConnectorModel has a delay
 
 }; // ConnectorModel
 
@@ -100,13 +164,17 @@ protected:
 template < typename ConnectionT >
 class GenericConnectorModel : public ConnectorModel
 {
+private:
   typename ConnectionT::CommonPropertiesType cp_;
+  typename ConnectionT::EventType*
+    pev_; //!< used to create secondary events that belong to secondary connections
+
   ConnectionT default_connection_;
   rport receptor_type_;
 
 public:
-  GenericConnectorModel( const std::string name )
-    : ConnectorModel( name )
+  GenericConnectorModel( const std::string name, bool is_primary, bool has_delay )
+    : ConnectorModel( name, is_primary, has_delay )
     , receptor_type_( 0 )
   {
   }
@@ -114,6 +182,7 @@ public:
   GenericConnectorModel( const GenericConnectorModel& cm, const std::string name )
     : ConnectorModel( cm, name )
     , cp_( cm.cp_ )
+    , pev_( cm.pev_ )
     , default_connection_( cm.default_connection_ )
     , receptor_type_( cm.receptor_type_ )
   {
@@ -148,10 +217,27 @@ public:
 
   void set_syn_id( synindex syn_id );
 
+  virtual typename ConnectionT::EventType*
+  get_event() const
+  {
+    assert( false );
+    return 0;
+  }
+
   ConnectionT const&
   get_default_connection() const
   {
     return default_connection_;
+  }
+
+  virtual std::vector< SecondaryEvent* >
+  create_event( size_t n ) const
+  {
+    // Should not be called for a ConnectorModel belonging to a primary
+    // connection. Only required for secondary connection types.
+    assert( false );
+    std::vector< SecondaryEvent* > prototype_events;
+    return prototype_events;
   }
 
 private:
@@ -166,6 +252,57 @@ private:
 
 }; // GenericConnectorModel
 
+template < typename ConnectionT >
+class GenericSecondaryConnectorModel : public GenericConnectorModel< ConnectionT >
+{
+private:
+  typename ConnectionT::EventType*
+    pev_; //!< used to create secondary events that belong to secondary connections
+
+public:
+  GenericSecondaryConnectorModel( const std::string name, bool has_delay )
+    : GenericConnectorModel< ConnectionT >( name, /*is _primary=*/false, has_delay )
+    , pev_( 0 )
+  {
+    pev_ = new typename ConnectionT::EventType();
+  }
+
+  GenericSecondaryConnectorModel( const GenericSecondaryConnectorModel& cm, const std::string name )
+    : GenericConnectorModel< ConnectionT >( cm, name )
+  {
+    pev_ = new typename ConnectionT::EventType( *cm.pev_ );
+  }
+
+
+  ConnectorModel*
+  clone( std::string name ) const
+  {
+    return new GenericSecondaryConnectorModel( *this, name ); // calls copy construtor
+  }
+
+  std::vector< SecondaryEvent* >
+  create_event( size_t n ) const
+  {
+    std::vector< SecondaryEvent* > prototype_events( n, NULL );
+    for ( size_t i = 0; i < n; i++ )
+      prototype_events[ i ] = new typename ConnectionT::EventType();
+
+    return prototype_events;
+  }
+
+
+  ~GenericSecondaryConnectorModel()
+  {
+    if ( pev_ != 0 )
+      delete pev_;
+  }
+
+  typename ConnectionT::EventType*
+  get_event() const
+  {
+    return pev_;
+  }
+};
 
 } // namespace nest
 

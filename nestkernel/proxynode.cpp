@@ -54,4 +54,10 @@ proxynode::send_test_event( Node& target, rport receptor_type, synindex syn_id, 
     ->send_test_event( target, receptor_type, syn_id, dummy_target );
 }
 
+void
+proxynode::sends_secondary_event( GapJEvent& ge )
+{
+  network()->get_model( get_model_id() )->sends_secondary_event( ge );
+}
+
 } // namespace

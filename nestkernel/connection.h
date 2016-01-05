@@ -117,6 +117,11 @@ class Connection
 {
 
 public:
+  // this typedef may be overwritten in the derived connection classes in order to attach a specific
+  // event type to this connection type, used in secondary connections not used in primary
+  // connectors
+  typedef SecondaryEvent EventType;
+
   Connection()
     : target_()
     , syn_id_delay_( 1.0 )

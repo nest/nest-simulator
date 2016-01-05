@@ -48,6 +48,7 @@
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
 #include "hh_psc_alpha.h"
+#include "hh_psc_alpha_gap.h"
 #include "ht_neuron.h"
 #include "iaf_chs_2007.h"
 #include "iaf_chxk_2008.h"
@@ -97,6 +98,7 @@
 #include "common_synapse_properties.h"
 #include "cont_delay_connection.h"
 #include "cont_delay_connection_impl.h"
+#include "gap_junction.h"
 #include "ht_connection.h"
 #include "quantal_stp_connection.h"
 #include "quantal_stp_connection_impl.h"
@@ -282,6 +284,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< iaf_cond_exp_sfa_rr >( "iaf_cond_exp_sfa_rr" );
   kernel().model_manager.register_node_model< iaf_cond_alpha_mc >( "iaf_cond_alpha_mc" );
   kernel().model_manager.register_node_model< hh_psc_alpha >( "hh_psc_alpha" );
+  kernel().model_manager.register_model< hh_psc_alpha_gap >( "hh_psc_alpha_gap" );
   kernel().model_manager.register_node_model< hh_cond_exp_traub >( "hh_cond_exp_traub" );
   kernel().model_manager.register_node_model< sinusoidal_gamma_generator >(
     "sinusoidal_gamma_generator" );
@@ -333,6 +336,7 @@ ModelsModule::init( SLIInterpreter* )
       "static_synapse_hom_w" );
   kernel().model_manager.register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
     "static_synapse_hom_w_hpc" );
+  kernel().model_manager.register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >( "gap_junction", false );
 
 
   /* BeginDocumentation

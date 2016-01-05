@@ -119,6 +119,9 @@ public:
     double_t t_trig,
     const std::vector< ConnectorModel* >& cm ) = 0;
 
+  virtual void
+  send_secondary( SecondaryEvent& e, thread t, const std::vector< ConnectorModel* >& cm ) = 0;
+
   // returns id of synapse type
   virtual synindex get_syn_id() const = 0;
 
@@ -152,6 +155,12 @@ class vector_like : public ConnectorBase
 
 public:
   virtual ConnectorBase& push_back( const ConnectionT& c ) = 0;
+
+  void
+  send_secondary( SecondaryEvent&, thread, const std::vector< ConnectorModel* >& )
+  {
+    assert( false ); // should not be called, only needed for heterogeneous connectors
+  };
 };
 
 // homogeneous connector containing K entries
@@ -569,8 +578,17 @@ public:
 // homogeneous connectors
 class HetConnector : public std::vector< ConnectorBase* >, public ConnectorBase
 {
+private:
+  synindex
+    primary_end_; // index of first secondary connector contained in the heterogeneous connector
 
 public:
+  HetConnector()
+    : vector< ConnectorBase* >()
+    , primary_end_( 0 )
+  {
+  }
+
   virtual ~HetConnector()
   {
     for ( size_t i = 0; i < size(); i++ )
@@ -636,8 +654,8 @@ public:
   void
   send( Event& e, thread t, const std::vector< ConnectorModel* >& cm )
   {
-    // for all delegate send to homogeneous connectors
-    for ( size_t i = 0; i < size(); i++ )
+    // for all primary connections delegate send to homogeneous connectors
+    for ( size_t i = 0; i < primary_end_; i++ )
       at( i )->send( e, t, cm );
   }
 
@@ -652,6 +670,18 @@ public:
       at( i )->trigger_update_weight( vt_gid, t, dopa_spikes, t_trig, cm );
   }
 
+  void
+  send_secondary( SecondaryEvent& e, thread t, const std::vector< ConnectorModel* >& cm )
+  {
+    // for all secondary connections delegate send to the matching homogeneous connector only
+    for ( size_t i = primary_end_; i < size(); i++ )
+      if ( at( i )->get_syn_id() == e.get_syn_id() )
+      {
+        at( i )->send( e, t, cm );
+        break;
+      }
+  }
+
   // returns id of synapse type
   synindex
   get_syn_id() const
@@ -664,6 +694,21 @@ public:
   homogeneous_model()
   {
     return false;
+  }
+
+  void
+  add_connector( bool is_primary, ConnectorBase* conn )
+  {
+    if ( is_primary )
+    {
+      insert( begin() + primary_end_,
+        conn ); // if empty, insert (begin(), conn) inserts into the first position
+      ++primary_end_;
+    }
+    else
+    {
+      push_back( conn );
+    }
   }
 };
 

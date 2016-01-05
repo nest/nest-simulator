@@ -387,7 +387,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
         if ( ( *hc )[ i ]->get_syn_id() == syn_id ) // there is already an entry for this type
         {
           // here we know that the type is vector_like<connectionT>, because syn_id agrees
-          // so we can savely static cast
+          // so we can safely static cast
           vector_like< ConnectionT >* vc =
             static_cast< vector_like< ConnectionT >* >( ( *hc )[ i ] );
           ( *hc )[ i ] = &vc->push_back( c );
@@ -407,6 +407,89 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       }
     }
   }
+
+  return conn;
+}
+
+/**
+ * Delete a connection of a given type directed to a defined target Node
+ * @param tgt Target node
+ * @param target_thread Thread of the target
+ * @param conn Connector Base from where the connection will be deleted
+ * @param syn_id Synapse type
+ * @return A new Connector, equal to the original but with an erased
+ * connection to the defined target.
+ */
+template < typename ConnectionT >
+ConnectorBase*
+GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
+  size_t target_thread,
+  ConnectorBase* conn,
+  synindex syn_id )
+{
+  assert( conn != 0 ); // we should not delete not existing synapses
+  bool found = false;
+  vector_like< ConnectionT >* vc;
+
+  if ( conn->homogeneous_model() )
+  {
+    assert( conn->get_syn_id() == syn_id );
+    vc = static_cast< vector_like< ConnectionT >* >( conn );
+    // delete the first Connection corresponding to the target
+    for ( size_t i = 0; i < vc->size(); i++ )
+    {
+      ConnectionT* connection = &vc->at( i );
+      if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
+      {
+        conn = &vc->erase( i );
+        found = true;
+        break;
+      }
+    }
+  }
+  else
+  {
+    // heterogeneous case
+    // go through all entries and search for correct syn_id
+    // if not found create new entry for this syn_id
+    HetConnector* hc = static_cast< HetConnector* >( conn );
+
+    for ( size_t i = 0; i < hc->size() && !found; i++ )
+    {
+      // need to cast to vector_like to access syn_id
+      if ( ( *hc )[ i ]->get_syn_id() == syn_id ) // there is already an entry for this type
+      {
+        // here we know that the type is vector_like<connectionT>, because syn_id agrees
+        // so we can safely static cast
+        vector_like< ConnectionT >* vc = static_cast< vector_like< ConnectionT >* >( ( *hc )[ i ] );
+        // Find and delete the first Connection corresponding to the target
+        for ( size_t j = 0; j < vc->size(); j++ )
+        {
+          ConnectionT* connection = &vc->at( j );
+          if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
+          {
+            // Get rid of the ConnectionBase for this type of synapse if there is only this element
+            // left
+            if ( vc->size() == 1 )
+            {
+              ( *hc ).erase( ( *hc ).begin() + i );
+              // Test if the homogeneous vector of connections went back to only 1 type of
+              // synapse... then go back to the simple vector_like case.
+              if ( hc->size() == 1 )
+                conn = static_cast< vector_like< ConnectionT >* >( ( *hc )[ 0 ] );
+            } // Otherwise, just remove the desired connection
+            else
+            {
+              ( *hc )[ i ] = &vc->erase( j );
+            }
+            found = true;
+            break;
+          }
+        }
+      }
+    }
+  }
+  assert( found );
 
   return conn;
 }

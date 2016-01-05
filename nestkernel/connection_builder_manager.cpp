@@ -34,6 +34,7 @@
 // Includes from nestkernel:
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
+#include "connection_label.h"
 #include "connector_base.h"
 #include "delay_checker.h"
 #include "exceptions.h"
@@ -1482,6 +1483,8 @@ nest::ConnectionBuilderManager::get_connections( DictionaryDatum params ) const
   const Token& syn_model_t = params->lookup( names::synapse_model );
   const TokenArray* source_a = 0;
   const TokenArray* target_a = 0;
+  long_t synapse_label = UNLABELED_CONNECTION;
+  updateValue< long_t >( params, names::synapse_label, synapse_label );
 
   if ( not source_t.empty() )
     source_a = dynamic_cast< TokenArray const* >( source_t.datum() );
@@ -1508,14 +1511,14 @@ nest::ConnectionBuilderManager::get_connections( DictionaryDatum params ) const
       syn_id = static_cast< size_t >( synmodel );
     else
       throw UnknownModelName( synmodel_name.toString() );
-    get_connections( connectome, source_a, target_a, syn_id );
+    get_connections( connectome, source_a, target_a, syn_id, synapse_label );
   }
   else
   {
     for ( syn_id = 0; syn_id < kernel().model_manager.get_num_synapse_prototypes(); ++syn_id )
     {
       ArrayDatum conn;
-      get_connections( conn, source_a, target_a, syn_id );
+      get_connections( conn, source_a, target_a, syn_id, synapse_label );
       if ( conn.size() > 0 )
         connectome.push_back( new ArrayDatum( conn ) );
     }
@@ -1528,7 +1531,8 @@ void
 nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
   TokenArray const* source,
   TokenArray const* target,
-  size_t syn_id ) const
+  size_t syn_id,
+  long_t synapse_label ) const
 {
   size_t num_connections = get_num_connections( syn_id );
 
@@ -1562,7 +1566,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
       {
         if ( connections_[ t ].get( source_id ) != 0 )
           validate_pointer( connections_[ t ].get( source_id ) )
-            ->get_connections( source_id, t, syn_id, conns_in_thread );
+            ->get_connections( source_id, t, syn_id, synapse_label, conns_in_thread );
       }
       if ( conns_in_thread.size() > 0 )
       {
@@ -1607,7 +1611,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
           {
             size_t target_id = target->get( t_id );
             validate_pointer( connections_[ t ].get( source_id ) )
-              ->get_connections( source_id, target_id, t, syn_id, conns_in_thread );
+              ->get_connections( source_id, target_id, t, syn_id, synapse_label, conns_in_thread );
           }
         }
       }
@@ -1653,7 +1657,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
           if ( target == 0 )
           {
             validate_pointer( connections_[ t ].get( source_id ) )
-              ->get_connections( source_id, t, syn_id, conns_in_thread );
+              ->get_connections( source_id, t, syn_id, synapse_label, conns_in_thread );
           }
           else
           {
@@ -1661,7 +1665,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
             {
               size_t target_id = target->get( t_id );
               validate_pointer( connections_[ t ].get( source_id ) )
-                ->get_connections( source_id, target_id, t, syn_id, conns_in_thread );
+                ->get_connections( source_id, target_id, t, syn_id, synapse_label, conns_in_thread );
             }
           }
         }

@@ -179,10 +179,10 @@ public:
    * @return an ID for the synapse prototype.
    */
   template < class ConnectionT >
-  synindex register_connection_model( const std::string& name );
+  void register_connection_model( const std::string& name );
   
   template < class ConnectionT >
-  synindex register_secondary_connection_model( const std::string& name, bool has_delay = true );
+  void register_secondary_connection_model( const std::string& name, bool has_delay = true );
 
   /**
    * @return The model id of a given model name
@@ -345,6 +345,10 @@ private:
    Name: synapsedict - Dictionary containing all synapse models.
    Description:
    'synapsedict info' shows the contents of the dictionary
+   Synapse model names ending with '_hpc' provide minimal memory requirements by using
+   thread-local target neuron IDs and fixing the `rport` to 0.
+   Synapse model names ending with '_lbl' allow to assign an individual integer label
+   (`synapse_label`) to created synapses at the cost of increased memory requirements.
    FirstVersion: October 2005
    Author: Jochen Martin Eppler
    SeeAlso: info

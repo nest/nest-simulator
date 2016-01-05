@@ -248,6 +248,7 @@ public:
    * 'target' a token array with GIDs of target neuron.
    * If either of these does not exist, all neuron are used for the respective entry.
    * 'synapse_model' name of the synapse model, or all synapse models are searched.
+   * 'synapse_label' label (long_t) of the synapse, or all synapses are searched.
    * The function then iterates all entries in source and collects the connection IDs to all neurons
    * in target.
    */
@@ -256,7 +257,8 @@ public:
   void get_connections( ArrayDatum& connectome,
     TokenArray const* source,
     TokenArray const* target,
-    size_t syn_id ) const;
+    size_t syn_id,
+    long_t synapse_label ) const;
 
   /**
    * Returns the number of connections in the network.

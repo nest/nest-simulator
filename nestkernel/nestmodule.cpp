@@ -674,11 +674,11 @@ NestModule::Disconnect_i_i_lFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // check whether the target is on this process
-  if ( get_network().is_local_gid( target ) )
+  if ( kernel().node_manager.is_local_gid( target ) )
   {
-    Node* const target_node = get_network().get_node( target );
+    Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
-    get_network().disconnect_single( source, target_node, target_thread, synapse_params );
+    kernel().sp_manager.disconnect_single( source, target_node, target_thread, synapse_params );
   }
 
   i->OStack.pop( 3 );
@@ -697,7 +697,7 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by disconnect
-  get_network().disconnect( sources, targets, connectivity, synapse_params );
+  kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
   i->EStack.pop();
@@ -1802,7 +1802,7 @@ NestModule::SetStructuralPlasticityStatus_DFunction::execute( SLIInterpreter* i 
   DictionaryDatum structural_plasticity_dictionary =
     getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  get_network().set_structural_plasticity_status( structural_plasticity_dictionary );
+  kernel().sp_manager.set_status( structural_plasticity_dictionary );
 
   i->OStack.pop( 1 );
   i->EStack.pop();
@@ -1814,7 +1814,7 @@ NestModule::GetStructuralPlasticityStatus_DFunction::execute( SLIInterpreter* i 
   i->assert_stack_load( 1 );
 
   DictionaryDatum current_status = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
-  get_network().get_structural_plasticity_status( current_status );
+  kernel().sp_manager.get_status( current_status );
 
   i->OStack.pop( 1 );
   i->OStack.push( current_status );
@@ -1829,7 +1829,7 @@ NestModule::GetStructuralPlasticityStatus_DFunction::execute( SLIInterpreter* i 
 void
 NestModule::EnableStructuralPlasticity_Function::execute( SLIInterpreter* i ) const
 {
-  get_network().enable_structural_plasticity();
+  kernel().sp_manager.enable_structural_plasticity();
 
   i->EStack.pop();
 }
@@ -1840,7 +1840,7 @@ NestModule::EnableStructuralPlasticity_Function::execute( SLIInterpreter* i ) co
 void
 NestModule::DisableStructuralPlasticity_Function::execute( SLIInterpreter* i ) const
 {
-  get_network().disable_structural_plasticity();
+  kernel().sp_manager.disable_structural_plasticity();
 
   i->EStack.pop();
 }
@@ -1853,13 +1853,6 @@ NestModule::init( SLIInterpreter* i )
 
   GIDCollectionType.settypename( "gidcollectiontype" );
   GIDCollectionType.setdefaultaction( SLIInterpreter::datatypefunction );
-
-  // ensure we have a network: it is created outside and registered via register_network()
-  assert( net_ != 0 );
-
-  // set resolution, ensure clock is calibrated to new resolution
-  Time::reset_resolution();
-  net_->calibrate_clock();
 
   // register interface functions with interpreter
   i->createcommand( "ChangeSubnet", &changesubnet_ifunction );

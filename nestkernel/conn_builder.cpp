@@ -319,9 +319,9 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
 
   int local = 1;
   // check whether the source is on this mpi machine
-  if ( net_.is_local_gid( sgid ) )
+  if ( kernel().node_manager.is_local_gid( sgid ) )
   {
-    Node* const source = net_.get_node( sgid );
+    Node* const source = kernel().node_manager.get_node( sgid );
     const thread source_thread = source->get_thread();
 
     // check whether the source is on our thread
@@ -333,13 +333,13 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
   }
 
   // check whether the target is on this mpi machine
-  if ( !net_.is_local_gid( tgid ) )
+  if ( not kernel().node_manager.is_local_gid( tgid ) )
   {
     local = 0;
   }
   else
   {
-    Node* const target = net_.get_node( tgid );
+    Node* const target = kernel().node_manager.get_node( tgid );
     const thread target_thread = target->get_thread();
     // check whether the target is on our thread
     if ( tid != target_thread )
@@ -369,7 +369,7 @@ nest::ConnBuilder::connect()
   }
 
   // check if any exceptions have been raised
-  for ( thread thr = 0; thr < net_.get_num_threads(); ++thr )
+  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
     if ( exceptions_raised_.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
 }
@@ -500,7 +500,7 @@ nest::ConnBuilder::single_disconnect_( index sgid, Node& target, thread target_t
   // This is the most simple case in which only the synapse_model_ has been
   // defined. TODO: Add functionality to delete synapses with a given weight
   // or a given delay
-  net_.disconnect( sgid, &target, target_thread, synapse_model_ );
+  kernel().sp_manager.disconnect( sgid, &target, target_thread, synapse_model_ );
 }
 
 void
@@ -545,13 +545,13 @@ nest::OneToOneBuilder::connect_()
           continue;
 
         // check whether the target is on this mpi machine
-        if ( !net_.is_local_gid( *tgid ) )
+        if ( not kernel().node_manager.is_local_gid( *tgid ) )
         {
           skip_conn_parameter_( tid );
           continue;
         }
 
-        Node* const target = net_.get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -585,7 +585,7 @@ nest::OneToOneBuilder::disconnect_()
   // make sure that target and source population have the same size
   if ( sources_.size() != targets_.size() )
   {
-    net_.message( SLIInterpreter::M_ERROR,
+    LOG( M_ERROR,
       "Disconnect",
       "Source and Target population must be of the same size." );
     throw DimensionMismatch();
@@ -594,7 +594,7 @@ nest::OneToOneBuilder::disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = net_.get_thread_id();
+    const int tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -646,7 +646,7 @@ nest::OneToOneBuilder::sp_connect_()
   // make sure that target and source population have the same size
   if ( sources_.size() != targets_.size() )
   {
-    net_.message( SLIInterpreter::M_ERROR,
+    LOG( M_ERROR,
       "Connect",
       "Source and Target population must be of the same size." );
     throw DimensionMismatch();
@@ -655,12 +655,12 @@ nest::OneToOneBuilder::sp_connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = net_.get_thread_id();
+    const int tid = kernel().vp_manager.get_thread_id();
 
     try
     {
       // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = net_.get_rng( tid );
+      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
       for ( GIDCollection::const_iterator tgid = targets_.begin(), sgid = sources_.begin();
             tgid != targets_.end();
@@ -676,7 +676,7 @@ nest::OneToOneBuilder::sp_connect_()
           skip_conn_parameter_( tid );
           continue;
         }
-        Node* const target = net_.get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid );
         const thread target_thread = target->get_thread();
 
         single_connect_( *sgid, *target, target_thread, rng );
@@ -704,7 +704,7 @@ nest::OneToOneBuilder::sp_disconnect_()
   // make sure that target and source population have the same size
   if ( sources_.size() != targets_.size() )
   {
-    net_.message( SLIInterpreter::M_ERROR,
+    LOG( M_ERROR,
       "Disconnect",
       "Source and Target population must be of the same size." );
     throw DimensionMismatch();
@@ -713,7 +713,7 @@ nest::OneToOneBuilder::sp_disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = net_.get_thread_id();
+    const int tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -725,7 +725,7 @@ nest::OneToOneBuilder::sp_disconnect_()
 
         if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           continue;
-        Node* const target = net_.get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid );
         const thread target_thread = target->get_thread();
 
         single_disconnect_( *sgid, *target, target_thread );
@@ -813,12 +813,12 @@ nest::AllToAllBuilder::sp_connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = net_.get_thread_id();
+    const int tid = kernel().vp_manager.get_thread_id();
     try
 
     {
       // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = net_.get_rng( tid );
+      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
       for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
       {
@@ -837,7 +837,7 @@ nest::AllToAllBuilder::sp_connect_()
               skip_conn_parameter_( tid );
             continue;
           }
-          Node* const target = net_.get_node( *tgid );
+          Node* const target = kernel().node_manager.get_node( *tgid );
           const thread target_thread = target->get_thread();
           single_connect_( *sgid, *target, target_thread, rng );
         }
@@ -864,14 +864,14 @@ nest::AllToAllBuilder::disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = net_.get_thread_id();
+    const int tid = kernel().vp_manager.get_thread_id();
 
     try
     {
       for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
       {
         // check whether the target is on this mpi machine
-        if ( !net_.is_local_gid( *tgid ) )
+        if ( not kernel().node_manager.is_local_gid( *tgid ) )
         {
           for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
                 ++sgid )
@@ -879,7 +879,7 @@ nest::AllToAllBuilder::disconnect_()
           continue;
         }
 
-        Node* const target = net_.get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -920,7 +920,7 @@ nest::AllToAllBuilder::sp_disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = net_.get_thread_id();
+    const int tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -936,7 +936,7 @@ nest::AllToAllBuilder::sp_disconnect_()
               skip_conn_parameter_( tid );
             continue;
           }
-          Node* const target = net_.get_node( *tgid );
+          Node* const target = kernel().node_manager.get_node( *tgid );
           const thread target_thread = target->get_thread();
           single_disconnect_( *sgid, *target, target_thread );
         }
@@ -1325,12 +1325,11 @@ nest::BernoulliBuilder::connect_()
  * @param conn_spec connectivity specs
  * @param syn_spec synapse specs
  */
-nest::SPBuilder::SPBuilder( Network& net,
-  const GIDCollection& sources,
+nest::SPBuilder::SPBuilder( const GIDCollection& sources,
   const GIDCollection& targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
-  : ConnBuilder( net, sources, targets, conn_spec, syn_spec )
+  : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   // Check that both pre and post synaptic element are provided
   if ( pre_synaptic_element_name == "" || post_synaptic_element_name == "" )
@@ -1339,62 +1338,14 @@ nest::SPBuilder::SPBuilder( Network& net,
   }
 }
 
-/**
- * Makes sure that the min delay has been configured correctly for the creation
- * of new synapses
- * @return the min_delay configured for the dynamically created synapses
- */
-nest::Time
-nest::SPBuilder::get_min_delay() const
+void
+nest::SPBuilder::update_delay(delay& d) const
 {
-  Time min_delay;
-  DictionaryDatum syn_defaults;
-  bool delay = get_default_delay();
-  syn_defaults = net_.get_connector_defaults( get_synapse_model() );
-  if ( !delay ) // delay can be random so min_delay must be defined in the synapse prototype
+  if ( get_default_delay() ) 
   {
-    min_delay = Time::ms( getValue< double_t >( syn_defaults, "min_delay" ) );
-    if ( min_delay == Time::pos_inf() )
-    {
-      throw BadProperty(
-        "Structural Plasticity: to use different delays for the synapses you must specify the min "
-        "and max delay in the synapse default parameters." );
-    }
+    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( get_synapse_model() );
+    d = Time( Time::ms( getValue< double_t >( syn_defaults, "delay" ) ) ).get_steps();
   }
-  else // we used the default delay
-  {
-    min_delay = Time::ms( getValue< double_t >( syn_defaults, "delay" ) );
-  }
-  return min_delay;
-}
-
-/**
- * Makes sure that the max delay has been configured correctly for the creation
- * of new synapses
- * @return the max_delay configured for the dynamically created synapses
- */
-nest::Time
-nest::SPBuilder::get_max_delay() const
-{
-  Time max_delay;
-  DictionaryDatum syn_defaults;
-  bool delay = get_default_delay();
-  syn_defaults = net_.get_connector_defaults( get_synapse_model() );
-  if ( !delay ) // delay can be random so max_delay must be defined in the synapse prototype
-  {
-    max_delay = Time::ms( getValue< double_t >( syn_defaults, "max_delay" ) );
-    if ( max_delay == Time::neg_inf() )
-    {
-      throw BadProperty(
-        "Structural Plasticity: to use different delays for the synapses you must specify the min "
-        "and max delay in the synapse default parameters." );
-    }
-  }
-  else // we used the default delay
-  {
-    max_delay = Time::ms( getValue< double_t >( syn_defaults, "delay" ) );
-  }
-  return max_delay;
 }
 
 void
@@ -1403,7 +1354,7 @@ nest::SPBuilder::connect( GIDCollection sources, GIDCollection targets )
   connect_( sources, targets );
 
   // check if any exceptions have been raised
-  for ( thread thr = 0; thr < net_.get_num_threads(); ++thr )
+  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
     if ( exceptions_raised_.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
 }
@@ -1427,7 +1378,7 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
   // make sure that target and source population have the same size
   if ( sources.size() != targets.size() )
   {
-    net_.message( SLIInterpreter::M_ERROR,
+    LOG( M_ERROR,
       "Connect",
       "Source and Target population must be of the same size." );
     throw DimensionMismatch();
@@ -1436,12 +1387,12 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
 #pragma omp parallel
   {
     // get thread id
-    const int tid = net_.get_thread_id();
+    const int tid = kernel().vp_manager.get_thread_id();
 
     try
     {
       // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = net_.get_rng( tid );
+      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
       for ( GIDCollection::const_iterator tgid = targets.begin(), sgid = sources.begin();
             tgid != targets.end();
@@ -1457,7 +1408,7 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
           skip_conn_parameter_( tid );
           continue;
         }
-        Node* const target = net_.get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid );
         const thread target_thread = target->get_thread();
 
         single_connect_( *sgid, *target, target_thread, rng );

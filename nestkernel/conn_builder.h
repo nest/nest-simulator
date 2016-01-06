@@ -293,14 +293,10 @@ private:
 class SPBuilder : public ConnBuilder
 {
 public:
-  SPBuilder( Network& net,
-    const GIDCollection& sources,
+  SPBuilder( const GIDCollection& sources,
     const GIDCollection& targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec );
-
-  Time get_min_delay() const;
-  Time get_max_delay() const;
 
   std::string
   get_pre_synaptic_element_name() const
@@ -312,15 +308,19 @@ public:
   {
     return post_synaptic_element_name;
   }
+  
+  /**
+   * Writes the default delay of the connection model, if the
+   * SPBuilder only uses the default delay. If not, the min/max_delay
+   * has to be specified explicitly with the kernel status.
+   */
+  void update_delay( delay& d ) const;
 
   void connect( GIDCollection sources, GIDCollection targets );
 
 protected:
   void connect_();
   void connect_( GIDCollection sources, GIDCollection targets );
-
-  Time min_delay;
-  Time max_delay;
 };
 
 } // namespace nest

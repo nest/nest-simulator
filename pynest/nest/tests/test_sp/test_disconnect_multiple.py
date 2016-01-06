@@ -38,9 +38,9 @@ class TestDisconnect(unittest.TestCase):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
-                nest.SetDefaults(syn_model, {'min_delay': 0.1, 'max_delay': 1.0, 'delay': 0.5})
+                nest.SetDefaults(syn_model, {'delay': 0.5})
                 syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1', 'post_synaptic_element': 'SE2'}
-                nest.SetKernelStatus({'structural_plasticity_synapses': {'syn1': syn_dict}})
+                nest.SetKernelStatus({'min_delay': 0.1, 'max_delay': 1.0, 'structural_plasticity_synapses': {'syn1': syn_dict}})
                 neurons = nest.Create('iaf_neuron', 10, {
                     'synaptic_elements': {
                         'SE1': {'z': 0.0, 'growth_rate': 0.0},
@@ -78,9 +78,9 @@ class TestDisconnect(unittest.TestCase):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
-                nest.SetDefaults(syn_model, {'min_delay': 0.1, 'max_delay': 1.0, 'delay': 0.5})
+                nest.SetDefaults(syn_model, {'delay': 0.5})
                 syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1', 'post_synaptic_element': 'SE2'}
-                nest.SetKernelStatus({'structural_plasticity_synapses': {'syn1': syn_dict}})
+                nest.SetKernelStatus({'min_delay': 0.1, 'max_delay': 1.0, 'structural_plasticity_synapses': {'syn1': syn_dict}})
                 neurons = nest.Create('iaf_neuron', 10, {
                     'synaptic_elements': {
                         'SE1': {'z': 0.0, 'growth_rate': 0.0},

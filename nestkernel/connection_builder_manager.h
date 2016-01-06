@@ -32,6 +32,7 @@
 #include "sparsetable.h"
 
 // Includes from nestkernel:
+#include "conn_builder.h"
 #include "gid_collection.h"
 #include "growth_curve_factory.h"
 #include "nest_time.h"
@@ -97,6 +98,11 @@ public:
    * @return a new Growth Curve object of the type indicated by name
    */
   GrowthCurve* new_growth_curve( Name name );
+  
+  ConnBuilder* get_conn_builder(const std::string& name, const GIDCollection& sources,
+                                              const GIDCollection& targets,
+                                              const DictionaryDatum& conn_spec,
+                                              const DictionaryDatum& syn_spec);
 
   /**
    * Create connections.
@@ -168,6 +174,8 @@ public:
    * \param syn The synapse model to use.
    */
   bool connect( index s, index r, DictionaryDatum& params, index syn );
+  
+  void disconnect( Node& target, index sgid, thread target_thread, index syn_id );
 
   void subnet_connect( Subnet&, Subnet&, int, index syn );
 
@@ -269,6 +277,13 @@ public:
    * Returns the number of connections of this synapse type.
    */
   size_t get_num_connections( synindex syn_id ) const;
+
+  void get_sources( std::vector< index > targets,
+                   std::vector< std::vector< index > >& sources,
+                   index synapse_model );
+  void get_targets( std::vector< index > sources,
+                   std::vector< std::vector< index > >& targets,
+                   index synapse_model );
 
   /**
    * Triggered by volume transmitter in update.
@@ -425,7 +440,7 @@ ConnectionBuilderManager::get_connruledict()
 inline DictionaryDatum&
 ConnectionBuilderManager::get_growthcurvedict()
 {
-  return connruledict_;
+  return growthcurvedict_;
 }
 
 inline delay

@@ -57,9 +57,11 @@ MUSICManager::MUSICManager()
 void
 MUSICManager::initialize()
 {
+#ifdef HAVE_MUSIC
   // Reset music_in_portlist_ to its pristine state.
   // See comment above pristine_music_in_portlist_ in the header.
   music_in_portlist_ = pristine_music_in_portlist_;
+#endif
 }
 
 void

@@ -99,14 +99,14 @@ M_ERROR setverbosity
          } if 
       } if   
       
-      /pg /poisson_generator << /rate 1e6 >> Create def
+      /pg /poisson_generator << /rate 1e5 >> Create def
       /parrot /parrot_neuron_ps Create def
       /sd /spike_detector << /withtime false /withgid false >> Create def
       
       pg parrot Connect   % need to connect via parrot since generators cannot connect with
                           % plastic synapses.
 
-      /initial_weight 1000.0 def
+      /initial_weight 10.0 def
       /syn_spec << /model /stdp_synapse
                    /weight initial_weight
                    /receptor_type 

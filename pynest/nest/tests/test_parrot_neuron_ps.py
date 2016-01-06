@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_parrot_neuron.py
+# test_parrot_neuron_ps.py
 #
 # This file is part of NEST.
 #
@@ -19,8 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# This script tests the parrot_neuron in NEST.
-# See test_parrot_neuron_ps.py for an equivalent test of the precise parrot.
+# This script tests the parrot_neuron_ps in NEST.
+# It is very similar to test_parrot_neuron.py, but uses precise spike times.
 
 import nest
 import unittest
@@ -28,7 +28,7 @@ import math
 
 
 @nest.check_stack
-class ParrotNeuronTestCase(unittest.TestCase):
+class ParrotNeuronPSTestCase(unittest.TestCase):
     """Check parrot_neuron spike repetition properties"""
 
     def setUp(self):
@@ -36,12 +36,14 @@ class ParrotNeuronTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         # set up source spike generator, as well as parrot neurons
-        self.spike_time = 1.
+        self.spike_time = 1.01
         self.delay = .2
         self.source = nest.Create("spike_generator", 1, 
-                                  {"spike_times": [self.spike_time]})
-        self.parrot = nest.Create('parrot_neuron')
-        self.spikes = nest.Create("spike_detector")
+                                  {"spike_times": [self.spike_time],
+                                   'precise_times': True})
+        self.parrot = nest.Create('parrot_neuron_ps')
+        self.spikes = nest.Create("spike_detector",
+                                  params={'precise_times': True})
 
         # record source and parrot spikes
         nest.Connect(self.source, self.spikes)
@@ -97,7 +99,7 @@ class ParrotNeuronTestCase(unittest.TestCase):
             "Parrot neuron failed to correctly repeat multiple spikes."
 
 @nest.check_stack
-class ParrotNeuronPoissonTestCase(unittest.TestCase):
+class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
     """Check parrot_neuron spike repetition properties"""
 
     def test_ParrotNeuronIncomingMultiplicity(self):
@@ -112,6 +114,9 @@ class ParrotNeuronPoissonTestCase(unittest.TestCase):
         We create a high-rate poisson_generator. If parrot_neuron
         ignored multiplicity, it would only transmit one spike per time
         step. We chain two parrot_neurons to check against any loss.
+        
+        Note: Even though we test parrot_neuron_ps, we drive it with the
+        plain poisson_generator, since only that generator uses multiplicity.
         """
 
         # set up source spike generator, as well as parrot neurons
@@ -135,8 +140,8 @@ class ParrotNeuronPoissonTestCase(unittest.TestCase):
                               'rng_seeds': [456]})
                 
         source = nest.Create('poisson_generator', params={'rate': rate})
-        parrots = nest.Create('parrot_neuron', 2)
-        detect = nest.Create('spike_detector')
+        parrots = nest.Create('parrot_neuron_ps', 2)
+        detect = nest.Create('spike_detector', params={'precise_times': True})
         
         nest.Connect(source, parrots[:1], syn_spec={'delay': delay}) 
         nest.Connect(parrots[:1], parrots[1:], syn_spec={'delay': delay})
@@ -152,12 +157,12 @@ class ParrotNeuronPoissonTestCase(unittest.TestCase):
  
 
 @nest.check_stack
-class ParrotNeuronSTDPTestCase(unittest.TestCase):
+class ParrotNeuronPSSTDPTestCase(unittest.TestCase):
     """
-    Check STDP protocol between two parrot_neurons connected by a stdp_synapse.
+    Check STDP protocol between two parrot_neurons_ps connected by a stdp_synapse.
     Exact pre- and post-synaptic spike times are set by spike_generators
     connected to each parrot neuron. Additional spikes sent through the
-    stdp_synapse are explicitly ignored in the postsynaptic parrot_neuron
+    stdp_synapse are explicitly ignored in the postsynaptic parrot_neuron_ps
     by setting the stdp_synapse to connect to port 1.
     """
 
@@ -177,18 +182,23 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
         post_times = [k+dt for k in pre_times]
 
         # create spike_generators with these times
-        pre_spikes = nest.Create("spike_generator", 1, {"spike_times": pre_times})
-        post_spikes = nest.Create("spike_generator", 1, {"spike_times": post_times})
+        pre_spikes = nest.Create("spike_generator", 
+                                 params={"spike_times": pre_times,
+                                         'precise_times': True})
+        post_spikes = nest.Create("spike_generator",
+                                  params={"spike_times": post_times,
+                                          'precise_times': True})
 
         # create parrot neurons and connect spike_generators
-        pre_parrot = nest.Create("parrot_neuron", 1)
-        post_parrot = nest.Create("parrot_neuron", 1)
+        pre_parrot = nest.Create("parrot_neuron_ps", 1)
+        post_parrot = nest.Create("parrot_neuron_ps", 1)
 
         nest.Connect(pre_spikes, pre_parrot, syn_spec={"delay": delay})
         nest.Connect(post_spikes, post_parrot, syn_spec={"delay": delay})
 
         # create spike detector
-        spikes = nest.Create("spike_detector")
+        spikes = nest.Create("spike_detector",
+                             params={'precise_times': True})
         nest.Connect(pre_parrot, spikes)
         nest.Connect(post_parrot, spikes)
 
@@ -237,9 +247,9 @@ def suite():
 
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721
     # using loadTestsFromTestCase instead.
-    suite1 = unittest.TestLoader().loadTestsFromTestCase(ParrotNeuronTestCase)
-    suite2 = unittest.TestLoader().loadTestsFromTestCase(ParrotNeuronPoissonTestCase)
-    suite3 = unittest.TestLoader().loadTestsFromTestCase(ParrotNeuronSTDPTestCase)
+    suite1 = unittest.TestLoader().loadTestsFromTestCase(ParrotNeuronPSTestCase)
+    suite2 = unittest.TestLoader().loadTestsFromTestCase(ParrotNeuronPSPoissonTestCase)
+    suite3 = unittest.TestLoader().loadTestsFromTestCase(ParrotNeuronPSSTDPTestCase)
     return unittest.TestSuite([suite1, suite2, suite3])
 
 

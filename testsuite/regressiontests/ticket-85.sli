@@ -1,0 +1,122 @@
+/*
+ *  ticket-85.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::ticket-85 Ensure that plastic synapses can be used with precise models.
+
+Synopsis: (ticket-85) run -> NEST exits if test fails
+
+Description:
+This ticket ensures that plastic synapses can be used to connect precise
+neuron models.
+
+Author: Hans Ekkehard Plesser, 2015-11-23
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+/precise_models 
+  [ /iaf_psc_alpha_canon
+    /iaf_psc_alpha_presc
+    /iaf_psc_delta_canon
+    /iaf_psc_exp_ps
+    /parrot_neuron_ps
+  ]
+def
+         
+% first test: can we create connections at all?
+precise_models
+{
+  /model Set
+  model ==
+  {
+    model Create
+    model Create
+    /stdp_synapse Connect
+  } pass_or_die
+} forall
+
+% second test: do we get status information from Archiving_Node?
+precise_models
+{
+  {
+    dup ==
+    model Create
+    GetStatus /tau_minus known
+  } assert_or_die
+} forall
+
+% third test: does archiving node register last spike time right
+precise_models
+{
+  /model Set
+  model ==
+  {
+    ResetKernel
+    /sg /spike_generator << /spike_times [ 10. ] >> Create def
+    /n model Create def
+    /sd /spike_detector << /withtime true /precise_times true >> Create def
+    
+    sg n 10000. 1. Connect
+    n sd Connect
+    
+    20 Simulate
+    
+    sd GetStatus /events get /times get dup length 1 sub get
+    n GetStatus /t_spike get
+    eq
+  } assert_or_die
+} forall
+
+% fourth test: is there any plastic effect?
+precise_models
+{
+  /model Set
+  model ==
+  { 
+    ResetKernel
+    /pg
+      /poisson_generator_ps << /rate 1e6 >> Create
+    def
+    
+    /n1 model Create def
+    /n2 model Create def
+    
+    /ini_weight 1000. def
+    pg n1 Connect
+    n1 n2 ini_weight 1.0 /stdp_synapse Connect
+    
+    100. Simulate
+    
+    << /source [ n1 ] >> GetConnections 
+    0 get GetStatus 
+    /weight get
+    ini_weight neq
+  } assert_or_die
+  
+} forall
+
+     

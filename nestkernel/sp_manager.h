@@ -30,11 +30,15 @@
 #ifndef SP_MANAGER_H
 #define SP_MANAGER_H
 
+// C++ includes:
+#include <vector>
+
 // Includes from libnestutil:
 #include "manager_interface.h"
 
 // Includes from nestkernel:
 #include "gid_collection.h"
+#include "growth_curve_factory.h"
 #include "nest_time.h"
 #include "nest_types.h"
 
@@ -67,6 +71,21 @@ public:
 
   virtual void get_status( DictionaryDatum& );
   virtual void set_status( const DictionaryDatum& );
+
+  DictionaryDatum& get_growthcurvedict();
+
+  /**
+   * Create a new Growth Curve object using the GrowthCurve Factory
+   * @param name which defines the type of GC to be created
+   * @return a new Growth Curve object of the type indicated by name
+   */
+  GrowthCurve* new_growth_curve( Name name );
+
+  /**
+   * Add a growth curve for MSP
+   */
+  template < typename GrowthCurve >
+  void register_growth_curve( const std::string& name );
 
   /**
    * Disconnect two nodes. The source node is defined by its global ID.
@@ -177,13 +196,42 @@ public:
   void global_shuffle( std::vector< index >& v, size_t n );
 
 private:
-  // Time interval for structural plasticity update (creation/deletion of synapses)
+  /**
+   * Time interval for structural plasticity update (creation/deletion of synapses).
+   */
   long_t structural_plasticity_update_interval_;
-  bool
-    structural_plasticity_enabled_; //!< Indicates whether the Structrual Plasticity functionality
-                                    //!< is On (True) of Off (False)
+
+  /**
+   * Indicates whether the Structrual Plasticity functionality is On (True) of Off (False).
+   */
+  bool structural_plasticity_enabled_;
   std::vector< SPBuilder* > sp_conn_builders_;
+
+  /* BeginDocumentation
+   Name: growthcurvedict - growth curves for Model of Structural Plasticity
+   Description:
+   This dictionary provides indexes for the growth curve factory
+   */
+  DictionaryDatum growthcurvedict_; //!< Dictionary for growth rules.
+
+  /**
+   * GrowthCurve factories, indexed by growthcurvedict_ elements.
+   */
+  std::vector< GenericGrowthCurveFactory* > growthcurve_factories_;
 };
+
+inline DictionaryDatum&
+SPManager::get_growthcurvedict()
+{
+  return growthcurvedict_;
+}
+
+inline GrowthCurve*
+SPManager::new_growth_curve( Name name )
+{
+  const long gc_id = ( *growthcurvedict_ )[ name ];
+  return growthcurve_factories_.at( gc_id )->create();
+}
 
 inline bool
 SPManager::is_structural_plasticity_enabled() const

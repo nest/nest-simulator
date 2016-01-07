@@ -131,7 +131,7 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
   engine.def( "modeldict", nest::kernel().model_manager.get_modeldict() );
   engine.def( "synapsedict", nest::kernel().model_manager.get_synapsedict() );
   engine.def( "connruledict", nest::kernel().connection_builder_manager.get_connruledict() );
-  engine.def( "growthcurvedict", nest::kernel().connection_builder_manager.get_growthcurvedict() );
+  engine.def( "growthcurvedict", nest::kernel().sp_manager.get_growthcurvedict() );
 
   // register sli_neuron
   nest::kernel().model_manager.register_node_model< nest::sli_neuron >( "sli_neuron" );

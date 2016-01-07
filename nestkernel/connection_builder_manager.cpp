@@ -66,7 +66,6 @@ extern PoorMansAllocator poormansallocpool;
 
 nest::ConnectionBuilderManager::ConnectionBuilderManager()
   : connruledict_( new Dictionary() )
-  , growthcurvedict_( new Dictionary() )
   , connbuilder_factories_()
   , min_delay_( 1 )
   , max_delay_( 1 )
@@ -306,10 +305,13 @@ nest::ConnectionBuilderManager::update_delay_extrema_()
   min_delay_ = get_min_delay_time_().get_steps();
   max_delay_ = get_max_delay_time_().get_steps();
 
-  // If no min/max_delay is set explicitly (SetKernelStatus), then the default
-  // delay used by the SPBuilders have to be respected for the min/max_delay.
-  min_delay_ = std::min( min_delay_, kernel().sp_manager.builder_min_delay() );
-  max_delay_ = std::max( max_delay_, kernel().sp_manager.builder_max_delay() );
+  if ( not get_user_set_delay_extrema() )
+  {
+    // If no min/max_delay is set explicitly (SetKernelStatus), then the default
+    // delay used by the SPBuilders have to be respected for the min/max_delay.
+    min_delay_ = std::min( min_delay_, kernel().sp_manager.builder_min_delay() );
+    max_delay_ = std::max( max_delay_, kernel().sp_manager.builder_max_delay() );
+  }
 
   if ( kernel().mpi_manager.get_num_processes() > 1 )
   {

@@ -1,5 +1,5 @@
 /*
- *  connection_builder_manager_impl.h
+ *  sp_manager_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,32 +20,31 @@
  *
  */
 
-#ifndef CONNECTIONBUILDERMANAGER_IMPL_H
-#define CONNECTIONBUILDERMANAGER_IMPL_H
+#ifndef SP_MANAGER_IMPL_H
+#define SP_MANAGER_IMPL_H
 
-#include "connection_builder_manager.h"
+#include "sp_manager.h"
 
 // C++ includes:
 #include <string>
 
 // Includes from nestkernel:
-#include "conn_builder.h"
-#include "conn_builder_factory.h"
+#include "growth_curve.h"
+#include "growth_curve_factory.h"
 
 namespace nest
 {
-
-template < typename ConnBuilder >
+template < typename GrowthCurve >
 void
-ConnectionBuilderManager::register_conn_builder( const std::string& name )
+SPManager::register_growth_curve( const std::string& name )
 {
-  assert( !connruledict_->known( name ) );
-  GenericConnBuilderFactory* cb = new ConnBuilderFactory< ConnBuilder >();
-  assert( cb != 0 );
-  const int id = connbuilder_factories_.size();
-  connbuilder_factories_.push_back( cb );
-  connruledict_->insert( name, id );
+  assert( !growthcurvedict_->known( name ) );
+  GenericGrowthCurveFactory* gc = new GrowthCurveFactory< GrowthCurve >();
+  assert( gc != 0 );
+  const int id = growthcurve_factories_.size();
+  growthcurve_factories_.push_back( gc );
+  growthcurvedict_->insert( name, id );
 }
 }
 
-#endif
+#endif /* SP_MANAGER_IMPL_H */

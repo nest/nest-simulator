@@ -43,6 +43,7 @@
 #include "nest_types.h"
 #include "node.h"
 #include "nodelist.h"
+#include "sp_manager_impl.h"
 #include "subnet.h"
 
 // Includes from sli:
@@ -1955,8 +1956,8 @@ NestModule::init( SLIInterpreter* i )
     "fixed_total_number" );
 
   // Add MSP growth curves
-  kernel().connection_builder_manager.register_growth_curve< GrowthCurveGaussian >( "gaussian" );
-  kernel().connection_builder_manager.register_growth_curve< GrowthCurveLinear >( "linear" );
+  kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >( "gaussian" );
+  kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );
 
   Token statusd = i->baselookup( Name( "statusdict" ) );
   DictionaryDatum dd = getValue< DictionaryDatum >( statusd );

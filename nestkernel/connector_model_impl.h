@@ -150,7 +150,7 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   // on the default connection, but not affect the actual min/max_delay
   // until a connection with that default delay is created. Since the
   // set_status calls on common properties and default connection may
-  // modify min/max delay, we need to preserve and restore.
+  // modify min/max delay, we need to freeze the min/max_delay checking.
 
   kernel().connection_builder_manager.get_delay_checker().freeze_delay_update();
 

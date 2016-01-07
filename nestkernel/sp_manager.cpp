@@ -48,6 +48,8 @@ SPManager::SPManager()
   , structural_plasticity_update_interval_( 1000 )
   , structural_plasticity_enabled_( false )
   , sp_conn_builders_()
+  , growthcurvedict_( new Dictionary() )
+  , growthcurve_factories_()
 {
 }
 

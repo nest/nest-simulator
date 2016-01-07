@@ -1,5 +1,5 @@
 AC_PREREQ(2.63)
-AC_INIT([nest], [git], [nest_user@nest-initiative.org])
+AC_INIT([nest], [2.10.0], [nest_user@nest-initiative.org])
 
 # Prevent automatic rebuilding of Makefile.ins and configure if their
 # content or timestamp changes. Not doing this lead to failing builds

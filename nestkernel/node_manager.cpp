@@ -700,23 +700,23 @@ NodeManager::prepare_nodes()
     if ( exceptions_raised.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 
-    if ( num_active_prelim_nodes == 0 )
-    {
-      LOG( M_INFO,
-        "NodeManager::prepare_nodes_",
-        String::compose(
-             "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
-    }
-    else
-    {
-      LOG( M_INFO,
-        "Scheduler::prepare_nodes",
-        String::compose( "Simulating %1 local node%2 of which %3 need%4 prelim_update.",
-                        num_active_nodes,
-                        num_active_nodes == 1 ? "" : "s",
-                        num_active_prelim_nodes,
-                        num_active_prelim_nodes == 1 ? "s" : "" ) );
-    }
+  if ( num_active_prelim_nodes == 0 )
+  {
+    LOG( M_INFO,
+      "NodeManager::prepare_nodes_",
+      String::compose(
+           "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
+  }
+  else
+  {
+    LOG( M_INFO,
+      "Scheduler::prepare_nodes",
+      String::compose( "Simulating %1 local node%2 of which %3 need%4 prelim_update.",
+           num_active_nodes,
+           num_active_nodes == 1 ? "" : "s",
+           num_active_prelim_nodes,
+           num_active_prelim_nodes == 1 ? "s" : "" ) );
+  }
 }
 
 //!< This function is called only if the thread data structures are properly set up.

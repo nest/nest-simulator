@@ -308,7 +308,7 @@ public:
   {
     return post_synaptic_element_name;
   }
-  
+
   /**
    * Writes the default delay of the connection model, if the
    * SPBuilder only uses the default delay. If not, the min/max_delay

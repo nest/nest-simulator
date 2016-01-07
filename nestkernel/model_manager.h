@@ -180,7 +180,7 @@ public:
    */
   template < class ConnectionT >
   void register_connection_model( const std::string& name );
-  
+
   template < class ConnectionT >
   void register_secondary_connection_model( const std::string& name, bool has_delay = true );
 
@@ -245,12 +245,12 @@ public:
    * @see sli::pool
    */
   void memory_info() const;
-  
+
   void create_secondary_events_prototypes();
 
   void delete_secondary_events_prototypes();
-  
-  SecondaryEvent& get_secondary_event_prototype(synindex syn_id, thread t = 0);
+
+  SecondaryEvent& get_secondary_event_prototype( synindex syn_id, thread t = 0 );
 
 private:
   /**  */
@@ -261,7 +261,7 @@ private:
 
   /**  */
   index register_node_model_( Model* model, bool private_model = false );
-  
+
   synindex register_connection_model_( ConnectorModel* );
 
   /**
@@ -332,7 +332,7 @@ private:
 
   std::vector< ConnectorModel* > secondary_connector_models_;
   std::vector< std::vector< SecondaryEvent* > > secondary_events_prototypes_;
-  
+
   /* BeginDocumentation
    Name: modeldict - dictionary containing all devices and models of NEST
    Description:
@@ -468,17 +468,17 @@ ModelManager::delete_secondary_events_prototypes()
         delete secondary_events_prototypes_[ j ][ i ];
     }
   }
-  
+
   for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
     secondary_events_prototypes_[ j ].clear();
   secondary_events_prototypes_.clear();
 }
 
 inline SecondaryEvent&
-ModelManager::get_secondary_event_prototype(synindex syn_id, thread t)
+ModelManager::get_secondary_event_prototype( synindex syn_id, thread t )
 {
   assert_valid_syn_id( syn_id );
-  return *secondary_events_prototypes_[t][syn_id];
+  return *secondary_events_prototypes_[ t ][ syn_id ];
 }
 
 } // namespace nest

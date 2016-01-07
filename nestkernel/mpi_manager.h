@@ -144,19 +144,19 @@ public:
   void communicate( std::vector< double_t >& send_buffer,
     std::vector< double_t >& recv_buffer,
     std::vector< int >& displacements );
-  
+
   void communicate( std::vector< ulong_t >& send_buffer,
-                          std::vector< ulong_t >& recv_buffer,
-                          std::vector< int >& displacements );
-  
+    std::vector< ulong_t >& recv_buffer,
+    std::vector< int >& displacements );
+
   void communicate( std::vector< int_t >& send_buffer,
-                          std::vector< int_t >& recv_buffer,
-                          std::vector< int >& displacements );
+    std::vector< int_t >& recv_buffer,
+    std::vector< int >& displacements );
 
   void communicate( double_t, std::vector< double_t >& );
   void communicate( std::vector< int_t >& );
   void communicate( std::vector< long_t >& );
-  
+
   /*
    * Sum across all rank
    */
@@ -164,7 +164,7 @@ public:
   void communicate_Allreduce_sum_in_place( std::vector< double_t >& buffer );
   void communicate_Allreduce_sum_in_place( std::vector< int_t >& buffer );
   void communicate_Allreduce_sum( std::vector< double_t >& send_buffer,
-                                        std::vector< double_t >& recv_buffer );
+    std::vector< double_t >& recv_buffer );
 
   /**
    * Collect GIDs for all nodes in a given node list across processes.

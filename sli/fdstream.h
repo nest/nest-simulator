@@ -55,7 +55,7 @@ typedef std::iostream fdstream;
 #include <istream>
 #include <ostream>
 #include <streambuf>
-#include <string> 
+#include <string>
 
 // The Compaq C++ compiler V6.5-014 surpresses all non standard
 // names if compilation is performed with -std strict_ansi.

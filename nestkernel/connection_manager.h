@@ -198,9 +198,9 @@ public:
 protected:
   std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
   std::vector< std::vector< ConnectorModel* > > prototypes_; //!< The list of available synapse
-                                                             //prototypes: first dimenasion one
-                                                             //entry per thread, second dimantion
-                                                             //for each synapse type
+  // prototypes: first dimenasion one
+  // entry per thread, second dimantion
+  // for each synapse type
 
   Network& net_;            //!< The reference to the network
   Dictionary* synapsedict_; //!< The synapsedict (owned by the network)

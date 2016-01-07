@@ -332,8 +332,9 @@ ModelsModule::init( SLIInterpreter* )
      Name: static_synapse_hom_w_hpc - Variant of static_synapse_hom_w with low memory consumption.
      SeeAlso: synapsedict, static_synapse_hom_w, static_synapse_hpc
   */
-  kernel().model_manager.register_connection_model< StaticConnectionHomW< TargetIdentifierPtrRport > >(
-    "static_synapse_hom_w" );
+  kernel()
+    .model_manager.register_connection_model< StaticConnectionHomW< TargetIdentifierPtrRport > >(
+      "static_synapse_hom_w" );
   kernel().model_manager.register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
     "static_synapse_hom_w_hpc" );
 
@@ -341,7 +342,9 @@ ModelsModule::init( SLIInterpreter* )
      Name: gap_junction - Connection model for gap junctions.
      SeeAlso: synapsedict
   */
-  kernel().model_manager.register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >( "gap_junction", false );
+  kernel()
+    .model_manager.register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
+      "gap_junction", false );
 
 
   /* BeginDocumentation
@@ -371,10 +374,10 @@ ModelsModule::init( SLIInterpreter* )
   */
   kernel()
     .model_manager.register_connection_model< STDPTripletConnection< TargetIdentifierPtrRport > >(
-    "stdp_triplet_synapse" );
+      "stdp_triplet_synapse" );
   kernel()
     .model_manager.register_connection_model< STDPTripletConnection< TargetIdentifierIndex > >(
-    "stdp_triplet_synapse_hpc" );
+      "stdp_triplet_synapse_hpc" );
 
 
   /* BeginDocumentation
@@ -438,8 +441,9 @@ ModelsModule::init( SLIInterpreter* )
      Name: tsodyks_synapse_hom_hpc - Variant of tsodyks_synapse_hom with low memory consumption.
      SeeAlso: synapsedict, tsodyks_synapse_hom, static_synapse_hpc
   */
-  kernel().model_manager.register_connection_model< TsodyksConnectionHom< TargetIdentifierPtrRport > >(
-    "tsodyks_synapse_hom" );
+  kernel()
+    .model_manager.register_connection_model< TsodyksConnectionHom< TargetIdentifierPtrRport > >(
+      "tsodyks_synapse_hom" );
   kernel().model_manager.register_connection_model< TsodyksConnectionHom< TargetIdentifierIndex > >(
     "tsodyks_synapse_hom_hpc" );
 

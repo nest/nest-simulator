@@ -85,24 +85,25 @@ public:
    */
   template < typename ConnBuilder >
   void register_conn_builder( const std::string& name );
-  
+
   /**
    * Add a growth curve for MSP
    */
   template < typename GrowthCurve >
   void register_growth_curve( const std::string& name );
-  
+
   /**
    * Create a new Growth Curve object using the GrowthCurve Factory
    * @param name which defines the type of GC to be created
    * @return a new Growth Curve object of the type indicated by name
    */
   GrowthCurve* new_growth_curve( Name name );
-  
-  ConnBuilder* get_conn_builder(const std::string& name, const GIDCollection& sources,
-                                              const GIDCollection& targets,
-                                              const DictionaryDatum& conn_spec,
-                                              const DictionaryDatum& syn_spec);
+
+  ConnBuilder* get_conn_builder( const std::string& name,
+    const GIDCollection& sources,
+    const GIDCollection& targets,
+    const DictionaryDatum& conn_spec,
+    const DictionaryDatum& syn_spec );
 
   /**
    * Create connections.
@@ -174,7 +175,7 @@ public:
    * \param syn The synapse model to use.
    */
   bool connect( index s, index r, DictionaryDatum& params, index syn );
-  
+
   void disconnect( Node& target, index sgid, thread target_thread, index syn_id );
 
   void subnet_connect( Subnet&, Subnet&, int, index syn );
@@ -279,11 +280,11 @@ public:
   size_t get_num_connections( synindex syn_id ) const;
 
   void get_sources( std::vector< index > targets,
-                   std::vector< std::vector< index > >& sources,
-                   index synapse_model );
+    std::vector< std::vector< index > >& sources,
+    index synapse_model );
   void get_targets( std::vector< index > sources,
-                   std::vector< std::vector< index > >& targets,
-                   index synapse_model );
+    std::vector< std::vector< index > >& targets,
+    index synapse_model );
 
   /**
    * Triggered by volume transmitter in update.
@@ -307,7 +308,7 @@ public:
   bool get_user_set_delay_extrema() const;
 
   void send( thread t, index sgid, Event& e );
-  
+
   void send_secondary( thread t, SecondaryEvent& e );
 
   /**
@@ -412,7 +413,7 @@ private:
    * SeeAlso: Connect
    */
   DictionaryDatum connruledict_; //!< Dictionary for connection rules.
-  
+
   /* BeginDocumentation
    Name: growthcurvedict - growth curves for Model of Structural Plasticity
    Description:
@@ -422,9 +423,9 @@ private:
 
   std::vector< GenericConnBuilderFactory* >
     connbuilder_factories_; //! ConnBuilder factories, indexed by connruledict_ elements.
-  
+
   std::vector< GenericGrowthCurveFactory* >
-  growthcurve_factories_; //! GrowthCurve factories, indexed by growthcurvedict_ elements.
+    growthcurve_factories_; //! GrowthCurve factories, indexed by growthcurvedict_ elements.
 
   delay min_delay_; //!< Value of the smallest delay in the network.
 

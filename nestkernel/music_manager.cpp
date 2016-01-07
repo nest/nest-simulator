@@ -162,7 +162,7 @@ MUSICManager::register_music_in_port( std::string portname, bool pristine )
     music_in_portlist_[ portname ] = MusicPortData( 1, 0.0, -1 );
   else
     music_in_portlist_[ portname ].n_input_proxies++;
-  
+
   // pristine is true if we are building up the initial portlist
   if ( pristine )
     pristine_music_in_portlist_[ portname ] = music_in_portlist_[ portname ];

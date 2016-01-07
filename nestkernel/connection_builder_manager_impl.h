@@ -60,7 +60,6 @@ ConnectionBuilderManager::register_growth_curve( const std::string& name )
   growthcurve_factories_.push_back( gc );
   growthcurvedict_->insert( name, id );
 }
-
 }
 
 #endif

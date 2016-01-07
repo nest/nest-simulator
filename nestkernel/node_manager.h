@@ -150,7 +150,7 @@ public:
    * @ingroup net_access
    */
   Node* get_node( index, thread thr = 0 );
-  
+
   Node* get_node_by_index( size_t );
 
   /**
@@ -186,7 +186,7 @@ public:
    * Get list of nodes on given thread.
    */
   const std::vector< Node* >& get_nodes_on_thread( thread ) const;
-  
+
   /**
    * Get list of nodes on given thread.
    */
@@ -203,7 +203,7 @@ public:
    * Invoke finalize() on nodes registered for finalization.
    */
   void finalize_nodes();
-  
+
   /**
    *
    */
@@ -256,10 +256,11 @@ private:
    * essentially undetectable).
    */
   std::vector< std::vector< Node* > > nodes_vec_;
-  std::vector< std::vector< Node* > > nodes_prelim_up_vec_; //!< Nodelists for unfrozen nodes that require an
-                                                            //!< additional preliminary update (e.g. gap
-                                                            //!< junctions)
-  bool needs_prelim_update_;     //!< there is at least one neuron model that needs preliminary update
+  std::vector< std::vector< Node* > >
+    nodes_prelim_up_vec_;    //!< Nodelists for unfrozen nodes that require an
+                             //!< additional preliminary update (e.g. gap
+                             //!< junctions)
+  bool needs_prelim_update_; //!< there is at least one neuron model that needs preliminary update
   index nodes_vec_network_size_; //!< Network size when nodes_vec_ was last updated
 };
 
@@ -286,8 +287,8 @@ NodeManager::is_local_gid( index gid ) const
 {
   return local_nodes_.get_node_by_gid( gid ) != 0;
 }
-  
-inline Node* 
+
+inline Node*
 NodeManager::get_node_by_index( size_t i )
 {
   return local_nodes_.get_node_by_index( i );
@@ -322,7 +323,7 @@ NodeManager::get_nodes_prelim_up_on_thread( thread t ) const
 {
   return nodes_prelim_up_vec_.at( t );
 }
-  
+
 inline bool
 NodeManager::needs_prelim_update() const
 {

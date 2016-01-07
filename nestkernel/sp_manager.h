@@ -59,7 +59,7 @@ class SPManager : public ManagerInterface
 {
 
 public:
-  SPManager( );
+  SPManager();
   virtual ~SPManager();
 
   virtual void initialize();
@@ -67,7 +67,7 @@ public:
 
   virtual void get_status( DictionaryDatum& );
   virtual void set_status( const DictionaryDatum& );
-  
+
   /**
    * Disconnect two nodes. The source node is defined by its global ID.
    * The target node is defined by the node. The connection is
@@ -81,7 +81,7 @@ public:
    * \param syn The synapse model to use.
    */
   void disconnect_single( index s, Node* target, thread target_thread, DictionaryDatum& syn );
-  
+
   /**
    * Disconnect two collections of nodes.  The connection is
    * established on the thread/process that owns the target node.
@@ -92,7 +92,7 @@ public:
    * \param synapseParams synapse parameters Dictionary
    */
   void disconnect( GIDCollection&, GIDCollection&, DictionaryDatum&, DictionaryDatum& );
-  
+
   /**
    * Disconnect two nodes.
    * The source node is defined by its global ID.
@@ -108,21 +108,21 @@ public:
 
   void update_structural_plasticity();
   void update_structural_plasticity( SPBuilder* );
-  
+
   /**
    * Enable  structural plasticity
    */
   void enable_structural_plasticity();
-  
+
   /**
    * Disable  structural plasticity
    */
   void disable_structural_plasticity();
-  
+
   bool is_structural_plasticity_enabled() const;
-  
+
   long_t get_structural_plasticity_update_interval() const;
-  
+
   /**
    * Returns the minimum delay of all SP builders.
    * This influences the min_delay of the kernel, as the connections
@@ -131,7 +131,7 @@ public:
    * as well.
    */
   delay builder_min_delay() const;
-  
+
   /**
    * Returns the maximum delay of all SP builders.
    * This influences the max_delay of the kernel, as the connections
@@ -179,17 +179,20 @@ public:
 private:
   // Time interval for structural plasticity update (creation/deletion of synapses)
   long_t structural_plasticity_update_interval_;
-  bool structural_plasticity_enabled_; //!< Indicates whether the Structrual Plasticity functionality
-                                       //!< is On (True) of Off (False)
+  bool
+    structural_plasticity_enabled_; //!< Indicates whether the Structrual Plasticity functionality
+                                    //!< is On (True) of Off (False)
   std::vector< SPBuilder* > sp_conn_builders_;
 };
-  
-inline bool SPManager::is_structural_plasticity_enabled() const
+
+inline bool
+SPManager::is_structural_plasticity_enabled() const
 {
   return structural_plasticity_enabled_;
 }
-  
-inline long_t SPManager::get_structural_plasticity_update_interval() const
+
+inline long_t
+SPManager::get_structural_plasticity_update_interval() const
 {
   return structural_plasticity_update_interval_;
 }

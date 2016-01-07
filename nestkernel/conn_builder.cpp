@@ -585,9 +585,7 @@ nest::OneToOneBuilder::disconnect_()
   // make sure that target and source population have the same size
   if ( sources_.size() != targets_.size() )
   {
-    LOG( M_ERROR,
-      "Disconnect",
-      "Source and Target population must be of the same size." );
+    LOG( M_ERROR, "Disconnect", "Source and Target population must be of the same size." );
     throw DimensionMismatch();
   }
 
@@ -646,9 +644,7 @@ nest::OneToOneBuilder::sp_connect_()
   // make sure that target and source population have the same size
   if ( sources_.size() != targets_.size() )
   {
-    LOG( M_ERROR,
-      "Connect",
-      "Source and Target population must be of the same size." );
+    LOG( M_ERROR, "Connect", "Source and Target population must be of the same size." );
     throw DimensionMismatch();
   }
 
@@ -704,9 +700,7 @@ nest::OneToOneBuilder::sp_disconnect_()
   // make sure that target and source population have the same size
   if ( sources_.size() != targets_.size() )
   {
-    LOG( M_ERROR,
-      "Disconnect",
-      "Source and Target population must be of the same size." );
+    LOG( M_ERROR, "Disconnect", "Source and Target population must be of the same size." );
     throw DimensionMismatch();
   }
 
@@ -1339,11 +1333,12 @@ nest::SPBuilder::SPBuilder( const GIDCollection& sources,
 }
 
 void
-nest::SPBuilder::update_delay(delay& d) const
+nest::SPBuilder::update_delay( delay& d ) const
 {
-  if ( get_default_delay() ) 
+  if ( get_default_delay() )
   {
-    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( get_synapse_model() );
+    DictionaryDatum syn_defaults =
+      kernel().model_manager.get_connector_defaults( get_synapse_model() );
     d = Time( Time::ms( getValue< double_t >( syn_defaults, "delay" ) ) ).get_steps();
   }
 }
@@ -1378,9 +1373,7 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
   // make sure that target and source population have the same size
   if ( sources.size() != targets.size() )
   {
-    LOG( M_ERROR,
-      "Connect",
-      "Source and Target population must be of the same size." );
+    LOG( M_ERROR, "Connect", "Source and Target population must be of the same size." );
     throw DimensionMismatch();
   }
 

@@ -120,8 +120,8 @@ parrot_neuron_ps::handle( SpikeEvent& e )
     const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
 
     // parrot ignores weight of incoming connection, store multiplicity
-  B_.events_.add_spike(
-    e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ),
+    B_.events_.add_spike(
+      e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ),
       Tdeliver,
       e.get_offset(),
       static_cast< double_t >( e.get_multiplicity() ) );

@@ -165,7 +165,7 @@ public:
    * @see unregister_music_in_port()
    */
   std::map< std::string, MusicPortData > music_in_portlist_;
-  
+
   /**
    * A copy of music_in_portlist_ at the pristine state.
    *

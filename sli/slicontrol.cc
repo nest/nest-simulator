@@ -62,7 +62,6 @@
 #endif
 
 
-
 /*BeginDocumentation
 Name: backtrace_on - enable stack backtrace on error.
 Synopsis: backtrace_on -> -

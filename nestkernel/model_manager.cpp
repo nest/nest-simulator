@@ -474,20 +474,21 @@ ModelManager::create_secondary_events_prototypes()
     std::vector< SecondaryEvent* > prototype;
     prototype.resize( secondary_connector_models_.size(), NULL );
     secondary_events_prototypes_.resize( kernel().vp_manager.get_num_threads(), prototype );
-    
-    
+
+
     for ( size_t i = 0; i < secondary_connector_models_.size(); i++ )
     {
       if ( secondary_connector_models_[ i ] != NULL )
       {
-        prototype = secondary_connector_models_[ i ]->create_event( kernel().vp_manager.get_num_threads() );
+        prototype =
+          secondary_connector_models_[ i ]->create_event( kernel().vp_manager.get_num_threads() );
         for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
           secondary_events_prototypes_[ j ][ i ] = prototype[ j ];
       }
     }
   }
 }
-  
+
 synindex
 ModelManager::register_connection_model_( ConnectorModel* cf )
 {
@@ -495,25 +496,25 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
   {
     delete cf;
     std::string msg = String::compose(
-                                      "A synapse type called '%1' already exists.\n"
-                                      "Please choose a different name!",
-                                      cf->get_name() );
+      "A synapse type called '%1' already exists.\n"
+      "Please choose a different name!",
+      cf->get_name() );
     throw NamingConflict( msg );
   }
-  
+
   pristine_prototypes_.push_back( cf );
-  
+
   const synindex syn_id = prototypes_[ 0 ].size();
   pristine_prototypes_[ syn_id ]->set_syn_id( syn_id );
-  
+
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
     prototypes_[ t ].push_back( cf->clone( cf->get_name() ) );
     prototypes_[ t ][ syn_id ]->set_syn_id( syn_id );
   }
-  
+
   synapsedict_->insert( cf->get_name(), syn_id );
-  
+
   return syn_id;
 }
 

@@ -144,18 +144,20 @@ SPManager::set_status( const DictionaryDatum& d )
     syn_spec = getValue< DictionaryDatum >( syn_specs, i->first );
     // We use a ConnBuilder with dummy values to check the synapse parameters
     SPBuilder* conn_builder = new SPBuilder( sources, targets, conn_spec, syn_spec );
-    
+
     // check that the user defined the min and max delay properly, if the
     // default delay is not used.
-    if ( not conn_builder->get_default_delay() && not kernel().connection_builder_manager.get_user_set_delay_extrema() )
+    if ( not conn_builder->get_default_delay()
+      && not kernel().connection_builder_manager.get_user_set_delay_extrema() )
     {
-      throw BadProperty("Structural Plasticity: to use different delays for synapses you must specify the min "
-                        "and max delay in the kernel parameters." );
+      throw BadProperty(
+        "Structural Plasticity: to use different delays for synapses you must specify the min "
+        "and max delay in the kernel parameters." );
     }
     sp_conn_builders_.push_back( conn_builder );
   }
 }
-  
+
 delay
 SPManager::builder_min_delay() const
 {
@@ -166,7 +168,7 @@ SPManager::builder_min_delay() const
         i != sp_conn_builders_.end();
         i++ )
   {
-    (*i)->update_delay(builder_delay);
+    ( *i )->update_delay( builder_delay );
     min_delay = std::min( min_delay, builder_delay );
   }
   return min_delay;
@@ -177,17 +179,17 @@ SPManager::builder_max_delay() const
 {
   delay max_delay = Time::neg_inf().get_steps();
   delay builder_delay = Time::neg_inf().get_steps();
-  
+
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin();
-       i != sp_conn_builders_.end();
-       i++ )
+        i != sp_conn_builders_.end();
+        i++ )
   {
-    (*i)->update_delay(builder_delay);
+    ( *i )->update_delay( builder_delay );
     max_delay = std::max( max_delay, builder_delay );
   }
   return max_delay;
 }
-  
+
 /**
  * Disconnects a single synapse. Uses the structural plasticity builder to remove
  * the synapse and updates number of connected synaptic elements.
@@ -199,7 +201,7 @@ SPManager::builder_max_delay() const
 void
 SPManager::disconnect_single( index sgid, Node* target, thread target_thread, DictionaryDatum& syn )
 {
-  
+
   if ( syn->known( names::pre_synaptic_element ) && syn->known( names::post_synaptic_element ) )
   {
     GIDCollection* sources = new GIDCollection();
@@ -209,7 +211,8 @@ SPManager::disconnect_single( index sgid, Node* target, thread target_thread, Di
     cb->change_connected_synaptic_elements( sgid, target->get_gid(), target->get_thread(), -1 );
   }
   const std::string syn_name = ( *syn )[ names::model ];
-  disconnect( sgid, target, target_thread, kernel().model_manager.get_synapsedict()->lookup( syn_name ) );
+  disconnect(
+    sgid, target, target_thread, kernel().model_manager.get_synapsedict()->lookup( syn_name ) );
 }
 
 /**
@@ -266,46 +269,48 @@ SPManager::disconnect( index sgid, Node* target, thread target_thread, index syn
  */
 void
 SPManager::disconnect( GIDCollection& sources,
-                       GIDCollection& targets,
-                       DictionaryDatum& conn_spec,
-                       DictionaryDatum& syn_spec )
+  GIDCollection& targets,
+  DictionaryDatum& conn_spec,
+  DictionaryDatum& syn_spec )
 {
   ConnBuilder* cb = NULL;
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
-  
+
   if ( !conn_spec->known( names::rule ) )
     throw BadProperty( "Disconnection spec must contain disconnection rule." );
   const std::string rule_name = ( *conn_spec )[ names::rule ];
-  
+
   if ( not kernel().connection_builder_manager.get_connruledict()->known( rule_name ) )
     throw BadProperty( "Unknown connectivty rule: " + rule_name );
-  
+
   if ( not sp_conn_builders_.empty() )
   { // Implement a getter for sp_conn_builders_
-    
-    for (
-         std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin();
-         i != sp_conn_builders_.end();
-         i++ )
+
+    for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin();
+          i != sp_conn_builders_.end();
+          i++ )
     {
       std::string synModel = getValue< std::string >( syn_spec, names::model );
-      if ( ( *i )->get_synapse_model() == ( index )( kernel().model_manager.get_synapsedict()->lookup( synModel ) ) )
+      if ( ( *i )->get_synapse_model()
+        == ( index )( kernel().model_manager.get_synapsedict()->lookup( synModel ) ) )
       {
-        cb = kernel().connection_builder_manager.get_conn_builder( rule_name, sources, targets, conn_spec, syn_spec );
+        cb = kernel().connection_builder_manager.get_conn_builder(
+          rule_name, sources, targets, conn_spec, syn_spec );
         cb->set_post_synaptic_element_name( ( *i )->get_post_synaptic_element_name() );
         cb->set_pre_synaptic_element_name( ( *i )->get_pre_synaptic_element_name() );
       }
     }
   }
   else
-    cb = kernel().connection_builder_manager.get_conn_builder( rule_name, sources, targets, conn_spec, syn_spec );
+    cb = kernel().connection_builder_manager.get_conn_builder(
+      rule_name, sources, targets, conn_spec, syn_spec );
   assert( cb != 0 );
-  
+
   // at this point, all entries in conn_spec and syn_spec have been checked
-  ALL_ENTRIES_ACCESSED(*conn_spec, "Connect", "Unread dictionary entries: " );
-  ALL_ENTRIES_ACCESSED(*syn_spec, "Connect", "Unread dictionary entries: " );
-  
+  ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries: " );
+
   cb->disconnect();
   delete cb;
 }
@@ -559,7 +564,7 @@ SPManager::delete_synapse( index sgid,
     thread target_thread = target->get_thread();
     if ( tid == target_thread )
     {
-      kernel().connection_builder_manager.disconnect( *target, sgid, target_thread, syn_id);
+      kernel().connection_builder_manager.disconnect( *target, sgid, target_thread, syn_id );
 
       target->connect_synaptic_element( se_post_name, -1 );
     }
@@ -655,7 +660,7 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
   for ( node_it = 0; node_it < n_nodes; node_it++ )
   {
     gid = kernel().node_manager.get_node_by_index( node_it )->get_gid();
-    n   = kernel().node_manager.get_node_by_index( node_it )->get_synaptic_elements_vacant( se_name );
+    n = kernel().node_manager.get_node_by_index( node_it )->get_synaptic_elements_vacant( se_name );
     if ( n > 0 )
     {
       ( *vacant_id_it ) = gid;

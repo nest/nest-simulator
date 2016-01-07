@@ -498,8 +498,8 @@ nest::MPIManager::communicate( std::vector< double_t >& send_buffer,
 
 void
 nest::MPIManager::communicate( std::vector< ulong_t >& send_buffer,
-                                std::vector< ulong_t >& recv_buffer,
-                                std::vector< int >& displacements )
+  std::vector< ulong_t >& recv_buffer,
+  std::vector< int >& displacements )
 {
   // get size of buffers
   std::vector< int > n_nodes( num_processes_ );
@@ -509,10 +509,10 @@ nest::MPIManager::communicate( std::vector< ulong_t >& send_buffer,
   displacements.resize( num_processes_, 0 );
   for ( int i = 1; i < num_processes_; ++i )
     displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
-  
+
   // Calculate total number of node data items to be gathered.
   size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
-  
+
   if ( n_globals != 0 )
   {
     recv_buffer.resize( n_globals, 0.0 );
@@ -526,8 +526,8 @@ nest::MPIManager::communicate( std::vector< ulong_t >& send_buffer,
 
 void
 nest::MPIManager::communicate( std::vector< int_t >& send_buffer,
-                                std::vector< int_t >& recv_buffer,
-                                std::vector< int >& displacements )
+  std::vector< int_t >& recv_buffer,
+  std::vector< int >& displacements )
 {
   // get size of buffers
   std::vector< int > n_nodes( num_processes_ );
@@ -537,10 +537,10 @@ nest::MPIManager::communicate( std::vector< int_t >& send_buffer,
   displacements.resize( num_processes_, 0 );
   for ( int i = 1; i < num_processes_; ++i )
     displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
-  
+
   // Calculate total number of node data items to be gathered.
   size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
-  
+
   if ( n_globals != 0 )
   {
     recv_buffer.resize( n_globals, 0.0 );
@@ -595,26 +595,28 @@ nest::MPIManager::communicate_Allreduce_sum_in_place( double_t buffer )
 void
 nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< double_t >& buffer )
 {
-  MPI_Allreduce( MPI_IN_PLACE, &buffer[ 0 ], buffer.size(), MPI_Type< double_t >::type, MPI_SUM, comm );
+  MPI_Allreduce(
+    MPI_IN_PLACE, &buffer[ 0 ], buffer.size(), MPI_Type< double_t >::type, MPI_SUM, comm );
 }
 
 void
 nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< int_t >& buffer )
 {
-  MPI_Allreduce( MPI_IN_PLACE, &buffer[ 0 ], buffer.size(), MPI_Type< int_t >::type, MPI_SUM, comm );
+  MPI_Allreduce(
+    MPI_IN_PLACE, &buffer[ 0 ], buffer.size(), MPI_Type< int_t >::type, MPI_SUM, comm );
 }
 
 void
 nest::MPIManager::communicate_Allreduce_sum( std::vector< double_t >& send_buffer,
-                                              std::vector< double_t >& recv_buffer )
+  std::vector< double_t >& recv_buffer )
 {
   assert( recv_buffer.size() == send_buffer.size() );
   MPI_Allreduce( &send_buffer[ 0 ],
-                &recv_buffer[ 0 ],
-                send_buffer.size(),
-                MPI_Type< double_t >::type,
-                MPI_SUM,
-                comm );
+    &recv_buffer[ 0 ],
+    send_buffer.size(),
+    MPI_Type< double_t >::type,
+    MPI_SUM,
+    comm );
 }
 
 void
@@ -638,8 +640,7 @@ nest::MPIManager::synchronize()
 void
 nest::MPIManager::test_link( int sender, int receiver )
 {
-  assert( sender < get_num_processes()
-    && receiver < get_num_processes() );
+  assert( sender < get_num_processes() && receiver < get_num_processes() );
 
   if ( get_num_processes() > 1 )
   {
@@ -697,8 +698,7 @@ nest::MPIManager::time_communicate( int num_bytes, int samples )
   if ( packet_length < 1 )
     packet_length = 1;
   std::vector< uint_t > test_send_buffer( packet_length );
-  std::vector< uint_t > test_recv_buffer(
-    packet_length * get_num_processes() );
+  std::vector< uint_t > test_recv_buffer( packet_length * get_num_processes() );
   // start time measurement here
   Stopwatch foo;
   foo.start();
@@ -725,8 +725,7 @@ nest::MPIManager::time_communicatev( int num_bytes, int samples )
   if ( packet_length < 1 )
     packet_length = 1;
   std::vector< uint_t > test_send_buffer( packet_length );
-  std::vector< uint_t > test_recv_buffer(
-    packet_length * get_num_processes() );
+  std::vector< uint_t > test_recv_buffer( packet_length * get_num_processes() );
   std::vector< int > n_nodes( get_num_processes(), packet_length );
   std::vector< int > displacements( get_num_processes(), 0 );
 
@@ -754,8 +753,7 @@ nest::MPIManager::time_communicate_offgrid( int num_bytes, int samples )
   if ( packet_length < 1 )
     packet_length = 1;
   std::vector< OffGridSpike > test_send_buffer( packet_length );
-  std::vector< OffGridSpike > test_recv_buffer(
-    packet_length * get_num_processes() );
+  std::vector< OffGridSpike > test_recv_buffer( packet_length * get_num_processes() );
   // start time measurement here
   Stopwatch foo;
   foo.start();
@@ -779,8 +777,8 @@ nest::MPIManager::time_communicate_alltoall( int num_bytes, int samples )
   if ( get_num_processes() == 1 )
     return 0.0;
   uint_t packet_length = num_bytes / sizeof( uint_t ); // this size should be sent to each process
-  uint_t total_packet_length = packet_length
-    * get_num_processes(); // total size of send and receive buffers
+  uint_t total_packet_length =
+    packet_length * get_num_processes(); // total size of send and receive buffers
   if ( total_packet_length < 1 )
     total_packet_length = 1;
   std::vector< uint_t > test_send_buffer( total_packet_length );
@@ -810,8 +808,8 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
   if ( get_num_processes() == 1 )
     return 0.0;
   uint_t packet_length = num_bytes / sizeof( uint_t ); // this size should be sent to each process
-  uint_t total_packet_length = packet_length
-    * get_num_processes(); // total size of send and receive buffers
+  uint_t total_packet_length =
+    packet_length * get_num_processes(); // total size of send and receive buffers
   if ( total_packet_length < 1 )
     total_packet_length = 1;
   std::vector< uint_t > test_send_buffer( total_packet_length );
@@ -960,8 +958,8 @@ nest::MPIManager::communicate( std::vector< double_t >& send_buffer,
 
 void
 nest::MPIManager::communicate( std::vector< ulong_t >& send_buffer,
-                                std::vector< ulong_t >& recv_buffer,
-                                std::vector< int >& displacements )
+  std::vector< ulong_t >& recv_buffer,
+  std::vector< int >& displacements )
 {
   displacements.resize( num_processes_, 0 );
   displacements[ 0 ] = 0;
@@ -970,8 +968,8 @@ nest::MPIManager::communicate( std::vector< ulong_t >& send_buffer,
 
 void
 nest::MPIManager::communicate( std::vector< int_t >& send_buffer,
-                                std::vector< int_t >& recv_buffer,
-                                std::vector< int >& displacements )
+  std::vector< int_t >& recv_buffer,
+  std::vector< int >& displacements )
 {
   displacements.resize( num_processes_, 0 );
   displacements[ 0 ] = 0;
@@ -1002,7 +1000,7 @@ nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< int_t >& buff
 
 void
 nest::MPIManager::communicate_Allreduce_sum( std::vector< double_t >& send_buffer,
-                                              std::vector< double_t >& recv_buffer )
+  std::vector< double_t >& recv_buffer )
 {
   recv_buffer.swap( send_buffer );
 }

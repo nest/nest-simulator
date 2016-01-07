@@ -97,7 +97,7 @@ public:
    * @see send_to_targets()
    */
   void send_remote( thread p, SpikeEvent&, const long_t lag = 0 );
-  
+
   void send_remote( thread t, SecondaryEvent& e );
 
   /**
@@ -264,7 +264,7 @@ private:
    * - Third dim: Struct containing GID and offset.
    */
   std::vector< std::vector< std::vector< OffGridSpike > > > offgrid_spike_register_;
-  
+
   /**
    * Buffer to collect the secondary events
    * after serialization.
@@ -378,10 +378,10 @@ EventDeliveryManager::get_slice_modulo( delay d )
 inline void
 EventDeliveryManager::send_remote( thread t, SecondaryEvent& e )
 {
-  
+
   // put the secondary events in a buffer for the remote machines
   size_t old_size = secondary_events_buffer_[ t ].size();
-  
+
   secondary_events_buffer_[ t ].resize( old_size + e.size() );
   std::vector< uint_t >::iterator it = secondary_events_buffer_[ t ].begin() + old_size;
   e >> it;

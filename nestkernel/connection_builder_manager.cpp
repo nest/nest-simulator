@@ -166,8 +166,9 @@ nest::ConnectionBuilderManager::set_synapse_status( index gid,
   kernel().model_manager.assert_valid_syn_id( syn_id );
   try
   {
-    validate_pointer( connections_[ tid ].get( gid ) )->set_synapse_status(
-      syn_id, kernel().model_manager.get_synapse_prototype( syn_id, tid ), dict, p );
+    validate_pointer( connections_[ tid ].get( gid ) )
+      ->set_synapse_status(
+        syn_id, kernel().model_manager.get_synapse_prototype( syn_id, tid ), dict, p );
   }
   catch ( BadProperty& e )
   {
@@ -251,13 +252,14 @@ nest::ConnectionBuilderManager::get_user_set_delay_extrema() const
 }
 
 nest::ConnBuilder*
-nest::ConnectionBuilderManager::get_conn_builder(const std::string& name, const GIDCollection& sources,
-                                           const GIDCollection& targets,
-                                           const DictionaryDatum& conn_spec,
-                                           const DictionaryDatum& syn_spec)
+nest::ConnectionBuilderManager::get_conn_builder( const std::string& name,
+  const GIDCollection& sources,
+  const GIDCollection& targets,
+  const DictionaryDatum& conn_spec,
+  const DictionaryDatum& syn_spec )
 {
   const size_t rule_id = connruledict_->lookup( name );
-  return connbuilder_factories_.at( rule_id )->create(sources, targets, conn_spec, syn_spec);
+  return connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_spec );
 }
 
 void
@@ -303,11 +305,11 @@ nest::ConnectionBuilderManager::update_delay_extrema_()
 {
   min_delay_ = get_min_delay_time_().get_steps();
   max_delay_ = get_max_delay_time_().get_steps();
-  
+
   // If no min/max_delay is set explicitly (SetKernelStatus), then the default
   // delay used by the SPBuilders have to be respected for the min/max_delay.
-  min_delay_ = std::min(min_delay_, kernel().sp_manager.builder_min_delay());
-  max_delay_ = std::max(max_delay_, kernel().sp_manager.builder_max_delay());
+  min_delay_ = std::min( min_delay_, kernel().sp_manager.builder_min_delay() );
+  max_delay_ = std::max( max_delay_, kernel().sp_manager.builder_max_delay() );
 
   if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
@@ -549,9 +551,12 @@ nest::ConnectionBuilderManager::connect_( Node& s,
  * @param syn_id type of synapse
  */
 void
-nest::ConnectionBuilderManager::disconnect( Node& target, index sgid, thread target_thread, index syn_id )
+nest::ConnectionBuilderManager::disconnect( Node& target,
+  index sgid,
+  thread target_thread,
+  index syn_id )
 {
-  
+
   if ( kernel().node_manager.is_local_gid( target.get_gid() ) )
   {
     // get the ConnectorBase corresponding to the source
@@ -1465,9 +1470,9 @@ nest::ConnectionBuilderManager::send( thread t, index sgid, Event& e )
 void
 nest::ConnectionBuilderManager::send_secondary( thread t, SecondaryEvent& e )
 {
-  
+
   index sgid = e.get_sender_gid();
-  
+
   if ( sgid < connections_[ t ].size() ) // probably test only fails, if there are no connections
   {
     ConnectorBase* p = connections_[ t ].get( sgid );
@@ -1477,14 +1482,14 @@ nest::ConnectionBuilderManager::send_secondary( thread t, SecondaryEvent& e )
       {
         // erase 2 least significant bits to obtain the correct pointer
         p = validate_pointer( p );
-        
+
         if ( p->homogeneous_model() )
         {
           if ( e.supports_syn_id( p->get_syn_id() ) )
-            p->send( e, t, kernel().model_manager.get_synapse_prototypes(t) );
+            p->send( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
         }
         else
-          p->send_secondary( e, t, kernel().model_manager.get_synapse_prototypes(t) );
+          p->send_secondary( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
       }
     }
   }
@@ -1697,7 +1702,8 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
       for ( index s = 0; s < source->size(); ++s )
       {
         size_t source_id = source->get( s );
-        if ( source_id < connections_[ t ].size() && validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
+        if ( source_id < connections_[ t ].size()
+          && validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
         {
           if ( target == 0 )
           {
@@ -1710,7 +1716,8 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
             {
               size_t target_id = target->get( t_id );
               validate_pointer( connections_[ t ].get( source_id ) )
-                ->get_connections( source_id, target_id, t, syn_id, synapse_label, conns_in_thread );
+                ->get_connections(
+                  source_id, target_id, t, syn_id, synapse_label, conns_in_thread );
             }
           }
         }
@@ -1731,38 +1738,38 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
 
 void
 nest::ConnectionBuilderManager::get_sources( std::vector< index > targets,
-                             std::vector< std::vector< index > >& sources,
-                             index synapse_model )
+  std::vector< std::vector< index > >& sources,
+  index synapse_model )
 {
   thread thread_id;
   index source_gid;
   std::vector< std::vector< index > >::iterator source_it;
   std::vector< index >::iterator target_it;
   size_t num_connections;
-  
+
   sources.resize( targets.size() );
   for ( std::vector< std::vector< index > >::iterator i = sources.begin(); i != sources.end(); i++ )
   {
     ( *i ).clear();
   }
-  
+
   // loop over the threads
   for ( tVSConnector::iterator it = connections_.begin(); it != connections_.end(); ++it )
   {
     thread_id = it - connections_.begin();
     // loop over the sources (return the corresponding ConnectorBase)
     for ( tSConnector::nonempty_iterator iit = it->nonempty_begin(); iit != it->nonempty_end();
-         ++iit )
+          ++iit )
     {
       source_gid = connections_[ thread_id ].get_pos( iit );
-      
+
       // loop over the targets/sources
       source_it = sources.begin();
       target_it = targets.begin();
       for ( ; target_it != targets.end(); target_it++, source_it++ )
       {
         num_connections =
-        validate_pointer( *iit )->get_num_connections( *target_it, thread_id, synapse_model );
+          validate_pointer( *iit )->get_num_connections( *target_it, thread_id, synapse_model );
         for ( size_t c = 0; c < num_connections; c++ )
         {
           ( *source_it ).push_back( source_gid );
@@ -1774,8 +1781,8 @@ nest::ConnectionBuilderManager::get_sources( std::vector< index > targets,
 
 void
 nest::ConnectionBuilderManager::get_targets( std::vector< index > sources,
-                             std::vector< std::vector< index > >& targets,
-                             index synapse_model )
+  std::vector< std::vector< index > >& targets,
+  index synapse_model )
 {
   thread thread_id;
   std::vector< index >::iterator source_it;
@@ -1785,7 +1792,7 @@ nest::ConnectionBuilderManager::get_targets( std::vector< index > sources,
   {
     ( *i ).clear();
   }
-  
+
   for ( tVSConnector::iterator it = connections_.begin(); it != connections_.end(); ++it )
   {
     thread_id = it - connections_.begin();
@@ -1797,7 +1804,7 @@ nest::ConnectionBuilderManager::get_targets( std::vector< index > sources,
       if ( ( *it ).get( *source_it ) != 0 )
       {
         validate_pointer( ( *it ).get( *source_it ) )
-        ->get_target_gids( ( *target_it ), thread_id, synapse_model );
+          ->get_target_gids( ( *target_it ), thread_id, synapse_model );
       }
     }
   }

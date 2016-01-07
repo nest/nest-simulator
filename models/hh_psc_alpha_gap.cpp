@@ -376,8 +376,8 @@ nest::hh_psc_alpha_gap::init_buffers_()
   // and unsigned int Scheduler::min_delay() (number of simulation time steps per min_delay step)
 
   // resize interpolation_coefficients depending on interpolation order
-  const size_t quantity =
-    kernel().connection_builder_manager.get_min_delay() * ( kernel().simulation_manager.get_prelim_interpolation_order() + 1 );
+  const size_t quantity = kernel().connection_builder_manager.get_min_delay()
+    * ( kernel().simulation_manager.get_prelim_interpolation_order() + 1 );
 
   B_.interpolation_coefficients.resize( quantity, 0.0 );
 
@@ -446,7 +446,8 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
 
   // allocate memory to store the new interpolation coefficients
   // to be sent by gap event
-  const size_t quantity = kernel().connection_builder_manager.get_min_delay() * ( interpolation_order + 1 );
+  const size_t quantity =
+    kernel().connection_builder_manager.get_min_delay() * ( interpolation_order + 1 );
   std::vector< double_t > new_coefficients( quantity, 0.0 );
 
   // parameters needed for piecewise interpolation
@@ -599,10 +600,12 @@ nest::hh_psc_alpha_gap::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() ); // current input, keep negative weight
 }
 
@@ -615,7 +618,8 @@ nest::hh_psc_alpha_gap::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

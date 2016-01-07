@@ -151,8 +151,6 @@ public:
    */
   Node* get_node( index, thread thr = 0 );
 
-  Node* get_node_by_index( size_t );
-
   /**
    * Return the Subnet that contains the thread siblings.
    * @param i Index of the specified Node.
@@ -286,12 +284,6 @@ inline bool
 NodeManager::is_local_gid( index gid ) const
 {
   return local_nodes_.get_node_by_gid( gid ) != 0;
-}
-
-inline Node*
-NodeManager::get_node_by_index( size_t i )
-{
-  return local_nodes_.get_node_by_index( i );
 }
 
 inline Node*

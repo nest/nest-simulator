@@ -110,6 +110,7 @@ public:
     synindex syn_id,
     double_t delay = numerics::nan,
     double_t weight = numerics::nan ) = 0;
+
   virtual ConnectorBase* add_connection( Node& src,
     Node& tgt,
     ConnectorBase* conn,

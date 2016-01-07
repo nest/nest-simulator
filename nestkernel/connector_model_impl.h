@@ -146,6 +146,12 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   updateValue< long_t >( d, names::music_channel, receptor_type_ );
 #endif
 
+  // If the parameter dict d contains /delay, this should set the delay
+  // on the default connection, but not affect the actual min/max_delay
+  // until a connection with that default delay is created. Since the
+  // set_status calls on common properties and default connection may
+  // modify min/max delay, we need to preserve and restore.
+
   kernel().connection_builder_manager.get_delay_checker().freeze_delay_update();
 
   cp_.set_status( d, *this );
@@ -163,7 +169,7 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
 {
   // if not used before, check now. Solves bug #138, MH 08-01-08
   // replaces whole delay checking for the default delay, see bug #217, MH 08-04-24
-  // get_default_delay_ must be overridded by derived class to return the correct default delay
+  // get_default_delay_ must be overridden by derived class to return the correct default delay
   // (either from commonprops or default connection)
   if ( default_delay_needs_check_ )
   {

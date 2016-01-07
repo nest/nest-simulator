@@ -330,6 +330,10 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   {
     // case 1 or case 2
 
+    // Already existing pointers of type ConnectorBase contain (in their two lowest bits) the
+    // information if *conn has primary and/or secondary connections. Before the pointer can
+    // be used as a valid pointer this information needs to be read and the original pointer
+    // needs to be restored by calling validate_pointer( conn ).
     bool b_has_primary = has_primary( conn );
     bool b_has_secondary = has_secondary( conn );
 
@@ -347,8 +351,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
         vector_like< ConnectionT >* vc = static_cast< vector_like< ConnectionT >* >( conn );
 
         // we do not need to change the flags is_primary or is_secondary, because the new synapse is
-        // of the
-        // same type as the existing ones
+        // of the same type as the existing ones
         conn = pack_pointer( &vc->push_back( c ), b_has_primary, b_has_secondary );
       }
       else

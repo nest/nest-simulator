@@ -6,6 +6,7 @@ set(nestkernel_sources
   sibling_container.h sibling_container.cpp
   subnet.h subnet.cpp
   connection.h
+  connection_label.h
   common_properties_hom_w.h
   syn_id_delay.h
   connector_base.h connector_base.cpp
@@ -46,12 +47,16 @@ set(nestkernel_sources
   music_event_handler.h music_event_handler.cpp
   music_manager.cpp music_manager.h
   nest.h nest.cpp
+  synaptic_element.h synaptic_element.cpp
+  growth_curve.h growth_curve.cpp
+  growth_curve_factory.h
   kernel_manager.h kernel_manager.cpp
   vp_manager.h vp_manager_impl.h vp_manager.cpp 
   io_manager.h io_manager.cpp 
   mpi_manager.h mpi_manager_impl.h mpi_manager.cpp 
   simulation_manager.h simulation_manager.cpp 
-  connection_builder_manager.h connection_builder_manager.cpp 
+  connection_builder_manager.h connection_builder_manager.cpp
+  sp_manager.h sp_manager_impl.h sp_manager.cpp
   delay_checker.h delay_checker.cpp 
   rng_manager.h rng_manager.cpp 
   event_delivery_manager.h event_delivery_manager_impl.h

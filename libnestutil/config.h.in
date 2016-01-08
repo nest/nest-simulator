@@ -88,6 +88,9 @@
 /* "Define if isnan() is available" */
 #cmakedefine HAVE_ISNAN
 
+/* "Define if std::isnan() is available" */
+#cmakedefine HAVE_STD_ISNAN
+
 /* define for istream */
 #cmakedefine HAVE_ISTREAM
 
@@ -123,6 +126,9 @@
 
 /* "Define if NAN is available" */
 #cmakedefine HAVE_NAN
+
+/* "Define if std::nan(NULL) is available" */
+#cmakedefine HAVE_STD_NAN
 
 /* Define to 1 if you have the `opendir' function. */
 #cmakedefine HAVE_OPENDIR

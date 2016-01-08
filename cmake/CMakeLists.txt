@@ -7,7 +7,7 @@
 # program and return the exit code.
 
 ####### NEST_EXITCODE_ABORT ########
-message("Check the abort exitcode.")
+message(STATUS "Check the abort exitcode.")
 set(ABORT_ERR "")
 try_compile(COMPILE_VAR
   ${CMAKE_BINARY_DIR}
@@ -28,10 +28,10 @@ if(COMPILE_VAR AND NOT CMAKE_CROSSCOMPILING)
   endif()
 endif()
 set(NEST_EXITCODE_ABORT ${ABORT_ERR} CACHE STRING "Abort exit code." FORCE)
-message("Check the abort exitcode. ${NEST_EXITCODE_ABORT}")
+message(STATUS "Check the abort exitcode. ${NEST_EXITCODE_ABORT}")
 
 ####### NEST_EXITCODE_SEGFAULT ########
-message("Check the segmentation fault exitcode.")
+message(STATUS "Check the segmentation fault exitcode.")
 set(SEG_ERR "")
 try_compile(COMPILE_VAR
   ${CMAKE_BINARY_DIR}
@@ -52,10 +52,10 @@ if(COMPILE_VAR AND NOT CMAKE_CROSSCOMPILING)
   endif()
 endif()
 set(NEST_EXITCODE_SEGFAULT ${SEG_ERR} CACHE STRING "Segmentation exit code." FORCE)
-message("Check the segmentation fault exitcode. ${NEST_EXITCODE_SEGFAULT}")
+message(STATUS "Check the segmentation fault exitcode. ${NEST_EXITCODE_SEGFAULT}")
 
 ####### HAVE_CMATH_MAKROS_IGNORED ########
-message("Check whether the compiler ignores cmath makros.")
+message(STATUS "Check whether the compiler ignores cmath makros.")
 try_compile(COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/CMathMacros.cxx
@@ -66,10 +66,10 @@ if(COMPILE_RESULT)
 else()
   set(HAVE_CMATH_MAKROS_IGNORED ON CACHE BOOL "" FORCE)
 endif()
-message("Check whether the compiler ignores cmath makros. ${HAVE_SIGUSR_IGNORED}")
+message(STATUS "Check whether the compiler ignores cmath makros. ${HAVE_SIGUSR_IGNORED}")
 
 ####### HAVE_ALPHA_CXX_STD_BUG ########
-message("Check whether the compiler does NOT include <*.h> headers ISO conformant.")
+message(STATUS "Check whether the compiler does NOT include <*.h> headers ISO conformant.")
 try_compile(COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/AlphaCXXBug.cxx
@@ -80,10 +80,10 @@ if(COMPILE_RESULT)
 else()
   set(HAVE_ALPHA_CXX_STD_BUG ON CACHE BOOL "" FORCE)
 endif()
-message("Check whether the compiler does NOT include <*.h> headers ISO conformant. ${HAVE_ALPHA_CXX_STD_BUG}")
+message(STATUS "Check whether the compiler does NOT include <*.h> headers ISO conformant. ${HAVE_ALPHA_CXX_STD_BUG}")
 
 ####### HAVE_SIGUSR_IGNORED ########
-message("Check whether the compiler respects symbolic signal names in signal.h.")
+message(STATUS "Check whether the compiler respects symbolic signal names in signal.h.")
 try_compile(COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/SigUsrIgnored.cxx
@@ -94,10 +94,10 @@ if(COMPILE_RESULT)
 else()
   set(HAVE_SIGUSR_IGNORED ON CACHE BOOL "" FORCE)
 endif()
-message("Check whether the compiler respects symbolic signal names in signal.h. ${HAVE_SIGUSR_IGNORED}")
+message(STATUS "Check whether the compiler respects symbolic signal names in signal.h. ${HAVE_SIGUSR_IGNORED}")
 
 ####### HAVE_STATIC_TEMPLATE_DECLARATION_FAIL ########
-message("Check whether static template member declaration succeeds.")
+message(STATUS "Check whether static template member declaration succeeds.")
 try_compile(COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/StaticTemplateDeclaration.cxx
@@ -108,10 +108,10 @@ if(COMPILE_RESULT)
 else()
   set(HAVE_STATIC_TEMPLATE_DECLARATION_FAIL ON CACHE BOOL "" FORCE)
 endif()
-message("Check whether static template member declaration succeeds. ${HAVE_STATIC_TEMPLATE_DECLARATION_FAIL}")
+message(STATUS "Check whether static template member declaration succeeds. ${HAVE_STATIC_TEMPLATE_DECLARATION_FAIL}")
 
 ####### HAVE_STL_VECTOR_CAPACITY_BASE_UNITY ########
-message("Check for STL vector capacity base unity.")
+message(STATUS "Check for STL vector capacity base unity.")
 set(RUN_RESULT 0)
 set(RUN_RESULT__TRYRUN_OUTPUT "")
 try_run(RUN_RESULT COMPILE_RESULT
@@ -124,10 +124,10 @@ if(RUN_RESULT EQUAL 0)
 else()
   set(HAVE_STL_VECTOR_CAPACITY_BASE_UNITY OFF CACHE BOOL "" FORCE)
 endif()
-message("Check for STL vector capacity base unity. ${HAVE_STL_VECTOR_CAPACITY_BASE_UNITY}")
+message(STATUS "Check for STL vector capacity base unity. ${HAVE_STL_VECTOR_CAPACITY_BASE_UNITY}")
 
 ####### HAVE_STL_VECTOR_CAPACITY_DOUBLING ########
-message("Check for STL vector capacity doubling strategy.")
+message(STATUS "Check for STL vector capacity doubling strategy.")
 try_run(RUN_RESULT COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/VectorCapacityDoubling.cxx
@@ -138,7 +138,7 @@ if(RUN_RESULT EQUAL 0)
 else()
   set(HAVE_STL_VECTOR_CAPACITY_DOUBLING OFF CACHE BOOL "" FORCE)
 endif()
-message("Check for STL vector capacity doubling strategy. ${HAVE_STL_VECTOR_CAPACITY_DOUBLING}")
+message(STATUS "Check for STL vector capacity doubling strategy. ${HAVE_STL_VECTOR_CAPACITY_DOUBLING}")
 
 
 # Tests for a an internal compiler error observed in IBM xlC.
@@ -147,7 +147,7 @@ message("Check for STL vector capacity doubling strategy. ${HAVE_STL_VECTOR_CAPA
 #
 # @author Hans E. Plesser
 
-message("Check whether the compiler fails with ICE.")
+message(STATUS "Check whether the compiler fails with ICE.")
 try_compile(COMPILE_RESULT
   ${CMAKE_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/ICE.cxx
@@ -158,4 +158,32 @@ if(COMPILE_RESULT)
 else()
   set(HAVE_XLC_ICE_ON_USING ON CACHE BOOL "" FORCE)
 endif()
-message("Check whether the compiler fails with ICE. ${HAVE_XLC_ICE_ON_USING}")
+message(STATUS "Check whether the compiler fails with ICE. ${HAVE_XLC_ICE_ON_USING}")
+
+####### Test if ::nan(...) is defined #######
+message(STATUS "Check if ::nan is available from cmath.")
+try_compile(COMPILE_RESULT
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/std_nan.cxx
+  OUTPUT_VARIABLE OUTPUT
+)
+if(COMPILE_RESULT)
+  set(HAVE_STD_NAN ON CACHE BOOL "" FORCE)
+else()
+  set(HAVE_STD_NAN OFF CACHE BOOL "" FORCE)
+endif()
+message(STATUS "Check if ::nan is available from cmath. ${HAVE_STD_NAN}")
+
+####### Test if ::isnan(...) is defined #######
+message(STATUS "Check if ::isnan is available from cmath.")
+try_compile(COMPILE_RESULT
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/CheckFiles/std_isnan.cxx
+  OUTPUT_VARIABLE OUTPUT
+)
+if(COMPILE_RESULT)
+  set(HAVE_STD_ISNAN ON CACHE BOOL "" FORCE)
+else()
+  set(HAVE_STD_ISNAN OFF CACHE BOOL "" FORCE)
+endif()
+message(STATUS "Check if ::isnan is available from cmath. ${HAVE_STD_ISNAN}")

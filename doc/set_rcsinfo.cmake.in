@@ -6,6 +6,6 @@ execute_process(
 
 
 execute_process(
-  COMMAND @SED@ -i "" -e "/^PROJECT_NUMBER/ s/=.*/= @SLI_VERSION@, ${RCSINFO} /" @PKGBUILDDIR@/doc/normaldoc.conf
-  COMMAND @SED@ -i "" -e "/^PROJECT_NUMBER/ s/=.*/= @SLI_VERSION@, ${RCSINFO} /" @PKGBUILDDIR@/doc/fulldoc.conf
+  COMMAND @SED@ -i "" -e "/^PROJECT_NUMBER/ s/=.*/= @NEST_VERSION_VERSION@, ${RCSINFO} /" @PKGBUILDDIR@/doc/normaldoc.conf
+  COMMAND @SED@ -i "" -e "/^PROJECT_NUMBER/ s/=.*/= @NEST_VERSION_VERSION@, ${RCSINFO} /" @PKGBUILDDIR@/doc/fulldoc.conf
 )

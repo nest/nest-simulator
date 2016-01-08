@@ -116,13 +116,16 @@ const long_t long_t_min = LONG_MIN;
  *  Unsigned long type for enumerations.
  */
 typedef size_t index;
-const index invalid_index = std::numeric_limits< index >::max();
+#ifndef SIZE_MAX
+#define SIZE_MAX ((size_t) - 1)
+#endif
+const index invalid_index = SIZE_MAX;
 
 /**
  *  Unsigned char type for enumerations of synapse types.
  */
 typedef unsigned char synindex;
-const synindex invalid_synindex = std::numeric_limits< synindex >::max();
+const synindex invalid_synindex = UCHAR_MAX;
 
 /**
  * Unsigned short type for compact target representation.
@@ -130,7 +133,7 @@ const synindex invalid_synindex = std::numeric_limits< synindex >::max();
  * See Kunkel et al, Front Neuroinform 8:78 (2014).
  */
 typedef unsigned short targetindex; ///< target index into thread local node vector
-const targetindex invalid_targetindex = std::numeric_limits< targetindex >::max();
+const targetindex invalid_targetindex = USHRT_MAX;
 const index max_targetindex = invalid_targetindex - 1;
 
 /**

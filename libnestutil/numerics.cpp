@@ -81,7 +81,7 @@ const double numerics::pi = 3.14159265358979323846264338328;
 #endif
 
 #if defined( HAVE_STD_NAN )
-const double numerics::nan = ::nan( 0 );
+const double numerics::nan = ::nan( "" );
 #elif defined( HAVE_NAN )
 const double numerics::nan = NAN;
 #else

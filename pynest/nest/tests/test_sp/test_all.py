@@ -23,12 +23,12 @@ __author__ = 'naveau'
 import unittest
 import nest
 
-from . import test_synaptic_elements
-from . import test_conn_builder
-from . import test_growth_curves
-from . import test_sp_manager
-from . import test_disconnect
-from . import test_disconnect_multiple
+from nest.tests.test_sp import test_synaptic_elements
+from nest.tests.test_sp import test_conn_builder
+from nest.tests.test_sp import test_growth_curves
+from nest.tests.test_sp import test_sp_manager
+from nest.tests.test_sp import test_disconnect
+from nest.tests.test_sp import test_disconnect_multiple
 
 
 def suite():

@@ -112,6 +112,7 @@
 #include "stdp_triplet_connection.h"
 #include "stdp_dopa_connection.h"
 #include "stdp_pl_connection_hom.h"
+#include "stdp_symmetric_connection.h"
 #include "tsodyks2_connection.h"
 #include "tsodyks_connection.h"
 #include "tsodyks_connection_hom.h"
@@ -478,6 +479,16 @@ ModelsModule::init( SLIInterpreter* )
       "stdp_dopamine_synapse" );
   kernel().model_manager.register_connection_model< STDPDopaConnection< TargetIdentifierIndex > >(
     "stdp_dopamine_synapse_hpc" );
+
+  /* BeginDocumentation
+     Name: stdp_symmetric_synapse_hpc - Variant of stdp_symmetric_synapse with low memory consumption.
+     SeeAlso: synapsedict, stdp_symmetric_synapse
+  */
+  kernel()
+    .model_manager.register_connection_model< STDPSymmetricConnection< TargetIdentifierPtrRport > >(
+      "stdp_symmetric_synapse" );
+  kernel().model_manager.register_connection_model< STDPSymmetricConnection< TargetIdentifierIndex > >(
+    "stdp_symmetric_synapse_hpc" );
 }
 
 } // namespace nest

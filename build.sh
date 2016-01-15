@@ -23,25 +23,23 @@ cat > $HOME/.nestrc <<EOF
     } Function def
 EOF
  
-    CONFIGURE_MPI="--with-mpi"
+    CONFIGURE_MPI="-DWITH-MPI=ON"
 
 else
-    CONFIGURE_MPI="--without-mpi"
+    CONFIGURE_MPI="-DWITH-MPI=OFF"
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
-    CONFIGURE_PYTHON="--with-python"
+    CONFIGURE_PYTHON="-DWITH_PYTHON=ON"
 else
-    CONFIGURE_PYTHON="--without-python"
+    CONFIGURE_PYTHON="-DWITH_PYTHON=OFF"
 fi
 
 if [ "$xGSL" = "1" ] ; then
-    CONFIGURE_GSL="--with-gsl"
+    CONFIGURE_GSL="" #"--with-gsl"
 else
-    CONFIGURE_GSL="--without-gsl"
+    CONFIGURE_GSL="-DGSL_PREFIX=/" #"--without-gsl"
 fi
-
-./bootstrap.sh
 
 NEST_VPATH=build
 NEST_RESULT=result
@@ -161,11 +159,14 @@ rm -rf ./cppcheck
 
 cd "$NEST_VPATH"
 
-../configure \
-    --prefix="$NEST_RESULT"  CC=mpicc CXX=mpic++ \
-    $CONFIGURE_MPI \
-    $CONFIGURE_PYTHON \
-    $CONFIGURE_GSL \
+cmake \
+  -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
+  -DWITH_OPTIMIZE=ON \
+  -DWITH_WARNING=ON \
+  $CONFIGURE_MPI \
+  $CONFIGURE_PYTHON \
+  $CONFIGURE_GSL \
+  ..
 
 make
 make install

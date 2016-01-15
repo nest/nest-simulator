@@ -214,9 +214,6 @@ if __name__ == '__main__':
             if not line:
                 break
 
-            if not bootstrapping_ok and line.startswith('+./bootstrap.sh'):
-                bootstrapping_ok, line = process_until(f, 'Done.')
-
             if not vera_init and line.startswith('+mkdir -p vera_home'):
                 vera_init, line = process_until(f, '+cat')
 
@@ -229,7 +226,7 @@ if __name__ == '__main__':
             if line.startswith('Static analysis on file '):
                 static_analysis.update(process_static_analysis(f, line))
 
-            if not configure_ok and line.startswith('+../configure --prefix='):
+            if not configure_ok and line.startswith('+cmake -DCMAKE_INSTALL_PREFIX='):
                 configure_ok, line = process_until(
                     f, 'You can now build and install NEST with')
 
@@ -246,7 +243,6 @@ if __name__ == '__main__':
                 uploading_results = False
 
     print("\n--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
-    print("Bootstrapping:       " + ("Ok" if bootstrapping_ok else "Error"))
     print("Vera init:           " + ("Ok" if vera_init else "Error"))
     print("Cppcheck init:       " + ("Ok" if cppcheck_init else "Error"))
     print("Changed files:       " + str(changed_files))

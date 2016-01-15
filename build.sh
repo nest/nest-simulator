@@ -23,10 +23,10 @@ cat > $HOME/.nestrc <<EOF
     } Function def
 EOF
  
-    CONFIGURE_MPI="-DWITH-MPI=ON"
+    CONFIGURE_MPI="-DWITH_MPI=ON"
 
 else
-    CONFIGURE_MPI="-DWITH-MPI=OFF"
+    CONFIGURE_MPI="-DWITH_MPI=OFF"
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
@@ -36,9 +36,9 @@ else
 fi
 
 if [ "$xGSL" = "1" ] ; then
-    CONFIGURE_GSL="" #"--with-gsl"
+    CONFIGURE_GSL="-DWITH_GSL=ON"
 else
-    CONFIGURE_GSL="-DGSL_PREFIX=/" #"--without-gsl"
+    CONFIGURE_GSL="-DWITH_GSL=OFF"
 fi
 
 NEST_VPATH=build

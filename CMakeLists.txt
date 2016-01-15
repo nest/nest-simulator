@@ -194,7 +194,7 @@ option( LIBNEUROSIM "Request the use of libneurosim; optionally give the directo
 set( WITH_OPTIMIZE OFF CACHE STRING "Enable user defined optimizations. [default OFF, when ON, '-O3']" )
 set( WITH_WARNING ON CACHE STRING "Enable user defined warnings. [default ON, when ON '-Wall']" )
 set( WITH_DEBUG OFF CACHE STRING "Enable user defined debug flags. [default OFF, when ON '-g']" )
-option( GSL_PREFIX "Prefix where GSL is installed. (optional)" OFF )
+option( WITH_GSL "Find a gsl library [default=ON]. To set a specific gsl installation, set install path." ON)
 option( WITH_READLINE "Find a readline library [default=ON]. To set a specific readline, set install path." ON )
 option( WITH_OPENMP "Enable OpenMP multithreading [default=ON]. Optional: set OMP flag." ON )
 option( WITH_PYTHON "Find a Python interpreter [default=ON]. To ignore the Python set to OFF. To set a specific Python, set path." ON )
@@ -403,26 +403,32 @@ else ()
 endif ()
 
 # GSL finding
-if ( GSL_PREFIX )
-  # if set, use this prefix
-  set( GSL_ROOT_DIR ${GSL_PREFIX} )
-endif ( GSL_PREFIX )
-
-find_package( GSL )
-
-if ( GSL_FOUND )
-  set( HAVE_GSL ON )
-
-  if ( "${GSL_VERSION}" VERSION_GREATER "1.2" )
-    set( HAVE_GSL_1_2 ON )
+if ( WITH_GSL )
+  if ( NOT ${WITH_GSL} STREQUAL "ON" )
+    # if set, use this prefix
+    set( GSL_ROOT_DIR ${WITH_GSL} )
   endif ()
 
-  if ( "${GSL_VERSION}" VERSION_GREATER "1.11" )
-    set( HAVE_GSL_1_11 ON )
-  endif ()
-  include_directories( ${GSL_INCLUDE_DIRS} )
-  link_libraries( ${GSL_LIBRARIES} )
-endif ( GSL_FOUND )
+  find_package( GSL )
+
+  if ( GSL_FOUND )
+    set( HAVE_GSL ON )
+
+    if ( "${GSL_VERSION}" VERSION_GREATER "1.2" )
+      set( HAVE_GSL_1_2 ON )
+    endif ()
+
+    if ( "${GSL_VERSION}" VERSION_GREATER "1.11" )
+      set( HAVE_GSL_1_11 ON )
+    endif ()
+    include_directories( ${GSL_INCLUDE_DIRS} )
+    link_libraries( ${GSL_LIBRARIES} )
+  elseif ( GSL_FOUND )
+    set( HAVE_GSL OFF )
+    set( HAVE_GSL_1_2 OFF )
+    set( HAVE_GSL_1_11 OFF )
+  endif ( GSL_FOUND )
+endif ( WITH_GSL )
 
 # libneurosim
 if ( LIBNEUROSIM )

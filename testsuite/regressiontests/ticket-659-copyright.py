@@ -35,6 +35,7 @@ except KeyError:
 exclude_dirs = [
     'libltdl',
     '.git',
+    'CMakeFiles',
 ]
 
 exclude_files = [

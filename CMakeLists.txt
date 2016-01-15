@@ -671,16 +671,26 @@ configure_file(
 ##################           Custom Global Targets            ##################
 ################################################################################
 
-add_custom_target( installcheck
-    COMMAND ${CMAKE_MAKE_PROGRAM} install
-    COMMAND export PATH="${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}:$ENV{PATH}" &&
-    export PYTHON="${PYTHON}" &&
-    export PYTHONPATH="${PYEXECDIR}:$ENV{PYTHONPATH}" &&
-    export exec_prefix="${CMAKE_INSTALL_PREFIX}" &&
-    ${PKGDATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
-    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-    COMMENT "Execute NEST's testsuite...."
-    )
+if ( HAVE_PYTHON )
+  add_custom_target( installcheck
+      #COMMAND ${CMAKE_MAKE_PROGRAM} install
+      COMMAND export PATH="${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}:$ENV{PATH}" &&
+      export PYTHON="${PYTHON}" &&
+      export PYTHONPATH="${PYEXECDIR}:$ENV{PYTHONPATH}" &&
+      export exec_prefix="${CMAKE_INSTALL_PREFIX}" &&
+      ${PKGDATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
+      WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+      COMMENT "Execute NEST's testsuite...."
+      )
+else ( HAVE_PYTHON )
+  add_custom_target( installcheck
+      #COMMAND ${CMAKE_MAKE_PROGRAM} install
+      COMMAND export PATH="${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}:$ENV{PATH}" &&
+      ${PKGDATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
+      WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+      COMMENT "Execute NEST's testsuite...."
+      )
+endif ( HAVE_PYTHON )
 
 add_custom_target( check
     COMMAND export CTEST_OUTPUT_ON_FAILURE=1 &&

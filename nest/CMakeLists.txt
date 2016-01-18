@@ -45,3 +45,6 @@ install( TARGETS nest nest_lib
     ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
     RUNTIME DESTINATION ${INSTALL_BIN_DIR}
     )
+
+install( FILES sli/models-init.sli
+    DESTINATION ${INSTALL_DATA_DIR}/sli )

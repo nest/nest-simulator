@@ -83,6 +83,15 @@ set( CPACK_PACKAGE_INSTALL_DIRECTORY "NEST ${NEST_VERSION_VERSION}" )
 include( CPack )
 
 ################################################################################
+#################        Do not install into /usr/local        #################
+################################################################################
+
+if ( ${CMAKE_INSTALL_PREFIX} STREQUAL "/usr/local" )
+  # no prefix given?
+  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'? Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
+endif ()
+
+################################################################################
 #################    Check for includes/ functions /symbols    #################
 ################################################################################
 
@@ -904,8 +913,3 @@ message( "please see http://www.nest-simulator.org/frequently_asked_questions" )
 message( "or go to http://www.nest-simulator.org/community to find out how to" )
 message( "join the user mailing list." )
 message( "" )
-
-if ( ${CMAKE_INSTALL_PREFIX} STREQUAL "/usr/local" )
-  # no prefix given?
-  message( WARNING "Are you sure to install into '${CMAKE_INSTALL_PREFIX}'? If not, set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
-endif ()

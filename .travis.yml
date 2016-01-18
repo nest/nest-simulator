@@ -55,7 +55,7 @@ before_install:
   - sudo apt-get install -y python-nose
 
   # static code analysis
-  - sudo apt-get install -y libllvm3.6 clang-format-3.6 vera++
+  - sudo apt-get install -y libllvm3.6 clang-format-3.6 vera++ pep8
 
   # used for building cppcheck-1.69
   - sudo apt-get install -y libpcre3 libpcre3-dev

@@ -196,7 +196,6 @@ if __name__ == '__main__':
 
     script, filename = argv
 
-    bootstrapping_ok = False
     configure_ok = False
     make_ok = False
     make_install_ok = False
@@ -258,8 +257,7 @@ if __name__ == '__main__':
     print_static_analysis(static_analysis)
     print("--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
 
-    if not (bootstrapping_ok and 
-            vera_init and 
+    if not (vera_init and 
             cppcheck_init and 
             configure_ok and 
             make_ok and 

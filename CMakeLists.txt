@@ -210,9 +210,6 @@ option( WITH_PYTHON "Find a Python interpreter [default=ON]. To ignore the Pytho
 option( EXTERNAL_MODULES "External modules to be linked in. Devided by ; ." OFF )
 option( STATIC_LIBRARIES "Build static libraries. [default=no]" OFF )
 option( PS_ARRAYS "Use PS array construction semantics" ON )
-
-# not defined yet
-option( WITH_SCALI "Request compilation with Scali MPI; optionally give directory with Scali installation.[/opt/scali]" OFF )
 option( WITH_MUSIC "Request the use of MUSIC; optionally give the directory, where MUSIC is installed." OFF )
 
 ################################################################################
@@ -852,16 +849,6 @@ message( "  source ${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}/nest_vars.sh" )
 message( "" )
 message( "--------------------------------------------------------------------------------" )
 message( "" )
-
-if ( WITH_SCALI )
-  message( "" )
-  message( "WARNING: We advise against using the SCALI MPI Library for the time being," )
-  message( "WARNING: because of instabilities observed when simulating with 28 or more" )
-  message( "WARNING: processes. We recommend using OpenMPI (www.open-mpi.org) instead!" )
-  message( "" )
-  message( "--------------------------------------------------------------------------------" )
-  message( "" )
-endif ( WITH_SCALI )
 
 if ( HAVE_GSL )
   if ( NOT HAVE_GSL_1_2 )

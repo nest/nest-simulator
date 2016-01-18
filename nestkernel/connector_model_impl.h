@@ -175,8 +175,11 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
   {
     try
     {
-      kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms(
-        default_connection_.get_delay() );
+      if ( has_delay_ )
+      {
+        kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms(
+          default_connection_.get_delay() );
+      }
     }
     catch ( BadDelay& e )
     {
@@ -213,7 +216,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   double_t delay,
   double_t weight )
 {
-  if ( not numerics::is_nan( delay ) )
+  if ( not numerics::is_nan( delay ) && has_delay_ )
     kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
 
   // create a new instance of the default connection
@@ -253,7 +256,10 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 {
   if ( not numerics::is_nan( delay ) )
   {
-    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+    if ( has_delay_ )
+    {
+      kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+    }
 
     if ( p->known( names::delay ) )
       throw BadParameter(
@@ -265,9 +271,16 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     double_t delay = 0.0;
 
     if ( updateValue< double_t >( p, names::delay, delay ) )
-      kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+    {
+      if ( has_delay_ )
+      {
+        kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+      }
+    }
     else
+    {
       used_default_delay();
+    }
   }
 
   // create a new instance of the default connection

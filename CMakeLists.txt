@@ -192,25 +192,39 @@ check_function_exists( opendir "dirent.h" HAVE_OPENDIR )
 ##################         All User Defined options           ##################
 ################################################################################
 
-# will be set in toolchain file
-set( ENABLE_BLUEGENE OFF CACHE STRING "Configure for BlueGene." )
+# Whether to build a 'mostly' static executable and static libraries.
+option( STATIC_LIBRARIES "Build static libraries. [default=no]" OFF )
 
-option( K_COMPUTER "Enable K computer." OFF )
+# change NEST defaults
 set( TICS_PER_MS "1000.0" CACHE STRING "Specify elementary unit of time. [default 1000.0]" )
 set( TICS_PER_STEP "100" CACHE STRING "Specify resolution. [default 100]" )
-option( WITH_MPI "Request compilation with MPI; optionally give directory with MPI installation." OFF )
+option( PS_ARRAYS "Use PS array construction semantics" ON )
+
+# add user modules
+option( EXTERNAL_MODULES "External modules to be linked in. Devided by ; ." OFF )
+
+# connect NEST with external projects
 option( LIBNEUROSIM "Request the use of libneurosim; optionally give the directory, where libneurosim is installed." OFF )
+option( WITH_MUSIC "Request the use of MUSIC; optionally give the directory, where MUSIC is installed." OFF )
+
+# change parallelization scheme
+option( WITH_MPI "Request compilation with MPI; optionally give directory with MPI installation." OFF )
+option( WITH_OPENMP "Enable OpenMP multithreading [default=ON]. Optional: set OMP flag." ON )
+
+# define default libraries
+option( WITH_GSL "Find a gsl library [default=ON]. To set a specific gsl installation, set install path." ON)
+option( WITH_READLINE "Find a readline library [default=ON]. To set a specific readline, set install path." ON )
+option( WITH_PYTHON "Find a Python interpreter [default=ON]. To ignore the Python set to OFF. To set a specific Python, set path." ON )
+
+# additional compile flags
 option( WITH_OPTIMIZE "Enable user defined optimizations. [default OFF, when ON, '-O3']" OFF)
 option( WITH_WARNING "Enable user defined warnings. [default ON, when ON '-Wall']" ON)
 option( WITH_DEBUG "Enable user defined debug flags. [default OFF, when ON '-g']" OFF)
-option( WITH_GSL "Find a gsl library [default=ON]. To set a specific gsl installation, set install path." ON)
-option( WITH_READLINE "Find a readline library [default=ON]. To set a specific readline, set install path." ON )
-option( WITH_OPENMP "Enable OpenMP multithreading [default=ON]. Optional: set OMP flag." ON )
-option( WITH_PYTHON "Find a Python interpreter [default=ON]. To ignore the Python set to OFF. To set a specific Python, set path." ON )
-option( EXTERNAL_MODULES "External modules to be linked in. Devided by ; ." OFF )
-option( STATIC_LIBRARIES "Build static libraries. [default=no]" OFF )
-option( PS_ARRAYS "Use PS array construction semantics" ON )
-option( WITH_MUSIC "Request the use of MUSIC; optionally give the directory, where MUSIC is installed." OFF )
+
+# cross-compiling
+# should be set via toolchain files
+set( ENABLE_BLUEGENE OFF CACHE STRING "Configure for BlueGene." )
+option( K_COMPUTER "Enable K computer." OFF )
 
 ################################################################################
 ##################           Find utility programs            ##################

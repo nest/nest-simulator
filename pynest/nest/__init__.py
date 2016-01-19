@@ -23,7 +23,7 @@
 Initializer of PyNEST.
 """
 
-import sys, os
+import sys, os, readline
 
 # This is a workaround to avoid segmentation faults when importing
 # scipy *after* nest. See https://github.com/numpy/numpy/issues/2521

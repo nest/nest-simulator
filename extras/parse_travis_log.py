@@ -74,9 +74,8 @@ def process_changed_files(f):
             return False, line
 
         if line.startswith('+file_names='):
-            return (
-              filter(lambda x: x != '', line.strip().split('=')[1].split(' ')),
-              line)
+            return (filter(lambda x: x != '',
+                           line.strip().split('=')[1].split(' ')), line)
 
 
 def process_vera(f, filename):
@@ -368,10 +367,10 @@ if __name__ == '__main__':
     print_pep8(pep8_analysis)
     print("--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
 
-    if not (vera_init and 
-            cppcheck_init and 
-            configure_ok and 
-            sum_of_errors == 0 and 
+    if not (vera_init and
+            cppcheck_init and
+            configure_ok and
+            sum_of_errors == 0 and
             make_install_ok and
             make_installcheck_failed == 0 and
             all([i['clang-format']['Ok?']

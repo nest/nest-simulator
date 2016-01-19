@@ -162,6 +162,9 @@ def process_static_analysis(f, line):
         if line.startswith('+echo Static analysis on file '):
             return res
 
+        if line.startswith('+echo Check PEP8 on file '):
+            return res
+
         if line.startswith('+rm -rf ./cppcheck'):
             return res
 
@@ -173,6 +176,35 @@ def process_static_analysis(f, line):
 
         if line.startswith(' - clang-format for '):
             d.update(process_clang_format(f, filename))
+
+def process_pep8(f, line):
+    """
+    Process PEP8 output for a certain file.
+    """
+    # Check PEP8 on file pynest/nest/lib/hl_api_connections.py:
+    filename = line.split(' ')[-1].strip()[0:-1]
+    d = set()
+    res = {filename: d}
+    while True:
+        line = f.readline()
+        if not line:
+            return res
+
+        if line.startswith('+echo Static analysis on file '):
+            return res
+
+        if line.startswith('+echo Check PEP8 on file '):
+            return res
+
+        if line.startswith('+rm -rf ./cppcheck'):
+            return res
+
+        if line.startswith('+echo ' + filename):
+            while True:
+                line = f.readline()
+                if line.startswith('+format_error_files='):
+                    break
+                d.add(line.strip())
 
 
 def print_static_analysis(d):
@@ -215,6 +247,18 @@ def count_warnings_errors(f):
                 error[file_name] = 0
             error[file_name] += 1
 
+
+def print_pep8(d):
+    """
+    Print a well formatted version of the dict returned by process_pep8(f, line).
+    """
+    for k1, v1 in d.iteritems():
+        print(INDENT + ' --' + '-' * len(k1))
+        print(INDENT + ' | ' + k1 + ':')
+        for v2 in v1:
+            print(INDENT + ' | ' + INDENT + v2)
+
+
 if __name__ == '__main__':
     from sys import argv, exit
 
@@ -230,6 +274,7 @@ if __name__ == '__main__':
     cppcheck_init = False
     changed_files = False
     static_analysis = {}
+    pep8_analysis = {}
     uploading_results = True
 
     with open(filename, 'r') as f:
@@ -249,6 +294,9 @@ if __name__ == '__main__':
 
             if line.startswith('Static analysis on file '):
                 static_analysis.update(process_static_analysis(f, line))
+
+            if line.startswith('Check PEP8 on file '):
+                pep8_analysis.update(process_pep8(f, line))
 
             if not configure_ok and line.startswith(
                                             '+cmake -DCMAKE_INSTALL_PREFIX='):
@@ -283,6 +331,7 @@ if __name__ == '__main__':
     print("Cppcheck init:       " + ("Ok" if cppcheck_init else "Error"))
     print("Changed files:       " + str(changed_files))
     print("Formatting:          " + ("Ok" if all([ i['clang-format']['Ok?'] for i in static_analysis.itervalues()]) else "Error"))
+    print("PEP8:                " + ("Ok" if all([ len(v) == 0 for v in pep8_analysis.values()]) else "Error"))
     print("Configure:           " + ("Ok" if configure_ok else "Error"))
     print("Make:                " + ("Ok" if sum_of_errors == 0 else 
                                      "Error(" + str(sum_of_errors) + ")") +
@@ -295,9 +344,13 @@ if __name__ == '__main__':
     print("\nStatic analysis:" )
     print_static_analysis(static_analysis)
 
+
     print("\n\nWarnings:")
     for k, v in actual_warnings.iteritems():
         print(" - {}: {}".format(k, v))
+
+    print("\nPEP8 analysis: (only first occurrence)")
+    print_pep8(pep8_analysis)
     print("--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
 
     if not (vera_init and 
@@ -306,5 +359,6 @@ if __name__ == '__main__':
             sum_of_errors == 0 and 
             make_install_ok and
             make_installcheck_failed == 0 and
-            all([ i['clang-format']['Ok?'] for i in static_analysis.itervalues()])):
+            all([ i['clang-format']['Ok?'] for i in static_analysis.itervalues()]) and
+            all([ len(v) == 0 for v in pep8_analysis.values()])):
         exit(1)

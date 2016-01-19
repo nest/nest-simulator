@@ -243,6 +243,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , have_gsl_name( "have_gsl" )
   , have_music_name( "have_music" )
   , have_libneurosim_name( "have_libneurosim" )
+  , have_sionlib_name( "have_sionlib" )
   , ndebug_name( "ndebug" )
   , exitcodes_name( "exitcodes" )
   , exitcode_success_name( "success" )
@@ -455,6 +456,12 @@ SLIStartup::init( SLIInterpreter* i )
   statusdict->insert( have_libneurosim_name, Token( new BoolDatum( true ) ) );
 #else
   statusdict->insert( have_libneurosim_name, Token( new BoolDatum( false ) ) );
+#endif
+
+#ifdef HAVE_SION
+  statusdict->insert( have_sionlib_name, Token( new BoolDatum( true ) ) );
+#else
+  statusdict->insert( have_sionlib_name, Token( new BoolDatum( false ) ) );
 #endif
 
 #ifdef NDEBUG

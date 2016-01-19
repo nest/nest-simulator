@@ -205,7 +205,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   {
     if ( nprelim < 0 )
       LOG( M_ERROR,
-        "Scheduler::set_status",
+        "Network::set_status",
         "Number of preliminary update iterations must be zero or positive." );
     else
       max_num_prelim_iterations_ = nprelim;
@@ -215,7 +215,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   if ( updateValue< double_t >( d, "prelim_tol", tol ) )
   {
     if ( tol < 0.0 )
-      LOG( M_ERROR, "Scheduler::set_status", "Tolerance must be zero or positive" );
+      LOG( M_ERROR, "Network::set_status", "Tolerance must be zero or positive" );
     else
       prelim_tol_ = tol;
   }
@@ -224,7 +224,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   if ( updateValue< long >( d, "prelim_interpolation_order", interp_order ) )
   {
     if ( ( interp_order < 0 ) || ( interp_order == 2 ) || ( interp_order > 3 ) )
-      LOG( M_ERROR, "Scheduler::set_status", "Interpolation order must be 0, 1, or 3." );
+      LOG( M_ERROR, "Network::set_status", "Interpolation order must be 0, 1, or 3." );
     else
       prelim_interpolation_order_ = interp_order;
   }

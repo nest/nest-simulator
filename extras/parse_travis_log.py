@@ -29,6 +29,7 @@ adapting this script.
 
 INDENT = "  "
 
+
 def process_until(f, final):
     """
     Run through the file f until a stripped line is equal to final.
@@ -42,11 +43,11 @@ def process_until(f, final):
             return True, line
 
 
-
 def process_installcheck(f):
     """
     Parse the `make installcheck` output and return the number of tests
-    and failed tests. Especially, it parses the output after 'NEST Testsuite Summary'.
+    and failed tests. Especially, it parses the output after
+    'NEST Testsuite Summary'.
     """
     res, line = process_until(f, 'NEST Testsuite Summary')
     if res:
@@ -63,9 +64,9 @@ def process_installcheck(f):
 
 def process_changed_files(f):
     """
-    Run through the file f until a line starts with '+file_names='. After the
-    equal sign is a space separated list of changed files in the PR. Returns that
-    list.
+    Run through the file f until a line starts with '+file_names='.
+    After the equal sign is a space separated list of changed files in the PR.
+    Returns that list.
     """
     while True:
         line = f.readline()
@@ -73,7 +74,9 @@ def process_changed_files(f):
             return False, line
 
         if line.startswith('+file_names='):
-            return filter(lambda x: x != '', line.strip().split('=')[1].split(' ')), line
+            return (
+              filter(lambda x: x != '', line.strip().split('=')[1].split(' ')),
+              line)
 
 
 def process_vera(f, filename):
@@ -92,7 +95,7 @@ def process_vera(f, filename):
 
         if line.startswith(filename):
             key = line.split(":")[-1].strip()
-            if not d.has_key(key):
+            if key not in d:
                 d[key] = 0
             d[key] += 1
 
@@ -117,7 +120,7 @@ def process_cppcheck(f, filename):
                 continue
             if '(information)' in key:
                 continue
-            if not d.has_key(key):
+            if key not in d:
                 d[key] = 0
             d[key] += 1
 
@@ -142,7 +145,8 @@ def process_clang_format(f, filename):
             if diff == '':
                 d['Ok?'] = True
             else:
-                d['diff'] = '\n##############################\n' + diff + '##############################'
+                d['diff'] = ('\n##############################\n' + diff +
+                             '##############################')
 
             return res
 
@@ -177,6 +181,7 @@ def process_static_analysis(f, line):
         if line.startswith(' - clang-format for '):
             d.update(process_clang_format(f, filename))
 
+
 def process_pep8(f, line):
     """
     Process PEP8 output for a certain file.
@@ -209,7 +214,8 @@ def process_pep8(f, line):
 
 def print_static_analysis(d):
     """
-    Print a well formatted version of the dict returned by process_static_analysis(f, line).
+    Print a well formatted version of the dict returned by
+    process_static_analysis(f, line).
     """
     for k1, v1 in d.iteritems():
         print(INDENT + ' --' + '-' * len(k1))
@@ -250,7 +256,8 @@ def count_warnings_errors(f):
 
 def print_pep8(d):
     """
-    Print a well formatted version of the dict returned by process_pep8(f, line).
+    Print a well formatted version of the dict returned by
+    process_pep8(f, line).
     """
     for k1, v1 in d.iteritems():
         print(INDENT + ' --' + '-' * len(k1))
@@ -286,10 +293,11 @@ if __name__ == '__main__':
             if not vera_init and line.startswith('+mkdir -p vera_home'):
                 vera_init, line = process_until(f, '+cat')
 
-            if not cppcheck_init and line.startswith('+git clone https://github.com/danmar/cppcheck.git'):
+            if not cppcheck_init and line.startswith(
+                    '+git clone https://github.com/danmar/cppcheck.git'):
                 cppcheck_init, line = process_until(f, 'Cppcheck 1.69')
 
-            if not changed_files and line.strip() == 'Extract changed files...':
+            if not changed_files and line.strip() == 'Extract changed files..':
                 changed_files, line = process_changed_files(f)
 
             if line.startswith('Static analysis on file '):
@@ -309,10 +317,11 @@ if __name__ == '__main__':
             if not make_install_ok and line.startswith('+make install'):
                 make_install_ok, line = process_until(f, '+make installcheck')
 
-            if make_installcheck_failed == -1 and line.startswith('+make installcheck'):
-                make_installcheck_all, make_installcheck_failed, line = process_installcheck(
-                    f)
-            if line.strip() == 'WARNING: Not uploading results as this is a pull request':
+            if make_installcheck_failed == -1 and line.startswith(
+                    '+make installcheck'):
+                make_installcheck_all, make_installcheck_failed, line = (
+                    process_installcheck(f))
+            if line.startswith('WARNING: Not uploading results as this is a'):
                 uploading_results = False
 
             if 'Skipping a deployment with the s3 provider because' in line:
@@ -330,18 +339,24 @@ if __name__ == '__main__':
     print("Vera init:           " + ("Ok" if vera_init else "Error"))
     print("Cppcheck init:       " + ("Ok" if cppcheck_init else "Error"))
     print("Changed files:       " + str(changed_files))
-    print("Formatting:          " + ("Ok" if all([ i['clang-format']['Ok?'] for i in static_analysis.itervalues()]) else "Error"))
-    print("PEP8:                " + ("Ok" if all([ len(v) == 0 for v in pep8_analysis.values()]) else "Error"))
+    print("Formatting:          " +
+          ("Ok" if all([i['clang-format']['Ok?']
+                        for i in static_analysis.itervalues()]) else "Error"))
+    print("PEP8:                " +
+          ("Ok" if all([len(v) == 0
+                        for v in pep8_analysis.values()]) else "Error"))
     print("Configure:           " + ("Ok" if configure_ok else "Error"))
     print("Make:                " + ("Ok" if sum_of_errors == 0 else 
                                      "Error(" + str(sum_of_errors) + ")") +
           " ( " + str(sum_of_warnings) + " warnings ).")
     print("Make install:        " + ("Ok" if make_install_ok else "Error"))
-    print("Make installcheck:   " + ("Ok (" if make_installcheck_failed == 0 else "Error (") +
-          str(make_installcheck_failed) + " / " + str(make_installcheck_all) + ")")
+    print("Make installcheck:   " + ("Ok (" if make_installcheck_failed == 0
+                                     else "Error (") +
+          str(make_installcheck_failed) + " / " +
+          str(make_installcheck_all) + ")")
     print("Logs uploaded to S3: " + ("Yes" if uploading_results else "No"))
 
-    print("\nStatic analysis:" )
+    print("\nStatic analysis:")
     print_static_analysis(static_analysis)
 
 
@@ -359,6 +374,7 @@ if __name__ == '__main__':
             sum_of_errors == 0 and 
             make_install_ok and
             make_installcheck_failed == 0 and
-            all([ i['clang-format']['Ok?'] for i in static_analysis.itervalues()]) and
-            all([ len(v) == 0 for v in pep8_analysis.values()])):
+            all([i['clang-format']['Ok?']
+                 for i in static_analysis.itervalues()]) and
+            all([len(v) == 0 for v in pep8_analysis.values()])):
         exit(1)

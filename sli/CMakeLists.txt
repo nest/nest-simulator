@@ -114,16 +114,16 @@ install( TARGETS sli_lib sli
     )
 
 # DIRS for help
-# TODO limit to used source folders
+# 
 # base dirs + dirs/sli
-file( GLOB children ${PROJECT_SOURCE_DIR}/* )
-set( HELPDIRS "" )
-foreach ( child ${children} )
-  if ( IS_DIRECTORY ${child} )
-    set( HELPDIRS "${HELPDIRS}${child}:" )
+
+set( __HELPDIRS libnestutil sli librandom lib nestkernel nest ${SLI_MODULES})
+foreach ( child ${__HELPDIRS} )
+  if ( IS_DIRECTORY "${PROJECT_SOURCE_DIR}/${child}" )
+    set( HELPDIRS "${HELPDIRS}${PROJECT_SOURCE_DIR}/${child}:" )
     # Automatically include sli directory if it exists
-    if ( IS_DIRECTORY ${child}/sli )
-      set( HELPDIRS "${HELPDIRS}${child}/sli:" )
+    if ( IS_DIRECTORY "${PROJECT_SOURCE_DIR}/${child}/sli" )
+      set( HELPDIRS "${HELPDIRS}${PROJECT_SOURCE_DIR}/${child}/sli:" )
     endif ()
   endif ()
 endforeach ()

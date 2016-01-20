@@ -370,7 +370,9 @@ nest::SimulationManager::resume_()
   if ( terminate_ )
   {
     LOG( M_ERROR, "SimulationManager::resume", "Exiting on error or user signal." );
-    LOG( M_ERROR, "SimulationManager::resume", "SimulationManager: Use 'ResumeSimulation' to resume." );
+    LOG( M_ERROR,
+      "SimulationManager::resume",
+      "SimulationManager: Use 'ResumeSimulation' to resume." );
 
     if ( SLIsignalflag != 0 )
     {

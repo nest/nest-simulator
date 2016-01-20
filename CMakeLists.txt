@@ -302,7 +302,7 @@ if ( with-includes )
     message(FATAL_ERROR "-Dwith-includes requires full paths.")
   endif ()
   foreach ( inc ${with-includes} )
-    if ( EXISTS "${inc}" )
+    if ( IS_DIRECTORY "${inc}" )
       include_directories( "${inc}" )
     else ()
       message(FATAL_ERROR "Include path '${inc}' does not exist!")
@@ -471,6 +471,7 @@ endif ( with-ps-arrays )
 ################################################################################
 
 # Only find libLTDL if we link dynamically
+set( HAVE_LIBLTDL OFF )
 if ( NOT static-libraries )
   find_package( LTDL )
   if ( LTDL_FOUND )
@@ -478,14 +479,29 @@ if ( NOT static-libraries )
 
     include_directories( ${LTDL_INCLUDE_DIRS} )
     link_libraries( ${LTDL_LIBRARIES} )
-  else ()
-    set( HAVE_LIBLTDL OFF )
   endif ( LTDL_FOUND )
-else ()
-  set( HAVE_LIBLTDL OFF )
 endif ()
 
-# GSL finding
+# Find readline
+set( HAVE_READLINE OFF )
+if ( with-readline )
+  if ( NOT ${with-readline} STREQUAL "ON" )
+    # a path is set
+    set( READLINE_ROOT_DIR ${with-readline} )
+  endif ()
+
+  find_package( Readline )
+  if ( READLINE_FOUND )
+    set( HAVE_READLINE ON )
+    include_directories( ${READLINE_INCLUDE_DIRS} )
+    link_libraries( ${READLINE_LIBRARIES} )
+  endif ( READLINE_FOUND )
+endif ()
+
+# Find GSL
+set( HAVE_GSL OFF )
+set( HAVE_GSL_1_2 OFF )
+set( HAVE_GSL_1_11 OFF )
 if ( with-gsl )
   if ( NOT ${with-gsl} STREQUAL "ON" )
     # if set, use this prefix
@@ -506,30 +522,11 @@ if ( with-gsl )
     endif ()
     include_directories( ${GSL_INCLUDE_DIRS} )
     link_libraries( ${GSL_LIBRARIES} )
-  elseif ( GSL_FOUND )
-    set( HAVE_GSL OFF )
-    set( HAVE_GSL_1_2 OFF )
-    set( HAVE_GSL_1_11 OFF )
   endif ( GSL_FOUND )
 endif ( with-gsl )
 
-# libneurosim
-if ( with-libneurosim )
-  if ( NOT ${with-libneurosim} STREQUAL "ON" )
-    # a path is set
-    set( LIBNEUROSIM_ROOT ${with-libneurosim} )
-  endif ()
-
-  find_package( LibNeurosim )
-  if ( LIBNEUROSIM_FOUND )
-    set( HAVE_LIBNEUROSIM ON )
-
-    include_directories( ${LIBNEUROSIM_INCLUDE_DIRS} )
-    link_libraries( ${LIBNEUROSIM_LIBRARIES} )
-  endif ( LIBNEUROSIM_FOUND )
-endif ( with-libneurosim )
-
-# Python executable finding
+# Find Python
+set( HAVE_PYTHON OFF )
 if ( with-python )
   if ( NOT ${with-python} STREQUAL "ON" )
     # a path is set
@@ -545,36 +542,15 @@ if ( with-python )
     find_package( PythonLibs )
     if ( PYTHONLIBS_FOUND )
       set( HAVE_PYTHON ON )
+
+      find_package( Cython )
+
+      set( PYEXECDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages )
     endif ()
   endif ()
-
-  find_package( Cython )
-
-  set( PYEXECDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages )
-else ( with-python )
-  set( HAVE_PYTHON OFF )
 endif ( with-python )
 
-# Find readline
-if ( with-readline )
-  if ( NOT ${with-readline} STREQUAL "ON" )
-    # a path is set
-    set( READLINE_ROOT_DIR ${with-readline} )
-  endif ()
-
-  find_package( Readline )
-  if ( READLINE_FOUND )
-    set( HAVE_READLINE ON )
-    include_directories( ${READLINE_INCLUDE_DIRS} )
-    link_libraries( ${READLINE_LIBRARIES} )
-  else ( READLINE_FOUND )
-    set( HAVE_READLINE OFF )
-  endif ( READLINE_FOUND )
-else ()
-  set( HAVE_READLINE OFF )
-endif ()
-
-# OPENMP finding
+# Find OPENMP
 if ( with-openmp )
   if ( NOT ${with-openmp} STREQUAL "ON" )
     # a path is set
@@ -589,7 +565,8 @@ if ( with-openmp )
   endif ()
 endif ( with-openmp )
 
-# MPI finding
+# Find MPI
+set( HAVE_MPI OFF )
 if ( with-mpi )
   find_package( MPI )
   if ( MPI_CXX_FOUND )
@@ -601,13 +578,28 @@ if ( with-mpi )
     set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_CXX_LINK_FLAGS}" )
     include_directories( ${MPI_CXX_INCLUDE_PATH} )
     link_libraries( ${MPI_CXX_LIBRARIES} )
-  else ( MPI_CXX_FOUND )
-    set( HAVE_MPI OFF )
   endif ( MPI_CXX_FOUND )
-else ()
-  set( HAVE_MPI OFF )
 endif ()
 
+# Find libneurosim
+set( HAVE_LIBNEUROSIM OFF )
+if ( with-libneurosim )
+  if ( NOT ${with-libneurosim} STREQUAL "ON" )
+    # a path is set
+    set( LIBNEUROSIM_ROOT ${with-libneurosim} )
+  endif ()
+
+  find_package( LibNeurosim )
+  if ( LIBNEUROSIM_FOUND )
+    set( HAVE_LIBNEUROSIM ON )
+
+    include_directories( ${LIBNEUROSIM_INCLUDE_DIRS} )
+    link_libraries( ${LIBNEUROSIM_LIBRARIES} )
+  endif ( LIBNEUROSIM_FOUND )
+endif ( with-libneurosim )
+
+# Find music
+set( HAVE_MUSIC OFF )
 if ( with-music )
   if ( NOT ${with-music} STREQUAL "ON" )
     # a path is set
@@ -622,11 +614,8 @@ if ( with-music )
   include_directories( ${MUSIC_INCLUDE_DIRS} )
   link_libraries( ${MUSIC_LIBRARIES} )
   if ( MUSIC_FOUND )
-
     set( HAVE_MUSIC ON )
   endif ( MUSIC_FOUND )
-else ( with-music )
-  set( HAVE_MUSIC OFF )
 endif ( with-music )
 
 ################################################################################

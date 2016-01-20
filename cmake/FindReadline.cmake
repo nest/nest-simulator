@@ -1,37 +1,47 @@
 # GNU Readline library finder
 
-if(NOT READLINE_FOUND)
+# - Find GNU Readline header and library
+#
+# This module defines
+#  READLINE_FOUND, if false, do not try to use GNU Readline.
+#  READLINE_INCLUDE_DIR, where to find readline/readline.h.
+#  READLINE_LIBRARY, the libraries to link against to use GNU Readline.
+#  READLINE_VERSION, the library version
+#
+# As a hint allows READLINE_ROOT_DIR
 
-  set(READLINE_ROOT_DIR ${READLINE_ROOT_DIR} /usr)
 
-  find_path(READLINE_INCLUDE_DIR readline/readline.h
-    HINTS ${READLINE_ROOT_DIR}
-    PATH_SUFFIXES include)
+find_path(READLINE_INCLUDE_DIRS
+    NAMES readline/readline.h
+    HINTS ${READLINE_ROOT_DIR}/include
+)
+find_library(READLINE_LIBRARY
+    NAMES readline
+    HINTS ${READLINE_ROOT_DIR}/lib
+)
+find_library(NCURSES_LIBRARY       # readline depends on libncurses, or similar
+    NAMES ncurses ncursesw curses termcap
+    HINTS ${READLINE_ROOT_DIR}/lib
+)
+set(READLINE_LIBRARIES ${READLINE_LIBRARY} ${NCURSES_LIBRARY})
 
-  find_library(READLINE_LIBRARY readline
-    HINTS ${READLINE_ROOT_DIR}
-    PATH_SUFFIXES lib)
+if( EXISTS "${READLINE_INCLUDE_DIRS}/readline/readline.h" )
+  file( STRINGS "${READLINE_INCLUDE_DIRS}/readline/readline.h" readline_h_content REGEX "#define RL_READLINE_VERSION" )
+  string( REGEX REPLACE ".*0x([0-9][0-9])([0-9][0-9]).*" "\\2.\\1" READLINE_VERSION ${readline_h_content} )
+  string( REGEX REPLACE "^0" "" READLINE_VERSION ${READLINE_VERSION} )
+  string( REPLACE ".0" "." READLINE_VERSION ${READLINE_VERSION} )
+endif()
 
-  find_library(NCURSES_LIBRARY ncurses)   # readline depends on libncurses
-  if(NOT ${NCURSES_LIBRARY} STREQUAL "NCURSES_LIBRARY-NOTFOUND")
-    find_library(NCURSES_LIBRARY termcap)   # readline depends on libncurses
-  endif()
-  
-  if(NOT ${NCURSES_LIBRARY} STREQUAL "NCURSES_LIBRARY-NOTFOUND")
-    find_library(NCURSES_LIBRARY ncursesw)   # readline depends on libncurses
-  endif()
-  
-  if(NOT ${NCURSES_LIBRARY} STREQUAL "NCURSES_LIBRARY-NOTFOUND")
-    find_library(NCURSES_LIBRARY curses)   # readline depends on libncurses
-  endif()
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Readline
+  FOUND_VAR
+    READLINE_FOUND
+  REQUIRED_VARS
+    READLINE_LIBRARY
+    NCURSES_LIBRARY
+    READLINE_INCLUDE_DIRS
+  VERSION_VAR
+    READLINE_VERSION
+)
 
-  mark_as_advanced(READLINE_INCLUDE_DIR READLINE_LIBRARY NCURSES_LIBRARY)
-
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(Readline DEFAULT_MSG
-    READLINE_LIBRARY NCURSES_LIBRARY READLINE_INCLUDE_DIR)
-
-  set(READLINE_INCLUDE_DIRS ${READLINE_INCLUDE_DIR})
-  set(READLINE_LIBRARIES ${READLINE_LIBRARY} ${NCURSES_LIBRARY})
-
-endif(NOT READLINE_FOUND)
+mark_as_advanced(READLINE_ROOT_DIR READLINE_INCLUDE_DIRS READLINE_LIBRARIES)

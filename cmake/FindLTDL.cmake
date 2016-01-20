@@ -3,27 +3,47 @@
 
 # This module defines
 #  LTDL_FOUND, if false, do not try to use LTDL.
-#  LTDL_INCLUDE_DIR, where to find ltdl.h.
+#  LTDL_INCLUDE_DIRS, where to find ltdl.h.
 #  LTDL_LIBRARIES, the libraries to link against to use libltdl.
+#  LTDL_VERSION, the library version
+#  LIBTOOL_EXECUTABLE, executable that provide generalized library-building support services.
+#
+# As a hint allows LTDL_ROOT_DIR
 
-find_path(LTDL_INCLUDE_DIR ltdl.h)
-find_library(LTDL_LIBRARY NAMES ltdl)
+find_path(LTDL_INCLUDE_DIRS 
+    NAMES ltdl.h
+    HINTS ${LTDL_ROOT_DIR}/include
+)
+find_library(LTDL_LIBRARIES
+    NAMES ltdl
+    HINTS ${LTDL_ROOT_DIR}/lib
+)
+find_program(LIBTOOL_EXECUTABLE
+  NAMES glibtool libtool
+  HINTS ${LTDL_ROOT_DIR}/bin
+)
 
-if(LTDL_INCLUDE_DIR AND LTDL_LIBRARY)
-    set(LTDL_FOUND 1)
-    set(LTDL_LIBRARIES ${LTDL_LIBRARY})
-    set(LTDL_INCLUDE_DIR ${LTDL_INCLUDE_DIR})
-else(LTDL_INCLUDE_DIR AND LTDL_LIBRARY)
-    set(LTDL_FOUND 0)
-    set(LTDL_LIBRARIES)
-    set(LTDL_INCLUDE_DIR)
-endif(LTDL_INCLUDE_DIR AND LTDL_LIBRARY)
+if( NOT LIBTOOL_EXECUTABLE STREQUAL "LIBTOOL_EXECUTABLE-NOTFOUND" )
+  execute_process(
+    COMMAND ${LIBTOOL_EXECUTABLE} --version
+    RESULT_VARIABLE RESULT
+    OUTPUT_VARIABLE LTDL_VAR_OUTPUT
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  if(RESULT EQUAL 0)
+    string( REGEX REPLACE ".* ([0-9]+\\.[0-9]+\\.[0-9]+).*" "\\1" LTDL_VERSION ${LTDL_VAR_OUTPUT} )
+  endif()
+endif()
 
-if(NOT LTDL_FOUND)
-    set(LTDL_ERROR_MESSAGE  "LTDL was not found. Make sure LTDL_LIBRARY and LTDL_INCLUDE_DIR are set.")
-    if(LTDL_FIND_REQUIRED)
-        message(FATAL_ERROR ${LTDL_ERROR_MESSAGE})
-    elseif(NOT LTDL_FIND_QUIETLY)
-        message(STATUS ${LTDL_ERROR_MESSAGE})
-    endif(LTDL_FIND_REQUIRED)
-endif(NOT LTDL_FOUND)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(LTDL
+  FOUND_VAR
+    LTDL_FOUND
+  REQUIRED_VARS
+    LTDL_LIBRARIES
+    LTDL_INCLUDE_DIRS
+  VERSION_VAR
+    LTDL_VERSION
+)
+
+mark_as_advanced(LTDL_ROOT_DIR LTDL_INCLUDE_DIRS LTDL_LIBRARIES LIBTOOL_EXECUTABLE)

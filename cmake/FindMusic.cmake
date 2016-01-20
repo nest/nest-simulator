@@ -3,18 +3,18 @@
 
 # This module defines
 #  MUSIC_FOUND, if false, do not try to use MUSIC.
-#  MUSIC_INCLUDE_DIR, where to find music.hh.
-#  MUSIC_LIBRARY, the libraries to link against to use MUSIC.
+#  MUSIC_INCLUDE_DIRS, where to find music.hh.
+#  MUSIC_LIBRARIES, the libraries to link against to use MUSIC.
 #  MUSIC_EXECUTABLE, the music executable.
 #  MUSIC_VERSION, the library version
 #
 # As a hint allows MUSIC_ROOT_DIR.
 
-find_path(MUSIC_INCLUDE_DIR
+find_path(MUSIC_INCLUDE_DIRS
   NAMES music.hh
   HINTS ${MUSIC_ROOT_DIR}/include
 )
-find_library(MUSIC_LIBRARY
+find_library(MUSIC_LIBRARIES
   NAMES music
   HINTS ${MUSIC_ROOT_DIR}/lib
 )
@@ -32,7 +32,7 @@ if( NOT MUSIC_EXECUTABLE STREQUAL "MUSIC_EXECUTABLE-NOTFOUND" )
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
   if(RESULT EQUAL 0)
-    string( REGEX REPLACE "^MUSIC ([0-9].[0-9].[0-9]).*" "\\1" MUSIC_VERSION ${MUSIC_VAR_OUTPUT} )
+    string( REGEX REPLACE "^MUSIC ([0-9]\\.[0-9]\\.[0-9]).*" "\\1" MUSIC_VERSION ${MUSIC_VAR_OUTPUT} )
   endif()
 endif()
 
@@ -41,11 +41,11 @@ find_package_handle_standard_args(Music
   FOUND_VAR
     MUSIC_FOUND
   REQUIRED_VARS
-    MUSIC_LIBRARY
-    MUSIC_INCLUDE_DIR
+    MUSIC_LIBRARIES
+    MUSIC_INCLUDE_DIRS
     MUSIC_EXECUTABLE
   VERSION_VAR
     MUSIC_VERSION
   )
 
-mark_as_advanced(MUSIC_ROOT_DIR MUSIC_INCLUDE_DIR MUSIC_LIBRARY MUSIC_EXECUTABLE)
+mark_as_advanced(MUSIC_ROOT_DIR MUSIC_INCLUDE_DIRS MUSIC_LIBRARIES MUSIC_EXECUTABLE)

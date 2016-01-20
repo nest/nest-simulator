@@ -102,7 +102,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     {
       // reset only if time has passed
       LOG( M_WARNING,
-        "Network::set_status",
+        "SimulationManager::set_status",
         "Simulation time reset to t=0.0. Resetting the simulation time is not "
         "fully supported in NEST at present. Some spikes may be lost, and "
         "stimulating devices may behave unexpectedly. PLEASE REVIEW YOUR "
@@ -129,7 +129,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     if ( kernel().node_manager.size() > 1 ) // root always exists
     {
       LOG( M_ERROR,
-        "Network::set_status",
+        "SimulationManager::set_status",
         "Cannot change time representation after nodes have been created. Please call ResetKernel "
         "first." );
       throw KernelException();
@@ -137,7 +137,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     else if ( has_been_simulated() ) // someone may have simulated empty network
     {
       LOG( M_ERROR,
-        "Network::set_status",
+        "SimulationManager::set_status",
         "Cannot change time representation after the network has been simulated. Please call "
         "ResetKernel first." );
       throw KernelException();
@@ -145,7 +145,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     else if ( kernel().connection_builder_manager.get_num_connections() != 0 )
     {
       LOG( M_ERROR,
-        "Network::set_status",
+        "SimulationManager::set_status",
         "Cannot change time representation after connections have been created. Please call "
         "ResetKernel first." );
       throw KernelException();
@@ -156,7 +156,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       if ( resd < 1.0 / tics_per_ms )
       {
         LOG( M_ERROR,
-          "Network::set_status",
+          "SimulationManager::set_status",
           "Resolution must be greater than or equal to one tic. Value unchanged." );
         throw KernelException();
       }
@@ -167,7 +167,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         // adjust delays in the connection system to new resolution
         kernel().connection_builder_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
-        LOG( M_INFO, "Network::set_status", "tics per ms and resolution changed." );
+        LOG( M_INFO, "SimulationManager::set_status", "tics per ms and resolution changed." );
       }
     }
     else if ( res_updated ) // only resolution changed
@@ -175,7 +175,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       if ( resd < Time::get_ms_per_tic() )
       {
         LOG( M_ERROR,
-          "Network::set_status",
+          "SimulationManager::set_status",
           "Resolution must be greater than or equal to one tic. Value unchanged." );
         throw KernelException();
       }
@@ -186,13 +186,13 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         // adjust delays in the connection system to new resolution
         kernel().connection_builder_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
-        LOG( M_INFO, "Network::set_status", "Temporal resolution changed." );
+        LOG( M_INFO, "SimulationManager::set_status", "Temporal resolution changed." );
       }
     }
     else
     {
       LOG( M_ERROR,
-        "Network::set_status",
+        "SimulationManager::set_status",
         "change of tics_per_step requires simultaneous specification of resolution." );
       throw KernelException();
     }
@@ -205,7 +205,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   {
     if ( nprelim < 0 )
       LOG( M_ERROR,
-        "Network::set_status",
+        "SimulationManager::set_status",
         "Number of preliminary update iterations must be zero or positive." );
     else
       max_num_prelim_iterations_ = nprelim;
@@ -215,7 +215,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   if ( updateValue< double_t >( d, "prelim_tol", tol ) )
   {
     if ( tol < 0.0 )
-      LOG( M_ERROR, "Network::set_status", "Tolerance must be zero or positive" );
+      LOG( M_ERROR, "SimulationManager::set_status", "Tolerance must be zero or positive" );
     else
       prelim_tol_ = tol;
   }
@@ -224,7 +224,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   if ( updateValue< long >( d, "prelim_interpolation_order", interp_order ) )
   {
     if ( ( interp_order < 0 ) || ( interp_order == 2 ) || ( interp_order > 3 ) )
-      LOG( M_ERROR, "Network::set_status", "Interpolation order must be 0, 1, or 3." );
+      LOG( M_ERROR, "SimulationManager::set_status", "Interpolation order must be 0, 1, or 3." );
     else
       prelim_interpolation_order_ = interp_order;
   }
@@ -265,7 +265,7 @@ nest::SimulationManager::simulate( Time const& t )
   if ( t < Time::step( 1 ) )
   {
     LOG( M_ERROR,
-      "Network::simulate",
+      "SimulationManager::simulate",
       String::compose(
            "Simulation time must be >= %1 ms (one time step).", Time::get_resolution().get_ms() ) );
     throw KernelException();
@@ -281,7 +281,7 @@ nest::SimulationManager::simulate( Time const& t )
         "clock first!",
         ( Time::max() - clock_ ).get_ms(),
         t.get_ms() );
-      LOG( M_ERROR, "Network::simulate", msg );
+      LOG( M_ERROR, "SimulationManager::simulate", msg );
       throw KernelException();
     }
   }
@@ -291,7 +291,7 @@ nest::SimulationManager::simulate( Time const& t )
       "The requested simulation time exceeds the largest time NEST can handle "
       "(T_max = %1 ms). Please use a shorter time!",
       Time::max().get_ms() );
-    LOG( M_ERROR, "Network::simulate", msg );
+    LOG( M_ERROR, "SimulationManager::simulate", msg );
     throw KernelException();
   }
 
@@ -316,7 +316,7 @@ nest::SimulationManager::simulate( Time const& t )
   // above.
   if ( t.get_steps() % kernel().connection_builder_manager.get_min_delay() != 0 )
     LOG( M_WARNING,
-      "Network::simulate",
+      "SimulationManager::simulate",
       "The requested simulation time is not an integer multiple of the minimal delay in the "
       "network. "
       "This may result in inconsistent results under the following conditions: (i) A network "
@@ -369,8 +369,8 @@ nest::SimulationManager::resume_()
 
   if ( terminate_ )
   {
-    LOG( M_ERROR, "Network::resume", "Exiting on error or user signal." );
-    LOG( M_ERROR, "Network::resume", "Network: Use 'ResumeSimulation' to resume." );
+    LOG( M_ERROR, "SimulationManager::resume", "Exiting on error or user signal." );
+    LOG( M_ERROR, "SimulationManager::resume", "SimulationManager: Use 'ResumeSimulation' to resume." );
 
     if ( SLIsignalflag != 0 )
     {
@@ -382,7 +382,7 @@ nest::SimulationManager::resume_()
       throw SimulationError();
   }
 
-  LOG( M_INFO, "Network::resume", "Simulation finished." );
+  LOG( M_INFO, "SimulationManager::resume", "Simulation finished." );
 }
 
 void
@@ -404,7 +404,7 @@ nest::SimulationManager::prepare_simulation_()
     if ( !kernel().mpi_manager.grng_synchrony( kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
       LOG( M_ERROR,
-        "Network::simulate",
+        "SimulationManager::simulate",
         "Global Random Number Generators are not synchronized prior to simulation." );
       throw KernelException();
     }
@@ -440,7 +440,7 @@ void
 nest::SimulationManager::update_()
 {
 #ifdef _OPENMP
-  LOG( M_INFO, "Network::update", "Simulating using OpenMP." );
+  LOG( M_INFO, "SimulationManager::update", "Simulating using OpenMP." );
 #endif
 
   // to store done values of the different threads
@@ -591,7 +591,7 @@ nest::SimulationManager::update_()
               String::compose( "Maximum number of iterations reached at interval %1-%2 ms",
                 clock_.get_ms(),
                 clock_.get_ms() + to_step_ * Time::get_resolution().get_ms() );
-            LOG( M_WARNING, "Scheduler::prelim_update", msg );
+            LOG( M_WARNING, "SimulationManager::prelim_update", msg );
           }
         }
 
@@ -635,7 +635,7 @@ nest::SimulationManager::update_()
 
         if ( SLIsignalflag != 0 )
         {
-          LOG( M_INFO, "Network::update", "Simulation exiting on user signal." );
+          LOG( M_INFO, "SimulationManager::update", "Simulation exiting on user signal." );
           terminate_ = true;
         }
 
@@ -680,7 +680,7 @@ nest::SimulationManager::finalize_simulation_()
     if ( !kernel().mpi_manager.grng_synchrony( kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
       LOG( M_ERROR,
-        "Network::simulate",
+        "SimulationManager::simulate",
         "Global Random Number Generators are not synchronized after simulation." );
       throw KernelException();
     }
@@ -701,7 +701,7 @@ nest::SimulationManager::reset_network()
 
   // ConnectionManager doesn't support resetting dynamic synapses yet
   LOG( M_WARNING,
-    "ResetNetwork",
+    "SimulationManager::ResetNetwork",
     "Synapses with internal dynamics (facilitation, STDP) are not reset.\n"
     "This will be implemented in a future version of NEST." );
 }

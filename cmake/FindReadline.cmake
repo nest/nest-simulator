@@ -31,10 +31,12 @@
 find_path(READLINE_INCLUDE_DIRS
     NAMES readline/readline.h
     HINTS ${READLINE_ROOT_DIR}/include
+    NO_SYSTEM_ENVIRONMENT_PATH  # anaconda python tries to be first in path and hides a useful readline
 )
 find_library(READLINE_LIBRARY
     NAMES readline
     HINTS ${READLINE_ROOT_DIR}/lib
+    NO_SYSTEM_ENVIRONMENT_PATH  # anaconda python tries to be first in path and hides a useful readline
 )
 find_library(NCURSES_LIBRARY       # readline depends on libncurses, or similar
     NAMES ncurses ncursesw curses termcap

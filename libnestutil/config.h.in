@@ -50,10 +50,10 @@
 #define NEST_EXITCODE_SEGFAULT @NEST_EXITCODE_SEGFAULT@
 
 /* tics per ms in simulation */
-#define CONFIG_TICS_PER_MS @TICS_PER_MS@
+#define CONFIG_TICS_PER_MS @tics_per_ms@
 
 /* tics per step in simulation */
-#define CONFIG_TICS_PER_STEP @TICS_PER_STEP@
+#define CONFIG_TICS_PER_STEP @tics_per_step@
 
 /* define if the compiler does not include *.h headers ISO conformant */
 #cmakedefine HAVE_ALPHA_CXX_STD_BUG

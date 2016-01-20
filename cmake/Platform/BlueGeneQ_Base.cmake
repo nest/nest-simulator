@@ -2,15 +2,15 @@
 set(CMAKE_SYSTEM_NAME BlueGeneQ_Base CACHE STRING "Cross-compiling for BlueGene/Q" FORCE)
 
 #
-# Set ENABLE_BLUEGENE for main CMakeList.txt
+# Set enable-bluegene for main CMakeList.txt
 #
-set(ENABLE_BLUEGENE "Q" CACHE STRING "Configure for BlueGene." FORCE)
+set(enable-bluegene "Q" CACHE STRING "Configure for BlueGene." FORCE)
 # better to build static for bluegene
-set(STATIC_LIBRARIES ON CACHE BOOL "Build static libraries. [default=no]" FORCE)
+set(static-libraries ON CACHE BOOL "Build static libraries. [default=no]" FORCE)
 # no readline support on bluegene
-set(WITH_READLINE OFF CACHE BOOL "Find a readline library [default=ON]. To set a specific readline, set install path." FORCE)
+set(with-readline OFF CACHE BOOL "Find a readline library [default=ON]. To set a specific readline, set install path." FORCE)
 # we obviously want to do mpi on bluegene
-set(WITH_MPI ON CACHE BOOL "Request compilation with MPI; optionally give directory with MPI installation." FORCE)
+set(with-mpi ON CACHE BOOL "Request compilation with MPI; optionally give directory with MPI installation." FORCE)
 
 set_property(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS FALSE)
 

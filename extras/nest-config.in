@@ -2,7 +2,7 @@
 
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
-configure_bluegene=@configure_bluegene@
+configure_bluegene=@IS_BLUEGENE@
 
 usage()
 {
@@ -81,7 +81,7 @@ while test $# -gt 0; do
         ;;
 
     --static-libraries)
-        echo @STATIC_LIBRARIES@
+        echo @static-libraries@
         ;;
 
     *)

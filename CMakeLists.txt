@@ -193,38 +193,38 @@ check_function_exists( opendir "dirent.h" HAVE_OPENDIR )
 ################################################################################
 
 # Whether to build a 'mostly' static executable and static libraries.
-option( STATIC_LIBRARIES "Build static libraries. [default=no]" OFF )
+option( static-libraries "Build static libraries. [default=no]" OFF )
 
 # change NEST defaults
-set( TICS_PER_MS "1000.0" CACHE STRING "Specify elementary unit of time. [default 1000.0]" )
-set( TICS_PER_STEP "100" CACHE STRING "Specify resolution. [default 100]" )
-option( PS_ARRAYS "Use PS array construction semantics" ON )
+set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time. [default 1000.0]" )
+set( tics_per_step "100" CACHE STRING "Specify resolution. [default 100]" )
+option( with-ps-arrays "Use PS array construction semantics" ON )
 
 # add user modules
-option( EXTERNAL_MODULES "External modules to be linked in. Devided by ; ." OFF )
+option( external-modules "External modules to be linked in. Devided by ; ." OFF )
 
 # connect NEST with external projects
-option( LIBNEUROSIM "Request the use of libneurosim; optionally give the directory, where libneurosim is installed." OFF )
-option( WITH_MUSIC "Request the use of MUSIC; optionally give the directory, where MUSIC is installed." OFF )
+option( with-libneurosim "Request the use of libneurosim; optionally give the directory, where libneurosim is installed." OFF )
+option( with-music "Request the use of MUSIC; optionally give the directory, where MUSIC is installed." OFF )
 
 # change parallelization scheme
-option( WITH_MPI "Request compilation with MPI; optionally give directory with MPI installation." OFF )
-option( WITH_OPENMP "Enable OpenMP multithreading [default=ON]. Optional: set OMP flag." ON )
+option( with-mpi "Request compilation with MPI; optionally give directory with MPI installation." OFF )
+option( with-openmp "Enable OpenMP multithreading [default=ON]. Optional: set OMP flag." ON )
 
 # define default libraries
-option( WITH_GSL "Find a gsl library [default=ON]. To set a specific gsl installation, set install path." ON)
-option( WITH_READLINE "Find a readline library [default=ON]. To set a specific readline, set install path." ON )
-option( WITH_PYTHON "Find a Python interpreter [default=ON]. To ignore the Python set to OFF. To set a specific Python, set path." ON )
+option( with-gsl "Find a gsl library [default=ON]. To set a specific gsl installation, set install path." ON)
+option( with-readline "Find a readline library [default=ON]. To set a specific readline, set install path." ON )
+option( with-python "Find a Python interpreter [default=ON]. To ignore the Python set to OFF. To set a specific Python, set path." ON )
 
 # additional compile flags
-option( WITH_OPTIMIZE "Enable user defined optimizations. [default OFF, when ON, '-O3']" OFF)
-option( WITH_WARNING "Enable user defined warnings. [default ON, when ON '-Wall']" ON)
-option( WITH_DEBUG "Enable user defined debug flags. [default OFF, when ON '-g']" OFF)
+option( with-optimize "Enable user defined optimizations. [default OFF, when ON, '-O3']" OFF)
+option( with-warning "Enable user defined warnings. [default ON, when ON '-Wall']" ON)
+option( with-debug "Enable user defined debug flags. [default OFF, when ON '-g']" OFF)
 
 # cross-compiling
 # should be set via toolchain files
-set( ENABLE_BLUEGENE OFF CACHE STRING "Configure for BlueGene." )
-option( K_COMPUTER "Enable K computer." OFF )
+set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
+option( k-computer "Enable K computer." OFF )
 
 ################################################################################
 ##################           Find utility programs            ##################
@@ -239,53 +239,53 @@ find_program( SED NAMES sed gsed )
 ################################################################################
 
 # add custom warnings and optimizations
-if ( WITH_OPTIMIZE )
-  if ( WITH_OPTIMIZE STREQUAL "ON" )
-    set( WITH_OPTIMIZE "-O3" )
+if ( with-optimize )
+  if ( with-optimize STREQUAL "ON" )
+    set( with-optimize "-O3" )
   endif ()
-  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${WITH_OPTIMIZE}" )
-  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WITH_OPTIMIZE}" )
-endif ( WITH_OPTIMIZE )
+  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${with-optimize}" )
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${with-optimize}" )
+endif ( with-optimize )
 
-if ( WITH_DEBUG )
-  if ( WITH_DEBUG STREQUAL "ON" )
-    set( WITH_DEBUG "-g" )
+if ( with-debug )
+  if ( with-debug STREQUAL "ON" )
+    set( with-debug "-g" )
   endif ()
-  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${WITH_DEBUG}" )
-  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WITH_DEBUG}" )
-endif ( WITH_DEBUG )
+  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${with-debug}" )
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${with-debug}" )
+endif ( with-debug )
 
-if ( WITH_WARNING )
-  if ( WITH_WARNING STREQUAL "ON" )
-    set( WITH_WARNING "-Wall" )
+if ( with-warning )
+  if ( with-warning STREQUAL "ON" )
+    set( with-warning "-Wall" )
   endif ()
-  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${WITH_WARNING}" )
-  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WITH_WARNING}" )
-endif ( WITH_WARNING )
+  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${with-warning}" )
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${with-warning}" )
+endif ( with-warning )
 
-if ( K_COMPUTER )
+if ( k-computer )
   # TODO use the -DCMAKE_TOOLCHAIN_FILE= argument
   set( IS_K ON )
-endif ( K_COMPUTER )
+endif ( k-computer )
 
 # is set in the BlueGeneQ.cmake file
-if ( ENABLE_BLUEGENE )
-  if ( ${ENABLE_BLUEGENE} STREQUAL "L" )
+if ( enable-bluegene )
+  if ( ${enable-bluegene} STREQUAL "L" )
     set( IS_BLUEGENE_L ON )
-  elseif ( ${ENABLE_BLUEGENE} STREQUAL "P" )
+  elseif ( ${enable-bluegene} STREQUAL "P" )
     set( IS_BLUEGENE_P ON )
-  elseif ( ${ENABLE_BLUEGENE} STREQUAL "Q" )
+  elseif ( ${enable-bluegene} STREQUAL "Q" )
     set( IS_BLUEGENE_Q ON )
   else ()
-    message( FATAL_ERROR "Only L/P/Q is allowed for ENABLE_BLUEGENE." )
+    message( FATAL_ERROR "Only L/P/Q is allowed for enable-bluegene." )
   endif ()
   set( IS_BLUEGENE ON )
 else ()
   set( IS_BLUEGENE OFF )
-endif ( ENABLE_BLUEGENE )
+endif ( enable-bluegene )
 
 # build static or shared libraries
-if ( STATIC_LIBRARIES )
+if ( static-libraries )
   set( BUILD_SHARED_LIBS OFF )
   if ( UNIX OR APPLE )
     # On Linux .a is the static library suffix, on Mac OS X .lib can also
@@ -302,16 +302,16 @@ endif ()
 
 # Static modules
 set( SLI_MODULES models precise topology )
-if ( LIBNEUROSIM )
+if ( with-libneurosim )
   set( SLI_MODULES ${SLI_MODULES} conngen )
-endif ( LIBNEUROSIM )
+endif ( with-libneurosim )
 
 set( SLI_MODULE_INCLUDE_DIRS )
 foreach ( mod ${SLI_MODULES} )
   list( APPEND SLI_MODULE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/${mod}" )
 endforeach ()
 
-if ( EXTERNAL_MODULES )
+if ( external-modules )
   # headers from external modules will be installed here
   include_directories( "${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}" )
 
@@ -319,7 +319,7 @@ if ( EXTERNAL_MODULES )
   set( EXTERNAL_MODULE_LIBRARIES )
   # put all external headers into this variable
   set( EXTERNAL_MODULE_INCLUDES )
-  foreach ( mod ${EXTERNAL_MODULES} )
+  foreach ( mod ${external-modules} )
     # find module header
     find_file( ${mod}_EXT_MOD_INCLUDE
         NAMES ${mod}module.h
@@ -340,7 +340,7 @@ if ( EXTERNAL_MODULES )
     endif ()
     list( APPEND EXTERNAL_MODULE_LIBRARIES "${${mod}_EXT_MOD_LIBRARY}" )
   endforeach ( mod )
-endif ( EXTERNAL_MODULES )
+endif ( external-modules )
 
 
 # write static_modules.h
@@ -353,12 +353,12 @@ endforeach ( mod )
 
 # when we build statically, we need to add headers and addmodule for external modules
 # just as if it were a in source module.
-if ( STATIC_LIBRARIES AND EXTERNAL_MODULES )
+if ( static-libraries AND external-modules )
   file( APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "\n// Add all external modules:\n" )
-  foreach ( mod ${EXTERNAL_MODULES} )
+  foreach ( mod ${external-modules} )
     file( APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "#include \"${mod}module.h\"\n" )
   endforeach ( mod )
-endif ( STATIC_LIBRARIES AND EXTERNAL_MODULES )
+endif ( static-libraries AND external-modules )
 file( APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "\n#include \"interpret.h\"\n\n" )
 file( APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "void add_static_modules(SLIInterpreter& engine)\n{\n" )
 file( APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "  // Add all in source modules:\n" )
@@ -371,7 +371,7 @@ endforeach ()
 
 # when we build statically, we need to add headers and addmodule for external modules
 # just as if it were a in source module.
-if ( STATIC_LIBRARIES AND EXTERNAL_MODULES )
+if ( static-libraries AND external-modules )
   file( APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "\n  // Add all external modules:\n" )
   foreach ( mod_header ${EXTERNAL_MODULE_INCLUDES} )
     # get namespace:
@@ -389,26 +389,29 @@ if ( STATIC_LIBRARIES AND EXTERNAL_MODULES )
     string( REGEX REPLACE "class ([a-zA-Z0-9_]+) : public SLIModule" "\\1" module_class ${module_class_string} )
     file( APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "  engine.addmodule(new ${module_namespace}::${module_class}());\n" )
   endforeach ()
-endif ( STATIC_LIBRARIES AND EXTERNAL_MODULES )
+endif ( static-libraries AND external-modules )
 
 file( APPEND ${PROJECT_BINARY_DIR}/nest/static_modules.h "}\n\n#endif\n" )
 # write static_modules.h
 
 # Set tics per ms / step
-if ( TICS_PER_MS )
+if ( tics_per_ms )
   set( HAVE_TICS_PER_MS ON )
-endif ( TICS_PER_MS )
+endif ( tics_per_ms )
 
-if ( TICS_PER_STEP )
+if ( tics_per_step )
   set( HAVE_TICS_PER_STEP ON )
-endif ( TICS_PER_STEP )
+endif ( tics_per_step )
 
+if ( with-ps-arrays )
+  set( PS_ARRAYS ON )
+endif ( with-ps-arrays )
 ################################################################################
 ##################            Find Libraries here             ##################
 ################################################################################
 
 # Only find libLTDL if we link dynamically
-if ( NOT STATIC_LIBRARIES )
+if ( NOT static-libraries )
   find_package( LTDL )
   if ( LTDL_FOUND )
     set( HAVE_LIBLTDL ON )
@@ -423,10 +426,10 @@ else ()
 endif ()
 
 # GSL finding
-if ( WITH_GSL )
-  if ( NOT ${WITH_GSL} STREQUAL "ON" )
+if ( with-gsl )
+  if ( NOT ${with-gsl} STREQUAL "ON" )
     # if set, use this prefix
-    set( GSL_ROOT_DIR ${WITH_GSL} )
+    set( GSL_ROOT_DIR ${with-gsl} )
   endif ()
 
   find_package( GSL )
@@ -448,13 +451,13 @@ if ( WITH_GSL )
     set( HAVE_GSL_1_2 OFF )
     set( HAVE_GSL_1_11 OFF )
   endif ( GSL_FOUND )
-endif ( WITH_GSL )
+endif ( with-gsl )
 
 # libneurosim
-if ( LIBNEUROSIM )
-  if ( NOT ${LIBNEUROSIM} STREQUAL "ON" )
+if ( with-libneurosim )
+  if ( NOT ${with-libneurosim} STREQUAL "ON" )
     # a path is set
-    set( LIBNEUROSIM_ROOT ${LIBNEUROSIM} )
+    set( LIBNEUROSIM_ROOT ${with-libneurosim} )
   endif ()
 
   find_package( LibNeurosim )
@@ -464,13 +467,13 @@ if ( LIBNEUROSIM )
     include_directories( ${LIBNEUROSIM_INCLUDE_DIR} )
     link_libraries( ${LIBNEUROSIM_LIBRARIES} )
   endif ( LIBNEUROSIM_FOUND )
-endif ( LIBNEUROSIM )
+endif ( with-libneurosim )
 
 # Python executable finding
-if ( WITH_PYTHON )
-  if ( NOT ${WITH_PYTHON} STREQUAL "ON" )
+if ( with-python )
+  if ( NOT ${with-python} STREQUAL "ON" )
     # a path is set
-    set( PYTHON_EXECUTABLE ${WITH_PYTHON} )
+    set( PYTHON_EXECUTABLE ${with-python} )
   endif ()
 
   find_package( PythonInterp )
@@ -488,15 +491,15 @@ if ( WITH_PYTHON )
   find_package( Cython )
 
   set( PYEXECDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages )
-else ( WITH_PYTHON )
+else ( with-python )
   set( HAVE_PYTHON OFF )
-endif ( WITH_PYTHON )
+endif ( with-python )
 
 # Find readline
-if ( WITH_READLINE )
-  if ( NOT ${WITH_READLINE} STREQUAL "ON" )
+if ( with-readline )
+  if ( NOT ${with-readline} STREQUAL "ON" )
     # a path is set
-    set( READLINE_ROOT_DIR ${WITH_READLINE} )
+    set( READLINE_ROOT_DIR ${with-readline} )
   endif ()
 
   find_package( Readline )
@@ -512,11 +515,11 @@ else ()
 endif ()
 
 # OPENMP finding
-if ( WITH_OPENMP )
-  if ( NOT ${WITH_OPENMP} STREQUAL "ON" )
+if ( with-openmp )
+  if ( NOT ${with-openmp} STREQUAL "ON" )
     # a path is set
-    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${WITH_OPENMP}" )
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WITH_OPENMP}" )
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${with-openmp}" )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${with-openmp}" )
   else ()
     find_package( OpenMP )
     if ( OPENMP_FOUND )
@@ -524,10 +527,10 @@ if ( WITH_OPENMP )
       set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
     endif ( OPENMP_FOUND )
   endif ()
-endif ( WITH_OPENMP )
+endif ( with-openmp )
 
 # MPI finding
-if ( WITH_MPI )
+if ( with-mpi )
   find_package( MPI )
   if ( MPI_CXX_FOUND )
     set( HAVE_MPI ON )
@@ -545,14 +548,14 @@ else ()
   set( HAVE_MPI OFF )
 endif ()
 
-if ( WITH_MUSIC )
-  if ( NOT ${WITH_MUSIC} STREQUAL "ON" )
+if ( with-music )
+  if ( NOT ${with-music} STREQUAL "ON" )
     # a path is set
-    set( MUSIC_ROOT_DIR "${WITH_MUSIC}" )
+    set( MUSIC_ROOT_DIR "${with-music}" )
   endif ()
 
   if ( NOT HAVE_MPI )
-    message( FATAL_ERROR "MUSIC requires -DWITH_MPI=ON." )
+    message( FATAL_ERROR "MUSIC requires -Dwith-mpi=ON." )
   endif ( NOT HAVE_MPI )
 
   find_package( Music )
@@ -562,9 +565,9 @@ if ( WITH_MUSIC )
 
     set( HAVE_MUSIC ON )
   endif ( MUSIC_FOUND )
-else ( WITH_MUSIC )
+else ( with-music )
   set( HAVE_MUSIC OFF )
-endif ( WITH_MUSIC )
+endif ( with-music )
 
 ################################################################################
 ##################        Define Subdirectories here          ##################
@@ -751,17 +754,17 @@ message( "C++ compiler flags  : ${ALL_CXXFLAGS}" )
 message( "Build dynamic       : ${BUILD_SHARED_LIBS}" )
 message( "" )
 message( "Built-in modules    : ${SLI_MODULES}" )
-if ( EXTERNAL_MODULES )
-  message( "User modules        : ${EXTERNAL_MODULES}" )
-  foreach ( mod ${EXTERNAL_MODULES} )
+if ( external-modules )
+  message( "User modules        : ${external-modules}" )
+  foreach ( mod ${external-modules} )
     message( "  ${mod}:" )
     message( "    Header          : ${${mod}_EXT_MOD_INCLUDE}" )
     message( "    Library         : ${${mod}_EXT_MOD_LIBRARY}" )
     message( "" )
   endforeach ()
-else ( EXTERNAL_MODULES )
+else ( external-modules )
   message( "User modules        : None" )
-endif ( EXTERNAL_MODULES )
+endif ( external-modules )
 
 if ( HAVE_PYTHON )
   message( "Python bindings     : Yes (Python ${PYTHON_VERSION}: ${PYTHON})" )

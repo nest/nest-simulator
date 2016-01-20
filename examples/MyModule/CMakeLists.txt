@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 2.8.12 )
 
-# 1) Name your module here, i.e. add later with -DEXTERNAL_MODULES=my:
+# 1) Name your module here, i.e. add later with -Dexternal-modules=my:
 set( SHORT_NAME my )
 #    the complete module name is here:
 set( MODULE_NAME ${SHORT_NAME}module )

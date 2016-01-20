@@ -23,22 +23,22 @@ cat > $HOME/.nestrc <<EOF
     } Function def
 EOF
  
-    CONFIGURE_MPI="-DWITH_MPI=ON"
+    CONFIGURE_MPI="-Dwith-mpi=ON"
 
 else
-    CONFIGURE_MPI="-DWITH_MPI=OFF"
+    CONFIGURE_MPI="-Dwith-mpi=OFF"
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
-    CONFIGURE_PYTHON="-DWITH_PYTHON=ON"
+    CONFIGURE_PYTHON="-Dwith-python=ON"
 else
-    CONFIGURE_PYTHON="-DWITH_PYTHON=OFF"
+    CONFIGURE_PYTHON="-Dwith-python=OFF"
 fi
 
 if [ "$xGSL" = "1" ] ; then
-    CONFIGURE_GSL="-DWITH_GSL=ON"
+    CONFIGURE_GSL="-Dwith-gsl=ON"
 else
-    CONFIGURE_GSL="-DWITH_GSL=OFF"
+    CONFIGURE_GSL="-Dwith-gsl=OFF"
 fi
 
 NEST_VPATH=build
@@ -161,8 +161,8 @@ cd "$NEST_VPATH"
 
 cmake \
   -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
-  -DWITH_OPTIMIZE=ON \
-  -DWITH_WARNING=ON \
+  -Dwith-optimize=ON \
+  -Dwith-warning=ON \
   $CONFIGURE_MPI \
   $CONFIGURE_PYTHON \
   $CONFIGURE_GSL \

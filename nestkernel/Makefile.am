@@ -52,7 +52,7 @@ libnest_la_SOURCES=\
 		gid_collection.h gid_collection.cpp\
 		histentry.h histentry.cpp\
 		model.h model.cpp\
-		model_manager.h model_manager.cpp\
+		model_manager.h model_manager_impl.h model_manager.cpp\
 		nest_types.h\
 		nest_datums.h nest_datums.cpp\
 		nest_names.cpp nest_names.h\
@@ -87,7 +87,7 @@ libnest_la_SOURCES=\
 		io_manager.h io_manager.cpp \
 		mpi_manager.h mpi_manager_impl.h mpi_manager.cpp \
 		simulation_manager.h simulation_manager.cpp \
-		connection_builder_manager.h connection_builder_manager.cpp \
+		connection_builder_manager.h connection_builder_manager_impl.h connection_builder_manager.cpp \
 		delay_checker.h delay_checker.cpp \
 		rng_manager.h rng_manager.cpp \
 		event_delivery_manager.h event_delivery_manager_impl.h\

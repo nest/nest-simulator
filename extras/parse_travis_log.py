@@ -22,8 +22,8 @@
 """
 This script parses the TravisCI output as it is generated
 by ./build.sh and outputs a shorter summary. It is hard-coded
-to the output of ./build.sh, ./bootstrap.sh, make installcheck,
-and ../configure --prefix=... . Changing any of those, requires
+to the output of ./build.sh, make installcheck,
+and cmake -DCMAKE_INSTALL_PREFIX=... . Changing any of those, requires
 adapting this script.
 """
 

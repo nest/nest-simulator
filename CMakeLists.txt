@@ -210,37 +210,36 @@ check_function_exists( opendir "dirent.h" HAVE_OPENDIR )
 ##################         All User Defined options           ##################
 ################################################################################
 
-# Whether to build a 'mostly' static executable and static libraries.
-option( static-libraries "Build static libraries. [default=no]" OFF )
-
 # change NEST defaults
 set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time. [default 1000.0]" )
 set( tics_per_step "100" CACHE STRING "Specify resolution. [default 100]" )
-option( with-ps-arrays "Use PS array construction semantics" ON )
+option( with-ps-arrays "Use PS array construction semantics. [default=ON]" ON )
 
 # add user modules
-option( external-modules "External modules to be linked in. Devided by ; ." OFF )
+option( external-modules "External modules to be linked in. Divided by ';'. [default=OFF]" OFF )
 
 # connect NEST with external projects
-option( with-libneurosim "Request the use of libneurosim; optionally give the directory, where libneurosim is installed." OFF )
-option( with-music "Request the use of MUSIC; optionally give the directory, where MUSIC is installed." OFF )
+option( with-libneurosim "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" OFF )
+option( with-music "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" OFF )
 
 # change parallelization scheme
-option( with-mpi "Request compilation with MPI; optionally give directory with MPI installation." OFF )
-option( with-openmp "Enable OpenMP multithreading [default=ON]. Optional: set OMP flag." ON )
+option( with-mpi "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" OFF )
+option( with-openmp "Enable OpenMP multithreading. Optional: set OMP flag. [default=ON]" ON )
 
 # define default libraries
-option( with-gsl "Find a gsl library [default=ON]. To set a specific gsl installation, set install path." ON)
-option( with-readline "Find a readline library [default=ON]. To set a specific readline, set install path." ON )
-option( with-python "Find a Python interpreter [default=ON]. To ignore the Python set to OFF. To set a specific Python, set path." ON )
+option( with-gsl "Find a gsl library. To set a specific gsl installation, set install path. [default=ON]" ON)
+option( with-readline "Find a readline library. To set a specific readline, set install path. [default=ON]" ON )
+option( with-python "Build PyNEST. To set a specific Python, set install path. [default=ON]" ON )
 
+# Whether to build a 'mostly' static executable and static libraries.
+option( static-libraries "Build static executable and libraries. [default=OFF]" OFF )
 # additional compile flags
-option( with-optimize "Enable user defined optimizations. [default OFF, when ON, '-O3']" OFF )
-option( with-warning "Enable user defined warnings. [default ON, when ON '-Wall']" ON )
-option( with-debug "Enable user defined debug flags. [default OFF, when ON '-g']" OFF )
-set( with-libraries OFF CACHE STRING "Link additional libraries. Give full path. Separate multiple libraries by ;. [default OFF]" )
-set( with-includes OFF CACHE STRING "Link additional include paths. Give full path without '-I'. Separate multiple include paths by ;. [default OFF]" )
-set( with-defines OFF CACHE STRING "Additional defines: -DXYZ=1 . Separate multiple defines by ;. [default OFF]" )
+option( with-optimize "Enable user defined optimizations. [default OFF, when ON, defaults to '-O3']" OFF )
+option( with-warning "Enable user defined warnings. [default ON, when ON, defaults to '-Wall']" ON )
+option( with-debug "Enable user defined debug flags. [default OFF, when ON, defaults to '-g']" OFF )
+set( with-libraries OFF CACHE STRING "Link additional libraries. Give full path. Separate multiple libraries by ';'. [default OFF]" )
+set( with-includes OFF CACHE STRING "Add additional include paths. Give full path without '-I'. Separate multiple include paths by ';'. [default OFF]" )
+set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1'. Separate multiple defines by ';'. [default OFF]" )
 
 # cross-compiling
 # should be set via toolchain files
@@ -264,24 +263,30 @@ if ( with-optimize )
   if ( with-optimize STREQUAL "ON" )
     set( with-optimize "-O3" )
   endif ()
-  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${with-optimize}" )
-  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${with-optimize}" )
+  foreach ( flag ${with-optimize} )
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}" )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" )
+  endforeach ()
 endif ( with-optimize )
 
 if ( with-debug )
   if ( with-debug STREQUAL "ON" )
     set( with-debug "-g" )
   endif ()
-  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${with-debug}" )
-  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${with-debug}" )
+  foreach ( flag ${with-debug} )
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}" )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" )
+  endforeach ()
 endif ( with-debug )
 
 if ( with-warning )
   if ( with-warning STREQUAL "ON" )
     set( with-warning "-Wall" )
   endif ()
-  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${with-warning}" )
-  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${with-warning}" )
+  foreach ( flag ${with-warning} )
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}" )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" )
+  endforeach ()
 endif ( with-warning )
 
 if ( with-libraries )
@@ -554,12 +559,12 @@ endif ( with-python )
 if ( with-openmp )
   if ( NOT ${with-openmp} STREQUAL "ON" )
     # a path is set
-    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${with-openmp}" )
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${with-openmp}" )
     set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${with-openmp}" )
   else ()
     find_package( OpenMP )
     if ( OPENMP_FOUND )
-      set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${OpenMP_C_FLAGS}" )
+      set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
       set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
     endif ( OPENMP_FOUND )
   endif ()

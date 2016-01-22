@@ -79,18 +79,17 @@ if ( "$tag" != "" ) then
   git push --tags
 endif
 
-echo "Bootstrapping clone ..."
-./bootstrap.sh
-
 cd $workdir
 mkdir $nest_blddir
 cd $nest_blddir
 
 echo "Configuring build directory ..." 
-../$nest_srcdir/configure --prefix=$HOME/opt/nest > /dev/null
+cmake -DCMAKE_INSTALL_PREFIX=$HOME/opt/nest ../$nest_srcdir > /dev/null
 
 echo "Precompile Cython files ..."
-make -C pynest pynestkernel.cpp
+cd pynest
+cythonize pynestkernel.pyx
+cd ..
 
 echo "Rolling tarball ..."
 make -s dist

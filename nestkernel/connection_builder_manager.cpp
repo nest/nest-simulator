@@ -22,6 +22,9 @@
 
 #include "connection_builder_manager.h"
 
+// Generated includes:
+#include "config.h"
+
 // C++ includes:
 #include <cassert>
 #include <cmath>
@@ -97,7 +100,7 @@ nest::ConnectionBuilderManager::initialize()
 #ifdef USE_PMA
 // initialize the memory pools
 #ifdef IS_K
-  assert( n_threads <= MAX_THREAD && "MAX_THREAD is a constant defined in allocator.h" );
+  assert( kernel().vp_manager.get_num_threads() <= MAX_THREAD && "MAX_THREAD is a constant defined in allocator.h" );
 
 #pragma omp parallel
   poormansallocpool[ kernel().vp_manager.get_thread_id() ].init();
@@ -201,8 +204,8 @@ nest::ConnectionBuilderManager::delete_connections_()
 #ifdef IS_K
 #pragma omp parallel
   {
-    poormansallocpool[ omp_get_thread_num() ].destruct();
-    poormansallocpool[ omp_get_thread_num() ].init();
+    poormansallocpool[ kernel().vp_manager.get_thread_id() ].destruct();
+    poormansallocpool[ kernel().vp_manager.get_thread_id() ].init();
   }
 #else
 #pragma omp parallel

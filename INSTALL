@@ -135,4 +135,43 @@ BlueGene/Q and leave the option `-Dwith-python=OFF` from the `cmake` line.
 Compiling for Fujitsu Sparc64
 =============================
 
-TODO
+On the K Computer:
+  The preinstalled `cmake` version is 2.6, which is to old for NEST. Please install
+  a newer version, e.g. like this:
+
+      wget https://cmake.org/files/v3.4/cmake-3.4.2.tar.gz
+      tar -xzf cmake-3.4.2.tar.gz
+      mv cmake-3.4.2 cmake.src
+      mkdir cmake.build
+      cd cmake.build
+      ../cmake.src/bootstrap --prefix=$PWD/install --parallel=4
+      gmake -j4
+      gmake install
+
+  Also you might need a cross compiled GNU Scientific Library (GSL). For GSL 2.1
+  this is a possible installation scenario:
+
+      wget ftp://ftp.gnu.org/gnu/gsl/gsl-2.1.tar.gz
+      tar -xzf gsl-2.1.tar.gz
+      mkdir gsl-2.1.build gsl-2.1.install
+      cd gsl-2.1.build
+      ../gsl-2.1/configure --prefix=$PWD/../gsl-2.1.install/
+                           CC=mpifccpx
+                           CXX=mpiFCCpx
+                           CFLAGS="-Nnoline"
+                           CXXFLAGS="--alternative_tokens -O3 -Kfast,openmp, -Nnoline, -Nquickdbg -NRtrap"
+                           --host=sparc64-unknown-linux-gnu
+                           --build=x86_64-unknown-linux-gnu
+      gmake -j4
+      gmake install
+
+  To install NEST, use the following `cmake` line:
+
+      cmake -DCMAKE_TOOLCHAIN_FILE=</path/to/NEST/src>/cmake/Platform/Fujitsu-Sparc64.cmake 
+            -DCMAKE_INSTALL_PREFIX:PATH=</install/path>
+            -Dwith-gsl=/path/to/gsl-2.1.install/\
+            -Dwith-optimize="-O3 -Nnoline"
+            -Dwith-defines="-DUSE_PMA"
+            -Dwith-python=OFF
+            -Dwith-warning=OFF
+            </path/to/NEST/src>

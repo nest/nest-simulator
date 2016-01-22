@@ -244,7 +244,7 @@ set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1'. Separate
 # cross-compiling
 # should be set via toolchain files
 set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
-option( k-computer "Enable K computer." OFF )
+set( k-computer OFF CACHE BOOL "Enable K computer." )
 
 ################################################################################
 ##################           Find utility programs            ##################
@@ -331,6 +331,9 @@ endif ( with-defines )
 if ( k-computer )
   # TODO use the -DCMAKE_TOOLCHAIN_FILE= argument
   set( IS_K ON )
+  # need alternative tokens command to compile NEST
+  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --alternative_tokens")
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --alternative_tokens")
 endif ( k-computer )
 
 # is set in the BlueGeneQ.cmake file

@@ -142,6 +142,7 @@ foreach ( child ${children} )
   endif ()
 endforeach ()
 
+if ( NOT CMAKE_CROSSCOMPILING )
 # install help (depends on sli and lib/sli/* installed)
 install( CODE
     "execute_process(
@@ -160,6 +161,7 @@ install( CODE
         WORKING_DIRECTORY \"${PROJECT_BINARY_DIR}\"
       )"
     )
+endif ( NOT CMAKE_CROSSCOMPILING )
 
 install( FILES ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
     DESTINATION ${INSTALL_DOC_DIR} )

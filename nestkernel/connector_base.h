@@ -91,7 +91,8 @@ suicide_and_resurrect( Told* connector, size_t i )
 #if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
   Tnew* p =
-    new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( Tnew ) ) ) Tnew( *connector, i );
+    new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( Tnew ) ) )
+      Tnew( *connector, i );
 #else
   Tnew* p = new ( poormansallocpool.alloc( sizeof( Tnew ) ) ) Tnew( *connector, i );
 #endif

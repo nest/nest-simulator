@@ -1,6 +1,7 @@
 #include <assert.h>
-int main()
+int
+main()
 {
-  assert(0);
-  return 0; //never reached
+  assert( 0 );
+  return 0; // never reached
 }

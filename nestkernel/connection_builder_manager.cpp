@@ -100,7 +100,8 @@ nest::ConnectionBuilderManager::initialize()
 #ifdef USE_PMA
 // initialize the memory pools
 #ifdef IS_K
-  assert( kernel().vp_manager.get_num_threads() <= MAX_THREAD && "MAX_THREAD is a constant defined in allocator.h" );
+  assert( kernel().vp_manager.get_num_threads() <= MAX_THREAD
+    && "MAX_THREAD is a constant defined in allocator.h" );
 
 #pragma omp parallel
   poormansallocpool[ kernel().vp_manager.get_thread_id() ].init();

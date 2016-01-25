@@ -48,7 +48,8 @@ allocate( C c )
 {
 #if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
-  T* p = new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( T ) ) ) T( c );
+  T* p = new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( T ) ) )
+    T( c );
 #else
   T* p = new ( poormansallocpool.alloc( sizeof( T ) ) ) T( c );
 #endif
@@ -68,7 +69,8 @@ allocate()
 {
 #if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
-  T* p = new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( T ) ) ) T();
+  T* p =
+    new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( T ) ) ) T();
 #else
   T* p = new ( poormansallocpool.alloc( sizeof( T ) ) ) T();
 #endif

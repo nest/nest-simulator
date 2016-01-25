@@ -119,7 +119,7 @@ const long_t long_t_min = LONG_MIN;
  */
 typedef size_t index;
 #ifndef SIZE_MAX
-#define SIZE_MAX ((size_t) - 1)
+#define SIZE_MAX ( ( size_t ) -1 )
 #endif
 const index invalid_index = SIZE_MAX;
 

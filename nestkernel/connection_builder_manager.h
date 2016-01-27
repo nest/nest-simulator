@@ -38,6 +38,7 @@
 #include "nest_types.h"
 #include "source_table.h"
 #include "target_table.h"
+#include "target_table_devices.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -281,6 +282,11 @@ public:
   void send_5g( thread tid, synindex syn_index, unsigned int lcid, Event& e );
 
   /**
+   * Send event e to all device targets of source s_gid
+   */
+  void send_to_devices( thread tid, const index s_gid, Event& e );
+
+  /**
    * Send event e to all targets of node source on thread t
    */
   // void send_local( thread t, Node& source, Event& e );
@@ -352,8 +358,8 @@ private:
   // ConnectorBase* validate_source_entry_( thread tid, index s_gid, synindex syn_id );
 
   /**
-   * Connect is used to establish a connection between a sender and
-   * receiving node.
+   * connect_ is used to establish a connection between a sender and
+   * receiving node which both have proxies.
    *
    * The parameters delay and weight have the default value NAN.
    * NAN is a special value in cmath, which describes double values that
@@ -362,9 +368,12 @@ private:
    *
    * \param s A reference to the sending Node.
    * \param r A reference to the receiving Node.
-   * \param t The thread of the target node.
+   * \param s_gid The global id of the sending Node.
+   * \param tid The thread of the target node.
    * \param syn The synapse model to use.
-   * \returns The receiver port number for the new connection
+   * \param d The delay of the connection (optional).
+   * \param w The weight of the connection (optional).
+   * \param p The parameters for the connection.
    */
   void connect_( Node& s,
     Node& r,
@@ -374,6 +383,74 @@ private:
     double_t d = NAN,
     double_t w = NAN );
   void connect_( Node& s,
+    Node& r,
+    index s_gid,
+    thread tid,
+    index syn,
+    DictionaryDatum& p,
+    double_t d = NAN,
+    double_t w = NAN );
+
+  /**
+   * connect_to_device_ is used to establish a connection between a sender and
+   * receiving node if the sender has proxies, and the receiver does not.
+   *
+   * The parameters delay and weight have the default value NAN.
+   * NAN is a special value in cmath, which describes double values that
+   * are not a number. If delay or weight is omitted in an connect call,
+   * NAN indicates this and weight/delay are set only, if they are valid.
+   *
+   * \param s A reference to the sending Node.
+   * \param r A reference to the receiving Node.
+   * \param s_gid The global id of the sending Node.
+   * \param tid The thread of the target node.
+   * \param syn The synapse model to use.
+   * \param d The delay of the connection (optional).
+   * \param w The weight of the connection (optional).
+   * \param p The parameters for the connection.
+   */
+  void connect_to_device_( Node& s,
+    Node& r,
+    index s_gid,
+    thread tid,
+    index syn,
+    double_t d = NAN,
+    double_t w = NAN );
+  void connect_to_device_( Node& s,
+    Node& r,
+    index s_gid,
+    thread tid,
+    index syn,
+    DictionaryDatum& p,
+    double_t d = NAN,
+    double_t w = NAN );
+
+  /**
+   * connect_from_device_ is used to establish a connection between a sender and
+   * receiving node if the sender has proxies, and the receiver does not.
+   *
+   * The parameters delay and weight have the default value NAN.
+   * NAN is a special value in cmath, which describes double values that
+   * are not a number. If delay or weight is omitted in an connect call,
+   * NAN indicates this and weight/delay are set only, if they are valid.
+   *
+   * \param s A reference to the sending Node.
+   * \param r A reference to the receiving Node.
+   * \param s_gid The global id of the sending Node.
+   * \param tid The thread of the target node.
+   * \param syn The synapse model to use.
+   * \param d The delay of the connection (optional).
+   * \param w The weight of the connection (optional).
+   * \param p The parameters for the connection.
+   */
+  void connect_from_device_( Node& s,
+    Node& r,
+    index s_gid,
+    thread tid,
+    index syn,
+    double_t d = NAN,
+    double_t w = NAN );
+  void connect_from_device_( Node& s,
     Node& r,
     index s_gid,
     thread tid,
@@ -410,8 +487,13 @@ private:
    */
   TargetTable target_table_;
 
+  TargetTableDevices target_table_devices_;
+
   tVDelayChecker delay_checkers_;
 
+  /** A structure to count the number of synapses of a specific
+   * type. Arranged in a 2d structure: threads|synapsetypes.
+   */
   tVVCounter vv_num_connections_;
 
   /**

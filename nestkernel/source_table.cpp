@@ -24,6 +24,8 @@
 #include "source_table.h"
 #include "target_table.h"
 #include "kernel_manager.h"
+#include "mpi_manager_impl.h"
+#include "vp_manager_impl.h"
 
 nest::SourceTable::SourceTable()
 {

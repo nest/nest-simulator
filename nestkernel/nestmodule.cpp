@@ -685,9 +685,16 @@ NestModule::Connect_i_i_lFunction::execute( SLIInterpreter* i ) const
   // check whether the target is on this process
   if ( kernel().node_manager.is_local_gid( target ) )
   {
-    Node* const target_node = kernel().node_manager.get_node( target );
-    const thread target_thread = target_node->get_thread();
-    kernel().connection_builder_manager.connect( source, target_node, target_thread, synmodel_id );
+#pragma omp parallel
+    {
+      const int tid = kernel().vp_manager.get_thread_id();
+      Node* const target_node = kernel().node_manager.get_node( target, tid );
+      const thread target_thread = target_node->get_thread();
+      if ( target_thread == tid )
+      {
+        kernel().connection_builder_manager.connect( source, target_node, target_thread, synmodel_id );
+      }
+    }
   }
 
   i->OStack.pop( 3 );

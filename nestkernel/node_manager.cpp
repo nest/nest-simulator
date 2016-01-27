@@ -38,6 +38,7 @@
 #include "node.h"
 #include "sibling_container.h"
 #include "subnet.h"
+#include "vp_manager_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"

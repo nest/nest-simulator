@@ -56,12 +56,19 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
   if ( source.has_proxies() )
   {
     if ( source.is_off_grid() )
+    {
       send_offgrid_remote( t, e, lag );
+    }
     else
+    {
       send_remote( t, e, lag );
+      send_to_devices( t, source.get_gid(), e, lag );
+    }
   }
   else
+  {
     send_local( t, source, e );
+  }
 }
 
 template <>
@@ -98,6 +105,17 @@ EventDeliveryManager::send_remote( thread t, SpikeEvent& e, const long_t lag )
   {
     spike_register_[ t ][ lag ].push_back( e.get_sender().get_gid() );
     spike_register_table_.add_spike( t, e, lag );
+  }
+}
+
+inline void
+EventDeliveryManager::send_to_devices( thread tid, const index s_gid, SpikeEvent& e, const long_t lag )
+{
+  e.set_stamp( kernel().simulation_manager.get_clock() + Time::step( lag + 1 ) );
+  e.set_sender_gid( s_gid );
+  for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+  {
+    kernel().connection_builder_manager.send_to_devices( tid, s_gid, e );
   }
 }
 

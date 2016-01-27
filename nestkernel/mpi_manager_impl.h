@@ -46,7 +46,7 @@ nest::MPIManager::get_process_id( nest::thread vp ) const
 inline nest::thread
 nest::MPIManager::get_process_id_of_gid( index gid ) const
 {
-  return gid % ( kernel().vp_manager.get_num_threads() * n_sim_procs_ ) % n_sim_procs_;
+  return gid % ( kernel().vp_manager.get_num_virtual_processes() ) % n_sim_procs_;
 }
 
 #endif /* MPI_MANAGER_IMPL_H */

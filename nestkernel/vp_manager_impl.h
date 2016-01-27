@@ -31,7 +31,7 @@
 inline nest::thread
 nest::VPManager::get_vp() const
 {
-  return kernel().mpi_manager.get_rank() + get_thread_id() * kernel().mpi_manager.get_num_processes();
+  return kernel().mpi_manager.get_rank() + get_thread_id() * kernel().mpi_manager.get_num_sim_processes();
 }
 
 inline nest::thread
@@ -41,7 +41,7 @@ nest::VPManager::get_num_virtual_processes() const
 }
 
 inline bool
-nest::VPManager::is_vp_local( index gid ) const
+nest::VPManager::is_vp_local( const index gid ) const
 {
   return ( gid % ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() ) == get_vp() );
 }

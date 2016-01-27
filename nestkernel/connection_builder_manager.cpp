@@ -43,8 +43,8 @@
 #include "nest_names.h"
 #include "node.h"
 #include "subnet.h"
-#include "target_table.h"
 #include "target_table_impl.h"
+#include "target_table_devices_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -90,6 +90,7 @@ nest::ConnectionBuilderManager::initialize()
   }
   source_table_.initialize();
   target_table_.initialize();
+  target_table_devices_.initialize();
 
   tVSConnector tmp( kernel().vp_manager.get_num_threads(), tSConnector() );
   connections_.swap( tmp );
@@ -125,6 +126,7 @@ nest::ConnectionBuilderManager::finalize()
 {
   source_table_.finalize();
   target_table_.finalize();
+  target_table_devices_.finalize();
   delete_connections_();
   delete_connections_5g_();
 }
@@ -202,6 +204,12 @@ void
 nest::ConnectionBuilderManager::send_5g( thread tid, synindex syn_index, unsigned int lcid, Event& e )
 {
   connections_5g_[ tid ]->send( tid, syn_index, lcid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+}
+
+void
+nest::ConnectionBuilderManager::send_to_devices( thread tid, const index s_gid, Event& e )
+{
+  target_table_devices_.send( tid, s_gid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
 }
 
 void
@@ -408,36 +416,59 @@ nest::ConnectionBuilderManager::connect( index sgid,
   double_t w )
 {
   Node* const source = kernel().node_manager.get_node( sgid, target_thread );
+  const thread tid = kernel().vp_manager.get_thread_id();
 
-  // normal nodes and devices with proxies
-  if ( target->has_proxies() )
+  // normal nodes and devices with proxies -> normal nodes and devices with proxies
+  if ( source->has_proxies() && target->has_proxies() )
   {
     connect_( *source, *target, sgid, target_thread, syn, d, w );
   }
-  else if ( target->local_receiver() ) // normal devices
+  // normal nodes and devices with proxies -> normal devices
+  else if ( source->has_proxies() && not target->has_proxies() )
   {
-    if ( source->is_proxy() )
-      return;
-
-    if ( ( source->get_thread() != target_thread ) && ( source->has_proxies() ) )
+    if ( source->is_proxy() || source->get_thread() != tid)
     {
-      target_thread = source->get_thread();
-      target = kernel().node_manager.get_node( target->get_gid(), target_thread );
+      return;
     }
 
-    connect_( *source, *target, sgid, target_thread, syn, d, w );
+    // if ( source->get_thread() != target_thread )
+    // {
+    //   target_thread = source->get_thread();
+    //   target = kernel().node_manager.get_node( target->get_gid(), target_thread );
+    // }
+
+    connect_to_device_( *source, *target, sgid, target_thread, syn, d, w );
   }
-  else // globally receiving devices iterate over all target threads
+  // normal devices -> normal nodes and devices with proxies
+  else if ( not source->has_proxies() && target->has_proxies() )
   {
-    if ( !source->has_proxies() ) // we do not allow to connect a device to a global receiver at the
-      // moment
+    connect_from_device_( *source, *target, sgid, target_thread, syn, d, w );
+  }
+  // normal devices -> normal devices
+  else if ( not source->has_proxies() && not target->has_proxies() )
+  {
+    connect_from_device_( *source, *target, sgid, target_thread, syn, d, w );
+  }
+  // globally receiving devices
+  // e.g., volume transmitter
+  else if ( not target->has_proxies() && not target->local_receiver() )
+  {
+     // we do not allow to connect a device to a global receiver at the moment
+    if ( not source->has_proxies() )
+    {
       return;
+    }
+    // globally receiving devices iterate over all target threads
     const thread n_threads = kernel().vp_manager.get_num_threads();
-    for ( thread t = 0; t < n_threads; t++ )
+    for ( thread tid = 0; tid < n_threads; ++tid )
     {
-      target = kernel().node_manager.get_node( target->get_gid(), t );
-      connect_( *source, *target, sgid, t, syn, d, w );
+      target = kernel().node_manager.get_node( target->get_gid(), tid );
+      connect_( *source, *target, sgid, tid, syn, d, w );
     }
+  }
+  else
+  {
+    assert( false );
   }
 }
 
@@ -453,15 +484,18 @@ nest::ConnectionBuilderManager::connect( index sgid,
 {
   Node* const source = kernel().node_manager.get_node( sgid, target_thread );
 
-  // normal nodes and devices with proxies
-  if ( target->has_proxies() )
+  // normal nodes and devices with proxies -> normal nodes and devices with proxies
+  if ( source->has_proxies() && target->has_proxies() )
   {
     connect_( *source, *target, sgid, target_thread, syn, params, d, w );
   }
-  else if ( target->local_receiver() ) // normal devices
+  // normal nodes and devices with proxies -> normal devices
+  else if ( source->has_proxies() && not target->has_proxies() )
   {
     if ( source->is_proxy() )
+    {
       return;
+    }
 
     if ( ( source->get_thread() != target_thread ) && ( source->has_proxies() ) )
     {
@@ -469,69 +503,110 @@ nest::ConnectionBuilderManager::connect( index sgid,
       target = kernel().node_manager.get_node( target->get_gid(), target_thread );
     }
 
-    connect_( *source, *target, sgid, target_thread, syn, params, d, w );
+    connect_to_device_( *source, *target, sgid, target_thread, syn, params, d, w );
   }
-  else // globally receiving devices iterate over all target threads
+  // normal devices -> normal nodes and devices with proxies
+  else if ( not source->has_proxies() && target->has_proxies() )
   {
-    if ( !source->has_proxies() ) // we do not allow to connect a device to a global receiver at the
-      // moment
-      return;
-    const thread n_threads = kernel().vp_manager.get_num_threads();
-    for ( thread t = 0; t < n_threads; t++ )
+    connect_from_device_( *source, *target, sgid, target_thread, syn, params, d, w );
+  }
+  // normal devices -> normal devices
+  else if ( not source->has_proxies() && not target->has_proxies() )
+  {
+    connect_from_device_( *source, *target, sgid, target_thread, syn, params, d, w );
+  }
+  // globally receiving devices
+  // e.g., volume transmitter
+  else if ( not target->has_proxies() && not target->local_receiver() )
+  {
+     // we do not allow to connect a device to a global receiver at the moment
+    if ( not source->has_proxies() )
     {
-      target = kernel().node_manager.get_node( target->get_gid(), t );
-      connect_( *source, *target, sgid, t, syn, params, d, w );
+      return;
     }
+    // globally receiving devices iterate over all target threads
+    const thread n_threads = kernel().vp_manager.get_num_threads();
+    for ( thread tid = 0; tid < n_threads; ++tid )
+    {
+      target = kernel().node_manager.get_node( target->get_gid(), tid );
+      connect_to_device_( *source, *target, sgid, tid, syn, params, d, w );
+    }
+  }
+  else
+  {
+    assert( false );
   }
 }
 
 // gid gid dict
 bool
-nest::ConnectionBuilderManager::connect( index source_id,
-  index target_id,
+nest::ConnectionBuilderManager::connect( index sgid,
+  index tgid,
   DictionaryDatum& params,
   index syn )
 {
 
-  if ( !kernel().node_manager.is_local_gid( target_id ) )
+  if ( !kernel().node_manager.is_local_gid( tgid ) )
     return false;
 
-  Node* target_ptr = kernel().node_manager.get_node( target_id );
+  Node* target = kernel().node_manager.get_node( tgid );
 
   // target_thread defaults to 0 for devices
-  thread target_thread = target_ptr->get_thread();
+  thread target_thread = target->get_thread();
 
-  Node* source_ptr = kernel().node_manager.get_node( source_id, target_thread );
+  Node* source = kernel().node_manager.get_node( sgid, target_thread );
 
-  // normal nodes and devices with proxies
-  if ( target_ptr->has_proxies() )
+  // normal nodes and devices with proxies -> normal nodes and devices with proxies
+  if ( source->has_proxies() && target->has_proxies() )
   {
-    connect_( *source_ptr, *target_ptr, source_id, target_thread, syn, params );
+    connect_( *source, *target, sgid, target_thread, syn, params );
   }
-  else if ( target_ptr->local_receiver() ) // normal devices
+  // normal nodes and devices with proxies -> normal devices
+  else if ( source->has_proxies() && not target->has_proxies() )
   {
-    if ( source_ptr->is_proxy() )
-      return false;
-
-    if ( ( source_ptr->get_thread() != target_thread ) && ( source_ptr->has_proxies() ) )
+    if ( source->is_proxy() )
     {
-      target_thread = source_ptr->get_thread();
-      target_ptr = kernel().node_manager.get_node( target_id, target_thread );
+      return false;
     }
 
-    connect_( *source_ptr, *target_ptr, source_id, target_thread, syn, params );
+    if ( ( source->get_thread() != target_thread ) && ( source->has_proxies() ) )
+    {
+      target_thread = source->get_thread();
+      target = kernel().node_manager.get_node( tgid, target_thread );
+    }
+
+    connect_to_device_( *source, *target, sgid, target_thread, syn, params );
   }
-  else // globally receiving devices iterate over all target threads
+  // normal devices -> normal nodes and devices with proxies
+  else if ( not source->has_proxies() && target->has_proxies() )
   {
-    if ( !source_ptr->has_proxies() ) // we do not allow to connect a device to a global receiver at
-      // the moment
+    connect_from_device_( *source, *target, sgid, target_thread, syn, params );
+  }
+  // normal devices -> normal devices
+  else if ( not source->has_proxies() && not target->has_proxies() )
+  {
+    connect_from_device_( *source, *target, sgid, target_thread, syn, params );
+  }
+  // globally receiving devices
+  // e.g., volume transmitter
+  else if ( not target->has_proxies() && not target->local_receiver() )
+  {
+     // we do not allow to connect a device to a global receiver at the moment
+    if ( not source->has_proxies() )
+    {
       return false;
+    }
+    // globally receiving devices iterate over all target threads
     const thread n_threads = kernel().vp_manager.get_num_threads();
-    for ( thread t = 0; t < n_threads; t++ )
+    for ( thread tid = 0; tid < n_threads; ++tid )
     {
-      target_ptr = kernel().node_manager.get_node( target_id, t );
-      connect_( *source_ptr, *target_ptr, source_id, t, syn, params );
+      target = kernel().node_manager.get_node( tgid, tid );
+      connect_( *source, *target, sgid, tid, syn, params );
     }
+  }
+  else
+  {
+    assert( false );
   }
 
   // We did not exit prematurely due to proxies, so we have connected.
@@ -627,6 +702,67 @@ nest::ConnectionBuilderManager::connect_( Node& s,
     vv_num_connections_[ tid ].resize( syn + 1 );
   }
   ++vv_num_connections_[ tid ][ syn ];
+}
+
+void
+nest::ConnectionBuilderManager::connect_to_device_( Node& s,
+  Node& r,
+  index s_gid,
+  thread tid,
+  index syn,
+  double_t d,
+  double_t w )
+{
+  std::cout<<"here connect_to_device \n";
+  kernel().model_manager.assert_valid_syn_id( syn );
+
+  // create entries in connection structure for connections to devices
+  target_table_devices_.add_connection( s, r, s_gid, tid, syn, d, w );
+  
+  // TODO: set size of vv_num_connections in init
+  if ( vv_num_connections_[ tid ].size() <= syn )
+  {
+    vv_num_connections_[ tid ].resize( syn + 1 );
+  }
+  ++vv_num_connections_[ tid ][ syn ];
+}
+
+void
+nest::ConnectionBuilderManager::connect_to_device_( Node& s,
+  Node& r,
+  index s_gid,
+  thread tid,
+  index syn,
+  DictionaryDatum& p,
+  double_t d,
+  double_t w )
+{
+  std::cout<<"here connect_to_device with params\n";
+}
+
+void
+nest::ConnectionBuilderManager::connect_from_device_( Node& s,
+  Node& r,
+  index s_gid,
+  thread tid,
+  index syn,
+  double_t d,
+  double_t w )
+{
+  std::cout<<"here connect_from_device\n";
+}
+
+void
+nest::ConnectionBuilderManager::connect_from_device_( Node& s,
+  Node& r,
+  index s_gid,
+  thread tid,
+  index syn,
+  DictionaryDatum& p,
+  double_t d,
+  double_t w )
+{
+    std::cout<<"here connect_from_device with params\n";
 }
 
 // -----------------------------------------------------------------------------

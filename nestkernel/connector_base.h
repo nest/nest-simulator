@@ -369,6 +369,14 @@ public:
   }
 
   void
+  send_to_all( Event& e, thread tid, const std::vector< ConnectorModel* >& cm )
+  {
+    // for all delegate send to homogeneous connectors
+    for ( size_t i = 0; i < size(); i++ )
+      at( i )->send( e, tid, cm );
+  }
+
+  void
   trigger_update_weight( long_t vt_gid,
     thread t,
     const vector< spikecounter >& dopa_spikes,

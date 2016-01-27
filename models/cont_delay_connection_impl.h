@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef CONT_DELAY_CONNECTION_IMPL_H
+#define CONT_DELAY_CONNECTION_IMPL_H
+
 #include "cont_delay_connection.h"
 
 // Includes from nestkernel:
@@ -99,3 +102,5 @@ ContDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d, 
 }
 
 } // of namespace nest
+
+#endif // #ifndef CONT_DELAY_CONNECTION_IMPL_H

@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef MODEL_MANAGER_IMPL_H
+#define MODEL_MANAGER_IMPL_H
+
 #include "model_manager.h"
 
 // Includes from libnestutil:
@@ -141,3 +144,5 @@ ModelManager::is_model_in_use( index i )
 
 
 } // namespace nest
+
+#endif // #ifndef MODEL_MANAGER_IMPL_H

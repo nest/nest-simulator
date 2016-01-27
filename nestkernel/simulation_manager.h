@@ -23,6 +23,9 @@
 #ifndef SIMULATION_MANAGER_H
 #define SIMULATION_MANAGER_H
 
+// C++ includes:
+#include <vector>
+
 // Includes from libnestutil:
 #include "manager_interface.h"
 
@@ -35,6 +38,7 @@
 
 namespace nest
 {
+class Node;
 
 class SimulationManager : public ManagerInterface
 {
@@ -61,6 +65,16 @@ public:
    * Terminate the simulation after the time-slice is finished.
    */
   void terminate();
+
+  /**
+   *
+   */
+  size_t get_prelim_interpolation_order() const;
+
+  /**
+   *
+   */
+  double_t get_prelim_tol() const;
 
   /**
    * Get the time at the beginning of the current time slice.
@@ -114,24 +128,28 @@ private:
   void prepare_simulation_();  //! setup before simulation start
   void finalize_simulation_(); //! wrap-up after simulation end
   void update_();              //! actually perform simulation
-  void advance_time_();        //!< Update time to next time step
-  void print_progress_();      //!< TODO: Remove, replace by logging!
+  bool prelim_update_( Node* );
+  void advance_time_();   //!< Update time to next time step
+  void print_progress_(); //!< TODO: Remove, replace by logging!
 
-  bool simulating_;       //!< true if simulation in progress
-  Time clock_;            //!< SimulationManager clock, updated once per slice
-  delay slice_;           //!< current update slice
-  delay to_do_;           //!< number of pending cycles.
-  delay to_do_total_;     //!< number of requested cycles in current simulation.
-  delay from_step_;       //!< update clock_+from_step<=T<clock_+to_step_
-  delay to_step_;         //!< update clock_+from_step<=T<clock_+to_step_
-  timeval t_slice_begin_; //!< Wall-clock time at the begin of a time slice
-  timeval t_slice_end_;   //!< Wall-clock time at the end of time slice
-  long t_real_;           //!< Accumunated wall-clock time spent simulating (in us)
-  bool terminate_;        //!< Terminate on signal or error
-  bool simulated_;        //!< indicates whether the SimulationManager has already been
-                          //!< simulated for sometime
-  bool print_time_;       //!< Indicates whether time should be printed during
-                          //!< simulations (or not)
+  bool simulating_;                   //!< true if simulation in progress
+  Time clock_;                        //!< SimulationManager clock, updated once per slice
+  delay slice_;                       //!< current update slice
+  delay to_do_;                       //!< number of pending cycles.
+  delay to_do_total_;                 //!< number of requested cycles in current simulation.
+  delay from_step_;                   //!< update clock_+from_step<=T<clock_+to_step_
+  delay to_step_;                     //!< update clock_+from_step<=T<clock_+to_step_
+  timeval t_slice_begin_;             //!< Wall-clock time at the begin of a time slice
+  timeval t_slice_end_;               //!< Wall-clock time at the end of time slice
+  long t_real_;                       //!< Accumunated wall-clock time spent simulating (in us)
+  bool terminate_;                    //!< Terminate on signal or error
+  bool simulated_;                    //!< indicates whether the SimulationManager has already been
+                                      //!< simulated for sometime
+  bool print_time_;                   //!< Indicates whether time should be printed during
+                                      //!< simulations (or not)
+  long max_num_prelim_iterations_;    //!< maximal number of iterations used for preliminary update
+  size_t prelim_interpolation_order_; //!< interpolation order for prelim iterations
+  double_t prelim_tol_;               //!< Tolerance of prelim iterations
 };
 
 inline void
@@ -181,6 +199,18 @@ inline delay
 SimulationManager::get_to_step() const
 {
   return to_step_;
+}
+
+inline size_t
+SimulationManager::get_prelim_interpolation_order() const
+{
+  return prelim_interpolation_order_;
+}
+
+inline double_t
+SimulationManager::get_prelim_tol() const
+{
+  return prelim_tol_;
 }
 }
 

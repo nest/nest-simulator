@@ -63,7 +63,7 @@ public:
    * @throws nest::UnknownNode       Target does not exist in the network.
    */
   DictionaryDatum get_status( index );
-  
+
   /**
    * Set properties of a Node. The specified node must exist.
    * @throws nest::UnknownNode       Target does not exist in the network.
@@ -156,6 +156,11 @@ public:
    */
   Node* get_node( index, thread thr = 0 );
 
+  /*
+   * Return the process id of the node with gid
+   */
+  thread get_process_id_of_gid( index gid ) const;
+
   /**
    * Return the Subnet that contains the thread siblings.
    * @param i Index of the specified Node.
@@ -191,6 +196,11 @@ public:
   const std::vector< Node* >& get_nodes_on_thread( thread ) const;
 
   /**
+   * Get list of nodes on given thread.
+   */
+  const std::vector< Node* >& get_nodes_prelim_up_on_thread( thread ) const;
+
+  /**
    * Prepare nodes for simulation and register nodes in node_list.
    * Calls prepare_node_() for each pertaining Node.
    * @see prepare_node_()
@@ -201,6 +211,11 @@ public:
    * Invoke finalize() on nodes registered for finalization.
    */
   void finalize_nodes();
+
+  /**
+   *
+   */
+  bool needs_prelim_update() const;
 
 private:
   /**
@@ -229,27 +244,32 @@ private:
 
 private:
   SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
-  Subnet* root_;    //!< Root node.
-  Subnet* current_; //!< Current working node (for insertion).
+  Subnet* root_;                //!< Root node.
+  Subnet* current_;             //!< Current working node (for insertion).
 
   Model* siblingcontainer_model_; //!< The model for the SiblingContainer class
 
   index n_gsd_; //!< Total number of global spike detectors, used for distributing them over
                 //!< recording processes
 
-   /**
-    * Data structure holding node pointers per thread.
-    *
-    * The outer dimension of indexes threads. Each per-thread vector
-    * contains all nodes on that thread, except subnets, since these
-    * are never updated.
-    *
-    * @note Frozen nodes are included, so that we do not need to regenerate
-    * these vectors when the frozen status on nodes is changed (which is
-    * essentially undetectable).
-    */
+  /**
+   * Data structure holding node pointers per thread.
+   *
+   * The outer dimension of indexes threads. Each per-thread vector
+   * contains all nodes on that thread, except subnets, since these
+   * are never updated.
+   *
+   * @note Frozen nodes are included, so that we do not need to regenerate
+   * these vectors when the frozen status on nodes is changed (which is
+   * essentially undetectable).
+   */
   std::vector< std::vector< Node* > > nodes_vec_;
-  index nodes_vec_network_size_;        //!< Network size when nodes_vec_ was last updated
+  std::vector< std::vector< Node* > >
+    nodes_prelim_up_vec_;    //!< Nodelists for unfrozen nodes that require an
+                             //!< additional preliminary update (e.g. gap
+                             //!< junctions)
+  bool needs_prelim_update_; //!< there is at least one neuron model that needs preliminary update
+  index nodes_vec_network_size_; //!< Network size when nodes_vec_ was last updated
 };
 
 inline index
@@ -295,11 +315,23 @@ NodeManager::get_n_gsd()
 }
 
 inline const std::vector< Node* >&
-NodeManager::get_nodes_on_thread(thread t) const
+NodeManager::get_nodes_on_thread( thread t ) const
 {
-  return nodes_vec_.at(t);
+  return nodes_vec_.at( t );
 }
 
-} // namespace 
+inline const std::vector< Node* >&
+NodeManager::get_nodes_prelim_up_on_thread( thread t ) const
+{
+  return nodes_prelim_up_vec_.at( t );
+}
+
+inline bool
+NodeManager::needs_prelim_update() const
+{
+  return needs_prelim_update_;
+}
+
+} // namespace
 
 #endif /* NODE_MANAGER_H */

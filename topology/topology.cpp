@@ -54,7 +54,7 @@ create_layer( const DictionaryDatum& layer_dict )
 
   index layernode = AbstractLayer::create_layer( layer_dict );
 
-  ALL_ENTRIES_ACCESSED( *layer_dict, "topology::CreateLayer", "Unread dictionary entries: ");
+  ALL_ENTRIES_ACCESSED( *layer_dict, "topology::CreateLayer", "Unread dictionary entries: " );
 
   return layernode;
 }
@@ -111,7 +111,7 @@ create_mask( const DictionaryDatum& mask_dict )
 
   MaskDatum datum( TopologyModule::create_mask( mask_dict ) );
 
-  ALL_ENTRIES_ACCESSED( *mask_dict, "topology::CreateMask", "Unread dictionary entries: ");
+  ALL_ENTRIES_ACCESSED( *mask_dict, "topology::CreateMask", "Unread dictionary entries: " );
 
   return datum;
 }
@@ -200,7 +200,7 @@ connect_layers( const index source_gid,
 
   ConnectionCreator connector( connection_dict );
 
-  ALL_ENTRIES_ACCESSED( *connection_dict, "topology::CreateLayers", "Unread dictionary entries: ");
+  ALL_ENTRIES_ACCESSED( *connection_dict, "topology::CreateLayers", "Unread dictionary entries: " );
 
   source->connect( *target, connector );
 }
@@ -212,7 +212,7 @@ create_parameter( const DictionaryDatum& param_dict )
 
   ParameterDatum datum( TopologyModule::create_parameter( param_dict ) );
 
-  ALL_ENTRIES_ACCESSED( *param_dict, "topology::CreateParameter", "Unread dictionary entries: ");
+  ALL_ENTRIES_ACCESSED( *param_dict, "topology::CreateParameter", "Unread dictionary entries: " );
 
   return datum;
 }

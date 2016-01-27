@@ -26,8 +26,6 @@
 #include "config.h"
 
 // Includes from nestkernel:
-#include "communicator.h"
-#include "communicator_impl.h"
 #include "genericmodel.h"
 #include "kernel_manager.h"
 #include "model.h"

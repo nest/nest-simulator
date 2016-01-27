@@ -83,6 +83,16 @@ EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const
   send_local( t, source, e );
 }
 
+inline void
+EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
+{
+  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
+  e.set_sender( source );
+  e.set_sender_gid( source.get_gid() );
+  thread t = source.get_thread();
+  send_remote( t, e );
+}
+
 inline size_t
 EventDeliveryManager::write_toggle() const
 {
@@ -95,17 +105,6 @@ EventDeliveryManager::send_local( thread t, Node& source, Event& e )
   index sgid = source.get_gid();
   e.set_sender_gid( sgid );
   kernel().connection_builder_manager.send( t, sgid, e );
-}
-
-inline void
-EventDeliveryManager::send_remote( thread t, SpikeEvent& e, const long_t lag )
-{
-  // Put the spike in a buffer for the remote machines
-  for ( int_t i = 0; i < e.get_multiplicity(); ++i )
-  {
-    spike_register_[ t ][ lag ].push_back( e.get_sender().get_gid() );
-    spike_register_table_.add_spike( t, e, lag );
-  }
 }
 
 inline void

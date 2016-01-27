@@ -87,23 +87,23 @@ public:
     const std::string&,
     const std::string&,
     const size_t ) const;
-  
+
   /**
    * Implements standard behaviour for dictionary entry misses. Use with define
    * ALL_ENTRIES_ACCESSED.
    */
-  void all_entries_accessed( const Dictionary&, 
-    const std::string&, 
-    const std::string&, 
-    const std::string&, 
-    const size_t) const;
-  
-  void all_entries_accessed( const Dictionary&, 
-    const std::string&, 
-    const std::string&, 
-    const std::string&, 
-    const std::string&, 
-    const size_t) const;
+  void all_entries_accessed( const Dictionary&,
+    const std::string&,
+    const std::string&,
+    const std::string&,
+    const size_t ) const;
+
+  void all_entries_accessed( const Dictionary&,
+    const std::string&,
+    const std::string&,
+    const std::string&,
+    const std::string&,
+    const size_t ) const;
 
 private:
   /**
@@ -113,7 +113,7 @@ private:
    * LoggingEvent as argument.
    */
   void deliver_logging_event_( const LoggingEvent& event ) const;
-  
+
   void default_logging_callback_( const LoggingEvent& event ) const;
 
 private:

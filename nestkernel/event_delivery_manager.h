@@ -32,7 +32,7 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-#include "communicator.h" // OffGridSpike
+#include "mpi_manager.h" // OffGridSpike
 #include "event.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -45,11 +45,9 @@
 
 namespace nest
 {
+typedef MPIManager::OffGridSpike OffGridSpike;
 
 struct TargetData;
-  
-typedef Communicator::OffGridSpike OffGridSpike;
-
 // TODO@5g: move this to communicator.h and implement getter
 const size_t mpi_buffer_size_target_data = 30000;
 const size_t mpi_buffer_size_spike_data = 30000;
@@ -80,6 +78,11 @@ public:
   void send( Node& source, EventT& e, const long_t lag = 0 );
 
   /**
+   * Send a secondary event remote.
+   */
+  void send_secondary( Node& source, SecondaryEvent& e );
+
+  /**
    * Send event e to all targets of node source on thread t
    */
   void send_local( thread t, Node& source, Event& e );
@@ -102,6 +105,8 @@ public:
    * @see send_to_targets()
    */
   void send_remote( thread p, SpikeEvent&, const long_t lag = 0 );
+
+  void send_remote( thread t, SecondaryEvent& e );
 
   /**
    * Add global id of event sender to the spike_register.
@@ -202,12 +207,12 @@ public:
    * ordering applies to time stamps only, it does NOT take into
    * account the offsets of precise spikes.
    */
-  void deliver_events( thread t );
+  bool deliver_events( thread t );
 
   /**
    * Collocate buffers and exchange events with other MPI processes.
    */
-  void gather_events();
+  void gather_events( bool );
 
   void gather_spike_data( const thread tid );
 
@@ -226,13 +231,12 @@ public:
   void init_moduli();
 
 private:
-
   /**
    * Rearrange the spike_register into a 2-dim structure. This is
    * done by collecting the spikes from all threads in each slice of
    * the min_delay_ interval.
    */
-  void collocate_buffers_();
+  void collocate_buffers_( bool );
 
   bool check_spike_data_me_completed_() const;
 
@@ -300,6 +304,12 @@ private:
   std::vector< std::vector< std::vector< OffGridSpike > > > offgrid_spike_register_;
 
   /**
+   * Buffer to collect the secondary events
+   * after serialization.
+   */
+  std::vector< std::vector< uint_t > > secondary_events_buffer_;
+
+  /**
    * Buffer containing the gids of local neurons that spiked in the
    * last min_delay_ interval. The single slices are separated by a
    * marker value.
@@ -351,6 +361,17 @@ EventDeliveryManager::send_to_node( Event& e )
 }
 
 inline void
+EventDeliveryManager::send_remote( thread t, SpikeEvent& e, const long_t lag )
+{
+  // Put the spike in a buffer for the remote machines
+  for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+  {
+    spike_register_[ t ][ lag ].push_back( e.get_sender().get_gid() );
+    spike_register_table_.add_spike( t, e, lag );
+  }
+}
+
+inline void
 EventDeliveryManager::send_offgrid_remote( thread t, SpikeEvent& e, const long_t lag )
 {
   // Put the spike in a buffer for the remote machines
@@ -396,6 +417,18 @@ EventDeliveryManager::get_slice_modulo( delay d )
   assert( static_cast< std::vector< delay >::size_type >( d ) < slice_moduli_.size() );
 
   return slice_moduli_[ d ];
+}
+
+inline void
+EventDeliveryManager::send_remote( thread t, SecondaryEvent& e )
+{
+
+  // put the secondary events in a buffer for the remote machines
+  size_t old_size = secondary_events_buffer_[ t ].size();
+
+  secondary_events_buffer_[ t ].resize( old_size + e.size() );
+  std::vector< uint_t >::iterator it = secondary_events_buffer_[ t ].begin() + old_size;
+  e >> it;
 }
 
 } // namespace nest

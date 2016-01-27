@@ -32,7 +32,6 @@
 #include "topology_names.h"
 
 
-
 namespace nest
 {
 

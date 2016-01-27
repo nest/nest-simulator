@@ -839,7 +839,7 @@ public:
    * @param model name of model causing problem
    */
   NumericalInstability( const std::string& model )
-    : KernelException( "GSLSolverFailure" )
+    : KernelException( "NumericalInstability" )
     , model_( model )
   {
   }

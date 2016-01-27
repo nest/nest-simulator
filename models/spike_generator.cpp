@@ -366,4 +366,3 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
-

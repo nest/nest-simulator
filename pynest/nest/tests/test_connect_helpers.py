@@ -22,7 +22,6 @@
 import numpy as np
 import scipy.stats
 import nest
-import matplotlib.pylab as plt
 from scipy.stats import truncexpon
 
 try:

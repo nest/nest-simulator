@@ -23,7 +23,6 @@
 #include "sparse_node_array.h"
 
 // Includes from nestkernel:
-#include "communicator.h"
 #include "exceptions.h"
 #include "node.h"
 

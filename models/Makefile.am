@@ -28,9 +28,11 @@ libmodelsmodule_la_SOURCES= \
 		correlospinmatrix_detector.h correlospinmatrix_detector.cpp\
 		dc_generator.h dc_generator.cpp\
 		gamma_sup_generator.h gamma_sup_generator.cpp\
+		gap_junction.h\
 		ginzburg_neuron.h ginzburg_neuron.cpp\
 		hh_cond_exp_traub.h hh_cond_exp_traub.cpp\
 		hh_psc_alpha.h hh_psc_alpha.cpp\
+		hh_psc_alpha_gap.h hh_psc_alpha_gap.cpp\
 		ht_connection.h\
 		ht_neuron.h ht_neuron.cpp\
 		iaf_chxk_2008.cpp iaf_chxk_2008.h\
@@ -64,7 +66,6 @@ libmodelsmodule_la_SOURCES= \
 		ppd_sup_generator.h ppd_sup_generator.cpp\
 		pulsepacket_generator.h pulsepacket_generator.cpp\
 		quantal_stp_connection.h quantal_stp_connection_impl.h\
-		sli_neuron.h sli_neuron.cpp\
 		sinusoidal_poisson_generator.h sinusoidal_poisson_generator.cpp \
 		sinusoidal_gamma_generator.h sinusoidal_gamma_generator.cpp \
 		spike_detector.h spike_detector.cpp\
@@ -78,9 +79,11 @@ libmodelsmodule_la_SOURCES= \
 		stdp_dopa_connection.h stdp_dopa_connection.cpp\
 		stdp_connection_facetshw_hom.h stdp_connection_facetshw_hom_impl.h\
 		stdp_pl_connection_hom.h stdp_pl_connection_hom.cpp\
+		stdp_triplet_connection.h\
 		step_current_generator.h step_current_generator.cpp\
 		tsodyks2_connection.h\
 		tsodyks_connection.h\
+		tsodyks_connection_hom.h tsodyks_connection_hom.cpp\
 		volume_transmitter.h volume_transmitter.cpp\
 		spike_dilutor.h spike_dilutor.cpp
 

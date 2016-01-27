@@ -29,10 +29,12 @@
 #include "compose.hpp"
 #include "numerics.h"
 
+// includes from nest:
+#include "neststartup.h" // get_engine()
+
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
-#include "network.h" // interpreter_
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -41,7 +43,6 @@
 #include "dictutils.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
-
 
 
 /* ----------------------------------------------------------------
@@ -145,8 +146,7 @@ nest::sli_neuron::calibrate()
   if ( terminate )
   {
     kernel().simulation_manager.terminate();
-    LOG(
-      M_ERROR, "sli_neuron::calibrate", "Terminating." );
+    LOG( M_ERROR, "sli_neuron::calibrate", "Terminating." );
     return;
   }
 
@@ -171,9 +171,7 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
   {
     std::string msg = String::compose( "Node %1 still has its error state set.", get_gid() );
     LOG( M_ERROR, "sli_neuron::update", msg.c_str() );
-    LOG( M_ERROR,
-      "sli_neuron::update",
-      "Please check /calibrate and /update for errors" );
+    LOG( M_ERROR, "sli_neuron::update", "Please check /calibrate and /update for errors" );
     kernel().simulation_manager.terminate();
     return;
   }
@@ -215,27 +213,27 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
 int
 nest::sli_neuron::execute_sli_protected( DictionaryDatum state, Name cmd )
 {
-  SLIInterpreter& i = Network::get_network().interpreter_;
-  
+  SLIInterpreter& i = get_engine();
+
   i.DStack->push( state ); // push state dictionary as top namespace
   size_t exitlevel = i.EStack.load();
   i.EStack.push( new NameDatum( cmd ) );
   int result = i.execute_( exitlevel );
   i.DStack->pop(); // pop neuron's namespace
-  
+
   if ( state->known( "error" ) )
   {
     assert( state->known( names::global_id ) );
     index g_id = ( *state )[ names::global_id ];
     std::string model = getValue< std::string >( ( *state )[ names::model ] );
     std::string msg = String::compose( "Error in %1 with global id %2.", model, g_id );
-    
+
     LOG( M_ERROR, cmd.toString().c_str(), msg.c_str() );
     LOG( M_ERROR, "execute_sli_protected", "Terminating." );
-    
+
     kernel().simulation_manager.terminate();
   }
-  
+
   return result;
 }
 
@@ -246,10 +244,12 @@ nest::sli_neuron::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.ex_spikes_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.in_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.in_spikes_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 

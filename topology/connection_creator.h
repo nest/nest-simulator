@@ -194,7 +194,8 @@ ConnectionCreator::connect_( index s,
     // check whether the target is on our thread
     thread tid = kernel().vp_manager.get_thread_id();
     if ( tid == target_thread )
-      kernel().connection_builder_manager.connect( s, target, target_thread, syn, d, w ); // TODO implement in terms of nest-api
+      kernel().connection_builder_manager.connect(
+        s, target, target_thread, syn, d, w ); // TODO implement in terms of nest-api
   }
 }
 

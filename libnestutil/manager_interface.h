@@ -85,7 +85,7 @@ public:
    *
    * @see initialize()
    */
-   virtual void finalize() = 0;
+  virtual void finalize() = 0;
 
   virtual void set_status( const DictionaryDatum& ) = 0;
   virtual void get_status( DictionaryDatum& ) = 0;

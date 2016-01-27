@@ -25,10 +25,10 @@
 #ifdef HAVE_MUSIC
 
 // Includes from libnestutil:
+#include "compose.hpp"
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "communicator.h"
 #include "event.h"
 #include "kernel_manager.h"
 #include "nest_types.h"
@@ -90,7 +90,7 @@ MusicEventHandler::publish_port()
 {
   if ( !published_ )
   {
-    music_port_ = Communicator::get_music_setup()->publishEventInput( portname_ );
+    music_port_ = kernel().music_manager.get_music_setup()->publishEventInput( portname_ );
 
     // MUSIC wants seconds, NEST has miliseconds
     double_t acceptable_latency = acceptable_latency_ / 1000.0;

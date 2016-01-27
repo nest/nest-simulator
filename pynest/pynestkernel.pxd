@@ -133,11 +133,8 @@ cdef extern from "interpret.h":
         int execute(const string&) except +
         TokenStack OStack
 
-cdef extern from "network.h" namespace "nest":
-    cppclass Network
-
 cdef extern from "neststartup.h":
-    int neststartup(int, char**, SLIInterpreter&, string) except +
+    int neststartup(int*, char***, SLIInterpreter&, string) except +
     void nestshutdown(int) except +
 
 

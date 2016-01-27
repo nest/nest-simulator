@@ -218,7 +218,8 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
     }
     else
     {
-      throw std::string( "image read error:" ) + std::string( magic ) + std::string( ": Unsupported file type." );
+      throw std::string( "image read error:" ) + std::string( magic )
+        + std::string( ": Unsupported file type." );
     }
   }
   catch ( std::exception& e )

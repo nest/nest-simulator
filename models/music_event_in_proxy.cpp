@@ -34,7 +34,13 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
+// Includes from libnestutil:
+#include "compose.hpp"
+#include "logging.h"
 
+// Includes from nestkernel:
+#include "kernel_manager.h"
+#include "event_delivery_manager_impl.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -106,7 +112,7 @@ nest::music_event_in_proxy::music_event_in_proxy( const music_event_in_proxy& n 
   , P_( n.P_ )
   , S_( n.S_ )
 {
-  Network::get_network().register_music_in_port( P_.port_name_ );
+  kernel().music_manager.register_music_in_port( P_.port_name_, true );
 }
 
 
@@ -133,7 +139,7 @@ nest::music_event_in_proxy::calibrate()
   // register my port and my channel at the scheduler
   if ( !S_.registered_ )
   {
-    Network::get_network().register_music_event_in_proxy( P_.port_name_, P_.channel_, this );
+    kernel().music_manager.register_music_event_in_proxy( P_.port_name_, P_.channel_, this );
     S_.registered_ = true;
   }
 }
@@ -155,8 +161,8 @@ nest::music_event_in_proxy::set_status( const DictionaryDatum& d )
   stmp.set( d, P_ ); // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
-  Network::get_network().register_music_in_port( ptmp.port_name_ );
-  Network::get_network().unregister_music_in_port( P_.port_name_ );
+  kernel().music_manager.register_music_in_port( ptmp.port_name_ );
+  kernel().music_manager.unregister_music_in_port( P_.port_name_ );
 
   P_ = ptmp;
   S_ = stmp;
@@ -168,7 +174,7 @@ nest::music_event_in_proxy::handle( SpikeEvent& e )
   e.set_sender( *this );
 
   for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    Network::get_network().send_local( t, *this, e );
+    kernel().event_delivery_manager.send_local( t, *this, e );
 }
 
 #endif

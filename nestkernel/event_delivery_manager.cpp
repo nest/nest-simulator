@@ -34,6 +34,7 @@
 #include "mpi_manager_impl.h"
 #include "vp_manager_impl.h"
 #include "spike_register_table_impl.h"
+#include "node_manager_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -127,21 +128,47 @@ EventDeliveryManager::configure_spike_buffers()
     for ( size_t k = 0; k < offgrid_spike_register_[ j ].size(); ++k )
       offgrid_spike_register_[ j ][ k ].clear();
 
-  // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces.
+
+  // this should also clear all contained elements
+  // so no loop required
+  secondary_events_buffer_.clear();
+  secondary_events_buffer_.resize( kernel().vp_manager.get_num_threads() );
+
+
+  // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces
+  // plus the fiunal marker and the done flag for iterations
+  // + 1 for the final markers of each thread (invalid_synindex) of secondary events
+  // + 1 for the done flag (true) of each process
   int send_buffer_size =
-    kernel().vp_manager.get_num_threads() * kernel().connection_builder_manager.get_min_delay() > 2
+    kernel().vp_manager.get_num_threads() * kernel().connection_builder_manager.get_min_delay() + 2
+      > 4
     ? kernel().vp_manager.get_num_threads() * kernel().connection_builder_manager.get_min_delay()
-    : 2;
+      + 2
+    : 4;
   int recv_buffer_size = send_buffer_size * kernel().mpi_manager.get_num_processes();
-  Communicator::set_buffer_sizes( send_buffer_size, recv_buffer_size );
+  kernel().mpi_manager.set_buffer_sizes( send_buffer_size, recv_buffer_size );
 
   // DEC cxx required 0U literal, HEP 2007-03-26
   local_grid_spikes_.clear();
   local_grid_spikes_.resize( send_buffer_size, 0U );
   local_offgrid_spikes_.clear();
   local_offgrid_spikes_.resize( send_buffer_size, OffGridSpike( 0, 0.0 ) );
+
   global_grid_spikes_.clear();
   global_grid_spikes_.resize( recv_buffer_size, 0U );
+
+  // insert the end marker for payload event (==invalid_synindex)
+  // and insert the done flag (==true)
+  // after min_delay 0's (== comm_marker)
+  // use the template functions defined in event.h
+  // this only needs to be done for one process, because displacements is set to 0
+  // so all processes initially read out the same positions in the
+  // global spike buffer
+  std::vector< uint_t >::iterator pos = global_grid_spikes_.begin()
+    + kernel().vp_manager.get_num_threads() * kernel().connection_builder_manager.get_min_delay();
+  write_to_comm_buffer( invalid_synindex, pos );
+  write_to_comm_buffer( true, pos );
+
   global_offgrid_spikes_.clear();
   global_offgrid_spikes_.resize( recv_buffer_size, OffGridSpike( 0, 0.0 ) );
 
@@ -216,18 +243,19 @@ EventDeliveryManager::update_moduli()
     std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
   for ( delay d = 0; d < min_delay + max_delay; ++d )
   {
-    slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d )
-                           / min_delay ) % nbuff;
+    slice_moduli_[ d ] =
+      ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
   }
 }
 
 void
-EventDeliveryManager::collocate_buffers_()
+EventDeliveryManager::collocate_buffers_( bool done )
 {
   // count number of spikes in registers
   int num_spikes = 0;
   int num_grid_spikes = 0;
   int num_offgrid_spikes = 0;
+  int uintsize_secondary_events = 0;
 
   std::vector< std::vector< std::vector< uint_t > > >::iterator i;
   std::vector< std::vector< uint_t > >::iterator j;
@@ -241,28 +269,41 @@ EventDeliveryManager::collocate_buffers_()
     for ( jt = it->begin(); jt != it->end(); ++jt )
       num_offgrid_spikes += jt->size();
 
-  num_spikes = num_grid_spikes + num_offgrid_spikes;
+  // here we need to count the secondary events and take them
+  // into account in the size of the buffers
+  // assume that we already serialized all secondary
+  // events into the secondary_events_buffer_
+  // and that secondary_events_buffer_.size() contains the correct size
+  // of this buffer in units of uint_t
+
+  for ( j = secondary_events_buffer_.begin(); j != secondary_events_buffer_.end(); ++j )
+    uintsize_secondary_events += j->size();
+
+  // +1 because we need one end marker invalid_synindex
+  // +1 for bool-value done
+  num_spikes = num_grid_spikes + num_offgrid_spikes + uintsize_secondary_events + 2;
   if ( !off_grid_spiking_ ) // on grid spiking
   {
     // make sure buffers are correctly sized
     if ( global_grid_spikes_.size()
-      != static_cast< uint_t >( Communicator::get_recv_buffer_size() ) )
-      global_grid_spikes_.resize( Communicator::get_recv_buffer_size(), 0 );
+      != static_cast< uint_t >( kernel().mpi_manager.get_recv_buffer_size() ) )
+      global_grid_spikes_.resize( kernel().mpi_manager.get_recv_buffer_size(), 0 );
 
     if ( num_spikes + ( kernel().vp_manager.get_num_threads()
                         * kernel().connection_builder_manager.get_min_delay() )
-      > static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
+      > static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
       local_grid_spikes_.resize(
         ( num_spikes + ( kernel().connection_builder_manager.get_min_delay()
                          * kernel().vp_manager.get_num_threads() ) ),
         0 );
     else if ( local_grid_spikes_.size()
-      < static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
-      local_grid_spikes_.resize( Communicator::get_send_buffer_size(), 0 );
+      < static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
+      local_grid_spikes_.resize( kernel().mpi_manager.get_send_buffer_size(), 0 );
 
     // collocate the entries of spike_registers into local_grid_spikes__
     std::vector< uint_t >::iterator pos = local_grid_spikes_.begin();
     if ( num_offgrid_spikes == 0 )
+    {
       for ( i = spike_register_.begin(); i != spike_register_.end(); ++i )
         for ( j = i->begin(); j != i->end(); ++j )
         {
@@ -270,6 +311,7 @@ EventDeliveryManager::collocate_buffers_()
           *pos = comm_marker_;
           ++pos;
         }
+    }
     else
     {
       std::vector< OffGridSpike >::iterator n;
@@ -300,24 +342,40 @@ EventDeliveryManager::collocate_buffers_()
     for ( i = spike_register_.begin(); i != spike_register_.end(); ++i )
       for ( j = i->begin(); j != i->end(); ++j )
         j->clear();
+
+    // here all spikes have been written to the local_grid_spikes buffer
+    // pos points to next position in this outgoing communication buffer
+    for ( j = secondary_events_buffer_.begin(); j != secondary_events_buffer_.end(); ++j )
+    {
+      pos = std::copy( j->begin(), j->end(), pos );
+      j->clear();
+    }
+
+    // end marker after last secondary event
+    // made sure in resize that this position is still allocated
+    write_to_comm_buffer( invalid_synindex, pos );
+    // append the boolean value indicating whether we are done here
+    write_to_comm_buffer( done, pos );
   }
   else // off_grid_spiking
   {
     // make sure buffers are correctly sized
     if ( global_offgrid_spikes_.size()
-      != static_cast< uint_t >( Communicator::get_recv_buffer_size() ) )
-      global_offgrid_spikes_.resize( Communicator::get_recv_buffer_size(), OffGridSpike( 0, 0.0 ) );
+      != static_cast< uint_t >( kernel().mpi_manager.get_recv_buffer_size() ) )
+      global_offgrid_spikes_.resize(
+        kernel().mpi_manager.get_recv_buffer_size(), OffGridSpike( 0, 0.0 ) );
 
     if ( num_spikes + ( kernel().vp_manager.get_num_threads()
                         * kernel().connection_builder_manager.get_min_delay() )
-      > static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
+      > static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
       local_offgrid_spikes_.resize(
         ( num_spikes + ( kernel().connection_builder_manager.get_min_delay()
                          * kernel().vp_manager.get_num_threads() ) ),
         OffGridSpike( 0, 0.0 ) );
     else if ( local_offgrid_spikes_.size()
-      < static_cast< uint_t >( Communicator::get_send_buffer_size() ) )
-      local_offgrid_spikes_.resize( Communicator::get_send_buffer_size(), OffGridSpike( 0, 0.0 ) );
+      < static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
+      local_offgrid_spikes_.resize(
+        kernel().mpi_manager.get_send_buffer_size(), OffGridSpike( 0, 0.0 ) );
 
     // collocate the entries of spike_registers into local_offgrid_spikes__
     std::vector< OffGridSpike >::iterator pos = local_offgrid_spikes_.begin();
@@ -362,12 +420,16 @@ EventDeliveryManager::collocate_buffers_()
   }
 }
 
-void
+// returns the done value
+bool
 EventDeliveryManager::deliver_events( thread t )
 {
+  // are we done?
+  bool done = true;
+
   // deliver only at beginning of time slice
   if ( kernel().simulation_manager.get_from_step() > 0 )
-    return;
+    return done;
 
   SpikeEvent se;
 
@@ -406,6 +468,43 @@ EventDeliveryManager::deliver_events( thread t )
       }
       pos[ pid ] = pos_pid;
     }
+
+    // here we are done with the spiking events
+    // pos[pid] for each pid now points to the first entry of
+    // the secondary events
+
+    for ( size_t pid = 0; pid < ( size_t ) kernel().mpi_manager.get_num_processes(); ++pid )
+    {
+      std::vector< uint_t >::iterator readpos = global_grid_spikes_.begin() + pos[ pid ];
+
+      while ( true )
+      {
+        // we must not use uint_t for the type, otherwise
+        // the encoding will be different on JUQUEEN for the
+        // index written into the buffer and read out of it
+        synindex synid;
+        read_from_comm_buffer( synid, readpos );
+
+        if ( synid == invalid_synindex )
+          break;
+        --readpos;
+
+        kernel().model_manager.assert_valid_syn_id( synid );
+
+        kernel().model_manager.get_secondary_event_prototype( synid, t ) << readpos;
+
+        kernel().connection_builder_manager.send_secondary(
+          t, kernel().model_manager.get_secondary_event_prototype( synid, t ) );
+      } // of while (true)
+
+      // read the done value of the p-th num_process
+
+      // must be a bool (same type as on the sending side)
+      // otherwise the encoding will be inconsistent on JUQUEEN
+      bool done_p;
+      read_from_comm_buffer( done_p, readpos );
+      done = done && done_p;
+    }
   }
   else // off grid spiking
   {
@@ -442,16 +541,19 @@ EventDeliveryManager::deliver_events( thread t )
       pos[ pid ] = pos_pid;
     }
   }
+
+  return done;
 }
 
 void
-EventDeliveryManager::gather_events()
+EventDeliveryManager::gather_events( bool done )
 {
-  collocate_buffers_();
+  collocate_buffers_( done );
   if ( off_grid_spiking_ )
-    Communicator::communicate( local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
+    kernel().mpi_manager.communicate(
+      local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
   else
-    Communicator::communicate( local_grid_spikes_, global_grid_spikes_, displacements_ );
+    kernel().mpi_manager.communicate( local_grid_spikes_, global_grid_spikes_, displacements_ );
 }
 
 void
@@ -491,7 +593,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     {
       unsigned int* send_buffer_int = reinterpret_cast< unsigned int* >( &send_buffer_spike_data_[0] );
       unsigned int* recv_buffer_int = reinterpret_cast< unsigned int* >( &recv_buffer_spike_data_[0] );
-      Communicator::communicate_Alltoall( send_buffer_int, recv_buffer_int, send_recv_count );
+      kernel().mpi_manager.communicate_Alltoall( send_buffer_int, recv_buffer_int, send_recv_count );
     } // of omp single
 #pragma omp single
     {
@@ -668,7 +770,7 @@ EventDeliveryManager::gather_target_data()
       {
         unsigned int* send_buffer_int = reinterpret_cast< unsigned int* >( &send_buffer_target_data[0] );
         unsigned int* recv_buffer_int = reinterpret_cast< unsigned int* >( &recv_buffer_target_data[0] );
-        Communicator::communicate_Alltoall( send_buffer_int, recv_buffer_int, send_recv_count );
+        kernel().mpi_manager.communicate_Alltoall( send_buffer_int, recv_buffer_int, send_recv_count );
         
       } // of omp single
       
@@ -748,7 +850,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid, std::vec
       }
       else
       {
-        thread target_rank = kernel().mpi_manager.get_process_id_of_gid( next_target_data.gid );
+        thread target_rank = kernel().node_manager.get_process_id_of_gid( next_target_data.gid );
         thread target_rank_index = target_rank - rank_start;
         if ( send_buffer_offset[ target_rank_index ] < num_target_data_per_rank )
         {

@@ -34,10 +34,10 @@ libnest_la_SOURCES=\
 		recordables_map.h\
 		archiving_node.h archiving_node.cpp\
 		common_synapse_properties.h common_synapse_properties.cpp\
-		communicator.h communicator_impl.h communicator.cpp\
 		sibling_container.h sibling_container.cpp\
 		subnet.h subnet.cpp\
 		connection.h\
+		connection_label.h\
 		common_properties_hom_w.h\
 		syn_id_delay.h\
 		connector_base.h connector_base.cpp\
@@ -61,8 +61,8 @@ libnest_la_SOURCES=\
 		nest_timeconverter.h nest_timeconverter.cpp \
 		modelrange.h modelrange.cpp\
 		modelrange_manager.h modelrange_manager.cpp\
+		sp_manager.h sp_manager_impl.h sp_manager.cpp\
 		multirange.h multirange.cpp\
-		network.h network_impl.h network.cpp\
 		node.h node.cpp\
 		nodelist.h nodelist.cpp\
 		proxynode.h proxynode.cpp\
@@ -77,6 +77,10 @@ libnest_la_SOURCES=\
 		conn_builder.h conn_builder.cpp\
 		conn_builder_factory.h\
 		music_event_handler.h music_event_handler.cpp\
+		synaptic_element.h synaptic_element.cpp\
+		growth_curve.h growth_curve.cpp\
+		growth_curve_factory.h\
+		music_manager.cpp music_manager.h\
 		nest.h nest.cpp\
 		kernel_manager.h kernel_manager.cpp\
 		vp_manager.h vp_manager_impl.h vp_manager.cpp \
@@ -89,7 +93,7 @@ libnest_la_SOURCES=\
 		rng_manager.h rng_manager.cpp \
 		event_delivery_manager.h event_delivery_manager_impl.h\
 		event_delivery_manager.cpp\
-		node_manager.h node_manager.cpp\
+		node_manager.h node_manager_impl.h node_manager.cpp\
 		source_table.h source_table.cpp\
 		target_table.h target_table_impl.h target_table.cpp\
 		spike_register_table.h spike_register_table_impl.h\

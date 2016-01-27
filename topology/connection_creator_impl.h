@@ -500,7 +500,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           double w, d;
           get_parameters_(
             source.compute_displacement( target_pos, positions[ random_id ].first ), rng, w, d );
-          kernel().connection_builder_manager.connect( source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_builder_manager.connect(
+            source_id, *tgt_it, target_thread, synapse_model_, d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -535,7 +536,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           double w, d;
           get_parameters_(
             source.compute_displacement( target_pos, positions[ random_id ].first ), rng, w, d );
-          kernel().connection_builder_manager.connect( source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_builder_manager.connect(
+            source_id, *tgt_it, target_thread, synapse_model_, d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -618,7 +620,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           Position< D > source_pos = ( *positions )[ random_id ].first;
           double w, d;
           get_parameters_( source.compute_displacement( target_pos, source_pos ), rng, w, d );
-          kernel().connection_builder_manager.connect( source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_builder_manager.connect(
+            source_id, *tgt_it, target_thread, synapse_model_, d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -651,7 +654,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           Position< D > source_pos = ( *positions )[ random_id ].first;
           double w, d;
           get_parameters_( source.compute_displacement( target_pos, source_pos ), rng, w, d );
-          kernel().connection_builder_manager.connect( source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_builder_manager.connect(
+            source_id, *tgt_it, target_thread, synapse_model_, d, w );
           is_selected[ random_id ] = true;
         }
       }

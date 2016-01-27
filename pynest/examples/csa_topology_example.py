@@ -20,70 +20,104 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-This example shows a brute-force way of specifying connections
-between NEST Topology layers using Connection Set Algebra.
+Using CSA with Topology layers
+------------------------------
 
-We are working on better ways to do this.
+This example shows a brute-force way of specifying connections between
+NEST Topology layers using Connection Set Algebra instead of the
+built-in connection routines.
+
+Using the CSA requires NEST to be compiled with support for
+libneurosim. For details, see Djurfeldt M, Davison AP and Eppler JM
+(2014) **Efficient generation of connectivity in neuronal networks
+from simulator-independent descriptions**, *Front. Neuroinform.*
+http://dx.doi.org/10.3389/fninf.2014.00043
+
+For a related example, see csa_example.py
+
+"""
+
+"""
+First, we import all necessary modules.
 """
 
 import nest
 import nest.topology as topo
-import matplotlib.pyplot as plt
+
+"""
+Next, we check for the availability of the CSA Python module. If it
+does not import, we exit with an error message.
+"""
 
 try:
     import csa
     haveCSA = True
 except ImportError:
-    haveCSA = False
+    print("This example requires CSA to be installed in order to run.\n"
+          + "Please make sure you compiled NEST using --with-libneurosim=PATH\n"
+          + "and CSA and libneurosim are available from PYTHONPATH.")
+    import sys
+    sys.exit()
 
+
+"""
+We define a factory that returns a CSA-style geometry function for
+the given layer. The function returned will return for each CSA-index
+the position in space of the given neuron as a 2- or 3-element list.
+
+This function stores a copy of the neuron positions internally,
+entailing memory overhead.
+"""
 
 def geometryFunction(topologyLayer):
-    """
-    This factory returns a CSA-style geometry function for the given layer.
-
-    The function returned will return for each CSA-index the position in
-    space of the given neuron as a 2- or 3-element list.
-
-    Note: This function stores a copy of the neuron positions internally,
-          entailing memory overhead.
-    """
 
     positions = topo.GetPosition(nest.GetLeaves(topologyLayer)[0])
 
     def geometry_function(idx):
-        "Return position of neuron with given CSA-index."
         return positions[idx]
-
+    
     return geometry_function
 
 
-def csa_topology_example():
+"""
+We create two layers that have 20x20 neurons of type `iaf_neuron`.
+"""
 
-    # layers have 20x20 neurons and extent 1 x 1
-    pop1 = topo.CreateLayer({'elements': 'iaf_neuron',
-                             'rows': 20, 'columns': 20})
-    pop2 = topo.CreateLayer({'elements': 'iaf_neuron',
-                             'rows': 20, 'columns': 20})
+pop1 = topo.CreateLayer({'elements': 'iaf_neuron',
+                         'rows': 20, 'columns': 20})
+pop2 = topo.CreateLayer({'elements': 'iaf_neuron',
+                         'rows': 20, 'columns': 20})
 
-    # create CSA-style geometry functions and metric
-    g1 = geometryFunction(pop1)
-    g2 = geometryFunction(pop2)
-    d = csa.euclidMetric2d(g1, g2)
+"""
+For each layer, we create a CSA-style geometry function and a CSA
+metric based on them.
+"""
 
-    # Gaussian connectivity profile, sigma = 0.2, cutoff at 0.5
-    cs = csa.cset(csa.random * (csa.gaussian(0.2, 0.5) * d), 10000.0, 1.0)
+g1 = geometryFunction(pop1)
+g2 = geometryFunction(pop2)
+d = csa.euclidMetric2d(g1, g2)
 
-    # create connections
-    nest.CGConnect(pop1, pop2, cs, {"weight": 0, "delay": 1})
+"""
+The connection set ``cs`` describes a Gaussian connectivity profile
+with sigma = 0.2 and cutoff at 0.5, and two values (10000.0 and 1.0)
+used as weight and delay, respectively.
+"""
 
-    # show targets of center neuron
-    topo.PlotTargets(topo.FindCenterElement(pop1), pop2)
+cs = csa.cset(csa.random * (csa.gaussian(0.2, 0.5) * d), 10000.0, 1.0)
 
+"""
+We can now connect the populations using the `CGConnect` function.
+It takes the IDs of pre- and postsynaptic neurons (``pop1`` and
+``pop2``), the connection set (``cs``) and a dictionary that maps
+the parameters weight and delay to positions in the value set
+associated with the connection set.
+"""
 
-if __name__ == "__main__":
+nest.CGConnect(pop1, pop2, cs, {"weight": 0, "delay": 1})
 
-    if haveCSA:
-        nest.ResetKernel()
-        csa_topology_example()
-    else:
-        print("This example requires CSA to be installed in order to run!")
+"""
+Finally, we use the `PlotTargets` function to show all targets in
+``pop2`` starting at the center neuron of ``pop1``.
+"""
+
+topo.PlotTargets(topo.FindCenterElement(pop1), pop2)

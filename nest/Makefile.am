@@ -20,7 +20,8 @@ MAKEFLAGS= @MAKE_FLAGS@
 
 bin_PROGRAMS= nest
 
-nest_SOURCES= main.cpp neststartup.cpp neststartup.h
+nest_SOURCES= main.cpp neststartup.cpp neststartup.h \
+		sli_neuron.h sli_neuron.cpp
 
 ## make symbols inside nest known to dynamically linked modules via back-linking
 nest_LDFLAGS= -export-dynamic 

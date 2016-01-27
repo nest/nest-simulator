@@ -36,13 +36,15 @@
 // Includes from librandom:
 #include "random_numbers.h"
 
+// Includes from nest:
+#include "sli_neuron.h"
+
 // Includes from nestkernel:
-#include "communicator.h"
 #include "dynamicloader.h"
 #include "kernel_manager.h"
 #include "nest.h"
 #include "nestmodule.h"
-#include "network.h"
+#include "model_manager_impl.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -61,26 +63,32 @@
 #include <gnureadline.h>
 #endif
 
-SLIInterpreter* engine_only_for_logging;
+SLIInterpreter* sli_engine;
+
+SLIInterpreter&
+get_engine()
+{
+  assert( sli_engine );
+  return *sli_engine;
+}
 
 void
 sli_logging( const nest::LoggingEvent& e )
 {
-  engine_only_for_logging->message(
-    static_cast< int >( e.severity ), e.function.c_str(), e.message.c_str() );
+  sli_engine->message( static_cast< int >( e.severity ), e.function.c_str(), e.message.c_str() );
 }
 
 #ifndef _IS_PYNEST
 int
-neststartup( int argc, char** argv, SLIInterpreter& engine )
+neststartup( int* argc, char*** argv, SLIInterpreter& engine )
 #else
 int
-neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepath )
+neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string modulepath )
 #endif
 {
-  nest::init_nest (&argc, &argv);
+  nest::init_nest( argc, argv );
 
-  engine_only_for_logging = &engine;
+  sli_engine = &engine;
   register_logger_client( sli_logging );
 
 // We disable synchronization between stdio and istd::ostreams
@@ -110,15 +118,23 @@ neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepa
   addmodule< SLIArrayModule >( engine );
   addmodule< SpecialFunctionsModule >( engine ); // safe without GSL
   addmodule< SLIgraphics >( engine );
-  engine.addmodule( new SLIStartup( argc, argv ) );
+  engine.addmodule( new SLIStartup( *argc, *argv ) );
   addmodule< Processes >( engine );
   addmodule< RegexpModule >( engine );
   addmodule< FilesystemModule >( engine );
 
-  // create the network
-  nest::Network::create_network( engine );
   // register NestModule class
   addmodule< nest::NestModule >( engine );
+
+  // this can make problems with reference counting, if
+  // the intepreter decides cleans up memory before NEST is ready
+  engine.def( "modeldict", nest::kernel().model_manager.get_modeldict() );
+  engine.def( "synapsedict", nest::kernel().model_manager.get_synapsedict() );
+  engine.def( "connruledict", nest::kernel().connection_builder_manager.get_connruledict() );
+  engine.def( "growthcurvedict", nest::kernel().sp_manager.get_growthcurvedict() );
+
+  // register sli_neuron
+  nest::kernel().model_manager.register_node_model< nest::sli_neuron >( "sli_neuron" );
 
   // now add static modules providing models
   add_static_modules( engine );
@@ -163,10 +179,7 @@ neststartup( int argc, char** argv, SLIInterpreter& engine, std::string modulepa
 void
 nestshutdown( int exitcode )
 {
-#ifdef HAVE_MPI
-  nest::Communicator::finalize( exitcode );
-#endif
-  nest::Network::destroy_network();
+  nest::kernel().mpi_manager.mpi_finalize( exitcode );
   nest::KernelManager::destroy_kernel_manager();
 }
 

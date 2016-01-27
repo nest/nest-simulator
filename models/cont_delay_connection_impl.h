@@ -90,7 +90,8 @@ ContDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d, 
     else
     {
       const long_t lowerbound = static_cast< long_t >( int_delay );
-      kernel().connection_builder_manager.get_delay_checker().assert_two_valid_delays_steps( lowerbound, lowerbound + 1 );
+      kernel().connection_builder_manager.get_delay_checker().assert_two_valid_delays_steps(
+        lowerbound, lowerbound + 1 );
       set_delay_steps( lowerbound + 1 );
       delay_offset_ = h * ( 1.0 - frac_delay );
     }

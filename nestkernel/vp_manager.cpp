@@ -47,8 +47,8 @@ nest::VPManager::VPManager()
 void
 nest::VPManager::initialize()
 {
-  // When the VPManager is initialized, you will have 1 thread again.
-  // Setting more threads will be done via nest::set_kernel_status
+// When the VPManager is initialized, you will have 1 thread again.
+// Setting more threads will be done via nest::set_kernel_status
 #ifdef _OPENMP
   /* The next line is required because we use the OpenMP
    threadprivate() directive in the allocator, see OpenMP
@@ -103,7 +103,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
 
     // it is essential to call reset() here to adapt memory pools and more
     // to the new number of threads and VPs.
-    set_num_threads(n_threads);
+    set_num_threads( n_threads );
     kernel().num_threads_changed_reset();
   }
 
@@ -194,7 +194,8 @@ nest::VPManager::suggest_rec_vp( nest::index gid ) const
 nest::thread
 nest::VPManager::vp_to_thread( nest::thread vp ) const
 {
-  if ( vp >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() ) )
+  if ( vp
+    >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() ) )
   {
     return ( vp + kernel().mpi_manager.get_num_sim_processes() * ( 1 - get_num_threads() )
              - kernel().mpi_manager.get_rank() ) / kernel().mpi_manager.get_num_rec_processes();

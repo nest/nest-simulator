@@ -154,8 +154,6 @@ void
 nest::iaf_psc_delta_canon::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, U_ + p.E_L_ ); // Membrane potential
-  def< double >( d, names::t_spike, Time( Time::step( last_spike_step_ ) ).get_ms() );
-  def< double >( d, names::offset, last_spike_offset_ );
   def< bool >( d, names::is_refractory, is_refractory_ );
   def< bool >( d, names::refractory_input, with_refr_input_ );
 }
@@ -186,7 +184,7 @@ nest::iaf_psc_delta_canon::Buffers_::Buffers_( const Buffers_&, iaf_psc_delta_ca
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_delta_canon::iaf_psc_delta_canon()
-  : Node()
+  : Archiving_Node()
   , P_()
   , S_()
   , B_( *this )
@@ -195,7 +193,7 @@ nest::iaf_psc_delta_canon::iaf_psc_delta_canon()
 }
 
 nest::iaf_psc_delta_canon::iaf_psc_delta_canon( const iaf_psc_delta_canon& n )
-  : Node( n )
+  : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -220,6 +218,8 @@ nest::iaf_psc_delta_canon::init_buffers_()
   B_.events_.clear();
   B_.currents_.clear();
   B_.logger_.reset();
+
+  Archiving_Node::clear_history();
 }
 
 void
@@ -443,7 +443,7 @@ nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
   double_t dt = -P_.tau_m_ * std::log( ( v_inf - S_.U_ ) / ( v_inf - P_.U_th_ ) );
 
   // set stamp and offset for spike
-  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
   S_.last_spike_offset_ = offset_U + dt;
 
   // reset neuron and make it refractory
@@ -451,6 +451,7 @@ nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
   S_.is_refractory_ = true;
 
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
   kernel().event_delivery_manager.send( *this, se, lag );
@@ -466,7 +467,7 @@ nest::iaf_psc_delta_canon::emit_instant_spike_( Time const& origin,
   assert( S_.U_ >= P_.U_th_ ); // ensure we are superthreshold
 
   // set stamp and offset for spike
-  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
   S_.last_spike_offset_ = spike_offs;
 
   // reset neuron and make it refractory
@@ -474,6 +475,7 @@ nest::iaf_psc_delta_canon::emit_instant_spike_( Time const& origin,
   S_.is_refractory_ = true;
 
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
   kernel().event_delivery_manager.send( *this, se, lag );
@@ -515,12 +517,6 @@ void
 nest::iaf_psc_delta_canon::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
-}
-
-void
-iaf_psc_delta_canon::set_spiketime( Time const& now )
-{
-  S_.last_spike_step_ = now.get_steps();
 }
 
 } // namespace

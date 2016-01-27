@@ -26,12 +26,10 @@
 #include <cassert>
 
 // Includes from nestkernel:
-#include "communicator.h"
-#include "communicator_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "network.h"
 #include "nodelist.h"
+#include "mpi_manager_impl.h"
 #include "subnet.h"
 
 // Includes from sli:
@@ -46,7 +44,7 @@ init_nest( int* argc, char** argv[] )
 {
   KernelManager::create_kernel_manager();
   kernel().mpi_manager.init_mpi( argc, argv );
-  // kernel().init(); currently called from network.cpp
+  kernel().initialize();
 }
 
 void
@@ -62,7 +60,7 @@ install_module( const std::string& module_name )
 void
 reset_kernel()
 {
-  Network::get_network().reset_kernel();
+  kernel().reset();
 }
 
 void
@@ -107,12 +105,12 @@ get_vp_rng_of_gid( index target )
 
   return kernel().rng_manager.get_rng( target_node->get_thread() );
 }
-  
+
 librandom::RngPtr
 get_vp_rng( thread tid )
 {
-  assert(tid >=0);
-  assert(tid < static_cast< thread >( kernel().vp_manager.get_num_threads()) );
+  assert( tid >= 0 );
+  assert( tid < static_cast< thread >( kernel().vp_manager.get_num_threads() ) );
   return kernel().rng_manager.get_rng( tid );
 }
 
@@ -132,7 +130,15 @@ set_kernel_status( const DictionaryDatum& dict )
 DictionaryDatum
 get_kernel_status()
 {
-  return Network::get_network().get_status( 0 );
+  assert( kernel().is_initialized() );
+
+  Node* root = kernel().node_manager.get_root();
+  assert( root != 0 );
+
+  DictionaryDatum d = root->get_status_base();
+  kernel().get_status( d );
+
+  return d;
 }
 
 void
@@ -144,7 +150,7 @@ set_node_status( const index node_id, const DictionaryDatum& dict )
 DictionaryDatum
 get_node_status( const index node_id )
 {
-  return Network::get_network().get_status( node_id );
+  return kernel().node_manager.get_status( node_id );
 }
 
 void
@@ -161,8 +167,10 @@ set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict 
 
   kernel().connection_builder_manager.set_synapse_status( gid, synapse_id, port, tid, dict );
 
-  ALL_ENTRIES_ACCESSED2( *dict, "SetStatus", "Unread dictionary entries: ", 
-    "Maybe you tried to set common synapse properties through an individual synapse?");
+  ALL_ENTRIES_ACCESSED2( *dict,
+    "SetStatus",
+    "Unread dictionary entries: ",
+    "Maybe you tried to set common synapse properties through an individual synapse?" );
 }
 
 DictionaryDatum
@@ -209,7 +217,7 @@ get_connections( const DictionaryDatum& dict )
 
   ArrayDatum array = kernel().connection_builder_manager.get_connections( dict );
 
-  ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: ");
+  ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: " );
 
   return array;
 }
@@ -228,13 +236,13 @@ simulate( const double_t& time )
 void
 copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict )
 {
-  kernel().model_manager.copy_model(oldmodname, newmodname, dict);
+  kernel().model_manager.copy_model( oldmodname, newmodname, dict );
 }
 
 void
 set_model_defaults( const Name& modelname, const DictionaryDatum& dict )
 {
-  kernel().model_manager.set_model_defaults(modelname, dict);
+  kernel().model_manager.set_model_defaults( modelname, dict );
 }
 
 DictionaryDatum
@@ -301,19 +309,19 @@ get_nodes( const index node_id,
     throw SubnetExpected();
 
   LocalNodeList localnodes( *subnet );
-  std::vector< Communicator::NodeAddressingData > globalnodes;
+  std::vector< MPIManager::NodeAddressingData > globalnodes;
   if ( params->empty() )
   {
-    Communicator::communicate( localnodes, globalnodes, include_remotes );
+    kernel().mpi_manager.communicate( localnodes, globalnodes, include_remotes );
   }
   else
   {
-    Communicator::communicate( localnodes, globalnodes, params, include_remotes );
+    kernel().mpi_manager.communicate( localnodes, globalnodes, params, include_remotes );
   }
 
   ArrayDatum result;
   result.reserve( globalnodes.size() );
-  for ( std::vector< Communicator::NodeAddressingData >::iterator n = globalnodes.begin();
+  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin();
         n != globalnodes.end();
         ++n )
   {
@@ -346,18 +354,18 @@ get_leaves( const index node_id, const DictionaryDatum& params, const bool inclu
   LocalLeafList localnodes( *subnet );
   ArrayDatum result;
 
-  std::vector< Communicator::NodeAddressingData > globalnodes;
+  std::vector< MPIManager::NodeAddressingData > globalnodes;
   if ( params->empty() )
   {
-    nest::Communicator::communicate( localnodes, globalnodes, include_remotes );
+    kernel().mpi_manager.communicate( localnodes, globalnodes, include_remotes );
   }
   else
   {
-    nest::Communicator::communicate( localnodes, globalnodes, params, include_remotes );
+    kernel().mpi_manager.communicate( localnodes, globalnodes, params, include_remotes );
   }
   result.reserve( globalnodes.size() );
 
-  for ( std::vector< Communicator::NodeAddressingData >::iterator n = globalnodes.begin();
+  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin();
         n != globalnodes.end();
         ++n )
   {
@@ -379,17 +387,17 @@ get_children( const index node_id, const DictionaryDatum& params, const bool inc
   LocalChildList localnodes( *subnet );
   ArrayDatum result;
 
-  std::vector< Communicator::NodeAddressingData > globalnodes;
+  std::vector< MPIManager::NodeAddressingData > globalnodes;
   if ( params->empty() )
   {
-    nest::Communicator::communicate( localnodes, globalnodes, include_remotes );
+    kernel().mpi_manager.communicate( localnodes, globalnodes, include_remotes );
   }
   else
   {
-    nest::Communicator::communicate( localnodes, globalnodes, params, include_remotes );
+    kernel().mpi_manager.communicate( localnodes, globalnodes, params, include_remotes );
   }
   result.reserve( globalnodes.size() );
-  for ( std::vector< Communicator::NodeAddressingData >::iterator n = globalnodes.begin();
+  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin();
         n != globalnodes.end();
         ++n )
   {

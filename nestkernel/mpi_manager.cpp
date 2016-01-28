@@ -112,14 +112,14 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   blockcounts[ 0 ] = 1;
 
   // OffGridSpike.offset
-  MPI_Address( &( ogs.gid_ ), &start_address );
-  MPI_Address( &( ogs.offset_ ), &address );
+  MPI_Get_address( &( ogs.gid_ ), &start_address );
+  MPI_Get_address( &( ogs.offset_ ), &address );
   offsets[ 1 ] = address - start_address;
   source_types[ 1 ] = MPI_DOUBLE;
   blockcounts[ 1 ] = 1;
 
   // generate and commit struct
-  MPI_Type_struct( 2, blockcounts, offsets, source_types, &MPI_OFFGRID_SPIKE );
+  MPI_Type_create_struct( 2, blockcounts, offsets, source_types, &MPI_OFFGRID_SPIKE );
   MPI_Type_commit( &MPI_OFFGRID_SPIKE );
 
   use_mpi_ = true;

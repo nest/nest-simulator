@@ -101,6 +101,13 @@ public:
   double get_value( const long_t offs );
 
   /**
+   * Read one value from ring buffer without deleting it afterwards.
+   * @param  offs  Offset of element to read within slice.
+   * @returns value
+   */
+  double get_value_prelim( const long_t offs );
+
+  /**
    * Initialize the buffer with noughts.
    * Also resizes the buffer if necessary.
    */
@@ -158,6 +165,19 @@ RingBuffer::get_value( const long_t offs )
   long_t idx = get_index_( offs );
   double_t val = buffer_[ idx ];
   buffer_[ idx ] = 0.0; // clear buffer after reading
+  return val;
+}
+
+inline double
+RingBuffer::get_value_prelim( const long_t offs )
+{
+  assert( 0 <= offs && ( size_t ) offs < buffer_.size() );
+  assert( ( delay ) offs < Scheduler::get_min_delay() );
+
+  // offs == 0 is beginning of slice, but we have to
+  // take modulo into account when indexing
+  long_t idx = get_index_( offs );
+  double_t val = buffer_[ idx ];
   return val;
 }
 

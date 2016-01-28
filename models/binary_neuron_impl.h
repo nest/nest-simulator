@@ -203,10 +203,15 @@ binary_neuron< TGainfunction >::update( Time const& origin, const long_t from, c
       if ( new_y != S_.y_ )
       {
         SpikeEvent se;
-        // use multiplicity 2 to signalize transition to 1 state
-        // use multiplicity 1 to signalize transition to 0 state
+        // use multiplicity 2 to signal transition to 1 state
+        // use multiplicity 1 to signal transition to 0 state
         se.set_multiplicity( new_y ? 2 : 1 );
         network()->send( *this, se, lag );
+
+        // As multiplicity is used only to signal internal information
+        // to other binary neurons, we only set spiketime once, independent
+        // of multiplicity.
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         S_.y_ = new_y;
       }
 
@@ -234,6 +239,15 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
   // Remember the global id of the sender of the last spike being received
   // this assumes that several spikes being sent by the same neuron in the same time step
   // are received consecutively or are conveyed by setting the multiplicity accordingly.
+  //
+  // Since in collocate_buffers spike events with multiplicity > 1
+  // will be converted into sequences of spikes with unit multiplicity,
+  // we will count the arrival of the first spike of a doublet (not yet knowing
+  // it's a doublet) with a weight -1. The second part of a doublet is then
+  // counted with weight 2. Since both parts of a doublet are delivered before
+  // update is called, the final value in the ring buffer is guaranteed to be
+  // correct.
+
 
   long_t m = e.get_multiplicity();
   long_t gid = e.get_sender_gid();

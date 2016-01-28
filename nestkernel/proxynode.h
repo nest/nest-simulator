@@ -71,7 +71,14 @@ public:
    */
   using Node::handle;
 
+  using Node::sends_signal;
+
   port send_test_event( Node&, rport, synindex, bool );
+
+  void sends_secondary_event( GapJunctionEvent& );
+
+  SignalType sends_signal() const;
+
   void
   handle( SpikeEvent& )
   {

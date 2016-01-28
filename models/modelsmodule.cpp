@@ -49,6 +49,7 @@
 #include "amat2_psc_exp.h"
 #include "hh_cond_exp_traub.h"
 #include "hh_psc_alpha.h"
+#include "hh_psc_alpha_gap.h"
 #include "ht_neuron.h"
 #include "iaf_chs_2007.h"
 #include "iaf_chxk_2008.h"
@@ -92,6 +93,7 @@
 #include "multimeter.h"
 #include "correlation_detector.h"
 #include "correlomatrix_detector.h"
+#include "correlospinmatrix_detector.h"
 
 #include "volume_transmitter.h"
 
@@ -106,6 +108,7 @@
 #include "cont_delay_connection.h"
 #include "cont_delay_connection_impl.h"
 #include "tsodyks_connection.h"
+#include "tsodyks_connection_hom.h"
 #include "tsodyks2_connection.h"
 #include "quantal_stp_connection.h"
 #include "quantal_stp_connection_impl.h"
@@ -114,7 +117,9 @@
 #include "stdp_connection_facetshw_hom.h"
 #include "stdp_connection_facetshw_hom_impl.h"
 #include "stdp_pl_connection_hom.h"
+#include "stdp_triplet_connection.h"
 #include "stdp_dopa_connection.h"
+#include "gap_junction.h"
 #include "ht_connection.h"
 #include "spike_dilutor.h"
 
@@ -194,6 +199,7 @@ ModelsModule::init( SLIInterpreter* )
   register_model< Multimeter >( net_, "multimeter" );
   register_model< correlation_detector >( net_, "correlation_detector" );
   register_model< correlomatrix_detector >( net_, "correlomatrix_detector" );
+  register_model< correlospinmatrix_detector >( net_, "correlospinmatrix_detector" );
   register_model< volume_transmitter >( net_, "volume_transmitter" );
 
   // Create voltmeter as a multimeter pre-configured to record V_m.
@@ -275,6 +281,7 @@ ModelsModule::init( SLIInterpreter* )
   register_model< iaf_cond_exp_sfa_rr >( net_, "iaf_cond_exp_sfa_rr" );
   register_model< iaf_cond_alpha_mc >( net_, "iaf_cond_alpha_mc" );
   register_model< hh_psc_alpha >( net_, "hh_psc_alpha" );
+  register_model< hh_psc_alpha_gap >( net_, "hh_psc_alpha_gap" );
   register_model< hh_cond_exp_traub >( net_, "hh_cond_exp_traub" );
   register_model< sinusoidal_gamma_generator >( net_, "sinusoidal_gamma_generator" );
 #endif
@@ -324,6 +331,13 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
     net_, "static_synapse_hom_w_hpc" );
 
+  /* BeginDocumentation
+     Name: gap_junction - Connection model for gap junctions.
+     SeeAlso: synapsedict
+  */
+  register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
+    net_, "gap_junction", false );
+
 
   /* BeginDocumentation
      Name: stdp_synapse_hpc - Variant of stdp_synapse with low memory consumption.
@@ -341,6 +355,16 @@ ModelsModule::init( SLIInterpreter* )
     net_, "stdp_pl_synapse_hom" );
   register_connection_model< STDPPLConnectionHom< TargetIdentifierIndex > >(
     net_, "stdp_pl_synapse_hom_hpc" );
+
+
+  /* BeginDocumentation
+     Name: stdp_triplet_synapse_hpc - Variant of stdp_triplet_synapse with low memory consumption.
+     SeeAlso: synapsedict, stdp_synapse, static_synapse_hpc
+  */
+  register_connection_model< STDPTripletConnection< TargetIdentifierPtrRport > >(
+    net_, "stdp_triplet_synapse" );
+  register_connection_model< STDPTripletConnection< TargetIdentifierIndex > >(
+    net_, "stdp_triplet_synapse_hpc" );
 
 
   /* BeginDocumentation
@@ -392,6 +416,16 @@ ModelsModule::init( SLIInterpreter* )
     net_, "tsodyks_synapse" );
   register_connection_model< TsodyksConnection< TargetIdentifierIndex > >(
     net_, "tsodyks_synapse_hpc" );
+
+
+  /* BeginDocumentation
+     Name: tsodyks_synapse_hom_hpc - Variant of tsodyks_synapse_hom with low memory consumption.
+     SeeAlso: synapsedict, tsodyks_synapse_hom, static_synapse_hpc
+  */
+  register_connection_model< TsodyksConnectionHom< TargetIdentifierPtrRport > >(
+    net_, "tsodyks_synapse_hom" );
+  register_connection_model< TsodyksConnectionHom< TargetIdentifierIndex > >(
+    net_, "tsodyks_synapse_hom_hpc" );
 
 
   /* BeginDocumentation

@@ -29,13 +29,15 @@
 #include "network.h"
 #include "connector_model.h"
 #include "connector_base.h"
+#include "connection_label.h"
+#include "string_utils.h"
 
 
 template < typename T, typename C >
 inline T*
 allocate( C c )
 {
-#ifdef USE_PMA
+#if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
   T* p = new ( poormansallocpool[ omp_get_thread_num() ].alloc( sizeof( T ) ) ) T( c );
 #else
@@ -44,6 +46,10 @@ allocate( C c )
 #else
   T* p = new T( c );
 #endif
+  // we need to check, if the two lowest bits of the pointer
+  // are 0, because we want to use them to encode for the
+  // existence of primary and secondary events
+  assert( ( reinterpret_cast< unsigned long >( p ) & 3 ) == 0 );
   return p;
 }
 
@@ -51,7 +57,7 @@ template < typename T >
 inline T*
 allocate()
 {
-#ifdef USE_PMA
+#if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
   T* p = new ( poormansallocpool[ omp_get_thread_num() ].alloc( sizeof( T ) ) ) T();
 #else
@@ -60,6 +66,10 @@ allocate()
 #else
   T* p = new T();
 #endif
+  // we need to check, if the two lowest bits of the pointer
+  // are 0, because we want to use them to encode for the
+  // existence of primary and secondary events
+  assert( ( reinterpret_cast< unsigned long >( p ) & 3 ) == 0 );
   return p;
 }
 
@@ -145,76 +155,71 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   updateValue< long_t >( d, names::music_channel, receptor_type_ );
 #endif
 
-  /*
-   * In the following code, we do not round delays to steps. For min and max delay,
-   * this is not strictly necessary. For a newly set delay, the rounding will be
-   * handled in cp_.set_status() or default_connection_.set_status().
-   * Since min_/max_delay are Time-objects and comparison is defined on Time
-   * objects, we should use it.
-   */
-  Time min_delay, max_delay, new_delay;
+  // For the minimum delay, we always round down. The easiest way to do this,
+  // is to round up and then subtract one step. The only remaining edge case
+  // is that the min delay is exactly at a step, in which case one would get
+  // a min delay that is one step too small. We can detect this by an
+  // additional test.
   double_t delay_tmp;
   bool min_delay_updated = updateValue< double_t >( d, "min_delay", delay_tmp );
-  min_delay = Time( Time::ms( delay_tmp ) );
-  bool max_delay_updated = updateValue< double_t >( d, "max_delay", delay_tmp );
-  max_delay = Time( Time::ms( delay_tmp ) );
+  Time new_min_delay;
+  if ( min_delay_updated )
+  {
+    delay new_min_delay_steps = Time( Time::ms_stamp( delay_tmp ) ).get_steps();
+    if ( Time( Time::step( new_min_delay_steps ) ).get_ms() > delay_tmp )
+    {
+      new_min_delay_steps -= 1;
+    }
+    new_min_delay = Time( Time::step( new_min_delay_steps ) );
+  }
 
-  // the delay might also be updated, so check new_min_delay and new_max_delay against new_delay, if
-  // given
-  if ( !updateValue< double_t >( d, "delay", delay_tmp ) )
-    new_delay = Time( Time::ms( default_connection_.get_delay() ) );
-  else
-    new_delay = Time( Time::ms( delay_tmp ) );
+  // For the maximum delay, we always round up, using ms_stamp
+  bool max_delay_updated = updateValue< double_t >( d, "max_delay", delay_tmp );
+  Time new_max_delay = Time( Time::ms_stamp( delay_tmp ) );
 
   if ( min_delay_updated xor max_delay_updated )
-    net_.message(
-      SLIInterpreter::M_ERROR, "SetDefaults", "Both min_delay and max_delay have to be specified" );
+  {
+    throw BadProperty( "Both min_delay and max_delay have to be specified" );
+  }
 
   if ( min_delay_updated && max_delay_updated )
   {
     if ( num_connections_ > 0 )
-      net_.message( SLIInterpreter::M_ERROR,
-        "SetDefaults",
-        "Connections already exist. Please call ResetKernel first" );
-    else if ( min_delay > new_delay )
-      net_.message(
-        SLIInterpreter::M_ERROR, "SetDefaults", "min_delay is not compatible with default delay" );
-    else if ( max_delay < new_delay )
-      net_.message(
-        SLIInterpreter::M_ERROR, "SetDefaults", "max_delay is not compatible with default delay" );
-    else if ( min_delay < Time::get_resolution() )
-      net_.message( SLIInterpreter::M_ERROR,
-        "SetDefaults",
-        "min_delay must be greater than or equal to resolution" );
-    else if ( max_delay < Time::get_resolution() )
-      net_.message( SLIInterpreter::M_ERROR,
-        "SetDefaults",
-        "max_delay must be greater than or equal to resolution" );
+    {
+      throw BadProperty( "Connections already exist. Please call ResetKernel first" );
+    }
+    else if ( new_min_delay < Time::get_resolution() )
+    {
+      throw BadDelay(
+        new_min_delay.get_ms(), "min_delay must be greater than or equal to resolution." );
+    }
+    else if ( new_max_delay < new_min_delay )
+    {
+      throw BadDelay(
+        new_min_delay.get_ms(), "min_delay must be smaller than or equal to max_delay." );
+    }
     else
     {
-      min_delay_ = min_delay;
-      max_delay_ = max_delay;
+      min_delay_ = new_min_delay;
+      max_delay_ = new_max_delay;
       user_set_delay_extrema_ = true;
     }
   }
 
-  // common_props_.set_status(d, *this) AND defaults_.set_status(d, *this);
-  // has to be done after adapting min_delay / max_delay, since Connection::set_status
-  // and CommonProperties::set_status might want to check the delay
+  // If the parameter dict d contains /delay, this should set the delay
+  // on the default connection, but not affect the actual min/max_delay
+  // until a connection with that default delay is created. Since the
+  // set_status calls on common properties and default connection may
+  // modify min/max delay, we need to preserve and restore.
 
-  // store min_delay_, max_delay_
-  // calling set_status will check the delay.
-  // and so may modify min_delay, max_delay, if the specified delay exceeds one of these bounds
-  // we have to save min/max_delay because we dont know, if the default will ever be used
-  Time min_delay_tmp = min_delay_;
-  Time max_delay_tmp = max_delay_;
+  const Time save_min_delay_ = min_delay_;
+  const Time save_max_delay_ = max_delay_;
 
   cp_.set_status( d, *this );
   default_connection_.set_status( d, *this );
 
-  // restore min_delay_, max_delay_
-  min_delay_ = min_delay_tmp;
-  max_delay_ = max_delay_tmp;
+  min_delay_ = save_min_delay_;
+  max_delay_ = save_max_delay_;
 
   // we've possibly just got a new default delay. So enforce checking next time it is used
   default_delay_needs_check_ = true;
@@ -226,7 +231,7 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
 {
   // if not used before, check now. Solves bug #138, MH 08-01-08
   // replaces whole delay checking for the default delay, see bug #217, MH 08-04-24
-  // get_default_delay_ must be overridded by derived class to return the correct default delay
+  // get_default_delay_ must be overridden by derived class to return the correct default delay
   // (either from commonprops or default connection)
   if ( default_delay_needs_check_ )
   {
@@ -257,17 +262,15 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   double_t delay,
   double_t weight )
 {
-  if ( !std::isnan( delay ) )
-    assert_valid_delay_ms( delay );
-
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
-  if ( !std::isnan( weight ) )
+  if ( not numerics::is_nan( weight ) )
   {
     c.set_weight( weight );
   }
-  if ( !std::isnan( delay ) )
+  if ( not numerics::is_nan( delay ) )
   {
+    assert_valid_delay_ms( delay );
     c.set_delay( delay );
   }
   else
@@ -275,7 +278,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     // tell the connector model, that we used the default delay
     used_default_delay();
   }
-
 
   return add_connection( src, tgt, conn, syn_id, c, receptor_type_ );
 }
@@ -296,7 +298,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   double_t delay,
   double_t weight )
 {
-  if ( !std::isnan( delay ) )
+  if ( not numerics::is_nan( delay ) )
   {
     assert_valid_delay_ms( delay );
 
@@ -320,11 +322,11 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   if ( !p->empty() )
     c.set_status( p, *this ); // reference to connector model needed here to check delay (maybe this
                               // could be done one level above?)
-  if ( !std::isnan( weight ) )
+  if ( not numerics::is_nan( weight ) )
   {
     c.set_weight( weight );
   }
-  if ( !std::isnan( delay ) )
+  if ( not numerics::is_nan( delay ) )
   {
     c.set_delay( delay );
   }
@@ -373,10 +375,23 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
     // no entry at all, so start with homogeneous container for exactly one connection
     conn = allocate< Connector< 1, ConnectionT > >( c );
+
+    // there is only one connection, so either it is primary or secondary
+    conn = pack_pointer( conn, is_primary_, !is_primary_ );
   }
   else
   {
     // case 1 or case 2
+
+    // Already existing pointers of type ConnectorBase contain (in their two lowest bits) the
+    // information if *conn has primary and/or secondary connections. Before the pointer can
+    // be used as a valid pointer this information needs to be read and the original pointer
+    // needs to be restored by calling validate_pointer( conn ).
+    bool b_has_primary = has_primary( conn );
+    bool b_has_secondary = has_secondary( conn );
+
+    conn = validate_pointer( conn );
+    // from here on we can use conn as a valid pointer
 
     // the following line will throw an exception, if it does not work
     c.check_connection( src, tgt, receptor_type, conn->get_t_lastspike(), get_common_properties() );
@@ -387,7 +402,10 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       {
         // we can safely static cast, because we checked syn_id == syn_id(connectionT)
         vector_like< ConnectionT >* vc = static_cast< vector_like< ConnectionT >* >( conn );
-        conn = &vc->push_back( c );
+
+        // we do not need to change the flags is_primary or is_secondary, because the new synapse is
+        // of the same type as the existing ones
+        conn = pack_pointer( &vc->push_back( c ), b_has_primary, b_has_secondary );
       }
       else
       {
@@ -397,16 +415,20 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
         HetConnector* hc = allocate< HetConnector >();
 
         // add existing connector
-        hc->push_back( conn );
+        // we read out the primary/secondary property of the existing connector conn above
+        hc->add_connector( b_has_primary, conn );
 
         // create hom connector for new synid
         vector_like< ConnectionT >* vc = allocate< Connector< 1, ConnectionT > >( c );
 
         // append new homogeneous connector to heterogeneous connector
-        hc->push_back( vc );
+        hc->add_connector( is_primary_, vc );
 
         // make entry in connections_[sgid] point to new heterogeneous connector
-        conn = hc;
+        // the existing connections had b_has_primary or b_has_secondary,
+        // our new connection is_primary
+        conn =
+          pack_pointer( hc, b_has_primary || is_primary_, b_has_secondary || ( !is_primary_ ) );
       }
     }
     else // case 2: the entry is heterogeneous, need to search for syn_id
@@ -421,24 +443,134 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
         if ( ( *hc )[ i ]->get_syn_id() == syn_id ) // there is already an entry for this type
         {
           // here we know that the type is vector_like<connectionT>, because syn_id agrees
-          // so we can savely static cast
+          // so we can safely static cast
           vector_like< ConnectionT >* vc =
             static_cast< vector_like< ConnectionT >* >( ( *hc )[ i ] );
           ( *hc )[ i ] = &vc->push_back( c );
           found = true;
         }
-      }             // of for
-      if ( !found ) // we need to create a new entry for this type of connection
+      }            // of for
+      if ( found ) // we need to create a new entry for this type of connection
+        conn = pack_pointer( hc, b_has_primary, b_has_secondary );
+      else
       {
         vector_like< ConnectionT >* vc = allocate< Connector< 1, ConnectionT > >( c );
 
-        hc->push_back( vc );
+        hc->add_connector( is_primary_, vc );
+
+        conn =
+          pack_pointer( hc, b_has_primary || is_primary_, b_has_secondary || ( !is_primary_ ) );
       }
     }
   }
 
   num_connections_++;
 
+  return conn;
+}
+
+/**
+ * Delete a connection of a given type directed to a defined target Node
+ * @param tgt Target node
+ * @param target_thread Thread of the target
+ * @param conn Connector Base from where the connection will be deleted
+ * @param syn_id Synapse type
+ * @return A new Connector, equal to the original but with an erased
+ * connection to the defined target.
+ */
+template < typename ConnectionT >
+ConnectorBase*
+GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
+  size_t target_thread,
+  ConnectorBase* conn,
+  synindex syn_id )
+{
+  assert( conn != 0 ); // we should not delete not existing synapses
+  bool found = false;
+  vector_like< ConnectionT >* vc;
+
+  bool b_has_primary = has_primary( conn );
+  bool b_has_secondary = has_secondary( conn );
+
+  conn = validate_pointer( conn );
+  // from here on we can use conn as a valid pointer
+
+  if ( conn->homogeneous_model() )
+  {
+    assert( conn->get_syn_id() == syn_id );
+    vc = static_cast< vector_like< ConnectionT >* >( conn );
+    // delete the first Connection corresponding to the target
+    for ( size_t i = 0; i < vc->size(); i++ )
+    {
+      ConnectionT* connection = &vc->at( i );
+      if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
+      {
+        if ( vc->get_num_connections() > 1 )
+          conn = &vc->erase( i );
+        else
+        {
+          delete vc;
+          conn = 0;
+        }
+        if ( conn != 0 )
+          conn = pack_pointer( conn, is_primary_, !is_primary_ );
+        found = true;
+        break;
+      }
+    }
+  }
+  else
+  {
+    // heterogeneous case
+    // go through all entries and search for correct syn_id
+    // if not found create new entry for this syn_id
+    HetConnector* hc = static_cast< HetConnector* >( conn );
+
+    for ( size_t i = 0; i < hc->size() && !found; i++ )
+    {
+      // need to cast to vector_like to access syn_id
+      if ( ( *hc )[ i ]->get_syn_id() == syn_id ) // there is already an entry for this type
+      {
+        // here we know that the type is vector_like<connectionT>, because syn_id agrees
+        // so we can safely static cast
+        vector_like< ConnectionT >* vc = static_cast< vector_like< ConnectionT >* >( ( *hc )[ i ] );
+        // Find and delete the first Connection corresponding to the target
+        for ( size_t j = 0; j < vc->size(); j++ )
+        {
+          ConnectionT* connection = &vc->at( j );
+          if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
+          {
+            // Get rid of the ConnectionBase for this type of synapse if there is only this element
+            // left
+            if ( vc->size() == 1 )
+            {
+              ( *hc ).erase( ( *hc ).begin() + i );
+              // Test if the homogeneous vector of connections went back to only 1 type of
+              // synapse... then go back to the simple vector_like case.
+              if ( hc->size() == 1 )
+              {
+                conn = static_cast< vector_like< ConnectionT >* >( ( *hc )[ 0 ] );
+                conn = pack_pointer( conn, b_has_primary, b_has_secondary );
+              }
+              else
+              {
+                conn = pack_pointer( hc, b_has_primary, b_has_secondary );
+              }
+            } // Otherwise, just remove the desired connection
+            else
+            {
+              ( *hc )[ i ] = &vc->erase( j );
+              conn = pack_pointer( hc, b_has_primary, b_has_secondary );
+            }
+            found = true;
+            break;
+          }
+        }
+      }
+    }
+  }
+  assert( found );
+  num_connections_--;
   return conn;
 }
 
@@ -452,10 +584,38 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
  * Register a synape with default Connector and without any common properties.
  */
 template < class ConnectionT >
-synindex
+void
 register_connection_model( Network& net, const std::string& name )
 {
-  return net.register_synapse_prototype( new GenericConnectorModel< ConnectionT >( net, name ) );
+  net.register_synapse_prototype( new GenericConnectorModel< ConnectionT >(
+    net, name, /*is_primary=*/true, /*has_delay=*/true ) );
+  if ( not ends_with( name, "_hpc" ) )
+  {
+    net.register_synapse_prototype( new GenericConnectorModel< ConnectionLabel< ConnectionT > >(
+      net, name + "_lbl", /*is_primary=*/true, /*has_delay=*/true ) );
+  }
+}
+
+/**
+ * Register a synape with default Connector and without any common properties.
+ */
+template < class ConnectionT >
+void
+register_secondary_connection_model( Network& net, const std::string& name, bool has_delay = true )
+{
+  ConnectorModel* cm = new GenericSecondaryConnectorModel< ConnectionT >( net, name, has_delay );
+
+  synindex synid = net.register_secondary_synapse_prototype( cm );
+
+  ConnectionT::EventType::set_syn_id( synid );
+
+  // create labeled secondary event connection model
+  cm = new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT > >(
+    net, name + "_lbl", has_delay );
+
+  synid = net.register_secondary_synapse_prototype( cm );
+
+  ConnectionT::EventType::set_syn_id( synid );
 }
 
 } // namespace nest

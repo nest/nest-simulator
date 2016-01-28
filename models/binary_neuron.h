@@ -59,6 +59,8 @@ public:
    */
   using Node::handle;
   using Node::handles_test_event;
+  using Node::sends_signal;
+  using Node::receives_signal;
 
   port send_test_event( Node&, rport, synindex, bool );
 
@@ -70,8 +72,12 @@ public:
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
+  SignalType sends_signal() const;
+  SignalType receives_signal() const;
+
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
+
 
 private:
   void init_state_( const Node& proto );
@@ -225,6 +231,22 @@ binary_neuron< TGainfunction >::handles_test_event( DataLoggingRequest& dlr, rpo
     throw UnknownReceptorType( receptor_type, get_name() );
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
+
+
+template < class TGainfunction >
+inline SignalType
+binary_neuron< TGainfunction >::sends_signal() const
+{
+  return BINARY;
+}
+
+template < class TGainfunction >
+inline SignalType
+binary_neuron< TGainfunction >::receives_signal() const
+{
+  return BINARY;
+}
+
 
 template < class TGainfunction >
 inline void

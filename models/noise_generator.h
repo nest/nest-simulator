@@ -118,8 +118,11 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
    */
   using Node::event_hook;
+  using Node::sends_signal;
 
   port send_test_event( Node&, rport, synindex, bool );
+
+  SignalType sends_signal() const;
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -237,6 +240,12 @@ noise_generator::set_status( const DictionaryDatum& d )
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   P_.num_targets_ = ptmp.num_targets_;
+}
+
+inline SignalType
+noise_generator::sends_signal() const
+{
+  return ALL;
 }
 }
 #endif // NOISE_GENERATOR_H

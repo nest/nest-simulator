@@ -27,7 +27,7 @@
 
 #include "nest.h"
 #include "event.h"
-#include "node.h"
+#include "archiving_node.h"
 #include "slice_ring_buffer.h"
 #include "ring_buffer.h"
 #include "connection.h"
@@ -152,7 +152,7 @@ class Network;
    SeeAlso: iaf_psc_delta, iaf_psc_exp_ps
 */
 
-class iaf_psc_delta_canon : public Node
+class iaf_psc_delta_canon : public Archiving_Node
 {
 
 public:
@@ -208,9 +208,6 @@ private:
 
   void calibrate();
   void update( Time const&, const long_t, const long_t );
-
-  void set_spiketime( Time const& );
-  Time get_spiketime() const;
 
   /**
    * Calculate the precise spike time, emit the spike and reset the
@@ -429,17 +426,13 @@ iaf_psc_delta_canon::handles_test_event( DataLoggingRequest& dlr, rport receptor
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
-inline Time
-iaf_psc_delta_canon::get_spiketime() const
-{
-  return Time::step( S_.last_spike_step_ );
-}
-
 inline void
 iaf_psc_delta_canon::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
+  Archiving_Node::get_status( d );
+
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -450,6 +443,12 @@ iaf_psc_delta_canon::set_status( const DictionaryDatum& d )
   const double delta_EL = ptmp.set( d ); // throws if BadProperty
   State_ stmp = S_;                      // temporary copy in case of errors
   stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+
+  // We now know that (ptmp, stmp) are consistent. We do not
+  // write them back to (P_, S_) before we are also sure that
+  // the properties to be set in the parent class are internally
+  // consistent.
+  Archiving_Node::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

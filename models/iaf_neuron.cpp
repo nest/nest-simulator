@@ -29,6 +29,7 @@
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
+#include "propagator_stability.h"
 
 #include <limits>
 
@@ -126,11 +127,6 @@ nest::iaf_neuron::Parameters_::set( const DictionaryDatum& d )
   if ( Tau_ <= 0 || tau_syn_ <= 0 || TauR_ <= 0 )
     throw BadProperty( "All time constants must be strictly positive." );
 
-  if ( Tau_ == tau_syn_ )
-    throw BadProperty(
-      "Membrane and synapse time constant(s) must differ."
-      "See note in documentation." );
-
   return delta_EL;
 }
 
@@ -213,11 +209,13 @@ nest::iaf_neuron::calibrate()
   V_.P33_ = std::exp( -h / P_.Tau_ );
   V_.P21_ = h * V_.P11_;
 
-  // these depend on the above. Please do not change the order.
+  // this depends on the above. Please do not change the order.
   V_.P30_ = 1 / P_.C_ * ( 1 - V_.P33_ ) * P_.Tau_;
-  V_.P31_ = 1 / P_.C_ * ( ( V_.P11_ - V_.P33_ ) / ( -1 / P_.tau_syn_ - -1 / P_.Tau_ )
-                          - h * V_.P11_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_syn_ );
-  V_.P32_ = 1 / P_.C_ * ( V_.P33_ - V_.P11_ ) / ( -1 / P_.Tau_ - -1 / P_.tau_syn_ );
+
+  // these are determined according to a numeric stability criterion
+  V_.P31_ = propagator_31( P_.tau_syn_, P_.Tau_, P_.C_, h );
+  V_.P32_ = propagator_32( P_.tau_syn_, P_.Tau_, P_.C_, h );
+
   V_.PSCInitialValue_ = 1.0 * numerics::e / P_.tau_syn_;
 
 

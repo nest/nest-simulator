@@ -31,11 +31,12 @@
 #include "scheduler.h"
 #include "exceptions.h"
 #include "proxynode.h"
-#include "connection_manager.h"
+#include "sp_manager.h"
 #include "event.h"
 #include "modelrangemanager.h"
 #include "compose.hpp"
 #include "dictdatum.h"
+#include "numerics.h"
 #include <ostream>
 #include <cmath>
 
@@ -43,6 +44,8 @@
 #include "errno.h"
 
 #include "sparse_node_array.h"
+
+#include "growth_curve_factory.h"
 
 #ifdef M_ERROR
 #undef M_ERROR
@@ -70,6 +73,7 @@ class SiblingContainer;
 class Event;
 class Node;
 class GenericConnBuilderFactory;
+class GenericGrowthCurveFactory;
 class GIDCollection;
 
 /**
@@ -99,45 +103,68 @@ class GIDCollection;
 Name: kernel - Global properties of the simulation kernel.
 
 Description:
-(start here.)
+Global properties of the simulation kernel.
 
 Parameters:
-  The following parameters can be set in the status dictionary.
+  The following parameters are available in the kernel status dictionary.
 
-  data_path                stringtype  - A path, where all data is written to (default is the
-current directory)
-  data_prefix              stringtype  - A common prefix for all data files
-  dict_miss_is_error       booltype    - Whether missed dictionary entries are treated as errors
-  local_num_threads        integertype - The local number of threads (cf. global_num_virt_procs)
+
+  Time and resolution
+  resolution               doubletype  - The resolution of the simulation (in ms)
+  time                     doubletype  - The current simulation time
+  to_do                    integertype - The number of steps yet to be simulated (read only)
   max_delay                doubletype  - The maximum delay in the network
   min_delay                doubletype  - The minimum delay in the network
-  ms_per_tic               doubletype  - The number of miliseconds per tic (cf. tics_per_ms,
-tics_per_step)
-  network_size             integertype - The number of nodes in the network
-  num_connections          integertype - The number of connections in the network
-  num_processes            integertype - The number of MPI processes
+  ms_per_tic               doubletype  - The number of milliseconds per tic
+  tics_per_ms              doubletype  - The number of tics per millisecond
+  tics_per_step            integertype - The number of tics per simulation time step
+  T_max                    doubletype  - The largest representable time value (read only)
+  T_min                    doubletype  - The smallest representable time value (read only)
+
+  Parallel processing
+  total_num_virtual_procs  integertype - The total number of virtual processes
+  local_num_threads        integertype - The local number of threads
+  num_processes            integertype - The number of MPI processes (read only)
   num_rec_processes        integertype - The number of MPI processes reserved for recording spikes
   num_sim_processes        integertype - The number of MPI processes reserved for simulating neurons
-  off_grid_spiking         booltype    - Whether to transmit precise spike times in MPI communicatio
+  off_grid_spiking         booltype    - Whether to transmit precise spike times in MPI
+                                         communication (read only)
+
+  Random number generators
+  grng_seed                integertype - Seed for global random number generator used
+                                         synchronously by all virtual processes to
+                                         create, e.g., fixed fan-out connections
+                                         (write only).
+  rng_seeds                arraytype   - Seeds for the per-virtual-process random
+                                         number generators used for most purposes.
+                                         Array with one integer per virtual process,
+                                         all must be unique and differ from
+                                         grng_seed (write only).
+
+  Output
+  data_path                stringtype  - A path, where all data is written to
+                                         (default is the current directory)
+  data_prefix              stringtype  - A common prefix for all data files
   overwrite_files          booltype    - Whether to overwrite existing data files
   print_time               booltype    - Whether to print progress information during the simulation
-  resolution               doubletype  - The resolution of the simulation (in ms)
-  tics_per_ms              doubletype  - The number of tics per milisecond (cf. ms_per_tic,
-tics_per_step)
-  tics_per_step            integertype - The number of tics per simulation time step (cf.
-ms_per_tic, tics_per_ms)
-  time                     doubletype  - The current simulation time
-  total_num_virtual_procs  integertype - The total number of virtual processes (cf.
-local_num_threads)
-  to_do                    integertype - The number of steps yet to be simulated
-  T_max                    doubletype  - The largest representable time value
-  T_min                    doubletype  - The smallest representable time value
+
+  Network information
+  network_size             integertype - The number of nodes in the network (read only)
+  num_connections          integertype - The number of connections in the network
+                                         (read only, local only)
+
+  Miscellaneous
+  dict_miss_is_error       booltype    - Whether missed dictionary entries are treated as errors
+  prelim_tol		   doubletype  - Tolerance of prelim iterations
+  prelim_interpolation_order integertype - Interpolation order of polynomial used in prelim
+                                           iterations
 SeeAlso: Simulate, Node
 */
 
 class Network
 {
   friend class Scheduler;
+  friend class SPManager;
 
 public:
   Network( SLIInterpreter& );
@@ -166,7 +193,7 @@ public:
    * @param   private_model  If true, model is not entered in modeldict.
    * @return void
    * @note The Network calls the Model object's destructor at exit.
-   * @see register_model
+   * @see register_model, unregister_model, register_user_model
    */
   void register_basis_model( Model& m, bool private_model = false );
 
@@ -177,6 +204,7 @@ public:
    * @param   private_model  If true, model is not entered in modeldict.
    * @return Model ID assigned by network
    * @note The Network calls the Model object's destructor at exit.
+   * @see unregister_model, register_user_model
    */
   index register_model( Model& m, bool private_model = false );
 
@@ -196,6 +224,11 @@ public:
   synindex register_synapse_prototype( ConnectorModel* cf );
 
   /**
+   * Register a synapse prototype for a secondary synapse at the connection manager.
+   */
+  synindex register_secondary_synapse_prototype( ConnectorModel* cf );
+
+  /**
    * Copy an existing synapse type.
    * @see copy_model(), ConnectionManager::copy_synapse_prototype()
    */
@@ -206,6 +239,19 @@ public:
    */
   template < typename ConnBuilder >
   void register_conn_builder( const std::string& name );
+
+  /**
+   * Add a growth curve for MSP
+   */
+  template < typename GrowthCurve >
+  void register_growth_curve( const std::string& name );
+
+  /**
+   * Create a new Growth Curve object using the GrowthCurve Factory
+   * @param name which defines the type of GC to be created
+   * @return a new Growth Curve object of the type indicated by name
+   */
+  GrowthCurve* new_growth_curve( Name name );
 
   /**
    * Return the model id for a given model name.
@@ -271,6 +317,44 @@ public:
   index size() const;
 
   /**
+  * Disconnect two nodes. The source node is defined by its global ID.
+  * The target node is defined by the node. The connection is
+  * established on the thread/process that owns the target node.
+  * Identifies if the network is Structural Plasticity enabled or not and then performs
+  * a single disconnect between the two nodes.
+  *
+  * \param s GID of the sending Node.
+  * \param target Pointer to target Node.
+  * \param target_thread Thread that hosts the target node.
+  * \param syn The synapse model to use.
+  */
+  void disconnect_single( index s, Node* target, thread target_thread, DictionaryDatum& syn );
+
+  /**
+   * Disconnect two collections of nodes.  The connection is
+   * established on the thread/process that owns the target node.
+   *
+   * \param sources GID Collection of the source Nodes.
+   * \param targets GID Collection of the target Nodes.
+   * \param connectivityParams connectivity Dictionary
+   * \param synapseParams synapse parameters Dictionary
+   */
+  void disconnect( GIDCollection&, GIDCollection&, DictionaryDatum&, DictionaryDatum& );
+
+  /**
+  * Disconnect two nodes.
+  * The source node is defined by its global ID.
+  * The target node is defined by the node. The connection is
+  * established on the thread/process that owns the target node.
+  *
+  * \param s GID of the sending Node.
+  * \param target Pointer to target Node.
+  * \param target_thread Thread that hosts the target node.
+  * \param syn The synapse model to use.
+  */
+  void disconnect( index s, Node* target, thread target_thread, index syn );
+
+  /**
    * Connect two nodes. The source node is defined by its global ID.
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
@@ -291,8 +375,8 @@ public:
     Node* target,
     thread target_thread,
     index syn,
-    double_t d = NAN,
-    double_t w = NAN );
+    double_t d = numerics::nan,
+    double_t w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -317,8 +401,8 @@ public:
     thread target_thread,
     index syn,
     DictionaryDatum& params,
-    double_t d = NAN,
-    double_t w = NAN );
+    double_t d = numerics::nan,
+    double_t w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -415,6 +499,8 @@ public:
 
   ArrayDatum get_connections( DictionaryDatum dict );
 
+  void update_structural_plasticity();
+
   Subnet* get_root() const; ///< return root subnet.
   Subnet* get_cwn() const;  ///< current working node.
 
@@ -473,6 +559,13 @@ public:
   template < class EventT >
   void send( Node& source, EventT& e, const long_t lag = 0 );
 
+
+  /**
+   * Send a secondary event.
+   */
+  void send_secondary( Node& source, SecondaryEvent& e );
+
+
   /**
    * Send event e to all targets of node source on thread t
    */
@@ -494,6 +587,9 @@ public:
    * Return maximal connection delay.
    */
   delay get_max_delay() const;
+
+  size_t get_prelim_interpolation_order() const;
+  double_t get_prelim_tol() const;
 
   /**
    * Get the time at the beginning of the current time slice.
@@ -741,8 +837,15 @@ public:
    * Register a MUSIC input port (portname) with the port list.
    * This will increment the counter of the respective entry in the
    * music_in_portlist.
+   *
+   * The argument pristine should be set to true when a model
+   * registers the initial port name. This typically happens when the
+   * copy constructor of the model registers a port, as in
+   * models/music_event_in_proxy.cpp. Setting pristine = true causes
+   * the port to be also added to pristine_music_in_portlist.  See
+   * also comment above Network::pristine_music_in_portlist_.
    */
-  void register_music_in_port( std::string portname );
+  void register_music_in_port( std::string portname, bool pristine = false );
 
   /**
    * Unregister a MUSIC input port (portname) from the port list.
@@ -794,6 +897,16 @@ public:
   std::map< std::string, MusicPortData > music_in_portlist_;
 
   /**
+   * A copy of music_in_portlist_ at the pristine state.
+   *
+   * This is used to reset music_in_portlist_ to its pristine state in
+   * Network::init_ (a default state). Pristine here refers to the
+   * initial state of music_in_portlist_ after the loading of the
+   * pristine_models_.
+   */
+  std::map< std::string, MusicPortData > pristine_music_in_portlist_;
+
+  /**
    * The mapping between MUSIC input ports identified by portname
    * and the corresponding MUSIC event handler.
    */
@@ -811,6 +924,26 @@ public:
    */
   void update_music_event_handlers_( Time const&, const long_t, const long_t );
 #endif
+
+  /**
+   * Set structural plasticity status parameters using a dictionary
+   */
+  void set_structural_plasticity_status( const DictionaryDatum& );
+
+  /**
+   * Get the current status of structural plasticity parameters in the network
+   */
+  void get_structural_plasticity_status( DictionaryDatum& );
+
+  /*
+   Enable  structural plasticity
+   */
+  void enable_structural_plasticity();
+
+  /*
+   Disable  structural plasticity
+   */
+  void disable_structural_plasticity();
 
   /**
    * Gets ID of local thread.
@@ -858,7 +991,7 @@ private:
   SLIInterpreter& interpreter_;
   SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
   Scheduler scheduler_;
-  ConnectionManager connection_manager_;
+  SPManager connection_manager_;
 
   Subnet* root_;    //!< Root node.
   Subnet* current_; //!< Current working node (for insertion).
@@ -867,6 +1000,10 @@ private:
      Name: synapsedict - Dictionary containing all synapse models.
      Description:
      'synapsedict info' shows the contents of the dictionary
+     Synapse model names ending with '_hpc' provide minimal memory requirements by using
+     thread-local target neuron IDs and fixing the `rport` to 0.
+     Synapse model names ending with '_lbl' allow to assign an individual integer label
+     (`synapse_label`) to created synapses at the cost of increased memory requirements.
      FirstVersion: October 2005
      Author: Jochen Martin Eppler
      SeeAlso: info
@@ -891,6 +1028,13 @@ private:
   */
   Dictionary* connruledict_; //!< Dictionary for connection rules.
 
+  /* BeginDocumentation
+     Name: growthcurvedict - growth curves for Model of Structural Plasticity
+     Description:
+     This dictionary provides indexes for the growth curve factory
+  */
+  Dictionary* growthcurvedict_; //!< Dictionary for growth rules.
+
   Model* siblingcontainer_model; //!< The model for the SiblingContainer class
 
   std::string data_path_;   //!< Path for all files written by devices
@@ -914,11 +1058,17 @@ private:
   std::vector< GenericConnBuilderFactory* >
     connbuilder_factories_; //! ConnBuilder factories, indexed by connruledict_ elements.
 
+  std::vector< GenericGrowthCurveFactory* >
+    growthcurve_factories_; //! GrowthCurve factories, indexed by growthcurvedict_ elements.
+
   Modelrangemanager node_model_ids_; //!< Records the model id of each neuron in the network
 
   bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 
   bool model_defaults_modified_; //!< whether any model defaults have been modified
+
+  bool structural_plasticity_enabled_; // Indicates whether the Structrual Plasticity functionality
+                                       // is On (True) of Off (False)
 };
 
 inline void
@@ -982,6 +1132,12 @@ Network::get_connections( DictionaryDatum params )
 }
 
 inline void
+Network::update_structural_plasticity()
+{
+  connection_manager_.update_structural_plasticity();
+}
+
+inline void
 Network::set_connector_defaults( index sc, DictionaryDatum& d )
 {
   connection_manager_.set_prototype_status( sc, d );
@@ -997,6 +1153,16 @@ inline synindex
 Network::register_synapse_prototype( ConnectorModel* cm )
 {
   return connection_manager_.register_synapse_prototype( cm );
+}
+
+inline synindex
+Network::register_secondary_synapse_prototype( ConnectorModel* cm )
+{
+  synindex synid = connection_manager_.register_synapse_prototype( cm );
+  // call function in scheduler to register secondary synapse type
+  // and create corresponding event
+  scheduler_.register_secondary_synapse_prototype( cm, synid );
+  return synid;
 }
 
 inline int
@@ -1125,6 +1291,18 @@ Network::get_max_delay() const
   return scheduler_.get_max_delay();
 }
 
+inline size_t
+Network::get_prelim_interpolation_order() const
+{
+  return scheduler_.get_prelim_interpolation_order();
+}
+
+inline double_t
+Network::get_prelim_tol() const
+{
+  return scheduler_.get_prelim_tol();
+}
+
 inline void
 Network::trigger_update_weight( const long_t vt_gid,
   const vector< spikecounter >& dopa_spikes,
@@ -1145,6 +1323,18 @@ Network::send( Node& source, EventT& e, const long_t lag )
   assert( !source.has_proxies() );
   connection_manager_.send( t, gid, e );
 }
+
+
+inline void
+Network::send_secondary( Node& source, SecondaryEvent& e )
+{
+  e.set_stamp( get_slice_origin() + Time::step( 1 ) );
+  e.set_sender( source );
+  e.set_sender_gid( source.get_gid() );
+  thread t = source.get_thread();
+  scheduler_.send_remote( t, e );
+}
+
 
 template <>
 inline void
@@ -1169,6 +1359,7 @@ template <>
 inline void
 Network::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long_t lag )
 {
+
   e.set_stamp( get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
   thread t = source.get_thread();
@@ -1328,6 +1519,13 @@ Network::get_thread_id() const
 #else
   return 0;
 #endif
+}
+
+inline GrowthCurve*
+Network::new_growth_curve( Name name )
+{
+  const long gc_id = ( *growthcurvedict_ )[ name ];
+  return growthcurve_factories_.at( gc_id )->create();
 }
 
 } // namespace

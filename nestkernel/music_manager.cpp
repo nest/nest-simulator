@@ -73,12 +73,12 @@ MUSICManager::finalize()
      - set the ... properties
 */
 void
-MUSICManager::set_status( const DictionaryDatum& d )
+MUSICManager::set_status( const DictionaryDatum& )
 {
 }
 
 void
-MUSICManager::get_status( DictionaryDatum& d )
+MUSICManager::get_status( DictionaryDatum& )
 {
 }
 

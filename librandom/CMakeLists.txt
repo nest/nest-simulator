@@ -18,26 +18,25 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set( random_sources
-    librandom_exceptions.h
-    exp_randomdev.h
+    binomial_randomdev.h binomial_randomdev.cpp
+    clipped_randomdev.h
+    exp_randomdev.h exp_randomdev.cpp
+    gamma_randomdev.h gamma_randomdev.cpp
+    gsl_binomial_randomdev.h gsl_binomial_randomdev.cpp
+    gslrandomgen.h gslrandomgen.cpp
     knuthlfg.h knuthlfg.cpp
+    librandom_exceptions.h
+    lognormal_randomdev.h lognormal_randomdev.cpp
     mt19937.h mt19937.cpp
+    normal_randomdev.h normal_randomdev.cpp
+    poisson_randomdev.h poisson_randomdev.cpp
+    random.h random.cpp
     random_datums.h
     random_numbers.h random_numbers.cpp
-    randomgen.h randomgen.cpp
-    binomial_randomdev.h binomial_randomdev.cpp
-    exp_randomdev.cpp
-    gamma_randomdev.h gamma_randomdev.cpp
-    normal_randomdev.h normal_randomdev.cpp
-    lognormal_randomdev.h lognormal_randomdev.cpp
-    poisson_randomdev.h poisson_randomdev.cpp
     randomdev.h randomdev.cpp
-    clipped_randomdev.h
+    randomgen.h randomgen.cpp
     uniform_randomdev.h uniform_randomdev.cpp
     uniformint_randomdev.h uniformint_randomdev.cpp
-    gslrandomgen.h gslrandomgen.cpp
-    gsl_binomial_randomdev.h gsl_binomial_randomdev.cpp
-    random.h random.cpp
     )
 
 add_library( random ${random_sources} )

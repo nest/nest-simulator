@@ -35,6 +35,7 @@
 
 // Includes from sli:
 #include "lockptrdatum.h"
+#include "lockptrdatum_impl.h"
 
 namespace librandom
 {

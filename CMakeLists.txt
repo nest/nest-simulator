@@ -552,6 +552,14 @@ if ( with-python )
       set( HAVE_PYTHON ON )
 
       find_package( Cython )
+      if ( CYTHON_FOUND )
+        # confirmed not working: 0.15.1
+        # confirmed working: 0.19.2+
+        # in between unknown
+        if ( CYTHON_VERSION VERSION_LESS "0.19.2" )
+          message( FATAL_ERROR "Your Cython version is too old. Please install newer version (0.19.2+)" )
+        endif ()
+      endif ( CYTHON_FOUND )
 
       set( PYEXECDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages )
     endif ()
@@ -834,7 +842,7 @@ endif ( external-modules )
 
 if ( HAVE_PYTHON )
   message( "Python bindings     : Yes (Python ${PYTHON_VERSION}: ${PYTHON})" )
-  message( "Cython bindings     : Yes (Cython: ${CYTHON_EXECUTABLE})" )
+  message( "Cython bindings     : Yes (Cython ${CYTHON_VERSION}: ${CYTHON_EXECUTABLE})" )
 else ( HAVE_PYTHON )
   message( "Python bindings     : No" )
 endif ( HAVE_PYTHON )

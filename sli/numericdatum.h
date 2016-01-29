@@ -26,8 +26,11 @@
     Datum template for numeric data types
 */
 
-#include "genericdatum.h"
+// Includes from libnestutil:
 #include "allocator.h"
+
+// Includes from sli:
+#include "genericdatum.h"
 
 
 // prefixed all references to members of GenericDatum with this->,

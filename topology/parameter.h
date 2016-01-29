@@ -23,16 +23,25 @@
 #ifndef PARAMETER_H
 #define PARAMETER_H
 
+// C++ includes:
 #include <limits>
-#include "nest.h"
+
+// Includes from librandom:
+#include "normal_randomdev.h"
 #include "randomgen.h"
+
+// Includes from nestkernel:
 #include "nest_names.h"
-#include "topology_names.h"
-#include "position.h"
+#include "nest_types.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "dictutils.h"
+
+// Includes from topology:
+#include "position.h"
+#include "topology_names.h"
 #include "topologymodule.h"
-#include "normal_randomdev.h"
 
 namespace nest
 {

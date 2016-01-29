@@ -26,8 +26,11 @@
     Array of Tokens
 */
 
-#include <typeinfo>
+// C++ includes:
 #include <cstddef>
+#include <typeinfo>
+
+// Includes from sli:
 #include "token.h"
 
 #define ARRAY_ALLOC_SIZE 64

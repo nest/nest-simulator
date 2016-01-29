@@ -23,7 +23,7 @@
 #ifndef SYN_ID_DELAY_H
 #define SYN_ID_DELAY_H
 
-#include "nest_time.h"
+// Includes from nestkernel:
 
 namespace nest
 {

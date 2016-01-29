@@ -33,11 +33,15 @@
           in a SLI error message.  HEP 2002-09-19.
 */
 
-#include "slimodule.h"
-#include "slifunction.h"
+// Generated includes:
 #include "config.h"
 
+// Includes from sli:
+#include "slifunction.h"
+#include "slimodule.h"
+
 #ifdef HAVE_GSL
+// External include:
 #include <gsl/gsl_integration.h>
 #endif
 

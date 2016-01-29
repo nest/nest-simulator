@@ -23,14 +23,18 @@
 #ifndef NOISE_GENERATOR_H
 #define NOISE_GENERATOR_H
 
-
+// C++ includes:
 #include <vector>
-#include "nest.h"
+
+// Includes from librandom:
+#include "normal_randomdev.h"
+
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "stimulating_device.h"
-#include "connection.h"
-#include "normal_randomdev.h"
 
 namespace nest
 {

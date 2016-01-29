@@ -26,10 +26,13 @@
     class implementing SLI types
 */
 
-#include <typeinfo>
+// C++ includes:
 #include <iostream>
-#include "slifunction.h"
+#include <typeinfo>
+
+// Includes from sli:
 #include "name.h"
+#include "slifunction.h"
 
 
 /* class SLIType represents the SLI type information. Each

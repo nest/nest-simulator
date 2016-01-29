@@ -21,21 +21,29 @@
  */
 
 #include "recording_device.h"
-#include "network.h"
-#include "dictutils.h"
-#include "iostreamdatum.h"
-#include "arraydatum.h"
-#include "config.h"
-#include "exceptions.h"
-#include "sliexceptions.h"
-#include <iostream> // using cerr for error message.
+
+// C++ includes:
 #include <iomanip>
+#include <iostream> // using cerr for error message.
+
+// Generated includes:
+#include "config.h"
+
+// Includes from libnestutil:
+#include "compose.hpp"
+#include "logging.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "vp_manager_impl.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dictutils.h"
 #include "fdstream.h"
-
-// nestmodule provides global access to the network, so we can
-// issue warning messages. This is messy and needs cleaning up.
-#include "nestmodule.h"
-
+#include "iostreamdatum.h"
+#include "sliexceptions.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -210,14 +218,12 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   }
 
   if ( ( rec_change || have_record_to ) && to_file_ && to_memory_ )
-    NestModule::get_network().message( SLIInterpreter::M_INFO,
-      "RecordingDevice::set_status",
-      "Data will be recorded to file and to memory." );
+    LOG( M_INFO, "RecordingDevice::set_status", "Data will be recorded to file and to memory." );
 
   if ( to_accumulator_ && ( to_file_ || to_screen_ || to_memory_ || withgid_ || withweight_ ) )
   {
     to_file_ = to_screen_ = to_memory_ = withgid_ = withweight_ = false;
-    Node::network()->message( SLIInterpreter::M_WARNING,
+    LOG( M_WARNING,
       "RecordingDevice::set_status()",
       "Accumulator mode selected. All incompatible properties "
       "(to_file, to_screen, to_memory, withgid, withweight) "
@@ -387,7 +393,7 @@ nest::RecordingDevice::calibrate()
       {
         std::string msg =
           String::compose( "Closing file '%1', opening file '%2'", P_.filename_, newname );
-        Node::network()->message( SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg );
+        LOG( M_INFO, "RecordingDevice::calibrate()", msg );
 
         B_.fs_.close(); // close old file
         P_.filename_ = newname;
@@ -399,7 +405,7 @@ nest::RecordingDevice::calibrate()
     {
       assert( !B_.fs_.is_open() );
 
-      if ( Node::network()->overwrite_files() )
+      if ( kernel().io_manager.overwrite_files() )
       {
         if ( P_.binary_ )
           B_.fs_.open( P_.filename_.c_str(), std::ios::out | std::ios::binary );
@@ -417,7 +423,7 @@ nest::RecordingDevice::calibrate()
             "Please change data_path, data_prefix or label, or set /overwrite_files "
             "to true in the root node.",
             P_.filename_ );
-          Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+          LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
           throw IOError();
         }
         else
@@ -451,7 +457,7 @@ nest::RecordingDevice::calibrate()
         "This may be caused by too many open files in networks "
         "with many recording devices and threads.",
         P_.filename_ );
-      Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+      LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
 
       if ( B_.fs_.is_open() )
         B_.fs_.close();
@@ -478,7 +484,7 @@ nest::RecordingDevice::calibrate()
         "openeded with a buffer size of %1. Please close the "
         "file first.",
         P_.fbuffer_size_old_ );
-      Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+      LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
       throw IOError();
     }
   }
@@ -501,7 +507,7 @@ nest::RecordingDevice::finalize()
     if ( !B_.fs_.good() )
     {
       std::string msg = String::compose( "I/O error while opening file '%1'", P_.filename_ );
-      Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg );
+      LOG( M_ERROR, "RecordingDevice::finalize()", msg );
 
       throw IOError();
     }
@@ -642,16 +648,16 @@ nest::RecordingDevice::build_filename_() const
 {
   // number of digits in number of virtual processes
   const int vpdigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >( Communicator::get_num_virtual_processes() ) ) )
-    + 1 );
+    std::floor(
+      std::log10( static_cast< float >( kernel().vp_manager.get_num_virtual_processes() ) ) ) + 1 );
   const int gidigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >( Node::network()->size() ) ) ) + 1 );
+    std::floor( std::log10( static_cast< float >( kernel().node_manager.size() ) ) ) + 1 );
 
   std::ostringstream basename;
-  const std::string& path = Node::network()->get_data_path();
+  const std::string& path = kernel().io_manager.get_data_path();
   if ( !path.empty() )
     basename << path << '/';
-  basename << Node::network()->get_data_prefix();
+  basename << kernel().io_manager.get_data_prefix();
 
 
   if ( !P_.label_.empty() )

@@ -25,24 +25,30 @@
 
 #ifdef HAVE_GSL
 
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include <limits>
-
-#include "universal_data_logger_impl.h"
-
+// C++ includes:
+#include <cstdio>
 #include <iomanip>
 #include <iostream>
-#include <cstdio>
+#include <limits>
 
+// External includes:
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_sf_exp.h>
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 nest::RecordablesMap< nest::hh_cond_exp_traub > nest::hh_cond_exp_traub::recordablesMap_;
 
@@ -353,7 +359,7 @@ nest::hh_cond_exp_traub::calibrate()
 void
 nest::hh_cond_exp_traub::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -398,7 +404,7 @@ nest::hh_cond_exp_traub::update( Time const& origin, const long_t from, const lo
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
         SpikeEvent se;
-        network()->send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
 
@@ -417,14 +423,16 @@ nest::hh_cond_exp_traub::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_exc_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
     // add with negative weight, ie positive value, since we are changing a
     // conductance
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_inh_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -438,7 +446,8 @@ nest::hh_cond_exp_traub::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

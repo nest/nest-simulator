@@ -23,6 +23,7 @@
 #ifndef DATUM_H
 #define DATUM_H
 
+// Includes from sli:
 #include "slitype.h"
 
 /***********************************************************/

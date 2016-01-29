@@ -20,23 +20,44 @@
  *
  */
 
-#include "config.h"
+#include "processes.h"
 
-#include <climits>
-#include <cstdlib>
-#include <cassert>
-#include <cstdio>
-#include <cstring>
-
-
-#include <unistd.h>
+// C includes:
+#include <fcntl.h>
+#include <signal.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <signal.h>
-#include <fcntl.h>
+#include <unistd.h>
+
+// C++ includes:
+#include <cassert>
+#include <climits>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <string>
+#include <vector>
+
+// Generated includes:
+#include "config.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "booldatum.h"
+#include "dict.h"      // for TokenMap
+#include "dictdatum.h" // for signaldict
+#include "dictutils.h"
+#include "fdstream.h"
+#include "integerdatum.h" // Include the data-types we use!
+#include "interpret.h"    // for SLI Interpreter and messaging mechanism
+#include "iostreamdatum.h"
+#include "namedatum.h"
+#include "sliexceptions.h"
+#include "stringdatum.h"
+#include "tokenutils.h"
+
 
 // sstream has functions std::?stringstream
 // strstream has functions std::?strstream
@@ -54,22 +75,6 @@
 #else
 #include <cerrno>
 #endif
-
-#include <vector>
-#include "processes.h"
-#include "integerdatum.h" // Include the data-types we use!
-#include "arraydatum.h"
-#include "stringdatum.h"
-#include "namedatum.h"
-#include "booldatum.h"
-#include "dictdatum.h" // for signaldict
-#include "iostreamdatum.h"
-#include "dictutils.h"
-#include "tokenutils.h"
-#include "interpret.h" // for SLI Interpreter and messaging mechanism
-#include "dict.h"      // for TokenMap
-#include "sliexceptions.h"
-#include "fdstream.h"
 
 #ifndef _POSIX_SOURCE
 #define _SYNOD__SET_POSIX_SOURCE

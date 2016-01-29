@@ -1,5 +1,5 @@
 /*
- *  communicator_impl.h
+ *  mpi_manager_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,17 +20,38 @@
  *
  */
 
-#include "communicator.h"
-#include "network.h"
+#ifndef MPI_MANAGER_IMPL_H
+#define MPI_MANAGER_IMPL_H
 
 #include "config.h"
 
 /* To avoid problems on BlueGene/L, mpi.h MUST be the
-   first included file after config.h.
+ first included file after config.h.
  */
 #ifdef HAVE_MPI
+// C includes:
 #include <mpi.h>
 #endif /* #ifdef HAVE_MPI */
+
+#include "mpi_manager.h"
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
+inline nest::thread
+nest::MPIManager::get_process_id( nest::thread vp ) const
+{
+  if ( vp >= static_cast< thread >( n_sim_procs_
+               * kernel().vp_manager.get_num_threads() ) ) // vp belongs to recording VPs
+  {
+    return ( vp - n_sim_procs_ * kernel().vp_manager.get_num_threads() ) % n_rec_procs_
+      + n_sim_procs_;
+  }
+  else // vp belongs to simulating VPs
+  {
+    return vp % n_sim_procs_;
+  }
+}
 
 #ifdef HAVE_MPI
 
@@ -60,7 +81,7 @@ struct MPI_Type
 
 template < typename T >
 void
-nest::Communicator::communicate_Allgatherv( std::vector< T >& send_buffer,
+nest::MPIManager::communicate_Allgatherv( std::vector< T >& send_buffer,
   std::vector< T >& recv_buffer,
   std::vector< int >& displacements,
   std::vector< int >& recv_counts )
@@ -78,14 +99,14 @@ nest::Communicator::communicate_Allgatherv( std::vector< T >& send_buffer,
 
 template < typename NodeListType >
 void
-nest::Communicator::communicate( const NodeListType& local_nodes,
-  vector< NodeAddressingData >& all_nodes,
+nest::MPIManager::communicate( const NodeListType& local_nodes,
+  std::vector< NodeAddressingData >& all_nodes,
   bool remote )
 {
-  size_t np = Communicator::num_processes_;
+  size_t np = get_num_processes();
   if ( np > 1 && remote )
   {
-    vector< long_t > localnodes;
+    std::vector< long_t > localnodes;
     for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
     {
       localnodes.push_back( ( *n )->get_gid() );
@@ -94,7 +115,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
     }
     // get size of buffers
     std::vector< nest::int_t > n_nodes( np );
-    n_nodes[ Communicator::rank_ ] = localnodes.size();
+    n_nodes[ get_rank() ] = localnodes.size();
     communicate( n_nodes );
     // Set up displacements vector.
     std::vector< int > displacements( np, 0 );
@@ -105,7 +126,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
     // Calculate total number of node data items to be gathered.
     size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
     assert( n_globals % 3 == 0 );
-    vector< long_t > globalnodes;
+    std::vector< long_t > globalnodes;
     if ( n_globals != 0 )
     {
       globalnodes.resize( n_globals, 0L );
@@ -118,7 +139,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 
       // get rid of any multiple entries
       std::sort( all_nodes.begin(), all_nodes.end() );
-      vector< NodeAddressingData >::iterator it;
+      std::vector< NodeAddressingData >::iterator it;
       it = std::unique( all_nodes.begin(), all_nodes.end() );
       all_nodes.resize( it - all_nodes.begin() );
     }
@@ -135,17 +156,16 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 
 template < typename NodeListType >
 void
-nest::Communicator::communicate( const NodeListType& local_nodes,
-  vector< NodeAddressingData >& all_nodes,
-  Network& net,
+nest::MPIManager::communicate( const NodeListType& local_nodes,
+  std::vector< NodeAddressingData >& all_nodes,
   DictionaryDatum params,
   bool remote )
 {
-  size_t np = Communicator::num_processes_;
+  size_t np = get_num_processes();
 
   if ( np > 1 && remote )
   {
-    vector< long_t > localnodes;
+    std::vector< long_t > localnodes;
     if ( params->empty() )
     {
       for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
@@ -162,7 +182,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
         // select those nodes fulfilling the key/value pairs of the dictionary
         bool match = true;
         index gid = ( *n )->get_gid();
-        DictionaryDatum node_status = net.get_status( gid );
+        DictionaryDatum node_status = kernel().node_manager.get_status( gid );
         for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
         {
           if ( node_status->known( i->first ) )
@@ -186,7 +206,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 
     // get size of buffers
     std::vector< nest::int_t > n_nodes( np );
-    n_nodes[ Communicator::rank_ ] = localnodes.size();
+    n_nodes[ get_rank() ] = localnodes.size();
     communicate( n_nodes );
 
     // Set up displacements vector.
@@ -198,7 +218,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
     // Calculate sum of global connections.
     size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
     assert( n_globals % 3 == 0 );
-    vector< long_t > globalnodes;
+    std::vector< long_t > globalnodes;
     if ( n_globals != 0 )
     {
       globalnodes.resize( n_globals, 0L );
@@ -211,7 +231,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 
       // get rid of any multiple entries
       std::sort( all_nodes.begin(), all_nodes.end() );
-      vector< NodeAddressingData >::iterator it;
+      std::vector< NodeAddressingData >::iterator it;
       it = std::unique( all_nodes.begin(), all_nodes.end() );
       all_nodes.resize( it - all_nodes.begin() );
     }
@@ -231,7 +251,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
       {
         bool match = true;
         index gid = ( *n )->get_gid();
-        DictionaryDatum node_status = net.get_status( gid );
+        DictionaryDatum node_status = kernel().node_manager.get_status( gid );
         for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
         {
           if ( node_status->known( i->first ) )
@@ -258,8 +278,8 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 
 template < typename NodeListType >
 void
-nest::Communicator::communicate( const NodeListType& local_nodes,
-  vector< NodeAddressingData >& all_nodes,
+nest::MPIManager::communicate( const NodeListType& local_nodes,
+  std::vector< NodeAddressingData >& all_nodes,
   bool )
 {
   for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
@@ -270,9 +290,8 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 
 template < typename NodeListType >
 void
-nest::Communicator::communicate( const NodeListType& local_nodes,
-  vector< NodeAddressingData >& all_nodes,
-  Network& net,
+nest::MPIManager::communicate( const NodeListType& local_nodes,
+  std::vector< NodeAddressingData >& all_nodes,
   DictionaryDatum params,
   bool )
 {
@@ -290,7 +309,7 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
     {
       bool match = true;
       index gid = ( *n )->get_gid();
-      DictionaryDatum node_status = net.get_status( gid );
+      DictionaryDatum node_status = kernel().node_manager.get_status( gid );
       for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
       {
         if ( node_status->known( i->first ) )
@@ -312,3 +331,5 @@ nest::Communicator::communicate( const NodeListType& local_nodes,
 }
 
 #endif
+
+#endif /* MPI_MANAGER_IMPL_H */

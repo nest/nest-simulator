@@ -21,12 +21,20 @@
  */
 
 #include "noise_generator.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// Includes from libnestutil:
+#include "logging.h"
 #include "numerics.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -164,7 +172,7 @@ nest::noise_generator::calibrate()
   device_.calibrate();
   if ( P_.num_targets_ != B_.amps_.size() )
   {
-    network()->message( SLIInterpreter::M_INFO,
+    LOG( M_INFO,
       "noise_generator::calibrate()",
       "The number of targets has changed, drawing new amplitudes." );
     init_buffers_();
@@ -173,7 +181,7 @@ nest::noise_generator::calibrate()
   V_.dt_steps_ = P_.dt_.get_steps();
 
   const double_t h = Time::get_resolution().get_ms();
-  const double_t t = network()->get_time().get_ms();
+  const double_t t = kernel().simulation_manager.get_time().get_ms();
 
   // scale Hz to ms
   const double_t omega = 2.0 * numerics::pi * P_.freq_ / 1000.0;
@@ -250,7 +258,7 @@ nest::noise_generator::update( Time const& origin, const long_t from, const long
       {
         *it = P_.mean_
           + std::sqrt( P_.std_ * P_.std_ + S_.y_1_ * P_.std_mod_ * P_.std_mod_ )
-            * V_.normal_dev_( net_->get_rng( get_thread() ) );
+            * V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
       }
 
       // use now as reference, in case we woke up from inactive period
@@ -258,7 +266,7 @@ nest::noise_generator::update( Time const& origin, const long_t from, const long
     }
 
     DSCurrentEvent ce;
-    network()->send( *this, ce, offs );
+    kernel().event_delivery_manager.send( *this, ce, offs );
   }
 }
 

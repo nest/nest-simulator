@@ -25,8 +25,10 @@
 /*
     SLI's control structures
 */
-#include "interpret.h"
+
+// Includes from sli:
 #include "dictdatum.h"
+#include "interpret.h"
 
 /**************************************
   All SLI control functions are

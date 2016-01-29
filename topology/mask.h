@@ -23,12 +23,17 @@
 #ifndef MASK_H
 #define MASK_H
 
-#include "nest.h"
-#include "topology_names.h"
-#include "position.h"
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "nest_types.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "dictutils.h"
-#include "exceptions.h"
+
+// Includes from topology:
+#include "position.h"
+#include "topology_names.h"
 #include "topologymodule.h"
 
 namespace nest

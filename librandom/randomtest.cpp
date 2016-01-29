@@ -20,28 +20,35 @@
  *
  */
 
-#include <iostream>
-#include <iomanip>
+// C++ includes:
 #include <cmath>
-#include <ctime>
 #include <cstring>
-#include "randomgen.h"
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+
+// Generated includes:
+#include "config.h"
+
+// Includes from librandom:
+#include "binomial_randomdev.h"
+#include "binomial_randomdev.h"
+#include "exp_randomdev.h"
+#include "gamma_randomdev.h"
+#include "gslrandomgen.h"
 #include "knuthlfg.h"
 #include "mt19937.h"
-#include "gslrandomgen.h"
-#include "randomdev.h"
-#include "poisson_randomdev.h"
-#include "binomial_randomdev.h"
-#include "gamma_randomdev.h"
 #include "normal_randomdev.h"
-#include "exp_randomdev.h"
-#include "binomial_randomdev.h"
-#include "config.h"
-#include "dictdatum.h"
-#include "dict.h"
-#include "tokenutils.h"
-#include "token.h"
+#include "poisson_randomdev.h"
 #include "random_datums.h"
+#include "randomdev.h"
+#include "randomgen.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictdatum.h"
+#include "token.h"
+#include "tokenutils.h"
 
 /* Run all available random generators and deviates
    Mean and std dev are computed as a simple test   */

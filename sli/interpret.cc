@@ -23,41 +23,42 @@
 /*
     Definitions for the SLI Interpreter class
 */
-#include <functional>
+
+#include "interpret.h"
+
+// C++ includes:
 #include <algorithm>
 #include <ctime>
-#include <string>
-#include "numerics.h"
 #include <exception>
-#include "psignal.h"
-#include "interpret.h"
-#include "scanner.h"
-#include "parser.h"
-#include "functiondatum.h"
-#include "booldatum.h"
-#include "namedatum.h"
-//#include "arraydatum.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-#include "dictstack.h"
-#include "functional.h"
-#include "stringdatum.h"
-#include "iostreamdatum.h"
-#include "dictdatum.h"
-#include "tokenutils.h"
-#include "dictutils.h"
-#include "triedatum.h"
+#include <fstream>
+#include <functional>
+#include <sstream>
+#include <string>
+
+// Generated includes:
 #include "config.h"
 
+// Includes from libnestutil:
 #include "compose.hpp"
+#include "numerics.h"
 
-#include <sstream>
-#include <fstream>
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
+// Includes from sli:
+#include "booldatum.h"
+#include "dictdatum.h"
+#include "dictstack.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "functional.h"
+#include "functiondatum.h"
+#include "integerdatum.h"
+#include "iostreamdatum.h"
+#include "namedatum.h"
+#include "parser.h"
+#include "psignal.h"
+#include "scanner.h"
+#include "stringdatum.h"
+#include "tokenutils.h"
+#include "triedatum.h"
 
 // This function is the only interface to the driver program
 extern void init_slidict( SLIInterpreter* );
@@ -415,8 +416,6 @@ SLIInterpreter::SLIInterpreter( void )
   , iforallindexedarray_name( "::forallindexed_a" )
   , iforallindexedstring_name( "::forallindexed_s" )
   , iforallstring_name( "::forall_s" )
-  ,
-
 
   /* BeginDocumentation
    Name: Pi - Value of the constant Pi= 3.1415...
@@ -428,8 +427,7 @@ SLIInterpreter::SLIInterpreter( void )
    SeeAlso: E, sin, cos
   */
 
-  pi_name( "Pi" )
-  ,
+  , pi_name( "Pi" )
 
   /* BeginDocumentation
    Name: E - Value of the Euler constant E=2.718...
@@ -442,10 +440,8 @@ SLIInterpreter::SLIInterpreter( void )
    SeeAlso: exp
   */
 
-  e_name( "E" )
-  ,
-
-  iparse_name( "::parse" )
+  , e_name( "E" )
+  , iparse_name( "::parse" )
   , stop_name( "stop" )
   , end_name( "end" )
   , null_name( "null" )
@@ -455,7 +451,6 @@ SLIInterpreter::SLIInterpreter( void )
   , istopped_name( "::stopped" )
   , systemdict_name( "systemdict" )
   , userdict_name( "userdict" )
-  ,
 
   /* BeginDocumentation
    Name: errordict - pushes error dictionary on operand stack
@@ -486,10 +481,8 @@ SLIInterpreter::SLIInterpreter( void )
    SeeAlso: raiseerror, raiseagain, info
    References: The Red Book 2nd. ed. p. 408
   */
-  errordict_name( "errordict" )
-  ,
-
-  quitbyerror_name( "quitbyerror" )
+  , errordict_name( "errordict" )
+  , quitbyerror_name( "quitbyerror" )
   , newerror_name( "newerror" )
   , errorname_name( "errorname" )
   , commandname_name( "commandname" )
@@ -500,9 +493,7 @@ SLIInterpreter::SLIInterpreter( void )
   , dstack_name( "dstack" )
   , commandstring_name( "moduleinitializers" )
   , interpreter_name( "SLIInterpreter::execute" )
-  ,
-
-  ArgumentTypeError( "ArgumentType" )
+  , ArgumentTypeError( "ArgumentType" )
   , StackUnderflowError( "StackUnderflow" )
   , UndefinedNameError( "UndefinedName" )
   , WriteProtectedError( "WriteProtected" )
@@ -516,10 +507,7 @@ SLIInterpreter::SLIInterpreter( void )
   , BadErrorHandler( "BadErrorHandler" )
   , KernelError( "KernelError" )
   , InternalKernelError( "InternalKernelError" )
-  ,
-
-
-  OStack( 100 )
+  , OStack( 100 )
   , EStack( 100 )
 {
   inittypes();

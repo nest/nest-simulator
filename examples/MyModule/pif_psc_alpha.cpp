@@ -20,18 +20,25 @@
  *
  */
 
-#include "exceptions.h"
 #include "pif_psc_alpha.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include "universal_data_logger_impl.h"
-#include "lockptrdatum.h"
 
+// C++ includes:
 #include <limits>
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "lockptrdatum.h"
 
 using namespace nest;
 
@@ -243,7 +250,7 @@ mynest::pif_psc_alpha::update( Time const& slice_origin,
       // send spike, and set spike time in archive.
       set_spiketime( Time::step( slice_origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().connection_builder_manager.send( *this, se, lag );
     }
 
     // add synaptic input currents for this step
@@ -262,7 +269,8 @@ mynest::pif_psc_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  B_.spikes.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), e.get_weight() );
+  B_.spikes.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() );
 }
 
 void
@@ -270,8 +278,8 @@ mynest::pif_psc_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  B_.currents.add_value(
-    e.get_rel_delivery_steps( network()->get_slice_origin() ), e.get_weight() * e.get_current() );
+  B_.currents.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 // Do not move this function as inline to h-file. It depends on

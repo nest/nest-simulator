@@ -28,12 +28,15 @@
 /*                                      */
 /****************************************/
 
-#include "nest.h"
+// Includes from librandom:
+#include "poisson_randomdev.h"
+
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "stimulating_device.h"
-#include "connection.h"
-#include "poisson_randomdev.h"
 
 namespace nest
 {

@@ -23,13 +23,19 @@
 #ifndef CONN_PARAMETER_H
 #define CONN_PARAMETER_H
 
+// C++ includes:
 #include <limits>
 #include <vector>
 
-#include "randomgen.h"
+// Includes from librandom:
 #include "randomdev.h"
-#include "token.h"
+#include "randomgen.h"
+
+// Includes from nestkernel:
 #include "exceptions.h"
+
+// Includes from sli:
+#include "token.h"
 
 /**
  * Base class for parameters provided to connection routines.

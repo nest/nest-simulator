@@ -28,8 +28,9 @@
   sli_io.h.
   *************************************/
 
-#include "slimodule.h"
+// Includes from sli:
 #include "slifunction.h"
+#include "slimodule.h"
 
 
 class FilesystemModule : public SLIModule

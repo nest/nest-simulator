@@ -21,9 +21,16 @@
  */
 
 #include "selector.h"
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
+// Includes from sli:
 #include "dictutils.h"
-#include "network.h"
+
+// Includes from topology:
 #include "topology_names.h"
+
 
 namespace nest
 {
@@ -45,7 +52,7 @@ Selector::Selector( const DictionaryDatum& d )
   if ( updateValue< std::string >( d, names::model, modelname ) )
   {
 
-    const Token model_token = Node::network()->get_modeldict().lookup( modelname );
+    const Token model_token = kernel().model_manager.get_modeldict()->lookup( modelname );
 
     if ( model_token.empty() )
       throw UnknownModelName( modelname );

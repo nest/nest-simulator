@@ -21,7 +21,11 @@
  */
 
 #include "propagator_stability.h"
+
+// C++ includes:
 #include <cmath>
+
+// Includes from libnestutil:
 #include "numerics.h"
 
 double

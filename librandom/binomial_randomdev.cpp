@@ -33,10 +33,16 @@
 
 
 #include "binomial_randomdev.h"
-#include "dictutils.h"
-#include "compose.hpp"
-#include <limits>
+
+// C++ includes:
 #include <cmath>
+#include <limits>
+
+// Includes from libnestutil:
+#include "compose.hpp"
+
+// Includes from sli:
+#include "dictutils.h"
 
 librandom::BinomialRandomDev::BinomialRandomDev( RngPtr r_s, double p_s, unsigned int n_s )
   : RandomDev( r_s )

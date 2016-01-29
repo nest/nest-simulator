@@ -36,15 +36,24 @@
 
 #ifdef HAVE_LIBLTDL
 
+// External includes:
 #include <ltdl.h>
 
+// Generated includes:
 #include "sliconfig.h"
-#include "network.h"
-#include "interpret.h"
+
+// Includes from libnestutil:
+#include "logging.h"
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
+#include "model.h"
+
+// Includes from sli:
 #include "integerdatum.h"
+#include "interpret.h"
 #include "stringdatum.h"
 
-#include "model.h"
 
 namespace nest
 {
@@ -82,15 +91,11 @@ DynamicLoaderModule::getLinkedModules()
 /*! At the time when DynamicLoaderModule is constructed, the SLI Interpreter
   and NestModule must be already constructed and initialized.
   DynamicLoaderModule relies on the presence of
-  the following SLI datastructures: Name, Dictionary
-  and on the nest::NestModule::net.
+  the following SLI datastructures: Name, Dictionary.
 */
-DynamicLoaderModule::DynamicLoaderModule( Network* pNet, SLIInterpreter& interpreter )
-  : loadmodule_function( pNet, dyn_modules )
+DynamicLoaderModule::DynamicLoaderModule( SLIInterpreter& interpreter )
+  : loadmodule_function( dyn_modules )
 {
-  assert( pNet != NULL );
-  pNet_ = pNet;
-
   interpreter.def( "moduledict", new DictionaryDatum( moduledict_ ) );
 }
 
@@ -140,10 +145,8 @@ has_name( SLIModule const* const m, const std::string n )
   Description:
   Synopsis: (module_name) Install -> handle
 */
-DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction( Network* pNet,
-  vecDynModules& dyn_modules )
-  : pNet_( pNet )
-  , dyn_modules_( dyn_modules )
+DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction( vecDynModules& dyn_modules )
+  : dyn_modules_( dyn_modules )
 {
 }
 
@@ -238,7 +241,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   new_module.pModule = pModule;
   dyn_modules_.push_back( new_module );
 
-  i->message( SLIInterpreter::M_INFO, "Install", ( "loaded module " + pModule->name() ).c_str() );
+  LOG( M_INFO, "Install", ( "loaded module " + pModule->name() ).c_str() );
 
   // remove operand and operator from stack
   i->OStack.pop();
@@ -275,19 +278,17 @@ DynamicLoaderModule::init( SLIInterpreter* i )
     const char* path = getenv( "SLI_MODULE_PATH" );
     if ( path != NULL )
     {
-      i->message( SLIInterpreter::M_INFO, "DynamicLoaderModule::init", "Setting module path to" );
-      i->message( SLIInterpreter::M_INFO, "DynamicLoaderModule::init", path );
+      LOG( M_INFO, "DynamicLoaderModule::init", "Setting module path to" );
+      LOG( M_INFO, "DynamicLoaderModule::init", path );
 
       dl_error = lt_dlsetsearchpath( path );
       if ( dl_error )
-        i->message( SLIInterpreter::M_ERROR,
-          "DynamicLoaderModule::init",
-          "Could not set dynamic module path." );
+        LOG( M_ERROR, "DynamicLoaderModule::init", "Could not set dynamic module path." );
     }
   }
   else
   {
-    i->message( SLIInterpreter::M_ERROR,
+    LOG( M_ERROR,
       "DynamicLoaderModule::init",
       "Could not initialize libltdl. No dynamic modules will be avaiable." );
   }

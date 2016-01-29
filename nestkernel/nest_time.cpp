@@ -20,13 +20,21 @@
  *
  */
 
-#include <string>
 #include "nest_time.h"
-#include "token.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
+
+// C++ includes:
+#include <string>
+
+// Generated includes:
 #include "config.h"
+
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from sli:
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "token.h"
 
 using namespace nest;
 
@@ -45,7 +53,6 @@ using namespace nest;
 const nest::double_t Time::Range::TICS_PER_MS_DEFAULT = CONFIG_TICS_PER_MS;
 const tic_t Time::Range::TICS_PER_STEP_DEFAULT = CONFIG_TICS_PER_STEP;
 
-tic_t Time::Range::OLD_TICS_PER_STEP = Time::Range::TICS_PER_STEP_DEFAULT;
 tic_t Time::Range::TICS_PER_STEP = Time::Range::TICS_PER_STEP_DEFAULT;
 tic_t Time::Range::TICS_PER_STEP_RND = Time::Range::TICS_PER_STEP - 1;
 
@@ -94,7 +101,6 @@ Time::set_resolution( double_t ms_per_step )
 {
   assert( ms_per_step > 0 );
 
-  Range::OLD_TICS_PER_STEP = Range::TICS_PER_STEP;
   Range::TICS_PER_STEP = static_cast< tic_t >( dround( Range::TICS_PER_MS * ms_per_step ) );
   Range::TICS_PER_STEP_RND = Range::TICS_PER_STEP - 1;
 
@@ -118,10 +124,6 @@ Time::set_resolution( double_t tics_per_ms, double_t ms_per_step )
 void
 Time::reset_resolution()
 {
-  // When resetting the kernel, we have to reset OLD_TICS as well,
-  // otherwise we get into trouble with regenerated synapse prototypes,
-  // see ticket #164.
-  Range::OLD_TICS_PER_STEP = Range::TICS_PER_STEP_DEFAULT;
   Range::TICS_PER_STEP = Range::TICS_PER_STEP_DEFAULT;
   Range::TICS_PER_STEP_RND = Range::TICS_PER_STEP - 1;
 

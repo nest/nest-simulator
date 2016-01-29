@@ -23,29 +23,28 @@
 #ifndef HH_PSC_ALPHA_H
 #define HH_PSC_ALPHA_H
 
+// Generated includes:
 #include "config.h"
 
 #ifdef HAVE_GSL
 
-#include "nest.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
-
-#include "universal_data_logger.h"
-#include "recordables_map.h"
-
+// External includes:
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
 #include <gsl/gsl_sf_exp.h>
 
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
+
 namespace nest
 {
-
-using std::vector;
-
 /**
  * Function computing right-hand side of ODE for GSL solver.
  * @note Must be declared here so we can befriend it in class.

@@ -23,8 +23,13 @@
 #ifndef GENERIC_FACTORY_H
 #define GENERIC_FACTORY_H
 
+// C++ includes:
 #include <map>
-#include "nest.h"
+
+// Includes from nestkernel:
+#include "nest_types.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 
 namespace nest

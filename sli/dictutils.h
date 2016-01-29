@@ -23,15 +23,18 @@
 #ifndef DICTUTILS_H
 #define DICTUTILS_H
 
-#include "dictdatum.h"
-#include "namedatum.h"
-#include "tokenutils.h"
-#include "arraydatum.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include <string>
+// C++ includes:
 #include <algorithm>
 #include <functional>
+#include <string>
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dictdatum.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "namedatum.h"
+#include "tokenutils.h"
 
 /**
  * @defgroup DictUtils How to access the value contained in a Token contained in a dictionary.

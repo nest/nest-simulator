@@ -23,20 +23,20 @@
 #ifndef PP_PSC_DELTA_H
 #define PP_PSC_DELTA_H
 
-#include "nest.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
-#include "poisson_randomdev.h"
+// Includes from librandom:
 #include "gamma_randomdev.h"
+#include "poisson_randomdev.h"
+
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
 {
-
-
-class Network;
 
 /* BeginDocumentation
    Name: pp_psc_delta - Point process neuron with leaky integration of delta-shaped PSCs.

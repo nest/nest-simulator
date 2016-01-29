@@ -1,5 +1,5 @@
 /*
- *  modelrangemanager.h
+ *  sp_manager_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,36 +20,31 @@
  *
  */
 
-#ifndef MODELRANGEMANAGER_H
-#define MODELRANGEMANAGER_H
+#ifndef SP_MANAGER_IMPL_H
+#define SP_MANAGER_IMPL_H
 
-#include <vector>
-#include "nest.h"
-#include "modelrange.h"
+#include "sp_manager.h"
+
+// C++ includes:
+#include <string>
+
+// Includes from nestkernel:
+#include "growth_curve.h"
+#include "growth_curve_factory.h"
 
 namespace nest
 {
-
-class Modelrangemanager
+template < typename GrowthCurve >
+void
+SPManager::register_growth_curve( const std::string& name )
 {
-public:
-  Modelrangemanager();
-  void add_range( index model, index first_gid, index last_gid );
-  bool
-  is_in_range( index gid ) const
-  {
-    return ( ( gid <= last_gid_ ) && ( gid >= first_gid_ ) );
-  }
-  long_t get_model_id( index gid );
-  bool model_in_use( index i ) const;
-  void clear();
-  void print() const;
-  const modelrange& get_range( index gid ) const;
-
-private:
-  std::vector< modelrange > modelranges_;
-  index first_gid_;
-  index last_gid_;
-};
+  assert( !growthcurvedict_->known( name ) );
+  GenericGrowthCurveFactory* gc = new GrowthCurveFactory< GrowthCurve >();
+  assert( gc != 0 );
+  const int id = growthcurve_factories_.size();
+  growthcurve_factories_.push_back( gc );
+  growthcurvedict_->insert( name, id );
 }
-#endif
+}
+
+#endif /* SP_MANAGER_IMPL_H */

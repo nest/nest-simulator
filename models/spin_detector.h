@@ -24,12 +24,15 @@
 #define SPIN_DETECTOR_H
 
 
+// C++ includes:
 #include <vector>
-#include "nest.h"
+
+// Includes from nestkernel:
 #include "event.h"
+#include "exceptions.h"
+#include "nest_types.h"
 #include "node.h"
 #include "recording_device.h"
-#include "exceptions.h"
 
 /* BeginDocumentation
 
@@ -67,9 +70,6 @@ SeeAlso: spike_detector, Device, RecordingDevice
 
 namespace nest
 {
-
-class Network;
-
 /**
  * Spike detector class.
  *
@@ -150,16 +150,16 @@ private:
    *
    * This data structure buffers all incoming spikes until they are
    * passed to the RecordingDevice for storage or output during update().
-   * update() always reads from spikes_[network()->read_toggle()] and
+   * update() always reads from spikes_[Network::get_network().read_toggle()] and
    * deletes all events that have been read.
    *
    * Events arriving from locally sending nodes, i.e., devices without
-   * proxies, are stored in spikes_[network()->write_toggle()], to ensure
+   * proxies, are stored in spikes_[Network::get_network().write_toggle()], to ensure
    * order-independent results.
    *
    * Events arriving from globally sending nodes are delivered from the
-   * global event queue by Scheduler::deliver_events() at the beginning
-   * of the time slice. They are therefore written to spikes_[network()->read_toggle()]
+   * global event queue by Network::deliver_events() at the beginning
+   * of the time slice. They are therefore written to spikes_[Network::get_network().read_toggle()]
    * so that they can be recorded by the subsequent call to update().
    * This does not violate order-independence, since all spikes are delivered
    * from the global queue before any node is updated.

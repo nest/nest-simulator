@@ -23,10 +23,13 @@
 /*
     SLI's data access functions
 */
+
 #include "oosupport.h"
-#include "namedatum.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "dictstack.h"
+#include "namedatum.h"
 
 void
 OOSupportModule::init( SLIInterpreter* i )

@@ -1,5 +1,5 @@
 /*
- *  event_priority.h
+ *  vp_manager_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,30 +20,18 @@
  *
  */
 
-#ifndef EVENT_PRIORITY_H
-#define EVENT_PRIORITY_H
+#ifndef VP_MANAGER_IMPL_H
+#define VP_MANAGER_IMPL_H
 
-#include "event.h"
+#include "vp_manager.h"
 
-namespace nest
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
+inline nest::thread
+nest::VPManager::get_num_virtual_processes() const
 {
-bool operator<( const Event&, const Event& );
-
-class EventPTRPriority
-{
-public:
-  typedef Event const* value_type;
-  typedef bool return_type;
-  bool operator()( Event const* e1, Event const* e2 ) const
-  {
-    return !( *e1 < *e2 );
-  }
-};
-
-inline bool operator<( const Event& e1, const Event& e2 )
-{
-  return ( e1.get_stamp().get_steps() + e1.get_delay() )
-    < ( e2.get_stamp().get_steps() + e2.get_delay() );
+  return get_num_threads() * kernel().mpi_manager.get_num_processes();
 }
-}
-#endif
+
+#endif /* VP_MANAGER_IMPL_H */

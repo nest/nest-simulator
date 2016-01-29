@@ -1,5 +1,5 @@
 /*
- *  modelrangemanager.cpp
+ *  modelrange_manager.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,22 +20,41 @@
  *
  */
 
+#include "modelrange_manager.h"
+
+// C includes:
 #include <assert.h>
-#include <iostream>
-#include "modelrangemanager.h"
-#include "exceptions.h"
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
+#include "model.h"
+
 
 namespace nest
 {
 
-Modelrangemanager::Modelrangemanager()
-  : first_gid_( 0 )
+ModelRangeManager::ModelRangeManager()
+  : modelranges_()
+  , first_gid_( 0 )
   , last_gid_( 0 )
 {
 }
 
 void
-Modelrangemanager::add_range( index model, index first_gid, index last_gid )
+ModelRangeManager::initialize()
+{
+}
+
+void
+ModelRangeManager::finalize()
+{
+  modelranges_.clear();
+  first_gid_ = 0;
+  last_gid_ = 0;
+}
+
+void
+ModelRangeManager::add_range( index model, index first_gid, index last_gid )
 {
   if ( !modelranges_.empty() )
   {
@@ -54,13 +73,15 @@ Modelrangemanager::add_range( index model, index first_gid, index last_gid )
   last_gid_ = last_gid;
 }
 
-long_t
-Modelrangemanager::get_model_id( index gid )
+index
+ModelRangeManager::get_model_id( index gid ) const
 {
+  if ( not is_in_range( gid ) )
+    throw UnknownNode( gid );
+
   int left = -1;
   int right = modelranges_.size();
   assert( right >= 1 );
-  assert( is_in_range( gid ) );
 
   // to ensure thread-safety, use local range_idx
   size_t range_idx = right / 2; // start in center
@@ -82,8 +103,15 @@ Modelrangemanager::get_model_id( index gid )
   return modelranges_[ range_idx ].get_model_id();
 }
 
+// inline
+nest::Model*
+nest::ModelRangeManager::get_model_of_gid( index gid )
+{
+  return kernel().model_manager.get_model( get_model_id( gid ) );
+}
+
 bool
-Modelrangemanager::model_in_use( index i ) const
+ModelRangeManager::model_in_use( index i ) const
 {
   bool found = false;
 
@@ -99,14 +127,8 @@ Modelrangemanager::model_in_use( index i ) const
   return found;
 }
 
-void
-Modelrangemanager::clear()
-{
-  modelranges_.clear();
-}
-
 const modelrange&
-Modelrangemanager::get_range( index gid ) const
+ModelRangeManager::get_contiguous_gid_range( index gid ) const
 {
   if ( !is_in_range( gid ) )
     throw UnknownNode( gid );

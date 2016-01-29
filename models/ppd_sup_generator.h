@@ -23,15 +23,19 @@
 #ifndef ppd_sup_generator_H
 #define ppd_sup_generator_H
 
+// C++ includes:
 #include <vector>
-#include "nest.h"
-#include "event.h"
-#include "node.h"
-#include "stimulating_device.h"
-#include "scheduler.h"
+
+// Includes from librandom:
 #include "binomial_randomdev.h"
 #include "poisson_randomdev.h"
+
+// Includes from nestkernel:
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "node.h"
+#include "stimulating_device.h"
 
 /*BeginDocumentation
 Name: ppd_sup_generator - simulate the superimposed spike train of a population of Poisson processes

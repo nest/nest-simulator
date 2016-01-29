@@ -30,10 +30,27 @@
 #ifndef SP_MANAGER_H
 #define SP_MANAGER_H
 
-#include "connection_manager.h"
+// C++ includes:
+#include <vector>
+
+// Includes from libnestutil:
+#include "manager_interface.h"
+
+// Includes from nestkernel:
+#include "gid_collection.h"
+#include "growth_curve_factory.h"
+#include "nest_time.h"
+#include "nest_types.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dict.h"
+#include "dictdatum.h"
 
 namespace nest
 {
+class Node;
+
 class SPBuilder;
 
 /**
@@ -42,26 +59,106 @@ class SPBuilder;
  * it behaves as the normal ConnectionManager.
  * @param
  */
-class SPManager : public ConnectionManager
+class SPManager : public ManagerInterface
 {
 
 public:
-  SPManager( Network& );
+  SPManager();
   virtual ~SPManager();
 
-  void reset();
+  virtual void initialize();
+  virtual void finalize();
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  virtual void get_status( DictionaryDatum& );
+  virtual void set_status( const DictionaryDatum& );
 
-  void get_structural_plasticity_status( DictionaryDatum& ) const;
-  void set_structural_plasticity_status( const DictionaryDatum& );
+  DictionaryDatum& get_growthcurvedict();
 
-  const Time get_min_delay() const;
-  const Time get_max_delay() const;
+  /**
+   * Create a new Growth Curve object using the GrowthCurve Factory
+   * @param name which defines the type of GC to be created
+   * @return a new Growth Curve object of the type indicated by name
+   */
+  GrowthCurve* new_growth_curve( Name name );
+
+  /**
+   * Add a growth curve for MSP
+   */
+  template < typename GrowthCurve >
+  void register_growth_curve( const std::string& name );
+
+  /**
+   * Disconnect two nodes. The source node is defined by its global ID.
+   * The target node is defined by the node. The connection is
+   * established on the thread/process that owns the target node.
+   * Identifies if the network is Structural Plasticity enabled or not and then performs
+   * a single disconnect between the two nodes.
+   *
+   * \param s GID of the sending Node.
+   * \param target Pointer to target Node.
+   * \param target_thread Thread that hosts the target node.
+   * \param syn The synapse model to use.
+   */
+  void disconnect_single( index s, Node* target, thread target_thread, DictionaryDatum& syn );
+
+  /**
+   * Disconnect two collections of nodes.  The connection is
+   * established on the thread/process that owns the target node.
+   *
+   * \param sources GID Collection of the source Nodes.
+   * \param targets GID Collection of the target Nodes.
+   * \param connectivityParams connectivity Dictionary
+   * \param synapseParams synapse parameters Dictionary
+   */
+  void disconnect( GIDCollection&, GIDCollection&, DictionaryDatum&, DictionaryDatum& );
+
+  /**
+   * Disconnect two nodes.
+   * The source node is defined by its global ID.
+   * The target node is defined by the node. The connection is
+   * established on the thread/process that owns the target node.
+   *
+   * \param s GID of the sending Node.
+   * \param target Pointer to target Node.
+   * \param target_thread Thread that hosts the target node.
+   * \param syn The synapse model to use.
+   */
+  void disconnect( index s, Node* target, thread target_thread, index syn );
 
   void update_structural_plasticity();
   void update_structural_plasticity( SPBuilder* );
+
+  /**
+   * Enable  structural plasticity
+   */
+  void enable_structural_plasticity();
+
+  /**
+   * Disable  structural plasticity
+   */
+  void disable_structural_plasticity();
+
+  bool is_structural_plasticity_enabled() const;
+
+  long_t get_structural_plasticity_update_interval() const;
+
+  /**
+   * Returns the minimum delay of all SP builders.
+   * This influences the min_delay of the kernel, as the connections
+   * are build during the simulation. Hence, the
+   * ConnectionBuilderManager::min_delay() methods have to respect this delay
+   * as well.
+   */
+  delay builder_min_delay() const;
+
+  /**
+   * Returns the maximum delay of all SP builders.
+   * This influences the max_delay of the kernel, as the connections
+   * are build during the simulation. Hence, the
+   * ConnectionBuilderManager::max_delay() methods have to respect this delay
+   * as well.
+   */
+  delay builder_max_delay() const;
 
   // Creation of synapses
   void create_synapses( std::vector< index >& pre_vacant_id,
@@ -94,21 +191,75 @@ public:
     std::vector< index >& se_deleted_id,
     std::vector< int_t >& se_deleted_n );
 
-  void get_sources( std::vector< index > targets,
-    std::vector< std::vector< index > >& sources,
-    index synapse_model );
-  void get_targets( std::vector< index > sources,
-    std::vector< std::vector< index > >& targets,
-    index synapse_model );
   void serialize_id( std::vector< index >& id, std::vector< int_t >& n, std::vector< index >& res );
   void global_shuffle( std::vector< index >& v );
   void global_shuffle( std::vector< index >& v, size_t n );
 
-  // Time interval for structural plasticity update (creation/deletion of synapses)
-  static long_t structural_plasticity_update_interval;
-  std::vector< SPBuilder* > sp_conn_builders;
-
 private:
+  /**
+   * Time interval for structural plasticity update (creation/deletion of synapses).
+   */
+  long_t structural_plasticity_update_interval_;
+
+  /**
+   * Indicates whether the Structrual Plasticity functionality is On (True) of Off (False).
+   */
+  bool structural_plasticity_enabled_;
+  std::vector< SPBuilder* > sp_conn_builders_;
+
+  /* BeginDocumentation
+   Name: growthcurvedict - growth curves for Model of Structural Plasticity
+   Description:
+   This dictionary provides indexes for the growth curve factory
+   */
+  DictionaryDatum growthcurvedict_; //!< Dictionary for growth rules.
+
+  /**
+   * GrowthCurve factories, indexed by growthcurvedict_ elements.
+   */
+  std::vector< GenericGrowthCurveFactory* > growthcurve_factories_;
 };
+
+inline DictionaryDatum&
+SPManager::get_growthcurvedict()
+{
+  return growthcurvedict_;
+}
+
+inline GrowthCurve*
+SPManager::new_growth_curve( Name name )
+{
+  const long gc_id = ( *growthcurvedict_ )[ name ];
+  return growthcurve_factories_.at( gc_id )->create();
+}
+
+inline bool
+SPManager::is_structural_plasticity_enabled() const
+{
+  return structural_plasticity_enabled_;
+}
+
+inline long_t
+SPManager::get_structural_plasticity_update_interval() const
+{
+  return structural_plasticity_update_interval_;
+}
+
+/*
+ Enable structural plasticity
+ */
+inline void
+SPManager::enable_structural_plasticity()
+{
+  structural_plasticity_enabled_ = true;
+}
+/*
+ Disable  structural plasticity
+ */
+inline void
+SPManager::disable_structural_plasticity()
+{
+  structural_plasticity_enabled_ = false;
+}
 }
 #endif /* SP_MANAGER_H */

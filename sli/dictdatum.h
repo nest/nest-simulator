@@ -25,8 +25,10 @@
 /*
     Defines class DictionaryDatum
 */
-#include "interpret.h"
+
+// Includes from sli:
 #include "dict.h"
+#include "interpret.h"
 #include "lockptrdatum.h"
 
 typedef lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > DictionaryDatum;

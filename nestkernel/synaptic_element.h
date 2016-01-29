@@ -31,19 +31,17 @@
 #ifndef SYNAPTIC_ELEMENT_H
 #define SYNAPTIC_ELEMENT_H
 
-#include "dictdatum.h"
-#include "dictutils.h"
-#include "histentry.h"
-#include "growth_curve.h"
+// C++ includes:
 #include <cmath>
+
+// Includes from nestkernel:
+#include "growth_curve.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {
-
-class SynapticElement;
-class Archiving_Node;
-class GrowthCurveGaussian;
-class GrowthCurveLinear;
 
 /**
  * \class SynapticElement

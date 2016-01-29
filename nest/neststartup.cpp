@@ -20,68 +20,76 @@
  *
  */
 
-#include "config.h"
-
 #include "neststartup.h"
 
+// C++ includes:
 #include <fstream>
 
-#include "network.h"
-#include "interpret.h"
-#include "communicator.h"
-
-#include "dict.h"
-#include "dictdatum.h"
-#include "random_numbers.h"
-
-#ifndef _IS_PYNEST
-#include "gnureadline.h"
-#endif
-
-#include "slistartup.h"
-#include "sliarray.h"
-#include "oosupport.h"
-#include "processes.h"
-#include "nestmodule.h"
-#include "sliregexp.h"
-#include "specialfunctionsmodule.h"
-#include "sligraphics.h"
-#include "dynamicloader.h"
-#include "filesystem.h"
-
+// Generated includes:
+#include "config.h"
 #include "static_modules.h"
 
-#ifdef _OPENMP
-#include <omp.h>
+// Includes from libnestutil:
+#include "logging.h"
+#include "logging_event.h"
+
+// Includes from librandom:
+#include "random_numbers.h"
+
+// Includes from nest:
+#include "sli_neuron.h"
+
+// Includes from nestkernel:
+#include "dynamicloader.h"
+#include "kernel_manager.h"
+#include "nest.h"
+#include "nestmodule.h"
+#include "model_manager_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictdatum.h"
+#include "filesystem.h"
+#include "interpret.h"
+#include "oosupport.h"
+#include "processes.h"
+#include "sliarray.h"
+#include "sligraphics.h"
+#include "sliregexp.h"
+#include "slistartup.h"
+#include "specialfunctionsmodule.h"
+
+#ifndef _IS_PYNEST
+#include <gnureadline.h>
 #endif
+
+SLIInterpreter* sli_engine;
+
+SLIInterpreter&
+get_engine()
+{
+  assert( sli_engine );
+  return *sli_engine;
+}
+
+void
+sli_logging( const nest::LoggingEvent& e )
+{
+  sli_engine->message( static_cast< int >( e.severity ), e.function.c_str(), e.message.c_str() );
+}
 
 #ifndef _IS_PYNEST
 int
-neststartup( int* argc, char*** argv, SLIInterpreter& engine, nest::Network*& pNet )
+neststartup( int* argc, char*** argv, SLIInterpreter& engine )
 #else
 int
-neststartup( int* argc,
-  char*** argv,
-  SLIInterpreter& engine,
-  nest::Network*& pNet,
-  std::string modulepath )
+neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string modulepath )
 #endif
 {
+  nest::init_nest( argc, argv );
 
-#ifdef HAVE_MPI
-  nest::Communicator::init( argc, argv );
-#endif
-
-#ifdef _OPENMP
-  /* The next line is required because we use the OpenMP
-     threadprivate() directive in the allocator, see OpenMP
-     API Specifications v 3.1, Ch 2.9.2, p 89, l 14f.
-     It keeps OpenMP from automagically changing the number
-     of threads used for parallel regions.
-  */
-  omp_set_dynamic( false );
-  omp_set_num_threads( 1 );
-#endif
+  sli_engine = &engine;
+  register_logger_client( sli_logging );
 
 // We disable synchronization between stdio and istd::ostreams
 // this has to be done before any in- or output has been done.
@@ -115,14 +123,21 @@ neststartup( int* argc,
   addmodule< RegexpModule >( engine );
   addmodule< FilesystemModule >( engine );
 
-  // create the network and register with NestModule class
-  pNet = new nest::Network( engine );
-  assert( pNet != 0 );
-  nest::NestModule::register_network( *pNet );
+  // register NestModule class
   addmodule< nest::NestModule >( engine );
 
+  // this can make problems with reference counting, if
+  // the intepreter decides cleans up memory before NEST is ready
+  engine.def( "modeldict", nest::kernel().model_manager.get_modeldict() );
+  engine.def( "synapsedict", nest::kernel().model_manager.get_synapsedict() );
+  engine.def( "connruledict", nest::kernel().connection_builder_manager.get_connruledict() );
+  engine.def( "growthcurvedict", nest::kernel().sp_manager.get_growthcurvedict() );
+
+  // register sli_neuron
+  nest::kernel().model_manager.register_node_model< nest::sli_neuron >( "sli_neuron" );
+
   // now add static modules providing models
-  add_static_modules( engine, *pNet );
+  add_static_modules( engine );
 
 /*
  * The following section concerns shared user modules and is thus only
@@ -137,7 +152,7 @@ neststartup( int* argc,
  */
 #ifdef HAVE_LIBLTDL
   // dynamic loader module for managing linked and dynamically loaded extension modules
-  nest::DynamicLoaderModule* pDynLoader = new nest::DynamicLoaderModule( pNet, engine );
+  nest::DynamicLoaderModule* pDynLoader = new nest::DynamicLoaderModule( engine );
 
 // initialize all modules that were linked into at compile time
 // these modules have registered via calling DynamicLoader::registerLinkedModule
@@ -162,11 +177,10 @@ neststartup( int* argc,
 }
 
 void
-nestshutdown( void )
+nestshutdown( int exitcode )
 {
-#ifdef HAVE_MPI
-  nest::Communicator::finalize();
-#endif
+  nest::kernel().mpi_manager.mpi_finalize( exitcode );
+  nest::KernelManager::destroy_kernel_manager();
 }
 
 #if defined( HAVE_LIBNEUROSIM ) && defined( _IS_PYNEST )

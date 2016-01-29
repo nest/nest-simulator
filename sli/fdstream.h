@@ -28,8 +28,11 @@
  *  the file descriptor.
  */
 
+// Generated includes:
 #include "config.h"
+
 #ifndef HAVE_ISTREAM
+// C++ includes:
 #include <iostream>
 #include <fstream>
 
@@ -38,21 +41,21 @@ typedef std::ofstream ofdstream;
 typedef std::iostream fdstream;
 #else
 
+// C includes:
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
-#include <streambuf>
+
+// C++ includes:
+#include <cassert>
+#include <cstdio> // for the parallel FILE* workaround.
+#include <fstream>
+#include <iostream>
 #include <istream>
 #include <ostream>
+#include <streambuf>
 #include <string>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
-#include <iostream>
-#include <fstream>
-#include <cassert>
-
-#include <cstdio> // for the parallel FILE* workaround.
 
 // The Compaq C++ compiler V6.5-014 surpresses all non standard
 // names if compilation is performed with -std strict_ansi.

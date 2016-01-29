@@ -23,15 +23,21 @@
 #ifndef EVENT_H
 #define EVENT_H
 
+// C++ includes:
 #include <cassert>
 #include <cstring>
 #include <algorithm>
 #include <vector>
 
-#include "nest.h"
-#include "nest_time.h"
+// Includes from libnestutil:
 #include "lockptr.h"
+
+// Includes from nestkernel:
 #include "exceptions.h"
+#include "nest_time.h"
+#include "nest_types.h"
+
+// Includes from sli:
 #include "name.h"
 
 namespace nest
@@ -152,8 +158,6 @@ public:
    * expected to arrive at the receiver.
    */
   delay get_delay() const;
-
-  delay get_max_delay() const;
 
   /**
    * Relative spike delivery time in steps.
@@ -778,7 +782,7 @@ write_to_comm_buffer( T d, std::vector< uint_t >::iterator& pos )
   const size_t num_uints = number_of_uints_covered< T >();
   size_t left_to_copy = sizeof( T );
 
-  for ( int i = 0; i < num_uints; i++ )
+  for ( size_t i = 0; i < num_uints; i++ )
   {
     memcpy(
       &( *( pos + i ) ), c + i * sizeof( uint_t ), std::min( left_to_copy, sizeof( uint_t ) ) );
@@ -805,7 +809,7 @@ read_from_comm_buffer( T& d, std::vector< uint_t >::iterator& pos )
   const size_t num_uints = number_of_uints_covered< T >();
   size_t left_to_copy = sizeof( T );
 
-  for ( int i = 0; i < num_uints; i++ )
+  for ( size_t i = 0; i < num_uints; i++ )
   {
     memcpy(
       c + i * sizeof( uint_t ), &( *( pos + i ) ), std::min( left_to_copy, sizeof( uint_t ) ) );

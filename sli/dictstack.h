@@ -25,9 +25,13 @@
 /*
     SLI's dictionary stack
 */
-#include <typeinfo>
-#include "dictdatum.h"
+
+// C++ includes:
 #include <list>
+#include <typeinfo>
+
+// Includes from sli:
+#include "dictdatum.h"
 #include "sliexceptions.h"
 
 

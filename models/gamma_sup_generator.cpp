@@ -21,14 +21,23 @@
  */
 
 #include "gamma_sup_generator.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "numerics.h"
-#include "datum.h"
+
+// C++ includes:
 #include <algorithm>
 #include <limits>
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "datum.h"
+#include "dict.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -215,7 +224,7 @@ nest::gamma_sup_generator::calibrate()
 void
 nest::gamma_sup_generator::update( Time const& T, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
@@ -229,7 +238,7 @@ nest::gamma_sup_generator::update( Time const& T, const long_t from, const long_
       continue; // no spike at this lag
 
     DSSpikeEvent se;
-    network()->send( *this, se, lag );
+    kernel().event_delivery_manager.send( *this, se, lag );
   }
 }
 
@@ -245,8 +254,8 @@ nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
   assert( 0 <= prt && static_cast< size_t >( prt ) < B_.internal_states_.size() );
 
   // age_distribution object propagates one time step and returns number of spikes
-  ulong_t n_spikes =
-    B_.internal_states_[ prt ].update( V_.transition_prob_, net_->get_rng( get_thread() ) );
+  ulong_t n_spikes = B_.internal_states_[ prt ].update(
+    V_.transition_prob_, kernel().rng_manager.get_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

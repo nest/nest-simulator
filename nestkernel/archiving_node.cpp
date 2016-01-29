@@ -28,9 +28,9 @@
  */
 
 #include "archiving_node.h"
-#include "synaptic_element.h"
+
+// Includes from sli:
 #include "dictutils.h"
-#include "network.h"
 
 namespace nest
 {

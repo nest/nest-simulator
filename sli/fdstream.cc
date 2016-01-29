@@ -20,8 +20,10 @@
  *
  */
 
-#include "config.h"
 #include "fdstream.h"
+
+// Generated includes:
+#include "config.h"
 
 #ifdef HAVE_ISTREAM
 

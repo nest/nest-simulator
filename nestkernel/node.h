@@ -582,12 +582,10 @@ public:
 
   /**
    * Is used to reduce the number of synaptic elements in the node through
-   * time.
-   * @param p double_t correspond the the proportion of synaptic elements
-   * to be removed.
+   * time. This amount is defined by tau_vacant.
    * @ingroup SP_functions
    */
-  virtual void decay_synaptic_elements_vacant( double_t ){};
+  virtual void decay_synaptic_elements_vacant(){};
 
   /**
    * Is used to update the number of connected

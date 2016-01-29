@@ -34,7 +34,6 @@ set( nestkernel_sources
     device.h device.cpp
     dynamicloader.h dynamicloader.cpp
     event.h event.cpp
-    event_priority.h
     exceptions.h exceptions.cpp
     genericmodel.h
     gid_collection.h gid_collection.cpp

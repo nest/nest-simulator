@@ -5,7 +5,7 @@ http://www.nest-simulator.org/installation
 Introduction
 ============
 
-NEST is installed with cmake: In the simplest case, the commands
+NEST is installed with cmake (at least v2.8.12). In the simplest case, the commands
 
    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
    make

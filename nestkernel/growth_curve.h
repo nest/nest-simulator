@@ -23,13 +23,6 @@
 #ifndef GROWTH_CURVE_H
 #define GROWTH_CURVE_H
 
-/**
- * \file growth_curve.h
- *
- * \author Mikael Naveau
- * \date July 2013
- */
-
 // Includes from nestkernel:
 #include "nest_types.h"
 
@@ -39,11 +32,33 @@
 namespace nest
 {
 
-/**
- * \class GrowthCurve
- * Defines the way the number of synaptic elements changes through time
- * according to the calcium concentration of the neuron.
- */
+/* BeginDocumentation
+  Name: growth_curve - Defines the way the number of synaptic elements changes through time
+   according to the calcium concentration of the neuron.
+
+  Description:
+   This class represents a generic growth rule for the number of synaptic elements
+   inside a neuron. The creation and deletion of synaptic elements when structural
+   plasticity is enabled, allows the dynamic rewiring of the network during the
+   simulation.
+
+  Parameters:
+   name          Name -  Identifier for the growth curve
+
+  References:
+   [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
+   "Activity-dependent structural plasticity." Brain research reviews 60.2
+   (2009): 287-305.
+
+   [2] Butz, Markus, and Arjen van Ooyen. "A simple rule for dendritic spine
+   and axonal bouton formation can account for cortical reorganization after
+   focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
+
+  FirstVersion: July 2013
+  Author: Mikael Naveau, Sandra Diaz
+  SeeAlso: SynapticElement, SPManager, SPBuilder, GrowthCurveLinear,
+           GrowthCurveGaussian
+*/
 class GrowthCurve
 {
 public:
@@ -77,12 +92,34 @@ protected:
   const Name name_;
 };
 
-/**
- * \class GrowthCurveLinear
- * Uses an exact integration method to update the number of synaptic elements:
- * dz/dt = nu (1 - (1/epsilon) * Ca(t)), where nu is the growth rate and
- * epsilon is the desired average calcium concentration.
- */
+/* BeginDocumentation
+  Name: growth_curve_linear - Linear version of a growth curve
+
+  Description:
+   This type of growth curve uses an exact integration method to update the
+   number of synaptic elements: dz/dt = nu (1 - (1/epsilon) * Ca(t)),
+   where nu is the growth rate and epsilon is the desired average calcium
+   concentration.
+
+  Parameters:
+   eps_         double -  The target calcium concentration (firing rate) that
+                          the neuron should look to achieve by creating or deleting
+                          synaptic elements.
+
+  References:
+   [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
+   "Activity-dependent structural plasticity." Brain research reviews 60.2
+   (2009): 287-305.
+
+   [2] Butz, Markus, and Arjen van Ooyen. "A simple rule for dendritic spine
+   and axonal bouton formation can account for cortical reorganization after
+   focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
+
+  FirstVersion: July 2013
+  Author: Mikael Naveau
+  SeeAlso: SynapticElement, SPManager, SPBuilder, GrowthCurveLinear,
+           GrowthCurveGaussian
+*/
 class GrowthCurveLinear : public GrowthCurve
 {
 public:
@@ -100,17 +137,40 @@ private:
   double_t eps_;
 };
 
-/**
- * \class GrowthCurveGaussian
- * Uses a forward Euler integration method to update the number of synaptic
- * elements:
- * dz/dt = nu (2 * e^(- ((Ca(t) - xi)/zeta)^2 ) - 1)
- * where xi = (eta  + epsilon)/2,
- * zeta = (epsilon - eta)/2 * sqrt(ln(2))),
- * eta is the minimum calcium concentration required for any synaptic element
- * to be created, epsilon is the target mean calcium concentration in the
- * neuron and nu is the growth rate.
- */
+/* BeginDocumentation
+  Name: growth_curve_gaussian - Gaussian version of a growth curve
+
+  Description:
+   This type of growth curve  uses a forward Euler integration method to update
+   the number of synaptic elements:
+   dz/dt = nu (2 * e^(- ((Ca(t) - xi)/zeta)^2 ) - 1)
+   where xi = (eta  + epsilon)/2,
+   zeta = (epsilon - eta)/2 * sqrt(ln(2))),
+   eta is the minimum calcium concentration required for any synaptic element
+   to be created, epsilon is the target mean calcium concentration in the
+   neuron and nu is the growth rate.
+
+  Parameters:
+   eta_         double -  Minimum amount of calcium concentration that the
+                          neuron needs to start creating synaptic elements.
+   eps_         double -  The target calcium concentration (firing rate) that
+                          the neuron should look to achieve by creating or deleting
+                          synaptic elements.
+
+  References:
+   [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
+   "Activity-dependent structural plasticity." Brain research reviews 60.2
+   (2009): 287-305.
+
+   [2] Butz, Markus, and Arjen van Ooyen. "A simple rule for dendritic spine
+   and axonal bouton formation can account for cortical reorganization after
+   focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
+
+  FirstVersion: July 2013
+  Author: Mikael Naveau
+  SeeAlso: SynapticElement, SPManager, SPBuilder, GrowthCurveLinear,
+           GrowthCurveGaussian
+*/
 class GrowthCurveGaussian : public GrowthCurve
 {
 public:

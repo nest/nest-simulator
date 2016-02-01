@@ -31,6 +31,45 @@
 #ifndef SYNAPTIC_ELEMENT_H
 #define SYNAPTIC_ELEMENT_H
 
+/* BeginDocumentation
+  Name: synaptic_element - Contact point element for the dynamic creation
+   and deletion of synapses.
+
+  Description:
+   This class represents synaptic element of a node (like Axonl boutons or
+   dendritic spines) used for structural plasticity.
+   The synaptic elements represent connection points between two neurons. They
+   grow according to a homeostatic growth rule. The dynamics of the
+   number of synaptic elements is driven by the average electrical activity of
+   the neuron (indirectly measured through the Calcium concentration of the
+   node). The probability of two neurons creating a new synapse between them,
+   depends on the number of available synaptic elements of each neuron.
+
+  Parameters:
+   z_               double - Current number of synaptic elements
+   z_t_             double - Last time stamp when the number of synaptic elements was updated
+   z_connected_     int - Number of synaptic elements bound to a synapse
+   continuous       boolean - Defines if the number of synaptic elements should be treated
+                              as a continuous double number or as an integer value
+   growth_rate_     double - The maximum amount by which the synaptic elements will
+                             change between time steps.
+   tau_vacant_      double - Rate at which vacant synaptic elements will decay
+   growth_curve_    GrowthCurve* - Rule which defines the dynamics of this synaptic element.
+
+  References:
+   [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
+   "Activity-dependent structural plasticity." Brain research reviews 60.2
+   (2009): 287-305.
+
+   [2] Butz, Markus, and Arjen van Ooyen. "A simple rule for dendritic spine
+   and axonal bouton formation can account for cortical reorganization after
+   focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
+
+  FirstVersion: July 2013
+  Author: Mikael Naveau, Sandra Diaz
+  SeeAlso: GrowthCurve, SPManager, SPBuilder
+*/
+
 // C++ includes:
 #include <cmath>
 
@@ -43,17 +82,6 @@
 namespace nest
 {
 
-/**
- * \class SynapticElement
- * Synaptic element of a node (like Axon or dendrite) for the purposes
- * of synaptic plasticity.
- * The synaptic elements represent connection points between two neurons that
- * grow according to a homeostatic growth rule. Basically, the dynamics of the
- * number of synaptic elements is driven by the average electrical activity of
- * the neuron (indirectly measured through the Calcium concentration of the
- * node). The probability of two neurons creating a new synapse between them,
- * depends on the number of available synaptic elements of each neuron.
- */
 class SynapticElement
 {
 

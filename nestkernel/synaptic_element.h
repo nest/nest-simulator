@@ -183,6 +183,15 @@ public:
   {
     return z_;
   }
+  /**
+   * Reduce the amount of vacant synaptic elements by a factor
+   * of tau_vacant_
+   */
+  void
+  decay_z_vacant()
+  {
+    z_ -= get_z_vacant() * tau_vacant_;
+  }
 
   bool
   continuous() const

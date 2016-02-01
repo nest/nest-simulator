@@ -117,7 +117,7 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b 
 }
 
 void
-Multimeter::init_state_( const Node& np )
+Multimeter::init_state_( const Node& )
 {
   // const Multimeter& asd = dynamic_cast< const Multimeter& >( np );
   // device_.init_state( asd.device_ );
@@ -188,9 +188,9 @@ Multimeter::handle( DataLoggingReply& reply )
     // ++S_.events_;
 
     reply.set_stamp( info[ j ].timestamp );
-    const index sender = reply.get_sender_gid();
-    const Time stamp = reply.get_stamp();
-    const double offset = reply.get_offset();
+    //const index sender = reply.get_sender_gid();
+    //const Time stamp = reply.get_stamp();
+    //const double offset = reply.get_offset();
 
     Logger* logger = kernel().io_manager.get_logger();
     logger->write( *this, reply, info[ j ].data );

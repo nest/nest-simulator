@@ -116,13 +116,15 @@ const long_t long_t_min = LONG_MIN;
  *  Unsigned long type for enumerations.
  */
 typedef size_t index;
-const index invalid_index = std::numeric_limits< index >::max();
+__attribute__ ((__unused__))
+static const index invalid_index = std::numeric_limits< index >::max();
 
 /**
  *  Unsigned char type for enumerations of synapse types.
  */
 typedef unsigned char synindex;
-const synindex invalid_synindex = std::numeric_limits< synindex >::max();
+__attribute__ ((__unused__))
+static const synindex invalid_synindex = std::numeric_limits< synindex >::max();
 
 /**
  * Unsigned short type for compact target representation.
@@ -131,7 +133,8 @@ const synindex invalid_synindex = std::numeric_limits< synindex >::max();
  */
 typedef unsigned short targetindex; ///< target index into thread local node vector
 const targetindex invalid_targetindex = std::numeric_limits< targetindex >::max();
-const index max_targetindex = invalid_targetindex - 1;
+__attribute__ ((__unused__))
+static const index max_targetindex = invalid_targetindex - 1;
 
 /**
  * Thread index type.

@@ -56,9 +56,9 @@ nest::spike_detector::spike_detector( const spike_detector& n )
 }
 
 void
-nest::spike_detector::init_state_( const Node& np )
+nest::spike_detector::init_state_( const Node& )
 {
-  const spike_detector& sd = dynamic_cast< const spike_detector& >( np );
+  //const spike_detector& sd = dynamic_cast< const spike_detector& >( np );
   init_buffers_();
 }
 

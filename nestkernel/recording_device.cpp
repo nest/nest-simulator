@@ -29,7 +29,7 @@ nest::RecordingDevice::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingDevice::Parameters_::get( const RecordingDevice& sl, DictionaryDatum& d ) const
+nest::RecordingDevice::Parameters_::get( const RecordingDevice&, DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
 
@@ -41,7 +41,7 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& sl, DictionaryDa
 }
 
 void
-nest::RecordingDevice::Parameters_::set( const RecordingDevice& sl, const DictionaryDatum& d )
+nest::RecordingDevice::Parameters_::set( const RecordingDevice&, const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::label, label_ );
 }

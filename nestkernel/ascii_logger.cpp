@@ -42,7 +42,7 @@ nest::ASCIILogger::enroll( RecordingDevice& device )
 }
 
 void
-nest::ASCIILogger::enroll( RecordingDevice& device, const std::vector< Name >& value_names )
+nest::ASCIILogger::enroll( RecordingDevice& device, const std::vector< Name >&  )
 {
   const int task = device.get_vp();
   const int gid = device.get_gid();
@@ -94,7 +94,7 @@ nest::ASCIILogger::initialize()
       // iterate over registed devices and their corresponding file streams
       for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )
       {
-        int gid = jj->first;
+        //int gid = jj->first;
         std::ofstream& file = *( jj->second.second );
         RecordingDevice& device = *( jj->second.first );
 
@@ -246,7 +246,7 @@ nest::ASCIILogger::finalize()
       // iterate over registed devices and their corresponding file streams
       for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )
       {
-        int gid = jj->first;
+        //int gid = jj->first;
         std::ofstream& file = *( jj->second.second );
         RecordingDevice& device = *( jj->second.first );
 
@@ -380,7 +380,7 @@ nest::ASCIILogger::Parameters_::Parameters_()
 }
 
 void
-nest::ASCIILogger::Parameters_::get( const ASCIILogger& al, DictionaryDatum& d ) const
+nest::ASCIILogger::Parameters_::get( const ASCIILogger& , DictionaryDatum& d ) const
 {
   ( *d )[ names::precision ] = precision_;
   ( *d )[ names::file_extension ] = file_ext_;
@@ -390,7 +390,7 @@ nest::ASCIILogger::Parameters_::get( const ASCIILogger& al, DictionaryDatum& d )
 }
 
 void
-nest::ASCIILogger::Parameters_::set( const ASCIILogger& al, const DictionaryDatum& d )
+nest::ASCIILogger::Parameters_::set( const ASCIILogger& , const DictionaryDatum& d )
 {
   updateValue< long >( d, names::precision, precision_ );
   updateValue< std::string >( d, names::file_extension, file_ext_ );

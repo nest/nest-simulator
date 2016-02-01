@@ -60,8 +60,8 @@ nest::spin_detector::spin_detector( const spin_detector& n )
 void
 nest::spin_detector::init_state_( const Node& np )
 {
-  const spin_detector& sd = dynamic_cast< const spin_detector& >( np );
-  //device_.init_state( sd.device_ ); // FIXME
+  //const spin_detector& sd = dynamic_cast< const spin_detector& >( np );
+  //device_.init_state( sd.device_ ); // FIXME (??)
   init_buffers_();
 }
 

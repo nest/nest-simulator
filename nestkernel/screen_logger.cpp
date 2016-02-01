@@ -27,12 +27,12 @@
 #include "screen_logger.h"
 
 void
-nest::ScreenLogger::enroll( RecordingDevice& device )
+nest::ScreenLogger::enroll( RecordingDevice& )
 {
 }
 
 void
-nest::ScreenLogger::enroll( RecordingDevice& device, const std::vector< Name >& value_names )
+nest::ScreenLogger::enroll( RecordingDevice&, const std::vector< Name >& )
 {
 }
 
@@ -54,7 +54,7 @@ nest::ScreenLogger::synchronize()
 }
 
 void
-nest::ScreenLogger::write( const RecordingDevice& device, const Event& event )
+nest::ScreenLogger::write( const RecordingDevice& , const Event& event )
 {
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
@@ -65,7 +65,7 @@ nest::ScreenLogger::write( const RecordingDevice& device, const Event& event )
 }
 
 void
-nest::ScreenLogger::write( const RecordingDevice& device,
+nest::ScreenLogger::write( const RecordingDevice&,
   const Event& event,
   const std::vector< double_t >& values )
 {
@@ -96,13 +96,13 @@ nest::ScreenLogger::Parameters_::Parameters_()
 }
 
 void
-nest::ScreenLogger::Parameters_::get( const ScreenLogger& sl, DictionaryDatum& d ) const
+nest::ScreenLogger::Parameters_::get( const ScreenLogger& , DictionaryDatum& d ) const
 {
   ( *d )[ names::precision ] = precision_;
 }
 
 void
-nest::ScreenLogger::Parameters_::set( const ScreenLogger& sl, const DictionaryDatum& d )
+nest::ScreenLogger::Parameters_::set( const ScreenLogger& , const DictionaryDatum& d )
 {
   if ( updateValue< long >( d, names::precision, precision_ ) )
   {

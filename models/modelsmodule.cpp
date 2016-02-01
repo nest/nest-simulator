@@ -48,6 +48,7 @@
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
 #include "hh_psc_alpha.h"
+#include "hh_psc_alpha_gap.h"
 #include "ht_neuron.h"
 #include "iaf_chs_2007.h"
 #include "iaf_chxk_2008.h"
@@ -97,6 +98,7 @@
 #include "common_synapse_properties.h"
 #include "cont_delay_connection.h"
 #include "cont_delay_connection_impl.h"
+#include "gap_junction.h"
 #include "ht_connection.h"
 #include "quantal_stp_connection.h"
 #include "quantal_stp_connection_impl.h"
@@ -107,10 +109,12 @@
 #include "stdp_connection_facetshw_hom.h"
 #include "stdp_connection_facetshw_hom_impl.h"
 #include "stdp_connection_hom.h"
+#include "stdp_triplet_connection.h"
 #include "stdp_dopa_connection.h"
 #include "stdp_pl_connection_hom.h"
 #include "tsodyks2_connection.h"
 #include "tsodyks_connection.h"
+#include "tsodyks_connection_hom.h"
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
@@ -281,6 +285,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< iaf_cond_exp_sfa_rr >( "iaf_cond_exp_sfa_rr" );
   kernel().model_manager.register_node_model< iaf_cond_alpha_mc >( "iaf_cond_alpha_mc" );
   kernel().model_manager.register_node_model< hh_psc_alpha >( "hh_psc_alpha" );
+  kernel().model_manager.register_node_model< hh_psc_alpha_gap >( "hh_psc_alpha_gap" );
   kernel().model_manager.register_node_model< hh_cond_exp_traub >( "hh_cond_exp_traub" );
   kernel().model_manager.register_node_model< sinusoidal_gamma_generator >(
     "sinusoidal_gamma_generator" );
@@ -333,6 +338,14 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
     "static_synapse_hom_w_hpc" );
 
+  /* BeginDocumentation
+     Name: gap_junction - Connection model for gap junctions.
+     SeeAlso: synapsedict
+  */
+  kernel()
+    .model_manager.register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
+      "gap_junction", false );
+
 
   /* BeginDocumentation
      Name: stdp_synapse_hpc - Variant of stdp_synapse with low memory consumption.
@@ -353,6 +366,18 @@ ModelsModule::init( SLIInterpreter* )
       "stdp_pl_synapse_hom" );
   kernel().model_manager.register_connection_model< STDPPLConnectionHom< TargetIdentifierIndex > >(
     "stdp_pl_synapse_hom_hpc" );
+
+
+  /* BeginDocumentation
+     Name: stdp_triplet_synapse_hpc - Variant of stdp_triplet_synapse with low memory consumption.
+     SeeAlso: synapsedict, stdp_synapse, static_synapse_hpc
+  */
+  kernel()
+    .model_manager.register_connection_model< STDPTripletConnection< TargetIdentifierPtrRport > >(
+      "stdp_triplet_synapse" );
+  kernel()
+    .model_manager.register_connection_model< STDPTripletConnection< TargetIdentifierIndex > >(
+      "stdp_triplet_synapse_hpc" );
 
 
   /* BeginDocumentation
@@ -410,6 +435,17 @@ ModelsModule::init( SLIInterpreter* )
     "tsodyks_synapse" );
   kernel().model_manager.register_connection_model< TsodyksConnection< TargetIdentifierIndex > >(
     "tsodyks_synapse_hpc" );
+
+
+  /* BeginDocumentation
+     Name: tsodyks_synapse_hom_hpc - Variant of tsodyks_synapse_hom with low memory consumption.
+     SeeAlso: synapsedict, tsodyks_synapse_hom, static_synapse_hpc
+  */
+  kernel()
+    .model_manager.register_connection_model< TsodyksConnectionHom< TargetIdentifierPtrRport > >(
+      "tsodyks_synapse_hom" );
+  kernel().model_manager.register_connection_model< TsodyksConnectionHom< TargetIdentifierIndex > >(
+    "tsodyks_synapse_hom_hpc" );
 
 
   /* BeginDocumentation

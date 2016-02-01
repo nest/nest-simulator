@@ -34,8 +34,8 @@ The simulation kernel is put back to its initial state using `ResetKernel`.
 '''
 
 import nest
-import numpy as np
-import pylab as pl
+import numpy
+import pylab
 
 nest.ResetKernel()
 
@@ -101,9 +101,9 @@ m = nest.Create("multimeter",
                           "label": "my_multimeter"})
 
 s_ex = nest.Create("spike_generator",
-                  params = {"spike_times": np.array([10.0, 20.0, 50.0])})
+                  params = {"spike_times": numpy.array([10.0, 20.0, 50.0])})
 s_in = nest.Create("spike_generator",
-                  params = {"spike_times": np.array([15.0, 25.0, 55.0])})
+                  params = {"spike_times": numpy.array([15.0, 25.0, 55.0])})
 
 '''
 Next, the spike generators are connected to the neuron with `Connect`. Synapse
@@ -137,16 +137,16 @@ Finally, the time courses of the membrane voltage and the synaptic
 conductance are displayed.
 '''
 
-pl.clf()
+pylab.clf()
 
-pl.subplot(211)
-pl.plot(t, events["V_m"])
-pl.axis([0, 100, -75, -53])
-pl.ylabel("membrane potential (mV)")
+pylab.subplot(211)
+pylab.plot(t, events["V_m"])
+pylab.axis([0, 100, -75, -53])
+pylab.ylabel("membrane potential (mV)")
 
-pl.subplot(212)
-pl.plot(t, events["g_ex"], t, events["g_in"])
-pl.axis([0, 100, 0, 45])
-pl.xlabel("time (ms)")
-pl.ylabel("synaptic conductance (nS)")
-pl.legend(("g_exc", "g_inh"))
+pylab.subplot(212)
+pylab.plot(t, events["g_ex"], t, events["g_in"])
+pylab.axis([0, 100, 0, 45])
+pylab.xlabel("time (ms)")
+pylab.ylabel("synaptic conductance (nS)")
+pylab.legend(("g_exc", "g_inh"))

@@ -11,6 +11,8 @@ nobase_data_DATA=\
 	Brette_et_al_2007/cuba_ps.sli\
 	Brette_et_al_2007/hh_coba.sli\
 	Brette_et_al_2007/benchmark.sli\
+	gap_junction/two_neurons.py\
+	gap_junction/inhibitory_network.py\
 	hpc_benchmark.sli\
 	multimeter.sli\
 	music/clocktest.music\

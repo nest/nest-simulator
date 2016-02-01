@@ -179,7 +179,10 @@ public:
    * @return an ID for the synapse prototype.
    */
   template < class ConnectionT >
-  synindex register_connection_model( const std::string& name );
+  void register_connection_model( const std::string& name );
+
+  template < class ConnectionT >
+  void register_secondary_connection_model( const std::string& name, bool has_delay = true );
 
   /**
    * @return The model id of a given model name
@@ -243,6 +246,12 @@ public:
    */
   void memory_info() const;
 
+  void create_secondary_events_prototypes();
+
+  void delete_secondary_events_prototypes();
+
+  SecondaryEvent& get_secondary_event_prototype( synindex syn_id, thread t = 0 );
+
 private:
   /**  */
   void clear_models_( bool called_from_destructor = false );
@@ -252,6 +261,8 @@ private:
 
   /**  */
   index register_node_model_( Model* model, bool private_model = false );
+
+  synindex register_connection_model_( ConnectorModel* );
 
   /**
    * Copy an existing node model and register it as a new model.
@@ -314,6 +325,14 @@ private:
                                                              //!< for each synapse type
 
 
+  /**
+   * prototypes of events
+   */
+  std::vector< Event* > event_prototypes_;
+
+  std::vector< ConnectorModel* > secondary_connector_models_;
+  std::vector< std::vector< SecondaryEvent* > > secondary_events_prototypes_;
+
   /* BeginDocumentation
    Name: modeldict - dictionary containing all devices and models of NEST
    Description:
@@ -326,6 +345,10 @@ private:
    Name: synapsedict - Dictionary containing all synapse models.
    Description:
    'synapsedict info' shows the contents of the dictionary
+   Synapse model names ending with '_hpc' provide minimal memory requirements by using
+   thread-local target neuron IDs and fixing the `rport` to 0.
+   Synapse model names ending with '_lbl' allow to assign an individual integer label
+   (`synapse_label`) to created synapses at the cost of increased memory requirements.
    FirstVersion: October 2005
    Author: Jochen Martin Eppler
    SeeAlso: info
@@ -432,6 +455,30 @@ inline bool
 ModelManager::has_user_prototypes() const
 {
   return prototypes_[ 0 ].size() > pristine_prototypes_.size();
+}
+
+inline void
+ModelManager::delete_secondary_events_prototypes()
+{
+  for ( size_t i = 0; i < secondary_connector_models_.size(); i++ )
+  {
+    if ( secondary_connector_models_[ i ] != NULL )
+    {
+      for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
+        delete secondary_events_prototypes_[ j ][ i ];
+    }
+  }
+
+  for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
+    secondary_events_prototypes_[ j ].clear();
+  secondary_events_prototypes_.clear();
+}
+
+inline SecondaryEvent&
+ModelManager::get_secondary_event_prototype( synindex syn_id, thread t )
+{
+  assert_valid_syn_id( syn_id );
+  return *secondary_events_prototypes_[ t ][ syn_id ];
 }
 
 } // namespace nest

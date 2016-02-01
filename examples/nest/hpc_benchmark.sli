@@ -41,23 +41,64 @@
 
 /nvp 1 def % total number of virtual processes
 /scale 0.2 def %  scaling factor of the network size, total network size = scale*11250 neurons
-/Tsim 100. def % total simulation time in ms
+/simtime 1000. def % total simulation time in ms
+/presimtime 100. ms def % simulation time until reaching equilibrium
+/dt         0.1 ms def % simulation step
 /record_spikes true def % switch to record spikes of excitatory neurons to file
 /path_name (.) def % path where all files will have to be written
 /log_file (log) def % naming scheme for the log files
 
 % -------------------------------------------------------------------------------------
 
+%%% Define function to convert synapse weight from  mV to pA %%%%%%%%%%
+
+/ConvertSynapseWeight
+{
+  /tauMem Set
+  /tauSyn Set
+  /CMem Set
+  % This function is specific to the used neuron model
+  % Leaky integrate-and-fire neuron with alpha-shaped
+  % postsynaptic currents
+  (
+  a = tauMem / tauSyn;
+  b = 1.0 / tauSyn - 1.0 / tauMem;
+  % time of maximum
+  t_max = 1.0/b * (-LambertWm1(-exp(-1.0/a)/a)-1.0/a);
+  % maximum of PSP for current of unit amplitude
+  exp(1.0)/(tauSyn*CMem*b) * ((exp(-t_max/tauMem) - exp(-t_max/tauSyn)) / b - t_max*exp(-t_max/tauSyn))
+  ) ExecMath
+  1 exch div
+}
+def
+
+%%% Rise time of synaptic currents
+
+% The synaptic rise time is chosen such that the rise time of the
+% evoked post-synaptic potential is 1.700759 ms.
+% For alpha-shaped postynaptic currents, the rise time of the post-synaptic
+% potential follows from the synaptic rise time as
+
+/PSP_rise_time
+{
+  /taumem set
+  /tausyn set
+  
+  (
+  a = taumem / tausyn;
+  b = 1.0 / tausyn - 1.0 / taumem;
+  ) execmath
+  
+} def
+
+% Inverting this equation numerically leads to tau_syn = 0.32582722403722841 ms, as specified in model_params below.
+
+% -------------------------------------------------------------------------------------
+
 /brunel_params
 <<
 
-  /virtual_processes nvp      % number of virtual processes to use
-  /simtime Tsim ms        % simulated time
-  /presimtime 100. ms     % simulation time until reaching equilibrium
-  /dt         0.1 ms        % simulation step
 
-  /scale scale def
-  
   /NE 9000 scale mul round cvi   % number of excitatory neurons
   /NI 2250 scale mul round cvi   % number of inhibitory neurons
 
@@ -66,7 +107,7 @@
 
   /model_params
    <<
-   % Set variables for iaf_psc_exp
+   % Set variables for iaf_neuron
     /E_L     0.0  mV  % Resting membrane potential [mV]
     /C_m   250.0  pF  % Capacity of the membrane [pF]
     /tau_m  10.0  ms  % Membrane time constant [ms]
@@ -79,18 +120,21 @@
     /V_m 5.7 mV % mean value of membrane potential
    >> 
 
-  /mean_potential 5.7 mV
-  /sigma_potential 7.2 mV
- 
+  
+  
+  /randomize_Vm true
+  /mean_potential 5.7 mV  % Note that Kunkel et al. (2014) report different values. The values
+  /sigma_potential 7.2 mV % in the paper were used for the benchmarks on K, the values given
+                          % here were used for the benchmark on JUQUEEN.
 
   /delay  1.5 ms         % synaptic delay, all connections [ms] 
 
-   % synaptic strengths
-  /JE 325.78288268410768 0.14 mul pA    %peak of EPSC
+   % synaptic weight
+  /JE 0.14 mV %peak of EPSP
 
   /sigma_w 3.47 pA      %standard dev. of E->E synapses [pA]
-  /g  -5.0 	
-    
+  /g  -5.0
+
   /stdp_params
   <<
     /delay 1.5 ms
@@ -125,7 +169,7 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
   % set global kernel parameters
   0
   <<
-     /total_num_virtual_procs virtual_processes
+     /total_num_virtual_procs nvp
      /resolution  dt
      /overwrite_files true
   >> SetStatus
@@ -143,6 +187,28 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
   /I_from I_net 1 add def                    % gid of first child
   /I_to 0 GetStatus /network_size get 1 sub def % gid of last child
 
+  randomize_Vm
+  {
+      M_INFO (BuildNetwork)
+      (Randomzing membrane potentials.) message
+
+      0 GetStatus /rng_seeds get Last 1 add 0 /vp get add 
+      rngdict/MT19937 :: exch CreateRNG 
+      rdevdict/normal :: CreateRDV /normal Set
+
+      [E_from E_to] Range
+      { 
+	  << /V_m mean_potential sigma_potential normal Random mul add >> 
+	  SetStatus 
+      } forall
+
+      [I_from I_to] Range
+      { 
+	  << /V_m mean_potential sigma_potential normal Random mul add >> 
+	  SetStatus 
+      } forall
+  } if
+   
   /E_neurons E_from E_to cvgidcollection def % get memory efficient gid-collection
 
   /I_neurons I_from I_to cvgidcollection def % get memory efficient gid-collection
@@ -157,7 +223,12 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
   (Creating excitatory stimulus generator.) message
 
   model_params using
-  /nu_thresh V_th CE tau_m C_m div mul JE mul 1.0 exp mul tau_syn mul div def
+   
+  % Convert synapse weight from mV to pA
+  C_m tau_syn tau_m ConvertSynapseWeight /conversion_factor Set
+  /JE_pA conversion_factor JE mul def
+  
+  /nu_thresh V_th CE tau_m C_m div mul JE_pA mul 1.0 exp mul tau_syn mul div def
   /nu_ext nu_thresh eta mul def
   endusing
     
@@ -200,10 +271,10 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
   % our excitatory and inhibitory connections
   /static_synapse_hpc << /delay delay >> SetDefaults
   /static_synapse_hpc /syn_std  CopyModel
-  /static_synapse_hpc /syn_ex << /weight JE >> CopyModel
-  /static_synapse_hpc /syn_in << /weight JE g mul >> CopyModel
+  /static_synapse_hpc /syn_ex << /weight JE_pA >> CopyModel
+  /static_synapse_hpc /syn_in << /weight JE_pA g mul >> CopyModel
       	
-  stdp_params /weight JE put	
+  stdp_params /weight JE_pA put	
   /stdp_pl_synapse_hom_hpc stdp_params SetDefaults
 
   

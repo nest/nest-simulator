@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef QUANTAL_STP_CONNECTION_IMPL_H
+#define QUANTAL_STP_CONNECTION_IMPL_H
+
 #include "quantal_stp_connection.h"
 
 // Includes from nestkernel:
@@ -123,3 +126,5 @@ Quantal_StpConnection< targetidentifierT >::set_status( const DictionaryDatum& d
 }
 
 } // of namespace nest
+
+#endif // #ifndef QUANTAL_STP_CONNECTION_IMPL_H

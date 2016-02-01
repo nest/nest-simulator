@@ -37,6 +37,7 @@ libnest_la_SOURCES=\
 		sibling_container.h sibling_container.cpp\
 		subnet.h subnet.cpp\
 		connection.h\
+		connection_label.h\
 		common_properties_hom_w.h\
 		syn_id_delay.h\
 		connector_base.h connector_base.cpp\
@@ -51,7 +52,7 @@ libnest_la_SOURCES=\
 		gid_collection.h gid_collection.cpp\
 		histentry.h histentry.cpp\
 		model.h model.cpp\
-		model_manager.h model_manager.cpp\
+		model_manager.h model_manager_impl.h model_manager.cpp\
 		nest_types.h\
 		nest_datums.h nest_datums.cpp\
 		nest_names.cpp nest_names.h\
@@ -60,6 +61,7 @@ libnest_la_SOURCES=\
 		nest_timeconverter.h nest_timeconverter.cpp \
 		modelrange.h modelrange.cpp\
 		modelrange_manager.h modelrange_manager.cpp\
+		sp_manager.h sp_manager_impl.h sp_manager.cpp\
 		multirange.h multirange.cpp\
 		node.h node.cpp\
 		nodelist.h nodelist.cpp\
@@ -78,6 +80,9 @@ libnest_la_SOURCES=\
 		screen_logger.h screen_logger.cpp\
 		ascii_logger.h ascii_logger.cpp\
 		sion_logger.h sion_logger.cpp\
+		synaptic_element.h synaptic_element.cpp\
+		growth_curve.h growth_curve.cpp\
+		growth_curve_factory.h\
 		music_manager.cpp music_manager.h\
 		nest.h nest.cpp\
 		kernel_manager.h kernel_manager.cpp\
@@ -85,7 +90,7 @@ libnest_la_SOURCES=\
 		io_manager.h io_manager.cpp \
 		mpi_manager.h mpi_manager_impl.h mpi_manager.cpp \
 		simulation_manager.h simulation_manager.cpp \
-		connection_builder_manager.h connection_builder_manager.cpp \
+		connection_builder_manager.h connection_builder_manager_impl.h connection_builder_manager.cpp \
 		delay_checker.h delay_checker.cpp \
 		rng_manager.h rng_manager.cpp \
 		event_delivery_manager.h event_delivery_manager_impl.h\

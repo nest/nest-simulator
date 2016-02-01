@@ -70,6 +70,11 @@ public:
   void send( Node& source, EventT& e, const long_t lag = 0 );
 
   /**
+   * Send a secondary event remote.
+   */
+  void send_secondary( Node& source, SecondaryEvent& e );
+
+  /**
    * Send event e to all targets of node source on thread t
    */
   void send_local( thread t, Node& source, Event& e );
@@ -92,6 +97,8 @@ public:
    * @see send_to_targets()
    */
   void send_remote( thread p, SpikeEvent&, const long_t lag = 0 );
+
+  void send_remote( thread t, SecondaryEvent& e );
 
   /**
    * Add global id of event sender to the spike_register.
@@ -187,12 +194,12 @@ public:
    * ordering applies to time stamps only, it does NOT take into
    * account the offsets of precise spikes.
    */
-  void deliver_events( thread t );
+  bool deliver_events( thread t );
 
   /**
    * Collocate buffers and exchange events with other MPI processes.
    */
-  void gather_events();
+  void gather_events( bool );
 
   /**
    * Update table of fixed modulos, including slice-based.
@@ -212,7 +219,7 @@ private:
    * done by collecting the spikes from all threads in each slice of
    * the min_delay_ interval.
    */
-  void collocate_buffers_();
+  void collocate_buffers_( bool );
 
 
 private:
@@ -257,6 +264,12 @@ private:
    * - Third dim: Struct containing GID and offset.
    */
   std::vector< std::vector< std::vector< OffGridSpike > > > offgrid_spike_register_;
+
+  /**
+   * Buffer to collect the secondary events
+   * after serialization.
+   */
+  std::vector< std::vector< uint_t > > secondary_events_buffer_;
 
   /**
    * Buffer containing the gids of local neurons that spiked in the
@@ -360,6 +373,18 @@ EventDeliveryManager::get_slice_modulo( delay d )
   assert( static_cast< std::vector< delay >::size_type >( d ) < slice_moduli_.size() );
 
   return slice_moduli_[ d ];
+}
+
+inline void
+EventDeliveryManager::send_remote( thread t, SecondaryEvent& e )
+{
+
+  // put the secondary events in a buffer for the remote machines
+  size_t old_size = secondary_events_buffer_[ t ].size();
+
+  secondary_events_buffer_[ t ].resize( old_size + e.size() );
+  std::vector< uint_t >::iterator it = secondary_events_buffer_[ t ].begin() + old_size;
+  e >> it;
 }
 
 } // namespace nest

@@ -43,10 +43,8 @@ public:
 
   const Time& get_max_delay() const;
 
-  void update_delay_extrema( const double_t mindelay_cand, const double_t maxdelay_cand );
-
   /**
-   * This method freezes the min/ max delay update in the update_delay_extrema
+   * This method freezes the min/ max delay update in SetDefaults of connections
    * method. This is used, when the delay of default connections in the ConnectorModel
    * is set: we do not know, whether new connections with this delay will ever be
    * created.
@@ -54,7 +52,7 @@ public:
   void freeze_delay_update();
 
   /**
-   * This method enables the min/ max delay update in the update_delay_extrema
+   * This method enables the min/ max delay update in SetDefaults of connections
    * method. This is used, when the delay of default connections in the ConnectorModel
    * is set: we do not know, whether new connections with this delay will ever be
    * created.
@@ -77,7 +75,7 @@ public:
    *       working with continuous delays.
    * @note Not const, since it may update delay extrema as a side-effect.
    */
-  void assert_two_valid_delays_steps( long_t, long_t );
+  void assert_two_valid_delays_steps( delay, delay );
 
   bool get_user_set_delay_extrema() const;
 

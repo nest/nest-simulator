@@ -1,5 +1,5 @@
 /*
- *  event_priority.h
+ *  string_utils.h
  *
  *  This file is part of NEST.
  *
@@ -20,31 +20,25 @@
  *
  */
 
-#ifndef EVENT_PRIORITY_H
-#define EVENT_PRIORITY_H
+#ifndef STRING_UTILS_H
+#define STRING_UTILS_H
 
-// Includes from nestkernel:
-#include "event.h"
+#include <algorithm>
+#include <string>
 
-namespace nest
+/**
+ * This header is supposed to group string related utility functions.
+ */
+
+/**
+ * Returns true, if the string `value` ends with the string `ending`.
+ */
+inline bool
+ends_with( std::string const& value, std::string const& ending )
 {
-bool operator<( const Event&, const Event& );
-
-class EventPTRPriority
-{
-public:
-  typedef Event const* value_type;
-  typedef bool return_type;
-  bool operator()( Event const* e1, Event const* e2 ) const
-  {
-    return !( *e1 < *e2 );
-  }
-};
-
-inline bool operator<( const Event& e1, const Event& e2 )
-{
-  return ( e1.get_stamp().get_steps() + e1.get_delay() )
-    < ( e2.get_stamp().get_steps() + e2.get_delay() );
+  if ( ending.size() > value.size() )
+    return false;
+  return std::equal( ending.rbegin(), ending.rend(), value.rbegin() );
 }
-}
-#endif
+
+#endif /* STRING_UTILS_H */

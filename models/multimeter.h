@@ -161,13 +161,15 @@ public:
    */
   using Node::handle;
   using Node::handles_test_event;
+  using Node::sends_signal;
 
   port send_test_event( Node&, rport, synindex, bool );
 
   void handle( DataLoggingReply& );
 
   Type get_type() const;
-
+ 
+  SignalType sends_signal() const;
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
@@ -294,6 +296,11 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
   P_ = ptmp;
 }
 
+inline SignalType
+nest::Multimeter::sends_signal() const
+{
+  return ALL;
+}
 
 } // Namespace
 

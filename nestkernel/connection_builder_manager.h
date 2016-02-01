@@ -32,6 +32,7 @@
 #include "sparsetable.h"
 
 // Includes from nestkernel:
+#include "conn_builder.h"
 #include "gid_collection.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
@@ -50,7 +51,9 @@ class spikecounter;
 class Node;
 class Subnet;
 class Event;
+class SecondaryEvent;
 class DelayChecker;
+class GrowthCurve;
 
 typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons having targets
 typedef std::vector< tSConnector > tVSConnector;           // for all threads
@@ -80,6 +83,12 @@ public:
    */
   template < typename ConnBuilder >
   void register_conn_builder( const std::string& name );
+
+  ConnBuilder* get_conn_builder( const std::string& name,
+    const GIDCollection& sources,
+    const GIDCollection& targets,
+    const DictionaryDatum& conn_spec,
+    const DictionaryDatum& syn_spec );
 
   /**
    * Create connections.
@@ -151,6 +160,8 @@ public:
    * \param syn The synapse model to use.
    */
   bool connect( index s, index r, DictionaryDatum& params, index syn );
+
+  void disconnect( Node& target, index sgid, thread target_thread, index syn_id );
 
   void subnet_connect( Subnet&, Subnet&, int, index syn );
 
@@ -231,6 +242,7 @@ public:
    * 'target' a token array with GIDs of target neuron.
    * If either of these does not exist, all neuron are used for the respective entry.
    * 'synapse_model' name of the synapse model, or all synapse models are searched.
+   * 'synapse_label' label (long_t) of the synapse, or all synapses are searched.
    * The function then iterates all entries in source and collects the connection IDs to all neurons
    * in target.
    */
@@ -239,7 +251,8 @@ public:
   void get_connections( ArrayDatum& connectome,
     TokenArray const* source,
     TokenArray const* target,
-    size_t syn_id ) const;
+    size_t syn_id,
+    long_t synapse_label ) const;
 
   /**
    * Returns the number of connections in the network.
@@ -250,6 +263,13 @@ public:
    * Returns the number of connections of this synapse type.
    */
   size_t get_num_connections( synindex syn_id ) const;
+
+  void get_sources( std::vector< index > targets,
+    std::vector< std::vector< index > >& sources,
+    index synapse_model );
+  void get_targets( std::vector< index > sources,
+    std::vector< std::vector< index > >& targets,
+    index synapse_model );
 
   /**
    * Triggered by volume transmitter in update.
@@ -273,6 +293,8 @@ public:
   bool get_user_set_delay_extrema() const;
 
   void send( thread t, index sgid, Event& e );
+
+  void send_secondary( thread t, SecondaryEvent& e );
 
   /**
    * Send event e to all targets of node source on thread t

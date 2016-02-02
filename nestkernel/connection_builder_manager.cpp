@@ -367,7 +367,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
     }
     else // create device->device connections on suggested thread of target
     {
-      target_thread = kernel().vp_manager.suggest_vp( target->get_gid() );
+      target_thread = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
         source = kernel().node_manager.get_node( sgid, target_thread );
@@ -430,7 +430,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
     }
     else // create device->device connections on suggested thread of target
     {
-      target_thread = kernel().vp_manager.suggest_vp( target->get_gid() );
+      target_thread = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
         source = kernel().node_manager.get_node( sgid, target_thread );
@@ -499,7 +499,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
     }
     else // create device->device connections on suggested thread of target
     {
-      target_thread = kernel().vp_manager.suggest_vp( target->get_gid() );
+      target_thread = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
         source = kernel().node_manager.get_node( sgid, target_thread );

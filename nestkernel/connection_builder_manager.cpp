@@ -367,7 +367,8 @@ nest::ConnectionBuilderManager::connect( index sgid,
     }
     else // create device->device connections on suggested thread of target
     {
-      target_thread = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
+      target_thread =
+        kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
         source = kernel().node_manager.get_node( sgid, target_thread );
@@ -410,7 +411,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
   {
     connect_( *source, *target, sgid, target_thread, syn, params, d, w );
   }
-  else if ( target->local_receiver() )  // target is a normal device
+  else if ( target->local_receiver() ) // target is a normal device
   {
     // make sure source is on this MPI rank
     if ( source->is_proxy() )
@@ -430,7 +431,8 @@ nest::ConnectionBuilderManager::connect( index sgid,
     }
     else // create device->device connections on suggested thread of target
     {
-      target_thread = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
+      target_thread =
+        kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
         source = kernel().node_manager.get_node( sgid, target_thread );
@@ -499,7 +501,8 @@ nest::ConnectionBuilderManager::connect( index sgid,
     }
     else // create device->device connections on suggested thread of target
     {
-      target_thread = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
+      target_thread =
+        kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
         source = kernel().node_manager.get_node( sgid, target_thread );
@@ -507,7 +510,6 @@ nest::ConnectionBuilderManager::connect( index sgid,
         connect_( *source, *target, sgid, target_thread, syn, params );
       }
     }
-
   }
   else // globally receiving devices iterate over all target threads, e.g., volume transmitter
   {

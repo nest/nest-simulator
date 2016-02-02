@@ -46,15 +46,18 @@
    depends on the number of available synaptic elements of each neuron.
 
   Parameters:
-   z_               double - Current number of synaptic elements
-   z_t_             double - Last time stamp when the number of synaptic elements was updated
-   z_connected_     int - Number of synaptic elements bound to a synapse
-   continuous       boolean - Defines if the number of synaptic elements should be treated
-                              as a continuous double number or as an integer value
-   growth_rate_     double - The maximum amount by which the synaptic elements will
-                             change between time steps.
-   tau_vacant_      double - Rate at which vacant synaptic elements will decay
-   growth_curve_    GrowthCurve* - Rule which defines the dynamics of this synaptic element.
+   z                double  - Current number of synaptic elements
+   continuous       boolean - Defines if the number of synaptic elements should
+                              be treated as a continuous double number or as an
+                              integer value. Default is false.
+   growth_rate      double  - The maximum amount by which the synaptic elements will
+                              change between time steps. In elements/update.
+   tau_vacant       double  - Rate at which vacant synaptic elements will decay.
+                              Typical is 0.1 which represents a
+                              loss of 10% of the vacant synaptic elements each time
+                              the structural_plasticity_update_interval is
+                              reached by the simulation time.
+   growth_curve     GrowthCurve* - Rule which defines the dynamics of this synaptic element.
 
   References:
    [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
@@ -67,7 +70,7 @@
 
   FirstVersion: July 2013
   Author: Mikael Naveau, Sandra Diaz
-  SeeAlso: GrowthCurve, SPManager, SPBuilder
+  SeeAlso: GrowthCurve, SPManager, SPBuilder, Node, ArchivingNode.
 */
 
 // C++ includes:
@@ -82,6 +85,17 @@
 namespace nest
 {
 
+/**
+ * \class SynapticElement
+ * Synaptic element of a node (like Axon or dendrite) for the purposes
+ * of synaptic plasticity.
+ * The synaptic elements represent connection points between two neurons that
+ * grow according to a homeostatic growth rule. Basically, the dynamics of the
+ * number of synaptic elements is driven by the average electrical activity of
+ * the neuron (indirectly measured through the Calcium concentration of the
+ * node). The probability of two neurons creating a new synapse between them,
+ * depends on the number of available synaptic elements of each neuron.
+ */
 class SynapticElement
 {
 
@@ -185,7 +199,7 @@ public:
   }
 
   /*
-   * Retrieves the current value of the growth rate, this is
+   * Retrieves the current value of the growth rate
    */
   double_t
   get_growth_rate() const

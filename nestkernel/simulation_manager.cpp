@@ -486,7 +486,7 @@ nest::SimulationManager::update_()
               i != kernel().node_manager.get_nodes_on_thread( thrd ).end();
               ++i )
         {
-          ( *i )->decay_synaptic_elements_vacant( 0.1 );
+          ( *i )->decay_synaptic_elements_vacant();
         }
       }
 

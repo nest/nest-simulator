@@ -174,6 +174,14 @@ public:
     return z_connected_;
   }
   /*
+   * Retrieves the value of tau_vacant
+   */
+  double_t
+  get_tau_vacant() const
+  {
+    return tau_vacant_;
+  }
+  /*
    * Changes the number of bound synaptic elements by n.
    * @param n number of new connections. Can be negative.
    */
@@ -216,6 +224,15 @@ public:
   get_z() const
   {
     return z_;
+  }
+  /**
+   * Reduce the amount of vacant synaptic elements by a factor
+   * of tau_vacant_
+   */
+  void
+  decay_z_vacant()
+  {
+    z_ -= get_z_vacant() * tau_vacant_;
   }
 
   bool

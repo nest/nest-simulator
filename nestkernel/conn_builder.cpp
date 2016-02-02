@@ -1344,7 +1344,7 @@ nest::SPBuilder::update_delay( delay& d ) const
 }
 
 void
-nest::SPBuilder::connect( GIDCollection sources, GIDCollection targets )
+nest::SPBuilder::sp_connect( GIDCollection sources, GIDCollection targets )
 {
   connect_( sources, targets );
 

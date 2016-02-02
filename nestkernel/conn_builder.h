@@ -316,7 +316,7 @@ public:
    */
   void update_delay( delay& d ) const;
 
-  void connect( GIDCollection sources, GIDCollection targets );
+  void sp_connect( GIDCollection sources, GIDCollection targets );
 
 protected:
   void connect_();

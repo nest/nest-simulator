@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef UNIVERSAL_DATA_LOGGER_IMPL_H
+#define UNIVERSAL_DATA_LOGGER_IMPL_H
+
 #include "universal_data_logger.h"
 
 // Includes from nestkernel:
@@ -207,3 +210,5 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host,
   // send it off
   kernel().event_delivery_manager.send_to_node( reply );
 }
+
+#endif // #ifndef UNIVERSAL_DATA_LOGGER_IMPL_H

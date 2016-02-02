@@ -47,7 +47,7 @@ nest::SynapticElement::SynapticElement()
   , z_connected_( 0 )
   , continuous_( true )
   , growth_rate_( 1.0 )
-  , tau_vacant_( 10.0 )
+  , tau_vacant_( 0.1 )
   , growth_curve_( new GrowthCurveLinear )
 {
 }

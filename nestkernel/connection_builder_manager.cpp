@@ -339,31 +339,50 @@ nest::ConnectionBuilderManager::connect( index sgid,
   double_t d,
   double_t w )
 {
-  Node* const source = kernel().node_manager.get_node( sgid, target_thread );
+  const thread tid = kernel().vp_manager.get_thread_id();
+  Node* source = kernel().node_manager.get_node( sgid, target_thread );
 
-  // normal nodes and devices with proxies
+  // target is a normal node or device with proxies
   if ( target->has_proxies() )
   {
     connect_( *source, *target, sgid, target_thread, syn, d, w );
   }
-  else if ( target->local_receiver() ) // normal devices
+  else if ( target->local_receiver() ) // target is a normal device
   {
+    // make sure source is on this MPI rank
     if ( source->is_proxy() )
-      return;
-
-    if ( ( source->get_thread() != target_thread ) && ( source->has_proxies() ) )
     {
-      target_thread = source->get_thread();
-      target = kernel().node_manager.get_node( target->get_gid(), target_thread );
+      return;
     }
 
-    connect_( *source, *target, sgid, target_thread, syn, d, w );
-  }
-  else // globally receiving devices iterate over all target threads
-  {
-    if ( !source->has_proxies() ) // we do not allow to connect a device to a global receiver at the
-      // moment
+    // make sure connections are only created on the thread of the device
+    if ( ( source->get_thread() != target_thread ) && ( source->has_proxies() ) )
+    {
       return;
+    }
+
+    if ( source->has_proxies() ) // normal neuron->device connection
+    {
+      connect_( *source, *target, sgid, target_thread, syn, d, w );
+    }
+    else // create device->device connections on suggested thread of target
+    {
+      target_thread = kernel().vp_manager.suggest_vp( target->get_gid() );
+      if ( target_thread == tid )
+      {
+        source = kernel().node_manager.get_node( sgid, target_thread );
+        target = kernel().node_manager.get_node( target->get_gid(), target_thread );
+        connect_( *source, *target, sgid, target_thread, syn, d, w );
+      }
+    }
+  }
+  else // globally receiving devices iterate over all target threads, e.g., volume transmitter
+  {
+    // we do not allow to connect a device to a global receiver at the moment
+    if ( not source->has_proxies() )
+    {
+      return;
+    }
     const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread t = 0; t < n_threads; t++ )
     {
@@ -383,31 +402,50 @@ nest::ConnectionBuilderManager::connect( index sgid,
   double_t d,
   double_t w )
 {
-  Node* const source = kernel().node_manager.get_node( sgid, target_thread );
+  const thread tid = kernel().vp_manager.get_thread_id();
+  Node* source = kernel().node_manager.get_node( sgid, target_thread );
 
-  // normal nodes and devices with proxies
+  // target is a normal node or device with proxies
   if ( target->has_proxies() )
   {
     connect_( *source, *target, sgid, target_thread, syn, params, d, w );
   }
-  else if ( target->local_receiver() ) // normal devices
+  else if ( target->local_receiver() )  // target is a normal device
   {
+    // make sure source is on this MPI rank
     if ( source->is_proxy() )
-      return;
-
-    if ( ( source->get_thread() != target_thread ) && ( source->has_proxies() ) )
     {
-      target_thread = source->get_thread();
-      target = kernel().node_manager.get_node( target->get_gid(), target_thread );
+      return;
     }
 
-    connect_( *source, *target, sgid, target_thread, syn, params, d, w );
-  }
-  else // globally receiving devices iterate over all target threads
-  {
-    if ( !source->has_proxies() ) // we do not allow to connect a device to a global receiver at the
-      // moment
+    // make sure connections are only created on the thread of the device
+    if ( ( source->get_thread() != target_thread ) && ( source->has_proxies() ) )
+    {
       return;
+    }
+
+    if ( source->has_proxies() ) // normal neuron->device connection
+    {
+      connect_( *source, *target, sgid, target_thread, syn, d, w );
+    }
+    else // create device->device connections on suggested thread of target
+    {
+      target_thread = kernel().vp_manager.suggest_vp( target->get_gid() );
+      if ( target_thread == tid )
+      {
+        source = kernel().node_manager.get_node( sgid, target_thread );
+        target = kernel().node_manager.get_node( target->get_gid(), target_thread );
+        connect_( *source, *target, sgid, target_thread, syn, d, w );
+      }
+    }
+  }
+  else // globally receiving devices iterate over all target threads, e.g., volume transmitter
+  {
+    // we do not allow to connect a device to a global receiver at the moment
+    if ( not source->has_proxies() )
+    {
+      return;
+    }
     const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread t = 0; t < n_threads; t++ )
     {
@@ -419,53 +457,72 @@ nest::ConnectionBuilderManager::connect( index sgid,
 
 // gid gid dict
 bool
-nest::ConnectionBuilderManager::connect( index source_id,
-  index target_id,
+nest::ConnectionBuilderManager::connect( index sgid,
+  index tgid,
   DictionaryDatum& params,
   index syn )
 {
+  const thread tid = kernel().vp_manager.get_thread_id();
 
-  if ( !kernel().node_manager.is_local_gid( target_id ) )
+  // make sure target is on this MPI rank
+  if ( !kernel().node_manager.is_local_gid( tgid ) )
+  {
     return false;
-
-  Node* target_ptr = kernel().node_manager.get_node( target_id );
-
-  // target_thread defaults to 0 for devices
-  thread target_thread = target_ptr->get_thread();
-
-  Node* source_ptr = kernel().node_manager.get_node( source_id, target_thread );
-
-  // normal nodes and devices with proxies
-  if ( target_ptr->has_proxies() )
-  {
-    connect_( *source_ptr, *target_ptr, source_id, target_thread, syn, params );
   }
-  else if ( target_ptr->local_receiver() ) // normal devices
-  {
-    if ( source_ptr->is_proxy() )
-      return false;
 
-    if ( ( source_ptr->get_thread() != target_thread ) && ( source_ptr->has_proxies() ) )
+  Node* target = kernel().node_manager.get_node( tgid, tid );
+  thread target_thread = target->get_thread();
+  Node* source = kernel().node_manager.get_node( sgid, target_thread );
+
+  // target is a normal node or device with proxies
+  if ( target->has_proxies() )
+  {
+    connect_( *source, *target, sgid, target_thread, syn, params );
+  }
+  else if ( target->local_receiver() ) // target is a normal device
+  {
+    // make sure source is on this MPI rank
+    if ( source->is_proxy() )
     {
-      target_thread = source_ptr->get_thread();
-      target_ptr = kernel().node_manager.get_node( target_id, target_thread );
+      return false;
     }
 
-    connect_( *source_ptr, *target_ptr, source_id, target_thread, syn, params );
-  }
-  else // globally receiving devices iterate over all target threads
-  {
-    if ( !source_ptr->has_proxies() ) // we do not allow to connect a device to a global receiver at
-      // the moment
+    // make sure connections are only created on the thread of the device
+    if ( ( source->get_thread() != target_thread ) && ( source->has_proxies() ) )
+    {
       return false;
+    }
+
+    if ( source->has_proxies() ) // normal neuron->device connection
+    {
+      connect_( *source, *target, sgid, target_thread, syn, params );
+    }
+    else // create device->device connections on suggested thread of target
+    {
+      target_thread = kernel().vp_manager.suggest_vp( target->get_gid() );
+      if ( target_thread == tid )
+      {
+        source = kernel().node_manager.get_node( sgid, target_thread );
+        target = kernel().node_manager.get_node( target->get_gid(), target_thread );
+        connect_( *source, *target, sgid, target_thread, syn, params );
+      }
+    }
+
+  }
+  else // globally receiving devices iterate over all target threads, e.g., volume transmitter
+  {
+    // we do not allow to connect a device to a global receiver at the moment
+    if ( not source->has_proxies() )
+    {
+      return false;
+    }
     const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread t = 0; t < n_threads; t++ )
     {
-      target_ptr = kernel().node_manager.get_node( target_id, t );
-      connect_( *source_ptr, *target_ptr, source_id, t, syn, params );
+      target = kernel().node_manager.get_node( tgid, t );
+      connect_( *source, *target, sgid, t, syn, params );
     }
   }
-
   // We did not exit prematurely due to proxies, so we have connected.
   return true;
 }
@@ -587,6 +644,8 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
   const TokenArray& delays,
   index syn )
 {
+  const thread tid = kernel().vp_manager.get_thread_id();
+
   bool complete_wd_lists = ( target_ids.size() == weights.size() && weights.size() != 0
     && weights.size() == delays.size() );
   bool short_wd_lists =
@@ -632,7 +691,7 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
   {
     index gid = getValue< long >( target_ids[ i ] );
     if ( kernel().node_manager.is_local_gid( gid ) )
-      targets.push_back( kernel().node_manager.get_node( gid ) );
+      targets.push_back( kernel().node_manager.get_node( gid, tid ) );
   }
 
   for ( index i = 0; i < targets.size(); ++i )

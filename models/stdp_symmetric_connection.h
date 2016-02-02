@@ -153,16 +153,14 @@ private:
   double_t
   facilitate_( double_t w, double_t kplus )
   {
-    double_t norm_w =
-      ( w / Wmax_ ) + ( lambda_ * eta_ * kplus );
+    double_t norm_w = ( w / Wmax_ ) + ( lambda_ * eta_ * kplus );
     return norm_w < 1.0 ? norm_w * Wmax_ : Wmax_;
   }
 
   double_t
   depress_( double_t w )
   {
-    double_t norm_w =
-      ( w / Wmax_ ) - ( 2.* kappa_ * tau_ * lambda_ * eta_ );
+    double_t norm_w = ( w / Wmax_ ) - ( 2. * kappa_ * tau_ * lambda_ * eta_ );
     return norm_w > 0.0 ? norm_w * Wmax_ : 0.0;
   }
 
@@ -213,8 +211,8 @@ STDPSymmetricConnection< targetidentifierT >::send( Event& e,
   {
     minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
     ++start;
-    if (minus_dt == 0)
-        continue;
+    if ( minus_dt == 0 )
+      continue;
     // Use value of kplus at the time of the post synaptic spike
     // therefore the exponential multiplier
     // for minus_dt = 0, the exponential becomes 1 and facilitation occurs
@@ -227,7 +225,7 @@ STDPSymmetricConnection< targetidentifierT >::send( Event& e,
   // Facilitation and constant depression
   // Getting kvalue at required time already for deferred processing, so no
   // need to transform it to the current time, and so, no exponential required
-  weight_ = facilitate_( weight_, target->get_K_value( t_spike - dendritic_delay) );
+  weight_ = facilitate_( weight_, target->get_K_value( t_spike - dendritic_delay ) );
   weight_ = depress_( weight_ );
 
   e.set_receiver( *target );
@@ -248,8 +246,8 @@ STDPSymmetricConnection< targetidentifierT >::STDPSymmetricConnection()
   , weight_( 0.5 )
   , tau_( 20.0 )
   , lambda_( 0.01 )
-  , kappa_ ( 3. )
-  , eta_ ( 0.001 )
+  , kappa_( 3. )
+  , eta_( 0.001 )
   , Wmax_( 1.0 )
   , Kplus_( 0.0 )
 {
@@ -262,8 +260,8 @@ STDPSymmetricConnection< targetidentifierT >::STDPSymmetricConnection(
   , weight_( rhs.weight_ )
   , tau_( rhs.tau_ )
   , lambda_( rhs.lambda_ )
-  , kappa_ (rhs.kappa_ )
-  , eta_ (rhs.eta_ )
+  , kappa_( rhs.kappa_ )
+  , eta_( rhs.eta_ )
   , Wmax_( rhs.Wmax_ )
   , Kplus_( rhs.Kplus_ )
 {
@@ -285,7 +283,8 @@ STDPSymmetricConnection< targetidentifierT >::get_status( DictionaryDatum& d ) c
 
 template < typename targetidentifierT >
 void
-STDPSymmetricConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+STDPSymmetricConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double_t >( d, names::weight, weight_ );

@@ -481,14 +481,16 @@ ModelsModule::init( SLIInterpreter* )
     "stdp_dopamine_synapse_hpc" );
 
   /* BeginDocumentation
-     Name: stdp_symmetric_synapse_hpc - Variant of stdp_symmetric_synapse with low memory consumption.
+     Name: stdp_symmetric_synapse_hpc - Variant of stdp_symmetric_synapse with low memory
+     consumption.
      SeeAlso: synapsedict, stdp_symmetric_synapse
   */
   kernel()
     .model_manager.register_connection_model< STDPSymmetricConnection< TargetIdentifierPtrRport > >(
       "stdp_symmetric_synapse" );
-  kernel().model_manager.register_connection_model< STDPSymmetricConnection< TargetIdentifierIndex > >(
-    "stdp_symmetric_synapse_hpc" );
+  kernel()
+    .model_manager.register_connection_model< STDPSymmetricConnection< TargetIdentifierIndex > >(
+      "stdp_symmetric_synapse_hpc" );
 }
 
 } // namespace nest

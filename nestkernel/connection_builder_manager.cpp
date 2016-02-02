@@ -644,8 +644,6 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
   const TokenArray& delays,
   index syn )
 {
-  const thread tid = kernel().vp_manager.get_thread_id();
-
   bool complete_wd_lists = ( target_ids.size() == weights.size() && weights.size() != 0
     && weights.size() == delays.size() );
   bool short_wd_lists =
@@ -691,7 +689,9 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
   {
     index gid = getValue< long >( target_ids[ i ] );
     if ( kernel().node_manager.is_local_gid( gid ) )
-      targets.push_back( kernel().node_manager.get_node( gid, tid ) );
+    {
+      targets.push_back( kernel().node_manager.get_node( gid ) );
+    }
   }
 
   for ( index i = 0; i < targets.size(); ++i )
@@ -699,10 +699,14 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
     thread target_thread = targets[ i ]->get_thread();
 
     if ( source->get_thread() != target_thread )
+    {
       source = kernel().node_manager.get_node( source_id, target_thread );
+    }
 
     if ( !targets[ i ]->has_proxies() && source->is_proxy() )
+    {
       continue;
+    }
 
     try
     {

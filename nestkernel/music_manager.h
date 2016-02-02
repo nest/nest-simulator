@@ -70,7 +70,7 @@ std::map< std::string, MusicEventHandler > music_in_portmap_;
 namespace nest
 {
 
-class MUSICManager : ManagerInterface
+class MUSICManager : public ManagerInterface
 {
 public:
   virtual void initialize(); // called from meta-manager to construct

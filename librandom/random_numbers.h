@@ -23,18 +23,14 @@
 #ifndef RANDOM_NUMBERS_H
 #define RANDOM_NUMBERS_H
 
-#include "slitype.h"
-#include "slimodule.h"
-
+// C++ includes:
 #include <string>
 
-#ifndef DICT_H
-class Dictionary;
-#endif
+// Includes from sli:
+#include "slimodule.h"
+#include "slitype.h"
 
-#ifndef DICTDATUM_H
-class DictionaryDatum;
-#endif
+class Dictionary;
 
 /**
  *  Provides random numbers and deviates to SLI.

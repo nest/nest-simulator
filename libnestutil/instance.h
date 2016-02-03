@@ -22,8 +22,12 @@
 
 #ifndef INSTANCE_H
 #define INSTANCE_H
-#include "nest.h"
+
+// Includes from libnestutil:
 #include "allocator.h"
+
+// Includes from nestkernel:
+#include "nest_types.h"
 
 
 namespace nest

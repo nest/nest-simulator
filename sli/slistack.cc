@@ -23,10 +23,15 @@
 /*
     slistack.cc
 */
-#include <typeinfo>
+
 #include "slistack.h"
-#include "integerdatum.h"
+
+// C++ includes:
+#include <typeinfo>
+
+// Includes from sli:
 #include "arraydatum.h"
+#include "integerdatum.h"
 
 //******************* Stack Functions
 /*BeginDocumentation

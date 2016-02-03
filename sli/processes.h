@@ -26,19 +26,24 @@
 /*
     SLI's basic process management capabilities
 */
-#include <cstdlib>
 
-#include "config.h"
-
-
-#include <cstdio>
+// C includes:
 #include <sys/types.h>
+
+// C++ includes:
+#include <cstdio>
+#include <cstdlib>
 #include <fstream>
 #include <string>
 #include <vector>
-#include "slimodule.h"
-#include "slifunction.h"
+
+// Generated includes:
+#include "config.h"
+
+// Includes from sli:
 #include "name.h"
+#include "slifunction.h"
+#include "slimodule.h"
 
 // A new SLI-Module:
 class Processes : public SLIModule

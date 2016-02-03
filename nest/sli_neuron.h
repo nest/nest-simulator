@@ -23,17 +23,19 @@
 #ifndef SLI_NEURON_H
 #define SLI_NEURON_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {
-
-class Network;
 
 /* BeginDocumentation
 Name: sli_neuron - neuron with SLI callback
@@ -128,6 +130,11 @@ private:
   void calibrate();
 
   void update( Time const&, const long_t, const long_t );
+
+  /**
+   * Execute a SLI command in the neuron's namespace.
+   */
+  int execute_sli_protected( DictionaryDatum, Name );
 
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary

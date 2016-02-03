@@ -28,11 +28,13 @@
 #ifndef RANDOM_DATUMS_H
 #define RANDOM_DATUMS_H
 
-#include "lockptrdatum.h"
-
+// Includes from librandom:
 #include "random_numbers.h"
-#include "randomgen.h"
 #include "randomdev.h"
+#include "randomgen.h"
+
+// Includes from sli:
+#include "lockptrdatum.h"
 
 namespace librandom
 {

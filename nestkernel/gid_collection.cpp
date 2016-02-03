@@ -22,7 +22,8 @@
 
 #include "gid_collection.h"
 
-#include <algorithm>
+// C++ includes:
+#include <algorithm> // copy
 
 namespace nest
 {

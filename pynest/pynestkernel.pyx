@@ -154,21 +154,17 @@ cdef class SLILiteral(object):
 cdef class NESTEngine(object):
 
     cdef SLIInterpreter* pEngine
-    cdef Network* pNet
 
     def __cinit__(self):
 
-        self.pNet = NULL
         self.pEngine = NULL
 
     def __dealloc__(self):
 
-        nestshutdown()
+        nestshutdown( 0 )
 
-        del self.pNet
         del self.pEngine
 
-        self.pNet = NULL
         self.pEngine = NULL
 
     def init(self, argv, modulepath):
@@ -200,15 +196,14 @@ cdef class NESTEngine(object):
             self.pEngine = new SLIInterpreter()
 
             neststartup(&argc,
-			&argv_bytes,
-			deref(self.pEngine),
-			self.pNet,
-			modulepath_str)
+              &argv_bytes,
+              deref(self.pEngine),
+              modulepath_str)
             # If using MPI, argv might now have changed, so rebuild it
             del argv[:]
             for i in range(argc):
                 # str(...) will convert to ordinary string in Python2,
-		# otherwise Python2 will return a unicode string
+                # otherwise Python2 will return a unicode string
                 argv.append(str(argv_bytes[i].decode()))
         finally:
             free(argv_bytes)

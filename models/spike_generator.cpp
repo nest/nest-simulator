@@ -21,14 +21,19 @@
  */
 
 #include "spike_generator.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "booldatum.h"
-#include "arraydatum.h"
-#include "dictutils.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "booldatum.h"
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -322,7 +327,7 @@ nest::spike_generator::update( Time const& sliceT0, const long_t from, const lon
       long_t lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
 
       // all spikes are sent locally, so offset information is always preserved
-      network()->send( *this, *se, lag );
+      kernel().event_delivery_manager.send( *this, *se, lag );
       delete se;
     }
 
@@ -335,4 +340,29 @@ nest::spike_generator::event_hook( DSSpikeEvent& e )
 {
   e.set_weight( P_.spike_weights_[ S_.position_ ] * e.get_weight() );
   e.get_receiver().handle( e );
+}
+
+// inline
+void
+nest::spike_generator::set_status( const DictionaryDatum& d )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // To detect "now" spikes and shift them, we need the origin. In case
+  // it is set in this call, we need to extract it explicitly here.
+  Time origin;
+  double_t v;
+  if ( updateValue< double_t >( d, names::origin, v ) )
+    origin = Time::ms( v );
+  else
+    origin = device_.get_origin();
+  ptmp.set( d, S_, origin, kernel().simulation_manager.get_time() ); // throws if BadProperty
+
+  // We now know that ptmp is consistent. We do not write it back
+  // to P_ before we are also sure that the properties to be set
+  // in the parent class are internally consistent.
+  device_.set_status( d );
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

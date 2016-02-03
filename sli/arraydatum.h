@@ -23,11 +23,14 @@
 #ifndef ARRAYDATUM_H
 #define ARRAYDATUM_H
 
-#include "interpret.h"
-#include "tokenarray.h"
-#include "aggregatedatum.h"
-#include "lockptrdatum.h"
+// C++ includes:
 #include <vector>
+
+// Includes from sli:
+#include "aggregatedatum.h"
+#include "interpret.h"
+#include "lockptrdatum.h"
+#include "tokenarray.h"
 
 /* These are declarations to specialize the static memory pool BEFORE
    we instantiate the AggregateDatum. Note, that this is only a declaration,

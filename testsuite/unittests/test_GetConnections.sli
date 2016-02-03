@@ -78,6 +78,9 @@
   end
 } assert_or_die
 
+(FIRST TEST PASSED) ==
+
+
 % second test: retrieve stdp connections
 {
   << >> begin

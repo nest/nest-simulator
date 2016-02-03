@@ -22,6 +22,8 @@
 
 #ifndef SLIMODULE_H
 #define SLIMODULE_H
+
+// C++ includes:
 #include <iostream>
 #include <string>
 

@@ -19,11 +19,17 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "exceptions.h"
-#include "interpret.h"
+
+// C++ includes:
+#include <sstream>
+
+// Generated includes:
 #include "config.h"
 
-#include <sstream>
+// Includes from sli:
+#include "interpret.h"
 
 std::string
 nest::UnknownModelName::message()

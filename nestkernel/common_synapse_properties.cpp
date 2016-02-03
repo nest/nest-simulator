@@ -20,12 +20,16 @@
  *
  */
 
-#include "nest.h"
-#include "dictdatum.h"
 #include "common_synapse_properties.h"
+
+// Includes from nestkernel:
 #include "connector_model.h"
 #include "nest_timeconverter.h"
+#include "nest_types.h"
 #include "node.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {

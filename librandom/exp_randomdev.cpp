@@ -19,9 +19,12 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "exp_randomdev.h"
-#include "sliexceptions.h"
+
+// Includes from sli:
 #include "dictutils.h"
+#include "sliexceptions.h"
 
 void
 librandom::ExpRandomDev::set_status( const DictionaryDatum& d )

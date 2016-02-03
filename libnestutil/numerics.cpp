@@ -22,7 +22,6 @@
 
 #include "numerics.h"
 
-
 #ifndef HAVE_M_E
 
 #ifdef HAVE_CMATH_MAKROS_IGNORED

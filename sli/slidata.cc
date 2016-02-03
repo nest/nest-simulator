@@ -23,18 +23,23 @@
 /*
     SLI's data access functions
 */
-#include <vector>
+
 #include "slidata.h"
-#include "namedatum.h"
-#include "arraydatum.h"
-#include "stringdatum.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictdatum.h"
-#include "iteratordatum.h"
-#include "tokenutils.h"
+
+// C++ includes:
 #include <climits>
 #include <sstream>
+#include <vector>
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dictdatum.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "iteratordatum.h"
+#include "namedatum.h"
+#include "stringdatum.h"
+#include "tokenutils.h"
 
 /*BeginDocumentation
 Name: allocations - Return the number of array reallocations.

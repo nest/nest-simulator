@@ -20,18 +20,26 @@
  *
  */
 
+// Generated includes:
 #include "config.h"
 
 #ifndef BINOMIAL_RANDOMDEV_H
 #define BINOMIAL_RANDOMDEV_H
 
+// C++ includes:
 #include <cmath>
 #include <vector>
-#include "randomgen.h"
-#include "randomdev.h"
-#include "poisson_randomdev.h"
-#include "exp_randomdev.h"
+
+// Includes from libnestutil:
 #include "lockptr.h"
+
+// Includes from librandom:
+#include "exp_randomdev.h"
+#include "poisson_randomdev.h"
+#include "randomdev.h"
+#include "randomgen.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 
 

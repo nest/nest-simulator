@@ -20,18 +20,30 @@
  *
  */
 
-#include "exceptions.h"
 #include "sli_neuron.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include "universal_data_logger_impl.h"
-#include "dictstack.h"
 
+// C++ includes:
 #include <limits>
+
+// Includes from libnestutil:
+#include "compose.hpp"
+#include "numerics.h"
+
+// includes from nest:
+#include "neststartup.h" // get_engine()
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictstack.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -119,7 +131,7 @@ nest::sli_neuron::calibrate()
   {
     std::string msg =
       String::compose( "Node %1 has no /calibrate function in its status dictionary.", get_gid() );
-    net_->message( SLIInterpreter::M_ERROR, "sli_neuron::calibrate", msg.c_str() );
+    LOG( M_ERROR, "sli_neuron::calibrate", msg.c_str() );
     terminate = true;
   }
 
@@ -127,20 +139,20 @@ nest::sli_neuron::calibrate()
   {
     std::string msg = String::compose(
       "Node %1 has no /update function in its status dictionary. Terminating.", get_gid() );
-    net_->message( SLIInterpreter::M_ERROR, "sli_neuron::calibrate", msg.c_str() );
+    LOG( M_ERROR, "sli_neuron::calibrate", msg.c_str() );
     terminate = true;
   }
 
   if ( terminate )
   {
-    net_->terminate();
-    net_->message( SLIInterpreter::M_ERROR, "sli_neuron::calibrate", "Terminating." );
+    kernel().simulation_manager.terminate();
+    LOG( M_ERROR, "sli_neuron::calibrate", "Terminating." );
     return;
   }
 
 #pragma omp critical( sli_neuron )
   {
-    network()->execute_sli_protected( state_, names::calibrate_node ); // call interpreter
+    execute_sli_protected( state_, names::calibrate_node ); // call interpreter
   }
 }
 
@@ -151,18 +163,16 @@ nest::sli_neuron::calibrate()
 void
 nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
   ( *state_ )[ names::t_origin ] = origin.get_steps();
 
   if ( state_->known( names::error ) )
   {
     std::string msg = String::compose( "Node %1 still has its error state set.", get_gid() );
-    net_->message( SLIInterpreter::M_ERROR, "sli_neuron::update", msg.c_str() );
-    net_->message( SLIInterpreter::M_ERROR,
-      "sli_neuron::update",
-      "Please check /calibrate and /update for errors" );
-    net_->terminate();
+    LOG( M_ERROR, "sli_neuron::update", msg.c_str() );
+    LOG( M_ERROR, "sli_neuron::update", "Please check /calibrate and /update for errors" );
+    kernel().simulation_manager.terminate();
     return;
   }
 
@@ -177,7 +187,7 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
 
 #pragma omp critical( sli_neuron )
     {
-      network()->execute_sli_protected( state_, names::update_node ); // call interpreter
+      execute_sli_protected( state_, names::update_node ); // call interpreter
     }
 
     bool spike_emission = false;
@@ -189,11 +199,42 @@ nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to
     {
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     B_.logger_.record_data( origin.get_steps() + lag );
   }
+}
+
+/**
+ * This function is not thread save and has to be called inside a omp critical
+ * region.
+ */
+int
+nest::sli_neuron::execute_sli_protected( DictionaryDatum state, Name cmd )
+{
+  SLIInterpreter& i = get_engine();
+
+  i.DStack->push( state ); // push state dictionary as top namespace
+  size_t exitlevel = i.EStack.load();
+  i.EStack.push( new NameDatum( cmd ) );
+  int result = i.execute_( exitlevel );
+  i.DStack->pop(); // pop neuron's namespace
+
+  if ( state->known( "error" ) )
+  {
+    assert( state->known( names::global_id ) );
+    index g_id = ( *state )[ names::global_id ];
+    std::string model = getValue< std::string >( ( *state )[ names::model ] );
+    std::string msg = String::compose( "Error in %1 with global id %2.", model, g_id );
+
+    LOG( M_ERROR, cmd.toString().c_str(), msg.c_str() );
+    LOG( M_ERROR, "execute_sli_protected", "Terminating." );
+
+    kernel().simulation_manager.terminate();
+  }
+
+  return result;
 }
 
 
@@ -203,10 +244,12 @@ nest::sli_neuron::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.ex_spikes_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.in_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.in_spikes_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 
@@ -219,7 +262,8 @@ nest::sli_neuron::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * I );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
 }
 
 void

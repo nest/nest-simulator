@@ -20,16 +20,17 @@
  *
  */
 
-#include "token.h"
+#include "datum.h"
 
-#include "doubledatum.h"
-#include "integerdatum.h"
-#include "dictdatum.h"
-#include "dictutils.h"
+// Includes from sli:
 #include "arraydatum.h"
 #include "booldatum.h"
+#include "dictdatum.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 #include "stringdatum.h"
-#include "datum.h"
+#include "token.h"
 
 void
 Datum::info( std::ostream& ) const

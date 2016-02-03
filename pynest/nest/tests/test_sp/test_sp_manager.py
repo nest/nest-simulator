@@ -37,9 +37,9 @@ class TestStructuralPlasticityManager(unittest.TestCase):
         for syn_model in nest.Models('synapses'):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
-                nest.SetDefaults(syn_model, {'min_delay': 0.1, 'max_delay': 1.0, 'delay': 0.5})
+                nest.SetDefaults(syn_model, {'delay': 0.5})
                 syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1', 'post_synaptic_element': 'SE2'}
-                nest.SetKernelStatus({'structural_plasticity_synapses': {'syn1': syn_dict}})
+                nest.SetKernelStatus({'min_delay': 0.1, 'max_delay': 1.0, 'structural_plasticity_synapses': {'syn1': syn_dict}})
                 kernel_status = nest.GetKernelStatus('structural_plasticity_synapses')
                 self.assertIn('syn1', kernel_status)
                 self.assertEqual(kernel_status['syn1'], extract_dict_a_from_b(kernel_status['syn1'], syn_dict))

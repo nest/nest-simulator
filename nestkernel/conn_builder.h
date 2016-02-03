@@ -31,21 +31,26 @@
  *
  */
 
+// C++ includes:
 #include <map>
 #include <vector>
 
-#include "dictdatum.h"
-#include "gid_collection.h"
+// Includes from libnestutil:
 #include "lockptr.h"
-#include "sliexceptions.h"
+
+// Includes from librandom:
+#include "gslrandomgen.h"
+
+// Includes from nestkernel:
+#include "gid_collection.h"
 #include "nest_time.h"
 
-#include "gslrandomgen.h"
+// Includes from sli:
+#include "dictdatum.h"
+#include "sliexceptions.h"
 
 namespace nest
 {
-
-class Network;
 class Node;
 class ConnParameter;
 
@@ -75,8 +80,7 @@ public:
   virtual void disconnect();
 
   //! parameters: sources, targets, specifications
-  ConnBuilder( Network&,
-    const GIDCollection&,
+  ConnBuilder( const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
     const DictionaryDatum& );
@@ -132,8 +136,6 @@ protected:
    * array.
    */
   void skip_conn_parameter_( thread );
-
-  Network& net_;
 
   const GIDCollection& sources_;
   const GIDCollection& targets_;
@@ -194,12 +196,11 @@ private:
 class OneToOneBuilder : public ConnBuilder
 {
 public:
-  OneToOneBuilder( Network& net,
-    const GIDCollection& sources,
+  OneToOneBuilder( const GIDCollection& sources,
     const GIDCollection& targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec )
-    : ConnBuilder( net, sources, targets, conn_spec, syn_spec )
+    : ConnBuilder( sources, targets, conn_spec, syn_spec )
   {
   }
 
@@ -213,12 +214,11 @@ protected:
 class AllToAllBuilder : public ConnBuilder
 {
 public:
-  AllToAllBuilder( Network& net,
-    const GIDCollection& sources,
+  AllToAllBuilder( const GIDCollection& sources,
     const GIDCollection& targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec )
-    : ConnBuilder( net, sources, targets, conn_spec, syn_spec )
+    : ConnBuilder( sources, targets, conn_spec, syn_spec )
   {
   }
 
@@ -233,8 +233,7 @@ protected:
 class FixedInDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedInDegreeBuilder( Network&,
-    const GIDCollection&,
+  FixedInDegreeBuilder( const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
     const DictionaryDatum& );
@@ -249,8 +248,7 @@ private:
 class FixedOutDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedOutDegreeBuilder( Network&,
-    const GIDCollection&,
+  FixedOutDegreeBuilder( const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
     const DictionaryDatum& );
@@ -265,8 +263,7 @@ private:
 class FixedTotalNumberBuilder : public ConnBuilder
 {
 public:
-  FixedTotalNumberBuilder( Network&,
-    const GIDCollection&,
+  FixedTotalNumberBuilder( const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
     const DictionaryDatum& );
@@ -281,8 +278,7 @@ private:
 class BernoulliBuilder : public ConnBuilder
 {
 public:
-  BernoulliBuilder( Network&,
-    const GIDCollection&,
+  BernoulliBuilder( const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
     const DictionaryDatum& );
@@ -297,14 +293,10 @@ private:
 class SPBuilder : public ConnBuilder
 {
 public:
-  SPBuilder( Network& net,
-    const GIDCollection& sources,
+  SPBuilder( const GIDCollection& sources,
     const GIDCollection& targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec );
-
-  Time get_min_delay() const;
-  Time get_max_delay() const;
 
   std::string
   get_pre_synaptic_element_name() const
@@ -317,14 +309,18 @@ public:
     return post_synaptic_element_name;
   }
 
-  void connect( GIDCollection sources, GIDCollection targets );
+  /**
+   * Writes the default delay of the connection model, if the
+   * SPBuilder only uses the default delay. If not, the min/max_delay
+   * has to be specified explicitly with the kernel status.
+   */
+  void update_delay( delay& d ) const;
+
+  void sp_connect( GIDCollection sources, GIDCollection targets );
 
 protected:
   void connect_();
   void connect_( GIDCollection sources, GIDCollection targets );
-
-  Time min_delay;
-  Time max_delay;
 };
 
 } // namespace nest

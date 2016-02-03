@@ -23,20 +23,25 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include "nest_time.h"
-#include "nest_timeconverter.h"
-#include "nest.h"
-#include "node.h"
-#include "event.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "arraydatum.h"
-#include "doubledatum.h"
+// Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connection_label.h"
+#include "delay_checker.h"
+#include "event.h"
+#include "kernel_manager.h"
 #include "nest_names.h"
+#include "nest_time.h"
+#include "nest_timeconverter.h"
+#include "nest_types.h"
+#include "node.h"
 #include "spikecounter.h"
 #include "syn_id_delay.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
 
 namespace nest
 {
@@ -290,12 +295,12 @@ Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& )
 {
   double_t delay;
   if ( updateValue< double_t >( d, names::delay, delay ) )
   {
-    cm.assert_valid_delay_ms( delay );
+    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
     syn_id_delay_.set_delay_ms( delay );
   }
   // no call to target_.set_status() because target and rport cannot be changed

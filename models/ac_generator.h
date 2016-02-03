@@ -25,10 +25,11 @@
 
 // provides AC input current
 
-#include "nest.h"
-#include "event.h"
-#include "node.h"
+// Includes from nestkernel:
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "node.h"
 #include "stimulating_device.h"
 
 /* BeginDocumentation
@@ -59,9 +60,6 @@
 
 namespace nest
 {
-
-class Network;
-
 class ac_generator : public Node
 {
 

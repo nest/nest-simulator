@@ -21,7 +21,8 @@
  */
 
 #include "tsodyks_connection_hom.h"
-#include "network.h"
+
+// Includes from nestkernel:
 #include "connector_model.h"
 
 namespace nest

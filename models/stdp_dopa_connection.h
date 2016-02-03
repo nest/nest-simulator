@@ -88,10 +88,15 @@
    SeeAlso: volume_transmitter
 */
 
-#include "connection.h"
-#include "volume_transmitter.h"
-#include "spikecounter.h"
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from models:
+#include "volume_transmitter.h"
+
+// Includes from nestkernel:
+#include "connection.h"
+#include "spikecounter.h"
 
 namespace nest
 {
@@ -192,7 +197,7 @@ public:
   void send( Event& e, thread t, double_t, const STDPDopaCommonProperties& cp );
 
   void trigger_update_weight( thread t,
-    const vector< spikecounter >& dopa_spikes,
+    const std::vector< spikecounter >& dopa_spikes,
     double_t t_trig,
     const STDPDopaCommonProperties& cp );
 
@@ -249,13 +254,13 @@ public:
 
 private:
   // update dopamine trace from last to current dopamine spike and increment index
-  void update_dopamine_( const vector< spikecounter >& dopa_spikes,
+  void update_dopamine_( const std::vector< spikecounter >& dopa_spikes,
     const STDPDopaCommonProperties& cp );
 
   void
   update_weight_( double_t c0, double_t n0, double_t minus_dt, const STDPDopaCommonProperties& cp );
 
-  void process_dopa_spikes_( const vector< spikecounter >& dopa_spikes,
+  void process_dopa_spikes_( const std::vector< spikecounter >& dopa_spikes,
     double_t t0,
     double_t t1,
     const STDPDopaCommonProperties& cp );
@@ -334,7 +339,7 @@ STDPDopaConnection< targetidentifierT >::set_status( const DictionaryDatum& d, C
 template < typename targetidentifierT >
 inline void
 STDPDopaConnection< targetidentifierT >::update_dopamine_(
-  const vector< spikecounter >& dopa_spikes,
+  const std::vector< spikecounter >& dopa_spikes,
   const STDPDopaCommonProperties& cp )
 {
   double_t minus_dt =
@@ -365,7 +370,7 @@ STDPDopaConnection< targetidentifierT >::update_weight_( double_t c0,
 template < typename targetidentifierT >
 inline void
 STDPDopaConnection< targetidentifierT >::process_dopa_spikes_(
-  const vector< spikecounter >& dopa_spikes,
+  const std::vector< spikecounter >& dopa_spikes,
   double_t t0,
   double_t t1,
   const STDPDopaCommonProperties& cp )
@@ -459,7 +464,7 @@ STDPDopaConnection< targetidentifierT >::send( Event& e,
   double_t t_spike = e.get_stamp().get_ms();
 
   // get history of dopamine spikes
-  const vector< spikecounter >& dopa_spikes = cp.vt_->deliver_spikes();
+  const std::vector< spikecounter >& dopa_spikes = cp.vt_->deliver_spikes();
 
   // get spike history in relevant range (t_last_update, t_spike] from post-synaptic neuron
   std::deque< histentry >::iterator start;
@@ -497,7 +502,7 @@ STDPDopaConnection< targetidentifierT >::send( Event& e,
 template < typename targetidentifierT >
 inline void
 STDPDopaConnection< targetidentifierT >::trigger_update_weight( thread t,
-  const vector< spikecounter >& dopa_spikes,
+  const std::vector< spikecounter >& dopa_spikes,
   const double_t t_trig,
   const STDPDopaCommonProperties& cp )
 {

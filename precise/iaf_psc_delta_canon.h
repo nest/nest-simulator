@@ -23,22 +23,22 @@
 #ifndef IAF_PSC_DELTA_CANON_H
 #define IAF_PSC_DELTA_CANON_H
 
+// Generated includes:
 #include "config.h"
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "slice_ring_buffer.h"
-#include "ring_buffer.h"
 #include "connection.h"
-
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
+
+// Includes from precise:
+#include "slice_ring_buffer.h"
 
 namespace nest
 {
-
-class Network;
-
 /* BeginDocumentation
    Name: iaf_psc_delta_canon - Leaky integrate-and-fire neuron model.
 

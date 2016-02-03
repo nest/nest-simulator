@@ -23,17 +23,21 @@
 /*
     SLI main
 */
+
+// Generated includes:
 #include "config.h"
-#include "interpret.h"
+
+// Includes from sli:
+#include "filesystem.h"
 #include "gnureadline.h"
-#include "slistartup.h"
-#include "sliarray.h"
+#include "integerdatum.h"
+#include "interpret.h"
 #include "oosupport.h"
 #include "processes.h"
+#include "sliarray.h"
 #include "sliregexp.h"
-#include "integerdatum.h"
+#include "slistartup.h"
 #include "tokenutils.h"
-#include "filesystem.h"
 
 int
 main( int argc, char* argv[] )

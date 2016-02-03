@@ -21,14 +21,19 @@
  */
 
 #include "correlospinmatrix_detector.h"
-#include "network.h"
+
+// C++ includes:
+#include <cmath>
+#include <functional>
+#include <numeric>
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "arraydatum.h"
-
-#include <numeric>
-#include <functional> // for bind2nd
-#include <cmath>      // for less
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -374,7 +379,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       }
       const double_t tau_edge = P_.tau_max_.get_steps() + P_.delta_tau_.get_steps();
 
-      const delay min_delay = Scheduler::get_min_delay();
+      const delay min_delay = kernel().connection_builder_manager.get_min_delay();
       while (
         !otherPulses.empty() && ( t_min_on - otherPulses.front().t_off_ ) >= tau_edge + min_delay )
         otherPulses.pop_front();

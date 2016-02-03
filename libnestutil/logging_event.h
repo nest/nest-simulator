@@ -1,5 +1,5 @@
 /*
- *  nest_timemodifier.cpp
+ *  logging_event.h
  *
  *  This file is part of NEST.
  *
@@ -20,18 +20,40 @@
  *
  */
 
-#include "nest_timemodifier.h"
-#include "time.h"
 
+#ifndef LOGGING_EVENT_H
+#define LOGGING_EVENT_H
 
-void
-nest::TimeModifier::set_time_representation( nest::double_t tics_per_ms, double_t ms_per_step )
+// C++ includes:
+#include <ostream>
+#include <string>
+
+// Includes from libnestutil:
+#include "logging.h"
+
+namespace nest
 {
-  nest::Time::set_resolution( tics_per_ms, ms_per_step ); // set TICS_PER_STEP
-}
 
-void
-nest::TimeModifier::reset_to_defaults()
+class LoggingEvent
 {
-  nest::Time::reset_to_defaults();
-}
+public:
+  LoggingEvent( const severity_t s,
+    const std::string& fctn,
+    const std::string& msg,
+    const std::string& file = "none",
+    const size_t line = 0 );
+
+  friend std::ostream& operator<<( std::ostream&, const LoggingEvent& );
+
+public:
+  const std::string& message;
+  const std::string& function;
+  const severity_t severity;
+  const time_t time_stamp;
+  const std::string& file_name;
+  const size_t line_number;
+};
+
+} // namespace nest
+
+#endif // ifndef LOGGING_EVENT_H

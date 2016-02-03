@@ -31,13 +31,18 @@
 #ifndef ARCHIVING_NODE_H
 #define ARCHIVING_NODE_H
 
-#include "nest.h"
-#include "node.h"
-#include "dictdatum.h"
-#include "nest_time.h"
-#include "histentry.h"
+// C++ includes:
 #include <deque>
+
+// Includes from nestkernel:
+#include "histentry.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
 #include "synaptic_element.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 #define DEBUG_ARCHIVER 1
 
@@ -65,8 +70,8 @@ public:
    * Copy Constructor.
    */
   Archiving_Node( const Archiving_Node& );
-
   /**
+
    * \fn double_t get_Ca_minus()
    * return the current value of Ca_minus
    */
@@ -113,7 +118,7 @@ public:
    * Delete a certain portion of the vacant synaptic elements which are not
    * in use
    */
-  void decay_synaptic_elements_vacant( double_t p );
+  void decay_synaptic_elements_vacant();
 
   /**
    * \fn void connect_synaptic_element()

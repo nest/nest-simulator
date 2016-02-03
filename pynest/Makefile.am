@@ -27,7 +27,8 @@ endif
 
 pkgpyexec_LTLIBRARIES = pynestkernel.la
 
-pynestkernel_la_SOURCES = pynestkernel.cpp ../nest/neststartup.cpp ../nest/neststartup.h
+pynestkernel_la_SOURCES = pynestkernel.cpp ../nest/neststartup.cpp ../nest/neststartup.h\
+	../nest/sli_neuron.h ../nest/sli_neuron.cpp
 
 pynestkernel_la_LDFLAGS = -shared -module -avoid-version -export-dynamic $(THREADING_FLAGS)
 

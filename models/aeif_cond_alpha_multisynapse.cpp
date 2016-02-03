@@ -20,17 +20,24 @@
  *
  */
 
-#include "exceptions.h"
 #include "aeif_cond_alpha_multisynapse.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -435,7 +442,7 @@ aeif_cond_alpha_multisynapse::calibrate()
 void
 aeif_cond_alpha_multisynapse::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -583,7 +590,7 @@ aeif_cond_alpha_multisynapse::update( Time const& origin, const long_t from, con
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        network()->send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     } // while
 
@@ -622,13 +629,13 @@ aeif_cond_alpha_multisynapse::handle( SpikeEvent& e )
   if ( e.get_weight() > 0.0 )
   {
     B_.spike_exc_[ e.get_rport() - 1 ].add_value(
-      e.get_rel_delivery_steps( network()->get_slice_origin() ),
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
     B_.spike_inh_[ e.get_rport() - 1 ].add_value(
-      e.get_rel_delivery_steps( network()->get_slice_origin() ),
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() ); // keep conductances positive
   }
 }
@@ -642,7 +649,8 @@ aeif_cond_alpha_multisynapse::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * I );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
 }
 
 void

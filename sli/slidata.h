@@ -25,7 +25,10 @@
 /*
     SLI's array access functions
 */
+
+// Includes from sli:
 #include "slifunction.h"
+
 /*
  Operators will be implemented as described in the PS Reference Manual
  for the types

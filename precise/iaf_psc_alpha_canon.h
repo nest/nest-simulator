@@ -23,18 +23,22 @@
 #ifndef IAF_PSC_ALPHA_CANON_H
 #define IAF_PSC_ALPHA_CANON_H
 
+// C++ includes:
+#include <vector>
+
+// Generated includes:
 #include "config.h"
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
-#include "slice_ring_buffer.h"
 #include "connection.h"
-
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-#include <vector>
+// Includes from precise:
+#include "slice_ring_buffer.h"
 
 /*BeginDocumentation
 Name: iaf_psc_alpha_canon - Leaky integrate-and-fire neuron
@@ -136,9 +140,6 @@ namespace nest
  */
 class iaf_psc_alpha_canon : public Archiving_Node
 {
-
-  class Network;
-
 public:
   /** Basic constructor.
       This constructor should only be used by GenericModel to create

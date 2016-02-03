@@ -26,12 +26,15 @@
     Reference Counted Array class specialized on Token objects.
 */
 
-#include <typeinfo>
-#include <cstddef>
-#include <vector>
+// C++ includes:
 #include <algorithm>
-#include "tarrayobj.h"
+#include <cstddef>
+#include <typeinfo>
+#include <vector>
+
+// Includes from sli:
 #include "sliexceptions.h"
+#include "tarrayobj.h"
 
 // class Tokenarray uses reference counting and lazy evaluation.
 // This means that only a pointer

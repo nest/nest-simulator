@@ -162,8 +162,8 @@ M_ERROR setverbosity
   
   /min_delay 0.81 def  % rounded to 0.8
   /max_delay 1.49 def  % rounded to 1.5
-  
-  /static_synapse << /min_delay min_delay /max_delay max_delay >> SetDefaults
+
+  0 << /min_delay min_delay /max_delay max_delay >> SetStatus
   
   /n /iaf_neuron Create def
   
@@ -181,7 +181,7 @@ M_ERROR setverbosity
   /min_delay 0.89 def  % rounded to 0.8
   /max_delay 1.41 def  % rounded to 1.5
   
-  /static_synapse << /min_delay min_delay /max_delay max_delay >> SetDefaults
+  0 << /min_delay min_delay /max_delay max_delay >> SetStatus
   
   /n /iaf_neuron Create def
   

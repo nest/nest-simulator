@@ -24,13 +24,34 @@
     SLI's control structures
 */
 
-#include "config.h"
+#include "slicontrol.h"
 
-#include <time.h>
-#include <sys/time.h> // required to fix header dependencies in OS X, HEP
-#include <sys/times.h>
+// C includes:
 #include <sys/resource.h>
+#include <sys/time.h>
+#include <sys/times.h>
+#include <time.h>
 #include <unistd.h>
+
+// Generated includes:
+#include "config.h"
+#include "sliconfig.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "booldatum.h"
+#include "dictstack.h"
+#include "doubledatum.h"
+#include "functiondatum.h"
+#include "integerdatum.h"
+#include "iostreamdatum.h"
+#include "namedatum.h"
+#include "parser.h"
+#include "processes.h"
+#include "scanner.h"
+#include "sliexceptions.h"
+#include "stringdatum.h"
+
 // sstream has functions std::?stringstream
 // strstream has functions std::?strstream
 // HEP 2002-10-06
@@ -39,23 +60,6 @@
 #else
 #include <strstream>
 #endif
-
-#include "sliconfig.h"
-#include "slicontrol.h"
-#include "namedatum.h"
-#include "booldatum.h"
-#include "arraydatum.h"
-#include "stringdatum.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "scanner.h"
-#include "parser.h"
-#include "iostreamdatum.h"
-#include "dictstack.h"
-#include "functiondatum.h"
-#include "processes.h"
-
-#include "sliexceptions.h"
 
 
 /*BeginDocumentation

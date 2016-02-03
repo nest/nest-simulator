@@ -20,16 +20,24 @@
  *
  */
 
-#include "exceptions.h"
 #include "parrot_neuron_ps.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
 
-#include <limits>
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 namespace nest
 {
@@ -51,7 +59,7 @@ void
 parrot_neuron_ps::update( Time const& origin, long_t const from, long_t const to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < Scheduler::get_min_delay() );
+  assert( static_cast< delay >( from ) < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
@@ -75,7 +83,7 @@ parrot_neuron_ps::update( Time const& origin, long_t const from, long_t const to
       SpikeEvent se;
       se.set_multiplicity( multiplicity );
       se.set_offset( ev_offset );
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
 
       for ( ulong_t i = 0; i < multiplicity; ++i )
       {
@@ -112,7 +120,8 @@ parrot_neuron_ps::handle( SpikeEvent& e )
     const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
 
     // parrot ignores weight of incoming connection, store multiplicity
-    B_.events_.add_spike( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.events_.add_spike(
+      e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ),
       Tdeliver,
       e.get_offset(),
       static_cast< double_t >( e.get_multiplicity() ) );

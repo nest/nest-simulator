@@ -23,18 +23,25 @@
 #ifndef BINARY_NEURON_IMPL_H
 #define BINARY_NEURON_IMPL_H
 
-#include "exceptions.h"
 #include "binary_neuron.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include "universal_data_logger_impl.h"
 
+// C++ includes:
 #include <limits>
 
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 namespace nest
 {
@@ -162,7 +169,7 @@ void
 binary_neuron< TGainfunction >::calibrate()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
-  V_.rng_ = net_->get_rng( get_thread() );
+  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 
   // draw next time of update for the neuron from exponential distribution
   // only if not yet initialized
@@ -179,7 +186,7 @@ template < class TGainfunction >
 void
 binary_neuron< TGainfunction >::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -206,7 +213,7 @@ binary_neuron< TGainfunction >::update( Time const& origin, const long_t from, c
         // use multiplicity 2 to signal transition to 1 state
         // use multiplicity 1 to signal transition to 0 state
         se.set_multiplicity( new_y ? 2 : 1 );
-        network()->send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
 
         // As multiplicity is used only to signal internal information
         // to other binary neurons, we only set spiketime once, independent
@@ -260,14 +267,16 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
       // received twice the same gid, so transition 0->1
       // take double weight to compensate for subtracting first event
       B_.spikes_.add_value(
-        e.get_rel_delivery_steps( network()->get_slice_origin() ), 2.0 * e.get_weight() );
+        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+        2.0 * e.get_weight() );
     }
     else
     {
       // count this event negatively, assuming it comes as single event
       // transition 1->0
       B_.spikes_.add_value(
-        e.get_rel_delivery_steps( network()->get_slice_origin() ), -e.get_weight() );
+        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+        -e.get_weight() );
     }
   }
   else // multiplicity != 1
@@ -275,7 +284,7 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
   {
     // count this event positively, transition 0->1
     B_.spikes_.add_value(
-      e.get_rel_delivery_steps( network()->get_slice_origin() ), e.get_weight() );
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() );
   }
 
   S_.last_in_gid_ = gid;
@@ -294,7 +303,8 @@ binary_neuron< TGainfunction >::handle( CurrentEvent& e )
   // we use the spike buffer to receive the binary events
   // but also to handle the incoming current events added
   // both contributions are directly added to the variable h
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 

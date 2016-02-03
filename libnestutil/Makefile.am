@@ -26,7 +26,12 @@ libnestutil_la_SOURCES= \
 		hashtable-common.h \
 		sparsetable.h \
 		compose.hpp \
-		string_utils.h
+		manager_interface.h \
+		string_utils.h \
+		logging.h \
+		logging_manager.h logging_manager.cpp \
+		logging_event.h logging_event.cpp
+
 
 
 common_cppflags= -I$(top_srcdir)/librandom \

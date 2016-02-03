@@ -86,14 +86,26 @@ protected:
    plasticity is enabled, allows the dynamic rewiring of the network during the
    simulation.
    This type of growth curve uses an exact integration method to update the
-   number of synaptic elements: dz/dt = nu (1 - (1/epsilon) * Ca(t)),
-   where nu is the growth rate and epsilon is the desired average calcium
-   concentration.
+   number of synaptic elements: dz/dt = nu (1 - (1/eps) * Ca(t)),
+   where nu is the growth rate [elements/ms] and eps is the desired average calcium
+   concentration [Ca2+]. The growth rate nu is defined in the SynapticElement class.
 
   Parameters:
-   eps          double -  The target calcium concentration (firing rate) that
+   eps          double -  The target calcium concentration [Ca2+] that
                           the neuron should look to achieve by creating or deleting
-                          synaptic elements.
+                          synaptic elements. It should always be a positive value.
+                          It is important to note that the calcium concentration
+                          is linearly proportional to the firing rate. This is
+                          because dCa/dt = - Ca(t)/tau_Ca + beta_Ca if the neuron
+                          fires and dCa/dt = - Ca(t)/tau_Ca otherwise, where tau_Ca
+                          is the calcium concentration decay constant and beta_Ca
+                          is the calcium intake constant (see SynapticElement class).
+                          This means that eps also defines
+                          the desired firing rate that the neuron should
+                          achieve.
+                          For example, an eps = 0.05 [Ca2+] with tau_Ca = 10000.0
+                          and beta_Ca = 0.001 for a synaptic element means a desired
+                          firing rate of 5Hz.
 
   References:
    [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
@@ -142,12 +154,13 @@ private:
    simulation.
    This type of growth curve  uses a forward Euler integration method to update
    the number of synaptic elements:
-   dz/dt = nu (2 * e^(- ((Ca(t) - xi)/zeta)^2 ) - 1)
-   where xi = (eta  + epsilon)/2,
-   zeta = (epsilon - eta)/2 * sqrt(ln(2))),
+   dz/dt = nu (2 * e^(- ((Ca(t) - xi)/z)^2 ) - 1)
+   where xi = (eta  + eps)/2,
+   zeta = (eps - eta)/2 * sqrt(ln(2))),
    eta is the minimum calcium concentration required for any synaptic element
-   to be created, epsilon is the target mean calcium concentration in the
-   neuron and nu is the growth rate.
+   to be created, eps is the target mean calcium concentration [Ca2+] in the
+   neuron and nu is the growth rate in elements/ms. The growth rate nu is
+   defined in the SynapticElement class.
 
   Parameters:
    eta          double -  Minimum amount of calcium concentration [Ca2+] that the

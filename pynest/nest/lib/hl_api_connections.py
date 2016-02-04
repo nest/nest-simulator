@@ -85,13 +85,13 @@ def FindConnections(source, target=None, synapse_model=None, synapse_type=None):
 def GetConnections(source=None, target=None, synapse_model=None, synapse_label=None):
     """
     Return an array of connection identifiers.
-    
+
     Parameters:
     source - list of source GIDs
     target - list of target GIDs
     synapse_model - string with the synapse model
     synapse_label - non negative integer with synapse label
-    
+
     If GetConnections is called without parameters, all connections
     in the network are returned.
 
@@ -103,7 +103,7 @@ def GetConnections(source=None, target=None, synapse_model=None, synapse_label=N
 
     If a synapse model is given, only connections with this synapse
     type are returned.
-    
+
     If a synapse label is given, only connections with this synapse
     label are returned.
 
@@ -113,7 +113,7 @@ def GetConnections(source=None, target=None, synapse_model=None, synapse_label=N
     Each connection id is a 5-tuple or, if available, a NumPy
     array with the following five entries:
     source-gid, target-gid, target-thread, synapse-id, port
-    
+
     Note: Only connections with targets on the MPI process executing
           the command are returned.
     """
@@ -220,7 +220,7 @@ def ConvergentConnect(pre, post, weight=None, delay=None, model="static_synapse"
         delay = broadcast(delay, len(pre), (float,), "delay")
         if len(delay) != len(pre):
             raise kernel.NESTError("delay must be a float, or sequence of floats of length 1 or len(pre)")
-        
+
         for d in post:
             sps(pre)
             sps(d)
@@ -261,7 +261,7 @@ def RandomConvergentConnect(pre, post, n, weight=None, delay=None, model="static
         sli_func(
             '/m Set /n Set /pre Set { pre exch n m RandomConvergentConnect } forall',
             post, pre, n, '/'+model, litconv=True)
-    
+
     elif weight is not None and delay is not None:
         weight = broadcast(weight, n, (float,), "weight")
         if len(weight) != n:
@@ -273,7 +273,7 @@ def RandomConvergentConnect(pre, post, n, weight=None, delay=None, model="static
         sli_func(
             '/m Set /d Set /w Set /n Set /pre Set { pre exch n w d m RandomConvergentConnect } forall',
             post, pre, n, weight, delay, '/'+model, litconv=True)
-    
+
     else:
         error = True
 
@@ -316,7 +316,7 @@ def DivergentConnect(pre, post, weight=None, delay=None, model="static_synapse")
             sps(weight)
             sps(delay)
             sr(cmd)
-    
+
     else:
         raise kernel.NESTError("Both 'weight' and 'delay' have to be given.")
 
@@ -335,17 +335,17 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     specified nodes.
 
     pre - presynaptic nodes, given as list of GIDs
-    post - presynaptic nodes, given as list of GIDs
+    post - postsynaptic nodes, given as list of GIDs
     conn_spec - string, or dictionary specifying connectivity rule, see below
     syn_spec - string, or dictionary specifying synapse model, see below
 
     Connectivity specification (conn_spec):
-    
+
     Connectivity is specified either as a string containing the name of a
     connectivity rule (default: 'all_to_all') or as a dictionary specifying
     the rule and any mandatory rule-specific parameters (e.g. 'indegree').
-    In addition, switches setting permission for establishing self-connections 
-    ('autapses', default: True) and multiple connections between a pair of nodes 
+    In addition, switches setting permission for establishing self-connections
+    ('autapses', default: True) and multiple connections between a pair of nodes
     ('multapses', default: True) can be contained in the dictionary.
 
     Available rules and their associated parameters are:
@@ -364,24 +364,24 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     Synapse specification (syn_spec):
 
     The synapse model and its properties can be given either as a string identifying
-    a specific synapse model (default: 'static_synapse') or as a dictionary 
-    specifying the synapse model and its parameters. 
-    
+    a specific synapse model (default: 'static_synapse') or as a dictionary
+    specifying the synapse model and its parameters.
+
     Available keys in the synapse specification dictionary are 'model', 'weight',
     'delay', 'receptor_type' and any parameters specific to the selected synapse model.
-    All parameters are optional and if not specified, the default values of the synapse 
+    All parameters are optional and if not specified, the default values of the synapse
     model will be used. The key 'model' identifies the synapse model, this can be one
     of NEST's built-in synapse models or a user-defined model created via CopyModel().
     If 'model' is not specified the default model 'static_synapse' will be used.
 
-    All other parameters can be scalars, arrays or distributions. 
+    All other parameters can be scalars, arrays or distributions.
     In the case of scalar parameters, all keys must be doubles except for 'receptor_type' which must be
-    initialised with an integer. 
+    initialised with an integer.
     Parameter arrays are only available for the rules 'one_to_one' and 'all_to_all'. For 'one_to_one' the
     array has to be a one-dimensional NumPy array with length len(pre). For 'all_to_all' the array has
-    to be a two-dimensional NumPy array with shape (len(post), len(pre)), therefore the rows describe the 
+    to be a two-dimensional NumPy array with shape (len(post), len(pre)), therefore the rows describe the
     target and the columns the source neurons.
-    Any distributed parameter must be initialised with a further dictionary specifying the distribution 
+    Any distributed parameter must be initialised with a further dictionary specifying the distribution
     type ('distribution', e.g. 'normal') and any distribution-specific parameters (e.g. 'mu' and 'sigma').
 
     Available distributions are given in the rdevdict, the most common ones (and their
@@ -394,11 +394,11 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     - 'uniform' with 'low', 'high'
     - 'uniform_int' with 'low', 'high'
 
-    To see all available distributions, run: 
+    To see all available distributions, run:
     nest.slirun(’rdevdict info’)
-    To get information on a particular distribution, e.g. 'binomial', run: 
+    To get information on a particular distribution, e.g. 'binomial', run:
     nest.help(’rdevdict::binomial’)
-    
+
     Example choices for the syn_spec are:
     - 'stdp_synapse'
     - {'weight': 2.4, 'receptor_type': 1}
@@ -408,7 +408,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
        'alpha': {'distribution': 'normal_clipped', 'low': 0.5, 'mu': 5.0, 'sigma': 1.0}
       }
 
-    Note: model is alias for syn_spec for backward compatibility.  
+    Note: model is alias for syn_spec for backward compatibility.
     """
 
     if model is not None:
@@ -416,7 +416,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                                     "Connect function and will be removed in a future version of NEST. Please change the name ",
                                     "of the keyword argument from 'model' to 'syn_spec'. For details, see the ",
                                     "documentation at:\nhttp://www.nest-simulator.org/connection_management"])
-        show_deprecation_warning("BackwardCompatibilityConnect", 
+        show_deprecation_warning("BackwardCompatibilityConnect",
                                  text=deprecation_text)
 
     if model is not None and syn_spec is not None:
@@ -425,7 +425,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     sps(pre)
     sps(post)
 
-    # default rule 
+    # default rule
     rule = 'all_to_all'
 
     if conn_spec is not None:
@@ -434,7 +434,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
             rule = conn_spec
             sr("cvlit")
         elif isinstance(conn_spec, dict):
-            rule = conn_spec['rule']          
+            rule = conn_spec['rule']
         else:
             raise kernel.NESTError("conn_spec needs to be a string or dictionary.")
     else:
@@ -620,7 +620,7 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
         if len(pre) > 1 or len(post) > 1:
             raise kernel.NESTError("the length of pre and post has to be 1 if subnets are given")
         sli_func('CGConnect', cg, pre[0], post[0], parameter_map, '/'+model, litconv=True)
-        
+
     else:
         sli_func('CGConnect', cg, pre, post, parameter_map, '/'+model, litconv=True)
 
@@ -655,12 +655,12 @@ def CGSelectImplementation(tag, library):
     sps(library)
     sr("CGSelectImplementation")
 
-@check_stack 
+@check_stack
 def DisconnectOneToOne(source, target, syn_spec):
     """
     Disconnect a currently existing synapse
     """
-    
+
     sps(source)
     sps(target)
     if syn_spec is not None:
@@ -688,13 +688,13 @@ def Disconnect(pre, post, conn_spec, syn_spec):
     syn_spec - name or dictionary specifying synapses, see below
 
     Disconnection specs:
-    
+
     Apply the same rules as for connectivity specs in the connection method
 
     Available rules and the associated parameters are:
      - 'one_to_one'
      - 'all_to_all'
-     
+
     Possible choices of the conn_spec are:
     - 'one_to_one'
     - 'all_to_all'
@@ -730,5 +730,5 @@ def Disconnect(pre, post, conn_spec, syn_spec):
         sps(syn_spec)
         if is_string(syn_spec):
             sr("cvlit")
-    
+
     sr('Disconnect_g_g_D_D')

@@ -96,9 +96,8 @@ tau_syn    double - Rise time of the excitatory synaptic alpha function in ms.
 I_e        double - Constant external input current in pA.
 
 Remarks:
-If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-will numerically behave as if tau_m is equal to tau_syn_ex or
-tau_syn_in, respectively, to avoid numerical instabilities.
+If tau_m is very close to tau_syn, the model will numerically behave as if
+tau_m is equal to tau_syn to avoid numerical instabilities.
 For details, please see IAF_Neruons_Singularity.ipynb in
 the NEST source code (docs/model_details).
 

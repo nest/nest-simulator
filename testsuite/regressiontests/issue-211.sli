@@ -46,8 +46,8 @@ ResetKernel
 /n1 /iaf_psc_delta Create def
 /n2 /iaf_psc_delta Create def
 /n3 /iaf_psc_delta Create def
-/n4 /spike_detector Create def
-/n5 /spike_generator Create def
+/d4 /spike_detector Create def
+/g5 /spike_generator Create def
 
 % neuron-neuron
 [n1 n2] [n3 n3] /one_to_one Connect
@@ -55,19 +55,19 @@ ResetKernel
 n2 n1 << /weight 1. >> Connect
 
 % neuron-device
-[n1 n1] [n4 n3] /one_to_one Connect
-[n2 n3] [n4] Connect
-n2 n4 << /weight 1. >> Connect
+[n1 n1] [d4 n3] /one_to_one Connect
+[n2 n3] [d4] Connect
+n2 d4 << /weight 1. >> Connect
 
 % device-neuron
-[n5 n5] [n2 n3] /one_to_one Connect
-[n5 n5] [n1] Connect
-n5 n3 << /weight 1. >> Connect
+[g5 g5] [n2 n3] /one_to_one Connect
+[g5 g5] [n1] Connect
+g5 n3 << /weight 1. >> Connect
 
-% device-device, n5n5 should be ignored
-[n5 n5] [n4 n5] /one_to_one Connect
-[n5 n5] [n4] Connect
-n5 n4 << /weight 1. >> Connect
+% device-device; but g5g5 should be ignored
+[g5 g5] [d4 g5] /one_to_one Connect
+[g5 g5] [d4] Connect
+g5 d4 << /weight 1. >> Connect
 
 /conn << >> GetConnections def
 

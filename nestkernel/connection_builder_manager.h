@@ -170,64 +170,12 @@ public:
    */
   bool connect( ArrayDatum& connectome );
 
-  void divergent_connect( index s,
-    const TokenArray& r,
-    const TokenArray& weights,
-    const TokenArray& delays,
-    index syn );
   /**
    * Connect one source node with many targets.
    * The dictionary d contains arrays for all the connections of type syn.
+   * AKA DataConnect
    */
-
   void divergent_connect( index s, DictionaryDatum d, index syn );
-
-  void random_divergent_connect( index s,
-    const TokenArray& r,
-    index n,
-    const TokenArray& w,
-    const TokenArray& d,
-    bool,
-    bool,
-    index syn );
-
-  void convergent_connect( const TokenArray& s,
-    index r,
-    const TokenArray& weights,
-    const TokenArray& delays,
-    index syn );
-
-  /**
-   * Specialized version of convegent_connect
-   * called by random_convergent_connect threaded
-   */
-  void convergent_connect( const std::vector< index >& s_id,
-    index r,
-    const TokenArray& weight,
-    const TokenArray& delays,
-    index syn );
-
-  void random_convergent_connect( const TokenArray& s,
-    index t,
-    index n,
-    const TokenArray& w,
-    const TokenArray& d,
-    bool,
-    bool,
-    index syn );
-
-  /**
-   * Use openmp threaded parallelization to speed up connection.
-   * Parallelize over target list.
-   */
-  void random_convergent_connect( TokenArray& s,
-    TokenArray& t,
-    TokenArray& n,
-    TokenArray& w,
-    TokenArray& d,
-    bool,
-    bool,
-    index syn );
 
   // aka conndatum GetStatus
   DictionaryDatum get_synapse_status( index gid, synindex syn, port p, thread tid );

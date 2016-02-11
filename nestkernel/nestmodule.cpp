@@ -928,200 +928,6 @@ NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
 }
 
 /* BeginDocumentation
-   Name: DivergentConnect - Connect node to a population of nodes.
-
-   Synopsis:
-   source [targets]                              DivergentConnect -> -
-   source [targets]                    /synmodel DivergentConnect -> -
-   source [targets] [weights] [delays]           DivergentConnect -> -
-   source [targets] [weights] [delays] /synmodel DivergentConnect -> -
-
-   Parameters:
-   source    - GID of source node
-   [targets] - array of (global IDs of) potential target nodes
-   [weights] - weights for the connections. List of the same size as targets or 1.
-   [delays]  - delays for the connections. List of the same size as targets or 1.
-   /synmodel - The synapse model for the connection (see Options below)
-
-   Options:
-   If not given, the synapse model is taken from the Options dictionary
-   of the Connect command.
-
-   Description:
-   Connect a neuron with a set of target neurons.
-
-   Author:
-   Marc-Oliver Gewaltig
-   modified Ruediger Kupper, 20.3.2003
-   modified Jochen Eppler, 04.11.2005
-   SeeAlso: RandomDivergentConnect, ConvergentConnect
-*/
-
-void
-NestModule::DivergentConnect_i_ia_a_a_lFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 5 );
-
-  long source_adr = getValue< long >( i->OStack.pick( 4 ) );
-  TokenArray target_adr = getValue< TokenArray >( i->OStack.pick( 3 ) );
-
-  TokenArray weights = getValue< TokenArray >( i->OStack.pick( 2 ) );
-  TokenArray delays = getValue< TokenArray >( i->OStack.pick( 1 ) );
-
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  kernel().connection_builder_manager.divergent_connect(
-    source_adr, target_adr, weights, delays, synmodel_id );
-
-  i->OStack.pop( 5 );
-  i->EStack.pop();
-}
-
-// Documentation can be found in lib/sli/nest-init.sli near definition
-// of the trie for RandomConvergentConnect.
-void
-NestModule::RDivergentConnect_i_i_ia_da_da_b_b_lFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 8 );
-
-  long source_adr = getValue< long >( i->OStack.pick( 7 ) );
-  size_t n = getValue< long >( i->OStack.pick( 6 ) );
-  TokenArray target_adr = getValue< TokenArray >( i->OStack.pick( 5 ) );
-  TokenArray weights = getValue< TokenArray >( i->OStack.pick( 4 ) );
-  TokenArray delays = getValue< TokenArray >( i->OStack.pick( 3 ) );
-  bool allow_multapses = getValue< bool >( i->OStack.pick( 2 ) );
-  bool allow_autapses = getValue< bool >( i->OStack.pick( 1 ) );
-
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  kernel().connection_builder_manager.random_divergent_connect(
-    source_adr, target_adr, n, weights, delays, allow_multapses, allow_autapses, synmodel_id );
-
-  i->OStack.pop( 8 );
-  i->EStack.pop();
-}
-
-
-/* BeginDocumentation
-   Name: ConvergentConnect - Connect population of nodes to a single node.
-
-   Synopsis:
-   [sources] target                    /synmodel ConvergentConnect -> -
-   [sources] target                    /synmodel ConvergentConnect -> -
-   [sources] target [weights] [delays] /synmodel ConvergentConnect -> -
-
-   Parameters:
-   [source]  - GID of source nodes
-   target    - array of (global IDs of) potential target nodes
-   [weights] - weights for the connections. List of the same size as sources or 1.
-   [delays]  - delays for the connections. List of the same size as sources or 1.
-   /synmodel - The synapse model for the connection (see Options below)
-
-   Options:
-   If not given, the synapse model is taken from the Options dictionary
-   of the Connect command.
-
-   Description:
-   Connect a set of source neurons to a single neuron.
-
-   Author:
-   Ruediger Kupper, via copy-paste-and-modify from Oliver's DivergentConnect.
-   Modified Ruediger Kupper, 20.03.2003
-   Modified Jochen Martin Eppler, 03.03.2009
-   SeeAlso: RandomConvergentConnect, DivergentConnect
-*/
-
-void
-NestModule::ConvergentConnect_ia_i_a_a_lFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 5 );
-
-  TokenArray source_adr = getValue< TokenArray >( i->OStack.pick( 4 ) );
-  long target_adr = getValue< long >( i->OStack.pick( 3 ) );
-
-  TokenArray weights = getValue< TokenArray >( i->OStack.pick( 2 ) );
-  TokenArray delays = getValue< TokenArray >( i->OStack.pick( 1 ) );
-
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  kernel().connection_builder_manager.convergent_connect(
-    source_adr, target_adr, weights, delays, synmodel_id );
-
-  i->OStack.pop( 5 );
-  i->EStack.pop();
-}
-
-
-// Documentation can be found in lib/sli/nest-init.sli near definition
-// of the trie for RandomConvergentConnect.
-void
-NestModule::RConvergentConnect_ia_i_i_da_da_b_b_lFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 8 );
-
-  TokenArray source_adr = getValue< TokenArray >( i->OStack.pick( 7 ) );
-  long target_adr = getValue< long >( i->OStack.pick( 6 ) );
-  size_t n = getValue< long >( i->OStack.pick( 5 ) );
-  TokenArray weights = getValue< TokenArray >( i->OStack.pick( 4 ) );
-  TokenArray delays = getValue< TokenArray >( i->OStack.pick( 3 ) );
-  bool allow_multapses = getValue< bool >( i->OStack.pick( 2 ) );
-  bool allow_autapses = getValue< bool >( i->OStack.pick( 1 ) );
-
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  kernel().connection_builder_manager.random_convergent_connect(
-    source_adr, target_adr, n, weights, delays, allow_multapses, allow_autapses, synmodel_id );
-
-  i->OStack.pop( 8 );
-  i->EStack.pop();
-}
-
-// Documentation can be found in lib/sli/nest-init.sli near definition
-// of the trie for RandomConvergentConnect.
-void
-NestModule::RConvergentConnect_ia_ia_ia_daa_daa_b_b_lFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 8 );
-
-  TokenArray source_adr = getValue< TokenArray >( i->OStack.pick( 7 ) );
-  TokenArray target_adr = getValue< TokenArray >( i->OStack.pick( 6 ) );
-  TokenArray n = getValue< TokenArray >( i->OStack.pick( 5 ) );
-  TokenArray weights = getValue< TokenArray >( i->OStack.pick( 4 ) );
-  TokenArray delays = getValue< TokenArray >( i->OStack.pick( 3 ) );
-  bool allow_multapses = getValue< bool >( i->OStack.pick( 2 ) );
-  bool allow_autapses = getValue< bool >( i->OStack.pick( 1 ) );
-
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  kernel().connection_builder_manager.random_convergent_connect(
-    source_adr, target_adr, n, weights, delays, allow_multapses, allow_autapses, synmodel_id );
-
-  i->OStack.pop( 8 );
-  i->EStack.pop();
-}
-
-
-/* BeginDocumentation
    Name: MemoryInfo - Report current memory usage.
    Description:
    MemoryInfo reports the current utilization of the memory manager for all models,
@@ -1599,7 +1405,7 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
    gid  - global id of the node
    Description:
    This function is helpful in the implementation of parallelized wiring
-   routines that create idential random structures independent of the
+   routines that create identical random structures independent of the
    number of machines and threads participating in the simulation. The
    function is used in SLI libraries, e.g. in the implementation of
    RandomConvergentConnect. There is probably no need to directly use
@@ -1608,7 +1414,7 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
    In NEST each node (e.g. neuron) is assigned to a virtual process and
    each virtual process maintains its own random number generator. In a
    simulation run the virtual processes are equally distributed over the
-   participating machines and threads as speciefied by the user. In NEST
+   participating machines and threads as specified by the user. In NEST
    2.0 virtual processes are identified with threads.  Thus, with the
    option /total_num_virtual_procs of [0] set to n, there are in total
    always n threads (virtual processes) independent of the number of
@@ -1912,16 +1718,6 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "DataConnect_i_D_s", &dataconnect_i_D_sfunction );
   i->createcommand( "DataConnect_a", &dataconnect_afunction );
-
-  i->createcommand( "DivergentConnect_i_ia_a_a_l", &divergentconnect_i_ia_a_a_lfunction );
-  i->createcommand(
-    "RandomDivergentConnect_i_i_ia_da_da_b_b_l", &rdivergentconnect_i_i_ia_da_da_b_b_lfunction );
-
-  i->createcommand( "ConvergentConnect_ia_i_a_a_l", &convergentconnect_ia_i_a_a_lfunction );
-  i->createcommand(
-    "RandomConvergentConnect_ia_i_i_da_da_b_b_l", &rconvergentconnect_ia_i_i_da_da_b_b_lfunction );
-  i->createcommand( "RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l",
-    &rconvergentconnect_ia_ia_ia_daa_daa_b_b_lfunction );
 
   i->createcommand( "ResetNetwork", &resetnetworkfunction );
   i->createcommand( "ResetKernel", &resetkernelfunction );

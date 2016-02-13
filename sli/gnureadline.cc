@@ -21,9 +21,13 @@
  */
 
 #include "gnureadline.h"
-#include <cstdio>
-#include "stringdatum.h"
+
+// C++ includes:
 #include <algorithm>
+#include <cstdio>
+
+// Includes from sli:
+#include "stringdatum.h"
 
 #ifdef HAVE_READLINE
 

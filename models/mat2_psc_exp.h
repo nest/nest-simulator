@@ -24,19 +24,17 @@
 #ifndef MAT2_PSC_EXP_H
 #define MAT2_PSC_EXP_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
-#include "universal_data_logger.h"
+#include "event.h"
+#include "nest_types.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
 namespace nest
 {
-
-class Network;
-
 /* BeginDocumentation
    Name: mat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model with
    exponential PSCs and adaptive threshold.

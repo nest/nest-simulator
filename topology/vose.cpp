@@ -20,9 +20,11 @@
  *
  */
 
+#include "vose.h"
+
+// C++ includes:
 #include <algorithm>
 #include <cassert>
-#include "vose.h"
 
 namespace nest
 {

@@ -23,190 +23,88 @@
 #ifndef NEST_H
 #define NEST_H
 
-#include <cstddef>
-#include <climits>
-#include <cfloat>
-#include <limits>
-#include "config.h"
+// C++ includes:
+#include <ostream>
 
-/**
- * @mainpage NEST: Neural Simulation Tool
- *
- * The main resource on information about NEST is the homepage of the
- * NEST simulator at http://www.nest-simulator.org
- * <p>
- *
- * @see Diesmann, Markus and Gewaltig, Marc-Oliver (2002) NEST: An
- * Environment for Neural Systems Simulations Goettingen : Ges. fuer
- * Wiss. Datenverarbeitung, Forschung und wisschenschaftliches
- * Rechnen, Beitraege zum Heinz-Billing-Preis 2001. 58 : 43--70
- *
- * @see Morrison, Abigail and Mehring, Carsten and Geisel, Theo and
- * Aertsen, Ad and Diesmann, Markus (2005) Advancing the boundaries of
- * high connectivity network simulation with distributed computing
- * Neural Computation. 17 (8) : 1776--1801
- *
- * @see Eppler, Jochen, Diploma Thesis, University of Freiburg (2006),
- * http://mindzoo.de/files/DiplomaThesis-Eppler.pdf
- *
- * @see Eppler, Jochen and Helias, Moritz and Muller, Eilif and
- * Diesmann, Markus and Gewaltig, Marc-Oliver (2008) PyNEST: A
- * convenient interface to the NEST simulator.  Front. Neuroinform. 2
- * : 12. doi:10.3389/neuro.11.012.2008
- *
- * (C) Copyright 1995-2006 The NEST Initiative.
- */
+// Includes from libnestutil:
+#include "logging.h"
 
+// Includes from librandom:
+#include "randomgen.h"
 
-/**
- * Namespace for the NEST simulation kernel.
- */
+// Includes from nestkernel:
+#include "nest_datums.h"
+#include "nest_time.h"
+#include "nest_types.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dictdatum.h"
 
 namespace nest
 {
 
-/**
- * \file nest.h
- * Default types used by the NEST kernel.
- * These typedefs should be used
- * in place of the primitive C/C++ types.
- * Thus, it will be easy to change
- * the precision of the kernel or to adapt the kernel to
- * different architectures (e.g. 32 or 64 bit).
- */
+void init_nest( int* argc, char** argv[] );
+void fail_exit( int exitcode );
 
-/**
- * Type for Time tics.
- */
+void install_module( const std::string& module_name );
 
-#ifdef HAVE_LONG_LONG
-typedef long long tic_t;
-#ifdef IS_K
-const tic_t tic_t_max = LLONG_MAX;
-const tic_t tic_t_min = LLONG_MIN;
-#else
-const tic_t tic_t_max = LONG_LONG_MAX;
-const tic_t tic_t_min = LONG_LONG_MIN;
-#endif
-#else
-typedef long tic_t;
-const tic_t tic_t_max = LONG_MAX;
-const tic_t tic_t_min = LONG_MIN;
-#endif
+void reset_kernel();
+void reset_network();
 
-using std::size_t;
+void enable_dryrun_mode( const index n_procs );
 
-typedef double double_t;       ///< Double precision floating point numbers.
-typedef float float_t;         ///< Single precision floating point numbers.
-typedef int int_t;             ///< Integer number with at least 16 bit.
-typedef long long_t;           ///< Integer number with at least 32 bit.
-typedef unsigned int uint_t;   ///< Unsigned int_t.
-typedef unsigned long ulong_t; ///< Unsigned long_t.
+void register_logger_client( const deliver_logging_event_ptr client_callback );
+void print_network( index gid, index depth, std::ostream& out = std::cout );
 
-const long_t long_t_max = LONG_MAX;
-const long_t long_t_min = LONG_MIN;
+librandom::RngPtr get_vp_rng_of_gid( index target );
+librandom::RngPtr get_vp_rng( thread tid );
+librandom::RngPtr get_global_rng();
 
-#define double_t_max ( DBL_MAX ) // because C++ language designers are apes
-#define double_t_min ( DBL_MIN ) // (only integral consts are compile time)
+void set_kernel_status( const DictionaryDatum& dict );
+DictionaryDatum get_kernel_status();
 
-/**
- *  Unsigned long type for enumerations.
- */
-typedef size_t index;
-const index invalid_index = std::numeric_limits< index >::max();
+void set_node_status( const index node_id, const DictionaryDatum& dict );
+DictionaryDatum get_node_status( const index node_id );
 
-/**
- *  Unsigned char type for enumerations of synapse types.
- */
-typedef unsigned char synindex;
-const synindex invalid_synindex = std::numeric_limits< synindex >::max();
+void set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict );
+DictionaryDatum get_connection_status( const ConnectionDatum& conn );
 
-/**
- * Unsigned short type for compact target representation.
- *
- * See Kunkel et al, Front Neuroinform 8:78 (2014).
- */
-typedef unsigned short targetindex; ///< target index into thread local node vector
-const targetindex invalid_targetindex = std::numeric_limits< targetindex >::max();
-const index max_targetindex = invalid_targetindex - 1;
+index create( const Name& model_name, const index n );
 
-/**
- * Thread index type.
- * NEST threads are assigned non-negative numbers for
- * identification.
- * For invalid or undefined threads, the value -1 is used.
- */
-typedef int_t thread;
+void connect( const GIDCollection& sources,
+  const GIDCollection& targets,
+  const DictionaryDatum& connectivity,
+  const DictionaryDatum& synapse_params );
 
-/**
- * Value for invalid connection port number.
- */
-const thread invalid_thread_ = -1;
+ArrayDatum get_connections( const DictionaryDatum& dict );
 
-/**
- * Connection port number to distinguish incoming connections,
- * also called receiver port.
- * Connections between Nodes are assigned port numbers.
- * Valid port numbers start at zero (0).
- * The value -1 is used for invalid or unassigned ports.
- */
-typedef long_t rport;
+void simulate( const double_t& t );
+void resume_simulation();
 
-/**
- * Connection port number to distinguis outgoing connections.
- * Connections between Nodes are assigned port numbers.
- * Valid port numbers start at zero (0).
- * The value -1 is used for invalid or unassigned ports.
- */
-typedef long_t port;
+void copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict );
 
-/**
- * Value for invalid connection port number.
- */
-const rport invalid_port_ = -1;
+void set_model_defaults( const Name& model_name, const DictionaryDatum& );
+DictionaryDatum get_model_defaults( const Name& model_name );
 
-/**
- * Weight of a connection.
- * Connections have a weight which is used to scale the influence
- * of an event.
- * A weight of 0 should have the same influence on the receiving node
- * as a non-existing connection. Otherwise, there is no default range for
- * connection weights.
- */
-typedef double_t weight;
+void set_num_rec_processes( const index n_rec_procs );
 
-/**
- * Delay of a connection.
- * The delay defines the number of simulation steps which elapse
- * before an Event arrives at the receiving Node.
- * Delays must be equal or larger than one.
- */
-typedef long_t delay;
-const long_t delay_max = long_t_max;
-const long_t delay_min = long_t_min;
+void change_subnet( const index node_gid );
+index current_subnet();
 
+ArrayDatum get_nodes( const index subnet_id,
+  const DictionaryDatum& params,
+  const bool include_remotes,
+  const bool return_gids_only );
 
-/**
- * enum type of signal conveyed by spike events of a node.
- * These types are used upon connect to check if spikes sent by one
- * neuron are intepreted the same way by receiving neuron.
- *
- * Each possible signal that may be represented (currently SPIKE and BINARY)
- * is interpreted as a separate bit flag. This way, upon connection, we determine
- * by a bitwise AND operation if sender and receiver are compatible.
- * The check takes place in connection::check_connection().
- *
- * A device, such as the spike-generator or spike_detector,
- * that can in a meaningful way be connected to either neuron model
- * can use the wildcard ALL, that will match any connection partner.
- */
-enum SignalType
-{
-  NONE = 0,
-  SPIKE = 1,
-  BINARY = 2,
-  ALL = SPIKE | BINARY
-};
+ArrayDatum
+get_leaves( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
+
+ArrayDatum
+get_children( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
+
+void restore_nodes( const ArrayDatum& node_list );
 }
 
-#endif
+
+#endif /* NEST_H */

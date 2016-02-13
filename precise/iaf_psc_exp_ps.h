@@ -23,18 +23,23 @@
 #ifndef IAF_PSC_EXP_PS_H
 #define IAF_PSC_EXP_PS_H
 
+// C++ includes:
+#include <vector>
+
+// Generated includes:
 #include "config.h"
 
-#include "nest.h"
-#include "event.h"
-#include "node.h"
-#include "ring_buffer.h"
-#include "slice_ring_buffer.h"
+// Includes from nestkernel:
+#include "archiving_node.h"
 #include "connection.h"
-#include "universal_data_logger.h"
+#include "event.h"
+#include "nest_types.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
-#include <vector>
+// Includes from precise:
+#include "slice_ring_buffer.h"
 
 /*BeginDocumentation
 Name: iaf_psc_exp_ps - Leaky integrate-and-fire neuron
@@ -118,11 +123,8 @@ namespace nest
  * from this one.
  * @todo Implement current input in consistent way.
  */
-class iaf_psc_exp_ps : public Node
+class iaf_psc_exp_ps : public Archiving_Node
 {
-
-  class Network;
-
 public:
   /** Basic constructor.
       This constructor should only be used by GenericModel to create
@@ -197,8 +199,6 @@ private:
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_exp_ps >;
   friend class UniversalDataLogger< iaf_psc_exp_ps >;
-
-  void set_spiketime( Time const& );
 
   /**
    * Propagate neuron state.
@@ -423,6 +423,9 @@ iaf_psc_exp_ps::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
+  Archiving_Node::get_status( d );
+
+  ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
@@ -432,6 +435,12 @@ iaf_psc_exp_ps::set_status( const DictionaryDatum& d )
   const double delta_EL = ptmp.set( d ); // throws if BadProperty
   State_ stmp = S_;                      // temporary copy in case of errors
   stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+
+  // We now know that (ptmp, stmp) are consistent. We do not
+  // write them back to (P_, S_) before we are also sure that
+  // the properties to be set in the parent class are internally
+  // consistent.
+  Archiving_Node::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

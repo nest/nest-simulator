@@ -26,13 +26,15 @@
     SLI's parser.
 */
 
-#include <typeinfo>
+// C++ includes:
 #include <iostream>
+#include <typeinfo>
+
+// Includes from sli:
+#include "scanner.h"
 #include "token.h"
 #include "tokenstack.h"
 
-
-class Scanner;
 
 class Parser
 {

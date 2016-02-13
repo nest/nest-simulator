@@ -20,18 +20,25 @@
  *
  */
 
-#include "exceptions.h"
 #include "iaf_psc_alpha.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
-#include "universal_data_logger_impl.h"
 #include "propagator_stability.h"
 
-#include <limits>
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_;
 
@@ -280,7 +287,7 @@ iaf_psc_alpha::calibrate()
 void
 iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -326,7 +333,7 @@ iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current
@@ -345,9 +352,11 @@ iaf_psc_alpha::handle( SpikeEvent& e )
   const double_t s = e.get_weight() * e.get_multiplicity();
 
   if ( e.get_weight() > 0.0 )
-    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), s );
+    B_.ex_spikes_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
   else
-    B_.in_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), s );
+    B_.in_spikes_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
 }
 
 void
@@ -358,7 +367,8 @@ iaf_psc_alpha::handle( CurrentEvent& e )
   const double_t I = e.get_current();
   const double_t w = e.get_weight();
 
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * I );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
 }
 
 void

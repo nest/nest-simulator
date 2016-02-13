@@ -23,17 +23,19 @@
 #ifndef IAF_PSC_ALPHA_PRESC_H
 #define IAF_PSC_ALPHA_PRESC_H
 
+// C++ includes:
+#include <vector>
+
+// Generated includes:
 #include "config.h"
 
-#include "nest.h"
-#include "event.h"
-#include "node.h"
-#include "ring_buffer.h"
+// Includes from nestkernel:
+#include "archiving_node.h"
 #include "connection.h"
-
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
-
-#include <vector>
 
 /*BeginDocumentation
   Name: iaf_psc_alpha_presc - Leaky integrate-and-fire neuron
@@ -112,11 +114,8 @@ namespace nest
  * from this one.
  * @todo Implement current input in consistent way.
  */
-class iaf_psc_alpha_presc : public Node
+class iaf_psc_alpha_presc : public Archiving_Node
 {
-
-  class Network;
-
 public:
   /** Basic constructor.
       This constructor should only be used by GenericModel to create
@@ -191,9 +190,6 @@ private:
   void update( Time const& origin, const long_t from, const long_t to );
 
   //@}
-
-  Time get_spiketime() const;
-  void set_spiketime( Time const& );
 
   /**
    * Compute membrane potential after return from refractoriness.
@@ -427,6 +423,8 @@ iaf_psc_alpha_presc::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
+  Archiving_Node::get_status( d );
+
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -437,6 +435,12 @@ iaf_psc_alpha_presc::set_status( const DictionaryDatum& d )
   const double delta_EL = ptmp.set( d ); // throws if BadProperty
   State_ stmp = S_;                      // temporary copy in case of errors
   stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+
+  // We now know that (ptmp, stmp) are consistent. We do not
+  // write them back to (P_, S_) before we are also sure that
+  // the properties to be set in the parent class are internally
+  // consistent.
+  Archiving_Node::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

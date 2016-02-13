@@ -58,7 +58,7 @@
  *   poisson_dev_(0.0),
  *  ...
  * {
- *   calibrate(network()->get_resolution());
+ *   calibrate(Time::get_resolution());
  * }
  * void nest::poisson_generator::calibrate(Time const & dt)
  * {
@@ -68,7 +68,7 @@
  * void nest::poisson_generator::update(thread thrd, Time const & T)
  * {
  *   ...
- *   librandom::RngPtr rng=Node::network()->get_rng(thrd);
+ *   librandom::RngPtr rng=kernel().rng_manager.get_rng(thrd);
  *   ...
  *     long_t n_spikes = poisson_dev_.ldev(rng);
  *   ...
@@ -82,7 +82,7 @@
  * If one wanted just uniformly distributed numbers in [0, 1), one could
  * obtain them with
  * @code
- *   librandom::RngPtr rng=Node::network()->get_rng(thrd);
+ *   librandom::RngPtr rng=Network::get_network().get_rng(thrd);
  *   double r = rng();
  * @endcode
  *
@@ -191,9 +191,11 @@
  *         small simulations anyway) (WS, 01.05.15; see #947).
  */
 
-#include <vector>
+// C++ includes:
 #include <cmath>
+#include <vector>
 
+// Includes from libnestutil:
 #include "lockptr.h"
 
 /**

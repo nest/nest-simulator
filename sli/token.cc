@@ -20,18 +20,22 @@
  *
  */
 
-#include <algorithm>
 #include "token.h"
+
+// C++ includes:
+#include <algorithm>
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "booldatum.h"
 #include "datum.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 #include "name.h"
+#include "namedatum.h"
+#include "stringdatum.h"
 #include "tokenarray.h"
 #include "tokenutils.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "namedatum.h"
-#include "booldatum.h"
-#include "stringdatum.h"
-#include "arraydatum.h"
 
 
 /***********************************************************/

@@ -22,12 +22,18 @@
 
 #ifndef TYPEDFUNCTIONDATUM_H
 #define TYPEDFUNCTIONDATUM_H
+
+// C++ includes:
 #include <typeinfo>
-#include "slifunction.h"
-#include "interpret.h"
-#include "typechk.h"
+
+// Includes from libnestutil:
 #include "allocator.h"
+
+// Includes from sli:
 #include "datum.h"
+#include "interpret.h"
+#include "slifunction.h"
+#include "typechk.h"
 
 class TrieDatum : public TypedDatum< &SLIInterpreter::Trietype >
 {

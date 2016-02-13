@@ -23,20 +23,21 @@
 #ifndef PP_POP_PSC_DELTA_H
 #define PP_POP_PSC_DELTA_H
 
-#include "nest.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
+// Includes from librandom:
 #include "binomial_randomdev.h"
+
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 
 namespace nest
 {
 
-
-class Network;
 
 /* BeginDocumentation
    Name: pp_pop_psc_delta - Population of point process neurons with leaky integration of
@@ -149,7 +150,7 @@ class Network;
  */
 
 
-class pp_pop_psc_delta : public Archiving_Node
+class pp_pop_psc_delta : public Node
 {
 
 public:
@@ -375,7 +376,6 @@ pp_pop_psc_delta::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -386,12 +386,6 @@ pp_pop_psc_delta::set_status( const DictionaryDatum& d )
   ptmp.set( d );         // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
   stmp.set( d, ptmp );   // throws if BadProperty
-
-  // We now know that (ptmp, stmp) are consistent. We do not
-  // write them back to (P_, S_) before we are also sure that
-  // the properties to be set in the parent class are internally
-  // consistent.
-  Archiving_Node::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

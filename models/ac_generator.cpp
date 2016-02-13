@@ -20,16 +20,23 @@
  *
  */
 
+#include "ac_generator.h"
+
+// C++ includes:
 #include <cmath>
 
-#include "ac_generator.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+// Includes from libnestutil:
 #include "numerics.h"
 
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -126,7 +133,7 @@ nest::ac_generator::calibrate()
   device_.calibrate();
 
   const double_t h = Time::get_resolution().get_ms();
-  const double_t t = network()->get_time().get_ms();
+  const double_t t = kernel().simulation_manager.get_time().get_ms();
 
   // scale Hz to ms
   const double_t omega = 2.0 * numerics::pi * P_.freq_ / 1000.0;
@@ -156,6 +163,6 @@ nest::ac_generator::update( Time const& origin, const long_t from, const long_t 
       S_.y_0_ = V_.A_00_ * y_0 + V_.A_01_ * S_.y_1_;
       S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
       ce.set_current( S_.y_1_ + P_.offset_ );
-      network()->send( *this, ce, lag );
+      kernel().event_delivery_manager.send( *this, ce, lag );
     }
 }

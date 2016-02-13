@@ -22,12 +22,19 @@
 
 #ifndef MODEL_H
 #define MODEL_H
-#include <string>
 
+// C++ includes:
 #include <new>
+#include <string>
 #include <vector>
-#include "node.h"
+
+// Includes from libnestutil:
 #include "allocator.h"
+
+// Includes from nestkernel:
+#include "node.h"
+
+// Includes from sli:
 #include "dictutils.h"
 
 namespace nest
@@ -147,7 +154,7 @@ public:
 
   virtual port send_test_event( Node&, rport, synindex, bool ) = 0;
 
-  virtual void sends_secondary_event( GapJEvent& ge ) = 0;
+  virtual void sends_secondary_event( GapJunctionEvent& ge ) = 0;
 
   /**
    * Check what type of signal this model is sending.

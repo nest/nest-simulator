@@ -23,13 +23,14 @@
 #ifndef IAF_PSC_ALPHA_H
 #define IAF_PSC_ALPHA_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
-#include "universal_data_logger.h"
+#include "event.h"
+#include "nest_types.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
 /* BeginDocumentation
 Name: iaf_psc_alpha - Leaky integrate-and-fire neuron model.
@@ -125,8 +126,6 @@ SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 
 namespace nest
 {
-class Network;
-
 /**
  * Leaky integrate-and-fire neuron with alpha-shaped PSCs.
  */

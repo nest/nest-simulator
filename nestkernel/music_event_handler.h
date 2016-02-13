@@ -23,20 +23,22 @@
 #ifndef MUSIC_EVENT_HANDLER
 #define MUSIC_EVENT_HANDLER
 
+// Generated includes:
 #include "config.h"
 
 #ifdef HAVE_MUSIC
 
+// C++ includes:
 #include <music.hh>
-#include "nest.h"
+#include <queue>
+
+// Includes from nestkernel:
+#include "nest_types.h"
 #include "node.h"
 
-#include <queue>
 
 namespace nest
 {
-
-class Network;
 
 /**
  * Event handler for all events of a MUSIC port received on this process.
@@ -45,10 +47,7 @@ class MusicEventHandler : public MUSIC::EventHandlerGlobalIndex
 {
 public:
   MusicEventHandler();
-  MusicEventHandler( std::string portname,
-    double acceptable_latency,
-    int max_buffered,
-    Network* net );
+  MusicEventHandler( std::string portname, double acceptable_latency, int max_buffered );
 
   virtual ~MusicEventHandler();
 
@@ -86,7 +85,6 @@ private:
   std::vector< MUSIC::GlobalIndex > indexmap_; //!< Maps local index to global MUSIC index (channel)
   double acceptable_latency_;                  //!< The acceptable latency of the port in ms
   int max_buffered_;
-  Network* net_; //!< Pointer to global network driver.
 
   /**
    * Buffers incoming spike events until they are due. The vector has

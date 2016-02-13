@@ -23,9 +23,9 @@
 #ifndef MYMODULE_H
 #define MYMODULE_H
 
-#include "slimodule.h"
+// Includes from sli:
 #include "slifunction.h"
-
+#include "slimodule.h"
 
 // Put your stuff into your own namespace.
 namespace mynest
@@ -52,7 +52,7 @@ public:
   ~MyModule();
 
   /**
-   * Initialize module by registering models with the network.
+   * Initialize module.
    * @param SLIInterpreter* SLI interpreter
    */
   void init( SLIInterpreter* );

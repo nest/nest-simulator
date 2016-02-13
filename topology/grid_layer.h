@@ -23,6 +23,7 @@
 #ifndef GRID_LAYER_H
 #define GRID_LAYER_H
 
+// Includes from topology:
 #include "layer.h"
 
 namespace nest
@@ -354,7 +355,7 @@ GridLayer< D >::insert_global_positions_( Ins iter, const Selector& filter )
   {
 
     if ( filter.select_model()
-      && ( ( int ) this->net_->get_model_id_of_gid( *gi ) != filter.model ) )
+      && ( ( int ) kernel().modelrange_manager.get_model_id( *gi ) != filter.model ) )
       continue;
 
     *iter++ = std::pair< Position< D >, index >( lid_to_position( i ), *gi );
@@ -450,7 +451,7 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
 
   if ( ( not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) )
     or ( filter_.select_model()
-         && ( layer_.net_->get_model_id_of_gid( layer_.gids_[ depth_ * layer_size_ ] )
+         && ( kernel().modelrange_manager.get_model_id( layer_.gids_[ depth_ * layer_size_ ] )
               != index( filter_.model ) ) ) )
     ++( *this );
 }
@@ -479,7 +480,7 @@ typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::opera
     else
     {
       if ( filter_.select_model()
-        && ( layer_.net_->get_model_id_of_gid( layer_.gids_[ depth_ * layer_size_ ] )
+        && ( kernel().modelrange_manager.get_model_id( layer_.gids_[ depth_ * layer_size_ ] )
              != index( filter_.model ) ) )
         return operator++();
       else
@@ -502,7 +503,7 @@ typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::opera
   } while ( not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) );
 
   if ( filter_.select_model()
-    && ( layer_.net_->get_model_id_of_gid( layer_.gids_[ depth_ * layer_size_ ] )
+    && ( kernel().modelrange_manager.get_model_id( layer_.gids_[ depth_ * layer_size_ ] )
          != index( filter_.model ) ) )
     return operator++();
 

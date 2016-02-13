@@ -23,18 +23,17 @@
 #ifndef IAF_PSC_EXP_MULTISYNAPSE_H
 #define IAF_PSC_EXP_MULTISYNAPSE_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
-#include "universal_data_logger.h"
+#include "event.h"
+#include "nest_types.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
 namespace nest
 {
-class Network;
-
 /* BeginDocumentation
 Name: iaf_psc_exp_multisynapse - Leaky integrate-and-fire neuron model with multiple ports.
 

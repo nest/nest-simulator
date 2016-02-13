@@ -21,11 +21,16 @@
  */
 
 #include "step_current_generator.h"
-#include "network.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
 #include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
 #include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -159,7 +164,7 @@ nest::step_current_generator::update( Time const& origin, const long_t from, con
     {
       CurrentEvent ce;
       ce.set_current( B_.amp_ );
-      network()->send( *this, ce, offs );
+      kernel().event_delivery_manager.send( *this, ce, offs );
     }
   }
 }

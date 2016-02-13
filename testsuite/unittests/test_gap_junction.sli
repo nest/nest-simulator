@@ -57,19 +57,30 @@ ResetKernel
   neuron_gap neuron_gap << /weight 2.0 >> /gap_junction Connect
 } pass_or_die
 
-%Gap junctions have no delay - therefore it is not allowed to set the /delay
+% Gap junctions have no delay - therefore it is not allowed to set the /delay
 {
   neuron_gap neuron_gap << /delay 2.0 >> /gap_junction Connect
 } fail_or_die
 
+% The delay of gap junction connections should not influence the min_delay and max_delay
+0 /max_delay get /old_max Set
+0 /min_delay get /old_min Set
+
+neuron_gap neuron_gap 4.0 4.0 /gap_junction Connect
+
+0 /max_delay get /new_max Set
+0 /min_delay get /new_min Set
+
+{ old_min new_min eq old_max new_max eq and }assert_or_die
+
 % Check if illegal gap-junction connections can be created
 {
-  neuron_no_gap neuron_no_gap << /delay 2.0 >> /gap_junction Connect
+  neuron_no_gap neuron_no_gap << /weight 2.0 >> /gap_junction Connect
 } fail_or_die
 
 % Check if illegal gap-junction connections can be created
 {
-  neuron_no_gap neuron_gap << /delay 2.0 >> /gap_junction Connect
+  neuron_no_gap neuron_gap << /weight 2.0 >> /gap_junction Connect
 } fail_or_die
 
 endusing

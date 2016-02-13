@@ -58,8 +58,11 @@
 
 */
 
-#include "randomgen.h"
+// C++ includes:
 #include <vector>
+
+// Includes from librandom:
+#include "randomgen.h"
 
 namespace librandom
 {

@@ -31,9 +31,10 @@
  *  @note Presently included in network.h and connection.h
  */
 
-#include "node.h"
 #include "event.h"
-#include "scheduler.h"
+
+// Includes from nestkernel:
+#include "node.h"
 
 namespace nest
 {
@@ -50,17 +51,6 @@ Event::Event()
   , offset_( 0.0 )
   , w_( 0.0 )
 {
-}
-
-
-delay
-Event::get_max_delay() const
-{
-  // This is dead stupid, but I was not able to
-  // formulate a forward declaration of the static
-  // function Scheduler::get_max_delay() :-(
-  // mog
-  return Scheduler::get_max_delay();
 }
 
 
@@ -116,11 +106,11 @@ void DataLoggingReply::operator()()
   receiver_->handle( *this );
 }
 
-void GapJEvent::operator()()
+void GapJunctionEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-std::vector< synindex > GapJEvent::supported_syn_ids_;
-size_t GapJEvent::coeff_length_ = 0;
+std::vector< synindex > GapJunctionEvent::supported_syn_ids_;
+size_t GapJunctionEvent::coeff_length_ = 0;
 }

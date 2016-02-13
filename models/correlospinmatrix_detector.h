@@ -24,10 +24,13 @@
 #define CORRELOSPINMATRIX_DETECTOR_H
 
 
-#include <vector>
+// C++ includes:
 #include <deque>
-#include "nest.h"
+#include <vector>
+
+// Includes from nestkernel:
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "pseudo_recording_device.h"
 
@@ -119,9 +122,6 @@
 
 namespace nest
 {
-
-class Network;
-
 /**
  * Correlospinmatrixdetector class.
  *

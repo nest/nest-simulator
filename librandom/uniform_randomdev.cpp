@@ -21,10 +21,13 @@
  */
 
 #include "uniform_randomdev.h"
+
+// C++ includes:
+#include <cmath>
+
+// Includes from sli:
 #include "dictutils.h"
 #include "sliexceptions.h"
-
-#include <cmath>
 
 // by default, init with interval [0, 1)
 librandom::UniformRandomDev::UniformRandomDev( RngPtr r_source )

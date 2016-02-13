@@ -73,9 +73,11 @@
   SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_canon
 */
 
-
-#include "connection.h"
+// C++ includes:
 #include <cmath>
+
+// Includes from nestkernel:
+#include "connection.h"
 
 namespace nest
 {

@@ -70,16 +70,15 @@ FirstVersion: May 2006
 #ifndef PARROT_NEURON_H
 #define PARROT_NEURON_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 
 namespace nest
 {
-class Network;
-
 class parrot_neuron : public Archiving_Node
 {
 

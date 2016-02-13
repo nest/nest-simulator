@@ -47,13 +47,12 @@
 
   ResetKernel
 
-  0 << /resolution h >> SetStatus
-
-  /static_synapse
-  <<                                % settings not required but respected:
-      /min_delay h                  % smallest delay expected by user 
-      /max_delay bigdelay 2 mul	    % biggest delay expected by user
-  >> SetDefaults
+  0 <<
+    /resolution h
+                               % settings not required but respected:
+    /min_delay h               % smallest delay expected by user 
+    /max_delay bigdelay 2 mul  % biggest delay expected by user
+  >> SetStatus
 
   /iaf_neuron Create /neuron1 Set
   neuron1 << /I_e 1450.0 >> SetStatus

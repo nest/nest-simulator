@@ -23,6 +23,7 @@
 #ifndef CONNECTION_ID_H
 #define CONNECTION_ID_H
 
+// Includes from sli:
 #include "arraydatum.h"
 #include "dictutils.h"
 

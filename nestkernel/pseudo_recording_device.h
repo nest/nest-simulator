@@ -23,14 +23,20 @@
 #ifndef PSEUDO_RECORDING_DEVICE_H
 #define PSEUDO_RECORDING_DEVICE_H
 
-#include "nest.h"
+// C++ includes:
+#include <fstream>
+#include <vector>
+
+// Includes from libnestutil:
+#include "lockptr.h"
+
+// Includes from nestkernel:
+#include "device.h"
+#include "nest_types.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "dictutils.h"
-#include "lockptr.h"
-#include "device.h"
-
-#include <vector>
-#include <fstream>
 
 namespace nest
 {

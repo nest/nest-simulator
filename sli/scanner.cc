@@ -23,15 +23,20 @@
 /*
     scanner.cc
 */
+
 #include "scanner.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "namedatum.h"
-#include "symboldatum.h"
-#include "stringdatum.h"
+
+// C++ includes:
 #include <cmath>
-#include <sstream>
 #include <limits>
+#include <sstream>
+
+// Includes from sli:
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "namedatum.h"
+#include "stringdatum.h"
+#include "symboldatum.h"
 
 /*************************************************************************/
 /** Scanner   (implemented as a DFA)                                     */

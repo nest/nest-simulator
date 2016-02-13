@@ -148,10 +148,6 @@ sli::pool::reserve_additional( size_t n )
 // --- Code below is for the PoorMan's Allocator
 #ifdef USE_PMA
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 void
 PoorMansAllocator::init( size_t chunk_size )
 {

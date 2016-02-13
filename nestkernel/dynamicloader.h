@@ -23,16 +23,19 @@
 #ifndef DYNAMICLOADER_H
 #define DYNAMICLOADER_H
 
+// Generated includes:
 #include "config.h"
 
 // DynamicLoaderModule defined only if libltdl is available
 
 #ifdef HAVE_LIBLTDL
 
-#include "slimodule.h"
-#include "slifunction.h"
-
+// C++ includes:
 #include <vector>
+
+// Includes from sli:
+#include "slifunction.h"
+#include "slimodule.h"
 
 namespace nest
 {
@@ -44,8 +47,6 @@ typedef std::vector< sDynModule > vecDynModules;
 
 typedef std::vector< SLIModule* > vecLinkedModules;
 
-class Network;
-
 
 /**
  * SLI interface of the Ddynamic module loader.
@@ -56,7 +57,7 @@ class Network;
 class DynamicLoaderModule : public SLIModule
 {
 public:
-  DynamicLoaderModule( Network* pNet, SLIInterpreter& interpreter );
+  DynamicLoaderModule( SLIInterpreter& interpreter );
   ~DynamicLoaderModule();
 
   void init( SLIInterpreter* );
@@ -81,13 +82,12 @@ public:
   class LoadModuleFunction : public SLIFunction
   {
   public:
-    LoadModuleFunction( Network* pNet, vecDynModules& dyn_modules );
+    LoadModuleFunction( vecDynModules& dyn_modules );
 
   private:
     void execute( SLIInterpreter* ) const;
 
   private:
-    Network* pNet_;
     vecDynModules& dyn_modules_;
   };
 
@@ -107,7 +107,6 @@ private:
   // vector to store handles and pointers to dynamic modules
   vecDynModules dyn_modules;
 
-  Network* pNet_;
   static Dictionary* moduledict_; //!< Dictionary for dynamically loaded modules.
 };
 

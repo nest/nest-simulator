@@ -22,14 +22,20 @@
 
 #include "connection_manager.h"
 #include "connector_base.h"
+#include "connection_label.h"
 #include "network.h"
 #include "nest_time.h"
 #include "nest_datums.h"
+#include "conn_builder.h"
 #include <algorithm>
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+// !!!!!!Depricated!!!!!!
+// Do not use anymore! Will be removed!
+#error Do not use connection_manager.cpp in any place in your nest code!
 
 namespace nest
 {
@@ -339,6 +345,8 @@ ConnectionManager::get_connections( DictionaryDatum params ) const
   const Token& syn_model_t = params->lookup( names::synapse_model );
   const TokenArray* source_a = 0;
   const TokenArray* target_a = 0;
+  long_t synapse_label = UNLABELED_CONNECTION;
+  updateValue< long_t >( params, names::synapse_label, synapse_label );
 
   if ( not source_t.empty() )
     source_a = dynamic_cast< TokenArray const* >( source_t.datum() );
@@ -364,14 +372,14 @@ ConnectionManager::get_connections( DictionaryDatum params ) const
       syn_id = static_cast< size_t >( synmodel );
     else
       throw UnknownModelName( synmodel_name.toString() );
-    get_connections( connectome, source_a, target_a, syn_id );
+    get_connections( connectome, source_a, target_a, syn_id, synapse_label );
   }
   else
   {
     for ( syn_id = 0; syn_id < prototypes_[ 0 ].size(); ++syn_id )
     {
       ArrayDatum conn;
-      get_connections( conn, source_a, target_a, syn_id );
+      get_connections( conn, source_a, target_a, syn_id, synapse_label );
       if ( conn.size() > 0 )
         connectome.push_back( new ArrayDatum( conn ) );
     }
@@ -384,7 +392,8 @@ void
 ConnectionManager::get_connections( ArrayDatum& connectome,
   TokenArray const* source,
   TokenArray const* target,
-  size_t syn_id ) const
+  size_t syn_id,
+  long_t synapse_label ) const
 {
   size_t num_connections = 0;
 
@@ -421,7 +430,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
       {
         if ( connections_[ t ].get( source_id ) != 0 )
           validate_pointer( connections_[ t ].get( source_id ) )
-            ->get_connections( source_id, t, syn_id, conns_in_thread );
+            ->get_connections( source_id, t, syn_id, synapse_label, conns_in_thread );
       }
       if ( conns_in_thread.size() > 0 )
       {
@@ -465,7 +474,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
           {
             size_t target_id = target->get( t_id );
             validate_pointer( connections_[ t ].get( source_id ) )
-              ->get_connections( source_id, target_id, t, syn_id, conns_in_thread );
+              ->get_connections( source_id, target_id, t, syn_id, synapse_label, conns_in_thread );
           }
         }
       }
@@ -511,7 +520,7 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
           if ( target == 0 )
           {
             validate_pointer( connections_[ t ].get( source_id ) )
-              ->get_connections( source_id, t, syn_id, conns_in_thread );
+              ->get_connections( source_id, t, syn_id, synapse_label, conns_in_thread );
           }
           else
           {
@@ -519,7 +528,8 @@ ConnectionManager::get_connections( ArrayDatum& connectome,
             {
               size_t target_id = target->get( t_id );
               validate_pointer( connections_[ t ].get( source_id ) )
-                ->get_connections( source_id, target_id, t, syn_id, conns_in_thread );
+                ->get_connections(
+                  source_id, target_id, t, syn_id, synapse_label, conns_in_thread );
             }
           }
         }
@@ -549,8 +559,9 @@ ConnectionManager::validate_source_entry( thread tid, index s_gid, synindex syn_
   // check, if entry exists
   // if not put in zero pointer
   if ( connections_[ tid ].test( s_gid ) )
-    return connections_[ tid ].get(
-      s_gid ); // returns non-const reference to stored type, here ConnectorBase*
+  {
+    return connections_[ tid ].get( s_gid );
+  }
   else
     return 0; // if non-existing
 }
@@ -612,6 +623,34 @@ ConnectionManager::connect( Node& s,
   ConnectorBase* conn = validate_source_entry( tid, s_gid, syn );
   ConnectorBase* c = prototypes_[ tid ][ syn ]->add_connection( s, r, conn, syn, p, d, w );
   connections_[ tid ].set( s_gid, c );
+}
+
+/**
+ * Works in a similar way to connect, same logic but removes a connection.
+ * @param target target node
+ * @param sgid id of the source
+ * @param target_thread thread of the target
+ * @param syn_id type of synapse
+ */
+void
+ConnectionManager::disconnect( Node& target, index sgid, thread target_thread, index syn_id )
+{
+
+  if ( net_.is_local_gid( target.get_gid() ) )
+  {
+    // get the ConnectorBase corresponding to the source
+    ConnectorBase* conn = validate_pointer( validate_source_entry( target_thread, sgid, syn_id ) );
+    ConnectorBase* c = prototypes_[ target_thread ][ syn_id ]->delete_connection(
+      target, target_thread, conn, syn_id );
+    if ( c == 0 )
+    {
+      connections_[ target_thread ].erase( sgid );
+    }
+    else
+    {
+      connections_[ target_thread ].set( sgid, c );
+    }
+  }
 }
 
 /**

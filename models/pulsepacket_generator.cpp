@@ -21,15 +21,26 @@
  */
 
 #include "pulsepacket_generator.h"
-#include "network.h"
+
+// C++ includes:
+#include <algorithm>
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from librandom:
+#include "gslrandomgen.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
 #include "dict.h"
+#include "dictutils.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
-#include "dictutils.h"
-#include "exceptions.h"
-#include "numerics.h"
-#include "gslrandomgen.h"
-#include <algorithm>
 
 
 /* ----------------------------------------------------------------
@@ -134,7 +145,7 @@ nest::pulsepacket_generator::calibrate()
   else
     V_.tolerance = 1.0;
 
-  const double_t now = ( net_->get_time() ).get_ms();
+  const double_t now = ( kernel().simulation_manager.get_time() ).get_ms();
 
   V_.start_center_idx_ = 0;
   V_.stop_center_idx_ = 0;
@@ -156,7 +167,7 @@ void
 nest::pulsepacket_generator::update( Time const& T, const long_t from, const long_t to )
 {
   assert( to >= from );
-  assert( ( to - from ) <= Scheduler::get_min_delay() );
+  assert( ( to - from ) <= kernel().connection_builder_manager.get_min_delay() );
 
   if ( ( V_.start_center_idx_ == P_.pulse_times_.size() && B_.spiketimes_.empty() )
     || ( !device_.is_active( T ) ) )
@@ -176,7 +187,7 @@ nest::pulsepacket_generator::update( Time const& T, const long_t from, const lon
   if ( V_.start_center_idx_ < V_.stop_center_idx_ )
   {
     // obtain rng
-    librandom::RngPtr rng = net_->get_rng( get_thread() );
+    librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
 
     bool needtosort = false;
 
@@ -210,7 +221,7 @@ nest::pulsepacket_generator::update( Time const& T, const long_t from, const lon
     {
       SpikeEvent se;
       se.set_multiplicity( n_spikes );
-      network()->send( *this, se, prev_spike - T.get_steps() );
+      kernel().event_delivery_manager.send( *this, se, prev_spike - T.get_steps() );
       n_spikes = 0;
     }
   }

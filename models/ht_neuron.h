@@ -23,21 +23,29 @@
 #ifndef HT_NEURON_H
 #define HT_NEURON_H
 
-#include "archiving_node.h"
-#include <vector>
-#include <string>
-#include "stringdatum.h"
+// Generated includes:
+#include "config.h"
 
 #ifdef HAVE_GSL_1_11
 
-#include "ring_buffer.h"
-#include "connection.h"
-#include "universal_data_logger.h"
-#include "recordables_map.h"
+// C++ includes:
+#include <string>
+#include <vector>
 
+// C includes:
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
+
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
+
+// Includes from sli:
+#include "stringdatum.h"
 
 /* BeginDocumentation
    Name: ht_neuron - Neuron model after Hill & Tononi (2005).

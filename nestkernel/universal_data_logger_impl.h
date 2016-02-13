@@ -20,9 +20,15 @@
  *
  */
 
+#ifndef UNIVERSAL_DATA_LOGGER_IMPL_H
+#define UNIVERSAL_DATA_LOGGER_IMPL_H
+
 #include "universal_data_logger.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
 #include "nest_time.h"
-#include "network.h"
 #include "node.h"
 
 
@@ -84,7 +90,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
 
   // Next recording step is in current slice or beyond, indicates that
   // buffer is properly initialized.
-  if ( next_rec_step_ >= Node::network()->get_slice_origin().get_steps() )
+  if ( next_rec_step_ >= kernel().simulation_manager.get_slice_origin().get_steps() )
     return;
 
   // If we get here, the buffer has either never been initialized or has
@@ -100,11 +106,13 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
   // left of update intervals, and we want time stamps at right end of
   // update interval to be multiples of recording interval
   next_rec_step_ =
-    ( Node::network()->get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
+    ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_
+    - 1;
 
   // number of data points per slice
-  const long_t recs_per_slice = static_cast< long_t >(
-    std::ceil( Node::network()->get_min_delay() / static_cast< double >( rec_int_steps_ ) ) );
+  const long_t recs_per_slice =
+    static_cast< long_t >( std::ceil( kernel().connection_builder_manager.get_min_delay()
+      / static_cast< double >( rec_int_steps_ ) ) );
 
   data_.resize(
     2, DataLoggingReply::Container( recs_per_slice, DataLoggingReply::Item( num_vars_ ) ) );
@@ -120,7 +128,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode&
   if ( num_vars_ < 1 || step < next_rec_step_ )
     return;
 
-  const size_t wt = Node::network()->write_toggle();
+  const size_t wt = kernel().event_delivery_manager.write_toggle();
 
   assert( wt < next_rec_.size() );
   assert( wt < data_.size() );
@@ -167,14 +175,14 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host,
   assert( data_.size() == 2 );
 
   // get read toggle and start and end of slice
-  const size_t rt = Node::network()->read_toggle();
+  const size_t rt = kernel().event_delivery_manager.read_toggle();
   assert( not data_[ rt ].empty() );
 
   // Check if we have valid data, i.e., data with time stamps within the
   // past time slice. This may not be the case if the node has been frozen.
   // In that case, we still reset the recording marker, to prepare for the next
   // round.
-  if ( data_[ rt ][ 0 ].timestamp <= Node::network()->get_previous_slice_origin() )
+  if ( data_[ rt ][ 0 ].timestamp <= kernel().simulation_manager.get_previous_slice_origin() )
   {
     next_rec_[ rt ] = 0;
     return;
@@ -200,5 +208,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host,
   reply.set_port( request.get_port() );
 
   // send it off
-  host.network()->send_to_node( reply );
+  kernel().event_delivery_manager.send_to_node( reply );
 }
+
+#endif // #ifndef UNIVERSAL_DATA_LOGGER_IMPL_H

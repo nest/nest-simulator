@@ -20,18 +20,23 @@
  *
  */
 
-#include "exceptions.h"
 #include "volume_transmitter.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "arraydatum.h"
+
+// C++ includes:
+#include <numeric>
+
+// Includes from nestkernel:
 #include "connector_base.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "spikecounter.h"
 
-#include <numeric>
+// Includes from sli:
+#include "arraydatum.h"
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters
@@ -92,7 +97,8 @@ void
 nest::volume_transmitter::calibrate()
 {
   // +1 as pseudo dopa spike at t_trig is inserted after trigger_update_weight
-  B_.spikecounter_.reserve( Scheduler::get_min_delay() * P_.deliver_interval_ + 1 );
+  B_.spikecounter_.reserve(
+    kernel().connection_builder_manager.get_min_delay() * P_.deliver_interval_ + 1 );
 }
 
 void
@@ -106,20 +112,23 @@ nest::volume_transmitter::update( const Time&, const long_t from, const long_t t
     multiplicity = B_.neuromodulatory_spikes_.get_value( lag );
     if ( multiplicity > 0 )
     {
-      t_spike = Time( Time::step( network()->get_slice_origin().get_steps() + lag + 1 ) ).get_ms();
+      t_spike = Time( Time::step( kernel().simulation_manager.get_slice_origin().get_steps() + lag
+                        + 1 ) ).get_ms();
       B_.spikecounter_.push_back( spikecounter( t_spike, multiplicity ) );
     }
   }
 
   // all spikes stored in spikecounter_ are delivered to the target synapses
-  if ( ( network()->get_slice_origin().get_steps() + to )
-      % ( P_.deliver_interval_ * Scheduler::get_min_delay() )
+  if ( ( kernel().simulation_manager.get_slice_origin().get_steps() + to )
+      % ( P_.deliver_interval_ * kernel().connection_builder_manager.get_min_delay() )
     == 0 )
   {
-    double_t t_trig = Time( Time::step( network()->get_slice_origin().get_steps() + to ) ).get_ms();
+    double_t t_trig = Time( Time::step( kernel().simulation_manager.get_slice_origin().get_steps()
+                              + to ) ).get_ms();
 
     if ( !B_.spikecounter_.empty() )
-      network()->trigger_update_weight( get_gid(), B_.spikecounter_, t_trig );
+      kernel().connection_builder_manager.trigger_update_weight(
+        get_gid(), B_.spikecounter_, t_trig );
 
     // clear spikecounter
     B_.spikecounter_.clear();
@@ -133,6 +142,7 @@ nest::volume_transmitter::update( const Time&, const long_t from, const long_t t
 void
 nest::volume_transmitter::handle( SpikeEvent& e )
 {
-  B_.neuromodulatory_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.neuromodulatory_spikes_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     static_cast< double_t >( e.get_multiplicity() ) );
 }

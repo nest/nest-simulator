@@ -23,13 +23,18 @@
 #ifndef GRID_MASK_H
 #define GRID_MASK_H
 
-#include "nest.h"
-#include "topology_names.h"
-#include "position.h"
+// Includes from nestkernel:
+#include "nest_types.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "dictutils.h"
-#include "topologymodule.h"
+
+// Includes from topology:
 #include "mask.h"
+#include "position.h"
+#include "topology_names.h"
+#include "topologymodule.h"
 
 namespace nest
 {

@@ -23,8 +23,17 @@
 #ifndef CG_CONNECT_H
 #define CG_CONNECT_H
 
-#include "conngenmodule.h"
-#include "vector"
+// C++ includes:
+#include <vector>
+
+// Includes from conngen:
+#include "conngendatum.h"
+
+// Includes from nestkernel:
+#include "nest_types.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {

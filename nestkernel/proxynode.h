@@ -23,6 +23,7 @@
 #ifndef PROXYNODE_H
 #define PROXYNODE_H
 
+// Includes from nestkernel:
 #include "node.h"
 
 namespace nest
@@ -75,7 +76,7 @@ public:
 
   port send_test_event( Node&, rport, synindex, bool );
 
-  void sends_secondary_event( GapJEvent& );
+  void sends_secondary_event( GapJunctionEvent& );
 
   SignalType sends_signal() const;
 

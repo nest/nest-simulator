@@ -21,14 +21,18 @@
  */
 
 #include "dict.h"
+
+// C++ includes:
+#include <algorithm>
+#include <cstdlib>
+#include <iomanip>
+#include <string>
+#include <vector>
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "dictutils.h"
 #include "sliexceptions.h"
-#include <iomanip>
-#include <algorithm>
-#include <vector>
-#include <cstdlib>
-#include <string>
 
 const Token Dictionary::VoidToken;
 

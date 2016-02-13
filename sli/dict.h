@@ -25,11 +25,13 @@
 /*
     SLI's dictionary class
 */
-#include "name.h"
-#include "token.h"
-
+// C++ includes:
 #include <map>
+
+// Includes from sli:
+#include "name.h"
 #include "sliexceptions.h"
+#include "token.h"
 
 
 typedef std::map< Name, Token, std::less< Name > > TokenMap;

@@ -30,10 +30,11 @@
  * \date July 2013
  */
 
+// Includes from nestkernel:
+#include "nest_types.h"
+
+// Includes from sli:
 #include "dictdatum.h"
-#include "dictutils.h"
-#include "histentry.h"
-#include <cmath>
 
 namespace nest
 {

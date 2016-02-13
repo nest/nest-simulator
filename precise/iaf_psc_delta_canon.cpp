@@ -22,19 +22,24 @@
 
 /* iaf_psc_delta_canon is a neuron where the potential jumps on each spike arrival. */
 
-#include "config.h"
-
-#include "exceptions.h"
 #include "iaf_psc_delta_canon.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 namespace nest
 {
@@ -149,8 +154,6 @@ void
 nest::iaf_psc_delta_canon::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, U_ + p.E_L_ ); // Membrane potential
-  def< double >( d, names::t_spike, Time( Time::step( last_spike_step_ ) ).get_ms() );
-  def< double >( d, names::offset, last_spike_offset_ );
   def< bool >( d, names::is_refractory, is_refractory_ );
   def< bool >( d, names::refractory_input, with_refr_input_ );
 }
@@ -181,7 +184,7 @@ nest::iaf_psc_delta_canon::Buffers_::Buffers_( const Buffers_&, iaf_psc_delta_ca
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_delta_canon::iaf_psc_delta_canon()
-  : Node()
+  : Archiving_Node()
   , P_()
   , S_()
   , B_( *this )
@@ -190,7 +193,7 @@ nest::iaf_psc_delta_canon::iaf_psc_delta_canon()
 }
 
 nest::iaf_psc_delta_canon::iaf_psc_delta_canon( const iaf_psc_delta_canon& n )
-  : Node( n )
+  : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -215,6 +218,8 @@ nest::iaf_psc_delta_canon::init_buffers_()
   B_.events_.clear();
   B_.currents_.clear();
   B_.logger_.reset();
+
+  Archiving_Node::clear_history();
 }
 
 void
@@ -240,7 +245,7 @@ void
 iaf_psc_delta_canon::update( Time const& origin, const long_t from, const long_t to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < Scheduler::get_min_delay() );
+  assert( static_cast< delay >( from ) < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
@@ -438,7 +443,7 @@ nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
   double_t dt = -P_.tau_m_ * std::log( ( v_inf - S_.U_ ) / ( v_inf - P_.U_th_ ) );
 
   // set stamp and offset for spike
-  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
   S_.last_spike_offset_ = offset_U + dt;
 
   // reset neuron and make it refractory
@@ -446,9 +451,10 @@ nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
   S_.is_refractory_ = true;
 
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  network()->send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 
   return;
 }
@@ -461,7 +467,7 @@ nest::iaf_psc_delta_canon::emit_instant_spike_( Time const& origin,
   assert( S_.U_ >= P_.U_th_ ); // ensure we are superthreshold
 
   // set stamp and offset for spike
-  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
   S_.last_spike_offset_ = spike_offs;
 
   // reset neuron and make it refractory
@@ -469,9 +475,10 @@ nest::iaf_psc_delta_canon::emit_instant_spike_( Time const& origin,
   S_.is_refractory_ = true;
 
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  network()->send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 
   return;
 }
@@ -486,7 +493,7 @@ iaf_psc_delta_canon::handle( SpikeEvent& e )
      in the queue.  The time is computed according to Time Memo, Rule 3.
   */
   const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
-  B_.events_.add_spike( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.events_.add_spike( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -501,7 +508,8 @@ iaf_psc_delta_canon::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add stepwise constant current; MH 2009-10-14
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 
@@ -509,12 +517,6 @@ void
 nest::iaf_psc_delta_canon::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
-}
-
-void
-iaf_psc_delta_canon::set_spiketime( Time const& now )
-{
-  S_.last_spike_step_ = now.get_steps();
 }
 
 } // namespace

@@ -43,7 +43,8 @@ librandom_la_SOURCES=\
 		uniform_randomdev.h uniform_randomdev.cpp \
 		uniformint_randomdev.h uniformint_randomdev.cpp \
 		gslrandomgen.h gslrandomgen.cpp \
-		gsl_binomial_randomdev.h gsl_binomial_randomdev.cpp
+		gsl_binomial_randomdev.h gsl_binomial_randomdev.cpp \
+		random.h random.cpp
 
 
 librandom_la_CXXFLAGS=  @SLI_CXXBACKEND@ @AM_CXXFLAGS@

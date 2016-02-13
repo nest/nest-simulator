@@ -27,11 +27,13 @@
  * SLI Datum types related to the NEST kernel.
  */
 
-#include "nestmodule.h"
-#include "aggregatedatum.h"
-
+// Includes from nestkernel:
 #include "connection_id.h"
 #include "gid_collection.h"
+#include "nestmodule.h"
+
+// Includes from sli:
+#include "aggregatedatum.h"
 
 typedef AggregateDatum< nest::ConnectionID, &nest::NestModule::ConnectionType > ConnectionDatum;
 typedef AggregateDatum< nest::GIDCollection, &nest::NestModule::GIDCollectionType >

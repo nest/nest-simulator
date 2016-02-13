@@ -20,6 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 # This script tests the parrot_neuron in NEST.
+# See test_parrot_neuron_ps.py for an equivalent test of the precise parrot.
 
 import nest
 import unittest

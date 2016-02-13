@@ -24,20 +24,26 @@
  *  Multimeter support by Yury V. Zaytsev.
  */
 
-
-#include "exceptions.h"
 #include "pp_pop_psc_delta.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include "universal_data_logger_impl.h"
-#include "compose.hpp"
 
-#include <limits>
+// C++ includes:
 #include <algorithm>
+#include <limits>
+
+// Includes from libnestutil:
+#include "compose.hpp"
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 namespace nest
 {
@@ -188,7 +194,7 @@ nest::pp_pop_psc_delta::Buffers_::Buffers_( const Buffers_&, pp_pop_psc_delta& n
  * ---------------------------------------------------------------- */
 
 nest::pp_pop_psc_delta::pp_pop_psc_delta()
-  : Archiving_Node()
+  : Node()
   , P_()
   , S_()
   , B_( *this )
@@ -197,7 +203,7 @@ nest::pp_pop_psc_delta::pp_pop_psc_delta()
 }
 
 nest::pp_pop_psc_delta::pp_pop_psc_delta( const pp_pop_psc_delta& n )
-  : Archiving_Node( n )
+  : Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -221,7 +227,6 @@ nest::pp_pop_psc_delta::init_buffers_()
   B_.spikes_.clear();   //!< includes resize
   B_.currents_.clear(); //!< includes resize
   B_.logger_.reset();   //!< includes resize
-  Archiving_Node::clear_history();
 }
 
 
@@ -238,7 +243,7 @@ nest::pp_pop_psc_delta::calibrate()
   B_.logger_.init();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = net_->get_rng( get_thread() );
+  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
   V_.min_double_ = std::numeric_limits< double_t >::min();
 
   double_t tau_eta_max = -1; // finding max of taus_eta_
@@ -261,7 +266,7 @@ nest::pp_pop_psc_delta::calibrate()
     for ( int_t j = 0; j < V_.len_eta_; j++ )
       S_.n_spikes_past_.push_back( 0 );
 
-    vector< double > ts;
+    std::vector< double > ts;
     ts.clear();
     for ( int_t j = 0; j < V_.len_eta_; j++ )
       ts.push_back( j * V_.h_ );
@@ -301,7 +306,7 @@ nest::pp_pop_psc_delta::calibrate()
 void
 nest::pp_pop_psc_delta::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -408,7 +413,7 @@ nest::pp_pop_psc_delta::update( Time const& origin, const long_t from, const lon
     {
       SpikeEvent se;
       se.set_multiplicity( S_.n_spikes_past_[ S_.p_n_spikes_past_ ] );
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
   }
 }
@@ -422,7 +427,7 @@ nest::pp_pop_psc_delta::handle( SpikeEvent& e )
   //     explicitly, since it depends on delay and offset within
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
-  B_.spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -435,7 +440,8 @@ nest::pp_pop_psc_delta::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

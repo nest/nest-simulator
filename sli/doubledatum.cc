@@ -20,8 +20,12 @@
  *
  */
 
-#include <iomanip>
 #include "doubledatum.h"
+
+// C++ includes:
+#include <iomanip>
+
+// Includes from sli:
 #include "numericdatum_impl.h"
 
 // explicit template instantiation needed

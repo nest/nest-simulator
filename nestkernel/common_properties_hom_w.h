@@ -33,7 +33,7 @@
    SeeAlso: synapsedict, static_synapse
 */
 
-
+// Includes from nestkernel:
 #include "common_synapse_properties.h"
 
 namespace nest

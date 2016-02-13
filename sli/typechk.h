@@ -58,14 +58,17 @@ Date:      18.11.95
 *******************************************************************/
 
 
-#include <typeinfo>
+// C++ includes:
 #include <iostream>
+#include <typeinfo>
 #include <vector>
+
+// Includes from sli:
 #include "slifunction.h"
+#include "slinames.h"
 #include "tokenarray.h"
 #include "tokenstack.h"
 #include "typearray.h"
-#include "slinames.h"
 
 class TypeTrie
 {

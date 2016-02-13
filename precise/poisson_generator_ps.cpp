@@ -21,15 +21,22 @@
  */
 
 #include "poisson_generator_ps.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "arraydatum.h"
-#include "dictutils.h"
 
+// C++ includes:
 #include <algorithm>
 #include <limits>
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -159,7 +166,7 @@ nest::poisson_generator_ps::calibrate()
 void
 nest::poisson_generator_ps::update( Time const& T, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
@@ -180,7 +187,7 @@ nest::poisson_generator_ps::update( Time const& T, const long_t from, const long
     // the event hook then sends out the real spikes with offgrid timing
     // We pretend to send at T+from
     DSSpikeEvent se;
-    net_->send( *this, se, from );
+    kernel().event_delivery_manager.send( *this, se, from );
   }
 }
 
@@ -194,7 +201,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
   assert( 0 <= prt && static_cast< size_t >( prt ) < B_.next_spike_.size() );
 
   // obtain rng
-  librandom::RngPtr rng = net_->get_rng( get_thread() );
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
 
   // introduce nextspk as a shorthand
   Buffers_::SpikeTime& nextspk = B_.next_spike_[ prt ];

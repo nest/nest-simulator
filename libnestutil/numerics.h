@@ -25,9 +25,13 @@
 
 #include "config.h"
 
+// C++ includes:
 #include <cassert>
-#include <limits>
 #include <cmath>
+#include <limits>
+
+// Generated includes:
+#include "config.h"
 
 #if HAVE_EXPM1
 #include <math.h>

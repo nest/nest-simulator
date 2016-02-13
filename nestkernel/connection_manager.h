@@ -37,6 +37,10 @@
 #include "../models/volume_transmitter.h"
 #include <cmath>
 
+// !!!!!!Depricated!!!!!!
+// Do not use anymore! Will be removed!
+#error Do not use connection_manager.h in any place in your nest code!
+
 namespace nest
 {
 class ConnectorBase;
@@ -49,7 +53,7 @@ class Network;
  */
 class ConnectionManager
 {
-
+protected:
   typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons having targets
   typedef std::vector< tSConnector > tVSConnector;           // for all threads
 
@@ -62,7 +66,7 @@ public:
 
   /**
    * Register a synapse type. This is called by Network::register_synapse_prototype.
-   * Returns an id for the prototype.
+   * Returns an id, which is needed to unregister the prototype later.
    */
   synindex register_synapse_prototype( ConnectorModel* cf );
 
@@ -75,6 +79,7 @@ public:
    * Add ConnectionManager specific stuff to the root status dictionary
    */
   void get_status( DictionaryDatum& d ) const;
+  void set_status( const DictionaryDatum& d );
 
   // aka SetDefaults for synapse models
   void set_prototype_status( synindex syn_id, const DictionaryDatum& d );
@@ -94,6 +99,7 @@ public:
    * 'target' a token array with GIDs of target neuron.
    * If either of these does not exist, all neuron are used for the respective entry.
    * 'synapse_model' name of the synapse model, or all synapse models are searched.
+   * 'synapse_label' label (long_t) of the synapse, or all synapses are searched.
    * The function then iterates all entries in source and collects the connection IDs to all neurons
    * in target.
    */
@@ -102,7 +108,8 @@ public:
   void get_connections( ArrayDatum& connectome,
     TokenArray const* source,
     TokenArray const* target,
-    size_t syn_id ) const;
+    size_t syn_id,
+    long_t synapse_label ) const;
 
   // aka CopyModel for synapse models
   synindex copy_synapse_prototype( synindex old_id, std::string new_name );
@@ -151,7 +158,7 @@ public:
     double_t d = numerics::nan,
     double_t w = numerics::nan );
 
-
+  void disconnect( Node& target, index sgid, thread target_thread, index syn_id );
   /**
    * Experimental bulk connector. See documentation in network.h
    */
@@ -188,12 +195,12 @@ public:
    */
   void assert_valid_syn_id( synindex syn_id, thread t = 0 ) const;
 
-private:
+protected:
   std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
   std::vector< std::vector< ConnectorModel* > > prototypes_; //!< The list of available synapse
-                                                             //!< prototypes: first dimension one
-                                                             //!< entry per thread, second dimension
-                                                             //!< for each synapse type
+  // prototypes: first dimenasion one
+  // entry per thread, second dimantion
+  // for each synapse type
 
   Network& net_;            //!< The reference to the network
   Dictionary* synapsedict_; //!< The synapsedict (owned by the network)

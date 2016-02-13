@@ -20,19 +20,28 @@
  *
  */
 
-#include "exceptions.h"
-#include "sinusoidal_poisson_generator.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "arraydatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include "universal_data_logger_impl.h"
 
+#include "sinusoidal_poisson_generator.h"
+
+// C++ includes:
 #include <cmath>
 #include <limits>
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 namespace nest
 {
@@ -200,7 +209,7 @@ nest::sinusoidal_poisson_generator::calibrate()
 
   // time resolution
   V_.h_ = Time::get_resolution().get_ms();
-  const double_t t = network()->get_time().get_ms();
+  const double_t t = kernel().simulation_manager.get_time().get_ms();
 
   // initial state
   S_.y_0_ = P_.amplitude_ * std::cos( P_.om_ * t + P_.phi_ );
@@ -215,13 +224,13 @@ nest::sinusoidal_poisson_generator::calibrate()
 void
 nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   const long_t start = origin.get_steps();
 
   // random number generator
-  librandom::RngPtr rng = net_->get_rng( get_thread() );
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
 
   // We iterate the dynamics even when the device is turned off,
   // but do not issue spikes while it is off. In this way, the
@@ -253,7 +262,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
       if ( P_.individual_spike_trains_ )
       {
         DSSpikeEvent se;
-        network()->send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
       else
       {
@@ -261,7 +270,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
         long_t n_spikes = V_.poisson_dev_.ldev( rng );
         SpikeEvent se;
         se.set_multiplicity( n_spikes );
-        network()->send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
   }
@@ -270,7 +279,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
 void
 nest::sinusoidal_poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  librandom::RngPtr rng = net_->get_rng( get_thread() );
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
   V_.poisson_dev_.set_lambda( S_.rate_ * V_.h_ );
   long_t n_spikes = V_.poisson_dev_.ldev( rng );
 

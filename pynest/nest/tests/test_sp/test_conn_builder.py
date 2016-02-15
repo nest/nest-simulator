@@ -77,7 +77,7 @@ class TestSPBuilder(unittest.TestCase):
             try:
                 nest.Connect(neurons, neurons, conn_dict, syn_dict)
             except nest.NESTError as e:
-                self.assertRegexpMatches(e.message, 'This connection rule is not implemented for structural plasticity')
+                self.assertRegexpMatches(str(e), 'This connection rule is not implemented for structural plasticity')
 
 
 def suite():

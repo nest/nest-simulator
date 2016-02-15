@@ -25,6 +25,12 @@ Initializer of PyNEST.
 
 import sys, os
 
+# This is a workaround for readline import errors encountered with Anaconda
+# Python running on Ubuntu, when invoked from the terminal
+# "python -c 'import nest'"
+if 'linux' in sys.platform and 'Anaconda' in sys.version:
+    import readline
+
 # This is a workaround to avoid segmentation faults when importing
 # scipy *after* nest. See https://github.com/numpy/numpy/issues/2521
 try:

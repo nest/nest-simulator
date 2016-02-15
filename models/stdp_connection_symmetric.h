@@ -192,7 +192,6 @@ STDPConnectionSymmetric< targetidentifierT >::send( Event& e,
   const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
-  //   if(t_lastspike >0) {std::cout << "last spike " << t_lastspike << std::endl ;}
   double_t t_spike = e.get_stamp().get_ms();
   // t_lastspike_ = 0 initially
 
@@ -215,10 +214,6 @@ STDPConnectionSymmetric< targetidentifierT >::send( Event& e,
     ++start;
     if ( minus_dt == 0 )
       continue;
-    // Use value of kplus at the time of the post synaptic spike
-    // therefore the exponential multiplier
-    // for minus_dt = 0, the exponential becomes 1 and facilitation occurs
-    // normally
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_ ) );
   }
 

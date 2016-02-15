@@ -112,7 +112,7 @@
 #include "stdp_triplet_connection.h"
 #include "stdp_dopa_connection.h"
 #include "stdp_pl_connection_hom.h"
-#include "stdp_symmetric_connection.h"
+#include "stdp_connection_symmetric.h"
 #include "tsodyks2_connection.h"
 #include "tsodyks_connection.h"
 #include "tsodyks_connection_hom.h"
@@ -486,10 +486,10 @@ ModelsModule::init( SLIInterpreter* )
      SeeAlso: synapsedict, stdp_symmetric_synapse
   */
   kernel()
-    .model_manager.register_connection_model< STDPSymmetricConnection< TargetIdentifierPtrRport > >(
+    .model_manager.register_connection_model< STDPConnectionSymmetric< TargetIdentifierPtrRport > >(
       "stdp_symmetric_synapse" );
   kernel()
-    .model_manager.register_connection_model< STDPSymmetricConnection< TargetIdentifierIndex > >(
+    .model_manager.register_connection_model< STDPConnectionSymmetric< TargetIdentifierIndex > >(
       "stdp_symmetric_synapse_hpc" );
 }
 

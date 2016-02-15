@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STDP_SYMMETRIC_CONNECTION_H
-#define STDP_SYMMETRIC_CONNECTION_H
+#ifndef STDP_CONNECTION_SYMMETRIC_H
+#define STDP_CONNECTION_SYMMETRIC_H
 
 /* BeginDocumentation
   Name: stdp_symmetric_synapse - Synapse type for symmetric spike-timing dependent
@@ -68,7 +68,7 @@ namespace nest
 // connections are templates of target identifier type (used for pointer / target index addressing)
 // derived from generic connection template
 template < typename targetidentifierT >
-class STDPSymmetricConnection : public Connection< targetidentifierT >
+class STDPConnectionSymmetric : public Connection< targetidentifierT >
 {
 
 public:
@@ -79,14 +79,14 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  STDPSymmetricConnection();
+  STDPConnectionSymmetric();
 
 
   /**
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPSymmetricConnection( const STDPSymmetricConnection& );
+  STDPConnectionSymmetric( const STDPConnectionSymmetric& );
 
   // Explicitly declare all methods inherited from the dependent base ConnectionBase.
   // This avoids explicit name prefixes in all places these functions are used.
@@ -184,7 +184,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-STDPSymmetricConnection< targetidentifierT >::send( Event& e,
+STDPConnectionSymmetric< targetidentifierT >::send( Event& e,
   thread t,
   double_t t_lastspike,
   const CommonSynapseProperties& )
@@ -241,7 +241,7 @@ STDPSymmetricConnection< targetidentifierT >::send( Event& e,
 
 
 template < typename targetidentifierT >
-STDPSymmetricConnection< targetidentifierT >::STDPSymmetricConnection()
+STDPConnectionSymmetric< targetidentifierT >::STDPConnectionSymmetric()
   : ConnectionBase()
   , weight_( 0.5 )
   , tau_( 20.0 )
@@ -254,8 +254,8 @@ STDPSymmetricConnection< targetidentifierT >::STDPSymmetricConnection()
 }
 
 template < typename targetidentifierT >
-STDPSymmetricConnection< targetidentifierT >::STDPSymmetricConnection(
-  const STDPSymmetricConnection< targetidentifierT >& rhs )
+STDPConnectionSymmetric< targetidentifierT >::STDPConnectionSymmetric(
+  const STDPConnectionSymmetric< targetidentifierT >& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , tau_( rhs.tau_ )
@@ -269,7 +269,7 @@ STDPSymmetricConnection< targetidentifierT >::STDPSymmetricConnection(
 
 template < typename targetidentifierT >
 void
-STDPSymmetricConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+STDPConnectionSymmetric< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double_t >( d, names::weight, weight_ );
@@ -283,7 +283,7 @@ STDPSymmetricConnection< targetidentifierT >::get_status( DictionaryDatum& d ) c
 
 template < typename targetidentifierT >
 void
-STDPSymmetricConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+STDPConnectionSymmetric< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
@@ -297,4 +297,4 @@ STDPSymmetricConnection< targetidentifierT >::set_status( const DictionaryDatum&
 
 } // of namespace nest
 
-#endif // of #ifndef STDP_SYMMETRIC_CONNECTION_H
+#endif // of #ifndef STDP_CONNECTION_SYMMETRIC_H

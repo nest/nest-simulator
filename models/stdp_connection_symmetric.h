@@ -33,7 +33,6 @@
 
   Parameters:
    tau   double - Time constant of STDP window, potentiation in ms
-   lambda     double - Step size
    Wmax       double - Maximum allowed weight
    eta        double - learning rate
    kappa      double - target firing rate
@@ -153,21 +152,20 @@ private:
   double_t
   facilitate_( double_t w, double_t kplus )
   {
-    double_t norm_w = ( w / Wmax_ ) + ( lambda_ * eta_ * kplus );
+    double_t norm_w = ( w / Wmax_ ) + ( eta_ * kplus );
     return norm_w < 1.0 ? norm_w * Wmax_ : Wmax_;
   }
 
   double_t
   depress_( double_t w )
   {
-    double_t norm_w = ( w / Wmax_ ) - ( 2. * kappa_ * tau_ * lambda_ * eta_ );
+    double_t norm_w = ( w / Wmax_ ) - ( 2. * kappa_ * tau_ * eta_ );
     return norm_w > 0.0 ? norm_w * Wmax_ : 0.0;
   }
 
   // data members of each connection
   double_t weight_;
   double_t tau_;
-  double_t lambda_;
   double_t kappa_;
   double_t eta_;
   double_t Wmax_;
@@ -245,7 +243,6 @@ STDPConnectionSymmetric< targetidentifierT >::STDPConnectionSymmetric()
   : ConnectionBase()
   , weight_( 0.5 )
   , tau_( 20.0 )
-  , lambda_( 0.01 )
   , kappa_( 3. )
   , eta_( 0.001 )
   , Wmax_( 1.0 )
@@ -259,7 +256,6 @@ STDPConnectionSymmetric< targetidentifierT >::STDPConnectionSymmetric(
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , tau_( rhs.tau_ )
-  , lambda_( rhs.lambda_ )
   , kappa_( rhs.kappa_ )
   , eta_( rhs.eta_ )
   , Wmax_( rhs.Wmax_ )
@@ -274,7 +270,6 @@ STDPConnectionSymmetric< targetidentifierT >::get_status( DictionaryDatum& d ) c
   ConnectionBase::get_status( d );
   def< double_t >( d, names::weight, weight_ );
   def< double_t >( d, "tau", tau_ );
-  def< double_t >( d, "lambda", lambda_ );
   def< double_t >( d, "kappa", kappa_ );
   def< double_t >( d, "eta", eta_ );
   def< double_t >( d, "Wmax", Wmax_ );
@@ -289,7 +284,6 @@ STDPConnectionSymmetric< targetidentifierT >::set_status( const DictionaryDatum&
   ConnectionBase::set_status( d, cm );
   updateValue< double_t >( d, names::weight, weight_ );
   updateValue< double_t >( d, "tau", tau_ );
-  updateValue< double_t >( d, "lambda", lambda_ );
   updateValue< double_t >( d, "kappa", kappa_ );
   updateValue< double_t >( d, "eta", eta_ );
   updateValue< double_t >( d, "Wmax", Wmax_ );

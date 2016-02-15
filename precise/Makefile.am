@@ -16,9 +16,15 @@ libprecisemodule_la_CXXFLAGS= @AM_CXXFLAGS@
 
 libprecisemodule_la_SOURCES=\
 	slice_ring_buffer.cpp   slice_ring_buffer.h\
-	iaf_psc_delta_canon.cpp iaf_psc_delta_canon.h\
+	slice_ring_buffer_new.cpp   slice_ring_buffer_new.h\
+	aeif_cond_alpha_ps.cpp aeif_cond_alpha_ps.h\
+	aeif_cond_exp_ps.cpp aeif_cond_exp_ps.h\
+	aeif_psc_alpha_ps.cpp aeif_psc_alpha_ps.h\
+	aeif_psc_exp_ps.cpp aeif_psc_exp_ps.h\
 	iaf_psc_alpha_canon.cpp iaf_psc_alpha_canon.h\
 	iaf_psc_alpha_presc.cpp iaf_psc_alpha_presc.h\
+	iaf_psc_alpha_ps.cpp iaf_psc_alpha_ps.h\
+	iaf_psc_delta_canon.cpp iaf_psc_delta_canon.h\
 	iaf_psc_exp_ps.cpp      iaf_psc_exp_ps.h\
 	poisson_generator_ps.cpp poisson_generator_ps.h\
 	parrot_neuron_ps.cpp parrot_neuron_ps.h\

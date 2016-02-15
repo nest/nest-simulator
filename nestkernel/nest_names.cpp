@@ -89,6 +89,8 @@ const Name dhaene_max_geq_V_th( "dhaene_max_geq_V_th" );
 const Name dhaene_quick1( "dhaene_quick1" );
 const Name dhaene_quick2( "dhaene_quick2" );
 const Name dhaene_tmax_lt_t1( "dhaene_tmax_lt_t1" );
+const Name dI_ex( "dI_ex" );
+const Name dI_in( "dI_in" );
 const Name distribution( "distribution" );
 const Name dt( "dt" );
 const Name dU( "U" );

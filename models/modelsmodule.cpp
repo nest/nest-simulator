@@ -44,6 +44,7 @@
 #include "aeif_cond_alpha_multisynapse.h"
 #include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_exp.h"
+#include "aeif_cond_exp_gridprecise.h"
 #include "amat2_psc_exp.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
@@ -292,9 +293,10 @@ ModelsModule::init( SLIInterpreter* )
 #endif
 
 #ifdef HAVE_GSL_1_11
-  kernel().model_manager.register_node_model< aeif_cond_alpha >( "aeif_cond_alpha" );
-  kernel().model_manager.register_node_model< aeif_cond_exp >( "aeif_cond_exp" );
-  kernel().model_manager.register_node_model< ht_neuron >( "ht_neuron" );
+  register_model< aeif_cond_alpha >( net_, "aeif_cond_alpha" );
+  register_model< aeif_cond_exp >( net_, "aeif_cond_exp" );
+  register_model< aeif_cond_exp_gridprecise >( net_, "aeif_cond_exp_gridprecise" );
+  register_model< ht_neuron >( net_, "ht_neuron" );
 #endif
   // This version of the AdEx model does not depend on GSL.
   kernel().model_manager.register_node_model< aeif_cond_alpha_RK5 >( "aeif_cond_alpha_RK5" );

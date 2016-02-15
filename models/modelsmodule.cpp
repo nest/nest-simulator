@@ -44,7 +44,7 @@
 #include "aeif_cond_alpha_multisynapse.h"
 #include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_exp.h"
-#include "aeif_cond_exp_gridprecise.h"
+#include "aeif_cond_alpha_gridprecise.h"
 #include "amat2_psc_exp.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
@@ -294,6 +294,7 @@ ModelsModule::init( SLIInterpreter* )
 
 #ifdef HAVE_GSL_1_11
   kernel().model_manager.register_node_model< aeif_cond_alpha >( "aeif_cond_alpha" );
+  kernel().model_manager.register_node_model< aeif_cond_alpha_gridprecise >( "aeif_cond_alpha_gridprecise" );
   kernel().model_manager.register_node_model< aeif_cond_exp >( "aeif_cond_exp" );
   kernel().model_manager.register_node_model< ht_neuron >( "ht_neuron" );
 #endif

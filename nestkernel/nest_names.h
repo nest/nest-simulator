@@ -101,6 +101,8 @@ extern const Name delta_u;           //!< Specific to population point process m
                                      //!< (pp_pop_psc_delta)
 extern const Name dg_ex;             //!< Derivative of the excitatory conductance
 extern const Name dg_in;             //!< Derivative of the inhibitory conductance
+extern const Name dI_ex;             //!< Derivative of the excitatory current
+extern const Name dI_in;             //!< Derivative of the inhibitory current
 extern const Name dhaene_det_spikes; //!< used for iaflossless_count_exp
 extern const Name dhaene_max_geq_V_th; //!< used for iaflossless_count_exp
 extern const Name dhaene_quick1;       //!< used for iaflossless_count_exp

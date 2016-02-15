@@ -17,10 +17,10 @@ libmodelsmodule_la_CXXFLAGS= @AM_CXXFLAGS@
 libmodelsmodule_la_SOURCES= \
 		ac_generator.h ac_generator.cpp\
 		aeif_cond_alpha.h aeif_cond_alpha.cpp\
+		aeif_cond_alpha_gridprecise.h aeif_cond_alpha_gridprecise.cpp\
 		aeif_cond_alpha_RK5.h aeif_cond_alpha_RK5.cpp\
 		aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp\
 		aeif_cond_exp.h aeif_cond_exp.cpp\
-		aeif_cond_exp_gridprecise.h aeif_cond_exp_gridprecise.cpp\
 		amat2_psc_exp.h amat2_psc_exp.cpp\
 		binary_neuron.h binary_neuron_impl.h\
 		cont_delay_connection.h cont_delay_connection_impl.h\

@@ -25,11 +25,15 @@
 
 /* BeginDocumentation
   Name: stdp_symmetric_synapse - Synapse type for symmetric spike-timing dependent
-   plasticity.
+   plasticity with constant depression.
 
   Description:
-   stdp_symmetric_synapse is a connector to create synapses with symmetric spike time
-   dependent plasticity (as defined in [1]).
+   stdp_symmetric_synapse is a connector to create synapses with symmetric
+   spike time dependent plasticity and constant depression (as defined in [1]).
+   The learning rule is symmetric, i.e., the synapse is strengthened
+   irrespective of the order of the pre and post-synaptic spikes. Each
+   pre-synaptic spike also causes a constant depression of the synaptic weight
+   which differentiates this rule from other classical stdp rules.
 
   Parameters:
    tau   double - Time constant of STDP window, potentiation in ms

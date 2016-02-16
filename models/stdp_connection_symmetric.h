@@ -288,8 +288,12 @@ STDPConnectionSymmetric< targetidentifierT >::set_status( const DictionaryDatum&
   updateValue< double_t >( d, "eta", eta_ );
   updateValue< double_t >( d, "Wmax", Wmax_ );
   updateValue< double_t >( d, "Kplus", Kplus_ );
-}
 
+  if ( not( Kplus_ >= 0 ) )
+  {
+    throw BadProperty( "State Kplus must be positive." );
+  }
+}
 } // of namespace nest
 
 #endif // of #ifndef STDP_CONNECTION_SYMMETRIC_H

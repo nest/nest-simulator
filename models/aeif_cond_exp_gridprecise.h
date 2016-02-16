@@ -20,49 +20,51 @@
  *
  */
 
-#ifndef AEIF_COND_EXP_GRIDPRECISE_H
-#define AEIF_COND_EXP_GRIDPRECISE_H
+#ifndef AEIF_COND_EXP_GP_H
+#define AEIF_COND_EXP_GP_H
 
+// Generated includes:
 #include "config.h"
 
 #ifdef HAVE_GSL_1_11
 
-#include "nest.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
-#include "universal_data_logger.h"
-#include "recordables_map.h"
-
+// External includes:
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
 
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
+
 /* BeginDocumentation
-Name: aeif_cond_exp_gridprecise - Conductance based exponential integrate-and-fire neuron model according to
-Brette and Gerstner (2005).
+Name: aeif_cond_exp_gridprecise - Conductance based exponential integrate-and-
+  fire neuron model according to Brette and Gerstner (2005), implementing a 
+  linear interpolation to find the precise time where the threshold was 
+  crossed, i.e. the spiking time.
 
 Description:
+aeif_cond_alpha is the adaptive exponential integrate and fire neuron according
+to Brette and Gerstner (2005) and synaptic conductances are modelled as alpha
+functions. This model implements a linear interpolation to find spike times 
+more precisely.
 
-aeif_cond_exp_gridprecise is the adaptive exponential integrate and fire neuron
-according to Brette and Gerstner (2005), with post-synaptic
-conductances in the form of truncated exponentials.
-
-This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
-solver with adaptive stepsize to integrate the differential equation.
+This implementation uses the embedded 4th order Runge-Kutta-Fehlberg solver
+with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
-C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e) -g_i(t)(V-E_i)-w +I_e
+
+C dV/dt = -g_L*(V-E_L) + g_L*Delta_T*exp((V-V_T)/Delta_T) - g_e(t)*(V-E_e)
+          -g_i(t)*(V-E_i) - w + I_e
 
 and
 
-tau_w * dw/dt= a(V-E_L) -W
-
-
-Note that the spike detection threshold V_peak is automatically set to
-V_th+10 mV to avoid numerical instabilites that may result from
-setting V_peak too high.
+tau_w * dw/dt = a*(V-E_L) - w
 
 Parameters:
 The following parameters can be set in the status dictionary.
@@ -70,7 +72,9 @@ The following parameters can be set in the status dictionary.
 Dynamic state variables:
   V_m        double - Membrane potential in mV
   g_ex       double - Excitatory synaptic conductance in nS.
+  dg_ex      double - First derivative of g_ex in nS/ms
   g_in       double - Inhibitory synaptic conductance in nS.
+  dg_in      double - First derivative of g_in in nS/ms.
   w          double - Spike-adaptation current in pA.
 
 Membrane Parameters:
@@ -86,29 +90,30 @@ Spike adaptation parameters:
   b          double - Spike-triggered adaptation in pA.
   Delta_T    double - Slope factor in mV
   tau_w      double - Adaptation time constant in ms
-  V_t        double - Spike initiation threshold in mV
+  V_th       double - Spike initiation threshold in mV
   V_peak     double - Spike detection threshold in mV.
 
 Synaptic parameters
   E_ex       double - Excitatory reversal potential in mV.
-  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (exp function).
+  tau_syn_ex double - Characteristic decrease time of excitatory synaptic conductance in ms (exponential function).
   E_in       double - Inhibitory reversal potential in mV.
-  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms (exp function).
+  tau_syn_in double - Characteristic decrease time of inhibitory synaptic conductance in ms (exponential function).
 
 Integration parameters
   gsl_error_tol  double - This parameter controls the admissible error of the GSL integrator.
                           Reduce it if NEST complains about numerical instabilities.
 
-Author: Adapted from aeif_cond_alpha by Lyle Muller
+Author: Tanguy Fardet, modified from Marc-Oliver Gewaltig's implementation
 
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-References: Brette R and Gerstner W (2005) Adaptive Exponential Integrate-and-Fire Model as
-            an Effective Description of Neuronal Activity. J Neurophysiol 94:3637-3642
+References: Brette R and Gerstner W (2005) Adaptive Exponential Integrate-and-
+  Fire Model as an Effective Description of Neuronal Activity.
+  J Neurophysiol 94:3637-3642
 
-SeeAlso: iaf_cond_exp, aeif_cond_alpha
+SeeAlso: iaf_cond_alpha, aeif_cond_exp, aeif_cond_alpha_gridprecise, 
 */
 
 namespace nest
@@ -157,7 +162,9 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  void update( const Time&, const long_t, const long_t );
+  void update( Time const&, const long_t, const long_t );
+  void interpolate_( double&, double );
+  void spiking_( const nest::long_t, const double );
 
   // END Boilerplate function declarations ----------------------------
 
@@ -222,16 +229,17 @@ public:
     enum StateVecElems
     {
       V_M = 0,
-      G_EXC, // 1
-      G_INH, // 2
-      W,     // 3
+      G_EXC,  // 1
+      G_INH,  // 2
+      W,      // 3
       STATE_VEC_SIZE
     };
 
     double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
+    double_t y_old_[ STATE_VEC_SIZE ]; //!< old neuron state, must be C-array for GSL solver
     int_t r_;                      //!< number of refractory steps remaining
     double_t r_offset_;      // offset on the refractory time if it is not a multiple of step_
-
+    
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
     State_& operator=( const State_& );
@@ -378,4 +386,4 @@ aeif_cond_exp_gridprecise::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL_1_11
-#endif // AEIF_COND_EXP_GRIDPRECISE_H
+#endif // AEIF_COND_EXP_GP_H

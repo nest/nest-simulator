@@ -21,6 +21,8 @@ libmodelsmodule_la_SOURCES= \
 		aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp\
 		aeif_cond_exp.h aeif_cond_exp.cpp\
 		aeif_cond_exp_gridprecise.h aeif_cond_exp_gridprecise.cpp\
+		aeif_psc_alpha_gridprecise.h aeif_psc_alpha_gridprecise.cpp\
+		aeif_psc_exp_gridprecise.h aeif_psc_exp_gridprecise.cpp\
 		amat2_psc_exp.h amat2_psc_exp.cpp\
 		binary_neuron.h binary_neuron_impl.h\
 		cont_delay_connection.h cont_delay_connection_impl.h\

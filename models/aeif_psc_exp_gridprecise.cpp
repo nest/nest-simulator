@@ -1,5 +1,5 @@
 /*
- *  aeif_cond_exp_gridprecise.cpp
+ *  aeif_psc_exp_gridprecise.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "aeif_cond_exp_gridprecise.h"
+#include "aeif_psc_exp_gridprecise.h"
 #ifdef HAVE_GSL_1_11
 
 // C++ includes:
@@ -49,7 +49,7 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_cond_exp_gridprecise > nest::aeif_cond_exp_gridprecise::recordablesMap_;
+nest::RecordablesMap< nest::aeif_psc_exp_gridprecise > nest::aeif_psc_exp_gridprecise::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -57,25 +57,25 @@ namespace nest // template specialization must be placed in namespace
 // for each quantity to be recorded.
 template <>
 void
-RecordablesMap< aeif_cond_exp_gridprecise >::create()
+RecordablesMap< aeif_psc_exp_gridprecise >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &aeif_cond_exp_gridprecise::get_y_elem_< aeif_cond_exp_gridprecise::State_::V_M > );
-  insert_( names::g_ex, &aeif_cond_exp_gridprecise::get_y_elem_< aeif_cond_exp_gridprecise::State_::G_EXC > );
-  insert_( names::g_in, &aeif_cond_exp_gridprecise::get_y_elem_< aeif_cond_exp_gridprecise::State_::G_INH > );
-  insert_( names::w, &aeif_cond_exp_gridprecise::get_y_elem_< aeif_cond_exp_gridprecise::State_::W > );
+  insert_( names::V_m, &aeif_psc_exp_gridprecise::get_y_elem_< aeif_psc_exp_gridprecise::State_::V_M > );
+  insert_( names::I_ex, &aeif_psc_exp_gridprecise::get_y_elem_< aeif_psc_exp_gridprecise::State_::I_EXC > );
+  insert_( names::I_in, &aeif_psc_exp_gridprecise::get_y_elem_< aeif_psc_exp_gridprecise::State_::I_INH > );
+  insert_( names::w, &aeif_psc_exp_gridprecise::get_y_elem_< aeif_psc_exp_gridprecise::State_::W > );
 }
 }
 
 extern "C" int
-nest::aeif_cond_exp_gridprecise_dynamics( double, const double y[], double f[], void* pnode )
+nest::aeif_psc_exp_gridprecise_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::aeif_cond_exp_gridprecise::State_ S;
+  typedef nest::aeif_psc_exp_gridprecise::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_cond_exp_gridprecise& node = *( reinterpret_cast< nest::aeif_cond_exp_gridprecise* >( pnode ) );
+  const nest::aeif_psc_exp_gridprecise& node = *( reinterpret_cast< nest::aeif_psc_exp_gridprecise* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -85,12 +85,9 @@ nest::aeif_cond_exp_gridprecise_dynamics( double, const double y[], double f[], 
 
   // shorthand for state variables
   const double_t& V = y[ S::V_M ];
-  const double_t& g_ex = y[ S::G_EXC ];
-  const double_t& g_in = y[ S::G_INH ];
+  const double_t& I_exc = y[ S::I_EXC ];
+  const double_t& I_in = y[ S::I_INH ];
   const double_t& w = y[ S::W ];
-
-  const double_t I_syn_exc = g_ex * ( V - node.P_.E_ex );
-  const double_t I_syn_inh = g_in * ( V - node.P_.E_in );
 
   // We pre-compute the argument of the exponential
   const double_t exp_arg = ( V - node.P_.V_th ) / node.P_.Delta_T;
@@ -102,11 +99,12 @@ nest::aeif_cond_exp_gridprecise_dynamics( double, const double y[], double f[], 
   const double_t I_spike = node.P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
 
   // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh - w
+  f[ S::V_M ] = ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) + I_exc - I_in - w
             + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
-  f[ S::G_EXC ] = - g_ex / node.P_.tau_syn_ex; // Synaptic Conductance (nS)
-  f[ S::G_INH ] = - g_in / node.P_.tau_syn_in; // Synaptic Conductance (nS)
+  f[ S::I_EXC ] = -I_exc / node.P_.tau_syn_ex; // Synaptic Conductance (nS)
+
+  f[ S::I_INH ] = -I_in / node.P_.tau_syn_in; // Synaptic Conductance (nS)
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -118,14 +116,12 @@ nest::aeif_cond_exp_gridprecise_dynamics( double, const double y[], double f[], 
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::aeif_cond_exp_gridprecise::Parameters_::Parameters_()
+nest::aeif_psc_exp_gridprecise::Parameters_::Parameters_()
   : V_peak_( 0.0 )    // mV, should not be larger that V_th+10
   , V_reset_( -60.0 ) // mV
   , t_ref_( 0.0 )     // ms
   , g_L( 30.0 )       // nS
   , C_m( 281.0 )      // pF
-  , E_ex( 0.0 )       // mV
-  , E_in( -85.0 )     // mV
   , E_L( -70.6 )      // mV
   , Delta_T( 2.0 )    // mV
   , tau_w( 144.0 )    // ms
@@ -139,7 +135,7 @@ nest::aeif_cond_exp_gridprecise::Parameters_::Parameters_()
 {
 }
 
-nest::aeif_cond_exp_gridprecise::State_::State_( const Parameters_& p )
+nest::aeif_psc_exp_gridprecise::State_::State_( const Parameters_& p )
   : r_( 0 )
   , r_offset_( 0. )
 {
@@ -148,7 +144,7 @@ nest::aeif_cond_exp_gridprecise::State_::State_( const Parameters_& p )
     y_[ i ] = 0;
 }
 
-nest::aeif_cond_exp_gridprecise::State_::State_( const State_& s )
+nest::aeif_psc_exp_gridprecise::State_::State_( const State_& s )
   : r_( s.r_ )
   , r_offset_( s.r_offset_ )
 {
@@ -156,7 +152,7 @@ nest::aeif_cond_exp_gridprecise::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::aeif_cond_exp_gridprecise::State_& nest::aeif_cond_exp_gridprecise::State_::operator=( const State_& s )
+nest::aeif_psc_exp_gridprecise::State_& nest::aeif_psc_exp_gridprecise::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -172,7 +168,7 @@ nest::aeif_cond_exp_gridprecise::State_& nest::aeif_cond_exp_gridprecise::State_
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_exp_gridprecise::Parameters_::get( DictionaryDatum& d ) const
+nest::aeif_psc_exp_gridprecise::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::C_m, C_m );
   def< double >( d, names::V_th, V_th );
@@ -180,8 +176,6 @@ nest::aeif_cond_exp_gridprecise::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::g_L, g_L );
   def< double >( d, names::E_L, E_L );
   def< double >( d, names::V_reset, V_reset_ );
-  def< double >( d, names::E_ex, E_ex );
-  def< double >( d, names::E_in, E_in );
   def< double >( d, names::tau_syn_ex, tau_syn_ex );
   def< double >( d, names::tau_syn_in, tau_syn_in );
   def< double >( d, names::a, a );
@@ -194,15 +188,13 @@ nest::aeif_cond_exp_gridprecise::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cond_exp_gridprecise::Parameters_::set( const DictionaryDatum& d )
+nest::aeif_psc_exp_gridprecise::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::V_th, V_th );
   updateValue< double >( d, names::V_peak, V_peak_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
   updateValue< double >( d, names::E_L, E_L );
   updateValue< double >( d, names::V_reset, V_reset_ );
-  updateValue< double >( d, names::E_ex, E_ex );
-  updateValue< double >( d, names::E_in, E_in );
 
   updateValue< double >( d, names::C_m, C_m );
   updateValue< double >( d, names::g_L, g_L );
@@ -241,27 +233,27 @@ nest::aeif_cond_exp_gridprecise::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::aeif_cond_exp_gridprecise::State_::get( DictionaryDatum& d ) const
+nest::aeif_psc_exp_gridprecise::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] );
-  def< double >( d, names::g_ex, y_[ G_EXC ] );
-  def< double >( d, names::g_in, y_[ G_INH ] );
+  def< double >( d, names::I_ex, y_[ I_EXC ] );
+  def< double >( d, names::I_in, y_[ I_INH ] );
   def< double >( d, names::w, y_[ W ] );
 }
 
 void
-nest::aeif_cond_exp_gridprecise::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::aeif_psc_exp_gridprecise::State_::set( const DictionaryDatum& d, const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
-  updateValue< double >( d, names::g_ex, y_[ G_EXC ] );
-  updateValue< double >( d, names::g_in, y_[ G_INH ] );
+  updateValue< double >( d, names::I_ex, y_[ I_EXC ] );
+  updateValue< double >( d, names::I_in, y_[ I_INH ] );
   updateValue< double >( d, names::w, y_[ W ] );
 
-  if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 )
+  if ( y_[ I_EXC ] < 0 || y_[ I_INH ] < 0 )
     throw BadProperty( "Conductances must not be negative." );
 }
 
-nest::aeif_cond_exp_gridprecise::Buffers_::Buffers_( aeif_cond_exp_gridprecise& n )
+nest::aeif_psc_exp_gridprecise::Buffers_::Buffers_( aeif_psc_exp_gridprecise& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -271,7 +263,7 @@ nest::aeif_cond_exp_gridprecise::Buffers_::Buffers_( aeif_cond_exp_gridprecise& 
   // init_buffers_().
 }
 
-nest::aeif_cond_exp_gridprecise::Buffers_::Buffers_( const Buffers_&, aeif_cond_exp_gridprecise& n )
+nest::aeif_psc_exp_gridprecise::Buffers_::Buffers_( const Buffers_&, aeif_psc_exp_gridprecise& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -285,7 +277,7 @@ nest::aeif_cond_exp_gridprecise::Buffers_::Buffers_( const Buffers_&, aeif_cond_
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::aeif_cond_exp_gridprecise::aeif_cond_exp_gridprecise()
+nest::aeif_psc_exp_gridprecise::aeif_psc_exp_gridprecise()
   : Archiving_Node()
   , P_()
   , S_( P_ )
@@ -294,7 +286,7 @@ nest::aeif_cond_exp_gridprecise::aeif_cond_exp_gridprecise()
   recordablesMap_.create();
 }
 
-nest::aeif_cond_exp_gridprecise::aeif_cond_exp_gridprecise( const aeif_cond_exp_gridprecise& n )
+nest::aeif_psc_exp_gridprecise::aeif_psc_exp_gridprecise( const aeif_psc_exp_gridprecise& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -302,7 +294,7 @@ nest::aeif_cond_exp_gridprecise::aeif_cond_exp_gridprecise( const aeif_cond_exp_
 {
 }
 
-nest::aeif_cond_exp_gridprecise::~aeif_cond_exp_gridprecise()
+nest::aeif_psc_exp_gridprecise::~aeif_psc_exp_gridprecise()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -318,14 +310,14 @@ nest::aeif_cond_exp_gridprecise::~aeif_cond_exp_gridprecise()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_exp_gridprecise::init_state_( const Node& proto )
+nest::aeif_psc_exp_gridprecise::init_state_( const Node& proto )
 {
-  const aeif_cond_exp_gridprecise& pr = downcast< aeif_cond_exp_gridprecise >( proto );
+  const aeif_psc_exp_gridprecise& pr = downcast< aeif_psc_exp_gridprecise >( proto );
   S_ = pr.S_;
 }
 
 void
-nest::aeif_cond_exp_gridprecise::init_buffers_()
+nest::aeif_psc_exp_gridprecise::init_buffers_()
 {
   B_.spike_exc_.clear(); // includes resize
   B_.spike_inh_.clear(); // includes resize
@@ -354,7 +346,7 @@ nest::aeif_cond_exp_gridprecise::init_buffers_()
   else
     gsl_odeiv_evolve_reset( B_.e_ );
 
-  B_.sys_.function = aeif_cond_exp_gridprecise_dynamics;
+  B_.sys_.function = aeif_psc_exp_gridprecise_dynamics;
   B_.sys_.jacobian = NULL;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
@@ -363,7 +355,7 @@ nest::aeif_cond_exp_gridprecise::init_buffers_()
 }
 
 void
-nest::aeif_cond_exp_gridprecise::calibrate()
+nest::aeif_psc_exp_gridprecise::calibrate()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 
@@ -378,7 +370,7 @@ nest::aeif_cond_exp_gridprecise::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_exp_gridprecise::interpolate_( double& t, double t_old )
+nest::aeif_psc_exp_gridprecise::interpolate_( double& t, double t_old )
 {
   // find the exact time when the threshold was crossed
   double dt_crossing = ( P_.V_peak_ - S_.y_old_[ State_::V_M ] ) * ( t - t_old ) / ( S_.y_[ State_::V_M ] - S_.y_old_[ State_::V_M ] );
@@ -395,7 +387,7 @@ nest::aeif_cond_exp_gridprecise::interpolate_( double& t, double t_old )
 }
 
 void
-nest::aeif_cond_exp_gridprecise::spiking_( const long_t lag, const double t )
+nest::aeif_psc_exp_gridprecise::spiking_( const long_t lag, const double t )
 {
   // spike event
   SpikeEvent se;
@@ -420,7 +412,7 @@ nest::aeif_cond_exp_gridprecise::spiking_( const long_t lag, const double t )
 }
 
 void
-nest::aeif_cond_exp_gridprecise::update( const Time& origin, const nest::long_t from, const nest::long_t to )
+nest::aeif_psc_exp_gridprecise::update( const Time& origin, const nest::long_t from, const nest::long_t to )
 {
   assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
@@ -493,8 +485,8 @@ nest::aeif_cond_exp_gridprecise::update( const Time& origin, const nest::long_t 
     }
 
     // influence of received spikes on post-synaptic conductances
-    S_.y_[ State_::G_EXC ] += B_.spike_exc_.get_value( lag );
-    S_.y_[ State_::G_INH ] += B_.spike_inh_.get_value( lag );
+    S_.y_[ State_::I_EXC ] += B_.spike_exc_.get_value( lag );
+    S_.y_[ State_::I_INH ] += B_.spike_inh_.get_value( lag );
 
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );
@@ -505,7 +497,7 @@ nest::aeif_cond_exp_gridprecise::update( const Time& origin, const nest::long_t 
 }
 
 void
-nest::aeif_cond_exp_gridprecise::handle( SpikeEvent& e )
+nest::aeif_psc_exp_gridprecise::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
@@ -520,7 +512,7 @@ nest::aeif_cond_exp_gridprecise::handle( SpikeEvent& e )
 }
 
 void
-nest::aeif_cond_exp_gridprecise::handle( CurrentEvent& e )
+nest::aeif_psc_exp_gridprecise::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
@@ -534,7 +526,7 @@ nest::aeif_cond_exp_gridprecise::handle( CurrentEvent& e )
 }
 
 void
-nest::aeif_cond_exp_gridprecise::handle( DataLoggingRequest& e )
+nest::aeif_psc_exp_gridprecise::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }

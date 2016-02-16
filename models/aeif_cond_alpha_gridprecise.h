@@ -43,7 +43,7 @@
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
-Name: gp_aeif_cond_alpha - Conductance based exponential integrate-and-fire
+Name: aeif_cond_alpha_gridprecise - Conductance based exponential integrate-and-fire
   neuron model according to Brette and Gerstner (2005), implementing a linear
   interpolation to find the "exact" time where the threshold was crossed, i.e.
   the spiking time.

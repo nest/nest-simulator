@@ -297,6 +297,7 @@ ModelsModule::init( SLIInterpreter* )
 
 #ifdef HAVE_GSL_1_11
   kernel().model_manager.register_node_model< aeif_cond_alpha >( "aeif_cond_alpha" );
+  kernel().model_manager.register_node_model< aeif_cond_alpha_gridprecise >( "aeif_cond_alpha_gridprecise" );
   kernel().model_manager.register_node_model< aeif_cond_exp >( "aeif_cond_exp" );
   kernel().model_manager.register_node_model< aeif_cond_exp_gridprecise >( "aeif_cond_exp_gridprecise" );
   kernel().model_manager.register_node_model< aeif_psc_alpha_gridprecise >( "aeif_psc_alpha_gridprecise" );

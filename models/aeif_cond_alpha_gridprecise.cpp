@@ -1,5 +1,5 @@
 /*
- *  aeif_cond_alpha.cpp
+ *  aeif_cond_alpha_gridprecise.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,32 +20,36 @@
  *
  */
 
-#include "aeif_cond_alpha.h"
-#include "nest_names.h"
-
+#include "aeif_cond_alpha_gridprecise.h"
 #ifdef HAVE_GSL_1_11
 
-#include "universal_data_logger_impl.h"
-
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include <limits>
-
+// C++ includes:
 #include <cmath>
+#include <cstdio>
 #include <iomanip>
 #include <iostream>
-#include <cstdio>
+#include <limits>
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_cond_alpha > nest::aeif_cond_alpha::recordablesMap_;
+nest::RecordablesMap< nest::aeif_cond_alpha_gridprecise > nest::aeif_cond_alpha_gridprecise::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -53,25 +57,25 @@ namespace nest // template specialization must be placed in namespace
 // for each quantity to be recorded.
 template <>
 void
-RecordablesMap< aeif_cond_alpha >::create()
+RecordablesMap< aeif_cond_alpha_gridprecise >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::V_M > );
-  insert_( names::g_ex, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::G_EXC > );
-  insert_( names::g_in, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::G_INH > );
-  insert_( names::w, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::W > );
+  insert_( names::V_m, &aeif_cond_alpha_gridprecise::get_y_elem_< aeif_cond_alpha_gridprecise::State_::V_M > );
+  insert_( names::g_ex, &aeif_cond_alpha_gridprecise::get_y_elem_< aeif_cond_alpha_gridprecise::State_::G_EXC > );
+  insert_( names::g_in, &aeif_cond_alpha_gridprecise::get_y_elem_< aeif_cond_alpha_gridprecise::State_::G_INH > );
+  insert_( names::w, &aeif_cond_alpha_gridprecise::get_y_elem_< aeif_cond_alpha_gridprecise::State_::W > );
 }
 }
 
 extern "C" int
-nest::aeif_cond_alpha_dynamics( double, const double y[], double f[], void* pnode )
+nest::aeif_cond_alpha_gridprecise_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::aeif_cond_alpha::State_ S;
+  typedef nest::aeif_cond_alpha_gridprecise::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_cond_alpha& node = *( reinterpret_cast< nest::aeif_cond_alpha* >( pnode ) );
+  const nest::aeif_cond_alpha_gridprecise& node = *( reinterpret_cast< nest::aeif_cond_alpha_gridprecise* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -119,7 +123,7 @@ nest::aeif_cond_alpha_dynamics( double, const double y[], double f[], void* pnod
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::aeif_cond_alpha::Parameters_::Parameters_()
+nest::aeif_cond_alpha_gridprecise::Parameters_::Parameters_()
   : V_peak_( 0.0 )    // mV, should not be larger that V_th+10
   , V_reset_( -60.0 ) // mV
   , t_ref_( 0.0 )     // ms
@@ -140,7 +144,7 @@ nest::aeif_cond_alpha::Parameters_::Parameters_()
 {
 }
 
-nest::aeif_cond_alpha::State_::State_( const Parameters_& p )
+nest::aeif_cond_alpha_gridprecise::State_::State_( const Parameters_& p )
   : r_( 0 )
   , r_offset_( 0. )
 {
@@ -149,7 +153,7 @@ nest::aeif_cond_alpha::State_::State_( const Parameters_& p )
     y_[ i ] = 0;
 }
 
-nest::aeif_cond_alpha::State_::State_( const State_& s )
+nest::aeif_cond_alpha_gridprecise::State_::State_( const State_& s )
   : r_( s.r_ )
   , r_offset_( s.r_offset_ )
 {
@@ -157,7 +161,7 @@ nest::aeif_cond_alpha::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::aeif_cond_alpha::State_& nest::aeif_cond_alpha::State_::operator=( const State_& s )
+nest::aeif_cond_alpha_gridprecise::State_& nest::aeif_cond_alpha_gridprecise::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -173,7 +177,7 @@ nest::aeif_cond_alpha::State_& nest::aeif_cond_alpha::State_::operator=( const S
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha::Parameters_::get( DictionaryDatum& d ) const
+nest::aeif_cond_alpha_gridprecise::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::C_m, C_m );
   def< double >( d, names::V_th, V_th );
@@ -195,7 +199,7 @@ nest::aeif_cond_alpha::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
+nest::aeif_cond_alpha_gridprecise::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::V_th, V_th );
   updateValue< double >( d, names::V_peak, V_peak_ );
@@ -242,7 +246,7 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::aeif_cond_alpha::State_::get( DictionaryDatum& d ) const
+nest::aeif_cond_alpha_gridprecise::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] );
   def< double >( d, names::g_ex, y_[ G_EXC ] );
@@ -253,7 +257,7 @@ nest::aeif_cond_alpha::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::aeif_cond_alpha_gridprecise::State_::set( const DictionaryDatum& d, const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::g_ex, y_[ G_EXC ] );
@@ -266,7 +270,7 @@ nest::aeif_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_&
     throw BadProperty( "Conductances must not be negative." );
 }
 
-nest::aeif_cond_alpha::Buffers_::Buffers_( aeif_cond_alpha& n )
+nest::aeif_cond_alpha_gridprecise::Buffers_::Buffers_( aeif_cond_alpha_gridprecise& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -276,7 +280,7 @@ nest::aeif_cond_alpha::Buffers_::Buffers_( aeif_cond_alpha& n )
   // init_buffers_().
 }
 
-nest::aeif_cond_alpha::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha& n )
+nest::aeif_cond_alpha_gridprecise::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha_gridprecise& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -290,7 +294,7 @@ nest::aeif_cond_alpha::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha& n )
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::aeif_cond_alpha::aeif_cond_alpha()
+nest::aeif_cond_alpha_gridprecise::aeif_cond_alpha_gridprecise()
   : Archiving_Node()
   , P_()
   , S_( P_ )
@@ -299,7 +303,7 @@ nest::aeif_cond_alpha::aeif_cond_alpha()
   recordablesMap_.create();
 }
 
-nest::aeif_cond_alpha::aeif_cond_alpha( const aeif_cond_alpha& n )
+nest::aeif_cond_alpha_gridprecise::aeif_cond_alpha_gridprecise( const aeif_cond_alpha_gridprecise& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -307,7 +311,7 @@ nest::aeif_cond_alpha::aeif_cond_alpha( const aeif_cond_alpha& n )
 {
 }
 
-nest::aeif_cond_alpha::~aeif_cond_alpha()
+nest::aeif_cond_alpha_gridprecise::~aeif_cond_alpha_gridprecise()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -323,14 +327,14 @@ nest::aeif_cond_alpha::~aeif_cond_alpha()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha::init_state_( const Node& proto )
+nest::aeif_cond_alpha_gridprecise::init_state_( const Node& proto )
 {
-  const aeif_cond_alpha& pr = downcast< aeif_cond_alpha >( proto );
+  const aeif_cond_alpha_gridprecise& pr = downcast< aeif_cond_alpha_gridprecise >( proto );
   S_ = pr.S_;
 }
 
 void
-nest::aeif_cond_alpha::init_buffers_()
+nest::aeif_cond_alpha_gridprecise::init_buffers_()
 {
   B_.spike_exc_.clear(); // includes resize
   B_.spike_inh_.clear(); // includes resize
@@ -359,7 +363,7 @@ nest::aeif_cond_alpha::init_buffers_()
   else
     gsl_odeiv_evolve_reset( B_.e_ );
 
-  B_.sys_.function = aeif_cond_alpha_dynamics;
+  B_.sys_.function = aeif_cond_alpha_gridprecise_dynamics;
   B_.sys_.jacobian = NULL;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
@@ -368,7 +372,7 @@ nest::aeif_cond_alpha::init_buffers_()
 }
 
 void
-nest::aeif_cond_alpha::calibrate()
+nest::aeif_cond_alpha_gridprecise::calibrate()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 
@@ -385,15 +389,59 @@ nest::aeif_cond_alpha::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha::update( Time const& origin, const long_t from, const long_t to )
+nest::aeif_cond_alpha_gridprecise::interpolate_( double& t, double t_old )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  // find the exact time when the threshold was crossed
+  double dt_crossing = ( P_.V_peak_ - S_.y_old_[ State_::V_M ] ) * ( t - t_old ) / ( S_.y_[ State_::V_M ] - S_.y_old_[ State_::V_M ] );
+
+  // reset V_m and set the other variables correctly
+  S_.y_[ State_::V_M ] = P_.V_reset_;
+  for ( int i=1; i < State_::STATE_VEC_SIZE; ++i )
+  {
+    S_.y_[i] = S_.y_old_[i] + ( S_.y_[i] - S_.y_old_[i] ) / ( t - t_old ) * dt_crossing;
+  }
+  S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
+
+  t = t_old + dt_crossing;
+}
+
+void
+nest::aeif_cond_alpha_gridprecise::spiking_( const long_t lag, const double t )
+{
+  // spike event
+  SpikeEvent se;
+  kernel().event_delivery_manager.send( *this, se, lag );
+
+  // refractoriness
+  if ( P_.t_ref_ > 0. )
+  {
+    S_.r_ = V_.RefractoryCounts_;
+    S_.r_offset_ = V_.RefractoryOffset_ - (B_.step_ - t);
+    if ( S_.r_offset_ < 0. )
+    {
+      if ( S_.r_ > 0 )
+      {
+        --S_.r_;
+        S_.r_offset_ = B_.step_ + S_.r_offset_;
+      }
+      else
+        S_.r_offset_ = t + V_.RefractoryOffset_;
+    }
+  }
+}
+
+void
+nest::aeif_cond_alpha_gridprecise::update( const Time& origin, const nest::long_t from, const nest::long_t to )
+{
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
+  double t, t_old, t_next_event;
+
   for ( long_t lag = from; lag < to; ++lag )
   {
-    double t = 0.0;
+    t = 0.;
 
     if ( S_.r_ > 0 )
       --S_.r_;
@@ -407,43 +455,55 @@ nest::aeif_cond_alpha::update( Time const& origin, const long_t from, const long
     // to a small integration step size;
     // note that (t+IntegrationStep > step) leads to integration over
     // (t, step] and afterwards setting t to step, but it does not
-    // enforce setting IntegrationStep to step-t; this is of advantage
-    // for a consistent and efficient integration across subsequent
-    // simulation intervals
+    // enforce setting IntegrationStep to step-t
 
     while ( t < B_.step_ )
     {
-      const int status = gsl_odeiv_evolve_apply( B_.e_,
-        B_.c_,
-        B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+      // store the previous values of V_m, w, and t
+      std::copy(S_.y_, S_.y_ + sizeof(S_.y_)/sizeof(S_.y_[0]), S_.y_old_);
+      t_old = t;
 
-      if ( status != GSL_SUCCESS )
-        throw GSLSolverFailure( get_name(), status );
+      // check for end of refractory period
+      if ( P_.t_ref_ > 0. && S_.r_ == 0 && t < S_.r_offset_ )
+        t_next_event = S_.r_offset_;
+      else
+        t_next_event = B_.step_;
 
-      // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
-        throw NumericalInstability( get_name() );
+      while (t < t_next_event)
+      {
+        // propagate the ODE
+        const int status = gsl_odeiv_evolve_apply( B_.e_,
+          B_.c_,
+          B_.s_,
+          &B_.sys_,             // system of ODE
+          &t,                   // from t
+          t_next_event,         // to t <= t_next_event
+          &B_.IntegrationStep_, // integration step size
+          S_.y_ );              // neuronal state
 
-      // spikes are handled inside the while-loop
-      // due to spike-driven adaptation
-      if ( S_.r_ > 0 )
-        S_.y_[ State_::V_M ] = P_.V_reset_;
+        // checks
+        if ( status != GSL_SUCCESS )
+          throw GSLSolverFailure( get_name(), status );
+        if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
+          throw NumericalInstability( get_name() );
+      }
+
+      // check refractoriness
+      if ( S_.r_ > 0 || S_.r_offset_ > 0. )
+        S_.y_[ State_::V_M ] = P_.V_reset_; // only V_m is frozen
       else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ )
       {
-        S_.y_[ State_::V_M ] = P_.V_reset_;
-        S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
-        S_.r_ = V_.RefractoryCounts_;
-
-        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
-        SpikeEvent se;
-        network()->send( *this, se, lag );
+        interpolate_( t, t_old);
+        spiking_( lag, t );
       }
+
+      /* reset refractory offset once refractory period is elapsed;
+       * this cannot be done beforehand because of the previous check */
+      if ( S_.r_ == 0 && std::abs(t - S_.r_offset_ ) < std::numeric_limits< double >::epsilon() )
+        S_.r_offset_ = 0.;
     }
+
+    // influence of received spikes on post-synaptic conductances
     S_.y_[ State_::DG_EXC ] += B_.spike_exc_.get_value( lag ) * V_.g0_ex_;
     S_.y_[ State_::DG_INH ] += B_.spike_inh_.get_value( lag ) * V_.g0_in_;
 
@@ -456,20 +516,22 @@ nest::aeif_cond_alpha::update( Time const& origin, const long_t from, const long
 }
 
 void
-nest::aeif_cond_alpha::handle( SpikeEvent& e )
+nest::aeif_cond_alpha_gridprecise::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_exc_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_inh_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() ); // keep conductances positive
 }
 
 void
-nest::aeif_cond_alpha::handle( CurrentEvent& e )
+nest::aeif_cond_alpha_gridprecise::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
@@ -477,11 +539,13 @@ nest::aeif_cond_alpha::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void
-nest::aeif_cond_alpha::handle( DataLoggingRequest& e )
+nest::aeif_cond_alpha_gridprecise::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }

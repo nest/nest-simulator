@@ -93,17 +93,19 @@ void
 PreciseModule::init( SLIInterpreter* )
 {
   // register models
-  kernel().model_manager.register_node_model< aeif_cond_alpha_ps >( "aeif_cond_alpha_ps" );
-  kernel().model_manager.register_node_model< aeif_cond_exp_ps >( "aeif_cond_exp_ps" );
-  kernel().model_manager.register_node_model< aeif_psc_alpha_ps >( "aeif_psc_alpha_ps" );
-  kernel().model_manager.register_node_model< aeif_psc_exp_ps >( "aeif_psc_exp_ps" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_canon >( "iaf_psc_alpha_canon" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_presc >( "iaf_psc_alpha_presc" );
-  kernel().model_manager.register_node_model< iaf_psc_alpha_ps >( "iaf_psc_alpha_ps" );
   kernel().model_manager.register_node_model< iaf_psc_delta_canon >( "iaf_psc_delta_canon" );
   kernel().model_manager.register_node_model< iaf_psc_exp_ps >( "iaf_psc_exp_ps" );
   kernel().model_manager.register_node_model< poisson_generator_ps >( "poisson_generator_ps" );
   kernel().model_manager.register_node_model< parrot_neuron_ps >( "parrot_neuron_ps" );
+#ifdef HAVE_GSL_1_11
+  kernel().model_manager.register_node_model< aeif_cond_alpha_ps >( "aeif_cond_alpha_ps" );
+  kernel().model_manager.register_node_model< aeif_cond_exp_ps >( "aeif_cond_exp_ps" );
+  kernel().model_manager.register_node_model< aeif_psc_alpha_ps >( "aeif_psc_alpha_ps" );
+  kernel().model_manager.register_node_model< aeif_psc_exp_ps >( "aeif_psc_exp_ps" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha_ps >( "iaf_psc_alpha_ps" );
+#endif
 } // PreciseModule::init()
 
 

@@ -170,8 +170,25 @@ On the K Computer:
       cmake -DCMAKE_TOOLCHAIN_FILE=</path/to/NEST/src>/cmake/Platform/Fujitsu-Sparc64.cmake 
             -DCMAKE_INSTALL_PREFIX:PATH=</install/path>
             -Dwith-gsl=/path/to/gsl-2.1.install/\
-            -Dwith-optimize="-O3 -Nnoline"
+            -Dwith-optimize="-Kfast"
             -Dwith-defines="-DUSE_PMA"
             -Dwith-python=OFF
             -Dwith-warning=OFF
             </path/to/NEST/src>
+      make -j4
+      make install
+
+  The compilation can take quite some time compiling the file `models/modelsmodule.cpp`
+  due to generation of many template classes. To speed up the process, you can
+  comment out all synapse models you do not need.
+  The option `-Kfast` on the K computer enables many different options:
+
+        -O3 -Kdalign,eval,fast_matmul,fp_contract,fp_relaxed,ilfunc,lib,mfunc,ns,omitfp,prefetch_conditional,rdconv -x-
+
+  Be aware that, with the option `-Kfast` an internal compiler error - probably
+  an out of memory situation - can occur. One solution is to disable synapse
+  models that you don't use in `models/modelsmodule.cpp`. From current observations
+  this might be related to the `-x-` option; you can give it a fixed value, e.g
+  `-x1`, and the compilation succeeds (the impact on performance was not analyzed):
+
+        -Dwith-optimize="-Kfast -x1"

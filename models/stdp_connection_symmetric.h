@@ -272,6 +272,7 @@ STDPConnectionSymmetric< targetidentifierT >::get_status( DictionaryDatum& d ) c
   def< double_t >( d, "kappa", kappa_ );
   def< double_t >( d, "eta", eta_ );
   def< double_t >( d, "Wmax", Wmax_ );
+  def< double_t >( d, "Kplus", Kplus_ );
   def< long_t >( d, names::size_of, sizeof( *this ) );
 }
 
@@ -286,6 +287,7 @@ STDPConnectionSymmetric< targetidentifierT >::set_status( const DictionaryDatum&
   updateValue< double_t >( d, "kappa", kappa_ );
   updateValue< double_t >( d, "eta", eta_ );
   updateValue< double_t >( d, "Wmax", Wmax_ );
+  updateValue< double_t >( d, "Kplus", Kplus_ );
 }
 
 } // of namespace nest

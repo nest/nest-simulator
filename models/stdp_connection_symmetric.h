@@ -1,5 +1,5 @@
 /*
- *  stdp_symmetric_connection.h
+ *  stdp_connection_symmetric.h
  *
  *  This file is part of NEST.
  *

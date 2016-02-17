@@ -438,6 +438,18 @@ nest::aeif_cond_alpha_gridprecise::update( const Time& origin, const nest::long_
   assert( State_::V_M == 0 );
 
   double t, t_old, t_next_event;
+  
+  /* Neurons may have been initialized to superthreshold potentials.
+     We need to check for this here and issue spikes at the beginning of
+     the interval.
+  */
+  if ( S_.y_[ State_::V_M ] >= P_.V_peak_ )
+  {
+    S_.y_[ State_::V_M ] = P_.V_reset_;
+    S_.y_[ State_::W ] += P_.b;
+    SpikeEvent se;
+    kernel().event_delivery_manager.send( *this, se, from );
+  }
 
   for ( long_t lag = from; lag < to; ++lag )
   {

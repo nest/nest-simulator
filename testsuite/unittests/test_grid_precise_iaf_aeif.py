@@ -20,8 +20,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 import numpy as np
 import nest
 
@@ -148,9 +146,14 @@ def simulate_models(models, I_dc=160., noise=False, precise=False, rate=100.):
     '''
     Simulate models in given conditions and record their variables.
     '''
+    msd = 123456
     resol = 0.01
     nest.ResetKernel()
     nest.SetKernelStatus({"resolution":resol})
+    N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
+    pyrngs = [np.random.RandomState(s) for s in range(msd, msd+N_vp)]
+    nest.SetKernelStatus({'grng_seed': msd+N_vp})
+    nest.SetKernelStatus({'rng_seeds': range(msd+N_vp+1, msd+2*N_vp+1)})
     num_models = len(models)
     # create the neurons and devices
     print(models)
@@ -176,7 +179,7 @@ def simulate_models(models, I_dc=160., noise=False, precise=False, rate=100.):
     nest.Simulate(1600.)
     return multimeter
   
-def compute_difference(multimeter, models):
+def compute_difference(multimeter, models, avg=1.):
     '''
     Compute the relative differences between the values recorded by the
     multimeter.
@@ -199,7 +202,7 @@ def compute_difference(multimeter, models):
         for model in models.iterkeys():
             if model != first:
                 di_diff[record] += np.abs(first_val - di_val[model][i])
-        rel_diff = np.sum(np.abs(di_diff[record]))/np.sum(np.abs(first_val))
+        rel_diff = np.sum(np.abs(di_diff[record]))/(avg*np.sum(np.abs(first_val)))
         di_rel_diff[record] = 0. if np.isnan(rel_diff) else rel_diff
     return di_rel_diff
 
@@ -215,30 +218,30 @@ def compare_iaf_psc_alpha(di_models):
         assert(rel_diff < tol_iaf)
     return di_rel_diff
 
-def compare_aeif_RK5(di_models, di_compare):
+def compare_aeif_RK5(models, compare):
     '''
     Compare the new aeif models with the old "aeif_cond_alpha_RK5"
     implementation; they should stay whithin a reasonnable precision.
     '''
-    multimeter = simulate_models(di_models)
-    di_rel_diff = compute_difference(multimeter, di_models)
-    mm_comp = simulate_models(di_compare)
-    di_rel_diff_comp = compute_difference(mm_comp, di_compare)
+    multimeter = simulate_models(models)
+    di_rel_diff = compute_difference(multimeter, models, avg=len(models)-1)
+    mm_comp = simulate_models(compare)
+    di_rel_diff_comp = compute_difference(mm_comp, compare)
     for rd, rd_comp in zip(di_rel_diff.values(), di_rel_diff_comp.values()):
         assert(rd < tol_rk5)
         assert(rd < rd_comp)
     return di_rel_diff
 
-def compare_aeif_cond_alpha(di_models, di_compare):
+def compare_aeif_cond_alpha(models, compare):
     '''
     Compare more precisely (with poisson noise) the new aeif_cond_alpha models 
     with the old "aeif_cond_alpha_RK5" implementation; they should stay whithin
-    a reasonnable precision.
+    a closer range than "aeif_cond_alpha".
     '''
-    multimeter = simulate_models(di_models, noise=True)
-    di_rel_diff = compute_difference(multimeter, di_models)
-    mm_comp = simulate_models(di_compare)
-    di_rel_diff_comp = compute_difference(mm_comp, di_compare)
+    multimeter = simulate_models(models, noise=True)
+    di_rel_diff = compute_difference(multimeter, models, avg=len(models)-1)
+    mm_comp = simulate_models(compare)
+    di_rel_diff_comp = compute_difference(mm_comp, compare)
     for rd, rd_comp in zip(di_rel_diff.values(), di_rel_diff_comp.values()):
         assert(rd < tol_aeif_cond_alpha)
         assert(rd < rd_comp)
@@ -258,5 +261,3 @@ lst_results.append(compare_aeif_RK5(di_aeif_rk5, di_aeif_rk5_comp))
 # for the aeif_cond_alpha with non-precise poisson noise
 lst_results.append(compare_aeif_cond_alpha( di_aeif_cond_alpha,
                                             di_aeif_cond_alpha_comp) )
-
-print(lst_results)

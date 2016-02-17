@@ -328,25 +328,25 @@ M_WARNING setverbosity
       % random convergent connect to all neurons 
       1 1 E_last
       {
-	/target Set
+        /target Set
         % We have CE E -> E connections
         CE
         {
-	  rng NE irand % draw random number in [0,NE)
+          rng NE irand % draw random number in [0,NE)
           1 add        % plus 1 to get number in [1,NE]
-	  target
-	  /syn_ex Connect
+          target
+          /syn_ex Connect
         } repeat
       }  for
 
       I_first 1 I_last
       {
-	/target Set
+        /target Set
         % E -> I connections
         CE
         {
-	  rng NE irand 1 add
-	  target /syn_ex Connect
+          rng NE irand 1 add
+          target /syn_ex Connect
         } repeat
       } for
 
@@ -354,13 +354,13 @@ M_WARNING setverbosity
 
       1 1 E_last
       {
-	/target Set
- 	% We have CI I -> E connections
-	CI
-	{
-	   rng NI irand I_first add 
-	   target /syn_in Connect
-	} repeat
+        /target Set
+        % We have CI I -> E connections
+        CI
+        {
+           rng NI irand I_first add
+           target /syn_in Connect
+        } repeat
       } for
 
       % We must undef target to prevent the old value from
@@ -368,12 +368,12 @@ M_WARNING setverbosity
       userdict /target undef
       I_first 1 I_last
       {
-	/target Set
- 	CI
-	{
-	   rng NI irand I_first add 
-	   target /syn_in Connect
-	} repeat
+        /target Set
+        CI
+        {
+           rng NI irand I_first add
+           target /syn_in Connect
+        } repeat
       } for
 } bind def
 
@@ -384,13 +384,13 @@ M_WARNING setverbosity
       % Connect Poisson generator to neurons
       1 1 E_last
       {
-        expoisson exch /syn_ex Connect	
+        expoisson exch /syn_ex Connect
       } for
 
       % Connect Poisson generator to neurons
       I_first 1 I_last
       {
-        inpoisson exch /syn_ex Connect	
+        inpoisson exch /syn_ex Connect
       } for
 
       % Spike detectors are connected to the first Nrec neurons in each
@@ -414,26 +414,26 @@ M_WARNING setverbosity
       % random convergent connect to all neurons 
       1 1 E_last
       {
-	/target Set
+        /target Set
         % We have CE E -> E connections
         CE
         {
-	  rng NE irand % draw random number in [0,NE)
+          rng NE irand % draw random number in [0,NE)
           1 add        % plus 1 to get number in [1,NE]
-	  target
-	  /syn_ex
+          target
+          /syn_ex
           Connect  
         } repeat
       }  for
 
       I_first 1 I_last
       {
-	/target Set
+        /target Set
         % E -> I connections
         CE
         {
-	  rng NE irand 1 add
-	  target /syn_ex Connect  
+          rng NE irand 1 add
+          target /syn_ex Connect  
         } repeat
       } for
 
@@ -441,13 +441,13 @@ M_WARNING setverbosity
 
       1 1 E_last
       {
-	/target Set
- 	% We have CI I -> E connections
-	CI
-	{
-	   rng NI irand I_first add 
-	   target /syn_in Connect
-	} repeat
+        /target Set
+        % We have CI I -> E connections
+        CI
+        {
+           rng NI irand I_first add 
+           target /syn_in Connect
+        } repeat
       } for
 
       % We must undef target to prevent the old value from
@@ -455,12 +455,12 @@ M_WARNING setverbosity
       userdict /target undef
       I_first 1 I_last
       {
-	/target Set
- 	CI
-	{
-	   rng NI irand I_first add 
-	   target /syn_in Connect
-	} repeat
+        /target Set
+        CI
+        {
+           rng NI irand I_first add 
+           target /syn_in Connect
+        } repeat
       } for
 } bind def
 
@@ -476,13 +476,13 @@ M_WARNING setverbosity
       % Connect Poisson generator to neurons
       1 1 E_last
       {
-        expoisson exch /syn_ex Connect	
+        expoisson exch /syn_ex Connect
       } for
 
       % Connect Poisson generator to neurons
       I_first 1 I_last
       {
-        inpoisson exch /syn_ex Connect	
+        inpoisson exch /syn_ex Connect
       } for
 
       % Spike detectors are connected to the first Nrec neurons in each
@@ -506,14 +506,14 @@ M_WARNING setverbosity
       % random convergent connect to all neurons 
       1 1 E_last
       {
-	/target Set_
+        /target Set_
         % We have CE E -> E connections
         CE
         {
-	  rng NE irand_g_i % draw random number in [0,NE)
+          rng NE irand_g_i % draw random number in [0,NE)
           1 add_ii         % plus 1 to get number in [1,NE]
-	  target
-	  /syn_ex Connect  
+          target
+          /syn_ex Connect  
         } repeat_
       }  for
 
@@ -523,12 +523,12 @@ M_WARNING setverbosity
 
       I_first 1 I_last
       {
-	/target Set_
+        /target Set_
         % E -> I connections
         CE
         {
-	  rng NE irand_g_i 1 add_ii
-	  target /syn_ex Connect  
+          rng NE irand_g_i 1 add_ii
+          target /syn_ex Connect  
         } repeat_
       }  for
 
@@ -540,13 +540,13 @@ M_WARNING setverbosity
 
       1 1 E_last
       {
-	/target Set_
- 	% We have CI I -> E connections
-	CI
-	{
-	   rng NI irand_g_i I_first add_ii 
-	   target /syn_in Connect
-	} repeat_
+        /target Set_
+        % We have CI I -> E connections
+        CI
+        {
+           rng NI irand_g_i I_first add_ii 
+           target /syn_in Connect
+        } repeat_
       } for
 
       % We must undef target to prevent the old value from
@@ -554,12 +554,12 @@ M_WARNING setverbosity
       userdict /target undef
       I_first 1 I_last
       {
-	/target Set_
- 	CI
-	{
-	   rng NI irand_g_i I_first add_ii 
-	   target /syn_in Connect
-	} repeat_
+        /target Set_
+        CI
+        {
+           rng NI irand_g_i I_first add_ii 
+           target /syn_in Connect
+        } repeat_
       }  for
 } bind userdict Inline def
 

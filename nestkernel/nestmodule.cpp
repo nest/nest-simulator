@@ -724,6 +724,7 @@ NestModule::Connect_i_i_lFunction::execute( SLIInterpreter* i ) const
   // check whether the target is on this process
   if ( kernel().node_manager.is_local_gid( target ) )
   {
+    // VERY EXPENSIVE for successive calls, e.g. brunel-sli_connect.sli
 #pragma omp parallel
     {
       const int tid = kernel().vp_manager.get_thread_id();

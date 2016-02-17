@@ -66,7 +66,7 @@ class ThreadTestCase(unittest.TestCase):
         pre = nest.Create("iaf_neuron")
         post = nest.Create("iaf_neuron", 6)
 
-        nest.DivergentConnect(pre, post)
+        nest.Connect(pre, post)
 
         conn = nest.FindConnections(pre)
         # Because of threading, targets may be in a different order than
@@ -100,8 +100,8 @@ class ThreadTestCase(unittest.TestCase):
             sd = nest.Create('spike_detector')
             vm = nest.Create('voltmeter')
 
-            nest.ConvergentConnect(n,sd)
-            nest.DivergentConnect(vm,n)
+            nest.Connect(n,sd)
+            nest.Connect(vm,n)
 
             nest.Simulate(Simtime)
 

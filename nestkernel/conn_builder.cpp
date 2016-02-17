@@ -968,16 +968,19 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( const GIDCollection& sources,
     }
     else if ( indegree_ == n_sources and not autapses_ )
     {
-      LOG( M_WARNING, "FixedInDegreeBuilder::connect", "Multapses and autapses prohibited. "
-        "When the sources and the targets have a non-empty intersection, the connect "
-        "algorithm will enter an infinite loop.");
+      LOG( M_WARNING,
+        "FixedInDegreeBuilder::connect",
+        "Multapses and autapses prohibited. When the sources and the targets have a non-empty "
+        "intersection, the connect algorithm will enter an infinite loop." );
       return;
     }
 
     if ( indegree_ > 0.9 * n_sources )
     {
-      LOG( M_WARNING, "FixedInDegreeBuilder::connect", "Multapses are prohibited and you request "
-        "more than 90% connectivity. Expect long connecting times!");
+      LOG( M_WARNING,
+        "FixedInDegreeBuilder::connect",
+        "Multapses are prohibited and you request more than 90% connectivity. "
+        "Expect long connecting times!" );
     }
   } // if (not multapses_ )
 }
@@ -1064,18 +1067,21 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( const GIDCollection& sources
     }
     else if ( outdegree_ == n_targets and not autapses_ )
     {
-      LOG( M_WARNING, "FixedOutDegreeBuilder::connect", "Multapses and autapses prohibited. "
-        "When the sources and the targets have a non-empty intersection, the connect "
-        "algorithm will enter an infinite loop.");
+      LOG( M_WARNING,
+        "FixedOutDegreeBuilder::connect",
+        "Multapses and autapses prohibited. When the sources and the targets have a non-empty "
+        "intersection, the connect algorithm will enter an infinite loop." );
       return;
     }
 
     if ( outdegree_ > 0.9 * n_targets )
     {
-      LOG( M_WARNING, "FixedOutDegreeBuilder::connect", "Multapses are prohibited and you request "
-        "more than 90% connectivity. Expect long connecting times!");
+      LOG( M_WARNING,
+        "FixedOutDegreeBuilder::connect",
+        "Multapses are prohibited and you request more than 90% connectivity. "
+        "Expect long connecting times!" );
     }
-  } 
+  }
 }
 
 void

@@ -907,7 +907,7 @@ private:
 
 public:
   HetConnector()
-    : vector< ConnectorBase* >()
+    : std::vector< ConnectorBase* >()
     , primary_end_( 0 )
   {
   }

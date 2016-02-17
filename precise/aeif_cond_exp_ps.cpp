@@ -1,6 +1,23 @@
 /*
  *  aeif_cond_exp_ps.cpp
  *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #include "aeif_cond_exp_ps.h"
@@ -38,17 +55,20 @@ nest::RecordablesMap< nest::aeif_cond_exp_ps > nest::aeif_cond_exp_ps::recordabl
 
 namespace nest // template specialization must be placed in namespace
 {
-  // Override the create() method with one call to RecordablesMap::insert_()
-  // for each quantity to be recorded.
-  template <>
-  void
-  RecordablesMap< nest::aeif_cond_exp_ps >::create()
-  {
-    insert_( names::V_m, &nest::aeif_cond_exp_ps::get_y_elem_< nest::aeif_cond_exp_ps::State_::V_M > );
-    insert_( names::g_ex, &nest::aeif_cond_exp_ps::get_y_elem_< nest::aeif_cond_exp_ps::State_::G_EXC > );
-    insert_( names::g_in, &nest::aeif_cond_exp_ps::get_y_elem_< nest::aeif_cond_exp_ps::State_::G_INH > );
-    insert_( names::w, &nest::aeif_cond_exp_ps::get_y_elem_< nest::aeif_cond_exp_ps::State_::W > );
-  }
+// Override the create() method with one call to RecordablesMap::insert_()
+// for each quantity to be recorded.
+template <>
+void
+RecordablesMap< nest::aeif_cond_exp_ps >::create()
+{
+  insert_(
+    names::V_m, &nest::aeif_cond_exp_ps::get_y_elem_< nest::aeif_cond_exp_ps::State_::V_M > );
+  insert_(
+    names::g_ex, &nest::aeif_cond_exp_ps::get_y_elem_< nest::aeif_cond_exp_ps::State_::G_EXC > );
+  insert_(
+    names::g_in, &nest::aeif_cond_exp_ps::get_y_elem_< nest::aeif_cond_exp_ps::State_::G_INH > );
+  insert_( names::w, &nest::aeif_cond_exp_ps::get_y_elem_< nest::aeif_cond_exp_ps::State_::W > );
+}
 }
 
 
@@ -92,10 +112,10 @@ nest::aeif_cond_exp_ps_dynamics( double, const double y[], double f[], void* pno
 
   // dv/dt
   f[ S::V_M ] = ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh - w
-            + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+                  + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
-  f[ S::G_EXC ] = - g_ex / node.P_.tau_syn_ex; // Synaptic Conductance (nS)
-  f[ S::G_INH ] = - g_in / node.P_.tau_syn_in; // Synaptic Conductance (nS)
+  f[ S::G_EXC ] = -g_ex / node.P_.tau_syn_ex; // Synaptic Conductance (nS)
+  f[ S::G_INH ] = -g_in / node.P_.tau_syn_in; // Synaptic Conductance (nS)
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -109,41 +129,41 @@ nest::aeif_cond_exp_ps_dynamics( double, const double y[], double f[], void* pno
  * ---------------------------------------------------------------- */
 
 nest::aeif_cond_exp_ps::Parameters_::Parameters_()
-  : V_peak_( 0.0 )   // mV, should not be larger that V_th+10
+  : V_peak_( 0.0 )    // mV, should not be larger that V_th+10
   , V_reset_( -60.0 ) // mV
-  , t_ref_( 0.0 )    // ms
-  , g_L( 30.0 )     // nS
-  , C_m( 281.0 )    // pF
-  , E_L( -70.6 )    // mV
-  , E_ex( 0.0 )     // mV
-  , E_in( -85.0 )    // mV
-  , Delta_T( 2.0 )   // mV
-  , tau_w( 144.0 )   // ms
-  , a( 4.0 )       // nS
-  , b( 80.5 )      // pA
-  , V_th( -50.4 )    // mV
+  , t_ref_( 0.0 )     // ms
+  , g_L( 30.0 )       // nS
+  , C_m( 281.0 )      // pF
+  , E_L( -70.6 )      // mV
+  , E_ex( 0.0 )       // mV
+  , E_in( -85.0 )     // mV
+  , Delta_T( 2.0 )    // mV
+  , tau_w( 144.0 )    // ms
+  , a( 4.0 )          // nS
+  , b( 80.5 )         // pA
+  , V_th( -50.4 )     // mV
   , tau_syn_ex( 0.2 ) // ms
   , tau_syn_in( 2.0 ) // ms
-  , I_e( 0.0 )      // pA
+  , I_e( 0.0 )        // pA
   , gsl_error_tol( 1e-6 )
 {
 }
 
 nest::aeif_cond_exp_ps::State_::State_( const Parameters_& p )
   : r_( 0 )
-  , r_offset_ ( 0. )
+  , r_offset_( 0. )
 {
   y_[ 0 ] = p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
-   y_[ i ] = 0;
+    y_[ i ] = 0;
 }
 
 nest::aeif_cond_exp_ps::State_::State_( const State_& s )
   : r_( s.r_ )
-  , r_offset_ ( s.r_offset_ )
+  , r_offset_( s.r_offset_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-   y_[ i ] = s.y_[ i ];
+    y_[ i ] = s.y_[ i ];
 }
 
 nest::aeif_cond_exp_ps::State_& nest::aeif_cond_exp_ps::State_::operator=( const State_& s )
@@ -151,7 +171,7 @@ nest::aeif_cond_exp_ps::State_& nest::aeif_cond_exp_ps::State_::operator=( const
   assert( this != &s ); // would be bad logical error in program
 
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-   y_[ i ] = s.y_[ i ];
+    y_[ i ] = s.y_[ i ];
   r_ = s.r_;
   r_offset_ = s.r_offset_;
   return *this;
@@ -219,6 +239,9 @@ nest::aeif_cond_exp_ps::Parameters_::set( const DictionaryDatum& d )
   if ( C_m <= 0 )
     throw BadProperty( "Capacitance must be strictly positive." );
 
+  if ( g_L <= 0 )
+    throw BadProperty( "Leak conductance must be strictly positive." );
+
   if ( t_ref_ < 0 )
     throw BadProperty( "Refractory time cannot be negative." );
 
@@ -247,7 +270,7 @@ nest::aeif_cond_exp_ps::State_::set( const DictionaryDatum& d, const Parameters_
   updateValue< double >( d, names::w, y_[ W ] );
 
   if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 )
-   throw BadProperty( "Conductances must not be negative." );
+    throw BadProperty( "Conductances must not be negative." );
 }
 
 nest::aeif_cond_exp_ps::Buffers_::Buffers_( aeif_cond_exp_ps& n )
@@ -308,7 +331,7 @@ nest::aeif_cond_exp_ps::init_buffers_()
 {
   B_.events_.resize();
   B_.events_.clear();
-  B_.currents_.clear();  // includes resize
+  B_.currents_.clear(); // includes resize
   Archiving_Node::clear_history();
 
   B_.logger_.reset();
@@ -362,13 +385,14 @@ void
 nest::aeif_cond_exp_ps::interpolate_( double& t, double t_old )
 {
   // find the exact time when the threshold was crossed
-  double dt_crossing = ( P_.V_peak_ - S_.y_old_[ State_::V_M ] ) * ( t - t_old ) / ( S_.y_[ State_::V_M ] - S_.y_old_[ State_::V_M ] );
+  double dt_crossing = ( P_.V_peak_ - S_.y_old_[ State_::V_M ] ) * ( t - t_old )
+    / ( S_.y_[ State_::V_M ] - S_.y_old_[ State_::V_M ] );
 
   // reset V_m and set the other variables correctly
   S_.y_[ State_::V_M ] = P_.V_reset_;
-  for ( int i=1; i < State_::STATE_VEC_SIZE; ++i )
+  for ( int i = 1; i < State_::STATE_VEC_SIZE; ++i )
   {
-    S_.y_[i] = S_.y_old_[i] + ( S_.y_[i] - S_.y_old_[i] ) / ( t - t_old ) * dt_crossing;
+    S_.y_[ i ] = S_.y_old_[ i ] + ( S_.y_[ i ] - S_.y_old_[ i ] ) / ( t - t_old ) * dt_crossing;
   }
   S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
 
@@ -387,7 +411,7 @@ nest::aeif_cond_exp_ps::spiking_( const long_t T, const long_t lag, const double
   if ( P_.t_ref_ > 0. )
   {
     S_.r_ = V_.RefractoryCounts_;
-    S_.r_offset_ = V_.RefractoryOffset_ - (B_.step_ - t);
+    S_.r_offset_ = V_.RefractoryOffset_ - ( B_.step_ - t );
     if ( S_.r_offset_ < 0. )
     {
       if ( S_.r_ > 0 )
@@ -409,7 +433,7 @@ nest::aeif_cond_exp_ps::update( const Time& origin, const long_t from, const lon
   assert( from < to );
   assert( State_::V_M == 0 );
 
-  double t, t_old, t_next_event, spike_in(0.), spike_ex(0.);
+  double t, t_old, t_next_event, spike_in( 0. ), spike_ex( 0. );
 
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )
@@ -452,20 +476,20 @@ nest::aeif_cond_exp_ps::update( const Time& origin, const long_t from, const lon
     while ( t < B_.step_ )
     {
       // store the previous values of the state variables, and t
-      std::copy(S_.y_, S_.y_ + sizeof(S_.y_)/sizeof(S_.y_[0]), S_.y_old_);
+      std::copy( S_.y_, S_.y_ + sizeof( S_.y_ ) / sizeof( S_.y_[ 0 ] ), S_.y_old_ );
       t_old = t;
-      B_.events_.get_next_event(T, t_next_event, spike_in, spike_ex, B_.step_ );
+      B_.events_.get_next_event( T, t_next_event, spike_in, spike_ex, B_.step_ );
 
-      while (t < t_next_event)
+      while ( t < t_next_event )
       {
         const int status = gsl_odeiv_evolve_apply( B_.e_,
-        B_.c_,
-        B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        t_next_event,         // to t <= t_next_event
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+          B_.c_,
+          B_.s_,
+          &B_.sys_,             // system of ODE
+          &t,                   // from t
+          t_next_event,         // to t <= t_next_event
+          &B_.IntegrationStep_, // integration step size
+          S_.y_ );              // neuronal state
 
         // checks
         if ( status != GSL_SUCCESS )
@@ -485,10 +509,10 @@ nest::aeif_cond_exp_ps::update( const Time& origin, const long_t from, const lon
       }
 
       // reset refractory offset once refractory period is elapsed
-      if ( S_.r_ == 0 && std::abs(t - S_.r_offset_ ) < std::numeric_limits< double >::epsilon() )
+      if ( S_.r_ == 0 && std::abs( t - S_.r_offset_ ) < std::numeric_limits< double >::epsilon() )
         S_.r_offset_ = 0.;
-      
-      if (t == t_next_event)
+
+      if ( t == t_next_event )
       {
         S_.y_[ State_::G_EXC ] += spike_ex;
         S_.y_[ State_::G_INH ] += spike_in;
@@ -511,8 +535,7 @@ nest::aeif_cond_exp_ps::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
-  B_.events_.add_spike(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  B_.events_.add_spike( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -528,8 +551,7 @@ nest::aeif_cond_exp_ps::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 // Do not move this function as inline to h-file. It depends on

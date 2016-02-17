@@ -49,7 +49,8 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_psc_alpha_gridprecise > nest::aeif_psc_alpha_gridprecise::recordablesMap_;
+nest::RecordablesMap< nest::aeif_psc_alpha_gridprecise >
+  nest::aeif_psc_alpha_gridprecise::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -60,12 +61,18 @@ void
 RecordablesMap< aeif_psc_alpha_gridprecise >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &aeif_psc_alpha_gridprecise::get_y_elem_< aeif_psc_alpha_gridprecise::State_::V_M > );
-  insert_( names::I_ex, &aeif_psc_alpha_gridprecise::get_y_elem_< aeif_psc_alpha_gridprecise::State_::I_EXC > );
-  insert_( names::I_in, &aeif_psc_alpha_gridprecise::get_y_elem_< aeif_psc_alpha_gridprecise::State_::I_INH > );
-  insert_( names::dI_ex, &aeif_psc_alpha_gridprecise::get_y_elem_< aeif_psc_alpha_gridprecise::State_::DI_EXC > );
-  insert_( names::dI_in, &aeif_psc_alpha_gridprecise::get_y_elem_< aeif_psc_alpha_gridprecise::State_::DI_INH > );
-  insert_( names::w, &aeif_psc_alpha_gridprecise::get_y_elem_< aeif_psc_alpha_gridprecise::State_::W > );
+  insert_( names::V_m,
+    &aeif_psc_alpha_gridprecise::get_y_elem_< aeif_psc_alpha_gridprecise::State_::V_M > );
+  insert_( names::I_ex,
+    &aeif_psc_alpha_gridprecise::get_y_elem_< aeif_psc_alpha_gridprecise::State_::I_EXC > );
+  insert_( names::I_in,
+    &aeif_psc_alpha_gridprecise::get_y_elem_< aeif_psc_alpha_gridprecise::State_::I_INH > );
+  insert_( names::dI_ex,
+    &aeif_psc_alpha_gridprecise::get_y_elem_< aeif_psc_alpha_gridprecise::State_::DI_EXC > );
+  insert_( names::dI_in,
+    &aeif_psc_alpha_gridprecise::get_y_elem_< aeif_psc_alpha_gridprecise::State_::DI_INH > );
+  insert_(
+    names::w, &aeif_psc_alpha_gridprecise::get_y_elem_< aeif_psc_alpha_gridprecise::State_::W > );
 }
 }
 
@@ -77,7 +84,8 @@ nest::aeif_psc_alpha_gridprecise_dynamics( double, const double y[], double f[],
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_psc_alpha_gridprecise& node = *( reinterpret_cast< nest::aeif_psc_alpha_gridprecise* >( pnode ) );
+  const nest::aeif_psc_alpha_gridprecise& node =
+    *( reinterpret_cast< nest::aeif_psc_alpha_gridprecise* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -103,8 +111,8 @@ nest::aeif_psc_alpha_gridprecise_dynamics( double, const double y[], double f[],
   const double_t I_spike = node.P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
 
   // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) + I_exc - I_in - w
-            + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) + I_exc - I_in - w + node.P_.I_e
+                  + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::DI_EXC ] = -dI_exc / node.P_.tau_syn_ex;
   f[ S::I_EXC ] = dI_exc - I_exc / node.P_.tau_syn_ex; // Synaptic Conductance (nS)
@@ -158,7 +166,8 @@ nest::aeif_psc_alpha_gridprecise::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::aeif_psc_alpha_gridprecise::State_& nest::aeif_psc_alpha_gridprecise::State_::operator=( const State_& s )
+nest::aeif_psc_alpha_gridprecise::State_& nest::aeif_psc_alpha_gridprecise::State_::operator=(
+  const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -224,9 +233,10 @@ nest::aeif_psc_alpha_gridprecise::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Ensure that: V_reset < V_peak ." );
 
   if ( C_m <= 0 )
-  {
     throw BadProperty( "Capacitance must be strictly positive." );
-  }
+
+  if ( g_L <= 0 )
+    throw BadProperty( "Leak conductance must be strictly positive." );
 
   if ( t_ref_ < 0 )
     throw BadProperty( "Refractory time cannot be negative." );
@@ -273,7 +283,8 @@ nest::aeif_psc_alpha_gridprecise::Buffers_::Buffers_( aeif_psc_alpha_gridprecise
   // init_buffers_().
 }
 
-nest::aeif_psc_alpha_gridprecise::Buffers_::Buffers_( const Buffers_&, aeif_psc_alpha_gridprecise& n )
+nest::aeif_psc_alpha_gridprecise::Buffers_::Buffers_( const Buffers_&,
+  aeif_psc_alpha_gridprecise& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -385,13 +396,14 @@ void
 nest::aeif_psc_alpha_gridprecise::interpolate_( double& t, double t_old )
 {
   // find the exact time when the threshold was crossed
-  double dt_crossing = ( P_.V_peak_ - S_.y_old_[ State_::V_M ] ) * ( t - t_old ) / ( S_.y_[ State_::V_M ] - S_.y_old_[ State_::V_M ] );
+  double dt_crossing = ( P_.V_peak_ - S_.y_old_[ State_::V_M ] ) * ( t - t_old )
+    / ( S_.y_[ State_::V_M ] - S_.y_old_[ State_::V_M ] );
 
   // reset V_m and set the other variables correctly
   S_.y_[ State_::V_M ] = P_.V_reset_;
-  for ( int i=1; i < State_::STATE_VEC_SIZE; ++i )
+  for ( int i = 1; i < State_::STATE_VEC_SIZE; ++i )
   {
-    S_.y_[i] = S_.y_old_[i] + ( S_.y_[i] - S_.y_old_[i] ) / ( t - t_old ) * dt_crossing;
+    S_.y_[ i ] = S_.y_old_[ i ] + ( S_.y_[ i ] - S_.y_old_[ i ] ) / ( t - t_old ) * dt_crossing;
   }
   S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
 
@@ -409,7 +421,7 @@ nest::aeif_psc_alpha_gridprecise::spiking_( const long_t lag, const double t )
   if ( P_.t_ref_ > 0. )
   {
     S_.r_ = V_.RefractoryCounts_;
-    S_.r_offset_ = V_.RefractoryOffset_ - (B_.step_ - t);
+    S_.r_offset_ = V_.RefractoryOffset_ - ( B_.step_ - t );
     if ( S_.r_offset_ < 0. )
     {
       if ( S_.r_ > 0 )
@@ -424,14 +436,16 @@ nest::aeif_psc_alpha_gridprecise::spiking_( const long_t lag, const double t )
 }
 
 void
-nest::aeif_psc_alpha_gridprecise::update( const Time& origin, const nest::long_t from, const nest::long_t to )
+nest::aeif_psc_alpha_gridprecise::update( const Time& origin,
+  const nest::long_t from,
+  const nest::long_t to )
 {
   assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
   double t, t_old, t_next_event;
-  
+
   /* Neurons may have been initialized to superthreshold potentials.
      We need to check for this here and issue spikes at the beginning of
      the interval.
@@ -465,7 +479,7 @@ nest::aeif_psc_alpha_gridprecise::update( const Time& origin, const nest::long_t
     while ( t < B_.step_ )
     {
       // store the previous values of V_m, w, and t
-      std::copy(S_.y_, S_.y_ + sizeof(S_.y_)/sizeof(S_.y_[0]), S_.y_old_);
+      std::copy( S_.y_, S_.y_ + sizeof( S_.y_ ) / sizeof( S_.y_[ 0 ] ), S_.y_old_ );
       t_old = t;
 
       // check for end of refractory period
@@ -474,7 +488,7 @@ nest::aeif_psc_alpha_gridprecise::update( const Time& origin, const nest::long_t
       else
         t_next_event = B_.step_;
 
-      while (t < t_next_event)
+      while ( t < t_next_event )
       {
         // propagate the ODE
         const int status = gsl_odeiv_evolve_apply( B_.e_,
@@ -498,13 +512,13 @@ nest::aeif_psc_alpha_gridprecise::update( const Time& origin, const nest::long_t
         S_.y_[ State_::V_M ] = P_.V_reset_; // only V_m is frozen
       else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ )
       {
-        interpolate_( t, t_old);
+        interpolate_( t, t_old );
         spiking_( lag, t );
       }
 
       /* reset refractory offset once refractory period is elapsed;
        * this cannot be done beforehand because of the previous check */
-      if ( S_.r_ == 0 && std::abs(t - S_.r_offset_ ) < std::numeric_limits< double >::epsilon() )
+      if ( S_.r_ == 0 && std::abs( t - S_.r_offset_ ) < std::numeric_limits< double >::epsilon() )
         S_.r_offset_ = 0.;
     }
 
@@ -545,8 +559,7 @@ nest::aeif_psc_alpha_gridprecise::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

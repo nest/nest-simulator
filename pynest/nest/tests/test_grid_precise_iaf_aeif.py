@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#-*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 #
-# test_grid_precise.py
+# test_grid_precise_iaf_aeif.py
 #
 # This file is part of NEST.
 #

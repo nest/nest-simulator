@@ -51,16 +51,19 @@ nest::RecordablesMap< nest::iaf_psc_alpha_ps > nest::iaf_psc_alpha_ps::recordabl
 
 namespace nest // template specialization must be placed in namespace
 {
-  // Override the create() method with one call to RecordablesMap::insert_()
-  // for each quantity to be recorded.
-  template <>
-  void
-  RecordablesMap< nest::iaf_psc_alpha_ps >::create()
-  {
-    insert_( names::V_m, &nest::iaf_psc_alpha_ps::get_y_elem_< nest::iaf_psc_alpha_ps::State_::V_M > );
-    insert_( names::I_ex, &nest::iaf_psc_alpha_ps::get_y_elem_< nest::iaf_psc_alpha_ps::State_::I_EXC > );
-    insert_( names::I_in, &nest::iaf_psc_alpha_ps::get_y_elem_< nest::iaf_psc_alpha_ps::State_::I_INH > );
-  }
+// Override the create() method with one call to RecordablesMap::insert_()
+// for each quantity to be recorded.
+template <>
+void
+RecordablesMap< nest::iaf_psc_alpha_ps >::create()
+{
+  insert_(
+    names::V_m, &nest::iaf_psc_alpha_ps::get_y_elem_< nest::iaf_psc_alpha_ps::State_::V_M > );
+  insert_(
+    names::I_ex, &nest::iaf_psc_alpha_ps::get_y_elem_< nest::iaf_psc_alpha_ps::State_::I_EXC > );
+  insert_(
+    names::I_in, &nest::iaf_psc_alpha_ps::get_y_elem_< nest::iaf_psc_alpha_ps::State_::I_INH > );
+}
 }
 
 /* ----------------------------------------------------------------
@@ -91,8 +94,8 @@ nest::iaf_psc_alpha_ps_dynamics( double, const double y[], double f[], void* pno
   const double_t& i_inh = y[ S::I_INH ];
 
   // dv/dt
-  f[ S::V_M ] = ( - node.P_.g_L * ( V - node.P_.E_L ) + i_exc - i_inh
-                  + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) + i_exc - i_inh + node.P_.I_e
+                  + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::DI_EXC ] = -di_exc / node.P_.tau_syn_exc;
   f[ S::I_EXC ] = di_exc - i_exc / node.P_.tau_syn_exc; // Synaptic Conductance (nS)
@@ -109,36 +112,36 @@ nest::iaf_psc_alpha_ps_dynamics( double, const double y[], double f[], void* pno
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_alpha_ps::Parameters_::Parameters_()
-  : V_reset_( -60.0 ) // mV
-  , t_ref_( 2.0 )    // ms
-  , g_L( 16.6667 )   // nS
-  , C_m( 281.0 )    // pF
-  , E_ex( 0.0 )     // mV
-  , E_in( -85.0 )    // mV
-  , E_L( -70. )    // mV
-  , V_th( -55 )    // mV
+  : V_reset_( -60.0 )  // mV
+  , t_ref_( 2.0 )      // ms
+  , g_L( 16.6667 )     // nS
+  , C_m( 281.0 )       // pF
+  , E_ex( 0.0 )        // mV
+  , E_in( -85.0 )      // mV
+  , E_L( -70. )        // mV
+  , V_th( -55 )        // mV
   , tau_syn_exc( 0.2 ) // ms
   , tau_syn_inh( 2.0 ) // ms
-  , I_e( 0.0 )      // pA
+  , I_e( 0.0 )         // pA
   , gsl_error_tol( 1e-6 )
 {
 }
 
 nest::iaf_psc_alpha_ps::State_::State_( const Parameters_& p )
   : r_( 0 )
-  , r_offset_ ( 0. )
+  , r_offset_( 0. )
 {
   y_[ 0 ] = p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
-   y_[ i ] = 0;
+    y_[ i ] = 0;
 }
 
 nest::iaf_psc_alpha_ps::State_::State_( const State_& s )
   : r_( s.r_ )
-  , r_offset_ ( s.r_offset_ )
+  , r_offset_( s.r_offset_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-   y_[ i ] = s.y_[ i ];
+    y_[ i ] = s.y_[ i ];
 }
 
 nest::iaf_psc_alpha_ps::State_& nest::iaf_psc_alpha_ps::State_::operator=( const State_& s )
@@ -146,7 +149,7 @@ nest::iaf_psc_alpha_ps::State_& nest::iaf_psc_alpha_ps::State_::operator=( const
   assert( this != &s ); // would be bad logical error in program
 
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-   y_[ i ] = s.y_[ i ];
+    y_[ i ] = s.y_[ i ];
   r_ = s.r_;
   r_offset_ = s.r_offset_;
   return *this;
@@ -194,8 +197,17 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
 
+  if ( V_reset_ >= V_th )
+    throw BadProperty( "Reset potential must be smaller than threshold." );
+
   if ( C_m <= 0 )
     throw BadProperty( "Capacitance must be strictly positive." );
+
+  if ( g_L <= 0 )
+    throw BadProperty( "Leak conductance must be strictly positive." );
+
+  if ( tau_syn_exc <= 0 || tau_syn_inh <= 0 )
+    throw BadProperty( "All time constants must be strictly positive." );
 
   if ( t_ref_ < 0 )
     throw BadProperty( "Refractory time cannot be negative." );
@@ -224,7 +236,7 @@ nest::iaf_psc_alpha_ps::State_::set( const DictionaryDatum& d, const Parameters_
   updateValue< double >( d, names::dg_in, y_[ DI_INH ] );
 
   if ( y_[ I_EXC ] < 0 || y_[ I_INH ] < 0 )
-   throw BadProperty( "Conductances must not be negative." );
+    throw BadProperty( "Conductances must not be negative." );
 }
 
 nest::iaf_psc_alpha_ps::Buffers_::Buffers_( iaf_psc_alpha_ps& n )
@@ -285,7 +297,7 @@ nest::iaf_psc_alpha_ps::init_buffers_()
 {
   B_.events_.resize();
   B_.events_.clear();
-  B_.currents_.clear();  // includes resize
+  B_.currents_.clear(); // includes resize
   Archiving_Node::clear_history();
 
   B_.logger_.reset();
@@ -339,13 +351,14 @@ void
 nest::iaf_psc_alpha_ps::interpolate_( double& t, double t_old )
 {
   // find the exact time when the threshold was crossed
-  double dt_crossing = ( P_.V_th - S_.y_old_[ State_::V_M ] ) * ( t - t_old ) / ( S_.y_[ State_::V_M ] - S_.y_old_[ State_::V_M ] );
+  double dt_crossing = ( P_.V_th - S_.y_old_[ State_::V_M ] ) * ( t - t_old )
+    / ( S_.y_[ State_::V_M ] - S_.y_old_[ State_::V_M ] );
 
   // reset V_m and set the other variables correctly
   S_.y_[ State_::V_M ] = P_.V_reset_;
-  for ( int i=1; i < State_::STATE_VEC_SIZE; ++i )
+  for ( int i = 1; i < State_::STATE_VEC_SIZE; ++i )
   {
-    S_.y_[i] = S_.y_old_[i] + ( S_.y_[i] - S_.y_old_[i] ) / ( t - t_old ) * dt_crossing;
+    S_.y_[ i ] = S_.y_old_[ i ] + ( S_.y_[ i ] - S_.y_old_[ i ] ) / ( t - t_old ) * dt_crossing;
   }
 
   t = t_old + dt_crossing;
@@ -364,7 +377,7 @@ nest::iaf_psc_alpha_ps::spiking_( const long_t T, const long_t lag, const double
   if ( P_.t_ref_ > 0. )
   {
     S_.r_ = V_.RefractoryCounts_;
-    S_.r_offset_ = V_.RefractoryOffset_ - (B_.step_ - t);
+    S_.r_offset_ = V_.RefractoryOffset_ - ( B_.step_ - t );
     if ( S_.r_offset_ < 0. )
     {
       if ( S_.r_ > 0 )
@@ -386,7 +399,7 @@ nest::iaf_psc_alpha_ps::update( const Time& origin, const long_t from, const lon
   assert( from < to );
   assert( State_::V_M == 0 );
 
-  double t, t_old, t_next_event, spike_in(0.), spike_ex(0.);
+  double t, t_old, t_next_event, spike_in( 0. ), spike_ex( 0. );
 
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )
@@ -429,20 +442,20 @@ nest::iaf_psc_alpha_ps::update( const Time& origin, const long_t from, const lon
     while ( t < B_.step_ )
     {
       // store the previous values of V_m, g_exc, g_inh, and t
-      std::copy(S_.y_, S_.y_ + sizeof(S_.y_)/sizeof(S_.y_[0]), S_.y_old_);
+      std::copy( S_.y_, S_.y_ + sizeof( S_.y_ ) / sizeof( S_.y_[ 0 ] ), S_.y_old_ );
       t_old = t;
-      B_.events_.get_next_event(T, t_next_event, spike_in, spike_ex, B_.step_ );
+      B_.events_.get_next_event( T, t_next_event, spike_in, spike_ex, B_.step_ );
 
-      while (t < t_next_event)
+      while ( t < t_next_event )
       {
         const int status = gsl_odeiv_evolve_apply( B_.e_,
-        B_.c_,
-        B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        t_next_event,         // to t <= t_next_event
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+          B_.c_,
+          B_.s_,
+          &B_.sys_,             // system of ODE
+          &t,                   // from t
+          t_next_event,         // to t <= t_next_event
+          &B_.IntegrationStep_, // integration step size
+          S_.y_ );              // neuronal state
 
         if ( status != GSL_SUCCESS )
           throw GSLSolverFailure( get_name(), status );
@@ -462,10 +475,10 @@ nest::iaf_psc_alpha_ps::update( const Time& origin, const long_t from, const lon
         spiking_( T, lag, t );
       }
 
-      if ( S_.r_ == 0 && std::abs(t - S_.r_offset_) < std::numeric_limits< double >::epsilon() )
+      if ( S_.r_ == 0 && std::abs( t - S_.r_offset_ ) < std::numeric_limits< double >::epsilon() )
         S_.r_offset_ = 0.;
 
-      if (t == t_next_event)
+      if ( t == t_next_event )
       {
         S_.y_[ State_::DI_EXC ] += spike_ex * V_.I0_ex_;
         S_.y_[ State_::DI_INH ] += spike_in * V_.I0_in_;
@@ -488,8 +501,7 @@ nest::iaf_psc_alpha_ps::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
-  B_.events_.add_spike(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  B_.events_.add_spike( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -505,8 +517,7 @@ nest::iaf_psc_alpha_ps::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 // Do not move this function as inline to h-file. It depends on

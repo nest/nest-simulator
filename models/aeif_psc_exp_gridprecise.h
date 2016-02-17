@@ -51,7 +51,7 @@ Name: aeif_psc_exp_gridprecise - Current-based exponential integrate-and-fire
 Description:
 aeif_cond_alpha is the adaptive exponential integrate and fire neuron according
 to Brette and Gerstner (2005) and synaptic currents are modelled as alpha
-functions. This model implements a linear interpolation to find spike times 
+functions. This model implements a linear interpolation to find spike times
 more precisely.
 
 This implementation uses the embedded 4th order Runge-Kutta-Fehlberg solver
@@ -92,8 +92,10 @@ Spike adaptation parameters:
   V_peak     double - Spike detection threshold in mV.
 
 Synaptic parameters
-  tau_syn_ex double - Characteristic decrease time of excitatory synaptic current in ms (exponential function).
-  tau_syn_in double - Characteristic decrease time of inhibitory synaptic current in ms (exponential function).
+  tau_syn_ex double - Characteristic decrease time of excitatory synaptic current in ms (exponential
+function).
+  tau_syn_in double - Characteristic decrease time of inhibitory synaptic current in ms (exponential
+function).
 
 Integration parameters
   gsl_error_tol  double - This parameter controls the admissible error of the GSL integrator.
@@ -223,17 +225,17 @@ public:
     enum StateVecElems
     {
       V_M = 0,
-      I_EXC,  // 1
-      I_INH,  // 2
-      W,      // 3
+      I_EXC, // 1
+      I_INH, // 2
+      W,     // 3
       STATE_VEC_SIZE
     };
 
-    double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
+    double_t y_[ STATE_VEC_SIZE ];     //!< neuron state, must be C-array for GSL solver
     double_t y_old_[ STATE_VEC_SIZE ]; //!< old neuron state, must be C-array for GSL solver
-    int_t r_;                      //!< number of refractory steps remaining
-    double_t r_offset_;      // offset on the refractory time if it is not a multiple of step_
-    
+    int_t r_;                          //!< number of refractory steps remaining
+    double_t r_offset_; // offset on the refractory time if it is not a multiple of step_
+
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
     State_& operator=( const State_& );

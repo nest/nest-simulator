@@ -54,8 +54,8 @@ Name: iaf_psc_alpha_ps - Leaky integrate-and-fire neuron
   threshold was crossed, i.e. the spiking time.
 
 Description:
-iaf_psc_alpha_ps is an implementation of the leaky integrate-and-fire model 
-neuron with alpha-shaped postsynaptic currents in the sense of [1]. This model 
+iaf_psc_alpha_ps is an implementation of the leaky integrate-and-fire model
+neuron with alpha-shaped postsynaptic currents in the sense of [1]. This model
 implements precise spikes and a linear interpolation to find spike times more
 precisely.
 
@@ -144,262 +144,259 @@ extern "C" int iaf_psc_alpha_ps_dynamics( double, const double*, double*, void* 
  */
 class iaf_psc_alpha_ps : public Archiving_Node
 {
-  public:
-    /** Basic constructor.
-        This constructor should only be used by GenericModel to create
-        model prototype instances.
+public:
+  /** Basic constructor.
+      This constructor should only be used by GenericModel to create
+      model prototype instances.
+  */
+  iaf_psc_alpha_ps();
+
+  /** Copy constructor.
+      GenericModel::allocate_() uses the copy constructor to clone
+      actual model instances from the prototype instance.
+
+      @note The copy constructor MUST NOT be used to create nodes based
+      on nodes that have been placed in the network.
+  */
+  iaf_psc_alpha_ps( const iaf_psc_alpha_ps& );
+
+  /**
+   * Import sets of overloaded virtual functions.
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   */
+  using Node::handle;
+  using Node::handles_test_event;
+
+  port send_test_event( Node&, rport, synindex, bool );
+
+  port handles_test_event( SpikeEvent&, rport );
+  port handles_test_event( CurrentEvent&, rport );
+  port handles_test_event( DataLoggingRequest&, rport );
+
+  void handle( SpikeEvent& );
+  void handle( CurrentEvent& );
+  void handle( DataLoggingRequest& );
+
+  bool
+  is_off_grid() const
+  {
+    return true;
+  } // uses off_grid events
+
+  void get_status( DictionaryDatum& ) const;
+  void set_status( const DictionaryDatum& );
+
+private:
+  /** @name Interface functions
+   * @note These functions are private, so that they can be accessed
+   * only through a Node*.
+   */
+  //@{
+  void init_state_( const Node& proto );
+  void init_buffers_();
+  void calibrate();
+
+  /**
+   * Time Evolution Operator.
+   *
+   * update() promotes the state of the neuron from origin+from to origin+to.
+   * It does so in steps of the resolution h.  Within each step, time is
+   * advanced from event to event, as retrieved from the spike queue.
+   *
+   * Return from refractoriness is handled as a special event in the
+   * queue, which is marked by a weight that is GSL_NAN.  This greatly simplifies
+   * the code.
+   *
+   * For steps, during which no events occur, the precomputed propagator matrix
+   * is used.  For other steps, the propagator matrix is computed as needed.
+   *
+   * While the neuron is refractory, membrane potential (y3_) is
+   * clamped to U_reset_.
+   */
+
+  //! Take neuron through given time interval
+  void update( const Time&, const long_t, const long_t );
+
+  //! Find the precise time of network crossing
+  void interpolate_( double&, double );
+
+  //! Send spike and set refractoriness
+  void spiking_( const long_t, const long_t, const double );
+
+  // The next two classes need to be friends to access the State_ class/member
+  friend class RecordablesMap< iaf_psc_alpha_ps >;
+  friend class UniversalDataLogger< iaf_psc_alpha_ps >;
+
+  // ----------------------------------------------------------------
+
+  /**
+   * Independent parameters of the model.
+   */
+
+  struct Parameters_
+  {
+    double_t V_reset_; //!< Reset Potential in mV
+    double_t t_ref_;   //!< Refractory period in ms
+
+    double_t g_L;         //!< Leak Conductance in nS
+    double_t C_m;         //!< Membrane Capacitance in pF
+    double_t E_ex;        //!< Excitatory reversal Potential in mV
+    double_t E_in;        //!< Inhibitory reversal Potential in mV
+    double_t E_L;         //!< Leak reversal Potential (aka resting potential) in mV
+    double_t V_th;        //!< Spike threshold in mV.
+    double_t t_ref;       //!< Refractory period in ms.
+    double_t tau_syn_exc; //!< Excitatory synaptic rise time.
+    double_t tau_syn_inh; //!< Excitatory synaptic rise time.
+    double_t I_e;         //!< Intrinsic current in pA.
+
+    double_t gsl_error_tol; //!< error bound for GSL integrator
+
+    Parameters_(); //!< Sets default parameter values
+
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+  };
+
+  // ----------------------------------------------------------------
+
+public:
+  /**
+   * State variables of the model.
+   */
+  struct State_
+  {
+    /**
+    * Enumeration identifying elements in state array State_::y_.
+    * The state vector must be passed to GSL as a C array. This enum
+    * identifies the elements of the vector. It must be public to be
+    * accessible from the iteration function.
     */
-    iaf_psc_alpha_ps();
-
-    /** Copy constructor.
-        GenericModel::allocate_() uses the copy constructor to clone
-        actual model instances from the prototype instance.
-
-        @note The copy constructor MUST NOT be used to create nodes based
-        on nodes that have been placed in the network.
-    */
-    iaf_psc_alpha_ps( const iaf_psc_alpha_ps& );
-
-    /**
-     * Import sets of overloaded virtual functions.
-     * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
-     */
-    using Node::handle;
-    using Node::handles_test_event;
-
-    port send_test_event( Node&, rport, synindex, bool );
-
-    port handles_test_event( SpikeEvent&, rport );
-    port handles_test_event( CurrentEvent&, rport );
-    port handles_test_event( DataLoggingRequest&, rport );
-
-    void handle( SpikeEvent& );
-    void handle( CurrentEvent& );
-    void handle( DataLoggingRequest& );
-
-    bool
-    is_off_grid() const
+    enum StateVecElems
     {
-      return true;
-    } // uses off_grid events
-
-    void get_status( DictionaryDatum& ) const;
-    void set_status( const DictionaryDatum& );
-
-  private:
-    /** @name Interface functions
-     * @note These functions are private, so that they can be accessed
-     * only through a Node*.
-     */
-    //@{
-    void init_state_( const Node& proto );
-    void init_buffers_();
-    void calibrate();
-
-    /**
-     * Time Evolution Operator.
-     *
-     * update() promotes the state of the neuron from origin+from to origin+to.
-     * It does so in steps of the resolution h.  Within each step, time is
-     * advanced from event to event, as retrieved from the spike queue.
-     *
-     * Return from refractoriness is handled as a special event in the
-     * queue, which is marked by a weight that is GSL_NAN.  This greatly simplifies
-     * the code.
-     *
-     * For steps, during which no events occur, the precomputed propagator matrix
-     * is used.  For other steps, the propagator matrix is computed as needed.
-     *
-     * While the neuron is refractory, membrane potential (y3_) is
-     * clamped to U_reset_.
-     */
-    
-    //! Take neuron through given time interval
-    void update( const Time&, const long_t, const long_t );
-
-    //! Find the precise time of network crossing
-    void interpolate_( double&, double );
-
-    //! Send spike and set refractoriness
-    void spiking_( const long_t, const long_t, const double );
-
-    // The next two classes need to be friends to access the State_ class/member
-    friend class RecordablesMap< iaf_psc_alpha_ps >;
-    friend class UniversalDataLogger< iaf_psc_alpha_ps >;
-
-    // ----------------------------------------------------------------
-
-    /**
-     * Independent parameters of the model.
-     */
-
-    struct Parameters_
-    {
-       double_t V_reset_; //!< Reset Potential in mV
-       double_t t_ref_;   //!< Refractory period in ms
-
-       double_t g_L;        //!< Leak Conductance in nS
-       double_t C_m;        //!< Membrane Capacitance in pF
-       double_t E_ex;       //!< Excitatory reversal Potential in mV
-       double_t E_in;       //!< Inhibitory reversal Potential in mV
-       double_t E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-       double_t V_th;       //!< Spike threshold in mV.
-       double_t t_ref;      //!< Refractory period in ms.
-       double_t tau_syn_exc; //!< Excitatory synaptic rise time.
-       double_t tau_syn_inh; //!< Excitatory synaptic rise time.
-       double_t I_e;        //!< Intrinsic current in pA.
-
-       double_t gsl_error_tol; //!< error bound for GSL integrator
-
-       Parameters_(); //!< Sets default parameter values
-
-       void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-       void set( const DictionaryDatum& ); //!< Set values from dicitonary
+      V_M = 0,
+      DI_EXC, // 1
+      I_EXC,  // 2
+      DI_INH, // 3
+      I_INH,  // 4
+      STATE_VEC_SIZE
     };
 
-    // ----------------------------------------------------------------
+    double_t y_[ STATE_VEC_SIZE ];     //!< neuron state, must be C-array for GSL solver
+    double_t y_old_[ STATE_VEC_SIZE ]; //!< old neuron state, must be C-array for GSL solver
+    int_t r_;                          //!< number of refractory steps remaining
+    double_t r_offset_; // offset on the refractory time if it is not a multiple of step_
 
-  public:
-    /**
-     * State variables of the model.
-     */
-    struct State_
-    {
-       /**
-       * Enumeration identifying elements in state array State_::y_.
-       * The state vector must be passed to GSL as a C array. This enum
-       * identifies the elements of the vector. It must be public to be
-       * accessible from the iteration function.
-       */
-       enum StateVecElems
-       {
-          V_M = 0,
-          DI_EXC, // 1
-          I_EXC,  // 2
-          DI_INH, // 3
-          I_INH,  // 4
-          STATE_VEC_SIZE
-       };
+    State_( const Parameters_& ); //!< Default initialization
+    State_( const State_& );
+    State_& operator=( const State_& );
 
-       double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
-       double_t y_old_[ STATE_VEC_SIZE ]; //!< old neuron state, must be C-array for GSL solver
-       int_t r_;                      //!< number of refractory steps remaining
-       double_t r_offset_;      // offset on the refractory time if it is not a multiple of step_
+    void get( DictionaryDatum& ) const;
+    void set( const DictionaryDatum&, const Parameters_& );
+  };
 
-       State_( const Parameters_& ); //!< Default initialization
-       State_( const State_& );
-       State_& operator=( const State_& );
+  // ----------------------------------------------------------------
 
-       void get( DictionaryDatum& ) const;
-       void set( const DictionaryDatum&, const Parameters_& );
-    };
+  /**
+   * Buffers of the model.
+   */
+  struct Buffers_
+  {
+    Buffers_( iaf_psc_alpha_ps& );                  //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_psc_alpha_ps& ); //!<Sets buffer pointers to 0
 
-    // ----------------------------------------------------------------
+    //! Logger for all analog data
+    nest::UniversalDataLogger< iaf_psc_alpha_ps > logger_;
 
-    /**
-     * Buffers of the model.
-     */
-    struct Buffers_
-    {
-       Buffers_( iaf_psc_alpha_ps& );                  //!<Sets buffer pointers to 0
-       Buffers_( const Buffers_&, iaf_psc_alpha_ps& ); //!<Sets buffer pointers to 0
+    /** buffers and sums up incoming spikes/currents */
+    SliceRingBufferNew events_;
+    RingBuffer currents_;
 
-       //! Logger for all analog data
-       nest::UniversalDataLogger< iaf_psc_alpha_ps > logger_;
+    /** GSL ODE stuff */
+    gsl_odeiv_step* s_;    //!< stepping function
+    gsl_odeiv_control* c_; //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;  //!< evolution function
+    gsl_odeiv_system sys_; //!< struct describing system
 
-       /** buffers and sums up incoming spikes/currents */
-       SliceRingBufferNew events_;
-       RingBuffer currents_;
-
-       /** GSL ODE stuff */
-       gsl_odeiv_step* s_;    //!< stepping function
-       gsl_odeiv_control* c_; //!< adaptive stepsize control function
-       gsl_odeiv_evolve* e_;  //!< evolution function
-       gsl_odeiv_system sys_; //!< struct describing system
-
-       // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-       // but remain unchanged during calibration. Since it is initialized with
-       // step_, and the resolution cannot change after nodes have been created,
-       // it is safe to place both here.
-       double_t step_;          //!< step size in ms
-       double IntegrationStep_; //!< current integration time step, updated by GSL
-
-       /**
-       * Input current injected by CurrentEvent.
-       * This variable is used to transport the current applied into the
-       * _dynamics function computing the derivative of the state vector.
-       * It must be a part of Buffers_, since it is initialized once before
-       * the first simulation, but not modified before later Simulate calls.
-       */
-       double_t I_stim_;
-    };
+    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
+    // but remain unchanged during calibration. Since it is initialized with
+    // step_, and the resolution cannot change after nodes have been created,
+    // it is safe to place both here.
+    double_t step_;          //!< step size in ms
+    double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**
-    * Internal variables of the neuron.
-    * These variables must be initialized by @c calibrate, which is called before
-    * the first call to @c update() upon each call to @c Simulate.
-    * @node Variables_ needs neither constructor, copy constructor or assignment operator,
-    *       since it is initialized by @c calibrate(). If Variables_ has members that
-    *       cannot destroy themselves, Variables_ will need a destructor.
+    * Input current injected by CurrentEvent.
+    * This variable is used to transport the current applied into the
+    * _dynamics function computing the derivative of the state vector.
+    * It must be a part of Buffers_, since it is initialized once before
+    * the first simulation, but not modified before later Simulate calls.
     */
-    struct Variables_
-    {
-      /** initial value to normalise excitatory psc */
-      double_t I0_ex_; //!< e / tau_syn_exc
+    double_t I_stim_;
+  };
 
-      /** initial value to normalise inhibitory psc */
-      double_t I0_in_; //!< e / tau_syn_inh
+  /**
+  * Internal variables of the neuron.
+  * These variables must be initialized by @c calibrate, which is called before
+  * the first call to @c update() upon each call to @c Simulate.
+  * @node Variables_ needs neither constructor, copy constructor or assignment operator,
+  *       since it is initialized by @c calibrate(). If Variables_ has members that
+  *       cannot destroy themselves, Variables_ will need a destructor.
+  */
+  struct Variables_
+  {
+    /** initial value to normalise excitatory psc */
+    double_t I0_ex_; //!< e / tau_syn_exc
 
-      int_t RefractoryCounts_;
-      double_t RefractoryOffset_;
-    };
+    /** initial value to normalise inhibitory psc */
+    double_t I0_in_; //!< e / tau_syn_inh
 
-    /**
-    * @defgroup Access functions for UniversalDataLogger.
-    * @{
-    */
-    //! Read out the real membrane potential
-    template < State_::StateVecElems elem >
-    double_t
-    get_y_elem_() const
-    {
-       return S_.y_[ elem ];
-    }
-    //! Read out the old state
-    template < State_::StateVecElems elem >
-    double_t
-    get_y_old_elem_() const
-    {
-       return S_.y_old_[ elem ];
-    }
-    /** @} */
+    int_t RefractoryCounts_;
+    double_t RefractoryOffset_;
+  };
 
-    /**
-    * @defgroup pif_members Member variables of neuron model.
-    * Each model neuron should have precisely the following four data members,
-    * which are one instance each of the parameters, state, buffers and variables
-    * structures. Experience indicates that the state and variables member should
-    * be next to each other to achieve good efficiency (caching).
-    * @note Devices require one additional data member, an instance of the @c Device
-    *       child class they belong to.
-    * @{
-    */
-    Parameters_ P_; //!< Free parameters.
-    State_ S_;      //!< Dynamic state.
-    Variables_ V_;  //!< Internal Variables
-    Buffers_ B_;    //!< Buffers.
+  /**
+  * @defgroup Access functions for UniversalDataLogger.
+  * @{
+  */
+  //! Read out the real membrane potential
+  template < State_::StateVecElems elem >
+  double_t
+  get_y_elem_() const
+  {
+    return S_.y_[ elem ];
+  }
+  //! Read out the old state
+  template < State_::StateVecElems elem >
+  double_t
+  get_y_old_elem_() const
+  {
+    return S_.y_old_[ elem ];
+  }
+  /** @} */
 
-    //! Mapping of recordables names to access functions
-    static RecordablesMap< iaf_psc_alpha_ps > recordablesMap_;
+  /**
+  * @defgroup pif_members Member variables of neuron model.
+  * Each model neuron should have precisely the following four data members,
+  * which are one instance each of the parameters, state, buffers and variables
+  * structures. Experience indicates that the state and variables member should
+  * be next to each other to achieve good efficiency (caching).
+  * @note Devices require one additional data member, an instance of the @c Device
+  *       child class they belong to.
+  * @{
+  */
+  Parameters_ P_; //!< Free parameters.
+  State_ S_;      //!< Dynamic state.
+  Variables_ V_;  //!< Internal Variables
+  Buffers_ B_;    //!< Buffers.
 
-    /** @} */
+  //! Mapping of recordables names to access functions
+  static RecordablesMap< iaf_psc_alpha_ps > recordablesMap_;
+
+  /** @} */
 };
 
 inline port
-nest::iaf_psc_alpha_ps::send_test_event( Node& target,
-  port receptor_type,
-  synindex,
-  bool )
+nest::iaf_psc_alpha_ps::send_test_event( Node& target, port receptor_type, synindex, bool )
 {
   // You should usually not change the code in this function.
   // It confirms that the target of connection @c c accepts @c SpikeEvent on

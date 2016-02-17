@@ -51,7 +51,7 @@ Name: aeif_psc_alpha_gridprecise - Current-based exponential integrate-and-fire
 Description:
 aeif_cond_alpha is the adaptive exponential integrate and fire neuron according
 to Brette and Gerstner (2005) and synaptic currents are modelled as alpha
-functions. This model implements a linear interpolation to find spike times 
+functions. This model implements a linear interpolation to find spike times
 more precisely.
 
 This implementation uses the embedded 4th order Runge-Kutta-Fehlberg solver
@@ -233,11 +233,11 @@ public:
       STATE_VEC_SIZE
     };
 
-    double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
+    double_t y_[ STATE_VEC_SIZE ];     //!< neuron state, must be C-array for GSL solver
     double_t y_old_[ STATE_VEC_SIZE ]; //!< old neuron state, must be C-array for GSL solver
-    int_t r_;                      //!< number of refractory steps remaining
-    double_t r_offset_;      // offset on the refractory time if it is not a multiple of step_
-    
+    int_t r_;                          //!< number of refractory steps remaining
+    double_t r_offset_; // offset on the refractory time if it is not a multiple of step_
+
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
     State_& operator=( const State_& );

@@ -1,5 +1,5 @@
 /*
- *  slice_ring_buffer.h
+ *  slice_ring_buffer_new.h
  *
  *  This file is part of NEST.
  *
@@ -110,11 +110,11 @@ public:
    *                   If several spikes coincide, the sum of their
    *                   weights is returned a single spike.
    */
-  void get_next_event(  const long_t req_stamp,
-                        double_t& ps_offset,
-                        double& weight_in,
-                        double& weight_ex,
-                        const double_t step_ );
+  void get_next_event( const long_t req_stamp,
+    double_t& ps_offset,
+    double& weight_in,
+    double& weight_ex,
+    const double_t step_ );
 
   /**
    * Clear buffer

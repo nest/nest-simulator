@@ -44,14 +44,14 @@
 
 /* BeginDocumentation
 Name: aeif_cond_exp_gridprecise - Conductance based exponential integrate-and-
-  fire neuron model according to Brette and Gerstner (2005), implementing a 
-  linear interpolation to find the precise time where the threshold was 
+  fire neuron model according to Brette and Gerstner (2005), implementing a
+  linear interpolation to find the precise time where the threshold was
   crossed, i.e. the spiking time.
 
 Description:
 aeif_cond_alpha is the adaptive exponential integrate and fire neuron according
 to Brette and Gerstner (2005) and synaptic conductances are modelled as alpha
-functions. This model implements a linear interpolation to find spike times 
+functions. This model implements a linear interpolation to find spike times
 more precisely.
 
 This implementation uses the embedded 4th order Runge-Kutta-Fehlberg solver
@@ -95,9 +95,11 @@ Spike adaptation parameters:
 
 Synaptic parameters
   E_ex       double - Excitatory reversal potential in mV.
-  tau_syn_ex double - Characteristic decrease time of excitatory synaptic conductance in ms (exponential function).
+  tau_syn_ex double - Characteristic decrease time of excitatory synaptic conductance in ms
+(exponential function).
   E_in       double - Inhibitory reversal potential in mV.
-  tau_syn_in double - Characteristic decrease time of inhibitory synaptic conductance in ms (exponential function).
+  tau_syn_in double - Characteristic decrease time of inhibitory synaptic conductance in ms
+(exponential function).
 
 Integration parameters
   gsl_error_tol  double - This parameter controls the admissible error of the GSL integrator.
@@ -113,7 +115,7 @@ References: Brette R and Gerstner W (2005) Adaptive Exponential Integrate-and-
   Fire Model as an Effective Description of Neuronal Activity.
   J Neurophysiol 94:3637-3642
 
-SeeAlso: iaf_cond_alpha, aeif_cond_exp, aeif_cond_alpha_gridprecise, 
+SeeAlso: iaf_cond_alpha, aeif_cond_exp, aeif_cond_alpha_gridprecise,
 */
 
 namespace nest
@@ -229,17 +231,17 @@ public:
     enum StateVecElems
     {
       V_M = 0,
-      G_EXC,  // 1
-      G_INH,  // 2
-      W,      // 3
+      G_EXC, // 1
+      G_INH, // 2
+      W,     // 3
       STATE_VEC_SIZE
     };
 
-    double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
+    double_t y_[ STATE_VEC_SIZE ];     //!< neuron state, must be C-array for GSL solver
     double_t y_old_[ STATE_VEC_SIZE ]; //!< old neuron state, must be C-array for GSL solver
-    int_t r_;                      //!< number of refractory steps remaining
-    double_t r_offset_;      // offset on the refractory time if it is not a multiple of step_
-    
+    int_t r_;                          //!< number of refractory steps remaining
+    double_t r_offset_; // offset on the refractory time if it is not a multiple of step_
+
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
     State_& operator=( const State_& );

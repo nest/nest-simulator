@@ -1,7 +1,22 @@
 /*
  *  aeif_psc_alpha_ps.h
  *
- *  Changes Parameters_, changing State_;
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -120,290 +135,287 @@ extern "C" int aeif_psc_alpha_ps_dynamics( double, const double*, double*, void*
 
 class aeif_psc_alpha_ps : public Archiving_Node
 {
-   public:
-      /**
-      * The constructor is only used to create the model prototype in the model manager.
-      */
-      aeif_psc_alpha_ps();
+public:
+  /**
+  * The constructor is only used to create the model prototype in the model manager.
+  */
+  aeif_psc_alpha_ps();
 
-      /**
-      * The copy constructor is used to create model copies and instances of the model.
-      * @node The copy constructor needs to initialize the parameters and the state.
-      *       Initialization of buffers and interal variables is deferred to
-      *       @c init_buffers_() and @c calibrate().
-      */
-      aeif_psc_alpha_ps( const aeif_psc_alpha_ps& );
+  /**
+  * The copy constructor is used to create model copies and instances of the model.
+  * @node The copy constructor needs to initialize the parameters and the state.
+  *       Initialization of buffers and interal variables is deferred to
+  *       @c init_buffers_() and @c calibrate().
+  */
+  aeif_psc_alpha_ps( const aeif_psc_alpha_ps& );
 
-      /**
-      * Import sets of overloaded virtual functions.
-      * This is necessary to ensure proper overload and overriding resolution.
-      * @see http://www.gotw.ca/gotw/005.htm.
-      */
-      using Node::handle;
-      using Node::handles_test_event;
+  /**
+  * Import sets of overloaded virtual functions.
+  * This is necessary to ensure proper overload and overriding resolution.
+  * @see http://www.gotw.ca/gotw/005.htm.
+  */
+  using Node::handle;
+  using Node::handles_test_event;
 
-      /**
-      * Used to validate that we can send SpikeEvent to desired target:port.
-      */
-      port send_test_event( Node&, port, synindex, bool );
+  /**
+  * Used to validate that we can send SpikeEvent to desired target:port.
+  */
+  port send_test_event( Node&, port, synindex, bool );
 
-      /**
-      * @defgroup mynest_handle Functions handling incoming events.
-      * We tell nest that we can handle incoming events of various types by
-      * defining @c handle() and @c connect_sender() for the given event.
-      * @{
-      */
-      void handle( SpikeEvent& );         //! accept spikes
-      void handle( CurrentEvent& );       //! accept input current
-      void handle( DataLoggingRequest& ); //! allow recording with multimeter
-      
-      bool
-      is_off_grid() const
-      {
-        return true;
-      } // uses off_grid events
+  /**
+  * @defgroup mynest_handle Functions handling incoming events.
+  * We tell nest that we can handle incoming events of various types by
+  * defining @c handle() and @c connect_sender() for the given event.
+  * @{
+  */
+  void handle( SpikeEvent& );         //! accept spikes
+  void handle( CurrentEvent& );       //! accept input current
+  void handle( DataLoggingRequest& ); //! allow recording with multimeter
 
-      port handles_test_event( SpikeEvent&, port );
-      port handles_test_event( CurrentEvent&, port );
-      port handles_test_event( DataLoggingRequest&, port );
-      /** @} */
+  bool
+  is_off_grid() const
+  {
+    return true;
+  } // uses off_grid events
 
-      void get_status( DictionaryDatum& ) const;
-      void set_status( const DictionaryDatum& );
+  port handles_test_event( SpikeEvent&, port );
+  port handles_test_event( CurrentEvent&, port );
+  port handles_test_event( DataLoggingRequest&, port );
+  /** @} */
 
-   private:
-      //! Reset parameters and state of neuron.
+  void get_status( DictionaryDatum& ) const;
+  void set_status( const DictionaryDatum& );
 
-      //! Reset state of neuron.
-      void init_state_( const Node& proto );
+private:
+  //! Reset parameters and state of neuron.
 
-      //! Reset internal buffers of neuron.
-      void init_buffers_();
+  //! Reset state of neuron.
+  void init_state_( const Node& proto );
 
-      //! Initialize auxiliary quantities, leave parameters and state untouched.
-      void calibrate();
+  //! Reset internal buffers of neuron.
+  void init_buffers_();
 
-      //! Take neuron through given time interval
-      void update( const Time&, const long_t, const long_t );
+  //! Initialize auxiliary quantities, leave parameters and state untouched.
+  void calibrate();
 
-      //! Find the precise time of network crossing
-      void interpolate_( double&, double );
-      
-      //! Send spike and set refractoriness
-      void spiking_( const long_t, const long_t, const double );
+  //! Take neuron through given time interval
+  void update( const Time&, const long_t, const long_t );
 
-      // The next two classes need to be friends to access the State_ class/member
-      friend class RecordablesMap< aeif_psc_alpha_ps >;
-      friend class UniversalDataLogger< aeif_psc_alpha_ps >;
+  //! Find the precise time of network crossing
+  void interpolate_( double&, double );
 
-      /**
-      * Free parameters of the neuron.
-      *
-      * These are the parameters that can be set by the user through @c SetStatus.
-      * They are initialized from the model prototype when the node is created.
-      * Parameters do not change during calls to @c update() and are not reset by
-      * @c ResetNetwork.
-      *
-      * @note Parameters_ need neither copy constructor nor @c operator=(), since
-      *       all its members are copied properly by the default copy constructor
-      *       and assignment operator. Important:
-      *       - If Parameters_ contained @c Time members, you need to define the
-      *         assignment operator to recalibrate all members of type @c Time . You
-      *         may also want to define the assignment operator.
-      *       - If Parameters_ contained members that cannot copy themselves, such
-      *         as C-style arrays, you need to define the copy constructor and
-      *         assignment operator to copy those members.
-      */
-      struct Parameters_
-      {
-         double_t V_peak_;  //!< Spike detection threshold in mV
-         double_t V_reset_; //!< Reset Potential in mV
-         double_t t_ref_;   //!< Refractory period in ms
+  //! Send spike and set refractoriness
+  void spiking_( const long_t, const long_t, const double );
 
-         double_t g_L;        //!< Leak Conductance in nS
-         double_t C_m;        //!< Membrane Capacitance in pF
-         double_t E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-         double_t Delta_T;    //!< Slope faktor in ms.
-         double_t tau_w;      //!< adaptation time-constant in ms.
-         double_t a;          //!< Subthreshold adaptation in nS.
-         double_t b;          //!< Spike-triggered adaptation in pA
-         double_t V_th;       //!< Spike threshold in mV.
-         double_t t_ref;      //!< Refractory period in ms.
-         double_t tau_syn_ex; //!< Excitatory synaptic rise time.
-         double_t tau_syn_in; //!< Excitatory synaptic rise time.
-         double_t I_e;        //!< Intrinsic current in pA.
-         int interpol_order;        //!< Interpolation order (from 1 to 3)
+  // The next two classes need to be friends to access the State_ class/member
+  friend class RecordablesMap< aeif_psc_alpha_ps >;
+  friend class UniversalDataLogger< aeif_psc_alpha_ps >;
 
-         double_t gsl_error_tol; //!< error bound for GSL integrator
+  /**
+  * Free parameters of the neuron.
+  *
+  * These are the parameters that can be set by the user through @c SetStatus.
+  * They are initialized from the model prototype when the node is created.
+  * Parameters do not change during calls to @c update() and are not reset by
+  * @c ResetNetwork.
+  *
+  * @note Parameters_ need neither copy constructor nor @c operator=(), since
+  *       all its members are copied properly by the default copy constructor
+  *       and assignment operator. Important:
+  *       - If Parameters_ contained @c Time members, you need to define the
+  *         assignment operator to recalibrate all members of type @c Time . You
+  *         may also want to define the assignment operator.
+  *       - If Parameters_ contained members that cannot copy themselves, such
+  *         as C-style arrays, you need to define the copy constructor and
+  *         assignment operator to copy those members.
+  */
+  struct Parameters_
+  {
+    double_t V_peak_;  //!< Spike detection threshold in mV
+    double_t V_reset_; //!< Reset Potential in mV
+    double_t t_ref_;   //!< Refractory period in ms
 
-         Parameters_(); //!< Sets default parameter values
+    double_t g_L;        //!< Leak Conductance in nS
+    double_t C_m;        //!< Membrane Capacitance in pF
+    double_t E_L;        //!< Leak reversal Potential (aka resting potential) in mV
+    double_t Delta_T;    //!< Slope faktor in ms.
+    double_t tau_w;      //!< adaptation time-constant in ms.
+    double_t a;          //!< Subthreshold adaptation in nS.
+    double_t b;          //!< Spike-triggered adaptation in pA
+    double_t V_th;       //!< Spike threshold in mV.
+    double_t t_ref;      //!< Refractory period in ms.
+    double_t tau_syn_ex; //!< Excitatory synaptic rise time.
+    double_t tau_syn_in; //!< Excitatory synaptic rise time.
+    double_t I_e;        //!< Intrinsic current in pA.
+    int interpol_order;  //!< Interpolation order (from 1 to 3)
 
-         void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-         void set( const DictionaryDatum& ); //!< Set values from dicitonary
-      };
+    double_t gsl_error_tol; //!< error bound for GSL integrator
 
-   public:
-      /**
-      * Dynamic state of the neuron.
-      *
-      * These are the state variables that are advanced in time by calls to
-      * @c update(). In many models, some or all of them can be set by the user
-      * through @c SetStatus. The state variables are initialized from the model
-      * prototype when the node is created. State variables are reset by @c ResetNetwork.
-      *
-      * @note State_ need neither copy constructor nor @c operator=(), since
-      *       all its members are copied properly by the default copy constructor
-      *       and assignment operator. Important:
-      *       - If State_ contained @c Time members, you need to define the
-      *         assignment operator to recalibrate all members of type @c Time . You
-      *         may also want to define the assignment operator.
-      *       - If State_ contained members that cannot copy themselves, such
-      *         as C-style arrays, you need to define the copy constructor and
-      *         assignment operator to copy those members.
-      */
-      struct State_
-      {
-         /**
-         * Enumeration identifying elements in state array State_::y_.
-         * The state vector must be passed to GSL as a C array. This enum
-         * identifies the elements of the vector. It must be public to be
-         * accessible from the iteration function.
-         */
-         enum StateVecElems
-         {
-            V_M = 0,
-            DI_EXC, // 1
-            I_EXC,  // 2
-            DI_INH, // 3
-            I_INH,  // 4
-            W,      // 5
-            STATE_VEC_SIZE
-         };
+    Parameters_(); //!< Sets default parameter values
 
-         double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
-         double_t y_old_[ STATE_VEC_SIZE ]; //!< old neuron state, must be C-array for GSL solver
-         int_t r_;                      //!< number of refractory steps remaining
-         double_t r_offset_;      // offset on the refractory time if it is not a multiple of step_
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+  };
 
-         State_( const Parameters_& ); //!< Default initialization
-         State_( const State_& );
-         State_& operator=( const State_& );
+public:
+  /**
+  * Dynamic state of the neuron.
+  *
+  * These are the state variables that are advanced in time by calls to
+  * @c update(). In many models, some or all of them can be set by the user
+  * through @c SetStatus. The state variables are initialized from the model
+  * prototype when the node is created. State variables are reset by @c ResetNetwork.
+  *
+  * @note State_ need neither copy constructor nor @c operator=(), since
+  *       all its members are copied properly by the default copy constructor
+  *       and assignment operator. Important:
+  *       - If State_ contained @c Time members, you need to define the
+  *         assignment operator to recalibrate all members of type @c Time . You
+  *         may also want to define the assignment operator.
+  *       - If State_ contained members that cannot copy themselves, such
+  *         as C-style arrays, you need to define the copy constructor and
+  *         assignment operator to copy those members.
+  */
+  struct State_
+  {
+    /**
+    * Enumeration identifying elements in state array State_::y_.
+    * The state vector must be passed to GSL as a C array. This enum
+    * identifies the elements of the vector. It must be public to be
+    * accessible from the iteration function.
+    */
+    enum StateVecElems
+    {
+      V_M = 0,
+      DI_EXC, // 1
+      I_EXC,  // 2
+      DI_INH, // 3
+      I_INH,  // 4
+      W,      // 5
+      STATE_VEC_SIZE
+    };
 
-         void get( DictionaryDatum& ) const;
-         void set( const DictionaryDatum&, const Parameters_& );
-      };
+    double_t y_[ STATE_VEC_SIZE ];     //!< neuron state, must be C-array for GSL solver
+    double_t y_old_[ STATE_VEC_SIZE ]; //!< old neuron state, must be C-array for GSL solver
+    int_t r_;                          //!< number of refractory steps remaining
+    double_t r_offset_; // offset on the refractory time if it is not a multiple of step_
 
-      /**
-      * Buffers of the neuron.
-      * Ususally buffers for incoming spikes and data logged for analog recorders.
-      * Buffers must be initialized by @c init_buffers_(), which is called before
-      * @c calibrate() on the first call to @c Simulate after the start of NEST,
-      * ResetKernel or ResetNetwork.
-      * @node Buffers_ needs neither constructor, copy constructor or assignment operator,
-      *       since it is initialized by @c init_nodes_(). If Buffers_ has members that
-      *       cannot destroy themselves, Buffers_ will need a destructor.
-      */
-      struct Buffers_
-      {
-         Buffers_( aeif_psc_alpha_ps& );                  //!<Sets buffer pointers to 0
-         Buffers_( const Buffers_&, aeif_psc_alpha_ps& ); //!<Sets buffer pointers to 0
+    State_( const Parameters_& ); //!< Default initialization
+    State_( const State_& );
+    State_& operator=( const State_& );
 
-         //! Logger for all analog data
-         UniversalDataLogger< aeif_psc_alpha_ps > logger_;
+    void get( DictionaryDatum& ) const;
+    void set( const DictionaryDatum&, const Parameters_& );
+  };
 
-         /** buffers and sums up incoming spikes/currents */
-         SliceRingBufferNew events_;
-         RingBuffer currents_;
+  /**
+  * Buffers of the neuron.
+  * Ususally buffers for incoming spikes and data logged for analog recorders.
+  * Buffers must be initialized by @c init_buffers_(), which is called before
+  * @c calibrate() on the first call to @c Simulate after the start of NEST,
+  * ResetKernel or ResetNetwork.
+  * @node Buffers_ needs neither constructor, copy constructor or assignment operator,
+  *       since it is initialized by @c init_nodes_(). If Buffers_ has members that
+  *       cannot destroy themselves, Buffers_ will need a destructor.
+  */
+  struct Buffers_
+  {
+    Buffers_( aeif_psc_alpha_ps& );                  //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_psc_alpha_ps& ); //!<Sets buffer pointers to 0
 
-         /** GSL ODE stuff */
-         gsl_odeiv_step* s_;    //!< stepping function
-         gsl_odeiv_control* c_; //!< adaptive stepsize control function
-         gsl_odeiv_evolve* e_;  //!< evolution function
-         gsl_odeiv_system sys_; //!< struct describing system
+    //! Logger for all analog data
+    UniversalDataLogger< aeif_psc_alpha_ps > logger_;
 
-         // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-         // but remain unchanged during calibration. Since it is initialized with
-         // step_, and the resolution cannot change after nodes have been created,
-         // it is safe to place both here.
-         double_t step_;          //!< step size in ms
-         double IntegrationStep_; //!< current integration time step, updated by GSL
+    /** buffers and sums up incoming spikes/currents */
+    SliceRingBufferNew events_;
+    RingBuffer currents_;
 
-         /**
-         * Input current injected by CurrentEvent.
-         * This variable is used to transport the current applied into the
-         * _dynamics function computing the derivative of the state vector.
-         * It must be a part of Buffers_, since it is initialized once before
-         * the first simulation, but not modified before later Simulate calls.
-         */
-         double_t I_stim_;
-      };
+    /** GSL ODE stuff */
+    gsl_odeiv_step* s_;    //!< stepping function
+    gsl_odeiv_control* c_; //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;  //!< evolution function
+    gsl_odeiv_system sys_; //!< struct describing system
 
-      /**
-      * Internal variables of the neuron.
-      * These variables must be initialized by @c calibrate, which is called before
-      * the first call to @c update() upon each call to @c Simulate.
-      * @node Variables_ needs neither constructor, copy constructor or assignment operator,
-      *       since it is initialized by @c calibrate(). If Variables_ has members that
-      *       cannot destroy themselves, Variables_ will need a destructor.
-      */
-      struct Variables_
-      {
-         /** initial value to normalise excitatory synaptic conductance */
-         double_t I0_ex_;
+    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
+    // but remain unchanged during calibration. Since it is initialized with
+    // step_, and the resolution cannot change after nodes have been created,
+    // it is safe to place both here.
+    double_t step_;          //!< step size in ms
+    double IntegrationStep_; //!< current integration time step, updated by GSL
 
-         /** initial value to normalise inhibitory synaptic conductance */
-         double_t I0_in_;
+    /**
+    * Input current injected by CurrentEvent.
+    * This variable is used to transport the current applied into the
+    * _dynamics function computing the derivative of the state vector.
+    * It must be a part of Buffers_, since it is initialized once before
+    * the first simulation, but not modified before later Simulate calls.
+    */
+    double_t I_stim_;
+  };
 
-         int_t RefractoryCounts_;
-         double_t RefractoryOffset_;
-      };
+  /**
+  * Internal variables of the neuron.
+  * These variables must be initialized by @c calibrate, which is called before
+  * the first call to @c update() upon each call to @c Simulate.
+  * @node Variables_ needs neither constructor, copy constructor or assignment operator,
+  *       since it is initialized by @c calibrate(). If Variables_ has members that
+  *       cannot destroy themselves, Variables_ will need a destructor.
+  */
+  struct Variables_
+  {
+    /** initial value to normalise excitatory synaptic conductance */
+    double_t I0_ex_;
 
-      /**
-      * @defgroup Access functions for UniversalDataLogger.
-      * @{
-      */
-      //! Read out the real membrane potential
-      template < State_::StateVecElems elem >
-      double_t
-      get_y_elem_() const
-      {
-         return S_.y_[ elem ];
-      }
-      //! Read out the old state
-      template < State_::StateVecElems elem >
-      double_t
-      get_y_old_elem_() const
-      {
-         return S_.y_old_[ elem ];
-      }
-      /** @} */
+    /** initial value to normalise inhibitory synaptic conductance */
+    double_t I0_in_;
 
-      /**
-      * @defgroup pif_members Member variables of neuron model.
-      * Each model neuron should have precisely the following four data members,
-      * which are one instance each of the parameters, state, buffers and variables
-      * structures. Experience indicates that the state and variables member should
-      * be next to each other to achieve good efficiency (caching).
-      * @note Devices require one additional data member, an instance of the @c Device
-      *       child class they belong to.
-      * @{
-      */
-      Parameters_ P_; //!< Free parameters.
-      State_ S_;      //!< Dynamic state.
-      Variables_ V_;  //!< Internal Variables
-      Buffers_ B_;    //!< Buffers.
+    int_t RefractoryCounts_;
+    double_t RefractoryOffset_;
+  };
 
-      //! Mapping of recordables names to access functions
-      static RecordablesMap< aeif_psc_alpha_ps > recordablesMap_;
+  /**
+  * @defgroup Access functions for UniversalDataLogger.
+  * @{
+  */
+  //! Read out the real membrane potential
+  template < State_::StateVecElems elem >
+  double_t
+  get_y_elem_() const
+  {
+    return S_.y_[ elem ];
+  }
+  //! Read out the old state
+  template < State_::StateVecElems elem >
+  double_t
+  get_y_old_elem_() const
+  {
+    return S_.y_old_[ elem ];
+  }
+  /** @} */
 
-      /** @} */
+  /**
+  * @defgroup pif_members Member variables of neuron model.
+  * Each model neuron should have precisely the following four data members,
+  * which are one instance each of the parameters, state, buffers and variables
+  * structures. Experience indicates that the state and variables member should
+  * be next to each other to achieve good efficiency (caching).
+  * @note Devices require one additional data member, an instance of the @c Device
+  *       child class they belong to.
+  * @{
+  */
+  Parameters_ P_; //!< Free parameters.
+  State_ S_;      //!< Dynamic state.
+  Variables_ V_;  //!< Internal Variables
+  Buffers_ B_;    //!< Buffers.
+
+  //! Mapping of recordables names to access functions
+  static RecordablesMap< aeif_psc_alpha_ps > recordablesMap_;
+
+  /** @} */
 };
 
 inline port
-aeif_psc_alpha_ps::send_test_event( Node& target,
-  port receptor_type,
-  synindex,
-  bool )
+aeif_psc_alpha_ps::send_test_event( Node& target, port receptor_type, synindex, bool )
 {
   // You should usually not change the code in this function.
   // It confirms that the target of connection @c c accepts @c SpikeEvent on

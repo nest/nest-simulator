@@ -36,10 +36,10 @@
    which differentiates this rule from other classical stdp rules.
 
   Parameters:
-   tau   double - Time constant of STDP window, potentiation in ms
+   tau        double - Time constant of STDP window, potentiation in ms
    Wmax       double - Maximum allowed weight
    eta        double - learning rate
-   kappa      double - target firing rate
+   alpha      double - constant depression (= 2 * tau * target firing rate in [1])
 
   Transmits: SpikeEvent
 
@@ -163,14 +163,14 @@ private:
   double_t
   depress_( double_t w )
   {
-    double_t norm_w = ( w / Wmax_ ) - ( 2. * kappa_ * tau_ * eta_ );
+    double_t norm_w = ( w / Wmax_ ) - ( alpha_ * eta_ );
     return norm_w > 0.0 ? norm_w * Wmax_ : 0.0;
   }
 
   // data members of each connection
   double_t weight_;
   double_t tau_;
-  double_t kappa_;
+  double_t alpha_;
   double_t eta_;
   double_t Wmax_;
   double_t Kplus_;
@@ -242,7 +242,7 @@ STDPConnectionSymmetric< targetidentifierT >::STDPConnectionSymmetric()
   : ConnectionBase()
   , weight_( 0.5 )
   , tau_( 20.0 )
-  , kappa_( 3. )
+  , alpha_( 0.12 )
   , eta_( 0.001 )
   , Wmax_( 1.0 )
   , Kplus_( 0.0 )
@@ -255,7 +255,7 @@ STDPConnectionSymmetric< targetidentifierT >::STDPConnectionSymmetric(
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , tau_( rhs.tau_ )
-  , kappa_( rhs.kappa_ )
+  , alpha_( rhs.alpha_ )
   , eta_( rhs.eta_ )
   , Wmax_( rhs.Wmax_ )
   , Kplus_( rhs.Kplus_ )
@@ -269,7 +269,7 @@ STDPConnectionSymmetric< targetidentifierT >::get_status( DictionaryDatum& d ) c
   ConnectionBase::get_status( d );
   def< double_t >( d, names::weight, weight_ );
   def< double_t >( d, "tau", tau_ );
-  def< double_t >( d, "kappa", kappa_ );
+  def< double_t >( d, "alpha", alpha_ );
   def< double_t >( d, "eta", eta_ );
   def< double_t >( d, "Wmax", Wmax_ );
   def< double_t >( d, "Kplus", Kplus_ );
@@ -284,7 +284,7 @@ STDPConnectionSymmetric< targetidentifierT >::set_status( const DictionaryDatum&
   ConnectionBase::set_status( d, cm );
   updateValue< double_t >( d, names::weight, weight_ );
   updateValue< double_t >( d, "tau", tau_ );
-  updateValue< double_t >( d, "kappa", kappa_ );
+  updateValue< double_t >( d, "alpha", alpha_ );
   updateValue< double_t >( d, "eta", eta_ );
   updateValue< double_t >( d, "Wmax", Wmax_ );
   updateValue< double_t >( d, "Kplus", Kplus_ );

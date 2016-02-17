@@ -90,8 +90,8 @@ noise
 } for
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-drive neurons DivergentConnect
-noise neurons DivergentConnect
-neurons sd    ConvergentConnect
+[drive] neurons Connect
+[noise] neurons Connect
+neurons [sd]    Connect
 
 T Simulate

@@ -20,6 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
+import unittest
 import nest
 
 
@@ -46,6 +47,9 @@ Details:
   between "aeif_cond_alpha_RK5" and the new models than between the old
   "aeif_cond_alpha" and "aeif_cond_alpha_RK5".
 """
+
+
+HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 
 
 #-----------------------------------------------------------------------------#
@@ -252,11 +256,16 @@ def compare_aeif_cond_alpha(models, compare):
 #-------------------------
 #
 
-lst_results = []
-# for the precise iaf with precise poisson noise
-lst_results.append(compare_iaf_psc_alpha(di_iaf))
-# for all aeif without noise
-lst_results.append(compare_aeif_RK5(di_aeif_rk5, di_aeif_rk5_comp))
-# for the aeif_cond_alpha with non-precise poisson noise
-lst_results.append(compare_aeif_cond_alpha( di_aeif_cond_alpha,
-                                            di_aeif_cond_alpha_comp) )
+@unittest.skipIf(not HAVE_GSL, 'GSL is not available')
+def run_tests():
+    lst_results = []
+    # for the precise iaf with precise poisson noise
+    lst_results.append(compare_iaf_psc_alpha(di_iaf))
+    # for all aeif without noise
+    lst_results.append(compare_aeif_RK5(di_aeif_rk5, di_aeif_rk5_comp))
+    # for the aeif_cond_alpha with non-precise poisson noise
+    lst_results.append(compare_aeif_cond_alpha( di_aeif_cond_alpha,
+                                                di_aeif_cond_alpha_comp) )
+
+if __name__ == '__main__':
+    run_tests()

@@ -22,15 +22,15 @@ __author__ = 'naveau'
 
 import nest
 import unittest
-from .utils import extract_dict_a_from_b
+from nest.tests.test_sp.utils import extract_dict_a_from_b
 
 
 class TestStructuralPlasticityManager(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
         nest.set_verbosity('M_INFO')
-        self.exclude_synapse_model = ['stdp_dopamine_synapse', 'stdp_dopamine_synapse_lbl', 
-                                      'stdp_dopamine_synapse_hpc', 'stdp_dopamine_synapse_hpc_lbl', 
+        self.exclude_synapse_model = ['stdp_dopamine_synapse', 'stdp_dopamine_synapse_lbl',
+                                      'stdp_dopamine_synapse_hpc', 'stdp_dopamine_synapse_hpc_lbl',
                                       'gap_junction', 'gap_junction_lbl']
 
     def test_register_synapses(self):
@@ -83,7 +83,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
 
                 self.assertEqual(20, len(nest.GetConnections(neurons, neurons, syn_model)))
                 break
-    
+
 
 def suite():
     test_suite = unittest.makeSuite(TestStructuralPlasticityManager, 'test')

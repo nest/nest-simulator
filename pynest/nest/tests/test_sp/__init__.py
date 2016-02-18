@@ -20,6 +20,6 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 __author__ = 'naveau'
 
-from . import test_all
+from nest.tests.test_sp import test_all
 
 suite = test_all.suite

@@ -45,18 +45,18 @@ set( MODULE_VERSION "${MODULE_VERSION_MAJOR}.${MODULE_VERSION_MINOR}" )
 # on OS X
 set( CMAKE_MACOSX_RPATH ON )
 
-set( WITH_NEST OFF CACHE STRING "Specify the `nest-config` executable." )
+set( with-nest OFF CACHE STRING "Specify the `nest-config` executable." )
 
-if ( NOT WITH_NEST )
+if ( NOT with-nest )
   # try find the program ourselves
   find_program( NEST_CONFIG
       NAMES nest-config
       )
   if ( NEST_CONFIG STREQUAL "NEST_CONFIG-NOTFOUND" )
-    message( FATAL_ERROR "Cannot find the program `nest-config`. Specify via -DWITH_NEST=... ." )
+    message( FATAL_ERROR "Cannot find the program `nest-config`. Specify via -Dwith-nest=... ." )
   endif ()
 else ()
-  set( NEST_CONFIG ${WITH_NEST} )
+  set( NEST_CONFIG ${with-nest} )
 endif ()
 
 # gather the options
@@ -68,7 +68,7 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 if ( NOT RES_VAR EQUAL 0 )
-  message( FATAL_ERROR "Cannot run `${NEST_CONFIG}`. Please specify correct `nest-config` via -DWITH_NEST=... " )
+  message( FATAL_ERROR "Cannot run `${NEST_CONFIG}`. Please specify correct `nest-config` via -Dwith-nest=... " )
 endif ()
 
 if ( ${CMAKE_INSTALL_PREFIX} STREQUAL "/usr/local" )
@@ -126,6 +126,55 @@ set( PKGSRCDIR ${PROJECT_SOURCE_DIR} )
 set( PKGBUILDDIR ${PROJECT_BINARY_DIR} )
 set( PKGDATADIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR} )
 set( PKGDOCDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR} )
+
+
+# CPack stuff
+set( CPACK_GENERATOR TGZ )
+set( CPACK_SOURCE_GENERATOR TGZ )
+
+set( CPACK_PACKAGE_DESCRIPTION_SUMMARY "NEST Module ${MODULE_NAME}" )
+set( CPACK_PACKAGE_VENDOR "NEST Initiative (http://www.nest-initiative.org/)" )
+
+set( CPACK_PACKAGE_VERSION_MAJOR ${MODULE_VERSION_MAJOR} )
+set( CPACK_PACKAGE_VERSION_MINOR ${MODULE_VERSION_MINOR} )
+set( CPACK_PACKAGE_VERSION ${MODULE_VERSION} )
+
+set( CPACK_SOURCE_IGNORE_FILES
+    "\\\\.gitignore"
+    "\\\\.git/"
+    "\\\\.travis\\\\.yml"
+    # ignore autotools stuff
+    # TODO cleanup, once autotools stuff is removed
+    "/libltdl/"
+    "/debian/"
+    ".*\\\\.m4"
+    ".*\\\\.ac"
+    "autom4te\\\\.cache/"
+    "bootstrap\\\\.sh"
+
+    # if we have in source builds
+    "/build/"
+    "/_CPack_Packages/"
+    "CMakeFiles/"
+    "cmake_install\\\\.cmake"
+    "Makefile.*"
+    "CMakeCache\\\\.txt"
+    "CPackConfig\\\\.cmake"
+    "CPackSourceConfig\\\\.cmake"
+    )
+set( CPACK_SOURCE_PACKAGE_FILE_NAME ${MODULE_NAME} )
+
+set( CPACK_PACKAGE_INSTALL_DIRECTORY "${MODULE_NAME} ${MODULE_VERSION}" )
+include( CPack )
+
+# add make dist target
+add_custom_target( dist
+    COMMAND ${CMAKE_MAKE_PROGRAM} package_source
+    # not sure about this... seems, that it will be removed before dist...
+    # DEPENDS doc
+    COMMENT "Creating a source distribution from ${MODULE_NAME}..."
+)
+
 
 if ( BUILD_SHARED_LIBS )
   # build module 

@@ -40,7 +40,7 @@
 /* The following models will not be tested:
    iaf_cxhk_2008  ---  spikes only on explicit positive threshold crossings
 */
-/skip_list [ /iaf_chxk_2008 /correlospinmatrix_detector /aeif_psc_alpha_ps /aeif_psc_exp_ps /aeif_cond_alpha_ps /aeif_cond_exp_ps ] def
+/skip_list [ /iaf_chxk_2008 /correlospinmatrix_detector ] def
 
 {
   modeldict keys {

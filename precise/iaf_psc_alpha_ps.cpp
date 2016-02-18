@@ -369,7 +369,7 @@ nest::iaf_psc_alpha_ps::spiking_( const long_t T, const long_t lag, const double
 {
   // spike event
   const double_t offset = B_.step_ - t;
-  set_spiketime( Time::step( T ), offset );
+  set_spiketime( Time::step( T + 1 ), offset );
   SpikeEvent se;
   se.set_offset( offset );
   kernel().event_delivery_manager.send( *this, se, lag );

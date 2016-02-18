@@ -413,9 +413,10 @@ nest::iaf_psc_alpha_ps::update( const Time& origin, const long_t from, const lon
   if ( S_.y_[ State_::V_M ] >= P_.V_th )
   {
     S_.y_[ State_::V_M ] = P_.V_reset_;
-    set_spiketime( Time::step( origin.get_steps() + from ), std::numeric_limits< double_t >::epsilon() );
+    const double_t init_offset = B_.step_ * ( 1 - std::numeric_limits< double_t >::epsilon() );
+    set_spiketime( Time::step( origin.get_steps() + from + 1 ), init_offset );
     SpikeEvent se;
-    se.set_offset( B_.step_ * ( 1 - std::numeric_limits< double_t >::epsilon() ) );
+    se.set_offset( init_offset );
     kernel().event_delivery_manager.send( *this, se, from );
   }
 

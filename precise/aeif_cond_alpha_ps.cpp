@@ -460,7 +460,8 @@ nest::aeif_cond_alpha_ps::update( const Time& origin, const long_t from, const l
   {
     S_.y_[ State_::V_M ] = P_.V_reset_;
     S_.y_[ State_::W ] += P_.b;
-    set_spiketime( Time::step( origin.get_steps() + from ), std::numeric_limits< double_t >::epsilon() );
+    const double_t init_offset = B_.step_ * ( 1 - std::numeric_limits< double_t >::epsilon() );
+    set_spiketime( Time::step( origin.get_steps() + from + 1 ), init_offset );
     SpikeEvent se;
     se.set_offset( B_.step_ * ( 1 - std::numeric_limits< double_t >::epsilon() ) );
     kernel().event_delivery_manager.send( *this, se, from );

@@ -411,9 +411,7 @@ nest::aeif_psc_alpha_gridprecise::interpolate_( double& t, double t_old )
 }
 
 void
-nest::aeif_psc_alpha_gridprecise::spiking_( Time const& origin,
-  const long_t lag,
-  const double t )
+nest::aeif_psc_alpha_gridprecise::spiking_( Time const& origin, const long_t lag, const double t )
 {
   // spike event
   set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );

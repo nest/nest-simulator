@@ -130,7 +130,7 @@ nest::aeif_cond_alpha_gridprecise_dynamics( double, const double y[], double f[]
  * ---------------------------------------------------------------- */
 
 nest::aeif_cond_alpha_gridprecise::Parameters_::Parameters_()
-  : V_peak_( 0.0 )    // mV, should not be larger that V_th+10
+  : V_peak_( 0.0 )    // mV
   , V_reset_( -60.0 ) // mV
   , t_ref_( 0.0 )     // ms
   , g_L( 30.0 )       // nS
@@ -417,9 +417,7 @@ nest::aeif_cond_alpha_gridprecise::interpolate_( double& t, double t_old )
 }
 
 void
-nest::aeif_cond_alpha_gridprecise::spiking_( Time const& origin,
-  const long_t lag,
-  const double t )
+nest::aeif_cond_alpha_gridprecise::spiking_( Time const& origin, const long_t lag, const double t )
 {
   // spike event
   set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );

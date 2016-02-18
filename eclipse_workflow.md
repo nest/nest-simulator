@@ -110,7 +110,7 @@ If you have longer-running branches for major changes, you may want to create on
 
 ### Preparations
 
-You should bootstrap and configure NEST as usual. In this document,
+You should configure NEST as usual. In this document,
 we will first set up the NEST production build
 `bld_master_nompi`. Handling further configurations will be described
 in a later section.
@@ -123,14 +123,16 @@ We thus assume the following directory layout:
 
 You should configure, build and install NEST manually once (note that
 I want to build NEST with gcc 5.1 from Homebrew, therefore the
-`CC=gcc-5 CXX=g++-5` arguments to `configure`; NB: Make sure that you
-have checked out the master branch in the `src` directory):
+`-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5` arguments to `cmake`; 
+NB: Make sure that you have checked out the master branch in the `src` directory):
 
     cd $NEST_ROOT/bld_master_nompi
-    ../src/configure --prefix=$NEST_ROOT/bld_master_nompi/install CC=gcc-5 CXX=g++-5
-	make -j4
-	make install
-	make installcheck
+    cmake -DCMAKE_INSTALL_PREFIX=$NEST_ROOT/bld_master_nompi/install -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -Dwith-debug=ON ../src
+    make -j4
+    make install
+    make installcheck
+
+__Note:__ With `cmake` you can also generate the Eclipse project files yourself by adding the option `-G "Eclipse CDT4 - Unix Makefiles"`. The following section assumes, that you do not use this option.
 
 ### Project setup
 
@@ -246,14 +248,14 @@ each build directory you create.
 ### Configuring and additional build directory
 
 Create and configure the build directory as usual and build and
-install NEST once (`CC` and `CXX` are not set explicitly, since I
-built MPI to use the `gcc-5` and `g++-5` compilers).
+install NEST once (do not use the MPI compiler wrappers for `cmake`, as
+it will figure out the correct options itself).
 
 ```
 cd $NEST_ROOT
 mkdir bld_fixes_mpi
 cd bld_fixes_mpi
-../src/configure --prefix=$NEST_ROOT/bld_fixes_mpi/install --with-mpi
+cmake -DCMAKE_INSTALL_KU=$NEST_ROOT/bld_fixes_mpi/install -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -Dwith-debug=ON -Dwith-mpi=ON ../src
 make -j4
 make install
 make installcheck
@@ -297,7 +299,7 @@ Afterwards, you can select the run configuration by clicking on the little trian
 This section is very preliminary.
 
 1. Create a build directory and configure NEST with the `--with-debug` switch, then add a corresponding configuration in Eclipse as described above.
-1. Remember to also create a run configuration. Then, click the triangle next to the Bug to start debugging, chosing your debug run configuration.
+1. Remember to also create a run configuration. Then, click the triangle next to the Bug to start debugging, choosing your debug run configuration.
 1. Eclipse stops the debugger on entry to main, you probably want to click Resume here.
 
 NB: At present, I am not able to get any variable values out in gdb. This seems to be a gdb problem, I also have this problem with gdb on the command line. So on the Mac we may have to wait until Eclipse support lldb.

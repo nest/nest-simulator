@@ -181,7 +181,7 @@ if ( BUILD_SHARED_LIBS )
   add_library( ${MODULE_NAME}_module MODULE ${MODULE_SOURCES} )
   set_target_properties( ${MODULE_NAME}_module
       PROPERTIES
-      COMPILE_FLAGS "${NEST_CXXFLAGS}"
+      COMPILE_FLAGS "${NEST_CXXFLAGS} -DLTX_MODULE"
       LINK_FLAGS "${NEST_LIBS}"
       PREFIX ""
       OUTPUT_NAME ${MODULE_NAME} )

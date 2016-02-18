@@ -61,6 +61,14 @@ M_ERROR setverbosity
              /pp_pop_psc_delta         % population model, not suitable for STDP
            ] def    
 
+/higher_weight_list [ % all aeif_psc neurons
+                       /aeif_psc_alpha_gridprecise
+                       /aeif_psc_exp_gridprecise
+                       /aeif_psc_alpha_ps
+                       /aeif_psc_exp_ps
+                    ] def
+             
+
 % The following models require connections to rport 1:
 /extra_params <<
    /iaf_psc_alpha_multisynapse << /params << /tau_syn [ 1.0 ] >>
@@ -107,6 +115,10 @@ M_ERROR setverbosity
                           % plastic synapses.
 
       /initial_weight 10.0 def
+      model higher_weight_list exch MemberQ
+      {
+        /initial_weight 80.0 def
+      } if
       /syn_spec << /model /stdp_synapse
                    /weight initial_weight
                    /receptor_type 

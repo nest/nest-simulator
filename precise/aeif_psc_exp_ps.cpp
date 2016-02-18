@@ -393,15 +393,17 @@ void
 nest::aeif_psc_exp_ps::spiking_( const long_t T, const long_t lag, const double t )
 {
   // spike event
+  const double_t offset = B_.step_ - t;
+  set_spiketime( Time::step( T ), offset );
   SpikeEvent se;
-  se.set_offset( B_.step_ - t );
+  se.set_offset( offset );
   kernel().event_delivery_manager.send( *this, se, lag );
 
   // refractoriness
   if ( P_.t_ref_ > 0. )
   {
     S_.r_ = V_.RefractoryCounts_;
-    S_.r_offset_ = V_.RefractoryOffset_ - ( B_.step_ - t );
+    S_.r_offset_ = V_.RefractoryOffset_ - offset;
     if ( S_.r_offset_ < 0. )
     {
       if ( S_.r_ > 0 )
@@ -437,6 +439,7 @@ nest::aeif_psc_exp_ps::update( const Time& origin, const long_t from, const long
   {
     S_.y_[ State_::V_M ] = P_.V_reset_;
     S_.y_[ State_::W ] += P_.b;
+    set_spiketime( Time::step( origin.get_steps() + from ), std::numeric_limits< double_t >::epsilon() );
     SpikeEvent se;
     se.set_offset( B_.step_ * ( 1 - std::numeric_limits< double_t >::epsilon() ) );
     kernel().event_delivery_manager.send( *this, se, from );

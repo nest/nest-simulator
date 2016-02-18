@@ -417,9 +417,12 @@ nest::aeif_cond_alpha_gridprecise::interpolate_( double& t, double t_old )
 }
 
 void
-nest::aeif_cond_alpha_gridprecise::spiking_( const long_t lag, const double t )
+nest::aeif_cond_alpha_gridprecise::spiking_( Time const& origin,
+  const long_t lag,
+  const double t )
 {
   // spike event
+  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
   SpikeEvent se;
   kernel().event_delivery_manager.send( *this, se, lag );
 
@@ -442,7 +445,7 @@ nest::aeif_cond_alpha_gridprecise::spiking_( const long_t lag, const double t )
 }
 
 void
-nest::aeif_cond_alpha_gridprecise::update( const Time& origin,
+nest::aeif_cond_alpha_gridprecise::update( Time const& origin,
   const nest::long_t from,
   const nest::long_t to )
 {
@@ -460,6 +463,7 @@ nest::aeif_cond_alpha_gridprecise::update( const Time& origin,
   {
     S_.y_[ State_::V_M ] = P_.V_reset_;
     S_.y_[ State_::W ] += P_.b;
+    set_spiketime( Time::step( origin.get_steps() + from + 1 ) );
     SpikeEvent se;
     kernel().event_delivery_manager.send( *this, se, from );
   }
@@ -519,7 +523,7 @@ nest::aeif_cond_alpha_gridprecise::update( const Time& origin,
       else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ )
       {
         interpolate_( t, t_old );
-        spiking_( lag, t );
+        spiking_( origin, lag, t );
       }
 
       /* reset refractory offset once refractory period is elapsed;

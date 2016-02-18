@@ -162,7 +162,7 @@ private:
   void calibrate();
   void update( Time const&, const long_t, const long_t );
   void interpolate_( double&, double );
-  void spiking_( const nest::long_t, const double );
+  void spiking_( Time const&, const long_t, const double );
 
   // END Boilerplate function declarations ----------------------------
 

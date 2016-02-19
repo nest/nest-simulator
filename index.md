@@ -107,6 +107,14 @@ Once your code is in shape, head over to the [workflow
 manual](development_workflow) to find out how to initiate the inclusion
 by issuing a pull request.
 
+### Contributor License Agreement
+
+In order to make sure that the NEST Initiative can manage the NEST
+code base in the long term, you need to send us a completed and signed
+[NEST Contributor Agreement](NEST_Contributor_Agreement.pdf) to
+transfer your copyright to the NEST Initiative before we can merge
+your pull request.
+
 You might also want to consider [becoming a
 member](http://www.nest-initiative.org/membership/) in the NEST
 Initiative.

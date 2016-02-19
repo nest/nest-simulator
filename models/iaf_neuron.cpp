@@ -69,9 +69,9 @@ nest::iaf_neuron::Parameters_::Parameters_()
   , Tau_( 10.0 )            // ms
   , tau_syn_( 2.0 )         // ms
   , TauR_( 2.0 )            // ms
-  , U0_( -70.0 )            // mV
-  , V_reset_( -70.0 - U0_ ) // mV, rel to U0_
-  , Theta_( -55.0 - U0_ )   // mV, rel to U0_
+  , E_L_( -70.0 )            // mV
+  , V_reset_( -70.0 - E_L_ ) // mV, rel to E_L_
+  , Theta_( -55.0 - E_L_ )   // mV, rel to E_L_
   , I_e_( 0.0 )             // pA
 {
 }
@@ -92,10 +92,10 @@ nest::iaf_neuron::State_::State_()
 void
 nest::iaf_neuron::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::E_L, U0_ ); // Resting potential
+  def< double >( d, names::E_L, E_L_ ); // Resting potential
   def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, Theta_ + U0_ ); // threshold value
-  def< double >( d, names::V_reset, V_reset_ + U0_ );
+  def< double >( d, names::V_th, Theta_ + E_L_ ); // threshold value
+  def< double >( d, names::V_reset, V_reset_ + E_L_ );
   def< double >( d, names::C_m, C_ );
   def< double >( d, names::tau_m, Tau_ );
   def< double >( d, names::tau_syn, tau_syn_ );
@@ -105,20 +105,20 @@ nest::iaf_neuron::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_neuron::Parameters_::set( const DictionaryDatum& d )
 {
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
-  const double ELold = U0_;
-  updateValue< double >( d, names::E_L, U0_ );
-  const double delta_EL = U0_ - ELold;
+  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  const double ELold = E_L_;
+  updateValue< double >( d, names::E_L, E_L_ );
+  const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
-    V_reset_ -= U0_; // here we use the new U0_, no need for adjustments
+    V_reset_ -= E_L_; // here we use the new E_L_, no need for adjustments
   else
-    V_reset_ -= delta_EL; // express relative to new U0_
+    V_reset_ -= delta_EL; // express relative to new E_L_
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
-    Theta_ -= U0_;
+    Theta_ -= E_L_;
   else
-    Theta_ -= delta_EL; // express relative to new U0_
+    Theta_ -= delta_EL; // express relative to new E_L_
 
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, C_ );
@@ -141,14 +141,14 @@ nest::iaf_neuron::Parameters_::set( const DictionaryDatum& d )
 void
 nest::iaf_neuron::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, y3_ + p.U0_ ); // Membrane potential
+  def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
 }
 
 void
 nest::iaf_neuron::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
-    y3_ -= p.U0_;
+    y3_ -= p.E_L_;
   else
     y3_ -= delta_EL;
 }

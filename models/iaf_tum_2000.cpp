@@ -70,10 +70,10 @@ nest::iaf_tum_2000::Parameters_::Parameters_()
   , C_( 250.0 )             // in pF
   , tau_ref_tot_( 2.0 )     // in ms
   , tau_ref_abs_( 2.0 )     // in ms
-  , U0_( -70.0 )            // in mV
+  , E_L_( -70.0 )            // in mV
   , I_e_( 0.0 )             // in pA
-  , Theta_( -55.0 - U0_ )   // relative U0_
-  , V_reset_( -70.0 - U0_ ) // in mV
+  , Theta_( -55.0 - E_L_ )   // relative E_L_
+  , V_reset_( -70.0 - E_L_ ) // in mV
   , tau_ex_( 2.0 )          // in ms
   , tau_in_( 2.0 )          // in ms
 {
@@ -96,10 +96,10 @@ nest::iaf_tum_2000::State_::State_()
 void
 nest::iaf_tum_2000::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::E_L, U0_ ); // Resting potential
+  def< double >( d, names::E_L, E_L_ ); // Resting potential
   def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, Theta_ + U0_ ); // threshold value
-  def< double >( d, names::V_reset, V_reset_ + U0_ );
+  def< double >( d, names::V_th, Theta_ + E_L_ ); // threshold value
+  def< double >( d, names::V_reset, V_reset_ + E_L_ );
   def< double >( d, names::C_m, C_ );
   def< double >( d, names::tau_m, Tau_ );
   def< double >( d, names::tau_syn_ex, tau_ex_ );
@@ -111,18 +111,18 @@ nest::iaf_tum_2000::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d )
 {
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
-  const double ELold = U0_;
-  updateValue< double >( d, names::E_L, U0_ );
-  const double delta_EL = U0_ - ELold;
+  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  const double ELold = E_L_;
+  updateValue< double >( d, names::E_L, E_L_ );
+  const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
-    V_reset_ -= U0_;
+    V_reset_ -= E_L_;
   else
     V_reset_ -= delta_EL;
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
-    Theta_ -= U0_;
+    Theta_ -= E_L_;
   else
     Theta_ -= delta_EL;
 
@@ -153,14 +153,14 @@ nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d )
 void
 nest::iaf_tum_2000::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, V_m_ + p.U0_ ); // Membrane potential
+  def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
 }
 
 void
 nest::iaf_tum_2000::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
-    V_m_ -= p.U0_;
+    V_m_ -= p.E_L_;
   else
     V_m_ -= delta_EL;
 }

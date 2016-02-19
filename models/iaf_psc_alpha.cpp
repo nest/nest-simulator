@@ -69,10 +69,10 @@ iaf_psc_alpha::Parameters_::Parameters_()
   : Tau_( 10.0 )            // ms
   , C_( 250.0 )             // pF
   , TauR_( 2.0 )            // ms
-  , U0_( -70.0 )            // mV
+  , E_L_( -70.0 )            // mV
   , I_e_( 0.0 )             // pA
-  , V_reset_( -70.0 - U0_ ) // mV, rel to U0_
-  , Theta_( -55.0 - U0_ )   // mV, rel to U0_
+  , V_reset_( -70.0 - E_L_ ) // mV, rel to E_L_
+  , Theta_( -55.0 - E_L_ )   // mV, rel to E_L_
   , LowerBound_( -std::numeric_limits< double_t >::infinity() )
   , tau_ex_( 2.0 ) // ms
   , tau_in_( 2.0 ) // ms
@@ -97,11 +97,11 @@ iaf_psc_alpha::State_::State_()
 void
 iaf_psc_alpha::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::E_L, U0_ ); // Resting potential
+  def< double >( d, names::E_L, E_L_ ); // Resting potential
   def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, Theta_ + U0_ ); // threshold value
-  def< double >( d, names::V_reset, V_reset_ + U0_ );
-  def< double >( d, names::V_min, LowerBound_ + U0_ );
+  def< double >( d, names::V_th, Theta_ + E_L_ ); // threshold value
+  def< double >( d, names::V_reset, V_reset_ + E_L_ );
+  def< double >( d, names::V_min, LowerBound_ + E_L_ );
   def< double >( d, names::C_m, C_ );
   def< double >( d, names::tau_m, Tau_ );
   def< double >( d, names::t_ref, TauR_ );
@@ -112,23 +112,23 @@ iaf_psc_alpha::Parameters_::get( DictionaryDatum& d ) const
 double
 iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
 {
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
-  const double ELold = U0_;
-  updateValue< double >( d, names::E_L, U0_ );
-  const double delta_EL = U0_ - ELold;
+  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  const double ELold = E_L_;
+  updateValue< double >( d, names::E_L, E_L_ );
+  const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
-    V_reset_ -= U0_;
+    V_reset_ -= E_L_;
   else
     V_reset_ -= delta_EL;
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
-    Theta_ -= U0_;
+    Theta_ -= E_L_;
   else
     Theta_ -= delta_EL;
 
   if ( updateValue< double >( d, names::V_min, LowerBound_ ) )
-    LowerBound_ -= U0_;
+    LowerBound_ -= E_L_;
   else
     LowerBound_ -= delta_EL;
 
@@ -160,14 +160,14 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
 void
 iaf_psc_alpha::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, y3_ + p.U0_ ); // Membrane potential
+  def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
 }
 
 void
 iaf_psc_alpha::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
-    y3_ -= p.U0_;
+    y3_ -= p.E_L_;
   else
     y3_ -= delta_EL;
 }

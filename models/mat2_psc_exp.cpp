@@ -69,7 +69,7 @@ nest::mat2_psc_exp::Parameters_::Parameters_()
   : Tau_( 5.0 )      // in ms
   , C_( 100.0 )      // in pF
   , tau_ref_( 2.0 )  // in ms
-  , E_L_( -70.0 )     // in mV
+  , E_L_( -70.0 )    // in mV
   , I_e_( 0.0 )      // in pA
   , tau_ex_( 1.0 )   // in ms
   , tau_in_( 3.0 )   // in ms

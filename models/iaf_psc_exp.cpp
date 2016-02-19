@@ -69,15 +69,15 @@ RecordablesMap< iaf_psc_exp >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_exp::Parameters_::Parameters_()
-  : Tau_( 10.0 )            // in ms
-  , C_( 250.0 )             // in pF
-  , t_ref_( 2.0 )           // in ms
+  : Tau_( 10.0 )             // in ms
+  , C_( 250.0 )              // in pF
+  , t_ref_( 2.0 )            // in ms
   , E_L_( -70.0 )            // in mV
-  , I_e_( 0.0 )             // in pA
+  , I_e_( 0.0 )              // in pA
   , Theta_( -55.0 - E_L_ )   // relative E_L_
   , V_reset_( -70.0 - E_L_ ) // in mV
-  , tau_ex_( 2.0 )          // in ms
-  , tau_in_( 2.0 )          // in ms
+  , tau_ex_( 2.0 )           // in ms
+  , tau_in_( 2.0 )           // in ms
 {
 }
 

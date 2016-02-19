@@ -66,11 +66,11 @@ RecordablesMap< iaf_psc_alpha_multisynapse >::create()
  * ---------------------------------------------------------------- */
 
 iaf_psc_alpha_multisynapse::Parameters_::Parameters_()
-  : Tau_( 10.0 )            // ms
-  , C_( 250.0 )             // pF
-  , TauR_( 2.0 )            // ms
+  : Tau_( 10.0 )             // ms
+  , C_( 250.0 )              // pF
+  , TauR_( 2.0 )             // ms
   , E_L_( -70.0 )            // mV
-  , I_e_( 0.0 )             // pA
+  , I_e_( 0.0 )              // pA
   , V_reset_( -70.0 - E_L_ ) // mV, rel to E_L_
   , Theta_( -55.0 - E_L_ )   // mV, rel to E_L_
   , LowerBound_( -std::numeric_limits< double_t >::infinity() )

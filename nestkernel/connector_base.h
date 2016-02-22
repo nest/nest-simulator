@@ -907,7 +907,7 @@ private:
 
 public:
   HetConnector()
-    : vector< ConnectorBase* >()
+    : std::vector< ConnectorBase* >()
     , primary_end_( 0 )
   {
   }
@@ -1015,7 +1015,7 @@ public:
   void
   trigger_update_weight( long_t vt_gid,
     thread t,
-    const vector< spikecounter >& dopa_spikes,
+    const std::vector< spikecounter >& dopa_spikes,
     double_t t_trig,
     const std::vector< ConnectorModel* >& cm )
   {

@@ -29,7 +29,6 @@ from . import test_stack
 from . import test_create
 from . import test_status
 from . import test_onetooneconnect
-from . import test_convergent_divergent_connect
 from . import test_connect_all_to_all
 from . import test_connect_fixed_indegree
 from . import test_connect_fixed_outdegree
@@ -55,27 +54,26 @@ def suite():
 
     suite.addTest(test_errors.suite())
     suite.addTest(test_stack.suite())
-    suite.addTest(test_create.suite())                    
+    suite.addTest(test_create.suite())
     suite.addTest(test_status.suite())
     suite.addTest(test_onetooneconnect.suite())
-    suite.addTest(test_convergent_divergent_connect.suite())
     suite.addTest(test_connect_all_to_all.suite())
     suite.addTest(test_connect_fixed_indegree.suite())
     suite.addTest(test_connect_fixed_outdegree.suite())
     suite.addTest(test_connect_fixed_total_number.suite())
     suite.addTest(test_connect_one_to_one.suite())
     suite.addTest(test_connect_pairwise_bernoulli.suite())
-    suite.addTest(test_findconnections.suite())    
+    suite.addTest(test_findconnections.suite())
     suite.addTest(test_getconnections.suite())
     suite.addTest(test_dataconnect.suite())
     suite.addTest(test_events.suite())
     suite.addTest(test_networks.suite())
-    suite.addTest(test_threads.suite())    
+    suite.addTest(test_threads.suite())
     suite.addTest(test_csa.suite())
     suite.addTest(test_quantal_stp_synapse.suite())
     suite.addTest(test_sp.suite())
     suite.addTest(test_parrot_neuron.suite())
-    suite.addTest(test_stdp_triplet_synapse.suite())    
+    suite.addTest(test_stdp_triplet_synapse.suite())
 
     return suite
 

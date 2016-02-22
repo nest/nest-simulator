@@ -954,13 +954,35 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( const GIDCollection& sources,
   , indegree_( ( *conn_spec )[ Name( "indegree" ) ] )
 {
   // check for potential errors
-
+  long n_sources = sources_.size();
+  if ( n_sources == 0 )
+  {
+    throw BadProperty( "Source array must not be empty." );
+  }
   // verify that indegree is not larger than source population if multapses are disabled
   if ( not multapses_ )
   {
-    if ( ( indegree_ > static_cast< long >( sources_.size() ) ) )
-      throw BadProperty( "Indegree cannot be larger than population size." );
-  }
+    if ( indegree_ > n_sources )
+    {
+      throw BadProperty( "Multapses prohibited and fewer sources than connections." );
+    }
+    else if ( indegree_ == n_sources and not autapses_ )
+    {
+      LOG( M_WARNING,
+        "FixedInDegreeBuilder::connect",
+        "Multapses and autapses prohibited. When the sources and the targets have a non-empty "
+        "intersection, the connect algorithm will enter an infinite loop." );
+      return;
+    }
+
+    if ( indegree_ > 0.9 * n_sources )
+    {
+      LOG( M_WARNING,
+        "FixedInDegreeBuilder::connect",
+        "Multapses are prohibited and you request more than 90% connectivity. "
+        "Expect long connecting times!" );
+    }
+  } // if (not multapses_ )
 }
 
 void
@@ -1029,12 +1051,36 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( const GIDCollection& sources
   , outdegree_( ( *conn_spec )[ Name( "outdegree" ) ] )
 {
   // check for potential errors
+  // check for potential errors
+  long n_targets = targets_.size();
+  if ( n_targets == 0 )
+  {
+    throw BadProperty( "Target array must not be empty." );
+  }
 
   // verify that outdegree is not larger than target population if multapses are disabled
   if ( not multapses_ )
   {
-    if ( ( outdegree_ > static_cast< long >( targets_.size() ) ) )
-      throw BadProperty( "Outdegree cannot be larger than population size." );
+    if ( outdegree_ > n_targets )
+    {
+      throw BadProperty( "Multapses prohibited and fewer targets than connections." );
+    }
+    else if ( outdegree_ == n_targets and not autapses_ )
+    {
+      LOG( M_WARNING,
+        "FixedOutDegreeBuilder::connect",
+        "Multapses and autapses prohibited. When the sources and the targets have a non-empty "
+        "intersection, the connect algorithm will enter an infinite loop." );
+      return;
+    }
+
+    if ( outdegree_ > 0.9 * n_targets )
+    {
+      LOG( M_WARNING,
+        "FixedOutDegreeBuilder::connect",
+        "Multapses are prohibited and you request more than 90% connectivity. "
+        "Expect long connecting times!" );
+    }
   }
 }
 

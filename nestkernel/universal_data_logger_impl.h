@@ -211,4 +211,4 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host,
   kernel().event_delivery_manager.send_to_node( reply );
 }
 
-#endif
+#endif // #ifndef UNIVERSAL_DATA_LOGGER_IMPL_H

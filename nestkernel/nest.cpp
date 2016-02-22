@@ -48,12 +48,12 @@ init_nest( int* argc, char** argv[] )
 }
 
 void
-fail_exit( int exitcode )
+fail_exit( int )
 {
 }
 
 void
-install_module( const std::string& module_name )
+install_module( const std::string& )
 {
 }
 
@@ -85,7 +85,7 @@ register_logger_client( const deliver_logging_event_ptr client_callback )
 }
 
 void
-print_network( index gid, index depth, std::ostream& out )
+print_network( index gid, index depth, std::ostream& )
 {
   kernel().node_manager.print( gid, depth - 1 );
 }

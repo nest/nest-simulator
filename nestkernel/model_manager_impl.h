@@ -32,7 +32,6 @@
 // Includes from nestkernel:
 #include "connection_label.h"
 #include "kernel_manager.h"
-#include "connector_model_impl.h"
 
 
 namespace nest
@@ -146,4 +145,4 @@ ModelManager::is_model_in_use( index i )
 
 } // namespace nest
 
-#endif
+#endif // #ifndef MODEL_MANAGER_IMPL_H

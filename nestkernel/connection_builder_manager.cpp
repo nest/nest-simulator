@@ -576,11 +576,12 @@ nest::ConnectionBuilderManager::connect( index sgid,
   DictionaryDatum& params,
   index syn )
 {
+  thread tid = kernel().vp_manager.get_thread_id();
 
   if ( !kernel().node_manager.is_local_gid( tgid ) )
     return false;
 
-  Node* target = kernel().node_manager.get_node( tgid );
+  Node* target = kernel().node_manager.get_node( tgid, tid );
 
   thread target_thread = target->get_thread();
 
@@ -616,7 +617,6 @@ nest::ConnectionBuilderManager::connect( index sgid,
   else if ( not source->has_proxies() && not target->has_proxies() )
   {
     // create connection only on suggested thread of target
-    thread tid = kernel().vp_manager.get_thread_id();
     target_thread = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
     if ( target_thread == tid )
     {

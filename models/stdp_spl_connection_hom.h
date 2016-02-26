@@ -468,7 +468,7 @@ private:
         // no integration to be done
         delta_i = 0;
       }
-      else if ( w_create_steps_[ i ] > 1 )
+      else if ( w_create_steps_[ i ] > 0 )
       {
         // the contact is going to be created within this delta.
         // how many steps will elapse until this happens?
@@ -580,7 +580,8 @@ private:
               exp_dev_( rng_ ) / cp.lambda_ *1e3 ) ).get_steps();
             // set synapse to equal zero
             w_jk_[ i ] = 0.;
-            // set activity dependent state variables to NAN
+            // set activity dependent state variables to NAN to denote that 
+            // they are not defined.
             r_jk_[ i ] = NAN;
             c_jk_[ i ] = NAN;
             r_post_jk_[ i ] = NAN;
@@ -588,42 +589,38 @@ private:
             // increment deletion counter
             n_delete_ ++;
           }
-      }
-
-      // now we integrate the remaining variables for delta_this steps
-      // only if the contact exists
-
-      if (w_create_steps_[ i ] == 0)
-      {
-      // precompute some exponentials
-      if ( delta_this < cp.exp_cache_len_ )
-      {
-          // we copy the exp terms from the cache if possible
-          exp_term_8_ = cp.exp_8_[delta_this];
-          exp_term_9_ = cp.exp_2_[delta_this];
-      }
-      else
-      {
-          // otherwise we compute them
-          double_t t_delta_ = Time( Time::step(delta_this) ).get_ms() / 1000.;  
-          exp_term_8_ =  std::exp( -t_delta_/cp.tau_ );
-          exp_term_9_ =  std::exp( -t_delta_/cp.tau_slow_ );
-      }
-      // std::exp( t_delta_*(-2/cp.tau_ + 1/cp.tau_slow_) )
-      exp_term_10_ = exp_term_8_ * exp_term_8_ / exp_term_9_;
-
-      // c_jk update by analytical solution
-      c_jk_[ i ] = ((-1 + exp_term_10_) * r_jk_[ i ]*r_post_jk_[ i ]*cp.tau_ 
-            + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))/
-            (cp.tau_ - 2*cp.tau_slow_) * exp_term_9_;
       
-      // r_jk update by analytical solution
-      r_jk_[ i ] *= exp_term_8_;
+          // now we integrate the remaining state variables for delta_this steps
 
-      // r/R post update by analytical solution
-      r_post_jk_[ i ] *= exp_term_8_;
-      R_post_jk_[ i ] *= exp_term_9_;
-      }
+          // precompute some exponentials
+          if ( delta_this < cp.exp_cache_len_ )
+          {
+              // we copy the exp terms from the cache if possible
+              exp_term_8_ = cp.exp_8_[delta_this];
+              exp_term_9_ = cp.exp_2_[delta_this];
+          }
+          else
+          {
+              // otherwise we compute them
+              double_t t_delta_ = Time( Time::step(delta_this) ).get_ms() / 1000.;  
+              exp_term_8_ =  std::exp( -t_delta_/cp.tau_ );
+              exp_term_9_ =  std::exp( -t_delta_/cp.tau_slow_ );
+          }
+          // std::exp( t_delta_*(-2/cp.tau_ + 1/cp.tau_slow_) )
+          exp_term_10_ = exp_term_8_ * exp_term_8_ / exp_term_9_;
+
+          // c_jk update by analytical solution
+          c_jk_[ i ] = ((-1 + exp_term_10_) * r_jk_[ i ]*r_post_jk_[ i ]*cp.tau_ 
+                + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))/
+                (cp.tau_ - 2*cp.tau_slow_) * exp_term_9_;
+          
+          // r_jk update by analytical solution
+          r_jk_[ i ] *= exp_term_8_;
+
+          // r/R post update by analytical solution
+          r_post_jk_[ i ] *= exp_term_8_;
+          R_post_jk_[ i ] *= exp_term_9_;
+          }
       
       // increment the step counter of the loop over delta
       delta_done += delta_this;

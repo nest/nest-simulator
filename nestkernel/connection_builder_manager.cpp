@@ -457,12 +457,6 @@ nest::ConnectionBuilderManager::connect( index sgid,
       return;
     }
 
-    // if ( source->get_thread() != target_thread )
-    // {
-    //   target_thread = source->get_thread();
-    //   target = kernel().node_manager.get_node( target->get_gid(), target_thread );
-    // }
-
     connect_to_device_( *source, *target, sgid, target_thread, syn, d, w );
   }
   // normal devices -> normal nodes and devices with proxies
@@ -473,7 +467,12 @@ nest::ConnectionBuilderManager::connect( index sgid,
   // normal devices -> normal devices
   else if ( not source->has_proxies() && not target->has_proxies() )
   {
-    connect_from_device_( *source, *target, sgid, target_thread, syn, d, w );
+    // create connection only on suggested thread of target
+    target_thread = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
+    if ( target_thread == tid )
+    {
+      connect_from_device_( *source, *target, sgid, target_thread, syn, d, w );
+    }
   }
   // globally receiving devices
   // e.g., volume transmitter
@@ -539,7 +538,13 @@ nest::ConnectionBuilderManager::connect( index sgid,
   // normal devices -> normal devices
   else if ( not source->has_proxies() && not target->has_proxies() )
   {
-    connect_from_device_( *source, *target, sgid, target_thread, syn, params, d, w );
+    // create connection only on suggested thread of target
+    thread tid = kernel().vp_manager.get_thread_id();
+    target_thread = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
+    if ( target_thread == tid )
+    {
+      connect_from_device_( *source, *target, sgid, target_thread, syn, params, d, w );
+    }
   }
   // globally receiving devices
   // e.g., volume transmitter
@@ -577,7 +582,6 @@ nest::ConnectionBuilderManager::connect( index sgid,
 
   Node* target = kernel().node_manager.get_node( tgid );
 
-  // target_thread defaults to 0 for devices
   thread target_thread = target->get_thread();
 
   Node* source = kernel().node_manager.get_node( sgid, target_thread );
@@ -611,7 +615,13 @@ nest::ConnectionBuilderManager::connect( index sgid,
   // normal devices -> normal devices
   else if ( not source->has_proxies() && not target->has_proxies() )
   {
-    connect_from_device_( *source, *target, sgid, target_thread, syn, params );
+    // create connection only on suggested thread of target
+    thread tid = kernel().vp_manager.get_thread_id();
+    target_thread = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
+    if ( target_thread == tid )
+    {
+      connect_from_device_( *source, *target, sgid, target_thread, syn, params );
+    }
   }
   // globally receiving devices
   // e.g., volume transmitter

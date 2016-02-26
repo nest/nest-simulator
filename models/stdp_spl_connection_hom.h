@@ -58,6 +58,8 @@ Common parameters:
  w0           double - Weight of newly created contacts
  p_fail       double - Probability of synaptic transmission failure (at each 
                        contact)
+ grace_period double - Time interval after creation of contacts for the 
+                       duration of which plasticity is inactive (in s).
  t_cache      double - Exponential terms are precomputed for time intervals up 
                        to t_cache (in s)
  safe_mode    bool   - In safe mode zero-crossings of the contact weights within 
@@ -141,11 +143,13 @@ public:
   double_t w0_;
   double_t p_fail_;
   double_t t_cache_;
+  double_t t_grace_period_;
   bool safe_mode_;
   bool sleep_mode_;
 
   // precomputed values
   long_t exp_cache_len_;
+  long_t steps_grace_period_;
   std::vector<double_t> exp_2_;
   std::vector<double_t> exp_7_;
   std::vector<double_t> exp_8_;
@@ -483,9 +487,27 @@ private:
         r_post_jk_[ i ] = 0.;
         R_post_jk_[ i ] = 0.;
         // clear creation step counter
-        w_create_steps_[ i ] = 0;
+        // set to negative grace period steps. Plasticity is paused until 
+        // grace period ends.
+        w_create_steps_[ i ] = -cp.steps_grace_period_;
         // increment creation counter
         n_create_ ++;
+      }
+      else if (-w_create_steps_[ i ] > delta_this)
+      {
+        // the contact exists, but is still in its period of grace.
+        // the period is still longer than the delta. So we can do the 
+        // whole delta_this.
+        delta_i = delta_this;
+        // w_create_steps_ will be decremented below
+      }
+      else if ( -w_create_steps_[ i ] > 0)
+      {
+        // the contact exists, but is still in its period of grace.
+        // the period ends during the delta. We integrate until it ends
+        delta_this = -w_create_steps_[ i ];
+        delta_i = delta_this;
+        // w_create_steps_ will be decremented below
       }
       else
       {
@@ -496,6 +518,10 @@ private:
       // state variable integration, only for existing contacts
       if (delta_i>0)
       {
+          // weight plasticity is only active for exisiting synapses which
+          // have passed their period of grace
+          if (w_create_steps_[ i ]==0)
+          {
           // these local switches control the flow below
           bool deletion_trigger;
           bool stepeval_trigger;
@@ -589,9 +615,20 @@ private:
             // increment deletion counter
             n_delete_ ++;
           }
+          // end of weight plasticity part
+          }
+          else
+          {
+            // w_create_steps_ has to be negative, otherwise there is a problem
+            // above. That means plasticity is paused because of grace period.
+            assert( w_create_steps_[ i ] < 0 );
+            w_create_steps_[i] += delta_this;
+            // passing period of grace must not cause deletion of the contact.
+            assert( w_create_steps_[ i ] <= 0 );
+          }
       
           // now we integrate the remaining state variables for delta_this steps
-
+        
           // precompute some exponentials
           if ( delta_this < cp.exp_cache_len_ )
           {
@@ -790,6 +827,10 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
   // to trigger sleep mode when no contacts are active.
   w_create_steps_min_ = 
      *std::min_element( w_create_steps_.begin(), w_create_steps_.end() );
+  if (w_create_steps_min_<0)
+  {
+    w_create_steps_min_ = 0;
+  } 
   }
 }
 
@@ -955,6 +996,10 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   // of the synapse by changing w_create_steps_
   w_create_steps_min_ = 
      *std::min_element( w_create_steps_.begin(), w_create_steps_.end() );
+  if (w_create_steps_min_<0)
+  {
+    w_create_steps_min_ = 0;
+  } 
 }
 
 } // of namespace nest

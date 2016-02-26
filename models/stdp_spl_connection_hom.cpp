@@ -46,6 +46,7 @@ STDPSplHomCommonProperties::STDPSplHomCommonProperties()
   , w0_( 0.01 )
   , p_fail_( 0.2 )
   , t_cache_( 1. )
+  , t_grace_period_( 0. )
   , safe_mode_( true )
   , sleep_mode_( true )
 {
@@ -66,6 +67,7 @@ STDPSplHomCommonProperties::get_status( DictionaryDatum& d ) const
   def< double_t >( d, "w0", w0_ );
   def< double_t >( d, "p_fail", p_fail_ );
   def< double_t >( d, "t_cache", t_cache_ );
+  def< double_t >( d, "t_grace_period", t_grace_period_ );
   def< bool >( d, "safe_mode", safe_mode_ );
   def< bool >( d, "sleep_mode", sleep_mode_ );
 }
@@ -85,6 +87,7 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
   updateValue< double_t >( d, "w0", w0_ );
   updateValue< double_t >( d, "p_fail", p_fail_ );
   updateValue< double_t >( d, "t_cache", t_cache_ );
+  updateValue< double_t >( d, "t_grace_period", t_grace_period_ );
   updateValue< bool >( d, "safe_mode", safe_mode_ );
   updateValue< bool >( d, "sleep_mode", sleep_mode_ );  
 
@@ -103,6 +106,11 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
   if ( not( t_cache_ >= 0. ) )
   {
     throw BadProperty( "The time interval for caching of exponentials must be positive" );
+  }
+
+  if ( not( t_grace_period_ >= 0. ) )
+  {
+    throw BadProperty( "The grace period must be positive" );
   }
 
   if (safe_mode_)
@@ -147,6 +155,8 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
       exp_8_[i] = std::exp( -t_i_ / tau_ );
       exp_7_[i] = std::exp( -t_i_* alpha_ );
   }
+  
+  steps_grace_period_ = Time( Time::ms( t_grace_period_ * 1000. )).get_steps();
 }
 
 } // of namespace nest

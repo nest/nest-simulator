@@ -83,11 +83,6 @@ public:
   void send_secondary( Node& source, SecondaryEvent& e );
 
   /**
-   * Send event e to all targets of node source on thread t
-   */
-  void send_local( thread t, Node& source, Event& e );
-
-  /**
    * Add global id of event sender to the spike_register.
    * An event sent through this method will remain in the queue until
    * the network time has advanced by min_delay_ steps. After this period
@@ -253,7 +248,16 @@ private:
 
   void deliver_events_5g_( const thread tid );
 
-private:
+  /**
+   * Send event e to all targets of node source on thread t
+   *
+   * Delivers events from devices directly to targets.
+   */
+  template< class EventT >
+  void send_local_( Node& source, EventT& e, const long_t lag );
+
+  //--------------------------------------------------//
+
   bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid
 
   /**

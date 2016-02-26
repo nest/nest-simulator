@@ -311,7 +311,7 @@ public:
   /**
    * Send event e to all targets of source device ldid (local device id)
    */
-  void send_from_devices( thread tid, const index ldid, Event& e );
+  void send_from_device( thread tid, const index ldid, Event& e );
 
   /**
    * Send event e to all targets of node source on thread t

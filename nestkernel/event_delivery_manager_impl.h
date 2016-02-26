@@ -32,29 +32,37 @@
 namespace nest
 {
 
+template< class EventT >
+inline void
+EventDeliveryManager::send_local_( Node& source, EventT& e, const long_t lag )
+{
+  assert( !source.has_proxies() );
+  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
+  e.set_sender( source );
+  const thread t = source.get_thread();
+  const index ldid = source.get_local_device_id();
+  kernel().connection_builder_manager.send_from_device( t, ldid, e );
+}
+
 template < class EventT >
 inline void
 EventDeliveryManager::send( Node& source, EventT& e, const long_t lag )
 {
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
-  e.set_sender( source );
-  thread t = source.get_thread();
-  index gid = source.get_gid();
-
-  assert( !source.has_proxies() );
-  kernel().connection_builder_manager.send( t, gid, e );
+  send_local_( source, e, lag );
 }
 
 template <>
 inline void
 EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const long_t lag )
 {
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
-  e.set_sender( source );
-  thread tid = source.get_thread();
-
+  const index s_gid = source.get_gid();
+  e.set_sender_gid( s_gid );
   if ( source.has_proxies() )
   {
+    e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
+    e.set_sender( source );
+    const thread tid = source.get_thread();
+
     if ( source.is_off_grid() )
     {
       send_offgrid_remote( tid, e, lag );
@@ -62,8 +70,6 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
     else
     {
       send_remote( tid, e, lag );
-      const index s_gid = source.get_gid();
-      e.set_sender_gid( s_gid );
       for ( int_t i = 0; i < e.get_multiplicity(); ++i )
       {
         kernel().connection_builder_manager.send_to_devices( tid, s_gid, e );
@@ -72,7 +78,7 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
   }
   else
   {
-    send_local( tid, source, e );
+    send_local_( source, e, lag );
   }
 }
 
@@ -80,12 +86,8 @@ template <>
 inline void
 EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long_t lag )
 {
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
-  e.set_sender( source );
-  thread t = source.get_thread();
-
-  assert( !source.has_proxies() );
-  send_local( t, source, e );
+  e.set_sender_gid( source.get_gid() );
+  send_local_( source, e, lag );
 }
 
 inline void
@@ -94,7 +96,7 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
   e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
   e.set_sender( source );
   e.set_sender_gid( source.get_gid() );
-  thread t = source.get_thread();
+  const thread t = source.get_thread();
   send_remote( t, e );
 }
 
@@ -102,16 +104,6 @@ inline size_t
 EventDeliveryManager::write_toggle() const
 {
   return kernel().simulation_manager.get_slice() % 2;
-}
-
-inline void
-EventDeliveryManager::send_local( thread t, Node& source, Event& e )
-{
-  index sgid = source.get_gid();
-  e.set_sender_gid( sgid );
-  // kernel().connection_builder_manager.send( t, sgid, e );
-  const index ldid = source.get_local_device_id();
-  kernel().connection_builder_manager.send_from_devices( t, ldid, e );
 }
 
 } // of namespace nest

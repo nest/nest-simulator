@@ -215,7 +215,7 @@ nest::ConnectionBuilderManager::send_to_devices( thread tid, const index s_gid, 
 }
 
 void
-nest::ConnectionBuilderManager::send_from_devices( thread tid, const index ldid, Event& e)
+nest::ConnectionBuilderManager::send_from_device( thread tid, const index ldid, Event& e)
 {
   target_table_devices_.send_from_device( tid, ldid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
 }

@@ -121,11 +121,16 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
    */
   using Node::event_hook;
+  using Node::set_local_device_id;
+  using Node::get_local_device_id;
 
   port send_test_event( Node&, rport, synindex, bool );
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
+
+  void set_local_device_id( const index ldid );
+  index get_local_device_id( ) const;
 
 private:
   void init_state_( const Node& );
@@ -162,6 +167,8 @@ private:
   StimulatingDevice< SpikeEvent > device_;
   Parameters_ P_;
   Variables_ V_;
+
+  index local_device_id_;
 };
 
 inline port

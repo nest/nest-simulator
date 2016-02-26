@@ -419,6 +419,8 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   ConnectionT& c,
   rport receptor_type )
 {
+  // TODO@5g: remove this function
+  assert(false);
   // here we need to distinguish several cases:
   // - neuron src has no target on this machine yet (case 0)
   // - neuron src has n targets on this machine, all of same type syn_id_existing (case 1)
@@ -662,7 +664,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
     conn = allocate< Connector< ConnectionT > >();
     syn_index = hetconn->size();
     hetconn->resize( syn_index + 1);
-    // currently this is only a dummy implementation, need to be updated to TODO@5g
+    // currently this is only a dummy implementation, need to be updated to support gap junctions TODO@5g
     hetconn->add_connector_5g();
   }
   else
@@ -671,6 +673,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
     // the following line will throw an exception, if it does not work
     c.check_connection( src, tgt, receptor_type, conn->get_t_lastspike(), get_common_properties() );
   }
+  assert( conn != 0 );
 
   Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( conn );
   conn = &vc->push_back( c );

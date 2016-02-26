@@ -421,10 +421,6 @@ nest::SimulationManager::prepare_simulation_()
 
   kernel().model_manager.create_secondary_events_prototypes();
 
-  // resize the target table for delivery of events to devices to make
-  // sure the first dimension matches the number of local nodes
-  kernel().connection_builder_manager.resize_target_table_devices();
-
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime

@@ -95,6 +95,9 @@ class ConnectorBase
 public:
   ConnectorBase();
 
+  // destructor needed to delete connections
+  virtual ~ConnectorBase(){};
+
   virtual void get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const = 0;
   virtual void
   set_synapse_status( synindex syn_id, ConnectorModel& cm, const DictionaryDatum& d, port p ) = 0;
@@ -119,9 +122,9 @@ public:
   virtual void
   get_target_gids( std::vector< size_t >& target_gids, size_t thrd, synindex synapse_id ) const = 0;
 
-  virtual void send( Event& e, thread t, const std::vector< ConnectorModel* >& cm ) = 0;
-  virtual void send( thread tid, synindex syn_index, unsigned int lcid, Event& e, const std::vector< ConnectorModel* >& cm ) = 0;
+  virtual void send_to_all( Event& e, thread tid, const std::vector< ConnectorModel* >& cm ) = 0;
 
+  virtual void send( thread tid, synindex syn_index, unsigned int lcid, Event& e, const std::vector< ConnectorModel* >& cm ) = 0;
 
   virtual void trigger_update_weight( long_t vt_gid,
     thread t,
@@ -130,16 +133,13 @@ public:
     const std::vector< ConnectorModel* >& cm ) = 0;
 
   virtual void
-  send_secondary( SecondaryEvent& e, thread t, const std::vector< ConnectorModel* >& cm ) = 0;
+  send_to_all_secondary( SecondaryEvent& e, thread t, const std::vector< ConnectorModel* >& cm ) = 0;
 
   // returns id of synapse type
   virtual synindex get_syn_id() const = 0;
 
   // returns true, if all synapse models are of same type
   virtual bool homogeneous_model() = 0;
-
-  // destructor needed to delete connections
-  virtual ~ConnectorBase(){};
 
   double_t
   get_t_lastspike() const
@@ -162,6 +162,7 @@ private:
 template < typename ConnectionT >
 class Connector : public ConnectorBase
 {
+private:
   std::vector< ConnectionT > C_;
 
 public:
@@ -301,7 +302,7 @@ public:
   }
 
   void
-  send( Event& e, thread t, const std::vector< ConnectorModel* >& cm )
+  send_to_all( Event& e, thread tid, const std::vector< ConnectorModel* >& cm )
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
 
@@ -310,7 +311,7 @@ public:
 
       e.set_port( i );
       C_[ i ].send( e,
-        t,
+        tid,
         ConnectorBase::get_t_lastspike(),
         static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
           ->get_common_properties() );
@@ -324,6 +325,7 @@ public:
   {
     const synindex syn_id = C_[ 0 ].get_syn_id();
     e.set_port( lcid );
+    // TODO@5g: -1 placeholder for t_lastspike
     C_[ lcid ].send( e, tid, -1., static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
                   ->get_common_properties() );
   }
@@ -348,7 +350,7 @@ public:
   }
 
   void
-  send_secondary( SecondaryEvent&, thread, const std::vector< ConnectorModel* >& )
+  send_to_all_secondary( SecondaryEvent&, thread, const std::vector< ConnectorModel* >& )
   {
     assert( false ); // should not be called, only needed for heterogeneous connectors
   };
@@ -379,7 +381,7 @@ private:
 
 public:
   HetConnector()
-    : std::vector< ConnectorBase* >()
+    : std::vector< ConnectorBase* >( 0 )
     , primary_end_( 0 )
   {
   }
@@ -477,14 +479,6 @@ public:
   }
 
   void
-  send( Event& e, thread t, const std::vector< ConnectorModel* >& cm )
-  {
-    // for all primary connections delegate send to homogeneous connectors
-    for ( size_t i = 0; i < primary_end_; i++ )
-      at( i )->send( e, t, cm );
-  }
-
-  void
   send( thread tid, synindex syn_index, unsigned int lcid, Event& e, const std::vector< ConnectorModel* >& cm )
   {
     at( syn_index )->send( tid, syn_index, lcid, e, cm );
@@ -495,7 +489,9 @@ public:
   {
     // for all delegate send to homogeneous connectors
     for ( size_t i = 0; i < primary_end_; i++ )
-      at( i )->send( e, tid, cm );
+    {
+      at( i )->send_to_all( e, tid, cm );
+    }
   }
 
   void
@@ -510,13 +506,13 @@ public:
   }
 
   void
-  send_secondary( SecondaryEvent& e, thread t, const std::vector< ConnectorModel* >& cm )
+  send_to_all_secondary( SecondaryEvent& e, thread t, const std::vector< ConnectorModel* >& cm )
   {
     // for all secondary connections delegate send to the matching homogeneous connector only
     for ( size_t i = primary_end_; i < size(); i++ )
       if ( e.supports_syn_id( at( i )->get_syn_id() ) )
       {
-        at( i )->send( e, t, cm );
+        at( i )->send_to_all( e, t, cm );
         break;
       }
   }
@@ -550,7 +546,7 @@ public:
     }
   }
 
-  // currently this is only a dummy implementation, need to be updated to TODO@5g
+  // currently this is only a dummy implementation, need to be updated to support gap junctions TODO@5g
   void
   add_connector_5g()
   {

@@ -211,7 +211,13 @@ nest::ConnectionBuilderManager::send_5g( thread tid, synindex syn_index, unsigne
 void
 nest::ConnectionBuilderManager::send_to_devices( thread tid, const index s_gid, Event& e )
 {
-  target_table_devices_.send( tid, s_gid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+  target_table_devices_.send_to_device( tid, s_gid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+}
+
+void
+nest::ConnectionBuilderManager::send_from_devices( thread tid, const index ldid, Event& e)
+{
+  target_table_devices_.send_from_device( tid, ldid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
 }
 
 void
@@ -766,11 +772,10 @@ nest::ConnectionBuilderManager::connect_to_device_( Node& s,
   double_t d,
   double_t w )
 {
-  std::cout<<"here connect_to_device \n";
   kernel().model_manager.assert_valid_syn_id( syn );
 
   // create entries in connection structure for connections to devices
-  target_table_devices_.add_connection( s, r, s_gid, tid, syn, d, w );
+  target_table_devices_.add_connection_to_device( s, r, s_gid, tid, syn, d, w );
   
   // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
@@ -790,7 +795,7 @@ nest::ConnectionBuilderManager::connect_to_device_( Node& s,
   double_t d,
   double_t w )
 {
-  std::cout<<"here connect_to_device with params\n";
+  assert(false);
 }
 
 void
@@ -802,7 +807,18 @@ nest::ConnectionBuilderManager::connect_from_device_( Node& s,
   double_t d,
   double_t w )
 {
-  std::cout<<"here connect_from_device\n";
+  kernel().model_manager.assert_valid_syn_id( syn );
+
+  // create entries in connections vector of devices
+  target_table_devices_.add_connection_from_device( s, r, s_gid, tid, syn, d, w );
+
+  // TODO: set size of vv_num_connections in init
+  if ( vv_num_connections_[ tid ].size() <= syn )
+  {
+    vv_num_connections_[ tid ].resize( syn + 1 );
+  }
+  ++vv_num_connections_[ tid ][ syn ];
+
 }
 
 void
@@ -815,7 +831,7 @@ nest::ConnectionBuilderManager::connect_from_device_( Node& s,
   double_t d,
   double_t w )
 {
-    std::cout<<"here connect_from_device with params\n";
+    assert(false);
 }
 
 // -----------------------------------------------------------------------------
@@ -1703,7 +1719,7 @@ nest::ConnectionBuilderManager::send( thread t, index sgid, Event& e )
       if ( has_primary( p ) )
       {
         // erase 2 least significant bits to obtain the correct pointer
-        validate_pointer( p )->send( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
+        validate_pointer( p )->send_to_all( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
       }
     }
   }
@@ -1728,10 +1744,10 @@ nest::ConnectionBuilderManager::send_secondary( thread t, SecondaryEvent& e )
         if ( p->homogeneous_model() )
         {
           if ( e.supports_syn_id( p->get_syn_id() ) )
-            p->send( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
+            p->send_to_all( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
         }
         else
-          p->send_secondary( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
+          p->send_to_all_secondary( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
       }
     }
   }

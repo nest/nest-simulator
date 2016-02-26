@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CONNECTIONBUILDER_MANAGER_H
-#define CONNECTIONBUILDER_MANAGER_H
+#ifndef CONNECTION_BUILDER_MANAGER_H
+#define CONNECTION_BUILDER_MANAGER_H
 
 // C++ includes:
 #include <string>
@@ -309,6 +309,11 @@ public:
   void send_to_devices( thread tid, const index s_gid, Event& e );
 
   /**
+   * Send event e to all targets of source device ldid (local device id)
+   */
+  void send_from_devices( thread tid, const index ldid, Event& e );
+
+  /**
    * Send event e to all targets of node source on thread t
    */
   void send_local( thread t, Node& source, Event& e );
@@ -570,4 +575,4 @@ ConnectionBuilderManager::resize_target_table_devices()
 
 } // namespace nest
 
-#endif /* CONNECTIONBUILDER_MANAGER_H */
+#endif /* CONNECTION_BUILDER_MANAGER_H */

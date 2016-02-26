@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CONNECTIONBUILDERMANAGER_IMPL_H
-#define CONNECTIONBUILDERMANAGER_IMPL_H
+#ifndef CONNECTION_BUILDER_MANAGER_IMPL_H
+#define CONNECTION_BUILDER_MANAGER_IMPL_H
 
 #include "connection_builder_manager.h"
 
@@ -48,4 +48,4 @@ ConnectionBuilderManager::register_conn_builder( const std::string& name )
 }
 }
 
-#endif
+#endif // CONNECTION_BUILDER_MANAGER_IMPL_H

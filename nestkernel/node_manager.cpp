@@ -117,6 +117,8 @@ NodeManager::initialize()
 
   // explicitly force construction of nodes_vec_ to ensure consistent state
   ensure_valid_thread_local_ids();
+
+  num_local_devices_ = 0;
 }
 
 void
@@ -355,6 +357,9 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
     {
       thread thread_id = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
 
+      // keep track of number of local devices
+      ++num_local_devices_;
+
       // Create wrapper and register with nodes_ array.
       SiblingContainer* container =
         static_cast< SiblingContainer* >( siblingcontainer_model_->allocate( thread_id ) );
@@ -372,6 +377,7 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
         newnode->set_model_id( mod );
         newnode->set_thread( t );
         newnode->set_vp( kernel().vp_manager.thread_to_vp( t ) );
+        newnode->set_local_device_id( num_local_devices_ - 1 );
 
         // Register instance with wrapper
         // container has one entry for each thread
@@ -415,6 +421,10 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
       "NOTE: Mixing precise-spiking and normal neuron models may "
       "lead to inconsistent results." );
   }
+
+  // resize the target table for delivery of events to devices to make
+  // sure the first dimension matches the number of local nodes
+  kernel().connection_builder_manager.resize_target_table_devices();
 
   return max_gid - 1;
 }
@@ -469,6 +479,12 @@ index
 NodeManager::get_max_num_local_nodes() const
 {
   return ceil( float( size() ) / kernel().vp_manager.get_num_virtual_processes() );
+}
+
+index
+NodeManager::get_num_local_devices() const
+{
+  return num_local_devices_;
 }
 
 bool

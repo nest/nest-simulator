@@ -51,23 +51,28 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
 {
   e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
-  thread t = source.get_thread();
+  thread tid = source.get_thread();
 
   if ( source.has_proxies() )
   {
     if ( source.is_off_grid() )
     {
-      send_offgrid_remote( t, e, lag );
+      send_offgrid_remote( tid, e, lag );
     }
     else
     {
-      send_remote( t, e, lag );
-      send_to_devices( t, source.get_gid(), e, lag );
+      send_remote( tid, e, lag );
+      const index s_gid = source.get_gid();
+      e.set_sender_gid( s_gid );
+      for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+      {
+        kernel().connection_builder_manager.send_to_devices( tid, s_gid, e );
+      }
     }
   }
   else
   {
-    send_local( t, source, e );
+    send_local( tid, source, e );
   }
 }
 
@@ -104,18 +109,9 @@ EventDeliveryManager::send_local( thread t, Node& source, Event& e )
 {
   index sgid = source.get_gid();
   e.set_sender_gid( sgid );
-  kernel().connection_builder_manager.send( t, sgid, e );
-}
-
-inline void
-EventDeliveryManager::send_to_devices( thread tid, const index s_gid, SpikeEvent& e, const long_t lag )
-{
-  e.set_stamp( kernel().simulation_manager.get_clock() + Time::step( lag + 1 ) );
-  e.set_sender_gid( s_gid );
-  for ( int_t i = 0; i < e.get_multiplicity(); ++i )
-  {
-    kernel().connection_builder_manager.send_to_devices( tid, s_gid, e );
-  }
+  // kernel().connection_builder_manager.send( t, sgid, e );
+  const index ldid = source.get_local_device_id();
+  kernel().connection_builder_manager.send_from_devices( t, ldid, e );
 }
 
 } // of namespace nest

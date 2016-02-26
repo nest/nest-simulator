@@ -738,6 +738,9 @@ public:
     buffers_initialized_ = initialized;
   }
 
+  virtual void set_local_device_id( const index lsdid );
+  virtual index get_local_device_id() const;
+
 private:
   void set_lid_( index );          //!< Set local id, relative to the parent subnet
   void set_parent_( Subnet* );     //!< Set pointer to parent subnet.

@@ -120,6 +120,18 @@ Node::get_status_dict_()
   return DictionaryDatum( new Dictionary );
 }
 
+void
+Node::set_local_device_id( const index lsdid )
+{
+  throw UnexpectedEvent();
+}
+
+index
+Node::get_local_device_id() const
+{
+  throw UnexpectedEvent();
+}
+
 DictionaryDatum
 Node::get_status_base()
 {

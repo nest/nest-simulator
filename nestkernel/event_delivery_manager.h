@@ -136,11 +136,6 @@ public:
   void send_to_node( Event& e );
 
   /**
-   * Send event e to all device targets of source s_gid
-   */
-  void send_to_devices( thread tid, const index s_gid, SpikeEvent& e, const long_t lag );
-
-  /**
    * return current communication style.
    * A result of true means off_grid, false means on_grid communication.
    */

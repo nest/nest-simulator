@@ -135,6 +135,9 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  void set_local_device_id( const index ldid );
+  index get_local_device_id() const;
+
 private:
   void init_state_( Node const& );
   void init_buffers_();
@@ -182,6 +185,8 @@ private:
   bool user_set_precise_times_;
   bool has_proxies_;
   bool local_receiver_;
+
+  index local_device_id_;
 };
 
 inline void

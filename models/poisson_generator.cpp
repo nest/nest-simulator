@@ -69,6 +69,7 @@ nest::poisson_generator::poisson_generator()
   : Node()
   , device_()
   , P_()
+  , local_device_id_( invalid_index )
 {
 }
 
@@ -76,6 +77,7 @@ nest::poisson_generator::poisson_generator( const poisson_generator& n )
   : Node( n )
   , device_( n.device_ )
   , P_( n.P_ )
+  , local_device_id_( invalid_index ) // copy must get its own device id
 {
 }
 
@@ -142,4 +144,16 @@ nest::poisson_generator::event_hook( DSSpikeEvent& e )
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
   }
+}
+
+void
+nest::poisson_generator::set_local_device_id( const index ldid )
+{
+  local_device_id_ = ldid;
+}
+
+nest::index
+nest::poisson_generator::get_local_device_id() const
+{
+  return local_device_id_;
 }

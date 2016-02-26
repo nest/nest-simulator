@@ -47,6 +47,7 @@ nest::spike_detector::spike_detector()
   , user_set_precise_times_( false )
   , has_proxies_( false )
   , local_receiver_( true )
+  , local_device_id_( invalid_index )
 {
 }
 
@@ -56,6 +57,7 @@ nest::spike_detector::spike_detector( const spike_detector& n )
   , user_set_precise_times_( n.user_set_precise_times_ )
   , has_proxies_( false )
   , local_receiver_( true )
+  , local_device_id_( invalid_index ) // copy must get its own device id
 {
 }
 
@@ -162,4 +164,16 @@ nest::spike_detector::handle( SpikeEvent& e )
       B_.spikes_[ dest_buffer ].push_back( event );
     }
   }
+}
+
+void
+nest::spike_detector::set_local_device_id( const index ldid )
+{
+  local_device_id_ = ldid;
+}
+
+nest::index
+nest::spike_detector::get_local_device_id() const
+{
+  return local_device_id_;
 }

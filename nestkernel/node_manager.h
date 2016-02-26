@@ -123,6 +123,11 @@ public:
    */
   index get_max_num_local_nodes() const;
 
+  /**
+   * Returns the number of devices per virtual process.
+   */
+  index get_num_local_devices() const;
+
   Subnet* get_root() const; ///< return root subnet.
   Subnet* get_cwn() const;  ///< current working node.
 
@@ -270,6 +275,8 @@ private:
                              //!< junctions)
   bool needs_prelim_update_; //!< there is at least one neuron model that needs preliminary update
   index nodes_vec_network_size_; //!< Network size when nodes_vec_ was last updated
+
+  index num_local_devices_; //!< stores number of local devices
 };
 
 inline index

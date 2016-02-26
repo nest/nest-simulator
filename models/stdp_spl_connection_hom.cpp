@@ -47,6 +47,7 @@ STDPSplHomCommonProperties::STDPSplHomCommonProperties()
   , p_fail_( 0.2 )
   , t_cache_( 1. )
   , safe_mode_( true )
+  , sleep_mode_( true )
 {
 }
 
@@ -66,6 +67,7 @@ STDPSplHomCommonProperties::get_status( DictionaryDatum& d ) const
   def< double_t >( d, "p_fail", p_fail_ );
   def< double_t >( d, "t_cache", t_cache_ );
   def< bool >( d, "safe_mode", safe_mode_ );
+  def< bool >( d, "sleep_mode", sleep_mode_ );
 }
 
 void
@@ -84,6 +86,7 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
   updateValue< double_t >( d, "p_fail", p_fail_ );
   updateValue< double_t >( d, "t_cache", t_cache_ );
   updateValue< bool >( d, "safe_mode", safe_mode_ );
+  updateValue< bool >( d, "sleep_mode", sleep_mode_ );  
 
   if ( not( tau_slow_ > tau_ ) )
   {

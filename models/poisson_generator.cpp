@@ -145,15 +145,3 @@ nest::poisson_generator::event_hook( DSSpikeEvent& e )
     e.get_receiver().handle( e );
   }
 }
-
-void
-nest::poisson_generator::set_local_device_id( const index ldid )
-{
-  local_device_id_ = ldid;
-}
-
-nest::index
-nest::poisson_generator::get_local_device_id() const
-{
-  return local_device_id_;
-}

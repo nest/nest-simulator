@@ -89,6 +89,9 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  void set_local_device_id( const index ldid );
+  index get_local_device_id( ) const;
+
 private:
   void init_state_( const Node& );
   void init_buffers_();
@@ -115,6 +118,8 @@ private:
 
   StimulatingDevice< CurrentEvent > device_;
   Parameters_ P_;
+
+  index local_device_id_;
 };
 
 inline port
@@ -150,6 +155,17 @@ dc_generator::set_status( const DictionaryDatum& d )
   P_ = ptmp;
 }
 
+inline void
+dc_generator::set_local_device_id( const index ldid )
+{
+  local_device_id_ = ldid;
+}
+
+inline index
+dc_generator::get_local_device_id() const
+{
+  return local_device_id_;
+}
 
 } // namespace
 

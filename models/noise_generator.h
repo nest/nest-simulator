@@ -131,6 +131,9 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  void set_local_device_id( const index ldid );
+  index get_local_device_id( ) const;
+
 private:
   void init_state_( const Node& );
   void init_buffers_();
@@ -218,6 +221,8 @@ private:
   Variables_ V_;
   Buffers_ B_;
   State_ S_;
+
+  index local_device_id_;
 };
 
 
@@ -251,5 +256,18 @@ noise_generator::sends_signal() const
 {
   return ALL;
 }
+
+inline void
+noise_generator::set_local_device_id( const index ldid )
+{
+  local_device_id_ = ldid;
 }
+
+inline index
+noise_generator::get_local_device_id() const
+{
+  return local_device_id_;
+}
+
+} // namespace
 #endif // NOISE_GENERATOR_H

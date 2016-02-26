@@ -78,6 +78,9 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  void set_local_device_id( const index ldid );
+  index get_local_device_id( ) const;
+
 private:
   void init_state_( const Node& );
   void init_buffers_();
@@ -133,6 +136,8 @@ private:
   Parameters_ P_;
   State_ S_;
   Variables_ V_;
+
+  index local_device_id_;
 };
 
 inline port
@@ -170,5 +175,19 @@ ac_generator::set_status( const DictionaryDatum& d )
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
 }
+
+inline void
+ac_generator::set_local_device_id( const index ldid )
+{
+  local_device_id_ = ldid;
 }
+
+inline index
+ac_generator::get_local_device_id() const
+{
+  return local_device_id_;
+}
+
+}
+
 #endif // AC_GENERATOR_H

@@ -204,6 +204,8 @@ public:
     return ALL;
   }
 
+  void set_local_device_id( const index ldid );
+  index get_local_device_id( ) const;
 
 private:
   void init_state_( const Node& );
@@ -269,6 +271,8 @@ private:
 
   Parameters_ P_;
   State_ S_;
+
+  index local_device_id_;
 };
 
 inline port
@@ -298,6 +302,18 @@ spike_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   device_.get_status( d );
+}
+
+inline void
+spike_generator::set_local_device_id( const index ldid )
+{
+  local_device_id_ = ldid;
+}
+
+inline index
+spike_generator::get_local_device_id() const
+{
+  return local_device_id_;
 }
 
 } // namespace

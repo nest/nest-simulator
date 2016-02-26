@@ -187,6 +187,9 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  void set_local_device_id( const index ldid );
+  index get_local_device_id( ) const;
+
 protected:
   void init_state_( Node const& );
   void init_buffers_();
@@ -301,6 +304,8 @@ private:
   State_ S_;
   Buffers_ B_;
   Variables_ V_;
+
+  index local_device_id_;
 };
 
 
@@ -349,6 +354,18 @@ inline SignalType
 nest::Multimeter::sends_signal() const
 {
   return ALL;
+}
+
+inline void
+Multimeter::set_local_device_id( const index ldid )
+{
+  local_device_id_ = ldid;
+}
+
+inline index
+Multimeter::get_local_device_id() const
+{
+  return local_device_id_;
 }
 
 } // Namespace

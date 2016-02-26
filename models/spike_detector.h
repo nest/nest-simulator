@@ -221,6 +221,18 @@ spike_detector::receives_signal() const
   return ALL;
 }
 
+inline void
+spike_detector::set_local_device_id( const index ldid )
+{
+  local_device_id_ = ldid;
+}
+
+inline index
+spike_detector::get_local_device_id() const
+{
+  return local_device_id_;
+}
+
 } // namespace
 
 #endif /* #ifndef SPIKE_DETECTOR_H */

@@ -215,6 +215,18 @@ poisson_generator::set_status( const DictionaryDatum& d )
   P_ = ptmp;
 }
 
+inline void
+poisson_generator::set_local_device_id( const index ldid )
+{
+  local_device_id_ = ldid;
+}
+
+inline index
+poisson_generator::get_local_device_id() const
+{
+  return local_device_id_;
+}
+
 } // namespace nest
 
 #endif

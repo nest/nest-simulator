@@ -165,15 +165,3 @@ nest::spike_detector::handle( SpikeEvent& e )
     }
   }
 }
-
-void
-nest::spike_detector::set_local_device_id( const index ldid )
-{
-  local_device_id_ = ldid;
-}
-
-nest::index
-nest::spike_detector::get_local_device_id() const
-{
-  return local_device_id_;
-}

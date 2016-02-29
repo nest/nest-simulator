@@ -156,15 +156,15 @@ private:
   double_t
   facilitate_( double_t w, double_t kplus )
   {
-    double_t norm_w = ( w / Wmax_ ) + ( eta_ * kplus );
-    return norm_w < 1.0 ? norm_w * Wmax_ : Wmax_;
+    double_t new_w = w + ( eta_ * kplus );
+    return ( new_w / Wmax_ ) < 1.0 ? new_w : Wmax_;
   }
 
   double_t
   depress_( double_t w )
   {
-    double_t norm_w = ( w / Wmax_ ) - ( alpha_ * eta_ );
-    return norm_w > 0.0 ? norm_w * Wmax_ : 0.0;
+    double_t new_w = w - ( alpha_ * eta_ );
+    return ( new_w / Wmax_ ) > 0.0 ? new_w : 0.0;
   }
 
   // data members of each connection

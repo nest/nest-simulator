@@ -61,17 +61,8 @@
 /* define if the compiler ignores cmath makros */
 #cmakedefine HAVE_CMATH_MAKROS_IGNORED
 
-/* Define to 1 if you have the <dirent.h> header file. */
-#cmakedefine HAVE_DIRENT_H
-
-/* Define to 1 if you have the `execvp' function. */
-#cmakedefine HAVE_EXECVP
-
 /* "Define if expm1() is available" */
 #cmakedefine HAVE_EXPM1
-
-/* Define to 1 if you have the `fork' function. */
-#cmakedefine HAVE_FORK
 
 /* Is the GNU Science Library available (ver. >= 1.0)? */
 #cmakedefine HAVE_GSL
@@ -82,7 +73,9 @@
 /* Is GSL Version >= 1.2? */
 #cmakedefine HAVE_GSL_1_2
 
-/* Define to 1 if you have the <inttypes.h> header file. */
+/* Define to 1 if you have the <inttypes.h> header file.
+ * Used in sparseconfig.h.
+ */
 #cmakedefine HAVE_INTTYPES_H
 
 /* "Define if isnan() is available" */
@@ -100,7 +93,9 @@
 /* libneurosim support enabled? */
 #cmakedefine HAVE_LIBNEUROSIM
 
-/* define if we have usable long long type. */
+/* define if we have usable long long type.
+ * Used in sparseconfig.h.
+ */
 #cmakedefine HAVE_LONG_LONG
 
 /* Define to 1 if you have the <mach/mach.h> header file. */
@@ -130,13 +125,8 @@
 /* "Define if std::nan(NULL) is available" */
 #cmakedefine HAVE_STD_NAN
 
-/* Define to 1 if you have the `opendir' function. */
-#cmakedefine HAVE_OPENDIR
-
 /* define for ostream */
 #cmakedefine HAVE_OSTREAM
-
-#cmakedefine HAVE_PYTHON
 
 /* Use GNU libreadline */
 #cmakedefine HAVE_READLINE
@@ -150,11 +140,10 @@
 /* define if the compiler fails on static template member declaration */
 #cmakedefine HAVE_STATIC_TEMPLATE_DECLARATION_FAIL
 
-/* Define to 1 if you have the <stdint.h> header file. */
+/* Define to 1 if you have the <stdint.h> header file.
+ * Used in sparseconfig.h.
+ */
 #cmakedefine HAVE_STDINT_H
-
-/* Define to 1 if you have the <stdlib.h> header file. */
-#cmakedefine HAVE_STDLIB_H
 
 /* define for STL vector capacity base unity */
 #cmakedefine HAVE_STL_VECTOR_CAPACITY_BASE_UNITY
@@ -162,26 +151,26 @@
 /* define for STL vector capacity doubling strategy */
 #cmakedefine HAVE_STL_VECTOR_CAPACITY_DOUBLING
 
-/* Define to 1 if you have the <strings.h> header file. */
-#cmakedefine HAVE_STRINGS_H
-
-/* Define to 1 if you have the <string.h> header file. */
-#cmakedefine HAVE_STRING_H
-
-/* Define to 1 if you have the <sys/stat.h> header file. */
-#cmakedefine HAVE_SYS_STAT_H
-
-/* Define to 1 if you have the <sys/types.h> header file. */
+/* Define to 1 if you have the <sys/types.h> header file.
+ * Used in sparseconfig.h.
+ */
 #cmakedefine HAVE_SYS_TYPES_H
+
+/* Define if the system has the type `uint16_t'.
+ * Used in sparseconfig.h.
+ */
+#cmakedefine HAVE_UINT16_T
+
+/* Define if the system has the type `u_int16_t'.
+ * Used in sparseconfig.h.
+ */
+#cmakedefine HAVE_U_INT16_T
 
 /* Tics per millisecond specified? */
 #cmakedefine HAVE_TICS_PER_MS
 
 /* Tics per step specified? */
 #cmakedefine HAVE_TICS_PER_STEP
-
-/* Define to 1 if you have the <unistd.h> header file. */
-#cmakedefine HAVE_UNISTD_H
 
 /* define if the compiler fails with ICE */
 #cmakedefine HAVE_XLC_ICE_ON_USING

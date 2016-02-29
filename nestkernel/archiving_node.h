@@ -118,7 +118,7 @@ public:
    * Delete a certain portion of the vacant synaptic elements which are not
    * in use
    */
-  void decay_synaptic_elements_vacant( double_t p );
+  void decay_synaptic_elements_vacant();
 
   /**
    * \fn void connect_synaptic_element()

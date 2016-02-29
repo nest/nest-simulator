@@ -474,7 +474,7 @@ SPManager::create_synapses( std::vector< index >& pre_id,
   GIDCollection sources = GIDCollection( pre_id_rnd );
   GIDCollection targets = GIDCollection( post_id_rnd );
 
-  sp_conn_builder->connect( sources, targets );
+  sp_conn_builder->sp_connect( sources, targets );
 }
 
 /**

@@ -34,6 +34,47 @@ set( NEST_VERSION_PATCHLEVEL 0 )
 set( NEST_VERSION_VERSION "${NEST_VERSION_MAJOR}.${NEST_VERSION_MINOR}.${NEST_VERSION_PATCHLEVEL}" )
 set( NEST_VERSION_PRGNAME "${PROJECT_NAME}-${NEST_VERSION_VERSION}" )
 
+################################################################################
+##################         All User Defined options           ##################
+################################################################################
+
+# change NEST defaults
+set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time. [default 1000.0]" )
+set( tics_per_step "100" CACHE STRING "Specify resolution. [default 100]" )
+option( with-ps-arrays "Use PS array construction semantics. [default=ON]" ON )
+
+# add user modules
+option( external-modules "External modules to be linked in. Divided by ';'. [default=OFF]" OFF )
+
+# connect NEST with external projects
+option( with-libneurosim "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" OFF )
+option( with-music "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" OFF )
+
+# change parallelization scheme
+option( with-mpi "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" OFF )
+option( with-openmp "Enable OpenMP multithreading. Optional: set OMP flag. [default=ON]" ON )
+
+# define default libraries
+option( with-gsl "Find a gsl library. To set a specific gsl installation, set install path. [default=ON]" ON)
+option( with-readline "Find a readline library. To set a specific readline, set install path. [default=ON]" ON )
+option( with-python "Build PyNEST. To set a specific Python, set install path. [default=ON]" ON )
+
+# Whether to build a 'mostly' static executable and static libraries.
+option( static-libraries "Build static executable and libraries. [default=OFF]" OFF )
+# additional compile flags
+option( with-optimize "Enable user defined optimizations. [default OFF, when ON, defaults to '-O3']" OFF )
+option( with-warning "Enable user defined warnings. [default ON, when ON, defaults to '-Wall']" ON )
+option( with-debug "Enable user defined debug flags. [default OFF, when ON, defaults to '-g']" OFF )
+set( with-libraries OFF CACHE STRING "Link additional libraries. Give full path. Separate multiple libraries by ';'. [default OFF]" )
+set( with-includes OFF CACHE STRING "Add additional include paths. Give full path without '-I'. Separate multiple include paths by ';'. [default OFF]" )
+set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1'. Separate multiple defines by ';'. [default OFF]" )
+
+# cross-compiling
+# should be set via toolchain files
+set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
+set( k-computer OFF CACHE BOOL "Enable K computer." )
+
+
 # some default directories
 # install prefix is set with -DCMAKE_INSTALL_PREFIX:PATH=...
 set( INSTALL_BIN_DIR bin )
@@ -159,46 +200,6 @@ check_cxx_symbol_exists( M_PI "cmath" HAVE_M_PI )
 # Check functions exist
 include( CheckFunctionExists )
 check_function_exists( expm1 "math.h" HAVE_EXPM1 )
-
-################################################################################
-##################         All User Defined options           ##################
-################################################################################
-
-# change NEST defaults
-set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time. [default 1000.0]" )
-set( tics_per_step "100" CACHE STRING "Specify resolution. [default 100]" )
-option( with-ps-arrays "Use PS array construction semantics. [default=ON]" ON )
-
-# add user modules
-option( external-modules "External modules to be linked in. Divided by ';'. [default=OFF]" OFF )
-
-# connect NEST with external projects
-option( with-libneurosim "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" OFF )
-option( with-music "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" OFF )
-
-# change parallelization scheme
-option( with-mpi "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" OFF )
-option( with-openmp "Enable OpenMP multithreading. Optional: set OMP flag. [default=ON]" ON )
-
-# define default libraries
-option( with-gsl "Find a gsl library. To set a specific gsl installation, set install path. [default=ON]" ON)
-option( with-readline "Find a readline library. To set a specific readline, set install path. [default=ON]" ON )
-option( with-python "Build PyNEST. To set a specific Python, set install path. [default=ON]" ON )
-
-# Whether to build a 'mostly' static executable and static libraries.
-option( static-libraries "Build static executable and libraries. [default=OFF]" OFF )
-# additional compile flags
-option( with-optimize "Enable user defined optimizations. [default OFF, when ON, defaults to '-O3']" OFF )
-option( with-warning "Enable user defined warnings. [default ON, when ON, defaults to '-Wall']" ON )
-option( with-debug "Enable user defined debug flags. [default OFF, when ON, defaults to '-g']" OFF )
-set( with-libraries OFF CACHE STRING "Link additional libraries. Give full path. Separate multiple libraries by ';'. [default OFF]" )
-set( with-includes OFF CACHE STRING "Add additional include paths. Give full path without '-I'. Separate multiple include paths by ';'. [default OFF]" )
-set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1'. Separate multiple defines by ';'. [default OFF]" )
-
-# cross-compiling
-# should be set via toolchain files
-set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
-set( k-computer OFF CACHE BOOL "Enable K computer." )
 
 ################################################################################
 ##################           Find utility programs            ##################

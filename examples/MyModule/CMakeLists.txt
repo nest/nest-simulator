@@ -95,7 +95,7 @@ if ( NEST_STATIC_LIB )
   set( BUILD_SHARED_LIBS OFF )
 else ()
   set( BUILD_SHARED_LIBS ON )
-endif ( NEST_STATIC_LIB )
+endif ()
 
 # libs
 execute_process(
@@ -194,7 +194,7 @@ endif ()
 add_library( ${MODULE_NAME}_lib ${MODULE_SOURCES} )
 if ( BUILD_SHARED_LIBS )
   target_compile_definitions( ${MODULE_NAME}_lib PRIVATE -DLINKED_MODULE )
-endif ( BUILD_SHARED_LIBS )
+endif ()
 set_target_properties( ${MODULE_NAME}_lib
     PROPERTIES
     COMPILE_FLAGS "${NEST_CXXFLAGS}"

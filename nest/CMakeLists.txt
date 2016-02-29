@@ -57,7 +57,7 @@ if ( HAVE_PYTHON )
   target_compile_definitions( nest_lib PRIVATE
       -D_IS_PYNEST
       )
-endif ( HAVE_PYTHON )
+endif ()
 
 install( TARGETS nest nest_lib
     LIBRARY DESTINATION ${INSTALL_LIB_DIR}

@@ -32,4 +32,4 @@ if ( HAVE_PYTHON )
   install( FILES doc/connplotter_tutorial.pdf
       DESTINATION ${INSTALL_DOC_DIR}/ConnPlotter )
 
-endif ( HAVE_PYTHON )
+endif ()

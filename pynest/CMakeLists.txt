@@ -45,7 +45,7 @@ if ( HAVE_PYTHON )
     else ()
       target_link_libraries( pynestkernel ${PYTHON_LIBRARIES} )
     endif ()
-  endif ( CYTHON_FOUND )
+  endif ()
 
   target_link_libraries( pynestkernel
       nest_lib nestutil nestkernel random sli_lib
@@ -89,4 +89,4 @@ if ( HAVE_PYTHON )
         --xunit-file=${PROJECT_BINARY_DIR}/reports/pynest_tests.xml
         ${PYEXECDIR}/nest/tests )
   endif ()
-endif ( HAVE_PYTHON )
+endif ()

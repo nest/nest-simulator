@@ -29,4 +29,4 @@ if ( HAVE_MPI )
     set_tests_properties( mpi_selftests/fail/${script}
         PROPERTIES WILL_FAIL TRUE )
   endforeach ()
-endif ( HAVE_MPI )
+endif ()

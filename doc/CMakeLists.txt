@@ -51,5 +51,5 @@ if ( DOXYGEN_FOUND )
         COMMAND ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/fulldoc.conf"
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         )
-  endif ( DOXYGEN_DOT_FOUND )
-endif ( DOXYGEN_FOUND )
+  endif ()
+endif ()

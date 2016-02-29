@@ -27,4 +27,4 @@ if ( HAVE_MPI )
         ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR}/mpitests/${script} # use the installed version
         )
   endforeach ()
-endif ( HAVE_MPI )
+endif ()

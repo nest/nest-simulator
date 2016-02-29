@@ -86,4 +86,4 @@ if ( HAVE_PYTHON )
   install( DIRECTORY testsuite
       DESTINATION ${INSTALL_DOC_DIR}/topology
       )
-endif ( HAVE_PYTHON )
+endif ()

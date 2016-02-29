@@ -161,7 +161,7 @@ install( CODE
         WORKING_DIRECTORY \"${PROJECT_BINARY_DIR}\"
       )"
     )
-endif ( NOT CMAKE_CROSSCOMPILING )
+endif ()
 
 install( FILES ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
     DESTINATION ${INSTALL_DOC_DIR} )

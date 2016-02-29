@@ -116,7 +116,7 @@
 #cmakedefine HAVE_MPI
 
 /* MUSIC support enabled? */
-#undef HAVE_MUSIC
+#cmakedefine HAVE_MUSIC
 
 /* define if M_E is defined */
 #cmakedefine HAVE_M_E

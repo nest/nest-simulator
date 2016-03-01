@@ -118,7 +118,8 @@ nest::spike_dilutor::calibrate()
 void
 nest::spike_dilutor::update( Time const& T, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0
+    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -127,7 +128,8 @@ nest::spike_dilutor::update( Time const& T, const long_t from, const long_t to )
       return; // no spikes to be repeated
 
     // generate spikes of mother process for each time slice
-    ulong_t n_mother_spikes = static_cast< ulong_t >( B_.n_spikes_.get_value( lag ) );
+    ulong_t n_mother_spikes =
+      static_cast< ulong_t >( B_.n_spikes_.get_value( lag ) );
 
     if ( n_mother_spikes )
     {
@@ -149,7 +151,8 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
   // once for every receiver. when calling handle() of the receiver
   // above, we need to change the multiplicty to the number of copied
   // child process spikes, so afterwards it needs to be reset to correctly
-  // store the number of mother spikes again during the next call of event_hook().
+  // store the number of mother spikes again during the next call of
+  // event_hook().
   // reichert
 
   librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );

@@ -43,7 +43,8 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::amat2_psc_exp > nest::amat2_psc_exp::recordablesMap_;
+nest::RecordablesMap< nest::amat2_psc_exp >
+  nest::amat2_psc_exp::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -125,7 +126,8 @@ nest::amat2_psc_exp::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
 {
-  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -151,7 +153,8 @@ nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
   if ( C_ <= 0 )
     throw BadProperty( "Capacitance must be strictly positive." );
 
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0 || tau_2_ <= 0
+  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0
+    || tau_2_ <= 0
     || tau_v_ <= 0 )
     throw BadProperty( "All time constants must be strictly positive." );
 
@@ -160,7 +163,8 @@ nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
       "tau_m must differ from tau_syn_ex, tau_syn_in and tau_v. "
       "See note in documentation." );
 
-  if ( tau_v_ == tau_ex_ || tau_v_ == tau_in_ ) // tau_v_ == tau_m_  checked above
+  if ( tau_v_ == tau_ex_
+    || tau_v_ == tau_in_ ) // tau_v_ == tau_m_  checked above
     throw BadProperty(
       "tau_v must differ from tau_syn_ex, tau_syn_in and tau_m. "
       "See note in documentation." );
@@ -169,18 +173,22 @@ nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::amat2_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::amat2_psc_exp::State_::get( DictionaryDatum& d,
+  const Parameters_& p ) const
 {
   def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
+  // Adaptive threshold
   def< double >(
-    d, names::V_th, p.E_L_ + p.omega_ + V_th_1_ + V_th_2_ + V_th_v_ ); // Adaptive threshold
+    d, names::V_th, p.E_L_ + p.omega_ + V_th_1_ + V_th_2_ + V_th_v_ );
   def< double >( d, names::V_th_alpha_1, V_th_1_ );
   def< double >( d, names::V_th_alpha_2, V_th_2_ );
   def< double >( d, names::V_th_v, V_th_v_ );
 }
 
 void
-nest::amat2_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
+nest::amat2_psc_exp::State_::set( const DictionaryDatum& d,
+  const Parameters_& p,
+  double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
     V_m_ -= p.E_L_;
@@ -253,7 +261,8 @@ nest::amat2_psc_exp::init_buffers_()
 void
 nest::amat2_psc_exp::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
 
@@ -300,30 +309,40 @@ nest::amat2_psc_exp::calibrate()
   V_.P32_ = ( ( eI - em ) * tauI * taum ) / ( c * ( tauI - taum ) );
 
   V_.P60_ = ( beta * ( em - eV ) * taum * tauV ) / ( c * ( taum - tauV ) );
-  V_.P61_ = ( beta * tauE * taum * tauV
-              * ( eV * ( -tauE + taum ) + em * ( tauE - tauV ) + eE * ( -taum + tauV ) ) )
+  V_.P61_ =
+    ( beta * tauE * taum * tauV * ( eV * ( -tauE + taum ) + em * ( tauE - tauV )
+                                    + eE * ( -taum + tauV ) ) )
     / ( c * ( tauE - taum ) * ( tauE - tauV ) * ( taum - tauV ) );
-  V_.P62_ = ( beta * tauI * taum * tauV
-              * ( eV * ( -tauI + taum ) + em * ( tauI - tauV ) + eI * ( -taum + tauV ) ) )
+  V_.P62_ =
+    ( beta * tauI * taum * tauV * ( eV * ( -tauI + taum ) + em * ( tauI - tauV )
+                                    + eI * ( -taum + tauV ) ) )
     / ( c * ( tauI - taum ) * ( tauI - tauV ) * ( taum - tauV ) );
   V_.P63_ = ( beta * ( -em + eV ) * tauV ) / ( taum - tauV );
 
   V_.P70_ =
-    ( beta * taum * tauV * ( em * taum * tauV - eV * ( h * ( taum - tauV ) + taum * tauV ) ) )
+    ( beta * taum * tauV
+      * ( em * taum * tauV - eV * ( h * ( taum - tauV ) + taum * tauV ) ) )
     / ( c * std::pow( taum - tauV, 2 ) );
   V_.P71_ =
     ( beta * tauE * taum * tauV
-      * ( ( em * taum * std::pow( tauE - tauV, 2 ) - eE * tauE * std::pow( taum - tauV, 2 ) ) * tauV
-          - eV * ( tauE - taum ) * ( h * ( tauE - tauV ) * ( taum - tauV ) + tauE * taum * tauV
-                                     - std::pow( tauV, 3 ) ) ) )
-    / ( c * ( tauE - taum ) * std::pow( tauE - tauV, 2 ) * std::pow( taum - tauV, 2 ) );
+      * ( ( em * taum * std::pow( tauE - tauV, 2 )
+            - eE * tauE * std::pow( taum - tauV, 2 ) ) * tauV
+          - eV * ( tauE - taum )
+            * ( h * ( tauE - tauV ) * ( taum - tauV ) + tauE * taum * tauV
+                - std::pow( tauV, 3 ) ) ) )
+    / ( c * ( tauE - taum ) * std::pow( tauE - tauV, 2 )
+        * std::pow( taum - tauV, 2 ) );
   V_.P72_ =
     ( beta * tauI * taum * tauV
-      * ( ( em * taum * std::pow( tauI - tauV, 2 ) - eI * tauI * std::pow( taum - tauV, 2 ) ) * tauV
-          - eV * ( tauI - taum ) * ( h * ( tauI - tauV ) * ( taum - tauV ) + tauI * taum * tauV
-                                     - std::pow( tauV, 3 ) ) ) )
-    / ( c * ( tauI - taum ) * std::pow( tauI - tauV, 2 ) * std::pow( taum - tauV, 2 ) );
-  V_.P73_ = ( beta * tauV * ( -( em * taum * tauV ) + eV * ( h * ( taum - tauV ) + taum * tauV ) ) )
+      * ( ( em * taum * std::pow( tauI - tauV, 2 )
+            - eI * tauI * std::pow( taum - tauV, 2 ) ) * tauV
+          - eV * ( tauI - taum )
+            * ( h * ( tauI - tauV ) * ( taum - tauV ) + tauI * taum * tauV
+                - std::pow( tauV, 3 ) ) ) )
+    / ( c * ( tauI - taum ) * std::pow( tauI - tauV, 2 )
+        * std::pow( taum - tauV, 2 ) );
+  V_.P73_ = ( beta * tauV * ( -( em * taum * tauV )
+                              + eV * ( h * ( taum - tauV ) + taum * tauV ) ) )
     / std::pow( taum - tauV, 2 );
   V_.P76_ = eV * h;
 
@@ -335,20 +354,22 @@ nest::amat2_psc_exp::calibrate()
   // should be carried out via objects of class nest::Time. The conversion
   // requires 2 steps:
   //     1. A time object r is constructed defining representation of
-  //        tau_ref_ in tics. This representation is then converted to computation time
-  //        steps again by a strategy defined by class nest::Time.
-  //     2. The refractory time in units of steps is read out get_steps(), a member
-  //        function of class nest::Time.
+  //        tau_ref_ in tics. This representation is then converted to
+  //        computation time steps again by a strategy defined by
+  //        class nest::Time.
+  //     2. The refractory time in units of steps is read out get_steps(), a
+  //        member function of class nest::Time.
   //
   // Choosing a tau_ref_ that is not an integer multiple of the computation time
   // step h will leed to accurate (up to the resolution h) and self-consistent
-  // results. However, a neuron model capable of operating with real valued spike
-  // time may exhibit a different effective refractory time.
+  // results. However, a neuron model capable of operating with real valued
+  // spike time may exhibit a different effective refractory time.
 
   V_.RefractoryCountsTot_ = Time( Time::ms( P_.tau_ref_ ) ).get_steps();
 
   if ( V_.RefractoryCountsTot_ < 1 )
-    throw BadProperty( "Total refractory time must be at least one time step." );
+    throw BadProperty(
+      "Total refractory time must be at least one time step." );
 }
 
 /* ----------------------------------------------------------------
@@ -356,9 +377,12 @@ nest::amat2_psc_exp::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::amat2_psc_exp::update( Time const& origin, const long_t from, const long_t to )
+nest::amat2_psc_exp::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0
+    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -366,16 +390,17 @@ nest::amat2_psc_exp::update( Time const& origin, const long_t from, const long_t
   {
 
     // evolve voltage dependency (6,7)
-    S_.V_th_v_ = ( P_.I_e_ + S_.i_0_ ) * V_.P70_ + S_.i_syn_ex_ * V_.P71_ + S_.i_syn_in_ * V_.P72_
-      + S_.V_m_ * V_.P73_ + S_.V_th_dv_ * V_.P76_ + S_.V_th_v_ * V_.P77_;
+    S_.V_th_v_ = ( P_.I_e_ + S_.i_0_ ) * V_.P70_ + S_.i_syn_ex_ * V_.P71_
+      + S_.i_syn_in_ * V_.P72_ + S_.V_m_ * V_.P73_ + S_.V_th_dv_ * V_.P76_
+      + S_.V_th_v_ * V_.P77_;
 
-    S_.V_th_dv_ = ( P_.I_e_ + S_.i_0_ ) * V_.P60_ + S_.i_syn_ex_ * V_.P61_ + S_.i_syn_in_ * V_.P62_
-      + S_.V_m_ * V_.P63_ + S_.V_th_dv_ * V_.P66_;
+    S_.V_th_dv_ = ( P_.I_e_ + S_.i_0_ ) * V_.P60_ + S_.i_syn_ex_ * V_.P61_
+      + S_.i_syn_in_ * V_.P62_ + S_.V_m_ * V_.P63_ + S_.V_th_dv_ * V_.P66_;
 
 
     // evolve membrane potential (3)
-    S_.V_m_ = ( P_.I_e_ + S_.i_0_ ) * V_.P30_ + S_.i_syn_ex_ * V_.P31_ + S_.i_syn_in_ * V_.P32_
-      + S_.V_m_ * V_.P33_;
+    S_.V_m_ = ( P_.I_e_ + S_.i_0_ ) * V_.P30_ + S_.i_syn_ex_ * V_.P31_
+      + S_.i_syn_in_ * V_.P32_ + S_.V_m_ * V_.P33_;
 
 
     // evolve adaptive threshold (4,5)
@@ -385,13 +410,16 @@ nest::amat2_psc_exp::update( Time const& origin, const long_t from, const long_t
     // exponential decaying PSCs (1,2)
     S_.i_syn_ex_ *= V_.P11_;
     S_.i_syn_in_ *= V_.P22_;
-    S_.i_syn_ex_ += B_.spikes_ex_.get_value( lag ); // the spikes arriving at T+1 have an
-    S_.i_syn_in_ += B_.spikes_in_.get_value( lag ); // the spikes arriving at T+1 have an
+    S_.i_syn_ex_ +=
+      B_.spikes_ex_.get_value( lag ); // the spikes arriving at T+1 have an
+    S_.i_syn_in_ +=
+      B_.spikes_in_.get_value( lag ); // the spikes arriving at T+1 have an
 
 
     if ( S_.r_ == 0 ) // neuron is allowed to fire
     {
-      if ( S_.V_m_ >= P_.omega_ + S_.V_th_2_ + S_.V_th_1_ + S_.V_th_v_ ) // threshold crossing
+      // threshold crossing
+      if ( S_.V_m_ >= P_.omega_ + S_.V_th_2_ + S_.V_th_1_ + S_.V_th_v_ )
       {
         S_.r_ = V_.RefractoryCountsTot_;
 
@@ -423,12 +451,12 @@ nest::amat2_psc_exp::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
-    B_.spikes_ex_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spikes_in_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_in_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 
@@ -442,7 +470,8 @@ nest::amat2_psc_exp::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void

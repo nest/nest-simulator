@@ -54,8 +54,9 @@ class Network;
 class ConnectionManager
 {
 protected:
-  typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons having targets
-  typedef std::vector< tSConnector > tVSConnector;           // for all threads
+  typedef google::sparsetable< ConnectorBase* >
+    tSConnector; // for all neurons having targets
+  typedef std::vector< tSConnector > tVSConnector; // for all threads
 
 public:
   ConnectionManager( Network& net );
@@ -65,7 +66,8 @@ public:
   void reset();
 
   /**
-   * Register a synapse type. This is called by Network::register_synapse_prototype.
+   * Register a synapse type. This is called by
+   * Network::register_synapse_prototype.
    * Returns an id, which is needed to unregister the prototype later.
    */
   synindex register_synapse_prototype( ConnectorModel* cf );
@@ -87,20 +89,28 @@ public:
   DictionaryDatum get_prototype_status( synindex syn_id ) const;
 
   // aka conndatum GetStatus
-  DictionaryDatum get_synapse_status( index gid, synindex syn_id, port p, thread tid );
+  DictionaryDatum
+  get_synapse_status( index gid, synindex syn_id, port p, thread tid );
   // aka conndatum SetStatus
-  void
-  set_synapse_status( index gid, synindex syn_id, port p, thread tid, const DictionaryDatum& d );
+  void set_synapse_status( index gid,
+    synindex syn_id,
+    port p,
+    thread tid,
+    const DictionaryDatum& d );
 
   /**
    * Return connections between pairs of neurons.
    * The params dictionary can have the following entries:
    * 'source' a token array with GIDs of source neurons.
    * 'target' a token array with GIDs of target neuron.
-   * If either of these does not exist, all neuron are used for the respective entry.
-   * 'synapse_model' name of the synapse model, or all synapse models are searched.
-   * 'synapse_label' label (long_t) of the synapse, or all synapses are searched.
-   * The function then iterates all entries in source and collects the connection IDs to all neurons
+   * If either of these does not exist, all neuron are used for the respective
+   * entry.
+   * 'synapse_model' name of the synapse model, or all synapse models are
+   * searched.
+   * 'synapse_label' label (long_t) of the synapse, or all synapses are
+   * searched.
+   * The function then iterates all entries in source and collects the
+   * connection IDs to all neurons
    * in target.
    */
   ArrayDatum get_connections( DictionaryDatum params ) const;
@@ -158,7 +168,8 @@ public:
     double_t d = numerics::nan,
     double_t w = numerics::nan );
 
-  void disconnect( Node& target, index sgid, thread target_thread, index syn_id );
+  void
+  disconnect( Node& target, index sgid, thread target_thread, index syn_id );
   /**
    * Experimental bulk connector. See documentation in network.h
    */
@@ -175,9 +186,11 @@ public:
 
   /**
    * Resize the structures for the Connector objects if necessary.
-   * This function should be called after number of threads, min_delay, max_delay,
+   * This function should be called after number of threads, min_delay,
+   * max_delay,
    * and time representation have been changed in the scheduler.
-   * The TimeConverter is used to convert times from the old to the new representation.
+   * The TimeConverter is used to convert times from the old to the new
+   * representation.
    * It is also forwarding the calibration
    * request to all ConnectorModel objects.
    */
@@ -187,7 +200,8 @@ public:
    * Return pointer to protoype for given synapse id.
    * @throws UnknownSynapseType
    */
-  const ConnectorModel& get_synapse_prototype( synindex syn_id, thread t = 0 ) const;
+  const ConnectorModel& get_synapse_prototype( synindex syn_id,
+    thread t = 0 ) const;
 
   /**
    * Asserts validity of synapse index, otherwise throws exception.
@@ -196,8 +210,10 @@ public:
   void assert_valid_syn_id( synindex syn_id, thread t = 0 ) const;
 
 protected:
-  std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
-  std::vector< std::vector< ConnectorModel* > > prototypes_; //!< The list of available synapse
+  std::vector< ConnectorModel* >
+    pristine_prototypes_; //!< The list of clean synapse prototypes
+  std::vector< std::vector< ConnectorModel* > >
+    prototypes_; //!< The list of available synapse
   // prototypes: first dimenasion one
   // entry per thread, second dimantion
   // for each synapse type
@@ -206,22 +222,26 @@ protected:
   Dictionary* synapsedict_; //!< The synapsedict (owned by the network)
 
   /**
-   * A 3-dim structure to hold the Connector objects which in turn hold the connection
+   * A 3-dim structure to hold the Connector objects which in turn hold the
+   * connection
    * information.
    * - First dim: A std::vector for each local thread
    * - Second dim: A std::vector for each node on each thread
-   * - Third dim: A std::vector for each synapse prototype, holding the Connector objects
+   * - Third dim: A std::vector for each synapse prototype, holding the
+   * Connector objects
    */
 
   tVSConnector connections_;
 
-  mutable size_t num_connections_; //!< The global counter for the number of synapses
+  mutable size_t
+    num_connections_; //!< The global counter for the number of synapses
 
   void init_();
   void delete_connections_();
   void clear_prototypes_();
 
-  ConnectorBase* validate_source_entry( thread tid, index s_gid, synindex syn_id );
+  ConnectorBase*
+  validate_source_entry( thread tid, index s_gid, synindex syn_id );
 };
 
 inline const ConnectorModel&

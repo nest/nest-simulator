@@ -311,15 +311,16 @@ public:
   // Time(const Time& t);
 
   Time( tic t )
-    : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t : ( t.t < 0 ) ? LIM_NEG_INF.tics
-                                                                   : LIM_POS_INF.tics )
+    : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t : ( t.t < 0 )
+            ? LIM_NEG_INF.tics
+            : LIM_POS_INF.tics )
   {
   }
 
   Time( step t )
-    : tics( ( time_abs( t.t ) < LIM_MAX.steps ) ? t.t * Range::TICS_PER_STEP : ( t.t < 0 )
-            ? LIM_NEG_INF.tics
-            : LIM_POS_INF.tics )
+    : tics( ( time_abs( t.t ) < LIM_MAX.steps )
+          ? t.t * Range::TICS_PER_STEP
+          : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
   {
   }
 
@@ -524,8 +525,8 @@ public:
   /**
    * Convert between delays given in steps and milliseconds.
    * This is not a reversible operation, since steps have a finite
-   * rounding resolution. This is not a truncation, but rounding as per ld_round,
-   * which is different from ms_stamp --> Time mapping, which rounds
+   * rounding resolution. This is not a truncation, but rounding as per
+   * ld_round, which is different from ms_stamp --> Time mapping, which rounds
    * up. See #903.
    */
   static double_t

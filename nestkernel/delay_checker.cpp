@@ -98,17 +98,18 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
   {
     if ( kernel().connection_builder_manager.get_num_connections() > 0 )
     {
-      throw BadProperty( "Connections already exist. Please call ResetKernel first" );
+      throw BadProperty(
+        "Connections already exist. Please call ResetKernel first" );
     }
     else if ( new_min_delay < Time::get_resolution() )
     {
-      throw BadDelay(
-        new_min_delay.get_ms(), "min_delay must be greater than or equal to resolution." );
+      throw BadDelay( new_min_delay.get_ms(),
+        "min_delay must be greater than or equal to resolution." );
     }
     else if ( new_max_delay < new_min_delay )
     {
-      throw BadDelay(
-        new_min_delay.get_ms(), "min_delay must be smaller than or equal to max_delay." );
+      throw BadDelay( new_min_delay.get_ms(),
+        "min_delay must be smaller than or equal to max_delay." );
     }
     else
     {
@@ -126,14 +127,17 @@ nest::DelayChecker::assert_valid_delay_ms( double_t requested_new_delay )
   const double new_delay_ms = Time::delay_steps_to_ms( new_delay );
 
   if ( new_delay < Time::get_resolution().get_steps() )
-    throw BadDelay( new_delay_ms, "Delay must be greater than or equal to resolution" );
+    throw BadDelay(
+      new_delay_ms, "Delay must be greater than or equal to resolution" );
 
   // if already simulated, the new delay has to be checked against the
   // min_delay and the max_delay which have been used during simulation
   if ( kernel().simulation_manager.has_been_simulated() )
   {
-    const bool bad_min_delay = new_delay < kernel().connection_builder_manager.get_min_delay();
-    const bool bad_max_delay = new_delay > kernel().connection_builder_manager.get_max_delay();
+    const bool bad_min_delay =
+      new_delay < kernel().connection_builder_manager.get_min_delay();
+    const bool bad_max_delay =
+      new_delay > kernel().connection_builder_manager.get_max_delay();
 
     if ( bad_min_delay || bad_max_delay )
       throw BadDelay( new_delay_ms,
@@ -176,19 +180,22 @@ nest::DelayChecker::assert_valid_delay_ms( double_t requested_new_delay )
 }
 
 void
-nest::DelayChecker::assert_two_valid_delays_steps( delay new_delay1, delay new_delay2 )
+nest::DelayChecker::assert_two_valid_delays_steps( delay new_delay1,
+  delay new_delay2 )
 {
   const delay ldelay = std::min( new_delay1, new_delay2 );
   const delay hdelay = std::max( new_delay1, new_delay2 );
 
   if ( ldelay < Time::get_resolution().get_steps() )
-    throw BadDelay(
-      Time::delay_steps_to_ms( ldelay ), "Delay must be greater than or equal to resolution" );
+    throw BadDelay( Time::delay_steps_to_ms( ldelay ),
+      "Delay must be greater than or equal to resolution" );
 
   if ( kernel().simulation_manager.has_been_simulated() )
   {
-    const bool bad_min_delay = ldelay < kernel().connection_builder_manager.get_min_delay();
-    const bool bad_max_delay = hdelay > kernel().connection_builder_manager.get_max_delay();
+    const bool bad_min_delay =
+      ldelay < kernel().connection_builder_manager.get_min_delay();
+    const bool bad_max_delay =
+      hdelay > kernel().connection_builder_manager.get_max_delay();
 
     if ( bad_min_delay )
       throw BadDelay( Time::delay_steps_to_ms( ldelay ),

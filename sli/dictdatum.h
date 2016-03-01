@@ -31,6 +31,7 @@
 #include "interpret.h"
 #include "lockptrdatum.h"
 
-typedef lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > DictionaryDatum;
+typedef lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >
+  DictionaryDatum;
 
 #endif

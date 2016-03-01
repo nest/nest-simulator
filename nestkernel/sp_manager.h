@@ -54,9 +54,9 @@ class Node;
 class SPBuilder;
 
 /**
- * The SPManager class is in charge of managing the dynamic creation and deletion
- * of synapses in the simulation when structural plasticity is enabled. Otherwise
- * it behaves as the normal ConnectionManager.
+ * The SPManager class is in charge of managing the dynamic creation and
+ * deletion of synapses in the simulation when structural plasticity is enabled.
+ * Otherwise it behaves as the normal ConnectionManager.
  * @param
  */
 class SPManager : public ManagerInterface
@@ -91,15 +91,18 @@ public:
    * Disconnect two nodes. The source node is defined by its global ID.
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
-   * Identifies if the network is Structural Plasticity enabled or not and then performs
-   * a single disconnect between the two nodes.
+   * Identifies if the network is Structural Plasticity enabled or not and then
+   * performs a single disconnect between the two nodes.
    *
    * \param s GID of the sending Node.
    * \param target Pointer to target Node.
    * \param target_thread Thread that hosts the target node.
    * \param syn The synapse model to use.
    */
-  void disconnect_single( index s, Node* target, thread target_thread, DictionaryDatum& syn );
+  void disconnect_single( index s,
+    Node* target,
+    thread target_thread,
+    DictionaryDatum& syn );
 
   /**
    * Disconnect two collections of nodes.  The connection is
@@ -110,7 +113,10 @@ public:
    * \param connectivityParams connectivity Dictionary
    * \param synapseParams synapse parameters Dictionary
    */
-  void disconnect( GIDCollection&, GIDCollection&, DictionaryDatum&, DictionaryDatum& );
+  void disconnect( GIDCollection&,
+    GIDCollection&,
+    DictionaryDatum&,
+    DictionaryDatum& );
 
   /**
    * Disconnect two nodes.
@@ -191,18 +197,22 @@ public:
     std::vector< index >& se_deleted_id,
     std::vector< int_t >& se_deleted_n );
 
-  void serialize_id( std::vector< index >& id, std::vector< int_t >& n, std::vector< index >& res );
+  void serialize_id( std::vector< index >& id,
+    std::vector< int_t >& n,
+    std::vector< index >& res );
   void global_shuffle( std::vector< index >& v );
   void global_shuffle( std::vector< index >& v, size_t n );
 
 private:
   /**
-   * Time interval for structural plasticity update (creation/deletion of synapses).
+   * Time interval for structural plasticity update (creation/deletion of
+   * synapses).
    */
   long_t structural_plasticity_update_interval_;
 
   /**
-   * Indicates whether the Structrual Plasticity functionality is On (True) of Off (False).
+   * Indicates whether the Structrual Plasticity functionality is On (True) of
+   * Off (False).
    */
   bool structural_plasticity_enabled_;
   std::vector< SPBuilder* > sp_conn_builders_;

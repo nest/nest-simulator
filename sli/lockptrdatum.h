@@ -54,7 +54,8 @@ public:
   }
 
   //   template<SLIType *st>
-  //   lockPTRDatum(const lockPTRDatum<D,st> &d):lockPTR<D>(d), TypedDatum<slt>(){}
+  //   lockPTRDatum(const lockPTRDatum<D,st> &d):lockPTR<D>(d),
+  //   TypedDatum<slt>(){}
 
   lockPTRDatum( const lockPTR< D > d )
     : lockPTR< D >( d )

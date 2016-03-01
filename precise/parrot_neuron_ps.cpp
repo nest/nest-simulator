@@ -56,10 +56,13 @@ parrot_neuron_ps::init_buffers_()
 }
 
 void
-parrot_neuron_ps::update( Time const& origin, long_t const from, long_t const to )
+parrot_neuron_ps::update( Time const& origin,
+  long_t const from,
+  long_t const to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < kernel().connection_builder_manager.get_min_delay() );
+  assert( static_cast< delay >( from )
+    < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
@@ -75,7 +78,8 @@ parrot_neuron_ps::update( Time const& origin, long_t const from, long_t const to
     double_t ev_multiplicity; // parrot stores multiplicity in weight
     bool end_of_refract;
 
-    while ( B_.events_.get_next_spike( T, ev_offset, ev_multiplicity, end_of_refract ) )
+    while ( B_.events_.get_next_spike(
+      T, ev_offset, ev_multiplicity, end_of_refract ) )
     {
       const ulong_t multiplicity = static_cast< ulong_t >( ev_multiplicity );
 
@@ -121,7 +125,8 @@ parrot_neuron_ps::handle( SpikeEvent& e )
 
     // parrot ignores weight of incoming connection, store multiplicity
     B_.events_.add_spike(
-      e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ),
+      e.get_rel_delivery_steps(
+        nest::kernel().simulation_manager.get_slice_origin() ),
       Tdeliver,
       e.get_offset(),
       static_cast< double_t >( e.get_multiplicity() ) );

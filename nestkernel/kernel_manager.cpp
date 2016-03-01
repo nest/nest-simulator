@@ -147,7 +147,8 @@ nest::KernelManager::num_threads_changed_reset()
   rng_manager.finalize();
 
   rng_manager.initialize();
-  modelrange_manager.initialize(); // independant of threads, but node_manager needs it reset
+  // independant of threads, but node_manager needs it reset
+  modelrange_manager.initialize();
   connection_builder_manager.initialize();
   model_manager.initialize();
   music_manager.initialize();
@@ -164,7 +165,8 @@ nest::KernelManager::set_status( const DictionaryDatum& dict )
   mpi_manager.set_status( dict );
   vp_manager.set_status( dict );
 
-  rng_manager.set_status( dict ); // set RNGs --- MUST come after n_threads_ is updated
+  // set RNGs --- MUST come after n_threads_ is updated
+  rng_manager.set_status( dict );
   simulation_manager.set_status( dict );
   modelrange_manager.set_status( dict );
   connection_builder_manager.set_status( dict );

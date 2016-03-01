@@ -527,9 +527,21 @@ private:
   {
     return S_.ICa_;
   }
-  double_t get_CurrS_() const { return B_.I_stim_[SOMA]; }  
-  double_t get_CurrP_() const { return B_.I_stim_[PROX]; }
-  double_t get_CurrD_() const { return B_.I_stim_[DIST]; }   
+  double_t
+  get_CurrS_() const
+  {
+    return B_.I_stim_[ SOMA ];
+  }
+  double_t
+  get_CurrP_() const
+  {
+    return B_.I_stim_[ PROX ];
+  }
+  double_t
+  get_CurrD_() const
+  {
+    return B_.I_stim_[ DIST ];
+  }
 
   // Data members ----------------------------------------------------
 

@@ -395,9 +395,8 @@ const Name reset_flag( "reset_flag" );
 // Specific to iaf conductance mc fixedca
 const Name ca_spike( "ca_spike" );
 const Name amp( "amp" );
-const Name curr_s("curr_s");
-const Name curr_p("curr_p");
-const Name curr_d("curr_d");
-
+const Name curr_s( "curr_s" );
+const Name curr_p( "curr_p" );
+const Name curr_d( "curr_d" );
 }
 }

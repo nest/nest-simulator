@@ -125,9 +125,9 @@ RecordablesMap< iaf_cond_alpha_mc_fixedca >::create()
   insert_( names::ca_spike_count, &iaf_cond_alpha_mc_fixedca::get_ca_ );
   insert_( names::t_refCa_remaining, &iaf_cond_alpha_mc_fixedca::get_rCa_ );
   insert_( names::ca_spike, &iaf_cond_alpha_mc_fixedca::get_ICa_ );
-  insert_(names::curr_s, &iaf_cond_alpha_mc_fixedca::get_CurrS_);
-  insert_(names::curr_p, &iaf_cond_alpha_mc_fixedca::get_CurrP_);
-  insert_(names::curr_d, &iaf_cond_alpha_mc_fixedca::get_CurrD_);
+  insert_( names::curr_s, &iaf_cond_alpha_mc_fixedca::get_CurrS_ );
+  insert_( names::curr_p, &iaf_cond_alpha_mc_fixedca::get_CurrP_ );
+  insert_( names::curr_d, &iaf_cond_alpha_mc_fixedca::get_CurrD_ );
 }
 }
 
@@ -1819,7 +1819,8 @@ nest::iaf_cond_alpha_mc_fixedca::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
   assert( 0 <= e.get_rport() && e.get_rport() < 2 * NCOMP );
 
-  B_.spikes_[ e.get_rport() ].add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  B_.spikes_[ e.get_rport() ].add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -1831,7 +1832,8 @@ nest::iaf_cond_alpha_mc_fixedca::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 void

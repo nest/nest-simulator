@@ -69,6 +69,10 @@ Set default libraries:
                                                [default=ON]
   -Dwith-python=[OFF|ON|</path/to/python>]     Build PyNEST. To set a specific Python,
                                                set install path. [default=ON]
+  -Dcythonize-pynest=[OFF|ON]                  Use Cython to cythonize pynestkernel.pyx.
+                                               If OFF, PyNEST has to be build from
+                                               a pre-cythonized pynestkernel.pyx.
+                                               [default=ON]
 
 Change compilation behavior:
   -Dstatic-libraries=[OFF|ON]     Build static executable and libraries. [default=OFF]

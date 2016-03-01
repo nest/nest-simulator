@@ -58,6 +58,7 @@ option( with-openmp "Enable OpenMP multithreading. Optional: set OMP flag. [defa
 option( with-gsl "Find a gsl library. To set a specific gsl installation, set install path. [default=ON]" ON)
 option( with-readline "Find a readline library. To set a specific readline, set install path. [default=ON]" ON )
 option( with-python "Build PyNEST. To set a specific Python, set install path. [default=ON]" ON )
+option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx. [default=ON]" ON )
 
 # Whether to build a 'mostly' static executable and static libraries.
 option( static-libraries "Build static executable and libraries. [default=OFF]" OFF )
@@ -506,13 +507,15 @@ if ( with-python )
     if ( PYTHONLIBS_FOUND )
       set( HAVE_PYTHON ON )
 
-      find_package( Cython )
-      if ( CYTHON_FOUND )
-        # confirmed not working: 0.15.1
-        # confirmed working: 0.19.2+
-        # in between unknown
-        if ( CYTHON_VERSION VERSION_LESS "0.19.2" )
-          message( FATAL_ERROR "Your Cython version is too old. Please install newer version (0.19.2+)" )
+      if ( cythonize-pynest )
+        find_package( Cython )
+        if ( CYTHON_FOUND )
+          # confirmed not working: 0.15.1
+          # confirmed working: 0.19.2+
+          # in between unknown
+          if ( CYTHON_VERSION VERSION_LESS "0.19.2" )
+            message( FATAL_ERROR "Your Cython version is too old. Please install newer version (0.19.2+)" )
+          endif ()
         endif ()
       endif ()
 
@@ -797,7 +800,11 @@ endif ()
 
 if ( HAVE_PYTHON )
   message( "Python bindings     : Yes (Python ${PYTHON_VERSION}: ${PYTHON})" )
-  message( "Cython bindings     : Yes (Cython ${CYTHON_VERSION}: ${CYTHON_EXECUTABLE})" )
+  if ( CYTHON_FOUND )
+    message( "Cython bindings     : Yes (Cython ${CYTHON_VERSION}: ${CYTHON_EXECUTABLE})" )
+  else ()
+    message( "Cython bindings     : No. Make sure to cythonize `pynestkernel.pyx` before." )
+  endif ()
 else ()
   message( "Python bindings     : No" )
 endif ()

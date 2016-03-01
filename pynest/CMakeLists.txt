@@ -36,8 +36,13 @@ if ( HAVE_PYTHON )
     endif ()
 
     if ( pynestkernel_generated_file STREQUAL "NOTFOUND" )
-      message( FATAL_ERROR "Need the source pynestkernel.cxx/cpp precompiled in '${CMAKE_CURRENT_SOURCE_DIR}', "
-          "e.g. use `cythonize pynestkernel.pyx` in that directory." )
+      message( FATAL_ERROR "You have configured NEST to build the Python bindings PyNEST, but "
+            "either there is no Cython version found on your system or you decided to "
+            "not have NEST cythonize the bindings. Either install Cython (>=0.19.2) or cythonize the "
+            "PyNEST bindings yourself on a system with a suitable version of Cython (>=0.19.2):\n" 
+            "    cd <NEST sources>/pynest\n"
+            "    cythonize pynestkernel.pyx\n" 
+            "And copy the file `pynestkernel.cpp` into ${CMAKE_CURRENT_SOURCE_DIR}/pynest ." )
     endif ()
     python_add_module( pynestkernel ${pynestkernel_generated_file} pynestkernel.pxd )
     if ( APPLE )

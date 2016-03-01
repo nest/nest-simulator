@@ -49,6 +49,9 @@
 #define NEST_EXITCODE_ABORT @NEST_EXITCODE_ABORT@
 #define NEST_EXITCODE_SEGFAULT @NEST_EXITCODE_SEGFAULT@
 
+/* Name of package */
+#define PACKAGE @PROJECT_NAME@
+
 /* tics per ms in simulation */
 #define CONFIG_TICS_PER_MS @tics_per_ms@
 
@@ -56,147 +59,141 @@
 #define CONFIG_TICS_PER_STEP @tics_per_step@
 
 /* define if the compiler does not include *.h headers ISO conformant */
-#cmakedefine HAVE_ALPHA_CXX_STD_BUG
+#cmakedefine HAVE_ALPHA_CXX_STD_BUG 1
 
 /* define if the compiler ignores cmath makros */
-#cmakedefine HAVE_CMATH_MAKROS_IGNORED
+#cmakedefine HAVE_CMATH_MAKROS_IGNORED 1
 
 /* "Define if expm1() is available" */
-#cmakedefine HAVE_EXPM1
+#cmakedefine HAVE_EXPM1 1
 
 /* Is the GNU Science Library available (ver. >= 1.0)? */
-#cmakedefine HAVE_GSL
+#cmakedefine HAVE_GSL 1
 
 /* Is GSL Version >= 1.11? */
-#cmakedefine HAVE_GSL_1_11
+#cmakedefine HAVE_GSL_1_11 1
 
 /* Is GSL Version >= 1.2? */
-#cmakedefine HAVE_GSL_1_2
+#cmakedefine HAVE_GSL_1_2 1
 
 /* Define to 1 if you have the <inttypes.h> header file.
  * Used in sparseconfig.h.
  */
-#cmakedefine HAVE_INTTYPES_H
+#cmakedefine HAVE_INTTYPES_H 1
 
 /* "Define if isnan() is available" */
-#cmakedefine HAVE_ISNAN
+#cmakedefine HAVE_ISNAN 1
 
 /* "Define if std::isnan() is available" */
-#cmakedefine HAVE_STD_ISNAN
+#cmakedefine HAVE_STD_ISNAN 1
 
 /* define for istream */
-#cmakedefine HAVE_ISTREAM
+#cmakedefine HAVE_ISTREAM 1
 
 /* Havel libltdl, can load dynamic modules */
-#cmakedefine HAVE_LIBLTDL
+#cmakedefine HAVE_LIBLTDL 1
 
 /* libneurosim support enabled? */
-#cmakedefine HAVE_LIBNEUROSIM
+#cmakedefine HAVE_LIBNEUROSIM 1
 
 /* define if we have usable long long type.
  * Used in sparseconfig.h.
  */
-#cmakedefine HAVE_LONG_LONG
+#cmakedefine HAVE_LONG_LONG 1
 
 /* Define to 1 if you have the <mach/mach.h> header file. */
-#cmakedefine HAVE_MACH_MACH_H
+#cmakedefine HAVE_MACH_MACH_H 1
 
 /* Define to 1 if you have the <mach-o/dyld.h> header file. */
-#cmakedefine HAVE_MACH_O_DYLD_H
+#cmakedefine HAVE_MACH_O_DYLD_H 1
 
 /* Define to 1 if you have the <memory.h> header file. */
-#cmakedefine HAVE_MEMORY_H
+#cmakedefine HAVE_MEMORY_H 1
 
 /* MPI is available. */
-#cmakedefine HAVE_MPI
+#cmakedefine HAVE_MPI 1
 
 /* MUSIC support enabled? */
-#cmakedefine HAVE_MUSIC
+#cmakedefine HAVE_MUSIC 1
 
 /* define if M_E is defined */
-#cmakedefine HAVE_M_E
+#cmakedefine HAVE_M_E 1
 
 /* define if M_PI is defined */
-#cmakedefine HAVE_M_PI
+#cmakedefine HAVE_M_PI 1
 
 /* "Define if NAN is available" */
-#cmakedefine HAVE_NAN
+#cmakedefine HAVE_NAN 1
 
 /* "Define if std::nan(NULL) is available" */
-#cmakedefine HAVE_STD_NAN
+#cmakedefine HAVE_STD_NAN 1
 
 /* define for ostream */
-#cmakedefine HAVE_OSTREAM
+#cmakedefine HAVE_OSTREAM 1
 
 /* Use GNU libreadline */
-#cmakedefine HAVE_READLINE
+#cmakedefine HAVE_READLINE 1
 
 /* define if the compiler ignores symbolic signal names in signal.h */
-#cmakedefine HAVE_SIGUSR_IGNORED
+#cmakedefine HAVE_SIGUSR_IGNORED 1
 
 /* define for sstream */
-#cmakedefine HAVE_SSTREAM
+#cmakedefine HAVE_SSTREAM 1
 
 /* define if the compiler fails on static template member declaration */
-#cmakedefine HAVE_STATIC_TEMPLATE_DECLARATION_FAIL
+#cmakedefine HAVE_STATIC_TEMPLATE_DECLARATION_FAIL 1
 
 /* Define to 1 if you have the <stdint.h> header file.
  * Used in sparseconfig.h.
  */
-#cmakedefine HAVE_STDINT_H
+#cmakedefine HAVE_STDINT_H 1
 
 /* define for STL vector capacity base unity */
-#cmakedefine HAVE_STL_VECTOR_CAPACITY_BASE_UNITY
+#cmakedefine HAVE_STL_VECTOR_CAPACITY_BASE_UNITY 1
 
 /* define for STL vector capacity doubling strategy */
-#cmakedefine HAVE_STL_VECTOR_CAPACITY_DOUBLING
+#cmakedefine HAVE_STL_VECTOR_CAPACITY_DOUBLING 1
 
 /* Define to 1 if you have the <sys/types.h> header file.
  * Used in sparseconfig.h.
  */
-#cmakedefine HAVE_SYS_TYPES_H
+#cmakedefine HAVE_SYS_TYPES_H 1
 
 /* Define if the system has the type `uint16_t'.
  * Used in sparseconfig.h.
  */
-#cmakedefine HAVE_UINT16_T
+#cmakedefine HAVE_UINT16_T 1
 
 /* Define if the system has the type `u_int16_t'.
  * Used in sparseconfig.h.
  */
-#cmakedefine HAVE_U_INT16_T
+#cmakedefine HAVE_U_INT16_T 1
 
 /* Tics per millisecond specified? */
-#cmakedefine HAVE_TICS_PER_MS
+#cmakedefine HAVE_TICS_PER_MS 1
 
 /* Tics per step specified? */
-#cmakedefine HAVE_TICS_PER_STEP
+#cmakedefine HAVE_TICS_PER_STEP 1
 
 /* define if the compiler fails with ICE */
-#cmakedefine HAVE_XLC_ICE_ON_USING
+#cmakedefine HAVE_XLC_ICE_ON_USING 1
 
 /* Configuring for Blue Gene */
-#cmakedefine IS_BLUEGENE
+#cmakedefine IS_BLUEGENE 1
 
 /* Configuring for Blue Gene/L */
-#cmakedefine IS_BLUEGENE_L
+#cmakedefine IS_BLUEGENE_L 1
 
 /* Configuring for Blue Gene/P */
-#cmakedefine IS_BLUEGENE_P
+#cmakedefine IS_BLUEGENE_P 1
 
 /* Configuring for Blue Gene/Q */
-#cmakedefine IS_BLUEGENE_Q
+#cmakedefine IS_BLUEGENE_Q 1
 
 /* Configuring for K */
-#cmakedefine IS_K
-
-/* Name of package */
-#define PACKAGE @PROJECT_NAME@
+#cmakedefine IS_K 1
 
 /* Use PS array construction semantics */
-#cmakedefine PS_ARRAYS
+#cmakedefine PS_ARRAYS 1
 
-/* Do not delete the empty line above ! Configure will not work correctly
-   on some systems without it!
-*/
 #endif // #ifndef CONFIG_H

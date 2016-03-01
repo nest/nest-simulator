@@ -286,8 +286,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< iaf_cond_exp >( "iaf_cond_exp" );
   kernel().model_manager.register_node_model< iaf_cond_exp_sfa_rr >( "iaf_cond_exp_sfa_rr" );
   kernel().model_manager.register_node_model< iaf_cond_alpha_mc >( "iaf_cond_alpha_mc" );
-  kernel().model_manager.register_node_model< iaf_cond_alpha_mc_kinetics >( net_, "iaf_cond_alpha_mc_kinetics" );
-  kernel().model_manager.register_node_model< iaf_cond_alpha_mc_fixedca >( net_, "iaf_cond_alpha_mc_fixedca" );
+  kernel().model_manager.register_node_model< iaf_cond_alpha_mc_kinetics >( "iaf_cond_alpha_mc_kinetics" );
+  kernel().model_manager.register_node_model< iaf_cond_alpha_mc_fixedca >( "iaf_cond_alpha_mc_fixedca" );
   kernel().model_manager.register_node_model< hh_psc_alpha >( "hh_psc_alpha" );
   kernel().model_manager.register_node_model< hh_psc_alpha_gap >( "hh_psc_alpha_gap" );
   kernel().model_manager.register_node_model< hh_cond_exp_traub >( "hh_cond_exp_traub" );

@@ -51,5 +51,16 @@ if ( DOXYGEN_FOUND )
         COMMAND ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/fulldoc.conf"
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         )
+  else ()
+    add_custom_target( fulldoc
+        COMMAND ${CMAKE_COMMAND} -E echo "dot command is not found on your system. Cannot build full documentation."
+        )
   endif ()
+else ()
+  add_custom_target( doc
+    COMMAND ${CMAKE_COMMAND} -E echo "Doxygen is not found on your system. Cannot build documentation."
+    )
+  add_custom_target( fulldoc
+    COMMAND ${CMAKE_COMMAND} -E echo "Doxygen is not found on your system. Cannot build full documentation."
+    )
 endif ()

@@ -172,7 +172,7 @@ Synaptic background activity influences spatiotemporal integration in
 single pyramidal cells.  Proc. Natl. Acad. Sci. USA, 88(24),
 11569–11573.
 
-Chua, Y., Morrison, A., & Moritz, H. (2015).
+Chua, Y., Morrison, A., & Helias, M. (2015).
 Modeling the calcium spike as a threshold triggered fixed waveform for
 synchronous inputs in the fluctuation regime. Frontiers in Computational Neuroscience.,
 9(00091).

@@ -50,3 +50,7 @@ build/
 # Temporary data
 .ipynb_checkpoints/
 TAGS
+
+# cstags and cscope
+tags
+cscope.out

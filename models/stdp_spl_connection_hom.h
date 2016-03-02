@@ -526,6 +526,16 @@ private:
           bool deletion_trigger;
           bool stepeval_trigger;
         
+          if ( w_jk_[ i ] <= 0. )
+          {
+              // if the contact has weight zero from the start, we just schedule
+              // deletion and are done. This can happen due to inconsistent 
+              // set_status call by user.
+              deletion_trigger = true;
+              stepeval_trigger = false;
+          }
+          else
+          {
           // the delta_done in this case may be different from delta_this, in
           // case the contact is deleted before delta_this is elapsed. If so,
           // we reenter this while loop from the top.
@@ -540,7 +550,7 @@ private:
 
           // compose the solution
           w_jk_[ i ] = compose_w_sol_( ); //amps_, exps_ );
-    
+          }
           // delete contacts with negative or zero weights
           if ( w_jk_[ i ] <= 0. )
           {

@@ -67,8 +67,8 @@ install-data-hook: install-exec install-slidoc-recursive
 	sed -e "s:++PKGDATADIR++:@PKGDATADIR@:"\
 	    -e "s:++PKGDOCDIR++:@PKGDOCDIR@:"\
 	    -e "s:++PKGSRCDIR++:@PKGSRCDIR@:"\
-	    $(DESTDIR)@PKGDATADIR@/extras/emacs/sli.el.in > $(DESTDIR)@PKGDATADIR@/extras/emacs/sli.el
-	rm $(DESTDIR)@PKGDATADIR@/extras/emacs/sli.el.in
+	    $(DESTDIR)@PKGDATADIR@/extras/EditorSupport/emacs/sli.el.in > $(DESTDIR)@PKGDATADIR@/extras/EditorSupport/emacs/sli.el
+	rm $(DESTDIR)@PKGDATADIR@/extras/EditorSupport/emacs/sli.el.in
 	\
 	@INSTALL_PROGRAM@ @PKGBUILDDIR@/extras/nest-config $(DESTDIR)$(exec_prefix)/bin/
 	@INSTALL_PROGRAM@ @PKGSRCDIR@/extras/nest_serial $(DESTDIR)$(exec_prefix)/bin/
@@ -82,9 +82,10 @@ install-data-hook: install-exec install-slidoc-recursive
 	  && @INSTALL_PROGRAM@ -m 644 @PKGBUILDDIR@/lib/sli/rcsinfo.sli $(DESTDIR)@PKGDATADIR@/sli
 
 nobase_pkgdata_DATA=\
-	extras/emacs/sli.el.in \
-	extras/emacs/postscript-sli.el \
-	extras/emacs/psvn.el
+	extras/EditorSupport/emacs/sli.el.in \
+	extras/EditorSupport/emacs/postscript-sli.el \
+	extras/EditorSupport/emacs/psvn.el \
+	extras/EditorSupport/vim/syntax/sli.vim
 
 uninstall:
 	@echo "make: uninstall target is not supported, use isolated prefix or a package manager instead!"

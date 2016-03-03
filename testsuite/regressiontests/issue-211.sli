@@ -48,6 +48,8 @@ ResetKernel
 /n3 /iaf_psc_delta Create def
 /d4 /spike_detector Create def
 /g5 /spike_generator Create def
+/v6 /volume_transmitter Create def
+/stdp_dopamine_synapse << /vt v6 >> SetDefaults
 
 % neuron-neuron
 [n1 n2] [n3 n3] /one_to_one Connect
@@ -69,13 +71,18 @@ g5 n3 << /weight 1. >> Connect
 [g5 g5] [d4] Connect
 g5 d4 << /weight 1. >> Connect
 
+% neuron-globally receiving device (volume transmitter)
+n1 v6 Connect
+n2 v6 Connect
+
 /conn << >> GetConnections def
 
 % expected connections with expected threads
-/target_conn <[1 3 1] [2 3 1] [2 1 1] [3 1 1] [2 1 1]
-              [1 4 1] [1 3 1] [2 4 0] [3 4 1] [2 4 0]
-              [5 2 0] [5 3 1] [5 1 1] [5 1 1] [5 3 1]
-              [5 4 0] [5 4 0] [5 4 0] [5 4 0]> def
+/target_conn <[1 3 1] [2 3 1] [2 1 1] [3 1 1] [2 1 1] % neuron-neuron
+              [1 4 1] [1 3 1] [2 4 0] [3 4 1] [2 4 0] % neuron-device
+              [5 2 0] [5 3 1] [5 1 1] [5 1 1] [5 3 1] % device-neuron
+              [5 4 0] [5 4 0] [5 4 0] [5 4 0]         % device-device
+              [1 6 0] [1 6 1] [2 6 0] [2 6 1]> def    % neuron-globally receiving device
 
 conn {
   target_conn exch cva [[1 2 3]] Part MemberQ assert

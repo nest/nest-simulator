@@ -377,19 +377,14 @@ nest::ConnectionBuilderManager::connect( index sgid,
       }
     }
   }
-  else // globally receiving devices iterate over all target threads, e.g., volume transmitter
+  else // globally receiving devices, e.g., volume transmitter
   {
     // we do not allow to connect a device to a global receiver at the moment
     if ( not source->has_proxies() )
     {
       return;
     }
-    const thread n_threads = kernel().vp_manager.get_num_threads();
-    for ( thread t = 0; t < n_threads; t++ )
-    {
-      target = kernel().node_manager.get_node( target->get_gid(), t );
-      connect_( *source, *target, sgid, t, syn, d, w );
-    }
+    connect_( *source, *target, sgid, tid, syn, d, w );
   }
 }
 
@@ -441,19 +436,14 @@ nest::ConnectionBuilderManager::connect( index sgid,
       }
     }
   }
-  else // globally receiving devices iterate over all target threads, e.g., volume transmitter
+  else // globally receiving devices, e.g., volume transmitter
   {
     // we do not allow to connect a device to a global receiver at the moment
     if ( not source->has_proxies() )
     {
       return;
     }
-    const thread n_threads = kernel().vp_manager.get_num_threads();
-    for ( thread t = 0; t < n_threads; t++ )
-    {
-      target = kernel().node_manager.get_node( target->get_gid(), t );
-      connect_( *source, *target, sgid, t, syn, params, d, w );
-    }
+    connect_( *source, *target, sgid, tid, syn, params, d, w );
   }
 }
 
@@ -511,19 +501,14 @@ nest::ConnectionBuilderManager::connect( index sgid,
       }
     }
   }
-  else // globally receiving devices iterate over all target threads, e.g., volume transmitter
+  else // globally receiving devices, e.g., volume transmitter
   {
     // we do not allow to connect a device to a global receiver at the moment
     if ( not source->has_proxies() )
     {
       return false;
     }
-    const thread n_threads = kernel().vp_manager.get_num_threads();
-    for ( thread t = 0; t < n_threads; t++ )
-    {
-      target = kernel().node_manager.get_node( tgid, t );
-      connect_( *source, *target, sgid, t, syn, params );
-    }
+    connect_( *source, *target, sgid, tid, syn, params );
   }
   // We did not exit prematurely due to proxies, so we have connected.
   return true;

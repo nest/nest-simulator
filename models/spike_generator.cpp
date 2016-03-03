@@ -91,7 +91,8 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
   }
   ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
   ( *d )[ "spike_weights" ] = DoubleVectorDatum( new std::vector< double_t >( spike_weights_ ) );
-  ( *d )[ "spike_multiplicities" ] = IntVectorDatum( new std::vector< long >( spike_multiplicities_ ) );
+  ( *d )[ "spike_multiplicities" ] =
+    IntVectorDatum( new std::vector< long >( spike_multiplicities_ ) );
   ( *d )[ names::precise_times ] = BoolDatum( precise_times_ );
   ( *d )[ "allow_offgrid_spikes" ] = BoolDatum( allow_offgrid_spikes_ );
   ( *d )[ "shift_now_spikes" ] = BoolDatum( shift_now_spikes_ );
@@ -249,7 +250,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
 
   // Set position to start if something changed
   if ( updated_spike_times || updated_spike_weights || d->known( names::origin )
-	   || updated_spike_multiplicities )
+    || updated_spike_multiplicities )
     s.position_ = 0;
 }
 
@@ -313,7 +314,8 @@ nest::spike_generator::update( Time const& sliceT0, const long_t from, const lon
 
   assert( !P_.precise_times_ || P_.spike_stamps_.size() == P_.spike_offsets_.size() );
   assert( P_.spike_weights_.empty() || P_.spike_stamps_.size() == P_.spike_weights_.size() );
-  assert( P_.spike_multiplicities_.empty() || P_.spike_stamps_.size() == P_.spike_multiplicities_.size() );
+  assert( P_.spike_multiplicities_.empty()
+    || P_.spike_stamps_.size() == P_.spike_multiplicities_.size() );
 
   const Time tstart = sliceT0 + Time::step( from );
   const Time tstop = sliceT0 + Time::step( to );
@@ -350,7 +352,7 @@ nest::spike_generator::update( Time const& sliceT0, const long_t from, const lon
         se->set_offset( P_.spike_offsets_[ S_.position_ ] );
 
       if ( !P_.spike_multiplicities_.empty() )
-    	se->set_multiplicity( P_.spike_multiplicities_[ S_.position_] );
+        se->set_multiplicity( P_.spike_multiplicities_[ S_.position_ ] );
 
       // we need to subtract one from stamp which is added again in send()
       long_t lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;

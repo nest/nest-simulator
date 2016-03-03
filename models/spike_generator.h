@@ -154,7 +154,8 @@ namespace nest
   ms
        spike_times    double array - spike-times in ms
        spike_weights  double array - corresponding spike-weights, the unit depends on the receiver
-       spike_multiplicities  int array - multiplicities of spikes, same length as spike_times; mostly for debugging
+       spike_multiplicities  int array - multiplicities of spikes, same length as spike_times;
+  mostly for debugging
        precise_times        bool - see above
        allow_offgrid_spikes bool - see above
        shift_now_spikes     bool - see above
@@ -232,7 +233,7 @@ private:
 
     std::vector< double > spike_weights_; //!< Spike weights as double
 
-    std::vector< long > spike_multiplicities_;  //!< Spike multiplicity
+    std::vector< long > spike_multiplicities_; //!< Spike multiplicity
 
     //! Interpret spike times as precise, i.e. send as step and offset
     bool precise_times_;

@@ -724,18 +724,37 @@ NestModule::Connect_i_i_lFunction::execute( SLIInterpreter* i ) const
   // check whether the target is on this process
   if ( kernel().node_manager.is_local_gid( target ) )
   {
-    // VERY EXPENSIVE for successive calls, e.g. brunel-sli_connect.sli
+    std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
+      kernel().vp_manager.get_num_threads() );
 #pragma omp parallel
     {
       const int tid = kernel().vp_manager.get_thread_id();
-      Node* const target_node = kernel().node_manager.get_node( target, tid );
-      const thread target_thread = target_node->get_thread();
-      if ( target_thread == tid )
+      try
       {
-        kernel().connection_builder_manager.connect(
-          source, target_node, target_thread, synmodel_id );
+        Node* const target_node = kernel().node_manager.get_node( target, tid );
+        const thread target_thread = target_node->get_thread();
+        if ( target_thread == tid )
+        {
+          kernel().connection_builder_manager.connect(
+            source, target_node, target_thread, synmodel_id );
+        }
+      }
+      catch ( std::exception& err )
+      {
+        // We must create a new exception here, err's lifetime ends at
+        // the end of the catch block.
+        exceptions_raised.at( tid ) =
+          lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
       }
     } // of omp parallel
+    // check if any exceptions have been raised
+    for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+    {
+      if ( exceptions_raised.at( thr ).valid() )
+      {
+        throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
+      }
+    }
   }
   i->OStack.pop( 3 );
   i->EStack.pop();
@@ -762,17 +781,37 @@ NestModule::Connect_i_i_d_d_lFunction::execute( SLIInterpreter* i ) const
   // check whether the target is on this process
   if ( kernel().node_manager.is_local_gid( target ) )
   {
+    std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
+      kernel().vp_manager.get_num_threads() );
 #pragma omp parallel
     {
       const int tid = kernel().vp_manager.get_thread_id();
-      Node* const target_node = kernel().node_manager.get_node( target, tid );
-      const thread target_thread = target_node->get_thread();
-      if ( target_thread == tid )
+      try
       {
-        kernel().connection_builder_manager.connect(
-          source, target_node, target_thread, synmodel_id, delay, weight );
+        Node* const target_node = kernel().node_manager.get_node( target, tid );
+        const thread target_thread = target_node->get_thread();
+        if ( target_thread == tid )
+        {
+          kernel().connection_builder_manager.connect(
+            source, target_node, target_thread, synmodel_id, delay, weight );
+        }
+      }
+      catch ( std::exception& err )
+      {
+        // We must create a new exception here, err's lifetime ends at
+        // the end of the catch block.
+        exceptions_raised.at( tid ) =
+          lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
       }
     } // of omp parallel
+    // check if any exceptions have been raised
+    for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+    {
+      if ( exceptions_raised.at( thr ).valid() )
+      {
+        throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
+      }
+    }
   }
 
   i->OStack.pop( 5 );
@@ -799,17 +838,37 @@ NestModule::Connect_i_i_D_lFunction::execute( SLIInterpreter* i ) const
   // check whether the target is on this process
   if ( kernel().node_manager.is_local_gid( target ) )
   {
+    std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
+      kernel().vp_manager.get_num_threads() );
 #pragma omp parallel
     {
       const int tid = kernel().vp_manager.get_thread_id();
-      Node* const target_node = kernel().node_manager.get_node( target, tid );
-      const thread target_thread = target_node->get_thread();
-      if ( target_thread == tid )
+      try
       {
-        kernel().connection_builder_manager.connect(
-          source, target_node, target_thread, synmodel_id, params );
+        Node* const target_node = kernel().node_manager.get_node( target, tid );
+        const thread target_thread = target_node->get_thread();
+        if ( target_thread == tid )
+        {
+          kernel().connection_builder_manager.connect(
+            source, target_node, target_thread, synmodel_id, params );
+        }
+      }
+      catch ( std::exception& err )
+      {
+        // We must create a new exception here, err's lifetime ends at
+        // the end of the catch block.
+        exceptions_raised.at( tid ) =
+          lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
       }
     } // of omp parallel
+    // check if any exceptions have been raised
+    for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+    {
+      if ( exceptions_raised.at( thr ).valid() )
+      {
+        throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
+      }
+    }
   }
 
   i->OStack.pop( 4 );

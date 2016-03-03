@@ -189,28 +189,17 @@ def % brunel_setup
     /static_synapse << /delay delay >> SetDefaults
     /static_synapse /syn_ex << /weight JE >> CopyModel
     /static_synapse /syn_in << /weight JI >> CopyModel
-    
-    E_neurons
-    {
-      /target Set
-      expoisson target /syn_ex Connect
-      E_neurons target CE /syn_ex RandomConvergentConnect
-      I_neurons target CI /syn_in RandomConvergentConnect
-    } bind % bind improves efficiency
-    forall
 
-    I_neurons
-    {
-      /target Set
-      inpoisson target /syn_ex Connect
-      E_neurons target CE /syn_ex RandomConvergentConnect
-      I_neurons target CI /syn_in RandomConvergentConnect
-    } bind forall
+    [expoisson] E_neurons /all_to_all /syn_ex Connect
+    E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
+    I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+
+
+    [inpoisson] I_neurons /all_to_all /syn_ex Connect
+    E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
+    I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
     
-    E_neurons Nrec Take
-    {
-      exsd Connect
-    } bind forall
+    E_neurons Nrec Take [exsd] Connect
     
     simtime Simulate
 

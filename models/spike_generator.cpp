@@ -44,6 +44,7 @@ nest::spike_generator::Parameters_::Parameters_()
   : spike_stamps_()
   , spike_offsets_()
   , spike_weights_()
+  , spike_multiplicities_()
   , precise_times_( false )
   , allow_offgrid_spikes_( false )
   , shift_now_spikes_( false )
@@ -54,6 +55,7 @@ nest::spike_generator::Parameters_::Parameters_( const Parameters_& op )
   : spike_stamps_( op.spike_stamps_ )
   , spike_offsets_( op.spike_offsets_ )
   , spike_weights_( op.spike_weights_ )
+  , spike_multiplicities_( op.spike_multiplicities_ )
   , precise_times_( op.precise_times_ )
   , allow_offgrid_spikes_( op.allow_offgrid_spikes_ )
   , shift_now_spikes_( op.shift_now_spikes_ )
@@ -89,6 +91,7 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
   }
   ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
   ( *d )[ "spike_weights" ] = DoubleVectorDatum( new std::vector< double_t >( spike_weights_ ) );
+  ( *d )[ "spike_multiplicities" ] = IntVectorDatum( new std::vector< long >( spike_multiplicities_ ) );
   ( *d )[ names::precise_times ] = BoolDatum( precise_times_ );
   ( *d )[ "allow_offgrid_spikes" ] = BoolDatum( allow_offgrid_spikes_ );
   ( *d )[ "shift_now_spikes" ] = BoolDatum( shift_now_spikes_ );
@@ -223,8 +226,30 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
     }
   }
 
+  // spike_multiplicities can be the same size as spike_times, or can be of size 0 to
+  // only use the spike_times array
+  bool updated_spike_multiplicities = d->known( "spike_multiplicities" );
+  if ( updated_spike_multiplicities )
+  {
+    std::vector< long > spike_multiplicities =
+      getValue< std::vector< long > >( d->lookup( "spike_multiplicities" ) );
+
+    if ( spike_multiplicities.empty() )
+      spike_multiplicities_.clear();
+    else
+    {
+      if ( spike_multiplicities.size() != spike_stamps_.size() )
+        throw BadProperty(
+          "spike_multiplicities must have the same number of elements as spike_times,"
+          " or 0 elements to clear the property." );
+
+      spike_multiplicities_.swap( spike_multiplicities );
+    }
+  }
+
   // Set position to start if something changed
-  if ( updated_spike_times || updated_spike_weights || d->known( names::origin ) )
+  if ( updated_spike_times || updated_spike_weights || d->known( names::origin )
+	   || updated_spike_multiplicities )
     s.position_ = 0;
 }
 
@@ -288,6 +313,7 @@ nest::spike_generator::update( Time const& sliceT0, const long_t from, const lon
 
   assert( !P_.precise_times_ || P_.spike_stamps_.size() == P_.spike_offsets_.size() );
   assert( P_.spike_weights_.empty() || P_.spike_stamps_.size() == P_.spike_weights_.size() );
+  assert( P_.spike_multiplicities_.empty() || P_.spike_stamps_.size() == P_.spike_multiplicities_.size() );
 
   const Time tstart = sliceT0 + Time::step( from );
   const Time tstop = sliceT0 + Time::step( to );
@@ -322,6 +348,9 @@ nest::spike_generator::update( Time const& sliceT0, const long_t from, const lon
 
       if ( P_.precise_times_ )
         se->set_offset( P_.spike_offsets_[ S_.position_ ] );
+
+      if ( !P_.spike_multiplicities_.empty() )
+    	se->set_multiplicity( P_.spike_multiplicities_[ S_.position_] );
 
       // we need to subtract one from stamp which is added again in send()
       long_t lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;

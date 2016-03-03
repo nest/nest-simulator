@@ -208,6 +208,7 @@ def
   (Connecting Poisson stimulus.) =
   [E_stimulus]
   E_neurons Nstim Take     % pick the first Nstim neurons
+  /all_to_all
   /syn_ex
   Connect
 

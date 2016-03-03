@@ -284,13 +284,13 @@ statusdict/userargs :: size 1 geq
       /source_ids E_net GetGlobalNodes def
 
       % E -> E
-      E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> /syn_ex Connect
+      E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
 
       /ns [ target_ids length ] { pop CI } Table def
       /source_ids I_net GetGlobalNodes def
 
       % I -> I
-      I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> /syn_in Connect
+      I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
 
       (Connecting inhibitory population.) =
       [inpoisson] I_neurons /all_to_all /syn_ex Connect
@@ -302,14 +302,14 @@ statusdict/userargs :: size 1 geq
       /source_ids E_net GetGlobalNodes def
 
       % E -> I
-      E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> /syn_ex Connect
+      E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
       
 
       /ns [ target_ids length ] { pop CI } Table def
       /source_ids I_net GetGlobalNodes def
 
       % I -> I
-      I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> /syn_in Connect
+      I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
 
       % Spike detectors are connected to the first Nrec neurons in each
       % population.  Since neurons are equal and connectivity is homogeneously
@@ -328,6 +328,7 @@ statusdict/userargs :: size 1 geq
 %%% SIMULATION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   % run, measure computer time with tic-toc
+  (Starting simulation.) =
   tic
   simtime Simulate
   toc /SimCPUTime Set

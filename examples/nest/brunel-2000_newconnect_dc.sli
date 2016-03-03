@@ -323,8 +323,8 @@ statusdict/userargs :: size 1 geq
       % from each population
       (Connecting spike detectors.) =
 
-      E_neurons Nrec Take exsd 1 arraystore Connect  % pick the first 500 neurons
-      I_neurons Nrec Take insd 1 arraystore Connect
+      E_neurons Nrec Take [exsd] Connect  % pick the first 500 neurons
+      I_neurons Nrec Take [insd] Connect
 
       toc /BuildCPUTime Set
 
@@ -334,6 +334,7 @@ statusdict/userargs :: size 1 geq
 %%% SIMULATION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   % run, measure computer time with tic-toc
+  (Starting simulation.) =
   tic
   simtime Simulate
   toc /SimCPUTime Set

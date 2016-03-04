@@ -31,7 +31,8 @@ long librandom::RandomDev::ldev( RngPtr ) const
   return 0;
 }
 
-void librandom::RandomDev::get_status( DictionaryDatum& dict ) const
+void
+librandom::RandomDev::get_status( DictionaryDatum& dict ) const
 {
   def< bool >( dict, "is_discrete", has_ldev() );
 }

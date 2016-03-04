@@ -76,6 +76,7 @@ Quantal_StpConnection< targetidentifierT >::Quantal_StpConnection()
   , tau_fac_( 10.0 )
   , n_( 1 )
   , a_( n_ )
+  , t_lastspike_( 0.0 )
 {
 }
 
@@ -90,6 +91,7 @@ Quantal_StpConnection< targetidentifierT >::Quantal_StpConnection(
   , tau_fac_( rhs.tau_fac_ )
   , n_( rhs.n_ )
   , a_( rhs.a_ )
+  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

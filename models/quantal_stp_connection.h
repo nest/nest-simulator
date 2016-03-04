@@ -124,10 +124,9 @@ public:
   /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
-   * \param t_lastspike Point in time of last spike sent.
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -143,7 +142,7 @@ public:
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -163,6 +162,7 @@ private:
   double_t tau_fac_; //!< [ms] time constant for facilitation (F)
   int n_;            //!< Number of release sites
   int a_;            //!< Number of available release sites
+  double_t t_lastspike_;
 };
 
 
@@ -170,19 +170,17 @@ private:
  * Send an event to the receiver of this connection.
  * \param e The event to send
  * \param t The thread on which this connection is stored.
- * \param t_lastspike Time point of last spike emitted
  * \param cp Common properties object, containing the quantal_stp parameters.
  */
 template < typename targetidentifierT >
 inline void
 Quantal_StpConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
   const CommonSynapseProperties& )
 {
   const int vp = get_target( t )->get_vp();
-
-  const double_t h = e.get_stamp().get_ms() - t_lastspike;
+  const double_t t_spike = e.get_stamp().get_ms();
+  const double_t h = t_spike - t_lastspike_;
 
   // Compute the decay factors, based on the time since the last spike.
   const double_t p_decay = std::exp( -h / tau_rec_ );
@@ -215,6 +213,8 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e,
     e();
     a_ -= n_release;
   }
+
+  t_lastspike_ = t_spike;
 }
 
 } // namespace

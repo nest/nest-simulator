@@ -26,7 +26,6 @@ namespace nest
 {
 
 ConnectorBase::ConnectorBase()
-  : t_lastspike_( 0. )
 {
 }
 

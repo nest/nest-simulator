@@ -137,20 +137,6 @@ public:
 
   // returns id of synapse type
   virtual synindex get_syn_id() const = 0;
-
-  double_t
-  get_t_lastspike() const
-  {
-    return t_lastspike_;
-  }
-  void
-  set_t_lastspike( const double_t t_lastspike )
-  {
-    t_lastspike_ = t_lastspike;
-  }
-
-private:
-  double_t t_lastspike_;
 };
 
 // homogeneous connector containing >=K_cutoff entries ***OUTDATED***TODO@5g
@@ -305,26 +291,18 @@ public:
 
     for ( size_t i = 0; i < C_.size(); i++ )
     {
-
       e.set_port( i );
-      C_[ i ].send( e,
-        tid,
-        ConnectorBase::get_t_lastspike(),
-        static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-          ->get_common_properties() );
+      C_[ i ].send( e, tid, static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )->get_common_properties() );
     }
 
-    ConnectorBase::set_t_lastspike( e.get_stamp().get_ms() );
   }
 
   void
   send( thread tid, synindex syn_index, unsigned int lcid, Event& e, const std::vector< ConnectorModel* >& cm )
   {
     const synindex syn_id = C_[ 0 ].get_syn_id();
-    e.set_port( lcid );
-    // TODO@5g: -1 placeholder for t_lastspike
-    C_[ lcid ].send( e, tid, -1., static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-                  ->get_common_properties() );
+    e.set_port( lcid ); // TODO@5g: does this make sense?
+    C_[ lcid ].send( e, tid, static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )->get_common_properties() );
   }
 
   void

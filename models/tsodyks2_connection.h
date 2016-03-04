@@ -135,10 +135,9 @@ public:
   /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
-   * \param t_lastspike Point in time of last spike sent.
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -156,7 +155,7 @@ public:
 
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -176,6 +175,7 @@ private:
   double_t x_;       //!< current fraction of the synaptic weight
   double_t tau_rec_; //!< [ms] time constant for recovery
   double_t tau_fac_; //!< [ms] time constant for facilitation
+  double_t t_lastspike_;
 };
 
 
@@ -183,18 +183,16 @@ private:
  * Send an event to the receiver of this connection.
  * \param e The event to send
  * \param p The port under which this connection is stored in the Connector.
- * \param t_lastspike Time point of last spike emitted
  */
 template < typename targetidentifierT >
 inline void
 Tsodyks2Connection< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
   const CommonSynapseProperties& )
 {
   Node* target = get_target( t );
-
-  double_t h = e.get_stamp().get_ms() - t_lastspike;
+  const double_t t_spike = e.get_stamp().get_ms();
+  const double_t h = t_spike - t_lastspike_;
   double_t x_decay = std::exp( -h / tau_rec_ );
   double_t u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
@@ -209,6 +207,8 @@ Tsodyks2Connection< targetidentifierT >::send( Event& e,
   e.set_delay( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
+
+  t_lastspike_ = t_spike;
 }
 
 template < typename targetidentifierT >
@@ -220,6 +220,7 @@ Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection()
   , x_( 1 )
   , tau_rec_( 800.0 )
   , tau_fac_( 0.0 )
+  , t_lastspike_( 0.0 )
 {
 }
 
@@ -232,6 +233,7 @@ Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection( const Tsodyks2Conne
   , x_( rhs.x_ )
   , tau_rec_( rhs.tau_rec_ )
   , tau_fac_( rhs.tau_fac_ )
+  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

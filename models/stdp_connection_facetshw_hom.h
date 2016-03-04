@@ -228,11 +228,9 @@ public:
   /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
-   * \param t_lastspike Point in time of last spike sent.
    */
   void send( Event& e,
     thread t,
-    double_t t_lastspike,
     const STDPFACETSHWHomCommonProperties< targetidentifierT >& );
 
 
@@ -262,20 +260,18 @@ public:
    * \param s The source node
    * \param r The target node
    * \param receptor_type The ID of the requested receptor type
-   * \param t_lastspike last spike produced by presynaptic neuron (in ms)
    */
   void
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t t_lastspike,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.register_stdp_connection( t_lastspike - get_delay() );
+    t.register_stdp_connection( t_lastspike_ - get_delay() );
   }
 
   void
@@ -308,6 +304,7 @@ private:
   long_t synapse_id_;
   double_t next_readout_time_;
   uint_t discrete_weight_; // TODO: TP: only needed in send, move to common properties or "static"?
+  double_t t_lastspike_;
 };
 
 template < typename targetidentifierT >
@@ -357,13 +354,11 @@ STDPFACETSHWConnectionHom< targetidentifierT >::lookup_( uint_t discrete_weight_
  * Send an event to the receiver of this connection.
  * \param e The event to send
  * \param p The port under which this connection is stored in the Connector.
- * \param t_lastspike Time point of last spike emitted
  */
 template < typename targetidentifierT >
 inline void
 STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
   const STDPFACETSHWHomCommonProperties< targetidentifierT >& cp )
 {
   // synapse STDP dynamics
@@ -450,14 +445,14 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
   get_target( t )->get_history(
-    t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+    t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   double_t minus_dt = 0;
   double_t plus_dt = 0;
 
   if ( start != finish ) // take only first postspike after last prespike
   {
-    minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
+    minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
   }
 
   if ( start != finish ) // take only last postspike before current spike
@@ -481,6 +476,8 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
   e.set_delay( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
+
+  t_lastspike_ = t_spike;
 }
 } // of namespace nest
 

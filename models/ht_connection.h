@@ -115,10 +115,9 @@ public:
   /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
-   * \param t_lastspike Point in time of last spike sent.
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -134,7 +133,7 @@ public:
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -154,6 +153,8 @@ private:
   double_t delta_P_; //!< fractional decrease in pool size per spike
 
   double_t p_; //!< current pool size
+
+  double_t t_lastspike_;
 };
 
 
@@ -161,20 +162,18 @@ private:
  * Send an event to the receiver of this connection.
  * \param e The event to send
  * \param p The port under which this connection is stored in the Connector.
- * \param t_lastspike Time point of last spike emitted
  */
 template < typename targetidentifierT >
 inline void
 HTConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
   const CommonSynapseProperties& )
 {
-  double_t h = e.get_stamp().get_ms() - t_lastspike;
+  const double_t t_spike = e.get_stamp().get_ms();
+  const double_t h = t_spike - t_lastspike_;
   Node* target = get_target( t );
-  // t_lastspike_ = 0 initially
 
-  // propagation t_lastspike -> t_spike, t_lastspike_ = 0 initially, p_ = 1
+  // propagation t_lastspike_ -> t_spike, t_lastspike_ = 0 initially, p_ = 1
   p_ = 1 - ( 1 - p_ ) * std::exp( -h / tau_P_ );
 
   // send the spike to the target
@@ -186,6 +185,8 @@ HTConnection< targetidentifierT >::send( Event& e,
 
   // reduce pool after spike is sent
   p_ *= ( 1 - delta_P_ );
+
+  t_lastspike_ = t_spike;
 }
 
 template < typename targetidentifierT >
@@ -195,6 +196,7 @@ HTConnection< targetidentifierT >::HTConnection()
   , tau_P_( 50.0 )
   , delta_P_( 0.2 )
   , p_( 1.0 )
+  , t_lastspike_( 0.0 )
 {
 }
 
@@ -205,6 +207,7 @@ HTConnection< targetidentifierT >::HTConnection( const HTConnection& rhs )
   , tau_P_( rhs.tau_P_ )
   , delta_P_( rhs.delta_P_ )
   , p_( rhs.p_ )
+  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

@@ -646,7 +646,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
   {
     // the following line will throw an exception, if it does not work
     c.check_connection(
-      src, tgt, receptor_type, 0., get_common_properties() ); // set last_spike to 0
+      src, tgt, receptor_type, get_common_properties() );
 
     // no entry at all, so create a homogeneous container for this connection type
     conn = allocate< Connector< ConnectionT > >();
@@ -657,7 +657,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
   {
     conn = (*hetconn)[ syn_index ];
     // the following line will throw an exception, if it does not work
-    c.check_connection( src, tgt, receptor_type, conn->get_t_lastspike(), get_common_properties() );
+    c.check_connection( src, tgt, receptor_type, get_common_properties() );
   }
   assert( conn != 0 );
 

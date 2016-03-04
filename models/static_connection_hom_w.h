@@ -132,7 +132,7 @@ public:
   void get_status( DictionaryDatum& d ) const;
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -142,10 +142,9 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    * \param p The port under which this connection is stored in the Connector.
-   * \param t_lastspike Time point of last spike emitted
    */
   void
-  send( Event& e, thread t, double_t, const CommonPropertiesHomW& cp )
+  send( Event& e, thread t, const CommonPropertiesHomW& cp )
   {
     e.set_weight( cp.get_weight() );
     e.set_delay( get_delay_steps() );

@@ -141,9 +141,8 @@ public:
   /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
-   * \param t_lastspike Point in time of last spike sent.
    */
-  void send( Event& e, thread t, double_t t_lastspike, const STDPPLHomCommonProperties& );
+  void send( Event& e, thread t, const STDPPLHomCommonProperties& );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -170,20 +169,18 @@ public:
    * \param s The source node
    * \param r The target node
    * \param receptor_type The ID of the requested receptor type
-   * \param t_lastspike last spike produced by presynaptic neuron (in ms)
    */
   void
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t t_lastspike,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.register_stdp_connection( t_lastspike - get_delay() );
+    t.register_stdp_connection( t_lastspike_ - get_delay() );
   }
 
   void
@@ -209,6 +206,7 @@ private:
   // data members of each connection
   double_t weight_;
   double_t Kplus_;
+  double_t t_lastspike_;
 };
 
 //
@@ -219,18 +217,16 @@ private:
  * Send an event to the receiver of this connection.
  * \param e The event to send
  * \param p The port under which this connection is stored in the Connector.
- * \param t_lastspike Time point of last spike emitted
  */
 template < typename targetidentifierT >
 inline void
 STDPPLConnectionHom< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
   const STDPPLHomCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
 
-  double_t t_spike = e.get_stamp().get_ms();
+  const double_t t_spike = e.get_stamp().get_ms();
 
   // t_lastspike_ = 0 initially
 
@@ -241,13 +237,13 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e,
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  target->get_history( t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   double_t minus_dt;
   while ( start != finish )
   {
-    minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
+    minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
     start++;
     if ( minus_dt == 0 )
       continue;
@@ -263,7 +259,9 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e,
   e.set_rport( get_rport() );
   e();
 
-  Kplus_ = Kplus_ * std::exp( ( t_lastspike - t_spike ) / cp.tau_plus_ ) + 1.0;
+  Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) / cp.tau_plus_ ) + 1.0;
+
+  t_lastspike_ = t_spike;
 }
 
 template < typename targetidentifierT >
@@ -271,6 +269,7 @@ STDPPLConnectionHom< targetidentifierT >::STDPPLConnectionHom()
   : ConnectionBase()
   , weight_( 1.0 )
   , Kplus_( 0.0 )
+  , t_lastspike_( 0.0 )
 {
 }
 
@@ -279,6 +278,7 @@ STDPPLConnectionHom< targetidentifierT >::STDPPLConnectionHom( const STDPPLConne
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , Kplus_( rhs.Kplus_ )
+  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

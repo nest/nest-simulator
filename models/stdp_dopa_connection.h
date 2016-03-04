@@ -194,7 +194,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, thread t, double_t, const STDPDopaCommonProperties& cp );
+  void send( Event& e, thread t, const STDPDopaCommonProperties& cp );
 
   void trigger_update_weight( thread t,
     const std::vector< spikecounter >& dopa_spikes,
@@ -228,13 +228,11 @@ public:
    * \param s The source node
    * \param r The target node
    * \param receptor_type The ID of the requested receptor type
-   * \param t_lastspike last spike produced by presynaptic neuron (in ms)
    */
   void
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t t_lastspike,
     const CommonPropertiesType& cp )
   {
     if ( cp.vt_ == 0 )
@@ -243,7 +241,7 @@ public:
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.register_stdp_connection( t_lastspike - get_delay() );
+    t.register_stdp_connection( t_last_update_ - get_delay() );
   }
 
   void
@@ -445,17 +443,13 @@ STDPDopaConnection< targetidentifierT >::depress_( double_t kminus,
  * Send an event to the receiver of this connection.
  * \param e The event to send
  * \param p The port under which this connection is stored in the Connector.
- * \param t_lastspike Time point of last spike emitted
  */
 template < typename targetidentifierT >
 inline void
 STDPDopaConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double_t,
   const STDPDopaCommonProperties& cp )
 {
-  // t_lastspike_ = 0 initially
-
   Node* target = get_target( t );
 
   // purely dendritic delay

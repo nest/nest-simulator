@@ -42,5 +42,7 @@ librandom::ExpRandomDev::set_status( const DictionaryDatum& d )
 void
 librandom::ExpRandomDev::get_status( DictionaryDatum& d ) const
 {
+  RandomDev::get_status( d );
+
   def< double >( d, "lambda", lambda_ );
 }

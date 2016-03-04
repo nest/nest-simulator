@@ -523,81 +523,84 @@ nest::SimulationManager::update_()
 #endif
       }
 
+      // TODO@5g: implement secondary events
       // preliminary update of nodes, e.g. for gapjunctions
       if ( kernel().node_manager.needs_prelim_update() )
       {
-#pragma omp single
-        {
-          // if the end of the simulation is in the middle
-          // of a min_delay_ step, we need to make a complete
-          // step in the preliminary update and only do
-          // the partial step in the final update
-          // needs to be done in omp single since to_step_ is a scheduler variable
-          old_to_step = to_step_;
-          if ( to_step_ < kernel().connection_builder_manager.get_min_delay() )
-            to_step_ = kernel().connection_builder_manager.get_min_delay();
-        }
+        assert( false );
+// #pragma omp single
+//         {
+//           // if the end of the simulation is in the middle
+//           // of a min_delay_ step, we need to make a complete
+//           // step in the preliminary update and only do
+//           // the partial step in the final update
+//           // needs to be done in omp single since to_step_ is a scheduler variable
+//           old_to_step = to_step_;
+//           if ( to_step_ < kernel().connection_builder_manager.get_min_delay() )
+//             to_step_ = kernel().connection_builder_manager.get_min_delay();
+//         }
 
-        bool max_iterations_reached = true;
-        const std::vector< Node* >& thread_local_nodes_prelim_up =
-          kernel().node_manager.get_nodes_prelim_up_on_thread( thrd );
-        for ( long_t n = 0; n < max_num_prelim_iterations_; ++n )
-        {
-          bool done_p = true;
+//         bool max_iterations_reached = true;
+//         const std::vector< Node* >& thread_local_nodes_prelim_up =
+//           kernel().node_manager.get_nodes_prelim_up_on_thread( thrd );
+//         for ( long_t n = 0; n < max_num_prelim_iterations_; ++n )
+//         {
+//           bool done_p = true;
 
-          // this loop may be empty for those threads
-          // that do not have any nodes requiring preliminary update
-          for ( std::vector< Node* >::const_iterator i = thread_local_nodes_prelim_up.begin();
-                i != thread_local_nodes_prelim_up.end();
-                ++i )
-            done_p = prelim_update_( *i ) && done_p;
+//           // this loop may be empty for those threads
+//           // that do not have any nodes requiring preliminary update
+//           for ( std::vector< Node* >::const_iterator i = thread_local_nodes_prelim_up.begin();
+//                 i != thread_local_nodes_prelim_up.end();
+//                 ++i )
+//             done_p = prelim_update_( *i ) && done_p;
 
-// add done value of thread p to done vector
-#pragma omp critical
-          done.push_back( done_p );
-// parallel section ends, wait until all threads are done -> synchronize
-#pragma omp barrier
+// // add done value of thread p to done vector
+// #pragma omp critical
+//           done.push_back( done_p );
+// // parallel section ends, wait until all threads are done -> synchronize
+// #pragma omp barrier
 
-// the following block is executed by a single thread
-// the other threads wait at the end of the block
-#pragma omp single
-          {
-            // set done_all
-            for ( size_t i = 0; i < done.size(); i++ )
-              done_all = done[ i ] && done_all;
+// // the following block is executed by a single thread
+// // the other threads wait at the end of the block
+// #pragma omp single
+//           {
+//             // set done_all
+//             for ( size_t i = 0; i < done.size(); i++ )
+//               done_all = done[ i ] && done_all;
 
-            // gather SecondaryEvents (e.g. GapJunctionEvents)
-            kernel().event_delivery_manager.gather_events( done_all );
+//             // gather SecondaryEvents (e.g. GapJunctionEvents)
+//             kernel().event_delivery_manager.gather_events( done_all );
+//             // kernel().event_delivery_manager.gather_secondary_events( tid ); TODO@5g
 
-            // reset done and done_all
-            //(needs to be in the single threaded part)
-            done_all = true;
-            done.clear();
-          }
+//             // reset done and done_all
+//             //(needs to be in the single threaded part)
+//             done_all = true;
+//             done.clear();
+//           }
 
-          // deliver SecondaryEvents generated during preliminary update
-          // returns the done value over all threads
-          done_p = kernel().event_delivery_manager.deliver_events( thrd );
+//           // deliver SecondaryEvents generated during preliminary update
+//           // returns the done value over all threads
+//           done_p = kernel().event_delivery_manager.deliver_events( thrd );
 
-          if ( done_p )
-          {
-            max_iterations_reached = false;
-            break;
-          }
-        } // of for (max_num_prelim_iterations_) ...
+//           if ( done_p )
+//           {
+//             max_iterations_reached = false;
+//             break;
+//           }
+//         } // of for (max_num_prelim_iterations_) ...
 
-#pragma omp single
-        {
-          to_step_ = old_to_step;
-          if ( max_iterations_reached )
-          {
-            std::string msg =
-              String::compose( "Maximum number of iterations reached at interval %1-%2 ms",
-                clock_.get_ms(),
-                clock_.get_ms() + to_step_ * Time::get_resolution().get_ms() );
-            LOG( M_WARNING, "SimulationManager::prelim_update", msg );
-          }
-        }
+// #pragma omp single
+//         {
+//           to_step_ = old_to_step;
+//           if ( max_iterations_reached )
+//           {
+//             std::string msg =
+//               String::compose( "Maximum number of iterations reached at interval %1-%2 ms",
+//                 clock_.get_ms(),
+//                 clock_.get_ms() + to_step_ * Time::get_resolution().get_ms() );
+//             LOG( M_WARNING, "SimulationManager::prelim_update", msg );
+//           }
+//         }
 
       } // of if(needs_prelim_update_)
       // end preliminary update
@@ -657,15 +660,16 @@ nest::SimulationManager::update_()
 
     } while ( ( to_do_ != 0 ) && ( !terminate_ ) );
 
+    // TODO@5g: implement SP
     // End of the slice, we update the number of synaptic element
-    for ( std::vector< Node* >::const_iterator i =
-            kernel().node_manager.get_nodes_on_thread( thrd ).begin();
-          i != kernel().node_manager.get_nodes_on_thread( thrd ).end();
-          ++i )
-    {
-      ( *i )->update_synaptic_elements(
-        Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
-    }
+    // for ( std::vector< Node* >::const_iterator i =
+    //         kernel().node_manager.get_nodes_on_thread( thrd ).begin();
+    //       i != kernel().node_manager.get_nodes_on_thread( thrd ).end();
+    //       ++i )
+    // {
+    //   ( *i )->update_synaptic_elements(
+    //     Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
+    // }
 
   } // end of #pragma parallel omp
 

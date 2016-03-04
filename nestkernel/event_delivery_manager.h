@@ -285,12 +285,10 @@ private:
   /**
    * Register for gids of neurons that spiked. This is a 3-dim
    * structure.
-   * - First dim: Each thread has its own vector to write to.
-   * - Second dim: A vector for each slice of the min_delay interval
-   * - Third dim: The gids.
+   * - First dim: threads
+   * - Second dim: slices of the min_delay interval
+   * - Third dim: lids
    */
-  std::vector< std::vector< std::vector< uint_t > > > spike_register_;
-
   SpikeRegisterTable spike_register_table_;
 
   /**
@@ -365,7 +363,6 @@ EventDeliveryManager::send_remote( thread t, SpikeEvent& e, const long_t lag )
   // Put the spike in a buffer for the remote machines
   for ( int_t i = 0; i < e.get_multiplicity(); ++i )
   {
-    spike_register_[ t ][ lag ].push_back( e.get_sender().get_gid() );
     spike_register_table_.add_spike( t, e, lag );
   }
 }

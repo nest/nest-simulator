@@ -31,6 +31,9 @@
 #include "node.h"
 #include "connector_base.h"
 
+// Includes from SLI:
+// #include "dictdatum.h"
+
 inline void
 nest::TargetTableDevices::add_connection_to_device( Node& source, Node& target, index s_gid, thread tid, index syn, double_t d, double_t w )
 {
@@ -41,6 +44,15 @@ nest::TargetTableDevices::add_connection_to_device( Node& source, Node& target, 
 }
 
 inline void
+nest::TargetTableDevices::add_connection_to_device( Node& source, Node& target, index s_gid, thread tid, index syn, DictionaryDatum& p, double_t d, double_t w )
+{
+  const index lid = kernel().vp_manager.gid_to_lid( s_gid );
+  assert( lid < target_to_devices_[ tid ]->size() );
+  kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection_5g(
+    source, target, (*target_to_devices_[ tid ])[ lid ], syn, p, d, w );
+}
+
+inline void
 nest::TargetTableDevices::add_connection_from_device( Node& source, Node& target, index s_gid, thread tid, index syn, double_t d, double_t w )
 {
   const index ldid = source.get_local_device_id();
@@ -48,6 +60,16 @@ nest::TargetTableDevices::add_connection_from_device( Node& source, Node& target
   assert( ldid < target_from_devices_[ tid ]->size() );
   kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection_5g(
     source, target, (*target_from_devices_[ tid ])[ ldid ], syn, d, w );
+}
+
+inline void
+nest::TargetTableDevices::add_connection_from_device( Node& source, Node& target, index s_gid, thread tid, index syn, DictionaryDatum& p, double_t d, double_t w )
+{
+  const index ldid = source.get_local_device_id();
+  assert( ldid != invalid_index );
+  assert( ldid < target_from_devices_[ tid ]->size() );
+  kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection_5g(
+    source, target, (*target_from_devices_[ tid ])[ ldid ], syn, p, d, w );
 }
 
 inline void

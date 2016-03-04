@@ -32,6 +32,9 @@
 #include "nest_types.h"
 #include "event.h"
 
+// Includes from SLI:
+#include "dictdatum.h"
+
 namespace nest
 {
 class Node;
@@ -60,8 +63,10 @@ public:
   void finalize();
   //! add a connection from the neuron source to the device target
   void add_connection_to_device( Node& source, Node& target, index s_gid, thread tid, index syn, double_t d, double_t w );
+  void add_connection_to_device( Node& source, Node& target, index s_gid, thread tid, index syn, DictionaryDatum& p, double_t d, double_t w );
   //! add a connection from the device source to the neuron target
   void add_connection_from_device( Node& source, Node& target, index s_gid, thread tid, index syn, double_t d, double_t w );
+  void add_connection_from_device( Node& source, Node& target, index s_gid, thread tid, index syn, DictionaryDatum& p, double_t d, double_t w );
   //! send a spike event to all targets of the source neuron
   void send_to_device( thread tid, const index s_gid, Event& e, const std::vector< ConnectorModel* >& cm );
   //! send a spike event to all targets of the source device

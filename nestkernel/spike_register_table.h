@@ -111,12 +111,14 @@ public:
   void initialize();
   void finalize();
   void add_spike( const thread tid, const SpikeEvent& e, const long_t lag );
-  void clear();
+  void configure();
+  void clear( const thread tid );
   bool get_next_spike_data( const thread tid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end );
   void reject_last_spike_data( const thread tid );
   void save_entry_point( const thread tid );
   void restore_entry_point( const thread tid );
   void reset_entry_point( const thread tid );
+
 };
 
 } // namespace nest

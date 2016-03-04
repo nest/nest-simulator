@@ -72,6 +72,16 @@ nest::SpikeRegisterTable::finalize()
   spike_register_.clear();
 }
 
+void
+nest::SpikeRegisterTable::clear( const thread tid )
+{
+  for ( std::vector< std::vector< index > >::iterator it = spike_register_[ tid ]->begin();
+        it != spike_register_[ tid ]->end(); ++it )
+  {
+    it->clear();
+  }
+}
+
 bool
 nest::SpikeRegisterTable::get_next_spike_data( const thread tid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end )
 {

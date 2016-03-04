@@ -43,15 +43,7 @@ template < typename T, typename C >
 inline T*
 allocate( C c )
 {
-#if defined _OPENMP && defined USE_PMA
-#ifdef IS_K
-  T* p = new ( poormansallocpool[ omp_get_thread_num() ].alloc( sizeof( T ) ) ) T( c );
-#else
-  T* p = new ( poormansallocpool.alloc( sizeof( T ) ) ) T( c );
-#endif
-#else
   T* p = new T( c );
-#endif
   // we need to check, if the two lowest bits of the pointer
   // are 0, because we want to use them to encode for the
   // existence of primary and secondary events
@@ -63,15 +55,7 @@ template < typename T >
 inline T*
 allocate()
 {
-#if defined _OPENMP && defined USE_PMA
-#ifdef IS_K
-  T* p = new ( poormansallocpool[ omp_get_thread_num() ].alloc( sizeof( T ) ) ) T();
-#else
-  T* p = new ( poormansallocpool.alloc( sizeof( T ) ) ) T();
-#endif
-#else
   T* p = new T();
-#endif
   // we need to check, if the two lowest bits of the pointer
   // are 0, because we want to use them to encode for the
   // existence of primary and secondary events
@@ -201,6 +185,7 @@ GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
   default_connection_.set_syn_id( syn_id );
 }
 
+// TODO@5g: remove?
 /**
  * delay and weight have the default value NAN.
  * NAN is a special value in cmath, which describes double values that
@@ -216,24 +201,25 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   double_t delay,
   double_t weight )
 {
-  if ( not numerics::is_nan( delay ) && has_delay_ )
-    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+  assert( false );
+  // if ( not numerics::is_nan( delay ) && has_delay_ )
+  //   kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
 
-  // create a new instance of the default connection
+  // // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
-  if ( not numerics::is_nan( weight ) )
-  {
-    c.set_weight( weight );
-  }
-  if ( not numerics::is_nan( delay ) )
-  {
-    c.set_delay( delay );
-  }
-  else
-  {
-    // tell the connector model, that we used the default delay
-    used_default_delay();
-  }
+  // if ( not numerics::is_nan( weight ) )
+  // {
+  //   c.set_weight( weight );
+  // }
+  // if ( not numerics::is_nan( delay ) )
+  // {
+  //   c.set_delay( delay );
+  // }
+  // else
+  // {
+  //   // tell the connector model, that we used the default delay
+  //   used_default_delay();
+  // }
 
   return add_connection( src, tgt, conn, syn_id, c, receptor_type_ );
 }
@@ -430,107 +416,108 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   //     -- there are already synapses of type syn_id
   //     -- there are no connections of type syn_id yet
 
-  if ( conn == 0 )
-  {
-    // case 0
+  // if ( conn == 0 )
+  // {
+  //   // case 0
 
-    // the following line will throw an exception, if it does not work
-    c.check_connection(
-      src, tgt, receptor_type, 0., get_common_properties() ); // set last_spike to 0
+  //   // the following line will throw an exception, if it does not work
+  //   c.check_connection(
+  //     src, tgt, receptor_type, 0., get_common_properties() ); // set last_spike to 0
 
-    // no entry at all, so start with homogeneous container for exactly one connection
-    conn = allocate< Connector< ConnectionT > >();
+  //   // no entry at all, so start with homogeneous container for exactly one connection
+  //   conn = allocate< Connector< ConnectionT > >();
 
-    // there is only one connection, so either it is primary or secondary
-    conn = pack_pointer( conn, is_primary_, !is_primary_ );
-  }
-  else
-  {
-    // case 1 or case 2
+  //   // there is only one connection, so either it is primary or secondary
+  //   conn = pack_pointer( conn, is_primary_, !is_primary_ );
+  // }
+  // else
+  // {
+  //   // case 1 or case 2
 
-    // Already existing pointers of type ConnectorBase contain (in their two lowest bits) the
-    // information if *conn has primary and/or secondary connections. Before the pointer can
-    // be used as a valid pointer this information needs to be read and the original pointer
-    // needs to be restored by calling validate_pointer( conn ).
-    bool b_has_primary = has_primary( conn );
-    bool b_has_secondary = has_secondary( conn );
+  //   // Already existing pointers of type ConnectorBase contain (in their two lowest bits) the
+  //   // information if *conn has primary and/or secondary connections. Before the pointer can
+  //   // be used as a valid pointer this information needs to be read and the original pointer
+  //   // needs to be restored by calling validate_pointer( conn ).
+  //   bool b_has_primary = has_primary( conn );
+  //   bool b_has_secondary = has_secondary( conn );
 
-    conn = validate_pointer( conn );
-    // from here on we can use conn as a valid pointer
+  //   conn = validate_pointer( conn );
+  //   // from here on we can use conn as a valid pointer
 
-    // the following line will throw an exception, if it does not work
-    c.check_connection( src, tgt, receptor_type, conn->get_t_lastspike(), get_common_properties() );
+  //   // the following line will throw an exception, if it does not work
+  //   c.check_connection( src, tgt, receptor_type, conn->get_t_lastspike(), get_common_properties() );
 
-    if ( conn->homogeneous_model() ) //  there is already a homogeneous entry
-    {
-      if ( conn->get_syn_id() == syn_id ) // case 1: connector for this syn_id
-      {
-        // we can safely static cast, because we checked syn_id == syn_id(connectionT)
-        Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( conn );
+  //   if ( conn->homogeneous_model() ) //  there is already a homogeneous entry
+  //   {
+  //     if ( conn->get_syn_id() == syn_id ) // case 1: connector for this syn_id
+  //     {
+  //       // we can safely static cast, because we checked syn_id == syn_id(connectionT)
+  //       Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( conn );
 
-        // we do not need to change the flags is_primary or is_secondary, because the new synapse is
-        // of the same type as the existing ones
-        conn = pack_pointer( &vc->push_back( c ), b_has_primary, b_has_secondary );
-      }
-      else
-      {
-        // syn_id is different from the one stored in the homogeneous connector
-        // we need to create a heterogeneous connector now and insert the existing
-        // homogeneous connector and a new homogeneous connector for the new syn_id
-        HetConnector* hc = allocate< HetConnector >();
+  //       // we do not need to change the flags is_primary or is_secondary, because the new synapse is
+  //       // of the same type as the existing ones
+  //       conn = pack_pointer( &vc->push_back( c ), b_has_primary, b_has_secondary );
+  //     }
+  //     else
+  //     {
+  //       // syn_id is different from the one stored in the homogeneous connector
+  //       // we need to create a heterogeneous connector now and insert the existing
+  //       // homogeneous connector and a new homogeneous connector for the new syn_id
+  //       HetConnector* hc = allocate< HetConnector >();
 
-        // add existing connector
-        // we read out the primary/secondary property of the existing connector conn above
-        hc->add_connector( b_has_primary, conn );
+  //       // add existing connector
+  //       // we read out the primary/secondary property of the existing connector conn above
+  //       hc->add_connector( b_has_primary, conn );
 
-        // create hom connector for new synid
-        Connector< ConnectionT >* vc = allocate< Connector< ConnectionT > >();
+  //       // create hom connector for new synid
+  //       Connector< ConnectionT >* vc = allocate< Connector< ConnectionT > >();
 
-        // append new homogeneous connector to heterogeneous connector
-        hc->add_connector( is_primary_, vc );
+  //       // append new homogeneous connector to heterogeneous connector
+  //       hc->add_connector( is_primary_, vc );
 
-        // make entry in connections_[sgid] point to new heterogeneous connector
-        // the existing connections had b_has_primary or b_has_secondary,
-        // our new connection is_primary
-        conn =
-          pack_pointer( hc, b_has_primary || is_primary_, b_has_secondary || ( !is_primary_ ) );
-      }
-    }
-    else // case 2: the entry is heterogeneous, need to search for syn_id
-    {
-      // go through all entries and search for correct syn_id
-      // if not found create new entry for this syn_id
-      HetConnector* hc = static_cast< HetConnector* >( conn );
-      bool found = false;
-      for ( size_t i = 0; i < hc->size() && !found; i++ )
-      {
-        // need to cast to Connector to access syn_id
-        if ( ( *hc )[ i ]->get_syn_id() == syn_id ) // there is already an entry for this type
-        {
-          // here we know that the type is Connector<connectionT>, because syn_id agrees
-          // so we can safely static cast
-          Connector< ConnectionT >* vc =
-            static_cast< Connector< ConnectionT >* >( ( *hc )[ i ] );
-          ( *hc )[ i ] = &vc->push_back( c );
-          found = true;
-        }
-      }             // of for
-      if ( !found ) // we need to create a new entry for this type of connection
-      {
-        Connector< ConnectionT >* vc = allocate< Connector< ConnectionT > >();
+  //       // make entry in connections_[sgid] point to new heterogeneous connector
+  //       // the existing connections had b_has_primary or b_has_secondary,
+  //       // our new connection is_primary
+  //       conn =
+  //         pack_pointer( hc, b_has_primary || is_primary_, b_has_secondary || ( !is_primary_ ) );
+  //     }
+  //   }
+  //   else // case 2: the entry is heterogeneous, need to search for syn_id
+  //   {
+  //     // go through all entries and search for correct syn_id
+  //     // if not found create new entry for this syn_id
+  //     HetConnector* hc = static_cast< HetConnector* >( conn );
+  //     bool found = false;
+  //     for ( size_t i = 0; i < hc->size() && !found; i++ )
+  //     {
+  //       // need to cast to Connector to access syn_id
+  //       if ( ( *hc )[ i ]->get_syn_id() == syn_id ) // there is already an entry for this type
+  //       {
+  //         // here we know that the type is Connector<connectionT>, because syn_id agrees
+  //         // so we can safely static cast
+  //         Connector< ConnectionT >* vc =
+  //           static_cast< Connector< ConnectionT >* >( ( *hc )[ i ] );
+  //         ( *hc )[ i ] = &vc->push_back( c );
+  //         found = true;
+  //       }
+  //     }             // of for
+  //     if ( !found ) // we need to create a new entry for this type of connection
+  //     {
+  //       Connector< ConnectionT >* vc = allocate< Connector< ConnectionT > >();
 
-        hc->add_connector( is_primary_, vc );
+  //       hc->add_connector( is_primary_, vc );
 
-        conn =
-          pack_pointer( hc, b_has_primary || is_primary_, b_has_secondary || ( !is_primary_ ) );
-      }
-    }
-  }
+  //       conn =
+  //         pack_pointer( hc, b_has_primary || is_primary_, b_has_secondary || ( !is_primary_ ) );
+  //     }
+  //   }
+  // }
   
   return conn;
 }
 
 
+// TODO@5g: implement
 /**
  * Delete a connection of a given type directed to a defined target Node
  * @param tgt Target node
@@ -547,91 +534,92 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
   ConnectorBase* conn,
   synindex syn_id )
 {
-  assert( conn != 0 ); // we should not delete not existing synapses
-  bool found = false;
-  Connector< ConnectionT >* vc;
+  assert( false );
+  // assert( conn != 0 ); // we should not delete not existing synapses
+  // bool found = false;
+  // Connector< ConnectionT >* vc;
 
-  bool b_has_primary = has_primary( conn );
-  bool b_has_secondary = has_secondary( conn );
+  // bool b_has_primary = has_primary( conn );
+  // bool b_has_secondary = has_secondary( conn );
 
-  conn = validate_pointer( conn );
-  // from here on we can use conn as a valid pointer
+  // conn = validate_pointer( conn );
+  // // from here on we can use conn as a valid pointer
 
-  if ( conn->homogeneous_model() )
-  {
-    assert( conn->get_syn_id() == syn_id );
-    vc = static_cast< Connector< ConnectionT >* >( conn );
-    // delete the first Connection corresponding to the target
-    for ( size_t i = 0; i < vc->size(); i++ )
-    {
-      ConnectionT* connection = &vc->at( i );
-      if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
-      {
-        if ( vc->get_num_connections() > 1 )
-          conn = &vc->erase( i );
-        else
-        {
-          delete vc;
-          conn = 0;
-        }
-        if ( conn != 0 )
-          conn = pack_pointer( conn, is_primary_, !is_primary_ );
-        found = true;
-        break;
-      }
-    }
-  }
-  else
-  {
-    // heterogeneous case
-    // go through all entries and search for correct syn_id
-    // if not found create new entry for this syn_id
-    HetConnector* hc = static_cast< HetConnector* >( conn );
+  // if ( conn->homogeneous_model() )
+  // {
+  //   assert( conn->get_syn_id() == syn_id );
+  //   vc = static_cast< Connector< ConnectionT >* >( conn );
+  //   // delete the first Connection corresponding to the target
+  //   for ( size_t i = 0; i < vc->size(); i++ )
+  //   {
+  //     ConnectionT* connection = &vc->at( i );
+  //     if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
+  //     {
+  //       if ( vc->get_num_connections() > 1 )
+  //         conn = &vc->erase( i );
+  //       else
+  //       {
+  //         delete vc;
+  //         conn = 0;
+  //       }
+  //       if ( conn != 0 )
+  //         conn = pack_pointer( conn, is_primary_, !is_primary_ );
+  //       found = true;
+  //       break;
+  //     }
+  //   }
+  // }
+  // else
+  // {
+  //   // heterogeneous case
+  //   // go through all entries and search for correct syn_id
+  //   // if not found create new entry for this syn_id
+  //   HetConnector* hc = static_cast< HetConnector* >( conn );
 
-    for ( size_t i = 0; i < hc->size() && !found; i++ )
-    {
-      // need to cast to Connector to access syn_id
-      if ( ( *hc )[ i ]->get_syn_id() == syn_id ) // there is already an entry for this type
-      {
-        // here we know that the type is Connector<connectionT>, because syn_id agrees
-        // so we can safely static cast
-        Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( ( *hc )[ i ] );
-        // Find and delete the first Connection corresponding to the target
-        for ( size_t j = 0; j < vc->size(); j++ )
-        {
-          ConnectionT* connection = &vc->at( j );
-          if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
-          {
-            // Get rid of the ConnectionBase for this type of synapse if there is only this element
-            // left
-            if ( vc->size() == 1 )
-            {
-              ( *hc ).erase( ( *hc ).begin() + i );
-              // Test if the homogeneous vector of connections went back to only 1 type of
-              // synapse... then go back to the simple Connector case.
-              if ( hc->size() == 1 )
-              {
-                conn = static_cast< Connector< ConnectionT >* >( ( *hc )[ 0 ] );
-                conn = pack_pointer( conn, b_has_primary, b_has_secondary );
-              }
-              else
-              {
-                conn = pack_pointer( hc, b_has_primary, b_has_secondary );
-              }
-            } // Otherwise, just remove the desired connection
-            else
-            {
-              ( *hc )[ i ] = &vc->erase( j );
-              conn = pack_pointer( hc, b_has_primary, b_has_secondary );
-            }
-            found = true;
-            break;
-          }
-        }
-      }
-    }
-  }
-  assert( found );
+  //   for ( size_t i = 0; i < hc->size() && !found; i++ )
+  //   {
+  //     // need to cast to Connector to access syn_id
+  //     if ( ( *hc )[ i ]->get_syn_id() == syn_id ) // there is already an entry for this type
+  //     {
+  //       // here we know that the type is Connector<connectionT>, because syn_id agrees
+  //       // so we can safely static cast
+  //       Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( ( *hc )[ i ] );
+  //       // Find and delete the first Connection corresponding to the target
+  //       for ( size_t j = 0; j < vc->size(); j++ )
+  //       {
+  //         ConnectionT* connection = &vc->at( j );
+  //         if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
+  //         {
+  //           // Get rid of the ConnectionBase for this type of synapse if there is only this element
+  //           // left
+  //           if ( vc->size() == 1 )
+  //           {
+  //             ( *hc ).erase( ( *hc ).begin() + i );
+  //             // Test if the homogeneous vector of connections went back to only 1 type of
+  //             // synapse... then go back to the simple Connector case.
+  //             if ( hc->size() == 1 )
+  //             {
+  //               conn = static_cast< Connector< ConnectionT >* >( ( *hc )[ 0 ] );
+  //               conn = pack_pointer( conn, b_has_primary, b_has_secondary );
+  //             }
+  //             else
+  //             {
+  //               conn = pack_pointer( hc, b_has_primary, b_has_secondary );
+  //             }
+  //           } // Otherwise, just remove the desired connection
+  //           else
+  //           {
+  //             ( *hc )[ i ] = &vc->erase( j );
+  //             conn = pack_pointer( hc, b_has_primary, b_has_secondary );
+  //           }
+  //           found = true;
+  //           break;
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+  // assert( found );
 
   return conn;
 }
@@ -664,8 +652,6 @@ GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
     conn = allocate< Connector< ConnectionT > >();
     syn_index = hetconn->size();
     hetconn->resize( syn_index + 1);
-    // currently this is only a dummy implementation, need to be updated to support gap junctions TODO@5g
-    hetconn->add_connector_5g();
   }
   else
   {

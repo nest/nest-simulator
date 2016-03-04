@@ -54,18 +54,6 @@
 #include "token.h"
 #include "tokenutils.h"
 
-#ifdef USE_PMA
-#include "allocator.h"
-#ifdef IS_K
-extern PaddedPMA poormansallocpool[];
-#else // not IS_K
-extern PoorMansAllocator poormansallocpool;
-#ifdef _OPENMP
-#pragma omp threadprivate( poormansallocpool )
-#endif // _OPENMP
-#endif // IS_K
-#endif // USE_PMA
-
 nest::ConnectionBuilderManager::ConnectionBuilderManager()
   : connruledict_( new Dictionary() )
   , connbuilder_factories_()
@@ -77,7 +65,6 @@ nest::ConnectionBuilderManager::ConnectionBuilderManager()
 nest::ConnectionBuilderManager::~ConnectionBuilderManager()
 {
   source_table_.finalize();
-  delete_connections_();
   delete_connections_5g_();
 }
 
@@ -94,9 +81,6 @@ nest::ConnectionBuilderManager::initialize()
   target_table_.initialize();
   target_table_devices_.initialize();
 
-  tVSConnector tmp( kernel().vp_manager.get_num_threads(), tSConnector() );
-  connections_.swap( tmp );
-
   tVDelayChecker tmp2( kernel().vp_manager.get_num_threads() );
   delay_checkers_.swap( tmp2 );
 
@@ -107,20 +91,6 @@ nest::ConnectionBuilderManager::initialize()
   // this change in delays.
   min_delay_ = max_delay_ = 1;
 
-#ifdef _OPENMP
-#ifdef USE_PMA
-// initialize the memory pools
-#ifdef IS_K
-  assert( n_threads <= MAX_THREAD && "MAX_THREAD is a constant defined in allocator.h" );
-
-#pragma omp parallel
-  poormansallocpool[ kernel().vp_manager.get_thread_id() ].init();
-#else
-#pragma omp parallel
-  poormansallocpool.init();
-#endif
-#endif
-#endif
 }
 
 void
@@ -129,7 +99,6 @@ nest::ConnectionBuilderManager::finalize()
   source_table_.finalize();
   target_table_.finalize();
   target_table_devices_.finalize();
-  delete_connections_();
   delete_connections_5g_();
 }
 
@@ -276,44 +245,9 @@ nest::ConnectionBuilderManager::delete_connections_5g_()
   for( std::vector< HetConnector* >::iterator it = connections_5g_.begin();
        it != connections_5g_.end(); ++it)
   {
-    delete *it;
+    (*it)->~HetConnector();
   }
   connections_5g_.clear();
-
-}
-
-void
-nest::ConnectionBuilderManager::delete_connections_()
-{
-  for ( tVSConnector::iterator it = connections_.begin(); it != connections_.end(); ++it )
-  {
-    for ( tSConnector::nonempty_iterator iit = it->nonempty_begin(); iit != it->nonempty_end();
-          ++iit )
-    {
-#ifdef USE_PMA
-      validate_pointer( *iit )->~ConnectorBase();
-#else
-      delete validate_pointer( *iit );
-#endif
-    }
-    it->clear();
-  }
-
-#if defined _OPENMP && defined USE_PMA
-#ifdef IS_K
-#pragma omp parallel
-  {
-    poormansallocpool[ omp_get_thread_num() ].destruct();
-    poormansallocpool[ omp_get_thread_num() ].init();
-  }
-#else
-#pragma omp parallel
-  {
-    poormansallocpool.destruct();
-    poormansallocpool.init();
-  }
-#endif
-#endif
 }
 
 const nest::Time
@@ -497,6 +431,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
   }
 }
 
+// TODO@5g: why are d and w passed as arguments? params should contain these
 // gid node thread syn dict delay weight
 void
 nest::ConnectionBuilderManager::connect( index sgid,
@@ -569,6 +504,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
   }
 }
 
+// TODO@5g: remove; only used by deprecated connect functions
 // gid gid dict
 bool
 nest::ConnectionBuilderManager::connect( index sgid,
@@ -649,34 +585,9 @@ nest::ConnectionBuilderManager::connect( index sgid,
   return true;
 }
 
-/*
- Connection::Manager::connect() ***OUTDATED COMMENT***TODO@5g
-
- Here a short description of the logic of the following connect() methods
- (from a mail conversation between HEP and MH, 2013-07-03)
-
- 1. On the first line, conn is assigned from connections_[tid], may
- be 0.  It may be zero, if there is no outgoing connection from
- the neuron s_gid on this thread.  It will also create the sparse
- table for the specified thread tid, if it does not exist yet.
-
- 2. After the second line, c will contain a pointer to a
- ConnectorBase object, c will never be zero. The pointer address
- conn may be changed by add_connection, due to suicide.
- This possibly new pointer is returned and stored in c.
-
- 3. The third line inserts c into the same place where conn was
- taken from on the first line.  It stores the pointer conn in the
- sparse table, either overwriting the old value, if unequal 0, or
- creating a new entry.
-
-
- The parameters delay and weight have the default value NAN.
- NAN is a special value in cmath, which describes double values that
- are not a number. If delay or weight is omitted in an connect call,
- NAN indicates this and weight/delay are set only, if they are valid.
+/**
+ * The parameters delay and weight have the default value NAN.
  */
-
 void
 nest::ConnectionBuilderManager::connect_( Node& s,
   Node& r,
@@ -686,18 +597,10 @@ nest::ConnectionBuilderManager::connect_( Node& s,
   double_t d,
   double_t w )
 {
-  // see comment above for explanation ***OUTDATED***TODO@5g
-  // ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
-  // ConnectorBase* c =
-  //   kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection( s, r, conn, syn, d, w );
-  // connections_[ tid ].set( s_gid, c );
-
   kernel().model_manager.assert_valid_syn_id( syn );
-  // 
+
   kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection_5g(
     s, r, connections_5g_[ tid ], syn, d, w );
-
-  // we add the presynaptic neuron to the source table
   source_table_.add_source( tid, syn, s_gid );
 
   // TODO: set size of vv_num_connections in init
@@ -718,18 +621,10 @@ nest::ConnectionBuilderManager::connect_( Node& s,
   double_t d,
   double_t w )
 {
-  // see comment above for explanation ***OUTDATED***TODO@5g
-  // ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
-  // ConnectorBase* c =
-  //   kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection(
-  //     s, r, conn, syn, p, d, w );
-  // connections_[ tid ].set( s_gid, c );
-
   kernel().model_manager.assert_valid_syn_id( syn );
+
   kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection_5g(
     s, r, connections_5g_[ tid ], syn, p, d, w );
-
-  // we add the presynaptic neuron to the source table
   source_table_.add_source( tid, syn, s_gid );
 
   // TODO: set size of vv_num_connections in init
@@ -738,39 +633,6 @@ nest::ConnectionBuilderManager::connect_( Node& s,
     vv_num_connections_[ tid ].resize( syn + 1 );
   }
   ++vv_num_connections_[ tid ][ syn ];
-}
-
-/**
- * Works in a similar way to connect, same logic but removes a connection.
- * @param target target node
- * @param sgid id of the source
- * @param target_thread thread of the target
- * @param syn_id type of synapse
- */
-void
-nest::ConnectionBuilderManager::disconnect( Node& target,
-  index sgid,
-  thread target_thread,
-  index syn_id )
-{
-
-  if ( kernel().node_manager.is_local_gid( target.get_gid() ) )
-  {
-    // get the ConnectorBase corresponding to the source
-    ConnectorBase* conn = validate_pointer( validate_source_entry_( target_thread, sgid, syn_id ) );
-    ConnectorBase* c = kernel()
-                         .model_manager.get_synapse_prototype( syn_id, target_thread )
-                         .delete_connection( target, target_thread, conn, syn_id );
-    if ( c == 0 )
-    {
-      connections_[ target_thread ].erase( sgid );
-    }
-    else
-    {
-      connections_[ target_thread ].set( sgid, c );
-    }
-    --vv_num_connections_[ target_thread ][ syn_id ];
-  }
 }
 
 void
@@ -786,7 +648,7 @@ nest::ConnectionBuilderManager::connect_to_device_( Node& s,
 
   // create entries in connection structure for connections to devices
   target_table_devices_.add_connection_to_device( s, r, s_gid, tid, syn, d, w );
-  
+
   // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
   {
@@ -805,7 +667,17 @@ nest::ConnectionBuilderManager::connect_to_device_( Node& s,
   double_t d,
   double_t w )
 {
-  assert(false);
+  kernel().model_manager.assert_valid_syn_id( syn );
+
+  // create entries in connection structure for connections to devices
+  target_table_devices_.add_connection_to_device( s, r, s_gid, tid, syn, p, d, w );
+
+  // TODO: set size of vv_num_connections in init
+  if ( vv_num_connections_[ tid ].size() <= syn )
+  {
+    vv_num_connections_[ tid ].resize( syn + 1 );
+  }
+  ++vv_num_connections_[ tid ][ syn ];
 }
 
 void
@@ -817,18 +689,18 @@ nest::ConnectionBuilderManager::connect_from_device_( Node& s,
   double_t d,
   double_t w )
 {
-  kernel().model_manager.assert_valid_syn_id( syn );
+  kernel().model_manager.assert_valid_syn_id( syn ); // TODO@5g: move to connect(...)
 
   // create entries in connections vector of devices
   target_table_devices_.add_connection_from_device( s, r, s_gid, tid, syn, d, w );
 
+  // TODO@5g: move to connect(...)
   // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
   {
     vv_num_connections_[ tid ].resize( syn + 1 );
   }
   ++vv_num_connections_[ tid ][ syn ];
-
 }
 
 void
@@ -841,7 +713,52 @@ nest::ConnectionBuilderManager::connect_from_device_( Node& s,
   double_t d,
   double_t w )
 {
-    assert(false);
+  kernel().model_manager.assert_valid_syn_id( syn );
+
+  // create entries in connections vector of devices
+  target_table_devices_.add_connection_from_device( s, r, s_gid, tid, syn, p, d, w );
+
+  // TODO: set size of vv_num_connections in init
+  if ( vv_num_connections_[ tid ].size() <= syn )
+  {
+    vv_num_connections_[ tid ].resize( syn + 1 );
+  }
+  ++vv_num_connections_[ tid ][ syn ];
+}
+
+// TODO@5g: implement
+/**
+ * Works in a similar way to connect, same logic but removes a connection.
+ * @param target target node
+ * @param sgid id of the source
+ * @param target_thread thread of the target
+ * @param syn_id type of synapse
+ */
+void
+nest::ConnectionBuilderManager::disconnect( Node& target,
+  index sgid,
+  thread target_thread,
+  index syn_id )
+{
+  assert( false );
+
+  // if ( kernel().node_manager.is_local_gid( target.get_gid() ) )
+  // {
+  //   // get the ConnectorBase corresponding to the source
+  //   ConnectorBase* conn = validate_pointer( validate_source_entry_( target_thread, sgid, syn_id ) );
+  //   ConnectorBase* c = kernel()
+  //                        .model_manager.get_synapse_prototype( syn_id, target_thread )
+  //                        .delete_connection( target, target_thread, conn, syn_id );
+  //   if ( c == 0 )
+  //   {
+  //     connections_[ target_thread ].erase( sgid );
+  //   }
+  //   else
+  //   {
+  //     connections_[ target_thread ].set( sgid, c );
+  //   }
+  //   --vv_num_connections_[ target_thread ][ syn_id ];
+  // }
 }
 
 // -----------------------------------------------------------------------------
@@ -1264,23 +1181,6 @@ nest::ConnectionBuilderManager::connect( ArrayDatum& conns )
     }
   }
   return true;
-}
-
-nest::ConnectorBase*
-nest::ConnectionBuilderManager::validate_source_entry_( thread tid, index s_gid, synindex syn_id )
-{
-  kernel().model_manager.assert_valid_syn_id( syn_id );
-
-  // resize sparsetable to full network size
-  if ( connections_[ tid ].size() < kernel().node_manager.size() )
-    connections_[ tid ].resize( kernel().node_manager.size() );
-
-  // check, if entry exists
-  // if not put in zero pointer
-  if ( connections_[ tid ].test( s_gid ) )
-    return connections_[ tid ].get( s_gid );
-  else
-    return 0; // if non-existing
 }
 
 // -----------------------------------------------------------------------------
@@ -1707,60 +1607,62 @@ nest::ConnectionBuilderManager::trigger_update_weight( const long_t vt_id,
   const std::vector< spikecounter >& dopa_spikes,
   const double_t t_trig )
 {
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
-          it != connections_[ t ].nonempty_end();
-          ++it )
-      validate_pointer( *it )->trigger_update_weight(
-        vt_id, t, dopa_spikes, t_trig, kernel().model_manager.get_synapse_prototypes( t ) );
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    connections_5g_[ tid ]->trigger_update_weight(
+      vt_id, tid, dopa_spikes, t_trig, kernel().model_manager.get_synapse_prototypes( tid ) );
+  }
 }
 
+// TODO@5g: implement
 void
 nest::ConnectionBuilderManager::send( thread t, index sgid, Event& e )
 {
-  if ( sgid < connections_[ t ].size() ) // probably test only fails, if there are no connections
-  {
-    ConnectorBase* p = connections_[ t ].get( sgid );
-    if ( p != 0 ) // only send, if connections exist
-    {
-      // the two least significant bits of the pointer
-      // contain the information, whether there are
-      // primary and secondary connections behind
-      if ( has_primary( p ) )
-      {
-        // erase 2 least significant bits to obtain the correct pointer
-        validate_pointer( p )->send_to_all( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
-      }
-    }
-  }
+  assert( false );
+  // if ( sgid < connections_[ t ].size() ) // probably test only fails, if there are no connections
+  // {
+  //   ConnectorBase* p = connections_[ t ].get( sgid );
+  //   if ( p != 0 ) // only send, if connections exist
+  //   {
+  //     // the two least significant bits of the pointer
+  //     // contain the information, whether there are
+  //     // primary and secondary connections behind
+  //     if ( has_primary( p ) )
+  //     {
+  //       // erase 2 least significant bits to obtain the correct pointer
+  //       validate_pointer( p )->send_to_all( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
+  //     }
+  //   }
+  // }
 }
 
+// TODO@5g: implement
 void
 nest::ConnectionBuilderManager::send_secondary( thread t, SecondaryEvent& e )
 {
+  assert( false );
+  // index sgid = e.get_sender_gid();
 
-  index sgid = e.get_sender_gid();
+  // if ( sgid < connections_[ t ].size() ) // probably test only fails, if there are no connections
+  // {
+  //   ConnectorBase* p = connections_[ t ].get( sgid );
+  //   if ( p != 0 ) // only send, if connections exist
+  //   {
+  //     if ( has_secondary( p ) )
+  //     {
+  //       // erase 2 least significant bits to obtain the correct pointer
+  //       p = validate_pointer( p );
 
-  if ( sgid < connections_[ t ].size() ) // probably test only fails, if there are no connections
-  {
-    ConnectorBase* p = connections_[ t ].get( sgid );
-    if ( p != 0 ) // only send, if connections exist
-    {
-      if ( has_secondary( p ) )
-      {
-        // erase 2 least significant bits to obtain the correct pointer
-        p = validate_pointer( p );
-
-        if ( p->homogeneous_model() )
-        {
-          if ( e.supports_syn_id( p->get_syn_id() ) )
-            p->send_to_all( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
-        }
-        else
-          p->send_to_all_secondary( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
-      }
-    }
-  }
+  //       if ( p->homogeneous_model() )
+  //       {
+  //         if ( e.supports_syn_id( p->get_syn_id() ) )
+  //           p->send_to_all( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
+  //       }
+  //       else
+  //         p->send_to_all_secondary( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
+  //     }
+  //   }
+  // }
 }
 
 size_t
@@ -1791,60 +1693,63 @@ nest::ConnectionBuilderManager::get_num_connections( synindex syn_id ) const
   return num_connections;
 }
 
+// TODO@5g: implement
 ArrayDatum
 nest::ConnectionBuilderManager::get_connections( DictionaryDatum params ) const
 {
+  assert( false );
   ArrayDatum connectome;
 
-  const Token& source_t = params->lookup( names::source );
-  const Token& target_t = params->lookup( names::target );
-  const Token& syn_model_t = params->lookup( names::synapse_model );
-  const TokenArray* source_a = 0;
-  const TokenArray* target_a = 0;
-  long_t synapse_label = UNLABELED_CONNECTION;
-  updateValue< long_t >( params, names::synapse_label, synapse_label );
+//   const Token& source_t = params->lookup( names::source );
+//   const Token& target_t = params->lookup( names::target );
+//   const Token& syn_model_t = params->lookup( names::synapse_model );
+//   const TokenArray* source_a = 0;
+//   const TokenArray* target_a = 0;
+//   long_t synapse_label = UNLABELED_CONNECTION;
+//   updateValue< long_t >( params, names::synapse_label, synapse_label );
 
-  if ( not source_t.empty() )
-    source_a = dynamic_cast< TokenArray const* >( source_t.datum() );
-  if ( not target_t.empty() )
-    target_a = dynamic_cast< TokenArray const* >( target_t.datum() );
+//   if ( not source_t.empty() )
+//     source_a = dynamic_cast< TokenArray const* >( source_t.datum() );
+//   if ( not target_t.empty() )
+//     target_a = dynamic_cast< TokenArray const* >( target_t.datum() );
 
-  size_t syn_id = 0;
+//   size_t syn_id = 0;
 
-#ifdef _OPENMP
-  std::string msg;
-  msg =
-    String::compose( "Setting OpenMP num_threads to %1.", kernel().vp_manager.get_num_threads() );
-  LOG( M_DEBUG, "ConnectionManager::get_connections", msg );
-  omp_set_num_threads( kernel().vp_manager.get_num_threads() );
-#endif
+// #ifdef _OPENMP
+//   std::string msg;
+//   msg =
+//     String::compose( "Setting OpenMP num_threads to %1.", kernel().vp_manager.get_num_threads() );
+//   LOG( M_DEBUG, "ConnectionManager::get_connections", msg );
+//   omp_set_num_threads( kernel().vp_manager.get_num_threads() );
+// #endif
 
-  // First we check, whether a synapse model is given.
-  // If not, we will iterate all.
-  if ( not syn_model_t.empty() )
-  {
-    Name synmodel_name = getValue< Name >( syn_model_t );
-    const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-    if ( !synmodel.empty() )
-      syn_id = static_cast< size_t >( synmodel );
-    else
-      throw UnknownModelName( synmodel_name.toString() );
-    get_connections( connectome, source_a, target_a, syn_id, synapse_label );
-  }
-  else
-  {
-    for ( syn_id = 0; syn_id < kernel().model_manager.get_num_synapse_prototypes(); ++syn_id )
-    {
-      ArrayDatum conn;
-      get_connections( conn, source_a, target_a, syn_id, synapse_label );
-      if ( conn.size() > 0 )
-        connectome.push_back( new ArrayDatum( conn ) );
-    }
-  }
+//   // First we check, whether a synapse model is given.
+//   // If not, we will iterate all.
+//   if ( not syn_model_t.empty() )
+//   {
+//     Name synmodel_name = getValue< Name >( syn_model_t );
+//     const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
+//     if ( !synmodel.empty() )
+//       syn_id = static_cast< size_t >( synmodel );
+//     else
+//       throw UnknownModelName( synmodel_name.toString() );
+//     get_connections( connectome, source_a, target_a, syn_id, synapse_label );
+//   }
+//   else
+//   {
+//     for ( syn_id = 0; syn_id < kernel().model_manager.get_num_synapse_prototypes(); ++syn_id )
+//     {
+//       ArrayDatum conn;
+//       get_connections( conn, source_a, target_a, syn_id, synapse_label );
+//       if ( conn.size() > 0 )
+//         connectome.push_back( new ArrayDatum( conn ) );
+//     }
+//   }
 
-  return connectome;
+   return connectome;
 }
 
+// TODO@5g: implement
 void
 nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
   TokenArray const* source,
@@ -1852,228 +1757,233 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
   size_t syn_id,
   long_t synapse_label ) const
 {
-  size_t num_connections = get_num_connections( syn_id );
-
-  connectome.reserve( num_connections );
-
-  if ( source == 0 and target == 0 )
-  {
-#ifdef _OPENMP
-#pragma omp parallel
-    {
-      thread t = kernel().vp_manager.get_thread_id();
-#else
-    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
-#endif
-      ArrayDatum conns_in_thread;
-      size_t num_connections_in_thread = 0;
-      // Count how many connections we will have.
-      for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
-            it != connections_[ t ].nonempty_end();
-            ++it )
-      {
-        num_connections_in_thread += validate_pointer( *it )->get_num_connections();
-      }
-
-#ifdef _OPENMP
-#pragma omp critical( get_connections )
-#endif
-      conns_in_thread.reserve( num_connections_in_thread );
-      for ( index source_id = 1; source_id < connections_[ t ].size(); ++source_id )
-      {
-        if ( connections_[ t ].get( source_id ) != 0 )
-          validate_pointer( connections_[ t ].get( source_id ) )
-            ->get_connections( source_id, t, syn_id, synapse_label, conns_in_thread );
-      }
-      if ( conns_in_thread.size() > 0 )
-      {
-#ifdef _OPENMP
-#pragma omp critical( get_connections )
-#endif
-        connectome.append_move( conns_in_thread );
-      }
-    }
-
-    return;
-  }
-  else if ( source == 0 and target != 0 )
-  {
-#ifdef _OPENMP
-#pragma omp parallel
-    {
-      thread t = kernel().vp_manager.get_thread_id();
-#else
-    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
-#endif
-      ArrayDatum conns_in_thread;
-      size_t num_connections_in_thread = 0;
-      // Count how many connections we will have maximally.
-      for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
-            it != connections_[ t ].nonempty_end();
-            ++it )
-      {
-        num_connections_in_thread += validate_pointer( *it )->get_num_connections();
-      }
-
-#ifdef _OPENMP
-#pragma omp critical( get_connections )
-#endif
-      conns_in_thread.reserve( num_connections_in_thread );
-      for ( index source_id = 1; source_id < connections_[ t ].size(); ++source_id )
-      {
-        if ( validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
-        {
-          for ( index t_id = 0; t_id < target->size(); ++t_id )
-          {
-            size_t target_id = target->get( t_id );
-            validate_pointer( connections_[ t ].get( source_id ) )
-              ->get_connections( source_id, target_id, t, syn_id, synapse_label, conns_in_thread );
-          }
-        }
-      }
-      if ( conns_in_thread.size() > 0 )
-      {
-#ifdef _OPENMP
-#pragma omp critical( get_connections )
-#endif
-        connectome.append_move( conns_in_thread );
-      }
-    }
-    return;
-  }
-  else if ( source != 0 )
-  {
-#ifdef _OPENMP
-#pragma omp parallel
-    {
-      size_t t = kernel().vp_manager.get_thread_id();
-#else
-    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
-#endif
-      ArrayDatum conns_in_thread;
-      size_t num_connections_in_thread = 0;
-      // Count how many connections we will have maximally.
-      for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
-            it != connections_[ t ].nonempty_end();
-            ++it )
-      {
-        num_connections_in_thread += validate_pointer( *it )->get_num_connections();
-      }
-
-#ifdef _OPENMP
-#pragma omp critical( get_connections )
-#endif
-      conns_in_thread.reserve( num_connections_in_thread );
-      for ( index s = 0; s < source->size(); ++s )
-      {
-        size_t source_id = source->get( s );
-        if ( source_id < connections_[ t ].size()
-          && validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
-        {
-          if ( target == 0 )
-          {
-            validate_pointer( connections_[ t ].get( source_id ) )
-              ->get_connections( source_id, t, syn_id, synapse_label, conns_in_thread );
-          }
-          else
-          {
-            for ( index t_id = 0; t_id < target->size(); ++t_id )
-            {
-              size_t target_id = target->get( t_id );
-              validate_pointer( connections_[ t ].get( source_id ) )
-                ->get_connections(
-                  source_id, target_id, t, syn_id, synapse_label, conns_in_thread );
-            }
-          }
-        }
-      }
-
-      if ( conns_in_thread.size() > 0 )
-      {
-#ifdef _OPENMP
-#pragma omp critical( get_connections )
-#endif
-        connectome.append_move( conns_in_thread );
-      }
-    }
-    return;
-  } // else
+  assert( false );
+//   size_t num_connections = get_num_connections( syn_id );
+//
+//   connectome.reserve( num_connections );
+//
+//   if ( source == 0 and target == 0 )
+//   {
+// #ifdef _OPENMP
+// #pragma omp parallel
+//     {
+//       thread t = kernel().vp_manager.get_thread_id();
+// #else
+//     for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+//     {
+// #endif
+//       ArrayDatum conns_in_thread;
+//       size_t num_connections_in_thread = 0;
+//       // Count how many connections we will have.
+//       for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
+//             it != connections_[ t ].nonempty_end();
+//             ++it )
+//       {
+//         num_connections_in_thread += validate_pointer( *it )->get_num_connections();
+//       }
+//
+// #ifdef _OPENMP
+// #pragma omp critical( get_connections )
+// #endif
+//       conns_in_thread.reserve( num_connections_in_thread );
+//       for ( index source_id = 1; source_id < connections_[ t ].size(); ++source_id )
+//       {
+//         if ( connections_[ t ].get( source_id ) != 0 )
+//           validate_pointer( connections_[ t ].get( source_id ) )
+//             ->get_connections( source_id, t, syn_id, synapse_label, conns_in_thread );
+//       }
+//       if ( conns_in_thread.size() > 0 )
+//       {
+// #ifdef _OPENMP
+// #pragma omp critical( get_connections )
+// #endif
+//         connectome.append_move( conns_in_thread );
+//       }
+//     }
+//
+//     return;
+//   }
+//   else if ( source == 0 and target != 0 )
+//   {
+// #ifdef _OPENMP
+// #pragma omp parallel
+//     {
+//       thread t = kernel().vp_manager.get_thread_id();
+// #else
+//     for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+//     {
+// #endif
+//       ArrayDatum conns_in_thread;
+//       size_t num_connections_in_thread = 0;
+//       // Count how many connections we will have maximally.
+//       for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
+//             it != connections_[ t ].nonempty_end();
+//             ++it )
+//       {
+//         num_connections_in_thread += validate_pointer( *it )->get_num_connections();
+//       }
+//
+// #ifdef _OPENMP
+// #pragma omp critical( get_connections )
+// #endif
+//       conns_in_thread.reserve( num_connections_in_thread );
+//       for ( index source_id = 1; source_id < connections_[ t ].size(); ++source_id )
+//       {
+//         if ( validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
+//         {
+//           for ( index t_id = 0; t_id < target->size(); ++t_id )
+//           {
+//             size_t target_id = target->get( t_id );
+//             validate_pointer( connections_[ t ].get( source_id ) )
+//               ->get_connections( source_id, target_id, t, syn_id, synapse_label, conns_in_thread );
+//           }
+//         }
+//       }
+//       if ( conns_in_thread.size() > 0 )
+//       {
+// #ifdef _OPENMP
+// #pragma omp critical( get_connections )
+// #endif
+//         connectome.append_move( conns_in_thread );
+//       }
+//     }
+//     return;
+//   }
+//   else if ( source != 0 )
+//   {
+// #ifdef _OPENMP
+// #pragma omp parallel
+//     {
+//       size_t t = kernel().vp_manager.get_thread_id();
+// #else
+//     for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+//     {
+// #endif
+//       ArrayDatum conns_in_thread;
+//       size_t num_connections_in_thread = 0;
+//       // Count how many connections we will have maximally.
+//       for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
+//             it != connections_[ t ].nonempty_end();
+//             ++it )
+//       {
+//         num_connections_in_thread += validate_pointer( *it )->get_num_connections();
+//       }
+//
+// #ifdef _OPENMP
+// #pragma omp critical( get_connections )
+// #endif
+//       conns_in_thread.reserve( num_connections_in_thread );
+//       for ( index s = 0; s < source->size(); ++s )
+//       {
+//         size_t source_id = source->get( s );
+//         if ( source_id < connections_[ t ].size()
+//           && validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
+//         {
+//           if ( target == 0 )
+//           {
+//             validate_pointer( connections_[ t ].get( source_id ) )
+//               ->get_connections( source_id, t, syn_id, synapse_label, conns_in_thread );
+//           }
+//           else
+//           {
+//             for ( index t_id = 0; t_id < target->size(); ++t_id )
+//             {
+//               size_t target_id = target->get( t_id );
+//               validate_pointer( connections_[ t ].get( source_id ) )
+//                 ->get_connections(
+//                   source_id, target_id, t, syn_id, synapse_label, conns_in_thread );
+//             }
+//           }
+//         }
+//       }
+//
+//       if ( conns_in_thread.size() > 0 )
+//       {
+// #ifdef _OPENMP
+// #pragma omp critical( get_connections )
+// #endif
+//         connectome.append_move( conns_in_thread );
+//       }
+//     }
+//     return;
+//   } // else
 }
 
 
+// TODO@5g: implement
 void
 nest::ConnectionBuilderManager::get_sources( std::vector< index > targets,
   std::vector< std::vector< index > >& sources,
   index synapse_model )
 {
-  thread thread_id;
-  index source_gid;
-  std::vector< std::vector< index > >::iterator source_it;
-  std::vector< index >::iterator target_it;
-  size_t num_connections;
-
-  sources.resize( targets.size() );
-  for ( std::vector< std::vector< index > >::iterator i = sources.begin(); i != sources.end(); i++ )
-  {
-    ( *i ).clear();
-  }
-
-  // loop over the threads
-  for ( tVSConnector::iterator it = connections_.begin(); it != connections_.end(); ++it )
-  {
-    thread_id = it - connections_.begin();
-    // loop over the sources (return the corresponding ConnectorBase)
-    for ( tSConnector::nonempty_iterator iit = it->nonempty_begin(); iit != it->nonempty_end();
-          ++iit )
-    {
-      source_gid = connections_[ thread_id ].get_pos( iit );
-
-      // loop over the targets/sources
-      source_it = sources.begin();
-      target_it = targets.begin();
-      for ( ; target_it != targets.end(); target_it++, source_it++ )
-      {
-        num_connections =
-          validate_pointer( *iit )->get_num_connections( *target_it, thread_id, synapse_model );
-        for ( size_t c = 0; c < num_connections; c++ )
-        {
-          ( *source_it ).push_back( source_gid );
-        }
-      }
-    }
-  }
+  assert( false );
+  // thread thread_id;
+  // index source_gid;
+  // std::vector< std::vector< index > >::iterator source_it;
+  // std::vector< index >::iterator target_it;
+  // size_t num_connections;
+  //
+  // sources.resize( targets.size() );
+  // for ( std::vector< std::vector< index > >::iterator i = sources.begin(); i != sources.end(); i++ )
+  // {
+  //   ( *i ).clear();
+  // }
+  //
+  // // loop over the threads
+  // for ( tVSConnector::iterator it = connections_.begin(); it != connections_.end(); ++it )
+  // {
+  //   thread_id = it - connections_.begin();
+  //   // loop over the sources (return the corresponding ConnectorBase)
+  //   for ( tSConnector::nonempty_iterator iit = it->nonempty_begin(); iit != it->nonempty_end();
+  //         ++iit )
+  //   {
+  //     source_gid = connections_[ thread_id ].get_pos( iit );
+  //
+  //     // loop over the targets/sources
+  //     source_it = sources.begin();
+  //     target_it = targets.begin();
+  //     for ( ; target_it != targets.end(); target_it++, source_it++ )
+  //     {
+  //       num_connections =
+  //         validate_pointer( *iit )->get_num_connections( *target_it, thread_id, synapse_model );
+  //       for ( size_t c = 0; c < num_connections; c++ )
+  //       {
+  //         ( *source_it ).push_back( source_gid );
+  //       }
+  //     }
+  //   }
+  // }
 }
 
+// TODO@5g: implement
 void
 nest::ConnectionBuilderManager::get_targets( std::vector< index > sources,
   std::vector< std::vector< index > >& targets,
   index synapse_model )
 {
-  thread thread_id;
-  std::vector< index >::iterator source_it;
-  std::vector< std::vector< index > >::iterator target_it;
-  targets.resize( sources.size() );
-  for ( std::vector< std::vector< index > >::iterator i = targets.begin(); i != targets.end(); i++ )
-  {
-    ( *i ).clear();
-  }
-
-  for ( tVSConnector::iterator it = connections_.begin(); it != connections_.end(); ++it )
-  {
-    thread_id = it - connections_.begin();
-    // loop over the targets/sources
-    source_it = sources.begin();
-    target_it = targets.begin();
-    for ( ; source_it != sources.end(); source_it++, target_it++ )
-    {
-      if ( ( *it ).get( *source_it ) != 0 )
-      {
-        validate_pointer( ( *it ).get( *source_it ) )
-          ->get_target_gids( ( *target_it ), thread_id, synapse_model );
-      }
-    }
-  }
+  assert( false );
+  // thread thread_id;
+  // std::vector< index >::iterator source_it;
+  // std::vector< std::vector< index > >::iterator target_it;
+  // targets.resize( sources.size() );
+  // for ( std::vector< std::vector< index > >::iterator i = targets.begin(); i != targets.end(); i++ )
+  // {
+  //   ( *i ).clear();
+  // }
+  //
+  // for ( tVSConnector::iterator it = connections_.begin(); it != connections_.end(); ++it )
+  // {
+  //   thread_id = it - connections_.begin();
+  //   // loop over the targets/sources
+  //   source_it = sources.begin();
+  //   target_it = targets.begin();
+  //   for ( ; source_it != sources.end(); source_it++, target_it++ )
+  //   {
+  //     if ( ( *it ).get( *source_it ) != 0 )
+  //     {
+  //       validate_pointer( ( *it ).get( *source_it ) )
+  //         ->get_target_gids( ( *target_it ), thread_id, synapse_model );
+  //     }
+  //   }
+  // }
 }

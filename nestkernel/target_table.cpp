@@ -86,6 +86,11 @@ nest::TargetTable::get_next_spike_data( const thread tid, const thread current_t
       // reached the end of the target vector for this node, so we
       // reset the current_target_index and return false.
       current_target_index_[ tid ] = 0;
+      for (std::vector< Target >::iterator it = (*targets_[ current_tid ])[lid].begin();
+           it != (*targets_[ current_tid ])[lid].end(); ++it )
+      {
+        it->processed = false;
+      }
       return false;
     }
     else

@@ -29,7 +29,6 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-#include "sparsetable.h"
 
 // Includes from nestkernel:
 #include "conn_builder.h"
@@ -60,9 +59,7 @@ class DelayChecker;
 class GrowthCurve;
 struct SpikeData;
 
-typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons having targets
-typedef std::vector< tSConnector > tVSConnector;           // for all threads
-
+// TODO@5g: remove tV etc.
 typedef std::vector< DelayChecker > tVDelayChecker; // each thread checks delays themselve
 
 typedef std::vector< size_t > tVCounter;     // each synapse type has a counter
@@ -377,12 +374,13 @@ private:
   const Time get_max_delay_time_() const;
 
   /**
-   * Deletes all connections and also frees the PMA.
+   * Deletes all connections.
    */
-  void delete_connections_();
-
   void delete_connections_5g_();
 
+  /**
+   * TODO@5g: add documentation
+   */
   ConnectorBase* validate_source_entry_( thread tid, index s_gid, synindex syn_id );
 
   /**
@@ -486,15 +484,6 @@ private:
     DictionaryDatum& p,
     double_t d = NAN,
     double_t w = NAN );
-
-  /**
-   * A 3-dim structure to hold the Connector objects which in turn hold the connection
-   * information.
-   * - First dim: A std::vector for each local thread
-   * - Second dim: A std::vector for each node on each thread
-   * - Third dim: A std::vector for each synapse prototype, holding the Connector objects
-   */
-  tVSConnector connections_;
 
   /** A structure to hold the Connector objects which in turn hold the
    * connection information. Corresponds to a three dimensional

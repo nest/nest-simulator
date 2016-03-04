@@ -138,9 +138,6 @@ public:
   // returns id of synapse type
   virtual synindex get_syn_id() const = 0;
 
-  // returns true, if all synapse models are of same type
-  virtual bool homogeneous_model() = 0;
-
   double_t
   get_t_lastspike() const
   {
@@ -360,40 +357,24 @@ public:
   {
     return C_[ 0 ].get_syn_id();
   }
-
-  bool
-  homogeneous_model()
-  {
-    return true;
-  }
 };
 
-// heterogeneous connector containing different types of synapses
-// each entry is of type connectorbase, so in principle the structure could be
-// nested indefinitely
-// the logic in add_connection, however, assumes that these entries are
-// homogeneous connectors
+// heterogeneous connector containing different types of synapses is a
+// vector of homogeneous connectors
 class HetConnector : public std::vector< ConnectorBase* >, public ConnectorBase
 {
-private:
-  synindex
-    primary_end_; // index of first secondary connector contained in the heterogeneous connector
-
 public:
   HetConnector()
     : std::vector< ConnectorBase* >( 0 )
-    , primary_end_( 0 )
   {
   }
 
   virtual ~HetConnector()
   {
     for ( size_t i = 0; i < size(); i++ )
-#ifdef USE_PMA
-      at( i )->~ConnectorBase();
-#else
+    {
       delete at( i );
-#endif
+    }
   }
 
   void
@@ -487,10 +468,12 @@ public:
   void
   send_to_all( Event& e, thread tid, const std::vector< ConnectorModel* >& cm )
   {
-    // for all delegate send to homogeneous connectors
-    for ( size_t i = 0; i < primary_end_; i++ )
+    // only called for events from or to devices. can not contain
+    // secondary-event connections, so we can delegate send to
+    // homogeneous connectors for all connections
+    for ( std::vector< ConnectorBase* >::iterator it = begin(); it != end(); ++it )
     {
-      at( i )->send_to_all( e, tid, cm );
+      (*it)->send_to_all( e, tid, cm );
     }
   }
 
@@ -505,16 +488,18 @@ public:
       at( i )->trigger_update_weight( vt_gid, t, dopa_spikes, t_trig, cm );
   }
 
+  // TODO@5g: can probably be removed
   void
   send_to_all_secondary( SecondaryEvent& e, thread t, const std::vector< ConnectorModel* >& cm )
   {
-    // for all secondary connections delegate send to the matching homogeneous connector only
-    for ( size_t i = primary_end_; i < size(); i++ )
-      if ( e.supports_syn_id( at( i )->get_syn_id() ) )
-      {
-        at( i )->send_to_all( e, t, cm );
-        break;
-      }
+    assert( false );
+    // // for all secondary connections delegate send to the matching homogeneous connector only
+    // for ( size_t i = primary_end_; i < size(); i++ )
+    //   if ( e.supports_syn_id( at( i )->get_syn_id() ) )
+    //   {
+    //     at( i )->send_to_all( e, t, cm );
+    //     break;
+    //   }
   }
 
   // returns id of synapse type
@@ -524,33 +509,21 @@ public:
     return invalid_synindex;
   }
 
-  // returns true, if all synapse models are of same type
-  bool
-  homogeneous_model()
-  {
-    return false;
-  }
-
+  // TODO@5g: can probably be removed
   void
   add_connector( bool is_primary, ConnectorBase* conn )
   {
-    if ( is_primary )
-    {
-      insert( begin() + primary_end_,
-        conn ); // if empty, insert (begin(), conn) inserts into the first position
-      ++primary_end_;
-    }
-    else
-    {
-      push_back( conn );
-    }
-  }
-
-  // currently this is only a dummy implementation, need to be updated to support gap junctions TODO@5g
-  void
-  add_connector_5g()
-  {
-    ++primary_end_;
+    assert( false );
+    // if ( is_primary )
+    // {
+    //   insert( begin() + primary_end_,
+    //     conn ); // if empty, insert (begin(), conn) inserts into the first position
+    //   ++primary_end_;
+    // }
+    // else
+    // {
+    //   push_back( conn );
+    // }
   }
 
   // we check whether an entry with this synapse id already exists in

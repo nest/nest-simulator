@@ -70,10 +70,7 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
     else
     {
       send_remote( tid, e, lag );
-      for ( int_t i = 0; i < e.get_multiplicity(); ++i )
-      {
-        kernel().connection_builder_manager.send_to_devices( tid, s_gid, e );
-      }
+      kernel().connection_builder_manager.send_to_devices( tid, s_gid, e );
     }
   }
   else

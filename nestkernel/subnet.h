@@ -82,6 +82,10 @@ public:
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
 
+  // subnet does not require local id; needs to be defined here to
+  // avoid exception in node_manager::add_node
+  void set_local_device_id( const index ldid ){};
+
   bool has_proxies() const;
 
   size_t global_size() const; //!< Returns total number of children.

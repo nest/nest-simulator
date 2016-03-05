@@ -48,6 +48,10 @@ libmodelsmodule_la_SOURCES= \
 		iaf_psc_delta.h iaf_psc_delta.cpp\
 		iaf_psc_exp.h iaf_psc_exp.cpp\
 		iaf_tum_2000.h iaf_tum_2000.cpp\
+		gif_psc_exp.h gif_psc_exp.cpp\
+		gif_psc_exp_multisynapse.h gif_psc_exp_multisynapse.cpp\
+		gif_cond_exp.h gif_cond_exp.cpp\
+		gif_cond_exp_multisynapse.h gif_cond_exp_multisynapse.cpp\
 		izhikevich.h izhikevich.cpp\
 		mat2_psc_exp.h mat2_psc_exp.cpp\
 		mcculloch_pitts_neuron.h mcculloch_pitts_neuron.cpp\

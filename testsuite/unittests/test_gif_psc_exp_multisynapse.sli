@@ -1,0 +1,86 @@
+/*
+ *  test_gif_psc_exp_multisynapse.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /* BeginDocumentation
+Name: testsuite::test_gif_psc_exp_multisynapse - sli script for test of gif_psc_exp_multisynapse with external DC current and spike generators
+
+Synopsis: (test_gif_psc_exp_multisynapse) run
+
+
+Description:
+
+ This testscript checks the correctness of gif_psc_exp_multisynapse neuron model. It injects external DC current and also three spikes to the neuron model and measures neuron's spike times. The spike times should match the expected values.
+
+Author:  March 2016, Setareh
+SeeAlso: gif_psc_exp_multisynapse, testsuite::test_gif_psc_exp
+*/
+
+(unittest) run
+/unittest using
+
+0.1 /h Set
+
+ResetKernel
+
+0 << 
+      /local_num_threads 1 
+      /resolution h
+      /grng_seed 0
+      /rng_seeds [0]
+    >> SetStatus
+
+
+/gif_psc_exp_multisynapse Create /neuron Set
+neuron << /taus_syn[30.0] /tau_sfa [120.0] /q_sfa [20.0] /tau_stc [10.0] /q_stc [20.0] >> SetStatus
+
+/spike_generator Create /sg Set
+sg << /spike_times [10.0 20.0 30.0]>> SetStatus
+
+/dc_generator Create /dc_gen Set
+dc_gen <<  /amplitude 150. >> SetStatus
+
+/spike_detector Create /sd Set
+sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
+
+dc_gen neuron 1.0 h Connect
+neuron sd Connect
+
+sg neuron << /weight 50.0 /receptor_type 1 >> Connect
+
+250.0 Simulate
+
+
+sd GetStatus /events get /times get /spikes Set
+
+%The neuron should fire spikes at 22.9, 55.6 and 204.6 ms
+229  /t1  Set
+556  /t2  Set
+2046 /t3  Set
+
+spikes size 3 eq assert_or_die
+
+{} forall
+t3 eq rot
+t2 eq rot
+t1 eq and and
+
+assert_or_die

@@ -255,8 +255,12 @@ extern const Name PSC_adapt_step;        //!< PSC increment (current homeostasis
 extern const Name PSC_Unit_amplitude;    //!< Scaling of PSC (current homeostasis)
 extern const Name published;             //!< Parameters for MUSIC devices
 
-extern const Name q_rr;  //!< Other adaptation
-extern const Name q_sfa; //!< Other adaptation
+extern const Name q_rr;                  //!< Other adaptation
+extern const Name q_sfa;                 //!< Other adaptation
+extern const Name q_stc;                 // Specific to gif models
+
+extern const Name v_t_star;              // Specific to gif models
+
 
 extern const Name rate;                 //!< Specific to ppd_sup_generator and gamma_sup_generator
 extern const Name receptor_type;        //!< Connection parameters
@@ -331,6 +335,7 @@ extern const Name tau_recs;          //!< time constant for recovery (ms) (prope
 extern const Name tau_reset;         //!< Specific to iaf_chs_2008 neuron
 extern const Name tau_rr;            //!< Other adaptation
 extern const Name tau_sfa;           //!< Other adaptation
+extern const Name tau_stc;           //!< Specific to gif models
 extern const Name tau_syn;           //!< Synapse time constant
 extern const Name tau_syn_ex;        //!< Excitatory synaptic time constant
 extern const Name tau_syn_in;        //!< Inhibitory synaptic time constant

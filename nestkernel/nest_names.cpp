@@ -234,6 +234,9 @@ const Name published( "published" );
 
 const Name q_rr( "q_rr" );
 const Name q_sfa( "q_sfa" );
+const Name q_stc( "q_stc" );
+
+const Name v_t_star( "v_t_star" );	
 
 const Name rate( "rate" );
 const Name receptor_type( "receptor_type" );
@@ -303,6 +306,7 @@ const Name tau_recs( "tau_recs" );
 const Name tau_reset( "tau_reset" );
 const Name tau_rr( "tau_rr" );
 const Name tau_sfa( "tau_sfa" );
+const Name tau_stc( "tau_stc" );
 const Name tau_syn( "tau_syn" );
 const Name tau_syn_ex( "tau_syn_ex" );
 const Name tau_syn_in( "tau_syn_in" );

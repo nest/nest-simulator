@@ -1,3 +1,7 @@
+"""
+Functions to get information on NEST.
+"""
+
 # -*- coding: utf-8 -*-
 #
 # hl_api_info.py
@@ -19,88 +23,108 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Functions to get information on NEST.
-"""
-
 from .hl_api_helper import *
+
 
 @check_stack
 def sysinfo():
-    """
-    Print information on the platform on which NEST was compiled.
-    """
+    """Print information on the platform on which NEST was compiled."""
 
     sr("sysinfo")
 
 
 @check_stack
 def version():
-    """
-    Return the NEST version.
+    """Return the NEST version.
+
+    Returns
+    -------
+    str:
+        The version of NEST.
     """
 
     sr("statusdict [[ /kernelname /version ]] get")
     return " ".join(spp())
-    
+
 
 @check_stack
 def authors():
-    """
-    Print the authors of NEST.
-    """
+    """Print the authors of NEST."""
 
     sr("authors")
 
 
 @check_stack
 def helpdesk(browser="firefox"):
+    """Open the NEST helpdesk in the given browser.
+
+    The default browser is firefox.
+
+    Parameters
+    ----------
+    browser : str, optional
+        Name of the browser to use
     """
-    Open the NEST helpdesk in the given browser. The default browser is firefox.
-    """
-    
+
     sr("/helpdesk << /command (%s) >> SetOptions" % browser)
     sr("helpdesk")
 
 
 @check_stack
 def help(obj=None, pager="less"):
-    """
-    Show the help page for the given object using the given pager. The
-    default pager is less.
+    """Show the help page for the given object using the given pager.
+
+    The default pager is less.
+
+    Parameters
+    ----------
+    obj : object, optional
+        Object to display help for
+    pager : str, optional
+        Pager to use
     """
 
     if obj is not None:
         sr("/page << /command (%s) >> SetOptions" % pager)
         sr("/%s help" % obj)
     else:
-        print("Type 'nest.helpdesk()' to access the online documentation in a browser.")
-        print("Type 'nest.help(object)' to get help on a NEST object or command.")
-        print()
-        print("Type 'nest.Models()' to see a list of available models in NEST.")
-        print()
-        print("Type 'nest.authors()' for information about the makers of NEST.")
-        print("Type 'nest.sysinfo()' to see details on the system configuration.")
-        print("Type 'nest.version()' for information about the NEST version.")
-        print()
+        print("Type 'nest.helpdesk()' to access the online documentation "
+              "in a browser.")
+        print("Type 'nest.help(object)' to get help on a NEST object or "
+              "command.\n")
+        print("Type 'nest.Models()' to see a list of available models "
+              "in NEST.\n")
+        print("Type 'nest.authors()' for information about the makers "
+              "of NEST.")
+        print("Type 'nest.sysinfo()' to see details on the system "
+              "configuration.")
+        print("Type 'nest.version()' for information about the NEST "
+              "version.\n")
         print("For more information visit http://www.nest-simulator.org.")
 
 
 @check_stack
 def get_verbosity():
+    """Return verbosity level of NEST's messages.
+
+    Returns
+    -------
+    int:
+        The current verbosity level
     """
-    Return verbosity level of NEST's messages.
-    """
-    
+
     sr('verbosity')
     return spp()
 
 
 @check_stack
 def set_verbosity(level):
-    """
-    Change verbosity level for NEST's messages. level is a string and
-    can be one of M_FATAL, M_ERROR, M_WARNING, or M_INFO.
+    """Change verbosity level for NEST's messages.
+
+    Parameters
+    ----------
+    level : str
+        Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', or 'M_INFO'.
     """
 
     sr("%s setverbosity" % level)
@@ -108,19 +132,33 @@ def set_verbosity(level):
 
 @check_stack
 def get_argv():
+    """Return argv as seen by NEST.
+
+    This is similar to Python sys.argv but might have changed after
+    MPI initialization.
+
+    Returns
+    -------
+    tuple:
+        Argv, as seen by NEST.
     """
-    Return argv as seen by NEST. This is similar to Python sys.argv
-    but might have changed after MPI initialization.
-    """
-    sr ('statusdict')
-    statusdict = spp ()
+    sr('statusdict')
+    statusdict = spp()
     return statusdict['argv']
 
 
 @check_stack
-def message(level,sender,text):
-    """
-    Print a message using NEST's message system.
+def message(level, sender, text):
+    """Print a message using NEST's message system.
+
+    Parameters
+    ----------
+    level :
+        Level
+    sender :
+        Message sender
+    text : str
+        Text to be sent in the message
     """
 
     sps(level)
@@ -131,13 +169,28 @@ def message(level,sender,text):
 
 @check_stack
 def SetStatus(nodes, params, val=None):
-    """
-    Set the parameters of nodes (identified by global ids) or
-    connections (identified by handles as returned by
-    GetConnections()) to params, which may be a single dictionary or a
-    list of dictionaries. If val is given, params has to be the name
+    """Set the parameters of nodes or connections to params.
+
+    If val is given, params has to be the name
     of an attribute, which is set to val on the nodes/connections. val
     can be a single value or a list of the same size as nodes.
+
+    Parameters
+    ----------
+    nodes : list or tuple
+        Either a list of global ids of nodes, or a tuple of connection
+        handles as returned by GetConnections()
+    params : str or dict or list
+        Dictionary of parameters or list of dictionaries of parameters of
+        same length as nodes. If val is given, this has to be the name of
+        a model property as a str.
+    val : str, optional
+        If given, params has to be the name of a model property.
+
+    Raises
+    ------
+    TypeError
+        Description
     """
 
     if not is_coercible_to_sli_array(nodes):
@@ -159,7 +212,9 @@ def SetStatus(nodes, params, val=None):
 
     params = broadcast(params, len(nodes), (dict,), "params")
     if len(nodes) != len(params):
-        raise TypeError("status dict must be a dict, or list of dicts of length 1 or len(nodes)")
+        raise TypeError(
+            "status dict must be a dict, or list of dicts of length 1 "
+            "or len(nodes)")
 
     if is_sequence_of_connections(nodes):
         pcd(nodes)
@@ -173,12 +228,35 @@ def SetStatus(nodes, params, val=None):
 
 @check_stack
 def GetStatus(nodes, keys=None):
-    """
-    Return the parameter dictionaries of the given list of nodes
-    (identified by global ids) or connections (identified
-    by handles as returned by GetConnections()). If keys is given, a
-    list of values is returned instead. keys may also be a list, in
-    which case the returned list contains lists of values.
+    """Return the parameter dictionaries of nodes or connections.
+
+    If keys is given, a list of values is returned instead. keys may also be a
+    list, in which case the returned list contains lists of values.
+
+    Parameters
+    ----------
+    nodes : list or tuple
+        Either a list of global ids of nodes, or a tuple of connection
+        handles as returned by GetConnections()
+    keys : str or list, optional
+        String or a list of strings naming model properties. GetDefaults then
+        returns a single value or a list of values belonging to the keys
+        given.
+
+    Returns
+    -------
+    dict:
+        All parameters
+    type:
+        If keys is a string, the corrsponding default parameter is returned
+    list:
+        If keys is a list of strings, a list of corrsponding default parameters
+        is returned
+
+    Raises
+    ------
+    TypeError
+        Description
     """
 
     if not is_coercible_to_sli_array(nodes):

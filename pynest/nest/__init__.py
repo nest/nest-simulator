@@ -74,7 +74,7 @@ initialized = False
 def catching_sli_run(cmd):
     """Send a command string to the NEST kernel to be executed, catch
     SLI errors and re-raise them in Python.
-    
+
     Parameters
     ----------
     cmd : str

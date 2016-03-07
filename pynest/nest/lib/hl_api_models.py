@@ -163,8 +163,8 @@ def GetDefaults(model, keys=None):
         cmd = '/{0} GetDefaults /{1} get'.format(model, keys)
     elif is_iterable(keys):
         keys_str = " ".join("/{0}".format(x) for x in keys)
-        cmd = "/{0} GetDefaults  [ {1} ] ".format(model, keys_str) + \
-              "{{ 1 index exch get }} Map exch pop"
+        cmd = "/{0} GetDefaults  [ {1} ] {{ 1 index exch get }}"\
+              .format(model, keys_str) + " Map exch pop"
     else:
         raise TypeError("keys should be either a string or an iterable")
 

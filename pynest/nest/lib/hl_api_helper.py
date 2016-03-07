@@ -45,6 +45,26 @@ warnings.showwarning = _warning
 _deprecation_warning = {'BackwardCompatibilityConnect': True}
 
 
+def get_wrapped_text(text, width=80):
+    """Formats a given multiline string to wrap at a given width, while
+    preserving newlines (and removing excessive whitespace).
+
+    Parameters
+    ----------
+    text : str
+        String to format
+
+    Returns
+    -------
+    str:
+        Wrapped string
+    """
+
+    lines = text.split("\n")
+    lines = [textwrap.fill(" ".join(l.split()), width=width) for l in lines]
+    return "\n".join(lines)
+
+
 def show_deprecation_warning(func_name, alt_func_name=None, text=None):
     """Shows a deprecation warning for a function.
 
@@ -61,14 +81,12 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
         if alt_func_name is None:
             alt_func_name = 'Connect'
         if text is None:
-            text = textwrap.dedent(
-                       """\
-                       {0} is deprecated and will be removed in a future \
-                       version of NEST. Please use {1} instead!
-                       For details, see \
-                       http://www.nest-simulator.org/connection_management\
-                       """.format(func_name, alt_func_name)
-                   )
+            text = "{0} is deprecated and will be removed in a future \
+            version of NEST.\nPlease use {1} instead!\n\
+            For details, see\
+            http://www.nest-simulator.org/connection_management\
+            ".format(func_name, alt_func_name)
+            text = get_wrapped_text(text)
 
         warnings.warn('\n' + text)   # add LF so text starts on new line
         _deprecation_warning[func_name] = False
@@ -93,7 +111,6 @@ def deprecated(alt_func_name, text=None):
     function:
         Decorator function
     """
-
     def deprecated_decorator(func):
         _deprecation_warning[func.__name__] = True
 

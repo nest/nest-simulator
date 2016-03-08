@@ -69,12 +69,13 @@ M_ERROR setverbosity
 % end of stimulation period
 /stimtime 30.0 def
 
-% make simulation time long enough so that
+% Make simulation time long enough so that
 % at least one full min-delay passes after
 % end of stimulation even if resolution does 
 % not divide 1.0ms. Otherwise, not all spikes
 % will reach the spike_detector.
-/simtime stimtime 2.0 add def 
+% We then restrict the simulation time to the grid.
+/simtime stimtime 2.0 add h div cvi h mul def
 
 ResetKernel
 

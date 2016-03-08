@@ -38,46 +38,41 @@ FirstVersion: 160304
 (unittest) run
 /unittest using
 
-/skip_list [ /gsl_binomial ] def
-
-rngdict /knuthlfg get 123456789 CreateRNG /rng Set
+rngdict /gsl_knuthran known { /gsl_knuthran } { /knuthlfg } ifelse
+rngdict exch get 123456789 CreateRNG /rng Set
 
 % check all random deviations
 rdevdict keys
 {
   /rdv_name Set
 
-  % except for those in the skip_list
-  skip_list rdv_name MemberQ not
-  {
-    rng rdevdict rdv_name get CreateRDV /rdv Set
+  rng rdevdict rdv_name get CreateRDV /rdv Set
 
-    rdv GetStatus /is_discrete get
+  rdv GetStatus /is_discrete get
+  {
+    % check discrete RDV
+    0 1 10 % try 10 random numbers
     {
-      % check discrete RDV
-      0 1 10 % try 10 random numbers
       {
-        {
-          rdv Random IntegerQ exch ;
-        } assert_or_die
-      } for
-      {
-        rdv 10 RandomArray 
-        true exch { IntegerQ exch ; and } Fold
+        rdv Random IntegerQ exch ;
       } assert_or_die
-    }
+    } for
     {
-      % check continuous RDV
-      0 1 10 % try 10 random numbers
-      {
-        true {
-          rdv Random DoubleQ exch ;
-        } assert_or_die
-      } for
-      {
-        rdv 10 RandomArray 
-        true exch { DoubleQ exch ; and } Fold
+      rdv 10 RandomArray 
+      true exch { IntegerQ exch ; and } Fold
+    } assert_or_die
+  }
+  {
+    % check continuous RDV
+    0 1 10 % try 10 random numbers
+    {
+      true {
+        rdv Random DoubleQ exch ;
       } assert_or_die
-    } ifelse
-  } if
+    } for
+    {
+      rdv 10 RandomArray 
+      true exch { DoubleQ exch ; and } Fold
+    } assert_or_die
+  } ifelse
 } forall

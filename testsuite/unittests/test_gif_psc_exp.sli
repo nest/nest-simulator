@@ -38,6 +38,24 @@ SeeAlso: gif_psc_exp, testsuite::test_gif_psc_exp_multisynapse
 (unittest) run
 /unittest using
 
+/* 
+  Due to stochasticity of the neuron model and different generated random numbers in case of 
+  having or not having gsl, the expected spike times are different.
+*/
+
+statusdict/have_gsl :: not 
+{ %The neuron should fire spikes at 22.9, 53.1 and 168.5 ms in case of not having gsl
+  229  /t1  Set 
+  531  /t2  Set
+  1685 /t3  Set
+} 
+{ %The neuron should fire spikes at 22.9, 55.6 and 204.6 ms in case of having gsl
+  229  /t1  Set 
+  556  /t2  Set
+  2046 /t3  Set
+} 
+ifelse
+
 0.1 /h Set
 
 ResetKernel
@@ -48,6 +66,7 @@ ResetKernel
       /grng_seed 0
       /rng_seeds [0]
     >> SetStatus
+
 
 
 /gif_psc_exp Create /neuron Set
@@ -72,14 +91,9 @@ sg neuron << /weight 50.0 >> Connect
 
 sd GetStatus /events get /times get /spikes Set
 
-%The neuron should fire spikes at 22.9, 55.6 and 204.6 ms
-229  /t1  Set
-556  /t2  Set
-2046 /t3  Set
-
 spikes size 3 eq assert_or_die
 
-{} forall
+{ } forall
 t3 eq rot
 t2 eq rot
 t1 eq and and

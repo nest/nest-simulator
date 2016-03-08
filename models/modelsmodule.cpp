@@ -183,7 +183,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
   kernel().model_manager.register_node_model< pp_pop_psc_delta >( "pp_pop_psc_delta" );
   kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
-  kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >( "gif_psc_exp_multisynapse" );
+  kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >(
+    "gif_psc_exp_multisynapse" );
 
   kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
@@ -296,7 +297,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< sinusoidal_gamma_generator >(
     "sinusoidal_gamma_generator" );
   kernel().model_manager.register_node_model< gif_cond_exp >( "gif_cond_exp" );
-  kernel().model_manager.register_node_model< gif_cond_exp_multisynapse >( "gif_cond_exp_multisynapse" );
+  kernel().model_manager.register_node_model< gif_cond_exp_multisynapse >(
+    "gif_cond_exp_multisynapse" );
 #endif
 
 #ifdef HAVE_GSL_1_11

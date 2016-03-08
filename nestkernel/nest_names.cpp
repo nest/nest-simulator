@@ -236,7 +236,7 @@ const Name q_rr( "q_rr" );
 const Name q_sfa( "q_sfa" );
 const Name q_stc( "q_stc" );
 
-const Name v_t_star( "v_t_star" );	
+const Name v_t_star( "v_t_star" );
 
 const Name rate( "rate" );
 const Name receptor_type( "receptor_type" );

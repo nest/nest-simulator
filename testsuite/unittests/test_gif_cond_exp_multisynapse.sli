@@ -34,6 +34,9 @@ Author:  March 2016, Setareh
 SeeAlso: gif_cond_exp_multisynapse, testsuite::test_gif_cond_exp
 */
 
+% This test should only run if we have GSL
+statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
+
 (unittest) run
 /unittest using
 

@@ -66,17 +66,17 @@ RecordablesMap< gif_psc_exp >::create()
  * ---------------------------------------------------------------- */
 
 nest::gif_psc_exp::Parameters_::Parameters_()
-  : g_L_( 4.0 ) // nS
-  , E_L_( -70.0 ) // mV
-  , c_m_( 80.0 ) // pF
-  , V_reset_( -55.0 ) // mV
-  , delta_u_( 1.5 ) // mV
-  , v_t_star_( -35 ) // mV
+  : g_L_( 4.0 )         // nS
+  , E_L_( -70.0 )       // mV
+  , c_m_( 80.0 )        // pF
+  , V_reset_( -55.0 )   // mV
+  , delta_u_( 1.5 )     // mV
+  , v_t_star_( -35 )    // mV
   , lambda0_( 10000.0 ) // Hz
-  , I_e_( 0.0 ) // pA
-  , t_ref_( 4.0 ) // ms
-  , tau_ex_( 2.0 ) // in ms
-  , tau_in_( 2.0 ) // in ms
+  , I_e_( 0.0 )         // pA
+  , t_ref_( 4.0 )       // ms
+  , tau_ex_( 2.0 )      // in ms
+  , tau_in_( 2.0 )      // in ms
 {
   tau_sfa_.clear();
   q_sfa_.clear();
@@ -203,8 +203,7 @@ nest::gif_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p )
 {
   updateValue< double >( d, names::V_m, y3_ );
   updateValue< double >( d, names::E_sfa, q_ );
-  initialized_ =
-    false; // vectors of the state should be initialized with new parameter set.
+  initialized_ = false; // vectors of the state should be initialized with new parameter set.
 }
 
 nest::gif_psc_exp::Buffers_::Buffers_( gif_psc_exp& n )
@@ -284,8 +283,7 @@ nest::gif_psc_exp::calibrate()
   V_.P31_ = ( 1 - V_.P33_ );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.RefractoryCounts_
-    >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
 
   // initializing internal state
   if ( !S_.initialized_ )
@@ -311,13 +309,10 @@ nest::gif_psc_exp::calibrate()
  */
 
 void
-nest::gif_psc_exp::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+nest::gif_psc_exp::update( Time const& origin, const long_t from, const long_t to )
 {
 
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   double_t q_temp_;
@@ -383,19 +378,16 @@ nest::gif_psc_exp::update( Time const& origin,
         S_.q_ += q_temp_;
       }
 
-      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.y3_
-        + V_.P31_ * P_.E_L_ + S_.i_syn_ex_ * V_.P21ex_
-        + S_.i_syn_in_ * V_.P21in_;
+      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.y3_ + V_.P31_ * P_.E_L_
+        + S_.i_syn_ex_ * V_.P21ex_ + S_.i_syn_in_ * V_.P21in_;
 
-      double_t lambda =
-        P_.lambda0_ * std::exp( ( S_.y3_ - S_.q_ ) / P_.delta_u_ );
+      double_t lambda = P_.lambda0_ * std::exp( ( S_.y3_ - S_.q_ ) / P_.delta_u_ );
 
       if ( lambda > 0.0 )
       {
 
         // Draw random number and compare to prob to have a spike
-        if ( V_.rng_->drand()
-          <= -numerics::expm1( -lambda * ( V_.h_ / 1000.0 ) ) )
+        if ( V_.rng_->drand() <= -numerics::expm1( -lambda * ( V_.h_ / 1000.0 ) ) )
         {
           n_spikes = 1;
         }
@@ -446,12 +438,12 @@ nest::gif_psc_exp::handle( SpikeEvent& e )
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
   if ( e.get_weight() >= 0.0 )
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_ex_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spikes_in_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_in_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 
@@ -465,8 +457,7 @@ nest::gif_psc_exp::handle( CurrentEvent& e )
 
   // Add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

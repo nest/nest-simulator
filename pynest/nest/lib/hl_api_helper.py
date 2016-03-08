@@ -1,8 +1,3 @@
-"""
-These are helper functions to ease the definition of the high-level
-API of the PyNEST wrapper.
-"""
-
 # -*- coding: utf-8 -*-
 #
 # hl_api_helper.py
@@ -23,6 +18,11 @@ API of the PyNEST wrapper.
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+These are helper functions to ease the definition of the high-level
+API of the PyNEST wrapper.
+"""
 
 import warnings
 import inspect

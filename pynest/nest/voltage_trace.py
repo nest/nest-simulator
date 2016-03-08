@@ -1,7 +1,3 @@
-"""
-Functions to plot voltage traces.
-"""
-
 # -*- coding: utf-8 -*-
 #
 # voltage_trace.py
@@ -22,6 +18,10 @@ Functions to plot voltage traces.
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+Functions to plot voltage traces.
+"""
 
 import nest
 import numpy

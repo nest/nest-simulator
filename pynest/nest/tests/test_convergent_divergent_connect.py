@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # test_convergent_divergent_connect.py
 #

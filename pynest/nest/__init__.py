@@ -1,7 +1,3 @@
-"""
-Initializer of PyNEST.
-"""
-
 # -*- coding: utf-8 -*-
 #
 # __init__.py
@@ -22,6 +18,10 @@ Initializer of PyNEST.
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+Initializer of PyNEST.
+"""
 
 import sys
 import os

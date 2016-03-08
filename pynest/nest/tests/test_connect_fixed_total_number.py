@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # test_connect_fixed_total_number.py
 #

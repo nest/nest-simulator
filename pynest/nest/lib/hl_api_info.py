@@ -1,7 +1,3 @@
-"""
-Functions to get information on NEST.
-"""
-
 # -*- coding: utf-8 -*-
 #
 # hl_api_info.py
@@ -22,6 +18,10 @@ Functions to get information on NEST.
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+Functions to get information on NEST.
+"""
 
 from .hl_api_helper import *
 

@@ -1,7 +1,3 @@
-"""
-Functions for raster plotting.
-"""
-
 # -*- coding: utf-8 -*-
 #
 # raster_plot.py
@@ -22,6 +18,10 @@ Functions for raster plotting.
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+Functions for raster plotting.
+"""
 
 import nest
 import numpy

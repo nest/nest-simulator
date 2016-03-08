@@ -1,7 +1,3 @@
-"""
-Functions to visualize a network built in NEST.
-"""
-
 # -*- coding: utf-8 -*-
 #
 # visualization.py
@@ -22,6 +18,10 @@ Functions to visualize a network built in NEST.
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+Functions to visualize a network built in NEST.
+"""
 
 import pydot
 import nest

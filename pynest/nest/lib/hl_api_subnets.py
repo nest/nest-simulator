@@ -1,7 +1,3 @@
-"""
-Functions for hierarchical networks
-"""
-
 # -*- coding: utf-8 -*-
 #
 # hl_api_subnets.py
@@ -22,6 +18,10 @@ Functions for hierarchical networks
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+Functions for hierarchical networks
+"""
 
 from .hl_api_helper import *
 from .hl_api_nodes import Create

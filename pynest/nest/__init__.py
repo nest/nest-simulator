@@ -94,10 +94,11 @@ sli_run = hl_api.sr = catching_sli_run
 
 
 def sli_func(s, *args, **kwargs):
-    """Convenience function for executing the sequence
-    sli_push(args); sli_run(s); y=sli_pop().
+    """Convenience function for executing an SLI command s with
+    arguments args.
 
-    The function takes an
+    This executes the SLI sequence:
+    ``sli_push(args); sli_run(s); y=sli_pop()``
 
     Parameters
     ----------

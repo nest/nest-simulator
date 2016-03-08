@@ -53,6 +53,12 @@ nest::VPManager::gid_to_lid( const index gid ) const
   return gid / ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() );
 }
 
+inline nest::index
+nest::VPManager::lid_to_gid( const index lid ) const
+{
+  return lid * ( get_num_virtual_processes() ) + get_vp();
+}
+
 inline unsigned int
 nest::VPManager::get_num_assigned_ranks_per_thread() const
 {

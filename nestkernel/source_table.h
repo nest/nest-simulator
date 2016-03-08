@@ -129,6 +129,8 @@ public:
   void restore_entry_point( const thread tid );
   //! resets the save_* positions to zero
   void reset_entry_point( const thread tid );
+  //! returns the global id of the source at tid|syn_id|lcid
+  index get_gid( const thread tid, const synindex syn_id, const index lcid ) const;
 };
 
 inline
@@ -210,6 +212,13 @@ nest::SourceTable::reset_entry_point( const thread tid )
   save_tid_[ tid ] = 0;
   save_syn_id_[ tid ] = 0;
   save_lcid_[ tid ] = 0;
+}
+
+inline index
+nest::SourceTable::get_gid( const thread tid, const synindex syn_id, const index lcid ) const
+{
+  std::map< synindex, synindex >::iterator it = synapse_ids_[ tid ]->find( syn_id );
+  return (*sources_[ tid ])[ it->second ][ lcid ].gid;
 }
 
 } // namespace nest

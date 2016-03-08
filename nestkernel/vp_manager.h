@@ -85,6 +85,11 @@ public:
   index gid_to_lid( index gid ) const;
 
   /**
+   * Returns the global id of a given local index
+   */
+  index lid_to_gid( const index lid ) const;
+
+  /**
    * Returns virtual process index
    */
   thread get_vp() const;

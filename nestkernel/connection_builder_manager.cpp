@@ -26,6 +26,7 @@
 #include <cassert>
 #include <cmath>
 #include <set>
+#include <algorithm>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -59,6 +60,7 @@ nest::ConnectionBuilderManager::ConnectionBuilderManager()
   , connbuilder_factories_()
   , min_delay_( 1 )
   , max_delay_( 1 )
+  , keep_source_table_( true )
 {
 }
 
@@ -201,39 +203,83 @@ nest::ConnectionBuilderManager::get_status( DictionaryDatum& d )
 }
 
 DictionaryDatum
-nest::ConnectionBuilderManager::get_synapse_status( index gid, synindex syn_id, port p, thread tid )
+nest::ConnectionBuilderManager::get_synapse_status( const index source_gid, const index target_gid, const thread tid, const synindex syn_id, const port p ) const // TODO@5g: rename port -> lcid?
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
   DictionaryDatum dict( new Dictionary );
-  validate_pointer( connections_[ tid ].get( gid ) )->get_synapse_status( syn_id, dict, p );
-  ( *dict )[ names::source ] = gid;
+  ( *dict )[ names::source ] = source_gid;
   ( *dict )[ names::synapse_model ] =
     LiteralDatum( kernel().model_manager.get_synapse_prototype( syn_id ).get_name() );
+
+  const Node* source = kernel().node_manager.get_node( source_gid, tid );
+  const Node* target = kernel().node_manager.get_node( target_gid, tid );
+
+  if ( source->has_proxies() and target->has_proxies() )
+  {
+    // TODO@5g: get_synapse_neuron_to_neuron_status
+    connections_5g_[ tid ]->get_synapse_status( syn_id, dict, p );
+  }
+  else if ( source->has_proxies() and not target->has_proxies() )
+  {
+    // TODO@5g: get_synapse_neuron_to_device_status
+    target_table_devices_.get_synapse_status_to_device( tid, source_gid, syn_id, dict, p );
+  }
+  else if ( not source->has_proxies() )
+  {
+    // TODO@5g: get_synapse_from_device_status
+    const index ldid = source->get_local_device_id();
+    target_table_devices_.get_synapse_status_from_device( tid, ldid, syn_id, dict, p );
+  }
+  else
+  {
+    assert( false );
+  }
 
   return dict;
 }
 
 void
-nest::ConnectionBuilderManager::set_synapse_status( index gid,
-  synindex syn_id,
-  port p,
-  thread tid,
+nest::ConnectionBuilderManager::set_synapse_status(
+  const index source_gid,
+  const index target_gid,
+  const thread tid,
+  const synindex syn_id,
+  const port p,
   const DictionaryDatum& dict )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
+
+  const Node* source = kernel().node_manager.get_node( source_gid, tid );
+  const Node* target = kernel().node_manager.get_node( target_gid, tid );
+
   try
   {
-    validate_pointer( connections_[ tid ].get( gid ) )
-      ->set_synapse_status(
-        syn_id, kernel().model_manager.get_synapse_prototype( syn_id, tid ), dict, p );
+    if ( source->has_proxies() and target->has_proxies() )
+    {
+      connections_5g_[ tid ]->set_synapse_status( syn_id, kernel().model_manager.get_synapse_prototype( syn_id, tid ), dict, p );
+    }
+    else if ( source->has_proxies() and not target->has_proxies() )
+    {
+      target_table_devices_.set_synapse_status_to_device( tid, source_gid, syn_id, kernel().model_manager.get_synapse_prototype( syn_id, tid ), dict, p );
+    }
+    else if ( not source->has_proxies() )
+    {
+      const index ldid = source->get_local_device_id();
+      target_table_devices_.set_synapse_status_from_device( tid, ldid, syn_id, kernel().model_manager.get_synapse_prototype( syn_id, tid ), dict, p );
+    }
+    else
+    {
+      assert( false );
+    }
   }
   catch ( BadProperty& e )
   {
     throw BadProperty(
-      String::compose( "Setting status of '%1' connecting from GID %2 to port %3: %4",
+      String::compose( "Setting status of '%1' connecting from GID %2 to GID %3 via port %4: %5",
         kernel().model_manager.get_synapse_prototype( syn_id, tid ).get_name(),
-        gid,
+        source_gid,
+        target_gid,
         p,
         e.message() ) );
   }
@@ -1693,28 +1739,31 @@ nest::ConnectionBuilderManager::get_num_connections( synindex syn_id ) const
   return num_connections;
 }
 
-// TODO@5g: implement
 ArrayDatum
 nest::ConnectionBuilderManager::get_connections( DictionaryDatum params ) const
 {
-  assert( false );
   ArrayDatum connectome;
 
-//   const Token& source_t = params->lookup( names::source );
-//   const Token& target_t = params->lookup( names::target );
-//   const Token& syn_model_t = params->lookup( names::synapse_model );
-//   const TokenArray* source_a = 0;
-//   const TokenArray* target_a = 0;
-//   long_t synapse_label = UNLABELED_CONNECTION;
-//   updateValue< long_t >( params, names::synapse_label, synapse_label );
+  const Token& source_t = params->lookup( names::source );
+  const Token& target_t = params->lookup( names::target );
+  const Token& synapse_model_t = params->lookup( names::synapse_model );
+  const TokenArray* source_a = 0;
+  const TokenArray* target_a = 0;
+  long_t synapse_label = UNLABELED_CONNECTION;
+  updateValue< long_t >( params, names::synapse_label, synapse_label );
 
-//   if ( not source_t.empty() )
-//     source_a = dynamic_cast< TokenArray const* >( source_t.datum() );
-//   if ( not target_t.empty() )
-//     target_a = dynamic_cast< TokenArray const* >( target_t.datum() );
+  if ( not source_t.empty() )
+  {
+    source_a = dynamic_cast< TokenArray const* >( source_t.datum() );
+  }
+  if ( not target_t.empty() )
+  {
+    target_a = dynamic_cast< TokenArray const* >( target_t.datum() );
+  }
 
-//   size_t syn_id = 0;
+  synindex synapse_id = 0;
 
+  // TODO@5g: why do we need to do this? can this be removed?
 // #ifdef _OPENMP
 //   std::string msg;
 //   msg =
@@ -1723,192 +1772,202 @@ nest::ConnectionBuilderManager::get_connections( DictionaryDatum params ) const
 //   omp_set_num_threads( kernel().vp_manager.get_num_threads() );
 // #endif
 
-//   // First we check, whether a synapse model is given.
-//   // If not, we will iterate all.
-//   if ( not syn_model_t.empty() )
-//   {
-//     Name synmodel_name = getValue< Name >( syn_model_t );
-//     const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-//     if ( !synmodel.empty() )
-//       syn_id = static_cast< size_t >( synmodel );
-//     else
-//       throw UnknownModelName( synmodel_name.toString() );
-//     get_connections( connectome, source_a, target_a, syn_id, synapse_label );
-//   }
-//   else
-//   {
-//     for ( syn_id = 0; syn_id < kernel().model_manager.get_num_synapse_prototypes(); ++syn_id )
-//     {
-//       ArrayDatum conn;
-//       get_connections( conn, source_a, target_a, syn_id, synapse_label );
-//       if ( conn.size() > 0 )
-//         connectome.push_back( new ArrayDatum( conn ) );
-//     }
-//   }
+  // First we check, whether a synapse model is given.
+  // If not, we will iterate all.
+  if ( not synapse_model_t.empty() )
+  {
+    Name synapse_model_name = getValue< Name >( synapse_model_t );
+    const Token synapse_model = kernel().model_manager.get_synapsedict()->lookup( synapse_model_name );
+    if ( !synapse_model.empty() )
+      synapse_id = static_cast< size_t >( synapse_model );
+    else
+      throw UnknownModelName( synapse_model_name.toString() );
+    get_connections( connectome, source_a, target_a, synapse_id, synapse_label );
+  }
+  else
+  {
+    for ( synapse_id = 0; synapse_id < kernel().model_manager.get_num_synapse_prototypes(); ++synapse_id )
+    {
+      ArrayDatum conn;
+      get_connections( conn, source_a, target_a, synapse_id, synapse_label );
+      if ( conn.size() > 0 )
+      {
+        connectome.push_back( new ArrayDatum( conn ) );
+      }
+    }
+  }
 
    return connectome;
 }
 
-// TODO@5g: implement
 void
 nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
   TokenArray const* source,
   TokenArray const* target,
-  size_t syn_id,
+  synindex synapse_id,
   long_t synapse_label ) const
 {
-  assert( false );
-//   size_t num_connections = get_num_connections( syn_id );
-//
-//   connectome.reserve( num_connections );
-//
-//   if ( source == 0 and target == 0 )
-//   {
-// #ifdef _OPENMP
-// #pragma omp parallel
-//     {
-//       thread t = kernel().vp_manager.get_thread_id();
-// #else
-//     for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-//     {
-// #endif
-//       ArrayDatum conns_in_thread;
-//       size_t num_connections_in_thread = 0;
-//       // Count how many connections we will have.
-//       for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
-//             it != connections_[ t ].nonempty_end();
-//             ++it )
-//       {
-//         num_connections_in_thread += validate_pointer( *it )->get_num_connections();
-//       }
-//
-// #ifdef _OPENMP
-// #pragma omp critical( get_connections )
-// #endif
-//       conns_in_thread.reserve( num_connections_in_thread );
-//       for ( index source_id = 1; source_id < connections_[ t ].size(); ++source_id )
-//       {
-//         if ( connections_[ t ].get( source_id ) != 0 )
-//           validate_pointer( connections_[ t ].get( source_id ) )
-//             ->get_connections( source_id, t, syn_id, synapse_label, conns_in_thread );
-//       }
-//       if ( conns_in_thread.size() > 0 )
-//       {
-// #ifdef _OPENMP
-// #pragma omp critical( get_connections )
-// #endif
-//         connectome.append_move( conns_in_thread );
-//       }
-//     }
-//
-//     return;
-//   }
-//   else if ( source == 0 and target != 0 )
-//   {
-// #ifdef _OPENMP
-// #pragma omp parallel
-//     {
-//       thread t = kernel().vp_manager.get_thread_id();
-// #else
-//     for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-//     {
-// #endif
-//       ArrayDatum conns_in_thread;
-//       size_t num_connections_in_thread = 0;
-//       // Count how many connections we will have maximally.
-//       for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
-//             it != connections_[ t ].nonempty_end();
-//             ++it )
-//       {
-//         num_connections_in_thread += validate_pointer( *it )->get_num_connections();
-//       }
-//
-// #ifdef _OPENMP
-// #pragma omp critical( get_connections )
-// #endif
-//       conns_in_thread.reserve( num_connections_in_thread );
-//       for ( index source_id = 1; source_id < connections_[ t ].size(); ++source_id )
-//       {
-//         if ( validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
-//         {
-//           for ( index t_id = 0; t_id < target->size(); ++t_id )
-//           {
-//             size_t target_id = target->get( t_id );
-//             validate_pointer( connections_[ t ].get( source_id ) )
-//               ->get_connections( source_id, target_id, t, syn_id, synapse_label, conns_in_thread );
-//           }
-//         }
-//       }
-//       if ( conns_in_thread.size() > 0 )
-//       {
-// #ifdef _OPENMP
-// #pragma omp critical( get_connections )
-// #endif
-//         connectome.append_move( conns_in_thread );
-//       }
-//     }
-//     return;
-//   }
-//   else if ( source != 0 )
-//   {
-// #ifdef _OPENMP
-// #pragma omp parallel
-//     {
-//       size_t t = kernel().vp_manager.get_thread_id();
-// #else
-//     for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-//     {
-// #endif
-//       ArrayDatum conns_in_thread;
-//       size_t num_connections_in_thread = 0;
-//       // Count how many connections we will have maximally.
-//       for ( tSConnector::const_nonempty_iterator it = connections_[ t ].nonempty_begin();
-//             it != connections_[ t ].nonempty_end();
-//             ++it )
-//       {
-//         num_connections_in_thread += validate_pointer( *it )->get_num_connections();
-//       }
-//
-// #ifdef _OPENMP
-// #pragma omp critical( get_connections )
-// #endif
-//       conns_in_thread.reserve( num_connections_in_thread );
-//       for ( index s = 0; s < source->size(); ++s )
-//       {
-//         size_t source_id = source->get( s );
-//         if ( source_id < connections_[ t ].size()
-//           && validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
-//         {
-//           if ( target == 0 )
-//           {
-//             validate_pointer( connections_[ t ].get( source_id ) )
-//               ->get_connections( source_id, t, syn_id, synapse_label, conns_in_thread );
-//           }
-//           else
-//           {
-//             for ( index t_id = 0; t_id < target->size(); ++t_id )
-//             {
-//               size_t target_id = target->get( t_id );
-//               validate_pointer( connections_[ t ].get( source_id ) )
-//                 ->get_connections(
-//                   source_id, target_id, t, syn_id, synapse_label, conns_in_thread );
-//             }
-//           }
-//         }
-//       }
-//
-//       if ( conns_in_thread.size() > 0 )
-//       {
-// #ifdef _OPENMP
-// #pragma omp critical( get_connections )
-// #endif
-//         connectome.append_move( conns_in_thread );
-//       }
-//     }
-//     return;
-//   } // else
-}
+  if ( is_source_table_cleared() )
+  {
+    throw KernelException( "Invalid attempt to access connection information: source table was cleared." );
+  }
 
+  const size_t num_connections = get_num_connections( synapse_id );
+
+  connectome.reserve( num_connections );
+  if ( source == 0 and target == 0 )
+  {
+#ifdef _OPENMP
+#pragma omp parallel
+    {
+      thread tid = kernel().vp_manager.get_thread_id();
+#else
+    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+    {
+#endif
+      ArrayDatum conns_in_thread;
+
+      // collect all connections between neurons
+      const size_t num_connections_in_thread = connections_5g_[ tid ]->get_num_connections( synapse_id );
+      // TODO@5g: why do we need the critical construct?
+#ifdef _OPENMP
+#pragma omp critical( get_connections )
+#endif
+      conns_in_thread.reserve( num_connections_in_thread );
+      for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
+      {
+        const index source_gid = source_table_.get_gid( tid, synapse_id, lcid );
+        connections_5g_[ tid ]->get_connection( source_gid, tid, synapse_id, lcid, synapse_label, conns_in_thread );
+      }
+
+      target_table_devices_.get_connections( 0, 0, tid, synapse_id, synapse_label, conns_in_thread );
+
+      if ( conns_in_thread.size() > 0 )
+      {
+#ifdef _OPENMP
+#pragma omp critical( get_connections )
+#endif
+        connectome.append_move( conns_in_thread );
+      }
+    } // of omp parallel
+    return;
+  } // if
+  else if ( source == 0 and target != 0 )
+  {
+#ifdef _OPENMP
+#pragma omp parallel
+    {
+      thread tid = kernel().vp_manager.get_thread_id();
+#else
+    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+    {
+#endif
+      ArrayDatum conns_in_thread;
+
+      // collect all connections between neurons
+      const size_t num_connections_in_thread = connections_5g_[ tid ]->get_num_connections( synapse_id );
+#ifdef _OPENMP
+#pragma omp critical( get_connections )
+#endif
+      conns_in_thread.reserve( num_connections_in_thread );
+      for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
+      {
+        const index source_gid = source_table_.get_gid( tid, synapse_id, lcid );
+        for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+        {
+          const index target_gid = target->get( t_id );
+          connections_5g_[ tid ]->get_connection( source_gid, target_gid, tid, synapse_id, lcid, synapse_label, conns_in_thread );
+        }
+      }
+
+      for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+      {
+          const index target_gid = target->get( t_id );
+          target_table_devices_.get_connections( 0, target_gid, tid, synapse_id, synapse_label, conns_in_thread );
+      }
+
+      if ( conns_in_thread.size() > 0 )
+      {
+#ifdef _OPENMP
+#pragma omp critical( get_connections )
+#endif
+        connectome.append_move( conns_in_thread );
+      }
+    } // of omp parallel
+    return;
+  } // else if
+  else if ( source != 0 )
+  {
+#ifdef _OPENMP
+#pragma omp parallel
+    {
+      thread tid = kernel().vp_manager.get_thread_id();
+#else
+    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+    {
+#endif
+      ArrayDatum conns_in_thread;
+
+      // collect all connections between neurons
+      const size_t num_connections_in_thread = connections_5g_[ tid ]->get_num_connections( synapse_id );
+#ifdef _OPENMP
+#pragma omp critical( get_connections )
+#endif
+      conns_in_thread.reserve( num_connections_in_thread );
+
+      // TODO@5g: this this too expensive? are there alternatives?
+      std::vector< index > sources;
+      source->toVector( sources );
+      std::sort( sources.begin(), sources.end() );
+
+      for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
+      {
+        const index source_gid = source_table_.get_gid( tid, synapse_id, lcid );
+        if ( std::binary_search( sources.begin(), sources.end(), source_gid ) )
+        {
+          if ( target == 0 )
+          {
+            connections_5g_[ tid ]->get_connection( source_gid, tid, synapse_id, lcid, synapse_label, conns_in_thread );
+          }
+          else
+          {
+            for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+            {
+              const index target_gid = target->get( t_id );
+              connections_5g_[ tid ]->get_connection( source_gid, target_gid, tid, synapse_id, lcid, synapse_label, conns_in_thread );
+            }
+          }
+        }
+      }
+
+      for ( size_t s_id = 0; s_id < source->size(); ++s_id )
+      {
+        const index source_gid = source->get( s_id );
+        if ( target == 0 )
+        {
+          target_table_devices_.get_connections( source_gid, 0, tid, synapse_id, synapse_label, conns_in_thread );
+        }
+        else
+        {
+          for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+          {
+            const index target_gid = target->get( t_id );
+            target_table_devices_.get_connections( source_gid, target_gid, tid, synapse_id, synapse_label, conns_in_thread );
+          }
+        }
+      }
+
+      if ( conns_in_thread.size() > 0 )
+      {
+#ifdef _OPENMP
+#pragma omp critical( get_connections )
+#endif
+        connectome.append_move( conns_in_thread );
+      }
+    } // of omp parallel
+    return;
+  } // else if
+}
 
 // TODO@5g: implement
 void

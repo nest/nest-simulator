@@ -232,10 +232,10 @@ public:
     index syn );
 
   // aka conndatum GetStatus
-  DictionaryDatum get_synapse_status( index gid, synindex syn, port p, thread tid );
-  // aka conndatum SetStatus
-  void set_synapse_status( index gid, synindex syn, port p, thread tid, const DictionaryDatum& d );
+  DictionaryDatum get_synapse_status( const index source_gid, const index target_gid, const thread tid, const synindex syn_id, const port p ) const;
 
+  // aka conndatum SetStatus
+  void set_synapse_status( const index source_gid, const index target_gid, const thread tid, const synindex syn_id, const port p, const DictionaryDatum& dict );
 
   /**
    * Return connections between pairs of neurons.
@@ -253,7 +253,7 @@ public:
   void get_connections( ArrayDatum& connectome,
     TokenArray const* source,
     TokenArray const* target,
-    size_t syn_id,
+    synindex syn_id,
     long_t synapse_label ) const;
 
   /**
@@ -530,6 +530,8 @@ private:
   delay min_delay_; //!< Value of the smallest delay in the network.
 
   delay max_delay_; //!< Value of the largest delay in the network in steps.
+
+  bool keep_source_table_;  //!< Whether to keep source table after connection setup is complete
 };
 
 inline DictionaryDatum&

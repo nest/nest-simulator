@@ -1,6 +1,6 @@
 " Vim syntax file
 " Language: nest SLI
-" Maintainer: Ankur Sinha/ Nest initiative
+" Maintainer: Ankur Sinha/Nest initiative
 " Latest revision: 01 March 2016
 
 if exists("b:current_syntax")
@@ -26,6 +26,9 @@ syn match sliUnit '\smV'
 syn match sliUnit '\spF'
 syn match sliUnit '\spA'
 syn match sliUnit '\sms'
+syn match sliUnit '\ss'
+syn match sliUnit '\sHz'
+syn match sliUnit '\snS'
 hi def link sliUnit      Constant
 
 syn match sliNumber '\d\+'

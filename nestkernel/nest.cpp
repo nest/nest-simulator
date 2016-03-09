@@ -225,12 +225,7 @@ get_connections( const DictionaryDatum& dict )
 void
 simulate( const double_t& time )
 {
-  std::ostringstream os;
-  os << "Simulating " << time << " ms.";
-  LOG( M_INFO, "Simulate", os.str() );
-  Time t = Time::ms( time );
-
-  kernel().simulation_manager.simulate( t );
+  kernel().simulation_manager.simulate( Time::ms( time ) );
 }
 
 void

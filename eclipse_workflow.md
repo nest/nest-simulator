@@ -255,7 +255,7 @@ it will figure out the correct options itself).
 cd $NEST_ROOT
 mkdir bld_fixes_mpi
 cd bld_fixes_mpi
-cmake -DCMAKE_INSTALL_KU=$NEST_ROOT/bld_fixes_mpi/install -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -Dwith-debug=ON -Dwith-mpi=ON ../src
+cmake -DCMAKE_INSTALL_PREFIX=$NEST_ROOT/bld_fixes_mpi/install -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -Dwith-debug=ON -Dwith-mpi=ON ../src
 make -j4
 make install
 make installcheck

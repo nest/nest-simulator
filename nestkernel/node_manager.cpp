@@ -115,6 +115,7 @@ NodeManager::initialize()
   /* END of code adding the root subnet. */
 
   // explicitly force construction of nodes_vec_ to ensure consistent state
+  nodes_vec_network_size_ = 0;
   ensure_valid_thread_local_ids();
 }
 

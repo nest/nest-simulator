@@ -139,16 +139,25 @@ Parameters: in: string is the string where te regular expression should be
                 the matches of the regex an any paranthesized subregexes within
                 the string.
  
-Examples:  (remember regexdict begin for these examples!)
-            1) (simple) REG_EXTENDED regcomp -> <regextype>
-               (   simple   ) 0 0 regexec -> 0  %this 0 indicating success
-            2)  (simple) REG_EXTENDED regcomp -> <regextype>
-               (   simple   ) 1 0 regexec -> [[3 9]] 0
+Examples:   1) (simple) regcomp -> <regextype>
+               (   simple   ) 0 0 regexec -> 0  % this 0 indicating success
+            2) (simple) regcomp -> <regextype>
+               (   simple   ) 1 0 regexec -> [[3 9]] 0 
                % this 3,9 are begin and end offsets of matched regex!
-            3) ((paranthesize)+.*example) regcomp -> <regextype>
-               (This is a paranthesize using example) 2 0 regexec -> 0 [[10 36] [10 22]]
+            3) ((parenthesize)+.*example) regcomp -> <regextype>
+               (This is a parenthesize using example) 2 0 regexec -> [[10 36] [10 22]] 0
+               
+            4) This is a more complex example showing how more and more parenthesized
+               expressions are returned
+               
+               /rx (:(passed|result|error):([0-9]+):(.*):) regcomp def
+               /st (:result:4:this is the result:) def
+               
+               rx st 0 0 regexec -> 0
+               rx st 1 0 regexec -> [[0 29]] 0
+               rx st 2 0 regexec -> [[0 29] [1 7]] 0
+               rx st 4 0 regexec -> [[0 29] [1 7] [8 9] [10 28]] 0
  
-Bugs: no knwon ;-)
 Diagnostics: no errors raised
 Author: Diesmann & Hehl
 FirstVersion: 27.9.99

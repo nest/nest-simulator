@@ -331,7 +331,7 @@ nest::SimulationManager::simulate( Time const& t )
 }
 
 void
-nest::SimulationManager::resume_( size_t num_active_nodes )
+nest::SimulationManager::resume_( const size_t num_active_nodes )
 {
   assert( kernel().is_initialized() );
 
@@ -404,7 +404,7 @@ nest::SimulationManager::resume_( size_t num_active_nodes )
   LOG( M_INFO, "SimulationManager::resume", "Simulation finished." );
 }
 
-size_t
+const size_t
 nest::SimulationManager::prepare_simulation_()
 {
   assert( to_do_ != 0 ); // This is checked in simulate()
@@ -433,7 +433,7 @@ nest::SimulationManager::prepare_simulation_()
     kernel().event_delivery_manager.configure_spike_buffers();
 
   kernel().node_manager.ensure_valid_thread_local_ids();
-  size_t num_active_nodes = kernel().node_manager.prepare_nodes();
+  const size_t num_active_nodes = kernel().node_manager.prepare_nodes();
 
   kernel().model_manager.create_secondary_events_prototypes();
 

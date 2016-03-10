@@ -124,10 +124,10 @@ public:
   delay get_to_step() const;
 
 private:
-  void resume_( size_t );       //!< actually run simulation; TODO: review
-  size_t prepare_simulation_(); //! setup before simulation start
-  void finalize_simulation_();  //! wrap-up after simulation end
-  void update_();               //! actually perform simulation
+  void resume_( const size_t );       //!< actually run simulation; TODO: review
+  const size_t prepare_simulation_(); //! setup before simulation start
+  void finalize_simulation_();        //! wrap-up after simulation end
+  void update_();                     //! actually perform simulation
   bool prelim_update_( Node* );
   void advance_time_();   //!< Update time to next time step
   void print_progress_(); //!< TODO: Remove, replace by logging!

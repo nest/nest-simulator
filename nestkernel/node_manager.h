@@ -196,7 +196,7 @@ public:
    * @see prepare_node_()
    * @returns number of nodes that will be simulated.
    */
-  size_t prepare_nodes();
+  const size_t prepare_nodes();
 
   /**
    * Invoke finalize() on nodes registered for finalization.

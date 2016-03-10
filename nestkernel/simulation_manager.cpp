@@ -407,6 +407,8 @@ nest::SimulationManager::resume_( size_t num_active_nodes )
 size_t
 nest::SimulationManager::prepare_simulation_()
 {
+  assert( to_do_ != 0 ); // This is checked in simulate()
+
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables
   kernel().connection_builder_manager.update_delay_extrema_();

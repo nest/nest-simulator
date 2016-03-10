@@ -338,7 +338,7 @@ nest::SimulationManager::resume_( const size_t num_active_nodes )
   std::ostringstream os;
   double_t t_sim = to_do_ * Time::get_resolution().get_ms();
 
-  os << "Number of nodes: " << num_active_nodes << std::endl;
+  os << "Number of local nodes: " << num_active_nodes << std::endl;
   os << "Simulaton time (ms): " << t_sim;
 
 #ifdef _OPENMP

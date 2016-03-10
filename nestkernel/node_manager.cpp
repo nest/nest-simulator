@@ -723,10 +723,10 @@ NodeManager::finalize_nodes()
 #pragma omp parallel
   {
     index t = kernel().vp_manager.get_thread_id();
-#else
+#else // clang-format off
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
-#endif
+#endif // clang-format on
     for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
     {
       Node* node = local_nodes_.get_node_by_index( idx );

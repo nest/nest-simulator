@@ -73,17 +73,15 @@ nest::Device::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::Device::Parameters_::update_( const DictionaryDatum& d,
-		                            const Name& name,
-		                            Time& value )
+nest::Device::Parameters_::update_( const DictionaryDatum& d, const Name& name, Time& value )
 {
   /* We cannot update the Time values directly, since updateValue()
-	 doesn't support Time objects. We thus read the value in ms into
-	 a double first and then update the time object if a value was
-	 given.
+         doesn't support Time objects. We thus read the value in ms into
+         a double first and then update the time object if a value was
+         given.
 
-	 To be valid, time values must either be on the time grid,
-	 or be infinite. Infinite values are handled gracefully.
+         To be valid, time values must either be on the time grid,
+         or be infinite. Infinite values are handled gracefully.
   */
 
   double_t val;
@@ -102,9 +100,9 @@ nest::Device::Parameters_::update_( const DictionaryDatum& d,
 void
 nest::Device::Parameters_::set( const DictionaryDatum& d )
 {
-   update_( d, names::origin, origin_ );
-   update_( d, names::start, start_ );
-   update_( d, names::stop, stop_ );
+  update_( d, names::origin, origin_ );
+  update_( d, names::start, start_ );
+  update_( d, names::stop, stop_ );
 
   if ( stop_ < start_ )
   {

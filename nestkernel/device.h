@@ -182,7 +182,6 @@ private:
   private:
     //! Update given Time parameter including error checking
     static void update_( const DictionaryDatum&, const Name&, Time& );
-
   };
 
 

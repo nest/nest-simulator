@@ -122,6 +122,8 @@ librandom::PoissonRandomDev::set_status( const DictionaryDatum& d )
 void
 librandom::PoissonRandomDev::get_status( DictionaryDatum& d ) const
 {
+  RandomDev::get_status( d );
+
   def< double >( d, "lambda", mu_ );
 }
 

@@ -73,50 +73,38 @@ nest::Device::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
+nest::Device::Parameters_::update_( const DictionaryDatum& d,
+		                            const Name& name,
+		                            Time& value )
+{
+  /* We cannot update the Time values directly, since updateValue()
+	 doesn't support Time objects. We thus read the value in ms into
+	 a double first and then update the time object if a value was
+	 given.
+
+	 To be valid, time values must either be on the time grid,
+	 or be infinite. Infinite values are handled gracefully.
+  */
+
+  double_t val;
+  if ( updateValue< double_t >( d, name, val ) )
+  {
+    const Time t = Time::ms( val );
+    if ( t.is_finite() && not t.is_grid_time() )
+    {
+      throw BadProperty( name.toString() +  " must be a multiple "
+			              "of the simulation resolution." );
+    }
+    value = t;
+  }
+}
+
+void
 nest::Device::Parameters_::set( const DictionaryDatum& d )
 {
-  double_t v = 0.0;
-
-  /* We cannot update the Time values directly, since updateValue()
-     doesn't support Time objects. We thus read the value in ms into
-     a double first and then update the time object if a value was
-     given.
-
-     To be valid, time values must either be on the time grid,
-     or be infinite. Infinite values are handled gracefully.
-  */
-  if ( updateValue< double_t >( d, names::origin, v ) )
-  {
-    const Time t = Time::ms( v );
-    if ( t.is_finite() && not t.is_grid_time() )
-    {
-      throw BadProperty( names::origin.toString() +  " must be a multiple "
-			              "of the simulation resolution." );
-    }
-    origin_ = t;
-  }
-
-  if ( updateValue< double_t >( d, names::start, v ) )
-  {
-    const Time t = Time::ms( v );
-    if ( t.is_finite() && not t.is_grid_time() )
-    {
-      throw BadProperty( names::start.toString() + " must be a multiple "
-			              "of the simulation resolution." );
-    }
-    start_ = t;
-  }
-
-  if ( updateValue< double_t >( d, names::stop, v ) )
-  {
-    const Time t = Time::ms( v );
-    if ( t.is_finite() && not t.is_grid_time() )
-    {
-      throw BadProperty( names::stop.toString() + " must be a multiple "
-			              "of the simulation resolution." );
-    }
-    stop_ = t;
-  }
+   update_( d, names::origin, origin_ );
+   update_( d, names::start, start_ );
+   update_( d, names::stop, stop_ );
 
   if ( stop_ < start_ )
   {

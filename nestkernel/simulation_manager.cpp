@@ -298,7 +298,7 @@ nest::SimulationManager::simulate( Time const& t )
   to_do_ += t.get_steps();
   to_do_total_ = to_do_;
 
-  size_t num_active_nodes = prepare_simulation_();
+  const size_t num_active_nodes = prepare_simulation_();
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -331,7 +331,7 @@ nest::SimulationManager::simulate( Time const& t )
 }
 
 void
-nest::SimulationManager::resume_( const size_t num_active_nodes )
+nest::SimulationManager::resume_( size_t num_active_nodes )
 {
   assert( kernel().is_initialized() );
 
@@ -404,7 +404,7 @@ nest::SimulationManager::resume_( const size_t num_active_nodes )
   LOG( M_INFO, "SimulationManager::resume", "Simulation finished." );
 }
 
-const size_t
+size_t
 nest::SimulationManager::prepare_simulation_()
 {
   assert( to_do_ != 0 ); // This is checked in simulate()

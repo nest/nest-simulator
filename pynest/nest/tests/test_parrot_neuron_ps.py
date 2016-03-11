@@ -33,7 +33,7 @@ def _round_up(simtime):
     """
     
     res = nest.GetKernelStatus('resolution')
-    return res * math.ceil(simtime / res)
+    return res * math.ceil(float(simtime) / float(res))
 
 
 @nest.check_stack

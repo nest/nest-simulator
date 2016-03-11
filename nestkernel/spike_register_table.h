@@ -118,9 +118,38 @@ public:
   void save_entry_point( const thread tid );
   void restore_entry_point( const thread tid );
   void reset_entry_point( const thread tid );
-
+  void toggle_target_processed_flags( const thread tid );
 };
+  
+inline void
+SpikeRegisterTable::save_entry_point( const thread tid )
+{
+  if ( not saved_entry_point_[ tid ] )
+  {
+    save_tid_[ tid ] = current_tid_[ tid ];
+    save_lag_[ tid ] = current_lag_[ tid ];
+    save_lid_[ tid ] = current_lid_[ tid ];
+    saved_entry_point_[ tid ] = true;
+  }
+}
+
+inline void
+SpikeRegisterTable::restore_entry_point( const thread tid )
+{
+  current_tid_[ tid ] = save_tid_[ tid ];
+  current_lag_[ tid ] = save_lag_[ tid ];
+  current_lid_[ tid ] = save_lid_[ tid ];
+  saved_entry_point_[ tid ] = false;
+}
+
+inline void
+SpikeRegisterTable::reset_entry_point( const thread tid )
+{
+  save_tid_[ tid ] = 0;
+  save_lag_[ tid ] = 0;
+  save_lid_[ tid ] = 0;
+}
 
 } // namespace nest
 
-#endif
+#endif /* SPIKE_REGISTER_TABLE_H */

@@ -28,6 +28,7 @@
 #include "spike_register_table.h"
 #include "vp_manager_impl.h"
 #include "event.h"
+#include "connection_builder_manager_impl.h"
 
 namespace nest
 {
@@ -42,16 +43,65 @@ SpikeRegisterTable::add_spike( const thread tid, const SpikeEvent& e, const long
   (*spike_register_[ tid ])[ lag ].push_back( kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() ) );
 }
 
-inline void
-SpikeRegisterTable::configure()
+inline bool
+SpikeRegisterTable::get_next_spike_data( const thread tid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end )
 {
-  for ( std::vector< std::vector< std::vector< index > >* >::iterator it = spike_register_.begin();
-        it != spike_register_.end(); ++it )
+  while ( true )
   {
-    (*it)->resize( kernel().connection_builder_manager.get_min_delay() );
-    for ( std::vector< std::vector< index > >::iterator iit = (*it)->begin(); iit != (*it)->end(); ++iit)
+    if ( current_tid_[ tid ] == spike_register_.size() )
     {
-      iit->clear();
+      return false;
+    }
+    else
+    {
+      if ( current_lag_[ tid ] == spike_register_[ current_tid_[ tid ] ]->size() )
+      {
+        current_lag_[ tid ] = 0;
+        ++current_tid_[ tid ];
+        continue;
+      }
+      else
+      {
+        if ( current_lid_[ tid ] == (*spike_register_[ current_tid_[ tid ] ])[ current_lag_[ tid ] ].size() )
+        {
+          current_lid_[ tid ] = 0;
+          ++current_lag_[ tid ];
+          continue;
+        }
+        else
+        {
+          const index lid = ( *spike_register_[ current_tid_[ tid ] ] )[ current_lag_[ tid ] ][ current_lid_[ tid ] ];
+          if ( kernel().connection_builder_manager.get_next_spike_data( tid, current_tid_[ tid ], lid, rank, next_spike_data, rank_start, rank_end ) )
+          {
+            next_spike_data.lag = current_lag_[ tid ];
+            return true;
+          }
+          else
+          {
+            ++current_lid_[ tid ];
+          }
+        }
+      }
+    }
+  }
+}
+
+inline void
+SpikeRegisterTable::reject_last_spike_data( const thread tid )
+{
+  index lid = ( *spike_register_[ current_tid_[ tid ] ] )[ current_lag_[ tid ] ][ current_lid_[ tid ] ];
+  kernel().connection_builder_manager.reject_last_spike_data( tid, current_tid_[ tid ], lid );
+}
+
+inline void
+SpikeRegisterTable::toggle_target_processed_flags( const thread tid )
+{
+  for ( std::vector< std::vector< index > >::iterator it = spike_register_[ tid ]->begin();
+        it != spike_register_[ tid ]->end(); ++it )
+  {
+    for ( std::vector< index >::iterator jt = it->begin(); jt != it->end(); ++jt )
+    {
+      kernel().connection_builder_manager.toggle_target_processed_flag( tid, *jt );
     }
   }
 }

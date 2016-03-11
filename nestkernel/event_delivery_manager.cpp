@@ -601,6 +601,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
       break;
     }
   } // of while(true)
+  spike_register_table_.toggle_target_processed_flags( tid );
   spike_register_table_.clear( tid );
 }
 

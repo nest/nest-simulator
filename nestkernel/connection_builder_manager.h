@@ -340,6 +340,8 @@ public:
 
   void reject_last_spike_data( const thread tid, const thread current_tid, const index lid );
 
+  void toggle_target_processed_flag( const thread tid, const index lid );
+
   void get_next_target_data( const thread tid, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end );
 
   void reject_last_target_data( const thread tid );
@@ -351,6 +353,8 @@ public:
   void restore_source_table_entry_point( const thread tid );
 
   void add_target( const thread tid, const TargetData& target_data);
+
+  void reset_current_index_target_table( const thread tid );
 
 private:
   /**
@@ -562,6 +566,19 @@ inline void
 ConnectionBuilderManager::resize_target_table_devices()
 {
   target_table_devices_.resize();
+}
+
+inline void
+ConnectionBuilderManager::reset_current_index_target_table( const thread tid )
+{
+  target_table_.reset_current_target_index( tid );
+}
+
+
+inline void
+ConnectionBuilderManager::toggle_target_processed_flag( const thread tid, const index lid )
+{
+  target_table_.toggle_target_processed_flag( tid, lid );
 }
 
 } // namespace nest

@@ -148,9 +148,11 @@ TargetData::is_complete() const
 class TargetTable
 {
 private:
-  //! 3d structure storing targets of local neurons
+  //! stores remote targets of local neurons
   std::vector< std::vector< std::vector< Target > >* > targets_;
-  //! for each thread, keep track of index in target vector
+  //! stores the current value to mark processed entries in targets_
+  std::vector< std::vector< bool >* > target_processed_flag_;
+  //! keeps track of index in target vector for each thread
   std::vector< index > current_target_index_;
   
 public:
@@ -168,20 +170,34 @@ public:
   // void clear( thread );
   //! returns the next spike data according to current_target_index
   bool get_next_spike_data( const thread tid, const thread current_tid, const index lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end );
-  //! rejects the last spike data and resets current_target_index accordingly
+  //! flips the value of the processed entries marker
+  void toggle_target_processed_flag( const thread tid, const index lid );
+  //! rejects the last spike data and resets current_target_index accordinglyp
   void reject_last_spike_data( const thread tid, const thread current_tid, const index lid );
   // TODO@5g: don't we need save/restore/reset as in communication of source table?
+  void reset_current_target_index( const thread );
 };
 
 inline
 void
-nest::TargetTable::reject_last_spike_data( const thread tid, const thread current_tid, const index lid )
+TargetTable::reject_last_spike_data( const thread tid, const thread current_tid, const index lid )
 {
   assert( current_target_index_[ tid ] > 0 );
   --current_target_index_[ tid ];
-  ( *targets_[ current_tid ])[ lid ][ current_target_index_[ tid ] ].processed = false;
+  ( *targets_[ current_tid ])[ lid ][ current_target_index_[ tid ] ].processed = (*target_processed_flag_[ current_tid ])[ lid ];
 }
 
+inline void
+TargetTable::reset_current_target_index( const thread tid )
+{
+  current_target_index_[ tid ] = 0;
+}
+
+inline void
+TargetTable::toggle_target_processed_flag( const thread tid, const index lid )
+{
+  (*target_processed_flag_[ tid ])[ lid ] = not (*target_processed_flag_[ tid ])[ lid ];
+}
 
 } // namespace nest
 

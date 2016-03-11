@@ -226,6 +226,15 @@ void
 simulate( const double_t& time )
 {
   const Time t_sim = Time::ms( time );
+
+  if ( time < 0 )
+  {
+	throw BadParameter( "The simulation time cannot be negative." );
+  }
+  if ( not t_sim.is_finite() )
+  {
+	throw BadParameter( "The simulation time must be finite." );
+  }
   if ( not t_sim.is_grid_time() )
   {
     throw BadParameter(

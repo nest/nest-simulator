@@ -46,7 +46,6 @@
 #include "node.h"
 #include "nodelist.h"
 #include "subnet.h"
-#include "target_table_impl.h"
 #include "target_table_devices_impl.h"
 
 // Includes from sli:
@@ -117,78 +116,6 @@ nest::DelayChecker&
 nest::ConnectionBuilderManager::get_delay_checker()
 {
   return delay_checkers_[ kernel().vp_manager.get_thread_id() ];
-}
-
-void
-nest::ConnectionBuilderManager::prepare_target_table( const thread tid )
-{
-  target_table_.prepare( tid );
-}
-
-bool
-nest::ConnectionBuilderManager::get_next_spike_data( const thread tid, const thread current_tid, const index lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end)
-{
-  target_table_.get_next_spike_data( tid, current_tid, lid, rank, next_spike_data, rank_start, rank_end );
-}
-
-void
-nest::ConnectionBuilderManager::reject_last_spike_data( const thread tid, const thread current_tid, const index lid )
-{
-  target_table_.reject_last_spike_data( tid, current_tid, lid );
-}
-
-void
-nest::ConnectionBuilderManager::get_next_target_data( const thread tid, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end )
-{
-  source_table_.get_next_target_data( tid, next_target_data, rank_start, rank_end );
-}
-
-void
-nest::ConnectionBuilderManager::reject_last_target_data( const thread tid )
-{
-  source_table_.reject_last_target_data( tid );
-}
-
-void
-nest::ConnectionBuilderManager::save_source_table_entry_point( const thread tid )
-{
-  source_table_.save_entry_point( tid );
-}
-
-void
-nest::ConnectionBuilderManager::reset_source_table_entry_point( const thread tid )
-{
-  source_table_.reset_entry_point( tid );
-}
-
-void
-nest::ConnectionBuilderManager::restore_source_table_entry_point( const thread tid )
-{
-  source_table_.restore_entry_point( tid );
-}
-
-void
-nest::ConnectionBuilderManager::add_target( const thread tid, const TargetData& target_data)
-{
-  target_table_.add_target( tid, target_data );
-}
-
-void
-nest::ConnectionBuilderManager::send_5g( thread tid, synindex syn_index, unsigned int lcid, Event& e )
-{
-  connections_5g_[ tid ]->send( tid, syn_index, lcid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
-}
-
-void
-nest::ConnectionBuilderManager::send_to_devices( thread tid, const index s_gid, Event& e )
-{
-  target_table_devices_.send_to_device( tid, s_gid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
-}
-
-void
-nest::ConnectionBuilderManager::send_from_device( thread tid, const index ldid, Event& e)
-{
-  target_table_devices_.send_from_device( tid, ldid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
 }
 
 void

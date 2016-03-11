@@ -574,11 +574,52 @@ ConnectionBuilderManager::reset_current_index_target_table( const thread tid )
   target_table_.reset_current_target_index( tid );
 }
 
+inline void
+ConnectionBuilderManager::reject_last_spike_data( const thread tid, const thread current_tid, const index lid )
+{
+  target_table_.reject_last_spike_data( tid, current_tid, lid );
+}
 
 inline void
 ConnectionBuilderManager::toggle_target_processed_flag( const thread tid, const index lid )
 {
   target_table_.toggle_target_processed_flag( tid, lid );
+}
+
+inline void
+ConnectionBuilderManager::get_next_target_data( const thread tid, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end )
+{
+  source_table_.get_next_target_data( tid, next_target_data, rank_start, rank_end );
+}
+
+inline void
+ConnectionBuilderManager::reject_last_target_data( const thread tid )
+{
+  source_table_.reject_last_target_data( tid );
+}
+
+inline void
+ConnectionBuilderManager::save_source_table_entry_point( const thread tid )
+{
+  source_table_.save_entry_point( tid );
+}
+
+inline void
+ConnectionBuilderManager::reset_source_table_entry_point( const thread tid )
+{
+  source_table_.reset_entry_point( tid );
+}
+
+inline void
+ConnectionBuilderManager::restore_source_table_entry_point( const thread tid )
+{
+  source_table_.restore_entry_point( tid );
+}
+
+inline void
+ConnectionBuilderManager::prepare_target_table( const thread tid )
+{
+  target_table_.prepare( tid );
 }
 
 } // namespace nest

@@ -228,13 +228,11 @@ private:
    */
   void collocate_buffers_( bool );
 
-  bool check_spike_data_me_completed_() const;
-
-  bool check_spike_data_others_completed_() const;
+  bool have_other_ranks_communicated_all_spike_data_() const;
 
   void prepare_spike_data_buffers_( const bool me_completed );
 
-  void collocate_spike_data_buffers_( const thread tid );
+  bool collocate_spike_data_buffers_( const thread tid );
 
   void collocate_target_data_buffers_( const thread tid, std::vector< TargetData >& send_buffer );
 

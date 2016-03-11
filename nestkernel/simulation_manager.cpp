@@ -632,8 +632,10 @@ nest::SimulationManager::update_()
 
       if ( to_step_
            == kernel().connection_builder_manager.get_min_delay() ) // gather only at end of slice
+      {
         // kernel().event_delivery_manager.gather_events( true );
         kernel().event_delivery_manager.gather_spike_data( thrd );
+      }
 
 #pragma omp barrier
 

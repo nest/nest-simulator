@@ -35,6 +35,9 @@
 #include "vp_manager_impl.h"
 #include "spike_register_table_impl.h"
 #include "node_manager_impl.h"
+#include "connection_builder_manager.h"
+#include "connection_builder_manager_impl.h"
+#include "event_delivery_manager_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -555,7 +558,7 @@ EventDeliveryManager::gather_events( bool done )
 void
 EventDeliveryManager::gather_spike_data( const thread tid )
 {
-  unsigned int send_recv_count = sizeof( SpikeData ) / sizeof( unsigned int ) *
+  const unsigned int send_recv_count = sizeof( SpikeData ) / sizeof( unsigned int ) *
     ceil( send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes() );
 
   spike_register_table_.reset_entry_point( tid );
@@ -563,21 +566,21 @@ EventDeliveryManager::gather_spike_data( const thread tid )
   {
     static bool me_completed;
     static bool others_completed;
+    bool me_completed_tid = false;
 #pragma omp single
     {
-      me_completed = false;
+      me_completed = true;
       others_completed = false;
     }
     spike_register_table_.restore_entry_point( tid );
+    kernel().connection_builder_manager.reset_current_index_target_table( tid );
     prepare_spike_data_buffers_( me_completed );
       
 #pragma omp barrier
-    collocate_spike_data_buffers_( tid );
+    me_completed_tid = collocate_spike_data_buffers_( tid );
+#pragma omp critical
+    me_completed = me_completed && me_completed_tid;
 #pragma omp barrier
-#pragma omp single
-    {
-      me_completed = check_spike_data_me_completed_();
-    }
     if ( me_completed )
     {
 #pragma omp barrier
@@ -593,9 +596,12 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     } // of omp single
 #pragma omp single
     {
-      others_completed = check_spike_data_others_completed_();
+      others_completed = have_other_ranks_communicated_all_spike_data_();
+    } // of omp single
+    if ( not others_completed )
+    {
+      deliver_events_5g_( tid );
     }
-    deliver_events_5g_( tid );
     if ( me_completed && others_completed )
     {
       break;
@@ -604,35 +610,6 @@ EventDeliveryManager::gather_spike_data( const thread tid )
   spike_register_table_.toggle_target_processed_flags( tid );
   spike_register_table_.clear( tid );
 }
-
-bool
-EventDeliveryManager::check_spike_data_me_completed_() const
-{
-  for ( std::vector< SpikeData >::const_iterator it = send_buffer_spike_data_.begin();
-        it != send_buffer_spike_data_.end(); ++it )
-  {
-    if ( not it->is_empty() )
-    {
-      return false;
-    }
-  }
-  return true;
-}
-
-bool
-EventDeliveryManager::check_spike_data_others_completed_() const
-{
-  for ( std::vector< SpikeData >::const_iterator it = recv_buffer_spike_data_.begin();
-        it != recv_buffer_spike_data_.end(); ++it )
-  {
-    if ( not it->is_complete() )
-    {
-      return false;
-    }
-  }
-  return true;
-}
-
 
 void
 EventDeliveryManager::prepare_spike_data_buffers_( const bool me_completed )
@@ -656,7 +633,7 @@ EventDeliveryManager::prepare_spike_data_buffers_( const bool me_completed )
 
 }
 
-void
+bool
 EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
 {
   // TODO@5g: documentation
@@ -669,20 +646,24 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
   unsigned int num_spike_data_per_rank = ceil( send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes() );
   index target_rank;
   SpikeData next_spike_data;
-
+  bool spike_register_contains_more = false;
+  bool buffer_untouched = true;
+  // TODO@5g: for just one rank, only one thread fills MPI buffer
   if ( rank_start != rank_end )
   {
     while ( true )
     {
-      if ( spike_register_table_.get_next_spike_data( tid, target_rank, next_spike_data, rank_start, rank_end ) )
+      spike_register_contains_more = spike_register_table_.get_next_spike_data( tid, target_rank, next_spike_data, rank_start, rank_end );
+      if ( spike_register_contains_more )
       {
-        thread target_rank_index = target_rank - rank_start;
+        const thread target_rank_index = target_rank - rank_start;
         if ( send_buffer_offset[ target_rank_index ] < num_spike_data_per_rank )
         {
-          unsigned int idx = target_rank * num_spike_data_per_rank + send_buffer_offset[ target_rank_index ];
+          const unsigned int idx = target_rank * num_spike_data_per_rank + send_buffer_offset[ target_rank_index ];
           send_buffer_spike_data_[ idx ] = next_spike_data;
           ++send_buffer_offset[ target_rank_index ];
           ++sum_send_buffer_offset;
+          buffer_untouched = false;
         }
         else
         {
@@ -691,14 +672,22 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
         }
         if ( sum_send_buffer_offset == ( num_spike_data_per_rank * num_assigned_ranks_per_thread ) )
         {
-          break;
+          return buffer_untouched; // spike register contains more spikes
+        }
+        else
+        {
+          continue;
         }
       }
       else
       {
-        break;
+        return buffer_untouched; // all spikes have been processed
       }
     }
+  }
+  else
+  {
+    return buffer_untouched; // no spikes to process for this thread
   }
 }
 

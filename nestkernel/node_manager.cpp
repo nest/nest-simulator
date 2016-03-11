@@ -646,7 +646,7 @@ NodeManager::set_status_single_node_( Node& target, const DictionaryDatum& d, bo
   }
 }
 
-const size_t
+size_t
 NodeManager::prepare_nodes()
 {
   assert( kernel().is_initialized() );

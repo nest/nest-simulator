@@ -54,6 +54,7 @@ libmodelsmodule_la_SOURCES= \
 		mip_generator.h mip_generator.cpp\
 		modelsmodule.h modelsmodule.cpp\
 		multimeter.h multimeter.cpp\
+		music_cont_out_proxy.h music_cont_out_proxy.cpp\
 		music_cont_in_proxy.h music_cont_in_proxy.cpp\
 		music_event_in_proxy.h music_event_in_proxy.cpp\
 		music_event_out_proxy.h music_event_out_proxy.cpp\

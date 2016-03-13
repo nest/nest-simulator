@@ -53,10 +53,7 @@ class Network;
    spikes are forced to that grid.
 
    An additional state variable and the corresponding differential
-   equation represents a piecewise constant external current. If the
-   corresponding current event is connected with port 1 the current
-   is filtered by the synapse (using the time constant of post-synaptic
-   excitatory currents)
+   equation represents a piecewise constant external current.
 
    The general framework for the consistent formulation of systems with
    neuron like dynamics interacting by point events is described in
@@ -98,6 +95,13 @@ Remarks:
    tau_syn_in, respectively, to avoid numerical instabilities.
    For details, please see IAF_Neruons_Singularity.ipynb in the
    NEST source code (docs/model_details).
+
+   If the current event corresponding to the piecewise constant
+   external current is received at port 1 the current is filtered by
+   the synapse. Hereby the time constant of the post-synaptic
+   excitatory currents is used. This filtering can be used for a
+   direct implementation of the diffusion approximation, i.e.,
+   replacing incoming spike trains with white noise.
 
    References:
    [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation in Recurrent

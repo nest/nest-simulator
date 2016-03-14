@@ -184,13 +184,13 @@ private:
     double_t tau_ref_abs_;
 
     /** Resting potential in mV. */
-    double_t U0_;
+    double_t E_L_;
 
     /** External current in pA */
     double_t I_e_;
 
     /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
-        I.e. the real threshold is (U0_+Theta_). */
+        I.e. the real threshold is (E_L_+Theta_). */
     double_t Theta_;
 
     /** reset value of the membrane potential */

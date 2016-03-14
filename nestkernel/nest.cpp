@@ -225,12 +225,28 @@ get_connections( const DictionaryDatum& dict )
 void
 simulate( const double_t& time )
 {
+  const Time t_sim = Time::ms( time );
+
+  if ( time < 0 )
+  {
+    throw BadParameter( "The simulation time cannot be negative." );
+  }
+  if ( not t_sim.is_finite() )
+  {
+    throw BadParameter( "The simulation time must be finite." );
+  }
+  if ( not t_sim.is_grid_time() )
+  {
+    throw BadParameter(
+      "The simulation time must be a multiple "
+      "of the simulation resolution." );
+  }
+
   std::ostringstream os;
   os << "Simulating " << time << " ms.";
   LOG( M_INFO, "Simulate", os.str() );
-  Time t = Time::ms( time );
 
-  kernel().simulation_manager.simulate( t );
+  kernel().simulation_manager.simulate( t_sim );
 }
 
 void

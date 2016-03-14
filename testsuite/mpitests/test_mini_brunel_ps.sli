@@ -90,7 +90,7 @@ def
 /CMem  250.0 def    % membrane capacity [pF]
 /tauSyn  0.5 def    % synaptic time constant [ms]
 /tauRef  2.0 def    % refractory time [ms]
-/U0      0.0 def    % resting potential [mV]
+/E_L     0.0 def    % resting potential [mV]
 /theta  20.0 def    % threshold
 
 
@@ -178,10 +178,10 @@ def % brunel_setup
       /C_m     CMem
       /tau_syn tauSyn
       /t_ref   tauRef
-      /E_L     U0
+      /E_L     E_L
       /V_th    theta
-      /V_m     U0
-      /V_reset U0
+      /V_m     E_L
+      /V_reset E_L
       /C_m     1.0     % capacitance is unity in Brunel model
       >> SetStatus
     } forall

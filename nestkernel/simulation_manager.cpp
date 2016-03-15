@@ -30,6 +30,7 @@
 
 // Includes from libnestutil:
 #include "compose.hpp"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
@@ -458,7 +459,10 @@ nest::SimulationManager::update_()
 #pragma omp parallel
   {
     const int thrd = kernel().vp_manager.get_thread_id();
+    Stopwatch sw_total;
+    Stopwatch sw_comm;
 
+    sw_total.start();
     do
     {
       if ( print_time_ )
@@ -630,12 +634,14 @@ nest::SimulationManager::update_()
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
 
+      sw_comm.start();
       if ( to_step_
            == kernel().connection_builder_manager.get_min_delay() ) // gather only at end of slice
       {
         // kernel().event_delivery_manager.gather_events( true );
         kernel().event_delivery_manager.gather_spike_data( thrd );
       }
+      sw_comm.stop();
 
 #pragma omp barrier
 
@@ -662,6 +668,7 @@ nest::SimulationManager::update_()
 
     } while ( ( to_do_ != 0 ) && ( !terminate_ ) );
 
+    sw_total.stop();
     // TODO@5g: implement SP
     // End of the slice, we update the number of synaptic element
     // for ( std::vector< Node* >::const_iterator i =
@@ -673,6 +680,15 @@ nest::SimulationManager::update_()
     //     Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     // }
 
+    sw_comm.print( "gather " );
+    kernel().event_delivery_manager.sw_collocate.print("--collocate: ");
+    kernel().event_delivery_manager.sw_communicate.print("--communicate: ");
+    kernel().event_delivery_manager.sw_deliver.print("--deliver: ");
+    kernel().event_delivery_manager.sw_prepare.print("--prepare: ");
+    kernel().event_delivery_manager.sw_check.print("--check: ");
+    kernel().event_delivery_manager.sw_reset_restore_save.print("--reset_restore_save: ");
+
+    sw_total.print( "total " );
   } // end of #pragma parallel omp
 
   // check if any exceptions have been raised

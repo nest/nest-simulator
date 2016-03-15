@@ -561,7 +561,9 @@ EventDeliveryManager::gather_spike_data( const thread tid )
   const unsigned int send_recv_count = sizeof( SpikeData ) / sizeof( unsigned int ) *
     ceil( send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes() );
 
+  sw_reset_restore_save.start();
   spike_register_table_.reset_entry_point( tid );
+  sw_reset_restore_save.start();
 
   static bool me_completed;
   static bool others_completed;
@@ -575,25 +577,38 @@ EventDeliveryManager::gather_spike_data( const thread tid )
       me_completed = true;
       others_completed = true;
     }
+    sw_reset_restore_save.start();
     spike_register_table_.restore_entry_point( tid );
     kernel().connection_builder_manager.reset_current_index_target_table( tid );
+    sw_reset_restore_save.stop();
       
 #pragma omp barrier
+    sw_collocate.start();
     me_completed_tid = collocate_spike_data_buffers_( tid );
+    sw_collocate.stop();
 #pragma omp critical
     me_completed = me_completed && me_completed_tid;
 #pragma omp barrier
+    sw_reset_restore_save.start();
     spike_register_table_.save_entry_point( tid );
+    sw_reset_restore_save.stop();
+
+   sw_communicate.start();
 #pragma omp single
     {
       unsigned int* send_buffer_int = reinterpret_cast< unsigned int* >( &send_buffer_spike_data_[0] );
       unsigned int* recv_buffer_int = reinterpret_cast< unsigned int* >( &recv_buffer_spike_data_[0] );
       kernel().mpi_manager.communicate_Alltoall( send_buffer_int, recv_buffer_int, send_recv_count );
     } // of omp single
+    sw_communicate.stop();
+    sw_check.start();
+    sw_check.stop();
+    sw_deliver.start();
     others_completed_tid = deliver_events_5g_( tid );
 #pragma omp critical
     others_completed = others_completed && others_completed_tid;
 #pragma omp barrier
+    sw_deliver.stop();
     if ( me_completed && others_completed )
     {
       break;

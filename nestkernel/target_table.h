@@ -89,17 +89,14 @@ struct TargetData
 {
   index gid;
   Target target;
-  static const index empty_marker; // std::numeric_limits< index >::max()
   static const index complete_marker; // std::numeric_limits< index >::max() - 1
   static const index end_marker; // std::numeric_limits< index >::max() - 2
   TargetData();
   TargetData( const index gid, const Target& target);
-  void set_empty();
-  void set_complete();
-  void set_end();
-  bool is_empty() const;
-  bool is_complete() const;
-  bool is_end() const;
+  void set_complete_marker();
+  void set_end_marker();
+  bool is_complete_marker() const;
+  bool is_end_marker() const;
 };
 
 inline
@@ -117,37 +114,25 @@ TargetData::TargetData( const index gid, const Target& target )
 }
 
 inline void
-TargetData::set_empty()
-{
-  gid = empty_marker;
-}
-
-inline void
-TargetData::set_complete()
+TargetData::set_complete_marker()
 {
   gid = complete_marker;
 }
 
 inline void
-TargetData::set_end()
+TargetData::set_end_marker()
 {
   gid = end_marker;
 }
 
 inline bool
-TargetData::is_empty() const
-{
-  return gid == empty_marker;
-}
-
-inline bool
-TargetData::is_complete() const
+TargetData::is_complete_marker() const
 {
   return gid == complete_marker;
 }
 
 inline bool
-TargetData::is_end() const
+TargetData::is_end_marker() const
 {
   return gid == end_marker;
 }

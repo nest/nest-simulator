@@ -673,11 +673,11 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
               if ( is_buffer_untouched )
               {
                 assert( send_buffer_offset[ rank ] == 0 );
-                send_buffer_spike_data_[ rank * num_spike_data_per_rank + send_buffer_offset[ rank ] ].set_complete();
+                send_buffer_spike_data_[ rank * num_spike_data_per_rank + send_buffer_offset[ rank ] ].set_complete_marker();
               }
               else
               {
-                send_buffer_spike_data_[ rank * num_spike_data_per_rank + send_buffer_offset[ rank ] ].set_end();
+                send_buffer_spike_data_[ rank * num_spike_data_per_rank + send_buffer_offset[ rank ] ].set_end_marker();
               }
             }
           }
@@ -715,13 +715,13 @@ EventDeliveryManager::deliver_events_5g_( const thread tid )
   const unsigned int num_spike_data_per_rank = ceil( send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes() );
   for ( unsigned int rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
   {
-    if ( not recv_buffer_spike_data_[ rank * num_spike_data_per_rank ].is_complete() )
+    if ( not recv_buffer_spike_data_[ rank * num_spike_data_per_rank ].is_complete_marker() )
     {
       are_others_completed = false;
       for ( unsigned int i = 0; i < num_spike_data_per_rank; ++i )
       {
         SpikeData& spike_data = recv_buffer_spike_data_[ rank * num_spike_data_per_rank + i ];
-        if ( spike_data.is_end() )
+        if ( spike_data.is_end_marker() )
         {
           break;
         }
@@ -851,11 +851,11 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid, std::vec
               if ( is_buffer_untouched )
               {
                 assert( send_buffer_offset[ rank ] == 0 );
-                send_buffer[ rank * num_target_data_per_rank + send_buffer_offset[ rank ] ].set_complete();
+                send_buffer[ rank * num_target_data_per_rank + send_buffer_offset[ rank ] ].set_complete_marker();
               }
               else
               {
-                send_buffer[ rank * num_target_data_per_rank + send_buffer_offset[ rank ] ].set_end();
+                send_buffer[ rank * num_target_data_per_rank + send_buffer_offset[ rank ] ].set_end_marker();
               }
             }
           }
@@ -877,13 +877,13 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid, c
   bool are_others_completed = true;
   for ( unsigned int rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
   {
-    if ( not recv_buffer[ rank * num_target_data_per_rank ].is_complete() )
+    if ( not recv_buffer[ rank * num_target_data_per_rank ].is_complete_marker() )
     {
       are_others_completed = false;
       for ( unsigned int i = 0; i < num_target_data_per_rank; ++i )
       {
         const TargetData& target_data = recv_buffer[ rank * num_target_data_per_rank + i ];
-        if ( target_data.is_end() )
+        if ( target_data.is_end_marker() )
         {
           break;
         }

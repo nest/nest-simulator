@@ -41,17 +41,14 @@ struct SpikeData
   unsigned int syn_index : 6;
   unsigned int lcid : 25;
   unsigned int lag : 6;
-  const static unsigned int empty_marker; // 1024 - 1
-  const static unsigned int complete_marker; // 1024 - 2
-  const static unsigned int end_marker; // 1024 - 3
+  const static unsigned int complete_marker; // 1024 - 1
+  const static unsigned int end_marker; // 1024 - 2
   SpikeData();
   SpikeData( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag );
-  void set_empty();
-  void set_complete();
-  void set_end();
-  bool is_empty() const;
-  bool is_complete() const;
-  bool is_end() const;
+  void set_complete_marker();
+  void set_end_marker();
+  bool is_complete_marker() const;
+  bool is_end_marker() const;
 };
 
 inline
@@ -73,37 +70,25 @@ SpikeData::SpikeData( const thread tid, const unsigned int syn_index, const unsi
 }
 
 inline void
-SpikeData::set_empty()
-{
-  tid = empty_marker;
-}
-
-inline void
-SpikeData::set_complete()
+SpikeData::set_complete_marker()
 {
   tid = complete_marker;
 }
 
 inline void
-SpikeData::set_end()
+SpikeData::set_end_marker()
 {
   tid = end_marker;
 }
 
 inline bool
-SpikeData::is_empty() const
-{
-  return tid == empty_marker;
-}
-
-inline bool
-SpikeData::is_complete() const
+SpikeData::is_complete_marker() const
 {
   return tid == complete_marker;
 }
 
 inline bool
-SpikeData::is_end() const
+SpikeData::is_end_marker() const
 {
   return tid == end_marker;
 }

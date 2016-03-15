@@ -25,7 +25,6 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
-const nest::index nest::TargetData::empty_marker = std::numeric_limits< index >::max();
 const nest::index nest::TargetData::complete_marker = std::numeric_limits< index >::max() - 1;
 const nest::index nest::TargetData::end_marker = std::numeric_limits< index >::max() - 2;
 

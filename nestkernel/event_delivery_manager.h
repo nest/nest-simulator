@@ -228,8 +228,6 @@ private:
    */
   void collocate_buffers_( bool );
 
-  bool have_other_ranks_communicated_all_spike_data_() const;
-
   void prepare_spike_data_buffers_( const bool me_completed );
 
   bool collocate_spike_data_buffers_( const thread tid );
@@ -244,7 +242,7 @@ private:
 
   void prepare_target_data_buffers_( const bool me_completed, std::vector< TargetData >& send_buffer );
 
-  void deliver_events_5g_( const thread tid );
+  bool deliver_events_5g_( const thread tid );
 
   /**
    * Send event e to all targets of node source on thread t

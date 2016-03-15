@@ -562,15 +562,18 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     ceil( send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes() );
 
   spike_register_table_.reset_entry_point( tid );
+
+  static bool me_completed;
+  static bool others_completed;
+  bool me_completed_tid;
+  bool others_completed_tid;
+
   while ( true )
   {
-    static bool me_completed;
-    static bool others_completed;
-    bool me_completed_tid = false;
 #pragma omp single
     {
       me_completed = true;
-      others_completed = false;
+      others_completed = true;
     }
     spike_register_table_.restore_entry_point( tid );
     kernel().connection_builder_manager.reset_current_index_target_table( tid );
@@ -594,18 +597,15 @@ EventDeliveryManager::gather_spike_data( const thread tid )
       unsigned int* recv_buffer_int = reinterpret_cast< unsigned int* >( &recv_buffer_spike_data_[0] );
       kernel().mpi_manager.communicate_Alltoall( send_buffer_int, recv_buffer_int, send_recv_count );
     } // of omp single
-#pragma omp single
-    {
-      others_completed = have_other_ranks_communicated_all_spike_data_();
-    } // of omp single
-    if ( not others_completed )
-    {
-      deliver_events_5g_( tid );
-    }
+    others_completed_tid = deliver_events_5g_( tid );
+#pragma omp critical
+    others_completed = others_completed && others_completed_tid;
+#pragma omp barrier
     if ( me_completed && others_completed )
     {
       break;
     }
+#pragma omp barrier
   } // of while(true)
   spike_register_table_.toggle_target_processed_flags( tid );
   spike_register_table_.clear( tid );
@@ -691,12 +691,15 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
   }
 }
 
-void
+bool
 EventDeliveryManager::deliver_events_5g_( const thread tid )
 {
+  bool no_spikes_delivered = true;
   // deliver only at beginning of time slice
   if ( kernel().simulation_manager.get_from_step() > 0 )
-    return;
+  {
+    return no_spikes_delivered;
+  }
 
   SpikeEvent se;
 
@@ -715,9 +718,10 @@ EventDeliveryManager::deliver_events_5g_( const thread tid )
     {
       se.set_stamp( prepared_timestamps[ it->lag ] );
       kernel().connection_builder_manager.send_5g( tid, it->syn_index, it->lcid, se );
+      no_spikes_delivered = false;
     }
   }
-
+  return no_spikes_delivered;
 }
 
 // TODO@5g: documentation

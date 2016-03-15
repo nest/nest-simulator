@@ -105,20 +105,6 @@ EventDeliveryManager::write_toggle() const
   return kernel().simulation_manager.get_slice() % 2;
 }
 
-inline bool
-EventDeliveryManager::have_other_ranks_communicated_all_spike_data_() const
-{
-  for ( std::vector< SpikeData >::const_iterator it = recv_buffer_spike_data_.begin();
-        it != recv_buffer_spike_data_.end(); ++it )
-  {
-    if ( not it->is_complete() )
-    {
-      return false;
-    }
-  }
-  return true;
-}
-
 } // of namespace nest
 
 #endif

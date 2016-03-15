@@ -44,12 +44,12 @@ nest::SpikeRegisterTable::initialize()
   spike_register_.resize( num_threads );
 
   saved_entry_point_.resize( num_threads, false );
-  current_tid_.resize( num_threads );
-  current_lag_.resize( num_threads );
-  current_lid_.resize( num_threads );
-  save_tid_.resize( num_threads );
-  save_lag_.resize( num_threads );
-  save_lid_.resize( num_threads );
+  current_tid_.resize( num_threads, 0 );
+  current_lag_.resize( num_threads, 0 );
+  current_lid_.resize( num_threads, 0 );
+  save_tid_.resize( num_threads, 0 );
+  save_lag_.resize( num_threads, 0 );
+  save_lid_.resize( num_threads, 0 );
 
   for( thread tid = 0; tid < num_threads; ++tid)
   {

@@ -47,7 +47,7 @@ nest::TargetTable::initialize()
   {
     targets_[ tid ] = new std::vector< std::vector< Target > >(
       0, std::vector< Target >( 0, Target() ) );
-    target_processed_flag_[ tid ] = new std::vector< bool >( true );
+    target_processed_flag_[ tid ] = new std::vector< bool >( 0 );
   }
 }
 
@@ -72,7 +72,7 @@ void
 nest::TargetTable::prepare( const thread tid )
 {
   targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes() );
-  target_processed_flag_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes() );
+  target_processed_flag_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes(), true );
 }
 
 // TODO@5g: benchmark with and without reserving memory for synapses

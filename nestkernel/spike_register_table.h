@@ -43,12 +43,15 @@ struct SpikeData
   unsigned int lag : 6;
   const static unsigned int empty_marker; // 1024 - 1
   const static unsigned int complete_marker; // 1024 - 2
+  const static unsigned int end_marker; // 1024 - 3
   SpikeData();
   SpikeData( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag );
   void set_empty();
   void set_complete();
+  void set_end();
   bool is_empty() const;
   bool is_complete() const;
+  bool is_end() const;
 };
 
 inline
@@ -81,6 +84,12 @@ SpikeData::set_complete()
   tid = complete_marker;
 }
 
+inline void
+SpikeData::set_end()
+{
+  tid = end_marker;
+}
+
 inline bool
 SpikeData::is_empty() const
 {
@@ -93,6 +102,12 @@ SpikeData::is_complete() const
   return tid == complete_marker;
 }
 
+inline bool
+SpikeData::is_end() const
+{
+  return tid == end_marker;
+}
+
 class SpikeRegisterTable
 {
 private:
@@ -102,7 +117,7 @@ private:
   std::vector< unsigned int > current_lid_;
   std::vector< unsigned int > save_tid_;
   std::vector< unsigned int > save_lag_;
-  std::vector< unsigned int > save_lid_;
+  std::vector< unsigned int > save_lid_; // TODO@5g: rename! this is not a lid, but just an index
   std::vector< bool > saved_entry_point_;
 
 public:
@@ -128,7 +143,14 @@ SpikeRegisterTable::save_entry_point( const thread tid )
   {
     save_tid_[ tid ] = current_tid_[ tid ];
     save_lag_[ tid ] = current_lag_[ tid ];
-    save_lid_[ tid ] = current_lid_[ tid ];
+    if ( current_lid_[ tid ] > 0 )
+    {
+      save_lid_[ tid ] = current_lid_[ tid ] - 1;
+    }
+    else
+    {
+      save_lid_[ tid ] = 0;
+    }
     saved_entry_point_[ tid ] = true;
   }
 }

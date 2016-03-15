@@ -35,7 +35,9 @@ namespace nest
 inline void
 TargetTable::add_target( thread tid, const TargetData& target_data )
 {
-  index lid = kernel().vp_manager.gid_to_lid( target_data.gid );
+  const index lid = kernel().vp_manager.gid_to_lid( target_data.gid );
+  assert( tid < targets_.size() );
+  assert( lid < targets_[ tid ]->size() );
   (*targets_[ tid ])[ lid ].push_back( target_data.target );
 }
 

@@ -120,7 +120,7 @@ public:
   //! returns true if the sources table has been cleared
   bool is_cleared() const;
   //! returns the next target data, according to the current_* positions
-  void get_next_target_data( const thread tid, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end );
+  bool get_next_target_data( const thread tid, index& target_rank, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end );
   //! rejects the last target data, and resets the current_* positions accordingly
   void reject_last_target_data( const thread tid );
   //! stores the current_* positions
@@ -171,13 +171,10 @@ nest::SourceTable::reject_last_target_data( const thread tid )
 {
   // adding the last target data returned by get_next_target_data
   // could not be inserted into MPI buffer due to overflow. we hence
-  // need to reduce the current lcid cound by one, since after this
-  // function, save_entry_point is called, which uses the current_lcid
-  // values as the save point. we also need to correct the processed
-  // flag of the last entry.
+  // need to correct the processed flag of the last entry.
   assert( current_lcid_[ tid ] > 0 );
-  --current_lcid_[ tid ];
-  ( *sources_[ current_tid_[ tid ] ] )[ current_syn_id_[ tid ] ][ current_lcid_[ tid ]  ].processed = false;
+  // --current_lcid_[ tid ];
+  ( *sources_[ current_tid_[ tid ] ] )[ current_syn_id_[ tid ] ][ current_lcid_[ tid ] - 1 ].processed = false;
 }
 
 inline
@@ -188,7 +185,14 @@ nest::SourceTable::save_entry_point( const thread tid )
   {
     save_tid_[ tid ] = current_tid_[ tid ];
     save_syn_id_[ tid ] = current_syn_id_[ tid ];
-    save_lcid_[ tid ] = current_lcid_[ tid ];
+    if ( current_lcid_[ tid ] > 0 )
+    {
+      save_lcid_[ tid ] = current_lcid_[ tid ] - 1;
+    }
+    else
+    {
+      save_lcid_[ tid ] = 0;
+    }
     saved_entry_point_[ tid ] = true;
   }
 }

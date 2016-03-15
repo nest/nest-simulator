@@ -91,12 +91,15 @@ struct TargetData
   Target target;
   static const index empty_marker; // std::numeric_limits< index >::max()
   static const index complete_marker; // std::numeric_limits< index >::max() - 1
+  static const index end_marker; // std::numeric_limits< index >::max() - 2
   TargetData();
   TargetData( const index gid, const Target& target);
   void set_empty();
   void set_complete();
+  void set_end();
   bool is_empty() const;
   bool is_complete() const;
+  bool is_end() const;
 };
 
 inline
@@ -125,6 +128,12 @@ TargetData::set_complete()
   gid = complete_marker;
 }
 
+inline void
+TargetData::set_end()
+{
+  gid = end_marker;
+}
+
 inline bool
 TargetData::is_empty() const
 {
@@ -135,6 +144,12 @@ inline bool
 TargetData::is_complete() const
 {
   return gid == complete_marker;
+}
+
+inline bool
+TargetData::is_end() const
+{
+  return gid == end_marker;
 }
 
 /** This data structure stores the targets of the local neurons, i.e.,
@@ -183,8 +198,7 @@ void
 TargetTable::reject_last_spike_data( const thread tid, const thread current_tid, const index lid )
 {
   assert( current_target_index_[ tid ] > 0 );
-  --current_target_index_[ tid ];
-  ( *targets_[ current_tid ])[ lid ][ current_target_index_[ tid ] ].processed = (*target_processed_flag_[ current_tid ])[ lid ];
+  ( *targets_[ current_tid ])[ lid ][ current_target_index_[ tid ] - 1 ].processed = (*target_processed_flag_[ current_tid ])[ lid ];
 }
 
 inline void

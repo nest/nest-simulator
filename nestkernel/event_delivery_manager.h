@@ -228,19 +228,13 @@ private:
    */
   void collocate_buffers_( bool );
 
-  void prepare_spike_data_buffers_( const bool me_completed );
-
   bool collocate_spike_data_buffers_( const thread tid );
 
-  void collocate_target_data_buffers_( const thread tid, std::vector< TargetData >& send_buffer );
+  bool collocate_target_data_buffers_( const thread tid, std::vector< TargetData >& send_buffer );
 
-  void distribute_target_data_buffers_( const thread tid, const std::vector< TargetData >& recv_buffer );
-
-  bool check_target_data_me_completed_( const std::vector< TargetData >& buffer );
+  bool distribute_target_data_buffers_( const thread tid, const std::vector< TargetData >& recv_buffer );
 
   bool check_target_data_others_completed_( const std::vector< TargetData >& buffer );
-
-  void prepare_target_data_buffers_( const bool me_completed, std::vector< TargetData >& send_buffer );
 
   bool deliver_events_5g_( const thread tid );
 

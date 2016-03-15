@@ -27,6 +27,7 @@
 
 const unsigned int nest::SpikeData::empty_marker = ( 1024 - 1 );
 const unsigned int nest::SpikeData::complete_marker = ( 1024 - 2 );
+const unsigned int nest::SpikeData::end_marker = ( 1024 - 3 );
 
 nest::SpikeRegisterTable::SpikeRegisterTable()
 {

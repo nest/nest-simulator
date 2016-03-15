@@ -99,8 +99,8 @@ nest::SourceTable::is_cleared() const
   return all_cleared;
 }
 
-void
-nest::SourceTable::get_next_target_data( const thread tid, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end )
+bool
+nest::SourceTable::get_next_target_data( const thread tid, index& target_rank, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end )
 {
   // we stay in this loop either until we can return a valid
   // TargetData object or we have reached the end of the sources table
@@ -108,11 +108,7 @@ nest::SourceTable::get_next_target_data( const thread tid, TargetData& next_targ
   {
     if ( current_tid_[ tid ] == sources_.size() )
     {
-      // reached the end of the sources table, which we signal by
-      // setting the gid of next_target_data to a specific value and
-      // return
-      next_target_data.gid = invalid_index;
-      return;
+      return false; // reached the end of the sources table
     }
     else
     {
@@ -134,7 +130,7 @@ nest::SourceTable::get_next_target_data( const thread tid, TargetData& next_targ
         {
           // the current position contains an entry, so we retrieve it
           Source& current_source = ( *sources_[ current_tid_[ tid ] ] )[ current_syn_id_[ tid ] ][ current_lcid_[ tid ] ];
-          const thread target_rank = kernel().node_manager.get_process_id_of_gid( current_source.gid );
+          target_rank = kernel().node_manager.get_process_id_of_gid( current_source.gid );
           // now we need to determine whether this thread is
           // responsible for this part of the MPI buffer; if not we
           // just continue with the next iteration of the loop
@@ -160,7 +156,7 @@ nest::SourceTable::get_next_target_data( const thread tid, TargetData& next_targ
               next_target_data.target.syn_index = current_syn_id_[ tid ];
               next_target_data.target.lcid = current_lcid_[ tid ];
               ++current_lcid_[ tid ];
-              return;
+              return true;
             }
           }
           else

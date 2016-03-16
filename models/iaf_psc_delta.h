@@ -184,7 +184,7 @@ private:
     double_t I_e_;
 
     /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
-        I.e. the real threshold is (U0_+V_th_). */
+        I.e. the real threshold is (E_L_+V_th_). */
     double_t V_th_;
 
     /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).

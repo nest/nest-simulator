@@ -27,6 +27,15 @@ import unittest
 import math
 
 
+def _round_up(simtime):
+    """
+    Returns simulation time rounded up to next multiple of resolution.
+    """
+    
+    res = nest.GetKernelStatus('resolution')
+    return res * math.ceil(float(simtime) / float(res))
+
+
 @nest.check_stack
 class ParrotNeuronPSTestCase(unittest.TestCase):
     """Check parrot_neuron spike repetition properties"""
@@ -54,7 +63,7 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
 
         # connect with arbitrary delay
         nest.Connect(self.source, self.parrot, syn_spec={"delay": self.delay})
-        nest.Simulate(self.spike_time + 2 * self.delay)
+        nest.Simulate(_round_up(self.spike_time + 2 * self.delay))
 
         # get spike from parrot neuron
         events = nest.GetStatus(self.spikes)[0]["events"]
@@ -71,7 +80,7 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         # connect with arbitrary delay to port 1
         nest.Connect(self.source, self.parrot,
                      syn_spec={"receptor_type": 1, "delay": self.delay})
-        nest.Simulate(self.spike_time + 2. * self.delay)
+        nest.Simulate(_round_up(self.spike_time + 2. * self.delay))
 
         # get spike from parrot neuron, assert it was ignored
         events = nest.GetStatus(self.spikes)[0]["events"]
@@ -90,7 +99,7 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         # connect twice
         nest.Connect(self.source, self.parrot, syn_spec={"delay": self.delay})
         nest.Connect(self.source, self.parrot, syn_spec={"delay": self.delay})
-        nest.Simulate(self.spike_time + 2. * self.delay)
+        nest.Simulate(_round_up(self.spike_time + 2. * self.delay))
 
         # get spikes from parrot neuron, assert two were transmitted
         events = nest.GetStatus(self.spikes)[0]["events"]
@@ -148,7 +157,7 @@ class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
         nest.Connect(parrots[:1], parrots[1:], syn_spec={'delay': delay})
         nest.Connect(parrots[1:], detect)
 
-        nest.Simulate(t_sim)
+        nest.Simulate(_round_up(t_sim))
 
         n_spikes = nest.GetStatus(detect)[0]['n_events']
         assert n_spikes > spikes_expected - 3 * spikes_std, \
@@ -225,7 +234,7 @@ class ParrotNeuronPSSTDPTestCase(unittest.TestCase):
         w_pre = syn_status['weight']
 
         last_time = max(pre_times[-1], post_times[-1])
-        nest.Simulate(last_time + 2 * delay)
+        nest.Simulate(_round_up(last_time + 2 * delay))
 
         # get weight post protocol
         syn_status = nest.GetStatus(syn)[0]

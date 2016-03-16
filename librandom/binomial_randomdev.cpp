@@ -235,6 +235,7 @@ librandom::BinomialRandomDev::set_status( const DictionaryDatum& d )
 void
 librandom::BinomialRandomDev::get_status( DictionaryDatum& d ) const
 {
+  RandomDev::get_status( d );
   def< double >( d, "p", p_ );
   def< long >( d, "n", n_ );
 }

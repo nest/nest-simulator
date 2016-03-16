@@ -67,6 +67,9 @@ Set default libraries:
   -Dwith-readline=[OFF|ON|</path/to/readline>] Find a GNU Readline library. To set
                                                a specific library, set install path.
                                                [default=ON]
+  -Dwith-ltdl=[OFF|ON|</path/to/ltdl>]         Find a ltdl library. To set a specific
+                                               ltdl, set install path.
+                                               [default=ON]
   -Dwith-python=[OFF|ON|</path/to/python>]     Build PyNEST. To set a specific Python,
                                                set install path. [default=ON]
   -Dcythonize-pynest=[OFF|ON]                  Use Cython to cythonize pynestkernel.pyx.

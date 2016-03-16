@@ -57,6 +57,7 @@ option( with-openmp "Enable OpenMP multithreading. Optional: set OMP flag. [defa
 # define default libraries
 option( with-gsl "Find a gsl library. To set a specific gsl installation, set install path. [default=ON]" ON)
 option( with-readline "Find a readline library. To set a specific readline, set install path. [default=ON]" ON )
+option( with-ltdl "Find a ltdl library. To set a specific ltdl, set install path. [default=ON]" ON )
 option( with-python "Build PyNEST. To set a specific Python, set install path. [default=ON]" ON )
 option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx. [default=ON]" ON )
 
@@ -436,7 +437,12 @@ endif ()
 
 # Only find libLTDL if we link dynamically
 set( HAVE_LIBLTDL OFF )
-if ( NOT static-libraries )
+if ( with-ltdl AND NOT static-libraries )
+  if ( NOT ${with-ltdl} STREQUAL "ON" )
+    # a path is set
+    set( LTDL_ROOT_DIR ${with-ltdl} )
+  endif ()
+
   find_package( LTDL )
   if ( LTDL_FOUND )
     set( HAVE_LIBLTDL ON )

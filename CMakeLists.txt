@@ -63,7 +63,7 @@ option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx. If OFF, PyNE
 # Whether to build a 'mostly' static executable and static libraries.
 option( static-libraries "Build static executable and libraries. [default=OFF]" OFF )
 # additional compile flags
-option( with-optimize "Enable user defined optimizations. [default OFF, when ON, defaults to '-O3']" OFF )
+option( with-optimize "Enable user defined optimizations. [default ON, when ON, defaults to '-O2']" ON )
 option( with-warning "Enable user defined warnings. [default ON, when ON, defaults to '-Wall']" ON )
 option( with-debug "Enable user defined debug flags. [default OFF, when ON, defaults to '-g']" OFF )
 set( with-libraries OFF CACHE STRING "Link additional libraries. Give full path. Separate multiple libraries by ';'. [default OFF]" )
@@ -217,7 +217,7 @@ find_program( SED NAMES sed gsed )
 # add custom warnings and optimizations
 if ( with-optimize )
   if ( with-optimize STREQUAL "ON" )
-    set( with-optimize "-O3" )
+    set( with-optimize "-O2" )
   endif ()
   foreach ( flag ${with-optimize} )
     set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}" )

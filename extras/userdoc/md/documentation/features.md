@@ -12,11 +12,19 @@ General
 Neuron models
 -------------
 
--   Integrate and fire (IAF) neuron models with current based synapses (delta-, exponential- and alpha-function shaped)
+-   Integrate and fire (IAF) neuron models with current based synapses (delta-,
+    exponential- and alpha-function shaped)
+
 -   Integrate and fire neuron models with conductance-based synapses
--   Adaptive-exponential integrate and fire neuron model (AdEx) ([Brette & Gerstner, 2005](http://jn.physiology.org/cgi/content/abstract/94/5/3637)) - the standard in the FACETS EU project ([[1]](http://facets.kip.uni-heidelberg.de/))
+
+-   Adaptive-exponential integrate and fire neuron model (AdEx)
+    ([Brette & Gerstner, 2005](http://jn.physiology.org/cgi/content/abstract/94/5/3637))-
+    the standard in the FACETS EU project ([[1]](http://facets.kip.uni-heidelberg.de/))
+
 -   MAT2 neuron model ([Kobayashi et al. 2009](http://www.frontiersin.org/computational_neuroscience/10.3389/neuro.10/009.2009/abstract))
+
 -   Hodgkin-Huxley type models with one compartment
+
 -   Neuron models with few compartments
 
 Synapse models
@@ -42,15 +50,23 @@ Accuracy
 --------
 
 -   Each neuron model is assigned an appropriate solver
--   [Exact Integration](http://www.springerlink.com/content/08legf57tjkc6nj0/) is used for suitable neuron models
--   By default spikes are restricted to the grid spanned by the computation time step
--   For some neuron models [spike interaction in continuous time](../simulations-with-precise-spike-times/) is available
+
+-   [Exact Integration](http://www.springerlink.com/content/08legf57tjkc6nj0/)
+    is used for suitable neuron models
+
+-   By default spikes are restricted to the grid spanned by the computation time
+    step
+
+-   For some neuron models [spike interaction in continuous time](../simulations-with-precise-spike-times/)
+    is available
 
 Verification
 ------------
 
 -   After installation NEST can be verified by an automatic testsuite
--   The testsuite is automatically run after each modification of the NEST sources. You can watch the current status on our [Continuous Integration](../continuous_integration/index.html "Continuous Integration") system.
+
+-   The testsuite is automatically run after each modification of the NEST
+    sources. You can watch the current status on our [Continuous Integration](../continuous_integration/index.html "Continuous Integration") system.
 
 Supported platforms
 -------------------
@@ -60,4 +76,6 @@ Supported platforms
 -   Virtual machines for use under Windows
 -   IBM BlueGene
 
-By support we mean that we regularly test and use NEST on recent versions of these systems and that NEST therefore should work on those systems. It should not be construed as any warranty that NEST will run on any particular system.
+By support we mean that we regularly test and use NEST on recent versions of
+these systems and that NEST therefore should work on those systems. It should
+not be construed as any warranty that NEST will run on any particular system.

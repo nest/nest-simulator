@@ -4,8 +4,8 @@ First Steps
 Overview
 --------
 
-SLI is the simulation language interface of NEST. It is a stack language where each command
- expects to find its arguments on the stack.
+SLI is the simulation language interface of NEST. It is a stack language where
+each command expects to find its arguments on the stack.
 
 A stack is a place where data can be stored. The stack is
  organized into levels and the data can be thought of being on top
@@ -23,9 +23,13 @@ Each command expects to find its arguments on the stack. When a
  the stack and pushes one or more results back on the stack.
  The basic concepts of stack operation are:
 
--   Commands that require *arguments* take their arguments from the stack. Thus, this data must be present before you execute the command.
+-   Commands that require *arguments* take their arguments from the stack. Thus,
+    this data must be present before you execute the command.
+
 -   The arguments are then removed by the command as it is executed.
--   Any results which are produced by the command are returned to the stack, so you can use them in other operations.
+
+-   Any results which are produced by the command are returned to the stack, so
+    you can use them in other operations.
 
 Commands with one argument
 --------------------------
@@ -37,27 +41,28 @@ Commands which need one argument take their argument from the top
 
 ### Example
 
-
     SLI ] 10 log =
     1
 
-
-Here, the command `log` is used to compute the decadic logarithm of 10. Then, the command `=` is used to display the result of this computation.
+Here, the command `log` is used to compute the decadic logarithm of 10. Then,
+the command `=` is used to display the result of this computation.
 
 Commands with more arguments
 ----------------------------
 
-Commands which need more than one argument, take their arguments from level 0, 1, 2, and so forth and return their result to level 0, the top of the stack. Examples are the arithmetic functions `add`, `sub`, `mul`, and `div`, which take two arguments and return one result.
-
+Commands which need more than one argument, take their arguments from level 0,
+1, 2, and so forth and return their result to level 0, the top of the stack.
+Examples are the arithmetic functions `add`, `sub`, `mul`, and `div`, which
+take two arguments and return one result.
 
     SLI ] 1 2 add =
     3
     SLI ] 1 2. div =
     0.5
 
-
-So far, we have used the command `=` to display the top object on the stack. In addition, this command removes the object. You can also list the contents of the stack without changing it.
-
+So far, we have used the command `=` to display the top object on the stack. In
+addition, this command removes the object. You can also list the contents of the
+stack without changing it.
 
     SLI ] 1 2
     SLI [2] stack
@@ -68,14 +73,15 @@ So far, we have used the command `=` to display the top object on the stack. In 
     3
     SLI [1]
 
-
 Using previous results
 ----------------------
 
-Chain calculations are calculations which involve more than one operation. A stack is particularly useful for chaining operations,because it retains intermediate results.
+Chain calculations are calculations which involve more than one operation. A
+stack is particularly useful for chaining operations,because it retains
+intermediate results.
 
-This example shows, how the stack can be used for chain calculations. Calculate (10+13) \\(cdot\\) (8-12)
-
+This example shows, how the stack can be used for chain calculations. Calculate
+(10+13) \\(cdot\\) (8-12)
 
     SLI [1] 10 13 add 8 12 sub
     SLI [2] stack
@@ -84,18 +90,19 @@ This example shows, how the stack can be used for chain calculations. Calculate 
     SLI [2] mul =
     -92                                                                              
 
-
-Notice that the results of the fist two operations remain on the stack, until they are used in the multiplication.
+Notice that the results of the fist two operations remain on the stack, until
+they are used in the multiplication.
 
 Exchanging the first two stack levels
 -------------------------------------
 
-The command `exch` exchanges the contents of the levels 0 and 1. This is useful, if the order of objects on the stack does not match the order required by the desired command.
+The command `exch` exchanges the contents of the levels 0 and 1. This is useful,
+if the order of objects on the stack does not match the order required by the
+desired command.
 
-### Example
+### Example 1
 
 Calculate 1/ln(2).
-
 
     SLI ] 2 ln
     SLI [1] 1
@@ -103,11 +110,12 @@ Calculate 1/ln(2).
     SLI [1] =
     1.4427
 
-
 Removing stack elements
 -----------------------
 
-The command `pop` removes the top object (level 0) of the stack. The remaining items move up on the stack, so that the object which was at level 1 is now at level 0.
+The command `pop` removes the top object (level 0) of the stack. The remaining
+items move up on the stack, so that the object which was at level 1 is now at
+level 0.
 
 The command `clear` clears the entire stack.
 
@@ -119,10 +127,9 @@ level 0 and pushes the other element down one level.
 This command is useful if the result of an operation is needed
 more than once in a chain calculation.
 
-### Example
+### Example 2
 
 Calculate (1+4/2) + exp(1+4/2)
-
 
     SLI ] 1 4 2.0 div add
     SLI [1] dup
@@ -130,7 +137,6 @@ Calculate (1+4/2) + exp(1+4/2)
     SLI [2] add
     SLI [1] =
     23.0855
-
 
 Important stack commands
 ------------------------

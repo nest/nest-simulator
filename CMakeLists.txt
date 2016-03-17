@@ -91,13 +91,6 @@ set( PKGDATADIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR} )
 set( PKGDOCDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR} )
 set( TESTSUITE_BASEDIR ${PKGDOCDIR} )
 
-# on OS X
-set( CMAKE_MACOSX_RPATH ON )
-
-# set the rpath only when installed
-# https://cmake.org/Wiki/CMake_RPATH_handling#Mac_OS_X_and_the_RPATH
-set( CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}" "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/nest" )
-
 # CPack stuff
 set( CPACK_GENERATOR TGZ )
 set( CPACK_SOURCE_GENERATOR TGZ )
@@ -312,6 +305,9 @@ endif ()
 # build static or shared libraries
 if ( static-libraries )
   set( BUILD_SHARED_LIBS OFF )
+  # set RPATH stuff
+  SET( CMAKE_SKIP_RPATH TRUE )
+
   if ( UNIX OR APPLE )
     # On Linux .a is the static library suffix, on Mac OS X .lib can also
     # be used, so we'll add both to the preference list.
@@ -319,6 +315,27 @@ if ( static-libraries )
   endif ()
 else ()
   set( BUILD_SHARED_LIBS ON )
+
+  # set RPATH stuff
+  SET( CMAKE_SKIP_RPATH FALSE )
+  # use, i.e. don't skip the full RPATH for the build tree
+  SET( CMAKE_SKIP_BUILD_RPATH FALSE )
+  # on OS X
+  set( CMAKE_MACOSX_RPATH ON )
+
+  # when building, don't use the install RPATH already
+  # (but later on when installing)
+  SET( CMAKE_BUILD_WITH_INSTALL_RPATH FALSE )
+
+  # set the rpath only when installed
+  set( CMAKE_INSTALL_RPATH
+    "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}"
+    "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/nest" )
+
+  # add the automatically determined parts of the RPATH
+  # which point to directories outside the build tree to the install RPATH
+  SET( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE )
+
   if ( UNIX OR APPLE )
     # reverse the search order for lib extensions
     set( CMAKE_FIND_LIBRARY_SUFFIXES ".so;.dylib;.a;.lib" )
@@ -785,6 +802,7 @@ message( "----------------------------------------------------------------------
 message( "" )
 message( "Build type          : ${CMAKE_BUILD_TYPE}" )
 message( "Target System       : ${CMAKE_SYSTEM_NAME}" )
+message( "Cross Compiling     : ${CMAKE_CROSSCOMPILING}" )
 message( "C compiler          : ${CMAKE_C_COMPILER}" )
 message( "C compiler flags    : ${ALL_CFLAGS}" )
 message( "C++ compiler        : ${CMAKE_CXX_COMPILER}" )
@@ -806,6 +824,9 @@ endif ()
 
 if ( HAVE_PYTHON )
   message( "Python bindings     : Yes (Python ${PYTHON_VERSION}: ${PYTHON})" )
+  message( "       Includes     : ${PYTHON_INCLUDE_DIRS}" )
+  message( "       Libraries    : ${PYTHON_LIBRARIES}" )
+  message( "" )
   if ( CYTHON_FOUND )
     message( "Cython bindings     : Yes (Cython ${CYTHON_VERSION}: ${CYTHON_EXECUTABLE})" )
   else ()

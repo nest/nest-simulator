@@ -38,45 +38,51 @@
 #include "connection.h"
 #include "dictutils.h"
 #include "sibling_container.h"
-//#include "recording_device.h"
-
-
 
 /* BeginDocumentation
 
-Name: music_cont_out_proxy - Device to forward contiguous values to remote applications using MUSIC.
+Name: music_cont_out_proxy - A device which sends continuous data from NEST to MUSIC.
 
 Description:
-A music_cont_out_proxy is used to send contiguous values to a remote application that
-also uses MUSIC.
+A music_cont_out_proxy can be used to send continuous data from neurons over MUSIC to 
+remote applications. It works in a similar like a multimeter model. The user
+has to specify the recordable values to observe (e.g. ["V_m"]) via the record_from parameter.
+The target neurons are specified by a list of global neuron ids which must be passed via
+the "index_map" parameter. The music_cont_out_proxy will be connected automatically to the 
+specified target neurons. It is not possible to change the list of target neurons or observed 
+quantities once they have been set or the simulation has been started for the first time.
 
-The music_cont_out_proxy represents a complete MUSIC contiguous output
-port. The channel on the port to which a source node forwards its
-events is determined during connection setup by using the parameter
-music_channel of the connection. The name of the port is set via
-SetStatus (see Parameters section below).
+Note: If only a single continuous value is observed, then the receiver must provide a buffer
+of MPI::DOUBLE values. Otherwise a custom MPI datatype, consisting of multiple doubles,
+must be created on receiver side as follows:
 
+--- Example ---
+//#include <mpi.h>
+//int observed_values= 3;
+//MPI_Datatype n_double_tuple;
+//MPI_Type_contiguous( observed_values, MPI::DOUBLE, &n_double_tuple );
+---------------
+ 
 Parameters:
 The following properties are available in the status dictionary:
 
-port_name      - The name of the MUSIC output_port to forward events to
-                 (default: event_out)
-port_width     - The width of the MUSIC input port
-published      - A bool indicating if the port has been already published
-                 with MUSIC
+interval     double   - Recording interval in milliseconds
+index_map    array    - Global id list of neurons to be observed
+port_name    string   - The name of the MUSIC output port to send to (default:
+                        cont_out)
+port_width   integer  - The width of the MUSIC input port
+published    bool     - A bool indicating if the port has been already published
+                        with MUSIC. Read only property.
+record_from  array    - Array containing the names of variables to record
+                        from, obtained from the /recordables entry of the
+                        model from which one wants to record
 
-The parameter port_name can be set using SetStatus.
 
-Examples:
-/iaf_neuron Create /n Set
-/music_cont_out_proxy Create /meop Set
-n meop << /music_channel 2 >> Connect
-
-Author: Moritz Helias, Jochen Martin Eppler
-FirstVersion: March 2009
+Author: Martin Asghar Schulze, Forschungszentrum fur Informatik Karlsruhe (FZI)
+FirstVersion: March 2016
 Availability: Only when compiled with MUSIC
 
-SeeAlso: music_event_in_proxy, music_cont_in_proxy, music_message_in_proxy
+SeeAlso: music_cont_in_proxy, music_event_out_proxy, music_event_in_proxy, music_message_in_proxy
 */
 
 namespace nest

@@ -130,6 +130,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d, const St
         "the simulation resolution" );
   }
 
+
   // extract data
   if ( d->known( names::record_from ) )
   {
@@ -200,12 +201,10 @@ nest::music_cont_out_proxy::init_state_( const Node& /* np */ )
 void
 nest::music_cont_out_proxy::init_buffers_()
 {
-  // device_.init_buffers();
 }
 
 void nest::music_cont_out_proxy::finalize()
 {
-  // device_.finalize();
 }
 
 
@@ -229,7 +228,6 @@ nest::port nest::music_cont_out_proxy::send_test_event( Node& target, rport rece
 void
 nest::music_cont_out_proxy::calibrate()
 {
-  // device_.calibrate();
 
   // only publish the output port once,
   if ( !S_.published_ )
@@ -263,16 +261,20 @@ nest::music_cont_out_proxy::calibrate()
     V_.music_perm_ind_ = new MUSIC::PermutationIndex( &V_.index_map_.front(), V_.index_map_.size() );
 
     // New MPI datatype which is a compound of multiple double values
-    //MPI_Datatype n_double_tuple;
-    //MPI_Type_contiguous( per_port_width, MPI::DOUBLE, &n_double_tuple );
+    if ( per_port_width > 1 )
+    {
+        MPI_Datatype n_double_tuple;
+        MPI_Type_contiguous( per_port_width, MPI::DOUBLE, &n_double_tuple );
+        V_.dmap_ = new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), n_double_tuple, V_.music_perm_ind_ );
+    }
+    else
+    {
+        V_.dmap_ = new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), MPI::DOUBLE, V_.music_perm_ind_ );
+    }
 
     // Setup an array map
-    V_.dmap_ = new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), MPI::DOUBLE, V_.music_perm_ind_ );
 
-    //if( S_.max_buffered_ > 0 )
-     //   V_.MP_->map( V_.dmap_, S_.max_buffered_ );
-    //else
-        V_.MP_->map( V_.dmap_ );
+    V_.MP_->map( V_.dmap_ );
 
     S_.published_ = true;
 
@@ -287,8 +289,6 @@ void
 nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
 {
 
-  // get the data from the device
-  // device_.get_status( d );
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
@@ -363,11 +363,6 @@ void nest::music_cont_out_proxy::update( Time const& origin, const long_t from, 
   // ensures that the event is recorded.
   // handle() has access to request_, so it knows what we asked for.
   //
-  // Provided we are recording anything, V_.new_request_ is set to true. This informs
-  // handle() that the first incoming DataLoggingReply is for a new time slice, so that
-  // the data from that first Reply must be pushed back; all following Reply data is
-  // then added.
-  //
   // Note that not all nodes receiving the request will necessarily answer.
   DataLoggingRequest req;
   kernel().event_delivery_manager.send( *this, req );
@@ -382,18 +377,12 @@ nest::music_cont_out_proxy::handle( DataLoggingReply& reply )
   const index port = reply.get_port();
   const size_t record_width = P_.record_from_.size();
   const size_t offset = port * record_width;
-  // record all data, time point by time point
-        // S_.data_.push_back( info[ info.size()-1 ].data );
   const DataLoggingReply::DataItem item = info[ info.size()-1 ].data;
     if ( info[ info.size()-1 ].timestamp.is_finite() )
     {
         for ( size_t i = 0; i < item.size(); i++ )
         {
             B_.data_[ offset + i ] = item[ i ];
-
-            //std::string msg = String::compose(
-            //  "Data from gid '%1' is %2.\n Data in buffer: data_[%1] = %2", sender_gid , item[i], i, B_.data_[ offset + i ] );
-            // net_->message( SLIInterpreter::M_INFO, "debug", msg.c_str() );
         }
          
     }

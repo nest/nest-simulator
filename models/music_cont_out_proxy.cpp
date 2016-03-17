@@ -68,13 +68,13 @@ nest::music_cont_out_proxy::State_::State_()
 
 nest::music_cont_out_proxy::Buffers_::Buffers_()
   : has_targets_( false )
-  , data_( )
+  , data_()
 {
 }
 
 nest::music_cont_out_proxy::Variables_::Variables_()
     : MP_( NULL )
-    , index_map_( )
+    , index_map_()
     , music_perm_ind_( NULL )
     , dmap_( NULL )
 {
@@ -262,11 +262,13 @@ nest::music_cont_out_proxy::calibrate()
     {
         MPI_Datatype n_double_tuple;
         MPI_Type_contiguous( per_port_width, MPI::DOUBLE, &n_double_tuple );
-        V_.dmap_ = new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), n_double_tuple, V_.music_perm_ind_ );
+        V_.dmap_ = new MUSIC::ArrayData( 
+                static_cast< void* >( &( B_.data_.front() ) ), n_double_tuple, V_.music_perm_ind_ );
     }
     else
     {
-        V_.dmap_ = new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), MPI::DOUBLE, V_.music_perm_ind_ );
+        V_.dmap_ = new MUSIC::ArrayData( 
+                static_cast< void* >( &( B_.data_.front() ) ), MPI::DOUBLE, V_.music_perm_ind_ );
     }
 
     // Setup an array map
@@ -277,7 +279,6 @@ nest::music_cont_out_proxy::calibrate()
 
     std::string msg = String::compose(
       "Mapping MUSIC output port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
-    //net_->message( SLIInterpreter::M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
     LOG( M_INFO, "MUSIC::publish_port()", msg.c_str() );
   }
 }
@@ -302,7 +303,7 @@ nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
 void nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, S_, B_ );     // throws if BadProperty
+  ptmp.set( d, S_, B_ ); // throws if BadProperty
 
   State_ stmp = S_;
   stmp.set( d, P_ ); // throws if BadProperty

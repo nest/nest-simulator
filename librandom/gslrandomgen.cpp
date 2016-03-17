@@ -22,7 +22,7 @@
 
 #include "gslrandomgen.h"
 
-#ifdef HAVE_GSL_1_2
+#ifdef HAVE_GSL
 
 // nothing if GSL 1.2 or later not available
 

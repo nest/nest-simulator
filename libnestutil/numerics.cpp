@@ -58,7 +58,7 @@
 //
 //   e
 //
-#ifdef HAVE_GSL_1_2
+#ifdef HAVE_GSL
 
 #include <gsl/gsl_math.h>
 const double numerics::e = M_E;

@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-include(BlueGeneQ_Base)
+include(Platform/BlueGeneQ_Base)
 # add path to ppc gcc
 set(ENV{PATH} "/bgsys/drivers/ppcfloor/gnu-linux/bin:$ENV{PATH}")
 
@@ -25,3 +25,10 @@ set(ENV{PATH} "/bgsys/drivers/ppcfloor/gnu-linux/bin:$ENV{PATH}")
 set(CMAKE_C_COMPILER powerpc64-bgq-linux-gcc)
 set(CMAKE_CXX_COMPILER powerpc64-bgq-linux-g++)
 
+if ( static-libraries )
+  __BlueGeneQ_setup_static(GNU CXX)
+  __BlueGeneQ_setup_static(GNU C)
+else ()
+  __BlueGeneQ_setup_dynamic(GNU CXX)
+  __BlueGeneQ_setup_dynamic(GNU C)
+endif ()

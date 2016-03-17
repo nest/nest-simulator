@@ -20,8 +20,7 @@ cmake_minimum_required( VERSION 2.8.12 )
 # juqueen 2.8.12.2
 
 # add cmake modules
-set( CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules" )
-list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Platform )
+list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 
 project( nest CXX C )
 set( NEST_USER_EMAIL "nest_user@nest-initiative.org" )

@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-include(BlueGeneQ_Base)
+include(Platform/BlueGeneQ_Base)
 # set the compiler
 set(CMAKE_C_COMPILER bgxlc_r)
 set(CMAKE_CXX_COMPILER bgxlc++_r)
@@ -34,3 +34,11 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g -qarch=qp -qtune=qp -DNDEBUG" CACHE S
 
 set(OpenMP_C_FLAGS "-qsmp=omp" CACHE STRING "Compiler flag for OpenMP parallelization" FORCE)
 set(OpenMP_CXX_FLAGS "-qsmp=omp" CACHE STRING "Compiler flag for OpenMP parallelization" FORCE)
+
+if ( static-libraries )
+  __BlueGeneQ_setup_static(XL CXX)
+  __BlueGeneQ_setup_static(XL C)
+else ()
+  __BlueGeneQ_setup_dynamic(XL CXX)
+  __BlueGeneQ_setup_dynamic(XL C)
+endif ()

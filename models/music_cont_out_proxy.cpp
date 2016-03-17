@@ -68,14 +68,15 @@ nest::music_cont_out_proxy::State_::State_()
 
 nest::music_cont_out_proxy::Buffers_::Buffers_()
   : has_targets_( false )
-  , data_(  )
+  , data_( )
 {
 }
 
 nest::music_cont_out_proxy::Variables_::Variables_()
-    : index_map_( )
-    , MP_( NULL )
+    : MP_( NULL )
+    , index_map_( )
     , music_perm_ind_( NULL )
+    , dmap_( NULL )
 {
 }
 /* ----------------------------------------------------------------
@@ -103,7 +104,7 @@ nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d, const Variable
 }
 
 void
-nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d, const State_& states, const Buffers_& buffs, Variables_& vars )
+nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d, const State_& states, const Buffers_& buffs)
 {
 
   if ( !states.published_ )
@@ -129,8 +130,6 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d, const St
         "The sampling interval must be a multiple of "
         "the simulation resolution" );
   }
-
-
   // extract data
   if ( d->known( names::record_from ) )
   {
@@ -228,7 +227,6 @@ nest::port nest::music_cont_out_proxy::send_test_event( Node& target, rport rece
 void
 nest::music_cont_out_proxy::calibrate()
 {
-
   // only publish the output port once,
   if ( !S_.published_ )
   {
@@ -246,7 +244,6 @@ nest::music_cont_out_proxy::calibrate()
 
     S_.port_width_ = V_.MP_->width();
     const size_t per_port_width = P_.record_from_.size();
-
 
     // Allocate memory
     B_.data_.resize( per_port_width * S_.port_width_ );
@@ -288,8 +285,6 @@ nest::music_cont_out_proxy::calibrate()
 void
 nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
 {
-
-
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
   if ( get_thread() == 0 )
@@ -307,7 +302,7 @@ nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
 void nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, S_, B_, V_ );     // throws if BadProperty
+  ptmp.set( d, S_, B_ );     // throws if BadProperty
 
   State_ stmp = S_;
   stmp.set( d, P_ ); // throws if BadProperty

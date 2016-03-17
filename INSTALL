@@ -42,8 +42,8 @@ Change NEST behavior:
   -Dwith-ps-arrays=[OFF|ON]  Use PS array construction semantics. [default=ON]
 
 Add user modules:
-  -Dexternal-modules=[OFF|<list;of;modules>]  External modules to be linked in.
-                                              Divided by ';'. [default=OFF]
+  -Dexternal-modules=[OFF|<list;of;modules>]  External NEST modules to be linked
+                                              in, separated by ';'. [default=OFF]
 
 Connect NEST with external projects:
   -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]  Request the use of libneurosim.

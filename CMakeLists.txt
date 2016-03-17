@@ -43,7 +43,7 @@ set( tics_per_step "100" CACHE STRING "Specify resolution. [default 100]" )
 option( with-ps-arrays "Use PS array construction semantics. [default=ON]" ON )
 
 # add user modules
-option( external-modules "External modules to be linked in. Divided by ';'. [default=OFF]" OFF )
+option( external-modules "External NEST modules to be linked in, separated by ';'. [default=OFF]" OFF )
 
 # connect NEST with external projects
 option( with-libneurosim "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" OFF )

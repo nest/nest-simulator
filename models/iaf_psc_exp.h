@@ -96,12 +96,13 @@ Remarks:
    For details, please see IAF_Neruons_Singularity.ipynb in the
    NEST source code (docs/model_details).
 
-   If the current event corresponding to the piecewise constant
-   external current is received at port 1 the current is filtered by
-   the synapse. Hereby the time constant of the post-synaptic
-   excitatory currents is used. This filtering can be used for a
-   direct implementation of the diffusion approximation, i.e.,
-   replacing incoming spike trains with white noise.
+   iaf_psc_exp can handle current input in two ways: Current input
+   through receptor_type 0 are handled as stepwise constant current
+   input as in other iaf models, i.e., this current directly enters
+   the membrane potential equation. Current input through
+   receptor_type 1, in contrast, is filtered through an exponential
+   kernel with the time constant of the excitatory synapse,
+   tau_syn_ex. For an example application, see [4].
 
    References:
    [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation in Recurrent
@@ -113,6 +114,9 @@ Remarks:
    [3] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
    analysis of synchronous spiking in cortical neural networks.
    Neurocomputing 38-40:565-571.
+   [4] Schuecker J, Diesmann M, Helias M (2015) Modulated escape from a
+   metastable state driven by colored noise.
+   Physical Review E 92:052119
 
    Sends: SpikeEvent
 

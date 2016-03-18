@@ -49,11 +49,11 @@ if( PYTHONINTERP_FOUND )
   find_program( CYTHON_EXECUTABLE
     NAMES cython cython.bat cython3
     HINTS ${_python_path}
-    )
+  )
 else()
   find_program( CYTHON_EXECUTABLE
     NAMES cython cython.bat cython3
-    )
+  )
 endif()
 
 if( NOT CYTHON_EXECUTABLE STREQUAL "CYTHON_EXECUTABLE-NOTFOUND" )
@@ -77,6 +77,6 @@ find_package_handle_standard_args( Cython
     CYTHON_EXECUTABLE
   VERSION_VAR
     CYTHON_VERSION
-  )
+)
 
 mark_as_advanced( CYTHON_EXECUTABLE )

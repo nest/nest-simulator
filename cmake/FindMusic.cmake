@@ -64,6 +64,6 @@ find_package_handle_standard_args(Music
     MUSIC_EXECUTABLE
   VERSION_VAR
     MUSIC_VERSION
-  )
+)
 
 mark_as_advanced(MUSIC_ROOT_DIR MUSIC_INCLUDE_DIRS MUSIC_LIBRARIES MUSIC_EXECUTABLE)

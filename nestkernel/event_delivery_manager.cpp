@@ -774,6 +774,7 @@ EventDeliveryManager::gather_target_data()
       me_completed_tid = collocate_target_data_buffers_( tid, send_buffer_target_data );
 #pragma omp critical
       me_completed = me_completed && me_completed_tid;
+#pragma omp barrier
 
       kernel().connection_builder_manager.save_source_table_entry_point( tid );      
 #pragma omp single

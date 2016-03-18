@@ -307,21 +307,6 @@ configure_file(
 )
 
 ################################################################################
-##################           Custom Global Targets            ##################
-################################################################################
-
-# add make dist target
-add_custom_target( dist
-    # create current rcsinfo.sli
-    # target dir is PROJECT_SOURCE_DIR as this will be the `install dir` from cmake package_source
-    COMMAND ${PROJECT_SOURCE_DIR}/extras/create_rcsinfo.sh "${PROJECT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}"
-    COMMAND ${CMAKE_MAKE_PROGRAM} package_source
-    # not sure about this... seems, that it will be removed before dist...
-    # DEPENDS doc
-    COMMENT "Creating a source distribution from NEST..."
-    )
-
-################################################################################
 ##################            Install Extra Files             ##################
 ################################################################################
 

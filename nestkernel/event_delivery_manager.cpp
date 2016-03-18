@@ -666,18 +666,19 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
         else // all spikes have been processed
         {
           // mark end of valid data for each rank
-          for ( unsigned int rank = rank_start; rank < rank_end; ++rank )
+          for ( thread target_rank = rank_start; target_rank < rank_end; ++target_rank )
           {
-            if ( send_buffer_offset[ rank - rank_start ] < num_spike_data_per_rank )
+            const thread target_rank_index = target_rank - rank_start;
+            if ( send_buffer_offset[ target_rank_index ] < num_spike_data_per_rank )
             {
               if ( is_buffer_untouched )
               {
-                assert( send_buffer_offset[ rank ] == 0 );
-                send_buffer_spike_data_[ rank * num_spike_data_per_rank + send_buffer_offset[ rank ] ].set_complete_marker();
+                assert( send_buffer_offset[ target_rank_index ] == 0 );
+                send_buffer_spike_data_[ target_rank * num_spike_data_per_rank + send_buffer_offset[ target_rank_index ] ].set_complete_marker();
               }
               else
               {
-                send_buffer_spike_data_[ rank * num_spike_data_per_rank + send_buffer_offset[ rank ] ].set_end_marker();
+                send_buffer_spike_data_[ target_rank * num_spike_data_per_rank + send_buffer_offset[ target_rank_index ] ].set_end_marker();
               }
             }
           }
@@ -845,18 +846,19 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid, std::vec
         else  // all connections have been processed
         {
           // mark end of valid data for each rank
-          for ( unsigned int rank = rank_start; rank < rank_end; ++rank )
+          for ( unsigned int target_rank = rank_start; target_rank < rank_end; ++target_rank )
           {
-            if ( send_buffer_offset[ rank - rank_start ] < num_target_data_per_rank )
+            const thread target_rank_index = target_rank - rank_start;
+            if ( send_buffer_offset[ target_rank_index ] < num_target_data_per_rank )
             {
               if ( is_buffer_untouched )
               {
-                assert( send_buffer_offset[ rank ] == 0 );
-                send_buffer[ rank * num_target_data_per_rank + send_buffer_offset[ rank ] ].set_complete_marker();
+                assert( send_buffer_offset[ target_rank_index ] == 0 );
+                send_buffer[ target_rank * num_target_data_per_rank + send_buffer_offset[ target_rank_index ] ].set_complete_marker();
               }
               else
               {
-                send_buffer[ rank * num_target_data_per_rank + send_buffer_offset[ rank ] ].set_end_marker();
+                send_buffer[ target_rank * num_target_data_per_rank + send_buffer_offset[ target_rank_index ] ].set_end_marker();
               }
             }
           }

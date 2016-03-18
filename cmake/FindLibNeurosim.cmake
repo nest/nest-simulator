@@ -27,27 +27,27 @@
 #
 # As a hint allows LIBNEUROSIM_ROOT.
 
-find_path(LIBNEUROSIM_INCLUDE_DIRS
-  NAMES neurosim/connection_generator.h
-  HINTS ${LIBNEUROSIM_ROOT}/include
-)
-find_library(NEUROSIM_LIBRARY
-  NAMES neurosim
-  HINTS ${LIBNEUROSIM_ROOT}/lib
-)
+find_path( LIBNEUROSIM_INCLUDE_DIRS
+    NAMES neurosim/connection_generator.h
+    HINTS ${LIBNEUROSIM_ROOT}/include
+    )
+find_library( NEUROSIM_LIBRARY
+    NAMES neurosim
+    HINTS ${LIBNEUROSIM_ROOT}/lib
+    )
 
-find_library(PYNEUROSIM_LIBRARY
-  NAMES pyneurosim
-  HINTS ${LIBNEUROSIM_ROOT}/lib
-)
+find_library( PYNEUROSIM_LIBRARY
+    NAMES pyneurosim
+    HINTS ${LIBNEUROSIM_ROOT}/lib
+    )
 
-if(EXISTS "${LIBNEUROSIM_INCLUDE_DIRS}/neurosim/version.h" )
+if ( EXISTS "${LIBNEUROSIM_INCLUDE_DIRS}/neurosim/version.h" )
   file( STRINGS "${LIBNEUROSIM_INCLUDE_DIRS}/neurosim/version.h" version_h_contents REGEX "define LIBNEUROSIM_VERSION" )
   string( REGEX REPLACE ".*([0-9].[0-9].[0-9]).*" "\\1" LIBNEUROSIM_VERSION ${version_h_contents} )
-endif()
+endif ()
 
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(LibNeurosim
+include( FindPackageHandleStandardArgs )
+find_package_handle_standard_args( LibNeurosim
   FOUND_VAR
     LIBNEUROSIM_FOUND
   REQUIRED_VARS
@@ -56,9 +56,9 @@ find_package_handle_standard_args(LibNeurosim
     LIBNEUROSIM_INCLUDE_DIRS
   VERSION_VAR
     LIBNEUROSIM_VERSION
-)
+    )
 
-set(LIBNEUROSIM_LIBRARIES ${NEUROSIM_LIBRARY} ${PYNEUROSIM_LIBRARY})
+set( LIBNEUROSIM_LIBRARIES ${NEUROSIM_LIBRARY} ${PYNEUROSIM_LIBRARY} )
 
-mark_as_advanced(LIBNEUROSIM_ROOT LIBNEUROSIM_INCLUDE_DIRS LIBNEUROSIM_LIBRARIES
-  NEUROSIM_LIBRARY PYNEUROSIM_LIBRARY)
+mark_as_advanced( LIBNEUROSIM_ROOT LIBNEUROSIM_INCLUDE_DIRS LIBNEUROSIM_LIBRARIES
+    NEUROSIM_LIBRARY PYNEUROSIM_LIBRARY )

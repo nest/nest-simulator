@@ -34,7 +34,7 @@ try_compile( COMPILE_VAR
     #CMAKE_FLAGS -DCMAKE_C_FLAGS:String=-O3
     COPY_FILE "${CMAKE_BINARY_DIR}/assert_value"
     COPY_FILE_ERROR CP_ERR
-)
+    )
 
 if ( COMPILE_VAR AND NOT CMAKE_CROSSCOMPILING )
   execute_process(
@@ -61,7 +61,7 @@ try_compile( COMPILE_VAR
     #CMAKE_FLAGS -DCMAKE_C_FLAGS:String=-O3
     COPY_FILE "${CMAKE_BINARY_DIR}/segfault_value"
     COPY_FILE_ERROR CP_ERR
-)
+    )
 
 if ( COMPILE_VAR AND NOT CMAKE_CROSSCOMPILING )
   execute_process(
@@ -85,7 +85,7 @@ try_compile( COMPILE_RESULT
     ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/CMathMacros.cxx
     OUTPUT_VARIABLE OUTPUT
-)
+    )
 if ( COMPILE_RESULT )
   set( HAVE_CMATH_MAKROS_IGNORED OFF CACHE BOOL "" FORCE )
 else ()
@@ -99,7 +99,7 @@ try_compile( COMPILE_RESULT
     ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/AlphaCXXBug.cxx
     OUTPUT_VARIABLE OUTPUT
-)
+    )
 if ( COMPILE_RESULT )
   set( HAVE_ALPHA_CXX_STD_BUG OFF CACHE BOOL "" FORCE )
 else ()
@@ -113,7 +113,7 @@ try_compile( COMPILE_RESULT
     ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/SigUsrIgnored.cxx
     OUTPUT_VARIABLE OUTPUT
-)
+    )
 if ( COMPILE_RESULT )
   set( HAVE_SIGUSR_IGNORED OFF CACHE BOOL "" FORCE )
 else ()
@@ -127,7 +127,7 @@ try_compile( COMPILE_RESULT
     ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/StaticTemplateDeclaration.cxx
     OUTPUT_VARIABLE OUTPUT
-)
+    )
 if ( COMPILE_RESULT )
   set( HAVE_STATIC_TEMPLATE_DECLARATION_FAIL OFF CACHE BOOL "" FORCE )
 else ()
@@ -144,7 +144,7 @@ try_run( RUN_RESULT COMPILE_RESULT
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/VectorCapacity.cxx
     COMPILE_OUTPUT_VARIABLE COMPILE_OUTPUT_VAR
     RUN_OUTPUT_VARIABLE RUN_OUTPUT_VAR
-)
+    )
 if ( RUN_RESULT EQUAL 0 )
   set( HAVE_STL_VECTOR_CAPACITY_BASE_UNITY ON CACHE BOOL "" FORCE )
 else ()
@@ -159,7 +159,7 @@ try_run( RUN_RESULT COMPILE_RESULT
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/VectorCapacityDoubling.cxx
     COMPILE_OUTPUT_VARIABLE COMPILE_OUTPUT_VAR
     RUN_OUTPUT_VARIABLE RUN_OUTPUT_VAR
-)
+    )
 if ( RUN_RESULT EQUAL 0 )
   set( HAVE_STL_VECTOR_CAPACITY_DOUBLING ON CACHE BOOL "" FORCE )
 else ()
@@ -179,7 +179,7 @@ try_compile( COMPILE_RESULT
     ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/ICE.cxx
     OUTPUT_VARIABLE OUTPUT
-)
+    )
 if ( COMPILE_RESULT )
   set( HAVE_XLC_ICE_ON_USING OFF CACHE BOOL "" FORCE )
 else ()
@@ -193,7 +193,7 @@ try_compile( COMPILE_RESULT
     ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/std_nan.cxx
     OUTPUT_VARIABLE OUTPUT
-)
+    )
 if ( COMPILE_RESULT )
   set( HAVE_STD_NAN ON CACHE BOOL "" FORCE )
 else ()
@@ -207,7 +207,7 @@ try_compile( COMPILE_RESULT
     ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/std_isnan.cxx
     OUTPUT_VARIABLE OUTPUT
-)
+    )
 if ( COMPILE_RESULT )
   set( HAVE_STD_ISNAN ON CACHE BOOL "" FORCE )
 else ()

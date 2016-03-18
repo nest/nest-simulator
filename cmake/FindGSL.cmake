@@ -139,40 +139,40 @@
 #=============================================================================
 # If the user has provided ``GSL_ROOT_DIR``, use it!  Choose items found
 # at this location over system locations.
-if( EXISTS "$ENV{GSL_ROOT_DIR}" )
+if ( EXISTS "$ENV{GSL_ROOT_DIR}" )
   file( TO_CMAKE_PATH "$ENV{GSL_ROOT_DIR}" GSL_ROOT_DIR )
   set( GSL_ROOT_DIR "${GSL_ROOT_DIR}" CACHE PATH "Prefix for GSL installation." )
-endif()
-if( NOT EXISTS "${GSL_ROOT_DIR}" )
+endif ()
+if ( NOT EXISTS "${GSL_ROOT_DIR}" )
   set( GSL_USE_PKGCONFIG ON )
-endif()
+endif ()
 
 #=============================================================================
 # As a first try, use the PkgConfig module.  This will work on many
 # *NIX systems.  See :module:`findpkgconfig`
 # This will return ``GSL_INCLUDEDIR`` and ``GSL_LIBDIR`` used below.
-if( GSL_USE_PKGCONFIG )
-  find_package(PkgConfig)
+if ( GSL_USE_PKGCONFIG )
+  find_package( PkgConfig )
   pkg_check_modules( GSL QUIET gsl )
 
-  if( EXISTS "${GSL_INCLUDEDIR}" )
-    get_filename_component( GSL_ROOT_DIR "${GSL_INCLUDEDIR}" DIRECTORY CACHE)
-  endif()
-endif()
+  if ( EXISTS "${GSL_INCLUDEDIR}" )
+    get_filename_component( GSL_ROOT_DIR "${GSL_INCLUDEDIR}" DIRECTORY CACHE )
+  endif ()
+endif ()
 
-if(NOT GSL_ROOT_DIR AND NOT GSL_INCLUDEDIR AND NOT GSL_LIBDIR)
+if ( NOT GSL_ROOT_DIR AND NOT GSL_INCLUDEDIR AND NOT GSL_LIBDIR )
   # not found yet... try gsl-config and set GSL_ROOT_DIR
   # 1. If gsl-config exists, query for the version.
   find_program( GSL_CONFIG_EXECUTABLE
-    NAMES gsl-config
-    )
-  if( EXISTS "${GSL_CONFIG_EXECUTABLE}" )
+      NAMES gsl-config
+      )
+  if ( EXISTS "${GSL_CONFIG_EXECUTABLE}" )
     execute_process(
-      COMMAND "${GSL_CONFIG_EXECUTABLE}" --prefix
-      OUTPUT_VARIABLE GSL_ROOT_DIR
-      OUTPUT_STRIP_TRAILING_WHITESPACE )
-  endif()
-endif()
+        COMMAND "${GSL_CONFIG_EXECUTABLE}" --prefix
+        OUTPUT_VARIABLE GSL_ROOT_DIR
+        OUTPUT_STRIP_TRAILING_WHITESPACE )
+  endif ()
+endif ()
 
 #=============================================================================
 # Set GSL_INCLUDE_DIRS and GSL_LIBRARIES. If we skipped the PkgConfig step, try
@@ -183,56 +183,56 @@ endif()
 # (/usr/lib64 (Redhat), lib/i386-linux-gnu (Debian)).
 
 find_path( GSL_INCLUDE_DIR
-  NAMES gsl/gsl_sf.h
-  HINTS ${GSL_ROOT_DIR}/include ${GSL_INCLUDEDIR}
-)
+    NAMES gsl/gsl_sf.h
+    HINTS ${GSL_ROOT_DIR}/include ${GSL_INCLUDEDIR}
+    )
 find_library( GSL_LIBRARY
-  NAMES gsl
-  HINTS ${GSL_ROOT_DIR}/lib ${GSL_LIBDIR}
-  PATH_SUFFIXES Release Debug
-)
+    NAMES gsl
+    HINTS ${GSL_ROOT_DIR}/lib ${GSL_LIBDIR}
+    PATH_SUFFIXES Release Debug
+    )
 find_library( GSL_CBLAS_LIBRARY
-  NAMES gslcblas cblas
-  HINTS ${GSL_ROOT_DIR}/lib ${GSL_LIBDIR}
-  PATH_SUFFIXES Release Debug
-)
+    NAMES gslcblas cblas
+    HINTS ${GSL_ROOT_DIR}/lib ${GSL_LIBDIR}
+    PATH_SUFFIXES Release Debug
+    )
 # Do we also have debug versions?
 find_library( GSL_LIBRARY_DEBUG
-  NAMES gsl
-  HINTS ${GSL_ROOT_DIR}/lib ${GSL_LIBDIR}
-  PATH_SUFFIXES Debug
-)
+    NAMES gsl
+    HINTS ${GSL_ROOT_DIR}/lib ${GSL_LIBDIR}
+    PATH_SUFFIXES Debug
+    )
 find_library( GSL_CBLAS_LIBRARY_DEBUG
-  NAMES gslcblas cblas
-  HINTS ${GSL_ROOT_DIR}/lib ${GSL_LIBDIR}
-  PATH_SUFFIXES Debug
-)
+    NAMES gslcblas cblas
+    HINTS ${GSL_ROOT_DIR}/lib ${GSL_LIBDIR}
+    PATH_SUFFIXES Debug
+    )
 set( GSL_INCLUDE_DIRS ${GSL_INCLUDE_DIR} )
 set( GSL_LIBRARIES ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} )
 
 # If we didn't use PkgConfig, try to find the version via gsl-config or by
 # reading gsl_version.h.
-if( NOT GSL_VERSION )
+if ( NOT GSL_VERSION )
   # 1. If gsl-config exists, query for the version.
   find_program( GSL_CONFIG_EXECUTABLE
-    NAMES gsl-config
-    HINTS "${GSL_ROOT_DIR}/bin"
-    )
-  if( EXISTS "${GSL_CONFIG_EXECUTABLE}" )
+      NAMES gsl-config
+      HINTS "${GSL_ROOT_DIR}/bin"
+      )
+  if ( EXISTS "${GSL_CONFIG_EXECUTABLE}" )
     execute_process(
-      COMMAND "${GSL_CONFIG_EXECUTABLE}" --version
-      OUTPUT_VARIABLE GSL_VERSION
-      OUTPUT_STRIP_TRAILING_WHITESPACE )
-  endif()
+        COMMAND "${GSL_CONFIG_EXECUTABLE}" --version
+        OUTPUT_VARIABLE GSL_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE )
+  endif ()
 
   # 2. If gsl-config is not available, try looking in gsl/gsl_version.h
-  if( NOT GSL_VERSION AND EXISTS "${GSL_INCLUDE_DIRS}/gsl/gsl_version.h" )
+  if ( NOT GSL_VERSION AND EXISTS "${GSL_INCLUDE_DIRS}/gsl/gsl_version.h" )
     file( STRINGS "${GSL_INCLUDE_DIRS}/gsl/gsl_version.h" gsl_version_h_contents REGEX "define GSL_VERSION" )
     string( REGEX REPLACE ".*([0-9]\\.[0-9][0-9]).*" "\\1" GSL_VERSION ${gsl_version_h_contents} )
-  endif()
+  endif ()
 
   # might also try scraping the directory name for a regex match "gsl-X.X"
-endif()
+endif ()
 
 #=============================================================================
 # handle the QUIETLY and REQUIRED arguments and set GSL_FOUND to TRUE if all
@@ -249,5 +249,5 @@ find_package_handle_standard_args( GSL
     )
 
 mark_as_advanced( GSL_ROOT_DIR GSL_VERSION GSL_LIBRARY GSL_INCLUDE_DIR
-  GSL_CBLAS_LIBRARY GSL_LIBRARY_DEBUG GSL_CBLAS_LIBRARY_DEBUG
-  GSL_USE_PKGCONFIG GSL_CONFIG )
+    GSL_CBLAS_LIBRARY GSL_LIBRARY_DEBUG GSL_CBLAS_LIBRARY_DEBUG
+    GSL_USE_PKGCONFIG GSL_CONFIG )

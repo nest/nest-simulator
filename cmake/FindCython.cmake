@@ -44,27 +44,27 @@
 # Use the Cython executable that lives next to the Python executable
 # if it is a local installation.
 find_package( PythonInterp )
-if( PYTHONINTERP_FOUND )
+if ( PYTHONINTERP_FOUND )
   get_filename_component( _python_path ${PYTHON_EXECUTABLE} PATH )
   find_program( CYTHON_EXECUTABLE
-    NAMES cython cython.bat cython3
-    HINTS ${_python_path}
-  )
-else()
+      NAMES cython cython.bat cython3
+      HINTS ${_python_path}
+      )
+else ()
   find_program( CYTHON_EXECUTABLE
-    NAMES cython cython.bat cython3
-  )
-endif()
+      NAMES cython cython.bat cython3
+      )
+endif ()
 
-if( NOT CYTHON_EXECUTABLE STREQUAL "CYTHON_EXECUTABLE-NOTFOUND" )
+if ( NOT CYTHON_EXECUTABLE STREQUAL "CYTHON_EXECUTABLE-NOTFOUND" )
   execute_process(
-    COMMAND ${CYTHON_EXECUTABLE} --version
-    RESULT_VARIABLE RESULT
-    OUTPUT_VARIABLE CYTHON_VAR_OUTPUT
-    ERROR_VARIABLE CYTHON_VAR_OUTPUT
-    OUTPUT_STRIP_TRAILING_WHITESPACE
+      COMMAND ${CYTHON_EXECUTABLE} --version
+      RESULT_VARIABLE RESULT
+      OUTPUT_VARIABLE CYTHON_VAR_OUTPUT
+      ERROR_VARIABLE CYTHON_VAR_OUTPUT
+      OUTPUT_STRIP_TRAILING_WHITESPACE
   )
-  if(RESULT EQUAL 0)
+  if ( RESULT EQUAL 0 )
     string( REGEX REPLACE ".* ([0-9]+\\.[0-9]+(\\.[0-9]+)?)$" "\\1" CYTHON_VERSION "${CYTHON_VAR_OUTPUT}" )
   endif ()
 endif ()
@@ -77,6 +77,6 @@ find_package_handle_standard_args( Cython
     CYTHON_EXECUTABLE
   VERSION_VAR
     CYTHON_VERSION
-)
+    )
 
 mark_as_advanced( CYTHON_EXECUTABLE )

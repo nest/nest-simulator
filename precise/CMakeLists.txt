@@ -30,7 +30,8 @@ set( precise_sources
 
 add_library( precise ${precise_sources} )
 target_link_libraries( precise
-    nestutil sli_lib nestkernel )
+    nestutil sli_lib nestkernel
+    )
 
 target_include_directories( precise PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil

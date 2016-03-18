@@ -56,7 +56,7 @@ set( CPACK_SOURCE_IGNORE_FILES
     "CMakeCache\\\\.txt"
     "CPackConfig\\\\.cmake"
     "CPackSourceConfig\\\\.cmake"
-)
+    )
 set( CPACK_SOURCE_PACKAGE_FILE_NAME ${NEST_VERSION_PRGNAME} )
 
 set( CPACK_PACKAGE_INSTALL_DIRECTORY "NEST ${NEST_VERSION_VERSION}" )

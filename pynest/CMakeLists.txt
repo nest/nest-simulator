@@ -37,12 +37,12 @@ if ( HAVE_PYTHON )
 
     if ( pynestkernel_generated_file STREQUAL "NOTFOUND" )
       message( FATAL_ERROR "You have configured NEST to build the Python bindings PyNEST, but "
-            "either there is no Cython version found on your system or you decided to "
-            "not have NEST cythonize the bindings. Either install Cython (>=0.19.2) or cythonize the "
-            "PyNEST bindings yourself on a system with a suitable version of Cython (>=0.19.2):\n" 
-            "    cd <NEST sources>/pynest\n"
-            "    cythonize pynestkernel.pyx\n" 
-            "And copy the file `pynestkernel.cpp` into ${CMAKE_CURRENT_SOURCE_DIR}/pynest ." )
+          "either there is no Cython version found on your system or you decided to "
+          "not have NEST cythonize the bindings. Either install Cython (>=0.19.2) or cythonize the "
+          "PyNEST bindings yourself on a system with a suitable version of Cython (>=0.19.2):\n"
+          "    cd <NEST sources>/pynest\n"
+          "    cythonize pynestkernel.pyx\n"
+          "And copy the file `pynestkernel.cpp` into ${CMAKE_CURRENT_SOURCE_DIR}/pynest ." )
     endif ()
     python_add_module( pynestkernel ${pynestkernel_generated_file} pynestkernel.pxd )
     if ( APPLE )
@@ -82,16 +82,19 @@ if ( HAVE_PYTHON )
       )
   install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
   install( FILES ${PROJECT_BINARY_DIR}/pynest/do_tests.py
-      DESTINATION ${INSTALL_DATA_DIR}/extras )
+      DESTINATION ${INSTALL_DATA_DIR}/extras
+      )
 
   install( DIRECTORY examples/
-      DESTINATION ${INSTALL_DOC_DIR}/examples/pynest )
+      DESTINATION ${INSTALL_DOC_DIR}/examples/pynest
+      )
 
   find_program( NOSETESTS nosetests )
   if ( NOT NOSETESTS STREQUAL "NOSETESTS-NOTFOUND" )
     add_test( NAME PyNEST
         COMMAND ${NOSETESTS} -v --with-xunit
         --xunit-file=${PROJECT_BINARY_DIR}/reports/pynest_tests.xml
-        ${PYEXECDIR}/nest/tests )
+        ${PYEXECDIR}/nest/tests
+        )
   endif ()
 endif ()

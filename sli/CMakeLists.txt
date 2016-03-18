@@ -117,7 +117,7 @@ install( TARGETS sli_lib sli
 # 
 # base dirs + dirs/sli
 
-set( __HELPDIRS libnestutil sli librandom lib nestkernel nest ${SLI_MODULES})
+set( __HELPDIRS libnestutil sli librandom lib nestkernel nest ${SLI_MODULES} )
 foreach ( child ${__HELPDIRS} )
   if ( IS_DIRECTORY "${PROJECT_SOURCE_DIR}/${child}" )
     set( HELPDIRS "${HELPDIRS}${PROJECT_SOURCE_DIR}/${child}:" )
@@ -143,25 +143,26 @@ foreach ( child ${children} )
 endforeach ()
 
 if ( NOT CMAKE_CROSSCOMPILING )
-# install help (depends on sli and lib/sli/* installed)
-install( CODE
-    "execute_process(
-      COMMAND ${CMAKE_COMMAND} -E remove_directory ${PKGDOCDIR}/help/sli
-      COMMAND ${CMAKE_COMMAND} -E remove_directory ${PKGDOCDIR}/help/cc
-      COMMAND ${CMAKE_COMMAND} -E remove ${PKGDOCDIR}/help/helpindex.html
-      COMMAND ${CMAKE_COMMAND} -E remove ${PKGDOCDIR}/help/helpindex.hlp
+  # install help (depends on sli and lib/sli/* installed)
+  install( CODE
+      "execute_process(
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${PKGDOCDIR}/help/sli
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${PKGDOCDIR}/help/cc
+        COMMAND ${CMAKE_COMMAND} -E remove ${PKGDOCDIR}/help/helpindex.html
+        COMMAND ${CMAKE_COMMAND} -E remove ${PKGDOCDIR}/help/helpindex.hlp
 
-      COMMAND ${CMAKE_COMMAND} -E make_directory ${PKGDOCDIR}/help
-      COMMAND ${CMAKE_COMMAND}
-          -DDOC_DIR='${PKGDOCDIR}'
-          -DDATA_DIR='${PKGDATADIR}'
-          -DHELPDIRS='${HELPDIRS}'
-          -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
-          -P ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
-        WORKING_DIRECTORY \"${PROJECT_BINARY_DIR}\"
-      )"
-    )
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${PKGDOCDIR}/help
+        COMMAND ${CMAKE_COMMAND}
+            -DDOC_DIR='${PKGDOCDIR}'
+            -DDATA_DIR='${PKGDATADIR}'
+            -DHELPDIRS='${HELPDIRS}'
+            -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
+            -P ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
+          WORKING_DIRECTORY \"${PROJECT_BINARY_DIR}\"
+        )"
+      )
 endif ()
 
 install( FILES ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
-    DESTINATION ${INSTALL_DOC_DIR} )
+    DESTINATION ${INSTALL_DOC_DIR}
+    )

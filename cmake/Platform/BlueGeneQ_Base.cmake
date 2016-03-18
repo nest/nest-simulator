@@ -18,14 +18,14 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 # Based on the BlueGeneQ-base platform file
-set(CMAKE_SYSTEM_NAME BlueGeneQ_Base CACHE STRING "Cross-compiling for BlueGene/Q" FORCE)
+set( CMAKE_SYSTEM_NAME BlueGeneQ_Base CACHE STRING "Cross-compiling for BlueGene/Q" FORCE )
 
 # Set enable-bluegene for main CMakeList.txt
-set(enable-bluegene "Q" CACHE STRING "Configure for BlueGene." FORCE)
+set( enable-bluegene "Q" CACHE STRING "Configure for BlueGene." FORCE )
 # no readline support on bluegene
-set(with-readline OFF CACHE BOOL "Find a readline library [default=ON]. To set a specific readline, set install path." FORCE)
+set( with-readline OFF CACHE BOOL "Find a readline library [default=ON]. To set a specific readline, set install path." FORCE )
 # we obviously want to do mpi on bluegene
-set(with-mpi ON CACHE BOOL "Request compilation with MPI; optionally give directory with MPI installation." FORCE)
+set( with-mpi ON CACHE BOOL "Request compilation with MPI; optionally give directory with MPI installation." FORCE )
 
 # CMake - Cross Platform Makefile Generator
 # Copyright 2000-2016 Kitware, Inc.
@@ -112,46 +112,46 @@ set(with-mpi ON CACHE BOOL "Request compilation with MPI; optionally give direct
 # libraries are typically strewn about the filesystem, and we can't
 # re-root ALL backend libraries to a single place.
 #
-set(CMAKE_SYSTEM_IGNORE_PATH
-  /lib             /lib64             /include
-  /usr/lib         /usr/lib64         /usr/include
-  /usr/local/lib   /usr/local/lib64   /usr/local/include
-  /usr/X11/lib     /usr/X11/lib64     /usr/X11/include
-  /usr/lib/X11     /usr/lib64/X11     /usr/include/X11
-  /usr/X11R6/lib   /usr/X11R6/lib64   /usr/X11R6/include
-  /usr/X11R7/lib   /usr/X11R7/lib64   /usr/X11R7/include
-)
+set( CMAKE_SYSTEM_IGNORE_PATH
+    /lib /lib64 /include
+    /usr/lib /usr/lib64 /usr/include
+    /usr/local/lib /usr/local/lib64 /usr/local/include
+    /usr/X11/lib /usr/X11/lib64 /usr/X11/include
+    /usr/lib/X11 /usr/lib64/X11 /usr/include/X11
+    /usr/X11R6/lib /usr/X11R6/lib64 /usr/X11R6/include
+    /usr/X11R7/lib /usr/X11R7/lib64 /usr/X11R7/include
+    )
 
 #
 # Indicate that this is a unix-like system
 #
-set(UNIX 1)
+set( UNIX 1 )
 
 #
 # Library prefixes, suffixes, extra libs.
 #
-set(CMAKE_LINK_LIBRARY_SUFFIX "")
-set(CMAKE_STATIC_LIBRARY_PREFIX "lib")     # lib
-set(CMAKE_STATIC_LIBRARY_SUFFIX ".a")      # .a
+set( CMAKE_LINK_LIBRARY_SUFFIX "" )
+set( CMAKE_STATIC_LIBRARY_PREFIX "lib" )     # lib
+set( CMAKE_STATIC_LIBRARY_SUFFIX ".a" )      # .a
 
-set(CMAKE_SHARED_LIBRARY_PREFIX "lib")     # lib
-set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")     # .so
-set(CMAKE_EXECUTABLE_SUFFIX "")            # .exe
+set( CMAKE_SHARED_LIBRARY_PREFIX "lib" )     # lib
+set( CMAKE_SHARED_LIBRARY_SUFFIX ".so" )     # .so
+set( CMAKE_EXECUTABLE_SUFFIX "" )            # .exe
 
-set(CMAKE_DL_LIBS "dl")
+set( CMAKE_DL_LIBS "dl" )
 
 #
 # BG/Q supports dynamic libraries regardless of whether we're building
 # static or dynamic *executables*.
 #
-set_property(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
+set_property( GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE )
 # NEST: can irritate cmake 3.4 and before
 #       if this is not set, TARGET_SUPPORTS_SHARED_LIBS will be set to
 #       FALSE later
 set( CMAKE_C_COMPILER_LINKS_STATICALLY OFF )
 set( CMAKE_CXX_COMPILER_LINKS_STATICALLY OFF )
 
-set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
+set( CMAKE_FIND_LIBRARY_PREFIXES "lib" )
 
 #
 # For BGQ builds, we're cross compiling, but we don't want to re-root things
@@ -161,48 +161,48 @@ set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
 # searched first.  This is not the clearest thing in the world, given IBM's driver
 # layout, but this should cover all the standard ones.
 #
-macro(__BlueGeneQ_common_setup compiler_id lang)
+macro( __bluegeneq_common_setup compiler_id lang )
 
   # Need to use the version of the comm lib compiled with the right compiler.
-  set(__BlueGeneQ_commlib_dir gcc)
-  if (${compiler_id} STREQUAL XL)
-    set(__BlueGeneQ_commlib_dir xl)
-  endif()
+  set( __BlueGeneQ_commlib_dir gcc )
+  if ( ${compiler_id} STREQUAL XL )
+    set( __BlueGeneQ_commlib_dir xl )
+  endif ()
 
-  set(CMAKE_SYSTEM_LIBRARY_PATH
-    /bgsys/drivers/ppcfloor/comm/lib                            # default comm layer (used by mpi compiler wrappers)
-    /bgsys/drivers/ppcfloor/comm/sys/lib/
-    /bgsys/drivers/ppcfloor/comm/${__BlueGeneQ_commlib_dir}/lib # PAMI, other lower-level comm libraries
-    /bgsys/drivers/ppcfloor/spi/lib
-    /bgsys/drivers/ppcfloor/gnu-linux/lib                       # CNK python installation directory
-    /bgsys/drivers/ppcfloor/gnu-linux/powerpc64-bgq-linux/lib   # CNK Linux image -- standard runtime libs, pthread, etc.
-    )
+  set( CMAKE_SYSTEM_LIBRARY_PATH
+      /bgsys/drivers/ppcfloor/comm/lib                            # default comm layer (used by mpi compiler wrappers)
+      /bgsys/drivers/ppcfloor/comm/sys/lib/
+      /bgsys/drivers/ppcfloor/comm/${__BlueGeneQ_commlib_dir}/lib # PAMI, other lower-level comm libraries
+      /bgsys/drivers/ppcfloor/spi/lib
+      /bgsys/drivers/ppcfloor/gnu-linux/lib                       # CNK python installation directory
+      /bgsys/drivers/ppcfloor/gnu-linux/powerpc64-bgq-linux/lib   # CNK Linux image -- standard runtime libs, pthread, etc.
+      )
 
   # Add all the system include paths.
-  set(CMAKE_SYSTEM_INCLUDE_PATH
-    /bgsys/drivers/ppcfloor/comm/include
-    /bgsys/drivers/ppcfloor/comm/sys/include
-    /bgsys/drivers/ppcfloor/
-    /bgsys/drivers/ppcfloor/spi/include
-    /bgsys/drivers/ppcfloor/spi/include/kernel/cnk
-    /bgsys/drivers/ppcfloor/comm/${__BlueGeneQ_commlib_dir}/include
-    )
+  set( CMAKE_SYSTEM_INCLUDE_PATH
+      /bgsys/drivers/ppcfloor/comm/include
+      /bgsys/drivers/ppcfloor/comm/sys/include
+      /bgsys/drivers/ppcfloor/
+      /bgsys/drivers/ppcfloor/spi/include
+      /bgsys/drivers/ppcfloor/spi/include/kernel/cnk
+      /bgsys/drivers/ppcfloor/comm/${__BlueGeneQ_commlib_dir}/include
+      )
 
   # Ensure that the system directories are included with the regular compilers, as users will expect this
   # to do the same thing as the MPI compilers, which add these flags.
-  set(BGQ_SYSTEM_INCLUDES "")
-  foreach(dir ${CMAKE_SYSTEM_INCLUDE_PATH})
-    set(BGQ_SYSTEM_INCLUDES "${BGQ_SYSTEM_INCLUDES} -I${dir}")
-  endforeach()
+  set( BGQ_SYSTEM_INCLUDES "" )
+  foreach ( dir ${CMAKE_SYSTEM_INCLUDE_PATH} )
+    set( BGQ_SYSTEM_INCLUDES "${BGQ_SYSTEM_INCLUDES} -I${dir}" )
+  endforeach ()
 
   if ( CMAKE_VERSION VERSION_LESS 3 )
     # remove <INCLUDES> as cmake 2.8.12 is confused by it
-    set(CMAKE_C_COMPILE_OBJECT   "<CMAKE_C_COMPILER>   <DEFINES> ${BGQ_SYSTEM_INCLUDES} <FLAGS> -o <OBJECT> -c <SOURCE>")
-    set(CMAKE_CXX_COMPILE_OBJECT "<CMAKE_CXX_COMPILER> <DEFINES> ${BGQ_SYSTEM_INCLUDES} <FLAGS> -o <OBJECT> -c <SOURCE>")
+    set( CMAKE_C_COMPILE_OBJECT "<CMAKE_C_COMPILER>   <DEFINES> ${BGQ_SYSTEM_INCLUDES} <FLAGS> -o <OBJECT> -c <SOURCE>" )
+    set( CMAKE_CXX_COMPILE_OBJECT "<CMAKE_CXX_COMPILER> <DEFINES> ${BGQ_SYSTEM_INCLUDES} <FLAGS> -o <OBJECT> -c <SOURCE>" )
   else ()
     # later versions need <INCLUDES> for the includes
-    set(CMAKE_C_COMPILE_OBJECT   "<CMAKE_C_COMPILER>   <DEFINES> ${BGQ_SYSTEM_INCLUDES} <INCLUDES> <FLAGS> -o <OBJECT> -c <SOURCE>")
-    set(CMAKE_CXX_COMPILE_OBJECT "<CMAKE_CXX_COMPILER> <DEFINES> ${BGQ_SYSTEM_INCLUDES} <INCLUDES> <FLAGS> -o <OBJECT> -c <SOURCE>")
+    set( CMAKE_C_COMPILE_OBJECT "<CMAKE_C_COMPILER>   <DEFINES> ${BGQ_SYSTEM_INCLUDES} <INCLUDES> <FLAGS> -o <OBJECT> -c <SOURCE>" )
+    set( CMAKE_CXX_COMPILE_OBJECT "<CMAKE_CXX_COMPILER> <DEFINES> ${BGQ_SYSTEM_INCLUDES} <INCLUDES> <FLAGS> -o <OBJECT> -c <SOURCE>" )
   endif ()
 
   #
@@ -211,23 +211,23 @@ macro(__BlueGeneQ_common_setup compiler_id lang)
   # shared libraries even if you intend to make static executables, you just
   # can't make a dynamic executable if you use the static platform file.
   #
-  if (${compiler_id} STREQUAL XL)
+  if ( ${compiler_id} STREQUAL XL )
     # Flags for XL compilers if we explicitly detected XL
-    set(CMAKE_SHARED_LIBRARY_${lang}_FLAGS           "-qpic")
-    set(CMAKE_SHARED_LIBRARY_CREATE_${lang}_FLAGS    "-qmkshrobj -qnostaticlink")
-  else()
+    set( CMAKE_SHARED_LIBRARY_${lang}_FLAGS "-qpic" )
+    set( CMAKE_SHARED_LIBRARY_CREATE_${lang}_FLAGS "-qmkshrobj -qnostaticlink" )
+  else ()
     # Assume flags for GNU compilers (if the ID is GNU *or* anything else).
-    set(CMAKE_SHARED_LIBRARY_${lang}_FLAGS           "-fPIC")
-    set(CMAKE_SHARED_LIBRARY_CREATE_${lang}_FLAGS    "-shared")
-  endif()
+    set( CMAKE_SHARED_LIBRARY_${lang}_FLAGS "-fPIC" )
+    set( CMAKE_SHARED_LIBRARY_CREATE_${lang}_FLAGS "-shared" )
+  endif ()
 
   # Both toolchains use the GNU linker on BG/P, so these options are shared.
-  set(CMAKE_SHARED_LIBRARY_RUNTIME_${lang}_FLAG      "-Wl,-rpath,")
-  set(CMAKE_SHARED_LIBRARY_RPATH_LINK_${lang}_FLAG   "-Wl,-rpath-link,")
-  set(CMAKE_SHARED_LIBRARY_SONAME_${lang}_FLAG       "-Wl,-soname,")
-  set(CMAKE_EXE_EXPORTS_${lang}_FLAG                 "-Wl,--export-dynamic")
-  set(CMAKE_SHARED_LIBRARY_LINK_${lang}_FLAGS        "")  # +s, flag for exe link to use shared lib
-  set(CMAKE_SHARED_LIBRARY_RUNTIME_${lang}_FLAG_SEP  ":") # : or empty
+  set( CMAKE_SHARED_LIBRARY_RUNTIME_${lang}_FLAG "-Wl,-rpath," )
+  set( CMAKE_SHARED_LIBRARY_RPATH_LINK_${lang}_FLAG "-Wl,-rpath-link," )
+  set( CMAKE_SHARED_LIBRARY_SONAME_${lang}_FLAG "-Wl,-soname," )
+  set( CMAKE_EXE_EXPORTS_${lang}_FLAG "-Wl,--export-dynamic" )
+  set( CMAKE_SHARED_LIBRARY_LINK_${lang}_FLAGS "" )  # +s, flag for exe link to use shared lib
+  set( CMAKE_SHARED_LIBRARY_RUNTIME_${lang}_FLAG_SEP ":" ) # : or empty
 
 endmacro()
 
@@ -236,36 +236,36 @@ endmacro()
 # We can't support both static and dynamic links in the same platform file.  The
 # dynamic link platform file needs to call this explicitly to set up dynamic linking.
 #
-macro(__BlueGeneQ_setup_dynamic compiler_id lang)
-  __BlueGeneQ_common_setup(${compiler_id} ${lang})
+macro( __bluegeneq_setup_dynamic compiler_id lang )
+  __bluegeneq_common_setup( ${compiler_id} ${lang} )
 
   set( CMAKE_FIND_LIBRARY_SUFFIXES ".so;.a" )
 
-  if (${compiler_id} STREQUAL XL)
-    set(BGQ_${lang}_DYNAMIC_EXE_FLAGS "-qnostaticlink -qnostaticlink=libgcc")
-  else()
-    set(BGQ_${lang}_DYNAMIC_EXE_FLAGS "-dynamic")
-  endif()
+  if ( ${compiler_id} STREQUAL XL )
+    set( BGQ_${lang}_DYNAMIC_EXE_FLAGS "-qnostaticlink -qnostaticlink=libgcc" )
+  else ()
+    set( BGQ_${lang}_DYNAMIC_EXE_FLAGS "-dynamic" )
+  endif ()
 
   # For dynamic executables, need to provide special BG/Q arguments.
-  set(BGQ_${lang}_DEFAULT_EXE_FLAGS
-    "<FLAGS> <CMAKE_${lang}_LINK_FLAGS> <LINK_FLAGS> <OBJECTS>  -o <TARGET> <LINK_LIBRARIES>")
-  set(CMAKE_${lang}_LINK_EXECUTABLE
-    "<CMAKE_${lang}_COMPILER> -Wl,-relax ${BGQ_${lang}_DYNAMIC_EXE_FLAGS} ${BGQ_${lang}_DEFAULT_EXE_FLAGS}")
+  set( BGQ_${lang}_DEFAULT_EXE_FLAGS
+      "<FLAGS> <CMAKE_${lang}_LINK_FLAGS> <LINK_FLAGS> <OBJECTS>  -o <TARGET> <LINK_LIBRARIES>" )
+  set( CMAKE_${lang}_LINK_EXECUTABLE
+      "<CMAKE_${lang}_COMPILER> -Wl,-relax ${BGQ_${lang}_DYNAMIC_EXE_FLAGS} ${BGQ_${lang}_DEFAULT_EXE_FLAGS}" )
 endmacro()
 
 #
 # This macro needs to be called for static builds.  Right now it just adds -Wl,-relax
 # to the link line.
 #
-macro(__BlueGeneQ_setup_static compiler_id lang)
-  __BlueGeneQ_common_setup(${compiler_id} ${lang})
+macro( __bluegeneq_setup_static compiler_id lang )
+  __bluegeneq_common_setup( ${compiler_id} ${lang} )
 
   set( CMAKE_FIND_LIBRARY_SUFFIXES ".a" )
 
   # For static executables, use default link settings.
-  set(BGQ_${lang}_DEFAULT_EXE_FLAGS
-    "<FLAGS> <CMAKE_${lang}_LINK_FLAGS> <LINK_FLAGS> <OBJECTS>  -o <TARGET> <LINK_LIBRARIES>")
-  set(CMAKE_${lang}_LINK_EXECUTABLE
-    "<CMAKE_${lang}_COMPILER> -Wl,-relax ${BGQ_${lang}_DEFAULT_EXE_FLAGS}")
+  set( BGQ_${lang}_DEFAULT_EXE_FLAGS
+      "<FLAGS> <CMAKE_${lang}_LINK_FLAGS> <LINK_FLAGS> <OBJECTS>  -o <TARGET> <LINK_LIBRARIES>" )
+  set( CMAKE_${lang}_LINK_EXECUTABLE
+      "<CMAKE_${lang}_COMPILER> -Wl,-relax ${BGQ_${lang}_DEFAULT_EXE_FLAGS}" )
 endmacro()

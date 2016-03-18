@@ -58,9 +58,9 @@ if ( DOXYGEN_FOUND )
   endif ()
 else ()
   add_custom_target( doc
-    COMMAND ${CMAKE_COMMAND} -E echo "Doxygen is not found on your system. Cannot build documentation."
-    )
+      COMMAND ${CMAKE_COMMAND} -E echo "Doxygen is not found on your system. Cannot build documentation."
+      )
   add_custom_target( fulldoc
-    COMMAND ${CMAKE_COMMAND} -E echo "Doxygen is not found on your system. Cannot build full documentation."
-    )
+      COMMAND ${CMAKE_COMMAND} -E echo "Doxygen is not found on your system. Cannot build full documentation."
+      )
 endif ()

@@ -163,7 +163,7 @@ if ( HAVE_PYTHON )
       ${PKGDATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
       WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
       COMMENT "Execute NEST's testsuite...."
-  )
+      )
 else ()
   add_custom_target( installcheck
       #COMMAND ${CMAKE_MAKE_PROGRAM} install
@@ -171,14 +171,14 @@ else ()
       ${PKGDATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
       WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
       COMMENT "Execute NEST's testsuite...."
-  )
+      )
 endif ()
 
 add_custom_target( check
     COMMAND export CTEST_OUTPUT_ON_FAILURE=1 &&
     ${CMAKE_CTEST_COMMAND} -C ${CMAKE_BUILD_TYPE}
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-)
+    )
 
 ################################################################################
 ##################        Define Subdirectories here          ##################
@@ -230,9 +230,9 @@ else ()
   message( FATAL_ERROR "Unknown build type: '${CMAKE_BUILD_TYPE}'" )
 endif ()
 if ( with-defines )
-  foreach( def ${with-defines} )
-    set( ALL_CFLAGS "${def} ${ALL_CFLAGS}")
-    set( ALL_CXXFLAGS "${def} ${ALL_CXXFLAGS}")
+  foreach ( def ${with-defines} )
+    set( ALL_CFLAGS "${def} ${ALL_CFLAGS}" )
+    set( ALL_CXXFLAGS "${def} ${ALL_CXXFLAGS}" )
   endforeach ()
 endif ()
 
@@ -319,7 +319,7 @@ add_custom_target( dist
     # not sure about this... seems, that it will be removed before dist...
     # DEPENDS doc
     COMMENT "Creating a source distribution from NEST..."
-)
+    )
 
 ################################################################################
 ##################            Install Extra Files             ##################
@@ -327,7 +327,7 @@ add_custom_target( dist
 
 install( FILES LICENSE README.md NEWS
     DESTINATION ${INSTALL_DOC_DIR}
-)
+    )
 
 ################################################################################
 ##################           Configuration Summary            ##################

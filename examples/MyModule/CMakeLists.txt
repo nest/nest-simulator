@@ -173,7 +173,7 @@ add_custom_target( dist
     # not sure about this... seems, that it will be removed before dist...
     # DEPENDS doc
     COMMENT "Creating a source distribution from ${MODULE_NAME}..."
-)
+    )
 
 
 if ( BUILD_SHARED_LIBS )

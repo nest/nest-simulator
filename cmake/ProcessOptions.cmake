@@ -52,39 +52,39 @@ endif ()
 
 if ( with-libraries )
   if ( with-libraries STREQUAL "ON" )
-    message(FATAL_ERROR "-Dwith-libraries requires full library paths.")
+    message( FATAL_ERROR "-Dwith-libraries requires full library paths." )
   endif ()
   foreach ( lib ${with-libraries} )
     if ( EXISTS "${lib}" )
       link_libraries( "${lib}" )
     else ()
-      message(FATAL_ERROR "Library '${lib}' does not exist!")
+      message( FATAL_ERROR "Library '${lib}' does not exist!" )
     endif ()
   endforeach ()
 endif ()
 
 if ( with-includes )
   if ( with-includes STREQUAL "ON" )
-    message(FATAL_ERROR "-Dwith-includes requires full paths.")
+    message( FATAL_ERROR "-Dwith-includes requires full paths." )
   endif ()
   foreach ( inc ${with-includes} )
     if ( IS_DIRECTORY "${inc}" )
       include_directories( "${inc}" )
     else ()
-      message(FATAL_ERROR "Include path '${inc}' does not exist!")
+      message( FATAL_ERROR "Include path '${inc}' does not exist!" )
     endif ()
   endforeach ()
 endif ()
 
 if ( with-defines )
   if ( with-defines STREQUAL "ON" )
-    message(FATAL_ERROR "-Dwith-defines requires compiler defines -DXYZ=... .")
+    message( FATAL_ERROR "-Dwith-defines requires compiler defines -DXYZ=... ." )
   endif ()
   foreach ( def ${with-defines} )
-    if ( "${def}" MATCHES "^-D.*")
+    if ( "${def}" MATCHES "^-D.*" )
       add_definitions( "${def}" )
     else ()
-      message(FATAL_ERROR "Define '${def}' does not match '-D.*' !")
+      message( FATAL_ERROR "Define '${def}' does not match '-D.*' !" )
     endif ()
   endforeach ()
 endif ()
@@ -93,8 +93,8 @@ endif ()
 if ( k-computer )
   set( IS_K ON )
   # need alternative tokens command to compile NEST
-  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --alternative_tokens")
-  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --alternative_tokens")
+  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --alternative_tokens" )
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --alternative_tokens" )
 endif ()
 
 # is set in the BlueGeneQ.cmake file
@@ -117,7 +117,7 @@ endif ()
 if ( static-libraries )
   set( BUILD_SHARED_LIBS OFF )
   # set RPATH stuff
-  SET( CMAKE_SKIP_RPATH TRUE )
+  set( CMAKE_SKIP_RPATH TRUE )
 
   if ( UNIX OR APPLE )
     # On Linux .a is the static library suffix, on Mac OS X .lib can also
@@ -128,25 +128,25 @@ else ()
   set( BUILD_SHARED_LIBS ON )
 
   # set RPATH stuff
-  SET( CMAKE_SKIP_RPATH FALSE )
+  set( CMAKE_SKIP_RPATH FALSE )
   # use, i.e. don't skip the full RPATH for the build tree
-  SET( CMAKE_SKIP_BUILD_RPATH FALSE )
+  set( CMAKE_SKIP_BUILD_RPATH FALSE )
   # on OS X
   set( CMAKE_MACOSX_RPATH ON )
 
   # when building, don't use the install RPATH already
   # (but later on when installing)
-  SET( CMAKE_BUILD_WITH_INSTALL_RPATH FALSE )
+  set( CMAKE_BUILD_WITH_INSTALL_RPATH FALSE )
 
   # set the rpath only when installed
   set( CMAKE_INSTALL_RPATH
-    "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}"
-    "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/nest"
-  )
+      "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}"
+      "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/nest"
+      )
 
   # add the automatically determined parts of the RPATH
   # which point to directories outside the build tree to the install RPATH
-  SET( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE )
+  set( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE )
 
   if ( UNIX OR APPLE )
     # reverse the search order for lib extensions
@@ -178,7 +178,7 @@ if ( external-modules )
     find_file( ${mod}_EXT_MOD_INCLUDE
         NAMES ${mod}module.h
         HINTS "${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}"
-    )
+        )
     if ( ${mod}_EXT_MOD_INCLUDE STREQUAL "${mod}_EXT_MOD_INCLUDE-NOTFOUND" )
       message( FATAL_ERROR "Cannot find header for external module '${mod}'. Should be '${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}/${mod}module.h' ." )
     endif ()
@@ -188,7 +188,7 @@ if ( external-modules )
     find_library( ${mod}_EXT_MOD_LIBRARY
         NAMES ${mod}module
         HINTS ${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/nest
-    )
+        )
     if ( ${mod}_EXT_MOD_LIBRARY STREQUAL "${mod}_EXT_MOD_LIBRARY-NOTFOUND" )
       message( FATAL_ERROR "Cannot find library for external module '${mod}'." )
     endif ()

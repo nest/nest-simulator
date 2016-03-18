@@ -63,8 +63,8 @@ if ( with-gsl )
   find_package( GSL )
 
   # only allow GSL 1.11 and later
-  if ( GSL_FOUND AND ( "${GSL_VERSION}" VERSION_GREATER "1.11" 
-                    OR "${GSL_VERSION}" VERSION_EQUAL "1.11" ) )
+  if ( GSL_FOUND AND ( "${GSL_VERSION}" VERSION_GREATER "1.11"
+      OR "${GSL_VERSION}" VERSION_EQUAL "1.11" ))
     set( HAVE_GSL ON )
     include_directories( ${GSL_INCLUDE_DIRS} )
     # is linked in libnestutil/CMakeLists.txt

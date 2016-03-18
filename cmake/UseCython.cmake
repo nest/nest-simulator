@@ -83,11 +83,11 @@
 
 # Configuration options.
 set( CYTHON_ANNOTATE OFF
-  CACHE BOOL "Create an annotated .html file when compiling *.pyx." )
+    CACHE BOOL "Create an annotated .html file when compiling *.pyx." )
 set( CYTHON_NO_DOCSTRINGS OFF
-  CACHE BOOL "Strip docstrings from the compiled module." )
+    CACHE BOOL "Strip docstrings from the compiled module." )
 set( CYTHON_FLAGS "" CACHE STRING
-  "Extra flags to the cython compiler." )
+    "Extra flags to the cython compiler." )
 mark_as_advanced( CYTHON_ANNOTATE CYTHON_NO_DOCSTRINGS CYTHON_FLAGS )
 
 find_package( Cython REQUIRED )
@@ -111,17 +111,17 @@ function( compile_pyx _name generated_file )
   set( c_header_dependencies "" )
   set( pyx_locations "" )
 
-  foreach( pyx_file ${ARGN} )
+  foreach ( pyx_file ${ARGN} )
     get_filename_component( pyx_file_basename "${pyx_file}" NAME_WE )
 
     # Determine if it is a C or C++ file.
     get_source_file_property( property_is_cxx ${pyx_file} CYTHON_IS_CXX )
-    if( ${property_is_cxx} )
+    if ( ${property_is_cxx} )
       set( cxx_arg "--cplus" )
       set( extension ${CYTHON_CXX_EXTENSION} )
       set( pyx_lang "CXX" )
       set( comment "Compiling Cython CXX source for ${_name}..." )
-    endif()
+    endif ()
 
     # Get the include directories.
     get_source_file_property( pyx_location ${pyx_file} LOCATION )
@@ -134,100 +134,100 @@ function( compile_pyx _name generated_file )
     # Add the pxd file will the same name as the given pyx file.
     unset( corresponding_pxd_file CACHE )
     find_file( corresponding_pxd_file ${pyx_file_basename}.pxd
-      PATHS "${pyx_path}" ${cmake_include_directories} 
-      NO_DEFAULT_PATH )
-    if( corresponding_pxd_file )
+        PATHS "${pyx_path}" ${cmake_include_directories}
+        NO_DEFAULT_PATH )
+    if ( corresponding_pxd_file )
       list( APPEND pxd_dependencies "${corresponding_pxd_file}" )
-    endif()
+    endif ()
 
     # pxd files to check for additional dependencies.
     set( pxds_to_check "${pyx_file}" "${pxd_dependencies}" )
     set( pxds_checked "" )
     set( number_pxds_to_check 1 )
-    while( ${number_pxds_to_check} GREATER 0 )
-      foreach( pxd ${pxds_to_check} )
+    while ( ${number_pxds_to_check} GREATER 0 )
+      foreach ( pxd ${pxds_to_check} )
         list( APPEND pxds_checked "${pxd}" )
         list( REMOVE_ITEM pxds_to_check "${pxd}" )
 
         # check for C header dependencies
         file( STRINGS "${pxd}" extern_from_statements
-          REGEX "cdef[ ]+extern[ ]+from.*$" )
-        foreach( statement ${extern_from_statements} )
+            REGEX "cdef[ ]+extern[ ]+from.*$" )
+        foreach ( statement ${extern_from_statements} )
           # Had trouble getting the quote in the regex
           string( REGEX REPLACE "cdef[ ]+extern[ ]+from[ ]+[\"]([^\"]+)[\"].*" "\\1" header "${statement}" )
           unset( header_location CACHE )
           find_file( header_location ${header} PATHS ${cmake_include_directories} )
-          if( header_location )
+          if ( header_location )
             list( FIND c_header_dependencies "${header_location}" header_idx )
-            if( ${header_idx} LESS 0 )
+            if ( ${header_idx} LESS 0 )
               list( APPEND c_header_dependencies "${header_location}" )
-            endif()
-          endif()
-        endforeach()
+            endif ()
+          endif ()
+        endforeach ()
 
         # check for pxd dependencies
 
         # Look for cimport statements.
         set( module_dependencies "" )
         file( STRINGS "${pxd}" cimport_statements REGEX cimport )
-        foreach( statement ${cimport_statements} )
-          if( ${statement} MATCHES from )
+        foreach ( statement ${cimport_statements} )
+          if ( ${statement} MATCHES from )
             string( REGEX REPLACE "from[ ]+([^ ]+).*" "\\1" module "${statement}" )
-          else()
+          else ()
             string( REGEX REPLACE "cimport[ ]+([^ ]+).*" "\\1" module "${statement}" )
-          endif()
+          endif ()
           list( APPEND module_dependencies ${module} )
-        endforeach()
+        endforeach ()
         list( REMOVE_DUPLICATES module_dependencies )
         # Add the module to the files to check, if appropriate.
-        foreach( module ${module_dependencies} )
+        foreach ( module ${module_dependencies} )
           unset( pxd_location CACHE )
           find_file( pxd_location ${module}.pxd
-            PATHS "${pyx_path}" ${cmake_include_directories} NO_DEFAULT_PATH )
-          if( pxd_location )
+              PATHS "${pyx_path}" ${cmake_include_directories} NO_DEFAULT_PATH )
+          if ( pxd_location )
             list( FIND pxds_checked ${pxd_location} pxd_idx )
-            if( ${pxd_idx} LESS 0 )
+            if ( ${pxd_idx} LESS 0 )
               list( FIND pxds_to_check ${pxd_location} pxd_idx )
-              if( ${pxd_idx} LESS 0 )
+              if ( ${pxd_idx} LESS 0 )
                 list( APPEND pxds_to_check ${pxd_location} )
                 list( APPEND pxd_dependencies ${pxd_location} )
-              endif() # if it is not already going to be checked
-            endif() # if it has not already been checked
-          endif() # if pxd file can be found
-        endforeach() # for each module dependency discovered
-      endforeach() # for each pxd file to check
+              endif () # if it is not already going to be checked
+            endif () # if it has not already been checked
+          endif () # if pxd file can be found
+        endforeach () # for each module dependency discovered
+      endforeach () # for each pxd file to check
       list( LENGTH pxds_to_check number_pxds_to_check )
-    endwhile()
-  endforeach() # pyx_file
+    endwhile ()
+  endforeach () # pyx_file
 
   # Set additional flags.
-  if( CYTHON_ANNOTATE )
+  if ( CYTHON_ANNOTATE )
     set( annotate_arg "--annotate" )
-  endif()
+  endif ()
 
-  if( CYTHON_NO_DOCSTRINGS )
+  if ( CYTHON_NO_DOCSTRINGS )
     set( no_docstrings_arg "--no-docstrings" )
-  endif()
+  endif ()
 
-  if( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" OR
-        "${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo" )
-      set( cython_debug_arg "--gdb" )
-  endif()
+  if ( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" OR
+      "${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo" )
+    set( cython_debug_arg "--gdb" )
+  endif ()
 
-  if( "${PYTHONLIBS_VERSION_STRING}" MATCHES "^2." )
+  if ( "${PYTHONLIBS_VERSION_STRING}" MATCHES "^2." )
     set( version_arg "-2" )
-  elseif( "${PYTHONLIBS_VERSION_STRING}" MATCHES "^3." )
+  elseif ( "${PYTHONLIBS_VERSION_STRING}" MATCHES "^3." )
     set( version_arg "-3" )
-  else()
+  else ()
     set( version_arg )
-  endif()
+  endif ()
 
   # Include directory arguments. 
   list( REMOVE_DUPLICATES cython_include_directories )
   set( include_directory_arg "" )
-  foreach( _include_dir ${cython_include_directories} )
+  foreach ( _include_dir ${cython_include_directories} )
     set( include_directory_arg ${include_directory_arg} "-I" "${_include_dir}" )
-  endforeach()
+  endforeach ()
 
   # Determining generated file name.
   set( _generated_file "${CMAKE_CURRENT_BINARY_DIR}/${_name}.${extension}" )
@@ -239,14 +239,14 @@ function( compile_pyx _name generated_file )
 
   # Add the command to run the compiler.
   add_custom_command( OUTPUT ${_generated_file}
-    COMMAND ${CYTHON_EXECUTABLE}
-    ARGS ${cxx_arg} ${include_directory_arg} ${version_arg}
-    ${annotate_arg} ${no_docstrings_arg} ${cython_debug_arg} ${CYTHON_FLAGS}
-    --output-file  ${_generated_file} ${pyx_locations}
-    DEPENDS ${pyx_locations} ${pxd_dependencies}
-    IMPLICIT_DEPENDS ${pyx_lang} ${c_header_dependencies}
-    COMMENT ${comment}
-    )
+      COMMAND ${CYTHON_EXECUTABLE}
+      ARGS ${cxx_arg} ${include_directory_arg} ${version_arg}
+      ${annotate_arg} ${no_docstrings_arg} ${cython_debug_arg} ${CYTHON_FLAGS}
+      --output-file ${_generated_file} ${pyx_locations}
+      DEPENDS ${pyx_locations} ${pxd_dependencies}
+      IMPLICIT_DEPENDS ${pyx_lang} ${c_header_dependencies}
+      COMMENT ${comment}
+      )
 
   # Remove their visibility to the user.
   set( corresponding_pxd_file "" CACHE INTERNAL "" )
@@ -259,21 +259,21 @@ endfunction()
 function( cython_add_module _name )
   set( pyx_module_sources "" )
   set( other_module_sources "" )
-  foreach( _file ${ARGN} )
-    if( ${_file} MATCHES ".*\\.py[x]?$" )
+  foreach ( _file ${ARGN} )
+    if ( ${_file} MATCHES ".*\\.py[x]?$" )
       list( APPEND pyx_module_sources ${_file} )
-    else()
+    else ()
       list( APPEND other_module_sources ${_file} )
-    endif()
-  endforeach()
+    endif ()
+  endforeach ()
   compile_pyx( ${_name} generated_file ${pyx_module_sources} )
   include_directories( ${PYTHON_INCLUDE_DIRS} )
   python_add_module( ${_name} ${generated_file} ${other_module_sources} )
-  if( APPLE )
+  if ( APPLE )
     set_target_properties( ${_name} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )
-  else()
+  else ()
     target_link_libraries( ${_name} ${PYTHON_LIBRARIES} )
-  endif()
+  endif ()
 endfunction()
 
 include( CMakeParseArguments )
@@ -285,27 +285,27 @@ function( cython_add_standalone_executable _name )
   set( main_module "" )
   cmake_parse_arguments( cython_arguments "" "MAIN_MODULE" "" ${ARGN} )
   include_directories( ${PYTHON_INCLUDE_DIRS} )
-  foreach( _file ${cython_arguments_UNPARSED_ARGUMENTS} )
-    if( ${_file} MATCHES ".*\\.py[x]?$" )
+  foreach ( _file ${cython_arguments_UNPARSED_ARGUMENTS} )
+    if ( ${_file} MATCHES ".*\\.py[x]?$" )
       get_filename_component( _file_we ${_file} NAME_WE )
-      if( "${_file_we}" STREQUAL "${_name}" )
+      if ( "${_file_we}" STREQUAL "${_name}" )
         set( main_module "${_file}" )
-      elseif( NOT "${_file}" STREQUAL "${cython_arguments_MAIN_MODULE}" )
+      elseif ( NOT "${_file}" STREQUAL "${cython_arguments_MAIN_MODULE}" )
         set( PYTHON_MODULE_${_file_we}_static_BUILD_SHARED OFF )
         compile_pyx( "${_file_we}_static" generated_file "${_file}" )
         list( APPEND pyx_module_sources "${generated_file}" )
-      endif()
-    else()
+      endif ()
+    else ()
       list( APPEND other_module_sources ${_file} )
-    endif()
-  endforeach()
+    endif ()
+  endforeach ()
 
-  if( cython_arguments_MAIN_MODULE )
+  if ( cython_arguments_MAIN_MODULE )
     set( main_module ${cython_arguments_MAIN_MODULE} )
-  endif()
-  if( NOT main_module )
+  endif ()
+  if ( NOT main_module )
     message( FATAL_ERROR "main module not found." )
-  endif()
+  endif ()
   get_filename_component( main_module_we "${main_module}" NAME_WE )
   set( CYTHON_FLAGS ${CYTHON_FLAGS} --embed )
   compile_pyx( "${main_module_we}_static" generated_file ${main_module} )

@@ -36,7 +36,7 @@ set( nestutil_sources
 
 add_library( nestutil ${nestutil_sources} )
 
-target_link_libraries( nestutil )
+target_link_libraries( nestutil ${GSL_LIBRARIES} )
 
 target_include_directories( nestutil PRIVATE
     ${PROJECT_BINARY_DIR}/libnestutil

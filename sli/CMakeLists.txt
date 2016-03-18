@@ -85,7 +85,7 @@ set( sli_sources
     )
 
 add_library( sli_lib ${sli_sources} )
-target_link_libraries( sli_lib nestutil )
+target_link_libraries( sli_lib nestutil ${READLINE_LIBRARIES} )
 
 # add the executable
 add_executable( sli puresli.cc )

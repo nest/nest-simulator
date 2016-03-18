@@ -85,7 +85,10 @@ set( nestkernel_sources
     )
 
 add_library( nestkernel ${nestkernel_sources} )
-target_link_libraries( nestkernel nestutil random sli_lib )
+target_link_libraries( nestkernel
+    nestutil random sli_lib
+    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES}
+    )
 
 target_include_directories( nestkernel PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil

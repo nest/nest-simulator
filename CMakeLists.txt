@@ -464,7 +464,7 @@ if ( with-ltdl AND NOT static-libraries )
     set( HAVE_LIBLTDL ON )
 
     include_directories( ${LTDL_INCLUDE_DIRS} )
-    link_libraries( ${LTDL_LIBRARIES} )
+    # is linked in nestkernel/CMakeLists.txt
   endif ()
 endif ()
 
@@ -480,7 +480,7 @@ if ( with-readline )
   if ( READLINE_FOUND )
     set( HAVE_READLINE ON )
     include_directories( ${READLINE_INCLUDE_DIRS} )
-    link_libraries( ${READLINE_LIBRARIES} )
+    # is linked in sli/CMakeLists.txt
   endif ()
 endif ()
 
@@ -498,7 +498,7 @@ if ( with-gsl )
                     OR "${GSL_VERSION}" VERSION_EQUAL "1.11" ) )
     set( HAVE_GSL ON )
     include_directories( ${GSL_INCLUDE_DIRS} )
-    link_libraries( ${GSL_LIBRARIES} )
+    # is linked in libnestutil/CMakeLists.txt
   endif ()
 endif ()
 
@@ -564,7 +564,7 @@ if ( with-mpi )
 
     set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_CXX_LINK_FLAGS}" )
     include_directories( ${MPI_CXX_INCLUDE_PATH} )
-    link_libraries( ${MPI_CXX_LIBRARIES} )
+    # is linked in nestkernel/CMakeLists.txt
   endif ()
 endif ()
 
@@ -581,7 +581,7 @@ if ( with-libneurosim )
     set( HAVE_LIBNEUROSIM ON )
 
     include_directories( ${LIBNEUROSIM_INCLUDE_DIRS} )
-    link_libraries( ${LIBNEUROSIM_LIBRARIES} )
+    # is linked in conngen/CMakeLists.txt
   endif ()
 endif ()
 
@@ -599,7 +599,7 @@ if ( with-music )
 
   find_package( Music )
   include_directories( ${MUSIC_INCLUDE_DIRS} )
-  link_libraries( ${MUSIC_LIBRARIES} )
+  # is linked in nestkernel/CMakeLists.txt
   if ( MUSIC_FOUND )
     set( HAVE_MUSIC ON )
   endif ()

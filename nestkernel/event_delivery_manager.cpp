@@ -586,6 +586,22 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     sw_collocate.start();
     me_completed_tid = collocate_spike_data_buffers_( tid );
     sw_collocate.stop();
+
+#pragma omp barrier
+#pragma omp single
+{
+  for ( unsigned int rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  {
+    MPI_Barrier(MPI_COMM_WORLD);
+    if ( kernel().mpi_manager.get_rank() == rank )
+    {
+      std::cout << "send buffer spike data on rank " << rank << std::endl;
+      for ( std::vector< SpikeData >::iterator it = send_buffer_spike_data_.begin(); it != send_buffer_spike_data_.end(); ++it )
+	std::cout << (*it).tid << " "  << (*it).syn_index << " "  << (*it).lcid << " " << (*it).lag << std::endl;
+    }
+  }
+}
+
 #pragma omp critical
     me_completed = me_completed && me_completed_tid;
 #pragma omp barrier
@@ -795,6 +811,21 @@ EventDeliveryManager::gather_target_data()
         break;
       }
 #pragma omp barrier
+
+#pragma omp single
+{
+  for ( unsigned int rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  {
+    MPI_Barrier(MPI_COMM_WORLD);
+    if ( kernel().mpi_manager.get_rank() == rank )
+    {
+      std::cout << "send buffer target data on rank " << rank << std::endl;
+      for ( std::vector< TargetData >::iterator it = send_buffer_target_data.begin(); it != send_buffer_target_data.end(); ++it )
+	std::cout << (*it).gid << " | "  << (*it).target.rank << " " << (*it).target.tid << " "  << (*it).target.syn_index << " "  << (*it).target.lcid << " " << (*it).target.processed << std::endl;
+    }
+  }
+}
+
     } // of while(true)
   } // of omp parallel
 }

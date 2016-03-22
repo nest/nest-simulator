@@ -67,6 +67,7 @@
 
   FirstVersion: March 2006
   Author: Moritz Helias, Abigail Morrison
+  Adapted by: Philipp Weidel
   SeeAlso: synapsedict, tsodyks_synapse, static_synapse
 */
 
@@ -169,6 +170,7 @@ public:
   set_weight( double_t w )
   {
     weight_ = w;
+    Wmax_ = copysign( Wmax_, weight_ ); // ensure W_max has the same sign as weight_
   }
 
 private:
@@ -185,7 +187,7 @@ private:
   {
     double_t norm_w =
       ( w / Wmax_ ) - ( alpha_ * lambda_ * std::pow( w / Wmax_, mu_minus_ ) * kminus );
-    return norm_w > 0.0 ? norm_w * Wmax_ : 0.0;
+    return norm_w > 0.0 ? norm_w * Wmax_ : copysign( 0.0, Wmax_ );
   }
 
   // data members of each connection
@@ -315,6 +317,7 @@ STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d, Conne
   updateValue< double_t >( d, "mu_plus", mu_plus_ );
   updateValue< double_t >( d, "mu_minus", mu_minus_ );
   updateValue< double_t >( d, "Wmax", Wmax_ );
+  Wmax_ = copysign( Wmax_, weight_ ); // ensure W_max has the same sign as weight_
 }
 
 } // of namespace nest

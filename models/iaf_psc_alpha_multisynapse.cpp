@@ -74,6 +74,7 @@ iaf_psc_alpha_multisynapse::Parameters_::Parameters_()
   , V_reset_( -70.0 - E_L_ ) // mV, rel to E_L_
   , Theta_( -55.0 - E_L_ )   // mV, rel to E_L_
   , LowerBound_( -std::numeric_limits< double_t >::infinity() )
+  , num_of_receptors_( 0 )
   , has_connections_( false )
 {
   tau_syn_.clear();

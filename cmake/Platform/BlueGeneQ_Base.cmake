@@ -17,16 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# Based on the BlueGeneQ-base platform file
-set( CMAKE_SYSTEM_NAME BlueGeneQ_Base CACHE STRING "Cross-compiling for BlueGene/Q" FORCE )
-
-# Set enable-bluegene for main CMakeList.txt
-set( enable-bluegene "Q" CACHE STRING "Configure for BlueGene." FORCE )
-# no readline support on bluegene
-set( with-readline OFF CACHE BOOL "Find a readline library [default=ON]. To set a specific readline, set install path." FORCE )
-# we obviously want to do mpi on bluegene
-set( with-mpi ON CACHE BOOL "Request compilation with MPI; optionally give directory with MPI installation." FORCE )
-
 # CMake - Cross Platform Makefile Generator
 # Copyright 2000-2016 Kitware, Inc.
 # Copyright 2000-2011 Insight Software Consortium
@@ -102,6 +92,16 @@ set( with-mpi ON CACHE BOOL "Request compilation with MPI; optionally give direc
 # This platform file tries its best to adhere to the behavior of the MPI
 # compiler wrappers included with the latest BG/P drivers.
 #
+
+# Based on the BlueGeneQ-base platform file
+set( CMAKE_SYSTEM_NAME BlueGeneQ_Base CACHE STRING "Cross-compiling for BlueGene/Q" FORCE )
+
+# Set enable-bluegene for main CMakeList.txt
+set( enable-bluegene "Q" CACHE STRING "Configure for BlueGene." FORCE )
+# no readline support on bluegene
+set( with-readline OFF CACHE BOOL "Find a readline library [default=ON]. To set a specific readline, set install path." FORCE )
+# we obviously want to do mpi on bluegene
+set( with-mpi ON CACHE BOOL "Request compilation with MPI; optionally give directory with MPI installation." FORCE )
 
 #
 # This adds directories that find commands should specifically ignore

@@ -169,8 +169,7 @@ private:
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
 
-    void get( DictionaryDatum&,
-      const Variables_& ) const; //!< Store current values in dictionary
+    void get( DictionaryDatum&, const Variables_& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum&,
       const State_&,
       const Buffers_& ); //!< Set values from dicitonary

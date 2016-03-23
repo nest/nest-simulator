@@ -1,4 +1,4 @@
-# cmake/WrietStaticModules_h.cmake
+# cmake/WriteStaticModules_h.cmake
 #
 # This file is part of NEST.
 #

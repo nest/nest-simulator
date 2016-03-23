@@ -38,7 +38,7 @@ set( NEST_VERSION_PRGNAME "${PROJECT_NAME}-${NEST_VERSION_VERSION}" )
 ##################         All User Defined options           ##################
 ################################################################################
 
-# change NEST defaults
+# set NEST defaults
 set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time. [default 1000.0]" )
 set( tics_per_step "100" CACHE STRING "Specify resolution. [default 100]" )
 option( with-ps-arrays "Use PS array construction semantics. [default=ON]" ON )
@@ -50,7 +50,7 @@ set( external-modules OFF CACHE STRING "External NEST modules to be linked in, s
 set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
 
-# change parallelization scheme
+# set parallelization scheme
 set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )
 set( with-openmp ON CACHE STRING "Enable OpenMP multithreading. Optional: set OMP flag. [default=ON]" )
 
@@ -94,25 +94,14 @@ set( PKGDOCDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR} )
 set( TESTSUITE_BASEDIR ${PKGDOCDIR} )
 
 ################################################################################
-##################             Configure CPack                ##################
-################################################################################
-
-include( CPackVariables )
-
-################################################################################
 #################        Do not install into /usr/local        #################
 ################################################################################
 
-if ( ${CMAKE_INSTALL_PREFIX} STREQUAL "/usr/local" )
+if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
   # no prefix given?
-  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'? Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
+  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'? "
+                    "Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
 endif ()
-
-################################################################################
-#################    Check for includes/ functions /symbols    #################
-################################################################################
-
-include( CheckIncludesSymbols )
 
 ################################################################################
 ##################           Find utility programs            ##################
@@ -123,27 +112,14 @@ find_package( Doxygen )
 find_program( SED NAMES sed gsed )
 
 ################################################################################
-##################          Process custom options            ##################
+##################   CPack, checks, ... in external modules   ##################
 ################################################################################
 
+include( CPackVariables )
+include( CheckIncludesSymbols )
 include( ProcessOptions )
-
-################################################################################
-##################           Write static_modules.h           ##################
-################################################################################
-
 include( WriteStaticModules_h )
-
-################################################################################
-##################            Find Libraries here             ##################
-################################################################################
-
 include( DetermineLibraries )
-
-################################################################################
-##################       Check extra compiler features        ##################
-################################################################################
-
 include( CheckExtraCompilerFeatures )
 
 ################################################################################
@@ -313,9 +289,5 @@ configure_file(
 install( FILES LICENSE README.md NEWS
     DESTINATION ${INSTALL_DOC_DIR}
     )
-
-################################################################################
-##################           Configuration Summary            ##################
-################################################################################
 
 include( ConfigureSummary )

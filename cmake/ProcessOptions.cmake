@@ -180,7 +180,8 @@ if ( external-modules )
         HINTS "${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}"
         )
     if ( ${mod}_EXT_MOD_INCLUDE STREQUAL "${mod}_EXT_MOD_INCLUDE-NOTFOUND" )
-      message( FATAL_ERROR "Cannot find header for external module '${mod}'. Should be '${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}/${mod}module.h' ." )
+      message( FATAL_ERROR "Cannot find header for external module '${mod}'. "
+        "Should be '${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}/${mod}module.h' ." )
     endif ()
     list( APPEND EXTERNAL_MODULE_INCLUDES ${${mod}_EXT_MOD_INCLUDE} )
 

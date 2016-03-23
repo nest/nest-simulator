@@ -19,6 +19,18 @@
 
 cmake_minimum_required( VERSION 2.8.12 )
 
+# This CMakeLists.txt is configured to build your external module for NEST. For
+# illustrative reasons this module is called 'my' (change SHORT_NAME to your
+# preferred module name). NEST requires you to extend the 'SLIModule' (see
+# mymodule.h and mymodule.cpp as an example) and provide a module header
+# (see MODULE_HEADER). The subsequent instructions 
+#
+# The configuration requires a compiled and installed NEST; if `nest-config` is 
+# not in the PATH, please specify the absolute path with `-Dwith-nest=...`.
+#
+# For more informations on how to extend and use your module see:
+#           https://nest.github.io/nest-simulator/extension_modules
+
 # 1) Name your module here, i.e. add later with -Dexternal-modules=my:
 set( SHORT_NAME my )
 #    the complete module name is here:
@@ -33,11 +45,12 @@ set( MODULE_SOURCES
 set( MODULE_HEADER ${MODULE_NAME}.h )
 # containing the class description of the class extending the SLIModule
 
-# 4) Leave the rest as is. All files in `sli` will be installed.
+# 4) Leave the rest as is. All files in `sli` will be installed to
+#    `share/nest/sli/`, so that NEST will find the during initialization.
 
 project( ${MODULE_NAME} CXX )
 
-# VERSION exported to libnestutil/config.h, extras/create_release.sh
+# Your module version
 set( MODULE_VERSION_MAJOR 1 )
 set( MODULE_VERSION_MINOR 0 )
 set( MODULE_VERSION "${MODULE_VERSION_MAJOR}.${MODULE_VERSION_MINOR}" )
@@ -45,8 +58,10 @@ set( MODULE_VERSION "${MODULE_VERSION_MAJOR}.${MODULE_VERSION_MINOR}" )
 # on OS X
 set( CMAKE_MACOSX_RPATH ON )
 
+# Set the `nest-config` executable to use during configuration.
 set( with-nest OFF CACHE STRING "Specify the `nest-config` executable." )
 
+# If it is not set, look for a `nest-config` in the PATH.
 if ( NOT with-nest )
   # try find the program ourselves
   find_program( NEST_CONFIG
@@ -59,24 +74,28 @@ else ()
   set( NEST_CONFIG ${with-nest} )
 endif ()
 
-# gather the options
-# PREFIX
+# Use `nest-config` to get the compile and installation options used with the
+# NEST installation.
+
+# Get the install prefix.
 execute_process(
     COMMAND ${NEST_CONFIG} --prefix
     RESULT_VARIABLE RES_VAR
     OUTPUT_VARIABLE NEST_PREFIX
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+# One check on first execution, if `nest-config` is working.
 if ( NOT RES_VAR EQUAL 0 )
   message( FATAL_ERROR "Cannot run `${NEST_CONFIG}`. Please specify correct `nest-config` via -Dwith-nest=... " )
 endif ()
 
+# If no `CMAKE_INSTALL_PREFIX` is given, set the NEST_PREFIX.
 if ( ${CMAKE_INSTALL_PREFIX} STREQUAL "/usr/local" )
   # no prefix given?
   set( CMAKE_INSTALL_PREFIX "${NEST_PREFIX}" CACHE STRING "Install path prefix, prepended onto install directories." FORCE )
 endif ()
 
-# CFLAGS
+# Get the CXXFLAGS.
 execute_process(
     COMMAND ${NEST_CONFIG} --cflags
     RESULT_VARIABLE RES_VAR
@@ -84,7 +103,8 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-# static-libraries
+# Get, if NEST is build as a (mostly) static application. If yes, also only build
+# static library.
 execute_process(
     COMMAND ${NEST_CONFIG} --static-libraries
     RESULT_VARIABLE RES_VAR
@@ -97,7 +117,7 @@ else ()
   set( BUILD_SHARED_LIBS ON )
 endif ()
 
-# libs
+# Get all linked libraries.
 execute_process(
     COMMAND ${NEST_CONFIG} --libs
     RESULT_VARIABLE RES_VAR
@@ -105,30 +125,34 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-# compiler
+# Get the compiler that was used for NEST.
 execute_process(
     COMMAND ${NEST_CONFIG} --compiler
     RESULT_VARIABLE RES_VAR
     OUTPUT_VARIABLE NEST_COMPILER
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+# Usually you have to set CMAKE_${lang}_COMPILER before the `project()` call, hence
+# only give a error message explaining how to set the compiler.
 if ( NOT CMAKE_CXX_COMPILER STREQUAL ${NEST_COMPILER} )
   message( FATAL_ERROR "NEST compiler and CMAKE compiler differ. Please specify with `-DCMAKE_CXX_COMPILER=${NEST_COMPILER}` ." )
 endif ()
 
+# The module install directories in variables.
 set( INSTALL_BIN_DIR bin )
 set( INSTALL_INCLUDES_DIR include )
 set( INSTALL_LIB_DIR lib/nest )
 set( INSTALL_DATA_DIR share/nest )
 set( INSTALL_DOC_DIR share/doc/nest )
 
+# Complete paths of the install directories. Only used for the help installation.
 set( PKGSRCDIR ${PROJECT_SOURCE_DIR} )
 set( PKGBUILDDIR ${PROJECT_BINARY_DIR} )
 set( PKGDATADIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR} )
 set( PKGDOCDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR} )
 
 
-# CPack stuff
+# CPack stuff. Required for target `dist`.
 set( CPACK_GENERATOR TGZ )
 set( CPACK_SOURCE_GENERATOR TGZ )
 
@@ -143,14 +167,6 @@ set( CPACK_SOURCE_IGNORE_FILES
     "\\\\.gitignore"
     "\\\\.git/"
     "\\\\.travis\\\\.yml"
-    # ignore autotools stuff
-    # TODO cleanup, once autotools stuff is removed
-    "/libltdl/"
-    "/debian/"
-    ".*\\\\.m4"
-    ".*\\\\.ac"
-    "autom4te\\\\.cache/"
-    "bootstrap\\\\.sh"
 
     # if we have in source builds
     "/build/"
@@ -177,7 +193,8 @@ add_custom_target( dist
 
 
 if ( BUILD_SHARED_LIBS )
-  # build module 
+  # When building shared libraries, also create a module for loading at runtime
+  # with the `Install` command.
   add_library( ${MODULE_NAME}_module MODULE ${MODULE_SOURCES} )
   set_target_properties( ${MODULE_NAME}_module
       PROPERTIES
@@ -190,9 +207,11 @@ if ( BUILD_SHARED_LIBS )
       )
 endif ()
 
-# build dynamic/static library for linking from NEST
+# Build dynamic/static library for standard linking from NEST.
 add_library( ${MODULE_NAME}_lib ${MODULE_SOURCES} )
 if ( BUILD_SHARED_LIBS )
+  # Dynamic libraries are initiated by a `global` variable of the `SLIModule`,
+  # which is included, when the flag `LINKED_MODULE` is set.
   target_compile_definitions( ${MODULE_NAME}_lib PRIVATE -DLINKED_MODULE )
 endif ()
 set_target_properties( ${MODULE_NAME}_lib
@@ -201,16 +220,13 @@ set_target_properties( ${MODULE_NAME}_lib
     LINK_FLAGS "${NEST_LIBS}"
     OUTPUT_NAME ${MODULE_NAME} )
 
-install( TARGETS ${MODULE_NAME}_lib
-    DESTINATION ${INSTALL_LIB_DIR}
-    )
-
+# Install library, header and sli init files.
+install( TARGETS ${MODULE_NAME}_lib DESTINATION ${INSTALL_LIB_DIR} )
 install( FILES ${MODULE_HEADER} DESTINATION ${INSTALL_INCLUDES_DIR} )
 install( DIRECTORY sli DESTINATION ${INSTALL_DATA_DIR} )
 
-# install help (depends on sli installed)
+# Install help.
 set( HELPDIRS "${PKGSRCDIR}:${PKGSRCDIR}/sli" )
-
 install( CODE
     "execute_process(COMMAND ${CMAKE_COMMAND}
           -DDOC_DIR='${PKGDOCDIR}'

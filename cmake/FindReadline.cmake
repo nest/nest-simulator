@@ -45,8 +45,10 @@ find_library( NCURSES_LIBRARY       # readline depends on libncurses, or similar
 set( READLINE_LIBRARIES ${READLINE_LIBRARY} ${NCURSES_LIBRARY} )
 
 if ( EXISTS "${READLINE_INCLUDE_DIRS}/readline/readline.h" )
-  file( STRINGS "${READLINE_INCLUDE_DIRS}/readline/readline.h" readline_h_content REGEX "#define RL_READLINE_VERSION" )
-  string( REGEX REPLACE ".*0x([0-9][0-9])([0-9][0-9]).*" "\\1.\\2" READLINE_VERSION ${readline_h_content} )
+  file( STRINGS "${READLINE_INCLUDE_DIRS}/readline/readline.h" readline_h_content
+                REGEX "#define RL_READLINE_VERSION" )
+  string( REGEX REPLACE ".*0x([0-9][0-9])([0-9][0-9]).*" "\\1.\\2"
+                        READLINE_VERSION ${readline_h_content} )
   string( REGEX REPLACE "^0" "" READLINE_VERSION ${READLINE_VERSION} )
   string( REPLACE ".0" "." READLINE_VERSION ${READLINE_VERSION} )
 endif ()

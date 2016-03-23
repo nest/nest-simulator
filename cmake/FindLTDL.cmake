@@ -49,7 +49,8 @@ if ( NOT LIBTOOL_EXECUTABLE STREQUAL "LIBTOOL_EXECUTABLE-NOTFOUND" )
       OUTPUT_STRIP_TRAILING_WHITESPACE
   )
   if ( RESULT EQUAL 0 )
-    string( REGEX REPLACE ".* ([0-9]+\\.[0-9]+\\.[0-9]+).*" "\\1" LTDL_VERSION ${LTDL_VAR_OUTPUT} )
+    string( REGEX REPLACE ".* ([0-9]+\\.[0-9]+\\.[0-9]+).*" "\\1"
+                          LTDL_VERSION ${LTDL_VAR_OUTPUT} )
   endif ()
 endif ()
 

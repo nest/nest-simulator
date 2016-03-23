@@ -31,7 +31,6 @@ set( ABORT_ERR "" )
 try_compile( COMPILE_VAR
     ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/assert_value.c
-    #CMAKE_FLAGS -DCMAKE_C_FLAGS:String=-O3
     COPY_FILE "${CMAKE_BINARY_DIR}/assert_value"
     COPY_FILE_ERROR CP_ERR
     )
@@ -58,7 +57,6 @@ set( SEG_ERR "" )
 try_compile( COMPILE_VAR
     ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/segfault_value.c
-    #CMAKE_FLAGS -DCMAKE_C_FLAGS:String=-O3
     COPY_FILE "${CMAKE_BINARY_DIR}/segfault_value"
     COPY_FILE_ERROR CP_ERR
     )
@@ -122,7 +120,7 @@ endif ()
 message( STATUS "Check whether the compiler respects symbolic signal names in signal.h. ${HAVE_SIGUSR_IGNORED}" )
 
 ####### HAVE_STATIC_TEMPLATE_DECLARATION_FAIL ########
-message( STATUS "Check whether static template member declaration succeeds." )
+message( STATUS "Check static template member declaration." )
 try_compile( COMPILE_RESULT
     ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/StaticTemplateDeclaration.cxx
@@ -133,7 +131,7 @@ if ( COMPILE_RESULT )
 else ()
   set( HAVE_STATIC_TEMPLATE_DECLARATION_FAIL ON CACHE BOOL "" FORCE )
 endif ()
-message( STATUS "Check whether static template member declaration succeeds. ${HAVE_STATIC_TEMPLATE_DECLARATION_FAIL}" )
+message( STATUS "Check static template member declaration. ${HAVE_STATIC_TEMPLATE_DECLARATION_FAIL}" )
 
 ####### HAVE_STL_VECTOR_CAPACITY_BASE_UNITY ########
 message( STATUS "Check for STL vector capacity base unity." )

@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# Here we give a summary of all our configure options.
-
 message( "" )
 message( "--------------------------------------------------------------------------------" )
 message( "NEST Configuration Summary" )

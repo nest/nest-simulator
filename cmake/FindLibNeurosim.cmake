@@ -42,8 +42,10 @@ find_library( PYNEUROSIM_LIBRARY
     )
 
 if ( EXISTS "${LIBNEUROSIM_INCLUDE_DIRS}/neurosim/version.h" )
-  file( STRINGS "${LIBNEUROSIM_INCLUDE_DIRS}/neurosim/version.h" version_h_contents REGEX "define LIBNEUROSIM_VERSION" )
-  string( REGEX REPLACE ".*([0-9].[0-9].[0-9]).*" "\\1" LIBNEUROSIM_VERSION ${version_h_contents} )
+  file( STRINGS "${LIBNEUROSIM_INCLUDE_DIRS}/neurosim/version.h" 
+                version_h_contents REGEX "define LIBNEUROSIM_VERSION" )
+  string( REGEX REPLACE ".*([0-9].[0-9].[0-9]).*" "\\1" 
+                        LIBNEUROSIM_VERSION ${version_h_contents} )
 endif ()
 
 include( FindPackageHandleStandardArgs )

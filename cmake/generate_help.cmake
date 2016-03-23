@@ -31,7 +31,8 @@ if ( NOT CMAKE_CROSSCOMPILING )
   set( ENV{SLIDATADIR} "${DATA_DIR}" )
   set( ENV{NESTRCFILENAME} "/dev/null" )
   execute_process(
-      COMMAND ${INSTALL_DIR}/bin/sli --userargs=${HELPDIRS} "${DATA_DIR}/sli/install-help.sli"
+      COMMAND ${INSTALL_DIR}/bin/sli --userargs=${HELPDIRS}
+                                              "${DATA_DIR}/sli/install-help.sli"
       RESULT_VARIABLE RET_VAR
       OUTPUT_FILE "install-help.log"
       ERROR_FILE "install-help.log"

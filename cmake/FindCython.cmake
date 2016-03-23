@@ -65,7 +65,8 @@ if ( NOT CYTHON_EXECUTABLE STREQUAL "CYTHON_EXECUTABLE-NOTFOUND" )
       OUTPUT_STRIP_TRAILING_WHITESPACE
   )
   if ( RESULT EQUAL 0 )
-    string( REGEX REPLACE ".* ([0-9]+\\.[0-9]+(\\.[0-9]+)?)$" "\\1" CYTHON_VERSION "${CYTHON_VAR_OUTPUT}" )
+    string( REGEX REPLACE ".* ([0-9]+\\.[0-9]+(\\.[0-9]+)?)$" "\\1" 
+                          CYTHON_VERSION "${CYTHON_VAR_OUTPUT}" )
   endif ()
 endif ()
 

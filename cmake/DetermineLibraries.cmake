@@ -96,7 +96,8 @@ if ( with-python )
           # confirmed working: 0.19.2+
           # in between unknown
           if ( CYTHON_VERSION VERSION_LESS "0.19.2" )
-            message( FATAL_ERROR "Your Cython version is too old. Please install newer version (0.19.2+)" )
+            message( FATAL_ERROR "Your Cython version is too old. Please install "
+                                 "newer version (0.19.2+)" )
           endif ()
         endif ()
       endif ()

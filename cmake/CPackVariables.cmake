@@ -38,14 +38,6 @@ set( CPACK_SOURCE_IGNORE_FILES
     "\\\\.gitignore"
     "\\\\.git/"
     "\\\\.travis\\\\.yml"
-    # ignore autotools stuff
-    # TODO cleanup, once autotools stuff is removed
-    "/libltdl/"
-    "/debian/"
-    ".*\\\\.m4"
-    ".*\\\\.ac"
-    "autom4te\\\\.cache/"
-    "bootstrap\\\\.sh"
 
     # if we have in source builds
     "/build/"

@@ -169,11 +169,10 @@ private:
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
 
-    void get( DictionaryDatum&,
-      const Variables_& ) const; //!< Store current values in dictionary
+    void get( DictionaryDatum&, const Variables_& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum&,
       const State_&,
-      const Buffers_& ); //!< Set values from dicitonary
+      const Buffers_& ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -181,7 +180,7 @@ private:
   struct State_
   {
     bool published_; //!< indicates whether this node has been published already
-    // with MUSIC
+                     //!< with MUSIC
     int port_width_; //!< the width of the MUSIC port
     // int max_buffered_; //!< maximum delay (measured in multiples of music
     // ticks) of publishing new data
@@ -189,7 +188,8 @@ private:
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( DictionaryDatum& ) const;                     //!< Store current values in dictionary
+    void set( const DictionaryDatum&, const Parameters_& ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------

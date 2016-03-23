@@ -68,6 +68,7 @@
 
   FirstVersion: Nov 2007
   Author: Abigail Morrison, Eilif Muller, Alexander Seeholzer, Teo Stocco
+  Adapted by: Philipp Weidel
   SeeAlso: stdp_triplet_synapse_hpc, synapsedict, stdp_synapse, static_synapse
 */
 
@@ -178,6 +179,7 @@ public:
   set_weight( double_t w )
   {
     weight_ = w;
+    Wmax_ = copysign( Wmax_, weight_ ); // ensure W_max has the same sign as weight_
   }
 
 private:
@@ -185,7 +187,7 @@ private:
   facilitate_( double_t w, double_t kplus, double_t ky )
   {
     double_t new_w = w + kplus * ( Aplus_ + Aplus_triplet_ * ky );
-    return new_w < Wmax_ ? new_w : Wmax_;
+    return new_w < std::abs( Wmax_ ) ? new_w : std::abs( Wmax_ );
   }
 
   inline double_t
@@ -249,7 +251,8 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
       continue;
     }
 
-    weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ), ky );
+    weight_ = copysign(
+      facilitate_( std::abs( weight_ ), Kplus_ * std::exp( minus_dt / tau_plus_ ), ky ), Wmax_ );
   }
 
   // depression due to new pre-synaptic spike
@@ -258,7 +261,10 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
   // dendritic delay means we must look back in time by that amount
   // for determining the K value, because the K value must propagate
   // out to the synapse
-  weight_ = depress_( weight_, target->get_K_value( t_spike - dendritic_delay ), Kplus_triplet_ );
+  weight_ = copysign(
+    depress_(
+      std::abs( weight_ ), target->get_K_value( t_spike - dendritic_delay ), Kplus_triplet_ ),
+    Wmax_ );
 
   Kplus_triplet_ += 1.0;
   Kplus_ = Kplus_ * std::exp( ( t_lastspike - t_spike ) / tau_plus_ ) + 1.0;
@@ -337,6 +343,7 @@ STDPTripletConnection< targetidentifierT >::set_status( const DictionaryDatum& d
   updateValue< double_t >( d, "Kplus", Kplus_ );
   updateValue< double_t >( d, "Kplus_triplet", Kplus_triplet_ );
   updateValue< double_t >( d, "Wmax", Wmax_ );
+  Wmax_ = copysign( Wmax_, weight_ ); // ensure W_max has the same sign as weight_
 
   if ( not( Kplus_ >= 0 ) )
   {

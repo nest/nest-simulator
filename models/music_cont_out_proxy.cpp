@@ -166,12 +166,6 @@ nest::music_cont_out_proxy::State_::get( DictionaryDatum& d ) const
   ( *d )[ names::port_width ] = port_width_;
 }
 
-void
-nest::music_cont_out_proxy::State_::set( const DictionaryDatum& d,
-  const Parameters_& p )
-{
-}
-
 /* ----------------------------------------------------------------
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */

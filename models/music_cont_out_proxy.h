@@ -190,8 +190,6 @@ private:
     State_(); //!< Sets default state value
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      const Parameters_& ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------

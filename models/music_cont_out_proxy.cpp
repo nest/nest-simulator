@@ -93,7 +93,9 @@ nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d,
   ArrayDatum ad_record_from;
 
   for ( size_t j = 0; j < record_from_.size(); ++j )
+  {
     ad_record_from.push_back( LiteralDatum( record_from_[ j ] ) );
+  }
   ( *d )[ names::record_from ] = ad_record_from;
 
   std::vector< long_t >* pInd_map_long =
@@ -111,30 +113,38 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
   const Buffers_& buffs )
 {
 
-  if ( !states.published_ )
+  if ( states.published_ == false )
+  {
     updateValue< string >( d, names::port_name, port_name_ );
+  }
 
   if ( buffs.has_targets_
     && ( d->known( names::interval ) || d->known( names::record_from ) ) )
+  {
     throw BadProperty(
       "The recording interval and the list of properties to record "
       "cannot be changed after the index_map has been set." );
+  }
 
   double_t v;
   if ( updateValue< double_t >( d, names::interval, v ) )
   {
     if ( Time( Time::ms( v ) ) < Time::get_resolution() )
+    {
       throw BadProperty(
         "The sampling interval must be at least as long "
         "as the simulation resolution." );
+    }
 
     // see if we can represent interval as multiple of step
     interval_ = Time::step( Time( Time::ms( v ) ).get_steps() );
     if ( std::abs( 1 - interval_.get_ms() / v ) > 10
         * std::numeric_limits< double >::epsilon() )
+    {
       throw BadProperty(
         "The sampling interval must be a multiple of "
         "the simulation resolution" );
+    }
   }
   // extract data
   if ( d->known( names::record_from ) )
@@ -143,7 +153,9 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
 
     ArrayDatum ad = getValue< ArrayDatum >( d, names::record_from );
     for ( Token* t = ad.begin(); t != ad.end(); ++t )
+    {
       record_from_.push_back( Name( getValue< std::string >( *t ) ) );
+    }
   }
 }
 
@@ -224,7 +236,9 @@ nest::music_cont_out_proxy::send_test_event( Node& target,
   e.set_sender( *this );
   port p = target.handles_test_event( e, receptor_type );
   if ( p != invalid_port_ and not is_model_prototype() )
+  {
     B_.has_targets_ = true;
+  }
 
   return p;
 }
@@ -234,19 +248,25 @@ void
 nest::music_cont_out_proxy::calibrate()
 {
   // only publish the output port once,
-  if ( !S_.published_ )
+  if ( S_.published_ == false )
   {
     MUSIC::Setup* s = kernel().music_manager.get_music_setup();
     if ( s == 0 )
+    {
       throw MUSICSimulationHasRun( get_name() );
+    }
 
     V_.MP_ = s->publishContOutput( P_.port_name_ );
 
-    if ( !V_.MP_->isConnected() )
+    if ( V_.MP_->isConnected() == false )
+    {
       throw MUSICPortUnconnected( get_name(), P_.port_name_ );
+    }
 
-    if ( !V_.MP_->hasWidth() )
+    if ( V_.MP_->hasWidth() == false )
+    {
       throw MUSICPortHasNoWidth( get_name(), P_.port_name_ );
+    }
 
     S_.port_width_ = V_.MP_->width();
     const size_t per_port_width = P_.record_from_.size();
@@ -257,8 +277,12 @@ nest::music_cont_out_proxy::calibrate()
     // Check if any port is out of bounds
     std::vector< MUSIC::GlobalIndex >::const_iterator it;
     for ( it = V_.index_map_.begin(); it != V_.index_map_.end(); ++it )
+    {
       if ( *it > S_.port_width_ )
+      {
         throw MUSICChannelUnknown( get_name(), P_.port_name_, *it );
+      }
+    }
 
     // The permutation index map, contains global_index[local_index]
     V_.music_perm_ind_ = new MUSIC::PermutationIndex(
@@ -308,7 +332,9 @@ nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
     std::vector< Node* >::const_iterator sibling;
     for ( sibling = siblings->begin() + 1; sibling != siblings->end();
           ++sibling )
+    {
       ( *sibling )->get_status( d );
+    }
   }
 
   P_.get( d, V_ );
@@ -326,7 +352,7 @@ nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
 
   if ( d->known( names::index_map ) )
   {
-    if ( !S_.published_ )
+    if ( S_.published_ == false )
     {
       const Token synmodel =
         kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
@@ -334,8 +360,6 @@ nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
       DictionaryDatum syn_defaults =
         kernel().model_manager.get_connector_defaults( synmodel_id );
       ArrayDatum mca = getValue< ArrayDatum >( d, names::index_map );
-      Node* const source_node =
-        kernel().node_manager.get_node( this->get_gid() );
       size_t music_index = 0;
 
       for ( Token* t = mca.begin(); t != mca.end(); ++t, ++music_index )
@@ -377,7 +401,9 @@ nest::music_cont_out_proxy::update( Time const& origin,
      nothing.
    */
   if ( origin.get_steps() == 0 || from != 0 )
+  {
     return;
+  }
 
   // We send a request to each of our targets.
   // The target then immediately returns a DataLoggingReply event,

@@ -42,7 +42,8 @@
 #include "model_manager_impl.h"
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
- * ---------------------------------------------------------------- */
+ * ----------------------------------------------------------------
+ */
 
 nest::music_cont_out_proxy::Parameters_::Parameters_()
   : port_name_( "cont_out" )
@@ -59,7 +60,6 @@ nest::music_cont_out_proxy::Parameters_::Parameters_( const Parameters_& p )
   interval_.calibrate();
 }
 
-
 nest::music_cont_out_proxy::State_::State_()
   : published_( false )
   , port_width_( -1 )
@@ -73,10 +73,10 @@ nest::music_cont_out_proxy::Buffers_::Buffers_()
 }
 
 nest::music_cont_out_proxy::Variables_::Variables_()
-    : MP_( NULL )
-    , index_map_()
-    , music_perm_ind_( NULL )
-    , dmap_( NULL )
+  : MP_( NULL )
+  , index_map_()
+  , music_perm_ind_( NULL )
+  , dmap_( NULL )
 {
 }
 /* ----------------------------------------------------------------
@@ -84,7 +84,8 @@ nest::music_cont_out_proxy::Variables_::Variables_()
  * ---------------------------------------------------------------- */
 
 void
-nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d, const Variables_& vars ) const
+nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d,
+  const Variables_& vars ) const
 {
   ( *d )[ names::port_name ] = port_name_;
   ( *d )[ names::interval ] = interval_.get_ms();
@@ -95,22 +96,26 @@ nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d, const Variable
     ad_record_from.push_back( LiteralDatum( record_from_[ j ] ) );
   ( *d )[ names::record_from ] = ad_record_from;
 
-  std::vector< long_t >* pInd_map_long = new std::vector< long_t >( vars.index_map_.size() );
-  std::copy< std::vector< MUSIC::GlobalIndex >::const_iterator, std::vector< long_t >::iterator >(
+  std::vector< long_t >* pInd_map_long =
+    new std::vector< long_t >( vars.index_map_.size() );
+  std::copy< std::vector< MUSIC::GlobalIndex >::const_iterator,
+    std::vector< long_t >::iterator >(
     vars.index_map_.begin(), vars.index_map_.end(), pInd_map_long->begin() );
 
   ( *d )[ names::index_map ] = IntVectorDatum( pInd_map_long );
-
 }
 
 void
-nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d, const State_& states, const Buffers_& buffs)
+nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
+  const State_& states,
+  const Buffers_& buffs )
 {
 
   if ( !states.published_ )
     updateValue< string >( d, names::port_name, port_name_ );
 
-  if ( buffs.has_targets_ && ( d->known( names::interval ) || d->known( names::record_from ) ) )
+  if ( buffs.has_targets_ &&
+    ( d->known( names::interval ) || d->known( names::record_from ) ) )
     throw BadProperty(
       "The recording interval and the list of properties to record "
       "cannot be changed after the index_map has been set." );
@@ -125,7 +130,8 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d, const St
 
     // see if we can represent interval as multiple of step
     interval_ = Time::step( Time( Time::ms( v ) ).get_steps() );
-    if ( std::abs( 1 - interval_.get_ms() / v ) > 10 * std::numeric_limits< double >::epsilon() )
+    if ( std::abs( 1 - interval_.get_ms() / v ) >
+      10 * std::numeric_limits< double >::epsilon() )
       throw BadProperty(
         "The sampling interval must be a multiple of "
         "the simulation resolution" );
@@ -139,7 +145,6 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d, const St
     for ( Token* t = ad.begin(); t != ad.end(); ++t )
       record_from_.push_back( Name( getValue< std::string >( *t ) ) );
   }
-
 }
 
 void
@@ -150,10 +155,10 @@ nest::music_cont_out_proxy::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_cont_out_proxy::State_::set( const DictionaryDatum& d, const Parameters_& p )
+nest::music_cont_out_proxy::State_::set( const DictionaryDatum& d,
+  const Parameters_& p )
 {
 }
-
 
 /* ----------------------------------------------------------------
  * Default and copy constructor for node
@@ -169,7 +174,8 @@ nest::music_cont_out_proxy::music_cont_out_proxy()
 {
 }
 
-nest::music_cont_out_proxy::music_cont_out_proxy( const music_cont_out_proxy& n )
+nest::music_cont_out_proxy::music_cont_out_proxy(
+  const music_cont_out_proxy& n )
   : Node( n )
   // , device_( *this, n.device_ )
   , P_( n.P_ )
@@ -202,14 +208,17 @@ nest::music_cont_out_proxy::init_buffers_()
 {
 }
 
-void nest::music_cont_out_proxy::finalize()
+void
+nest::music_cont_out_proxy::finalize()
 {
 }
 
-
-nest::port nest::music_cont_out_proxy::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::port
+nest::music_cont_out_proxy::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
-
 
   DataLoggingRequest e( P_.interval_, P_.record_from_ );
   e.set_sender( *this );
@@ -217,13 +226,10 @@ nest::port nest::music_cont_out_proxy::send_test_event( Node& target, rport rece
   if ( p != invalid_port_ and not is_model_prototype() )
     B_.has_targets_ = true;
 
-
   return p;
 }
 
-
-
-//OK
+// OK
 void
 nest::music_cont_out_proxy::calibrate()
 {
@@ -251,24 +257,29 @@ nest::music_cont_out_proxy::calibrate()
     // Check if any port is out of bounds
     std::vector< MUSIC::GlobalIndex >::const_iterator it;
     for ( it = V_.index_map_.begin(); it != V_.index_map_.end(); ++it )
-        if ( *it > S_.port_width_ )
-            throw MUSICChannelUnknown( get_name(), P_.port_name_, *it );
+      if ( *it > S_.port_width_ )
+        throw MUSICChannelUnknown( get_name(), P_.port_name_, *it );
 
     // The permutation index map, contains global_index[local_index]
-    V_.music_perm_ind_ = new MUSIC::PermutationIndex( &V_.index_map_.front(), V_.index_map_.size() );
+    V_.music_perm_ind_ = new MUSIC::PermutationIndex(
+      &V_.index_map_.front(), V_.index_map_.size() );
 
     // New MPI datatype which is a compound of multiple double values
     if ( per_port_width > 1 )
     {
-        MPI_Datatype n_double_tuple;
-        MPI_Type_contiguous( per_port_width, MPI::DOUBLE, &n_double_tuple );
-        V_.dmap_ = new MUSIC::ArrayData( 
-                static_cast< void* >( &( B_.data_.front() ) ), n_double_tuple, V_.music_perm_ind_ );
+      MPI_Datatype n_double_tuple;
+      MPI_Type_contiguous( per_port_width, MPI::DOUBLE, &n_double_tuple );
+      V_.dmap_ =
+        new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ),
+          n_double_tuple,
+          V_.music_perm_ind_ );
     }
     else
     {
-        V_.dmap_ = new MUSIC::ArrayData( 
-                static_cast< void* >( &( B_.data_.front() ) ), MPI::DOUBLE, V_.music_perm_ind_ );
+      V_.dmap_ =
+        new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ),
+          MPI::DOUBLE,
+          V_.music_perm_ind_ );
     }
 
     // Setup an array map
@@ -277,8 +288,10 @@ nest::music_cont_out_proxy::calibrate()
 
     S_.published_ = true;
 
-    std::string msg = String::compose(
-      "Mapping MUSIC output port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
+    std::string msg =
+      String::compose( "Mapping MUSIC output port '%1' with width=%2.",
+        P_.port_name_,
+        S_.port_width_ );
     LOG( M_INFO, "MUSIC::publish_port()", msg.c_str() );
   }
 }
@@ -290,9 +303,11 @@ nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
+    const SiblingContainer* siblings =
+      kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
+    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
+          ++sibling )
       ( *sibling )->get_status( d );
   }
 
@@ -300,7 +315,8 @@ nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
   S_.get( d );
 }
 
-void nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
+void
+nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, S_, B_ ); // throws if BadProperty
@@ -310,33 +326,38 @@ void nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
 
   if ( d->known( names::index_map ) )
   {
-      if ( !S_.published_ )
+    if ( !S_.published_ )
+    {
+      const Token synmodel =
+        kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
+      const index synmodel_id = static_cast< index >( synmodel );
+      DictionaryDatum syn_defaults =
+        kernel().model_manager.get_connector_defaults( synmodel_id );
+      ArrayDatum mca = getValue< ArrayDatum >( d, names::index_map );
+      Node* const source_node =
+        kernel().node_manager.get_node( this->get_gid() );
+      size_t music_index = 0;
+
+      for ( Token* t = mca.begin(); t != mca.end(); ++t, ++music_index )
       {
-        const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
-        const index synmodel_id = static_cast< index >( synmodel );
-        DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synmodel_id ); 
-        ArrayDatum mca = getValue< ArrayDatum >( d, names::index_map );
-        Node* const source_node = kernel().node_manager.get_node( this->get_gid() );
-        size_t music_index = 0;
 
-        for ( Token* t = mca.begin(); t != mca.end(); ++t, ++music_index )
+        const long target_node_id = getValue< long >( *t );
+        if ( kernel().node_manager.is_local_gid( target_node_id ) )
         {
-
-            const long target_node_id = getValue< long >( *t );
-            if( kernel().node_manager.is_local_gid( target_node_id ) )
-            {
-              // std::distance( mca.begin(), t )
-              V_.index_map_.push_back( static_cast< int > ( music_index ) );
-              Node* const target_node = kernel().node_manager.get_node( target_node_id );
-              const thread target_thread = target_node->get_thread(); 
-              kernel().connection_builder_manager.connect( this->get_gid(), target_node, target_thread, synmodel_id );
-            }
+          // std::distance( mca.begin(), t )
+          V_.index_map_.push_back( static_cast< int >( music_index ) );
+          Node* const target_node =
+            kernel().node_manager.get_node( target_node_id );
+          const thread target_thread = target_node->get_thread();
+          kernel().connection_builder_manager.connect(
+            this->get_gid(), target_node, target_thread, synmodel_id );
         }
       }
-      else
-      {
-        throw MUSICPortAlreadyPublished( get_name(), P_.port_name_ );
-      }
+    }
+    else
+    {
+      throw MUSICPortAlreadyPublished( get_name(), P_.port_name_ );
+    }
   }
 
   // if we get here, temporaries contain consistent set of properties
@@ -344,11 +365,16 @@ void nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-void nest::music_cont_out_proxy::update( Time const& origin, const long_t from, const long_t )
+void
+nest::music_cont_out_proxy::update( Time const& origin,
+  const long_t from,
+  const long_t )
 {
   /* There is nothing to request during the first time slice.
-     For each subsequent slice, we collect all data generated during the previous
-     slice if we are called at the beginning of the slice. Otherwise, we do nothing.
+     For each subsequent slice, we collect all data generated during the
+     previous
+     slice if we are called at the beginning of the slice. Otherwise, we do
+     nothing.
    */
   if ( origin.get_steps() == 0 || from != 0 )
     return;
@@ -373,15 +399,14 @@ nest::music_cont_out_proxy::handle( DataLoggingReply& reply )
   const index port = reply.get_port();
   const size_t record_width = P_.record_from_.size();
   const size_t offset = port * record_width;
-  const DataLoggingReply::DataItem item = info[ info.size()-1 ].data;
-    if ( info[ info.size()-1 ].timestamp.is_finite() )
+  const DataLoggingReply::DataItem item = info[ info.size() - 1 ].data;
+  if ( info[ info.size() - 1 ].timestamp.is_finite() )
+  {
+    for ( size_t i = 0; i < item.size(); i++ )
     {
-        for ( size_t i = 0; i < item.size(); i++ )
-        {
-            B_.data_[ offset + i ] = item[ i ];
-        }
-         
+      B_.data_[ offset + i ] = item[ i ];
     }
+  }
 }
 
 #endif

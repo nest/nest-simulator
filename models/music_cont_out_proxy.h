@@ -41,19 +41,28 @@
 
 /* BeginDocumentation
 
-Name: music_cont_out_proxy - A device which sends continuous data from NEST to MUSIC.
+Name: music_cont_out_proxy - A device which sends continuous data from NEST to
+MUSIC.
 
 Description:
-A music_cont_out_proxy can be used to send continuous data from neurons over MUSIC to 
+A music_cont_out_proxy can be used to send continuous data from neurons over
+MUSIC to
 remote applications. It works in a similar like a multimeter model. The user
-has to specify the recordable values to observe (e.g. ["V_m"]) via the record_from parameter.
-The target neurons are specified by a list of global neuron ids which must be passed via
-the "index_map" parameter. The music_cont_out_proxy will be connected automatically to the 
-specified target neurons. It is not possible to change the list of target neurons or observed 
-quantities once they have been set or the simulation has been started for the first time.
+has to specify the recordable values to observe (e.g. ["V_m"]) via the
+record_from parameter.
+The target neurons are specified by a list of global neuron ids which must be
+passed via
+the "index_map" parameter. The music_cont_out_proxy will be connected
+automatically to the
+specified target neurons. It is not possible to change the list of target
+neurons or observed
+quantities once they have been set or the simulation has been started for the
+first time.
 
-Note: If only a single continuous value is observed, then the receiver must provide a buffer
-of MPI::DOUBLE values. Otherwise a custom MPI datatype, consisting of multiple doubles,
+Note: If only a single continuous value is observed, then the receiver must
+provide a buffer
+of MPI::DOUBLE values. Otherwise a custom MPI datatype, consisting of multiple
+doubles,
 must be created on receiver side as follows:
 
 --- Example ---
@@ -62,7 +71,7 @@ must be created on receiver side as follows:
 //MPI_Datatype n_double_tuple;
 //MPI_Type_contiguous( observed_values, MPI::DOUBLE, &n_double_tuple );
 ---------------
- 
+
 Parameters:
 The following properties are available in the status dictionary:
 
@@ -81,13 +90,14 @@ Author: Martin Asghar Schulze, Forschungszentrum fur Informatik Karlsruhe (FZI)
 FirstVersion: March 2016
 Availability: Only when compiled with MUSIC
 
-SeeAlso: music_cont_in_proxy, music_event_out_proxy, music_event_in_proxy, music_message_in_proxy
+SeeAlso: music_cont_in_proxy, music_event_out_proxy, music_event_in_proxy,
+music_message_in_proxy
 */
 namespace nest
 {
 class Network;
 
-class music_cont_out_proxy : public Node 
+class music_cont_out_proxy : public Node
 {
 
 public:
@@ -113,12 +123,13 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
   using Node::sends_signal;
-  port send_test_event( Node&, rport , synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool );
 
   void handle( DataLoggingReply& );
 
@@ -128,7 +139,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 protected:
-
   void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
@@ -144,7 +154,6 @@ protected:
   void update( Time const&, const long_t, const long_t );
 
 private:
-
   struct State_;
 
   struct Buffers_;
@@ -153,30 +162,36 @@ private:
 
   struct Parameters_
   {
-    std::string port_name_; //!< the name of MUSIC port to connect to
+    std::string port_name_;           //!< the name of MUSIC port to connect to
     Time interval_;                   //!< recording interval, in ms
     std::vector< Name > record_from_; //!< which data to record
 
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
 
-    void get( DictionaryDatum&, const Variables_& ) const;          //!< Store current values in dictionary
-    void set( const DictionaryDatum&, const State_&, const Buffers_& ); //!< Set values from dicitonary
+    void get( DictionaryDatum&,
+      const Variables_& ) const; //!< Store current values in dictionary
+    void set( const DictionaryDatum&,
+      const State_&,
+      const Buffers_& ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
 
   struct State_
   {
-    bool published_; //!< indicates whether this node has been published already with MUSIC
+    bool published_; //!< indicates whether this node has been published already
+    // with MUSIC
     int port_width_; //!< the width of the MUSIC port
-    //int max_buffered_; //!< maximum delay (measured in multiples of music ticks) of publishing new data
+    // int max_buffered_; //!< maximum delay (measured in multiples of music
+    // ticks) of publishing new data
 
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const;                     //!< Store current values in dictionary
-    void set( const DictionaryDatum&, const Parameters_& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void set( const DictionaryDatum&,
+      const Parameters_& ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -197,17 +212,17 @@ private:
 
   struct Variables_
   {
-    MUSIC::ContOutputPort * MP_; //!< The MUSIC event port for output of spikes
+    MUSIC::ContOutputPort* MP_; //!< The MUSIC event port for output of spikes
 
     std::vector< MUSIC::GlobalIndex > index_map_;
-    MUSIC::PermutationIndex * music_perm_ind_; //!< The permutation index needed to map the ports of MUSIC.
-    MUSIC::ArrayData * dmap_;
+    MUSIC::PermutationIndex* music_perm_ind_; //!< The permutation index needed
+    // to map the ports of MUSIC.
+    MUSIC::ArrayData* dmap_;
     Variables_();
-
   };
 
   // ------------------------------------------------------------
-  
+
   // RecordingDevice device_;
 
   // ------------------------------------------------------------

@@ -48,17 +48,18 @@ class STDPSymmetricConnectionTestCase(unittest.TestCase):
             "alpha": 0.1,
             "tau": 20.,
             "Kplus": 0.0,
-            "Wmax": 100.0,
+            "Wmax": 15.,
         }
 
         # setup basic circuit
         self.pre_neuron = nest.Create("parrot_neuron")
         self.post_neuron = nest.Create("parrot_neuron")
-        nest.Connect(self.pre_neuron, self.post_neuron, syn_spec=self.syn_spec)
+        nest.Connect(self.pre_neuron, self.post_neuron,
+                     syn_spec=self.syn_spec)
 
     def generateSpikes(self, neuron, times):
         """Trigger spike to given neuron at specified times."""
-        delay = 1.
+        delay = self.dendritic_delay
         gen = nest.Create("spike_generator", 1,
                           {"spike_times": [t-delay for t in times]})
         nest.Connect(gen, neuron, syn_spec={"delay": delay})
@@ -69,19 +70,21 @@ class STDPSymmetricConnectionTestCase(unittest.TestCase):
                                     synapse_model=self.synapse_model)
         return nest.GetStatus(stats, [which])[0][0]
 
-    def decay(self, time, Kplus):
+    def decay(self, time, Kvalue):
         """Decay variables."""
-        Kplus *= exp(- time / self.syn_spec["tau"])
-        return Kplus
+        Kvalue *= exp(- time / self.syn_spec["tau"])
+        return Kvalue
 
     def facilitate(self, w, Kplus):
         """Facilitate weight."""
-        return (w/self.syn_spec['Wmax'] + (self.syn_spec['eta'] * Kplus))
+        new_w = w + (self.syn_spec['eta'] * Kplus)
+        return new_w if (new_w / self.status('Wmax') < 1.0) else \
+            self.syn_spec['Wmax']
 
     def depress(self, w):
         """Depress weight."""
-        return (w/self.syn_spec['Wmax'] - (self.syn_spec['alpha'] *
-                                           self.syn_spec['eta']))
+        new_w = w - (self.syn_spec['alpha'] * self.syn_spec['eta'])
+        return new_w if (new_w / self.status('Wmax') > 0.0) else 0
 
     def assertAlmostEqualDetailed(self, expected, given, message):
         """Improve assetAlmostEqual with detailed message."""
@@ -139,7 +142,7 @@ class STDPSymmetricConnectionTestCase(unittest.TestCase):
         self.generateSpikes(self.pre_neuron,
                             [2.0 + self.decay_duration])  # trigger computation
 
-        Kplus = self.decay(self.decay_duration, 1.0)
+        Kplus  = self.decay(self.decay_duration, 1.0)
         Kplus += 1.0
 
         nest.Simulate(20.0)
@@ -152,34 +155,60 @@ class STDPSymmetricConnectionTestCase(unittest.TestCase):
         self.generateSpikes(self.post_neuron, [4.0])
         self.generateSpikes(self.pre_neuron, [6.0])  # trigger computation
 
-        weight = self.syn_spec['weight']
-        Kplus = self.decay(self.decay_duration, 1.0)
+        print("")
+        weight = self.status("weight")
+        Kplus = self.status("Kplus")
+        Kminus = 0.
 
         Kplus = self.decay(2.0, Kplus)
-        weight = self.facilitate(weight, Kplus)
+        # first pre-synaptic spike
+        weight = self.facilitate(weight, Kminus)
         weight = self.depress(weight)
         Kplus += 1.0
 
-        Kplus = self.decay(2.0 + self.dendritic_delay, Kplus)
-        weight = self.facilitate(weight, Kplus)
+        # Resultant postspike at 3.0ms (because we're using parrot neurons, the
+        # prespike causes a postspike too
+        Kminus += 1.0
 
+        # Planned postspike at 4.0ms
+        Kminus = self.decay(1.0, Kminus)
+        Kminus += 1.0
+
+        # next pre-synaptic spike
+        # first postspike in history
+        dt = 2.0
+        Kplus_temp1 = self.decay(2.0, Kplus)
+        weight = self.facilitate(weight, Kplus_temp1)
+        # second postspike in history
+        dt = 3.0
+        Kplus_temp2 = self.decay(3.0, Kplus)
+        weight = self.facilitate(weight, Kplus_temp2)
+
+        Kminus = self.decay(1.0, Kminus)
+        weight = self.facilitate(weight, Kminus)
+        weight = self.depress(weight)
+
+        Kplus = self.decay(4.0, Kplus)
+
+        # The simulation using Nest
         nest.Simulate(20.0)
         self.assertAlmostEqualDetailed(weight, self.status("weight"),
-                                       "weight should have decreased")
+                                       "weight should have increased")
 
     def test_maxWeightStaturatesWeight(self):
         """Check that setting maximum weight property keep weight limited."""
         limited_weight = self.status("weight") + 1e-10
-        limited_syn_spec = self.syn_spec
-        limited_syn_spec['Wmax'] = limited_weight
-        nest.Connect(self.pre_neuron, self.post_neuron,
-                     syn_spec=limited_syn_spec)
+        conn = nest.GetConnections(target=self.post_neuron, source=self.pre_neuron)
+        # disable depression to make it get to max weight
+        # increase eta to cause enough facilitation
+        nest.SetStatus(conn, "Wmax", limited_weight)
+        nest.SetStatus(conn, "eta", 5.)
+        nest.SetStatus(conn, "alpha", 0.)
 
         self.generateSpikes(self.pre_neuron, [2.0])
         self.generateSpikes(self.post_neuron, [3.0])
         self.generateSpikes(self.pre_neuron, [4.0])  # trigger computation
 
-        nest.Simulate(5.0)
         self.assertAlmostEqualDetailed(limited_weight,
                                        self.status("weight"),
                                        "weight should have been limited")

@@ -114,8 +114,8 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
   if ( !states.published_ )
     updateValue< string >( d, names::port_name, port_name_ );
 
-  if ( buffs.has_targets_ &&
-    ( d->known( names::interval ) || d->known( names::record_from ) ) )
+  if ( buffs.has_targets_
+    && ( d->known( names::interval ) || d->known( names::record_from ) ) )
     throw BadProperty(
       "The recording interval and the list of properties to record "
       "cannot be changed after the index_map has been set." );
@@ -130,8 +130,8 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
 
     // see if we can represent interval as multiple of step
     interval_ = Time::step( Time( Time::ms( v ) ).get_steps() );
-    if ( std::abs( 1 - interval_.get_ms() / v ) >
-      10 * std::numeric_limits< double >::epsilon() )
+    if ( std::abs( 1 - interval_.get_ms() / v ) > 10
+        * std::numeric_limits< double >::epsilon() )
       throw BadProperty(
         "The sampling interval must be a multiple of "
         "the simulation resolution" );

@@ -24,6 +24,7 @@
 
 // C++ includes:
 #include <algorithm> // rotate
+#include <bitset>
 #include <iostream>
 
 // Includes from libnestutil:
@@ -83,6 +84,12 @@ EventDeliveryManager::finalize()
   local_offgrid_spikes_.clear();
   global_offgrid_spikes_.clear();
   spike_register_table_.finalize();
+
+  for( std::vector< std::vector< std::vector< std::vector< Target* > > >* >::iterator it = spike_register_5g_.begin(); it != spike_register_5g_.end(); ++it )
+  {
+    delete *it;
+  }
+  spike_register_5g_.clear();
 }
 
 void
@@ -109,6 +116,14 @@ EventDeliveryManager::configure_spike_buffers()
   assert( kernel().connection_builder_manager.get_min_delay() != 0 );
 
   spike_register_table_.configure();
+
+  const unsigned int num_threads = kernel().vp_manager.get_num_threads();
+  spike_register_5g_.resize( num_threads, 0 );
+  for( thread tid = 0; tid < num_threads; ++tid )
+  {
+    assert( spike_register_5g_[ tid ] == 0 );
+    spike_register_5g_[ tid ] = new std::vector< std::vector< std::vector< Target* > > >( num_threads, std::vector< std::vector< Target* > >( kernel().connection_builder_manager.get_min_delay(), std::vector< Target* >( 0 ) ) );
+  }
 
   send_buffer_spike_data_.resize( mpi_buffer_size_spike_data );
   recv_buffer_spike_data_.resize( mpi_buffer_size_spike_data );
@@ -584,23 +599,27 @@ EventDeliveryManager::gather_spike_data( const thread tid )
       
 #pragma omp barrier
     sw_collocate.start();
-    me_completed_tid = collocate_spike_data_buffers_( tid );
+    me_completed_tid = collocate_spike_data_buffers_thr_( tid );
+    //me_completed_tid = collocate_spike_data_buffers_( tid );
     sw_collocate.stop();
 
 #pragma omp barrier
-#pragma omp single
-{
-  for ( unsigned int rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
-  {
-    MPI_Barrier(MPI_COMM_WORLD);
-    if ( kernel().mpi_manager.get_rank() == rank )
-    {
-      std::cout << "send buffer spike data on rank " << rank << std::endl;
-      for ( std::vector< SpikeData >::iterator it = send_buffer_spike_data_.begin(); it != send_buffer_spike_data_.end(); ++it )
-	std::cout << (*it).tid << " "  << (*it).syn_index << " "  << (*it).lcid << " " << (*it).lag << std::endl;
-    }
-  }
-}
+    clean_spike_register_5g_( tid );
+
+// #pragma omp barrier
+// #pragma omp single
+// {
+//   for ( unsigned int rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+//   {
+//     MPI_Barrier(MPI_COMM_WORLD);
+//     if ( kernel().mpi_manager.get_rank() == rank )
+//     {
+//       std::cout << "send buffer spike data on rank " << rank << std::endl;
+//       for ( std::vector< SpikeData >::iterator it = send_buffer_spike_data_.begin(); it != send_buffer_spike_data_.end(); ++it )
+// 	std::cout << (*it).tid << " "  << (*it).syn_index << " "  << (*it).lcid << " " << (*it).lag << std::endl;
+//     }
+//   }
+// }
 
 #pragma omp critical
     me_completed = me_completed && me_completed_tid;
@@ -633,6 +652,100 @@ EventDeliveryManager::gather_spike_data( const thread tid )
   } // of while(true)
   spike_register_table_.toggle_target_processed_flags( tid );
   spike_register_table_.clear( tid );
+  reset_spike_register_5g_( tid );
+}
+
+bool
+EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
+{
+  // TODO@5g: make struct part of vp_manager
+  // thread tid is responsible for all ranks in [assigned_ranks.begin, assigned_ranks.end),
+  // which are in total assigned_ranks.size and at most assigned_ranks.max_size
+  struct { unsigned int begin, end, size, max_size; } assigned_ranks;
+  assigned_ranks.begin = kernel().vp_manager.get_start_rank_per_thread();
+  assigned_ranks.end = kernel().vp_manager.get_end_rank_per_thread();
+  assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
+  assigned_ranks.max_size = kernel().vp_manager.get_num_assigned_ranks_per_thread();
+
+  // TODO@5g: make sure buffer size is a multiple of number of processes and make num_spike_data_per_rank a member
+  assert( send_buffer_spike_data_.size() % kernel().mpi_manager.get_num_processes() == 0 );
+  const unsigned int num_spike_data_per_rank = send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes();
+
+  // number of spike-register entries that have been read
+  unsigned int num_spike_data_read = 0;
+
+  // [send_buffer_idx, send_buffer_end) defines the send-buffer slot for each assigned rank
+  std::vector< unsigned int > send_buffer_idx( assigned_ranks.size, 0 );
+  std::vector< unsigned int > send_buffer_end( assigned_ranks.size, 0 );
+  for ( unsigned int rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  {
+    // thread-local index of (global) rank
+    const unsigned int lr_idx = rank % assigned_ranks.max_size;
+    assert( lr_idx < assigned_ranks.size );
+    send_buffer_idx[ lr_idx ] = rank * num_spike_data_per_rank;
+    send_buffer_end[ lr_idx ] = (rank + 1) * num_spike_data_per_rank;
+  }
+
+  // whether all spike-register entries have been read
+  bool is_spike_register_read = true;
+
+  for( std::vector< std::vector< std::vector< std::vector< Target* > > >* >::iterator it = spike_register_5g_.begin(); it != spike_register_5g_.end(); ++it )
+  {
+    for ( std::vector< std::vector< Target* > >::iterator iiit = (*(*it))[tid].begin(); iiit < (*(*it))[tid].end(); ++iiit )
+    { // only for vectors that are assigned to thread tid
+      for ( unsigned int lag = 0; lag < (*iiit).size(); ++lag )
+      {
+	assert ( (*iiit)[lag] != 0 );
+
+	// thread-local index of (global) rank of target
+	const unsigned int lr_idx = (*(*iiit)[lag]).rank % assigned_ranks.max_size;
+	assert( lr_idx < assigned_ranks.size );
+
+	if ( send_buffer_idx[ lr_idx ] == send_buffer_end[ lr_idx ] )
+	{ // send-buffer slot of this assigned rank is full
+	  is_spike_register_read = false;
+	  if ( num_spike_data_read == send_buffer_spike_data_.size() );
+	  { // send-buffer slots of all assigned ranks are full
+	    return is_spike_register_read;
+	  }
+	  // else continue
+	}
+	else
+	{
+	  //std::cout << "collocate on rank " << kernel().mpi_manager.get_rank() << " thread " << tid << " target (rank " << (*(*iiit)[lag]).rank << " lcid " << (*(*iiit)[lag]).lcid << ") send buffer index " << send_buffer_idx[ lr_idx ] << std::endl;
+	  send_buffer_spike_data_[ send_buffer_idx[ lr_idx ] ].set( (*(*iiit)[lag]).tid, (*(*iiit)[lag]).syn_index, (*(*iiit)[lag]).lcid, lag );
+	  (*iiit)[lag] = 0; // set to null to mark entry for removal
+	  ++send_buffer_idx[ lr_idx ];
+	  ++num_spike_data_read;
+	}
+      }
+    }
+  }
+
+  if ( is_spike_register_read )
+  {
+    for ( unsigned int rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+    {
+      // thread-local index of (global) rank
+      const unsigned int lr_idx = rank % assigned_ranks.max_size;
+      assert( lr_idx < assigned_ranks.size );
+      if ( send_buffer_idx[ lr_idx ] < send_buffer_end[ lr_idx ] )
+  	send_buffer_spike_data_[ send_buffer_idx[ lr_idx ] ].set_complete_marker();
+    }
+  }
+  else
+  {
+    for ( unsigned int rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+    {
+      // thread-local index of (global) rank
+      const unsigned int lr_idx = rank % assigned_ranks.max_size;
+      assert( lr_idx < assigned_ranks.size );
+      if ( send_buffer_idx[ lr_idx ] < send_buffer_end[ lr_idx ] )
+	send_buffer_spike_data_[ send_buffer_idx[ lr_idx ] ].set_end_marker();
+    }
+  }
+
+  return is_spike_register_read;
 }
 
 bool
@@ -812,19 +925,19 @@ EventDeliveryManager::gather_target_data()
       }
 #pragma omp barrier
 
-#pragma omp single
-{
-  for ( unsigned int rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
-  {
-    MPI_Barrier(MPI_COMM_WORLD);
-    if ( kernel().mpi_manager.get_rank() == rank )
-    {
-      std::cout << "send buffer target data on rank " << rank << std::endl;
-      for ( std::vector< TargetData >::iterator it = send_buffer_target_data.begin(); it != send_buffer_target_data.end(); ++it )
-	std::cout << (*it).gid << " | "  << (*it).target.rank << " " << (*it).target.tid << " "  << (*it).target.syn_index << " "  << (*it).target.lcid << " " << (*it).target.processed << std::endl;
-    }
-  }
-}
+// #pragma omp single
+// {
+//   for ( unsigned int rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+//   {
+//     MPI_Barrier(MPI_COMM_WORLD);
+//     if ( kernel().mpi_manager.get_rank() == rank )
+//     {
+//       std::cout << "send buffer target data on rank " << rank << std::endl;
+//       for ( std::vector< TargetData >::iterator it = send_buffer_target_data.begin(); it != send_buffer_target_data.end(); ++it )
+// 	std::cout << (*it).gid << " | "  << (*it).target.rank << " " << (*it).target.tid << " "  << (*it).target.syn_index << " "  << (*it).target.lcid << " " << (*it).target.processed << std::endl;
+//     }
+//   }
+// }
 
     } // of while(true)
   } // of omp parallel

@@ -45,6 +45,7 @@ struct SpikeData
   const static unsigned int end_marker; // 1024 - 2
   SpikeData();
   SpikeData( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag );
+  void set( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag );
   void set_complete_marker();
   void set_end_marker();
   bool is_complete_marker() const;
@@ -67,6 +68,15 @@ SpikeData::SpikeData( const thread tid, const unsigned int syn_index, const unsi
   , lcid( lcid )
   , lag( lag )
 {
+}
+
+inline void
+SpikeData::set( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag )
+{
+  (*this).tid = tid;
+  (*this).syn_index = syn_index;
+  (*this).lcid = lcid;
+  (*this).lag = lag;
 }
 
 inline void

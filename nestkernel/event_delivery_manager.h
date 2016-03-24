@@ -50,8 +50,8 @@ typedef MPIManager::OffGridSpike OffGridSpike;
 
 struct TargetData;
 // TODO@5g: move this to communicator.h and implement getter
-const size_t mpi_buffer_size_target_data = 8;
-const size_t mpi_buffer_size_spike_data = 8;
+const size_t mpi_buffer_size_target_data = 100;
+const size_t mpi_buffer_size_spike_data = 100;
 
 class EventDeliveryManager : public ManagerInterface
 {
@@ -100,7 +100,7 @@ public:
    * in a synchronised (single threaded) state.
    * @see send_to_targets()
    */
-  void send_remote( thread p, SpikeEvent&, const long_t lag = 0 );
+  void send_remote( thread tid, SpikeEvent&, const long_t lag = 0 );
 
   void send_remote( thread t, SecondaryEvent& e );
 
@@ -237,6 +237,11 @@ private:
   void collocate_buffers_( bool );
 
   bool collocate_spike_data_buffers_( const thread tid );
+  bool collocate_spike_data_buffers_thr_( const thread tid );
+
+  void reset_spike_register_5g_( const thread tid );
+  static bool is_marked_for_removal_( const Target* p_tgt ); // required by clean_spike_register_5g_
+  void clean_spike_register_5g_( const thread tid );
 
   bool collocate_target_data_buffers_( const thread tid, std::vector< TargetData >& send_buffer );
 
@@ -288,6 +293,9 @@ private:
    * - Third dim: lids
    */
   SpikeRegisterTable spike_register_table_;
+
+  // tid, assigned tid, lag
+  std::vector< std::vector< std::vector< std::vector< Target* > > >* > spike_register_5g_;
 
   /**
    * Register for off-grid spikes.
@@ -348,21 +356,41 @@ private:
   std::vector< SpikeData > recv_buffer_spike_data_;
 };
 
+inline void
+EventDeliveryManager::reset_spike_register_5g_( const thread tid )
+{
+  for ( std::vector< std::vector< std::vector< Target* > > >::iterator it = (*spike_register_5g_[ tid ]).begin(); it < (*spike_register_5g_[ tid ]).end(); ++it )
+  {
+    for ( std::vector< std::vector< Target* > >::iterator iit = (*it).begin(); iit < (*it).end(); ++iit )
+    {
+      (*iit).clear();
+    }
+  }
+}
+
+inline bool
+EventDeliveryManager::is_marked_for_removal_( const Target* p_tgt )
+{
+  return ( p_tgt == 0 );
+}
+
+inline void
+EventDeliveryManager::clean_spike_register_5g_( const thread tid )
+{
+  for ( std::vector< std::vector< std::vector< Target* > > >::iterator it = (*spike_register_5g_[ tid ]).begin(); it < (*spike_register_5g_[ tid ]).end(); ++it )
+  {
+    for ( std::vector< std::vector< Target* > >::iterator iit = (*it).begin(); iit < (*it).end(); ++iit )
+    {
+      std::vector< Target* >::iterator new_end = std::remove_if( (*iit).begin(), (*iit).end(), is_marked_for_removal_ );
+      (*iit).erase( new_end, (*iit).end() );
+    }
+  }
+}
 
 inline void
 EventDeliveryManager::send_to_node( Event& e )
 {
   e();
-}
-
-inline void
-EventDeliveryManager::send_remote( thread t, SpikeEvent& e, const long_t lag )
-{
-  // Put the spike in a buffer for the remote machines
-  for ( int_t i = 0; i < e.get_multiplicity(); ++i )
-  {
-    spike_register_table_.add_spike( t, e, lag );
-  }
 }
 
 inline void

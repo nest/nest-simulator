@@ -273,6 +273,8 @@ public:
     std::vector< std::vector< index > >& targets,
     index synapse_model );
 
+  std::vector< Target >& get_targets( const thread tid, const index lid );
+
   /**
    * Triggered by volume transmitter in update.
    * Triggeres updates for all connectors of dopamine synapses that
@@ -620,6 +622,12 @@ inline void
 ConnectionBuilderManager::prepare_target_table( const thread tid )
 {
   target_table_.prepare( tid );
+}
+
+inline std::vector< Target >&
+ConnectionBuilderManager::get_targets( const thread tid, const index lid )
+{
+  return target_table_.get_targets( tid, lid );
 }
 
 } // namespace nest

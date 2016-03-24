@@ -90,6 +90,29 @@ EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const
 }
 
 inline void
+EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long_t lag )
+{
+  // Put the spike in a buffer for the remote machines
+  for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+  {
+    spike_register_table_.add_spike( tid, e, lag );
+
+    const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
+    //std::cout << "on rank " << kernel().mpi_manager.get_rank() << " thread "<< tid << " send_remote of (gid = " << e.get_sender().get_gid() << ", lid = " << lid << ")" << std::endl;
+
+    std::vector< Target >& targets = kernel().connection_builder_manager.get_targets( tid, lid );
+    for ( std::vector< Target >::iterator it = targets.begin(); it < targets.end(); ++it )
+    {
+      const thread assigned_tid = (*it).rank / kernel().vp_manager.get_num_assigned_ranks_per_thread();
+      //std::cout << "target (rank = " << (*it).rank << ", lcid = " << (*it).lcid << "), tid = " << tid << ", assigned_tid = " << assigned_tid << ", lag = " << lag <<std::endl;
+      assert( assigned_tid < (*spike_register_5g_[tid]).size() );
+      assert( lag < (*spike_register_5g_[tid])[assigned_tid].size() );
+      (*spike_register_5g_[tid])[assigned_tid][lag].push_back( &(*it) );
+    }
+  }
+}
+
+inline void
 EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
 {
   e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );

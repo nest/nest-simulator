@@ -176,6 +176,8 @@ public:
   void reject_last_spike_data( const thread tid, const thread current_tid, const index lid );
   // TODO@5g: don't we need save/restore/reset as in communication of source table?
   void reset_current_target_index( const thread );
+
+  std::vector< Target >& get_targets( const thread tid, const index lid );
 };
 
 inline
@@ -196,6 +198,12 @@ inline void
 TargetTable::toggle_target_processed_flag( const thread tid, const index lid )
 {
   (*target_processed_flag_[ tid ])[ lid ] = not (*target_processed_flag_[ tid ])[ lid ];
+}
+
+inline std::vector< Target >&
+TargetTable::get_targets( const thread tid, const index lid )
+{
+  return (*targets_[ tid ])[ lid ];
 }
 
 } // namespace nest

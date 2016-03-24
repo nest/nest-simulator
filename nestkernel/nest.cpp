@@ -242,10 +242,6 @@ simulate( const double_t& time )
       "of the simulation resolution." );
   }
 
-  std::ostringstream os;
-  os << "Simulating " << time << " ms.";
-  LOG( M_INFO, "Simulate", os.str() );
-
   kernel().simulation_manager.simulate( t_sim );
 }
 

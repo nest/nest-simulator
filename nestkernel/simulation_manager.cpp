@@ -298,7 +298,7 @@ nest::SimulationManager::simulate( Time const& t )
   to_do_ += t.get_steps();
   to_do_total_ = to_do_;
 
-  prepare_simulation_();
+  const size_t num_active_nodes = prepare_simulation_();
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -325,15 +325,40 @@ nest::SimulationManager::simulate( Time const& t )
       "Simulate "
       "is called repeatedly with simulation times that are not multiples of the minimal delay." );
 
-  resume_();
+  resume_( num_active_nodes );
 
   finalize_simulation_();
 }
 
 void
-nest::SimulationManager::resume_()
+nest::SimulationManager::resume_( size_t num_active_nodes )
 {
   assert( kernel().is_initialized() );
+
+  std::ostringstream os;
+  double_t t_sim = to_do_ * Time::get_resolution().get_ms();
+
+  os << "Number of local nodes: " << num_active_nodes << std::endl;
+  os << "Simulaton time (ms): " << t_sim;
+
+#ifdef _OPENMP
+  os << std::endl
+     << "Number of OpenMP threads: " << kernel().vp_manager.get_num_threads();
+#else
+  os << std::endl
+     << "Not using OpenMP";
+#endif
+
+#ifdef HAVE_MPI
+  os << std::endl
+     << "Number of MPI processes: " << kernel().mpi_manager.get_num_processes();
+#else
+  os << std::endl
+     << "Not using MPI";
+#endif
+
+  LOG( M_INFO, "SimulationManager::resume", os.str() );
+
 
   terminate_ = false;
 
@@ -349,14 +374,6 @@ nest::SimulationManager::resume_()
 
   simulating_ = true;
   simulated_ = true;
-
-#ifndef _OPENMP
-  if ( kernel().vp_manager.get_num_threads() > 1 )
-  {
-    LOG(
-      M_ERROR, "SimulationManager::resume", "No multithreading available, using single threading" );
-  }
-#endif
 
   update_();
 
@@ -387,11 +404,10 @@ nest::SimulationManager::resume_()
   LOG( M_INFO, "SimulationManager::resume", "Simulation finished." );
 }
 
-void
+size_t
 nest::SimulationManager::prepare_simulation_()
 {
-  if ( to_do_ == 0 )
-    return;
+  assert( to_do_ != 0 ); // This is checked in simulate()
 
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables
@@ -417,7 +433,7 @@ nest::SimulationManager::prepare_simulation_()
     kernel().event_delivery_manager.configure_spike_buffers();
 
   kernel().node_manager.ensure_valid_thread_local_ids();
-  kernel().node_manager.prepare_nodes();
+  const size_t num_active_nodes = kernel().node_manager.prepare_nodes();
 
   kernel().model_manager.create_secondary_events_prototypes();
 
@@ -430,6 +446,8 @@ nest::SimulationManager::prepare_simulation_()
       Time::get_resolution().get_ms() * kernel().connection_builder_manager.get_min_delay();
     kernel().music_manager.enter_runtime( tick );
   }
+
+  return num_active_nodes;
 }
 
 bool
@@ -441,10 +459,6 @@ nest::SimulationManager::prelim_update_( Node* n )
 void
 nest::SimulationManager::update_()
 {
-#ifdef _OPENMP
-  LOG( M_INFO, "SimulationManager::update", "Simulating using OpenMP." );
-#endif
-
   // to store done values of the different threads
   std::vector< bool > done;
   bool done_all = true;

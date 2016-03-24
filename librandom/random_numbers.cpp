@@ -306,7 +306,7 @@ RandomNumbers::RandomArrayFunction::execute( SLIInterpreter* i ) const
   ArrayDatum result = librandom::random_array( rdv, n );
 
   i->OStack.pop( 2 );
-  i->OStack.push( ArrayDatum( result ) );
+  i->OStack.push( result );
   i->EStack.pop();
 }
 
@@ -318,9 +318,9 @@ RandomNumbers::RandomFunction::execute( SLIInterpreter* i ) const
 
   librandom::RdvDatum rdv = getValue< librandom::RdvDatum >( i->OStack.top() );
 
-  long result = librandom::random( rdv );
-
   i->OStack.pop();
+  Token result = librandom::random( rdv );
+
   i->OStack.push( result );
   i->EStack.pop();
 }

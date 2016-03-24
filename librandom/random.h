@@ -29,6 +29,7 @@
 // Includes from sli:
 #include "arraydatum.h"
 #include "dictdatum.h"
+#include "token.h"
 
 namespace librandom
 {
@@ -45,7 +46,7 @@ unsigned long irand( const long N, RngDatum& rng );
 double drand( RngDatum& rng );
 
 ArrayDatum random_array( RdvDatum& rdv, const size_t n );
-long random( RdvDatum& rdv );
+Token random( RdvDatum& rdv );
 }
 
 #endif /* RANDOM_H */

@@ -108,6 +108,8 @@ librandom::UniformIntRandomDev::set_status( const DictionaryDatum& d )
 void
 librandom::UniformIntRandomDev::get_status( DictionaryDatum& d ) const
 {
+  RandomDev::get_status( d );
+
   def< long >( d, "low", nmin_ );
   def< long >( d, "high", nmax_ );
 }

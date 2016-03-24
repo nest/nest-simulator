@@ -134,8 +134,8 @@ ResetKernel      % clear all existing network elements
             /tau_m   Tau
             /tau_syn_ex  Tau_psc
             /tau_syn_in  Tau_psc
-            /E_L     U0
-            /V_m     U0
+            /E_L     E_L
+            /V_m     E_L
             /V_reset Vreset
             /V_th    Theta
             /C_m     C
@@ -160,8 +160,8 @@ ResetKernel      % clear all existing network elements
                 /tau_m    Tau
                 /tau_syn_ex   Tau_psc
                 /tau_syn_in   Tau_psc
-                /E_L      U0
-                /V_m      U0
+                /E_L      E_L
+                /V_m      E_L
                 /V_reset  Vreset
                 /V_th     Theta
                 /C_m      C
@@ -471,7 +471,7 @@ userdict begin
 
       % excitatory neurons
       /Tau 30.0 def             % membrane time constant of ex./inh. neurons in ms
-      /U0 0.0 def               % resting potential of Vm for exc./inh.
+      /E_L 0.0 def              % resting potential of Vm for exc./inh.
       /Theta 15.0 def           % threshold for exc. neuron
       /Vreset 13.5 def          % reset potential of Vm after a spike
       /R 1.0 def                % membrane resistance 1 GOhm

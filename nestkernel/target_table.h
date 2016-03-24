@@ -185,7 +185,7 @@ void
 TargetTable::reject_last_spike_data( const thread tid, const thread current_tid, const index lid )
 {
   assert( current_target_index_[ tid ] > 0 );
-  ( *targets_[ current_tid ])[ lid ][ current_target_index_[ tid ] - 1 ].processed = (*target_processed_flag_[ current_tid ])[ lid ];
+  ( *targets_[ current_tid ])[ lid ][ current_target_index_[ tid ] - 1 ].processed = not (*target_processed_flag_[ current_tid ])[ lid ];
 }
 
 inline void

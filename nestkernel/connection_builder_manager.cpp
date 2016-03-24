@@ -743,6 +743,7 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
   const TokenArray& delays,
   index syn )
 {
+  assert( false );
   bool complete_wd_lists = ( target_ids.size() == weights.size() && weights.size() != 0
     && weights.size() == delays.size() );
   bool short_wd_lists =
@@ -870,6 +871,7 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
   DictionaryDatum pars,
   index syn )
 {
+  assert( false );
   // We extract the parameters from the dictionary explicitly since getValue() for DoubleVectorDatum
   // copies the data into an array, from which the data must then be copied once more.
   DictionaryDatum par_i( new Dictionary() );
@@ -1039,6 +1041,7 @@ nest::ConnectionBuilderManager::random_divergent_connect( index source_id,
   bool allow_autapses,
   index syn )
 {
+  assert( false );
   Node* source = kernel().node_manager.get_node( source_id );
 
   // check if we have consistent lists for weights and delays
@@ -1112,6 +1115,7 @@ nest::ConnectionBuilderManager::random_divergent_connect( index source_id,
 bool
 nest::ConnectionBuilderManager::connect( ArrayDatum& conns )
 {
+  assert( false );
   // #ifdef _OPENMP
   //     LOG(M_INFO, "ConnectionManager::Connect", msg);
   // #endif
@@ -1165,6 +1169,7 @@ nest::ConnectionBuilderManager::convergent_connect( const TokenArray& source_ids
   const TokenArray& delays,
   index syn )
 {
+  assert( false );
   bool complete_wd_lists = ( source_ids.size() == weights.size() && weights.size() != 0
     && weights.size() == delays.size() );
   bool short_wd_lists =
@@ -1288,6 +1293,7 @@ nest::ConnectionBuilderManager::convergent_connect( const std::vector< index >& 
   const TokenArray& delays,
   index syn )
 {
+  assert( false );
   bool complete_wd_lists = ( source_ids.size() == weights.size() && weights.size() != 0
     && weights.size() == delays.size() );
   bool short_wd_lists =
@@ -1386,6 +1392,7 @@ nest::ConnectionBuilderManager::random_convergent_connect( const TokenArray& sou
   bool allow_autapses,
   index syn )
 {
+  assert( false );
   if ( !kernel().node_manager.is_local_gid( target_id ) )
     return;
 
@@ -1450,6 +1457,7 @@ nest::ConnectionBuilderManager::random_convergent_connect( TokenArray& source_id
   bool allow_autapses,
   index syn )
 {
+  assert( false );
 #ifndef _OPENMP
   // It only makes sense to call this function if we have openmp
   LOG( M_ERROR, "ConvergentConnect", "This function can only be called using OpenMP threading." );

@@ -72,7 +72,7 @@
 */
 
 // C++ includes:
-#include <cmath>
+#include <math.h>
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
@@ -187,7 +187,7 @@ private:
   {
     double_t norm_w =
       ( w / Wmax_ ) - ( alpha_ * lambda_ * std::pow( w / Wmax_, mu_minus_ ) * kminus );
-    return norm_w > 0.0 ? norm_w * Wmax_ : copysign( 0.0, Wmax_ );
+    return norm_w > 0.0 ? norm_w * Wmax_ : 0.0;
   }
 
   // data members of each connection

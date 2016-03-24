@@ -739,6 +739,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
         --i;
         continue;
       }
+      is_selected[ random_id ] = true;
       Position< D > target_displ = displacements[ random_id ];
       index target_id = targets[ random_id ];
 
@@ -756,7 +757,6 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
       Node* target_ptr = kernel().node_manager.get_node( target_id );
       kernel().connection_builder_manager.connect(
         source_id, target_ptr, target_ptr->get_thread(), synapse_model_, d, w );
-      is_selected[ random_id ] = true;
     }
   }
 }

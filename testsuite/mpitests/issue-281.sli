@@ -48,7 +48,9 @@ Author: Hans Ekkehard Plesser, 2016-03-18
 
   << 
      /connection_type /divergent
-     /number_of_connections 10
+     /number_of_connections 8
+     /allow_multapses false
+     /allow_autapses false
 
      % weights are randomized to check that global RNGs stay in sync
      /weights << /uniform << /min 1. /max 2. >> >>

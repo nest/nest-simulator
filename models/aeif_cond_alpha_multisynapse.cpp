@@ -83,6 +83,7 @@ aeif_cond_alpha_multisynapse::Parameters_::Parameters_()
   , I_e( 0.0 )        // pA
   , MAXERR( 1.0e-10 ) // mV
   , HMIN( 1.0e-3 )    // ms
+  , num_of_receptors_( 0 )
   , has_connections_( false )
 {
   taus_syn.clear();

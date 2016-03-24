@@ -42,11 +42,11 @@ struct SpikeData;
 struct Target
 {
   // TODO@5g: additional types in nest_types?
-  unsigned int tid : 10;            //!< thread of target neuron
-  unsigned int rank : 22;           //!< rank of target neuron
-  unsigned int processed : 1;       //!< has this entry been processed
-  unsigned int syn_index : 6;       //!< index of synapse type
   unsigned int lcid : 25;           //! local index of connection to target
+  unsigned int rank : 22;           //!< rank of target neuron
+  unsigned int tid : 10;            //!< thread of target neuron
+  unsigned int syn_index : 6;       //!< index of synapse type
+  unsigned int processed : 1;       //!< has this entry been processed
   Target();
   Target( const Target& target );
   Target( const thread tid, const unsigned int rank, const unsigned int syn_index, const unsigned int lcid);
@@ -54,31 +54,31 @@ struct Target
 
 inline
 Target::Target()
-  : tid( 0 )
+  : lcid( 0 )
   , rank( 0 )
-  , processed( false )
+  , tid( 0 )
   , syn_index( 0 )
-  , lcid( 0 )
+  , processed( false )
 {
 }
 
 inline
 Target::Target( const Target& target )
-  : tid( target.tid )
+  : lcid( target.lcid )
   , rank( target.rank )
-  , processed( false )
+  , tid( target.tid )
   , syn_index( target.syn_index )
-  , lcid( target.lcid )
+  , processed( false )
 {
 }
 
 inline
 Target::Target( const thread tid, const unsigned int rank, const unsigned int syn_index, const unsigned int lcid)
-  : tid( tid )
+  : lcid( lcid )
   , rank( rank )
-  , processed( false )
+  , tid( tid )
   , syn_index( syn_index )
-  , lcid( lcid )
+  , processed( false )
 {
 }
 

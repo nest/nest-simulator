@@ -81,7 +81,6 @@ TargetTable::get_next_spike_data( const thread tid, const thread current_tid, co
           next_spike_data.tid = current_target.tid;
           next_spike_data.syn_index = current_target.syn_index;
           next_spike_data.lcid = current_target.lcid;
-          // assert( next_spike_data.lcid < 4 * 1250000 );
           ++current_target_index_[ tid ];
           return true;
         }

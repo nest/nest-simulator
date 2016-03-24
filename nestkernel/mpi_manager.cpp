@@ -639,7 +639,7 @@ nest::MPIManager::communicate_Alltoall(
                 recv_buffer,
                 send_recv_count,
                 MPI::UNSIGNED,
-                comm);
+                comm );
 }
 
 

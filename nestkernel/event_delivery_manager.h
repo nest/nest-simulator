@@ -238,9 +238,9 @@ private:
 
   bool collocate_spike_data_buffers_( const thread tid );
 
-  bool collocate_target_data_buffers_( const thread tid, std::vector< TargetData >& send_buffer );
+  bool collocate_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, std::vector< TargetData >& send_buffer );
 
-  bool distribute_target_data_buffers_( const thread tid, const std::vector< TargetData >& recv_buffer );
+  bool distribute_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, const std::vector< TargetData >& recv_buffer );
 
   bool check_target_data_others_completed_( const std::vector< TargetData >& buffer );
 
@@ -346,6 +346,8 @@ private:
 
   std::vector< SpikeData > send_buffer_spike_data_;
   std::vector< SpikeData > recv_buffer_spike_data_;
+  unsigned int send_recv_count_spike_data_per_rank_;
+  unsigned int send_recv_count_spike_data_in_int_per_rank_;
 };
 
 

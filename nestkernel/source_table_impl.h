@@ -82,7 +82,8 @@ SourceTable::get_next_target_data( const thread tid, index& target_rank, TargetD
               // we have found a valid entry, so mark it as processed,
               // update the values of next_target_data and return
               current_source.processed = true;
-              next_target_data.gid = current_source.gid;
+              next_target_data.lid = kernel().vp_manager.gid_to_lid( current_source.gid );
+              next_target_data.tid = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( current_source.gid ) );
               // we store the position in the sources table, not our own
               next_target_data.target.tid = current_tid_[ tid ];
               next_target_data.target.rank = kernel().mpi_manager.get_rank();

@@ -27,11 +27,33 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "mpi_manager.h"
 
 inline nest::thread
 nest::VPManager::get_vp() const
 {
   return kernel().mpi_manager.get_rank() + get_thread_id() * kernel().mpi_manager.get_num_sim_processes();
+}
+
+inline nest::thread
+nest::VPManager::suggest_vp( nest::index gid ) const
+{
+  return gid % ( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() );
+}
+
+inline nest::thread
+nest::VPManager::vp_to_thread( nest::thread vp ) const
+{
+  if ( vp
+    >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() ) )
+  {
+    return ( vp + kernel().mpi_manager.get_num_sim_processes() * ( 1 - get_num_threads() )
+             - kernel().mpi_manager.get_rank() ) / kernel().mpi_manager.get_num_rec_processes();
+  }
+  else
+  {
+    return vp / kernel().mpi_manager.get_num_sim_processes();
+  }
 }
 
 inline nest::thread
@@ -49,7 +71,6 @@ nest::VPManager::is_vp_local( const index gid ) const
 inline nest::index
 nest::VPManager::gid_to_lid( const index gid ) const
 {
-  assert( is_vp_local( gid ) );
   return gid / ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() );
 }
 

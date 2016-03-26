@@ -87,12 +87,12 @@ Target::Target( const thread tid, const unsigned int rank, const unsigned int sy
  */
 struct TargetData
 {
-  index gid;
   Target target;
-  static const index complete_marker; // std::numeric_limits< index >::max() - 1
-  static const index end_marker; // std::numeric_limits< index >::max() - 2
+  unsigned int lid : 16;
+  unsigned int tid : 8;
+  static const index complete_marker; // 2^16 - 1
+  static const index end_marker; // 2^16 - 2
   TargetData();
-  TargetData( const index gid, const Target& target);
   void set_complete_marker();
   void set_end_marker();
   bool is_complete_marker() const;
@@ -101,40 +101,33 @@ struct TargetData
 
 inline
 TargetData::TargetData()
-  : gid( 0 )
+  : lid( 0 )
   , target( Target() )
-{
-}
-
-inline
-TargetData::TargetData( const index gid, const Target& target )
-  : gid( gid )
-  , target( target )
 {
 }
 
 inline void
 TargetData::set_complete_marker()
 {
-  gid = complete_marker;
+  lid = complete_marker;
 }
 
 inline void
 TargetData::set_end_marker()
 {
-  gid = end_marker;
+  lid = end_marker;
 }
 
 inline bool
 TargetData::is_complete_marker() const
 {
-  return gid == complete_marker;
+  return lid == complete_marker;
 }
 
 inline bool
 TargetData::is_end_marker() const
 {
-  return gid == end_marker;
+  return lid == end_marker;
 }
 
 /** This data structure stores the targets of the local neurons, i.e.,

@@ -887,7 +887,7 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid, c
         {
           break;
         }
-        else if ( kernel().vp_manager.is_vp_local( target_data.gid ) )
+        else if ( target_data.tid == tid )
         {
           kernel().connection_builder_manager.add_target( tid, target_data );
         }

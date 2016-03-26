@@ -179,31 +179,10 @@ nest::VPManager::is_local_vp( nest::thread vp ) const
 }
 
 nest::thread
-nest::VPManager::suggest_vp( nest::index gid ) const
-{
-  return gid % ( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() );
-}
-
-nest::thread
 nest::VPManager::suggest_rec_vp( nest::index gid ) const
 {
   return gid % ( kernel().mpi_manager.get_num_rec_processes() * get_num_threads() )
     + kernel().mpi_manager.get_num_sim_processes() * get_num_threads();
-}
-
-nest::thread
-nest::VPManager::vp_to_thread( nest::thread vp ) const
-{
-  if ( vp
-    >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() ) )
-  {
-    return ( vp + kernel().mpi_manager.get_num_sim_processes() * ( 1 - get_num_threads() )
-             - kernel().mpi_manager.get_rank() ) / kernel().mpi_manager.get_num_rec_processes();
-  }
-  else
-  {
-    return vp / kernel().mpi_manager.get_num_sim_processes();
-  }
 }
 
 nest::thread

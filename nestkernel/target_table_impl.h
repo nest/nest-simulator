@@ -35,10 +35,9 @@ namespace nest
 inline void
 TargetTable::add_target( thread tid, const TargetData& target_data )
 {
-  const index lid = kernel().vp_manager.gid_to_lid( target_data.gid );
   assert( tid < targets_.size() );
-  assert( lid < targets_[ tid ]->size() );
-  (*targets_[ tid ])[ lid ].push_back( target_data.target );
+  assert( target_data.lid < targets_[ tid ]->size() );
+  (*targets_[ tid ])[ target_data.lid ].push_back( target_data.target );
 }
 
 inline bool

@@ -586,12 +586,6 @@ ConnectionBuilderManager::toggle_target_processed_flag( const thread tid, const 
   target_table_.toggle_target_processed_flag( tid, lid );
 }
 
-inline bool
-ConnectionBuilderManager::get_next_target_data( const thread tid, index& target_rank, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end )
-{
-  return source_table_.get_next_target_data( tid, target_rank, next_target_data, rank_start, rank_end );
-}
-
 inline void
 ConnectionBuilderManager::reject_last_target_data( const thread tid )
 {

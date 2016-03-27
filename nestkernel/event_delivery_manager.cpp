@@ -576,9 +576,8 @@ EventDeliveryManager::gather_spike_data( const thread tid )
 #pragma omp single
     {
       completed_count = 0;
-    }
-    sw_reset_restore_save.start();
     } // of omp single; implicit barrier
+    sw_reset_restore_save.start();
     spike_register_table_.restore_entry_point( tid ); // TODO@5g: move spike_register calls into collocation of buffers?!
     kernel().connection_builder_manager.reset_current_index_target_table( tid );
     sw_reset_restore_save.stop();

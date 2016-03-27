@@ -565,8 +565,8 @@ EventDeliveryManager::gather_spike_data( const thread tid )
   spike_register_table_.reset_entry_point( tid );
   sw_reset_restore_save.start();
 
-  static bool me_completed;
-  static bool others_completed;
+  static unsigned int completed_count;
+  const unsigned int max_completed_count = 2 * kernel().vp_manager.get_num_threads();
   bool me_completed_tid;
   bool others_completed_tid;
 
@@ -574,8 +574,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
   {
 #pragma omp single
     {
-      me_completed = true;
-      others_completed = true;
+      completed_count = 0;
     }
     sw_reset_restore_save.start();
     spike_register_table_.restore_entry_point( tid );
@@ -586,8 +585,8 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     sw_collocate.start();
     me_completed_tid = collocate_spike_data_buffers_( tid );
     sw_collocate.stop();
-#pragma omp critical
-    me_completed = me_completed && me_completed_tid;
+#pragma omp atomic
+    completed_count += me_completed_tid;
 #pragma omp barrier
     sw_reset_restore_save.start();
     spike_register_table_.save_entry_point( tid );
@@ -605,11 +604,11 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     sw_check.stop();
     sw_deliver.start();
     others_completed_tid = deliver_events_5g_( tid );
-#pragma omp critical
-    others_completed = others_completed && others_completed_tid;
+#pragma omp atomic
+    completed_count += others_completed_tid;
 #pragma omp barrier
     sw_deliver.stop();
-    if ( me_completed && others_completed )
+    if ( completed_count == max_completed_count )
     {
       break;
     }
@@ -749,13 +748,18 @@ EventDeliveryManager::gather_target_data()
   std::vector< TargetData > send_buffer_target_data( mpi_buffer_size_target_data );
   std::vector< TargetData > recv_buffer_target_data( mpi_buffer_size_target_data );
 
-  bool me_completed;
-  bool others_completed;
+  // when a thread does not have any more spike to collocate and when
+  // it detects a remote MPI rank is finished this cound is increased
+  // by 1 in each case. only if all threads are done AND all threads
+  // detect all remote ranks are done, we are allowed to stop
+  // communication.
+  unsigned int completed_count;
+  unsigned int max_completed_count = 2 * kernel().vp_manager.get_num_threads();
+
   const unsigned int send_recv_count_target_data_per_rank = floor( send_buffer_target_data.size() / kernel().mpi_manager.get_num_processes() );
   const unsigned int send_recv_count_target_data_in_int_per_rank = sizeof( TargetData ) / sizeof( unsigned int ) * send_recv_count_target_data_per_rank;
 
-
-#pragma omp parallel shared(me_completed, others_completed)
+#pragma omp parallel shared(completed_count)
   {
     const thread tid = kernel().vp_manager.get_thread_id();
     bool me_completed_tid;
@@ -766,14 +770,13 @@ EventDeliveryManager::gather_target_data()
     {
 #pragma omp single
       {
-        me_completed = true;
-        others_completed = true;
+        completed_count = 0;
       }
       kernel().connection_builder_manager.restore_source_table_entry_point( tid );
 
       me_completed_tid = collocate_target_data_buffers_( tid, send_recv_count_target_data_per_rank, send_buffer_target_data );
-#pragma omp critical
-      me_completed = me_completed && me_completed_tid;
+#pragma omp atomic
+      completed_count += me_completed_tid;
 #pragma omp barrier
 
       kernel().connection_builder_manager.save_source_table_entry_point( tid );      
@@ -786,10 +789,10 @@ EventDeliveryManager::gather_target_data()
 
       others_completed_tid = distribute_target_data_buffers_( tid, send_recv_count_target_data_per_rank, recv_buffer_target_data );
 
-#pragma omp critical
-      others_completed = others_completed && others_completed_tid;
+#pragma omp atomic
+      completed_count += others_completed_tid;
 #pragma omp barrier
-      if ( me_completed && others_completed )
+      if ( completed_count == max_completed_count )
       {
         break;
       }

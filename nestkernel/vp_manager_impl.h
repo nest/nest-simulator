@@ -87,16 +87,15 @@ nest::VPManager::get_num_assigned_ranks_per_thread() const
 }
 
 inline unsigned int
-nest::VPManager::get_start_rank_per_thread() const
+nest::VPManager::get_start_rank_per_thread( const thread tid ) const
 {
-  return get_thread_id() * get_num_assigned_ranks_per_thread();
+  return tid * get_num_assigned_ranks_per_thread();
 }
 
 inline unsigned int
-nest::VPManager::get_end_rank_per_thread() const
+nest::VPManager::get_end_rank_per_thread( const thread tid, const unsigned int rank_start, const unsigned int num_assigned_ranks_per_thread ) const
 {
-  unsigned int rank_start = get_start_rank_per_thread();
-  unsigned int rank_end =  rank_start + get_num_assigned_ranks_per_thread();
+  unsigned int rank_end =  rank_start + num_assigned_ranks_per_thread;
 
   // if we have more threads than ranks, or if ranks can not be
   // distributed evenly on threads, we need to make sure, that all

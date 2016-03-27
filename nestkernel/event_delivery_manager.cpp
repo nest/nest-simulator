@@ -623,8 +623,8 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
 {
   // TODO@5g: documentation
   const unsigned int num_assigned_ranks_per_thread = kernel().vp_manager.get_num_assigned_ranks_per_thread();
-  const unsigned int rank_start = kernel().vp_manager.get_start_rank_per_thread();
-  const unsigned int rank_end = kernel().vp_manager.get_end_rank_per_thread();
+  const unsigned int rank_start = kernel().vp_manager.get_start_rank_per_thread( tid );
+  const unsigned int rank_end = kernel().vp_manager.get_end_rank_per_thread( tid, rank_start, num_assigned_ranks_per_thread );
   // store how far each segment in sendbuffer is filled
   std::vector< unsigned int > send_buffer_offset( num_assigned_ranks_per_thread, 0 );
   unsigned int sum_send_buffer_offset = 0;
@@ -805,8 +805,8 @@ bool
 EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, std::vector< TargetData >& send_buffer )
 {
   const unsigned int num_assigned_ranks_per_thread = kernel().vp_manager.get_num_assigned_ranks_per_thread();
-  const unsigned int rank_start = kernel().vp_manager.get_start_rank_per_thread();
-  const unsigned int rank_end = kernel().vp_manager.get_end_rank_per_thread();
+  const unsigned int rank_start = kernel().vp_manager.get_start_rank_per_thread( tid );
+  const unsigned int rank_end = kernel().vp_manager.get_end_rank_per_thread( tid, rank_start, num_assigned_ranks_per_thread );
   // store how far each segment in sendbuffer is filled
   std::vector< unsigned int > send_buffer_offset( num_assigned_ranks_per_thread, 0 );
   unsigned int sum_send_buffer_offset = 0;

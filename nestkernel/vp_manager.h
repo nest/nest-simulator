@@ -140,8 +140,8 @@ public:
    */
   unsigned int get_num_assigned_ranks_per_thread() const;
 
-  unsigned int get_start_rank_per_thread() const;
-  unsigned int get_end_rank_per_thread() const;
+  unsigned int get_start_rank_per_thread( const thread tid ) const;
+  unsigned int get_end_rank_per_thread( const thread tid, const unsigned int rank_start, const unsigned int num_assigned_ranks_per_thread ) const;
 
 private:
   const bool force_singlethreading_;

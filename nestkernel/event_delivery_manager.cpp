@@ -630,65 +630,65 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
   unsigned int sum_send_buffer_offset = 0;
   index target_rank;
   SpikeData next_spike_data;
-  bool spike_register_contains_more = false;
+  bool valid_next_spike_data;
   bool is_buffer_untouched = true;
+
   // TODO@5g: for just one rank, only one thread fills MPI buffer
-  if ( rank_start != rank_end )
+  if ( rank_start == rank_end )  // no ranks to process for this thread
   {
-    while ( true )
+    return is_buffer_untouched;
+  }
+
+  while ( true )
+  {
+    if ( sum_send_buffer_offset == ( send_recv_count_spike_data_per_rank_ * num_assigned_ranks_per_thread ) )
     {
-      if ( sum_send_buffer_offset == ( send_recv_count_spike_data_per_rank_ * num_assigned_ranks_per_thread ) )
+      return is_buffer_untouched;
+    }
+    else
+    {
+      valid_next_spike_data = spike_register_table_.get_next_spike_data( tid, target_rank, next_spike_data, rank_start, rank_end );
+      if ( valid_next_spike_data )
       {
-        return is_buffer_untouched;
+        const thread target_rank_index = target_rank - rank_start;
+        if ( send_buffer_offset[ target_rank_index ] < send_recv_count_spike_data_per_rank_ )
+        {
+          const unsigned int idx = target_rank * send_recv_count_spike_data_per_rank_ + send_buffer_offset[ target_rank_index ];
+          send_buffer_spike_data_[ idx ] = next_spike_data;
+          ++send_buffer_offset[ target_rank_index ];
+          ++sum_send_buffer_offset;
+          is_buffer_untouched = false;
+        }
+        else
+        {
+          spike_register_table_.reject_last_spike_data( tid );
+          spike_register_table_.save_entry_point( tid );
+        }
       }
-      else
+      else // all spikes have been processed
       {
-        spike_register_contains_more = spike_register_table_.get_next_spike_data( tid, target_rank, next_spike_data, rank_start, rank_end );
-        if ( spike_register_contains_more )
+        // mark end of valid data for each rank
+        for ( thread target_rank = rank_start; target_rank < rank_end; ++target_rank )
         {
           const thread target_rank_index = target_rank - rank_start;
           if ( send_buffer_offset[ target_rank_index ] < send_recv_count_spike_data_per_rank_ )
           {
             const unsigned int idx = target_rank * send_recv_count_spike_data_per_rank_ + send_buffer_offset[ target_rank_index ];
-            send_buffer_spike_data_[ idx ] = next_spike_data;
-            ++send_buffer_offset[ target_rank_index ];
-            ++sum_send_buffer_offset;
-            is_buffer_untouched = false;
-          }
-          else
-          {
-            spike_register_table_.reject_last_spike_data( tid );
-            spike_register_table_.save_entry_point( tid );
-          }
-        }
-        else // all spikes have been processed
-        {
-          // mark end of valid data for each rank
-          for ( thread target_rank = rank_start; target_rank < rank_end; ++target_rank )
-          {
-            const thread target_rank_index = target_rank - rank_start;
-            if ( send_buffer_offset[ target_rank_index ] < send_recv_count_spike_data_per_rank_ )
+            if ( is_buffer_untouched )
             {
-              if ( is_buffer_untouched )
-              {
-                assert( send_buffer_offset[ target_rank_index ] == 0 );
-                send_buffer_spike_data_[ target_rank * send_recv_count_spike_data_per_rank_ + send_buffer_offset[ target_rank_index ] ].set_complete_marker();
-              }
-              else
-              {
-                send_buffer_spike_data_[ target_rank * send_recv_count_spike_data_per_rank_ + send_buffer_offset[ target_rank_index ] ].set_end_marker();
-              }
+              assert( send_buffer_offset[ target_rank_index ] == 0 );
+              send_buffer_spike_data_[ idx ].set_complete_marker();
+            }
+            else
+            {
+              send_buffer_spike_data_[ idx ].set_end_marker();
             }
           }
-          return is_buffer_untouched;
         }
-      }
+        return is_buffer_untouched;
+      } // of else
     }
-  }
-  else // no spikes to process for this thread
-  {
-    return is_buffer_untouched;
-  }
+  } // of while(true)
 }
 
 bool
@@ -812,66 +812,64 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const un
   unsigned int sum_send_buffer_offset = 0;
   index target_rank;
   TargetData next_target_data;
-  bool source_table_contains_more = false;
+  bool valid_next_target_data;
   bool is_buffer_untouched = true;
 
-  if ( rank_start != rank_end )
+  if ( rank_start == rank_end ) // no ranks to process for this thread
   {
-    while ( true )
+    return is_buffer_untouched;
+  }
+
+  while ( true )
+  {
+    if ( sum_send_buffer_offset == ( num_target_data_per_rank * num_assigned_ranks_per_thread ) ) // buffer is full
     {
-      // buffer is full
-      if ( sum_send_buffer_offset == ( num_target_data_per_rank * num_assigned_ranks_per_thread ) )
+      return is_buffer_untouched;
+    }
+    else
+    {
+      valid_next_target_data = kernel().connection_builder_manager.get_next_target_data( tid, target_rank, next_target_data, rank_start, rank_end );
+      if ( valid_next_target_data ) // add valid entry to MPI buffer
       {
-        return is_buffer_untouched;
+        const thread target_rank_index = target_rank - rank_start;
+        if ( send_buffer_offset[ target_rank_index ] < num_target_data_per_rank )
+        {
+          const unsigned int idx = target_rank * num_target_data_per_rank + send_buffer_offset[ target_rank_index ];
+          send_buffer[ idx ] = next_target_data;
+          ++send_buffer_offset[ target_rank_index ];
+          ++sum_send_buffer_offset;
+          is_buffer_untouched = false;
+        }
+        else
+        {
+          kernel().connection_builder_manager.reject_last_target_data( tid );
+          kernel().connection_builder_manager.save_source_table_entry_point( tid );
+        }
       }
-      else
+      else  // all connections have been processed
       {
-        source_table_contains_more = kernel().connection_builder_manager.get_next_target_data( tid, target_rank, next_target_data, rank_start, rank_end );
-        if ( source_table_contains_more ) // add valid entry to MPI buffer
+        // mark end of valid data for each rank
+        for ( unsigned int target_rank = rank_start; target_rank < rank_end; ++target_rank )
         {
           const thread target_rank_index = target_rank - rank_start;
           if ( send_buffer_offset[ target_rank_index ] < num_target_data_per_rank )
           {
             const unsigned int idx = target_rank * num_target_data_per_rank + send_buffer_offset[ target_rank_index ];
-            send_buffer[ idx ] = next_target_data;
-            ++send_buffer_offset[ target_rank_index ];
-            ++sum_send_buffer_offset;
-            is_buffer_untouched = false;
-          }
-          else
-          {
-            kernel().connection_builder_manager.reject_last_target_data( tid );
-            kernel().connection_builder_manager.save_source_table_entry_point( tid );
-          }
-        }
-        else  // all connections have been processed
-        {
-          // mark end of valid data for each rank
-          for ( unsigned int target_rank = rank_start; target_rank < rank_end; ++target_rank )
-          {
-            const thread target_rank_index = target_rank - rank_start;
-            if ( send_buffer_offset[ target_rank_index ] < num_target_data_per_rank )
+            if ( is_buffer_untouched )
             {
-              if ( is_buffer_untouched )
-              {
-                assert( send_buffer_offset[ target_rank_index ] == 0 );
-                send_buffer[ target_rank * num_target_data_per_rank + send_buffer_offset[ target_rank_index ] ].set_complete_marker();
-              }
-              else
-              {
-                send_buffer[ target_rank * num_target_data_per_rank + send_buffer_offset[ target_rank_index ] ].set_end_marker();
-              }
+              assert( send_buffer_offset[ target_rank_index ] == 0 );
+              send_buffer[ idx ].set_complete_marker();
+            }
+            else
+            {
+              send_buffer[ idx ].set_end_marker();
             }
           }
-          return is_buffer_untouched;
         }
-      }
+        return is_buffer_untouched;
+      } // of else
     }
-  }
-  else // no connections to process for this thread
-  {
-    return is_buffer_untouched;
-  }
+  } // of while(true)
 }
 
 bool

@@ -566,7 +566,8 @@ EventDeliveryManager::gather_spike_data( const thread tid )
   sw_reset_restore_save.start();
 
   static unsigned int completed_count;
-  const unsigned int max_completed_count = 2 * kernel().vp_manager.get_num_threads();
+  const unsigned int half_completed_count = kernel().vp_manager.get_num_threads();
+  const unsigned int max_completed_count = 2 * half_completed_count;
   bool me_completed_tid;
   bool others_completed_tid;
 
@@ -577,7 +578,8 @@ EventDeliveryManager::gather_spike_data( const thread tid )
       completed_count = 0;
     }
     sw_reset_restore_save.start();
-    spike_register_table_.restore_entry_point( tid );
+    } // of omp single; implicit barrier
+    spike_register_table_.restore_entry_point( tid ); // TODO@5g: move spike_register calls into collocation of buffers?!
     kernel().connection_builder_manager.reset_current_index_target_table( tid );
     sw_reset_restore_save.stop();
       
@@ -589,6 +591,13 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     completed_count += me_completed_tid;
 #pragma omp barrier
     sw_reset_restore_save.start();
+
+    if ( completed_count == half_completed_count )
+    {
+      set_complete_marker_spike_data_( tid );
+#pragma omp barrier
+    }
+
     spike_register_table_.save_entry_point( tid );
     sw_reset_restore_save.stop();
 
@@ -650,7 +659,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
       valid_next_spike_data = spike_register_table_.get_next_spike_data( tid, target_rank, next_spike_data, rank_start, rank_end );
       if ( valid_next_spike_data )
       {
-        const thread target_rank_index = target_rank - rank_start;
+        const unsigned int target_rank_index = target_rank - rank_start;
         if ( send_buffer_offset[ target_rank_index ] < send_recv_count_spike_data_per_rank_ )
         {
           const unsigned int idx = target_rank * send_recv_count_spike_data_per_rank_ + send_buffer_offset[ target_rank_index ];
@@ -668,27 +677,33 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
       else // all spikes have been processed
       {
         // mark end of valid data for each rank
-        for ( thread target_rank = rank_start; target_rank < rank_end; ++target_rank )
+        for ( unsigned int target_rank = rank_start; target_rank < rank_end; ++target_rank )
         {
-          const thread target_rank_index = target_rank - rank_start;
+          const unsigned int target_rank_index = target_rank - rank_start;
           if ( send_buffer_offset[ target_rank_index ] < send_recv_count_spike_data_per_rank_ )
           {
             const unsigned int idx = target_rank * send_recv_count_spike_data_per_rank_ + send_buffer_offset[ target_rank_index ];
-            if ( is_buffer_untouched )
-            {
-              assert( send_buffer_offset[ target_rank_index ] == 0 );
-              send_buffer_spike_data_[ idx ].set_complete_marker();
-            }
-            else
-            {
-              send_buffer_spike_data_[ idx ].set_end_marker();
-            }
+            send_buffer_spike_data_[ idx ].set_end_marker();
           }
         }
         return is_buffer_untouched;
       } // of else
     }
   } // of while(true)
+}
+
+void
+EventDeliveryManager::set_complete_marker_spike_data_( const thread tid )
+{
+  const unsigned int num_assigned_ranks_per_thread = kernel().vp_manager.get_num_assigned_ranks_per_thread();
+  const unsigned int rank_start = kernel().vp_manager.get_start_rank_per_thread( tid );
+  const unsigned int rank_end = kernel().vp_manager.get_end_rank_per_thread( tid, rank_start, num_assigned_ranks_per_thread );
+
+  for ( unsigned int target_rank = rank_start; target_rank < rank_end; ++target_rank )
+  {
+    const unsigned int idx = target_rank * send_recv_count_spike_data_per_rank_;
+    send_buffer_spike_data_[ idx ].set_complete_marker();
+  }
 }
 
 bool
@@ -754,7 +769,8 @@ EventDeliveryManager::gather_target_data()
   // detect all remote ranks are done, we are allowed to stop
   // communication.
   unsigned int completed_count;
-  unsigned int max_completed_count = 2 * kernel().vp_manager.get_num_threads();
+  unsigned int half_completed_count = kernel().vp_manager.get_num_threads();
+  unsigned int max_completed_count = 2 * half_completed_count;
 
   const unsigned int send_recv_count_target_data_per_rank = floor( send_buffer_target_data.size() / kernel().mpi_manager.get_num_processes() );
   const unsigned int send_recv_count_target_data_in_int_per_rank = sizeof( TargetData ) / sizeof( unsigned int ) * send_recv_count_target_data_per_rank;
@@ -778,6 +794,11 @@ EventDeliveryManager::gather_target_data()
 #pragma omp atomic
       completed_count += me_completed_tid;
 #pragma omp barrier
+      if ( completed_count == half_completed_count )
+      {
+        set_complete_marker_target_data_( tid, send_recv_count_target_data_per_rank, send_buffer_target_data );
+#pragma omp barrier
+      }
 
       kernel().connection_builder_manager.save_source_table_entry_point( tid );      
 #pragma omp single
@@ -855,21 +876,27 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const un
           if ( send_buffer_offset[ target_rank_index ] < num_target_data_per_rank )
           {
             const unsigned int idx = target_rank * num_target_data_per_rank + send_buffer_offset[ target_rank_index ];
-            if ( is_buffer_untouched )
-            {
-              assert( send_buffer_offset[ target_rank_index ] == 0 );
-              send_buffer[ idx ].set_complete_marker();
-            }
-            else
-            {
-              send_buffer[ idx ].set_end_marker();
-            }
+            send_buffer[ idx ].set_end_marker();
           }
         }
         return is_buffer_untouched;
       } // of else
     }
   } // of while(true)
+}
+
+void
+nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid, const unsigned int num_target_data_per_rank, std::vector< TargetData >& send_buffer )
+{
+  const unsigned int num_assigned_ranks_per_thread = kernel().vp_manager.get_num_assigned_ranks_per_thread();
+  const unsigned int rank_start = kernel().vp_manager.get_start_rank_per_thread( tid );
+  const unsigned int rank_end = kernel().vp_manager.get_end_rank_per_thread( tid, rank_start, num_assigned_ranks_per_thread );
+
+  for ( unsigned int target_rank = rank_start; target_rank < rank_end; ++target_rank )
+  {
+    const unsigned int idx = target_rank * num_target_data_per_rank;
+    send_buffer[ idx ].set_complete_marker();
+  }
 }
 
 bool

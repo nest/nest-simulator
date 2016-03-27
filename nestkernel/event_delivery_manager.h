@@ -238,7 +238,11 @@ private:
 
   bool collocate_spike_data_buffers_( const thread tid );
 
+  void set_complete_marker_spike_data_( const thread tid );
+
   bool collocate_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, std::vector< TargetData >& send_buffer );
+
+  void set_complete_marker_target_data_( const thread tid, const unsigned int num_target_data_per_rank, std::vector< TargetData >& send_buffer );
 
   bool distribute_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, const std::vector< TargetData >& recv_buffer );
 

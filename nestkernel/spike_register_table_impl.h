@@ -48,6 +48,7 @@ SpikeRegisterTable::get_next_spike_data( const thread tid, index& rank, SpikeDat
 {
   while ( true )
   {
+    assert( current_tid_[ tid ] <= spike_register_.size() );
     if ( current_tid_[ tid ] == spike_register_.size() )
     {
       return false;

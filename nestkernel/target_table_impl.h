@@ -41,15 +41,15 @@ TargetTable::add_target( thread tid, const TargetData& target_data )
 }
 
 inline bool
-TargetTable::get_next_spike_data( const thread tid, const thread current_tid, const index lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end )
+TargetTable::get_next_spike_data( const thread tid, const thread current_tid, const index current_lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end )
 {
   // we stay in this loop either until we can return a valid SpikeData
   // object or we have reached the end of the target vector for this
   // node
   while ( true )
   {
-    assert( current_target_index_[ tid ] <= (*targets_[ current_tid ])[ lid ].size() );
-    if ( current_target_index_[ tid ] == (*targets_[ current_tid ])[ lid ].size() )
+    assert( current_target_index_[ tid ] <= (*targets_[ current_tid ])[ current_lid ].size() );
+    if ( current_target_index_[ tid ] == (*targets_[ current_tid ])[ current_lid ].size() )
     {
       // reached the end of the target vector for this node, so we
       // reset the current_target_index and return false.
@@ -59,12 +59,12 @@ TargetTable::get_next_spike_data( const thread tid, const thread current_tid, co
     else
     {
       // the current position contains an entry, so we retrieve it
-      Target& current_target = (*targets_[ current_tid ])[ lid ][ current_target_index_[ tid ] ];
+      Target& current_target = (*targets_[ current_tid ])[ current_lid ][ current_target_index_[ tid ] ];
       // we determine whether this thread is responsible for this part
       // of the MPI buffer; if not, we continue with the loop
       if ( rank_start <= current_target.rank && current_target.rank < rank_end )
       {
-        if ( current_target.processed == (*target_processed_flag_[ current_tid ])[ lid ] )
+        if ( current_target.processed == (*target_processed_flag_[ current_tid ])[ current_lid ] )
         {
           // looks like we've processed this already, let's
           // continue
@@ -75,7 +75,7 @@ TargetTable::get_next_spike_data( const thread tid, const thread current_tid, co
         {
           // we have found a valid entry, so mark it as processed and
           // set appropiate values for rank and next_spike_data
-          current_target.processed = (*target_processed_flag_[ current_tid ])[ lid ];
+          current_target.processed = (*target_processed_flag_[ current_tid ])[ current_lid ];
           rank = current_target.rank;
           next_spike_data.tid = current_target.tid;
           next_spike_data.syn_index = current_target.syn_index;
@@ -84,7 +84,7 @@ TargetTable::get_next_spike_data( const thread tid, const thread current_tid, co
           return true;
         }
       }
-      else
+      else // we are not responsible for this rank
       {
         ++current_target_index_[ tid ];
         continue;

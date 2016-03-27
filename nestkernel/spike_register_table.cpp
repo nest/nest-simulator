@@ -46,10 +46,10 @@ nest::SpikeRegisterTable::initialize()
   saved_entry_point_.resize( num_threads, false );
   current_tid_.resize( num_threads, 0 );
   current_lag_.resize( num_threads, 0 );
-  current_lid_.resize( num_threads, 0 );
+  current_sid_.resize( num_threads, 0 );
   save_tid_.resize( num_threads, 0 );
   save_lag_.resize( num_threads, 0 );
-  save_lid_.resize( num_threads, 0 );
+  save_sid_.resize( num_threads, 0 );
 
   for( thread tid = 0; tid < num_threads; ++tid)
   {
@@ -68,16 +68,6 @@ nest::SpikeRegisterTable::finalize()
     delete *it;
   }
   spike_register_.clear();
-}
-
-void
-nest::SpikeRegisterTable::clear( const thread tid )
-{
-  for ( std::vector< std::vector< index > >::iterator it = spike_register_[ tid ]->begin();
-        it != spike_register_[ tid ]->end(); ++it )
-  {
-    it->clear();
-  }
 }
 
 void

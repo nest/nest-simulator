@@ -166,17 +166,17 @@ public:
   //! flips the value of the processed entries marker
   void toggle_target_processed_flag( const thread tid, const index lid );
   //! rejects the last spike data and resets current_target_index accordinglyp
-  void reject_last_spike_data( const thread tid, const thread current_tid, const index lid );
+  void reject_last_spike_data( const thread tid, const thread current_tid, const index current_lid );
   // TODO@5g: don't we need save/restore/reset as in communication of source table?
   void reset_current_target_index( const thread );
 };
 
 inline
 void
-TargetTable::reject_last_spike_data( const thread tid, const thread current_tid, const index lid )
+TargetTable::reject_last_spike_data( const thread tid, const thread current_tid, const index current_lid )
 {
   assert( current_target_index_[ tid ] > 0 );
-  ( *targets_[ current_tid ])[ lid ][ current_target_index_[ tid ] - 1 ].processed = not (*target_processed_flag_[ current_tid ])[ lid ];
+  ( *targets_[ current_tid ])[ current_lid ][ current_target_index_[ tid ] - 1 ].processed = not (*target_processed_flag_[ current_tid ])[ current_lid ];
 }
 
 inline void

@@ -56,29 +56,30 @@ SpikeRegisterTable::get_next_spike_data( const thread tid, index& rank, SpikeDat
     {
       if ( current_lag_[ tid ] == spike_register_[ current_tid_[ tid ] ]->size() )
       {
+        assert( current_sid_[ tid ] == 0 );
         current_lag_[ tid ] = 0;
         ++current_tid_[ tid ];
         continue;
       }
       else
       {
-        if ( current_lid_[ tid ] == (*spike_register_[ current_tid_[ tid ] ])[ current_lag_[ tid ] ].size() )
+        if ( current_sid_[ tid ] == (*spike_register_[ current_tid_[ tid ] ])[ current_lag_[ tid ] ].size() )
         {
-          current_lid_[ tid ] = 0;
+          current_sid_[ tid ] = 0;
           ++current_lag_[ tid ];
           continue;
         }
         else
         {
-          const index lid = ( *spike_register_[ current_tid_[ tid ] ] )[ current_lag_[ tid ] ][ current_lid_[ tid ] ];
-          if ( kernel().connection_builder_manager.get_next_spike_data( tid, current_tid_[ tid ], lid, rank, next_spike_data, rank_start, rank_end ) )
+          const index current_lid = ( *spike_register_[ current_tid_[ tid ] ] )[ current_lag_[ tid ] ][ current_sid_[ tid ] ];
+          if ( kernel().connection_builder_manager.get_next_spike_data( tid, current_tid_[ tid ], current_lid, rank, next_spike_data, rank_start, rank_end ) )
           {
             next_spike_data.lag = current_lag_[ tid ];
             return true;
           }
           else
           {
-            ++current_lid_[ tid ];
+            ++current_sid_[ tid ];
           }
         }
       }
@@ -89,8 +90,8 @@ SpikeRegisterTable::get_next_spike_data( const thread tid, index& rank, SpikeDat
 inline void
 SpikeRegisterTable::reject_last_spike_data( const thread tid )
 {
-  index lid = ( *spike_register_[ current_tid_[ tid ] ] )[ current_lag_[ tid ] ][ current_lid_[ tid ] ];
-  kernel().connection_builder_manager.reject_last_spike_data( tid, current_tid_[ tid ], lid );
+  const index current_lid = ( *spike_register_[ current_tid_[ tid ] ] )[ current_lag_[ tid ] ][ current_sid_[ tid ] ];
+  kernel().connection_builder_manager.reject_last_spike_data( tid, current_tid_[ tid ], current_lid );
 }
 
 inline void

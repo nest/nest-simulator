@@ -99,10 +99,10 @@ private:
   std::vector< std::vector< std::vector< index > >* > spike_register_;
   std::vector< unsigned int > current_tid_;
   std::vector< unsigned int > current_lag_;
-  std::vector< unsigned int > current_lid_;
+  std::vector< unsigned int > current_sid_;
   std::vector< unsigned int > save_tid_;
   std::vector< unsigned int > save_lag_;
-  std::vector< unsigned int > save_lid_; // TODO@5g: rename! this is not a lid, but just an index
+  std::vector< unsigned int > save_sid_;
   std::vector< bool > saved_entry_point_;
 
 public:
@@ -128,13 +128,19 @@ SpikeRegisterTable::save_entry_point( const thread tid )
   {
     save_tid_[ tid ] = current_tid_[ tid ];
     save_lag_[ tid ] = current_lag_[ tid ];
-    if ( current_lid_[ tid ] > 0 )
+    // we substract one since this function can be called after
+    // reject_last_spike_data, in which the current_sid_ target was
+    // not added to the spike buffer. if we start one before the
+    // current one, we make sure to pick it up in the next
+    // communication round. we need the else to make sure we do not
+    // run into negative numbers.
+    if ( current_sid_[ tid ] > 0 )
     {
-      save_lid_[ tid ] = current_lid_[ tid ] - 1;
+      save_sid_[ tid ] = current_sid_[ tid ] - 1;
     }
     else
     {
-      save_lid_[ tid ] = 0;
+      save_sid_[ tid ] = 0;
     }
     saved_entry_point_[ tid ] = true;
   }
@@ -145,7 +151,7 @@ SpikeRegisterTable::restore_entry_point( const thread tid )
 {
   current_tid_[ tid ] = save_tid_[ tid ];
   current_lag_[ tid ] = save_lag_[ tid ];
-  current_lid_[ tid ] = save_lid_[ tid ];
+  current_sid_[ tid ] = save_sid_[ tid ];
   saved_entry_point_[ tid ] = false;
 }
 
@@ -154,7 +160,17 @@ SpikeRegisterTable::reset_entry_point( const thread tid )
 {
   save_tid_[ tid ] = 0;
   save_lag_[ tid ] = 0;
-  save_lid_[ tid ] = 0;
+  save_sid_[ tid ] = 0;
+}
+
+inline void
+SpikeRegisterTable::clear( const thread tid )
+{
+  for ( std::vector< std::vector< index > >::iterator it = spike_register_[ tid ]->begin();
+        it != spike_register_[ tid ]->end(); ++it )
+  {
+    it->clear();
+  }
 }
 
 } // namespace nest

@@ -571,7 +571,9 @@ EventDeliveryManager::gather_spike_data( const thread tid )
   bool me_completed_tid;
   bool others_completed_tid;
 
-  while ( true )
+  // can not use while(true) and break in an omp structured block
+  bool done = false;
+  while ( not done )
   {
 #pragma omp single
     {
@@ -618,7 +620,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     sw_deliver.stop();
     if ( completed_count == max_completed_count )
     {
-      break;
+      done = true;
     }
 #pragma omp barrier
   } // of while(true)
@@ -781,12 +783,15 @@ EventDeliveryManager::gather_target_data()
     bool others_completed_tid;
     kernel().connection_builder_manager.prepare_target_table( tid );
     kernel().connection_builder_manager.reset_source_table_entry_point( tid );
-    while ( true )
+
+    // can not use while(true) and break in an omp structured block
+    bool done = false;
+    while ( not done )
     {
 #pragma omp single
       {
         completed_count = 0;
-      }
+      } // of omp single; implicit barrier
       kernel().connection_builder_manager.restore_source_table_entry_point( tid );
 
       me_completed_tid = collocate_target_data_buffers_( tid, send_recv_count_target_data_per_rank, send_buffer_target_data );
@@ -814,7 +819,7 @@ EventDeliveryManager::gather_target_data()
 #pragma omp barrier
       if ( completed_count == max_completed_count )
       {
-        break;
+        done = true;
       }
 #pragma omp barrier
     } // of while(true)

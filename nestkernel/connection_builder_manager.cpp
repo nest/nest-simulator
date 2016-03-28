@@ -97,6 +97,7 @@ nest::ConnectionBuilderManager::initialize()
 #ifdef USE_PMA
 // initialize the memory pools
 #ifdef IS_K
+  const thread n_threads = kernel().vp_manager.get_num_threads();
   assert( n_threads <= MAX_THREAD && "MAX_THREAD is a constant defined in allocator.h" );
 
 #pragma omp parallel

@@ -41,18 +41,16 @@ nest::SourceTable::initialize()
   sources_.resize( num_threads );
   is_cleared_.resize( num_threads, false );
   saved_entry_point_.resize( num_threads, false );
-  current_tid_.resize( num_threads, 0 );
-  current_syn_id_.resize( num_threads, 0 );
-  current_lcid_.resize( num_threads, 0 );
-  save_tid_.resize( num_threads, 0 );
-  save_syn_id_.resize( num_threads, 0 );
-  save_lcid_.resize( num_threads, 0 );
+  current_positions_.resize( num_threads );
+  saved_positions_.resize( num_threads );
 
   for( thread tid = 0; tid < num_threads; ++tid)
   {
     synapse_ids_[ tid ] = new std::map< synindex, synindex >();
     sources_[ tid ] = new std::vector< std::vector< Source > >(
       0, std::vector< Source >( 0, Source() ) );
+    current_positions_[ tid ] = new SourceTablePosition();
+    saved_positions_[ tid ] = new SourceTablePosition();
   }
 }
 
@@ -71,6 +69,16 @@ nest::SourceTable::finalize()
     delete *it;
   }
   sources_.clear();
+  for ( std::vector< SourceTablePosition* >::iterator it = current_positions_.begin(); it != current_positions_.end(); ++it )
+  {
+    delete *it;
+  }
+  current_positions_.clear();
+  for ( std::vector< SourceTablePosition* >::iterator it = saved_positions_.begin(); it != saved_positions_.end(); ++it )
+  {
+    delete *it;
+  }
+  saved_positions_.clear();
 }
 
 // TODO@5g: benchmark with and without reserving memory for synapses

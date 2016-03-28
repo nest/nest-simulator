@@ -43,19 +43,17 @@ nest::SpikeRegisterTable::initialize()
 
   spike_register_.resize( num_threads );
 
+  current_positions_.resize( num_threads );
+  saved_positions_.resize( num_threads );
   saved_entry_point_.resize( num_threads, false );
-  current_tid_.resize( num_threads, 0 );
-  current_lag_.resize( num_threads, 0 );
-  current_sid_.resize( num_threads, 0 );
-  save_tid_.resize( num_threads, 0 );
-  save_lag_.resize( num_threads, 0 );
-  save_sid_.resize( num_threads, 0 );
-
+  
   for( thread tid = 0; tid < num_threads; ++tid)
   {
     spike_register_[ tid ] = new std::vector< std::vector< index > >(
       kernel().connection_builder_manager.get_min_delay(),
       std::vector< index >( 0 ) );
+    current_positions_[ tid ] = new SpikeRegisterPosition();
+    saved_positions_[ tid ] = new SpikeRegisterPosition();
   }
 }
 
@@ -68,6 +66,16 @@ nest::SpikeRegisterTable::finalize()
     delete *it;
   }
   spike_register_.clear();
+  for ( std::vector< SpikeRegisterPosition* >::iterator it = current_positions_.begin(); it != current_positions_.end(); ++it )
+  {
+    delete *it;
+  }
+  current_positions_.clear();
+  for ( std::vector< SpikeRegisterPosition* >::iterator it = saved_positions_.begin(); it != saved_positions_.end(); ++it )
+  {
+    delete *it;
+  }
+  saved_positions_.clear();
 }
 
 void

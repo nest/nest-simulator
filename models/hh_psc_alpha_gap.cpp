@@ -25,20 +25,26 @@
 
 #ifdef HAVE_GSL
 
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include <limits>
-#include "universal_data_logger_impl.h"
-
+// C++ includes:
+#include <cmath> // in case we need isnan() // fabs
+#include <cstdio>
 #include <iomanip>
 #include <iostream>
-#include <cstdio>
-#include <cmath> // in case we need isnan() // fabs
+#include <limits>
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 nest::RecordablesMap< nest::hh_psc_alpha_gap > nest::hh_psc_alpha_gap::recordablesMap_;
 
@@ -105,7 +111,7 @@ hh_psc_alpha_gap_dynamics( double time, const double y[], double f[], void* pnod
 
   const double_t t = time / node.B_.step_;
 
-  switch ( Scheduler::get_prelim_interpolation_order() )
+  switch ( kernel().simulation_manager.get_prelim_interpolation_order() )
   {
   case 0:
     gap = -node.B_.sumj_g_ij_ * V + node.B_.interpolation_coefficients[ node.B_.lag_ ];
@@ -370,12 +376,12 @@ nest::hh_psc_alpha_gap::init_buffers_()
   // and unsigned int Scheduler::min_delay() (number of simulation time steps per min_delay step)
 
   // resize interpolation_coefficients depending on interpolation order
-  const size_t quantity =
-    Scheduler::get_min_delay() * ( Scheduler::get_prelim_interpolation_order() + 1 );
+  const size_t quantity = kernel().connection_builder_manager.get_min_delay()
+    * ( kernel().simulation_manager.get_prelim_interpolation_order() + 1 );
 
   B_.interpolation_coefficients.resize( quantity, 0.0 );
 
-  B_.last_y_values.resize( Scheduler::get_min_delay(), 0.0 );
+  B_.last_y_values.resize( kernel().connection_builder_manager.get_min_delay(), 0.0 );
 
   B_.sumj_g_ij_ = 0.0;
 
@@ -431,16 +437,17 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
   const bool prelim )
 {
 
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   bool done = true;
-  const size_t interpolation_order = Scheduler::get_prelim_interpolation_order();
-  const double_t prelim_tol = Scheduler::get_prelim_tol();
+  const size_t interpolation_order = kernel().simulation_manager.get_prelim_interpolation_order();
+  const double_t prelim_tol = kernel().simulation_manager.get_prelim_tol();
 
   // allocate memory to store the new interpolation coefficients
   // to be sent by gap event
-  const size_t quantity = Scheduler::get_min_delay() * ( interpolation_order + 1 );
+  const size_t quantity =
+    kernel().connection_builder_manager.get_min_delay() * ( interpolation_order + 1 );
   std::vector< double_t > new_coefficients( quantity, 0.0 );
 
   // parameters needed for piecewise interpolation
@@ -511,7 +518,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
         SpikeEvent se;
-        network()->send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
 
       // log state data
@@ -571,13 +578,13 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
       new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] = S_.y_[ State_::V_M ];
 
     B_.last_y_values.clear();
-    B_.last_y_values.resize( Scheduler::get_min_delay(), 0.0 );
+    B_.last_y_values.resize( kernel().connection_builder_manager.get_min_delay(), 0.0 );
   }
 
   // Send gap-event
   GapJunctionEvent ge;
   ge.set_coeffarray( new_coefficients );
-  network()->send_secondary( *this, ge );
+  kernel().event_delivery_manager.send_secondary( *this, ge );
 
   // Reset variables
   B_.sumj_g_ij_ = 0.0;
@@ -593,10 +600,12 @@ nest::hh_psc_alpha_gap::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_exc_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_inh_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() ); // current input, keep negative weight
 }
 
@@ -609,7 +618,8 @@ nest::hh_psc_alpha_gap::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

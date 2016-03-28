@@ -23,8 +23,10 @@
 #ifndef STIMULATING_DEVICE_H
 #define STIMULATING_DEVICE_H
 
+// Includes from nestkernel:
 #include "device.h"
 
+// Includes from sli:
 #include "dictutils.h"
 
 class SpikeEvent;

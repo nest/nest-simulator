@@ -21,6 +21,8 @@
  */
 
 #include "randomgen.h"
+
+// Includes from librandom:
 #include "knuthlfg.h"
 
 const unsigned long librandom::RandomGen::DefaultSeed = 0xd37ca59fUL;

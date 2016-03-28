@@ -24,20 +24,28 @@
 
 #ifdef HAVE_GSL
 
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "arraydatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include "universal_data_logger_impl.h"
-
+// C++ includes:
 #include <cmath>
 #include <limits>
 
+// External includes:
 #include <gsl/gsl_sf_gamma.h>
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 namespace nest
 {
@@ -224,7 +232,8 @@ nest::sinusoidal_gamma_generator::init_buffers_()
   device_.init_buffers();
   B_.logger_.reset();
 
-  std::vector< double >( P_.num_trains_, network()->get_time().get_ms() ).swap( B_.t0_ms_ );
+  std::vector< double >( P_.num_trains_, kernel().simulation_manager.get_time().get_ms() )
+    .swap( B_.t0_ms_ );
   std::vector< double >( P_.num_trains_, 0.0 ).swap( B_.Lambda_t0_ );
   B_.P_prev_ = P_;
 }
@@ -255,9 +264,9 @@ nest::sinusoidal_gamma_generator::calibrate()
   device_.calibrate();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = network()->get_rng( get_thread() );
+  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 
-  const double t_ms = network()->get_time().get_ms();
+  const double t_ms = kernel().simulation_manager.get_time().get_ms();
 
   // if new connections were created during simulation break, resize accordingly
   // this is a no-op if no new connections were created
@@ -288,7 +297,7 @@ nest::sinusoidal_gamma_generator::hazard_( port tgt_idx ) const
 void
 nest::sinusoidal_gamma_generator::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -306,14 +315,14 @@ nest::sinusoidal_gamma_generator::update( Time const& origin, const long_t from,
       if ( P_.individual_spike_trains_ )
       {
         DSSpikeEvent se;
-        network()->send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
       else
       {
         if ( V_.rng_->drand() < hazard_( 0 ) )
         {
           SpikeEvent se;
-          network()->send( *this, se, lag );
+          kernel().event_delivery_manager.send( *this, se, lag );
           B_.t0_ms_[ 0 ] = V_.t_ms_;
           B_.Lambda_t0_[ 0 ] = 0;
         }

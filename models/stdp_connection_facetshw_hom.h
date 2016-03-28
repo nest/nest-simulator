@@ -109,9 +109,12 @@
   SeeAlso: stdp_synapse, synapsedict, tsodyks_synapse, static_synapse
 */
 
-#include "connection.h"
-#include "common_synapse_properties.h"
+// C++ includes:
 #include <cmath>
+
+// Includes from nestkernel:
+#include "common_synapse_properties.h"
+#include "connection.h"
 
 namespace nest
 {

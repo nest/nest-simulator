@@ -22,17 +22,23 @@
 
 #include "iaf_psc_alpha_canon.h"
 
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
-#include "universal_data_logger_impl.h"
 #include "propagator_stability.h"
 
-#include <limits>
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -50,10 +56,8 @@ template <>
 void
 RecordablesMap< iaf_psc_alpha_canon >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_psc_alpha_canon::get_V_m_ );
-  insert_( "y2", &iaf_psc_alpha_canon::get_y2_ );
-  insert_( "y1", &iaf_psc_alpha_canon::get_y1_ );
 }
 }
 
@@ -108,7 +112,7 @@ nest::iaf_psc_alpha_canon::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_psc_alpha_canon::Parameters_::set( const DictionaryDatum& d )
 {
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
+  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -169,8 +173,6 @@ nest::iaf_psc_alpha_canon::State_::get( DictionaryDatum& d, const Parameters_& p
   def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
   def< double >( d, "y1", y1_ );                // y1 state
   def< double >( d, "y2", y2_ );                // y2 state
-  def< double >( d, names::t_spike, Time( Time::step( last_spike_step_ ) ).get_ms() );
-  def< double >( d, names::offset, last_spike_offset_ );
   def< bool >( d, names::is_refractory, is_refractory_ );
 }
 
@@ -204,7 +206,7 @@ nest::iaf_psc_alpha_canon::Buffers_::Buffers_( const Buffers_&, iaf_psc_alpha_ca
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_alpha_canon::iaf_psc_alpha_canon()
-  : Node()
+  : Archiving_Node()
   , P_()
   , S_()
   , B_( *this )
@@ -213,7 +215,7 @@ nest::iaf_psc_alpha_canon::iaf_psc_alpha_canon()
 }
 
 nest::iaf_psc_alpha_canon::iaf_psc_alpha_canon( const iaf_psc_alpha_canon& n )
-  : Node( n )
+  : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -238,6 +240,8 @@ nest::iaf_psc_alpha_canon::init_buffers_()
   B_.events_.clear();
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();
+
+  Archiving_Node::clear_history();
 }
 
 void
@@ -276,7 +280,7 @@ void
 nest::iaf_psc_alpha_canon::update( Time const& origin, const long_t from, const long_t to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < Scheduler::get_min_delay() );
+  assert( static_cast< delay >( from ) < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
@@ -407,7 +411,8 @@ nest::iaf_psc_alpha_canon::handle( SpikeEvent& e )
      in the queue.  The time is computed according to Time Memo, Rule 3.
   */
   const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
-  B_.events_.add_spike( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.events_.add_spike(
+    e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -422,7 +427,8 @@ nest::iaf_psc_alpha_canon::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void
@@ -432,12 +438,6 @@ nest::iaf_psc_alpha_canon::handle( DataLoggingRequest& e )
 }
 
 // auxiliary functions ---------------------------------------------
-
-inline void
-nest::iaf_psc_alpha_canon::set_spiketime( Time const& now )
-{
-  S_.last_spike_step_ = now.get_steps();
-}
 
 void
 nest::iaf_psc_alpha_canon::propagate_( const double_t dt )
@@ -475,18 +475,18 @@ nest::iaf_psc_alpha_canon::emit_spike_( Time const& origin,
   // we know that the potential is subthreshold at t0, super at t0+dt
 
   // compute spike time relative to beginning of step
-  const double_t spike_offset = V_.h_ms_ - ( t0 + thresh_find_( dt ) );
-  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
-  S_.last_spike_offset_ = spike_offset;
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
+  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + thresh_find_( dt ) );
 
   // reset neuron and make it refractory
   S_.y3_ = P_.U_reset_;
   S_.is_refractory_ = true;
 
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
-  se.set_offset( spike_offset );
-  network()->send( *this, se, lag );
+  se.set_offset( S_.last_spike_offset_ );
+  kernel().event_delivery_manager.send( *this, se, lag );
 
   return;
 }
@@ -499,7 +499,7 @@ nest::iaf_psc_alpha_canon::emit_instant_spike_( Time const& origin,
   assert( S_.y3_ >= P_.U_th_ ); // ensure we are superthreshold
 
   // set stamp and offset for spike
-  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
   S_.last_spike_offset_ = spike_offs;
 
   // reset neuron and make it refractory
@@ -507,9 +507,10 @@ nest::iaf_psc_alpha_canon::emit_instant_spike_( Time const& origin,
   S_.is_refractory_ = true;
 
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  network()->send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 
   return;
 }

@@ -23,21 +23,24 @@
 #ifndef AEIF_COND_ALPHA_H
 #define AEIF_COND_ALPHA_H
 
+// Generated includes:
 #include "config.h"
 
 #ifdef HAVE_GSL_1_11
 
-#include "nest.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
-#include "universal_data_logger.h"
-#include "recordables_map.h"
-
+// External includes:
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
+
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
 /* BeginDocumentation
 Name: aeif_cond_alpha -  Conductance based exponential integrate-and-fire neuron model according to

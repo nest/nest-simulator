@@ -21,8 +21,10 @@
  */
 
 #include "tokenarray.h"
-#include "integerdatum.h"
+
+// Includes from sli:
 #include "doubledatum.h"
+#include "integerdatum.h"
 #include "stringdatum.h"
 #include "tokenutils.h"
 

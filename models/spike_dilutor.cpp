@@ -21,12 +21,19 @@
  */
 
 #include "spike_dilutor.h"
-#include "network.h"
-#include "dict.h"
-#include "random_datums.h"
-#include "dictutils.h"
-#include "exceptions.h"
+
+// Includes from librandom:
 #include "gslrandomgen.h"
+#include "random_datums.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -111,7 +118,7 @@ nest::spike_dilutor::calibrate()
 void
 nest::spike_dilutor::update( Time const& T, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -127,7 +134,7 @@ nest::spike_dilutor::update( Time const& T, const long_t from, const long_t to )
       DSSpikeEvent se;
 
       se.set_multiplicity( n_mother_spikes );
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
   }
 }
@@ -145,7 +152,7 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
   // store the number of mother spikes again during the next call of event_hook().
   // reichert
 
-  librandom::RngPtr rng = net_->get_rng( get_thread() );
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
   ulong_t n_mother_spikes = e.get_multiplicity();
   ulong_t n_spikes = 0;
 
@@ -167,6 +174,7 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
 void
 nest::spike_dilutor::handle( SpikeEvent& e )
 {
-  B_.n_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.n_spikes_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     static_cast< double_t >( e.get_multiplicity() ) );
 }

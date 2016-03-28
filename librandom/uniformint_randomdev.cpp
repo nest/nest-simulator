@@ -21,12 +21,17 @@
  */
 
 #include "uniformint_randomdev.h"
-#include "dictutils.h"
-#include "sliexceptions.h"
-#include "compose.hpp"
 
+// C++ includes:
 #include <cmath>
 #include <limits>
+
+// Includes from libnestutil:
+#include "compose.hpp"
+
+// Includes from sli:
+#include "dictutils.h"
+#include "sliexceptions.h"
 
 // by default, init as exponential density with mean 1
 librandom::UniformIntRandomDev::UniformIntRandomDev( RngPtr r_source )
@@ -103,6 +108,8 @@ librandom::UniformIntRandomDev::set_status( const DictionaryDatum& d )
 void
 librandom::UniformIntRandomDev::get_status( DictionaryDatum& d ) const
 {
+  RandomDev::get_status( d );
+
   def< long >( d, "low", nmin_ );
   def< long >( d, "high", nmax_ );
 }

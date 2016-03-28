@@ -21,14 +21,16 @@
  */
 
 #include "correlation_detector.h"
-#include "network.h"
+
+// C++ includes:
+#include <cmath>      // for less
+#include <functional> // for bind2nd
+#include <numeric>
+
+// Includes from sli:
+#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "arraydatum.h"
-
-#include <numeric>
-#include <functional> // for bind2nd
-#include <cmath>      // for less
 
 
 /* ----------------------------------------------------------------

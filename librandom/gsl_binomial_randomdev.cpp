@@ -24,11 +24,18 @@
 
 #ifdef HAVE_GSL
 
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
+#include "compose.hpp"
+
+// Includes from librandom:
+#include "librandom_exceptions.h"
+
+// Includes from sli:
 #include "dictutils.h"
 #include "sliexceptions.h"
-#include "librandom_exceptions.h"
-#include "compose.hpp"
-#include <limits>
 
 librandom::GSL_BinomialRandomDev::GSL_BinomialRandomDev( RngPtr r_s, double p_s, unsigned int n_s )
   : RandomDev( r_s )
@@ -112,6 +119,8 @@ librandom::GSL_BinomialRandomDev::set_status( const DictionaryDatum& d )
 void
 librandom::GSL_BinomialRandomDev::get_status( DictionaryDatum& d ) const
 {
+  RandomDev::get_status( d );
+
   def< double >( d, "p", p_ );
   def< long >( d, "n", n_ );
 }

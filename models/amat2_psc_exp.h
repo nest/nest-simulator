@@ -24,19 +24,17 @@
 #ifndef AMAT2_PSC_EXP_H
 #define AMAT2_PSC_EXP_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
-#include "universal_data_logger.h"
+#include "event.h"
+#include "nest_types.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
 namespace nest
 {
-
-class Network;
-
 /* BeginDocumentation
    Name: amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model with
    exponential PSCs and adaptive threshold.
@@ -194,7 +192,7 @@ private:
     double_t tau_ref_;
 
     /** Resting potential in mV. */
-    double_t U0_;
+    double_t E_L_;
 
     /** External current in pA */
     double_t I_e_;
@@ -221,7 +219,7 @@ private:
 
     /** Resting threshold in mV
         (relative to resting potential).
-        The real resting threshold is (U0_+omega_).
+        The real resting threshold is (E_L_+omega_).
         Called omega in [3]. */
     double_t omega_;
 
@@ -329,12 +327,12 @@ private:
   double_t
   get_V_m_() const
   {
-    return S_.V_m_ + P_.U0_;
+    return S_.V_m_ + P_.E_L_;
   }
   double_t
   get_V_th_() const
   {
-    return P_.U0_ + P_.omega_ + S_.V_th_1_ + S_.V_th_2_ + S_.V_th_v_;
+    return P_.E_L_ + P_.omega_ + S_.V_th_1_ + S_.V_th_2_ + S_.V_th_v_;
   }
   double_t
   get_V_th_v_() const

@@ -23,12 +23,14 @@
 #ifndef MODELSMODULE_H
 #define MODELSMODULE_H
 
+// C++ includes:
+#include <string>
+
+// Includes from sli:
 #include "slimodule.h"
 
 namespace nest
 {
-class Network;
-
 /**
  * Module supplying all models that are included in the NEST release.
  * @todo Should this be a dynamic module?
@@ -36,22 +38,17 @@ class Network;
 class ModelsModule : public SLIModule
 {
 public:
-  ModelsModule( Network& );
+  ModelsModule();
   ~ModelsModule();
 
   /**
    * Initialize module by registering models with the network.
    * @param SLIInterpreter* SLI interpreter
-   * @param nest::Network&  Network with which to register models
    */
   void init( SLIInterpreter* );
 
   const std::string name( void ) const;
   const std::string commandstring( void ) const;
-
-private:
-  //! network where models are to be registered
-  Network& net_;
 };
 
 

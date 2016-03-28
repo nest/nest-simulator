@@ -23,11 +23,16 @@
 #ifndef SUBNET_H
 #define SUBNET_H
 
-#include <vector>
+// C++ includes:
 #include <string>
-#include "node.h"
-#include "dictdatum.h"
+#include <vector>
+
+// Includes from nestkernel:
 #include "multirange.h"
+#include "node.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 /* BeginDocumentation
 
@@ -53,8 +58,6 @@ number_of_children (integertype) -
 
 namespace nest
 {
-
-using std::vector;
 
 class Node;
 
@@ -104,22 +107,22 @@ public:
   /**
    * Return iterator to the first local child node.
    */
-  vector< Node* >::iterator local_begin();
+  std::vector< Node* >::iterator local_begin();
 
   /**
    * Return iterator to the end of the local child-list.
    */
-  vector< Node* >::iterator local_end();
+  std::vector< Node* >::iterator local_end();
 
   /**
    * Return const iterator to the first local child node.
    */
-  vector< Node* >::const_iterator local_begin() const;
+  std::vector< Node* >::const_iterator local_begin() const;
 
   /**
    * Return const iterator to the end of the local child-list.
    */
-  vector< Node* >::const_iterator local_end() const;
+  std::vector< Node* >::const_iterator local_end() const;
 
   /**
    * Return pointer to Node at given LID if it is local.
@@ -199,7 +202,7 @@ protected:
    * vector may be NULL. Note that all code must handle
    * this case gracefully.
    */
-  vector< Node* > nodes_;
+  std::vector< Node* > nodes_;
 
   /**
    * GIDs of global child nodes.
@@ -253,25 +256,25 @@ Subnet::add_remote_node( index gid, index mid )
   return lid;
 }
 
-inline vector< Node* >::iterator
+inline std::vector< Node* >::iterator
 Subnet::local_begin()
 {
   return nodes_.begin();
 }
 
-inline vector< Node* >::iterator
+inline std::vector< Node* >::iterator
 Subnet::local_end()
 {
   return nodes_.end();
 }
 
-inline vector< Node* >::const_iterator
+inline std::vector< Node* >::const_iterator
 Subnet::local_begin() const
 {
   return nodes_.begin();
 }
 
-inline vector< Node* >::const_iterator
+inline std::vector< Node* >::const_iterator
 Subnet::local_end() const
 {
   return nodes_.end();

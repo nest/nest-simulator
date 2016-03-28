@@ -22,16 +22,22 @@
 
 #include "amat2_psc_exp.h"
 
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -64,7 +70,7 @@ nest::amat2_psc_exp::Parameters_::Parameters_()
   : Tau_( 10.0 )     // in ms
   , C_( 200.0 )      // in pF (R=50MOhm)
   , tau_ref_( 2.0 )  // in ms
-  , U0_( -70.0 )     // in mV
+  , E_L_( -70.0 )    // in mV
   , I_e_( 0.0 )      // in pA
   , tau_ex_( 1.0 )   // in ms
   , tau_in_( 3.0 )   // in ms
@@ -74,7 +80,7 @@ nest::amat2_psc_exp::Parameters_::Parameters_()
   , alpha_2_( 0.0 )  // in mV
   , beta_( 0.0 )     // in mV
   , tau_v_( 5.0 )    // in ms
-  , omega_( 5.0 )    // resting threshold relative to U0_ in mV
+  , omega_( 5.0 )    // resting threshold relative to E_L_ in mV
                      // state V_th_ is initialized with the
                      // same value
 {
@@ -100,7 +106,7 @@ nest::amat2_psc_exp::State_::State_()
 void
 nest::amat2_psc_exp::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::E_L, U0_ ); // Resting potential
+  def< double >( d, names::E_L, E_L_ ); // Resting potential
   def< double >( d, names::I_e, I_e_ );
   def< double >( d, names::C_m, C_ );
   def< double >( d, names::tau_m, Tau_ );
@@ -113,16 +119,16 @@ nest::amat2_psc_exp::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::alpha_2, alpha_2_ );
   def< double >( d, names::beta, beta_ );
   def< double >( d, names::tau_v, tau_v_ );
-  def< double >( d, names::omega, omega_ + U0_ );
+  def< double >( d, names::omega, omega_ + E_L_ );
 }
 
 double
 nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
 {
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
-  const double ELold = U0_;
-  updateValue< double >( d, names::E_L, U0_ );
-  const double delta_EL = U0_ - ELold;
+  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  const double ELold = E_L_;
+  updateValue< double >( d, names::E_L, E_L_ );
+  const double delta_EL = E_L_ - ELold;
 
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, C_ );
@@ -138,7 +144,7 @@ nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_v, tau_v_ );
 
   if ( updateValue< double >( d, names::omega, omega_ ) )
-    omega_ -= U0_;
+    omega_ -= E_L_;
   else
     omega_ -= delta_EL;
 
@@ -165,9 +171,9 @@ nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
 void
 nest::amat2_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, V_m_ + p.U0_ ); // Membrane potential
+  def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
   def< double >(
-    d, names::V_th, p.U0_ + p.omega_ + V_th_1_ + V_th_2_ + V_th_v_ ); // Adaptive threshold
+    d, names::V_th, p.E_L_ + p.omega_ + V_th_1_ + V_th_2_ + V_th_v_ ); // Adaptive threshold
   def< double >( d, names::V_th_alpha_1, V_th_1_ );
   def< double >( d, names::V_th_alpha_2, V_th_2_ );
   def< double >( d, names::V_th_v, V_th_v_ );
@@ -177,7 +183,7 @@ void
 nest::amat2_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
-    V_m_ -= p.U0_;
+    V_m_ -= p.E_L_;
   else
     V_m_ -= delta_EL;
 
@@ -352,7 +358,7 @@ nest::amat2_psc_exp::calibrate()
 void
 nest::amat2_psc_exp::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -396,7 +402,7 @@ nest::amat2_psc_exp::update( Time const& origin, const long_t from, const long_t
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
         SpikeEvent se;
-        network()->send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
     else
@@ -417,10 +423,12 @@ nest::amat2_psc_exp::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spikes_ex_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spikes_in_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spikes_in_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 
@@ -433,7 +441,8 @@ nest::amat2_psc_exp::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

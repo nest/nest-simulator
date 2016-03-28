@@ -23,9 +23,12 @@
 #ifndef NTREE_H
 #define NTREE_H
 
-#include <vector>
-#include <utility>
+// C++ includes:
 #include <bitset>
+#include <utility>
+#include <vector>
+
+// Includes from topology:
 #include "position.h"
 
 namespace nest

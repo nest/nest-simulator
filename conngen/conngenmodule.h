@@ -23,28 +23,25 @@
 #ifndef CONNGENMODULE_H
 #define CONNGENMODULE_H
 
-#include "slimodule.h"
-#include "slitype.h"
+// C++ includes:
+#include <string>
 
+// Includes from conngen:
+#include "conngendatum.h"
+
+// Includes from nestkernel:
 #include "modelrange.h"
 
-#include <neurosim/connection_generator.h>
-
-typedef std::vector< ConnectionGenerator::ClosedInterval > RangeSet;
-typedef ConnectionGenerator::ClosedInterval Range;
-
+// Includes from sli:
 #include "dictdatum.h"
+#include "slimodule.h"
 
 namespace nest
 {
-class Network;
-
 class ConnectionGeneratorModule : public SLIModule
 {
 public:
-  static SLIType ConnectionGeneratorType;
-
-  ConnectionGeneratorModule( Network& );
+  ConnectionGeneratorModule();
   ~ConnectionGeneratorModule();
 
   /**
@@ -95,26 +92,7 @@ public:
   {
     void execute( SLIInterpreter* ) const;
   } cgnext_cgfunction;
-
-  static Network& get_network();
-
-private:
-  /**
-   * - @c net must be static, so that the execute() members of the
-   *   SliFunction classes in the module can access the network.
-   */
-  static Network* net_;
 };
-
-inline Network&
-ConnectionGeneratorModule::get_network()
-{
-  assert( net_ != 0 );
-  return *net_;
-}
-
-typedef lockPTRDatum< ConnectionGenerator,
-  &nest::ConnectionGeneratorModule::ConnectionGeneratorType > ConnectionGeneratorDatum;
 
 } // namespace nest
 

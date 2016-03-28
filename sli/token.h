@@ -26,13 +26,19 @@
     token.h defines the base objects used by the SLI interpreter.
 */
 
-#include <typeinfo>
-#include <iostream>
+// C++ includes:
 #include <iomanip>
+#include <iostream>
 #include <string>
+#include <typeinfo>
 #include <vector>
+
+// Generated includes:
 #include "config.h"
+
+// Includes from sli:
 #include "datum.h"
+
 class Name;
 class Token;
 class TokenArray;

@@ -28,10 +28,16 @@
  */
 
 #include "growth_curve.h"
+
+// C++ includes:
+#include <cmath>
+
+// Includes from nestkernel:
+#include "nest_names.h"
+#include "nest_time.h"
+
+// Includes from sli:
 #include "dictutils.h"
-#include "exceptions.h"
-#include "archiving_node.h"
-#include "network.h"
 
 /* ----------------------------------------------------------------
  * GrowthCurveLinear

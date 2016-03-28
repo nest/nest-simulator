@@ -23,17 +23,16 @@
 #ifndef IAF_NEURON_H
 #define IAF_NEURON_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
 {
-class Network;
-
 /* BeginDocumentation
 Name: iaf_neuron - Leaky integrate-and-fire neuron model.
 
@@ -97,9 +96,8 @@ tau_syn    double - Rise time of the excitatory synaptic alpha function in ms.
 I_e        double - Constant external input current in pA.
 
 Remarks:
-If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-will numerically behave as if tau_m is equal to tau_syn_ex or
-tau_syn_in, respectively, to avoid numerical instabilities.
+If tau_m is very close to tau_syn, the model will numerically behave as if
+tau_m is equal to tau_syn to avoid numerical instabilities.
 For details, please see IAF_Neruons_Singularity.ipynb in
 the NEST source code (docs/model_details).
 
@@ -183,14 +181,14 @@ private:
     double_t TauR_;
 
     /** Resting potential in mV. */
-    double_t U0_;
+    double_t E_L_;
 
     /** Reset value of the membrane potential, in mV.
-        @note Value is relative to resting potential U0_. */
+        @note Value is relative to resting potential E_L_. */
     double_t V_reset_;
 
     /** Threshold in mV.
-        @note Value is relative to resting potential U0_. */
+        @note Value is relative to resting potential E_L_. */
     double_t Theta_;
 
     /** External current in pA */
@@ -279,7 +277,7 @@ private:
   double_t
   get_V_m_() const
   {
-    return S_.y3_ + P_.U0_;
+    return S_.y3_ + P_.E_L_;
   }
 
   // ----------------------------------------------------------------

@@ -23,12 +23,20 @@
 #ifndef CONNECTOR_MODEL_H
 #define CONNECTOR_MODEL_H
 
-#include "nest_time.h"
-#include "dictutils.h"
-#include "nest.h"
-#include "event.h"
-#include "numerics.h"
+// C++ includes:
 #include <cmath>
+#include <string>
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "event.h"
+#include "nest_time.h"
+#include "nest_types.h"
+
+// Includes from sli:
+#include "dictutils.h"
 
 namespace nest
 {
@@ -37,7 +45,16 @@ class CommonSynapseProperties;
 class TimeConverter;
 class Node;
 
-
+/**
+ * This function sets the two lowest bits of the pointer depending on the existing connections.
+ *
+ * - If *p contains primary connections the lowest bit is set to 1
+ * - If *p contains secondary connections the second lowest bit is set to 1
+ *
+ * This implementation relies on the assumption that the two lowest bits of the pointer are 0.
+ * This can be assumed with some certainty (see github issue #186 for a discussion).
+ * The assumption is secured by an assert in the allocate()-function.
+ */
 inline ConnectorBase*
 pack_pointer( ConnectorBase* p, bool has_primary, bool has_secondary )
 {
@@ -45,6 +62,10 @@ pack_pointer( ConnectorBase* p, bool has_primary, bool has_secondary )
     reinterpret_cast< unsigned long >( p ) | has_primary | ( has_secondary << 1 ) );
 }
 
+/**
+ * This function removes the setting of the two lowest bits done in the pack_pointer()-function.
+ * The returned pointer can again be used as a valid pointer.
+ */
 inline ConnectorBase*
 validate_pointer( ConnectorBase* p )
 {
@@ -56,16 +77,14 @@ validate_pointer( ConnectorBase* p )
 inline bool
 has_primary( ConnectorBase* p )
 {
-  // the lowest bit is set, if there is at least one primary
-  // connection
+  // the lowest bit is set, if there is at least one primary connection
   return static_cast< bool >( reinterpret_cast< unsigned long >( p ) & 1 );
 }
 
 inline bool
 has_secondary( ConnectorBase* p )
 {
-  // the second lowest bit is set, if there is at least one secondary
-  // connection
+  // the second lowest bit is set, if there is at least one secondary connection
   return static_cast< bool >( reinterpret_cast< unsigned long >( p ) & 2 );
 }
 
@@ -74,26 +93,11 @@ class ConnectorModel
 {
 
 public:
-  ConnectorModel( Network& net, const std::string, bool is_primary, bool has_delay );
+  ConnectorModel( const std::string, bool is_primary, bool has_delay );
   ConnectorModel( const ConnectorModel&, const std::string );
   virtual ~ConnectorModel()
   {
   }
-
-  size_t get_num_connections() const;
-
-  const Time&
-  get_min_delay() const
-  {
-    return min_delay_;
-  }
-  const Time&
-  get_max_delay() const
-  {
-    return max_delay_;
-  }
-
-  void update_delay_extrema( const double_t mindelay_cand, const double_t maxdelay_cand );
 
   /**
    * NAN is a special value in cmath, which describes double values that
@@ -106,6 +110,7 @@ public:
     synindex syn_id,
     double_t delay = numerics::nan,
     double_t weight = numerics::nan ) = 0;
+
   virtual ConnectorBase* add_connection( Node& src,
     Node& tgt,
     ConnectorBase* conn,
@@ -141,40 +146,10 @@ public:
 
   virtual std::vector< SecondaryEvent* > create_event( size_t n ) const = 0;
 
-  /**
-   * Raise exception if delay value in milliseconds is invalid.
-   *
-   * @note Not const, since it may update delay extrema as a side-effect.
-   */
-  void assert_valid_delay_ms( double_t );
-
-  /**
-   * Raise exception if either of the two delays in steps is invalid.
-   *
-   * @note Setting continuous delays requires testing d and d+1. This function
-   *       implements this more efficiently than two calls to assert_valid_delay().
-   * @note This test accepts the delays in steps, as this makes more sense when
-   *       working with continuous delays.
-   * @note Not const, since it may update delay extrema as a side-effect.
-   */
-  void assert_two_valid_delays_steps( long_t, long_t );
-
   std::string
   get_name() const
   {
     return name_;
-  }
-
-  bool
-  get_user_set_delay_extrema() const
-  {
-    return user_set_delay_extrema_;
-  }
-
-  Network&
-  network() const
-  {
-    return net_;
   }
 
   bool
@@ -190,14 +165,8 @@ public:
   }
 
 protected:
-  Network& net_;                   //!< The Network instance.
-  Time min_delay_;                 //!< Minimal delay of all created synapses.
-  Time max_delay_;                 //!< Maximal delay of all created synapses.
-  size_t num_connections_;         //!< The number of connections registered with this type
-  bool default_delay_needs_check_; //!< Flag indicating, that the default delay must be checked
-  bool user_set_delay_extrema_;    //!< Flag indicating if the user set the delay extrema.
-  bool used_default_delay_;
   std::string name_;
+  bool default_delay_needs_check_; //!< Flag indicating, that the default delay must be checked
   bool is_primary_; //!< indicates, whether this ConnectorModel belongs to a primary connection
   bool has_delay_;  //!< indicates, that ConnectorModel has a delay
 
@@ -216,8 +185,8 @@ private:
   rport receptor_type_;
 
 public:
-  GenericConnectorModel( Network& net, const std::string name, bool is_primary, bool has_delay )
-    : ConnectorModel( net, name, is_primary, has_delay )
+  GenericConnectorModel( const std::string name, bool is_primary, bool has_delay )
+    : ConnectorModel( name, is_primary, has_delay )
     , receptor_type_( 0 )
   {
   }
@@ -297,13 +266,6 @@ private:
 
 }; // GenericConnectorModel
 
-inline size_t
-ConnectorModel::get_num_connections() const
-{
-  return num_connections_;
-}
-
-
 template < typename ConnectionT >
 class GenericSecondaryConnectorModel : public GenericConnectorModel< ConnectionT >
 {
@@ -312,8 +274,8 @@ private:
     pev_; //!< used to create secondary events that belong to secondary connections
 
 public:
-  GenericSecondaryConnectorModel( Network& net, const std::string name, bool has_delay )
-    : GenericConnectorModel< ConnectionT >( net, name, /*is _primary=*/false, has_delay )
+  GenericSecondaryConnectorModel( const std::string name, bool has_delay )
+    : GenericConnectorModel< ConnectionT >( name, /*is _primary=*/false, has_delay )
     , pev_( 0 )
   {
     pev_ = new typename ConnectionT::EventType();

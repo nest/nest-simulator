@@ -37,6 +37,10 @@
 #include "../models/volume_transmitter.h"
 #include <cmath>
 
+// !!!!!!Depricated!!!!!!
+// Do not use anymore! Will be removed!
+#error Do not use connection_manager.h in any place in your nest code!
+
 namespace nest
 {
 class ConnectorBase;
@@ -49,7 +53,7 @@ class Network;
  */
 class ConnectionManager
 {
-
+protected:
   typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons having targets
   typedef std::vector< tSConnector > tVSConnector;           // for all threads
 
@@ -62,7 +66,7 @@ public:
 
   /**
    * Register a synapse type. This is called by Network::register_synapse_prototype.
-   * Returns an id for the prototype.
+   * Returns an id, which is needed to unregister the prototype later.
    */
   synindex register_synapse_prototype( ConnectorModel* cf );
 
@@ -75,6 +79,7 @@ public:
    * Add ConnectionManager specific stuff to the root status dictionary
    */
   void get_status( DictionaryDatum& d ) const;
+  void set_status( const DictionaryDatum& d );
 
   // aka SetDefaults for synapse models
   void set_prototype_status( synindex syn_id, const DictionaryDatum& d );
@@ -153,7 +158,7 @@ public:
     double_t d = numerics::nan,
     double_t w = numerics::nan );
 
-
+  void disconnect( Node& target, index sgid, thread target_thread, index syn_id );
   /**
    * Experimental bulk connector. See documentation in network.h
    */
@@ -190,12 +195,12 @@ public:
    */
   void assert_valid_syn_id( synindex syn_id, thread t = 0 ) const;
 
-private:
+protected:
   std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
   std::vector< std::vector< ConnectorModel* > > prototypes_; //!< The list of available synapse
-                                                             //!< prototypes: first dimension one
-                                                             //!< entry per thread, second dimension
-                                                             //!< for each synapse type
+  // prototypes: first dimenasion one
+  // entry per thread, second dimantion
+  // for each synapse type
 
   Network& net_;            //!< The reference to the network
   Dictionary* synapsedict_; //!< The synapsedict (owned by the network)

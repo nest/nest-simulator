@@ -54,9 +54,11 @@
   SeeAlso: synapsedict, stdp_synapse, tsodyks_synapse, static_synapse
 */
 
-#include "connection.h"
-
+// C++ includes:
 #include <cmath>
+
+// Includes from nestkernel:
+#include "connection.h"
 
 namespace nest
 {

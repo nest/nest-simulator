@@ -20,18 +20,25 @@
  *
  */
 
-#include "exceptions.h"
 #include "iaf_psc_exp_multisynapse.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
-#include "universal_data_logger_impl.h"
 #include "propagator_stability.h"
 
-#include <limits>
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -58,13 +65,14 @@ RecordablesMap< iaf_psc_exp_multisynapse >::create()
  * ---------------------------------------------------------------- */
 
 iaf_psc_exp_multisynapse::Parameters_::Parameters_()
-  : Tau_( 10.0 )            // in ms
-  , C_( 250.0 )             // in pF
-  , t_ref_( 2.0 )           // in ms
-  , U0_( -70.0 )            // in mV
-  , I_e_( 0.0 )             // in pA
-  , V_reset_( -70.0 - U0_ ) // in mV
-  , Theta_( -55.0 - U0_ )   // relative U0_
+  : Tau_( 10.0 )             // in ms
+  , C_( 250.0 )              // in pF
+  , t_ref_( 2.0 )            // in ms
+  , E_L_( -70.0 )            // in mV
+  , I_e_( 0.0 )              // in pA
+  , V_reset_( -70.0 - E_L_ ) // in mV
+  , Theta_( -55.0 - E_L_ )   // relative E_L_
+  , num_of_receptors_( 0 )
   , has_connections_( false )
 {
   tau_syn_.clear();
@@ -85,10 +93,10 @@ iaf_psc_exp_multisynapse::State_::State_()
 void
 iaf_psc_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::E_L, U0_ ); // resting potential
+  def< double >( d, names::E_L, E_L_ ); // resting potential
   def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, Theta_ + U0_ ); // threshold value
-  def< double >( d, names::V_reset, V_reset_ + U0_ );
+  def< double >( d, names::V_th, Theta_ + E_L_ ); // threshold value
+  def< double >( d, names::V_reset, V_reset_ + E_L_ );
   def< double >( d, names::C_m, C_ );
   def< double >( d, names::tau_m, Tau_ );
   def< double >( d, names::t_ref, t_ref_ );
@@ -102,18 +110,18 @@ iaf_psc_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 double
 iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
 {
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
-  const double ELold = U0_;
-  updateValue< double >( d, names::E_L, U0_ );
-  const double delta_EL = U0_ - ELold;
+  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  const double ELold = E_L_;
+  updateValue< double >( d, names::E_L, E_L_ );
+  const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
-    V_reset_ -= U0_;
+    V_reset_ -= E_L_;
   else
     V_reset_ -= delta_EL;
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
-    Theta_ -= U0_;
+    Theta_ -= E_L_;
   else
     Theta_ -= delta_EL;
 
@@ -159,7 +167,7 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
 void
 iaf_psc_exp_multisynapse::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, V_m_ + p.U0_ ); // Membrane potential
+  def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
 }
 
 void
@@ -168,7 +176,7 @@ iaf_psc_exp_multisynapse::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
-    V_m_ -= p.U0_;
+    V_m_ -= p.E_L_;
   else
     V_m_ -= delta_EL;
 }
@@ -267,7 +275,7 @@ nest::iaf_psc_exp_multisynapse::calibrate()
 void
 iaf_psc_exp_multisynapse::update( const Time& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -303,7 +311,7 @@ iaf_psc_exp_multisynapse::update( const Time& origin, const long_t from, const l
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current
@@ -333,7 +341,8 @@ iaf_psc_exp_multisynapse::handle( SpikeEvent& e )
   {
     if ( P_.receptor_types_[ i ] == e.get_rport() )
     {
-      B_.spikes_[ i ].add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+      B_.spikes_[ i ].add_value(
+        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
         e.get_weight() * e.get_multiplicity() );
     }
   }
@@ -348,7 +357,8 @@ iaf_psc_exp_multisynapse::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * I );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
 }
 
 void

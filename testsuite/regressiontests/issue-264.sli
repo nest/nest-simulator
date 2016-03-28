@@ -1,0 +1,93 @@
+/*
+ *  issue-264.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::issue-264 Ensure error is raised on times incommensurate with resolution
+
+Synopsis: (issue-264) run -> NEST exits if test fails
+
+Description:
+This test ensures that NEST raises an error if the requested simulation
+time is not a multiple of the resolution, or if one attempts to set
+start/stop/origin for devices that are not multiples of the resolution.
+
+Author: Hans E Plesser, 2016-03-08
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+
+% Note: To ensure that the resolution 1.0 and test value 1.5 can be
+%       represented exactly in tics, we set tics_per_ms below to the
+%       usual default. This handles the unusual case where NEST is
+%       compiled with a different value. 
+
+% Check incommensurate simulation time
+{
+  ResetKernel
+  0 << /resolution 1.0 /tics_per_ms 1000 >> SetStatus
+  1.5 Simulate
+} fail_or_die
+
+% Check start, stop, origin on defaults
+[ /start /stop /origin ]
+{
+  /item Set
+  
+  % stimulating device
+  {
+    ResetKernel
+    0 << /resolution 1.0 /tics_per_ms 1000 >> SetStatus
+    /spike_generator << item 1.5 >> SetDefaults
+  } fail_or_die
+    
+  % recording device
+  {
+    ResetKernel
+    0 << /resolution 1.0 /tics_per_ms 1000 >> SetStatus
+    /spike_detector << item 1.5 >> SetDefaults
+  } fail_or_die
+} forall
+
+% Check start, stop, origin on device
+[ /start /stop /origin ]
+{
+  /item Set
+  
+  % stimulating device
+  {
+    ResetKernel
+    0 << /resolution 1.0 /tics_per_ms 1000 >> SetStatus
+    /spike_generator Create << item 1.5 >> SetStatus
+  } fail_or_die
+    
+  % recording device
+  {
+    ResetKernel
+    0 << /resolution 1.0 /tics_per_ms 1000 >> SetStatus
+    /spike_detector Create << item 1.5 >> SetStatus
+  } fail_or_die
+} forall

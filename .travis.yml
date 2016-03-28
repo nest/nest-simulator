@@ -43,7 +43,7 @@ before_install:
   - sudo apt-get install -y build-essential autoconf automake libtool libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy python-matplotlib ipython
 
   # Install pip and cython
-  - wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+  - wget https://bootstrap.pypa.io/get-pip.py
   - sudo python get-pip.py
   - sudo pip install -U setuptools
   - pip install --user cython==0.23.4

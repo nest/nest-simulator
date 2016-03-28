@@ -24,16 +24,21 @@
  *  Implementation based on J H Ahrens, U Dieter, ACM TOMS 8:163-179(1982)
  */
 
-#include <cmath>
-#include <algorithm>
-#include <limits>
-#include <climits>
-
-#include "numerics.h"
 #include "poisson_randomdev.h"
+
+// C++ includes:
+#include <algorithm>
+#include <climits>
+#include <cmath>
+#include <limits>
+
+// Includes from libnestutil:
+#include "compose.hpp"
+#include "numerics.h"
+
+// Includes from sli:
 #include "dictutils.h"
 #include "sliexceptions.h"
-#include "compose.hpp"
 
 // Poisson CDF tabulation limit for case mu_ < 10, P(46, 10) ~ eps
 const unsigned librandom::PoissonRandomDev::n_tab_ = 46;
@@ -117,6 +122,8 @@ librandom::PoissonRandomDev::set_status( const DictionaryDatum& d )
 void
 librandom::PoissonRandomDev::get_status( DictionaryDatum& d ) const
 {
+  RandomDev::get_status( d );
+
   def< double >( d, "lambda", mu_ );
 }
 

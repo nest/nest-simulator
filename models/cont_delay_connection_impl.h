@@ -20,12 +20,18 @@
  *
  */
 
-#include "network.h"
-#include "dictdatum.h"
-#include "connector_model.h"
-#include "common_synapse_properties.h"
+#ifndef CONT_DELAY_CONNECTION_IMPL_H
+#define CONT_DELAY_CONNECTION_IMPL_H
+
 #include "cont_delay_connection.h"
+
+// Includes from nestkernel:
+#include "common_synapse_properties.h"
+#include "connector_model.h"
 #include "event.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 
 namespace nest
@@ -80,14 +86,15 @@ ContDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d, 
 
     if ( frac_delay == 0 )
     {
-      cm.assert_valid_delay_ms( delay );
+      kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
       set_delay_steps( Time::delay_ms_to_steps( delay ) );
       delay_offset_ = 0.0;
     }
     else
     {
       const long_t lowerbound = static_cast< long_t >( int_delay );
-      cm.assert_two_valid_delays_steps( lowerbound, lowerbound + 1 );
+      kernel().connection_builder_manager.get_delay_checker().assert_two_valid_delays_steps(
+        lowerbound, lowerbound + 1 );
       set_delay_steps( lowerbound + 1 );
       delay_offset_ = h * ( 1.0 - frac_delay );
     }
@@ -95,3 +102,5 @@ ContDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d, 
 }
 
 } // of namespace nest
+
+#endif // #ifndef CONT_DELAY_CONNECTION_IMPL_H

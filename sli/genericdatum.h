@@ -25,6 +25,8 @@
 /*
     Datum template for generic C/C++ data types
 */
+
+// Includes from sli:
 #include "datum.h"
 
 /***********************************************************/

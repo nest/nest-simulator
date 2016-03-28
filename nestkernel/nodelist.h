@@ -23,6 +23,7 @@
 #ifndef NODELIST_H
 #define NODELIST_H
 
+// Includes from nestkernel:
 #include "node.h"
 #include "subnet.h"
 
@@ -144,8 +145,8 @@ public:
 
 private:
   //! iterator to the current node in subnet
-  vector< Node* >::iterator current_node_;
-  vector< Node* >::iterator list_end_;
+  std::vector< Node* >::iterator current_node_;
+  std::vector< Node* >::iterator list_end_;
 };
 
 
@@ -201,8 +202,8 @@ public:
 
 private:
   //! iterator to the current node in subnet
-  vector< Node* >::iterator current_node_;
-  vector< Node* >::iterator list_end_;
+  std::vector< Node* >::iterator current_node_;
+  std::vector< Node* >::iterator list_end_;
 };
 
 template <>

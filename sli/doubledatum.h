@@ -26,9 +26,10 @@
     class DoubleDatum
 */
 
+// Includes from sli:
 #include "datum.h"
-#include "numericdatum.h"
 #include "interpret.h"
+#include "numericdatum.h"
 
 
 /* These are declarations to specialize the static memory pool BEFORE

@@ -23,13 +23,14 @@
 #ifndef IAF_PSC_ALPHA_H
 #define IAF_PSC_ALPHA_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
-#include "universal_data_logger.h"
+#include "event.h"
+#include "nest_types.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
 /* BeginDocumentation
 Name: iaf_psc_alpha - Leaky integrate-and-fire neuron model.
@@ -125,8 +126,6 @@ SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 
 namespace nest
 {
-class Network;
-
 /**
  * Leaky integrate-and-fire neuron with alpha-shaped PSCs.
  */
@@ -183,7 +182,7 @@ private:
     double_t TauR_;
 
     /** Resting potential in mV. */
-    double_t U0_;
+    double_t E_L_;
 
     /** External current in pA */
     double_t I_e_;
@@ -192,11 +191,11 @@ private:
     double_t V_reset_;
 
     /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
-        I.e. the real threshold is (U0_+Theta_). */
+        I.e. the real threshold is (E_L_+Theta_). */
     double_t Theta_;
 
     /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
-        I.e. the real lower bound is (LowerBound_+U0_). */
+        I.e. the real lower bound is (LowerBound_+E_L_). */
     double_t LowerBound_;
 
     /** Time constant of excitatory synaptic current in ms. */
@@ -295,7 +294,7 @@ private:
   double_t
   get_V_m_() const
   {
-    return S_.y3_ + P_.U0_;
+    return S_.y3_ + P_.E_L_;
   }
 
   double_t

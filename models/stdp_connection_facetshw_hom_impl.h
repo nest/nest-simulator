@@ -20,12 +20,18 @@
  *
  */
 
-#include "network.h"
-#include "dictdatum.h"
-#include "connector_model.h"
-#include "common_synapse_properties.h"
+#ifndef STDP_CONNECTION_FACETSHW_HOM_IMPL_H
+#define STDP_CONNECTION_FACETSHW_HOM_IMPL_H
+
 #include "stdp_connection_facetshw_hom.h"
+
+// Includes from nestkernel:
+#include "common_synapse_properties.h"
+#include "connector_model.h"
 #include "event.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {
@@ -351,3 +357,5 @@ STDPFACETSHWConnectionHom< targetidentifierT >::set_status( const DictionaryDatu
 }
 
 } // of namespace nest
+
+#endif // #ifndef STDP_CONNECTION_FACETSHW_HOM_IMPL_H

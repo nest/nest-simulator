@@ -20,10 +20,16 @@
  *
  */
 
-#include "config.h"
 #include "sliexceptions.h"
-#include "interpret.h"
+
+// C++ includes:
 #include <sstream>
+
+// Generated includes:
+#include "config.h"
+
+// Includes from sli:
+#include "interpret.h"
 
 WrappedThreadException::WrappedThreadException( std::exception& exc )
   : SLIException( exc.what() )

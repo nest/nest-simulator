@@ -21,6 +21,8 @@
  */
 
 #include "integerdatum.h"
+
+// Includes from sli:
 #include "numericdatum_impl.h"
 
 // explicit template instantiation needed

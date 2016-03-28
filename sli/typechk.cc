@@ -58,8 +58,10 @@ Date:      18.11.95
 
 
 #include "typechk.h"
-#include "namedatum.h"
+
+// Includes from sli:
 #include "arraydatum.h"
+#include "namedatum.h"
 #include "sliexceptions.h"
 
 void

@@ -20,19 +20,26 @@
  *
  */
 
-#include "config.h"
+#include "music_event_out_proxy.h"
 
 #ifdef HAVE_MUSIC
 
-#include "music_event_out_proxy.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "arraydatum.h"
-
+// C++ includes:
 #include <numeric>
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+
+// Includes from libnestutil:
+#include "compose.hpp"
+#include "logging.h"
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -132,7 +139,7 @@ nest::music_event_out_proxy::calibrate()
   // only publish the output port once,
   if ( !S_.published_ )
   {
-    MUSIC::Setup* s = nest::Communicator::get_music_setup();
+    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
     if ( s == 0 )
       throw MUSICSimulationHasRun( get_name() );
 
@@ -164,7 +171,7 @@ nest::music_event_out_proxy::calibrate()
 
     std::string msg = String::compose(
       "Mapping MUSIC output port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
-    net_->message( SLIInterpreter::M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
+    LOG( M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
   }
 }
 

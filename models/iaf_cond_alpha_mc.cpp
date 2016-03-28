@@ -25,19 +25,25 @@
 
 #ifdef HAVE_GSL
 
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include "universal_data_logger_impl.h"
-#include <limits>
-
+// C++ includes:
+#include <cstdio>
 #include <iomanip>
 #include <iostream>
-#include <cstdio>
+#include <limits>
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Compartment name list
@@ -515,7 +521,7 @@ void
 nest::iaf_cond_alpha_mc::update( Time const& origin, const long_t from, const long_t to )
 {
 
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -576,7 +582,7 @@ nest::iaf_cond_alpha_mc::update( Time const& origin, const long_t from, const lo
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input currents
@@ -594,7 +600,8 @@ nest::iaf_cond_alpha_mc::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
   assert( 0 <= e.get_rport() && e.get_rport() < 2 * NCOMP );
 
-  B_.spikes_[ e.get_rport() ].add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.spikes_[ e.get_rport() ].add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -606,7 +613,8 @@ nest::iaf_cond_alpha_mc::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( network()->get_slice_origin() ), e.get_weight() * e.get_current() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 void

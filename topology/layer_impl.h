@@ -23,8 +23,12 @@
 #ifndef LAYER_IMPL_H
 #define LAYER_IMPL_H
 
-#include "nest_datums.h"
 #include "layer.h"
+
+// Includes from nestkernel:
+#include "nest_datums.h"
+
+// Includes from topology:
 #include "grid_layer.h"
 #include "grid_mask.h"
 
@@ -327,22 +331,23 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
 
     source_array[ 0 ] = source_gid;
     def( gcdict, names::source, source_array );
-    ArrayDatum connectome = net_->get_connections( gcdict );
+    ArrayDatum connectome = kernel().connection_builder_manager.get_connections( gcdict );
 
     // Print information about all local connections for current source
     for ( size_t i = 0; i < connectome.size(); ++i )
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( connectome.get( i ) );
-      DictionaryDatum result_dict = net_->get_synapse_status( con_id.get_source_gid(),
-        con_id.get_synapse_model_id(),
-        con_id.get_port(),
-        con_id.get_target_thread() );
+      DictionaryDatum result_dict =
+        kernel().connection_builder_manager.get_synapse_status( con_id.get_source_gid(),
+          con_id.get_synapse_model_id(),
+          con_id.get_port(),
+          con_id.get_target_thread() );
 
       long_t target_gid = getValue< long_t >( result_dict, names::target );
       double_t weight = getValue< double_t >( result_dict, names::weight );
       double_t delay = getValue< double_t >( result_dict, names::delay );
 
-      Node const* const target = net_->get_node( target_gid );
+      Node const* const target = kernel().node_manager.get_node( target_gid );
       assert( target );
 
       // Print source, target, weight, delay, rports

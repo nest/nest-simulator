@@ -120,3 +120,37 @@ def Install(module_name):
     """
 
     return sr("(%s) Install" % module_name)
+
+@check_stack
+def SetStructuralPlasticityStatus(params):
+    """
+    Set structural plasticity parameters for the network simulation
+    """
+    
+    sps(params)
+    sr('SetStructuralPlasticityStatus')
+
+@check_stack
+def GetStructuralPlasticityStatus(params):
+    """
+    Get the current structural plasticity parameters for the network simulation
+    """
+    
+    sps(params)
+    sr('GetStructuralPlasticityStatus')
+    return spp()
+
+@check_stack
+def EnableStructuralPlasticity():
+    """
+    Enable structural plasticity for the network simulation
+    """
+    
+    sr('EnableStructuralPlasticity')
+
+@check_stack
+def DisableStructuralPlasticity():
+    """
+    Disable structural plasticity for the network simulation
+    """
+    sr('DisableStructuralPlasticity')

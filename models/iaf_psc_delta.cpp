@@ -22,17 +22,25 @@
 
 /* iaf_psc_delta is a neuron where the potential jumps on each spike arrival. */
 
-#include "exceptions.h"
 #include "iaf_psc_delta.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+
 namespace nest
 {
 
@@ -62,9 +70,9 @@ nest::iaf_psc_delta::Parameters_::Parameters_()
   , t_ref_( 2.0 )                                     // ms
   , E_L_( -70.0 )                                     // mV
   , I_e_( 0.0 )                                       // pA
-  , V_th_( -55.0 - E_L_ )                             // mV, rel to U0_
-  , V_min_( -std::numeric_limits< double_t >::max() ) // relative U0_-55.0-U0_
-  , V_reset_( -70.0 - E_L_ )                          // mV, rel to U0_
+  , V_th_( -55.0 - E_L_ )                             // mV, rel to E_L_
+  , V_min_( -std::numeric_limits< double_t >::max() ) // relative E_L_-55.0-E_L_
+  , V_reset_( -70.0 - E_L_ )                          // mV, rel to E_L_
   , with_refr_input_( false )
 {
 }
@@ -98,7 +106,7 @@ nest::iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d )
 {
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
+  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -250,7 +258,7 @@ nest::iaf_psc_delta::calibrate()
 void
 nest::iaf_psc_delta::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   const double_t h = Time::get_resolution().get_ms();
@@ -294,7 +302,7 @@ nest::iaf_psc_delta::update( Time const& origin, const long_t from, const long_t
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current
@@ -314,7 +322,7 @@ nest::iaf_psc_delta::handle( SpikeEvent& e )
   //     explicity, since it depends on delay and offset within
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
-  B_.spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -327,7 +335,8 @@ nest::iaf_psc_delta::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

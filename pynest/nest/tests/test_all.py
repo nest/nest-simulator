@@ -44,8 +44,9 @@ from . import test_networks
 from . import test_threads
 from . import test_csa
 from . import test_quantal_stp_synapse
-from . import test_msp
+from . import test_sp
 from . import test_parrot_neuron
+from . import test_stdp_triplet_synapse
 
 
 def suite():
@@ -72,8 +73,9 @@ def suite():
     suite.addTest(test_threads.suite())    
     suite.addTest(test_csa.suite())
     suite.addTest(test_quantal_stp_synapse.suite())
-    suite.addTest(test_msp.suite())
+    suite.addTest(test_sp.suite())
     suite.addTest(test_parrot_neuron.suite())
+    suite.addTest(test_stdp_triplet_synapse.suite())    
 
     return suite
 

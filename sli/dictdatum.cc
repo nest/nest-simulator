@@ -21,6 +21,8 @@
  */
 
 #include "dictdatum.h"
+
+// Includes from sli:
 #include "lockptrdatum_impl.h"
 
 // explicit template instantiation needed

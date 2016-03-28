@@ -23,13 +23,18 @@
 #ifndef FREE_LAYER_H
 #define FREE_LAYER_H
 
+// C++ includes:
+#include <algorithm>
 #include <limits>
 #include <sstream>
-#include <algorithm>
-#include "layer.h"
-#include "topology_names.h"
+
+// Includes from sli:
 #include "dictutils.h"
+
+// Includes from topology:
+#include "layer.h"
 #include "ntree_impl.h"
+#include "topology_names.h"
 
 namespace nest
 {
@@ -119,7 +124,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     const index nodes_per_depth = this->global_size() / this->depth_;
     const index first_lid = this->nodes_[ 0 ]->get_lid();
 
-    for ( vector< Node* >::iterator i = this->local_begin(); i != this->local_end(); ++i )
+    for ( std::vector< Node* >::iterator i = this->local_begin(); i != this->local_end(); ++i )
     {
 
       // Nodes are grouped by depth. When lid % nodes_per_depth ==
@@ -214,7 +219,7 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
   // This array will be filled with GID,pos_x,pos_y[,pos_z] for global nodes:
   std::vector< double_t > global_gid_pos;
   std::vector< int > displacements;
-  Communicator::communicate( local_gid_pos, global_gid_pos, displacements );
+  kernel().mpi_manager.communicate( local_gid_pos, global_gid_pos, displacements );
 
   // To avoid copying the vector one extra time in order to sort, we
   // sneakishly use reinterpret_cast

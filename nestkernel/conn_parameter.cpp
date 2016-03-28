@@ -21,12 +21,18 @@
  */
 
 #include "conn_parameter.h"
+
+// Includes from librandom:
+#include "random_datums.h"
+#include "random_numbers.h"
+
+// Includes from nestkernel:
+#include "nest_names.h"
+
+// Includes from sli:
 #include "arraydatum.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
-#include "random_numbers.h"
-#include "random_datums.h"
-#include "nest_names.h"
 #include "tokenutils.h"
 
 nest::ConnParameter*

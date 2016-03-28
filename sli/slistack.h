@@ -25,8 +25,13 @@
 /*
     Stack manipulation functions
 */
+
+// C++ includes:
 #include <typeinfo>
+
+// Includes from sli:
 #include "interpret.h"
+
 /************************************************
   Stack manipulation functions
   ********************************************/

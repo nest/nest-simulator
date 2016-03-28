@@ -23,16 +23,22 @@
 #ifndef SLISTARTUP_H
 #define SLISTARTUP_H
 
+// C++ includes:
 #include <string>
-#include "sliconfig.h"
-#include "slimodule.h"
-#include "token.h"
-#include "slifunction.h"
-#include "name.h"
-#include "compose.hpp"
 
+// Generated includes:
 #include "dirent.h"
 #include "errno.h"
+#include "sliconfig.h"
+
+// Includes from libnestutil:
+#include "compose.hpp"
+
+// Includes from sli:
+#include "name.h"
+#include "slifunction.h"
+#include "slimodule.h"
+#include "token.h"
 
 class SLIStartup : public SLIModule
 {

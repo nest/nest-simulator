@@ -23,10 +23,14 @@
 #ifndef VOSE_H
 #define VOSE_H
 
+// C++ includes:
 #include <vector>
 
-#include "nest.h"
+// Includes from librandom:
 #include "randomgen.h"
+
+// Includes from nestkernel:
+#include "nest_types.h"
 
 namespace nest
 {

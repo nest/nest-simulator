@@ -23,14 +23,17 @@
 #ifndef CONNECTION_CREATOR_IMPL_H
 #define CONNECTION_CREATOR_IMPL_H
 
-#include <vector>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
-
 #include "connection_creator.h"
+
+// C++ includes:
+#include <vector>
+
+// Includes from librandom:
 #include "binomial_randomdev.h"
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
+#include "nest.h"
 
 namespace nest
 {
@@ -86,7 +89,7 @@ ConnectionCreator::connect_to_target_( Iterator from,
   thread tgt_thread,
   const Layer< D >& source )
 {
-  librandom::RngPtr rng = net_.get_rng( tgt_thread );
+  librandom::RngPtr rng = get_vp_rng( tgt_thread );
 
   const bool without_kernel = not kernel_.valid();
   for ( Iterator iter = from; iter != to; ++iter )
@@ -212,7 +215,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source, Layer< D >& targe
     {
       const thread target_thread = ( *tgt_it )->get_thread();
 
-      if ( target_thread != net_.get_thread_id() )
+      if ( target_thread != kernel().vp_manager.get_thread_id() )
         continue;
 
       if ( target_filter_.select_model()
@@ -279,7 +282,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
 
       index target_id = ( *tgt_it )->get_gid();
       thread target_thread = ( *tgt_it )->get_thread();
-      librandom::RngPtr rng = net_.get_rng( target_thread );
+      librandom::RngPtr rng = get_vp_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it )->get_subnet_index() );
 
       // If there is a kernel, we create connections conditionally,
@@ -301,7 +304,8 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
           {
             double w, d;
             get_parameters_( target.compute_displacement( iter->first, target_pos ), rng, w, d );
-            net_.connect( iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+            kernel().connection_builder_manager.connect(
+              iter->second, *tgt_it, target_thread, synapse_model_, d, w );
           }
         }
       }
@@ -319,7 +323,8 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
             continue;
           double w, d;
           get_parameters_( target.compute_displacement( iter->first, target_pos ), rng, w, d );
-          net_.connect( iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_builder_manager.connect(
+            iter->second, *tgt_it, target_thread, synapse_model_, d, w );
         }
       }
     }
@@ -340,7 +345,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
 
       index target_id = ( *tgt_it )->get_gid();
       thread target_thread = ( *tgt_it )->get_thread();
-      librandom::RngPtr rng = net_.get_rng( target_thread );
+      librandom::RngPtr rng = get_vp_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it )->get_subnet_index() );
 
       // If there is a kernel, we create connections conditionally,
@@ -363,7 +368,8 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
           {
             double w, d;
             get_parameters_( target.compute_displacement( iter->first, target_pos ), rng, w, d );
-            net_.connect( iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+            kernel().connection_builder_manager.connect(
+              iter->second, *tgt_it, target_thread, synapse_model_, d, w );
           }
         }
       }
@@ -380,7 +386,8 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
             continue;
           double w, d;
           get_parameters_( target.compute_displacement( iter->first, target_pos ), rng, w, d );
-          net_.connect( iter->second, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_builder_manager.connect(
+            iter->second, *tgt_it, target_thread, synapse_model_, d, w );
         }
       }
     }
@@ -427,7 +434,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
 
       index target_id = ( *tgt_it )->get_gid();
       thread target_thread = ( *tgt_it )->get_thread();
-      librandom::RngPtr rng = net_.get_rng( target_thread );
+      librandom::RngPtr rng = get_vp_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it )->get_subnet_index() );
 
       // Get (position,GID) pairs for sources inside mask
@@ -493,7 +500,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           double w, d;
           get_parameters_(
             source.compute_displacement( target_pos, positions[ random_id ].first ), rng, w, d );
-          net_.connect( source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_builder_manager.connect(
+            source_id, *tgt_it, target_thread, synapse_model_, d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -528,7 +536,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           double w, d;
           get_parameters_(
             source.compute_displacement( target_pos, positions[ random_id ].first ), rng, w, d );
-          net_.connect( source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_builder_manager.connect(
+            source_id, *tgt_it, target_thread, synapse_model_, d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -552,7 +561,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
 
       index target_id = ( *tgt_it )->get_gid();
       thread target_thread = ( *tgt_it )->get_thread();
-      librandom::RngPtr rng = net_.get_rng( target_thread );
+      librandom::RngPtr rng = get_vp_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it )->get_subnet_index() );
 
       if ( ( positions->size() == 0 ) or ( ( not allow_autapses_ ) and ( positions->size() == 1 )
@@ -611,7 +620,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           Position< D > source_pos = ( *positions )[ random_id ].first;
           double w, d;
           get_parameters_( source.compute_displacement( target_pos, source_pos ), rng, w, d );
-          net_.connect( source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_builder_manager.connect(
+            source_id, *tgt_it, target_thread, synapse_model_, d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -644,7 +654,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           Position< D > source_pos = ( *positions )[ random_id ].first;
           double w, d;
           get_parameters_( source.compute_displacement( target_pos, source_pos ), rng, w, d );
-          net_.connect( source_id, *tgt_it, target_thread, synapse_model_, d, w );
+          kernel().connection_builder_manager.connect(
+            source_id, *tgt_it, target_thread, synapse_model_, d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -692,7 +703,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
         continue;
 
       Position< D > target_displ = target.compute_displacement( source_pos, tgt_it->first );
-      librandom::RngPtr rng = net_.get_grng();
+      librandom::RngPtr rng = get_global_rng();
 
       targets.push_back( tgt_it->second );
       displacements.push_back( target_displ );
@@ -722,7 +733,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
     // Draw `number_of_connections_` targets
     for ( long_t i = 0; i < ( long_t ) number_of_connections_; ++i )
     {
-      index random_id = lottery.get_random_id( net_.get_grng() );
+      index random_id = lottery.get_random_id( get_global_rng() );
       if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
       {
         --i;
@@ -730,10 +741,11 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
       }
       Position< D > target_displ = displacements[ random_id ];
       index target_id = targets[ random_id ];
-      Node* target_ptr = net_.get_node( target_id );
+      Node* target_ptr = kernel().node_manager.get_node( target_id );
       double w, d;
-      get_parameters_( target_displ, net_.get_grng(), w, d );
-      net_.connect( source_id, target_ptr, target_ptr->get_thread(), synapse_model_, d, w );
+      get_parameters_( target_displ, get_global_rng(), w, d );
+      kernel().connection_builder_manager.connect(
+        source_id, target_ptr, target_ptr->get_thread(), synapse_model_, d, w );
       is_selected[ random_id ] = true;
     }
   }

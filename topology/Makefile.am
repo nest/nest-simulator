@@ -39,7 +39,8 @@ libtopologymodule_la_SOURCES= \
 	parameter.h \
 	parameter.cpp \
 	selector.h \
-	selector.cpp
+	selector.cpp \
+	topology.h topology.cpp
 
 nobase_pkgdata_DATA=\
 	sli/topology-interface.sli

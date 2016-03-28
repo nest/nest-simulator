@@ -23,25 +23,27 @@
 #ifndef SINUSOIDAL_GAMMA_GENERATOR_H
 #define SINUSOIDAL_GAMMA_GENERATOR_H
 
+// Generated includes:
 #include "config.h"
 
 #ifdef HAVE_GSL
 
-#include "nest.h"
+// C++ includes:
+#include <vector>
+
+// Includes from librandom:
 #include "randomgen.h"
+
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "stimulating_device.h"
-#include "connection.h"
 #include "universal_data_logger.h"
-
-#include <vector>
 
 namespace nest
 {
-
-class Network;
-
 /* BeginDocumentation
    Name: sinusoidal_gamma_generator - Generates sinusoidally modulated gamma spike trains.
 

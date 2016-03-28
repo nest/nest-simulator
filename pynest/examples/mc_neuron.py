@@ -41,8 +41,7 @@ plotting.
 '''
 
 import nest
-import matplotlib
-import pylab as pl
+import pylab
 
 nest.ResetKernel()
 
@@ -178,22 +177,22 @@ Plot time traces of the membrane potential measured in different compartments.
 V_m.s,V_m.p,V_m.d state for the membrane potential in soma, proximal and distal dendrites.
 '''
 
-pl.figure()
-pl.subplot(211)
-pl.plot(t, rec['V_m.s'], t, rec['V_m.p'], t, rec['V_m.d'])
-pl.legend(('Soma', 'Proximal dendrite', 'Distal dendrite'),loc='lower right')
-pl.axis([0, 1000, -76, -59])
-pl.ylabel('Membrane potential [mV]')
-pl.title('Responses of iaf_cond_alpha_mc neuron')
+pylab.figure()
+pylab.subplot(211)
+pylab.plot(t, rec['V_m.s'], t, rec['V_m.p'], t, rec['V_m.d'])
+pylab.legend(('Soma', 'Proximal dendrite', 'Distal dendrite'),loc='lower right')
+pylab.axis([0, 1000, -76, -59])
+pylab.ylabel('Membrane potential [mV]')
+pylab.title('Responses of iaf_cond_alpha_mc neuron')
 
 '''
 Plot time traces of the synaptic conductance measured in different compartments. 
 '''
 
-pl.subplot(212)
-pl.plot(t, rec['g_ex.s'], 'b-', t, rec['g_ex.p'], 'g-', t, rec['g_ex.d'], 'r-')
-pl.plot(t, rec['g_in.s'], 'b--', t, rec['g_in.p'], 'g--', t, rec['g_in.d'], 'r--')
-pl.legend(('g_ex.s', 'g_ex.p', 'g_in.d','g_in.s', 'g_in.p', 'g_in.d'))
-pl.axis([350, 700, 0, 1.15])
-pl.xlabel('Time [ms]')
-pl.ylabel('Synaptic conductance [nS]')
+pylab.subplot(212)
+pylab.plot(t, rec['g_ex.s'], 'b-', t, rec['g_ex.p'], 'g-', t, rec['g_ex.d'], 'r-')
+pylab.plot(t, rec['g_in.s'], 'b--', t, rec['g_in.p'], 'g--', t, rec['g_in.d'], 'r--')
+pylab.legend(('g_ex.s', 'g_ex.p', 'g_in.d','g_in.s', 'g_in.p', 'g_in.d'))
+pylab.axis([350, 700, 0, 1.15])
+pylab.xlabel('Time [ms]')
+pylab.ylabel('Synaptic conductance [nS]')

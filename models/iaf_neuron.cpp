@@ -20,18 +20,26 @@
  *
  */
 
-#include "exceptions.h"
 #include "iaf_neuron.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
-#include "universal_data_logger_impl.h"
 #include "propagator_stability.h"
 
-#include <limits>
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -57,14 +65,14 @@ RecordablesMap< iaf_neuron >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_neuron::Parameters_::Parameters_()
-  : C_( 250.0 )             // pF
-  , Tau_( 10.0 )            // ms
-  , tau_syn_( 2.0 )         // ms
-  , TauR_( 2.0 )            // ms
-  , U0_( -70.0 )            // mV
-  , V_reset_( -70.0 - U0_ ) // mV, rel to U0_
-  , Theta_( -55.0 - U0_ )   // mV, rel to U0_
-  , I_e_( 0.0 )             // pA
+  : C_( 250.0 )              // pF
+  , Tau_( 10.0 )             // ms
+  , tau_syn_( 2.0 )          // ms
+  , TauR_( 2.0 )             // ms
+  , E_L_( -70.0 )            // mV
+  , V_reset_( -70.0 - E_L_ ) // mV, rel to E_L_
+  , Theta_( -55.0 - E_L_ )   // mV, rel to E_L_
+  , I_e_( 0.0 )              // pA
 {
 }
 
@@ -84,10 +92,10 @@ nest::iaf_neuron::State_::State_()
 void
 nest::iaf_neuron::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::E_L, U0_ ); // Resting potential
+  def< double >( d, names::E_L, E_L_ ); // Resting potential
   def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, Theta_ + U0_ ); // threshold value
-  def< double >( d, names::V_reset, V_reset_ + U0_ );
+  def< double >( d, names::V_th, Theta_ + E_L_ ); // threshold value
+  def< double >( d, names::V_reset, V_reset_ + E_L_ );
   def< double >( d, names::C_m, C_ );
   def< double >( d, names::tau_m, Tau_ );
   def< double >( d, names::tau_syn, tau_syn_ );
@@ -97,20 +105,20 @@ nest::iaf_neuron::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_neuron::Parameters_::set( const DictionaryDatum& d )
 {
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
-  const double ELold = U0_;
-  updateValue< double >( d, names::E_L, U0_ );
-  const double delta_EL = U0_ - ELold;
+  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  const double ELold = E_L_;
+  updateValue< double >( d, names::E_L, E_L_ );
+  const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
-    V_reset_ -= U0_; // here we use the new U0_, no need for adjustments
+    V_reset_ -= E_L_; // here we use the new E_L_, no need for adjustments
   else
-    V_reset_ -= delta_EL; // express relative to new U0_
+    V_reset_ -= delta_EL; // express relative to new E_L_
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
-    Theta_ -= U0_;
+    Theta_ -= E_L_;
   else
-    Theta_ -= delta_EL; // express relative to new U0_
+    Theta_ -= delta_EL; // express relative to new E_L_
 
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, C_ );
@@ -133,14 +141,14 @@ nest::iaf_neuron::Parameters_::set( const DictionaryDatum& d )
 void
 nest::iaf_neuron::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, y3_ + p.U0_ ); // Membrane potential
+  def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
 }
 
 void
 nest::iaf_neuron::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
-    y3_ -= p.U0_;
+    y3_ -= p.E_L_;
   else
     y3_ -= delta_EL;
 }
@@ -250,7 +258,7 @@ nest::iaf_neuron::calibrate()
 void
 nest::iaf_neuron::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -283,7 +291,7 @@ nest::iaf_neuron::update( Time const& origin, const long_t from, const long_t to
       // independent of the computation step size, see [2,3] for details.
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current
@@ -299,7 +307,7 @@ nest::iaf_neuron::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  B_.spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -312,7 +320,8 @@ nest::iaf_neuron::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

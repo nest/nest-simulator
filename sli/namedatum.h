@@ -30,16 +30,18 @@
 */
 
 // Include all headers, needed to use token and datum objects
+
+// C++ includes:
+#include <string>
 #include <typeinfo>
 
-// <string> MUST be included before any STL header, since there are
-// some conflicts between this and the g++-2.7.2 STL version
+// Generated includes:
+#include "config.h"
 
-#include <string>
-#include "name.h"
+// Includes from sli:
 #include "aggregatedatum.h"
 #include "interpret.h"
-#include "config.h"
+#include "name.h"
 
 /* These are declarations to specialize the static memory pool BEFORE
    we instantiate the AggregateDatum. Note, that this is only a declaration,

@@ -21,11 +21,19 @@
  */
 
 #include "model.h"
-#include "exceptions.h"
-#include "dictutils.h"
-#include "nestmodule.h"
-#include "compose.hpp"
+
+// C++ includes:
 #include <algorithm>
+
+// Includes from libnestutil:
+#include "compose.hpp"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dictutils.h"
 
 namespace nest
 {
@@ -40,7 +48,7 @@ Model::Model( const std::string& name )
 void
 Model::set_threads()
 {
-  set_threads_( NestModule::get_num_threads() );
+  set_threads_( kernel().vp_manager.get_num_threads() );
 }
 
 void
@@ -116,7 +124,7 @@ Model::get_status( void )
     tmp[ t ] = memory_[ t ].get_instantiations();
 
   ( *d )[ "instantiations" ] = Token( tmp );
-  ( *d )[ "type_id" ] = LiteralDatum( Node::network()->get_model( type_id_ )->get_name() );
+  ( *d )[ "type_id" ] = LiteralDatum( kernel().model_manager.get_model( type_id_ )->get_name() );
 
   for ( size_t t = 0; t < tmp.size(); ++t )
     tmp[ t ] = memory_[ t ].get_total();

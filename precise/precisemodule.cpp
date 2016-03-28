@@ -32,20 +32,27 @@
     First Version: June 2006
 */
 
-#include "config.h"
 #include "precisemodule.h"
-#include "network.h"
-#include "model.h"
-#include "genericmodel.h"
+
+// C++ includes:
 #include <string>
 
-// Node headers
-#include "iaf_psc_delta_canon.h"
+// Generated includes:
+#include "config.h"
+
+// Includes from nestkernel:
+#include "genericmodel.h"
+#include "kernel_manager.h"
+#include "model.h"
+#include "model_manager_impl.h"
+
+// Includes from precise:
 #include "iaf_psc_alpha_canon.h"
 #include "iaf_psc_alpha_presc.h"
+#include "iaf_psc_delta_canon.h"
 #include "iaf_psc_exp_ps.h"
-#include "poisson_generator_ps.h"
 #include "parrot_neuron_ps.h"
+#include "poisson_generator_ps.h"
 
 namespace nest
 {
@@ -55,8 +62,7 @@ namespace nest
    the following SLI datastructures: Name, Dictionary
 */
 
-PreciseModule::PreciseModule( Network& net )
-  : net_( net )
+PreciseModule::PreciseModule()
 {
 }
 
@@ -82,12 +88,12 @@ void
 PreciseModule::init( SLIInterpreter* )
 {
   // register models
-  register_model< iaf_psc_delta_canon >( net_, "iaf_psc_delta_canon" );
-  register_model< iaf_psc_alpha_canon >( net_, "iaf_psc_alpha_canon" );
-  register_model< iaf_psc_alpha_presc >( net_, "iaf_psc_alpha_presc" );
-  register_model< iaf_psc_exp_ps >( net_, "iaf_psc_exp_ps" );
-  register_model< poisson_generator_ps >( net_, "poisson_generator_ps" );
-  register_model< parrot_neuron_ps >( net_, "parrot_neuron_ps" );
+  kernel().model_manager.register_node_model< iaf_psc_delta_canon >( "iaf_psc_delta_canon" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha_canon >( "iaf_psc_alpha_canon" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha_presc >( "iaf_psc_alpha_presc" );
+  kernel().model_manager.register_node_model< iaf_psc_exp_ps >( "iaf_psc_exp_ps" );
+  kernel().model_manager.register_node_model< poisson_generator_ps >( "poisson_generator_ps" );
+  kernel().model_manager.register_node_model< parrot_neuron_ps >( "parrot_neuron_ps" );
 } // PreciseModule::init()
 
 

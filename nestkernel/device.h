@@ -24,10 +24,13 @@
 #define DEVICE_H
 
 
-#include "nest.h"
-#include "node.h"
-#include "dictdatum.h"
+// Includes from nestkernel:
 #include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {
@@ -175,6 +178,10 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum& ); //!< Set values from dictionary
+
+  private:
+    //! Update given Time parameter including error checking
+    static void update_( const DictionaryDatum&, const Name&, Time& );
   };
 
 

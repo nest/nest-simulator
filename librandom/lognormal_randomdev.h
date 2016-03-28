@@ -23,10 +23,15 @@
 #ifndef LOGNORMAL_RANDOMDEV_H
 #define LOGNORMAL_RANDOMDEV_H
 
+// C++ includes:
 #include <cmath>
-#include "randomgen.h"
-#include "randomdev.h"
+
+// Includes from libnestutil:
 #include "lockptr.h"
+
+// Includes from librandom:
+#include "randomdev.h"
+#include "randomgen.h"
 
 
 namespace librandom

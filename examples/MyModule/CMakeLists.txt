@@ -99,11 +99,8 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-# If no `CMAKE_INSTALL_PREFIX` is given, set the NEST_PREFIX.
-if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
-  # no prefix given?
-  set( CMAKE_INSTALL_PREFIX "${NEST_PREFIX}" CACHE STRING "Install path prefix, prepended onto install directories." FORCE )
-endif ()
+# Use the `NEST_PREFIX` as `CMAKE_INSTALL_PREFIX`.
+set( CMAKE_INSTALL_PREFIX "${NEST_PREFIX}" CACHE STRING "Install path prefix, prepended onto install directories." FORCE )
 
 # Get the CXXFLAGS.
 execute_process(

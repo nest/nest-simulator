@@ -40,7 +40,8 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_;
+nest::RecordablesMap< nest::iaf_psc_alpha >
+  nest::iaf_psc_alpha::recordablesMap_;
 
 namespace nest
 {
@@ -112,7 +113,8 @@ iaf_psc_alpha::Parameters_::get( DictionaryDatum& d ) const
 double
 iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
 {
-  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -164,7 +166,9 @@ iaf_psc_alpha::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-iaf_psc_alpha::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
+iaf_psc_alpha::State_::set( const DictionaryDatum& d,
+  const Parameters_& p,
+  double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
     y3_ -= p.E_L_;
@@ -230,7 +234,8 @@ iaf_psc_alpha::init_buffers_()
 void
 iaf_psc_alpha::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_
+    .init(); // ensures initialization in case mm connected after Simulate
 
   const double h = Time::get_resolution().get_ms();
 
@@ -263,9 +268,11 @@ iaf_psc_alpha::calibrate()
   // should be carried out via objects of class nest::Time. The conversion
   // requires 2 steps:
   //     1. A time object is constructed defining representation of
-  //        TauR in tics. This representation is then converted to computation time
+  //        TauR in tics. This representation is then converted to computation
+  //        time
   //        steps again by a strategy defined by class nest::Time.
-  //     2. The refractory time in units of steps is read out get_steps(), a member
+  //     2. The refractory time in units of steps is read out get_steps(), a
+  //     member
   //        function of class nest::Time.
   //
   // The definition of the refractory period of the iaf_psc_alpha is consistent
@@ -273,11 +280,13 @@ iaf_psc_alpha::calibrate()
   //
   // Choosing a TauR that is not an integer multiple of the computation time
   // step h will lead to accurate (up to the resolution h) and self-consistent
-  // results. However, a neuron model capable of operating with real valued spike
+  // results. However, a neuron model capable of operating with real valued
+  // spike
   // time may exhibit a different effective refractory time.
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.TauR_ ) ).get_steps();
-  assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  assert( V_.RefractoryCounts_
+    >= 0 ); // since t_ref_ >= 0, this can only fail in error
 }
 
 /* ----------------------------------------------------------------
@@ -287,7 +296,8 @@ iaf_psc_alpha::calibrate()
 void
 iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0
+    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -295,8 +305,9 @@ iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
     if ( S_.r_ == 0 )
     {
       // neuron not refractory
-      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ex_ * S_.y1_ex_ + V_.P32_ex_ * S_.y2_ex_
-        + V_.P31_in_ * S_.y1_in_ + V_.P32_in_ * S_.y2_in_ + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
+      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ex_ * S_.y1_ex_
+        + V_.P32_ex_ * S_.y2_ex_ + V_.P31_in_ * S_.y1_in_
+        + V_.P32_in_ * S_.y2_in_ + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
 
       // lower bound of membrane potential
       S_.y3_ = ( S_.y3_ < P_.LowerBound_ ? P_.LowerBound_ : S_.y3_ );
@@ -328,7 +339,8 @@ iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
       S_.r_ = V_.RefractoryCounts_;
       S_.y3_ = P_.V_reset_;
       // A supra-threshold membrane potential should never be observable.
-      // The reset at the time of threshold crossing enables accurate integration
+      // The reset at the time of threshold crossing enables accurate
+      // integration
       // independent of the computation step size, see [2,3] for details.
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
@@ -352,11 +364,13 @@ iaf_psc_alpha::handle( SpikeEvent& e )
   const double_t s = e.get_weight() * e.get_multiplicity();
 
   if ( e.get_weight() > 0.0 )
-    B_.ex_spikes_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
+    B_.ex_spikes_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
+      s );
   else
-    B_.in_spikes_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
+    B_.in_spikes_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
+      s );
 }
 
 void
@@ -368,7 +382,8 @@ iaf_psc_alpha::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * I );
 }
 
 void

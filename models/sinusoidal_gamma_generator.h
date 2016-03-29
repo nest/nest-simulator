@@ -45,10 +45,12 @@
 namespace nest
 {
 /* BeginDocumentation
-   Name: sinusoidal_gamma_generator - Generates sinusoidally modulated gamma spike trains.
+   Name: sinusoidal_gamma_generator - Generates sinusoidally modulated gamma
+   spike trains.
 
    Description:
-   sinusoidal_gamma_generator generates sinusoidally modulated gamma spike trains. By default,
+   sinusoidal_gamma_generator generates sinusoidally modulated gamma spike
+   trains. By default,
    each target of the generator will receive a different spike train.
 
    The instantaneous rate of the process is given by
@@ -59,7 +61,8 @@ namespace nest
    The following parameters can be set in the status dictionary:
 
    rate       double - Mean firing rate in spikes/second, default: 0 s^-1
-   amplitude  double - Firing rate modulation amplitude in spikes/second, default: 0 s^-1
+   amplitude  double - Firing rate modulation amplitude in spikes/second,
+   default: 0 s^-1
    frequency  double - Modulation frequency in Hz, default: 0 Hz
    phase      double - Modulation phase in degree [0-360], default: 0
    order      double - Gamma order (>= 1), default: 1
@@ -75,9 +78,12 @@ namespace nest
      temporal resolutions.
 
    - Individual spike trains vs single spike train:
-     By default, the generator sends a different spike train to each of its targets.
-     If /individual_spike_trains is set to false using either SetDefaults or CopyModel
-     before a generator node is created, the generator will send the same spike train
+     By default, the generator sends a different spike train to each of its
+   targets.
+     If /individual_spike_trains is set to false using either SetDefaults or
+   CopyModel
+     before a generator node is created, the generator will send the same spike
+   train
      to all of its targets.
 
    Receives: DataLoggingRequest
@@ -95,29 +101,37 @@ namespace nest
 /**
  * AC Gamma Generator.
  * Generates AC-modulated inhomogeneous gamma process.
- * @todo The implementation is very quick and dirty and not tuned for performance at all.
+ * @todo The implementation is very quick and dirty and not tuned for
+ *performance at all.
  * @note  The simulator works by calculating the hazard h(t) for each time step
  *  and comparing h(t) dt to a [0,1)-uniform number. The hazard is given by
  * $[
- *     h(t) = \frac{a \lambda(t) \Lambda(t)^{a-1} e^{-\Lambda(t)}}{\Gamma(a, \Lambda(t))}
+ *     h(t) = \frac{a \lambda(t) \Lambda(t)^{a-1} e^{-\Lambda(t)}}{\Gamma(a,
+ *\Lambda(t))}
  * $]
  * with
  * $[  \lambda(t) = dc + ac \sin ( 2 \pi f t + \phi ) $]
  * $[  \Lambda(t) = a \int_{t_0}^t \lambda(s) ds $]
- * and the incomplete Gamma function $\Gamma(a,z)$; $a$ is the order of the gamma function and
+ * and the incomplete Gamma function $\Gamma(a,z)$; $a$ is the order of the
+ *gamma function and
  * $t_0$ the time of the most recent spike.
  *
- * @note This implementation includes an additional $a$ factor in the calculation of $\Lambda(t)$
+ * @note This implementation includes an additional $a$ factor in the
+ *calculation of $\Lambda(t)$
  * and $h(t)$ in order to keep the mean rate constant with varying $a$
  *
- * @note Let $t_0$ be the time of the most recent spike. If stimulus parameters are changed at
+ * @note Let $t_0$ be the time of the most recent spike. If stimulus parameters
+ *are changed at
  *       $t_c > t_0$, then $\Lambda(t)$ is integrated piecewise for $t>t_c$ as
  *       $[ \Lambda(t) = \a_{old} \int_{t_0}^{t_c]} \lambda_{old}(s) ds
  *                      + \a_{new} \int_{t_c}^{t]} \lambda_{new}(s) ds $]
- *       where "old" and "new" indicate old an new parameter values, respectively.
+ *       where "old" and "new" indicate old an new parameter values,
+ *respectively.
  *
- * @todo This implementation assumes that outgoing connections are all made from the same
- *       synapse type, see #737. Once #681 is fixed, we need to add a check that his assumption
+ * @todo This implementation assumes that outgoing connections are all made from
+ *the same
+ *       synapse type, see #737. Once #681 is fixed, we need to add a check that
+ *his assumption
  *       holds.
  */
 class sinusoidal_gamma_generator : public Node
@@ -131,7 +145,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -218,8 +233,9 @@ private:
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const;                     //!< Store current values in dictionary
-    void set( const DictionaryDatum&, const Parameters_& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void set( const DictionaryDatum&,
+      const Parameters_& ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -262,9 +278,10 @@ private:
 
   struct Variables_
   {
-    double_t h_;            //!< time resolution (ms)
-    double_t t_ms_;         //!< current time in ms, for communication with event_hook()
-    long_t t_steps_;        //!< current time in steps, for communication with event_hook()
+    double_t h_;    //!< time resolution (ms)
+    double_t t_ms_; //!< current time in ms, for communication with event_hook()
+    long_t
+      t_steps_; //!< current time in steps, for communication with event_hook()
     librandom::RngPtr rng_; //!< thread-specific random generator
   };
 
@@ -328,7 +345,8 @@ sinusoidal_gamma_generator::send_test_event( Node& target,
 }
 
 inline port
-sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

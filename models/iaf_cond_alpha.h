@@ -43,7 +43,8 @@
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
-Name: iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron model.
+Name: iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron
+model.
 
 Description:
 iaf_cond_alpha is an implementation of a spiking neuron using IAF dynamics with
@@ -170,14 +171,14 @@ private:
   //! Model parameters
   struct Parameters_
   {
-    double_t V_th;     //!< Threshold Potential in mV
-    double_t V_reset;  //!< Reset Potential in mV
-    double_t t_ref;    //!< Refractory period in ms
-    double_t g_L;      //!< Leak Conductance in nS
-    double_t C_m;      //!< Membrane Capacitance in pF
-    double_t E_ex;     //!< Excitatory reversal Potential in mV
-    double_t E_in;     //!< Inhibitory reversal Potential in mV
-    double_t E_L;      //!< Leak reversal Potential (aka resting potential) in mV
+    double_t V_th;    //!< Threshold Potential in mV
+    double_t V_reset; //!< Reset Potential in mV
+    double_t t_ref;   //!< Refractory period in ms
+    double_t g_L;     //!< Leak Conductance in nS
+    double_t C_m;     //!< Membrane Capacitance in pF
+    double_t E_ex;    //!< Excitatory reversal Potential in mV
+    double_t E_in;    //!< Inhibitory reversal Potential in mV
+    double_t E_L;     //!< Leak reversal Potential (aka resting potential) in mV
     double_t tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
     double_t tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
     double_t I_e;      //!< Constant Current in pA
@@ -336,7 +337,10 @@ private:
 // Boilerplate inline function definitions ----------------------------------
 
 inline port
-iaf_cond_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_cond_alpha::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -360,7 +364,8 @@ iaf_cond_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_cond_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_cond_alpha::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

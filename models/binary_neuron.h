@@ -43,7 +43,8 @@ namespace nest
 /**
  * Binary stochastic neuron with linear or sigmoidal gain function.
  *
- * This class is a base class that needs to be instantiated with a gain function.
+ * This class is a base class that needs to be instantiated with a gain
+ *function.
  *
  * @see ginzburg_neuron, mccullogh_pitts_neuron
  */
@@ -57,7 +58,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -103,7 +105,8 @@ private:
    */
   struct Parameters_
   {
-    /** mean inter-update interval in ms (acts like a membrane time constant). */
+    /** mean inter-update interval in ms (acts like a membrane time constant).
+     */
     double_t tau_m_;
 
     Parameters_(); //!< Sets default parameter values
@@ -157,7 +160,7 @@ private:
    */
   struct Variables_
   {
-    librandom::RngPtr rng_;           // random number generator of my own thread
+    librandom::RngPtr rng_; // random number generator of my own thread
     librandom::ExpRandomDev exp_dev_; // random deviate generator
   };
 
@@ -199,7 +202,10 @@ private:
 
 template < class TGainfunction >
 inline port
-binary_neuron< TGainfunction >::send_test_event( Node& target, rport receptor_type, synindex, bool )
+binary_neuron< TGainfunction >::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -209,7 +215,8 @@ binary_neuron< TGainfunction >::send_test_event( Node& target, rport receptor_ty
 
 template < class TGainfunction >
 inline port
-binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&, rport receptor_type )
+binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -218,7 +225,8 @@ binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&, rport receptor_
 
 template < class TGainfunction >
 inline port
-binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&, rport receptor_type )
+binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -227,7 +235,8 @@ binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&, rport recepto
 
 template < class TGainfunction >
 inline port
-binary_neuron< TGainfunction >::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+binary_neuron< TGainfunction >::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

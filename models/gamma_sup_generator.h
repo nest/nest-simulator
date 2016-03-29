@@ -38,7 +38,8 @@
 #include "stimulating_device.h"
 
 /*BeginDocumentation
-Name: gamma_sup_generator - simulate the superimposed spike train of a population of gamma process.
+Name: gamma_sup_generator - simulate the superimposed spike train of a
+population of gamma process.
 Description:
 
   The gamma_sup_generator generator simulates the pooled spike train of a
@@ -47,9 +48,11 @@ Description:
 Parameters:
    The following parameters appear in the element's status dictionary:
 
-   rate         double - mean firing rate of the component processes, default: 0 s^-1
+   rate         double - mean firing rate of the component processes, default: 0
+s^-1
    gamma_shape  long   - shape paramter of component gamma processes, default: 1
-   n_proc       long   - number of superimposed independent component processes, default: 1
+   n_proc       long   - number of superimposed independent component processes,
+default: 1
 
 Remarks:
    The generator has been published in Deger, Helias, Boucsein, Rotter (2011)
@@ -61,7 +64,8 @@ Remarks:
 Author:
    Jan 2011, Moritz Deger
 
-SeeAlso: ppd_sup_generator, poisson_generator_ps, spike_generator, Device, StimulatingDevice
+SeeAlso: ppd_sup_generator, poisson_generator_ps, spike_generator, Device,
+StimulatingDevice
 */
 
 namespace nest
@@ -156,7 +160,7 @@ private:
 
     librandom::BinomialRandomDev bino_dev_;   //!< random deviate generator
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    std::vector< ulong_t > occ_;              //!< occupation numbers of internal states
+    std::vector< ulong_t > occ_; //!< occupation numbers of internal states
 
   public:
     Internal_states_( size_t num_bins,
@@ -180,7 +184,8 @@ private:
 
   struct Variables_
   {
-    double_t transition_prob_; //!< transition probabililty to go to next internal state
+    double_t transition_prob_; //!< transition probabililty to go to next
+    // internal state
 
     /**
      * @name update-hook communication.

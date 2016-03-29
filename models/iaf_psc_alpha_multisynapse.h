@@ -33,7 +33,8 @@
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
-Name: iaf_psc_alpha_multisynapse - Leaky integrate-and-fire neuron model with multiple ports.
+Name: iaf_psc_alpha_multisynapse - Leaky integrate-and-fire neuron model with
+multiple ports.
 
 Description:
 
@@ -50,7 +51,8 @@ Sends: SpikeEvent
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Author:  Schrader, adapted from iaf_psc_alpha
-SeeAlso: iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, iaf_psc_exp_multisynapse
+SeeAlso: iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp,
+iaf_psc_exp_multisynapse
 */
 
 namespace nest
@@ -67,7 +69,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -160,8 +163,10 @@ private:
     double_t y0_; //!< Constant current
     std::vector< double_t > y1_syn_;
     std::vector< double_t > y2_syn_;
-    double_t y3_;      //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-    double_t current_; //! This is the current in a time step. This is only here to allow logging
+    double_t
+      y3_; //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double_t current_; //! This is the current in a time step. This is only here
+    // to allow logging
 
     int_t r_; //!< Number of refractory steps remaining
 
@@ -252,7 +257,10 @@ private:
 };
 
 inline port
-iaf_psc_alpha_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_psc_alpha_multisynapse::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -261,7 +269,8 @@ iaf_psc_alpha_multisynapse::send_test_event( Node& target, rport receptor_type, 
 }
 
 inline port
-iaf_psc_alpha_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
+iaf_psc_alpha_multisynapse::handles_test_event( CurrentEvent&,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -269,7 +278,8 @@ iaf_psc_alpha_multisynapse::handles_test_event( CurrentEvent&, rport receptor_ty
 }
 
 inline port
-iaf_psc_alpha_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_psc_alpha_multisynapse::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

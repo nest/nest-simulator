@@ -56,15 +56,18 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
+extern "C" int
+hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
 
 /* BeginDocumentation
 Name: hh_psc_alpha_gap - Hodgkin Huxley neuron model with gap-junction support.
 
 Description:
 
- hh_psc_alpha_gap is an implementation of a spiking neuron using the Hodkin-Huxley formalism.
- In contrast to hh_psc_alpha the implementation additionally supports gap junctions.
+ hh_psc_alpha_gap is an implementation of a spiking neuron using the
+Hodkin-Huxley formalism.
+ In contrast to hh_psc_alpha the implementation additionally supports gap
+junctions.
 
 
  (1) Post-syaptic currents
@@ -73,8 +76,10 @@ Description:
  weight 1.0 results in a peak current of 1 pA.
 
  (2) Spike Detection
- Spike detection is done by a combined threshold-and-local-maximum search: if there
- is a local maximum above a certain threshold of the membrane potential, it is considered a spike.
+ Spike detection is done by a combined threshold-and-local-maximum search: if
+there
+ is a local maximum above a certain threshold of the membrane potential, it is
+considered a spike.
 
  (3) Gap Junctions
  Gap Junctions are implemented by a gap current of the form g_ij( V_i - V_j).
@@ -144,7 +149,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -215,15 +221,15 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double_t t_ref_;   //!< refractory time in ms
-    double_t g_Na;     //!< Sodium Conductance in nS
-    double_t g_Kv1;    //!< Potassium Conductance in nS
-    double_t g_Kv3;    //!< Potassium Conductance in nS
-    double_t g_L;      //!< Leak Conductance in nS
-    double_t C_m;      //!< Membrane Capacitance in pF
-    double_t E_Na;     //!< Sodium Reversal Potential in mV
-    double_t E_K;      //!< Potassium Reversal Potential in mV
-    double_t E_L;      //!< Leak reversal Potential (aka resting potential) in mV
+    double_t t_ref_; //!< refractory time in ms
+    double_t g_Na;   //!< Sodium Conductance in nS
+    double_t g_Kv1;  //!< Potassium Conductance in nS
+    double_t g_Kv3;  //!< Potassium Conductance in nS
+    double_t g_L;    //!< Leak Conductance in nS
+    double_t C_m;    //!< Membrane Capacitance in pF
+    double_t E_Na;   //!< Sodium Reversal Potential in mV
+    double_t E_K;    //!< Potassium Reversal Potential in mV
+    double_t E_L;    //!< Leak reversal Potential (aka resting potential) in mV
     double_t tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
     double_t tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
     double_t I_e;      //!< Constant Current in pA
@@ -266,8 +272,9 @@ public:
     };
 
 
-    double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
-    int_t r_;                      //!< number of refractory steps remaining
+    double_t
+      y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
+    int_t r_;               //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -285,8 +292,9 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( hh_psc_alpha_gap& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, hh_psc_alpha_gap& ); //!<Sets buffer pointers to 0
+    Buffers_( hh_psc_alpha_gap& ); //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&,
+      hh_psc_alpha_gap& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< hh_psc_alpha_gap > logger_;
@@ -366,13 +374,17 @@ private:
 };
 
 inline void
-hh_psc_alpha_gap::update( Time const& origin, const long_t from, const long_t to )
+hh_psc_alpha_gap::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
   update_( origin, from, to, false );
 }
 
 inline bool
-hh_psc_alpha_gap::prelim_update( Time const& origin, const long_t from, const long_t to )
+hh_psc_alpha_gap::prelim_update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
   bool done = false;
   State_ old_state = S_; // save state before prelim update
@@ -383,7 +395,10 @@ hh_psc_alpha_gap::prelim_update( Time const& origin, const long_t from, const lo
 }
 
 inline port
-hh_psc_alpha_gap::send_test_event( Node& target, rport receptor_type, synindex, bool )
+hh_psc_alpha_gap::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent se;
   se.set_sender( *this );
@@ -408,7 +423,8 @@ hh_psc_alpha_gap::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-hh_psc_alpha_gap::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+hh_psc_alpha_gap::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

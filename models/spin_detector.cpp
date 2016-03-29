@@ -84,7 +84,8 @@ nest::spin_detector::init_buffers_()
 void
 nest::spin_detector::calibrate()
 {
-  if ( !user_set_precise_times_ && kernel().event_delivery_manager.get_off_grid_communication() )
+  if ( !user_set_precise_times_
+    && kernel().event_delivery_manager.get_off_grid_communication() )
   {
     device_.set_precise( true, 15 );
 
@@ -129,9 +130,11 @@ nest::spin_detector::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
+    const SiblingContainer* siblings =
+      kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
+    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
+          ++sibling )
       ( *sibling )->get_status( d );
   }
 }
@@ -157,26 +160,36 @@ nest::spin_detector::handle( SpikeEvent& e )
     assert( e.get_multiplicity() > 0 );
 
     long_t dest_buffer;
-    if ( kernel().modelrange_manager.get_model_of_gid( e.get_sender_gid() )->has_proxies() )
-      dest_buffer = kernel().event_delivery_manager.read_toggle(); // events from central queue
+    if ( kernel()
+           .modelrange_manager.get_model_of_gid( e.get_sender_gid() )
+           ->has_proxies() )
+      dest_buffer =
+        kernel()
+          .event_delivery_manager.read_toggle(); // events from central queue
     else
-      dest_buffer = kernel().event_delivery_manager.write_toggle(); // locally delivered events
+      dest_buffer =
+        kernel()
+          .event_delivery_manager.write_toggle(); // locally delivered events
 
 
     // The following logic implements the decoding
-    // A single spike signals a transition to 0 state, two spikes in same time step
+    // A single spike signals a transition to 0 state, two spikes in same time
+    // step
     // signal the transition to 1 state.
     //
     // Remember the global id of the sender of the last spike being received
-    // this assumes that several spikes being sent by the same neuron in the same time step
-    // are received consecutively or are conveyed by setting the multiplicity accordingly.
+    // this assumes that several spikes being sent by the same neuron in the
+    // same time step
+    // are received consecutively or are conveyed by setting the multiplicity
+    // accordingly.
 
     long_t m = e.get_multiplicity();
     index gid = e.get_sender_gid();
     const Time& t_spike = e.get_stamp();
 
     if ( m == 1 )
-    { // multiplicity == 1, either a single 1->0 event or the first or second of a pair of 0->1
+    { // multiplicity == 1, either a single 1->0 event or the first or second of
+      // a pair of 0->1
       // events
       if ( gid == last_in_gid_ && t_spike == t_last_in_spike_ )
       {

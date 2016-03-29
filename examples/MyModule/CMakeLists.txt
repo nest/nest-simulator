@@ -45,18 +45,15 @@ set( MODULE_SOURCES
 set( MODULE_HEADER ${MODULE_NAME}.h )
 # containing the class description of the class extending the SLIModule
 
-# 4) Leave the rest as is. All files in `sli` will be installed to
-#    `share/nest/sli/`, so that NEST will find the during initialization.
-
-project( ${MODULE_NAME} CXX )
-
-# Your module version
+# 4) Specify your module version
 set( MODULE_VERSION_MAJOR 1 )
 set( MODULE_VERSION_MINOR 0 )
 set( MODULE_VERSION "${MODULE_VERSION_MAJOR}.${MODULE_VERSION_MINOR}" )
 
-# on OS X
-set( CMAKE_MACOSX_RPATH ON )
+# 5) Leave the rest as is. All files in `sli` will be installed to
+#    `share/nest/sli/`, so that NEST will find the during initialization.
+
+# Leave the call to "project(...)" for after the compiler is determined.
 
 # Set the `nest-config` executable to use during configuration.
 set( with-nest OFF CACHE STRING "Specify the `nest-config` executable." )
@@ -77,11 +74,11 @@ endif ()
 # Use `nest-config` to get the compile and installation options used with the
 # NEST installation.
 
-# Get the install prefix.
+# Get the compiler that was used for NEST.
 execute_process(
-    COMMAND ${NEST_CONFIG} --prefix
+    COMMAND ${NEST_CONFIG} --compiler
     RESULT_VARIABLE RES_VAR
-    OUTPUT_VARIABLE NEST_PREFIX
+    OUTPUT_VARIABLE NEST_COMPILER
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 # One check on first execution, if `nest-config` is working.
@@ -89,8 +86,21 @@ if ( NOT RES_VAR EQUAL 0 )
   message( FATAL_ERROR "Cannot run `${NEST_CONFIG}`. Please specify correct `nest-config` via -Dwith-nest=... " )
 endif ()
 
+# Setting the compiler has to happen before the call to "project(...)" function.
+set( CMAKE_CXX_COMPILER "${NEST_COMPILER}" )
+
+project( ${MODULE_NAME} CXX )
+
+# Get the install prefix.
+execute_process(
+    COMMAND ${NEST_CONFIG} --prefix
+    RESULT_VARIABLE RES_VAR
+    OUTPUT_VARIABLE NEST_PREFIX
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
 # If no `CMAKE_INSTALL_PREFIX` is given, set the NEST_PREFIX.
-if ( ${CMAKE_INSTALL_PREFIX} STREQUAL "/usr/local" )
+if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
   # no prefix given?
   set( CMAKE_INSTALL_PREFIX "${NEST_PREFIX}" CACHE STRING "Install path prefix, prepended onto install directories." FORCE )
 endif ()
@@ -125,18 +135,8 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-# Get the compiler that was used for NEST.
-execute_process(
-    COMMAND ${NEST_CONFIG} --compiler
-    RESULT_VARIABLE RES_VAR
-    OUTPUT_VARIABLE NEST_COMPILER
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-# Usually you have to set CMAKE_${lang}_COMPILER before the `project()` call, hence
-# only give a error message explaining how to set the compiler.
-if ( NOT CMAKE_CXX_COMPILER STREQUAL ${NEST_COMPILER} )
-  message( FATAL_ERROR "NEST compiler and CMAKE compiler differ. Please specify with `-DCMAKE_CXX_COMPILER=${NEST_COMPILER}` ." )
-endif ()
+# on OS X
+set( CMAKE_MACOSX_RPATH ON )
 
 # The module install directories in variables.
 set( INSTALL_BIN_DIR bin )

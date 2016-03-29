@@ -107,13 +107,13 @@ def
   /model_params
   <<
     % Set variables for iaf_neuron
-    /E_L     0.0  mV  % Resting membrane potential [mV]
-    /C_m   250.0  pF  % Capacity of the membrane [pF]
-    /tau_m  10.0  ms  % Membrane time constant [ms]
-    /t_ref 0.5  ms  % duration of refractory period [ms]
-    /V_th   20.0  mV  % Threshold [mV]
-    /V_reset 0.0  mV  % Reset Potential [mV]
-    /tau_syn  0.32582722403722841 ms  % time const. postsynaptic excitatory currents [ms]
+    /E_L     0.0  mV  % Resting membrane potential (mV)
+    /C_m   250.0  pF  % Capacity of the membrane (pF)
+    /tau_m  10.0  ms  % Membrane time constant (ms)
+    /t_ref 0.5  ms  % duration of refractory period (ms)
+    /V_th   20.0  mV  % Threshold (mV)
+    /V_reset 0.0  mV  % Reset Potential (mV)
+    /tau_syn  0.32582722403722841 ms  % time const. postsynaptic excitatory currents (ms)
     /tau_minus 30.0 ms %time constant for STDP (depression)
     % V can be randomly initialized see below
     /V_m 5.7 mV % mean value of membrane potential
@@ -124,12 +124,12 @@ def
   /sigma_potential 7.2 mV % in the paper were used for the benchmarks on K, the values given
                           % here were used for the benchmark on JUQUEEN.
 
-  /delay  1.5 ms         % synaptic delay, all connections [ms]
+  /delay  1.5 ms         % synaptic delay, all connections (ms)
 
    % synaptic weight
   /JE 0.14 mV %peak of EPSP
 
-  /sigma_w 3.47 pA      %standard dev. of E->E synapses [pA]
+  /sigma_w 3.47 pA      %standard dev. of E->E synapses (pA)
   /g  -5.0
 
   /stdp_params

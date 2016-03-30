@@ -35,6 +35,7 @@
 #include "connector_base.h"
 #include "target_table_impl.h"
 #include "target_table_devices_impl.h"
+#include "source_table_impl.h"
 
 namespace nest
 {
@@ -79,6 +80,12 @@ inline bool
 ConnectionBuilderManager::get_next_spike_data( const thread tid, const thread current_tid, const index lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end)
 {
   return target_table_.get_next_spike_data( tid, current_tid, lid, rank, next_spike_data, rank_start, rank_end );
+}
+
+inline bool
+ConnectionBuilderManager::get_next_target_data( const thread tid, index& target_rank, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end )
+{
+  return source_table_.get_next_target_data( tid, target_rank, next_target_data, rank_start, rank_end );
 }
 
 } // namespace nest

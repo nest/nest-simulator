@@ -65,6 +65,34 @@ Source::Source( index gid )
 {
 }
 
+struct SourceTablePosition
+{
+  // index for threads
+  unsigned int tid;
+  // index for synapse ids
+  unsigned int syn_id;
+  // index for connections
+  unsigned int lcid;
+  SourceTablePosition();
+  void reset();
+};
+
+inline
+SourceTablePosition::SourceTablePosition()
+  : tid(0)
+  , syn_id(0)
+  , lcid(0)
+{
+}
+
+inline void
+SourceTablePosition::reset()
+{
+  tid = 0;
+  syn_id = 0;
+  lcid = 0;
+}
+
 /** This data structure that stores the global ids of presynaptic
  * neuron during postsynaptic connection creation, before the
  * connection information has been transferred to the presynaptic
@@ -91,12 +119,8 @@ private:
   //! the following six members are needed during the readout of the
   //! sources_ table. every time it is requested we return the next
   //! member of the sources table (see below).
-  std::vector< unsigned int > current_tid_;
-  std::vector< unsigned int > current_syn_id_;
-  std::vector< unsigned int > current_lcid_;
-  std::vector< unsigned int > save_tid_;
-  std::vector< unsigned int > save_syn_id_;
-  std::vector< unsigned int > save_lcid_;
+  std::vector< SourceTablePosition* > current_positions_;
+  std::vector< SourceTablePosition* > saved_positions_;
   //! if we detect an overflow in one of the MPI buffers, we save our
   //! current position in the sources table (see above) and continue
   //! at that point in the next communication round, while filling up
@@ -169,12 +193,12 @@ inline
 void
 nest::SourceTable::reject_last_target_data( const thread tid )
 {
+  SourceTablePosition& current_position = *current_positions_[ tid ];
   // adding the last target data returned by get_next_target_data
   // could not be inserted into MPI buffer due to overflow. we hence
   // need to correct the processed flag of the last entry.
-  assert( current_lcid_[ tid ] > 0 );
-  // --current_lcid_[ tid ];
-  ( *sources_[ current_tid_[ tid ] ] )[ current_syn_id_[ tid ] ][ current_lcid_[ tid ] - 1 ].processed = false;
+  assert( current_position.lcid > 0 );
+  ( *sources_[ current_position.tid ] )[ current_position.syn_id ][ current_position.lcid - 1 ].processed = false;
 }
 
 inline
@@ -183,15 +207,17 @@ nest::SourceTable::save_entry_point( const thread tid )
 {
   if ( not saved_entry_point_[ tid ] )
   {
-    save_tid_[ tid ] = current_tid_[ tid ];
-    save_syn_id_[ tid ] = current_syn_id_[ tid ];
-    if ( current_lcid_[ tid ] > 0 )
+    SourceTablePosition& current_position = *current_positions_[ tid ];
+    SourceTablePosition& saved_position = *saved_positions_[ tid ];
+    saved_position.tid = current_position.tid;
+    saved_position.syn_id = current_position.syn_id;
+    if ( current_position.lcid > 0 )
     {
-      save_lcid_[ tid ] = current_lcid_[ tid ] - 1;
+      saved_position.lcid = current_position.lcid - 1;
     }
     else
     {
-      save_lcid_[ tid ] = 0;
+      saved_position.lcid = 0;
     }
     saved_entry_point_[ tid ] = true;
   }
@@ -201,11 +227,7 @@ inline
 void
 nest::SourceTable::restore_entry_point( const thread tid )
 {
-  current_tid_[ tid ] = save_tid_[ tid ];
-  current_syn_id_[ tid ] = save_syn_id_[ tid ];
-  current_lcid_[ tid ] = save_lcid_[ tid ];
-  // we want to be able to store the positions again at a later point,
-  // hence we need to set saved_entry_point to false
+  *current_positions_[ tid ] = *saved_positions_[ tid ];
   saved_entry_point_[ tid ] = false;
 }
 
@@ -213,9 +235,8 @@ inline
 void
 nest::SourceTable::reset_entry_point( const thread tid )
 {
-  save_tid_[ tid ] = 0;
-  save_syn_id_[ tid ] = 0;
-  save_lcid_[ tid ] = 0;
+  saved_positions_[ tid ]->reset();
+  current_positions_[ tid ]->reset();
 }
 
 inline index

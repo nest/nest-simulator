@@ -340,7 +340,7 @@ public:
 
   bool get_next_spike_data( const thread tid, const thread current_tid, const index lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end);
 
-  void reject_last_spike_data( const thread tid, const thread current_tid, const index lid );
+  void reject_last_spike_data( const thread tid, const thread current_tid, const index current_lid );
 
   void toggle_target_processed_flag( const thread tid, const index lid );
 
@@ -577,21 +577,15 @@ ConnectionBuilderManager::reset_current_index_target_table( const thread tid )
 }
 
 inline void
-ConnectionBuilderManager::reject_last_spike_data( const thread tid, const thread current_tid, const index lid )
+ConnectionBuilderManager::reject_last_spike_data( const thread tid, const thread current_tid, const index current_lid )
 {
-  target_table_.reject_last_spike_data( tid, current_tid, lid );
+  target_table_.reject_last_spike_data( tid, current_tid, current_lid );
 }
 
 inline void
 ConnectionBuilderManager::toggle_target_processed_flag( const thread tid, const index lid )
 {
   target_table_.toggle_target_processed_flag( tid, lid );
-}
-
-inline bool
-ConnectionBuilderManager::get_next_target_data( const thread tid, index& target_rank, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end )
-{
-  return source_table_.get_next_target_data( tid, target_rank, next_target_data, rank_start, rank_end );
 }
 
 inline void

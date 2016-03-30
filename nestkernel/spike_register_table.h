@@ -103,16 +103,40 @@ SpikeData::is_end_marker() const
   return tid == end_marker;
 }
 
+struct SpikeRegisterPosition
+{
+  // index for threads
+  unsigned int tid;
+  // index for lags
+  unsigned int lag;
+  // index for spikes
+  unsigned int sid;
+  SpikeRegisterPosition();
+  void reset();
+};
+
+inline
+SpikeRegisterPosition::SpikeRegisterPosition()
+  : tid(0)
+  , lag(0)
+  , sid(0)
+{
+}
+
+inline void
+SpikeRegisterPosition::reset()
+{
+  tid = 0;
+  lag = 0;
+  sid = 0;
+}
+
 class SpikeRegisterTable
 {
 private:
   std::vector< std::vector< std::vector< index > >* > spike_register_;
-  std::vector< unsigned int > current_tid_;
-  std::vector< unsigned int > current_lag_;
-  std::vector< unsigned int > current_lid_;
-  std::vector< unsigned int > save_tid_;
-  std::vector< unsigned int > save_lag_;
-  std::vector< unsigned int > save_lid_; // TODO@5g: rename! this is not a lid, but just an index
+  std::vector< SpikeRegisterPosition* > current_positions_;
+  std::vector< SpikeRegisterPosition* > saved_positions_;
   std::vector< bool > saved_entry_point_;
 
 public:
@@ -136,15 +160,22 @@ SpikeRegisterTable::save_entry_point( const thread tid )
 {
   if ( not saved_entry_point_[ tid ] )
   {
-    save_tid_[ tid ] = current_tid_[ tid ];
-    save_lag_[ tid ] = current_lag_[ tid ];
-    if ( current_lid_[ tid ] > 0 )
+    SpikeRegisterPosition& current_position = *current_positions_[ tid ];
+    SpikeRegisterPosition& saved_position = *saved_positions_[ tid ];
+    saved_position.tid = current_position.tid;
+    saved_position.lag = current_position.lag;
+    // we substract one since this function can be called after
+    // reject_last_spike_data, in which the current_sid_ target was
+    // not added to the spike buffer. if we start one before the
+    // current one, we make sure to pick it up in the next
+    // communication round.
+    if ( current_position.sid > 0 )
     {
-      save_lid_[ tid ] = current_lid_[ tid ] - 1;
+      saved_position.sid = current_position.sid - 1;
     }
     else
     {
-      save_lid_[ tid ] = 0;
+      saved_position.sid = 0;
     }
     saved_entry_point_[ tid ] = true;
   }
@@ -153,18 +184,25 @@ SpikeRegisterTable::save_entry_point( const thread tid )
 inline void
 SpikeRegisterTable::restore_entry_point( const thread tid )
 {
-  current_tid_[ tid ] = save_tid_[ tid ];
-  current_lag_[ tid ] = save_lag_[ tid ];
-  current_lid_[ tid ] = save_lid_[ tid ];
+  *current_positions_[ tid ] = *saved_positions_[ tid ];
   saved_entry_point_[ tid ] = false;
 }
 
 inline void
 SpikeRegisterTable::reset_entry_point( const thread tid )
 {
-  save_tid_[ tid ] = 0;
-  save_lag_[ tid ] = 0;
-  save_lid_[ tid ] = 0;
+  saved_positions_[ tid ]->reset();
+  current_positions_[ tid ]->reset();
+}
+
+inline void
+SpikeRegisterTable::clear( const thread tid )
+{
+  for ( std::vector< std::vector< index > >::iterator it = spike_register_[ tid ]->begin();
+        it != spike_register_[ tid ]->end(); ++it )
+  {
+    it->clear();
+  }
 }
 
 } // namespace nest

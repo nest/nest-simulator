@@ -22,11 +22,8 @@
 
 // Includes from nestkernel:
 #include "source_table.h"
-#include "target_table.h"
 #include "kernel_manager.h"
-#include "mpi_manager_impl.h"
 #include "vp_manager_impl.h"
-#include "node_manager_impl.h"
 
 nest::SourceTable::SourceTable()
 {
@@ -44,18 +41,16 @@ nest::SourceTable::initialize()
   sources_.resize( num_threads );
   is_cleared_.resize( num_threads, false );
   saved_entry_point_.resize( num_threads, false );
-  current_tid_.resize( num_threads, 0 );
-  current_syn_id_.resize( num_threads, 0 );
-  current_lcid_.resize( num_threads, 0 );
-  save_tid_.resize( num_threads, 0 );
-  save_syn_id_.resize( num_threads, 0 );
-  save_lcid_.resize( num_threads, 0 );
+  current_positions_.resize( num_threads );
+  saved_positions_.resize( num_threads );
 
   for( thread tid = 0; tid < num_threads; ++tid)
   {
     synapse_ids_[ tid ] = new std::map< synindex, synindex >();
     sources_[ tid ] = new std::vector< std::vector< Source > >(
       0, std::vector< Source >( 0, Source() ) );
+    current_positions_[ tid ] = new SourceTablePosition();
+    saved_positions_[ tid ] = new SourceTablePosition();
   }
 }
 
@@ -74,6 +69,16 @@ nest::SourceTable::finalize()
     delete *it;
   }
   sources_.clear();
+  for ( std::vector< SourceTablePosition* >::iterator it = current_positions_.begin(); it != current_positions_.end(); ++it )
+  {
+    delete *it;
+  }
+  current_positions_.clear();
+  for ( std::vector< SourceTablePosition* >::iterator it = saved_positions_.begin(); it != saved_positions_.end(); ++it )
+  {
+    delete *it;
+  }
+  saved_positions_.clear();
 }
 
 // TODO@5g: benchmark with and without reserving memory for synapses
@@ -97,75 +102,4 @@ nest::SourceTable::is_cleared() const
     all_cleared &= is_cleared_[ tid ];
   }
   return all_cleared;
-}
-
-bool
-nest::SourceTable::get_next_target_data( const thread tid, index& target_rank, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end )
-{
-  // we stay in this loop either until we can return a valid
-  // TargetData object or we have reached the end of the sources table
-  while ( true )
-  {
-    if ( current_tid_[ tid ] == sources_.size() )
-    {
-      return false; // reached the end of the sources table
-    }
-    else
-    {
-      if ( current_syn_id_[ tid ] == sources_[ current_tid_[ tid ] ]->size() )
-      {
-        current_syn_id_[ tid ] = 0;
-        ++current_tid_[ tid ];
-        continue;
-      }
-      else
-      {
-        if ( current_lcid_[ tid ] == (*sources_[ current_tid_[ tid ] ])[ current_syn_id_[ tid ] ].size() )
-        {
-          current_lcid_[ tid ] = 0;
-          ++current_syn_id_[ tid ];
-          continue;
-        }
-        else
-        {
-          // the current position contains an entry, so we retrieve it
-          Source& current_source = ( *sources_[ current_tid_[ tid ] ] )[ current_syn_id_[ tid ] ][ current_lcid_[ tid ] ];
-          target_rank = kernel().node_manager.get_process_id_of_gid( current_source.gid );
-          // now we need to determine whether this thread is
-          // responsible for this part of the MPI buffer; if not we
-          // just continue with the next iteration of the loop
-          if ( rank_start <= target_rank && target_rank < rank_end )
-          {
-            if ( current_source.processed )
-            {
-              // looks like we've processed this already, let's
-              // continue
-              ++current_lcid_[ tid ];
-              continue;
-            }
-            else
-            {
-              // we have found a valid entry, so mark it as processed,
-              // update the values of next_target_data and return
-              current_source.processed = true;
-              next_target_data.gid = current_source.gid;
-              // we store the position in the sources table, not our own
-              next_target_data.target.tid = current_tid_[ tid ];
-              next_target_data.target.rank = kernel().mpi_manager.get_rank();
-              next_target_data.target.processed = false;
-              next_target_data.target.syn_index = current_syn_id_[ tid ];
-              next_target_data.target.lcid = current_lcid_[ tid ];
-              ++current_lcid_[ tid ];
-              return true;
-            }
-          }
-          else
-          {
-            ++current_lcid_[ tid ];
-            continue;
-          }
-        }
-      }
-    }
-  }
 }

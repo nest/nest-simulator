@@ -46,39 +46,42 @@ SpikeRegisterTable::add_spike( const thread tid, const SpikeEvent& e, const long
 inline bool
 SpikeRegisterTable::get_next_spike_data( const thread tid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end )
 {
+  SpikeRegisterPosition& current_position = *current_positions_[ tid ];
   while ( true )
   {
-    if ( current_tid_[ tid ] == spike_register_.size() )
+    assert( current_position.tid <= spike_register_.size() );
+    if ( current_position.tid == spike_register_.size() )
     {
       return false;
     }
     else
     {
-      if ( current_lag_[ tid ] == spike_register_[ current_tid_[ tid ] ]->size() )
+      if ( current_position.lag == spike_register_[ current_position.tid ]->size() )
       {
-        current_lag_[ tid ] = 0;
-        ++current_tid_[ tid ];
+        assert( current_position.sid == 0 );
+        current_position.lag = 0;
+        ++current_position.tid;
         continue;
       }
       else
       {
-        if ( current_lid_[ tid ] == (*spike_register_[ current_tid_[ tid ] ])[ current_lag_[ tid ] ].size() )
+        if ( current_position.sid == (*spike_register_[ current_position.tid ])[ current_position.lag ].size() )
         {
-          current_lid_[ tid ] = 0;
-          ++current_lag_[ tid ];
+          current_position.sid = 0;
+          ++current_position.lag;
           continue;
         }
         else
         {
-          const index lid = ( *spike_register_[ current_tid_[ tid ] ] )[ current_lag_[ tid ] ][ current_lid_[ tid ] ];
-          if ( kernel().connection_builder_manager.get_next_spike_data( tid, current_tid_[ tid ], lid, rank, next_spike_data, rank_start, rank_end ) )
+          const index current_lid = ( *spike_register_[ current_position.tid ] )[ current_position.lag ][ current_position.sid ];
+          if ( kernel().connection_builder_manager.get_next_spike_data( tid, current_position.tid, current_lid, rank, next_spike_data, rank_start, rank_end ) )
           {
-            next_spike_data.lag = current_lag_[ tid ];
+            next_spike_data.lag = current_position.lag;
             return true;
           }
           else
           {
-            ++current_lid_[ tid ];
+            ++current_position.sid;
           }
         }
       }
@@ -89,8 +92,9 @@ SpikeRegisterTable::get_next_spike_data( const thread tid, index& rank, SpikeDat
 inline void
 SpikeRegisterTable::reject_last_spike_data( const thread tid )
 {
-  index lid = ( *spike_register_[ current_tid_[ tid ] ] )[ current_lag_[ tid ] ][ current_lid_[ tid ] ];
-  kernel().connection_builder_manager.reject_last_spike_data( tid, current_tid_[ tid ], lid );
+  SpikeRegisterPosition& current_position = *current_positions_[ tid ];
+  const index current_lid = ( *spike_register_[ current_position.tid ] )[ current_position.lag ][ current_position.sid ];
+  kernel().connection_builder_manager.reject_last_spike_data( tid, current_position.tid, current_lid );
 }
 
 inline void

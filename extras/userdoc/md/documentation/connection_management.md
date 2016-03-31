@@ -4,18 +4,18 @@ Connection Management
 From NEST 2.4 onwards the old connection routines (i.e.
 `(Random)ConvergentConnect`, `(Random)DivergentConnect` and plain `Connect`) are
 replaced by one unified `Connect` function. In
-[SLI](../an_introduction_to_sli/index.html "An Introduction to SLI")
+[SLI](an_introduction_to_sli.md "An Introduction to SLI")
 ,the old syntax of the function still works, while in
-[PyNEST](../introduction-to-pynest/index.html "PyNEST"), the `Connect()`
+[PyNEST](introduction-to-pynest.md "PyNEST"), the `Connect()`
 function has been renamed to `OneToOneConnect()`. However, simple cases, which
 are just creating one-to-one connections between two lists of nodes are still
 working with the new command without the need to change the code. Note that the
 topology-module is not effected by theses changes. The translation between the
-old and the new connect routines is described in [Old Connection Routines](../connection_management/index.html#Old_Connection_Routines).
+old and the new connect routines is described in [Old Connection Routines](connection_management.md#Old-Connection-Routines).
 
 The connectivity pattern is defined inside the `Connect()` function under the
 key 'rule'. The patterns available are described in
-[Connection Rules](../connection_management/index.html#Connection_Rules). In
+[Connection Rules](connection_management.md#Connection-Rules). In
 addition the synapse model can be specified within the connect function and all
 synaptic parameters can be randomly distributed.
 
@@ -46,7 +46,7 @@ string defining the synapse model (default: 'static\_synapse') or as a
 dictionary. By using the key-word variant (`Connect(pre, post,
 syn_spec=syn_spec_dict)`), the conn\_spec can be omitted in the call to
 connect and 'all\_to\_all' is assumed as the default.
-The exact usage of the synapse dictionary is described in [Synapse Specification](../connection_management/index.html#Synapse_Specification).
+The exact usage of the synapse dictionary is described in [Synapse Specification](connection_management.md#Synapse-Specification).
 
 Connection Rules
 ----------------
@@ -162,7 +162,7 @@ Example:
 
 The synapse properties can be given as a string or a dictionary. The string can
 be the name of a pre-defined synapse which can be found in the synapsedict (see
-[Synapse Types](../connection_management/index.html#Synapse_Types)) or a
+[Synapse Types](connection_management.md#Synapse-Types)) or a
 manually defined synapse via `CopyModel()`.
 
 Example:
@@ -185,7 +185,7 @@ parameter types, as long as they agree with the connection routine ('rule').
 
 **Scalar** parameters must be given as floats except for the 'receptor\_type'
 which has to be initialized as an integer. For more information on the receptor
-type see [Receptor Types](../connection_management/index.html#Synapse_Types) .
+type see [Receptor Types](connection_management.md#Synapse-Types) .
 
 Example:
 
@@ -304,7 +304,7 @@ needs to be defined in two steps:
     Connect(A, B, syn_spec=syn_dict)
 
 For further information on the distributions see
-[Random numbers in NEST](../random_numbers/index.html "Random numbers in NEST").
+[Random numbers in NEST](random_numbers.md "Random numbers in NEST").
 
 Old Connection Routines
 -----------------------
@@ -448,7 +448,7 @@ Topological Connections
 If the connect functions above are not sufficient, the topology provides more
 sophisticated functions. For example, it is possible to create receptive field
 structures and much more! See
-[Topological Connections](../topological_connections/index.html "Topological Connections")
+[Topological Connections](Topology_UserManual.pdf)
 for more information.
 
 Receptor Types

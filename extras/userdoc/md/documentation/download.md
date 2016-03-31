@@ -1,15 +1,15 @@
 Download & Releases
 ===================
 
-NEST is available under the [GNU General Public License 2 or later](../license/index.html "License").
+NEST is available under the [GNU General Public License 2 or later](license/index.html "License").
 This means that you can
 
 -   use NEST for your research,
 -   modify and improve NEST according to your needs,
 -   distribute NEST to others under the same license.
 
-To find out more about NEST, see the [list of features](../features/index.html "Features")
-and the [user documentation](../documentation/index.html "Documentation").
+To find out more about NEST, see the [list of features](features.md "Features")
+and the [user documentation](documentation.md "Documentation").
 For details about how to contribute to the development of NEST, see the [developer space](http://nest.github.io/nest-simulator "Development").
 
 Citing NEST

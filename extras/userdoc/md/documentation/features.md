@@ -4,8 +4,8 @@ Features
 General
 ------------------------------------------------------
 
--   Python based user interface ([PyNEST](../introduction-to-pynest/index.html ))
--   Built-in simulation language interpreter ([SLI](../an_introduction_to_sli/index.html "An Introduction to SLI"))
+-   Python based user interface ([PyNEST](introduction-to-pynest.md ))
+-   Built-in simulation language interpreter ([SLI](an_introduction_to_sli.md "An Introduction to SLI"))
 -   Multi-threading to use multi-processor machines efficiently
 -   MPI-parallelism to use computer clusters and super computers
 
@@ -43,7 +43,7 @@ Network models
 Interoperability
 ----------------
 
--   Interface to the Multi Simulator Coordinator [MUSIC](../using_nest_with_music/index.html "Using NEST with MUSIC")
+-   Interface to the Multi Simulator Coordinator [MUSIC](using_nest_with_music.md "Using NEST with MUSIC")
 -   Backend for the simulator-independent modeling tool [PyNN](http://neuralensemble.org/trac/PyNN/)
 
 Accuracy
@@ -57,7 +57,7 @@ Accuracy
 -   By default spikes are restricted to the grid spanned by the computation time
     step
 
--   For some neuron models [spike interaction in continuous time](../simulations-with-precise-spike-times/)
+-   For some neuron models [spike interaction in continuous time](simulations-with-precise-spike-times/)
     is available
 
 Verification
@@ -66,7 +66,7 @@ Verification
 -   After installation NEST can be verified by an automatic testsuite
 
 -   The testsuite is automatically run after each modification of the NEST
-    sources. You can watch the current status on our [Continuous Integration](../continuous_integration/index.html "Continuous Integration") system.
+    sources. You can watch the current status on our [Continuous Integration](continuous_integration.md "Continuous Integration") system.
 
 Supported platforms
 -------------------

@@ -1,15 +1,15 @@
 The Neural Simulation Tool
 ==========================
 
--   ### Download NEST
+-   *Download NEST*
 
-    [http://nest-simulator.org/download](../download/index.html)
+    [http://nest-simulator.org/download](download.md)
 
     Use NEST for your research, modify and improve it
 
-    Current Release [NEST 2.10.0 (Dec 31 2015)](../download/index.html#h1-17987)
+    Current Release [NEST 2.10.0 (Dec 31 2015)](download.md#h1-17987)
 
--   ### Tools for modern computational neuroscience
+-   *Tools for modern computational neuroscience*
 
     Synaptic plasticity
 
@@ -19,7 +19,7 @@ The Neural Simulation Tool
 
     MUSIC interface
 
--   ### Correctness and release stability
+-   *Correctness and release stability*
 
     A battery of unit tests
 
@@ -33,7 +33,7 @@ What is NEST
 NEST is a simulator for spiking neural network models that focuses on the
 dynamics, size and structure of neural systems rather than on the exact
 morphology of individual neurons. The development of NEST is coordinated by the
-[NEST Initiative](http://www.nest-initiative.org/index.html).
+[NEST Initiative](http://www.nest-initiative.org.md).
 
 NEST is ideal for networks of spiking neurons of any size, for example:
 
@@ -82,12 +82,12 @@ memory or to file.
 NEST is extensible and new models for neurons, synapses, and devices can be
 added.
 
-To get started with NEST, please see the [Documentation Page for Tutorials](../documentation/ "Documentation").
+To get started with NEST, please see the [Documentation Page for Tutorials](documentation.md "Documentation").
 
 Why should I use NEST
 ----------------------
 
-To learn more about the capabilities of NEST, see the [Feature summary](../features/index.html "Features").
+To learn more about the capabilities of NEST, see the [Feature summary](features.md "Features").
 
 1.  NEST provides over 50 neuron models many of which have been published.
     Choose from simple integrate-and-fire neurons with current or conductance
@@ -117,7 +117,7 @@ To learn more about the capabilities of NEST, see the [Feature summary](../featu
 8.  NEST has minimal dependencies. All it really needs is a C++ compiler.
     Everything else is optional.
 
-9.  NEST developers are using agile [continuous integration](../continuous_integration/index.html "Continuous Integration")-based
+9.  NEST developers are using agile [continuous integration](continuous_integration.md "Continuous Integration")-based
     workflows in order to maintain high code quality standards for correct and
     reproducible simulations.
 
@@ -148,10 +148,10 @@ Here is suitable BibTeX entry:
       number = {4}
     }
 
-If you tell us about your publications that used [NEST](../download/index.html "Download"),
-we will add it to our [publication list](../publications/index.html "Publications"),
+If you tell us about your publications that used [NEST](download.md "Download"),
+we will add it to our [publication list](publications.md "Publications"),
 thus making it visible to potential readers. Send us your reference or even a
-reprint, using the mail address given on the [contact page](../impressum/index.html "Impressum").
+reprint, using the mail address given on the [contact page](impressum.md "Impressum").
 
 NEST logo for your poster or presentation
 -----------------------------------------

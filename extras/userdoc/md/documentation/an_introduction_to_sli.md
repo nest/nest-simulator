@@ -79,8 +79,8 @@ SLI user manual
 
 This manual gives a brief overview of the SLI programming language.
 
-1.  [First Steps](../first_steps/index.html "First Steps")
-2.  [Objects and data types](../objects_and_data_types/index.html "Objects and data types")
-3.  [Programming in SLI](../programming_in_sli/index.html "Programming in SLI")
-4.  [Using files and keyboard input](../using_files_and_keyboard_input/index.html "Using files and keyboard input")
-5.  [Neural simulations](../neural_simulations/index.html "Neural simulations")
+1.  [First Steps](first_steps.md "First Steps")
+2.  [Objects and data types](objects_and_data_types.md "Objects and data types")
+3.  [Programming in SLI](programming_in_sli.md "Programming in SLI")
+4.  [Using files and keyboard input](using_files_and_keyboard_input.md "Using files and keyboard input")
+5.  [Neural simulations](neural_simulations.md "Neural simulations")

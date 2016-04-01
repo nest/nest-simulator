@@ -20,8 +20,6 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
-from mpi4py import MPI
-comm = MPI.COMM_WORLD
 
 proxy = nest.Create('music_cont_out_proxy', 1)
 nest.SetStatus(proxy, {'port_name': 'out'})

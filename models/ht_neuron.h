@@ -87,19 +87,23 @@
    Parameters:
    V_m  -  membrane potential
    spike_duration - duration of re-polarizing potassium current
-   Tau_m - membrane time constant applying to all currents but repolarizing K-current
+   Tau_m - membrane time constant applying to all currents but repolarizing
+   K-current
            (see [1, p 1677])
    Tau_spike - membrane time constant applying to repolarizing K-current
    Theta, Theta_eq, Tau_theta - Threshold, equilibrium value, time constant
-   g_KL, E_K, g_NaL, E_Na - conductances and reversal potentials for K and Na leak currents
+   g_KL, E_K, g_NaL, E_Na - conductances and reversal potentials for K and Na
+   leak currents
 
    {AMPA,NMDA,GABA_A,GABA_B}_{E_rev,g_peak,Tau_1,Tau_2}
    - reversal potentials, peak conductances and time constants for synapses
      (Tau_1: rise time, Tau_2: decay time, Tau_1 < Tau_2)
 
-   NMDA_Sact, NMDA_Vact - Parameters for voltage dependence of NMDA-synapse, see eq. above
+   NMDA_Sact, NMDA_Vact - Parameters for voltage dependence of NMDA-synapse, see
+   eq. above
 
-   {h,T,NaP,KNa}_{E_rev,g_peak} - reversal potential and peak conductance for intrinsic currents
+   {h,T,NaP,KNa}_{E_rev,g_peak} - reversal potential and peak conductance for
+   intrinsic currents
 
    receptor_types - dictionary mapping synapse names to ports on neuron model
    recordables - list of recordable quantities.
@@ -142,7 +146,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -284,7 +289,8 @@ public:
       STATE_VEC_SIZE
     };
 
-    double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
+    double_t
+      y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
 
     // Timer (counter) for potassium current.
     int_t r_potassium_;
@@ -429,7 +435,8 @@ ht_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   assert( B_.spike_inputs_.size() == 4 );
 
-  if ( !( INF_SPIKE_RECEPTOR < receptor_type && receptor_type < SUP_SPIKE_RECEPTOR ) )
+  if ( !( INF_SPIKE_RECEPTOR < receptor_type
+         && receptor_type < SUP_SPIKE_RECEPTOR ) )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
     return 0;

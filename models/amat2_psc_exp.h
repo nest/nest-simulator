@@ -36,15 +36,18 @@
 namespace nest
 {
 /* BeginDocumentation
-   Name: amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model with
+   Name: amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model
+   with
    exponential PSCs and adaptive threshold.
 
    Description:
    amat2_psc_exp is an implementation of a leaky integrate-and-fire model
-   with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic currents
+   with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
+   currents
    have an infinitely short rise time.
 
-   The threshold is lifted when the neuron is fired and then decreases in a fixed
+   The threshold is lifted when the neuron is fired and then decreases in a
+   fixed
    time scale toward a fixed level [3].
 
    The threshold crossing is followed by a total refractory period
@@ -73,9 +76,11 @@ namespace nest
          - tau_m != {tau_syn_ex, tau_syn_in}
          - tau_v != {tau_syn_ex, tau_syn_in}
          - tau_m != tau_v
-         This is required to avoid singularities in the numerics. This is a problem
+         This is required to avoid singularities in the numerics. This is a
+   problem
          of implementation only, not a principal problem of the model.
-       - Expect unstable numerics if time constants that are required to be different
+       - Expect unstable numerics if time constants that are required to be
+   different
          are very close.
 
    Parameters:
@@ -86,19 +91,27 @@ namespace nest
    tau_m        double - Membrane time constant in ms
    tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
    tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
-   t_ref        double - Duration of absolute refractory period (no spiking) in ms
+   t_ref        double - Duration of absolute refractory period (no spiking) in
+   ms
    V_m          double - Membrane potential in mV
    I_e          double - Constant input current in pA
    t_spike      double - Point in time of last spike in ms
-   tau_1        double - Short time constant of adaptive threshold in ms [3, eqs 2-3]
-   tau_2        double - Long time constant of adaptive threshold in ms [3, eqs 2-3]
-   alpha_1      double - Amplitude of short time threshold adaption in mV [3, eqs 2-3]
-   alpha_2      double - Amplitude of long time threshold adaption in mV [3, eqs 2-3]
-   tau_v        double - Time constant of kernel for voltage-dependent threshold component in ms [3,
+   tau_1        double - Short time constant of adaptive threshold in ms [3, eqs
+   2-3]
+   tau_2        double - Long time constant of adaptive threshold in ms [3, eqs
+   2-3]
+   alpha_1      double - Amplitude of short time threshold adaption in mV [3,
+   eqs 2-3]
+   alpha_2      double - Amplitude of long time threshold adaption in mV [3, eqs
+   2-3]
+   tau_v        double - Time constant of kernel for voltage-dependent threshold
+   component in ms [3,
    eqs 16-17]
-   beta         double - Scaling coefficient for voltage-dependent threshold component in 1/ms [3,
+   beta         double - Scaling coefficient for voltage-dependent threshold
+   component in 1/ms [3,
    eqs 16-17]
-   omega        double - Resting spike threshold in mV (absolute value, not relative to E_L as in
+   omega        double - Resting spike threshold in mV (absolute value, not
+   relative to E_L as in
    [3])
 
    The following state variables can be read out with the multimeter device:
@@ -122,15 +135,18 @@ namespace nest
        spiking neuron model equipped with a multi-timescale adaptive
        threshold. Front. Comput. Neurosci. 3:9. doi:10.3389/neuro.10.009.2009
    [4] Yamauchi S, Kim H and Shinomoto S (2011) Elemental spiking neuron model
-               for reproducing diverse firing patterns and predicting precise firing
-               times. Front. Comput. Neurosci. 5:42. doi: 10.3389/fncom.2011.00042
+               for reproducing diverse firing patterns and predicting precise
+   firing
+               times. Front. Comput. Neurosci. 5:42. doi:
+   10.3389/fncom.2011.00042
 
    Sends: SpikeEvent
 
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
    FirstVersion: April 2013
-   Author: Thomas Heiberg & Hans E. Plesser (modified mat2_psc_exp model of Thomas Pfeil)
+   Author: Thomas Heiberg & Hans E. Plesser (modified mat2_psc_exp model of
+   Thomas Pfeil)
 */
 
 /**
@@ -146,7 +162,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -211,7 +228,8 @@ private:
     double_t alpha_1_;
     double_t alpha_2_;
 
-    /** Scaling coefficient for voltage-dependent threshold component in 1/ms. */
+    /** Scaling coefficient for voltage-dependent threshold component in 1/ms.
+     */
     double_t beta_;
 
     /** Time-constant for voltage-dependent threshold component in ms. */
@@ -245,10 +263,12 @@ private:
     double_t i_syn_ex_; // postsynaptic current for exc. inputs, variable 1
     double_t i_syn_in_; // postsynaptic current for inh. inputs, variable 2
     double_t V_m_;      // membrane potential, variable 3
-    double_t V_th_1_;   // short time adaptive threshold (related to tau_1_), variable 4
-    double_t V_th_2_;   // long time adaptive threshold (related to tau_2_), variable 5
-    double_t V_th_dv_;  // derivative of voltage dependent threshold variable 6
-    double_t V_th_v_;   // voltage dependent threshold, variable 7
+    double_t
+      V_th_1_; // short time adaptive threshold (related to tau_1_), variable 4
+    double_t
+      V_th_2_; // long time adaptive threshold (related to tau_2_), variable 5
+    double_t V_th_dv_; // derivative of voltage dependent threshold variable 6
+    double_t V_th_v_;  // voltage dependent threshold, variable 7
 
     int_t r_; // total refractory counter (no spikes can be generated)
 
@@ -361,7 +381,10 @@ private:
 
 
 inline port
-amat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+amat2_psc_exp::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -386,7 +409,8 @@ amat2_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-amat2_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+amat2_psc_exp::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

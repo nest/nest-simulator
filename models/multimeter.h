@@ -43,7 +43,8 @@ Name: multimeter - Device to record analog data from neurons.
 Synopsis: multimeter Create
 
 Description:
-A multimeter records a user-defined set of state variables from connected nodes to memory,
+A multimeter records a user-defined set of state variables from connected nodes
+to memory,
 file or stdout.
 
 The multimeter must be configured with the list of variables to record
@@ -55,7 +56,8 @@ using CopyModel). If the defaults or status dictionary of a model neuron
 does not contain a /recordables entry, it is not ready for use with
 multimeter.
 
-By default, multimeters record values once per ms. Set the parameter /interval to
+By default, multimeters record values once per ms. Set the parameter /interval
+to
 change this. The recording interval cannot be smaller than the resolution.
 
 Results are returned in the /events entry of the status dictionary. For
@@ -64,14 +66,18 @@ same name as the /recordable. If /withtime is set, times are given in the
 /times vector in /events.
 
 Accumulator mode:
-Multimeter can operate in accumulator mode. In this case, values for all recorded
-variables are added across all recorded nodes (but kept separate in time). This can
+Multimeter can operate in accumulator mode. In this case, values for all
+recorded
+variables are added across all recorded nodes (but kept separate in time). This
+can
 be useful to record average membrane potential in a population.
 
 To activate accumulator mode, either set /to_accumulator to true, or set
 /record_to [ /accumulator ].  In accumulator mode, you cannot record to file,
-to memory, to screen, with GID or with weight. You must activate accumulator mode
-before simulating. Accumulator data is never written to file. You must extract it
+to memory, to screen, with GID or with weight. You must activate accumulator
+mode
+before simulating. Accumulator data is never written to file. You must extract
+it
 from the device using GetStatus.
 
 Remarks:
@@ -172,7 +178,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -210,9 +217,11 @@ private:
   bool is_active( Time const& T ) const;
 
   /**
-   * "Print" one value to file or screen, depending on settings in RecordingDevice.
+   * "Print" one value to file or screen, depending on settings in
+   * RecordingDevice.
    * @note The default implementation supports only EntryTypes which
-   *       RecordingDevice::print_value() can handle. Otherwise, specialization is
+   *       RecordingDevice::print_value() can handle. Otherwise, specialization
+   * is
    *       required.
    */
   void print_value_( const std::vector< double_t >& );
@@ -252,10 +261,12 @@ private:
      * First dimension: time
      * Second dimension: recorded variables
      * @note In normal mode, data is stored as follows:
-     *          For each recorded node, all data points for one time slice are put
+     *          For each recorded node, all data points for one time slice are
+     * put
      *          after one another in the first dimension. Each entry is a vector
      *          containing one element per recorded quantity.
-     *        In accumulating mode, only one data point is stored per time step and
+     *        In accumulating mode, only one data point is stored per time step
+     * and
      *          values are added across nodes.
      */
     std::vector< std::vector< double_t > > data_; //!< Recorded data
@@ -278,10 +289,14 @@ private:
 
   struct Variables_
   {
-    /** Flag active till first DataLoggingReply during an update() call processed.
-     * This flag is set to true by update() before dispatching the DataLoggingRequest
-     * event and is reset to false by handle() as soon as the first DataLoggingReply
-     * has been handled. This is needed when the Multimeter is running in accumulator
+    /** Flag active till first DataLoggingReply during an update() call
+     * processed.
+     * This flag is set to true by update() before dispatching the
+     * DataLoggingRequest
+     * event and is reset to false by handle() as soon as the first
+     * DataLoggingReply
+     * has been handled. This is needed when the Multimeter is running in
+     * accumulator
      * mode.
      */
     bool new_request_;
@@ -318,9 +333,11 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
+    const SiblingContainer* siblings =
+      kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
+    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
+          ++sibling )
       ( *sibling )->get_status( d );
   }
 

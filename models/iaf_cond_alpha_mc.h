@@ -50,7 +50,8 @@
 #include "name.h"
 
 /* BeginDocumentation
-Name: iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky integrate-and-fire
+Name: iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky
+integrate-and-fire
 neuron model.
 
 Description:
@@ -85,7 +86,8 @@ current input from a current generator, and an external (rheobase)
 current can be set for each compartment.
 
 Synapses, including those for injection external currents, are addressed through
-the receptor types given in the receptor_types entry of the state dictionary. Note
+the receptor types given in the receptor_types entry of the state dictionary.
+Note
 that in contrast to the single-compartment iaf_cond_alpha model, all synaptic
 weights must be positive numbers!
 
@@ -107,7 +109,8 @@ tau_syn_in*  double - Rise time of the inhibitory synaptic alpha function in ms.
 I_e*         double - Constant input current in pA.
 
 g_sp         double - Conductance connecting soma and proximal dendrite, in nS.
-g_pd         double - Conductance connecting proximal and distal dendrite, in nS.
+g_pd         double - Conductance connecting proximal and distal dendrite, in
+nS.
 t_ref        double - Duration of refractory period in ms.
 V_th         double - Spike threshold in mV.
 V_reset      double - Reset potential of the membrane in mV.
@@ -149,7 +152,8 @@ namespace nest
  * @note No point in declaring it inline, since it is called
  *       through a function pointer.
  */
-extern "C" int iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
+extern "C" int
+iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
 
 /**
  * @note All parameters that occur for both compartments
@@ -167,7 +171,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -223,7 +228,8 @@ private:
     SUP_SPIKE_RECEPTOR
   };
 
-  static const size_t NUM_SPIKE_RECEPTORS = SUP_SPIKE_RECEPTOR - MIN_SPIKE_RECEPTOR;
+  static const size_t NUM_SPIKE_RECEPTORS =
+    SUP_SPIKE_RECEPTOR - MIN_SPIKE_RECEPTOR;
 
   /**
    * Minimal current receptor type.
@@ -243,11 +249,13 @@ private:
     SUP_CURR_RECEPTOR
   };
 
-  static const size_t NUM_CURR_RECEPTORS = SUP_CURR_RECEPTOR - MIN_CURR_RECEPTOR;
+  static const size_t NUM_CURR_RECEPTORS =
+    SUP_CURR_RECEPTOR - MIN_CURR_RECEPTOR;
 
   // Friends --------------------------------------------------------
 
-  friend int iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
+  friend int
+  iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
 
   friend class RecordablesMap< iaf_cond_alpha_mc >;
   friend class UniversalDataLogger< iaf_cond_alpha_mc >;
@@ -275,21 +283,25 @@ private:
    */
   struct Parameters_
   {
-    double_t V_th;                //!< Threshold Potential in mV
-    double_t V_reset;             //!< Reset Potential in mV
-    double_t t_ref;               //!< Refractory period in ms
-    double_t g_conn[ NCOMP - 1 ]; //!< Conductances connecting compartments, in nS
-    double_t g_L[ NCOMP ];        //!< Leak Conductance in nS
-    double_t C_m[ NCOMP ];        //!< Membrane Capacitance in pF
-    double_t E_ex[ NCOMP ];       //!< Excitatory reversal Potential in mV
-    double_t E_in[ NCOMP ];       //!< Inhibitory reversal Potential in mV
-    double_t E_L[ NCOMP ];        //!< Leak reversal Potential (aka resting potential) in mV
-    double_t tau_synE[ NCOMP ];   //!< Synaptic Time Constant Excitatory Synapse in ms
-    double_t tau_synI[ NCOMP ];   //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double_t I_e[ NCOMP ];        //!< Constant Current in pA
+    double_t V_th;    //!< Threshold Potential in mV
+    double_t V_reset; //!< Reset Potential in mV
+    double_t t_ref;   //!< Refractory period in ms
+    double_t
+      g_conn[ NCOMP - 1 ];  //!< Conductances connecting compartments, in nS
+    double_t g_L[ NCOMP ];  //!< Leak Conductance in nS
+    double_t C_m[ NCOMP ];  //!< Membrane Capacitance in pF
+    double_t E_ex[ NCOMP ]; //!< Excitatory reversal Potential in mV
+    double_t E_in[ NCOMP ]; //!< Inhibitory reversal Potential in mV
+    double_t
+      E_L[ NCOMP ]; //!< Leak reversal Potential (aka resting potential) in mV
+    double_t
+      tau_synE[ NCOMP ]; //!< Synaptic Time Constant Excitatory Synapse in ms
+    double_t tau_synI[ NCOMP ]; //!< Synaptic Time Constant for Inhibitory
+    // Synapse in ms
+    double_t I_e[ NCOMP ]; //!< Constant Current in pA
 
-    Parameters_();                                //!< Sets default parameter values
-    Parameters_( const Parameters_& );            //!< needed to copy C-arrays
+    Parameters_();                     //!< Sets default parameter values
+    Parameters_( const Parameters_& ); //!< needed to copy C-arrays
     Parameters_& operator=( const Parameters_& ); //!< needed to copy C-arrays
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -360,8 +372,9 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_alpha_mc& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_cond_alpha_mc& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_alpha_mc& ); //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&,
+      iaf_cond_alpha_mc& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_cond_alpha_mc > logger_;
@@ -449,7 +462,10 @@ private:
 };
 
 inline port
-iaf_cond_alpha_mc::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_cond_alpha_mc::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -459,7 +475,8 @@ iaf_cond_alpha_mc::send_test_event( Node& target, rport receptor_type, synindex,
 inline port
 iaf_cond_alpha_mc::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < MIN_SPIKE_RECEPTOR || receptor_type >= SUP_SPIKE_RECEPTOR )
+  if ( receptor_type < MIN_SPIKE_RECEPTOR
+    || receptor_type >= SUP_SPIKE_RECEPTOR )
   {
     if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
       throw UnknownReceptorType( receptor_type, get_name() );
@@ -475,7 +492,8 @@ iaf_cond_alpha_mc::handles_test_event( CurrentEvent&, rport receptor_type )
   if ( receptor_type < MIN_CURR_RECEPTOR || receptor_type >= SUP_CURR_RECEPTOR )
   {
     if ( receptor_type >= 0 && receptor_type < MIN_CURR_RECEPTOR )
-      throw IncompatibleReceptorType( receptor_type, get_name(), "CurrentEvent" );
+      throw IncompatibleReceptorType(
+        receptor_type, get_name(), "CurrentEvent" );
     else
       throw UnknownReceptorType( receptor_type, get_name() );
   }
@@ -483,14 +501,16 @@ iaf_cond_alpha_mc::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_cond_alpha_mc::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_cond_alpha_mc::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
     if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
       throw UnknownReceptorType( receptor_type, get_name() );
     else
-      throw IncompatibleReceptorType( receptor_type, get_name(), "DataLoggingRequest" );
+      throw IncompatibleReceptorType(
+        receptor_type, get_name(), "DataLoggingRequest" );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }

@@ -95,7 +95,8 @@ nest::noise_generator::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_generator& n )
+nest::noise_generator::Parameters_::set( const DictionaryDatum& d,
+  const noise_generator& n )
 {
   updateValue< double_t >( d, names::mean, mean_ );
   updateValue< double_t >( d, names::std, std_ );
@@ -114,7 +115,8 @@ nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_g
 
   if ( std_mod_ > std_ )
     throw BadProperty(
-      "The modulation apmlitude must be smaller or equal to the baseline amplitude." );
+      "The modulation apmlitude must be smaller or equal to the baseline "
+      "amplitude." );
 
   if ( !dt_.is_step() )
     throw StepMultipleRequired( n.get_name(), names::dt, dt_ );
@@ -232,7 +234,9 @@ nest::noise_generator::send_test_event( Node& target,
 // Time Evolution Operator
 //
 void
-nest::noise_generator::update( Time const& origin, const long_t from, const long_t to )
+nest::noise_generator::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
   const long_t start = origin.get_steps();
 
@@ -254,7 +258,8 @@ nest::noise_generator::update( Time const& origin, const long_t from, const long
     if ( now >= B_.next_step_ )
     {
       // compute new currents
-      for ( AmpVec_::iterator it = B_.amps_.begin(); it != B_.amps_.end(); ++it )
+      for ( AmpVec_::iterator it = B_.amps_.begin(); it != B_.amps_.end();
+            ++it )
       {
         *it = P_.mean_
           + std::sqrt( P_.std_ * P_.std_ + S_.y_1_ * P_.std_mod_ * P_.std_mod_ )

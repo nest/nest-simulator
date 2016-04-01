@@ -76,8 +76,7 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
   const size_t n_spikes = spike_stamps_.size();
   const size_t n_offsets = spike_offsets_.size();
 
-  assert( ( precise_times_ && n_offsets == n_spikes )
-    || ( !precise_times_ && n_offsets == 0 ) );
+  assert( ( precise_times_ && n_offsets == n_spikes ) || ( !precise_times_ && n_offsets == 0 ) );
 
 
   std::vector< double_t >* times_ms = new std::vector< double_t >();
@@ -89,16 +88,14 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
       ( *times_ms )[ n ] -= spike_offsets_[ n ];
   }
   ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
-  ( *d )[ "spike_weights" ] =
-    DoubleVectorDatum( new std::vector< double_t >( spike_weights_ ) );
+  ( *d )[ "spike_weights" ] = DoubleVectorDatum( new std::vector< double_t >( spike_weights_ ) );
   ( *d )[ names::precise_times ] = BoolDatum( precise_times_ );
   ( *d )[ "allow_offgrid_spikes" ] = BoolDatum( allow_offgrid_spikes_ );
   ( *d )[ "shift_now_spikes" ] = BoolDatum( shift_now_spikes_ );
 }
 
 void
-nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_(
-  double t,
+nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t,
   const Time& origin,
   const Time& now )
 {
@@ -163,14 +160,12 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   const Time& origin,
   const Time& now )
 {
-  const bool flags_changed =
-    updateValue< bool >( d, names::precise_times, precise_times_ )
+  const bool flags_changed = updateValue< bool >( d, names::precise_times, precise_times_ )
     || updateValue< bool >( d, "allow_offgrid_spikes", allow_offgrid_spikes_ )
     || updateValue< bool >( d, "shift_now_spikes", shift_now_spikes_ );
   if ( precise_times_ && ( allow_offgrid_spikes_ || shift_now_spikes_ ) )
     throw BadProperty(
-      "Option precise_times cannot be set to true when either "
-      "allow_offgrid_spikes "
+      "Option precise_times cannot be set to true when either allow_offgrid_spikes "
       "or shift_now_spikes is set to true." );
 
   const bool updated_spike_times = d->known( names::spike_times );
@@ -198,12 +193,10 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
       assert_valid_spike_time_and_insert_( *prev, origin, now );
 
       // handle all remaining spike times, compare to predecessor
-      for ( std::vector< double_t >::const_iterator next = prev + 1;
-            next != d_times.end();
+      for ( std::vector< double_t >::const_iterator next = prev + 1; next != d_times.end();
             ++next, ++prev )
         if ( *prev > *next )
-          throw BadProperty(
-            "Spike times must be sorted in non-descending order." );
+          throw BadProperty( "Spike times must be sorted in non-descending order." );
         else
           assert_valid_spike_time_and_insert_( *next, origin, now );
     }
@@ -231,8 +224,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   }
 
   // Set position to start if something changed
-  if ( updated_spike_times || updated_spike_weights
-    || d->known( names::origin ) )
+  if ( updated_spike_times || updated_spike_weights || d->known( names::origin ) )
     s.position_ = 0;
 }
 
@@ -289,17 +281,13 @@ nest::spike_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::update( Time const& sliceT0,
-  const long_t from,
-  const long_t to )
+nest::spike_generator::update( Time const& sliceT0, const long_t from, const long_t to )
 {
   if ( P_.spike_stamps_.empty() )
     return;
 
-  assert(
-    !P_.precise_times_ || P_.spike_stamps_.size() == P_.spike_offsets_.size() );
-  assert( P_.spike_weights_.empty()
-    || P_.spike_stamps_.size() == P_.spike_weights_.size() );
+  assert( !P_.precise_times_ || P_.spike_stamps_.size() == P_.spike_offsets_.size() );
+  assert( P_.spike_weights_.empty() || P_.spike_stamps_.size() == P_.spike_weights_.size() );
 
   const Time tstart = sliceT0 + Time::step( from );
   const Time tstop = sliceT0 + Time::step( to );
@@ -368,10 +356,7 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
     origin = Time::ms( v );
   else
     origin = device_.get_origin();
-  ptmp.set( d,
-    S_,
-    origin,
-    kernel().simulation_manager.get_time() ); // throws if BadProperty
+  ptmp.set( d, S_, origin, kernel().simulation_manager.get_time() ); // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

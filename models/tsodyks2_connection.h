@@ -28,15 +28,11 @@
   Name: tsodyks2_synapse - Synapse type with short term plasticity.
 
   Description:
-   This synapse model implements synaptic short-term depression and short-term
-  facilitation
-   according to [1] and [2]. It solves Eq (2) from [1] and modulates U according
-  to eq. (2) of [2].
+   This synapse model implements synaptic short-term depression and short-term facilitation
+   according to [1] and [2]. It solves Eq (2) from [1] and modulates U according to eq. (2) of [2].
 
-   This connection merely scales the synaptic weight, based on the spike history
-  and the
-   parameters of the kinetic model. Thus, it is suitable for all types of
-  synaptic dynamics,
+   This connection merely scales the synaptic weight, based on the spike history and the
+   parameters of the kinetic model. Thus, it is suitable for all types of synaptic dynamics,
    that is current or conductance based.
 
    The parameter A_se from the publications is represented by the
@@ -45,10 +41,8 @@
 
    Parameters:
      The following parameters can be set in the status dictionary:
-     U          double - probability of release increment (U1) [0,1],
-  default=0.5
-     u          double - Maximum probability of release (U_se) [0,1],
-  default=0.5
+     U          double - probability of release increment (U1) [0,1], default=0.5
+     u          double - Maximum probability of release (U_se) [0,1], default=0.5
      x          double - current scaling factor of the weight, default=U
      tau_rec    double - time constant for depression in ms, default=800 ms
      tau_fac    double - time constant for facilitation in ms, default=0 (off)
@@ -63,15 +57,11 @@
 
 
   References:
-   [1] Tsodyks, M. V., & Markram, H. (1997). The neural code between neocortical
-  pyramidal neurons
+   [1] Tsodyks, M. V., & Markram, H. (1997). The neural code between neocortical pyramidal neurons
        depends on neurotransmitter release probability. PNAS, 94(2), 719-23.
-   [2] Fuhrmann, G., Segev, I., Markram, H., & Tsodyks, M. V. (2002). Coding of
-  temporal
-       information by activity-dependent synapses. Journal of neurophysiology,
-  87(1), 140-8.
-   [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers.
-  Neural networks, 15(2),
+   [2] Fuhrmann, G., Segev, I., Markram, H., & Tsodyks, M. V. (2002). Coding of temporal
+       information by activity-dependent synapses. Journal of neurophysiology, 87(1), 140-8.
+   [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers. Neural networks, 15(2),
   155–61.
 
   Transmits: SpikeEvent
@@ -83,10 +73,8 @@
 
 
 /**
- * Class representing a synapse with Tsodyks short term plasticity, based on the
- * iterative formula
- * A suitable Connector containing these connections can be obtained from the
- * template
+ * Class representing a synapse with Tsodyks short term plasticity, based on the iterative formula
+ * A suitable Connector containing these connections can be obtained from the template
  * GenericConnector.
  */
 
@@ -125,11 +113,9 @@ public:
   {
   }
 
-  // Explicitly declare all methods inherited from the dependent base
-  // ConnectionBase.
+  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
   // This avoids explicit name prefixes in all places these functions are used.
-  // Since ConnectionBase depends on the template parameter, they are not
-  // automatically
+  // Since ConnectionBase depends on the template parameter, they are not automatically
   // found in the base class.
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
@@ -152,10 +138,7 @@ public:
    * \param t_lastspike Point in time of last spike sent.
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    double_t t_lastspike,
-    const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -173,11 +156,7 @@ public:
 
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    double_t,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -245,8 +224,7 @@ Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection()
 }
 
 template < typename targetidentifierT >
-Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection(
-  const Tsodyks2Connection& rhs )
+Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection( const Tsodyks2Connection& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , U_( rhs.U_ )
@@ -275,8 +253,7 @@ Tsodyks2Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double_t >( d, names::weight, weight_ );

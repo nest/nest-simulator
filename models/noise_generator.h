@@ -47,8 +47,7 @@ The current is not really white, but a piecewise constant current with Gaussian
 distributed amplitude. The current changes at intervals of dt. dt must be a
 multiple of the simulation step size, the default is 1.0ms,
 corresponding to a 1kHz cut-off.
-Additionally a second sinusodial modulated term can be added to the standard
-deviation of the noise.
+Additionally a second sinusodial modulated term can be added to the standard deviation of the noise.
 
 The current generated is given by
 
@@ -58,13 +57,11 @@ where N_j are Gaussian random numbers with unit standard deviation and t_0 is
 the device onset time.
 If the modulation is added the current is given by
 
-  I(t) = mean + sqrt(std^2 + std_mod^2 * sin(omega * t + phase)) * N_j  for t_0
-+ j dt <= t < t_0 +
+  I(t) = mean + sqrt(std^2 + std_mod^2 * sin(omega * t + phase)) * N_j  for t_0 + j dt <= t < t_0 +
 (j-1) dt
 
 For a detailed discussion of the properties of the noise generator, please see
-the noise_generator.ipynb notebook included in the NEST source code
-(docs/model_details).
+the noise_generator.ipynb notebook included in the NEST source code (docs/model_details).
 
 Parameters:
 The following parameters can be set in the status dictionary:
@@ -85,8 +82,7 @@ Remarks:
    injected into a neuron. The standard deviation of these fluctuations
    across an ensemble will increase with dt for a given value of std.
    For the leaky integrate-and-fire neuron with time constant tau_m and
-   capacity C_m, membrane potential fluctuations Sigma at times t_j+delay are
-given by
+   capacity C_m, membrane potential fluctuations Sigma at times t_j+delay are given by
 
      Sigma = std * tau_m / C_m * sqrt( (1-x) / (1+x) ) where x = exp(-dt/tau_m)
 
@@ -123,8 +119,7 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
    */
   using Node::event_hook;
   using Node::sends_signal;
@@ -177,8 +172,7 @@ private:
     Parameters_( const Parameters_& );
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      const noise_generator& ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, const noise_generator& ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -208,7 +202,7 @@ private:
     long_t dt_steps_;                       //!< update interval in steps
     librandom::NormalRandomDev normal_dev_; //!< random deviate generator
     double_t omega_;                        //!< Angelfrequency i rad/s
-    double_t phi_rad_; //!< Phase of sine current (0-2Pi rad)
+    double_t phi_rad_;                      //!< Phase of sine current (0-2Pi rad)
 
     // The exact integration matrix
     double_t A_00_;

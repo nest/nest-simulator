@@ -43,8 +43,7 @@
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
-Name: aeif_cond_exp - Conductance based exponential integrate-and-fire neuron
-model according to
+Name: aeif_cond_exp - Conductance based exponential integrate-and-fire neuron model according to
 Brette and Gerstner (2005).
 
 Description:
@@ -57,8 +56,7 @@ This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
 solver with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
-C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e)
--g_i(t)(V-E_i)-w +I_e
+C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e) -g_i(t)(V-E_i)-w +I_e
 
 and
 
@@ -96,17 +94,13 @@ Spike adaptation parameters:
 
 Synaptic parameters
   E_ex       double - Excitatory reversal potential in mV.
-  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (exp
-function).
+  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (exp function).
   E_in       double - Inhibitory reversal potential in mV.
-  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms
-(exp function).
+  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms (exp function).
 
 Integration parameters
-  gsl_error_tol  double - This parameter controls the admissible error of the
-GSL integrator.
-                          Reduce it if NEST complains about numerical
-instabilities.
+  gsl_error_tol  double - This parameter controls the admissible error of the GSL integrator.
+                          Reduce it if NEST complains about numerical instabilities.
 
 Author: Adapted from aeif_cond_alpha by Lyle Muller
 
@@ -114,10 +108,8 @@ Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-References: Brette R and Gerstner W (2005) Adaptive Exponential
-Integrate-and-Fire Model as
-            an Effective Description of Neuronal Activity. J Neurophysiol
-94:3637-3642
+References: Brette R and Gerstner W (2005) Adaptive Exponential Integrate-and-Fire Model as
+            an Effective Description of Neuronal Activity. J Neurophysiol 94:3637-3642
 
 SeeAlso: iaf_cond_exp, aeif_cond_alpha
 */
@@ -146,8 +138,7 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -192,17 +183,17 @@ private:
     double_t V_reset_; //!< Reset Potential in mV
     double_t t_ref_;   //!< Refractory period in ms
 
-    double_t g_L;     //!< Leak Conductance in nS
-    double_t C_m;     //!< Membrane Capacitance in pF
-    double_t E_ex;    //!< Excitatory reversal Potential in mV
-    double_t E_in;    //!< Inhibitory reversal Potential in mV
-    double_t E_L;     //!< Leak reversal Potential (aka resting potential) in mV
-    double_t Delta_T; //!< Slope faktor in ms.
-    double_t tau_w;   //!< adaptation time-constant in ms.
-    double_t a;       //!< Subthreshold adaptation in nS.
-    double_t b;       //!< Spike-triggered adaptation in pA
-    double_t V_th;    //!< Spike threshold in mV.
-    double_t t_ref;   //!< Refractory period in ms.
+    double_t g_L;        //!< Leak Conductance in nS
+    double_t C_m;        //!< Membrane Capacitance in pF
+    double_t E_ex;       //!< Excitatory reversal Potential in mV
+    double_t E_in;       //!< Inhibitory reversal Potential in mV
+    double_t E_L;        //!< Leak reversal Potential (aka resting potential) in mV
+    double_t Delta_T;    //!< Slope faktor in ms.
+    double_t tau_w;      //!< adaptation time-constant in ms.
+    double_t a;          //!< Subthreshold adaptation in nS.
+    double_t b;          //!< Spike-triggered adaptation in pA
+    double_t V_th;       //!< Spike threshold in mV.
+    double_t t_ref;      //!< Refractory period in ms.
     double_t tau_syn_ex; //!< Excitatory synaptic rise time.
     double_t tau_syn_in; //!< Excitatory synaptic rise time.
     double_t I_e;        //!< Intrinsic current in pA.
@@ -240,9 +231,8 @@ public:
       STATE_VEC_SIZE
     };
 
-    double_t
-      y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
-    int_t r_;               //!< number of refractory steps remaining
+    double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
+    int_t r_;                      //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -325,10 +315,7 @@ public:
 };
 
 inline port
-aeif_cond_exp::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+aeif_cond_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -353,8 +340,7 @@ aeif_cond_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-aeif_cond_exp::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+aeif_cond_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

@@ -38,8 +38,7 @@
 #include "stimulating_device.h"
 
 /*BeginDocumentation
-Name: ppd_sup_generator - simulate the superimposed spike train of a population
-of Poisson processes
+Name: ppd_sup_generator - simulate the superimposed spike train of a population of Poisson processes
 with dead time.
 Description:
 
@@ -52,13 +51,10 @@ Description:
 Parameters:
    The following parameters appear in the element's status dictionary:
 
-   rate                double - mean firing rate of the component processes,
-default: 0 s^-1
-   dead_time           double - minimal time between two spikes of the component
-processes, default:
+   rate                double - mean firing rate of the component processes, default: 0 s^-1
+   dead_time           double - minimal time between two spikes of the component processes, default:
 0 ms
-   n_proc              long   - number of superimposed independent component
-processes, default: 1
+   n_proc              long   - number of superimposed independent component processes, default: 1
    frequency           double - rate modulation frequency, default: 0 Hz
    relative_amplitude  double - relative rate modulation amplitude, default: 0
 
@@ -72,8 +68,7 @@ Remarks:
 Authors:
    June 2009, Moritz Deger, Moritz Helias
 
-SeeAlso: gamma_sup_generator, poisson_generator_ps, spike_generator, Device,
-StimulatingDevice
+SeeAlso: gamma_sup_generator, poisson_generator_ps, spike_generator, Device, StimulatingDevice
 */
 
 
@@ -81,11 +76,9 @@ namespace nest
 {
 
 /**
- * Generator of the spike output of a population of Poisson processes with dead
- *time.
+ * Generator of the spike output of a population of Poisson processes with dead time.
  *
- * This Poisson process with dead time superposition generator sends different
- *spike
+ * This Poisson process with dead time superposition generator sends different spike
  * trains to all its targets.
  *
  * @ingroup Devices
@@ -110,8 +103,7 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
    */
   using Node::event_hook;
 
@@ -179,10 +171,9 @@ private:
 
     librandom::BinomialRandomDev bino_dev_;   //!< random deviate generator
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    std::vector< ulong_t >
-      occ_refractory_;   //!< occupation numbers of ages below dead time
-    ulong_t occ_active_; //!< summed occupation number of ages above dead time
-    size_t activate_;    //!< rotating pointer
+    std::vector< ulong_t > occ_refractory_;   //!< occupation numbers of ages below dead time
+    ulong_t occ_active_;                      //!< summed occupation number of ages above dead time
+    size_t activate_;                         //!< rotating pointer
 
   public:
     Age_distribution_( size_t num_age_bins,
@@ -196,8 +187,7 @@ private:
   struct Buffers_
   {
     /**
-     * Age distribution of component Poisson processes with dead time of the
-     * superposition.
+     * Age distribution of component Poisson processes with dead time of the superposition.
      */
 
     std::vector< Age_distribution_ > age_distributions_;

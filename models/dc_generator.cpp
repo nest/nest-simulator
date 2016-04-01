@@ -109,9 +109,7 @@ nest::dc_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::dc_generator::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+nest::dc_generator::update( Time const& origin, const long_t from, const long_t to )
 {
   long_t start = origin.get_steps();
 

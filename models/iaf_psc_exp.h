@@ -35,8 +35,7 @@
 namespace nest
 {
 /* BeginDocumentation
-   Name: iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential
-PSCs.
+   Name: iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential PSCs.
 
    Description:
    iaf_psc_expp is an implementation of a leaky integrate-and-fire model
@@ -100,10 +99,8 @@ Remarks:
    NEST source code (docs/model_details).
 
    References:
-   [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation
-in Recurrent
-   Networks with Frequency-Dependent Synapses, The Journal of Neuroscience,
-2000, Vol. 20 RC50 p.
+   [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation in Recurrent
+   Networks with Frequency-Dependent Synapses, The Journal of Neuroscience, 2000, Vol. 20 RC50 p.
    1-5
    [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
    systems with applications to neuronal modeling. Biologial Cybernetics
@@ -134,8 +131,7 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -224,8 +220,7 @@ private:
     double_t i_syn_in_; // postsynaptic current for inh. inputs, variable 1
     double_t V_m_;      // membrane potential, variable 2
 
-    int_t
-      r_ref_; // absolute refractory counter (no membrane potential propagation)
+    int_t r_ref_; // absolute refractory counter (no membrane potential propagation)
 
     State_(); //!< Default initialization
 
@@ -337,10 +332,7 @@ private:
 
 
 inline port
-nest::iaf_psc_exp::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+nest::iaf_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

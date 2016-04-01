@@ -41,12 +41,10 @@ namespace nest
 
    Description:
    mat2_psc_exp is an implementation of a leaky integrate-and-fire model
-   with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
-   currents
+   with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic currents
    have an infinitely short rise time.
 
-   The threshold is lifted when the neuron is fired and then decreases in a
-   fixed
+   The threshold is lifted when the neuron is fired and then decreases in a fixed
    time scale toward a fixed level [3].
 
    The threshold crossing is followed by a total refractory period
@@ -82,8 +80,7 @@ namespace nest
    tau_m        double - Membrane time constant in ms
    tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
    tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
-   t_ref        double - Duration of absolute refractory period (no spiking) in
-   ms
+   t_ref        double - Duration of absolute refractory period (no spiking) in ms
    V_m          double - Membrane potential in mV
    I_e          double - Constant input current in pA
    t_spike      double - Point in time of last spike in ms
@@ -91,8 +88,7 @@ namespace nest
    tau_2        double - Long time constant of adaptive threshold in ms
    alpha_1      double - Amplitude of short time threshold adaption in mV [3]
    alpha_2      double - Amplitude of long time threshold adaption in mV [3]
-   omega        double - Resting spike threshold in mV (absolute value, not
-   relative to E_L as in
+   omega        double - Resting spike threshold in mV (absolute value, not relative to E_L as in
    [3])
 
    The following state variables can be read out with the multimeter device:
@@ -137,8 +133,7 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -231,10 +226,8 @@ private:
     double_t i_syn_ex_; // postsynaptic current for exc. inputs, variable 1
     double_t i_syn_in_; // postsynaptic current for inh. inputs, variable 1
     double_t V_m_;      // membrane potential, variable 2
-    double_t
-      V_th_1_; // short time adaptive threshold (related to tau_1_), variable 1
-    double_t
-      V_th_2_; // long time adaptive threshold (related to tau_2_), variable 2
+    double_t V_th_1_;   // short time adaptive threshold (related to tau_1_), variable 1
+    double_t V_th_2_;   // long time adaptive threshold (related to tau_2_), variable 2
 
     int_t r_; // total refractory counter (no spikes can be generated)
 
@@ -335,10 +328,7 @@ private:
 
 
 inline port
-mat2_psc_exp::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+mat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

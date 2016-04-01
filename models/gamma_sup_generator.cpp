@@ -60,8 +60,7 @@ nest::ulong_t
 nest::gamma_sup_generator::Internal_states_::update( double_t transition_prob,
   librandom::RngPtr rng )
 {
-  std::vector< ulong_t >
-    n_trans; // only set from poisson_dev_ og bino_dev_ or 0, thus >= 0
+  std::vector< ulong_t > n_trans; // only set from poisson_dev_ og bino_dev_ or 0, thus >= 0
   n_trans.resize( occ_.size() );
 
   // go through all states and draw number of transitioning components
@@ -71,14 +70,12 @@ nest::gamma_sup_generator::Internal_states_::update( double_t transition_prob,
     {
       /*The binomial distribution converges towards the Poisson distribution as
        the number of trials goes to infinity while the product np remains fixed.
-       Therefore the Poisson distribution with parameter \lambda = np can be
-       used as
+       Therefore the Poisson distribution with parameter \lambda = np can be used as
        an approximation to B(n, p) of the binomial distribution if n is
        sufficiently large and p is sufficiently small. According to two rules
        of thumb, this approximation is good if n >= 20 and p <= 0.05, or if
        n >= 100 and np <= 10. Source:
-       http://en.wikipedia.org/wiki/Binomial_distribution#Poisson_approximation
-       */
+       http://en.wikipedia.org/wiki/Binomial_distribution#Poisson_approximation */
       if ( ( occ_[ i ] >= 100 && transition_prob <= 0.01 )
         || ( occ_[ i ] >= 500 && transition_prob * occ_[ i ] <= 0.1 ) )
       {
@@ -155,8 +152,7 @@ nest::gamma_sup_generator::Parameters_::set( const DictionaryDatum& d )
   long n_proc_l = n_proc_;
   updateValue< long_t >( d, names::n_proc, n_proc_l );
   if ( n_proc_l < 1 )
-    throw BadProperty(
-      "The number of component processes cannot be smaller than one" );
+    throw BadProperty( "The number of component processes cannot be smaller than one" );
   else
     n_proc_ = static_cast< ulong_t >( n_proc_l );
 }
@@ -213,8 +209,7 @@ nest::gamma_sup_generator::calibrate()
   ulong_t ini_occ_0 = static_cast< ulong_t >( P_.n_proc_ / P_.gamma_shape_ );
 
   // If new targets have been added during a simulation break, we
-  // initialize the new elements in Internal_states with the initial dist. The
-  // existing
+  // initialize the new elements in Internal_states with the initial dist. The existing
   // elements are unchanged.
   Internal_states_ internal_states0(
     P_.gamma_shape_, ini_occ_0, P_.n_proc_ - ini_occ_0 * P_.gamma_shape_ );
@@ -227,12 +222,9 @@ nest::gamma_sup_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::gamma_sup_generator::update( Time const& T,
-  const long_t from,
-  const long_t to )
+nest::gamma_sup_generator::update( Time const& T, const long_t from, const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
@@ -259,11 +251,9 @@ nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
   const port prt = e.get_port();
 
   // we handle only one port here, get reference to vector elem
-  assert(
-    0 <= prt && static_cast< size_t >( prt ) < B_.internal_states_.size() );
+  assert( 0 <= prt && static_cast< size_t >( prt ) < B_.internal_states_.size() );
 
-  // age_distribution object propagates one time step and returns number of
-  // spikes
+  // age_distribution object propagates one time step and returns number of spikes
   ulong_t n_spikes = B_.internal_states_[ prt ].update(
     V_.transition_prob_, kernel().rng_manager.get_rng( get_thread() ) );
 

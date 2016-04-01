@@ -98,14 +98,11 @@ nest::volume_transmitter::calibrate()
 {
   // +1 as pseudo dopa spike at t_trig is inserted after trigger_update_weight
   B_.spikecounter_.reserve(
-    kernel().connection_builder_manager.get_min_delay() * P_.deliver_interval_
-    + 1 );
+    kernel().connection_builder_manager.get_min_delay() * P_.deliver_interval_ + 1 );
 }
 
 void
-nest::volume_transmitter::update( const Time&,
-  const long_t from,
-  const long_t to )
+nest::volume_transmitter::update( const Time&, const long_t from, const long_t to )
 {
   // spikes that arrive in this time slice are stored in spikecounter_
   double_t t_spike;
@@ -115,24 +112,19 @@ nest::volume_transmitter::update( const Time&,
     multiplicity = B_.neuromodulatory_spikes_.get_value( lag );
     if ( multiplicity > 0 )
     {
-      t_spike =
-        Time(
-          Time::step( kernel().simulation_manager.get_slice_origin().get_steps()
-            + lag + 1 ) ).get_ms();
+      t_spike = Time( Time::step( kernel().simulation_manager.get_slice_origin().get_steps() + lag
+                        + 1 ) ).get_ms();
       B_.spikecounter_.push_back( spikecounter( t_spike, multiplicity ) );
     }
   }
 
   // all spikes stored in spikecounter_ are delivered to the target synapses
   if ( ( kernel().simulation_manager.get_slice_origin().get_steps() + to )
-      % ( P_.deliver_interval_
-          * kernel().connection_builder_manager.get_min_delay() )
+      % ( P_.deliver_interval_ * kernel().connection_builder_manager.get_min_delay() )
     == 0 )
   {
-    double_t t_trig =
-      Time(
-        Time::step( kernel().simulation_manager.get_slice_origin().get_steps()
-          + to ) ).get_ms();
+    double_t t_trig = Time( Time::step( kernel().simulation_manager.get_slice_origin().get_steps()
+                              + to ) ).get_ms();
 
     if ( !B_.spikecounter_.empty() )
       kernel().connection_builder_manager.trigger_update_weight(
@@ -141,8 +133,7 @@ nest::volume_transmitter::update( const Time&,
     // clear spikecounter
     B_.spikecounter_.clear();
 
-    // as with trigger_update_weight dopamine trace has been updated to t_trig,
-    // insert pseudo last
+    // as with trigger_update_weight dopamine trace has been updated to t_trig, insert pseudo last
     // dopa spike at t_trig
     B_.spikecounter_.push_back( spikecounter( t_trig, 0.0 ) );
   }

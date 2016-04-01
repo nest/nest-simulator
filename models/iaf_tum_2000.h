@@ -35,8 +35,7 @@
 namespace nest
 {
 /* BeginDocumentation
-   Name: iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential
-   PSCs.
+   Name: iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential PSCs.
 
    Description:
 
@@ -91,8 +90,7 @@ namespace nest
    tau_m        double - Membrane time constant in ms.
    tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
    tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
-   t_ref_abs    double - Duration of absolute refractory period (V_m = V_reset)
-   in ms.
+   t_ref_abs    double - Duration of absolute refractory period (V_m = V_reset) in ms.
    t_ref_tot    double - Duration of total refractory period (no spiking) in ms.
    V_m          double - Membrane potential in mV
    V_th         double - Spike threshold in mV.
@@ -108,10 +106,8 @@ namespace nest
    the NEST source code (docs/model_details).
 
    References:
-   [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation
-   in Recurrent
-   Networks with Frequency-Dependent Synapses, The Journal of Neuroscience,
-   2000, Vol. 20 RC50 p.
+   [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation in Recurrent
+   Networks with Frequency-Dependent Synapses, The Journal of Neuroscience, 2000, Vol. 20 RC50 p.
    1-5
    [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
    systems with applications to neuronal modeling. Biologial Cybernetics
@@ -140,8 +136,7 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -230,8 +225,7 @@ private:
     double_t i_syn_in_; // postsynaptic current for inh. inputs, variable 1
     double_t V_m_;      // membrane potential, variable 2
 
-    int_t
-      r_abs_; // absolute refractory counter (no membrane potential propagation)
+    int_t r_abs_; // absolute refractory counter (no membrane potential propagation)
     int_t r_tot_; // total refractory counter (no spikes can be generated)
 
     State_(); //!< Default initialization
@@ -331,10 +325,7 @@ private:
 
 
 inline port
-iaf_tum_2000::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+iaf_tum_2000::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

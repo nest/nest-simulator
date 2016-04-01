@@ -77,8 +77,7 @@ Author: Moritz Helias, Jochen Martin Eppler
 FirstVersion: October 2008
 Availability: Only when compiled with MUSIC
 
-SeeAlso: SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy,
-music_message_in_proxy
+SeeAlso: SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy, music_message_in_proxy
 */
 
 namespace nest
@@ -108,8 +107,7 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -153,14 +151,12 @@ private:
 
   struct State_
   {
-    bool registered_; //!< indicates whether this node has been registered
-    // already with MUSIC
+    bool registered_; //!< indicates whether this node has been registered already with MUSIC
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      const Parameters_& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;                     //!< Store current values in dictionary
+    void set( const DictionaryDatum&, const Parameters_& ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -170,10 +166,7 @@ private:
 };
 
 inline port
-music_event_in_proxy::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+music_event_in_proxy::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

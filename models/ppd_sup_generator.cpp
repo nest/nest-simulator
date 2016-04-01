@@ -44,8 +44,7 @@
  * Constructor of age distribution class
  * ---------------------------------------------------------------- */
 
-nest::ppd_sup_generator::Age_distribution_::Age_distribution_(
-  size_t num_age_bins,
+nest::ppd_sup_generator::Age_distribution_::Age_distribution_( size_t num_age_bins,
   ulong_t ini_occ_ref,
   ulong_t ini_occ_act )
 {
@@ -59,16 +58,14 @@ nest::ppd_sup_generator::Age_distribution_::Age_distribution_(
  * ---------------------------------------------------------------- */
 
 nest::ulong_t
-nest::ppd_sup_generator::Age_distribution_::update( double_t hazard_step,
-  librandom::RngPtr rng )
+nest::ppd_sup_generator::Age_distribution_::update( double_t hazard_step, librandom::RngPtr rng )
 {
   ulong_t n_spikes; // only set from poisson_dev, bino_dev or 0, thus >= 0
   if ( occ_active_ > 0 )
   {
     /*The binomial distribution converges towards the Poisson distribution as
     the number of trials goes to infinity while the product np remains fixed.
-    Therefore the Poisson distribution with parameter \lambda = np can be used
-    as
+    Therefore the Poisson distribution with parameter \lambda = np can be used as
     an approximation to B(n, p) of the binomial distribution if n is
     sufficiently large and p is sufficiently small. According to two rules
     of thumb, this approximation is good if n >= 20 and p <= 0.05, or if
@@ -143,14 +140,12 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double_t >( d, names::rate, rate_ );
   if ( 1000.0 / rate_ <= dead_time_ )
-    throw BadProperty(
-      "The inverse rate has to be larger than the dead time." );
+    throw BadProperty( "The inverse rate has to be larger than the dead time." );
 
   long n_proc_l = n_proc_;
   updateValue< long_t >( d, names::n_proc, n_proc_l );
   if ( n_proc_l < 1 )
-    throw BadProperty(
-      "The number of component processes cannot be smaller than one" );
+    throw BadProperty( "The number of component processes cannot be smaller than one" );
   else
     n_proc_ = static_cast< ulong_t >( n_proc_l );
 
@@ -158,8 +153,7 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double_t >( d, names::relative_amplitude, amplitude_ );
   if ( amplitude_ > 1.0 or amplitude_ < 0.0 )
-    throw BadProperty(
-      "The relative amplitude of the rate modulation must be in [0,1]." );
+    throw BadProperty( "The relative amplitude of the rate modulation must be in [0,1]." );
 }
 
 
@@ -217,12 +211,10 @@ nest::ppd_sup_generator::calibrate()
   V_.hazard_step_ = 1.0 / ( 1000.0 / P_.rate_ - P_.dead_time_ ) * h;
 
   // equilibrium occupation of dead time bins (in case of constant rate)
-  ulong_t ini_occ_0 =
-    static_cast< ulong_t >( P_.rate_ / 1000.0 * P_.n_proc_ * h );
+  ulong_t ini_occ_0 = static_cast< ulong_t >( P_.rate_ / 1000.0 * P_.n_proc_ * h );
 
   // If new targets have been added during a simulation break, we
-  // initialize the new elements in age_distributions with the initial dist. The
-  // existing
+  // initialize the new elements in age_distributions with the initial dist. The existing
   // elements are unchanged.
   Age_distribution_ age_distribution0(
     num_age_bins, ini_occ_0, P_.n_proc_ - ini_occ_0 * num_age_bins );
@@ -235,12 +227,9 @@ nest::ppd_sup_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::ppd_sup_generator::update( Time const& T,
-  const long_t from,
-  const long_t to )
+nest::ppd_sup_generator::update( Time const& T, const long_t from, const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
@@ -257,8 +246,7 @@ nest::ppd_sup_generator::update( Time const& T,
     if ( P_.amplitude_ > 0.0 && ( P_.frequency_ > 0.0 || P_.frequency_ < 0.0 ) )
     {
       double_t t_ms = t.get_ms();
-      V_.hazard_step_t_ = V_.hazard_step_
-        * ( 1.0 + P_.amplitude_ * std::sin( V_.omega_ * t_ms ) );
+      V_.hazard_step_t_ = V_.hazard_step_ * ( 1.0 + P_.amplitude_ * std::sin( V_.omega_ * t_ms ) );
     }
     else
       V_.hazard_step_t_ = V_.hazard_step_;
@@ -276,11 +264,9 @@ nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
   const port prt = e.get_port();
 
   // we handle only one port here, get reference to vector element
-  assert(
-    0 <= prt && static_cast< size_t >( prt ) < B_.age_distributions_.size() );
+  assert( 0 <= prt && static_cast< size_t >( prt ) < B_.age_distributions_.size() );
 
-  // age_distribution object propagates one time step and returns number of
-  // spikes
+  // age_distribution object propagates one time step and returns number of spikes
   ulong_t n_spikes = B_.age_distributions_[ prt ].update(
     V_.hazard_step_t_, kernel().rng_manager.get_rng( get_thread() ) );
 

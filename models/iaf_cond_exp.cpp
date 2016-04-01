@@ -60,12 +60,9 @@ void
 RecordablesMap< iaf_cond_exp >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_(
-    names::V_m, &iaf_cond_exp::get_y_elem_< iaf_cond_exp::State_::V_M > );
-  insert_(
-    names::g_ex, &iaf_cond_exp::get_y_elem_< iaf_cond_exp::State_::G_EXC > );
-  insert_(
-    names::g_in, &iaf_cond_exp::get_y_elem_< iaf_cond_exp::State_::G_INH > );
+  insert_( names::V_m, &iaf_cond_exp::get_y_elem_< iaf_cond_exp::State_::V_M > );
+  insert_( names::g_ex, &iaf_cond_exp::get_y_elem_< iaf_cond_exp::State_::G_EXC > );
+  insert_( names::g_in, &iaf_cond_exp::get_y_elem_< iaf_cond_exp::State_::G_INH > );
 }
 }
 
@@ -77,8 +74,7 @@ nest::iaf_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::iaf_cond_exp& node =
-    *( reinterpret_cast< nest::iaf_cond_exp* >( pnode ) );
+  const nest::iaf_cond_exp& node = *( reinterpret_cast< nest::iaf_cond_exp* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -90,8 +86,7 @@ nest::iaf_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
   const double I_L = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
 
   // V dot
-  f[ 0 ] = ( -I_L + node.B_.I_stim_ + node.P_.I_e - I_syn_exc - I_syn_inh )
-    / node.P_.C_m;
+  f[ 0 ] = ( -I_L + node.B_.I_stim_ + node.P_.I_e - I_syn_exc - I_syn_inh ) / node.P_.C_m;
 
   f[ 1 ] = -y[ S::G_EXC ] / node.P_.tau_synE;
   f[ 2 ] = -y[ S::G_INH ] / node.P_.tau_synI;
@@ -132,8 +127,7 @@ nest::iaf_cond_exp::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::iaf_cond_exp::State_& nest::iaf_cond_exp::State_::operator=(
-  const State_& s )
+nest::iaf_cond_exp::State_& nest::iaf_cond_exp::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -285,8 +279,7 @@ nest::iaf_cond_exp::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
-    B_.s_ =
-      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   else
     gsl_odeiv_step_reset( B_.s_ );
 
@@ -311,12 +304,10 @@ nest::iaf_cond_exp::init_buffers_()
 void
 nest::iaf_cond_exp::calibrate()
 {
-  B_.logger_
-    .init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.RefractoryCounts_
-    >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
 }
 
 /* ----------------------------------------------------------------
@@ -324,13 +315,10 @@ nest::iaf_cond_exp::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_exp::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+nest::iaf_cond_exp::update( Time const& origin, const long_t from, const long_t to )
 {
 
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -401,14 +389,13 @@ nest::iaf_cond_exp::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
-      -e.get_weight()
-        * e.get_multiplicity() ); // ensure conductance is positive
+    B_.spike_inh_.add_value(
+      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+      -e.get_weight() * e.get_multiplicity() ); // ensure conductance is positive
 }
 
 void
@@ -421,8 +408,7 @@ nest::iaf_cond_exp::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

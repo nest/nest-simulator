@@ -32,8 +32,7 @@
  Parameters:
      The following parameters can be set in the status dictionary:
      amplitude_times   list of doubles - Times at which current changes in ms
-     amplitude_values  list of doubles - Amplitudes of step current current in
- pA
+     amplitude_values  list of doubles - Amplitudes of step current current in pA
 
   Examples:
     The current can be altered in the following way:
@@ -47,8 +46,7 @@
 
   Author: Jochen Martin Eppler, Jens Kremkow
 
-  SeeAlso: ac_generator, dc_generator, step_current_generator, Device,
- StimulatingDevice
+  SeeAlso: ac_generator, dc_generator, step_current_generator, Device, StimulatingDevice
 */
 
 #ifndef STEP_CURRENT_GENERATOR_H
@@ -105,9 +103,8 @@ private:
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_&, Buffers_& );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      Buffers_& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;            //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Buffers_& ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -126,10 +123,7 @@ private:
 };
 
 inline port
-step_current_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool )
+step_current_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
   device_.enforce_single_syn_type( syn_id );
 

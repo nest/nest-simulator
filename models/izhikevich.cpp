@@ -111,13 +111,11 @@ nest::izhikevich::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::b, b_ );
   updateValue< double >( d, names::c, c_ );
   updateValue< double >( d, names::d, d_ );
-  updateValue< bool >(
-    d, names::consistent_integration, consistent_integration_ );
+  updateValue< bool >( d, names::consistent_integration, consistent_integration_ );
   const double_t h = Time::get_resolution().get_ms();
   if ( not consistent_integration_ && h != 1.0 )
   {
-    LOG(
-      M_INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
+    LOG( M_INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
   }
 }
 
@@ -197,12 +195,9 @@ nest::izhikevich::calibrate()
  */
 
 void
-nest::izhikevich::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+nest::izhikevich::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
 
   const double_t h = Time::get_resolution().get_ms();
@@ -216,20 +211,18 @@ nest::izhikevich::update( Time const& origin,
     {
       v_old = S_.v_;
       u_old = S_.u_;
-      S_.v_ += h * ( 0.04 * v_old * v_old + 5.0 * v_old + 140.0 - u_old + S_.I_
-                     + P_.I_e_ )
+      S_.v_ += h * ( 0.04 * v_old * v_old + 5.0 * v_old + 140.0 - u_old + S_.I_ + P_.I_e_ )
         + B_.spikes_.get_value( lag );
       S_.u_ += h * P_.a_ * ( P_.b_ * v_old - u_old );
     }
-    // use numerics published in Izhikevich (2003) in this case (not
-    // recommended)
+    // use numerics published in Izhikevich (2003) in this case (not recommended)
     else
     {
       double I_syn = B_.spikes_.get_value( lag );
-      S_.v_ += h * 0.5 * ( 0.04 * S_.v_ * S_.v_ + 5.0 * S_.v_ + 140.0 - S_.u_
-                           + S_.I_ + P_.I_e_ + I_syn );
-      S_.v_ += h * 0.5 * ( 0.04 * S_.v_ * S_.v_ + 5.0 * S_.v_ + 140.0 - S_.u_
-                           + S_.I_ + P_.I_e_ + I_syn );
+      S_.v_ +=
+        h * 0.5 * ( 0.04 * S_.v_ * S_.v_ + 5.0 * S_.v_ + 140.0 - S_.u_ + S_.I_ + P_.I_e_ + I_syn );
+      S_.v_ +=
+        h * 0.5 * ( 0.04 * S_.v_ * S_.v_ + 5.0 * S_.v_ + 140.0 - S_.u_ + S_.I_ + P_.I_e_ + I_syn );
       S_.u_ += h * P_.a_ * ( P_.b_ * S_.v_ - S_.u_ );
     }
 
@@ -261,8 +254,7 @@ void
 nest::izhikevich::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
-  B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -274,8 +266,7 @@ nest::izhikevich::handle( CurrentEvent& e )
   const double_t c = e.get_current();
   const double_t w = e.get_weight();
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

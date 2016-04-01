@@ -53,8 +53,7 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int
-hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
+extern "C" int hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
 
 /* BeginDocumentation
 Name: hh_cond_exp_traub - Hodgin Huxley based model, Traub modified.
@@ -65,15 +64,12 @@ Description:
 
  (1) Post-syaptic currents
  Incoming spike events induce a post-synaptic change of conductance modelled
- by an exponential function. The exponential function is normalised such that an
-event of
+ by an exponential function. The exponential function is normalised such that an event of
  weight 1.0 results in a peak current of 1 nS.
 
  (2) Spike Detection
- Spike detection is done by a combined threshold-and-local-maximum search: if
-there
- is a local maximum above a certain threshold of the membrane potential, it is
-considered a spike.
+ Spike detection is done by a combined threshold-and-local-maximum search: if there
+ is a local maximum above a certain threshold of the membrane potential, it is considered a spike.
 
 Problems/Todo:
 Only the channel variables m,h,n are implemented. The original
@@ -85,15 +81,12 @@ Parameters:
 
  V_m        double - Membrane potential in mV
  V_T        double - Voltage offset that controls dynamics. For default
-                     parameters, V_T = -63mV results in a threshold around
--50mV.
+                     parameters, V_T = -63mV results in a threshold around -50mV.
  E_L        double - Leak reversal potential in mV.
  C_m        double - Capacity of the membrane in pF.
  g_L        double - Leak conductance in nS.
- tau_syn_ex double - Time constant of the excitatory synaptic exponential
-function in ms.
- tau_syn_in double - Time constant of the inhibitory synaptic exponential
-function in ms.
+ tau_syn_ex double - Time constant of the excitatory synaptic exponential function in ms.
+ tau_syn_in double - Time constant of the inhibitory synaptic exponential function in ms.
  E_ex       double - Excitatory synaptic reversal potential in mV.
  E_in       double - Inhibitory synaptic reversal potential in mV.
  E_Na       double - Sodium reversal potential in mV.
@@ -127,8 +120,7 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -158,8 +150,7 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int
-  hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
+  friend int hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< hh_cond_exp_traub >;
@@ -182,8 +173,7 @@ private:
     double E_K;  //!< Potassium Reversal Potential in mV
     double E_L;  //!< Leak Reversal Potential in mV
 
-    double
-      V_T; //!< Voltage offset for dynamics (adjusts threshold to around -50 mV)
+    double V_T; //!< Voltage offset for dynamics (adjusts threshold to around -50 mV)
 
     double E_ex;     //!< Excitatory reversal Potential in mV
     double E_in;     //!< Inhibitory reversal Potential in mV
@@ -218,9 +208,8 @@ public:
       STATE_VEC_SIZE
     };
 
-    double
-      y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
-    int_t r_;               //!< number of refractory steps remaining
+    double y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
+    int_t r_;                    //!< number of refractory steps remaining
 
     State_( const Parameters_& p );
     State_( const State_& s );
@@ -249,9 +238,8 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( hh_cond_exp_traub& ); //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&,
-      hh_cond_exp_traub& ); //!<Sets buffer pointers to 0
+    Buffers_( hh_cond_exp_traub& );                  //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&, hh_cond_exp_traub& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< hh_cond_exp_traub > logger_;
@@ -304,10 +292,7 @@ public:
 };
 
 inline port
-hh_cond_exp_traub::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+hh_cond_exp_traub::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -333,8 +318,7 @@ hh_cond_exp_traub::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-hh_cond_exp_traub::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+hh_cond_exp_traub::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

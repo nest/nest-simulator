@@ -36,76 +36,52 @@
 
 /* BeginDocumentation
 
-   Name: correlospinmatrix_detector - Device for measuring the covariance matrix
-   from several inputs
+   Name: correlospinmatrix_detector - Device for measuring the covariance matrix from several inputs
 
-   Description: The correlospinmatrix_detector is a recording device. It is used
-   to record
+   Description: The correlospinmatrix_detector is a recording device. It is used to record
    correlations
-   from binary neurons from several binary sources and calculates the raw auto
-   and cross correlation
+   from binary neurons from several binary sources and calculates the raw auto and cross correlation
    binned to bins of duration delta_tau.
    The result can be obtained via GetStatus under the key /count_covariance.
-   The result is a tensor of rank 3 of size N_channels x N_channels, with each
-   entry C_ij being a
+   The result is a tensor of rank 3 of size N_channels x N_channels, with each entry C_ij being a
    vector of
-   size 2*tau_max/delta_tau + 1 containing the histogram for the different time
-   lags.
+   size 2*tau_max/delta_tau + 1 containing the histogram for the different time lags.
 
-   The bins are centered around the time difference they represent, and are
-   left-closed
-   and right-open in the lower triangular part of the matrix. On the diagonal
-   and in the upper
-   triangular part the intervals are left-open and right-closed. This ensures
-   proper counting
+   The bins are centered around the time difference they represent, and are left-closed
+   and right-open in the lower triangular part of the matrix. On the diagonal and in the upper
+   triangular part the intervals are left-open and right-closed. This ensures proper counting
    of events at the border of bins.
 
-   The correlospinmatrix_detector has a variable number of inputs which can be
-   set via SetStatus
-   under the key N_channels. All incoming connections to a specified receptor
-   will be pooled.
+   The correlospinmatrix_detector has a variable number of inputs which can be set via SetStatus
+   under the key N_channels. All incoming connections to a specified receptor will be pooled.
 
    Parameters:
-   Tstart     double    - Time when to start counting events. This time should
-   be set to at least
-                          start + tau_max in order to avoid edge effects of the
-   correlation counts.
-   Tstop      double    - Time when to stop counting events. This time should be
-   set to at most
-                          Tsim - tau_max, where Tsim is the duration of
-   simulation,
-                          in order to avoid edge effects of the correlation
-   counts.
-   delta_tau  double    - bin width in ms. This has to be a multiple of the
-   resolution.
+   Tstart     double    - Time when to start counting events. This time should be set to at least
+                          start + tau_max in order to avoid edge effects of the correlation counts.
+   Tstop      double    - Time when to stop counting events. This time should be set to at most
+                          Tsim - tau_max, where Tsim is the duration of simulation,
+                          in order to avoid edge effects of the correlation counts.
+   delta_tau  double    - bin width in ms. This has to be a multiple of the resolution.
 
-   tau_max    double    - one-sided width in ms. In the lower triangular part
-   events with
+   tau_max    double    - one-sided width in ms. In the lower triangular part events with
    differences in
-                          [0, tau_max+delta_tau/2) are counted. On the diagonal
-   and in
-                          the upper triangular part events with differences in
-   (0,
+                          [0, tau_max+delta_tau/2) are counted. On the diagonal and in
+                          the upper triangular part events with differences in (0,
    tau_max+delta_tau/2]
 
-   N_channels long      - The number of inputs to correlate. This defines the
-   range of
+   N_channels long      - The number of inputs to correlate. This defines the range of
    receptor_type. Default is
    1.
-   count_covariance       matrix of long vectors, read-only   - raw, auto/cross
-   correlation counts
+   count_covariance       matrix of long vectors, read-only   - raw, auto/cross correlation counts
 
-   Remarks: This recorder does not record to file, screen or memory in the usual
-   sense. The result
-   must be obtained by a call to GetStatus. Setting either N_channels, Tstart,
-   Tstop, tau_max or
+   Remarks: This recorder does not record to file, screen or memory in the usual sense. The result
+   must be obtained by a call to GetStatus. Setting either N_channels, Tstart, Tstop, tau_max or
    delta_tau clears count_covariance.
 
    Example:
 
    See also pynest/examples/correlospinmatrix_detector_two_neuron.py
-   for a script reproducing a setting studied in Fig 1 of Grinzburg &
-   Sompolinsky (1994) PRE 50(4)
+   for a script reproducing a setting studied in Fig 1 of Grinzburg & Sompolinsky (1994) PRE 50(4)
    p. 3171.
 
    See also examples/nest/correlospinmatrix_detector.sli for a basic
@@ -138,8 +114,7 @@
    Author: Moritz Helias
 
    FirstVersion: 2015/08/25
-   SeeAlso: correlation_detector, correlomatrix_detector, spike_detector,
-   Device,
+   SeeAlso: correlation_detector, correlomatrix_detector, spike_detector, Device,
    PseudoRecordingDevice
    Availability: NEST
 */
@@ -176,8 +151,7 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -270,18 +244,14 @@ private:
   {
     BinaryPulselistType incoming_; //!< incoming binary pulses, sorted
 
-    rport last_i_; //!< rport of last event coming in (needed for decoding logic
-    // of binary events)
-    Time t_last_in_spike_; //!< time of last event coming in (needed for
-    // decoding logic of binary
+    rport last_i_; //!< rport of last event coming in (needed for decoding logic of binary events)
+    Time t_last_in_spike_; //!< time of last event coming in (needed for decoding logic of binary
     // events)
-    bool tentative_down_; //!< potentially a down transition (single spike
-    // received)
+    bool tentative_down_; //!< potentially a down transition (single spike received)
 
     std::vector< bool > curr_state_; //!< current state of neuron i
 
-    std::vector< long_t >
-      last_change_; //!< last time pointof change of neuron i
+    std::vector< long_t > last_change_; //!< last time pointof change of neuron i
 
     /** Unweighted covariance matrix.
      */
@@ -308,8 +278,7 @@ private:
 };
 
 inline port
-correlospinmatrix_detector::handles_test_event( SpikeEvent&,
-  rport receptor_type )
+correlospinmatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type < 0 || receptor_type > P_.N_channels_ - 1 )
     throw UnknownReceptorType( receptor_type, get_name() );

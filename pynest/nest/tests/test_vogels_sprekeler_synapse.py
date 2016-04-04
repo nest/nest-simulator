@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_stdp_symmetric_synapse.py
+# test_vogels_sprekeler_synapse.py
 #
 # This file is part of NEST.
 #
@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# This script tests the stdp_symmetric_synapse in NEST.
+# This script tests the vogels_sprekeler_synapse in NEST.
 
 import nest
 import unittest
@@ -27,9 +27,9 @@ from math import exp
 
 
 @nest.check_stack
-class STDPSymmetricConnectionTestCase(unittest.TestCase):
+class VogelsSprekelerConnectionTestCase(unittest.TestCase):
 
-    """Check stdp_symmetric_connection model properties."""
+    """Check vogels_sprekeler_synapse model properties."""
 
     def setUp(self):
         """Set up the test."""
@@ -39,7 +39,7 @@ class STDPSymmetricConnectionTestCase(unittest.TestCase):
         # settings
         self.dendritic_delay = 1.0
         self.decay_duration = 5.0
-        self.synapse_model = "stdp_symmetric_synapse"
+        self.synapse_model = "vogels_sprekeler_synapse"
         self.syn_spec = {
             "model": self.synapse_model,
             "delay": self.dendritic_delay,
@@ -215,7 +215,7 @@ class STDPSymmetricConnectionTestCase(unittest.TestCase):
 
 
 def suite():
-    return unittest.makeSuite(STDPSymmetricConnectionTestCase, "test")
+    return unittest.makeSuite(VogelsSprekelerConnectionTestCase, "test")
 
 
 def run():

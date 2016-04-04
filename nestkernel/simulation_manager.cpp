@@ -119,9 +119,9 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // tics_per_ms and resolution must come after local_num_thread / total_num_threads
   // because they might reset the network and the time representation
-  nest::double_t tics_per_ms;
+  nest::double_t tics_per_ms = 0.0;
   bool tics_per_ms_updated = updateValue< nest::double_t >( d, "tics_per_ms", tics_per_ms );
-  double_t resd;
+  double_t resd = 0.0;
   bool res_updated = updateValue< double_t >( d, "resolution", resd );
 
   if ( tics_per_ms_updated || res_updated )

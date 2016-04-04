@@ -22,7 +22,7 @@
 
 #include "ht_neuron.h"
 
-#ifdef HAVE_GSL_1_11
+#ifdef HAVE_GSL
 
 // C++ includes:
 #include <cmath>

@@ -23,7 +23,6 @@
 /*
     slimath.cc
 */
-#define NDEBUG
 
 #include "slimath.h"
 

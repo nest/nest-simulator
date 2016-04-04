@@ -349,7 +349,7 @@ fi
 mkdir "${TEST_OUTDIR}"
 
 PYTHON="${PYTHON:-python}"
-PYTHON_HARNESS="@PKGDATADIR_AS_CONFIGURED@/extras/do_tests.py"
+PYTHON_HARNESS="@CMAKE_INSTALL_PREFIX@/@INSTALL_DATA_DIR@/extras/do_tests.py"
 
 TMPDIR=${TMPDIR:-${TEST_OUTDIR}}
 TEST_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/nest.XXXXX")"
@@ -373,7 +373,7 @@ TEST_FAILED=0
 TIME_TOTAL=0
 TIME_ELAPSED=0
 
-echo >  "${TEST_LOGFILE}" "NEST v. @SLI_VERSION@ testsuite log"
+echo >  "${TEST_LOGFILE}" "NEST v. @NEST_VERSION_VERSION@ testsuite log"
 echo >> "${TEST_LOGFILE}" "======================"
 echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
 

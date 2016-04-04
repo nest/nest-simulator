@@ -23,7 +23,7 @@ from distutils.core import setup
 
 setup(
     name='PyNEST',
-    version='@SLI_VERSION@',
+    version='@NEST_VERSION_VERSION@',
     description='PyNEST provides Python bindings for NEST',
     author='The NEST Initiative',
     url='http://www.nest-simulator.org',

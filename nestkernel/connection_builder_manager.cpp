@@ -22,6 +22,9 @@
 
 #include "connection_builder_manager.h"
 
+// Generated includes:
+#include "config.h"
+
 // C++ includes:
 #include <cassert>
 #include <cmath>
@@ -202,8 +205,8 @@ nest::ConnectionBuilderManager::delete_connections_()
 #ifdef IS_K
 #pragma omp parallel
   {
-    poormansallocpool[ omp_get_thread_num() ].destruct();
-    poormansallocpool[ omp_get_thread_num() ].init();
+    poormansallocpool[ kernel().vp_manager.get_thread_id() ].destruct();
+    poormansallocpool[ kernel().vp_manager.get_thread_id() ].init();
   }
 #else
 #pragma omp parallel

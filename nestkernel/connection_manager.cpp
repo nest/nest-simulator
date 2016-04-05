@@ -557,10 +557,7 @@ nest::ConnectionManager::connect_( Node& s,
  * @param syn_id type of synapse
  */
 void
-nest::ConnectionManager::disconnect( Node& target,
-  index sgid,
-  thread target_thread,
-  index syn_id )
+nest::ConnectionManager::disconnect( Node& target, index sgid, thread target_thread, index syn_id )
 {
 
   if ( kernel().node_manager.is_local_gid( target.get_gid() ) )
@@ -714,9 +711,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
 
 
 void
-nest::ConnectionManager::divergent_connect( index source_id,
-  DictionaryDatum pars,
-  index syn )
+nest::ConnectionManager::divergent_connect( index source_id, DictionaryDatum pars, index syn )
 {
   // We extract the parameters from the dictionary explicitly since getValue() for DoubleVectorDatum
   // copies the data into an array, from which the data must then be copied once more.

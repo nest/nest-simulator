@@ -110,9 +110,8 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
     - 1;
 
   // number of data points per slice
-  const long_t recs_per_slice =
-    static_cast< long_t >( std::ceil( kernel().connection_manager.get_min_delay()
-      / static_cast< double >( rec_int_steps_ ) ) );
+  const long_t recs_per_slice = static_cast< long_t >( std::ceil(
+    kernel().connection_manager.get_min_delay() / static_cast< double >( rec_int_steps_ ) ) );
 
   data_.resize(
     2, DataLoggingReply::Container( recs_per_slice, DataLoggingReply::Item( num_vars_ ) ) );

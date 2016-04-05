@@ -446,8 +446,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
 
   // allocate memory to store the new interpolation coefficients
   // to be sent by gap event
-  const size_t quantity =
-    kernel().connection_manager.get_min_delay() * ( interpolation_order + 1 );
+  const size_t quantity = kernel().connection_manager.get_min_delay() * ( interpolation_order + 1 );
   std::vector< double_t > new_coefficients( quantity, 0.0 );
 
   // parameters needed for piecewise interpolation

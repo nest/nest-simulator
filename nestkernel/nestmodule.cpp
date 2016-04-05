@@ -247,9 +247,9 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
       kernel().connection_manager.set_synapse_status( con_id.get_source_gid(), // source_gid
-        con_id.get_synapse_model_id(),                                                 // synapse_id
-        con_id.get_port(),                                                             // port
-        con_id.get_target_thread(), // target thread
+        con_id.get_synapse_model_id(),                                         // synapse_id
+        con_id.get_port(),                                                     // port
+        con_id.get_target_thread(),                                            // target thread
         dict );
 
       ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
@@ -264,9 +264,9 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
       kernel().connection_manager.set_synapse_status( con_id.get_source_gid(), // source_gid
-        con_id.get_synapse_model_id(),                                                 // synapse_id
-        con_id.get_port(),                                                             // port
-        con_id.get_target_thread(), // target thread
+        con_id.get_synapse_model_id(),                                         // synapse_id
+        con_id.get_port(),                                                     // port
+        con_id.get_target_thread(),                                            // target thread
         dict );
 
       ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
@@ -786,8 +786,7 @@ NestModule::Connect_i_i_D_lFunction::execute( SLIInterpreter* i ) const
   {
     Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
-    kernel().connection_manager.connect(
-      source, target_node, target_thread, synmodel_id, params );
+    kernel().connection_manager.connect( source, target_node, target_thread, synmodel_id, params );
   }
 
   i->OStack.pop( 4 );
@@ -1946,12 +1945,9 @@ NestModule::init( SLIInterpreter* i )
   // Add connection rules
   kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
   kernel().connection_manager.register_conn_builder< AllToAllBuilder >( "all_to_all" );
-  kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >(
-    "fixed_indegree" );
-  kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >(
-    "fixed_outdegree" );
-  kernel().connection_manager.register_conn_builder< BernoulliBuilder >(
-    "pairwise_bernoulli" );
+  kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
+  kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
+  kernel().connection_manager.register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
   kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >(
     "fixed_total_number" );
 

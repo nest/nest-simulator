@@ -83,8 +83,8 @@ nest::KernelManager::initialize()
   // invariant: supporting managers set up
 
   // "Core kernel managers" follow
-  simulation_manager.initialize();         // independent of others
-  modelrange_manager.initialize();         // independent of others
+  simulation_manager.initialize(); // independent of others
+  modelrange_manager.initialize(); // independent of others
   connection_manager.initialize(); // depends only on num of threads
   sp_manager.initialize();
 

@@ -442,8 +442,7 @@ nest::SimulationManager::prepare_simulation_()
   // before enter_runtime
   if ( !simulated_ ) // only enter the runtime mode once
   {
-    double tick =
-      Time::get_resolution().get_ms() * kernel().connection_manager.get_min_delay();
+    double tick = Time::get_resolution().get_ms() * kernel().connection_manager.get_min_delay();
     kernel().music_manager.enter_runtime( tick );
   }
 

@@ -33,7 +33,7 @@ What is NEST
 NEST is a simulator for spiking neural network models that focuses on the
 dynamics, size and structure of neural systems rather than on the exact
 morphology of individual neurons. The development of NEST is coordinated by the
-[NEST Initiative](http://www.nest-initiative.org.md).
+[NEST Initiative](http://www.nest-initiative.org).
 
 NEST is ideal for networks of spiking neurons of any size, for example:
 

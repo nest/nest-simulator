@@ -52,8 +52,8 @@ and other users.
 
 As a starting point, try to build MyModule as follows:
 
-1. From the NEST source directory, copy directory examples/MyModule to somewhere outside the NEST source, build or install directories.
-2. Create a build directory for it on the same level as MyModule, e.g., mmb next to it
+1. From the NEST source directory, copy directory `examples/MyModule` to somewhere outside the NEST source, build or install directories.
+2. Create a build directory for it on the same level as MyModule (e.g. mmb)
 
         cd /path/to/MyModule
         cd ..
@@ -90,7 +90,7 @@ As a starting point, try to build MyModule as follows:
         /drop_odd_spike help
         /StepPatternConnect help
 
-4. In PyNest, use
+4. In PyNEST, use
 
         nest.Install("mymodule")
 

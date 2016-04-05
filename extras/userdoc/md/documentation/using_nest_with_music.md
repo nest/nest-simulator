@@ -1,23 +1,38 @@
 Using NEST with MUSIC
 =====================
 
-
  Introduction
 -------------
 
-NEST supports the [MUSIC interface](http://software.incf.org/software/music), a standard by the INCF, which allows the transmission of data between applications at runtime. It can be used to couple NEST with other simulators, with applications for stimulus generation and data analysis and visualization and with custom applications that also use the MUSIC interface.
+NEST supports the [MUSIC interface](http://software.incf.org/software/music), a
+standard by the INCF, which allows the transmission of data between applications
+at runtime. It can be used to couple NEST with other simulators, with
+applications for stimulus generation and data analysis and visualization and
+with custom applications that also use the MUSIC interface.
 
-Basically, all communication with MUSIC is mediated via *proxies* that receive/send data from/to remote applications using MUSIC. Different proxies are used for the different types of data. At the moment, NEST supports sending and receiving spike events and receiving continuous data and string messages.
+Basically, all communication with MUSIC is mediated via *proxies* that
+receive/send data from/to remote applications using MUSIC. Different proxies are
+used for the different types of data. At the moment, NEST supports sending and
+receiving spike events and receiving continuous data and string messages.
 
-###  Publication
+### Publication
 
-The implementation of the MUSIC interface for NEST is published as *Mikael Djurfeldt, Johannes Hjorth, Jochen Martin Eppler, Niraj Dudani, Moritz Helias, Tobias C Potjans, Upinder S Bhalla, Markus Diesmann, Jeanette Hellgren Kotaleski, and Örjan Ekeberg. Run-time interoperability between neuronal simulators based on the MUSIC framework. Neuroinformatics, 8, 2010. doi:10.1007/s12021-010-9064-z* and available from [here](http://www.springerlink.com/content/r6j425027lmv1251/).
+The implementation of the MUSIC interface for NEST is published as
+*Mikael Djurfeldt, Johannes Hjorth, Jochen Martin Eppler, Niraj Dudani,
+Moritz Helias, Tobias C Potjans, Upinder S Bhalla, Markus Diesmann,
+Jeanette Hellgren Kotaleski, and Örjan Ekeberg. Run-time interoperability
+between neuronal simulators based on the MUSIC framework.
+Neuroinformatics, 8, 2010. doi:10.1007/s12021-010-9064-z* and available from [here](http://www.springerlink.com/content/r6j425027lmv1251/).
 
- Sending and receiving spike events
+Sending and receiving spike events
 -----------------------------------
 
-A minimal example for the exchange of spikes between two independent instances of NEST is given in the example `examples/nest/music/minimalmusicsetup.music`. It uses one [SLI script](../an_introduction_to_sli/index.html "An Introduction to SLI"), which sends spikes using a `music_event_out_proxy` and one SLI script, which receives the spikes using a `music_event_in_proxy`. The configuration file is shown in the following listing:
-
+A minimal example for the exchange of spikes between two independent instances
+of NEST is given in the example `examples/nest/music/minimalmusicsetup.music`.
+It uses one [SLI script](../an_introduction_to_sli/index.html "An Introduction
+to SLI"), which sends spikes using a `music_event_out_proxy` and one SLI script,
+which receives the spikes using a `music_event_in_proxy`. The configuration file
+is shown in the following listing:
 
     [from]
       binary=nest
@@ -30,9 +45,11 @@ A minimal example for the exchange of spikes between two independent instances o
       args=minimalmusicsetup_receivenest.sli
       from.spikes_out -> to.spikes_in [1]
 
-
-This configuration file sets up two applications, `from` and `to`, which are both instances of `NEST`. The first runs a script to send spike events on the MUSIC port `spikes_out` to the second, which receives the events on the port `spikes_in`. The width of the port is 1. The content of `minimalmusicsetup_sendnest.sli` is contained in the following listing:
-
+This configuration file sets up two applications, `from` and `to`, which are
+both instances of `NEST`. The first runs a script to send spike events on the
+MUSIC port `spikes_out` to the second, which receives the events on the port
+`spikes_in`. The width of the port is 1. The content of
+`minimalmusicsetup_sendnest.sli` is contained in the following listing:
 
     /spike_generator Create /sg Set
     sg << /spike_times [1.0 1.5 2.0 ]>> SetStatus
@@ -46,11 +63,18 @@ This configuration file sets up two applications, `from` and `to`, which are bot
     sg meop << /music_channel 0 >> Connect
     10 Simulate
 
-
-Line 1 creates a `spike_generator`, which sends three spikes. The spike times are specified in line 2. The script then creates an `iaf_neuron` in line 3 and connects the `spike_generator` to the `iaf_neuron` in line 4. The membrane potential of the `iaf_neuron` is measured by a `voltmeter`, which is created in line 5 and set to print the measured values in line 6. The connection between the `voltmeter` and the `iaf_neuron` is established in line 7. Line 8 creates a `music_event_out_proxy`, which forwards the spikes it receives directly to the MUSIC event output port `spikes_out` (set in line 9). The `spike_generator` is connected to the MUSIC channel 0 on the `music_event_out_proxy` in line 10. Finally, the network is simulated for 10 miliseconds.
+Line 1 creates a `spike_generator`, which sends three spikes. The spike times
+are specified in line 2. The script then creates an `iaf_neuron` in line 3 and
+connects the `spike_generator` to the `iaf_neuron` in line 4. The membrane
+potential of the `iaf_neuron` is measured by a `voltmeter`, which is created in
+line 5 and set to print the measured values in line 6. The connection between
+the `voltmeter` and the `iaf_neuron` is established in line 7. Line 8 creates a
+`music_event_out_proxy`, which forwards the spikes it receives directly to the
+MUSIC event output port `spikes_out` (set in line 9). The `spike_generator` is
+connected to the MUSIC channel 0 on the `music_event_out_proxy` in line 10.
+Finally, the network is simulated for 10 miliseconds.
 
 The next listing contains the content of `minimalmusicsetup_receivenest.sli`:
-
 
 /music_event_in_proxy Create /meip Set
 meip << /port_name (spikes_in) /music_channel 0 >> SetStatus
@@ -61,20 +85,10 @@ vm << /to_memory false /to_screen true >> SetStatus
 vm n Connect
 10 Simulate
 
-
-Running the example using `mpirun -np 2 music minimalmusicsetup.music` yields the following output, which shows that the neurons in both processes receive the same input from the `spike_generator` in the first NEST process and show the same membrane potential trace.
-
-
-    NEST v1.9.svn (C) 1995-2008 The NEST Initiative
-    -70
-    -70
-    -68.1559    
-    -61.9174    
-    -70
-    -70
-    -70
-    -65.2054    
-    -62.1583
+Running the example using `mpirun -np 2 music minimalmusicsetup.music` yields
+the following output, which shows that the neurons in both processes receive the
+same input from the `spike_generator` in the first NEST process and show the
+same membrane potential trace.
 
     NEST v1.9.svn (C) 1995-2008 The NEST Initiative
     -70
@@ -87,12 +101,24 @@ Running the example using `mpirun -np 2 music minimalmusicsetup.music` yields th
     -65.2054    
     -62.1583
 
+    NEST v1.9.svn (C) 1995-2008 The NEST Initiative
+    -70
+    -70
+    -68.1559    
+    -61.9174    
+    -70
+    -70
+    -70
+    -65.2054    
+    -62.1583
 
- Receiving string messages
+Receiving string messages
 ---------------------------
 
-Currently, NEST is only able to receive, but not to send string messages. We thus use MUSIC's `messagesource` program for the generation of messages in the following example. The configuration file (`msgtest.music`) is shown in the following listing:
-
+Currently, NEST is only able to receive, but not to send string messages. We
+thus use MUSIC's `messagesource` program for the generation of messages in the
+following example. The configuration file (`msgtest.music`) is shown in the
+following listing:
 
     stoptime=1.0
     np=1
@@ -104,16 +130,18 @@ Currently, NEST is only able to receive, but not to send string messages. We thu
 
     from.out -> to.msgdata [0]
 
-
-This configuration file connects MUSIC's `messagesource` program to the port `msgdata` of a NEST instance. The `messagesource` program needs a data file, which contains the messages and the corresponding time stamps. The data file (`messages0.dat`) is shown in the following listing:
-
+This configuration file connects MUSIC's `messagesource` program to the port
+`msgdata` of a NEST instance. The `messagesource` program needs a data file,
+which contains the messages and the corresponding time stamps. The data file
+(`messages0.dat`) is shown in the following listing:
 
     0.3     Hello
     0.7     !
 
-
-Please note that MUSIC uses a default unit of seconds for the specification of times, while NEST uses miliseconds. The example uses the [PyNEST](../introduction-to-pynest/index.html "PyNEST") syntax instead of SLI for the NEST part. The script that sets up the receiving side (`msgtest.py`) of the exampe is shown in the following listing:
-
+Please note that MUSIC uses a default unit of seconds for the specification of
+times, while NEST uses miliseconds. The example uses the [PyNEST](../introduction-to-pynest/index.html "PyNEST")
+syntax instead of SLI for the NEST part. The script that sets up the receiving
+side (`msgtest.py`) of the exampe is shown in the following listing:
 
     #!/usr/bin/python
 
@@ -131,8 +159,11 @@ Please note that MUSIC uses a default unit of seconds for the specification of t
         time += 10
 
 
-We first import the `nest` in line 2 and create an instance of the `music_message_in_proxy` in line 3. In line 4, we set the name of the port it listens to to `msgdata`. Lines 6 through 11 simulate the network in steps of 10 ms. Running the example using `mpirun -np 2 music msgtest.music` yields the following output:
-
+We first import the `nest` in line 2 and create an instance of the
+`music_message_in_proxy` in line 3. In line 4, we set the name of the port it
+listens to to `msgdata`. Lines 6 through 11 simulate the network in steps of
+10 ms. Running the example using `mpirun -np 2 music msgtest.music` yields the
+following output:
 
                -- N E S T 2 beta --
               Neural Simulation Tool
@@ -183,12 +214,15 @@ We first import the `nest` in line 2 and create an instance of the `music_messag
         Simulation finished.
     [{'messages': ['Hello', '!'], 'message_times': array([ 300.,  700.])}]
 
-
- Receiving continuous data
+Receiving continuous data
 --------------------------
 
-As in the case of string message, NEST currently only supports receiving continuous data, but not sending. This means that we have to use another of MUSIC's test programs to generate the data for us. This time, we use `constsource`, which generates a sequence of numbers form 0 to w, where w is the width of the port. The MUSIC configuration file (`conttest.music`) is shown in the following listing:
-
+As in the case of string message, NEST currently only supports receiving
+continuous data, but not sending. This means that we have to use another of
+MUSIC's test programs to generate the data for us. This time, we use
+`constsource`, which generates a sequence of numbers form 0 to w, where w is the
+width of the port. The MUSIC configuration file (`conttest.music`) is shown in
+the following listing:
 
     stoptime=1.0
     [from]
@@ -200,9 +234,8 @@ As in the case of string message, NEST currently only supports receiving continu
 
     from.contdata -> to.contdata [10]
 
-
-The receiving side is again implemented using a [PyNEST](/introduction-to-pynest/index.html "PyNEST") script (`conttest.py`):
-
+The receiving side is again implemented using a [PyNEST](/introduction-to-pynest/index.html "PyNEST")
+script (`conttest.py`):
 
     #!/usr/bin/python
 
@@ -219,9 +252,11 @@ The receiving side is again implemented using a [PyNEST](/introduction-to-pynest
        print data
        time += 10
 
-
-We first import the nest in line 2 and create an instance of the music\_cont\_in\_proxy in line 3. In line 4, we set the name of the port it listens to to msgdata. Lines 6 through 11 simulate the network in steps of 10 ms. Running the example using `mpirun -np 2 music conttest.music` yields the following output:
-
+We first import the nest in line 2 and create an instance of the
+music\_cont\_in\_proxy in line 3. In line 4, we set the name of the port it
+listens to to msgdata. Lines 6 through 11 simulate the network in steps of
+10 ms. Running the example using `mpirun -np 2 music conttest.music` yields the
+following output:
 
                -- N E S T 2 beta --
               Neural Simulation Tool

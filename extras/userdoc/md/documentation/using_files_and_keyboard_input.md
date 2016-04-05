@@ -1,47 +1,44 @@
 Using files and keyboard input
 ==============================
 
- Overview
+Overview
 ---------
 
-SLI's input/output fascilities differ from those of PostScript and
- are close to the stream concept of C++. However, for compatibility
- some PostScript output commands are implemented.
+SLI's input/output fascilities differ from those of PostScript and are close to
+the stream concept of C++. However, for compatibility some PostScript output
+commands are implemented.
 
-Like in C++, files are represented as *streams*, which can
- be put on the stack. All i/o commands leave their stream
- argument on the stack, so that operations can be chained.
+Like in C++, files are represented as *streams*, which can be put on the stack.
+All i/o commands leave their stream argument on the stack, so that operations
+can be chained.
 
-###  Example
+### Example
 
 Print *Hello World* to the standard output.
-
 
     SLI ] cout (Hello World) <- endl
     Hello World
     SLI [1] ;
     SLI ]
 
+`cout` is the standard output of SLI. The command `<-` takes the role of C++'s
+`<<` output operator and prints the ASCII representation of the object at stack
+level 0 to the stream at level 1. After this, the object is removed and the
+stream remains at level 0.
 
-`cout` is the standard output of SLI. The command
-`<-` takes the role of C++'s `<<` output operator and prints
- the ASCII representation of the object at stack level 0 to the
- stream at level 1. After this, the object is removed and the
- stream remains at level 0.
+The command `endl` corresponds to the C++ manipulator of the same name. It
+prints an end of line character to the stream at level 0. Again, it leaves the
+stream argument on the stack.
 
-The command `endl` corresponds to the C++ manipulator of
- the same name. It prints an end of line character to the stream
- at level 0. Again, it leaves the stream argument on the stack.
+Now, the abbreviated form of `pop`, i.e. the command `;`, is used to remove the
+stream object from the stack.
 
-Now, the abbreviated form of `pop`, i.e. the command
-`;`, is used to remove the stream object from the stack.
-
- Standard streams
+Standard streams
 -----------------
 
-The standard streams of a UNIX program are mapped to the following
- names. Note that these streams should not be closed by a SLI
- program, since the result is undefined.
+The standard streams of a UNIX program are mapped to the following names. Note
+that these streams should not be closed by a SLI program, since the result is
+undefined.
 
 Name
 Description
@@ -51,12 +48,13 @@ Standart input stream.
 Standart output stream.
 `cerr`
 Standart error output stream.
- Opening and closing a stream
--------------------------------------------------------------------------------------------------
 
-Streams are objects which handle the input and output of data to or
- from some external target. The target of a stream can be a file, a
- string, a devide, or another process.
+Opening and closing a stream
+----------------------------
+
+Streams are objects which handle the input and output of data to or from some
+external target. The target of a stream can be a file, a string, a devide, or
+another process.
 
 Command
 Description
@@ -76,8 +74,9 @@ Open string-stream for writing.
 Extract a string from a string-stream.
 `stream close`
 Close the stream.
- Writing to streams
------------------------------------------------------------------------------
+
+Writing to streams
+------------------
 
 Command
 Description
@@ -89,27 +88,24 @@ Print detailed ASCII representation of `obj` to `stream`.
 Print ASCII representation of `obj` to `cout`.
 `stream obj ==`
 Print detailed ASCII representation of `obj` to `cout`.
+
 ###  Example
 
 Print *Hello World* to a text file.
 
-    
     SLI ] (test.txt) (w) file
     SLI [1] (Hello World!) <-
     SLI [1] endl
     SLI [1] ;
 
-
- Manipulators
+Manipulators
 -------------
 
-Manipulators are used to manipulate the state of a stream
- object. Such changes can, for instance, affect the precision with
- which numbers are printed.
+Manipulators are used to manipulate the state of a stream object. Such changes
+can, for instance, affect the precision with which numbers are printed.
 
-Manipulators take one or more arguments. In general, the
- manipulator leaves the stream object at the top of the stack and
- removes all other arguments.
+Manipulators take one or more arguments. In general, the manipulator leaves the
+stream object at the top of the stack and removes all other arguments.
 
 Manipulator
 Description

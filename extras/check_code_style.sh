@@ -6,6 +6,7 @@ END_SHA=HEAD
 
 CPPCHECK=cppcheck
 VERA=vera++
+PEP8=pep8
 
 CLANG_FORMAT=clang-format-3.6
 INCREMENTAL=false
@@ -57,6 +58,8 @@ Options:
                          TravisCI setup. (default=clang-format-3.6)
     --vera++=exe         Enter the executable that is used for vera++.
                          (default=vera++)
+    --pep8=exe           Enter the executable that is used for pep8.
+                         (default=pep8)
 EOF
 
     exit $1
@@ -97,6 +100,9 @@ while test $# -gt 0 ; do
         --vera++=*)
             VERA="$( echo "$1" | sed 's/^--vera++=//' )"
             ;;
+        --pep8=*)
+            PEP8="$( echo "$1" | sed 's/^--pep8=//' )"
+            ;;
         --clang-format=*)
             CLANG_FORMAT="$( echo "$1" | sed 's/^--clang-format=//' )"
             ;;
@@ -122,7 +128,13 @@ echo "Tooling:"
 # check vera++ is set up appropriately
 $VERA ./nest/main.cpp >/dev/null 2>&1 || usage 1 "Executable $VERA for vera++ is not working!"
 $VERA --profile nest ./nest/main.cpp >/dev/null 2>&1 ||  bail_out "No profile called nest for vera++ installed. See https://nest.github.io/nest-simulator/coding_guidelines_c++#vera-profile-nest"
-echo "vera++ version: `vera++ --version`"
+echo "vera++ version: `$VERA --version`"
+
+# check pep8 is working
+#set +e # pep8 returns 1 if the file does not comply with PEP8
+$PEP8 ./extras/parse_travis_log.py || usage 1 "Executable $PEP8 for pep8 is not working!"
+#set -e
+echo "pep8 version: `$PEP8 --version`"
 
 # check cppcheck 1.69 is installed correctly
 # Previous versions of cppcheck halted on sli/tokenutils.cc (see https://github.com/nest/nest-simulator/pull/79)
@@ -216,8 +228,20 @@ for f in $file_names; do
       $CPPCHECK --enable=all --inconclusive --std=c++03 $f
 
       ;;
+    *.py )
+      set +e # pep8 returns 1 if the file does not comply with PEP8
+      echo "Check PEP8 on file $f:"
+      pep8_result=`pep8 --first $f`
+
+      if [ "$?" -gt "0" ]; then
+        echo "$pep8_result"
+
+        format_error_files="$format_error_files $f"
+      fi
+      set -e
+      ;;
     *)
-      echo "$f : not a C/CPP file. Skipping ..."
+      echo "$f : not a C/CPP/PY file. Skipping ..."
   esac
 done
 

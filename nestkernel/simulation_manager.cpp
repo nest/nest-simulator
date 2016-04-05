@@ -142,7 +142,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "ResetKernel first." );
       throw KernelException();
     }
-    else if ( kernel().connection_builder_manager.get_num_connections() != 0 )
+    else if ( kernel().connection_manager.get_num_connections() != 0 )
     {
       LOG( M_ERROR,
         "SimulationManager::set_status",
@@ -165,7 +165,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         nest::Time::set_resolution( tics_per_ms, resd );
         clock_.calibrate(); // adjust to new resolution
         // adjust delays in the connection system to new resolution
-        kernel().connection_builder_manager.calibrate( time_converter );
+        kernel().connection_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
         LOG( M_INFO, "SimulationManager::set_status", "tics per ms and resolution changed." );
       }
@@ -184,7 +184,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         Time::set_resolution( resd );
         clock_.calibrate(); // adjust to new resolution
         // adjust delays in the connection system to new resolution
-        kernel().connection_builder_manager.calibrate( time_converter );
+        kernel().connection_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
         LOG( M_INFO, "SimulationManager::set_status", "Temporal resolution changed." );
       }
@@ -306,15 +306,15 @@ nest::SimulationManager::simulate( Time const& t )
   // have the proper value.  to_step_ is set as in advance_time().
 
   delay end_sim = from_step_ + to_do_;
-  if ( kernel().connection_builder_manager.get_min_delay() < end_sim )
-    to_step_ = kernel().connection_builder_manager.get_min_delay(); // update to end of time slice
+  if ( kernel().connection_manager.get_min_delay() < end_sim )
+    to_step_ = kernel().connection_manager.get_min_delay(); // update to end of time slice
   else
     to_step_ = end_sim; // update to end of simulation time
 
   // Warn about possible inconsistencies, see #504.
   // This test cannot come any earlier, because we first need to compute min_delay_
   // above.
-  if ( t.get_steps() % kernel().connection_builder_manager.get_min_delay() != 0 )
+  if ( t.get_steps() % kernel().connection_manager.get_min_delay() != 0 )
     LOG( M_WARNING,
       "SimulationManager::simulate",
       "The requested simulation time is not an integer multiple of the minimal delay in the "
@@ -411,7 +411,7 @@ nest::SimulationManager::prepare_simulation_()
 
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables
-  kernel().connection_builder_manager.update_delay_extrema_();
+  kernel().connection_manager.update_delay_extrema_();
   kernel().event_delivery_manager.init_moduli();
 
   // Check for synchronicity of global rngs over processes.
@@ -443,7 +443,7 @@ nest::SimulationManager::prepare_simulation_()
   if ( !simulated_ ) // only enter the runtime mode once
   {
     double tick =
-      Time::get_resolution().get_ms() * kernel().connection_builder_manager.get_min_delay();
+      Time::get_resolution().get_ms() * kernel().connection_manager.get_min_delay();
     kernel().music_manager.enter_runtime( tick );
   }
 
@@ -546,8 +546,8 @@ nest::SimulationManager::update_()
           // the partial step in the final update
           // needs to be done in omp single since to_step_ is a scheduler variable
           old_to_step = to_step_;
-          if ( to_step_ < kernel().connection_builder_manager.get_min_delay() )
-            to_step_ = kernel().connection_builder_manager.get_min_delay();
+          if ( to_step_ < kernel().connection_manager.get_min_delay() )
+            to_step_ = kernel().connection_manager.get_min_delay();
         }
 
         bool max_iterations_reached = true;
@@ -644,7 +644,7 @@ nest::SimulationManager::update_()
 #pragma omp master
       {
         if ( to_step_
-          == kernel().connection_builder_manager.get_min_delay() ) // gather only at end of slice
+          == kernel().connection_manager.get_min_delay() ) // gather only at end of slice
           kernel().event_delivery_manager.gather_events( true );
 
         advance_time_();
@@ -729,9 +729,9 @@ nest::SimulationManager::advance_time_()
   to_do_ -= to_step_ - from_step_;
 
   // advance clock, update modulos, slice counter only if slice completed
-  if ( ( delay ) to_step_ == kernel().connection_builder_manager.get_min_delay() )
+  if ( ( delay ) to_step_ == kernel().connection_manager.get_min_delay() )
   {
-    clock_ += Time::step( kernel().connection_builder_manager.get_min_delay() );
+    clock_ += Time::step( kernel().connection_manager.get_min_delay() );
     ++slice_;
     kernel().event_delivery_manager.update_moduli();
     from_step_ = 0;
@@ -741,12 +741,12 @@ nest::SimulationManager::advance_time_()
 
   long_t end_sim = from_step_ + to_do_;
 
-  if ( kernel().connection_builder_manager.get_min_delay() < ( delay ) end_sim )
-    to_step_ = kernel().connection_builder_manager.get_min_delay(); // update to end of time slice
+  if ( kernel().connection_manager.get_min_delay() < ( delay ) end_sim )
+    to_step_ = kernel().connection_manager.get_min_delay(); // update to end of time slice
   else
     to_step_ = end_sim; // update to end of simulation time
 
-  assert( to_step_ - from_step_ <= ( long_t ) kernel().connection_builder_manager.get_min_delay() );
+  assert( to_step_ - from_step_ <= ( long_t ) kernel().connection_manager.get_min_delay() );
 }
 
 void
@@ -777,5 +777,5 @@ nest::SimulationManager::print_progress_()
 nest::Time const
 nest::SimulationManager::get_previous_slice_origin() const
 {
-  return clock_ - Time::step( kernel().connection_builder_manager.get_min_delay() );
+  return clock_ - Time::step( kernel().connection_manager.get_min_delay() );
 }

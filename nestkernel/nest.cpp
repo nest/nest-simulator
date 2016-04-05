@@ -165,7 +165,7 @@ set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict 
 
   dict->clear_access_flags();
 
-  kernel().connection_builder_manager.set_synapse_status( gid, synapse_id, port, tid, dict );
+  kernel().connection_manager.set_synapse_status( gid, synapse_id, port, tid, dict );
 
   ALL_ENTRIES_ACCESSED2( *dict,
     "SetStatus",
@@ -179,7 +179,7 @@ get_connection_status( const ConnectionDatum& conn )
   long gid = conn.get_source_gid();
   kernel().node_manager.get_node( gid ); // Just to check if the node exists
 
-  return kernel().connection_builder_manager.get_synapse_status(
+  return kernel().connection_manager.get_synapse_status(
     gid, conn.get_synapse_model_id(), conn.get_port(), conn.get_target_thread() );
 }
 
@@ -207,7 +207,7 @@ connect( const GIDCollection& sources,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params )
 {
-  kernel().connection_builder_manager.connect( sources, targets, connectivity, synapse_params );
+  kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 }
 
 ArrayDatum
@@ -215,7 +215,7 @@ get_connections( const DictionaryDatum& dict )
 {
   dict->clear_access_flags();
 
-  ArrayDatum array = kernel().connection_builder_manager.get_connections( dict );
+  ArrayDatum array = kernel().connection_manager.get_connections( dict );
 
   ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: " );
 

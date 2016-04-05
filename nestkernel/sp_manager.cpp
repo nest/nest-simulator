@@ -150,7 +150,7 @@ SPManager::set_status( const DictionaryDatum& d )
     // check that the user defined the min and max delay properly, if the
     // default delay is not used.
     if ( not conn_builder->get_default_delay()
-      && not kernel().connection_builder_manager.get_user_set_delay_extrema() )
+      && not kernel().connection_manager.get_user_set_delay_extrema() )
     {
       throw BadProperty(
         "Structural Plasticity: to use different delays for synapses you must specify the min "
@@ -231,7 +231,7 @@ SPManager::disconnect( index sgid, Node* target, thread target_thread, index syn
   // normal nodes and devices with proxies
   if ( target->has_proxies() )
   {
-    kernel().connection_builder_manager.disconnect( *target, sgid, target_thread, syn );
+    kernel().connection_manager.disconnect( *target, sgid, target_thread, syn );
   }
   else if ( target->local_receiver() ) // normal devices
   {
@@ -243,7 +243,7 @@ SPManager::disconnect( index sgid, Node* target, thread target_thread, index syn
       target = kernel().node_manager.get_node( target->get_gid(), sgid );
     }
     // thread target_thread = target->get_thread();
-    kernel().connection_builder_manager.disconnect( *target, sgid, target_thread, syn );
+    kernel().connection_manager.disconnect( *target, sgid, target_thread, syn );
   }
   else // globally receiving devices iterate over all target threads
   {
@@ -255,7 +255,7 @@ SPManager::disconnect( index sgid, Node* target, thread target_thread, index syn
     {
       target = kernel().node_manager.get_node( target->get_gid(), t );
       target_thread = target->get_thread();
-      kernel().connection_builder_manager.disconnect( *target, sgid, target_thread, syn ); // tgid
+      kernel().connection_manager.disconnect( *target, sgid, target_thread, syn ); // tgid
     }
   }
 }
@@ -283,7 +283,7 @@ SPManager::disconnect( GIDCollection& sources,
     throw BadProperty( "Disconnection spec must contain disconnection rule." );
   const std::string rule_name = ( *conn_spec )[ names::rule ];
 
-  if ( not kernel().connection_builder_manager.get_connruledict()->known( rule_name ) )
+  if ( not kernel().connection_manager.get_connruledict()->known( rule_name ) )
     throw BadProperty( "Unknown connectivty rule: " + rule_name );
 
   if ( not sp_conn_builders_.empty() )
@@ -297,7 +297,7 @@ SPManager::disconnect( GIDCollection& sources,
       if ( ( *i )->get_synapse_model()
         == ( index )( kernel().model_manager.get_synapsedict()->lookup( synModel ) ) )
       {
-        cb = kernel().connection_builder_manager.get_conn_builder(
+        cb = kernel().connection_manager.get_conn_builder(
           rule_name, sources, targets, conn_spec, syn_spec );
         cb->set_post_synaptic_element_name( ( *i )->get_post_synaptic_element_name() );
         cb->set_pre_synaptic_element_name( ( *i )->get_pre_synaptic_element_name() );
@@ -305,7 +305,7 @@ SPManager::disconnect( GIDCollection& sources,
     }
   }
   else
-    cb = kernel().connection_builder_manager.get_conn_builder(
+    cb = kernel().connection_manager.get_conn_builder(
       rule_name, sources, targets, conn_spec, syn_spec );
   assert( cb != 0 );
 
@@ -509,7 +509,7 @@ SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
   std::vector< index >::iterator id_it;
   std::vector< int_t >::iterator n_it;
 
-  kernel().connection_builder_manager.get_targets( pre_deleted_id, connectivity, synapse_model );
+  kernel().connection_manager.get_targets( pre_deleted_id, connectivity, synapse_model );
 
   id_it = pre_deleted_id.begin();
   n_it = pre_deleted_n.begin();
@@ -566,7 +566,7 @@ SPManager::delete_synapse( index sgid,
     thread target_thread = target->get_thread();
     if ( tid == target_thread )
     {
-      kernel().connection_builder_manager.disconnect( *target, sgid, target_thread, syn_id );
+      kernel().connection_manager.disconnect( *target, sgid, target_thread, syn_id );
 
       target->connect_synaptic_element( se_post_name, -1 );
     }
@@ -607,7 +607,7 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
   std::vector< int_t >::iterator n_it;
 
   // Retrieve the connected sources
-  kernel().connection_builder_manager.get_sources( post_deleted_id, connectivity, synapse_model );
+  kernel().connection_manager.get_sources( post_deleted_id, connectivity, synapse_model );
 
   id_it = post_deleted_id.begin();
   n_it = post_deleted_n.begin();

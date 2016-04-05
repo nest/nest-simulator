@@ -15,10 +15,9 @@ This article contains instructions on how to develop NEST on a Mac (OSX 10.10.3 
 We need several packages installed, before we can become productive with NEST:
 
 * gcc
-* openmpi 1.6
+* openmpi 1.6 (or later)
 * gsl
-* autoconf
-* automake
+* cmake
 * libtool
 * ipython, python, cython, ... The best way to install all the python requirements is to use [Anaconda](https://store.continuum.io/cshop/anaconda/).
 
@@ -34,26 +33,7 @@ We present two ways to install the rest: MacPorts and Homebrew. For both version
 1. Follow the install instructions for Homebrew ([short](http://brew.sh/) or [long](https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Installation.md#installation))
 1. Open up the Terminal and execute the following lines:
 
-        brew install gcc gsl autoconf automake libtool
-1. Since every package is compiled using th Mac supplied gcc, aka clang, but we want OpenMP to wrap around the Homebrew-gcc, we have to alter the openmpi-installation script. Assuming we installed Homebrew gcc 5.1.0, the executable is called `gcc-5` or `g++-5`, the script can be changed this way:
-
-        brew edit open-mpi
-In the `def install` function add the `CC` and `CXX` lines to the `args` variable like this:
-
-        args = %W[
-          --prefix=#{prefix}
-          --disable-dependency-tracking
-          --disable-silent-rules
-          --enable-ipv6
-          --with-libevent=#{Formula["libevent"].opt_prefix}
-          --with-sge
-          CC=gcc-5         # these are the
-          CXX=g++-5        # important lines
-        ]
-1. Homebrew tries to use pre-compiled packages, if possible (so-called bottles). You can disable this by setting the environment variable `HOMEBREW_BUILD_FROM_SOURCE` to some value. Install OpenMPI with the following line:
-
-        brew install pkg-config makedepend     # have open-mpi dependencies installed as bottles
-        HOMEBREW_BUILD_FROM_SOURCE=1 brew install open-mpi
+        brew install gcc gsl cmake open-mpi libtool
 
 ### MacPorts
 
@@ -65,7 +45,7 @@ In the `def install` function add the `CC` and `CXX` lines to the `args` variabl
         sudo port install gcc48
         sudo port select gcc mp-gcc48 # make gcc-48 the default compiler
         sudo port install gsl +gcc48
-        sudo port install autoconf automake libtool    # build tools
+        sudo port install cmake       # build tools
 1. NEST on Mac requires OpenMPI 1.6 from MacPorts to work properly, so we have to get this older version for MacPort. Download the portsfile [Portfile-openmpi-1.6.4.txt](http://www.nest-simulator.org/wp-content/uploads/2014/12/Portfile-openmpi-1.6.4.txt) and save it under the name `Portfile` in an arbitraty directory.
 1. In Terminal, move to the directory containing Portfile and run
 
@@ -89,23 +69,26 @@ Afterwards you should have a directory structure like:
 1. Build NEST
 
         cd src
-        ./bootstrap.sh
         cd ../build
 
         # with Homebrew infrastructure run:
-        $PWD/../src/configure --prefix=$PWD/../install --with-debug --with-mpi CC=mpicc CXX=mpicxx
+        cmake -DCMAKE_INSTALL_PREFIX=$PWD/../install -Dwith-debug=ON -Dwith-mpi=ON -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 $PWD/../src
         # with MacPorts infrastructure run:
-        $PWD/../src/configure --prefix=$PWD/../install --with-debug --with-mpi CC=openmpicc CXX=openmpicxx
+        cmake -DCMAKE_INSTALL_PREFIX=$PWD/../install -Dwith-debug=ON -Dwith-mpi=ON -DCMAKE_C_COMPILER=gcc-mp-4.8 -DCMAKE_CXX_COMPILER=g++-mp-4.8 $PWD/../src
 
         make -j8    # run make with 8 processes
         make install 
         make installcheck
 
-__Note:__ It is important, that the `configure` command is _not_ executed with relative paths, in order for Xcode to find source files mentioned in the build logs.
+__Note:__ It is important, that the `cmake` command is _not_ executed with relative paths, in order for Xcode to find source files mentioned in the build logs.
 
 __Note:__ If you want to debug your code with Xcode later, it has to be compiled with debug-options enabled.
 
-__Note:__ Always supply a concrete `CC` and `CXX` for the configure (if you do not use the mpi-versions, which should wrap around the correct gcc): e.g. `CC=gcc-5 CXX=g++-5` (for Homebrew) or `CC=gcc-mp-4.8 CXX=g++-mp-4.8` (for MacPorts). Otherwise Xcode will prefer to use the gcc/clang version.
+__Note:__ Always supply a concrete `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` for the configure: e.g. `-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5` (for Homebrew) or `-DCMAKE_C_COMPILER=gcc-mp-4.8 -DCMAKE_CXX_COMPILER=g++-mp-4.8` (for MacPorts). Otherwise Xcode will prefer to use the gcc/clang version.
+
+__Note:__ Even if you want to build with MPI enabled, do not set the wrapper compilers for `CMAKE_*_COMPILER`, as cmake will figure out the correct compiler options on its own.
+
+__Note:__ With cmake it is also possible, to generate the XCode project files with `-G Xcode`, but this will require you to build with `gcc/clang`. The following instructions assume, that you do not use this option.
 
 ## Get Xcode working with NEST
 

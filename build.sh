@@ -111,6 +111,9 @@ else
 fi
 format_error_files=""
 
+# Ignore those PEP8 rules
+PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
+
 for f in $file_names; do
   if [ ! -f "$f" ]; then
     echo "$f : Is not a file or does not exist anymore."
@@ -151,7 +154,7 @@ for f in $file_names; do
     *.py )
       set +e # pep8 returns 1 if the file does not comply with PEP8
       echo "Check PEP8 on file $f:"
-      pep8_result=`pep8 --first $f`
+      pep8_result=`pep8 --first --ignore=$PEP8_IGNORES $f`
 
       if [ "$?" -gt "0" ]; then
         echo "$pep8_result"

@@ -7,6 +7,7 @@ END_SHA=HEAD
 CPPCHECK=cppcheck
 VERA=vera++
 PEP8=pep8
+PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
 
 CLANG_FORMAT=clang-format-3.6
 INCREMENTAL=false
@@ -132,7 +133,7 @@ echo "vera++ version: `$VERA --version`"
 
 # check pep8 is working
 #set +e # pep8 returns 1 if the file does not comply with PEP8
-$PEP8 ./extras/parse_travis_log.py || usage 1 "Executable $PEP8 for pep8 is not working!"
+$PEP8 --ignore=$PEP8_IGNORES ./extras/parse_travis_log.py || usage 1 "Executable $PEP8 for pep8 is not working!"
 #set -e
 echo "pep8 version: `$PEP8 --version`"
 
@@ -231,7 +232,7 @@ for f in $file_names; do
     *.py )
       set +e # pep8 returns 1 if the file does not comply with PEP8
       echo "Check PEP8 on file $f:"
-      pep8_result=`pep8 --first $f`
+      pep8_result=`pep8 --first --ignore=$PEP8_IGNORES $f`
 
       if [ "$?" -gt "0" ]; then
         echo "$pep8_result"

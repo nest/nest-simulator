@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AEIF_PSC_ALPHA_GP_H
-#define AEIF_PSC_ALPHA_GP_H
+#ifndef AEIF_PSC_ALPHA_GRIDPRECISE_H
+#define AEIF_PSC_ALPHA_GRIDPRECISE_H
 
 // Generated includes:
 #include "config.h"

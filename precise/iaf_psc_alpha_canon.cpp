@@ -113,7 +113,7 @@ nest::iaf_psc_alpha_canon::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_psc_alpha_canon::Parameters_::set( const DictionaryDatum& d )
 {
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
+  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;

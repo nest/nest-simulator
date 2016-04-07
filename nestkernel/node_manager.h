@@ -45,7 +45,7 @@ class Node;
 class Subnet;
 class Model;
 
-class NodeManager : ManagerInterface
+class NodeManager : public ManagerInterface
 {
 public:
   NodeManager();
@@ -194,8 +194,9 @@ public:
    * Prepare nodes for simulation and register nodes in node_list.
    * Calls prepare_node_() for each pertaining Node.
    * @see prepare_node_()
+   * @returns number of nodes that will be simulated.
    */
-  void prepare_nodes();
+  size_t prepare_nodes();
 
   /**
    * Invoke finalize() on nodes registered for finalization.

@@ -23,6 +23,9 @@
 #ifndef CONNECTOR_BASE_H
 #define CONNECTOR_BASE_H
 
+// Generated includes:
+#include "config.h"
+
 // C++ includes:
 #include <cstdlib>
 #include <vector>
@@ -88,7 +91,8 @@ suicide_and_resurrect( Told* connector, size_t i )
 #if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
   Tnew* p =
-    new ( poormansallocpool[ omp_get_thread_num() ].alloc( sizeof( Tnew ) ) ) Tnew( *connector, i );
+    new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( Tnew ) ) )
+      Tnew( *connector, i );
 #else
   Tnew* p = new ( poormansallocpool.alloc( sizeof( Tnew ) ) ) Tnew( *connector, i );
 #endif
@@ -907,7 +911,7 @@ private:
 
 public:
   HetConnector()
-    : vector< ConnectorBase* >()
+    : std::vector< ConnectorBase* >()
     , primary_end_( 0 )
   {
   }
@@ -1015,7 +1019,7 @@ public:
   void
   trigger_update_weight( long_t vt_gid,
     thread t,
-    const vector< spikecounter >& dopa_spikes,
+    const std::vector< spikecounter >& dopa_spikes,
     double_t t_trig,
     const std::vector< ConnectorModel* >& cm )
   {

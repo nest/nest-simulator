@@ -619,7 +619,7 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
     // Communicate the list of sources
     kernel().mpi_manager.communicate( *connectivity_it, global_sources, displacements );
     // shuffle only the first n items, n is the number of deleted synaptic elements
-    if ( -( *n_it ) > global_sources.size() )
+    if ( -( *n_it ) > static_cast< int_t >( global_sources.size() ) )
       *n_it = -global_sources.size();
     global_shuffle( global_sources, -( *n_it ) );
 

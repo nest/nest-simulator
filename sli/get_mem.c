@@ -71,7 +71,7 @@ bg_get_stack_mem()
 
 #endif
 
-#if defined __APPLE__ && HAVE_MACH_MACH_H
+#if defined __APPLE__ && defined HAVE_MACH_MACH_H
 #include <mach/mach.h>
 unsigned long
 darwin_get_used_mem()

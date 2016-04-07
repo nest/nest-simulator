@@ -295,7 +295,7 @@ ModelsModule::init( SLIInterpreter* )
     "sinusoidal_gamma_generator" );
 #endif
 
-#ifdef HAVE_GSL_1_11
+#ifdef HAVE_GSL
   kernel().model_manager.register_node_model< aeif_cond_alpha >( "aeif_cond_alpha" );
   kernel().model_manager.register_node_model< aeif_cond_alpha_gridprecise >(
     "aeif_cond_alpha_gridprecise" );

@@ -29,7 +29,7 @@
 // Generated includes:
 #include "config.h"
 
-#ifdef HAVE_GSL_1_11
+#ifdef HAVE_GSL
 
 // External includes:
 #include <gsl/gsl_errno.h>
@@ -478,5 +478,5 @@ iaf_psc_alpha_ps::set_status( const DictionaryDatum& d )
 
 } // namespace
 
-#endif /* #ifdef HAVE_GSL_1_11 */
+#endif /* #ifdef HAVE_GSL */
 #endif /* #ifndef IAF_PSC_ALPHA_PS_H */

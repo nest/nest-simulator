@@ -22,7 +22,7 @@
 
 #include "aeif_cond_alpha_ps.h"
 
-#ifdef HAVE_GSL_1_11
+#ifdef HAVE_GSL
 
 // C++ includes:
 #include <cmath>
@@ -577,4 +577,4 @@ nest::aeif_cond_alpha_ps::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL_1_11
+#endif // HAVE_GSL

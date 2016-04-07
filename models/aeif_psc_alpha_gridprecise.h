@@ -20,13 +20,13 @@
  *
  */
 
-#ifndef AEIF_PSC_ALPHA_GRIDPRECISE_H
-#define AEIF_PSC_ALPHA_GRIDPRECISE_H
+#ifndef AEIF_PSC_ALPHA_GP_H
+#define AEIF_PSC_ALPHA_GP_H
 
 // Generated includes:
 #include "config.h"
 
-#ifdef HAVE_GSL_1_11
+#ifdef HAVE_GSL
 
 // External includes:
 #include <gsl/gsl_errno.h>
@@ -389,5 +389,5 @@ aeif_psc_alpha_gridprecise::set_status( const DictionaryDatum& d )
 
 } // namespace
 
-#endif // HAVE_GSL_1_11
+#endif // HAVE_GSL
 #endif // AEIF_PSC_ALPHA_GP_H

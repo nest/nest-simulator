@@ -21,7 +21,7 @@
  */
 
 #include "aeif_psc_exp_gridprecise.h"
-#ifdef HAVE_GSL_1_11
+#ifdef HAVE_GSL
 
 // C++ includes:
 #include <cmath>
@@ -555,4 +555,4 @@ nest::aeif_psc_exp_gridprecise::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL_1_11
+#endif // HAVE_GSL

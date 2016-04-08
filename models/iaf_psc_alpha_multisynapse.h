@@ -114,7 +114,7 @@ private:
     double_t TauR_;
 
     /** Resting potential in mV. */
-    double_t U0_;
+    double_t E_L_;
 
     /** External current in pA */
     double_t I_e_;
@@ -123,7 +123,7 @@ private:
     double_t V_reset_;
 
     /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
-        I.e. the real threshold is (U0_+Theta_). */
+        I.e. the real threshold is (E_L_+Theta_). */
     double_t Theta_;
 
     /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
@@ -224,7 +224,7 @@ private:
   double_t
   get_V_m_() const
   {
-    return S_.y3_ + P_.U0_;
+    return S_.y3_ + P_.E_L_;
   }
   double_t
   get_current_() const

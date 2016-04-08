@@ -72,7 +72,7 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
   // is that the min delay is exactly at a step, in which case one would get
   // a min delay that is one step too small. We can detect this by an
   // additional test.
-  double_t delay_tmp;
+  double_t delay_tmp = 0.0;
   bool min_delay_updated = updateValue< double_t >( d, "min_delay", delay_tmp );
   Time new_min_delay;
   if ( min_delay_updated )

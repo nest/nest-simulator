@@ -51,7 +51,7 @@
 namespace nest
 {
 
-class MPIManager : ManagerInterface
+class MPIManager : public ManagerInterface
 {
 public:
   // forward declaration of internal classes

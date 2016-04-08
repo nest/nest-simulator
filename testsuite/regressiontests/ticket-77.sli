@@ -60,16 +60,9 @@ M_ERROR setverbosity
              /mcculloch_pitts_neuron      % binary neuron
              /pp_pop_psc_delta         % population model, not suitable for STDP
            ] def    
-
-/higher_weight_list [ % all aeif_psc neurons
-                       /aeif_psc_alpha_gridprecise
-                       /aeif_psc_exp_gridprecise
-                       /aeif_psc_alpha_ps
-                       /aeif_psc_exp_ps
-                    ] def
              
 
-% The following models require connections to rport 1:
+% The following models require connections to rport 1 or other specific parameters:
 /extra_params <<
    /iaf_psc_alpha_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
@@ -79,6 +72,10 @@ M_ERROR setverbosity
                                   /receptor_type 1 >>
    /iaf_cond_alpha_mc << /receptor_type 1 >>
    /ht_neuron << /receptor_type 1 >>
+   /aeif_psc_alpha_gridprecise << /initial_weight 80.0 >>
+   /aeif_psc_exp_gridprecise << /initial_weight 80.0 >>
+   /aeif_psc_alpha_ps << /initial_weight 80.0 >>
+   /aeif_psc_exp_ps << /initial_weight 80.0 >>
    /sli_neuron << /params << /calibrate { }
                              /update { /spike ex_spikes 10. gt def } 
                           >>
@@ -115,13 +112,22 @@ M_ERROR setverbosity
                           % plastic synapses.
 
       /initial_weight 10.0 def
-      model higher_weight_list exch MemberQ
-      {
-        /initial_weight 80.0 def
-      } if
       /syn_spec << /model /stdp_synapse
-                   /weight initial_weight
-                   /receptor_type 
+                   /weight
+                     extra_params model known
+                     {
+                        extra_params model get /initial_weight known
+                        {
+                           extra_params model get /initial_weight get
+                        }
+                        {
+                           initial_weight
+                        } ifelse
+                     }
+                     {
+                        initial_weight
+                     } ifelse
+                   /receptor_type
                      extra_params model known
                      {
                        extra_params model get /receptor_type known

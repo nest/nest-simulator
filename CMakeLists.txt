@@ -263,8 +263,8 @@ configure_file(
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/extras/emacs/sli.el.in"
-    "${PROJECT_BINARY_DIR}/extras/emacs/sli.el" @ONLY
+    "${PROJECT_SOURCE_DIR}/extras/EditorSupport/emacs/sli.el.in"
+    "${PROJECT_BINARY_DIR}/extras/EditorSupport/emacs/sli.el" @ONLY
 )
 
 configure_file(

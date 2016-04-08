@@ -1,7 +1,7 @@
-License {.entry-title}
+License
 =======
 
-GNU GENERAL PUBLIC LICENSE {#GNU_GENERAL_PUBLIC_LICENSE}
+GNU GENERAL PUBLIC LICENSE
 --------------------------
 
 Version 2, June 1991
@@ -61,7 +61,7 @@ be licensed for everyone's free use or not licensed at all.
 The precise terms and conditions for copying, distribution and
 modification follow.
 
-GNU GENERAL PUBLIC LICENSE {#GNU_GENERAL_PUBLIC_LICENSE_2}
+GNU GENERAL PUBLIC LICENSE
 --------------------------
 
 ### TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION

@@ -53,7 +53,6 @@ An example
 
 As an example, here is the multimeter.py example from the PyNEST examples set:
 
-     prettyprint
     import nest
     import numpy as np
     import pylab as pl

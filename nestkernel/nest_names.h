@@ -308,6 +308,7 @@ extern const Name S; //!< Binary state (output) of neuron (Ginzburg neuron)
 extern const Name scientific;  //!< Recorder parameter
 extern const Name screen;      //!< Recorder parameter
 extern const Name senders;     //!< Recorder parameter
+extern const Name sigma;       //!< Inverse steepness of erfc_neuron
 extern const Name size_of;     //!< Connection parameters
 extern const Name source;      //!< Connection parameters
 extern const Name spike;       //!< true if the neuron spikes and false if not.

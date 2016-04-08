@@ -26,7 +26,7 @@
 // Generated includes:
 #include "config.h"
 
-#ifdef HAVE_GSL_1_11
+#ifdef HAVE_GSL
 
 // C++ includes:
 #include <string>

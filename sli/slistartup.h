@@ -29,7 +29,7 @@
 // Generated includes:
 #include "dirent.h"
 #include "errno.h"
-#include "sliconfig.h"
+#include "config.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"

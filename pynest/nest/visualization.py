@@ -72,7 +72,7 @@ def plot_network(nodes, filename, ext_conns = False, plot_modelnames = False):
 
     # Flatten nodes
     nodes = [node for node_list in nodes for node in node_list]
-    adjlist = [[j, nest.GetStatus(nest.FindConnections([j]), 'target')] for j in nodes]
+    adjlist = [[j, nest.GetStatus(nest.GetConnections([j]), 'target')] for j in nodes]
     
     for cl in adjlist:
         if not ext_conns:

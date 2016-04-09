@@ -55,8 +55,8 @@ class ThreadTestCase(unittest.TestCase):
         self.assertEqual(st,[0, 1, 2, 3, 4, 5, 6, 7])
 
 
-    def test_ThreadsFindConnections(self):
-        """FindConnections with threads"""
+    def test_ThreadsGetConnections(self):
+        """GetConnections with threads"""
 
         if not self.nest_multithreaded():
             self.skipTest("NEST was compiled without multi-threading")
@@ -68,7 +68,7 @@ class ThreadTestCase(unittest.TestCase):
 
         nest.Connect(pre, post)
 
-        conn = nest.FindConnections(pre)
+        conn = nest.GetConnections(pre)
         # Because of threading, targets may be in a different order than
         # in post, so we sort the vector.
         targets = list(nest.GetStatus(conn, "target"))

@@ -81,11 +81,11 @@ class TestFixedTotalNumber(TestParams):
                 self.setUpNetwork(conn_dict=conn_params,N1=self.N_s,N2=self.N_t)
                 degrees = hf.get_degrees(fan, self.pop1, self.pop2)
                 degrees = hf.gather_data(degrees)
-                if degrees != None:
+                if degrees is not None:
                     chi, p = hf.chi_squared_check(degrees, expected)
                     pvalues.append(p)
                 hf.mpi_barrier()
-            if degrees != None:
+            if degrees is not None:
                 ks, p = scipy.stats.kstest(pvalues, 'uniform')
                 self.assertTrue( p > self.stat_dict['alpha2'] )
 
@@ -101,7 +101,7 @@ class TestFixedTotalNumber(TestParams):
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
         M = hf.gather_data(M)
-        if M != None:
+        if M is not None:
             self.assertTrue(np.sum(np.diag(M)) > N)
         hf.nest.ResetKernel()
 

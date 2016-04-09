@@ -50,11 +50,11 @@ class TestPairwiseBernoulli(TestParams):
                 degrees = hf.gather_data(degrees)
                 #degrees = self.comm.gather(degrees, root=0)
                 #if self.rank == 0:
-                if degrees != None:
+                if degrees is not None:
                     chi, p = hf.chi_squared_check(degrees, expected, self.rule)
                     pvalues.append(p)
                 hf.mpi_barrier()
-            if degrees != None:
+            if degrees is not None:
                 ks, p = scipy.stats.kstest(pvalues, 'uniform')
                 self.assertTrue( p > self.stat_dict['alpha2'] )
 

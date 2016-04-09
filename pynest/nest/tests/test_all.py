@@ -35,7 +35,6 @@ from . import test_connect_fixed_outdegree
 from . import test_connect_fixed_total_number
 from . import test_connect_one_to_one
 from . import test_connect_pairwise_bernoulli
-from . import test_findconnections
 from . import test_getconnections
 from . import test_dataconnect
 from . import test_events
@@ -63,7 +62,6 @@ def suite():
     suite.addTest(test_connect_fixed_total_number.suite())
     suite.addTest(test_connect_one_to_one.suite())
     suite.addTest(test_connect_pairwise_bernoulli.suite())
-    suite.addTest(test_findconnections.suite())
     suite.addTest(test_getconnections.suite())
     suite.addTest(test_dataconnect.suite())
     suite.addTest(test_events.suite())

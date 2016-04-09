@@ -255,7 +255,7 @@ E_id = [gid for gid in ctr_id
         if nest.GetStatus([gid], 'model')[0] == 'E']
 
 # get all targets, split into excitatory and inhibitory
-alltgts = nest.GetStatus(nest.FindConnections(E_id, synapse_model='static_synapse'), 'target')
+alltgts = nest.GetStatus(nest.GetConnections(E_id, synapse_model='static_synapse'), 'target')
 Etgts = [t for t in alltgts if nest.GetStatus([t], 'model')[0] == 'E']
 Itgts = [t for t in alltgts if nest.GetStatus([t], 'model')[0] == 'I']
 

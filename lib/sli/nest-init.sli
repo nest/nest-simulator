@@ -337,6 +337,46 @@ def
 
 %%% Variants of Connect
 
+/Connect_i_i_l
+{
+  /ciil_model Set
+  dup cvgidcollection
+  exch
+  dup cvgidcollection
+  exch
+  /one_to_one
+  ciil_model
+  Connect
+} def
+
+/Connect_i_i_d_d_l
+{
+  /ciiddl_model Set
+  /ciiddl_delay Set
+  /ciiddl_weight Set
+  dup cvgidcollection
+  exch
+  dup cvgidcollection
+  exch
+  << /rule /one_to_one >>
+  << /model ciiddl_model /weight ciiddl_weight /delay ciiddl_delay >>
+  Connect
+} def
+
+/Connect_i_i_D_l
+{
+  /ciiDl_model Set
+  /ciiDl_syn_spec Set
+  dup cvgidcollection
+  exch
+  dup cvgidcollection
+  exch
+  << /rule /one_to_one >>
+  << /model ciiDl_model >> /ciiDl_syn_spec JoinTo
+  ciiDl_syn_spec
+  Connect
+} def
+
 /Connect trie
 
   % Connect two nodes using default synapse model

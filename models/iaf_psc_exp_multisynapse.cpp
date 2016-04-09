@@ -72,6 +72,7 @@ iaf_psc_exp_multisynapse::Parameters_::Parameters_()
   , I_e_( 0.0 )              // in pA
   , V_reset_( -70.0 - E_L_ ) // in mV
   , Theta_( -55.0 - E_L_ )   // relative E_L_
+  , num_of_receptors_( 0 )
   , has_connections_( false )
 {
   tau_syn_.clear();

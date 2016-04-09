@@ -42,11 +42,11 @@ using namespace nest;
    variables or use defaults.
 */
 
-#ifndef HAVE_TICS_PER_MS
+#ifndef CONFIG_TICS_PER_MS
 #define CONFIG_TICS_PER_MS 1000.0
 #endif
 
-#ifndef HAVE_TICS_PER_STEP
+#ifndef CONFIG_TICS_PER_STEP
 #define CONFIG_TICS_PER_STEP 100
 #endif
 

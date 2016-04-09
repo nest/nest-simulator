@@ -54,7 +54,7 @@ namespace nest
 
    All times given in multiples of "tics":
    A "tic" is a microsecond by default, but may be changed through
-   the option --with-tics_per_ms to configure.
+   the option -Dtics_per_ms to configure.
 
    User access to time only through accessor functions:
    - Times can be added, subtracted, and multiplied by ints

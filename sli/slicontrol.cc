@@ -35,7 +35,7 @@
 
 // Generated includes:
 #include "config.h"
-#include "sliconfig.h"
+#include "config.h"
 
 // Includes from sli:
 #include "arraydatum.h"

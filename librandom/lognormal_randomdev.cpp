@@ -67,6 +67,8 @@ librandom::LognormalRandomDev::set_status( const DictionaryDatum& d )
 void
 librandom::LognormalRandomDev::get_status( DictionaryDatum& d ) const
 {
+  RandomDev::get_status( d );
+
   def< double >( d, "mu", mu_ );
   def< double >( d, "sigma", sigma_ );
 }

@@ -92,7 +92,7 @@ long bg_get_stack_mem();
 }
 #endif
 
-#if defined __APPLE__ && HAVE_MACH_MACH_H
+#if defined __APPLE__ && defined HAVE_MACH_MACH_H
 extern "C" {
 // Similar to the above prototype definitions for BG.
 unsigned long darwin_get_used_mem();
@@ -267,7 +267,7 @@ Processes::init( SLIInterpreter* i )
 #if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
   i->createcommand( ":memory_thisjob_bg", &memorythisjobbgfunction );
 #endif
-#if defined __APPLE__ && HAVE_MACH_MACH_H
+#if defined __APPLE__ && defined HAVE_MACH_MACH_H
   i->createcommand( ":memory_thisjob_darwin", &memorythisjobdarwinfunction );
 #endif
   i->createcommand( "setNONBLOCK", &setnonblockfunction );
@@ -822,7 +822,7 @@ Processes::MemoryThisjobBgFunction::execute( SLIInterpreter* i ) const
 }
 #endif
 
-#if defined __APPLE__ && HAVE_MACH_MACH_H
+#if defined __APPLE__ && defined HAVE_MACH_MACH_H
 /* BeginDocumentation
  Name: memory_thisjob_darwin - Reports memory usage on Darwin/Apple systems
  Description:

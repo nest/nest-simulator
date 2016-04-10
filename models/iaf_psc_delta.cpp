@@ -70,9 +70,9 @@ nest::iaf_psc_delta::Parameters_::Parameters_()
   , t_ref_( 2.0 )                                     // ms
   , E_L_( -70.0 )                                     // mV
   , I_e_( 0.0 )                                       // pA
-  , V_th_( -55.0 - E_L_ )                             // mV, rel to U0_
-  , V_min_( -std::numeric_limits< double_t >::max() ) // relative U0_-55.0-U0_
-  , V_reset_( -70.0 - E_L_ )                          // mV, rel to U0_
+  , V_th_( -55.0 - E_L_ )                             // mV, rel to E_L_
+  , V_min_( -std::numeric_limits< double_t >::max() ) // relative E_L_-55.0-E_L_
+  , V_reset_( -70.0 - E_L_ )                          // mV, rel to E_L_
   , with_refr_input_( false )
 {
 }
@@ -106,7 +106,7 @@ nest::iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d )
 {
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
+  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;

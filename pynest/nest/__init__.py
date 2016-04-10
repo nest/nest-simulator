@@ -25,6 +25,12 @@ Initializer of PyNEST.
 
 import sys, os
 
+# This is a workaround for readline import errors encountered with Anaconda
+# Python running on Ubuntu, when invoked from the terminal
+# "python -c 'import nest'"
+if 'linux' in sys.platform and 'Anaconda' in sys.version:
+    import readline
+
 # This is a workaround to avoid segmentation faults when importing
 # scipy *after* nest. See https://github.com/numpy/numpy/issues/2521
 try:
@@ -50,7 +56,7 @@ except:
 
 
 from . import pynestkernel as _kernel
-import lib.hl_api_helper as hl_api
+from .lib import hl_api_helper as hl_api
 
 engine = _kernel.NESTEngine()
 
@@ -174,7 +180,7 @@ def test():
     hl_api.set_debug(debug)
 
 from .pynestkernel import *
-from lib.hl_api_helper import *
+from .lib.hl_api_helper import *
 
 # We search through the subdirectory "lib" of the "nest" module
 # directory and import the content of all Python files therein into
@@ -182,7 +188,7 @@ from lib.hl_api_helper import *
 # and those of extra modules available to the user.
 for name in os.listdir(os.path.join(os.path.dirname(__file__), "lib")):
     if name.endswith(".py") and not name.startswith('__'):
-        exec("from lib.{0} import *".format(name[:-3]))
+        exec("from .lib.{0} import *".format(name[:-3]))
 
 if not 'DELAY_PYNEST_INIT' in os.environ:
     init(sys.argv)

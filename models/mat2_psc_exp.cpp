@@ -69,7 +69,7 @@ nest::mat2_psc_exp::Parameters_::Parameters_()
   : Tau_( 5.0 )      // in ms
   , C_( 100.0 )      // in pF
   , tau_ref_( 2.0 )  // in ms
-  , U0_( -70.0 )     // in mV
+  , E_L_( -70.0 )    // in mV
   , I_e_( 0.0 )      // in pA
   , tau_ex_( 1.0 )   // in ms
   , tau_in_( 3.0 )   // in ms
@@ -77,7 +77,7 @@ nest::mat2_psc_exp::Parameters_::Parameters_()
   , tau_2_( 200.0 )  // in ms
   , alpha_1_( 37.0 ) // in mV
   , alpha_2_( 2.0 )  // in mV
-  , omega_( 19.0 )   // resting threshold relative to U0_ in mV
+  , omega_( 19.0 )   // resting threshold relative to E_L_ in mV
                      // state V_th_ is initialized with the
                      // same value
 {
@@ -101,7 +101,7 @@ nest::mat2_psc_exp::State_::State_()
 void
 nest::mat2_psc_exp::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::E_L, U0_ ); // Resting potential
+  def< double >( d, names::E_L, E_L_ ); // Resting potential
   def< double >( d, names::I_e, I_e_ );
   def< double >( d, names::C_m, C_ );
   def< double >( d, names::tau_m, Tau_ );
@@ -112,16 +112,16 @@ nest::mat2_psc_exp::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_2, tau_2_ );
   def< double >( d, names::alpha_1, alpha_1_ );
   def< double >( d, names::alpha_2, alpha_2_ );
-  def< double >( d, names::omega, omega_ + U0_ );
+  def< double >( d, names::omega, omega_ + E_L_ );
 }
 
 double
 nest::mat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
 {
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
-  const double ELold = U0_;
-  updateValue< double >( d, names::E_L, U0_ );
-  const double delta_EL = U0_ - ELold;
+  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  const double ELold = E_L_;
+  updateValue< double >( d, names::E_L, E_L_ );
+  const double delta_EL = E_L_ - ELold;
 
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, C_ );
@@ -135,7 +135,7 @@ nest::mat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::alpha_2, alpha_2_ );
 
   if ( updateValue< double >( d, names::omega, omega_ ) )
-    omega_ -= U0_;
+    omega_ -= E_L_;
   else
     omega_ -= delta_EL;
 
@@ -156,8 +156,8 @@ nest::mat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
 void
 nest::mat2_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, V_m_ + p.U0_ );                          // Membrane potential
-  def< double >( d, names::V_th, p.U0_ + p.omega_ + V_th_1_ + V_th_2_ ); // Adaptive threshold
+  def< double >( d, names::V_m, V_m_ + p.E_L_ );                          // Membrane potential
+  def< double >( d, names::V_th, p.E_L_ + p.omega_ + V_th_1_ + V_th_2_ ); // Adaptive threshold
   def< double >( d, names::V_th_alpha_1, V_th_1_ );
   def< double >( d, names::V_th_alpha_2, V_th_2_ );
 }
@@ -166,7 +166,7 @@ void
 nest::mat2_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
-    V_m_ -= p.U0_;
+    V_m_ -= p.E_L_;
   else
     V_m_ -= delta_EL;
 

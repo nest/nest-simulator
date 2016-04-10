@@ -115,6 +115,7 @@ NodeManager::initialize()
   /* END of code adding the root subnet. */
 
   // explicitly force construction of nodes_vec_ to ensure consistent state
+  nodes_vec_network_size_ = 0;
   ensure_valid_thread_local_ids();
 }
 
@@ -645,12 +646,10 @@ NodeManager::set_status_single_node_( Node& target, const DictionaryDatum& d, bo
   }
 }
 
-void
+size_t
 NodeManager::prepare_nodes()
 {
   assert( kernel().is_initialized() );
-
-  LOG( M_INFO, "NodeManager::prepare_nodes_", "Please wait. Preparing elements." );
 
   /* We initialize the buffers of each node and calibrate it. */
 
@@ -700,23 +699,20 @@ NodeManager::prepare_nodes()
     if ( exceptions_raised.at( thr ).valid() )
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 
-  if ( num_active_prelim_nodes == 0 )
+  std::ostringstream os;
+  std::string tmp_str = num_active_nodes == 1 ? " node" : " nodes";
+  os << "Preparing " << num_active_nodes << tmp_str << " for simulation.";
+
+  if ( num_active_prelim_nodes != 0 )
   {
-    LOG( M_INFO,
-      "NodeManager::prepare_nodes_",
-      String::compose(
-           "Simulating %1 local node%2.", num_active_nodes, num_active_nodes == 1 ? "" : "s" ) );
+    tmp_str = num_active_prelim_nodes == 1 ? " uses " : " use ";
+    os << " " << num_active_prelim_nodes << " of them" << tmp_str
+       << "iterative solution techniques.";
   }
-  else
-  {
-    LOG( M_INFO,
-      "Scheduler::prepare_nodes",
-      String::compose( "Simulating %1 local node%2 of which %3 need%4 prelim_update.",
-           num_active_nodes,
-           num_active_nodes == 1 ? "" : "s",
-           num_active_prelim_nodes,
-           num_active_prelim_nodes == 1 ? "s" : "" ) );
-  }
+
+  LOG( M_INFO, "NodeManager::prepare_nodes", os.str() );
+
+  return num_active_nodes;
 }
 
 //!< This function is called only if the thread data structures are properly set up.
@@ -724,15 +720,13 @@ void
 NodeManager::finalize_nodes()
 {
 #ifdef _OPENMP
-  LOG( M_INFO, "NodeManager::finalize_nodes()", " using OpenMP." );
-// parallel section begins
 #pragma omp parallel
   {
     index t = kernel().vp_manager.get_thread_id();
-#else
-    for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
-#endif
+#else // clang-format off
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
+#endif // clang-format on
     for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
     {
       Node* node = local_nodes_.get_node_by_index( idx );

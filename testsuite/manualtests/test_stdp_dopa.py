@@ -53,12 +53,12 @@ pg_in = nest.Create("poisson_generator")
 nest.SetStatus(pg_in, {"rate": K_in * nu_in})
 
 sd = nest.Create("spike_detector")
-nest.SetStatus([sd], [ {
+nest.SetStatus(sd, {
     "label": "spikes",
     "withtime": True,
     "withgid": True,
     "to_file": True,
-    } ])
+    })
 
 neuron1 = nest.Create("iaf_psc_alpha")
 neuron2 = nest.Create("iaf_psc_alpha")
@@ -68,13 +68,13 @@ nest.SetStatus(neuron2, {"tau_syn_ex": 0.3, "tau_syn_in": 0.3, "tau_minus": 20.0
 
 vt = nest.Create("volume_transmitter")
 
-nest.Connect(pg_ex, neuron1, params=w_ex, delay=delay)
-nest.Connect(pg_ex, neuron2, params=w_ex, delay=delay)
-nest.Connect(pg_ex, dopa_neuron, params=w_ex, delay=delay)
+nest.Connect(pg_ex, neuron1, syn_spec={'weight': w_ex, 'delay': delay})
+nest.Connect(pg_ex, neuron2, syn_spec={'weight': w_ex, 'delay': delay})
+nest.Connect(pg_ex, dopa_neuron, syn_spec={'weight': w_ex, 'delay': delay})
 
-nest.Connect(pg_in, neuron1, params=w_in, delay=delay)
-nest.Connect(pg_in, neuron2, params=w_in, delay=delay)
-nest.Connect(pg_in, dopa_neuron, params=w_in, delay=delay)
+nest.Connect(pg_in, neuron1, syn_spec={'weight': w_in, 'delay': delay})
+nest.Connect(pg_in, neuron2, syn_spec={'weight': w_in, 'delay': delay})
+nest.Connect(pg_in, dopa_neuron, syn_spec={'weight': w_in, 'delay': delay})
 
 nest.Connect(neuron1, sd)
 nest.Connect(neuron2, sd)
@@ -98,7 +98,7 @@ dt = 10.0
 weight = None
 for t in np.arange(0, T + dt, dt):
     if nest.GetStatus(neuron2)[0]['local']:
-        weight = nest.GetStatus(nest.FindConnections(neuron1, synapse_model="dopa"))[0]['weight']
+        weight = nest.GetStatus(nest.GetConnections(neuron1, synapse_model="dopa"))[0]['weight']
         print(weight)
         weightstr = str(weight)
         timestr = str(t)
@@ -110,5 +110,3 @@ if nest.GetStatus(neuron2)[0]['local']:
     print("expected weight at T=1000 ms: 28.6125 pA")
     print("weight at last event: " + str(weight) + " pA")
     fname.close()
-
-

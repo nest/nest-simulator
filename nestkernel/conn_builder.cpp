@@ -414,8 +414,12 @@ nest::ConnBuilder::single_connect_( index sgid,
     }
     else if ( default_delay_ )
     {
-      kernel().connection_builder_manager.connect(
-        sgid, &target, target_thread, synapse_model_, NAN, weight_->value_double( target_thread, rng ) );
+      kernel().connection_builder_manager.connect( sgid,
+        &target,
+        target_thread,
+        synapse_model_,
+        NAN,
+        weight_->value_double( target_thread, rng ) );
     }
     else
     {

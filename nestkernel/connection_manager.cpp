@@ -588,10 +588,10 @@ ConnectionManager::validate_source_entry( thread tid, index s_gid, synindex syn_
       creating a new entry.
 
 
-   The parameters delay and weight have the default value NAN.
-   NAN is a special value in cmath, which describes double values that
+   The parameters delay and weight have the default value numerics::nan.
+   numerics::nan is a special value, which describes double values that
    are not a number. If delay or weight is omitted in an connect call,
-   NAN indicates this and weight/delay are set only, if they are valid.
+   numerics::nan indicates this and weight/delay are set only, if they are valid.
 */
 
 void

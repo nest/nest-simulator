@@ -418,7 +418,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         &target,
         target_thread,
         synapse_model_,
-        NAN,
+        numerics::nan,
         weight_->value_double( target_thread, rng ) );
     }
     else
@@ -493,7 +493,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         target_thread,
         synapse_model_,
         param_dicts_[ target_thread ],
-        NAN,
+        numerics::nan,
         weight_->value_double( target_thread, rng ) );
     }
     else

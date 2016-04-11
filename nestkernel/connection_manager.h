@@ -131,10 +131,10 @@ public:
    * Connect is used to establish a connection between a sender and
    * receiving node.
    *
-   * The parameters delay and weight have the default value NAN.
-   * NAN is a special value in cmath, which describes double values that
+   * The parameters delay and weight have the default value numerics::nan.
+   * numerics::nan is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in an connect call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
+   * numerics::nan indicates this and weight/delay are set only, if they are valid.
    *
    * \param s A reference to the sending Node.
    * \param r A reference to the receiving Node.

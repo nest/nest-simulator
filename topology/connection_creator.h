@@ -81,7 +81,7 @@ public:
   /**
    * Construct a ConnectionCreator with the properties defined in the
    * given dictionary. Parameters for a ConnectionCreator are:
-   * - "connection_type": Either "convergent" or "convergent".
+   * - "connection_type": Either "convergent" or "divergent".
    * - "allow_autapses": Boolean, true if autapses are allowed.
    * - "allow_multapses": Boolean, true if multapses are allowed.
    * - "allow_oversized": Boolean, true if oversized masks are allowed.

@@ -25,6 +25,9 @@
 
 #include "connector_model.h"
 
+// Generated includes:
+#include "config.h"
+
 // Includes from libnestutil:
 #include "compose.hpp"
 
@@ -45,7 +48,8 @@ allocate( C c )
 {
 #if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
-  T* p = new ( poormansallocpool[ omp_get_thread_num() ].alloc( sizeof( T ) ) ) T( c );
+  T* p = new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( T ) ) )
+    T( c );
 #else
   T* p = new ( poormansallocpool.alloc( sizeof( T ) ) ) T( c );
 #endif
@@ -65,7 +69,8 @@ allocate()
 {
 #if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
-  T* p = new ( poormansallocpool[ omp_get_thread_num() ].alloc( sizeof( T ) ) ) T();
+  T* p =
+    new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( T ) ) ) T();
 #else
   T* p = new ( poormansallocpool.alloc( sizeof( T ) ) ) T();
 #endif
@@ -152,12 +157,12 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   // set_status calls on common properties and default connection may
   // modify min/max delay, we need to freeze the min/max_delay checking.
 
-  kernel().connection_builder_manager.get_delay_checker().freeze_delay_update();
+  kernel().connection_manager.get_delay_checker().freeze_delay_update();
 
   cp_.set_status( d, *this );
   default_connection_.set_status( d, *this );
 
-  kernel().connection_builder_manager.get_delay_checker().enable_delay_update();
+  kernel().connection_manager.get_delay_checker().enable_delay_update();
 
   // we've possibly just got a new default delay. So enforce checking next time it is used
   default_delay_needs_check_ = true;
@@ -177,18 +182,17 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
     {
       if ( has_delay_ )
       {
-        kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms(
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
           default_connection_.get_delay() );
       }
     }
     catch ( BadDelay& e )
     {
-      throw BadDelay(
-        default_connection_.get_delay(),
+      throw BadDelay( default_connection_.get_delay(),
         String::compose( "Default delay of '%1' must be between min_delay %2 and max_delay %3.",
-          get_name(),
-          Time::delay_steps_to_ms( kernel().connection_builder_manager.get_min_delay() ),
-          Time::delay_steps_to_ms( kernel().connection_builder_manager.get_max_delay() ) ) );
+                        get_name(),
+                        Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() ),
+                        Time::delay_steps_to_ms( kernel().connection_manager.get_max_delay() ) ) );
     }
     default_delay_needs_check_ = false;
   }
@@ -217,7 +221,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   double_t weight )
 {
   if ( not numerics::is_nan( delay ) && has_delay_ )
-    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
 
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
@@ -258,7 +262,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   {
     if ( has_delay_ )
     {
-      kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
     }
 
     if ( p->known( names::delay ) )
@@ -274,7 +278,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     {
       if ( has_delay_ )
       {
-        kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
       }
     }
     else

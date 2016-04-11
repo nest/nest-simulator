@@ -22,7 +22,7 @@
 
 #include "aeif_cond_alpha.h"
 
-#ifdef HAVE_GSL_1_11
+#ifdef HAVE_GSL
 
 // C++ includes:
 #include <cmath>
@@ -387,7 +387,7 @@ nest::aeif_cond_alpha::calibrate()
 void
 nest::aeif_cond_alpha::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -489,4 +489,4 @@ nest::aeif_cond_alpha::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL_1_11
+#endif // HAVE_GSL

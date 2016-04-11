@@ -74,6 +74,7 @@ iaf_psc_alpha_multisynapse::Parameters_::Parameters_()
   , V_reset_( -70.0 - E_L_ ) // mV, rel to E_L_
   , Theta_( -55.0 - E_L_ )   // mV, rel to E_L_
   , LowerBound_( -std::numeric_limits< double_t >::infinity() )
+  , num_of_receptors_( 0 )
   , has_connections_( false )
 {
   tau_syn_.clear();
@@ -292,7 +293,7 @@ iaf_psc_alpha_multisynapse::calibrate()
 void
 iaf_psc_alpha_multisynapse::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )

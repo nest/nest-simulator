@@ -119,9 +119,9 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // tics_per_ms and resolution must come after local_num_thread / total_num_threads
   // because they might reset the network and the time representation
-  nest::double_t tics_per_ms;
+  nest::double_t tics_per_ms = 0.0;
   bool tics_per_ms_updated = updateValue< nest::double_t >( d, "tics_per_ms", tics_per_ms );
-  double_t resd;
+  double_t resd = 0.0;
   bool res_updated = updateValue< double_t >( d, "resolution", resd );
 
   if ( tics_per_ms_updated || res_updated )
@@ -142,7 +142,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "ResetKernel first." );
       throw KernelException();
     }
-    else if ( kernel().connection_builder_manager.get_num_connections() != 0 )
+    else if ( kernel().connection_manager.get_num_connections() != 0 )
     {
       LOG( M_ERROR,
         "SimulationManager::set_status",
@@ -165,7 +165,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         nest::Time::set_resolution( tics_per_ms, resd );
         clock_.calibrate(); // adjust to new resolution
         // adjust delays in the connection system to new resolution
-        kernel().connection_builder_manager.calibrate( time_converter );
+        kernel().connection_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
         LOG( M_INFO, "SimulationManager::set_status", "tics per ms and resolution changed." );
       }
@@ -184,7 +184,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         Time::set_resolution( resd );
         clock_.calibrate(); // adjust to new resolution
         // adjust delays in the connection system to new resolution
-        kernel().connection_builder_manager.calibrate( time_converter );
+        kernel().connection_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
         LOG( M_INFO, "SimulationManager::set_status", "Temporal resolution changed." );
       }
@@ -298,7 +298,7 @@ nest::SimulationManager::simulate( Time const& t )
   to_do_ += t.get_steps();
   to_do_total_ = to_do_;
 
-  prepare_simulation_();
+  const size_t num_active_nodes = prepare_simulation_();
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -306,15 +306,15 @@ nest::SimulationManager::simulate( Time const& t )
   // have the proper value.  to_step_ is set as in advance_time().
 
   delay end_sim = from_step_ + to_do_;
-  if ( kernel().connection_builder_manager.get_min_delay() < end_sim )
-    to_step_ = kernel().connection_builder_manager.get_min_delay(); // update to end of time slice
+  if ( kernel().connection_manager.get_min_delay() < end_sim )
+    to_step_ = kernel().connection_manager.get_min_delay(); // update to end of time slice
   else
     to_step_ = end_sim; // update to end of simulation time
 
   // Warn about possible inconsistencies, see #504.
   // This test cannot come any earlier, because we first need to compute min_delay_
   // above.
-  if ( t.get_steps() % kernel().connection_builder_manager.get_min_delay() != 0 )
+  if ( t.get_steps() % kernel().connection_manager.get_min_delay() != 0 )
     LOG( M_WARNING,
       "SimulationManager::simulate",
       "The requested simulation time is not an integer multiple of the minimal delay in the "
@@ -325,15 +325,40 @@ nest::SimulationManager::simulate( Time const& t )
       "Simulate "
       "is called repeatedly with simulation times that are not multiples of the minimal delay." );
 
-  resume_();
+  resume_( num_active_nodes );
 
   finalize_simulation_();
 }
 
 void
-nest::SimulationManager::resume_()
+nest::SimulationManager::resume_( size_t num_active_nodes )
 {
   assert( kernel().is_initialized() );
+
+  std::ostringstream os;
+  double_t t_sim = to_do_ * Time::get_resolution().get_ms();
+
+  os << "Number of local nodes: " << num_active_nodes << std::endl;
+  os << "Simulaton time (ms): " << t_sim;
+
+#ifdef _OPENMP
+  os << std::endl
+     << "Number of OpenMP threads: " << kernel().vp_manager.get_num_threads();
+#else
+  os << std::endl
+     << "Not using OpenMP";
+#endif
+
+#ifdef HAVE_MPI
+  os << std::endl
+     << "Number of MPI processes: " << kernel().mpi_manager.get_num_processes();
+#else
+  os << std::endl
+     << "Not using MPI";
+#endif
+
+  LOG( M_INFO, "SimulationManager::resume", os.str() );
+
 
   terminate_ = false;
 
@@ -349,14 +374,6 @@ nest::SimulationManager::resume_()
 
   simulating_ = true;
   simulated_ = true;
-
-#ifndef _OPENMP
-  if ( kernel().vp_manager.get_num_threads() > 1 )
-  {
-    LOG(
-      M_ERROR, "SimulationManager::resume", "No multithreading available, using single threading" );
-  }
-#endif
 
   update_();
 
@@ -387,15 +404,14 @@ nest::SimulationManager::resume_()
   LOG( M_INFO, "SimulationManager::resume", "Simulation finished." );
 }
 
-void
+size_t
 nest::SimulationManager::prepare_simulation_()
 {
-  if ( to_do_ == 0 )
-    return;
+  assert( to_do_ != 0 ); // This is checked in simulate()
 
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables
-  kernel().connection_builder_manager.update_delay_extrema_();
+  kernel().connection_manager.update_delay_extrema_();
   kernel().event_delivery_manager.init_moduli();
 
   // Check for synchronicity of global rngs over processes.
@@ -417,7 +433,7 @@ nest::SimulationManager::prepare_simulation_()
     kernel().event_delivery_manager.configure_spike_buffers();
 
   kernel().node_manager.ensure_valid_thread_local_ids();
-  kernel().node_manager.prepare_nodes();
+  const size_t num_active_nodes = kernel().node_manager.prepare_nodes();
 
   kernel().model_manager.create_secondary_events_prototypes();
 
@@ -426,10 +442,11 @@ nest::SimulationManager::prepare_simulation_()
   // before enter_runtime
   if ( !simulated_ ) // only enter the runtime mode once
   {
-    double tick =
-      Time::get_resolution().get_ms() * kernel().connection_builder_manager.get_min_delay();
+    double tick = Time::get_resolution().get_ms() * kernel().connection_manager.get_min_delay();
     kernel().music_manager.enter_runtime( tick );
   }
+
+  return num_active_nodes;
 }
 
 bool
@@ -441,10 +458,6 @@ nest::SimulationManager::prelim_update_( Node* n )
 void
 nest::SimulationManager::update_()
 {
-#ifdef _OPENMP
-  LOG( M_INFO, "SimulationManager::update", "Simulating using OpenMP." );
-#endif
-
   // to store done values of the different threads
   std::vector< bool > done;
   bool done_all = true;
@@ -532,8 +545,8 @@ nest::SimulationManager::update_()
           // the partial step in the final update
           // needs to be done in omp single since to_step_ is a scheduler variable
           old_to_step = to_step_;
-          if ( to_step_ < kernel().connection_builder_manager.get_min_delay() )
-            to_step_ = kernel().connection_builder_manager.get_min_delay();
+          if ( to_step_ < kernel().connection_manager.get_min_delay() )
+            to_step_ = kernel().connection_manager.get_min_delay();
         }
 
         bool max_iterations_reached = true;
@@ -630,7 +643,7 @@ nest::SimulationManager::update_()
 #pragma omp master
       {
         if ( to_step_
-          == kernel().connection_builder_manager.get_min_delay() ) // gather only at end of slice
+          == kernel().connection_manager.get_min_delay() ) // gather only at end of slice
           kernel().event_delivery_manager.gather_events( true );
 
         advance_time_();
@@ -715,9 +728,9 @@ nest::SimulationManager::advance_time_()
   to_do_ -= to_step_ - from_step_;
 
   // advance clock, update modulos, slice counter only if slice completed
-  if ( ( delay ) to_step_ == kernel().connection_builder_manager.get_min_delay() )
+  if ( ( delay ) to_step_ == kernel().connection_manager.get_min_delay() )
   {
-    clock_ += Time::step( kernel().connection_builder_manager.get_min_delay() );
+    clock_ += Time::step( kernel().connection_manager.get_min_delay() );
     ++slice_;
     kernel().event_delivery_manager.update_moduli();
     from_step_ = 0;
@@ -727,12 +740,12 @@ nest::SimulationManager::advance_time_()
 
   long_t end_sim = from_step_ + to_do_;
 
-  if ( kernel().connection_builder_manager.get_min_delay() < ( delay ) end_sim )
-    to_step_ = kernel().connection_builder_manager.get_min_delay(); // update to end of time slice
+  if ( kernel().connection_manager.get_min_delay() < ( delay ) end_sim )
+    to_step_ = kernel().connection_manager.get_min_delay(); // update to end of time slice
   else
     to_step_ = end_sim; // update to end of simulation time
 
-  assert( to_step_ - from_step_ <= ( long_t ) kernel().connection_builder_manager.get_min_delay() );
+  assert( to_step_ - from_step_ <= ( long_t ) kernel().connection_manager.get_min_delay() );
 }
 
 void
@@ -763,5 +776,5 @@ nest::SimulationManager::print_progress_()
 nest::Time const
 nest::SimulationManager::get_previous_slice_origin() const
 {
-  return clock_ - Time::step( kernel().connection_builder_manager.get_min_delay() );
+  return clock_ - Time::step( kernel().connection_manager.get_min_delay() );
 }

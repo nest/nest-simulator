@@ -72,6 +72,7 @@ iaf_psc_exp_multisynapse::Parameters_::Parameters_()
   , I_e_( 0.0 )              // in pA
   , V_reset_( -70.0 - E_L_ ) // in mV
   , Theta_( -55.0 - E_L_ )   // relative E_L_
+  , num_of_receptors_( 0 )
   , has_connections_( false )
 {
   tau_syn_.clear();
@@ -274,7 +275,7 @@ nest::iaf_psc_exp_multisynapse::calibrate()
 void
 iaf_psc_exp_multisynapse::update( const Time& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each

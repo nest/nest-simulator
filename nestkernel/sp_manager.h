@@ -146,7 +146,7 @@ public:
    * Returns the minimum delay of all SP builders.
    * This influences the min_delay of the kernel, as the connections
    * are build during the simulation. Hence, the
-   * ConnectionBuilderManager::min_delay() methods have to respect this delay
+   * ConnectionManager::min_delay() methods have to respect this delay
    * as well.
    */
   delay builder_min_delay() const;
@@ -155,7 +155,7 @@ public:
    * Returns the maximum delay of all SP builders.
    * This influences the max_delay of the kernel, as the connections
    * are build during the simulation. Hence, the
-   * ConnectionBuilderManager::max_delay() methods have to respect this delay
+   * ConnectionManager::max_delay() methods have to respect this delay
    * as well.
    */
   delay builder_max_delay() const;

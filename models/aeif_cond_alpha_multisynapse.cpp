@@ -83,6 +83,7 @@ aeif_cond_alpha_multisynapse::Parameters_::Parameters_()
   , I_e( 0.0 )        // pA
   , MAXERR( 1.0e-10 ) // mV
   , HMIN( 1.0e-3 )    // ms
+  , num_of_receptors_( 0 )
   , has_connections_( false )
 {
   taus_syn.clear();
@@ -442,7 +443,7 @@ aeif_cond_alpha_multisynapse::calibrate()
 void
 aeif_cond_alpha_multisynapse::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 

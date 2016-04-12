@@ -98,6 +98,7 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long_t lag )
     spike_register_table_.add_spike( tid, e, lag );
 
     const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
+    
     //std::cout << "on rank " << kernel().mpi_manager.get_rank() << " thread "<< tid << " send_remote of (gid = " << e.get_sender().get_gid() << ", lid = " << lid << ")" << std::endl;
 
     std::vector< Target >& targets = kernel().connection_builder_manager.get_targets( tid, lid );
@@ -105,6 +106,7 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long_t lag )
     {
       const thread assigned_tid = (*it).rank / kernel().vp_manager.get_num_assigned_ranks_per_thread();
       //std::cout << "target (rank = " << (*it).rank << ", lcid = " << (*it).lcid << "), tid = " << tid << ", assigned_tid = " << assigned_tid << ", lag = " << lag <<std::endl;
+      ++count_register;
       assert( assigned_tid < (*spike_register_5g_[tid]).size() );
       assert( lag < (*spike_register_5g_[tid])[assigned_tid].size() );
       (*spike_register_5g_[tid])[assigned_tid][lag].push_back( &(*it) );

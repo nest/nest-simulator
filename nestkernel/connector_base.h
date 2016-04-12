@@ -135,6 +135,9 @@ public:
   virtual void
   get_target_gids( std::vector< size_t >& target_gids, size_t thrd, synindex synapse_id ) const = 0;
 
+  virtual index
+  get_target_gid( const thread tid, const synindex syn_index, const unsigned int lcid ) const = 0;
+
   virtual void send_to_all( Event& e, thread tid, const std::vector< ConnectorModel* >& cm ) = 0;
 
   virtual void send( thread tid, synindex syn_index, unsigned int lcid, Event& e, const std::vector< ConnectorModel* >& cm ) = 0;
@@ -354,6 +357,12 @@ public:
     }
   }
 
+  index
+  get_target_gid( const thread tid, const synindex, const unsigned int lcid ) const
+  {
+    return C_[ lcid ].get_target( tid )->get_gid();
+  }
+
   void
   send_to_all( Event& e, thread tid, const std::vector< ConnectorModel* >& cm )
   {
@@ -538,6 +547,12 @@ public:
         at( i )->get_target_gids( target_gids, thrd, synapse_id );
       }
     }
+  }
+
+  index
+  get_target_gid( const thread tid, const synindex syn_index, const unsigned int lcid ) const
+  {
+    return at( syn_index )->get_target_gid( tid, syn_index, lcid );
   }
 
   void

@@ -34,6 +34,16 @@ namespace nest
 {
 
 inline void
+SpikeData::set( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag )
+{
+  std::cout << "set spike data for target " << kernel().connection_builder_manager.get_target_gid( tid, syn_index, lcid ) << std::endl;
+  (*this).tid = tid;
+  (*this).syn_index = syn_index;
+  (*this).lcid = lcid;
+  (*this).lag = lag;
+}
+
+inline void
 SpikeRegisterTable::add_spike( const thread tid, const SpikeEvent& e, const long_t lag )
 {
   // the spike register is separate for each thread; hence we can

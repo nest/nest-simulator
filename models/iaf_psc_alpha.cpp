@@ -334,6 +334,10 @@ iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );
+
+      index g = get_gid();
+      if ( g == 74 || g == 90 || g == 155 || g == 172 || g == 16 || g == 142 || g == 101 || g == 104 || g == 122 || g == 55 || g == 54 || g == 133 || g == 76 || g == 17 || g == 16 || g == 44 || g == 71 || g == 159 || g == 185 || g == 23 || g == 253 || g == 234 || g == 206 || g == 234 || g == 221 || g == 233 )
+	std::cout << "neuron " << g << " spike at " << Time::step( origin.get_steps() + lag + 1 ) << std::endl;
     }
 
     // set new input current
@@ -347,6 +351,9 @@ iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
 void
 iaf_psc_alpha::handle( SpikeEvent& e )
 {
+  if ( get_gid() == 8 )
+    std::cout << "neuron 8 handle spike event from neuron " << e.get_sender_gid() << std::endl;
+
   assert( e.get_delay() > 0 );
 
   const double_t s = e.get_weight() * e.get_multiplicity();

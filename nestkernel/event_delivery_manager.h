@@ -50,8 +50,8 @@ typedef MPIManager::OffGridSpike OffGridSpike;
 
 struct TargetData;
 // TODO@5g: move this to communicator.h and implement getter
-const size_t mpi_buffer_size_target_data = 100;
-const size_t mpi_buffer_size_spike_data = 100;
+const size_t mpi_buffer_size_target_data = 10000000;
+const size_t mpi_buffer_size_spike_data = 1000000;
 
 class EventDeliveryManager : public ManagerInterface
 {
@@ -360,6 +360,9 @@ private:
   std::vector< SpikeData > recv_buffer_spike_data_;
   unsigned int send_recv_count_spike_data_per_rank_;
   unsigned int send_recv_count_spike_data_in_int_per_rank_;
+
+  long_t count_register;
+  long_t count_buffer;
 };
 
 inline void

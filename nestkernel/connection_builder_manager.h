@@ -275,6 +275,8 @@ public:
 
   std::vector< Target >& get_targets( const thread tid, const index lid );
 
+  index get_target_gid( const thread tid, const synindex syn_index, const unsigned int lcid ) const;
+
   /**
    * Triggered by volume transmitter in update.
    * Triggeres updates for all connectors of dopamine synapses that

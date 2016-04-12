@@ -52,6 +52,12 @@ ConnectionBuilderManager::register_conn_builder( const std::string& name )
   connruledict_->insert( name, id );
 }
 
+inline index
+ConnectionBuilderManager::get_target_gid( const thread tid, const synindex syn_index, const unsigned int lcid ) const
+{
+  return connections_5g_[ tid ]->get_target_gid( tid, syn_index, lcid );
+}
+
 inline void
 ConnectionBuilderManager::send_5g( thread tid, synindex syn_index, unsigned int lcid, Event& e )
 {

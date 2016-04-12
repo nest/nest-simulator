@@ -627,7 +627,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     {
       set_complete_marker_spike_data_( tid );
 #pragma omp barrier
-	}
+    }
 
     spike_register_table_.save_entry_point( tid );
     sw_reset_restore_save.stop();
@@ -870,10 +870,10 @@ EventDeliveryManager::deliver_events_5g_( const thread tid )
         }
         else if ( spike_data.tid == tid )
         {
-	  
-	  index target_gid = kernel().connection_builder_manager.get_target_gid( spike_data.tid, spike_data.syn_index, spike_data.lcid );
-	  if ( target_gid == 8 )
-	    std::cout << "deliver on rank " << kernel().mpi_manager.get_rank() << " thread " << tid << " target (lcid " << spike_data.lcid <<  " lag " << spike_data.lag << ")" << std::endl;
+
+	  // index target_gid = kernel().connection_builder_manager.get_target_gid( spike_data.tid, spike_data.syn_index, spike_data.lcid );
+	  // if ( target_gid == 8 )
+	  //   std::cout << "deliver on rank " << kernel().mpi_manager.get_rank() << " thread " << tid << " target (lcid " << spike_data.lcid <<  " lag " << spike_data.lag << ")" << std::endl;
 
           se.set_stamp( prepared_timestamps[ spike_data.lag ] );
           kernel().connection_builder_manager.send_5g( tid, spike_data.syn_index,
@@ -881,7 +881,7 @@ EventDeliveryManager::deliver_events_5g_( const thread tid )
         }
         else
         {
-	  std::cout << "deliver continue" << std::endl;
+	  // std::cout << "deliver continue" << std::endl;
           continue;
         }
       }

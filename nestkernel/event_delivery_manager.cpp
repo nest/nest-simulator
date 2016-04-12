@@ -675,8 +675,8 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
     // thread-local index of (global) rank
     const unsigned int lr_idx = rank % assigned_ranks.max_size;
     assert( lr_idx < assigned_ranks.size );
-    send_buffer_idx[ lr_idx ] = rank * num_spike_data_per_rank;
-    send_buffer_end[ lr_idx ] = (rank + 1) * num_spike_data_per_rank;
+    send_buffer_idx[ lr_idx ] = rank * send_recv_count_spike_data_per_rank_;
+    send_buffer_end[ lr_idx ] = (rank + 1) * send_recv_count_spike_data_per_rank_;
   }
 
   // whether all spike-register entries have been read
@@ -697,7 +697,7 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
 	if ( send_buffer_idx[ lr_idx ] == send_buffer_end[ lr_idx ] )
 	{ // send-buffer slot of this assigned rank is full
 	  is_spike_register_read = false;
-	  if ( num_spike_data_read == num_spike_data_per_rank * assigned_ranks.size );
+	  if ( num_spike_data_read == send_recv_count_spike_data_per_rank_ * assigned_ranks.size )
 	  { // send-buffer slots of all assigned ranks are full
 	    return is_spike_register_read;
 	  }

@@ -201,8 +201,8 @@ nest::izhikevich::update( Time const& origin,
   const long_t from,
   const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const double_t h = Time::get_resolution().get_ms();

@@ -237,8 +237,8 @@ nest::ppd_sup_generator::update( Time const& T,
   const long_t from,
   const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )

@@ -118,8 +118,8 @@ nest::mat2_psc_exp::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::mat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
 {
-  // if E_L_ is changed, we need to adjust all variables
-  // defined relative to E_L_
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -160,8 +160,9 @@ nest::mat2_psc_exp::State_::get( DictionaryDatum& d,
   const Parameters_& p ) const
 {
   def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
-  // Adaptive threshold
-  def< double >( d, names::V_th, p.E_L_ + p.omega_ + V_th_1_ + V_th_2_ );
+  def< double >( d,
+    names::V_th,
+    p.E_L_ + p.omega_ + V_th_1_ + V_th_2_ ); // Adaptive threshold
   def< double >( d, names::V_th_alpha_1, V_th_1_ );
   def< double >( d, names::V_th_alpha_2, V_th_2_ );
 }
@@ -308,8 +309,8 @@ nest::mat2_psc_exp::update( Time const& origin,
   const long_t from,
   const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -327,15 +328,14 @@ nest::mat2_psc_exp::update( Time const& origin,
     // exponential decaying PSCs
     S_.i_syn_ex_ *= V_.P11ex_;
     S_.i_syn_in_ *= V_.P11in_;
-    S_.i_syn_ex_ +=
-      B_.spikes_ex_.get_value( lag ); // the spikes arriving at T+1 have an
-    S_.i_syn_in_ +=
-      B_.spikes_in_.get_value( lag ); // the spikes arriving at T+1 have an
+    // the spikes arriving at T+1 have an
+    S_.i_syn_ex_ += B_.spikes_ex_.get_value( lag );
+    S_.i_syn_in_ += B_.spikes_in_.get_value( lag );
 
     if ( S_.r_ == 0 ) // neuron is allowed to fire
     {
-      // threshold crossing
-      if ( S_.V_m_ >= P_.omega_ + S_.V_th_2_ + S_.V_th_1_ )
+      if ( S_.V_m_ >= P_.omega_ + S_.V_th_2_
+          + S_.V_th_1_ ) // threshold crossing
       {
         S_.r_ = V_.RefractoryCountsTot_;
 

@@ -173,8 +173,7 @@ nest::pulsepacket_generator::update( Time const& T,
   const long_t to )
 {
   assert( to >= from );
-  assert(
-    ( to - from ) <= kernel().connection_builder_manager.get_min_delay() );
+  assert( ( to - from ) <= kernel().connection_manager.get_min_delay() );
 
   if ( ( V_.start_center_idx_ == P_.pulse_times_.size()
          && B_.spiketimes_.empty() ) || ( !device_.is_active( T ) ) )

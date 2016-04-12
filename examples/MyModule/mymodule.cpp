@@ -189,10 +189,10 @@ mynest::MyModule::StepPatternConnect_Vi_i_Vi_i_lFunction::execute(
     // We must first obtain the GID of the source as integer
     const nest::long_t sgid = getValue< nest::long_t >( sources[ s ] );
 
-    // nest::kernel().connection_builder_manager.divergent_connect
+    // nest::kernel().connection_manager.divergent_connect
     // requires weight and delay arrays. We want to use
     // default values from the synapse model, so we pass empty arrays.
-    nest::kernel().connection_builder_manager.divergent_connect(
+    nest::kernel().connection_manager.divergent_connect(
       sgid, selected_targets, TokenArray(), TokenArray(), synmodel_id );
     Nconn += selected_targets.size();
   }

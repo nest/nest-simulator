@@ -306,14 +306,14 @@ nest::aeif_cond_alpha_RK5::init_buffers_()
 void
 nest::aeif_cond_alpha_RK5::calibrate()
 {
-  // ensures initialization in case mm connected after Simulate
-  B_.logger_.init();
+  B_.logger_
+    .init(); // ensures initialization in case mm connected after Simulate
 
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  // since t_ref_ >= 0, this can only fail in error
-  assert( V_.RefractoryCounts_ >= 0 );
+  assert( V_.RefractoryCounts_
+    >= 0 ); // since t_ref_ >= 0, this can only fail in error
 }
 
 /* ----------------------------------------------------------------
@@ -330,8 +330,8 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
   const long_t from,
   const long_t to ) // proceed in time
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -441,9 +441,10 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
                   + 1.0 / 40.0 * S_.k7[ i ] );
         }
 
-        err = std::fabs( S_.ynew[ 0 ] - S_.yref[ 0 ] ) / MAXERR + 1.0e-200;
-        // error estimate, based on different orders for stepsize prediction.
-        // Small value added to prevent err==0
+        err = std::fabs( S_.ynew[ 0 ] - S_.yref[ 0 ] ) / MAXERR
+          + 1.0e-200; // error estimate,
+        // based on different orders for stepsize prediction. Small value added
+        // to prevent err==0
 
         // The following flag 'done' is needed to ensure that we accept the
         // result for h<=HMIN, irrespective of the error. (See below)
@@ -457,7 +458,7 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
         //   2. compute the result and accept it irrespective of the error,
         //      because we cannot decrease the stepsize any further.
         //  the 'done' flag, computed above ensure that the loop is terminated
-        //  after the result was computed.
+        //  after the  result was computed.
 
         h *= 0.98 * std::pow( 1.0 / err, 1.0 / 5.0 );
         h = std::max( h, HMIN );

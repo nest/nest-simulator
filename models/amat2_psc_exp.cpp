@@ -355,13 +355,13 @@ nest::amat2_psc_exp::calibrate()
   // requires 2 steps:
   //     1. A time object r is constructed defining representation of
   //        tau_ref_ in tics. This representation is then converted to
-  //        computation time steps again by a strategy defined by
-  //        class nest::Time.
+  //        computation time
+  //        steps again by a strategy defined by class nest::Time.
   //     2. The refractory time in units of steps is read out get_steps(), a
   //        member function of class nest::Time.
   //
   // Choosing a tau_ref_ that is not an integer multiple of the computation time
-  // step h will leed to accurate (up to the resolution h) and self-consistent
+  // step h will led to accurate (up to the resolution h) and self-consistent
   // results. However, a neuron model capable of operating with real valued
   // spike time may exhibit a different effective refractory time.
 
@@ -381,8 +381,8 @@ nest::amat2_psc_exp::update( Time const& origin,
   const long_t from,
   const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -418,8 +418,8 @@ nest::amat2_psc_exp::update( Time const& origin,
 
     if ( S_.r_ == 0 ) // neuron is allowed to fire
     {
-      // threshold crossing
-      if ( S_.V_m_ >= P_.omega_ + S_.V_th_2_ + S_.V_th_1_ + S_.V_th_v_ )
+      if ( S_.V_m_ >= P_.omega_ + S_.V_th_2_ + S_.V_th_1_
+          + S_.V_th_v_ ) // threshold crossing
       {
         S_.r_ = V_.RefractoryCountsTot_;
 

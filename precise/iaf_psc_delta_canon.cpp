@@ -20,8 +20,8 @@
  *
  */
 
-/* iaf_psc_delta_canon is a neuron where the potential jumps on each spike
- * arrival. */
+// iaf_psc_delta_canon is a neuron where the potential jumps on each spike
+// arrival.
 
 #include "iaf_psc_delta_canon.h"
 
@@ -108,8 +108,8 @@ nest::iaf_psc_delta_canon::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_psc_delta_canon::Parameters_::set( const DictionaryDatum& d )
 {
-  // if E_L_ is changed, we need to adjust all variables
-  // defined relative to E_L_
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -254,7 +254,7 @@ iaf_psc_delta_canon::update( Time const& origin,
 {
   assert( to >= 0 );
   assert( static_cast< delay >( from )
-    < kernel().connection_builder_manager.get_min_delay() );
+    < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
@@ -327,8 +327,8 @@ iaf_psc_delta_canon::update( Time const& origin,
 
         S_.U_ = V_.I_contrib_ + I_contrib_t + V_.expm1_t_ * S_.U_ + S_.U_;
 
-        // lower bound on potential
-        S_.U_ = S_.U_ < P_.U_min_ ? P_.U_min_ : S_.U_;
+        S_.U_ =
+          S_.U_ < P_.U_min_ ? P_.U_min_ : S_.U_; // lower bound on potential
         if ( S_.U_ >= P_.U_th_ )
           emit_spike_( origin, lag, 0 ); // offset is zero at end of step
 

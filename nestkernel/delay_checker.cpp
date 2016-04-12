@@ -96,7 +96,7 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
 
   if ( min_delay_updated && max_delay_updated )
   {
-    if ( kernel().connection_builder_manager.get_num_connections() > 0 )
+    if ( kernel().connection_manager.get_num_connections() > 0 )
     {
       throw BadProperty(
         "Connections already exist. Please call ResetKernel first" );
@@ -135,9 +135,9 @@ nest::DelayChecker::assert_valid_delay_ms( double_t requested_new_delay )
   if ( kernel().simulation_manager.has_been_simulated() )
   {
     const bool bad_min_delay =
-      new_delay < kernel().connection_builder_manager.get_min_delay();
+      new_delay < kernel().connection_manager.get_min_delay();
     const bool bad_max_delay =
-      new_delay > kernel().connection_builder_manager.get_max_delay();
+      new_delay > kernel().connection_manager.get_max_delay();
 
     if ( bad_min_delay || bad_max_delay )
       throw BadDelay( new_delay_ms,
@@ -193,9 +193,9 @@ nest::DelayChecker::assert_two_valid_delays_steps( delay new_delay1,
   if ( kernel().simulation_manager.has_been_simulated() )
   {
     const bool bad_min_delay =
-      ldelay < kernel().connection_builder_manager.get_min_delay();
+      ldelay < kernel().connection_manager.get_min_delay();
     const bool bad_max_delay =
-      hdelay > kernel().connection_builder_manager.get_max_delay();
+      hdelay > kernel().connection_manager.get_max_delay();
 
     if ( bad_min_delay )
       throw BadDelay( Time::delay_steps_to_ms( ldelay ),

@@ -552,8 +552,8 @@ nest::iaf_cond_alpha_mc::update( Time const& origin,
   const long_t to )
 {
 
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )

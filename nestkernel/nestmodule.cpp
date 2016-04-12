@@ -34,7 +34,7 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
-#include "connection_builder_manager_impl.h"
+#include "connection_manager_impl.h"
 #include "genericmodel.h"
 #include "kernel_manager.h"
 #include "model_manager_impl.h"
@@ -148,7 +148,7 @@ NestModule::CurrentSubnetFunction::execute( SLIInterpreter* i ) const
 
 /* BeginDocumentation
    Name: SetStatus - sets the value of properties of a node, connection, random
-                     deviate generator or object
+   deviate generator or object
 
    Synopsis:
    gid   dict SetStatus -> -
@@ -247,7 +247,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_builder_manager.set_synapse_status(
+      kernel().connection_manager.set_synapse_status(
         con_id.get_source_gid(),       // source_gid
         con_id.get_synapse_model_id(), // synapse_id
         con_id.get_port(),             // port
@@ -265,7 +265,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ con ] );
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_builder_manager.set_synapse_status(
+      kernel().connection_manager.set_synapse_status(
         con_id.get_source_gid(),       // source_gid
         con_id.get_synapse_model_id(), // synapse_id
         con_id.get_port(),             // port
@@ -282,7 +282,8 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
 
 /* BeginDocumentation
    Name: GetStatus - return the property dictionary of a node, connection,
-                     random deviate generator or object
+   random deviate generator or object
+
    Synopsis:
    gid   GetStatus -> dict
    conn  GetStatus -> dict
@@ -357,7 +358,7 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
   kernel().node_manager.get_node( gid ); // Just to check if the node exists
 
   DictionaryDatum result_dict =
-    kernel().connection_builder_manager.get_synapse_status( gid,
+    kernel().connection_manager.get_synapse_status( gid,
       conn.get_synapse_model_id(),
       conn.get_port(),
       conn.get_target_thread() );
@@ -380,8 +381,7 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
   {
     ConnectionDatum con_id = getValue< ConnectionDatum >( conns.get( nt ) );
     DictionaryDatum result_dict =
-      kernel().connection_builder_manager.get_synapse_status(
-        con_id.get_source_gid(),
+      kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
         con_id.get_synapse_model_id(),
         con_id.get_port(),
         con_id.get_target_thread() );
@@ -476,7 +476,7 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
 
 /* BeginDocumentation
    Name: CopyModel - copy a model to a new name, set parameters for copy, if
-                     given
+   given
    Synopsis:
    /model /new_model param_dict -> -
    /model /new_model            -> -
@@ -663,8 +663,8 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
      model since you called Simulate the first time, the network will NOT be
      reset to the status at T=0.
    - The dynamic state of synapses with internal dynamics (STDP, facilitation)
-     is NOT reset at present. This will be implemented in a future version of
-     NEST.
+     is NOT reset at present. This will be implemented in a future version
+     of NEST.
 
    SeeAlso: ResetKernel, reset
 */
@@ -747,7 +747,7 @@ NestModule::Connect_i_i_lFunction::execute( SLIInterpreter* i ) const
   {
     Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
-    kernel().connection_builder_manager.connect(
+    kernel().connection_manager.connect(
       source, target_node, target_thread, synmodel_id );
   }
 
@@ -779,7 +779,7 @@ NestModule::Connect_i_i_d_d_lFunction::execute( SLIInterpreter* i ) const
   {
     Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
-    kernel().connection_builder_manager.connect(
+    kernel().connection_manager.connect(
       source, target_node, target_thread, synmodel_id, delay, weight );
   }
 
@@ -810,7 +810,7 @@ NestModule::Connect_i_i_D_lFunction::execute( SLIInterpreter* i ) const
   {
     Node* const target_node = kernel().node_manager.get_node( target );
     const thread target_thread = target_node->get_thread();
-    kernel().connection_builder_manager.connect(
+    kernel().connection_manager.connect(
       source, target_node, target_thread, synmodel_id, params );
   }
 
@@ -835,7 +835,7 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
     getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by connect
-  kernel().connection_builder_manager.connect(
+  kernel().connection_manager.connect(
     sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
@@ -857,7 +857,8 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
    the synapse 'model'.
 
    Dict is a parameter dictionary that must contain the connection parameters as
-   DoubleVectors. The parameter dictionary must contain at least the fields:
+   DoubleVectors.
+   The parameter dictionary must contain at least the fields:
    /target <. gid_1 ... gid_n .>
    /weight <. w1_1 ... w_n .>
    /delay  <. d_1 ... d_n .>
@@ -888,8 +889,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  kernel().connection_builder_manager.divergent_connect(
-    source, params, synmodel_id );
+  kernel().connection_manager.divergent_connect( source, params, synmodel_id );
 
   ALL_ENTRIES_ACCESSED(
     *params, "Connect", "The following synapse parameters are unused: " );
@@ -900,14 +900,14 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 
 /* BeginDocumentation
     Name: DataConnect_a - Connect many neurons from a list of synapse status
-                          dictionaries.
+   dictionaries.
 
     Synopsis:
     [dict1, dict2, ..., dict_n ]  DataConnect_a -> -
 
     This variant of DataConnect can be used to re-instantiate a given
-    connectivity matrix. The argument is a list of dictionaries, each containing
-    at least the keys
+   connectivity matrix.
+    The argument is a list of dictionaries, each containing at least the keys
     /source
     /target
     /weight
@@ -936,7 +936,7 @@ NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
   ArrayDatum connectome = getValue< ArrayDatum >( i->OStack.top() );
 
-  kernel().connection_builder_manager.connect( connectome );
+  kernel().connection_manager.connect( connectome );
   i->OStack.pop();
   i->EStack.pop();
 }
@@ -953,10 +953,10 @@ NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
    Parameters:
    source    - GID of source node
    [targets] - array of (global IDs of) potential target nodes
-   [weights] - weights for the connections. List of the same size
-               as targets or 1.
-   [delays]  - delays for the connections. List of the same size
-               as targets or 1.
+   [weights] - weights for the connections. List of the same size as targets or
+               1.
+   [delays]  - delays for the connections. List of the same size as targets or
+               1.
    /synmodel - The synapse model for the connection (see Options below)
 
    Options:
@@ -992,7 +992,7 @@ NestModule::DivergentConnect_i_ia_a_a_lFunction::execute(
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  kernel().connection_builder_manager.divergent_connect(
+  kernel().connection_manager.divergent_connect(
     source_adr, target_adr, weights, delays, synmodel_id );
 
   i->OStack.pop( 5 );
@@ -1022,7 +1022,7 @@ NestModule::RDivergentConnect_i_i_ia_da_da_b_b_lFunction::execute(
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  kernel().connection_builder_manager.random_divergent_connect( source_adr,
+  kernel().connection_manager.random_divergent_connect( source_adr,
     target_adr,
     n,
     weights,
@@ -1047,10 +1047,10 @@ NestModule::RDivergentConnect_i_i_ia_da_da_b_b_lFunction::execute(
    Parameters:
    [source]  - GID of source nodes
    target    - array of (global IDs of) potential target nodes
-   [weights] - weights for the connections. List of the same size as
-               sources or 1.
-   [delays]  - delays for the connections. List of the same size as
-               sources or 1.
+   [weights] - weights for the connections. List of the same size as sources or
+               1.
+   [delays]  - delays for the connections. List of the same size as sources or
+               1.
    /synmodel - The synapse model for the connection (see Options below)
 
    Options:
@@ -1086,7 +1086,7 @@ NestModule::ConvergentConnect_ia_i_a_a_lFunction::execute(
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  kernel().connection_builder_manager.convergent_connect(
+  kernel().connection_manager.convergent_connect(
     source_adr, target_adr, weights, delays, synmodel_id );
 
   i->OStack.pop( 5 );
@@ -1117,7 +1117,7 @@ NestModule::RConvergentConnect_ia_i_i_da_da_b_b_lFunction::execute(
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  kernel().connection_builder_manager.random_convergent_connect( source_adr,
+  kernel().connection_manager.random_convergent_connect( source_adr,
     target_adr,
     n,
     weights,
@@ -1153,7 +1153,7 @@ NestModule::RConvergentConnect_ia_ia_ia_daa_daa_b_b_lFunction::execute(
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  kernel().connection_builder_manager.random_convergent_connect( source_adr,
+  kernel().connection_manager.random_convergent_connect( source_adr,
     target_adr,
     n,
     weights,
@@ -1172,10 +1172,10 @@ NestModule::RConvergentConnect_ia_ia_ia_daa_daa_b_b_lFunction::execute(
    Description:
    MemoryInfo reports the current utilization of the memory manager for all
    models, which are used at least once. The output is sorted ascending
-   according to the name of the model is written to stdout. The unit of the data
-   is byte. Note that MemoryInfo only gives you information about the memory
-   requirements of the static model data inside of NEST. It does not tell
-   anything about the memory situation on your computer.
+   according according to the name of the model is written to stdout. The unit
+   of the data is byte. Note that MemoryInfo only gives you information about
+   the memory requirements of the static model data inside of NEST. It does not
+   tell anything about the memory situation on your computer.
    Synopsis:
    MemoryInfo -> -
    Availability: NEST
@@ -1376,18 +1376,17 @@ NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
    Synopsis: n_procs SetFakeNumProcesses -> -
    Description:
    Sets the number of MPI processes to n_procs. Used for benchmarking purposes
-   of memory consumption
-   only.
+   of memory consumption only.
    Please note:
    - Simulation of the network will not be possible after setting fake
-   processes.
+     processes.
    - It is not possible to use this function when running a script on multiple
-   actual MPI processes.
+     actual MPI processes.
    - The setting of the fake number of processes has to happen before the kernel
-   reset and before the setting of the local number of threads.
-   After calling SetFakeNumProcesses, it is obligatory to call either
-   ResetKernel or SetStatus on the Kernel for the setting of the fake
-   number of processes to come into effect.
+     reset and before the setting of the local number of threads.
+     After calling SetFakeNumProcesses, it is obligatory to call either
+     ResetKernel or SetStatus on the Kernel for the setting of the fake
+     number of processes to come into effect.
 
    A typical use case would be to test if a neuronal network fits on a machine
    of given size without using the actual resources.
@@ -1430,7 +1429,7 @@ NestModule::SetFakeNumProcesses_iFunction::execute( SLIInterpreter* i ) const
 
 /* BeginDocumentation
    Name: SetNumRecProcesses - Set the number of MPI processes dedicated to
-                              recording spikes.
+   recording spikes.
    Synopsis: n_procs SetNumRecProcesses -> -
    Description:
    Sets the number of recording MPI processes to n_procs. Usually,
@@ -1478,7 +1477,7 @@ NestModule::SyncProcessesFunction::execute( SLIInterpreter* i ) const
 
 /* BeginDocumentation
    Name: TimeCommunication - returns average time taken for MPI_Allgather over n
-                             calls with m bytes
+   calls with m bytes
    Synopsis:
    n m TimeCommunication -> time
    Availability: NEST 2.0
@@ -1507,7 +1506,8 @@ NestModule::TimeCommunication_i_i_bFunction::execute( SLIInterpreter* i ) const
 }
 /* BeginDocumentation
    Name: TimeCommunicationv - returns average time taken for MPI_Allgatherv over
-                              n calls with m bytes
+   n calls with m
+   bytes
    Synopsis:
    n m TimeCommunication -> time
    Availability: NEST 2.0
@@ -1536,7 +1536,8 @@ NestModule::TimeCommunicationv_i_iFunction::execute( SLIInterpreter* i ) const
 
 /* BeginDocumentation
    Name: TimeCommunicationAlltoall - returns average time taken for MPI_Alltoall
-                                     over n calls with m bytes
+   over n calls with m
+   bytes
    Synopsis:
    n m TimeCommunicationAlltoall -> time
    Availability: 10kproject (>r11254)
@@ -1566,7 +1567,8 @@ NestModule::TimeCommunicationAlltoall_i_iFunction::execute(
 
 /* BeginDocumentation
    Name: TimeCommunicationAlltoallv - returns average time taken for
-                                      MPI_Alltoallv over n calls with m bytes
+   MPI_Alltoallv over n calls with
+   m bytes
    Synopsis:
    n m TimeCommunicationAlltoallv -> time
    Availability: 10kproject (>r11300)
@@ -1607,8 +1609,8 @@ NestModule::TimeCommunicationAlltoallv_i_iFunction::execute(
    is not compiled with MPI support, this function returns the hostname of
    the machine as returned by the POSIX function gethostname().
    Examples:
-   (I'm process ) =only Rank 1 add =only ( of ) =only NumProcesses =only
-   ( on machine ) =only
+   (I'm process ) =only Rank 1 add =only ( of ) =only NumProcesses =only ( on
+   machine ) =only
    ProcessorName =
    SeeAlso: Rank, NumProcesses, SyncProcesses
 */
@@ -1648,7 +1650,7 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
 
 /* BeginDocumentation
    Name: GetVpRNG - return random number generator associated to virtual process
-                    of node
+   of node
    Synopsis:
    gid GetVpRNG -> rngtype
    Parameters:
@@ -1863,7 +1865,7 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
 
 /* BeginDocumentation
    Name: EnableStructuralPlasticity - Enable structural plasticity functionality
-                                      in the network.
+   in the network.
 
    Synopsis:
    Allows the user to treat the nodes as neurons with synaptic elements,
@@ -1872,8 +1874,7 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
 
    Parameters:
    structural_plasticity_dictionary - is a dictionary which states the settings
-                                      for the structural plasticity
-                                      functionality
+   for the structural plasticity functionality
 
    Author: Mikael Naveau, Sandra Diaz
    FirstVersion: December 2014
@@ -2040,21 +2041,18 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Disconnect", &disconnect_i_i_lfunction );
   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
   // Add connection rules
-  kernel().connection_builder_manager.register_conn_builder< OneToOneBuilder >(
+  kernel().connection_manager.register_conn_builder< OneToOneBuilder >(
     "one_to_one" );
-  kernel().connection_builder_manager.register_conn_builder< AllToAllBuilder >(
+  kernel().connection_manager.register_conn_builder< AllToAllBuilder >(
     "all_to_all" );
-  kernel()
-    .connection_builder_manager.register_conn_builder< FixedInDegreeBuilder >(
-      "fixed_indegree" );
-  kernel()
-    .connection_builder_manager.register_conn_builder< FixedOutDegreeBuilder >(
-      "fixed_outdegree" );
-  kernel().connection_builder_manager.register_conn_builder< BernoulliBuilder >(
+  kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >(
+    "fixed_indegree" );
+  kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >(
+    "fixed_outdegree" );
+  kernel().connection_manager.register_conn_builder< BernoulliBuilder >(
     "pairwise_bernoulli" );
-  kernel()
-    .connection_builder_manager
-    .register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
+  kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >(
+    "fixed_total_number" );
 
   // Add MSP growth curves
   kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >(

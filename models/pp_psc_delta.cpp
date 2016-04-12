@@ -182,8 +182,7 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
   {
     throw BadProperty( String::compose(
       "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of "
-      "tau_sfa: %1\nSize of q_sfa: "
-      "%2",
+      "tau_sfa: %1\nSize of q_sfa: %2",
       tau_sfa_.size(),
       q_sfa_.size() ) );
   }
@@ -349,9 +348,8 @@ nest::pp_psc_delta::calibrate()
 
   if ( P_.dead_time_random_ )
   {
-    V_.dt_rate_ = P_.dead_time_shape_ / P_.dead_time_; // Choose dead time rate
-                                                       // parameter such that
-                                                       // mean equals dead_time
+    // Choose dead time rate parameter such that mean equals dead_time
+    V_.dt_rate_ = P_.dead_time_shape_ / P_.dead_time_;
     V_.gamma_dev_.set_order( P_.dead_time_shape_ );
   }
 
@@ -373,8 +371,8 @@ nest::pp_psc_delta::update( Time const& origin,
   const long_t to )
 {
 
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )

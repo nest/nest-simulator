@@ -110,8 +110,8 @@ iaf_psc_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 double
 iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
 {
-  // if E_L_ is changed, we need to adjust all variables
-  // defined relative to E_L_
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -286,8 +286,8 @@ iaf_psc_exp_multisynapse::update( const Time& origin,
   const long_t from,
   const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -295,8 +295,8 @@ iaf_psc_exp_multisynapse::update( const Time& origin,
   {
     if ( S_.r_ref_ == 0 ) // neuron not refractory, so evolve V
     {
-      // not sure about this
-      S_.V_m_ = S_.V_m_ * V_.P22_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
+      S_.V_m_ = S_.V_m_ * V_.P22_
+        + ( P_.I_e_ + S_.i_0_ ) * V_.P20_; // not sure about this
 
       S_.current_ = 0.0;
       for ( size_t i = 0; i < P_.num_of_receptors_; i++ )

@@ -401,7 +401,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
       dict ); // each call adds to num_connections
 
   ( *dict )[ "num_connections" ] =
-    kernel().connection_builder_manager.get_num_connections( syn_id );
+    kernel().connection_manager.get_num_connections( syn_id );
 
   return dict;
 }

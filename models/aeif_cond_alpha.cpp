@@ -120,12 +120,12 @@ nest::aeif_cond_alpha_dynamics( double,
       - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::DG_EXC ] = -dg_ex / node.P_.tau_syn_ex;
-  f[ S::G_EXC ] =
-    dg_ex - g_ex / node.P_.tau_syn_ex; // Synaptic Conductance (nS)
+  // Synaptic Conductance (nS)
+  f[ S::G_EXC ] = dg_ex - g_ex / node.P_.tau_syn_ex;
 
   f[ S::DG_INH ] = -dg_in / node.P_.tau_syn_in;
-  f[ S::G_INH ] =
-    dg_in - g_in / node.P_.tau_syn_in; // Synaptic Conductance (nS)
+  // Synaptic Conductance (nS)
+  f[ S::G_INH ] = dg_in - g_in / node.P_.tau_syn_in;
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -389,8 +389,8 @@ nest::aeif_cond_alpha::init_buffers_()
 void
 nest::aeif_cond_alpha::calibrate()
 {
-  B_.logger_
-    .init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
@@ -408,8 +408,8 @@ nest::aeif_cond_alpha::update( Time const& origin,
   const long_t from,
   const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 

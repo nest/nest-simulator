@@ -111,8 +111,8 @@ nest::iaf_tum_2000::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d )
 {
-  // if E_L_ is changed, we need to adjust all variables
-  // defined relative to E_L_
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -291,8 +291,8 @@ nest::iaf_tum_2000::update( Time const& origin,
   const long_t from,
   const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -308,11 +308,10 @@ nest::iaf_tum_2000::update( Time const& origin,
     // exponential decaying PSCs
     S_.i_syn_ex_ *= V_.P11ex_;
     S_.i_syn_in_ *= V_.P11in_;
-    S_.i_syn_ex_ +=
-      B_.spikes_ex_.get_value( lag ); // the spikes arriving at T+1 have an
-    S_.i_syn_in_ +=
-      B_.spikes_in_.get_value( lag ); // the spikes arriving at T+1 have an
-    // immediate effect on the state of the neuron
+    // the spikes arriving at T+1 have an immediate effect on the
+    // state of the neuron
+    S_.i_syn_ex_ += B_.spikes_ex_.get_value( lag );
+    S_.i_syn_in_ += B_.spikes_in_.get_value( lag );
 
     if ( S_.r_tot_ == 0 )
     {

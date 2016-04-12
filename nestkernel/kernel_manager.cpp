@@ -53,7 +53,7 @@ nest::KernelManager::KernelManager()
   , rng_manager()
   , simulation_manager()
   , modelrange_manager()
-  , connection_builder_manager()
+  , connection_manager()
   , sp_manager()
   , event_delivery_manager()
   , model_manager()
@@ -83,13 +83,13 @@ nest::KernelManager::initialize()
   // invariant: supporting managers set up
 
   // "Core kernel managers" follow
-  simulation_manager.initialize();         // independent of others
-  modelrange_manager.initialize();         // independent of others
-  connection_builder_manager.initialize(); // depends only on num of threads
+  simulation_manager.initialize(); // independent of others
+  modelrange_manager.initialize(); // independent of others
+  connection_manager.initialize(); // depends only on num of threads
   sp_manager.initialize();
 
   // prerequisites:
-  //   - min_delay/max_delay available (connection_builder_manager)
+  //   - min_delay/max_delay available (connection_manager)
   //   - clock initialized (simulation_manager)
   event_delivery_manager.initialize();
 
@@ -117,7 +117,7 @@ nest::KernelManager::finalize()
   model_manager.finalize();
   event_delivery_manager.finalize();
   sp_manager.finalize();
-  connection_builder_manager.finalize();
+  connection_manager.finalize();
   modelrange_manager.finalize();
   simulation_manager.finalize();
 
@@ -142,14 +142,14 @@ nest::KernelManager::num_threads_changed_reset()
 {
   node_manager.finalize();
   model_manager.finalize();
-  connection_builder_manager.finalize();
+  connection_manager.finalize();
   modelrange_manager.finalize();
   rng_manager.finalize();
 
   rng_manager.initialize();
-  // independant of threads, but node_manager needs it reset
+  // independent of threads, but node_manager needs it reset
   modelrange_manager.initialize();
-  connection_builder_manager.initialize();
+  connection_manager.initialize();
   model_manager.initialize();
   music_manager.initialize();
   node_manager.initialize();
@@ -169,7 +169,7 @@ nest::KernelManager::set_status( const DictionaryDatum& dict )
   rng_manager.set_status( dict );
   simulation_manager.set_status( dict );
   modelrange_manager.set_status( dict );
-  connection_builder_manager.set_status( dict );
+  connection_manager.set_status( dict );
   sp_manager.set_status( dict );
 
   event_delivery_manager.set_status( dict );
@@ -192,7 +192,7 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
   rng_manager.get_status( dict );
   simulation_manager.get_status( dict );
   modelrange_manager.get_status( dict );
-  connection_builder_manager.get_status( dict );
+  connection_manager.get_status( dict );
   sp_manager.get_status( dict );
 
   event_delivery_manager.get_status( dict );

@@ -118,18 +118,16 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s )
   }
   /*
   // TODO: How to handle setting U_noise first and noise later and still make
-  sure they are
-  consistent?
+           sure they are consistent?
   if ( U_noise_ > 0 && noise_.empty() )
-        throw BadProperty("Noise amplitude larger than zero while noise signal
-  is missing.");
-        */
+        throw BadProperty("Noise amplitude larger than zero while noise signal "
+                          "is missing.");
+  */
   if ( U_epsp_ < 0 )
     throw BadProperty( "EPSP cannot be negative." );
 
-  if ( U_reset_ < 0 )
-    throw BadProperty(
-      "Reset potential cannot be negative." ); // sign switched above
+  if ( U_reset_ < 0 ) // sign switched above
+    throw BadProperty( "Reset potential cannot be negative." );
 
   if ( tau_epsp_ <= 0 || tau_reset_ <= 0 )
     throw BadProperty( "All time constants must be strictly positive." );
@@ -238,8 +236,8 @@ nest::iaf_chs_2007::update( const Time& origin,
   const long_t from,
   const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each

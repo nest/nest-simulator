@@ -243,8 +243,7 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name,
 
 
   // throw error if n or a are set in quantal_stp_synapse, Connect cannot handle
-  // them since they are
-  // integer
+  // them since they are integer
   if ( syn_name == "quantal_stp_synapse" )
   {
     if ( syn_spec->known( names::n ) )
@@ -415,10 +414,10 @@ nest::ConnBuilder::single_connect_( index sgid,
   if ( param_dicts_.empty() ) // indicates we have no synapse params
   {
     if ( default_weight_and_delay_ )
-      kernel().connection_builder_manager.connect(
+      kernel().connection_manager.connect(
         sgid, &target, target_thread, synapse_model_ );
     else if ( default_weight_ )
-      kernel().connection_builder_manager.connect( sgid,
+      kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
         synapse_model_,
@@ -427,7 +426,7 @@ nest::ConnBuilder::single_connect_( index sgid,
     {
       double delay = delay_->value_double( target_thread, rng );
       double weight = weight_->value_double( target_thread, rng );
-      kernel().connection_builder_manager.connect(
+      kernel().connection_manager.connect(
         sgid, &target, target_thread, synapse_model_, delay, weight );
     }
   }
@@ -476,13 +475,13 @@ nest::ConnBuilder::single_connect_( index sgid,
     }
 
     if ( default_weight_and_delay_ )
-      kernel().connection_builder_manager.connect( sgid,
+      kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
         synapse_model_,
         param_dicts_[ target_thread ] );
     else if ( default_weight_ )
-      kernel().connection_builder_manager.connect( sgid,
+      kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
         synapse_model_,
@@ -492,7 +491,7 @@ nest::ConnBuilder::single_connect_( index sgid,
     {
       double delay = delay_->value_double( target_thread, rng );
       double weight = weight_->value_double( target_thread, rng );
-      kernel().connection_builder_manager.connect( sgid,
+      kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
         synapse_model_,
@@ -1189,7 +1188,8 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder(
 
   // for now multapses cannot be forbidden
   // TODO: Implement option for multapses_ = False, where already existing
-  // connections are stored in a bitmap
+  // connections are stored in
+  // a bitmap
   if ( not multapses_ )
     throw NotImplemented(
       "Connect doesn't support the suppression of multapses in the "
@@ -1234,7 +1234,7 @@ nest::FixedTotalNumberBuilder::connect_()
 
   // HEP: instead of counting upwards, we might count remaining_targets and
   // remaining_partitions down. why?
-  // begin code adapted from gsl 1.8
+  // begin code adapted from gsl 1.8 //
   double_t sum_dist = 0.0; // corresponds to sum_p
   // norm is equivalent to size_targets
   uint_t sum_partitions = 0; // corresponds to sum_n

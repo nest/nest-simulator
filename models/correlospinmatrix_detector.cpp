@@ -324,15 +324,16 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
 
     if ( m == 1 )
     { // multiplicity == 1, either a single 1->0 event or the first or second of
-      // a pair of 0->1 events
+      // a pair of 0->1
+      // events
       if ( curr_i == S_.last_i_ && stamp == S_.t_last_in_spike_ )
       {
         // received twice the same gid, so transition 0->1
         // revise the last event written to the buffer
         S_.curr_state_[ curr_i ] = true;
         S_.last_change_[ curr_i ] = stamp.get_steps();
-        // previous event was first event of two, so no down transition
-        S_.tentative_down_ = false;
+        S_.tentative_down_ =
+          false; // previous event was first event of two, so no down transition
       }
       else
       {
@@ -395,8 +396,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       const double_t tau_edge =
         P_.tau_max_.get_steps() + P_.delta_tau_.get_steps();
 
-      const delay min_delay =
-        kernel().connection_builder_manager.get_min_delay();
+      const delay min_delay = kernel().connection_manager.get_min_delay();
       while ( !otherPulses.empty()
         && ( t_min_on - otherPulses.front().t_off_ ) >= tau_edge + min_delay )
         otherPulses.pop_front();

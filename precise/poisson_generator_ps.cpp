@@ -173,8 +173,8 @@ nest::poisson_generator_ps::update( Time const& T,
   const long_t from,
   const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
@@ -220,12 +220,14 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
   {
     // need to initialize relative to t_min_active_
     // first spike is drawn from backward recurrence time to initialize the
-    // process in equilibrium. In the case of the Poisson process with dead
-    // time, this has two domains: one with uniform probability (t<dead_time)
-    // and one with exponential probability (t>=dead_time). First we draw a
-    // uniform number to choose the case according to the associated probability
-    // mass. If dead_time==0 we do not want to draw additional random numbers
-    // (keeps old functionality).
+    // process in equilibrium.
+    // In the case of the Poisson process with dead time, this has two domains:
+    // one with uniform probability (t<dead_time) and one
+    // with exponential probability (t>=dead_time).
+    // First we draw a uniform number to choose the case according to the
+    // associated probability mass.
+    // If dead_time==0 we do not want to draw additional random numbers (keeps
+    // old functionality).
 
     double spike_offset = 0;
 

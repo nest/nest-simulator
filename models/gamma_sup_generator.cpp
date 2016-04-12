@@ -60,8 +60,8 @@ nest::ulong_t
 nest::gamma_sup_generator::Internal_states_::update( double_t transition_prob,
   librandom::RngPtr rng )
 {
-  // only set from poisson_dev_ og bino_dev_ or 0, thus >= 0
-  std::vector< ulong_t > n_trans;
+  std::vector< ulong_t >
+    n_trans; // only set from poisson_dev_ og bino_dev_ or 0, thus >= 0
   n_trans.resize( occ_.size() );
 
   // go through all states and draw number of transitioning components
@@ -69,16 +69,14 @@ nest::gamma_sup_generator::Internal_states_::update( double_t transition_prob,
   {
     if ( occ_[ i ] > 0 )
     {
-      /* The binomial distribution converges towards the Poisson distribution as
-         the number of trials goes to infinity while the product np remains
-         fixed.
-         Therefore the Poisson distribution with parameter \lambda = np can be
-         used as an approximation to B(n, p) of the binomial distribution if n
-         is
-         sufficiently large and p is sufficiently small. According to two rules
-         of thumb, this approximation is good if n >= 20 and p <= 0.05, or if
-         n >= 100 and np <= 10. Source:
-         http://en.wikipedia.org/wiki/Binomial_distribution#Poisson_approximation
+      /*The binomial distribution converges towards the Poisson distribution as
+       the number of trials goes to infinity while the product np remains fixed.
+       Therefore the Poisson distribution with parameter \lambda = np can be
+       used as an approximation to B(n, p) of the binomial distribution if n is
+       sufficiently large and p is sufficiently small. According to two rules
+       of thumb, this approximation is good if n >= 20 and p <= 0.05, or if
+       n >= 100 and np <= 10. Source:
+       http://en.wikipedia.org/wiki/Binomial_distribution#Poisson_approximation
        */
       if ( ( occ_[ i ] >= 100 && transition_prob <= 0.01 )
         || ( occ_[ i ] >= 500 && transition_prob * occ_[ i ] <= 0.1 ) )
@@ -231,8 +229,8 @@ nest::gamma_sup_generator::update( Time const& T,
   const long_t from,
   const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )

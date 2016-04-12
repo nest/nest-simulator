@@ -98,8 +98,7 @@ nest::volume_transmitter::calibrate()
 {
   // +1 as pseudo dopa spike at t_trig is inserted after trigger_update_weight
   B_.spikecounter_.reserve(
-    kernel().connection_builder_manager.get_min_delay() * P_.deliver_interval_
-    + 1 );
+    kernel().connection_manager.get_min_delay() * P_.deliver_interval_ + 1 );
 }
 
 void
@@ -125,8 +124,7 @@ nest::volume_transmitter::update( const Time&,
 
   // all spikes stored in spikecounter_ are delivered to the target synapses
   if ( ( kernel().simulation_manager.get_slice_origin().get_steps() + to )
-      % ( P_.deliver_interval_
-          * kernel().connection_builder_manager.get_min_delay() )
+      % ( P_.deliver_interval_ * kernel().connection_manager.get_min_delay() )
     == 0 )
   {
     double_t t_trig =
@@ -135,7 +133,7 @@ nest::volume_transmitter::update( const Time&,
           + to ) ).get_ms();
 
     if ( !B_.spikecounter_.empty() )
-      kernel().connection_builder_manager.trigger_update_weight(
+      kernel().connection_manager.trigger_update_weight(
         get_gid(), B_.spikecounter_, t_trig );
 
     // clear spikecounter

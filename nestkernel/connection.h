@@ -237,7 +237,8 @@ public:
 protected:
   /**
    * This function calls check_connection() on the sender to check if the
-   * receiver accepts the event type and receptor type requested by the sender.
+   * receiver
+   * accepts the event type and receptor type requested by the sender.
    * \param s The source node
    * \param r The target node
    * \param receptor The ID of the requested receptor type
@@ -253,12 +254,13 @@ protected:
      as it influcences the size of the object. Please leave unchanged
      as
      targetidentifierT target_;
-     SynIdDelay syn_id_delay_; //!< syn_id (char) and delay (24 bit) in
-                               //!< timesteps of this connection
+     SynIdDelay syn_id_delay_;        //!< syn_id (char) and delay (24 bit) in
+     timesteps of this
+     connection
   */
   targetidentifierT target_;
-  SynIdDelay syn_id_delay_; //!< syn_id (char) and delay (24 bit) in timesteps
-                            //!< of this connection
+  //! syn_id (char) and delay (24 bit) in timesteps of this connection
+  SynIdDelay syn_id_delay_;
 };
 
 
@@ -308,9 +310,8 @@ Connection< targetidentifierT >::set_status( const DictionaryDatum& d,
   double_t delay;
   if ( updateValue< double_t >( d, names::delay, delay ) )
   {
-    kernel()
-      .connection_builder_manager.get_delay_checker()
-      .assert_valid_delay_ms( delay );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+      delay );
     syn_id_delay_.set_delay_ms( delay );
   }
   // no call to target_.set_status() because target and rport cannot be changed
@@ -335,8 +336,9 @@ Connection< targetidentifierT >::trigger_update_weight( const thread,
   const CommonSynapseProperties& )
 {
   throw IllegalConnection(
-    "Connection::trigger_update_weight: Connection does not support updates "
-    "that are triggered by the volume transmitter." );
+    "Connection::trigger_update_weight: "
+    "Connection does not support updates that are triggered by the volume "
+    "transmitter." );
 }
 
 } // namespace nest

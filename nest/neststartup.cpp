@@ -134,8 +134,8 @@ neststartup( int* argc,
   // the intepreter decides cleans up memory before NEST is ready
   engine.def( "modeldict", nest::kernel().model_manager.get_modeldict() );
   engine.def( "synapsedict", nest::kernel().model_manager.get_synapsedict() );
-  engine.def( "connruledict",
-    nest::kernel().connection_builder_manager.get_connruledict() );
+  engine.def(
+    "connruledict", nest::kernel().connection_manager.get_connruledict() );
   engine.def(
     "growthcurvedict", nest::kernel().sp_manager.get_growthcurvedict() );
 

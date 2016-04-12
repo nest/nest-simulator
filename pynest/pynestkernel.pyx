@@ -39,18 +39,18 @@ from cpython.ref cimport PyObject
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
 
-cdef string SLI_TYPE_BOOL = "booltype"
-cdef string SLI_TYPE_INTEGER = "integertype"
-cdef string SLI_TYPE_DOUBLE = "doubletype"
-cdef string SLI_TYPE_STRING = "stringtype"
-cdef string SLI_TYPE_LITERAL = "literaltype"
-cdef string SLI_TYPE_ARRAY = "arraytype"
-cdef string SLI_TYPE_DICTIONARY = "dictionarytype"
-cdef string SLI_TYPE_CONNECTION = "connectiontype"
-cdef string SLI_TYPE_VECTOR_INT = "intvectortype"
-cdef string SLI_TYPE_VECTOR_DOUBLE = "doublevectortype"
-cdef string SLI_TYPE_MASK = "masktype"
-cdef string SLI_TYPE_PARAMETER = "parametertype"
+cdef string SLI_TYPE_BOOL = b"booltype"
+cdef string SLI_TYPE_INTEGER = b"integertype"
+cdef string SLI_TYPE_DOUBLE = b"doubletype"
+cdef string SLI_TYPE_STRING = b"stringtype"
+cdef string SLI_TYPE_LITERAL = b"literaltype"
+cdef string SLI_TYPE_ARRAY = b"arraytype"
+cdef string SLI_TYPE_DICTIONARY = b"dictionarytype"
+cdef string SLI_TYPE_CONNECTION = b"connectiontype"
+cdef string SLI_TYPE_VECTOR_INT = b"intvectortype"
+cdef string SLI_TYPE_VECTOR_DOUBLE = b"doublevectortype"
+cdef string SLI_TYPE_MASK = b"masktype"
+cdef string SLI_TYPE_PARAMETER = b"parametertype"
 
 
 DEF CONN_ELMS = 5

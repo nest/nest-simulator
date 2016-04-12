@@ -403,13 +403,12 @@ nest::hh_psc_alpha_gap::init_buffers_()
   // per min_delay step)
 
   // resize interpolation_coefficients depending on interpolation order
-  const size_t quantity = kernel().connection_builder_manager.get_min_delay()
+  const size_t quantity = kernel().connection_manager.get_min_delay()
     * ( kernel().simulation_manager.get_prelim_interpolation_order() + 1 );
 
   B_.interpolation_coefficients.resize( quantity, 0.0 );
 
-  B_.last_y_values.resize(
-    kernel().connection_builder_manager.get_min_delay(), 0.0 );
+  B_.last_y_values.resize( kernel().connection_manager.get_min_delay(), 0.0 );
 
   B_.sumj_g_ij_ = 0.0;
 
@@ -468,8 +467,8 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
   const bool prelim )
 {
 
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   bool done = true;
@@ -479,8 +478,8 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
 
   // allocate memory to store the new interpolation coefficients
   // to be sent by gap event
-  const size_t quantity = kernel().connection_builder_manager.get_min_delay()
-    * ( interpolation_order + 1 );
+  const size_t quantity =
+    kernel().connection_manager.get_min_delay() * ( interpolation_order + 1 );
   std::vector< double_t > new_coefficients( quantity, 0.0 );
 
   // parameters needed for piecewise interpolation
@@ -620,8 +619,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
         S_.y_[ State_::V_M ];
 
     B_.last_y_values.clear();
-    B_.last_y_values.resize(
-      kernel().connection_builder_manager.get_min_delay(), 0.0 );
+    B_.last_y_values.resize( kernel().connection_manager.get_min_delay(), 0.0 );
   }
 
   // Send gap-event

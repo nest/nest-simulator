@@ -367,14 +367,14 @@ nest::hh_psc_alpha::init_buffers_()
 void
 nest::hh_psc_alpha::calibrate()
 {
-  B_.logger_
-    .init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   V_.PSCurrInit_E_ = 1.0 * numerics::e / P_.tau_synE;
   V_.PSCurrInit_I_ = 1.0 * numerics::e / P_.tau_synI;
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.RefractoryCounts_
-    >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  // since t_ref_ >= 0, this can only fail in error
+  assert( V_.RefractoryCounts_ >= 0 );
 }
 
 /* ----------------------------------------------------------------
@@ -387,8 +387,8 @@ nest::hh_psc_alpha::update( Time const& origin,
   const long_t to )
 {
 
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )

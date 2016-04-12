@@ -113,8 +113,8 @@ iaf_psc_alpha::Parameters_::get( DictionaryDatum& d ) const
 double
 iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
 {
-  // if E_L_ is changed, we need to adjust all variables
-  // defined relative to E_L_
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -293,8 +293,8 @@ iaf_psc_alpha::calibrate()
 void
 iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -337,8 +337,8 @@ iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
       S_.y3_ = P_.V_reset_;
       // A supra-threshold membrane potential should never be observable.
       // The reset at the time of threshold crossing enables accurate
-      // integration independent of the computation step size, see [2,3]
-      // for details.
+      // integration independent of the computation step size, see [2,3] for
+      // details.
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;

@@ -42,7 +42,7 @@ EventDeliveryManager::send( Node& source, EventT& e, const long_t lag )
   index gid = source.get_gid();
 
   assert( !source.has_proxies() );
-  kernel().connection_builder_manager.send( t, gid, e );
+  kernel().connection_manager.send( t, gid, e );
 }
 
 template <>
@@ -104,7 +104,7 @@ EventDeliveryManager::send_local( thread t, Node& source, Event& e )
 {
   index sgid = source.get_gid();
   e.set_sender_gid( sgid );
-  kernel().connection_builder_manager.send( t, sgid, e );
+  kernel().connection_manager.send( t, sgid, e );
 }
 }
 

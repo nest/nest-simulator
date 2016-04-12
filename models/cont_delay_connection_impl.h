@@ -89,9 +89,8 @@ ContDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
 
     if ( frac_delay == 0 )
     {
-      kernel()
-        .connection_builder_manager.get_delay_checker()
-        .assert_valid_delay_ms( delay );
+      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+        delay );
       set_delay_steps( Time::delay_ms_to_steps( delay ) );
       delay_offset_ = 0.0;
     }
@@ -99,7 +98,7 @@ ContDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
     {
       const long_t lowerbound = static_cast< long_t >( int_delay );
       kernel()
-        .connection_builder_manager.get_delay_checker()
+        .connection_manager.get_delay_checker()
         .assert_two_valid_delays_steps( lowerbound, lowerbound + 1 );
       set_delay_steps( lowerbound + 1 );
       delay_offset_ = h * ( 1.0 - frac_delay );

@@ -355,8 +355,8 @@ nest::iaf_cond_alpha::update( Time const& origin,
   const long_t to )
 {
 
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -436,8 +436,8 @@ nest::iaf_cond_alpha::handle( SpikeEvent& e )
   else
     B_.spike_inh_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
-      // ensure conductance is positive
-      -e.get_weight() * e.get_multiplicity() );
+      -e.get_weight()
+        * e.get_multiplicity() ); // ensure conductance is positive
 }
 
 void

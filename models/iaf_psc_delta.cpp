@@ -106,8 +106,8 @@ nest::iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d )
 {
-  // if E_L_ is changed, we need to adjust all variables
-  // defined relative to E_L_
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -249,7 +249,6 @@ nest::iaf_psc_delta::calibrate()
   // step h will leed to accurate (up to the resolution h) and self-consistent
   // results. However, a neuron model capable of operating with real valued
   // spike time may exhibit a different effective refractory time.
-  //
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   // since t_ref_ >= 0, this can only fail in error
@@ -265,8 +264,8 @@ nest::iaf_psc_delta::update( Time const& origin,
   const long_t from,
   const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const double_t h = Time::get_resolution().get_ms();

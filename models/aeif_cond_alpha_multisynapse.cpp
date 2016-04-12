@@ -409,8 +409,8 @@ aeif_cond_alpha_multisynapse::init_buffers_()
 void
 aeif_cond_alpha_multisynapse::calibrate()
 {
-  // ensures initialization in case mm connected after Simulate
-  B_.logger_.init();
+  B_.logger_
+    .init(); // ensures initialization in case mm connected after Simulate
 
   P_.receptor_types_.resize( P_.num_of_receptors_ );
   for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
@@ -427,8 +427,8 @@ aeif_cond_alpha_multisynapse::calibrate()
     V_.g0_in_[ i ] = 1.0 * numerics::e / P_.taus_syn[ i ];
   }
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  // since t_ref_ >= 0, this can only fail in error
-  assert( V_.RefractoryCounts_ >= 0 );
+  assert( V_.RefractoryCounts_
+    >= 0 ); // since t_ref_ >= 0, this can only fail in error
 
   B_.spike_exc_.resize( P_.num_of_receptors_ );
   B_.spike_inh_.resize( P_.num_of_receptors_ );
@@ -472,8 +472,8 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
   const long_t from,
   const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -583,9 +583,10 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
                   + 1.0 / 40.0 * S_.k7[ i ] );
         }
 
-        err = std::fabs( S_.ynew[ 0 ] - S_.yref[ 0 ] ) / MAXERR + 1.0e-200;
-        // error estimate, based on different orders for stepsize prediction.
-        // Small value added to prevent err==0
+        err = std::fabs( S_.ynew[ 0 ] - S_.yref[ 0 ] ) / MAXERR
+          + 1.0e-200; // error estimate,
+        // based on different orders for stepsize prediction. Small value added
+        // to prevent err==0
 
         // The following flag 'done' is needed to ensure that we accept the
         // result for h<=HMIN, irrespective of the error. (See below)

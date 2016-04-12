@@ -137,8 +137,7 @@ nest::pp_pop_psc_delta::Parameters_::set( const DictionaryDatum& d )
   if ( taus_eta_.size() != vals_eta_.size() )
     throw BadProperty( String::compose(
       "'taus_eta' and 'vals_eta' need to have the same dimension.\nSize of "
-      "taus_eta: %1\nSize of "
-      "vals_eta: %2",
+      "taus_eta: %1\nSize of vals_eta: %2",
       taus_eta_.size(),
       vals_eta_.size() ) );
 
@@ -180,8 +179,8 @@ nest::pp_pop_psc_delta::State_::set( const DictionaryDatum& d,
   const Parameters_& )
 {
   updateValue< double >( d, names::V_m, h_ );
-  // vectors of the state should be initialized with new parameter set.
-  initialized_ = false;
+  initialized_ =
+    false; // vectors of the state should be initialized with new parameter set.
 }
 
 nest::pp_pop_psc_delta::Buffers_::Buffers_( pp_pop_psc_delta& n )
@@ -315,8 +314,8 @@ nest::pp_pop_psc_delta::update( Time const& origin,
   const long_t from,
   const long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -404,16 +403,14 @@ nest::pp_pop_psc_delta::update( Time const& origin,
       S_.age_occupations_[ ( S_.p_age_occupations_ + i )
         % S_.age_occupations_.size() ] -= S_.n_spikes_ages_[ i ];
 
-    // save the last element
     int_t last_element_value =
       S_.age_occupations_[ ( S_.p_age_occupations_ - 1
                              + S_.age_occupations_.size() )
-        % S_.age_occupations_.size() ];
+        % S_.age_occupations_.size() ]; // save the last element
 
-    // shift to the right
     S_.p_age_occupations_ =
       ( S_.p_age_occupations_ - 1 + S_.age_occupations_.size() )
-      % S_.age_occupations_.size();
+      % S_.age_occupations_.size(); // shift to the right
     S_.age_occupations_[ ( S_.p_age_occupations_ - 1
                            + S_.age_occupations_.size() )
       % S_.age_occupations_.size() ] += last_element_value;

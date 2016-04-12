@@ -313,7 +313,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 
     // throw away all spikes which are too old to
     // enter the correlation window
-    const delay min_delay = kernel().connection_builder_manager.get_min_delay();
+    const delay min_delay = kernel().connection_manager.get_min_delay();
     while ( !otherSpikes.empty()
       && ( spike_i - otherSpikes.front().timestep_ ) >= tau_edge + min_delay )
       otherSpikes.pop_front();
@@ -321,8 +321,9 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
     // min_delay
 
     // only count events in histogram, if the current event is within the time
-    // window [Tstart, Tstop] this is needed in order to prevent boundary
-    // effects
+    // window [Tstart,
+    // Tstop]
+    // this is needed in order to prevent boundary effects
     if ( P_.Tstart_ <= stamp && stamp <= P_.Tstop_ )
     {
       // calculate the effect of this spike immediately with respect to all

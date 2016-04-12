@@ -118,7 +118,7 @@ template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::calibrate( const TimeConverter& tc )
 {
-  // calibrate the dalay of the default properties here
+  // calibrate the delay of the default properties here
   default_connection_.calibrate( tc );
 
   // Calibrate will be called after a change in resolution, when there are no
@@ -159,12 +159,12 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   // set_status calls on common properties and default connection may
   // modify min/max delay, we need to freeze the min/max_delay checking.
 
-  kernel().connection_builder_manager.get_delay_checker().freeze_delay_update();
+  kernel().connection_manager.get_delay_checker().freeze_delay_update();
 
   cp_.set_status( d, *this );
   default_connection_.set_status( d, *this );
 
-  kernel().connection_builder_manager.get_delay_checker().enable_delay_update();
+  kernel().connection_manager.get_delay_checker().enable_delay_update();
 
   // we've possibly just got a new default delay. So enforce checking next time
   // it is used
@@ -176,32 +176,30 @@ void
 GenericConnectorModel< ConnectionT >::used_default_delay()
 {
   // if not used before, check now. Solves bug #138, MH 08-01-08
-  // replaces whole delay checking for the default delay, see bug #217, MH
-  // 08-04-24 get_default_delay_ must be overridden by derived class to return
-  // the correct default delay (either from commonprops or default connection)
+  // replaces whole delay checking for the default delay, see bug #217
+  // MH 08-04-24
+  // get_default_delay_ must be overridden by derived class to return the
+  // correct default delay (either from commonprops or default connection)
   if ( default_delay_needs_check_ )
   {
     try
     {
       if ( has_delay_ )
       {
-        kernel()
-          .connection_builder_manager.get_delay_checker()
-          .assert_valid_delay_ms( default_connection_.get_delay() );
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+          default_connection_.get_delay() );
       }
     }
     catch ( BadDelay& e )
     {
-      throw BadDelay(
-        default_connection_.get_delay(),
-        String::compose(
-          "Default delay of '%1' must be between min_delay %2 and max_delay "
-          "%3.",
-          get_name(),
-          Time::delay_steps_to_ms(
-            kernel().connection_builder_manager.get_min_delay() ),
-          Time::delay_steps_to_ms(
-            kernel().connection_builder_manager.get_max_delay() ) ) );
+      throw BadDelay( default_connection_.get_delay(),
+        String::compose( "Default delay of '%1' must be between min_delay %2 "
+                         "and max_delay %3.",
+                        get_name(),
+                        Time::delay_steps_to_ms(
+                           kernel().connection_manager.get_min_delay() ),
+                        Time::delay_steps_to_ms(
+                           kernel().connection_manager.get_max_delay() ) ) );
     }
     default_delay_needs_check_ = false;
   }
@@ -230,9 +228,8 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   double_t weight )
 {
   if ( not numerics::is_nan( delay ) && has_delay_ )
-    kernel()
-      .connection_builder_manager.get_delay_checker()
-      .assert_valid_delay_ms( delay );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+      delay );
 
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
@@ -273,9 +270,8 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   {
     if ( has_delay_ )
     {
-      kernel()
-        .connection_builder_manager.get_delay_checker()
-        .assert_valid_delay_ms( delay );
+      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+        delay );
     }
 
     if ( p->known( names::delay ) )
@@ -292,9 +288,8 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     {
       if ( has_delay_ )
       {
-        kernel()
-          .connection_builder_manager.get_delay_checker()
-          .assert_valid_delay_ms( delay );
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+          delay );
       }
     }
     else
@@ -358,11 +353,8 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     // case 0
 
     // the following line will throw an exception, if it does not work
-    c.check_connection( src,
-      tgt,
-      receptor_type,
-      0.,
-      get_common_properties() ); // set last_spike to 0
+    // set last_spike to 0
+    c.check_connection( src, tgt, receptor_type, 0., get_common_properties() );
 
     // no entry at all, so start with homogeneous container for exactly one
     // connection
@@ -403,8 +395,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
           static_cast< vector_like< ConnectionT >* >( conn );
 
         // we do not need to change the flags is_primary or is_secondary,
-        // because the new synapse is
-        // of the same type as the existing ones
+        // because the new synapse is of the same type as the existing ones
         conn =
           pack_pointer( &vc->push_back( c ), b_has_primary, b_has_secondary );
       }
@@ -534,8 +525,8 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
 
     for ( size_t i = 0; i < hc->size() && !found; i++ )
     {
-      // need to cast to vector_like to access syn_id
-      // there is already an entry for this type
+      // need to cast to vector_like to access syn_id there is already an entry
+      // for this type
       if ( ( *hc )[ i ]->get_syn_id() == syn_id )
       {
         // here we know that the type is vector_like<connectionT>, because

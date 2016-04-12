@@ -281,7 +281,7 @@ nest::iaf_psc_alpha_presc::update( Time const& origin,
 {
   assert( to >= 0 );
   assert( static_cast< delay >( from )
-    < kernel().connection_builder_manager.get_min_delay() );
+    < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   /* Neurons may have been initialized to superthreshold potentials.
@@ -419,8 +419,8 @@ nest::iaf_psc_alpha_presc::handle( SpikeEvent& e )
   // Building the new matrix for the offset of the spike
   // NOTE: We do not use get matrix, but compute only those
   //       components we actually need for spike registration
-  const double_t ps_e_TauSyn =
-    numerics::expm1( -dt / P_.tau_syn_ ); // needed in any case
+  // needed in any case
+  const double_t ps_e_TauSyn = numerics::expm1( -dt / P_.tau_syn_ );
   const double_t ps_e_Tau = numerics::expm1( -dt / P_.tau_m_ );
   const double_t ps_P31 = V_.gamma_sq_ * ps_e_Tau - V_.gamma_sq_ * ps_e_TauSyn
     - dt * V_.gamma_ * ps_e_TauSyn - dt * V_.gamma_;

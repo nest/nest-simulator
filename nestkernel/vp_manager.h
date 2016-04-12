@@ -40,6 +40,14 @@
 namespace nest
 {
 
+struct AssignedRanks
+{
+  unsigned int begin;
+  unsigned int end;
+  unsigned int size;
+  unsigned int max_size;
+};
+
 class VPManager : ManagerInterface
 {
 public:
@@ -142,6 +150,14 @@ public:
 
   unsigned int get_start_rank_per_thread( const thread tid ) const;
   unsigned int get_end_rank_per_thread( const thread tid, const unsigned int rank_start, const unsigned int num_assigned_ranks_per_thread ) const;
+
+  /**
+   * Returns assigned ranks per thread to fill MPI buffers. thread tid
+   * is responsible for all ranks in [assigned_ranks.begin,
+   * assigned_ranks.end), which are in total assigned_ranks.size and
+   * at most assigned_ranks.max_size
+   */
+  AssignedRanks get_assigned_ranks( const thread tid );
 
 private:
   const bool force_singlethreading_;

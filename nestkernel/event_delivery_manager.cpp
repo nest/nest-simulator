@@ -662,18 +662,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
 bool
 EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
 {
-  // TODO@5g: make struct part of vp_manager
-  // thread tid is responsible for all ranks in [assigned_ranks.begin, assigned_ranks.end),
-  // which are in total assigned_ranks.size and at most assigned_ranks.max_size
-  struct { unsigned int begin, end, size, max_size; } assigned_ranks;
-  assigned_ranks.begin = kernel().vp_manager.get_start_rank_per_thread( tid );
-  assigned_ranks.max_size = kernel().vp_manager.get_num_assigned_ranks_per_thread();
-  assigned_ranks.end = kernel().vp_manager.get_end_rank_per_thread( tid, assigned_ranks.begin, assigned_ranks.max_size );
-  assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
-
-  // TODO@5g: make sure buffer size is a multiple of number of processes and make num_spike_data_per_rank a member
-  assert( send_buffer_spike_data_.size() % kernel().mpi_manager.get_num_processes() == 0 );
-  const unsigned int num_spike_data_per_rank = send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes();
+  AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
   // number of spike-register entries that have been read
   unsigned int num_spike_data_read = 0;

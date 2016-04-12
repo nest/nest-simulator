@@ -55,8 +55,6 @@ EventDeliveryManager::EventDeliveryManager()
   , global_offgrid_spikes_()
   , displacements_()
   , comm_marker_( 0 )
-  , count_register(0)
-  , count_buffer(0)
 {
 }
 
@@ -681,17 +679,18 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
 
   // whether all spike-register entries have been read
   bool is_spike_register_read = true;
+  bool is_buffer_untouched = true;
 
   for( std::vector< std::vector< std::vector< std::vector< Target* > > >* >::iterator it = spike_register_5g_.begin(); it != spike_register_5g_.end(); ++it )
   { // only for vectors that are assigned to thread tid
-    for ( unsigned int lag = 0; lag < (*(*it))[tid].size(); ++lag )
+    for ( unsigned int lag = 0; lag < (*(*it))[ tid ].size(); ++lag )
     {
-      for ( std::vector< Target* >::iterator iiit = (*(*it))[tid][lag].begin(); iiit < (*(*it))[tid][lag].end(); ++iiit )
+      for ( std::vector< Target* >::iterator iiit = (*(*it))[ tid ][ lag ].begin(); iiit < (*(*it))[ tid ][ lag ].end(); ++iiit )
       { 
 	assert ( (*iiit) != 0 );
 
 	// thread-local index of (global) rank of target
-	const unsigned int lr_idx = (*(*iiit)).rank % assigned_ranks.max_size;
+	const unsigned int lr_idx = (*iiit)->rank % assigned_ranks.max_size;
 	assert( lr_idx < assigned_ranks.size );
 
 	if ( send_buffer_idx[ lr_idx ] == send_buffer_end[ lr_idx ] )
@@ -699,51 +698,38 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
 	  is_spike_register_read = false;
 	  if ( num_spike_data_read == send_recv_count_spike_data_per_rank_ * assigned_ranks.size )
 	  { // send-buffer slots of all assigned ranks are full
-	    return is_spike_register_read;
+            return is_buffer_untouched;
 	  }
-	  // else continue
+          else
+          {
+            continue;
+          }
 	}
 	else
 	{
-	  index target_gid = kernel().connection_builder_manager.get_target_gid( (*(*iiit)).tid, (*(*iiit)).syn_index, (*(*iiit)).lcid );
-	  if ( target_gid == 8 )
-	    std::cout << "collocate on rank " << kernel().mpi_manager.get_rank() << " thread " << tid << " target (rank " << (*(*iiit)).rank << " lcid " << (*(*iiit)).lcid <<  " lag " << lag << ") send buffer index " << send_buffer_idx[ lr_idx ] << std::endl;
+	  const index target_gid = kernel().connection_builder_manager.get_target_gid( (*(*iiit)).tid, (*(*iiit)).syn_index, (*(*iiit)).lcid );
 	  send_buffer_spike_data_[ send_buffer_idx[ lr_idx ] ].set( (*(*iiit)).tid, (*(*iiit)).syn_index, (*(*iiit)).lcid, lag );
 	  (*iiit) = 0; // set to null to mark entry for removal
 	  ++send_buffer_idx[ lr_idx ];
 	  ++num_spike_data_read;
-	  ++count_buffer;
+          is_buffer_untouched = false;
 	}
       }
     }
   }
 
-  if ( is_spike_register_read )
+  for ( unsigned int rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
-    for ( unsigned int rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+    // thread-local index of (global) rank
+    const unsigned int lr_idx = rank % assigned_ranks.max_size;
+    assert( lr_idx < assigned_ranks.size );
+    if ( send_buffer_idx[ lr_idx ] < send_buffer_end[ lr_idx ] )
     {
-      // thread-local index of (global) rank
-      const unsigned int lr_idx = rank % assigned_ranks.max_size;
-      assert( lr_idx < assigned_ranks.size );
-      if ( send_buffer_idx[ lr_idx ] < send_buffer_end[ lr_idx ] )
-  	send_buffer_spike_data_[ send_buffer_idx[ lr_idx ] ].set_complete_marker();
-    }
-  }
-  else
-  {
-    for ( unsigned int rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
-    {
-      // thread-local index of (global) rank
-      const unsigned int lr_idx = rank % assigned_ranks.max_size;
-      assert( lr_idx < assigned_ranks.size );
-      if ( send_buffer_idx[ lr_idx ] < send_buffer_end[ lr_idx ] )
-	send_buffer_spike_data_[ send_buffer_idx[ lr_idx ] ].set_end_marker();
+      send_buffer_spike_data_[ send_buffer_idx[ lr_idx ] ].set_end_marker();
     }
   }
 
-  std::cout << "count register " << count_register << " count entries " << count_buffer << std::endl;
-
-  return is_spike_register_read;
+  return is_buffer_untouched;
 }
 
 bool
@@ -859,23 +845,18 @@ EventDeliveryManager::deliver_events_5g_( const thread tid )
         }
         else if ( spike_data.tid == tid )
         {
-
-	  // index target_gid = kernel().connection_builder_manager.get_target_gid( spike_data.tid, spike_data.syn_index, spike_data.lcid );
-	  // if ( target_gid == 8 )
-	  //   std::cout << "deliver on rank " << kernel().mpi_manager.get_rank() << " thread " << tid << " target (lcid " << spike_data.lcid <<  " lag " << spike_data.lag << ")" << std::endl;
-
           se.set_stamp( prepared_timestamps[ spike_data.lag ] );
           kernel().connection_builder_manager.send_5g( tid, spike_data.syn_index,
                                                        spike_data.lcid, se );
         }
         else
         {
-	  // std::cout << "deliver continue" << std::endl;
           continue;
         }
       }
     }
   }
+
   return are_others_completed;
 }
 

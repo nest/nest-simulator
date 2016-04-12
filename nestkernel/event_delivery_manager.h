@@ -360,9 +360,6 @@ private:
   std::vector< SpikeData > recv_buffer_spike_data_;
   unsigned int send_recv_count_spike_data_per_rank_;
   unsigned int send_recv_count_spike_data_in_int_per_rank_;
-
-  long_t count_register;
-  long_t count_buffer;
 };
 
 inline void

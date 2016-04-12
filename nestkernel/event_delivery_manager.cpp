@@ -663,7 +663,7 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
   AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
   // number of spike-register entries that have been read
-  unsigned int num_spike_data_read = 0;
+  unsigned int num_spike_data_written = 0;
 
   // [send_buffer_idx, send_buffer_end) defines the send-buffer slot for each assigned rank
   std::vector< unsigned int > send_buffer_idx( assigned_ranks.size, 0 );
@@ -674,12 +674,15 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
     const unsigned int lr_idx = rank % assigned_ranks.max_size;
     assert( lr_idx < assigned_ranks.size );
     send_buffer_idx[ lr_idx ] = rank * send_recv_count_spike_data_per_rank_;
-    send_buffer_end[ lr_idx ] = (rank + 1) * send_recv_count_spike_data_per_rank_;
+    // we need one entry to signal whether another MPI round is
+    // necessary to communicate all spikes
+    send_buffer_end[ lr_idx ] = (rank + 1) * send_recv_count_spike_data_per_rank_ - 1;
+    // reset complete marker (last entry)
+    send_buffer_spike_data_[ send_buffer_end[ lr_idx ] ].set_end_marker();
   }
 
   // whether all spike-register entries have been read
-  bool is_spike_register_read = true;
-  bool is_buffer_untouched = true;
+  bool is_spike_register_empty = true;
 
   for( std::vector< std::vector< std::vector< std::vector< Target* > > >* >::iterator it = spike_register_5g_.begin(); it != spike_register_5g_.end(); ++it )
   { // only for vectors that are assigned to thread tid
@@ -695,10 +698,11 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
 
 	if ( send_buffer_idx[ lr_idx ] == send_buffer_end[ lr_idx ] )
 	{ // send-buffer slot of this assigned rank is full
-	  is_spike_register_read = false;
-	  if ( num_spike_data_read == send_recv_count_spike_data_per_rank_ * assigned_ranks.size )
+	  is_spike_register_empty = false;
+          // last entry is reserved, see above
+	  if ( num_spike_data_written == ( send_recv_count_spike_data_per_rank_ - 1 ) * assigned_ranks.size )
 	  { // send-buffer slots of all assigned ranks are full
-            return is_buffer_untouched;
+            return is_spike_register_empty;
 	  }
           else
           {
@@ -711,8 +715,7 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
 	  send_buffer_spike_data_[ send_buffer_idx[ lr_idx ] ].set( (*(*iiit)).tid, (*(*iiit)).syn_index, (*(*iiit)).lcid, lag );
 	  (*iiit) = 0; // set to null to mark entry for removal
 	  ++send_buffer_idx[ lr_idx ];
-	  ++num_spike_data_read;
-          is_buffer_untouched = false;
+	  ++num_spike_data_written;
 	}
       }
     }
@@ -729,12 +732,13 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
     }
   }
 
-  return is_buffer_untouched;
+  return is_spike_register_empty;
 }
 
 bool
 EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
 {
+  assert( false );
   // TODO@5g: documentation
   const unsigned int num_assigned_ranks_per_thread = kernel().vp_manager.get_num_assigned_ranks_per_thread();
   const unsigned int rank_start = kernel().vp_manager.get_start_rank_per_thread( tid );
@@ -800,13 +804,12 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
 void
 EventDeliveryManager::set_complete_marker_spike_data_( const thread tid )
 {
-  const unsigned int num_assigned_ranks_per_thread = kernel().vp_manager.get_num_assigned_ranks_per_thread();
-  const unsigned int rank_start = kernel().vp_manager.get_start_rank_per_thread( tid );
-  const unsigned int rank_end = kernel().vp_manager.get_end_rank_per_thread( tid, rank_start, num_assigned_ranks_per_thread );
+  AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
-  for ( unsigned int target_rank = rank_start; target_rank < rank_end; ++target_rank )
+  for ( unsigned int target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
   {
-    const unsigned int idx = target_rank * send_recv_count_spike_data_per_rank_;
+    // use last entry for completion marker
+    const unsigned int idx = ( target_rank + 1 ) * send_recv_count_spike_data_per_rank_ - 1;
     send_buffer_spike_data_[ idx ].set_complete_marker();
   }
 }
@@ -835,7 +838,6 @@ EventDeliveryManager::deliver_events_5g_( const thread tid )
   {
     if ( not recv_buffer_spike_data_[ rank * send_recv_count_spike_data_per_rank_ ].is_complete_marker() )
     {
-      are_others_completed = false;
       for ( unsigned int i = 0; i < send_recv_count_spike_data_per_rank_; ++i )
       {
         SpikeData& spike_data = recv_buffer_spike_data_[ rank * send_recv_count_spike_data_per_rank_ + i ];
@@ -854,6 +856,12 @@ EventDeliveryManager::deliver_events_5g_( const thread tid )
           continue;
         }
       }
+    }
+    // last entry is reserved for completed marker
+    const unsigned int idx = ( rank + 1 ) * send_recv_count_spike_data_per_rank_ - 1;
+    if ( not recv_buffer_spike_data_[ idx ].is_complete_marker() )
+    {
+      are_others_completed = false;
     }
   }
 

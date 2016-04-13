@@ -34,15 +34,6 @@ namespace nest
 {
 
 inline void
-SpikeData::set( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag )
-{
-  (*this).tid = tid;
-  (*this).syn_index = syn_index;
-  (*this).lcid = lcid;
-  (*this).lag = lag;
-}
-
-inline void
 SpikeRegisterTable::add_spike( const thread tid, const SpikeEvent& e, const long_t lag )
 {
   // the spike register is separate for each thread; hence we can

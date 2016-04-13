@@ -41,15 +41,20 @@ struct SpikeData
   unsigned int syn_index : 6;
   unsigned int lcid : 25;
   unsigned int lag : 6;
-  const static unsigned int complete_marker; // 1024 - 1
-  const static unsigned int end_marker; // 1024 - 2
+  unsigned int marker : 2;
+  const static unsigned int end_marker; // 1
+  const static unsigned int complete_marker; // 2
+  const static unsigned int invalid_marker; // 3
   SpikeData();
   SpikeData( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag );
   void set( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag );
+  void reset_marker();
   void set_complete_marker();
   void set_end_marker();
+  void set_invalid_marker();
   bool is_complete_marker() const;
   bool is_end_marker() const;
+  bool is_invalid_marker() const;
 };
 
 inline
@@ -58,6 +63,7 @@ SpikeData::SpikeData()
   , syn_index( 0 )
   , lcid( 0 )
   , lag( 0 )
+  , marker( 0 )
 {
 }
 
@@ -67,41 +73,60 @@ SpikeData::SpikeData( const thread tid, const unsigned int syn_index, const unsi
   , syn_index( syn_index )
   , lcid( lcid )
   , lag( lag )
+  , marker( 0 )
 {
 }
 
-/* inline void */
-/* SpikeData::set( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag ) */
-/* { */
-/*   std::cout << "set spike data for target " << kernel().connection_builder_manager.get_target_gid( tid, syn_index, lcid ) << std::endl; */
-/*   (*this).tid = tid; */
-/*   (*this).syn_index = syn_index; */
-/*   (*this).lcid = lcid; */
-/*   (*this).lag = lag; */
-/* } */
+inline void
+SpikeData::set( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag )
+{
+  (*this).tid = tid;
+  (*this).syn_index = syn_index;
+  (*this).lcid = lcid;
+  (*this).lag = lag;
+  marker = 0;
+}
+
+inline void
+SpikeData::reset_marker()
+{
+  marker = 0;
+}
 
 inline void
 SpikeData::set_complete_marker()
 {
-  tid = complete_marker;
+  marker = complete_marker;
 }
 
 inline void
 SpikeData::set_end_marker()
 {
-  tid = end_marker;
+  marker = end_marker;
+}
+
+inline void
+SpikeData::set_invalid_marker()
+{
+  marker = invalid_marker;
 }
 
 inline bool
 SpikeData::is_complete_marker() const
 {
-  return tid == complete_marker;
+  return marker == complete_marker;
 }
 
 inline bool
 SpikeData::is_end_marker() const
 {
-  return tid == end_marker;
+  return marker == end_marker;
+}
+
+inline bool
+SpikeData::is_invalid_marker() const
+{
+  return marker == invalid_marker;
 }
 
 struct SpikeRegisterPosition

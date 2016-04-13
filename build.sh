@@ -168,7 +168,7 @@ cmake \
   $CONFIGURE_GSL \
   ..
 
-make
+make VERBOSE=1
 make install
 make installcheck
 

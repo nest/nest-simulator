@@ -257,7 +257,7 @@ if __name__ == '__main__':
                 configure_ok, line = process_until(
                     f, 'You can now build and install NEST with')
 
-            if line.strip() == '+make':
+            if line.strip() == '+make VERBOSE=1':
                 warnings, errors, line = count_warnings_errors(f)
 
             if not make_install_ok and line.startswith('+make install'):

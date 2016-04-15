@@ -657,6 +657,7 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
 
   // [send_buffer_idx, send_buffer_end) defines the send-buffer slot for each assigned rank
   std::vector< unsigned int > send_buffer_idx( assigned_ranks.size, 0 );
+  std::vector< unsigned int > send_buffer_begin( assigned_ranks.size, 0 );
   std::vector< unsigned int > send_buffer_end( assigned_ranks.size, 0 );
   for ( unsigned int rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
@@ -664,8 +665,9 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
     const unsigned int lr_idx = rank % assigned_ranks.max_size;
     assert( lr_idx < assigned_ranks.size );
     send_buffer_idx[ lr_idx ] = rank * send_recv_count_spike_data_per_rank_;
+    send_buffer_begin[ lr_idx ] = rank * send_recv_count_spike_data_per_rank_;
     send_buffer_end[ lr_idx ] = (rank + 1) * send_recv_count_spike_data_per_rank_;
-    send_buffer_spike_data_[ send_buffer_end[ lr_idx ] ].reset_marker();
+    send_buffer_spike_data_[ send_buffer_end[ lr_idx ] - 1 ].reset_marker();
   }
 
   // whether all spike-register entries have been read
@@ -686,7 +688,6 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
 	if ( send_buffer_idx[ lr_idx ] == send_buffer_end[ lr_idx ] )
 	{ // send-buffer slot of this assigned rank is full
 	  is_spike_register_empty = false;
-          // last entry is reserved, see above
 	  if ( num_spike_data_written == send_recv_count_spike_data_per_rank_ * assigned_ranks.size )
 	  { // send-buffer slots of all assigned ranks are full
             return is_spike_register_empty;
@@ -713,19 +714,16 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
     // thread-local index of (global) rank
     const unsigned int lr_idx = rank % assigned_ranks.max_size;
     assert( lr_idx < assigned_ranks.size );
-    // if ( send_buffer_idx[ lr_idx ] < send_buffer_end[ lr_idx ] )
-    // {
-    if ( send_buffer_idx[ lr_idx ] > 0 )
+    if ( send_buffer_idx[ lr_idx ] > send_buffer_begin[ lr_idx ] )
     {
       assert( send_buffer_idx[ lr_idx ] - 1 < send_buffer_end[ lr_idx ] );
       send_buffer_spike_data_[ send_buffer_idx[ lr_idx ] - 1 ].set_end_marker();
     }
     else
     {
-      assert( send_buffer_idx[ lr_idx ] == 0 );
-      send_buffer_spike_data_[ 0 ].set_invalid_marker();
+      assert( send_buffer_idx[ lr_idx ] == send_buffer_begin[ lr_idx ] );
+      send_buffer_spike_data_[ send_buffer_begin[ lr_idx ] ].set_invalid_marker();
     }
-    // }
   }
 
   return is_spike_register_empty;
@@ -832,48 +830,34 @@ EventDeliveryManager::deliver_events_5g_( const thread tid )
 
   for ( unsigned int rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
   {
-    // last entry carries completed marker
-    const unsigned int idx = ( rank + 1 ) * send_recv_count_spike_data_per_rank_ - 1;
-    if ( not recv_buffer_spike_data_[ idx ].is_complete_marker() )
+    // check last entry for completed marker
+    if ( not recv_buffer_spike_data_[ ( rank + 1 ) * send_recv_count_spike_data_per_rank_ - 1 ].is_complete_marker() )
     {
       are_others_completed = false;
     }
 
-    if ( not recv_buffer_spike_data_[ rank * send_recv_count_spike_data_per_rank_ ].is_complete_marker() )
+    // were spikes sent by this rank?
+    if ( recv_buffer_spike_data_[ rank * send_recv_count_spike_data_per_rank_ ].is_invalid_marker() )
     {
-      for ( unsigned int i = 0; i < send_recv_count_spike_data_per_rank_; ++i )
-      {
-        SpikeData& spike_data = recv_buffer_spike_data_[ rank * send_recv_count_spike_data_per_rank_ + i ];
-        if ( spike_data.is_invalid_marker() )
-        {
-          break;
-        }
-        else if ( spike_data.tid == tid )
-        {
-          se.set_stamp( prepared_timestamps[ spike_data.lag ] );
-          kernel().connection_builder_manager.send_5g( tid, spike_data.syn_index,
-                                                       spike_data.lcid, se );
-          if ( spike_data.is_end_marker() )
-          {
-            break;
-          }
-        }
-        else
-        {
-          if ( spike_data.is_end_marker() )
-          {
-            break;
-          }
-          else
-          {
-            continue;
-          }
-        }
-      }
+      continue;
     }
-    else
+
+    for ( unsigned int i = 0; i < send_recv_count_spike_data_per_rank_; ++i )
     {
-      assert( false );
+      SpikeData& spike_data = recv_buffer_spike_data_[ rank * send_recv_count_spike_data_per_rank_ + i ];
+
+      if ( spike_data.tid == tid )
+      {
+        se.set_stamp( prepared_timestamps[ spike_data.lag ] );
+        kernel().connection_builder_manager.send_5g( tid, spike_data.syn_index,
+                                                     spike_data.lcid, se );
+      }
+
+      // is this the last spike from this rank?
+      if ( spike_data.is_end_marker() )
+      {
+        break;
+      }
     }
   }
 

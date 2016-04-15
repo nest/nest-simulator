@@ -102,10 +102,10 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long_t lag )
     std::vector< Target >& targets = kernel().connection_builder_manager.get_targets( tid, lid );
     for ( std::vector< Target >::iterator it = targets.begin(); it < targets.end(); ++it )
     {
-      const thread assigned_tid = (*it).rank / kernel().vp_manager.get_num_assigned_ranks_per_thread();
-      assert( assigned_tid < (*spike_register_5g_[tid]).size() );
-      assert( lag < (*spike_register_5g_[tid])[assigned_tid].size() );
-      (*spike_register_5g_[tid])[assigned_tid][lag].push_back( &(*it) );
+      const thread assigned_tid = ( *it ).rank / kernel().vp_manager.get_num_assigned_ranks_per_thread(); // TODO@5g: put this in a function?
+      assert( assigned_tid < (*spike_register_5g_[ tid ]).size() );
+      assert( lag < ( *spike_register_5g_[ tid ] )[ assigned_tid ].size() );
+      ( *spike_register_5g_[ tid ] )[ assigned_tid ][ lag ].push_back( *it );
     }
   }
 }

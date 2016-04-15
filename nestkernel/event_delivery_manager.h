@@ -240,7 +240,11 @@ private:
   bool collocate_spike_data_buffers_thr_( const thread tid );
 
   void reset_spike_register_5g_( const thread tid );
-  static bool is_marked_for_removal_( const Target* p_tgt ); // required by clean_spike_register_5g_
+
+  // required static function in clean_spike_register_5g_ by
+  // std::remove_if
+  static bool is_marked_for_removal_( const Target& target );
+
   void clean_spike_register_5g_( const thread tid );
 
   void set_complete_marker_spike_data_( const thread tid );
@@ -299,7 +303,7 @@ private:
   SpikeRegisterTable spike_register_table_;
 
   // tid, assigned tid, lag
-  std::vector< std::vector< std::vector< std::vector< Target* > > >* > spike_register_5g_;
+  std::vector< std::vector< std::vector< std::vector< Target > > >* > spike_register_5g_;
 
   /**
    * Register for off-grid spikes.
@@ -365,9 +369,9 @@ private:
 inline void
 EventDeliveryManager::reset_spike_register_5g_( const thread tid )
 {
-  for ( std::vector< std::vector< std::vector< Target* > > >::iterator it = (*spike_register_5g_[ tid ]).begin(); it < (*spike_register_5g_[ tid ]).end(); ++it )
+  for ( std::vector< std::vector< std::vector< Target > > >::iterator it = (*spike_register_5g_[ tid ]).begin(); it < (*spike_register_5g_[ tid ]).end(); ++it )
   {
-    for ( std::vector< std::vector< Target* > >::iterator iit = (*it).begin(); iit < (*it).end(); ++iit )
+    for ( std::vector< std::vector< Target > >::iterator iit = (*it).begin(); iit < (*it).end(); ++iit )
     {
       (*iit).clear();
     }
@@ -375,19 +379,19 @@ EventDeliveryManager::reset_spike_register_5g_( const thread tid )
 }
 
 inline bool
-EventDeliveryManager::is_marked_for_removal_( const Target* p_tgt )
+EventDeliveryManager::is_marked_for_removal_( const Target& target )
 {
-  return ( p_tgt == 0 );
+  return target.is_processed();
 }
 
 inline void
 EventDeliveryManager::clean_spike_register_5g_( const thread tid )
 {
-  for ( std::vector< std::vector< std::vector< Target* > > >::iterator it = (*spike_register_5g_[ tid ]).begin(); it < (*spike_register_5g_[ tid ]).end(); ++it )
+  for ( std::vector< std::vector< std::vector< Target > > >::iterator it = (*spike_register_5g_[ tid ]).begin(); it < (*spike_register_5g_[ tid ]).end(); ++it )
   {
-    for ( std::vector< std::vector< Target* > >::iterator iit = (*it).begin(); iit < (*it).end(); ++iit )
+    for ( std::vector< std::vector< Target > >::iterator iit = (*it).begin(); iit < (*it).end(); ++iit )
     {
-      std::vector< Target* >::iterator new_end = std::remove_if( (*iit).begin(), (*iit).end(), is_marked_for_removal_ );
+      std::vector< Target >::iterator new_end = std::remove_if( (*iit).begin(), (*iit).end(), is_marked_for_removal_ );
       (*iit).erase( new_end, (*iit).end() );
     }
   }

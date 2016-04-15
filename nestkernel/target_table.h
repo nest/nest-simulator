@@ -50,6 +50,8 @@ struct Target
   Target();
   Target( const Target& target );
   Target( const thread tid, const unsigned int rank, const unsigned int syn_index, const unsigned int lcid);
+  void set_processed();
+  bool is_processed() const;
 };
 
 inline
@@ -80,6 +82,18 @@ Target::Target( const thread tid, const unsigned int rank, const unsigned int sy
   , syn_index( syn_index )
   , processed( false )
 {
+}
+
+inline void
+Target::set_processed()
+{
+  processed = true;
+}
+
+inline bool
+Target::is_processed() const
+{
+  return processed;
 }
 
 /** A data structure used to communicate part of the infrastructure

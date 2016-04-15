@@ -84,7 +84,7 @@ EventDeliveryManager::finalize()
   global_offgrid_spikes_.clear();
   spike_register_table_.finalize();
 
-  for( std::vector< std::vector< std::vector< std::vector< Target* > > >* >::iterator it = spike_register_5g_.begin(); it != spike_register_5g_.end(); ++it )
+  for( std::vector< std::vector< std::vector< std::vector< Target > > >* >::iterator it = spike_register_5g_.begin(); it != spike_register_5g_.end(); ++it )
   {
     delete (*it);
   };
@@ -120,7 +120,7 @@ EventDeliveryManager::configure_spike_buffers()
   for( thread tid = 0; tid < num_threads; ++tid )
   {
     assert( spike_register_5g_[ tid ] == 0 );
-    spike_register_5g_[ tid ] = new std::vector< std::vector< std::vector< Target* > > >( num_threads, std::vector< std::vector< Target* > >( kernel().connection_builder_manager.get_min_delay(), std::vector< Target* >( 0 ) ) );
+    spike_register_5g_[ tid ] = new std::vector< std::vector< std::vector< Target > > >( num_threads, std::vector< std::vector< Target > >( kernel().connection_builder_manager.get_min_delay(), std::vector< Target >( 0 ) ) );
   }
 
   send_buffer_spike_data_.resize( mpi_buffer_size_spike_data );
@@ -673,16 +673,16 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
   // whether all spike-register entries have been read
   bool is_spike_register_empty = true;
 
-  for( std::vector< std::vector< std::vector< std::vector< Target* > > >* >::iterator it = spike_register_5g_.begin(); it != spike_register_5g_.end(); ++it )
+  for( std::vector< std::vector< std::vector< std::vector< Target > > >* >::iterator it = spike_register_5g_.begin(); it != spike_register_5g_.end(); ++it )
   { // only for vectors that are assigned to thread tid
     for ( unsigned int lag = 0; lag < (*(*it))[ tid ].size(); ++lag )
     {
-      for ( std::vector< Target* >::iterator iiit = (*(*it))[ tid ][ lag ].begin(); iiit < (*(*it))[ tid ][ lag ].end(); ++iiit )
+      for ( std::vector< Target >::iterator iiit = (*(*it))[ tid ][ lag ].begin(); iiit < (*(*it))[ tid ][ lag ].end(); ++iiit )
       { 
-	assert ( (*iiit) != 0 );
+	assert ( not iiit->is_processed() );
 
 	// thread-local index of (global) rank of target
-	const unsigned int lr_idx = (*iiit)->rank % assigned_ranks.max_size;
+	const unsigned int lr_idx = iiit->rank % assigned_ranks.max_size;
 	assert( lr_idx < assigned_ranks.size );
 
 	if ( send_buffer_idx[ lr_idx ] == send_buffer_end[ lr_idx ] )
@@ -699,9 +699,8 @@ EventDeliveryManager::collocate_spike_data_buffers_thr_( const thread tid )
 	}
 	else
 	{
-	  const index target_gid = kernel().connection_builder_manager.get_target_gid( (*(*iiit)).tid, (*(*iiit)).syn_index, (*(*iiit)).lcid );
-	  send_buffer_spike_data_[ send_buffer_idx[ lr_idx ] ].set( (*(*iiit)).tid, (*(*iiit)).syn_index, (*(*iiit)).lcid, lag );
-	  (*iiit) = 0; // set to null to mark entry for removal
+	  send_buffer_spike_data_[ send_buffer_idx[ lr_idx ] ].set( (*iiit).tid, (*iiit).syn_index, (*iiit).lcid, lag );
+	  (*iiit).set_processed(); // mark entry for removal
 	  ++send_buffer_idx[ lr_idx ];
 	  ++num_spike_data_written;
 	}

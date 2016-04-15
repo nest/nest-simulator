@@ -83,6 +83,11 @@ EventDeliveryManager::finalize()
   local_offgrid_spikes_.clear();
   global_offgrid_spikes_.clear();
   spike_register_table_.finalize();
+
+  for( std::vector< std::vector< std::vector< std::vector< Target* > > >* >::iterator it = spike_register_5g_.begin(); it != spike_register_5g_.end(); ++it )
+  {
+    delete (*it);
+  };
 }
 
 void

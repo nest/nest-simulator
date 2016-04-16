@@ -782,7 +782,6 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
           send_buffer_spike_data_[ idx ] = next_spike_data;
           ++send_buffer_offset[ target_rank_index ];
           ++sum_send_buffer_offset;
-          is_buffer_untouched = false;
         }
         else
         {

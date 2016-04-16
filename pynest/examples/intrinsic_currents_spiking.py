@@ -64,7 +64,7 @@ Note that all parameter values should be doubles, since NEST expects doubles.
 '''
 
 rate_in = 100.
-w_recep = {'AMPA': 500., 'NMDA': 50., 'GABA_A': 250., 'GABA_B': 100.}
+w_recep = {'AMPA': 30., 'NMDA': 30., 'GABA_A': 5., 'GABA_B': 20.}
 t_sim = 250.
 
 num_recep = len(w_recep)

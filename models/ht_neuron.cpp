@@ -47,7 +47,7 @@ RecordablesMap< ht_neuron >::create()
   insert_( names::V_m, &ht_neuron::get_y_elem_< ht_neuron::State_::VM > );
   insert_( Name( "Theta" ), &ht_neuron::get_y_elem_< ht_neuron::State_::THETA > );
   insert_( Name( "g_AMPA" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_AMPA > );
-  insert_( Name( "g_NMDA" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_NMDA > );
+  insert_( Name( "g_NMDA" ), &ht_neuron::get_g_NMDA_ );
   insert_( Name( "g_GABAA" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_A > );
   insert_( Name( "g_GABAB" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_B > );
   insert_( Name( "r_potassium" ), &ht_neuron::get_r_potassium_ );
@@ -78,13 +78,28 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   // Synaptic channels
   double_t I_syn = 0;
 
+  /*
+   * NMDA conductance
+   *
+   * We need to take care to handle instantaneous blocking correctly.
+   * If the unblock-variables Mg_{fast,slow} > Mg_ss, the steady-state
+   * value for the present membrane potential, we cannot change those values
+   * in State_[], since the ODE Solver may call this function multiple times
+   * and in arbitrary temporal order. We thus need to use local variables
+   * for the values at the current time, and check the state variables once
+   * the ODE solver has completed the time step.
+   */
+  const double_t Mg_ss = node.Mg_steady_state_( y[ S::VM ] );
+  const double_t Mg_s = std::min( Mg_ss, y[ S::Mg_slow ] );
+  const double_t Mg_f = std::min( Mg_ss, y[ S::Mg_fast ] );
+  const double_t A1 = 0.51 - 0.0028 * y[ S::VM ];
+  const double_t A2 = 1 - A1;
+
   // Calculate sum of all synaptic channels.
   // Sign convention: For each current, write I = - g * ( V - E )
   //    then dV/dt ~ Sum(I)
-  // NMDA has instantaneous de-blocking thru sigmoidal function, see Lumer et al (1997)
   I_syn += -y[ S::G_AMPA ] * ( V - node.P_.AMPA_E_rev );
-  I_syn += -y[ S::G_NMDA ] * ( V - node.P_.NMDA_E_rev )
-    / ( 1 + std::exp( ( node.P_.NMDA_Vact - V ) / node.P_.NMDA_Sact ) );
+  I_syn += -y[ S::G_NMDA ] * (  A1 * Mg_f + A2 * Mg_s ) * ( V - node.P_.NMDA_E_rev );
   I_syn += -y[ S::G_GABA_A ] * ( V - node.P_.GABA_A_E_rev );
   I_syn += -y[ S::G_GABA_B ] * ( V - node.P_.GABA_B_E_rev );
 
@@ -135,6 +150,8 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   // NMDA
   f[ S::DG_NMDA ] = -y[ S::DG_NMDA ] / node.P_.NMDA_Tau_1;
   f[ S::G_NMDA ] = y[ S::DG_NMDA ] - y[ S::G_NMDA ] / node.P_.NMDA_Tau_2;
+  f[ S::Mg_slow ] = ( Mg_ss - Mg_s ) / node.P_.NMDA_tau_Mg_slow;
+  f[ S::Mg_fast ] = ( Mg_ss - Mg_f ) / node.P_.NMDA_tau_Mg_fast;
 
   // GABA_A
   f[ S::DG_GABA_A ] = -y[ S::DG_GABA_A ] / node.P_.GABA_A_Tau_1;
@@ -193,8 +210,10 @@ nest::ht_neuron::Parameters_::Parameters_()
   , NMDA_Tau_1( 4.0 )  // ms
   , NMDA_Tau_2( 40.0 ) // ms
   , NMDA_E_rev( 0.0 )  // mV
-  , NMDA_Vact( -58.0 ) // mV
-  , NMDA_Sact( 2.5 )   // mV
+  , NMDA_Vact( -25.57 ) // mV
+  , NMDA_Sact( 0.081 )   // mV
+  , NMDA_tau_Mg_slow( 22.7 )  // ms
+  , NMDA_tau_Mg_fast( 0.68 )  // ms
   , GABA_A_g_peak( 0.33 )
   , GABA_A_Tau_1( 1.0 )   // ms
   , GABA_A_Tau_2( 7.0 )   // ms
@@ -306,6 +325,8 @@ nest::ht_neuron::Parameters_::get( DictionaryDatum& d ) const
   def< double_t >( d, "NMDA_E_rev", NMDA_E_rev );
   def< double_t >( d, "NMDA_Vact", NMDA_Vact );
   def< double_t >( d, "NMDA_Sact", NMDA_Sact );
+  def< double_t >( d, "NMDA_tau_Mg_slow", NMDA_tau_Mg_slow );
+  def< double_t >( d, "NMDA_tau_Mg_fast", NMDA_tau_Mg_fast );
   def< double_t >( d, "GABA_A_g_peak", GABA_A_g_peak );
   def< double_t >( d, "GABA_A_Tau_1", GABA_A_Tau_1 );
   def< double_t >( d, "GABA_A_Tau_2", GABA_A_Tau_2 );
@@ -346,6 +367,8 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
   updateValue< double_t >( d, "NMDA_E_rev", NMDA_E_rev );
   updateValue< double_t >( d, "NMDA_Vact", NMDA_Vact );
   updateValue< double_t >( d, "NMDA_Sact", NMDA_Sact );
+  updateValue< double_t >( d, "NMDA_tau_Mg_slow", NMDA_tau_Mg_slow );
+  updateValue< double_t >( d, "NMDA_tau_Mg_fast", NMDA_tau_Mg_fast );
   updateValue< double_t >( d, "GABA_A_g_peak", GABA_A_g_peak );
   updateValue< double_t >( d, "GABA_A_Tau_1", GABA_A_Tau_1 );
   updateValue< double_t >( d, "GABA_A_Tau_2", GABA_A_Tau_2 );
@@ -595,6 +618,12 @@ ht_neuron::update( Time const& origin, const long_t from, const long_t to )
       if ( status != GSL_SUCCESS )
         throw GSLSolverFailure( get_name(), status );
     }
+
+    // Enforce instantaneous blocking of NMDA channels, see comment
+    // in ht_neuron_dynamics().
+    const double_t Mg_ss = Mg_steady_state_( S_.y_[ State_::VM ]);
+    S_.y_[ State_::Mg_slow ] = std::min( Mg_ss, S_.y_[ State_::Mg_slow ] );
+    S_.y_[ State_::Mg_fast ] = std::min( Mg_ss, S_.y_[ State_::Mg_fast ] );
 
     // Deactivate potassium current after spike time have expired
     if ( S_.r_potassium_ && --S_.r_potassium_ == 0 )

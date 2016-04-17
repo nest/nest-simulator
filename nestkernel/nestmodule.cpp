@@ -34,7 +34,7 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
-#include "connection_builder_manager_impl.h"
+#include "connection_manager_impl.h"
 #include "genericmodel.h"
 #include "kernel_manager.h"
 #include "model_manager_impl.h"
@@ -246,10 +246,10 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_builder_manager.set_synapse_status( con_id.get_source_gid(), // source_gid
-        con_id.get_synapse_model_id(),                                                 // synapse_id
-        con_id.get_port(),                                                             // port
-        con_id.get_target_thread(), // target thread
+      kernel().connection_manager.set_synapse_status( con_id.get_source_gid(), // source_gid
+        con_id.get_synapse_model_id(),                                         // synapse_id
+        con_id.get_port(),                                                     // port
+        con_id.get_target_thread(),                                            // target thread
         dict );
 
       ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
@@ -263,10 +263,10 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ con ] );
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_builder_manager.set_synapse_status( con_id.get_source_gid(), // source_gid
-        con_id.get_synapse_model_id(),                                                 // synapse_id
-        con_id.get_port(),                                                             // port
-        con_id.get_target_thread(), // target thread
+      kernel().connection_manager.set_synapse_status( con_id.get_source_gid(), // source_gid
+        con_id.get_synapse_model_id(),                                         // synapse_id
+        con_id.get_port(),                                                     // port
+        con_id.get_target_thread(),                                            // target thread
         dict );
 
       ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
@@ -353,7 +353,7 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
   long gid = conn.get_source_gid();
   kernel().node_manager.get_node( gid ); // Just to check if the node exists
 
-  DictionaryDatum result_dict = kernel().connection_builder_manager.get_synapse_status(
+  DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status(
     gid, conn.get_synapse_model_id(), conn.get_port(), conn.get_target_thread() );
 
   i->OStack.pop();
@@ -374,7 +374,7 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
   {
     ConnectionDatum con_id = getValue< ConnectionDatum >( conns.get( nt ) );
     DictionaryDatum result_dict =
-      kernel().connection_builder_manager.get_synapse_status( con_id.get_source_gid(),
+      kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
         con_id.get_synapse_model_id(),
         con_id.get_port(),
         con_id.get_target_thread() );
@@ -717,7 +717,7 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by connect
-  kernel().connection_builder_manager.connect( sources, targets, connectivity, synapse_params );
+  kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
   i->EStack.pop();
@@ -767,7 +767,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  kernel().connection_builder_manager.divergent_connect( source, params, synmodel_id );
+  kernel().connection_manager.divergent_connect( source, params, synmodel_id );
 
   ALL_ENTRIES_ACCESSED( *params, "Connect", "The following synapse parameters are unused: " );
 
@@ -811,7 +811,7 @@ NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
   ArrayDatum connectome = getValue< ArrayDatum >( i->OStack.top() );
 
-  kernel().connection_builder_manager.connect( connectome );
+  kernel().connection_manager.connect( connectome );
   i->OStack.pop();
   i->EStack.pop();
 }
@@ -1646,15 +1646,12 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Disconnect", &disconnect_i_i_lfunction );
   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
   // Add connection rules
-  kernel().connection_builder_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
-  kernel().connection_builder_manager.register_conn_builder< AllToAllBuilder >( "all_to_all" );
-  kernel().connection_builder_manager.register_conn_builder< FixedInDegreeBuilder >(
-    "fixed_indegree" );
-  kernel().connection_builder_manager.register_conn_builder< FixedOutDegreeBuilder >(
-    "fixed_outdegree" );
-  kernel().connection_builder_manager.register_conn_builder< BernoulliBuilder >(
-    "pairwise_bernoulli" );
-  kernel().connection_builder_manager.register_conn_builder< FixedTotalNumberBuilder >(
+  kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
+  kernel().connection_manager.register_conn_builder< AllToAllBuilder >( "all_to_all" );
+  kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
+  kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
+  kernel().connection_manager.register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
+  kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >(
     "fixed_total_number" );
 
   // Add MSP growth curves

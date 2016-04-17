@@ -1,5 +1,5 @@
 /*
- *  connection_builder_manager.h
+ *  connection_manager.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CONNECTIONBUILDER_MANAGER_H
-#define CONNECTIONBUILDER_MANAGER_H
+#ifndef CONNECTION_MANAGER_H
+#define CONNECTION_MANAGER_H
 
 // C++ includes:
 #include <string>
@@ -63,12 +63,12 @@ typedef std::vector< DelayChecker > tVDelayChecker; // each thread checks delays
 typedef std::vector< size_t > tVCounter;     // each synapse type has a counter
 typedef std::vector< tVCounter > tVVCounter; // and each threads counts for all its synapses
 
-class ConnectionBuilderManager : public ManagerInterface
+class ConnectionManager : public ManagerInterface
 {
   friend class SimulationManager; // update_delay_extrema_
 public:
-  ConnectionBuilderManager();
-  virtual ~ConnectionBuilderManager();
+  ConnectionManager();
+  virtual ~ConnectionManager();
 
   virtual void initialize();
   virtual void finalize();
@@ -356,23 +356,23 @@ private:
 };
 
 inline DictionaryDatum&
-ConnectionBuilderManager::get_connruledict()
+ConnectionManager::get_connruledict()
 {
   return connruledict_;
 }
 
 inline delay
-ConnectionBuilderManager::get_min_delay() const
+ConnectionManager::get_min_delay() const
 {
   return min_delay_;
 }
 
 inline delay
-ConnectionBuilderManager::get_max_delay() const
+ConnectionManager::get_max_delay() const
 {
   return max_delay_;
 }
 
 } // namespace nest
 
-#endif /* CONNECTIONBUILDER_MANAGER_H */
+#endif /* CONNECTION_MANAGER_H */

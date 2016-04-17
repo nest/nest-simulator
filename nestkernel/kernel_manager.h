@@ -27,7 +27,7 @@
 #include "logging_manager.h"
 
 // Includes from nestkernel:
-#include "connection_builder_manager.h"
+#include "connection_manager.h"
 #include "event_delivery_manager.h"
 #include "io_manager.h"
 #include "model_manager.h"
@@ -178,7 +178,7 @@ public:
   RNGManager rng_manager;
   SimulationManager simulation_manager;
   ModelRangeManager modelrange_manager;
-  ConnectionBuilderManager connection_builder_manager;
+  ConnectionManager connection_manager;
   SPManager sp_manager;
   EventDeliveryManager event_delivery_manager;
   ModelManager model_manager;

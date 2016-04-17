@@ -1,5 +1,5 @@
 /*
- *  connection_builder_manager.cpp
+ *  connection_manager.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "connection_builder_manager.h"
+#include "connection_manager.h"
 
 // Generated includes:
 #include "config.h"
@@ -67,7 +67,7 @@ extern PoorMansAllocator poormansallocpool;
 #endif // IS_K
 #endif // USE_PMA
 
-nest::ConnectionBuilderManager::ConnectionBuilderManager()
+nest::ConnectionManager::ConnectionManager()
   : connruledict_( new Dictionary() )
   , connbuilder_factories_()
   , min_delay_( 1 )
@@ -75,13 +75,13 @@ nest::ConnectionBuilderManager::ConnectionBuilderManager()
 {
 }
 
-nest::ConnectionBuilderManager::~ConnectionBuilderManager()
+nest::ConnectionManager::~ConnectionManager()
 {
   delete_connections_();
 }
 
 void
-nest::ConnectionBuilderManager::initialize()
+nest::ConnectionManager::initialize()
 {
   tVSConnector tmp( kernel().vp_manager.get_num_threads(), tSConnector() );
   connections_.swap( tmp );
@@ -114,13 +114,13 @@ nest::ConnectionBuilderManager::initialize()
 }
 
 void
-nest::ConnectionBuilderManager::finalize()
+nest::ConnectionManager::finalize()
 {
   delete_connections_();
 }
 
 void
-nest::ConnectionBuilderManager::set_status( const DictionaryDatum& d )
+nest::ConnectionManager::set_status( const DictionaryDatum& d )
 {
   for ( size_t i = 0; i < delay_checkers_.size(); ++i )
   {
@@ -129,13 +129,13 @@ nest::ConnectionBuilderManager::set_status( const DictionaryDatum& d )
 }
 
 nest::DelayChecker&
-nest::ConnectionBuilderManager::get_delay_checker()
+nest::ConnectionManager::get_delay_checker()
 {
   return delay_checkers_[ kernel().vp_manager.get_thread_id() ];
 }
 
 void
-nest::ConnectionBuilderManager::get_status( DictionaryDatum& d )
+nest::ConnectionManager::get_status( DictionaryDatum& d )
 {
   update_delay_extrema_();
   def< double >( d, "min_delay", Time( Time::step( min_delay_ ) ).get_ms() );
@@ -146,7 +146,7 @@ nest::ConnectionBuilderManager::get_status( DictionaryDatum& d )
 }
 
 DictionaryDatum
-nest::ConnectionBuilderManager::get_synapse_status( index gid, synindex syn_id, port p, thread tid )
+nest::ConnectionManager::get_synapse_status( index gid, synindex syn_id, port p, thread tid )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
@@ -160,7 +160,7 @@ nest::ConnectionBuilderManager::get_synapse_status( index gid, synindex syn_id, 
 }
 
 void
-nest::ConnectionBuilderManager::set_synapse_status( index gid,
+nest::ConnectionManager::set_synapse_status( index gid,
   synindex syn_id,
   port p,
   thread tid,
@@ -185,7 +185,7 @@ nest::ConnectionBuilderManager::set_synapse_status( index gid,
 }
 
 void
-nest::ConnectionBuilderManager::delete_connections_()
+nest::ConnectionManager::delete_connections_()
 {
   for ( tVSConnector::iterator it = connections_.begin(); it != connections_.end(); ++it )
   {
@@ -219,7 +219,7 @@ nest::ConnectionBuilderManager::delete_connections_()
 }
 
 const nest::Time
-nest::ConnectionBuilderManager::get_min_delay_time_() const
+nest::ConnectionManager::get_min_delay_time_() const
 {
   Time min_delay = Time::pos_inf();
 
@@ -231,7 +231,7 @@ nest::ConnectionBuilderManager::get_min_delay_time_() const
 }
 
 const nest::Time
-nest::ConnectionBuilderManager::get_max_delay_time_() const
+nest::ConnectionManager::get_max_delay_time_() const
 {
   Time max_delay = Time::get_resolution();
 
@@ -243,7 +243,7 @@ nest::ConnectionBuilderManager::get_max_delay_time_() const
 }
 
 bool
-nest::ConnectionBuilderManager::get_user_set_delay_extrema() const
+nest::ConnectionManager::get_user_set_delay_extrema() const
 {
   bool user_set_delay_extrema = false;
 
@@ -255,7 +255,7 @@ nest::ConnectionBuilderManager::get_user_set_delay_extrema() const
 }
 
 nest::ConnBuilder*
-nest::ConnectionBuilderManager::get_conn_builder( const std::string& name,
+nest::ConnectionManager::get_conn_builder( const std::string& name,
   const GIDCollection& sources,
   const GIDCollection& targets,
   const DictionaryDatum& conn_spec,
@@ -266,7 +266,7 @@ nest::ConnectionBuilderManager::get_conn_builder( const std::string& name,
 }
 
 void
-nest::ConnectionBuilderManager::calibrate( const TimeConverter& tc )
+nest::ConnectionManager::calibrate( const TimeConverter& tc )
 {
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
@@ -275,7 +275,7 @@ nest::ConnectionBuilderManager::calibrate( const TimeConverter& tc )
 }
 
 void
-nest::ConnectionBuilderManager::connect( const GIDCollection& sources,
+nest::ConnectionManager::connect( const GIDCollection& sources,
   const GIDCollection& targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
@@ -304,7 +304,7 @@ nest::ConnectionBuilderManager::connect( const GIDCollection& sources,
 }
 
 void
-nest::ConnectionBuilderManager::update_delay_extrema_()
+nest::ConnectionManager::update_delay_extrema_()
 {
   min_delay_ = get_min_delay_time_().get_steps();
   max_delay_ = get_max_delay_time_().get_steps();
@@ -336,7 +336,7 @@ nest::ConnectionBuilderManager::update_delay_extrema_()
 
 // gid node thread syn delay weight
 void
-nest::ConnectionBuilderManager::connect( index sgid,
+nest::ConnectionManager::connect( index sgid,
   Node* target,
   thread target_thread,
   index syn,
@@ -394,7 +394,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
 
 // gid node thread syn dict delay weight
 void
-nest::ConnectionBuilderManager::connect( index sgid,
+nest::ConnectionManager::connect( index sgid,
   Node* target,
   thread target_thread,
   index syn,
@@ -453,7 +453,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
 
 // gid gid dict
 bool
-nest::ConnectionBuilderManager::connect( index sgid,
+nest::ConnectionManager::connect( index sgid,
   index tgid,
   DictionaryDatum& params,
   index syn )
@@ -547,7 +547,7 @@ nest::ConnectionBuilderManager::connect( index sgid,
  */
 
 void
-nest::ConnectionBuilderManager::connect_( Node& s,
+nest::ConnectionManager::connect_( Node& s,
   Node& r,
   index s_gid,
   thread tid,
@@ -570,7 +570,7 @@ nest::ConnectionBuilderManager::connect_( Node& s,
 }
 
 void
-nest::ConnectionBuilderManager::connect_( Node& s,
+nest::ConnectionManager::connect_( Node& s,
   Node& r,
   index s_gid,
   thread tid,
@@ -601,7 +601,7 @@ nest::ConnectionBuilderManager::connect_( Node& s,
  * @param syn_id type of synapse
  */
 void
-nest::ConnectionBuilderManager::disconnect( Node& target,
+nest::ConnectionManager::disconnect( Node& target,
   index sgid,
   thread target_thread,
   index syn_id )
@@ -629,7 +629,7 @@ nest::ConnectionBuilderManager::disconnect( Node& target,
 // -----------------------------------------------------------------------------
 
 void
-nest::ConnectionBuilderManager::divergent_connect( index source_id,
+nest::ConnectionManager::divergent_connect( index source_id,
   DictionaryDatum pars,
   index syn )
 {
@@ -817,7 +817,7 @@ nest::ConnectionBuilderManager::divergent_connect( index source_id,
  * connect call to the connectors who can then deal with the details of the connection.
  */
 bool
-nest::ConnectionBuilderManager::connect( ArrayDatum& conns )
+nest::ConnectionManager::connect( ArrayDatum& conns )
 {
   // #ifdef _OPENMP
   //     LOG(M_INFO, "ConnectionManager::Connect", msg);
@@ -864,7 +864,7 @@ nest::ConnectionBuilderManager::connect( ArrayDatum& conns )
 }
 
 nest::ConnectorBase*
-nest::ConnectionBuilderManager::validate_source_entry_( thread tid, index s_gid, synindex syn_id )
+nest::ConnectionManager::validate_source_entry_( thread tid, index s_gid, synindex syn_id )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
@@ -883,7 +883,7 @@ nest::ConnectionBuilderManager::validate_source_entry_( thread tid, index s_gid,
 // -----------------------------------------------------------------------------
 
 void
-nest::ConnectionBuilderManager::trigger_update_weight( const long_t vt_id,
+nest::ConnectionManager::trigger_update_weight( const long_t vt_id,
   const std::vector< spikecounter >& dopa_spikes,
   const double_t t_trig )
 {
@@ -896,7 +896,7 @@ nest::ConnectionBuilderManager::trigger_update_weight( const long_t vt_id,
 }
 
 void
-nest::ConnectionBuilderManager::send( thread t, index sgid, Event& e )
+nest::ConnectionManager::send( thread t, index sgid, Event& e )
 {
   if ( sgid < connections_[ t ].size() ) // probably test only fails, if there are no connections
   {
@@ -916,7 +916,7 @@ nest::ConnectionBuilderManager::send( thread t, index sgid, Event& e )
 }
 
 void
-nest::ConnectionBuilderManager::send_secondary( thread t, SecondaryEvent& e )
+nest::ConnectionManager::send_secondary( thread t, SecondaryEvent& e )
 {
 
   index sgid = e.get_sender_gid();
@@ -944,7 +944,7 @@ nest::ConnectionBuilderManager::send_secondary( thread t, SecondaryEvent& e )
 }
 
 size_t
-nest::ConnectionBuilderManager::get_num_connections() const
+nest::ConnectionManager::get_num_connections() const
 {
   size_t num_connections = 0;
   tVDelayChecker::const_iterator i;
@@ -956,7 +956,7 @@ nest::ConnectionBuilderManager::get_num_connections() const
 }
 
 size_t
-nest::ConnectionBuilderManager::get_num_connections( synindex syn_id ) const
+nest::ConnectionManager::get_num_connections( synindex syn_id ) const
 {
   size_t num_connections = 0;
   tVDelayChecker::const_iterator i;
@@ -972,7 +972,7 @@ nest::ConnectionBuilderManager::get_num_connections( synindex syn_id ) const
 }
 
 ArrayDatum
-nest::ConnectionBuilderManager::get_connections( DictionaryDatum params ) const
+nest::ConnectionManager::get_connections( DictionaryDatum params ) const
 {
   ArrayDatum connectome;
 
@@ -1026,7 +1026,7 @@ nest::ConnectionBuilderManager::get_connections( DictionaryDatum params ) const
 }
 
 void
-nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
+nest::ConnectionManager::get_connections( ArrayDatum& connectome,
   TokenArray const* source,
   TokenArray const* target,
   size_t syn_id,
@@ -1185,7 +1185,7 @@ nest::ConnectionBuilderManager::get_connections( ArrayDatum& connectome,
 
 
 void
-nest::ConnectionBuilderManager::get_sources( std::vector< index > targets,
+nest::ConnectionManager::get_sources( std::vector< index > targets,
   std::vector< std::vector< index > >& sources,
   index synapse_model )
 {
@@ -1228,7 +1228,7 @@ nest::ConnectionBuilderManager::get_sources( std::vector< index > targets,
 }
 
 void
-nest::ConnectionBuilderManager::get_targets( std::vector< index > sources,
+nest::ConnectionManager::get_targets( std::vector< index > sources,
   std::vector< std::vector< index > >& targets,
   index synapse_model )
 {

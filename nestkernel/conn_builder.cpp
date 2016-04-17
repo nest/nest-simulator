@@ -405,16 +405,16 @@ nest::ConnBuilder::single_connect_( index sgid,
   {
     if ( default_weight_and_delay_ )
     {
-      kernel().connection_builder_manager.connect( sgid, &target, target_thread, synapse_model_ );
+      kernel().connection_manager.connect( sgid, &target, target_thread, synapse_model_ );
     }
     else if ( default_weight_ )
     {
-      kernel().connection_builder_manager.connect(
+      kernel().connection_manager.connect(
         sgid, &target, target_thread, synapse_model_, delay_->value_double( target_thread, rng ) );
     }
     else if ( default_delay_ )
     {
-      kernel().connection_builder_manager.connect( sgid,
+      kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
         synapse_model_,
@@ -425,7 +425,7 @@ nest::ConnBuilder::single_connect_( index sgid,
     {
       double delay = delay_->value_double( target_thread, rng );
       double weight = weight_->value_double( target_thread, rng );
-      kernel().connection_builder_manager.connect(
+      kernel().connection_manager.connect(
         sgid, &target, target_thread, synapse_model_, delay, weight );
     }
   }
@@ -474,12 +474,12 @@ nest::ConnBuilder::single_connect_( index sgid,
 
     if ( default_weight_and_delay_ )
     {
-      kernel().connection_builder_manager.connect(
+      kernel().connection_manager.connect(
         sgid, &target, target_thread, synapse_model_, param_dicts_[ target_thread ] );
     }
     else if ( default_weight_ )
     {
-      kernel().connection_builder_manager.connect( sgid,
+      kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
         synapse_model_,
@@ -488,7 +488,7 @@ nest::ConnBuilder::single_connect_( index sgid,
     }
     else if ( default_delay_ )
     {
-      kernel().connection_builder_manager.connect( sgid,
+      kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
         synapse_model_,
@@ -500,7 +500,7 @@ nest::ConnBuilder::single_connect_( index sgid,
     {
       double delay = delay_->value_double( target_thread, rng );
       double weight = weight_->value_double( target_thread, rng );
-      kernel().connection_builder_manager.connect( sgid,
+      kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
         synapse_model_,
@@ -981,7 +981,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( const GIDCollection& sources,
   , indegree_( ( *conn_spec )[ Name( "indegree" ) ] )
 {
   // check for potential errors
-  long n_sources = sources_.size();
+  long n_sources = static_cast< long >( sources_.size() );
   if ( n_sources == 0 )
   {
     throw BadProperty( "Source array must not be empty." );
@@ -991,7 +991,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( const GIDCollection& sources,
   {
     if ( indegree_ > n_sources )
     {
-      throw BadProperty( "Multapses prohibited and fewer sources than connections." );
+      throw BadProperty( "Indegree cannot be larger than population size." );
     }
     else if ( indegree_ == n_sources and not autapses_ )
     {
@@ -1078,8 +1078,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( const GIDCollection& sources
   , outdegree_( ( *conn_spec )[ Name( "outdegree" ) ] )
 {
   // check for potential errors
-  // check for potential errors
-  long n_targets = targets_.size();
+  long n_targets = static_cast< long >( targets_.size() );
   if ( n_targets == 0 )
   {
     throw BadProperty( "Target array must not be empty." );
@@ -1090,7 +1089,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( const GIDCollection& sources
   {
     if ( outdegree_ > n_targets )
     {
-      throw BadProperty( "Multapses prohibited and fewer targets than connections." );
+      throw BadProperty( "Outdegree cannot be larger than population size." );
     }
     else if ( outdegree_ == n_targets and not autapses_ )
     {

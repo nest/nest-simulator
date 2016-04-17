@@ -255,8 +255,6 @@ private:
 
   bool distribute_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, const std::vector< TargetData >& recv_buffer );
 
-  bool check_target_data_others_completed_( const std::vector< TargetData >& buffer );
-
   bool deliver_events_5g_( const thread tid );
 
   /**

@@ -574,9 +574,11 @@ EventDeliveryManager::gather_events( bool done )
 void
 EventDeliveryManager::gather_spike_data( const thread tid )
 {
-  sw_reset_restore_save.start();
+  // sw_reset_restore_save.start();
+#ifndef USE_THREADED_COLLOCATE
   spike_register_table_.reset_entry_point( tid );
-  sw_reset_restore_save.start();
+#endif
+  // sw_reset_restore_save.start();
 
   static unsigned int completed_count;
   const unsigned int half_completed_count = kernel().vp_manager.get_num_threads();

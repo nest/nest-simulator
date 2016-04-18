@@ -73,7 +73,7 @@ set( nestkernel_sources
     io_manager.h io_manager.cpp
     mpi_manager.h mpi_manager_impl.h mpi_manager.cpp
     simulation_manager.h simulation_manager.cpp
-    connection_builder_manager.h connection_builder_manager_impl.h connection_builder_manager.cpp
+    connection_manager.h connection_manager_impl.h connection_manager.cpp
     sp_manager.h sp_manager_impl.h sp_manager.cpp
     delay_checker.h delay_checker.cpp
     rng_manager.h rng_manager.cpp

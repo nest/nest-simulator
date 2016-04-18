@@ -51,7 +51,8 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_cond_exp_ps > nest::aeif_cond_exp_ps::recordablesMap_;
+nest::RecordablesMap< nest::aeif_cond_exp_ps >
+  nest::aeif_cond_exp_ps::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -61,13 +62,17 @@ template <>
 void
 RecordablesMap< nest::aeif_cond_exp_ps >::create()
 {
-  insert_(
-    names::V_m, &nest::aeif_cond_exp_ps::get_y_elem_< nest::aeif_cond_exp_ps::State_::V_M > );
-  insert_(
-    names::g_ex, &nest::aeif_cond_exp_ps::get_y_elem_< nest::aeif_cond_exp_ps::State_::G_EXC > );
-  insert_(
-    names::g_in, &nest::aeif_cond_exp_ps::get_y_elem_< nest::aeif_cond_exp_ps::State_::G_INH > );
-  insert_( names::w, &nest::aeif_cond_exp_ps::get_y_elem_< nest::aeif_cond_exp_ps::State_::W > );
+  insert_( names::V_m,
+    &nest::aeif_cond_exp_ps::
+      get_y_elem_< nest::aeif_cond_exp_ps::State_::V_M > );
+  insert_( names::g_ex,
+    &nest::aeif_cond_exp_ps::
+      get_y_elem_< nest::aeif_cond_exp_ps::State_::G_EXC > );
+  insert_( names::g_in,
+    &nest::aeif_cond_exp_ps::
+      get_y_elem_< nest::aeif_cond_exp_ps::State_::G_INH > );
+  insert_( names::w,
+    &nest::aeif_cond_exp_ps::get_y_elem_< nest::aeif_cond_exp_ps::State_::W > );
 }
 }
 
@@ -77,14 +82,18 @@ RecordablesMap< nest::aeif_cond_exp_ps >::create()
  * ---------------------------------------------------------------- */
 
 extern "C" int
-nest::aeif_cond_exp_ps_dynamics( double, const double y[], double f[], void* pnode )
+nest::aeif_cond_exp_ps_dynamics( double,
+  const double y[],
+  double f[],
+  void* pnode )
 {
   // a shorthand
   typedef nest::aeif_cond_exp_ps::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_cond_exp_ps& node = *( reinterpret_cast< nest::aeif_cond_exp_ps* >( pnode ) );
+  const nest::aeif_cond_exp_ps& node =
+    *( reinterpret_cast< nest::aeif_cond_exp_ps* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -108,11 +117,16 @@ nest::aeif_cond_exp_ps_dynamics( double, const double y[], double f[], void* pno
   const double_t MAX_EXP_ARG = 10.;
 
   // If the argument is too large, we clip it.
-  const double_t I_spike = node.P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
+  const double_t I_spike =
+    node.P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
 
   // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh - w
-                  + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] =
+    ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
+      - w
+      + node.P_.I_e
+      + node.B_.I_stim_ )
+    / node.P_.C_m;
 
   f[ S::G_EXC ] = -g_ex / node.P_.tau_syn_ex; // Synaptic Conductance (nS)
   f[ S::G_INH ] = -g_in / node.P_.tau_syn_in; // Synaptic Conductance (nS)
@@ -166,7 +180,8 @@ nest::aeif_cond_exp_ps::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::aeif_cond_exp_ps::State_& nest::aeif_cond_exp_ps::State_::operator=( const State_& s )
+nest::aeif_cond_exp_ps::State_& nest::aeif_cond_exp_ps::State_::operator=(
+  const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -262,7 +277,8 @@ nest::aeif_cond_exp_ps::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cond_exp_ps::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::aeif_cond_exp_ps::State_::set( const DictionaryDatum& d,
+  const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::g_ex, y_[ G_EXC ] );
@@ -283,7 +299,8 @@ nest::aeif_cond_exp_ps::Buffers_::Buffers_( aeif_cond_exp_ps& n )
   // init_buffers_().
 }
 
-nest::aeif_cond_exp_ps::Buffers_::Buffers_( const Buffers_&, aeif_cond_exp_ps& n )
+nest::aeif_cond_exp_ps::Buffers_::Buffers_( const Buffers_&,
+  aeif_cond_exp_ps& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -342,14 +359,16 @@ nest::aeif_cond_exp_ps::init_buffers_()
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
   if ( B_.s_ == 0 )
-    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ =
+      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   else
     gsl_odeiv_step_reset( B_.s_ );
 
   if ( B_.c_ == 0 )
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
   else
-    gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
+    gsl_odeiv_control_init(
+      B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
 
   if ( B_.e_ == 0 )
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
@@ -367,13 +386,16 @@ nest::aeif_cond_exp_ps::init_buffers_()
 void
 nest::aeif_cond_exp_ps::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_
+    .init(); // ensures initialization in case mm connected after Simulate
 
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  V_.RefractoryOffset_ = P_.t_ref_ - V_.RefractoryCounts_ * Time::get_resolution().get_ms();
-  assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  V_.RefractoryOffset_ =
+    P_.t_ref_ - V_.RefractoryCounts_ * Time::get_resolution().get_ms();
+  assert( V_.RefractoryCounts_
+    >= 0 ); // since t_ref_ >= 0, this can only fail in error
   assert( V_.RefractoryOffset_ >= 0. );
 }
 
@@ -392,7 +414,8 @@ nest::aeif_cond_exp_ps::interpolate_( double& t, double t_old )
   S_.y_[ State_::V_M ] = P_.V_reset_;
   for ( int i = 1; i < State_::STATE_VEC_SIZE; ++i )
   {
-    S_.y_[ i ] = S_.y_old_[ i ] + ( S_.y_[ i ] - S_.y_old_[ i ] ) / ( t - t_old ) * dt_crossing;
+    S_.y_[ i ] = S_.y_old_[ i ]
+      + ( S_.y_[ i ] - S_.y_old_[ i ] ) / ( t - t_old ) * dt_crossing;
   }
   S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
 
@@ -400,7 +423,9 @@ nest::aeif_cond_exp_ps::interpolate_( double& t, double t_old )
 }
 
 void
-nest::aeif_cond_exp_ps::spiking_( const long_t T, const long_t lag, const double t )
+nest::aeif_cond_exp_ps::spiking_( const long_t T,
+  const long_t lag,
+  const double t )
 {
   // spike event
   const double_t offset = B_.step_ - t;
@@ -429,9 +454,12 @@ nest::aeif_cond_exp_ps::spiking_( const long_t T, const long_t lag, const double
 }
 
 void
-nest::aeif_cond_exp_ps::update( const Time& origin, const long_t from, const long_t to )
+nest::aeif_cond_exp_ps::update( const Time& origin,
+  const long_t from,
+  const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0
+    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -449,10 +477,12 @@ nest::aeif_cond_exp_ps::update( const Time& origin, const long_t from, const lon
   {
     S_.y_[ State_::V_M ] = P_.V_reset_;
     S_.y_[ State_::W ] += P_.b;
-    const double_t init_offset = B_.step_ * ( 1 - std::numeric_limits< double_t >::epsilon() );
+    const double_t init_offset =
+      B_.step_ * ( 1 - std::numeric_limits< double_t >::epsilon() );
     set_spiketime( Time::step( origin.get_steps() + from + 1 ), init_offset );
     SpikeEvent se;
-    se.set_offset( B_.step_ * ( 1 - std::numeric_limits< double_t >::epsilon() ) );
+    se.set_offset(
+      B_.step_ * ( 1 - std::numeric_limits< double_t >::epsilon() ) );
     kernel().event_delivery_manager.send( *this, se, from );
   }
 
@@ -480,9 +510,11 @@ nest::aeif_cond_exp_ps::update( const Time& origin, const long_t from, const lon
     while ( t < B_.step_ )
     {
       // store the previous values of the state variables, and t
-      std::copy( S_.y_, S_.y_ + sizeof( S_.y_ ) / sizeof( S_.y_[ 0 ] ), S_.y_old_ );
+      std::copy(
+        S_.y_, S_.y_ + sizeof( S_.y_ ) / sizeof( S_.y_[ 0 ] ), S_.y_old_ );
       t_old = t;
-      B_.events_.get_next_event( T, t_next_event, spike_in, spike_ex, B_.step_ );
+      B_.events_.get_next_event(
+        T, t_next_event, spike_in, spike_ex, B_.step_ );
 
       while ( t < t_next_event )
       {
@@ -498,7 +530,8 @@ nest::aeif_cond_exp_ps::update( const Time& origin, const long_t from, const lon
         // checks
         if ( status != GSL_SUCCESS )
           throw GSLSolverFailure( get_name(), status );
-        if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
+        if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
+          || S_.y_[ State_::W ] > 1e6 )
           throw NumericalInstability( get_name() );
       }
 
@@ -513,7 +546,9 @@ nest::aeif_cond_exp_ps::update( const Time& origin, const long_t from, const lon
       }
 
       // reset refractory offset once refractory period is elapsed
-      if ( S_.r_ == 0 && std::abs( t - S_.r_offset_ ) < std::numeric_limits< double >::epsilon() )
+      if ( S_.r_ == 0
+        && std::abs( t - S_.r_offset_ )
+          < std::numeric_limits< double >::epsilon() )
         S_.r_offset_ = 0.;
 
       if ( t == t_next_event )
@@ -539,7 +574,8 @@ nest::aeif_cond_exp_ps::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
-  B_.events_.add_spike( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  B_.events_.add_spike(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -555,7 +591,8 @@ nest::aeif_cond_exp_ps::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 // Do not move this function as inline to h-file. It depends on

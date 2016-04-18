@@ -1,5 +1,5 @@
 /*
- *  aeif_psc_alpha_gridprecise.h
+ *  aeif_psc_alpha_gp.h
  *
  *  This file is part of NEST.
  *
@@ -43,7 +43,7 @@
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
-Name: aeif_psc_alpha_gridprecise - Current-based exponential integrate-and-fire
+Name: aeif_psc_alpha_gp - Current-based exponential integrate-and-fire
   neuron model according to Brette and Gerstner (2005), implementing a linear
   interpolation to find the "exact" time where the threshold was crossed, i.e.
   the spiking time.
@@ -94,12 +94,16 @@ Spike adaptation parameters:
   V_peak     double - Spike detection threshold in mV.
 
 Synaptic parameters
-  tau_syn_ex double - Rise time of excitatory synaptic current in ms (alpha function).
-  tau_syn_in double - Rise time of the inhibitory synaptic current in ms (alpha function).
+  tau_syn_ex double - Rise time of excitatory synaptic current in ms (alpha
+function).
+  tau_syn_in double - Rise time of the inhibitory synaptic current in ms (alpha
+function).
 
 Integration parameters
-  gsl_error_tol  double - This parameter controls the admissible error of the GSL integrator.
-                          Reduce it if NEST complains about numerical instabilities.
+  gsl_error_tol  double - This parameter controls the admissible error of the
+GSL integrator.
+                          Reduce it if NEST complains about numerical
+instabilities.
 
 Author: Tanguy Fardet, modified from Marc-Oliver Gewaltig's implementation
 
@@ -126,19 +130,21 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int aeif_psc_alpha_gridprecise_dynamics( double, const double*, double*, void* );
+extern "C" int
+aeif_psc_alpha_gp_dynamics( double, const double*, double*, void* );
 
-class aeif_psc_alpha_gridprecise : public Archiving_Node
+class aeif_psc_alpha_gp : public Archiving_Node
 {
 
 public:
-  aeif_psc_alpha_gridprecise();
-  aeif_psc_alpha_gridprecise( const aeif_psc_alpha_gridprecise& );
-  ~aeif_psc_alpha_gridprecise();
+  aeif_psc_alpha_gp();
+  aeif_psc_alpha_gp( const aeif_psc_alpha_gp& );
+  ~aeif_psc_alpha_gp();
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -169,11 +175,12 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int aeif_psc_alpha_gridprecise_dynamics( double, const double*, double*, void* );
+  friend int
+  aeif_psc_alpha_gp_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< aeif_psc_alpha_gridprecise >;
-  friend class UniversalDataLogger< aeif_psc_alpha_gridprecise >;
+  friend class RecordablesMap< aeif_psc_alpha_gp >;
+  friend class UniversalDataLogger< aeif_psc_alpha_gp >;
 
 private:
   // ----------------------------------------------------------------
@@ -185,15 +192,15 @@ private:
     double_t V_reset_; //!< Reset Potential in mV
     double_t t_ref_;   //!< Refractory period in ms
 
-    double_t g_L;        //!< Leak Conductance in nS
-    double_t C_m;        //!< Membrane Capacitance in pF
-    double_t E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double_t Delta_T;    //!< Slope faktor in ms.
-    double_t tau_w;      //!< adaptation time-constant in ms.
-    double_t a;          //!< Subthreshold adaptation in nS.
-    double_t b;          //!< Spike-triggered adaptation in pA
-    double_t V_th;       //!< Spike threshold in mV.
-    double_t t_ref;      //!< Refractory period in ms.
+    double_t g_L;     //!< Leak Conductance in nS
+    double_t C_m;     //!< Membrane Capacitance in pF
+    double_t E_L;     //!< Leak reversal Potential (aka resting potential) in mV
+    double_t Delta_T; //!< Slope faktor in ms.
+    double_t tau_w;   //!< adaptation time-constant in ms.
+    double_t a;       //!< Subthreshold adaptation in nS.
+    double_t b;       //!< Spike-triggered adaptation in pA
+    double_t V_th;    //!< Spike threshold in mV.
+    double_t t_ref;   //!< Refractory period in ms.
     double_t tau_syn_ex; //!< Excitatory synaptic rise time.
     double_t tau_syn_in; //!< Excitatory synaptic rise time.
     double_t I_e;        //!< Intrinsic current in pA.
@@ -233,10 +240,13 @@ public:
       STATE_VEC_SIZE
     };
 
-    double_t y_[ STATE_VEC_SIZE ];     //!< neuron state, must be C-array for GSL solver
-    double_t y_old_[ STATE_VEC_SIZE ]; //!< old neuron state, must be C-array for GSL solver
+    double_t
+      y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
+    double_t y_old_[ STATE_VEC_SIZE ]; //!< old neuron state, must be C-array
+                                       //!for GSL solver
     int_t r_;                          //!< number of refractory steps remaining
-    double_t r_offset_; // offset on the refractory time if it is not a multiple of step_
+    double_t r_offset_; // offset on the refractory time if it is not a multiple
+                        // of step_
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -253,11 +263,12 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_psc_alpha_gridprecise& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_psc_alpha_gridprecise& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_psc_alpha_gp& ); //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&,
+      aeif_psc_alpha_gp& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
-    UniversalDataLogger< aeif_psc_alpha_gridprecise > logger_;
+    UniversalDataLogger< aeif_psc_alpha_gp > logger_;
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spike_exc_;
@@ -322,11 +333,14 @@ public:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< aeif_psc_alpha_gridprecise > recordablesMap_;
+  static RecordablesMap< aeif_psc_alpha_gp > recordablesMap_;
 };
 
 inline port
-aeif_psc_alpha_gridprecise::send_test_event( Node& target, rport receptor_type, synindex, bool )
+aeif_psc_alpha_gp::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -335,7 +349,7 @@ aeif_psc_alpha_gridprecise::send_test_event( Node& target, rport receptor_type, 
 }
 
 inline port
-aeif_psc_alpha_gridprecise::handles_test_event( SpikeEvent&, rport receptor_type )
+aeif_psc_alpha_gp::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -343,7 +357,7 @@ aeif_psc_alpha_gridprecise::handles_test_event( SpikeEvent&, rport receptor_type
 }
 
 inline port
-aeif_psc_alpha_gridprecise::handles_test_event( CurrentEvent&, rport receptor_type )
+aeif_psc_alpha_gp::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -351,7 +365,8 @@ aeif_psc_alpha_gridprecise::handles_test_event( CurrentEvent&, rport receptor_ty
 }
 
 inline port
-aeif_psc_alpha_gridprecise::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+aeif_psc_alpha_gp::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -359,7 +374,7 @@ aeif_psc_alpha_gridprecise::handles_test_event( DataLoggingRequest& dlr, rport r
 }
 
 inline void
-aeif_psc_alpha_gridprecise::get_status( DictionaryDatum& d ) const
+aeif_psc_alpha_gp::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -369,7 +384,7 @@ aeif_psc_alpha_gridprecise::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-aeif_psc_alpha_gridprecise::set_status( const DictionaryDatum& d )
+aeif_psc_alpha_gp::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty

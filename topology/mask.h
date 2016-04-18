@@ -355,7 +355,7 @@ public:
   Mask< D >* clone() const;
 
 protected:
-  Mask< D >* mask1_, *mask2_;
+  Mask< D > *mask1_, *mask2_;
 };
 
 /**
@@ -402,7 +402,7 @@ public:
   Mask< D >* clone() const;
 
 protected:
-  Mask< D >* mask1_, *mask2_;
+  Mask< D > *mask1_, *mask2_;
 };
 
 /**
@@ -449,7 +449,7 @@ public:
   Mask< D >* clone() const;
 
 protected:
-  Mask< D >* mask1_, *mask2_;
+  Mask< D > *mask1_, *mask2_;
 };
 
 
@@ -573,7 +573,8 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
 }
 
 template < int D >
-inline BoxMask< D >::BoxMask( const Position< D >& lower_left, const Position< D >& upper_right )
+inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
+  const Position< D >& upper_right )
   : lower_left_( lower_left )
   , upper_right_( upper_right )
 {

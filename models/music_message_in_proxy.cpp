@@ -75,7 +75,8 @@ nest::music_message_in_proxy::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_message_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
+nest::music_message_in_proxy::Parameters_::set( const DictionaryDatum& d,
+  State_& s )
 {
   if ( !s.published_ )
   {
@@ -92,7 +93,8 @@ nest::music_message_in_proxy::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_message_in_proxy::State_::set( const DictionaryDatum&, const Parameters_& )
+nest::music_message_in_proxy::State_::set( const DictionaryDatum&,
+  const Parameters_& )
 {
 }
 
@@ -108,7 +110,8 @@ nest::music_message_in_proxy::music_message_in_proxy()
 {
 }
 
-nest::music_message_in_proxy::music_message_in_proxy( const music_message_in_proxy& n )
+nest::music_message_in_proxy::music_message_in_proxy(
+  const music_message_in_proxy& n )
   : Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -123,7 +126,8 @@ nest::music_message_in_proxy::music_message_in_proxy( const music_message_in_pro
 void
 nest::music_message_in_proxy::init_state_( const Node& proto )
 {
-  const music_message_in_proxy& pr = downcast< music_message_in_proxy >( proto );
+  const music_message_in_proxy& pr =
+    downcast< music_message_in_proxy >( proto );
 
   S_ = pr.S_;
 }
@@ -159,11 +163,12 @@ nest::music_message_in_proxy::calibrate()
     V_.MP_->map( &B_.message_handler_, acceptable_latency );
     S_.published_ = true;
 
-    std::string msg =
-      String::compose( "Mapping MUSIC input port '%1' with width=%2 and acceptable latency=%3 ms.",
-        P_.port_name_,
-        S_.port_width_,
-        P_.acceptable_latency_ );
+    std::string msg = String::compose(
+      "Mapping MUSIC input port '%1' with width=%2 and acceptable latency=%3 "
+      "ms.",
+      P_.port_name_,
+      S_.port_width_,
+      P_.acceptable_latency_ );
     LOG( M_INFO, "music_message_in_proxy::calibrate()", msg.c_str() );
   }
 }

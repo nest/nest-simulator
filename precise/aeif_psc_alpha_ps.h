@@ -100,12 +100,16 @@ Spike adaptation parameters:
   V_peak     double - Spike detection threshold in mV.
 
 Synaptic parameters
-  tau_syn_ex double - Rise time of excitatory synaptic current in ms (alpha function).
-  tau_syn_in double - Rise time of the inhibitory synaptic current in ms (alpha function).
+  tau_syn_ex double - Rise time of excitatory synaptic current in ms (alpha
+function).
+  tau_syn_in double - Rise time of the inhibitory synaptic current in ms (alpha
+function).
 
 Integration parameters
-  gsl_error_tol  double - This parameter controls the admissible error of the GSL integrator.
-                          Reduce it if NEST complains about numerical instabilities.
+  gsl_error_tol  double - This parameter controls the admissible error of the
+GSL integrator.
+                          Reduce it if NEST complains about numerical
+instabilities.
 
 Author: Tanguy Fardet, modified from Marc-Oliver Gewaltig's implementation
 
@@ -131,18 +135,21 @@ SeeAlso: iaf_cond_alpha, aeif_cond_exp, aeif_cond_alpha
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int aeif_psc_alpha_ps_dynamics( double, const double*, double*, void* );
+extern "C" int
+aeif_psc_alpha_ps_dynamics( double, const double*, double*, void* );
 
 class aeif_psc_alpha_ps : public Archiving_Node
 {
 public:
   /**
-  * The constructor is only used to create the model prototype in the model manager.
+  * The constructor is only used to create the model prototype in the model
+  * manager.
   */
   aeif_psc_alpha_ps();
 
   /**
-  * The copy constructor is used to create model copies and instances of the model.
+  * The copy constructor is used to create model copies and instances of the
+  * model.
   * @node The copy constructor needs to initialize the parameters and the state.
   *       Initialization of buffers and interal variables is deferred to
   *       @c init_buffers_() and @c calibrate().
@@ -235,15 +242,15 @@ private:
     double_t V_reset_; //!< Reset Potential in mV
     double_t t_ref_;   //!< Refractory period in ms
 
-    double_t g_L;        //!< Leak Conductance in nS
-    double_t C_m;        //!< Membrane Capacitance in pF
-    double_t E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double_t Delta_T;    //!< Slope faktor in ms.
-    double_t tau_w;      //!< adaptation time-constant in ms.
-    double_t a;          //!< Subthreshold adaptation in nS.
-    double_t b;          //!< Spike-triggered adaptation in pA
-    double_t V_th;       //!< Spike threshold in mV.
-    double_t t_ref;      //!< Refractory period in ms.
+    double_t g_L;     //!< Leak Conductance in nS
+    double_t C_m;     //!< Membrane Capacitance in pF
+    double_t E_L;     //!< Leak reversal Potential (aka resting potential) in mV
+    double_t Delta_T; //!< Slope faktor in ms.
+    double_t tau_w;   //!< adaptation time-constant in ms.
+    double_t a;       //!< Subthreshold adaptation in nS.
+    double_t b;       //!< Spike-triggered adaptation in pA
+    double_t V_th;    //!< Spike threshold in mV.
+    double_t t_ref;   //!< Refractory period in ms.
     double_t tau_syn_ex; //!< Excitatory synaptic rise time.
     double_t tau_syn_in; //!< Excitatory synaptic rise time.
     double_t I_e;        //!< Intrinsic current in pA.
@@ -264,7 +271,8 @@ public:
   * These are the state variables that are advanced in time by calls to
   * @c update(). In many models, some or all of them can be set by the user
   * through @c SetStatus. The state variables are initialized from the model
-  * prototype when the node is created. State variables are reset by @c ResetNetwork.
+  * prototype when the node is created. State variables are reset by @c
+  * ResetNetwork.
   *
   * @note State_ need neither copy constructor nor @c operator=(), since
   *       all its members are copied properly by the default copy constructor
@@ -295,10 +303,13 @@ public:
       STATE_VEC_SIZE
     };
 
-    double_t y_[ STATE_VEC_SIZE ];     //!< neuron state, must be C-array for GSL solver
-    double_t y_old_[ STATE_VEC_SIZE ]; //!< old neuron state, must be C-array for GSL solver
+    double_t
+      y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
+    double_t y_old_[ STATE_VEC_SIZE ]; //!< old neuron state, must be C-array
+                                       //!for GSL solver
     int_t r_;                          //!< number of refractory steps remaining
-    double_t r_offset_; // offset on the refractory time if it is not a multiple of step_
+    double_t r_offset_; // offset on the refractory time if it is not a multiple
+                        // of step_
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -314,14 +325,17 @@ public:
   * Buffers must be initialized by @c init_buffers_(), which is called before
   * @c calibrate() on the first call to @c Simulate after the start of NEST,
   * ResetKernel or ResetNetwork.
-  * @node Buffers_ needs neither constructor, copy constructor or assignment operator,
-  *       since it is initialized by @c init_nodes_(). If Buffers_ has members that
+  * @node Buffers_ needs neither constructor, copy constructor or assignment
+  * operator,
+  *       since it is initialized by @c init_nodes_(). If Buffers_ has members
+  * that
   *       cannot destroy themselves, Buffers_ will need a destructor.
   */
   struct Buffers_
   {
-    Buffers_( aeif_psc_alpha_ps& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_psc_alpha_ps& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_psc_alpha_ps& ); //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&,
+      aeif_psc_alpha_ps& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< aeif_psc_alpha_ps > logger_;
@@ -357,8 +371,10 @@ public:
   * Internal variables of the neuron.
   * These variables must be initialized by @c calibrate, which is called before
   * the first call to @c update() upon each call to @c Simulate.
-  * @node Variables_ needs neither constructor, copy constructor or assignment operator,
-  *       since it is initialized by @c calibrate(). If Variables_ has members that
+  * @node Variables_ needs neither constructor, copy constructor or assignment
+  * operator,
+  *       since it is initialized by @c calibrate(). If Variables_ has members
+  * that
   *       cannot destroy themselves, Variables_ will need a destructor.
   */
   struct Variables_
@@ -399,7 +415,8 @@ public:
   * which are one instance each of the parameters, state, buffers and variables
   * structures. Experience indicates that the state and variables member should
   * be next to each other to achieve good efficiency (caching).
-  * @note Devices require one additional data member, an instance of the @c Device
+  * @note Devices require one additional data member, an instance of the @c
+  * Device
   *       child class they belong to.
   * @{
   */
@@ -415,7 +432,10 @@ public:
 };
 
 inline port
-aeif_psc_alpha_ps::send_test_event( Node& target, port receptor_type, synindex, bool )
+aeif_psc_alpha_ps::send_test_event( Node& target,
+  port receptor_type,
+  synindex,
+  bool )
 {
   // You should usually not change the code in this function.
   // It confirms that the target of connection @c c accepts @c SpikeEvent on
@@ -450,7 +470,8 @@ aeif_psc_alpha_ps::handles_test_event( CurrentEvent&, port receptor_type )
 }
 
 inline port
-aeif_psc_alpha_ps::handles_test_event( DataLoggingRequest& dlr, port receptor_type )
+aeif_psc_alpha_ps::handles_test_event( DataLoggingRequest& dlr,
+  port receptor_type )
 {
   // You should usually not change the code in this function.
   // It confirms to the connection management system that we are able

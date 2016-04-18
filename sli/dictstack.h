@@ -291,7 +291,8 @@ public:
    */
   void def( const Name&, const Token& );
 
-  /** Unbind a previously defined Name from its token. Seach in all dictionaries.
+  /** Unbind a previously defined Name from its token. Seach in all
+   * dictionaries.
    */
   void undef( const Name& );
 

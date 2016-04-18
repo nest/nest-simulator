@@ -63,7 +63,8 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
 {
   // have those two for later asking, whether threads have changed:
   long n_threads;
-  bool n_threads_updated = updateValue< long >( d, "local_num_threads", n_threads );
+  bool n_threads_updated =
+    updateValue< long >( d, "local_num_threads", n_threads );
 
   // set RNGs --- MUST come after n_threads_ is updated
   if ( d->known( "rngs" ) )
@@ -76,14 +77,17 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
 
     // n_threads_ is the new value after a change of the number of
     // threads
-    if ( ad->size() != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
+    if ( ad->size()
+      != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
     {
       LOG( M_ERROR,
         "RNGManager::set_status",
-        "Number of RNGs must equal number of virtual processes (threads*processes). RNGs "
+        "Number of RNGs must equal number of virtual processes "
+        "(threads*processes). RNGs "
         "unchanged." );
       throw DimensionMismatch(
-        ( size_t )( kernel().vp_manager.get_num_virtual_processes() ), ad->size() );
+        ( size_t )( kernel().vp_manager.get_num_virtual_processes() ),
+        ad->size() );
     }
 
     // delete old generators, insert new generators this code is
@@ -93,29 +97,34 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     rng_.clear();
     for ( index i = 0; i < ad->size(); ++i )
       if ( kernel().vp_manager.is_local_vp( i ) )
-        rng_.push_back(
-          getValue< librandom::RngDatum >( ( *ad )[ kernel().vp_manager.suggest_vp( i ) ] ) );
+        rng_.push_back( getValue< librandom::RngDatum >(
+          ( *ad )[ kernel().vp_manager.suggest_vp( i ) ] ) );
   }
   else if ( n_threads_updated && kernel().node_manager.size() == 0 )
   {
-    LOG( M_WARNING, "RNGManager::set_status", "Equipping threads with new default RNGs" );
+    LOG( M_WARNING,
+      "RNGManager::set_status",
+      "Equipping threads with new default RNGs" );
     create_rngs_();
   }
 
   if ( d->known( "rng_seeds" ) )
   {
-    ArrayDatum* ad = dynamic_cast< ArrayDatum* >( ( *d )[ "rng_seeds" ].datum() );
+    ArrayDatum* ad =
+      dynamic_cast< ArrayDatum* >( ( *d )[ "rng_seeds" ].datum() );
     if ( ad == 0 )
       throw BadProperty();
 
-    if ( ad->size() != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
+    if ( ad->size()
+      != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
     {
       LOG( M_ERROR,
         "RNGManager::set_status",
-        "Number of seeds must equal number of virtual processes (threads*processes). RNGs "
-        "unchanged." );
+        "Number of seeds must equal number of virtual processes "
+        "(threads*processes). RNGs unchanged." );
       throw DimensionMismatch(
-        ( size_t )( kernel().vp_manager.get_num_virtual_processes() ), ad->size() );
+        ( size_t )( kernel().vp_manager.get_num_virtual_processes() ),
+        ad->size() );
     }
 
     // check if seeds are unique
@@ -125,7 +134,9 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
       long s = ( *ad )[ i ]; // SLI has no ulong tokens
       if ( !seedset.insert( s ).second )
       {
-        LOG( M_WARNING, "RNGManager::set_status", "Seeds are not unique across threads!" );
+        LOG( M_WARNING,
+          "RNGManager::set_status",
+          "Seeds are not unique across threads!" );
         break;
       }
     }
@@ -136,7 +147,9 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
       long s = ( *ad )[ i ];
 
       if ( kernel().vp_manager.is_local_vp( i ) )
-        rng_[ kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( i ) ) ]->seed( s );
+        rng_[ kernel().vp_manager.vp_to_thread(
+                kernel().vp_manager.suggest_vp( i ) ) ]
+          ->seed( s );
 
       rng_seeds_[ i ] = s;
     }
@@ -150,7 +163,9 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
   }
   else if ( n_threads_updated && kernel().node_manager.size() == 0 )
   {
-    LOG( M_WARNING, "RNGManager::set_status", "Equipping threads with new default GRNG" );
+    LOG( M_WARNING,
+      "RNGManager::set_status",
+      "Equipping threads with new default GRNG" );
     create_grng_();
   }
 
@@ -164,7 +179,8 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     seedset.insert( gseed );
     if ( d->known( "rng_seeds" ) )
     {
-      ArrayDatum* ad_rngseeds = dynamic_cast< ArrayDatum* >( ( *d )[ "rng_seeds" ].datum() );
+      ArrayDatum* ad_rngseeds =
+        dynamic_cast< ArrayDatum* >( ( *d )[ "rng_seeds" ].datum() );
       if ( ad_rngseeds == 0 )
         throw BadProperty();
       for ( index i = 0; i < ad_rngseeds->size(); ++i )
@@ -172,7 +188,9 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
         const long vpseed = ( *ad_rngseeds )[ i ]; // SLI has no ulong tokens
         if ( !seedset.insert( vpseed ).second )
         {
-          LOG( M_WARNING, "RNGManager::set_status", "Seeds are not unique across threads!" );
+          LOG( M_WARNING,
+            "RNGManager::set_status",
+            "Seeds are not unique across threads!" );
           break;
         }
       }
@@ -199,7 +217,9 @@ nest::RNGManager::create_rngs_()
   // lockPTRs, we don't have to worry about deletion
   if ( !rng_.empty() )
   {
-    LOG( M_INFO, "Network::create_rngs_", "Deleting existing random number generators" );
+    LOG( M_INFO,
+      "Network::create_rngs_",
+      "Deleting existing random number generators" );
 
     rng_.clear();
   }
@@ -208,7 +228,8 @@ nest::RNGManager::create_rngs_()
 
   rng_seeds_.resize( kernel().vp_manager.get_num_virtual_processes() );
 
-  for ( index i = 0; i < static_cast< index >( kernel().vp_manager.get_num_virtual_processes() );
+  for ( index i = 0; i < static_cast< index >(
+                           kernel().vp_manager.get_num_virtual_processes() );
         ++i )
   {
     unsigned long s = i + 1;
@@ -225,7 +246,8 @@ nest::RNGManager::create_rngs_()
  For simplicity, we use 1 .. n_vps.
  */
 #ifdef HAVE_GSL
-      librandom::RngPtr rng( new librandom::GslRandomGen( gsl_rng_knuthran2002, s ) );
+      librandom::RngPtr rng(
+        new librandom::GslRandomGen( gsl_rng_knuthran2002, s ) );
 #else
       librandom::RngPtr rng = librandom::RandomGen::create_knuthlfg_rng( s );
 #endif
@@ -252,10 +274,11 @@ nest::RNGManager::create_grng_()
 
 // create default RNG with default seed
 #ifdef HAVE_GSL
-  grng_ = librandom::RngPtr(
-    new librandom::GslRandomGen( gsl_rng_knuthran2002, librandom::RandomGen::DefaultSeed ) );
+  grng_ = librandom::RngPtr( new librandom::GslRandomGen(
+    gsl_rng_knuthran2002, librandom::RandomGen::DefaultSeed ) );
 #else
-  grng_ = librandom::RandomGen::create_knuthlfg_rng( librandom::RandomGen::DefaultSeed );
+  grng_ = librandom::RandomGen::create_knuthlfg_rng(
+    librandom::RandomGen::DefaultSeed );
 #endif
 
   if ( !grng_ )

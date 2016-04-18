@@ -1,5 +1,5 @@
 /*
- *  aeif_cond_alpha_gridprecise.h
+ *  aeif_psc_exp_gp.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AEIF_COND_ALPHA_GP_H
-#define AEIF_COND_ALPHA_GP_H
+#ifndef AEIF_PSC_EXP_GP_H
+#define AEIF_PSC_EXP_GP_H
 
 // Generated includes:
 #include "config.h"
@@ -43,14 +43,14 @@
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
-Name: aeif_cond_alpha_gridprecise - Conductance based exponential integrate-and-fire
+Name: aeif_psc_exp_gp - Current-based exponential integrate-and-fire
   neuron model according to Brette and Gerstner (2005), implementing a linear
   interpolation to find the "exact" time where the threshold was crossed, i.e.
   the spiking time.
 
 Description:
 aeif_cond_alpha is the adaptive exponential integrate and fire neuron according
-to Brette and Gerstner (2005) and synaptic conductances are modelled as alpha
+to Brette and Gerstner (2005) and synaptic currents are modelled as alpha
 functions. This model implements a linear interpolation to find spike times
 more precisely.
 
@@ -59,8 +59,8 @@ with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
 
-C dV/dt = -g_L*(V-E_L) + g_L*Delta_T*exp((V-V_T)/Delta_T) - g_e(t)*(V-E_e)
-          -g_i(t)*(V-E_i) - w + I_e
+C dV/dt = -g_L*(V-E_L) + g_L*Delta_T*exp((V-V_T)/Delta_T) + I_ex(t) - I_in(t)
+          - w + I_e
 
 and
 
@@ -71,10 +71,8 @@ The following parameters can be set in the status dictionary.
 
 Dynamic state variables:
   V_m        double - Membrane potential in mV
-  g_ex       double - Excitatory synaptic conductance in nS.
-  dg_ex      double - First derivative of g_ex in nS/ms
-  g_in       double - Inhibitory synaptic conductance in nS.
-  dg_in      double - First derivative of g_in in nS/ms.
+  I_ex       double - Excitatory synaptic current in pA.
+  I_in       double - Inhibitory synaptic current in pA.
   w          double - Spike-adaptation current in pA.
 
 Membrane Parameters:
@@ -94,14 +92,18 @@ Spike adaptation parameters:
   V_peak     double - Spike detection threshold in mV.
 
 Synaptic parameters
-  E_ex       double - Excitatory reversal potential in mV.
-  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (alpha function).
-  E_in       double - Inhibitory reversal potential in mV.
-  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms (alpha function).
+  tau_syn_ex double - Characteristic decrease time of excitatory synaptic
+current in ms (exponential
+function).
+  tau_syn_in double - Characteristic decrease time of inhibitory synaptic
+current in ms (exponential
+function).
 
 Integration parameters
-  gsl_error_tol  double - This parameter controls the admissible error of the GSL integrator.
-                          Reduce it if NEST complains about numerical instabilities.
+  gsl_error_tol  double - This parameter controls the admissible error of the
+GSL integrator.
+                          Reduce it if NEST complains about numerical
+instabilities.
 
 Author: Tanguy Fardet, modified from Marc-Oliver Gewaltig's implementation
 
@@ -113,7 +115,7 @@ References: Brette R and Gerstner W (2005) Adaptive Exponential Integrate-and-
   Fire Model as an Effective Description of Neuronal Activity.
   J Neurophysiol 94:3637-3642
 
-SeeAlso: iaf_cond_alpha, aeif_cond_exp, aeif_cond_alpha
+SeeAlso: iaf_cond_alpha, aeif_cond_exp, aeif_psc_alpha
 */
 
 namespace nest
@@ -128,19 +130,21 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int aeif_cond_alpha_gridprecise_dynamics( double, const double*, double*, void* );
+extern "C" int
+aeif_psc_exp_gp_dynamics( double, const double*, double*, void* );
 
-class aeif_cond_alpha_gridprecise : public Archiving_Node
+class aeif_psc_exp_gp : public Archiving_Node
 {
 
 public:
-  aeif_cond_alpha_gridprecise();
-  aeif_cond_alpha_gridprecise( const aeif_cond_alpha_gridprecise& );
-  ~aeif_cond_alpha_gridprecise();
+  aeif_psc_exp_gp();
+  aeif_psc_exp_gp( const aeif_psc_exp_gp& );
+  ~aeif_psc_exp_gp();
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -171,11 +175,11 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int aeif_cond_alpha_gridprecise_dynamics( double, const double*, double*, void* );
+  friend int aeif_psc_exp_gp_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< aeif_cond_alpha_gridprecise >;
-  friend class UniversalDataLogger< aeif_cond_alpha_gridprecise >;
+  friend class RecordablesMap< aeif_psc_exp_gp >;
+  friend class UniversalDataLogger< aeif_psc_exp_gp >;
 
 private:
   // ----------------------------------------------------------------
@@ -187,17 +191,15 @@ private:
     double_t V_reset_; //!< Reset Potential in mV
     double_t t_ref_;   //!< Refractory period in ms
 
-    double_t g_L;        //!< Leak Conductance in nS
-    double_t C_m;        //!< Membrane Capacitance in pF
-    double_t E_ex;       //!< Excitatory reversal Potential in mV
-    double_t E_in;       //!< Inhibitory reversal Potential in mV
-    double_t E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double_t Delta_T;    //!< Slope faktor in ms.
-    double_t tau_w;      //!< adaptation time-constant in ms.
-    double_t a;          //!< Subthreshold adaptation in nS.
-    double_t b;          //!< Spike-triggered adaptation in pA
-    double_t V_th;       //!< Spike threshold in mV.
-    double_t t_ref;      //!< Refractory period in ms.
+    double_t g_L;     //!< Leak Conductance in nS
+    double_t C_m;     //!< Membrane Capacitance in pF
+    double_t E_L;     //!< Leak reversal Potential (aka resting potential) in mV
+    double_t Delta_T; //!< Slope faktor in ms.
+    double_t tau_w;   //!< adaptation time-constant in ms.
+    double_t a;       //!< Subthreshold adaptation in nS.
+    double_t b;       //!< Spike-triggered adaptation in pA
+    double_t V_th;    //!< Spike threshold in mV.
+    double_t t_ref;   //!< Refractory period in ms.
     double_t tau_syn_ex; //!< Excitatory synaptic rise time.
     double_t tau_syn_in; //!< Excitatory synaptic rise time.
     double_t I_e;        //!< Intrinsic current in pA.
@@ -229,18 +231,19 @@ public:
     enum StateVecElems
     {
       V_M = 0,
-      DG_EXC, // 1
-      G_EXC,  // 2
-      DG_INH, // 3
-      G_INH,  // 4
-      W,      // 5
+      I_EXC, // 1
+      I_INH, // 2
+      W,     // 3
       STATE_VEC_SIZE
     };
 
-    double_t y_[ STATE_VEC_SIZE ];     //!< neuron state, must be C-array for GSL solver
-    double_t y_old_[ STATE_VEC_SIZE ]; //!< old neuron state, must be C-array for GSL solver
+    double_t
+      y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
+    double_t y_old_[ STATE_VEC_SIZE ]; //!< old neuron state, must be C-array
+                                       //!for GSL solver
     int_t r_;                          //!< number of refractory steps remaining
-    double_t r_offset_; // offset on the refractory time if it is not a multiple of step_
+    double_t r_offset_; // offset on the refractory time if it is not a multiple
+                        // of step_
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -257,11 +260,11 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_cond_alpha_gridprecise& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_cond_alpha_gridprecise& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_psc_exp_gp& );                  //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_psc_exp_gp& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
-    UniversalDataLogger< aeif_cond_alpha_gridprecise > logger_;
+    UniversalDataLogger< aeif_psc_exp_gp > logger_;
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spike_exc_;
@@ -298,12 +301,6 @@ public:
    */
   struct Variables_
   {
-    /** initial value to normalise excitatory synaptic conductance */
-    double_t g0_ex_;
-
-    /** initial value to normalise inhibitory synaptic conductance */
-    double_t g0_in_;
-
     int_t RefractoryCounts_;
     double_t RefractoryOffset_;
   };
@@ -326,11 +323,14 @@ public:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< aeif_cond_alpha_gridprecise > recordablesMap_;
+  static RecordablesMap< aeif_psc_exp_gp > recordablesMap_;
 };
 
 inline port
-aeif_cond_alpha_gridprecise::send_test_event( Node& target, rport receptor_type, synindex, bool )
+aeif_psc_exp_gp::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -339,7 +339,7 @@ aeif_cond_alpha_gridprecise::send_test_event( Node& target, rport receptor_type,
 }
 
 inline port
-aeif_cond_alpha_gridprecise::handles_test_event( SpikeEvent&, rport receptor_type )
+aeif_psc_exp_gp::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -347,7 +347,7 @@ aeif_cond_alpha_gridprecise::handles_test_event( SpikeEvent&, rport receptor_typ
 }
 
 inline port
-aeif_cond_alpha_gridprecise::handles_test_event( CurrentEvent&, rport receptor_type )
+aeif_psc_exp_gp::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -355,7 +355,8 @@ aeif_cond_alpha_gridprecise::handles_test_event( CurrentEvent&, rport receptor_t
 }
 
 inline port
-aeif_cond_alpha_gridprecise::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+aeif_psc_exp_gp::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -363,7 +364,7 @@ aeif_cond_alpha_gridprecise::handles_test_event( DataLoggingRequest& dlr, rport 
 }
 
 inline void
-aeif_cond_alpha_gridprecise::get_status( DictionaryDatum& d ) const
+aeif_psc_exp_gp::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -373,7 +374,7 @@ aeif_cond_alpha_gridprecise::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-aeif_cond_alpha_gridprecise::set_status( const DictionaryDatum& d )
+aeif_psc_exp_gp::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
@@ -394,4 +395,4 @@ aeif_cond_alpha_gridprecise::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL
-#endif // AEIF_COND_ALPHA_GP_H
+#endif // AEIF_PSC_EXP_GP_H

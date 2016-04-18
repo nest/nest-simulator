@@ -47,7 +47,8 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_psc_alpha_ps > nest::iaf_psc_alpha_ps::recordablesMap_;
+nest::RecordablesMap< nest::iaf_psc_alpha_ps >
+  nest::iaf_psc_alpha_ps::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -57,12 +58,15 @@ template <>
 void
 RecordablesMap< nest::iaf_psc_alpha_ps >::create()
 {
-  insert_(
-    names::V_m, &nest::iaf_psc_alpha_ps::get_y_elem_< nest::iaf_psc_alpha_ps::State_::V_M > );
-  insert_(
-    names::I_ex, &nest::iaf_psc_alpha_ps::get_y_elem_< nest::iaf_psc_alpha_ps::State_::I_EXC > );
-  insert_(
-    names::I_in, &nest::iaf_psc_alpha_ps::get_y_elem_< nest::iaf_psc_alpha_ps::State_::I_INH > );
+  insert_( names::V_m,
+    &nest::iaf_psc_alpha_ps::
+      get_y_elem_< nest::iaf_psc_alpha_ps::State_::V_M > );
+  insert_( names::I_ex,
+    &nest::iaf_psc_alpha_ps::
+      get_y_elem_< nest::iaf_psc_alpha_ps::State_::I_EXC > );
+  insert_( names::I_in,
+    &nest::iaf_psc_alpha_ps::
+      get_y_elem_< nest::iaf_psc_alpha_ps::State_::I_INH > );
 }
 }
 
@@ -71,14 +75,18 @@ RecordablesMap< nest::iaf_psc_alpha_ps >::create()
  * ---------------------------------------------------------------- */
 
 extern "C" int
-nest::iaf_psc_alpha_ps_dynamics( double, const double y[], double f[], void* pnode )
+nest::iaf_psc_alpha_ps_dynamics( double,
+  const double y[],
+  double f[],
+  void* pnode )
 {
   // a shorthand
   typedef nest::iaf_psc_alpha_ps::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::iaf_psc_alpha_ps& node = *( reinterpret_cast< nest::iaf_psc_alpha_ps* >( pnode ) );
+  const nest::iaf_psc_alpha_ps& node =
+    *( reinterpret_cast< nest::iaf_psc_alpha_ps* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -94,14 +102,18 @@ nest::iaf_psc_alpha_ps_dynamics( double, const double y[], double f[], void* pno
   const double_t& i_inh = y[ S::I_INH ];
 
   // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) + i_exc - i_inh + node.P_.I_e
-                  + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] =
+    ( -node.P_.g_L * ( V - node.P_.E_L ) + i_exc - i_inh + node.P_.I_e
+      + node.B_.I_stim_ )
+    / node.P_.C_m;
 
   f[ S::DI_EXC ] = -di_exc / node.P_.tau_syn_exc;
-  f[ S::I_EXC ] = di_exc - i_exc / node.P_.tau_syn_exc; // Synaptic Conductance (nS)
+  f[ S::I_EXC ] =
+    di_exc - i_exc / node.P_.tau_syn_exc; // Synaptic Conductance (nS)
 
   f[ S::DI_INH ] = -di_inh / node.P_.tau_syn_inh;
-  f[ S::I_INH ] = di_inh - i_inh / node.P_.tau_syn_inh; // Synaptic Conductance (nS)
+  f[ S::I_INH ] =
+    di_inh - i_inh / node.P_.tau_syn_inh; // Synaptic Conductance (nS)
 
   return GSL_SUCCESS;
 }
@@ -144,7 +156,8 @@ nest::iaf_psc_alpha_ps::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::iaf_psc_alpha_ps::State_& nest::iaf_psc_alpha_ps::State_::operator=( const State_& s )
+nest::iaf_psc_alpha_ps::State_& nest::iaf_psc_alpha_ps::State_::operator=(
+  const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -227,7 +240,8 @@ nest::iaf_psc_alpha_ps::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_psc_alpha_ps::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::iaf_psc_alpha_ps::State_::set( const DictionaryDatum& d,
+  const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::g_ex, y_[ I_EXC ] );
@@ -249,7 +263,8 @@ nest::iaf_psc_alpha_ps::Buffers_::Buffers_( iaf_psc_alpha_ps& n )
   // init_buffers_().
 }
 
-nest::iaf_psc_alpha_ps::Buffers_::Buffers_( const Buffers_&, iaf_psc_alpha_ps& n )
+nest::iaf_psc_alpha_ps::Buffers_::Buffers_( const Buffers_&,
+  iaf_psc_alpha_ps& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -308,14 +323,16 @@ nest::iaf_psc_alpha_ps::init_buffers_()
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
   if ( B_.s_ == 0 )
-    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ =
+      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   else
     gsl_odeiv_step_reset( B_.s_ );
 
   if ( B_.c_ == 0 )
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
   else
-    gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
+    gsl_odeiv_control_init(
+      B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
 
   if ( B_.e_ == 0 )
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
@@ -333,13 +350,16 @@ nest::iaf_psc_alpha_ps::init_buffers_()
 void
 nest::iaf_psc_alpha_ps::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_
+    .init(); // ensures initialization in case mm connected after Simulate
 
   V_.I0_ex_ = 1.0 * numerics::e / P_.tau_syn_exc;
   V_.I0_in_ = 1.0 * numerics::e / P_.tau_syn_inh;
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps() + 1;
-  V_.RefractoryOffset_ = P_.t_ref_ - ( V_.RefractoryCounts_ - 1 ) * Time::get_resolution().get_ms();
-  assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  V_.RefractoryOffset_ =
+    P_.t_ref_ - ( V_.RefractoryCounts_ - 1 ) * Time::get_resolution().get_ms();
+  assert( V_.RefractoryCounts_
+    >= 0 ); // since t_ref_ >= 0, this can only fail in error
   assert( V_.RefractoryOffset_ >= 0. );
 }
 
@@ -358,14 +378,17 @@ nest::iaf_psc_alpha_ps::interpolate_( double& t, double t_old )
   S_.y_[ State_::V_M ] = P_.V_reset_;
   for ( int i = 1; i < State_::STATE_VEC_SIZE; ++i )
   {
-    S_.y_[ i ] = S_.y_old_[ i ] + ( S_.y_[ i ] - S_.y_old_[ i ] ) / ( t - t_old ) * dt_crossing;
+    S_.y_[ i ] = S_.y_old_[ i ]
+      + ( S_.y_[ i ] - S_.y_old_[ i ] ) / ( t - t_old ) * dt_crossing;
   }
 
   t = t_old + dt_crossing;
 }
 
 void
-nest::iaf_psc_alpha_ps::spiking_( const long_t T, const long_t lag, const double t )
+nest::iaf_psc_alpha_ps::spiking_( const long_t T,
+  const long_t lag,
+  const double t )
 {
   // spike event
   const double_t offset = B_.step_ - t;
@@ -394,9 +417,12 @@ nest::iaf_psc_alpha_ps::spiking_( const long_t T, const long_t lag, const double
 }
 
 void
-nest::iaf_psc_alpha_ps::update( const Time& origin, const long_t from, const long_t to )
+nest::iaf_psc_alpha_ps::update( const Time& origin,
+  const long_t from,
+  const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert( to >= 0
+    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -413,7 +439,8 @@ nest::iaf_psc_alpha_ps::update( const Time& origin, const long_t from, const lon
   if ( S_.y_[ State_::V_M ] >= P_.V_th )
   {
     S_.y_[ State_::V_M ] = P_.V_reset_;
-    const double_t init_offset = B_.step_ * ( 1 - std::numeric_limits< double_t >::epsilon() );
+    const double_t init_offset =
+      B_.step_ * ( 1 - std::numeric_limits< double_t >::epsilon() );
     set_spiketime( Time::step( origin.get_steps() + from + 1 ), init_offset );
     SpikeEvent se;
     se.set_offset( init_offset );
@@ -445,9 +472,11 @@ nest::iaf_psc_alpha_ps::update( const Time& origin, const long_t from, const lon
     while ( t < B_.step_ )
     {
       // store the previous values of V_m, g_exc, g_inh, and t
-      std::copy( S_.y_, S_.y_ + sizeof( S_.y_ ) / sizeof( S_.y_[ 0 ] ), S_.y_old_ );
+      std::copy(
+        S_.y_, S_.y_ + sizeof( S_.y_ ) / sizeof( S_.y_[ 0 ] ), S_.y_old_ );
       t_old = t;
-      B_.events_.get_next_event( T, t_next_event, spike_in, spike_ex, B_.step_ );
+      B_.events_.get_next_event(
+        T, t_next_event, spike_in, spike_ex, B_.step_ );
 
       while ( t < t_next_event )
       {
@@ -478,7 +507,9 @@ nest::iaf_psc_alpha_ps::update( const Time& origin, const long_t from, const lon
         spiking_( T, lag, t );
       }
 
-      if ( S_.r_ == 0 && std::abs( t - S_.r_offset_ ) < std::numeric_limits< double >::epsilon() )
+      if ( S_.r_ == 0
+        && std::abs( t - S_.r_offset_ )
+          < std::numeric_limits< double >::epsilon() )
         S_.r_offset_ = 0.;
 
       if ( t == t_next_event )
@@ -504,7 +535,8 @@ nest::iaf_psc_alpha_ps::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
-  B_.events_.add_spike( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  B_.events_.add_spike(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -520,7 +552,8 @@ nest::iaf_psc_alpha_ps::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 // Do not move this function as inline to h-file. It depends on

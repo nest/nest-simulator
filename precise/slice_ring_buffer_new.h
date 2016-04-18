@@ -160,7 +160,8 @@ SliceRingBufferNew::add_spike( const delay rel_delivery,
   const double ps_offset,
   const double weight )
 {
-  const delay idx = kernel().event_delivery_manager.get_slice_modulo( rel_delivery );
+  const delay idx =
+    kernel().event_delivery_manager.get_slice_modulo( rel_delivery );
   assert( ( size_t ) idx < queue_.size() );
   assert( ps_offset >= 0 );
 
@@ -168,7 +169,8 @@ SliceRingBufferNew::add_spike( const delay rel_delivery,
 }
 
 inline void
-SliceRingBufferNew::set_refractory( const long_t stamp, const double_t ps_offset )
+SliceRingBufferNew::set_refractory( const long_t stamp,
+  const double_t ps_offset )
 {
   refract_ = SpikeInfo( stamp, ps_offset, 0. );
 }
@@ -241,7 +243,9 @@ SliceRingBufferNew::get_next_event( const long_t req_stamp,
   }
 }
 
-inline SliceRingBufferNew::SpikeInfo::SpikeInfo( long_t stamp, double_t ps_offset, double_t weight )
+inline SliceRingBufferNew::SpikeInfo::SpikeInfo( long_t stamp,
+  double_t ps_offset,
+  double_t weight )
   : stamp_( stamp )
   , ps_offset_( ps_offset )
   , weight_( weight )
@@ -253,7 +257,8 @@ inline bool SliceRingBufferNew::SpikeInfo::operator<( const SpikeInfo& b ) const
   return stamp_ == b.stamp_ ? ps_offset_ > b.ps_offset_ : stamp_ < b.stamp_;
 }
 
-inline bool SliceRingBufferNew::SpikeInfo::operator<=( const SpikeInfo& b ) const
+inline bool SliceRingBufferNew::SpikeInfo::operator<=(
+  const SpikeInfo& b ) const
 {
   return !( *this > b );
 }

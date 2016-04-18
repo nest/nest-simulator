@@ -87,7 +87,8 @@ inline index GIDCollection::const_iterator::operator*() const
   return ( *gc_ )[ offset_ ];
 }
 
-inline const GIDCollection::const_iterator& GIDCollection::const_iterator::operator++()
+inline const GIDCollection::const_iterator& GIDCollection::const_iterator::
+operator++()
 {
   ++offset_;
   return *this;

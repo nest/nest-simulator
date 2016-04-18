@@ -134,7 +134,8 @@ const synindex invalid_synindex = UCHAR_MAX;
  *
  * See Kunkel et al, Front Neuroinform 8:78 (2014).
  */
-typedef unsigned short targetindex; ///< target index into thread local node vector
+//! target index into thread local node vector
+typedef unsigned short targetindex;
 const targetindex invalid_targetindex = USHRT_MAX;
 const index max_targetindex = invalid_targetindex - 1;
 
@@ -200,8 +201,8 @@ const long_t delay_min = long_t_min;
  * neuron are intepreted the same way by receiving neuron.
  *
  * Each possible signal that may be represented (currently SPIKE and BINARY)
- * is interpreted as a separate bit flag. This way, upon connection, we determine
- * by a bitwise AND operation if sender and receiver are compatible.
+ * is interpreted as a separate bit flag. This way, upon connection, we
+ * determine by a bitwise AND operation if sender and receiver are compatible.
  * The check takes place in connection::check_connection().
  *
  * A device, such as the spike-generator or spike_detector,

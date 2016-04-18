@@ -62,7 +62,8 @@ Node::Node( const Node& n )
   , thread_( n.thread_ )
   , vp_( n.vp_ )
   , frozen_( n.frozen_ )
-  , buffers_initialized_( false ) // copy must always initialized its own buffers
+  // copy must always initialized its own buffers
+  , buffers_initialized_( false )
   , needs_prelim_up_( n.needs_prelim_up_ )
 {
 }
@@ -174,8 +175,11 @@ Node::set_status_base( const DictionaryDatum& dict )
   }
   catch ( BadProperty& e )
   {
-    throw BadProperty( String::compose(
-      "Setting status of a '%1' with GID %2: %3", get_name(), get_gid(), e.message() ) );
+    throw BadProperty(
+      String::compose( "Setting status of a '%1' with GID %2: %3",
+        get_name(),
+        get_gid(),
+        e.message() ) );
   }
 
   updateValue< bool >( dict, names::frozen, frozen_ );
@@ -263,7 +267,8 @@ port
 Node::handles_test_event( DataLoggingRequest&, rport )
 {
   throw IllegalConnection(
-    "Possible cause: only static synapse types may be used to connect devices." );
+    "Possible cause: only static synapse types may be used to connect "
+    "devices." );
 }
 
 void
@@ -300,14 +305,16 @@ port
 Node::handles_test_event( DSSpikeEvent&, rport )
 {
   throw IllegalConnection(
-    "Possible cause: only static synapse types may be used to connect devices." );
+    "Possible cause: only static synapse types may be used to connect "
+    "devices." );
 }
 
 port
 Node::handles_test_event( DSCurrentEvent&, rport )
 {
   throw IllegalConnection(
-    "Possible cause: only static synapse types may be used to connect devices." );
+    "Possible cause: only static synapse types may be used to connect "
+    "devices." );
 }
 
 void

@@ -105,7 +105,8 @@ BoxMask< D >::outside( const Box< D >& b ) const
 {
   for ( int i = 0; i < D; ++i )
   {
-    if ( ( b.upper_right[ i ] < lower_left_[ i ] ) || ( b.lower_left[ i ] > upper_right_[ i ] ) )
+    if ( ( b.upper_right[ i ] < lower_left_[ i ] )
+      || ( b.lower_left[ i ] > upper_right_[ i ] ) )
       return true;
   }
   return false;
@@ -419,14 +420,16 @@ template < int D >
 bool
 AnchoredMask< D >::inside( const Box< D >& b ) const
 {
-  return m_->inside( Box< D >( b.lower_left - anchor_, b.upper_right - anchor_ ) );
+  return m_->inside(
+    Box< D >( b.lower_left - anchor_, b.upper_right - anchor_ ) );
 }
 
 template < int D >
 bool
 AnchoredMask< D >::outside( const Box< D >& b ) const
 {
-  return m_->outside( Box< D >( b.lower_left - anchor_, b.upper_right - anchor_ ) );
+  return m_->outside(
+    Box< D >( b.lower_left - anchor_, b.upper_right - anchor_ ) );
 }
 
 template < int D >

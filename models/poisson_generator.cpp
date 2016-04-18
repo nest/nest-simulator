@@ -104,7 +104,8 @@ nest::poisson_generator::calibrate()
   device_.calibrate();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
-  V_.poisson_dev_.set_lambda( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
+  V_.poisson_dev_.set_lambda(
+    Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
 }
 
 
@@ -113,9 +114,12 @@ nest::poisson_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator::update( Time const& T, const long_t from, const long_t to )
+nest::poisson_generator::update( Time const& T,
+  const long_t from,
+  const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 )

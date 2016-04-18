@@ -94,7 +94,8 @@ binary_neuron< TGainfunction >::Parameters_::set( const DictionaryDatum& d )
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::State_::get( DictionaryDatum& d, const Parameters_& ) const
+binary_neuron< TGainfunction >::State_::get( DictionaryDatum& d,
+  const Parameters_& ) const
 {
   def< double >( d, names::h, h_ ); // summed input
   def< double >( d, names::S, y_ ); // binary_neuron output state
@@ -102,7 +103,8 @@ binary_neuron< TGainfunction >::State_::get( DictionaryDatum& d, const Parameter
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::State_::set( const DictionaryDatum&, const Parameters_& )
+binary_neuron< TGainfunction >::State_::set( const DictionaryDatum&,
+  const Parameters_& )
 {
 }
 
@@ -113,7 +115,8 @@ binary_neuron< TGainfunction >::Buffers_::Buffers_( binary_neuron& n )
 }
 
 template < class TGainfunction >
-binary_neuron< TGainfunction >::Buffers_::Buffers_( const Buffers_&, binary_neuron& n )
+binary_neuron< TGainfunction >::Buffers_::Buffers_( const Buffers_&,
+  binary_neuron& n )
   : logger_( n )
 {
 }
@@ -168,7 +171,8 @@ template < class TGainfunction >
 void
 binary_neuron< TGainfunction >::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
   V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 
   // draw next time of update for the neuron from exponential distribution
@@ -184,15 +188,19 @@ binary_neuron< TGainfunction >::calibrate()
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::update( Time const& origin, const long_t from, const long_t to )
+binary_neuron< TGainfunction >::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
   {
     // update the input current
-    // the buffer for incoming spikes for every time step contains the difference
+    // the buffer for incoming spikes for every time step contains the
+    // difference
     // of the total input h with respect to the previous step, so sum them up
     S_.h_ += B_.spikes_.get_value( lag );
 
@@ -203,7 +211,8 @@ binary_neuron< TGainfunction >::update( Time const& origin, const long_t from, c
     {
       // change the state of the neuron with probability given by
       // gain function
-      // if the state has changed, the neuron produces an event sent to all its targets
+      // if the state has changed, the neuron produces an event sent to all its
+      // targets
 
       bool new_y = gain_( V_.rng_, S_.h_ + c );
 
@@ -240,12 +249,13 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   // The following logic implements the encoding:
-  // A single spike signals a transition to 0 state, two spikes in same time step
-  // signal the transition to 1 state.
+  // A single spike signals a transition to 0 state, two spikes in same time
+  // step signal the transition to 1 state.
   //
   // Remember the global id of the sender of the last spike being received
-  // this assumes that several spikes being sent by the same neuron in the same time step
-  // are received consecutively or are conveyed by setting the multiplicity accordingly.
+  // this assumes that several spikes being sent by the same neuron in the same
+  // time step are received consecutively or are conveyed by setting the
+  // multiplicity accordingly.
   //
   // Since in collocate_buffers spike events with multiplicity > 1
   // will be converted into sequences of spikes with unit multiplicity,
@@ -261,21 +271,22 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
   const Time& t_spike = e.get_stamp();
 
   if ( m == 1 )
-  { // multiplicity == 1, either a single 1->0 event or the first or second of a pair of 0->1 events
+  { // multiplicity == 1, either a single 1->0 event or the first or second of a
+    // pair of 0->1 events
     if ( gid == S_.last_in_gid_ && t_spike == S_.t_last_in_spike_ )
     {
       // received twice the same gid, so transition 0->1
       // take double weight to compensate for subtracting first event
-      B_.spikes_.add_value(
-        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+      B_.spikes_.add_value( e.get_rel_delivery_steps(
+                              kernel().simulation_manager.get_slice_origin() ),
         2.0 * e.get_weight() );
     }
     else
     {
       // count this event negatively, assuming it comes as single event
       // transition 1->0
-      B_.spikes_.add_value(
-        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+      B_.spikes_.add_value( e.get_rel_delivery_steps(
+                              kernel().simulation_manager.get_slice_origin() ),
         -e.get_weight() );
     }
   }
@@ -283,8 +294,9 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
     if ( m == 2 )
   {
     // count this event positively, transition 0->1
-    B_.spikes_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() );
+    B_.spikes_.add_value( e.get_rel_delivery_steps(
+                            kernel().simulation_manager.get_slice_origin() ),
+      e.get_weight() );
   }
 
   S_.last_in_gid_ = gid;
@@ -304,7 +316,8 @@ binary_neuron< TGainfunction >::handle( CurrentEvent& e )
   // but also to handle the incoming current events added
   // both contributions are directly added to the variable h
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 

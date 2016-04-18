@@ -73,7 +73,8 @@ ModelManager::register_preconf_node_model( const Name& name,
   conf->clear_access_flags();
   model->set_status( conf );
   std::string missed;
-  assert( conf->all_accessed( missed ) ); // we only get here from C++ code, no need for exception
+  // we only get here from C++ code, no need for exception
+  assert( conf->all_accessed( missed ) );
   return register_node_model_( model, private_model );
 }
 
@@ -81,8 +82,8 @@ template < class ConnectionT >
 void
 ModelManager::register_connection_model( const std::string& name )
 {
-  ConnectorModel* cf =
-    new GenericConnectorModel< ConnectionT >( name, /*is_primary=*/true, /*has_delay=*/true );
+  ConnectorModel* cf = new GenericConnectorModel< ConnectionT >(
+    name, /*is_primary=*/true, /*has_delay=*/true );
   register_connection_model_( cf );
 
   if ( not ends_with( name, "_hpc" ) )
@@ -98,14 +99,17 @@ ModelManager::register_connection_model( const std::string& name )
  */
 template < class ConnectionT >
 void
-ModelManager::register_secondary_connection_model( const std::string& name, bool has_delay )
+ModelManager::register_secondary_connection_model( const std::string& name,
+  bool has_delay )
 {
-  ConnectorModel* cm = new GenericSecondaryConnectorModel< ConnectionT >( name, has_delay );
+  ConnectorModel* cm =
+    new GenericSecondaryConnectorModel< ConnectionT >( name, has_delay );
 
   synindex synid = register_connection_model_( cm );
 
   // idea: save *cm in data structure
-  // otherwise when number of threads is increased no way to get further elements
+  // otherwise when number of threads is increased no way to get further
+  // elements
   if ( secondary_connector_models_.size() < synid + ( unsigned int ) 1 )
     secondary_connector_models_.resize( synid + 1, NULL );
 
@@ -120,7 +124,8 @@ ModelManager::register_secondary_connection_model( const std::string& name, bool
   synid = register_connection_model_( cm );
 
   // idea: save *cm in data structure
-  // otherwise when number of threads is increased no way to get further elements
+  // otherwise when number of threads is increased no way to get further
+  // elements
   if ( secondary_connector_models_.size() < synid + ( unsigned int ) 1 )
     secondary_connector_models_.resize( synid + 1, NULL );
 
@@ -132,7 +137,8 @@ ModelManager::register_secondary_connection_model( const std::string& name, bool
 inline Node*
 ModelManager::get_proxy_node( thread tid, index gid )
 {
-  return proxy_nodes_[ tid ].at( kernel().modelrange_manager.get_model_id( gid ) );
+  return proxy_nodes_[ tid ].at(
+    kernel().modelrange_manager.get_model_id( gid ) );
 }
 
 

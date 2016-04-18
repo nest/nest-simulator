@@ -26,7 +26,8 @@
 
 // nothing if GSL 1.2 or later not available
 
-librandom::GslRandomGen::GslRandomGen( const gsl_rng_type* type, unsigned long seed )
+librandom::GslRandomGen::GslRandomGen( const gsl_rng_type* type,
+  unsigned long seed )
   : RandomGen()
 {
   rng_ = gsl_rng_alloc( type );

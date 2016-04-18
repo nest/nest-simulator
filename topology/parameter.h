@@ -423,8 +423,7 @@ public:
             + ( pos[ 1 ] - mean_y_ ) * ( pos[ 1 ] - mean_y_ )
               / ( sigma_y_ * sigma_y_ )
             - 2. * rho_ * ( pos[ 0 ] - mean_x_ ) * ( pos[ 1 ] - mean_y_ )
-              / ( sigma_x_ * sigma_y_ ) )
-          / ( 2. * ( 1. - rho_ * rho_ ) ) );
+              / ( sigma_x_ * sigma_y_ ) ) / ( 2. * ( 1. - rho_ * rho_ ) ) );
   }
 
   double_t
@@ -744,7 +743,7 @@ public:
   }
 
 protected:
-  Parameter *parameter1_, *parameter2_;
+  Parameter* parameter1_, *parameter2_;
 };
 
 /**
@@ -801,7 +800,7 @@ public:
   }
 
 protected:
-  Parameter *parameter1_, *parameter2_;
+  Parameter* parameter1_, *parameter2_;
 };
 
 /**
@@ -858,7 +857,7 @@ public:
   }
 
 protected:
-  Parameter *parameter1_, *parameter2_;
+  Parameter* parameter1_, *parameter2_;
 };
 
 /**
@@ -915,7 +914,7 @@ public:
   }
 
 protected:
-  Parameter *parameter1_, *parameter2_;
+  Parameter* parameter1_, *parameter2_;
 };
 
 /**

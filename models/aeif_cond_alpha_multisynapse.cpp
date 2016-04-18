@@ -299,8 +299,7 @@ aeif_cond_alpha_multisynapse::State_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::V_m, y_[ V_M ] );
 
   if ( ( d->known( names::g_ex ) ) && ( d->known( names::dg_ex ) )
-    && ( d->known( names::g_in ) )
-    && ( d->known( names::dg_in ) ) )
+    && ( d->known( names::g_in ) ) && ( d->known( names::dg_in ) ) )
   {
     const std::vector< double_t > g_exc =
       getValue< std::vector< double_t > >( d->lookup( names::g_ex ) );

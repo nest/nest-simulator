@@ -264,8 +264,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_(
       node_access_.clear();
       throw IllegalConnection(
         "UniversalDataLogger::connect_logging_device(): "
-        "Unknown recordable "
-        + recvars[ j ].toString() );
+        "Unknown recordable " + recvars[ j ].toString() );
     }
 
     node_access_.push_back( rec->second );

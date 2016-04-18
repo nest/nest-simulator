@@ -115,11 +115,8 @@ nest::aeif_psc_alpha_gp_dynamics( double,
     node.P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
 
   // dv/dt
-  f[ S::V_M ] =
-    ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) + I_exc - I_in - w
-      + node.P_.I_e
-      + node.B_.I_stim_ )
-    / node.P_.C_m;
+  f[ S::V_M ] = ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) + I_exc
+                  - I_in - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::DI_EXC ] = -dI_exc / node.P_.tau_syn_ex;
   f[ S::I_EXC ] =

@@ -102,10 +102,8 @@ nest::iaf_psc_alpha_ps_dynamics( double,
   const double_t& i_inh = y[ S::I_INH ];
 
   // dv/dt
-  f[ S::V_M ] =
-    ( -node.P_.g_L * ( V - node.P_.E_L ) + i_exc - i_inh + node.P_.I_e
-      + node.B_.I_stim_ )
-    / node.P_.C_m;
+  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) + i_exc - i_inh
+                  + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::DI_EXC ] = -di_exc / node.P_.tau_syn_exc;
   f[ S::I_EXC ] =

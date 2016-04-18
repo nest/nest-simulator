@@ -113,9 +113,8 @@ hh_psc_alpha_dynamics( double, const double y[], double f[], void* pnode )
   const double_t I_L = node.P_.g_L * ( V - node.P_.E_L );
 
   // V dot -- synaptic input are currents, inhib current is negative
-  f[ S::V_M ] =
-    ( -( I_Na + I_K + I_L ) + node.B_.I_stim_ + node.P_.I_e + I_ex + I_in )
-    / node.P_.C_m;
+  f[ S::V_M ] = ( -( I_Na + I_K + I_L ) + node.B_.I_stim_ + node.P_.I_e + I_ex
+                  + I_in ) / node.P_.C_m;
 
   // channel dynamics
   f[ S::HH_M ] =

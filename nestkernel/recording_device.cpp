@@ -188,9 +188,8 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
     updateValue< bool >( d, names::to_memory, to_memory_ ) || rec_change;
   rec_change = updateValue< bool >( d, names::to_file, to_file_ ) || rec_change;
   if ( rd.mode_ == RecordingDevice::MULTIMETER )
-    rec_change =
-      updateValue< bool >( d, names::to_accumulator, to_accumulator_ )
-      || rec_change;
+    rec_change = updateValue< bool >(
+                   d, names::to_accumulator, to_accumulator_ ) || rec_change;
 
   const bool have_record_to = d->known( names::record_to );
   if ( have_record_to )
@@ -681,14 +680,12 @@ const std::string
 nest::RecordingDevice::build_filename_() const
 {
   // number of digits in number of virtual processes
-  const int vpdigits =
-    static_cast< int >( std::floor( std::log10( static_cast< float >(
-                          kernel().vp_manager.get_num_virtual_processes() ) ) )
-      + 1 );
+  const int vpdigits = static_cast< int >(
+    std::floor( std::log10( static_cast< float >(
+      kernel().vp_manager.get_num_virtual_processes() ) ) ) + 1 );
   const int gidigits = static_cast< int >(
-    std::floor(
-      std::log10( static_cast< float >( kernel().node_manager.size() ) ) )
-    + 1 );
+    std::floor( std::log10(
+      static_cast< float >( kernel().node_manager.size() ) ) ) + 1 );
 
   std::ostringstream basename;
   const std::string& path = kernel().io_manager.get_data_path();

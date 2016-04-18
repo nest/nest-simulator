@@ -126,10 +126,7 @@ nest::aeif_cond_alpha_ps_dynamics( double,
   // dv/dt
   f[ S::V_M ] =
     ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
-      - w
-      + node.P_.I_e
-      + node.B_.I_stim_ )
-    / node.P_.C_m;
+      - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::DG_EXC ] = -dg_ex / node.P_.tau_syn_ex;
   f[ S::G_EXC ] =

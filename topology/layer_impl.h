@@ -200,10 +200,11 @@ Layer< D >::do_get_global_positions_ntree_( const Selector& filter )
     typename std::insert_iterator< Ntree< D, index > > to =
       std::inserter( *cached_ntree_, cached_ntree_->end() );
 
-    for ( typename std::vector< std::pair< Position< D >, index > >::iterator
-            from = cached_vector_->begin();
-          from != cached_vector_->end();
-          ++from )
+    for (
+      typename std::vector< std::pair< Position< D >, index > >::iterator from =
+        cached_vector_->begin();
+      from != cached_vector_->end();
+      ++from )
     {
       *to = *from;
     }
@@ -382,8 +383,7 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
 
         out << ' ';
         tgt_layer->compute_displacement(
-                   source_pos, target->get_subnet_index() )
-          .print( out );
+                     source_pos, target->get_subnet_index() ).print( out );
       }
 
       out << '\n';
@@ -422,8 +422,7 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
       for ( int i = 0; i < D; ++i )
         oversize |= layer.get_periodic_mask()[ i ]
           and ( grid_mask.get_lower_right()[ i ]
-                - grid_mask.get_upper_left()[ i ] )
-            > ( int ) dims[ i ];
+                - grid_mask.get_upper_left()[ i ] ) > ( int ) dims[ i ];
 
       if ( oversize )
         throw BadProperty(

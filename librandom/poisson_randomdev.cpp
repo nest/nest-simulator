@@ -173,8 +173,8 @@ librandom::PoissonRandomDev::init_()
 
     // breaks in case of rounding issues
     assert( ( P_[ n_tab_ - 1 ] <= 1.0 )
-      && ( 1 - P_[ n_tab_ - 1 ]
-              < 10 * std::numeric_limits< double >::epsilon() ) );
+      && ( 1 - P_[ n_tab_ - 1 ] < 10
+                * std::numeric_limits< double >::epsilon() ) );
 
     // ensure table ends with 1.0
     P_[ n_tab_ - 1 ] = 1.0;

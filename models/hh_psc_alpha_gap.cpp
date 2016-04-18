@@ -155,10 +155,8 @@ hh_psc_alpha_gap_dynamics( double time,
   const double_t I_gap = gap;
 
   // V dot -- synaptic input are currents, inhib current is negative
-  f[ S::V_M ] =
-    ( -( I_Na + I_K + I_L ) + node.B_.I_stim_ + node.P_.I_e + I_ex + I_in
-      + I_gap )
-    / node.P_.C_m;
+  f[ S::V_M ] = ( -( I_Na + I_K + I_L ) + node.B_.I_stim_ + node.P_.I_e + I_ex
+                  + I_in + I_gap ) / node.P_.C_m;
 
   // channel dynamics
   f[ S::HH_M ] =
@@ -572,9 +570,8 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
       S_.y_[ State_::DI_INH ] +=
         B_.spike_inh_.get_value_prelim( lag ) * V_.PSCurrInit_I_;
       // check deviation from last iteration
-      done =
-        ( fabs( S_.y_[ State_::V_M ] - B_.last_y_values[ lag ] ) <= prelim_tol )
-        && done;
+      done = ( fabs( S_.y_[ State_::V_M ] - B_.last_y_values[ lag ] )
+               <= prelim_tol ) && done;
       B_.last_y_values[ lag ] = S_.y_[ State_::V_M ];
 
       // update different interpolations

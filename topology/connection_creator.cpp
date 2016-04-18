@@ -115,8 +115,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     {
 
       throw BadProperty( "ConnectLayers cannot handle parameter '"
-        + dit->first.toString()
-        + "'." );
+        + dit->first.toString() + "'." );
     }
   }
 

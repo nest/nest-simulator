@@ -106,9 +106,8 @@ nest::iaf_chxk_2008_dynamics( double,
   const double_t I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
 
   // dV_m/dt
-  f[ S::V_M ] =
-    ( -I_leak - I_syn_exc - I_syn_inh - I_ahp + node.B_.I_stim_ + node.P_.I_e )
-    / node.P_.C_m;
+  f[ S::V_M ] = ( -I_leak - I_syn_exc - I_syn_inh - I_ahp + node.B_.I_stim_
+                  + node.P_.I_e ) / node.P_.C_m;
 
   // d dg_exc/dt, dg_exc/dt
   f[ S::DG_EXC ] = -y[ S::DG_EXC ] / node.P_.tau_synE;

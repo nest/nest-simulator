@@ -132,9 +132,7 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   // delta V
   f[ S::VM ] =
     ( I_Na + I_K + I_syn + node.S_.I_NaP_ + node.S_.I_KNa_ + node.S_.I_T_
-      + node.S_.I_h_
-      + node.B_.I_stim_ )
-      / node.P_.Tau_m
+      + node.S_.I_h_ + node.B_.I_stim_ ) / node.P_.Tau_m
     + I_spike;
 
   // delta Theta

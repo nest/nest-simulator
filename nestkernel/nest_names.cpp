@@ -270,6 +270,7 @@ const Name structural_plasticity_synapses( "structural_plasticity_synapses" );
 const Name structural_plasticity_update_interval( "structural_plasticity_update_interval" );
 const Name structure( "structure" );
 const Name success( "success" );
+const Name symmetric( "symmetric" );
 const Name synapse( "synapse" );
 const Name synapse_label( "synapse_label" );
 const Name synapse_model( "synapse_model" );

@@ -102,6 +102,8 @@ public:
   void set_post_synaptic_element_name( std::string name );
 
   int change_connected_synaptic_elements( index, index, const int, int );
+  
+  virtual bool supports_symmetric() const { return false; }
 
 protected:
   //! Implements the actual connection algorithm
@@ -137,11 +139,12 @@ protected:
    */
   void skip_conn_parameter_( thread );
 
-  const GIDCollection& sources_;
-  const GIDCollection& targets_;
+  GIDCollection const * sources_;
+  GIDCollection const * targets_;
 
   bool autapses_;
   bool multapses_;
+  bool symmetric_;
 
   //! buffer for exceptions raised in threads
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
@@ -203,6 +206,8 @@ public:
     : ConnBuilder( sources, targets, conn_spec, syn_spec )
   {
   }
+  
+  bool supports_symmetric() const { return true; }
 
 protected:
   void connect_();

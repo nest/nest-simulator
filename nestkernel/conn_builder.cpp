@@ -51,10 +51,11 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   const GIDCollection& targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
-  : sources_( sources )
-  , targets_( targets )
+  : sources_( &sources )
+  , targets_( &targets )
   , autapses_( true )
   , multapses_( true )
+  , symmetric_ ( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
   , synapse_model_( kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
   , weight_( 0 )
@@ -67,6 +68,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   //  - rule-specific params are handled by subclass c'tor
   updateValue< bool >( conn_spec, names::autapses, autapses_ );
   updateValue< bool >( conn_spec, names::multapses, multapses_ );
+  updateValue< bool >( conn_spec, names::symmetric, symmetric_ );
 
   // read out synapse-related parameters ----------------------
   if ( !syn_spec->known( names::model ) )
@@ -359,13 +361,24 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
 void
 nest::ConnBuilder::connect()
 {
+  if( symmetric_ && not supports_symmetric() )
+    throw NotImplemented( "So far Connect doesn't support symmetric connections for this connection rule." );
+  
   if ( pre_synaptic_element_name != "" && post_synaptic_element_name != "" )
   {
+    if( symmetric_ )
+      throw NotImplemented( "So far Connect doesn't support symmetric connections in combination with structural plasticity." );
     sp_connect_();
   }
   else
   {
     connect_();
+    if( symmetric_ )
+    {
+       std::swap(sources_, targets_);
+       connect_();
+       std::swap(sources_, targets_);  // not really necessary, but leaves things in clean state
+    }
   }
 
   // check if any exceptions have been raised
@@ -519,7 +532,7 @@ void
 nest::OneToOneBuilder::connect_()
 {
   // make sure that target and source population have the same size
-  if ( sources_.size() != targets_.size() )
+  if ( sources_->size() != targets_->size() )
   {
     LOG( M_ERROR, "Connect", "Source and Target population must be of the same size." );
     throw DimensionMismatch();
@@ -535,11 +548,11 @@ nest::OneToOneBuilder::connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      for ( GIDCollection::const_iterator tgid = targets_.begin(), sgid = sources_.begin();
-            tgid != targets_.end();
+      for ( GIDCollection::const_iterator tgid = targets_->begin(), sgid = sources_->begin();
+            tgid != targets_->end();
             ++tgid, ++sgid )
       {
-        assert( sgid != sources_.end() );
+        assert( sgid != sources_->end() );
 
         if ( *sgid == *tgid and not autapses_ )
           continue;
@@ -583,7 +596,7 @@ void
 nest::OneToOneBuilder::disconnect_()
 {
   // make sure that target and source population have the same size
-  if ( sources_.size() != targets_.size() )
+  if ( sources_->size() != targets_->size() )
   {
     LOG( M_ERROR, "Disconnect", "Source and Target population must be of the same size." );
     throw DimensionMismatch();
@@ -596,12 +609,12 @@ nest::OneToOneBuilder::disconnect_()
 
     try
     {
-      for ( GIDCollection::const_iterator tgid = targets_.begin(), sgid = sources_.begin();
-            tgid != targets_.end();
+      for ( GIDCollection::const_iterator tgid = targets_->begin(), sgid = sources_->begin();
+            tgid != targets_->end();
             ++tgid, ++sgid )
       {
 
-        assert( sgid != sources_.end() );
+        assert( sgid != sources_->end() );
 
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
@@ -642,7 +655,7 @@ void
 nest::OneToOneBuilder::sp_connect_()
 {
   // make sure that target and source population have the same size
-  if ( sources_.size() != targets_.size() )
+  if ( sources_->size() != targets_->size() )
   {
     LOG( M_ERROR, "Connect", "Source and Target population must be of the same size." );
     throw DimensionMismatch();
@@ -658,11 +671,11 @@ nest::OneToOneBuilder::sp_connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      for ( GIDCollection::const_iterator tgid = targets_.begin(), sgid = sources_.begin();
-            tgid != targets_.end();
+      for ( GIDCollection::const_iterator tgid = targets_->begin(), sgid = sources_->begin();
+            tgid != targets_->end();
             ++tgid, ++sgid )
       {
-        assert( sgid != sources_.end() );
+        assert( sgid != sources_->end() );
 
         if ( *sgid == *tgid and not autapses_ )
           continue;
@@ -698,7 +711,7 @@ void
 nest::OneToOneBuilder::sp_disconnect_()
 {
   // make sure that target and source population have the same size
-  if ( sources_.size() != targets_.size() )
+  if ( sources_->size() != targets_->size() )
   {
     LOG( M_ERROR, "Disconnect", "Source and Target population must be of the same size." );
     throw DimensionMismatch();
@@ -711,11 +724,11 @@ nest::OneToOneBuilder::sp_disconnect_()
 
     try
     {
-      for ( GIDCollection::const_iterator tgid = targets_.begin(), sgid = sources_.begin();
-            tgid != targets_.end();
+      for ( GIDCollection::const_iterator tgid = targets_->begin(), sgid = sources_->begin();
+            tgid != targets_->end();
             ++tgid, ++sgid )
       {
-        assert( sgid != sources_.end() );
+        assert( sgid != sources_->end() );
 
         if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           continue;
@@ -749,12 +762,12 @@ nest::AllToAllBuilder::connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
+      for ( GIDCollection::const_iterator tgid = targets_->begin(); tgid != targets_->end(); ++tgid )
       {
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
         {
-          for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+          for ( GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end();
                 ++sgid )
             skip_conn_parameter_( tid );
           continue;
@@ -766,13 +779,13 @@ nest::AllToAllBuilder::connect_()
         // check whether the target is on our thread
         if ( tid != target_thread )
         {
-          for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+          for ( GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end();
                 ++sgid )
             skip_conn_parameter_( tid );
           continue;
         }
 
-        for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+        for ( GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end();
               ++sgid )
         {
           if ( not autapses_ and *sgid == *tgid )
@@ -814,9 +827,9 @@ nest::AllToAllBuilder::sp_connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
+      for ( GIDCollection::const_iterator tgid = targets_->begin(); tgid != targets_->end(); ++tgid )
       {
-        for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+        for ( GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end();
               ++sgid )
         {
           if ( not autapses_ and *sgid == *tgid )
@@ -826,7 +839,7 @@ nest::AllToAllBuilder::sp_connect_()
           }
           if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
           {
-            for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+            for ( GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end();
                   ++sgid )
               skip_conn_parameter_( tid );
             continue;
@@ -862,12 +875,12 @@ nest::AllToAllBuilder::disconnect_()
 
     try
     {
-      for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
+      for ( GIDCollection::const_iterator tgid = targets_->begin(); tgid != targets_->end(); ++tgid )
       {
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
         {
-          for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+          for ( GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end();
                 ++sgid )
             skip_conn_parameter_( tid );
           continue;
@@ -879,13 +892,13 @@ nest::AllToAllBuilder::disconnect_()
         // check whether the target is on our thread
         if ( tid != target_thread )
         {
-          for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+          for ( GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end();
                 ++sgid )
             skip_conn_parameter_( tid );
           continue;
         }
 
-        for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+        for ( GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end();
               ++sgid )
         {
           single_disconnect_( *sgid, *target, target_thread );
@@ -918,14 +931,14 @@ nest::AllToAllBuilder::sp_disconnect_()
 
     try
     {
-      for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
+      for ( GIDCollection::const_iterator tgid = targets_->begin(); tgid != targets_->end(); ++tgid )
       {
-        for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+        for ( GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end();
               ++sgid )
         {
           if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           {
-            for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+            for ( GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end();
                   ++sgid )
               skip_conn_parameter_( tid );
             continue;
@@ -958,7 +971,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( const GIDCollection& sources,
   // verify that indegree is not larger than source population if multapses are disabled
   if ( not multapses_ )
   {
-    if ( ( indegree_ > static_cast< long >( sources_.size() ) ) )
+    if ( ( indegree_ > static_cast< long >( sources_->size() ) ) )
       throw BadProperty( "Indegree cannot be larger than population size." );
   }
 }
@@ -976,7 +989,7 @@ nest::FixedInDegreeBuilder::connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
+      for ( GIDCollection::const_iterator tgid = targets_->begin(); tgid != targets_->end(); ++tgid )
       {
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
@@ -990,7 +1003,7 @@ nest::FixedInDegreeBuilder::connect_()
           continue;
 
         std::set< long > ch_ids;
-        long n_rnd = sources_.size();
+        long n_rnd = sources_->size();
 
         for ( long j = 0; j < indegree_; ++j )
         {
@@ -1000,7 +1013,7 @@ nest::FixedInDegreeBuilder::connect_()
           do
           {
             s_id = rng->ulrand( n_rnd );
-            sgid = sources_[ s_id ];
+            sgid = (*sources_)[ s_id ];
           } while ( ( not autapses_ and sgid == *tgid )
             || ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
 
@@ -1033,7 +1046,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( const GIDCollection& sources
   // verify that outdegree is not larger than target population if multapses are disabled
   if ( not multapses_ )
   {
-    if ( ( outdegree_ > static_cast< long >( targets_.size() ) ) )
+    if ( ( outdegree_ > static_cast< long >( targets_->size() ) ) )
       throw BadProperty( "Outdegree cannot be larger than population size." );
   }
 }
@@ -1043,11 +1056,11 @@ nest::FixedOutDegreeBuilder::connect_()
 {
   librandom::RngPtr grng = kernel().rng_manager.get_grng();
 
-  for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end(); ++sgid )
+  for ( GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end(); ++sgid )
   {
     std::set< long > ch_ids;
     std::vector< index > tgt_ids_;
-    const long n_rnd = targets_.size();
+    const long n_rnd = targets_->size();
 
     for ( long j = 0; j < outdegree_; ++j )
     {
@@ -1057,7 +1070,7 @@ nest::FixedOutDegreeBuilder::connect_()
       do
       {
         t_id = grng->ulrand( n_rnd );
-        tgid = targets_[ t_id ];
+        tgid = (*targets_)[ t_id ];
       } while ( ( not autapses_ and tgid == *sgid )
         || ( not multapses_ and ch_ids.find( t_id ) != ch_ids.end() ) );
 
@@ -1118,7 +1131,7 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( const GIDCollection& sou
   // verify that total number of connections is not larger than N_sources*N_targets
   if ( not multapses_ )
   {
-    if ( ( N_ > static_cast< long >( sources_.size() * targets_.size() ) ) )
+    if ( ( N_ > static_cast< long >( sources_->size() * targets_->size() ) ) )
       throw BadProperty(
         "Total number of connections cannot exceed product "
         "of source and targer population sizes." );
@@ -1137,16 +1150,16 @@ void
 nest::FixedTotalNumberBuilder::connect_()
 {
   const int_t M = kernel().vp_manager.get_num_virtual_processes();
-  const long_t size_sources = sources_.size();
-  const long_t size_targets = targets_.size();
+  const long_t size_sources = sources_->size();
+  const long_t size_targets = targets_->size();
 
   // drawing connection ids
 
   // Compute the distribution of targets over processes using the modulo function
   std::vector< std::vector< size_t > > targets_on_vp( M );
-  for ( size_t t = 0; t < targets_.size(); t++ )
+  for ( size_t t = 0; t < targets_->size(); t++ )
   {
-    targets_on_vp[ kernel().vp_manager.suggest_vp( targets_[ t ] ) ].push_back( targets_[ t ] );
+    targets_on_vp[ kernel().vp_manager.suggest_vp( (*targets_)[ t ] ) ].push_back( (*targets_)[ t ] );
   }
 
   // We use the multinomial distribution to determine the number of
@@ -1221,7 +1234,7 @@ nest::FixedTotalNumberBuilder::connect_()
           const long_t t_index = rng->ulrand( targets_on_vp[ vp_id ].size() );
           // map random number of source node to gid corresponding to
           // the source_adr vector
-          const long_t sgid = sources_[ s_index ];
+          const long_t sgid = (*sources_)[ s_index ];
           // map random number of target node to gid using the
           // targets_on_vp vector
           const long_t tgid = targets_on_vp[ vp_id ][ t_index ];
@@ -1271,7 +1284,7 @@ nest::BernoulliBuilder::connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      for ( GIDCollection::const_iterator tgid = targets_.begin(); tgid != targets_.end(); ++tgid )
+      for ( GIDCollection::const_iterator tgid = targets_->begin(); tgid != targets_->end(); ++tgid )
       {
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
@@ -1284,7 +1297,7 @@ nest::BernoulliBuilder::connect_()
         if ( tid != target_thread )
           continue;
 
-        for ( GIDCollection::const_iterator sgid = sources_.begin(); sgid != sources_.end();
+        for ( GIDCollection::const_iterator sgid = sources_->begin(); sgid != sources_->end();
               ++sgid )
         {
           // not possible to create multapses with this implementation,

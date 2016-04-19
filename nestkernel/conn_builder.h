@@ -111,7 +111,8 @@ protected:
   virtual void
   sp_connect_()
   {
-    throw NotImplemented( "This connection rule is not implemented for structural plasticity" );
+    throw NotImplemented(
+      "This connection rule is not implemented for structural plasticity" );
   }
   virtual void
   disconnect_()
@@ -121,7 +122,8 @@ protected:
   virtual void
   sp_disconnect_()
   {
-    throw NotImplemented( "This connection rule is not implemented for structural plasticity" );
+    throw NotImplemented(
+      "This connection rule is not implemented for structural plasticity" );
   }
 
   //! Create connection between given nodes, fill parameter values
@@ -149,7 +151,8 @@ protected:
   //! buffer for exceptions raised in threads
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
 
-  // Name of the pre synaptic and post synaptic elements for this connection builder
+  // Name of the pre synaptic and post synaptic elements for this connection
+  // builder
   std::string pre_synaptic_element_name;
   std::string post_synaptic_element_name;
 
@@ -190,9 +193,10 @@ private:
   void register_parameters_requiring_skipping_( ConnParameter& param );
 
   // check for synapse specific errors or warnings
-  // This is a temporary function which should be removed once all parameter types work with
-  // Connect.
-  // The remaining error and warnings should then be handled within the synapse model.
+  // This is a temporary function which should be removed once all parameter
+  // types work with Connect.
+  // The remaining error and warnings should then be handled within the synapse
+  // model.
   void check_synapse_params_( std::string, const DictionaryDatum& );
 };
 

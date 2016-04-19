@@ -83,8 +83,8 @@ nest::sli_neuron::sli_neuron()
   , state_( new Dictionary() )
   , B_( *this )
 {
-  // We add empty defaults for /calibrate and /update, so that the uninitialised node runs without
-  // errors.
+  // We add empty defaults for /calibrate and /update, so that the uninitialized
+  // node runs without errors.
   state_->insert( names::calibrate, new ProcedureDatum() );
   state_->insert( names::update, new ProcedureDatum() );
   recordablesMap_.create();
@@ -129,8 +129,9 @@ nest::sli_neuron::calibrate()
 
   if ( !state_->known( names::calibrate ) )
   {
-    std::string msg =
-      String::compose( "Node %1 has no /calibrate function in its status dictionary.", get_gid() );
+    std::string msg = String::compose(
+      "Node %1 has no /calibrate function in its status dictionary.",
+      get_gid() );
     LOG( M_ERROR, "sli_neuron::calibrate", msg.c_str() );
     terminate = true;
   }
@@ -138,7 +139,8 @@ nest::sli_neuron::calibrate()
   if ( !state_->known( names::update ) )
   {
     std::string msg = String::compose(
-      "Node %1 has no /update function in its status dictionary. Terminating.", get_gid() );
+      "Node %1 has no /update function in its status dictionary. Terminating.",
+      get_gid() );
     LOG( M_ERROR, "sli_neuron::calibrate", msg.c_str() );
     terminate = true;
   }
@@ -161,17 +163,23 @@ nest::sli_neuron::calibrate()
  */
 
 void
-nest::sli_neuron::update( Time const& origin, const long_t from, const long_t to )
+nest::sli_neuron::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   ( *state_ )[ names::t_origin ] = origin.get_steps();
 
   if ( state_->known( names::error ) )
   {
-    std::string msg = String::compose( "Node %1 still has its error state set.", get_gid() );
+    std::string msg =
+      String::compose( "Node %1 still has its error state set.", get_gid() );
     LOG( M_ERROR, "sli_neuron::update", msg.c_str() );
-    LOG( M_ERROR, "sli_neuron::update", "Please check /calibrate and /update for errors" );
+    LOG( M_ERROR,
+      "sli_neuron::update",
+      "Please check /calibrate and /update for errors" );
     kernel().simulation_manager.terminate();
     return;
   }
@@ -226,7 +234,8 @@ nest::sli_neuron::execute_sli_protected( DictionaryDatum state, Name cmd )
     assert( state->known( names::global_id ) );
     index g_id = ( *state )[ names::global_id ];
     std::string model = getValue< std::string >( ( *state )[ names::model ] );
-    std::string msg = String::compose( "Error in %1 with global id %2.", model, g_id );
+    std::string msg =
+      String::compose( "Error in %1 with global id %2.", model, g_id );
 
     LOG( M_ERROR, cmd.toString().c_str(), msg.c_str() );
     LOG( M_ERROR, "execute_sli_protected", "Terminating." );
@@ -244,12 +253,12 @@ nest::sli_neuron::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.ex_spikes_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.ex_spikes_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.in_spikes_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.in_spikes_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 
@@ -263,7 +272,8 @@ nest::sli_neuron::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * I );
 }
 
 void

@@ -480,7 +480,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-//--------------------------------------------------------------------------------- <- end of line
+//---------------------------------------------------------------------------------
 //(C84) is maximum width for LaTeX-include1
 /* BeginDocumentation
 
@@ -516,7 +516,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-//--------------------------------------------------------------------------------- <- end of line
+//---------------------------------------------------------------------------------
 //(C84) is maximum width for LaTeX-include1
 /* BeginDocumentation
 

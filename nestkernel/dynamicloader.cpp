@@ -102,7 +102,9 @@ DynamicLoaderModule::DynamicLoaderModule( SLIInterpreter& interpreter )
 DynamicLoaderModule::~DynamicLoaderModule()
 {
   // unload all loaded modules
-  for ( vecDynModules::iterator it = dyn_modules.begin(); it != dyn_modules.end(); ++it )
+  for ( vecDynModules::iterator it = dyn_modules.begin();
+        it != dyn_modules.end();
+        ++it )
   {
     if ( it->handle != NULL )
     {
@@ -145,7 +147,8 @@ has_name( SLIModule const* const m, const std::string n )
   Description:
   Synopsis: (module_name) Install -> handle
 */
-DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction( vecDynModules& dyn_modules )
+DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction(
+  vecDynModules& dyn_modules )
   : dyn_modules_( dyn_modules )
 {
 }
@@ -162,10 +165,12 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
     throw DynamicModuleManagementError( "Module name must not be empty." );
 
   // check if module already loaded
-  // this check can happen here, since we are comparing dynamically loaded modules
-  // based on the name given to the Install command
-  if ( std::find( dyn_modules_.begin(), dyn_modules_.end(), new_module ) != dyn_modules_.end() )
-    throw DynamicModuleManagementError( "Module '" + new_module.name + "' is loaded already." );
+  // this check can happen here, since we are comparing dynamically loaded
+  // modules based on the name given to the Install command
+  if ( std::find( dyn_modules_.begin(), dyn_modules_.end(), new_module )
+    != dyn_modules_.end() )
+    throw DynamicModuleManagementError(
+      "Module '" + new_module.name + "' is loaded already." );
 
   // call lt_dlerror() to reset any error messages hanging around
   lt_dlerror();
@@ -173,9 +178,11 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   if ( searchpath_result != 0 )
   {
     char* errstr = ( char* ) lt_dlerror();
-    std::string msg = "Could not set user search path: " NEST_PREFIX "/lib/nest";
+    std::string msg =
+      "Could not set user search path: " NEST_PREFIX "/lib/nest";
     if ( errstr )
-      msg += "\nThe dynamic loader returned the following error: '" + std::string( errstr ) + "'.";
+      msg += "\nThe dynamic loader returned the following error: '"
+        + std::string( errstr ) + "'.";
     throw DynamicModuleManagementError( msg );
   }
 
@@ -187,7 +194,8 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
     char* errstr = ( char* ) lt_dlerror();
     std::string msg = "Module '" + new_module.name + "' could not be opened.";
     if ( errstr )
-      msg += "\nThe dynamic loader returned the following error: '" + std::string( errstr ) + "'.";
+      msg += "\nThe dynamic loader returned the following error: '"
+        + std::string( errstr ) + "'.";
     msg += "\n\nPlease check LD_LIBRARY_PATH (OSX: DYLD_LIBRARY_PATH)!";
     throw DynamicModuleManagementError( msg );
   }
@@ -206,8 +214,8 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   }
 
   // check if module is linked in. This test is based on the module name
-  // returned by DynModule::name(), since we have no file names for linked modules.
-  // We can only perform it after we have loaded the module.
+  // returned by DynModule::name(), since we have no file names for linked
+  // modules. We can only perform it after we have loaded the module.
   if ( std::find_if( DynamicLoaderModule::getLinkedModules().begin(),
          DynamicLoaderModule::getLinkedModules().end(),
          std::bind2nd( std::ptr_fun( has_name ), pModule->name() ) )
@@ -283,7 +291,9 @@ DynamicLoaderModule::init( SLIInterpreter* i )
 
       dl_error = lt_dlsetsearchpath( path );
       if ( dl_error )
-        LOG( M_ERROR, "DynamicLoaderModule::init", "Could not set dynamic module path." );
+        LOG( M_ERROR,
+          "DynamicLoaderModule::init",
+          "Could not set dynamic module path." );
     }
   }
   else
@@ -307,13 +317,16 @@ void
 DynamicLoaderModule::initLinkedModules( SLIInterpreter& interpreter )
 {
 
-  for ( vecLinkedModules::iterator it = getLinkedModules().begin(); it != getLinkedModules().end();
+  for ( vecLinkedModules::iterator it = getLinkedModules().begin();
+        it != getLinkedModules().end();
         ++it )
   {
-    interpreter.message(
-      SLIInterpreter::M_STATUS, "DynamicLoaderModule::initLinkedModules", "adding linked module" );
-    interpreter.message(
-      SLIInterpreter::M_STATUS, "DynamicLoaderModule::initLinkedModules", ( *it )->name().c_str() );
+    interpreter.message( SLIInterpreter::M_STATUS,
+      "DynamicLoaderModule::initLinkedModules",
+      "adding linked module" );
+    interpreter.message( SLIInterpreter::M_STATUS,
+      "DynamicLoaderModule::initLinkedModules",
+      ( *it )->name().c_str() );
     interpreter.addlinkedusermodule( *it );
   }
 }

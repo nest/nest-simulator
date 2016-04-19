@@ -94,9 +94,9 @@ public:
   Time const get_time() const;
 
   /**
-   * Return true, if the SimulationManager has already been simulated for some time.
-   * This does NOT indicate that simulate has been called (i.e. if Simulate
-   * is called with 0 as argument, the flag is still set to false.)
+   * Return true, if the SimulationManager has already been simulated for some
+   * time. This does NOT indicate that simulate has been called (i.e. if
+   * Simulate is called with 0 as argument, the flag is still set to false.)
    */
   bool has_been_simulated() const;
 
@@ -132,24 +132,26 @@ private:
   void advance_time_();   //!< Update time to next time step
   void print_progress_(); //!< TODO: Remove, replace by logging!
 
-  bool simulating_;                   //!< true if simulation in progress
-  Time clock_;                        //!< SimulationManager clock, updated once per slice
-  delay slice_;                       //!< current update slice
-  delay to_do_;                       //!< number of pending cycles.
-  delay to_do_total_;                 //!< number of requested cycles in current simulation.
-  delay from_step_;                   //!< update clock_+from_step<=T<clock_+to_step_
-  delay to_step_;                     //!< update clock_+from_step<=T<clock_+to_step_
-  timeval t_slice_begin_;             //!< Wall-clock time at the begin of a time slice
-  timeval t_slice_end_;               //!< Wall-clock time at the end of time slice
-  long t_real_;                       //!< Accumunated wall-clock time spent simulating (in us)
-  bool terminate_;                    //!< Terminate on signal or error
-  bool simulated_;                    //!< indicates whether the SimulationManager has already been
-                                      //!< simulated for sometime
-  bool print_time_;                   //!< Indicates whether time should be printed during
-                                      //!< simulations (or not)
-  long max_num_prelim_iterations_;    //!< maximal number of iterations used for preliminary update
-  size_t prelim_interpolation_order_; //!< interpolation order for prelim iterations
-  double_t prelim_tol_;               //!< Tolerance of prelim iterations
+  bool simulating_;       //!< true if simulation in progress
+  Time clock_;            //!< SimulationManager clock, updated once per slice
+  delay slice_;           //!< current update slice
+  delay to_do_;           //!< number of pending cycles.
+  delay to_do_total_;     //!< number of requested cycles in current simulation.
+  delay from_step_;       //!< update clock_+from_step<=T<clock_+to_step_
+  delay to_step_;         //!< update clock_+from_step<=T<clock_+to_step_
+  timeval t_slice_begin_; //!< Wall-clock time at the begin of a time slice
+  timeval t_slice_end_;   //!< Wall-clock time at the end of time slice
+  long t_real_;    //!< Accumunated wall-clock time spent simulating (in us)
+  bool terminate_; //!< Terminate on signal or error
+  bool simulated_; //!< indicates whether the SimulationManager has already been
+                   //!< simulated for sometime
+  bool print_time_; //!< Indicates whether time should be printed during
+                    //!< simulations (or not)
+  long max_num_prelim_iterations_; //!< maximal number of iterations used for
+                                   //!< preliminary update
+  //! interpolation order for prelim iterations
+  size_t prelim_interpolation_order_;
+  double_t prelim_tol_; //!< Tolerance of prelim iterations
 };
 
 inline void

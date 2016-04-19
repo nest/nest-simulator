@@ -58,12 +58,14 @@ parrot_neuron::init_buffers_()
 void
 parrot_neuron::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
   {
-    const ulong_t current_spikes_n = static_cast< ulong_t >( B_.n_spikes_.get_value( lag ) );
+    const ulong_t current_spikes_n =
+      static_cast< ulong_t >( B_.n_spikes_.get_value( lag ) );
     if ( current_spikes_n > 0 )
     {
       // create a new SpikeEvent, set its multiplicity and send it
@@ -99,8 +101,8 @@ parrot_neuron::handle( SpikeEvent& e )
   // Repeat only spikes incoming on port 0, port 1 will be ignored
   if ( 0 == e.get_rport() )
   {
-    B_.n_spikes_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.n_spikes_.add_value( e.get_rel_delivery_steps(
+                              kernel().simulation_manager.get_slice_origin() ),
       static_cast< double_t >( e.get_multiplicity() ) );
   }
 }

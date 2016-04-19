@@ -25,7 +25,7 @@ import nest
 
 
 """
-Comparing the new implementations of gridprecise and precise-spiking
+Comparing the new implementations of gp and precise-spiking
 models in NEST with previous ones and with their regular counterparts.
 These hybrid models implement:
   - a linear interpolation to find the spike time more precisely (all),
@@ -34,10 +34,10 @@ These hybrid models implement:
 Rationale:
   - the new "iaf_psc_alpha_ps" should give the exact same results as the 
     elder "iaf_psc_alpha_canon",
-  - the implementation of the precise-spiking and gridprecise models should be
+  - the implementation of the precise-spiking and gp models should be
     very close to the RK5 implementation of "aeif_cond_alpha_RK5" as long as
     only DC currents are involved.
-  - "aeif_cond_alpha_ps" and "aeif_cond_alpha_gridprecise" can even be compared
+  - "aeif_cond_alpha_ps" and "aeif_cond_alpha_gp" can even be compared
     to "aeif_cond_alpha_RK5" when non-precise-spikes are involved.
 
 Details:
@@ -114,10 +114,10 @@ di_aeif_rk5 = {
     "aeif_cond_exp_ps": { 'recordables': ["V_m"], 'param': param_aeif },
     "aeif_psc_alpha_ps": { 'recordables': ["V_m"], 'param': param_aeif },
     "aeif_psc_exp_ps": { 'recordables': ["V_m"], 'param': param_aeif },
-    "aeif_cond_alpha_gridprecise": {'recordables': ["V_m"],'param':param_aeif},
-    "aeif_cond_exp_gridprecise": { 'recordables':["V_m"], 'param':param_aeif },
-    "aeif_psc_alpha_gridprecise": {'recordables': ["V_m"],'param':param_aeif},
-    "aeif_psc_exp_gridprecise": { 'recordables': ["V_m"], 'param': param_aeif }
+    "aeif_cond_alpha_gp": {'recordables': ["V_m"],'param':param_aeif},
+    "aeif_cond_exp_gp": { 'recordables':["V_m"], 'param':param_aeif },
+    "aeif_psc_alpha_gp": {'recordables': ["V_m"],'param':param_aeif},
+    "aeif_psc_exp_gp": { 'recordables': ["V_m"], 'param': param_aeif }
 }
 
 di_aeif_rk5_comp = {
@@ -130,7 +130,7 @@ di_aeif_cond_alpha = {
         { 'recordables': ["V_m", "g_ex"], 'param': param_aeif },
     "aeif_cond_alpha_ps":
         { 'recordables': ["V_m", "g_ex"], 'param': param_aeif },
-    "aeif_cond_alpha_gridprecise":
+    "aeif_cond_alpha_gp":
         {'recordables': ["V_m", "g_ex"], 'param': param_aeif }
 }
 
@@ -161,7 +161,7 @@ def simulate_models(models, I_dc=160., noise=False, precise=False, rate=100.):
     # create the neurons and devices
     print(models)
     lst_neurons = [ nest.Create(model,params=di_model["param"])
-                    for model,di_model in models.iteritems() ]
+                    for model,di_model in iter(models.items()) ]
     step_gen = nest.Create("step_current_generator",
                            params= {"amplitude_times": [50.,1500.],
                                     "amplitude_values":[I_dc,0.] })

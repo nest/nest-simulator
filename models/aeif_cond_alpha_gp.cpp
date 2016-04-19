@@ -462,8 +462,8 @@ nest::aeif_cond_alpha_gp::update( Time const& origin,
   const nest::long_t from,
   const nest::long_t to )
 {
-  assert( to >= 0
-    && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 

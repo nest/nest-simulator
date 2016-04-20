@@ -33,17 +33,19 @@ namespace nest
 class ConnectorModel;
 
 /**
- * Connections are unlabeled by default. Unlabeled connections cannot be specified
+ * Connections are unlabeled by default. Unlabeled connections cannot be
+ * specified
  * as a search criterion in the `GetConnections` function.
  * @see ConnectionLabel
  */
 const static long_t UNLABELED_CONNECTION = -1;
 
 /**
- * The class ConnectionLabel enables synapse model to be labeled by a positive integer. The
- * label can be set / retrieved with the `names::synapse_label` property in the parameter
- * dictionary of `Set/GetStatus` or `Connect`.
- * Using the `GetConnections` function, synapses with the same label can be specified.
+ * The class ConnectionLabel enables synapse model to be labeled by a positive
+ * integer. The label can be set / retrieved with the `names::synapse_label`
+ * property in the parameter dictionary of `Set/GetStatus` or `Connect`.
+ * Using the `GetConnections` function, synapses with the same label can be
+ * specified.
  *
  * The name of synapse models, which can be labeled, end with '_lbl'.
  * @see nest::ConnectionManager::get_connections
@@ -62,7 +64,8 @@ public:
   /**
    * Set properties of this connection from the values given in dictionary.
    *
-   * @note Target and Rport cannot be changed after a connection has been created.
+   * @note Target and Rport cannot be changed after a connection has been
+   * created.
    */
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
@@ -93,7 +96,8 @@ ConnectionLabel< ConnectionT >::get_status( DictionaryDatum& d ) const
 
 template < typename ConnectionT >
 void
-ConnectionLabel< ConnectionT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+ConnectionLabel< ConnectionT >::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
   long_t lbl;
   if ( updateValue< long >( d, names::synapse_label, lbl ) )

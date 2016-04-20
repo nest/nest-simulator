@@ -88,9 +88,12 @@ class Archiving_Node;
    local_id   integertype - The id of the node in the current  (cf. global_id)
    model      literaltype - The model type the node was created from
    parent     integertype - The global id of the parent subnet
-   state      integertype - The state of the node (see the help on elementstates for details)
-   thread     integertype - The id of the thread the node is assigned to (valid locally)
-   vp         integertype - The id of the virtual process the node is assigned to (valid globally)
+   state      integertype - The state of the node (see the help on elementstates
+                            for details)
+   thread     integertype - The id of the thread the node is assigned to (valid
+                            locally)
+   vp         integertype - The id of the virtual process the node is assigned
+                            to (valid globally)
    SeeAlso: GetStatus, SetStatus, elementstates
  */
 
@@ -130,17 +133,20 @@ public:
   virtual bool has_proxies() const;
 
   /**
-   * Returns true for potential global receivers (e.g. spike_detector) and false otherwise
+   * Returns true for potential global receivers (e.g. spike_detector) and false
+   * otherwise
    */
   virtual bool potential_global_receiver() const;
 
   /**
-   * Sets has_proxies_ member variable (to switch to global spike detection mode)
+   * Sets has_proxies_ member variable (to switch to global spike detection
+   * mode)
    */
   virtual void set_has_proxies( const bool );
 
   /**
-   * Sets local_receiver_ member variable (to switch to global spike detection mode)
+   * Sets local_receiver_ member variable (to switch to global spike detection
+   * mode)
    */
   virtual void set_local_receiver( const bool );
 
@@ -277,8 +283,9 @@ public:
    * for incoming events, buffers for logging potentials.
    * This function is called before Simulate is called for the first time
    * on a node, but not upon resumption of a simulation.
-   * This is a wrapper function, which calls the overloaded Node::init_buffers_()
-   * worker only if the buffers of the node have not been initialized yet.
+   * This is a wrapper function, which calls the overloaded
+   * Node::init_buffers_() worker only if the buffers of the node have not been
+   * initialized yet.
    */
   void init_buffers();
 
@@ -293,9 +300,10 @@ public:
 
   /**
    * Finalize node.
-   * Override this function if a node needs to "wrap up" things after a simulation,
-   * i.e., before Network::get_network().resume() returns. Typical use-cases are devices
-   * that need to flush buffers or disconnect from external files or pipes.
+   * Override this function if a node needs to "wrap up" things after a
+   * simulation, i.e., before Network::get_network().resume() returns. Typical
+   * use-cases are devices that need to flush buffers or disconnect from
+   * external files or pipes.
    */
   virtual void
   finalize()
@@ -393,8 +401,10 @@ public:
    * DS*Events when called with the dummy target, and *Events when called with
    * the real target, see #478.
    */
-  virtual port
-  send_test_event( Node& receiving_node, rport receptor_type, synindex syn_id, bool dummy_target );
+  virtual port send_test_event( Node& receiving_node,
+    rport receptor_type,
+    synindex syn_id,
+    bool dummy_target );
 
   /**
    * Check if the node can handle a particular event and receptor type.
@@ -409,7 +419,8 @@ public:
    *
    * See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.
    *
-   * @note The semantics of all other handles_test_event() functions is identical.
+   * @note The semantics of all other handles_test_event() functions is
+   * identical.
    * @ingroup event_interface
    * @throws IllegalConnection
    */
@@ -574,7 +585,8 @@ public:
 
   /**
    * Triggers the update of all SynapticElements
-   * stored in the synaptic_element_map_. It also updates the calcium concentration.
+   * stored in the synaptic_element_map_. It also updates the calcium
+   * concentration.
    * @param t double_t time when the update is being performed
    * @ingroup SP_functions
    */
@@ -608,7 +620,8 @@ public:
    * the provided locations.
    * @throws UnexpectedEvent
    */
-  virtual void get_K_values( double_t t, double_t& Kminus, double_t& triplet_Kminus );
+  virtual void
+  get_K_values( double_t t, double_t& Kminus, double_t& triplet_Kminus );
 
   /**
   * return the spike history for (t1,t2].
@@ -672,7 +685,8 @@ public:
 
   /**
    * @returns type of signal this node produces
-   * used in check_connection to only connect neurons which send / receive compatible information
+   * used in check_connection to only connect neurons which send / receive
+   * compatible information
    */
   virtual SignalType
   sends_signal() const
@@ -682,7 +696,8 @@ public:
 
   /**
    * @returns type of signal this node consumes
-   * used in check_connection to only connect neurons which send / receive compatible information
+   * used in check_connection to only connect neurons which send / receive
+   * compatible information
    */
   virtual SignalType
   receives_signal() const
@@ -739,9 +754,9 @@ public:
   }
 
 private:
-  void set_lid_( index );          //!< Set local id, relative to the parent subnet
-  void set_parent_( Subnet* );     //!< Set pointer to parent subnet.
-  void set_gid_( index );          //!< Set global node id
+  void set_lid_( index );      //!< Set local id, relative to the parent subnet
+  void set_parent_( Subnet* ); //!< Set pointer to parent subnet.
+  void set_gid_( index );      //!< Set global node id
   void set_subnet_index_( index ); //!< Index into node array in subnet
 
   /** Return a new dictionary datum .
@@ -795,12 +810,13 @@ protected:
   /**
    * Private function to initialize the state of a node to model defaults.
    * This function, which must be overloaded by all derived classes, provides
-   * the implementation for initializing the state of a node to the model defaults;
-   * the state is the set of observable dynamic variables.
+   * the implementation for initializing the state of a node to the model
+   * defaults; the state is the set of observable dynamic variables.
    * @param Reference to model prototype object.
    * @see Node::init_state()
-   * @note To provide a reasonable behavior during the transition to the new scheme,
-   *       init_state_() has a default implementation calling init_dynamic_state_().
+   * @note To provide a reasonable behavior during the transition to the new
+   *       scheme, init_state_() has a default implementation calling
+   *       init_dynamic_state_().
    */
   virtual void init_state_( Node const& ) = 0;
 
@@ -822,7 +838,8 @@ protected:
   }
 
   /**
-   * Auxiliary function to downcast a Node to a concrete class derived from Node.
+   * Auxiliary function to downcast a Node to a concrete class derived from
+   * Node.
    * @note This function is used to convert generic Node references to specific
    *       ones when intializing parameters or state from a prototype.
    */

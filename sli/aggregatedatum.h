@@ -156,7 +156,9 @@ AggregateDatum< C, slt >::pprint( std::ostream& out ) const
 
 template < class C, SLIType* slt >
 void
-AggregateDatum< C, slt >::list( std::ostream& out, std::string prefix, int l ) const
+AggregateDatum< C, slt >::list( std::ostream& out,
+  std::string prefix,
+  int l ) const
 {
   if ( l == 0 )
     prefix = "-->" + prefix;

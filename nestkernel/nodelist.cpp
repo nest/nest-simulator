@@ -58,7 +58,7 @@ LocalNodeListBase< LocalNodeListIterator >::begin() const
   do
   {
     assert( not current_subnet->local_empty() );
-    node = current_subnet->local_begin();              // leftmost in current subnet
+    node = current_subnet->local_begin(); // leftmost in current subnet
     current_subnet = dynamic_cast< Subnet* >( *node ); // attempt descend
   } while ( current_subnet && not current_subnet->local_empty() );
 
@@ -118,7 +118,8 @@ LocalNodeListIterator LocalNodeListIterator::operator++()
   Subnet* parent = current_subnet->get_parent();
   assert( parent );
   current_node_ = parent->local_begin() + current_subnet->get_subnet_index();
-  assert( *current_node_ == current_subnet ); // make sure we got iterator to correct node
+  // make sure we got iterator to correct node
+  assert( *current_node_ == current_subnet );
 
   return *this;
 }
@@ -157,12 +158,13 @@ LocalNodeListBase< LocalLeafListIterator >::begin() const
   do
   {
     assert( not current_subnet->local_empty() );
-    node = current_subnet->local_begin();              // leftmost in current subnet
+    node = current_subnet->local_begin(); // leftmost in current subnet
     current_subnet = dynamic_cast< Subnet* >( *node ); // attempt descend
   } while ( current_subnet && not current_subnet->local_empty() );
 
-  // Either node is a non-subnet node or and empty subnet. It is a candidate for the
-  // first node. The constructor will automatically move on to the first true leaf.
+  // Either node is a non-subnet node or and empty subnet. It is a candidate for
+  // the first node. The constructor will automatically move on to the first
+  // true leaf.
   return iterator( node, subnet_.local_end() );
 }
 

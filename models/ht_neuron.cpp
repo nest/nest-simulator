@@ -104,7 +104,8 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   // Sign convention: For each current, write I = - g * ( V - E )
   //    then dV/dt ~ Sum(I)
   I_syn += -y[ S::G_AMPA ] * ( V - node.P_.AMPA_E_rev );
-  I_syn += -y[ S::G_NMDA ] * (  A1 * Mg_f + A2 * Mg_s ) * ( V - node.P_.NMDA_E_rev );
+  I_syn +=
+    -y[ S::G_NMDA ] * ( A1 * Mg_f + A2 * Mg_s ) * ( V - node.P_.NMDA_E_rev );
   I_syn += -y[ S::G_GABA_A ] * ( V - node.P_.GABA_A_E_rev );
   I_syn += -y[ S::G_GABA_B ] * ( V - node.P_.GABA_B_E_rev );
 
@@ -224,13 +225,13 @@ nest::ht_neuron::Parameters_::Parameters_()
   , AMPA_Tau_2( 2.4 ) // ms
   , AMPA_E_rev( 0.0 ) // mV
   , NMDA_g_peak( 0.075 )
-  , NMDA_Tau_1( 4.0 )  // ms
-  , NMDA_Tau_2( 40.0 ) // ms
-  , NMDA_E_rev( 0.0 )  // mV
-  , NMDA_Vact( -25.57 ) // mV
-  , NMDA_Sact( 0.081 )   // mV
-  , NMDA_tau_Mg_slow( 22.7 )  // ms
-  , NMDA_tau_Mg_fast( 0.68 )  // ms
+  , NMDA_Tau_1( 4.0 )        // ms
+  , NMDA_Tau_2( 40.0 )       // ms
+  , NMDA_E_rev( 0.0 )        // mV
+  , NMDA_Vact( -25.57 )      // mV
+  , NMDA_Sact( 0.081 )       // mV
+  , NMDA_tau_Mg_slow( 22.7 ) // ms
+  , NMDA_tau_Mg_fast( 0.68 ) // ms
   , GABA_A_g_peak( 0.33 )
   , GABA_A_Tau_1( 1.0 )   // ms
   , GABA_A_Tau_2( 7.0 )   // ms
@@ -645,7 +646,7 @@ ht_neuron::update( Time const& origin, const long_t from, const long_t to )
 
     // Enforce instantaneous blocking of NMDA channels, see comment
     // in ht_neuron_dynamics().
-    const double_t Mg_ss = Mg_steady_state_( S_.y_[ State_::VM ]);
+    const double_t Mg_ss = Mg_steady_state_( S_.y_[ State_::VM ] );
     S_.y_[ State_::Mg_slow ] = std::min( Mg_ss, S_.y_[ State_::Mg_slow ] );
     S_.y_[ State_::Mg_fast ] = std::min( Mg_ss, S_.y_[ State_::Mg_fast ] );
 

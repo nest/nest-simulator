@@ -282,10 +282,10 @@ public:
       DG_GABA_A,
       G_GABA_A,
       DG_GABA_B,
-      G_GABA_B,   // DO NOT INSERT ANYTHING UP TO HERE, WILL MIX UP
-	              // SPIKE DELIVERY
-	  Mg_slow,
-	  Mg_fast,
+      G_GABA_B, // DO NOT INSERT ANYTHING UP TO HERE, WILL MIX UP
+                // SPIKE DELIVERY
+      Mg_slow,
+      Mg_fast,
       IKNa_D,
       IT_m,
       IT_h,
@@ -417,10 +417,10 @@ private:
   double_t
   get_g_NMDA_() const
   {
-	const double_t A1 = 0.51 - 0.0028 * S_.y_[ State_::VM ];
-	const double_t A2 = 1 - A1;
-	return S_.y_[ State_::G_NMDA ] * (  A1 * S_.y_[ State_::Mg_fast ]
-									  + A2 * S_.y_[ State_::Mg_slow ] );
+    const double_t A1 = 0.51 - 0.0028 * S_.y_[ State_::VM ];
+    const double_t A2 = 1 - A1;
+    return S_.y_[ State_::G_NMDA ]
+      * ( A1 * S_.y_[ State_::Mg_fast ] + A2 * S_.y_[ State_::Mg_slow ] );
   }
 
   /**
@@ -432,8 +432,7 @@ private:
   double_t
   Mg_steady_state_( double_t V ) const
   {
-	return 1.0 / ( 1.0 +
-	 		       std::exp( - P_.NMDA_Sact * ( V - P_.NMDA_Vact ) ) );
+    return 1.0 / ( 1.0 + std::exp( -P_.NMDA_Sact * ( V - P_.NMDA_Vact ) ) );
   }
 
   static RecordablesMap< ht_neuron > recordablesMap_;

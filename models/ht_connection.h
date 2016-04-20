@@ -178,14 +178,12 @@ HTConnection< targetidentifierT >::send( Event& e,
   double_t t_lastspike,
   const CommonSynapseProperties& )
 {
-  const double_t h = e.get_stamp().get_ms() - t_lastspike;
-  // t_lastspike_ = 0 initially
-
   // propagation t_lastspike -> t_spike, t_lastspike_ = 0 initially, p_ = 1
+  const double_t h = e.get_stamp().get_ms() - t_lastspike;
   p_ = 1 - ( 1 - p_ ) * std::exp( -h / tau_P_ );
 
   // send the spike to the target
-  e.set_receiver( *get_target() );
+  e.set_receiver( *get_target( t ) );
   e.set_weight( weight_ * p_ );
   e.set_delay( get_delay_steps() );
   e.set_rport( get_rport() );

@@ -66,8 +66,6 @@ public:
   Name prgpatch_name;
   Name prgbuilt_name;
   Name prefix_name;
-  Name prgsourcedir_name;
-  Name prgbuilddir_name;
   Name prgdatadir_name;
   Name prgdocdir_name;
 

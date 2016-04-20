@@ -206,11 +206,10 @@ SLIStartup::checkenvpath( std::string const& envvar,
 SLIStartup::SLIStartup( int argc, char** argv )
   : startupfilename( "sli-init.sli" )
   , slilibpath( "/sli" )
-  , slihomepath( NEST_INSTALL_FULL_DATADIR )
-  , slidocdir( CMAKE_INSTALL_FULL_DOCDIR )
-  , verbosity_( SLIInterpreter::M_INFO )
-  , // default verbosity level
-  debug_( false )
+  , slihomepath( NEST_PREFIX "/" NEST_DATADIR )
+  , slidocdir( NEST_PREFIX "/" NEST_DOCDIR )
+  , verbosity_( SLIInterpreter::M_INFO ) // default verbosity level
+  , debug_( false )
   , argv_name( "argv" )
   , prgname_name( "prgname" )
   , exitcode_name( "exitcode" )
@@ -219,8 +218,6 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , prgpatch_name( "prgpatch" )
   , prgbuilt_name( "built" )
   , prefix_name( "prefix" )
-  , prgsourcedir_name( "prgsourcedir" )
-  , prgbuilddir_name( "prgbuilddir" )
   , prgdatadir_name( "prgdatadir" )
   , prgdocdir_name( "prgdocdir" )
   , host_name( "host" )
@@ -400,10 +397,6 @@ SLIStartup::init( SLIInterpreter* i )
     Token( new StringDatum(
       String::compose( "%1 %2", __DATE__, __TIME__ ) ) ) );
   statusdict->insert( prefix_name, Token( new StringDatum( NEST_PREFIX ) ) );
-  statusdict->insert(
-    prgsourcedir_name, Token( new StringDatum( PKGSOURCEDIR ) ) );
-  statusdict->insert(
-    prgbuilddir_name, Token( new StringDatum( NEST_BUILDDIR ) ) );
   statusdict->insert(
     prgdatadir_name, Token( new StringDatum( slihomepath ) ) );
   statusdict->insert( prgdocdir_name, Token( new StringDatum( slidocdir ) ) );

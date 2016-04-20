@@ -50,7 +50,7 @@ RecordablesMap< ht_neuron >::create()
   insert_(
     Name( "g_AMPA" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_AMPA > );
   insert_(
-    Name( "g_NMDA" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_NMDA > );
+    Name( "g_NMDA" ), &ht_neuron::get_g_NMDA_ );
   insert_(
     Name( "g_GABAA" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_A > );
   insert_(

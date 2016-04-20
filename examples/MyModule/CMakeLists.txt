@@ -135,18 +135,17 @@ execute_process(
 # on OS X
 set( CMAKE_MACOSX_RPATH ON )
 
+include( GNUInstallDirs )
+
 # The module install directories in variables.
-set( INSTALL_BIN_DIR bin )
-set( INSTALL_INCLUDES_DIR include )
-set( INSTALL_LIB_DIR lib/nest )
-set( INSTALL_DATA_DIR share/nest )
-set( INSTALL_DOC_DIR share/doc/nest )
+set( CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/nest )
+set( CMAKE_INSTALL_FULL_LIBDIR ${CMAKE_INSTALL_FULL_LIBDIR}/nest )
 
 # Complete paths of the install directories. Only used for the help installation.
-set( PKGSRCDIR ${PROJECT_SOURCE_DIR} )
-set( PKGBUILDDIR ${PROJECT_BINARY_DIR} )
-set( PKGDATADIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR} )
-set( PKGDOCDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR} )
+set( CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_DATAROOTDIR}/doc/nest )
+set( CMAKE_INSTALL_FULL_DOCDIR ${CMAKE_INSTALL_FULL_DATAROOTDIR}/doc/nest )
+set( NEST_INSTALL_DATADIR ${CMAKE_INSTALL_DATAROOTDIR}/nest )
+set( NEST_INSTALL_FULL_DATADIR ${CMAKE_INSTALL_FULL_DATAROOTDIR}/nest )
 
 
 # CPack stuff. Required for target `dist`.
@@ -200,7 +199,7 @@ if ( BUILD_SHARED_LIBS )
       PREFIX ""
       OUTPUT_NAME ${MODULE_NAME} )
   install( TARGETS ${MODULE_NAME}_module
-      DESTINATION ${INSTALL_LIB_DIR}
+      DESTINATION ${CMAKE_INSTALL_LIBDIR}
       )
 endif ()
 
@@ -218,19 +217,19 @@ set_target_properties( ${MODULE_NAME}_lib
     OUTPUT_NAME ${MODULE_NAME} )
 
 # Install library, header and sli init files.
-install( TARGETS ${MODULE_NAME}_lib DESTINATION ${INSTALL_LIB_DIR} )
-install( FILES ${MODULE_HEADER} DESTINATION ${INSTALL_INCLUDES_DIR} )
-install( DIRECTORY sli DESTINATION ${INSTALL_DATA_DIR} )
+install( TARGETS ${MODULE_NAME}_lib DESTINATION ${CMAKE_INSTALL_LIBDIR} )
+install( FILES ${MODULE_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} )
+install( DIRECTORY sli DESTINATION ${NEST_INSTALL_DATADIR} )
 
 # Install help.
-set( HELPDIRS "${PKGSRCDIR}:${PKGSRCDIR}/sli" )
+set( HELPDIRS "${PROJECT_SOURCE_DIR}:${PROJECT_SOURCE_DIR}/sli" )
 install( CODE
     "execute_process(COMMAND ${CMAKE_COMMAND}
-          -DDOC_DIR='${PKGDOCDIR}'
-          -DDATA_DIR='${PKGDATADIR}'
+          -DDOC_DIR='${CMAKE_INSTALL_FULL_DOCDIR}'
+          -DDATA_DIR='${NEST_INSTALL_FULL_DATADIR}'
           -DHELPDIRS='${HELPDIRS}'
           -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
-          -P ${PKGDOCDIR}/generate_help.cmake
+          -P ${CMAKE_INSTALL_FULL_DOCDIR}/generate_help.cmake
         WORKING_DIRECTORY \"${PROJECT_BINARY_DIR}\"
       )"
     )
@@ -252,5 +251,5 @@ message( "You can build and install ${MODULE_NAME} now, using" )
 message( "  make" )
 message( "  make install" )
 message( "" )
-message( "${MODULE_NAME} will be installed to: ${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}" )
+message( "${MODULE_NAME} will be installed to: ${CMAKE_INSTALL_FULL_LIBDIR}" )
 message( "" )

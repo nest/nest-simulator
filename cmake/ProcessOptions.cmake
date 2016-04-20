@@ -140,8 +140,8 @@ else ()
 
   # set the rpath only when installed
   set( CMAKE_INSTALL_RPATH
-      "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}"
-      "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/nest"
+      "${CMAKE_INSTALL_FULL_LIBDIR}"
+      "${CMAKE_INSTALL_FULL_LIBDIR}/nest"
       )
 
   # add the automatically determined parts of the RPATH
@@ -167,7 +167,7 @@ endforeach ()
 
 if ( external-modules )
   # headers from external modules will be installed here
-  include_directories( "${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}" )
+  include_directories( "${CMAKE_INSTALL_FULL_INCLUDEDIR}" )
 
   # put all external libs into this variable
   set( EXTERNAL_MODULE_LIBRARIES )
@@ -177,18 +177,18 @@ if ( external-modules )
     # find module header
     find_file( ${mod}_EXT_MOD_INCLUDE
         NAMES ${mod}module.h
-        HINTS "${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}"
+        HINTS "${CMAKE_INSTALL_FULL_INCLUDEDIR}"
         )
     if ( ${mod}_EXT_MOD_INCLUDE STREQUAL "${mod}_EXT_MOD_INCLUDE-NOTFOUND" )
       message( FATAL_ERROR "Cannot find header for external module '${mod}'. "
-        "Should be '${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}/${mod}module.h' ." )
+        "Should be '${CMAKE_INSTALL_FULL_INCLUDEDIR}/${mod}module.h' ." )
     endif ()
     list( APPEND EXTERNAL_MODULE_INCLUDES ${${mod}_EXT_MOD_INCLUDE} )
 
     # find module library
     find_library( ${mod}_EXT_MOD_LIBRARY
         NAMES ${mod}module
-        HINTS ${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/nest
+        HINTS "${CMAKE_INSTALL_FULL_LIBDIR}/nest"
         )
     if ( ${mod}_EXT_MOD_LIBRARY STREQUAL "${mod}_EXT_MOD_LIBRARY-NOTFOUND" )
       message( FATAL_ERROR "Cannot find library for external module '${mod}'." )

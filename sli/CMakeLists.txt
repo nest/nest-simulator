@@ -114,15 +114,15 @@ target_include_directories( sli_readline PRIVATE
     )
 
 target_compile_definitions( sli_lib PRIVATE
-    -DPKGDATADIR=\"${PKGDATADIR}\"
-    -DPKGDOCDIR=\"${PKGDOCDIR}\"
+    -DNEST_INSTALL_FULL_DATADIR=\"${NEST_INSTALL_FULL_DATADIR}\"
+    -DCMAKE_INSTALL_FULL_DOCDIR=\"${CMAKE_INSTALL_FULL_DOCDIR}\"
     -DPKGSOURCEDIR=\"${PROJECT_SOURCE_DIR}\"
     )
 
 install( TARGETS sli_readline sli_lib sli
-    LIBRARY DESTINATION ${INSTALL_LIB_DIR}
-    ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
-    RUNTIME DESTINATION ${INSTALL_BIN_DIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
 # DIRS for help
@@ -158,15 +158,15 @@ if ( NOT CMAKE_CROSSCOMPILING )
   # install help (depends on sli and lib/sli/* installed)
   install( CODE
       "execute_process(
-        COMMAND ${CMAKE_COMMAND} -E remove_directory ${PKGDOCDIR}/help/sli
-        COMMAND ${CMAKE_COMMAND} -E remove_directory ${PKGDOCDIR}/help/cc
-        COMMAND ${CMAKE_COMMAND} -E remove ${PKGDOCDIR}/help/helpindex.html
-        COMMAND ${CMAKE_COMMAND} -E remove ${PKGDOCDIR}/help/helpindex.hlp
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_INSTALL_FULL_DOCDIR}/help/sli
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_INSTALL_FULL_DOCDIR}/help/cc
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_FULL_DOCDIR}/help/helpindex.html
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_FULL_DOCDIR}/help/helpindex.hlp
 
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${PKGDOCDIR}/help
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_FULL_DOCDIR}/help
         COMMAND ${CMAKE_COMMAND}
-            -DDOC_DIR='${PKGDOCDIR}'
-            -DDATA_DIR='${PKGDATADIR}'
+            -DDOC_DIR='${CMAKE_INSTALL_FULL_DOCDIR}'
+            -DDATA_DIR='${NEST_INSTALL_FULL_DATADIR}'
             -DHELPDIRS='${HELPDIRS}'
             -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
             -P ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
@@ -176,5 +176,5 @@ if ( NOT CMAKE_CROSSCOMPILING )
 endif ()
 
 install( FILES ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
-    DESTINATION ${INSTALL_DOC_DIR}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )

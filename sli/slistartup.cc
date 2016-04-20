@@ -206,8 +206,8 @@ SLIStartup::checkenvpath( std::string const& envvar,
 SLIStartup::SLIStartup( int argc, char** argv )
   : startupfilename( "sli-init.sli" )
   , slilibpath( "/sli" )
-  , slihomepath( PKGDATADIR )
-  , slidocdir( PKGDOCDIR )
+  , slihomepath( NEST_INSTALL_FULL_DATADIR )
+  , slidocdir( CMAKE_INSTALL_FULL_DOCDIR )
   , verbosity_( SLIInterpreter::M_INFO )
   , // default verbosity level
   debug_( false )

@@ -80,18 +80,11 @@ option( k-computer "Enable K computer." OFF )
 ##################      Project Directory variables           ##################
 ################################################################################
 
-# install prefix is set with -DCMAKE_INSTALL_PREFIX:PATH=...
-set( INSTALL_BIN_DIR bin )
-set( INSTALL_LIB_DIR lib )
-set( INSTALL_INC_DIR include )
-set( INSTALL_DATA_DIR share/nest )
-set( INSTALL_DOC_DIR share/doc/nest )
+include( GNUInstallDirs )
 
-set( PKGSRCDIR ${PROJECT_SOURCE_DIR} )
-set( PKGBUILDDIR ${PROJECT_BINARY_DIR} )
-set( PKGDATADIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR} )
-set( PKGDOCDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR} )
-set( TESTSUITE_BASEDIR ${PKGDOCDIR} )
+# install prefix is set with -DCMAKE_INSTALL_PREFIX:PATH=...
+set( NEST_INSTALL_DATADIR ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME} )
+set( NEST_INSTALL_FULL_DATADIR ${CMAKE_INSTALL_FULL_DATAROOTDIR}/${PROJECT_NAME} )
 
 ################################################################################
 #################        Do not install into /usr/local        #################
@@ -136,19 +129,19 @@ file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
 if ( HAVE_PYTHON )
   add_custom_target( installcheck
       #COMMAND ${CMAKE_MAKE_PROGRAM} install
-      COMMAND export PATH="${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}:$ENV{PATH}" &&
+      COMMAND export PATH="${CMAKE_INSTALL_FULL_BINDIR}:$ENV{PATH}" &&
       export PYTHON="${PYTHON}" &&
-      export PYTHONPATH="${PYEXECDIR}:$ENV{PYTHONPATH}" &&
+      export PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}:$ENV{PYTHONPATH}" &&
       export exec_prefix="${CMAKE_INSTALL_PREFIX}" &&
-      ${PKGDATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
+      ${NEST_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
       WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
       COMMENT "Execute NEST's testsuite...."
       )
 else ()
   add_custom_target( installcheck
       #COMMAND ${CMAKE_MAKE_PROGRAM} install
-      COMMAND export PATH="${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}:$ENV{PATH}" &&
-      ${PKGDATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
+      COMMAND export PATH="${CMAKE_INSTALL_FULL_BINDIR}:$ENV{PATH}" &&
+      ${NEST_INSTALL_FULL_DATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
       WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
       COMMENT "Execute NEST's testsuite...."
       )
@@ -291,7 +284,7 @@ configure_file(
 ################################################################################
 
 install( FILES LICENSE README.md NEWS
-    DESTINATION ${INSTALL_DOC_DIR}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 
 include( ConfigureSummary )

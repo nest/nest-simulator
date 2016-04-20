@@ -60,9 +60,9 @@ while test $# -gt 0; do
         ;;
 
     --cflags)
-        NEST_CFLAGS="-I@PKGSRCDIR@/{libnestutil,librandom,sli,nestkernel,nest,topology,precise} @ALL_INCLUDES@"
-        if [ "@PKGBUILDDIR@" != "@PKGSRCDIR@" ]; then
-            NEST_CFLAGS="-I@PKGBUILDDIR@/libnestutil $NEST_CFLAGS"
+        NEST_CFLAGS="-I@PROJECT_SOURCE_DIR@/{libnestutil,librandom,sli,nestkernel,nest,topology,precise} @ALL_INCLUDES@"
+        if [ "@PROJECT_BINARY_DIR@" != "@PROJECT_SOURCE_DIR@" ]; then
+            NEST_CFLAGS="-I@PROJECT_BINARY_DIR@/libnestutil $NEST_CFLAGS"
         fi
         NEST_CFLAGS="@ALL_CXXFLAGS@ $NEST_CFLAGS"
         echo $NEST_CFLAGS
@@ -71,7 +71,7 @@ while test $# -gt 0; do
     --libs)
         NEST_LDFLAGS="-lnest_lib -lrandom -lsli_lib -lnestkernel -lnestutil -lprecise -ltopology @ALL_LIBS@"
         # cmake: all libs are installed
-        NEST_LDFLAGS="-L@CMAKE_INSTALL_PREFIX@/@INSTALL_LIB_DIR@ $NEST_LDFLAGS"
+        NEST_LDFLAGS="-L@CMAKE_INSTALL_FULL_LIBDIR@ $NEST_LDFLAGS"
         echo $NEST_LDFLAGS
         ;;
 

@@ -230,16 +230,13 @@ for f in $file_names; do
 
       ;;
     *.py )
-      set +e # pep8 returns 1 if the file does not comply with PEP8
       echo "Check PEP8 on file $f:"
-      pep8_result=`pep8 --first --ignore=$PEP8_IGNORES $f`
 
-      if [ "$?" -gt "0" ]; then
+      if ! pep8_result=`pep8 --first --ignore=$PEP8_IGNORES $f` ; then
         echo "$pep8_result"
 
         format_error_files="$format_error_files $f"
       fi
-      set -e
       ;;
     *)
       echo "$f : not a C/CPP/PY file. Skipping ..."
@@ -254,7 +251,10 @@ if [ "$format_error_files" != "" ]; then
     echo "  $f"
   done
   echo
-  echo "Perform '$CLANG_FORMAT -i <filename>' on them, otherwise TravisCI will report failure!"
+  echo "TravisCI will report failure!"
+  echo "- On C/CPP files, perform '$CLANG_FORMAT -i <filename>' on them."
+  echo "- On Python files, perform 'pep8ify -w <filename>' on them and"
+  echo "  work through the warnings on the output above."
   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   exit 42
 fi

@@ -152,16 +152,13 @@ for f in $file_names; do
 
       ;;
     *.py )
-      set +e # pep8 returns 1 if the file does not comply with PEP8
       echo "Check PEP8 on file $f:"
-      pep8_result=`pep8 --first --ignore=$PEP8_IGNORES $f`
 
-      if [ "$?" -gt "0" ]; then
+      if ! pep8_result=`pep8 --first --ignore=$PEP8_IGNORES $f` ; then
         echo "$pep8_result"
 
         format_error_files="$format_error_files $f"
       fi
-      set -e
       ;;
     *)
       echo "$f : not a C/CPP/PY file. Do not do static analysis / formatting checking."

@@ -60,7 +60,7 @@
 
 /**
  * Class representing a synapse with Hill short term plasticity.  A
- * suitale Connector containing these connections can be obtained from
+ * suitable Connector containing these connections can be obtained from
  * the template GenericConnector.
  */
 
@@ -170,15 +170,14 @@ HTConnection< targetidentifierT >::send( Event& e,
   double_t t_lastspike,
   const CommonSynapseProperties& )
 {
-  double_t h = e.get_stamp().get_ms() - t_lastspike;
-  Node* target = get_target( t );
+  const double_t h = e.get_stamp().get_ms() - t_lastspike;
   // t_lastspike_ = 0 initially
 
   // propagation t_lastspike -> t_spike, t_lastspike_ = 0 initially, p_ = 1
   p_ = 1 - ( 1 - p_ ) * std::exp( -h / tau_P_ );
 
   // send the spike to the target
-  e.set_receiver( *target );
+  e.set_receiver( *get_target() );
   e.set_weight( weight_ * p_ );
   e.set_delay( get_delay_steps() );
   e.set_rport( get_rport() );
@@ -192,8 +191,8 @@ template < typename targetidentifierT >
 HTConnection< targetidentifierT >::HTConnection()
   : ConnectionBase()
   , weight_( 1.0 )
-  , tau_P_( 50.0 )
-  , delta_P_( 0.2 )
+  , tau_P_( 500.0 )
+  , delta_P_( 0.5 )
   , p_( 1.0 )
 {
 }

@@ -46,6 +46,7 @@ class SLIStartup : public SLIModule
   const std::string slilibpath;
   std::string slihomepath;
   std::string slidocdir;
+  std::string sliprefix;
 
   std::string locateSLIInstallationPath( void );
   bool checkpath( std::string const&, std::string& ) const;

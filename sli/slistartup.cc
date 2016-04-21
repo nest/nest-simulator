@@ -208,6 +208,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , slilibpath( "/sli" )
   , slihomepath( NEST_PREFIX "/" NEST_DATADIR )
   , slidocdir( NEST_PREFIX "/" NEST_DOCDIR )
+  , sliprefix( NEST_PREFIX )
   , verbosity_( SLIInterpreter::M_INFO ) // default verbosity level
   , debug_( false )
   , argv_name( "argv" )
@@ -329,7 +330,7 @@ SLIStartup::init( SLIInterpreter* i )
   if ( slihomepath_env != "" )
   {
     slihomepath = slihomepath_env; // absolute path & directory exists
-    i->message( SLIInterpreter::M_INFO,
+    i->message( SLIInterpreter::M_DEBUG,
       "SLIStartup",
       String::compose( "Using SLIDATADIR=%1", slihomepath ).c_str() );
   }
@@ -339,9 +340,19 @@ SLIStartup::init( SLIInterpreter* i )
   if ( slidocdir_env != "" )
   {
     slidocdir = slidocdir_env; // absolute path & directory exists
-    i->message( SLIInterpreter::M_INFO,
+    i->message( SLIInterpreter::M_DEBUG,
       "SLIStartup",
       String::compose( "Using SLIDOCDIR=%1", slidocdir ).c_str() );
+  }
+
+  // check for supplied NEST_INSTALL_DIR
+  std::string sliprefix_env = checkenvpath( "NEST_INSTALL_DIR", i, sliprefix );
+  if ( sliprefix_env != "" )
+  {
+    sliprefix = sliprefix_env; // absolute path & directory exists
+    i->message( SLIInterpreter::M_DEBUG,
+      "SLIStartup",
+      String::compose( "Using NEST_INSTALL_DIR=%1", sliprefix ).c_str() );
   }
 
   if ( !checkpath( slihomepath, fname ) )
@@ -396,10 +407,10 @@ SLIStartup::init( SLIInterpreter* i )
   statusdict->insert( prgbuilt_name,
     Token( new StringDatum(
       String::compose( "%1 %2", __DATE__, __TIME__ ) ) ) );
-  statusdict->insert( prefix_name, Token( new StringDatum( NEST_PREFIX ) ) );
   statusdict->insert(
     prgdatadir_name, Token( new StringDatum( slihomepath ) ) );
   statusdict->insert( prgdocdir_name, Token( new StringDatum( slidocdir ) ) );
+  statusdict->insert( prefix_name, Token( new StringDatum( sliprefix ) ) );
   statusdict->insert( host_name, Token( new StringDatum( NEST_HOST ) ) );
   statusdict->insert( hostos_name, Token( new StringDatum( NEST_HOSTOS ) ) );
   statusdict->insert(

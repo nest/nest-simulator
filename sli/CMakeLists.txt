@@ -107,6 +107,10 @@ target_include_directories( sli_lib PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     )
+set_target_properties( sli_lib
+    PROPERTIES
+    OUTPUT_NAME sli
+    )
 
 target_include_directories( sli_readline PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil

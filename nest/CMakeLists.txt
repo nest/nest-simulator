@@ -25,6 +25,10 @@ set( nest_sources
 add_executable( nest main.cpp ${nest_sources} )
 
 add_library( nest_lib ${nest_sources} )
+set_target_properties( nest_lib
+    PROPERTIES
+    OUTPUT_NAME nest
+    )
 
 target_link_libraries( nest
     nestutil nestkernel random sli_lib sli_readline

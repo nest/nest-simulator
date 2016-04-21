@@ -210,14 +210,38 @@ if ( with-defines )
 endif ()
 
 # all libraries
-set( ALL_LIBS "${OpenMP_CXX_FLAGS};${LTDL_LIBRARIES};${READLINE_LIBRARIES};${GSL_LIBRARIES};${LIBNEUROSIM_LIBRARIES};${MUSIC_LIBRARIES};${MPI_CXX_LIBRARIES}" )
+set( ALL_LIBS
+  "-lnestutil"
+  "-lnest"
+  "-lrandom"
+  "-lsli"
+  "-lnestkernel"
+  "${OpenMP_CXX_FLAGS}"
+  "${LTDL_LIBRARIES}"
+  "${READLINE_LIBRARIES}"
+  "${GSL_LIBRARIES}"
+  "${LIBNEUROSIM_LIBRARIES}"
+  "${MUSIC_LIBRARIES}"
+  "${MPI_CXX_LIBRARIES}" )
 if ( with-libraries )
   set( ALL_LIBS "${ALL_LIBS};${with-libraries}" )
 endif ()
 string( REPLACE ";" " " ALL_LIBS "${ALL_LIBS}" )
 
 # all includes
-set( ALL_INCLUDES_tmp "${LTDL_INCLUDE_DIRS};${READLINE_INCLUDE_DIRS};${GSL_INCLUDE_DIRS};${LIBNEUROSIM_INCLUDE_DIRS};${MUSIC_INCLUDE_DIRS};${MPI_CXX_INCLUDE_PATH}" )
+set( ALL_INCLUDES_tmp
+  "${PROJECT_SOURCE_DIR}/libnestutil"
+  "${PROJECT_BINARY_DIR}/libnestutil"
+  "${PROJECT_SOURCE_DIR}/librandom"
+  "${PROJECT_SOURCE_DIR}/sli"
+  "${PROJECT_SOURCE_DIR}/nestkernel"
+  "${PROJECT_SOURCE_DIR}/nest"
+  "${LTDL_INCLUDE_DIRS}"
+  "${READLINE_INCLUDE_DIRS}"
+  "${GSL_INCLUDE_DIRS}"
+  "${LIBNEUROSIM_INCLUDE_DIRS}"
+  "${MUSIC_INCLUDE_DIRS}"
+  "${MPI_CXX_INCLUDE_PATH}" )
 set( ALL_INCLUDES "" )
 foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
   if ( INC AND NOT INC STREQUAL "" )

@@ -14,8 +14,12 @@ Known values for OPTION are:
   --exec-prefix         NEST install prefix for architecture-dependent files
   --libs                print library linking information
   --cflags              print pre-processor and compiler flags
+  --includes            print includes
   --compiler            print the compiler used to compile NEST
   --static-libraries    print "ON" if configured for static libraries, "OFF" otherwise
+  --docdir              print the directory with installed documentation
+  --datadir             print the directory with installed data
+  --libdir              print the directory with installed libraries
   --help                display this help and exit
   --version             output version information
 
@@ -59,30 +63,41 @@ while test $# -gt 0; do
         usage 0
         ;;
 
-    --cflags)
-        NEST_CFLAGS="-I@PROJECT_SOURCE_DIR@/{libnestutil,librandom,sli,nestkernel,nest,topology,precise} @ALL_INCLUDES@"
+    --includes)
+        NEST_INCLUDES="@ALL_INCLUDES@"
         if [ "@PROJECT_BINARY_DIR@" != "@PROJECT_SOURCE_DIR@" ]; then
-            NEST_CFLAGS="-I@PROJECT_BINARY_DIR@/libnestutil $NEST_CFLAGS"
+            NEST_CFLAGS="-I@PROJECT_BINARY_DIR@/libnestutil $NEST_INCLUDES"
         fi
-        NEST_CFLAGS="@ALL_CXXFLAGS@ $NEST_CFLAGS"
+        echo $NEST_INCLUDES
+        ;;
+
+    --cflags)
+        NEST_CFLAGS="@ALL_CXXFLAGS@"
         echo $NEST_CFLAGS
         ;;
 
     --libs)
-        NEST_LDFLAGS="-lnest_lib -lrandom -lsli_lib -lnestkernel -lnestutil -lprecise -ltopology @ALL_LIBS@"
+        NEST_LDFLAGS="@ALL_LIBS@"
         # cmake: all libs are installed
         NEST_LDFLAGS="-L@CMAKE_INSTALL_FULL_LIBDIR@ $NEST_LDFLAGS"
         echo $NEST_LDFLAGS
         ;;
-
     --compiler)
-        echo @CMAKE_CXX_COMPILER@
+        echo "@CMAKE_CXX_COMPILER@"
         ;;
 
     --static-libraries)
-        echo @static-libraries@
+        echo "@static-libraries@"
         ;;
-
+    --docdir)
+        echo "@CMAKE_INSTALL_DOCDIR@"
+        ;;
+    --datadir)
+        echo "@CMAKE_INSTALL_DATADIR@"
+        ;;
+    --libdir)
+        echo "@CMAKE_INSTALL_LIBDIR@"
+        ;;
     *)
         usage
         exit 1

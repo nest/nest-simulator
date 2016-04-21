@@ -110,6 +110,29 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
+# Get the Includes.
+execute_process(
+    COMMAND ${NEST_CONFIG} --includes
+    RESULT_VARIABLE RES_VAR
+    OUTPUT_VARIABLE NEST_INCLUDES
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if ( NEST_INCLUDES )
+  # make a cmake list
+  string( REPLACE " " ";" NEST_INCLUDES_LIST "${NEST_INCLUDES}" )
+  foreach ( inc_complete ${NEST_INCLUDES_LIST} )
+    # if it is actually a -Iincludedir
+    if ( "${inc_complete}" MATCHES "^-I.*" )
+      # get the directory
+      string( REGEX REPLACE "^-I(.*)" "\\1" inc "${inc_complete}" )
+      # and check whether it is a directory
+      if ( IS_DIRECTORY "${inc}" )
+        include_directories( "${inc}" )
+      endif ()
+    endif ()
+  endforeach ()
+endif ()
+
 # Get, if NEST is build as a (mostly) static application. If yes, also only build
 # static library.
 execute_process(
@@ -132,21 +155,40 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
+# Get the data install dir.
+execute_process(
+    COMMAND ${NEST_CONFIG} --datadir
+    RESULT_VARIABLE RES_VAR
+    OUTPUT_VARIABLE NEST_DATADIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get the documentation install dir.
+execute_process(
+    COMMAND ${NEST_CONFIG} --docdir
+    RESULT_VARIABLE RES_VAR
+    OUTPUT_VARIABLE NEST_DOCDIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get the library install dir.
+execute_process(
+    COMMAND ${NEST_CONFIG} --libdir
+    RESULT_VARIABLE RES_VAR
+    OUTPUT_VARIABLE NEST_LIBDIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+
 # on OS X
 set( CMAKE_MACOSX_RPATH ON )
 
+# Install all stuff to NEST's install directories.
+set( CMAKE_INSTALL_LIBDIR ${NEST_LIBDIR}/nest CACHE STRING "object code libraries (lib/nest or lib64/nest or lib/<multiarch-tuple>/nest on Debian)" FORCE )
+set( CMAKE_INSTALL_DOCDIR ${NEST_DOCDIR} CACHE STRING "documentation root (DATAROOTDIR/doc/nest)" FORCE )
+set( CMAKE_INSTALL_DATADIR ${NEST_DATADIR} CACHE STRING "read-only architecture-independent data (DATAROOTDIR/nest)" FORCE )
+
 include( GNUInstallDirs )
-
-# The module install directories in variables.
-set( CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/nest )
-set( CMAKE_INSTALL_FULL_LIBDIR ${CMAKE_INSTALL_FULL_LIBDIR}/nest )
-
-# Complete paths of the install directories. Only used for the help installation.
-set( CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_DATAROOTDIR}/doc/nest )
-set( CMAKE_INSTALL_FULL_DOCDIR ${CMAKE_INSTALL_FULL_DATAROOTDIR}/doc/nest )
-set( NEST_INSTALL_DATADIR ${CMAKE_INSTALL_DATAROOTDIR}/nest )
-set( NEST_INSTALL_FULL_DATADIR ${CMAKE_INSTALL_FULL_DATAROOTDIR}/nest )
-
 
 # CPack stuff. Required for target `dist`.
 set( CPACK_GENERATOR TGZ )
@@ -243,6 +285,7 @@ message( "C++ compiler         : ${CMAKE_CXX_COMPILER}" )
 message( "Build static libs    : ${NEST_STATIC_LIB}" )
 message( "C++ compiler flags   : ${CMAKE_CXX_FLAGS}" )
 message( "NEST compiler flags  : ${NEST_CXXFLAGS}" )
+message( "NEST include dirs    : ${NEST_INCLUDES}" )
 message( "NEST libraries flags : ${NEST_LIBS}" )
 message( "" )
 message( "-------------------------------------------------------" )

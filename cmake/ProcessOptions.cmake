@@ -139,10 +139,23 @@ else ()
   set( CMAKE_BUILD_WITH_INSTALL_RPATH FALSE )
 
   # set the rpath only when installed
-  set( CMAKE_INSTALL_RPATH
-      "${CMAKE_INSTALL_FULL_LIBDIR}"
-      "${CMAKE_INSTALL_FULL_LIBDIR}/nest"
-      )
+  if ( APPLE )
+    set( CMAKE_INSTALL_RPATH
+        "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
+        "@loader_path/../${CMAKE_INSTALL_LIBDIR}/nest"
+        # for pynestkernel: @loader_path at <prefix>/lib/python2.7/site-packages/nest
+        "@loader_path/../../.."
+        "@loader_path/../../../nest"
+       )
+  else ()
+    set( CMAKE_INSTALL_RPATH
+        "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
+        "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/nest"
+        # for pynestkernel: origin at <prefix>/lib/python2.7/site-packages/nest
+        "\$ORIGIN/../../.."
+        "\$ORIGIN/../../../nest"
+        )
+  endif ()
 
   # add the automatically determined parts of the RPATH
   # which point to directories outside the build tree to the install RPATH

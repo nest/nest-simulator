@@ -180,10 +180,8 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
           "tics per ms and resolution changed." );
 
         // make sure that wfr communication interval is always greater or equal
-        // to resolution
-        // if no wfr is used explicitly set wfr_comm_interval to resolution
-        // because
-        // communication in every step is needed
+        // to resolution if no wfr is used explicitly set wfr_comm_interval
+        // to resolution because communication in every step is needed
         if ( wfr_comm_interval_ < Time::get_resolution().get_ms()
           || not use_wfr_ )
         {
@@ -213,10 +211,8 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
           "Temporal resolution changed." );
 
         // make sure that wfr communication interval is always greater or equal
-        // to resolution
-        // if no wfr is used explicitly set wfr_comm_interval to resolution
-        // because
-        // communication in every step is needed
+        // to resolution if no wfr is used explicitly set wfr_comm_interval
+        // to resolution because communication in every step is needed
         if ( wfr_comm_interval_ < Time::get_resolution().get_ms()
           || not use_wfr_ )
         {
@@ -245,16 +241,14 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       LOG( M_ERROR,
         "SimulationManager::set_status",
         "Cannot enable/disable usage of waveform relaxation after nodes have "
-        "been created. "
-        "Please call ResetKernel first." );
+        "been created. Please call ResetKernel first." );
       throw KernelException();
     }
     else
     {
       use_wfr_ = wfr;
       // if no wfr is used explicitly set wfr_comm_interval to resolution
-      // because
-      // communication in every step is needed
+      // because communication in every step is needed
       if ( not use_wfr_ )
       {
         wfr_comm_interval_ = Time::get_resolution().get_ms();
@@ -263,10 +257,8 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   }
 
   // wfr_comm_interval_ can only be changed if use_wfr_ is true and before
-  // connections
-  // are created. If use_wfr_ is false wfr_comm_interval_ is set to the
-  // resolution
-  // whenever the resolution changes.
+  // connections are created. If use_wfr_ is false wfr_comm_interval_ is set to
+  // the resolution whenever the resolution changes.
   double_t wfr_interval;
   if ( updateValue< double_t >( d, "wfr_comm_interval", wfr_interval ) )
   {
@@ -275,8 +267,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       LOG( M_ERROR,
         "SimulationManager::set_status",
         "Cannot set waveform communication interval when usage of waveform "
-        "relaxation "
-        "is disabled. Set use_wfr to true first." );
+        "relaxation is disabled. Set use_wfr to true first." );
       throw KernelException();
     }
     else if ( kernel().connection_manager.get_num_connections() != 0 )
@@ -284,8 +275,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       LOG( M_ERROR,
         "SimulationManager::set_status",
         "Cannot change waveform communication interval after connections have "
-        "been created. "
-        "Please call ResetKernel first." );
+        "been created. Please call ResetKernel first." );
       throw KernelException();
     }
     else if ( wfr_interval < Time::get_resolution().get_ms() )
@@ -293,8 +283,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       LOG( M_ERROR,
         "SimulationManager::set_status",
         "Communication interval of the waveform relaxation must be greater or "
-        "equal "
-        "to the resolution of the simulation." );
+        "equal to the resolution of the simulation." );
       throw KernelException();
     }
     else
@@ -326,8 +315,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       LOG( M_ERROR,
         "SimulationManager::set_status",
         "Maximal number of iterations  for the waveform relaxation must be "
-        "positive."
-        "To disable waveform relaxation set use_wfr instead." );
+        "positive. To disable waveform relaxation set use_wfr instead." );
     else
       wfr_max_iterations_ = max_iter;
   }

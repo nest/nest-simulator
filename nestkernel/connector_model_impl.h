@@ -192,6 +192,9 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
       // Let connections without delay contribute to the delay extrema with
       // wfr_comm_interval. For those connections the min_delay is important
       // as it determines the length of the global communication interval.
+      // The call to assert_valid_delay_ms needs to happen only once
+      // (either here or in add_connection()) when the first connection
+      // without delay is created.
       else
       {
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
@@ -235,21 +238,10 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   double_t delay,
   double_t weight )
 {
-  if ( not numerics::is_nan( delay ) )
+  if ( not numerics::is_nan( delay ) && has_delay_ )
   {
-    if ( has_delay_ )
-    {
-      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-        delay );
-    }
-    // Let connections without delay contribute to the delay extrema with
-    // wfr_comm_interval. For those connections the min_delay is important
-    // as it determines the length of the global communication interval.
-    else
-    {
-      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-        kernel().simulation_manager.get_wfr_comm_interval() );
-    }
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+      delay );
   }
 
   // create a new instance of the default connection
@@ -294,14 +286,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
         delay );
     }
-    // Let connections without delay contribute to the delay extrema with
-    // wfr_comm_interval. For those connections the min_delay is important
-    // as it determines the length of the global communication interval.
-    else
-    {
-      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-        kernel().simulation_manager.get_wfr_comm_interval() );
-    }
 
     if ( p->known( names::delay ) )
       throw BadParameter(
@@ -319,14 +303,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       {
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
           delay );
-      }
-      // Let connections without delay contribute to the delay extrema with
-      // wfr_comm_interval. For those connections the min_delay is important
-      // as it determines the length of the global communication interval.
-      else
-      {
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-          kernel().simulation_manager.get_wfr_comm_interval() );
       }
     }
     else
@@ -498,6 +474,19 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
           b_has_secondary || ( !is_primary_ ) );
       }
     }
+  }
+
+  // Let connections without delay contribute to the delay extrema with
+  // wfr_comm_interval. For those connections the min_delay is important
+  // as it determines the length of the global communication interval.
+  // The call to assert_valid_delay_ms needs to happen only once
+  // (either here or in used_default_delay()) when the first connection
+  // without delay is created.
+  if ( default_delay_needs_check_ && not has_delay_ )
+  {
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+      kernel().simulation_manager.get_wfr_comm_interval() );
+    default_delay_needs_check_ = false;
   }
 
   return conn;

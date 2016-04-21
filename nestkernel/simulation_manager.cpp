@@ -51,9 +51,11 @@ nest::SimulationManager::SimulationManager()
   , terminate_( false )
   , simulated_( false )
   , print_time_( false )
-  , max_num_prelim_iterations_( 15 )
-  , prelim_interpolation_order_( 3 )
-  , prelim_tol_( 0.0001 )
+  , use_wfr_( true )
+  , wfr_comm_interval_( 1.0 )
+  , wfr_tol_( 0.0001 )
+  , wfr_max_iterations_( 15 )
+  , wfr_interpolation_order_( 3 )
 {
 }
 
@@ -176,6 +178,17 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         LOG( M_INFO,
           "SimulationManager::set_status",
           "tics per ms and resolution changed." );
+
+        // make sure that wfr communication interval is always greater or equal
+        // to resolution
+        // if no wfr is used explicitly set wfr_comm_interval to resolution
+        // because
+        // communication in every step is needed
+        if ( wfr_comm_interval_ < Time::get_resolution().get_ms()
+          || not use_wfr_ )
+        {
+          wfr_comm_interval_ = Time::get_resolution().get_ms();
+        }
       }
     }
     else if ( res_updated ) // only resolution changed
@@ -198,6 +211,17 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         LOG( M_INFO,
           "SimulationManager::set_status",
           "Temporal resolution changed." );
+
+        // make sure that wfr communication interval is always greater or equal
+        // to resolution
+        // if no wfr is used explicitly set wfr_comm_interval to resolution
+        // because
+        // communication in every step is needed
+        if ( wfr_comm_interval_ < Time::get_resolution().get_ms()
+          || not use_wfr_ )
+        {
+          wfr_comm_interval_ = Time::get_resolution().get_ms();
+        }
       }
     }
     else
@@ -210,39 +234,114 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     }
   }
 
-  // set the number of preliminary update cycles
-  // e.g. for the implementation of gap junctions
-  long nprelim;
-  if ( updateValue< long >( d, "max_num_prelim_iterations", nprelim ) )
+  // The decision whether the waveform relaxation is used
+  // must be set before nodes are created.
+  // Important: wfr_comm_interval_ may change depending on use_wfr_
+  bool wfr;
+  if ( updateValue< bool >( d, "use_wfr", wfr ) )
   {
-    if ( nprelim < 0 )
+    if ( kernel().node_manager.size() > 1 )
+    {
       LOG( M_ERROR,
         "SimulationManager::set_status",
-        "Number of preliminary update iterations must be zero or positive." );
+        "Cannot enable/disable usage of waveform relaxation after nodes have "
+        "been created. "
+        "Please call ResetKernel first." );
+      throw KernelException();
+    }
     else
-      max_num_prelim_iterations_ = nprelim;
+    {
+      use_wfr_ = wfr;
+      // if no wfr is used explicitly set wfr_comm_interval to resolution
+      // because
+      // communication in every step is needed
+      if ( not use_wfr_ )
+      {
+        wfr_comm_interval_ = Time::get_resolution().get_ms();
+      }
+    }
   }
 
+  // wfr_comm_interval_ can only be changed if use_wfr_ is true and before
+  // connections
+  // are created. If use_wfr_ is false wfr_comm_interval_ is set to the
+  // resolution
+  // whenever the resolution changes.
+  double_t wfr_interval;
+  if ( updateValue< double_t >( d, "wfr_comm_interval", wfr_interval ) )
+  {
+    if ( not use_wfr_ )
+    {
+      LOG( M_ERROR,
+        "SimulationManager::set_status",
+        "Cannot set waveform communication interval when usage of waveform "
+        "relaxation "
+        "is disabled. Set use_wfr to true first." );
+      throw KernelException();
+    }
+    else if ( kernel().connection_manager.get_num_connections() != 0 )
+    {
+      LOG( M_ERROR,
+        "SimulationManager::set_status",
+        "Cannot change waveform communication interval after connections have "
+        "been created. "
+        "Please call ResetKernel first." );
+      throw KernelException();
+    }
+    else if ( wfr_interval < Time::get_resolution().get_ms() )
+    {
+      LOG( M_ERROR,
+        "SimulationManager::set_status",
+        "Communication interval of the waveform relaxation must be greater or "
+        "equal "
+        "to the resolution of the simulation." );
+      throw KernelException();
+    }
+    else
+    {
+      LOG( M_INFO,
+        "SimulationManager::set_status",
+        "Waveform communication interval changed successfully. " );
+      wfr_comm_interval_ = wfr_interval;
+    }
+  }
+
+  // set the convergence tolerance for the waveform relaxation method
   double_t tol;
-  if ( updateValue< double_t >( d, "prelim_tol", tol ) )
+  if ( updateValue< double_t >( d, "wfr_tol", tol ) )
   {
     if ( tol < 0.0 )
       LOG( M_ERROR,
         "SimulationManager::set_status",
         "Tolerance must be zero or positive" );
     else
-      prelim_tol_ = tol;
+      wfr_tol_ = tol;
   }
 
+  // set the maximal number of iterations for the waveform relaxation method
+  long max_iter;
+  if ( updateValue< long >( d, "wfr_max_iterations", max_iter ) )
+  {
+    if ( max_iter <= 0 )
+      LOG( M_ERROR,
+        "SimulationManager::set_status",
+        "Maximal number of iterations  for the waveform relaxation must be "
+        "positive."
+        "To disable waveform relaxation set use_wfr instead." );
+    else
+      wfr_max_iterations_ = max_iter;
+  }
+
+  // set the interpolation order for the waveform relaxation method
   long interp_order;
-  if ( updateValue< long >( d, "prelim_interpolation_order", interp_order ) )
+  if ( updateValue< long >( d, "wfr_interpolation_order", interp_order ) )
   {
     if ( ( interp_order < 0 ) || ( interp_order == 2 ) || ( interp_order > 3 ) )
       LOG( M_ERROR,
         "SimulationManager::set_status",
         "Interpolation order must be 0, 1, or 3." );
     else
-      prelim_interpolation_order_ = interp_order;
+      wfr_interpolation_order_ = interp_order;
   }
 }
 
@@ -261,9 +360,11 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< long >( d, "to_do", to_do_ );
   def< bool >( d, "print_time", print_time_ );
 
-  def< long >( d, "max_num_prelim_iterations", max_num_prelim_iterations_ );
-  def< long >( d, "prelim_interpolation_order", prelim_interpolation_order_ );
-  def< double >( d, "prelim_tol", prelim_tol_ );
+  def< bool >( d, "use_wfr", use_wfr_ );
+  def< double >( d, "wfr_comm_interval", wfr_comm_interval_ );
+  def< double >( d, "wfr_tol", wfr_tol_ );
+  def< long >( d, "wfr_max_iterations", wfr_max_iterations_ );
+  def< long >( d, "wfr_interpolation_order", wfr_interpolation_order_ );
 }
 
 void
@@ -473,9 +574,9 @@ nest::SimulationManager::prepare_simulation_()
 }
 
 bool
-nest::SimulationManager::prelim_update_( Node* n )
+nest::SimulationManager::wfr_update_( Node* n )
 {
-  return ( n->prelim_update( clock_, from_step_, to_step_ ) );
+  return ( n->wfr_update( clock_, from_step_, to_step_ ) );
 }
 
 void
@@ -558,14 +659,14 @@ nest::SimulationManager::update_()
 #endif
       }
 
-      // preliminary update of nodes, e.g. for gapjunctions
-      if ( kernel().node_manager.needs_prelim_update() )
+      // preliminary update of nodes that use waveform relaxtion
+      if ( kernel().node_manager.any_node_uses_wfr() )
       {
 #pragma omp single
         {
           // if the end of the simulation is in the middle
           // of a min_delay_ step, we need to make a complete
-          // step in the preliminary update and only do
+          // step in the wfr_update and only do
           // the partial step in the final update
           // needs to be done in omp single since to_step_ is a scheduler
           // variable
@@ -575,19 +676,19 @@ nest::SimulationManager::update_()
         }
 
         bool max_iterations_reached = true;
-        const std::vector< Node* >& thread_local_nodes_prelim_up =
-          kernel().node_manager.get_nodes_prelim_up_on_thread( thrd );
-        for ( long_t n = 0; n < max_num_prelim_iterations_; ++n )
+        const std::vector< Node* >& thread_local_wfr_nodes =
+          kernel().node_manager.get_wfr_nodes_on_thread( thrd );
+        for ( long_t n = 0; n < wfr_max_iterations_; ++n )
         {
           bool done_p = true;
 
           // this loop may be empty for those threads
-          // that do not have any nodes requiring preliminary update
+          // that do not have any nodes requiring wfr_update
           for ( std::vector< Node* >::const_iterator i =
-                  thread_local_nodes_prelim_up.begin();
-                i != thread_local_nodes_prelim_up.end();
+                  thread_local_wfr_nodes.begin();
+                i != thread_local_wfr_nodes.end();
                 ++i )
-            done_p = prelim_update_( *i ) && done_p;
+            done_p = wfr_update_( *i ) && done_p;
 
 // add done value of thread p to done vector
 #pragma omp critical
@@ -612,7 +713,7 @@ nest::SimulationManager::update_()
             done.clear();
           }
 
-          // deliver SecondaryEvents generated during preliminary update
+          // deliver SecondaryEvents generated during wfr_update
           // returns the done value over all threads
           done_p = kernel().event_delivery_manager.deliver_events( thrd );
 
@@ -621,7 +722,7 @@ nest::SimulationManager::update_()
             max_iterations_reached = false;
             break;
           }
-        } // of for (max_num_prelim_iterations_) ...
+        } // of for (wfr_max_iterations) ...
 
 #pragma omp single
         {
@@ -632,12 +733,12 @@ nest::SimulationManager::update_()
               "Maximum number of iterations reached at interval %1-%2 ms",
               clock_.get_ms(),
               clock_.get_ms() + to_step_ * Time::get_resolution().get_ms() );
-            LOG( M_WARNING, "SimulationManager::prelim_update", msg );
+            LOG( M_WARNING, "SimulationManager::wfr_update", msg );
           }
         }
 
-      } // of if(needs_prelim_update_)
-      // end preliminary update
+      } // of if(any_node_uses_wfr)
+      // end of preliminary update
 
       const std::vector< Node* >& thread_local_nodes =
         kernel().node_manager.get_nodes_on_thread( thrd );

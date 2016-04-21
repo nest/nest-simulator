@@ -77,6 +77,7 @@ class Node;
  * @see CurrentEvent
  * @see CurrentEvent
  * @see ConductanceEvent
+ * @see GapJunctionEvent
  * @ingroup event_interface
  */
 

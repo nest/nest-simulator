@@ -189,7 +189,7 @@ public:
   /**
    * Get list of nodes on given thread.
    */
-  const std::vector< Node* >& get_nodes_prelim_up_on_thread( thread ) const;
+  const std::vector< Node* >& get_wfr_nodes_on_thread( thread ) const;
 
   /**
    * Prepare nodes for simulation and register nodes in node_list.
@@ -207,7 +207,7 @@ public:
   /**
    *
    */
-  bool needs_prelim_update() const;
+  bool any_node_uses_wfr() const;
 
 private:
   /**
@@ -259,11 +259,10 @@ private:
    */
   std::vector< std::vector< Node* > > nodes_vec_;
   std::vector< std::vector< Node* > >
-    nodes_prelim_up_vec_;    //!< Nodelists for unfrozen nodes that require an
-                             //!< additional preliminary update (e.g. gap
-                             //!< junctions)
-  bool needs_prelim_update_; //!< there is at least one neuron model that needs
-                             //!< preliminary update
+    wfr_nodes_vec_;        //!< Nodelists for unfrozen nodes that
+                           //!< use the waveform relaxation method
+  bool any_node_uses_wfr_; //!< there is at least one neuron model that uses
+                           //!< waveform relaxation
   //! Network size when nodes_vec_ was last updated
   index nodes_vec_network_size_;
 };
@@ -317,15 +316,15 @@ NodeManager::get_nodes_on_thread( thread t ) const
 }
 
 inline const std::vector< Node* >&
-NodeManager::get_nodes_prelim_up_on_thread( thread t ) const
+NodeManager::get_wfr_nodes_on_thread( thread t ) const
 {
-  return nodes_prelim_up_vec_.at( t );
+  return wfr_nodes_vec_.at( t );
 }
 
 inline bool
-NodeManager::needs_prelim_update() const
+NodeManager::any_node_uses_wfr() const
 {
-  return needs_prelim_update_;
+  return any_node_uses_wfr_;
 }
 
 } // namespace

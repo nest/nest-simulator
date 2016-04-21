@@ -3,7 +3,7 @@
 # NEST is installed here. When you relocate NEST, change this variable.
 export NEST_INSTALL_DIR=@CMAKE_INSTALL_PREFIX@
 # NEST finds standard *.sli files $SLIDATADIR/sli
-export SLIDATADIR=$NEST_INSTALL_DIR/@NEST_INSTALL_DATADIR@
+export SLIDATADIR=$NEST_INSTALL_DIR/@CMAKE_INSTALL_DATADIR@
 # NEST finds help files $SLIDOCDIR/help
 export SLIDOCDIR=$NEST_INSTALL_DIR/@CMAKE_INSTALL_DOCDIR@
 # The path where NEST looks for user modules.

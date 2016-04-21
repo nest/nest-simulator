@@ -38,5 +38,5 @@ install( DIRECTORY ${TESTSUBDIRS}
     )
 
 install( PROGRAMS ${PROJECT_BINARY_DIR}/testsuite/do_tests.sh
-    DESTINATION ${NEST_INSTALL_DATADIR}/extras
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras
     )

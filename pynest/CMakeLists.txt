@@ -77,12 +77,12 @@ if ( HAVE_PYTHON )
                                install --prefix=${CMAKE_INSTALL_PREFIX}
                                        --install-lib=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
                                        --install-scripts=${CMAKE_INSTALL_FULL_BINDIR}
-                                       --install-data=${NEST_INSTALL_FULL_DATADIR}
+                                       --install-data=${CMAKE_INSTALL_FULL_DATADIR}
     WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")"
       )
   install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
   install( FILES ${PROJECT_BINARY_DIR}/pynest/do_tests.py
-      DESTINATION ${NEST_INSTALL_DATADIR}/extras
+      DESTINATION ${CMAKE_INSTALL_DATADIR}/extras
       )
 
   install( DIRECTORY examples/

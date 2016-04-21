@@ -64,7 +64,7 @@ install( TARGETS topology
     )
 
 install( FILES sli/topology-interface.sli
-    DESTINATION ${NEST_INSTALL_DATADIR}/sli )
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/sli )
 
 install( FILES doc/Topology_UserManual.pdf
     DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology )
@@ -75,7 +75,7 @@ if ( HAVE_PYTHON )
                                install --prefix=${CMAKE_INSTALL_PREFIX}
                                        --install-lib=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
                                        --install-scripts=${CMAKE_INSTALL_FULL_BINDIR}
-                                       --install-data=${NEST_INSTALL_FULL_DATADIR}
+                                       --install-data=${CMAKE_INSTALL_FULL_DATADIR}
     WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")"
       )
 

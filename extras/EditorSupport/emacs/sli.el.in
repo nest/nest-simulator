@@ -1,4 +1,4 @@
-(setq load-path (cons "@NEST_INSTALL_FULL_DATADIR@/extras/emacs" load-path))
+(setq load-path (cons "@CMAKE_INSTALL_FULL_DATADIR@/extras/emacs" load-path))
 
 (defvar running-xemacs (string-match "XEmacs\\|Lucid" emacs-version))
 

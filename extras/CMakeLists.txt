@@ -20,7 +20,7 @@
 execute_process( COMMAND ${PROJECT_SOURCE_DIR}/extras/create_rcsinfo.sh ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR} )
 if ( EXISTS ${PROJECT_BINARY_DIR}/lib/sli/rcsinfo.sli )
   install( FILES ${PROJECT_BINARY_DIR}/lib/sli/rcsinfo.sli
-      DESTINATION ${NEST_INSTALL_DATADIR}/sli
+      DESTINATION ${CMAKE_INSTALL_DATADIR}/sli
       )
 endif ()
 
@@ -29,11 +29,11 @@ install( DIRECTORY bibliography logos
     )
 
 install( FILES EditorSupport/emacs/postscript-sli.el EditorSupport/emacs/psvn.el ${CMAKE_CURRENT_BINARY_DIR}/EditorSupport/emacs/sli.el
-    DESTINATION ${NEST_INSTALL_DATADIR}/extras/EditorSupport/emacs
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras/EditorSupport/emacs
     )
 
 install( FILES EditorSupport/vim/syntax/sli.vim
-    DESTINATION ${NEST_INSTALL_DATADIR}/extras/EditorSupport/vim/syntax
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras/EditorSupport/vim/syntax
     )
 
 install( PROGRAMS

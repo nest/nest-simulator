@@ -23,7 +23,7 @@ if ( HAVE_PYTHON )
                              install --prefix=${CMAKE_INSTALL_PREFIX}
                                      --install-lib=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
                                      --install-scripts=${CMAKE_INSTALL_FULL_BINDIR}
-                                     --install-data=${NEST_INSTALL_FULL_DATADIR}
+                                     --install-data=${CMAKE_INSTALL_FULL_DATADIR}
     WORKING_DIRECTORY \"${CMAKE_CURRENT_SOURCE_DIR}\")"
       )
 

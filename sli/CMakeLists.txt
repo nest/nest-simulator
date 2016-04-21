@@ -170,7 +170,7 @@ if ( NOT CMAKE_CROSSCOMPILING )
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_FULL_DOCDIR}/help
         COMMAND ${CMAKE_COMMAND}
             -DDOC_DIR='${CMAKE_INSTALL_FULL_DOCDIR}'
-            -DDATA_DIR='${NEST_INSTALL_FULL_DATADIR}'
+            -DDATA_DIR='${CMAKE_INSTALL_FULL_DATADIR}'
             -DHELPDIRS='${HELPDIRS}'
             -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
             -P ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake

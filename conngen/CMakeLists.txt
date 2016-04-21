@@ -44,4 +44,4 @@ install( TARGETS conngen
     )
 
 install( DIRECTORY sli
-    DESTINATION ${NEST_INSTALL_DATADIR} )
+    DESTINATION ${CMAKE_INSTALL_DATADIR} )

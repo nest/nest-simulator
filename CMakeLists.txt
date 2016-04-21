@@ -80,11 +80,12 @@ option( k-computer "Enable K computer." OFF )
 ##################      Project Directory variables           ##################
 ################################################################################
 
-include( GNUInstallDirs )
+# In general use the CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir> vars from
+# GNUInstallDirs, but the CMAKE_INSTALL_DATADIR is usually just CMAKE_INSTALL_DATAROOTDIR
+# and we want it to be CMAKE_INSTALL_DATAROOTDIR/PROJECT_NAME
+set( CMAKE_INSTALL_DATADIR "${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}" CACHE STRING "Relative directory, where NEST installs its data (share/nest)" )
 
-# install prefix is set with -DCMAKE_INSTALL_PREFIX:PATH=...
-set( NEST_INSTALL_DATADIR ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME} )
-set( NEST_INSTALL_FULL_DATADIR ${CMAKE_INSTALL_FULL_DATAROOTDIR}/${PROJECT_NAME} )
+include( GNUInstallDirs )
 
 ################################################################################
 #################        Do not install into /usr/local        #################
@@ -133,7 +134,7 @@ if ( HAVE_PYTHON )
       export PYTHON="${PYTHON}" &&
       export PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}:$ENV{PYTHONPATH}" &&
       export exec_prefix="${CMAKE_INSTALL_PREFIX}" &&
-      ${NEST_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
+      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
       WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
       COMMENT "Execute NEST's testsuite...."
       )
@@ -141,7 +142,7 @@ else ()
   add_custom_target( installcheck
       #COMMAND ${CMAKE_MAKE_PROGRAM} install
       COMMAND export PATH="${CMAKE_INSTALL_FULL_BINDIR}:$ENV{PATH}" &&
-      ${NEST_INSTALL_FULL_DATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
+      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
       WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
       COMMENT "Execute NEST's testsuite...."
       )

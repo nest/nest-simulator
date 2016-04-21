@@ -179,7 +179,6 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-
 # on OS X
 set( CMAKE_MACOSX_RPATH ON )
 
@@ -261,14 +260,14 @@ set_target_properties( ${MODULE_NAME}_lib
 # Install library, header and sli init files.
 install( TARGETS ${MODULE_NAME}_lib DESTINATION ${CMAKE_INSTALL_LIBDIR} )
 install( FILES ${MODULE_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} )
-install( DIRECTORY sli DESTINATION ${NEST_INSTALL_DATADIR} )
+install( DIRECTORY sli DESTINATION ${CMAKE_INSTALL_DATADIR} )
 
 # Install help.
 set( HELPDIRS "${PROJECT_SOURCE_DIR}:${PROJECT_SOURCE_DIR}/sli" )
 install( CODE
     "execute_process(COMMAND ${CMAKE_COMMAND}
           -DDOC_DIR='${CMAKE_INSTALL_FULL_DOCDIR}'
-          -DDATA_DIR='${NEST_INSTALL_FULL_DATADIR}'
+          -DDATA_DIR='${CMAKE_INSTALL_FULL_DATADIR}'
           -DHELPDIRS='${HELPDIRS}'
           -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
           -P ${CMAKE_INSTALL_FULL_DOCDIR}/generate_help.cmake

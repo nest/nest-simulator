@@ -215,7 +215,6 @@ private:
     std::vector< MUSIC::GlobalIndex > index_map_;
     MUSIC::PermutationIndex* music_perm_ind_; //!< The permutation index needed
     // to map the ports of MUSIC.
-    MUSIC::ArrayData* dmap_;
     Variables_();
   };
 

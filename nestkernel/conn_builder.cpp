@@ -373,15 +373,14 @@ nest::ConnBuilder::connect()
 {
   if ( symmetric_ && not supports_symmetric() )
     throw NotImplemented(
-      "So far Connect doesn't support symmetric connections for this "
-      "connection rule." );
+      "This connection rule does not support symmetric connections." );
 
   if ( pre_synaptic_element_name != "" && post_synaptic_element_name != "" )
   {
     if ( symmetric_ )
       throw NotImplemented(
-        "So far Connect doesn't support symmetric connections in combination "
-        "with structural plasticity." );
+        "Symmetric connections are not supported in combination with "
+        "structural plasticity." );
     sp_connect_();
   }
   else
@@ -391,8 +390,7 @@ nest::ConnBuilder::connect()
     {
       std::swap( sources_, targets_ );
       connect_();
-      std::swap( sources_,
-        targets_ ); // not really necessary, but leaves things in clean state
+      std::swap( sources_, targets_ ); // re-establish original state
     }
   }
 

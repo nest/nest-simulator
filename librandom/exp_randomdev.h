@@ -86,7 +86,8 @@ private:
   double lambda_; //!< rate parameter
 };
 
-inline double ExpRandomDev::operator()( RngPtr rthrd ) const
+inline double
+ExpRandomDev::operator()( RngPtr rthrd ) const
 {
   return -std::log( rthrd->drandpos() ) / lambda_;
 }

@@ -418,8 +418,11 @@ aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics( const double y[],
     P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
 
   // dv/dt
-  f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
-                  - w + P_.I_e + B_.I_stim_ ) / P_.C_m;
+  f[ S::V_M ] =
+    ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh - w
+      + P_.I_e
+      + B_.I_stim_ )
+    / P_.C_m;
   f[ S::DG_EXC ] = -dg_ex / P_.tau_syn_ex;
   f[ S::G_EXC ] = dg_ex - g_ex / P_.tau_syn_ex; // Synaptic Conductance (nS)
 

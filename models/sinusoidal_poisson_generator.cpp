@@ -81,8 +81,8 @@ nest::sinusoidal_poisson_generator::Parameters_::Parameters_(
 }
 
 nest::sinusoidal_poisson_generator::Parameters_&
-  nest::sinusoidal_poisson_generator::Parameters_::
-  operator=( const Parameters_& p )
+nest::sinusoidal_poisson_generator::Parameters_::operator=(
+  const Parameters_& p )
 {
   if ( this == &p )
     return *this;

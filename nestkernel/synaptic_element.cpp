@@ -68,8 +68,8 @@ nest::SynapticElement::SynapticElement( const SynapticElement& se )
   growth_curve_->set( gc_parameters );
 }
 
-nest::SynapticElement& nest::SynapticElement::operator=(
-  const SynapticElement& other )
+nest::SynapticElement&
+nest::SynapticElement::operator=( const SynapticElement& other )
 {
   if ( this != &other )
   {

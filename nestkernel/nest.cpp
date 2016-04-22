@@ -28,8 +28,8 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "nodelist.h"
 #include "mpi_manager_impl.h"
+#include "nodelist.h"
 #include "subnet.h"
 
 // Includes from sli:

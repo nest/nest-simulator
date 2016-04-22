@@ -98,7 +98,8 @@ class MsgHandler : public MUSIC::MessageHandler
   ArrayDatum messages;                 //!< The buffer for incoming message
   std::vector< double > message_times; //!< The buffer for incoming message
 
-  void operator()( double t, void* msg, size_t size )
+  void
+  operator()( double t, void* msg, size_t size )
   {
     message_times.push_back( t * 1000.0 );
     messages.push_back( std::string( static_cast< char* >( msg ), size ) );

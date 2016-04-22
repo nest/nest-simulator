@@ -85,8 +85,7 @@ nest::sinusoidal_gamma_generator::Parameters_::Parameters_(
 }
 
 nest::sinusoidal_gamma_generator::Parameters_&
-  nest::sinusoidal_gamma_generator::Parameters_::
-  operator=( const Parameters_& p )
+nest::sinusoidal_gamma_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
     return *this;
@@ -240,8 +239,9 @@ nest::sinusoidal_gamma_generator::init_buffers_()
   device_.init_buffers();
   B_.logger_.reset();
 
-  std::vector< double >( P_.num_trains_,
-    kernel().simulation_manager.get_time().get_ms() ).swap( B_.t0_ms_ );
+  std::vector< double >(
+    P_.num_trains_, kernel().simulation_manager.get_time().get_ms() )
+    .swap( B_.t0_ms_ );
   std::vector< double >( P_.num_trains_, 0.0 ).swap( B_.Lambda_t0_ );
   B_.P_prev_ = P_;
 }

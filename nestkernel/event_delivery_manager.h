@@ -31,8 +31,8 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-#include "mpi_manager.h" // OffGridSpike
 #include "event.h"
+#include "mpi_manager.h" // OffGridSpike
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"

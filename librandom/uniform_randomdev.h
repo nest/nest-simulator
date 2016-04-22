@@ -98,7 +98,8 @@ private:
   double delta_; //!< interval width
 };
 
-inline double UniformRandomDev::operator()( RngPtr rthrd ) const
+inline double
+UniformRandomDev::operator()( RngPtr rthrd ) const
 {
   return low_ + delta_ * rthrd->drand();
 }

@@ -225,8 +225,8 @@
 #define UTIL_GTL_SPARSETABLE_H_
 
 #include <sparseconfig.h>
-#include <stdlib.h> // for malloc/free
 #include <stdio.h>  // to read/write tables
+#include <stdlib.h> // for malloc/free
 #include <string.h> // for memcpy
 #ifdef HAVE_STDINT_H
 #include <stdint.h> // the normal place uint16_t is defined
@@ -237,14 +237,14 @@
 #ifdef HAVE_INTTYPES_H
 #include <inttypes.h> // a third place for uint16_t or u_int16_t
 #endif
-#include <assert.h>  // for bounds checking
-#include <iterator>  // to define reverse_iterator for me
 #include <algorithm> // equal, lexicographical_compare, swap,...
-#include <memory>    // uninitialized_copy, uninitialized_fill
-#include <vector>    // a sparsetable is a vector of groups
-#include <type_traits.h>
+#include <assert.h>  // for bounds checking
 #include <hashtable-common.h>
+#include <iterator> // to define reverse_iterator for me
 #include <libc_allocator_with_realloc.h>
+#include <memory> // uninitialized_copy, uninitialized_fill
+#include <type_traits.h>
+#include <vector> // a sparsetable is a vector of groups
 
 // A lot of work to get a type that's guaranteed to be 16 bits...
 #ifndef HAVE_U_INT16_T
@@ -311,7 +311,8 @@ public:
     , pos( p )
   {
   }
-  table_element_adaptor& operator=( const value_type& val )
+  table_element_adaptor&
+  operator=( const value_type& val )
   {
     table->set( pos, val );
     return *this;
@@ -391,13 +392,15 @@ public:
 
   // Arithmetic: we just do arithmetic on pos.  We don't even need to
   // do bounds checking, since STL doesn't consider that its job.  :-)
-  iterator& operator+=( size_type t )
+  iterator&
+  operator+=( size_type t )
   {
     pos += t;
     check();
     return *this;
   }
-  iterator& operator-=( size_type t )
+  iterator&
+  operator-=( size_type t )
   {
     pos -= t;
     check();
@@ -429,19 +432,22 @@ public:
     check();
     return tmp;
   }
-  iterator operator+( difference_type i ) const
+  iterator
+  operator+( difference_type i ) const
   {
     iterator tmp( *this );
     tmp += i;
     return tmp;
   }
-  iterator operator-( difference_type i ) const
+  iterator
+  operator-( difference_type i ) const
   {
     iterator tmp( *this );
     tmp -= i;
     return tmp;
   }
-  difference_type operator-( iterator it ) const
+  difference_type
+  operator-( iterator it ) const
   { // for "x = it2 - it"
     assert( table == it.table );
     return pos - it.pos;
@@ -452,28 +458,34 @@ public:
   }
 
   // Comparisons.
-  bool operator==( const iterator& it ) const
+  bool
+  operator==( const iterator& it ) const
   {
     return table == it.table && pos == it.pos;
   }
-  bool operator<( const iterator& it ) const
+  bool
+  operator<( const iterator& it ) const
   {
     assert( table == it.table ); // life is bad bad bad otherwise
     return pos < it.pos;
   }
-  bool operator!=( const iterator& it ) const
+  bool
+  operator!=( const iterator& it ) const
   {
     return !( *this == it );
   }
-  bool operator<=( const iterator& it ) const
+  bool
+  operator<=( const iterator& it ) const
   {
     return !( it < *this );
   }
-  bool operator>( const iterator& it ) const
+  bool
+  operator>( const iterator& it ) const
   {
     return it < *this;
   }
-  bool operator>=( const iterator& it ) const
+  bool
+  operator>=( const iterator& it ) const
   {
     return !( *this < it );
   }
@@ -485,7 +497,8 @@ public:
 
 // support for "3 + iterator" has to be defined outside the class, alas
 template < class T >
-table_iterator< T > operator+( typename table_iterator< T >::difference_type i,
+table_iterator< T >
+operator+( typename table_iterator< T >::difference_type i,
   table_iterator< T > it )
 {
   return it + i; // so people can say it2 = 3 + it
@@ -548,13 +561,15 @@ public:
 
   // Arithmetic: we just do arithmetic on pos.  We don't even need to
   // do bounds checking, since STL doesn't consider that its job.  :-)
-  const_iterator& operator+=( size_type t )
+  const_iterator&
+  operator+=( size_type t )
   {
     pos += t;
     check();
     return *this;
   }
-  const_iterator& operator-=( size_type t )
+  const_iterator&
+  operator-=( size_type t )
   {
     pos -= t;
     check();
@@ -586,19 +601,22 @@ public:
     check();
     return tmp;
   }
-  const_iterator operator+( difference_type i ) const
+  const_iterator
+  operator+( difference_type i ) const
   {
     const_iterator tmp( *this );
     tmp += i;
     return tmp;
   }
-  const_iterator operator-( difference_type i ) const
+  const_iterator
+  operator-( difference_type i ) const
   {
     const_iterator tmp( *this );
     tmp -= i;
     return tmp;
   }
-  difference_type operator-( const_iterator it ) const
+  difference_type
+  operator-( const_iterator it ) const
   { // for "x = it2 - it"
     assert( table == it.table );
     return pos - it.pos;
@@ -609,28 +627,34 @@ public:
   }
 
   // Comparisons.
-  bool operator==( const const_iterator& it ) const
+  bool
+  operator==( const const_iterator& it ) const
   {
     return table == it.table && pos == it.pos;
   }
-  bool operator<( const const_iterator& it ) const
+  bool
+  operator<( const const_iterator& it ) const
   {
     assert( table == it.table ); // life is bad bad bad otherwise
     return pos < it.pos;
   }
-  bool operator!=( const const_iterator& it ) const
+  bool
+  operator!=( const const_iterator& it ) const
   {
     return !( *this == it );
   }
-  bool operator<=( const const_iterator& it ) const
+  bool
+  operator<=( const const_iterator& it ) const
   {
     return !( it < *this );
   }
-  bool operator>( const const_iterator& it ) const
+  bool
+  operator>( const const_iterator& it ) const
   {
     return it < *this;
   }
-  bool operator>=( const const_iterator& it ) const
+  bool
+  operator>=( const const_iterator& it ) const
   {
     return !( *this < it );
   }
@@ -642,8 +666,8 @@ public:
 
 // support for "3 + iterator" has to be defined outside the class, alas
 template < class T >
-const_table_iterator< T > operator+(
-  typename const_table_iterator< T >::difference_type i,
+const_table_iterator< T >
+operator+( typename const_table_iterator< T >::difference_type i,
   const_table_iterator< T > it )
 {
   return it + i; // so people can say it2 = 3 + it
@@ -790,13 +814,15 @@ public:
 
 
   // Comparisons.
-  bool operator==( const iterator& it ) const
+  bool
+  operator==( const iterator& it ) const
   {
     return ( row_begin == it.row_begin && row_end == it.row_end
       && row_current == it.row_current
       && ( row_current == row_end || col_current == it.col_current ) );
   }
-  bool operator!=( const iterator& it ) const
+  bool
+  operator!=( const iterator& it ) const
   {
     return !( *this == it );
   }
@@ -922,13 +948,15 @@ public:
     return tmp;
   }
 
-  bool operator==( const iterator& it ) const
+  bool
+  operator==( const iterator& it ) const
   {
     return ( row_begin == it.row_begin && row_end == it.row_end
       && row_current == it.row_current
       && ( row_current == row_end || col_current == it.col_current ) );
   }
-  bool operator!=( const iterator& it ) const
+  bool
+  operator!=( const iterator& it ) const
   {
     return !( *this == it );
   }
@@ -1029,13 +1057,15 @@ public:
     return tmp;
   }
 
-  bool operator==( const iterator& it ) const
+  bool
+  operator==( const iterator& it ) const
   {
     return ( row_begin == it.row_begin && row_end == it.row_end
       && row_current == it.row_current
       && ( row_current == row_end || col_current == it.col_current ) );
   }
-  bool operator!=( const iterator& it ) const
+  bool
+  operator!=( const iterator& it ) const
   {
     return !( *this == it );
   }
@@ -1617,7 +1647,8 @@ public:
   // Operator= is just like the copy constructor, I guess
   // TODO(austern): Make this exception safe. Handle exceptions in value_type's
   // copy constructor.
-  sparsegroup& operator=( const sparsegroup& x )
+  sparsegroup&
+  operator=( const sparsegroup& x )
   {
     if ( &x == this )
       return *this; // x = x
@@ -1772,15 +1803,12 @@ public:
     }
     else
     {
-      typedef base::
-        integral_constant< bool,
-          ( base::has_trivial_copy< value_type >::value
-                             && base::has_trivial_destructor< value_type >::
-                                  value
-                             && base::is_same< allocator_type,
-                                  libc_allocator_with_realloc< value_type > >::
-                                  value ) >
-          realloc_and_memmove_ok; // we pretend mv(x,y) == "x.~T(); new(x) T(y)"
+      typedef base::integral_constant< bool,
+        ( base::has_trivial_copy< value_type >::value
+          && base::has_trivial_destructor< value_type >::value
+          && base::is_same< allocator_type,
+               libc_allocator_with_realloc< value_type > >::value ) >
+        realloc_and_memmove_ok; // we pretend mv(x,y) == "x.~T(); new(x) T(y)"
       set_aux( offset, realloc_and_memmove_ok() );
       ++settings.num_buckets;
       bmset( i );
@@ -1859,15 +1887,12 @@ public:
       }
       else
       {
-        typedef base::
-          integral_constant< bool,
-            ( base::has_trivial_copy< value_type >::value
-                               && base::has_trivial_destructor< value_type >::
-                                    value
-                               && base::is_same< allocator_type,
-                                    libc_allocator_with_realloc< value_type > >::
-                                    value ) >
-            realloc_and_memmove_ok; // pretend mv(x,y) == "x.~T(); new(x) T(y)"
+        typedef base::integral_constant< bool,
+          ( base::has_trivial_copy< value_type >::value
+            && base::has_trivial_destructor< value_type >::value
+            && base::is_same< allocator_type,
+                 libc_allocator_with_realloc< value_type > >::value ) >
+          realloc_and_memmove_ok; // pretend mv(x,y) == "x.~T(); new(x) T(y)"
         erase_aux( offset, realloc_and_memmove_ok() );
       }
       --settings.num_buckets;
@@ -1962,30 +1987,36 @@ public:
   // Note the comparisons are pretty arbitrary: we compare
   // values of the first index that isn't equal (using default
   // value for empty buckets).
-  bool operator==( const sparsegroup& x ) const
+  bool
+  operator==( const sparsegroup& x ) const
   {
     return ( settings.num_buckets == x.settings.num_buckets
       && memcmp( bitmap, x.bitmap, sizeof( bitmap ) ) == 0
       && std::equal( begin(), end(), x.begin() ) ); // from <algorithm>
   }
 
-  bool operator<( const sparsegroup& x ) const
+  bool
+  operator<( const sparsegroup& x ) const
   { // also from <algorithm>
     return std::lexicographical_compare( begin(), end(), x.begin(), x.end() );
   }
-  bool operator!=( const sparsegroup& x ) const
+  bool
+  operator!=( const sparsegroup& x ) const
   {
     return !( *this == x );
   }
-  bool operator<=( const sparsegroup& x ) const
+  bool
+  operator<=( const sparsegroup& x ) const
   {
     return !( x < *this );
   }
-  bool operator>( const sparsegroup& x ) const
+  bool
+  operator>( const sparsegroup& x ) const
   {
     return x < *this;
   }
-  bool operator>=( const sparsegroup& x ) const
+  bool
+  operator>=( const sparsegroup& x ) const
   {
     return !( *this < x );
   }
@@ -2121,17 +2152,20 @@ public:
   // table.  These aren't const only because you can change non-empty bcks.
   typedef two_d_iterator< std::
       vector< sparsegroup< value_type, GROUP_SIZE, value_alloc_type >,
-        vector_alloc > > nonempty_iterator;
+        vector_alloc > >
+    nonempty_iterator;
   typedef const_two_d_iterator< std::
       vector< sparsegroup< value_type, GROUP_SIZE, value_alloc_type >,
-        vector_alloc > > const_nonempty_iterator;
+        vector_alloc > >
+    const_nonempty_iterator;
   typedef std::reverse_iterator< nonempty_iterator > reverse_nonempty_iterator;
   typedef std::reverse_iterator< const_nonempty_iterator >
     const_reverse_nonempty_iterator;
   // Another special iterator: it frees memory as it iterates (used to resize)
   typedef destructive_two_d_iterator< std::
       vector< sparsegroup< value_type, GROUP_SIZE, value_alloc_type >,
-        vector_alloc > > destructive_iterator;
+        vector_alloc > >
+    destructive_iterator;
 
   // Iterator functions
   iterator
@@ -2418,8 +2452,7 @@ public:
   {
     assert(
       test( i ) ); // how can a nonempty_iterator point to an empty bucket?
-    return const_nonempty_iterator(
-      groups.begin(),
+    return const_nonempty_iterator( groups.begin(),
       groups.end(),
       groups.begin() + group_num( i ),
       ( groups[ group_num( i ) ].nonempty_begin()
@@ -2431,8 +2464,7 @@ public:
   {
     assert(
       test( i ) ); // how can a nonempty_iterator point to an empty bucket?
-    return nonempty_iterator(
-      groups.begin(),
+    return nonempty_iterator( groups.begin(),
       groups.end(),
       groups.begin() + group_num( i ),
       ( groups[ group_num( i ) ].nonempty_begin()
@@ -2668,30 +2700,36 @@ public:
   // Comparisons.  Note the comparisons are pretty arbitrary: we
   // compare values of the first index that isn't equal (using default
   // value for empty buckets).
-  bool operator==( const sparsetable& x ) const
+  bool
+  operator==( const sparsetable& x ) const
   {
     return ( settings.table_size == x.settings.table_size
       && settings.num_buckets == x.settings.num_buckets
       && groups == x.groups );
   }
 
-  bool operator<( const sparsetable& x ) const
+  bool
+  operator<( const sparsetable& x ) const
   {
     return std::lexicographical_compare( begin(), end(), x.begin(), x.end() );
   }
-  bool operator!=( const sparsetable& x ) const
+  bool
+  operator!=( const sparsetable& x ) const
   {
     return !( *this == x );
   }
-  bool operator<=( const sparsetable& x ) const
+  bool
+  operator<=( const sparsetable& x ) const
   {
     return !( x < *this );
   }
-  bool operator>( const sparsetable& x ) const
+  bool
+  operator>( const sparsetable& x ) const
   {
     return x < *this;
   }
-  bool operator>=( const sparsetable& x ) const
+  bool
+  operator>=( const sparsetable& x ) const
   {
     return !( *this < x );
   }

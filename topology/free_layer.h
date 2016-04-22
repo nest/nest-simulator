@@ -84,11 +84,13 @@ protected:
     {
       return Position< D >( pos_ );
     }
-    bool operator<( const NodePositionData& other ) const
+    bool
+    operator<( const NodePositionData& other ) const
     {
       return gid_ < other.gid_;
     }
-    bool operator==( const NodePositionData& other ) const
+    bool
+    operator==( const NodePositionData& other ) const
     {
       return gid_ == other.gid_;
     }

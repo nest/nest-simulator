@@ -112,8 +112,8 @@ public:
   bool operator()( librandom::RngPtr, double_t h );
 };
 
-inline bool gainfunction_mcculloch_pitts::operator()( librandom::RngPtr,
-  double_t h )
+inline bool
+gainfunction_mcculloch_pitts::operator()( librandom::RngPtr, double_t h )
 {
   return h > theta_;
 }

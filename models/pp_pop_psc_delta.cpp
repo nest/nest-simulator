@@ -336,7 +336,9 @@ nest::pp_pop_psc_delta::update( Time const& origin,
     {
       tmp_vector.push_back( V_.eta_kernel_[ i ]
         * S_.n_spikes_past_[ ( S_.p_n_spikes_past_ + i )
-            % S_.n_spikes_past_.size() ] * V_.h_ * 0.001 );
+            % S_.n_spikes_past_.size() ]
+        * V_.h_
+        * 0.001 );
       integral += tmp_vector[ i ];
     }
 
@@ -365,11 +367,12 @@ nest::pp_pop_psc_delta::update( Time const& origin,
     {
 
       if ( S_.age_occupations_[ ( S_.p_age_occupations_ + i )
-             % S_.age_occupations_.size() ] > 0 )
+             % S_.age_occupations_.size() ]
+        > 0 )
       {
 
         p_argument = -numerics::expm1( -S_.rhos_ages_[ i ] * V_.h_
-                       * 0.001 ); // V_.h_ is in ms, S_.rhos_ages_ is in Hz
+          * 0.001 ); // V_.h_ is in ms, S_.rhos_ages_ is in Hz
 
         if ( p_argument > V_.min_double_ )
         {

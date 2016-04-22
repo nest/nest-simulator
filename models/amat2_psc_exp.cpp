@@ -326,7 +326,8 @@ nest::amat2_psc_exp::calibrate()
   V_.P71_ =
     ( beta * tauE * taum * tauV
       * ( ( em * taum * std::pow( tauE - tauV, 2 )
-            - eE * tauE * std::pow( taum - tauV, 2 ) ) * tauV
+            - eE * tauE * std::pow( taum - tauV, 2 ) )
+            * tauV
           - eV * ( tauE - taum )
             * ( h * ( tauE - tauV ) * ( taum - tauV ) + tauE * taum * tauV
                 - std::pow( tauV, 3 ) ) ) )
@@ -335,7 +336,8 @@ nest::amat2_psc_exp::calibrate()
   V_.P72_ =
     ( beta * tauI * taum * tauV
       * ( ( em * taum * std::pow( tauI - tauV, 2 )
-            - eI * tauI * std::pow( taum - tauV, 2 ) ) * tauV
+            - eI * tauI * std::pow( taum - tauV, 2 ) )
+            * tauV
           - eV * ( tauI - taum )
             * ( h * ( tauI - tauV ) * ( taum - tauV ) + tauI * taum * tauV
                 - std::pow( tauV, 3 ) ) ) )

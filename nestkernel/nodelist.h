@@ -134,11 +134,13 @@ public:
     return *current_node_;
   }
 
-  bool operator==( const LocalNodeListIterator& i ) const
+  bool
+  operator==( const LocalNodeListIterator& i ) const
   {
     return current_node_ == i.current_node_;
   }
-  bool operator!=( const LocalNodeListIterator& i ) const
+  bool
+  operator!=( const LocalNodeListIterator& i ) const
   {
     return not( *this == i );
   }
@@ -191,11 +193,13 @@ public:
     return *current_node_;
   }
 
-  bool operator==( const LocalChildListIterator& i ) const
+  bool
+  operator==( const LocalChildListIterator& i ) const
   {
     return current_node_ == i.current_node_;
   }
-  bool operator!=( const LocalChildListIterator& i ) const
+  bool
+  operator!=( const LocalChildListIterator& i ) const
   {
     return not( *this == i );
   }
@@ -249,11 +253,13 @@ public:
     return *base_it_;
   }
 
-  bool operator==( const LocalLeafListIterator& i ) const
+  bool
+  operator==( const LocalLeafListIterator& i ) const
   {
     return base_it_ == i.base_it_;
   }
-  bool operator!=( const LocalLeafListIterator& i ) const
+  bool
+  operator!=( const LocalLeafListIterator& i ) const
   {
     return not( *this == i );
   }

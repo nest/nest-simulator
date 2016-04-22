@@ -79,8 +79,8 @@
   SeeAlso: stdp_triplet_synapse_hpc, synapsedict, stdp_synapse, static_synapse
 */
 
-#include <cmath>
 #include "connection.h"
+#include <cmath>
 
 namespace nest
 {

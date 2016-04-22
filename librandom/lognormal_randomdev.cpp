@@ -73,7 +73,8 @@ librandom::LognormalRandomDev::get_status( DictionaryDatum& d ) const
   def< double >( d, "sigma", sigma_ );
 }
 
-double librandom::LognormalRandomDev::operator()( RngPtr r ) const
+double
+librandom::LognormalRandomDev::operator()( RngPtr r ) const
 {
   // We could forward here to a NormalRandomDev, but that would
   // require keeping such an object. Given that the Box-Muller code

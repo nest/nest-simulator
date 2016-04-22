@@ -522,7 +522,8 @@ Scanner::source( std::istream* in_s )
   }
 }
 
-bool Scanner::operator()( Token& t )
+bool
+Scanner::operator()( Token& t )
 {
   static const int base = 10;
   ScanStates state = start;
@@ -807,7 +808,7 @@ Scanner::print_error( const char* msg )
 {
   std::cout << "% parser: At line " << line << " position " << col << ".\n"
             << "% parser: Syntax Error: " << msg << "\n";
-  std::cout << "% parser: Context preceding the error follows:\n" << old_context
-            << std::endl
+  std::cout << "% parser: Context preceding the error follows:\n"
+            << old_context << std::endl
             << context << std::endl;
 }

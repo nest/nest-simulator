@@ -46,7 +46,8 @@ nest::LoggingEvent::LoggingEvent( const nest::severity_t s,
 namespace nest
 {
 
-std::ostream& operator<<( std::ostream& out, const LoggingEvent& e )
+std::ostream&
+operator<<( std::ostream& out, const LoggingEvent& e )
 {
   struct tm* ptm = localtime( &e.time_stamp );
   switch ( e.severity )

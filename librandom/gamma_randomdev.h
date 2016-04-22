@@ -130,13 +130,15 @@ private:
   double jv;
 };
 
-inline double GammaRandomDev::operator()( RngPtr rthrd, double a )
+inline double
+GammaRandomDev::operator()( RngPtr rthrd, double a )
 {
   set_order( a );
   return ( *this )( rthrd );
 }
 
-inline double GammaRandomDev::operator()( RngPtr r ) const
+inline double
+GammaRandomDev::operator()( RngPtr r ) const
 {
   return b_ * unscaled_gamma( r );
 }

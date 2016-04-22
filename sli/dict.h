@@ -36,7 +36,8 @@
 
 typedef std::map< Name, Token, std::less< Name > > TokenMap;
 
-inline bool operator==( const TokenMap& x, const TokenMap& y )
+inline bool
+operator==( const TokenMap& x, const TokenMap& y )
 {
   return ( x.size() == y.size() ) && equal( x.begin(), x.end(), y.begin() );
 }
@@ -60,7 +61,8 @@ class Dictionary : private TokenMap
     static bool nocase_compare( char c1, char c2 );
 
   public:
-    bool operator()( const std::pair< Name, Token >& lhs,
+    bool
+    operator()( const std::pair< Name, Token >& lhs,
       const std::pair< Name, Token >& rhs ) const
     {
       const std::string& ls = lhs.first.toString();
@@ -139,7 +141,8 @@ public:
 
   void info( std::ostream& ) const;
 
-  bool operator==( const Dictionary& d ) const
+  bool
+  operator==( const Dictionary& d ) const
   {
     return ::operator==( *this, d );
   }

@@ -232,7 +232,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
     size_t num_elements = source->last - source->first;
     size_t right = cg_idx_left + num_elements;
     for ( size_t proc = 0; proc
-            < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
+          < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
           ++proc )
       ( *masks )[ proc ].sources.insert( cg_idx_left, right );
     cg_idx_left += num_elements + 1;
@@ -247,7 +247,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
   {
     size_t num_elements = target->last - target->first;
     for ( size_t proc = 0; proc
-            < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
+          < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
           ++proc )
     {
       // Make sure that the range is only added on as many ranks as
@@ -270,8 +270,8 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
         // the rank where left acutally is the first neuron fromt
         // the currently looked at range.
         ( *masks )[ ( proc + target->first )
-          % kernel().mpi_manager.get_num_processes() ].targets.insert( left,
-          right );
+          % kernel().mpi_manager.get_num_processes() ]
+          .targets.insert( left, right );
       }
     }
 

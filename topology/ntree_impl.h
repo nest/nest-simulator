@@ -53,8 +53,7 @@ Ntree< D, T, max_capacity, max_depth >::iterator::iterator( Ntree& q )
 
 template < int D, class T, int max_capacity, int max_depth >
 typename Ntree< D, T, max_capacity, max_depth >::iterator&
-  Ntree< D, T, max_capacity, max_depth >::iterator::
-  operator++()
+  Ntree< D, T, max_capacity, max_depth >::iterator::operator++()
 {
   node_++;
 
@@ -136,8 +135,8 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::masked_iterator(
       {
         anchor_[ i ] = nest::mod( anchor_[ i ] + mask_bb.lower_left[ i ]
                            - ntree_->lower_left_[ i ],
-                         ntree_->extent_[ i ] ) - mask_bb.lower_left[ i ]
-          + ntree_->lower_left_[ i ];
+                         ntree_->extent_[ i ] )
+          - mask_bb.lower_left[ i ] + ntree_->lower_left_[ i ];
       }
     }
     anchors_.push_back( anchor_ );
@@ -150,7 +149,8 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::masked_iterator(
       {
         int n = anchors_.size();
         if ( ( anchor_[ i ] + mask_bb.upper_right[ i ]
-               - ntree_->lower_left_[ i ] ) > ntree_->extent_[ i ] )
+               - ntree_->lower_left_[ i ] )
+          > ntree_->extent_[ i ] )
         {
           for ( int j = 0; j < n; ++j )
           {
@@ -348,8 +348,7 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::first_leaf_inside_()
 
 template < int D, class T, int max_capacity, int max_depth >
 typename Ntree< D, T, max_capacity, max_depth >::masked_iterator&
-  Ntree< D, T, max_capacity, max_depth >::masked_iterator::
-  operator++()
+  Ntree< D, T, max_capacity, max_depth >::masked_iterator::operator++()
 {
   node_++;
 

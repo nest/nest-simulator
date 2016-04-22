@@ -312,10 +312,10 @@ SPManager::disconnect( GIDCollection& sources,
   if ( not sp_conn_builders_.empty() )
   { // Implement a getter for sp_conn_builders_
 
-    for (
-      std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin();
-      i != sp_conn_builders_.end();
-      i++ )
+    for ( std::vector< SPBuilder* >::const_iterator i =
+            sp_conn_builders_.begin();
+          i != sp_conn_builders_.end();
+          i++ )
     {
       std::string synModel = getValue< std::string >( syn_spec, names::model );
       if ( ( *i )->get_synapse_model()

@@ -364,7 +364,7 @@ Processes::Sysexec_aFunction::execute( SLIInterpreter* i ) const
   // **argv denotes an pointer to an array which is allocated dynamically
   // the old formulation char *argv[array->size() + 1]; is no longer legal c++
   // (Ruediger!!)
-  char** argv = new char* [ array->size() + 1 ];
+  char** argv = new char*[ array->size() + 1 ];
 
   for ( unsigned int j = 0; j < array->size(); j++ ) // forall in array
   {

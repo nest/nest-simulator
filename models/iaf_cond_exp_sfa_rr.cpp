@@ -101,8 +101,10 @@ nest::iaf_cond_exp_sfa_rr_dynamics( double,
   const double I_rr = y[ S::G_RR ] * ( y[ S::V_M ] - node.P_.E_rr );
 
   // V dot
-  f[ S::V_M ] = ( -I_L + node.B_.I_stim_ + node.P_.I_e - I_syn_exc - I_syn_inh
-                  - I_sfa - I_rr ) / node.P_.C_m;
+  f[ S::V_M ] =
+    ( -I_L + node.B_.I_stim_ + node.P_.I_e - I_syn_exc - I_syn_inh - I_sfa
+      - I_rr )
+    / node.P_.C_m;
 
   f[ S::G_EXC ] = -y[ S::G_EXC ] / node.P_.tau_synE;
   f[ S::G_INH ] = -y[ S::G_INH ] / node.P_.tau_synI;
@@ -153,8 +155,8 @@ nest::iaf_cond_exp_sfa_rr::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::iaf_cond_exp_sfa_rr::State_& nest::iaf_cond_exp_sfa_rr::State_::operator=(
-  const State_& s )
+nest::iaf_cond_exp_sfa_rr::State_&
+nest::iaf_cond_exp_sfa_rr::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 

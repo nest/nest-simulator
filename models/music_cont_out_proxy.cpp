@@ -40,9 +40,9 @@
 #include <string>
 
 // Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
 #include "sibling_container.h"
-#include "event_delivery_manager_impl.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -71,8 +71,8 @@ nest::music_cont_out_proxy::State_::State_()
 }
 
 nest::music_cont_out_proxy::State_::State_( const State_& s )
-    : published_( s.published_ )
-      , port_width_( s.port_width_ )
+  : published_( s.published_ )
+  , port_width_( s.port_width_ )
 {
 }
 
@@ -83,9 +83,10 @@ nest::music_cont_out_proxy::Buffers_::Buffers_()
 }
 
 nest::music_cont_out_proxy::Buffers_::Buffers_( const Buffers_& b )
-    : has_targets_( b.has_targets_ )
-      , data_( b.data_ )
-{}
+  : has_targets_( b.has_targets_ )
+  , data_( b.data_ )
+{
+}
 
 nest::music_cont_out_proxy::Variables_::Variables_()
   : index_map_()
@@ -309,7 +310,7 @@ nest::music_cont_out_proxy::calibrate()
     }
     else
     {
-      dmap  =
+      dmap =
         new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ),
           MPI::DOUBLE,
           music_perm_ind );
@@ -383,8 +384,8 @@ nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
           const thread target_thread = target_node->get_thread();
           kernel().connection_manager.connect(
             this->get_gid(), target_node, target_thread, synmodel_id );
-          }
         }
+      }
     }
     else
     {

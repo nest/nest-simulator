@@ -20,7 +20,7 @@
  *
  */
 
-#ifndef MUSIC_CONT_OUT_PROXY_H 
+#ifndef MUSIC_CONT_OUT_PROXY_H
 #define MUSIC_CONT_OUT_PROXY_H
 
 // Generated includes:
@@ -106,7 +106,7 @@ music_message_in_proxy
 */
 namespace nest
 {
-//class Network;
+// class Network;
 
 class music_cont_out_proxy : public Node
 {
@@ -172,14 +172,16 @@ private:
 
   struct Parameters_
   {
-    Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< Copy constructor for parameter values
+    Parameters_(); //!< Sets default parameter values
+    Parameters_(
+      const Parameters_& ); //!< Copy constructor for parameter values
 
     std::string port_name_;           //!< the name of MUSIC port to connect to
     Time interval_;                   //!< recording interval, in ms
     std::vector< Name > record_from_; //!< which data to record
 
-    void get( DictionaryDatum&, const Variables_& ) const; //!< Store current values in dictionary
+    void get( DictionaryDatum&,
+      const Variables_& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum&,
       const State_&,
       const Buffers_& ); //!< Set values from dictionary
@@ -189,7 +191,7 @@ private:
 
   struct State_
   {
-    State_(); //!< Sets default state value
+    State_();                //!< Sets default state value
     State_( const State_& ); //!< Copy constructor for state values
     bool published_; //!< indicates whether this node has been published already
                      //!< with MUSIC
@@ -197,17 +199,19 @@ private:
     // int max_buffered_; //!< maximum delay (measured in multiples of music
     // ticks) of publishing new data
 
-    void get( DictionaryDatum& ) const;                     //!< Store current values in dictionary
-    void set( const DictionaryDatum&, const Parameters_& ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void set( const DictionaryDatum&,
+      const Parameters_& ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
 
   struct Buffers_
   {
-    Buffers_(); //!< Initializes default buffer
+    Buffers_();                  //!< Initializes default buffer
     Buffers_( const Buffers_& ); //!< Copy constructor for the data buffer
-    bool has_targets_; //!< Indicates whether the proxy is recording from any neurons or not
+    bool has_targets_; //!< Indicates whether the proxy is recording from any
+                       //!neurons or not
     std::vector< double > data_; //!< Recorded data
   };
 
@@ -215,9 +219,10 @@ private:
 
   struct Variables_
   {
-    Variables_(); //!< Sets default variable values
+    Variables_();                    //!< Sets default variable values
     Variables_( const Variables_& ); //!< Copy constructor
-    std::vector< MUSIC::GlobalIndex > index_map_; //!< Global mapping for Nest-GIDs -> Music indice
+    std::vector< MUSIC::GlobalIndex >
+      index_map_; //!< Global mapping for Nest-GIDs -> Music indice
   };
 
   // ------------------------------------------------------------
@@ -242,4 +247,3 @@ nest::music_cont_out_proxy::sends_signal() const
 
 #endif /* #ifndef HAVE_MUSIC */
 #endif /* #ifndef MUSIC_CONT_OUT_PROXY_H */
-

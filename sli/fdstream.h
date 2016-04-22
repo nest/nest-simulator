@@ -33,8 +33,8 @@
 
 #ifndef HAVE_ISTREAM
 // C++ includes:
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 typedef std::ifstream ifdstream;
 typedef std::ofstream ofdstream;

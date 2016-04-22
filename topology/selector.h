@@ -74,7 +74,8 @@ struct Selector
    * Test if two selectors are equal, i.e. contain the same rules.
    * @returns true if both selectors are equal.
    */
-  bool operator==( const Selector& other )
+  bool
+  operator==( const Selector& other )
   {
     return ( other.model == model ) and ( other.depth == depth );
   }

@@ -240,7 +240,8 @@ TypeTrie::lookup( const TokenStack& st ) const
 }
 
 
-inline bool TypeTrie::operator==( const TypeTrie& tt ) const
+inline bool
+TypeTrie::operator==( const TypeTrie& tt ) const
 {
   return ( root == tt.root );
 }

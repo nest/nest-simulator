@@ -162,7 +162,8 @@ nest::iaf_cond_alpha_mc_dynamics( double,
     // membrane potential
     f[ S::idx( n, S::V_M ) ] =
       ( -I_L - I_syn_exc - I_syn_inh - I_conn + node.B_.I_stim_[ n ]
-        + node.P_.I_e[ n ] ) / node.P_.C_m[ n ];
+        + node.P_.I_e[ n ] )
+      / node.P_.C_m[ n ];
 
     // excitatory conductance
     f[ S::idx( n, S::DG_EXC ) ] =
@@ -246,8 +247,8 @@ nest::iaf_cond_alpha_mc::Parameters_::Parameters_( const Parameters_& p )
   }
 }
 
-nest::iaf_cond_alpha_mc::Parameters_& nest::iaf_cond_alpha_mc::Parameters_::
-operator=( const Parameters_& p )
+nest::iaf_cond_alpha_mc::Parameters_&
+nest::iaf_cond_alpha_mc::Parameters_::operator=( const Parameters_& p )
 {
   assert( this != &p ); // would be bad logical error in program
 
@@ -294,8 +295,8 @@ nest::iaf_cond_alpha_mc::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::iaf_cond_alpha_mc::State_& nest::iaf_cond_alpha_mc::State_::operator=(
-  const State_& s )
+nest::iaf_cond_alpha_mc::State_&
+nest::iaf_cond_alpha_mc::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 

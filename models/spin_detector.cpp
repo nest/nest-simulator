@@ -92,11 +92,11 @@ nest::spin_detector::calibrate()
     LOG( M_INFO,
       "spin_detector::calibrate",
       String::compose(
-           "Precise neuron models exist: the property precise_times "
-           "of the %1 with gid %2 has been set to true, precision has "
-           "been set to 15.",
-           get_name(),
-           get_gid() ) );
+        "Precise neuron models exist: the property precise_times "
+        "of the %1 with gid %2 has been set to true, precision has "
+        "been set to 15.",
+        get_name(),
+        get_gid() ) );
   }
 
   device_.calibrate();

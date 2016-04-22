@@ -112,8 +112,8 @@ nest::aeif_cond_alpha_RK5::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::aeif_cond_alpha_RK5::State_& nest::aeif_cond_alpha_RK5::State_::operator=(
-  const State_& s )
+nest::aeif_cond_alpha_RK5::State_&
+nest::aeif_cond_alpha_RK5::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 

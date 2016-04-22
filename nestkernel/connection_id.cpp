@@ -86,7 +86,8 @@ ConnectionID::to_ArrayDatum() const
   return ad;
 }
 
-bool ConnectionID::operator==( const ConnectionID& c ) const
+bool
+ConnectionID::operator==( const ConnectionID& c ) const
 {
   return ( source_gid_ == c.source_gid_ ) && ( target_gid_ == c.target_gid_ )
     && ( target_thread_ == c.target_thread_ ) && ( port_ == c.port_ )

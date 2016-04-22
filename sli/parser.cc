@@ -72,7 +72,8 @@ Parser::Parser( void )
 }
 
 
-bool Parser::operator()( Token& t )
+bool
+Parser::operator()( Token& t )
 {
   assert( s != NULL );
 
@@ -219,12 +220,14 @@ bool Parser::operator()( Token& t )
   return ( result == tokencompleted );
 }
 
-bool operator==( Parser const& p1, Parser const& p2 )
+bool
+operator==( Parser const& p1, Parser const& p2 )
 {
   return &p1 == &p2;
 }
 
-std::ostream& operator<<( std::ostream& out, const Parser& p )
+std::ostream&
+operator<<( std::ostream& out, const Parser& p )
 {
   out << "Parser(" << p.scan() << ')' << std::endl;
   return out;

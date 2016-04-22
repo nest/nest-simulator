@@ -107,8 +107,8 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
 
     // see if we can represent interval as multiple of step
     interval_ = Time::step( Time( Time::ms( v ) ).get_steps() );
-    if ( std::abs( 1 - interval_.get_ms() / v ) > 10
-        * std::numeric_limits< double >::epsilon() )
+    if ( std::abs( 1 - interval_.get_ms() / v )
+      > 10 * std::numeric_limits< double >::epsilon() )
       throw BadProperty(
         "The sampling interval must be a multiple of "
         "the simulation resolution" );
@@ -235,11 +235,13 @@ Multimeter::handle( DataLoggingReply& reply )
         assert( j >= inactive_skipped );
         assert( V_.current_request_data_start_ + j - inactive_skipped
           < S_.data_.size() );
-        assert( S_.data_[ V_.current_request_data_start_ + j
-                     - inactive_skipped ].size() == info[ j ].data.size() );
+        assert(
+          S_.data_[ V_.current_request_data_start_ + j - inactive_skipped ]
+            .size()
+          == info[ j ].data.size() );
         for ( size_t k = 0; k < info[ j ].data.size(); ++k )
-          S_.data_[ V_.current_request_data_start_ + j
-            - inactive_skipped ][ k ] += info[ j ].data[ k ];
+          S_.data_[ V_.current_request_data_start_ + j - inactive_skipped ]
+                  [ k ] += info[ j ].data[ k ];
       }
     }
   }

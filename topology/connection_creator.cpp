@@ -33,8 +33,8 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   , number_of_connections_( 0 )
   , mask_()
   , kernel_()
-  , synapse_model_( kernel().model_manager.get_synapsedict()->lookup(
-      "static_synapse" ) )
+  , synapse_model_(
+      kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
   , weight_()
   , delay_()
 {
@@ -115,7 +115,8 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     {
 
       throw BadProperty( "ConnectLayers cannot handle parameter '"
-        + dit->first.toString() + "'." );
+        + dit->first.toString()
+        + "'." );
     }
   }
 

@@ -40,12 +40,12 @@
 #ifndef UTIL_GTL_HASHTABLE_COMMON_H_
 #define UTIL_GTL_HASHTABLE_COMMON_H_
 
-#include <sparseconfig.h>
 #include <assert.h>
-#include <stdio.h>
-#include <stddef.h> // for size_t
 #include <iosfwd>
+#include <sparseconfig.h>
+#include <stddef.h>  // for size_t
 #include <stdexcept> // For length_error
+#include <stdio.h>
 
 /* If we're not using GNU C, elide __attribute__ */
 #ifndef __GNUC__
@@ -232,13 +232,15 @@ template < typename value_type >
 struct pod_serializer
 {
   template < typename INPUT >
-  bool operator()( INPUT* fp, value_type* value ) const
+  bool
+  operator()( INPUT* fp, value_type* value ) const
   {
     return read_data( fp, value, sizeof( *value ) );
   }
 
   template < typename OUTPUT >
-  bool operator()( OUTPUT* fp, const value_type& value ) const
+  bool
+  operator()( OUTPUT* fp, const value_type& value ) const
   {
     return write_data( fp, &value, sizeof( value ) );
   }

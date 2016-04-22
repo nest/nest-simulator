@@ -132,8 +132,8 @@ nest::iaf_cond_exp::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::iaf_cond_exp::State_& nest::iaf_cond_exp::State_::operator=(
-  const State_& s )
+nest::iaf_cond_exp::State_&
+nest::iaf_cond_exp::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 

@@ -116,7 +116,8 @@ inline Multirange::iterator::iterator( RangeVector::const_iterator iter,
 {
 }
 
-inline bool Multirange::iterator::operator!=( const iterator& other ) const
+inline bool
+Multirange::iterator::operator!=( const iterator& other ) const
 {
   return ( other.pair_iter_ != pair_iter_ ) || ( other.n_ != n_ );
 }

@@ -185,7 +185,8 @@ Time::reset_to_defaults()
   Range::STEPS_PER_MS = 1 / Range::MS_PER_STEP;
 }
 
-std::ostream& operator<<( std::ostream& strm, const Time& t )
+std::ostream&
+operator<<( std::ostream& strm, const Time& t )
 {
   if ( t.tics == Time::LIM_NEG_INF.tics )
     strm << "-INF";

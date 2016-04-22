@@ -154,7 +154,8 @@ private:
   void PrecomputeTable( size_t ); //!< compute the internal lookup table
 };
 
-inline double BinomialRandomDev::operator()( RngPtr rthrd ) const
+inline double
+BinomialRandomDev::operator()( RngPtr rthrd ) const
 {
   return static_cast< double >( ldev( rthrd ) );
 }

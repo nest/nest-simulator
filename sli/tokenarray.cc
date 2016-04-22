@@ -29,7 +29,8 @@
 #include "tokenutils.h"
 
 
-const TokenArray& TokenArray::operator=( const TokenArray& a )
+const TokenArray&
+TokenArray::operator=( const TokenArray& a )
 {
   a.data->add_reference(); // protect from a=a
   data->remove_reference();
@@ -170,7 +171,8 @@ TokenArray::valid( void ) const
 }
 
 
-std::ostream& operator<<( std::ostream& out, const TokenArray& a )
+std::ostream&
+operator<<( std::ostream& out, const TokenArray& a )
 {
 
   for ( Token* t = a.begin(); t < a.end(); ++t )

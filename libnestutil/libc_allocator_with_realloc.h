@@ -32,10 +32,10 @@
 #ifndef UTIL_GTL_LIBC_ALLOCATOR_WITH_REALLOC_H_
 #define UTIL_GTL_LIBC_ALLOCATOR_WITH_REALLOC_H_
 
+#include <new> // for placement new
 #include <sparseconfig.h>
-#include <stdlib.h> // for malloc/realloc/free
 #include <stddef.h> // for ptrdiff_t
-#include <new>      // for placement new
+#include <stdlib.h> // for malloc/realloc/free
 
 _START_GOOGLE_NAMESPACE_
 
@@ -137,14 +137,16 @@ public:
 };
 
 template < class T >
-inline bool operator==( const libc_allocator_with_realloc< T >&,
+inline bool
+operator==( const libc_allocator_with_realloc< T >&,
   const libc_allocator_with_realloc< T >& )
 {
   return true;
 }
 
 template < class T >
-inline bool operator!=( const libc_allocator_with_realloc< T >&,
+inline bool
+operator!=( const libc_allocator_with_realloc< T >&,
   const libc_allocator_with_realloc< T >& )
 {
   return false;

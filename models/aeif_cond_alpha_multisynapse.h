@@ -400,8 +400,8 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
   double_t I_syn_exc = 0.0;
   double_t I_syn_inh = 0.0;
 
-  for ( size_t i = 0; i < ( P_.num_of_receptors_
-                            * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
+  for ( size_t i = 0; i
+        < ( P_.num_of_receptors_ * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
         i += S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR )
   {
     I_syn_exc += y[ S::G_EXC + i ] * ( V - P_.E_ex );
@@ -419,8 +419,11 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
     P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
 
   // dv/dt
-  f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
-                  - w + P_.I_e + B_.I_stim_ ) / P_.C_m;
+  f[ S::V_M ] =
+    ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh - w
+      + P_.I_e
+      + B_.I_stim_ )
+    / P_.C_m;
 
   // Adaptation current w.
   f[ S::W ] = ( P_.a * ( V - P_.E_L ) - w ) / P_.tau_w;

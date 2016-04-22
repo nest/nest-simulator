@@ -57,7 +57,7 @@ posix_signal( int signo, Sigfunc* func )
    */
 
   /* Thus we cast the supplied pointer! */
-  act.sa_handler = ( void ( * ) () ) func;
+  act.sa_handler = ( void ( * )() ) func;
   sigemptyset( &act.sa_mask );
   act.sa_flags = 0;
   if ( signo == SIGALRM )

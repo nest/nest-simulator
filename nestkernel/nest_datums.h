@@ -38,7 +38,8 @@
 typedef AggregateDatum< nest::ConnectionID, &nest::NestModule::ConnectionType >
   ConnectionDatum;
 typedef AggregateDatum< nest::GIDCollection,
-  &nest::NestModule::GIDCollectionType > GIDCollectionDatum;
+  &nest::NestModule::GIDCollectionType >
+  GIDCollectionDatum;
 
 #ifndef HAVE_STATIC_TEMPLATE_DECLARATION_FAILS
 template <>

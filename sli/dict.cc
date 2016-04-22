@@ -196,7 +196,8 @@ Dictionary::all_accessed_( std::string& missed, std::string prefix ) const
   return missed.empty();
 }
 
-std::ostream& operator<<( std::ostream& out, const Dictionary& d )
+std::ostream&
+operator<<( std::ostream& out, const Dictionary& d )
 {
   out << "<<";
 

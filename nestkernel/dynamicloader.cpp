@@ -64,14 +64,16 @@ struct sDynModule
   lt_dlhandle handle;
   SLIModule* pModule;
 
-  bool operator==( const sDynModule& rhs ) const
+  bool
+  operator==( const sDynModule& rhs ) const
   {
     return name == rhs.name;
   }
 
   // operator!= must be implemented explicitly, not all compilers
   // generate it automatically from operator==
-  bool operator!=( const sDynModule& rhs ) const
+  bool
+  operator!=( const sDynModule& rhs ) const
   {
     return !( *this == rhs );
   }

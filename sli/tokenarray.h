@@ -415,7 +415,8 @@ public:
   const TokenArray& operator=( const std::vector< long >& );
   const TokenArray& operator=( const std::vector< double >& );
 
-  bool operator==( const TokenArray& a ) const
+  bool
+  operator==( const TokenArray& a ) const
   {
     return *data == *a.data;
   }

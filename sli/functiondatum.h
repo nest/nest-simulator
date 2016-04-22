@@ -62,7 +62,8 @@ class FunctionDatum : public TypedDatum< &SLIInterpreter::Functiontype >
     return this;
   }
 
-  SLIFunction const& operator=( SLIFunction const& f )
+  SLIFunction const&
+  operator=( SLIFunction const& f )
   {
     std::cerr << "Warning: Definition of FunctionDatum (" << name
               << ") changed!!\n";
@@ -130,14 +131,16 @@ public:
 
   void backtrace( SLIInterpreter*, int ) const;
 
-  static void* operator new( size_t size )
+  static void*
+  operator new( size_t size )
   {
     if ( size != sizeof( FunctionDatum ) )
       return ::operator new( size );
     return memory.alloc();
   }
 
-  static void operator delete( void* p, size_t size )
+  static void
+  operator delete( void* p, size_t size )
   {
     if ( p == NULL )
       return;

@@ -136,8 +136,9 @@ nest::NodeWithProxiesExpected::message()
 {
   std::ostringstream out;
   out << "Nest expected a node with proxies (eg normal model neuron),"
-         "but the node with id " << id_ << " is not a node without proxies, "
-                                           "e.g., a subnet or device.";
+         "but the node with id "
+      << id_ << " is not a node without proxies, "
+                "e.g., a subnet or device.";
   return out.str();
 }
 

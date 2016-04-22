@@ -144,10 +144,10 @@ ModelManager::initialize()
   prototypes_.swap( tmp_proto );
 
   // (re-)append all synapse prototypes
-  for (
-    std::vector< ConnectorModel* >::iterator i = pristine_prototypes_.begin();
-    i != pristine_prototypes_.end();
-    ++i )
+  for ( std::vector< ConnectorModel* >::iterator i =
+          pristine_prototypes_.begin();
+        i != pristine_prototypes_.end();
+        ++i )
   {
     if ( *i != 0 )
     {
@@ -456,10 +456,10 @@ ModelManager::calibrate( const TimeConverter& tc )
   for ( thread t = 0;
         t < static_cast< thread >( kernel().vp_manager.get_num_threads() );
         ++t )
-    for (
-      std::vector< ConnectorModel* >::iterator pt = prototypes_[ t ].begin();
-      pt != prototypes_[ t ].end();
-      ++pt )
+    for ( std::vector< ConnectorModel* >::iterator pt =
+            prototypes_[ t ].begin();
+          pt != prototypes_[ t ].end();
+          ++pt )
       if ( *pt != 0 )
         ( *pt )->calibrate( tc );
 }

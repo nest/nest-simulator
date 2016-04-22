@@ -121,8 +121,8 @@ librandom::BinomialRandomDev::ldev( RngPtr rng ) const
     Y = n_ - X;
 
     // 12
-    if ( V < static_cast< double >( m_ - Y ) * phi_ - f_[ m_ + 1 ]
-        + f_[ Y + 1 ] )
+    if ( V
+      < static_cast< double >( m_ - Y ) * phi_ - f_[ m_ + 1 ] + f_[ Y + 1 ] )
     {
       not_finished = 1;
     }

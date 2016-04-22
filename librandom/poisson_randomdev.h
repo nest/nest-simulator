@@ -181,7 +181,8 @@ private:
 };
 }
 
-inline double librandom::PoissonRandomDev::operator()( RngPtr rthrd ) const
+inline double
+librandom::PoissonRandomDev::operator()( RngPtr rthrd ) const
 {
   return static_cast< double >( ldev( rthrd ) );
 }

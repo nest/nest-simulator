@@ -457,7 +457,8 @@ public:
     for ( size_t i = 0; i < K; i++ )
       if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
              ->get_common_properties()
-             .get_vt_gid() == vt_gid )
+             .get_vt_gid()
+        == vt_gid )
         C_[ i ].trigger_update_weight( t,
           dopa_spikes,
           t_trig,
@@ -667,7 +668,8 @@ public:
       t,
       ConnectorBase::get_t_lastspike(),
       static_cast< GenericConnectorModel< ConnectionT >* >(
-        cm[ C_[ 0 ].get_syn_id() ] )->get_common_properties() );
+        cm[ C_[ 0 ].get_syn_id() ] )
+        ->get_common_properties() );
     ConnectorBase::set_t_lastspike( e.get_stamp().get_ms() );
   }
 
@@ -681,7 +683,8 @@ public:
     synindex syn_id = C_[ 0 ].get_syn_id();
     if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
            ->get_common_properties()
-           .get_vt_gid() == vt_gid )
+           .get_vt_gid()
+      == vt_gid )
       C_[ 0 ].trigger_update_weight( t,
         dopa_spikes,
         t_trig,
@@ -924,7 +927,8 @@ public:
     for ( size_t i = 0; i < C_.size(); i++ )
       if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
              ->get_common_properties()
-             .get_vt_gid() == vt_gid )
+             .get_vt_gid()
+        == vt_gid )
         C_[ i ].trigger_update_weight( t,
           dopa_spikes,
           t_trig,

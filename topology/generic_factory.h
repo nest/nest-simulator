@@ -112,8 +112,9 @@ inline bool
 GenericFactory< BaseT >::register_subtype( const Name& name,
   CreatorFunction creator )
 {
-  return associations_.insert( std::pair< Name, CreatorFunction >(
-                                 name, creator ) ).second;
+  return associations_
+    .insert( std::pair< Name, CreatorFunction >( name, creator ) )
+    .second;
 }
 
 template < class BaseT >

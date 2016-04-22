@@ -167,7 +167,8 @@ Token::pprint( std::ostream& out ) const
     p->pprint( out );
 }
 
-std::ostream& operator<<( std::ostream& o, const Token& c )
+std::ostream&
+operator<<( std::ostream& o, const Token& c )
 {
   if ( !c )
     o << "<Null token>";

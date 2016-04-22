@@ -118,11 +118,13 @@ public:
      * Iterators are equal if they point to the same node in the same
      * ntree.
      */
-    bool operator==( const iterator& other ) const
+    bool
+    operator==( const iterator& other ) const
     {
       return ( other.ntree_ == ntree_ ) && ( other.node_ == node_ );
     }
-    bool operator!=( const iterator& other ) const
+    bool
+    operator!=( const iterator& other ) const
     {
       return ( other.ntree_ != ntree_ ) || ( other.node_ != node_ );
     }
@@ -195,11 +197,13 @@ public:
      * Iterators are equal if they point to the same node in the same
      * ntree.
      */
-    bool operator==( const masked_iterator& other ) const
+    bool
+    operator==( const masked_iterator& other ) const
     {
       return ( other.ntree_ == ntree_ ) && ( other.node_ == node_ );
     }
-    bool operator!=( const masked_iterator& other ) const
+    bool
+    operator!=( const masked_iterator& other ) const
     {
       return ( other.ntree_ != ntree_ ) || ( other.node_ != node_ );
     }

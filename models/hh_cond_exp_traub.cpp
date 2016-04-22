@@ -105,7 +105,8 @@ hh_cond_exp_traub_dynamics( double, const double y[], double f[], void* pnode )
 
   // membrane potential
   f[ S::V_M ] = ( -I_Na - I_K - I_L - I_syn_exc - I_syn_inh + node.B_.I_stim_
-                  + node.P_.I_e ) / node.P_.C_m;
+                  + node.P_.I_e )
+    / node.P_.C_m;
 
   // channel dynamics
   const double V = y[ S::V_M ] - node.P_.V_T;
@@ -183,8 +184,8 @@ nest::hh_cond_exp_traub::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::hh_cond_exp_traub::State_& nest::hh_cond_exp_traub::State_::operator=(
-  const State_& s )
+nest::hh_cond_exp_traub::State_&
+nest::hh_cond_exp_traub::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 

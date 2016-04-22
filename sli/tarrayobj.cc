@@ -137,7 +137,8 @@ TokenArrayObj::resize( size_t s, const Token& t )
   resize( s, alloc_block_size, t );
 }
 
-const TokenArrayObj& TokenArrayObj::operator=( const TokenArrayObj& a )
+const TokenArrayObj&
+TokenArrayObj::operator=( const TokenArrayObj& a )
 {
   if ( capacity() >= a.size() )
   // This branch also covers the case where a is the null-vector.
@@ -309,7 +310,7 @@ TokenArrayObj::reduce( Token* first, Token* last )
 
   // First step: shift all elements to the begin of
   // the array.
-  Token* i = p, * l = first;
+  Token *i = p, *l = first;
 
   if ( first > begin() )
   {
@@ -570,7 +571,8 @@ TokenArrayObj::append_move( TokenArrayObj& a )
 }
 
 
-bool TokenArrayObj::operator==( const TokenArrayObj& a ) const
+bool
+TokenArrayObj::operator==( const TokenArrayObj& a ) const
 {
 
   // std::cout << "comparison of TokenArrayObj" << std::endl;
@@ -589,7 +591,7 @@ bool TokenArrayObj::operator==( const TokenArrayObj& a ) const
   if ( size() != a.size() )
     return false;
 
-  Token* i = begin(), * j = a.begin();
+  Token *i = begin(), *j = a.begin();
   while ( i < end() )
     if ( !( *i++ == *j++ ) )
       return false;
@@ -641,7 +643,8 @@ TokenArrayObj::valid( void ) const
 }
 
 
-std::ostream& operator<<( std::ostream& out, const TokenArrayObj& a )
+std::ostream&
+operator<<( std::ostream& out, const TokenArrayObj& a )
 {
 
   for ( Token* i = a.begin(); i < a.end(); ++i )

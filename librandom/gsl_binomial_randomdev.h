@@ -140,7 +140,8 @@ private:
   gsl_rng* rng_;
 };
 
-inline double GSL_BinomialRandomDev::operator()( RngPtr rthrd ) const
+inline double
+GSL_BinomialRandomDev::operator()( RngPtr rthrd ) const
 {
   return static_cast< double >( ldev( rthrd ) );
 }

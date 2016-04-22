@@ -95,9 +95,9 @@ private:
    * one entry per channel. The priority queues used within the vector
    * implement min-heaps stored in vectors.
    */
-  std::vector< std::priority_queue< double,
-    std::vector< double >,
-    std::greater< double > > > eventqueue_;
+  std::vector< std::
+      priority_queue< double, std::vector< double >, std::greater< double > > >
+    eventqueue_;
 };
 
 } // namespace nest

@@ -52,8 +52,8 @@ NodeManager::NodeManager()
   , siblingcontainer_model_( 0 )
   , n_gsd_( 0 )
   , nodes_vec_()
-  , nodes_prelim_up_vec_()
-  , needs_prelim_update_( false )
+  , wfr_nodes_vec_()
+  , any_node_uses_wfr_( false )
   , nodes_vec_network_size_( 0 ) // zero to force update
 {
 }
@@ -555,18 +555,18 @@ NodeManager::ensure_valid_thread_local_ids()
       /* We clear the existing nodes_vec_ and then rebuild it. */
       nodes_vec_.clear();
       nodes_vec_.resize( kernel().vp_manager.get_num_threads() );
-      nodes_prelim_up_vec_.clear();
-      nodes_prelim_up_vec_.resize( kernel().vp_manager.get_num_threads() );
+      wfr_nodes_vec_.clear();
+      wfr_nodes_vec_.resize( kernel().vp_manager.get_num_threads() );
 
       for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
       {
         nodes_vec_[ t ].clear();
-        nodes_prelim_up_vec_[ t ].clear();
+        wfr_nodes_vec_[ t ].clear();
 
         // Loops below run from index 1, because index 0 is always the root
         // network, which is never updated.
         size_t num_thread_local_nodes = 0;
-        size_t num_thread_local_prelim_nodes = 0;
+        size_t num_thread_local_wfr_nodes = 0;
         for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
         {
           Node* node = local_nodes_.get_node_by_index( idx );
@@ -575,12 +575,12 @@ NodeManager::ensure_valid_thread_local_ids()
                  || node->num_thread_siblings_() > 0 ) )
           {
             num_thread_local_nodes++;
-            if ( node->needs_prelim_update() )
-              num_thread_local_prelim_nodes++;
+            if ( node->node_uses_wfr() )
+              num_thread_local_wfr_nodes++;
           }
         }
         nodes_vec_[ t ].reserve( num_thread_local_nodes );
-        nodes_prelim_up_vec_[ t ].reserve( num_thread_local_prelim_nodes );
+        wfr_nodes_vec_[ t ].reserve( num_thread_local_wfr_nodes );
 
         for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
         {
@@ -605,24 +605,23 @@ NodeManager::ensure_valid_thread_local_ids()
             node->set_thread_lid( nodes_vec_[ t ].size() );
             nodes_vec_[ t ].push_back( node );
 
-            if ( node->needs_prelim_update() )
-              nodes_prelim_up_vec_[ t ].push_back( node );
+            if ( node->node_uses_wfr() )
+              wfr_nodes_vec_[ t ].push_back( node );
           }
         }
       } // end of for threads
 
       nodes_vec_network_size_ = size();
 
-      needs_prelim_update_ = false;
-      // needs prelim update indicates, whether at least one
-      // of the threads has a neuron that requires preliminary
-      // update
-      // all threads then need to perform a preliminary update
+      any_node_uses_wfr_ = false;
+      // any_node_uses_wfr_ indicates, whether at least one
+      // of the threads has a neuron that uses waveform relaxtion
+      // all threads then need to perform a wfr_update
       // step, because gather_events() has to be done in a
       // openmp single section
       for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-        if ( nodes_prelim_up_vec_[ t ].size() > 0 )
-          needs_prelim_update_ = true;
+        if ( wfr_nodes_vec_[ t ].size() > 0 )
+          any_node_uses_wfr_ = true;
     }
 #ifdef _OPENMP
   } // end of omp critical region
@@ -674,15 +673,14 @@ NodeManager::prepare_nodes()
 
   /* We initialize the buffers of each node and calibrate it. */
 
-  size_t num_active_nodes = 0; // counts nodes that will be updated
-  // counts nodes that need preliminary updates
-  size_t num_active_prelim_nodes = 0;
+  size_t num_active_nodes = 0;     // counts nodes that will be updated
+  size_t num_active_wfr_nodes = 0; // counts nodes that use waveform relaxation
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
     kernel().vp_manager.get_num_threads() );
 
 #ifdef _OPENMP
-#pragma omp parallel reduction( + : num_active_nodes, num_active_prelim_nodes )
+#pragma omp parallel reduction( + : num_active_nodes, num_active_wfr_nodes )
   {
     size_t t = kernel().vp_manager.get_thread_id();
 #else
@@ -702,8 +700,8 @@ NodeManager::prepare_nodes()
         if ( not( *it )->is_frozen() )
         {
           ++num_active_nodes;
-          if ( ( *it )->needs_prelim_update() )
-            ++num_active_prelim_nodes;
+          if ( ( *it )->node_uses_wfr() )
+            ++num_active_wfr_nodes;
         }
       }
     }
@@ -725,10 +723,10 @@ NodeManager::prepare_nodes()
   std::string tmp_str = num_active_nodes == 1 ? " node" : " nodes";
   os << "Preparing " << num_active_nodes << tmp_str << " for simulation.";
 
-  if ( num_active_prelim_nodes != 0 )
+  if ( num_active_wfr_nodes != 0 )
   {
-    tmp_str = num_active_prelim_nodes == 1 ? " uses " : " use ";
-    os << " " << num_active_prelim_nodes << " of them" << tmp_str
+    tmp_str = num_active_wfr_nodes == 1 ? " uses " : " use ";
+    os << " " << num_active_wfr_nodes << " of them" << tmp_str
        << "iterative solution techniques.";
   }
 

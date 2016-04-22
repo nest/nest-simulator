@@ -32,12 +32,11 @@ import sys
 class OneToOneConnectTestCase(unittest.TestCase):
     """Tests of OneToOneConnect"""
 
-
     def test_ConnectPrePost(self):
         """Connect pre to post"""
 
         # OneToOneConnect([pre], [post])
-        nest.ResetKernel()        
+        nest.ResetKernel()
         pre = nest.Create("iaf_neuron", 2)
         post = nest.Create("iaf_neuron", 2)
         nest.OneToOneConnect(pre, post)
@@ -45,43 +44,41 @@ class OneToOneConnectTestCase(unittest.TestCase):
         targets = nest.GetStatus(connections, "target")
         self.assertEqual(targets, post)
 
-
     def test_ConnectPrePostParams(self):
         """Connect pre to post with a params dict"""
 
         # OneToOneConnect([pre], [post], params)
-        nest.ResetKernel()        
+        nest.ResetKernel()
         pre = nest.Create("iaf_neuron", 2)
         post = nest.Create("iaf_neuron", 2)
-        nest.OneToOneConnect(pre, post, {"weight" : 2.0})
+        nest.OneToOneConnect(pre, post, {"weight": 2.0})
         connections = nest.FindConnections(pre)
         weights = nest.GetStatus(connections, "weight")
         self.assertEqual(weights, (2.0, 2.0))
 
         # OneToOneConnect([pre], [post], [params])
-        nest.ResetKernel()        
+        nest.ResetKernel()
         pre = nest.Create("iaf_neuron", 2)
         post = nest.Create("iaf_neuron", 2)
-        nest.OneToOneConnect(pre, post, [{"weight" : 2.0}])
+        nest.OneToOneConnect(pre, post, [{"weight": 2.0}])
         connections = nest.FindConnections(pre)
         weights = nest.GetStatus(connections, "weight")
         self.assertEqual(weights, (2.0, 2.0))
 
         # OneToOneConnect([pre], [post], [params, params])
-        nest.ResetKernel()        
+        nest.ResetKernel()
         pre = nest.Create("iaf_neuron", 2)
         post = nest.Create("iaf_neuron", 2)
-        nest.OneToOneConnect(pre, post, [{"weight" : 2.0}, {"weight" : 3.0}])
+        nest.OneToOneConnect(pre, post, [{"weight": 2.0}, {"weight": 3.0}])
         connections = nest.FindConnections(pre)
         weights = nest.GetStatus(connections, "weight")
         self.assertEqual(weights, (2.0, 3.0))
-
 
     def test_ConnectPrePostWD(self):
         """Connect pre to post with a weight and delay"""
 
         # OneToOneConnect([pre], [post], w, d)
-        nest.ResetKernel()        
+        nest.ResetKernel()
         pre = nest.Create("iaf_neuron", 2)
         post = nest.Create("iaf_neuron", 2)
         nest.OneToOneConnect(pre, post, 2.0, 2.0)
@@ -111,7 +108,6 @@ class OneToOneConnectTestCase(unittest.TestCase):
         self.assertEqual(weights, (2.0, 3.0))
         self.assertEqual(delays, (2.0, 3.0))
 
-
     def test_IllegalConnection(self):
         """Wrong Connections"""
 
@@ -119,8 +115,8 @@ class OneToOneConnectTestCase(unittest.TestCase):
         n = nest.Create('iaf_neuron')
         vm = nest.Create('voltmeter')
 
-        self.assertRaisesRegex(nest.NESTError, "IllegalConnection", nest.OneToOneConnect, n, vm)
-
+        self.assertRaisesRegex(
+            nest.NESTError, "IllegalConnection", nest.OneToOneConnect, n, vm)
 
     def test_UnexpectedEvent(self):
         """Unexpected Event"""
@@ -129,13 +125,15 @@ class OneToOneConnectTestCase(unittest.TestCase):
         n = nest.Create('iaf_neuron')
         sd = nest.Create('spike_detector')
 
-        self.assertRaisesRegex(nest.NESTError, "UnexpectedEvent", nest.OneToOneConnect, sd, n)
+        self.assertRaisesRegex(
+            nest.NESTError, "UnexpectedEvent", nest.OneToOneConnect, sd, n)
 
 
 def suite():
 
-    suite = unittest.makeSuite(OneToOneConnectTestCase,'test')
+    suite = unittest.makeSuite(OneToOneConnectTestCase, 'test')
     return suite
+
 
 def run():
     runner = unittest.TextTestRunner(verbosity=2)

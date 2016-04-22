@@ -86,14 +86,12 @@ public:
     /**
      * Iterators are equal if they point to the same node in the same layer.
      */
-    bool
-    operator==( const masked_iterator& other ) const
+    bool operator==( const masked_iterator& other ) const
     {
       return ( other.layer_.get_gid() == layer_.get_gid() )
         && ( other.node_ == node_ ) && ( other.depth_ == depth_ );
     }
-    bool
-    operator!=( const masked_iterator& other ) const
+    bool operator!=( const masked_iterator& other ) const
     {
       return ( other.layer_.get_gid() != layer_.get_gid() )
         || ( other.node_ != node_ ) || ( other.depth_ != depth_ );
@@ -430,27 +428,23 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
     if ( layer.periodic_[ i ] )
     {
       ll[ i ] = ceil( ( bbox.lower_left[ i ] - layer.lower_left_[ i ] )
-          * layer_.dims_[ i ]
-          / layer.extent_[ i ]
+          * layer_.dims_[ i ] / layer.extent_[ i ]
         - 0.5 );
       ur[ i ] = round( ( bbox.upper_right[ i ] - layer.lower_left_[ i ] )
-        * layer_.dims_[ i ]
-        / layer.extent_[ i ] );
+        * layer_.dims_[ i ] / layer.extent_[ i ] );
     }
     else
     {
       ll[ i ] = std::min(
         index( std::max( ceil( ( bbox.lower_left[ i ] - layer.lower_left_[ i ] )
-                             * layer_.dims_[ i ]
-                             / layer.extent_[ i ]
+                             * layer_.dims_[ i ] / layer.extent_[ i ]
                            - 0.5 ),
           0.0 ) ),
         layer.dims_[ i ] );
       ur[ i ] = std::min(
         index(
           std::max( round( ( bbox.upper_right[ i ] - layer.lower_left_[ i ] )
-                      * layer_.dims_[ i ]
-                      / layer.extent_[ i ] ),
+                      * layer_.dims_[ i ] / layer.extent_[ i ] ),
             0.0 ) ),
         layer.dims_[ i ] );
     }
@@ -526,9 +520,9 @@ operator++()
   } while (
     not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) );
 
-  if ( filter_.select_model() && ( kernel().modelrange_manager.get_model_id(
-                                     layer_.gids_[ depth_ * layer_size_ ] )
-                                   != index( filter_.model ) ) )
+  if ( filter_.select_model()
+    && ( kernel().modelrange_manager.get_model_id(
+           layer_.gids_[ depth_ * layer_size_ ] ) != index( filter_.model ) ) )
     return operator++();
 
   return *this;

@@ -56,8 +56,8 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   , autapses_( true )
   , multapses_( true )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
-  , synapse_model_(
-      kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
+  , synapse_model_( kernel().model_manager.get_synapsedict()->lookup(
+      "static_synapse" ) )
   , weight_( 0 )
   , delay_( 0 )
   , param_dicts_()

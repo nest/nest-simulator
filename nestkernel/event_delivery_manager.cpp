@@ -105,14 +105,15 @@ EventDeliveryManager::configure_spike_buffers()
   // the following line does not compile with gcc <= 3.3.5
   spike_register_.resize( kernel().vp_manager.get_num_threads(),
     std::vector< std::vector< uint_t > >(
-      kernel().connection_manager.get_min_delay() ) );
+                            kernel().connection_manager.get_min_delay() ) );
   for ( size_t j = 0; j < spike_register_.size(); ++j )
     for ( size_t k = 0; k < spike_register_[ j ].size(); ++k )
       spike_register_[ j ][ k ].clear();
 
   offgrid_spike_register_.clear();
   // the following line does not compile with gcc <= 3.3.5
-  offgrid_spike_register_.resize( kernel().vp_manager.get_num_threads(),
+  offgrid_spike_register_.resize(
+    kernel().vp_manager.get_num_threads(),
     std::vector< std::vector< OffGridSpike > >(
       kernel().connection_manager.get_min_delay() ) );
   for ( size_t j = 0; j < offgrid_spike_register_.size(); ++j )
@@ -203,10 +204,8 @@ EventDeliveryManager::init_moduli()
   slice_moduli_.resize( min_delay + max_delay );
   for ( delay d = 0; d < min_delay + max_delay; ++d )
   {
-    slice_moduli_[ d ] =
-      ( ( kernel().simulation_manager.get_clock().get_steps() + d )
-        / min_delay )
-      % nbuff;
+    slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps()
+                             + d ) / min_delay ) % nbuff;
   }
 }
 
@@ -241,10 +240,8 @@ EventDeliveryManager::update_moduli()
     std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
   for ( delay d = 0; d < min_delay + max_delay; ++d )
   {
-    slice_moduli_[ d ] =
-      ( ( kernel().simulation_manager.get_clock().get_steps() + d )
-        / min_delay )
-      % nbuff;
+    slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps()
+                             + d ) / min_delay ) % nbuff;
   }
 }
 

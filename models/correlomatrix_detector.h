@@ -208,8 +208,7 @@ private:
     /**
      * Greater operator needed for insertion sort.
      */
-    inline bool
-    operator>( const Spike_& second ) const
+    inline bool operator>( const Spike_& second ) const
     {
       return timestep_ > second.timestep_;
     }

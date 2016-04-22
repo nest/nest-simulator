@@ -200,11 +200,9 @@ getValue< std::string >( const Token& t )
       NameDatum const d2( "dummy" );
       LiteralDatum const d3( "dummy" );
       SymbolDatum const d4( "dummy" );
-      throw TypeMismatch(
-        d1.gettypename().toString() + ", " + d2.gettypename().toString() + ", "
-          + d3.gettypename().toString()
-          + ", or "
-          + d4.gettypename().toString(),
+      throw TypeMismatch( d1.gettypename().toString() + ", "
+          + d2.gettypename().toString() + ", " + d3.gettypename().toString()
+          + ", or " + d4.gettypename().toString(),
         t.datum()->gettypename().toString() );
     }
   }
@@ -231,11 +229,9 @@ setValue< std::string >( const Token& t, std::string const& value )
       NameDatum const d2( "dummy" );
       LiteralDatum const d3( "dummy" );
       SymbolDatum const d4( "dummy" );
-      throw TypeMismatch(
-        d1.gettypename().toString() + ", " + d2.gettypename().toString() + ", "
-          + d3.gettypename().toString()
-          + ", or "
-          + d4.gettypename().toString(),
+      throw TypeMismatch( d1.gettypename().toString() + ", "
+          + d2.gettypename().toString() + ", " + d3.gettypename().toString()
+          + ", or " + d4.gettypename().toString(),
         t.datum()->gettypename().toString() );
     }
     else
@@ -256,11 +252,8 @@ setValue< std::string >( const Token& t, std::string const& value )
         LiteralDatum const d3( "dummy" );
         SymbolDatum const d4( "dummy" );
         throw TypeMismatch( d1.gettypename().toString() + ", "
-            + d2.gettypename().toString()
-            + ", "
-            + d3.gettypename().toString()
-            + ", or "
-            + d4.gettypename().toString(),
+            + d2.gettypename().toString() + ", " + d3.gettypename().toString()
+            + ", or " + d4.gettypename().toString(),
           t.datum()->gettypename().toString() );
       }
     }

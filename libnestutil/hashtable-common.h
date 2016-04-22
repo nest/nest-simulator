@@ -232,15 +232,13 @@ template < typename value_type >
 struct pod_serializer
 {
   template < typename INPUT >
-  bool
-  operator()( INPUT* fp, value_type* value ) const
+  bool operator()( INPUT* fp, value_type* value ) const
   {
     return read_data( fp, value, sizeof( *value ) );
   }
 
   template < typename OUTPUT >
-  bool
-  operator()( OUTPUT* fp, const value_type& value ) const
+  bool operator()( OUTPUT* fp, const value_type& value ) const
   {
     return write_data( fp, &value, sizeof( value ) );
   }

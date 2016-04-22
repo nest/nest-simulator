@@ -211,8 +211,7 @@ protected:
   RngPtr rng_; //!< store underlying RNG
 };
 
-inline double
-RandomDev::operator()( void )
+inline double RandomDev::operator()( void )
 {
   assert( rng_.valid() );
   return ( *this )( rng_ );

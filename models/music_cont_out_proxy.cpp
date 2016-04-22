@@ -158,8 +158,8 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
 
     // see if we can represent interval as multiple of step
     interval_ = Time::step( Time( Time::ms( v ) ).get_steps() );
-    if ( std::abs( 1 - interval_.get_ms() / v )
-      > 10 * std::numeric_limits< double >::epsilon() )
+    if ( std::abs( 1 - interval_.get_ms() / v ) > 10
+        * std::numeric_limits< double >::epsilon() )
     {
       throw BadProperty(
         "The sampling interval must be a multiple of "
@@ -371,7 +371,7 @@ nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
       ArrayDatum mca = getValue< ArrayDatum >( d, names::index_map );
       size_t music_index = 0;
 
-      for ( Token *t = mca.begin(); t != mca.end(); ++t, ++music_index )
+      for ( Token* t = mca.begin(); t != mca.end(); ++t, ++music_index )
       {
 
         const long target_node_id = getValue< long >( *t );

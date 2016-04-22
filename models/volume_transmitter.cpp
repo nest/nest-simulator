@@ -114,10 +114,10 @@ nest::volume_transmitter::update( const Time&,
     multiplicity = B_.neuromodulatory_spikes_.get_value( lag );
     if ( multiplicity > 0 )
     {
-      t_spike = Time(
-        Time::step( kernel().simulation_manager.get_slice_origin().get_steps()
-          + lag
-          + 1 ) ).get_ms();
+      t_spike =
+        Time(
+          Time::step( kernel().simulation_manager.get_slice_origin().get_steps()
+            + lag + 1 ) ).get_ms();
       B_.spikecounter_.push_back( spikecounter( t_spike, multiplicity ) );
     }
   }
@@ -127,9 +127,10 @@ nest::volume_transmitter::update( const Time&,
       % ( P_.deliver_interval_ * kernel().connection_manager.get_min_delay() )
     == 0 )
   {
-    double_t t_trig = Time(
-      Time::step( kernel().simulation_manager.get_slice_origin().get_steps()
-        + to ) ).get_ms();
+    double_t t_trig =
+      Time(
+        Time::step( kernel().simulation_manager.get_slice_origin().get_steps()
+          + to ) ).get_ms();
 
     if ( !B_.spikecounter_.empty() )
       kernel().connection_manager.trigger_update_weight(

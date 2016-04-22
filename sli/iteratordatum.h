@@ -53,8 +53,7 @@ public:
   long di;
   long pos;
 
-  bool
-  operator==( const IteratorState& i ) const
+  bool operator==( const IteratorState& i ) const
   {
     return stop == i.stop && start == i.start && di == i.di && pos == i.pos;
   }
@@ -140,22 +139,19 @@ public:
     return ( this->d.stop - this->d.start ) / this->d.di + 1;
   }
 
-  bool
-  operator==( const IteratorDatum& i ) const
+  bool operator==( const IteratorDatum& i ) const
   {
     return this->d == i.d;
   }
 
-  static void*
-  operator new( size_t size )
+  static void* operator new( size_t size )
   {
     if ( size != memory.size_of() )
       return ::operator new( size );
     return memory.alloc();
   }
 
-  static void
-  operator delete( void* p, size_t size )
+  static void operator delete( void* p, size_t size )
   {
     if ( p == NULL )
       return;

@@ -214,8 +214,7 @@ DictionaryStack::top_info( std::ostream& o ) const
   ( *d.begin() )->info( o );
 }
 
-const DictionaryStack&
-DictionaryStack::operator=( const DictionaryStack& ds )
+const DictionaryStack& DictionaryStack::operator=( const DictionaryStack& ds )
 {
   if ( &ds != this )
   {

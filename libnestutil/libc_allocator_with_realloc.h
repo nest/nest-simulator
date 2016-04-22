@@ -137,16 +137,14 @@ public:
 };
 
 template < class T >
-inline bool
-operator==( const libc_allocator_with_realloc< T >&,
+inline bool operator==( const libc_allocator_with_realloc< T >&,
   const libc_allocator_with_realloc< T >& )
 {
   return true;
 }
 
 template < class T >
-inline bool
-operator!=( const libc_allocator_with_realloc< T >&,
+inline bool operator!=( const libc_allocator_with_realloc< T >&,
   const libc_allocator_with_realloc< T >& )
 {
   return false;

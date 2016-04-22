@@ -49,8 +49,7 @@ typedef lockPTRDatum< librandom::RandomGen, &RandomNumbers::RngType > RngDatum;
  *  @ingroup RandomNumberGenerators
  */
 typedef lockPTRDatum< librandom::GenericRNGFactory,
-  &RandomNumbers::RngFactoryType >
-  RngFactoryDatum;
+  &RandomNumbers::RngFactoryType > RngFactoryDatum;
 
 /** Encapsulates random deviate generators in SLI.
  *  @ingroup RandomNumberGenerators
@@ -61,8 +60,7 @@ typedef lockPTRDatum< librandom::RandomDev, &RandomNumbers::RdvType > RdvDatum;
  *  @ingroup RandomNumberGenerators
  */
 typedef lockPTRDatum< librandom::GenericRandomDevFactory,
-  &RandomNumbers::RdvFactoryType >
-  RdvFactoryDatum;
+  &RandomNumbers::RdvFactoryType > RdvFactoryDatum;
 }
 
 #endif

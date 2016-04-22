@@ -73,8 +73,7 @@ librandom::NormalRandomDev::get_status( DictionaryDatum& d ) const
   def< double >( d, "sigma", sigma_ );
 }
 
-double
-librandom::NormalRandomDev::operator()( RngPtr r ) const
+double librandom::NormalRandomDev::operator()( RngPtr r ) const
 {
   // Box-Muller algorithm, see Knuth TAOCP, vol 2, 3rd ed, p 122
   // we waste one number

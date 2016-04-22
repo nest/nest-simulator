@@ -213,8 +213,7 @@ public:
     obj->removeReference();
   }
 
-  lockPTR< D >
-  operator=( const lockPTR< D >& spd )
+  lockPTR< D > operator=( const lockPTR< D >& spd )
   {
     //  assert(obj != NULL);
     // assert(spd.obj != NULL);
@@ -230,16 +229,14 @@ public:
     return *this;
   }
 
-  lockPTR< D >
-  operator=( D& s )
+  lockPTR< D > operator=( D& s )
   {
     *this = lockPTR< D >( s );
     assert( !( obj->isdeletable() ) );
     return *this;
   }
 
-  lockPTR< D >
-  operator=( D const& s )
+  lockPTR< D > operator=( D const& s )
   {
     *this = lockPTR< D >( s );
     assert( !( obj->isdeletable() ) );
@@ -309,14 +306,12 @@ public:
      that are shared by lockPTR<D>s, so this is equivalent to comparing the
      address of the D objects.
   */
-  bool
-  operator==( const lockPTR< D >& p ) const
+  bool operator==( const lockPTR< D >& p ) const
   {
     return ( obj == p.obj );
   }
 
-  bool
-  operator!=( const lockPTR< D >& p ) const
+  bool operator!=( const lockPTR< D >& p ) const
   {
     return ( obj != p.obj );
   }

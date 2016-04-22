@@ -796,8 +796,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
       }
       else
         throw TypeMismatch( DoubleVectorDatum().gettypename().toString()
-            + " or "
-            + ArrayDatum().gettypename().toString(),
+            + " or " + ArrayDatum().gettypename().toString(),
           di_s->second.datum()->gettypename().toString() );
     }
   }

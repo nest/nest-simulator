@@ -397,8 +397,8 @@ SLIStartup::init( SLIInterpreter* i )
   statusdict->insert(
     prgpatch_name, Token( new StringDatum( NEST_VERSION_PATCHLEVEL ) ) );
   statusdict->insert( prgbuilt_name,
-    Token(
-      new StringDatum( String::compose( "%1 %2", __DATE__, __TIME__ ) ) ) );
+    Token( new StringDatum(
+      String::compose( "%1 %2", __DATE__, __TIME__ ) ) ) );
   statusdict->insert( prefix_name, Token( new StringDatum( NEST_PREFIX ) ) );
   statusdict->insert(
     prgsourcedir_name, Token( new StringDatum( PKGSOURCEDIR ) ) );

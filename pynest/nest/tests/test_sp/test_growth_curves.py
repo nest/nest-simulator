@@ -32,7 +32,8 @@ import time
 
 class SynapticElementIntegrator(object):
     """
-    Generic class which describes how to compute the number of Synaptic Element based on Ca value
+    Generic class which describes how to compute the number of
+    Synaptic Element based on Ca value
     Each derived class should overwrite the get_se(self, t) method
     """
 
@@ -95,7 +96,8 @@ class SynapticElementIntegrator(object):
 
 class LinearExactSEI(SynapticElementIntegrator):
     """
-    Compute the number of synaptic element corresponding to a linear growth curve
+    Compute the number of synaptic element corresponding to a
+    linear growth curve
     dse/dCa = nu * (1 - Ca/eps)
     Use the exact solution
     """
@@ -122,8 +124,7 @@ class LinearExactSEI(SynapticElementIntegrator):
         se = 1 / self.eps * (
             self.growth_rate * self.tau_ca * (
                 self.get_ca(t) - self.ca_minus
-            )
-            + self.growth_rate * self.eps * (t - self.t_minus)
+            ) + self.growth_rate * self.eps * (t - self.t_minus)
         ) + self.se_minus
         if se > 0:
             return se
@@ -133,7 +134,8 @@ class LinearExactSEI(SynapticElementIntegrator):
 
 class LinearNumericSEI(SynapticElementIntegrator):
     """
-    Compute the number of synaptic element corresponding to a linear growth curve
+    Compute the number of synaptic element corresponding to a
+    linear growth curve
     dse/dCa = nu * (1 - Ca/eps)
     Use numerical integration (see scipy.integrate.quad)
     """
@@ -169,7 +171,8 @@ class LinearNumericSEI(SynapticElementIntegrator):
 
 class GaussianNumericSEI(SynapticElementIntegrator):
     """
-    Compute the number of synaptic element corresponding to a linear growth curve
+    Compute the number of synaptic element corresponding to a
+    linear growth curve
     dse/dCa = nu * (2 * exp( ((Ca - xi)/zeta)^2 ) - 1)
     with:
         xi = (eta + eps) / 2.0
@@ -206,7 +209,11 @@ class GaussianNumericSEI(SynapticElementIntegrator):
             return 0
 
     def growth_curve(self, t):
-        return self.growth_rate * (2 * math.exp(- math.pow((self.get_ca(t) - self.xi) / self.zeta, 2)) - 1)
+        return self.growth_rate * (
+            2 * math.exp(
+                - math.pow((self.get_ca(t) - self.xi) / self.zeta, 2)
+            ) - 1
+        )
 
 
 class TestGrowthCurve(unittest.TestCase):
@@ -222,7 +229,8 @@ class TestGrowthCurve(unittest.TestCase):
         self.sim_time = 10000
         self.sim_step = 100
 
-        nest.SetKernelStatus({'structural_plasticity_update_interval': self.sim_time + 1})
+        nest.SetKernelStatus(
+            {'structural_plasticity_update_interval': self.sim_time + 1})
 
         self.se_integrator = []
         self.sim_steps = None
@@ -242,15 +250,20 @@ class TestGrowthCurve(unittest.TestCase):
 
     def simulate(self):
         self.sim_steps = numpy.arange(0, self.sim_time, self.sim_step)
-        self.ca_nest = numpy.zeros((len(self.local_nodes), len(self.sim_steps)))
-        self.ca_python = numpy.zeros((len(self.se_integrator), len(self.sim_steps)))
-        self.se_nest = numpy.zeros((len(self.local_nodes), len(self.sim_steps)))
-        self.se_python = numpy.zeros((len(self.se_integrator), len(self.sim_steps)))
+        self.ca_nest = numpy.zeros(
+            (len(self.local_nodes), len(self.sim_steps)))
+        self.ca_python = numpy.zeros(
+            (len(self.se_integrator), len(self.sim_steps)))
+        self.se_nest = numpy.zeros(
+            (len(self.local_nodes), len(self.sim_steps)))
+        self.se_python = numpy.zeros(
+            (len(self.se_integrator), len(self.sim_steps)))
 
         start = time.clock()
         for t_i, t in enumerate(self.sim_steps):
             for n_i, n in enumerate(self.local_nodes):
-                self.ca_nest[n_i][t_i], synaptic_elements = nest.GetStatus([n], ('Ca', 'synaptic_elements'))[0]
+                self.ca_nest[n_i][t_i], synaptic_elements = nest.GetStatus(
+                    [n], ('Ca', 'synaptic_elements'))[0]
                 self.se_nest[n_i][t_i] = synaptic_elements['se']['z']
             nest.Simulate(self.sim_step)
 
@@ -264,15 +277,18 @@ class TestGrowthCurve(unittest.TestCase):
             spike_i = 0
             for t_i, t in enumerate(self.sim_steps):
                 while spike_i < len(spikes) and spikes[spike_i] <= t:
-                    [sei.handle_spike(spikes[spike_i]) for sei in self.se_integrator]
+                    [sei.handle_spike(spikes[spike_i])
+                     for sei in self.se_integrator]
                     spike_i += 1
                 for sei_i, sei in enumerate(self.se_integrator):
                     self.ca_python[sei_i, t_i] = sei.get_ca(t)
                     self.se_python[sei_i, t_i] = sei.get_se(t)
 
             for sei_i, sei in enumerate(self.se_integrator):
-                testing.assert_almost_equal(self.ca_nest[n_i], self.ca_python[sei_i], decimal=5)
-                testing.assert_almost_equal(self.se_nest[n_i], self.se_python[sei_i], decimal=5)
+                testing.assert_almost_equal(
+                    self.ca_nest[n_i], self.ca_python[sei_i], decimal=5)
+                testing.assert_almost_equal(
+                    self.se_nest[n_i], self.se_python[sei_i], decimal=5)
 
     def plot(self):
         pylab.ion()
@@ -297,25 +313,41 @@ class TestGrowthCurve(unittest.TestCase):
         tau_ca = 10000.0
         growth_rate = 0.0001
         eps = 0.10
-        nest.SetStatus(self.local_nodes, {'beta_Ca': beta_ca, 'tau_Ca': tau_ca,
-                                          'synaptic_elements': {
-                                              'se': {'growth_curve': 'linear', 'growth_rate': growth_rate,
-                                                     'eps': eps, 'z': 0.0}}})
-        self.se_integrator.append(LinearExactSEI(tau_ca=tau_ca, beta_ca=beta_ca, eps=eps, growth_rate=growth_rate))
-        self.se_integrator.append(LinearNumericSEI(tau_ca=tau_ca, beta_ca=beta_ca, eps=eps, growth_rate=growth_rate))
+        nest.SetStatus(
+            self.local_nodes,
+            {
+                'beta_Ca': beta_ca,
+                'tau_Ca': tau_ca,
+                'synaptic_elements': {
+                    'se': {
+                        'growth_curve': 'linear',
+                        'growth_rate': growth_rate,
+                        'eps': eps,
+                        'z': 0.0
+                    }
+                }
+            }
+        )
+        self.se_integrator.append(LinearExactSEI(
+            tau_ca=tau_ca, beta_ca=beta_ca, eps=eps, growth_rate=growth_rate))
+        self.se_integrator.append(LinearNumericSEI(
+            tau_ca=tau_ca, beta_ca=beta_ca, eps=eps, growth_rate=growth_rate))
 
         self.simulate()
 
         # check that we got the same values from one run to another
         # expected = self.se_nest[:, 10]
-        #print self.se_nest[:, 10].__repr__()
-        expected = numpy.array([0.08376263, 0.08374046, 0.08376031, 0.08376756, 0.08375428,
-                                0.08378699, 0.08376784, 0.08369779, 0.08374215, 0.08370484])
+        # print self.se_nest[:, 10].__repr__()
+        expected = numpy.array([
+            0.08376263, 0.08374046, 0.08376031, 0.08376756, 0.08375428,
+            0.08378699, 0.08376784, 0.08369779, 0.08374215, 0.08370484
+        ])
 
         for n in self.pop:
             if n in self.local_nodes:
                 testing.assert_almost_equal(
-                    self.se_nest[self.local_nodes.index(n), 10], expected[self.pop.index(n)],
+                    self.se_nest[self.local_nodes.index(n), 10], expected[
+                        self.pop.index(n)],
                     decimal=8)
 
     def test_gaussian_growth_curve(self):
@@ -324,24 +356,38 @@ class TestGrowthCurve(unittest.TestCase):
         growth_rate = 0.0001
         eta = 0.05
         eps = 0.10
-        nest.SetStatus(self.local_nodes, {'beta_Ca': beta_ca, 'tau_Ca': tau_ca,
-                                          'synaptic_elements': {
-                                              'se': {'growth_curve': 'gaussian', 'growth_rate': growth_rate,
-                                                     'eta': eta, 'eps': eps, 'z': 0.0}}})
-        self.se_integrator.append(GaussianNumericSEI(tau_ca=tau_ca, beta_ca=beta_ca,
-                                                     eta=eta, eps=eps, growth_rate=growth_rate))
+        nest.SetStatus(
+            self.local_nodes,
+            {
+                'beta_Ca': beta_ca,
+                'tau_Ca': tau_ca,
+                'synaptic_elements': {
+                    'se': {
+                        'growth_curve': 'gaussian',
+                        'growth_rate': growth_rate,
+                        'eta': eta, 'eps': eps, 'z': 0.0
+                    }
+                }
+            }
+        )
+        self.se_integrator.append(
+            GaussianNumericSEI(tau_ca=tau_ca, beta_ca=beta_ca,
+                               eta=eta, eps=eps, growth_rate=growth_rate))
         self.simulate()
 
         # check that we got the same values from one run to another
         # expected = self.se_nest[:, 30]
         # print self.se_nest[:, 30].__repr__()
-        expected = numpy.array([0.10044035, 0.10062526, 0.1003149, 0.10046311, 0.1005713,
-                                0.10031755, 0.10032216, 0.10040191, 0.10058179, 0.10068598])
+        expected = numpy.array([
+            0.10044035, 0.10062526, 0.1003149, 0.10046311, 0.1005713,
+            0.10031755, 0.10032216, 0.10040191, 0.10058179, 0.10068598
+        ])
 
         for n in self.pop:
             if n in self.local_nodes:
                 testing.assert_almost_equal(
-                    self.se_nest[self.local_nodes.index(n), 30], expected[self.pop.index(n)],
+                    self.se_nest[self.local_nodes.index(n), 30], expected[
+                        self.pop.index(n)],
                     decimal=5)
 
     def tearDown(self):

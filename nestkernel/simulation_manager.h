@@ -67,14 +67,24 @@ public:
   void terminate();
 
   /**
-   *
+   * Returns true if waveform relaxation is used.
    */
-  size_t get_prelim_interpolation_order() const;
+  bool use_wfr() const;
 
   /**
-   *
+   * Get the desired communication interval for the waveform relaxation
    */
-  double_t get_prelim_tol() const;
+  double_t get_wfr_comm_interval() const;
+
+  /**
+   * Get the convergence tolerance of the waveform relaxation method
+   */
+  double_t get_wfr_tol() const;
+
+  /**
+   * Get the interpolation order of the waveform relaxation method
+   */
+  size_t get_wfr_interpolation_order() const;
 
   /**
    * Get the time at the beginning of the current time slice.
@@ -128,7 +138,7 @@ private:
   size_t prepare_simulation_(); //! setup before simulation start
   void finalize_simulation_();  //! wrap-up after simulation end
   void update_();               //! actually perform simulation
-  bool prelim_update_( Node* );
+  bool wfr_update_( Node* );
   void advance_time_();   //!< Update time to next time step
   void print_progress_(); //!< TODO: Remove, replace by logging!
 
@@ -147,11 +157,14 @@ private:
                    //!< simulated for sometime
   bool print_time_; //!< Indicates whether time should be printed during
                     //!< simulations (or not)
-  long max_num_prelim_iterations_; //!< maximal number of iterations used for
-                                   //!< preliminary update
-  //! interpolation order for prelim iterations
-  size_t prelim_interpolation_order_;
-  double_t prelim_tol_; //!< Tolerance of prelim iterations
+  bool use_wfr_;    //!< Indicates wheter waveform relaxation is used
+  double_t wfr_comm_interval_; //!< Desired waveform relaxation communication
+                               //!< interval (in ms)
+  double_t wfr_tol_; //!< Convergence tolerance of waveform relaxation method
+  long wfr_max_iterations_; //!< maximal number of iterations used for waveform
+                            //!< relaxation
+  size_t wfr_interpolation_order_; //!< interpolation order for waveform
+                                   //!< relaxation method
 };
 
 inline void
@@ -203,16 +216,28 @@ SimulationManager::get_to_step() const
   return to_step_;
 }
 
-inline size_t
-SimulationManager::get_prelim_interpolation_order() const
+inline bool
+SimulationManager::use_wfr() const
 {
-  return prelim_interpolation_order_;
+  return use_wfr_;
 }
 
 inline double_t
-SimulationManager::get_prelim_tol() const
+SimulationManager::get_wfr_comm_interval() const
 {
-  return prelim_tol_;
+  return wfr_comm_interval_;
+}
+
+inline double_t
+SimulationManager::get_wfr_tol() const
+{
+  return wfr_tol_;
+}
+
+inline size_t
+SimulationManager::get_wfr_interpolation_order() const
+{
+  return wfr_interpolation_order_;
 }
 }
 

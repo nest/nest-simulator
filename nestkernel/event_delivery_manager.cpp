@@ -760,6 +760,13 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
   // whether all spike-register entries have been read
   bool is_spike_register_empty = true;
 
+  // reset complete marker
+  for ( unsigned int rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  {
+    send_buffer_spike_data_[ (rank + 1) * send_recv_count_spike_data_per_rank_ - 1 ].reset_marker();
+  }
+
+
   // TODO@5g: for just one rank, only one thread fills MPI buffer
   if ( assigned_ranks.size == 0 )  // no ranks to process for this thread
   {

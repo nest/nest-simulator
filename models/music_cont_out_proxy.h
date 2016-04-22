@@ -20,24 +20,35 @@
  *
  */
 
-#ifndef music_cont_out_PROXY_H
-#define music_cont_out_PROXY_H
+#ifndef MUSIC_CONT_OUT_PROXY_H 
+#define MUSIC_CONT_OUT_PROXY_H
 
+// Generated includes:
 #include "config.h"
+
+
 #ifdef HAVE_MUSIC
 
+// C includes:
+#include <mpi.h>
+
+// C++ includes:
 #include <vector>
-#include "nest.h"
-#include "event.h"
+
+// External includes:
+#include <music.hh>
+
+// Includes from nestkernel:
+#include "nest_types.h"
 #include "node.h"
-#include "exceptions.h"
-#include "mpi.h"
-#include "music.hh"
-#include "name.h"
-#include "nest_names.h"
-#include "connection.h"
-#include "dictutils.h"
-#include "sibling_container.h"
+
+
+// Includes from sli:
+#include "arraydatum.h"
+
+//#include "connection.h"
+//#include "dictutils.h"
+//#include "sibling_container.h"
 
 /* BeginDocumentation
 
@@ -95,7 +106,7 @@ music_message_in_proxy
 */
 namespace nest
 {
-class Network;
+//class Network;
 
 class music_cont_out_proxy : public Node
 {
@@ -103,7 +114,6 @@ class music_cont_out_proxy : public Node
 public:
   music_cont_out_proxy();
   music_cont_out_proxy( const music_cont_out_proxy& );
-  ~music_cont_out_proxy();
 
   bool
   has_proxies() const
@@ -154,7 +164,7 @@ protected:
   void update( Time const&, const long_t, const long_t );
 
 private:
-  struct State_;
+  struct State_; //!< Forward declarations
 
   struct Buffers_;
 
@@ -162,12 +172,12 @@ private:
 
   struct Parameters_
   {
+    Parameters_();                     //!< Sets default parameter values
+    Parameters_( const Parameters_& ); //!< Copy constructor for parameter values
+
     std::string port_name_;           //!< the name of MUSIC port to connect to
     Time interval_;                   //!< recording interval, in ms
     std::vector< Name > record_from_; //!< which data to record
-
-    Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< Recalibrate all times
 
     void get( DictionaryDatum&, const Variables_& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum&,
@@ -179,14 +189,13 @@ private:
 
   struct State_
   {
+    State_(); //!< Sets default state value
+    State_( const State_& ); //!< Copy constructor for state values
     bool published_; //!< indicates whether this node has been published already
                      //!< with MUSIC
     int port_width_; //!< the width of the MUSIC port
     // int max_buffered_; //!< maximum delay (measured in multiples of music
     // ticks) of publishing new data
-
-
-    State_(); //!< Sets default state value
 
     void get( DictionaryDatum& ) const;                     //!< Store current values in dictionary
     void set( const DictionaryDatum&, const Parameters_& ); //!< Set values from dictionary
@@ -196,13 +205,9 @@ private:
 
   struct Buffers_
   {
-    /** Does this multimeter have targets?
-     * Placed here since it is implementation detail.
-     * @todo Ideally, one should be able to ask ConnectionManager.
-     */
-    Buffers_();
-
-    bool has_targets_;
+    Buffers_(); //!< Initializes default buffer
+    Buffers_( const Buffers_& ); //!< Copy constructor for the data buffer
+    bool has_targets_; //!< Indicates whether the proxy is recording from any neurons or not
     std::vector< double > data_; //!< Recorded data
   };
 
@@ -210,12 +215,9 @@ private:
 
   struct Variables_
   {
-    MUSIC::ContOutputPort* MP_; //!< The MUSIC event port for output of spikes
-
-    std::vector< MUSIC::GlobalIndex > index_map_;
-    MUSIC::PermutationIndex* music_perm_ind_; //!< The permutation index needed
-    // to map the ports of MUSIC.
-    Variables_();
+    Variables_(); //!< Sets default variable values
+    Variables_( const Variables_& ); //!< Copy constructor
+    std::vector< MUSIC::GlobalIndex > index_map_; //!< Global mapping for Nest-GIDs -> Music indice
   };
 
   // ------------------------------------------------------------
@@ -238,6 +240,6 @@ nest::music_cont_out_proxy::sends_signal() const
 
 } // namespace
 
-#endif /* #ifndef music_cont_out_PROXY_H */
+#endif /* #ifndef HAVE_MUSIC */
+#endif /* #ifndef MUSIC_CONT_OUT_PROXY_H */
 
-#endif

@@ -129,6 +129,7 @@
 #include "music_event_in_proxy.h"
 #include "music_event_out_proxy.h"
 #include "music_cont_in_proxy.h"
+#include "music_cont_out_proxy.h"
 #include "music_message_in_proxy.h"
 #endif
 

@@ -20,26 +20,29 @@
  *
  */
 
-#include "config.h"
+#include "music_cont_out_proxy.h"
 
 #ifdef HAVE_MUSIC
 
+// Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
-#include "music_cont_out_proxy.h"
 
+// Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
+
+// Includes from C++:
 #include <numeric>
 #include <string>
 
-#include "connection_builder_manager_impl.h"
-#include "event_delivery_manager_impl.h"
+// Includes from nestkernel:
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
+#include "sibling_container.h"
+#include "event_delivery_manager_impl.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -67,16 +70,30 @@ nest::music_cont_out_proxy::State_::State_()
 {
 }
 
+nest::music_cont_out_proxy::State_::State_( const State_& s )
+    : published_( s.published_ )
+      , port_width_( s.port_width_ )
+{
+}
+
 nest::music_cont_out_proxy::Buffers_::Buffers_()
   : has_targets_( false )
   , data_()
 {
 }
 
+nest::music_cont_out_proxy::Buffers_::Buffers_( const Buffers_& b )
+    : has_targets_( b.has_targets_ )
+      , data_( b.data_ )
+{}
+
 nest::music_cont_out_proxy::Variables_::Variables_()
-  : MP_( NULL )
-  , index_map_()
-  , music_perm_ind_( NULL )
+  : index_map_()
+{
+}
+
+nest::music_cont_out_proxy::Variables_::Variables_( const Variables_& v )
+  : index_map_( v.index_map_ )
 {
 }
 /* ----------------------------------------------------------------
@@ -96,10 +113,12 @@ nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d,
   {
     ad_record_from.push_back( LiteralDatum( record_from_[ j ] ) );
   }
+
   ( *d )[ names::record_from ] = ad_record_from;
 
   std::vector< long_t >* pInd_map_long =
     new std::vector< long_t >( vars.index_map_.size() );
+
   std::copy< std::vector< MUSIC::GlobalIndex >::const_iterator,
     std::vector< long_t >::iterator >(
     vars.index_map_.begin(), vars.index_map_.end(), pInd_map_long->begin() );
@@ -178,7 +197,6 @@ nest::music_cont_out_proxy::State_::set( const DictionaryDatum& d,
 
 nest::music_cont_out_proxy::music_cont_out_proxy()
   : Node()
-  //, device_( *this, RecordingDevice::MULTIMETER, "dat", true, true )
   , P_()
   , S_()
   , V_()
@@ -189,7 +207,6 @@ nest::music_cont_out_proxy::music_cont_out_proxy()
 nest::music_cont_out_proxy::music_cont_out_proxy(
   const music_cont_out_proxy& n )
   : Node( n )
-  // , device_( *this, n.device_ )
   , P_( n.P_ )
   , S_( n.S_ )
   , V_( n.V_ )
@@ -197,14 +214,6 @@ nest::music_cont_out_proxy::music_cont_out_proxy(
 {
 }
 
-nest::music_cont_out_proxy::~music_cont_out_proxy()
-{
-  if ( S_.published_ )
-  {
-    delete V_.MP_;
-    delete V_.music_perm_ind_;
-  }
-}
 
 void
 nest::music_cont_out_proxy::init_state_( const Node& /* np */ )
@@ -255,19 +264,19 @@ nest::music_cont_out_proxy::calibrate()
       throw MUSICSimulationHasRun( get_name() );
     }
 
-    V_.MP_ = s->publishContOutput( P_.port_name_ );
+    MUSIC::ContOutputPort* MP = s->publishContOutput( P_.port_name_ );
 
-    if ( V_.MP_->isConnected() == false )
+    if ( MP->isConnected() == false )
     {
       throw MUSICPortUnconnected( get_name(), P_.port_name_ );
     }
 
-    if ( V_.MP_->hasWidth() == false )
+    if ( MP->hasWidth() == false )
     {
       throw MUSICPortHasNoWidth( get_name(), P_.port_name_ );
     }
 
-    S_.port_width_ = V_.MP_->width();
+    S_.port_width_ = MP->width();
     const size_t per_port_width = P_.record_from_.size();
 
     // Allocate memory
@@ -284,31 +293,30 @@ nest::music_cont_out_proxy::calibrate()
     }
 
     // The permutation index map, contains global_index[local_index]
-    V_.music_perm_ind_ = new MUSIC::PermutationIndex(
+    MUSIC::PermutationIndex* music_perm_ind = new MUSIC::PermutationIndex(
       &V_.index_map_.front(), V_.index_map_.size() );
 
-    // New MPI datatype which is a compound of multiple double values
-    MUSIC::ArrayData* dmap_ = NULL;
+    MUSIC::ArrayData* dmap = NULL;
     if ( per_port_width > 1 )
     {
+      // New MPI datatype a compound of multiple double values.
       MPI_Datatype n_double_tuple;
       MPI_Type_contiguous( per_port_width, MPI::DOUBLE, &n_double_tuple );
-      dmap_ =
+      dmap =
         new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ),
           n_double_tuple,
-          V_.music_perm_ind_ );
+          music_perm_ind );
     }
     else
     {
-      dmap_ =
+      dmap  =
         new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ),
           MPI::DOUBLE,
-          V_.music_perm_ind_ );
+          music_perm_ind );
     }
 
     // Setup an array map
-
-    V_.MP_->map( dmap_ );
+    MP->map( dmap );
 
     S_.published_ = true;
 
@@ -373,10 +381,10 @@ nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
           Node* const target_node =
             kernel().node_manager.get_node( target_node_id );
           const thread target_thread = target_node->get_thread();
-          kernel().connection_builder_manager.connect(
+          kernel().connection_manager.connect(
             this->get_gid(), target_node, target_thread, synmodel_id );
+          }
         }
-      }
     }
     else
     {

@@ -34,15 +34,14 @@ nest.SetStatus(proxy, {'index_map': neuron_grp })
 nest.SetStatus([neuron_grp[0]], "I_e", 300.)
 nest.SetStatus([neuron_grp[1]], "I_e", 600.)
 
-print( setup.config("bla") )
-
 comm = setup.comm
-
 rank = comm.Get_rank()
+
+# Using PyMusic binding to send out constant value 1.0 
 out = setup.publishContOutput("out2")
 data = numpy.array([-1], dtype=numpy.int)
 out.map(data, base=rank)
 
-nest.Simulate(6000)
+nest.Simulate(10)
 
 

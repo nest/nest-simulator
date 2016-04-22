@@ -22,8 +22,8 @@
 """
 This script parses the TravisCI output as it is generated
 by ./build.sh and outputs a shorter summary. It is hard-coded
-to the output of ./build.sh, ./bootstrap.sh, make installcheck,
-and ../configure --prefix=... . Changing any of those, requires
+to the output of ./build.sh, make installcheck,
+and cmake -DCMAKE_INSTALL_PREFIX=... . Changing any of those, requires
 adapting this script.
 """
 
@@ -196,7 +196,6 @@ if __name__ == '__main__':
 
     script, filename = argv
 
-    bootstrapping_ok = False
     configure_ok = False
     make_ok = False
     make_install_ok = False
@@ -214,9 +213,6 @@ if __name__ == '__main__':
             if not line:
                 break
 
-            if not bootstrapping_ok and line.startswith('+./bootstrap.sh'):
-                bootstrapping_ok, line = process_until(f, 'Done.')
-
             if not vera_init and line.startswith('+mkdir -p vera_home'):
                 vera_init, line = process_until(f, '+cat')
 
@@ -229,7 +225,7 @@ if __name__ == '__main__':
             if line.startswith('Static analysis on file '):
                 static_analysis.update(process_static_analysis(f, line))
 
-            if not configure_ok and line.startswith('+../configure --prefix='):
+            if not configure_ok and line.startswith('+cmake -DCMAKE_INSTALL_PREFIX='):
                 configure_ok, line = process_until(
                     f, 'You can now build and install NEST with')
 
@@ -246,7 +242,6 @@ if __name__ == '__main__':
                 uploading_results = False
 
     print("\n--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
-    print("Bootstrapping:       " + ("Ok" if bootstrapping_ok else "Error"))
     print("Vera init:           " + ("Ok" if vera_init else "Error"))
     print("Cppcheck init:       " + ("Ok" if cppcheck_init else "Error"))
     print("Changed files:       " + str(changed_files))
@@ -262,8 +257,7 @@ if __name__ == '__main__':
     print_static_analysis(static_analysis)
     print("--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
 
-    if not (bootstrapping_ok and 
-            vera_init and 
+    if not (vera_init and 
             cppcheck_init and 
             configure_ok and 
             make_ok and 

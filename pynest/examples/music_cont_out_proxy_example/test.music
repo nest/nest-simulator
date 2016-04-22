@@ -1,9 +1,11 @@
 stoptime=1.2
 timestep=0.001
 [from]
-    np=2
+    np=1
     binary=./nest_script.py
+    bla=japp
 [to]
     np=1
     binary=./receiver_script.py
 from.out -> to.in [2]
+from.out2 -> to.in2 [1]

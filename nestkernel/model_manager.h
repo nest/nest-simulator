@@ -68,10 +68,10 @@ public:
 
   /**
    * Resize the structures for the Connector objects if necessary.
-   * This function should be called after number of threads, min_delay, max_delay,
-   * and time representation have been changed in the scheduler.
-   * The TimeConverter is used to convert times from the old to the new representation.
-   * It is also forwarding the calibration
+   * This function should be called after number of threads, min_delay,
+   * max_delay, and time representation have been changed in the scheduler.
+   * The TimeConverter is used to convert times from the old to the new
+   * representation. It is also forwarding the calibration
    * request to all ConnectorModel objects.
    */
   void calibrate( const TimeConverter& );
@@ -147,7 +147,8 @@ public:
    * @param private_model if true, don't add model to modeldict.
    * @param dictionary to use to pre-configure model
    * @return ID of the new model object.
-   * @see register_private_prototype_model, register_node_model, register_prototype_connection
+   * @see register_private_prototype_model, register_node_model,
+   * register_prototype_connection
    */
   template < class ModelT >
   index register_preconf_node_model( const Name& name,
@@ -182,7 +183,8 @@ public:
   void register_connection_model( const std::string& name );
 
   template < class ConnectionT >
-  void register_secondary_connection_model( const std::string& name, bool has_delay = true );
+  void register_secondary_connection_model( const std::string& name,
+    bool has_delay = true );
 
   /**
    * @return The model id of a given model name
@@ -250,7 +252,8 @@ public:
 
   void delete_secondary_events_prototypes();
 
-  SecondaryEvent& get_secondary_event_prototype( synindex syn_id, thread t = 0 );
+  SecondaryEvent& get_secondary_event_prototype( synindex syn_id,
+    thread t = 0 );
 
 private:
   /**  */
@@ -318,12 +321,13 @@ private:
    * the model is private. Private models are not entered into the
    * modeldict.
    */
-  std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
-  std::vector< std::vector< ConnectorModel* > > prototypes_; //!< The list of available synapse
-                                                             //!< prototypes: first dimension one
-                                                             //!< entry per thread, second dimension
-                                                             //!< for each synapse type
+  std::vector< ConnectorModel* > pristine_prototypes_;
 
+  /**
+   * The list of available synapse prototypes: first dimension one
+   * entry per thread, second dimension for each synapse type
+   */
+  std::vector< std::vector< ConnectorModel* > > prototypes_;
 
   /**
    * prototypes of events
@@ -345,10 +349,11 @@ private:
    Name: synapsedict - Dictionary containing all synapse models.
    Description:
    'synapsedict info' shows the contents of the dictionary
-   Synapse model names ending with '_hpc' provide minimal memory requirements by using
-   thread-local target neuron IDs and fixing the `rport` to 0.
-   Synapse model names ending with '_lbl' allow to assign an individual integer label
-   (`synapse_label`) to created synapses at the cost of increased memory requirements.
+   Synapse model names ending with '_hpc' provide minimal memory requirements by
+   using thread-local target neuron IDs and fixing the `rport` to 0.
+   Synapse model names ending with '_lbl' allow to assign an individual integer
+   label (`synapse_label`) to created synapses at the cost of increased memory
+   requirements.
    FirstVersion: October 2005
    Author: Jochen Martin Eppler
    SeeAlso: info
@@ -359,12 +364,12 @@ private:
   Model* siblingcontainer_model_;
   Model* proxynode_model_;
 
-  std::vector< std::vector< Node* > >
-    proxy_nodes_; //!< Placeholders for remote nodes, one per thread
-  std::vector< Node* >
-    dummy_spike_sources_; //!< Placeholders for spiking remote nodes, one per thread
-
-  bool model_defaults_modified_; //!< True if any model defaults have been modified
+  //! Placeholders for remote nodes, one per thread
+  std::vector< std::vector< Node* > > proxy_nodes_;
+  //! Placeholders for spiking remote nodes, one per thread
+  std::vector< Node* > dummy_spike_sources_;
+  //! True if any model defaults have been modified
+  bool model_defaults_modified_;
 };
 
 

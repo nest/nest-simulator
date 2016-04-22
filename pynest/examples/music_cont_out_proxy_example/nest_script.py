@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # nest_script.py
@@ -20,7 +21,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
+import music
+import numpy
 
+setup = music.Setup()
 proxy = nest.Create('music_cont_out_proxy', 1)
 nest.SetStatus(proxy, {'port_name': 'out'})
 nest.SetStatus(proxy, {'record_from': ["V_m"], 'interval': 0.1})
@@ -30,6 +34,14 @@ nest.SetStatus(proxy, {'index_map': neuron_grp })
 nest.SetStatus([neuron_grp[0]], "I_e", 300.)
 nest.SetStatus([neuron_grp[1]], "I_e", 600.)
 
+print( setup.config("bla") )
+
+comm = setup.comm
+
+rank = comm.Get_rank()
+out = setup.publishContOutput("out2")
+data = numpy.array([-1], dtype=numpy.int)
+out.map(data, base=rank)
 
 nest.Simulate(6000)
 

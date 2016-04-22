@@ -45,7 +45,7 @@ class Node;
 class Subnet;
 class Model;
 
-class NodeManager : ManagerInterface
+class NodeManager : public ManagerInterface
 {
 public:
   NodeManager();
@@ -66,9 +66,10 @@ public:
 
   /**
    * Set properties of a Node. The specified node must exist.
-   * @throws nest::UnknownNode       Target does not exist in the network.
-   * @throws nest::UnaccessedDictionaryEntry  Non-proxy target did not read dict entry.
-   * @throws TypeMismatch            Array is not a flat & homogeneous array of integers.
+   * @throws nest::UnknownNode Target does not exist in the network.
+   * @throws nest::UnaccessedDictionaryEntry  Non-proxy target did not read dict
+   *                                          entry.
+   * @throws TypeMismatch   Array is not a flat & homogeneous array of integers.
    */
   void set_status( index, const DictionaryDatum& );
 
@@ -155,7 +156,7 @@ public:
    * Return the Subnet that contains the thread siblings.
    * @param i Index of the specified Node.
    *
-   * @throws nest::NoThreadSiblingsAvailable     Node does not have thread siblings.
+   * @throws nest::NoThreadSiblingsAvailable Node does not have thread siblings.
    *
    * @ingroup net_access
    */
@@ -194,8 +195,9 @@ public:
    * Prepare nodes for simulation and register nodes in node_list.
    * Calls prepare_node_() for each pertaining Node.
    * @see prepare_node_()
+   * @returns number of nodes that will be simulated.
    */
-  void prepare_nodes();
+  size_t prepare_nodes();
 
   /**
    * Invoke finalize() on nodes registered for finalization.
@@ -224,7 +226,9 @@ private:
    *        each call so Node::set_status_()
    * @throws UnaccessedDictionaryEntry
    */
-  void set_status_single_node_( Node&, const DictionaryDatum&, bool clear_flags = true );
+  void set_status_single_node_( Node&,
+    const DictionaryDatum&,
+    bool clear_flags = true );
 
   /**
    * Initialized buffers, register in list of nodes to update/finalize.
@@ -239,8 +243,8 @@ private:
 
   Model* siblingcontainer_model_; //!< The model for the SiblingContainer class
 
-  index n_gsd_; //!< Total number of global spike detectors, used for distributing them over
-                //!< recording processes
+  index n_gsd_; //!< Total number of global spike detectors, used for
+                //!< distributing them over recording processes
 
   /**
    * Data structure holding node pointers per thread.
@@ -258,8 +262,10 @@ private:
     nodes_prelim_up_vec_;    //!< Nodelists for unfrozen nodes that require an
                              //!< additional preliminary update (e.g. gap
                              //!< junctions)
-  bool needs_prelim_update_; //!< there is at least one neuron model that needs preliminary update
-  index nodes_vec_network_size_; //!< Network size when nodes_vec_ was last updated
+  bool needs_prelim_update_; //!< there is at least one neuron model that needs
+                             //!< preliminary update
+  //! Network size when nodes_vec_ was last updated
+  index nodes_vec_network_size_;
 };
 
 inline index

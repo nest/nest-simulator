@@ -38,7 +38,8 @@
 namespace nest
 {
 /*BeginDocumentation
-  Name: spike_generator - A device which generates spikes from an array with spike-times.
+  Name: spike_generator - A device which generates spikes from an array with
+                          spike-times.
 
   Synopsis: spike_generator Create -> gid
 
@@ -128,13 +129,15 @@ namespace nest
   /spike_generator << /spike_times [10.0001] /precise_times true >> Create
   ---> spike at step 101, offset -0.0999 is in the future
 
-  /spike_generator << /spike_times [10.0001 11.0001] /shift_now_spikes true >> Create
+  /spike_generator << /spike_times [10.0001 11.0001] /shift_now_spikes true >>
+                                                                          Create
   ---> spike at step 101, spike shifted into the future, and spike at step 110,
        not shifted, since it is in the future anyways
 
 
   Example:
-  spikegenerator << /spike_times [1.0 2.0] /spike_weights [5.0 -8.0] >> SetStatus
+  spikegenerator << /spike_times [1.0 2.0] /spike_weights [5.0 -8.0] >>
+                                                                       SetStatus
 
   Instructs the spike generator to generate an event with weight 5.0
   at 1.0 ms, and an event with weight -8.0 at 2.0 ms, relative to
@@ -149,11 +152,13 @@ namespace nest
   The following properties can be set in the status dictionary.
 
        origin         double - Time origin for device timer in ms
-       start          double - earliest possible time stamp of a spike to be emitted in ms
-       stop           double - earliest time stamp of a potential spike event that is not emitted in
-  ms
+       start          double - earliest possible time stamp of a spike to be
+                               emitted in ms
+       stop           double - earliest time stamp of a potential spike event
+                               that is not emitted in ms
        spike_times    double array - spike-times in ms
-       spike_weights  double array - corrsponding spike-weights, the unit depends on the receiver
+       spike_weights  double array - corrsponding spike-weights, the unit
+                                     depends on the receiver
        precise_times        bool - see above
        allow_offgrid_spikes bool - see above
        shift_now_spikes     bool - see above
@@ -191,7 +196,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::event_hook;
   using Node::sends_signal;
@@ -225,9 +231,10 @@ private:
 
   struct Parameters_
   {
-
-    std::vector< Time > spike_stamps_;    //!< Spike time stamp as Time, rel to origin_
-    std::vector< double > spike_offsets_; //!< Spike time offset, if using precise_times_
+    //! Spike time stamp as Time, rel to origin_
+    std::vector< Time > spike_stamps_;
+    //! Spike time offset, if using precise_times_
+    std::vector< double > spike_offsets_;
 
     std::vector< double > spike_weights_; //!< Spike weights as double
 
@@ -260,7 +267,8 @@ private:
      * @param origin
      * @param current simulation time
      */
-    void assert_valid_spike_time_and_insert_( double, const Time&, const Time& );
+    void
+    assert_valid_spike_time_and_insert_( double, const Time&, const Time& );
   };
 
   // ------------------------------------------------------------

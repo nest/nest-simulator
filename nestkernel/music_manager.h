@@ -54,8 +54,10 @@ void set_status( index, const DictionaryDatum& );
 DictionaryDatum get_status( index );
 void register_music_in_port( std::string portname );
 void unregister_music_in_port( std::string portname );
-void register_music_event_in_proxy( std::string portname, int channel, nest::Node* mp );
-void set_music_in_port_acceptable_latency( std::string portname, double_t latency );
+void register_music_event_in_proxy( std::string portname, int channel,
+nest::Node* mp );
+void set_music_in_port_acceptable_latency( std::string portname, double_t
+latency );
 void set_music_in_port_max_buffered( std::string portname, int_t maxbuffered );
 void publish_music_in_ports_();
 void update_music_event_handlers_( Time const&, const long_t, const long_t );
@@ -84,9 +86,10 @@ public:
   void init_music( int* argc, char** argv[] );
 
   /**
-   * Enter the runtime mode. This must be done before simulating. After having entered runtime mode
-   * ports cannot be published anymore.
-   * \param h_min_delay is the length of a time slice, after which commmunication should take place.
+   * Enter the runtime mode. This must be done before simulating. After having
+   * entered runtime mode ports cannot be published anymore.
+   * \param h_min_delay is the length of a time slice, after which
+   * communication should take place.
    */
   void enter_runtime( double_t h_min_delay );
 
@@ -131,13 +134,17 @@ public:
    * notified, if a MUSIC event is being received on the respective
    * channel and port.
    */
-  void register_music_event_in_proxy( std::string portname, int channel, nest::Node* mp );
+  void register_music_event_in_proxy( std::string portname,
+    int channel,
+    nest::Node* mp );
 
   /**
    * Set the acceptable latency (latency) for a music input port (portname).
    */
-  void set_music_in_port_acceptable_latency( std::string portname, double_t latency );
-  void set_music_in_port_max_buffered( std::string portname, int_t maxbuffered );
+  void set_music_in_port_acceptable_latency( std::string portname,
+    double_t latency );
+  void set_music_in_port_max_buffered( std::string portname,
+    int_t maxbuffered );
   /**
    * Data structure to hold variables and parameters associated with a port.
    */

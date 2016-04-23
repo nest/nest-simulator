@@ -107,10 +107,10 @@ public:
    * @param nrp  number of recording processes
    * @param called_by_reset   pass true when calling from Scheduler::reset()
    *
-   * @note The `called_by_reset` parameter is a cludge to avoid a chicken-and-egg
-   *       problem when resetting the kernel. It surpresses a test for existing
-   *       nodes, trusting that the kernel will immediately afterwards delete all
-   *       existing nodes.
+   * @note The `called_by_reset` parameter is a cludge to avoid a
+   *       chicken-and-egg problem when resetting the kernel. It surpresses a
+   *       test for existing nodes, trusting that the kernel will immediately
+   *       afterwards delete all existing nodes.
    */
   void set_num_rec_processes( int nrp, bool called_by_reset );
 
@@ -168,7 +168,8 @@ public:
 
   /**
    * Collect GIDs for all nodes in a given node list across processes.
-   * The NodeListType should be one of LocalNodeList, LocalLeafList, LocalChildList.
+   * The NodeListType should be one of LocalNodeList, LocalLeafList,
+   * LocalChildList.
    */
   template < typename NodeListType >
   void communicate( const NodeListType& local_nodes,
@@ -221,10 +222,11 @@ private:
   bool use_mpi_;         //!< whether MPI is used
 
 #ifdef HAVE_MPI
-  std::vector< int > comm_step_; //!< array containing communication partner for each step.
+  //! array containing communication partner for each step.
+  std::vector< int > comm_step_;
   uint_t COMM_OVERFLOW_ERROR;
 
-// Variable to hold the MPI communicator to use (the datatype matters).
+//! Variable to hold the MPI communicator to use (the datatype matters).
 #ifdef HAVE_MUSIC
   MPI::Intracomm comm;
 #else  /* #ifdef HAVE_MUSIC */
@@ -271,8 +273,8 @@ public:
     friend void MPIManager::init_mpi( int*, char*** );
 
   public:
-    //! We defined this type explicitly, so that the assert function below always tests the correct
-    //! type.
+    //! We defined this type explicitly, so that the assert function below
+    //! always tests the correct type.
     typedef uint_t gid_external_type;
 
     OffGridSpike()
@@ -314,7 +316,8 @@ public:
         > std::numeric_limits< gid_external_type >::digits );
 
       // the next one is doubling up, better be safe than sorry
-      const gid_external_type maxgid = std::numeric_limits< gid_external_type >::max();
+      const gid_external_type maxgid =
+        std::numeric_limits< gid_external_type >::max();
       OffGridSpike ogs( maxgid, 0.0 );
       assert( maxgid == ogs.get_gid() );
     }

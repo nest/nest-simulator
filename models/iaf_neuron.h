@@ -132,7 +132,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -214,7 +215,8 @@ private:
     double_t y0_; //!< Constant current
     double_t y1_;
     double_t y2_;
-    double_t y3_; //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double_t y3_;
 
     int_t r_; //!< number of refractory steps remaining
 

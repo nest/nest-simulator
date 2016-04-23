@@ -82,7 +82,8 @@ namespace librandom
   - parameter p (optional, default = 0.5)
   - parameter n (optional, default = 1)
 
- @see http://www.gnu.org/software/gsl/manual/html_node/The-Binomial-Distribution.html
+ @see
+ http://www.gnu.org/software/gsl/manual/html_node/The-Binomial-Distribution.html
  @ingroup RandomDeviateGenerators
 */
 

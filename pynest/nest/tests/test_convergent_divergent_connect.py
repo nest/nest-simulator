@@ -32,12 +32,11 @@ import sys
 class ConvergentDivergentConnectTestCase(unittest.TestCase):
     """Tests of Convergent/DivergentConnect"""
 
-
     def test_ConvergentConnect(self):
         """ConvergentConnect pre to post"""
 
         nest.ResetKernel()
-        pre  = nest.Create("iaf_neuron", 3) 
+        pre = nest.Create("iaf_neuron", 3)
         post = nest.Create("iaf_neuron", 1)
         nest.ConvergentConnect(pre, post)
         expected_targets = tuple(post[0] for _ in range(len(pre)))
@@ -45,46 +44,44 @@ class ConvergentDivergentConnectTestCase(unittest.TestCase):
         targets = nest.GetStatus(connections, "target")
         self.assertEqual(expected_targets, targets)
 
-        
     def test_ConvergentConnectWD(self):
         """ConvergentConnect pre to post with weight and delay"""
 
         nest.ResetKernel()
-        pre  = nest.Create("iaf_neuron", 3) 
+        pre = nest.Create("iaf_neuron", 3)
         post = nest.Create("iaf_neuron", 1)
-        nest.ConvergentConnect(pre, post, weight=(2.0,2.0,2.0), delay=(1.0,2.0,3.0))
+        nest.ConvergentConnect(pre, post, weight=(
+            2.0, 2.0, 2.0), delay=(1.0, 2.0, 3.0))
         connections = nest.FindConnections(pre)
         weights = nest.GetStatus(connections, "weight")
         delays = nest.GetStatus(connections, "delay")
-        self.assertEqual(weights, (2.0,2.0,2.0))
-        self.assertEqual(delays , (1.0,2.0,3.0))
+        self.assertEqual(weights, (2.0, 2.0, 2.0))
+        self.assertEqual(delays, (1.0, 2.0, 3.0))
 
-        
     def test_DivergentConnect(self):
         """DivergentConnect pre to post"""
 
         nest.ResetKernel()
-        pre  = nest.Create("iaf_neuron", 1) 
+        pre = nest.Create("iaf_neuron", 1)
         post = nest.Create("iaf_neuron", 3)
         nest.DivergentConnect(pre, post)
         connections = nest.FindConnections(pre)
         targets = nest.GetStatus(connections, "target")
         self.assertEqual(targets, post)
 
-
     def test_DivergentConnectWD(self):
         """DivergentConnect pre to post with weight and delay"""
 
         nest.ResetKernel()
-        pre  = nest.Create("iaf_neuron", 1) 
+        pre = nest.Create("iaf_neuron", 1)
         post = nest.Create("iaf_neuron", 3)
-        nest.DivergentConnect(pre, post, weight=(2.0,2.0,2.0), delay=(1.0,2.0,3.0))
+        nest.DivergentConnect(pre, post, weight=(
+            2.0, 2.0, 2.0), delay=(1.0, 2.0, 3.0))
         connections = nest.FindConnections(pre)
         weights = nest.GetStatus(connections, "weight")
         delays = nest.GetStatus(connections, "delay")
-        self.assertEqual(weights, (2.0,2.0,2.0))
-        self.assertEqual(delays , (1.0,2.0,3.0))
-
+        self.assertEqual(weights, (2.0, 2.0, 2.0))
+        self.assertEqual(delays, (1.0, 2.0, 3.0))
 
     def test_ConvergentDivergentConnectOptions(self):
         """Convergent/DivergentConnect with non-standard options and
@@ -93,28 +90,35 @@ class ConvergentDivergentConnectTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        copts = nest.sli_func('GetOptions', '/RandomConvergentConnect', litconv=True)
-        dopts = nest.sli_func('GetOptions', '/RandomDivergentConnect', litconv=True)
+        copts = nest.sli_func(
+            'GetOptions', '/RandomConvergentConnect', litconv=True)
+        dopts = nest.sli_func(
+            'GetOptions', '/RandomDivergentConnect', litconv=True)
 
-        ncopts = dict((k, not v) for k, v in copts.items() if k != 'DefaultOptions')
-        ndopts = dict((k, not v) for k, v in dopts.items() if k != 'DefaultOptions')
+        ncopts = dict((k, not v)
+                      for k, v in copts.items() if k != 'DefaultOptions')
+        ndopts = dict((k, not v)
+                      for k, v in dopts.items() if k != 'DefaultOptions')
 
         n = nest.Create('iaf_neuron', 3)
 
         nest.RandomConvergentConnect(n, n, 1, options=ncopts)
         nest.RandomDivergentConnect(n, n, 1, options=ndopts)
 
-        opts = nest.sli_func('GetOptions', '/RandomConvergentConnect', litconv=True)
+        opts = nest.sli_func(
+            'GetOptions', '/RandomConvergentConnect', litconv=True)
         self.assertEqual(copts, opts)
 
-        opts = nest.sli_func('GetOptions', '/RandomDivergentConnect', litconv=True)
+        opts = nest.sli_func(
+            'GetOptions', '/RandomDivergentConnect', litconv=True)
         self.assertEqual(dopts, opts)
 
 
 def suite():
 
-    suite = unittest.makeSuite(ConvergentDivergentConnectTestCase,'test')
+    suite = unittest.makeSuite(ConvergentDivergentConnectTestCase, 'test')
     return suite
+
 
 def run():
     runner = unittest.TextTestRunner(verbosity=2)

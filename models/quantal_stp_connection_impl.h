@@ -38,8 +38,9 @@ namespace nest
 
 
 /* Polymorphic version of update_value.
- * This version is needed, because DataConnect will pass all properties as doubles.
- * This code will take either an int or a double and convert is to an int.
+ * This version is needed, because DataConnect will pass all properties as
+ * doubles. This code will take either an int or a double and convert is to an
+ * int.
  */
 bool
 update_value_int( const DictionaryDatum& d, Name propname, int& prop )
@@ -96,7 +97,8 @@ Quantal_StpConnection< targetidentifierT >::Quantal_StpConnection(
 
 template < typename targetidentifierT >
 void
-Quantal_StpConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+Quantal_StpConnection< targetidentifierT >::get_status(
+  DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double_t >( d, names::weight, weight_ );
@@ -111,7 +113,8 @@ Quantal_StpConnection< targetidentifierT >::get_status( DictionaryDatum& d ) con
 
 template < typename targetidentifierT >
 void
-Quantal_StpConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+Quantal_StpConnection< targetidentifierT >::set_status(
+  const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );

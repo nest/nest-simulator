@@ -148,8 +148,9 @@ public:
 
 /**
  * Exception to be thrown if a (neuron/synapse) model with the the specified ID
- * is used within the network and the providing module hence cannot be uninstalled.
- * This exception can occur if the user tries to uninstall a module.
+ * is used within the network and the providing module hence cannot be
+ * uninstalled. This exception can occur if the user tries to uninstall a
+ * module.
  * @see UnknownModelID
  * @ingroup KernelExceptions
  */
@@ -339,7 +340,9 @@ class IncompatibleReceptorType : public KernelException
   std::string event_type_;
 
 public:
-  IncompatibleReceptorType( long receptor_type, std::string name, std::string event )
+  IncompatibleReceptorType( long receptor_type,
+    std::string name,
+    std::string event )
     : KernelException( "IncompatibleReceptorType" )
     , receptor_type_( receptor_type )
     , name_( name )
@@ -647,9 +650,9 @@ public:
 };
 
 /**
- * Exception to be thrown on prototype construction if Time objects incompatible.
- * This exception is to be thrown by the default constructor of nodes which
- * require that Time objects have properties wrt resolution.
+ * Exception to be thrown on prototype construction if Time objects
+ * incompatible. This exception is to be thrown by the default constructor of
+ * nodes which require that Time objects have properties wrt resolution.
  * @ingroup KernelExceptions
  * @see InvalidTimeInModel
  */
@@ -663,7 +666,9 @@ public:
    * @param property  name of property conflicting
    * @param value     value of property conflicting
    */
-  InvalidDefaultResolution( const std::string& model, const Name& property, const Time& value )
+  InvalidDefaultResolution( const std::string& model,
+    const Name& property,
+    const Time& value )
     : KernelException( "InvalidDefaultResolution" )
     , model_( model )
     , prop_( property )
@@ -699,7 +704,9 @@ public:
    * @param property  name of property conflicting
    * @param value     value of property conflicting
    */
-  InvalidTimeInModel( const std::string& model, const Name& property, const Time& value )
+  InvalidTimeInModel( const std::string& model,
+    const Name& property,
+    const Time& value )
     : KernelException( "InvalidTimeInModel" )
     , model_( model )
     , prop_( property )
@@ -733,7 +740,9 @@ public:
    * @param property  name of property conflicting
    * @param value     value of property conflicting
    */
-  StepMultipleRequired( const std::string& model, const Name& property, const Time& value )
+  StepMultipleRequired( const std::string& model,
+    const Name& property,
+    const Time& value )
     : KernelException( "StepMultipleRequired" )
     , model_( model )
     , prop_( property )
@@ -855,7 +864,8 @@ private:
 
 #ifdef HAVE_MUSIC
 /**
- * Exception to be thrown if a music_event_out_proxy is generated, but the music port is unmapped.
+ * Exception to be thrown if a music_event_out_proxy is generated, but the music
+ * port is unmapped.
  * @ingroup KernelExceptions
  */
 class MUSICPortUnconnected : public KernelException
@@ -885,9 +895,10 @@ private:
 };
 
 /**
-  * Exception to be thrown if a music_event_out_proxy is generated, but the music port has no width.
-  * @ingroup KernelExceptions
-  */
+ * Exception to be thrown if a music_event_out_proxy is generated, but the
+ * music port has no width.
+ * @ingroup KernelExceptions
+ */
 class MUSICPortHasNoWidth : public KernelException
 {
 public:
@@ -916,18 +927,20 @@ private:
 
 
 /**
-* Exception to be thrown if the user tries to change the name of an already published port.
-* @ingroup KernelExceptions
-*/
+ * Exception to be thrown if the user tries to change the name of an already
+ * published port.
+ * @ingroup KernelExceptions
+ */
 class MUSICPortAlreadyPublished : public KernelException
 {
 public:
   /**
-  * @note model should be passed from get_name() to ensure that
-  *             names of copied models are reported correctly.
+   * @note model should be passed from get_name() to ensure that
+   *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    */
-  MUSICPortAlreadyPublished( const std::string& model, const std::string& portname )
+  MUSICPortAlreadyPublished( const std::string& model,
+    const std::string& portname )
     : KernelException( "MUSICPortAlreadyPublished" )
     , model_( model )
     , portname_( portname )
@@ -945,7 +958,8 @@ private:
 };
 
 /**
-* Exception to be thrown if the user tries to change the name of an already published port.
+* Exception to be thrown if the user tries to change the name of an already
+* published port.
 * @ingroup KernelExceptions
 */
 class MUSICSimulationHasRun : public KernelException
@@ -973,8 +987,8 @@ private:
 
 
 /**
- * Exception to be thrown if the user tries to map a channel that exceeds the width of the MUSIC
- * port.
+ * Exception to be thrown if the user tries to map a channel that exceeds the
+ * width of the MUSIC port.
  * @ingroup KernelExceptions
  */
 class MUSICChannelUnknown : public KernelException
@@ -985,7 +999,9 @@ public:
   *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    */
-  MUSICChannelUnknown( const std::string& model, const std::string& portname, int channel )
+  MUSICChannelUnknown( const std::string& model,
+    const std::string& portname,
+    int channel )
     : KernelException( "MUSICChannelUnknown" )
     , portname_( portname )
     , channel_( channel )
@@ -1005,7 +1021,8 @@ private:
 };
 
 /**
- * Exception to be thrown if the user tries to use a port that is not known to NEST.
+ * Exception to be thrown if the user tries to use a port that is not known to
+ * NEST.
  * @ingroup KernelExceptions
  */
 class MUSICPortUnknown : public KernelException
@@ -1027,8 +1044,8 @@ private:
 };
 
 /**
- * Exception to be thrown if the user tries to map a channel that exceeds the width of the MUSIC
- * port.
+ * Exception to be thrown if the user tries to map a channel that exceeds the
+ * width of the MUSIC port.
  * @ingroup KernelExceptions
  */
 class MUSICChannelAlreadyMapped : public KernelException
@@ -1039,7 +1056,9 @@ public:
   *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    */
-  MUSICChannelAlreadyMapped( const std::string& model, const std::string& portname, int channel )
+  MUSICChannelAlreadyMapped( const std::string& model,
+    const std::string& portname,
+    int channel )
     : KernelException( "MUSICChannelAlreadyMapped" )
     , portname_( portname )
     , channel_( channel )

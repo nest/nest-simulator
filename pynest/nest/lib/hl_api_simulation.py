@@ -25,10 +25,15 @@ Functions for simulation control
 
 from .hl_api_helper import *
 
+
 @check_stack
 def Simulate(t):
-    """
-    Simulate the network for t milliseconds.
+    """Simulate the network for t milliseconds.
+
+    Parameters
+    ----------
+    t : float
+        Time to simulate in ms
     """
 
     sps(float(t))
@@ -37,8 +42,7 @@ def Simulate(t):
 
 @check_stack
 def ResumeSimulation():
-    """
-    Resume an interrupted simulation.
+    """Resume an interrupted simulation.
     """
 
     sr("ResumeSimulation")
@@ -46,10 +50,10 @@ def ResumeSimulation():
 
 @check_stack
 def ResetKernel():
-    """
-    Reset the simulation kernel. This will destroy the network as
-    well as all custom models created with CopyModel(). Calling this
-    function is equivalent to restarting NEST.
+    """Reset the simulation kernel.
+
+    This will destroy the network as well as all custom models created with
+    CopyModel(). Calling this function is equivalent to restarting NEST.
     """
 
     sr('ResetKernel')
@@ -57,8 +61,7 @@ def ResetKernel():
 
 @check_stack
 def ResetNetwork():
-    """
-    Reset all nodes and connections to their original state.
+    """Reset all nodes and connections to their original state.
     """
 
     sr('ResetNetwork')
@@ -66,10 +69,18 @@ def ResetNetwork():
 
 @check_stack
 def SetKernelStatus(params):
+    """Set parameters for the simulation kernel.
+
+    Parameters
+    ----------
+    params : dict
+        Dictionary of parameters to set.
+
+    See also
+    --------
+    GetKernelStatus
     """
-    Set parameters for the simulation kernel.
-    """
-    
+
     sps(0)
     sps(params)
     sr('SetStatus')
@@ -77,13 +88,25 @@ def SetKernelStatus(params):
 
 @check_stack
 def GetKernelStatus(keys=None):
-    """
-    Obtain parameters of the simulation kernel.
+    """Obtain parameters of the simulation kernel.
 
-    Returns:
-    - Parameter dictionary if called without argument
-    - Single parameter value if called with single parameter name
-    - List of parameter values if called with list of parameter names
+    Parameters
+    ----------
+    keys : str or list, optional
+        Single parameter name or list of parameter names
+
+    Returns
+    -------
+    dict:
+        Parameter dictionary, if called without argument
+    type:
+        Single parameter value, if called with single parameter name
+    list:
+        List of parameter values, if called with list of parameter names
+
+    Raises
+    ------
+    TypeError
     """
 
     sr('0 GetStatus')
@@ -106,51 +129,65 @@ def GetKernelStatus(keys=None):
 
 @check_stack
 def Install(module_name):
-    """
-    Load a dynamically linked NEST module.
+    """Load a dynamically linked NEST module.
 
-    Example:
-    nest.Install("mymodule")
+    Parameters
+    ----------
+    module_name : str
+        Name of the dynamically linked module
 
-    Returns:
+    Returns
+    -------
     NEST module identifier, required for unloading.
 
-    Note: Dynamically linked modules are searched in the
-    LD_LIBRARY_PATH (DYLD_LIBRARY_PATH under OSX).
+    Example
+    -------
+    nest.Install("mymodule")
+
+    Notes
+    -----
+    Dynamically linked modules are searched in the LD_LIBRARY_PATH
+    (DYLD_LIBRARY_PATH under OSX).
     """
 
     return sr("(%s) Install" % module_name)
 
+
 @check_stack
 def SetStructuralPlasticityStatus(params):
+    """Set structural plasticity parameters for the network simulation.
+
+    Parameters
+    ----------
+    params : dict
+        Dictionary of structural plasticity parameters to set
     """
-    Set structural plasticity parameters for the network simulation
-    """
-    
+
     sps(params)
     sr('SetStructuralPlasticityStatus')
 
+
 @check_stack
 def GetStructuralPlasticityStatus(params):
+    """Get the current structural plasticity parameters for the network
+    simulation.
     """
-    Get the current structural plasticity parameters for the network simulation
-    """
-    
+
     sps(params)
     sr('GetStructuralPlasticityStatus')
     return spp()
 
+
 @check_stack
 def EnableStructuralPlasticity():
+    """Enable structural plasticity for the network simulation
     """
-    Enable structural plasticity for the network simulation
-    """
-    
+
     sr('EnableStructuralPlasticity')
+
 
 @check_stack
 def DisableStructuralPlasticity():
-    """
-    Disable structural plasticity for the network simulation
+    """Disable structural plasticity for the network simulation
     """
     sr('DisableStructuralPlasticity')

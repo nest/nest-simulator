@@ -51,17 +51,20 @@ cg_connect( ConnectionGeneratorDatum& cg,
     {
       if ( kernel().node_manager.is_local_gid( target + target_offset ) )
       {
-        Node* const target_node = kernel().node_manager.get_node( target + target_offset );
+        Node* const target_node =
+          kernel().node_manager.get_node( target + target_offset );
         const thread target_thread = target_node->get_thread();
-        kernel().connection_builder_manager.connect(
+        kernel().connection_manager.connect(
           source + source_offset, target_node, target_thread, syn );
       }
     }
   }
   else if ( num_parameters == 2 )
   {
-    if ( !params_map->known( names::weight ) || !params_map->known( names::delay ) )
-      throw BadProperty( "The parameter map has to contain the indices of weight and delay." );
+    if ( !params_map->known( names::weight )
+      || !params_map->known( names::delay ) )
+      throw BadProperty(
+        "The parameter map has to contain the indices of weight and delay." );
 
     long w_idx = ( *params_map )[ names::weight ];
     long d_idx = ( *params_map )[ names::delay ];
@@ -72,9 +75,10 @@ cg_connect( ConnectionGeneratorDatum& cg,
     {
       if ( kernel().node_manager.is_local_gid( target + target_offset ) )
       {
-        Node* const target_node = kernel().node_manager.get_node( target + target_offset );
+        Node* const target_node =
+          kernel().node_manager.get_node( target + target_offset );
         const thread target_thread = target_node->get_thread();
-        kernel().connection_builder_manager.connect( source + source_offset,
+        kernel().connection_manager.connect( source + source_offset,
           target_node,
           target_thread,
           syn,
@@ -85,7 +89,9 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else
   {
-    LOG( M_ERROR, "Connect", "Either two or no parameters in the Connection Set expected." );
+    LOG( M_ERROR,
+      "Connect",
+      "Either two or no parameters in the Connection Set expected." );
     throw DimensionMismatch();
   }
 }
@@ -110,17 +116,20 @@ cg_connect( ConnectionGeneratorDatum& cg,
     {
       if ( kernel().node_manager.is_local_gid( target_gids.at( target ) ) )
       {
-        Node* const target_node = kernel().node_manager.get_node( target_gids.at( target ) );
+        Node* const target_node =
+          kernel().node_manager.get_node( target_gids.at( target ) );
         const thread target_thread = target_node->get_thread();
-        kernel().connection_builder_manager.connect(
+        kernel().connection_manager.connect(
           source_gids.at( source ), target_node, target_thread, syn );
       }
     }
   }
   else if ( num_parameters == 2 )
   {
-    if ( !params_map->known( names::weight ) || !params_map->known( names::delay ) )
-      throw BadProperty( "The parameter map has to contain the indices of weight and delay." );
+    if ( !params_map->known( names::weight )
+      || !params_map->known( names::delay ) )
+      throw BadProperty(
+        "The parameter map has to contain the indices of weight and delay." );
 
     long w_idx = ( *params_map )[ names::weight ];
     long d_idx = ( *params_map )[ names::delay ];
@@ -131,9 +140,10 @@ cg_connect( ConnectionGeneratorDatum& cg,
     {
       if ( kernel().node_manager.is_local_gid( target_gids.at( target ) ) )
       {
-        Node* const target_node = kernel().node_manager.get_node( target_gids.at( target ) );
+        Node* const target_node =
+          kernel().node_manager.get_node( target_gids.at( target ) );
         const thread target_thread = target_node->get_thread();
-        kernel().connection_builder_manager.connect( source_gids.at( source ),
+        kernel().connection_manager.connect( source_gids.at( source ),
           target_node,
           target_thread,
           syn,
@@ -144,7 +154,9 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else
   {
-    LOG( M_ERROR, "Connect", "Either two or no parameters in the Connection Set expected." );
+    LOG( M_ERROR,
+      "Connect",
+      "Either two or no parameters in the Connection Set expected." );
     throw DimensionMismatch();
   }
 }
@@ -158,10 +170,13 @@ cg_connect( ConnectionGeneratorDatum& cg,
  * \param targets The target ranges to create the target masks from
  */
 void
-cg_set_masks( ConnectionGeneratorDatum& cg, RangeSet& sources, RangeSet& targets )
+cg_set_masks( ConnectionGeneratorDatum& cg,
+  RangeSet& sources,
+  RangeSet& targets )
 {
   long np = kernel().mpi_manager.get_num_processes();
-  std::vector< ConnectionGenerator::Mask > masks( np, ConnectionGenerator::Mask( 1, np ) );
+  std::vector< ConnectionGenerator::Mask > masks(
+    np, ConnectionGenerator::Mask( 1, np ) );
 
   cg_create_masks( &masks, sources, targets );
   cg->setMask( masks, kernel().mpi_manager.get_rank() );
@@ -211,11 +226,13 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
   size_t cg_idx_left = 0;
 
   // For sources, we only need to translate from NEST to CG indices.
-  for ( RangeSet::iterator source = sources.begin(); source != sources.end(); ++source )
+  for ( RangeSet::iterator source = sources.begin(); source != sources.end();
+        ++source )
   {
     size_t num_elements = source->last - source->first;
     size_t right = cg_idx_left + num_elements;
-    for ( size_t proc = 0; proc < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
+    for ( size_t proc = 0; proc
+            < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
           ++proc )
       ( *masks )[ proc ].sources.insert( cg_idx_left, right );
     cg_idx_left += num_elements + 1;
@@ -225,10 +242,12 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
   // translation for the targets.
   cg_idx_left = 0;
 
-  for ( RangeSet::iterator target = targets.begin(); target != targets.end(); ++target )
+  for ( RangeSet::iterator target = targets.begin(); target != targets.end();
+        ++target )
   {
     size_t num_elements = target->last - target->first;
-    for ( size_t proc = 0; proc < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
+    for ( size_t proc = 0; proc
+            < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
           ++proc )
     {
       // Make sure that the range is only added on as many ranks as
@@ -250,8 +269,9 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
         // of neurons in NEST. This ensures that the mask is set for
         // the rank where left acutally is the first neuron fromt
         // the currently looked at range.
-        ( *masks )[ ( proc + target->first ) % kernel().mpi_manager.get_num_processes() ]
-          .targets.insert( left, right );
+        ( *masks )[ ( proc + target->first )
+          % kernel().mpi_manager.get_num_processes() ].targets.insert( left,
+          right );
       }
     }
 
@@ -294,7 +314,8 @@ cg_get_right_border( index left, size_t step, std::vector< long >& gids )
     // (i.e. we're back at an already visited index), we found the
     // right border of the contiguous range (last_i) and return it.
     if ( ( i == static_cast< long >( gids.size() ) - 1
-           && gids[ i ] - gids[ left ] == i - static_cast< long >( left ) ) || i == leftmost_r )
+           && gids[ i ] - gids[ left ] == i - static_cast< long >( left ) )
+      || i == leftmost_r )
       return last_i;
 
     // Store the current value of i in last_i. This is the current

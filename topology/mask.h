@@ -573,7 +573,8 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
 }
 
 template < int D >
-inline BoxMask< D >::BoxMask( const Position< D >& lower_left, const Position< D >& upper_right )
+inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
+  const Position< D >& upper_right )
   : lower_left_( lower_left )
   , upper_right_( upper_right )
 {

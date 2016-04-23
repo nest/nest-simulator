@@ -1,0 +1,76 @@
+/*
+ *  test_symmetric_connections.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::test_symmetric_connections - Tests that the functionality to create
+symmetric connections works properly.
+
+Synopsis: (test_symmetric_connections) run -> NEST exits if test fails
+
+Description: 
+This test ensures that the functionality to create symmetric connections
+works properly.
+
+In more detail the test ensures that
+- the symmetric flag works properly with one-to-one connection rule
+- the usage of the symmetric flag with any other connections throws
+  an NotImplemented exception
+
+Author: Jan Hahne, 2016-04-22
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+ResetKernel
+
+/iaf_neuron 10 Create
+
+/set1 1 5 cvgidcollection def
+/set2 6 10 cvgidcollection def
+
+% Check that symmetric flag cannot be used with other connection rules then one_to_one
+{
+set1 set2 << /rule /all_to_all /symmetric true >> /static_synapse Connect
+} fail_or_die
+{
+set1 set2 << /rule /fixed_indegree /indegree 3 /symmetric true >> /static_synapse Connect
+} fail_or_die
+{
+set1 set2 << /rule /fixed_outdegree /outdegree 3 /symmetric true >> /static_synapse Connect
+} fail_or_die
+{
+set1 set2 << /rule /fixed_total_number /N 3 /symmetric true >> /static_synapse Connect
+} fail_or_die
+
+% Check that symmetric flag works properly for one_to_one connections
+{
+set1 set2 << /rule /one_to_one /symmetric true >> /static_synapse Connect
+} pass_or_die
+
+<< /source [6 7 8 9 10] >> GetConnections
+{empty false eq}assert_or_die
+
+endusing

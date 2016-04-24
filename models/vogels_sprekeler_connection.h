@@ -24,7 +24,8 @@
 #define VOGELS_SPREKELER_CONNECTION_H
 
 /* BeginDocumentation
-  Name: vogels_sprekeler_synapse - Synapse type for symmetric spike-timing dependent
+  Name: vogels_sprekeler_synapse - Synapse type for symmetric spike-timing
+  dependent
    plasticity with constant depression.
 
   Description:
@@ -39,7 +40,8 @@
    tau        double - Time constant of STDP window, potentiation in ms
    Wmax       double - Maximum allowed weight
    eta        double - learning rate
-   alpha      double - constant depression (= 2 * tau * target firing rate in [1])
+   alpha      double - constant depression (= 2 * tau * target firing rate in
+  [1])
 
   Transmits: SpikeEvent
 
@@ -68,7 +70,8 @@
 namespace nest
 {
 
-// connections are templates of target identifier type (used for pointer / target index addressing)
+// connections are templates of target identifier type (used for pointer /
+// target index addressing)
 // derived from generic connection template
 template < typename targetidentifierT >
 class VogelsSprekelerConnection : public Connection< targetidentifierT >
@@ -91,9 +94,11 @@ public:
    */
   VogelsSprekelerConnection( const VogelsSprekelerConnection& );
 
-  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
+  // Explicitly declare all methods inherited from the dependent base
+  // ConnectionBase.
   // This avoids explicit name prefixes in all places these functions are used.
-  // Since ConnectionBase depends on the template parameter, they are not automatically
+  // Since ConnectionBase depends on the template parameter, they are not
+  // automatically
   // found in the base class.
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
@@ -116,7 +121,10 @@ public:
    * \param t_lastspike Point in time of last spike sent.
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties& cp );
+  void send( Event& e,
+    thread t,
+    double_t t_lastspike,
+    const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -195,14 +203,16 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
   double_t t_spike = e.get_stamp().get_ms();
   // t_lastspike_ = 0 initially
 
-  // use accessor functions (inherited from Connection< >) to obtain delay and target
+  // use accessor functions (inherited from Connection< >) to obtain delay and
+  // target
   Node* target = get_target( t );
   double_t dendritic_delay = get_delay();
 
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  target->get_history( t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  target->get_history(
+    t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
   // presynaptic neuron j, post synaptic neuron i
   // Facilitation for each post synaptic spike
@@ -222,12 +232,14 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
   // Facilitation and constant depression
   // Getting kvalue at required time already for deferred processing, so no
   // need to transform it to the current time, and so, no exponential required
-  weight_ = facilitate_( weight_, target->get_K_value( t_spike - dendritic_delay ) );
+  weight_ =
+    facilitate_( weight_, target->get_K_value( t_spike - dendritic_delay ) );
   weight_ = depress_( weight_ );
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
-  // use accessor functions (inherited from Connection< >) to obtain delay in steps and rport
+  // use accessor functions (inherited from Connection< >) to obtain delay in
+  // steps and rport
   e.set_delay( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
@@ -264,7 +276,8 @@ VogelsSprekelerConnection< targetidentifierT >::VogelsSprekelerConnection(
 
 template < typename targetidentifierT >
 void
-VogelsSprekelerConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+VogelsSprekelerConnection< targetidentifierT >::get_status(
+  DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double_t >( d, names::weight, weight_ );
@@ -278,7 +291,8 @@ VogelsSprekelerConnection< targetidentifierT >::get_status( DictionaryDatum& d )
 
 template < typename targetidentifierT >
 void
-VogelsSprekelerConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+VogelsSprekelerConnection< targetidentifierT >::set_status(
+  const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );

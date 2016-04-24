@@ -568,11 +568,14 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< STDPDopaConnection< TargetIdentifierPtrRport > >(
       "stdp_dopamine_synapse" );
-  kernel().model_manager.register_connection_model< STDPDopaConnection< TargetIdentifierIndex > >(
-    "stdp_dopamine_synapse_hpc" );
+  kernel()
+    .model_manager
+    .register_connection_model< STDPDopaConnection< TargetIdentifierIndex > >(
+      "stdp_dopamine_synapse_hpc" );
 
   /* BeginDocumentation
-     Name: vogels_sprekeler_synapse_hpc - Variant of vogels_sprekeler_synapse with low memory
+     Name: vogels_sprekeler_synapse_hpc - Variant of vogels_sprekeler_synapse
+     with low memory
      consumption.
      SeeAlso: synapsedict, vogels_sprekeler_synapse
   */
@@ -581,7 +584,8 @@ ModelsModule::init( SLIInterpreter* )
     .register_connection_model< VogelsSprekelerConnection< TargetIdentifierPtrRport > >(
       "vogels_sprekeler_synapse" );
   kernel()
-    .model_manager.register_connection_model< VogelsSprekelerConnection< TargetIdentifierIndex > >(
+    .model_manager
+    .register_connection_model< VogelsSprekelerConnection< TargetIdentifierIndex > >(
       "vogels_sprekeler_synapse_hpc" );
 }
 

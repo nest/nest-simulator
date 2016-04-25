@@ -72,7 +72,6 @@ def process_changed_files(f):
         if not line:
             return False, line
 
-        # +file_names=extras/scan_travis_log.py nestkernel/connector_model.h nestkernel/nestmodule.cpp nestkernel/network.cpp 
         if line.startswith('+file_names='):
             return filter(lambda x: x != '', line.strip().split('=')[1].split(' ')), line
 
@@ -92,7 +91,6 @@ def process_vera(f, filename):
             return res
 
         if line.startswith(filename):
-            # "nestkernel/network.cpp:107: full block {} expected in the control structure"
             key = line.split(":")[-1].strip()
             if not d.has_key(key):
                 d[key] = 0
@@ -153,7 +151,6 @@ def process_static_analysis(f, line):
     """
     Process static analysis output for a certain file.
     """
-    # Static analysis on file nestkernel/archiving_node.cpp:
     filename = line.split(' ')[-1].strip()[0:-1]
     d = {}
     res = {filename: d}
@@ -205,7 +202,6 @@ def count_warnings_errors(f):
         if line.strip() == '+make install':
             return warn, error, line
 
-        # /home/travis/build/tammoippen/nest-simulator/build/libnestutil/config.h:65:0: warning: "HAVE_DIRENT_H" redefined [enabled by default]
         if ': warning:' in line:
             file_name = line.split(':')[0]
             if file_name not in warn:

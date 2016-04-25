@@ -45,42 +45,26 @@ while test $# -gt 0; do
     --prefix=*)
         prefix=$optarg
         ;;
-
     --prefix)
         echo $prefix
         ;;
-
     --exec-prefix)
         echo $exec_prefix
         ;;
-
     --version)
-        echo @NEST_VERSION_VERSION@
-        exit 0
+        echo "@NEST_VERSION_VERSION@"
         ;;
-
     --help)
         usage 0
         ;;
-
     --includes)
-        NEST_INCLUDES="@ALL_INCLUDES@"
-        if [ "@PROJECT_BINARY_DIR@" != "@PROJECT_SOURCE_DIR@" ]; then
-            NEST_CFLAGS="-I@PROJECT_BINARY_DIR@/libnestutil $NEST_INCLUDES"
-        fi
-        echo $NEST_INCLUDES
+        echo "@ALL_INCLUDES@"
         ;;
-
     --cflags)
-        NEST_CFLAGS="@ALL_CXXFLAGS@"
-        echo $NEST_CFLAGS
+        echo "@ALL_CXXFLAGS@"
         ;;
-
     --libs)
-        NEST_LDFLAGS="@ALL_LIBS@"
-        # cmake: all libs are installed
-        NEST_LDFLAGS="-L@CMAKE_INSTALL_FULL_LIBDIR@ $NEST_LDFLAGS"
-        echo $NEST_LDFLAGS
+        echo "-L@CMAKE_INSTALL_FULL_LIBDIR@ @ALL_LIBS@"
         ;;
     --compiler)
         echo "@CMAKE_CXX_COMPILER@"

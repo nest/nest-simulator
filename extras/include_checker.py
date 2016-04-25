@@ -145,6 +145,7 @@ def print_includes(includes):
 
 def process_source(path, f, all_header, print_suggestion):
     if f in excludes_files:
+        print("Please do not change the includes in '" + f + "'.")
         return 0
     includes = get_includes_from(path + "/" + f, all_header)
     order_ok = is_include_order_ok(includes)
@@ -164,13 +165,15 @@ def process_source(path, f, all_header, print_suggestion):
 def process_all_sources(path, print_suggestion):
     all_header = all_includes(path)
     count = 0
-    dirs = [d for d in next(os.walk(path))[1] if d[0] != '.' and not d in excludes ]
-    for d in dirs:
-        for root, dirs, files in os.walk(path + "/" + d):
-            for f in files:
-                if re.search("\.h$|\.hpp$|\.c$|\.cc|\.cpp$",f):
-                    # valid source file
-                    count += process_source(root, f, all_header, print_suggestion)
+    for root, dirs, files in os.walk(path):
+        for f in files:
+            if re.search("\.h$|\.hpp$|\.c$|\.cc|\.cpp$",f):
+                # valid source file
+                count += process_source(root, f, all_header, print_suggestion)
+        for d in dirs:
+            if not d in excludes:
+                # valid directory
+                count += process_all_sources(root + "/" + d, print_suggestion)
     return count
 
 

@@ -207,16 +207,16 @@ def count_warnings_errors(f):
 
         # /home/travis/build/tammoippen/nest-simulator/build/libnestutil/config.h:65:0: warning: "HAVE_DIRENT_H" redefined [enabled by default]
         if ': warning:' in line:
-            file = line.split(':')[0]
-            if file not in warn:
-                warn[file] = 0
-            warn[file] += 1
+            file_name = line.split(':')[0]
+            if file_name not in warn:
+                warn[file_name] = 0
+            warn[file_name] += 1
 
         if ': error:' in line:
-            file = line.split(':')[0]
-            if file not in error:
-                error[file] = 0
-            error[file] += 1
+            file_name = line.split(':')[0]
+            if file_name not in error:
+                error[file_name] = 0
+            error[file_name] += 1
 
 if __name__ == '__main__':
     from sys import argv, exit

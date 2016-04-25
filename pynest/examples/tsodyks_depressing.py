@@ -54,7 +54,7 @@ neuron and synapse parameters are stored into a dictionary.
 h       = 0.1    # simulation step size (ms)
 Tau     = 40.    # membrane time constant
 Theta   = 15.    # threshold
-U0      = 0.     # reset potential of membrane potential
+E_L     = 0.     # reset potential of membrane potential
 R       = 0.1    # 100 M Ohm
 C       = Tau/R  # Tau (ms)/R in NEST units
 TauR    = 2.     # refractory time
@@ -74,9 +74,9 @@ neuron_param = {"tau_m"    :  Tau,
                "tau_syn_ex":  Tau_psc,
                "tau_syn_in":  Tau_psc,
                "C_m"       :  C,
-               "V_reset"   :  U0,
-               "E_L"       :  U0,
-               "V_m"       :  U0,
+               "V_reset"   :  E_L,
+               "E_L"       :  E_L,
+               "V_m"       :  E_L,
                "V_th"      :  Theta}
 
 syn_param = {"tau_psc" :  Tau_psc,

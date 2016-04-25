@@ -132,7 +132,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -184,7 +185,7 @@ private:
     double_t I_e_;
 
     /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
-        I.e. the real threshold is (U0_+V_th_). */
+        I.e. the real threshold is (E_L_+V_th_). */
     double_t V_th_;
 
     /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
@@ -194,7 +195,8 @@ private:
     /** reset value of the membrane potential */
     double_t V_reset_;
 
-    bool with_refr_input_; //!< spikes arriving during refractory period are counted
+    bool with_refr_input_; //!< spikes arriving during refractory period are
+                           //!< counted
 
     Parameters_(); //!< Sets default parameter values
 
@@ -214,7 +216,8 @@ private:
   struct State_
   {
     double_t y0_;
-    double_t y3_; //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double_t y3_;
 
     int_t r_; //!< Number of refractory steps remaining
 
@@ -297,7 +300,10 @@ private:
 
 
 inline port
-nest::iaf_psc_delta::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::iaf_psc_delta::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -321,7 +327,8 @@ iaf_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_delta::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_psc_delta::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

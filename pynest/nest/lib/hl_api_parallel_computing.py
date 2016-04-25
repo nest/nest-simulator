@@ -25,10 +25,15 @@ Functions for parallel computing
 
 from .hl_api_helper import *
 
+
 @check_stack
 def Rank():
-    """
-    Return the MPI rank of the local process.
+    """Return the MPI rank of the local process.
+
+    Returns
+    -------
+    int:
+        MPI rank of the local process
     """
 
     sr("Rank")
@@ -37,8 +42,12 @@ def Rank():
 
 @check_stack
 def NumProcesses():
-    """
-    Return the overall number of MPI processes.
+    """Return the overall number of MPI processes.
+
+    Returns
+    -------
+    int:
+        Number of overall MPI processes
     """
 
     sr("NumProcesses")
@@ -47,13 +56,17 @@ def NumProcesses():
 
 @check_stack
 def SetNumRecProcesses(nrp):
-    """
-    Set the number of recording MPI processes to nrp. Usually,
-    spike detectors are distributed over all processes and record
-    from local neurons only. If a number of processes is dedicated to
-    spike detection, each spike detector is hosted on one of these
-    processes and records globally from all simulating processes.
+    """Set the number of recording MPI processes.
 
+    Usually, spike detectors are distributed over all processes and record
+    from local neurons only. If a number of processes is dedicated to spike
+    detection, each spike detector is hosted on one of these processes and
+    records globally from all simulating processes.
+
+    Parameters
+    ----------
+    nrp : int
+        Number of recording MPI processes
     """
 
     sr("%d SetNumRecProcesses" % nrp)
@@ -61,9 +74,15 @@ def SetNumRecProcesses(nrp):
 
 @check_stack
 def SetAcceptableLatency(port, latency):
+    """Set the acceptable latency (in ms) for a MUSIC port.
+
+    Parameters
+    ----------
+    port : object
+        MUSIC port to set latency for
+    latency : float
+        Latency in ms
     """
-    Set the acceptable latency (in ms) for a MUSIC port.
-    """
-    
+
     sps(latency)
     sr("/%s exch SetAcceptableLatency" % port)

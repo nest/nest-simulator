@@ -200,8 +200,8 @@ const Name N( "N" );
 const Name N_channels( "N_channels" );
 const Name n_events( "n_events" );
 const Name n_proc( "n_proc" );
-const Name needs_prelim_update( "needs_prelim_update" );
 const Name neuron( "neuron" );
+const Name node_uses_wfr( "node_uses_wfr" );
 const Name noise( "noise" );
 const Name ns( "ns" );
 
@@ -267,7 +267,8 @@ const Name std_mod( "std_mod" );
 const Name stimulator( "stimulator" );
 const Name stop( "stop" );
 const Name structural_plasticity_synapses( "structural_plasticity_synapses" );
-const Name structural_plasticity_update_interval( "structural_plasticity_update_interval" );
+const Name structural_plasticity_update_interval(
+  "structural_plasticity_update_interval" );
 const Name structure( "structure" );
 const Name success( "success" );
 const Name synapse( "synapse" );

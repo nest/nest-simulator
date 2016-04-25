@@ -41,13 +41,12 @@ except ImportError:
 class StackTestCase(unittest.TestCase):
     """Stack tests"""
 
-
     def test_Count(self):
         """Object count"""
 
         nest.ResetKernel()
         nest.sr('clear')
-        
+
         for i in range(100):
             nest.sps(i)
 
@@ -55,8 +54,8 @@ class StackTestCase(unittest.TestCase):
         self.assertEqual(nest.spp(), 100)
 
         for i in range(100):
-            self.assertEqual(nest.spp(), (99-i))
-        
+            self.assertEqual(nest.spp(), (99 - i))
+
         nest.sr('count')
         self.assertEqual(nest.spp(), 0)
 
@@ -133,7 +132,8 @@ class StackTestCase(unittest.TestCase):
             nest.sps(x)
             self.assertEqual(nest.spp(), 2.)
 
-    @unittest.skipIf(HAVE_NUMPY, 'Makes no sense when NumPy package is available')
+    @unittest.skipIf(
+        HAVE_NUMPY, 'Makes no sense when NumPy package is available')
     def test_PushPop_no_NumPy(self):
 
         nest.ResetKernel()
@@ -150,8 +150,9 @@ class StackTestCase(unittest.TestCase):
 
 def suite():
 
-    suite = unittest.makeSuite(StackTestCase,'test')
+    suite = unittest.makeSuite(StackTestCase, 'test')
     return suite
+
 
 def run():
     runner = unittest.TextTestRunner(verbosity=2)
@@ -159,4 +160,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-    

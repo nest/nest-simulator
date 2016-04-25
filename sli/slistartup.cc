@@ -184,7 +184,8 @@ SLIStartup::checkenvpath( std::string const& envvar,
         msg = String::compose( "Directory '%1' does not exist.", envpath );
         break;
       default:
-        msg = String::compose( "Errno %1 received when trying to open '%2'", errno, envpath );
+        msg = String::compose(
+          "Errno %1 received when trying to open '%2'", errno, envpath );
         break;
       }
 
@@ -348,20 +349,27 @@ SLIStartup::init( SLIInterpreter* i )
 
   if ( !checkpath( slihomepath, fname ) )
   {
-    i->message( SLIInterpreter::M_FATAL, "SLIStartup", "Your NEST installation seems broken. \n" );
-    i->message( SLIInterpreter::M_FATAL, "SLIStartup", "I could not find the startup file that" );
     i->message( SLIInterpreter::M_FATAL,
       "SLIStartup",
-      std::string( std::string( "should have been in " ) + slihomepath ).c_str() );
-    i->message( SLIInterpreter::M_FATAL, "SLIStartup", "Please re-build NEST and try again." );
+      "Your NEST installation seems broken. \n" );
+    i->message( SLIInterpreter::M_FATAL,
+      "SLIStartup",
+      "I could not find the startup file that" );
+    i->message( SLIInterpreter::M_FATAL,
+      "SLIStartup",
+      std::string( std::string( "should have been in " ) + slihomepath )
+        .c_str() );
+    i->message( SLIInterpreter::M_FATAL,
+      "SLIStartup",
+      "Please re-build NEST and try again." );
     i->message( SLIInterpreter::M_FATAL,
       "SLIStartup",
       "The file install.html in NEST's doc directory tells you how." );
 
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", "Bye." );
 
-    SLIsignalflag = 255;                     // this exits the interpreter.
-    debug_ = false;                          // switches off the -d/--debug switch!
+    SLIsignalflag = 255; // this exits the interpreter.
+    debug_ = false;      // switches off the -d/--debug switch!
     i->verbosity( SLIInterpreter::M_QUIET ); // suppress all further output.
   }
   else
@@ -378,22 +386,32 @@ SLIStartup::init( SLIInterpreter* i )
   assert( statusdict.valid() );
 
   statusdict->insert_move( argv_name, targs );
-  statusdict->insert( prgname_name, Token( new StringDatum( SLI_PRGNAME ) ) );
-  statusdict->insert( exitcode_name, Token( new IntegerDatum( EXIT_SUCCESS ) ) );
-  statusdict->insert( prgmajor_name, Token( new IntegerDatum( SLI_MAJOR_REVISION ) ) );
-  statusdict->insert( prgminor_name, Token( new IntegerDatum( SLI_MINOR_REVISION ) ) );
-  statusdict->insert( prgpatch_name, Token( new StringDatum( SLI_PATCHLEVEL ) ) );
   statusdict->insert(
-    prgbuilt_name, Token( new StringDatum( String::compose( "%1 %2", __DATE__, __TIME__ ) ) ) );
-  statusdict->insert( prefix_name, Token( new StringDatum( SLI_PREFIX ) ) );
-  statusdict->insert( prgsourcedir_name, Token( new StringDatum( PKGSOURCEDIR ) ) );
-  statusdict->insert( prgbuilddir_name, Token( new StringDatum( SLI_BUILDDIR ) ) );
-  statusdict->insert( prgdatadir_name, Token( new StringDatum( slihomepath ) ) );
+    prgname_name, Token( new StringDatum( NEST_VERSION_PRGNAME ) ) );
+  statusdict->insert(
+    exitcode_name, Token( new IntegerDatum( EXIT_SUCCESS ) ) );
+  statusdict->insert(
+    prgmajor_name, Token( new IntegerDatum( NEST_VERSION_MAJOR_REVISION ) ) );
+  statusdict->insert(
+    prgminor_name, Token( new IntegerDatum( NEST_VERSION_MINOR_REVISION ) ) );
+  statusdict->insert(
+    prgpatch_name, Token( new StringDatum( NEST_VERSION_PATCHLEVEL ) ) );
+  statusdict->insert( prgbuilt_name,
+    Token( new StringDatum(
+      String::compose( "%1 %2", __DATE__, __TIME__ ) ) ) );
+  statusdict->insert( prefix_name, Token( new StringDatum( NEST_PREFIX ) ) );
+  statusdict->insert(
+    prgsourcedir_name, Token( new StringDatum( PKGSOURCEDIR ) ) );
+  statusdict->insert(
+    prgbuilddir_name, Token( new StringDatum( NEST_BUILDDIR ) ) );
+  statusdict->insert(
+    prgdatadir_name, Token( new StringDatum( slihomepath ) ) );
   statusdict->insert( prgdocdir_name, Token( new StringDatum( slidocdir ) ) );
-  statusdict->insert( host_name, Token( new StringDatum( SLI_HOST ) ) );
-  statusdict->insert( hostos_name, Token( new StringDatum( SLI_HOSTOS ) ) );
-  statusdict->insert( hostvendor_name, Token( new StringDatum( SLI_HOSTVENDOR ) ) );
-  statusdict->insert( hostcpu_name, Token( new StringDatum( SLI_HOSTCPU ) ) );
+  statusdict->insert( host_name, Token( new StringDatum( NEST_HOST ) ) );
+  statusdict->insert( hostos_name, Token( new StringDatum( NEST_HOSTOS ) ) );
+  statusdict->insert(
+    hostvendor_name, Token( new StringDatum( NEST_HOSTVENDOR ) ) );
+  statusdict->insert( hostcpu_name, Token( new StringDatum( NEST_HOSTCPU ) ) );
 
   // expose platform model for code branching without assuming
   // configure leads to a unique setting
@@ -466,33 +484,50 @@ SLIStartup::init( SLIInterpreter* i )
   DictionaryDatum architecturedict( new Dictionary() );
   assert( architecturedict.valid() );
 
-  architecturedict->insert( doublesize_name, Token( new IntegerDatum( sizeof( double ) ) ) );
-  architecturedict->insert( pointersize_name, Token( new IntegerDatum( sizeof( void* ) ) ) );
-  architecturedict->insert( intsize_name, Token( new IntegerDatum( sizeof( int ) ) ) );
-  architecturedict->insert( longsize_name, Token( new IntegerDatum( sizeof( long ) ) ) );
-  architecturedict->insert( "Token", Token( new IntegerDatum( sizeof( Token ) ) ) );
-  architecturedict->insert( "TokenMap", Token( new IntegerDatum( sizeof( TokenMap ) ) ) );
-  architecturedict->insert( "Dictionary", Token( new IntegerDatum( sizeof( Dictionary ) ) ) );
+  architecturedict->insert(
+    doublesize_name, Token( new IntegerDatum( sizeof( double ) ) ) );
+  architecturedict->insert(
+    pointersize_name, Token( new IntegerDatum( sizeof( void* ) ) ) );
+  architecturedict->insert(
+    intsize_name, Token( new IntegerDatum( sizeof( int ) ) ) );
+  architecturedict->insert(
+    longsize_name, Token( new IntegerDatum( sizeof( long ) ) ) );
+  architecturedict->insert(
+    "Token", Token( new IntegerDatum( sizeof( Token ) ) ) );
+  architecturedict->insert(
+    "TokenMap", Token( new IntegerDatum( sizeof( TokenMap ) ) ) );
+  architecturedict->insert(
+    "Dictionary", Token( new IntegerDatum( sizeof( Dictionary ) ) ) );
   architecturedict->insert(
     "DictionaryDatum", Token( new IntegerDatum( sizeof( DictionaryDatum ) ) ) );
-  architecturedict->insert( "IntegerDatum", Token( new IntegerDatum( sizeof( IntegerDatum ) ) ) );
-  architecturedict->insert( "ArrayDatum", Token( new IntegerDatum( sizeof( ArrayDatum ) ) ) );
-  architecturedict->insert( "TokenArray", Token( new IntegerDatum( sizeof( TokenArray ) ) ) );
-  architecturedict->insert( "TokenArrayObj", Token( new IntegerDatum( sizeof( TokenArrayObj ) ) ) );
+  architecturedict->insert(
+    "IntegerDatum", Token( new IntegerDatum( sizeof( IntegerDatum ) ) ) );
+  architecturedict->insert(
+    "ArrayDatum", Token( new IntegerDatum( sizeof( ArrayDatum ) ) ) );
+  architecturedict->insert(
+    "TokenArray", Token( new IntegerDatum( sizeof( TokenArray ) ) ) );
+  architecturedict->insert(
+    "TokenArrayObj", Token( new IntegerDatum( sizeof( TokenArrayObj ) ) ) );
 
   statusdict->insert( architecturedict_name, architecturedict );
 
   DictionaryDatum exitcodes( new Dictionary() );
   assert( exitcodes.valid() );
 
-  exitcodes->insert( exitcode_success_name, Token( new IntegerDatum( EXIT_SUCCESS ) ) );
-  exitcodes->insert( exitcode_scripterror_name, Token( new IntegerDatum( 126 ) ) );
-  exitcodes->insert( exitcode_abort_name, Token( new IntegerDatum( SLI_EXITCODE_ABORT ) ) );
+  exitcodes->insert(
+    exitcode_success_name, Token( new IntegerDatum( EXIT_SUCCESS ) ) );
+  exitcodes->insert(
+    exitcode_scripterror_name, Token( new IntegerDatum( 126 ) ) );
+  exitcodes->insert(
+    exitcode_abort_name, Token( new IntegerDatum( NEST_EXITCODE_ABORT ) ) );
   exitcodes->insert( exitcode_userabort_name, Token( new IntegerDatum( 15 ) ) );
-  exitcodes->insert( exitcode_segfault_name, Token( new IntegerDatum( SLI_EXITCODE_SEGFAULT ) ) );
-  exitcodes->insert( exitcode_exception_name, Token( new IntegerDatum( 125 ) ) );
+  exitcodes->insert( exitcode_segfault_name,
+    Token( new IntegerDatum( NEST_EXITCODE_SEGFAULT ) ) );
+  exitcodes->insert(
+    exitcode_exception_name, Token( new IntegerDatum( 125 ) ) );
   exitcodes->insert( exitcode_fatal_name, Token( new IntegerDatum( 127 ) ) );
-  exitcodes->insert( exitcode_unknownerror_name, Token( new IntegerDatum( 10 ) ) );
+  exitcodes->insert(
+    exitcode_unknownerror_name, Token( new IntegerDatum( 10 ) ) );
 
   statusdict->insert( exitcodes_name, exitcodes );
 
@@ -516,10 +551,12 @@ SLIStartup::init( SLIInterpreter* i )
   architecturedict->insert( havelonglong_name, Token( new BoolDatum( true ) ) );
 #else
   typedef long longlong_t;
-  architecturedict->insert( havelonglong_name, Token( new BoolDatum( false ) ) );
+  architecturedict->insert(
+    havelonglong_name, Token( new BoolDatum( false ) ) );
 #endif
 
-  architecturedict->insert( longlongsize_name, Token( new IntegerDatum( sizeof( longlong_t ) ) ) );
+  architecturedict->insert(
+    longlongsize_name, Token( new IntegerDatum( sizeof( longlong_t ) ) ) );
 
   i->def( statusdict_name, statusdict );
 
@@ -532,8 +569,8 @@ SLIStartup::init( SLIInterpreter* i )
     i->EStack.push( i->baselookup( i->iparse_name ) );
   }
 
-  // If we start with debug option, we set the debugging mode, but disable stepmode.
-  // This way, the debugger is entered only on error.
+  // If we start with debug option, we set the debugging mode, but disable
+  // stepmode. This way, the debugger is entered only on error.
   if ( debug_ )
   {
     i->debug_mode_on();

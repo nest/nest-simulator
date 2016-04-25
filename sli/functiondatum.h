@@ -64,7 +64,8 @@ class FunctionDatum : public TypedDatum< &SLIInterpreter::Functiontype >
 
   SLIFunction const& operator=( SLIFunction const& f )
   {
-    std::cerr << "Warning: Definition of FunctionDatum (" << name << ") changed!!\n";
+    std::cerr << "Warning: Definition of FunctionDatum (" << name
+              << ") changed!!\n";
 
     action = &f;
     return f;
@@ -112,7 +113,8 @@ public:
   bool
   equals( Datum const* dat ) const
   {
-    const FunctionDatum* fd = dynamic_cast< FunctionDatum* >( const_cast< Datum* >( dat ) );
+    const FunctionDatum* fd =
+      dynamic_cast< FunctionDatum* >( const_cast< Datum* >( dat ) );
 
     if ( fd == NULL )
       return false;

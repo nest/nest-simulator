@@ -51,26 +51,46 @@ ResetKernel
 /set1 1 5 cvgidcollection def
 /set2 6 10 cvgidcollection def
 
-% Check that symmetric flag cannot be used with other connection rules then one_to_one
+% Check that symmetric flag cannot be used with other connection rules than one_to_one
 {
-set1 set2 << /rule /all_to_all /symmetric true >> /static_synapse Connect
-} fail_or_die
+  set1 set2 << /rule /all_to_all /symmetric true >> /static_synapse Connect
+}
+fail_or_die
+
 {
-set1 set2 << /rule /fixed_indegree /indegree 3 /symmetric true >> /static_synapse Connect
-} fail_or_die
+  set1 set2 << /rule /fixed_indegree /indegree 3 /symmetric true >> /static_synapse Connect
+}
+fail_or_die
+
 {
-set1 set2 << /rule /fixed_outdegree /outdegree 3 /symmetric true >> /static_synapse Connect
-} fail_or_die
+  set1 set2 << /rule /fixed_outdegree /outdegree 3 /symmetric true >> /static_synapse Connect
+}
+fail_or_die
+
 {
-set1 set2 << /rule /fixed_total_number /N 3 /symmetric true >> /static_synapse Connect
-} fail_or_die
+  set1 set2 << /rule /fixed_total_number /N 3 /symmetric true >> /static_synapse Connect
+}
+fail_or_die
 
 % Check that symmetric flag works properly for one_to_one connections
 {
-set1 set2 << /rule /one_to_one /symmetric true >> /static_synapse Connect
-} pass_or_die
+  set1 set2 << /rule /one_to_one /symmetric true >> /static_synapse Connect
+}
+pass_or_die
 
-<< /source [6 7 8 9 10] >> GetConnections
-{empty false eq}assert_or_die
+<< /source [1 5] Range >> GetConnections /fwd Set
+<< /source [6 10] Range >> GetConnections /bck Set
+
+{
+  [ fwd bck ] 
+  {
+    /b Set /f Set
+    f /source get b /target get eq
+    b /source get f /target get eq and
+    f /delay get b /delay get eq and
+    f /weight get b /delay get eq and
+  } MapThread
+  true exch { and } Fold
+} assert_or_die
 
 endusing

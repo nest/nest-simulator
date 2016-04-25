@@ -23,6 +23,9 @@ import os
 import re
 import sys
 
+# We would like to have files that are not actually provided by
+# the NEST Initiative, e.g. implementing the Google Sparsetable,
+# to be exactly like they come from the upstream source.
 excludes_files=["sparsetable.h", "libc_allocator_with_realloc.h", "hashtable-common.h", "sparseconfig.h", "template_util.h"]
 
 class IncludeInfo():

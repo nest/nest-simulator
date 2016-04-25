@@ -102,9 +102,9 @@ true
 SLI ] (NONEXISTING) getenv =
 false
 
-SLI ] (SLIDATADIR) getenv
+SLI ] (NEST_DATA_DIR) getenv
 SLI [2] { (Using root path: )  =only = }
-SLI [3] { (Warning: $SLIDATADIR undefined) =}
+SLI [3] { (Warning: $NEST_DATA_DIR undefined) =}
 SLI [4] ifelse
 Using root path: /home/gewaltig/nest/release/release
 
@@ -325,24 +325,24 @@ SLIStartup::init( SLIInterpreter* i )
   i->createcommand( getenv_name, &getenvfunction );
   std::string fname;
 
-  // Check for supplied SLIDATADIR
-  std::string slihomepath_env = checkenvpath( "SLIDATADIR", i, slihomepath );
+  // Check for supplied NEST_DATA_DIR
+  std::string slihomepath_env = checkenvpath( "NEST_DATA_DIR", i, slihomepath );
   if ( slihomepath_env != "" )
   {
     slihomepath = slihomepath_env; // absolute path & directory exists
     i->message( SLIInterpreter::M_DEBUG,
       "SLIStartup",
-      String::compose( "Using SLIDATADIR=%1", slihomepath ).c_str() );
+      String::compose( "Using NEST_DATA_DIR=%1", slihomepath ).c_str() );
   }
 
-  // check for supplied SLIDOCDIR
-  std::string slidocdir_env = checkenvpath( "SLIDOCDIR", i, slidocdir );
+  // check for supplied NEST_DOC_DIR
+  std::string slidocdir_env = checkenvpath( "NEST_DOC_DIR", i, slidocdir );
   if ( slidocdir_env != "" )
   {
     slidocdir = slidocdir_env; // absolute path & directory exists
     i->message( SLIInterpreter::M_DEBUG,
       "SLIStartup",
-      String::compose( "Using SLIDOCDIR=%1", slidocdir ).c_str() );
+      String::compose( "Using NEST_DOC_DIR=%1", slidocdir ).c_str() );
   }
 
   // check for supplied NEST_INSTALL_DIR

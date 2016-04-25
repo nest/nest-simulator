@@ -117,12 +117,6 @@ target_include_directories( sli_readline PRIVATE
     ${PROJECT_BINARY_DIR}/libnestutil
     )
 
-target_compile_definitions( sli_lib PRIVATE
-    -DNEST_INSTALL_FULL_DATADIR=\"${NEST_INSTALL_FULL_DATADIR}\"
-    -DCMAKE_INSTALL_FULL_DOCDIR=\"${CMAKE_INSTALL_FULL_DOCDIR}\"
-    -DPKGSOURCEDIR=\"${PROJECT_SOURCE_DIR}\"
-    )
-
 install( TARGETS sli_readline sli_lib sli
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

@@ -268,7 +268,7 @@ DynamicLoaderModule::init( SLIInterpreter* i )
 
   if ( !dl_error )
   {
-    const char* path = getenv( "SLI_MODULE_PATH" );
+    const char* path = getenv( "NEST_MODULE_PATH" );
     if ( path != NULL )
     {
       LOG( M_DEBUG, "DynamicLoaderModule::init", "Setting module path to" );

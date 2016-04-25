@@ -145,7 +145,7 @@ def print_includes(includes):
 
 def process_source(path, f, all_header, print_suggestion):
     if f in excludes_files:
-        print("Please do not change the includes in '" + f + "'.")
+        print("Not checking file " + f + " as it is in the exclude list. Please do not change the order of includes.")
         return 0
     includes = get_includes_from(path + "/" + f, all_header)
     order_ok = is_include_order_ok(includes)

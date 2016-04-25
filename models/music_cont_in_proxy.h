@@ -130,7 +130,7 @@ private:
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
 
-    void get( DictionaryDatum& ) const;          //!< Store current values in dictionary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum&, State_& ); //!< Set values from dicitonary
   };
 
@@ -138,13 +138,15 @@ private:
 
   struct State_
   {
-    bool published_; //!< indicates whether this node has been published already with MUSIC
+    bool published_; //!< indicates whether this node has been published already
+                     //!< with MUSIC
     int port_width_; //!< the width of the MUSIC port
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const;                     //!< Store current values in dictionary
-    void set( const DictionaryDatum&, const Parameters_& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    //! Set values from dictionary
+    void set( const DictionaryDatum&, const Parameters_& );
   };
 
   // ------------------------------------------------------------

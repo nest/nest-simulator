@@ -18,7 +18,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-__author__ = 'naveau'
 
 import unittest
 import nest
@@ -29,6 +28,8 @@ from . import test_growth_curves
 from . import test_sp_manager
 from . import test_disconnect
 from . import test_disconnect_multiple
+
+__author__ = 'naveau'
 
 
 def suite():

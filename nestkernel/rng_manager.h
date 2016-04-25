@@ -87,11 +87,13 @@ private:
    */
   librandom::RngPtr grng_;
 
-  std::vector< long_t > rng_seeds_; //!< The seeds of the local RNGs. These do not neccessarily
-  //!< describe the state of the RNGs.
+  //! The seeds of the local RNGs. These do not necessarily describe the
+  //! state of the RNGs.
+  std::vector< long_t > rng_seeds_;
 
-  long_t
-    grng_seed_; //!< The seed of the global RNG, not neccessarily describing the state of the GRNG.
+  //! The seed of the global RNG, not necessarily describing the
+  //! state of the GRNG.
+  long_t grng_seed_;
 
 }; // class RNGManager
 } // namespace nest

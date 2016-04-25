@@ -77,6 +77,7 @@ class Node;
  * @see CurrentEvent
  * @see CurrentEvent
  * @see ConductanceEvent
+ * @see GapJunctionEvent
  * @ingroup event_interface
  */
 
@@ -516,7 +517,8 @@ private:
 
   /**
    * Names of properties to record from.
-   * @note This pointer shall be NULL unless the event is sent by a connection routine.
+   * @note This pointer shall be NULL unless the event is sent by a connection
+   * routine.
    */
   std::vector< Name > const* const record_from_;
 };
@@ -742,14 +744,17 @@ public:
 
   //! size of event in units of uint_t
   virtual size_t size() = 0;
-  virtual std::vector< uint_t >::iterator& operator<<( std::vector< uint_t >::iterator& pos ) = 0;
-  virtual std::vector< uint_t >::iterator& operator>>( std::vector< uint_t >::iterator& pos ) = 0;
+  virtual std::vector< uint_t >::iterator& operator<<(
+    std::vector< uint_t >::iterator& pos ) = 0;
+  virtual std::vector< uint_t >::iterator& operator>>(
+    std::vector< uint_t >::iterator& pos ) = 0;
 };
 
 /**
- * This template function returns the number of uints covered by a variable of type T.
- * This function is used to determine the storage demands for a variable of
- * type T in the NEST communication buffer, which is of type std::vector< uint_t>.
+ * This template function returns the number of uints covered by a variable of
+ * type T. This function is used to determine the storage demands for a variable
+ * of type T in the NEST communication buffer, which is of type
+ * std::vector<uint_t>.
  */
 template < typename T >
 size_t
@@ -764,19 +769,23 @@ number_of_uints_covered( void )
 }
 
 /**
- * This template function writes data of type T to a given position of a std::vector< uint_t >.
+ * This template function writes data of type T to a given position of a
+ * std::vector< uint_t >.
  * Please note that this function does not increase the size of the vector,
  * it just writes the data to the position given by the iterator.
- * The function is used to write data from SecondaryEvents to the NEST communcation buffer.
+ * The function is used to write data from SecondaryEvents to the NEST
+ * communcation buffer.
  * The pos iterator is advanced during execution.
- * For a discussion on the functionality of this function see github issue #181 and pull request
+ * For a discussion on the functionality of this function see github issue #181
+ * and pull request
  * #184.
  */
 template < typename T >
 void
 write_to_comm_buffer( T d, std::vector< uint_t >::iterator& pos )
 {
-  // there is no aliasing problem here, since cast to char* invalidate strict aliasing assumptions
+  // there is no aliasing problem here, since cast to char* invalidate strict
+  // aliasing assumptions
   char* const c = reinterpret_cast< char* >( &d );
 
   const size_t num_uints = number_of_uints_covered< T >();
@@ -784,8 +793,9 @@ write_to_comm_buffer( T d, std::vector< uint_t >::iterator& pos )
 
   for ( size_t i = 0; i < num_uints; i++ )
   {
-    memcpy(
-      &( *( pos + i ) ), c + i * sizeof( uint_t ), std::min( left_to_copy, sizeof( uint_t ) ) );
+    memcpy( &( *( pos + i ) ),
+      c + i * sizeof( uint_t ),
+      std::min( left_to_copy, sizeof( uint_t ) ) );
     left_to_copy -= sizeof( uint_t );
   }
 
@@ -793,17 +803,19 @@ write_to_comm_buffer( T d, std::vector< uint_t >::iterator& pos )
 }
 
 /**
- * This template function reads data of type T from a given position of a std::vector< uint_t >.
- * The function is used to read SecondaryEvents data from the NEST communcation buffer.
+ * This template function reads data of type T from a given position of a
+ * std::vector< uint_t >. The function is used to read SecondaryEvents data from
+ * the NEST communcation buffer.
  * The pos iterator is advanced during execution.
- * For a discussion on the functionality of this function see github issue #181 and pull request
- * #184.
+ * For a discussion on the functionality of this function see github issue #181
+ * and pull request #184.
  */
 template < typename T >
 void
 read_from_comm_buffer( T& d, std::vector< uint_t >::iterator& pos )
 {
-  // there is no aliasing problem here, since cast to char* invalidate strict aliasing assumptions
+  // there is no aliasing problem here, since cast to char* invalidate strict
+  // aliasing assumptions
   char* const c = reinterpret_cast< char* >( &d );
 
   const size_t num_uints = number_of_uints_covered< T >();
@@ -811,8 +823,9 @@ read_from_comm_buffer( T& d, std::vector< uint_t >::iterator& pos )
 
   for ( size_t i = 0; i < num_uints; i++ )
   {
-    memcpy(
-      c + i * sizeof( uint_t ), &( *( pos + i ) ), std::min( left_to_copy, sizeof( uint_t ) ) );
+    memcpy( c + i * sizeof( uint_t ),
+      &( *( pos + i ) ),
+      std::min( left_to_copy, sizeof( uint_t ) ) );
     left_to_copy -= sizeof( uint_t );
   }
 
@@ -840,7 +853,8 @@ read_from_comm_buffer( T& d, std::vector< uint_t >::iterator& pos )
 class GapJunctionEvent : public SecondaryEvent
 {
 private:
-  // we chose std::vector over std::set because we expect this always to be short
+  // we chose std::vector over std::set because we expect this always to be
+  // short
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
@@ -885,7 +899,8 @@ public:
   bool
   supports_syn_id( const synindex synid ) const
   {
-    return ( std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid )
+    return (
+      std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid )
       != supported_syn_ids_.end() );
   }
 
@@ -901,7 +916,8 @@ public:
    * The following operator is used to read the information
    * of the GapJunctionEvent from the buffer in Scheduler::deliver_events_
    */
-  std::vector< uint_t >::iterator& operator<<( std::vector< uint_t >::iterator& pos )
+  std::vector< uint_t >::iterator& operator<<(
+    std::vector< uint_t >::iterator& pos )
   {
     // The synid can be skipped here as it is stored in a static vector
     pos += number_of_uints_covered< synindex >();
@@ -924,7 +940,8 @@ public:
    * All GapJunctionEvents are identified by the synid of the
    * first element in supported_syn_ids_
    */
-  std::vector< uint_t >::iterator& operator>>( std::vector< uint_t >::iterator& pos )
+  std::vector< uint_t >::iterator& operator>>(
+    std::vector< uint_t >::iterator& pos )
   {
     write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
     write_to_comm_buffer( sender_gid_, pos );

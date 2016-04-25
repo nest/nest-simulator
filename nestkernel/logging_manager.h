@@ -55,8 +55,8 @@ public:
   /**
    * Register a logging client.
    *
-   * Register a callback function that will receive all subsequent LoggingEvents.
-   * For the method signature see logging.h .
+   * Register a callback function that will receive all subsequent
+   * LoggingEvents. For the method signature see logging.h .
    */
   void register_logging_client( const deliver_logging_event_ptr callback );
 
@@ -119,7 +119,8 @@ private:
 private:
   std::vector< deliver_logging_event_ptr > client_callbacks_;
   nest::severity_t logging_level_;
-  bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
+  bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary
+                            //!< entries
 };
 } // namespace nest
 

@@ -22,13 +22,13 @@ hi def link sliKeyword     Keyword
 syn keyword sliConstant M_INFO M_ERROR M_DEBUG M_WARNING M_STATUS M_FATAL
 hi def link sliConstant    Constant
 
-syn match sliUnit '\smV'
-syn match sliUnit '\spF'
-syn match sliUnit '\spA'
-syn match sliUnit '\sms'
-syn match sliUnit '\ss'
-syn match sliUnit '\sHz'
-syn match sliUnit '\snS'
+syn match sliUnit '\<mV\>'
+syn match sliUnit '\<pF\>'
+syn match sliUnit '\<pA\>'
+syn match sliUnit '\<ms\>'
+syn match sliUnit '\<s\>'
+syn match sliUnit '\<Hz\>'
+syn match sliUnit '\<nS\>'
 hi def link sliUnit      Constant
 
 syn match sliNumber '\d\+'

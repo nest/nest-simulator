@@ -49,7 +49,7 @@ Node::Node()
   , vp_( invalid_thread_ )
   , frozen_( false )
   , buffers_initialized_( false )
-  , needs_prelim_up_( false )
+  , node_uses_wfr_( false )
 {
 }
 
@@ -64,7 +64,7 @@ Node::Node( const Node& n )
   , frozen_( n.frozen_ )
   // copy must always initialized its own buffers
   , buffers_initialized_( false )
-  , needs_prelim_up_( n.needs_prelim_up_ )
+  , node_uses_wfr_( n.node_uses_wfr_ )
 {
 }
 
@@ -137,7 +137,7 @@ Node::get_status_base()
   {
     ( *dict )[ names::global_id ] = get_gid();
     ( *dict )[ names::frozen ] = is_frozen();
-    ( *dict )[ names::needs_prelim_update ] = needs_prelim_update();
+    ( *dict )[ names::node_uses_wfr ] = node_uses_wfr();
     ( *dict )[ names::thread ] = get_thread();
     ( *dict )[ names::vp ] = get_vp();
     if ( parent_ )
@@ -184,15 +184,15 @@ Node::set_status_base( const DictionaryDatum& dict )
 
   updateValue< bool >( dict, names::frozen, frozen_ );
 
-  updateValue< bool >( dict, names::needs_prelim_update, needs_prelim_up_ );
+  updateValue< bool >( dict, names::node_uses_wfr, node_uses_wfr_ );
 }
 
 /**
- * Default implementation of prelim_update just
+ * Default implementation of wfr_update just
  * throws UnexpectedEvent
  */
 bool
-Node::prelim_update( Time const&, const long_t, const long_t )
+Node::wfr_update( Time const&, const long_t, const long_t )
 {
   throw UnexpectedEvent();
 }

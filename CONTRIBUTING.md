@@ -25,15 +25,15 @@ We review each pull request according to our [code review guidelines](https://ne
 * Each pull request needs to be documented by an issue in the [issue tracker](https://github.com/nest/nest-simulator/issues) explaining the reason for the changes and the solution. The issue is also the place for discussions about the code.
 * New features like SLI or PyNEST functions, neuron or synapse models need to be accompanied by one or more tests written either in SLI or Python. New features for the NEST kernel need a test written in SLI.
 * Each change to the code has to be reflected also in the corresponding examples and documentation.
-* All source code has to be adhering to the Coding Guidelines for [C++](https://nest.github.io/nest-simulator/coding_guidelines_c++) and [SLI](https://nest.github.io/nest-simulator/coding_guidelines_sli) in order to pass the continuous integration system checks.
-* All Commits should be coherent and contain only changes that belong together.
+* All source code has to be adhering to the coding guidelines for [C++](https://nest.github.io/nest-simulator/coding_guidelines_c++) and [SLI](https://nest.github.io/nest-simulator/coding_guidelines_sli) in order to pass the continuous integration system checks.
+* All commits should be coherent and contain only changes that belong together.
 
 ## Submitting Changes
 
 * Sign the [Contributor License Agreement](https://nest.github.io/nest-simulator/#contributor-license-agreement).
 * Push your changes to a topic branch in your fork of the repository.
 * Submit a pull request to the [NEST repository](https://github.com/nest/nest-simulator).
-* The core team looks at Pull Requests on a regular basis and posts feedback.
+* The core team looks at pull requests on a regular basis and posts feedback.
 * After feedback has been given we expect responses within two weeks. After two weeks we may close the pull request if it isn't showing any activity.
 
 # Additional Resources

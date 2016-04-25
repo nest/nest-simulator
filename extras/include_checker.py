@@ -23,7 +23,6 @@ import os
 import re
 import sys
 
-excludes=["autom4te.cache", "debian", "lib", "libltdl"]
 excludes_files=["sparsetable.h", "libc_allocator_with_realloc.h", "hashtable-common.h", "sparseconfig.h", "template_util.h"]
 
 class IncludeInfo():
@@ -84,7 +83,7 @@ class IncludeInfo():
 
 def all_includes(path):
     result = {}
-    dirs = [d for d in next(os.walk(path))[1] if d[0] != '.' and not d in excludes ]
+    dirs = [d for d in next(os.walk(path))[1] if d[0] != '.' ]
     for d in dirs:
         for root, dirs, files in os.walk(path + "/" + d):
             tmp = [f for f in files if f.endswith(".h") or f.endswith(".hpp")]
@@ -171,9 +170,7 @@ def process_all_sources(path, print_suggestion):
                 # valid source file
                 count += process_source(root, f, all_header, print_suggestion)
         for d in dirs:
-            if not d in excludes:
-                # valid directory
-                count += process_all_sources(root + "/" + d, print_suggestion)
+            count += process_all_sources(root + "/" + d, print_suggestion)
     return count
 
 

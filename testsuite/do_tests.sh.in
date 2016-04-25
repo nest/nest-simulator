@@ -335,7 +335,7 @@ INFO_OS="$(uname -s)"
 INFO_USER="$(whoami)"
 INFO_VER="$(uname -r)"
 
-TEST_BASEDIR="@CMAKE_INSTALL_FULL_DOCDIR@"
+TEST_BASEDIR=${NEST_DOC_DIR:-"@CMAKE_INSTALL_FULL_DOCDIR@"}
 TEST_OUTDIR=${TEST_OUTDIR:-"$( pwd )/reports"}
 TEST_LOGFILE="${TEST_OUTDIR}/installcheck.log"
 TEST_OUTFILE="${TEST_OUTDIR}/output.log"
@@ -349,7 +349,7 @@ fi
 mkdir "${TEST_OUTDIR}"
 
 PYTHON="${PYTHON:-python}"
-PYTHON_HARNESS="@CMAKE_INSTALL_FULL_DATADIR@/extras/do_tests.py"
+PYTHON_HARNESS="${NEST_DATA_DIR:-@CMAKE_INSTALL_FULL_DATADIR@}/extras/do_tests.py"
 
 TMPDIR=${TMPDIR:-${TEST_OUTDIR}}
 TEST_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/nest.XXXXX")"
@@ -563,7 +563,7 @@ if test "x${TEST_PYNEST}" = xtrue ; then
         echo "  Using nosetests."
         echo
 
-        nosetests -v --with-xunit --xunit-file=${TEST_OUTDIR}/pynest_tests.xml @CMAKE_INSTALL_PREFIX@/@PYEXECDIR@/nest/tests 2>&1 \
+        nosetests -v --with-xunit --xunit-file=${TEST_OUTDIR}/pynest_tests.xml ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests 2>&1 \
             | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
 
         PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"

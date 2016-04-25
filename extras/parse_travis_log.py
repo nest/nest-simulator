@@ -188,6 +188,7 @@ def print_static_analysis(d):
                 print(INDENT + ' | ' + 2 * INDENT +
                       ' - ' + k3 + ' : ' + str(v3))
 
+
 def count_warnings_errors(f):
     """
     Counts compiler warnings and errors. Stops when reading '+make install'.
@@ -249,7 +250,8 @@ if __name__ == '__main__':
             if line.startswith('Static analysis on file '):
                 static_analysis.update(process_static_analysis(f, line))
 
-            if not configure_ok and line.startswith('+cmake -DCMAKE_INSTALL_PREFIX='):
+            if not configure_ok and line.startswith(
+                                            '+cmake -DCMAKE_INSTALL_PREFIX='):
                 configure_ok, line = process_until(
                     f, 'You can now build and install NEST with')
 
@@ -269,10 +271,12 @@ if __name__ == '__main__':
                 uploading_results = False
 
     # post process values
-    actual_warnings = { k.split("nest-simulator/")[1] :v for k,v in warnings.iteritems() if k.startswith('/home/travis/build') }
-    sum_of_warnings = sum([v for k,v in actual_warnings.iteritems()])
+    actual_warnings = {k.split("nest-simulator/")[1]: v
+                       for k, v in warnings.iteritems()
+                       if k.startswith('/home/travis/build')}
+    sum_of_warnings = sum([v for k, v in actual_warnings.iteritems()])
 
-    sum_of_errors = sum([v for k,v in errors.iteritems()])
+    sum_of_errors = sum([v for k, v in errors.iteritems()])
 
     print("\n--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
     print("Vera init:           " + ("Ok" if vera_init else "Error"))
@@ -280,8 +284,9 @@ if __name__ == '__main__':
     print("Changed files:       " + str(changed_files))
     print("Formatting:          " + ("Ok" if all([ i['clang-format']['Ok?'] for i in static_analysis.itervalues()]) else "Error"))
     print("Configure:           " + ("Ok" if configure_ok else "Error"))
-    print("Make:                " + ("Ok" if sum_of_errors == 0 else "Error(" + str(sum_of_errors) + ")")
-        + " ( " + str(sum_of_warnings) + " warnings ).")
+    print("Make:                " + ("Ok" if sum_of_errors == 0 else 
+                                     "Error(" + str(sum_of_errors) + ")") +
+          " ( " + str(sum_of_warnings) + " warnings ).")
     print("Make install:        " + ("Ok" if make_install_ok else "Error"))
     print("Make installcheck:   " + ("Ok (" if make_installcheck_failed == 0 else "Error (") +
           str(make_installcheck_failed) + " / " + str(make_installcheck_all) + ")")

@@ -178,7 +178,7 @@ if __name__ == '__main__':
     print_suggestion = True
     if len(sys.argv) != 3:
         print("Use like:")
-        print("  " + sys.argv[0] + " (-f <filename> | -d <directory>)")
+        print("  " + sys.argv[0] + " (-f <filename> | -d <base-directory-of-nest>)")
         sys.exit(1)
 
     if sys.argv[1] == '-f' and os.path.isfile(sys.argv[2]):
@@ -193,6 +193,6 @@ if __name__ == '__main__':
 
     else:
         print("Use like:")
-        print("  " + sys.argv[0] + " (-f <filename> | -d <directory>)")
+        print("  " + sys.argv[0] + " (-f <filename> | -d <base-directory-of-nest>)")
         sys.exit(1)
 

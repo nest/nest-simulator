@@ -1,6 +1,6 @@
 #! /bin/sh
 
-prefix=@CMAKE_INSTALL_PREFIX@
+prefix=${NEST_INSTALL_DIR:-@CMAKE_INSTALL_PREFIX@}
 exec_prefix=${prefix}
 
 usage()
@@ -64,7 +64,7 @@ while test $# -gt 0; do
         echo "@ALL_CXXFLAGS@"
         ;;
     --libs)
-        echo "-L@CMAKE_INSTALL_FULL_LIBDIR@ @ALL_LIBS@"
+        echo "-L$prefix/@CMAKE_INSTALL_LIBDIR@ @ALL_LIBS@"
         ;;
     --compiler)
         echo "@CMAKE_CXX_COMPILER@"

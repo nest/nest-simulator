@@ -237,18 +237,18 @@ extern const Name mother_seed;   //!< Specific to mip_generator
 extern const Name multapses;     //!< Connectivity-related
 extern const Name music_channel; //!< Parameters for MUSIC devices
 
-extern const Name n;          //!< Number of synaptic release sites (int >=0)
-                              //!< (Tsodyks2_connection)
-extern const Name N;          //!< Specific to population point process model
-                              //!< (pp_pop_psc_delta)
-extern const Name N_channels; //!< Specific to correlomatrix_detector
-extern const Name n_events;   //!< Recorder parameter
-extern const Name n_proc;     //!< Number of component processes of ppd_sup_/
-                              //!< gamma_sup_generator
-extern const Name needs_prelim_update; //!< Node parameter
-extern const Name neuron;              //!< Node type
-extern const Name noise;               //!< Specific to iaf_chs_2008 neuron
-extern const Name ns; //!< Number of release sites (property arrays)
+extern const Name n;             //!< Number of synaptic release sites (int >=0)
+                                 //!< (Tsodyks2_connection)
+extern const Name N;             //!< Specific to population point process model
+                                 //!< (pp_pop_psc_delta)
+extern const Name N_channels;    //!< Specific to correlomatrix_detector
+extern const Name n_events;      //!< Recorder parameter
+extern const Name n_proc;        //!< Number of component processes of ppd_sup_/
+                                 //!< gamma_sup_generator
+extern const Name neuron;        //!< Node type
+extern const Name node_uses_wfr; //!< Node parameter
+extern const Name noise;         //!< Specific to iaf_chs_2008 neuron
+extern const Name ns;            //!< Number of release sites (property arrays)
 
 extern const Name offset;  //!< Miscellaneous parameters
 extern const Name offsets; //!< Recorder parameter

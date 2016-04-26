@@ -129,15 +129,17 @@ namespace nest
   /spike_generator << /spike_times [10.0001] /precise_times true >> Create
   ---> spike at step 101, offset -0.0999 is in the future
 
-  /spike_generator << /spike_times [10.0001 11.0001] /shift_now_spikes true >>
-                                                                          Create
+  /spike_generator
+    << /spike_times [10.0001 11.0001] /shift_now_spikes true >>
+  Create
   ---> spike at step 101, spike shifted into the future, and spike at step 110,
        not shifted, since it is in the future anyways
 
 
   Example:
-  spikegenerator << /spike_times [1.0 2.0] /spike_weights [5.0 -8.0] >>
-                                                                       SetStatus
+  spikegenerator
+    << /spike_times [1.0 2.0] /spike_weights [5.0 -8.0] >>
+  SetStatus
 
   Instructs the spike generator to generate an event with weight 5.0
   at 1.0 ms, and an event with weight -8.0 at 2.0 ms, relative to
@@ -151,14 +153,17 @@ namespace nest
   Parameters:
   The following properties can be set in the status dictionary.
 
-       origin         double - Time origin for device timer in ms
-       start          double - earliest possible time stamp of a spike to be
-                               emitted in ms
-       stop           double - earliest time stamp of a potential spike event
-                               that is not emitted in ms
-       spike_times    double array - spike-times in ms
-       spike_weights  double array - corrsponding spike-weights, the unit
-                                     depends on the receiver
+       origin               double - Time origin for device timer in ms
+       start                double - earliest possible time stamp of a spike to
+                                     be emitted in ms
+       stop                 double - earliest time stamp of a potential spike
+                                     event that is not emitted in ms
+       spike_times          double array - spike-times in ms
+       spike_weights        double array - corresponding spike-weights, the unit
+                                           depends on the receiver
+       spike_multiplicities int array - multiplicities of spikes, same length
+                                        as spike_times; mostly for debugging
+
        precise_times        bool - see above
        allow_offgrid_spikes bool - see above
        shift_now_spikes     bool - see above
@@ -233,10 +238,13 @@ private:
   {
     //! Spike time stamp as Time, rel to origin_
     std::vector< Time > spike_stamps_;
+
     //! Spike time offset, if using precise_times_
     std::vector< double > spike_offsets_;
 
     std::vector< double > spike_weights_; //!< Spike weights as double
+
+    std::vector< long > spike_multiplicities_; //!< Spike multiplicity
 
     //! Interpret spike times as precise, i.e. send as step and offset
     bool precise_times_;

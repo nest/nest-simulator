@@ -26,39 +26,40 @@ FindConnections
 import unittest
 import nest
 
+
 @nest.check_stack
 class FindConnectionsTestCase(unittest.TestCase):
     """Find connections and test if values can be set."""
-
 
     def test_FindConnections(self):
         """FindConnections"""
 
         nest.ResetKernel()
-        
-        a=nest.Create("iaf_neuron", 3)
-        nest.DivergentConnect(a,a)
-        c1=nest.FindConnections(a)
-        c2=nest.FindConnections(a, synapse_model="static_synapse")
-        self.assertEqual(c1, c2)
-        
-        d1=tuple({"weight": w} for w in (2.0, 3.0, 4.0))
 
-        c3=nest.FindConnections(a, a)
+        a = nest.Create("iaf_neuron", 3)
+        nest.DivergentConnect(a, a)
+        c1 = nest.FindConnections(a)
+        c2 = nest.FindConnections(a, synapse_model="static_synapse")
+        self.assertEqual(c1, c2)
+
+        d1 = tuple({"weight": w} for w in (2.0, 3.0, 4.0))
+
+        c3 = nest.FindConnections(a, a)
         nest.SetStatus(c3, d1)
-        s1=nest.GetStatus(c3, "weight")
+        s1 = nest.GetStatus(c3, "weight")
         self.assertEqual(s1, tuple(w["weight"] for w in d1))
 
 
 def suite():
 
-    suite = unittest.makeSuite(FindConnectionsTestCase,'test')
+    suite = unittest.makeSuite(FindConnectionsTestCase, 'test')
     return suite
+
 
 def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
-    
+
 
 if __name__ == "__main__":
     run()

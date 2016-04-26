@@ -127,7 +127,7 @@ hh_psc_alpha_gap_dynamics( double time,
 
   const double_t t = time / node.B_.step_;
 
-  switch ( kernel().simulation_manager.get_prelim_interpolation_order() )
+  switch ( kernel().simulation_manager.get_wfr_interpolation_order() )
   {
   case 0:
     gap = -node.B_.sumj_g_ij_ * V
@@ -352,8 +352,8 @@ nest::hh_psc_alpha_gap::hh_psc_alpha_gap()
   , S_( P_ )
   , B_( *this )
 {
-  Node::set_needs_prelim_update( true );
   recordablesMap_.create();
+  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
 nest::hh_psc_alpha_gap::hh_psc_alpha_gap( const hh_psc_alpha_gap& n )
@@ -362,6 +362,7 @@ nest::hh_psc_alpha_gap::hh_psc_alpha_gap( const hh_psc_alpha_gap& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
+  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
 nest::hh_psc_alpha_gap::~hh_psc_alpha_gap()
@@ -404,7 +405,7 @@ nest::hh_psc_alpha_gap::init_buffers_()
 
   // resize interpolation_coefficients depending on interpolation order
   const size_t quantity = kernel().connection_manager.get_min_delay()
-    * ( kernel().simulation_manager.get_prelim_interpolation_order() + 1 );
+    * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 );
 
   B_.interpolation_coefficients.resize( quantity, 0.0 );
 
@@ -464,7 +465,7 @@ bool
 nest::hh_psc_alpha_gap::update_( Time const& origin,
   const long_t from,
   const long_t to,
-  const bool prelim )
+  const bool wfr_update )
 {
 
   assert(
@@ -473,8 +474,8 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
 
   bool done = true;
   const size_t interpolation_order =
-    kernel().simulation_manager.get_prelim_interpolation_order();
-  const double_t prelim_tol = kernel().simulation_manager.get_prelim_tol();
+    kernel().simulation_manager.get_wfr_interpolation_order();
+  const double_t wfr_tol = kernel().simulation_manager.get_wfr_tol();
 
   // allocate memory to store the new interpolation coefficients
   // to be sent by gap event
@@ -493,7 +494,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
     // determine the current section
     B_.lag_ = lag;
 
-    if ( prelim )
+    if ( wfr_update )
     {
       y_i = S_.y_[ State_::V_M ];
       if ( interpolation_order == 3 )
@@ -534,7 +535,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
         throw GSLSolverFailure( get_name(), status );
     }
 
-    if ( !prelim )
+    if ( not wfr_update )
     {
       S_.y_[ State_::DI_EXC ] +=
         B_.spike_exc_.get_value( lag ) * V_.PSCurrInit_E_;
@@ -563,15 +564,15 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
       // set new input current
       B_.I_stim_ = B_.currents_.get_value( lag );
     }
-    else // if(prelim)
+    else // if(wfr_update)
     {
       S_.y_[ State_::DI_EXC ] +=
-        B_.spike_exc_.get_value_prelim( lag ) * V_.PSCurrInit_E_;
+        B_.spike_exc_.get_value_wfr_update( lag ) * V_.PSCurrInit_E_;
       S_.y_[ State_::DI_INH ] +=
-        B_.spike_inh_.get_value_prelim( lag ) * V_.PSCurrInit_I_;
+        B_.spike_inh_.get_value_wfr_update( lag ) * V_.PSCurrInit_I_;
       // check deviation from last iteration
       done = ( fabs( S_.y_[ State_::V_M ] - B_.last_y_values[ lag ] )
-               <= prelim_tol ) && done;
+               <= wfr_tol ) && done;
       B_.last_y_values[ lag ] = S_.y_[ State_::V_M ];
 
       // update different interpolations
@@ -611,8 +612,8 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
 
   } // end for-loop
 
-  // if !prelim perform constant extrapolation and reset last_y_values
-  if ( !prelim )
+  // if !wfr_update perform constant extrapolation and reset last_y_values
+  if ( not wfr_update )
   {
     for ( long_t temp = from; temp < to; ++temp )
       new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] =

@@ -245,15 +245,15 @@ public:
   bool is_frozen() const;
 
   /**
-   * Returns true if the node requires a preliminary update step
+   * Returns true if the node uses the waveform relaxation method
    */
-  bool needs_prelim_update() const;
+  bool node_uses_wfr() const;
 
   /**
-   * Sets needs_prelim_up_ member variable
+   * Sets node_uses_wfr_ member variable
    * (to be able to set it to "true" for any class derived from Node)
    */
-  void set_needs_prelim_update( const bool );
+  void set_node_uses_wfr( const bool );
 
   /**
    * Returns true if the node is allocated in the local process.
@@ -328,7 +328,7 @@ public:
    * Bring the node from state $t$ to $t+n*dt$, sends SecondaryEvents
    * (e.g. GapJunctionEvent) and resets state variables to values at $t$.
    *
-   * n->prelim_update(T, from, to) performs the update steps beginning
+   * n->wfr_update(T, from, to) performs the update steps beginning
    * at T+from .. T+to-1.
    *
    * Does not emit spikes, does not log state variables.
@@ -340,7 +340,7 @@ public:
    * @param long_t post-final step inside time slice
    *
    */
-  virtual bool prelim_update( Time const&, const long_t, const long_t );
+  virtual bool wfr_update( Time const&, const long_t, const long_t );
 
   /**
    * @defgroup status_interface Configuration interface.
@@ -868,7 +868,7 @@ private:
   thread vp_;                //!< virtual process node is assigned to
   bool frozen_;              //!< node shall not be updated if true
   bool buffers_initialized_; //!< Buffers have been initialized
-  bool needs_prelim_up_;     //!< node requires preliminary update step
+  bool node_uses_wfr_;       //!< node uses waveform relaxation method
 };
 
 inline bool
@@ -878,15 +878,15 @@ Node::is_frozen() const
 }
 
 inline bool
-Node::needs_prelim_update() const
+Node::node_uses_wfr() const
 {
-  return needs_prelim_up_;
+  return node_uses_wfr_;
 }
 
 inline void
-Node::set_needs_prelim_update( const bool npu )
+Node::set_node_uses_wfr( const bool uwfr )
 {
-  needs_prelim_up_ = npu;
+  node_uses_wfr_ = uwfr;
 }
 
 inline bool

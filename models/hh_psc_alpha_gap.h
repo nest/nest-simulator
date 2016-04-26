@@ -152,6 +152,7 @@ public:
    */
   using Node::handle;
   using Node::handles_test_event;
+  using Node::sends_secondary_event;
 
   port send_test_event( Node& target, rport receptor_type, synindex, bool );
 
@@ -200,7 +201,7 @@ private:
   void calibrate();
   bool update_( Time const&, const long_t, const long_t, const bool );
   void update( Time const&, const long_t, const long_t );
-  bool prelim_update( Time const&, const long_t, const long_t );
+  bool wfr_update( Time const&, const long_t, const long_t );
 
   // END Boilerplate function declarations ----------------------------
 
@@ -316,7 +317,7 @@ private:
 
     // remembers current lag for piecewise interpolation
     long_t lag_;
-    // remembers y_values from last prelim_update
+    // remembers y_values from last wfr_update
     std::vector< double_t > last_y_values;
     // summarized gap weight
     double_t sumj_g_ij_;
@@ -379,12 +380,12 @@ hh_psc_alpha_gap::update( Time const& origin,
 }
 
 inline bool
-hh_psc_alpha_gap::prelim_update( Time const& origin,
+hh_psc_alpha_gap::wfr_update( Time const& origin,
   const long_t from,
   const long_t to )
 {
   bool done = false;
-  State_ old_state = S_; // save state before prelim update
+  State_ old_state = S_; // save state before wfr_update
   done = update_( origin, from, to, true );
   S_ = old_state; // restore old state
 

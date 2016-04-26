@@ -133,7 +133,6 @@ if ( HAVE_PYTHON )
       COMMAND export PATH="${CMAKE_INSTALL_FULL_BINDIR}:$ENV{PATH}" &&
       export PYTHON="${PYTHON}" &&
       export PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}:$ENV{PYTHONPATH}" &&
-      export exec_prefix="${CMAKE_INSTALL_PREFIX}" &&
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
       WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
       COMMENT "Execute NEST's testsuite...."

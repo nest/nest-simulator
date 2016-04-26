@@ -17,9 +17,9 @@ Known values for OPTION are:
   --includes            print includes
   --compiler            print the compiler used to compile NEST
   --static-libraries    print "ON" if configured for static libraries, "OFF" otherwise
-  --docdir              print the directory with installed documentation
-  --datadir             print the directory with installed data
-  --libdir              print the directory with installed libraries
+  --docdir              print the relative path (to prefix) to the installed documentation
+  --datadir             print the relative path (to prefix) to the installed data
+  --libdir              print the relative path (to prefix) to the installed libraries
   --help                display this help and exit
   --version             output version information
 

@@ -45,9 +45,6 @@ def _setup(arg):
     
     sys.stderr.write("  Running test " + MethodName + "...\n")
 
-myprint("\n")
-myprint("Phase 6: Running PyNEST tests.\n")
-myprint("------------------------------\n")
 
 import nest
 nest.init(["--verbosity=WARNING", "--quiet"])

@@ -42,13 +42,8 @@
 #include "nest_types.h"
 #include "node.h"
 
-
 // Includes from sli:
 #include "arraydatum.h"
-
-//#include "connection.h"
-//#include "dictutils.h"
-//#include "sibling_container.h"
 
 /* BeginDocumentation
 
@@ -99,11 +94,12 @@ record_from  array    - Array containing the names of variables to record
 
 Author: Martin Asghar Schulze, Forschungszentrum fur Informatik Karlsruhe (FZI)
 FirstVersion: March 2016
-Availability: Only when compiled with MUSIC
+Availability: Only when compiled with MPI and MUSIC
 
 SeeAlso: music_cont_in_proxy, music_event_out_proxy, music_event_in_proxy,
 music_message_in_proxy
 */
+
 namespace nest
 {
 // class Network;
@@ -177,8 +173,8 @@ private:
       const Parameters_& ); //!< Copy constructor for parameter values
 
     std::string port_name_;           //!< the name of MUSIC port to connect to
-    Time interval_;                   //!< recording interval, in ms
-    std::vector< Name > record_from_; //!< which data to record
+    Time interval_;                   //!< sampling interval, in ms
+    std::vector< Name > record_from_; //!< recordables to record from
 
     void get( DictionaryDatum&,
       const Variables_& ) const; //!< Store current values in dictionary
@@ -195,7 +191,7 @@ private:
     State_( const State_& ); //!< Copy constructor for state values
     bool published_; //!< indicates whether this node has been published already
                      //!< with MUSIC
-    int port_width_; //!< the width of the MUSIC port
+    int_t port_width_; //!< the width of the MUSIC port
     // int max_buffered_; //!< maximum delay (measured in multiples of music
     // ticks) of publishing new data
 
@@ -224,10 +220,6 @@ private:
     std::vector< MUSIC::GlobalIndex >
       index_map_; //!< Global mapping for Nest-GIDs -> Music indice
   };
-
-  // ------------------------------------------------------------
-
-  // RecordingDevice device_;
 
   // ------------------------------------------------------------
 

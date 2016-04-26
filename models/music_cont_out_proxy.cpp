@@ -25,7 +25,6 @@
 #ifdef HAVE_MUSIC
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
@@ -252,7 +251,6 @@ nest::music_cont_out_proxy::send_test_event( Node& target,
   return p;
 }
 
-// OK
 void
 nest::music_cont_out_proxy::calibrate()
 {
@@ -301,6 +299,8 @@ nest::music_cont_out_proxy::calibrate()
     if ( per_port_width > 1 )
     {
       // New MPI datatype a compound of multiple double values.
+      // The receiver applications must support the MPI
+      // contiguous type as well
       MPI_Datatype n_double_tuple;
       MPI_Type_contiguous( per_port_width, MPI::DOUBLE, &n_double_tuple );
       dmap =
@@ -325,7 +325,7 @@ nest::music_cont_out_proxy::calibrate()
       String::compose( "Mapping MUSIC output port '%1' with width=%2.",
         P_.port_name_,
         S_.port_width_ );
-    LOG( M_INFO, "MUSIC::publish_port()", msg.c_str() );
+    LOG( M_INFO, "music_cont_out_proxy::calibrate()", msg.c_str() );
   }
 }
 
@@ -374,11 +374,11 @@ nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
       for ( Token* t = mca.begin(); t != mca.end(); ++t, ++music_index )
       {
 
-        const long target_node_id = getValue< long >( *t );
+        const long target_node_id = getValue< long_t >( *t );
         if ( kernel().node_manager.is_local_gid( target_node_id ) )
         {
           // std::distance( mca.begin(), t )
-          V_.index_map_.push_back( static_cast< int >( music_index ) );
+          V_.index_map_.push_back( static_cast< int_t >( music_index ) );
           Node* const target_node =
             kernel().node_manager.get_node( target_node_id );
           const thread target_thread = target_node->get_thread();

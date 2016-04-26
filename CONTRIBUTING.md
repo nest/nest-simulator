@@ -32,6 +32,7 @@ We review each pull request according to our [code review guidelines](https://ne
 * Sign the [Contributor License Agreement](https://nest.github.io/nest-simulator/#contributor-license-agreement).
 * Push your changes to a topic branch in your fork of the repository.
 * Submit a pull request to the [NEST repository](https://github.com/nest/nest-simulator).
+* If your pull request affects documented issues, [mention](https://github.com/blog/957-introducing-issue-mentions) them in the description. If it is solving an issue, you can [state this explicitly](https://help.github.com/articles/closing-issues-via-commit-messages/).
 * The core team looks at pull requests on a regular basis and posts feedback.
 * After feedback has been given we expect responses within two weeks. After two weeks we may close the pull request if it isn't showing any activity.
 

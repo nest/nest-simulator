@@ -26,7 +26,9 @@ import sys
 # We would like to have files that are not actually provided by
 # the NEST Initiative, e.g. implementing the Google Sparsetable,
 # to be exactly like they come from the upstream source.
-excludes_files=["sparsetable.h", "libc_allocator_with_realloc.h", "hashtable-common.h", "sparseconfig.h", "template_util.h"]
+excludes_files = ["sparsetable.h", "libc_allocator_with_realloc.h",
+                  "hashtable-common.h", "sparseconfig.h", "template_util.h"]
+
 
 class IncludeInfo():
     filename = ""
@@ -41,20 +43,22 @@ class IncludeInfo():
         self.set_origin(all_headers)
 
     def is_header_include(self):
-        return ( self.name.split('.')[0] == self.filename.split('.')[0] or
-                 self.name.split('.')[0] == self.filename.split('_impl.')[0] )
+        return (self.name.split('.')[0] == self.filename.split('.')[0] or
+                self.name.split('.')[0] == self.filename.split('_impl.')[0])
 
     def is_cpp_include(self):
-        return not self.name.endswith('.h') and not self.name.endswith('.hpp') and self.spiky
+        return (not self.name.endswith('.h') and
+                not self.name.endswith('.hpp') and self.spiky)
 
     def is_c_include(self):
         return self.name.endswith('.h') and self.spiky
 
     def is_project_include(self):
-        return not self.spiky and (self.name.endswith('.h') or self.name.endswith('.hpp'))
+        return (not self.spiky and
+                (self.name.endswith('.h') or self.name.endswith('.hpp')))
 
     def set_origin(self, includes):
-        for k,v in includes.iteritems():
+        for k, v in includes.iteritems():
             if self.name in v:
                 self.origin = k
                 break
@@ -71,7 +75,7 @@ class IncludeInfo():
         o = other.cmp_value()
         val = o - s
         if val == 0:
-            val = cmp( self.origin, other.origin )
+            val = cmp(self.origin, other.origin)
             if val == 0:
                 return cmp(self.name, other.name)
             else:
@@ -82,18 +86,20 @@ class IncludeInfo():
     def to_string(self):
         l_guard = '<' if self.spiky else '"'
         r_guard = '>' if self.spiky else '"'
-        return '#include ' + l_guard + self.name + r_guard #+ " // from " + self.origin
+        return '#include ' + l_guard + self.name + r_guard
+
 
 def all_includes(path):
     result = {}
-    dirs = [d for d in next(os.walk(path))[1] if d[0] != '.' ]
+    dirs = [d for d in next(os.walk(path))[1] if d[0] != '.']
     for d in dirs:
-        for root, dirs, files in os.walk(path + "/" + d):
+        for root, dirs, files in os.walk(os.path.join(path, d)):
             tmp = [f for f in files if f.endswith(".h") or f.endswith(".hpp")]
             if len(tmp) > 0:
                 result[d] = tmp
 
     return result
+
 
 def create_include_info(line, filename, all_headers):
     match = re.search('^#include ([<"])(.*)([>"])', line)
@@ -101,17 +107,23 @@ def create_include_info(line, filename, all_headers):
     spiky = match.group(1) == '<'
     return IncludeInfo(filename, name, spiky, all_headers)
 
+
 def get_includes_from(file, all_headers):
     includes = []
     with open(file, 'r') as f:
         for line in f:
             if line.startswith('#include'):
-                includes += [create_include_info(line, os.path.basename(file), all_headers)]
+                includes += [create_include_info(line,
+                                                 os.path.basename(file),
+                                                 all_headers)]
     return includes
+
 
 def is_include_order_ok(includes):
     s_incs = sorted(includes)
-    return len(includes) - len( [ i for i,s in zip(includes, s_incs) if i.name == s.name ] )
+    return len(includes) - len([i for i, s in zip(includes, s_incs)
+                                if i.name == s.name])
+
 
 def print_includes(includes):
     s_incs = sorted(includes)
@@ -145,16 +157,20 @@ def print_includes(includes):
 
         print(i.to_string())
 
-def process_source(path, f, all_header, print_suggestion):
+
+def process_source(path, f, all_headers, print_suggestion):
     if f in excludes_files:
-        print("Not checking file " + f + " as it is in the exclude list. Please do not change the order of includes.")
+        print("Not checking file " + f + " as it is in the exclude list. " +
+              "Please do not change the order of includes.")
         return 0
-    includes = get_includes_from(path + "/" + f, all_header)
+    includes = get_includes_from(os.path.join(path, f), all_headers)
     order_ok = is_include_order_ok(includes)
     if order_ok <= 2:
-        print("Includes for " + f + " are OK! Includes in wrong order: " + str(order_ok))
+        print("Includes for " + f + " are OK! Includes in wrong order: " +
+              str(order_ok))
     if order_ok > 2:
-        print("Includes for " + f + " are WRONG! Includes in wrong order: " + str(order_ok))
+        print("Includes for " + f + " are WRONG! Includes in wrong order: " +
+              str(order_ok))
         if print_suggestion:
             print("\n##############################")
             print("Suggested includes for " + f + ":")
@@ -164,25 +180,30 @@ def process_source(path, f, all_header, print_suggestion):
 
     return order_ok
 
+
 def process_all_sources(path, print_suggestion):
     all_header = all_includes(path)
     count = 0
     for root, dirs, files in os.walk(path):
         for f in files:
-            if re.search("\.h$|\.hpp$|\.c$|\.cc|\.cpp$",f):
+            if re.search("\.h$|\.hpp$|\.c$|\.cc|\.cpp$", f):
                 # valid source file
                 count += process_source(root, f, all_header, print_suggestion)
         for d in dirs:
-            count += process_all_sources(root + "/" + d, print_suggestion)
+            count += process_all_sources(os.path.join(root, d),
+                                         print_suggestion)
     return count
 
+
+def usage(exitcode):
+    print("Use like:")
+    print("  " + sys.argv[0] + " (-f <filename> | -d <base-directory>)")
+    sys.exit(exitcode)
 
 if __name__ == '__main__':
     print_suggestion = True
     if len(sys.argv) != 3:
-        print("Use like:")
-        print("  " + sys.argv[0] + " (-f <filename> | -d <base-directory-of-nest>)")
-        sys.exit(1)
+        usage(1)
 
     if sys.argv[1] == '-f' and os.path.isfile(sys.argv[2]):
         path = os.path.dirname(sys.argv[2])
@@ -192,10 +213,7 @@ if __name__ == '__main__':
 
     elif sys.argv[1] == '-d' and os.path.isdir(sys.argv[2]):
         dir = sys.argv[2]
-        process_all_sources( dir, print_suggestion )
+        process_all_sources(dir, print_suggestion)
 
     else:
-        print("Use like:")
-        print("  " + sys.argv[0] + " (-f <filename> | -d <base-directory-of-nest>)")
-        sys.exit(1)
-
+        usage(1)

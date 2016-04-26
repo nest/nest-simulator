@@ -296,7 +296,7 @@ if __name__ == '__main__':
     print_static_analysis(static_analysis)
 
     print("\n\nWarnings:")
-    for k,v in actual_warnings.iteritems():
+    for k, v in actual_warnings.iteritems():
         print(" - {}: {}".format(k, v))
     print("--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
 

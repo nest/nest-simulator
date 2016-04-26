@@ -86,8 +86,13 @@ set( sli_sources
 add_library( sli_lib ${sli_sources} )
 target_link_libraries( sli_lib nestutil )
 
+# Make a separate target for linking against readline, so that
+# pynestkernel does not need to link against readline and make
+# loading different readlines a problem for Python. See this
+# pull request for more information:
+# https://github.com/nest/nest-simulator/pull/323
 add_library( sli_readline gnureadline.cc gnureadline.h )
-target_link_libraries( sli_readline sli_lib ${READLINE_LIBRARIES} )
+target_link_libraries( sli_readline sli_lib nestutil ${READLINE_LIBRARIES} )
 
 # add the executable
 add_executable( sli puresli.cc )

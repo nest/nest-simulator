@@ -36,7 +36,6 @@ set( sli_sources
     functiondatum.cc functiondatum.h
     genericdatum.h
     get_mem.c
-    gnureadline.cc gnureadline.h
     integerdatum.cc integerdatum.h
     interpret.cc interpret.h
     iostreamdatum.cc iostreamdatum.h
@@ -85,11 +84,19 @@ set( sli_sources
     )
 
 add_library( sli_lib ${sli_sources} )
-target_link_libraries( sli_lib nestutil ${READLINE_LIBRARIES} )
+target_link_libraries( sli_lib nestutil )
+
+# Make a separate target for linking against readline, so that
+# pynestkernel does not need to link against readline and make
+# loading different readlines a problem for Python. See this
+# pull request for more information:
+# https://github.com/nest/nest-simulator/pull/323
+add_library( sli_readline gnureadline.cc gnureadline.h )
+target_link_libraries( sli_readline sli_lib nestutil ${READLINE_LIBRARIES} )
 
 # add the executable
 add_executable( sli puresli.cc )
-target_link_libraries( sli sli_lib )
+target_link_libraries( sli sli_lib sli_readline )
 
 target_include_directories( sli PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
@@ -101,13 +108,18 @@ target_include_directories( sli_lib PRIVATE
     ${PROJECT_BINARY_DIR}/libnestutil
     )
 
+target_include_directories( sli_readline PRIVATE
+    ${PROJECT_SOURCE_DIR}/libnestutil
+    ${PROJECT_BINARY_DIR}/libnestutil
+    )
+
 target_compile_definitions( sli_lib PRIVATE
     -DPKGDATADIR=\"${PKGDATADIR}\"
     -DPKGDOCDIR=\"${PKGDOCDIR}\"
     -DPKGSOURCEDIR=\"${PROJECT_SOURCE_DIR}\"
     )
 
-install( TARGETS sli_lib sli
+install( TARGETS sli_readline sli_lib sli
     LIBRARY DESTINATION ${INSTALL_LIB_DIR}
     ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
     RUNTIME DESTINATION ${INSTALL_BIN_DIR}

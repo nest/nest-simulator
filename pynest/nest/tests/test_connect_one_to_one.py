@@ -56,6 +56,8 @@ class TestOneToOne(TestParams):
         M2 = hf.get_connectivity_matrix(self.pop2, self.pop1)
         # test that connections were created in both directions
         hf.mpi_assert(M1, np.transpose(M2), self)
+        # test that no other connections were created
+        hf.mpi_assert(M1-np.identity(self.N), np.zeros_like(M1), self)
 
     def testInputArray(self):
         syn_params = {}

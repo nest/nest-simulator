@@ -65,8 +65,8 @@ def process_installcheck(f):
 def process_changed_files(f):
     """
     Run through the file f until a line starts with '+file_names='.
-    After the equal sign is a space separated list of changed files in the PR.
-    Returns that list.
+    The equal sign is followed by a space separated list of changed files
+    in the PR. Returns that list.
     """
     while True:
         line = f.readline()
@@ -89,6 +89,7 @@ def process_vera(f, filename):
         if not line:
             return res
 
+        # Exit condition: after vera++, cppcheck is executed
         if line.startswith('+cppcheck '):
             return res
 
@@ -110,17 +111,20 @@ def process_cppcheck(f, filename):
         if not line:
             return res
 
+        # Exit condition: after cppcheck, clang-format is executed
         if line.startswith('+clang-format-'):
             return res
 
         if line.startswith('[' + filename):
             key = line[line.find('('):].strip()
+            # ignore 'is never used' items
             if 'is never used' in key:
                 continue
+            # ignore '(information)' items
             if '(information)' in key:
                 continue
             if key not in d:
-                d[key] = 0
+                d[key] = 0 # first seen here
             d[key] += 1
 
 
@@ -135,9 +139,12 @@ def process_clang_format(f, filename):
         if not line:
             return res
 
+        # The diff is stored in a file, that is `cat` to the screen.
         if line.startswith('+cat '):
-            line = f.readline()
+            line = f.readline() # next line is file start
             diff = ''
+            # when the file is finished `cat`ing, it will be removed
+            # until then, concatenate the diff.
             while not line.startswith("+rm"):
                 diff += line
                 line = f.readline()
@@ -162,21 +169,27 @@ def process_static_analysis(f, line):
         if not line:
             return res
 
+        # Exit condition: next file is analyzed (C/CPP)
         if line.startswith('+echo Static analysis on file '):
             return res
 
+        # Exit condition: next file is analyzed (PY)
         if line.startswith('+echo Check PEP8 on file '):
             return res
 
+        # Exit condition: static analysis finished, remove compiled cppcheck
         if line.startswith('+rm -rf ./cppcheck'):
             return res
 
+        # analyze vera++
         if line.startswith(' - vera++ for '):
             d.update(process_vera(f, filename))
 
+        # analyze cppcheck
         if line.startswith(' - cppcheck for '):
             d.update(process_cppcheck(f, filename))
 
+        # analyze clang-format
         if line.startswith(' - clang-format for '):
             d.update(process_clang_format(f, filename))
 
@@ -185,7 +198,7 @@ def process_pep8(f, line):
     """
     Process PEP8 output for a certain file.
     """
-    # Check PEP8 on file pynest/nest/lib/hl_api_connections.py:
+    # Check PEP8 on file path/to/python/file.py:
     filename = line.split(' ')[-1].strip()[0:-1]
     d = set()
     res = {filename: d}
@@ -194,18 +207,23 @@ def process_pep8(f, line):
         if not line:
             return res
 
+        # Exit condition: next file is analyzed (C/CPP)
         if line.startswith('+echo Static analysis on file '):
             return res
 
+        # Exit condition: next file is analyzed (PY)
         if line.startswith('+echo Check PEP8 on file '):
             return res
 
+        # Exit condition: static analysis finished, remove compiled cppcheck
         if line.startswith('+rm -rf ./cppcheck'):
             return res
 
+        # Analysis of filename starts here
         if line.startswith('+echo ' + filename):
             while True:
                 line = f.readline()
+                # Exit condition: read to far
                 if line.startswith('+format_error_files='):
                     break
                 d.add(line.strip())

@@ -252,8 +252,8 @@ if [ "$format_error_files" != "" ]; then
   done
   echo
   echo "TravisCI will report failure!"
-  echo "- On C/CPP files, perform '$CLANG_FORMAT -i <filename>' on them."
-  echo "- On Python files, perform 'pep8ify -w <filename>' on them and"
+  echo "- On C/CPP files, perform '$CLANG_FORMAT -i <filename>'."
+  echo "- On Python files, perform 'pep8ify -w <filename>' and"
   echo "  work through the warnings on the output above."
   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   exit 42

@@ -80,7 +80,7 @@ public:
    * Get number of threads.
    * This function returns the total number of threads per process.
    */
-  index get_num_threads() const;
+  thread get_num_threads() const;
 
   /**
    * Returns true if the given global node exists on this vp.
@@ -175,7 +175,7 @@ nest::VPManager::get_thread_id() const
 #endif
 }
 
-inline nest::index
+inline nest::thread
 nest::VPManager::get_num_threads() const
 {
   return n_threads_;

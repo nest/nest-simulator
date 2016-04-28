@@ -53,21 +53,34 @@ void cg_connect( ConnectionGeneratorDatum& cg,
   const DictionaryDatum& params_map,
   const Name& synmodel_name );
 
-ConnectionGeneratorDatum cg_parse( const StringDatum& xml );
+void cg_connect( ConnectionGeneratorDatum& cg,
+  RangeSet& sources,
+  index source_offset,
+  RangeSet& targets,
+  index target_offset,
+  DictionaryDatum params_map,
+  index syn );
 
-ConnectionGeneratorDatum cg_parse_file( const StringDatum& xml );
-
-void cg_select_implementation( const StringDatum& library,
-  const StringDatum& tag );
+void cg_connect( ConnectionGeneratorDatum& cg,
+  RangeSet& sources,
+  std::vector< long >& source_gids,
+  RangeSet& targets,
+  std::vector< long >& target_gids,
+  DictionaryDatum params_map,
+  index syn );
 
 void cg_set_masks( ConnectionGeneratorDatum& cg,
-  IntVectorDatum& sources,
-  IntVectorDatum& targets );
-void cg_start( ConnectionGeneratorDatum& cgd );
-bool cg_next( ConnectionGeneratorDatum& cgd,
-  int& src,
-  int& tgt,
-  std::vector< double >& values );
+  RangeSet& sources,
+  RangeSet& targets );
+
+void cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
+  RangeSet& sources,
+  RangeSet& targets );
+
+index cg_get_right_border( index left, size_t step, std::vector< long >& gids );
+
+void cg_get_ranges( RangeSet& ranges, std::vector< long >& gids );
+
 }
 
 #endif /* CONNGEN_H */

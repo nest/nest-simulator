@@ -26,7 +26,6 @@
 #include "config.h"
 
 // Includes from conngen:
-#include "cg_connect.h"
 #include "conngen.h"
 
 // Includes from sli:
@@ -182,7 +181,7 @@ ConnectionGeneratorModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   StringDatum xml = getValue< StringDatum >( i->OStack.pick( 0 ) );
-  ConnectionGeneratorDatum cgd = cg_parse( xml );
+  ConnectionGeneratorDatum cgd = ConnectionGenerator::fromXML( xml );
 
   i->OStack.pop( 1 );
   i->OStack.push( cgd );
@@ -217,7 +216,7 @@ ConnectionGeneratorModule::CGParseFile_sFunction::execute(
   i->assert_stack_load( 1 );
 
   StringDatum xml = getValue< StringDatum >( i->OStack.pick( 0 ) );
-  ConnectionGeneratorDatum cgd = cg_parse_file( xml );
+  ConnectionGeneratorDatum cgd = ConnectionGenerator::fromXMLFile( xml );
 
   i->OStack.pop( 1 );
   i->OStack.push( cgd );
@@ -253,7 +252,7 @@ ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute(
   StringDatum library = getValue< StringDatum >( i->OStack.pick( 0 ) );
   StringDatum tag = getValue< StringDatum >( i->OStack.pick( 1 ) );
 
-  cg_select_implementation( library, tag );
+  ConnectionGenerator::selectCGImplementation( tag, library );
 
   i->OStack.pop( 1 );
   i->EStack.pop();
@@ -297,7 +296,13 @@ ConnectionGeneratorModule::CGSetMask_cg_iV_iVFunction::execute(
   IntVectorDatum sources = getValue< IntVectorDatum >( i->OStack.pick( 1 ) );
   IntVectorDatum targets = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
 
-  cg_set_masks( cg, sources, targets );
+  RangeSet source_ranges;
+  cg_get_ranges( source_ranges, *sources );
+
+  RangeSet target_ranges;
+  cg_get_ranges( target_ranges, *targets );
+
+  cg_set_masks( cg, source_ranges, target_ranges );
 
   i->OStack.pop( 3 );
   i->EStack.pop();
@@ -336,7 +341,7 @@ ConnectionGeneratorModule::CGStart_cgFunction::execute(
   ConnectionGeneratorDatum cgd =
     getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
 
-  cg_start( cgd );
+  cgd->start();
 
   i->OStack.pop( 1 );
   i->EStack.pop();
@@ -365,7 +370,7 @@ ConnectionGeneratorModule::CGStart_cgFunction::execute(
    purposes. Usually, connections are created from a
    ConnectionGenerator using CGConnect.
 
-   Author: Mikael Djurfeldt
+   Author: Mikael Djurfeldt, Jochen Martin Eppler
    FirstVersion: December 2012
    SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation, cgstart,
    cgsetmask
@@ -378,14 +383,24 @@ ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const
   ConnectionGeneratorDatum cgd =
     getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
 
-  int j, k;
-  std::vector< double > values;
+  int arity = cgd->arity();
+  double* tmp_values = new double[ arity ];
+  std::vector< double > values( arity );
+
   i->OStack.pop( 1 );
-  i->EStack.pop();
-  if ( cg_next( cgd, j, k, values ) )
+
+  int source_id, target_id;
+  if ( cgd->next( source_id, target_id, tmp_values ) )
   {
-    i->OStack.push( j );
-    i->OStack.push( k );
+    for ( int m = 0; m < arity; ++m )
+    {
+      values[ m ] = tmp_values[ m ];
+    }
+    delete[] tmp_values;
+    cgd.unlock();
+
+    i->OStack.push( source_id );
+    i->OStack.push( target_id );
     for ( size_t m = 0; m < values.size(); ++m )
     {
       i->OStack.push( values[ m ] );
@@ -394,8 +409,11 @@ ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const
   }
   else
   {
+    cgd.unlock();
     i->OStack.push( false );
   }
+
+  i->EStack.pop();
 }
 
 

@@ -124,7 +124,7 @@ def process_cppcheck(f, filename):
             if '(information)' in key:
                 continue
             if key not in d:
-                d[key] = 0 # first seen here
+                d[key] = 0   # first seen here
             d[key] += 1
 
 
@@ -141,7 +141,7 @@ def process_clang_format(f, filename):
 
         # The diff is stored in a file, that is `cat` to the screen.
         if line.startswith('+cat '):
-            line = f.readline() # next line is file start
+            line = f.readline()      # next line is file start
             diff = ''
             # when the file is finished `cat`ing, it will be removed
             # until then, concatenate the diff.
@@ -363,7 +363,7 @@ if __name__ == '__main__':
           ("Ok" if all([len(v) == 0
                         for v in pep8_analysis.values()]) else "Error"))
     print("Configure:           " + ("Ok" if configure_ok else "Error"))
-    print("Make:                " + ("Ok" if sum_of_errors == 0 else 
+    print("Make:                " + ("Ok" if sum_of_errors == 0 else
                                      "Error(" + str(sum_of_errors) + ")") +
           " ( " + str(sum_of_warnings) + " warnings ).")
     print("Make install:        " + ("Ok" if make_install_ok else "Error"))
@@ -375,7 +375,6 @@ if __name__ == '__main__':
 
     print("\nStatic analysis:")
     print_static_analysis(static_analysis)
-
 
     print("\n\nWarnings:")
     for k, v in actual_warnings.iteritems():

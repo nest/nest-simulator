@@ -649,7 +649,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
       src, tgt, receptor_type, get_common_properties() );
 
     // no entry at all, so create a homogeneous container for this connection type
-    conn = allocate< Connector< ConnectionT > >();
+    conn = allocate< Connector< ConnectionT > >( syn_id );
     syn_index = hetconn->size();
     hetconn->resize( syn_index + 1);
   }

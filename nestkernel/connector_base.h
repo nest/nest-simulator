@@ -163,9 +163,11 @@ class Connector : public ConnectorBase
 {
 private:
   std::vector< ConnectionT > C_;
+  synindex syn_id_;
 
 public:
-  Connector()
+  Connector( synindex syn_id )
+    : syn_id_ ( syn_id )
   {
   }
 
@@ -176,7 +178,7 @@ public:
   void
   get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
   {
-    if ( syn_id == C_[ 0 ].get_syn_id() )
+    if ( syn_id == syn_id_ )
     {
       assert( p >= 0 && static_cast< size_t >( p ) < C_.size() );
       C_[ p ].get_status( d );
@@ -186,7 +188,7 @@ public:
   void
   set_synapse_status( synindex syn_id, ConnectorModel& cm, const DictionaryDatum& d, port p )
   {
-    if ( syn_id == C_[ 0 ].get_syn_id() )
+    if ( syn_id == syn_id_ )
     {
       assert( p >= 0 && static_cast< size_t >( p ) < C_.size() );
       C_[ p ].set_status( d, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
@@ -202,7 +204,7 @@ public:
   size_t
   get_num_connections( synindex syn_id )
   {
-    if ( syn_id == get_syn_id() )
+    if ( syn_id == syn_id_ )
       return C_.size();
     else
       return 0;
@@ -213,7 +215,7 @@ public:
   {
     typename std::vector< ConnectionT >::iterator C_it;
     size_t num_connections = 0;
-    if ( syn_id == get_syn_id() )
+    if ( syn_id == syn_id_ )
     {
       for ( C_it = C_.begin(); C_it != C_.end(); C_it++ )
       {
@@ -266,7 +268,7 @@ public:
     long_t synapse_label,
     ArrayDatum& conns ) const
   {
-    if ( get_syn_id() == synapse_id )
+    if ( syn_id_ == synapse_id )
     {
       if ( synapse_label == UNLABELED_CONNECTION ||
            C_[ lcid ].get_label() == synapse_label )
@@ -295,7 +297,7 @@ public:
     long_t synapse_label,
     ArrayDatum& conns ) const
   {
-    if ( get_syn_id() == synapse_id )
+    if ( syn_id_ == synapse_id )
     {
         if ( synapse_label == UNLABELED_CONNECTION ||
              C_[ lcid ].get_label() == synapse_label )
@@ -318,7 +320,7 @@ public:
     long_t synapse_label,
     ArrayDatum& conns ) const
   {
-    if ( get_syn_id() == synapse_id )
+    if ( syn_id_ == synapse_id )
     {
       for ( size_t i = 0; i < C_.size(); ++i )
       {
@@ -348,7 +350,7 @@ public:
   get_target_gids( std::vector< size_t >& target_gids, size_t thrd, synindex synapse_id ) const
   {
     typename std::vector< ConnectionT >::const_iterator C_it;
-    if ( get_syn_id() == synapse_id )
+    if ( syn_id_ == synapse_id )
     {
       for ( C_it = C_.begin(); C_it != C_.end(); C_it++ )
       {
@@ -366,12 +368,10 @@ public:
   void
   send_to_all( Event& e, thread tid, const std::vector< ConnectorModel* >& cm )
   {
-    synindex syn_id = C_[ 0 ].get_syn_id();
-
     for ( size_t i = 0; i < C_.size(); ++i )
     {
       e.set_port( i );
-      C_[ i ].send( e, tid, static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )->get_common_properties() );
+      C_[ i ].send( e, tid, static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties() );
     }
 
   }
@@ -379,9 +379,8 @@ public:
   void
   send( thread tid, synindex syn_index, unsigned int lcid, Event& e, const std::vector< ConnectorModel* >& cm )
   {
-    const synindex syn_id = C_[ 0 ].get_syn_id();
     e.set_port( lcid ); // TODO@5g: does this make sense?
-    C_[ lcid ].send( e, tid, static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )->get_common_properties() );
+    C_[ lcid ].send( e, tid, static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties() );
   }
 
   void
@@ -391,15 +390,14 @@ public:
     double_t t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
-    synindex syn_id = C_[ 0 ].get_syn_id();
     for ( size_t i = 0; i < C_.size(); ++i )
-      if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+      if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
              ->get_common_properties()
              .get_vt_gid() == vt_gid )
         C_[ i ].trigger_update_weight( t,
           dopa_spikes,
           t_trig,
-          static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+          static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
             ->get_common_properties() );
   }
 
@@ -412,7 +410,7 @@ public:
   synindex
   get_syn_id() const
   {
-    return C_[ 0 ].get_syn_id();
+    return syn_id_;
   }
 };
 

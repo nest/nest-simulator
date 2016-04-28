@@ -249,11 +249,11 @@ private:
 
   void set_complete_marker_spike_data_( const thread tid );
 
-  bool collocate_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, std::vector< TargetData >& send_buffer );
+  bool collocate_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, TargetData* send_buffer );
 
-  void set_complete_marker_target_data_( const thread tid, const unsigned int num_target_data_per_rank, std::vector< TargetData >& send_buffer );
+  void set_complete_marker_target_data_( const thread tid, const unsigned int num_target_data_per_rank, TargetData* send_buffer );
 
-  bool distribute_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, const std::vector< TargetData >& recv_buffer );
+  bool distribute_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, TargetData const* const recv_buffer );
 
   bool deliver_events_5g_( const thread tid );
 

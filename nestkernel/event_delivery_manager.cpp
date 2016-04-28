@@ -897,8 +897,9 @@ EventDeliveryManager::gather_target_data()
 {
   assert( not kernel().connection_builder_manager.is_source_table_cleared() );
 
-  std::vector< TargetData > send_buffer_target_data( mpi_buffer_size_target_data );
-  std::vector< TargetData > recv_buffer_target_data( mpi_buffer_size_target_data );
+  // use calloc to zero initialize all entries
+  TargetData* send_buffer_target_data = static_cast< TargetData* >( calloc( mpi_buffer_size_target_data, sizeof( TargetData) ) );
+  TargetData* recv_buffer_target_data = static_cast< TargetData* >( calloc( mpi_buffer_size_target_data, sizeof( TargetData) ) );
 
   // when a thread does not have any more spike to collocate and when
   // it detects a remote MPI rank is finished this cound is increased
@@ -909,7 +910,7 @@ EventDeliveryManager::gather_target_data()
   unsigned int half_completed_count = kernel().vp_manager.get_num_threads();
   unsigned int max_completed_count = 2 * half_completed_count;
 
-  const unsigned int send_recv_count_target_data_per_rank = floor( send_buffer_target_data.size() / kernel().mpi_manager.get_num_processes() );
+  const unsigned int send_recv_count_target_data_per_rank = floor( mpi_buffer_size_target_data / kernel().mpi_manager.get_num_processes() );
   const unsigned int send_recv_count_target_data_in_int_per_rank = sizeof( TargetData ) / sizeof( unsigned int ) * send_recv_count_target_data_per_rank;
 
 #pragma omp parallel shared(completed_count)
@@ -960,10 +961,13 @@ EventDeliveryManager::gather_target_data()
 #pragma omp barrier
     } // of while(true)
   } // of omp parallel
+
+  free( send_buffer_target_data );
+  free( recv_buffer_target_data );
 }
 
 bool
-EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, std::vector< TargetData >& send_buffer )
+EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, TargetData* send_buffer )
 {
   const unsigned int num_assigned_ranks_per_thread = kernel().vp_manager.get_num_assigned_ranks_per_thread();
   const unsigned int rank_start = kernel().vp_manager.get_start_rank_per_thread( tid );
@@ -1026,7 +1030,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const un
 }
 
 void
-nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid, const unsigned int num_target_data_per_rank, std::vector< TargetData >& send_buffer )
+nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid, const unsigned int num_target_data_per_rank, TargetData* send_buffer )
 {
   const unsigned int num_assigned_ranks_per_thread = kernel().vp_manager.get_num_assigned_ranks_per_thread();
   const unsigned int rank_start = kernel().vp_manager.get_start_rank_per_thread( tid );
@@ -1040,7 +1044,7 @@ nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid, 
 }
 
 bool
-nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, const std::vector< TargetData >& recv_buffer )
+nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, TargetData const* const recv_buffer )
 {
   bool are_others_completed = true;
   for ( unsigned int rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )

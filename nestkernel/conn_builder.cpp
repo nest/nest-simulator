@@ -206,6 +206,22 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
       }
     }
   }
+
+  // If symmetric_ is requested call reset on all parameters in order
+  // to check if all parameters support symmetric connections
+  if ( symmetric_ )
+  {
+    if ( weight_ )
+      weight_->reset();
+    if ( delay_ )
+      delay_->reset();
+    for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
+          it != synapse_params_.end();
+          ++it )
+    {
+      it->second->reset();
+    }
+  }
 }
 
 
@@ -388,6 +404,18 @@ nest::ConnBuilder::connect()
     connect_();
     if ( symmetric_ )
     {
+      // call reset on all parameters
+      if ( weight_ )
+        weight_->reset();
+      if ( delay_ )
+        delay_->reset();
+      for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
+            it != synapse_params_.end();
+            ++it )
+      {
+        it->second->reset();
+      }
+
       std::swap( sources_, targets_ );
       connect_();
       std::swap( sources_, targets_ ); // re-establish original state

@@ -30,6 +30,7 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
+#include "conn_builder.h"
 #include "nest_types.h"
 #include "sparse_node_array.h"
 
@@ -47,6 +48,7 @@ class Model;
 
 class NodeManager : public ManagerInterface
 {
+  friend const SparseNodeArray& ConnBuilder::get_local_nodes();
 public:
   NodeManager();
   ~NodeManager();
@@ -236,6 +238,8 @@ private:
    */
   void prepare_node_( Node* );
 
+  const SparseNodeArray& get_local_nodes_() const;
+
 private:
   SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
   Subnet* root_;                //!< Root node.
@@ -325,6 +329,12 @@ inline bool
 NodeManager::any_node_uses_wfr() const
 {
   return any_node_uses_wfr_;
+}
+
+inline const SparseNodeArray&
+NodeManager::get_local_nodes_() const
+{
+  return local_nodes_;
 }
 
 } // namespace

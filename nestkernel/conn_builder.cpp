@@ -40,6 +40,7 @@
 #include "kernel_manager.h"
 #include "nest_names.h"
 #include "node.h"
+#include "sparse_node_array.h"
 #include "vp_manager_impl.h"
 
 // Includes from sli:
@@ -57,8 +58,8 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   , multapses_( true )
   , symmetric_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
-  , synapse_model_( kernel().model_manager.get_synapsedict()->lookup(
-      "static_synapse" ) )
+  , synapse_model_(
+      kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
   , weight_( 0 )
   , delay_( 0 )
   , param_dicts_()
@@ -576,6 +577,13 @@ nest::ConnBuilder::single_connect_( index sgid,
     }
   }
 }
+
+const nest::SparseNodeArray&
+nest::ConnBuilder::get_local_nodes()
+{
+  return kernel().node_manager.get_local_nodes_();
+}
+
 
 void
 nest::ConnBuilder::skip_conn_parameter_( thread target_thread )

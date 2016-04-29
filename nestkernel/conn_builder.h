@@ -53,6 +53,7 @@ namespace nest
 {
 class Node;
 class ConnParameter;
+class SparseNodeArray;
 
 /**
  * Abstract base class for ConnBuilders.
@@ -108,6 +109,11 @@ public:
   {
     return false;
   }
+
+  /**
+   * This function gets the local nodes from the node manager for more efficient
+   */
+  const SparseNodeArray& get_local_nodes();
 
 protected:
   //! Implements the actual connection algorithm
@@ -184,9 +190,6 @@ private:
   //! dictionaries to pass to connect function, one per thread
   std::vector< DictionaryDatum > param_dicts_;
 
-  //! pointers to connection parameters specified as arrays
-  std::vector< ConnParameter* > parameters_requiring_skipping_;
-
   /**
    * Collects all array paramters in a vector.
    *
@@ -202,6 +205,10 @@ private:
   // The remaining error and warnings should then be handled within the synapse
   // model.
   void check_synapse_params_( std::string, const DictionaryDatum& );
+
+protected:
+  //! pointers to connection parameters specified as arrays
+  std::vector< ConnParameter* > parameters_requiring_skipping_;
 };
 
 class OneToOneBuilder : public ConnBuilder

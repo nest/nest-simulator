@@ -54,15 +54,16 @@ class Node;
  */
 class SparseNodeArray
 {
-private:
-  struct NodeEntry_
+public:
+  struct NodeEntry
   {
-    NodeEntry_( Node&, index );
+    NodeEntry( Node&, index );
     Node* node_;
     index gid_; //!< store gid locally for faster searching
   };
 
-public:
+  typedef std::vector< SparseNodeArray::NodeEntry >::const_iterator const_iterator;
+
   //! Create empty spare node array
   SparseNodeArray();
 
@@ -119,6 +120,12 @@ public:
   Node* get_node_by_index( size_t ) const;
 
   /**
+   * Get constant iterators for safe iteration of SparseNodeArray.
+   */
+  const_iterator begin() const;
+  const_iterator end() const;
+
+  /**
    * Return largest GID in global network.
    * @see size
    */
@@ -127,7 +134,7 @@ public:
   std::map< long, size_t > get_step_ctr() const;
 
 private:
-  std::vector< NodeEntry_ > nodes_;           //!< stores local node information
+  std::vector< NodeEntry > nodes_;           //!< stores local node information
   index max_gid_;                             //!< largest GID in network
   index local_min_gid_;                       //!< smallest local GID
   index local_max_gid_;                       //!< largest local GID
@@ -136,6 +143,18 @@ private:
 };
 
 } // namespace nest
+
+inline nest::SparseNodeArray::const_iterator
+nest::SparseNodeArray::begin() const
+{
+  return nodes_.begin();
+}
+
+inline nest::SparseNodeArray::const_iterator
+nest::SparseNodeArray::end() const
+{
+  return nodes_.end();
+}
 
 inline size_t
 nest::SparseNodeArray::size() const

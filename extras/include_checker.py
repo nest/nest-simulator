@@ -23,6 +23,46 @@ import os
 import re
 import sys
 
+"""
+This script suggest C/CPP include orders that conform to the NEST coding style
+guidelines. Call the script like (from NEST sources):
+
+For one file:
+    python extras/include_checker.py -nest $PWD -f nest/main.cpp
+
+For one directory:
+    python extras/include_checker.py -nest $PWD -d nest
+
+If everything is OK, or only few includes are in the wrong order, it will print
+something like:
+
+    Includes for main.cpp are OK! Includes in wrong order: 0
+
+If something is wrong, it will print the suggestion:
+
+    Includes for neststartup.h are WRONG! Includes in wrong order: 5
+
+    ##############################
+    Suggested includes for neststartup.h:
+    ##############################
+
+
+    // C includes:
+    #include <neurosim/pyneurosim.h>
+
+    // C++ includes:
+    #include <string>
+
+    // Generated includes:
+    #include "config.h"
+
+    // Includes from conngen:
+    #include "conngenmodule.h"
+
+    // Includes from sli:
+    #include "datum.h"
+"""
+
 # We would like to have files that are not actually provided by
 # the NEST Initiative, e.g. implementing the Google Sparsetable,
 # to be exactly like they come from the upstream source.

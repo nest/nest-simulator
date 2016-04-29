@@ -145,8 +145,9 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double 
     // Since substraction of closeby floating point values is
     // not stable, we have to compare with a delta.
     double_t offset = t_spike.get_ms() - t;
-    if ( std::fabs( offset ) < std::numeric_limits< double >::epsilon() )
-    {               // if difference is smaller than epsilon
+    if ( std::fabs( offset ) < std::numeric_limits< double >::epsilon() * std::fabs( t_spike.get_ms() + t) * 2.0 ||
+	std::fabs(offset) < std::numeric_limits< double >::min())
+    {               // if difference is smaller than scaled epsilon
       offset = 0.0; // than it is actually 0.0
     }
     assert( offset >= 0.0 );

@@ -1588,6 +1588,13 @@ nest::BernoulliBuilder::connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
+      // With large-scale simulations (vp >> indegree), most of the nodes in the
+      // targets_-range are not on this machine. Therefore, if the number of
+      // local nodes is smaller than the targets_-range, we will iterate over
+      // the local nodes instead and check, whether the node is in the
+      // targets_-range.
+      if ( targets_->size() < get_local_nodes().size() || not targets_->is_range() )
+      {
       for ( GIDCollection::const_iterator tgid = targets_->begin();
             tgid != targets_->end();
             ++tgid )
@@ -1597,26 +1604,25 @@ nest::BernoulliBuilder::connect_()
           continue;
 
         Node* const target = kernel().node_manager.get_node( *tgid, tid );
-        const thread target_thread = target->get_thread();
 
-        // check whether the target is on our thread
-        if ( tid != target_thread )
-          continue;
+          inner_connect_( tid, rng, target, *tgid );
+        }
+      }
 
-        for ( GIDCollection::const_iterator sgid = sources_->begin();
-              sgid != sources_->end();
-              ++sgid )
+    else
+    {
+      for ( SparseNodeArray::const_iterator it = get_local_nodes().begin();
+            it != get_local_nodes().end();
+            ++it )
         {
-          // not possible to create multapses with this implementation,
-          // hence leave out the check for BernoulliBuilder
+        Node* const target = ( *it ).node_;
+        const index tgid = ( *it ).gid_;
 
-          if ( not autapses_ and *sgid == *tgid )
+          // Is the local node in the targets list?
+          if ( targets_->find( tgid ) < 0 )
             continue;
 
-          if ( not( rng->drand() < p_ ) )
-            continue;
-
-          single_connect_( *sgid, *target, target_thread, rng );
+        inner_connect_( tid, rng, target, tgid );
         }
       }
     }
@@ -1626,7 +1632,36 @@ nest::BernoulliBuilder::connect_()
       // the end of the catch block.
       exceptions_raised_.at( tid ) =
         lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+  }
+}
     }
+
+void
+nest::BernoulliBuilder::inner_connect_( const int tid,
+  librandom::RngPtr& rng,
+  Node* target,
+  index tgid )
+{
+  const thread target_thread = target->get_thread();
+
+  // check whether the target is on our thread
+  if ( tid != target_thread )
+    return;
+
+  // It is not possible to create multapses with this type of BernoulliBuilder,
+  // hence leave out corresponding checks.
+
+  for ( GIDCollection::const_iterator sgid = sources_->begin();
+        sgid != sources_->end();
+        ++sgid )
+  {
+    if ( not autapses_ and *sgid == tgid )
+      continue;
+
+    if ( rng->drand() >= p_ )
+      continue;
+
+    single_connect_( *sgid, *target, target_thread, rng );
   }
 }
 

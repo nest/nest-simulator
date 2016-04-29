@@ -314,6 +314,7 @@ protected:
   void connect_();
 
 private:
+  void inner_connect_( const int, librandom::RngPtr&, Node*, index );
   double p_; //!< connection probability
 };
 

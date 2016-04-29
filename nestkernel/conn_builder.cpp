@@ -642,6 +642,14 @@ nest::OneToOneBuilder::connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
+      // With large-scale simulations (vp >> indegree), most of the nodes in the
+      // targets_-range are not on this machine. Therefore, if the number of
+      // local nodes is smaller than the targets_-range, we will iterate over
+      // the local nodes instead and check, whether the node is in the
+      // targets_-range.
+      if ( targets_->size() < get_local_nodes().size() || not targets_->is_range()
+        || parameters_requiring_skipping_.size() > 0 )
+      {
       for ( GIDCollection::const_iterator tgid = targets_->begin(),
                                           sgid = sources_->begin();
             tgid != targets_->end();
@@ -670,6 +678,41 @@ nest::OneToOneBuilder::connect_()
         }
 
         single_connect_( *sgid, *target, target_thread, rng );
+        }
+      }
+      else
+      {
+        for ( SparseNodeArray::const_iterator it = get_local_nodes().begin();
+              it != get_local_nodes().end();
+              ++it )
+        {
+          Node* const target = ( *it ).node_;
+          const thread target_thread = target->get_thread();
+          const index tgid = ( *it ).gid_;
+
+          int idx;
+          // Is local node in target list?
+          if ( ( idx = targets_->find( tgid ) ) < 0 )
+            continue;
+
+          const index sgid = ( *sources_ )[ idx ];
+
+          if ( tid != target_thread )
+          {
+            // no skipping required / possible,
+            // as we iterate only over local nodes
+            continue;
+          }
+
+          if ( not autapses_ and sgid == tgid )
+          {
+            // no skipping required / possible,
+            // as we iterate only over local nodes
+            continue;
+          }
+
+          single_connect_( sgid, *target, target_thread, rng );
+        }
       }
     }
     catch ( std::exception& err )

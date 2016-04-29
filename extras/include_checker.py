@@ -181,39 +181,43 @@ def process_source(path, f, all_headers, print_suggestion):
     return order_ok
 
 
-def process_all_sources(path, print_suggestion):
-    all_header = all_includes(path)
+def process_all_sources(path, all_headers, print_suggestion):
     count = 0
     for root, dirs, files in os.walk(path):
         for f in files:
             if re.search("\.h$|\.hpp$|\.c$|\.cc|\.cpp$", f):
                 # valid source file
-                count += process_source(root, f, all_header, print_suggestion)
+                count += process_source(root, f, all_headers, print_suggestion)
         for d in dirs:
-            count += process_all_sources(os.path.join(root, d),
+            count += process_all_sources(os.path.join(root, d), all_headers,
                                          print_suggestion)
     return count
 
 
 def usage(exitcode):
     print("Use like:")
-    print("  " + sys.argv[0] + " (-f <filename> | -d <base-directory>)")
+    print("  " + sys.argv[0] + " -nest <nest-base-dir>" +
+                               " (-f <filename> | -d <base-directory>)")
     sys.exit(exitcode)
 
 if __name__ == '__main__':
     print_suggestion = True
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 5:
         usage(1)
 
-    if sys.argv[1] == '-f' and os.path.isfile(sys.argv[2]):
-        path = os.path.dirname(sys.argv[2])
-        file = os.path.basename(sys.argv[2])
-        all_header = all_includes(path)
-        process_source(path, file, all_header, print_suggestion)
+    if sys.argv[1] == '-nest' and os.path.isdir(sys.argv[2]):
+        all_headers = all_includes(sys.argv[2])
+    else:
+        usage(2)
 
-    elif sys.argv[1] == '-d' and os.path.isdir(sys.argv[2]):
-        dir = sys.argv[2]
-        process_all_sources(dir, print_suggestion)
+    if sys.argv[3] == '-f' and os.path.isfile(sys.argv[4]):
+        path = os.path.dirname(sys.argv[4])
+        file = os.path.basename(sys.argv[4])
+        process_source(path, file, all_headers, print_suggestion)
+
+    elif sys.argv[3] == '-d' and os.path.isdir(sys.argv[4]):
+        dir = sys.argv[4]
+        process_all_sources(dir, all_headers, print_suggestion)
 
     else:
-        usage(1)
+        usage(3)

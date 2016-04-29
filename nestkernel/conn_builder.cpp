@@ -1458,11 +1458,18 @@ nest::FixedTotalNumberBuilder::connect_()
 
   // Compute the distribution of targets over processes using the modulo
   // function
-  std::vector< std::vector< size_t > > targets_on_vp( M );
+  std::vector< size_t > number_of_targets_on_vp( M, 0 );
+  std::vector< index > local_targets;
+  local_targets.reserve(
+    size_targets / kernel().mpi_manager.get_num_processes() );
   for ( size_t t = 0; t < targets_->size(); t++ )
   {
-    targets_on_vp[ kernel().vp_manager.suggest_vp( ( *targets_ )[ t ] ) ]
-      .push_back( ( *targets_ )[ t ] );
+    int vp = kernel().vp_manager.suggest_vp( ( *targets_ )[ t ] );
+    ++number_of_targets_on_vp[ vp ];
+    if ( kernel().vp_manager.is_local_vp( vp ) )
+    {
+      local_targets.push_back( ( *targets_ )[ t ] );
+    }
   }
 
   // We use the multinomial distribution to determine the number of
@@ -1498,17 +1505,17 @@ nest::FixedTotalNumberBuilder::connect_()
 
   for ( int k = 0; k < M; k++ )
   {
-    if ( targets_on_vp[ k ].size() > 0 )
+    if ( number_of_targets_on_vp[ k ] > 0 )
     {
       double_t num_local_targets =
-        static_cast< double_t >( targets_on_vp[ k ].size() );
+        static_cast< double_t >( number_of_targets_on_vp[ k ] );
       double_t p_local = num_local_targets / ( size_targets - sum_dist );
       bino.set_p( p_local );
       bino.set_n( N_ - sum_partitions );
       num_conns_on_vp[ k ] = bino.ldev();
     }
 
-    sum_dist += static_cast< double_t >( targets_on_vp[ k ].size() );
+    sum_dist += static_cast< double_t >( number_of_targets_on_vp[ k ] );
     sum_partitions += static_cast< uint_t >( num_conns_on_vp[ k ] );
   }
 
@@ -1528,6 +1535,19 @@ nest::FixedTotalNumberBuilder::connect_()
       {
         librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
+        // gather local target gids
+        std::vector< index > thread_local_targets;
+        thread_local_targets.reserve( number_of_targets_on_vp[ vp_id ] );
+        for ( std::vector< index >::const_iterator it = local_targets.begin();
+              it != local_targets.end();
+              ++it )
+        {
+          if ( kernel().vp_manager.suggest_vp( *it ) == vp_id )
+            thread_local_targets.push_back( *it );
+        }
+        assert(
+          thread_local_targets.size() == number_of_targets_on_vp[ vp_id ] );
+
         while ( num_conns_on_vp[ vp_id ] > 0 )
         {
 
@@ -1535,13 +1555,13 @@ nest::FixedTotalNumberBuilder::connect_()
           const long_t s_index = rng->ulrand( size_sources );
           // draw random numbers for target node from
           // targets_on_vp on this virtual process
-          const long_t t_index = rng->ulrand( targets_on_vp[ vp_id ].size() );
+          const long_t t_index = rng->ulrand( thread_local_targets.size() );
           // map random number of source node to gid corresponding to
           // the source_adr vector
           const long_t sgid = ( *sources_ )[ s_index ];
           // map random number of target node to gid using the
           // targets_on_vp vector
-          const long_t tgid = targets_on_vp[ vp_id ][ t_index ];
+          const long_t tgid = thread_local_targets[ t_index ];
 
           Node* const target = kernel().node_manager.get_node( tgid, tid );
           const thread target_thread = target->get_thread();

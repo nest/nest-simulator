@@ -200,37 +200,39 @@ nest::ConnectionManager::set_synapse_status( index gid,
 void
 nest::ConnectionManager::delete_connections_()
 {
-  for ( tVSConnector::iterator it = connections_.begin();
-        it != connections_.end();
-        ++it )
+#ifdef _OPENMP
+#pragma omp parallel
   {
-    for ( tSConnector::nonempty_iterator iit = it->nonempty_begin();
-          iit != it->nonempty_end();
-          ++iit )
+#pragma omp for schedule( static, 1 )
+#endif
+    for ( size_t t = 0; t < connections_.size(); ++t )
     {
+      for ( tSConnector::nonempty_iterator iit =
+              connections_[ t ].nonempty_begin();
+            iit != connections_[ t ].nonempty_end();
+            ++iit )
+      {
 #ifdef USE_PMA
-      validate_pointer( *iit )->~ConnectorBase();
+        validate_pointer( *iit )->~ConnectorBase();
 #else
       delete validate_pointer( *iit );
 #endif
+      }
+      connections_[ t ].clear();
     }
-    it->clear();
-  }
 
 #if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
-#pragma omp parallel
-  {
     poormansallocpool[ kernel().vp_manager.get_thread_id() ].destruct();
     poormansallocpool[ kernel().vp_manager.get_thread_id() ].init();
-  }
 #else
-#pragma omp parallel
-  {
     poormansallocpool.destruct();
     poormansallocpool.init();
-  }
 #endif
+#endif
+
+#ifdef _OPENMP
+  }
 #endif
 }
 

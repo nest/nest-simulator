@@ -72,7 +72,7 @@ fail_or_die
 }
 fail_or_die
 
-% Check that symmetric flag works properly for one_to_one connections
+% Check that symmetric flag works properly for basic one_to_one connections
 {
   set1 set2 << /rule /one_to_one /symmetric true >> /static_synapse Connect
 }
@@ -92,5 +92,27 @@ pass_or_die
   } MapThread
   true exch { and } Fold
 } assert_or_die
+
+% Check that symmetric flag cannot be used with random parameters
+{
+  set1 set2 
+  << /rule /one_to_one 
+     /symmetric true >> 
+  << /model /stdp_synapse 
+     /weight << /distribution  /uniform >> >> 
+  Connect
+}
+fail_or_die
+
+{
+  set1 set2 
+  << /rule /one_to_one 
+     /symmetric true >> 
+  << /model /stdp_synapse 
+     /alpha << /distribution  /uniform >> >> 
+  Connect
+}
+fail_or_die
+
 
 endusing

@@ -86,7 +86,7 @@ public:
   reset() const
   {
     throw NotImplemented(
-      "Symmetric connections do not work with random parameters." );
+      "Symmetric connections require parameters that can be reset." );
   }
 
   /**

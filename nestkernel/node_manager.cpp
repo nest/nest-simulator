@@ -299,7 +299,11 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
       }
     }
 
-    for ( size_t gid = min_gid; gid < max_gid; ++gid )
+    // min_gid is first valid gid i should create, hence ask for the first local
+    // gid after min_gid-1
+    for ( size_t gid = next_local_gid_( min_gid - 1 );
+          gid < max_gid;
+          gid = next_local_gid_( gid ) )
     {
       const thread vp = kernel().vp_manager.suggest_vp( gid );
       const thread t = kernel().vp_manager.vp_to_thread( vp );
@@ -315,11 +319,13 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
         local_nodes_.add_local_node( *newnode ); // put into local nodes list
         current_->add_node( newnode ); // and into current subnet, thread 0.
       }
-      else
-      {
-        local_nodes_.add_remote_node( gid ); // ensures max_gid is correct
-        current_->add_remote_node( gid, mod );
-      }
+    }
+    // if last gid is not on this process, we need to add it as a remote node
+    if ( not kernel().vp_manager.is_local_vp(
+           kernel().vp_manager.suggest_vp( max_gid - 1 ) ) )
+    {
+      local_nodes_.add_remote_node( max_gid - 1 ); // ensures max_gid is correct
+      current_->add_remote_node( max_gid - 1, mod );
     }
   }
   else if ( !model->one_node_per_process() )
@@ -487,6 +493,31 @@ NodeManager::is_local_node( Node* n ) const
   return kernel().vp_manager.is_local_vp( n->get_vp() );
 }
 
+inline index
+NodeManager::next_local_gid_( index curr_gid ) const
+{
+  index rank = kernel().mpi_manager.get_rank();
+  index sim_procs = kernel().mpi_manager.get_num_sim_processes();
+  if ( rank >= sim_procs )
+  {
+    // i am a rec proc trying to add a non-gsd node => just iterate to next gid
+    return curr_gid + sim_procs;
+  }
+  // responsible process for curr_gid
+  index proc_of_curr_gid = curr_gid % sim_procs;
+
+  if ( proc_of_curr_gid == rank )
+  {
+    // I am responsible for curr_gid, then add 'modulo'.
+    return curr_gid + sim_procs;
+  }
+  else
+  {
+    // else add difference
+    // make modulo positive and difference of my proc an curr_gid proc
+    return curr_gid + ( sim_procs + rank - proc_of_curr_gid ) % sim_procs;
+  }
+}
 
 void
 NodeManager::go_to( index n )

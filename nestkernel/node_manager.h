@@ -240,6 +240,13 @@ private:
 
   const SparseNodeArray& get_local_nodes_() const;
 
+  /**
+   * Returns the next local gid after curr_gid (in round robin fashion).
+   * In the case of GSD, there might be no valid gids, hence you should still
+   * check, if it returns a local gid.
+   */
+  index next_local_gid_( index curr_gid ) const;
+
 private:
   SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
   Subnet* root_;                //!< Root node.

@@ -1222,40 +1222,40 @@ nest::FixedInDegreeBuilder::connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
+      // With large-scale simulations (vp >> indegree), most of the nodes in the
+      // targets_-range are not on this machine. Therefore, if the number of
+      // local nodes is smaller than the targets_-range, we will iterate over
+      // the local nodes instead and check, whether the node is in the
+      // targets_-range.
+      if ( targets_->size() < get_local_nodes().size() || not targets_->is_range() )
+      {
       for ( GIDCollection::const_iterator tgid = targets_->begin();
             tgid != targets_->end();
             ++tgid )
       {
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
-          continue;
+            continue;
 
-        Node* const target = kernel().node_manager.get_node( *tgid, tid );
-        const thread target_thread = target->get_thread();
+          Node* target = kernel().node_manager.get_node( *tgid, tid );
 
-        // check whether the target is on our thread
-        if ( tid != target_thread )
-          continue;
-
-        std::set< long > ch_ids;
-        long n_rnd = sources_->size();
-
-        for ( long j = 0; j < indegree_; ++j )
+          inner_connect_( tid, rng, target, *tgid );
+        }
+      }
+      else
+      {
+        for ( SparseNodeArray::const_iterator it = get_local_nodes().begin();
+              it != get_local_nodes().end();
+              ++it )
         {
-          unsigned long s_id;
-          index sgid;
+          Node* const target = ( *it ).node_;
+          const index tgid = ( *it ).gid_;
 
-          do
-          {
-            s_id = rng->ulrand( n_rnd );
-            sgid = ( *sources_ )[ s_id ];
-          } while ( ( not autapses_ and sgid == *tgid )
-            || ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
+          // Is the local node in the targets list?
+          if ( targets_->find( tgid ) < 0 )
+            continue;
 
-          if ( not multapses_ )
-            ch_ids.insert( s_id );
-
-          single_connect_( sgid, *target, target_thread, rng );
+          inner_connect_( tid, rng, target, tgid );
         }
       }
     }
@@ -1266,6 +1266,40 @@ nest::FixedInDegreeBuilder::connect_()
       exceptions_raised_.at( tid ) =
         lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
     }
+  }
+}
+
+void
+nest::FixedInDegreeBuilder::inner_connect_( const int tid,
+  librandom::RngPtr& rng,
+  Node* target,
+  index tgid )
+{
+  const thread target_thread = target->get_thread();
+
+  // check whether the target is on our thread
+  if ( tid != target_thread )
+    return;
+
+  std::set< long > ch_ids;
+  long n_rnd = sources_->size();
+
+  for ( long j = 0; j < indegree_; ++j )
+  {
+    unsigned long s_id;
+    index sgid;
+
+    do
+    {
+      s_id = rng->ulrand( n_rnd );
+      sgid = ( *sources_ )[ s_id ];
+    } while ( ( not autapses_ and sgid == tgid )
+            || ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
+
+    if ( not multapses_ )
+      ch_ids.insert( s_id );
+
+    single_connect_( sgid, *target, target_thread, rng );
   }
 }
 

@@ -88,10 +88,10 @@ protected:
    This type of growth curve uses an exact integration method to update the
    number of synaptic elements: dz/dt = nu (1 - (1/eps) * Ca(t)),
    where nu is the growth rate [elements/ms] and eps is the desired average calcium
-   concentration [Ca2+]. The growth rate nu is defined in the SynapticElement class.
+   concentration. The growth rate nu is defined in the SynapticElement class.
 
   Parameters:
-   eps          double -  The target calcium concentration [Ca2+] that
+   eps          double -  The target calcium concentration that
                           the neuron should look to achieve by creating or deleting
                           synaptic elements. It should always be a positive value.
                           It is important to note that the calcium concentration
@@ -124,8 +124,8 @@ protected:
 /**
  * \class GrowthCurveLinear
  * Uses an exact integration method to update the number of synaptic elements:
- * dz/dt = nu (1 - (1/epsilon) * Ca(t)), where nu is the growth rate and
- * epsilon is the desired average calcium concentration.
+ * dz/dt = nu (1 - (1/eps) * Ca(t)), where nu is the growth rate and
+ * eps is the desired average calcium concentration.
  */
 class GrowthCurveLinear : public GrowthCurve
 {
@@ -158,20 +158,20 @@ private:
    where xi = (eta  + eps)/2,
    zeta = (eps - eta)/2 * sqrt(ln(2))),
    eta is the minimum calcium concentration required for any synaptic element
-   to be created, eps is the target mean calcium concentration [Ca2+] in the
+   to be created, eps is the target mean calcium concentration in the
    neuron and nu is the growth rate in elements/ms. The growth rate nu is
    defined in the SynapticElement class.
 
   Parameters:
-   eta          double -  Minimum amount of calcium concentration [Ca2+] that the
+   eta          double -  Minimum amount of calcium concentration that the
                           neuron needs to start creating synaptic elements.
                           eta can have a negative value, making the growth curve
                           move its maximum to the left. For example, if eta=-0.5
-                          and eps=0.5, the maximum growth rate (elements/ms) will
-                          be achieved at 0.0 [Ca2+]. If eta=0 and eps=0.5 the maximum
-                          growth rate will be achieved at 0.25 [Ca2+] while at
+                          and eps=0.5 [Ca2+], the maximum growth rate (elements/ms) will
+                          be achieved at 0.0 [Ca2+]. If eta=0.0 [Ca2+] and eps=0.5 [Ca2+]
+                          the maximum growth rate will be achieved at 0.25 [Ca2+] while at
                           0.0 [Ca+2] no new elements will be created.
-   eps          double -  The target calcium concentration [Ca2+] that
+   eps          double -  The target calcium concentration that
                           the neuron should look to achieve by creating or deleting
                           synaptic elements. It should always be a positive value.
                           It is important to note that the calcium concentration
@@ -186,6 +186,8 @@ private:
                           For example, an eps = 0.05 [Ca2+] with tau_Ca = 10000.0
                           and beta_Ca = 0.001 for a synaptic element means a desired
                           firing rate of 5Hz.
+   nu           double -  Growth rate in elements/ms. The growth rate nu is
+                          defined in the SynapticElement class. Can be negative.
 
   References:
    [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
@@ -206,10 +208,10 @@ private:
  * Uses a forward Euler integration method to update the number of synaptic
  * elements:
  * dz/dt = nu (2 * e^(- ((Ca(t) - xi)/zeta)^2 ) - 1)
- * where xi = (eta  + epsilon)/2,
- * zeta = (epsilon - eta)/2 * sqrt(ln(2))),
+ * where xi = (eta  + eps)/2,
+ * zeta = (eps - eta)/2 * sqrt(ln(2))),
  * eta is the minimum calcium concentration required for any synaptic element
- * to be created, epsilon is the target mean calcium concentration in the
+ * to be created, eps is the target mean calcium concentration in the
  * neuron and nu is the growth rate.
  */
 class GrowthCurveGaussian : public GrowthCurve

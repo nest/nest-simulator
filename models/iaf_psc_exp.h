@@ -35,7 +35,8 @@
 namespace nest
 {
 /* BeginDocumentation
-   Name: iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential PSCs.
+   Name: iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential
+                       PSCs.
 
    Description:
    iaf_psc_expp is an implementation of a leaky integrate-and-fire model
@@ -104,9 +105,9 @@ Remarks:
    tau_syn_ex. For an example application, see [4].
 
    References:
-   [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation in Recurrent
-   Networks with Frequency-Dependent Synapses, The Journal of Neuroscience, 2000, Vol. 20 RC50 p.
-   1-5
+   [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation
+   in Recurrent Networks with Frequency-Dependent Synapses, The Journal of
+   Neuroscience, 2000, Vol. 20 RC50 p. 1-5
    [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
    systems with applications to neuronal modeling. Biologial Cybernetics
    81:381-402.
@@ -139,7 +140,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -222,13 +224,15 @@ private:
   struct State_
   {
     // state variables
-    double_t i_0_;      // synaptic stepwise constant input current, variable 0
-    double_t i_1_;      // presynaptic stepwise constant input current
-    double_t i_syn_ex_; // postsynaptic current for exc. inputs, variable 1
-    double_t i_syn_in_; // postsynaptic current for inh. inputs, variable 1
-    double_t V_m_;      // membrane potential, variable 2
+    //! synaptic stepwise constant input current, variable 0
+    double_t i_0_;
+    double_t i_1_;      //!< presynaptic stepwise constant input current
+    double_t i_syn_ex_; //!< postsynaptic current for exc. inputs, variable 1
+    double_t i_syn_in_; //!< postsynaptic current for inh. inputs, variable 1
+    double_t V_m_;      //!< membrane potential, variable 2
 
-    int_t r_ref_; // absolute refractory counter (no membrane potential propagation)
+    //! absolute refractory counter (no membrane potential propagation)
+    int_t r_ref_;
 
     State_(); //!< Default initialization
 
@@ -340,7 +344,10 @@ private:
 
 
 inline port
-nest::iaf_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::iaf_psc_exp::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

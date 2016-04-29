@@ -45,7 +45,7 @@
 
 // essential GSL includes or replacements
 // GSL Versions < 1.2 have weak MT seeding
-#ifdef HAVE_GSL_1_2
+#ifdef HAVE_GSL
 
 // "Real" version in presence of GSL
 

@@ -188,7 +188,8 @@ public:
     init( &sb );
   }
 
-  explicit ofdstream( const char* s, std::ios_base::openmode mode = std::ios_base::out )
+  explicit ofdstream( const char* s,
+    std::ios_base::openmode mode = std::ios_base::out )
     : std::ostream( 0 )
     , sb()
   {
@@ -209,7 +210,8 @@ public:
   fdbuf*
   rdbuf() const
   {
-    return const_cast< fdbuf* >( &sb ); // return type is non-const, member is const, by C++ specs!
+    // return type is non-const, member is const, by C++ specs!
+    return const_cast< fdbuf* >( &sb );
   }
 
   bool
@@ -244,7 +246,8 @@ public:
     init( &sb );
   }
 
-  explicit ifdstream( const char* s, std::ios_base::openmode mode = std::ios_base::in )
+  explicit ifdstream( const char* s,
+    std::ios_base::openmode mode = std::ios_base::in )
     : std::istream( 0 )
     , sb()
   {
@@ -265,7 +268,8 @@ public:
   fdbuf*
   rdbuf() const
   {
-    return const_cast< fdbuf* >( &sb ); // return type is non-const, member is const, by C++ specs!
+    // return type is non-const, member is const, by C++ specs!
+    return const_cast< fdbuf* >( &sb );
   }
 
   bool
@@ -322,7 +326,8 @@ public:
   fdbuf*
   rdbuf() const
   {
-    return const_cast< fdbuf* >( &sb ); // return type is non-const, member is const, by C++ specs!
+    // return type is non-const, member is const, by C++ specs!
+    return const_cast< fdbuf* >( &sb );
   }
 
   bool

@@ -47,13 +47,14 @@ namespace nest
 
 
 /*BeginDocumentation
-Name: poisson_generator - simulate neuron firing with Poisson processes statistics.
+Name: poisson_generator - simulate neuron firing with Poisson processes
+                          statistics.
 Description:
-  The poisson_generator simulates a neuron that is firing with Poisson statistics,
-  i.e. exponentially distributed interspike intervals. It will generate a _unique_
-  spike train for each of it's targets. If you do not want this behavior and need
-  the same spike train for all targets, you have to use a parrot neuron inbetween
-  the poisson generator and the targets.
+  The poisson_generator simulates a neuron that is firing with Poisson
+  statistics, i.e. exponentially distributed interspike intervals. It will
+  generate a _unique_ spike train for each of it's targets. If you do not want
+  this behavior and need the same spike train for all targets, you have to use a
+  parrot neuron inbetween the poisson generator and the targets.
 
 Parameters:
    The following parameters appear in the element's status dictionary:
@@ -118,7 +119,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::event_hook;
 

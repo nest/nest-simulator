@@ -22,8 +22,8 @@
 """
 This script parses the TravisCI output as it is generated
 by ./build.sh and outputs a shorter summary. It is hard-coded
-to the output of ./build.sh, ./bootstrap.sh, make installcheck,
-and ../configure --prefix=... . Changing any of those, requires
+to the output of ./build.sh, make installcheck,
+and cmake -DCMAKE_INSTALL_PREFIX=... . Changing any of those, requires
 adapting this script.
 """
 
@@ -72,7 +72,6 @@ def process_changed_files(f):
         if not line:
             return False, line
 
-        # +file_names=extras/scan_travis_log.py nestkernel/connector_model.h nestkernel/nestmodule.cpp nestkernel/network.cpp 
         if line.startswith('+file_names='):
             return filter(lambda x: x != '', line.strip().split('=')[1].split(' ')), line
 
@@ -92,7 +91,6 @@ def process_vera(f, filename):
             return res
 
         if line.startswith(filename):
-            # "nestkernel/network.cpp:107: full block {} expected in the control structure"
             key = line.split(":")[-1].strip()
             if not d.has_key(key):
                 d[key] = 0
@@ -153,7 +151,6 @@ def process_static_analysis(f, line):
     """
     Process static analysis output for a certain file.
     """
-    # Static analysis on file nestkernel/archiving_node.cpp:
     filename = line.split(' ')[-1].strip()[0:-1]
     d = {}
     res = {filename: d}
@@ -191,14 +188,41 @@ def print_static_analysis(d):
                 print(INDENT + ' | ' + 2 * INDENT +
                       ' - ' + k3 + ' : ' + str(v3))
 
+
+def count_warnings_errors(f):
+    """
+    Counts compiler warnings and errors. Stops when reading '+make install'.
+    """
+    warn = {}
+    error = {}
+    while True:
+        line = f.readline()
+        if not line:
+            return warn, error, line
+
+        if line.strip() == '+make install':
+            return warn, error, line
+
+        if ': warning:' in line:
+            file_name = line.split(':')[0]
+            if file_name not in warn:
+                warn[file_name] = 0
+            warn[file_name] += 1
+
+        if ': error:' in line:
+            file_name = line.split(':')[0]
+            if file_name not in error:
+                error[file_name] = 0
+            error[file_name] += 1
+
 if __name__ == '__main__':
     from sys import argv, exit
 
     script, filename = argv
 
-    bootstrapping_ok = False
     configure_ok = False
-    make_ok = False
+    warnings = {}
+    errors = {}
     make_install_ok = False
     make_installcheck_all = 0
     make_installcheck_failed = -1
@@ -214,9 +238,6 @@ if __name__ == '__main__':
             if not line:
                 break
 
-            if not bootstrapping_ok and line.startswith('+./bootstrap.sh'):
-                bootstrapping_ok, line = process_until(f, 'Done.')
-
             if not vera_init and line.startswith('+mkdir -p vera_home'):
                 vera_init, line = process_until(f, '+cat')
 
@@ -229,12 +250,13 @@ if __name__ == '__main__':
             if line.startswith('Static analysis on file '):
                 static_analysis.update(process_static_analysis(f, line))
 
-            if not configure_ok and line.startswith('+../configure --prefix='):
+            if not configure_ok and line.startswith(
+                                            '+cmake -DCMAKE_INSTALL_PREFIX='):
                 configure_ok, line = process_until(
                     f, 'You can now build and install NEST with')
 
-            if not make_ok and line.strip() == '+make':
-                make_ok, line = process_until(f, '+make install')
+            if line.strip() == '+make VERBOSE=1':
+                warnings, errors, line = count_warnings_errors(f)
 
             if not make_install_ok and line.startswith('+make install'):
                 make_install_ok, line = process_until(f, '+make installcheck')
@@ -245,14 +267,26 @@ if __name__ == '__main__':
             if line.strip() == 'WARNING: Not uploading results as this is a pull request':
                 uploading_results = False
 
+            if 'Skipping a deployment with the s3 provider because' in line:
+                uploading_results = False
+
+    # post process values
+    actual_warnings = {k.split("nest-simulator/")[1]: v
+                       for k, v in warnings.iteritems()
+                       if k.startswith('/home/travis/build')}
+    sum_of_warnings = sum([v for k, v in actual_warnings.iteritems()])
+
+    sum_of_errors = sum([v for k, v in errors.iteritems()])
+
     print("\n--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
-    print("Bootstrapping:       " + ("Ok" if bootstrapping_ok else "Error"))
     print("Vera init:           " + ("Ok" if vera_init else "Error"))
     print("Cppcheck init:       " + ("Ok" if cppcheck_init else "Error"))
     print("Changed files:       " + str(changed_files))
     print("Formatting:          " + ("Ok" if all([ i['clang-format']['Ok?'] for i in static_analysis.itervalues()]) else "Error"))
     print("Configure:           " + ("Ok" if configure_ok else "Error"))
-    print("Make:                " + ("Ok" if make_ok else "Error"))
+    print("Make:                " + ("Ok" if sum_of_errors == 0 else 
+                                     "Error(" + str(sum_of_errors) + ")") +
+          " ( " + str(sum_of_warnings) + " warnings ).")
     print("Make install:        " + ("Ok" if make_install_ok else "Error"))
     print("Make installcheck:   " + ("Ok (" if make_installcheck_failed == 0 else "Error (") +
           str(make_installcheck_failed) + " / " + str(make_installcheck_all) + ")")
@@ -260,13 +294,16 @@ if __name__ == '__main__':
 
     print("\nStatic analysis:" )
     print_static_analysis(static_analysis)
+
+    print("\n\nWarnings:")
+    for k, v in actual_warnings.iteritems():
+        print(" - {}: {}".format(k, v))
     print("--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
 
-    if not (bootstrapping_ok and 
-            vera_init and 
+    if not (vera_init and 
             cppcheck_init and 
             configure_ok and 
-            make_ok and 
+            sum_of_errors == 0 and 
             make_install_ok and
             make_installcheck_failed == 0 and
             all([ i['clang-format']['Ok?'] for i in static_analysis.itervalues()])):

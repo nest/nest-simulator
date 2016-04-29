@@ -55,10 +55,10 @@ and delay will be ignored for that connection.
 Simulations progress in cycles defined by the minimum delay. During each
 cycle, the spike detector records (stores in memory or writes to screen/file)
 the spikes generated during the previous cycle. As a consequence, any
-spikes generated during the cycle immediately preceding the end of the simulation
-time will not be recorded. Setting the /stop parameter to at the latest one
-min_delay period before the end of the simulation time ensures that all spikes
-desired to be recorded, are recorded.
+spikes generated during the cycle immediately preceding the end of the
+simulation time will not be recorded. Setting the /stop parameter to at the
+latest one min_delay period before the end of the simulation time ensures that
+all spikes desired to be recorded, are recorded.
 
 Spike are not necessarily written to file in chronological order.
 
@@ -113,7 +113,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -150,16 +151,17 @@ private:
    *
    * This data structure buffers all incoming spikes until they are
    * passed to the RecordingDevice for storage or output during update().
-   * update() always reads from spikes_[Network::get_network().read_toggle()] and
-   * deletes all events that have been read.
+   * update() always reads from spikes_[Network::get_network().read_toggle()]
+   * and deletes all events that have been read.
    *
    * Events arriving from locally sending nodes, i.e., devices without
-   * proxies, are stored in spikes_[Network::get_network().write_toggle()], to ensure
-   * order-independent results.
+   * proxies, are stored in spikes_[Network::get_network().write_toggle()], to
+   * ensure order-independent results.
    *
    * Events arriving from globally sending nodes are delivered from the
    * global event queue by Network::deliver_events() at the beginning
-   * of the time slice. They are therefore written to spikes_[Network::get_network().read_toggle()]
+   * of the time slice. They are therefore written to
+   * spikes_[Network::get_network().read_toggle()]
    * so that they can be recorded by the subsequent call to update().
    * This does not violate order-independence, since all spikes are delivered
    * from the global queue before any node is updated.

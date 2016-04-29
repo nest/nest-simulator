@@ -80,9 +80,9 @@ nest::ConnectionManager::~ConnectionManager()
   // Memory leak on purpose!
   // The ConnectionManager is deleted, when the network is deleted, and
   // this happens only, when main() is finished and we give the allocated memory
-  // back to the system anyway. Hence, why bother cleaning up our highly scattered
-  // connection infrastructure? They do not have any open files, which need to be
-  // closed or similar.
+  // back to the system anyway. Hence, why bother cleaning up our highly
+  // scattered connection infrastructure? They do not have any open files, which
+  // need to be closed or similar.
   // delete_connections_();
 }
 
@@ -207,10 +207,10 @@ nest::ConnectionManager::delete_connections_()
 #endif
     for ( size_t t = 0; t < connections_.size(); ++t )
     {
-      for ( tSConnector::nonempty_iterator iit =
-              connections_[ t ].nonempty_begin();
-            iit != connections_[ t ].nonempty_end();
-            ++iit )
+      for (
+        tSConnector::nonempty_iterator iit = connections_[ t ].nonempty_begin();
+        iit != connections_[ t ].nonempty_end();
+        ++iit )
       {
 #ifdef USE_PMA
         validate_pointer( *iit )->~ConnectorBase();

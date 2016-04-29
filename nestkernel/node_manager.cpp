@@ -227,7 +227,7 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
   if ( model->potential_global_receiver()
     and kernel().mpi_manager.get_num_rec_processes() > 0 )
   {
-    // In this branch we create nodes for all GIDs which are on a local thread
+    // In this branch we create nodes for global receivers
     const int n_per_process = n / kernel().mpi_manager.get_num_rec_processes();
     const int n_per_thread = n_per_process / n_threads + 1;
 
@@ -301,8 +301,7 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
 
     // min_gid is first valid gid i should create, hence ask for the first local
     // gid after min_gid-1
-    for ( size_t gid = next_local_gid_( min_gid - 1 );
-          gid < max_gid;
+    for ( size_t gid = next_local_gid_( min_gid - 1 ); gid < max_gid;
           gid = next_local_gid_( gid ) )
     {
       const thread vp = kernel().vp_manager.suggest_vp( gid );

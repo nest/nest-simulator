@@ -58,8 +58,8 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   , multapses_( true )
   , symmetric_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
-  , synapse_model_(
-      kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
+  , synapse_model_( kernel().model_manager.get_synapsedict()->lookup(
+      "static_synapse" ) )
   , weight_( 0 )
   , delay_( 0 )
   , param_dicts_()
@@ -647,37 +647,38 @@ nest::OneToOneBuilder::connect_()
       // local nodes is smaller than the targets_-range, we will iterate over
       // the local nodes instead and check, whether the node is in the
       // targets_-range.
-      if ( targets_->size() < get_local_nodes().size() || not targets_->is_range()
+      if ( targets_->size() < get_local_nodes().size()
+        || not targets_->is_range()
         || parameters_requiring_skipping_.size() > 0 )
       {
-      for ( GIDCollection::const_iterator tgid = targets_->begin(),
-                                          sgid = sources_->begin();
-            tgid != targets_->end();
-            ++tgid, ++sgid )
-      {
-        assert( sgid != sources_->end() );
-
-        if ( *sgid == *tgid and not autapses_ )
-          continue;
-
-        // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_gid( *tgid ) )
+        for ( GIDCollection::const_iterator tgid = targets_->begin(),
+                                            sgid = sources_->begin();
+              tgid != targets_->end();
+              ++tgid, ++sgid )
         {
-          skip_conn_parameter_( tid );
-          continue;
-        }
+          assert( sgid != sources_->end() );
 
-        Node* const target = kernel().node_manager.get_node( *tgid, tid );
-        const thread target_thread = target->get_thread();
+          if ( *sgid == *tgid and not autapses_ )
+            continue;
 
-        // check whether the target is on our thread
-        if ( tid != target_thread )
-        {
-          skip_conn_parameter_( tid );
-          continue;
-        }
+          // check whether the target is on this mpi machine
+          if ( not kernel().node_manager.is_local_gid( *tgid ) )
+          {
+            skip_conn_parameter_( tid );
+            continue;
+          }
 
-        single_connect_( *sgid, *target, target_thread, rng );
+          Node* const target = kernel().node_manager.get_node( *tgid, tid );
+          const thread target_thread = target->get_thread();
+
+          // check whether the target is on our thread
+          if ( tid != target_thread )
+          {
+            skip_conn_parameter_( tid );
+            continue;
+          }
+
+          single_connect_( *sgid, *target, target_thread, rng );
         }
       }
       else
@@ -914,7 +915,8 @@ nest::AllToAllBuilder::connect_()
       // local nodes is smaller than the targets_-range, we will iterate over
       // the local nodes instead and check, whether the node is in the
       // targets_-range.
-      if ( targets_->size() < get_local_nodes().size() || not targets_->is_range()
+      if ( targets_->size() < get_local_nodes().size()
+        || not targets_->is_range()
         || parameters_requiring_skipping_.size() > 0 )
       {
         for ( GIDCollection::const_iterator tgid = targets_->begin();
@@ -1227,14 +1229,15 @@ nest::FixedInDegreeBuilder::connect_()
       // local nodes is smaller than the targets_-range, we will iterate over
       // the local nodes instead and check, whether the node is in the
       // targets_-range.
-      if ( targets_->size() < get_local_nodes().size() || not targets_->is_range() )
+      if ( targets_->size() < get_local_nodes().size()
+        || not targets_->is_range() )
       {
-      for ( GIDCollection::const_iterator tgid = targets_->begin();
-            tgid != targets_->end();
-            ++tgid )
-      {
-        // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_gid( *tgid ) )
+        for ( GIDCollection::const_iterator tgid = targets_->begin();
+              tgid != targets_->end();
+              ++tgid )
+        {
+          // check whether the target is on this mpi machine
+          if ( not kernel().node_manager.is_local_gid( *tgid ) )
             continue;
 
           Node* target = kernel().node_manager.get_node( *tgid, tid );
@@ -1294,7 +1297,7 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
       s_id = rng->ulrand( n_rnd );
       sgid = ( *sources_ )[ s_id ];
     } while ( ( not autapses_ and sgid == tgid )
-            || ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
+      || ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
 
     if ( not multapses_ )
       ch_ids.insert( s_id );
@@ -1613,36 +1616,37 @@ nest::BernoulliBuilder::connect_()
       // local nodes is smaller than the targets_-range, we will iterate over
       // the local nodes instead and check, whether the node is in the
       // targets_-range.
-      if ( targets_->size() < get_local_nodes().size() || not targets_->is_range() )
+      if ( targets_->size() < get_local_nodes().size()
+        || not targets_->is_range() )
       {
-      for ( GIDCollection::const_iterator tgid = targets_->begin();
-            tgid != targets_->end();
-            ++tgid )
-      {
-        // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_gid( *tgid ) )
-          continue;
+        for ( GIDCollection::const_iterator tgid = targets_->begin();
+              tgid != targets_->end();
+              ++tgid )
+        {
+          // check whether the target is on this mpi machine
+          if ( not kernel().node_manager.is_local_gid( *tgid ) )
+            continue;
 
-        Node* const target = kernel().node_manager.get_node( *tgid, tid );
+          Node* const target = kernel().node_manager.get_node( *tgid, tid );
 
           inner_connect_( tid, rng, target, *tgid );
         }
       }
 
-    else
-    {
-      for ( SparseNodeArray::const_iterator it = get_local_nodes().begin();
-            it != get_local_nodes().end();
-            ++it )
+      else
+      {
+        for ( SparseNodeArray::const_iterator it = get_local_nodes().begin();
+              it != get_local_nodes().end();
+              ++it )
         {
-        Node* const target = ( *it ).node_;
-        const index tgid = ( *it ).gid_;
+          Node* const target = ( *it ).node_;
+          const index tgid = ( *it ).gid_;
 
           // Is the local node in the targets list?
           if ( targets_->find( tgid ) < 0 )
             continue;
 
-        inner_connect_( tid, rng, target, tgid );
+          inner_connect_( tid, rng, target, tgid );
         }
       }
     }
@@ -1652,9 +1656,9 @@ nest::BernoulliBuilder::connect_()
       // the end of the catch block.
       exceptions_raised_.at( tid ) =
         lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
   }
 }
-    }
 
 void
 nest::BernoulliBuilder::inner_connect_( const int tid,

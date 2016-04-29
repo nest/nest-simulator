@@ -49,6 +49,7 @@ class Model;
 class NodeManager : public ManagerInterface
 {
   friend const SparseNodeArray& ConnBuilder::get_local_nodes();
+
 public:
   NodeManager();
   ~NodeManager();

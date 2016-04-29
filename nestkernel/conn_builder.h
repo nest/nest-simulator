@@ -251,6 +251,8 @@ protected:
   void sp_connect_();
   void disconnect_();
   void sp_disconnect_();
+private:
+  void inner_connect_( const int, librandom::RngPtr&, Node*, index, bool );
 };
 
 

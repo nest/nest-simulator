@@ -250,7 +250,7 @@ mynest::pif_psc_alpha::update( Time const& slice_origin,
       // send spike, and set spike time in archive.
       set_spiketime( Time::step( slice_origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      kernel().connection_builder_manager.send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // add synaptic input currents for this step

@@ -152,7 +152,7 @@ mynest::MyModule::StepPatternConnect_Vi_i_Vi_i_lFunction::execute( SLIInterprete
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) ); // top
 
   // Obtain synapse model index
-  const Token synmodel = nest::kernel().model_manager.get_synapsedict().lookup( synmodel_name );
+  const Token synmodel = nest::kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
     throw nest::UnknownSynapseType( synmodel_name.toString() );
   const nest::index synmodel_id = static_cast< nest::index >( synmodel );
@@ -195,7 +195,7 @@ mynest::MyModule::init( SLIInterpreter* i )
   /* Register a neuron or device model.
      Give node type as template argument and the name as second argument.
   */
-  nest::kernel().model_manager.register_model< pif_psc_alpha >( "pif_psc_alpha" );
+  nest::kernel().model_manager.register_node_model< pif_psc_alpha >( "pif_psc_alpha" );
 
   /* Register a synapse type.
      Give synapse type as template argument and the name as second argument.
@@ -208,7 +208,7 @@ mynest::MyModule::init( SLIInterpreter* i )
      even further, but limits the number of available rports. Please see
      Kunkel et al, Front Neurofinfom 8:78 (2014), Sec 3.3.2, for details.
   */
-  nest::register_connection_model< DropOddSpikeConnection< nest::TargetIdentifierPtrRport > >(
+  nest::kernel().model_manager.register_connection_model< DropOddSpikeConnection< nest::TargetIdentifierPtrRport > >(
     "drop_odd_synapse" );
 
   /* Register a SLI function.

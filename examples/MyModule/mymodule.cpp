@@ -38,6 +38,7 @@
 #include "model.h"
 #include "nestmodule.h"
 #include "target_identifier.h"
+#include "model_manager_impl.h"
 
 // Includes from sli:
 #include "booldatum.h"

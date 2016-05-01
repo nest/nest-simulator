@@ -27,7 +27,6 @@
 #include "kernel_manager.h"
 #include "target_table.h"
 #include "vp_manager_impl.h"
-#include "spike_register_table.h"
 
 namespace nest
 {

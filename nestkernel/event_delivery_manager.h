@@ -39,7 +39,7 @@
 #include "nest_types.h"
 #include "node.h"
 #include "target_table.h"
-#include "spike_register_table.h"
+#include "spike_data.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -292,15 +292,13 @@ private:
   std::vector< delay > slice_moduli_;
 
   /**
-   * Register for gids of neurons that spiked. This is a 3-dim
+   * Register for gids of neurons that spiked. This is a 4-dim
    * structure.
-   * - First dim: threads
-   * - Second dim: slices of the min_delay interval
-   * - Third dim: lids
+   * - First dim: write threads
+   * - Second dim: read threads
+   * - Third dim: lag
+   * - Fourth dim: Target
    */
-  SpikeRegisterTable spike_register_table_;
-
-  // tid, assigned tid, lag
   std::vector< std::vector< std::vector< std::vector< Target > > >* > spike_register_5g_;
 
   /**

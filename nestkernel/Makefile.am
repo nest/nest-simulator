@@ -96,10 +96,9 @@ libnest_la_SOURCES=\
 		node_manager.h node_manager_impl.h node_manager.cpp\
 		source_table.h source_table_impl.h source_table.cpp\
 		target_table.h target_table_impl.h target_table.cpp\
-		spike_register_table.h spike_register_table_impl.h\
-		spike_register_table.cpp\
 		target_table_devices.h target_table_devices_impl.h\
-		target_table_devices.cpp
+		target_table_devices.cpp\
+		spike_data.h spike_data.cpp
 
 libnest_la_LIBADD= @LIBLTDL@ @LIBADD_DL@
 

@@ -30,9 +30,11 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
+#include "spike_data.h"
 
 namespace nest
 {
+
 struct SpikeData;
 
 /** A data structure containing all information required to uniquely

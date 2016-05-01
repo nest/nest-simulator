@@ -27,8 +27,6 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "spike_register_table.h"
-#include "spike_register_table_impl.h"
 #include "connection_builder_manager_impl.h"
 
 namespace nest
@@ -95,7 +93,6 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long_t lag )
   // Put the spike in a buffer for the remote machines
   for ( int_t i = 0; i < e.get_multiplicity(); ++i )
   {
-    spike_register_table_.add_spike( tid, e, lag );
 
     const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
 

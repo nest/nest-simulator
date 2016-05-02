@@ -285,10 +285,21 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
     clear_history();
   }
 
-  if ( not d->known( names::synaptic_elements ) )
+  
+  if ( d->known( names::update_synaptic_elements ) )
   {
-    return;
+    const DictionaryDatum synaptic_elements_a = getValue< DictionaryDatum >( d, names::update_synaptic_elements );
+    for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
+        it != synaptic_elements_map_.end();
+        ++it )
+    {
+          it->second.set(synaptic_elements_a);
+    }
   }
+    if ( not d->known( names::synaptic_elements ) )
+    {
+      return;
+    }
   // we replace the existing synaptic_elements_map_ by the new one
   DictionaryDatum synaptic_elements_d;
   std::pair< std::map< Name, SynapticElement >::iterator, bool > insert_result;

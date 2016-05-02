@@ -487,6 +487,7 @@ const Name update( "update" );
 const Name update_node( "update_node" );
 const Name use_gid_in_filename( "use_gid_in_filename" );
 const Name use_wfr( "use_wfr" );
+const Name update_synaptic_elements( "update_synaptic_elements" );
 
 const Name V_act_NMDA( "V_act_NMDA" );
 const Name V_epsp( "V_epsp" );

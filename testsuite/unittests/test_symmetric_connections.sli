@@ -87,8 +87,8 @@ pass_or_die
     /b Set /f Set
     f /source get b /target get eq
     b /source get f /target get eq and
+    f /weight get b /weight get eq and
     f /delay get b /delay get eq and
-    f /weight get b /delay get eq and
   } MapThread
   true exch { and } Fold
 } assert_or_die
@@ -114,5 +114,42 @@ fail_or_die
 }
 fail_or_die
 
+% Check that symmetric flag works properly for one_to_one connections
+% containing array-parameters
+
+ResetKernel
+
+/iaf_neuron 10 Create
+
+/set1 1 5 cvgidcollection def
+/set2 6 10 cvgidcollection def
+
+{
+  set1 set2 
+  << /rule /one_to_one 
+     /symmetric true >> 
+  << /model /stdp_synapse 
+     /weight <. 1.0 2.0 3.0 4.0 5.0 .>
+     /delay <. 1.5 2.5 3.5 4.5 5.5 .>
+     /alpha <. 1.2 2.2 3.2 4.2 5.2 .> >> 
+  Connect
+}
+pass_or_die
+
+<< /source [1 5] Range >> GetConnections /fwd Set
+<< /source [6 10] Range >> GetConnections /bck Set
+
+{
+  [ fwd bck ] 
+  {
+    /b Set /f Set
+    f /source get b /target get eq
+    b /source get f /target get eq and
+    f /weight get b /weight get eq and
+    f /delay get b /delay get eq and
+    f /alpha get b /alpha get eq and
+  } MapThread
+  true exch { and } Fold
+} assert_or_die
 
 endusing

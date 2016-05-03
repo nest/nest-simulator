@@ -197,16 +197,15 @@ private:
   inline double_t
   facilitate_( double_t w, double_t kplus, double_t ky )
   {
-    double_t new_w = w + kplus * ( Aplus_ + Aplus_triplet_ * ky );
-    return new_w < std::abs( Wmax_ ) ? new_w : std::abs( Wmax_ );
+    double_t new_w = copysign( std::abs(w) + kplus * ( Aplus_ + Aplus_triplet_ * ky ), Wmax_);
+    return std::abs(new_w) < std::abs( Wmax_ ) ? new_w : Wmax_;
   }
 
   inline double_t
   depress_( double_t w, double_t kminus, double_t Kplus_triplet_ )
   {
-    double_t new_w =
-      w - kminus * ( Aminus_ + Aminus_triplet_ * Kplus_triplet_ );
-    return new_w > 0.0 ? new_w : 0.0;
+    double_t new_w = copysign( std::abs(w) - kminus * ( Aminus_ + Aminus_triplet_ * Kplus_triplet_ ), Wmax_);
+    return std::abs(new_w) > 0.0 ? new_w : 0.0;
   }
 
   // data members of each connection
@@ -264,8 +263,7 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
       continue;
     }
 
-    weight_ = copysign(
-      facilitate_( std::abs( weight_ ), Kplus_ * std::exp( minus_dt / tau_plus_ ), ky ), Wmax_ );
+    weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ), ky );
   }
 
   // depression due to new pre-synaptic spike
@@ -274,10 +272,7 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
   // dendritic delay means we must look back in time by that amount
   // for determining the K value, because the K value must propagate
   // out to the synapse
-  weight_ = copysign(
-    depress_(
-      std::abs( weight_ ), target->get_K_value( t_spike - dendritic_delay ), Kplus_triplet_ ),
-    Wmax_ );
+  weight_ = depress_(weight_, target->get_K_value( t_spike - dendritic_delay ), Kplus_triplet_ );
 
   Kplus_triplet_ += 1.0;
   Kplus_ = Kplus_ * std::exp( ( t_lastspike - t_spike ) / tau_plus_ ) + 1.0;

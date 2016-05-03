@@ -70,7 +70,8 @@ public:
 
   /**
    * Indicate if existing data files should be overwritten.
-   * @return true if existing data files should be overwritten by devices. Default: false.
+   * @return true if existing data files should be overwritten by devices.
+   * Default: false.
    */
   bool overwrite_files() const;
 

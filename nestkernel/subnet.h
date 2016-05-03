@@ -214,10 +214,15 @@ protected:
 private:
   void get_dimensions_( std::vector< int >& ) const;
 
-  std::string label_;          //!< user-defined label for this node.
-  DictionaryDatum customdict_; //!< user-defined dictionary for this node.
-  // note that DictionaryDatum is a pointer and must be initialized in the constructor.
-  bool homogeneous_; //!< flag which indicates if the subnet contains different kinds of models.
+  std::string label_; //!< user-defined label for this node.
+                      /**
+                       * user-defined dictionary for this node.
+                       * note that DictionaryDatum is a pointer and must be initialized in the
+                       * constructor.
+                       */
+  DictionaryDatum customdict_;
+  bool homogeneous_; //!< flag which indicates if the subnet contains different
+                     //!< kinds of models.
   index last_mid_;   //!< model index of last child
 };
 

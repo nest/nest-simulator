@@ -94,10 +94,12 @@ librandom::UniformIntRandomDev::set_status( const DictionaryDatum& d )
   //  See pull request #61
 
   const long max = std::numeric_limits< long >::max();
-  if ( ( new_nmin < 0 && new_nmax >= max + new_nmin ) || ( new_nmax - new_nmin == max ) )
+  if ( ( new_nmin < 0 && new_nmax >= max + new_nmin )
+    || ( new_nmax - new_nmin == max ) )
   {
-    throw BadParameterValue( String::compose(
-      "Uniformint RDV: high - low < %1 required.", static_cast< double >( max ) ) );
+    throw BadParameterValue(
+      String::compose( "Uniformint RDV: high - low < %1 required.",
+        static_cast< double >( max ) ) );
   }
 
   nmin_ = new_nmin;

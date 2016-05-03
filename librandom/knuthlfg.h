@@ -99,9 +99,10 @@ private:
   static long mod_diff_( long, long ); //!< subtraction module MM
   static bool is_odd_( long );
 
-  std::vector< long > ran_x_;                     //!< the generator state
-  std::vector< long > ran_buffer_;                //!< generated numbers, 0..KK-1 are shipped
-  const std::vector< long >::const_iterator end_; //!< marker past last to deliver
+  std::vector< long > ran_x_;      //!< the generator state
+  std::vector< long > ran_buffer_; //!< generated numbers, 0..KK-1 are shipped
+  const std::vector< long >::const_iterator end_; //!< marker past last
+                                                  //!< to deliver
   std::vector< long >::const_iterator next_;      //!< next number to deliver
 
   /**
@@ -111,7 +112,7 @@ private:
    */
   void ran_array_( std::vector< long >& rbuff );
   void ran_start_( long seed ); //!< initializes buffer
-  long ran_draw_();             //!< deliver integer random number from ran_buffer_
+  long ran_draw_(); //!< deliver integer random number from ran_buffer_
 
   /**
    * Perform minimal self-test given by Knuth.

@@ -125,7 +125,8 @@ public:
   long_t
   value_int( thread, librandom::RngPtr& ) const
   {
-    throw KernelException( "ConnParameter calls value function with false return type." );
+    throw KernelException(
+      "ConnParameter calls value function with false return type." );
   }
 
   inline bool
@@ -154,7 +155,8 @@ public:
   double
   value_double( thread, librandom::RngPtr& ) const
   {
-    throw KernelException( "ConnParameter calls value function with false return type." );
+    throw KernelException(
+      "ConnParameter calls value function with false return type." );
   }
 
   long_t
@@ -192,7 +194,8 @@ private:
 class ArrayDoubleParameter : public ConnParameter
 {
 public:
-  ArrayDoubleParameter( const std::vector< double >& values, const size_t nthreads )
+  ArrayDoubleParameter( const std::vector< double >& values,
+    const size_t nthreads )
     : values_( &values )
     , next_( nthreads, values_->begin() )
   {
@@ -225,7 +228,8 @@ public:
   long_t
   value_int( thread, librandom::RngPtr& ) const
   {
-    throw KernelException( "ConnParameter calls value function with false return type." );
+    throw KernelException(
+      "ConnParameter calls value function with false return type." );
   }
 
   inline bool
@@ -257,7 +261,8 @@ private:
 class ArrayIntegerParameter : public ConnParameter
 {
 public:
-  ArrayIntegerParameter( const std::vector< long_t >& values, const size_t nthreads )
+  ArrayIntegerParameter( const std::vector< long_t >& values,
+    const size_t nthreads )
     : values_( &values )
     , next_( nthreads, values_->begin() )
   {
@@ -290,7 +295,8 @@ public:
   double
   value_double( thread, librandom::RngPtr& ) const
   {
-    throw KernelException( "ConnParameter calls value function with false return type." );
+    throw KernelException(
+      "ConnParameter calls value function with false return type." );
   }
 
   inline bool

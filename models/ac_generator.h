@@ -77,6 +77,13 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
+  using Node::sends_signal;
+
+  SignalType
+  sends_signal() const
+  {
+    return ALL;
+  }
 
 private:
   void init_state_( const Node& );

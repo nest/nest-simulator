@@ -146,10 +146,10 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_(
   spike_stamps_.push_back( t_spike );
   if ( precise_times_ )
   {
-	// t_spike is created with ms_stamp() that aligns the time to the next
-	// resolution step, so the offset has to be greater or equal to t by
-	// construction. Since subtraction of close-by floating point values is
-	// not stable, we have to compare with a delta.
+    // t_spike is created with ms_stamp() that aligns the time to the next
+    // resolution step, so the offset has to be greater or equal to t by
+    // construction. Since subtraction of close-by floating point values is
+    // not stable, we have to compare with a delta.
     double_t offset = t_spike.get_ms() - t;
 
     // The second part of the test handles subnormal values of offset.

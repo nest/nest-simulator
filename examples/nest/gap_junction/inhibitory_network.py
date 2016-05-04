@@ -112,13 +112,10 @@ need to make sure that the same neurons are connected in both ways.
 n_connection = n_neuron * gap_per_neuron / 2
 connections = numpy.transpose([random.sample(neurons,2) for _ in range(n_connection)])   
 
-# sources -> targets
+# Connect sources -> targets and targets -> sources with 
+# one call to nest.Connect using the "symmetric" flag
 nest.Connect(connections[0], connections[1],
-             'one_to_one',
-             {'model': 'gap_junction', 'weight': gap_weight})
-# targets -> sources
-nest.Connect(connections[1], connections[0],
-             'one_to_one',
+             {'rule': 'one_to_one', 'symmetric': True},
              {'model': 'gap_junction', 'weight': gap_weight})
 
 nest.Simulate(simtime)

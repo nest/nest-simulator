@@ -57,16 +57,13 @@ nest.Connect(vm, neuron, 'all_to_all')
 """
 Use 'all_to_all' to connect neurons.
 This is equivalent to:
-nest.Connect([neuron[0]],[neuron[1]], 
-             'one_to_one',
-             {'model': 'gap_junction', 'weight': 0.5})
-nest.Connect([neuron[1]],[neuron[0]],
-             'one_to_one',
+nest.Connect([neuron[0]],[neuron[1]],
+             {'rule': 'one_to_one', 'symmetric': True},
              {'model': 'gap_junction', 'weight': 0.5})
 """
 
 nest.Connect(neuron,neuron, 
-             {'rule':'all_to_all', 'autapses': False},
+             {'rule': 'all_to_all', 'autapses': False},
              {'model': 'gap_junction', 'weight': 0.5})
 
 nest.Simulate(351.)

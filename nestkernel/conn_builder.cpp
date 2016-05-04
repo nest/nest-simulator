@@ -212,9 +212,13 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   if ( symmetric_ )
   {
     if ( weight_ )
+    {
       weight_->reset();
+    }
     if ( delay_ )
+    {
       delay_->reset();
+    }
     for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
           it != synapse_params_.end();
           ++it )

@@ -44,44 +44,52 @@ Author: Jan Hahne, 2016-04-22
 
 M_ERROR setverbosity
 
-ResetKernel
-
-/iaf_neuron 10 Create
-
-/set1 1 5 cvgidcollection def
-/set2 6 10 cvgidcollection def
+/setup
+{
+  ResetKernel
+  
+  /iaf_psc_alpha 10 Create
+  
+  /set1 1 5 cvgidcollection def
+  /set2 6 10 cvgidcollection def
+} def
 
 % Check that symmetric flag cannot be used with other connection rules than one_to_one
 {
+  setup
   set1 set2 << /rule /all_to_all /symmetric true >> /static_synapse Connect
 }
 fail_or_die
 
 {
+  setup
   set1 set2 << /rule /fixed_indegree /indegree 3 /symmetric true >> /static_synapse Connect
 }
 fail_or_die
 
 {
+  setup
   set1 set2 << /rule /fixed_outdegree /outdegree 3 /symmetric true >> /static_synapse Connect
 }
 fail_or_die
 
 {
+  setup
   set1 set2 << /rule /fixed_total_number /N 3 /symmetric true >> /static_synapse Connect
 }
 fail_or_die
 
 % Check that symmetric flag works properly for basic one_to_one connections
 {
+  setup
   set1 set2 << /rule /one_to_one /symmetric true >> /static_synapse Connect
 }
 pass_or_die
 
-<< /source [1 5] Range >> GetConnections /fwd Set
-<< /source [6 10] Range >> GetConnections /bck Set
-
 {
+  << /source [1 5] Range >> GetConnections /fwd Set
+  << /source [6 10] Range >> GetConnections /bck Set
+  
   [ fwd bck ] 
   {
     /b Set /f Set
@@ -95,6 +103,7 @@ pass_or_die
 
 % Check that symmetric flag cannot be used with random parameters
 {
+  setup
   set1 set2 
   << /rule /one_to_one 
      /symmetric true >> 
@@ -105,6 +114,7 @@ pass_or_die
 fail_or_die
 
 {
+  setup
   set1 set2 
   << /rule /one_to_one 
      /symmetric true >> 
@@ -116,15 +126,8 @@ fail_or_die
 
 % Check that symmetric flag works properly for one_to_one connections
 % containing array-parameters
-
-ResetKernel
-
-/iaf_neuron 10 Create
-
-/set1 1 5 cvgidcollection def
-/set2 6 10 cvgidcollection def
-
 {
+  setup
   set1 set2 
   << /rule /one_to_one 
      /symmetric true >> 
@@ -136,10 +139,10 @@ ResetKernel
 }
 pass_or_die
 
-<< /source [1 5] Range >> GetConnections /fwd Set
-<< /source [6 10] Range >> GetConnections /bck Set
-
 {
+  << /source [1 5] Range >> GetConnections /fwd Set
+  << /source [6 10] Range >> GetConnections /bck Set
+  
   [ fwd bck ] 
   {
     /b Set /f Set

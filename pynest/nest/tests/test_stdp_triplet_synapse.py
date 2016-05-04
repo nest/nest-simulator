@@ -90,18 +90,19 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
     def facilitate(self, w, Kplus, Kminus_triplet):
         """Facilitate weight."""
-
-        return abs(w + Kplus * (
+        Wmax = self.status("Wmax")
+        return  np.sign(Wmax) * (abs(w) + Kplus * (
             self.syn_spec["Aplus"] +
-            self.syn_spec["Aplus_triplet"] * Kminus_triplet
-        ))
+            self.syn_spec["Aplus_triplet"] * Kminus_triplet)
+        )
 
     def depress(self, w, Kminus, Kplus_triplet):
         """Depress weight."""
-        return abs(w - Kminus * (
+        Wmax = self.status("Wmax")
+        return np.sign(Wmax) * (abs(w) - Kminus * (
             self.syn_spec["Aminus"] +
-            self.syn_spec["Aminus_triplet"] * Kplus_triplet
-        ))
+            self.syn_spec["Aminus_triplet"] * Kplus_triplet)
+        )
 
     def assertAlmostEqualDetailed(self, expected, given, message):
         """Improve assetAlmostEqual with detailed message."""
@@ -209,7 +210,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
         (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(
             2.0, Kplus, Kplus_triplet, Kminus, Kminus_triplet)
-        weight = self.depress(abs(weight), Kminus, Kplus_triplet)
+        weight = self.depress(weight, Kminus, Kplus_triplet)
         Kplus += 1.0
         Kplus_triplet += 1.0
 
@@ -217,7 +218,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
             2.0 + self.dendritic_delay, Kplus, Kplus_triplet,
             Kminus, Kminus_triplet
         )
-        weight = self.facilitate(abs(weight), Kplus, Kminus_triplet)
+        weight = self.facilitate(weight, Kplus, Kminus_triplet)
         Kminus += 1.0
         Kminus_triplet += 1.0
 
@@ -225,7 +226,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
             2.0 - self.dendritic_delay, Kplus, Kplus_triplet,
             Kminus, Kminus_triplet
         )
-        weight = self.depress(abs(weight), Kminus, Kplus_triplet)
+        weight = self.depress(weight, Kminus, Kplus_triplet)
 
         nest.Simulate(20.0)
         self.assertAlmostEqualDetailed(weight, self.status(
@@ -249,7 +250,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
         (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(
             2.0, Kplus, Kplus_triplet, Kminus, Kminus_triplet)
-        weight = self.depress(abs(weight), Kminus, Kplus_triplet)
+        weight = self.depress(weight, Kminus, Kplus_triplet)
         Kplus += 1.0
         Kplus_triplet += 1.0
 
@@ -258,7 +259,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
             Kminus, Kminus_triplet
         )
 
-        weight = self.facilitate(abs(weight), Kplus, Kminus_triplet)
+        weight = self.facilitate(weight, Kplus, Kminus_triplet)
         Kminus += 1.0
         Kminus_triplet += 1.0
 
@@ -266,7 +267,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
             2.0 - self.dendritic_delay, Kplus, Kplus_triplet,
             Kminus, Kminus_triplet
         )
-        weight = self.depress(abs(weight), Kminus, Kplus_triplet)
+        weight = self.depress(weight, Kminus, Kplus_triplet)
         Kplus += 1.0
         Kplus_triplet += 1.0
 

@@ -82,6 +82,7 @@
 
 #include <math.h>
 #include "connection.h"
+#include <iostream>
 
 namespace nest
 {
@@ -190,22 +191,21 @@ public:
   set_weight( double_t w )
   {
     weight_ = w;
-    Wmax_ = copysign( Wmax_, weight_ ); // ensure W_max has the same sign as weight_
   }
 
 private:
   inline double_t
   facilitate_( double_t w, double_t kplus, double_t ky )
   {
-    double_t new_w = copysign( std::abs(w) + kplus * ( Aplus_ + Aplus_triplet_ * ky ), Wmax_);
-    return std::abs(new_w) < std::abs( Wmax_ ) ? new_w : Wmax_;
+    double_t new_w = std::abs(w) + kplus * ( Aplus_ + Aplus_triplet_ * ky );
+    return copysign( std::abs(new_w) < std::abs( Wmax_ ) ? new_w : Wmax_, Wmax_);
   }
 
   inline double_t
   depress_( double_t w, double_t kminus, double_t Kplus_triplet_ )
   {
-    double_t new_w = copysign( std::abs(w) - kminus * ( Aminus_ + Aminus_triplet_ * Kplus_triplet_ ), Wmax_);
-    return std::abs(new_w) > 0.0 ? new_w : 0.0;
+    double_t new_w = std::abs(w) - kminus * ( Aminus_ + Aminus_triplet_ * Kplus_triplet_ );
+    return copysign( new_w > 0.0 ? new_w : 0.0, Wmax_);
   }
 
   // data members of each connection
@@ -353,7 +353,13 @@ STDPTripletConnection< targetidentifierT >::set_status(
   updateValue< double_t >( d, "Kplus", Kplus_ );
   updateValue< double_t >( d, "Kplus_triplet", Kplus_triplet_ );
   updateValue< double_t >( d, "Wmax", Wmax_ );
-  Wmax_ = copysign( Wmax_, weight_ ); // ensure W_max has the same sign as weight_
+
+  if (not(((weight_ > 0) - (weight_ < 0)) == ((Wmax_ > 0) - (Wmax_ < 0))))
+  {
+    throw BadProperty("Weight and Wmax must have same sign.");
+  }
+
+  std::cout << weight_ << " " << Wmax_ << std::endl;
 
   if ( not( Kplus_ >= 0 ) )
   {

@@ -174,7 +174,6 @@ public:
   set_weight( double_t w )
   {
     weight_ = w;
-    Wmax_ = copysign( Wmax_, weight_ ); // ensure W_max has the same sign as weight_
   }
 
 private:
@@ -329,7 +328,12 @@ STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   updateValue< double_t >( d, "mu_plus", mu_plus_ );
   updateValue< double_t >( d, "mu_minus", mu_minus_ );
   updateValue< double_t >( d, "Wmax", Wmax_ );
-  Wmax_ = copysign( Wmax_, weight_ ); // ensure W_max has the same sign as weight_
+
+  // check if weight_ and Wmax_ has the same sign
+  if (not(((weight_ > 0) - (weight_ < 0)) == ((Wmax_ > 0) - (Wmax_ < 0))))
+  {
+    throw BadProperty("Weight and Wmax must have same sign.");
+  }
 }
 
 } // of namespace nest

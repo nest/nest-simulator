@@ -94,8 +94,9 @@ ResetKernel
 
 %%% connect %%%
 
-/stdp_synapse << /alpha    alpha
-                 /lambda   lambda
+/stdp_synapse << /weight w_neuron
+     /alpha    alpha
+     /lambda   lambda
 		 /tau_plus tau_plus
 		 /mu_plus  mu_plus
 		 /mu_minus mu_minus

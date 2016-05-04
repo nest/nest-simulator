@@ -82,7 +82,6 @@
 
 #include <math.h>
 #include "connection.h"
-#include <iostream>
 
 namespace nest
 {
@@ -354,12 +353,11 @@ STDPTripletConnection< targetidentifierT >::set_status(
   updateValue< double_t >( d, "Kplus_triplet", Kplus_triplet_ );
   updateValue< double_t >( d, "Wmax", Wmax_ );
 
+  // check if weight_ and Wmax_ has the same sign
   if (not(((weight_ > 0) - (weight_ < 0)) == ((Wmax_ > 0) - (Wmax_ < 0))))
   {
     throw BadProperty("Weight and Wmax must have same sign.");
   }
-
-  std::cout << weight_ << " " << Wmax_ << std::endl;
 
   if ( not( Kplus_ >= 0 ) )
   {

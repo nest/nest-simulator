@@ -153,6 +153,11 @@ public:
 
   // returns id of synapse type
   virtual synindex get_syn_id() const = 0;
+
+  virtual void
+  apply_permutation_to_connections( std::vector< std::size_t >& perm ){ assert( false ); };
+  virtual void
+  apply_permutation_to_connections( std::vector< std::vector< std::size_t > >& perm ){ assert( false ); };
 };
 
 // homogeneous connector containing >=K_cutoff entries ***OUTDATED***TODO@5g
@@ -412,6 +417,12 @@ public:
   {
     return syn_id_;
   }
+
+  void
+  apply_permutation_to_connections( std::vector< std::size_t >& perm )
+  {
+    C_ = sort::apply_permutation( C_, perm );
+  }
 };
 
 // heterogeneous connector containing different types of synapses is a
@@ -635,6 +646,15 @@ public:
       }
       return invalid_synindex;
     }
+
+  void
+  apply_permutation_to_connections( std::vector< std::vector< std::size_t > >& perm )
+  {
+    for ( unsigned int i = 0; i < perm.size(); ++i )
+    {
+      at( i )->apply_permutation_to_connections( perm[ i ] );
+    }
+  }
 };
 
 } // of namespace nest

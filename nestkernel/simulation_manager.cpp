@@ -431,6 +431,7 @@ nest::SimulationManager::prepare_simulation_()
       Time::get_resolution().get_ms() * kernel().connection_builder_manager.get_min_delay();
     kernel().music_manager.enter_runtime( tick );
 
+    kernel().connection_builder_manager.sort_connections();
     kernel().event_delivery_manager.gather_target_data();
   }
 }

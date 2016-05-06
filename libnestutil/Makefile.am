@@ -30,7 +30,8 @@ libnestutil_la_SOURCES= \
 		string_utils.h \
 		logging.h \
 		logging_manager.h logging_manager.cpp \
-		logging_event.h logging_event.cpp
+		logging_event.h logging_event.cpp\
+		sort.h
 
 
 

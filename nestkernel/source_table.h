@@ -31,6 +31,9 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
+// Include from libnestutil:
+#include "sort.h"
+
 namespace nest
 {
 
@@ -63,6 +66,18 @@ Source::Source( index gid )
   : gid( gid )
   , processed( false )
 {
+}
+
+inline bool
+operator<( const Source& lhs, const Source& rhs )
+{
+  return ( lhs.gid < rhs.gid );
+}
+
+inline bool
+operator>( const Source& lhs, const Source& rhs )
+{
+  return operator<( rhs, lhs );
 }
 
 struct SourceTablePosition
@@ -143,6 +158,7 @@ public:
   void clear( const thread );
   //! returns true if the sources table has been cleared
   bool is_cleared() const;
+  std::vector< std::vector< size_t > >& sort_sources( const thread tid, std::vector< std::vector< std::size_t > >& perm );
   //! returns the next target data, according to the current_* positions
   bool get_next_target_data( const thread tid, index& target_rank, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end );
   //! rejects the last target data, and resets the current_* positions accordingly

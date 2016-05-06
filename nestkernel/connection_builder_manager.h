@@ -360,6 +360,8 @@ public:
 
   void reset_current_index_target_table( const thread tid );
 
+  void sort_connections();
+
 private:
   /**
    * Update delay extrema to current values.

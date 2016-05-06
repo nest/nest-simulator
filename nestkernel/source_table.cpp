@@ -103,3 +103,19 @@ nest::SourceTable::is_cleared() const
   }
   return all_cleared;
 }
+
+std::vector< std::vector< size_t > >&
+nest::SourceTable::sort_sources( const thread tid, std::vector< std::vector< std::size_t > >& perm )
+{
+  perm.resize( (*sources_[ tid ]).size() );
+  for ( unsigned int i = 0; i < (*sources_[ tid ]).size(); ++i )
+  {
+    perm[ i ].resize( (*sources_[ tid ])[ i ].size() );
+    for ( unsigned int j = 0; j < (*sources_[ tid ])[ i ].size(); ++j )
+    {
+      perm[ i ][ j ] = j;
+    }
+    sort::sort( (*sources_[ tid ])[ i ], perm[ i ], 0, perm[ i ].size() - 1 );
+  }
+  return perm;
+}

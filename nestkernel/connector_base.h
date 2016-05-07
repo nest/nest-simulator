@@ -29,6 +29,7 @@
 
 // Includes from libnestutil:
 #include "compose.hpp"
+#include "sort.h"
 
 // Includes from nestkernel:
 #include "connection_label.h"
@@ -155,9 +156,9 @@ public:
   virtual synindex get_syn_id() const = 0;
 
   virtual void
-  apply_permutation_to_connections( std::vector< std::size_t >& perm ){ assert( false ); };
+  sort_connections( std::vector< Source >& sources ){ assert( false ); };
   virtual void
-  apply_permutation_to_connections( std::vector< std::vector< std::size_t > >& perm ){ assert( false ); };
+  sort_connections( std::vector< std::vector< Source > >& sources ){ assert( false ); };
 };
 
 // homogeneous connector containing >=K_cutoff entries ***OUTDATED***TODO@5g
@@ -419,9 +420,9 @@ public:
   }
 
   void
-  apply_permutation_to_connections( std::vector< std::size_t >& perm )
+  sort_connections( std::vector< Source >& sources )
   {
-    C_ = sort::apply_permutation( C_, perm );
+    sort::sort( sources, C_, 0, C_.size() - 1 );
   }
 };
 
@@ -647,12 +648,11 @@ public:
       return invalid_synindex;
     }
 
-  void
-  apply_permutation_to_connections( std::vector< std::vector< std::size_t > >& perm )
+  void sort_connections( std::vector< std::vector< Source > >& sources )
   {
-    for ( unsigned int i = 0; i < perm.size(); ++i )
+    for ( unsigned int i = 0; i < size(); ++i )
     {
-      at( i )->apply_permutation_to_connections( perm[ i ] );
+      at( i )->sort_connections( sources[ i ] );
     }
   }
 };

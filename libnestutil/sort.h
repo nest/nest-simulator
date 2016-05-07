@@ -26,6 +26,9 @@
 #include <vector>
 #include <cstddef>
 
+/* Quicksort with 3-way partitioning, adapted from Sedgewick & Wayne
+ * (2011), Algorithms 4th edition, p296ff */
+
 namespace sort
 {
   template < typename T >
@@ -36,25 +39,11 @@ namespace sort
     vec[ j ] = tmp;
   }
 
-  template < typename T >
-  inline short compare_( T& lhs, T& rhs )
-  {
-    if ( lhs < rhs )
-    {
-      return -1;
-    }
-    else if ( lhs > rhs )
-    {
-      return 1;
-    }
-    else
-    {
-      return 0;
-    }
-  }
-
-  template < typename T >
-  void sort( std::vector< T >& vec, std::vector< size_t >& perm, int lo, int hi )
+  /* recursively sorts the two vectors vec_sort and vec_perm, by
+   * sorting the entries in vec_sort and applying the same exchanges
+   * to vec_perm */
+  template < typename T1, typename T2 >
+  void sort( std::vector< T1 >& vec_sort, std::vector< T2 >& vec_perm, int lo, int hi )
   {
     if ( hi <= lo )
     {
@@ -66,19 +55,18 @@ namespace sort
     int pos = lo;
     while ( i <= gt )
     {
-      short cmp = compare_( vec[ i ], vec[ pos ] );
-      if ( cmp < 0 )
+      if ( vec_sort[ i ] < vec_sort[ pos ] )
       {
         ++pos;
-        exchange_( vec, lt, i );
-        exchange_( perm, lt, i );
+        exchange_( vec_sort, lt, i );
+        exchange_( vec_perm, lt, i );
         ++lt;
         ++i;
       }
-      else if ( cmp > 0 )
+      else if ( vec_sort[ i ] > vec_sort[ pos ] )
       {
-        exchange_( vec, i, gt );
-        exchange_( perm, i, gt );
+        exchange_( vec_sort, i, gt );
+        exchange_( vec_perm, i, gt );
         --gt;
       }
       else
@@ -86,19 +74,8 @@ namespace sort
         i++;
       }
     }
-    sort( vec, perm, lo, lt - 1 );
-    sort( vec, perm, gt + 1, hi );
-  }
-
-  template< typename T >
-  std::vector< T > apply_permutation( const std::vector< T >& vec, const std::vector< std::size_t >& perm )
-  {
-    std::vector< T > sorted_vec( perm.size() );
-    for ( unsigned int i = 0; i < perm.size(); ++i )
-    {
-      sorted_vec[ i ] = vec[ perm[ i ] ];
-    }
-    return sorted_vec;
+    sort( vec_sort, vec_perm, lo, lt - 1 );
+    sort( vec_sort, vec_perm, gt + 1, hi );
   }
 
 } // namespace sort

@@ -1988,8 +1988,6 @@ nest::ConnectionBuilderManager::sort_connections()
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    std::vector< std::vector< std::size_t > > perm;
-    source_table_.sort_sources( tid, perm );
-    (*connections_5g_[ tid ]).apply_permutation_to_connections( perm );
+    (*connections_5g_[ tid ]).sort_connections( source_table_.get_thread_local_sources( tid ) );
   } // of omp parallel
 }

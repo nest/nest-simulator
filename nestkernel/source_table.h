@@ -31,9 +31,6 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-// Include from libnestutil:
-#include "sort.h"
-
 namespace nest
 {
 
@@ -158,7 +155,6 @@ public:
   void clear( const thread );
   //! returns true if the sources table has been cleared
   bool is_cleared() const;
-  std::vector< std::vector< size_t > >& sort_sources( const thread tid, std::vector< std::vector< std::size_t > >& perm );
   //! returns the next target data, according to the current_* positions
   bool get_next_target_data( const thread tid, index& target_rank, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end );
   //! rejects the last target data, and resets the current_* positions accordingly
@@ -171,6 +167,8 @@ public:
   void reset_entry_point( const thread tid );
   //! returns the global id of the source at tid|syn_id|lcid
   index get_gid( const thread tid, const synindex syn_id, const index lcid ) const;
+  //! returns a reference to all sources local on thread tid (used for sorting)
+  std::vector< std::vector< Source > >& get_thread_local_sources( const thread tid );
 };
 
 inline

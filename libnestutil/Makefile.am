@@ -19,12 +19,7 @@ libnestutil_la_SOURCES= \
 		propagator_stability.h propagator_stability.cpp \
 		instance.h \
 		lockptr.h \
-		sparseconfig.h \
 		template_util.h \
-		type_traits.h \
-		libc_allocator_with_realloc.h \
-		hashtable-common.h \
-		sparsetable.h \
 		compose.hpp \
 		manager_interface.h \
 		string_utils.h \

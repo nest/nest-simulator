@@ -749,11 +749,11 @@ NestModule::Connect_i_i_lFunction::execute( SLIInterpreter* i ) const
       }
     } // of omp parallel
     // check if any exceptions have been raised
-    for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
     {
-      if ( exceptions_raised.at( thr ).valid() )
+      if ( exceptions_raised.at( tid ).valid() )
       {
-        throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
+        throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
       }
     }
   }
@@ -803,11 +803,11 @@ NestModule::Connect_i_i_d_d_lFunction::execute( SLIInterpreter* i ) const
       }
     } // of omp parallel
     // check if any exceptions have been raised
-    for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
     {
-      if ( exceptions_raised.at( thr ).valid() )
+      if ( exceptions_raised.at( tid ).valid() )
       {
-        throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
+        throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
       }
     }
   }
@@ -856,11 +856,11 @@ NestModule::Connect_i_i_D_lFunction::execute( SLIInterpreter* i ) const
       }
     } // of omp parallel
     // check if any exceptions have been raised
-    for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
     {
-      if ( exceptions_raised.at( thr ).valid() )
+      if ( exceptions_raised.at( tid ).valid() )
       {
-        throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
+        throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
       }
     }
   }

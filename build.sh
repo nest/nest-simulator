@@ -111,6 +111,9 @@ else
 fi
 format_error_files=""
 
+# Ignore those PEP8 rules
+PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
+
 for f in $file_names; do
   if [ ! -f "$f" ]; then
     echo "$f : Is not a file or does not exist anymore."
@@ -148,8 +151,17 @@ for f in $file_names; do
       fi
 
       ;;
+    *.py )
+      echo "Check PEP8 on file $f:"
+
+      if ! pep8_result=`pep8 --first --ignore=$PEP8_IGNORES $f` ; then
+        echo "$pep8_result"
+
+        format_error_files="$format_error_files $f"
+      fi
+      ;;
     *)
-      echo "$f : not a C/CPP file. Do not do static analysis / formatting checking."
+      echo "$f : not a C/CPP/PY file. Do not do static analysis / formatting checking."
       continue
   esac
 done

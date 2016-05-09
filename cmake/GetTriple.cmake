@@ -66,6 +66,9 @@ function(get_target_triple out out_arch out_vendor out_os)
   # Get the vendor.
   if ( "${CMAKE_SYSTEM_NAME}" MATCHES "^Darwin.*")
     set( vendor "apple" )
+  elseif ( TRIPLET_VENDOR )
+    # In our own tool chain files we define vendors.
+    set( vendor "${TRIPLET_VENDOR}" )
   else ()
     set( vendor "pc" )
   endif ()

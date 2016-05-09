@@ -102,7 +102,9 @@ nest::volume_transmitter::calibrate()
 }
 
 void
-nest::volume_transmitter::update( const Time&, const long_t from, const long_t to )
+nest::volume_transmitter::update( const Time&,
+  const long_t from,
+  const long_t to )
 {
   // spikes that arrive in this time slice are stored in spikecounter_
   double_t t_spike;
@@ -112,8 +114,10 @@ nest::volume_transmitter::update( const Time&, const long_t from, const long_t t
     multiplicity = B_.neuromodulatory_spikes_.get_value( lag );
     if ( multiplicity > 0 )
     {
-      t_spike = Time( Time::step( kernel().simulation_manager.get_slice_origin().get_steps() + lag
-                        + 1 ) ).get_ms();
+      t_spike =
+        Time(
+          Time::step( kernel().simulation_manager.get_slice_origin().get_steps()
+            + lag + 1 ) ).get_ms();
       B_.spikecounter_.push_back( spikecounter( t_spike, multiplicity ) );
     }
   }
@@ -123,17 +127,20 @@ nest::volume_transmitter::update( const Time&, const long_t from, const long_t t
       % ( P_.deliver_interval_ * kernel().connection_manager.get_min_delay() )
     == 0 )
   {
-    double_t t_trig = Time( Time::step( kernel().simulation_manager.get_slice_origin().get_steps()
-                              + to ) ).get_ms();
+    double_t t_trig =
+      Time(
+        Time::step( kernel().simulation_manager.get_slice_origin().get_steps()
+          + to ) ).get_ms();
 
     if ( !B_.spikecounter_.empty() )
-      kernel().connection_manager.trigger_update_weight( get_gid(), B_.spikecounter_, t_trig );
+      kernel().connection_manager.trigger_update_weight(
+        get_gid(), B_.spikecounter_, t_trig );
 
     // clear spikecounter
     B_.spikecounter_.clear();
 
-    // as with trigger_update_weight dopamine trace has been updated to t_trig, insert pseudo last
-    // dopa spike at t_trig
+    // as with trigger_update_weight dopamine trace has been updated to t_trig,
+    // insert pseudo last dopa spike at t_trig
     B_.spikecounter_.push_back( spikecounter( t_trig, 0.0 ) );
   }
 }

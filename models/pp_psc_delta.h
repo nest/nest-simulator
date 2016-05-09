@@ -39,7 +39,8 @@ namespace nest
 {
 
 /* BeginDocumentation
-   Name: pp_psc_delta - Point process neuron with leaky integration of delta-shaped PSCs.
+   Name: pp_psc_delta - Point process neuron with leaky integration of
+                        delta-shaped PSCs.
 
    Description:
 
@@ -149,14 +150,19 @@ namespace nest
    q_sfa             double - Adaptive threshold jump in mV.
    tau_sfa           double - Adaptive threshold time constant in ms.
    dead_time         double - Duration of the dead time in ms.
-   dead_time_random  bool   - Should a random dead time be drawn after each spike?
+   dead_time_random  bool   - Should a random dead time be drawn after each
+                              spike?
    dead_time_shape   int    - Shape parameter of dead time gamma distribution.
-   t_ref_remaining   double   Remaining dead time at simulation start.
-   with_reset        bool     Should the membrane potential be reset after a spike?
+   t_ref_remaining   double - Remaining dead time at simulation start.
+   with_reset        bool   - Should the membrane potential be reset after a
+                              spike?
    I_e               double - Constant input current in pA.
-   c_1               double - Slope of linear part of transfer function in Hz/mV.
-   c_2               double - Prefactor of exponential part of transfer function in Hz.
-   c_3               double - Coefficient of exponential non-linearity of transfer function in 1/mV.
+   c_1               double - Slope of linear part of transfer function in
+                              Hz/mV.
+   c_2               double - Prefactor of exponential part of transfer function
+                              in Hz.
+   c_3               double - Coefficient of exponential non-linearity of
+                              transfer function in 1/mV.
 
 
    Sends: SpikeEvent
@@ -164,8 +170,8 @@ namespace nest
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
    Author:  July 2009, Deger, Helias; January 2011, Zaytsev; May 2014, Setareh
-   SeeAlso: pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp, iaf_neuron,
-   iaf_psc_delta_canon
+   SeeAlso: pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp,
+   iaf_neuron, iaf_psc_delta_canon
 */
 
 /**
@@ -180,7 +186,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -236,7 +243,8 @@ private:
     /** Do we reset the membrane potential after each spike? */
     bool with_reset_;
 
-    /** List of adaptive threshold time constant in ms (for multi adaptation version). */
+    /** List of adaptive threshold time constant in ms (for multi adaptation
+     * version). */
     std::vector< double_t > tau_sfa_;
 
     /** Adaptive threshold jump in mV (for multi adaptation version). */
@@ -274,14 +282,16 @@ private:
   struct State_
   {
     double_t y0_; //!< This is piecewise constant external current
-    double_t y3_; //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-    double_t q_;  //!< This is the change of the 'threshold' due to adaptation.
+    //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double_t y3_;
+    double_t q_; //!< This is the change of the 'threshold' due to adaptation.
 
-    std::vector< double_t > q_elems_; // Vector of adaptation parameters. by Hesam
+    //! Vector of adaptation parameters. by Hesam
+    std::vector< double_t > q_elems_;
 
     int_t r_; //!< Number of refractory steps remaining
 
-    bool initialized_; // it is true if the vectors are initialized
+    bool initialized_; //!< it is true if the vectors are initialized
 
     State_(); //!< Default initialization
 
@@ -323,9 +333,9 @@ private:
     double_t h_;       //!< simulation time step in ms
     double_t dt_rate_; //!< rate parameter of dead time distribution
 
-    librandom::RngPtr rng_;                   // random number generator of my own thread
-    librandom::PoissonRandomDev poisson_dev_; // random deviate generator
-    librandom::GammaRandomDev gamma_dev_;     // random deviate generator
+    librandom::RngPtr rng_; //!< random number generator of my own thread
+    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
+    librandom::GammaRandomDev gamma_dev_;     //!< random deviate generator
 
     int_t DeadTimeCounts_;
   };
@@ -366,7 +376,10 @@ private:
 };
 
 inline port
-pp_psc_delta::send_test_event( Node& target, rport receptor_type, synindex, bool )
+pp_psc_delta::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

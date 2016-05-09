@@ -28,8 +28,12 @@ install( DIRECTORY bibliography logos
     DESTINATION ${INSTALL_DOC_DIR}
     )
 
-install( FILES emacs/postscript-sli.el emacs/psvn.el ${CMAKE_CURRENT_BINARY_DIR}/emacs/sli.el
-    DESTINATION ${INSTALL_DATA_DIR}/extras/emacs
+install( FILES EditorSupport/emacs/postscript-sli.el EditorSupport/emacs/psvn.el ${CMAKE_CURRENT_BINARY_DIR}/EditorSupport/emacs/sli.el
+    DESTINATION ${INSTALL_DATA_DIR}/extras/EditorSupport/emacs
+    )
+
+install( FILES EditorSupport/vim/syntax/sli.vim
+    DESTINATION ${INSTALL_DATA_DIR}/extras/EditorSupport/vim/syntax
     )
 
 install( PROGRAMS

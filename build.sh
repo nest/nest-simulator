@@ -168,11 +168,11 @@ cmake \
   $CONFIGURE_GSL \
   ..
 
-make
+make VERBOSE=1
 make install
 make installcheck
 
-if [ "$format_error_files" != "" ]; then
+if [ "x$format_error_files" != "x" ]; then
   echo "There are files with a formatting error: $format_error_files ."
   exit 42
 fi

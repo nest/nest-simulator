@@ -26,8 +26,9 @@
 /**
  *
  */
-#define LOG( s, fctn, msg ) \
-  nest::kernel().logging_manager.publish_log( ( s ), ( fctn ), ( msg ), __FILE__, __LINE__ )
+#define LOG( s, fctn, msg )                   \
+  nest::kernel().logging_manager.publish_log( \
+    ( s ), ( fctn ), ( msg ), __FILE__, __LINE__ )
 
 /**
  *

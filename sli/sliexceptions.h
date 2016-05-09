@@ -182,7 +182,8 @@ public:
   {
   }
 
-  TypeMismatch( const std::string& expectedType, const std::string& providedType )
+  TypeMismatch( const std::string& expectedType,
+    const std::string& providedType )
     : InterpreterError( "TypeMismatch" )
     , expected_( expectedType )
     , provided_( providedType )
@@ -330,7 +331,8 @@ public:
   ~EntryTypeMismatch() throw()
   {
   }
-  EntryTypeMismatch( const std::string& expectedType, const std::string& providedType )
+  EntryTypeMismatch( const std::string& expectedType,
+    const std::string& providedType )
     : DictError( "EntryTypeMismatch" )
     , expected_( expectedType )
     , provided_( providedType )

@@ -25,7 +25,9 @@
 namespace nest
 {
 
-ConnectorModel::ConnectorModel( const std::string name, bool is_primary, bool has_delay )
+ConnectorModel::ConnectorModel( const std::string name,
+  bool is_primary,
+  bool has_delay )
   : name_( name )
   , default_delay_needs_check_( true )
   , is_primary_( is_primary )
@@ -33,7 +35,8 @@ ConnectorModel::ConnectorModel( const std::string name, bool is_primary, bool ha
 {
 }
 
-ConnectorModel::ConnectorModel( const ConnectorModel& cm, const std::string name )
+ConnectorModel::ConnectorModel( const ConnectorModel& cm,
+  const std::string name )
   : name_( name )
   , default_delay_needs_check_( true )
   , is_primary_( cm.is_primary_ )

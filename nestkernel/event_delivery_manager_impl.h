@@ -35,7 +35,8 @@ template < class EventT >
 inline void
 EventDeliveryManager::send( Node& source, EventT& e, const long_t lag )
 {
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
+  e.set_stamp(
+    kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
   thread t = source.get_thread();
   index gid = source.get_gid();
@@ -46,9 +47,12 @@ EventDeliveryManager::send( Node& source, EventT& e, const long_t lag )
 
 template <>
 inline void
-EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const long_t lag )
+EventDeliveryManager::send< SpikeEvent >( Node& source,
+  SpikeEvent& e,
+  const long_t lag )
 {
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
+  e.set_stamp(
+    kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
   thread t = source.get_thread();
 
@@ -65,9 +69,12 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
 
 template <>
 inline void
-EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long_t lag )
+EventDeliveryManager::send< DSSpikeEvent >( Node& source,
+  DSSpikeEvent& e,
+  const long_t lag )
 {
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
+  e.set_stamp(
+    kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
   thread t = source.get_thread();
 
@@ -78,7 +85,8 @@ EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const
 inline void
 EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
 {
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
+  e.set_stamp(
+    kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
   e.set_sender( source );
   e.set_sender_gid( source.get_gid() );
   thread t = source.get_thread();

@@ -273,10 +273,18 @@ def
    conn_spec  dict     - dictionary with connectivity specification (see Options)
 
    Options:
-   /conn_spec - dictionary with connectivity specification, must at
-                least contain /rule
-   /syn_spec  - dictionary with synapse specification, must at least
-                contain /model
+   /conn_spec - dictionary with connectivity specification, must at least contain /rule
+
+                The following options may be given for all connection rules; 
+                not all rules support all options and many rules add rule-specific options.
+
+                autapses      bool  - allow self-connections (default: true)
+                multapses     bool  - allow multiple connections between pairs
+                                      of neurons (default: true)
+                symmetric     bool  - also create connection in opposite direction to
+                                      obtain symmetric connections (default: false)
+
+   /syn_spec  - dictionary with synapse specification, must at least contain /model
 
    Description:
    Connects sources to targets according to the given connectivity

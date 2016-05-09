@@ -115,6 +115,10 @@ find_program( SED NAMES sed gsed )
 ##################   CPack, checks, ... in external modules   ##################
 ################################################################################
 
+include( GetTriple )
+get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
+get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS )
+
 include( CPackVariables )
 include( CheckIncludesSymbols )
 include( ProcessOptions )

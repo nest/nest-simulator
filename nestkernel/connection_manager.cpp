@@ -377,7 +377,8 @@ nest::ConnectionManager::connect( index sgid,
     }
 
     // make sure connections are only created on the thread of the device
-    if ( ( source->get_thread() != target_thread ) && ( source->has_proxies() ) )
+    if ( ( source->get_thread() != target_thread )
+      && ( source->has_proxies() ) )
     {
       return;
     }
@@ -388,12 +389,13 @@ nest::ConnectionManager::connect( index sgid,
     }
     else // create device->device connections on suggested thread of target
     {
-      target_thread =
-        kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
+      target_thread = kernel().vp_manager.vp_to_thread(
+        kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
         source = kernel().node_manager.get_node( sgid, target_thread );
-        target = kernel().node_manager.get_node( target->get_gid(), target_thread );
+        target =
+          kernel().node_manager.get_node( target->get_gid(), target_thread );
         connect_( *source, *target, sgid, target_thread, syn, d, w );
       }
     }
@@ -436,7 +438,8 @@ nest::ConnectionManager::connect( index sgid,
     }
 
     // make sure connections are only created on the thread of the device
-    if ( ( source->get_thread() != target_thread ) && ( source->has_proxies() ) )
+    if ( ( source->get_thread() != target_thread )
+      && ( source->has_proxies() ) )
     {
       return;
     }
@@ -447,12 +450,13 @@ nest::ConnectionManager::connect( index sgid,
     }
     else // create device->device connections on suggested thread of target
     {
-      target_thread =
-        kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
+      target_thread = kernel().vp_manager.vp_to_thread(
+        kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
         source = kernel().node_manager.get_node( sgid, target_thread );
-        target = kernel().node_manager.get_node( target->get_gid(), target_thread );
+        target =
+          kernel().node_manager.get_node( target->get_gid(), target_thread );
         connect_( *source, *target, sgid, target_thread, syn, d, w );
       }
     }
@@ -470,7 +474,10 @@ nest::ConnectionManager::connect( index sgid,
 
 // gid gid dict
 bool
-nest::ConnectionManager::connect( index sgid, index tgid, DictionaryDatum& params, index syn )
+nest::ConnectionManager::connect( index sgid,
+  index tgid,
+  DictionaryDatum& params,
+  index syn )
 {
   const thread tid = kernel().vp_manager.get_thread_id();
 
@@ -498,7 +505,8 @@ nest::ConnectionManager::connect( index sgid, index tgid, DictionaryDatum& param
     }
 
     // make sure connections are only created on the thread of the device
-    if ( ( source->get_thread() != target_thread ) && ( source->has_proxies() ) )
+    if ( ( source->get_thread() != target_thread )
+      && ( source->has_proxies() ) )
     {
       return false;
     }
@@ -509,12 +517,13 @@ nest::ConnectionManager::connect( index sgid, index tgid, DictionaryDatum& param
     }
     else // create device->device connections on suggested thread of target
     {
-      target_thread =
-        kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( target->get_gid() ) );
+      target_thread = kernel().vp_manager.vp_to_thread(
+        kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
         source = kernel().node_manager.get_node( sgid, target_thread );
-        target = kernel().node_manager.get_node( target->get_gid(), target_thread );
+        target =
+          kernel().node_manager.get_node( target->get_gid(), target_thread );
         connect_( *source, *target, sgid, target_thread, syn, params );
       }
     }
@@ -645,29 +654,41 @@ nest::ConnectionManager::disconnect( Node& target,
 // -----------------------------------------------------------------------------
 
 void
-nest::ConnectionManager::divergent_connect( index source_id, DictionaryDatum pars, index syn )
+nest::ConnectionManager::divergent_connect( index source_id,
+  DictionaryDatum pars,
+  index syn )
 {
-  // We extract the parameters from the dictionary explicitly since getValue() for DoubleVectorDatum
-  // copies the data into an array, from which the data must then be copied once more.
+  // We extract the parameters from the dictionary explicitly since getValue()
+  // for DoubleVectorDatum
+  // copies the data into an array, from which the data must then be copied once
+  // more.
   Dictionary::iterator di_s, di_t;
 
-  // To save time, we first create the parameter dictionary for connect(), then we copy
+  // To save time, we first create the parameter dictionary for connect(), then
+  // we copy
   // all keys from the original dictionary into the parameter dictionary.
-  // We can the later use iterators to change the values inside the parameter dictionary,
+  // We can the later use iterators to change the values inside the parameter
+  // dictionary,
   // rather than using the lookup operator.
-  // We also do the parameter checking here so that we can later use unsafe operations.
+  // We also do the parameter checking here so that we can later use unsafe
+  // operations.
   for ( di_s = ( *pars ).begin(); di_s != ( *pars ).end(); ++di_s )
   {
-    DoubleVectorDatum const* tmp = dynamic_cast< DoubleVectorDatum* >( di_s->second.datum() );
-    IntVectorDatum const* tmpint = dynamic_cast< IntVectorDatum* >( di_s->second.datum() );
+    DoubleVectorDatum const* tmp =
+      dynamic_cast< DoubleVectorDatum* >( di_s->second.datum() );
+    IntVectorDatum const* tmpint =
+      dynamic_cast< IntVectorDatum* >( di_s->second.datum() );
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( di_s->second.datum() );
     if ( tmp == 0 )
     {
 
       std::string msg = String::compose(
-        "Parameter '%1' must be a DoubleVectorArray or numpy.array. ", di_s->first.toString() );
+        "Parameter '%1' must be a DoubleVectorArray or numpy.array. ",
+        di_s->first.toString() );
       LOG( M_DEBUG, "DivergentConnect", msg );
-      LOG( M_DEBUG, "DivergentConnect", "Trying to convert, but this takes time." );
+      LOG( M_DEBUG,
+        "DivergentConnect",
+        "Trying to convert, but this takes time." );
 
       if ( tmpint )
       {
@@ -685,23 +706,26 @@ nest::ConnectionManager::divergent_connect( index source_id, DictionaryDatum par
       }
       else
       {
-        throw TypeMismatch( DoubleVectorDatum().gettypename().toString() + " or "
-            + ArrayDatum().gettypename().toString(),
+        throw TypeMismatch( DoubleVectorDatum().gettypename().toString()
+            + " or " + ArrayDatum().gettypename().toString(),
           di_s->second.datum()->gettypename().toString() );
       }
     }
   }
 
   const Token target_t = pars->lookup2( names::target );
-  DoubleVectorDatum const* ptarget_ids = static_cast< DoubleVectorDatum* >( target_t.datum() );
+  DoubleVectorDatum const* ptarget_ids =
+    static_cast< DoubleVectorDatum* >( target_t.datum() );
   const std::vector< double >& target_ids( **ptarget_ids );
 
   // Only to check consistent
   const Token weight_t = pars->lookup2( names::weight );
-  DoubleVectorDatum const* pweights = static_cast< DoubleVectorDatum* >( weight_t.datum() );
+  DoubleVectorDatum const* pweights =
+    static_cast< DoubleVectorDatum* >( weight_t.datum() );
 
   const Token delay_t = pars->lookup2( names::delay );
-  DoubleVectorDatum const* pdelays = static_cast< DoubleVectorDatum* >( delay_t.datum() );
+  DoubleVectorDatum const* pdelays =
+    static_cast< DoubleVectorDatum* >( delay_t.datum() );
 
 
   bool complete_wd_lists = ( ( *ptarget_ids )->size() == ( *pweights )->size()
@@ -766,11 +790,13 @@ nest::ConnectionManager::divergent_connect( index source_id, DictionaryDatum par
         continue;
       }
 
-      // here we fill a parameter dictionary with the values of the current loop index.
+      // here we fill a parameter dictionary with the values of the current loop
+      // index.
       par_i->clear();
       for ( di_s = ( *pars ).begin(); di_s != ( *pars ).end(); ++di_s )
       {
-        DoubleVectorDatum const* tmp = static_cast< DoubleVectorDatum* >( di_s->second.datum() );
+        DoubleVectorDatum const* tmp =
+          static_cast< DoubleVectorDatum* >( di_s->second.datum() );
         const std::vector< double >& tmpvec = **tmp;
         par_i->insert( di_s->first, Token( new DoubleDatum( tmpvec[ i ] ) ) );
       }
@@ -824,14 +850,20 @@ nest::ConnectionManager::divergent_connect( index source_id, DictionaryDatum par
  * - connect
  * - divergent_connect
  * - convergent_connect
- * The decision is based on the details of the dictionary entries source and target.
- * If source and target are both either a GID or a list of GIDs with equal size, then source and
+ * The decision is based on the details of the dictionary entries source and
+ * target.
+ * If source and target are both either a GID or a list of GIDs with equal size,
+ * then source and
  * target are connected one-to-one.
- * If source is a gid and target is a list of GIDs then divergent_connect is used.
- * If source is a list of GIDs and target is a GID, then convergent_connect is used.
- * At this stage, the task of connect is to separate the dictionary into one for each thread and
+ * If source is a gid and target is a list of GIDs then divergent_connect is
+ * used.
+ * If source is a list of GIDs and target is a GID, then convergent_connect is
+ * used.
+ * At this stage, the task of connect is to separate the dictionary into one for
+ * each thread and
  * then to forward the
- * connect call to the connectors who can then deal with the details of the connection.
+ * connect call to the connectors who can then deal with the details of the
+ * connection.
  */
 bool
 nest::ConnectionManager::connect( ArrayDatum& conns )

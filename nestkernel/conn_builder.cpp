@@ -463,12 +463,16 @@ nest::ConnBuilder::single_connect_( index sgid,
   {
     if ( default_weight_and_delay_ )
     {
-      kernel().connection_manager.connect( sgid, &target, target_thread, synapse_model_ );
+      kernel().connection_manager.connect(
+        sgid, &target, target_thread, synapse_model_ );
     }
     else if ( default_weight_ )
     {
-      kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_, delay_->value_double( target_thread, rng ) );
+      kernel().connection_manager.connect( sgid,
+        &target,
+        target_thread,
+        synapse_model_,
+        delay_->value_double( target_thread, rng ) );
     }
     else if ( default_delay_ )
     {
@@ -533,8 +537,11 @@ nest::ConnBuilder::single_connect_( index sgid,
 
     if ( default_weight_and_delay_ )
     {
-      kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_, param_dicts_[ target_thread ] );
+      kernel().connection_manager.connect( sgid,
+        &target,
+        target_thread,
+        synapse_model_,
+        param_dicts_[ target_thread ] );
     }
     else if ( default_weight_ )
     {
@@ -1079,7 +1086,8 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( const GIDCollection& sources,
   {
     throw BadProperty( "Source array must not be empty." );
   }
-  // verify that indegree is not larger than source population if multapses are disabled
+  // verify that indegree is not larger than source population if multapses are
+  // disabled
   if ( not multapses_ )
   {
     if ( indegree_ > n_sources )
@@ -1090,7 +1098,8 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( const GIDCollection& sources,
     {
       LOG( M_WARNING,
         "FixedInDegreeBuilder::connect",
-        "Multapses and autapses prohibited. When the sources and the targets have a non-empty "
+        "Multapses and autapses prohibited. When the sources and the targets "
+        "have a non-empty "
         "intersection, the connect algorithm will enter an infinite loop." );
       return;
     }
@@ -1192,7 +1201,8 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder(
     {
       LOG( M_WARNING,
         "FixedOutDegreeBuilder::connect",
-        "Multapses and autapses prohibited. When the sources and the targets have a non-empty "
+        "Multapses and autapses prohibited. When the sources and the targets "
+        "have a non-empty "
         "intersection, the connect algorithm will enter an infinite loop." );
       return;
     }

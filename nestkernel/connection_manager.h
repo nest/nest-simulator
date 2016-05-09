@@ -109,7 +109,8 @@ public:
    * The parameters delay and weight have the default value numerics::nan.
    * numerics::nan is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in a connect call,
-   * numerics::nan indicates this and weight/delay are set only, if they are valid.
+   * numerics::nan indicates this and weight/delay are set only, if they are
+   *valid.
    *
    * \param s GID of the sending Node.
    * \param target Pointer to target Node.
@@ -133,7 +134,8 @@ public:
    * The parameters delay and weight have the default value numerics::nan.
    * numerics::nan is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in an connect call,
-   * numerics::nan indicates this and weight/delay are set only, if they are valid.
+   * numerics::nan indicates this and weight/delay are set only, if they are
+   *valid.
    *
    * \param s GID of the sending Node.
    * \param target Pointer to target Node.
@@ -314,7 +316,8 @@ private:
    * The parameters delay and weight have the default value numerics::nan.
    * numerics::nan is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in an connect call,
-   * numerics::nan indicates this and weight/delay are set only, if they are valid.
+   * numerics::nan indicates this and weight/delay are set only, if they are
+   *valid.
    *
    * \param s A reference to the sending Node.
    * \param r A reference to the receiving Node.

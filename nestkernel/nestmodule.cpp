@@ -717,7 +717,8 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
     getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by disconnect
-  kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
+  kernel().sp_manager.disconnect(
+    sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
   i->EStack.pop();

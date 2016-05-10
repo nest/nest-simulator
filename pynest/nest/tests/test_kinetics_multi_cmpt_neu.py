@@ -19,8 +19,12 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# This script tests the iaf_cond_alpha_mc_kinetics_neuron in NEST.
-
+# This script tests the iaf_cond_alpha_mc_kinetics_neuron in NEST, 
+# while comparing it with an implementation of the neuron model in
+# python using ode solver. The inputs to both neuron models are spikes
+# to an excitatory synapse at the distal compartment to trigger a calcium
+# spike. The membrane potential at the distal compartment of the models
+# are then compared.
 
 import numpy as np
 import pylab as pl
@@ -284,7 +288,7 @@ class KineticsMultiCmptNeuTestCase(unittest.TestCase):
 		   'g_sp' : gsp,
 		   'g_pd' : gpd,
 		   'V_th' : 955.0,
-		   'act_flag' : 1.0,
+		   'Ca_active' : True,
 		   'jump_Th' : 0.,
 		   'tau_Th' : 1.,
 		   'distal'  : { 
@@ -295,8 +299,8 @@ class KineticsMultiCmptNeuTestCase(unittest.TestCase):
 				 'tau_syn_in': 2.0,
 				 'g_L': gld,
 				 'C_m': c_d,
-				 'amp_cur_AP': 0.,
-				 'tau_cur_AP': 1. },
+				 'amp_curr_AP': 0.,
+				 'tau_curr_AP': 1. },
 		   'proximal'  : { 
 	  		           't_L' : glp,
 				   'nt_L' : glp,
@@ -305,8 +309,8 @@ class KineticsMultiCmptNeuTestCase(unittest.TestCase):
 				   'tau_syn_in': 2.0,
 				   'g_L': glp, 
 				   'C_m': c_p,
-				   'amp_cur_AP': 0.,
-				   'tau_cur_AP': 1.  },
+				   'amp_curr_AP': 0.,
+				   'tau_curr_AP': 1.  },
 		   'soma'  : { 
 			       't_L' : 150.,
 	  		       'nt_L' : gls,
@@ -315,8 +319,8 @@ class KineticsMultiCmptNeuTestCase(unittest.TestCase):
 			       'tau_syn_in': 2.0,
 			       'g_L': gls, 
 			       'C_m': c_s,
-			       'amp_cur_AP': 0.,
-			       'tau_cur_AP': 1. },
+			       'amp_curr_AP': 0.,
+			       'tau_curr_AP': 1. },
 		 }) 
 
 

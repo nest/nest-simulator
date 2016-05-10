@@ -189,8 +189,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< noise_generator >( "noise_generator" );
   kernel().model_manager.register_node_model< step_current_generator >( "step_current_generator" );
   kernel().model_manager.register_node_model< mip_generator >( "mip_generator" );
-  kernel().model_manager.register_node_model< sinusoidal_poisson_generator >(
-    "sinusoidal_poisson_generator" );
+  kernel().model_manager.register_node_model< sinusoidal_poisson_generator >( "sinusoidal_poisson_generator" );
   kernel().model_manager.register_node_model< ppd_sup_generator >( "ppd_sup_generator" );
   kernel().model_manager.register_node_model< gamma_sup_generator >( "gamma_sup_generator" );
   kernel().model_manager.register_node_model< ginzburg_neuron >( "ginzburg_neuron" );
@@ -351,7 +350,6 @@ ModelsModule::init( SLIInterpreter* )
   kernel()
     .model_manager.register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
       "gap_junction", false );
-
 
   /* BeginDocumentation
      Name: stdp_synapse_hpc - Variant of stdp_synapse with low memory consumption.

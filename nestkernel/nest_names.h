@@ -404,14 +404,13 @@ extern const Name V_thCa;
 extern const Name Ca_amp;
 extern const Name jump_Th;
 extern const Name tau_Th;
-extern const Name t_refCa;
-extern const Name act_flag;
+extern const Name Ca_active;
 extern const Name threshold;
 extern const Name ca_spike_count;
 extern const Name t_refCa_remaining;
 extern const Name ca_current;
-extern const Name tau_cur_AP;
-extern const Name amp_cur_AP;
+extern const Name tau_curr_AP;
+extern const Name amp_curr_AP;
 extern const Name E_Ca;
 extern const Name G_Ca;
 extern const Name tau_h;
@@ -421,14 +420,11 @@ extern const Name slope_m;
 extern const Name slope_h;
 extern const Name m_inf;
 extern const Name h_inf;
-extern const Name reset_flag;
+extern const Name reset_on_spike;
 
 // Specific to iaf conductance mc fixedca
-extern const Name ca_spike;
-extern const Name amp;
-extern const Name curr_s;
-extern const Name curr_p;
-extern const Name curr_d;
+extern const Name Ca_amplitude;
+
 }
 }
 

@@ -27,15 +27,15 @@ This file demonstrates recording from an `iaf_cond_alpha` neuron using a
 multimeter and writing data to file.
 '''
 
-import nest
-import numpy
-import pylab
-
 '''
-First, the necessary modules for simulation and plotting were imported.
+First, the necessary modules for simulation and plotting are imported.
 
 The simulation kernel is put back to its initial state using `ResetKernel`.
 '''
+
+import nest
+import numpy
+import pylab
 
 nest.ResetKernel()
 

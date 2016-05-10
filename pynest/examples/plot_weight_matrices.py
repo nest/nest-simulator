@@ -31,17 +31,16 @@ All connection types between these populations are considered, i.e.,
 four weight matrices are created and plotted.
 '''
 
+'''
+First, we import all necessary modules to extract, handle and plot
+the connectivity matrices
+'''
+
 import numpy as np
 import pylab
 import nest
 import matplotlib.gridspec as gridspec
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-
-'''
-First, we imported all necessary modules to extract, handle and plot
-the connectivity matrices
-'''
-
 
 '''
 We now specify a function which takes as arguments lists of neuron gids

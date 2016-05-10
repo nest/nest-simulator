@@ -38,13 +38,17 @@ intervals become increasingly longer.
 See also: intrinsic_currents_spiking.py
 '''
 
+'''
+We imported all necessary modules for simulation, analysis and
+plotting.
+'''
+
 import nest
 import numpy as np
 import matplotlib.pyplot as plt
 
 '''
-We imported all necessary modules for simulation, analysis and
-plotting. Additionally, we set the verbosity using `set_verbosity` to
+Additionally, we set the verbosity using `set_verbosity` to
 suppress info messages. We also reset the kernel to be sure to start
 with a clean NEST.
 '''

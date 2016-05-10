@@ -35,13 +35,13 @@ http://dx.doi.org/10.3389/fninf.2014.00043
 For a related example, see csa_topology_example.py
 """
 
+"""
+First, we import all necessary modules for simulation and plotting.
+"""
+
 import nest
 from nest import voltage_trace
 from nest import visualization
-
-"""
-First, we imported all necessary modules for simulation and plotting.
-"""
 
 """
 Next, we check for the availability of the CSA Python module. If it

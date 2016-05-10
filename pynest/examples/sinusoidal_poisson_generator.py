@@ -34,13 +34,13 @@ created with different parameters. Part 2 illustrates the effect of
 the ``individual_spike_trains`` switch.
 '''
 
+'''
+We import nest and modules required for analysis and plotting.
+'''
+
 import nest
 import matplotlib.pyplot as plt
 import numpy as np
-
-'''
-We have imported nest and modules required for analysis and plotting.
-'''
 
 nest.ResetKernel()   # in case we run the script multiple times from iPython
 

@@ -37,15 +37,14 @@ parameter ``U`` causes a slow saturation of the synaptic efficacy
 (Eq. 2.2), enabling a facilitating behavior.
 '''
 
+'''
+First, we import all necessary modules for simulation and plotting.
+'''
+
 import nest
 import nest.voltage_trace
 import pylab
 from numpy import exp
-
-'''
-First, we imported all necessary modules for simulation and plotting.
-'''
-
 
 '''
 Second, the simulation parameters are assigned to variables. The

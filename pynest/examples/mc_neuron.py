@@ -34,13 +34,13 @@ Three stimulation paradigms are illustrated:
 Voltage and synaptic conductance traces are shown for all compartments.
 '''
 
-import nest
-import pylab
-
 '''
-First, we imported all necessary modules for simulation, analysis and
+First, we import all necessary modules for simulation, analysis and
 plotting.
 '''
+
+import nest
+import pylab
 
 nest.ResetKernel()
 

@@ -244,7 +244,7 @@ for f in $file_names; do
       else
         IGNORES=$PEP8_IGNORES
       fi
-      echo $IGNORES
+
       if ! pep8_result=`pep8 --first --ignore=$IGNORES $f` ; then
         echo "$pep8_result"
 

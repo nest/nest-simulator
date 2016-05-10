@@ -37,12 +37,12 @@ For a related example, see csa_example.py
 
 """
 
+"""
+First, we import all necessary modules.
+"""
+
 import nest
 import nest.topology as topo
-
-"""
-First, we imported all necessary modules.
-"""
 
 """
 Next, we check for the availability of the CSA Python module. If it

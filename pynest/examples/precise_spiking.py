@@ -48,14 +48,13 @@ References:
     4:113. doi:10.3389/fninf.2010.00113
 '''
 
-import nest
-import pylab
-
 '''
-First, we imported all necessary modules for simulation, analysis and
+First, we import all necessary modules for simulation, analysis and
 plotting.
 '''
 
+import nest
+import pylab
 
 '''
 Second, we assign the simulation parameters to variables.

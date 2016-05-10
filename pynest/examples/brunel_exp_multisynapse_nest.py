@@ -44,15 +44,15 @@ are established. The building as well as the simulation time of the
 network are recorded.
 '''
 
+'''
+Import all necessary modules for simulation, analysis and plotting.
+'''
+
 import nest
 import nest.raster_plot
 
 import time
 from numpy import exp
-
-'''
-Imported all necessary modules for simulation, analysis and plotting.
-'''
 
 nest.ResetKernel()
 

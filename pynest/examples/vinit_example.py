@@ -27,13 +27,13 @@ Plot several runs of the `iaf_cond_exp_sfa_rr` neuron without input for various
 initial values of the membrane potential.
 '''
 
+'''
+First, the necessary modules for simulation and plotting are imported.
+'''
+
 import nest
 import numpy
 import pylab
-
-'''
-First, the necessary modules for simulation and plotting have been imported.
-'''
 
 '''
 A loop runs over a range of initial membrane voltages.

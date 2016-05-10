@@ -38,13 +38,12 @@ simulation time at the beginning of each trial. Start and stop are interpreted
 relative to the origin.
 '''
 
+'''
+First the nest module is imported for simulation.
+'''
+
 import nest
 import nest.raster_plot
-
-'''
-First the nest module has been imported for simulation.
-'''
-
 
 '''
 Second, the parameters are set so the poisson generator

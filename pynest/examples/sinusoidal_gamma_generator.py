@@ -37,14 +37,14 @@ different settings for rate, phase and frequency are demonstrated.
 
 '''
 
+'''
+First, we import all necessary modules for simulation, analysis and
+plotting.
+'''
+
 import nest
 import matplotlib.pyplot as plt
 import numpy as np
-
-'''
-First, we imported all necessary modules for simulation, analysis and
-plotting.
-'''
 
 nest.ResetKernel()   # in case we run the script multiple times from iPython
 

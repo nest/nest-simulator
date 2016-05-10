@@ -34,16 +34,15 @@ The user can specify the neural parameters, the parameters of the
 pulse-packet and the number of trials.
 '''
 
+'''
+First, we import all necessary modules for simulation, analysis and
+plotting.
+'''
+
 import nest
 import numpy
 import pylab
 import array
-
-'''
-First, we imported all necessary modules for simulation, analysis and
-plotting.
-'''
-
 
 '''
 Second, parameters are assigned to variables.

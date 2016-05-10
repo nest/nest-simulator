@@ -32,13 +32,12 @@ is emitted, the neuron becomes absolute refractory, and finally
 starts to recover.
 '''
 
+'''
+First, we import all necessary modules for simulation and plotting
+'''
+
 import nest
 import pylab
-
-'''
-First, we have imported all necessary modules for simulation and plotting
-'''
-
 
 '''
 Second the Function build_network is defined to build the network and

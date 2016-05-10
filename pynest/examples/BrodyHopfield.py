@@ -39,13 +39,13 @@ depend on the input current given. The result is then plotted using
 pylab. All parameters are taken from the above paper.
 '''
 
-import nest
-import nest.raster_plot
-
 '''
-First, we have imported all necessary modules for simulation, analysis and
+First, we import all necessary modules for simulation, analysis and
 plotting.
 '''
+
+import nest
+import nest.raster_plot
 
 '''
 Second, the simulation parameters are assigned to variables.

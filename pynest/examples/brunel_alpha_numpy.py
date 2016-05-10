@@ -40,6 +40,11 @@ are established. The building as well as the simulation time of the
 network are recorded.
 '''
 
+'''
+Import all necessary modules for simulation, analysis and plotting.
+Scipy should be imported before nest.
+'''
+
 from scipy.optimize import fsolve
 
 import nest
@@ -49,11 +54,6 @@ import numpy
 from numpy import exp
 
 import time
-
-'''
-Imported all necessary modules for simulation, analysis and plotting.
-Scipy should be imported before nest.
-'''
 
 '''
 Definition of functions used in this example. First, define the

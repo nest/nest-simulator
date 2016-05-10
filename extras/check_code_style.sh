@@ -9,6 +9,13 @@ VERA=vera++
 PEP8=pep8
 PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
 
+# In example dirs, also ignore incorrectly placed imports
+PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
+
+# regular expression of directory patterns on which to apply
+# PEP8_IGNORES_EXAMPLES
+EXAMPLE_DIRS='examples|user_manual_scripts'
+
 CLANG_FORMAT=clang-format-3.6
 INCREMENTAL=false
 
@@ -232,7 +239,13 @@ for f in $file_names; do
     *.py )
       echo "Check PEP8 on file $f:"
 
-      if ! pep8_result=`pep8 --first --ignore=$PEP8_IGNORES $f` ; then
+      if [[ $f =~ $EXAMPLE_DIRS ]]; then
+        IGNORES=$PEP8_IGNORES_EXAMPLES
+      else
+        IGNORES=$PEP8_IGNORES
+      fi
+      echo $IGNORES
+      if ! pep8_result=`pep8 --first --ignore=$IGNORES $f` ; then
         echo "$pep8_result"
 
         format_error_files="$format_error_files $f"

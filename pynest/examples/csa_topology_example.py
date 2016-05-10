@@ -37,12 +37,12 @@ For a related example, see csa_example.py
 
 """
 
-"""
-First, we import all necessary modules.
-"""
-
 import nest
 import nest.topology as topo
+
+"""
+First, we imported all necessary modules.
+"""
 
 """
 Next, we check for the availability of the CSA Python module. If it
@@ -53,12 +53,11 @@ try:
     import csa
     haveCSA = True
 except ImportError:
-    print("This example requires CSA to be installed in order to run.\n"
-          + "Please make sure you compiled NEST using --with-libneurosim=PATH\n"
-          + "and CSA and libneurosim are available from PYTHONPATH.")
+    print("This example requires CSA to be installed in order to run.\n" +
+          "Please make sure you compiled NEST using --with-libneurosim=PATH\n" +
+          "and CSA and libneurosim are available from PYTHONPATH.")
     import sys
     sys.exit()
-
 
 """
 We define a factory that returns a CSA-style geometry function for
@@ -69,15 +68,15 @@ This function stores a copy of the neuron positions internally,
 entailing memory overhead.
 """
 
+
 def geometryFunction(topologyLayer):
 
     positions = topo.GetPosition(nest.GetLeaves(topologyLayer)[0])
 
     def geometry_function(idx):
         return positions[idx]
-    
-    return geometry_function
 
+    return geometry_function
 
 """
 We create two layers that have 20x20 neurons of type `iaf_neuron`.

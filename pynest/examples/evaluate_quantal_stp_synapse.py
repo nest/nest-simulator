@@ -23,7 +23,8 @@
 Example for the quantal_stp_synapse
 -----------------------------------
 
-The quantal_stp_synapse is a stochastic version of the Tsodys-Markram model for synaptic short term plasticity (STP).
+The quantal_stp_synapse is a stochastic version of the Tsodys-Markram model
+for synaptic short term plasticity (STP).
 This script compares the two variants of the Tsodyks/Markram synapse in NEST.
 
 This synapse model implements synaptic short-term depression and
@@ -41,7 +42,8 @@ be obtained if all n release sites are activated.
 
 Parameters:
      The following parameters can be set in the status dictionary:
-     U          double - Maximal fraction of available resources [0,1], default=
+     U          double - Maximal fraction of available resources [0,1],
+                         default=0.5
      u          double - available fraction of resources [0,1], default=0.5
      p          double - probability that a vesicle is available, default = 1.0
      n          long - total number of release sites, default = 1
@@ -67,66 +69,69 @@ import pylab
 nest.ResetKernel()
 
 '''
-On average, the quantal_stp_synapse converges to the tsodyks2_synapse, so we can compare the two by running multiple trials.
+On average, the quantal_stp_synapse converges to the tsodyks2_synapse,
+so we can compare the two by running multiple trials.
 
 First we define the number of trials as well as the number of release sites.
 '''
-n_syn=10.0 # number of synapses in a connection
-n_trials=100# number of measurement trials
+n_syn = 10.0  # number of synapses in a connection
+n_trials = 100  # number of measurement trials
 
 '''
 Next, we define parameter sets for facilitation
 '''
-fac_params={"U":0.02, "u":0.02, "tau_fac":500., "tau_rec":200.,"weight":1.}
+fac_params = {"U": 0.02, "u": 0.02, "tau_fac": 500.,
+              "tau_rec": 200., "weight": 1.}
 
 '''
 Then, we assign the parameter set to the synapse models
 '''
-t1_params=fac_params       # for tsodyks2_synapse
-t2_params=t1_params.copy() # for quantal_stp_synapse
+t1_params = fac_params  # for tsodyks2_synapse
+t2_params = t1_params.copy()  # for quantal_stp_synapse
 
-t1_params['x']=t1_params['U']
-t2_params['n']=n_syn
+t1_params['x'] = t1_params['U']
+t2_params['n'] = n_syn
 
 '''
 To make the responses comparable, we have to scale the weight by the number of
 synapses.
 '''
-t2_params['weight']=1./n_syn
+t2_params['weight'] = 1. / n_syn
 
 '''
 Next, we chage the defaults of the various models to our parameters.
 '''
 
-nest.SetDefaults("tsodyks2_synapse",t1_params)
-nest.SetDefaults("quantal_stp_synapse",t2_params)
-nest.SetDefaults("iaf_psc_exp",{"tau_syn_ex": 3.})
+nest.SetDefaults("tsodyks2_synapse", t1_params)
+nest.SetDefaults("quantal_stp_synapse", t2_params)
+nest.SetDefaults("iaf_psc_exp", {"tau_syn_ex": 3.})
 
 '''
 We create three different neurons.
 Neuron one is the sender, the two other neurons receive the synapses.
 '''
-neuron = nest.Create("iaf_psc_exp",3)
+neuron = nest.Create("iaf_psc_exp", 3)
 
 '''
 The connection from neuron 1 to neuron 2 is a deterministic synapse.
 '''
-nest.Connect([neuron[0]],[neuron[1]],syn_spec="tsodyks2_synapse")
+nest.Connect([neuron[0]], [neuron[1]], syn_spec="tsodyks2_synapse")
 
 '''
 The connection from neuron 1 to neuron 3 has a stochastic quantal_stp_synapse.
 '''
-nest.Connect([neuron[0]],[neuron[2]],syn_spec="quantal_stp_synapse")
+nest.Connect([neuron[0]], [neuron[2]], syn_spec="quantal_stp_synapse")
 
 '''
 The voltmeter will show us the synaptic responses in neurons 2 and 3.
 '''
-voltmeter = nest.Create("voltmeter",2)
+voltmeter = nest.Create("voltmeter", 2)
 nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 '''
 One dry run to bring all synapses into their rest state.
-The default initialization does not achieve this. In large network simulations this problem does not show, but in small simulations like this, we would see it.
+The default initialization does not achieve this. In large network simulations
+this problem does not show, but in small simulations like this, we would see it.
 '''
 nest.SetStatus([neuron[0]], "I_e", 376.0)
 nest.Simulate(500.0)
@@ -141,7 +146,8 @@ nest.Connect([voltmeter[1]], [neuron[2]])
 
 
 '''
-This loop runs over the n_trials trials and performs a standard protocol of a high-rate response, followed by a pause and then a recovery response.
+This loop runs over the n_trials trials and performs a standard protocol
+of a high-rate response, followed by a pause and then a recovery response.
 '''
 for t in range(n_trials):
     nest.SetStatus([neuron[0]], "I_e", 376.0)
@@ -158,22 +164,23 @@ nest.Simulate(.1)
 '''
 Extract the reference trace.
 '''
-vm= numpy.array(nest.GetStatus([voltmeter[1]],'events')[0]['V_m'])
-vm_reference=numpy.array(nest.GetStatus([voltmeter[0]],'events')[0]['V_m'])
+vm = numpy.array(nest.GetStatus([voltmeter[1]], 'events')[0]['V_m'])
+vm_reference = numpy.array(nest.GetStatus([voltmeter[0]], 'events')[0]['V_m'])
 
-vm.shape=(n_trials,1500)
-vm_reference.shape=(n_trials,1500)
+vm.shape = (n_trials, 1500)
+vm_reference.shape = (n_trials, 1500)
 
 '''
 Now compute the mean of all trials and plot agains trials and references.
 '''
-vm_mean=numpy.array([numpy.mean(vm[:,i]) for (i,j) in enumerate(vm[0,:])]) 
-vm_ref_mean=numpy.array([numpy.mean(vm_reference[:,i]) for (i,j) in enumerate(vm_reference[0,:])]) 
+vm_mean = numpy.array([numpy.mean(vm[:, i]) for (i, j) in enumerate(vm[0, :])])
+vm_ref_mean = numpy.array([numpy.mean(vm_reference[:, i])
+                          for (i, j) in enumerate(vm_reference[0, :])])
 pylab.plot(vm_mean)
 pylab.plot(vm_ref_mean)
 
 '''
-Finally, print the mean-suqared error between the trial-average and the reference trace. The value should be < 10^-9.
+Finally, print the mean-suqared error between the trial-average and
+the reference trace. The value should be < 10^-9.
 '''
-print (numpy.mean((vm_ref_mean-vm_mean)**2))
-#pylab.show()
+print (numpy.mean((vm_ref_mean - vm_mean) ** 2))

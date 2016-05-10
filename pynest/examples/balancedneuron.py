@@ -36,16 +36,18 @@ This example is also shown in the article Eppler et al. (2009)
 *Front. Neuroinform.* http://dx.doi.org/10.3389/neuro.11.012.2008
 '''
 
-'''
-First, we import all necessary modules for simulation, analysis and
-plotting. Additionally, we set the verbosity using `set_verbosity` to
-suppress info messages
-'''
-
 from scipy.optimize import bisect
 
 import nest
 import nest.voltage_trace
+
+'''
+First, we imported all necessary modules for simulation, analysis and
+plotting. Scipy should be imported before nest.
+
+Additionally, we set the verbosity using `set_verbosity` to
+suppress info messages.
+'''
 
 nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
@@ -119,6 +121,7 @@ two steps:
 First, the function ``output_rate`` is defined to measure the firing
 rate of the target neuron for a given rate of the inhibitory neurons.
 '''
+
 
 def output_rate(guess):
     print("Inhibitory rate estimate: %5.2f Hz" % guess)

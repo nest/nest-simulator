@@ -27,13 +27,13 @@ Plot several runs of the `iaf_cond_exp_sfa_rr` neuron without input for various
 initial values of the membrane potential.
 '''
 
-'''
-First, the necessary modules for simulation and plotting are imported.
-'''
-
 import nest
 import numpy
 import pylab
+
+'''
+First, the necessary modules for simulation and plotting have been imported.
+'''
 
 '''
 A loop runs over a range of initial membrane voltages.
@@ -76,8 +76,8 @@ for vinit in numpy.arange(-100, -50, 10, float):
 
     nest.Simulate(75.0)
 
-    t = nest.GetStatus(voltmeter,"events")[0]["times"]
-    v = nest.GetStatus(voltmeter,"events")[0]["V_m"]
+    t = nest.GetStatus(voltmeter, "events")[0]["times"]
+    v = nest.GetStatus(voltmeter, "events")[0]["V_m"]
 
     pylab.plot(t, v, label="initial V_m = %.2f mV" % vinit)
 

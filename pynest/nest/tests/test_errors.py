@@ -40,40 +40,46 @@ class ErrorTestCase(unittest.TestCase):
         message = "test"
         exception = nest.NESTError
 
-        self.assertRaisesRegex(exception, message, raise_custom_exception, exception, message)
+        self.assertRaisesRegex(
+            exception, message, raise_custom_exception, exception, message)
 
     def test_StackUnderFlow(self):
         """Stack underflow"""
 
         nest.ResetKernel()
 
-        self.assertRaisesRegex(nest.NESTError, "StackUnderflow", nest.sli_run, 'clear ;')
+        self.assertRaisesRegex(
+            nest.NESTError, "StackUnderflow", nest.sli_run, 'clear ;')
 
     def test_DivisionByZero(self):
         """Division by zero"""
 
         nest.ResetKernel()
 
-        self.assertRaisesRegex(nest.NESTError, "DivisionByZero", nest.sli_run, '1 0 div')
+        self.assertRaisesRegex(
+            nest.NESTError, "DivisionByZero", nest.sli_run, '1 0 div')
 
     def test_UnknownNode(self):
         """Unknown node"""
 
         nest.ResetKernel()
 
-        self.assertRaisesRegex(nest.NESTError, "UnknownNode", nest.Connect, (99, ), (99, ))
+        self.assertRaisesRegex(
+            nest.NESTError, "UnknownNode", nest.Connect, (99, ), (99, ))
 
     def test_UnknownModel(self):
         """Unknown model name"""
 
         nest.ResetKernel()
 
-        self.assertRaisesRegex(nest.NESTError, "UnknownModelName", nest.Create, -1)
+        self.assertRaisesRegex(
+            nest.NESTError, "UnknownModelName", nest.Create, -1)
 
 
 def suite():
     suite = unittest.makeSuite(ErrorTestCase, 'test')
     return suite
+
 
 def run():
     runner = unittest.TextTestRunner(verbosity=2)

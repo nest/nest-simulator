@@ -51,6 +51,10 @@ build/
 .ipynb_checkpoints/
 TAGS
 
+### tags and cscope
+tags
+cscope.out
+
 ### CMAKE stuff
 cmake_install.cmake
 CMakeFiles/

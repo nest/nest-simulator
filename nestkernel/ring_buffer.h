@@ -109,7 +109,7 @@ public:
    * @param  offs  Offset of element to read within slice.
    * @returns value
    */
-  double get_value_prelim( const long_t offs );
+  double get_value_wfr_update( const long_t offs );
 
   /**
    * Initialize the buffer with noughts.
@@ -173,7 +173,7 @@ RingBuffer::get_value( const long_t offs )
 }
 
 inline double
-RingBuffer::get_value_prelim( const long_t offs )
+RingBuffer::get_value_wfr_update( const long_t offs )
 {
   assert( 0 <= offs && ( size_t ) offs < buffer_.size() );
   assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );

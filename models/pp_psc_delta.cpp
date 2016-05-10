@@ -24,7 +24,8 @@
  *  Multimeter support by Yury V. Zaytsev.
  */
 
-/* pp_psc_delta is a stochastically spiking neuron where the potential jumps on each spike arrival.
+/* pp_psc_delta is a stochastically spiking neuron where the potential jumps on
+ * each spike arrival.
  */
 
 
@@ -180,8 +181,8 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
   if ( tau_sfa_.size() != q_sfa_.size() )
   {
     throw BadProperty( String::compose(
-      "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of tau_sfa: %1\nSize of q_sfa: "
-      "%2",
+      "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of "
+      "tau_sfa: %1\nSize of q_sfa: %2",
       tau_sfa_.size(),
       q_sfa_.size() ) );
   }
@@ -198,7 +199,8 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
 
   if ( dead_time_shape_ < 1 )
   {
-    throw BadProperty( "Shape of the dead time gamma distribution must not be smaller than 1." );
+    throw BadProperty(
+      "Shape of the dead time gamma distribution must not be smaller than 1." );
   }
 
   if ( tau_m_ <= 0 )
@@ -237,7 +239,8 @@ nest::pp_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y3_ );
   updateValue< double >( d, names::E_sfa, q_ );
-  initialized_ = false; // vectors of the state should be initialized with new parameter set.
+  // vectors of the state should be initialized with new parameter set.
+  initialized_ = false;
 }
 
 nest::pp_psc_delta::Buffers_::Buffers_( pp_psc_delta& n )
@@ -330,30 +333,31 @@ nest::pp_psc_delta::calibrate()
   // requires 2 steps:
   //
   //     1. A time object r is constructed defining the representation of
-  //        TauR in tics. This representation is then converted to computation time
-  //        steps again by a strategy defined by class nest::Time.
-  //     2. The refractory time in units of steps is read out by get_steps(), a member
-  //        function of class nest::Time.
+  //        TauR in tics. This representation is then converted to computation
+  //        time steps again by a strategy defined by class nest::Time.
+  //     2. The refractory time in units of steps is read out by get_steps(), a
+  //        member function of class nest::Time.
   //
   // The definition of the refractory period of the pp_psc_delta is consistent
   // with the one of iaf_neuron_ps.
   //
   // Choosing a TauR that is not an integer multiple of the computation time
   // step h will lead to accurate (up to the resolution h) and self-consistent
-  // results. However, a neuron model capable of operating with real valued spike
-  // time may exhibit a different effective refractory time.
+  // results. However, a neuron model capable of operating with real valued
+  // spike time may exhibit a different effective refractory time.
 
   if ( P_.dead_time_random_ )
   {
-    V_.dt_rate_ = P_.dead_time_shape_
-      / P_.dead_time_; // Choose dead time rate parameter such that mean equals dead_time
+    // Choose dead time rate parameter such that mean equals dead_time
+    V_.dt_rate_ = P_.dead_time_shape_ / P_.dead_time_;
     V_.gamma_dev_.set_order( P_.dead_time_shape_ );
   }
 
   else
   {
     V_.DeadTimeCounts_ = Time( Time::ms( P_.dead_time_ ) ).get_steps();
-    assert( V_.DeadTimeCounts_ >= 0 ); // Since t_ref_ >= 0, this can only fail in error
+    // Since t_ref_ >= 0, this can only fail in error
+    assert( V_.DeadTimeCounts_ >= 0 );
   }
 }
 
@@ -362,16 +366,20 @@ nest::pp_psc_delta::calibrate()
  */
 
 void
-nest::pp_psc_delta::update( Time const& origin, const long_t from, const long_t to )
+nest::pp_psc_delta::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
   {
 
-    S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + B_.spikes_.get_value( lag );
+    S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_
+      + B_.spikes_.get_value( lag );
 
     double_t q_temp_ = 0;
     for ( uint_t i = 0; i < S_.q_elems_.size(); i++ )
@@ -396,7 +404,8 @@ nest::pp_psc_delta::update( Time const& origin, const long_t from, const long_t 
 
       V_eff = S_.y3_ - S_.q_;
 
-      double_t rate = ( P_.c_1_ * V_eff + P_.c_2_ * std::exp( P_.c_3_ * V_eff ) );
+      double_t rate =
+        ( P_.c_1_ * V_eff + P_.c_2_ * std::exp( P_.c_3_ * V_eff ) );
 
       if ( rate > 0.0 )
       {
@@ -422,7 +431,8 @@ nest::pp_psc_delta::update( Time const& origin, const long_t from, const long_t 
           // Set dead time interval according to paramters
           if ( P_.dead_time_random_ )
           {
-            S_.r_ = Time( Time::ms( V_.gamma_dev_( V_.rng_ ) / V_.dt_rate_ ) ).get_steps();
+            S_.r_ = Time( Time::ms( V_.gamma_dev_( V_.rng_ ) / V_.dt_rate_ ) )
+                      .get_steps();
           }
           else
             S_.r_ = V_.DeadTimeCounts_;
@@ -476,7 +486,8 @@ nest::pp_psc_delta::handle( SpikeEvent& e )
   //     explicitly, since it depends on delay and offset within
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
-  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  B_.spikes_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -490,7 +501,8 @@ nest::pp_psc_delta::handle( CurrentEvent& e )
 
   // Add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void

@@ -76,7 +76,8 @@ nest::SparseNodeArray::add_local_node( Node& node )
   local_max_gid_ = gid;
   max_gid_ = gid;
 
-  if ( local_max_gid_ > local_min_gid_ )                        // implies nodes_.size() > 1
+  // implies nodes_.size() > 1
+  if ( local_max_gid_ > local_min_gid_ )
     gid_idx_scale_ = static_cast< double >( nodes_.size() - 2 ) // -1 for root
       / ( local_max_gid_ - local_min_gid_ );
   assert( gid_idx_scale_ > 0. );

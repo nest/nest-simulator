@@ -18,21 +18,27 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-__author__ = 'naveau'
 
 import nest
 import unittest
 
+__author__ = 'naveau'
+
 
 class TestDisconnectSingle(unittest.TestCase):
+
     def setUp(self):
         nest.ResetKernel()
         nest.set_verbosity('M_ERROR')
-        self.exclude_synapse_model = ['stdp_dopamine_synapse', 'stdp_dopamine_synapse_lbl', 
-                              'stdp_dopamine_synapse_hpc', 'stdp_dopamine_synapse_hpc_lbl', 
-                              'gap_junction', 'gap_junction_lbl']
+        self.exclude_synapse_model = [
+            'stdp_dopamine_synapse',
+            'stdp_dopamine_synapse_lbl',
+            'stdp_dopamine_synapse_hpc',
+            'stdp_dopamine_synapse_hpc_lbl',
+            'gap_junction',
+            'gap_junction_lbl'
+        ]
 
-   
     def test_synapse_deletion_one_to_one_no_sp(self):
         for syn_model in nest.Models('synapses'):
             if syn_model not in self.exclude_synapse_model:
@@ -45,13 +51,15 @@ class TestDisconnectSingle(unittest.TestCase):
                 srcId = 0
                 targId = 1
 
-                conns = nest.GetConnections([neurons[srcId]],[neurons[targId]],syn_model)
+                conns = nest.GetConnections(
+                    [neurons[srcId]], [neurons[targId]], syn_model)
                 assert len(conns) == 1
-                nest.DisconnectOneToOne(neurons[srcId], neurons[targId], syn_dict)
+                nest.DisconnectOneToOne(
+                    neurons[srcId], neurons[targId], syn_dict)
 
-                conns = nest.GetConnections([neurons[srcId]],[neurons[targId]],syn_model)
+                conns = nest.GetConnections(
+                    [neurons[srcId]], [neurons[targId]], syn_model)
                 assert len(conns) == 0
-
 
 
 def suite():

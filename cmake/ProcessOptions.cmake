@@ -156,7 +156,7 @@ endif ()
 
 # Static modules
 set( SLI_MODULES models precise topology )
-if ( with-libneurosim )
+if ( HAVE_LIBNEUROSIM )
   set( SLI_MODULES ${SLI_MODULES} conngen )
 endif ()
 

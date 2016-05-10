@@ -55,13 +55,16 @@ class SecondaryEvent;
 class DelayChecker;
 class GrowthCurve;
 
-typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons having targets
-typedef std::vector< tSConnector > tVSConnector;           // for all threads
+// for all neurons having targets
+typedef google::sparsetable< ConnectorBase* > tSConnector;
+typedef std::vector< tSConnector > tVSConnector; // for all threads
 
-typedef std::vector< DelayChecker > tVDelayChecker; // each thread checks delays themselve
+// each thread checks delays themselve
+typedef std::vector< DelayChecker > tVDelayChecker;
 
-typedef std::vector< size_t > tVCounter;     // each synapse type has a counter
-typedef std::vector< tVCounter > tVVCounter; // and each threads counts for all its synapses
+typedef std::vector< size_t > tVCounter; // each synapse type has a counter
+// and each threads counts for all its synapses
+typedef std::vector< tVCounter > tVVCounter;
 
 class ConnectionManager : public ManagerInterface
 {
@@ -161,7 +164,8 @@ public:
    */
   bool connect( index s, index r, DictionaryDatum& params, index syn );
 
-  void disconnect( Node& target, index sgid, thread target_thread, index syn_id );
+  void
+  disconnect( Node& target, index sgid, thread target_thread, index syn_id );
 
   void subnet_connect( Subnet&, Subnet&, int, index syn );
 
@@ -230,9 +234,14 @@ public:
     index syn );
 
   // aka conndatum GetStatus
-  DictionaryDatum get_synapse_status( index gid, synindex syn, port p, thread tid );
+  DictionaryDatum
+  get_synapse_status( index gid, synindex syn, port p, thread tid );
   // aka conndatum SetStatus
-  void set_synapse_status( index gid, synindex syn, port p, thread tid, const DictionaryDatum& d );
+  void set_synapse_status( index gid,
+    synindex syn,
+    port p,
+    thread tid,
+    const DictionaryDatum& d );
 
 
   /**
@@ -240,11 +249,14 @@ public:
    * The params dictionary can have the following entries:
    * 'source' a token array with GIDs of source neurons.
    * 'target' a token array with GIDs of target neuron.
-   * If either of these does not exist, all neuron are used for the respective entry.
-   * 'synapse_model' name of the synapse model, or all synapse models are searched.
-   * 'synapse_label' label (long_t) of the synapse, or all synapses are searched.
-   * The function then iterates all entries in source and collects the connection IDs to all neurons
-   * in target.
+   * If either of these does not exist, all neuron are used for the respective
+   * entry.
+   * 'synapse_model' name of the synapse model, or all synapse models are
+   * searched.
+   * 'synapse_label' label (long_t) of the synapse, or all synapses are
+   * searched.
+   * The function then iterates all entries in source and collects the
+   * connection IDs to all neurons in target.
    */
   ArrayDatum get_connections( DictionaryDatum dict ) const;
 
@@ -281,12 +293,14 @@ public:
     const double_t t_trig );
 
   /**
-   * Return minimal connection delay, which is precomputed by update_delay_extrema_().
+   * Return minimal connection delay, which is precomputed by
+   * update_delay_extrema_().
    */
   delay get_min_delay() const;
 
   /**
-   * Return maximal connection delay, which is precomputed by update_delay_extrema_().
+   * Return maximal connection delay, which is precomputed by
+   * update_delay_extrema_().
    */
   delay get_max_delay() const;
 
@@ -303,11 +317,11 @@ public:
 
   /**
    * Resize the structures for the Connector objects if necessary.
-   * This function should be called after number of threads, min_delay, max_delay,
-   * and time representation have been changed in the scheduler.
-   * The TimeConverter is used to convert times from the old to the new representation.
-   * It is also forwarding the calibration
-   * request to all ConnectorModel objects.
+   * This function should be called after number of threads, min_delay,
+   * max_delay, and time representation have been changed in the scheduler.
+   * The TimeConverter is used to convert times from the old to the new
+   * representation. It is also forwarding the calibration request to all
+   * ConnectorModel objects.
    */
   void calibrate( const TimeConverter& );
 
@@ -342,7 +356,8 @@ private:
    */
   void delete_connections_();
 
-  ConnectorBase* validate_source_entry_( thread tid, index s_gid, synindex syn_id );
+  ConnectorBase*
+  validate_source_entry_( thread tid, index s_gid, synindex syn_id );
 
   /**
    * Connect is used to establish a connection between a sender and
@@ -376,11 +391,12 @@ private:
     double_t w = NAN );
 
   /**
-   * A 3-dim structure to hold the Connector objects which in turn hold the connection
-   * information.
+   * A 3-dim structure to hold the Connector objects which in turn hold the
+   * connection information.
    * - First dim: A std::vector for each local thread
    * - Second dim: A std::vector for each node on each thread
-   * - Third dim: A std::vector for each synapse prototype, holding the Connector objects
+   * - Third dim: A std::vector for each synapse prototype, holding the
+   * Connector objects
    */
   tVSConnector connections_;
 
@@ -399,8 +415,8 @@ private:
    */
   DictionaryDatum connruledict_; //!< Dictionary for connection rules.
 
-  std::vector< GenericConnBuilderFactory* >
-    connbuilder_factories_; //! ConnBuilder factories, indexed by connruledict_ elements.
+  //! ConnBuilder factories, indexed by connruledict_ elements.
+  std::vector< GenericConnBuilderFactory* > connbuilder_factories_;
 
   delay min_delay_; //!< Value of the smallest delay in the network.
 

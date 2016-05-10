@@ -64,8 +64,8 @@ public:
    * into a time object in current representation.
    *
    * Be careful not to call Time::get_steps() from an old Time object, as
-   * it will use the new TICS_PER_STEP constant. Use TimeConverter::from_old_tics
-   * instead.
+   * it will use the new TICS_PER_STEP constant. Use
+   * TimeConverter::from_old_tics instead.
    */
   Time from_old_steps( long_t s_old ) const;
 

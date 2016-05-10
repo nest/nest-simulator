@@ -23,25 +23,23 @@ cat > $HOME/.nestrc <<EOF
     } Function def
 EOF
  
-    CONFIGURE_MPI="--with-mpi"
+    CONFIGURE_MPI="-Dwith-mpi=ON"
 
 else
-    CONFIGURE_MPI="--without-mpi"
+    CONFIGURE_MPI="-Dwith-mpi=OFF"
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
-    CONFIGURE_PYTHON="--with-python"
+    CONFIGURE_PYTHON="-Dwith-python=ON"
 else
-    CONFIGURE_PYTHON="--without-python"
+    CONFIGURE_PYTHON="-Dwith-python=OFF"
 fi
 
 if [ "$xGSL" = "1" ] ; then
-    CONFIGURE_GSL="--with-gsl"
+    CONFIGURE_GSL="-Dwith-gsl=ON"
 else
-    CONFIGURE_GSL="--without-gsl"
+    CONFIGURE_GSL="-Dwith-gsl=OFF"
 fi
-
-./bootstrap.sh
 
 NEST_VPATH=build
 NEST_RESULT=result
@@ -113,6 +111,9 @@ else
 fi
 format_error_files=""
 
+# Ignore those PEP8 rules
+PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
+
 for f in $file_names; do
   if [ ! -f "$f" ]; then
     echo "$f : Is not a file or does not exist anymore."
@@ -150,8 +151,17 @@ for f in $file_names; do
       fi
 
       ;;
+    *.py )
+      echo "Check PEP8 on file $f:"
+
+      if ! pep8_result=`pep8 --first --ignore=$PEP8_IGNORES $f` ; then
+        echo "$pep8_result"
+
+        format_error_files="$format_error_files $f"
+      fi
+      ;;
     *)
-      echo "$f : not a C/CPP file. Do not do static analysis / formatting checking."
+      echo "$f : not a C/CPP/PY file. Do not do static analysis / formatting checking."
       continue
   esac
 done
@@ -161,17 +171,20 @@ rm -rf ./cppcheck
 
 cd "$NEST_VPATH"
 
-../configure \
-    --prefix="$NEST_RESULT"  CC=mpicc CXX=mpic++ \
-    $CONFIGURE_MPI \
-    $CONFIGURE_PYTHON \
-    $CONFIGURE_GSL \
+cmake \
+  -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
+  -Dwith-optimize=ON \
+  -Dwith-warning=ON \
+  $CONFIGURE_MPI \
+  $CONFIGURE_PYTHON \
+  $CONFIGURE_GSL \
+  ..
 
-make
+make VERBOSE=1
 make install
 make installcheck
 
-if [ "$format_error_files" != "" ]; then
+if [ "x$format_error_files" != "x" ]; then
   echo "There are files with a formatting error: $format_error_files ."
   exit 42
 fi

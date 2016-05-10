@@ -43,6 +43,7 @@ network resulting in an average of 60 gap-junction connections per neuron.
 import pylab
 import nest
 import random
+import numpy
 
 n_neuron = 500
 gap_per_neuron = 60
@@ -64,23 +65,42 @@ random.seed(1)
 
 nest.ResetKernel()
 
-nest.SetKernelStatus({'resolution': 0.05, 'total_num_virtual_procs': threads})
-nest.SetKernelStatus({'max_num_prelim_iterations': 15, 'prelim_interpolation_order': 3, 'prelim_tol': 0.0001})
+nest.SetKernelStatus({'resolution': 0.05, 
+                      'total_num_virtual_procs': threads,
+                      'print_time': True,
+# Settings for waveform relaxation
+# 'use_wfr': False uses communication in every step 
+# instead of an iterative solution
+                      'use_wfr': True,
+                      'wfr_comm_interval': 1.0,
+                      'wfr_tol': 0.0001,
+                      'wfr_max_iterations': 15,
+                      'wfr_interpolation_order': 3})
 
-neuron = nest.Create('hh_psc_alpha_gap',n_neuron)
+neurons = nest.Create('hh_psc_alpha_gap',n_neuron)
 
 sd = nest.Create("spike_detector", params={'to_file': False, 'to_memory': True})
 pg = nest.Create("poisson_generator",params={'rate': 500.0})
 
-conn_dict = {'rule': 'fixed_indegree', 'indegree': inh_per_neuron, 'autapses': False, 'multapses': True}
-syn_dict = {'model': 'static_synapse', 'weight': j_inh, 'delay': delay}
-nest.Connect(neuron, neuron, conn_dict, syn_dict)
+conn_dict = {'rule': 'fixed_indegree', 
+             'indegree': inh_per_neuron, 
+             'autapses': False, 
+             'multapses': True}
 
-nest.Connect(pg,neuron,'all_to_all',syn_spec={'model': 'static_synapse', 'weight': j_exc, 'delay': delay})
-nest.Connect(neuron,sd,'all_to_all')
+syn_dict = {'model': 'static_synapse', 
+            'weight': j_inh, 
+            'delay': delay}
+
+nest.Connect(neurons, neurons, conn_dict, syn_dict)
+
+nest.Connect(pg,neurons,'all_to_all',syn_spec={'model': 'static_synapse', 
+                                              'weight': j_exc, 
+                                              'delay': delay})
+
+nest.Connect(neurons,sd)
 
 for i in range(n_neuron):
-  nest.SetStatus([neuron[i]], { 'V_m': (-40. - 40. * random.random()) })
+  nest.SetStatus([neurons[i]], { 'V_m': (-40. - 40. * random.random()) })
 
 """
 We must not use the 'fixed_indegree' oder 'fixed_outdegree' functionality of nest.Connect
@@ -90,23 +110,25 @@ need to make sure that the same neurons are connected in both ways.
 
 # create gap_junction connections
 n_connection = n_neuron * gap_per_neuron / 2
-connection = [random.sample(range(n_neuron),2) for i in range(n_connection)]    
-for i in range(n_connection):
-  nest.Connect([neuron[connection[i][0]]], [neuron[connection[i][1]]], syn_spec={'model': 'gap_junction', 'weight': gap_weight})
-  nest.Connect([neuron[connection[i][1]]], [neuron[connection[i][0]]], syn_spec={'model': 'gap_junction', 'weight': gap_weight})
+connections = numpy.transpose([random.sample(neurons,2) for _ in range(n_connection)])   
+
+# Connect sources -> targets and targets -> sources with 
+# one call to nest.Connect using the "symmetric" flag
+nest.Connect(connections[0], connections[1],
+             {'rule': 'one_to_one', 'symmetric': True},
+             {'model': 'gap_junction', 'weight': gap_weight})
 
 nest.Simulate(simtime)
 
-times_sd = nest.GetStatus(sd, 'events')[0]['times']
+times = nest.GetStatus(sd, 'events')[0]['times']
 spikes = nest.GetStatus(sd, 'events')[0]['senders']
 n_spikes = nest.GetStatus(sd, 'n_events')[0]
 
 hz_rate = (1000.0*n_spikes/simtime)/n_neuron
 
 pylab.figure(1)
-pylab.plot(times_sd,spikes,'o')
+pylab.plot(times,spikes,'o')
 pylab.title('Average spike rate (Hz): %.2f' % hz_rate)
 pylab.xlabel('time (ms)')
 pylab.ylabel('neuron no')
 pylab.show()
-

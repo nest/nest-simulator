@@ -29,7 +29,7 @@
 // Generated includes:
 #include "dirent.h"
 #include "errno.h"
-#include "sliconfig.h"
+#include "config.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -50,7 +50,8 @@ class SLIStartup : public SLIModule
   std::string locateSLIInstallationPath( void );
   bool checkpath( std::string const&, std::string& ) const;
   std::string getenv( const std::string& ) const;
-  std::string checkenvpath( std::string const&, SLIInterpreter*, std::string ) const;
+  std::string
+  checkenvpath( std::string const&, SLIInterpreter*, std::string ) const;
 
   Token targs;
   int verbosity_;

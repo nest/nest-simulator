@@ -51,7 +51,8 @@ std::string
 TypeMismatch::message()
 {
   if ( !provided_.empty() && !expected_.empty() )
-    return "Expected datatype: " + expected_ + "\nProvided datatype: " + provided_;
+    return "Expected datatype: " + expected_ + "\nProvided datatype: "
+      + provided_;
   else if ( !expected_.empty() )
     return "Expected datatype: " + expected_;
   else
@@ -118,7 +119,8 @@ UndefinedName::message()
 std::string
 EntryTypeMismatch::message()
 {
-  return "Expected datatype: " + expected_ + "\nProvided datatype: " + provided_;
+  return "Expected datatype: " + expected_ + "\nProvided datatype: "
+    + provided_;
 }
 
 std::string
@@ -153,7 +155,8 @@ std::string
 SystemSignal::message()
 {
   std::ostringstream out;
-  out << "The operation was interrupted by the system signal " << signal_ << ".";
+  out << "The operation was interrupted by the system signal " << signal_
+      << ".";
   return out.str();
 }
 

@@ -157,7 +157,8 @@ SliceRingBuffer::add_spike( const delay rel_delivery,
   const double ps_offset,
   const double weight )
 {
-  const delay idx = kernel().event_delivery_manager.get_slice_modulo( rel_delivery );
+  const delay idx =
+    kernel().event_delivery_manager.get_slice_modulo( rel_delivery );
   assert( ( size_t ) idx < queue_.size() );
   assert( ps_offset >= 0 );
 
@@ -223,7 +224,9 @@ SliceRingBuffer::get_next_spike( const long_t req_stamp,
   }
 }
 
-inline SliceRingBuffer::SpikeInfo::SpikeInfo( long_t stamp, double_t ps_offset, double_t weight )
+inline SliceRingBuffer::SpikeInfo::SpikeInfo( long_t stamp,
+  double_t ps_offset,
+  double_t weight )
   : stamp_( stamp )
   , ps_offset_( ps_offset )
   , weight_( weight )

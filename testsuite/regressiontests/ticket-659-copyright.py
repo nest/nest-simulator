@@ -21,6 +21,7 @@
 
 import os
 import sys
+import re
 
 EXIT_SUCCESS = 0
 EXIT_BAD_HEADER = 20
@@ -37,6 +38,15 @@ exclude_dirs = [
     '.git',
     'CMakeFiles',
 ]
+
+# match all file names against these regular expressions. if a match
+# is found the file is excluded from the check
+exclude_file_patterns = [
+    '\.#.*',
+    '#.*',
+    '.*~',
+]
+exclude_file_regex = [re.compile(pattern) for pattern in exclude_file_patterns]
 
 exclude_files = [
     'doc/copyright_header.cpp',
@@ -79,6 +89,8 @@ for dirpath, _, fnames in os.walk(source_dir):
         continue
 
     for fname in fnames:
+        if any([regex.search(fname) for regex in exclude_file_regex]):
+            continue
 
         extension = os.path.splitext(fname)[1][1:]
         if not (extension and extension in template_contents.keys()):

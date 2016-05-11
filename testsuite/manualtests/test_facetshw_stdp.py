@@ -132,8 +132,8 @@ for i in range(len(weightTraceMod36)):
 
 # check charge on anti-causal capacitor after each pair
 for i in range(len(weightTrace) - 1):
-    assert (np.allclose(weightTrace[i, 3], ((i % 36) + 1) * np.exp(
-        -(timeBetweenPairs - 2 * delay) / tau),
+    assert (np.allclose(weightTrace[i, 3], ((i % 36) + 1) *
+                        np.exp(-(timeBetweenPairs - 2 * delay) / tau),
                         atol=1e-6))  # TODO: global params
 
 print 'test successful'

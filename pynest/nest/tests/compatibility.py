@@ -34,7 +34,8 @@ def _skipIf(condition, _):
            issubclass(test_item, unittest.TestCase):
             test_item = type("DummyTestCase", (unittest.TestCase, ), {})
         elif inspect.isfunction(test_item):
-            def ret_none(obj): return None
+            def ret_none(obj):
+                return None
             test_item = ret_none
         else:
             raise ValueError("unable to decorate {0}".format(test_item))

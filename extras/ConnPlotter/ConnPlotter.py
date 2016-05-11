@@ -822,7 +822,7 @@ class ConnectionPattern(object):
                     (tn is None or tn == self.tnrn) and
                     (syn is None or syn == self.synmodel))
 
-            # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     class _Patch(object):
         """

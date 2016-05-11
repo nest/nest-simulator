@@ -58,32 +58,32 @@ target_include_directories( topology PRIVATE
     )
 
 install( TARGETS topology
-    LIBRARY DESTINATION ${INSTALL_LIB_DIR}
-    ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
-    RUNTIME DESTINATION ${INSTALL_BIN_DIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
 install( FILES sli/topology-interface.sli
-    DESTINATION ${INSTALL_DATA_DIR}/sli )
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/sli )
 
 install( FILES doc/Topology_UserManual.pdf
-    DESTINATION ${INSTALL_DOC_DIR}/topology )
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology )
 
 if ( HAVE_PYTHON )
   install( CODE "execute_process(
     COMMAND ${PYTHON} setup.py build --build-base=${CMAKE_CURRENT_BINARY_DIR}/build
                                install --prefix=${CMAKE_INSTALL_PREFIX}
-                                       --install-lib=${PYEXECDIR}
-                                       --install-scripts=${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}
-                                       --install-data=${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR}
+                                       --install-lib=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
+                                       --install-scripts=${CMAKE_INSTALL_FULL_BINDIR}
+                                       --install-data=${CMAKE_INSTALL_FULL_DATADIR}
     WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")"
       )
 
   file( GLOB topo_examples "examples/*" )
   install( FILES ${topo_examples}
-      DESTINATION ${INSTALL_DOC_DIR}/examples/topology
+      DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/topology
       )
   install( DIRECTORY testsuite
-      DESTINATION ${INSTALL_DOC_DIR}/topology
+      DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology
       )
 endif ()

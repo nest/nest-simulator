@@ -22,7 +22,7 @@
 '''
 NEST Topology Module Example
 
-Create two 30x30 layers of iaf_neurons with edge_wrap, 
+Create two 30x30 layers of iaf_neurons with edge_wrap,
 connect with circular mask, flat probability,
 visualize.
 
@@ -33,6 +33,7 @@ Hans Ekkehard Plesser, UMB
 import pylab
 import nest
 import nest.topology as topo
+
 pylab.ion()
 
 nest.ResetKernel()
@@ -59,8 +60,7 @@ pylab.clf()
 fig = pylab.gcf()
 
 # plot targets of two source neurons into same figure, with mask
-for src_pos in [[15,15], [0,0]]:
-    
+for src_pos in [[15, 15], [0, 0]]:
     # obtain node id for center
     src = topo.GetElement(a, src_pos)
     topo.PlotTargets(src, b, mask=conndict['mask'], fig=fig)

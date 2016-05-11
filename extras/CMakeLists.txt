@@ -20,20 +20,20 @@
 execute_process( COMMAND ${PROJECT_SOURCE_DIR}/extras/create_rcsinfo.sh ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR} )
 if ( EXISTS ${PROJECT_BINARY_DIR}/lib/sli/rcsinfo.sli )
   install( FILES ${PROJECT_BINARY_DIR}/lib/sli/rcsinfo.sli
-      DESTINATION ${INSTALL_DATA_DIR}/sli
+      DESTINATION ${CMAKE_INSTALL_DATADIR}/sli
       )
 endif ()
 
 install( DIRECTORY bibliography logos
-    DESTINATION ${INSTALL_DOC_DIR}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 
 install( FILES EditorSupport/emacs/postscript-sli.el EditorSupport/emacs/psvn.el ${CMAKE_CURRENT_BINARY_DIR}/EditorSupport/emacs/sli.el
-    DESTINATION ${INSTALL_DATA_DIR}/extras/EditorSupport/emacs
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras/EditorSupport/emacs
     )
 
 install( FILES EditorSupport/vim/syntax/sli.vim
-    DESTINATION ${INSTALL_DATA_DIR}/extras/EditorSupport/vim/syntax
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras/EditorSupport/vim/syntax
     )
 
 install( PROGRAMS
@@ -41,7 +41,7 @@ install( PROGRAMS
     nest_indirect
     nest_serial
     ${PROJECT_BINARY_DIR}/extras/nest_vars.sh
-    DESTINATION ${INSTALL_BIN_DIR}
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
 add_subdirectory( ConnPlotter )

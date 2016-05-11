@@ -110,6 +110,29 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
+# Get the Includes.
+execute_process(
+    COMMAND ${NEST_CONFIG} --includes
+    RESULT_VARIABLE RES_VAR
+    OUTPUT_VARIABLE NEST_INCLUDES
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if ( NEST_INCLUDES )
+  # make a cmake list
+  string( REPLACE " " ";" NEST_INCLUDES_LIST "${NEST_INCLUDES}" )
+  foreach ( inc_complete ${NEST_INCLUDES_LIST} )
+    # if it is actually a -Iincludedir
+    if ( "${inc_complete}" MATCHES "^-I.*" )
+      # get the directory
+      string( REGEX REPLACE "^-I(.*)" "\\1" inc "${inc_complete}" )
+      # and check whether it is a directory
+      if ( IS_DIRECTORY "${inc}" )
+        include_directories( "${inc}" )
+      endif ()
+    endif ()
+  endforeach ()
+endif ()
+
 # Get, if NEST is build as a (mostly) static application. If yes, also only build
 # static library.
 execute_process(
@@ -132,22 +155,39 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
+# Get the data install dir.
+execute_process(
+    COMMAND ${NEST_CONFIG} --datadir
+    RESULT_VARIABLE RES_VAR
+    OUTPUT_VARIABLE NEST_DATADIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get the documentation install dir.
+execute_process(
+    COMMAND ${NEST_CONFIG} --docdir
+    RESULT_VARIABLE RES_VAR
+    OUTPUT_VARIABLE NEST_DOCDIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get the library install dir.
+execute_process(
+    COMMAND ${NEST_CONFIG} --libdir
+    RESULT_VARIABLE RES_VAR
+    OUTPUT_VARIABLE NEST_LIBDIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
 # on OS X
 set( CMAKE_MACOSX_RPATH ON )
 
-# The module install directories in variables.
-set( INSTALL_BIN_DIR bin )
-set( INSTALL_INCLUDES_DIR include )
-set( INSTALL_LIB_DIR lib/nest )
-set( INSTALL_DATA_DIR share/nest )
-set( INSTALL_DOC_DIR share/doc/nest )
+# Install all stuff to NEST's install directories.
+set( CMAKE_INSTALL_LIBDIR ${NEST_LIBDIR}/nest CACHE STRING "object code libraries (lib/nest or lib64/nest or lib/<multiarch-tuple>/nest on Debian)" FORCE )
+set( CMAKE_INSTALL_DOCDIR ${NEST_DOCDIR} CACHE STRING "documentation root (DATAROOTDIR/doc/nest)" FORCE )
+set( CMAKE_INSTALL_DATADIR ${NEST_DATADIR} CACHE STRING "read-only architecture-independent data (DATAROOTDIR/nest)" FORCE )
 
-# Complete paths of the install directories. Only used for the help installation.
-set( PKGSRCDIR ${PROJECT_SOURCE_DIR} )
-set( PKGBUILDDIR ${PROJECT_BINARY_DIR} )
-set( PKGDATADIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR} )
-set( PKGDOCDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR} )
-
+include( GNUInstallDirs )
 
 # CPack stuff. Required for target `dist`.
 set( CPACK_GENERATOR TGZ )
@@ -200,7 +240,7 @@ if ( BUILD_SHARED_LIBS )
       PREFIX ""
       OUTPUT_NAME ${MODULE_NAME} )
   install( TARGETS ${MODULE_NAME}_module
-      DESTINATION ${INSTALL_LIB_DIR}
+      DESTINATION ${CMAKE_INSTALL_LIBDIR}
       )
 endif ()
 
@@ -218,19 +258,19 @@ set_target_properties( ${MODULE_NAME}_lib
     OUTPUT_NAME ${MODULE_NAME} )
 
 # Install library, header and sli init files.
-install( TARGETS ${MODULE_NAME}_lib DESTINATION ${INSTALL_LIB_DIR} )
-install( FILES ${MODULE_HEADER} DESTINATION ${INSTALL_INCLUDES_DIR} )
-install( DIRECTORY sli DESTINATION ${INSTALL_DATA_DIR} )
+install( TARGETS ${MODULE_NAME}_lib DESTINATION ${CMAKE_INSTALL_LIBDIR} )
+install( FILES ${MODULE_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} )
+install( DIRECTORY sli DESTINATION ${CMAKE_INSTALL_DATADIR} )
 
 # Install help.
-set( HELPDIRS "${PKGSRCDIR}:${PKGSRCDIR}/sli" )
+set( HELPDIRS "${PROJECT_SOURCE_DIR}:${PROJECT_SOURCE_DIR}/sli" )
 install( CODE
     "execute_process(COMMAND ${CMAKE_COMMAND}
-          -DDOC_DIR='${PKGDOCDIR}'
-          -DDATA_DIR='${PKGDATADIR}'
+          -DDOC_DIR='${CMAKE_INSTALL_FULL_DOCDIR}'
+          -DDATA_DIR='${CMAKE_INSTALL_FULL_DATADIR}'
           -DHELPDIRS='${HELPDIRS}'
           -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
-          -P ${PKGDOCDIR}/generate_help.cmake
+          -P ${CMAKE_INSTALL_FULL_DOCDIR}/generate_help.cmake
         WORKING_DIRECTORY \"${PROJECT_BINARY_DIR}\"
       )"
     )
@@ -244,6 +284,7 @@ message( "C++ compiler         : ${CMAKE_CXX_COMPILER}" )
 message( "Build static libs    : ${NEST_STATIC_LIB}" )
 message( "C++ compiler flags   : ${CMAKE_CXX_FLAGS}" )
 message( "NEST compiler flags  : ${NEST_CXXFLAGS}" )
+message( "NEST include dirs    : ${NEST_INCLUDES}" )
 message( "NEST libraries flags : ${NEST_LIBS}" )
 message( "" )
 message( "-------------------------------------------------------" )
@@ -252,5 +293,5 @@ message( "You can build and install ${MODULE_NAME} now, using" )
 message( "  make" )
 message( "  make install" )
 message( "" )
-message( "${MODULE_NAME} will be installed to: ${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}" )
+message( "${MODULE_NAME} will be installed to: ${CMAKE_INSTALL_FULL_LIBDIR}" )
 message( "" )

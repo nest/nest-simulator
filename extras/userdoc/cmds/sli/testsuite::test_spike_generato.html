@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: testsuite::test_spike_generato</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: testsuite::test_spike_generato</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>testsuite::test_spike_generator - sli script to test spike_generator device</pre>
+<b>Synopsis: </b>
+<pre>(test_spike_generator) run  <br/>   <br/>     
+</pre>
+<b>Author: </b>
+<pre>Diesmann  <br/>     
+</pre>
+<b>FirstVersion: </b>
+<pre>July 2004  <br/>     
+</pre>
+<b>Description: </b>
+<pre> <br/>     test_spike_generator checks the spike_generator device and its  <br/>     consistency with the nest simulation kernel.  <br/>   <br/>     /start specifies the earliest possible time stamp of a spike event to  <br/>     be emitted. /stop specifies the earliest time stamp of a potential  <br/>     spike event that is not emitted.  <br/>   <br/>     spike_generator is a device emitting spike events restricted to the  <br/>     time grid spanned by the computation step size h. Nevertheless, the  <br/>     time stamps of the spike events to be emitted are specified by device  <br/>     property /spike_times as double floats in milliseconds (ms). The  <br/>     spike_generator automatically assigns the appropriate time stamps on  <br/>     the simulation grid. For an arbitrary spike time s this is t=i*h with  <br/>     s in the interval (t-h, t], the corresponding event with time stamp t  <br/>     is emitted in the simulation step t-h -> t. See test_iaf_i0_refractory  <br/>     for consistency with spike generation in integrate-and-fire type neuron  <br/>     models and test_iaf_dc_aligned_stop.sli for consistency with the  <br/>     generation of grid based dc currents.  <br/>   <br/>     A a consequence of the restriction of spike events to the simulation  <br/>     grid, multiple spike events with identical time stamps may be emitted.  <br/>   <br/>     The results at different computation step sizes (resolutions) require  <br/>     some further discussion. Let us assume that /start and /stop are at  <br/>     joined grid positions of all resolutions tested. If all spike events  <br/>     are specified on joined grid positions, the simulation results are  <br/>     inependent of the computation step size.  However, if spikes occur on  <br/>     non-joined grid positions, spike times are shifted to the appropriate  <br/>     position on the current grid and simulation results will differ. Also,  <br/>     the spike count cannot be preserved because spikes at the end of the  <br/>     interval may be shifted to grid position /stop which is not a valid  <br/>     time stamp of a spike event anymore.  <br/>   <br/>     Note that the number of emitted spike events can always be made  <br/>     independent of the computation step size by setting /stop to an  <br/>     appropriately late joined grid position.  <br/>   <br/>     The usage of values for /start and /stop that are not simultaneous  <br/>     grid positions of the computation step sizes to be used should be  <br/>     avoided because the set of spike events delivered in the simulation  <br/>     will vary in complex ways.  <br/>   <br/>     The expected output is documented at the end of the script.  <br/>   <br/>     
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/spike_generato.html">spike_generato</a></li>
+    <li><a href="../cc/testsuite::test_iaf_i0_refractory.html">testsuite::test_iaf_i0_refractory</a></li>
+    <li><a href="../cc/testsuite::test_iaf_dc_aligned_stop.html">testsuite::test_iaf_dc_aligned_stop</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/testsuite/unittests/test_spike_generator.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: unit_conversion</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: unit_conversion</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>unit_conversion - Conversion factors for SI units.</pre>
+<b>Description: </b>
+<pre> <br/>     Some SLI functions and tools expect numerical arguments which carry SI units.  <br/>     function/tool        expected unit  <br/>     ----------------------------------  <br/>     Simulate             ms  <br/>     current generators   pA  <br/>     voltmeters           mV  <br/>     ac_generator         Hz  <br/>   <br/>     As SLI does not know any unit conversion scheme, numerical values  <br/>     need to be specified in the appropriate units. However, it improves  <br/>     readability, if a hint to the unit is specified in the program code,  <br/>     such as "333 pA", instead of just "333".  <br/>     Furthermore, it may be convenient to have other units converted to the  <br/>     ones expected by the routines. (For example, "ms" converts from milliseconds  <br/>     to timesteps, taking into account the current network resolution, see  <br/>     example below.)  <br/>   <br/>     The following conversion factors are known (developers: please add others in  <br/>     nest-init.sli as required):  <br/>     ms, pA, mV, Hz, spikes  <br/>   <br/>     
+</pre>
+<b>Author: </b>
+<pre>(unknown), documented by Ruediger Kupper, 18-jul-2003  <br/>   <br/>     
+</pre>
+<b>Availability: </b>
+<pre>This is just a description. unit_conversion is no SLI command.  <br/>     
+</pre>
+<b>Examples: </b>
+<pre> <br/>     The following call always simulates 1000 ms of network time,  <br/>   <br/>     1000 ms Simulate  <br/>   <br/>     
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/Hz.html">Hz</a></li>
+    <li><a href="../cc/ms.html">ms</a></li>
+    <li><a href="../cc/pA.html">pA</a></li>
+    <li><a href="../cc/mV.html">mV</a></li>
+    <li><a href="../cc/spikes.html">spikes</a></li>
+    <li><a href="../cc/cvd.html">cvd</a></li>
+    <li><a href="../cc/cvi.html">cvi</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/lib/sli/nest-init.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

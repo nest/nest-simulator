@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: arraylib::Reform</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: arraylib::Reform</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>arraylib::Reform - Reform the dimensions of a hyperrectengular array</pre>
+<b>FirstVersion: </b>
+<pre>10.3.2003  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Ruediger Kupper  <br/>   <br/>  
+</pre>
+<b>Availability: </b>
+<pre> <br/>  "Namespace"-dictionary "arraylib".  <br/>   <br/>  
+</pre>
+<b>Synopsis: </b>
+<pre>[array] [dim1 dim2 ... dimn] Reform -> [reformedArray]  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  This routine is inspired by IDL's REFORM() routine.  <br/>   <br/>  
+</pre>
+<b>Diagnostics: </b>
+<pre> <br/>  If the new dimensionality is not consistent with the numer of elements  <br/>  in the array, /RangeCheck is raised.  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  The new dimensionality must not change the number of elements in the  <br/>  whole array, that is, dim1*...*dimn must equal the number of the  <br/>  flattened source array.  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  "Reform" changes the dimensionality i.e. the nesting of an array. The  <br/>  result is a hyperrectangular array of the given dimensions. The order  <br/>  of elements is not changed.  <br/>   <br/>  "Reform" relates to "Dimensions" in the following way:  <br/>  Given a hyperrectangular array [a] of "Dimensions" [d], these  <br/>  statements are true:  <br/>   <br/>  a           d Reform -> a  <br/>  a Flatten   d Reform -> a  <br/>  a dv Reform d Reform -> a, for any valid dimension vector [dv]  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/Dimensions.html">Dimensions</a></li>
+    <li><a href="../cc/TensorRank.html">TensorRank</a></li>
+    <li><a href="../cc/Flatten.html">Flatten</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/lib/sli/arraylib.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

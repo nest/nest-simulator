@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: validate</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: validate</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>validate - Check if a function is consistent with all its examples</pre>
+<b>FirstVersion: </b>
+<pre>080503  <br/>  
+</pre>
+<b>Author: </b>
+<pre>Diesmann  <br/>  
+</pre>
+<b>Synopsis: </b>
+<pre>/literal -> boolean  <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>      /Part validate     --> true  <br/>  %   /validate validate --> true   % infinite recursion  <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  The function is experimental. It constitutes a first attempt to  <br/>  provide support for test driven programming in NEST. A variant of  <br/>  this function could easily print a detailed report of the test results  <br/>  and the intermediate generation of a test script is not necessary.  <br/>  In the present implementation validate updates the plain text help file  <br/>  (.hlp) but not the hypertext help (.html).  <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>  The function validate checks whether the examples in the documentation  <br/>  of the function specified by the literal argument work as documented.  <br/>  Every example in the example section is expected to result in a boolean  <br/>  value. validate only returns true if the result of all examples is true.  <br/>  In order to make the documentation of examples more readable validate  <br/>  supports a special (infix) syntax for the examples:  <br/>        a1 ... an --> b1 ...bm  <br/>  is translated to  <br/>        a b eq  <br/>  assuming that the sequence ai collapses to a and the sequence bj to b.  <br/>  Thus, --> has delayed execution time and is only processed after all  <br/>  expressions in the example section have been executed once. The -->  <br/>  expressions can be freely mixed with regular SLI code boolean  <br/>  expressions like  <br/>        a b eq      <br/>  The documentation of function Part contains several examples.  <br/>   <br/>  Before a function can be validated it needs to be registered with the  <br/>  help system. This is required because in SLI several functions can be  <br/>  defined in the same source file. Thus, only after processing the source  <br/>  file SLI is aware of the functions implemented by this file. The help  <br/>  system of SLI stores the path to the implementing file with the  <br/>  documentation of each function. Therefore, SLI can lookup the source  <br/>  code for each function without searching.  <br/>   <br/>  The typical workflow in test driven programming in SLI is as follows:  <br/>  1. create a new file myfunctions.sli  <br/>  2. write documentation including examples for one or  <br/>      more functions, e.g. /myfunc1  <br/>  3. call (myfunctions.sli) makehelp  <br/>  4. implement /myfunc1  <br/>  5. call /myfunc1 validate  <br/>  6. continue with 4 (not 3) until validate is successful  <br/>   <br/>  The algorithm of function validate is as follows:  <br/>  1. find the help file (.hlp) for the specified function. If not  <br/>      found ask for running makehelp for first time registration of  <br/>      the function  <br/>  2. obtain the source file implementing the function  <br/>      from the help file  <br/>  3. update the help file of the function  <br/>  4. construct target path for test files  <br/>  5. write some header  <br/>  6. copy the invariants  <br/>  7. write some footer  <br/>  8. run the test file  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/EvaluateLiteralInfixes.html">EvaluateLiteralInfixes</a></li>
+    <li><a href="../cc/-->.html">--></a></li>
+    <li><a href="../cc/Part.html">Part</a></li>
+    <li><a href="../cc/makehelp.html">makehelp</a></li>
+    <li><a href="../cc/helpdesk.html">helpdesk</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/lib/sli/helpinit.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

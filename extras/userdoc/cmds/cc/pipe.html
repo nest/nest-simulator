@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: pipe</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: pipe</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>pipe - Open up a pipe</pre>
+<b>FirstVersion: </b>
+<pre>May 02 1999  <br/>   <br/>  Remarks:  Description-text taken mainly from "POSIX Programmer's Guide",  <br/>           D. Lewine, O'Reilly & Assoc. Inc.  <br/>   <br/>            The O_NONBLOCK and FD_CLOEXEC flags are clear on the  <br/>           file descriptors of both streams.  <br/>   <br/>            Opening a pipe in a single process is next to useless (however,  <br/>           it might be used for buffering data). The usual application  <br/>           is for inter-process-communication: A pipe is opened, and fork  <br/>           is called. The child process inherits both filestreams from  <br/>           the parent. The child will then close one of the streams (say:  <br/>           the read-end), the parent will close the other (say: the write-  <br/>           end). Data may then be transfered from the child to the parent  <br/>           process through the pipe.  <br/>   <br/>            If the child is to "sysexec" a UNIX command, it may duplicate  <br/>           the pipes's write-end onto its standard "cout" stream using "dup2",  <br/>           thus directing any data written to "cout" into the pipe. It then  <br/>           calles "sysexec". The parent process is thus enabled to read  <br/>           the UNIX-command's standard output from the pipe.  <br/>   <br/>            Pipes are unidirectional communication channels.  <br/>           For bidirectional communication, two separate pipes must be opened.  <br/>           The "spawn" command provides this functionality.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre>In : -none-  <br/>   <br/>              Out: read_end(ifstream):  <br/>                     A filestream open for reading, connected to the read-  <br/>                     end of the newly created pipe.  <br/>   <br/>                   write_end(ofstream):  <br/>                     A filestream open for writing, connected to the write-  <br/>                     end of the newly created pipe.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>R Kupper  <br/>   <br/>  
+</pre>
+<b>Bugs: </b>
+<pre>-  <br/>   <br/>  
+</pre>
+<b>Synopsis: </b>
+<pre>pipe -> read_end write_end  <br/>   <br/>  Description:  The pipe function creates a pipe, placing a filestream  <br/>               for the read end and a filestream for the write end of  <br/>               the pipe on the stack.  <br/>                Data can be written to "write_end" and read from "read_end".  <br/>               A read on "read_end" accesses the data written to "write_end"  <br/>               on a first-in-first-out basis.  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre>pipe  <br/>            (Hello Pipe) <- std::endl  <br/>            pop  <br/>            getline =  <br/>   <br/>  
+</pre>
+<b>Diagnostics: </b>
+<pre>If a system-error occurs, a code is stored in "sys_errno"  <br/>                (contained in errordict) to identify the error, and  <br/>                "sys_errname" is set to the error message. Then a  <br/>                "SystemError" is raised.  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/dup2.html">dup2</a></li>
+    <li><a href="../cc/available.html">available</a></li>
+    <li><a href="../cc/spawn.html">spawn</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/sli/processes.h</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

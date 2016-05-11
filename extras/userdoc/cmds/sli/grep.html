@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: grep</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: grep</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>grep - extract lines matching a regular expression pattern</pre>
+<b>FirstVersion: </b>
+<pre>23-jul-2008  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  (filename)      - name of the file to search for the pattern  <br/>  [(string1) ...] - array of strings to search for the pattern  <br/>  [(match1)  ...] - result: array of matching strings  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>R Kupper  <br/>   <br/>  
+</pre>
+<b>Synopsis: </b>
+<pre> <br/>                 (filename) (expression) grep -> [(line1) (line2) ...]  <br/>  [(string1) (string2) ...] (expression) grep -> [(match1) (match2) ...]  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  Unix manpage for "regcomp"  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>  [(hello) (world)] (^hell)       grep -> [(hello)]  <br/>  [(hello) (world)] (not in here) grep -> []  <br/>  [(hello) (world)] ()            grep -> [(hello) (world)]  <br/>  statusdict /prgdocdir get (LICENSE) joinpath (http) grep -> [(or visit http://www.nest-simulator.org)]  <br/>   <br/>  
+</pre>
+<b>Diagnostics: </b>
+<pre> <br/>  Raises /InvalidRegexError if the expression string is not a valid  <br/>  regular expression.  <br/>   <br/>  
+</pre>
+<b>Availability: </b>
+<pre>standard SLI  <br/>   <br/>  
+</pre>
+<b>Options: </b>
+<pre> <br/>  By default, "grep" uses extended regular expressions and performs  <br/>  case sensitive matching on the single lines or strings. This  <br/>  behaviour can be customized via the "SetOptions" command.  <br/>   <br/>  "grep" has the following options that can be set via the  <br/>  "SetOptions" command:  <br/>   <br/>  /flags_regcomp (integer) - flags passed to the "regcomp" command.  <br/>                              Must be the logical AND of any of  <br/>                              regexdict::REG_{EXTENDED,ICASE,NOSUB,NEWLINE}.  <br/>                              Default: REG_EXTENDED  <br/>   <br/>  /flags_regexec (integer) - flags passed to the "regexec" command.  <br/>                              Must be the logical AND of any of  <br/>                              regexdict::REG_{NOTBOL,NOTEOL}.  <br/>                              Default: 0  <br/>   <br/>  Please read the Unix manpage for "regcomp" for explanation of these  <br/>  flags.  <br/>   <br/>  To perform case insensitive matches, add regexdict::REG_ICASE to  <br/>  /flags_regcomp.  <br/>                              <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  "grep" is similar to the Unix command "grep".  <br/>  It performs a regular expression match, either on the lines of a  <br/>  file, or on the strings in an array of strings. A valid regular  <br/>  expression must be passed as a string as second argument.  <br/>   <br/>  "grep" returns an array of matching lines or strings. It returns the  <br/>  full lines or strings that matched. If not match was found, the  <br/>  empty array is returned.  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/egex_find.html">egex_find</a></li>
+    <li><a href="../cc/egcomp.html">egcomp</a></li>
+    <li><a href="../cc/egexec.html">egexec</a></li>
+    <li><a href="../cc/egexdict.html">egexdict</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/lib/sli/regexp.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: CyclicValue</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: CyclicValue</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>CyclicValue - project a cyclic value onto it's norm interval (e.g. angle on [0,360))</pre>
+<b>FirstVersion: </b>
+<pre>13.3.2003  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>    In :  value:   value in (-oo, oo)  <br/>   <br/>          b1, b2:  norm interval.  <br/>                   This interval is half-open: [.), or (.], depending on  <br/>                   the following rules:  <br/>   <br/>                   b1 must not equal b2.                    <br/>                   b1 always denotes the closed end of the interval.  <br/>                   b2 always denotes the open   end of the interval.                  <br/>                   If b1<b2, the norm interval used is [b1,b2).  <br/>                   If b1>b2, the norm interval used is (b2,b1].  <br/>   <br/>                   See below for examples.    <br/>            <br/>    Out:  The value's norm equivalent in the interval [b1, b2).  <br/>          The output is always of type double, regardless of the input  <br/>          type.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Ruediger Kupper  <br/>   <br/>  
+</pre>
+<b>Synopsis: </b>
+<pre> <br/>    value [b1 b2] CyclicValue -> normvalue  <br/>    value  b1 b2  CyclicValue -> normvalue  <br/>   <br/>    See below for the meaning of b1, b2!    <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>    %% project angle in degrees onto [0,360):  <br/>    -3601 [0 360] CyclicValue -> 359.0  <br/>   <br/>    %% project angle in radians onto [-pi,pi):  <br/>    23.0 [Pi -1 mul  Pi] CyclicValue -> -2.13274  <br/>   <br/>    %% this demonstrates the handling of open/closed interval ends:  <br/>    %%   project number onto [1,4):  <br/>    1 [1 4] CyclicValue -> 1  <br/>    2 [1 4] CyclicValue -> 2  <br/>    3 [1 4] CyclicValue -> 3    <br/>    4 [1 4] CyclicValue -> 1    <br/>    %%   project number onto (1,4]:  <br/>    1 [4 1] CyclicValue -> 4  <br/>    2 [4 1] CyclicValue -> 2  <br/>    3 [4 1] CyclicValue -> 3    <br/>    4 [4 1] CyclicValue -> 4    <br/>        <br/>  
+</pre>
+<b>Diagnostics: </b>
+<pre> <br/>      b1 must not equal b2. This is not checked for efficency reasons!  <br/>      If b1=b2, code will break with /DivisionByZero during execution.  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>    Variant *_d_d_d is fastest. Prefer this variant over *_d_a in time  <br/>    critical applications.      <br/>   <br/>    Inspired by IDL/NASE commandfunction cyclic_value().  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>    For a given value and a given norm interval, "CyclicValue" returns  <br/>    the value's norm equivalent. This is useful for all values with a  <br/>    cyclic definition, such as angles.    <br/>    The output is always of type double, regardless of the input type.  <br/>   <br/>    Alternatives: Function CyclicValue_d_d_d if you use it with three doubles  <br/>    (interval = double1 - double2), CyclicValue_d_a if you use it with  <br/>    double and array (both undocumented) -> behaviour and synopsis are the same.  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/mod.html">mod</a></li>
+    <li><a href="../cc/floo.html">floo</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/lib/sli/misc_helpers.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

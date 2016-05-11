@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: max</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: max</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>max - return the greater of two values</pre>
+<b>Parameters: </b>
+<pre> <br/>  val1, val2: numeric values (integer or double)  <br/>  result    : the greater of the two values (keeping its type, integer  <br/>              or double)  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Ruediger Kupper  <br/>   <br/>  
+</pre>
+<b>Synopsis: </b>
+<pre>val1 val2 max -> result  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>    1   2   max -> 2  <br/>    1   2.0 max -> 2.0  <br/>    1.0 2   max -> 2  <br/>   <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>17.3.2003  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  This function returns the greater of two values, by removing the other  <br/>  one from the stack. Hence, the output type is the same as the  <br/>  respective input type (integer or double).  <br/>   <br/>  Alternatives: Functions  max_i_i, max_i_d, max_d_i, max_d_d (all  <br/>  undocumented), where i is standing for integer and for double as  <br/>  arguments -> behaviour and synopsis are the same.  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/min.html">min</a></li>
+    <li><a href="../cc/gt.html">gt</a></li>
+    <li><a href="../cc/lt.html">lt</a></li>
+    <li><a href="../cc/geq.html">geq</a></li>
+    <li><a href="../cc/leq.html">leq</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/lib/sli/typeinit.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

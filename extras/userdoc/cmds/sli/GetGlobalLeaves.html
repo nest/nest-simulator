@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: GetGlobalLeaves</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: GetGlobalLeaves</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>GetGlobalLeaves - Return IDs of all leaves of a subnet that fulfill the  <br/>       conditions given in the dictionary, or all leaves if no dictionary given.</pre>
+<b>Synopsis: </b>
+<pre> <br/>     gid [<<dict>>]  GetGlobalLeaves -> [gid1 ... gidn]  <br/>     
+</pre>
+<b>Author: </b>
+<pre>Ruediger Kupper, Abigail Morrison  <br/>   <br/>     
+</pre>
+<b>FirstVersion: </b>
+<pre>12.3.2003  <br/>   <br/>     
+</pre>
+<b>Parameters: </b>
+<pre> <br/>     gid     - id of a subnet  <br/>     <<dict>> - Dictionary of selection properties  <br/>     Returns:  <br/>     [gid..] - Array with the global ids of all leaf nodes.  <br/>   <br/>     
+</pre>
+<b>Description: </b>
+<pre> <br/>     This function recursively traverses a subnet and returns the global  <br/>     ids of all leaf nodes in increasing order of gid.  If a dictionary is provided,  <br/>     only those nodes which fulfill the given criteria are returned.  <br/>   <br/>     The returned nodes DO NOT include the intermediate subnets. For a  <br/>     variant of this command that also returns the subnets, see  <br/>     "GetGlobalNodes".  <br/>   <br/>     
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/GetLocalLeaves.html">GetLocalLeaves</a></li>
+    <li><a href="../cc/GetGlobalNodes.html">GetGlobalNodes</a></li>
+    <li><a href="../cc/GetGlobalChildren.html">GetGlobalChildren</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/lib/sli/nest-init.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

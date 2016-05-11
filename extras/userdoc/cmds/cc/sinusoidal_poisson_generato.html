@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: sinusoidal_poisson_generato</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: sinusoidal_poisson_generato</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson  <br/>                                          spike trains.</pre>
+<b>Description: </b>
+<pre> <br/>     sinusoidal_poisson_generator generates sinusoidally modulated Poisson spike  <br/>     trains. By default, each target of the generator will receive a different  <br/>     spike train.  <br/>   <br/>     The instantaneous rate of the process is given by  <br/>   <br/>         f(t) = max(0, rate + amplitude sin ( 2 pi frequency t + phase * pi/180 ))  <br/>             >= 0  <br/>   <br/>     
+</pre>
+<b>Parameters: </b>
+<pre> <br/>     The following parameters can be set in the status dictionary:  <br/>   <br/>     rate       double - Mean firing rate in spikes/second, default: 0 s^-1  <br/>     amplitude  double - Firing rate modulation amplitude in spikes/second,  <br/>                         default: 0 s^-1  <br/>     frequency  double - Modulation frequency in Hz, default: 0 Hz  <br/>     phase      double - Modulation phase in degree [0-360], default: 0  <br/>   <br/>     individual_spike_trains   bool - See note below, default: true  <br/>   <br/>     
+</pre>
+<b>Author: </b>
+<pre>Hans Ekkehard Plesser  <br/>     
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>   <br/>     
+</pre>
+<b>Receives: </b>
+<pre>DataLoggingRequest  <br/>   <br/>     
+</pre>
+<b>Remarks: </b>
+<pre> <br/>     - If amplitude > rate, firing rate is cut off at zero. In this case, the mean  <br/>       firing rate will be less than rate.  <br/>     - The state of the generator is reset on calibration.  <br/>     - The generator does not support precise spike timing.  <br/>     - You can use the multimeter to sample the rate of the generator.  <br/>     - The generator will create different trains if run at different  <br/>       temporal resolutions.  <br/>   <br/>     - Individual spike trains vs single spike train:  <br/>       By default, the generator sends a different spike train to each of its  <br/>       targets. If /individual_spike_trains is set to false using either  <br/>       SetDefaults or CopyModel before a generator node is created, the generator  <br/>       will send the same spike train to all of its targets.  <br/>   <br/>     
+</pre>
+<b>FirstVersion: </b>
+<pre>July 2006, Oct 2009, May 2013  <br/>     
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/poisson_generato.html">poisson_generato</a></li>
+    <li><a href="../cc/sinusoidal_gamma_generato.html">sinusoidal_gamma_generato</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/models/sinusoidal_poisson_generator.h</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

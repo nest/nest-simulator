@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: testsuite::test_hh_phaseplane</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: testsuite::test_hh_phaseplane</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>testsuite::test_hh_phaseplane - sli script for hh_psc_alpha model</pre>
+<b>Synopsis: </b>
+<pre>(test_hh_phaseplane) run -> 'phaseplane.txt' & 'AP.txt'  <br/>   <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>    test_hh_phaseplane makes a numerical phase-plane analysis of the Hodgkin-Huxley neuron  <br/>    (iaf_psc_alpha). Dynamics is investigated in the V-n space (see remark below). A constant  <br/>    DC can be specified  and its influence on the nullclines can be studied.  <br/>    Results are written into two files. 'phaseplane.txt' contains the phase-plane data as a  <br/>    vector field and 'AP.txt' the trace of a single action potential as one possible  <br/>    numerical solution in the vector field. The data files are used in the matlab-script hh_phaseplane.m  <br/>   <br/>    REMARK  <br/>    To make the two-dimensional analysis possible, the (four-dimensional)  <br/>    Hodgkin-Huxley formalism needs to be artificially reduced to two dimensions,  <br/>    in this case by 'clamping' the two other variables, m an h, to  <br/>    constant values (m_eq and h_eq).  <br/>      <br/>    Author: Schrader  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/iaf_psc_exp.html">iaf_psc_exp</a></li>
+    <li><a href="../cc/iaf_neuron.html">iaf_neuron</a></li>
+    <li><a href="../cc/testsuite::test_iaf_i0.html">testsuite::test_iaf_i0</a></li>
+    <li><a href="../cc/testsuite::test_iaf_i0_refractory.html">testsuite::test_iaf_i0_refractory</a></li>
+    <li><a href="../cc/testsuite::test_iaf_dc.html">testsuite::test_iaf_dc</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/testsuite/manualtests/test_hh_phaseplane.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

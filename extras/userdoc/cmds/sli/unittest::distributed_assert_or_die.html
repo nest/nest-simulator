@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: unittest::distributed_assert_or_die</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: unittest::distributed_assert_or_die</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>unittest::distributed_assert_or_die - Checks whether code is independent of number of number of jobs</pre>
+<b>Synopsis: </b>
+<pre>array proc proc distributed_assert_or_die -> -  <br/>            array proc distributed_assert_or_die -> -  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Diesmann  <br/>   <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>090715  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>  The array specifies a list of numbers of  <br/>  jobs. distributed_assert_or_die executes the procedure specified as  <br/>  the second argument in parallel for all of the numbers of jobs given  <br/>  in the arrays. This means that distributed_assert_or_die carries out  <br/>  as many distributed simulations as there are entries in the array.  <br/>   <br/>  In each of the simulations a single job is expected to return a  <br/>  value on the stack. It is of no importance which job returns the  <br/>  value.  After completion of all simulations distributed_assert_or_die  <br/>  compares the results of all the simulations using the second proc  <br/>  as the test function. If no second proc is given distributed_assert_or_die  <br/>  requires that all results are "true".  <br/>   <br/>  A variant of this function  distributed_invariant_assert_or_die  <br/>  requires all results to be identical.  <br/>   <br/>  distributed_assert_or_die assumes that it is called from a file and  <br/>  that this file contains only a single call of  <br/>  distributed_assert_or_die because all distributed instances of the  <br/>  simulator will rerun this file.  In addition distributed_assert_or_die  <br/>  assumes that the test file is run with a version of nest capable of  <br/>  spawning further instances of nest.  This can be assured by using  <br/>  nest_indirect instead of the nest binary directly. The test file  <br/>  should not make the call of distributed_assert_or_die or the  <br/>  termination of the test file depending on the status flags is_mpi or  <br/>  have_mpi. This would interfere with the proper functioning of  <br/>  distributed_assert_or_die and the status flags have already been  <br/>  checked by nest_indirect at this point.  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/unittest::distributed_invariant_assert_or_die.html">unittest::distributed_invariant_assert_or_die</a></li>
+    <li><a href="../cc/nest_indirect.html">nest_indirect</a></li>
+    <li><a href="../cc/unittest::mpirun_self.html">unittest::mpirun_self</a></li>
+    <li><a href="../cc/unittest::assert_or_die.html">unittest::assert_or_die</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/lib/sli/unittest.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

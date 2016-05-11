@@ -25,32 +25,31 @@ import pylab
 import numpy
 
 # Network parameters. These are given in Brunel (2000) J.Comp.Neuro.
-g       = 5.0    # Ratio of IPSP to EPSP amplitude: J_I/J_E
-eta     = 2.0    # rate of external population in multiples of threshold rate
-delay   = 1.5    # synaptic delay in ms
-tau_m   = 20.0   # Membrane time constant in mV
-V_th    = 20.0   # Spike threshold in mV
+g = 5.0  # Ratio of IPSP to EPSP amplitude: J_I/J_E
+eta = 2.0  # rate of external population in multiples of threshold rate
+delay = 1.5  # synaptic delay in ms
+tau_m = 20.0  # Membrane time constant in mV
+V_th = 20.0  # Spike threshold in mV
 
 N_E = 8000
 N_I = 2000
 N_neurons = N_E + N_I
 
-C_E    = int(N_E / 10) # number of excitatory synapses per neuron
-C_I    = int(N_I / 10) # number of inhibitory synapses per neuron
+C_E = int(N_E / 10)  # number of excitatory synapses per neuron
+C_I = int(N_I / 10)  # number of inhibitory synapses per neuron
 
-J_E  = 0.1
-J_I  = -g * J_E
+J_E = 0.1
+J_I = -g * J_E
 
-nu_ex  = eta * V_th / (J_E * C_E * tau_m) # rate of an external neuron in ms^-1
-p_rate = 1000.0 * nu_ex * C_E             # rate of the external population in s^-1
-
+nu_ex = eta * V_th / (J_E * C_E * tau_m)  # rate of an external neuron in ms^-1
+p_rate = 1000.0 * nu_ex * C_E  # rate of the external population in s^-1
 
 # Set parameters of the NEST simulation kernel
 nest.SetKernelStatus({'print_time': True,
                       'local_num_threads': 2})
 
 # Create and seed RNGs
-ms = 1000 # master seed
+ms = 1000  # master seed
 n_vp = nest.GetKernelStatus('total_num_virtual_procs')
 pyrngs = [numpy.random.RandomState(s) for s in range(ms, ms + n_vp)]
 nest.SetKernelStatus({'grng_seed': ms + n_vp,
@@ -58,7 +57,7 @@ nest.SetKernelStatus({'grng_seed': ms + n_vp,
 
 # Create nodes -------------------------------------------------
 
-nest.SetDefaults('iaf_psc_delta', 
+nest.SetDefaults('iaf_psc_delta',
                  {'C_m': 1.0,
                   'tau_m': tau_m,
                   't_ref': 2.0,
@@ -72,7 +71,7 @@ nodes_I = nodes[N_E:]
 
 noise = nest.Create('poisson_generator', 1, {'rate': p_rate})
 
-spikes = nest.Create('spike_detector',2, 
+spikes = nest.Create('spike_detector', 2,
                      [{'label': 'brunel_py_ex'},
                       {'label': 'brunel_py_in'}])
 spikes_E = spikes[:1]
@@ -81,39 +80,39 @@ spikes_I = spikes[1:]
 # randomize membrane potential
 node_info = nest.GetStatus(nodes, ['global_id', 'vp', 'local'])
 local_nodes = [(gid, vp) for gid, vp, islocal in node_info if islocal]
-for gid, vp in local_nodes: 
-  nest.SetStatus([gid], {'V_m': pyrngs[vp].uniform(-V_th, V_th)})
+for gid, vp in local_nodes:
+    nest.SetStatus([gid], {'V_m': pyrngs[vp].uniform(-V_th, V_th)})
 
 # Connect nodes ------------------------------------------------
 
 nest.CopyModel('static_synapse', 'excitatory')
 nest.Connect(nodes_E, nodes,
-             {'rule': 'fixed_indegree', 
+             {'rule': 'fixed_indegree',
               'indegree': C_E},
-             {'model': 'excitatory', 
+             {'model': 'excitatory',
               'delay': delay,
               'weight': {'distribution': 'uniform',
-                         'low': 0.5 * J_E, 
+                         'low': 0.5 * J_E,
                          'high': 1.5 * J_E}})
-  
+
 nest.CopyModel('static_synapse_hom_w',
                'inhibitory',
-               {'weight': J_I, 
+               {'weight': J_I,
                 'delay': delay})
 nest.Connect(nodes_I, nodes,
-             {'rule': 'fixed_indegree', 
+             {'rule': 'fixed_indegree',
               'indegree': C_I},
              'inhibitory')
 
 # connect one noise generator to all neurons
 nest.CopyModel('static_synapse_hom_w',
                'excitatory_input',
-               {'weight': J_E, 
+               {'weight': J_E,
                 'delay': delay})
 nest.Connect(noise, nodes, syn_spec='excitatory_input')
 
 # connect all recorded E/I neurons to the respective detector
-N_rec   = 50    # Number of neurons to record from
+N_rec = 50  # Number of neurons to record from
 nest.Connect(nodes_E[:N_rec], spikes_E)
 nest.Connect(nodes_I[:N_rec], spikes_I)
 
@@ -122,23 +121,24 @@ nest.Connect(nodes_I[:N_rec], spikes_I)
 # Visualization of initial membrane potential and initial weight
 # distribution only if we run on single MPI process
 if nest.NumProcesses() == 1:
-  pylab.figure()
-  V_E = nest.GetStatus(nodes_E[:N_rec], 'V_m')
-  pylab.hist(V_E, bins=10)
-  pylab.xlabel('Membrane potential V_m [mV]')
-  pylab.title('Initial distribution of membrane potentials')
-  pylab.savefig('../figures/rand_Vm.eps')
+    pylab.figure()
+    V_E = nest.GetStatus(nodes_E[:N_rec], 'V_m')
+    pylab.hist(V_E, bins=10)
+    pylab.xlabel('Membrane potential V_m [mV]')
+    pylab.title('Initial distribution of membrane potentials')
+    pylab.savefig('../figures/rand_Vm.eps')
 
-  pylab.figure()
-  w = nest.GetStatus(nest.GetConnections(nodes_E[:N_rec],
-                                         synapse_model='excitatory'),
-                     'weight')
-  pylab.hist(w, bins=100)
-  pylab.xlabel('Synaptic weight [pA]')
-  pylab.title('Distribution of synaptic weights ({:d} synapses)'.format(len(w)))
-  pylab.savefig('../figures/rand_w.eps')
+    pylab.figure()
+    w = nest.GetStatus(nest.GetConnections(nodes_E[:N_rec],
+                                           synapse_model='excitatory'),
+                       'weight')
+    pylab.hist(w, bins=100)
+    pylab.xlabel('Synaptic weight [pA]')
+    pylab.title(
+        'Distribution of synaptic weights ({:d} synapses)'.format(len(w)))
+    pylab.savefig('../figures/rand_w.eps')
 else:
-  print('Multiple MPI processes, skipping graphical output')
+    print('Multiple MPI processes, skipping graphical output')
 
 simtime = 300.  # how long shall we simulate [ms]
 nest.Simulate(simtime)
@@ -156,9 +156,9 @@ rate_in = events[1] / simtime * 1000.0 / N_rec_local_I
 print('Inhibitory rate   : {:.2f} Hz'.format(rate_in))
 
 if nest.NumProcesses() == 1:
-  nest.raster_plot.from_device(spikes_E, hist=True, title='')
-  pylab.savefig('../figures/rand_raster.eps')
+    nest.raster_plot.from_device(spikes_E, hist=True, title='')
+    pylab.savefig('../figures/rand_raster.eps')
 else:
-  print('Multiple MPI processes, skipping graphical output')
+    print('Multiple MPI processes, skipping graphical output')
 
-#pylab.show()
+# pylab.show()

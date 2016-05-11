@@ -54,8 +54,8 @@ except:
     import ctypes
     sys.setdlopenflags(ctypes.RTLD_GLOBAL)
 
-from . import pynestkernel as _kernel
-from .lib import hl_api_helper as hl_api
+from . import pynestkernel as _kernel      # noqa
+from .lib import hl_api_helper as hl_api   # noqa
 
 engine = _kernel.NESTEngine()
 
@@ -211,8 +211,8 @@ def test():
 
     hl_api.set_debug(debug)
 
-from .pynestkernel import *
-from .lib.hl_api_helper import *
+from .pynestkernel import *         # noqa
+from .lib.hl_api_helper import *    # noqa
 
 # We search through the subdirectory "lib" of the "nest" module
 # directory and import the content of all Python files therein into

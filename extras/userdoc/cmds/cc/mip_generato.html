@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: mip_generato</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: mip_generato</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>mip_generator - create spike trains as described by the MIP model.</pre>
+<b>Description: </b>
+<pre> <br/>    The mip_generator generates correlated spike trains using an Multiple  <br/>    Interaction Process (MIP) as described in [1]. Underlying principle is a  <br/>    Poisson mother process with rate r, the spikes of which are copied into the  <br/>    child processes with a certain probability p. Every node the mip_generator is  <br/>    connected to receives a distinct child process as input, whose rate is p*r.  <br/>    The value of the pairwise correlation coefficient of two child processes  <br/>    created by a MIP process equals p.  <br/>   <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>     The following parameters appear in the element's status dictionary:  <br/>   <br/>     rate         double - Mean firing rate of the mother process in Hz  <br/>     p_copy       double - Copy probability  <br/>     mother_rng   rng    - Random number generator of mother process  <br/>     mother_seed  long   - Seed of RNG of mother process  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>May 2006, Helias  <br/>  
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>    [1] Alexandre Kuhn, Ad Aertsen, Stefan Rotter  <br/>        Higher-Order Statistics of Input Ensembles and the Response of Simple  <br/>        Model Neurons  <br/>        Neural Computation 15, 67-101 (2003)  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>     The MIP generator may emit more than one spike through a child process  <br/>     during a single time step, especially at high rates.  If this happens,  <br/>     the generator does not actually send out n spikes.  Instead, it emits  <br/>     a single spike with n-fold synaptic weight for the sake of efficiency.  <br/>     Furthermore, note that as with the Poisson generator, different threads  <br/>     have their own copy of a MIP generator. By using the same mother_seed  <br/>     it is ensured that the mother process is identical for each of the  <br/>     generators.  <br/>   <br/>     IMPORTANT: The mother_seed of mpi_generator must be different from any  <br/>                seeds used for the global or thread-specific RNGs set in  <br/>                the kernel.  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/Device.html">Device</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/models/mip_generator.h</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

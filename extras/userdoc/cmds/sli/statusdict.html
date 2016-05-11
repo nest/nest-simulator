@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: statusdict</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: statusdict</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>statusdict - dictionary with platform dependent status  <br/>  information.</pre>
+<b>Description: </b>
+<pre> <br/>  The status dictionary contains various platform dependend status  <br/>  information. Among others, it contains the following useful things:  <br/>   <br/>    argv        arraytype   full list of commandline arguments given to NEST  <br/>    userargs    arraytype   user supplied arguments, usable by scripts  <br/>    interactive booltype    does this NEST session read its commands from an interactive prompt?  <br/>    files       arraytype   list of files to execute, as specified on the commandline  <br/>    prgdatadir  stringtype  path to the installation directory  <br/>    prgdocdir   stringtype  path to the documentation directory  <br/>   <br/>    have_mpi    booltype    this flag is always defined and indicates whether an  <br/>                            MPI library is available to the NEST system or not.  <br/>                            The flag does not indicate whether the interpreter    <br/>                            actually has MPI support.  <br/>    is_mpi      booltype    this flag may not be defined if the interpreter does not  <br/>                            have MPI support. If the value of the flag is true, the  <br/>                            interpreter has support for parallel computing.  <br/>      <br/>  View the whole contents of the status dictionary with 'statusdict info'.  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/info.html">info</a></li>
+    <li><a href="../cc/LocateFileNames.html">LocateFileNames</a></li>
+    <li><a href="../cc/searchifstream.html">searchifstream</a></li>
+    <li><a href="../cc/searchfile.html">searchfile</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/lib/sli/sli-init.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

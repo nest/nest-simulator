@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: iaf_chxk_2008</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: iaf_chxk_2008</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>iaf_chxk_2008 - Conductance based leaky integrate-and-fire neuron model  <br/>                        used in Casti et al 2008.</pre>
+<b>Description: </b>
+<pre> <br/>  iaf_chxk_2008 is an implementation of a spiking neuron using IAF dynamics with  <br/>  conductance-based synapses [1]. It is modeled after iaf_cond_alpha with the  <br/>  addition of after hyper-polarization current instead of a membrane potential  <br/>  reset. Incoming spike events induce a post-synaptic change of conductance  <br/>  modeled by an alpha function. The alpha function is normalized such that an  <br/>  event of weight 1.0 results in a peak current of 1 nS at t = tau_syn.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  The following parameters can be set in the status dictionary.  <br/>   <br/>  V_m        double - Membrane potential in mV  <br/>  E_L        double - Leak reversal potential in mV.  <br/>  C_m        double - Capacity of the membrane in pF  <br/>  V_th       double - Spike threshold in mV.  <br/>  E_ex       double - Excitatory reversal potential in mV.  <br/>  E_in       double - Inhibitory reversal potential in mV.  <br/>  g_L        double - Leak conductance in nS.  <br/>  tau_ex     double - Rise time of the excitatory synaptic alpha function in ms.  <br/>  tau_in     double - Rise time of the inhibitory synaptic alpha function in ms.  <br/>  I_e        double - Constant input current in pA.  <br/>  tau_ahp    double - Afterhyperpolarization (AHP) time constant in ms.  <br/>  E_ahp      double - AHP potential in mV.  <br/>  g_ahp      double - AHP conductance in nS.  <br/>  ahp_bug    bool   - Defaults to false. If true, behaves like original  <br/>                      model implementation.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Heiberg  <br/>   <br/>  
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>Receives: </b>
+<pre>SpikeEvent, CurrentEvent  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  [1] Casti A, Hayot F, Xiao Y, and Kaplan E (2008) A simple model of retina-LGN  <br/>  transmission. J Comput Neurosci 24:235-252.  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/iaf_cond_alpha.html">iaf_cond_alpha</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/models/iaf_chxk_2008.h</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: message</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: message</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>message - Display an information message</pre>
+<b>FirstVersion: </b>
+<pre>Apr 9 1999  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  In : (MyMessage: Message to display  <br/>       Priority  : Priority level of message (integer).  <br/>  Opt: (From)    : Name of the caller of class of message.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>R Kupper,  <br/>          M.O. Gewaltig,  <br/>   <br/>  
+</pre>
+<b>Bugs: </b>
+<pre> <br/>   <br/>  
+</pre>
+<b>Synopsis: </b>
+<pre> <br/>  (Message) Priority        message -> -  <br/>  Priority (From) (Message) message ->  <br/>   <br/>  where "Priority" may be any positive integer, or one of the following:  <br/>  M_DEBUG, M_STATUS, M_INFO, M_WARNING, M_ERROR, M_FATAL  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre>Short form:  <br/>            1. (Still alive) M_DEBUG message  <br/>                issues something like  <br/>            % Jul 21 16:23:12 SLI[5] Still alive    <br/>   <br/>            1. (Something happened) M_STATUS message  <br/>                issues something like  <br/>            % Jul 21 16:23:12 SLI[5] Still alive    <br/>   <br/>            3. (Your last action had no effect) M_INFO message  <br/>                issues something like  <br/>            % Jul 21 16:24:12 SLI[10] Your last action had no effect  <br/>   <br/>            4. (Result may be invalid) M_WARNING message  <br/>                issues something like  <br/>            % Jul 21 16:24:24 SLI[20] Result may be invalid    <br/>   <br/>            5. (This should never happen!) M_ERROR message  <br/>                issues something like  <br/>            % Jul 21 16:24:36 SLI[30] This should never happen!  <br/>   <br/>            6. (It's all broken, let's go home.) M_FATAL message  <br/>                issues something like  <br/>            % Jul 21 16:24:36 SLI[40] It's all broken, let's go home.  <br/>   <br/>  Long form:  <br/>            1. M_DEBUG (DEBUGMESSAGE) (This should never happen!) message  <br/>                issues something like  <br/>            % Jul 21 16:24:36 DEBUGMESSAGE[30] This should never happen!  <br/>                <br/>  Depending on the verbosity-level, the output may be suppressed.  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>           M_* values are defined in system dictionary.  <br/>           You may introduce new priority levels in the user dictionary if convenient.  <br/>           Standard values are: M_ALL    = 0  <br/>                                M_DEBUG   = 5  <br/>                                M_STATUS  = 7  <br/>                                M_INFO    = 10  <br/>                                M_WARNING = 20  <br/>                                M_ERROR   = 30  <br/>                                M_FATAL   = 40  <br/>                                M_QUIET   = 100  <br/>           Standard output:     M_OUT     = cout  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  Display a message, if priority is higher than current verbosity-level.  <br/>  message uses the message mechanism which is provided  <br/>  by the SLIInterpreter class.  <br/>   <br/>  The output consists of a time-stamp (date and time), the name of the  <br/>  calling function, the priority level and the message text.  <br/>   <br/>   <br/>  % month dd hh:mm::ss from[pl] messagetext  <br/>   <br/>  Where  <br/>     month - abbreviated month (Jan-Dec)  <br/>     dd    - day in month (01-31)  <br/>     hh    - hour (00-23)  <br/>     mm    - minute (00-61)  <br/>     ss    - seconds (00-61)  <br/>     from  - name of the caller, defaults to (SLI) in the short form  <br/>     pl    - priority level of the message  <br/>      <br/>  The time-stamp is useful during long-running simulations.    <br/>   <br/>  All output is sent to the stream defined in M_OUT which is  <br/>  set to cout by default.  <br/>   <br/>  The verbosity level can be controlled by the functions  <br/>  verbosity and setverbosity. For compatibility, the function  <br/>  shutupto is still supported as alias to setverbosity.  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/setverbosity.html">setverbosity</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/lib/sli/misc_helpers.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

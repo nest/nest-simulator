@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: page</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: page</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>page - Conveniently display contents of a long file</pre>
+<b>FirstVersion: </b>
+<pre>Apr 22 1999, reworked 27-sep-2007  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>R Kupper  <br/>   <br/>  
+</pre>
+<b>Bugs: </b>
+<pre>The string contained in /command is processed by "breakup" to separate  <br/>        the command from its parameters. Be aware that there is a bug in the  <br/>        "breakup"-routine, which makes it impossible to pass a parameter  <br/>        containing blanks by enclosing it in quotation marks.  <br/>   <br/>        WARNING: Setting the /wait option to false with a pager  <br/>        program that writes to stdout will screw up your SLI prompt.  <br/>   <br/>  
+</pre>
+<b>Synopsis: </b>
+<pre>(filename) page -> -  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>    The following example displays the license agreement that came with  <br/>    your copy of NEST:  <br/>   <br/>    "statusdict /prgdatadir get (/LICENSE) join page"  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre>If /wait is set to false, the "system"-command is called in  <br/>            no-care-mode. Be aware that this may be an expensive operation  <br/>            depending on the ressources your SLI-process occupies.  <br/>            (see description of "system").  <br/>           Even if /wait is set to true, creation of a child process may  <br/>            be expensive. To avoid any overhead caused by process creation, set /command  <br/>            to false.  <br/>   <br/>  
+</pre>
+<b>Options: </b>
+<pre> <br/>    /command - UNIX command to display a file (default: see below)  <br/>      <br/>      /command can be either false or a string.  <br/>      If /command is set to false, "page" uses the simple built-in  <br/>      pager "ppage" for display.  <br/>      <br/>      If it is set to the name of a UNIX program, "page" will execute  <br/>      this program as a child process, passing the name of the  <br/>      file as argument.  <br/>      <br/>      /command defaults to the contents of the $PAGER environment  <br/>      variable. If this variable is not set, it defaults to false.  <br/>      <br/>    /wait - whether to wait for the UNIX program to finish. (default: true)  <br/>      <br/>      If /wait is set to true, the "page" command will not return until  <br/>      the UNIX process is terminated. Use this setting for all pager  <br/>      programs that write to stdout.  <br/>      <br/>      If /wait is set to false, "page" will return immediately after  <br/>      creating the child process. Use this setting for all pager programs  <br/>      that open up their own window.  <br/>      <br/>      The value of /wait is ignored, if /command is set to false.  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>    The "page" command is used by NEST's online-help system to display  <br/>    the help pages. It displays the contents of a file, either through a  <br/>    built-in pager, or an external pager program. The text you are  <br/>    reading right now is displayed using "page".  <br/>   <br/>    You can customize the display. Type "/page ShowOptions" to show your  <br/>    current settings. Use the "SetOptions" command to customize the  <br/>    pager program. Here are some useful suggestions. You will want to  <br/>    put your favourite into your ~/.nestrc file (see "/nestrc help"):  <br/>      <br/>    1. /page << /command (more)             % Use more as a pager  <br/>                /wait    true >> SetOptions % and wait for termination  <br/>      <br/>    2. /page << /command (less -S)          % Use less as a pager  <br/>                /wait    true >> SetOptions % and wait for termination  <br/>      <br/>    3. /page << /command (xterm -e less -S)  % Run less in a separate xterm window...  <br/>                /wait    false >> SetOptions % ..so we can go on working in parallel.  <br/>      <br/>    4. /page << /command (xless)             % Use xless as a pager  <br/>                /wait    false >> SetOptions % xless opens it's own window.  <br/>      <br/>    5. /page << /command (xemacs)            % If you like to show helpfiles using xemacs.  <br/>                /wait    false >> SetOptions % xemacs opens it's own window.  <br/>      <br/>    6. /page << /command false >> SetOptions % use built-in pager.  <br/>      <br/>    7. /page ResetOptions % Return to the default configuration ($PAGER or built-in pager).  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/help.html">help</a></li>
+    <li><a href="../cc/helpindex.html">helpindex</a></li>
+    <li><a href="../cc/license.html">license</a></li>
+    <li><a href="../cc/system.html">system</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/lib/sli/helpinit.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

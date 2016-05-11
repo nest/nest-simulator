@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: fork</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: fork</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>fork - create a child process of SLI</pre>
+<b>FirstVersion: </b>
+<pre>Mar 17 1999  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre>In : -none-  <br/>              Out: PID(integer) : 0 (for the child)  <br/>                                  the child's process ID (for the parent)  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>R Kupper  <br/>   <br/>  
+</pre>
+<b>Bugs: </b>
+<pre>-  <br/>   <br/>  
+</pre>
+<b>Synopsis: </b>
+<pre>fork -> PID  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre>1. fork  <br/>               (Well, just kidding...)  <br/>   <br/>            2. fork 0 eq {(I'm the child!) = quit} {(I'm the parent!) =} ifelse  <br/>               Try this several times. You will notice the child message to appear  <br/>               before or after the parent message "by chance". (Even after the  <br/>               parent's SLI-prompt...)  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre>A full parallel process of SLI is forked.  <br/>           Parent and child will execute in parallel. There is no way to know  <br/>           which will start being executed first.  <br/>           Child inherits all open files, including stdin and stdout, from parent!  <br/>           Thus, calling fork interactively from the SLI-prompt will result in  <br/>           command-line-confusion if both processes end up without quitting.  <br/>           If fork() cannot be executed, an error is raised.  <br/>   <br/>           SLI-function spoon (processes.sli) is a more convenient wrapper  <br/>            to fork!  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre>Thin wrapper to the fork() system function  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/spoon.html">spoon</a></li>
+    <li><a href="../cc/sysexec.html">sysexec</a></li>
+    <li><a href="../cc/getPID.html">getPID</a></li>
+    <li><a href="../cc/getPPID.html">getPPID</a></li>
+    <li><a href="../cc/getPGRP.html">getPGRP</a></li>
+    <li><a href="../cc/wait.html">wait</a></li>
+    <li><a href="../cc/waitPID.html">waitPID</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/sli/processes.h</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

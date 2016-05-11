@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: GetLocalNodes</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: GetLocalNodes</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>GetLocalNodes - Return IDs of all local nodes of a subnet that fulfill the  <br/>           conditions given in the dictionary, or all nodes if no dictionary given.</pre>
+<b>Synopsis: </b>
+<pre> <br/>       gid [<<dict>>]  GetLocalNodes -> [gid1 ... gidn]  <br/>     
+</pre>
+<b>Author: </b>
+<pre>Hans Ekkehard Plesser, Abigail Morrison  <br/>   <br/>     
+</pre>
+<b>Parameters: </b>
+<pre> <br/>       gid     - id of a subnet  <br/>       <<dict>> - Dictionary of selection properties  <br/>     Returns:  <br/>       [gid..] - Array with the global ids of all local child nodes.  <br/>     
+</pre>
+<b>Description: </b>
+<pre> <br/>     This function is equivalent to GetGlobalNodes, but returns only those  <br/>     nodes that are local to the MPI process executing the command.  <br/>   <br/>     
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/GetGlobalNodes.html">GetGlobalNodes</a></li>
+    <li><a href="../cc/GetLocalLeaves.html">GetLocalLeaves</a></li>
+    <li><a href="../cc/GetLocalChildren.html">GetLocalChildren</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/lib/sli/nest-init.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

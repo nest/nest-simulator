@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: arraylib::EdgeTruncate</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: arraylib::EdgeTruncate</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>arraylib::EdgeTruncate - Truncate 2-d array indices at array edges</pre>
+<b>FirstVersion: </b>
+<pre>17.3.2003  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Ruediger Kupper  <br/>   <br/>  
+</pre>
+<b>Availability: </b>
+<pre> <br/>  "Namespace"-dictionary "arraylib".  <br/>   <br/>  
+</pre>
+<b>Synopsis: </b>
+<pre>[2d-indices] height width EdgeTruncate -> [truncated-2d-indices]  <br/>   <br/>  
+</pre>
+<b>Diagnostics: </b>
+<pre> <br/>  The index array is expected to be a (nested) array of integer values  <br/>  only. Code will break otherwise.  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  The index array is expected to be a (nested) array of integer values only.  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  This function iterates through the given array indices and checks if  <br/>  they lie inside the bounds [0,height) and [0,width), respectively.  <br/>   <br/>  Indices are modified according to the following rules:  <br/>   <br/>  1. If both indices lie inside [0,height) and [0,width), respectively,  <br/>     they are left untouched.  <br/>  2. If either the row index lies outside [0,height), or the column  <br/>     index lies outside [0,width), the respective index is replaced by "false".  <br/>   <br/>  Note that by NEST convention, for index pairs, the first index denotes  <br/>  the row, and the second index denotes the column.  <br/>   <br/>  Dimensions of the index array are preserved.  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/arraylib::EdgeWrap.html">arraylib::EdgeWrap</a></li>
+    <li><a href="../cc/arraylib::EdgeClip.html">arraylib::EdgeClip</a></li>
+    <li><a href="../cc/area2.html">area2</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/lib/sli/arraylib.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

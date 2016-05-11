@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: arrayload</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: arrayload</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>arrayload - pushes array elements followed by number of elements</pre>
+<b>Synopsis: </b>
+<pre> <br/>        array Transpose ->  array arrayload -> t1 ... tn n  <br/>   <br/>     
+</pre>
+<b>Author: </b>
+<pre>Marc-Oliver Gewaltig, Markus Diesmann  <br/>     
+</pre>
+<b>Remarks: </b>
+<pre>There are two obsolete versions existing called aload and astore.  <br/>     
+</pre>
+<b>Examples: </b>
+<pre> <br/>          [ 5 4 2 ] arrayload  --> 5 4 2   3  <br/>   <br/>     
+</pre>
+<b>Description: </b>
+<pre> <br/>      The stack is invariant under the sequences  <br/>         arrayload arraystore  <br/>         arraystore arrayload  .  <br/>      arrayload is the SLI version of PostScript operator aload.  <br/>      In contrast to PostScript SLI arrays are dynamic therefore  <br/>      the syntax of aload and astore is obsolete in SLI.  <br/>      If used aload and astore issue a warning message.  <br/>   <br/>     
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/arraystore.html">arraystore</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/sli/sliarray.cc</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

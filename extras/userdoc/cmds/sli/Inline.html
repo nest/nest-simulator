@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: Inline</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: Inline</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>Inline - Replace names in a procedure with their definitions.</pre>
+<b>Synopsis: </b>
+<pre> <br/>     {proc} <<dict>> Inline -> {proc'}  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>marc-Oliver Gewaltig  <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>  SLI ] {a b add} <</a 1 /b 2 >> Inline ==  <br/>  {1 2 add}  <br/>   <br/>  SLI ] {1 2 3 stack} << /stack dup load  >> Inline ==  <br/>  {1 2 3 0 1 -count- 3 -sub_ii- /{-index- =} -for-}  <br/>   <br/>  Version: January 19 2008  <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>     {proc}    - procedure to be transformed  <br/>     <<dict>>  - dictionary with names and definitions for the names to be inlined.  <br/>     {proc'}   - the transformed procedure with all names replaced.  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>  Transform the input procedure {proc} such that all names that are  <br/>  defined in <<dict>> are placed by their definitions.  <br/>   <br/>  Inline can be used to inline the code of procedures or to replace  <br/>  names of constants with their literal values. All names that are not  <br/>  defined in <<dict>> are unchanged.  <br/>   <br/>  Inline is particularly useful in combination with CompileMath.  <br/>   <br/>  Inline is similar to bind, but there are two big differences:  <br/>  1. bind uses the current dictstack to determine which names are placed.  <br/>  2. bind only replaces names that refer to C++-functions or tries.  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/ind.html">ind</a></li>
+    <li><a href="../cc/CompileMath.html">CompileMath</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/lib/sli/mathematica.sli</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

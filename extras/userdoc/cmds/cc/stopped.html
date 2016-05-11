@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+<title>NEST Command Index: stopped</title></head>
+
+    <style type="text/css">
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: #339;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #339;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        padding: 15px 0 0 15px;
+      }
+      p {
+        padding-left: 15px;
+      }
+      table.headerfooter {
+        margin: 20px 0 20px 0;
+        background-color: #eee;
+        width: 100%;
+        height: 30px;
+        border-top: 2px solid #ccc;
+        border-bottom: 2px solid #ccc;
+        text-align: center;
+      }
+      div.wrap {
+        padding-left: 15px;
+      }
+    </style>
+    <body>
+<h1>Command: stopped</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    <div class="wrap">
+<b>Name:</b><pre>stopped - returns true if execution was stopped by stop</pre>
+<b>Synopsis: </b>
+<pre> <br/>    xobj stopped -> true;  if the object was aborted with stop  <br/>                 -> false; otherwise.  <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>    stopped is part of a pair of commands which implement the  <br/>    PostScript exception mechanism.  <br/>    stopped is applied to an executable object, most probably a  <br/>    procedure, and returns true if this object raised a stop  <br/>    signal and false otherwise.  <br/>    This is accomplished by first pushing an internal name which  <br/>    resolves to false and then executing the object.  <br/>    stop will pop the stack down to this name and return true. If  <br/>    stop is not called, the name is eventually executed and thus the  <br/>    return value false.  <br/>   <br/>    Note that when the executable object was stopped by a call  <br/>    to raiseerror, the name of the routine that caused the  <br/>    error has can be found on the operand stack (see raiseerror).  <br/>   <br/>    The stop/stopped pair is used to implement SLI's error handling  <br/>    capabilities.  <br/>   <br/>  Notes: stop, stopped is PostScript compatible  <br/>  References:   The Red Book, sec. 3.10  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/stop.html">stop</a></li>
+    <li><a href="../cc/aiseerro.html">aiseerro</a></li>
+</ul>
+<b>Source:</b><pre>/home/steffen/work-nest/nest-git/nest-simulator/sli/slicontrol.cc</pre>
+</div>
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+    
+
+    <p style="text-align:center">
+        &copy; 2016 <a href="http://www.nest-initiative.org">
+        The NEST Initiative</a>
+    </p>
+    
+
+        </body>
+    </html>

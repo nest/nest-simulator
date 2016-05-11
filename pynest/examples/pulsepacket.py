@@ -23,11 +23,11 @@
 Pulse packet example
 --------------------
 
-This script compares the average and individual membrane potential excursions in
-response to a single pulse packet with an analytically acquired voltage trace.
-(see: Diesmann M. (2002) **Conditions for Stable Propagation of Synchronous
-Spiking in Cortical Neural Networks, Single Neuron Dynamics and Network
-Properties**, http://d-nb.info/968772781/34)
+This script compares the average and individual membrane potential excursions
+in response to a single pulse packet with an analytically acquired voltage
+trace (see: Diesmann M. (2002) **Conditions for Stable Propagation of
+Synchronous Spiking in Cortical Neural Networks, Single Neuron Dynamics and
+Network Properties**, http://d-nb.info/968772781/34).
 
 A pulse packet is a transient spike volley with a Gaussian rate profile.
 The user can specify the neural parameters, the parameters of the
@@ -142,9 +142,10 @@ gauss = term1 * term2 * Convolution_resolution
 '''
 1b) Second, we calculate the PSP of a neuron due to a single spiking input.
 (see Diesmann 2002, eq. 2.3)
-Since we do that in discrete time steps, we first construct an array (``t_psp``)
-that contains the time points we want to consider. Then, the function
-make_psp() (that creates the PSP) takes the time array as its first argument.
+Since we do that in discrete time steps, we first construct an array
+(``t_psp``) that contains the time points we want to consider. Then, the
+function make_psp() (that creates the PSP) takes the time array as its
+first argument.
 '''
 
 t_psp = numpy.arange(0, 10 * (Tau_m + Tau_s), Convolution_resolution)
@@ -153,9 +154,9 @@ psp = make_psp(t_psp, Tau_s, Tau_m, Cm, Weight)
 '''
 1c) Now, we want to normalized the PSP amplitude to one. We therefore have to
 divide the PSP by its maximum [Diesmann 2002, sec 6.1]. The function
-``find_loc_pspmax()`` returns the exact time point (``t_pspmax``) when we expect
-the maximum to occur. The function ``make_psp()`` calculates the corresponding
-PSP value, which is our PSP amplitude (``psp_ampl``).
+``find_loc_pspmax()`` returns the exact time point (``t_pspmax``) when we
+expect the maximum to occur. The function ``make_psp()`` calculates the
+corresponding PSP value, which is our PSP amplitude (``psp_ampl``).
 '''
 
 t_pspmax = find_loc_pspmax(Tau_s, Tau_m)
@@ -166,10 +167,11 @@ psp_norm = psp / psp_amp
 1d) Now we have all ingredients to compute the membrane potential excursion
 (``U``) This calculation implies a convolution of the Gaussian with the
 normalized PSP (see Diesmann 2002, eq. 6.9). In order to avoid an offset in
-the convolution we need to add a pad of zeros on the left side of the normalized
-PSP. Later on we want to compare our analytical results with the simulation
-outcome. Therefore we need a time vector (``t_U``) with the correct temporal
-resolution, that places the excursion of the potential at the correct time.
+the convolution we need to add a pad of zeros on the left side of the
+normalized PSP. Later on we want to compare our analytical results with the
+simulation outcome. Therefore we need a time vector (``t_U``) with the correct
+temporal resolution, that places the excursion of the potential at the correct
+time.
 '''
 
 tmp = numpy.zeros(2 * len(psp_norm))
@@ -302,4 +304,5 @@ pylab.plot(simtimes, Vm_average, 'b', lw=4,
 pylab.legend()
 pylab.xlabel('time (ms)')
 pylab.ylabel('membrane potential (mV)')
-pylab.xlim((-5 * (tau_m + tau_s) + pulsetime, 10 * (tau_m + tau_s) + pulsetime))
+pylab.xlim((-5 * (tau_m + tau_s) + pulsetime,
+            10 * (tau_m + tau_s) + pulsetime))

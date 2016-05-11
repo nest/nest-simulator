@@ -44,7 +44,8 @@ import matplotlib.colors as mc
 import matplotlib.cbook as cbook
 import numpy as np
 
-__all__ = ['ZeroCenterNorm', 'make_colormap', 'redblue', 'bluered', 'bad_color']
+__all__ = ['ZeroCenterNorm', 'make_colormap', 'redblue', 'bluered',
+           'bad_color']
 
 # ----------------------------------------------------------------------------
 

@@ -80,9 +80,11 @@ ax = fig.gca()
 tx = []
 for r in range(5):
     tx.append(ax.text(0.65, 0.4 - r * 0.2, str(r),
-                      horizontalalignment='center', verticalalignment='center'))
+                      horizontalalignment='center',
+                      verticalalignment='center'))
     tx.append(ax.text(-0.4 + r * 0.2, 0.65, str(r),
-                      horizontalalignment='center', verticalalignment='center'))
+                      horizontalalignment='center',
+                      verticalalignment='center'))
 
 # For bbox_extra_artists, see
 # https://github.com/matplotlib/matplotlib/issues/351

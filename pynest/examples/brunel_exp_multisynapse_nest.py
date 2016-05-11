@@ -202,8 +202,10 @@ inhibitory connections giving the previously defined weights and equal
 delays.
 '''
 
-nest.CopyModel("static_synapse", "excitatory", {"weight": J_ex, "delay": delay})
-nest.CopyModel("static_synapse", "inhibitory", {"weight": J_in, "delay": delay})
+nest.CopyModel("static_synapse", "excitatory",
+               {"weight": J_ex, "delay": delay})
+nest.CopyModel("static_synapse", "inhibitory",
+               {"weight": J_in, "delay": delay})
 
 '''
 Connecting the previously defined poisson generator to the excitatory

@@ -170,9 +170,9 @@ class StructralPlasticityExample:
         Now we define Structural Plasticity synapses. In this example we create
         two synapse models, one for excitatory and one for inhibitory synapses.
         Then we define that excitatory synapses can only be created between a
-        pre synaptic element called 'Axon_ex' and a post synaptic element called
-        Den_ex. In a similar manner, synaptic elements for inhibitory synapses
-        are defined.
+        pre synaptic element called 'Axon_ex' and a post synaptic element
+        called Den_ex. In a similar manner, synaptic elements for inhibitory
+        synapses are defined.
         '''
         nest.CopyModel('static_synapse', 'synapse_ex')
         nest.SetDefaults('synapse_ex', {'weight': self.psc_e, 'delay': 1.0})
@@ -214,10 +214,12 @@ class StructralPlasticityExample:
         size excitatory neurons and another one with 20% of the total network
         size of inhibitory neurons.
         '''
-        self.nodes_e = nest.Create('iaf_neuron', self.number_excitatory_neurons,
+        self.nodes_e = nest.Create('iaf_neuron',
+                                   self.number_excitatory_neurons,
                                    {'synaptic_elements': synaptic_elements})
 
-        self.nodes_i = nest.Create('iaf_neuron', self.number_inhibitory_neurons,
+        self.nodes_i = nest.Create('iaf_neuron',
+                                   self.number_inhibitory_neurons,
                                    {'synaptic_elements': synaptic_elements_i})
         nest.SetStatus(self.nodes_e, 'synaptic_elements', synaptic_elements)
         nest.SetStatus(self.nodes_i, 'synaptic_elements', synaptic_elements_i)

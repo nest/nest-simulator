@@ -108,8 +108,9 @@ s_in = nest.Create("spike_generator",
 '''
 Next, the spike generators are connected to the neuron with `Connect`. Synapse
 specifications can be provided in a dictionary. In this example of a
-conductance-based neuron, the synaptic weight `weight` is given in nS. Note that
-it is positive for excitatory and negative for inhibitory connections.
+conductance-based neuron, the synaptic weight `weight` is given in nS.
+Note that it is positive for excitatory and negative for inhibitory
+connections.
 '''
 
 nest.Connect(s_ex, n, syn_spec={"weight": 40.0})
@@ -124,9 +125,10 @@ nest.Simulate(100.)
 
 '''
 After the simulation, the recordings are obtained from the multimeter via the
-key `events` of the status dictionary accessed by `GetStatus`. `times` indicates
-the recording times stored for each data point. They are recorded if the
-parameter `withtime` of the multimeter is set to True which is the default case.
+key `events` of the status dictionary accessed by `GetStatus`. `times`
+indicates the recording times stored for each data point. They are recorded
+if the parameter `withtime` of the multimeter is set to True which is the
+default case.
 '''
 
 events = nest.GetStatus(m)[0]["events"]

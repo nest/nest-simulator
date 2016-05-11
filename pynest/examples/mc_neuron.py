@@ -100,8 +100,8 @@ the start,stop times and the amplitude of the injected current.
 
 cgs = nest.Create('dc_generator', 3)
 nest.SetStatus(cgs,
-               [{'start': 250.0, 'stop': 300.0, 'amplitude': 50.0},  # soma
-                {'start': 150.0, 'stop': 200.0, 'amplitude': -50.0},  # proximal
+               [{'start': 250.0, 'stop': 300.0, 'amplitude': 50.0},   # soma
+                {'start': 150.0, 'stop': 200.0, 'amplitude': -50.0},  # proxim.
                 {'start': 50.0, 'stop': 100.0, 'amplitude': 100.0}])  # distal
 
 '''
@@ -188,7 +188,8 @@ pylab.ylabel('Membrane potential [mV]')
 pylab.title('Responses of iaf_cond_alpha_mc neuron')
 
 '''
-Plot time traces of the synaptic conductance measured in different compartments.
+Plot time traces of the synaptic conductance measured
+in different compartments.
 '''
 
 pylab.subplot(212)

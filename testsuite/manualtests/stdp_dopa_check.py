@@ -142,7 +142,8 @@ def stdp_dopa(w_init, pre_spikes, post_spikes, dopa_spikes, tau_e, tau_d,
 
             print "dopa\t%.4f\t%.4f" % (dopa_spikes[k], w)
             last_w_update = dopa_spikes[k]
-            Dtrace = (Dtrace * exp((last_dopa_spike - dopa_spikes[k]) / tau_d) +
+            Dtrace = (Dtrace *
+                      exp((last_dopa_spike - dopa_spikes[k]) / tau_d) +
                       1 / tau_d)
 
             last_dopa_spike = dopa_spikes[k]
@@ -199,7 +200,8 @@ def stdp_dopa(w_init, pre_spikes, post_spikes, dopa_spikes, tau_e, tau_d,
                 i += 1
                 advance = True
 
-            Dtrace = (Dtrace * exp((last_dopa_spike - dopa_spikes[k]) / tau_d) +
+            Dtrace = (Dtrace *
+                      exp((last_dopa_spike - dopa_spikes[k]) / tau_d) +
                       1 / tau_d)
             last_dopa_spike = dopa_spikes[k]
 
@@ -234,7 +236,8 @@ def stdp_dopa(w_init, pre_spikes, post_spikes, dopa_spikes, tau_e, tau_d,
                 j += 1
                 advance = True
 
-            Dtrace = (Dtrace * exp((last_dopa_spike - dopa_spikes[k]) / tau_d) +
+            Dtrace = (Dtrace *
+                      exp((last_dopa_spike - dopa_spikes[k]) / tau_d) +
                       1 / tau_d)
             last_dopa_spike = dopa_spikes[k]
 
@@ -258,7 +261,8 @@ def stdp_dopa(w_init, pre_spikes, post_spikes, dopa_spikes, tau_e, tau_d,
 
             print "dopa\t%.4f\t%.4f" % (dopa_spikes[k], w)
             last_w_update = dopa_spikes[k]
-            Dtrace = (Dtrace * exp((last_dopa_spike - dopa_spikes[k]) / tau_d) +
+            Dtrace = (Dtrace *
+                      exp((last_dopa_spike - dopa_spikes[k]) / tau_d) +
                       1 / tau_d)
 
             last_dopa_spike = dopa_spikes[k]

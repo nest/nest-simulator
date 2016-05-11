@@ -34,8 +34,8 @@ This script compares the two aeif_cond_alpha flavors with respect to speed
 and precision.
 
 Version 1 is the GSL based 'aeif_cond_alpha' model.
-Version 2 is called 'aeif_cond_alpha_RK5' which uses an explicitly coded version
-of the RK-45 method as described in Numerical Recepies, Chap. 17.2,
+Version 2 is called 'aeif_cond_alpha_RK5' which uses an explicitly coded
+version of the RK-45 method as described in Numerical Recepies, Chap. 17.2,
 Press et al (2007).
 
 Reference is Version 1 at a temporal resolution of 0.001 ms.

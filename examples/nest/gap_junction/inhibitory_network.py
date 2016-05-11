@@ -77,7 +77,8 @@ nest.SetKernelStatus({'resolution': 0.05,
 
 neurons = nest.Create('hh_psc_alpha_gap', n_neuron)
 
-sd = nest.Create("spike_detector", params={'to_file': False, 'to_memory': True})
+sd = nest.Create("spike_detector", params={'to_file': False,
+                                           'to_memory': True})
 pg = nest.Create("poisson_generator", params={'rate': 500.0})
 
 conn_dict = {'rule': 'fixed_indegree',

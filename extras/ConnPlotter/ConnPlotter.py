@@ -223,34 +223,44 @@ class PlotParams(object):
             self._colbar = 10.0
 
         @property
-        def left(self): return self._left
+        def left(self):
+            return self._left
 
         @left.setter
-        def left(self, l): self._left = float(l)
+        def left(self, l):
+            self._left = float(l)
 
         @property
-        def right(self): return self._right
+        def right(self):
+            return self._right
 
         @right.setter
-        def right(self, r): self._right = float(r)
+        def right(self, r):
+            self._right = float(r)
 
         @property
-        def top(self): return self._top
+        def top(self):
+            return self._top
 
         @top.setter
-        def top(self, t): self._top = float(t)
+        def top(self, t):
+            self._top = float(t)
 
         @property
-        def bottom(self): return self._bottom
+        def bottom(self):
+            return self._bottom
 
         @bottom.setter
-        def bottom(self, b): self._bottom = float(b)
+        def bottom(self, b):
+            self._bottom = float(b)
 
         @property
-        def colbar(self): return self._colbar
+        def colbar(self):
+            return self._colbar
 
         @colbar.setter
-        def colbar(self, b): self._colbar = float(b)
+        def colbar(self, b):
+            self._colbar = float(b)
 
     def __init__(self):
         """Set default values"""
@@ -346,7 +356,7 @@ class PlotParams(object):
     def layer_font(self, font):
         if not isinstance(font, mpl.font_manager.FontProperties):
             raise ValueError('layer_font must be a ' +
-                             'matplotlib.font_manager.FontProperties instance.')
+                             'matplotlib.font_manager.FontProperties instance')
         self._layer_font = font
 
     @property
@@ -390,7 +400,7 @@ class PlotParams(object):
     def pop_font(self, font):
         if not isinstance(font, mpl.font_manager.FontProperties):
             raise ValueError('pop_font must be a ' +
-                             'matplotlib.font_manager.FontProperties instance.')
+                             'matplotlib.font_manager.FontProperties instance')
         self._pop_font = font
 
     @property
@@ -433,7 +443,7 @@ class PlotParams(object):
     def legend_tick_font(self, font):
         if not isinstance(font, mpl.font_manager.FontProperties):
             raise ValueError('legend_tick_font must be a ' +
-                             'matplotlib.font_manager.FontProperties instance.')
+                             'matplotlib.font_manager.FontProperties instance')
         self._lgd_tick_font = font
 
     @property
@@ -447,7 +457,7 @@ class PlotParams(object):
     def legend_title_font(self, font):
         if not isinstance(font, mpl.font_manager.FontProperties):
             raise ValueError('legend_title_font must be a ' +
-                             'matplotlib.font_manager.FontProperties instance.')
+                             'matplotlib.font_manager.FontProperties instance')
         self._lgd_title_font = font
 
     @property
@@ -613,8 +623,8 @@ class ConnectionPattern(object):
 
         def __init__(self, row, col, tweight, cmap, idx):
             """
-            row, col: Position of synapse in grid of synapse patches, from 0, 0
-            tweight : weight to apply when adding kernels for different synapses
+            row, col: Position of synapse in grid of synapse patches, from 0,0
+            tweight : weight used when adding kernels for different synapses
             cmap    : colormap for synapse type (matplotlib.colors.Colormap)
             idx     : linear index, used to order colorbars in figure
             """
@@ -654,7 +664,8 @@ class ConnectionPattern(object):
         def __init__(self, conninfo, layers, synapses, intensity, tcd, Vmem):
             """
             Arguments:
-            conninfo: list of connection info entries: (sender,target,conn_dict)
+            conninfo: list of connection info entries:
+                      (sender,target,conn_dict)
             layers  : list of _LayerProps objects
             synapses: list of _SynProps objects
             intensity: 'wp', 'p', 'tcd'
@@ -940,14 +951,14 @@ class ConnectionPattern(object):
         el = block.newElement(1.0, 0.6, 's', 't')
         el = block.newElement(1.0, 0.6, 's', 't', size=[2.0, 3.0])
 
-        The first example adds a new _Block to the row. 1.0 is the space between
-        blocks, 0.6 the space before the first block in a row. 's' and 't' are
+        The first example adds a new _Block to the row. 1.0 is space between
+        blocks, 0.6 space before the first block in a row. 's' and 't' are
         stored as slbl and tlbl (optional). If size is given, a _Patch with
         the given size is created. _Patch is atomic. newElement() returns the
         _Block or _Patch created.
         """
 
-        # ------------------------------------------------------------------------
+        # --------------------------------------------------------------------
 
         def __init__(self, left, top, row, col, slabel=None, tlabel=None,
                      parent=None):
@@ -958,7 +969,7 @@ class ConnectionPattern(object):
             self._row = 0
             self._col = 0
 
-        # ------------------------------------------------------------------------
+        # --------------------------------------------------------------------
 
         def newRow(self, dy=0.0, dynew=0.0):
             """
@@ -979,7 +990,7 @@ class ConnectionPattern(object):
 
             self.elements.append([])
 
-        # ------------------------------------------------------------------------
+        # --------------------------------------------------------------------
 
         def newElement(self, dx=0.0, dxnew=0.0, slabel=None, tlabel=None,
                        size=None):
@@ -1024,7 +1035,7 @@ class ConnectionPattern(object):
 
             return elem
 
-        # ------------------------------------------------------------------------
+        # --------------------------------------------------------------------
 
         def addMargin(self, rmarg=0.0, bmarg=0.0):
             """Extend block by margin to right and bottom."""
@@ -1036,11 +1047,12 @@ class ConnectionPattern(object):
             lr = self.lr
             self._update_size((lr[0] + rmarg, lr[1] + bmarg))
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     def _prepareAxes(self, mode, showLegend):
         """
-        Prepare information for all axes, but do not create the actual axes yet.
+        Prepare information for all axes, but do not create the actual axes
+        yet.
         mode: one of 'detailed', 'by layer', 'totals'
         """
 
@@ -1124,15 +1136,16 @@ class ConnectionPattern(object):
                                     if s.r == r and s.c == c]
                             if smod:
                                 assert (len(smod) == 1)
-                                self._patchTable[
-                                    (sl.name, None, tl.name, None, smod[0])] = p
+                                self._patchTable[(sl.name, None, tl.name,
+                                                  None, smod[0])] = p
 
                 elif mode == 'population':
                     # one patch per population pair
                     for sp in spops:
                         block.newRow(popsep, popsep / 2.)
                         for tp in tpops:
-                            pblk = block.newElement(popsep, popsep / 2., sp, tp)
+                            pblk = block.newElement(popsep, popsep / 2.,
+                                                    sp, tp)
                             pblk.newRow(synsep, synsep / 2.)
                             self._patchTable[(sl.name, sp,
                                               tl.name, tp, None)] = \
@@ -1144,7 +1157,8 @@ class ConnectionPattern(object):
                     for sp in spops:
                         block.newRow(popsep, popsep / 2.)
                         for tp in tpops:
-                            pblk = block.newElement(popsep, popsep / 2., sp, tp)
+                            pblk = block.newElement(popsep, popsep / 2.,
+                                                    sp, tp)
                             pblk.newRow(synsep, synsep / 2.)
 
                             # Find all connections with matching properties
@@ -1163,15 +1177,17 @@ class ConnectionPattern(object):
                                 if (sl.name, sp, tl.name, tp, n) in axset:
                                     continue
 
-                                # Create patch. We must create also such patches
-                                # that do not have synapses, since spacing would
-                                # go wrong otherwise.
-                                p = pblk.newElement(synsep, 0.0, size=patchsize)
+                                # Create patch. We must create also such
+                                # patches that do not have synapses, since
+                                # spacing would go wrong otherwise.
+                                p = pblk.newElement(synsep, 0.0,
+                                                    size=patchsize)
 
-                                # if patch represents existing synapse, register
+                                # if patch represents existing synapse,
+                                # register
                                 if n in syns:
-                                    self._patchTable[
-                                        (sl.name, sp, tl.name, tp, syns[n])] = p
+                                    self._patchTable[(sl.name, sp, tl.name,
+                                                      tp, syns[n])] = p
 
                 block.addMargin(popsep / 2., popsep / 2.)
 
@@ -1188,7 +1204,7 @@ class ConnectionPattern(object):
                     lwidth = plotParams.cbwidth * figwidth
                 else:
                     lwidth = 0.2 * figwidth
-                    if lwidth > 100.0:  # colorbar should not be wider than 10cm
+                    if lwidth > 100.0:  # colorbar shouldn't be wider than 10cm
                         lwidth = 100.0
                 lheight = (plotParams.cbheight * cbmargin
                            if plotParams.cbheight else 0.3 * cbmargin)
@@ -1226,7 +1242,7 @@ class ConnectionPattern(object):
                     else:
                         lwidth = figwidth / (snum + 1.0)
                         lstep = (figwidth - snum * lwidth) / (snum - 1.0)
-                    if lwidth > 100.0:  # colorbar should not be wider than 10cm
+                    if lwidth > 100.0:  # colorbar shouldn't be wider than 10cm
                         lwidth = 100.0
                         lstep = 30.0
                 lheight = (plotParams.cbheight * cbmargin
@@ -1252,7 +1268,7 @@ class ConnectionPattern(object):
                             lwidth,
                             lheight)
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     def _scaledBox(self, p):
         """Scaled axes rectangle for patch, reverses y-direction."""
@@ -1260,7 +1276,7 @@ class ConnectionPattern(object):
         return self._figscale * np.array(
             [p.l / xsc, 1 - (p.t + p.h) / ysc, p.w / xsc, p.h / ysc])
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     def _scaledBoxNR(self, p):
         """Scaled axes rectangle for patch, does not reverse y-direction."""
@@ -1268,7 +1284,7 @@ class ConnectionPattern(object):
         return self._figscale * np.array(
             [p.l / xsc, p.t / ysc, p.w / xsc, p.h / ysc])
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     def _configSynapses(self, cList, synTypes):
         """Configure synapse information based on connections and user info."""
@@ -1330,7 +1346,7 @@ class ConnectionPattern(object):
                 ctr += 1
             row += 1
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     def __init__(self, lList, cList, synTypes=None, intensity='wp',
                  mList=None, Vmem=None, poporder=None):
@@ -1415,7 +1431,7 @@ class ConnectionPattern(object):
         self._synTypes = list(
             set([c.synmodel for c in _flattened(self._cTable.values())]))
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     def plot(self, aggrGroups=False, aggrSyns=False, globalColors=False,
              colorLimits=None, showLegend=True,
@@ -1523,13 +1539,12 @@ class ConnectionPattern(object):
                              if c.matches(sl=slayer.name, tl=tlayer.name)]
                     if len(kerns) > 0:
                         plotKerns.append(
-                            self._PlotKern(slayer.name, None, tlayer.name, None,
-                                           None,
-                                           _addKernels(kerns)))
+                            self._PlotKern(slayer.name, None, tlayer.name,
+                                           None, None, _addKernels(kerns)))
         elif mode == 'select':
             # copy only those kernels that have the requested synapse type,
             # no dimension reduction
-            # nb: we need to sum all kernels in the list for a set of attributes
+            # We need to sum all kernels in the list for a set of attributes
             plotKerns = [
                 self._PlotKern(clist[0].slayer, clist[0].snrn, clist[0].tlayer,
                                clist[0].tnrn,
@@ -1539,7 +1554,7 @@ class ConnectionPattern(object):
                 clist[0].synmodel in selected]
         else:
             # copy all
-            # nb: we need to sum all kernels in the list for a set of attributes
+            # We need to sum all kernels in the list for a set of attributes
             plotKerns = [
                 self._PlotKern(clist[0].slayer, clist[0].snrn, clist[0].tlayer,
                                clist[0].tnrn,
@@ -1614,8 +1629,8 @@ class ConnectionPattern(object):
                 ax.frame.set_visible(False)
             else:
                 for sp in ax.spines.values():
-                    sp.set_color(
-                        'none')  # turn off axis lines, make room for frame edge
+                    # turn off axis lines, make room for frame edge
+                    sp.set_color('none')
             if block.l <= self._axes.l_patches and block.slbl:
                 ax.set_ylabel(block.slbl,
                               rotation=plotParams.layer_orientation['sender'],
@@ -1683,8 +1698,8 @@ class ConnectionPattern(object):
 
         # Initialize dict storing sample patches for each synapse type for use
         # in creating color bars. We will store the last patch of any given
-        # synapse type for reference. When aggrSyns, we have only one patch type
-        # and store that.
+        # synapse type for reference. When aggrSyns, we have only one patch
+        #  type and store that.
         if not aggrSyns:
             samplePatches = dict(
                 [(sname, None) for sname in self._synAttr.keys()])
@@ -1693,7 +1708,8 @@ class ConnectionPattern(object):
             samplePatches = None
 
         for kern in plotKerns:
-            p = self._patchTable[(kern.sl, kern.sn, kern.tl, kern.tn, kern.syn)]
+            p = self._patchTable[(kern.sl, kern.sn, kern.tl,
+                                  kern.tn, kern.syn)]
 
             p.ax = f.add_axes(self._scaledBox(p), aspect='equal',
                               xticks=[], yticks=[], zorder=plotParams.z_conn)
@@ -1702,8 +1718,8 @@ class ConnectionPattern(object):
                 p.ax.frame.set_visible(False)
             else:
                 for sp in p.ax.spines.values():
-                    sp.set_color(
-                        'none')  # turn off axis lines, make room for frame edge
+                    # turn off axis lines, make room for frame edge
+                    sp.set_color('none')
 
             if not aggrSyns:
                 # we have synapse information -> not totals, a vals positive
@@ -1845,7 +1861,7 @@ class ConnectionPattern(object):
 
         return kern_min, kern_max
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     def toLaTeX(self, file, standalone=False, enumerate=False, legend=True):
         """
@@ -1894,7 +1910,8 @@ class ConnectionPattern(object):
                 \newcommand{\hdr}[3]{%
                   \multicolumn{#1}{|l|}{%
                     \color{white}\cellcolor[gray]{0.0}%
-                    \textbf{\makebox[0pt]{#2}\hspace{0.5\linewidth}\makebox[0pt][c]{#3}}%
+                    \textbf{\makebox[0pt]{#2}\hspace{0.5\linewidth}%
+                            \makebox[0pt][c]{#3}}%
                   }%
                 }
 

@@ -40,7 +40,7 @@ except:
 
 
 @unittest.skipIf(not PLOTTING_POSSIBLE,
-                 'Plotting is impossible because matplotlib or display missing')
+                 'Plotting impossible because matplotlib or display missing')
 class PlottingTestCase(unittest.TestCase):
     def test_PlotLayer(self):
         """Test plotting layer."""

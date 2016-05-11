@@ -33,8 +33,8 @@ from matplotlib.pylab import *
 # first version: Moritz Helias, april 2006
 # adapted to python MH, SK, May 2008
 
-def stdp(w_init, w_max, pre_spikes, post_spikes, alpha, mu_plus, mu_minus, lmbd,
-         tau_plus, tau_minus, delay):
+def stdp(w_init, w_max, pre_spikes, post_spikes, alpha, mu_plus, mu_minus,
+         lmbd, tau_plus, tau_minus, delay):
     w = w_init  # initial weight
     i = 0  # index of next presynaptic spike
     j = 0  # index of next postsynaptic spike

@@ -92,7 +92,8 @@ current. The first neuron additionally receives the current with amplitude
 '''
 
 nest.SetStatus(neurons, neuronparams)
-nest.SetStatus(neurons, [{'I_e': (n * (bias_end - bias_begin) / N + bias_begin)}
+nest.SetStatus(neurons, [{'I_e':
+                          (n * (bias_end - bias_begin) / N + bias_begin)}
                          for n in neurons])
 
 '''

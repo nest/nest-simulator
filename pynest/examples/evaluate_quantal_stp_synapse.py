@@ -54,12 +54,12 @@ Parameters:
 
 References:
    [1] Fuhrmann, G., Segev, I., Markram, H., & Tsodyks, M. V. (2002). Coding of
-       information by activity-dependent synapses. Journal of neurophysiology, 8
+       information by activity-dependent synapses. Journal of Neurophysiology.
    [2] Loebel, A., Silberberg, G., Helbig, D., Markram, H., Tsodyks,
        M. V, & Richardson, M. J. E. (2009). Multiquantal release underlies
        the distribution of synaptic efficacies in the neocortex. Frontiers
-       in computational neuroscience, 3(November), 27. doi:10.3389/neuro.10.027.
-   [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers. Neur
+       in Computational Neuroscience, 3:27. doi:10.3389/neuro.10.027.
+   [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers.
 '''
 import nest
 import nest.voltage_trace
@@ -131,7 +131,8 @@ nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 '''
 One dry run to bring all synapses into their rest state.
 The default initialization does not achieve this. In large network simulations
-this problem does not show, but in small simulations like this, we would see it.
+this problem does not show, but in small simulations like this,
+we would see it.
 '''
 nest.SetStatus([neuron[0]], "I_e", 376.0)
 nest.Simulate(500.0)

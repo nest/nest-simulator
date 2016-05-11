@@ -89,7 +89,8 @@ for dirpath, _, fnames in os.walk(source_dir):
 
         tested_file = os.path.join(dirpath, fname)
 
-        if any([exclude_file in tested_file for exclude_file in exclude_files]):
+        if any([exclude_file in tested_file
+                for exclude_file in exclude_files]):
             continue
 
         with open(tested_file) as source_file:
@@ -112,7 +113,8 @@ for dirpath, _, fnames in os.walk(source_dir):
                     total_errors += 1
                     break
 
-print("Files with errors '{0}' out of '{1}'!".format(total_errors, total_files))
+print("Files with errors '{0}' out of '{1}'!".format(total_errors,
+                                                     total_files))
 
 if total_errors > 0:
     sys.exit(EXIT_BAD_HEADER)

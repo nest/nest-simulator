@@ -130,7 +130,8 @@ class BasicsTestCase(unittest.TestCase):
 
         self.assertTrue(all(nest.is_iterable(n) for n in n4))
         self.assertTrue(all(len(n) == len(checkpos) for n in n4))
-        self.assertTrue(all(nest.is_sequence_of_gids(m) for n in n4 for m in n))
+        self.assertTrue(all(nest.is_sequence_of_gids(m)
+                            for n in n4 for m in n))
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Displacement(self):

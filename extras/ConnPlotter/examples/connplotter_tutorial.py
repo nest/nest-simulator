@@ -175,10 +175,10 @@ pylab.show()
 # !       connections, thus they are blue.
 # !     + The patches in detail are:
 # !
-# !       - **E to E** (top-left, row 3+4 in table): two rectangular projections
-# !         at 90 degrees.
+# !       - **E to E** (top-left, row 3+4 in table): two rectangular
+# !          projections at 90 degrees.
 # !       - **E to I** (top-right, row 5 in table): narrow gaussian projection.
-# !       - **I to E** (bottom-left, row 6 in table): wider gaussian projection.
+# !       - **I to E** (bottom-left, row 6 in table): wider gaussian projection
 # !       - **I to I** (bottom-right, row 7 in table): circular projection
 # !         covering entire layer.
 # !
@@ -191,8 +191,8 @@ s_cp.plot(globalColors=True)
 pylab.show()
 
 # ! This figure shows the same data as the one above, but now all patches use
-# ! a common color scale, so full intensity color (either red or blue) indicates
-# ! the strongest connectivity. From this we see that
+# ! a common color scale, so full intensity color (either red or blue)
+# ! indicates the strongest connectivity. From this we see that
 # !
 # ! - A to B/E is stronger than A to B/I
 # ! - B/E to B/I is the strongest of all connections at the center
@@ -207,9 +207,9 @@ pylab.show()
 
 # ! In the figure above, all excitatory connections from B to B layer have been
 # ! combined into one patch, as have all inhibitory connections from B to B.
-# ! In the upper-right corner, all connections from layer A to layer B have been
-# ! combined; the patch for inhibitory connections is missing, as there are
-# ! none.
+# ! In the upper-right corner, all connections from layer A to layer B have
+# ! been combined; the patch for inhibitory connections is missing, as there
+# ! are none.
 
 # ! Aggregate by groups and synapse models
 # ! --------------------------------------
@@ -449,8 +449,8 @@ c_cp_75 = cpl.ConnectionPattern(c_layer, c_conn, intensity='tcd',
 c_cp_45 = cpl.ConnectionPattern(c_layer, c_conn, intensity='tcd',
                                 mList=c_model, Vmem=-45.0)
 
-# ! In order to obtain a meaningful comparison between both membrane potentials,
-# ! we use the same global color scale
+# ! In order to obtain a meaningful comparison between both membrane
+# ! potentials, we use the same global color scale.
 
 # ! V_m = -75 mV
 # ! ::::::::::::::
@@ -513,7 +513,7 @@ pylab.show()
 # ! By default, ConnPlotter knows two following sets of synapse types.
 # !
 # ! exc/inh
-# !   - Used automatically when all connections have the same ``synapse_model``.
+# !   - Used automatically when all connections have the same synapse_model.
 # !   - Connections with positive weight are assigned model exc, those with
 # !     negative weight model inh.
 # !   - When computing totals, exc has weight +1, inh weight -1
@@ -627,8 +627,10 @@ pylab.show()
 # ! the colormap; unfortunately, this modifies the colormap.
 pylab.cm.hsv.set_bad(cpl.colormaps.bad_color)
 ccb_syns = (
-    (cpl.SynType('AMPA', 1, 'maroon'), cpl.SynType('NMDA', 1, (0.9, 0.5, 0.1))),
-    (cpl.SynType('GABA_A', -1, '0.7'), cpl.SynType('GABA_B', 1, pylab.cm.hsv)))
+    (cpl.SynType('AMPA', 1, 'maroon'),
+     cpl.SynType('NMDA', 1, (0.9, 0.5, 0.1))),
+    (cpl.SynType('GABA_A', -1, '0.7'),
+     cpl.SynType('GABA_B', 1, pylab.cm.hsv)))
 ccb_cp = cpl.ConnectionPattern(c_layer, c_conn, synTypes=ccb_syns)
 ccb_cp.plot(aggrGroups=True)
 pylab.show()

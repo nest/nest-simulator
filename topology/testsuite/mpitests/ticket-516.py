@@ -22,7 +22,8 @@
 """
 Regression test for Ticket 516.
 
-This test must be run with six MPI processes: mpirun -np 6 python ticket-516.sli
+This test must be run with six MPI processes:
+  mpirun -np 6 python ticket-516.sli
 
 NB: If a test fails, Python will hang as only some processes throw an error,
     while others enter the simulation loop.
@@ -64,7 +65,8 @@ class Ticket516RegressionCase(unittest.TestCase):
                                                  (self.master_seed +
                                                   2 * n_vp + 1))})
 
-        layer = topo.CreateLayer({'rows': 10, 'columns': 10, 'edge_wrap': False,
+        layer = topo.CreateLayer({'rows': 10, 'columns': 10,
+                                  'edge_wrap': False,
                                   'elements': 'iaf_psc_delta'})
 
         topo.ConnectLayers(layer, layer,

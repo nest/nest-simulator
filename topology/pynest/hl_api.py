@@ -434,7 +434,7 @@ def CreateParameter(parametertype, specs):
             # or
             # p(d) = c + p_center*exp(-(d-mean)^2/(2*sigma^2))
             'gaussian' :
-                {'p_center' : float, # value at center of Gaussian, default: 1.0
+                {'p_center' : float, # value at center, default: 1.0
                  'mean'     : float, # distance to center, default: 0.0
                  'sigma'    : float, # width of Gaussian, default: 1.0
                  'c'        : float} # constant offset, default: 0.0
@@ -472,11 +472,11 @@ def CreateParameter(parametertype, specs):
 
                  'max'  : float} # maximum value, default: +inf
             # or
-            # random parameter with lognormal distribution, optionally truncated
-            # to [min,max)
+            # random parameter with lognormal distribution,
+            # optionally truncated to [min,max)
             'lognormal' :
                 {'mu'   : float, # mean value of logarithm, default: 0.0
-                 'sigma': float, # standard deviation of logarithm, default: 1.0
+                 'sigma': float, # standard deviation of log, default: 1.0
                  'min'  : float, # minimum value, default: -inf
                  'max'  : float} # maximum value, default: +inf
 
@@ -634,9 +634,9 @@ def ConnectLayers(pre, post, projections):
     """
     Pairwise connect of pre- and postsynaptic (lists of) layers.
 
-    `pre` and `post` must be a tuple/list of GIDs of equal length. The GIDs must
-    refer to layers created with ``CreateLayers``. Layers in the `pre` and
-    `post` lists are connected pairwise.
+    `pre` and `post` must be a tuple/list of GIDs of equal length. The GIDs
+    must refer to layers created with ``CreateLayers``. Layers in the `pre`
+    and `post` lists are connected pairwise.
 
     * If `projections` is a single dictionary, it applies to all pre-post
       pairs.
@@ -791,7 +791,8 @@ def ConnectLayers(pre, post, projections):
         raise nest.NESTError("pre and post must have the same length.")
 
     # ensure projections is list of full length
-    projections = nest.broadcast(projections, len(pre), (dict, ), "projections")
+    projections = nest.broadcast(projections, len(pre), (dict, ),
+                                 "projections")
 
     # Replace python classes with SLI datums
     def fixdict(d):
@@ -1167,7 +1168,7 @@ def _check_displacement_args(from_arg, to_arg, caller):
     if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(
             to_arg):
         raise nest.NESTError(
-            "%s: If to_arg and from_arg are lists, they must have equal length."
+            "%s: If to_arg and from_arg are lists, they must have same length."
             % caller)
     # invariant: from_arg and to_arg have equal length,
     # or (at least) one has length 1
@@ -1268,7 +1269,8 @@ def Distance(from_arg, to_arg):
     * If one of `from_arg` or `to_arg` has length 1, and the other is longer,
       the displacement from/to the single item to all other items is given.
     * If `from_arg` and `to_arg` both have more than two elements, they have
-      to be lists of the same length and the distance for each pair is returned.
+      to be lists of the same length and the distance for each pair is
+      returned.
 
 
     Parameters
@@ -1555,8 +1557,8 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
         List of GIDs of target neurons fulfilling the given criteria.
         It is a list of lists, one list per source.
 
-        For each neuron in `sources`, this function finds all target elements in
-        `tgt_layer`. If `tgt_model` is not given (default), all targets are
+        For each neuron in `sources`, this function finds all target elements
+        in `tgt_layer`. If `tgt_model` is not given (default), all targets are
         returned, otherwise only targets of specific type, and similarly for
         syn_model.
 
@@ -1649,8 +1651,8 @@ def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
         Positions of target neurons fulfilling the given criteria as a nested
         list, containing one list of positions per node in sources.
 
-        For each neuron in `sources`, this function finds all target elements in
-        `tgt_layer`. If `tgt_model` is not given (default), all targets are
+        For each neuron in `sources`, this function finds all target elements
+        in `tgt_layer`. If `tgt_model` is not given (default), all targets are
         returned, otherwise only targets of specific type, and similarly for
         syn_model.
 
@@ -2097,7 +2099,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                                         fc='none', ec=kernel_color, lw=3,
                                         ls='dashed'))
         else:
-            raise ValueError(
-                'Kernel type cannot be plotted with this version of PyTopology')
+            raise ValueError('Kernel type cannot be plotted with this ' +
+                             'version of PyTopology')
 
     plt.draw()

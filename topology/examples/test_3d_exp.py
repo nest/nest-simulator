@@ -66,7 +66,8 @@ topo.ConnectLayers(l1, l1,
                    {'connection_type': 'divergent', 'allow_autapses': False,
                     'mask': {'volume': {'lower_left': [-0.75, -0.75, -0.75],
                                         'upper_right': [0.75, 0.75, 0.75]}},
-                    'kernel': {'exponential': {'c': 0., 'a': 1., 'tau': 0.25}}})
+                    'kernel': {'exponential':
+                               {'c': 0., 'a': 1., 'tau': 0.25}}})
 
 # show connections from center element
 # sender shown in red, targets in green

@@ -73,8 +73,10 @@ times = nest.GetStatus(vm, 'events')[0]['times']
 V = nest.GetStatus(vm, 'events')[0]['V_m']
 
 pylab.figure(1)
-pylab.plot(times[numpy.where(senders == 1)], V[numpy.where(senders == 1)], 'r-')
-pylab.plot(times[numpy.where(senders == 2)], V[numpy.where(senders == 2)], 'g-')
+pylab.plot(times[numpy.where(senders == 1)],
+           V[numpy.where(senders == 1)], 'r-')
+pylab.plot(times[numpy.where(senders == 2)],
+           V[numpy.where(senders == 2)], 'g-')
 pylab.xlabel('time (ms)')
 pylab.ylabel('membrane potential (mV)')
 pylab.show()

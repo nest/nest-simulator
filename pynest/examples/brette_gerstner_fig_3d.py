@@ -81,7 +81,8 @@ nest.SetStatus(voltmeter, {"withgid": True, "withtime": True, 'interval': 0.1})
 nest.Connect(voltmeter, neuron)
 
 '''
-Finally, we simulate for 1000 ms and plot a voltage trace to produce the figure.
+Finally, we simulate for 1000 ms and plot a voltage trace
+to produce the figure.
 '''
 nest.Simulate(1000.0)
 

@@ -112,7 +112,7 @@ weightTraceMod36 = weightTrace[::36]  # just after theoretical updates
 
 weightIndex = int(startWeight)
 for i in range(len(weightTraceMod36pre)):
-    # check weight value before update (after spike pair with index 35, 71, ...)
+    # check weight value before update (after spike pair w index 35, 71, ...)
     assert (np.allclose(weightTraceMod36pre[i][1],
                         1.0 / 15.0 * weightIndex * Wmax,
                         atol=1e-6))

@@ -79,21 +79,25 @@ pop_sizes = [gids[i][1] - gids[i][0] + 1 for i in np.arange(len(gids))]
 # numbers of neurons for which spikes were recorded
 
 if record_frac == 'true':
-    rec_sizes = [int(pop_sizes[i] * frac_rec) for i in xrange(len(pop_sizes))]
+    rec_sizes = [int(pop_sizes[i] * frac_rec)
+                 for i in xrange(len(pop_sizes))]
 else:
     rec_sizes = [n_rec] * len(pop_sizes)
 
 # first GID of each population once device GIDs are dropped
 
-first_gids = [int(1 + np.sum(pop_sizes[:i])) for i in np.arange(len(pop_sizes))]
+first_gids = [int(1 + np.sum(pop_sizes[:i]))
+              for i in np.arange(len(pop_sizes))]
 
 # last GID of each population once device GIDs are dropped
 
-last_gids = [int(np.sum(pop_sizes[:i + 1])) for i in np.arange(len(pop_sizes))]
+last_gids = [int(np.sum(pop_sizes[:i + 1]))
+             for i in np.arange(len(pop_sizes))]
 
 # convert lists to a nicer format, i.e. [[2/3e, 2/3i], []....]
 
-Pop_sizes = [pop_sizes[i:i + 2] for i in xrange(0, len(pop_sizes), 2)]
+Pop_sizes = [pop_sizes[i:i + 2]
+             for i in xrange(0, len(pop_sizes), 2)]
 print 'Population sizes:'
 print Pop_sizes
 print

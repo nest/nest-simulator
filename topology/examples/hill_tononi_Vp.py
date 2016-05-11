@@ -422,8 +422,10 @@ Rp = topo.CreateLayer(layerProps)
 # ! tuned populations as separate populations.
 
 # ! We use list comprehesions to create all neuron types:
-[nest.CopyModel('CtxExNeuron', layer + 'pyr') for layer in ('L23', 'L4', 'L56')]
-[nest.CopyModel('CtxInNeuron', layer + 'in') for layer in ('L23', 'L4', 'L56')]
+[nest.CopyModel('CtxExNeuron', layer + 'pyr')
+ for layer in ('L23', 'L4', 'L56')]
+[nest.CopyModel('CtxInNeuron', layer + 'in')
+ for layer in ('L23', 'L4', 'L56')]
 
 # ! Now we can create the populations, suffixes h and v indicate tuning
 layerProps.update({'elements': ['L23pyr', 2, 'L23in', 1,
@@ -609,8 +611,10 @@ corThalBase = {"connection_type": "divergent",
 
 # ! We use a loop to do the for for us. The loop runs over a list of
 # ! dictionaries with all values that need updating
-for conn in [{"sources": {"model": "L56pyr"}, "targets": {"model": "TpRelay"}},
-             {"sources": {"model": "L56pyr"}, "targets": {"model": "TpInter"}}]:
+for conn in [{"sources": {"model": "L56pyr"},
+              "targets": {"model": "TpRelay"}},
+             {"sources": {"model": "L56pyr"},
+              "targets": {"model": "TpInter"}}]:
     ndict = intraInhBase.copy()
     ndict.update(conn)
     ctConnections.append(ndict)
@@ -727,27 +731,31 @@ for src, tgt, conn in [(Tp, Rp, {"sources": {"model": "TpRelay"},
                                  "synapse_model": "GABA_A",
                                  "weights": -1.0,
                                  "mask": {"circular": {"radius": 2.0 * dpc}},
-                                 "kernel": {"gaussian": {"p_center": 0.25,
-                                                         "sigma": 7.5 * dpc}}}),
+                                 "kernel": {"gaussian":
+                                            {"p_center": 0.25,
+                                             "sigma": 7.5 * dpc}}}),
                        (Tp, Tp, {"sources": {"model": "TpInter"},
                                  "targets": {"model": "TpInter"},
                                  "synapse_model": "GABA_A",
                                  "weights": -1.0,
                                  "mask": {"circular": {"radius": 2.0 * dpc}},
-                                 "kernel": {"gaussian": {"p_center": 0.25,
-                                                         "sigma": 7.5 * dpc}}}),
+                                 "kernel": {"gaussian":
+                                            {"p_center": 0.25,
+                                             "sigma": 7.5 * dpc}}}),
                        (Rp, Tp, {"targets": {"model": "TpRelay"},
                                  "synapse_model": "GABA_A",
                                  "weights": -1.0,
                                  "mask": {"circular": {"radius": 12.0 * dpc}},
-                                 "kernel": {"gaussian": {"p_center": 0.15,
-                                                         "sigma": 7.5 * dpc}}}),
+                                 "kernel": {"gaussian":
+                                            {"p_center": 0.15,
+                                             "sigma": 7.5 * dpc}}}),
                        (Rp, Tp, {"targets": {"model": "TpInter"},
                                  "synapse_model": "GABA_A",
                                  "weights": -1.0,
                                  "mask": {"circular": {"radius": 12.0 * dpc}},
-                                 "kernel": {"gaussian": {"p_center": 0.15,
-                                                         "sigma": 7.5 * dpc}}}),
+                                 "kernel": {"gaussian":
+                                            {"p_center": 0.15,
+                                             "sigma": 7.5 * dpc}}}),
                        (Rp, Rp, {"targets": {"model": "RpNeuron"},
                                  "synapse_model": "GABA_A",
                                  "weights": -1.0,

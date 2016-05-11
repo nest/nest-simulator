@@ -48,7 +48,8 @@ nest.SetKernelStatus({"resolution": res})
 neuron = nest.Create("aeif_cond_alpha")
 
 '''
-a and b are parameters of the adex model. Their values come from the publication
+a and b are parameters of the adex model.
+Their values come from the publication.
 '''
 
 nest.SetStatus(neuron, {"a": 4.0, "b": 80.5})
@@ -83,7 +84,8 @@ nest.SetStatus(voltmeter, {'interval': 0.1, "withgid": True, "withtime": True})
 nest.Connect(voltmeter, neuron)
 
 '''
-Finally, we simulate for 1000 ms and plot a voltage trace to produce the figure.
+Finally, we simulate for 1000 ms and plot a voltage trace
+to produce the figure.
 '''
 nest.Simulate(1000.0)
 

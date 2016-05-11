@@ -79,7 +79,8 @@ for ctr in [[15, 15]]:
                                    if
                                    nest.GetStatus([n], 'model')[0] == 'pyr'])))
     tin = pylab.array(tuple(zip(*[topo.GetPosition([n])[0] for n in tgts
-                                  if nest.GetStatus([n], 'model')[0] == 'in'])))
+                                  if
+                                  nest.GetStatus([n], 'model')[0] == 'in'])))
 
     # scatter-plot
     pylab.scatter(tpyr[0] - 0.02, tpyr[1] - 0.02, 20, 'b', zorder=10)

@@ -67,32 +67,26 @@ for file in allfiles:
         f.close()
         items = re.findall(docstring, filetext, re.DOTALL)
         # List of all .sli files. Needed for the SeeAlso part.
-        if file.endswith('.sli'):
-            for item in items:
-                namestring = r'([ *]?Name[ *]?\:[ *]?)(.*?)([ *]?\-)'
-                fullnamestring = r'([ *]?Name[ *]?\:[ *]?)((.*?)[ *]?)\n'
-                docnames = re.findall(namestring, item, re.DOTALL)
-                fulldocnames = re.findall(fullnamestring, item, re.DOTALL)
-                for docname in docnames:
-                    sli_command_list.append(docname[1].strip())
-                    index_dic = {'name': docname[1], 'ext': 'py'}
-                for fulldocname in fulldocnames:
-                    fullname_dic = {'fullname': fulldocname[1]}
-                    index_dic.update(fullname_dic)
-                index_dic_list.append(index_dic)
-        else:
+        # if file.endswith('.sli'):
+        for item in items:
             namestring = r'([ *]?Name[ *]?\:[ *]?)(.*?)([ *]?\-)'
             fullnamestring = r'([ *]?Name[ *]?\:[ *]?)((.*?)[ *]?)\n'
             docnames = re.findall(namestring, item, re.DOTALL)
             fulldocnames = re.findall(fullnamestring, item, re.DOTALL)
             for docname in docnames:
-                sli_command_list.append(docname[1].strip())
-                index_dic = {'name': docname[1], 'ext': 'py'}
+                if file.endswith('.sli'):
+                    sli_command_list.append(docname[1].strip())
+                    index_dic = {'name': docname[1], 'ext': 'sli'}
+                else:
+                    index_dic = {'name': docname[1], 'ext': 'cc'}
+                filename_dic = {'file': file}
+                index_dic.update(filename_dic)
             for fulldocname in fulldocnames:
                 fullname_dic = {'fullname': fulldocname[1]}
                 index_dic.update(fullname_dic)
+                filename_dic = {'file': file}
+                index_dic.update(filename_dic)
             index_dic_list.append(index_dic)
-
 write_helpindex(index_dic_list)
 
 # Now begin to coll the data for the help files
@@ -110,7 +104,7 @@ for file in allfiles:
             if require:
                 item = '\n\nRequire: ' + require + item
             alllines = []
-            s = " ###br###\n"
+            s = " ######\n"
             for line in item.splitlines():
                 line = re.sub(r"(\s\s)", '$$', line)
                 alllines.append(line)

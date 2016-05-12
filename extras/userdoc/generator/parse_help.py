@@ -54,7 +54,7 @@ keywords = ["Name:", "Synopsis:", "Parameters:", "Description:",
             "Options:", "Examples:", "Variants:", "Bugs:",
             "Diagnostics:", "Author:", "FirstVersion:", "Remarks:",
             "Availability:", "References:", "SeeAlso:", "Source:",
-            "Sends:", "Receives:", "Transmits:", "Requires:" "Require:"]
+            "Sends:", "Receives:", "Transmits:", "Requires:", "Require:"]
 
 
 # List of all .sli files. Needed for the SeeAlso part.

@@ -323,8 +323,8 @@ if __name__ == '__main__':
             if line.startswith('Check PEP8 on file '):
                 pep8_analysis.update(process_pep8(f, line))
 
-            if not configure_ok and line.startswith(
-                                            '+cmake -DCMAKE_INSTALL_PREFIX='):
+            if (not configure_ok and
+                    line.startswith('+cmake -DCMAKE_INSTALL_PREFIX=')):
                 configure_ok, line = process_until(
                     f, 'You can now build and install NEST with')
 

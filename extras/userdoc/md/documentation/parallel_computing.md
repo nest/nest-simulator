@@ -113,6 +113,7 @@ MPI on your system. If you are on a cluster, you most likely have this already.
 Note, that in the case of a pre-packaged MPI library you will need both, the
 library and the development packages. Please see the [Installation instructions](../installation/index.html "Installation")
 for general information on installing NEST.
+Please be advised that NEST should currently only be run in a homogeneous MPI environment. Running in a heterogenenous environment can lead to unexpected results or even crashes. Please contact the [NEST community](http://www.nest-simulator.org/community/) if you require support for exotic setups.
 
 ### Compilation
 

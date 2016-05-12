@@ -27,8 +27,8 @@ if ( NOT CMAKE_CROSSCOMPILING )
   message( "Generate help from these directories:\n${HELPDIRS}" )
 
   # set environment vars
-  set( ENV{SLIDOCDIR} "${DOC_DIR}" )
-  set( ENV{SLIDATADIR} "${DATA_DIR}" )
+  set( ENV{NEST_DOC_DIR} "${DOC_DIR}" )
+  set( ENV{NEST_DATA_DIR} "${DATA_DIR}" )
   set( ENV{NESTRCFILENAME} "/dev/null" )
   execute_process(
       COMMAND ${INSTALL_DIR}/bin/sli --userargs=${HELPDIRS}
@@ -38,8 +38,8 @@ if ( NOT CMAKE_CROSSCOMPILING )
       ERROR_FILE "install-help.log"
   )
   # unset environment vars
-  unset( ENV{SLIDOCDIR} )
-  unset( ENV{SLIDATADIR} )
+  unset( ENV{NEST_DOC_DIR} )
+  unset( ENV{NEST_DATA_DIR} )
   unset( ENV{NESTRCFILENAME )
 
   if ( RET_VAR EQUAL 0 )

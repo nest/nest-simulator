@@ -75,18 +75,18 @@ if ( HAVE_PYTHON )
   install( CODE "execute_process(
     COMMAND ${PYTHON} setup.py build --build-base=${CMAKE_CURRENT_BINARY_DIR}/build
                                install --prefix=${CMAKE_INSTALL_PREFIX}
-                                       --install-lib=${PYEXECDIR}
-                                       --install-scripts=${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}
-                                       --install-data=${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR}
+                                       --install-lib=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
+                                       --install-scripts=${CMAKE_INSTALL_FULL_BINDIR}
+                                       --install-data=${CMAKE_INSTALL_FULL_DATADIR}
     WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")"
       )
   install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
   install( FILES ${PROJECT_BINARY_DIR}/pynest/do_tests.py
-      DESTINATION ${INSTALL_DATA_DIR}/extras
+      DESTINATION ${CMAKE_INSTALL_DATADIR}/extras
       )
 
   install( DIRECTORY examples/
-      DESTINATION ${INSTALL_DOC_DIR}/examples/pynest
+      DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
       )
 
   find_program( NOSETESTS nosetests )
@@ -94,7 +94,7 @@ if ( HAVE_PYTHON )
     add_test( NAME PyNEST
         COMMAND ${NOSETESTS} -v --with-xunit
         --xunit-file=${PROJECT_BINARY_DIR}/reports/pynest_tests.xml
-        ${PYEXECDIR}/nest/tests
+        ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/tests
         )
   endif ()
 endif ()

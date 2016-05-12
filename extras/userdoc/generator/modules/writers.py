@@ -48,7 +48,7 @@ else:
 # all_list = []
 
 
-def write_help_html(doc_dic, file, sli_list):
+def write_help_html(doc_dic, file, sli_command_list):
     """
     Write html.
 
@@ -151,7 +151,7 @@ def write_help_html(doc_dic, file, sli_list):
             for i in value:
                 see = i.strip("###br### ###br### $$")
                 if see:
-                    if see in sli_list:
+                    if see in sli_command_list:
                         htmllist.append('    <li><a href="../sli/' + see +
                                         '.html">' + see + '</a></li>')
                     else:
@@ -177,7 +177,7 @@ def write_help_html(doc_dic, file, sli_list):
         # return name
 
 
-def coll_data(keywords, documentation, num, file, sli_list):
+def coll_data(keywords, documentation, num, file, sli_command_list):
     """
     Collect data.
 
@@ -216,7 +216,7 @@ def coll_data(keywords, documentation, num, file, sli_list):
                     doc_dic.update({name: text})
 
     # all_list.append(doc_dic)
-    write_help_html(doc_dic, file, sli_list)
+    write_help_html(doc_dic, file, sli_command_list)
     # return(write_help_md(doc_dic))
 
 

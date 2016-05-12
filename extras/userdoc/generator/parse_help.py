@@ -29,7 +29,7 @@ Parse all NEST files for documentation and build the help.
 import os
 import re
 
-from modules.writers import coll_data, check_ifdef
+from modules.writers import coll_data, check_ifdef, write_helpindex
 
 path = '../../../'
 path = os.path.abspath(path)
@@ -39,6 +39,8 @@ allfiles = [os.path.join(dirpath, f) for dirpath, dirnames, files in
 num = 0
 full_list = []
 sli_command_list = []
+cc_command_list = []
+index_dic_list = []
 
 
 def cut_it(trenner, text):
@@ -57,19 +59,41 @@ keywords = ["Name:", "Synopsis:", "Parameters:", "Description:",
             "Sends:", "Receives:", "Transmits:", "Requires:", "Require:"]
 
 
-# List of all .sli files. Needed for the SeeAlso part.
 for file in allfiles:
-    if file.endswith('.sli'):
+    if not file.endswith('.py'):
         docstring = r'\/\*[ *\n]?BeginDocumentation\n(.*?)\n*?\*\/'
         f = open(('%s' % (file,)), 'r')
         filetext = f.read()
         f.close()
         items = re.findall(docstring, filetext, re.DOTALL)
-        for item in items:
+        # List of all .sli files. Needed for the SeeAlso part.
+        if file.endswith('.sli'):
+            for item in items:
+                namestring = r'([ *]?Name[ *]?\:[ *]?)(.*?)([ *]?\-)'
+                fullnamestring = r'([ *]?Name[ *]?\:[ *]?)((.*?)[ *]?)\n'
+                docnames = re.findall(namestring, item, re.DOTALL)
+                fulldocnames = re.findall(fullnamestring, item, re.DOTALL)
+                for docname in docnames:
+                    sli_command_list.append(docname[1].strip())
+                    index_dic = {'name': docname[1], 'ext': 'py'}
+                for fulldocname in fulldocnames:
+                    fullname_dic = {'fullname': fulldocname[1]}
+                    index_dic.update(fullname_dic)
+                index_dic_list.append(index_dic)
+        else:
             namestring = r'([ *]?Name[ *]?\:[ *]?)(.*?)([ *]?\-)'
+            fullnamestring = r'([ *]?Name[ *]?\:[ *]?)((.*?)[ *]?)\n'
             docnames = re.findall(namestring, item, re.DOTALL)
+            fulldocnames = re.findall(fullnamestring, item, re.DOTALL)
             for docname in docnames:
                 sli_command_list.append(docname[1].strip())
+                index_dic = {'name': docname[1], 'ext': 'py'}
+            for fulldocname in fulldocnames:
+                fullname_dic = {'fullname': fulldocname[1]}
+                index_dic.update(fullname_dic)
+            index_dic_list.append(index_dic)
+
+write_helpindex(index_dic_list)
 
 # Now begin to coll the data for the help files
 for file in allfiles:

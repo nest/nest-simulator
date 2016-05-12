@@ -44,9 +44,6 @@ if os.path.isdir('../cmds/cc'):
 else:
     os.mkdir('../cmds/cc')
 
-# global all_list
-# all_list = []
-
 
 def write_help_html(doc_dic, file, sli_command_list):
     """
@@ -175,6 +172,24 @@ def write_help_html(doc_dic, file, sli_command_list):
             f_file_name.write('\n'.join(htmllist))
             f_file_name.close()
         # return name
+
+
+def write_helpindex(index_dic_list):
+    """
+    Write helpindex.html.
+
+    Collect the long list of dicts and transform it toa sorted html file.
+    """
+    alpha = [('a', 'A'), 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Z', '-',
+             ':', '<', '=']
+    from operator import itemgetter
+    index_dic_list = sorted(index_dic_list, key=itemgetter('name'))
+    for doubles in alpha:
+        print '#############################\n' + doubles[0]
+        for item in index_dic_list:
+            if item['name'].startswith(doubles):
+                print item['name']
 
 
 def coll_data(keywords, documentation, num, file, sli_command_list):

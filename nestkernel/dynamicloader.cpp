@@ -39,9 +39,6 @@
 // External includes:
 #include <ltdl.h>
 
-// Generated includes:
-#include "config.h"
-
 // Includes from libnestutil:
 #include "logging.h"
 
@@ -174,18 +171,6 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
 
   // call lt_dlerror() to reset any error messages hanging around
   lt_dlerror();
-  int searchpath_result = lt_dlsetsearchpath( NEST_PREFIX "/lib/nest" );
-  if ( searchpath_result != 0 )
-  {
-    char* errstr = ( char* ) lt_dlerror();
-    std::string msg =
-      "Could not set user search path: " NEST_PREFIX "/lib/nest";
-    if ( errstr )
-      msg += "\nThe dynamic loader returned the following error: '"
-        + std::string( errstr ) + "'.";
-    throw DynamicModuleManagementError( msg );
-  }
-
   // try to open the module
   const lt_dlhandle hModule = lt_dlopenext( new_module.name.c_str() );
 
@@ -283,11 +268,11 @@ DynamicLoaderModule::init( SLIInterpreter* i )
 
   if ( !dl_error )
   {
-    const char* path = getenv( "SLI_MODULE_PATH" );
+    const char* path = getenv( "NEST_MODULE_PATH" );
     if ( path != NULL )
     {
-      LOG( M_INFO, "DynamicLoaderModule::init", "Setting module path to" );
-      LOG( M_INFO, "DynamicLoaderModule::init", path );
+      LOG( M_DEBUG, "DynamicLoaderModule::init", "Setting module path to" );
+      LOG( M_DEBUG, "DynamicLoaderModule::init", path );
 
       dl_error = lt_dlsetsearchpath( path );
       if ( dl_error )

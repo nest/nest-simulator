@@ -38,7 +38,7 @@ allfiles = [os.path.join(dirpath, f) for dirpath, dirnames, files in
             f.endswith((".sli", ".cpp", ".cc", ".h", ".py"))]
 num = 0
 full_list = []
-sli_list = []
+sli_command_list = []
 
 
 def cut_it(trenner, text):
@@ -54,32 +54,24 @@ keywords = ["Name:", "Synopsis:", "Parameters:", "Description:",
             "Options:", "Examples:", "Variants:", "Bugs:",
             "Diagnostics:", "Author:", "FirstVersion:", "Remarks:",
             "Availability:", "References:", "SeeAlso:", "Source:",
-            "Sends:", "Receives:", "Transmits:", "Requires:"]
+            "Sends:", "Receives:", "Transmits:", "Requires:" "Require:"]
 
-# file_docname_list = []
-# # List of all.sli files
-# for file in allfiles:
-#     if file.endswith('.sli'):
-#         docstring = r'\/\*[ *\n]?BeginDocumentation\n(.*?)\n*?\*\/'
-#         f = open(('%s' % (file,)), 'r')
-#         filetext = f.read()
-#         f.close()
-#
-#         # !!!!!!!NUR INNERHALB des DOC Blocks!!!!!
-#
-#         # Multiline matiching
-#         items = re.findall(docstring, filetext, re.DOTALL)
-#         namestring = r'([ *]?Name[ *]?\:[ *]?)(.*?)([ *]?\-)'
-#         docnames = re.findall(namestring, filetext, re.DOTALL)
-#         print '#################################################\n' + file
-#         for docname in docnames:
-#             print docname[1]
-#                 # docname = docname.lstrip(r'Name[ *]?\:')
-#                 # file_docname_list.append(docname[1])
-#             # print file_docname_list
-#             base = os.path.basename(file)
-#             sli_list.append(os.path.splitext(base)[0])
 
+# List of all .sli files. Needed for the SeeAlso part.
+for file in allfiles:
+    if file.endswith('.sli'):
+        docstring = r'\/\*[ *\n]?BeginDocumentation\n(.*?)\n*?\*\/'
+        f = open(('%s' % (file,)), 'r')
+        filetext = f.read()
+        f.close()
+        items = re.findall(docstring, filetext, re.DOTALL)
+        for item in items:
+            namestring = r'([ *]?Name[ *]?\:[ *]?)(.*?)([ *]?\-)'
+            docnames = re.findall(namestring, item, re.DOTALL)
+            for docname in docnames:
+                sli_command_list.append(docname[1].strip())
+
+# Now begin to coll the data for the help files
 for file in allfiles:
     # .py is for future use
     if not file.endswith('.py'):
@@ -90,15 +82,15 @@ for file in allfiles:
         # Multiline matiching
         items = re.findall(docstring, filetext, re.DOTALL)
         for item in items:
+            require = check_ifdef(item, filetext, docstring)
+            if require:
+                item = '\n\nRequire: ' + require + item
             alllines = []
             s = " ###br###\n"
             for line in item.splitlines():
                 line = re.sub(r"(\s\s)", '$$', line)
                 alllines.append(line)
             item = s.join(alllines)
-            require = check_ifdef(item, filetext, docstring)
-            if require:
-                item = '\n\nRequire: ' + require + item
             num = num + 1
             documentation = {}
             for token in item.split():
@@ -108,6 +100,5 @@ for file in allfiles:
                 else:
                     if keyword_curr in documentation:
                         documentation[keyword_curr] += " " + token
-            all_data = coll_data(keywords, documentation, num, file, sli_list)
-
-            # name_list.append(all_data)
+            all_data = coll_data(keywords, documentation, num, file,
+                                 sli_command_list)

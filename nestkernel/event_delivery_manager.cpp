@@ -854,76 +854,90 @@ EventDeliveryManager::gather_target_data()
 bool
 EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, TargetData* send_buffer )
 {
-  const unsigned int num_assigned_ranks_per_thread = kernel().vp_manager.get_num_assigned_ranks_per_thread();
-  const unsigned int rank_start = kernel().vp_manager.get_start_rank_per_thread( tid );
-  const unsigned int rank_end = kernel().vp_manager.get_end_rank_per_thread( tid, rank_start, num_assigned_ranks_per_thread );
-  // store how far each segment in sendbuffer is filled
-  std::vector< unsigned int > send_buffer_offset( num_assigned_ranks_per_thread, 0 );
-  unsigned int sum_send_buffer_offset = 0;
+  AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
+
+  unsigned int num_target_data_written = 0;
   index target_rank;
   TargetData next_target_data;
   bool valid_next_target_data;
-  bool is_buffer_untouched = true;
+  bool is_source_table_read = true;
 
-  if ( rank_start == rank_end ) // no ranks to process for this thread
+  // no ranks to process for this thread
+  if ( assigned_ranks.begin == assigned_ranks.end )
   {
-    return is_buffer_untouched;
+    return is_source_table_read;
+  }
+
+  // build lookup table for buffer indices and reset marker
+  std::vector< unsigned int > send_buffer_idx( assigned_ranks.size, 0 );
+  std::vector< unsigned int > send_buffer_begin( assigned_ranks.size, 0 );
+  std::vector< unsigned int > send_buffer_end( assigned_ranks.size, 0 );
+  for ( unsigned int rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  {
+    // thread-local index of (global) rank
+    const unsigned int lr_idx = rank % assigned_ranks.max_size;
+    assert( lr_idx < assigned_ranks.size );
+    send_buffer_idx[ lr_idx ] = rank * num_target_data_per_rank;
+    send_buffer_begin[ lr_idx ] = rank * num_target_data_per_rank;
+    send_buffer_end[ lr_idx ] = (rank + 1) * num_target_data_per_rank;
+    send_buffer[ send_buffer_end[ lr_idx ] - 1 ].reset_marker();
   }
 
   while ( true )
   {
-    if ( sum_send_buffer_offset == ( num_target_data_per_rank * num_assigned_ranks_per_thread ) ) // buffer is full
+    valid_next_target_data = kernel().connection_builder_manager.get_next_target_data( tid, target_rank, next_target_data, assigned_ranks.begin, assigned_ranks.end );
+    if ( valid_next_target_data ) // add valid entry to MPI buffer
     {
-      return is_buffer_untouched;
-    }
-    else
-    {
-      valid_next_target_data = kernel().connection_builder_manager.get_next_target_data( tid, target_rank, next_target_data, rank_start, rank_end );
-      if ( valid_next_target_data ) // add valid entry to MPI buffer
+      const unsigned int lr_idx = target_rank % assigned_ranks.max_size;
+      if ( send_buffer_idx[ lr_idx ] == send_buffer_end[ lr_idx ] )
       {
-        const thread target_rank_index = target_rank - rank_start;
-        if ( send_buffer_offset[ target_rank_index ] < num_target_data_per_rank )
+        kernel().connection_builder_manager.reject_last_target_data( tid );
+        kernel().connection_builder_manager.save_source_table_entry_point( tid );
+        is_source_table_read = false;
+        if ( num_target_data_written == ( num_target_data_per_rank * assigned_ranks.size ) ) // buffer is full
         {
-          const unsigned int idx = target_rank * num_target_data_per_rank + send_buffer_offset[ target_rank_index ];
-          send_buffer[ idx ] = next_target_data;
-          ++send_buffer_offset[ target_rank_index ];
-          ++sum_send_buffer_offset;
-          is_buffer_untouched = false;
+          return is_source_table_read;
         }
         else
         {
-          kernel().connection_builder_manager.reject_last_target_data( tid );
-          kernel().connection_builder_manager.save_source_table_entry_point( tid );
+          continue;
         }
       }
-      else  // all connections have been processed
+      else
       {
-        // mark end of valid data for each rank
-        for ( unsigned int target_rank = rank_start; target_rank < rank_end; ++target_rank )
-        {
-          const thread target_rank_index = target_rank - rank_start;
-          if ( send_buffer_offset[ target_rank_index ] < num_target_data_per_rank )
-          {
-            const unsigned int idx = target_rank * num_target_data_per_rank + send_buffer_offset[ target_rank_index ];
-            send_buffer[ idx ].set_end_marker();
-          }
-        }
-        return is_buffer_untouched;
-      } // of else
+        send_buffer[ send_buffer_idx[ lr_idx ] ] = next_target_data;
+        ++send_buffer_idx[ lr_idx ];
+        ++num_target_data_written;
+      }
     }
+    else  // all connections have been processed
+    {
+      // mark end of valid data for each rank
+      for ( unsigned int target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
+      {
+        const unsigned int lr_idx = target_rank % assigned_ranks.max_size;
+        if ( send_buffer_idx[ lr_idx ] > send_buffer_begin[ lr_idx ] )
+        {
+          send_buffer[ send_buffer_idx[ lr_idx ] - 1 ].set_end_marker();
+        }
+        else
+        {
+          send_buffer[ send_buffer_begin[ lr_idx ] ].set_invalid_marker();
+        }
+      }
+      return is_source_table_read;
+    } // of else
   } // of while(true)
 }
 
 void
 nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid, const unsigned int num_target_data_per_rank, TargetData* send_buffer )
 {
-  const unsigned int num_assigned_ranks_per_thread = kernel().vp_manager.get_num_assigned_ranks_per_thread();
-  const unsigned int rank_start = kernel().vp_manager.get_start_rank_per_thread( tid );
-  const unsigned int rank_end = kernel().vp_manager.get_end_rank_per_thread( tid, rank_start, num_assigned_ranks_per_thread );
+  AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
-  for ( unsigned int target_rank = rank_start; target_rank < rank_end; ++target_rank )
+  for ( unsigned int target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
   {
-    const unsigned int idx = target_rank * num_target_data_per_rank;
+    const unsigned int idx = ( target_rank + 1 ) * num_target_data_per_rank - 1;
     send_buffer[ idx ].set_complete_marker();
   }
 }
@@ -932,29 +946,37 @@ bool
 nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, TargetData const* const recv_buffer )
 {
   bool are_others_completed = true;
+
   for ( unsigned int rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
   {
-    if ( not recv_buffer[ rank * num_target_data_per_rank ].is_complete_marker() )
+    // check last entry for completed marker
+    if ( not recv_buffer[ ( rank + 1 ) * num_target_data_per_rank - 1 ].is_complete_marker() )
     {
       are_others_completed = false;
-      for ( unsigned int i = 0; i < num_target_data_per_rank; ++i )
+    }
+
+    // were spikes sent by this rank?
+    if ( recv_buffer[ rank * num_target_data_per_rank ].is_invalid_marker() )
+    {
+      continue;
+    }
+
+    for ( unsigned int i = 0; i < num_target_data_per_rank; ++i )
+    {
+      const TargetData& target_data = recv_buffer[ rank * num_target_data_per_rank + i ];
+      if ( target_data.tid == tid )
       {
-        const TargetData& target_data = recv_buffer[ rank * num_target_data_per_rank + i ];
-        if ( target_data.is_end_marker() )
-        {
-          break;
-        }
-        else if ( target_data.tid == tid )
-        {
-          kernel().connection_builder_manager.add_target( tid, target_data );
-        }
-        else
-        {
-          continue;
-        }
+        kernel().connection_builder_manager.add_target( tid, target_data );
+      }
+
+      // is this the last target from this rank?
+      if ( target_data.is_end_marker() )
+      {
+        break;
       }
     }
   }
+
   return are_others_completed;
 }
 

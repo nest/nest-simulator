@@ -106,44 +106,68 @@ struct TargetData
   Target target;
   unsigned int lid : 16;
   unsigned int tid : 8;
-  static const index complete_marker; // 2^16 - 1
-  static const index end_marker; // 2^16 - 2
+  unsigned int marker : 2;
+  static const unsigned int end_marker; // 1
+  static const unsigned int complete_marker; // 2
+  static const unsigned int invalid_marker; // 3
   TargetData();
+  void reset_marker();
   void set_complete_marker();
   void set_end_marker();
+  void set_invalid_marker();
   bool is_complete_marker() const;
   bool is_end_marker() const;
+  bool is_invalid_marker() const;
 };
 
 inline
 TargetData::TargetData()
   : lid( 0 )
   , target( Target() )
+  , marker( 0 )
 {
+}
+
+inline void
+TargetData::reset_marker()
+{
+  marker = 0;
 }
 
 inline void
 TargetData::set_complete_marker()
 {
-  lid = complete_marker;
+  marker = complete_marker;
 }
 
 inline void
 TargetData::set_end_marker()
 {
-  lid = end_marker;
+  marker = end_marker;
+}
+
+inline void
+TargetData::set_invalid_marker()
+{
+  marker = invalid_marker;
 }
 
 inline bool
 TargetData::is_complete_marker() const
 {
-  return lid == complete_marker;
+  return marker == complete_marker;
 }
 
 inline bool
 TargetData::is_end_marker() const
 {
-  return lid == end_marker;
+  return marker == end_marker;
+}
+
+inline bool
+TargetData::is_invalid_marker() const
+{
+  return marker == invalid_marker;
 }
 
 /** This data structure stores the targets of the local neurons, i.e.,

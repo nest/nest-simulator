@@ -130,14 +130,14 @@ def write_help_html(doc_dic, file, sli_command_list):
             htmllist.append(linkline + '<div class="wrap">')
     for key, value in doc_dic.iteritems():
         if key == "FullName":
-            fullname = value.strip("###br### ###br### $$")
-            fullname = re.sub("(###br###)", " <br/> ", fullname)
+            fullname = value.strip("###### ###### $$")
+            fullname = re.sub("(######)", " <br/> ", fullname)
             fullname = re.sub("(\$\$)", '  ', fullname)
             htmllist.append('<b>Name:</b><pre>%s</pre>' % fullname)
     for key, value in doc_dic.iteritems():
         if (key != "Name" and key != "SeeAlso" and key != "Id" and
                 key != "File" and key != "FullName"):
-            value = re.sub("(###br###)", " <br/> ", value)
+            value = re.sub("(######)", " <br/> ", value)
             value = re.sub("(\$\$)", '  ', value)
             htmllist.append('<b>%s: </b>' % key)
             htmllist.append('<pre>%s</pre>' % value)
@@ -146,7 +146,7 @@ def write_help_html(doc_dic, file, sli_command_list):
             htmllist.append('<b>%s: </b>' % key)
             htmllist.append('<ul>')
             for i in value:
-                see = i.strip("###br### ###br### $$")
+                see = i.strip("###### ###### $$")
                 if see:
                     if see in sli_command_list:
                         htmllist.append('    <li><a href="../sli/' + see +
@@ -157,7 +157,7 @@ def write_help_html(doc_dic, file, sli_command_list):
             htmllist.append('</ul>')
     for key, value in doc_dic.iteritems():
         if key == "File":
-            value = value.strip("###br### ###br### $$")
+            value = value.strip("###### ###### $$")
             htmllist.append('<b>Source:</b><pre>%s</pre>' % value)
     htmllist.append('</div>' + linkline)
     htmllist.append(copyright)
@@ -180,16 +180,148 @@ def write_helpindex(index_dic_list):
 
     Collect the long list of dicts and transform it toa sorted html file.
     """
-    alpha = [('a', 'A'), 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Z', '-',
+    head = '''
+    <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+    <html>
+    <head>
+      <title>NEST Command Index</title>
+      <style type="text/css">
+        body {
+          padding: 0;
+          margin: 0;
+        }
+        h1 {
+          padding: 15px 0 0 15px;
+        }
+        p {
+          padding-left: 15px;
+        }
+        a {
+          color: #339;
+          text-decoration: none;
+        }
+        a:visited {
+          color: #339;
+          text-decoration: none;
+        }
+        a:hover {
+          text-decoration: underline;
+        }
+        h1 a {
+          color: #000;
+          text-decoration: none;
+        }
+        table.headerfooter {
+          margin: 20px 0 20px 0;
+          background-color: #eee;
+          width: 100%;
+          height: 30px;
+          border-top: 2px solid #ccc;
+          border-bottom: 2px solid #ccc;
+          text-align: center;
+        }
+        table.commands {
+          margin: 15px 0 15px 0;
+          background-color: #eee;
+          width: 90%;
+          border: 2px solid #ccc;
+          border-spacing: 0px;
+          border-collapse: collapse;
+        }
+        table.commands td {
+          border-bottom: 1px solid #ccc;
+          border-right: 1px dotted #ccc;
+          padding: 5px 0 5px 10px;
+          text-align: left;
+        }
+        table.letteridx {
+          margin: 0;
+          background-color: #eee;
+          width: 90%;
+          border: 2px solid #ccc;
+          border-spacing: 0px;
+          border-collapse: collapse;
+        }
+        table.letteridx td {
+          border-right: 1px solid #ccc;
+          padding: 5px;
+          text-align: center;
+        }
+        table.letteridx a {
+          display: block;
+          height: 100%;
+          width: 100%;
+        }
+        td.left{
+            width:30%;
+        }
+      </style>
+    </head>
+    <body bgcolor="white" fgcolor="black">
+    <h1><a name="top">NEST Command Index</a></h1>
+    <table class="headerfooter">
+      <tr>
+        <td width="50%" align=center>
+        <a href="../index.html">NEST HelpDesk</a></td>
+        <td width="50%" align=center>
+        <a href="../quickref.html">NEST Quick Reference</a></td>
+      </tr>
+    </table>
+    '''
+
+    footer = '''
+    <table class="headerfooter">
+        <tr>
+        <td width="30%" align=center>
+        <a href="../index.html">NEST HelpDesk</a></td>
+        <td width="30%" align=center><a href="#top">Top</a></td>
+        <td width="30%" align=center>
+        <a href="../quickref.html">NEST Quick Reference</a></td>
+        </tr>
+    </table>
+
+    <p style="text-align:center">
+    &copy; 2016 <a href="http://www.nest-initiative.org">The NEST Initiative
+    </a>
+    </p>
+    </body>
+    </html>
+    '''
+    alpha = [('A', 'a'), ('B', 'b'), ('C', 'c'), ('D', 'd'), ('E', 'e'),
+             ('F', 'f'), ('G', 'g'), ('H', 'h'), ('I', 'i'), ('J' 'j'),
+             ('K', 'k'), ('L', 'l'), ('M', 'm'), ('N', 'n'), ('O', 'o'),
+             ('P', 'p'), ('Q', 'q'), ('R', 'r'), ('S', 's'), ('T', 't'),
+             ('U', 'u'), ('V', 'v'), ('W', 'w'), ('X', 'x'), ('Z', 'z'), '-',
              ':', '<', '=']
+
+    html_list = [head]
+
     from operator import itemgetter
     index_dic_list = sorted(index_dic_list, key=itemgetter('name'))
+    # print index_dic_list
     for doubles in alpha:
-        print '#############################\n' + doubles[0]
+        # print '#############################\n' + doubles[0]
+        html_list.append('<center><table>')
+        html_list.append('<a name="%s">' % doubles[0])
+        html_list.append('<table class="letteridx"><tr>')
+        for x in alpha:
+            html_list.append('<td><a href="#%s">%s</a></td>' % (x[0], x[0]))
+        html_list.append('</table></center>')
+        html_list.append('<center><table class="commands">')
         for item in index_dic_list:
             if item['name'].startswith(doubles):
-                print item['name']
+                # ERROR?
+                # if item['name'] == "tsodyks_facilitating":
+                #     continue
+                html_list.append('<tr><td class="left">')
+                html_list.append('<a href="%s/%s.html">%s</a></td>' %
+                                 (item['ext'], item['name'], item['name']))
+                html_list.append('<td>%s</td></tr>' % item['fullname'])
+        html_list.append('</table></center>')
+    html_list.append(footer)
+    f_helpindex = open('../cmds/helpindex.html', 'w')
+    f_helpindex.write('\n'.join(html_list))
+    f_helpindex.close()
 
 
 def coll_data(keywords, documentation, num, file, sli_command_list):
@@ -208,8 +340,8 @@ def coll_data(keywords, documentation, num, file, sli_command_list):
         if k in documentation:
             if k == "Name:":
                 iname = cut_it("-", documentation[k])
-                iname = iname[0].strip(" ###br###")
-                ifullname = documentation[k].strip(" ###br###")
+                iname = iname[0].strip(" ######")
+                ifullname = documentation[k].strip(" ######")
                 if iname:
                     doc_dic.update({"Name": iname})
                 if ifullname:

@@ -30,6 +30,7 @@ import os
 import re
 
 from modules.writers import coll_data, check_ifdef, write_helpindex
+from modules.helpers import cut_it
 
 path = '../../../'
 path = os.path.abspath(path)
@@ -43,22 +44,13 @@ cc_command_list = []
 index_dic_list = []
 
 
-def cut_it(trenner, text):
-    """
-    Cut it.
-
-    Cut text by trenner.
-    """
-    import re
-    return re.split(trenner, text)
-
 keywords = ["Name:", "Synopsis:", "Parameters:", "Description:",
             "Options:", "Examples:", "Variants:", "Bugs:",
             "Diagnostics:", "Author:", "FirstVersion:", "Remarks:",
             "Availability:", "References:", "SeeAlso:", "Source:",
             "Sends:", "Receives:", "Transmits:", "Requires:", "Require:"]
 
-
+# Now begin to collect the data for the helpindex.html
 for file in allfiles:
     if not file.endswith('.py'):
         docstring = r'\/\*[ *\n]?BeginDocumentation\n(.*?)\n*?\*\/'
@@ -69,27 +61,31 @@ for file in allfiles:
         # List of all .sli files. Needed for the SeeAlso part.
         # if file.endswith('.sli'):
         for item in items:
-            namestring = r'([ *]?Name[ *]?\:[ *]?)(.*?)([ *]?\-)'
-            fullnamestring = r'([ *]?Name[ *]?\:[ *]?)((.*?)[ *]?)\n'
+            # namestring = r'([ *]?Name[ *]?\:[ *]?)(.*?)([ *]?\-)'
+            namestring = r'([ *]?Name[ *]?\:[ *]?)(.*?)([ *]?\n)'
+            # fullnamestring = r'([ *]?Name[ *]?\:[ *]?)((.*?))\n'
             docnames = re.findall(namestring, item, re.DOTALL)
-            fulldocnames = re.findall(fullnamestring, item, re.DOTALL)
+            # fulldocnames = re.findall(fullnamestring, item, re.DOTALL)
             for docname in docnames:
+                if docname[1].strip():
+                    fullname = docname[1].strip()
+                    docname = cut_it(' - ', docname[1].strip())[0]
                 if file.endswith('.sli'):
-                    sli_command_list.append(docname[1].strip())
-                    index_dic = {'name': docname[1], 'ext': 'sli'}
+                    sli_command_list.append(docname.strip())
+                    index_dic = {'name': docname, 'ext': 'sli'}
                 else:
-                    index_dic = {'name': docname[1], 'ext': 'cc'}
+                    index_dic = {'name': docname, 'ext': 'cc'}
                 filename_dic = {'file': file}
-                index_dic.update(filename_dic)
-            for fulldocname in fulldocnames:
-                fullname_dic = {'fullname': fulldocname[1]}
-                index_dic.update(fullname_dic)
-                filename_dic = {'file': file}
+                if fullname:
+                    fullname_dic = {'fullname': fullname}
+                    index_dic.update(fullname_dic)
+                    filename_dic = {'file': file}
+                    # index_dic.update(filename_dic)
                 index_dic.update(filename_dic)
             index_dic_list.append(index_dic)
 write_helpindex(index_dic_list)
 
-# Now begin to coll the data for the help files
+# Now begin to collect the data for the help files and start generating.
 for file in allfiles:
     # .py is for future use
     if not file.endswith('.py'):

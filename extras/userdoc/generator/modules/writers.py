@@ -28,6 +28,7 @@ Collect all the data and write help files.
 
 import os
 import re
+from helpers import cut_it
 
 # from modules.writers import coll_data, check_ifdef
 
@@ -313,6 +314,11 @@ def write_helpindex(index_dic_list):
                 # ERROR?
                 # if item['name'] == "tsodyks_facilitating":
                 #     continue
+                # desc = cut_it("-", item['fullname'])
+                # i = 0
+                # while i < 2:
+                #     # print desc[i]
+                #     i = i + 1
                 html_list.append('<tr><td class="left">')
                 html_list.append('<a href="%s/%s.html">%s</a></td>' %
                                  (item['ext'], item['name'], item['name']))

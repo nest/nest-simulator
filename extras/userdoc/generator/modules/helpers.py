@@ -27,4 +27,7 @@ def cut_it(trenner, text):
     cut text by trenner
     """
     import re
-    return re.split(trenner, text)
+    if trenner:
+        return re.split(trenner, text)
+    else:
+        return text

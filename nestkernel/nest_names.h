@@ -341,6 +341,7 @@ extern const Name t_ref_remaining; //!< Time remaining till end of
 extern const Name t_ref_tot;       //!< Total refractory period
 extern const Name t_spike;         //!< Time of last spike
 extern const Name target;          //!< Connection parameters
+extern const Name target_gids;     //!< Specific to music_cont_out_proxy
 extern const Name target_thread;   //!< Connection parameters
 extern const Name targets;         //!< Connection parameters
 extern const Name tau_1;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009

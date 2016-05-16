@@ -58,31 +58,29 @@ has to specify the recordable values to observe (e.g. ["V_m"]) via the
 record_from parameter.
 The target neurons are specified by a list of global neuron ids which must be
 passed via
-the "index_map" parameter. The music_cont_out_proxy will be connected
+the "target_gids" parameter. The music_cont_out_proxy will be connected
 automatically to the
 specified target neurons. It is not possible to change the list of target
 neurons or observed
 quantities once they have been set or the simulation has been started for the
 first time.
 
-Note: If only a single continuous value is observed, then the receiver must
-provide a buffer
-of MPI::DOUBLE values. Otherwise a custom MPI datatype, consisting of multiple
-doubles,
-must be created on receiver side as follows:
+In case of multiple recordables the data can be read out of the receiving buffer
+via the following access pattern (like a 2-dimensional array in the C language
+):
+buffer[ target_gid_index ][ recordable_index] = buffer[ target_gid_index *
+record_from.size() + recordable_index ]
+For example:  if target_gids = [ 2, 5, 4] and record_from = ["V_m"], then if we
+want to get "V_m" for neuron with GID 5:
+buffer[ 1*1 + 0 ]
 
---- Example ---
-//#include <mpi.h>
-//int observed_values= 3;
-//MPI_Datatype n_double_tuple;
-//MPI_Type_contiguous( observed_values, MPI::DOUBLE, &n_double_tuple );
----------------
+
 
 Parameters:
 The following properties are available in the status dictionary:
 
 interval     double   - Recording interval in milliseconds
-index_map    array    - Global id list of neurons to be observed
+target_gids  array    - Global id list of neurons to be observed
 port_name    string   - The name of the MUSIC output port to send to (default:
                         cont_out)
 port_width   integer  - The width of the MUSIC input port
@@ -164,7 +162,6 @@ private:
 
   struct Buffers_;
 
-  struct Variables_;
 
   struct Parameters_
   {
@@ -172,13 +169,14 @@ private:
     Parameters_(
       const Parameters_& ); //!< Copy constructor for parameter values
 
-    std::string port_name_;           //!< the name of MUSIC port to connect to
     Time interval_;                   //!< sampling interval, in ms
+    std::string port_name_;           //!< the name of MUSIC port to connect to
     std::vector< Name > record_from_; //!< recordables to record from
+    std::vector< long_t > target_gids_; //!< Neuron GIDs to be observed
 
-    void get( DictionaryDatum&,
-      const Variables_& ) const; //!< Store current values in dictionary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum&,
+      const Node&,
       const State_&,
       const Buffers_& ); //!< Set values from dictionary
   };
@@ -191,13 +189,11 @@ private:
     State_( const State_& ); //!< Copy constructor for state values
     bool published_; //!< indicates whether this node has been published already
                      //!< with MUSIC
-    int_t port_width_; //!< the width of the MUSIC port
+    size_t port_width_; //!< the width of the MUSIC port
     // int max_buffered_; //!< maximum delay (measured in multiples of music
     // ticks) of publishing new data
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      const Parameters_& ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -213,19 +209,8 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Variables_
-  {
-    Variables_();                    //!< Sets default variable values
-    Variables_( const Variables_& ); //!< Copy constructor
-    std::vector< MUSIC::GlobalIndex >
-      index_map_; //!< Global mapping for Nest-GIDs -> Music indice
-  };
-
-  // ------------------------------------------------------------
-
   Parameters_ P_;
   State_ S_;
-  Variables_ V_;
   Buffers_ B_;
 };
 

@@ -285,6 +285,7 @@ const Name t_ref_remaining( "t_ref_remaining" );
 const Name t_ref_tot( "t_ref_tot" );
 const Name t_spike( "t_spike" );
 const Name target( "target" );
+const Name target_gids( "target_gids" );
 const Name target_thread( "target_thread" );
 const Name targets( "targets" );
 const Name tau_1( "tau_1" );

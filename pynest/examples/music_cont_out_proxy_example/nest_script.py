@@ -29,19 +29,10 @@ proxy = nest.Create('music_cont_out_proxy', 1)
 nest.SetStatus(proxy, {'port_name': 'out'})
 nest.SetStatus(proxy, {'record_from': ["V_m"], 'interval': 0.1})
 
-neuron_grp = nest.Create('iaf_cond_exp', 2)
-nest.SetStatus(proxy, {'index_map': neuron_grp })
+neuron_grp = nest.Create('iaf_cond_exp', 3)
+nest.SetStatus(proxy, {'target_gids': neuron_grp})
 nest.SetStatus([neuron_grp[0]], "I_e", 300.)
 nest.SetStatus([neuron_grp[1]], "I_e", 600.)
+nest.SetStatus([neuron_grp[2]], "I_e", 20.)
 
-comm = setup.comm
-rank = comm.Get_rank()
-
-# Using PyMusic binding to send out constant value 1.0 
-out = setup.publishContOutput("out2")
-data = numpy.array([-1], dtype=numpy.int)
-out.map(data, base=rank)
-
-nest.Simulate(10)
-
-
+nest.Simulate(200)

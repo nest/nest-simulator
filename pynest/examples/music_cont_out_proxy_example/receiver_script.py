@@ -29,20 +29,12 @@ setup = music.Setup()
 stoptime = setup.config("stoptime")
 timestep = setup.config("timestep")
 
-
 comm = setup.comm
 rank = comm.Get_rank()
 
 pin = setup.publishContInput("in")
-data = numpy.array([0.0, 0.0], dtype=numpy.double)
+data = numpy.array([0.0, 0.0, 0.0], dtype=numpy.double)
 pin.map(data, interpolate=False)
-
-
-pin = setup.publishContInput("in2")
-data2 = numpy.array([-2], dtype=numpy.int)
-pin.map(data2, base=rank)
-
-###
 
 runtime = setup.runtime(timestep)
 mintime = timestep
@@ -51,10 +43,6 @@ start = dropwhile(lambda t: t < mintime, runtime)
 times = takewhile(lambda t: t < maxtime, start)
 for time in times:
     val = data
-    sys.stdout.write(
-        "t={}\treceiver {}: received {}\n".
-        format(time, rank, val))
-    val = data2
     sys.stdout.write(
         "t={}\treceiver {}: received {}\n".
         format(time, rank, val))

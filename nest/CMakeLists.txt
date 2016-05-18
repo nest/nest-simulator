@@ -47,6 +47,10 @@ target_include_directories( nest PRIVATE
     ${SLI_MODULE_INCLUDE_DIRS}
     )
 
+target_compile_definitions( nest PRIVATE
+    -D_BUILD_NEST_CLI
+)
+
 target_include_directories( nest_lib PRIVATE
     ${PROJECT_BINARY_DIR}/nest
     ${PROJECT_SOURCE_DIR}/libnestutil

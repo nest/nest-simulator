@@ -46,6 +46,7 @@ target_include_directories( nest PRIVATE
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${SLI_MODULE_INCLUDE_DIRS}
     )
+
 target_compile_definitions( nest PRIVATE
     -D_BUILD_NEST_CLI
 )

@@ -68,12 +68,6 @@ function(NEST_GENERATE_HELP)
         )
         install( CODE
             "execute_process(
-                COMMAND ${CMAKE_COMMAND} -E remove_directory \"${CMAKE_INSTALL_FULL_DOCDIR}/help2/sli\"
-                COMMAND ${CMAKE_COMMAND} -E remove_directory \"${CMAKE_INSTALL_FULL_DOCDIR}/help2/cc\"
-                COMMAND ${CMAKE_COMMAND} -E remove \"${CMAKE_INSTALL_FULL_DOCDIR}/help2/helpindex.html\"
-                COMMAND ${CMAKE_COMMAND} -E remove \"${CMAKE_INSTALL_FULL_DOCDIR}/help2/helpindex.hlp\"
-                COMMAND ${CMAKE_COMMAND} -E remove_directory \"${CMAKE_INSTALL_FULL_DOCDIR}/help2\"
-
                 COMMAND ${PYTHON} parse_help.py \"${CMAKE_INSTALL_FULL_DOCDIR}/help2\"
                 WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/userdoc/generator\"
               )"

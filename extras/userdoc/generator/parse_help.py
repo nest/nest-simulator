@@ -121,4 +121,5 @@ for file in allfiles:
                                  sli_command_list)
 
 if len(sys.argv) > 1:
+    shutil.rmtree(sys.argv[1], ignore_errors=True)
     shutil.copytree("../cmds", sys.argv[1])

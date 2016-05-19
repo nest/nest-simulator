@@ -22,6 +22,7 @@ pynest/pynestkernel.cpp
 *.la
 .*
 *.log
+*.pyc
 config.status
 Makefile
 build/

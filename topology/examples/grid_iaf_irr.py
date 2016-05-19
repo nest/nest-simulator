@@ -32,16 +32,17 @@ import nest
 import pylab
 import random
 import nest.topology as topo
+
 pylab.ion()
 
 nest.ResetKernel()
 
 # generate list of 12 (x,y) pairs
-pos = [[random.uniform(-0.75,0.75), random.uniform(-0.5,0.5)]
+pos = [[random.uniform(-0.75, 0.75), random.uniform(-0.5, 0.5)]
        for j in range(12)]
 
 l1 = topo.CreateLayer({'extent': [2., 1.5],
-                       'positions': pos, 
+                       'positions': pos,
                        'elements': 'iaf_neuron'})
 
 nest.PrintNetwork()

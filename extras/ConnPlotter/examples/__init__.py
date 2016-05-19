@@ -21,8 +21,8 @@
 
 # ConnPlotter --- A Tool to Generate Connectivity Pattern Matrices
 
-__all__ = ['simple', 'complex', 'non_dale']
-
 from .simple import *
 from .complex import *
 from .non_dale import *
+
+__all__ = ['simple', 'complex', 'non_dale']

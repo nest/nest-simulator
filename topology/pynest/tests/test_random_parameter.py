@@ -34,14 +34,15 @@ import nest.topology as topo
 
 from math import sqrt
 
-
 try:
     import numpy
+
     HAVE_NUMPY = True
 except ImportError:
     HAVE_NUMPY = False
 try:
     from math import erf
+
     HAVE_ERF = True
 except ImportError:
     HAVE_ERF = False
@@ -49,9 +50,11 @@ except ImportError:
 
 @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
 class RandomParameterTestCase(unittest.TestCase):
-
-    def kolmogorov_smirnov(self,weight_dict,expected_cdf_func):
-        """Create connections with given distribution of weights and test that it fits the given expected cumulative distribution using K-S."""
+    def kolmogorov_smirnov(self, weight_dict, expected_cdf_func):
+        """
+        Create connections with given distribution of weights and test that it
+        fits the given expected cumulative distribution using K-S.
+        """
 
         # n = rows * cols * Nconn
         rows = 10
@@ -61,39 +64,45 @@ class RandomParameterTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         # Create layer and connect with given weight distribution
-        layer = topo.CreateLayer({'rows':rows,'columns':cols,'elements':'iaf_neuron'})
-        topo.ConnectLayers(layer, layer, {'connection_type': 'convergent', 'number_of_connections':Nconn,'weights':weight_dict})
+        layer = topo.CreateLayer(
+            {'rows': rows, 'columns': cols, 'elements': 'iaf_neuron'})
+        topo.ConnectLayers(layer, layer, {'connection_type': 'convergent',
+                                          'number_of_connections': Nconn,
+                                          'weights': weight_dict})
 
         # Get connection weights and sort
         connectome = nest.GetConnections()
-        weights = numpy.array(nest.GetStatus(connectome,'weight'))
+        weights = numpy.array(nest.GetStatus(connectome, 'weight'))
         weights.sort()
         n = len(weights)
 
         # The observed (empirical) cdf is simply i/n for weights[i]
-        observed_cdf = numpy.arange(n+1,dtype=float)/n
+        observed_cdf = numpy.arange(n + 1, dtype=float) / n
         expected_cdf = expected_cdf_func(weights)
 
-        D = max( numpy.abs(expected_cdf-observed_cdf[:-1]).max(), numpy.abs(expected_cdf-observed_cdf[1:]).max() )
+        D = max(numpy.abs(expected_cdf - observed_cdf[:-1]).max(),
+                numpy.abs(expected_cdf - observed_cdf[1:]).max())
 
         # Code to find Kalpha corresponding to level alpha:
         # alpha = 0.05
         # import scipy.optimize,scipy.stats
-        # Kalpha = scipy.optimize.fmin( lambda x: abs(alpha-scipy.stats.ksprob(x)), 1)[0]
+        # Kalpha = scipy.optimize.fmin(lambda x:
+        #                              abs(alpha-scipy.stats.ksprob(x)), 1)[0]
         Kalpha = 1.3581054687500012
 
-        self.assertTrue( sqrt(n)*D < Kalpha )
-
+        self.assertTrue(sqrt(n) * D < Kalpha)
 
     def test_uniform(self):
         """Test uniform distribution of weights."""
 
         w_min = -1.3
         w_max = 2.7
-        
-        weight_dict = {'uniform': {'min':w_min, 'max':w_max}}
 
-        uniform_cdf_func = lambda w:(w>w_min)*(w<w_max)*((w-w_min)/(w_max-w_min)) + (w>=w_max)*1.0
+        weight_dict = {'uniform': {'min': w_min, 'max': w_max}}
+
+        def uniform_cdf_func(w):
+            return ((w > w_min) * (w < w_max) *
+                    ((w - w_min) / (w_max - w_min)) + (w >= w_max) * 1.0)
 
         self.kolmogorov_smirnov(weight_dict, uniform_cdf_func)
 
@@ -104,11 +113,12 @@ class RandomParameterTestCase(unittest.TestCase):
         mean = 2.3
         sigma = 1.7
 
-        weight_dict = {'normal': {'mean':mean, 'sigma':sigma}}
+        weight_dict = {'normal': {'mean': mean, 'sigma': sigma}}
 
         numpy_erf = numpy.vectorize(erf)
 
-        normal_cdf_func = lambda w:0.5*(1.0 + numpy_erf( (w-mean)/sqrt(2)/sigma ))
+        def normal_cdf_func(w):
+            return 0.5 * (1.0 + numpy_erf((w - mean) / sqrt(2) / sigma))
 
         self.kolmogorov_smirnov(weight_dict, normal_cdf_func)
 
@@ -119,22 +129,22 @@ class RandomParameterTestCase(unittest.TestCase):
         mu = 1.7
         sigma = 0.9
 
-        weight_dict = {'lognormal': {'mu':mu, 'sigma':sigma}}
+        weight_dict = {'lognormal': {'mu': mu, 'sigma': sigma}}
 
         numpy_erf = numpy.vectorize(erf)
 
-        lognormal_cdf_func = lambda w:0.5*(1.0 + numpy_erf( (numpy.log(w)-mu)/sqrt(2)/sigma ))
+        def lognormal_cdf_func(w):
+            return 0.5 * (1.0 +
+                          numpy_erf((numpy.log(w) - mu) / sqrt(2) / sigma))
 
         self.kolmogorov_smirnov(weight_dict, lognormal_cdf_func)
 
 
 def suite():
-
-    suite = unittest.makeSuite(RandomParameterTestCase,'test')
+    suite = unittest.makeSuite(RandomParameterTestCase, 'test')
     return suite
 
 
 if __name__ == "__main__":
-
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

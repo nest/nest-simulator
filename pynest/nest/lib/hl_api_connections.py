@@ -512,7 +512,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     self-connections ('autapses', default: True) and multiple connections
     between a pair of nodes ('multapses', default: True) can be contained
     in the dictionary. Another switch enables the creation of symmetric
-    connections ('symmetric', default: False) by also creating connections 
+    connections ('symmetric', default: False) by also creating connections
     in the opposite direction.
 
     Available rules and associated parameters

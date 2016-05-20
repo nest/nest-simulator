@@ -425,15 +425,23 @@ nest::SimulationManager::prepare_simulation_()
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime
+  Stopwatch sw_sort;
+  Stopwatch sw_gather_target_data;
   if ( !simulated_ ) // only enter the runtime mode once
   {
     double tick =
       Time::get_resolution().get_ms() * kernel().connection_builder_manager.get_min_delay();
     kernel().music_manager.enter_runtime( tick );
 
+    sw_sort.start();
     kernel().connection_builder_manager.sort_connections();
+    sw_sort.stop();
+    sw_gather_target_data.start();
     kernel().event_delivery_manager.gather_target_data();
+    sw_gather_target_data.stop();
   }
+  sw_sort.print( "sort " );
+  sw_gather_target_data.print( "gather target data " );
 }
 
 bool
@@ -461,7 +469,8 @@ nest::SimulationManager::update_()
   {
     const int thrd = kernel().vp_manager.get_thread_id();
     Stopwatch sw_total;
-    Stopwatch sw_comm;
+    Stopwatch sw_update;
+    Stopwatch sw_gather_spike_data;
 
     sw_total.start();
     do
@@ -610,6 +619,7 @@ nest::SimulationManager::update_()
       } // of if(needs_prelim_update_)
       // end preliminary update
 
+      sw_update.start();
       const std::vector< Node* >& thread_local_nodes =
         kernel().node_manager.get_nodes_on_thread( thrd );
       for ( std::vector< Node* >::const_iterator node = thread_local_nodes.begin();
@@ -634,15 +644,16 @@ nest::SimulationManager::update_()
 
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
+      sw_update.stop();
 
-      sw_comm.start();
+      sw_gather_spike_data.start();
       if ( to_step_
            == kernel().connection_builder_manager.get_min_delay() ) // gather only at end of slice
       {
         // kernel().event_delivery_manager.gather_events( true );
         kernel().event_delivery_manager.gather_spike_data( thrd );
       }
-      sw_comm.stop();
+      sw_gather_spike_data.stop();
 
 #pragma omp barrier
 
@@ -681,15 +692,15 @@ nest::SimulationManager::update_()
     //     Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     // }
 
-    sw_comm.print( "gather " );
-    kernel().event_delivery_manager.sw_collocate.print("--collocate: ");
-    kernel().event_delivery_manager.sw_communicate.print("--communicate: ");
-    kernel().event_delivery_manager.sw_deliver.print("--deliver: ");
-    kernel().event_delivery_manager.sw_prepare.print("--prepare: ");
-    kernel().event_delivery_manager.sw_check.print("--check: ");
-    kernel().event_delivery_manager.sw_reset_restore_save.print("--reset_restore_save: ");
-
-    sw_total.print( "total " );
+#pragma omp single
+    {
+      sw_update.print( "update: " );
+      sw_gather_spike_data.print( "gather spike data: " );
+      kernel().event_delivery_manager.sw_collocate.print("--collocate: ");
+      kernel().event_delivery_manager.sw_communicate.print("--communicate: ");
+      kernel().event_delivery_manager.sw_deliver.print("--deliver: ");
+      sw_total.print( "total: " );
+    }
   } // end of #pragma parallel omp
 
   // check if any exceptions have been raised

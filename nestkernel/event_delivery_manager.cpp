@@ -615,12 +615,12 @@ EventDeliveryManager::gather_spike_data( const thread tid )
 #pragma omp atomic
     completed_count += others_completed_tid;
 #pragma omp barrier
-    sw_deliver.stop();
     if ( completed_count == max_completed_count )
     {
       done = true;
     }
 #pragma omp barrier
+    sw_deliver.stop();
   } // of while(true)
 
   reset_spike_register_5g_( tid );

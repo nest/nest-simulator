@@ -224,9 +224,6 @@ public:
   Stopwatch sw_collocate;
   Stopwatch sw_communicate;
   Stopwatch sw_deliver;
-  Stopwatch sw_prepare;
-  Stopwatch sw_check;
-  Stopwatch sw_reset_restore_save;
 
 private:
   /**

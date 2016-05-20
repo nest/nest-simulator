@@ -123,8 +123,6 @@ install( TARGETS sli_readline sli_lib sli
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
-nest_generate_help()
-
 install( FILES ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )

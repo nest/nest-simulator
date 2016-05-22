@@ -65,30 +65,34 @@ SourceTable::get_next_target_data( const thread tid, index& target_rank, TargetD
         {
           // the current position contains an entry, so we retrieve it
           Source& current_source = ( *sources_[ current_position.tid ] )[ current_position.syn_id ][ current_position.lcid ];
-          target_rank = kernel().node_manager.get_process_id_of_gid( current_source.gid );
-          // now we need to determine whether this thread is
-          // responsible for this part of the MPI buffer; if not we
-          // just continue with the next iteration of the loop
-          if ( rank_start <= target_rank && target_rank < rank_end )
+          if ( current_source.processed )
           {
-            if ( current_source.processed )
+            // looks like we've processed this already, let's
+            // continue
+            ++current_position.lcid;
+            continue;
+          }
+          else
+          {
+            target_rank = kernel().node_manager.get_process_id_of_gid( current_source.gid );
+            // now we need to determine whether this thread is
+            // responsible for this part of the MPI buffer; if not we
+            // just continue with the next iteration of the loop
+            if ( rank_start <= target_rank && target_rank < rank_end )
             {
-              // looks like we've processed this already, let's
-              // continue
-              ++current_position.lcid;
-              continue;
-            }
-            else
-            {
-              // we have found a valid entry, so mark it as processed,
-              // update the values of next_target_data and return
+              // we have found a valid entry, so mark it as processed
               current_source.processed = true;
+
+              // if current_first_source points to source with same
+              // gid, we only increase target count, and continue
               if ( current_first_source_[ tid ] != 0 && (*current_first_source_[ tid ]).gid == current_source.gid )
               {
                 ++(*current_first_source_[ tid ]).target_count;
                 ++current_position.lcid;
                 continue;
               }
+              // only if gids differ, we update the values of
+              // next_target_data and return
               else
               {
                 current_first_source_[ tid ] = &current_source;
@@ -105,11 +109,11 @@ SourceTable::get_next_target_data( const thread tid, index& target_rank, TargetD
                 return true;
               }
             }
-          }
-          else
-          {
-            ++current_position.lcid;
-            continue;
+            else
+            {
+              ++current_position.lcid;
+              continue;
+            }
           }
         }
       }

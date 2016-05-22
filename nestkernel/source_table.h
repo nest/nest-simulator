@@ -45,7 +45,8 @@ struct Source
 {
   // TODO@5g: use nest_types: index
   // TODO@5g: possible to define in nest_types?
-  unsigned long gid : 63;
+  unsigned long gid : 43;
+  unsigned long target_count : 20;
   unsigned long processed : 1;
   Source();
   Source( index );
@@ -54,6 +55,7 @@ struct Source
 inline
 Source::Source()
   : gid( 0 )
+  , target_count( 0 )
   , processed( false )
 {
 }
@@ -61,6 +63,7 @@ Source::Source()
 inline
 Source::Source( index gid )
   : gid( gid )
+  , target_count( 0 )
   , processed( false )
 {
 }
@@ -133,6 +136,7 @@ private:
   //! member of the sources table (see below).
   std::vector< SourceTablePosition* > current_positions_;
   std::vector< SourceTablePosition* > saved_positions_;
+  std::vector< Source* > current_first_source_;
   //! if we detect an overflow in one of the MPI buffers, we save our
   //! current position in the sources table (see above) and continue
   //! at that point in the next communication round, while filling up
@@ -167,6 +171,7 @@ public:
   void reset_entry_point( const thread tid );
   //! returns the global id of the source at tid|syn_id|lcid
   index get_gid( const thread tid, const synindex syn_id, const index lcid ) const;
+  unsigned int get_target_count( const thread tid, const synindex syn_index, const index lcid ) const;
   //! returns a reference to all sources local on thread tid (used for sorting)
   std::vector< std::vector< Source > >& get_thread_local_sources( const thread tid );
 };
@@ -210,9 +215,12 @@ nest::SourceTable::reject_last_target_data( const thread tid )
   SourceTablePosition& current_position = *current_positions_[ tid ];
   // adding the last target data returned by get_next_target_data
   // could not be inserted into MPI buffer due to overflow. we hence
-  // need to correct the processed flag of the last entry.
+  // need to correct the processed flag of the last entry (see
+  // source_table_impl.h)
   assert( current_position.lcid > 0 );
   ( *sources_[ current_position.tid ] )[ current_position.syn_id ][ current_position.lcid - 1 ].processed = false;
+  // need to decrease target count as well
+  --(*current_first_source_[ tid ]).target_count;
 }
 
 inline
@@ -243,6 +251,7 @@ nest::SourceTable::restore_entry_point( const thread tid )
 {
   *current_positions_[ tid ] = *saved_positions_[ tid ];
   saved_entry_point_[ tid ] = false;
+  current_first_source_[ tid ] = 0;
 }
 
 inline
@@ -251,6 +260,7 @@ nest::SourceTable::reset_entry_point( const thread tid )
 {
   saved_positions_[ tid ]->reset();
   current_positions_[ tid ]->reset();
+  current_first_source_[ tid ] = 0;
 }
 
 inline index
@@ -260,6 +270,12 @@ nest::SourceTable::get_gid( const thread tid, const synindex syn_id, const index
   return (*sources_[ tid ])[ it->second ][ lcid ].gid;
 }
 
+inline unsigned int
+nest::SourceTable::get_target_count( const thread tid, const synindex syn_id, const index lcid ) const
+{
+  return (*sources_[ tid ])[ syn_id ][ lcid ].target_count;
+}
+
 } // namespace nest
 
-#endif
+#endif // SOURCE_TABLE_H

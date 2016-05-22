@@ -61,7 +61,11 @@ ConnectionBuilderManager::get_target_gid( const thread tid, const synindex syn_i
 inline void
 ConnectionBuilderManager::send_5g( thread tid, synindex syn_index, unsigned int lcid, Event& e )
 {
-  connections_5g_[ tid ]->send( tid, syn_index, lcid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+  const unsigned int target_count = source_table_.get_target_count( tid, syn_index, lcid );
+  for ( unsigned int tmp_lcid = lcid; tmp_lcid < lcid + target_count; ++tmp_lcid )
+  {
+    connections_5g_[ tid ]->send( tid, syn_index, tmp_lcid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+  }
 }
 
 inline void

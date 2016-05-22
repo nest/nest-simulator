@@ -83,16 +83,27 @@ SourceTable::get_next_target_data( const thread tid, index& target_rank, TargetD
               // we have found a valid entry, so mark it as processed,
               // update the values of next_target_data and return
               current_source.processed = true;
-              next_target_data.lid = kernel().vp_manager.gid_to_lid( current_source.gid );
-              next_target_data.tid = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( current_source.gid ) );
-              // we store the position in the sources table, not our own
-              next_target_data.target.tid = current_position.tid;
-              next_target_data.target.rank = kernel().mpi_manager.get_rank();
-              next_target_data.target.processed = false;
-              next_target_data.target.syn_index = current_position.syn_id;
-              next_target_data.target.lcid = current_position.lcid;
-              ++current_position.lcid;
-              return true;
+              if ( current_first_source_[ tid ] != 0 && (*current_first_source_[ tid ]).gid == current_source.gid )
+              {
+                ++(*current_first_source_[ tid ]).target_count;
+                ++current_position.lcid;
+                continue;
+              }
+              else
+              {
+                current_first_source_[ tid ] = &current_source;
+                ++(*current_first_source_[ tid ]).target_count;
+                next_target_data.lid = kernel().vp_manager.gid_to_lid( current_source.gid );
+                next_target_data.tid = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( current_source.gid ) );
+                // we store the thread index of the sources table, not our own tid
+                next_target_data.target.tid = current_position.tid;
+                next_target_data.target.rank = kernel().mpi_manager.get_rank();
+                next_target_data.target.processed = false;
+                next_target_data.target.syn_index = current_position.syn_id;
+                next_target_data.target.lcid = current_position.lcid;
+                ++current_position.lcid;
+                return true;
+              }
             }
           }
           else

@@ -48,20 +48,25 @@
   Parameters:
    z                double  - Current number of synaptic elements. Stored as a
                               double variable but the actual usable number of
-                              synaptic elements is an integer truncated from this
-                              double value. An standard value for the growth of a
+                              synaptic elements is an integer truncated from
+  this
+                              double value. An standard value for the growth of
+  a
                               synaptic element is around 0.0001 elements/ms.
    continuous       boolean - Defines if the number of synaptic elements should
                               be treated as a continuous double number or as an
                               integer value. Default is false.
-   growth_rate      double  - The maximum amount by which the synaptic elements will
+   growth_rate      double  - The maximum amount by which the synaptic elements
+  will
                               change between time steps. In elements/ms.
    tau_vacant       double  - Rate at which vacant synaptic elements will decay.
                               Typical is 0.1 which represents a
-                              loss of 10% of the vacant synaptic elements each time
+                              loss of 10% of the vacant synaptic elements each
+  time
                               the structural_plasticity_update_interval is
                               reached by the simulation time.
-   growth_curve     GrowthCurve* - Rule which defines the dynamics of this synaptic element.
+   growth_curve     GrowthCurve* - Rule which defines the dynamics of this
+  synaptic element.
 
   References:
    [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.

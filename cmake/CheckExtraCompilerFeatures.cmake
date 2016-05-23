@@ -172,6 +172,8 @@ endfunction()
 ####### HAVE_STL_VECTOR_CAPACITY_DOUBLING ########
 function( NEST_CHECK_HAVE_STL_VECTOR_CAPACITY_DOUBLING )
   message( STATUS "Check for STL vector capacity doubling strategy." )
+  set( RUN_RESULT 0 )
+  set( RUN_RESULT__TRYRUN_OUTPUT "" )
   try_run( RUN_RESULT COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/VectorCapacityDoubling.cxx

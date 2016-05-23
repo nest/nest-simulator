@@ -138,7 +138,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -182,7 +183,7 @@ private:
     double_t TauR_;
 
     /** Resting potential in mV. */
-    double_t U0_;
+    double_t E_L_;
 
     /** External current in pA */
     double_t I_e_;
@@ -191,11 +192,11 @@ private:
     double_t V_reset_;
 
     /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
-        I.e. the real threshold is (U0_+Theta_). */
+        I.e. the real threshold is (E_L_+Theta_). */
     double_t Theta_;
 
     /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
-        I.e. the real lower bound is (LowerBound_+U0_). */
+        I.e. the real lower bound is (LowerBound_+E_L_). */
     double_t LowerBound_;
 
     /** Time constant of excitatory synaptic current in ms. */
@@ -224,7 +225,8 @@ private:
     double_t y2_ex_;
     double_t y1_in_;
     double_t y2_in_;
-    double_t y3_; //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double_t y3_;
 
     int_t r_; //!< Number of refractory steps remaining
 
@@ -294,7 +296,7 @@ private:
   double_t
   get_V_m_() const
   {
-    return S_.y3_ + P_.U0_;
+    return S_.y3_ + P_.E_L_;
   }
 
   double_t
@@ -338,7 +340,10 @@ private:
 };
 
 inline port
-nest::iaf_psc_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::iaf_psc_alpha::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -362,7 +367,8 @@ iaf_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_psc_alpha::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

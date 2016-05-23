@@ -88,7 +88,8 @@ SLIgraphics::ReadPGMFunction::execute( SLIInterpreter* i ) const
   }
   std::istream* in = NULL;
   std::vector< long > image;
-  int width = 0, height = 0, maxval = 0; // for the image parameters: width, height, maxval
+  // for the image parameters: width, height, maxval
+  int width = 0, height = 0, maxval = 0;
 
   try
   {
@@ -132,7 +133,8 @@ SLIgraphics::ReadPGMFunction::openPGMFile( StringDatum* filename ) const
 }
 
 void
-SLIgraphics::ReadPGMFunction::readMagicNumber( std::istream* in, char* magic ) const
+SLIgraphics::ReadPGMFunction::readMagicNumber( std::istream* in,
+  char* magic ) const
 {
   // reads in the magic number which determines the file format
   try
@@ -274,11 +276,16 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
     return;
   }
 
-  IntegerDatum* w = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
-  IntegerDatum* h = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* m = dynamic_cast< IntegerDatum* >( i->OStack.pick( 2 ).datum() );
-  ArrayDatum* image = dynamic_cast< ArrayDatum* >( i->OStack.pick( 3 ).datum() );
-  StringDatum* filename = dynamic_cast< StringDatum* >( i->OStack.pick( 4 ).datum() );
+  IntegerDatum* w =
+    dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* h =
+    dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* m =
+    dynamic_cast< IntegerDatum* >( i->OStack.pick( 2 ).datum() );
+  ArrayDatum* image =
+    dynamic_cast< ArrayDatum* >( i->OStack.pick( 3 ).datum() );
+  StringDatum* filename =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 4 ).datum() );
 
   long width = ( long ) w->get();
   long height = ( long ) h->get();

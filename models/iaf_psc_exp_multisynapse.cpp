@@ -65,13 +65,14 @@ RecordablesMap< iaf_psc_exp_multisynapse >::create()
  * ---------------------------------------------------------------- */
 
 iaf_psc_exp_multisynapse::Parameters_::Parameters_()
-  : Tau_( 10.0 )            // in ms
-  , C_( 250.0 )             // in pF
-  , t_ref_( 2.0 )           // in ms
-  , U0_( -70.0 )            // in mV
-  , I_e_( 0.0 )             // in pA
-  , V_reset_( -70.0 - U0_ ) // in mV
-  , Theta_( -55.0 - U0_ )   // relative U0_
+  : Tau_( 10.0 )             // in ms
+  , C_( 250.0 )              // in pF
+  , t_ref_( 2.0 )            // in ms
+  , E_L_( -70.0 )            // in mV
+  , I_e_( 0.0 )              // in pA
+  , V_reset_( -70.0 - E_L_ ) // in mV
+  , Theta_( -55.0 - E_L_ )   // relative E_L_
+  , num_of_receptors_( 0 )
   , has_connections_( false )
 {
   tau_syn_.clear();
@@ -92,10 +93,10 @@ iaf_psc_exp_multisynapse::State_::State_()
 void
 iaf_psc_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::E_L, U0_ ); // resting potential
+  def< double >( d, names::E_L, E_L_ ); // resting potential
   def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, Theta_ + U0_ ); // threshold value
-  def< double >( d, names::V_reset, V_reset_ + U0_ );
+  def< double >( d, names::V_th, Theta_ + E_L_ ); // threshold value
+  def< double >( d, names::V_reset, V_reset_ + E_L_ );
   def< double >( d, names::C_m, C_ );
   def< double >( d, names::tau_m, Tau_ );
   def< double >( d, names::t_ref, t_ref_ );
@@ -109,18 +110,19 @@ iaf_psc_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 double
 iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
 {
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
-  const double ELold = U0_;
-  updateValue< double >( d, names::E_L, U0_ );
-  const double delta_EL = U0_ - ELold;
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
+  const double ELold = E_L_;
+  updateValue< double >( d, names::E_L, E_L_ );
+  const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
-    V_reset_ -= U0_;
+    V_reset_ -= E_L_;
   else
     V_reset_ -= delta_EL;
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
-    Theta_ -= U0_;
+    Theta_ -= E_L_;
   else
     Theta_ -= delta_EL;
 
@@ -142,12 +144,14 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
     {
       if ( tau_tmp.size() < tau_syn_.size() && has_connections_ == true )
         throw BadProperty(
-          "The neuron has connections, therefore the number of ports cannot be reduced." );
+          "The neuron has connections, therefore the number of ports cannot be "
+          "reduced." );
       if ( tau_tmp[ i ] <= 0 )
         throw BadProperty( "All synaptic time constants must be > 0." );
       if ( tau_tmp[ i ] == Tau_ )
         throw BadProperty(
-          "Membrane and synapse time constant(s) must differ. See note in documentation." );
+          "Membrane and synapse time constant(s) must differ. See note in "
+          "documentation." );
     }
 
     tau_syn_ = tau_tmp;
@@ -164,9 +168,10 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-iaf_psc_exp_multisynapse::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+iaf_psc_exp_multisynapse::State_::get( DictionaryDatum& d,
+  const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, V_m_ + p.U0_ ); // Membrane potential
+  def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
 }
 
 void
@@ -175,7 +180,7 @@ iaf_psc_exp_multisynapse::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
-    V_m_ -= p.U0_;
+    V_m_ -= p.E_L_;
   else
     V_m_ -= delta_EL;
 }
@@ -185,7 +190,8 @@ iaf_psc_exp_multisynapse::Buffers_::Buffers_( iaf_psc_exp_multisynapse& n )
 {
 }
 
-iaf_psc_exp_multisynapse::Buffers_::Buffers_( const Buffers_&, iaf_psc_exp_multisynapse& n )
+iaf_psc_exp_multisynapse::Buffers_::Buffers_( const Buffers_&,
+  iaf_psc_exp_multisynapse& n )
   : logger_( n )
 {
 }
@@ -203,7 +209,8 @@ iaf_psc_exp_multisynapse::iaf_psc_exp_multisynapse()
   recordablesMap_.create();
 }
 
-iaf_psc_exp_multisynapse::iaf_psc_exp_multisynapse( const iaf_psc_exp_multisynapse& n )
+iaf_psc_exp_multisynapse::iaf_psc_exp_multisynapse(
+  const iaf_psc_exp_multisynapse& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -218,7 +225,8 @@ iaf_psc_exp_multisynapse::iaf_psc_exp_multisynapse( const iaf_psc_exp_multisynap
 void
 iaf_psc_exp_multisynapse::init_state_( const Node& proto )
 {
-  const iaf_psc_exp_multisynapse& pr = downcast< iaf_psc_exp_multisynapse >( proto );
+  const iaf_psc_exp_multisynapse& pr =
+    downcast< iaf_psc_exp_multisynapse >( proto );
   S_ = pr.S_;
 }
 
@@ -236,7 +244,8 @@ iaf_psc_exp_multisynapse::init_buffers_()
 void
 nest::iaf_psc_exp_multisynapse::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
 
@@ -268,13 +277,17 @@ nest::iaf_psc_exp_multisynapse::calibrate()
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
   if ( V_.RefractoryCounts_ < 1 )
-    throw BadProperty( "Absolute refractory time must be at least one time step." );
+    throw BadProperty(
+      "Absolute refractory time must be at least one time step." );
 }
 
 void
-iaf_psc_exp_multisynapse::update( const Time& origin, const long_t from, const long_t to )
+iaf_psc_exp_multisynapse::update( const Time& origin,
+  const long_t from,
+  const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -282,7 +295,8 @@ iaf_psc_exp_multisynapse::update( const Time& origin, const long_t from, const l
   {
     if ( S_.r_ref_ == 0 ) // neuron not refractory, so evolve V
     {
-      S_.V_m_ = S_.V_m_ * V_.P22_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_; // not sure about this
+      S_.V_m_ = S_.V_m_ * V_.P22_
+        + ( P_.I_e_ + S_.i_0_ ) * V_.P20_; // not sure about this
 
       S_.current_ = 0.0;
       for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
@@ -324,7 +338,8 @@ iaf_psc_exp_multisynapse::update( const Time& origin, const long_t from, const l
 port
 iaf_psc_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
+  if ( receptor_type <= 0
+    || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
 
   P_.has_connections_ = true;
@@ -341,7 +356,8 @@ iaf_psc_exp_multisynapse::handle( SpikeEvent& e )
     if ( P_.receptor_types_[ i ] == e.get_rport() )
     {
       B_.spikes_[ i ].add_value(
-        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+        e.get_rel_delivery_steps(
+          kernel().simulation_manager.get_slice_origin() ),
         e.get_weight() * e.get_multiplicity() );
     }
   }
@@ -357,7 +373,8 @@ iaf_psc_exp_multisynapse::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * I );
 }
 
 void

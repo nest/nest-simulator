@@ -27,7 +27,7 @@
 #include "logging_manager.h"
 
 // Includes from nestkernel:
-#include "connection_builder_manager.h"
+#include "connection_manager.h"
 #include "event_delivery_manager.h"
 #include "io_manager.h"
 #include "model_manager.h"
@@ -46,13 +46,13 @@
 // clang-format off
 /* BeginDocumentation
  Name: kernel - Global properties of the simulation kernel.
- 
+
  Description:
  Global properties of the simulation kernel.
- 
+
  Parameters:
  The following parameters are available in the kernel status dictionary.
- 
+
  Time and resolution
  resolution               doubletype  - The resolution of the simulation (in ms)
  time                     doubletype  - The current simulation time
@@ -64,7 +64,7 @@
  tics_per_step            integertype - The number of tics per simulation time step
  T_max                    doubletype  - The largest representable time value (read only)
  T_min                    doubletype  - The smallest representable time value (read only)
- 
+
  Parallel processing
  total_num_virtual_procs  integertype - The total number of virtual processes
  local_num_threads        integertype - The local number of threads
@@ -73,7 +73,7 @@
  num_sim_processes        integertype - The number of MPI processes reserved for simulating neurons
  off_grid_spiking         booltype    - Whether to transmit precise spike times in MPI
                                         communication (read only)
- 
+
  Random number generators
  grng_seed                integertype - Seed for global random number generator used
                                         synchronously by all virtual processes to
@@ -84,24 +84,29 @@
                                         Array with one integer per virtual process,
                                         all must be unique and differ from
                                         grng_seed (write only).
- 
+
  Output
  data_path                stringtype  - A path, where all data is written to
                                         (default is the current directory)
  data_prefix              stringtype  - A common prefix for all data files
  overwrite_files          booltype    - Whether to overwrite existing data files
  print_time               booltype    - Whether to print progress information during the simulation
- 
+
  Network information
  network_size             integertype - The number of nodes in the network (read only)
  num_connections          integertype - The number of connections in the network
                                         (read only, local only)
- 
+
+ Waveform relaxation method (wfr)
+ use_wfr                  booltype    - Whether to use waveform relaxation method
+ wfr_comm_interval        doubletype  - Desired waveform relaxation communication interval
+ wfr_tol                  doubletype  - Convergence tolerance of waveform relaxation method
+ wfr_max_iterations       integertype - Maximal number of iterations used for waveform relaxation
+ wfr_interpolation_order  integertype - Interpolation order of polynomial used in wfr iterations
+
  Miscellaneous
- dict_miss_is_error         booltype    - Whether missed dictionary entries are treated as errors
- prelim_tol                 doubletype  - Tolerance of prelim iterations
- prelim_interpolation_order integertype - Interpolation order of polynomial used in prelim iterations
- 
+ dict_miss_is_error       booltype    - Whether missed dictionary entries are treated as errors
+
  SeeAlso: Simulate, Node
  */
 // clang-format on
@@ -178,7 +183,7 @@ public:
   RNGManager rng_manager;
   SimulationManager simulation_manager;
   ModelRangeManager modelrange_manager;
-  ConnectionBuilderManager connection_builder_manager;
+  ConnectionManager connection_manager;
   SPManager sp_manager;
   EventDeliveryManager event_delivery_manager;
   ModelManager model_manager;

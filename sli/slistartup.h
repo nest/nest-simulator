@@ -29,7 +29,7 @@
 // Generated includes:
 #include "dirent.h"
 #include "errno.h"
-#include "sliconfig.h"
+#include "config.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -46,11 +46,13 @@ class SLIStartup : public SLIModule
   const std::string slilibpath;
   std::string slihomepath;
   std::string slidocdir;
+  std::string sliprefix;
 
   std::string locateSLIInstallationPath( void );
   bool checkpath( std::string const&, std::string& ) const;
   std::string getenv( const std::string& ) const;
-  std::string checkenvpath( std::string const&, SLIInterpreter*, std::string ) const;
+  std::string
+  checkenvpath( std::string const&, SLIInterpreter*, std::string ) const;
 
   Token targs;
   int verbosity_;
@@ -65,8 +67,6 @@ public:
   Name prgpatch_name;
   Name prgbuilt_name;
   Name prefix_name;
-  Name prgsourcedir_name;
-  Name prgbuilddir_name;
   Name prgdatadir_name;
   Name prgdocdir_name;
 

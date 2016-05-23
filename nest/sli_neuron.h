@@ -102,7 +102,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -264,8 +265,9 @@ sli_neuron::set_status( const DictionaryDatum& d )
   Archiving_Node::set_status( d );
 
   // To initialize the state dictionary, we copy all entries from d into s.
-  // Later, the state dictionary will be in the interpreter and values are changed
-  // automatically. SetStatus is then only needed to change properties of Archiving_Node.
+  // Later, the state dictionary will be in the interpreter and values are
+  // changed automatically. SetStatus is then only needed to change properties
+  // of Archiving_Node.
   for ( TokenMap::const_iterator it = d->begin(); it != d->end(); ++it )
   {
     state_->insert( it->first, it->second );

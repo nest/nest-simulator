@@ -156,7 +156,8 @@ public:
    * @param Ca_minus Calcium concentration at time t_minus
    * @param tau_Ca change in the calcium concentration on each spike
    */
-  void update( double_t t, double_t t_minus, double_t Ca_minus, double_t tau_Ca );
+  void
+  update( double_t t, double_t t_minus, double_t Ca_minus, double_t tau_Ca );
 
   /**
   * \fn double_t get_z_value(Archiving_Node const *a, double_t t) const

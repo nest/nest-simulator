@@ -40,7 +40,7 @@
 namespace nest
 {
 
-class VPManager : ManagerInterface
+class VPManager : public ManagerInterface
 {
 public:
   VPManager();

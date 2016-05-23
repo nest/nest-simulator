@@ -23,8 +23,10 @@
 #include "nest_datums.h"
 
 // explicit instantiations
-template class AggregateDatum< nest::ConnectionID, &nest::NestModule::ConnectionType >;
-template class AggregateDatum< nest::GIDCollection, &nest::NestModule::GIDCollectionType >;
+template class AggregateDatum< nest::ConnectionID,
+  &nest::NestModule::ConnectionType >;
+template class AggregateDatum< nest::GIDCollection,
+  &nest::NestModule::GIDCollectionType >;
 
 // instantiate memory management pool
 template <>

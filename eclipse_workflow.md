@@ -2,6 +2,8 @@
 layout: index
 ---
 
+[« Back to the index](index)
+
 # Developing NEST with Eclipse
 
 These instructions are based on Eclipse *Mars* (4.5). They are based
@@ -117,20 +119,24 @@ in a later section.
 
 We thus assume the following directory layout:
 
-    $NEST_ROOT/src                          # source code
-    $NEST_ROOT/bld_master_nompi             # build directory
-    $NEST_ROOT/bld_master_nompi/install     # install directory
+```sh
+$NEST_ROOT/src                          # source code
+$NEST_ROOT/bld_master_nompi             # build directory
+$NEST_ROOT/bld_master_nompi/install     # install directory
+```
 
 You should configure, build and install NEST manually once (note that
 I want to build NEST with gcc 5.1 from Homebrew, therefore the
-`-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5` arguments to `cmake`; 
+`-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5` arguments to `cmake`;
 NB: Make sure that you have checked out the master branch in the `src` directory):
 
-    cd $NEST_ROOT/bld_master_nompi
-    cmake -DCMAKE_INSTALL_PREFIX=$NEST_ROOT/bld_master_nompi/install -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -Dwith-debug=ON ../src
-    make -j4
-    make install
-    make installcheck
+```sh
+cd $NEST_ROOT/bld_master_nompi
+cmake -DCMAKE_INSTALL_PREFIX=$NEST_ROOT/bld_master_nompi/install -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -Dwith-debug=ON ../src
+make -j4
+make install
+make installcheck
+```
 
 __Note:__ With `cmake` you can also generate the Eclipse project files yourself by adding the option `-G "Eclipse CDT4 - Unix Makefiles"`. The following section assumes, that you do not use this option.
 
@@ -174,7 +180,7 @@ keeping an overview later), in our case `bld_master_nompi`.
 menu.
 1. Go to `C/C++ Build`
 1. It should show the`bld_master_nompi` (or whatever name you chose)  as active
-configuration. 
+configuration.
 1. Then, in the `Build location` section of the `C/C++ Build` window, click
 `File system ...`, then choose `$NEST_ROOT/bld_master_nompi`.
 1. If you want to build in parallel, remove the check for
@@ -201,7 +207,7 @@ targets:
 1. Choose `Make Targets > Create ...` and add a target,
 e.g. `install` by entering this as the target name.
 1. Remove the check for `Run all project builders`.
-1. You should create targets 
+1. You should create targets
     - `all` (builds nest)
     - `install` (installs nest, including tests and help)
 	- `install-exec` (installs compiled code and Python, but not SLI
@@ -251,7 +257,7 @@ Create and configure the build directory as usual and build and
 install NEST once (do not use the MPI compiler wrappers for `cmake`, as
 it will figure out the correct options itself).
 
-```
+```sh
 cd $NEST_ROOT
 mkdir bld_fixes_mpi
 cd bld_fixes_mpi
@@ -303,5 +309,3 @@ This section is very preliminary.
 1. Eclipse stops the debugger on entry to main, you probably want to click Resume here.
 
 NB: At present, I am not able to get any variable values out in gdb. This seems to be a gdb problem, I also have this problem with gdb on the command line. So on the Mac we may have to wait until Eclipse support lldb.
-
-

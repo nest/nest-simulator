@@ -16,7 +16,7 @@ the following parameters:
 * The connection delay
 * The connection weight
 * The target node of the connection
-* The receiver port, which identifies the connection on the postsynaptic side 
+* The receiver port, which identifies the connection on the postsynaptic side
 
 The source node of a connection is implicitly stored by the position
 in the data structure that is used internally. These parameters are
@@ -32,38 +32,40 @@ both of them are shown shown in the following listings:
 
 `NESTSRC/models/my_connection.h`
 
-    #ifndef MY_CONNECTION
-    #define MY_CONNECTION
-    
-    #include "static_connection.h"
-    #include "generic_connector.h"
-    
-    namespace nest
-    {
-      class MyConnection:public StaticConnection
-      {
-        public:
-          MyConnection () {}
-          MyConnection (const MyConnection &) {}
-          ~MyConnection () {}
-    
-          update_dynamics ();
-          void send (Event & e, double_t t_lastspike, const CommonSynapseProperties & cp);
-      };
-    
-      inline void MyConnection::send (Event & e, double_t t_lastspike, const CommonSynapseProperties &)
-      {
-        update_dynamics();
-    
-        e.set_receiver(*target_);
-        e.set_weight(weight_);
-        e.set_delay(delay_);
-        e.set_rport(rport_);
-        e();
-      }
-    } // namespace nest
-    
-    #endif /* #ifndef MY_CONNECTION */
+```c++
+#ifndef MY_CONNECTION
+#define MY_CONNECTION
+
+#include "static_connection.h"
+#include "generic_connector.h"
+
+namespace nest
+{
+  class MyConnection : public StaticConnection
+  {
+    public:
+      MyConnection () {}
+      MyConnection (const MyConnection &) {}
+      ~MyConnection () {}
+
+      update_dynamics ();
+      void send (Event & e, double_t t_lastspike, const CommonSynapseProperties & cp);
+  };
+
+  inline void MyConnection::send (Event & e, double_t t_lastspike, const CommonSynapseProperties &)
+  {
+    update_dynamics();
+
+    e.set_receiver(*target_);
+    e.set_weight(weight_);
+    e.set_delay(delay_);
+    e.set_rport(rport_);
+    e();
+  }
+} // namespace nest
+
+#endif /* #ifndef MY_CONNECTION */
+```
 
 The first thing we do is include the header files of our base class,
 StaticConnection. It already defines funtions for registering the
@@ -73,12 +75,14 @@ retrieve these parameters from within the SLI interpreter.
 
 `NESTSRC/models/my_connection.cpp`
 
-    #include "my_connection.h"
-    
-    void nest::MyConnection::update_dynamics ()
-    {
-      /* Do fancy stuff with weights here! */
-    }
+```c++
+#include "my_connection.h"
+
+void nest::MyConnection::update_dynamics ()
+{
+  /* Do fancy stuff with weights here! */
+}
+```
 
 To apply some (activity dependent) dynamics on the weight of the
 connection you simply have to override the method send(). It is the
@@ -98,8 +102,12 @@ To make the synapse type available inside of NEST scripts, you have to
 include and register it with the module. Add the following line to the
 begin of NESTSRC/models/modelmodule.cpp:
 
-    #include "my_connection.h"
+```c++
+#include "my_connection.h"
+```
 
 And the following line to the end of the file:
 
-    register_prototype_connection<MyConnection>(net_, "my_synapse");
+```c++
+register_prototype_connection<MyConnection>(net_, "my_synapse");
+```

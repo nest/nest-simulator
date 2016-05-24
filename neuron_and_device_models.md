@@ -61,49 +61,51 @@ will throw UnexpectedEvent for each incoming event.
 
 A typical update method of a neuron model will look like this:
 
-    void nest::iaf_neuron::update(Time const & origin, const long_t from, const long_t to)
+```c++
+void nest::iaf_neuron::update(Time const & origin, const long_t from, const long_t to)
+{
+  assert(to >= 0 && (delay) from < Scheduler::get_min_delay());
+  assert(from < to);
+
+  for ( long_t lag = from ; lag < to ; ++lag )
+  {
+    if ( r_ == 0 )
     {
-      assert(to >= 0 && (delay) from < Scheduler::get_min_delay());
-      assert(from < to);
-    
-      for ( long_t lag = from ; lag < to ; ++lag )
-      {
-        if ( r_ == 0 )
-        {
-          // neuron not refractory
-          y3_ = P30_*(y0_ + I_e_) + P31_*y1_ + P32_*y2_ + P33_*y3_;
-        }
-        else // neuron is absolute refractory
-         --r_;
-    
-        // alpha shape PSCs
-        y2_ = P21_*y1_ + P22_ * y2_;
-        y1_ *= P11_;
-                                                           // apply spikes delivered in this step
-        y1_ += PSCInitialValue_* spikes_.get_value(lag);   // the spikes arriving at T+1 have an
-                                                           // immediate effect on the state of the 
-                                                           // neuron
-        // threshold crossing
-        if (y3_ >= Theta_)
-        {
-          r_ = RefractoryCounts_;
-          y3_=V_reset_; 
-          // A supra-threshold membrane potential should never be observable.
-          // The reset at the time of threshold crossing enables accurate integration
-          // independent of the computation step size, see [2,3] for details.   
-    
-          set_spiketime(Time::step(origin.get_steps()+lag+1));
-          SpikeEvent se;
-          network()->send(*this, se, lag);
-        }
-    
-        // set new input current
-        y0_ = currents_.get_value(lag);
-    
-        // voltage logging for entire time slice
-        potentials_[network()->get_slice() % 2][lag] = y3_ + U0_;
-      }  
-    }     
+      // neuron not refractory
+      y3_ = P30_*(y0_ + I_e_) + P31_*y1_ + P32_*y2_ + P33_*y3_;
+    }
+    else // neuron is absolute refractory
+     --r_;
+
+    // alpha shape PSCs
+    y2_ = P21_*y1_ + P22_ * y2_;
+    y1_ *= P11_;
+                                                       // apply spikes delivered in this step
+    y1_ += PSCInitialValue_* spikes_.get_value(lag);   // the spikes arriving at T+1 have an
+                                                       // immediate effect on the state of the
+                                                       // neuron
+    // threshold crossing
+    if (y3_ >= Theta_)
+    {
+      r_ = RefractoryCounts_;
+      y3_=V_reset_;
+      // A supra-threshold membrane potential should never be observable.
+      // The reset at the time of threshold crossing enables accurate integration
+      // independent of the computation step size, see [2,3] for details.
+
+      set_spiketime(Time::step(origin.get_steps()+lag+1));
+      SpikeEvent se;
+      network()->send(*this, se, lag);
+    }
+
+    // set new input current
+    y0_ = currents_.get_value(lag);
+
+    // voltage logging for entire time slice
+    potentials_[network()->get_slice() % 2][lag] = y3_ + U0_;
+  }
+}
+```
 
 ## Sending Events
 
@@ -128,14 +130,16 @@ for a neuron to send SpikeEvents and CurrentEvents. The type of event
 is defined in my_model::check_connection(). If we assume that the
 model should send SpikeEvents, this function would look like this:
 
-    port my_model::check_connection(Node& r, port rp)
-    {
-      SpikeEvent e;
-      e.set_sender(*this);
-      e.set_receiver(r);
-      e.set_rport(rp);
-      return r.connect_sender(e);
-    }
+```c++
+port my_model::check_connection(Node& r, port rp)
+{
+  SpikeEvent e;
+  e.set_sender(*this);
+  e.set_receiver(r);
+  e.set_rport(rp);
+  return r.connect_sender(e);
+}
+```
 
 ## Handling Incoming Events
 
@@ -147,8 +151,10 @@ You need to include the following two lines in the declaration og your
 generator class (these lines are correct for a generator providing
 current input to nodes and which shall be recordable by multimeter):
 
-    bool has_proxies()    const { return false; }
-    bool local_receiver() const { return true;  }
+```c++
+bool has_proxies()    const { return false; }
+bool local_receiver() const { return true;  }
+```
 
 The standard location is right behind the "using Node::handle;" line.
 

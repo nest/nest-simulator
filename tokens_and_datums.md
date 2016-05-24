@@ -17,17 +17,21 @@ idioms:
 
 ## Construction
 
-    Token t(new IntergerDatum(5));
-    Token t=5;
-    Token t= new IntegerDatum(5);
+```c++
+Token t( new IntergerDatum( 5 ) );
+Token t = 5;
+Token t = new IntegerDatum( 5 );
+```
 
 The object constructor `Token(Datum&)` is historic and should not be
 used anymore.
 
 ## Assignment
 
-    Token t1=t;
-    t1.move(t); // move datum from t to t1
+```c++
+Token t1 = t;
+t1.move( t ); // move datum from t to t1
+```
 
 `TokenArrays`, `TokenStack`, and `Dictionary` are token
 containers. Their assignment interface takes
@@ -37,7 +41,9 @@ containers. Their assignment interface takes
 
 Thus, the recommended assignments are
 
-    array.push_back(new IntegerDatum(5));
+```c++
+array.push_back( new IntegerDatum( 5 ) );
+```
 
 It directly passes the datum pointer to the location in the
 array. Some convenient ways to write assignments are actually
@@ -50,10 +56,12 @@ inefficient
    This is convenient notation, but is much more expensive, because it is
    equivalent to the following code:
 
-       IntegerDatum tmp1(5); 
-       Token tmp2(new IntegerDatum(mp1));
-       Token tmp3(tmp2);  // one more datum copy
-       a.push_back_move(tmp3);
+   ```c++
+   IntegerDatum tmp1( 5 );
+   Token tmp2( new IntegerDatum( mp1 ) );
+   Token tmp3( tmp2 );  // one more datum copy
+   a.push_back_move( tmp3 );
+   ```
 
    Some of this, the compiler can optimize away, but benchmarks showed a
    big residual overhead compared to directly assigning the datum
@@ -64,8 +72,10 @@ inefficient
    This looks efficient, but in fact it is not, because it is equivalent
    to:
 
-       Token tmp1( new IntegerDatum(IntegerDatum(5)); 
-       a.push_back_move(tmp1);
+   ```c++
+   Token tmp1( new IntegerDatum( IntegerDatum( 5 ) );
+   a.push_back_move( tmp1 );
+   ```
 
 3. `a.push_back(t);`
 

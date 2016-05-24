@@ -117,7 +117,7 @@ neuron sd_post Connect
 /pre_spikes  sd_pre  GetStatus /events get /times get cva { axonal_delay add } Map def
 /post_spikes sd_post GetStatus /events get /times get cva { backpr_delay add } Map def
 
-/final_weight << /source parrot /target neuron >> FindConnections 0 get /weight get def
+/final_weight << /source [parrot] /target [neuron] >> GetConnections 0 get /weight get def
 
 
 %%% check final weight %%%

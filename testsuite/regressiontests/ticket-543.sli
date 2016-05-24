@@ -49,7 +49,7 @@ M_ERROR setverbosity
   0 ChangeSubnet
   /target_neuron /iaf_neuron Create def
   [source_neuron] [target_neuron] Connect
-  << /source source_neuron >> FindConnections { /target get } Map
+  << /source [source_neuron] >> GetConnections { /target get } Map
 } def
 
 /fod_conn_test {
@@ -60,7 +60,7 @@ M_ERROR setverbosity
   0 ChangeSubnet
   /target_neuron /iaf_neuron Create def
   [source_neuron] [target_neuron] << /rule /fixed_outdegree /outdegree num_conns >> Connect
-  << /source source_neuron >> FindConnections { /target get } Map 
+  << /source [source_neuron] >> GetConnections { /target get } Map
 } def
 
 /fid_conn_test {
@@ -71,7 +71,7 @@ M_ERROR setverbosity
   0 ChangeSubnet
   /source_neuron /iaf_neuron Create def
   [source_neuron] [target_neuron] << /rule /fixed_indegree /indegree num_conns >> Connect
-  << /source source_neuron >> FindConnections { /target get } Map 
+  << /source [source_neuron] >> GetConnections { /target get } Map
 } def
 
  % first test: connect

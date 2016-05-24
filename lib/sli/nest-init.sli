@@ -703,53 +703,6 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/*BeginDocumentation
- Name: FindConnections - Find connections that fulfill the given criteria
-
- Synopsis:
- dict FindConnections -> [c1 c2 ... cn]
-
- Parameters:
- The given dictionary may contain the following entries
- /source gid       - The GID of the source neuron (mandatory)
- /target gid       - The GID of the target neuron
- /synapsetype /syn - The synapsetype of the connection(s)
-
- Description:
- FindConnections returns an array with the ids of all connections that
- fulfil the given criteria. The connection ids can then be used
- as argumentsfor GetStatus and SetStatus to inspect and modify the
- parameters of the connections. If no connections were found, the
- returned array is empty.
-
- This function is deprecated and will disappear in a future version. 
- Please use GetConnections instead. 
-
- Remarks:
- This function iterates over all threads, but not over MPI processes.
-
- Author: Jochen Martin Eppler
- FirstVersion: January 2008
-
- SeeAlso: GetConnections, GetStatus, SetStatus
-*/
-
-/FindConnections
-[/dictionarytype]
-{
-  << >> begin
-  /args Set
-   <<
-     /source [ args /source get ]
-     args /target known {  /target [ args /target get ] } if 
-     args /synapse_model known { /synapse_model args /synapse_model get cvlit} if 
-  >> 
-  end
-  GetConnections Flatten
-} def
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 /* BeginDocumentation
    Name: LayoutNetwork - Create a multidimensional network.
 

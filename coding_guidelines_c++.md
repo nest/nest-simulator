@@ -659,64 +659,65 @@ nest::Stopwatch::Stopwatch()
 
 Copy as `.clang-format` file into directory, in which you execute the `clang-format` command.
 
-    BasedOnStyle: WebKit
+```
+BasedOnStyle: WebKit
 
-    AccessModifierOffset: -2
-    AlignEscapedNewlinesLeft: true
-    AlignTrailingComments: true
-    AllowAllParametersOfDeclarationOnNextLine: false
-    AllowShortBlocksOnASingleLine: false
-    AllowShortCaseLabelsOnASingleLine: false
-    AllowShortFunctionsOnASingleLine: None
-    AllowShortIfStatementsOnASingleLine: false
-    AllowShortLoopsOnASingleLine: false
-    AlwaysBreakAfterDefinitionReturnType: true
-    AlwaysBreakBeforeMultilineStrings: true
-    AlwaysBreakTemplateDeclarations: true
+AccessModifierOffset: -2
+AlignEscapedNewlinesLeft: true
+AlignTrailingComments: true
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakAfterDefinitionReturnType: true
+AlwaysBreakBeforeMultilineStrings: true
+AlwaysBreakTemplateDeclarations: true
 
-    BinPackArguments: false
-    BinPackParameters: false
-    BreakBeforeBinaryOperators: NonAssignment
-    BreakBeforeBraces: Allman
-    BreakBeforeTernaryOperators: true
-    BreakConstructorInitializersBeforeComma: true
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Allman
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializersBeforeComma: true
 
-    ColumnLimit: 80
-    ConstructorInitializerAllOnOneLineOrOnePerLine: false
-    ConstructorInitializerIndentWidth: 2
-    ContinuationIndentWidth: 2
+ColumnLimit: 80
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+ConstructorInitializerIndentWidth: 2
+ContinuationIndentWidth: 2
 
-    DerivePointerAlignment: false
+DerivePointerAlignment: false
 
-    ExperimentalAutoDetectBinPacking: false
+ExperimentalAutoDetectBinPacking: false
 
-    IndentCaseLabels: false
-    IndentWidth: 2
-    IndentWrappedFunctionNames: false
+IndentCaseLabels: false
+IndentWidth: 2
+IndentWrappedFunctionNames: false
 
-    KeepEmptyLinesAtTheStartOfBlocks: true
+KeepEmptyLinesAtTheStartOfBlocks: true
 
-    Language: Cpp
+Language: Cpp
 
-    MaxEmptyLinesToKeep: 2
+MaxEmptyLinesToKeep: 2
 
-    NamespaceIndentation: None
+NamespaceIndentation: None
 
-    PointerAlignment: Left
+PointerAlignment: Left
 
-    SpaceAfterCStyleCast: true
-    SpaceBeforeAssignmentOperators: true
-    SpaceBeforeParens: ControlStatements
-    SpaceInEmptyParentheses: false
-    SpacesBeforeTrailingComments: 1
-    SpacesInAngles: true
-    SpacesInCStyleCastParentheses: true
-    SpacesInParentheses: true
-    SpacesInSquareBrackets: true
-    Standard: Cpp03
+SpaceAfterCStyleCast: true
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: true
+SpacesInCStyleCastParentheses: true
+SpacesInParentheses: true
+SpacesInSquareBrackets: true
+Standard: Cpp03
 
-    UseTab: false
-
+UseTab: false
+``
 
 ## Vera++ profile nest
 

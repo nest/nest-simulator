@@ -1,4 +1,6 @@
-/* Based on from https://github.com/richleland/pygments-css/blob/master/zenburn.css*/
+/* Based on zenburn.css from Richard Leland
+   see https://github.com/richleland/pygments-css/blob/master/zenburn.css
+ */
 .highlight code, .highlight pre{color:#fdce93; background-color:#3f3f3f}
 .highlight .hll{background-color:#222}
 .highlight .c{color:#7f9f7f}

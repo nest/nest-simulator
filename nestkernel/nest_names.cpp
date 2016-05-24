@@ -366,5 +366,35 @@ const Name xs( "xs" );
 
 const Name z( "z" );
 const Name z_connected( "z_connected" );
+
+// Specific to iaf conductance mc kinetics
+const Name V_max( "V_max" );
+const Name t_L( "t_L" );
+const Name nt_L( "nt_L" );
+const Name V_thCa( "V_thCa" );
+const Name Ca_amp( "Ca_amp" );
+const Name jump_Th( "jump_Th" );
+const Name tau_Th( "tau_Th" );
+const Name Ca_active( "Ca_active" );
+const Name threshold( "threshold" );
+const Name ca_spike_count( "ca_spike_count" );
+const Name t_refCa_remaining( "t_refCa_remaining" );
+const Name ca_current( "ca_current" );
+const Name tau_curr_AP( "tau_curr_AP" );
+const Name amp_curr_AP( "amp_curr_AP" );
+const Name E_Ca( "E_Ca" );
+const Name G_Ca( "G_Ca" );
+const Name tau_h( "tau_h" );
+const Name half_m( "half_m" );
+const Name half_h( "half_h" );
+const Name slope_m( "slope_m" );
+const Name slope_h( "slope_h" );
+const Name m_inf( "m_inf" );
+const Name h_inf( "h_inf" );
+const Name reset_on_spike( "reset_on_spike" );
+
+// Specific to iaf conductance mc fixedca
+const Name Ca_amplitude( "Ca_amplitude" );
+
 }
 }

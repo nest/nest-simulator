@@ -1339,9 +1339,8 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
    This function is helpful in the implementation of parallelized wiring
    routines that create identical random structures independent of the
    number of machines and threads participating in the simulation. The
-   function is used in SLI libraries, e.g. in the implementation of
-   RandomConvergentConnect. There is probably no need to directly use
-   GetVpRNG in scripts describing a particular simulation.
+   function is used in SLI libraries. There is probably no need to
+   directly use GetVpRNG in scripts describing a particular simulation.
 
    In NEST each node (e.g. neuron) is assigned to a virtual process and
    each virtual process maintains its own random number generator. In a
@@ -1361,14 +1360,6 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
    An ArgumentTypeError is raised if GetVpRNG is called for a
    non-local gid.
 
-   Examples:
-   In the implementation of RandomConvergentConnect the Connect
-   operations are only carried out on the machine the target neuron lives
-   on. Whether the neuron is located on a specific machine is tested
-   using the /local property of the neuron.  The random selection of
-   source neurons is made using the random number generator of the thread
-   the target neuron is assigned to.
-
    References:
    [1] Morrison A, Mehring C, Geisel T, Aertsen A, and Diesmann M (2005)
        Advancing the boundaries of high connectivity network simulation
@@ -1376,7 +1367,7 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
        The article is available at www.nest-simulator.org
 
    Author: Tobias Potjans, Moritz Helias, Diesmann
-   SeeAlso: GetGlobalRNG, RandomConvergentConnect
+   SeeAlso: GetGlobalRNG
 */
 void
 NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
@@ -1407,10 +1398,6 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
    only a simple test upon each call to Simulate to check if the
    global RNGs on all MPI processes are still in sync.
 
-   Examples:
-   The RandomDivergentConnect function makes use of numbers
-   from the global RNG.
-
    References:
    [1] Morrison A, Mehring C, Geisel T, Aertsen A, and Diesmann M (2005)
        Advancing the boundaries of high connectivity network simulation
@@ -1418,7 +1405,7 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
        The article is available at www.nest-simulator.org
 
    Author: Tobias Potjans, Moritz Helias, Diesmann
-   SeeAlso: GetVpRNG, RandomDivergentConnect
+   SeeAlso: GetVpRNG
 */
 void
 NestModule::GetGlobalRngFunction::execute( SLIInterpreter* i ) const

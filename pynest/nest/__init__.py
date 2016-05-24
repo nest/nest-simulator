@@ -123,7 +123,6 @@ def sli_func(s, *args, **kwargs):
     r   = sli_func('add',2,3)
     r   = sli_func('add pop',2,3)
     l   = sli_func('CreateLayer', {...}, namespace='topology')
-    opt = sli_func('GetOptions', '/RandomConvergentConnect', litconv=True)
     """
 
     # check for namespace

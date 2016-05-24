@@ -183,7 +183,6 @@ def
   (Connecting excitatory population.) =
 
   % E -> E connections
-  % the following is a single call to RandomConvergentConnect
   E_neurons   % source population [we pick from this]
   E_neurons   % target neurons [for each we pick CE sources]
   << /rule  /fixed_indegree /indegree CE >> % number of source neurons to pick

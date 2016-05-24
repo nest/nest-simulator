@@ -36,7 +36,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
     def test_ConnectPrePost(self):
         """Connect pre to post"""
 
-        # OneToOneConnect([pre], [post])
+        # Connect([pre], [post])
         nest.ResetKernel()
         pre = nest.Create("iaf_neuron", 2)
         post = nest.Create("iaf_neuron", 2)
@@ -48,7 +48,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
     def test_ConnectPrePostParams(self):
         """Connect pre to post with a params dict"""
 
-        # OneToOneConnect([pre], [post], params)
+        # Connect([pre], [post], params)
         nest.ResetKernel()
         pre = nest.Create("iaf_neuron", 2)
         post = nest.Create("iaf_neuron", 2)
@@ -57,7 +57,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         weights = nest.GetStatus(connections, "weight")
         self.assertEqual(weights, (2.0, 2.0))
 
-        # OneToOneConnect([pre], [post], [params, params])
+        # Connect([pre], [post], [params, params])
         nest.ResetKernel()
         pre = nest.Create("iaf_neuron", 2)
         post = nest.Create("iaf_neuron", 2)
@@ -69,7 +69,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
     def test_ConnectPrePostWD(self):
         """Connect pre to post with a weight and delay"""
 
-        # OneToOneConnect([pre], [post], w, d)
+        # Connect([pre], [post], w, d)
         nest.ResetKernel()
         pre = nest.Create("iaf_neuron", 2)
         post = nest.Create("iaf_neuron", 2)
@@ -80,7 +80,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         self.assertEqual(weights, (2.0, 2.0))
         self.assertEqual(delays, (2.0, 2.0))
 
-        # OneToOneConnect([pre], [post], [w, w], [d, d])
+        # Connect([pre], [post], [w, w], [d, d])
         nest.ResetKernel()
         pre = nest.Create("iaf_neuron", 2)
         post = nest.Create("iaf_neuron", 2)

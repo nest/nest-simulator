@@ -308,7 +308,7 @@ def
    Parameters for synapses may be fixed single values and random deviate
    specifications.
 
-   SeeAlso: synapsedict, connruledict, cvgidcollection, DivergentConnect, RandomDivergentConnect, ConvergentConnect, RandomConvergentConnect
+   SeeAlso: synapsedict, connruledict, cvgidcollection
 
    Author: Hannah Bos, Hans Ekkehard Plesser, Jochen Martin Eppler
 

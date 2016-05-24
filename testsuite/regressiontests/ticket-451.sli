@@ -66,7 +66,6 @@ M_INFO setverbosity
 } pass_or_die
 
 % ---------------------
-% Finally, we test RandomDivergentConnect (no init dict variant)
 
 {
 [1] [1 2 3] << /rule /fixed_outdegree /outdegree 4 /multapses false /autapses true >> Connect

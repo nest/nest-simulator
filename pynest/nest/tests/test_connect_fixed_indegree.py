@@ -28,12 +28,14 @@ from .test_connect_parameters import TestParams
 
 from time import time
 
+
 class TestFixedInDegree(TestParams):
 
     # specify connection pattern and specific params
     rule = 'fixed_indegree'
     conn_dict = {'rule': rule}
-    # sizes of source-, target-population and outdegree for connection test and tests in test_Params
+    # sizes of source-, target-population and outdegree for connection test
+    # and tests in test_Params
     N1 = 50
     N2 = 70
     Nin = 10
@@ -65,11 +67,12 @@ class TestFixedInDegree(TestParams):
         self.setUpNetwork(conn_params)
         # make sure the indegree is right
         M = hf.get_connectivity_matrix(self.pop1, self.pop2)
-        inds = np.sum(M,axis=1)
-        hf.mpi_assert(inds, self.Nin*np.ones(self.N2), self)
-        # make sure no connections were drawn from the target to the source population
-        M = hf.get_connectivity_matrix(self.pop2,self.pop1)
-        M_none = np.zeros((len(self.pop1),len(self.pop2)))
+        inds = np.sum(M, axis=1)
+        hf.mpi_assert(inds, self.Nin * np.ones(self.N2), self)
+        # make sure no connections were drawn from the target to the source
+        # population
+        M = hf.get_connectivity_matrix(self.pop2, self.pop1)
+        M_none = np.zeros((len(self.pop1), len(self.pop2)))
         hf.mpi_assert(M, M_none, self)
 
     def testStatistics(self):
@@ -77,20 +80,21 @@ class TestFixedInDegree(TestParams):
         conn_params['autapses'] = True
         conn_params['multapses'] = True
         conn_params['indegree'] = self.C
-        expected = hf.get_expected_degrees_fixedDegrees(self.C, 'in', self.N_s, self.N_t)
+        expected = hf.get_expected_degrees_fixedDegrees(
+            self.C, 'in', self.N_s, self.N_t)
         pvalues = []
         for i in range(self.stat_dict['n_runs']):
             hf.reset_seed(i, self.nr_threads)
-            self.setUpNetwork(conn_dict=conn_params,N1=self.N_s,N2=self.N_t)
+            self.setUpNetwork(conn_dict=conn_params, N1=self.N_s, N2=self.N_t)
             degrees = hf.get_degrees('out', self.pop1, self.pop2)
             degrees = hf.gather_data(degrees)
-            if degrees != None:
+            if degrees is not None:
                 chi, p = hf.chi_squared_check(degrees, expected)
                 pvalues.append(p)
             hf.mpi_barrier()
-        if degrees != None:
+        if degrees is not None:
             ks, p = scipy.stats.kstest(pvalues, 'uniform')
-            self.assertTrue( p > self.stat_dict['alpha2'] )
+            self.assertTrue(p > self.stat_dict['alpha2'])
 
     def testAutapses(self):
         conn_params = self.conn_dict.copy()
@@ -108,8 +112,8 @@ class TestFixedInDegree(TestParams):
         hf.nest.ResetKernel()
 
         # test that autapses were excluded
-        conn_params['indegree'] = N-1
-        conn_params['autapses'] = False        
+        conn_params['indegree'] = N - 1
+        conn_params['autapses'] = False
         pop = hf.nest.Create('iaf_neuron', N)
         hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
@@ -122,12 +126,12 @@ class TestFixedInDegree(TestParams):
         conn_params['autapses'] = True
 
         # test that multapses were drawn
-        conn_params['indegree'] = N+1
+        conn_params['indegree'] = N + 1
         conn_params['multapses'] = True
         pop = hf.nest.Create('iaf_neuron', N)
         hf.nest.Connect(pop, pop, conn_params)
-        nr_conns = len(hf.nest.GetConnections(pop,pop))
-        hf.mpi_assert(nr_conns, conn_params['indegree']*N, self)
+        nr_conns = len(hf.nest.GetConnections(pop, pop))
+        hf.mpi_assert(nr_conns, conn_params['indegree'] * N, self)
         hf.nest.ResetKernel()
 
         # test that no multapses exist
@@ -137,16 +141,18 @@ class TestFixedInDegree(TestParams):
         hf.nest.Connect(pop, pop, conn_params)
         M = hf.get_connectivity_matrix(pop, pop)
         M = hf.gather_data(M)
-        if M != None:
-            self.assertTrue(M.flatten, np.ones(N*N))
+        if M is not None:
+            self.assertTrue(M.flatten, np.ones(N * N))
+
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestFixedInDegree)
     return suite
 
+
 def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
-        
+
 if __name__ == '__main__':
     run()

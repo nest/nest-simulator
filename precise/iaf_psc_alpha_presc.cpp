@@ -44,7 +44,8 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_psc_alpha_presc > nest::iaf_psc_alpha_presc::recordablesMap_;
+nest::RecordablesMap< nest::iaf_psc_alpha_presc >
+  nest::iaf_psc_alpha_presc::recordablesMap_;
 
 namespace nest
 {
@@ -112,7 +113,8 @@ nest::iaf_psc_alpha_presc::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_psc_alpha_presc::Parameters_::set( const DictionaryDatum& d )
 {
-  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -153,7 +155,8 @@ nest::iaf_psc_alpha_presc::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Reset potential must be smaller than threshold." );
 
   if ( U_reset_ < U_min_ )
-    throw BadProperty( "Reset potential must be greater equal minimum potential." );
+    throw BadProperty(
+      "Reset potential must be greater equal minimum potential." );
 
   if ( c_m_ <= 0 )
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -168,7 +171,8 @@ nest::iaf_psc_alpha_presc::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::iaf_psc_alpha_presc::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::iaf_psc_alpha_presc::State_::get( DictionaryDatum& d,
+  const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
 }
@@ -189,7 +193,8 @@ nest::iaf_psc_alpha_presc::Buffers_::Buffers_( iaf_psc_alpha_presc& n )
 {
 }
 
-nest::iaf_psc_alpha_presc::Buffers_::Buffers_( const Buffers_&, iaf_psc_alpha_presc& n )
+nest::iaf_psc_alpha_presc::Buffers_::Buffers_( const Buffers_&,
+  iaf_psc_alpha_presc& n )
   : logger_( n )
 {
 }
@@ -249,8 +254,8 @@ nest::iaf_psc_alpha_presc::calibrate()
   V_.PSCInitialValue_ = 1.0 * numerics::e / P_.tau_syn_;
 
   V_.gamma_ = 1 / P_.c_m_ / ( 1 / P_.tau_syn_ - 1 / P_.tau_m_ );
-  V_.gamma_sq_ =
-    1 / P_.c_m_ / ( ( 1 / P_.tau_syn_ - 1 / P_.tau_m_ ) * ( 1 / P_.tau_syn_ - 1 / P_.tau_m_ ) );
+  V_.gamma_sq_ = 1 / P_.c_m_ / ( ( 1 / P_.tau_syn_ - 1 / P_.tau_m_ )
+                                 * ( 1 / P_.tau_syn_ - 1 / P_.tau_m_ ) );
 
   // pre-compute matrix for full time step
   V_.expm1_tau_m_ = numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
@@ -264,15 +269,19 @@ nest::iaf_psc_alpha_presc::calibrate()
   // refractory_steps_ is the duration of the refractory period in whole
   // steps, rounded down
   V_.refractory_steps_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.refractory_steps_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  // since t_ref_ >= 0, this can only fail in error
+  assert( V_.refractory_steps_ >= 0 );
 }
 
 
 void
-nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const long_t to )
+nest::iaf_psc_alpha_presc::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < kernel().connection_builder_manager.get_min_delay() );
+  assert( static_cast< delay >( from )
+    < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   /* Neurons may have been initialized to superthreshold potentials.
@@ -282,7 +291,8 @@ nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const 
   if ( S_.y3_ >= P_.U_th_ )
   {
     S_.last_spike_step_ = origin.get_steps() + from + 1;
-    S_.last_spike_offset_ = V_.h_ms_ * ( 1 - std::numeric_limits< double_t >::epsilon() );
+    S_.last_spike_offset_ =
+      V_.h_ms_ * ( 1 - std::numeric_limits< double_t >::epsilon() );
 
     // reset neuron and make it refractory
     S_.y3_ = P_.U_reset_;
@@ -317,8 +327,8 @@ nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const 
     if ( S_.r_ == 0 )
     {
       // neuron is not refractory
-      S_.y3_ = V_.P30_ * ( P_.I_e_ + S_.y0_ ) + V_.P31_ * S_.y1_ + V_.P32_ * S_.y2_
-        + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
+      S_.y3_ = V_.P30_ * ( P_.I_e_ + S_.y0_ ) + V_.P31_ * S_.y1_
+        + V_.P32_ * S_.y2_ + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
 
       S_.y3_ += dy3; // add input
       // enforce lower bound
@@ -336,7 +346,8 @@ nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const 
       // is given by the part of the interval after the end of the
       // refractory period.
       S_.y3_ = P_.U_reset_ + // try fix 070623, md
-        update_y3_delta_() + dy3 - dy3 * ( 1 - S_.last_spike_offset_ / V_.h_ms_ );
+        update_y3_delta_() + dy3
+        - dy3 * ( 1 - S_.last_spike_offset_ / V_.h_ms_ );
 
       // enforce lower bound
       S_.y3_ = ( S_.y3_ < P_.U_min_ ? P_.U_min_ : S_.y3_ );
@@ -349,8 +360,8 @@ nest::iaf_psc_alpha_presc::update( Time const& origin, const long_t from, const 
     }
 
     // update synaptic currents
-    S_.y2_ = V_.expm1_tau_syn_ * V_.h_ms_ * S_.y1_ + V_.expm1_tau_syn_ * S_.y2_ + V_.h_ms_ * S_.y1_
-      + S_.y2_;
+    S_.y2_ = V_.expm1_tau_syn_ * V_.h_ms_ * S_.y1_ + V_.expm1_tau_syn_ * S_.y2_
+      + V_.h_ms_ * S_.y1_ + S_.y2_;
     S_.y1_ = V_.expm1_tau_syn_ * S_.y1_ + S_.y1_;
 
     // add synaptic inputs from the ring buffer
@@ -398,22 +409,25 @@ nest::iaf_psc_alpha_presc::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const long_t Tdeliver =
-    e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() );
+  const long_t Tdeliver = e.get_rel_delivery_steps(
+    nest::kernel().simulation_manager.get_slice_origin() );
 
-  const double_t spike_weight = V_.PSCInitialValue_ * e.get_weight() * e.get_multiplicity();
+  const double_t spike_weight =
+    V_.PSCInitialValue_ * e.get_weight() * e.get_multiplicity();
   const double_t dt = e.get_offset();
 
   // Building the new matrix for the offset of the spike
   // NOTE: We do not use get matrix, but compute only those
   //       components we actually need for spike registration
-  const double_t ps_e_TauSyn = numerics::expm1( -dt / P_.tau_syn_ ); // needed in any case
+  // needed in any case
+  const double_t ps_e_TauSyn = numerics::expm1( -dt / P_.tau_syn_ );
   const double_t ps_e_Tau = numerics::expm1( -dt / P_.tau_m_ );
   const double_t ps_P31 = V_.gamma_sq_ * ps_e_Tau - V_.gamma_sq_ * ps_e_TauSyn
     - dt * V_.gamma_ * ps_e_TauSyn - dt * V_.gamma_;
 
   B_.spike_y1_.add_value( Tdeliver, spike_weight * ps_e_TauSyn + spike_weight );
-  B_.spike_y2_.add_value( Tdeliver, spike_weight * dt * ps_e_TauSyn + spike_weight * dt );
+  B_.spike_y2_.add_value(
+    Tdeliver, spike_weight * dt * ps_e_TauSyn + spike_weight * dt );
   B_.spike_y3_.add_value( Tdeliver, spike_weight * ps_P31 );
 }
 
@@ -427,7 +441,9 @@ nest::iaf_psc_alpha_presc::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps(
+      nest::kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void
@@ -442,8 +458,8 @@ nest::double_t
 nest::iaf_psc_alpha_presc::update_y3_delta_() const
 {
   /* We need to proceed in two steps:
-     1. Update the synaptic currents as far as h_ms-last_spike_offset, when the refractory
-        period ends.  y3_ is clamped to 0 during this time.
+     1. Update the synaptic currents as far as h_ms-last_spike_offset, when the
+        refractory period ends.  y3_ is clamped to 0 during this time.
      2. Update y3_ from t_th to the end of the interval.  The synaptic
         currents need not be updated during this time, since they are
         anyways updated for the entire interval outside.
@@ -457,8 +473,8 @@ nest::iaf_psc_alpha_presc::update_y3_delta_() const
   double_t ps_e_TauSyn = numerics::expm1( -t_th / P_.tau_syn_ );
 
   // ps_y2_ = ps_P21_*y1_before_ + ps_P22_* y2_before_;
-  const double ps_y2 = t_th * ps_e_TauSyn * V_.y1_before_ + ps_e_TauSyn * V_.y2_before_
-    + t_th * V_.y1_before_ + V_.y2_before_;
+  const double ps_y2 = t_th * ps_e_TauSyn * V_.y1_before_
+    + ps_e_TauSyn * V_.y2_before_ + t_th * V_.y1_before_ + V_.y2_before_;
 
   // ps_y1_ = y1_before_*ps_P11_;
   const double ps_y1 = ps_e_TauSyn * V_.y1_before_ + V_.y1_before_;
@@ -513,10 +529,11 @@ nest::double_t
 nest::iaf_psc_alpha_presc::thresh_find2_( double_t const dt ) const
 {
   const double_t h_sq = dt * dt;
-  const double_t derivative =
-    -V_.y3_before_ / P_.tau_m_ + ( P_.I_e_ + V_.y0_before_ + V_.y2_before_ ) / P_.c_m_;
+  const double_t derivative = -V_.y3_before_ / P_.tau_m_
+    + ( P_.I_e_ + V_.y0_before_ + V_.y2_before_ ) / P_.c_m_;
 
-  const double_t a = ( -V_.y3_before_ / h_sq ) + ( S_.y3_ / h_sq ) - ( derivative / dt );
+  const double_t a =
+    ( -V_.y3_before_ / h_sq ) + ( S_.y3_ / h_sq ) - ( derivative / dt );
   const double_t b = derivative;
   const double_t c = V_.y3_before_;
 
@@ -539,12 +556,13 @@ nest::iaf_psc_alpha_presc::thresh_find3_( double_t const dt ) const
   const double_t h_sq = h_ms_ * h_ms_;
   const double_t h_cb = h_sq * h_ms_;
 
-  const double_t deriv_t1 =
-    -V_.y3_before_ / P_.tau_m_ + ( P_.I_e_ + V_.y0_before_ + V_.y2_before_ ) / P_.c_m_;
-  const double_t deriv_t2 = -S_.y3_ / P_.tau_m_ + ( P_.I_e_ + S_.y0_ + S_.y2_ ) / P_.c_m_;
+  const double_t deriv_t1 = -V_.y3_before_ / P_.tau_m_
+    + ( P_.I_e_ + V_.y0_before_ + V_.y2_before_ ) / P_.c_m_;
+  const double_t deriv_t2 =
+    -S_.y3_ / P_.tau_m_ + ( P_.I_e_ + S_.y0_ + S_.y2_ ) / P_.c_m_;
 
-  const double_t w3_ = ( 2 * V_.y3_before_ / h_cb ) - ( 2 * S_.y3_ / h_cb ) + ( deriv_t1 / h_sq )
-    + ( deriv_t2 / h_sq );
+  const double_t w3_ = ( 2 * V_.y3_before_ / h_cb ) - ( 2 * S_.y3_ / h_cb )
+    + ( deriv_t1 / h_sq ) + ( deriv_t2 / h_sq );
   const double_t w2_ = -( 3 * V_.y3_before_ / h_sq ) + ( 3 * S_.y3_ / h_sq )
     - ( 2 * deriv_t1 / h_ms_ ) - ( deriv_t2 / h_ms_ );
   const double_t w1_ = deriv_t1;
@@ -579,7 +597,8 @@ nest::iaf_psc_alpha_presc::thresh_find3_( double_t const dt ) const
   else
   {
     const double_t sgnq = ( q >= 0 ? 1 : -1 );
-    const double_t u = -sgnq * std::pow( std::fabs( q ) / 2.0 + std::sqrt( D ), 1.0 / 3.0 );
+    const double_t u =
+      -sgnq * std::pow( std::fabs( q ) / 2.0 + std::sqrt( D ), 1.0 / 3.0 );
     const double_t v = -p / ( 3 * u );
     tau1 = ( u + v ) - r / 3;
     if ( tau1 >= 0 )

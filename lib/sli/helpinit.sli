@@ -1487,27 +1487,6 @@ The algorithm of function validate is as follows:
  % new function in the help system
  /f Set
 
- % search for the source file implementing 
- % the command
- f (r) file
- {
-  getline
-  not {close exit} if
-  (Source:) search
-  {pop pop exch close exit}
-  {pop}
-  ifelse
- } loop 
- ( ) () ReplaceOccurrences
-
- % update the .hlp file
- makehelp
-
- % here we could also update
- % the .html file. At present all .html files 
- % are updated simultaneously by function :hlp2html
- %:makehtmlhelp
-
  % construct target path for test files
  %
 

@@ -143,7 +143,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -184,8 +185,8 @@ private:
    * advanced from event to event, as retrieved from the spike queue.
    *
    * Return from refractoriness is handled as a special event in the
-   * queue, which is marked by a weight that is GSL_NAN.  This greatly simplifies
-   * the code.
+   * queue, which is marked by a weight that is GSL_NAN.  This greatly
+   * simplifies the code.
    *
    * For steps, during which no events occur, the precomputed propagator matrix
    * is used.  For other steps, the propagator matrix is computed as needed.
@@ -218,7 +219,10 @@ private:
    * @param t0      Beginning of mini-timestep
    * @param dt      Duration of mini-timestep
    */
-  void emit_spike_( const Time& origin, const long_t lag, const double_t t0, const double_t dt );
+  void emit_spike_( const Time& origin,
+    const long_t lag,
+    const double_t t0,
+    const double_t dt );
 
   /**
    * Instantaneously emit a spike at the precise time defined by
@@ -228,7 +232,9 @@ private:
    * @param lag           Time step within slice
    * @param spike_offset  Time offset for spike
    */
-  void emit_instant_spike_( const Time& origin, const long_t lag, const double_t spike_offset );
+  void emit_instant_spike_( const Time& origin,
+    const long_t lag,
+    const double_t spike_offset );
 
   /**
    * Localize threshold crossing by bisectioning.
@@ -387,7 +393,10 @@ private:
 };
 
 inline port
-nest::iaf_psc_exp_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::iaf_psc_exp_ps::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -411,7 +420,8 @@ iaf_psc_exp_ps::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

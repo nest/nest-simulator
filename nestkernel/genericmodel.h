@@ -124,7 +124,8 @@ GenericModel< ElementT >::GenericModel( const char name[] )
 }
 
 template < typename ElementT >
-GenericModel< ElementT >::GenericModel( const GenericModel& oldmod, const std::string& newname )
+GenericModel< ElementT >::GenericModel( const GenericModel& oldmod,
+  const std::string& newname )
   : Model( newname )
   , proto_( oldmod.proto_ )
 {

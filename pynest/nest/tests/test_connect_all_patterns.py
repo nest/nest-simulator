@@ -23,8 +23,6 @@ import numpy as np
 import unittest
 import nest
 
-nest.set_verbosity("M_WARNING")
-
 from . import test_connect_helpers as hf
 
 from .test_connect_parameters import TestParams
@@ -35,11 +33,17 @@ from .test_connect_fixed_outdegree import TestFixedOutDegree
 from .test_connect_fixed_total_number import TestFixedTotalNumber
 from .test_connect_pairwise_bernoulli import TestPairwiseBernoulli
 
+nest.set_verbosity("M_WARNING")
+
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestAllToAll)
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestOneToOne))
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestFixedInDegree))
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestFixedOutDegree))
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestFixedTotalNumber))
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestPairwiseBernoulli))
+    suite.addTest(
+        unittest.TestLoader().loadTestsFromTestCase(TestFixedInDegree))
+    suite.addTest(
+        unittest.TestLoader().loadTestsFromTestCase(TestFixedOutDegree))
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(
+        TestFixedTotalNumber))
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(
+        TestPairwiseBernoulli))
     unittest.TextTestRunner(verbosity=2).run(suite)

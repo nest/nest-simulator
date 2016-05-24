@@ -99,8 +99,10 @@ public:
   }
 
 
-  Token( Datum* p_s =
-           NULL ) //!< use existing pointer to datum, token takes responsibility of the pointer.
+  /**
+   * use existing pointer to datum, token takes responsibility of the pointer.
+   */
+  Token( Datum* p_s = NULL )
     : p( p_s )
   {
   }
@@ -203,7 +205,8 @@ public:
    * Initialize the token with a datum pointer.
    * This function assumes that the token does not point to
    * a valid datum.
-   * The function assumes that the datum is new and DOES NOT increases its reference count.
+   * The function assumes that the datum is new and DOES NOT increases its
+   * reference count.
    */
   void
   init_by_pointer( Datum* rhs )

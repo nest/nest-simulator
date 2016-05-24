@@ -25,35 +25,35 @@ import pylab
 import numpy
 
 # Network parameters. These are given in Brunel (2000) J.Comp.Neuro.
-g       = 5.0    # Ratio of IPSP to EPSP amplitude: J_I/J_E
-eta     = 2.0    # rate of external population in multiples of threshold rate
-delay   = 1.5    # synaptic delay in ms
-tau_m   = 20.0   # Membrane time constant in mV
-V_th    = 20.0   # Spike threshold in mV
+g = 5.0  # Ratio of IPSP to EPSP amplitude: J_I/J_E
+eta = 2.0  # rate of external population in multiples of threshold rate
+delay = 1.5  # synaptic delay in ms
+tau_m = 20.0  # Membrane time constant in mV
+V_th = 20.0  # Spike threshold in mV
 
 N_E = 8000
 N_I = 2000
 N_neurons = N_E + N_I
 
-C_E    = int(N_E / 10) # number of excitatory synapses per neuron
-C_I    = int(N_I / 10) # number of inhibitory synapses per neuron
+C_E = int(N_E / 10)  # number of excitatory synapses per neuron
+C_I = int(N_I / 10)  # number of inhibitory synapses per neuron
 
-J_E  = 0.1
-J_I  = -g * J_E
+J_E = 0.1
+J_I = -g * J_E
 
-nu_ex  = eta * V_th / (J_E * C_E * tau_m) # rate of an external neuron in ms^-1
-p_rate = 1000.0 * nu_ex * C_E             # rate of the external population in s^-1
+nu_ex = eta * V_th / (J_E * C_E * tau_m)  # rate of an external neuron in ms^-1
+p_rate = 1000.0 * nu_ex * C_E  # rate of the external population in s^-1
 
 # Synaptic parameters
-STDP_alpha = 2.02     # relative strength of STDP depression w.r.t potentiation 
-STDP_Wmax = 3 * J_E   # maximum weight of plastic synapse
+STDP_alpha = 2.02  # relative strength of STDP depression w.r.t potentiation
+STDP_Wmax = 3 * J_E  # maximum weight of plastic synapse
 
 # Simulation parameters
-N_vp      = 8      # number of virtual processes to use
+N_vp = 8  # number of virtual processes to use
 base_seed = 10000  # increase in intervals of at least 2*n_vp+1
-N_rec     = 50     # Number of neurons to record from
-data2file = True   # whether to record data to file
-simtime   = 300.   # how long shall we simulate [ms]
+N_rec = 50  # Number of neurons to record from
+data2file = True  # whether to record data to file
+simtime = 300.  # how long shall we simulate [ms]
 
 # reset kernel so that we avoid problems when running skript several times
 # in interactive session
@@ -66,18 +66,18 @@ nest.SetKernelStatus({'print_time': True,
 
 # Create and seed RNGs
 n_vp = nest.GetKernelStatus('total_num_virtual_procs')
-bs = base_seed # abbreviation to make following code more compact
+bs = base_seed  # abbreviation to make following code more compact
 
 # Python RNGs for parameter randomization, one per vp
-pyrngs = [numpy.random.RandomState(s) for s in range(bs, bs+n_vp)]
+pyrngs = [numpy.random.RandomState(s) for s in range(bs, bs + n_vp)]
 
 # seed NEST internal RNGs
-nest.SetKernelStatus({'grng_seed': bs+n_vp,
-                      'rng_seeds': range(bs+n_vp+1, bs+1+2*n_vp)})
+nest.SetKernelStatus({'grng_seed': bs + n_vp,
+                      'rng_seeds': range(bs + n_vp + 1, bs + 1 + 2 * n_vp)})
 
 # Create nodes -------------------------------------------------
 
-nest.SetDefaults('iaf_psc_delta', 
+nest.SetDefaults('iaf_psc_delta',
                  {'C_m': 1.0,
                   'tau_m': tau_m,
                   't_ref': 2.0,
@@ -91,7 +91,7 @@ nodes_I = nodes[N_E:]
 
 noise = nest.Create('poisson_generator', 1, {'rate': p_rate})
 
-spikes = nest.Create('spike_detector',2, 
+spikes = nest.Create('spike_detector', 2,
                      [{'label': 'brunel_py_ex', 'to_file': data2file},
                       {'label': 'brunel_py_in', 'to_file': data2file}])
 spikes_E = spikes[:1]
@@ -100,12 +100,12 @@ spikes_I = spikes[1:]
 # randomize membrane potential
 node_info = nest.GetStatus(nodes, ['global_id', 'vp', 'local'])
 local_nodes = [(gid, vp) for gid, vp, islocal in node_info if islocal]
-for gid, vp in local_nodes: 
-  nest.SetStatus([gid], {'V_m': pyrngs[vp].uniform(-V_th, V_th)})
+for gid, vp in local_nodes:
+    nest.SetStatus([gid], {'V_m': pyrngs[vp].uniform(-V_th, V_th)})
 
 # Connect nodes ------------------------------------------------
 
-# We create a plastic excitatory synapse model for the 
+# We create a plastic excitatory synapse model for the
 # excitatory-excitatory weights and a static excitatory model for
 # the excitatory-inhibitory weights
 nest.CopyModel('stdp_synapse_hom',
@@ -117,37 +117,37 @@ nest.CopyModel('static_synapse', 'excitatory_static')
 
 # weights are drawn at random while connecting
 nest.Connect(nodes_E, nodes_E,
-             {'rule': 'fixed_indegree', 
+             {'rule': 'fixed_indegree',
               'indegree': C_E},
-             {'model': 'excitatory_plastic', 
+             {'model': 'excitatory_plastic',
               'delay': delay,
               'weight': {'distribution': 'uniform',
-                         'low': 0.5 * J_E, 
+                         'low': 0.5 * J_E,
                          'high': 1.5 * J_E}})
 
 # weights are drawn at random while connecting
 nest.Connect(nodes_E, nodes_I,
-             {'rule': 'fixed_indegree', 
+             {'rule': 'fixed_indegree',
               'indegree': C_E},
-             {'model': 'excitatory_static', 
+             {'model': 'excitatory_static',
               'delay': delay,
               'weight': {'distribution': 'uniform',
-                         'low': 0.5 * J_E, 
+                         'low': 0.5 * J_E,
                          'high': 1.5 * J_E}})
 
 nest.CopyModel('static_synapse',
                'inhibitory',
-               {'weight': J_I, 
+               {'weight': J_I,
                 'delay': delay})
 nest.Connect(nodes_I, nodes,
-             {'rule': 'fixed_indegree', 
+             {'rule': 'fixed_indegree',
               'indegree': C_I},
              'inhibitory')
 
 # connect noise generator to all neurons
 nest.CopyModel('static_synapse_hom_w',
                'excitatory_input',
-               {'weight': J_E, 
+               {'weight': J_E,
                 'delay': delay})
 nest.Connect(noise, nodes, syn_spec='excitatory_input')
 
@@ -155,42 +155,41 @@ nest.Connect(noise, nodes, syn_spec='excitatory_input')
 nest.Connect(nodes_E[:N_rec], spikes_E)
 nest.Connect(nodes_I[:N_rec], spikes_I)
 
-
 # Simulate -----------------------------------------------------
 
 # Visualization of initial membrane potential and initial weight
 # distribution only if we run on single MPI process
 if nest.NumProcesses() == 1:
 
-  pylab.figure()
+    pylab.figure()
 
-  # membrane potential
-  V_E = nest.GetStatus(nodes_E[:N_rec], 'V_m')
-  V_I = nest.GetStatus(nodes_I[:N_rec], 'V_m')
-  pylab.subplot(2, 1, 1)
-  pylab.hist([V_E, V_I], bins=10)
-  pylab.xlabel('Membrane potential V_m [mV]')
-  pylab.legend(('Excitatory', 'Inibitory'))
-  pylab.title('Initial distribution of membrane potentials')
-  pylab.draw()
+    # membrane potential
+    V_E = nest.GetStatus(nodes_E[:N_rec], 'V_m')
+    V_I = nest.GetStatus(nodes_I[:N_rec], 'V_m')
+    pylab.subplot(2, 1, 1)
+    pylab.hist([V_E, V_I], bins=10)
+    pylab.xlabel('Membrane potential V_m [mV]')
+    pylab.legend(('Excitatory', 'Inibitory'))
+    pylab.title('Initial distribution of membrane potentials')
+    pylab.draw()
 
-  # weight of excitatory connections
-  w = nest.GetStatus(nest.GetConnections(nodes_E[:N_rec],
-                                          synapse_model='excitatory_plastic'),
-                     'weight')
+    # weight of excitatory connections
+    w = nest.GetStatus(nest.GetConnections(nodes_E[:N_rec],
+                                           synapse_model='excitatory_plastic'),
+                       'weight')
 
-  pylab.subplot(2, 1, 2)
-  pylab.hist(w, bins=100)
-  pylab.xlabel('Synaptic weight w [pA]')
-  pylab.title('Initial distribution of excitatory synaptic weights')
-  pylab.draw()
+    pylab.subplot(2, 1, 2)
+    pylab.hist(w, bins=100)
+    pylab.xlabel('Synaptic weight w [pA]')
+    pylab.title('Initial distribution of excitatory synaptic weights')
+    pylab.draw()
 
 else:
-  print('Multiple MPI processes, skipping graphical output')
+    print('Multiple MPI processes, skipping graphical output')
 
 nest.Simulate(simtime)
 
-events = nest.GetStatus(spikes,'n_events')
+events = nest.GetStatus(spikes, 'n_events')
 
 # Before we compute the rates, we need to know how many of the recorded
 # neurons are on the local MPI process
@@ -203,18 +202,18 @@ rate_in = events[1] / simtime * 1000.0 / N_rec_local_I
 print('Inhibitory rate   : {:.2f} Hz'.format(rate_in))
 
 if nest.NumProcesses() == 1:
-  nest.raster_plot.from_device(spikes_E, hist=True)
-  pylab.draw()
+    nest.raster_plot.from_device(spikes_E, hist=True)
+    pylab.draw()
 
-  # weight of excitatory connections
-  w = nest.GetStatus(nest.GetConnections(nodes_E[:N_rec],
-                                          synapse_model='excitatory_plastic'),
-                     'weight')
-  pylab.figure()
-  pylab.hist(w, bins=100)
-  pylab.xlabel('Synaptic weight [pA]')
-  pylab.savefig('../figures/rand_plas_w.eps')
-  #pylab.show()
+    # weight of excitatory connections
+    w = nest.GetStatus(nest.GetConnections(nodes_E[:N_rec],
+                                           synapse_model='excitatory_plastic'),
+                       'weight')
+    pylab.figure()
+    pylab.hist(w, bins=100)
+    pylab.xlabel('Synaptic weight [pA]')
+    pylab.savefig('../figures/rand_plas_w.eps')
+    # pylab.show()
 
 else:
-  print('Multiple MPI processes, skipping graphical output')
+    print('Multiple MPI processes, skipping graphical output')

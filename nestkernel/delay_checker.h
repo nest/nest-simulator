@@ -45,17 +45,17 @@ public:
 
   /**
    * This method freezes the min/ max delay update in SetDefaults of connections
-   * method. This is used, when the delay of default connections in the ConnectorModel
-   * is set: we do not know, whether new connections with this delay will ever be
-   * created.
+   * method. This is used, when the delay of default connections in the
+   * ConnectorModel is set: we do not know, whether new connections with this
+   * delay will ever be created.
    */
   void freeze_delay_update();
 
   /**
    * This method enables the min/ max delay update in SetDefaults of connections
-   * method. This is used, when the delay of default connections in the ConnectorModel
-   * is set: we do not know, whether new connections with this delay will ever be
-   * created.
+   * method. This is used, when the delay of default connections in the
+   * ConnectorModel is set: we do not know, whether new connections with this
+   * delay will ever be created.
    */
   void enable_delay_update();
 
@@ -70,7 +70,8 @@ public:
    * Raise exception if either of the two delays in steps is invalid.
    *
    * @note Setting continuous delays requires testing d and d+1. This function
-   *       implements this more efficiently than two calls to assert_valid_delay().
+   *       implements this more efficiently than two calls to
+   *       assert_valid_delay().
    * @note This test accepts the delays in steps, as this makes more sense when
    *       working with continuous delays.
    * @note Not const, since it may update delay extrema as a side-effect.
@@ -87,7 +88,8 @@ public:
 private:
   Time min_delay_;              //!< Minimal delay of all created synapses.
   Time max_delay_;              //!< Maximal delay of all created synapses.
-  bool user_set_delay_extrema_; //!< Flag indicating if the user set the delay extrema.
+  bool user_set_delay_extrema_; //!< Flag indicating if the user set the delay
+                                //!< extrema.
   bool freeze_delay_update_;
 };
 

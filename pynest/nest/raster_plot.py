@@ -19,25 +19,41 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Functions for raster plotting.
+"""
+
 import nest
 import numpy
 import pylab
 
+
 def extract_events(data, time=None, sel=None):
-    """
-    Extracts all events within a given time interval or are from a
+    """Extracts all events within a given time interval or are from a
     given set of neurons.
-    - data is a matrix such that
-      data[:,0] is a vector of all gids and
-      data[:,1] a vector with the corresponding time stamps.
-    - time is a list with at most two entries such that
-      time=[t_max] extracts all events with t< t_max
-      time=[t_min, t_max] extracts all events with t_min <= t < t_max
-    - sel is a list of gids such that
-      sel=[gid1, ... , gidn] extracts all events from these gids.
-      All others are discarded.
+
     Both time and sel may be used at the same time such that all
     events are extracted for which both conditions are true.
+
+    Parameters
+    ----------
+    data : list
+        Matrix such that
+        data[:,0] is a vector of all gids and
+        data[:,1] a vector with the corresponding time stamps.
+    time : list, optional
+        List with at most two entries such that
+        time=[t_max] extracts all events with t< t_max
+        time=[t_min, t_max] extracts all events with t_min <= t < t_max
+    sel : list, optional
+        List of gids such that
+        sel=[gid1, ... , gidn] extracts all events from these gids.
+        All others are discarded.
+
+    Returns
+    -------
+    numpy.array
+        List of events as (gid, t) tuples
     """
 
     val = []
@@ -59,9 +75,22 @@ def extract_events(data, time=None, sel=None):
 
     return numpy.array(val)
 
-def from_data(data, title=None, hist=False, hist_binwidth=5.0, grayscale=False, sel=None):
-    """
-    Plot raster from data array
+
+def from_data(data, sel=None, **kwargs):
+    """Plot raster plot from data array.
+
+    Parameters
+    ----------
+    data : list
+        Matrix such that
+        data[:,0] is a vector of all gids and
+        data[:,1] a vector with the corresponding time stamps.
+    sel : list, optional
+        List of gids such that
+        sel=[gid1, ... , gidn] extracts all events from these gids.
+        All others are discarded.
+    kwargs:
+        Parameters passed to _make_plot
     """
 
     ts = data[:, 1]
@@ -69,11 +98,18 @@ def from_data(data, title=None, hist=False, hist_binwidth=5.0, grayscale=False, 
     ts1 = d[:, 1]
     gids = d[:, 0]
 
-    return _make_plot(ts, ts1, gids, data[:, 0], hist, hist_binwidth, grayscale, title)
+    return _make_plot(ts, ts1, gids, data[:, 0], **kwargs)
 
-def from_file(fname, title=None, hist=False, hist_binwidth=5.0, grayscale=False):
-    """
-    Plot raster from file
+
+def from_file(fname, **kwargs):
+    """Plot raster from file.
+
+    Parameters
+    ----------
+    fname : str
+        Name of file
+    kwargs:
+        Parameters passed to _make_plot
     """
 
     if nest.is_iterable(fname):
@@ -86,11 +122,25 @@ def from_file(fname, title=None, hist=False, hist_binwidth=5.0, grayscale=False)
     else:
         data = numpy.loadtxt(fname)
 
-    return from_data(data, title, hist, hist_binwidth, grayscale)
+    return from_data(data, **kwargs)
 
-def from_device(detec, title=None, hist=False, hist_binwidth=5.0, grayscale=False, plot_lid=False):
+
+def from_device(detec, plot_lid=False, **kwargs):
     """
-    Plot raster from spike detector
+    Plot raster from a spike detector.
+
+    Parameters
+    ----------
+    detec : TYPE
+        Description
+    plot_lid : bool, optional
+        Whether to convert from local IDs
+    kwargs:
+        Parameters passed to _make_plot
+
+    Raises
+    ------
+    nest.NESTError
     """
 
     if not nest.GetStatus(detec)[0]["model"] == "spike_detector":
@@ -106,31 +156,55 @@ def from_device(detec, title=None, hist=False, hist_binwidth=5.0, grayscale=Fals
         if plot_lid:
             gids = [nest.GetLID([x]) for x in gids]
 
-        if title is None:
-            title = "Raster plot from device '%i'" % detec[0]
+        if "title" not in kwargs:
+            kwargs["title"] = "Raster plot from device '%i'" % detec[0]
 
         if nest.GetStatus(detec)[0]["time_in_steps"]:
             xlabel = "Steps"
         else:
             xlabel = "Time (ms)"
 
-        return _make_plot(ts, ts, gids, gids, hist, hist_binwidth, grayscale, title, xlabel)
+        return _make_plot(ts, ts, gids, gids, xlabel=xlabel, **kwargs)
 
     elif nest.GetStatus(detec, "to_file")[0]:
         fname = nest.GetStatus(detec, "filenames")[0]
-        return from_file(fname, title, hist, hist_binwidth, grayscale)
+        return from_file(fname, **kwargs)
 
     else:
-        raise nest.NESTError("No data to plot. Make sure that either to_memory or to_file are set.")
+        raise nest.NESTError("No data to plot. Make sure that \
+            either to_memory or to_file are set.")
+
 
 def _from_memory(detec):
     ev = nest.GetStatus(detec, "events")[0]
     return ev["times"], ev["senders"]
 
-def _make_plot(ts, ts1, gids, neurons, hist, hist_binwidth, grayscale, title, xlabel=None):
-    """
-    Generic plotting routine that constructs a raster plot along with
-    an optional histogram (common part in all routines above)
+
+def _make_plot(ts, ts1, gids, neurons, hist=True, hist_binwidth=5.0,
+               grayscale=False, title=None, xlabel=None):
+    """Generic plotting routine that constructs a raster plot along with
+    an optional histogram (common part in all routines above).
+
+    Parameters
+    ----------
+    ts : list
+        All timestamps
+    ts1 : list
+        Timestamps corresponding to gids
+    gids : list
+        Global ids corresponding to ts1
+    neurons : list
+        GIDs of neurons to plot
+    hist : bool, optional
+        Display histogram
+    hist_binwidth : float, optional
+        Width of histogram bins
+    grayscale : bool, optional
+        Plot in grayscale
+    title : str, optional
+        Plot title
+    xlabel : str, optional
+        Label for x-axis
     """
 
     pylab.figure()
@@ -157,12 +231,20 @@ def _make_plot(ts, ts1, gids, neurons, hist, hist_binwidth, grayscale, title, xl
         xlim = pylab.xlim()
 
         pylab.axes([0.1, 0.1, 0.85, 0.17])
-        t_bins = numpy.arange(numpy.amin(ts), numpy.amax(ts), float(hist_binwidth))
+        t_bins = numpy.arange(
+            numpy.amin(ts), numpy.amax(ts),
+            float(hist_binwidth)
+        )
         n, bins = _histogram(ts, bins=t_bins)
         num_neurons = len(numpy.unique(neurons))
         heights = 1000 * n / (hist_binwidth * num_neurons)
-        pylab.bar(t_bins, heights, width=hist_binwidth, color=color_bar, edgecolor=color_edge)
-        pylab.yticks([int(x) for x in numpy.linspace(0.0, int(max(heights) * 1.1) + 5, 4)])
+
+        pylab.bar(t_bins, heights, width=hist_binwidth, color=color_bar,
+                  edgecolor=color_edge)
+        pylab.yticks([
+            int(x) for x in
+            numpy.linspace(0.0, int(max(heights) * 1.1) + 5, 4)
+        ])
         pylab.ylabel("Rate (Hz)")
         pylab.xlabel(xlabel)
         pylab.xlim(xlim)
@@ -183,6 +265,23 @@ def _make_plot(ts, ts1, gids, neurons, hist, hist_binwidth, grayscale, title, xl
 
 
 def _histogram(a, bins=10, bin_range=None, normed=False):
+    """Calculates histogram for data.
+
+    Parameters
+    ----------
+    a : list
+        Data to calculate histogram for
+    bins : int, optional
+        Number of bins
+    bin_range : TYPE, optional
+        Range of bins
+    normed : bool, optional
+        Whether distribution should be normalized
+
+    Raises
+    ------
+    ValueError
+    """
     from numpy import asarray, iterable, linspace, sort, concatenate
 
     a = asarray(a).ravel()
@@ -217,6 +316,7 @@ def _histogram(a, bins=10, bin_range=None, normed=False):
         return 1.0 / (a.size * db) * n, bins
     else:
         return n, bins
+
 
 def show():
     """

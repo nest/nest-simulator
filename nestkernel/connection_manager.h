@@ -23,87 +23,242 @@
 #ifndef CONNECTION_MANAGER_H
 #define CONNECTION_MANAGER_H
 
+// C++ includes:
+#include <string>
 #include <vector>
-#include <limits>
 
-#include "nest.h"
-#include "model.h"
-#include "dictutils.h"
+// Includes from libnestutil:
+#include "manager_interface.h"
+#include "sparsetable.h"
+
+// Includes from nestkernel:
+#include "conn_builder.h"
+#include "gid_collection.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
-#include "arraydatum.h"
-#include "sparsetable.h"
-#include "numerics.h"
-#include "../models/volume_transmitter.h"
-#include <cmath>
+#include "nest_types.h"
 
-// !!!!!!Depricated!!!!!!
-// Do not use anymore! Will be removed!
-#error Do not use connection_manager.h in any place in your nest code!
+// Includes from sli:
+#include "arraydatum.h"
+#include "dict.h"
+#include "dictdatum.h"
 
 namespace nest
 {
 class ConnectorBase;
-class ConnectorModel;
-class Network;
+class GenericConnBuilderFactory;
+class spikecounter;
+class Node;
+class Subnet;
+class Event;
+class SecondaryEvent;
+class DelayChecker;
+class GrowthCurve;
 
-/**
- * Manages the available connection prototypes and connections. It provides
- * the interface to establish and modify connections between nodes.
- */
-class ConnectionManager
+// for all neurons having targets
+typedef google::sparsetable< ConnectorBase* > tSConnector;
+typedef std::vector< tSConnector > tVSConnector; // for all threads
+
+// each thread checks delays themselve
+typedef std::vector< DelayChecker > tVDelayChecker;
+
+typedef std::vector< size_t > tVCounter; // each synapse type has a counter
+// and each threads counts for all its synapses
+typedef std::vector< tVCounter > tVVCounter;
+
+class ConnectionManager : public ManagerInterface
 {
-protected:
-  typedef google::sparsetable< ConnectorBase* > tSConnector; // for all neurons having targets
-  typedef std::vector< tSConnector > tVSConnector;           // for all threads
-
+  friend class SimulationManager; // update_delay_extrema_
 public:
-  ConnectionManager( Network& net );
-  ~ConnectionManager();
+  ConnectionManager();
+  virtual ~ConnectionManager();
 
-  void init( Dictionary* );
-  void reset();
+  virtual void initialize();
+  virtual void finalize();
 
-  /**
-   * Register a synapse type. This is called by Network::register_synapse_prototype.
-   * Returns an id, which is needed to unregister the prototype later.
-   */
-  synindex register_synapse_prototype( ConnectorModel* cf );
+  virtual void set_status( const DictionaryDatum& );
+  virtual void get_status( DictionaryDatum& );
 
-  /**
-   * Checks, whether connections of the given type were created
-   */
-  bool synapse_prototype_in_use( synindex syn_id );
+  DictionaryDatum& get_connruledict();
 
   /**
-   * Add ConnectionManager specific stuff to the root status dictionary
+   * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
    */
-  void get_status( DictionaryDatum& d ) const;
-  void set_status( const DictionaryDatum& d );
+  template < typename ConnBuilder >
+  void register_conn_builder( const std::string& name );
 
-  // aka SetDefaults for synapse models
-  void set_prototype_status( synindex syn_id, const DictionaryDatum& d );
-  // aka GetDefaults for synapse models
-  DictionaryDatum get_prototype_status( synindex syn_id ) const;
+  ConnBuilder* get_conn_builder( const std::string& name,
+    const GIDCollection& sources,
+    const GIDCollection& targets,
+    const DictionaryDatum& conn_spec,
+    const DictionaryDatum& syn_spec );
+
+  /**
+   * Create connections.
+   */
+  void connect( const GIDCollection&,
+    const GIDCollection&,
+    const DictionaryDatum&,
+    const DictionaryDatum& );
+
+  /**
+   * Connect two nodes. The source node is defined by its global ID.
+   * The target node is defined by the node. The connection is
+   * established on the thread/process that owns the target node.
+   *
+   * The parameters delay and weight have the default value NAN.
+   * NAN is a special value in cmath, which describes double values that
+   * are not a number. If delay or weight is omitted in a connect call,
+   * NAN indicates this and weight/delay are set only, if they are valid.
+   *
+   * \param s GID of the sending Node.
+   * \param target Pointer to target Node.
+   * \param target_thread Thread that hosts the target node.
+   * \param syn The synapse model to use.
+   * \param d Delay of the connection (in ms).
+   * \param w Weight of the connection.
+   */
+  void connect( index s,
+    Node* target,
+    thread target_thread,
+    index syn,
+    double_t d = NAN,
+    double_t w = NAN );
+
+  /**
+   * Connect two nodes. The source node is defined by its global ID.
+   * The target node is defined by the node. The connection is
+   * established on the thread/process that owns the target node.
+   *
+   * The parameters delay and weight have the default value NAN.
+   * NAN is a special value in cmath, which describes double values that
+   * are not a number. If delay or weight is omitted in an connect call,
+   * NAN indicates this and weight/delay are set only, if they are valid.
+   *
+   * \param s GID of the sending Node.
+   * \param target Pointer to target Node.
+   * \param target_thread Thread that hosts the target node.
+   * \param syn The synapse model to use.
+   * \param params parameter dict to configure the synapse
+   * \param d Delay of the connection (in ms).
+   * \param w Weight of the connection.
+   */
+  void connect( index s,
+    Node* target,
+    thread target_thread,
+    index syn,
+    DictionaryDatum& params,
+    double_t d = NAN,
+    double_t w = NAN );
+
+  /**
+   * Connect two nodes. The source node is defined by its global ID.
+   * The target node is defined by the node. The connection is
+   * established on the thread/process that owns the target node.
+   *
+   * \param s GID of the sending Node.
+   * \param target pointer to target Node.
+   * \param target_thread thread that hosts the target node
+   * \param params parameter dict to configure the synapse
+   * \param syn The synapse model to use.
+   */
+  bool connect( index s, index r, DictionaryDatum& params, index syn );
+
+  void
+  disconnect( Node& target, index sgid, thread target_thread, index syn_id );
+
+  void subnet_connect( Subnet&, Subnet&, int, index syn );
+
+  /**
+   * Connect from an array of dictionaries.
+   */
+  bool connect( ArrayDatum& connectome );
+
+  void divergent_connect( index s,
+    const TokenArray& r,
+    const TokenArray& weights,
+    const TokenArray& delays,
+    index syn );
+  /**
+   * Connect one source node with many targets.
+   * The dictionary d contains arrays for all the connections of type syn.
+   */
+
+  void divergent_connect( index s, DictionaryDatum d, index syn );
+
+  void random_divergent_connect( index s,
+    const TokenArray& r,
+    index n,
+    const TokenArray& w,
+    const TokenArray& d,
+    bool,
+    bool,
+    index syn );
+
+  void convergent_connect( const TokenArray& s,
+    index r,
+    const TokenArray& weights,
+    const TokenArray& delays,
+    index syn );
+
+  /**
+   * Specialized version of convegent_connect
+   * called by random_convergent_connect threaded
+   */
+  void convergent_connect( const std::vector< index >& s_id,
+    index r,
+    const TokenArray& weight,
+    const TokenArray& delays,
+    index syn );
+
+  void random_convergent_connect( const TokenArray& s,
+    index t,
+    index n,
+    const TokenArray& w,
+    const TokenArray& d,
+    bool,
+    bool,
+    index syn );
+
+  /**
+   * Use openmp threaded parallelization to speed up connection.
+   * Parallelize over target list.
+   */
+  void random_convergent_connect( TokenArray& s,
+    TokenArray& t,
+    TokenArray& n,
+    TokenArray& w,
+    TokenArray& d,
+    bool,
+    bool,
+    index syn );
 
   // aka conndatum GetStatus
-  DictionaryDatum get_synapse_status( index gid, synindex syn_id, port p, thread tid );
+  DictionaryDatum
+  get_synapse_status( index gid, synindex syn, port p, thread tid );
   // aka conndatum SetStatus
-  void
-  set_synapse_status( index gid, synindex syn_id, port p, thread tid, const DictionaryDatum& d );
+  void set_synapse_status( index gid,
+    synindex syn,
+    port p,
+    thread tid,
+    const DictionaryDatum& d );
+
 
   /**
    * Return connections between pairs of neurons.
    * The params dictionary can have the following entries:
    * 'source' a token array with GIDs of source neurons.
    * 'target' a token array with GIDs of target neuron.
-   * If either of these does not exist, all neuron are used for the respective entry.
-   * 'synapse_model' name of the synapse model, or all synapse models are searched.
-   * 'synapse_label' label (long_t) of the synapse, or all synapses are searched.
-   * The function then iterates all entries in source and collects the connection IDs to all neurons
-   * in target.
+   * If either of these does not exist, all neuron are used for the respective
+   * entry.
+   * 'synapse_model' name of the synapse model, or all synapse models are
+   * searched.
+   * 'synapse_label' label (long_t) of the synapse, or all synapses are
+   * searched.
+   * The function then iterates all entries in source and collects the
+   * connection IDs to all neurons in target.
    */
-  ArrayDatum get_connections( DictionaryDatum params ) const;
+  ArrayDatum get_connections( DictionaryDatum dict ) const;
 
   void get_connections( ArrayDatum& connectome,
     TokenArray const* source,
@@ -111,21 +266,98 @@ public:
     size_t syn_id,
     long_t synapse_label ) const;
 
-  // aka CopyModel for synapse models
-  synindex copy_synapse_prototype( synindex old_id, std::string new_name );
+  /**
+   * Returns the number of connections in the network.
+   */
+  size_t get_num_connections() const;
 
-  bool has_user_prototypes() const;
+  /**
+   * Returns the number of connections of this synapse type.
+   */
+  size_t get_num_connections( synindex syn_id ) const;
+
+  void get_sources( std::vector< index > targets,
+    std::vector< std::vector< index > >& sources,
+    index synapse_model );
+  void get_targets( std::vector< index > sources,
+    std::vector< std::vector< index > >& targets,
+    index synapse_model );
+
+  /**
+   * Triggered by volume transmitter in update.
+   * Triggeres updates for all connectors of dopamine synapses that
+   * are registered with the volume transmitter with gid vt_gid.
+   */
+  void trigger_update_weight( const long_t vt_gid,
+    const std::vector< spikecounter >& dopa_spikes,
+    const double_t t_trig );
+
+  /**
+   * Return minimal connection delay, which is precomputed by
+   * update_delay_extrema_().
+   */
+  delay get_min_delay() const;
+
+  /**
+   * Return maximal connection delay, which is precomputed by
+   * update_delay_extrema_().
+   */
+  delay get_max_delay() const;
 
   bool get_user_set_delay_extrema() const;
 
-  const Time get_min_delay() const;
-  const Time get_max_delay() const;
+  void send( thread t, index sgid, Event& e );
+
+  void send_secondary( thread t, SecondaryEvent& e );
 
   /**
-   * Make sure that the connection counters are up-to-date and return
-   * the total number of connections in the network.
+   * Send event e to all targets of node source on thread t
    */
-  size_t get_num_connections() const;
+  void send_local( thread t, Node& source, Event& e );
+
+  /**
+   * Resize the structures for the Connector objects if necessary.
+   * This function should be called after number of threads, min_delay,
+   * max_delay, and time representation have been changed in the scheduler.
+   * The TimeConverter is used to convert times from the old to the new
+   * representation. It is also forwarding the calibration request to all
+   * ConnectorModel objects.
+   */
+  void calibrate( const TimeConverter& );
+
+  /**
+   * Returns the delay checker for the current thread.
+   */
+  DelayChecker& get_delay_checker();
+
+private:
+  /**
+   * Update delay extrema to current values.
+   *
+   * Static since it only operates in static variables. This allows it to be
+   * called from const-method get_status() as well.
+   */
+  void update_delay_extrema_();
+
+  /**
+   * This method queries and finds the minimum delay
+   * of all local connections
+   */
+  const Time get_min_delay_time_() const;
+
+  /**
+   * This method queries and finds the minimum delay
+   * of all local connections
+   */
+  const Time get_max_delay_time_() const;
+
+  /**
+   * Deletes all connections and also frees the PMA.
+   */
+  void delete_connections_();
+
+  ConnectorBase*
+  validate_source_entry_( thread tid, index s_gid, synindex syn_id );
 
   /**
    * Connect is used to establish a connection between a sender and
@@ -142,109 +374,73 @@ public:
    * \param syn The synapse model to use.
    * \returns The receiver port number for the new connection
    */
-  void connect( Node& s,
+  void connect_( Node& s,
     Node& r,
     index s_gid,
     thread tid,
     index syn,
-    double_t d = numerics::nan,
-    double_t w = numerics::nan );
-  void connect( Node& s,
+    double_t d = NAN,
+    double_t w = NAN );
+  void connect_( Node& s,
     Node& r,
     index s_gid,
     thread tid,
     index syn,
     DictionaryDatum& p,
-    double_t d = numerics::nan,
-    double_t w = numerics::nan );
-
-  void disconnect( Node& target, index sgid, thread target_thread, index syn_id );
-  /**
-   * Experimental bulk connector. See documentation in network.h
-   */
-  bool connect( ArrayDatum& d );
-
-  void trigger_update_weight( const long_t vt_gid,
-    const vector< spikecounter >& dopa_spikes,
-    const double_t t_trig );
-
-  void send( thread t, index sgid, Event& e );
-
-  //! send secondary events, e.g. for gap junctions
-  void send_secondary( thread t, SecondaryEvent& e );
+    double_t d = NAN,
+    double_t w = NAN );
 
   /**
-   * Resize the structures for the Connector objects if necessary.
-   * This function should be called after number of threads, min_delay, max_delay,
-   * and time representation have been changed in the scheduler.
-   * The TimeConverter is used to convert times from the old to the new representation.
-   * It is also forwarding the calibration
-   * request to all ConnectorModel objects.
-   */
-  void calibrate( const TimeConverter& );
-
-  /**
-   * Return pointer to protoype for given synapse id.
-   * @throws UnknownSynapseType
-   */
-  const ConnectorModel& get_synapse_prototype( synindex syn_id, thread t = 0 ) const;
-
-  /**
-   * Asserts validity of synapse index, otherwise throws exception.
-   * @throws UnknownSynapseType
-   */
-  void assert_valid_syn_id( synindex syn_id, thread t = 0 ) const;
-
-protected:
-  std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
-  std::vector< std::vector< ConnectorModel* > > prototypes_; //!< The list of available synapse
-  // prototypes: first dimenasion one
-  // entry per thread, second dimantion
-  // for each synapse type
-
-  Network& net_;            //!< The reference to the network
-  Dictionary* synapsedict_; //!< The synapsedict (owned by the network)
-
-  /**
-   * A 3-dim structure to hold the Connector objects which in turn hold the connection
-   * information.
+   * A 3-dim structure to hold the Connector objects which in turn hold the
+   * connection information.
    * - First dim: A std::vector for each local thread
    * - Second dim: A std::vector for each node on each thread
-   * - Third dim: A std::vector for each synapse prototype, holding the Connector objects
+   * - Third dim: A std::vector for each synapse prototype, holding the
+   * Connector objects
    */
-
   tVSConnector connections_;
 
-  mutable size_t num_connections_; //!< The global counter for the number of synapses
+  tVDelayChecker delay_checkers_;
 
-  void init_();
-  void delete_connections_();
-  void clear_prototypes_();
+  tVVCounter vv_num_connections_;
 
-  ConnectorBase* validate_source_entry( thread tid, index s_gid, synindex syn_id );
+  /**
+   * BeginDocumentation
+   * Name: connruledict - dictionary containing all connectivity rules
+   * Description:
+   * This dictionary provides the connection rules that can be used
+   * in Connect.
+   * 'connruledict info' shows the contents of the dictionary.
+   * SeeAlso: Connect
+   */
+  DictionaryDatum connruledict_; //!< Dictionary for connection rules.
+
+  //! ConnBuilder factories, indexed by connruledict_ elements.
+  std::vector< GenericConnBuilderFactory* > connbuilder_factories_;
+
+  delay min_delay_; //!< Value of the smallest delay in the network.
+
+  delay max_delay_; //!< Value of the largest delay in the network in steps.
 };
 
-inline const ConnectorModel&
-ConnectionManager::get_synapse_prototype( synindex syn_id, thread t ) const
+inline DictionaryDatum&
+ConnectionManager::get_connruledict()
 {
-  assert_valid_syn_id( syn_id );
-  return *( prototypes_[ t ][ syn_id ] );
+  return connruledict_;
 }
 
-inline void
-ConnectionManager::assert_valid_syn_id( synindex syn_id, thread t ) const
+inline delay
+ConnectionManager::get_min_delay() const
 {
-  if ( syn_id >= prototypes_[ t ].size() || prototypes_[ t ][ syn_id ] == 0 )
-    throw UnknownSynapseType( syn_id );
+  return min_delay_;
 }
 
-inline bool
-ConnectionManager::has_user_prototypes() const
+inline delay
+ConnectionManager::get_max_delay() const
 {
-  return prototypes_[ 0 ].size() > pristine_prototypes_.size();
+  return max_delay_;
 }
 
-} // namespace
+} // namespace nest
 
-
-#endif /* #ifndef CONNECTION_MANAGER_H */
+#endif /* CONNECTION_MANAGER_H */

@@ -60,9 +60,9 @@ import pylab
 Second, we assign the simulation parameters to variables.
 '''
 
-simtime      = 100.0           # ms
+simtime = 100.0           # ms
 stim_current = 700.0           # pA
-resolutions  = [0.1, 0.5, 1.0] # ms
+resolutions = [0.1, 0.5, 1.0]  # ms
 
 '''
 Now, we simulate the two versions of the neuron models (i.e.
@@ -82,16 +82,16 @@ for h in resolutions:
     for model in ["iaf_psc_exp", "iaf_psc_exp_ps"]:
         nest.ResetKernel()
         nest.SetKernelStatus({'resolution': h})
-        
+
         neuron = nest.Create(model)
-        voltmeter= nest.Create("voltmeter", params={"interval": h})
+        voltmeter = nest.Create("voltmeter", params={"interval": h})
         dc = nest.Create("dc_generator", params={"amplitude": stim_current})
         sd = nest.Create("spike_detector", params={"precise_times": True})
-        
+
         nest.Connect(voltmeter, neuron)
-        nest.Connect(dc, neuron)        
+        nest.Connect(dc, neuron)
         nest.Connect(neuron, sd)
-    
+
         nest.Simulate(simtime)
 
         vm_status = nest.GetStatus(voltmeter, 'events')[0]
@@ -102,7 +102,7 @@ for h in resolutions:
                           "V_th": nest.GetStatus(neuron, 'V_th')[0]}
 
 '''
-After simulation, we plot the results from the simulation. The figure 
+After simulation, we plot the results from the simulation. The figure
 illustrates the membrane potential excursion of the two models due to
 injected current simulated for 100 ms for a different timestep in each
 panel. The blue line is the voltage trace of the discrete-time neuron,
@@ -117,17 +117,17 @@ colors = ["#3465a4", "#cc0000"]
 for v, h in enumerate(sorted(data)):
     plot = pylab.subplot(len(data), 1, v + 1)
     plot.set_title("Resolution: {0} ms".format(h))
-    
+
     for i, model in enumerate(data[h]):
         times = data[h][model]["vm_times"]
         potentials = data[h][model]["vm_values"]
         spikes = data[h][model]["spikes"]
-        spikes_y = [data[h][model]["V_th"]]*len(spikes)
+        spikes_y = [data[h][model]["V_th"]] * len(spikes)
 
         plot.plot(times, potentials, "-", c=colors[i], ms=5, lw=2, label=model)
         plot.plot(spikes, spikes_y, ".", c=colors[i], ms=5, lw=2)
-    
-    if v==2:
+
+    if v == 2:
         plot.legend(loc=4)
     else:
         plot.set_xticklabels('')

@@ -246,7 +246,8 @@ public:
 
   /**
    * Resizes the container to size s.
-   * If the new size is larger than the old size, the new space is initialized with t.
+   * If the new size is larger than the old size, the new space is initialized
+   * with t.
    */
   void
   resize( size_t s, const Token& t = Token() )
@@ -313,7 +314,8 @@ public:
     // the representations insert_move moves the
     // the contens of all Tokens in a.data and marks it empty.
 
-    //      assert(a.data->size()==0); // empty, but memory is still allocated incase
+    // assert(a.data->size()==0); // empty, but memory is still allocated incase
+    //
     // it will be used again. data->clear() would
     // free the memory. In any case the destructor
     // finally frees the memory.

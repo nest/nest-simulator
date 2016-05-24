@@ -1,6 +1,7 @@
-markdown: redcarpet
-redcarpet:
-  # see http://milanaryal.com/2015/writing-on-github-pages-and-jekyll-using-markdown/
-  extensions:    ["with_toc_data", "smart", "tables", "no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript"]
-
-
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  auto_ids: true
+  syntax_highlighter: rouge
+  toc_levels: 1..6

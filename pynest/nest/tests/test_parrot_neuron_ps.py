@@ -31,7 +31,7 @@ def _round_up(simtime):
     """
     Returns simulation time rounded up to next multiple of resolution.
     """
-    
+
     res = nest.GetKernelStatus('resolution')
     return res * math.ceil(float(simtime) / float(res))
 

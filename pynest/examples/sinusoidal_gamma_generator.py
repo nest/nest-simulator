@@ -20,7 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-'''Sinusoidal gamma generator example
+'''
+Sinusoidal gamma generator example
 ----------------------------------
 
 This script demonstrates the use of the `sinusoidal_gamma_generator`

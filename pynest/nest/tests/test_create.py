@@ -64,7 +64,8 @@ class CreateTestCase(unittest.TestCase):
 
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
-            self.assertRaises(TypeError, nest.Create, 'iaf_neuron', 10, tuple())
+            self.assertRaises(TypeError, nest.Create,
+                              'iaf_neuron', 10, tuple())
             self.assertTrue(issubclass(w[-1].category, UserWarning))
 
     def test_ModelDicts(self):
@@ -96,12 +97,15 @@ class CreateTestCase(unittest.TestCase):
         w = nest.GetDefaults('new_synapse')['weight']
         self.assertEqual(w, 10.0)
 
-        self.assertRaisesRegex(nest.NESTError, "NewModelNameExists", nest.CopyModel, 'iaf_neuron', 'new_neuron')
+        self.assertRaisesRegex(
+            nest.NESTError, "NewModelNameExists",
+            nest.CopyModel, 'iaf_neuron', 'new_neuron')
 
 
 def suite():
     suite = unittest.makeSuite(CreateTestCase, 'test')
     return suite
+
 
 def run():
     runner = unittest.TextTestRunner(verbosity=2)

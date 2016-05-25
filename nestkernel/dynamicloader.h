@@ -67,12 +67,12 @@ public:
 
 
   /**
-   * This static member is called by the constructor of a loadable module that was linked at compile
-   * time
-   * into the application to circumvent dynamic loading problems. Typically, the constructor of the
-   * global
+   * This static member is called by the constructor of a loadable module that
+   * was linked at compile time into the application to circumvent dynamic
+   * loading problems. Typically, the constructor of the global
    * instance of the module calls this method to register itself.
-   * Later, DynamicLoader will go through all registered modules and initialize them.
+   * Later, DynamicLoader will go through all registered modules and initialize
+   * them.
    */
   static int registerLinkedModule( SLIModule* pModule );
 
@@ -107,7 +107,8 @@ private:
   // vector to store handles and pointers to dynamic modules
   vecDynModules dyn_modules;
 
-  static Dictionary* moduledict_; //!< Dictionary for dynamically loaded modules.
+  //! Dictionary for dynamically loaded modules.
+  static Dictionary* moduledict_;
 };
 
 } // namespace

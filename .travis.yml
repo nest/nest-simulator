@@ -40,7 +40,7 @@ before_install:
   - sudo apt-get autoremove
 
   # from installation webpage http://www.nest-simulator.org/installation-2/#Standard_configuration
-  - sudo apt-get install -y build-essential autoconf automake libtool libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy python-matplotlib ipython
+  - sudo apt-get install -y build-essential cmake libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy python-matplotlib ipython
 
   # Install pip and cython
   - wget https://bootstrap.pypa.io/get-pip.py
@@ -55,7 +55,7 @@ before_install:
   - sudo apt-get install -y python-nose
 
   # static code analysis
-  - sudo apt-get install -y libllvm3.6 clang-format-3.6 vera++
+  - sudo apt-get install -y libllvm3.6 clang-format-3.6 vera++ pep8
 
   # used for building cppcheck-1.69
   - sudo apt-get install -y libpcre3 libpcre3-dev
@@ -69,6 +69,8 @@ install:
   - which python
   - python --version
   - which pip
+  - which cmake
+  - cmake --version
 
 before_script:
   - chmod +x build.sh 

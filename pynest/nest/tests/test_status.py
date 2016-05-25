@@ -40,7 +40,8 @@ class StatusTestCase(unittest.TestCase):
         self.assertIsInstance(kernel_status, dict)
         self.assertGreater(len(kernel_status), 1)
 
-        self.assertRaises(KeyError, nest.GetKernelStatus, "nonexistent_status_key")
+        self.assertRaises(KeyError, nest.GetKernelStatus,
+                          "nonexistent_status_key")
 
         test_keys = ("resolution", ) * 3
         kernel_status = nest.GetKernelStatus(test_keys)
@@ -55,7 +56,9 @@ class StatusTestCase(unittest.TestCase):
         nest.SetKernelStatus({})
         nest.SetKernelStatus({'resolution': 0.2})
 
-        self.assertRaisesRegex(nest.NESTError, "DictError", nest.SetKernelStatus, {'nonexistent_status_key': 0})
+        self.assertRaisesRegex(
+            nest.NESTError, "DictError",
+            nest.SetKernelStatus, {'nonexistent_status_key': 0})
 
     def test_GetDefaults(self):
         """GetDefaults"""
@@ -99,7 +102,9 @@ class StatusTestCase(unittest.TestCase):
                 nest.SetDefaults(m, 'V_m', v_m)
                 self.assertEqual(nest.GetDefaults(m, 'V_m'), v_m)
 
-                self.assertRaisesRegex(nest.NESTError, "DictError", nest.SetDefaults, m, 'nonexistent_status_key', 0)
+                self.assertRaisesRegex(
+                    nest.NESTError, "DictError",
+                    nest.SetDefaults, m, 'nonexistent_status_key', 0)
 
     def test_GetStatus(self):
         """GetStatus"""
@@ -175,8 +180,13 @@ class StatusTestCase(unittest.TestCase):
         """SetStatus of reversal and threshold potential """
 
         # sli_neuron does not work under PyNEST
-        models = (m for m in nest.Models()
-                  if m not in ('sli_neuron', 'a2eif_cond_exp_HW', 'mat2_psc_exp', 'amat2_psc_exp'))
+        models = (
+            m for m in nest.Models()
+            if m not in (
+                'sli_neuron', 'a2eif_cond_exp_HW',
+                'mat2_psc_exp', 'amat2_psc_exp'
+            )
+        )
 
         for m in models:
             if all(key in nest.GetDefaults(m) for key in ('V_th', 'E_L')):
@@ -212,19 +222,23 @@ class StatusTestCase(unittest.TestCase):
 
                 neuron = nest.Create(m)
 
-                # should raise exception           
-                self.assertRaisesRegex(nest.NESTError, "BadProperty", nest.SetStatus, neuron, {'V_reset': 10., 'V_th': 0.})
-
+                # should raise exception
+                self.assertRaisesRegex(
+                    nest.NESTError, "BadProperty",
+                    nest.SetStatus, neuron,
+                    {'V_reset': 10., 'V_th': 0.}
+                )
 
 
 def suite():
     suite = unittest.makeSuite(StatusTestCase, 'test')
     return suite
 
+
 def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
-    
+
 
 if __name__ == "__main__":
     run()

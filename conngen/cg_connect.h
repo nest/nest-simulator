@@ -52,7 +52,9 @@ void cg_connect( ConnectionGeneratorDatum& cg,
   DictionaryDatum params_map,
   index syn );
 
-void cg_set_masks( ConnectionGeneratorDatum& cg, RangeSet& sources, RangeSet& targets );
+void cg_set_masks( ConnectionGeneratorDatum& cg,
+  RangeSet& sources,
+  RangeSet& targets );
 void cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
   RangeSet& sources,
   RangeSet& targets );

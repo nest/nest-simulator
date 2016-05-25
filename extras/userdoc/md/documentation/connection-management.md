@@ -11,11 +11,11 @@ function has been renamed to `OneToOneConnect()`. However, simple cases, which
 are just creating one-to-one connections between two lists of nodes are still
 working with the new command without the need to change the code. Note that the
 topology-module is not effected by theses changes. The translation between the
-old and the new connect routines is described in [Old Connection Routines](connection-management.md#Old-Connection-Routines).
+old and the new connect routines is described in [Old Connection Routines](connection-management.md#old-connection-Routines).
 
 The connectivity pattern is defined inside the `Connect()` function under the
 key 'rule'. The patterns available are described in
-[Connection Rules](connection-management.md#Connection-Rules). In
+[Connection Rules](connection-management.md#connection-rules). In
 addition the synapse model can be specified within the connect function and all
 synaptic parameters can be randomly distributed.
 
@@ -46,7 +46,7 @@ string defining the synapse model (default: 'static\_synapse') or as a
 dictionary. By using the key-word variant (`Connect(pre, post,
 syn_spec=syn_spec_dict)`), the conn\_spec can be omitted in the call to
 connect and 'all\_to\_all' is assumed as the default.
-The exact usage of the synapse dictionary is described in [Synapse Specification](connection-management.md#Synapse-Specification).
+The exact usage of the synapse dictionary is described in [Synapse Specification](connection-management.md#synapse-specification).
 
 Connection Rules
 ----------------
@@ -162,7 +162,7 @@ Example:
 
 The synapse properties can be given as a string or a dictionary. The string can
 be the name of a pre-defined synapse which can be found in the synapsedict (see
-[Synapse Types](connection-management.md#Synapse-Types)) or a
+[Synapse Types](connection-management.md#synapse-types)) or a
 manually defined synapse via `CopyModel()`.
 
 Example:
@@ -185,7 +185,7 @@ parameter types, as long as they agree with the connection routine ('rule').
 
 **Scalar** parameters must be given as floats except for the 'receptor\_type'
 which has to be initialized as an integer. For more information on the receptor
-type see [Receptor Types](connection-management.md#Synapse-Types) .
+type see [Receptor Types](connection-management.md#synapse-types) .
 
 Example:
 

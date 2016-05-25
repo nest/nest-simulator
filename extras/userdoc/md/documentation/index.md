@@ -7,7 +7,7 @@ The Neural Simulation Tool
 
     Use NEST for your research, modify and improve it
 
-    Current Release [NEST 2.10.0 (Dec 31 2015)](download.md#h1-17987)
+    Current Release [NEST 2.10.0 (Dec 31 2015)](download.md)
 
 -   *Tools for modern computational neuroscience*
 

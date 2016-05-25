@@ -5,7 +5,7 @@ Introduction
 ------------
 
 NEST compiles and runs on most Unix-like operating systems including Linux and
-Mac OS X. For using NEST on Microsoft Windows, see [below](installation.md#Windows).
+Mac OS X. For using NEST on Microsoft Windows, see [below](installation.md#windows).
 The installation instructions here should work on all recent versions of Debian
 or Ubuntu. For more generic installation instructions, see the files README and
 INSTALL in the top source directory.
@@ -30,8 +30,8 @@ Following are the basic steps to compile and install NEST from source code:
 8.  See the [Getting started](getting-started.md "Getting started") pages to
     find out how to get going with NEST
 
-Please see the sections on [minimal](installation.md#Minimal_configuration) and
-[standard configuration](installation.md#Standard_configuration "Installation")
+Please see the sections on [minimal](installation.md#minimal-configuration) and
+[standard configuration](installation.md#standard-configuration "Installation")
 below for details.
 
 What gets installed where
@@ -77,7 +77,7 @@ Dependencies
 NEST needs a few third party tools and libraries to work. On many operating
 systems, these can be installed using a *package manager* like `apt`, `port` or
 `fink`
-(see [Standard configuration](installation.md#Standard_configuration "Software:Installation")).
+(see [Standard configuration](installation.md#standard-configuration "Software:Installation")).
 
 If you are building NEST from the SVN sources, you need the GNU autotools
 installed on your system to bootstrap the build system. These consist of

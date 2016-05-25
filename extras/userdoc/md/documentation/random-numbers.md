@@ -36,7 +36,7 @@ uniformly distributed integers in {0, 1, ..., N}. Random *deviate* generators,
 on the other hand, provide random numbers drawn from a range of distributions,
 such as the normal or binomial distributions. In most cases, you will be using
 random deviate generators. They are in particular used to initialize properties
-during network construction, as described in the sections [Changes in NEST 2.4](random-numbers.md#Changes-in-random-number-generation-in-NEST-2.4) and [Examples](random-numbers.md#Examples) below.
+during network construction, as described in the sections [Changes in NEST 2.4](random-numbers.md#changes-in-random-number-generation-in-NEST-2.4) and [Examples](random-numbers.md#examples) below.
 
 Changes in random number generation in NEST 2.4
 -------------------------------------------------

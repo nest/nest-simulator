@@ -35,7 +35,7 @@ Table of Contents
 -   [Parallel computing](#parallel-computing)
 
 
--   [Alphabetical command index](../helpindex/cmd_index.html)
+-   [Alphabetical command index](../helpindex/cmd_index.md)
 
 Introduction
 ------------

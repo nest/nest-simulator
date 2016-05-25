@@ -19,7 +19,7 @@ discusses in this primer, please visit [nest-initiative.org/](http://nest-initia
 or have a look at the source directory of your NEST installation in the
 subdirectory:
 `pynest/examples/`. For the internals of the NEST simulator you may refer
-to the [publications](../publications.md "Publications").
+to the [publications](publications.md "Publications").
 
 PyNEST - an interface to the NEST simulator
 -------------------------------------------
@@ -32,7 +32,7 @@ high-level API. These functions generate code in SLI (Simulation Language
 Interpreter), the native language of the interpreter of NEST. This interpreter,
 in turn, controls the NEST simulation kernel.
 
-The NEural Simulation Tool (NEST: [www.nest-initiative.org](../part-1-neurons-and-simple-neural-networks.md))
+The NEural Simulation Tool (NEST: [www.nest-initiative.org](part-1-neurons-and-simple-neural-networks.md))
 is designed for the simulation of large heterogeneous networks of point neurons.
 It is open source software released under the GPL licence. The simulator comes
 with an interface to Python . illustrates the interaction between the user’s
@@ -372,7 +372,7 @@ Here we have just used very simple connection schemes. Connectivity patterns
 requiring the specification of further parameters, such as in-degree or
 connection probabilities, must be defined in a dictionary containing the key
 `"rule"` and the key for parameters associated to the rule. Please see
-<../connection-management.md> for an illustrated guide to the usage of
+<connection-management.md> for an illustrated guide to the usage of
 `Connect`.
 
 Command overview

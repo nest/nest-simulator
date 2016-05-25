@@ -29,7 +29,7 @@ Sending and receiving spike events
 
 A minimal example for the exchange of spikes between two independent instances
 of NEST is given in the example `examples/nest/music/minimalmusicsetup.music`.
-It uses one [SLI script](../an-introduction-to-sli.md "An Introduction
+It uses one [SLI script](an-introduction-to-sli.md "An Introduction
 to SLI"), which sends spikes using a `music_event_out_proxy` and one SLI script,
 which receives the spikes using a `music_event_in_proxy`. The configuration file
 is shown in the following listing:
@@ -139,7 +139,7 @@ which contains the messages and the corresponding time stamps. The data file
     0.7     !
 
 Please note that MUSIC uses a default unit of seconds for the specification of
-times, while NEST uses miliseconds. The example uses the [PyNEST](../introduction-to-pynest.md "PyNEST")
+times, while NEST uses miliseconds. The example uses the [PyNEST](introduction-to-pynest.md "PyNEST")
 syntax instead of SLI for the NEST part. The script that sets up the receiving
 side (`msgtest.py`) of the exampe is shown in the following listing:
 
@@ -234,7 +234,7 @@ the following listing:
 
     from.contdata -> to.contdata [10]
 
-The receiving side is again implemented using a [PyNEST](/introduction-to-pynest.md "PyNEST")
+The receiving side is again implemented using a [PyNEST](introduction-to-pynest.md "PyNEST")
 script (`conttest.py`):
 
     #!/usr/bin/python

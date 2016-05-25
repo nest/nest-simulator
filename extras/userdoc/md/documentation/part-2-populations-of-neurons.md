@@ -17,7 +17,7 @@ to:
 -   reset simulations
 
 For more information on the usage of NEST, please visit:
-[Documentation](../documentation.md). To carry out the code snippets in
+[Documentation](documentation.md). To carry out the code snippets in
 this handout, you need to import `nest` and `numpy`.
 
 Creating parameterised populations of nodes

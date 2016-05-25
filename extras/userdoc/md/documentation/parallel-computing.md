@@ -22,7 +22,7 @@ describe the facilities for parallel and distributed computing in detail.
 
 See [Plesser et al (2007)](http://dx.doi.org/10.1007/978-3-540-74466-5_71) for
 more information on NEST parallelization and be sure to check the documentation
-on [Random numbers in NEST](../random-numbers.md "Random numbers in NEST").
+on [Random numbers in NEST](random-numbers.md "Random numbers in NEST").
 
 Concepts and definitions
 ------------------------
@@ -111,7 +111,7 @@ Using distributed computing
 To compile NEST for distributed computing, you need a library implementation of
 MPI on your system. If you are on a cluster, you most likely have this already.
 Note, that in the case of a pre-packaged MPI library you will need both, the
-library and the development packages. Please see the [Installation instructions](../installation.md "Installation")
+library and the development packages. Please see the [Installation instructions](installation.md "Installation")
 for general information on installing NEST.
 Please be advised that NEST should currently only be run in a homogeneous MPI environment. Running in a heterogenenous environment can lead to unexpected results or even crashes. Please contact the [NEST community](http://www.nest-simulator.org/community/) if you require support for exotic setups.
 
@@ -132,7 +132,7 @@ In some cases it might be necessary to specify MPI compiler wrappers explicitly:
 
     $NEST_SOURCE_DIR/configure CC=mpicc CXX=mpicxx --with-mpi
 
-Additional information concerning MPI on OSX can be found [here](../installation.md "Installation").
+Additional information concerning MPI on OSX can be found [here](installation.md "Installation").
 
 ### Running distributed simulations
 
@@ -177,7 +177,7 @@ strategies, the number of virtual processes has to be kept constant. A
 simulation with a specific number of virtual processes will always yield the
 same results, no matter how they are distributed over threads and processes,
 given that the seeds for the random number generators of the different virtual
-processes are the same (see [Random numbers in NEST](../random-numbers.md "Random numbers in NEST")).
+processes are the same (see [Random numbers in NEST](random-numbers.md "Random numbers in NEST")).
 
 In order to achieve a constant number of virtual processes, NEST provides the
 property *total\_num\_virtual\_procs* to adapt the number of local threads

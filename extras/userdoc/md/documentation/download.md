@@ -1,7 +1,7 @@
 Download & Releases
 ===================
 
-NEST is available under the [GNU General Public License 2 or later](license/index.html "License").
+NEST is available under the [GNU General Public License 2 or later](license.md "License").
 This means that you can
 
 -   use NEST for your research,

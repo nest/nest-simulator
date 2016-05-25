@@ -10,16 +10,16 @@ Documentation
 NEST User Manual
 ---------------------------------------------------------------------------
 
--   [Frequently Asked Questions](frequently_asked_questions.md "Frequently Asked Questions")
--   [Analog recording with multimeter](analog_recording_with_multimeter.md "Analog recording with multimeter")
--   [Connection Management](connection_management.md "Connection Management")
+-   [Frequently Asked Questions](frequently-asked-questions.md "Frequently Asked Questions")
+-   [Analog recording with multimeter](analog-recording-with-multimeter.md "Analog recording with multimeter")
+-   [Connection Management](connection-management.md "Connection Management")
 -   [Topological Connections](wp-content/uploads/2015/04/Topology_UserManual.pdf "Topological Connections")
--   [Random numbers in NEST](random_numbers.md "Random numbers in NEST")
--   [Parallel Computing](parallel_computing.md "Parallel Computing")
+-   [Random numbers in NEST](random-numbers.md "Random numbers in NEST")
+-   [Parallel Computing](parallel-computing.md "Parallel Computing")
 -   [Scheduling and simulation flow](scheduling-and-simulation-flow.md)
 -   [Simulations with precise spike times](simulations-with-precise-spike-times.md)
--   [Using NEST with MUSIC](using_nest_with_music.md "Using NEST with MUSIC")
--   [Using NEST with the SLI interpreter](an_introduction_to_sli.md "An Introduction to SLI")
+-   [Using NEST with MUSIC](using-nest-with-music.md "Using NEST with MUSIC")
+-   [Using NEST with the SLI interpreter](an-introduction-to-sli.md "An Introduction to SLI")
 -   [NEST/SLI Quick Reference](quickref.md)
 -   [NEST Command Index](helpindex.md)
 

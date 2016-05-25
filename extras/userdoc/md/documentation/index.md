@@ -117,7 +117,7 @@ To learn more about the capabilities of NEST, see the [Feature summary](features
 8.  NEST has minimal dependencies. All it really needs is a C++ compiler.
     Everything else is optional.
 
-9.  NEST developers are using agile [continuous integration](continuous_integration.md "Continuous Integration")-based
+9.  NEST developers are using agile [continuous integration](continuous-integration.md "Continuous Integration")-based
     workflows in order to maintain high code quality standards for correct and
     reproducible simulations.
 

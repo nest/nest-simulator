@@ -2,7 +2,7 @@ Simulations with precise spike times
 ====================================
 
 The simulation resolution *h* and the minimum synaptic transmission delay
-*d<sub>min</sub>* define the two major time intervals of the [scheduling and simulation flow of NEST](../scheduling-and-simulation-flow/index.html):
+*d<sub>min</sub>* define the two major time intervals of the [scheduling and simulation flow of NEST](../scheduling-and-simulation-flow.md):
 neurons update their state variables in steps of *h*, whereas spikes are
 communicated and delivered to their targets in steps of *d<sub>min</sub>*,
 where *d<sub>min</sub>* is a multiple of *h*.
@@ -89,4 +89,4 @@ Questions and answers about precise neurons
 
 During the review process of the above mentioned papers, we came up with a list
 of questions and answers pertaining to the implementation and usage of precise
-spiking neurons. This list can be found [here](../qa-precise-spike-times/index.html).
+spiking neurons. This list can be found [here](../qa-precise-spike-times.md).

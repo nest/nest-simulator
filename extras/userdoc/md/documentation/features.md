@@ -5,7 +5,7 @@ General
 ------------------------------------------------------
 
 -   Python based user interface ([PyNEST](introduction-to-pynest.md ))
--   Built-in simulation language interpreter ([SLI](an_introduction_to_sli.md "An Introduction to SLI"))
+-   Built-in simulation language interpreter ([SLI](an-introduction-to-sli.md "An Introduction to SLI"))
 -   Multi-threading to use multi-processor machines efficiently
 -   MPI-parallelism to use computer clusters and super computers
 
@@ -43,7 +43,7 @@ Network models
 Interoperability
 ----------------
 
--   Interface to the Multi Simulator Coordinator [MUSIC](using_nest_with_music.md "Using NEST with MUSIC")
+-   Interface to the Multi Simulator Coordinator [MUSIC](using-nest-with-music.md "Using NEST with MUSIC")
 -   Backend for the simulator-independent modeling tool [PyNN](http://neuralensemble.org/trac/PyNN/)
 
 Accuracy
@@ -66,7 +66,7 @@ Verification
 -   After installation NEST can be verified by an automatic testsuite
 
 -   The testsuite is automatically run after each modification of the NEST
-    sources. You can watch the current status on our [Continuous Integration](continuous_integration.md "Continuous Integration") system.
+    sources. You can watch the current status on our [Continuous Integration](continuous-integration.md "Continuous Integration") system.
 
 Supported platforms
 -------------------

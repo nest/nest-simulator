@@ -13,7 +13,7 @@ networks. When you have worked through this material you will be able to:
 -   Visualise the connectivity
 
 For more information on the usage of NEST, please visit:
-[http://www.nest-simulator.org/documentation/](../documentation/index.html))>
+[http://www.nest-simulator.org/documentation/](../documentation.md))>
 
 Incorporating structure in networks of point neurons
 ----------------------------------------------------

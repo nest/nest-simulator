@@ -14,7 +14,7 @@ have worked through this material, you will know how to:
 -   set synapse values during and after connection
 
 For more information on the usage of NEST, please visit:
-[Documentation](../documentation/index.html). To carry out the code snippets in
+[Documentation](../documentation.md). To carry out the code snippets in
 this handout, you need to import `nest` and `numpy`.
 
 Parameterising synapse models
@@ -146,7 +146,7 @@ set (for example `mu`). Here we show an example where the parameters `alpha` and
                 "delay": 1.0 }
     nest.Connect(epop1, neuron, "all_to_all", syn_dict)
 
-Available distributions and associated parameters are described in [Connection_Management](../connection_management/index.html)),
+Available distributions and associated parameters are described in [Connection_Management](../connection-management.md)),
 the most common ones are:
 
 | Distributions | Keys             |

@@ -4,6 +4,8 @@ layout: index
 
 [« Back to the index](index)
 
+<hr>
+
 # Developing NEST with Eclipse
 
 These instructions are based on Eclipse *Mars* (4.5). They are based

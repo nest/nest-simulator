@@ -166,7 +166,7 @@ Finally create a new branch for your work and check it out:
 ### Editing workflow overview
 
 ```bash
-# hack hack
+# improve 'modified_file'
 git status # Optional
 git diff # Optional
 git add modified_file

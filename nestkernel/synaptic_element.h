@@ -45,7 +45,7 @@ namespace nest
 
 /**
  * \class SynapticElement
- * Synaptic element of a node (Axonal bouton or dendritic spine) for the
+ * Synaptic element of a node (axonal bouton or dendritic spine) for the
  * purposes of structural plasticity.
  * The synaptic elements represent connection points between two neurons that
  * grow according to a homeostatic growth rule. Basically, the dynamics of the

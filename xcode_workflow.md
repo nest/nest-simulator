@@ -28,12 +28,15 @@ We present two ways to install the rest: MacPorts and Homebrew. For both version
 
         xcode-select --install
 
+
 ### Homebrew
 
 1. Follow the install instructions for Homebrew ([short](http://brew.sh/) or [long](https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Installation.md#installation))
 1. Open up the Terminal and execute the following lines:
 
-        brew install gcc gsl cmake open-mpi libtool
+   ```sh
+   brew install gcc gsl cmake open-mpi libtool
+   ```
 
 ### MacPorts
 
@@ -55,11 +58,13 @@ We present two ways to install the rest: MacPorts and Homebrew. For both version
 
 1. Get NEST from Github. You should follow the `Fork` / `Pull Request` process and clone from your fork:
 
-        cd <somebase>
-        mkdir NEST
-        cd NEST
-        mkdir src build install
-        git clone https://github.com/nest/nest-simulator.git src
+   ```sh
+   cd <somebase>
+   mkdir NEST
+   cd NEST
+   mkdir src build install
+   git clone https://github.com/nest/nest-simulator.git src
+   ```
 Afterwards you should have a directory structure like:
 
         <somebase>/NEST/
@@ -68,17 +73,19 @@ Afterwards you should have a directory structure like:
           - install/
 1. Build NEST
 
-        cd src
-        cd ../build
+   ```sh
+   cd src
+   cd ../build
 
-        # with Homebrew infrastructure run:
-        cmake -DCMAKE_INSTALL_PREFIX=$PWD/../install -Dwith-debug=ON -Dwith-mpi=ON -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 $PWD/../src
-        # with MacPorts infrastructure run:
-        cmake -DCMAKE_INSTALL_PREFIX=$PWD/../install -Dwith-debug=ON -Dwith-mpi=ON -DCMAKE_C_COMPILER=gcc-mp-4.8 -DCMAKE_CXX_COMPILER=g++-mp-4.8 $PWD/../src
+   # with Homebrew infrastructure run:
+   cmake -DCMAKE_INSTALL_PREFIX=$PWD/../install -Dwith-debug=ON -Dwith-mpi=ON -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 $PWD/../src
+   # with MacPorts infrastructure run:
+   cmake -DCMAKE_INSTALL_PREFIX=$PWD/../install -Dwith-debug=ON -Dwith-mpi=ON -DCMAKE_C_COMPILER=gcc-mp-4.8 -DCMAKE_CXX_COMPILER=g++-mp-4.8 $PWD/../src
 
-        make -j8    # run make with 8 processes
-        make install 
-        make installcheck
+   make -j8    # run make with 8 processes
+   make install
+   make installcheck
+   ```
 
 __Note:__ It is important, that the `cmake` command is _not_ executed with relative paths, in order for Xcode to find source files mentioned in the build logs.
 

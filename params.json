@@ -1,1 +1,7 @@
-{"name":"Nest-simulator","tagline":"The NEST simulator","body":"### Welcome to the NEST development space\r\n\r\nNEST is a simulator for spiking neural networks supported by the [NEST Iniative](http://nest-initiative.org). For more details about NEST, see http://nest-initiative.org. These pages contain the developer manual for NEST.","google":"","note":"Don't delete this file! It's used internally to help with page regeneration."}
+{
+    "name":"Nest-simulator",
+    "tagline":"The NEST simulator",
+    "body":"### Welcome to the NEST development space\r\n\r\nNEST is a simulator for spiking neural networks supported by the [NEST Iniative](http://nest-initiative.org). For more details about NEST, see http://nest-initiative.org. These pages contain the developer manual for NEST.",
+    "google":"",
+    "note":"Don't delete this file! It's used internally to help with page regeneration."
+}

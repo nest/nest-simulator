@@ -32,34 +32,30 @@ problems. This way, issues will be discovered earlier and the amount
 of efforts to fix them will be significantly decreased (hopefully).
 Continuous Integration at NEST Simulator
 
-The current CI implementation is now available at the following URL:
+The current CI implementation is now available at the following URL: [https://travis-ci.org/nest/nest-simulator](https://travis-ci.org/nest/nest-simulator). Travis CI service has been integrated with the Github repository to automatically run the tests when code is pushed. Github integration is done by adding a simple YAML file to the project root.Travis results will appear in the Github pull requests and the primary log is visible in the Travis interface.
 
-    https://travis-ci.org/nest/nest-simulator
-
-Travis CI service has been integrated with the Github repository to automatically run the tests when code is pushed. Github integration is done by adding a simple YAML file to the project root.Travis results will appear in the Github pull requests and the primary log is visible in the Travis interface. 
-
-Build jobs
+## Build jobs
 
 The CI system is closely integrated to Github repository. Whenever some changes in the code
 are detected, the latest source code is downloaded to a worker machine which is running on Ubuntu 14.04 LTS(Trusty) and the following actions are performed:
 
-    Bootstrap the build system
-    Build and install NEST
-    Run the test suite
-    Uploading the build artifacts to Amazon S3 (Simple Storage Service) in case of merge commits to the master branch.
+* Bootstrap the build system
+* Build and install NEST
+* Run the test suite
+* Uploading the build artifacts to Amazon S3 (Simple Storage Service) in case of merge commits to the master branch.
 
 If any of the first three steps fails (returns a non-zero exit code), the build
 is marked as failed and a notification is sent to the person who initiated the build.
 
-Pull Requests
+## Pull Requests
 
  Pull requests can be initiated by anyone having the fork of the repository. Travis builds only the  pull requests from someone who has write access to the main repository. Rather than testing the commits from the branches the pull request is sent from, Travis test the merge between the origin and the upstream branch.
 
  Uploading of artifacts to S3 is not allowed for the pull requests. From a pull request, the secure environment values (for e.g.: the encrypted access keys for S3) could not be extracted properly and thus the artifacts can't be uploaded to S3. Secure access keys are set for the particular repository (in our case, nest/nest-simulator). Because of this reason, artifacts will be uploaded only when we merge the commit to the upstream master.
 
-Skipping a Travis build
+## Skipping a Travis build
 
-In the case of some changes in the documentation where you don't want to trigger a Travis build, add 
+In the case of some changes in the documentation where you don't want to trigger a Travis build, add
 [ci skip] or [skip ci] anywhere in the commit message.
 
 

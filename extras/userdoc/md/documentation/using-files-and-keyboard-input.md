@@ -1,8 +1,6 @@
-Using files and keyboard input
-==============================
+# Using files and keyboard input
 
-Overview
----------
+## Overview
 
 SLI's input/output fascilities differ from those of PostScript and are close to
 the stream concept of C++. However, for compatibility some PostScript output
@@ -33,8 +31,7 @@ stream argument on the stack.
 Now, the abbreviated form of `pop`, i.e. the command `;`, is used to remove the
 stream object from the stack.
 
-Standard streams
------------------
+## Standard streams
 
 The standard streams of a UNIX program are mapped to the following names. Note
 that these streams should not be closed by a SLI program, since the result is
@@ -49,8 +46,7 @@ Standart output stream.
 `cerr`
 Standart error output stream.
 
-Opening and closing a stream
-----------------------------
+## Opening and closing a stream
 
 Streams are objects which handle the input and output of data to or from some
 external target. The target of a stream can be a file, a string, a devide, or
@@ -75,8 +71,7 @@ Extract a string from a string-stream.
 `stream close`
 Close the stream.
 
-Writing to streams
-------------------
+## Writing to streams
 
 Command
 Description
@@ -89,7 +84,7 @@ Print ASCII representation of `obj` to `cout`.
 `stream obj ==`
 Print detailed ASCII representation of `obj` to `cout`.
 
-###  Example
+### Example
 
 Print *Hello World* to a text file.
 
@@ -98,8 +93,7 @@ Print *Hello World* to a text file.
     SLI [1] endl
     SLI [1] ;
 
-Manipulators
--------------
+## Manipulators
 
 Manipulators are used to manipulate the state of a stream object. Such changes
 can, for instance, affect the precision with which numbers are printed.

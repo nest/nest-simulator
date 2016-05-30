@@ -1,5 +1,4 @@
-Simulations with precise spike times
-====================================
+# Simulations with precise spike times
 
 The simulation resolution *h* and the minimum synaptic transmission delay
 *d<sub>min</sub>* define the two major time intervals of the [scheduling and simulation flow of NEST](scheduling-and-simulation-flow.md):
@@ -45,8 +44,7 @@ neuron determines the precise offset of the outgoing spike with respect to the
 next point on the time grid. This grid point marks the spike's time stamp. The
 neuron then emits the spike and resets its membrane potential.
 
-Models with precise spike times in NEST
----------------------------------------
+## Models with precise spike times in NEST
 
 `poisson_generator_ps` creates Poissonian spike trains, where spike times have
 an integer time stamp and a double precision offset. It is hence dedicated to
@@ -84,8 +82,7 @@ the simulation resolution h. The model can also be used through the [PyNN interf
 
 The source code of these models is in the [*precise* module of NEST](https://github.com/nest/nest-simulator/tree/master/precise).
 
-Questions and answers about precise neurons
--------------------------------------------
+## Questions and answers about precise neurons
 
 During the review process of the above mentioned papers, we came up with a list
 of questions and answers pertaining to the implementation and usage of precise

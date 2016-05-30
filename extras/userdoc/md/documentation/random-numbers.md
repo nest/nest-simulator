@@ -1,8 +1,6 @@
-Random numbers
-==============
+# Random numbers
 
-Introduction
--------------
+## Introduction
 
 Random numbers are used for a variety of purposes in neuronal network
 simulations, e.g.
@@ -38,8 +36,7 @@ such as the normal or binomial distributions. In most cases, you will be using
 random deviate generators. They are in particular used to initialize properties
 during network construction, as described in the sections [Changes in NEST 2.4](random-numbers.md#changes-in-random-number-generation-in-NEST-2.4) and [Examples](random-numbers.md#examples) below.
 
-Changes in random number generation in NEST 2.4
--------------------------------------------------
+## Changes in random number generation in NEST 2.4
 
 Random deviate generation has become significantly more powerful in NEST 2.4, to
 fully support randomization of connections parameters offered by the revised
@@ -122,8 +119,7 @@ The changes are as follows:
 
     -   We believe that these variants should *not* be used for new studies.
 
-Basics of parallel simulation in NEST
---------------------------------------
+## Basics of parallel simulation in NEST
 
 For details of parallelization in NEST, please see [Parallel Computing](parallel-computing.md "Parallel Computing")
 and [Plesser et al (2007)](http://dx.doi.org/10.1007/978-3-540-74466-5_71).
@@ -175,8 +171,7 @@ Here, we just summarize a few basics.
         print nest.GetStatus(n, 'vp')       # virtual process "owning" node
         print nest.GetStatus(n, 'thread')   # thread in calling process "owning" node
 
-Random numbers in parallel simulations
----------------------------------------
+## Random numbers in parallel simulations
 
 Ideally, all random numbers in a simulation should come from a single RNG. This
 would require shipping truckloads of random numbers from a central RNG process
@@ -319,8 +314,7 @@ The following happens here:
 -   This array is then passed to the `/rngs` status variable of the kernel.
     This variable is invisible as well.
 
-Examples
---------
+## Examples
 
 **NOTE: These examples are not yet updated for NEST 2.4**
 

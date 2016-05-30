@@ -1,8 +1,6 @@
-Part 1: Neurons and simple neural networks
-==========================================
+# Part 1: Neurons and simple neural networks
 
-Introduction
-------------
+## Introduction
 
 In this handout we cover the first steps in using PyNEST to simulate neuronal
 networks. When you have worked through this material, you will know how to:
@@ -21,8 +19,7 @@ subdirectory:
 `pynest/examples/`. For the internals of the NEST simulator you may refer
 to the [publications](publications.md "Publications").
 
-PyNEST - an interface to the NEST simulator
--------------------------------------------
+## PyNEST - an interface to the NEST simulator
 
 ![Python Interface](../../img/python_interface.png) The Python interpreter
 imports NEST as a module and dynamically loads the NEST simulator kernel
@@ -69,8 +66,7 @@ function. There is a help system within NEST as well. You can open the help
 pages in a browser using `nest.helpdesk()` and you can get the help page for a
 particular object using `nest.help(object)`.
 
-Creating Nodes
---------------
+## Creating Nodes
 
 A neural network in NEST consists of two basic element types: nodes and
 connections. Nodes are either neurons, devices or sub-networks. Devices are used
@@ -164,8 +160,7 @@ A short note on naming: here we have called the neuron `neuron`, the multimeter
 variable names you like, but the script is easier to read if you choose names
 that reflect the concepts in your simulation.
 
-Connecting nodes with default connections
------------------------------------------
+## Connecting nodes with default connections
 
 Now we know how to create individual nodes, we can start connecting them to
 form a small network.
@@ -194,8 +189,7 @@ $$1000ms.$$
 
 Congratulations, you have just simulated your first network in NEST!
 
-Extracting and plotting data from devices
------------------------------------------
+## Extracting and plotting data from devices
 
 After the simulation has finished, we can obtain the data recorded by the
 multimeter.
@@ -255,8 +249,7 @@ named, say, `one-neuron.py` . You can then run it from the command line by
 prefixing the file name with `python`, or from the Python or ipython prompt, by
 prefixing it with `run`.
 
-Connecting nodes with specific connections
-------------------------------------------
+## Connecting nodes with specific connections
 
 A commonly used model of neural activity is the Poisson process. We now adapt
 the previous example such that the neuron receives $$2$$ Poisson spike trains,
@@ -300,8 +293,7 @@ see a membrane potential as in Fig 3.
 In the next part of the introduction we will look at more methods for connecting
 many neurons at once.
 
-Two connected neurons
----------------------
+## Two connected neurons
 
 There is no additional magic involved in connecting neurons. To demonstrate
 this, we start from our original example of one neuron with a constant input
@@ -335,8 +327,7 @@ between two nodes, it cannot be applied to populations of nodes
 as before, you should then see the postsynaptic potentials of `neuron2` evoked
 by the spikes of `neuron1` as in .
 
-Connected populations of neurons
---------------------------------
+## Connected populations of neurons
 
 In the previous section we demonstrated how synapse parameters can be set in the
 synapse specifications. The connection patterns can be chosen by altering the
@@ -375,8 +366,7 @@ connection probabilities, must be defined in a dictionary containing the key
 <connection-management.md> for an illustrated guide to the usage of
 `Connect`.
 
-Command overview
-----------------
+## Command overview
 
 These are the functions we introduced for the examples in this handout; as the
 week progresses we will add more.
@@ -456,8 +446,7 @@ distribution-specific paramters (such as `"mu"` and `"sigma"`).
 `Simulate(t)`:  
 Simulate the network for `t` milliseconds.
 
-References
-----------
+## References
 
 -   Marc-Oliver Gewaltig and Markus Diesmann. (NEural Simulation Tool). ,
     2(4):1430, 2007.

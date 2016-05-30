@@ -1,5 +1,4 @@
-Getting started
-===============
+# Getting started
 
 [Documentation](documentation.md "Documentation")
 This page contains the steps that you should follow right after you
@@ -7,8 +6,7 @@ This page contains the steps that you should follow right after you
 starting point is the help page, which is available as command `help` in SLI and
 `nest.help()` in PyNEST
 
-Set up the integrated helpdesk
-------------------------------
+## Set up the integrated helpdesk
 
 The command `helpdesk` needs to know which browser to launch in order to display
 the help pages. The browser is set as an option of `helpdesk`. Please see the
@@ -20,16 +18,14 @@ replace `$PREFIX` with the prefix you chose during the configuration of NEST.
 If you did not explicitly specify one, it is most likely set to `/usr` or
 `/usr/local` depending on what system you are.
 
-Tell NEST about your MPI setup
-------------------------------
+## Tell NEST about your MPI setup
 
 If you compiled NEST with support for distributed computing via MPI, you have to
  tell it how your `mpirun`/`mpiexec` command works by defining the function
  mpirun in your `~/.nestrc` file. This file already contains an example
  implementation that should work with [OpenMPI](http://www.openmpi.org) library.
 
-Creating Models with NEST
--------------------------
+## Creating Models with NEST
 
 After NEST is installed and configured properly, you can start to build your
 model.

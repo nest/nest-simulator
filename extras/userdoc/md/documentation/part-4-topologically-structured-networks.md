@@ -1,8 +1,6 @@
-Part 4: Topologically structured networks
-=========================================
+# Part 4: Topologically structured networks
 
-Introduction
-------------
+## Introduction
 
 This handout covers the use of NEST’s `topology` library to construct structured
 networks. When you have worked through this material you will be able to:
@@ -15,8 +13,7 @@ networks. When you have worked through this material you will be able to:
 For more information on the usage of NEST, please visit:
 [http://www.nest-simulator.org/documentation/](documentation.md))>
 
-Incorporating structure in networks of point neurons
-----------------------------------------------------
+## Incorporating structure in networks of point neurons
 
 If we use biologically detailed models of a neuron, then it’s easy to understand
 and implement the concepts of topology, as we already have dendritic arbors,
@@ -38,11 +35,10 @@ selected connections between networks using `Connect()`. If we want to create
 network models that incorporate the spatial location and spatial connectivity
 profiles, it is time to turn to the `topology` module. **NOTE:** Full
 documentation for usage of the topology module is present in NEST Topology
-Users Manual (NTUM) [^1], which in the following pages is referenced as a
+Users Manual (NTUM) \[1\], which in the following pages is referenced as a
 full-source.
 
-The nest.topology module
-------------------------
+## The nest.topology module
 
 The `nest.topology` module allows us to create populations of nodes with a given
 spatial organisation, connection profiles which specify how neurons are to be
@@ -73,8 +69,7 @@ which will be explained in the subsequent sections in more detail:
     by `nest.PrintNetwork()` or visualization functions included in the topology
     module and query the connections for further analysis.
 
-Defining layers
----------------
+## Defining layers
 
 The code for defining a layer follows this template:
 
@@ -171,8 +166,7 @@ generator. The corresponding code is:
     comp_layer = topp.CreateLayer({"rows":5,"columns":5,
             "elements": ["pyr",4,"inh","poisson_generator","noise_generator"]})
 
-Defining connection profiles
-----------------------------
+## Defining connection profiles
 
 To define the types of connections that we want between populations of neurons,
 we specify a *connection dictionary*.
@@ -247,8 +241,7 @@ mentioned in the following Python code snippet.
 | allow\_multapses        | Whether we want to have multiple connections between the same source-target pair, or ensure unique connections.                                                                                                    | boolean                                                                  |
 | allow\_autapses         | Whether we want to allow a neuron to connect to itself                                                                                                                                                             | boolean                                                                  |
 
-Connecting layers
------------------
+## Connecting layers
 
 Connecting layers is the easiest step: having defined a source layer, a target
 layer and a connection dictionary, we simply use the function
@@ -271,8 +264,7 @@ times and connect to the same layer:
     topp.ConnectLayers(in_layer,in_layer,conn_dict_in) # Connect I->I
     topp.ConnectLayers(in_layer,ex_layer,conn_dict_in) # Connect I->E
 
-Visualising and querying the network structure
-----------------------------------------------
+## Visualising and querying the network structure
 
 There are two main methods that we can use for checking that our network was
 built correctly:
@@ -296,13 +288,11 @@ listed in NTUM Section 4.1, are:
 | topp.GetPosition(gids)           | Returns position of elements specified in input                                           |
 | nest.GetStatus(layer,“topology”) | Returns the layer dictionary for a layer                                                  |
 
-References
-----------
+## References
 
-[^1]  Hans Ekkehard Plesser and Håkon Enger NEST Topology User Manual
+\[1\]  Hans Ekkehard Plesser and Håkon Enger NEST Topology User Manual
 
-Acknowledgments
----------------
+## Acknowledgments
 
 This handout is based on a previous document by Sarah Jarvis, many thanks to
 her.

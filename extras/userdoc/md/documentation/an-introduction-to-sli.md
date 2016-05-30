@@ -1,8 +1,6 @@
-An Introduction to SLI
-======================
+# An Introduction to SLI
 
-Introduction
-------------
+## Introduction
 
 NEST can be started by typing
 
@@ -25,8 +23,7 @@ at the command prompt. You should then see something like this:
     Type 'help' to get more information.
     Type 'quit' or CTRL-D to quit NEST.
 
-Command line switches
----------------------
+## Command line switches
 
 Type
 
@@ -74,8 +71,7 @@ to an integer. Using `mark` and `>>`, the content of the userargs array is added
 to a dictionary, which is stored under the name `args`. The second line just
 prints the content of the lamda variable.
 
-SLI user manual
----------------
+## SLI user manual
 
 This manual gives a brief overview of the SLI programming language.
 

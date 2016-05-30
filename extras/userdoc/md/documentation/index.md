@@ -1,5 +1,4 @@
-The Neural Simulation Tool
-==========================
+# The Neural Simulation Tool
 
 -   *Download NEST*
 
@@ -27,8 +26,7 @@ The Neural Simulation Tool
 
     Regular open source releases under the terms of the GPL
 
-What is NEST
--------------
+## What is NEST
 
 NEST is a simulator for spiking neural network models that focuses on the
 dynamics, size and structure of neural systems rather than on the exact
@@ -50,8 +48,7 @@ Learn more about NEST:
 **\>\> NEST:: documented movie ** **[(short version](http://www.youtube.com/watch?v=K7KXmIv6ROY),**
 **[long version)](http://www.youtube.com/watch?v=v0YEiren7D0)\>\> NEST information brochure** **[PDF](http://www.nest-simulator.org/wp-content/uploads/2015/04/JARA_NEST_final.pdf)**
 
-How do I use NEST
-------------------
+## How do I use NEST
 
 You can use NEST either as a for the interpreted programming language Python
 (PyNEST) or as a stand alone application (`nest`).
@@ -84,8 +81,7 @@ added.
 
 To get started with NEST, please see the [Documentation Page for Tutorials](documentation.md "Documentation").
 
-Why should I use NEST
-----------------------
+## Why should I use NEST
 
 To learn more about the capabilities of NEST, see the [Feature summary](features.md "Features").
 
@@ -127,8 +123,7 @@ To learn more about the capabilities of NEST, see the [Feature summary](features
 
 11. NEST is open source software and is licensed under the [GNU General Public License v2 or later](http://www.gnu.org/licenses/).
 
-Please cite NEST and tell us about your work
---------------------------------------------
+## Please cite NEST and tell us about your work
 
 If you have used NEST for your work either directly or via PyNN, please cite it
 in your publications as:
@@ -153,8 +148,7 @@ we will add it to our [publication list](publications.md "Publications"),
 thus making it visible to potential readers. Send us your reference or even a
 reprint, using the mail address given on the [contact page](impressum.md "Impressum").
 
-NEST logo for your poster or presentation
------------------------------------------
+## NEST logo for your poster or presentation
 
 If you like NEST, why not show it on your poster or on your slides?
 
@@ -162,8 +156,7 @@ If you like NEST, why not show it on your poster or on your slides?
 
 ![](../../../logos/nest-simulated.png)
 
-Nest Models on [Open Source Brain](http://www.opensourcebrain.org/)
--------------------------------------------------------------------
+## Nest Models on [Open Source Brain](http://www.opensourcebrain.org/)
 
 -   [Connection Set Algebra Showcase](http://www.opensourcebrain.org/projects/44)
 -   [Network models of V1](http://www.opensourcebrain.org/projects/111)

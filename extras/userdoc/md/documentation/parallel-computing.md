@@ -1,8 +1,6 @@
-Parallel Computing
-==================
+# Parallel Computing
 
-Introduction
-------------
+## Introduction
 
 Parallelization is a means to run simulations faster and use the capabilities of
 computer clusters and supercomputers to run large-scale simulations.
@@ -24,8 +22,7 @@ See [Plesser et al (2007)](http://dx.doi.org/10.1007/978-3-540-74466-5_71) for
 more information on NEST parallelization and be sure to check the documentation
 on [Random numbers in NEST](random-numbers.md "Random numbers in NEST").
 
-Concepts and definitions
-------------------------
+## Concepts and definitions
 
 In order to ease the handling of neuron and synapse distribution with both
 thread and process based parallelization, we use the concept of local and remote
@@ -84,8 +81,7 @@ spike files and `dat` for analog recordings from the `multimeter`.
 The `label` and `file_extension` of a recording device can be set like any other
 parameter of a node using `SetStatus`.
 
-Using multiple threads
-----------------------
+## Using multiple threads
 
 Thread-parallelism is compiled into NEST by default and should work on all MacOS
 and Linux machines without additional requirements. In order to keep results
@@ -103,8 +99,7 @@ machine. In some situations, oversubscribing can yield 20-30% improvement in
 simulation speed. Finding the optimal thread number for a specific situation
 might require a bit of experimenting.
 
-Using distributed computing
----------------------------
+## Using distributed computing
 
 ### Build requirements
 
@@ -113,7 +108,11 @@ MPI on your system. If you are on a cluster, you most likely have this already.
 Note, that in the case of a pre-packaged MPI library you will need both, the
 library and the development packages. Please see the [Installation instructions](installation.md "Installation")
 for general information on installing NEST.
-Please be advised that NEST should currently only be run in a homogeneous MPI environment. Running in a heterogenenous environment can lead to unexpected results or even crashes. Please contact the [NEST community](http://www.nest-simulator.org/community/) if you require support for exotic setups.
+Please be advised that NEST should currently only be run in a homogeneous MPI
+environment. Running in a heterogenenous environment can lead to unexpected
+results or even crashes.
+Please contact the [NEST community](http://www.nest-simulator.org/community/) if
+you require support for exotic setups.
 
 ### Compilation
 
@@ -169,8 +168,7 @@ The rank of the MPI process. The result differs on each process.
 `SyncProcesses`  
 Synchronize all MPI processes.
 
-Reproducibility
----------------
+## Reproducibility
 
 To achieve the same simulation results even when using different parallelization
 strategies, the number of virtual processes has to be kept constant. A

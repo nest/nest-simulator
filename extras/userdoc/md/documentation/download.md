@@ -1,5 +1,4 @@
-Download & Releases
-===================
+# Download & Releases
 
 NEST is available under the [GNU General Public License 2 or later](license.md "License").
 This means that you can
@@ -12,8 +11,7 @@ To find out more about NEST, see the [list of features](features.md "Features")
 and the [user documentation](documentation.md "Documentation").
 For details about how to contribute to the development of NEST, see the [developer space](http://nest.github.io/nest-simulator "Development").
 
-Citing NEST
------------
+## Citing NEST
 
 Please cite NEST in any of your work which is based on NEST.
 
@@ -41,8 +39,7 @@ Here is a suitable BibTeX entry:
 If you tell us about your publications that used NEST, we will add it to our
 publication list, thus making it visible to potential readers.
 
-Ubuntu 15.10 Live Media with NEST 2.8.0
----------------------------------------
+## Ubuntu 15.10 Live Media with NEST 2.8.0
 
 **[Download](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova)** (OVA, ~2.3G)          **[Checksum](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova.sha512sum)** (sha512sum)
 

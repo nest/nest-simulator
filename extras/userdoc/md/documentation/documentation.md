@@ -1,14 +1,10 @@
-Documentation
-=============
+# Documentation
 
-[Installing NEST](installation.md "Installation")
------------------------------------------------------------------------------
+## [Installing NEST](installation.md "Installation")
 
-[Introduction to PyNEST](introduction-to-pynest.md "Introduction to PyNEST")
---------------------------------------------------------------------------------------------------------
+## [Introduction to PyNEST](introduction-to-pynest.md "Introduction to PyNEST")
 
-NEST User Manual
----------------------------------------------------------------------------
+## NEST User Manual
 
 -   [Frequently Asked Questions](frequently-asked-questions.md "Frequently Asked Questions")
 -   [Analog recording with multimeter](analog-recording-with-multimeter.md "Analog recording with multimeter")
@@ -23,8 +19,7 @@ NEST User Manual
 -   [NEST/SLI Quick Reference](quickref.md)
 -   [NEST Command Index](helpindex.md)
 
-Example Networks
-----------------
+## Example Networks
 
 -   [brunel_alpha_nest](py_samples/brunel_alpha_nest.md)
 -   [precise_spiking](py_samples/precise_spiking.md)
@@ -62,15 +57,13 @@ Example Networks
 -   [if_curve](py_samples/if_curve.md)
 -   [sinusoidal_gamma_generator](py_samples/sinusoidal_gamma_generator.md)
 
-Further Reading
----------------
+## Further Reading
 
 -   [NEST by Example](wp-content/uploads/2015/02/NEST_by_Example.pdf)
 -   Read and improve the [NEST article on  Scholarpedia.org](cholarpedia.org/article/NEST_\(NEural_Simulation_Tool))
 -   Read and improve the [NEST article on Wikipedia](http://en.wikipedia.org/wiki/NEST_\(software))
 
-NEST Developer Manual
----------------------
+## NEST Developer Manual
 
 For information about modifying and extending NEST and contributing your code
 to the official version, please head over to the [NEST Developer Space](http://nest.github.io/nest-simulator.html).

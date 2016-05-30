@@ -1,5 +1,4 @@
-Connection Management
-=====================
+# Connection Management
 
 From NEST 2.4 onwards the old connection routines (i.e.
 `(Random)ConvergentConnect`, `(Random)DivergentConnect` and plain `Connect`) are
@@ -48,8 +47,7 @@ syn_spec=syn_spec_dict)`), the conn\_spec can be omitted in the call to
 connect and 'all\_to\_all' is assumed as the default.
 The exact usage of the synapse dictionary is described in [Synapse Specification](connection-management.md#synapse-specification).
 
-Connection Rules
-----------------
+## Connection Rules
 
 Connection rules are specified using the `conn_spec` parameter, which can be a
 string naming a connection rule or a dictionary containing a rule specification.
@@ -57,8 +55,7 @@ Only connection rules requiring no parameters can be given as strings, for all
 other rules, a dictionary specifying the rule and its parameters, such as in-
 or out-degrees, is required.
 
-one-to-one
-----------
+## one-to-one
 
 The i<sup>th</sup> node in `pre` is connected to the i<sup>th</sup> node in
 `post`. The node lists pre and post have to be of the same length.
@@ -84,8 +81,7 @@ Example:
     delay = 0.5
     Connect(A[0], B[0], weight, delay)
 
-all-to-all
-----------
+## all-to-all
 
 ![all-to-all connections](../../img/All_to_all.png)
 all-to-all connections
@@ -306,8 +302,7 @@ needs to be defined in two steps:
 For further information on the distributions see
 [Random numbers in NEST](random-numbers.md "Random numbers in NEST").
 
-Old Connection Routines
------------------------
+## Old Connection Routines
 
 The old connection routines are still available in NEST 2.4, apart from the old
 `Connect()` which has been renamed to `OneToOneConnect()` and whose the support
@@ -442,8 +437,7 @@ Example new connection routine:
     syn_dict = {'model': 'my_synapse', 'weight': w0, 'delay': w0}
     nest.Connect(A, B, conn_dict, syn_dict)
 
-Topological Connections
------------------------
+## Topological Connections
 
 If the connect functions above are not sufficient, the topology provides more
 sophisticated functions. For example, it is possible to create receptive field
@@ -451,8 +445,7 @@ structures and much more! See
 [Topological Connections](Topology_UserManual.pdf)
 for more information.
 
-Receptor Types
---------------
+## Receptor Types
 
 Each connection in NEST targets a specific receptor type on the post-synaptic
 node. Receptor types are identified by integer numbers, the default receptor
@@ -491,8 +484,7 @@ The code block above connects a standard integrate-and-fire neuron to a somatic
 excitatory receptor of a multi-compartment integrate-and-fire neuron model. The
 result is illustrated in the figure.
 
-Synapse Types
--------------
+## Synapse Types
 
 NEST supports multiple synapse types that are specified during connection setup.
 The default synapse type in NEST is `static_synapse`. Its weight does not change
@@ -550,8 +542,7 @@ copied model are taken.
 events a synapse type is able to transmit is documented in the *Transmits*
 section of the model documentation.
 
-Inspecting Connections
-----------------------
+## Inspecting Connections
 
 `GetConnections(source=None, target=None, synapse_model=None)`: Return an array
 of identifiers for connections that match the given parameters. source and
@@ -581,8 +572,7 @@ function, which will then return a list with the parameters of the connections:
       'source': 1,
       'receptor': 0}]
 
-Modifying existing Connections
-------------------------------
+## Modifying existing Connections
 
 To modify the connections of an existing connection, one also has to obtain
 handles to the connections with `GetConnections()` first. These can then be

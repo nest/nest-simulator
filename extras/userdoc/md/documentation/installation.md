@@ -1,8 +1,6 @@
-Installation
-============
+# Installation
 
-Introduction
-------------
+## Introduction
 
 NEST compiles and runs on most Unix-like operating systems including Linux and
 Mac OS X. For using NEST on Microsoft Windows, see [below](installation.md#windows).
@@ -34,8 +32,7 @@ Please see the sections on [minimal](installation.md#minimal-configuration) and
 [standard configuration](installation.md#standard-configuration "Installation")
 below for details.
 
-What gets installed where
---------------------------
+## What gets installed where
 
 By default, everything will be installed to the subdirectories
 `$PREFIX/{bin,lib,share}`, where `$PREFIX=$HOME/opt/nest`:
@@ -71,8 +68,7 @@ search paths. For example, if you are using bash:
     export PATH=$PATH:$PREFIX/bin
     export PYTHONPATH=$PREFIX/lib/pythonX.Y/site-packages:$PYTHONPATH
 
-Dependencies
-------------
+## Dependencies
 
 NEST needs a few third party tools and libraries to work. On many operating
 systems, these can be installed using a *package manager* like `apt`, `port` or
@@ -116,8 +112,7 @@ wonder why NEST is difficult to compile on Windows, it is because of these:
 -   libpthread, for threading support
 -   libregexp, for regular expressions.
 
-Minimal configuration
----------------------
+## Minimal configuration
 
 NEST can be compiled without any external packages; such configuration may be
 useful e.g. for initial porting to a new supercomputer. However, this implies
@@ -140,8 +135,7 @@ configure it:
         --without-readline
         --without-pthread
 
-Standard configuration
-----------------------
+## Standard configuration
 
 To install the packages required for the standard installation use the following
 command line:
@@ -154,8 +148,7 @@ Then configure NEST using:
 
     ../nest-x.y.z/configure --prefix=$HOME/opt/nest
 
-Choice of compiler
-------------------
+## Choice of compiler
 
 **Caveat:** you should compile NEST with the same compiler and version as your
 Python. Strange crashes have been observed on importing NEST when compiling
@@ -177,8 +170,7 @@ common compilers.
 When compiling with the Portland compiler, use the -Kieee flag to ensure that
 computations obey the IEEE754 standard for floating point numerics.
 
-Configuration options
----------------------
+## Configuration options
 
 If you need special features, like e.g. support for [distributed computing](Parallel_Computing "Parallel Computing"),
 you can add command line switches to the call to configure. `./configure --help`
@@ -204,8 +196,7 @@ to tell it how your`mpirun`/`mpiexec` command works by defining the function
 mpirun in your `~/.nestrc` file. This file already contains an example
 implementation that should work with [OpenMPI](http://www.openmpi.org/) library.
 
-Mac OS X
---------
+## Mac OS X
 
 ### Installation on OSX 10.9 Mavericks
 
@@ -437,8 +428,7 @@ please try making NEST as follows:
 
 Thanks to Harold Gutch for this hint.
 
-Windows
--------
+## Windows
 
 Windows and Linux differ considerably. This is the reason why it is difficult
 to compile NEST natively under Windows. However, it is still possible to use

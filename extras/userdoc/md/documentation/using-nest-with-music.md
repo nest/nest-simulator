@@ -1,8 +1,6 @@
-Using NEST with MUSIC
-=====================
+# Using NEST with MUSIC
 
- Introduction
--------------
+## Introduction
 
 NEST supports the [MUSIC interface](http://software.incf.org/software/music), a
 standard by the INCF, which allows the transmission of data between applications
@@ -24,8 +22,7 @@ Jeanette Hellgren Kotaleski, and Örjan Ekeberg. Run-time interoperability
 between neuronal simulators based on the MUSIC framework.
 Neuroinformatics, 8, 2010. doi:10.1007/s12021-010-9064-z* and available from [here](http://www.springerlink.com/content/r6j425027lmv1251/).
 
-Sending and receiving spike events
------------------------------------
+## Sending and receiving spike events
 
 A minimal example for the exchange of spikes between two independent instances
 of NEST is given in the example `examples/nest/music/minimalmusicsetup.music`.
@@ -112,8 +109,7 @@ same membrane potential trace.
     -65.2054    
     -62.1583
 
-Receiving string messages
----------------------------
+## Receiving string messages
 
 Currently, NEST is only able to receive, but not to send string messages. We
 thus use MUSIC's `messagesource` program for the generation of messages in the
@@ -157,7 +153,6 @@ side (`msgtest.py`) of the exampe is shown in the following listing:
         data = nest.GetStatus(mmip, 'data')
         print data
         time += 10
-
 
 We first import the `nest` in line 2 and create an instance of the
 `music_message_in_proxy` in line 3. In line 4, we set the name of the port it
@@ -214,8 +209,7 @@ following output:
         Simulation finished.
     [{'messages': ['Hello', '!'], 'message_times': array([ 300.,  700.])}]
 
-Receiving continuous data
---------------------------
+## Receiving continuous data
 
 As in the case of string message, NEST currently only supports receiving
 continuous data, but not sending. This means that we have to use another of

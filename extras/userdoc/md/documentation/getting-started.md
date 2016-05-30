@@ -33,8 +33,7 @@ model.
 ### Examples
 
 A good starting point to learn more about modeling in NEST are the
-[example networks](more-example-networks.md "Example networks")
-that come together with NEST.
+example networks that come together with NEST.
 
 ### Where does data get stored
 

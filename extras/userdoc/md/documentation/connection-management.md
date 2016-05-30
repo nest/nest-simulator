@@ -10,7 +10,7 @@ function has been renamed to `OneToOneConnect()`. However, simple cases, which
 are just creating one-to-one connections between two lists of nodes are still
 working with the new command without the need to change the code. Note that the
 topology-module is not effected by theses changes. The translation between the
-old and the new connect routines is described in [Old Connection Routines](connection-management.md#old-connection-Routines).
+old and the new connect routines is described in [Old Connection Routines](connection-management.md#old-connection-routines).
 
 The connectivity pattern is defined inside the `Connect()` function under the
 key 'rule'. The patterns available are described in

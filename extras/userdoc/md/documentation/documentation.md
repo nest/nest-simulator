@@ -9,7 +9,7 @@
 -   [Frequently Asked Questions](frequently-asked-questions.md "Frequently Asked Questions")
 -   [Analog recording with multimeter](analog-recording-with-multimeter.md "Analog recording with multimeter")
 -   [Connection Management](connection-management.md "Connection Management")
--   [Topological Connections](wp-content/uploads/2015/04/Topology_UserManual.pdf "Topological Connections")
+-   [Topological Connections](http://www.nest-simulator.org/wp-content/uploads/2015/04/Topology_UserManual.pdf "Topological Connections")
 -   [Random numbers in NEST](random-numbers.md "Random numbers in NEST")
 -   [Parallel Computing](parallel-computing.md "Parallel Computing")
 -   [Scheduling and simulation flow](scheduling-and-simulation-flow.md)
@@ -60,10 +60,10 @@
 ## Further Reading
 
 -   [NEST by Example](wp-content/uploads/2015/02/NEST_by_Example.pdf)
--   Read and improve the [NEST article on  Scholarpedia.org](cholarpedia.org/article/NEST_\(NEural_Simulation_Tool))
--   Read and improve the [NEST article on Wikipedia](http://en.wikipedia.org/wiki/NEST_\(software))
+-   Read and improve the [NEST article on  Scholarpedia.org](http://scholarpedia.org/article/NEST_\(NEural_Simulation_Tool\) "")
+-   Read and improve the [NEST article on Wikipedia](http://en.wikipedia.org/wiki/NEST_\(software\) "")
 
 ## NEST Developer Manual
 
 For information about modifying and extending NEST and contributing your code
-to the official version, please head over to the [NEST Developer Space](http://nest.github.io/nest-simulator.html).
+to the official version, please head over to the [NEST Developer Space](http://nest.github.io/nest-simulator.html "").

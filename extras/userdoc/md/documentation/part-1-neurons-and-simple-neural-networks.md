@@ -406,7 +406,7 @@ given, `params` has to be the name of a property, which is set to `val` on the
 ### Connections
 
 This is an abbreviated version of the documentation for the `Connect` function,
-please see NEST’s online help for the full version and <http://www.nest-initiative.org/Connection_Management>
+please see NEST’s online help for the full version and [Connection Management](connection-management.md "Connection Management")
 for an introduction and worked examples.
 
 `Connect(pre, post, conn_spec=None, syn_spec=None, model=None)`:  

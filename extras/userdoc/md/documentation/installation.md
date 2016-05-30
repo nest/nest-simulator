@@ -172,7 +172,7 @@ computations obey the IEEE754 standard for floating point numerics.
 
 ## Configuration options
 
-If you need special features, like e.g. support for [distributed computing](Parallel_Computing "Parallel Computing"),
+If you need special features, like e.g. support for [distributed computing](parallel-computing.md "Parallel Computing"),
 you can add command line switches to the call to configure. `./configure --help`
 will show you all available options. For more information on the installation of
 NEST, please see the file INSTALL that is included in the distribution archive.

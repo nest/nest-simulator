@@ -169,7 +169,7 @@ In addition to the rule specific parameters `indegree`, `outdegree`, `N` and
 Note that for all connectivity rules, it is perfectly legitimate to have the
 same population simultaneously in the role of `pre` and `post`. For more
 information on connecting neurons, please read the documentation of the
-`Connect` function and consult the guide at <http://www.nest-initiative.org/Connection_Management>.
+`Connect` function and consult the guide at [Connection Management](connection-management.md "Connection Management").
 
 ## Specifying the behaviour of devices
 

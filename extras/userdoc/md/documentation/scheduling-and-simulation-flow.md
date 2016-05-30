@@ -20,7 +20,7 @@ To speed up the simulation and allow the efficient use of computer clusters,
 NEST uses a [hybrid parallelization strategy](parallel-computing.md).
 The following figure shows the basic loop that is run upon a call to `Simulate`:
 
-![Simulation Loop](../../img/simulation-loop-241x300.png)
+![Simulation Loop](../../img/simulation_loop-241x300.png)
 
 The simulation loop. Light gray boxes denote thread parallel parts, dark gray
 boxes denote MPI parallel parts. U(S<sub>t</sub>) is the update operator that

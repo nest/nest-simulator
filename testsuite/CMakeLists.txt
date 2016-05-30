@@ -34,9 +34,9 @@ add_subdirectory( mpi_selftests/pass )
 add_subdirectory( mpitests )
 
 install( DIRECTORY ${TESTSUBDIRS}
-    DESTINATION ${INSTALL_DOC_DIR}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 
 install( PROGRAMS ${PROJECT_BINARY_DIR}/testsuite/do_tests.sh
-    DESTINATION ${INSTALL_DATA_DIR}/extras
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras
     )

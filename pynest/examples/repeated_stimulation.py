@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-Repeated Stimulation 
+Repeated Stimulation
 --------------------
 
 Simple example for how to repeat a stimulation protocol
@@ -39,26 +39,27 @@ relative to the origin.
 '''
 
 '''
-First the nest module is imported for simulation
+First the nest module is imported for simulation.
 '''
 
 import nest
+import nest.raster_plot
 
 '''
 Second, the parameters are set so the poisson generator
 generates 1000 spikes per second and is active from 100 to 500 ms
 '''
 
-rate  = 1000.0  # generator rate in spikes/s
-start =  100.0  # start of simulation relative to trial start, in ms
-stop  =  500.0  # end of simulation relative to trial start, in ms
+rate = 1000.0  # generator rate in spikes/s
+start = 100.0  # start of simulation relative to trial start, in ms
+stop = 500.0  # end of simulation relative to trial start, in ms
 
 '''
 The simulation is supposed to take 1s (1000 ms) and is repeated 5 times
 '''
 
-trial_duration = 1000.0 # trial duration, in ms
-num_trials     = 5      # number of trials to perform
+trial_duration = 1000.0  # trial duration, in ms
+num_trials = 5      # number of trials to perform
 
 '''
 Third the network is set up.  The Kernel is reset and a
@@ -70,9 +71,9 @@ optional parameter in the form of a dictionary
 
 nest.ResetKernel()
 pg = nest.Create('poisson_generator',
-                 params = {'rate'  : rate,
-                           'start' : start,
-                           'stop'  : stop}
+                 params={'rate': rate,
+                         'start': start,
+                         'stop': stop}
                  )
 
 '''
@@ -106,7 +107,5 @@ nest.raster_plot function note: The histogram will show spikes
 seemingly located before 100ms into each trial. This is due to
 sub-optimal automatic placement of histogram bin borders.
 '''
-
-import nest.raster_plot
 nest.raster_plot.from_device(sd, hist=True, hist_binwidth=100.,
                              title='Repeated stimulation by Poisson generator')

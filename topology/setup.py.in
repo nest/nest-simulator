@@ -27,5 +27,5 @@ setup(name         = 'Topology',
       author       = 'The NEST Initiative',
       url          = 'http://www.nest-simulator.org',
       packages     = ['nest.topology', 'nest.topology.tests'],
-      package_dir  = {'nest.topology': '@PKGSRCDIR@/topology/pynest',
-                      'nest.topology.tests': '@PKGSRCDIR@/topology/pynest/tests'})
+      package_dir  = {'nest.topology': '@PROJECT_SOURCE_DIR@/topology/pynest',
+                      'nest.topology.tests': '@PROJECT_SOURCE_DIR@/topology/pynest/tests'})

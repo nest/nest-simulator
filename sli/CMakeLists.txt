@@ -107,74 +107,22 @@ target_include_directories( sli_lib PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     )
+set_target_properties( sli_lib
+    PROPERTIES
+    OUTPUT_NAME sli
+    )
 
 target_include_directories( sli_readline PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     )
 
-target_compile_definitions( sli_lib PRIVATE
-    -DPKGDATADIR=\"${PKGDATADIR}\"
-    -DPKGDOCDIR=\"${PKGDOCDIR}\"
-    -DPKGSOURCEDIR=\"${PROJECT_SOURCE_DIR}\"
-    )
-
 install( TARGETS sli_readline sli_lib sli
-    LIBRARY DESTINATION ${INSTALL_LIB_DIR}
-    ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
-    RUNTIME DESTINATION ${INSTALL_BIN_DIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
-
-# DIRS for help
-# 
-# base dirs + dirs/sli
-
-set( __HELPDIRS libnestutil sli librandom lib nestkernel nest ${SLI_MODULES} )
-foreach ( child ${__HELPDIRS} )
-  if ( IS_DIRECTORY "${PROJECT_SOURCE_DIR}/${child}" )
-    set( HELPDIRS "${HELPDIRS}${PROJECT_SOURCE_DIR}/${child}:" )
-    # Automatically include sli directory if it exists
-    if ( IS_DIRECTORY "${PROJECT_SOURCE_DIR}/${child}/sli" )
-      set( HELPDIRS "${HELPDIRS}${PROJECT_SOURCE_DIR}/${child}/sli:" )
-    endif ()
-  endif ()
-endforeach ()
-
-# testsuite dirs
-file( GLOB children ${PROJECT_SOURCE_DIR}/testsuite/*/ )
-foreach ( child ${children} )
-  if ( IS_DIRECTORY ${child} )
-    set( HELPDIRS "${HELPDIRS}${child}:" )
-  endif ()
-  if ( IS_DIRECTORY ${child}/pass )
-    set( HELPDIRS "${HELPDIRS}${child}/pass:" )
-  endif ()
-  if ( IS_DIRECTORY ${child}/fail )
-    set( HELPDIRS "${HELPDIRS}${child}/fail:" )
-  endif ()
-endforeach ()
-
-if ( NOT CMAKE_CROSSCOMPILING )
-  # install help (depends on sli and lib/sli/* installed)
-  install( CODE
-      "execute_process(
-        COMMAND ${CMAKE_COMMAND} -E remove_directory ${PKGDOCDIR}/help/sli
-        COMMAND ${CMAKE_COMMAND} -E remove_directory ${PKGDOCDIR}/help/cc
-        COMMAND ${CMAKE_COMMAND} -E remove ${PKGDOCDIR}/help/helpindex.html
-        COMMAND ${CMAKE_COMMAND} -E remove ${PKGDOCDIR}/help/helpindex.hlp
-
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${PKGDOCDIR}/help
-        COMMAND ${CMAKE_COMMAND}
-            -DDOC_DIR='${PKGDOCDIR}'
-            -DDATA_DIR='${PKGDATADIR}'
-            -DHELPDIRS='${HELPDIRS}'
-            -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
-            -P ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
-          WORKING_DIRECTORY \"${PROJECT_BINARY_DIR}\"
-        )"
-      )
-endif ()
 
 install( FILES ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
-    DESTINATION ${INSTALL_DOC_DIR}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )

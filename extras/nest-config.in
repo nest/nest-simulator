@@ -1,6 +1,6 @@
 #! /bin/sh
 
-prefix=@CMAKE_INSTALL_PREFIX@
+prefix=${NEST_INSTALL_DIR:-@CMAKE_INSTALL_PREFIX@}
 exec_prefix=${prefix}
 
 usage()
@@ -14,8 +14,12 @@ Known values for OPTION are:
   --exec-prefix         NEST install prefix for architecture-dependent files
   --libs                print library linking information
   --cflags              print pre-processor and compiler flags
+  --includes            print includes
   --compiler            print the compiler used to compile NEST
   --static-libraries    print "ON" if configured for static libraries, "OFF" otherwise
+  --docdir              print the relative path (to prefix) to the installed documentation
+  --datadir             print the relative path (to prefix) to the installed data
+  --libdir              print the relative path (to prefix) to the installed libraries
   --help                display this help and exit
   --version             output version information
 
@@ -41,48 +45,43 @@ while test $# -gt 0; do
     --prefix=*)
         prefix=$optarg
         ;;
-
     --prefix)
         echo $prefix
         ;;
-
     --exec-prefix)
         echo $exec_prefix
         ;;
-
     --version)
-        echo @NEST_VERSION_VERSION@
-        exit 0
+        echo "@NEST_VERSION_VERSION@"
         ;;
-
     --help)
         usage 0
         ;;
-
+    --includes)
+        echo "@ALL_INCLUDES@"
+        ;;
     --cflags)
-        NEST_CFLAGS="-I@PKGSRCDIR@/{libnestutil,librandom,sli,nestkernel,nest,topology,precise} @ALL_INCLUDES@"
-        if [ "@PKGBUILDDIR@" != "@PKGSRCDIR@" ]; then
-            NEST_CFLAGS="-I@PKGBUILDDIR@/libnestutil $NEST_CFLAGS"
-        fi
-        NEST_CFLAGS="@ALL_CXXFLAGS@ $NEST_CFLAGS"
-        echo $NEST_CFLAGS
+        echo "@ALL_CXXFLAGS@"
         ;;
-
     --libs)
-        NEST_LDFLAGS="-lnest_lib -lrandom -lsli_lib -lnestkernel -lnestutil -lprecise -ltopology @ALL_LIBS@"
-        # cmake: all libs are installed
-        NEST_LDFLAGS="-L@CMAKE_INSTALL_PREFIX@/@INSTALL_LIB_DIR@ $NEST_LDFLAGS"
-        echo $NEST_LDFLAGS
+        echo "-L$prefix/@CMAKE_INSTALL_LIBDIR@ @ALL_LIBS@"
         ;;
-
     --compiler)
-        echo @CMAKE_CXX_COMPILER@
+        echo "@CMAKE_CXX_COMPILER@"
         ;;
 
     --static-libraries)
-        echo @static-libraries@
+        echo "@static-libraries@"
         ;;
-
+    --docdir)
+        echo "@CMAKE_INSTALL_DOCDIR@"
+        ;;
+    --datadir)
+        echo "@CMAKE_INSTALL_DATADIR@"
+        ;;
+    --libdir)
+        echo "@CMAKE_INSTALL_LIBDIR@"
+        ;;
     *)
         usage
         exit 1

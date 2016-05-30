@@ -23,11 +23,11 @@
 Pulse packet example
 --------------------
 
-This script compares the average and individual membrane potential excursions in
-response to a single pulse packet with an analytically acquired voltage trace.
-(see: Diesmann M. (2002) **Conditions for Stable Propagation of Synchronous
-Spiking in Cortical Neural Networks, Single Neuron Dynamics and Network
-Properties**, http://d-nb.info/968772781/34)
+This script compares the average and individual membrane potential excursions
+in response to a single pulse packet with an analytically acquired voltage
+trace (see: Diesmann M. (2002) **Conditions for Stable Propagation of
+Synchronous Spiking in Cortical Neural Networks, Single Neuron Dynamics and
+Network Properties**, http://d-nb.info/968772781/34).
 
 A pulse packet is a transient spike volley with a Gaussian rate profile.
 The user can specify the neural parameters, the parameters of the
@@ -71,21 +71,21 @@ Simulation and analysis parameters:
 '''
 
 simtime = 1000.               # how long we simulate (ms)
-simulation_resolution  = 0.1  # (ms)
-sampling_resolution    = 1.   # for voltmeter (ms)
+simulation_resolution = 0.1  # (ms)
+sampling_resolution = 1.   # for voltmeter (ms)
 convolution_resolution = 1.   # for the analytics (ms)
-
 
 '''
 Some parameters in base units.
 '''''
 
-Cm = cm*1e-12            # convert to Farad
-Weight = weight*1e-12    # convert to Ampere
-Tau_s = tau_s*1e-3       # convert to sec
-Tau_m = tau_m*1e-3       # convert to sec
-Sdev = sdev*1e-3         # convert to sec
-Convolution_resolution = convolution_resolution*1e-3 # convert to sec
+Cm = cm * 1e-12            # convert to Farad
+Weight = weight * 1e-12    # convert to Ampere
+Tau_s = tau_s * 1e-3       # convert to sec
+Tau_m = tau_m * 1e-3       # convert to sec
+Sdev = sdev * 1e-3         # convert to sec
+Convolution_resolution = convolution_resolution * 1e-3  # convert to sec
+
 
 def make_psp(Time, Tau_s, Tau_m, Cm, Weight):
     '''
@@ -99,89 +99,93 @@ def make_psp(Time, Tau_s, Tau_m, Cm, Weight):
     Weight: the synaptic weight (in Ampere)
     It returns the provoked membrane potential (in mV)
     '''
-    term1 = (1/(Tau_s)-1/(Tau_m))
-    term2 = numpy.exp(-Time/(Tau_s))
-    term3 = numpy.exp(-Time/(Tau_m))
-    PSP = Weight/Cm* numpy.exp(1)/Tau_s *\
-          (((-Time*term2)/term1)+(term3-term2)/term1**2)
-    return PSP*1e3
+    term1 = (1 / (Tau_s) - 1 / (Tau_m))
+    term2 = numpy.exp(-Time / (Tau_s))
+    term3 = numpy.exp(-Time / (Tau_m))
+    PSP = (Weight / Cm * numpy.exp(1) / Tau_s *
+           (((-Time * term2) / term1) + (term3 - term2) / term1 ** 2))
+    return PSP * 1e3
+
 
 def find_loc_pspmax(tau_s, tau_m):
     '''
     This function finds the exact location of the maximum of the PSP caused
     by a single input spike. The location is obtained by setting the first
     derivative of the equation for the PSP (see `make_psp()`) to zero. The
-    resulting equation can be expressed ain terms of a LambertW function. This 
-    function is implemented in nest as a .sli file. In order to access this 
+    resulting equation can be expressed ain terms of a LambertW function. This
+    function is implemented in nest as a .sli file. In order to access this
     function in pynest we called the function 'nest.sli_func()'.
     This function expects:
     Tau_s and Tau_m: the synaptic and membrane time constant (in sec)
     It returns the location of the maximum (in sec)
     '''
-    var = tau_m/tau_s
-    lam = nest.sli_func('LambertWm1', -numpy.exp(-1/var)/var)
-    t_maxpsp = (-var*lam-1)/var / (1/tau_s - 1/tau_m)*1e-3
+    var = tau_m / tau_s
+    lam = nest.sli_func('LambertWm1', -numpy.exp(-1 / var) / var)
+    t_maxpsp = (-var * lam - 1) / var / (1 / tau_s - 1 / tau_m) * 1e-3
     return t_maxpsp
 
 '''
-1. Analytically acquired voltage trace. 
+1. Analytically acquired voltage trace.
 
 1a) First, we construct a Gaussian kernel for a given standard derivation
-(``sig``) and mean value (``mu``). In this case the standard derivation is 
+(``sig``) and mean value (``mu``). In this case the standard derivation is
 the width of the pulse packet (see Diesmann 2002).
 '''
 
 sig = Sdev
 mu = 0.0
-x = numpy.arange(-4*sig, 4*sig, Convolution_resolution)
-term1 = 1/(sig*numpy.sqrt(2*numpy.pi))
-term2 = numpy.exp(-(x-mu)**2/(sig**2*2))
-gauss = term1*term2*Convolution_resolution
+x = numpy.arange(-4 * sig, 4 * sig, Convolution_resolution)
+term1 = 1 / (sig * numpy.sqrt(2 * numpy.pi))
+term2 = numpy.exp(-(x - mu) ** 2 / (sig ** 2 * 2))
+gauss = term1 * term2 * Convolution_resolution
 
 '''
 1b) Second, we calculate the PSP of a neuron due to a single spiking input.
 (see Diesmann 2002, eq. 2.3)
-Since we do that in discrete time steps, we first construct an array (``t_psp``)
-that contains the time points we want to consider. Then, the function
-make_psp() (that creates the PSP) takes the time array as its first argument.
+Since we do that in discrete time steps, we first construct an array
+(``t_psp``) that contains the time points we want to consider. Then, the
+function make_psp() (that creates the PSP) takes the time array as its
+first argument.
 '''
 
-t_psp = numpy.arange(0, 10*(Tau_m+Tau_s), Convolution_resolution)
+t_psp = numpy.arange(0, 10 * (Tau_m + Tau_s), Convolution_resolution)
 psp = make_psp(t_psp, Tau_s, Tau_m, Cm, Weight)
 
 '''
 1c) Now, we want to normalized the PSP amplitude to one. We therefore have to
 divide the PSP by its maximum [Diesmann 2002, sec 6.1]. The function
-``find_loc_pspmax()`` returns the exact time point (``t_pspmax``) when we expect
-the maximum to occur. The function ``make_psp()`` calculates the corresponding
-PSP value, which is our PSP amplitude (``psp_ampl``).
+``find_loc_pspmax()`` returns the exact time point (``t_pspmax``) when we
+expect the maximum to occur. The function ``make_psp()`` calculates the
+corresponding PSP value, which is our PSP amplitude (``psp_ampl``).
 '''
 
 t_pspmax = find_loc_pspmax(Tau_s, Tau_m)
 psp_amp = make_psp(t_pspmax, Tau_s, Tau_m, Cm, Weight)
-psp_norm = psp/psp_amp
+psp_norm = psp / psp_amp
 
 '''
 1d) Now we have all ingredients to compute the membrane potential excursion
 (``U``) This calculation implies a convolution of the Gaussian with the
 normalized PSP (see Diesmann 2002, eq. 6.9). In order to avoid an offset in
-the convolution we need to add a pad of zeros on the left side of the normalized
-PSP. Later on we want to compare our analytical results with the simulation
-outcome. Therefore we need a time vector (``t_U``) with the correct temporal
-resolution, that places the excursion of the potential at the correct time.
+the convolution we need to add a pad of zeros on the left side of the
+normalized PSP. Later on we want to compare our analytical results with the
+simulation outcome. Therefore we need a time vector (``t_U``) with the correct
+temporal resolution, that places the excursion of the potential at the correct
+time.
 '''
 
-tmp = numpy.zeros(2*len(psp_norm))
-tmp[len(psp_norm)-1:-1] += psp_norm
+tmp = numpy.zeros(2 * len(psp_norm))
+tmp[len(psp_norm) - 1:-1] += psp_norm
 psp_norm = tmp
 del tmp
-U = a*psp_amp*pylab.convolve(gauss, psp_norm)
+U = a * psp_amp * pylab.convolve(gauss, psp_norm)
 l = len(U)
-t_U = convolution_resolution*numpy.linspace(-l/2., l/2., l)+pulsetime+1.
+t_U = (convolution_resolution * numpy.linspace(-l / 2., l / 2., l) +
+       pulsetime + 1.)
 
 '''
 2. Simulation. In this section we simulate a network of multiple neurons.
-All these neurons receive an individual pulse packet that is drawn from a 
+All these neurons receive an individual pulse packet that is drawn from a
 Gaussian distribution.
 '''
 '''
@@ -190,7 +194,7 @@ verbosity using `set_verbosity()` to suppress info messages.
 '''
 
 nest.ResetKernel()
-nest.SetStatus([0], [{'resolution':simulation_resolution}])
+nest.SetStatus([0], [{'resolution': simulation_resolution}])
 nest.set_verbosity("M_WARNING")
 
 '''
@@ -201,27 +205,27 @@ dictionaries (here: ``neuron_pars`` for the neurons, ``ppg_pars''
 for the  and pulse-packet-generators and ``vm_pars`` for the voltmeter).
 '''
 
-neuron_pars = {\
-    'V_th':      Vth,
-    'tau_m':     tau_m,
-    'tau_syn_ex':tau_s,
-    'C_m':       cm,
-    'E_L':       V0,
-    'V_reset':   V0,
-    'V_m':       V0
-     }
+neuron_pars = {
+    'V_th': Vth,
+    'tau_m': tau_m,
+    'tau_syn_ex': tau_s,
+    'C_m': cm,
+    'E_L': V0,
+    'V_reset': V0,
+    'V_m': V0
+    }
 neurons = nest.Create('iaf_psc_alpha', n_neurons, neuron_pars)
-ppg_pars = {\
+ppg_pars = {
     'pulse_times': [pulsetime],
-    'activity':    a,
-    'sdev':        sdev
-     }
+    'activity': a,
+    'sdev': sdev
+    }
 ppgs = nest.Create('pulsepacket_generator', n_neurons, ppg_pars)
-vm_pars = {\
+vm_pars = {
     'record_to': ['memory'],
-    'withtime':  True,
-    'withgid':   True,
-    'interval':  sampling_resolution
+    'withtime': True,
+    'withgid': True,
+    'interval': sampling_resolution
     }
 vm = nest.Create('voltmeter', 1, vm_pars)
 
@@ -239,7 +243,7 @@ generator (source) to one neuron (target).
 In addition we also connect the voltmeter to the neurons'
 '''
 
-nest.SetDefaults('static_synapse', {'weight':weight})
+nest.SetDefaults('static_synapse', {'weight': weight})
 nest.Connect(ppgs, neurons, 'one_to_one')
 nest.Connect(vm, neurons)
 
@@ -274,7 +278,7 @@ and the averaged membrane potentials.
 Here we plot the analytical solution U (the resting potential
 V0 shifts the membrane potential up- or downwards).
 '''
-pylab.plot(t_U, U+V0, 'r', lw=2, zorder=3, label='analytical solution')
+pylab.plot(t_U, U + V0, 'r', lw=2, zorder=3, label='analytical solution')
 
 '''
 Here we plot all individual membrane potentials.
@@ -286,7 +290,7 @@ simtimes = numpy.arange(1, simtime)
 for idn in range(n_neurons):
     if idn == 0:
         pylab.plot(simtimes, Vm_single[idn], 'gray',
-                  zorder=1, label='single potentials')
+                   zorder=1, label='single potentials')
     else:
         pylab.plot(simtimes, Vm_single[idn], 'gray', zorder=1)
 
@@ -300,4 +304,5 @@ pylab.plot(simtimes, Vm_average, 'b', lw=4,
 pylab.legend()
 pylab.xlabel('time (ms)')
 pylab.ylabel('membrane potential (mV)')
-pylab.xlim((-5*(tau_m+tau_s)+pulsetime, 10*(tau_m+tau_s)+pulsetime))
+pylab.xlim((-5 * (tau_m + tau_s) + pulsetime,
+            10 * (tau_m + tau_s) + pulsetime))

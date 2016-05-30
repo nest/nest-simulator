@@ -28,6 +28,8 @@ Parse all NEST files for documentation and build the help.
 
 import os
 import re
+import sys
+import shutil
 
 from modules.writers import coll_data, check_ifdef, write_helpindex
 from modules.helpers import cut_it
@@ -107,6 +109,7 @@ for file in allfiles:
             item = s.join(alllines)
             num = num + 1
             documentation = {}
+            keyword_curr = ""
             for token in item.split():
                 if token in keywords:
                     keyword_curr = token
@@ -116,3 +119,7 @@ for file in allfiles:
                         documentation[keyword_curr] += " " + token
             all_data = coll_data(keywords, documentation, num, file,
                                  sli_command_list)
+
+if len(sys.argv) > 1:
+    shutil.rmtree(sys.argv[1], ignore_errors=True)
+    shutil.copytree("../cmds", sys.argv[1])

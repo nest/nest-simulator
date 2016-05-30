@@ -22,9 +22,8 @@
 '''
 Sensitivity to perturbation
 ---------------------------
-
-This script simulates a network in two successive trials which
-are identical except for an extra input spike in the second realisation.
+This script simulates a network in two successive trials, which
+are identical except for one extra input spike in the second realisation.
 (a small perturbation). The network consists of recurrent, randomly
 connected excitatory and inhibitory neurons. Its activity is driven
 by an external Poisson input provided to all neurons independently.
@@ -55,7 +54,7 @@ We start with the global network parameters.
 
 NE = 1000      # number of excitatory neurons
 NI = 250       # number of inhibitory neurons
-N = NE + NI
+N = NE + NI    # total number of neurons
 KE = 100       # excitatory in-degree
 KI = 25        # inhibitory in-degree
 
@@ -72,13 +71,16 @@ Vmax = neuron_params['V_th']  # max. potential for distribution of initial poten
 
 '''
 Synapse parameters. Changing the weights (J) in the network can lead to
-qualitatively different behaviors. If J is small (e.g. J = 0.1) we
-are likely to observe a non-chaotic network behavior (after perturbation
-the network returns to its original activity). Increasing J (e.g J = 3.)
-leads to rather chaotic acitivity.
+qualitatively different behaviours. If J is small (e.g. J = 0.1) we are
+likely to observe a non-chaotic network behaviour (after perturbation 
+the network returns to its original activity). Increasing J (e.g J = 5.5)
+leads to rather chaotic activity. Given that in this example the
+transition to chaos is probabilistic, we sometimes observe chaotic
+behaviour for small weights (e.g. J = 0.5) and non-chaotic behaviour
+for strong weights (e.g. J = 5.4).
 '''
 
-J = .1                    # excitatory synaptic weight (mV)
+J = 0.5                   # excitatory synaptic weight (mV)
 g = 6.                    # relative inhibitory weight
 delay = 0.1               # spike transmission delay (ms)
 
@@ -150,7 +152,7 @@ nest.Connect(ext, allnodes,
 
 suppr = nest.Create("dc_generator",
                   params={'amplitude':-1e16, 'start': T, 'stop':T+fade_out})
-nest.Connect(suppr, list(allnodes))
+nest.Connect(suppr, allnodes)
 
 spikedetector = nest.Create("spike_detector")   
 nest.ConvergentConnect(allnodes, spikedetector)
@@ -172,8 +174,8 @@ spiketimes = []
 for trial in [0,1]:
     '''
     As mentioned above, we need to reset the network, the random number
-    generator, and the clock of the Kernel. In addition we make sure 
-    that there is no spike left in the spike generator.
+    generator, and the clock of the simulation Kernel. In addition we make 
+    sure that there is no spike left in the spike detector.
     '''
     nest.ResetNetwork()
     nest.SetStatus([0], [{"rng_seeds": [seed_NEST]}])
@@ -228,4 +230,5 @@ pylab.xlabel('time (ms)')
 pylab.ylabel('neuron id')
 pylab.xlim((0, T))
 pylab.ylim((0, N))
-pylab.show()
+
+

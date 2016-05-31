@@ -95,7 +95,7 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
     if ( mpi_retcode != 0 )
     {
       MPI_Error_string( mpi_retcode, mpi_error_string, &mpi_error_len );
-      std::string msg = String.compose(
+      std::string msg = String::compose(
         "Error initializing MPI. Error encountered: %1", mpi_error_string );
 
       LOG( M_ERROR, "MPIManager::init_mpi", msg );

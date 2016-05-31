@@ -41,9 +41,9 @@ Based on: Kunkel, Nov 2010
 
 (unittest) run
 /unittest using
- 
+
 ResetKernel
- 
+
 /resolution 0.1 def %1.0 def %2.0 -4 pow def  % simulation step size
 0 << /resolution resolution >> SetStatus %/tics_per_ms 10000.0 >> SetStatus
 
@@ -154,7 +154,7 @@ def
 {
   j 1 add /j Set
   pre_spike /last_pre Set
-  pre_spikes j get /pre_spike Set  
+  pre_spikes j get /pre_spike Set
 }
 def
 
@@ -200,7 +200,7 @@ def
       if
     }
     {
-      exit  
+      exit
     }
     ifelse
   }

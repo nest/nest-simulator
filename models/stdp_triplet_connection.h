@@ -197,7 +197,7 @@ private:
   facilitate_( double_t w, double_t kplus, double_t ky )
   {
     double_t new_w = std::abs(w) + kplus * ( Aplus_ + Aplus_triplet_ * ky );
-    return copysign( std::abs(new_w) < std::abs( Wmax_ ) ? new_w : Wmax_, Wmax_);
+    return copysign( new_w < std::abs( Wmax_ ) ? new_w : Wmax_, Wmax_);
   }
 
   inline double_t
@@ -354,7 +354,7 @@ STDPTripletConnection< targetidentifierT >::set_status(
   updateValue< double_t >( d, "Wmax", Wmax_ );
 
   // check if weight_ and Wmax_ has the same sign
-  if (not(((weight_ > 0) - (weight_ < 0)) == ((Wmax_ > 0) - (Wmax_ < 0))))
+  if (not(((weight_ >= 0) - (weight_ < 0)) == ((Wmax_ >= 0) - (Wmax_ < 0))))
   {
     throw BadProperty("Weight and Wmax must have same sign.");
   }

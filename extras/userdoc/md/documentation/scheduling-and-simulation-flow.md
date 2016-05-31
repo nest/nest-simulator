@@ -82,15 +82,15 @@ of NEST (large *d<sub>max</sub>*).
 
 ## Spike generation and precision
 
-A neuron fires a spike when the membrane potential is above threshold at the end
-of an update interval (i.e., a multiple of the simulation resolution). For most
-models, the membrane potential is then reset to some fixed value and clamped to
-hat value during the refractory time. This means that the last membrane
-potential value at the last time step before the spike can vary, while the
-potential right after the step will usually be the reset potential (some models
-may deviate from this). This also means that the membrane potential recording
-will never show values above the threshold. The time of the spike is always the
-time at *the end of the interval* during which the threshold was crossed.
+A neuron fires a spike when the membrane potential is above threshold at the end of an
+update interval (i.e., a multiple of the simulation resolution). For most models, the
+membrane potential is then reset to some fixed value and clamped to that value during
+the refractory time. This means that the last membrane potential value at the last time
+step before the spike can vary, while the potential right after the step will usually
+be the reset potential (some models may deviate from this). This also means that the
+membrane potential recording will never show values above the threshold. The time of
+the spike is always the time at *the end of the interval* during which the threshold was
+crossed.
 
 NEST also has a some models that determine the precise time of the threshold
 crossing during the interval. Please see the documentation on [precise spike time neurons](simulations-with-precise-spike-times.md)

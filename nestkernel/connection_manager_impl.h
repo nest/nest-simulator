@@ -1,5 +1,5 @@
 /*
- *  connection_builder_manager_impl.h
+ *  connection_manager_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef CONNECTION_BUILDER_MANAGER_IMPL_H
-#define CONNECTION_BUILDER_MANAGER_IMPL_H
+#ifndef CONNECTION_MANAGER_IMPL_H
+#define CONNECTION_MANAGER_IMPL_H
 
-#include "connection_builder_manager.h"
+#include "connection_manager.h"
 
 // C++ includes:
 #include <string>
@@ -42,7 +42,7 @@ namespace nest
 
 template < typename ConnBuilder >
 void
-ConnectionBuilderManager::register_conn_builder( const std::string& name )
+ConnectionManager::register_conn_builder( const std::string& name )
 {
   assert( !connruledict_->known( name ) );
   GenericConnBuilderFactory* cb = new ConnBuilderFactory< ConnBuilder >();
@@ -53,13 +53,13 @@ ConnectionBuilderManager::register_conn_builder( const std::string& name )
 }
 
 inline index
-ConnectionBuilderManager::get_target_gid( const thread tid, const synindex syn_index, const unsigned int lcid ) const
+ConnectionManager::get_target_gid( const thread tid, const synindex syn_index, const unsigned int lcid ) const
 {
   return connections_5g_[ tid ]->get_target_gid( tid, syn_index, lcid );
 }
 
 inline void
-ConnectionBuilderManager::send_5g( thread tid, synindex syn_index, unsigned int lcid, Event& e )
+ConnectionManager::send_5g( thread tid, synindex syn_index, unsigned int lcid, Event& e )
 {
   const unsigned int target_count = source_table_.get_target_count( tid, syn_index, lcid );
   for ( unsigned int tmp_lcid = lcid; tmp_lcid < lcid + target_count; ++tmp_lcid )
@@ -69,35 +69,35 @@ ConnectionBuilderManager::send_5g( thread tid, synindex syn_index, unsigned int 
 }
 
 inline void
-ConnectionBuilderManager::send_to_devices( thread tid, const index s_gid, Event& e )
+ConnectionManager::send_to_devices( thread tid, const index s_gid, Event& e )
 {
   target_table_devices_.send_to_device( tid, s_gid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
 }
 
 inline void
-ConnectionBuilderManager::send_from_device( thread tid, const index ldid, Event& e)
+ConnectionManager::send_from_device( thread tid, const index ldid, Event& e)
 {
   target_table_devices_.send_from_device( tid, ldid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
 }
 
 inline void
-ConnectionBuilderManager::add_target( const thread tid, const TargetData& target_data)
+ConnectionManager::add_target( const thread tid, const TargetData& target_data)
 {
   target_table_.add_target( tid, target_data );
 }
 
 inline bool
-ConnectionBuilderManager::get_next_spike_data( const thread tid, const thread current_tid, const index lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end)
+ConnectionManager::get_next_spike_data( const thread tid, const thread current_tid, const index lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end)
 {
   return target_table_.get_next_spike_data( tid, current_tid, lid, rank, next_spike_data, rank_start, rank_end );
 }
 
 inline bool
-ConnectionBuilderManager::get_next_target_data( const thread tid, index& target_rank, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end )
+ConnectionManager::get_next_target_data( const thread tid, index& target_rank, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end )
 {
   return source_table_.get_next_target_data( tid, target_rank, next_target_data, rank_start, rank_end );
 }
 
 } // namespace nest
 
-#endif // CONNECTION_BUILDER_MANAGER_IMPL_H
+#endif /* CONNECTION_MANAGER_IMPL_H */

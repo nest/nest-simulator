@@ -26,7 +26,8 @@ namespace nest
 {
 
 double_t
-Parameter::value( const std::vector< double_t >& pt, librandom::RngPtr& rng ) const
+Parameter::value( const std::vector< double_t >& pt,
+  librandom::RngPtr& rng ) const
 {
   switch ( pt.size() )
   {

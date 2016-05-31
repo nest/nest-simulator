@@ -18,10 +18,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-__author__ = 'naveau'
 
 import nest
 import unittest
+
+__author__ = 'naveau'
 
 
 class TestSynapticElements(unittest.TestCase):
@@ -30,48 +31,65 @@ class TestSynapticElements(unittest.TestCase):
         nest.ResetKernel()
 
     def test_set_status(self):
-        synaptic_element_dict = {u'SE': {u'z': 15.0, u'growth_curve': u'linear'}}
+        synaptic_element_dict = {
+            u'SE': {u'z': 15.0, u'growth_curve': u'linear'}}
 
         neuron = nest.Create('iaf_neuron', 1)
         nest.SetStatus(neuron, {'synaptic_elements': synaptic_element_dict})
-        neuron_synaptic_elements = nest.GetStatus(neuron, 'synaptic_elements')[0]
+        neuron_synaptic_elements = nest.GetStatus(
+            neuron, 'synaptic_elements')[0]
         self.assertIn('SE', neuron_synaptic_elements)
-        self.assertDictContainsSubset(synaptic_element_dict[u'SE'], neuron_synaptic_elements[u'SE'])
+        self.assertDictContainsSubset(
+            synaptic_element_dict[u'SE'], neuron_synaptic_elements[u'SE'])
 
     def test_set_status_overwrite(self):
-        synaptic_element_dict1 = {u'SE1': {u'z': 15.0, u'growth_curve': u'linear'}}
-        synaptic_element_dict2 = {u'SE2': {u'z': 10.0, u'growth_curve': u'gaussian'}}
+        synaptic_element_dict1 = {
+            u'SE1': {u'z': 15.0, u'growth_curve': u'linear'}}
+        synaptic_element_dict2 = {
+            u'SE2': {u'z': 10.0, u'growth_curve': u'gaussian'}}
 
         neuron = nest.Create('iaf_neuron', 1)
         nest.SetStatus(neuron, {'synaptic_elements': synaptic_element_dict1})
         nest.SetStatus(neuron, {'synaptic_elements': synaptic_element_dict2})
 
-        neuron_synaptic_elements = nest.GetStatus(neuron, 'synaptic_elements')[0]
+        neuron_synaptic_elements = nest.GetStatus(
+            neuron, 'synaptic_elements')[0]
         self.assertNotIn('SE1', neuron_synaptic_elements)
         self.assertIn('SE2', neuron_synaptic_elements)
-        self.assertDictContainsSubset(synaptic_element_dict2[u'SE2'], neuron_synaptic_elements[u'SE2'])
+        self.assertDictContainsSubset(
+            synaptic_element_dict2[u'SE2'], neuron_synaptic_elements[u'SE2'])
 
     def test_set_defaults(self):
-        synaptic_element_dict = {u'SE': {u'z': 15.0, u'growth_curve': u'linear'}}
+        synaptic_element_dict = {
+            u'SE': {u'z': 15.0, u'growth_curve': u'linear'}}
 
-        nest.SetDefaults('iaf_neuron', {'synaptic_elements': synaptic_element_dict})
+        nest.SetDefaults(
+            'iaf_neuron', {'synaptic_elements': synaptic_element_dict})
         neuron = nest.Create('iaf_neuron', 1)
-        neuron_synaptic_elements = nest.GetStatus(neuron, 'synaptic_elements')[0]
+        neuron_synaptic_elements = nest.GetStatus(
+            neuron, 'synaptic_elements')[0]
         self.assertIn('SE', neuron_synaptic_elements)
-        self.assertDictContainsSubset(synaptic_element_dict[u'SE'], neuron_synaptic_elements[u'SE'])
+        self.assertDictContainsSubset(
+            synaptic_element_dict[u'SE'], neuron_synaptic_elements[u'SE'])
 
     def test_set_defaults_overwrite(self):
-        synaptic_element_dict1 = {u'SE1': {u'z': 15.0, u'growth_curve': u'linear'}}
-        synaptic_element_dict2 = {u'SE2': {u'z': 10.0, u'growth_curve': u'gaussian'}}
+        synaptic_element_dict1 = {
+            u'SE1': {u'z': 15.0, u'growth_curve': u'linear'}}
+        synaptic_element_dict2 = {
+            u'SE2': {u'z': 10.0, u'growth_curve': u'gaussian'}}
 
-        nest.SetDefaults('iaf_neuron', {'synaptic_elements': synaptic_element_dict1})
-        nest.SetDefaults('iaf_neuron', {'synaptic_elements': synaptic_element_dict2})
+        nest.SetDefaults(
+            'iaf_neuron', {'synaptic_elements': synaptic_element_dict1})
+        nest.SetDefaults(
+            'iaf_neuron', {'synaptic_elements': synaptic_element_dict2})
         neuron = nest.Create('iaf_neuron', 1)
 
-        neuron_synaptic_elements = nest.GetStatus(neuron, 'synaptic_elements')[0]
+        neuron_synaptic_elements = nest.GetStatus(
+            neuron, 'synaptic_elements')[0]
         self.assertNotIn('SE1', neuron_synaptic_elements)
         self.assertIn('SE2', neuron_synaptic_elements)
-        self.assertDictContainsSubset(synaptic_element_dict2[u'SE2'], neuron_synaptic_elements[u'SE2'])
+        self.assertDictContainsSubset(
+            synaptic_element_dict2[u'SE2'], neuron_synaptic_elements[u'SE2'])
 
 
 def suite():

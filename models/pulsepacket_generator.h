@@ -140,10 +140,10 @@ private:
 
     librandom::NormalRandomDev norm_dev_; //!< random deviate generator
 
-    /** Indices into sorted vector of sorted pulse-center times (P_.pulse_times_).
-     *  Spike times to be sent are calculated from pulse-center times
-     *  between 'start' and 'stop'. Times before 'start' are outdated,
-     *  times after 'stop' are not touched yet.
+    /** Indices into sorted vector of sorted pulse-center times
+     *  (P_.pulse_times_). Spike times to be sent are calculated from
+     *  pulse-center times between 'start' and 'stop'. Times before 'start' are
+     *  outdated, times after 'stop' are not touched yet.
      *
      *  Must be index, not iterator, since we copy pulse times
      *  out of temporary parameter set.
@@ -165,7 +165,10 @@ private:
 };
 
 inline port
-pulsepacket_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+pulsepacket_generator::send_test_event( Node& target,
+  rport receptor_type,
+  synindex syn_id,
+  bool )
 {
   device_.enforce_single_syn_type( syn_id );
 

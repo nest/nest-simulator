@@ -117,7 +117,7 @@ def
   /tauMem 20.0 def    % neuron membrane time constant [ms]
   /tauSyn  0.5 def    % synaptic time constant [ms]
   /tauRef  2.0 def    % refractory time [ms]
-  /U0      0.0 def    % resting potential [mV]
+  /E_L     0.0 def    % resting potential [mV]
   /theta  20.0 def    % threshold
 
   % synaptic weights, scaled for our alpha functions, such that
@@ -154,13 +154,13 @@ def
    /tau_m       tauMem def
    /tau_syn     tauSyn def
    /t_ref       tauRef def
-   /E_L         U0 def
+   /E_L         E_L def
    /V_th        theta def
    /C_m         1.0  def % Yes, capacitance is 1 in the Brunel model
    /t_spike      -1.0 def
-   /V_m           U0 def
-   /V_reset       U0 def
-   /V_th         U0 theta add def
+   /V_m           E_L def
+   /V_reset       E_L def
+   /V_th         E_L theta add def
    /theta        theta def
    /currents      0.0 def
 

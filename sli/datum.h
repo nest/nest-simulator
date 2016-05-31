@@ -171,7 +171,8 @@ public:
   bool
   isoftype( SLIType const& t ) const
   {
-    return ( type == &t ); // or: *type==t, there is only one t with same contents !
+    // or: *type==t, there is only one t with same contents !
+    return ( type == &t );
   }
 
   void
@@ -191,7 +192,8 @@ public:
   }
 
   // This is here solely for default assignment operators in
-  // derived classes synthesized by the compiler. It does nothing but return itself.
+  // derived classes synthesized by the compiler. It does nothing but return
+  // itself.
 protected:
   TypedDatum( const TypedDatum< slt >& d )
     : Datum( d )
@@ -201,7 +203,8 @@ protected:
 };
 
 template < SLIType* slt >
-inline const TypedDatum< slt >& TypedDatum< slt >::operator=( const TypedDatum< slt >& )
+inline const TypedDatum< slt >& TypedDatum< slt >::operator=(
+  const TypedDatum< slt >& )
 {
   //  assert( type == d.type );
   return *this;

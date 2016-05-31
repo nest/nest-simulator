@@ -182,9 +182,11 @@ nest::Subnet::print_network( int max_depth, int level, std::string prefix )
       // we must not print the continuation line '|', so we distinguish
       // this case.
       if ( next == nodes_.size() )
-        out << prefix << nodes_[ i ]->print_network( max_depth, level + 1, prefix + " " );
+        out << prefix
+            << nodes_[ i ]->print_network( max_depth, level + 1, prefix + " " );
       else
-        out << prefix << nodes_[ i ]->print_network( max_depth, level + 1, prefix + "|" );
+        out << prefix
+            << nodes_[ i ]->print_network( max_depth, level + 1, prefix + "|" );
 
       first = next;
       continue;
@@ -219,8 +221,8 @@ nest::Subnet::print_network( int max_depth, int level, std::string prefix )
     {
       // Here we print the sequence of consecutive nodes.
       // We can be sure that neither first, nor i point to NULL.
-      out << prefix << "+-[" << first + 1 << "]...[" << i + 1 << "] " << nodes_[ first ]->get_name()
-          << std::endl;
+      out << prefix << "+-[" << first + 1 << "]...[" << i + 1 << "] "
+          << nodes_[ first ]->get_name() << std::endl;
       // Print extra line, if we are at the end of a subnet.
       if ( next == nodes_.size() )
         out << prefix << std::endl;
@@ -228,9 +230,11 @@ nest::Subnet::print_network( int max_depth, int level, std::string prefix )
       continue;
     }
 
-    // Here, we deal the case of an individual Node with no identical neighbours.
+    // Here, we deal the case of an individual Node with no identical
+    // neighbours.
 
-    out << prefix << "+-[" << i + 1 << "] " << nodes_[ first ]->get_name() << std::endl;
+    out << prefix << "+-[" << i + 1 << "] " << nodes_[ first ]->get_name()
+        << std::endl;
 
     // Print extra line, if we are at the end of a subnet.
     if ( next == nodes_.size() )

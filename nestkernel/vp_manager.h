@@ -40,6 +40,7 @@
 namespace nest
 {
 
+// TODO@5g: change types into thread
 struct AssignedRanks
 {
   unsigned int begin;
@@ -48,7 +49,7 @@ struct AssignedRanks
   unsigned int max_size;
 };
 
-class VPManager : ManagerInterface
+class VPManager : public ManagerInterface
 {
 public:
   VPManager();

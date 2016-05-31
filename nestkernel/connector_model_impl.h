@@ -25,6 +25,9 @@
 
 #include "connector_model.h"
 
+// Generated includes:
+#include "config.h"
+
 // Includes from libnestutil:
 #include "compose.hpp"
 
@@ -95,11 +98,11 @@ template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::calibrate( const TimeConverter& tc )
 {
-  // calibrate the dalay of the default properties here
+  // calibrate the delay of the default properties here
   default_connection_.calibrate( tc );
 
-  // Calibrate will be called after a change in resolution, when there are no network elements
-  // present.
+  // Calibrate will be called after a change in resolution, when there are no
+  // network elements present.
 
   // calibrate any time objects that might reside in CommonProperties
   cp_.calibrate( tc );
@@ -136,14 +139,15 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   // set_status calls on common properties and default connection may
   // modify min/max delay, we need to freeze the min/max_delay checking.
 
-  kernel().connection_builder_manager.get_delay_checker().freeze_delay_update();
+  kernel().connection_manager.get_delay_checker().freeze_delay_update();
 
   cp_.set_status( d, *this );
   default_connection_.set_status( d, *this );
 
-  kernel().connection_builder_manager.get_delay_checker().enable_delay_update();
+  kernel().connection_manager.get_delay_checker().enable_delay_update();
 
-  // we've possibly just got a new default delay. So enforce checking next time it is used
+  // we've possibly just got a new default delay. So enforce checking next time
+  // it is used
   default_delay_needs_check_ = true;
 }
 
@@ -152,27 +156,41 @@ void
 GenericConnectorModel< ConnectionT >::used_default_delay()
 {
   // if not used before, check now. Solves bug #138, MH 08-01-08
-  // replaces whole delay checking for the default delay, see bug #217, MH 08-04-24
-  // get_default_delay_ must be overridden by derived class to return the correct default delay
-  // (either from commonprops or default connection)
+  // replaces whole delay checking for the default delay, see bug #217
+  // MH 08-04-24
+  // get_default_delay_ must be overridden by derived class to return the
+  // correct default delay (either from commonprops or default connection)
   if ( default_delay_needs_check_ )
   {
     try
     {
       if ( has_delay_ )
       {
-        kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms(
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
           default_connection_.get_delay() );
+      }
+      // Let connections without delay contribute to the delay extrema with
+      // wfr_comm_interval. For those connections the min_delay is important
+      // as it determines the length of the global communication interval.
+      // The call to assert_valid_delay_ms needs to happen only once
+      // (either here or in add_connection()) when the first connection
+      // without delay is created.
+      else
+      {
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+          kernel().simulation_manager.get_wfr_comm_interval() );
       }
     }
     catch ( BadDelay& e )
     {
-      throw BadDelay(
-        default_connection_.get_delay(),
-        String::compose( "Default delay of '%1' must be between min_delay %2 and max_delay %3.",
-          get_name(),
-          Time::delay_steps_to_ms( kernel().connection_builder_manager.get_min_delay() ),
-          Time::delay_steps_to_ms( kernel().connection_builder_manager.get_max_delay() ) ) );
+      throw BadDelay( default_connection_.get_delay(),
+        String::compose( "Default delay of '%1' must be between min_delay %2 "
+                         "and max_delay %3.",
+                        get_name(),
+                        Time::delay_steps_to_ms(
+                           kernel().connection_manager.get_min_delay() ),
+                        Time::delay_steps_to_ms(
+                           kernel().connection_manager.get_max_delay() ) ) );
     }
     default_delay_needs_check_ = false;
   }
@@ -203,7 +221,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 {
   assert( false );
   // if ( not numerics::is_nan( delay ) && has_delay_ )
-  //   kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+  //   kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
 
   // // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
@@ -240,15 +258,15 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   double_t weight )
 {
   if ( !numerics::is_nan( delay ) )
-    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
 
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
-  if ( !numerics::is_nan( weight ) )
+  if ( not numerics::is_nan( weight ) )
   {
     c.set_weight( weight );
   }
-  if ( !numerics::is_nan( delay ) )
+  if ( not numerics::is_nan( delay ) )
   {
     c.set_delay( delay );
   }
@@ -280,12 +298,14 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   {
     if ( has_delay_ )
     {
-      kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+        delay );
     }
 
     if ( p->known( names::delay ) )
       throw BadParameter(
-        "Parameter dictionary must not contain delay if delay is given explicitly." );
+        "Parameter dictionary must not contain delay if delay is given "
+        "explicitly." );
   }
   else
   {
@@ -296,7 +316,8 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     {
       if ( has_delay_ )
       {
-        kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+          delay );
       }
     }
     else
@@ -308,7 +329,8 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
   if ( !p->empty() )
-    c.set_status( p, *this ); // reference to connector model needed here to check delay (maybe this
+    c.set_status( p, *this ); // reference to connector model needed here to
+                              // check delay (maybe this
                               // could be done one level above?)
   if ( not numerics::is_nan( weight ) )
   {
@@ -350,7 +372,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
 {
   if ( !numerics::is_nan( delay ) )
   {
-    kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
 
     if ( p->known( names::delay ) )
       throw BadParameter(
@@ -362,7 +384,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
     double_t delay = 0.0;
 
     if ( updateValue< double_t >( p, names::delay, delay ) )
-      kernel().connection_builder_manager.get_delay_checker().assert_valid_delay_ms( delay );
+      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
     else
       used_default_delay();
   }
@@ -407,9 +429,23 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 {
   // TODO@5g: remove this function
   assert(false);
+  // Let connections without delay contribute to the delay extrema with
+  // wfr_comm_interval. For those connections the min_delay is important
+  // as it determines the length of the global communication interval.
+  // The call to assert_valid_delay_ms needs to happen only once
+  // (either here or in used_default_delay()) when the first connection
+  // without delay is created.
+  // if ( default_delay_needs_check_ && not has_delay_ )
+  // {
+  //   kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+  //     kernel().simulation_manager.get_wfr_comm_interval() );
+  //   default_delay_needs_check_ = false;
+  // }
+
   // here we need to distinguish several cases:
   // - neuron src has no target on this machine yet (case 0)
-  // - neuron src has n targets on this machine, all of same type syn_id_existing (case 1)
+  // - neuron src has n targets on this machine, all of same type
+  //   syn_id_existing (case 1)
   //     -- new connection of type syn_id == syn_id_existing
   //     -- new connection of type syn_id != syn_id_existing
   // - neuron src has n targets of more than a single synapse type (case 2)

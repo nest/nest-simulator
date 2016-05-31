@@ -91,7 +91,8 @@ public:
   get_list() const
   {
     ArrayDatum recordables;
-    for ( typename Base_::const_iterator it = this->begin(); it != this->end(); ++it )
+    for ( typename Base_::const_iterator it = this->begin(); it != this->end();
+          ++it )
       recordables.push_back( new LiteralDatum( it->first ) );
     return recordables;
 

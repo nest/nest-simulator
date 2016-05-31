@@ -211,7 +211,8 @@ LocalNodeListBase< LocalChildListIterator >::iterator
 LocalNodeListBase< LocalChildListIterator >::begin() const;
 
 /**
- * List interface to subnet providing iteration over immediate local child nodes.
+ * List interface to subnet providing iteration over immediate local child
+ * nodes.
  */
 typedef LocalNodeListBase< LocalChildListIterator > LocalChildList;
 

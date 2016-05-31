@@ -43,7 +43,8 @@
 
 nest::spike_detector::spike_detector()
   : Node()
-  , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true ) // record time and gid
+  // record time and gid
+  , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true )
   , user_set_precise_times_( false )
   , has_proxies_( false )
   , local_receiver_( true )
@@ -81,7 +82,8 @@ nest::spike_detector::init_buffers_()
 void
 nest::spike_detector::calibrate()
 {
-  if ( !user_set_precise_times_ && kernel().event_delivery_manager.get_off_grid_communication() )
+  if ( !user_set_precise_times_
+    && kernel().event_delivery_manager.get_off_grid_communication() )
   {
     device_.set_precise( true, 15 );
 
@@ -126,9 +128,11 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( local_receiver_ && get_thread() == 0 )
   {
-    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
+    const SiblingContainer* siblings =
+      kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
+    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
+          ++sibling )
       ( *sibling )->get_status( d );
   }
 }
@@ -152,10 +156,14 @@ nest::spike_detector::handle( SpikeEvent& e )
     assert( e.get_multiplicity() > 0 );
 
     long_t dest_buffer;
-    if ( kernel().modelrange_manager.get_model_of_gid( e.get_sender_gid() )->has_proxies() )
-      dest_buffer = kernel().event_delivery_manager.read_toggle(); // events from central queue
+    if ( kernel()
+           .modelrange_manager.get_model_of_gid( e.get_sender_gid() )
+           ->has_proxies() )
+      // events from central queue
+      dest_buffer = kernel().event_delivery_manager.read_toggle();
     else
-      dest_buffer = kernel().event_delivery_manager.write_toggle(); // locally delivered events
+      // locally delivered events
+      dest_buffer = kernel().event_delivery_manager.write_toggle();
 
     for ( int_t i = 0; i < e.get_multiplicity(); ++i )
     {

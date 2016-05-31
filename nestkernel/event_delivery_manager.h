@@ -264,7 +264,8 @@ private:
 
   //--------------------------------------------------//
 
-  bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid
+  bool off_grid_spiking_; //!< indicates whether spikes are not constrained to
+                          //!< the grid
 
   /**
    * Table of pre-computed modulos.
@@ -305,7 +306,8 @@ private:
    * - Second dim: A vector for each slice of the min_delay interval
    * - Third dim: Struct containing GID and offset.
    */
-  std::vector< std::vector< std::vector< OffGridSpike > > > offgrid_spike_register_;
+  std::vector< std::vector< std::vector< OffGridSpike > > >
+    offgrid_spike_register_;
 
   /**
    * Buffer to collect the secondary events
@@ -397,7 +399,9 @@ EventDeliveryManager::send_to_node( Event& e )
 }
 
 inline void
-EventDeliveryManager::send_offgrid_remote( thread t, SpikeEvent& e, const long_t lag )
+EventDeliveryManager::send_offgrid_remote( thread t,
+  SpikeEvent& e,
+  const long_t lag )
 {
   // Put the spike in a buffer for the remote machines
   OffGridSpike ogs( e.get_sender().get_gid(), e.get_offset() );
@@ -429,7 +433,8 @@ EventDeliveryManager::get_modulo( delay d )
 {
   // Note, here d may be 0, since bin 0 represents the "current" time
   // when all evens due are read out.
-  assert( static_cast< std::vector< delay >::size_type >( d ) < moduli_.size() );
+  assert(
+    static_cast< std::vector< delay >::size_type >( d ) < moduli_.size() );
 
   return moduli_[ d ];
 }
@@ -439,7 +444,8 @@ EventDeliveryManager::get_slice_modulo( delay d )
 {
   /// Note, here d may be 0, since bin 0 represents the "current" time
   // when all evens due are read out.
-  assert( static_cast< std::vector< delay >::size_type >( d ) < slice_moduli_.size() );
+  assert( static_cast< std::vector< delay >::size_type >( d )
+    < slice_moduli_.size() );
 
   return slice_moduli_[ d ];
 }
@@ -452,7 +458,8 @@ EventDeliveryManager::send_remote( thread t, SecondaryEvent& e )
   size_t old_size = secondary_events_buffer_[ t ].size();
 
   secondary_events_buffer_[ t ].resize( old_size + e.size() );
-  std::vector< uint_t >::iterator it = secondary_events_buffer_[ t ].begin() + old_size;
+  std::vector< uint_t >::iterator it =
+    secondary_events_buffer_[ t ].begin() + old_size;
   e >> it;
 }
 

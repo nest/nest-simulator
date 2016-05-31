@@ -47,24 +47,28 @@ class TimeConverter;
 class Node;
 
 /**
- * This function sets the two lowest bits of the pointer depending on the existing connections.
+ * This function sets the two lowest bits of the pointer depending on the
+ * existing connections.
  *
  * - If *p contains primary connections the lowest bit is set to 1
  * - If *p contains secondary connections the second lowest bit is set to 1
  *
- * This implementation relies on the assumption that the two lowest bits of the pointer are 0.
- * This can be assumed with some certainty (see github issue #186 for a discussion).
+ * This implementation relies on the assumption that the two lowest bits of the
+ * pointer are 0. This can be assumed with some certainty (see github issue #186
+ * for a discussion).
  * The assumption is secured by an assert in the allocate()-function.
  */
 inline ConnectorBase*
 pack_pointer( ConnectorBase* p, bool has_primary, bool has_secondary )
 {
   return reinterpret_cast< ConnectorBase* >(
-    reinterpret_cast< unsigned long >( p ) | has_primary | ( has_secondary << 1 ) );
+    reinterpret_cast< unsigned long >( p ) | has_primary
+    | ( has_secondary << 1 ) );
 }
 
 /**
- * This function removes the setting of the two lowest bits done in the pack_pointer()-function.
+ * This function removes the setting of the two lowest bits done in the
+ * pack_pointer()-function.
  * The returned pointer can again be used as a valid pointer.
  */
 inline ConnectorBase*
@@ -129,8 +133,10 @@ public:
    * @return A new Connector, equal to the original but with an erased
    * connection to the defined target.
    */
-  virtual ConnectorBase*
-  delete_connection( Node& tgt, size_t target_thread, ConnectorBase* conn, synindex syn_id ) = 0;
+  virtual ConnectorBase* delete_connection( Node& tgt,
+    size_t target_thread,
+    ConnectorBase* conn,
+    synindex syn_id ) = 0;
 
   virtual void add_connection_5g( Node& src,
     Node& tgt,
@@ -181,9 +187,11 @@ public:
 
 protected:
   std::string name_;
-  bool default_delay_needs_check_; //!< Flag indicating, that the default delay must be checked
-  bool is_primary_; //!< indicates, whether this ConnectorModel belongs to a primary connection
-  bool has_delay_;  //!< indicates, that ConnectorModel has a delay
+  //! Flag indicating, that the default delay must be checked
+  bool default_delay_needs_check_;
+  //! indicates, whether this ConnectorModel belongs to a primary connection
+  bool is_primary_;
+  bool has_delay_; //!< indicates, that ConnectorModel has a delay
 
 }; // ConnectorModel
 
@@ -193,20 +201,23 @@ class GenericConnectorModel : public ConnectorModel
 {
 private:
   typename ConnectionT::CommonPropertiesType cp_;
-  typename ConnectionT::EventType*
-    pev_; //!< used to create secondary events that belong to secondary connections
+  //! used to create secondary events that belong to secondary connections
+  typename ConnectionT::EventType* pev_;
 
   ConnectionT default_connection_;
   rport receptor_type_;
 
 public:
-  GenericConnectorModel( const std::string name, bool is_primary, bool has_delay )
+  GenericConnectorModel( const std::string name,
+    bool is_primary,
+    bool has_delay )
     : ConnectorModel( name, is_primary, has_delay )
     , receptor_type_( 0 )
   {
   }
 
-  GenericConnectorModel( const GenericConnectorModel& cm, const std::string name )
+  GenericConnectorModel( const GenericConnectorModel& cm,
+    const std::string name )
     : ConnectorModel( cm, name )
     , cp_( cm.cp_ )
     , pev_( cm.pev_ )
@@ -314,21 +325,25 @@ private:
 }; // GenericConnectorModel
 
 template < typename ConnectionT >
-class GenericSecondaryConnectorModel : public GenericConnectorModel< ConnectionT >
+class GenericSecondaryConnectorModel
+  : public GenericConnectorModel< ConnectionT >
 {
 private:
-  typename ConnectionT::EventType*
-    pev_; //!< used to create secondary events that belong to secondary connections
+  //! used to create secondary events that belong to secondary connections
+  typename ConnectionT::EventType* pev_;
 
 public:
   GenericSecondaryConnectorModel( const std::string name, bool has_delay )
-    : GenericConnectorModel< ConnectionT >( name, /*is _primary=*/false, has_delay )
+    : GenericConnectorModel< ConnectionT >( name,
+        /*is _primary=*/false,
+        has_delay )
     , pev_( 0 )
   {
     pev_ = new typename ConnectionT::EventType();
   }
 
-  GenericSecondaryConnectorModel( const GenericSecondaryConnectorModel& cm, const std::string name )
+  GenericSecondaryConnectorModel( const GenericSecondaryConnectorModel& cm,
+    const std::string name )
     : GenericConnectorModel< ConnectionT >( cm, name )
   {
     pev_ = new typename ConnectionT::EventType( *cm.pev_ );
@@ -338,7 +353,8 @@ public:
   ConnectorModel*
   clone( std::string name ) const
   {
-    return new GenericSecondaryConnectorModel( *this, name ); // calls copy construtor
+    return new GenericSecondaryConnectorModel(
+      *this, name ); // calls copy construtor
   }
 
   std::vector< SecondaryEvent* >

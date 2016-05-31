@@ -27,7 +27,7 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "connection_builder_manager_impl.h"
+#include "connection_manager_impl.h"
 
 namespace nest
 {
@@ -36,12 +36,12 @@ template< class EventT >
 inline void
 EventDeliveryManager::send_local_( Node& source, EventT& e, const long_t lag )
 {
-  assert( !source.has_proxies() );
+  assert( not source.has_proxies() );
   e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
   const thread t = source.get_thread();
   const index ldid = source.get_local_device_id();
-  kernel().connection_builder_manager.send_from_device( t, ldid, e );
+  kernel().connection_manager.send_from_device( t, ldid, e );
 }
 
 template < class EventT >
@@ -53,13 +53,16 @@ EventDeliveryManager::send( Node& source, EventT& e, const long_t lag )
 
 template <>
 inline void
-EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const long_t lag )
+EventDeliveryManager::send< SpikeEvent >( Node& source,
+  SpikeEvent& e,
+  const long_t lag )
 {
   const index s_gid = source.get_gid();
   e.set_sender_gid( s_gid );
   if ( source.has_proxies() )
   {
-    e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
+    e.set_stamp(
+      kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
     e.set_sender( source );
     const thread tid = source.get_thread();
 
@@ -70,7 +73,7 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
     else
     {
       send_remote( tid, e, lag );
-      kernel().connection_builder_manager.send_to_devices( tid, s_gid, e );
+      kernel().connection_manager.send_to_devices( tid, s_gid, e );
     }
   }
   else
@@ -81,7 +84,9 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
 
 template <>
 inline void
-EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long_t lag )
+EventDeliveryManager::send< DSSpikeEvent >( Node& source,
+  DSSpikeEvent& e,
+  const long_t lag )
 {
   e.set_sender_gid( source.get_gid() );
   send_local_( source, e, lag );
@@ -96,7 +101,7 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long_t lag )
 
     const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
 
-    std::vector< Target >& targets = kernel().connection_builder_manager.get_targets( tid, lid );
+    std::vector< Target >& targets = kernel().connection_manager.get_targets( tid, lid );
     for ( std::vector< Target >::iterator it = targets.begin(); it < targets.end(); ++it )
     {
       const thread assigned_tid = ( *it ).rank / kernel().vp_manager.get_num_assigned_ranks_per_thread(); // TODO@5g: put this in a function?
@@ -110,7 +115,8 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long_t lag )
 inline void
 EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
 {
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
+  e.set_stamp(
+    kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
   e.set_sender( source );
   e.set_sender_gid( source.get_gid() );
   const thread t = source.get_thread();

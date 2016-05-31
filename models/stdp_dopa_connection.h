@@ -25,8 +25,8 @@
 
 /* BeginDocumentation
 
-   Name: stdp_dopamine_synapse - Synapse type for dopamine-modulated spike-timing dependent
-   plasticity.
+   Name: stdp_dopamine_synapse - Synapse type for dopamine-modulated
+                                 spike-timing dependent plasticity.
 
    Description:
    stdp_dopamine_synapse is a connection to create synapses with
@@ -48,10 +48,11 @@
 
    Parameters:
      Common properties:
-           vt        long   - ID of volume_transmitter collecting the spikes from the pool of
-                              dopamine releasing neurons and transmitting the spikes
-                              to the synapse. A value of -1 indicates that no volume
-                              transmitter has been assigned.
+           vt        long   - ID of volume_transmitter collecting the spikes
+                              from the pool of dopamine releasing neurons and
+                              transmitting the spikes to the synapse. A value of
+                              -1 indicates that no volume transmitter has been
+                              assigned.
            A_plus    double - Amplitude of weight change for facilitation
            A_minus   double - Amplitude of weight change for depression
            tau_plus  double - STDP time constant for facilitation in ms
@@ -66,8 +67,8 @@
            n         double - neuromodulator concentration
 
    Remarks:
-     The common properties can only be set by SetDefaults and apply to all synapses of
-     the model.
+     The common properties can only be set by SetDefaults and apply to all
+     synapses of the model.
 
    References:
    [1] Potjans W, Morrison A and Diesmann M (2010). Enabling
@@ -102,7 +103,8 @@ namespace nest
 {
 
 /**
- * Class containing the common properties for all synapses of type dopamine connection.
+ * Class containing the common properties for all synapses of type dopamine
+ * connection.
  */
 class STDPDopaCommonProperties : public CommonSynapseProperties
 {
@@ -171,10 +173,10 @@ public:
    */
   STDPDopaConnection( const STDPDopaConnection& );
 
-  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
-  // This avoids explicit name prefixes in all places these functions are used.
-  // Since ConnectionBase depends on the template parameter, they are not automatically
-  // found in the base class.
+  // Explicitly declare all methods inherited from the dependent base
+  // ConnectionBase. This avoids explicit name prefixes in all places these
+  // functions are used. Since ConnectionBase depends on the template parameter,
+  // they are not automatically found in the base class.
   using ConnectionBase::get_delay;
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
@@ -215,15 +217,15 @@ public:
   };
 
   /*
-   * This function calls check_connection on the sender and checks if the receiver
-   * accepts the event type and receptor type requested by the sender.
+   * This function calls check_connection on the sender and checks if the
+   * receiver accepts the event type and receptor type requested by the sender.
    * Node::check_connection() will either confirm the receiver port by returning
    * true or false if the connection should be ignored.
    * We have to override the base class' implementation, since for STDP
-   * connections we have to call register_stdp_pl_connection on the target neuron
-   * to inform the Archiver to collect spikes for this connection.
-   * Further, the STDP dopamine synapse requires a volume transmitter to be set before
-   * any simulation is performed. Checking this satisfies ticket #926.
+   * connections we have to call register_stdp_pl_connection on the target
+   * neuron to inform the Archiver to collect spikes for this connection.
+   * Further, the STDP dopamine synapse requires a volume transmitter to be set
+   * before any simulation is performed. Checking this satisfies ticket #926.
    *
    * \param s The source node
    * \param r The target node
@@ -236,12 +238,13 @@ public:
     const CommonPropertiesType& cp )
   {
     if ( cp.vt_ == 0 )
-      throw BadProperty( "No volume transmitter has been assigned to the dopamine synapse." );
+      throw BadProperty(
+        "No volume transmitter has been assigned to the dopamine synapse." );
 
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.register_stdp_connection( t_last_update_ - get_delay() );
+    t.register_stdp_connection( t_lastspike_ - get_delay() );
   }
 
   void
@@ -251,12 +254,15 @@ public:
   }
 
 private:
-  // update dopamine trace from last to current dopamine spike and increment index
+  // update dopamine trace from last to current dopamine spike and increment
+  // index
   void update_dopamine_( const std::vector< spikecounter >& dopa_spikes,
     const STDPDopaCommonProperties& cp );
 
-  void
-  update_weight_( double_t c0, double_t n0, double_t minus_dt, const STDPDopaCommonProperties& cp );
+  void update_weight_( double_t c0,
+    double_t n0,
+    double_t minus_dt,
+    const STDPDopaCommonProperties& cp );
 
   void process_dopa_spikes_( const std::vector< spikecounter >& dopa_spikes,
     double_t t0,
@@ -272,12 +278,15 @@ private:
   double_t n_;
 
   // dopa_spikes_idx_ refers to the dopamine spike that has just been processes
-  // after trigger_update_weight a pseudo dopamine spike at t_trig is stored at index 0 and
-  // dopa_spike_idx_ = 0
+  // after trigger_update_weight a pseudo dopamine spike at t_trig is stored at
+  // index 0 and dopa_spike_idx_ = 0
   index dopa_spikes_idx_;
 
-  // time of last update, which is either time of last presyn. spike or time-driven update
+  // time of last update, which is either time of last presyn. spike or
+  // time-driven update
   double_t t_last_update_;
+
+  double_t t_lastspike_;
 };
 
 //
@@ -293,11 +302,13 @@ STDPDopaConnection< targetidentifierT >::STDPDopaConnection()
   , n_( 0.0 )
   , dopa_spikes_idx_( 0 )
   , t_last_update_( 0.0 )
+  , t_lastspike_( 0.0 )
 {
 }
 
 template < typename targetidentifierT >
-STDPDopaConnection< targetidentifierT >::STDPDopaConnection( const STDPDopaConnection& rhs )
+STDPDopaConnection< targetidentifierT >::STDPDopaConnection(
+  const STDPDopaConnection& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , Kplus_( rhs.Kplus_ )
@@ -305,6 +316,7 @@ STDPDopaConnection< targetidentifierT >::STDPDopaConnection( const STDPDopaConne
   , n_( rhs.n_ )
   , dopa_spikes_idx_( rhs.dopa_spikes_idx_ )
   , t_last_update_( rhs.t_last_update_ )
+  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 
@@ -324,7 +336,8 @@ STDPDopaConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-STDPDopaConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+STDPDopaConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
   // base class properties
   ConnectionBase::set_status( d, cm );
@@ -340,8 +353,8 @@ STDPDopaConnection< targetidentifierT >::update_dopamine_(
   const std::vector< spikecounter >& dopa_spikes,
   const STDPDopaCommonProperties& cp )
 {
-  double_t minus_dt =
-    dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_;
+  double_t minus_dt = dopa_spikes[ dopa_spikes_idx_ ].spike_time_
+    - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_;
   ++dopa_spikes_idx_;
   n_ = n_ * std::exp( minus_dt / cp.tau_n_ )
     + dopa_spikes[ dopa_spikes_idx_ ].multiplicity_ / cp.tau_n_;
@@ -380,10 +393,13 @@ STDPDopaConnection< targetidentifierT >::process_dopa_spikes_(
   {
     // there is at least 1 dopa spike in (t0, t1]
     // propagate weight up to first dopa spike and update dopamine trace
-    // weight and eligibility c are at time t0 but dopamine trace n is at time of last dopa spike
-    double_t n0 = n_ * std::exp( ( dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t0 )
-                         / cp.tau_n_ ); // dopamine trace n at time t0
-    update_weight_( c_, n0, t0 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_, cp );
+    // weight and eligibility c are at time t0 but dopamine trace n is at time
+    // of last dopa spike
+    double_t n0 =
+      n_ * std::exp( ( dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t0 )
+             / cp.tau_n_ ); // dopamine trace n at time t0
+    update_weight_(
+      c_, n0, t0 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_, cp );
     update_dopamine_( dopa_spikes, cp );
 
     // process remaining dopa spikes in (t0, t1]
@@ -392,7 +408,8 @@ STDPDopaConnection< targetidentifierT >::process_dopa_spikes_(
       && ( dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ <= t1 ) )
     {
       // propagate weight up to next dopa spike and update dopamine trace
-      // weight and dopamine trace n are at time of last dopa spike td but eligibility c is at time
+      // weight and dopamine trace n are at time of last dopa spike td but
+      // eligibility c is at time
       // t0
       cd = c_ * std::exp( ( t0 - dopa_spikes[ dopa_spikes_idx_ ].spike_time_ )
                   / cp.tau_c_ ); // eligibility c at time of td
@@ -405,17 +422,21 @@ STDPDopaConnection< targetidentifierT >::process_dopa_spikes_(
     }
 
     // propagate weight up to t1
-    // weight and dopamine trace n are at time of last dopa spike td but eligibility c is at time t0
+    // weight and dopamine trace n are at time of last dopa spike td but
+    // eligibility c is at time t0
     cd = c_ * std::exp( ( t0 - dopa_spikes[ dopa_spikes_idx_ ].spike_time_ )
                 / cp.tau_c_ ); // eligibility c at time td
-    update_weight_( cd, n_, dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t1, cp );
+    update_weight_(
+      cd, n_, dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t1, cp );
   }
   else
   {
     // no dopamine spikes in (t0, t1]
-    // weight and eligibility c are at time t0 but dopamine trace n is at time of last dopa spike
-    double_t n0 = n_ * std::exp( ( dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t0 )
-                         / cp.tau_n_ ); // dopamine trace n at time t0
+    // weight and eligibility c are at time t0 but dopamine trace n is at time
+    // of last dopa spike
+    double_t n0 =
+      n_ * std::exp( ( dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t0 )
+             / cp.tau_n_ ); // dopamine trace n at time t0
     update_weight_( c_, n0, t0 - t1, cp );
   }
 
@@ -460,11 +481,14 @@ STDPDopaConnection< targetidentifierT >::send( Event& e,
   // get history of dopamine spikes
   const std::vector< spikecounter >& dopa_spikes = cp.vt_->deliver_spikes();
 
-  // get spike history in relevant range (t_last_update, t_spike] from post-synaptic neuron
+  // get spike history in relevant range (t_last_update, t_spike] from
+  // post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  target->get_history(
-    t_last_update_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  target->get_history( t_last_update_ - dendritic_delay,
+    t_spike - dendritic_delay,
+    &start,
+    &finish );
 
   // facilitation due to post-synaptic spikes since last update
   double_t t0 = t_last_update_;
@@ -474,7 +498,8 @@ STDPDopaConnection< targetidentifierT >::send( Event& e,
     process_dopa_spikes_( dopa_spikes, t0, start->t_ + dendritic_delay, cp );
     t0 = start->t_ + dendritic_delay;
     minus_dt = t_last_update_ - t0;
-    if ( start->t_ < t_spike ) // only depression if pre- and postsyn. spike occur at the same time
+    if ( start->t_ < t_spike ) // only depression if pre- and postsyn. spike
+                               // occur at the same time
       facilitate_( Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
     ++start;
   }
@@ -489,8 +514,10 @@ STDPDopaConnection< targetidentifierT >::send( Event& e,
   e.set_rport( get_rport() );
   e();
 
-  Kplus_ = Kplus_ * std::exp( ( t_last_update_ - t_spike ) / cp.tau_plus_ ) + 1.0;
+  Kplus_ =
+    Kplus_ * std::exp( ( t_last_update_ - t_spike ) / cp.tau_plus_ ) + 1.0;
   t_last_update_ = t_spike;
+  t_lastspike_ = t_spike;
 }
 
 template < typename targetidentifierT >
@@ -501,16 +528,20 @@ STDPDopaConnection< targetidentifierT >::trigger_update_weight( thread t,
   const STDPDopaCommonProperties& cp )
 {
   // propagate all state variables to time t_trig
-  // this does not include the depression trace K_minus, which is updated in the postsyn. neuron
+  // this does not include the depression trace K_minus, which is updated in the
+  // postsyn. neuron
 
   // purely dendritic delay
   double_t dendritic_delay = get_delay();
 
-  // get spike history in relevant range (t_last_update, t_trig] from postsyn. neuron
+  // get spike history in relevant range (t_last_update, t_trig] from postsyn.
+  // neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  get_target( t )->get_history(
-    t_last_update_ - dendritic_delay, t_trig - dendritic_delay, &start, &finish );
+  get_target( t )->get_history( t_last_update_ - dendritic_delay,
+    t_trig - dendritic_delay,
+    &start,
+    &finish );
 
   // facilitation due to postsyn. spikes since last update
   double_t t0 = t_last_update_;
@@ -524,11 +555,12 @@ STDPDopaConnection< targetidentifierT >::trigger_update_weight( thread t,
     ++start;
   }
 
-  // propagate weight, eligibility trace c, dopamine trace n and facilitation trace K_plus to time
-  // t_trig
-  // but do not increment/decrement as there are no spikes to be handled at t_trig
+  // propagate weight, eligibility trace c, dopamine trace n and facilitation
+  // trace K_plus to time t_trig but do not increment/decrement as there are no
+  // spikes to be handled at t_trig
   process_dopa_spikes_( dopa_spikes, t0, t_trig, cp );
-  n_ = n_ * std::exp( ( dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t_trig ) / cp.tau_n_ );
+  n_ = n_ * std::exp( ( dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t_trig )
+              / cp.tau_n_ );
   Kplus_ = Kplus_ * std::exp( ( t_last_update_ - t_trig ) / cp.tau_plus_ );
 
   t_last_update_ = t_trig;

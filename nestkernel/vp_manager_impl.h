@@ -65,7 +65,7 @@ nest::VPManager::get_num_virtual_processes() const
 inline bool
 nest::VPManager::is_vp_local( const index gid ) const
 {
-  return ( gid % ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() ) == get_vp() );
+  return ( static_cast< long >( gid ) % ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() ) == get_vp() );
 }
 
 inline nest::index
@@ -80,22 +80,24 @@ nest::VPManager::lid_to_gid( const index lid ) const
   return lid * ( get_num_virtual_processes() ) + get_vp();
 }
 
-inline unsigned int
+inline nest::thread
 nest::VPManager::get_num_assigned_ranks_per_thread() const
 {
   return ceil( float( kernel().mpi_manager.get_num_processes() ) / n_threads_ );
 }
 
-inline unsigned int
+inline nest::thread
 nest::VPManager::get_start_rank_per_thread( const thread tid ) const
 {
   return tid * get_num_assigned_ranks_per_thread();
 }
 
-inline unsigned int
-nest::VPManager::get_end_rank_per_thread( const thread tid, const unsigned int rank_start, const unsigned int num_assigned_ranks_per_thread ) const
+inline nest::thread
+nest::VPManager::get_end_rank_per_thread( const thread tid,
+  const thread rank_start,
+  const thread num_assigned_ranks_per_thread ) const
 {
-  unsigned int rank_end =  rank_start + num_assigned_ranks_per_thread;
+  thread rank_end =  rank_start + num_assigned_ranks_per_thread;
 
   // if we have more threads than ranks, or if ranks can not be
   // distributed evenly on threads, we need to make sure, that all

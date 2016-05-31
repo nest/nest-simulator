@@ -281,9 +281,9 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
 void
 nest::ConnectionManager::calibrate( const TimeConverter& tc )
 {
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    delay_checkers_[ t ].calibrate( tc );
+    delay_checkers_[ tid ].calibrate( tc );
   }
 }
 
@@ -1182,7 +1182,7 @@ nest::ConnectionManager::connect( ArrayDatum& conns )
       DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
       index target_gid = static_cast< size_t >( ( *cd )[ names::target ] );
       Node* target_node = kernel().node_manager.get_node( target_gid );
-      size_t thr = target_node->get_thread();
+      const thread tid = target_node->get_thread();
 
       // #ifdef _OPENMP
       // 	    size_t my_thr=omp_get_thread_num();
@@ -1206,7 +1206,7 @@ nest::ConnectionManager::connect( ArrayDatum& conns )
         }
         Node* source_node = kernel().node_manager.get_node( source_gid );
         //#pragma omp critical
-        connect_( *source_node, *target_node, source_gid, thr, syn_id, cd );
+        connect_( *source_node, *target_node, source_gid, tid, syn_id, cd );
       }
     }
   }
@@ -1782,8 +1782,8 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
   const Token& syn_model_t = params->lookup( names::synapse_model );
   const TokenArray* source_a = 0;
   const TokenArray* target_a = 0;
-  long_t synapse_label = UNLABELED_CONNECTION;
-  updateValue< long_t >( params, names::synapse_label, synapse_label );
+  long_t syn_label = UNLABELED_CONNECTION;
+  updateValue< long_t >( params, names::synapse_label, syn_label );
 
   if ( not source_t.empty() )
   {
@@ -1794,7 +1794,7 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
     target_a = dynamic_cast< TokenArray const* >( target_t.datum() );
   }
 
-  synindex syn_id = 0;
+  size_t syn_id = 0;
 
   // TODO@5g: why do we need to do this? can this be removed?
 // #ifdef _OPENMP
@@ -1816,7 +1816,7 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
       syn_id = static_cast< size_t >( synmodel );
     else
       throw UnknownModelName( synmodel_name.toString() );
-    get_connections( connectome, source_a, target_a, syn_id, synapse_label );
+    get_connections( connectome, source_a, target_a, syn_id, syn_label );
   }
   else
   {
@@ -1825,7 +1825,7 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
           ++syn_id )
     {
       ArrayDatum conn;
-      get_connections( conn, source_a, target_a, syn_id, synapse_label );
+      get_connections( conn, source_a, target_a, syn_id, syn_label );
       if ( conn.size() > 0 )
       {
         connectome.push_back( new ArrayDatum( conn ) );
@@ -1841,7 +1841,7 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
   TokenArray const* source,
   TokenArray const* target,
   synindex syn_id,
-  long_t synapse_label ) const
+  long_t syn_label ) const
 {
   if ( is_source_table_cleared() )
   {
@@ -1873,10 +1873,10 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
       for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
       {
         const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
-        connections_5g_[ tid ]->get_connection( source_gid, tid, syn_id, lcid, synapse_label, conns_in_thread );
+        connections_5g_[ tid ]->get_connection( source_gid, tid, syn_id, lcid, syn_label, conns_in_thread );
       }
 
-      target_table_devices_.get_connections( 0, 0, tid, syn_id, synapse_label, conns_in_thread );
+      target_table_devices_.get_connections( 0, 0, tid, syn_id, syn_label, conns_in_thread );
 
       if ( conns_in_thread.size() > 0 )
       {
@@ -1912,14 +1912,14 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
         for ( size_t t_id = 0; t_id < target->size(); ++t_id )
         {
           const index target_gid = target->get( t_id );
-          connections_5g_[ tid ]->get_connection( source_gid, target_gid, tid, syn_id, lcid, synapse_label, conns_in_thread );
+          connections_5g_[ tid ]->get_connection( source_gid, target_gid, tid, syn_id, lcid, syn_label, conns_in_thread );
         }
       }
 
       for ( size_t t_id = 0; t_id < target->size(); ++t_id )
       {
           const index target_gid = target->get( t_id );
-          target_table_devices_.get_connections( 0, target_gid, tid, syn_id, synapse_label, conns_in_thread );
+          target_table_devices_.get_connections( 0, target_gid, tid, syn_id, syn_label, conns_in_thread );
       }
 
       if ( conns_in_thread.size() > 0 )
@@ -1963,14 +1963,14 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
         {
           if ( target == 0 )
           {
-            connections_5g_[ tid ]->get_connection( source_gid, tid, syn_id, lcid, synapse_label, conns_in_thread );
+            connections_5g_[ tid ]->get_connection( source_gid, tid, syn_id, lcid, syn_label, conns_in_thread );
           }
           else
           {
             for ( size_t t_id = 0; t_id < target->size(); ++t_id )
             {
               const index target_gid = target->get( t_id );
-              connections_5g_[ tid ]->get_connection( source_gid, target_gid, tid, syn_id, lcid, synapse_label, conns_in_thread );
+              connections_5g_[ tid ]->get_connection( source_gid, target_gid, tid, syn_id, lcid, syn_label, conns_in_thread );
             }
           }
         }
@@ -1981,14 +1981,14 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
         const index source_gid = source->get( s_id );
         if ( target == 0 )
         {
-          target_table_devices_.get_connections( source_gid, 0, tid, syn_id, synapse_label, conns_in_thread );
+          target_table_devices_.get_connections( source_gid, 0, tid, syn_id, syn_label, conns_in_thread );
         }
         else
         {
           for ( size_t t_id = 0; t_id < target->size(); ++t_id )
           {
             const index target_gid = target->get( t_id );
-            target_table_devices_.get_connections( source_gid, target_gid, tid, syn_id, synapse_label, conns_in_thread );
+            target_table_devices_.get_connections( source_gid, target_gid, tid, syn_id, syn_label, conns_in_thread );
           }
         }
       }
@@ -2009,7 +2009,7 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
 void
 nest::ConnectionManager::get_sources( std::vector< index > targets,
   std::vector< std::vector< index > >& sources,
-  index synapse_model )
+  index syn_model )
 {
   assert( false );
   // thread thread_id;
@@ -2045,7 +2045,7 @@ nest::ConnectionManager::get_sources( std::vector< index > targets,
   //     for ( ; target_it != targets.end(); target_it++, source_it++ )
   //     {
   //       num_connections = validate_pointer( *iit )->get_num_connections(
-  //         *target_it, thread_id, synapse_model );
+  //         *target_it, thread_id, syn_model );
   //       for ( size_t c = 0; c < num_connections; c++ )
   //       {
   //         ( *source_it ).push_back( source_gid );
@@ -2059,7 +2059,7 @@ nest::ConnectionManager::get_sources( std::vector< index > targets,
 void
 nest::ConnectionManager::get_targets( std::vector< index > sources,
   std::vector< std::vector< index > >& targets,
-  index synapse_model )
+  index syn_model )
 {
   assert( false );
   // thread thread_id;
@@ -2084,7 +2084,7 @@ nest::ConnectionManager::get_targets( std::vector< index > sources,
   //     if ( ( *it ).get( *source_it ) != 0 )
   //     {
   //       validate_pointer( ( *it ).get( *source_it ) )
-  //         ->get_target_gids( ( *target_it ), thread_id, synapse_model );
+  //         ->get_target_gids( ( *target_it ), thread_id, syn_model );
   //     }
   //   }
   // }

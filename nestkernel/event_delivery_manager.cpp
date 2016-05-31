@@ -70,7 +70,7 @@ void
 EventDeliveryManager::initialize()
 {
   init_moduli();
-  const unsigned int num_threads = kernel().vp_manager.get_num_threads();
+  const thread num_threads = kernel().vp_manager.get_num_threads();
   spike_register_5g_.resize( num_threads, 0 );
   for( thread tid = 0; tid < num_threads; ++tid )
   {
@@ -657,10 +657,10 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
   std::vector< unsigned int > send_buffer_idx( assigned_ranks.size, 0 );
   std::vector< unsigned int > send_buffer_begin( assigned_ranks.size, 0 );
   std::vector< unsigned int > send_buffer_end( assigned_ranks.size, 0 );
-  for ( unsigned int rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
     // thread-local index of (global) rank
-    const unsigned int lr_idx = rank % assigned_ranks.max_size;
+    const thread lr_idx = rank % assigned_ranks.max_size;
     assert( lr_idx < assigned_ranks.size );
     send_buffer_idx[ lr_idx ] = rank * send_recv_count_spike_data_per_rank_;
     send_buffer_begin[ lr_idx ] = rank * send_recv_count_spike_data_per_rank_;
@@ -680,7 +680,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
 	assert ( not iiit->is_processed() );
 
 	// thread-local index of (global) rank of target
-	const unsigned int lr_idx = iiit->rank % assigned_ranks.max_size;
+	const thread lr_idx = iiit->rank % assigned_ranks.max_size;
 	assert( lr_idx < assigned_ranks.size );
 
 	if ( send_buffer_idx[ lr_idx ] == send_buffer_end[ lr_idx ] )
@@ -706,10 +706,10 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid )
     }
   }
 
-  for ( unsigned int rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
     // thread-local index of (global) rank
-    const unsigned int lr_idx = rank % assigned_ranks.max_size;
+    const thread lr_idx = rank % assigned_ranks.max_size;
     assert( lr_idx < assigned_ranks.size );
     if ( send_buffer_idx[ lr_idx ] > send_buffer_begin[ lr_idx ] )
     {
@@ -731,10 +731,10 @@ EventDeliveryManager::set_complete_marker_spike_data_( const thread tid )
 {
   AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
-  for ( unsigned int target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
+  for ( thread target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
   {
     // use last entry for completion marker
-    const unsigned int idx = ( target_rank + 1 ) * send_recv_count_spike_data_per_rank_ - 1;
+    const thread idx = ( target_rank + 1 ) * send_recv_count_spike_data_per_rank_ - 1;
     send_buffer_spike_data_[ idx ].set_complete_marker();
   }
 }
@@ -759,7 +759,7 @@ EventDeliveryManager::deliver_events_5g_( const thread tid )
     prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() + Time::step( lag + 1 );
   }
 
-  for ( unsigned int rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
   {
     // check last entry for completed marker
     if ( not recv_buffer_spike_data_[ ( rank + 1 ) * send_recv_count_spike_data_per_rank_ - 1 ].is_complete_marker() )
@@ -891,10 +891,10 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const un
   std::vector< unsigned int > send_buffer_idx( assigned_ranks.size, 0 );
   std::vector< unsigned int > send_buffer_begin( assigned_ranks.size, 0 );
   std::vector< unsigned int > send_buffer_end( assigned_ranks.size, 0 );
-  for ( unsigned int rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
     // thread-local index of (global) rank
-    const unsigned int lr_idx = rank % assigned_ranks.max_size;
+    const thread lr_idx = rank % assigned_ranks.max_size;
     assert( lr_idx < assigned_ranks.size );
     send_buffer_idx[ lr_idx ] = rank * num_target_data_per_rank;
     send_buffer_begin[ lr_idx ] = rank * num_target_data_per_rank;
@@ -932,9 +932,9 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const un
     else  // all connections have been processed
     {
       // mark end of valid data for each rank
-      for ( unsigned int target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
+      for ( thread target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
       {
-        const unsigned int lr_idx = target_rank % assigned_ranks.max_size;
+        const thread lr_idx = target_rank % assigned_ranks.max_size;
         if ( send_buffer_idx[ lr_idx ] > send_buffer_begin[ lr_idx ] )
         {
           send_buffer[ send_buffer_idx[ lr_idx ] - 1 ].set_end_marker();
@@ -954,9 +954,9 @@ nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid, 
 {
   AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
-  for ( unsigned int target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
+  for ( thread target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
   {
-    const unsigned int idx = ( target_rank + 1 ) * num_target_data_per_rank - 1;
+    const thread idx = ( target_rank + 1 ) * num_target_data_per_rank - 1;
     send_buffer[ idx ].set_complete_marker();
   }
 }
@@ -966,7 +966,7 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid, c
 {
   bool are_others_completed = true;
 
-  for ( unsigned int rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
   {
     // check last entry for completed marker
     if ( not recv_buffer[ ( rank + 1 ) * num_target_data_per_rank - 1 ].is_complete_marker() )

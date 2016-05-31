@@ -592,7 +592,7 @@ nest::SimulationManager::update_()
 // parallel section begins
 #pragma omp parallel
   {
-    const int thrd = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
     Stopwatch sw_total;
     Stopwatch sw_update;
     Stopwatch sw_gather_spike_data;
@@ -609,8 +609,8 @@ nest::SimulationManager::update_()
           == 0 )
       {
         for ( std::vector< Node* >::const_iterator i =
-                kernel().node_manager.get_nodes_on_thread( thrd ).begin();
-              i != kernel().node_manager.get_nodes_on_thread( thrd ).end();
+                kernel().node_manager.get_nodes_on_thread( tid ).begin();
+              i != kernel().node_manager.get_nodes_on_thread( tid ).end();
               ++i )
         {
           ( *i )->update_synaptic_elements(
@@ -623,8 +623,8 @@ nest::SimulationManager::update_()
         }
         // Remove 10% of the vacant elements
         for ( std::vector< Node* >::const_iterator i =
-                kernel().node_manager.get_nodes_on_thread( thrd ).begin();
-              i != kernel().node_manager.get_nodes_on_thread( thrd ).end();
+                kernel().node_manager.get_nodes_on_thread( tid ).begin();
+              i != kernel().node_manager.get_nodes_on_thread( tid ).end();
               ++i )
         {
           ( *i )->decay_synaptic_elements_vacant();
@@ -634,7 +634,7 @@ nest::SimulationManager::update_()
 
       if ( from_step_ == 0 ) // deliver only at beginning of slice
       {
-        // kernel().event_delivery_manager.deliver_events( thrd );
+        // kernel().event_delivery_manager.deliver_events( tid );
 #ifdef HAVE_MUSIC
 // advance the time of music by one step (min_delay * h) must
 // be done after deliver_events_() since it calls
@@ -682,7 +682,7 @@ nest::SimulationManager::update_()
 
         bool max_iterations_reached = true;
         const std::vector< Node* >& thread_local_wfr_nodes =
-          kernel().node_manager.get_wfr_nodes_on_thread( thrd );
+          kernel().node_manager.get_wfr_nodes_on_thread( tid );
         for ( long_t n = 0; n < wfr_max_iterations_; ++n )
         {
           bool done_p = true;
@@ -720,7 +720,7 @@ nest::SimulationManager::update_()
 
           // deliver SecondaryEvents generated during wfr_update
           // returns the done value over all threads
-          done_p = kernel().event_delivery_manager.deliver_events( thrd );
+          done_p = kernel().event_delivery_manager.deliver_events( tid );
 
           if ( done_p )
           {
@@ -747,7 +747,7 @@ nest::SimulationManager::update_()
 
       sw_update.start();
       const std::vector< Node* >& thread_local_nodes =
-        kernel().node_manager.get_nodes_on_thread( thrd );
+        kernel().node_manager.get_nodes_on_thread( tid );
       for (
         std::vector< Node* >::const_iterator node = thread_local_nodes.begin();
         node != thread_local_nodes.end();
@@ -763,7 +763,7 @@ nest::SimulationManager::update_()
         catch ( std::exception& e )
         {
           // so throw the exception after parallel region
-          exceptions_raised.at( thrd ) = lockPTR< WrappedThreadException >(
+          exceptions_raised.at( tid ) = lockPTR< WrappedThreadException >(
             new WrappedThreadException( e ) );
           terminate_ = true;
         }
@@ -778,7 +778,7 @@ nest::SimulationManager::update_()
            == kernel().connection_manager.get_min_delay() ) // gather only at end of slice
       {
         // kernel().event_delivery_manager.gather_events( true );
-        kernel().event_delivery_manager.gather_spike_data( thrd );
+        kernel().event_delivery_manager.gather_spike_data( tid );
       }
       sw_gather_spike_data.stop();
 
@@ -813,8 +813,8 @@ nest::SimulationManager::update_()
     // TODO@5g: implement SP
     // End of the slice, we update the number of synaptic element
     // for ( std::vector< Node* >::const_iterator i =
-    //         kernel().node_manager.get_nodes_on_thread( thrd ).begin();
-    //       i != kernel().node_manager.get_nodes_on_thread( thrd ).end();
+    //         kernel().node_manager.get_nodes_on_thread( tid ).begin();
+    //       i != kernel().node_manager.get_nodes_on_thread( tid ).end();
     //       ++i )
     // {
     //   ( *i )->update_synaptic_elements(
@@ -834,9 +834,9 @@ nest::SimulationManager::update_()
   } // end of #pragma parallel omp
 
   // check if any exceptions have been raised
-  for ( index thrd = 0; thrd < kernel().vp_manager.get_num_threads(); ++thrd )
-    if ( exceptions_raised.at( thrd ).valid() )
-      throw WrappedThreadException( *( exceptions_raised.at( thrd ) ) );
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+    if ( exceptions_raised.at( tid ).valid() )
+      throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
 }
 
 void

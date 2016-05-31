@@ -122,8 +122,9 @@ struct TargetData
 
 inline
 TargetData::TargetData()
-  : lid( 0 )
-  , target( Target() )
+  : target( Target() )
+  , lid( 0 )
+  , tid( 0 )
   , marker( 0 )
 {
 }

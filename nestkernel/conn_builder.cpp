@@ -189,7 +189,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   // once to avoid re-creating the object over and over again.
   if ( synapse_params_.size() > 0 )
   {
-    for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
     {
       param_dicts_.push_back( new Dictionary() );
 
@@ -200,9 +200,9 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
         if ( it->first == names::receptor_type
           || it->first == names::music_channel
           || it->first == names::synapse_label )
-          ( *param_dicts_[ t ] )[ it->first ] = Token( new IntegerDatum( 0 ) );
+          ( *param_dicts_[ tid ] )[ it->first ] = Token( new IntegerDatum( 0 ) );
         else
-          ( *param_dicts_[ t ] )[ it->first ] = Token( new DoubleDatum( 0.0 ) );
+          ( *param_dicts_[ tid ] )[ it->first ] = Token( new DoubleDatum( 0.0 ) );
       }
     }
   }
@@ -345,7 +345,7 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name,
 int
 nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
   index tgid,
-  const int tid,
+  const thread tid,
   int update )
 {
 
@@ -427,9 +427,9 @@ nest::ConnBuilder::connect()
   }
 
   // check if any exceptions have been raised
-  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
-    if ( exceptions_raised_.at( thr ).valid() )
-      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+    if ( exceptions_raised_.at( tid ).valid() )
+      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
 }
 
 /**
@@ -448,9 +448,9 @@ nest::ConnBuilder::disconnect()
   }
 
   // check if any exceptions have been raised
-  for ( index thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
-    if ( exceptions_raised_.at( thr ).valid() )
-      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+    if ( exceptions_raised_.at( tid ).valid() )
+      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
 }
 
 inline void
@@ -480,7 +480,7 @@ nest::ConnBuilder::single_connect_( index sgid,
   }
   else
   {
-    assert( kernel().vp_manager.get_num_threads() == param_dicts_.size() );
+    assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_.size() ) );
 
     for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
           it != synapse_params_.end();
@@ -600,7 +600,7 @@ nest::OneToOneBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -667,7 +667,7 @@ nest::OneToOneBuilder::disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -729,7 +729,7 @@ nest::OneToOneBuilder::sp_connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -788,7 +788,7 @@ nest::OneToOneBuilder::sp_disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -824,7 +824,7 @@ nest::AllToAllBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -894,7 +894,7 @@ nest::AllToAllBuilder::sp_connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
     try
 
     {
@@ -949,7 +949,7 @@ nest::AllToAllBuilder::disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1010,7 +1010,7 @@ nest::AllToAllBuilder::sp_disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1070,7 +1070,7 @@ nest::FixedInDegreeBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1177,7 +1177,7 @@ nest::FixedOutDegreeBuilder::connect_()
 #pragma omp parallel
     {
       // get thread id
-      const int tid = kernel().vp_manager.get_thread_id();
+      const thread tid = kernel().vp_manager.get_thread_id();
 
       try
       {
@@ -1314,7 +1314,7 @@ nest::FixedTotalNumberBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1378,7 +1378,7 @@ nest::BernoulliBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1468,9 +1468,9 @@ nest::SPBuilder::sp_connect( GIDCollection sources, GIDCollection targets )
   connect_( sources, targets );
 
   // check if any exceptions have been raised
-  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
-    if ( exceptions_raised_.at( thr ).valid() )
-      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+    if ( exceptions_raised_.at( tid ).valid() )
+      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
 }
 
 void
@@ -1502,7 +1502,7 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
 #pragma omp parallel
   {
     // get thread id
-    const int tid = kernel().vp_manager.get_thread_id();
+    const thread tid = kernel().vp_manager.get_thread_id();
 
     try
     {

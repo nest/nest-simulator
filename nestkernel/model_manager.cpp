@@ -510,7 +510,7 @@ ModelManager::memory_info() const
 void
 ModelManager::create_secondary_events_prototypes()
 {
-  if ( secondary_events_prototypes_.size()
+  if ( static_cast< thread >( secondary_events_prototypes_.size() )
     < kernel().vp_manager.get_num_threads() )
   {
     delete_secondary_events_prototypes();

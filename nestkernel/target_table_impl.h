@@ -34,7 +34,7 @@ namespace nest
 inline void
 TargetTable::add_target( thread tid, const TargetData& target_data )
 {
-  assert( tid < targets_.size() );
+  assert( tid < static_cast< thread >( targets_.size() ) );
   assert( target_data.lid < targets_[ tid ]->size() );
   (*targets_[ tid ])[ target_data.lid ].push_back( target_data.target );
 }
@@ -63,7 +63,7 @@ TargetTable::get_next_spike_data( const thread tid, const thread current_tid, co
       // of the MPI buffer; if not, we continue with the loop
       if ( rank_start <= current_target.rank && current_target.rank < rank_end )
       {
-        if ( current_target.processed == (*target_processed_flag_[ current_tid ])[ current_lid ] )
+        if ( static_cast< bool >( current_target.processed ) == (*target_processed_flag_[ current_tid ])[ current_lid ] )
         {
           // looks like we've processed this already, let's
           // continue

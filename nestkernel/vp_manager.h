@@ -43,10 +43,10 @@ namespace nest
 // TODO@5g: change types into thread
 struct AssignedRanks
 {
-  unsigned int begin;
-  unsigned int end;
-  unsigned int size;
-  unsigned int max_size;
+  thread begin;
+  thread end;
+  thread size;
+  thread max_size;
 };
 
 class VPManager : public ManagerInterface
@@ -147,10 +147,12 @@ public:
    * Returns the number of processes that are taken care of by a single thread
    * while processing MPI buffers in a multithreaded environment
    */
-  unsigned int get_num_assigned_ranks_per_thread() const;
+  thread get_num_assigned_ranks_per_thread() const;
 
-  unsigned int get_start_rank_per_thread( const thread tid ) const;
-  unsigned int get_end_rank_per_thread( const thread tid, const unsigned int rank_start, const unsigned int num_assigned_ranks_per_thread ) const;
+  thread get_start_rank_per_thread( const thread tid ) const;
+  thread get_end_rank_per_thread( const thread tid,
+    const thread rank_start,
+    const thread num_assigned_ranks_per_thread ) const;
 
   /**
    * Returns assigned ranks per thread to fill MPI buffers. thread tid
@@ -162,7 +164,7 @@ public:
 
 private:
   const bool force_singlethreading_;
-  index n_threads_; //!< Number of threads per process.
+  thread n_threads_; //!< Number of threads per process.
 };
 }
 

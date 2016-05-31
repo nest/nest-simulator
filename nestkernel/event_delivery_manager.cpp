@@ -70,6 +70,16 @@ void
 EventDeliveryManager::initialize()
 {
   init_moduli();
+  const unsigned int num_threads = kernel().vp_manager.get_num_threads();
+  spike_register_5g_.resize( num_threads, 0 );
+  for( thread tid = 0; tid < num_threads; ++tid )
+  {
+    if ( spike_register_5g_[ tid ] != 0 )
+    {
+      delete( spike_register_5g_[ tid ] );
+    }
+    spike_register_5g_[ tid ] = new std::vector< std::vector< std::vector< Target > > >( num_threads, std::vector< std::vector< Target > >( kernel().connection_manager.get_min_delay(), std::vector< Target >( 0 ) ) );
+  }
 }
 
 void
@@ -85,6 +95,7 @@ EventDeliveryManager::finalize()
   {
     delete (*it);
   };
+  spike_register_5g_.clear();
 }
 
 void
@@ -110,12 +121,14 @@ EventDeliveryManager::configure_spike_buffers()
 {
   assert( kernel().connection_manager.get_min_delay() != 0 );
 
-  const unsigned int num_threads = kernel().vp_manager.get_num_threads();
-  spike_register_5g_.resize( num_threads, 0 );
-  for( thread tid = 0; tid < num_threads; ++tid )
+  for( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    assert( spike_register_5g_[ tid ] == 0 );
-    spike_register_5g_[ tid ] = new std::vector< std::vector< std::vector< Target > > >( num_threads, std::vector< std::vector< Target > >( kernel().connection_manager.get_min_delay(), std::vector< Target >( 0 ) ) );
+    reset_spike_register_5g_( tid );
+    for ( std::vector< std::vector< std::vector< Target > > >::iterator it = (*spike_register_5g_[ tid ]).begin();
+          it != (*spike_register_5g_[ tid ]).end(); ++it )
+    {
+          it->resize( kernel().connection_manager.get_min_delay(), std::vector< Target >( 0 ) );
+    }
   }
 
   send_buffer_spike_data_.resize( mpi_buffer_size_spike_data );

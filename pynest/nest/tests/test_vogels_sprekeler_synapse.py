@@ -113,7 +113,10 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
                                        "Kplus should be zero")
 
     def test_preVarsIncreaseWithPreSpike(self):
-        """Check that pre-synaptic variable, Kplus increase after each pre-synaptic spike."""
+        """
+        Check that pre-synaptic variable, Kplus increase after each
+        pre-synaptic spike.
+        """
         self.generateSpikes(self.pre_neuron, [2.0])
 
         Kplus = self.status("Kplus")
@@ -123,7 +126,10 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
                                        "Kplus should have increased by 1")
 
     def test_preVarsDecayAfterPreSpike(self):
-        """Check that pre-synaptic variables Kplus decay after each pre-synaptic spike."""
+        """
+        Check that pre-synaptic variables Kplus decay after each
+        pre-synaptic spike.
+        """
         self.generateSpikes(self.pre_neuron, [2.0])
         self.generateSpikes(self.pre_neuron,
                             [2.0 + self.decay_duration])  # trigger computation
@@ -136,13 +142,16 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
                                        "Kplus should have decay")
 
     def test_preVarsDecayAfterPostSpike(self):
-        """Check that pre-synaptic variables Kplus decay after each post-synaptic spike."""
+        """
+        Check that pre-synaptic variables Kplus decay after each post-synaptic
+        spike.
+        """
         self.generateSpikes(self.pre_neuron, [2.0])
         self.generateSpikes(self.post_neuron, [3.0, 4.0])
         self.generateSpikes(self.pre_neuron,
                             [2.0 + self.decay_duration])  # trigger computation
 
-        Kplus  = self.decay(self.decay_duration, 1.0)
+        Kplus = self.decay(self.decay_duration, 1.0)
         Kplus += 1.0
 
         nest.Simulate(20.0)
@@ -198,7 +207,8 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
     def test_maxWeightStaturatesWeight(self):
         """Check that setting maximum weight property keep weight limited."""
         limited_weight = self.status("weight") + 1e-10
-        conn = nest.GetConnections(target=self.post_neuron, source=self.pre_neuron)
+        conn = nest.GetConnections(target=self.post_neuron,
+                                   source=self.pre_neuron)
         # disable depression to make it get to max weight
         # increase eta to cause enough facilitation
         nest.SetStatus(conn, "Wmax", limited_weight)

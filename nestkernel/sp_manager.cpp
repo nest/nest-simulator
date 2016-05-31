@@ -704,10 +704,10 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
   std::vector< int_t >::iterator deleted_n_it = se_deleted_n.begin();
   std::vector< Node* >::const_iterator node_it;
 
-  for ( size_t thrd = 0; thrd < kernel().vp_manager.get_num_threads(); ++thrd )
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    for ( node_it = kernel().node_manager.get_nodes_on_thread( thrd ).begin();
-          node_it < kernel().node_manager.get_nodes_on_thread( thrd ).end();
+    for ( node_it = kernel().node_manager.get_nodes_on_thread( tid ).begin();
+          node_it < kernel().node_manager.get_nodes_on_thread( tid ).end();
           node_it++ )
     {
       gid = ( *node_it )->get_gid();

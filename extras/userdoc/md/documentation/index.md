@@ -79,11 +79,11 @@ memory or to file.
 NEST is extensible and new models for neurons, synapses, and devices can be
 added.
 
-To get started with NEST, please see the [Documentation Page for Tutorials](documentation.md "Documentation").
+To get started with NEST, please see the [Documentation Page for Tutorials](documentation.md).
 
 ## Why should I use NEST
 
-To learn more about the capabilities of NEST, see the [Feature summary](features.md "Features").
+To learn more about the capabilities of NEST, see the [Feature summary](features.md).
 
 1.  NEST provides over 50 neuron models many of which have been published.
     Choose from simple integrate-and-fire neurons with current or conductance
@@ -113,7 +113,7 @@ To learn more about the capabilities of NEST, see the [Feature summary](features
 8.  NEST has minimal dependencies. All it really needs is a C++ compiler.
     Everything else is optional.
 
-9.  NEST developers are using agile [continuous integration](continuous-integration.md "Continuous Integration")-based
+9.  NEST developers are using agile [continuous integration](continuous-integration.md)-based
     workflows in order to maintain high code quality standards for correct and
     reproducible simulations.
 
@@ -128,7 +128,7 @@ To learn more about the capabilities of NEST, see the [Feature summary](features
 If you have used NEST for your work either directly or via PyNN, please cite it
 in your publications as:
 
-Gewaltig M-O & Diesmann M (2007) [NEST (Neural Simulation Tool)](http://www.scholarpedia.org/article/NEST_(Neural_Simulation_Tool) "")
+Gewaltig M-O & Diesmann M (2007) [NEST (Neural Simulation Tool)](http://www.scholarpedia.org/article/NEST_(Neural_Simulation_Tool))
 *Scholarpedia* 2(4):1430.
 
 Here is suitable BibTeX entry:
@@ -143,10 +143,10 @@ Here is suitable BibTeX entry:
       number = {4}
     }
 
-If you tell us about your publications that used [NEST](download.md "Download"),
-we will add it to our [publication list](publications.md "Publications"),
+If you tell us about your publications that used [NEST](download.md),
+we will add it to our [publication list](publications.md),
 thus making it visible to potential readers. Send us your reference or even a
-reprint, using the mail address given on the [contact page](impressum.md "Impressum").
+reprint, using the mail address given on the [contact page](impressum.md).
 
 ## NEST logo for your poster or presentation
 

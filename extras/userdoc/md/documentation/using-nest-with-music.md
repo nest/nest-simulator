@@ -135,7 +135,7 @@ which contains the messages and the corresponding time stamps. The data file
     0.7     !
 
 Please note that MUSIC uses a default unit of seconds for the specification of
-times, while NEST uses miliseconds. The example uses the [PyNEST](introduction-to-pynest.md "PyNEST")
+times, while NEST uses miliseconds. The example uses the [PyNEST](introduction-to-pynest.md)
 syntax instead of SLI for the NEST part. The script that sets up the receiving
 side (`msgtest.py`) of the exampe is shown in the following listing:
 
@@ -228,7 +228,7 @@ the following listing:
 
     from.contdata -> to.contdata [10]
 
-The receiving side is again implemented using a [PyNEST](introduction-to-pynest.md "PyNEST")
+The receiving side is again implemented using a [PyNEST](introduction-to-pynest.md)
 script (`conttest.py`):
 
     #!/usr/bin/python

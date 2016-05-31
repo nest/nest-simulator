@@ -1,15 +1,15 @@
 # Download & Releases
 
-NEST is available under the [GNU General Public License 2 or later](license.md "License").
+NEST is available under the [GNU General Public License 2 or later](license.md).
 This means that you can
 
 -   use NEST for your research,
 -   modify and improve NEST according to your needs,
 -   distribute NEST to others under the same license.
 
-To find out more about NEST, see the [list of features](features.md "Features")
-and the [user documentation](documentation.md "Documentation").
-For details about how to contribute to the development of NEST, see the [developer space](http://nest.github.io/nest-simulator "Development").
+To find out more about NEST, see the [list of features](features.md)
+and the [user documentation](documentation.md).
+For details about how to contribute to the development of NEST, see the [developer space](http://nest.github.io/nest-simulator).
 
 ## Citing NEST
 
@@ -21,7 +21,7 @@ The full citation is available in different formats on
 [Zenodo](http://dx.doi.org/10.5281/zenodo.44222).
 
 For all other versions below NEST v2.8.0 use: Gewaltig M-O & Diesmann M (2007)
-[NEST (Neural Simulation Tool)](http://www.scholarpedia.org/article/NEST_(Neural_Simulation_Tool) "")
+[NEST (Neural Simulation Tool)](http://www.scholarpedia.org/article/NEST_(Neural_Simulation_Tool))
 *Scholarpedia* 2(4):1430.
 
 Here is a suitable BibTeX entry:

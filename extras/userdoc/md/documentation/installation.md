@@ -10,7 +10,7 @@ INSTALL in the top source directory.
 
 Following are the basic steps to compile and install NEST from source code:
 
-1.  [Download NEST](download.md "Download")
+1.  [Download NEST](download.md)
 
 2.  Unpack the tarball: `tar -xzvf nest-x.y.z.tar.gz`
 
@@ -25,11 +25,11 @@ Following are the basic steps to compile and install NEST from source code:
 
 7.  Install by running `make install`
 
-8.  See the [Getting started](getting-started.md "Getting started") pages to
+8.  See the [Getting started](getting-started.md) pages to
     find out how to get going with NEST
 
 Please see the sections on [minimal](installation.md#minimal-configuration) and
-[standard configuration](installation.md#standard-configuration "Installation")
+[standard configuration](installation.md#standard-configuration)
 below for details.
 
 ## What gets installed where
@@ -73,7 +73,7 @@ search paths. For example, if you are using bash:
 NEST needs a few third party tools and libraries to work. On many operating
 systems, these can be installed using a *package manager* like `apt`, `port` or
 `fink`
-(see [Standard configuration](installation.md#standard-configuration "Software:Installation")).
+(see [Standard configuration](installation.md#standard-configuration)).
 
 If you are building NEST from the SVN sources, you need the GNU autotools
 installed on your system to bootstrap the build system. These consist of
@@ -172,7 +172,7 @@ computations obey the IEEE754 standard for floating point numerics.
 
 ## Configuration options
 
-If you need special features, like e.g. support for [distributed computing](parallel-computing.md "Parallel Computing"),
+If you need special features, like e.g. support for [distributed computing](parallel-computing.md),
 you can add command line switches to the call to configure. `./configure --help`
 will show you all available options. For more information on the installation of
 NEST, please see the file INSTALL that is included in the distribution archive.
@@ -463,14 +463,14 @@ This is the easiest way to use NEST without having to install anything on your
 computer. The LiveCD can be used in almost any computer and boots directly into
 a complete Ubuntu system, which already has NEST, Python, and some analysis
 tools installed.
-The CD image is available on the [download page](download.md "Download").
+The CD image is available on the [download page](download.md).
 
 ### Virtual Machines
 
 A virtual machine is a software that lets you use Linux in parallel to Windows.
 We recommend to use VirtualBox, which is free software and can be downloaded
 from <http://www.virtualbox.org/>. Another popular virtual machine software is <http://www.vmware.com/>.
-The easiest way to get started is to download the NEST LiveCD from the [download page](download.md "Download")
+The easiest way to get started is to download the NEST LiveCD from the [download page](download.md)
 and either just boot the CD image directly or install it into a virtual hard
 disk.
 

@@ -2,8 +2,8 @@
 
 ## General
 
--   Python based user interface ([PyNEST](introduction-to-pynest.md ))
--   Built-in simulation language interpreter ([SLI](an-introduction-to-sli.md "An Introduction to SLI"))
+-   Python based user interface ([PyNEST](introduction-to-pynest.md))
+-   Built-in simulation language interpreter ([SLI](an-introduction-to-sli.md))
 -   Multi-threading to use multi-processor machines efficiently
 -   MPI-parallelism to use computer clusters and super computers
 
@@ -33,11 +33,11 @@
 
 ## Network models
 
--   Topology Module for creating complex networks ([Topology Module User Manual (PDF)](http://www.nest-simulator.org/wp-content/uploads/2014/12/NESTTopologyUserManual.pdf "NESTTopologyUserManual.pdf"))
+-   Topology Module for creating complex networks ([Topology Module User Manual (PDF)](http://www.nest-simulator.org/wp-content/uploads/2014/12/NESTTopologyUserManual.pdf))
 
 ## Interoperability
 
--   Interface to the Multi Simulator Coordinator [MUSIC](using-nest-with-music.md "Using NEST with MUSIC")
+-   Interface to the Multi Simulator Coordinator [MUSIC](using-nest-with-music.md)
 -   Backend for the simulator-independent modeling tool [PyNN](http://neuralensemble.org/trac/PyNN/)
 
 ## Accuracy
@@ -50,7 +50,7 @@
 -   By default spikes are restricted to the grid spanned by the computation time
     step
 
--   For some neuron models [spike interaction in continuous time](simulations-with-precise-spike-times.md "spike interaction in continuous time")
+-   For some neuron models [spike interaction in continuous time](simulations-with-precise-spike-times.md)
     is available
 
 ## Verification
@@ -58,7 +58,7 @@
 -   After installation NEST can be verified by an automatic testsuite
 
 -   The testsuite is automatically run after each modification of the NEST
-    sources. You can watch the current status on our [Continuous Integration](continuous-integration.md "Continuous Integration") system.
+    sources. You can watch the current status on our [Continuous Integration](continuous-integration.md) system.
 
 ## Supported platforms
 

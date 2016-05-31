@@ -1,8 +1,8 @@
 # Getting started
 
-[Documentation](documentation.md "Documentation")
+[Documentation](documentation.md)
 This page contains the steps that you should follow right after you
-[installed NEST](installation.md "Installation"). Another good
+[installed NEST](installation.md). Another good
 starting point is the help page, which is available as command `help` in SLI and
 `nest.help()` in PyNEST
 

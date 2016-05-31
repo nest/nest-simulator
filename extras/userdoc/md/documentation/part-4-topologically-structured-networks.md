@@ -11,7 +11,7 @@ networks. When you have worked through this material you will be able to:
 -   Visualise the connectivity
 
 For more information on the usage of NEST, please visit:
-[Documentation](documentation.md) "Documentation")
+[Documentation](documentation.md))
 
 ## Incorporating structure in networks of point neurons
 
@@ -91,8 +91,8 @@ We next have to decide whether the nodes should be placed in a **grid-based** or
 of our network be regularly and evenly placed within a 2D network, or do we need
 to tell them where they should be located?".
 
-A ![Example of (A) on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.](../../img/grid.png "fig:")
-B ![Example of (A) on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.](../../img/free.png "fig:")
+A ![Example of (A) on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.](../../img/grid.png)
+B ![Example of (A) on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.](../../img/free.png)
 
 Figure 1: Example of (A) on-grid and (B) off-grid, in which the neurons are
 positioned as grid+jitter.
@@ -184,12 +184,12 @@ constraints, as well as reading through the different examples listed there.
 Here are some representative examples for setting up a connectivity profile, and
 the following table lists the parameters that can be used.
 
-A ![Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.](../../img/sample1_circgauss.png "fig:")
+A ![Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.](../../img/sample1_circgauss.png)
 
-B ![Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.](../../img/sample2_rectanchor.png "fig:")
- C ![Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.](../../img/sample3_doughnutlinear.png "fig:")
+B ![Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.](../../img/sample2_rectanchor.png)
+ C ![Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.](../../img/sample3_doughnutlinear.png)
 
-D ![Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.](../../img/sample4_gaussweights.png "fig:")
+D ![Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.](../../img/sample4_gaussweights.png)
 
 Figure 2: Examples of connectivity for each of the connectivity dictionaries
 mentioned in the following Python code snippet.

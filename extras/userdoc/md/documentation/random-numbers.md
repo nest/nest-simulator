@@ -40,7 +40,7 @@ during network construction, as described in the sections [Changes in NEST 2.4](
 
 Random deviate generation has become significantly more powerful in NEST 2.4, to
 fully support randomization of connections parameters offered by the revised
-`Connect` function, as described in [Connection Management](connection-management.md "Connection Management")
+`Connect` function, as described in [Connection Management](connection-management.md)
 and illustrated by the [examples](random-numbers.md#examples) below.
 We have also made minor changes to make to achieve greater similarity between
 NEST, PyNN, and NumPy. For most users, these changes only add new features.
@@ -121,7 +121,7 @@ The changes are as follows:
 
 ## Basics of parallel simulation in NEST
 
-For details of parallelization in NEST, please see [Parallel Computing](parallel-computing.md "Parallel Computing")
+For details of parallelization in NEST, please see [Parallel Computing](parallel-computing.md)
 and [Plesser et al (2007)](http://dx.doi.org/10.1007/978-3-540-74466-5_71).
 Here, we just summarize a few basics.
 

@@ -75,8 +75,8 @@ prints the content of the lamda variable.
 
 This manual gives a brief overview of the SLI programming language.
 
-1.  [First Steps](first-steps.md "First Steps")
-2.  [Objects and data types](objects-and-data-types.md "Objects and data types")
-3.  [Programming in SLI](programming-in-sli.md "Programming in SLI")
-4.  [Using files and keyboard input](using-files-and-keyboard-input.md "Using files and keyboard input")
-5.  [Neural simulations](neural-simulations.md "Neural simulations")
+1.  [First Steps](first-steps.md)
+2.  [Objects and data types](objects-and-data-types.md)
+3.  [Programming in SLI](programming-in-sli.md)
+4.  [Using files and keyboard input](using-files-and-keyboard-input.md)
+5.  [Neural simulations](neural-simulations.md)

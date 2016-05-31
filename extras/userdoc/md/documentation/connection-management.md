@@ -3,9 +3,9 @@
 From NEST 2.4 onwards the old connection routines (i.e.
 `(Random)ConvergentConnect`, `(Random)DivergentConnect` and plain `Connect`) are
 replaced by one unified `Connect` function. In
-[SLI](an-introduction-to-sli.md "An Introduction to SLI")
+[SLI](an-introduction-to-sli.md)
 ,the old syntax of the function still works, while in
-[PyNEST](introduction-to-pynest.md "PyNEST"), the `Connect()`
+[PyNEST](introduction-to-pynest.md), the `Connect()`
 function has been renamed to `OneToOneConnect()`. However, simple cases, which
 are just creating one-to-one connections between two lists of nodes are still
 working with the new command without the need to change the code. Note that the
@@ -300,7 +300,7 @@ needs to be defined in two steps:
     Connect(A, B, syn_spec=syn_dict)
 
 For further information on the distributions see
-[Random numbers in NEST](random-numbers.md "Random numbers in NEST").
+[Random numbers in NEST](random-numbers.md).
 
 ## Old Connection Routines
 

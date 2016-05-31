@@ -140,7 +140,7 @@ set (for example `mu`). Here we show an example where the parameters `alpha` and
                 "delay": 1.0 }
     nest.Connect(epop1, neuron, "all_to_all", syn_dict)
 
-Available distributions and associated parameters are described in [Connection Management](connection-management.md "Connection Management"),
+Available distributions and associated parameters are described in [Connection Management](connection-management.md),
 the most common ones are:
 
 | Distributions | Keys             |

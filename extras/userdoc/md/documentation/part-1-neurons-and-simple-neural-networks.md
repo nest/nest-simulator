@@ -17,7 +17,7 @@ discusses in this primer, please visit [nest-initiative.org/](http://nest-initia
 or have a look at the source directory of your NEST installation in the
 subdirectory:
 `pynest/examples/`. For the internals of the NEST simulator you may refer
-to the [publications](publications.md "Publications").
+to the [publications](publications.md).
 
 ## PyNEST - an interface to the NEST simulator
 
@@ -170,7 +170,7 @@ form a small network.
 
 A![A Membrane potential of integrate-and-fire neuron with constant input current. B Spikes of the neuron.](../../img/vm_one_neuron.pdf.png) &
 
-B![A Membrane potential of integrate-and-fire neuron with constant input current. B Spikes of the neuron.](../../img/spikes_one_neuron.pdf.png "fig:")
+B![A Membrane potential of integrate-and-fire neuron with constant input current. B Spikes of the neuron.](../../img/spikes_one_neuron.pdf.png)
 
 Figure 2: A Membrane potential of integrate-and-fire neuron with constant input
 current. B Spikes of the neuron.
@@ -227,9 +227,9 @@ window and the fourth line actually produces the plot. You can’t see it yet
 because we have not used `pylab.show()`. Before we do that, we proceed
 analogously to obtain and display the spikes from the spike detector.
 
-A![A Membrane potential of integrate-and-fire neuron with Poisson noise as input. B Spikes of the neuron.](../../img/vm_one_neuron_noise.pdf.png "fig:") &
+A![A Membrane potential of integrate-and-fire neuron with Poisson noise as input. B Spikes of the neuron.](../../img/vm_one_neuron_noise.pdf.png) &
 
-B![A Membrane potential of integrate-and-fire neuron with Poisson noise as input. B Spikes of the neuron.](../../img/spikes_one_neuron_noise.pdf.png "fig:")
+B![A Membrane potential of integrate-and-fire neuron with Poisson noise as input. B Spikes of the neuron.](../../img/spikes_one_neuron_noise.pdf.png)
 
 Figure 3: A Membrane potential of integrate-and-fire neuron with Poisson noise
 as input. B Spikes of the neuron.
@@ -406,7 +406,7 @@ given, `params` has to be the name of a property, which is set to `val` on the
 ### Connections
 
 This is an abbreviated version of the documentation for the `Connect` function,
-please see NEST’s online help for the full version and [Connection Management](connection-management.md "Connection Management")
+please see NEST’s online help for the full version and [Connection Management](connection-management.md)
 for an introduction and worked examples.
 
 `Connect(pre, post, conn_spec=None, syn_spec=None, model=None)`:  

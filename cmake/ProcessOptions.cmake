@@ -89,6 +89,13 @@ if ( with-defines )
   endforeach ()
 endif ()
 
+# add colored output from gcc
+if ( with-color )
+  if ( with-color STREQUAL "ON" )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fdiagnostics-color=auto" )
+  endif ()
+endif ()
+
 # is set in the Fujitsu-Sparc64.cmake file
 if ( k-computer )
   set( IS_K ON )

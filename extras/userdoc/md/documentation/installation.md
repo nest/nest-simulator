@@ -198,6 +198,27 @@ implementation that should work with [OpenMPI](http://www.openmpi.org/) library.
 
 ## Mac OS X
 
+The easiest way to install NEST on a Mac is to install it via the Homebrew
+package manager:
+
+1.  To install homebrew, follow the instructions here: <http://brew.sh/>
+
+2.  Then, in a terminal
+
+    1.  Add the homebrew/science tap: execute 'brew tap homebrew/science'
+
+    2.  For information on what options NEST has and what will be installed,
+        execute 'brew info nest'
+
+    3.  To install nest, execute 'brew install nest'
+
+Options have to be appended, e.g. to install NEST with PyNEST execute
+'brew install nest --with-python'.
+
+#Sorry, the following instructions are a little bit outdated!#
+A more detailed up-to-date instruction for installation on OSX will
+follow soon.
+
 ### Installation on OSX 10.9 Mavericks
 
 The clang compiler that ships with OSX 10.9 does not support OpenMP threads.
@@ -282,6 +303,8 @@ need to trick MacPorts into installing OpenMPI 1.6.4. Proceed as follows:
         make installcheck
 
 ### Installation for Older OSX Versions
+
+#Outdated#
 
 Before you can build NEST under Mac OS X, you need to install Xcode from the
 Apple Developer tools installation DVD that came with your Mac (the packages are

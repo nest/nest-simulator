@@ -94,7 +94,9 @@
 #
 
 # Based on the BlueGeneQ-base platform file
-set( CMAKE_SYSTEM_NAME BlueGeneQ_Base CACHE STRING "Cross-compiling for BlueGene/Q" FORCE )
+set( CMAKE_SYSTEM_NAME Linux CACHE STRING "Cross-compiling for BlueGene/Q" FORCE )
+set( CMAKE_SYSTEM_PROCESSOR ppc64 )
+set( TRIPLET_VENDOR ibm )
 
 # Set enable-bluegene for main CMakeList.txt
 set( enable-bluegene "Q" CACHE STRING "Configure for BlueGene." FORCE )

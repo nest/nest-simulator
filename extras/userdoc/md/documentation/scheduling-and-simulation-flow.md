@@ -1,15 +1,17 @@
-Scheduling and simulation flow
-==============================
+# Scheduling and simulation flow
 
-Introduction
-------------
+## Introduction
 
-To drive the simulation in time, neurons and devices (*nodes*) are updated in a
+To drive the simulation, neurons and devices (*nodes*) are updated in a
 time-driven fashion by calling a member function on each of them in a regular
 interval. The spacing of the grid is called the *simulation resolution* (default
 0.1ms) and can be set using `SetKernelStatus`:
 
     SetKernelStatus("resolution", 0.1)
+
+Even though a neuron model can use smaller time steps internally, the membrane
+potential will only be visible to a `multimeter` on the outside at time points
+that are multiples of the simulation resolution.
 
 In contrast to the update of nodes, an event-driven approach is used for the
 synapses, meaning that they are only updated when an event is transmitted
@@ -19,12 +21,12 @@ NEST uses a [hybrid parallelization strategy](../parallel_computing/index.html).
 The following figure shows the basic loop that is run upon a call to `Simulate`:
 
 ![Simulation Loop](../../img/simulation_loop-241x300.png)
+
 The simulation loop. Light gray boxes denote thread parallel parts, dark gray
 boxes denote MPI parallel parts. U(S<sub>t</sub>) is the update operator that
 propagates the internal state of a neuron or device.
 
-Simulation resolution and update interval
------------------------------------------
+## Simulation resolution and update interval
 
 Each connection in NEST has it's own specific *delay* that defines the time it
 takes until an event reaches the target node. We define the minimum delay
@@ -34,6 +36,7 @@ influence another node during at least a time of *d<sub>min</sub>*, i.e. the
 elements are effectively decoupled for this interval.
 
 ![Definitions of the minimimum delay and the simulation resolution.](../../img/time_definitions-300x61.png)
+
 Definitions of minimum delay (d<sub>min</sub>) and simulation resolution (h).
 
 Two major optimizations in NEST are built on this decoupling:
@@ -77,9 +80,19 @@ wide without need leads to decreased performance due to more update calls and
 communication cycles (small *d<sub>min</sub>*), or increased memory consumption
 of NEST (large *d<sub>max</sub>*).
 
-Related topics
---------------
+## Spike generation and precision
 
-Please see the [FAQ on precise spike time neurons](../qa-precise-spike-times/index.html)
-for details about neuron update in continuous time and the [documentation on connection management](../connection_management/index.html)
+A neuron fires a spike when the membrane potential is above threshold at the end of an
+update interval (i.e., a multiple of the simulation resolution). For most models, the
+membrane potential is then reset to some fixed value and clamped to that value during
+the refractory time. This means that the last membrane potential value at the last time
+step before the spike can vary, while the potential right after the step will usually
+be the reset potential (some models may deviate from this). This also means that the
+membrane potential recording will never show values above the threshold. The time of
+the spike is always the time at *the end of the interval* during which the threshold was
+crossed.
+
+NEST also has a some models that determine the precise time of the threshold crossing
+during the interval. Please see the documentation on [precise spike time neurons](simulations-with-precise-spike-times/)
+for details about neuron update in continuous time and the [documentation on connection management](connection_management/)
 for how to set the delay when creating synapses.

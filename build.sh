@@ -111,6 +111,16 @@ else
 fi
 format_error_files=""
 
+# Ignore those PEP8 rules
+PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
+
+# In example dirs, also ignore incorrectly placed imports
+PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
+
+# regular expression of directory patterns on which to apply
+# PEP8_IGNORES_EXAMPLES
+EXAMPLE_DIRS='examples|user_manual_scripts'
+
 for f in $file_names; do
   if [ ! -f "$f" ]; then
     echo "$f : Is not a file or does not exist anymore."
@@ -148,8 +158,23 @@ for f in $file_names; do
       fi
 
       ;;
+    *.py )
+      echo "Check PEP8 on file $f:"
+
+      if [[ $f =~ $EXAMPLE_DIRS ]]; then
+        IGNORES=$PEP8_IGNORES_EXAMPLES
+      else
+        IGNORES=$PEP8_IGNORES
+      fi
+
+      if ! pep8_result=`pep8 --first --ignore=$PEP8_IGNORES $f` ; then
+        echo "$pep8_result"
+
+        format_error_files="$format_error_files $f"
+      fi
+      ;;
     *)
-      echo "$f : not a C/CPP file. Do not do static analysis / formatting checking."
+      echo "$f : not a C/CPP/PY file. Do not do static analysis / formatting checking."
       continue
   esac
 done
@@ -168,11 +193,11 @@ cmake \
   $CONFIGURE_GSL \
   ..
 
-make
+make VERBOSE=1
 make install
 make installcheck
 
-if [ "$format_error_files" != "" ]; then
+if [ "x$format_error_files" != "x" ]; then
   echo "There are files with a formatting error: $format_error_files ."
   exit 42
 fi

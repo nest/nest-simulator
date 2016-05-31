@@ -105,8 +105,8 @@ mynest::MyModule::commandstring( void ) const
                               pattern
 
    Synopsis:
-   [sources] source_step [targets] target_step synmod StepPatternConnect ->
-                                                                   n_connections
+   [sources] source_step [targets] target_step synmod StepPatternConnect
+       -> n_connections
 
    Parameters:
    [sources]     - Array containing GIDs of potential source neurons
@@ -114,7 +114,7 @@ mynest::MyModule::commandstring( void ) const
    [targets]     - Array containing GIDs of potential target neurons
    target_step   - Make connection to every target_step'th neuron
    synmod        - The synapse model to use (literal, must be key in
-   synapsedict)
+                   synapsedict)
    n_connections - Number of connections made
 
    Description:
@@ -138,8 +138,7 @@ mynest::MyModule::commandstring( void ) const
    command as one long line):
 
    src { /s Set << /source s >> GetConnections { cva 1 get } Map dup length 0 gt
-   { cout s <- ( -> )
-   <- exch <-- endl } if ; } forall
+   { cout s <- ( -> ) <- exch <-- endl } if ; } forall
    1 -> [21 25 29]
    7 -> [21 25 29]
    13 -> [21 25 29]

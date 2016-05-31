@@ -50,7 +50,7 @@
 -   By default spikes are restricted to the grid spanned by the computation time
     step
 
--   For some neuron models [spike interaction in continuous time](simulations-with-precise-spike-times-md "spike interaction in continuous time")
+-   For some neuron models [spike interaction in continuous time](simulations-with-precise-spike-times.md "spike interaction in continuous time")
     is available
 
 ## Verification

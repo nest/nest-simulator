@@ -128,7 +128,7 @@ To learn more about the capabilities of NEST, see the [Feature summary](features
 If you have used NEST for your work either directly or via PyNN, please cite it
 in your publications as:
 
-Gewaltig M-O & Diesmann M (2007) [NEST (Neural Simulation Tool)](http://www.scholarpedia.org/article/NEST_(Neural_Simulation_Tool))
+Gewaltig M-O & Diesmann M (2007) [NEST (Neural Simulation Tool)](http://www.scholarpedia.org/article/NEST_(Neural_Simulation_Tool) "")
 *Scholarpedia* 2(4):1430.
 
 Here is suitable BibTeX entry:

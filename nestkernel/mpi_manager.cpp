@@ -90,10 +90,6 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
     int mpi_retcode, mpi_error_len;
     char* mpi_error_string;
 
-    // Set MPI error handlers
-    MPI_File_set_errhandler( MPI_ERRORS_RETURN );
-    MPI_Comm_set_errhandler( MPI_ERRORS_RETURN );
-
     mpi_retcode = MPI_Init_thread(
       argc, argv, MPI_THREAD_FUNNELED, &provided_thread_level );
     if ( mpi_retcode != 0 )

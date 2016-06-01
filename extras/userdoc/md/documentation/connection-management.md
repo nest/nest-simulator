@@ -442,7 +442,7 @@ Example new connection routine:
 If the connect functions above are not sufficient, the topology provides more
 sophisticated functions. For example, it is possible to create receptive field
 structures and much more! See
-[Topological Connections](Topology_UserManual.pdf)
+[Topological Connections](wp-content/uploads/2015/04/Topology_UserManual.pdf)
 for more information.
 
 ## Receptor Types

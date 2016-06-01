@@ -778,7 +778,7 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
    SeeAlso: DataConnect_a, DataConnect
    Author: Marc-Oliver Gewaltig
    FirstVersion: August 2011
-   SeeAlso: Connect, DivergentConnect
+   SeeAlso: Connect
 */
 void
 NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const

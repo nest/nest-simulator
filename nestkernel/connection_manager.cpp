@@ -653,6 +653,11 @@ nest::ConnectionManager::disconnect( Node& target,
 
 // -----------------------------------------------------------------------------
 
+/**
+ * Divergent connection routine for use by DataConnect.
+ *
+ * @note This method is used only by DataConnect.
+ */
 void
 nest::ConnectionManager::divergent_connect( index source_id,
   DictionaryDatum pars,
@@ -864,6 +869,8 @@ nest::ConnectionManager::divergent_connect( index source_id,
  * then to forward the
  * connect call to the connectors who can then deal with the details of the
  * connection.
+ *
+ * @note This method is used only by DataConnect.
  */
 bool
 nest::ConnectionManager::connect( ArrayDatum& conns )

@@ -692,7 +692,7 @@ def
 
      Author: Marc-Oliver Gewaltig
      FirstVersion: August 2011
-     SeeAlso: DataConnect_i_D_s, DataConnect_a, Connect, DivergentConnect
+     SeeAlso: DataConnect_i_D_s, DataConnect_a, Connect
   */ 
 
 /DataConnect trie

@@ -154,7 +154,7 @@ If you like NEST, why not show it on your poster or on your slides?
 
 <https://github.com/nest/nest-simulator/tree/master/extras/logos>
 
-![](../../../logos/nest-simulated.png)
+<img src="../../../logos/nest-simulated.png" width="480">
 
 ## Nest Models on [Open Source Brain](http://www.opensourcebrain.org/)
 

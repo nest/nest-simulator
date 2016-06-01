@@ -34,37 +34,37 @@ namespace nest
 {
 
 inline bool
-SourceTable::get_next_target_data( const thread tid, index& target_rank, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end )
+SourceTable::get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, thread& target_rank, TargetData& next_target_data )
 {
   SourceTablePosition& current_position = *current_positions_[ tid ];
   // we stay in this loop either until we can return a valid
   // TargetData object or we have reached the end of the sources table
   while ( true )
   {
-    if ( current_position.tid == sources_.size() )
+    if ( current_position.tid == static_cast< thread >( sources_.size() ) )
     {
       return false; // reached the end of the sources table
     }
     else
     {
-      if ( current_position.syn_id == sources_[ current_position.tid ]->size() )
+      if ( current_position.syn_index == sources_[ current_position.tid ]->size() )
       {
-        current_position.syn_id = 0;
+        current_position.syn_index = 0;
         ++current_position.tid;
         continue;
       }
       else
       {
-        if ( current_position.lcid == (*sources_[ current_position.tid ])[ current_position.syn_id ].size() )
+        if ( current_position.lcid == (*sources_[ current_position.tid ])[ current_position.syn_index ].size() )
         {
           current_position.lcid = 0;
-          ++current_position.syn_id;
+          ++current_position.syn_index;
           continue;
         }
         else
         {
           // the current position contains an entry, so we retrieve it
-          Source& current_source = ( *sources_[ current_position.tid ] )[ current_position.syn_id ][ current_position.lcid ];
+          Source& current_source = ( *sources_[ current_position.tid ] )[ current_position.syn_index ][ current_position.lcid ];
           if ( current_source.processed )
           {
             // looks like we've processed this already, let's
@@ -103,7 +103,7 @@ SourceTable::get_next_target_data( const thread tid, index& target_rank, TargetD
                 next_target_data.target.tid = current_position.tid;
                 next_target_data.target.rank = kernel().mpi_manager.get_rank();
                 next_target_data.target.processed = false;
-                next_target_data.target.syn_index = current_position.syn_id;
+                next_target_data.target.syn_index = current_position.syn_index;
                 next_target_data.target.lcid = current_position.lcid;
                 ++current_position.lcid;
                 return true;

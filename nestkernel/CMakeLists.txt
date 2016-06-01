@@ -82,7 +82,7 @@ set( nestkernel_sources
     node_manager.h node_manager.cpp
     logging_manager.h logging_manager.cpp
     manager_interface.h
-    target_table.h target_table.cpp target_table_impl.h
+    target_table.h target_table.cpp
     target_table_devices.h target_table_devices.cpp target_table_devices_impl.h
     source_table.h source_table.cpp source_table_impl.h
     spike_data.h spike_data.cpp

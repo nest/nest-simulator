@@ -37,21 +37,21 @@ namespace nest
 
 struct SpikeData;
 
-/** A data structure containing all information required to uniquely
- * identify a target neuron on a machine. Used in TargetTable for
- * presynaptic part of connection infrastructure.
+/**
+ * A structure containing all information required to uniquely
+ * identify a target neuron on a (remote) machine. Used in TargetTable
+ * for presynaptic part of connection infrastructure.
  */
 struct Target
 {
-  // TODO@5g: additional types in nest_types?
-  unsigned int lcid : 25;           //! local index of connection to target
-  unsigned int rank : 22;           //!< rank of target neuron
-  unsigned int tid : 10;            //!< thread of target neuron
-  unsigned int syn_index : 6;       //!< index of synapse type
-  unsigned int processed : 1;       //!< has this entry been processed
+  index lcid : 27; //!< local connection index
+  thread rank : 20; //!< rank of target neuron
+  thread tid : 10; //!< thread index
+  synindex syn_index : 6; //!< synapse-type index
+  bool processed;
   Target();
   Target( const Target& target );
-  Target( const thread tid, const unsigned int rank, const unsigned int syn_index, const unsigned int lcid);
+  Target( const thread tid, const thread rank, const synindex syn_index, const index lcid);
   void set_processed();
   bool is_processed() const;
 };
@@ -72,17 +72,17 @@ Target::Target( const Target& target )
   , rank( target.rank )
   , tid( target.tid )
   , syn_index( target.syn_index )
-  , processed( false )
+  , processed( false ) // always initialize as non-processed
 {
 }
 
 inline
-Target::Target( const thread tid, const unsigned int rank, const unsigned int syn_index, const unsigned int lcid)
+Target::Target( const thread tid, const thread rank, const synindex syn_index, const index lcid)
   : lcid( lcid )
   , rank( rank )
   , tid( tid )
   , syn_index( syn_index )
-  , processed( false )
+  , processed( false ) // always initialize as non-processed
 {
 }
 
@@ -98,18 +98,21 @@ Target::is_processed() const
   return processed;
 }
 
-/** A data structure used to communicate part of the infrastructure
- * from post- to presynaptic side.
+/** 
+ * Structure used to communicate part of the connection infrastructure
+ * from post- to presynaptic side. These are the elements of the MPI
+ * buffers.
+ * SeeAlso: SpikeData
  */
 struct TargetData
 {
   Target target;
-  unsigned int lid : 16;
-  unsigned int tid : 8;
+  index lid : 20; //!< local id of presynaptic neuron
+  thread tid : 10; //!< thread index of presynaptic neuron
   unsigned int marker : 2;
-  static const unsigned int end_marker; // 1
-  static const unsigned int complete_marker; // 2
-  static const unsigned int invalid_marker; // 3
+  static const unsigned int end_marker; // =1
+  static const unsigned int complete_marker; // =2
+  static const unsigned int invalid_marker; // =3
   TargetData();
   void reset_marker();
   void set_complete_marker();
@@ -171,23 +174,20 @@ TargetData::is_invalid_marker() const
   return marker == invalid_marker;
 }
 
-/** This data structure stores the targets of the local neurons, i.e.,
- * the presynaptic part of the connection infrastructure. The core
+/**
+ * This data structure stores all targets of the local neurons. This
+ * is the presynaptic part of the connection infrastructure. The core
  * structure is a three dimensional vector, which is arranged as
  * follows:
  * 1st dimension: threads
- * 2nd dimension: local nodes/neurons
+ * 2nd dimension: local neurons
  * 3rd dimension: targets
  */
 class TargetTable
 {
 private:
-  //! stores remote targets of local neurons
+  //! stores (remote) targets of local neurons
   std::vector< std::vector< std::vector< Target > >* > targets_;
-  //! stores the current value to mark processed entries in targets_
-  std::vector< std::vector< bool >* > target_processed_flag_;
-  //! keeps track of index in target vector for each thread
-  std::vector< index > current_target_index_;
   
 public:
   TargetTable();
@@ -200,42 +200,20 @@ public:
   void prepare( const thread tid );
   // void reserve( thread, synindex, index );
   //! add entry to target table
-  void add_target( thread tid, const TargetData& target_data );
-  // void clear( thread );
-  //! returns the next spike data according to current_target_index
-  bool get_next_spike_data( const thread tid, const thread current_tid, const index lid, index& rank, SpikeData& next_spike_data, const unsigned int rank_start, const unsigned int rank_end );
-  //! flips the value of the processed entries marker
-  void toggle_target_processed_flag( const thread tid, const index lid );
-  //! rejects the last spike data and resets current_target_index accordinglyp
-  void reject_last_spike_data( const thread tid, const thread current_tid, const index current_lid );
-  // TODO@5g: don't we need save/restore/reset as in communication of source table?
-  void reset_current_target_index( const thread );
-
-  std::vector< Target >& get_targets( const thread tid, const index lid );
+  void add_target( const thread tid, const TargetData& target_data );
+  //! returns all targets of a neuron. used to fill spike_register_5g_
+  //! in event_delivery_manager
+  const std::vector< Target >& get_targets( const thread tid, const index lid ) const;
 };
 
-inline
-void
-TargetTable::reject_last_spike_data( const thread tid, const thread current_tid, const index current_lid )
-{
-  assert( current_target_index_[ tid ] > 0 );
-  ( *targets_[ current_tid ])[ current_lid ][ current_target_index_[ tid ] - 1 ].processed = not (*target_processed_flag_[ current_tid ])[ current_lid ];
-}
-
 inline void
-TargetTable::reset_current_target_index( const thread tid )
+TargetTable::add_target( const thread tid, const TargetData& target_data )
 {
-  current_target_index_[ tid ] = 0;
+  (*targets_[ tid ])[ target_data.lid ].push_back( target_data.target );
 }
 
-inline void
-TargetTable::toggle_target_processed_flag( const thread tid, const index lid )
-{
-  (*target_processed_flag_[ tid ])[ lid ] = not (*target_processed_flag_[ tid ])[ lid ];
-}
-
-inline std::vector< Target >&
-TargetTable::get_targets( const thread tid, const index lid )
+inline const std::vector< Target >&
+TargetTable::get_targets( const thread tid, const index lid ) const
 {
   return (*targets_[ tid ])[ lid ];
 }

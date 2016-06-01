@@ -42,13 +42,10 @@ nest::TargetTable::initialize()
 {
   thread num_threads = kernel().vp_manager.get_num_threads();
   targets_.resize( num_threads );
-  target_processed_flag_.resize( num_threads );
-  current_target_index_.resize( num_threads, 0 );
   for( thread tid = 0; tid < num_threads; ++tid)
   {
     targets_[ tid ] = new std::vector< std::vector< Target > >(
       0, std::vector< Target >( 0, Target() ) );
-    target_processed_flag_[ tid ] = new std::vector< bool >( 0 );
   }
 }
 
@@ -61,19 +58,12 @@ nest::TargetTable::finalize()
     delete *it;
   }
   targets_.clear();
-  for( std::vector< std::vector< bool >* >::iterator it = target_processed_flag_.begin();
-       it != target_processed_flag_.end(); ++it )
-  {
-    delete *it;
-  }
-  target_processed_flag_.clear();
 }
 
 void
 nest::TargetTable::prepare( const thread tid )
 {
   targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes() );
-  target_processed_flag_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes(), true );
 }
 
 // TODO@5g: benchmark with and without reserving memory for synapses

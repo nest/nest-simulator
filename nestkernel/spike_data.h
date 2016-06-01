@@ -29,19 +29,24 @@
 namespace nest
 {
 
+/**
+ * Structure used to communicate spikes. These are the elements of the
+ * MPI buffers.
+ * SeeAlso: TargetData
+ */
 struct SpikeData
 {
-  unsigned int tid : 10;
-  unsigned int syn_index : 6;
-  unsigned int lcid : 25;
-  unsigned int lag : 6;
+  index lcid : 27; //!< local connection index
+  thread tid : 10; //!< thread index
+  synindex syn_index : 8; //!< synapse-type index
+  unsigned int lag : 8; //!< lag in this min-delay interval
   unsigned int marker : 2;
-  const static unsigned int end_marker; // 1
-  const static unsigned int complete_marker; // 2
-  const static unsigned int invalid_marker; // 3
+  const static unsigned int end_marker; // =1
+  const static unsigned int complete_marker; // =2
+  const static unsigned int invalid_marker; // =3
   SpikeData();
-  SpikeData( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag );
-  void set( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag );
+  SpikeData( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag );
+  void set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag );
   void reset_marker();
   void set_complete_marker();
   void set_end_marker();
@@ -53,32 +58,32 @@ struct SpikeData
 
 inline
 SpikeData::SpikeData()
-  : tid( 0 )
+  : lcid( 0 )
+  , tid( 0 )
   , syn_index( 0 )
-  , lcid( 0 )
   , lag( 0 )
   , marker( 0 )
 {
 }
 
 inline
-SpikeData::SpikeData( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag )
-  : tid( tid )
+SpikeData::SpikeData( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag )
+  : lcid( lcid )
+  , tid( tid )
   , syn_index( syn_index )
-  , lcid( lcid )
   , lag( lag )
-  , marker( 0 )
+  , marker( 0 ) // always initialize with default marker
 {
 }
 
 inline void
-SpikeData::set( const thread tid, const unsigned int syn_index, const unsigned int lcid, const unsigned int lag )
+SpikeData::set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag )
 {
+  (*this).lcid = lcid;
   (*this).tid = tid;
   (*this).syn_index = syn_index;
-  (*this).lcid = lcid;
   (*this).lag = lag;
-  marker = 0;
+  marker = 0; // always initialize with default marker
 }
 
 inline void

@@ -290,11 +290,11 @@ public:
     std::vector< std::vector< index > >& targets,
     index synapse_model );
 
-  std::vector< Target >& get_targets( const thread tid, const index lid );
+  const std::vector< Target >& get_targets( const thread tid, const index lid ) const;
 
   index get_target_gid( const thread tid,
     const synindex syn_index,
-    const unsigned int lcid ) const;
+    const index lcid ) const;
 
   /**
    * Triggered by volume transmitter in update.
@@ -323,17 +323,20 @@ public:
 
   void send_secondary( thread t, SecondaryEvent& e );
 
-  void send_5g( thread tid, synindex syn_index, unsigned int lcid, Event& e );
+  void send_5g( const thread tid,
+    const synindex syn_index,
+    const index lcid,
+    Event& e );
 
   /**
    * Send event e to all device targets of source s_gid
    */
-  void send_to_devices( thread tid, const index s_gid, Event& e );
+  void send_to_devices( const thread tid, const index source_gid, Event& e );
 
   /**
    * Send event e to all targets of source device ldid (local device id)
    */
-  void send_from_device( thread tid, const index ldid, Event& e );
+  void send_from_device( const thread tid, const index ldid, Event& e );
 
   /**
    * Send event e to all targets of node source on thread t
@@ -361,26 +364,11 @@ public:
 
   void resize_target_table_devices();
 
-  // TODO@5g: change order of arguments
-  bool get_next_spike_data( const thread tid,
-    const thread current_tid,
-    const index lid,
-    index& rank,
-    SpikeData& next_spike_data,
-    const unsigned int rank_start,
-    const unsigned int rank_end);
-
-  void reject_last_spike_data( const thread tid,
-    const thread current_tid,
-    const index current_lid );
-
-  void toggle_target_processed_flag( const thread tid, const index lid );
-
   bool get_next_target_data( const thread tid,
-    index& target_rank,
-    TargetData& next_target_data,
-    const unsigned int rank_start,
-    const unsigned int rank_end );
+    const thread rank_start,
+    const thread rank_end,
+    thread& target_rank,
+    TargetData& next_target_data );
 
   void reject_last_target_data( const thread tid );
 
@@ -391,8 +379,6 @@ public:
   void restore_source_table_entry_point( const thread tid );
 
   void add_target( const thread tid, const TargetData& target_data);
-
-  void reset_current_index_target_table( const thread tid );
 
   void sort_connections();
 
@@ -604,27 +590,6 @@ ConnectionManager::resize_target_table_devices()
 }
 
 inline void
-ConnectionManager::reset_current_index_target_table( const thread tid )
-{
-  target_table_.reset_current_target_index( tid );
-}
-
-inline void
-ConnectionManager::reject_last_spike_data( const thread tid,
-  const thread current_tid,
-  const index current_lid )
-{
-  target_table_.reject_last_spike_data( tid, current_tid, current_lid );
-}
-
-inline void
-ConnectionManager::toggle_target_processed_flag( const thread tid,
-  const index lid )
-{
-  target_table_.toggle_target_processed_flag( tid, lid );
-}
-
-inline void
 ConnectionManager::reject_last_target_data( const thread tid )
 {
   source_table_.reject_last_target_data( tid );
@@ -654,8 +619,8 @@ ConnectionManager::prepare_target_table( const thread tid )
   target_table_.prepare( tid );
 }
 
-inline std::vector< Target >&
-ConnectionManager::get_targets( const thread tid, const index lid )
+inline const std::vector< Target >&
+ConnectionManager::get_targets( const thread tid, const index lid ) const
 {
   return target_table_.get_targets( tid, lid );
 }

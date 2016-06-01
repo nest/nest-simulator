@@ -38,16 +38,14 @@ struct TargetData;
 
 /**
  * A data structure that stores the global id of a presynaptic neuron
- * along with a flag, whether this entry has been processed yet. Used
- * in SourceTable.
+ * and the number of local targets, along with a flag, whether this
+ * entry has been processed yet. Used in SourceTable.
  */
 struct Source
 {
-  // TODO@5g: use nest_types: index
-  // TODO@5g: possible to define in nest_types?
-  unsigned long gid : 43;
-  unsigned long target_count : 20;
-  unsigned long processed : 1;
+  index gid : 45; //!< gid of source
+  unsigned int target_count : 18; //!< number of local targets
+  bool processed;
   Source();
   Source( index );
 };
@@ -80,23 +78,23 @@ operator>( const Source& lhs, const Source& rhs )
   return operator<( rhs, lhs );
 }
 
+/**
+ * Tuple to store position in 3d vector of sources.
+ **/
 struct SourceTablePosition
 {
-  // index for threads
-  unsigned int tid;
-  // index for synapse ids
-  unsigned int syn_id;
-  // index for connections
-  unsigned int lcid;
+  thread tid; //!< thread index
+  synindex syn_index; //!< synapse-type index
+  index lcid; //!< local connection index
   SourceTablePosition();
   void reset();
 };
 
 inline
 SourceTablePosition::SourceTablePosition()
-  : tid(0)
-  , syn_id(0)
-  , lcid(0)
+  : tid( 0 )
+  , syn_index( 0 )
+  , lcid( 0 )
 {
 }
 
@@ -104,7 +102,7 @@ inline void
 SourceTablePosition::reset()
 {
   tid = 0;
-  syn_id = 0;
+  syn_index = 0;
   lcid = 0;
 }
 
@@ -120,7 +118,6 @@ SourceTablePosition::reset()
  * this structure is transferred to the presynaptic side and the
  * sources vector is cleared.
  */
-
 class SourceTable
 {
 private:
@@ -156,11 +153,11 @@ public:
   //! adds a source to the sources table
   void add_source( const thread tid, const synindex syn_id, const index gid );
   //! clears the sources table
-  void clear( const thread );
+  void clear( const thread tid );
   //! returns true if the sources table has been cleared
   bool is_cleared() const;
   //! returns the next target data, according to the current_* positions
-  bool get_next_target_data( const thread tid, index& target_rank, TargetData& next_target_data, const unsigned int rank_start, const unsigned int rank_end );
+  bool get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, thread& target_rank, TargetData& next_target_data );
   //! rejects the last target data, and resets the current_* positions accordingly
   void reject_last_target_data( const thread tid );
   //! stores the current_* positions
@@ -218,7 +215,7 @@ nest::SourceTable::reject_last_target_data( const thread tid )
   // need to correct the processed flag of the last entry (see
   // source_table_impl.h)
   assert( current_position.lcid > 0 );
-  ( *sources_[ current_position.tid ] )[ current_position.syn_id ][ current_position.lcid - 1 ].processed = false;
+  ( *sources_[ current_position.tid ] )[ current_position.syn_index ][ current_position.lcid - 1 ].processed = false;
   // need to decrease target count as well
   --(*current_first_source_[ tid ]).target_count;
 }
@@ -232,7 +229,7 @@ nest::SourceTable::save_entry_point( const thread tid )
     SourceTablePosition& current_position = *current_positions_[ tid ];
     SourceTablePosition& saved_position = *saved_positions_[ tid ];
     saved_position.tid = current_position.tid;
-    saved_position.syn_id = current_position.syn_id;
+    saved_position.syn_index = current_position.syn_index;
     if ( current_position.lcid > 0 )
     {
       saved_position.lcid = current_position.lcid - 1;
@@ -271,9 +268,9 @@ nest::SourceTable::get_gid( const thread tid, const synindex syn_id, const index
 }
 
 inline unsigned int
-nest::SourceTable::get_target_count( const thread tid, const synindex syn_id, const index lcid ) const
+nest::SourceTable::get_target_count( const thread tid, const synindex syn_index, const index lcid ) const
 {
-  return (*sources_[ tid ])[ syn_id ][ lcid ].target_count;
+  return (*sources_[ tid ])[ syn_index ][ lcid ].target_count;
 }
 
 } // namespace nest

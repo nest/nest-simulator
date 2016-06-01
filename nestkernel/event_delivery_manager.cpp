@@ -876,7 +876,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const un
   AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
   unsigned int num_target_data_written = 0;
-  index target_rank;
+  thread target_rank;
   TargetData next_target_data;
   bool valid_next_target_data;
   bool is_source_table_read = true;
@@ -904,7 +904,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const un
 
   while ( true )
   {
-    valid_next_target_data = kernel().connection_manager.get_next_target_data( tid, target_rank, next_target_data, assigned_ranks.begin, assigned_ranks.end );
+    valid_next_target_data = kernel().connection_manager.get_next_target_data( tid, assigned_ranks.begin, assigned_ranks.end, target_rank, next_target_data );
     if ( valid_next_target_data ) // add valid entry to MPI buffer
     {
       const unsigned int lr_idx = target_rank % assigned_ranks.max_size;

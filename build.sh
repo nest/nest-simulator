@@ -22,7 +22,7 @@ cat > $HOME/.nestrc <<EOF
      ] {join} Fold
     } Function def
 EOF
- 
+
     CONFIGURE_MPI="-Dwith-mpi=ON"
 
 else
@@ -44,7 +44,7 @@ fi
 NEST_VPATH=build
 NEST_RESULT=result
 
-mkdir "$NEST_VPATH" "$NEST_RESULT" 
+mkdir "$NEST_VPATH" "$NEST_RESULT"
 mkdir "$NEST_VPATH/reports"
 
 NEST_RESULT=$(readlink -f $NEST_RESULT)
@@ -100,6 +100,10 @@ cppcheck --version
 # go back to NEST sources
 cd ..
 
+wget http://llvm.org/releases/3.6.0/clang+llvm-3.6.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+tar xvf clang+llvm-3.6.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+export PATH=$PATH:$PWD/clang+llvm-3.6.0-x86_64-linux-gnu/bin
+
 # Extracting changed files in PR / push
 echo "Extract changed files..."
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
@@ -131,7 +135,7 @@ for f in $file_names; do
     *.h | *.c | *.cc | *.hpp | *.cpp )
       echo "Static analysis on file $f:"
       f_base=$NEST_VPATH/reports/`basename $f`
-      # Vera++ checks the specified list of rules given in the profile 
+      # Vera++ checks the specified list of rules given in the profile
       # nest which is placed in the <vera++ root>/lib/vera++/profile
       vera++ --root ./vera_home --profile nest $f > ${f_base}_vera.txt 2>&1
       echo "\n - vera++ for $f:"
@@ -142,8 +146,8 @@ for f in $file_names; do
       cat ${f_base}_cppcheck.txt
 
       # clang format creates tempory formatted file
-      clang-format-3.6 $f > ${f_base}_formatted_$TRAVIS_COMMIT.txt
-      # compare the committed file and formatted file and 
+      clang-format $f > ${f_base}_formatted_$TRAVIS_COMMIT.txt
+      # compare the committed file and formatted file and
       # writes the differences to a temp file
       echo "\n - clang-format for $f:"
       diff $f ${f_base}_formatted_$TRAVIS_COMMIT.txt | tee ${f_base}_clang_format.txt
@@ -152,7 +156,7 @@ for f in $file_names; do
       # remove temporary files
       rm ${f_base}_formatted_$TRAVIS_COMMIT.txt
 
-      if [ -s ${f_base}_clang_format.txt ]; then 
+      if [ -s ${f_base}_clang_format.txt ]; then
         # file exists and has size greater than zero
         format_error_files="$format_error_files $f"
       fi
@@ -181,6 +185,7 @@ done
 
 # Remove cppcheck files, otherwise 'regressiontests/ticket-659-copyright.py' will complain
 rm -rf ./cppcheck
+rm -rf ./clang+llvm-3.6.0-x86_64-linux-gnu
 
 cd "$NEST_VPATH"
 
@@ -206,4 +211,3 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "WARNING: Not uploading results as this is a pull request" >&2
   exit 0
 fi
-

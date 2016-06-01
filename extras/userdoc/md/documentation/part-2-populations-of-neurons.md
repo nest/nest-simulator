@@ -224,7 +224,7 @@ is often helpful to call the function `ResetNetwork()` within each loop
 iteration. It resets all nodes to their default configuration and wipes the data
 from recording devices.
 
-## Command overview\[sec:Command-overview\]
+## Command overview
 
 These are the new functions we introduced for the examples in this handout.
 

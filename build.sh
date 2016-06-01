@@ -84,25 +84,32 @@ set rules {
 }
 EOF
 
-# initialize and build cppcheck 1.69
-git clone https://github.com/danmar/cppcheck.git
-# go into source directory of cppcheck
-cd cppcheck
-# set git to 1.69 version
-git checkout tags/1.69
-# build cppcheck => now there is an executable ./cppcheck
-mkdir -p install
-make PREFIX=$PWD/install CFGDIR=$PWD/install/cfg HAVE_RULES=yes install
-# make cppcheck available
-export PATH=$PATH:$PWD/install/bin
-# check everything is alright
-cppcheck --version
-# go back to NEST sources
-cd ..
 
-wget http://llvm.org/releases/3.6.0/clang+llvm-3.6.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-tar xvf clang+llvm-3.6.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-export PATH=$PATH:$PWD/clang+llvm-3.6.0-x86_64-linux-gnu/bin
+if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
+  # initialize and build cppcheck 1.69
+  git clone https://github.com/danmar/cppcheck.git
+  # go into source directory of cppcheck
+  cd cppcheck
+  # set git to 1.69 version
+  git checkout tags/1.69
+  # build cppcheck => now there is an executable ./cppcheck
+  mkdir -p install
+  make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
+
+  cd ..
+  
+  wget http://llvm.org/releases/3.6.0/clang+llvm-3.6.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+  tar xvf clang+llvm-3.6.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+  cp -R clang+llvm-3.6.0-x86_64-linux-gnu/* $HOME/.cache
+  
+  # remove directories, otherwise copyright-header check complains
+  rm -rf ./cppcheck
+  rm -rf ./clang+llvm-3.6.0-x86_64-linux-gnu
+fi
+
+export PATH=$PATH:$HOME/.cache/bin
+cppcheck --version 
+clang-format --version
 
 # Extracting changed files in PR / push
 echo "Extract changed files..."
@@ -183,9 +190,6 @@ for f in $file_names; do
   esac
 done
 
-# Remove cppcheck files, otherwise 'regressiontests/ticket-659-copyright.py' will complain
-rm -rf ./cppcheck
-rm -rf ./clang+llvm-3.6.0-x86_64-linux-gnu
 
 cd "$NEST_VPATH"
 

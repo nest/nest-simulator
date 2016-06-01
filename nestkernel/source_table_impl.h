@@ -39,86 +39,68 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
   SourceTablePosition& current_position = *current_positions_[ tid ];
   // we stay in this loop either until we can return a valid
   // TargetData object or we have reached the end of the sources table
-  while ( true )
+  while( current_position.tid < static_cast< thread >( sources_.size() ) )
   {
-    if ( current_position.tid == static_cast< thread >( sources_.size() ) )
+    if ( current_position.syn_index == sources_[ current_position.tid ]->size() )
     {
-      return false; // reached the end of the sources table
+      current_position.syn_index = 0;
+      ++current_position.tid;
+      continue;
     }
-    else
+    if ( current_position.lcid == (*sources_[ current_position.tid ])[ current_position.syn_index ].size() )
     {
-      if ( current_position.syn_index == sources_[ current_position.tid ]->size() )
-      {
-        current_position.syn_index = 0;
-        ++current_position.tid;
-        continue;
-      }
-      else
-      {
-        if ( current_position.lcid == (*sources_[ current_position.tid ])[ current_position.syn_index ].size() )
-        {
-          current_position.lcid = 0;
-          ++current_position.syn_index;
-          continue;
-        }
-        else
-        {
-          // the current position contains an entry, so we retrieve it
-          Source& current_source = ( *sources_[ current_position.tid ] )[ current_position.syn_index ][ current_position.lcid ];
-          if ( current_source.processed )
-          {
-            // looks like we've processed this already, let's
-            // continue
-            ++current_position.lcid;
-            continue;
-          }
-          else
-          {
-            target_rank = kernel().node_manager.get_process_id_of_gid( current_source.gid );
-            // now we need to determine whether this thread is
-            // responsible for this part of the MPI buffer; if not we
-            // just continue with the next iteration of the loop
-            if ( rank_start <= target_rank && target_rank < rank_end )
-            {
-              // we have found a valid entry, so mark it as processed
-              current_source.processed = true;
+      current_position.lcid = 0;
+      ++current_position.syn_index;
+      continue;
+    }
 
-              // if current_first_source points to source with same
-              // gid, we only increase target count, and continue
-              if ( current_first_source_[ tid ] != 0 && (*current_first_source_[ tid ]).gid == current_source.gid )
-              {
-                ++(*current_first_source_[ tid ]).target_count;
-                ++current_position.lcid;
-                continue;
-              }
-              // only if gids differ, we update the values of
-              // next_target_data and return
-              else
-              {
-                current_first_source_[ tid ] = &current_source;
-                ++(*current_first_source_[ tid ]).target_count;
-                next_target_data.lid = kernel().vp_manager.gid_to_lid( current_source.gid );
-                next_target_data.tid = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( current_source.gid ) );
-                // we store the thread index of the sources table, not our own tid
-                next_target_data.target.tid = current_position.tid;
-                next_target_data.target.rank = kernel().mpi_manager.get_rank();
-                next_target_data.target.processed = false;
-                next_target_data.target.syn_index = current_position.syn_index;
-                next_target_data.target.lcid = current_position.lcid;
-                ++current_position.lcid;
-                return true;
-              }
-            }
-            else
-            {
-              ++current_position.lcid;
-              continue;
-            }
-          }
-        }
-      }
+    // the current position contains an entry, so we retrieve it
+    Source& current_source = ( *sources_[ current_position.tid ] )[ current_position.syn_index ][ current_position.lcid ];
+    if ( current_source.processed )
+    {
+      // looks like we've processed this already, let's
+      // continue
+      ++current_position.lcid;
+      continue;
     }
+
+    target_rank = kernel().node_manager.get_process_id_of_gid( current_source.gid );
+    // now we need to determine whether this thread is
+    // responsible for this part of the MPI buffer; if not we
+    // just continue with the next iteration of the loop
+    if ( target_rank < rank_start || target_rank >= rank_end )
+    {
+      ++current_position.lcid;
+      continue;
+    }
+
+    // we have found a valid entry, so mark it as processed
+    current_source.processed = true;
+    // if current_first_source points to source with same
+    // gid, we only increase target count, and continue
+    if ( current_first_source_[ tid ] != 0 && (*current_first_source_[ tid ]).gid == current_source.gid )
+    {
+      ++(*current_first_source_[ tid ]).target_count;
+      ++current_position.lcid;
+      continue;
+    }
+
+    // update current_first_source
+    current_first_source_[ tid ] = &current_source;
+    ++(*current_first_source_[ tid ]).target_count;
+    // set values of next_target_data
+    next_target_data.lid = kernel().vp_manager.gid_to_lid( current_source.gid );
+    next_target_data.tid = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( current_source.gid ) );
+    // we store the thread index of the sources table, not our own tid
+    next_target_data.target.tid = current_position.tid;
+    next_target_data.target.rank = kernel().mpi_manager.get_rank();
+    next_target_data.target.processed = false;
+    next_target_data.target.syn_index = current_position.syn_index;
+    next_target_data.target.lcid = current_position.lcid;
+    ++current_position.lcid;
+    return true; // found a valid entry
   }
+  return false; // reached the end of the sources table
 }
 
 } // namespace nest

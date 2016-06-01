@@ -111,7 +111,7 @@ for general information on installing NEST.
 Please be advised that NEST should currently only be run in a homogeneous MPI
 environment. Running in a heterogenenous environment can lead to unexpected
 results or even crashes.
-Please contact the [NEST community](http://www.nest-simulator.org/community/) if
+Please contact the [NEST community](community.md) if
 you require support for exotic setups.
 
 ### Compilation

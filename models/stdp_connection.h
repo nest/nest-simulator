@@ -68,11 +68,12 @@
 
   FirstVersion: March 2006
   Author: Moritz Helias, Abigail Morrison
+  Adapted by: Philipp Weidel
   SeeAlso: synapsedict, tsodyks_synapse, static_synapse
 */
 
 // C++ includes:
-#include <cmath>
+#include <math.h>
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
@@ -327,6 +328,13 @@ STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   updateValue< double_t >( d, "mu_plus", mu_plus_ );
   updateValue< double_t >( d, "mu_minus", mu_minus_ );
   updateValue< double_t >( d, "Wmax", Wmax_ );
+
+  // check if weight_ and Wmax_ has the same sign
+  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )
+         == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
+  {
+    throw BadProperty( "Weight and Wmax must have same sign." );
+  }
 }
 
 } // of namespace nest

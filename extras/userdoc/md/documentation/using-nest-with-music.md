@@ -26,10 +26,10 @@ Neuroinformatics, 8, 2010. doi:10.1007/s12021-010-9064-z* and available from [he
 
 A minimal example for the exchange of spikes between two independent instances
 of NEST is given in the example `examples/nest/music/minimalmusicsetup.music`.
-It uses one [SLI script](an-introduction-to-sli.md "An Introduction
-to SLI"), which sends spikes using a `music_event_out_proxy` and one SLI script,
-which receives the spikes using a `music_event_in_proxy`. The configuration file
-is shown in the following listing:
+It uses one [SLI script](an-introduction-to-sli.md), which sends spikes using a
+`music_event_out_proxy` and one SLI script, which receives the spikes using a
+`music_event_in_proxy`. The configuration file is shown in the following
+listing:
 
     [from]
       binary=nest

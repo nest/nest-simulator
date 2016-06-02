@@ -131,15 +131,15 @@ def write_help_html(doc_dic, file, sli_command_list):
             htmllist.append(linkline + '<div class="wrap">')
     for key, value in doc_dic.iteritems():
         if key == "FullName":
-            fullname = value.strip("###### ###### $$")
+            fullname = value.strip("###### ###### ~~")
             fullname = re.sub("(######)", " <br/> ", fullname)
-            fullname = re.sub("(\$\$)", '  ', fullname)
+            fullname = re.sub("(\~\~)", '  ', fullname)
             htmllist.append('<b>Name:</b><pre>%s</pre>' % fullname)
     for key, value in doc_dic.iteritems():
         if (key != "Name" and key != "SeeAlso" and key != "Id" and
                 key != "File" and key != "FullName"):
             value = re.sub("(######)", " <br/> ", value)
-            value = re.sub("(\$\$)", '  ', value)
+            value = re.sub("(\~\~)", '  ', value)
             htmllist.append('<b>%s: </b>' % key)
             htmllist.append('<pre>%s</pre>' % value)
     for key, value in doc_dic.iteritems():
@@ -148,6 +148,7 @@ def write_help_html(doc_dic, file, sli_command_list):
             htmllist.append('<ul>')
             for i in value:
                 see = i.strip("###### ###### $$")
+                see = i.strip("###### ~~")
                 if see:
                     if see in sli_command_list:
                         htmllist.append('    <li><a href="../sli/' + see +
@@ -299,9 +300,7 @@ def write_helpindex(index_dic_list):
 
     from operator import itemgetter
     index_dic_list = sorted(index_dic_list, key=itemgetter('name'))
-    # print index_dic_list
     for doubles in alpha:
-        # print '#############################\n' + doubles[0]
         html_list.append('<center><table>')
         html_list.append('<a name="%s">' % doubles[0])
         html_list.append('<table class="letteridx"><tr>')
@@ -311,14 +310,6 @@ def write_helpindex(index_dic_list):
         html_list.append('<center><table class="commands">')
         for item in index_dic_list:
             if item['name'].startswith(doubles):
-                # ERROR?
-                # if item['name'] == "tsodyks_facilitating":
-                #     continue
-                # desc = cut_it("-", item['fullname'])
-                # i = 0
-                # while i < 2:
-                #     # print desc[i]
-                #     i = i + 1
                 html_list.append('<tr><td class="left">')
                 html_list.append('<a href="%s/%s.html">%s</a></td>' %
                                  (item['ext'], item['name'], item['name']))
@@ -336,7 +327,7 @@ def coll_data(keywords, documentation, num, file, sli_command_list):
 
     Prepare the data for writing the help.
     """
-    from helpers import cut_it
+    # from helpers import cut_it
     iname = ""
     see = ""
     ifullname = ""
@@ -345,10 +336,11 @@ def coll_data(keywords, documentation, num, file, sli_command_list):
     for k in keywords:
         if k in documentation:
             if k == "Name:":
-                iname = cut_it("-", documentation[k])
+                iname = cut_it(" - ", documentation[k])
                 iname = iname[0].strip(" ######")
                 ifullname = documentation[k].strip(" ######")
                 if iname:
+                    iname = iname.strip('~~')
                     doc_dic.update({"Name": iname})
                 if ifullname:
                     doc_dic.update({"FullName": ifullname})

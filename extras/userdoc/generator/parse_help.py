@@ -50,10 +50,12 @@ keywords = ["Name:", "Synopsis:", "Parameters:", "Description:",
             "Availability:", "References:", "SeeAlso:", "Source:",
             "Sends:", "Receives:", "Transmits:", "Requires:", "Require:"]
 
+# TODO combine the following 2 loops to make faster (and shorter)
+
 # Now begin to collect the data for the helpindex.html
 for file in allfiles:
     if not file.endswith('.py'):
-        docstring = r'\/\*[ *\n]?BeginDocumentation\n(.*?)\n*?\*\/'
+        docstring = r'\/\*[\s*\n]?BeginDocumentation[\s?]*\n(.*?)\n*?\*\/'
         f = open(('%s' % (file,)), 'r')
         filetext = f.read()
         f.close()
@@ -62,14 +64,14 @@ for file in allfiles:
         # if file.endswith('.sli'):
         for item in items:
             # namestring = r'([ *]?Name[ *]?\:[ *]?)(.*?)([ *]?\-)'
-            namestring = r'([ *]?Name[ *]?\:[ *]?)(.*?)([ *]?\n)'
+            namestring = r'([\s*]?Name[\s*]?\:[\s*]?)(.*?)([ *]?\n)'
             # fullnamestring = r'([ *]?Name[ *]?\:[ *]?)((.*?))\n'
             docnames = re.findall(namestring, item, re.DOTALL)
             # fulldocnames = re.findall(fullnamestring, item, re.DOTALL)
             for docname in docnames:
                 if docname[1].strip():
                     fullname = docname[1].strip()
-                    docname = cut_it(' - ', docname[1].strip())[0]
+                    docname = cut_it(' - ', docname[1].strip())[0].strip()
                 if file.endswith('.sli'):
                     sli_command_list.append(docname.strip())
                     index_dic = {'name': docname, 'ext': 'sli'}
@@ -89,24 +91,34 @@ write_helpindex(index_dic_list)
 for file in allfiles:
     # .py is for future use
     if not file.endswith('.py'):
-        docstring = r'\/\*[ *\n]?BeginDocumentation\n(.*?)\n*?\*\/'
+        docstring = r'\/\*[\s*\n]?BeginDocumentation[\s?]*\n(.*?)\n*?\*\/'
         f = open(('%s' % (file,)), 'r')
         filetext = f.read()
         f.close()
-        # Multiline matiching
+        # Multiline matiching to find codeblock
         items = re.findall(docstring, filetext, re.DOTALL)
         for item in items:
+            # Check the ifdef in code
             require = check_ifdef(item, filetext, docstring)
             if require:
                 item = '\n\nRequire: ' + require + item
             alllines = []
             s = " ######\n"
             for line in item.splitlines():
-                line = re.sub(r"(\s\s)", '$$', line)
+                name_line = re.findall(r"([\s*]?Name[\s*]?\:)(.*)", line)
+                if name_line:
+                    # Clean the Name: line!
+                    name_line_0 = name_line[0][0].strip()
+                    name_line_1 = name_line[0][1].strip()
+                    line = name_line_0 + ' ' + name_line_1
+                line = re.sub(r"(\s){4}", '~~ ', line)
+                line = re.sub(r"(\s){3}", ' ', line)
+                line = re.sub(r"(\s){2}", ' ', line)
                 alllines.append(line)
             item = s.join(alllines)
             num = num + 1
             documentation = {}
+            keyword_curr = ""
             for token in item.split():
                 if token in keywords:
                     keyword_curr = token
@@ -114,5 +126,6 @@ for file in allfiles:
                 else:
                     if keyword_curr in documentation:
                         documentation[keyword_curr] += " " + token
+
             all_data = coll_data(keywords, documentation, num, file,
                                  sli_command_list)

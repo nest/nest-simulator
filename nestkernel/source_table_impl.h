@@ -51,6 +51,7 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
     {
       current_position.lcid = 0;
       ++current_position.syn_index;
+      current_first_source_[ tid ] = 0; // need to reset current source since syn_index changes
       continue;
     }
 

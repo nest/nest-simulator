@@ -204,6 +204,8 @@ public:
   //! returns all targets of a neuron. used to fill spike_register_5g_
   //! in event_delivery_manager
   const std::vector< Target >& get_targets( const thread tid, const index lid ) const;
+  //! clear all entries
+  void clear( const thread tid );
 };
 
 inline void
@@ -216,6 +218,12 @@ inline const std::vector< Target >&
 TargetTable::get_targets( const thread tid, const index lid ) const
 {
   return (*targets_[ tid ])[ lid ];
+}
+
+inline void
+TargetTable::clear( const thread tid )
+{
+  (*targets_[ tid ]).clear();
 }
 
 } // namespace nest

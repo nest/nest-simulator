@@ -63,7 +63,8 @@ nest::TargetTable::finalize()
 void
 nest::TargetTable::prepare( const thread tid )
 {
-  targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes() );
+  targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes(),
+    std::vector< Target >( 0, Target() ) );
 }
 
 // TODO@5g: benchmark with and without reserving memory for synapses

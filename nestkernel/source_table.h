@@ -171,6 +171,9 @@ public:
   unsigned int get_target_count( const thread tid, const synindex syn_index, const index lcid ) const;
   //! returns a reference to all sources local on thread tid (used for sorting)
   std::vector< std::vector< Source > >& get_thread_local_sources( const thread tid );
+  //! resets all processed flags. needed for restructuring connection
+  //! tables.
+  void reset_processed_flags( const thread tid );
 };
 
 inline
@@ -271,6 +274,19 @@ inline unsigned int
 nest::SourceTable::get_target_count( const thread tid, const synindex syn_index, const index lcid ) const
 {
   return (*sources_[ tid ])[ syn_index ][ lcid ].target_count;
+}
+
+inline void
+SourceTable::reset_processed_flags( const thread tid )
+{
+  for( std::vector< std::vector< Source > >::iterator it = (*sources_[ tid ]).begin();
+       it != (*sources_[ tid ]).end(); ++it )
+  {
+    for( std::vector< Source >::iterator iit = it->begin(); iit != it->end(); ++iit )
+    {
+      iit->processed = false;
+    }
+  }
 }
 
 } // namespace nest

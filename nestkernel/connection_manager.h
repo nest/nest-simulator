@@ -382,6 +382,11 @@ public:
 
   void sort_connections();
 
+  bool have_connections_changed() const;
+  void set_have_connections_changed( const bool changed );
+
+  void restructure_connection_tables();
+
 private:
   /**
    * Update delay extrema to current values.
@@ -557,6 +562,9 @@ private:
   delay max_delay_; //!< Value of the largest delay in the network in steps.
 
   bool keep_source_table_;  //!< Whether to keep source table after connection setup is complete
+
+  bool have_connections_changed_; //!< true if new connections have been created
+                                  //!< since startup or last call to simulate
 };
 
 inline DictionaryDatum&
@@ -623,6 +631,18 @@ inline const std::vector< Target >&
 ConnectionManager::get_targets( const thread tid, const index lid ) const
 {
   return target_table_.get_targets( tid, lid );
+}
+
+inline bool
+ConnectionManager::have_connections_changed() const
+{
+  return have_connections_changed_;
+}
+
+inline void
+ConnectionManager::set_have_connections_changed( const bool changed )
+{
+  have_connections_changed_ = changed;
 }
 
 } // namespace nest

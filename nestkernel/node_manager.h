@@ -224,6 +224,9 @@ public:
    */
   bool any_node_uses_wfr() const;
 
+  bool have_nodes_changed() const;
+  void set_have_nodes_changed( const bool changed );
+
 private:
   /**
    * Initialize the network data structures.
@@ -251,7 +254,6 @@ private:
    */
   void prepare_node_( Node* );
 
-private:
   SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
   Subnet* root_;                //!< Root node.
   Subnet* current_;             //!< Current working node (for insertion).
@@ -282,6 +284,9 @@ private:
   index nodes_vec_network_size_;
 
   index num_local_devices_; //!< stores number of local devices
+
+  bool have_nodes_changed_; //!< true if new nodes have been created
+                            //!< since startup or last call to simulate
 };
 
 inline index
@@ -342,6 +347,18 @@ inline bool
 NodeManager::any_node_uses_wfr() const
 {
   return any_node_uses_wfr_;
+}
+
+inline bool
+NodeManager::have_nodes_changed() const
+{
+  return have_nodes_changed_;
+}
+
+inline void
+NodeManager::set_have_nodes_changed( const bool changed )
+{
+  have_nodes_changed_ = changed;
 }
 
 } // namespace

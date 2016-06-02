@@ -56,6 +56,7 @@ NodeManager::NodeManager()
   , wfr_nodes_vec_()
   , any_node_uses_wfr_( false )
   , nodes_vec_network_size_( 0 ) // zero to force update
+  , have_nodes_changed_( false )
 {
 }
 
@@ -184,6 +185,8 @@ NodeManager::get_status( index idx )
 
 index NodeManager::add_node( index mod, long_t n ) // no_p
 {
+  have_nodes_changed_ = true;
+
   assert( current_ != 0 );
   assert( root_ != 0 );
 

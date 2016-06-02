@@ -63,6 +63,7 @@ nest::ConnectionManager::ConnectionManager()
   , min_delay_( 1 )
   , max_delay_( 1 )
   , keep_source_table_( true )
+  , have_connections_changed_( false )
 {
 }
 
@@ -293,6 +294,8 @@ nest::ConnectionManager::connect( const GIDCollection& sources,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
 {
+  have_connections_changed_ = true;
+
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 
@@ -362,6 +365,8 @@ nest::ConnectionManager::connect( index sgid,
   double_t d,
   double_t w )
 {
+  have_connections_changed_ = true;
+
   Node* const source = kernel().node_manager.get_node( sgid, target_thread );
   const thread tid = kernel().vp_manager.get_thread_id();
 
@@ -429,6 +434,8 @@ nest::ConnectionManager::connect( index sgid,
   double_t d,
   double_t w )
 {
+  have_connections_changed_ = true;
+
   Node* const source = kernel().node_manager.get_node( sgid, target_thread );
 
   // normal nodes and devices with proxies -> normal nodes and devices with proxies
@@ -499,6 +506,8 @@ nest::ConnectionManager::connect( index sgid,
   DictionaryDatum& params,
   index syn )
 {
+  have_connections_changed_ = true;
+
   thread tid = kernel().vp_manager.get_thread_id();
 
   if ( !kernel().node_manager.is_local_gid( tgid ) )

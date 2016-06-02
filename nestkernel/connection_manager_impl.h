@@ -91,6 +91,17 @@ ConnectionManager::get_next_target_data( const thread tid, const thread rank_sta
   return source_table_.get_next_target_data( tid, rank_start, rank_end, target_rank, next_target_data );
 }
 
+inline void
+ConnectionManager::restructure_connection_tables()
+{
+#pragma omp parallel
+  {
+    const thread tid = kernel().vp_manager.get_thread_id();
+    target_table_.clear( tid );
+    source_table_.reset_processed_flags( tid );
+  }
+}
+
 } // namespace nest
 
 #endif /* CONNECTION_MANAGER_IMPL_H */

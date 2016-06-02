@@ -33,6 +33,7 @@
 #include "stopwatch.h"
 
 // Includes from nestkernel:
+#include "connection_manager_impl.h"
 #include "kernel_manager.h"
 #include "sibling_container.h"
 
@@ -552,6 +553,7 @@ nest::SimulationManager::prepare_simulation_()
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime
+  Stopwatch sw_reset_connections;
   Stopwatch sw_sort;
   Stopwatch sw_gather_target_data;
   if ( !simulated_ ) // only enter the runtime mode once
@@ -561,12 +563,21 @@ nest::SimulationManager::prepare_simulation_()
     kernel().music_manager.enter_runtime( tick );
   }
 
+  if ( kernel().node_manager.have_nodes_changed() || kernel().connection_manager.have_connections_changed() )
+  {
+    sw_reset_connections.start();
+    kernel().connection_manager.restructure_connection_tables();
+    sw_reset_connections.stop();
     sw_sort.start();
-    kernel().connection_manager.sort_connections();
+    kernel().connection_manager.sort_connections(); //TODO@5g: move into restructure_
     sw_sort.stop();
     sw_gather_target_data.start();
     kernel().event_delivery_manager.gather_target_data();
     sw_gather_target_data.stop();
+    kernel().node_manager.set_have_nodes_changed( false );
+    kernel().connection_manager.set_have_connections_changed( false );
+  }
+
   if ( kernel().mpi_manager.get_rank() < 30 )
   {
     sw_reset_connections.print( "0] ResetConnections time: " );
@@ -825,7 +836,7 @@ nest::SimulationManager::update_()
     //     Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     // }
 
-    if ( thrd == 0 && kernel().mpi_manager.get_rank() < 30 )
+    if ( tid == 0 && kernel().mpi_manager.get_rank() < 30 )
     {
       sw_update.print( "0] Update time: " );
       sw_gather_spike_data.print( "0] GatherSpikeData time: " );

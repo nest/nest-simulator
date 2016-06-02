@@ -470,8 +470,9 @@ extern const Name reset_on_spike;
 extern const Name Ca_amplitude;
 
 
-extern const Name z;           //!< Number of available synaptic elements per node
-extern const Name z_connected; //!< Number of connected synaptic elements per node
+extern const Name z; //!< Number of available synaptic elements per node
+extern const Name
+  z_connected; //!< Number of connected synaptic elements per node
 
 // Specific to iaf conductance mc kinetics
 extern const Name V_max;
@@ -501,8 +502,6 @@ extern const Name reset_on_spike;
 
 // Specific to iaf conductance mc fixedca
 extern const Name Ca_amplitude;
-
-
 }
 }
 

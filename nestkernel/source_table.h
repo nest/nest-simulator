@@ -178,7 +178,7 @@ public:
 
 inline
 void
-nest::SourceTable::add_source( const thread tid, const synindex syn_id, const index gid)
+SourceTable::add_source( const thread tid, const synindex syn_id, const index gid)
 {
   // the sources table is not ordered by synapse ids, to avoid wasting
   // memory, hence we need to determine for each source we are adding
@@ -202,7 +202,7 @@ nest::SourceTable::add_source( const thread tid, const synindex syn_id, const in
 
 inline
 void
-nest::SourceTable::clear( const thread tid )
+SourceTable::clear( const thread tid )
 {
   sources_[ tid ]->clear();
   is_cleared_[ tid ] = true;
@@ -210,7 +210,7 @@ nest::SourceTable::clear( const thread tid )
 
 inline
 void
-nest::SourceTable::reject_last_target_data( const thread tid )
+SourceTable::reject_last_target_data( const thread tid )
 {
   SourceTablePosition& current_position = *current_positions_[ tid ];
   // adding the last target data returned by get_next_target_data
@@ -225,7 +225,7 @@ nest::SourceTable::reject_last_target_data( const thread tid )
 
 inline
 void
-nest::SourceTable::save_entry_point( const thread tid )
+SourceTable::save_entry_point( const thread tid )
 {
   if ( not saved_entry_point_[ tid ] )
   {
@@ -247,7 +247,7 @@ nest::SourceTable::save_entry_point( const thread tid )
 
 inline
 void
-nest::SourceTable::restore_entry_point( const thread tid )
+SourceTable::restore_entry_point( const thread tid )
 {
   *current_positions_[ tid ] = *saved_positions_[ tid ];
   saved_entry_point_[ tid ] = false;
@@ -256,7 +256,7 @@ nest::SourceTable::restore_entry_point( const thread tid )
 
 inline
 void
-nest::SourceTable::reset_entry_point( const thread tid )
+SourceTable::reset_entry_point( const thread tid )
 {
   saved_positions_[ tid ]->reset();
   current_positions_[ tid ]->reset();
@@ -264,14 +264,14 @@ nest::SourceTable::reset_entry_point( const thread tid )
 }
 
 inline index
-nest::SourceTable::get_gid( const thread tid, const synindex syn_id, const index lcid ) const
+SourceTable::get_gid( const thread tid, const synindex syn_id, const index lcid ) const
 {
   std::map< synindex, synindex >::iterator it = synapse_ids_[ tid ]->find( syn_id );
   return (*sources_[ tid ])[ it->second ][ lcid ].gid;
 }
 
 inline unsigned int
-nest::SourceTable::get_target_count( const thread tid, const synindex syn_index, const index lcid ) const
+SourceTable::get_target_count( const thread tid, const synindex syn_index, const index lcid ) const
 {
   return (*sources_[ tid ])[ syn_index ][ lcid ].target_count;
 }

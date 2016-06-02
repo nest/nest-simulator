@@ -806,7 +806,7 @@ EventDeliveryManager::gather_target_data()
   TargetData* recv_buffer_target_data = static_cast< TargetData* >( calloc( mpi_buffer_size_target_data, sizeof( TargetData) ) );
 
   // when a thread does not have any more spike to collocate and when
-  // it detects a remote MPI rank is finished this cound is increased
+  // it detects a remote MPI rank is finished this count is increased
   // by 1 in each case. only if all threads are done AND all threads
   // detect all remote ranks are done, we are allowed to stop
   // communication.
@@ -873,7 +873,7 @@ EventDeliveryManager::gather_target_data()
 bool
 EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, TargetData* send_buffer )
 {
-  AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
+  const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
   unsigned int num_target_data_written = 0;
   thread target_rank;
@@ -952,7 +952,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const un
 void
 nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid, const unsigned int num_target_data_per_rank, TargetData* send_buffer )
 {
-  AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
+  const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
   for ( thread target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
   {

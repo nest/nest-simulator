@@ -96,14 +96,15 @@ inline void
 EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long_t lag )
 {
   // Put the spike in a buffer for the remote machines
-  for ( int_t i = 0; i < e.get_multiplicity(); ++i )
-  {
-    const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
+  const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
+  std::cout<<e.get_sender().get_gid()<<":"<<lid<<"/";
+  const std::vector< Target >& targets = kernel().connection_manager.get_targets( tid, lid );
 
-    const std::vector< Target >& targets = kernel().connection_manager.get_targets( tid, lid );
-    for ( std::vector< Target >::const_iterator it = targets.begin(); it < targets.end(); ++it )
+  for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
+  {
+    const thread assigned_tid = ( *it ).rank / kernel().vp_manager.get_num_assigned_ranks_per_thread();
+    for ( int_t i = 0; i < e.get_multiplicity(); ++i )
     {
-      const thread assigned_tid = ( *it ).rank / kernel().vp_manager.get_num_assigned_ranks_per_thread();
       ( *spike_register_5g_[ tid ] )[ assigned_tid ][ lag ].push_back( *it );
     }
   }

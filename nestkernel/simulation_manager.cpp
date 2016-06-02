@@ -559,6 +559,7 @@ nest::SimulationManager::prepare_simulation_()
     double tick = Time::get_resolution().get_ms()
       * kernel().connection_manager.get_min_delay();
     kernel().music_manager.enter_runtime( tick );
+  }
 
     sw_sort.start();
     kernel().connection_manager.sort_connections();
@@ -566,9 +567,12 @@ nest::SimulationManager::prepare_simulation_()
     sw_gather_target_data.start();
     kernel().event_delivery_manager.gather_target_data();
     sw_gather_target_data.stop();
+  if ( kernel().mpi_manager.get_rank() < 30 )
+  {
+    sw_reset_connections.print( "0] ResetConnections time: " );
+    sw_sort.print( "0] SortConnections time: " );
+    sw_gather_target_data.print( "0] GatherTargetData time: " );
   }
-  sw_sort.print( "sort " );
-  sw_gather_target_data.print( "gather target data " );
 
   return num_active_nodes;
 }
@@ -821,14 +825,14 @@ nest::SimulationManager::update_()
     //     Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     // }
 
-#pragma omp single
+    if ( thrd == 0 && kernel().mpi_manager.get_rank() < 30 )
     {
-      sw_update.print( "update: " );
-      sw_gather_spike_data.print( "gather spike data: " );
-      kernel().event_delivery_manager.sw_collocate.print("--collocate: ");
-      kernel().event_delivery_manager.sw_communicate.print("--communicate: ");
-      kernel().event_delivery_manager.sw_deliver.print("--deliver: ");
-      sw_total.print( "total: " );
+      sw_update.print( "0] Update time: " );
+      sw_gather_spike_data.print( "0] GatherSpikeData time: " );
+      // kernel().event_delivery_manager.sw_collocate.print("--collocate: ");
+      // kernel().event_delivery_manager.sw_communicate.print("--communicate: ");
+      // kernel().event_delivery_manager.sw_deliver.print("--deliver: ");
+      sw_total.print( "0] Total time: " );
     }
 
   } // end of #pragma parallel omp

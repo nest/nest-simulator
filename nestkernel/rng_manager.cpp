@@ -216,14 +216,14 @@ nest::RNGManager::create_rngs_()
   // lockPTRs, we don't have to worry about deletion
   if ( !rng_.empty() )
   {
-    LOG( M_INFO,
-      "Network::create_rngs_",
-      "Deleting existing random number generators" );
+    // LOG( M_INFO,
+    //   "Network::create_rngs_",
+    //   "Deleting existing random number generators" );
 
     rng_.clear();
   }
 
-  LOG( M_INFO, "Network::create_rngs_", "Creating default RNGs" );
+  // LOG( M_INFO, "Network::create_rngs_", "Creating default RNGs" );
 
   rng_seeds_.resize( kernel().vp_manager.get_num_virtual_processes() );
 
@@ -269,7 +269,7 @@ void
 nest::RNGManager::create_grng_()
 {
   // create new grng
-  LOG( M_INFO, "Network::create_grng_", "Creating new default global RNG" );
+  // LOG( M_INFO, "Network::create_grng_", "Creating new default global RNG" );
 
 // create default RNG with default seed
 #ifdef HAVE_GSL

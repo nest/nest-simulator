@@ -75,6 +75,8 @@ nest::MPIManager::MPIManager()
 void
 nest::MPIManager::init_mpi( int* argc, char** argv[] )
 {
+  try
+  {
 #ifdef HAVE_MPI
   int init;
   MPI_Initialized( &init );
@@ -125,6 +127,11 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 
   use_mpi_ = true;
 #endif /* #ifdef HAVE_MPI */
+  }
+  catch(MPI::Exception failure)
+  {
+    LOG( M_ERROR, "MPIManager::set_num_rec_processes", failure.Get_error_string() );
+  }
 }
 
 void

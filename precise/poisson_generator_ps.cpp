@@ -88,6 +88,7 @@ nest::poisson_generator_ps::poisson_generator_ps()
   : Node()
   , device_()
   , P_()
+  , local_device_id_( invalid_index )
 {
 }
 
@@ -96,6 +97,7 @@ nest::poisson_generator_ps::poisson_generator_ps(
   : Node( n )
   , device_( n.device_ )
   , P_( n.P_ )
+  , local_device_id_( invalid_index ) // copy must get its own device id
 {
 }
 

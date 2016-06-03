@@ -166,6 +166,11 @@ environment variables are set properly:
     # makes HOME and PYTHONPATH available for python
     runjob --exp-env HOME --exp-env PYTHONPATH ... : python script.py
 
+Compiling NEST with the GCC (`-DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_GCC`)
+might require you to use a GSL library compiled by the GCC, otherwise undefined
+symbols break your build. Changing the compiler should be done in the file
+`<src>/cmake/Platform/BlueGeneQ_GCC.cmake`.
+
 Compiling for Fujitsu Sparc64
 =============================
 

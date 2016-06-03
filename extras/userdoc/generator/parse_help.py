@@ -28,9 +28,11 @@ Parse all NEST files for documentation and build the help.
 
 import os
 import re
+import sys
+import shutil
 
 from modules.writers import coll_data, check_ifdef, write_helpindex
-from modules.helpers import cut_it
+# from modules.helpers import cut_it
 
 path = '../../../'
 path = os.path.abspath(path)
@@ -55,7 +57,7 @@ keywords = ["Name:", "Synopsis:", "Parameters:", "Description:",
 # Now begin to collect the data for the helpindex.html
 for file in allfiles:
     if not file.endswith('.py'):
-        docstring = r'\/\*[\s*\n]?BeginDocumentation[\s?]*\n(.*?)\n*?\*\/'
+        docstring = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
         f = open(('%s' % (file,)), 'r')
         filetext = f.read()
         f.close()
@@ -64,14 +66,23 @@ for file in allfiles:
         # if file.endswith('.sli'):
         for item in items:
             # namestring = r'([ *]?Name[ *]?\:[ *]?)(.*?)([ *]?\-)'
-            namestring = r'([\s*]?Name[\s*]?\:[\s*]?)(.*?)([ *]?\n)'
+            namestring = r'([\s*]?Name[\s*]?\:[\s*]?)(.*?)([\s*]?\n)'
             # fullnamestring = r'([ *]?Name[ *]?\:[ *]?)((.*?))\n'
             docnames = re.findall(namestring, item, re.DOTALL)
             # fulldocnames = re.findall(fullnamestring, item, re.DOTALL)
             for docname in docnames:
+                # iname = documentation[k].split()[0].rstrip("-")
+                # ifullname = documentation[k].strip(" ######").strip()
+                # ifullname = ifullname.lstrip(iname).strip()
+                # ifullname = ifullname.lstrip("- ")
+
                 if docname[1].strip():
                     fullname = docname[1].strip()
-                    docname = cut_it(' - ', docname[1].strip())[0].strip()
+
+                    # docname = cut_it(' - ', docname[1].strip())[0].strip()
+                    docname = fullname.split()[0].rstrip("-")
+                    fullname = fullname.lstrip(docname).strip()
+                    fullname = fullname.lstrip("-").strip()
                 if file.endswith('.sli'):
                     sli_command_list.append(docname.strip())
                     index_dic = {'name': docname, 'ext': 'sli'}
@@ -82,6 +93,9 @@ for file in allfiles:
                     fullname_dic = {'fullname': fullname}
                     index_dic.update(fullname_dic)
                     filename_dic = {'file': file}
+                else:
+                    fullname_dic = {'fullname': ''}
+                    index_dic.update(fullname_dic)
                     # index_dic.update(filename_dic)
                 index_dic.update(filename_dic)
             index_dic_list.append(index_dic)
@@ -91,7 +105,8 @@ write_helpindex(index_dic_list)
 for file in allfiles:
     # .py is for future use
     if not file.endswith('.py'):
-        docstring = r'\/\*[\s*\n]?BeginDocumentation[\s?]*\n(.*?)\n*?\*\/'
+        # docstring = r'\/\*[\s*\n]?BeginDocumentation[\s?]*\n(.*?)\n*?\*\/'
+        docstring = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
         f = open(('%s' % (file,)), 'r')
         filetext = f.read()
         f.close()
@@ -129,3 +144,6 @@ for file in allfiles:
 
             all_data = coll_data(keywords, documentation, num, file,
                                  sli_command_list)
+if len(sys.argv) > 1:
+    shutil.rmtree(sys.argv[1], ignore_errors=True)
+    shutil.copytree("../cmds", sys.argv[1])

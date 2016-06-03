@@ -57,8 +57,8 @@ EventDeliveryManager::send< SpikeEvent >( Node& source,
   SpikeEvent& e,
   const long_t lag )
 {
-  const index s_gid = source.get_gid();
-  e.set_sender_gid( s_gid );
+  const index source_gid = source.get_gid();
+  e.set_sender_gid( source_gid );
   if ( source.has_proxies() )
   {
     e.set_stamp(
@@ -68,13 +68,13 @@ EventDeliveryManager::send< SpikeEvent >( Node& source,
 
     if ( source.is_off_grid() )
     {
-      send_offgrid_remote( tid, e, lag );
+      send_off_grid_remote( tid, e, lag );
     }
     else
     {
       send_remote( tid, e, lag );
-      kernel().connection_manager.send_to_devices( tid, s_gid, e );
     }
+    kernel().connection_manager.send_to_devices( tid, source_gid, e );
   }
   else
   {
@@ -105,7 +105,28 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long_t lag )
     const thread assigned_tid = ( *it ).rank / kernel().vp_manager.get_num_assigned_ranks_per_thread();
     for ( int_t i = 0; i < e.get_multiplicity(); ++i )
     {
+      ++num_grid_spikes_[ tid ];
       ( *spike_register_5g_[ tid ] )[ assigned_tid ][ lag ].push_back( *it );
+    }
+  }
+}
+
+inline void
+EventDeliveryManager::send_off_grid_remote( thread tid,
+  SpikeEvent& e,
+  const long_t lag )
+{
+  // Put the spike in a buffer for the remote machines
+  const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
+  const std::vector< Target >& targets = kernel().connection_manager.get_targets( tid, lid );
+
+  for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
+  {
+    const thread assigned_tid = ( *it ).rank / kernel().vp_manager.get_num_assigned_ranks_per_thread();
+    for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+    {
+      ++num_off_grid_spikes_[ tid ];
+      ( *off_grid_spike_register_5g_[ tid ] )[ assigned_tid ][ lag ].push_back( OffGridTarget( *it, e.get_offset() ) );
     }
   }
 }
@@ -117,8 +138,8 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
     kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
   e.set_sender( source );
   e.set_sender_gid( source.get_gid() );
-  const thread t = source.get_thread();
-  send_remote( t, e );
+  const thread tid = source.get_thread();
+  send_remote( tid, e );
 }
 
 inline size_t
@@ -126,6 +147,23 @@ EventDeliveryManager::write_toggle() const
 {
   return kernel().simulation_manager.get_slice() % 2;
 }
+
+inline void
+EventDeliveryManager::resize_spike_register_5g_( const thread tid )
+{
+  for ( std::vector< std::vector< std::vector< Target > > >::iterator it = (*spike_register_5g_[ tid ]).begin();
+        it != (*spike_register_5g_[ tid ]).end(); ++it )
+  {
+    it->resize( kernel().connection_manager.get_min_delay(), std::vector< Target >( 0 ) );
+  }
+
+  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = (*off_grid_spike_register_5g_[ tid ]).begin();
+        it != (*off_grid_spike_register_5g_[ tid ]).end(); ++it )
+  {
+    it->resize( kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >( 0 ) );
+  }
+}
+
 
 } // of namespace nest
 

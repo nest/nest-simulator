@@ -54,6 +54,7 @@ struct Target
   Target( const thread tid, const thread rank, const synindex syn_index, const index lcid);
   void set_processed();
   bool is_processed() const;
+  double_t get_offset() const;
 };
 
 inline
@@ -96,6 +97,39 @@ inline bool
 Target::is_processed() const
 {
   return processed;
+}
+
+inline double_t
+Target::get_offset() const
+{
+  return 0;
+}
+
+struct OffGridTarget : Target
+{
+  double_t offset;
+  OffGridTarget();
+  OffGridTarget( const Target& target, const double_t offset );
+  double_t get_offset() const;
+};
+
+inline
+OffGridTarget::OffGridTarget()
+  : Target()
+{
+}
+
+inline
+OffGridTarget::OffGridTarget(const Target& target, const double_t offset )
+  : Target( target )
+  , offset( offset )
+{
+}
+
+inline double_t
+OffGridTarget::get_offset() const
+{
+  return offset;
 }
 
 /** 

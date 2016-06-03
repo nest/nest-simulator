@@ -40,6 +40,7 @@
 #include "node.h"
 #include "target_table.h"
 #include "spike_data.h"
+#include "vp_manager.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -49,9 +50,37 @@ namespace nest
 typedef MPIManager::OffGridSpike OffGridSpike;
 
 struct TargetData;
+
 // TODO@5g: move this to communicator.h and implement getter
 const size_t mpi_buffer_size_target_data = 30000;
 const size_t mpi_buffer_size_spike_data = 30000;
+
+struct SendBufferPosition
+{
+  size_t num_spike_data_written;
+  std::vector< unsigned int > idx;
+  std::vector< unsigned int > begin;
+  std::vector< unsigned int > end;
+  SendBufferPosition( const AssignedRanks assigned_ranks, const unsigned int send_recv_count_per_rank );
+};
+  
+inline
+SendBufferPosition::SendBufferPosition( const AssignedRanks assigned_ranks, const unsigned int send_recv_count_per_rank )
+  : num_spike_data_written( 0 )
+{
+  idx.resize( assigned_ranks.size );
+  begin.resize( assigned_ranks.size );
+  end.resize( assigned_ranks.size );
+  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+    {
+      // thread-local index of (global) rank
+      const thread lr_idx = rank % assigned_ranks.max_size;
+      assert( lr_idx < assigned_ranks.size );
+      idx[ lr_idx ] = rank * send_recv_count_per_rank;
+      begin[ lr_idx ] = rank * send_recv_count_per_rank;
+      end[ lr_idx ] = (rank + 1) * send_recv_count_per_rank;
+    }
+}
 
 class EventDeliveryManager : public ManagerInterface
 {
@@ -122,7 +151,7 @@ public:
    * in a synchronised (single threaded) state.
    * @see send_to_targets()
    */
-  void send_offgrid_remote( thread p, SpikeEvent&, const long_t lag = 0 );
+  void send_off_grid_remote( thread tid, SpikeEvent& e, const long_t lag = 0 );
 
   /**
    * Send event e directly to its target node. This should be
@@ -180,7 +209,7 @@ public:
 
   /**
    * Resize spike_register and comm_buffer to correct dimensions.
-   * Resizes also offgrid_*_buffer_.
+   * Resizes also off_grid_*_buffer_.
    * This is done by resume() when called for the first time.
    * The spike buffers cannot be reconfigured later, whence neither
    * the number of local threads or the min_delay can change after
@@ -233,10 +262,24 @@ private:
    */
   void collocate_buffers_( bool );
 
-  bool collocate_spike_data_buffers_( const thread tid );
-  bool collocate_spike_data_buffers_thr_( const thread tid );
+  template< typename TargetT, typename SpikeDataT >
+  bool collocate_spike_data_buffers_( const thread tid,
+    const AssignedRanks& assigned_ranks,
+    SendBufferPosition& send_buffer_position,
+    std::vector< std::vector< std::vector< std::vector< TargetT > > >* >& spike_register,
+    std::vector< SpikeDataT >& send_buffer );
+
+  template< typename SpikeDataT >
+  void set_end_and_invalid_markers_( const thread tid, const AssignedRanks& assigned_ranks, const SendBufferPosition& send_buffer_position, std::vector< SpikeDataT >& send_buffer );
+
+  template< typename SpikeDataT >
+  void set_complete_marker_spike_data_( const thread tid, const AssignedRanks& assigned_ranks, std::vector< SpikeDataT >& send_buffer );
+
+  template< typename SpikeDataT >
+  bool deliver_events_5g_( const thread tid, const std::vector< SpikeDataT >& recv_buffer );
 
   void reset_spike_register_5g_( const thread tid );
+  void resize_spike_register_5g_( const thread tid );
 
   // required static function in clean_spike_register_5g_ by
   // std::remove_if
@@ -244,15 +287,11 @@ private:
 
   void clean_spike_register_5g_( const thread tid );
 
-  void set_complete_marker_spike_data_( const thread tid );
-
   bool collocate_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, TargetData* send_buffer );
 
   void set_complete_marker_target_data_( const thread tid, const unsigned int num_target_data_per_rank, TargetData* send_buffer );
 
   bool distribute_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, TargetData const* const recv_buffer );
-
-  bool deliver_events_5g_( const thread tid );
 
   /**
    * Send event e to all targets of node source on thread t
@@ -266,6 +305,9 @@ private:
 
   bool off_grid_spiking_; //!< indicates whether spikes are not constrained to
                           //!< the grid
+
+  std::vector< size_t> num_grid_spikes_;
+  std::vector< size_t> num_off_grid_spikes_;
 
   /**
    * Table of pre-computed modulos.
@@ -298,6 +340,15 @@ private:
    * - Fourth dim: Target
    */
   std::vector< std::vector< std::vector< std::vector< Target > > >* > spike_register_5g_;
+
+  /**
+   * Register for off-grid spikes. This is 4-dim structure.
+   * - First dim: write threads
+   * - Second dim: read threads
+   * - Third dim: lag
+   * - Fourth dim: OffGridTarget
+   */
+  std::vector< std::vector< std::vector< std::vector< OffGridTarget > > >* > off_grid_spike_register_5g_;
 
   /**
    * Register for off-grid spikes.
@@ -357,8 +408,12 @@ private:
 
   std::vector< SpikeData > send_buffer_spike_data_;
   std::vector< SpikeData > recv_buffer_spike_data_;
+  std::vector< OffGridSpikeData > send_buffer_off_grid_spike_data_;
+  std::vector< OffGridSpikeData > recv_buffer_off_grid_spike_data_;
+
   unsigned int send_recv_count_spike_data_per_rank_;
   unsigned int send_recv_count_spike_data_in_int_per_rank_;
+  unsigned int send_recv_count_off_grid_spike_data_in_int_per_rank_;
 };
 
 inline void
@@ -371,6 +426,16 @@ EventDeliveryManager::reset_spike_register_5g_( const thread tid )
       (*iit).clear();
     }
   }
+  num_grid_spikes_[ tid ] = 0;
+
+  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = (*off_grid_spike_register_5g_[ tid ]).begin(); it < (*off_grid_spike_register_5g_[ tid ]).end(); ++it )
+  {
+    for ( std::vector< std::vector< OffGridTarget > >::iterator iit = (*it).begin(); iit < (*it).end(); ++iit )
+    {
+      (*iit).clear();
+    }
+  }
+  num_off_grid_spikes_[ tid ] = 0;
 }
 
 inline bool
@@ -396,17 +461,6 @@ inline void
 EventDeliveryManager::send_to_node( Event& e )
 {
   e();
-}
-
-inline void
-EventDeliveryManager::send_offgrid_remote( thread t,
-  SpikeEvent& e,
-  const long_t lag )
-{
-  // Put the spike in a buffer for the remote machines
-  OffGridSpike ogs( e.get_sender().get_gid(), e.get_offset() );
-  for ( int_t i = 0; i < e.get_multiplicity(); ++i )
-    offgrid_spike_register_[ t ][ lag ].push_back( ogs );
 }
 
 inline bool

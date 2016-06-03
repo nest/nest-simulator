@@ -46,7 +46,7 @@ struct SpikeData
   const static unsigned int invalid_marker; // =3
   SpikeData();
   SpikeData( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag );
-  void set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag );
+  void set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag, const double_t offset );
   void reset_marker();
   void set_complete_marker();
   void set_end_marker();
@@ -54,6 +54,7 @@ struct SpikeData
   bool is_complete_marker() const;
   bool is_end_marker() const;
   bool is_invalid_marker() const;
+  double_t get_offset() const;
 };
 
 inline
@@ -77,7 +78,7 @@ SpikeData::SpikeData( const thread tid, const synindex syn_index, const index lc
 }
 
 inline void
-SpikeData::set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag )
+SpikeData::set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag, const double_t )
 {
   (*this).lcid = lcid;
   (*this).tid = tid;
@@ -126,6 +127,40 @@ inline bool
 SpikeData::is_invalid_marker() const
 {
   return marker == invalid_marker;
+}
+
+inline double_t
+SpikeData::get_offset() const
+{
+  return 0;
+}
+
+struct OffGridSpikeData : SpikeData
+{
+  double_t offset;
+  void set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag, const double_t offset );
+  double_t get_offset() const;
+};
+
+inline void
+OffGridSpikeData::set( const thread tid,
+  const synindex syn_index,
+  const index lcid,
+  const unsigned int lag,
+  const double_t offset)
+{
+  (*this).lcid = lcid;
+  (*this).tid = tid;
+  (*this).syn_index = syn_index;
+  (*this).lag = lag;
+  marker = 0; // always initialize with default marker
+  (*this).offset = offset;
+}
+
+inline double_t
+OffGridSpikeData::get_offset() const
+{
+  return offset;
 }
 
 } // namespace nest

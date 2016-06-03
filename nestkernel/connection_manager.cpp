@@ -851,71 +851,46 @@ nest::ConnectionManager::divergent_connect( index source_id,
 
 /**
  * Connect, using a dictionary with arrays.
- * This variant of connect combines the functionalities of
- * - connect
- * - divergent_connect
- * - convergent_connect
- * The decision is based on the details of the dictionary entries source and
- * target.
+ * The connection rule is based on the details of the dictionary entries source
+ * and target.
  * If source and target are both either a GID or a list of GIDs with equal size,
- * then source and
- * target are connected one-to-one.
- * If source is a gid and target is a list of GIDs then divergent_connect is
- * used.
- * If source is a list of GIDs and target is a GID, then convergent_connect is
- * used.
- * At this stage, the task of connect is to separate the dictionary into one for
- * each thread and
- * then to forward the
- * connect call to the connectors who can then deal with the details of the
- * connection.
+ * then source and target are connected one-to-one.
+ * If source is a gid and target is a list of GIDs then the sources is
+ * connected to all targets.
+ * If source is a list of GIDs and target is a GID, then all sources are
+ * connected to the target.
+ * At this stage, the task of connect is to separate the dictionary into one
+ * for each thread and then to forward the connect call to the connectors who
+ * can then deal with the details of the connection.
  *
  * @note This method is used only by DataConnect.
  */
 bool
 nest::ConnectionManager::connect( ArrayDatum& conns )
 {
-  // #ifdef _OPENMP
-  //     LOG(M_INFO, "ConnectionManager::Connect", msg);
-  // #endif
-
-  // #ifdef _OPENMP
-  // #pragma omp parallel shared
-
-  // #endif
+  for ( Token* ct = conns.begin(); ct != conns.end(); ++ct )
   {
-    for ( Token* ct = conns.begin(); ct != conns.end(); ++ct )
+    DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
+    index target_gid = static_cast< size_t >( ( *cd )[ names::target ] );
+    Node* target_node = kernel().node_manager.get_node( target_gid );
+    size_t thr = target_node->get_thread();
+
+    size_t syn_id = 0;
+    index source_gid = ( *cd )[ names::source ];
+
+    Token synmodel = cd->lookup( names::synapse_model );
+    if ( !synmodel.empty() )
     {
-      DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
-      index target_gid = static_cast< size_t >( ( *cd )[ names::target ] );
-      Node* target_node = kernel().node_manager.get_node( target_gid );
-      size_t thr = target_node->get_thread();
-
-      // #ifdef _OPENMP
-      // 	    size_t my_thr=omp_get_thread_num();
-      // 	    if(my_thr == thr)
-      // #endif
-      {
-
-        size_t syn_id = 0;
-        index source_gid = ( *cd )[ names::source ];
-
-        Token synmodel = cd->lookup( names::synapse_model );
-        if ( !synmodel.empty() )
-        {
-          std::string synmodel_name = getValue< std::string >( synmodel );
-          synmodel =
-            kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-          if ( !synmodel.empty() )
-            syn_id = static_cast< size_t >( synmodel );
-          else
-            throw UnknownModelName( synmodel_name );
-        }
-        Node* source_node = kernel().node_manager.get_node( source_gid );
-        //#pragma omp critical
-        connect_( *source_node, *target_node, source_gid, thr, syn_id, cd );
-      }
+      std::string synmodel_name = getValue< std::string >( synmodel );
+      synmodel =
+        kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
+      if ( !synmodel.empty() )
+        syn_id = static_cast< size_t >( synmodel );
+      else
+        throw UnknownModelName( synmodel_name );
     }
+    Node* source_node = kernel().node_manager.get_node( source_gid );
+    connect_( *source_node, *target_node, source_gid, thr, syn_id, cd );
   }
   return true;
 }

@@ -32,7 +32,7 @@ Parameters:
   amplitude  double - Amplitude of current in pA
 
 Examples: The dc current can be altered in the following way:
-   /dc_generator Create /dc_gen Set         % Creates a dc_generator, which is a node
+   /dc_generator Create /dc_gen Set    % Creates a dc_generator, which is a node
    dc_gen GetStatus info                    % View properties (amplitude is 0)
    dc_gen << /amplitude 1500. >> SetStatus
    dc_gen GetStatus info                    % amplitude is now 1500.0
@@ -118,7 +118,10 @@ private:
 };
 
 inline port
-dc_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+dc_generator::send_test_event( Node& target,
+  rport receptor_type,
+  synindex syn_id,
+  bool )
 {
   device_.enforce_single_syn_type( syn_id );
 

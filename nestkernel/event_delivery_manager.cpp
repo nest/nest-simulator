@@ -99,21 +99,23 @@ EventDeliveryManager::clear_pending_spikes()
 void
 EventDeliveryManager::configure_spike_buffers()
 {
-  assert( kernel().connection_builder_manager.get_min_delay() != 0 );
+  assert( kernel().connection_manager.get_min_delay() != 0 );
 
   spike_register_.clear();
   // the following line does not compile with gcc <= 3.3.5
   spike_register_.resize( kernel().vp_manager.get_num_threads(),
-    std::vector< std::vector< uint_t > >( kernel().connection_builder_manager.get_min_delay() ) );
+    std::vector< std::vector< uint_t > >(
+                            kernel().connection_manager.get_min_delay() ) );
   for ( size_t j = 0; j < spike_register_.size(); ++j )
     for ( size_t k = 0; k < spike_register_[ j ].size(); ++k )
       spike_register_[ j ][ k ].clear();
 
   offgrid_spike_register_.clear();
   // the following line does not compile with gcc <= 3.3.5
-  offgrid_spike_register_.resize( kernel().vp_manager.get_num_threads(),
+  offgrid_spike_register_.resize(
+    kernel().vp_manager.get_num_threads(),
     std::vector< std::vector< OffGridSpike > >(
-                                    kernel().connection_builder_manager.get_min_delay() ) );
+      kernel().connection_manager.get_min_delay() ) );
   for ( size_t j = 0; j < offgrid_spike_register_.size(); ++j )
     for ( size_t k = 0; k < offgrid_spike_register_[ j ].size(); ++k )
       offgrid_spike_register_[ j ][ k ].clear();
@@ -127,15 +129,19 @@ EventDeliveryManager::configure_spike_buffers()
 
   // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces
   // plus the fiunal marker and the done flag for iterations
-  // + 1 for the final markers of each thread (invalid_synindex) of secondary events
+  // + 1 for the final markers of each thread (invalid_synindex) of secondary
+  // events
   // + 1 for the done flag (true) of each process
-  int send_buffer_size =
-    kernel().vp_manager.get_num_threads() * kernel().connection_builder_manager.get_min_delay() + 2
+  int send_buffer_size = kernel().vp_manager.get_num_threads()
+          * kernel().connection_manager.get_min_delay()
+        + 2
       > 4
-    ? kernel().vp_manager.get_num_threads() * kernel().connection_builder_manager.get_min_delay()
+    ? kernel().vp_manager.get_num_threads()
+        * kernel().connection_manager.get_min_delay()
       + 2
     : 4;
-  int recv_buffer_size = send_buffer_size * kernel().mpi_manager.get_num_processes();
+  int recv_buffer_size =
+    send_buffer_size * kernel().mpi_manager.get_num_processes();
   kernel().mpi_manager.set_buffer_sizes( send_buffer_size, recv_buffer_size );
 
   // DEC cxx required 0U literal, HEP 2007-03-26
@@ -151,11 +157,12 @@ EventDeliveryManager::configure_spike_buffers()
   // and insert the done flag (==true)
   // after min_delay 0's (== comm_marker)
   // use the template functions defined in event.h
-  // this only needs to be done for one process, because displacements is set to 0
-  // so all processes initially read out the same positions in the
-  // global spike buffer
+  // this only needs to be done for one process, because displacements is set to
+  // 0 so all processes initially read out the same positions in the global
+  // spike buffer
   std::vector< uint_t >::iterator pos = global_grid_spikes_.begin()
-    + kernel().vp_manager.get_num_threads() * kernel().connection_builder_manager.get_min_delay();
+    + kernel().vp_manager.get_num_threads()
+      * kernel().connection_manager.get_min_delay();
   write_to_comm_buffer( invalid_synindex, pos );
   write_to_comm_buffer( true, pos );
 
@@ -169,8 +176,8 @@ EventDeliveryManager::configure_spike_buffers()
 void
 EventDeliveryManager::init_moduli()
 {
-  delay min_delay = kernel().connection_builder_manager.get_min_delay();
-  delay max_delay = kernel().connection_builder_manager.get_max_delay();
+  delay min_delay = kernel().connection_manager.get_min_delay();
+  delay max_delay = kernel().connection_manager.get_max_delay();
   assert( min_delay != 0 );
   assert( max_delay != 0 );
 
@@ -185,8 +192,8 @@ EventDeliveryManager::init_moduli()
 
   for ( delay d = 0; d < min_delay + max_delay; ++d )
   {
-    moduli_[ d ] =
-      ( kernel().simulation_manager.get_clock().get_steps() + d ) % ( min_delay + max_delay );
+    moduli_[ d ] = ( kernel().simulation_manager.get_clock().get_steps() + d )
+      % ( min_delay + max_delay );
   }
 
   // Slice-based ring-buffers have one bin per min_delay steps,
@@ -197,8 +204,8 @@ EventDeliveryManager::init_moduli()
   slice_moduli_.resize( min_delay + max_delay );
   for ( delay d = 0; d < min_delay + max_delay; ++d )
   {
-    slice_moduli_[ d ] =
-      ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
+    slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps()
+                             + d ) / min_delay ) % nbuff;
   }
 }
 
@@ -213,8 +220,8 @@ EventDeliveryManager::init_moduli()
 void
 EventDeliveryManager::update_moduli()
 {
-  delay min_delay = kernel().connection_builder_manager.get_min_delay();
-  delay max_delay = kernel().connection_builder_manager.get_max_delay();
+  delay min_delay = kernel().connection_manager.get_min_delay();
+  delay max_delay = kernel().connection_manager.get_max_delay();
   assert( min_delay != 0 );
   assert( max_delay != 0 );
 
@@ -233,8 +240,8 @@ EventDeliveryManager::update_moduli()
     std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
   for ( delay d = 0; d < min_delay + max_delay; ++d )
   {
-    slice_moduli_[ d ] =
-      ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
+    slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps()
+                             + d ) / min_delay ) % nbuff;
   }
 }
 
@@ -255,7 +262,9 @@ EventDeliveryManager::collocate_buffers_( bool done )
 
   std::vector< std::vector< std::vector< OffGridSpike > > >::iterator it;
   std::vector< std::vector< OffGridSpike > >::iterator jt;
-  for ( it = offgrid_spike_register_.begin(); it != offgrid_spike_register_.end(); ++it )
+  for ( it = offgrid_spike_register_.begin();
+        it != offgrid_spike_register_.end();
+        ++it )
     for ( jt = it->begin(); jt != it->end(); ++jt )
       num_offgrid_spikes += jt->size();
 
@@ -266,29 +275,34 @@ EventDeliveryManager::collocate_buffers_( bool done )
   // and that secondary_events_buffer_.size() contains the correct size
   // of this buffer in units of uint_t
 
-  for ( j = secondary_events_buffer_.begin(); j != secondary_events_buffer_.end(); ++j )
+  for ( j = secondary_events_buffer_.begin();
+        j != secondary_events_buffer_.end();
+        ++j )
     uintsize_secondary_events += j->size();
 
   // +1 because we need one end marker invalid_synindex
   // +1 for bool-value done
-  num_spikes = num_grid_spikes + num_offgrid_spikes + uintsize_secondary_events + 2;
+  num_spikes =
+    num_grid_spikes + num_offgrid_spikes + uintsize_secondary_events + 2;
   if ( !off_grid_spiking_ ) // on grid spiking
   {
     // make sure buffers are correctly sized
     if ( global_grid_spikes_.size()
       != static_cast< uint_t >( kernel().mpi_manager.get_recv_buffer_size() ) )
-      global_grid_spikes_.resize( kernel().mpi_manager.get_recv_buffer_size(), 0 );
+      global_grid_spikes_.resize(
+        kernel().mpi_manager.get_recv_buffer_size(), 0 );
 
     if ( num_spikes + ( kernel().vp_manager.get_num_threads()
-                        * kernel().connection_builder_manager.get_min_delay() )
+                        * kernel().connection_manager.get_min_delay() )
       > static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
       local_grid_spikes_.resize(
-        ( num_spikes + ( kernel().connection_builder_manager.get_min_delay()
+        ( num_spikes + ( kernel().connection_manager.get_min_delay()
                          * kernel().vp_manager.get_num_threads() ) ),
         0 );
     else if ( local_grid_spikes_.size()
       < static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
-      local_grid_spikes_.resize( kernel().mpi_manager.get_send_buffer_size(), 0 );
+      local_grid_spikes_.resize(
+        kernel().mpi_manager.get_send_buffer_size(), 0 );
 
     // collocate the entries of spike_registers into local_grid_spikes__
     std::vector< uint_t >::iterator pos = local_grid_spikes_.begin();
@@ -323,7 +337,9 @@ EventDeliveryManager::collocate_buffers_( bool done )
         }
         ++it;
       }
-      for ( it = offgrid_spike_register_.begin(); it != offgrid_spike_register_.end(); ++it )
+      for ( it = offgrid_spike_register_.begin();
+            it != offgrid_spike_register_.end();
+            ++it )
         for ( jt = it->begin(); jt != it->end(); ++jt )
           jt->clear();
     }
@@ -335,7 +351,9 @@ EventDeliveryManager::collocate_buffers_( bool done )
 
     // here all spikes have been written to the local_grid_spikes buffer
     // pos points to next position in this outgoing communication buffer
-    for ( j = secondary_events_buffer_.begin(); j != secondary_events_buffer_.end(); ++j )
+    for ( j = secondary_events_buffer_.begin();
+          j != secondary_events_buffer_.end();
+          ++j )
     {
       pos = std::copy( j->begin(), j->end(), pos );
       j->clear();
@@ -356,10 +374,10 @@ EventDeliveryManager::collocate_buffers_( bool done )
         kernel().mpi_manager.get_recv_buffer_size(), OffGridSpike( 0, 0.0 ) );
 
     if ( num_spikes + ( kernel().vp_manager.get_num_threads()
-                        * kernel().connection_builder_manager.get_min_delay() )
+                        * kernel().connection_manager.get_min_delay() )
       > static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
       local_offgrid_spikes_.resize(
-        ( num_spikes + ( kernel().connection_builder_manager.get_min_delay()
+        ( num_spikes + ( kernel().connection_manager.get_min_delay()
                          * kernel().vp_manager.get_num_threads() ) ),
         OffGridSpike( 0, 0.0 ) );
     else if ( local_offgrid_spikes_.size()
@@ -370,7 +388,9 @@ EventDeliveryManager::collocate_buffers_( bool done )
     // collocate the entries of spike_registers into local_offgrid_spikes__
     std::vector< OffGridSpike >::iterator pos = local_offgrid_spikes_.begin();
     if ( num_grid_spikes == 0 )
-      for ( it = offgrid_spike_register_.begin(); it != offgrid_spike_register_.end(); ++it )
+      for ( it = offgrid_spike_register_.begin();
+            it != offgrid_spike_register_.end();
+            ++it )
         for ( jt = it->begin(); jt != it->end(); ++jt )
         {
           pos = std::copy( jt->begin(), jt->end(), pos );
@@ -381,7 +401,9 @@ EventDeliveryManager::collocate_buffers_( bool done )
     {
       std::vector< uint_t >::iterator n;
       i = spike_register_.begin();
-      for ( it = offgrid_spike_register_.begin(); it != offgrid_spike_register_.end(); ++it )
+      for ( it = offgrid_spike_register_.begin();
+            it != offgrid_spike_register_.end();
+            ++it )
       {
         j = i->begin();
         for ( jt = it->begin(); jt != it->end(); ++jt )
@@ -404,7 +426,9 @@ EventDeliveryManager::collocate_buffers_( bool done )
     }
 
     // empty offgrid_spike_register_
-    for ( it = offgrid_spike_register_.begin(); it != offgrid_spike_register_.end(); ++it )
+    for ( it = offgrid_spike_register_.begin();
+          it != offgrid_spike_register_.end();
+          ++it )
       for ( jt = it->begin(); jt != it->end(); ++jt )
         jt->clear();
   }
@@ -428,18 +452,23 @@ EventDeliveryManager::deliver_events( thread t )
   if ( !off_grid_spiking_ ) // on_grid_spiking
   {
     // prepare Time objects for every possible time stamp within min_delay_
-    std::vector< Time > prepared_timestamps( kernel().connection_builder_manager.get_min_delay() );
-    for ( size_t lag = 0; lag < ( size_t ) kernel().connection_builder_manager.get_min_delay();
+    std::vector< Time > prepared_timestamps(
+      kernel().connection_manager.get_min_delay() );
+    for ( size_t lag = 0;
+          lag < ( size_t ) kernel().connection_manager.get_min_delay();
           lag++ )
     {
-      prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() - Time::step( lag );
+      prepared_timestamps[ lag ] =
+        kernel().simulation_manager.get_clock() - Time::step( lag );
     }
 
-    for ( size_t vp = 0; vp < ( size_t ) kernel().vp_manager.get_num_virtual_processes(); ++vp )
+    for ( size_t vp = 0;
+          vp < ( size_t ) kernel().vp_manager.get_num_virtual_processes();
+          ++vp )
     {
       size_t pid = kernel().mpi_manager.get_process_id( vp );
       int pos_pid = pos[ pid ];
-      int lag = kernel().connection_builder_manager.get_min_delay() - 1;
+      int lag = kernel().connection_manager.get_min_delay() - 1;
       while ( lag >= 0 )
       {
         index nid = global_grid_spikes_[ pos_pid ];
@@ -448,7 +477,7 @@ EventDeliveryManager::deliver_events( thread t )
           // tell all local nodes about spikes on remote machines.
           se.set_stamp( prepared_timestamps[ lag ] );
           se.set_sender_gid( nid );
-          kernel().connection_builder_manager.send( t, nid, se );
+          kernel().connection_manager.send( t, nid, se );
         }
         else
         {
@@ -463,9 +492,12 @@ EventDeliveryManager::deliver_events( thread t )
     // pos[pid] for each pid now points to the first entry of
     // the secondary events
 
-    for ( size_t pid = 0; pid < ( size_t ) kernel().mpi_manager.get_num_processes(); ++pid )
+    for ( size_t pid = 0;
+          pid < ( size_t ) kernel().mpi_manager.get_num_processes();
+          ++pid )
     {
-      std::vector< uint_t >::iterator readpos = global_grid_spikes_.begin() + pos[ pid ];
+      std::vector< uint_t >::iterator readpos =
+        global_grid_spikes_.begin() + pos[ pid ];
 
       while ( true )
       {
@@ -481,9 +513,10 @@ EventDeliveryManager::deliver_events( thread t )
 
         kernel().model_manager.assert_valid_syn_id( synid );
 
-        kernel().model_manager.get_secondary_event_prototype( synid, t ) << readpos;
+        kernel().model_manager.get_secondary_event_prototype( synid, t )
+          << readpos;
 
-        kernel().connection_builder_manager.send_secondary(
+        kernel().connection_manager.send_secondary(
           t, kernel().model_manager.get_secondary_event_prototype( synid, t ) );
       } // of while (true)
 
@@ -499,18 +532,23 @@ EventDeliveryManager::deliver_events( thread t )
   else // off grid spiking
   {
     // prepare Time objects for every possible time stamp within min_delay_
-    std::vector< Time > prepared_timestamps( kernel().connection_builder_manager.get_min_delay() );
-    for ( size_t lag = 0; lag < ( size_t ) kernel().connection_builder_manager.get_min_delay();
+    std::vector< Time > prepared_timestamps(
+      kernel().connection_manager.get_min_delay() );
+    for ( size_t lag = 0;
+          lag < ( size_t ) kernel().connection_manager.get_min_delay();
           lag++ )
     {
-      prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() - Time::step( lag );
+      prepared_timestamps[ lag ] =
+        kernel().simulation_manager.get_clock() - Time::step( lag );
     }
 
-    for ( size_t vp = 0; vp < ( size_t ) kernel().vp_manager.get_num_virtual_processes(); ++vp )
+    for ( size_t vp = 0;
+          vp < ( size_t ) kernel().vp_manager.get_num_virtual_processes();
+          ++vp )
     {
       size_t pid = kernel().mpi_manager.get_process_id( vp );
       int pos_pid = pos[ pid ];
-      int lag = kernel().connection_builder_manager.get_min_delay() - 1;
+      int lag = kernel().connection_manager.get_min_delay() - 1;
       while ( lag >= 0 )
       {
         index nid = global_offgrid_spikes_[ pos_pid ].get_gid();
@@ -520,7 +558,7 @@ EventDeliveryManager::deliver_events( thread t )
           se.set_stamp( prepared_timestamps[ lag ] );
           se.set_sender_gid( nid );
           se.set_offset( global_offgrid_spikes_[ pos_pid ].get_offset() );
-          kernel().connection_builder_manager.send( t, nid, se );
+          kernel().connection_manager.send( t, nid, se );
         }
         else
         {
@@ -543,6 +581,7 @@ EventDeliveryManager::gather_events( bool done )
     kernel().mpi_manager.communicate(
       local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
   else
-    kernel().mpi_manager.communicate( local_grid_spikes_, global_grid_spikes_, displacements_ );
+    kernel().mpi_manager.communicate(
+      local_grid_spikes_, global_grid_spikes_, displacements_ );
 }
 }

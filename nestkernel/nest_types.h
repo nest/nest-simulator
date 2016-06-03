@@ -60,6 +60,8 @@
  * (C) Copyright 1995-2006 The NEST Initiative.
  */
 
+// Generated includes:
+#include "config.h"
 
 /**
  * Namespace for the NEST simulation kernel.
@@ -117,24 +119,24 @@ const long_t long_t_min = LONG_MIN;
  */
 typedef size_t index;
 __attribute__ ((__unused__))
-static const index invalid_index = std::numeric_limits< index >::max();
+const index invalid_index = SIZE_MAX;
 
 /**
  *  Unsigned char type for enumerations of synapse types.
  */
 typedef unsigned char synindex;
-__attribute__ ((__unused__))
-static const synindex invalid_synindex = std::numeric_limits< synindex >::max();
+const synindex invalid_synindex = UCHAR_MAX;
 
 /**
  * Unsigned short type for compact target representation.
  *
  * See Kunkel et al, Front Neuroinform 8:78 (2014).
  */
-typedef unsigned short targetindex; ///< target index into thread local node vector
-const targetindex invalid_targetindex = std::numeric_limits< targetindex >::max();
+//! target index into thread local node vector
+typedef unsigned short targetindex;
+const targetindex invalid_targetindex = USHRT_MAX;
 __attribute__ ((__unused__))
-static const index max_targetindex = invalid_targetindex - 1;
+const index max_targetindex = invalid_targetindex - 1;
 
 /**
  * Thread index type.
@@ -198,8 +200,8 @@ const long_t delay_min = long_t_min;
  * neuron are intepreted the same way by receiving neuron.
  *
  * Each possible signal that may be represented (currently SPIKE and BINARY)
- * is interpreted as a separate bit flag. This way, upon connection, we determine
- * by a bitwise AND operation if sender and receiver are compatible.
+ * is interpreted as a separate bit flag. This way, upon connection, we
+ * determine by a bitwise AND operation if sender and receiver are compatible.
  * The check takes place in connection::check_connection().
  *
  * A device, such as the spike-generator or spike_detector,

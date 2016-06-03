@@ -40,7 +40,8 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_;
+nest::RecordablesMap< nest::iaf_psc_alpha >
+  nest::iaf_psc_alpha::recordablesMap_;
 
 namespace nest
 {
@@ -66,13 +67,13 @@ RecordablesMap< iaf_psc_alpha >::create()
  * ---------------------------------------------------------------- */
 
 iaf_psc_alpha::Parameters_::Parameters_()
-  : Tau_( 10.0 )            // ms
-  , C_( 250.0 )             // pF
-  , TauR_( 2.0 )            // ms
-  , U0_( -70.0 )            // mV
-  , I_e_( 0.0 )             // pA
-  , V_reset_( -70.0 - U0_ ) // mV, rel to U0_
-  , Theta_( -55.0 - U0_ )   // mV, rel to U0_
+  : Tau_( 10.0 )             // ms
+  , C_( 250.0 )              // pF
+  , TauR_( 2.0 )             // ms
+  , E_L_( -70.0 )            // mV
+  , I_e_( 0.0 )              // pA
+  , V_reset_( -70.0 - E_L_ ) // mV, rel to E_L_
+  , Theta_( -55.0 - E_L_ )   // mV, rel to E_L_
   , LowerBound_( -std::numeric_limits< double_t >::infinity() )
   , tau_ex_( 2.0 ) // ms
   , tau_in_( 2.0 ) // ms
@@ -97,11 +98,11 @@ iaf_psc_alpha::State_::State_()
 void
 iaf_psc_alpha::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::E_L, U0_ ); // Resting potential
+  def< double >( d, names::E_L, E_L_ ); // Resting potential
   def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, Theta_ + U0_ ); // threshold value
-  def< double >( d, names::V_reset, V_reset_ + U0_ );
-  def< double >( d, names::V_min, LowerBound_ + U0_ );
+  def< double >( d, names::V_th, Theta_ + E_L_ ); // threshold value
+  def< double >( d, names::V_reset, V_reset_ + E_L_ );
+  def< double >( d, names::V_min, LowerBound_ + E_L_ );
   def< double >( d, names::C_m, C_ );
   def< double >( d, names::tau_m, Tau_ );
   def< double >( d, names::t_ref, TauR_ );
@@ -112,23 +113,24 @@ iaf_psc_alpha::Parameters_::get( DictionaryDatum& d ) const
 double
 iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
 {
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
-  const double ELold = U0_;
-  updateValue< double >( d, names::E_L, U0_ );
-  const double delta_EL = U0_ - ELold;
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
+  const double ELold = E_L_;
+  updateValue< double >( d, names::E_L, E_L_ );
+  const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
-    V_reset_ -= U0_;
+    V_reset_ -= E_L_;
   else
     V_reset_ -= delta_EL;
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
-    Theta_ -= U0_;
+    Theta_ -= E_L_;
   else
     Theta_ -= delta_EL;
 
   if ( updateValue< double >( d, names::V_min, LowerBound_ ) )
-    LowerBound_ -= U0_;
+    LowerBound_ -= E_L_;
   else
     LowerBound_ -= delta_EL;
 
@@ -160,14 +162,16 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
 void
 iaf_psc_alpha::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, y3_ + p.U0_ ); // Membrane potential
+  def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
 }
 
 void
-iaf_psc_alpha::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
+iaf_psc_alpha::State_::set( const DictionaryDatum& d,
+  const Parameters_& p,
+  double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
-    y3_ -= p.U0_;
+    y3_ -= p.E_L_;
   else
     y3_ -= delta_EL;
 }
@@ -230,7 +234,8 @@ iaf_psc_alpha::init_buffers_()
 void
 iaf_psc_alpha::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
 
@@ -263,21 +268,22 @@ iaf_psc_alpha::calibrate()
   // should be carried out via objects of class nest::Time. The conversion
   // requires 2 steps:
   //     1. A time object is constructed defining representation of
-  //        TauR in tics. This representation is then converted to computation time
-  //        steps again by a strategy defined by class nest::Time.
-  //     2. The refractory time in units of steps is read out get_steps(), a member
-  //        function of class nest::Time.
+  //        TauR in tics. This representation is then converted to computation
+  //        time steps again by a strategy defined by class nest::Time.
+  //     2. The refractory time in units of steps is read out get_steps(), a
+  //        member function of class nest::Time.
   //
   // The definition of the refractory period of the iaf_psc_alpha is consistent
   // the one of iaf_psc_alpha_ps.
   //
   // Choosing a TauR that is not an integer multiple of the computation time
   // step h will lead to accurate (up to the resolution h) and self-consistent
-  // results. However, a neuron model capable of operating with real valued spike
-  // time may exhibit a different effective refractory time.
+  // results. However, a neuron model capable of operating with real valued
+  // spike time may exhibit a different effective refractory time.
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.TauR_ ) ).get_steps();
-  assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  // since t_ref_ >= 0, this can only fail in error
+  assert( V_.RefractoryCounts_ >= 0 );
 }
 
 /* ----------------------------------------------------------------
@@ -287,7 +293,8 @@ iaf_psc_alpha::calibrate()
 void
 iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -295,8 +302,9 @@ iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
     if ( S_.r_ == 0 )
     {
       // neuron not refractory
-      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ex_ * S_.y1_ex_ + V_.P32_ex_ * S_.y2_ex_
-        + V_.P31_in_ * S_.y1_in_ + V_.P32_in_ * S_.y2_in_ + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
+      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ex_ * S_.y1_ex_
+        + V_.P32_ex_ * S_.y2_ex_ + V_.P31_in_ * S_.y1_in_
+        + V_.P32_in_ * S_.y2_in_ + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
 
       // lower bound of membrane potential
       S_.y3_ = ( S_.y3_ < P_.LowerBound_ ? P_.LowerBound_ : S_.y3_ );
@@ -328,8 +336,9 @@ iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
       S_.r_ = V_.RefractoryCounts_;
       S_.y3_ = P_.V_reset_;
       // A supra-threshold membrane potential should never be observable.
-      // The reset at the time of threshold crossing enables accurate integration
-      // independent of the computation step size, see [2,3] for details.
+      // The reset at the time of threshold crossing enables accurate
+      // integration independent of the computation step size, see [2,3] for
+      // details.
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
@@ -352,11 +361,13 @@ iaf_psc_alpha::handle( SpikeEvent& e )
   const double_t s = e.get_weight() * e.get_multiplicity();
 
   if ( e.get_weight() > 0.0 )
-    B_.ex_spikes_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
+    B_.ex_spikes_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
+      s );
   else
-    B_.in_spikes_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
+    B_.in_spikes_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
+      s );
 }
 
 void
@@ -368,7 +379,8 @@ iaf_psc_alpha::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * I );
 }
 
 void

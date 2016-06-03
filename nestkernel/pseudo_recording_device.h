@@ -42,7 +42,8 @@ namespace nest
 {
 
 /*BeginDocumentation
-  Name: PseudoRecordingDevice - Common properties of all pseudo-recording devices.
+  Name: PseudoRecordingDevice - Common properties of all pseudo-recording
+                                devices.
   Description:
 
   Pseudo recording devices are used to measure properties of or signals emitted
@@ -99,7 +100,8 @@ inline PseudoRecordingDevice::PseudoRecordingDevice()
 {
 }
 
-inline PseudoRecordingDevice::PseudoRecordingDevice( const PseudoRecordingDevice& prd )
+inline PseudoRecordingDevice::PseudoRecordingDevice(
+  const PseudoRecordingDevice& prd )
   : Device( prd )
 {
 }

@@ -81,9 +81,11 @@ nest::Multimeter::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b )
+nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
+  const Buffers_& b )
 {
-  if ( b.has_targets_ && ( d->known( names::interval ) || d->known( names::record_from ) ) )
+  if ( b.has_targets_
+    && ( d->known( names::interval ) || d->known( names::record_from ) ) )
     throw BadProperty(
       "The recording interval and the list of properties to record "
       "cannot be changed after the multimeter has been connected to "
@@ -99,7 +101,8 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b 
 
     // see if we can represent interval as multiple of step
     interval_ = Time::step( Time( Time::ms( v ) ).get_steps() );
-    if ( std::abs( 1 - interval_.get_ms() / v ) > 10 * std::numeric_limits< double >::epsilon() )
+    if ( std::abs( 1 - interval_.get_ms() / v ) > 10
+        * std::numeric_limits< double >::epsilon() )
       throw BadProperty(
         "The sampling interval must be a multiple of "
         "the simulation resolution" );
@@ -147,8 +150,9 @@ void
 Multimeter::update( Time const& origin, const long_t from, const long_t )
 {
   /* There is nothing to request during the first time slice.
-     For each subsequent slice, we collect all data generated during the previous
-     slice if we are called at the beginning of the slice. Otherwise, we do nothing.
+     For each subsequent slice, we collect all data generated during the
+     previous slice if we are called at the beginning of the slice. Otherwise,
+     we do nothing.
    */
   if ( origin.get_steps() == 0 || from != 0 )
     return;

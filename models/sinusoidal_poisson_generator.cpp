@@ -45,7 +45,8 @@
 
 namespace nest
 {
-RecordablesMap< sinusoidal_poisson_generator > sinusoidal_poisson_generator::recordablesMap_;
+RecordablesMap< sinusoidal_poisson_generator >
+  sinusoidal_poisson_generator::recordablesMap_;
 
 template <>
 void
@@ -69,7 +70,8 @@ nest::sinusoidal_poisson_generator::Parameters_::Parameters_()
 {
 }
 
-nest::sinusoidal_poisson_generator::Parameters_::Parameters_( const Parameters_& p )
+nest::sinusoidal_poisson_generator::Parameters_::Parameters_(
+  const Parameters_& p )
   : om_( p.om_ )
   , phi_( p.phi_ )
   , rate_( p.rate_ )
@@ -78,8 +80,9 @@ nest::sinusoidal_poisson_generator::Parameters_::Parameters_( const Parameters_&
 {
 }
 
-nest::sinusoidal_poisson_generator::Parameters_& nest::sinusoidal_poisson_generator::Parameters_::
-operator=( const Parameters_& p )
+nest::sinusoidal_poisson_generator::Parameters_&
+  nest::sinusoidal_poisson_generator::Parameters_::
+  operator=( const Parameters_& p )
 {
   if ( this == &p )
     return *this;
@@ -101,7 +104,8 @@ nest::sinusoidal_poisson_generator::State_::State_()
 }
 
 
-nest::sinusoidal_poisson_generator::Buffers_::Buffers_( sinusoidal_poisson_generator& n )
+nest::sinusoidal_poisson_generator::Buffers_::Buffers_(
+  sinusoidal_poisson_generator& n )
   : logger_( n )
 {
 }
@@ -136,12 +140,14 @@ void
 nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
   const sinusoidal_poisson_generator& n )
 {
-  if ( not n.is_model_prototype() && d->known( names::individual_spike_trains ) )
+  if ( not n.is_model_prototype()
+    && d->known( names::individual_spike_trains ) )
     throw BadProperty(
       "The individual_spike_trains property can only be set as"
       " a model default using SetDefaults or upon CopyModel." );
 
-  updateValue< bool >( d, names::individual_spike_trains, individual_spike_trains_ );
+  updateValue< bool >(
+    d, names::individual_spike_trains, individual_spike_trains_ );
 
   if ( updateValue< double_t >( d, names::rate, rate_ ) )
     rate_ /= 1000.0; // scale to ms^-1
@@ -187,7 +193,8 @@ nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator(
 void
 nest::sinusoidal_poisson_generator::init_state_( const Node& proto )
 {
-  const sinusoidal_poisson_generator& pr = downcast< sinusoidal_poisson_generator >( proto );
+  const sinusoidal_poisson_generator& pr =
+    downcast< sinusoidal_poisson_generator >( proto );
 
   device_.init_state( pr.device_ );
   S_ = pr.S_;
@@ -203,7 +210,8 @@ nest::sinusoidal_poisson_generator::init_buffers_()
 void
 nest::sinusoidal_poisson_generator::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   device_.calibrate();
 
@@ -222,9 +230,12 @@ nest::sinusoidal_poisson_generator::calibrate()
 }
 
 void
-nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t from, const long_t to )
+nest::sinusoidal_poisson_generator::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const long_t start = origin.get_steps();
@@ -240,8 +251,8 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long_t fro
 
   for ( long_t lag = from; lag < to; ++lag )
   {
-    // update oscillator blocks, accumulate rate as sum of DC and N_osc_ AC elements
-    // rate is instantaneous sum of state
+    // update oscillator blocks, accumulate rate as sum of DC and N_osc_ AC
+    // elements rate is instantaneous sum of state
     S_.rate_ = P_.rate_;
 
     const double_t new_y_0 = V_.cos_ * S_.y_0_ - V_.sin_ * S_.y_1_;

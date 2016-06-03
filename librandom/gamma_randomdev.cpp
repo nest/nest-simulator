@@ -118,6 +118,8 @@ librandom::GammaRandomDev::set_status( const DictionaryDatum& d )
 void
 librandom::GammaRandomDev::get_status( DictionaryDatum& d ) const
 {
+  RandomDev::get_status( d );
+
   def< double >( d, "order", a );
   def< double >( d, "scale", b_ );
 }

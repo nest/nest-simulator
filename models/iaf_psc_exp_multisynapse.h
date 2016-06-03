@@ -35,7 +35,8 @@
 namespace nest
 {
 /* BeginDocumentation
-Name: iaf_psc_exp_multisynapse - Leaky integrate-and-fire neuron model with multiple ports.
+Name: iaf_psc_exp_multisynapse - Leaky integrate-and-fire neuron model with
+                                 multiple ports.
 
 Description:
 
@@ -52,7 +53,8 @@ Sends: SpikeEvent
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Author:  Plesser, adapted from iaf_psc_alpha_multisynapse
-SeeAlso: iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, iaf_psc_alpha_multisynapse
+SeeAlso: iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp,
+iaf_psc_alpha_multisynapse
 */
 class iaf_psc_exp_multisynapse : public Archiving_Node
 {
@@ -63,7 +65,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -110,7 +113,7 @@ private:
     double_t t_ref_;
 
     /** Resting potential in mV. */
-    double_t U0_;
+    double_t E_L_;
 
     /** External current in pA */
     double_t I_e_;
@@ -119,7 +122,7 @@ private:
     double_t V_reset_;
 
     /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
-        I.e. the real threshold is (U0_+Theta_). */
+        I.e. the real threshold is (E_L_+Theta_). */
     double_t Theta_;
 
     /** Time constants of synaptic currents in ms. */
@@ -149,12 +152,14 @@ private:
    */
   struct State_
   {
-    double_t i_0_; // synaptic dc input current, variable 0
+    double_t i_0_; //!< synaptic dc input current, variable 0
     std::vector< double_t > i_syn_;
-    double_t V_m_;     // membrane potential, variable 2
-    double_t current_; //! This is the current in a time step. This is only here to allow logging
+    double_t V_m_;     //!< membrane potential, variable 2
+    double_t current_; //!< This is the current in a time step. This is only
+                       //!< here to allow logging
 
-    int_t r_ref_; // absolute refractory counter (no membrane potential propagation)
+    //! absolute refractory counter (no membrane potential propagation)
+    int_t r_ref_;
 
     State_(); //!< Default initialization
 
@@ -218,7 +223,7 @@ private:
   double_t
   get_V_m_() const
   {
-    return S_.V_m_ + P_.U0_;
+    return S_.V_m_ + P_.E_L_;
   }
 
   /**
@@ -239,7 +244,10 @@ private:
 };
 
 inline port
-iaf_psc_exp_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_psc_exp_multisynapse::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -248,7 +256,8 @@ iaf_psc_exp_multisynapse::send_test_event( Node& target, rport receptor_type, sy
 }
 
 inline port
-iaf_psc_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
+iaf_psc_exp_multisynapse::handles_test_event( CurrentEvent&,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -256,7 +265,8 @@ iaf_psc_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type
 }
 
 inline port
-iaf_psc_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_psc_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

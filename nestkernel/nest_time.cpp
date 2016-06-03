@@ -42,11 +42,11 @@ using namespace nest;
    variables or use defaults.
 */
 
-#ifndef HAVE_TICS_PER_MS
+#ifndef CONFIG_TICS_PER_MS
 #define CONFIG_TICS_PER_MS 1000.0
 #endif
 
-#ifndef HAVE_TICS_PER_STEP
+#ifndef CONFIG_TICS_PER_STEP
 #define CONFIG_TICS_PER_STEP 100
 #endif
 
@@ -101,7 +101,8 @@ Time::set_resolution( double_t ms_per_step )
 {
   assert( ms_per_step > 0 );
 
-  Range::TICS_PER_STEP = static_cast< tic_t >( dround( Range::TICS_PER_MS * ms_per_step ) );
+  Range::TICS_PER_STEP =
+    static_cast< tic_t >( dround( Range::TICS_PER_MS * ms_per_step ) );
   Range::TICS_PER_STEP_RND = Range::TICS_PER_STEP - 1;
 
   // Recalculate ms_per_step to be consistent with rounding above
@@ -143,8 +144,8 @@ Time::ms::fromtoken( const Token& t )
   if ( ddat )
     return ddat->get();
 
-  throw TypeMismatch(
-    IntegerDatum().gettypename().toString() + " or " + DoubleDatum().gettypename().toString(),
+  throw TypeMismatch( IntegerDatum().gettypename().toString() + " or "
+      + DoubleDatum().gettypename().toString(),
     t.datum()->gettypename().toString() );
 }
 
@@ -191,7 +192,8 @@ std::ostream& operator<<( std::ostream& strm, const Time& t )
   else if ( t.tics == Time::LIM_POS_INF.tics )
     strm << "+INF";
   else
-    strm << t.get_ms() << " ms (= " << t.get_tics() << " tics = " << t.get_steps()
+    strm << t.get_ms() << " ms (= " << t.get_tics()
+         << " tics = " << t.get_steps()
          << ( t.get_steps() != 1 ? " steps)" : " step)" );
 
   return strm;

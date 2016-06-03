@@ -70,34 +70,43 @@ void
 nest::VPManager::set_status( const DictionaryDatum& d )
 {
   long n_threads = get_num_threads();
-  bool n_threads_updated = updateValue< long >( d, "local_num_threads", n_threads );
+  bool n_threads_updated =
+    updateValue< long >( d, "local_num_threads", n_threads );
   if ( n_threads_updated )
   {
     if ( kernel().node_manager.size() > 1 )
-      throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
+      throw KernelException(
+        "Nodes exist: Thread/process number cannot be changed." );
     if ( kernel().model_manager.has_user_models() )
       throw KernelException(
-        "Custom neuron models exist: Thread/process number cannot be changed." );
+        "Custom neuron models exist: Thread/process number cannot be "
+        "changed." );
     if ( kernel().model_manager.has_user_prototypes() )
       throw KernelException(
-        "Custom synapse types exist: Thread/process number cannot be changed." );
-    if ( kernel().connection_builder_manager.get_user_set_delay_extrema() )
+        "Custom synapse types exist: Thread/process number cannot be "
+        "changed." );
+    if ( kernel().connection_manager.get_user_set_delay_extrema() )
       throw KernelException(
-        "Delay extrema have been set: Thread/process number cannot be changed." );
+        "Delay extrema have been set: Thread/process number cannot be "
+        "changed." );
     if ( kernel().simulation_manager.has_been_simulated() )
       throw KernelException(
-        "The network has been simulated: Thread/process number cannot be changed." );
+        "The network has been simulated: Thread/process number cannot be "
+        "changed." );
     if ( not Time::resolution_is_default() )
       throw KernelException(
-        "The resolution has been set: Thread/process number cannot be changed." );
+        "The resolution has been set: Thread/process number cannot be "
+        "changed." );
     if ( kernel().model_manager.are_model_defaults_modified() )
       throw KernelException(
-        "Model defaults have been modified: Thread/process number cannot be changed." );
+        "Model defaults have been modified: Thread/process number cannot be "
+        "changed." );
 
     if ( n_threads > 1 && force_singlethreading_ )
     {
-      LOG(
-        M_WARNING, "VPManager::set_status", "No multithreading available, using single threading" );
+      LOG( M_WARNING,
+        "VPManager::set_status",
+        "No multithreading available, using single threading" );
       n_threads = 1;
     }
 
@@ -108,29 +117,37 @@ nest::VPManager::set_status( const DictionaryDatum& d )
   }
 
   long n_vps = get_num_virtual_processes();
-  bool n_vps_updated = updateValue< long >( d, "total_num_virtual_procs", n_vps );
+  bool n_vps_updated =
+    updateValue< long >( d, "total_num_virtual_procs", n_vps );
   if ( n_vps_updated )
   {
     if ( kernel().node_manager.size() > 1 )
-      throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
+      throw KernelException(
+        "Nodes exist: Thread/process number cannot be changed." );
     if ( kernel().model_manager.has_user_models() )
       throw KernelException(
-        "Custom neuron models exist: Thread/process number cannot be changed." );
+        "Custom neuron models exist: Thread/process number cannot be "
+        "changed." );
     if ( kernel().model_manager.has_user_prototypes() )
       throw KernelException(
-        "Custom synapse types exist: Thread/process number cannot be changed." );
-    if ( kernel().connection_builder_manager.get_user_set_delay_extrema() )
+        "Custom synapse types exist: Thread/process number cannot be "
+        "changed." );
+    if ( kernel().connection_manager.get_user_set_delay_extrema() )
       throw KernelException(
-        "Delay extrema have been set: Thread/process number cannot be changed." );
+        "Delay extrema have been set: Thread/process number cannot be "
+        "changed." );
     if ( kernel().simulation_manager.has_been_simulated() )
       throw KernelException(
-        "The network has been simulated: Thread/process number cannot be changed." );
+        "The network has been simulated: Thread/process number cannot be "
+        "changed." );
     if ( not Time::resolution_is_default() )
       throw KernelException(
-        "The resolution has been set: Thread/process number cannot be changed." );
+        "The resolution has been set: Thread/process number cannot be "
+        "changed." );
     if ( kernel().model_manager.are_model_defaults_modified() )
       throw KernelException(
-        "Model defaults have been modified: Thread/process number cannot be changed." );
+        "Model defaults have been modified: Thread/process number cannot be "
+        "changed." );
 
     if ( n_vps % kernel().mpi_manager.get_num_processes() != 0 )
       throw BadProperty(
@@ -140,8 +157,9 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     long n_threads = n_vps / kernel().mpi_manager.get_num_processes();
     if ( ( n_threads > 1 ) && ( force_singlethreading_ ) )
     {
-      LOG(
-        M_WARNING, "VPManager::set_status", "No multithreading available, using single threading" );
+      LOG( M_WARNING,
+        "VPManager::set_status",
+        "No multithreading available, using single threading" );
       n_threads = 1;
     }
 
@@ -175,30 +193,36 @@ nest::VPManager::set_num_threads( nest::thread n_threads )
 bool
 nest::VPManager::is_local_vp( nest::thread vp ) const
 {
-  return kernel().mpi_manager.get_process_id( vp ) == kernel().mpi_manager.get_rank();
+  return kernel().mpi_manager.get_process_id( vp )
+    == kernel().mpi_manager.get_rank();
 }
 
 nest::thread
 nest::VPManager::suggest_vp( nest::index gid ) const
 {
-  return gid % ( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() );
+  return gid
+    % ( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() );
 }
 
 nest::thread
 nest::VPManager::suggest_rec_vp( nest::index gid ) const
 {
-  return gid % ( kernel().mpi_manager.get_num_rec_processes() * get_num_threads() )
+  return gid
+    % ( kernel().mpi_manager.get_num_rec_processes() * get_num_threads() )
     + kernel().mpi_manager.get_num_sim_processes() * get_num_threads();
 }
 
 nest::thread
 nest::VPManager::vp_to_thread( nest::thread vp ) const
 {
-  if ( vp
-    >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() ) )
+  if ( vp >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes()
+               * get_num_threads() ) )
   {
-    return ( vp + kernel().mpi_manager.get_num_sim_processes() * ( 1 - get_num_threads() )
-             - kernel().mpi_manager.get_rank() ) / kernel().mpi_manager.get_num_rec_processes();
+    return ( vp
+             + kernel().mpi_manager.get_num_sim_processes()
+               * ( 1 - get_num_threads() )
+             - kernel().mpi_manager.get_rank() )
+      / kernel().mpi_manager.get_num_rec_processes();
   }
   else
   {
@@ -213,13 +237,15 @@ nest::VPManager::thread_to_vp( nest::thread t ) const
     >= static_cast< int >( kernel().mpi_manager.get_num_sim_processes() ) )
   {
     // Rank is a recording process
-    return t * kernel().mpi_manager.get_num_rec_processes() + kernel().mpi_manager.get_rank()
+    return t * kernel().mpi_manager.get_num_rec_processes()
+      + kernel().mpi_manager.get_rank()
       - kernel().mpi_manager.get_num_sim_processes()
       + kernel().mpi_manager.get_num_sim_processes() * get_num_threads();
   }
   else
   {
     // Rank is a simulating process
-    return t * kernel().mpi_manager.get_num_sim_processes() + kernel().mpi_manager.get_rank();
+    return t * kernel().mpi_manager.get_num_sim_processes()
+      + kernel().mpi_manager.get_rank();
   }
 }

@@ -59,7 +59,7 @@
 #include "slistartup.h"
 #include "specialfunctionsmodule.h"
 
-#ifndef _IS_PYNEST
+#if defined( _BUILD_NEST_CLI ) && defined( HAVE_READLINE )
 #include <gnureadline.h>
 #endif
 
@@ -75,7 +75,8 @@ get_engine()
 void
 sli_logging( const nest::LoggingEvent& e )
 {
-  sli_engine->message( static_cast< int >( e.severity ), e.function.c_str(), e.message.c_str() );
+  sli_engine->message(
+    static_cast< int >( e.severity ), e.function.c_str(), e.message.c_str() );
 }
 
 #ifndef _IS_PYNEST
@@ -83,7 +84,10 @@ int
 neststartup( int* argc, char*** argv, SLIInterpreter& engine )
 #else
 int
-neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string modulepath )
+neststartup( int* argc,
+  char*** argv,
+  SLIInterpreter& engine,
+  std::string modulepath )
 #endif
 {
   nest::init_nest( argc, argv );
@@ -111,7 +115,7 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
   addmodule< OOSupportModule >( engine );
   addmodule< RandomNumbers >( engine );
 
-#if defined( HAVE_READLINE ) && !defined( _IS_PYNEST )
+#if defined( _BUILD_NEST_CLI ) && defined( HAVE_READLINE )
   addmodule< GNUReadline >( engine );
 #endif
 
@@ -130,11 +134,14 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
   // the intepreter decides cleans up memory before NEST is ready
   engine.def( "modeldict", nest::kernel().model_manager.get_modeldict() );
   engine.def( "synapsedict", nest::kernel().model_manager.get_synapsedict() );
-  engine.def( "connruledict", nest::kernel().connection_builder_manager.get_connruledict() );
-  engine.def( "growthcurvedict", nest::kernel().sp_manager.get_growthcurvedict() );
+  engine.def(
+    "connruledict", nest::kernel().connection_manager.get_connruledict() );
+  engine.def(
+    "growthcurvedict", nest::kernel().sp_manager.get_growthcurvedict() );
 
   // register sli_neuron
-  nest::kernel().model_manager.register_node_model< nest::sli_neuron >( "sli_neuron" );
+  nest::kernel().model_manager.register_node_model< nest::sli_neuron >(
+    "sli_neuron" );
 
   // now add static modules providing models
   add_static_modules( engine );
@@ -151,8 +158,10 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
  * optimize DynamicLoaderModule::registerLinkedModule() away.
  */
 #ifdef HAVE_LIBLTDL
-  // dynamic loader module for managing linked and dynamically loaded extension modules
-  nest::DynamicLoaderModule* pDynLoader = new nest::DynamicLoaderModule( engine );
+  // dynamic loader module for managing linked and dynamically loaded extension
+  // modules
+  nest::DynamicLoaderModule* pDynLoader =
+    new nest::DynamicLoaderModule( engine );
 
 // initialize all modules that were linked into at compile time
 // these modules have registered via calling DynamicLoader::registerLinkedModule
@@ -167,10 +176,11 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
 
 #ifdef _IS_PYNEST
   // add the init-script to the list of module initializers
-  ArrayDatum* ad =
-    dynamic_cast< ArrayDatum* >( engine.baselookup( engine.commandstring_name ).datum() );
+  ArrayDatum* ad = dynamic_cast< ArrayDatum* >(
+    engine.baselookup( engine.commandstring_name ).datum() );
   assert( ad != NULL );
-  ad->push_back( new StringDatum( "(" + modulepath + "/pynest-init.sli) run" ) );
+  ad->push_back(
+    new StringDatum( "(" + modulepath + "/pynest-init.sli) run" ) );
 #endif
 
   return engine.startup();

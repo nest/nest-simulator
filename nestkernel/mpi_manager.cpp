@@ -87,19 +87,7 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
     comm = kernel().music_manager.communicator();
 #else  /* #ifdef HAVE_MUSIC */
     int provided_thread_level;
-    int mpi_retcode, mpi_error_len;
-    char* mpi_error_string;
-
-    mpi_retcode = MPI_Init_thread(
-      argc, argv, MPI_THREAD_FUNNELED, &provided_thread_level );
-    if ( mpi_retcode != 0 )
-    {
-      MPI_Error_string( mpi_retcode, mpi_error_string, &mpi_error_len );
-      std::string msg = String.compose(
-        "Error initializing MPI. Error encountered: %1", mpi_error_string );
-
-      LOG( M_ERROR, "MPIManager::init_mpi", msg );
-    }
+    MPI_Init_thread( argc, argv, MPI_THREAD_FUNNELED, &provided_thread_level );
     comm = MPI_COMM_WORLD;
 #endif /* #ifdef HAVE_MUSIC */
   }

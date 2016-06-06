@@ -767,9 +767,8 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
   }
 
   // get random number generator of target thread
-  Network* net = Node::network();
-  rng_ = net->get_rng( target->get_vp() ); 
-
+  rng_ = kernel().rng_manager.get_rng( get_target( t )->get_vp() );
+  
   // integration of synapse state starts from the last spike received
   double_t t_last_postspike = t_lastspike;
 

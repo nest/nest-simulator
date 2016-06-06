@@ -20,13 +20,15 @@
  *
  */
 
-#include "network.h"
-#include "dictdatum.h"
-#include "connector_model.h"
-#include "common_synapse_properties.h"
 #include "stdp_spl_connection_hom.h"
+
+// Includes from nestkernel:
+#include "common_synapse_properties.h"
+#include "connector_model.h"
 #include "event.h"
-#include "numerics.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {
